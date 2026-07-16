@@ -83,9 +83,12 @@ stream and zero alignment. The recovered encoder is canonical and rebuilds the
 entire `0x592c`-byte archive exactly. `preview.atlas.png` is a generated
 non-source contact sheet of the same PNGs.
 
-`graphics/resource_f2/images/` contains twelve palette-correct 64x64 indexed
-sprite frames. The runtime ARM decoder proves byte values `1..0xdf` are pixel
-indices, `0xe0..0xff` skip 1..32 transparent pixels, and zero terminates a
-frame. Every stream lands exactly on the 4096-pixel boundary. The shared
-224-color OBJ palette is the independently reconstructed range copied from
-ROM `0x0800779c`; `preview.atlas.png` is a generated contact sheet.
+`graphics/resource_f2/` through `graphics/resource_127/` contain 54
+palette-correct indexed sprite archives. The runtime ARM decoder proves byte
+values `1..0xdf` are pixel indices, `0xe0..0xff` skip 1..32 transparent
+pixels, and zero terminates a frame. All 32x32 and 64x64 streams land exactly
+on their metadata-defined pixel boundary and greedily re-encode byte-for-byte.
+The shared 224-color OBJ palette is the independently reconstructed range
+copied from ROM `0x0800779c`; each `preview.atlas.png` is a generated contact
+sheet. Regenerate the series with `python3 tools/export_sprite_series.py
+baserom.gba`.

@@ -17,6 +17,10 @@ def main():
     parser.add_argument("rom", type=Path, nargs="?", default="baserom.gba")
     parser.add_argument("-o", "--output", type=Path, default="out/full/rebuilt.gba")
     parser.add_argument("--claimed-output", type=Path, default="out/full/claimed")
+    parser.add_argument("--asset-manifest", type=Path,
+                        default=Path("assets/manifest.json"))
+    parser.add_argument("--asset-output", type=Path,
+                        default=Path("out/full/assets"))
     parser.add_argument("--jobs", type=int, default=min(16, os.cpu_count() or 1))
     args = parser.parse_args()
 
@@ -43,6 +47,31 @@ def main():
         start = address - ROM_BASE
         rebuilt[start:start + size] = source
         claimed_mask[start:start + size] = b"\1" * size
+    asset_regions = []
+    if args.asset_manifest.exists():
+        subprocess.run([
+            "python3", "tools/build_assets.py", str(args.rom),
+            "--manifest", str(args.asset_manifest),
+            "--output", str(args.asset_output),
+        ], check=True)
+        asset_manifest = json.loads(
+            (args.asset_output / "manifest.json").read_text())
+        for region in asset_manifest["regions"]:
+            address = region["address"]
+            size = region["size"]
+            start = address - ROM_BASE
+            end = start + size
+            if any(claimed_mask[start:end]):
+                raise SystemExit(
+                    f"asset overlaps another source at 0x{address:08x}")
+            source = Path(region["output"]).read_bytes()
+            expected = rom[start:end]
+            if source != expected:
+                raise SystemExit(
+                    f"asset mismatch at 0x{address:08x} ({size:#x} bytes)")
+            rebuilt[start:end] = source
+            claimed_mask[start:end] = b"\1" * size
+            asset_regions.append(region)
     if bytes(rebuilt) != rom:
         raise SystemExit("full rebuild differs from private ROM")
     args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -51,7 +80,9 @@ def main():
         "format": 1,
         "rom_base": ROM_BASE,
         "rom_size": len(rom),
-        "source_regions": len(manifest["regions"]),
+        "code_regions": len(manifest["regions"]),
+        "asset_regions": len(asset_regions),
+        "source_regions": len(manifest["regions"]) + len(asset_regions),
         "source_bytes": sum(claimed_mask),
         "rom_fallback_bytes": len(rom) - sum(claimed_mask),
         "byte_identical": True,
@@ -61,6 +92,7 @@ def main():
     report_path.write_text(json.dumps(report, indent=2) + "\n")
     print(
         f"identical={report['byte_identical']} regions={report['source_regions']} "
+        f"assets={report['asset_regions']} "
         f"source_bytes={report['source_bytes']} "
         f"rom_fallback_bytes={report['rom_fallback_bytes']}"
     )

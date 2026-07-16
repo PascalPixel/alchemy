@@ -59,12 +59,21 @@ def emit_discovery(rom, discovery, address, output):
         rom, start, end, function_instructions, output_dir)
     calls = {source: target for source, target, mode in discovery.calls
              if source in function["instructions"] and mode == "thumb"}
+    jump_tables = {
+        table: discovery.jump_tables[table]
+        for site, table in discovery.jump_table_sites.items()
+        if site in function["instructions"]
+    }
     labels = {
         target for item in instructions
         for target in [branch_target(
             rom, item, discovery.instructions[item]["kind"])]
         if target in function["instructions"]
     }
+    labels.update(
+        target for targets in jump_tables.values() for target in targets
+        if target in function["instructions"]
+    )
     literals = {}
     lines = [".syntax unified", ".thumb", f"glabel Func_{address:08x}"]
     for item in instructions:
@@ -88,10 +97,20 @@ def emit_discovery(rom, discovery, address, output):
             instruction = f"ldr r{register}, .L_{literal:08x}"
         lines.append(f"    {instruction}")
     for literal, value in sorted(literals.items()):
+        word = (
+            f".L_{value:08x}"
+            if value in jump_tables else f"0x{value:08x}"
+        )
         lines.extend([
             "    .align 2",
             f".L_{literal:08x}:",
-            f"    .word 0x{value:08x}",
+            f"    .word {word}",
+        ])
+    for table, targets in sorted(jump_tables.items()):
+        lines.extend([
+            "    .align 2",
+            f".L_{table:08x}:",
+            *(f"    .word .L_{target:08x}" for target in targets),
         ])
     output.write_text("\n".join(lines) + "\n")
 

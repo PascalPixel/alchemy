@@ -26,6 +26,7 @@ class Discovery:
         self.data_refs = set()
         self.pointer_tables = {}
         self.jump_tables = {}
+        self.jump_table_sites = {}
 
     def inside(self, address, size=1):
         return ROM_BASE <= address and address + size <= self.limit
@@ -428,6 +429,7 @@ class Discovery:
             return None
         self.data_refs.add(table)
         self.jump_tables[table] = targets
+        self.jump_table_sites[pc] = table
         return targets
 
     def walk_function(self, address):
@@ -634,7 +636,14 @@ class Discovery:
                 for address, targets in sorted(self.pointer_tables.items())
             ]
             report["jump_tables"] = [
-                {"address": address, "targets": targets}
+                {
+                    "address": address,
+                    "targets": targets,
+                    "sites": sorted(
+                        site for site, table in self.jump_table_sites.items()
+                        if table == address
+                    ),
+                }
                 for address, targets in sorted(self.jump_tables.items())
             ]
         return report

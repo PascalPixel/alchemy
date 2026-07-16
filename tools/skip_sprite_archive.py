@@ -142,7 +142,8 @@ def preview(images, width, height, palette, columns=4, scale=2):
             chunk(b"IEND", b""))
 
 
-def export(decoded, directory, plan_path, palette_path, preview_path=None):
+def export(decoded, directory, plan_path, palette_path, preview_path=None,
+           width=64, height=64):
     entries = []
     for offset in range(0, min(len(decoded), 256 * 4), 4):
         value = struct.unpack_from("<I", decoded, offset)[0]
@@ -158,7 +159,6 @@ def export(decoded, directory, plan_path, palette_path, preview_path=None):
     if len(set(offsets)) != len(offsets) or any(
             value < first or value >= len(decoded) for value in offsets):
         raise ValueError("archive contains an invalid sprite pointer")
-    width = height = 64
     images = []
     ends = {}
     for offset in offsets:
@@ -207,6 +207,8 @@ def main():
     parser.add_argument("--plan", type=Path)
     parser.add_argument("--palette", type=Path)
     parser.add_argument("--preview", type=Path)
+    parser.add_argument("--width", type=int, default=64)
+    parser.add_argument("--height", type=int, default=64)
     args = parser.parse_args()
     if args.self_test:
         self_test()
@@ -215,7 +217,7 @@ def main():
     if None in (args.decoded, args.images, args.plan, args.palette):
         parser.error("--decoded, --images, --plan, and --palette are required")
     count = export(args.decoded.read_bytes(), args.images, args.plan,
-                   args.palette, args.preview)
+                   args.palette, args.preview, args.width, args.height)
     print(f"images={count} decoded={args.decoded.stat().st_size}")
 
 

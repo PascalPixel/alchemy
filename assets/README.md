@@ -18,3 +18,10 @@ sources are a BGR555 palette PNG, two 8bpp tile PNGs, a 32×32 text tilemap,
 and a payload-free custom-LZ token plan. The plan records literal positions
 and copy decisions; literal bytes come from the PNG/text components during
 the build. Together they re-encode the complete compressed ROM stream.
+
+`graphics/resources_d8_e3/` contains two alternative six-resource graphics
+sets selected by a ROM-derived map condition. The palette streams use BGR555
+PNG sources. Four decoded banks per set are hardware-proven VRAM inputs; the
+last is a related RAM input whose downstream format is not yet established.
+Until tile depth is proven, these ten decoded banks use format-neutral indexed
+PNGs: one pixel index preserves one byte without asserting 4bpp or 8bpp.

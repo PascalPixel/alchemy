@@ -64,6 +64,33 @@ def tile_png(raw, bpp, columns):
                  "tiles": count, "columns": columns}
 
 
+def palette_png(raw):
+    if not raw or len(raw) % 2 or len(raw) > 512:
+        raise ValueError("palette must contain 1..256 BGR555 entries")
+    entries = len(raw) // 2
+    palette = bytearray()
+    for offset in range(0, len(raw), 2):
+        value = struct.unpack_from("<H", raw, offset)[0]
+        if value & 0x8000:
+            raise ValueError("palette contains a non-BGR555 high bit")
+        palette.extend(((value & 31) << 3,
+                        (value >> 5 & 31) << 3,
+                        (value >> 10 & 31) << 3))
+    pixels = list(range(entries)) + [0] * (256 - entries)
+    scanlines = b"".join(
+        b"\0" + bytes(pixels[row * 16:(row + 1) * 16])
+        for row in range(16))
+    png = (
+        b"\x89PNG\r\n\x1a\n" +
+        chunk(b"IHDR", struct.pack(">IIBBBBB", 16, 16, 8, 3, 0, 0, 0)) +
+        chunk(b"PLTE", bytes(palette)) +
+        chunk(b"IDAT", zlib.compress(scanlines, 9)) +
+        chunk(b"IEND", b"")
+    )
+    return png, {"width": 16, "height": 16,
+                 "palette_entries": entries}
+
+
 def self_test():
     for bpp, size in ((4, 32 * 7), (8, 64 * 4)):
         raw = bytes((index * 37 + 11) & 255 for index in range(size))
@@ -71,6 +98,12 @@ def self_test():
         tiles, _, _ = gba_graphics(png, bpp)
         if tiles != raw:
             raise AssertionError(f"{bpp}bpp tile round-trip failed")
+    raw = b"".join(struct.pack("<H", (index * 109) & 0x7fff)
+                   for index in range(224))
+    png, _ = palette_png(raw)
+    _, palette, _ = gba_graphics(png, 8)
+    if palette != raw:
+        raise AssertionError("palette round-trip failed")
     print("self-test=ok")
 
 
@@ -92,21 +125,39 @@ def main():
     tiles.add_argument("--bpp", type=int, choices=(4, 8), required=True)
     tiles.add_argument("--columns", type=int, required=True)
     tiles.add_argument("-o", "--output", type=Path, required=True)
+    tile_file = commands.add_parser("tiles-file")
+    tile_file.add_argument("input", type=Path)
+    tile_file.add_argument("--bpp", type=int, choices=(4, 8), required=True)
+    tile_file.add_argument("--columns", type=int, required=True)
+    tile_file.add_argument("-o", "--output", type=Path, required=True)
+    palette = commands.add_parser("palette-file")
+    palette.add_argument("input", type=Path)
+    palette.add_argument("-o", "--output", type=Path, required=True)
     args = parser.parse_args()
     if args.self_test:
         self_test()
         if args.command is None:
             return
-    if args.command != "tiles":
+    if args.command == "tiles":
+        rom = args.rom.read_bytes()
+        start = args.address - ROM_BASE
+        end = start + args.size
+        if start < 0 or end > len(rom) or start >= end:
+            parser.error("tile range is outside the ROM or empty")
+        if args.output.resolve() == args.rom.resolve():
+            parser.error("refusing to overwrite the input ROM")
+        png, report = tile_png(rom[start:end], args.bpp, args.columns)
+    elif args.command == "tiles-file":
+        if args.output.resolve() == args.input.resolve():
+            parser.error("refusing to overwrite the input")
+        png, report = tile_png(
+            args.input.read_bytes(), args.bpp, args.columns)
+    elif args.command == "palette-file":
+        if args.output.resolve() == args.input.resolve():
+            parser.error("refusing to overwrite the input")
+        png, report = palette_png(args.input.read_bytes())
+    else:
         parser.error("an asset command is required")
-    rom = args.rom.read_bytes()
-    start = args.address - ROM_BASE
-    end = start + args.size
-    if start < 0 or end > len(rom) or start >= end:
-        parser.error("tile range is outside the ROM or empty")
-    if args.output.resolve() == args.rom.resolve():
-        parser.error("refusing to overwrite the input ROM")
-    png, report = tile_png(rom[start:end], args.bpp, args.columns)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_bytes(png)
     print(json.dumps(report, sort_keys=True))

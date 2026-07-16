@@ -385,6 +385,21 @@
       "kind": "golden-sun-offset-palette-lz",
       "source": "assets/graphics/resource_f1/atlas.8bpp.png",
       "plan": "assets/graphics/resource_f1/stream.archive.json"
+    },
+    {
+      "address": "0x0843f868",
+      "size": "0x21b2",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/graphics/resource_f2/stream.lz.json",
+      "components": [
+        {
+          "kind": "zero-skip-sprite-archive",
+          "size": "0x35ac",
+          "source": "assets/graphics/resource_f2/images",
+          "plan": "assets/graphics/resource_f2/archive.json",
+          "palette": "assets/graphics/0800777c.gbapal.png"
+        }
+      ]
     }
   ]
 }

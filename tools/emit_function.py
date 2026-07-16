@@ -17,9 +17,15 @@ def branch_target(data, address, kind):
     return None
 
 
-def disassemble(data, start, end, output_dir):
+def disassemble(data, start, end, instructions, output_dir):
     binary = output_dir / f"{start:08x}.bin"
-    binary.write_bytes(data[start - ROM_BASE:end - ROM_BASE])
+    masked = bytearray(b"\xc0\x46" * ((end - start + 1) // 2))
+    for address in instructions:
+        size = instructions[address]["size"]
+        source = address - ROM_BASE
+        destination = address - start
+        masked[destination:destination + size] = data[source:source + size]
+    binary.write_bytes(masked[:end - start])
     text = subprocess.check_output([
         "arm-none-eabi-objdump", "-D", "-b", "binary", "-marm",
         "-Mforce-thumb", f"--adjust-vma=0x{start:08x}", str(binary),
@@ -46,7 +52,11 @@ def emit_discovery(rom, discovery, address, output):
         item + discovery.instructions[item]["size"] for item in instructions)
     output_dir = output.parent
     output_dir.mkdir(parents=True, exist_ok=True)
-    decoded = disassemble(rom, start, end, output_dir)
+    function_instructions = {
+        item: discovery.instructions[item] for item in instructions
+    }
+    decoded = disassemble(
+        rom, start, end, function_instructions, output_dir)
     calls = {source: target for source, target, mode in discovery.calls
              if source in function["instructions"] and mode == "thumb"}
     labels = {

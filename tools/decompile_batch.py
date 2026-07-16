@@ -53,17 +53,21 @@ def main():
         address, size = candidate
         assembly = args.output / f"{address:08x}.s"
         source = args.output / f"{address:08x}.c"
-        emit_discovery(rom, discovery, address, assembly)
-        process = subprocess.run([
-            str(m2c), "-t", "gba", "--valid-syntax",
-            "--comment-style", "none", str(assembly),
-        ], text=True, capture_output=True)
-        if process.returncode == 0:
+        try:
+            emit_discovery(rom, discovery, address, assembly)
+            process = subprocess.run([
+                str(m2c), "-t", "gba", "--valid-syntax",
+                "--comment-style", "none", str(assembly),
+            ], text=True, capture_output=True)
+            success = process.returncode == 0
+        except (OSError, KeyError, ValueError):
+            success = False
+        if success:
             source.write_text(process.stdout)
         return {
             "entry": address,
             "size": size,
-            "success": process.returncode == 0,
+            "success": success,
         }
 
     with ThreadPoolExecutor(max_workers=args.jobs) as executor:

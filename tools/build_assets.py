@@ -9,6 +9,7 @@ from import_asset import gba_graphics, gba_palette_rgba, indexed_png, rgba_png
 from archive_asset import build_archive
 from tilemap import import_tilemap
 from wordstream import import_words
+from f0_archive import build_archive as build_f0_archive
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -129,6 +130,19 @@ def main():
             report = {"streams": len(plan["streams"]),
                       "chunk_width": plan["chunk_width"],
                       "chunk_height": plan["chunk_height"]}
+        elif kind == "golden-sun-mtf4-archive":
+            plan_path = source_path(entry["plan"])
+            directory = source_path(entry["source"])
+            plan = json.loads(plan_path.read_text())
+            if plan.get("format") != 1 or plan.get("codec") != kind:
+                raise ValueError("unsupported F0 archive plan")
+            built_data = build_f0_archive(plan, directory)
+            image_sources = [
+                str(Path(entry["source"]) / f"image_{index:02d}.png")
+                for index in range(int(plan["images"]))]
+            sources = [entry["plan"], *image_sources]
+            report = {"entries": len(plan["entries"]),
+                      "images": int(plan["images"])}
         else:
             raise ValueError(f"unsupported asset kind: {kind}")
         if len(built_data) != size:

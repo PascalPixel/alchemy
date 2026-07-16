@@ -149,6 +149,22 @@ def rgba_png(data):
     return width, height, b"".join(rows)
 
 
+def gba_palette_rgba(data):
+    width, height, pixels = rgba_png(data)
+    palette = bytearray()
+    for offset in range(0, len(pixels), 4):
+        red, green, blue, alpha = pixels[offset:offset + 4]
+        if red & 7 or green & 7 or blue & 7:
+            raise ValueError("RGBA palette colors must be multiples of eight")
+        if alpha not in (254, 255):
+            raise ValueError("RGBA palette alpha must be 254 or 255")
+        value = ((red >> 3) | (green >> 3) << 5 |
+                 (blue >> 3) << 10 | (255 - alpha) << 15)
+        palette.extend(struct.pack("<H", value))
+    return bytes(palette), {"width": width, "height": height,
+                            "palette_entries": len(palette) // 2}
+
+
 def gba_graphics(data, bpp):
     width, height, pixels, palette = indexed_png(data)
     limit = 16 if bpp == 4 else 256
@@ -298,6 +314,11 @@ def self_test():
     from export_asset import rgba_image
     image, _ = rgba_image(rgba, 7)
     assert rgba_png(image) == (7, 5, rgba)
+    raw_palette = b"".join(struct.pack("<H", (index * 109) & 0xffff)
+                           for index in range(128))
+    from export_asset import palette_rgba_image
+    image, _ = palette_rgba_image(raw_palette, 16)
+    assert gba_palette_rgba(image)[0] == raw_palette
     print("self-test=ok")
 
 

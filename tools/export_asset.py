@@ -6,7 +6,7 @@ import struct
 import zlib
 from pathlib import Path
 
-from import_asset import gba_graphics, indexed_png, rgba_png
+from import_asset import gba_graphics, gba_palette_rgba, indexed_png, rgba_png
 
 
 ROM_BASE = 0x08000000
@@ -133,6 +133,20 @@ def rgba_image(raw, width):
     return png, {"width": width, "height": height, "pixels": pixels}
 
 
+def palette_rgba_image(raw, width):
+    if not raw or len(raw) % 2 or width <= 0 or len(raw) // 2 % width:
+        raise ValueError("palette RGBA dimensions must divide whole colors")
+    pixels = bytearray()
+    for offset in range(0, len(raw), 2):
+        value = struct.unpack_from("<H", raw, offset)[0]
+        pixels.extend(((value & 31) << 3, (value >> 5 & 31) << 3,
+                       (value >> 10 & 31) << 3,
+                       254 if value & 0x8000 else 255))
+    png, report = rgba_image(bytes(pixels), width)
+    report["palette_entries"] = len(raw) // 2
+    return png, report
+
+
 def self_test():
     for bpp, size in ((4, 32 * 7), (8, 64 * 4)):
         raw = bytes((index * 37 + 11) & 255 for index in range(size))
@@ -155,6 +169,11 @@ def self_test():
     png, _ = rgba_image(raw, 11)
     if rgba_png(png) != (11, 7, raw):
         raise AssertionError("RGBA image round-trip failed")
+    raw = b"".join(struct.pack("<H", (index * 109) & 0xffff)
+                   for index in range(128))
+    png, _ = palette_rgba_image(raw, 16)
+    if gba_palette_rgba(png)[0] != raw:
+        raise AssertionError("RGBA palette round-trip failed")
     print("self-test=ok")
 
 
@@ -192,6 +211,16 @@ def main():
     rgba_file.add_argument("input", type=Path)
     rgba_file.add_argument("--width", type=int, required=True)
     rgba_file.add_argument("-o", "--output", type=Path, required=True)
+    rgba_palette = commands.add_parser("palette-rgba-file")
+    rgba_palette.add_argument("input", type=Path)
+    rgba_palette.add_argument("--width", type=int, default=16)
+    rgba_palette.add_argument("-o", "--output", type=Path, required=True)
+    rgba_palette_rom = commands.add_parser("palette-rgba")
+    rgba_palette_rom.add_argument("rom", type=Path)
+    rgba_palette_rom.add_argument("--address", type=number, required=True)
+    rgba_palette_rom.add_argument("--size", type=number, required=True)
+    rgba_palette_rom.add_argument("--width", type=int, default=16)
+    rgba_palette_rom.add_argument("-o", "--output", type=Path, required=True)
     args = parser.parse_args()
     if args.self_test:
         self_test()
@@ -223,6 +252,20 @@ def main():
         if args.output.resolve() == args.input.resolve():
             parser.error("refusing to overwrite the input")
         png, report = rgba_image(args.input.read_bytes(), args.width)
+    elif args.command == "palette-rgba-file":
+        if args.output.resolve() == args.input.resolve():
+            parser.error("refusing to overwrite the input")
+        png, report = palette_rgba_image(
+            args.input.read_bytes(), args.width)
+    elif args.command == "palette-rgba":
+        rom = args.rom.read_bytes()
+        start = args.address - ROM_BASE
+        end = start + args.size
+        if start < 0 or end > len(rom) or start >= end:
+            parser.error("palette range is outside the ROM or empty")
+        if args.output.resolve() == args.rom.resolve():
+            parser.error("refusing to overwrite the input ROM")
+        png, report = palette_rgba_image(rom[start:end], args.width)
     else:
         parser.error("an asset command is required")
     args.output.parent.mkdir(parents=True, exist_ok=True)

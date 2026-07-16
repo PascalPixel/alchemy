@@ -20,10 +20,12 @@ class Discovery:
         self.functions = {}
         self.instructions = {}
         self.calls = set()
+        self.external_calls = set()
         self.unresolved = set()
         self.conflicts = []
         self.data_refs = set()
         self.pointer_tables = {}
+        self.jump_tables = {}
 
     def inside(self, address, size=1):
         return ROM_BASE <= address and address + size <= self.limit
@@ -51,7 +53,8 @@ class Discovery:
             return False
         self.functions[address] = {
             "mode": mode, "sources": {source}, "blocks": set(),
-            "instructions": set(), "callees": set(), "unresolved": set(),
+            "instructions": set(), "callees": set(),
+            "external_callees": set(), "unresolved": set(),
         }
         return True
 
@@ -94,8 +97,8 @@ class Discovery:
         if mode == "thumb":
             target &= ~1
         if not self.inside(target, 2 if mode == "thumb" else 4):
-            function["unresolved"].add(source)
-            self.unresolved.add(source)
+            function["external_callees"].add(target)
+            self.external_calls.add((source, target, mode))
             return
         function["callees"].add(target)
         self.calls.add((source, target, mode))
@@ -151,7 +154,7 @@ class Discovery:
                 else:
                     kind = "indirect"
                     value = constants.get(register)
-                    if value is not None and self.inside(value & ~1, 2):
+                    if value is not None:
                         self.call(
                             function, pc, value,
                             "thumb" if value & 1 else "arm")
@@ -304,7 +307,7 @@ class Discovery:
                 else:
                     kind = "indirect"
                     value = constants.get(register)
-                    if value is not None and self.inside(value & ~1, 2):
+                    if value is not None:
                         self.call(
                             function, pc, value,
                             "thumb" if value & 1 else "arm")
@@ -316,12 +319,21 @@ class Discovery:
                 kind = "return"
                 stop = True
             elif (half & 0xFC00) == 0x4400 and (half & 0x0087) == 0x0087:
-                kind = "indirect"
-                function["unresolved"].add(pc)
-                self.unresolved.add(pc)
+                register = (half >> 3) & 15
+                targets = self.thumb_jump_table(pc, register)
+                if targets:
+                    kind = "switch"
+                    successors.extend(targets)
+                else:
+                    kind = "indirect"
+                    function["unresolved"].add(pc)
+                    self.unresolved.add(pc)
                 stop = True
 
-            if (half & 0xFC00) == 0x4600:
+            if (
+                (half & 0xFC00) == 0x4400 and
+                ((half >> 8) & 3) == 2
+            ):
                 destination = (half & 7) | ((half >> 4) & 8)
                 source = (half >> 3) & 15
                 constants.pop(destination, None)
@@ -336,6 +348,87 @@ class Discovery:
             if stop:
                 return
             pc += size
+
+    def thumb_jump_table(self, pc, register):
+        if not self.inside(pc - 12, 14):
+            return None
+        setup = [
+            (pc - 6, self.u16(pc - 6)),
+            (pc - 4, self.u16(pc - 4)),
+        ]
+        table_load = self.u16(pc - 2)
+        literal_items = [
+            item for item in setup if (item[1] & 0xF800) == 0x4800
+        ]
+        shift_items = [
+            item for item in setup
+            if (
+                (item[1] & 0xF800) == 0 and
+                (item[1] & 7) == register and
+                ((item[1] >> 6) & 0x1F) == 2
+            )
+        ]
+        if (
+            len(literal_items) != 1 or
+            len(shift_items) != 1 or
+            (table_load & 0xFE00) != 0x5800 or
+            (table_load & 7) != register
+        ):
+            return None
+        literal_pc, literal_load = literal_items[0]
+        _, shift = shift_items[0]
+        index_register = (shift >> 3) & 7
+        direct_compare = self.u16(pc - 10)
+        direct_branch = self.u16(pc - 8)
+        guarded_compare = self.u16(pc - 12)
+        guarded_branch = self.u16(pc - 10)
+        guarded_default = self.u16(pc - 8)
+        if (
+            (direct_compare & 0xF800) == 0x2800 and
+            ((direct_compare >> 8) & 7) == index_register and
+            (direct_branch & 0xFF00) == 0xD800
+        ):
+            compare = direct_compare
+        elif (
+            (guarded_compare & 0xF800) == 0x2800 and
+            ((guarded_compare >> 8) & 7) == index_register and
+            (guarded_branch & 0xFF00) == 0xD900 and
+            (guarded_default & 0xF800) == 0xE000 and
+            pc - 10 + 4 + (sx(guarded_branch & 0xFF, 8) << 1) ==
+            pc - 6
+        ):
+            compare = guarded_compare
+        else:
+            return None
+        base_register = (literal_load >> 8) & 7
+        load_registers = {
+            (table_load >> 3) & 7,
+            (table_load >> 6) & 7,
+        }
+        if load_registers != {register, base_register}:
+            return None
+        literal = (
+            ((literal_pc + 4) & ~3) +
+            ((literal_load & 0xFF) << 2)
+        )
+        if not self.inside(literal, 4):
+            return None
+        table = self.u32(literal)
+        count = (compare & 0xFF) + 1
+        if not self.inside(table, count * 4):
+            return None
+        targets = [self.u32(table + index * 4) for index in range(count)]
+        bank = (pc - ROM_BASE) // 0x10000
+        if any(
+            target & 1 or
+            not self.inside(target, 2) or
+            (target - ROM_BASE) // 0x10000 != bank
+            for target in targets
+        ):
+            return None
+        self.data_refs.add(table)
+        self.jump_tables[table] = targets
+        return targets
 
     def walk_function(self, address):
         function = self.functions[address]
@@ -504,6 +597,7 @@ class Discovery:
                     if insns else None
                 ),
                 "callees": sorted(function["callees"]),
+                "external_callees": sorted(function["external_callees"]),
                 "unresolved": sorted(function["unresolved"]),
             })
         report = {
@@ -513,8 +607,10 @@ class Discovery:
             "function_count": len(functions),
             "instruction_count": len(self.instructions),
             "call_count": len(self.calls),
+            "external_call_count": len(self.external_calls),
             "unresolved_count": len(self.unresolved),
             "pointer_table_count": len(self.pointer_tables),
+            "jump_table_count": len(self.jump_tables),
             "conflicts": self.conflicts,
             "functions": functions,
         }
@@ -527,11 +623,19 @@ class Discovery:
                 {"source": source, "target": target, "mode": mode}
                 for source, target, mode in sorted(self.calls)
             ]
+            report["external_calls"] = [
+                {"source": source, "target": target, "mode": mode}
+                for source, target, mode in sorted(self.external_calls)
+            ]
             report["unresolved"] = sorted(self.unresolved)
             report["data_refs"] = sorted(self.data_refs)
             report["pointer_tables"] = [
                 {"address": address, "targets": targets}
                 for address, targets in sorted(self.pointer_tables.items())
+            ]
+            report["jump_tables"] = [
+                {"address": address, "targets": targets}
+                for address, targets in sorted(self.jump_tables.items())
             ]
         return report
 
@@ -550,7 +654,9 @@ def main():
         f"functions={report['function_count']} "
         f"instructions={report['instruction_count']} "
         f"calls={report['call_count']} "
+        f"external_calls={report['external_call_count']} "
         f"unresolved={report['unresolved_count']} "
+        f"jump_tables={report['jump_table_count']} "
         f"conflicts={len(report['conflicts'])}"
     )
 

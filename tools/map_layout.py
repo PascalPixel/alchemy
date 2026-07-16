@@ -71,6 +71,10 @@ def main():
         [item["address"], item["address"] + 4 * len(item["targets"])]
         for item in report["pointer_tables"]
     ])
+    jump_table_ranges = coalesce([
+        [item["address"], item["address"] + 4 * len(item["targets"])]
+        for item in report.get("jump_tables", [])
+    ])
     claimed_ranges = []
     claimed_entries = []
     if args.claimed:
@@ -82,7 +86,8 @@ def main():
             [item["address"], item["end"]] for item in claimed["regions"]
         ])
 
-    classified = coalesce(instruction_ranges + table_ranges)
+    classified = coalesce(
+        instruction_ranges + table_ranges + jump_table_ranges)
     unknown_ranges = complement(classified, rom_base, rom_end)
     functions = [item["entry"] for item in report["functions"]]
     missing_claimed_entries = sorted(set(claimed_entries) - set(functions))
@@ -92,6 +97,9 @@ def main():
     unresolved = report["unresolved"]
     data_refs = report["data_refs"]
     table_starts = [item["address"] for item in report["pointer_tables"]]
+    jump_table_starts = [
+        item["address"] for item in report.get("jump_tables", [])
+    ]
     banks = []
     bank = rom_base
     while bank < rom_end:
@@ -108,6 +116,10 @@ def main():
                 bank <= value < end for value in table_starts),
             "pointer_table_bytes": intersected_bytes(
                 table_ranges, bank, end),
+            "jump_tables": sum(
+                bank <= value < end for value in jump_table_starts),
+            "jump_table_bytes": intersected_bytes(
+                jump_table_ranges, bank, end),
             "data_refs": sum(bank <= value < end for value in data_refs),
             "unresolved_sites": sum(
                 bank <= value < end for value in unresolved),
@@ -146,14 +158,17 @@ def main():
             "claimed_functions": len(claimed_entries),
             "instructions": report["instruction_count"],
             "calls": report["call_count"],
+            "external_calls": report.get("external_call_count", 0),
             "unresolved": report["unresolved_count"],
             "pointer_tables": report["pointer_table_count"],
+            "jump_tables": report.get("jump_table_count", 0),
             "data_refs": len(data_refs),
         },
         "bytes": {
             "instructions": measure(instruction_ranges),
             "function_envelopes": measure(envelope_ranges),
             "pointer_tables": measure(table_ranges),
+            "jump_tables": measure(jump_table_ranges),
             "claimed_source": measure(claimed_ranges),
             "unclassified": measure(unknown_ranges),
         },
@@ -161,6 +176,7 @@ def main():
         "instruction_ranges": instruction_ranges,
         "function_envelope_ranges": envelope_ranges,
         "pointer_table_ranges": table_ranges,
+        "jump_table_ranges": jump_table_ranges,
         "claimed_source_ranges": claimed_ranges,
         "unclassified_ranges": unknown_ranges,
         "banks": banks,

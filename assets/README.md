@@ -22,6 +22,10 @@ sources are a BGR555 palette PNG, two 8bpp tile PNGs, a 32×32 text tilemap,
 and a payload-free custom-LZ token plan. The plan records literal positions
 and copy decisions; literal bytes come from the PNG/text components during
 the build. Together they re-encode the complete compressed ROM stream.
+`preview.frames.png` is a generated, non-source rendering of the four proven
+dynamic states after applying the real palette, 32x32 tilemap, tile flips, and
+the runtime `0x340`-byte dynamic upload. Regenerate it with
+`python3 tools/render_resource_19.py -o assets/graphics/resource_19/preview.frames.png`.
 
 `graphics/resources_d8_e3/` contains two alternative six-resource graphics
 sets selected by a ROM-derived map condition. The palette streams use BGR555

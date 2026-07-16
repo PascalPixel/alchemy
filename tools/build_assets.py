@@ -11,6 +11,7 @@ from tilemap import import_tilemap
 from wordstream import import_words
 from pairtable import import_pairs
 from f0_archive import build_archive as build_f0_archive
+from skip_sprite_archive import build_archive as build_skip_sprite_archive
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -54,6 +55,14 @@ def build_component(entry):
     elif kind == "little-u16-pairs":
         data = import_pairs(source.read_text())
         details = {"pairs": len(data) // 4}
+    elif kind == "zero-skip-sprite-archive":
+        plan_path = source_path(entry["plan"])
+        palette_path = source_path(entry["palette"])
+        plan = json.loads(plan_path.read_text())
+        data = build_skip_sprite_archive(plan, source, palette_path)
+        details = {"images": int(plan["images"]),
+                   "width": int(plan["width"]),
+                   "height": int(plan["height"])}
     else:
         raise ValueError(f"unsupported asset component: {kind}")
     size = number(entry["size"])
@@ -102,6 +111,8 @@ def main():
                 data, details = build_component(component)
                 parts.append(data)
                 sources.append(component["source"])
+                if component["kind"] == "zero-skip-sprite-archive":
+                    sources.extend((component["plan"], component["palette"]))
                 component_reports.append({
                     "kind": component["kind"],
                     "source": component["source"], "details": details,

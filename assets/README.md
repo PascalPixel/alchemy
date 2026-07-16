@@ -9,6 +9,10 @@ ROM code copies the seven consecutive 32-byte units to seven consecutive VRAM
 tile slots. The PNG palette is an index legend only; it does not claim the
 scene's active colors.
 
+`graphics/0800777c.gbapal.png` and `graphics/08073812.gbapal.png` preserve
+BGR555 colors copied directly from ROM into palette RAM by DMA. Their ranges
+and lengths come from the DMA setup; no scene names are inferred.
+
 `graphics/resource_19/` is one compressed graphics package. Its tracked
 sources are a BGR555 palette PNG, two 8bpp tile PNGs, a 32×32 text tilemap,
 and a payload-free custom-LZ token plan. The plan records literal positions

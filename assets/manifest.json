@@ -316,6 +316,13 @@
       "source": "assets/graphics/palette_animation_ef.rgba.png"
     },
     {
+      "address": "0x084366f8",
+      "size": "0x592c",
+      "kind": "golden-sun-mtf4-archive",
+      "source": "assets/graphics/resource_f0/images",
+      "plan": "assets/graphics/resource_f0/archive.json"
+    },
+    {
       "address": "0x0843c024",
       "size": "0x3842",
       "kind": "golden-sun-offset-palette-lz",

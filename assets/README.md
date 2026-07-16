@@ -13,6 +13,10 @@ scene's active colors.
 BGR555 colors copied directly from ROM into palette RAM by DMA. Their ranges
 and lengths come from the DMA setup; no scene names are inferred.
 
+`graphics/direct_palettes/` contains three 64-color resources selected by
+fixed pointer-table IDs. Their call sites copy exactly `0x80` bytes to palette
+RAM; names beyond the independently derived IDs are intentionally omitted.
+
 `graphics/resource_19/` is one compressed graphics package. Its tracked
 sources are a BGR555 palette PNG, two 8bpp tile PNGs, a 32×32 text tilemap,
 and a payload-free custom-LZ token plan. The plan records literal positions

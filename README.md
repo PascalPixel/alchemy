@@ -9,3 +9,4 @@ Local reconstruction of Golden Sun from one private ROM.
 - `src/` contains only byte-verified reconstructed C.
 
 Private inputs and generated artifacts are ignored; pushing is disabled.
+Complete means these tracked sources and generic tools, given only the private ROM and approved compiler, independently build a byte-identical full ROM; every decompiled region comes from compiled reconstructed source.

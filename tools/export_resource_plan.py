@@ -4,7 +4,10 @@ import argparse
 import json
 from pathlib import Path
 
-from extract_resource import decode_general_trace, encode_general
+from extract_resource import (
+    decode_general_trace, decode_palette_trace,
+    encode_general, encode_palette,
+)
 
 
 ROM_BASE = 0x08000000
@@ -23,6 +26,8 @@ def main():
     parser.add_argument("--address", type=number, required=True)
     parser.add_argument("--input-end", type=number, required=True)
     parser.add_argument("--max-output", type=number, required=True)
+    parser.add_argument("--codec", choices=("general", "palette"),
+                        default="general")
     parser.add_argument("--plan", type=Path, required=True)
     parser.add_argument("--decoded", type=Path)
     args = parser.parse_args()
@@ -32,16 +37,23 @@ def main():
     end = args.input_end - ROM_BASE
     if start < 0 or not start < end <= len(rom):
         parser.error("compressed range is outside the ROM or empty")
-    decoded, cursor, tokens = decode_general_trace(
-        rom, start, end, args.max_output)
-    encoded = encode_general(decoded, tokens)
+    if args.codec == "general":
+        decoded, cursor, tokens = decode_general_trace(
+            rom, start, end, args.max_output)
+        encoded = encode_general(decoded, tokens)
+        codec = "golden-sun-general-lz"
+    else:
+        decoded, cursor, tokens = decode_palette_trace(
+            rom, start, end, args.max_output)
+        encoded = encode_palette(decoded, tokens)
+        codec = "golden-sun-palette-lz"
     original = rom[start:cursor]
     if not original.startswith(encoded):
         raise ValueError("token replay differs before decoder look-ahead")
     lookahead = original[len(encoded):]
     plan = {
         "format": 1,
-        "codec": "golden-sun-general-lz",
+        "codec": codec,
         "decoded_size": len(decoded),
         "encoded_size": len(original),
         "tokens": tokens,

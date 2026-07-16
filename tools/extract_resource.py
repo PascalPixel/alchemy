@@ -180,9 +180,10 @@ def encode_general(decoded, tokens):
     return bytes(packed)
 
 
-def decode_palette(data, start, end, maximum):
+def decode_palette_trace(data, start, end, maximum):
     cursor = start
     output = bytearray()
+    groups = []
 
     def take(size):
         nonlocal cursor
@@ -199,23 +200,97 @@ def decode_palette(data, start, end, maximum):
             if len(output) + 8 > maximum:
                 raise DecodeError("decoded output crossed configured bound")
             output.extend(block)
+            groups.append(["z"])
             continue
+        operations = []
+        groups.append(["g", operations])
         for bit in range(7, -1, -1):
             if not flags & (1 << bit):
                 if len(output) >= maximum:
                     raise DecodeError("decoded output crossed configured bound")
                 output.extend(take(1))
+                operations.append(["l"])
                 continue
             first, second = take(2)
             distance = ((first & 0xF0) << 4) | second
             length = first & 0x0F
             if length == 0:
                 if distance == 0:
-                    return bytes(output), cursor
+                    operations.append(["e"])
+                    return bytes(output), cursor, groups
                 length = take(1)[0] + 17
             else:
                 length += 1
+            operations.append(["c", length, distance])
             append_copy(output, distance, length, maximum)
+
+
+def decode_palette(data, start, end, maximum):
+    output, cursor, _ = decode_palette_trace(data, start, end, maximum)
+    return output, cursor
+
+
+def encode_palette(decoded, groups):
+    output = bytearray()
+    encoded = bytearray()
+    cursor = 0
+    ended = False
+    for group in groups:
+        if ended:
+            raise DecodeError("palette plan contains data after terminator")
+        if group == ["z"]:
+            if cursor + 8 > len(decoded):
+                raise DecodeError("palette literal block crossed decoded input")
+            encoded.append(0)
+            encoded.extend(decoded[cursor:cursor + 8])
+            output.extend(decoded[cursor:cursor + 8])
+            cursor += 8
+            continue
+        if len(group) != 2 or group[0] != "g" or not group[1]:
+            raise DecodeError("invalid palette token group")
+        operations = group[1]
+        if len(operations) > 8:
+            raise DecodeError("palette group exceeds eight operations")
+        flags = 0
+        payload = bytearray()
+        for index, token in enumerate(operations):
+            if token == ["l"]:
+                if cursor >= len(decoded):
+                    raise DecodeError("palette literal crossed decoded input")
+                payload.append(decoded[cursor])
+                output.append(decoded[cursor])
+                cursor += 1
+                continue
+            flags |= 1 << (7 - index)
+            if token == ["e"]:
+                payload.extend(b"\0\0")
+                ended = True
+                if index + 1 != len(operations):
+                    raise DecodeError("palette terminator is not group-final")
+                continue
+            if len(token) != 3 or token[0] != "c":
+                raise DecodeError("invalid palette copy token")
+            length, distance = map(int, token[1:])
+            if not 1 <= distance <= len(output) or distance > 0xfff:
+                raise DecodeError("palette copy distance is invalid")
+            if 2 <= length <= 16:
+                payload.extend(((distance >> 8) << 4 | (length - 1),
+                                distance & 0xff))
+            elif 17 <= length <= 272:
+                payload.extend(((distance >> 8) << 4,
+                                distance & 0xff, length - 17))
+            else:
+                raise DecodeError("palette copy length is invalid")
+            for _ in range(length):
+                output.append(output[-distance])
+            cursor += length
+        encoded.append(flags)
+        encoded.extend(payload)
+    if not ended:
+        raise DecodeError("palette plan lacks a terminator")
+    if cursor != len(decoded) or bytes(output) != bytes(decoded):
+        raise DecodeError("palette token plan does not reconstruct input")
+    return bytes(encoded)
 
 
 def decode(data, start, end, maximum, kind):
@@ -281,9 +356,12 @@ def self_test():
     if not general.startswith(encoded):
         raise AssertionError("general encoder self-test failed")
     palette = bytes((0x30, ord("A"), ord("B"), 0x01, 0x02, 0, 0))
-    output, cursor = decode_palette(palette, 0, len(palette), 4)
+    output, cursor, groups = decode_palette_trace(
+        palette, 0, len(palette), 4)
     if output != b"ABAB" or cursor != len(palette):
         raise AssertionError("palette decoder self-test failed")
+    if encode_palette(output, groups) != palette:
+        raise AssertionError("palette encoder self-test failed")
     for decoder, stream in ((decode_general, general[:-2]),
                             (decode_palette, palette[:-1])):
         try:

@@ -6,7 +6,7 @@ import struct
 import zlib
 from pathlib import Path
 
-from import_asset import gba_graphics
+from import_asset import gba_graphics, indexed_png
 
 
 ROM_BASE = 0x08000000
@@ -91,6 +91,28 @@ def palette_png(raw):
                  "palette_entries": entries}
 
 
+def byte_png(raw, width):
+    if (not raw or width <= 0 or len(raw) % width or width % 8 or
+            (len(raw) // width) % 8):
+        raise ValueError("byte image dimensions must be nonzero multiples of eight")
+    height = len(raw) // width
+    palette = bytearray()
+    for index in range(256):
+        palette.extend(((index & 31) * 8, (index >> 5) * 8, 0))
+    scanlines = b"".join(
+        b"\0" + raw[row * width:(row + 1) * width]
+        for row in range(height))
+    png = (
+        b"\x89PNG\r\n\x1a\n" +
+        chunk(b"IHDR", struct.pack(">IIBBBBB",
+                                    width, height, 8, 3, 0, 0, 0)) +
+        chunk(b"PLTE", bytes(palette)) +
+        chunk(b"IDAT", zlib.compress(scanlines, 9)) +
+        chunk(b"IEND", b"")
+    )
+    return png, {"width": width, "height": height, "bytes": len(raw)}
+
+
 def self_test():
     for bpp, size in ((4, 32 * 7), (8, 64 * 4)):
         raw = bytes((index * 37 + 11) & 255 for index in range(size))
@@ -104,6 +126,11 @@ def self_test():
     _, palette, _ = gba_graphics(png, 8)
     if palette != raw:
         raise AssertionError("palette round-trip failed")
+    raw = bytes((index * 53 + 7) & 255 for index in range(128 * 64))
+    png, _ = byte_png(raw, 128)
+    _, _, pixels, _ = indexed_png(png)
+    if bytes(pixels) != raw:
+        raise AssertionError("indexed byte-image round-trip failed")
     print("self-test=ok")
 
 
@@ -133,6 +160,10 @@ def main():
     palette = commands.add_parser("palette-file")
     palette.add_argument("input", type=Path)
     palette.add_argument("-o", "--output", type=Path, required=True)
+    byte_file = commands.add_parser("bytes-file")
+    byte_file.add_argument("input", type=Path)
+    byte_file.add_argument("--width", type=int, required=True)
+    byte_file.add_argument("-o", "--output", type=Path, required=True)
     args = parser.parse_args()
     if args.self_test:
         self_test()
@@ -156,6 +187,10 @@ def main():
         if args.output.resolve() == args.input.resolve():
             parser.error("refusing to overwrite the input")
         png, report = palette_png(args.input.read_bytes())
+    elif args.command == "bytes-file":
+        if args.output.resolve() == args.input.resolve():
+            parser.error("refusing to overwrite the input")
+        png, report = byte_png(args.input.read_bytes(), args.width)
     else:
         parser.error("an asset command is required")
     args.output.parent.mkdir(parents=True, exist_ok=True)

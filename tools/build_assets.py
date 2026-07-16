@@ -4,8 +4,8 @@ import argparse
 import json
 from pathlib import Path
 
-from extract_resource import encode_general
-from import_asset import gba_graphics
+from extract_resource import encode_general, encode_palette
+from import_asset import gba_graphics, indexed_png
 from tilemap import import_tilemap
 
 
@@ -35,6 +35,10 @@ def build_component(entry):
     elif kind == "gba-tilemap16":
         data = import_tilemap(source.read_text())
         details = {"entries": len(data) // 2}
+    elif kind == "indexed-bytes":
+        width, height, pixels, _ = indexed_png(source.read_bytes())
+        data = bytes(pixels)
+        details = {"width": width, "height": height}
     else:
         raise ValueError(f"unsupported asset component: {kind}")
     size = number(entry["size"])
@@ -89,12 +93,15 @@ def main():
             decoded = b"".join(parts)
             plan_path = source_path(entry["plan"])
             plan = json.loads(plan_path.read_text())
-            if (plan.get("format") != 1 or
-                    plan.get("codec") != "golden-sun-general-lz"):
+            if plan.get("format") != 1 or plan.get("codec") not in (
+                    "golden-sun-general-lz", "golden-sun-palette-lz"):
                 raise ValueError("unsupported custom-LZ plan")
             if len(decoded) != number(plan["decoded_size"]):
                 raise ValueError("decoded components do not match plan size")
-            built_data = (encode_general(decoded, plan["tokens"]) +
+            encoder = (
+                encode_general if plan["codec"] == "golden-sun-general-lz"
+                else encode_palette)
+            built_data = (encoder(decoded, plan["tokens"]) +
                           bytes.fromhex(plan.get("lookahead", "")))
             sources.append(entry["plan"])
             report = {"decoded_size": len(decoded),

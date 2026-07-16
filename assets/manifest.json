@@ -2,6 +2,18 @@
   "format": 1,
   "regions": [
     {
+      "address": "0x0800777c",
+      "size": "0x1e0",
+      "kind": "gba-palette",
+      "source": "assets/graphics/0800777c.gbapal.png"
+    },
+    {
+      "address": "0x08073812",
+      "size": "0x40",
+      "kind": "gba-palette",
+      "source": "assets/graphics/08073812.gbapal.png"
+    },
+    {
       "address": "0x080c5b30",
       "size": "0xe0",
       "kind": "gba-4bpp-tiles",

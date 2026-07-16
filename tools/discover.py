@@ -488,7 +488,7 @@ class Discovery:
                 break
         return entry
 
-    def report(self, entry):
+    def report(self, entry, details=False):
         functions = []
         for address, function in sorted(self.functions.items()):
             insns = sorted(function["instructions"])
@@ -506,7 +506,7 @@ class Discovery:
                 "callees": sorted(function["callees"]),
                 "unresolved": sorted(function["unresolved"]),
             })
-        return {
+        report = {
             "rom_base": ROM_BASE,
             "rom_size": len(self.data),
             "reset_entry": entry,
@@ -518,16 +518,33 @@ class Discovery:
             "conflicts": self.conflicts,
             "functions": functions,
         }
+        if details:
+            report["instructions"] = [
+                {"address": address, **instruction}
+                for address, instruction in sorted(self.instructions.items())
+            ]
+            report["calls"] = [
+                {"source": source, "target": target, "mode": mode}
+                for source, target, mode in sorted(self.calls)
+            ]
+            report["unresolved"] = sorted(self.unresolved)
+            report["data_refs"] = sorted(self.data_refs)
+            report["pointer_tables"] = [
+                {"address": address, "targets": targets}
+                for address, targets in sorted(self.pointer_tables.items())
+            ]
+        return report
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("rom", type=Path)
     parser.add_argument("-o", "--output", type=Path, required=True)
+    parser.add_argument("--details", action="store_true")
     args = parser.parse_args()
     discovery = Discovery(args.rom.read_bytes())
     entry = discovery.run()
-    report = discovery.report(entry)
+    report = discovery.report(entry, args.details)
     args.output.write_text(json.dumps(report, indent=2) + "\n")
     print(
         f"functions={report['function_count']} "

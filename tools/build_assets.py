@@ -71,7 +71,7 @@ def main():
         if not ROM_BASE <= address < previous_end <= ROM_BASE + len(rom):
             raise ValueError(f"asset region outside ROM at 0x{address:08x}")
         kind = entry["kind"]
-        if kind in ("gba-4bpp-tiles", "gba-8bpp-tiles"):
+        if kind in ("gba-4bpp-tiles", "gba-8bpp-tiles", "gba-palette"):
             built_data, report = build_component(entry)
             sources = [entry["source"]]
         elif kind == "golden-sun-general-lz":

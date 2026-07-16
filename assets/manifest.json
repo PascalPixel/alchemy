@@ -6,6 +6,34 @@
       "size": "0xe0",
       "kind": "gba-4bpp-tiles",
       "source": "assets/graphics/080c5b30.4bpp.png"
+    },
+    {
+      "address": "0x08333fc8",
+      "size": "0x182a",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/graphics/resource_19/stream.lz.json",
+      "components": [
+        {
+          "kind": "gba-palette",
+          "size": "0x1c0",
+          "source": "assets/graphics/resource_19/palette.png"
+        },
+        {
+          "kind": "gba-tilemap16",
+          "size": "0x800",
+          "source": "assets/graphics/resource_19/bg2.tilemap"
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x4000",
+          "source": "assets/graphics/resource_19/static.8bpp.png"
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x1000",
+          "source": "assets/graphics/resource_19/dynamic.8bpp.png"
+        }
+      ]
     }
   ]
 }

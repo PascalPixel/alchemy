@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "regions": [
+    {
+      "address": "0x080c5b30",
+      "size": "0xe0",
+      "kind": "gba-4bpp-tiles",
+      "source": "assets/graphics/080c5b30.4bpp.png"
+    }
+  ]
+}

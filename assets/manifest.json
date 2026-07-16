@@ -268,6 +268,63 @@
       ]
     },
     {
+      "address": "0x084303b4",
+      "size": "0x189a",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/data/resource_e4_e6/e4.lz.json",
+      "components": [
+        {
+          "kind": "little-u16-pairs",
+          "size": "0x7080",
+          "source": "assets/data/resource_e4_e6/e4.pairs.txt"
+        }
+      ]
+    },
+    {
+      "address": "0x08431c50",
+      "size": "0x15c6",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/data/resource_e4_e6/e5.lz.json",
+      "components": [
+        {
+          "kind": "little-u16-pairs",
+          "size": "0x7080",
+          "source": "assets/data/resource_e4_e6/e5.pairs.txt"
+        }
+      ]
+    },
+    {
+      "address": "0x08433218",
+      "size": "0x1a8e",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/data/resource_e4_e6/e6.lz.json",
+      "components": [
+        {
+          "kind": "little-u16-pairs",
+          "size": "0x7080",
+          "source": "assets/data/resource_e4_e6/e6.pairs.txt"
+        }
+      ]
+    },
+    {
+      "address": "0x08434ca8",
+      "size": "0x1250",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/graphics/resource_e7/stream.lz.json",
+      "components": [
+        {
+          "kind": "gba-palette",
+          "size": "0xa0",
+          "source": "assets/graphics/resource_e7/palettes.png"
+        },
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x2000",
+          "source": "assets/graphics/resource_e7/frames.4bpp.png"
+        }
+      ]
+    },
+    {
       "address": "0x08435ef8",
       "size": "0x100",
       "kind": "gba-palette-rgba",

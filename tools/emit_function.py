@@ -34,9 +34,7 @@ def disassemble(data, start, end, output_dir):
     return result
 
 
-def emit(rom, address, output):
-    discovery = Discovery(rom)
-    discovery.run()
+def emit_discovery(rom, discovery, address, output):
     function = discovery.functions.get(address)
     if function is None:
         raise ValueError(f"unknown function: {address:08x}")
@@ -86,6 +84,12 @@ def emit(rom, address, output):
             f"    .word 0x{value:08x}",
         ])
     output.write_text("\n".join(lines) + "\n")
+
+
+def emit(rom, address, output):
+    discovery = Discovery(rom)
+    discovery.run()
+    emit_discovery(rom, discovery, address, output)
 
 
 def main():

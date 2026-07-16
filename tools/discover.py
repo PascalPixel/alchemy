@@ -53,7 +53,8 @@ class Discovery:
             old["sources"].add(source)
             return False
         self.functions[address] = {
-            "mode": mode, "sources": {source}, "blocks": set(),
+            "entry": address, "mode": mode, "sources": {source},
+            "blocks": set(),
             "instructions": set(), "callees": set(),
             "external_callees": set(), "unresolved": set(),
         }
@@ -303,7 +304,14 @@ class Discovery:
                     (previous & 0xFF00) == 0xBC00 and
                     previous & (1 << register)
                 )
-                if register == 14 or popped_return:
+                if (
+                    register == 14 or
+                    popped_return or
+                    (
+                        register == 12 and
+                        self.u16(function["entry"]) == 0x46F4
+                    )
+                ):
                     kind = "return"
                 else:
                     kind = "indirect"
@@ -321,10 +329,15 @@ class Discovery:
                 stop = True
             elif (half & 0xFC00) == 0x4400 and (half & 0x0087) == 0x0087:
                 register = (half >> 3) & 15
-                targets = self.thumb_jump_table(pc, register)
+                targets = self.thumb_jump_table(pc, register, constants)
                 if targets:
                     kind = "switch"
                     successors.extend(targets)
+                elif (
+                    register == 12 and
+                    self.u16(function["entry"]) == 0x46F4
+                ):
+                    kind = "return"
                 else:
                     kind = "indirect"
                     function["unresolved"].add(pc)
@@ -350,7 +363,38 @@ class Discovery:
                 return
             pc += size
 
-    def thumb_jump_table(self, pc, register):
+    def note_jump_table(self, pc, table, count):
+        if (
+            count < 1 or count > 256 or
+            table & 3 or
+            abs(table - pc) > 0x10000 or
+            not self.inside(table, count * 4)
+        ):
+            return None
+        targets = [self.u32(table + index * 4) for index in range(count)]
+        if any(
+            target & 1 or
+            not self.inside(target, 2) or
+            abs(target - pc) > 0x10000
+            for target in targets
+        ):
+            return None
+        self.data_refs.add(table)
+        self.jump_tables[table] = targets
+        self.jump_table_sites[pc] = table
+        return targets
+
+    def thumb_jump_table(self, pc, register, constants=None):
+        table = self.jump_table_sites.get(pc)
+        if table is not None:
+            return self.jump_tables[table]
+        targets = self.thumb_jump_table_compact(pc, register)
+        if targets:
+            return targets
+        return self.thumb_jump_table_extended(
+            pc, register, constants or {})
+
+    def thumb_jump_table_compact(self, pc, register):
         if not self.inside(pc - 12, 14):
             return None
         setup = [
@@ -416,21 +460,111 @@ class Discovery:
             return None
         table = self.u32(literal)
         count = (compare & 0xFF) + 1
-        if not self.inside(table, count * 4):
-            return None
-        targets = [self.u32(table + index * 4) for index in range(count)]
-        bank = (pc - ROM_BASE) // 0x10000
-        if any(
-            target & 1 or
-            not self.inside(target, 2) or
-            (target - ROM_BASE) // 0x10000 != bank
-            for target in targets
+        targets = self.note_jump_table(pc, table, count)
+        if targets:
+            return targets
+        return None
+
+    def thumb_jump_table_extended(self, pc, register, constants):
+        dispatches = []
+        for load_pc in range(pc - 2, max(pc - 42, ROM_BASE), -2):
+            load = self.u16(load_pc)
+            if (load & 0xFE00) != 0x5800 or (load & 7) != register:
+                continue
+            address_registers = {
+                (load >> 3) & 7,
+                (load >> 6) & 7,
+            }
+            for shift_pc in range(load_pc - 2, max(load_pc - 10, ROM_BASE), -2):
+                shift = self.u16(shift_pc)
+                if (
+                    (shift & 0xF800) != 0 or
+                    ((shift >> 6) & 0x1F) != 2 or
+                    (shift & 7) not in address_registers
+                ):
+                    continue
+                index_register = (shift >> 3) & 7
+                shifted_register = shift & 7
+                for base_register in address_registers - {shifted_register}:
+                    table = constants.get(base_register)
+                    for literal_pc in range(
+                        load_pc - 2, max(load_pc - 18, ROM_BASE), -2
+                    ):
+                        literal_load = self.u16(literal_pc)
+                        if (
+                            (literal_load & 0xF800) == 0x4800 and
+                            ((literal_load >> 8) & 7) == base_register
+                        ):
+                            literal = (
+                                ((literal_pc + 4) & ~3) +
+                                ((literal_load & 0xFF) << 2)
+                            )
+                            if self.inside(literal, 4):
+                                table = self.u32(literal)
+                            break
+                    if table is not None:
+                        dispatches.append(
+                            (shift_pc, index_register, table)
+                        )
+
+        load = self.u16(pc - 2)
+        if (
+            (load & 0xF800) == 0x6800 and
+            (load & 7) == register and
+            ((load >> 3) & 7) == register and
+            ((load >> 6) & 0x1F) == 0
         ):
-            return None
-        self.data_refs.add(table)
-        self.jump_tables[table] = targets
-        self.jump_table_sites[pc] = table
-        return targets
+            add = self.u16(pc - 4)
+            shift = self.u16(pc - 8)
+            literal_load = self.u16(pc - 6)
+            if (
+                (add & 0xFE00) == 0x1800 and
+                (add & 7) == register and
+                (shift & 0xF800) == 0 and
+                ((shift >> 6) & 0x1F) == 2 and
+                (shift & 7) == register and
+                (literal_load & 0xF800) == 0x4800
+            ):
+                add_registers = {
+                    (add >> 3) & 7,
+                    (add >> 6) & 7,
+                }
+                base_register = (literal_load >> 8) & 7
+                if add_registers == {register, base_register}:
+                    literal = (
+                        ((pc - 6 + 4) & ~3) +
+                        ((literal_load & 0xFF) << 2)
+                    )
+                    if self.inside(literal, 4):
+                        dispatches.append((
+                            pc - 8,
+                            (shift >> 3) & 7,
+                            self.u32(literal),
+                        ))
+
+        for shift_pc, index_register, table in dispatches:
+            for compare_pc in range(
+                shift_pc - 2, max(shift_pc - 50, ROM_BASE), -2
+            ):
+                compare = self.u16(compare_pc)
+                if (compare & 0xF800) != 0x2800:
+                    continue
+                branch = self.u16(compare_pc + 2)
+                if (branch & 0xFF00) not in (0xD800, 0xD900):
+                    continue
+                branch_target = (
+                    compare_pc + 6 +
+                    (sx(branch & 0xFF, 8) << 1)
+                )
+                if (branch & 0xFF00) == 0xD900 and not (
+                    compare_pc + 4 <= branch_target <= shift_pc
+                ):
+                    continue
+                targets = self.note_jump_table(
+                    pc, table, (compare & 0xFF) + 1)
+                if targets:
+                    return targets
+        return None
 
     def walk_function(self, address):
         function = self.functions[address]
@@ -536,6 +670,11 @@ class Discovery:
                     (self.u16(address) & 0xFF00) != 0xB500
                 ):
                     continue
+                if (
+                    not self.inside(address + 2, 2) or
+                    self.u16(address + 2) in (0, 0xFFFF)
+                ):
+                    continue
                 previous = self.u16(address - 2)
                 after_padding = previous in (0, 0xFFFF)
                 after_return = previous == 0x4770 or (previous & 0xFF00) == 0xBD00
@@ -581,6 +720,9 @@ class Discovery:
             added |= self.discover_prologue_boundaries()
             if not added:
                 break
+        self.unresolved.difference_update(self.jump_table_sites)
+        for function in self.functions.values():
+            function["unresolved"].difference_update(self.jump_table_sites)
         return entry
 
     def report(self, entry, details=False):

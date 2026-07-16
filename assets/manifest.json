@@ -46,6 +46,162 @@
           "source": "assets/graphics/resource_19/dynamic.8bpp.png"
         }
       ]
+    },
+    {
+      "address": "0x08424c6c",
+      "size": "0x1f5",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/graphics/resources_d8_e3/d8.lz.json",
+      "components": [
+        {
+          "kind": "gba-palette",
+          "size": "0x1c0",
+          "source": "assets/graphics/resources_d8_e3/d8.palette.png"
+        }
+      ]
+    },
+    {
+      "address": "0x08424e64",
+      "size": "0x16ba",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/graphics/resources_d8_e3/d9.lz.json",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0x2000",
+          "source": "assets/graphics/resources_d8_e3/d9.bytes.png"
+        }
+      ]
+    },
+    {
+      "address": "0x08426520",
+      "size": "0x151e",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/graphics/resources_d8_e3/da.lz.json",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0x2000",
+          "source": "assets/graphics/resources_d8_e3/da.bytes.png"
+        }
+      ]
+    },
+    {
+      "address": "0x08427a40",
+      "size": "0xbca",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/graphics/resources_d8_e3/db.lz.json",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0x2000",
+          "source": "assets/graphics/resources_d8_e3/db.bytes.png"
+        }
+      ]
+    },
+    {
+      "address": "0x0842860c",
+      "size": "0xb72",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/graphics/resources_d8_e3/dc.lz.json",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0x2000",
+          "source": "assets/graphics/resources_d8_e3/dc.bytes.png"
+        }
+      ]
+    },
+    {
+      "address": "0x08429180",
+      "size": "0x1ea8",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/graphics/resources_d8_e3/dd.lz.json",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0x4000",
+          "source": "assets/graphics/resources_d8_e3/dd.bytes.png"
+        }
+      ]
+    },
+    {
+      "address": "0x0842b028",
+      "size": "0x1f0",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/graphics/resources_d8_e3/de.lz.json",
+      "components": [
+        {
+          "kind": "gba-palette",
+          "size": "0x1c0",
+          "source": "assets/graphics/resources_d8_e3/de.palette.png"
+        }
+      ]
+    },
+    {
+      "address": "0x0842b218",
+      "size": "0x159e",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/graphics/resources_d8_e3/df.lz.json",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0x2000",
+          "source": "assets/graphics/resources_d8_e3/df.bytes.png"
+        }
+      ]
+    },
+    {
+      "address": "0x0842c7b8",
+      "size": "0x14ae",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/graphics/resources_d8_e3/e0.lz.json",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0x2000",
+          "source": "assets/graphics/resources_d8_e3/e0.bytes.png"
+        }
+      ]
+    },
+    {
+      "address": "0x0842dc68",
+      "size": "0x908",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/graphics/resources_d8_e3/e1.lz.json",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0x2000",
+          "source": "assets/graphics/resources_d8_e3/e1.bytes.png"
+        }
+      ]
+    },
+    {
+      "address": "0x0842e570",
+      "size": "0x904",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/graphics/resources_d8_e3/e2.lz.json",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0x2000",
+          "source": "assets/graphics/resources_d8_e3/e2.bytes.png"
+        }
+      ]
+    },
+    {
+      "address": "0x0842ee74",
+      "size": "0x1540",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/graphics/resources_d8_e3/e3.lz.json",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0x4000",
+          "source": "assets/graphics/resources_d8_e3/e3.bytes.png"
+        }
+      ]
     }
   ]
 }

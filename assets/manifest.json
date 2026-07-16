@@ -48,6 +48,24 @@
       ]
     },
     {
+      "address": "0x083ee384",
+      "size": "0x80",
+      "kind": "gba-palette",
+      "source": "assets/graphics/direct_palettes/8d.png"
+    },
+    {
+      "address": "0x08403388",
+      "size": "0x80",
+      "kind": "gba-palette",
+      "source": "assets/graphics/direct_palettes/bb.png"
+    },
+    {
+      "address": "0x084090cc",
+      "size": "0x80",
+      "kind": "gba-palette",
+      "source": "assets/graphics/direct_palettes/c4.png"
+    },
+    {
       "address": "0x08424c6c",
       "size": "0x1f5",
       "kind": "golden-sun-general-lz",

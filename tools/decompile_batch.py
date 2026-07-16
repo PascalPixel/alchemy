@@ -19,6 +19,7 @@ def main():
     parser.add_argument("--limit", type=int)
     parser.add_argument("--jobs", type=int,
                         default=min(16, os.cpu_count() or 1))
+    parser.add_argument("--context", type=Path)
     parser.add_argument("-o", "--output", type=Path,
                         default=ROOT / "work/m2c")
     args = parser.parse_args()
@@ -55,10 +56,16 @@ def main():
         source = args.output / f"{address:08x}.c"
         try:
             emit_discovery(rom, discovery, address, assembly)
-            process = subprocess.run([
+            command = [
                 str(m2c), "-t", "gba", "--valid-syntax",
                 "--comment-style", "none", str(assembly),
-            ], text=True, capture_output=True)
+            ]
+            if args.context is not None:
+                command[1:1] = [
+                    "--context", str(args.context), "--no-cache",
+                ]
+            process = subprocess.run(
+                command, text=True, capture_output=True)
             success = process.returncode == 0
         except (OSError, KeyError, ValueError):
             success = False

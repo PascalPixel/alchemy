@@ -16,7 +16,7 @@ def run(command):
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
-def verify(source, rom, output_dir):
+def verify(source, rom, output_dir, details=False):
     address = int(source.stem, 16)
     symbol = f"Func_{address:08x}"
     assembly = output_dir / f"{source.stem}.s"
@@ -70,6 +70,8 @@ def verify(source, rom, output_dir):
     size = int(row.split()[1], 16)
     actual = binary.read_bytes()[:size]
     expected = rom[address - ROM_BASE:address - ROM_BASE + size]
+    if details:
+        return actual, expected, size
     return actual == expected, size
 
 

@@ -28,3 +28,7 @@ For exact rebuilding, PNG alone is insufficient until tile ordering, palette
 length, tilemaps, flips, compression, and alignment are represented explicitly.
 MIDI alone is insufficient to preserve engine commands, voice allocation, and
 sample data. Those facts belong in future per-asset manifests, not heuristics.
+
+RGBA source PNGs may also be used as lossless four-byte record atlases. In that
+case the per-asset documentation defines the channel-to-field mapping; the
+colors are data visualization, not a claim that the records are display pixels.

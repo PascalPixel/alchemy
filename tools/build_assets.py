@@ -5,8 +5,10 @@ import json
 from pathlib import Path
 
 from extract_resource import encode_general, encode_palette
-from import_asset import gba_graphics, indexed_png
+from import_asset import gba_graphics, indexed_png, rgba_png
+from archive_asset import build_archive
 from tilemap import import_tilemap
+from wordstream import import_words
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,6 +41,12 @@ def build_component(entry):
         width, height, pixels, _ = indexed_png(source.read_bytes())
         data = bytes(pixels)
         details = {"width": width, "height": height}
+    elif kind == "rgba-bytes":
+        width, height, data = rgba_png(source.read_bytes())
+        details = {"width": width, "height": height, "pixels": len(data) // 4}
+    elif kind == "little-u16-text":
+        data = import_words(source.read_text())
+        details = {"words": len(data) // 2}
     else:
         raise ValueError(f"unsupported asset component: {kind}")
     size = number(entry["size"])
@@ -107,6 +115,17 @@ def main():
             report = {"decoded_size": len(decoded),
                       "tokens": len(plan["tokens"]),
                       "components": component_reports}
+        elif kind == "golden-sun-offset-palette-lz":
+            plan_path = source_path(entry["plan"])
+            atlas_path = source_path(entry["source"])
+            plan = json.loads(plan_path.read_text())
+            if plan.get("format") != 1 or plan.get("codec") != kind:
+                raise ValueError("unsupported archive plan")
+            built_data = build_archive(atlas_path.read_bytes(), plan)
+            sources = [entry["source"], entry["plan"]]
+            report = {"streams": len(plan["streams"]),
+                      "chunk_width": plan["chunk_width"],
+                      "chunk_height": plan["chunk_height"]}
         else:
             raise ValueError(f"unsupported asset kind: {kind}")
         if len(built_data) != size:

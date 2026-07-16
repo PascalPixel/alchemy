@@ -29,3 +29,13 @@ PNG sources. Four decoded banks per set are hardware-proven VRAM inputs; the
 last is a related RAM input whose downstream format is not yet established.
 Until tile depth is proven, these ten decoded banks use format-neutral indexed
 PNGs: one pixel index preserves one byte without asserting 4bpp or 8bpp.
+
+`maps/world_map/` reconstructs resources D4-D7 as one independently traced map
+subsystem. D4 is an offset-table archive of 640 compressed 16x16 chunks. Each
+RGBA atlas pixel stores one little-endian 16-bit tile-pair index and one
+little-endian 16-bit flag field; the low values address all 4,386 records in
+D5 exactly. D5's RGBA pixels store the two little-endian 16-bit tilemap entries
+in each record. D6 is a terminated 16-bit animation command stream represented
+as text. D7 contains two banks of 512 four-byte terrain-property records. The
+PNG row wrapping is presentational only; the manifest preserves linear order.
+All four compression plans contain token choices but no literal payload bytes.

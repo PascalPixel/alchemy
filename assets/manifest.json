@@ -66,6 +66,52 @@
       "source": "assets/graphics/direct_palettes/c4.png"
     },
     {
+      "address": "0x08411474",
+      "size": "0xf828",
+      "kind": "golden-sun-offset-palette-lz",
+      "source": "assets/maps/world_map/chunks.rgba.png",
+      "plan": "assets/maps/world_map/chunks.archive.json"
+    },
+    {
+      "address": "0x08420c9c",
+      "size": "0x39ec",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/maps/world_map/tile_pairs.lz.json",
+      "components": [
+        {
+          "kind": "rgba-bytes",
+          "size": "0x4488",
+          "source": "assets/maps/world_map/tile_pairs.rgba.png"
+        }
+      ]
+    },
+    {
+      "address": "0x08424688",
+      "size": "0x152",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/maps/world_map/animation.lz.json",
+      "components": [
+        {
+          "kind": "little-u16-text",
+          "size": "0x3a2",
+          "source": "assets/maps/world_map/animation.commands.txt"
+        }
+      ]
+    },
+    {
+      "address": "0x084247dc",
+      "size": "0x48e",
+      "kind": "golden-sun-general-lz",
+      "plan": "assets/maps/world_map/terrain.lz.json",
+      "components": [
+        {
+          "kind": "rgba-bytes",
+          "size": "0x1000",
+          "source": "assets/maps/world_map/terrain.rgba.png"
+        }
+      ]
+    },
+    {
       "address": "0x08424c6c",
       "size": "0x1f5",
       "kind": "golden-sun-general-lz",

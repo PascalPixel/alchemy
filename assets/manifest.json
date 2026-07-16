@@ -266,6 +266,13 @@
           "source": "assets/graphics/resources_d8_e3/e3.bytes.png"
         }
       ]
+    },
+    {
+      "address": "0x0843c024",
+      "size": "0x3842",
+      "kind": "golden-sun-offset-palette-lz",
+      "source": "assets/graphics/resource_f1/atlas.8bpp.png",
+      "plan": "assets/graphics/resource_f1/stream.archive.json"
     }
   ]
 }

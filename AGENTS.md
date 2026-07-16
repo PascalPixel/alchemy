@@ -5,3 +5,4 @@
 3. Track independent tools and byte-verified C; keep the ROM, toolchains, dumps, generated analysis, assembly, and build products ignored.
 4. Never transmit, paste, upload, or expose ROM bytes or anything derived from them; never give local content to network tools.
 5. Work locally, inspect staged names before every commit, and never push this branch.
+6. Claim completion only when this branch, given the private ROM and approved compiler, independently builds a byte-identical full ROM; every region called decompiled must be emitted from compiled reconstructed source.

@@ -21,7 +21,7 @@ typedef unsigned long long u64;
 typedef int bool;
 #define NULL ((void *)0)
 #define M2C_FIELD(base, type, offset) \
-    (*(type *)((u8 *)(base) + (offset)))
+    (*(type)((u8 *)(base) + (offset)))
 
 """
 REJECT = (
@@ -44,6 +44,13 @@ def main():
     candidate_dir.mkdir(parents=True, exist_ok=True)
     output_dir.mkdir(parents=True, exist_ok=True)
     tracked = {item.name for item in (ROOT / "src").glob("*.c")}
+    draft_report = args.drafts / "report.json"
+    spans = {}
+    if draft_report.exists():
+        spans = {
+            item["entry"]: item["size"]
+            for item in json.loads(draft_report.read_text())
+        }
     drafts = [
         item for item in sorted(args.drafts.glob("*.c"))
         if item.name not in tracked and
@@ -56,8 +63,12 @@ def main():
         function_output.mkdir(parents=True, exist_ok=True)
         source = draft.read_text()
         strategies = (
-            (("s32", "u32") if "M2C_UNK" in source else (None,))
+            (
+                ("s32", "u32", "void *", "s16", "u16", "s8", "u8")
+                if "M2C_UNK" in source else (None,)
+            )
         )
+        best = None
         for replacement in strategies:
             body = (
                 source.replace("M2C_UNK", replacement)
@@ -65,13 +76,26 @@ def main():
             )
             candidate.write_text(TYPES + body)
             try:
-                matched, size = verify(candidate, rom, function_output)
+                actual, expected, size = verify(
+                    candidate, rom, function_output, details=True)
             except (
                 OSError, RuntimeError, ValueError, StopIteration,
                 subprocess.CalledProcessError,
             ):
                 continue
-            if matched:
+            mismatch = sum(
+                left != right for left, right in zip(actual, expected))
+            span = spans.get(int(draft.stem, 16), 0)
+            mismatch += max(0, span - len(actual))
+            prefix = 0
+            for left, right in zip(actual, expected):
+                if left != right:
+                    break
+                prefix += 1
+            score = (mismatch, -prefix, abs(size - span))
+            if best is None or score < best[0]:
+                best = (score, replacement, body, size, prefix)
+            if actual == expected:
                 return {
                     "entry": int(draft.stem, 16),
                     "matched": True,
@@ -79,7 +103,18 @@ def main():
                     "source": str(candidate),
                     "unknown_type": replacement,
                 }
-        return {"entry": int(draft.stem, 16), "matched": False}
+        if best is None:
+            return {"entry": int(draft.stem, 16), "matched": False}
+        score, replacement, body, size, prefix = best
+        candidate.write_text(TYPES + body)
+        return {
+            "entry": int(draft.stem, 16),
+            "matched": False,
+            "size": size,
+            "mismatched_bytes": score[0],
+            "common_prefix": prefix,
+            "unknown_type": replacement,
+        }
 
     with ThreadPoolExecutor(max_workers=args.jobs) as executor:
         results = list(executor.map(match, drafts))

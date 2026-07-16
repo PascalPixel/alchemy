@@ -9,6 +9,7 @@ from import_asset import gba_graphics, gba_palette_rgba, indexed_png, rgba_png
 from archive_asset import build_archive
 from tilemap import import_tilemap
 from wordstream import import_words
+from pairtable import import_pairs
 from f0_archive import build_archive as build_f0_archive
 
 
@@ -50,6 +51,9 @@ def build_component(entry):
     elif kind == "little-u16-text":
         data = import_words(source.read_text())
         details = {"words": len(data) // 2}
+    elif kind == "little-u16-pairs":
+        data = import_pairs(source.read_text())
+        details = {"pairs": len(data) // 4}
     else:
         raise ValueError(f"unsupported asset component: {kind}")
     size = number(entry["size"])

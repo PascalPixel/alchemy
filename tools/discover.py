@@ -24,9 +24,11 @@ class Discovery:
         self.unresolved = set()
         self.conflicts = []
         self.data_refs = set()
+        self.literal_slots = set()
         self.pointer_tables = {}
         self.jump_tables = {}
         self.jump_table_sites = {}
+        self.blocked_data = set()
 
     def inside(self, address, size=1):
         return ROM_BASE <= address and address + size <= self.limit
@@ -41,6 +43,8 @@ class Discovery:
         if mode == "thumb":
             address &= ~1
         if not self.inside(address, 2 if mode == "thumb" else 4):
+            return False
+        if address in self.blocked_data:
             return False
         old = self.functions.get(address)
         if old and old["mode"] != mode:
@@ -110,6 +114,8 @@ class Discovery:
         pc = start
         constants = dict(initial_constants)
         while self.inside(pc, 4) and pc not in seen:
+            if any(pc + offset in self.blocked_data for offset in (0, 2)):
+                return
             seen.add(pc)
             word = self.u32(pc)
             cond = word >> 28
@@ -130,6 +136,7 @@ class Discovery:
                     literal = pc + 8
                     literal += displacement if word & (1 << 23) else -displacement
                     if self.inside(literal, 4):
+                        self.literal_slots.add(literal)
                         value = self.u32(literal)
                         constants[destination] = value
                         if self.inside(value & ~1, 2):
@@ -197,6 +204,8 @@ class Discovery:
         pc = start
         constants = dict(initial_constants)
         while self.inside(pc, 2) and pc not in seen:
+            if pc in self.blocked_data:
+                return
             seen.add(pc)
             half = self.u16(pc)
             kind = "linear"
@@ -239,6 +248,7 @@ class Discovery:
                 register = (half >> 8) & 7
                 literal = ((pc + 4) & ~3) + ((half & 0xFF) << 2)
                 if self.inside(literal, 4):
+                    self.literal_slots.add(literal)
                     value = self.u32(literal)
                     constants[register] = value
                     if self.inside(value & ~1, 2):
@@ -667,6 +677,7 @@ class Discovery:
             for address in range(start + 2, end, 2):
                 if (
                     address in self.instructions or
+                    address in self.literal_slots or
                     (self.u16(address) & 0xFF00) != 0xB500
                 ):
                     continue
@@ -683,7 +694,33 @@ class Discovery:
                         address, "thumb", f"prologue-boundary:{address:08x}")
         return added
 
-    def run(self):
+    def reset_flow(self):
+        self.functions = {}
+        self.instructions = {}
+        self.calls = set()
+        self.external_calls = set()
+        self.unresolved = set()
+        self.conflicts = []
+        self.data_refs = set()
+        self.literal_slots = set()
+        self.pointer_tables = {}
+        self.jump_tables = {}
+        self.jump_table_sites = {}
+
+    def block_structural_overlaps(self):
+        blocked = set()
+        for address in self.literal_slots:
+            if address in self.instructions or address + 2 in self.instructions:
+                blocked.update((address, address + 2))
+        for address, targets in self.jump_tables.items():
+            table = set(range(address, address + 4 * len(targets), 2))
+            if table.intersection(self.instructions):
+                blocked.update(table)
+        added = blocked.difference(self.blocked_data)
+        self.blocked_data.update(added)
+        return bool(added)
+
+    def discover_once(self):
         entry = self.initial_seeds()
         walked = set()
         while True:
@@ -720,6 +757,14 @@ class Discovery:
             added |= self.discover_prologue_boundaries()
             if not added:
                 break
+        return entry
+
+    def run(self):
+        while True:
+            entry = self.discover_once()
+            if not self.block_structural_overlaps():
+                break
+            self.reset_flow()
         self.unresolved.difference_update(self.jump_table_sites)
         for function in self.functions.values():
             function["unresolved"].difference_update(self.jump_table_sites)
@@ -773,6 +818,7 @@ class Discovery:
             ]
             report["unresolved"] = sorted(self.unresolved)
             report["data_refs"] = sorted(self.data_refs)
+            report["literal_slots"] = sorted(self.literal_slots)
             report["pointer_tables"] = [
                 {"address": address, "targets": targets}
                 for address, targets in sorted(self.pointer_tables.items())

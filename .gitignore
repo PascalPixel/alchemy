@@ -1,0 +1,11 @@
+baserom.gba
+toolchain/
+work/
+out/
+*.gba
+*.rom
+*.bin
+*.elf
+*.o
+*.a
+*.log

@@ -23,7 +23,7 @@ typedef int bool;
 
 """
 REJECT = (
-    "M2C_UNK", "M2C_FIELD", "M2C_ERROR", "M2C_BITFIELD",
+    "M2C_FIELD", "M2C_ERROR", "M2C_BITFIELD",
     "M2C_MEMSET", "M2C_MEMCPY",
 )
 
@@ -50,22 +50,34 @@ def main():
 
     def match(draft):
         candidate = candidate_dir / draft.name
-        candidate.write_text(TYPES + draft.read_text())
         function_output = output_dir / draft.stem
         function_output.mkdir(parents=True, exist_ok=True)
-        try:
-            matched, size = verify(candidate, rom, function_output)
-        except (
-            OSError, RuntimeError, ValueError, StopIteration,
-            subprocess.CalledProcessError,
-        ):
-            return {"entry": int(draft.stem, 16), "matched": False}
-        return {
-            "entry": int(draft.stem, 16),
-            "matched": matched,
-            "size": size,
-            "source": str(candidate),
-        }
+        source = draft.read_text()
+        strategies = (
+            (("s32", "u32") if "M2C_UNK" in source else (None,))
+        )
+        for replacement in strategies:
+            body = (
+                source.replace("M2C_UNK", replacement)
+                if replacement is not None else source
+            )
+            candidate.write_text(TYPES + body)
+            try:
+                matched, size = verify(candidate, rom, function_output)
+            except (
+                OSError, RuntimeError, ValueError, StopIteration,
+                subprocess.CalledProcessError,
+            ):
+                continue
+            if matched:
+                return {
+                    "entry": int(draft.stem, 16),
+                    "matched": True,
+                    "size": size,
+                    "source": str(candidate),
+                    "unknown_type": replacement,
+                }
+        return {"entry": int(draft.stem, 16), "matched": False}
 
     with ThreadPoolExecutor(max_workers=args.jobs) as executor:
         results = list(executor.map(match, drafts))

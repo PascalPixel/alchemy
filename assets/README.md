@@ -59,6 +59,22 @@ the palette allocator. RGB channels preserve the five-bit GBA color. Alpha
 otherwise non-visual high bit while leaving the displayed colors effectively
 opaque.
 
+`data/resource_e4_e6/` reconstructs three compressed fixed-capacity tables,
+each containing 7,200 little-endian 16-bit pairs. Their active prefixes have
+3,918, 4,380, and 5,048 pairs respectively; every successive active pair
+moves by no more than eight in either component, and the remaining entries are
+`0,0` padding. This proves ordered coordinate/path data and rules out the
+visually noisy 4bpp interpretation. The pair names remain numeric because the
+runtime selector and coordinate system are not yet proven.
+
+`graphics/resource_e7/` reconstructs one compressed UI-graphics package as
+five 16-color BGR555 palette banks and 256 4bpp tiles. Pixel-edge continuity
+fixes the native tile order at four tiles wide: every consecutive group of
+sixteen tiles is one coherent 32x32 frame, yielding sixteen frames and five
+color variants. `preview.frames.png` is generated from those tracked sources
+with `python3 tools/render_resource_e7.py -o
+assets/graphics/resource_e7/preview.frames.png`.
+
 `graphics/resource_f0/images/` contains 57 unique, palette-correct 32x32 4bpp
 images. The ROM's 80-entry 16-bit offset table contains 23 null slots and one
 offset for each image, represented by `archive.json`. Each package contains a

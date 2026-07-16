@@ -6,7 +6,7 @@ import struct
 import zlib
 from pathlib import Path
 
-from import_asset import gba_graphics, indexed_png
+from import_asset import gba_graphics, indexed_png, rgba_png
 
 
 ROM_BASE = 0x08000000
@@ -113,6 +113,26 @@ def byte_png(raw, width):
     return png, {"width": width, "height": height, "bytes": len(raw)}
 
 
+def rgba_image(raw, width):
+    if not raw or len(raw) % 4 or width <= 0:
+        raise ValueError("RGBA input must contain whole nonempty pixels")
+    pixels = len(raw) // 4
+    if pixels % width:
+        raise ValueError("width must divide the RGBA pixel count")
+    height = pixels // width
+    scanlines = b"".join(
+        b"\0" + raw[row * width * 4:(row + 1) * width * 4]
+        for row in range(height))
+    png = (
+        b"\x89PNG\r\n\x1a\n" +
+        chunk(b"IHDR", struct.pack(">IIBBBBB",
+                                    width, height, 8, 6, 0, 0, 0)) +
+        chunk(b"IDAT", zlib.compress(scanlines, 9)) +
+        chunk(b"IEND", b"")
+    )
+    return png, {"width": width, "height": height, "pixels": pixels}
+
+
 def self_test():
     for bpp, size in ((4, 32 * 7), (8, 64 * 4)):
         raw = bytes((index * 37 + 11) & 255 for index in range(size))
@@ -131,6 +151,10 @@ def self_test():
     _, _, pixels, _ = indexed_png(png)
     if bytes(pixels) != raw:
         raise AssertionError("indexed byte-image round-trip failed")
+    raw = bytes((index * 29 + 3) & 255 for index in range(11 * 7 * 4))
+    png, _ = rgba_image(raw, 11)
+    if rgba_png(png) != (11, 7, raw):
+        raise AssertionError("RGBA image round-trip failed")
     print("self-test=ok")
 
 
@@ -164,6 +188,10 @@ def main():
     byte_file.add_argument("input", type=Path)
     byte_file.add_argument("--width", type=int, required=True)
     byte_file.add_argument("-o", "--output", type=Path, required=True)
+    rgba_file = commands.add_parser("rgba-file")
+    rgba_file.add_argument("input", type=Path)
+    rgba_file.add_argument("--width", type=int, required=True)
+    rgba_file.add_argument("-o", "--output", type=Path, required=True)
     args = parser.parse_args()
     if args.self_test:
         self_test()
@@ -191,6 +219,10 @@ def main():
         if args.output.resolve() == args.input.resolve():
             parser.error("refusing to overwrite the input")
         png, report = byte_png(args.input.read_bytes(), args.width)
+    elif args.command == "rgba-file":
+        if args.output.resolve() == args.input.resolve():
+            parser.error("refusing to overwrite the input")
+        png, report = rgba_image(args.input.read_bytes(), args.width)
     else:
         parser.error("an asset command is required")
     args.output.parent.mkdir(parents=True, exist_ok=True)

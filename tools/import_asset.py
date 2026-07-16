@@ -104,6 +104,51 @@ def indexed_png(data):
     return width, height, pixels, palette
 
 
+def rgba_png(data):
+    width = height = None
+    compressed = bytearray()
+    for kind, payload in chunks(data, b"\x89PNG\r\n\x1a\n"):
+        if kind == b"IHDR":
+            if len(payload) != 13:
+                raise ValueError("invalid IHDR")
+            width, height, depth, color, compression, filtering, interlace = (
+                struct.unpack(">IIBBBBB", payload))
+            if color != 6 or depth != 8:
+                raise ValueError("PNG must use 8-bit RGBA pixels")
+            if compression or filtering or interlace:
+                raise ValueError("unsupported PNG encoding")
+        elif kind == b"IDAT":
+            compressed.extend(payload)
+        elif kind == b"IEND":
+            break
+    if width is None or height is None or width == 0 or height == 0:
+        raise ValueError("PNG lacks a nonempty IHDR")
+    row_size = width * 4
+    raw = zlib.decompress(bytes(compressed))
+    if len(raw) != height * (row_size + 1):
+        raise ValueError("unexpected decompressed PNG size")
+    rows = []
+    cursor = 0
+    previous = bytearray(row_size)
+    for _ in range(height):
+        method = raw[cursor]
+        source = raw[cursor + 1:cursor + row_size + 1]
+        cursor += row_size + 1
+        if method > 4:
+            raise ValueError("invalid PNG filter")
+        row = bytearray(row_size)
+        for index, value in enumerate(source):
+            left = row[index - 4] if index >= 4 else 0
+            above = previous[index]
+            upper_left = previous[index - 4] if index >= 4 else 0
+            predictor = (0, left, above, (left + above) // 2,
+                         paeth(left, above, upper_left))[method]
+            row[index] = (value + predictor) & 255
+        rows.append(row)
+        previous = row
+    return width, height, b"".join(rows)
+
+
 def gba_graphics(data, bpp):
     width, height, pixels, palette = indexed_png(data)
     limit = 16 if bpp == 4 else 256
@@ -249,6 +294,10 @@ def self_test():
     report = midi_events(midi)
     assert report["ticks_per_quarter"] == 96
     assert [event["tick"] for event in report["events"]] == [0, 0, 96, 96]
+    rgba = bytes((index * 29 + 3) & 255 for index in range(7 * 5 * 4))
+    from export_asset import rgba_image
+    image, _ = rgba_image(rgba, 7)
+    assert rgba_png(image) == (7, 5, rgba)
     print("self-test=ok")
 
 

@@ -8,3 +8,9 @@ re-encodes byte-for-byte to the private ROM.
 ROM code copies the seven consecutive 32-byte units to seven consecutive VRAM
 tile slots. The PNG palette is an index legend only; it does not claim the
 scene's active colors.
+
+`graphics/resource_19/` is one compressed graphics package. Its tracked
+sources are a BGR555 palette PNG, two 8bpp tile PNGs, a 32×32 text tilemap,
+and a payload-free custom-LZ token plan. The plan records literal positions
+and copy decisions; literal bytes come from the PNG/text components during
+the build. Together they re-encode the complete compressed ROM stream.

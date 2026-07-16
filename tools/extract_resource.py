@@ -58,16 +58,21 @@ def append_copy(output, distance, length, maximum):
         output.append(output[-distance])
 
 
-def decode_general(data, start, end, maximum):
+def decode_general_trace(data, start, end, maximum):
     if start >= end or data[start] != 0:
         raise DecodeError("general stream is missing its kind-zero header")
     bits = LsbBits(data, start + 1, end)
     output = bytearray()
+    tokens = []
     while True:
         if bits.get(1):
             if len(output) >= maximum:
                 raise DecodeError("decoded output crossed configured bound")
             output.append(bits.get(8))
+            if tokens and tokens[-1][0] == "l":
+                tokens[-1][1] += 1
+            else:
+                tokens.append(["l", 1])
             continue
         if not bits.get(1):
             length = 2
@@ -86,7 +91,7 @@ def decode_general(data, start, end, maximum):
             else:
                 long = bits.get(7)
                 if long == 0:
-                    return bytes(output), bits.cursor
+                    return bytes(output), bits.cursor, tokens
                 length = long + 10
         if bits.get(1):
             distance = bits.get(5) + 1
@@ -94,7 +99,85 @@ def decode_general(data, start, end, maximum):
             window = len(output) - 33
             width = window.bit_length() if 0 <= window < 2048 else 12
             distance = bits.get(width) + 33
+        tokens.append(["c", length, distance])
         append_copy(output, distance, length, maximum)
+
+
+def decode_general(data, start, end, maximum):
+    output, cursor, _ = decode_general_trace(data, start, end, maximum)
+    return output, cursor
+
+
+def encode_general(decoded, tokens):
+    bits = []
+    replay = bytearray()
+    cursor = 0
+    for token in tokens:
+        if token[0] == "l":
+            count = int(token[1])
+            if count < 1 or cursor + count > len(decoded):
+                raise DecodeError("literal run crossed decoded input")
+            for _ in range(count):
+                put(bits, 1, 1)
+                value = decoded[cursor]
+                put(bits, value, 8)
+                replay.append(value)
+                cursor += 1
+            continue
+        if len(token) != 3 or token[0] != "c":
+            raise DecodeError("invalid general-stream token")
+        length, distance = map(int, token[1:])
+        put(bits, 0, 1)
+        if length == 2:
+            put(bits, 0, 1)
+        elif length == 3:
+            put(bits, 1, 1)
+            put(bits, 0, 1)
+        elif length == 4:
+            put(bits, 3, 2)
+            put(bits, 0, 1)
+        elif length == 5:
+            put(bits, 7, 3)
+            put(bits, 0, 1)
+        elif length in (6, 7):
+            put(bits, 15, 4)
+            put(bits, 0, 1)
+            put(bits, length - 6, 1)
+        elif length in (8, 9, 10):
+            put(bits, 31, 5)
+            put(bits, length - 7, 2)
+        elif 11 <= length <= 137:
+            put(bits, 31, 5)
+            put(bits, 0, 2)
+            put(bits, length - 10, 7)
+        else:
+            raise DecodeError(f"unencodable copy length: {length}")
+        if not 1 <= distance <= len(replay):
+            raise DecodeError("copy distance crossed replay prefix")
+        if distance <= 32:
+            put(bits, 1, 1)
+            put(bits, distance - 1, 5)
+        else:
+            put(bits, 0, 1)
+            window = len(replay) - 33
+            width = window.bit_length() if 0 <= window < 2048 else 12
+            if distance - 33 >= 1 << width:
+                raise DecodeError("copy distance exceeds position-dependent width")
+            put(bits, distance - 33, width)
+        for _ in range(length):
+            replay.append(replay[-distance])
+        cursor += length
+    if cursor != len(decoded) or bytes(replay) != bytes(decoded):
+        raise DecodeError("token plan does not reconstruct decoded input")
+    put(bits, 0, 1)
+    put(bits, 31, 5)
+    put(bits, 0, 2)
+    put(bits, 0, 7)
+    packed = bytearray(b"\0")
+    for offset in range(0, len(bits), 8):
+        packed.append(sum(
+            bit << index for index, bit in enumerate(bits[offset:offset + 8])))
+    return bytes(packed)
 
 
 def decode_palette(data, start, end, maximum):
@@ -191,9 +274,12 @@ def synthetic_general():
 
 def self_test():
     general = synthetic_general()
-    output, cursor = decode_general(general, 0, len(general), 4)
+    output, cursor, tokens = decode_general_trace(general, 0, len(general), 4)
     if output != b"ABAB" or cursor > len(general):
         raise AssertionError("general decoder self-test failed")
+    encoded = encode_general(output, tokens)
+    if not general.startswith(encoded):
+        raise AssertionError("general encoder self-test failed")
     palette = bytes((0x30, ord("A"), ord("B"), 0x01, 0x02, 0, 0))
     output, cursor = decode_palette(palette, 0, len(palette), 4)
     if output != b"ABAB" or cursor != len(palette):

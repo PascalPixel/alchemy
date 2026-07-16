@@ -32,3 +32,7 @@ sample data. Those facts belong in future per-asset manifests, not heuristics.
 RGBA source PNGs may also be used as lossless four-byte record atlases. In that
 case the per-asset documentation defines the channel-to-field mapping; the
 colors are data visualization, not a claim that the records are display pixels.
+
+For 16-bit GBA palette words that use bit 15, `gba-palette-rgba` stores the
+BGR555 color as exact multiples-of-eight RGB and encodes bit 15 as alpha 255
+(clear) or 254 (set). The importer rejects every other alpha value.

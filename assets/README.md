@@ -46,3 +46,11 @@ selected `0x400`-byte block; one path remaps its byte indices through palette
 RAM and uploads the result to VRAM. The archive uses a 16-bit offset table and
 32-byte-aligned compressed slots. Its final two table-range bytes are outside
 the proven archive boundary and remain ROM fallback bytes.
+
+`graphics/palette_animation_e8.rgba.png` through
+`palette_animation_ef.rgba.png` are eight consecutive 128-color frames. A
+consumer selects `(counter & 7) + E8` and copies exactly `0x100` bytes through
+the palette allocator. RGB channels preserve the five-bit GBA color. Alpha
+255 represents bit 15 clear and alpha 254 represents bit 15 set, retaining the
+otherwise non-visual high bit while leaving the displayed colors effectively
+opaque.

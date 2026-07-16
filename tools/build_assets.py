@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 from extract_resource import encode_general, encode_palette
-from import_asset import gba_graphics, indexed_png, rgba_png
+from import_asset import gba_graphics, gba_palette_rgba, indexed_png, rgba_png
 from archive_asset import build_archive
 from tilemap import import_tilemap
 from wordstream import import_words
@@ -34,6 +34,8 @@ def build_component(entry):
         data, _, details = gba_graphics(source.read_bytes(), bpp)
     elif kind == "gba-palette":
         _, data, details = gba_graphics(source.read_bytes(), 8)
+    elif kind == "gba-palette-rgba":
+        data, details = gba_palette_rgba(source.read_bytes())
     elif kind == "gba-tilemap16":
         data = import_tilemap(source.read_text())
         details = {"entries": len(data) // 2}
@@ -83,7 +85,8 @@ def main():
         if not ROM_BASE <= address < previous_end <= ROM_BASE + len(rom):
             raise ValueError(f"asset region outside ROM at 0x{address:08x}")
         kind = entry["kind"]
-        if kind in ("gba-4bpp-tiles", "gba-8bpp-tiles", "gba-palette"):
+        if kind in ("gba-4bpp-tiles", "gba-8bpp-tiles", "gba-palette",
+                    "gba-palette-rgba"):
             built_data, report = build_component(entry)
             sources = [entry["source"]]
         elif kind == "golden-sun-general-lz":

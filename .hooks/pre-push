@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "raw: pushing this worktree is disabled" >&2
+exit 1

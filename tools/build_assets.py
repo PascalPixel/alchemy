@@ -87,9 +87,30 @@ def main():
         raise ValueError("unsupported asset manifest format")
     output = args.output if args.output.is_absolute() else ROOT / args.output
     output.mkdir(parents=True, exist_ok=True)
+    entries = list(manifest.get("regions", []))
+    for series in manifest.get("series", []):
+        if series.get("kind") != "golden-sun-zero-skip-sprite-series":
+            raise ValueError("unsupported asset series")
+        palette = series["palette"]
+        for resource in series["resources"]:
+            name = str(resource["id"]).lower()
+            directory = f"assets/graphics/resource_{name}"
+            entries.append({
+                "address": resource["address"],
+                "size": resource["size"],
+                "kind": "golden-sun-general-lz",
+                "plan": f"{directory}/stream.lz.json",
+                "components": [{
+                    "kind": "zero-skip-sprite-archive",
+                    "size": resource["decoded_size"],
+                    "source": f"{directory}/images",
+                    "plan": f"{directory}/archive.json",
+                    "palette": palette,
+                }],
+            })
     regions = []
     previous_end = ROM_BASE
-    for entry in sorted(manifest.get("regions", []),
+    for entry in sorted(entries,
                         key=lambda item: number(item["address"])):
         address = number(entry["address"])
         size = number(entry["size"])

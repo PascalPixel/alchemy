@@ -39,3 +39,10 @@ in each record. D6 is a terminated 16-bit animation command stream represented
 as text. D7 contains two banks of 512 four-byte terrain-property records. The
 PNG row wrapping is presentational only; the manifest preserves linear order.
 All four compression plans contain token choices but no literal payload bytes.
+
+`graphics/resource_f1/` contains 49 independently compressed 32x32 8-bit
+indexed graphics blocks in one 7x7 PNG atlas. Multiple consumers decode one
+selected `0x400`-byte block; one path remaps its byte indices through palette
+RAM and uploads the result to VRAM. The archive uses a 16-bit offset table and
+32-byte-aligned compressed slots. Its final two table-range bytes are outside
+the proven archive boundary and remain ROM fallback bytes.

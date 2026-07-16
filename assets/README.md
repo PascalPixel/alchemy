@@ -58,3 +58,11 @@ the palette allocator. RGB channels preserve the five-bit GBA color. Alpha
 255 represents bit 15 clear and alpha 254 represents bit 15 set, retaining the
 otherwise non-visual high bit while leaving the displayed colors effectively
 opaque.
+
+`graphics/resource_f0/images/` contains 57 unique, palette-correct 32x32 4bpp
+images. The ROM's 80-entry 16-bit offset table contains 23 null slots and one
+offset for each image, represented by `archive.json`. Each package contains a
+16-color palette followed by a terminating LSB-first run/move-to-front pixel
+stream and zero alignment. The recovered encoder is canonical and rebuilds the
+entire `0x592c`-byte archive exactly. `preview.atlas.png` is a generated
+non-source contact sheet of the same PNGs.

@@ -36,3 +36,8 @@ colors are data visualization, not a claim that the records are display pixels.
 For 16-bit GBA palette words that use bit 15, `gba-palette-rgba` stores the
 BGR555 color as exact multiples-of-eight RGB and encodes bit 15 as alpha 255
 (clear) or 254 (set). The importer rejects every other alpha value.
+
+Recognizable renderings and exact sources are distinct. A generated preview
+may combine source tiles, palettes, maps, flips, or animation states, but does
+not itself claim extra ROM coverage. Source PNGs count only through a manifest
+encoder that reproduces their named ROM region byte-for-byte.

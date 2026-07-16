@@ -235,7 +235,7 @@ def linked_text(obj, address, symbol, output_dir):
     names = []
     for line in undefined.splitlines():
         name = line.split()[-1]
-        if not re.fullmatch(r"(Func|Data)_[0-9a-f]{8}", name):
+        if not re.fullmatch(r"(Func|Data|Value)_[0-9a-f]{8}", name):
             raise ValueError(f"unsupported external symbol: {name}")
         names.append(name)
     symbols_source = output_dir / f"{address:08x}.symbols.s"
@@ -247,7 +247,7 @@ def linked_text(obj, address, symbol, output_dir):
         "".join(
             f".global {name}\n" +
             (".thumb_func\n" if name.startswith("Func_") else "") +
-            f".set {name}, 0x{name[5:]}\n"
+            f".set {name}, 0x{name.rsplit('_', 1)[1]}\n"
             for name in names
         )
     )

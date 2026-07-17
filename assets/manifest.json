@@ -597,6 +597,21 @@
       ]
     },
     {
+      "kind": "golden-sun-standalone-palette-series",
+      "palettes": [
+        {"id":"1e6","address":"0x085bd08c","size":"0x180"},
+        {"id":"1f4","address":"0x085ceed8","size":"0x168"},
+        {"id":"1f7","address":"0x085d1ee4","size":"0x168"},
+        {"id":"28d","address":"0x086adc28","size":"0x1a8"},
+        {"id":"2b4","address":"0x086d5780","size":"0x178"},
+        {"id":"2d5","address":"0x086f65ec","size":"0x150"},
+        {"id":"308","address":"0x087379ec","size":"0xe4"},
+        {"id":"31d","address":"0x08752ba8","size":"0x188"},
+        {"id":"321","address":"0x08755b58","size":"0xe4"},
+        {"id":"332","address":"0x0876aa28","size":"0xe8"}
+      ]
+    },
+    {
       "kind": "golden-sun-map-grid-series",
       "grids": [
         {"id":"128","address":"0x084ba7a4","size":"0x2fc"},

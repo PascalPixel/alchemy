@@ -1,8 +1,17 @@
-# Raw
+# goldensun-decomp-pure
 
-Local reconstruction of Golden Sun from one private ROM.
+A clean-room, in-progress decompilation of Golden Sun (GBA), reconstructed
+entirely from a single privately-supplied ROM using only generic tools.
 
-- `baserom.gba` is the sole game-specific input.
+This repository is **source only**. It ships no ROM, no game binaries, and no
+playable output. To build or verify anything you must supply your own legally
+obtained Golden Sun ROM as `baserom.gba`; it must match the checksum in
+`rom.sha1`. Every not-yet-reconstructed region is filled from that private ROM
+at build time (the pret-style incbin skeleton), so nothing here reproduces a
+playable game on its own. Not affiliated with or endorsed by Nintendo or
+Camelot. Non-commercial.
+
+- `baserom.gba` (your own dump, git-ignored) is the sole game-specific input.
 - `toolchain/gcc296/` is the native code-generation oracle.
 - Host Python and ARM binutils provide generic analysis.
 - `tools/` contains independent analysis and matching code.
@@ -28,5 +37,10 @@ Local reconstruction of Golden Sun from one private ROM.
   differently), so each region contributes its verified bytes; the linker-script
   and incbin-skeleton structure follows pret/pokeemerald, the golden reference.
 
-Private inputs and generated artifacts are ignored; pushing is disabled.
-Complete means these tracked sources and generic tools, given only the private ROM and approved compiler, independently build a byte-identical full ROM; every claimed region comes from reconstructed C or assembly, never copied ROM bytes. Full decompilation is the further goal of retiring every `asm/` region except the genuinely compiler-unproducible stubs.
+The private ROM, toolchains, and generated artifacts are git-ignored; only
+reconstructed source and generic tools are tracked. Complete means these tracked
+sources and generic tools, given only your ROM and the approved compiler,
+independently build a byte-identical full ROM; every claimed region comes from
+reconstructed C or assembly, never copied ROM bytes. Full decompilation is the
+further goal of retiring every `asm/` region except the genuinely
+compiler-unproducible stubs.

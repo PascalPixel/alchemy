@@ -14,6 +14,10 @@ from f0_archive import build_archive as build_f0_archive
 from skip_sprite_archive import build_archive as build_skip_sprite_archive
 from kind2_resource import encode_kind2
 from kind1_map_grid import build_grid
+from map_container_components import (
+    build_blend_animation, build_descriptors, build_metatiles, build_queues,
+    build_sparse,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -158,6 +162,39 @@ def main():
                     "source": directory,
                     "plan": f"{directory}/grid.kind1.json",
                 })
+        elif series.get("kind") == "golden-sun-map-component-series":
+            for family in series["families"]:
+                name = str(family["id"]).lower()
+                directory = f"assets/maps/resource_{name}/components"
+                for component in family["components"]:
+                    slot = int(component["slot"])
+                    sources = {
+                        0: ("golden-sun-map-metatiles",
+                            f"{directory}/metatiles.tilemap",
+                            f"{directory}/metatiles.lz.json"),
+                        1: ("golden-sun-map-descriptors",
+                            f"{directory}/descriptors.json",
+                            f"{directory}/descriptors.lz.json"),
+                        3: ("golden-sun-map-animation-queues",
+                            f"{directory}/animation_queues.json",
+                            f"{directory}/animation_queues.lz.json"),
+                        4: ("golden-sun-map-blend-animation",
+                            f"{directory}/blend_animation.json",
+                            f"{directory}/blend_animation.lz.json"),
+                        5: ("golden-sun-map-sparse-cells",
+                            f"{directory}/sparse_cells.json", None),
+                    }
+                    if slot not in sources:
+                        raise ValueError("unsupported map component slot")
+                    kind, source, plan = sources[slot]
+                    entry = {
+                        "address": component["address"],
+                        "size": component["size"],
+                        "kind": kind, "source": source,
+                    }
+                    if plan is not None:
+                        entry["plan"] = plan
+                    entries.append(entry)
         else:
             raise ValueError("unsupported asset series")
     regions = []
@@ -245,6 +282,33 @@ def main():
                  "attribute_b.png", "sentinels.png")]]
             report = {"decoded_size": number(plan["decoded_size"]),
                       "tokens": len(plan["tokens"]), "planes": 4}
+        elif kind in ("golden-sun-map-metatiles",
+                      "golden-sun-map-descriptors",
+                      "golden-sun-map-animation-queues",
+                      "golden-sun-map-blend-animation"):
+            source = source_path(entry["source"])
+            plan_path = source_path(entry["plan"])
+            builders = {
+                "golden-sun-map-metatiles": build_metatiles,
+                "golden-sun-map-descriptors": build_descriptors,
+                "golden-sun-map-animation-queues": build_queues,
+                "golden-sun-map-blend-animation": build_blend_animation,
+            }
+            built_data = builders[kind](source, plan_path)
+            plan = json.loads(plan_path.read_text())
+            sources = [entry["source"], entry["plan"]]
+            report = {
+                "decoded_size": number(plan["decoded_size"]),
+                "tokens": len(plan["tokens"]),
+                "component": plan["component"],
+            }
+        elif kind == "golden-sun-map-sparse-cells":
+            source = source_path(entry["source"])
+            built_data = build_sparse(source)
+            document = json.loads(source.read_text())
+            sources = [entry["source"]]
+            report = {"records": len(document["records"]),
+                      "alignment_zeros": document["alignment_zeros"]}
         elif kind == "golden-sun-offset-palette-lz":
             plan_path = source_path(entry["plan"])
             atlas_path = source_path(entry["source"])

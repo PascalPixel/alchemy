@@ -131,9 +131,9 @@
       "plan": "assets/graphics/resources_d8_e3/d9.lz.json",
       "components": [
         {
-          "kind": "indexed-bytes",
+          "kind": "gba-8bpp-tiles",
           "size": "0x2000",
-          "source": "assets/graphics/resources_d8_e3/d9.bytes.png"
+          "source": "assets/graphics/resources_d8_e3/d9.tiles.8bpp.png"
         }
       ]
     },
@@ -144,9 +144,9 @@
       "plan": "assets/graphics/resources_d8_e3/da.lz.json",
       "components": [
         {
-          "kind": "indexed-bytes",
+          "kind": "gba-8bpp-tiles",
           "size": "0x2000",
-          "source": "assets/graphics/resources_d8_e3/da.bytes.png"
+          "source": "assets/graphics/resources_d8_e3/da.tiles.8bpp.png"
         }
       ]
     },
@@ -157,9 +157,9 @@
       "plan": "assets/graphics/resources_d8_e3/db.lz.json",
       "components": [
         {
-          "kind": "indexed-bytes",
+          "kind": "gba-8bpp-tiles",
           "size": "0x2000",
-          "source": "assets/graphics/resources_d8_e3/db.bytes.png"
+          "source": "assets/graphics/resources_d8_e3/db.tiles.8bpp.png"
         }
       ]
     },
@@ -170,9 +170,9 @@
       "plan": "assets/graphics/resources_d8_e3/dc.lz.json",
       "components": [
         {
-          "kind": "indexed-bytes",
+          "kind": "gba-8bpp-tiles",
           "size": "0x2000",
-          "source": "assets/graphics/resources_d8_e3/dc.bytes.png"
+          "source": "assets/graphics/resources_d8_e3/dc.tiles.8bpp.png"
         }
       ]
     },
@@ -183,9 +183,9 @@
       "plan": "assets/graphics/resources_d8_e3/dd.lz.json",
       "components": [
         {
-          "kind": "indexed-bytes",
+          "kind": "gba-8bpp-tiles",
           "size": "0x4000",
-          "source": "assets/graphics/resources_d8_e3/dd.bytes.png"
+          "source": "assets/graphics/resources_d8_e3/dd.tiles.8bpp.png"
         }
       ]
     },
@@ -209,9 +209,9 @@
       "plan": "assets/graphics/resources_d8_e3/df.lz.json",
       "components": [
         {
-          "kind": "indexed-bytes",
+          "kind": "gba-8bpp-tiles",
           "size": "0x2000",
-          "source": "assets/graphics/resources_d8_e3/df.bytes.png"
+          "source": "assets/graphics/resources_d8_e3/df.tiles.8bpp.png"
         }
       ]
     },
@@ -222,9 +222,9 @@
       "plan": "assets/graphics/resources_d8_e3/e0.lz.json",
       "components": [
         {
-          "kind": "indexed-bytes",
+          "kind": "gba-8bpp-tiles",
           "size": "0x2000",
-          "source": "assets/graphics/resources_d8_e3/e0.bytes.png"
+          "source": "assets/graphics/resources_d8_e3/e0.tiles.8bpp.png"
         }
       ]
     },
@@ -235,9 +235,9 @@
       "plan": "assets/graphics/resources_d8_e3/e1.lz.json",
       "components": [
         {
-          "kind": "indexed-bytes",
+          "kind": "gba-8bpp-tiles",
           "size": "0x2000",
-          "source": "assets/graphics/resources_d8_e3/e1.bytes.png"
+          "source": "assets/graphics/resources_d8_e3/e1.tiles.8bpp.png"
         }
       ]
     },
@@ -248,9 +248,9 @@
       "plan": "assets/graphics/resources_d8_e3/e2.lz.json",
       "components": [
         {
-          "kind": "indexed-bytes",
+          "kind": "gba-8bpp-tiles",
           "size": "0x2000",
-          "source": "assets/graphics/resources_d8_e3/e2.bytes.png"
+          "source": "assets/graphics/resources_d8_e3/e2.tiles.8bpp.png"
         }
       ]
     },
@@ -261,9 +261,9 @@
       "plan": "assets/graphics/resources_d8_e3/e3.lz.json",
       "components": [
         {
-          "kind": "indexed-bytes",
+          "kind": "gba-8bpp-tiles",
           "size": "0x4000",
-          "source": "assets/graphics/resources_d8_e3/e3.bytes.png"
+          "source": "assets/graphics/resources_d8_e3/e3.tiles.8bpp.png"
         }
       ]
     },

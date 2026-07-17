@@ -331,6 +331,9 @@ def main():
     png.add_argument("--bpp", type=int, choices=(4, 8), required=True)
     png.add_argument("--tiles", type=Path, required=True)
     png.add_argument("--palette", type=Path, required=True)
+    indexed = commands.add_parser("indexed")
+    indexed.add_argument("input", type=Path)
+    indexed.add_argument("-o", "--output", type=Path, required=True)
     midi = commands.add_parser("midi")
     midi.add_argument("input", type=Path)
     midi.add_argument("-o", "--output", type=Path, required=True)
@@ -346,6 +349,13 @@ def main():
         args.tiles.write_bytes(tiles)
         args.palette.write_bytes(palette)
         print(json.dumps(report, sort_keys=True))
+    elif args.command == "indexed":
+        width, height, pixels, palette = indexed_png(args.input.read_bytes())
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_bytes(bytes(pixels))
+        print(json.dumps({"width": width, "height": height,
+                          "pixels": len(pixels),
+                          "palette_entries": len(palette)}, sort_keys=True))
     elif args.command == "midi":
         report = midi_events(args.input.read_bytes())
         args.output.parent.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,43 @@
+{
+  "format": 1,
+  "word_size": 2,
+  "commands": [
+    {
+      "op": "set_blend_control",
+      "value": "0x3fc8"
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x0003",
+      "duration": 120
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x0004",
+      "duration": 120
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x0005",
+      "duration": 120
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x0006",
+      "duration": 120
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x0005",
+      "duration": 120
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x0004",
+      "duration": 120
+    },
+    {
+      "op": "reset"
+    }
+  ]
+}

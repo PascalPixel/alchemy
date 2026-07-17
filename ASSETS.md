@@ -69,9 +69,8 @@ reproduces the compressed ROM resource byte-for-byte. Palette application,
 destination tile IDs, timing, and composition belong to separate map animation
 commands and are deliberately not asserted by these source images.
 
-Twenty of the twenty-one traced map charblock families have this field-5
-tag-2 bank. Family `0x164` is excluded: its `base + 5` resource is the next
-container, not an animation-source bank. Family `0x182` carries only a
-palette, and container `0x16f` is not a graphics family at all: it has no
-palette, charblock, or animation resources, and the next resource after it is
-container `0x170`.
+Fifty-seven of the 121 traced map graphics families have this fourth tag-2
+bank after their three charblocks. Families with fewer banks stop at their
+last present bank, fifty families carry only a palette, and fifty-two
+containers have no graphics resources at all; each family's manifest entry
+lists exactly the resources its greedy palette-plus-banks tail classified.

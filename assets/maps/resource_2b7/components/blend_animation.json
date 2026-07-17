@@ -1,0 +1,33 @@
+{
+  "format": 1,
+  "word_size": 2,
+  "commands": [
+    {
+      "op": "write_blend_value",
+      "value": "0x0003",
+      "duration": 16
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x0003",
+      "duration": 16
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x0004",
+      "duration": 16
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x0003",
+      "duration": 16
+    },
+    {
+      "op": "jump",
+      "target_pair": 0
+    },
+    {
+      "op": "reset"
+    }
+  ]
+}

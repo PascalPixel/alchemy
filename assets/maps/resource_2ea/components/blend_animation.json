@@ -1,0 +1,57 @@
+{
+  "format": 1,
+  "word_size": 2,
+  "commands": [
+    {
+      "op": "set_blend_control",
+      "value": "0x3f42"
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1003",
+      "duration": 46
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1002",
+      "duration": 36
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1003",
+      "duration": 50
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1002",
+      "duration": 45
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1006",
+      "duration": 6
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1005",
+      "duration": 6
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1004",
+      "duration": 6
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1005",
+      "duration": 6
+    },
+    {
+      "op": "jump",
+      "target_pair": 0
+    },
+    {
+      "op": "reset"
+    }
+  ]
+}

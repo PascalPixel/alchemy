@@ -1,0 +1,72 @@
+{
+  "format": 1,
+  "word_size": 2,
+  "commands": [
+    {
+      "op": "set_blend_control",
+      "value": "0x3f44"
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1006",
+      "duration": 14
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1007",
+      "duration": 14
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1008",
+      "duration": 14
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1009",
+      "duration": 14
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x100a",
+      "duration": 12
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x100a",
+      "duration": 12
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1009",
+      "duration": 14
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1008",
+      "duration": 14
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1007",
+      "duration": 14
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1006",
+      "duration": 14
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1005",
+      "duration": 14
+    },
+    {
+      "op": "jump",
+      "target_pair": 0
+    },
+    {
+      "op": "reset"
+    }
+  ]
+}

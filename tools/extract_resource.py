@@ -180,6 +180,132 @@ def encode_general(decoded, tokens):
     return bytes(packed)
 
 
+def decode_general_prefill_trace(data, start, end, maximum, prefill):
+    """Decode a general-LZ stream whose output window starts pre-filled.
+
+    Identical to decode_general_trace except the output buffer begins with
+    ``prefill`` zero bytes, so an early back-reference may read the cleared
+    decompression buffer. The prefill is not part of the decoded resource; the
+    window used to size long distances excludes it. Golden Sun uses this for a
+    large family of resources that a bare general-LZ decode rejects at offset 0.
+    """
+    if start >= end or data[start] != 0:
+        raise DecodeError("general stream is missing its kind-zero header")
+    bits = LsbBits(data, start + 1, end)
+    output = bytearray(prefill)
+    tokens = []
+    while True:
+        if bits.get(1):
+            if len(output) - prefill >= maximum:
+                raise DecodeError("decoded output crossed configured bound")
+            output.append(bits.get(8))
+            if tokens and tokens[-1][0] == "l":
+                tokens[-1][1] += 1
+            else:
+                tokens.append(["l", 1])
+            continue
+        if not bits.get(1):
+            length = 2
+        elif not bits.get(1):
+            length = 3
+        elif not bits.get(1):
+            length = 4
+        elif not bits.get(1):
+            length = 5
+        elif not bits.get(1):
+            length = 6 if not bits.get(1) else 7
+        else:
+            short = bits.get(2)
+            if short:
+                length = short + 7
+            else:
+                long = bits.get(7)
+                if long == 0:
+                    return bytes(output[prefill:]), bits.cursor, tokens
+                length = long + 10
+        if bits.get(1):
+            distance = bits.get(5) + 1
+        else:
+            window = len(output) - prefill - 33
+            width = window.bit_length() if 0 <= window < 2048 else 12
+            distance = bits.get(width) + 33
+        tokens.append(["c", length, distance])
+        append_copy(output, distance, length, prefill + maximum)
+
+
+def encode_general_prefill(decoded, tokens, prefill):
+    """Re-encode a pre-filled general-LZ stream (inverse of the decoder)."""
+    bits = []
+    replay = bytearray(prefill)
+    cursor = 0
+    for token in tokens:
+        if token[0] == "l":
+            count = int(token[1])
+            if count < 1 or cursor + count > len(decoded):
+                raise DecodeError("literal run crossed decoded input")
+            for _ in range(count):
+                put(bits, 1, 1)
+                value = decoded[cursor]
+                put(bits, value, 8)
+                replay.append(value)
+                cursor += 1
+            continue
+        if len(token) != 3 or token[0] != "c":
+            raise DecodeError("invalid general-stream token")
+        length, distance = map(int, token[1:])
+        put(bits, 0, 1)
+        if length == 2:
+            put(bits, 0, 1)
+        elif length == 3:
+            put(bits, 1, 1)
+            put(bits, 0, 1)
+        elif length == 4:
+            put(bits, 3, 2)
+            put(bits, 0, 1)
+        elif length == 5:
+            put(bits, 7, 3)
+            put(bits, 0, 1)
+        elif length in (6, 7):
+            put(bits, 15, 4)
+            put(bits, 0, 1)
+            put(bits, length - 6, 1)
+        elif length in (8, 9, 10):
+            put(bits, 31, 5)
+            put(bits, length - 7, 2)
+        elif 11 <= length <= 137:
+            put(bits, 31, 5)
+            put(bits, 0, 2)
+            put(bits, length - 10, 7)
+        else:
+            raise DecodeError(f"unencodable copy length: {length}")
+        if not 1 <= distance <= len(replay):
+            raise DecodeError("copy distance crossed replay prefix")
+        if distance <= 32:
+            put(bits, 1, 1)
+            put(bits, distance - 1, 5)
+        else:
+            put(bits, 0, 1)
+            window = len(replay) - prefill - 33
+            width = window.bit_length() if 0 <= window < 2048 else 12
+            if distance - 33 >= 1 << width:
+                raise DecodeError("copy distance exceeds position-dependent width")
+            put(bits, distance - 33, width)
+        for _ in range(length):
+            replay.append(replay[-distance])
+        cursor += length
+    if cursor != len(decoded) or bytes(replay[prefill:]) != bytes(decoded):
+        raise DecodeError("token plan does not reconstruct decoded input")
+    put(bits, 0, 1)
+    put(bits, 31, 5)
+    put(bits, 0, 2)
+    put(bits, 0, 7)
+    packed = bytearray(b"\0")
+    for offset in range(0, len(bits), 8):
+        packed.append(sum(
+            bit << index for index, bit in enumerate(bits[offset:offset + 8])))
+    return bytes(packed)
+
+
 def decode_palette_trace(data, start, end, maximum):
     cursor = start
     output = bytearray()

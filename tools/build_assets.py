@@ -4,7 +4,8 @@ import argparse
 import json
 from pathlib import Path
 
-from extract_resource import encode_general, encode_palette
+from extract_resource import (encode_general, encode_palette,
+                              encode_general_prefill)
 from import_asset import (gba_graphics, gba_palette_rgba, gba_4bpp_banked,
                           indexed_png, rgba_png)
 from archive_asset import build_archive
@@ -56,6 +57,10 @@ def build_component(entry):
         width, height, pixels, _ = indexed_png(source.read_bytes())
         data = bytes(pixels)
         details = {"width": width, "height": height}
+    elif kind == "raw-lz-bytes":
+        width, height, pixels, _ = indexed_png(source.read_bytes())
+        data = bytes(pixels)[:number(entry["size"])]
+        details = {"width": width, "height": height, "bytes": len(data)}
     elif kind == "rgba-bytes":
         width, height, data = rgba_png(source.read_bytes())
         details = {"width": width, "height": height, "pixels": len(data) // 4}
@@ -178,6 +183,20 @@ def main():
                         "source": f"{directory}/palette.224.png",
                     }],
                 })
+        elif series.get("kind") == "golden-sun-prefill-lz-series":
+            for resource in series["resources"]:
+                name = str(resource["id"]).lower()
+                directory = f"assets/data/resource_{name}"
+                entries.append({
+                    "address": resource["address"], "size": resource["size"],
+                    "kind": "golden-sun-general-lz",
+                    "plan": f"{directory}/stream.lz.json",
+                    "components": [{
+                        "kind": "raw-lz-bytes",
+                        "size": resource["decoded_size"],
+                        "source": f"{directory}/content.png",
+                    }],
+                })
         elif series.get("kind") == "golden-sun-thumb-overlay-series":
             base = series["base"]
             for resource in series["resources"]:
@@ -287,11 +306,15 @@ def main():
             plan = json.loads(plan_path.read_text())
             if plan.get("format") != 1 or plan.get("codec") not in (
                     "golden-sun-general-lz", "golden-sun-palette-lz",
-                    "golden-sun-tagged-palette-lz"):
+                    "golden-sun-tagged-palette-lz",
+                    "golden-sun-general-lz-prefill"):
                 raise ValueError("unsupported custom-LZ plan")
             if len(decoded) != number(plan["decoded_size"]):
                 raise ValueError("decoded components do not match plan size")
-            if plan["codec"] == "golden-sun-general-lz":
+            if plan["codec"] == "golden-sun-general-lz-prefill":
+                built_data = encode_general_prefill(
+                    decoded, plan["tokens"], number(plan["prefill"]))
+            elif plan["codec"] == "golden-sun-general-lz":
                 built_data = encode_general(decoded, plan["tokens"])
             else:
                 built_data = encode_palette(decoded, plan["tokens"])

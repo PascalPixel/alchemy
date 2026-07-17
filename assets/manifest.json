@@ -419,6 +419,25 @@
   ],
   "series": [
     {
+      "kind": "golden-sun-map-grid-series",
+      "grids": [
+        {"id":"12e","address":"0x084bdea4","size":"0x23c0"},
+        {"id":"134","address":"0x084cca50","size":"0x2188"},
+        {"id":"13a","address":"0x084da30c","size":"0x14dc"},
+        {"id":"140","address":"0x084e5308","size":"0xdec"},
+        {"id":"146","address":"0x084efa00","size":"0x16e4"},
+        {"id":"14c","address":"0x084f9620","size":"0x180c"},
+        {"id":"152","address":"0x0850268c","size":"0x4a4"},
+        {"id":"158","address":"0x08506cc8","size":"0x1ba0"},
+        {"id":"15e","address":"0x0850c46c","size":"0x8c4"},
+        {"id":"164","address":"0x08513740","size":"0x7e8"},
+        {"id":"169","address":"0x085184e8","size":"0x7a4"},
+        {"id":"170","address":"0x0851d5d4","size":"0x868"},
+        {"id":"176","address":"0x08520c78","size":"0xc9c"},
+        {"id":"17c","address":"0x08526870","size":"0x1068"}
+      ]
+    },
+    {
       "kind": "golden-sun-map-charblock-series",
       "families": [
         {"id":"12e","palette":{"address":"0x084c03d0","size":"0x190"},"charblocks":[{"address":"0x084c0560","size":"0x2b34"},{"address":"0x084c3094","size":"0x252c"},{"address":"0x084c55c0","size":"0x26dc"}]},

@@ -313,7 +313,8 @@ def main():
                 raise ValueError("decoded components do not match plan size")
             if plan["codec"] == "golden-sun-general-lz-prefill":
                 built_data = encode_general_prefill(
-                    decoded, plan["tokens"], number(plan["prefill"]))
+                    decoded, plan["tokens"], number(plan["prefill"]),
+                    number(plan.get("header", 1)))
             elif plan["codec"] == "golden-sun-general-lz":
                 built_data = encode_general(decoded, plan["tokens"])
             else:

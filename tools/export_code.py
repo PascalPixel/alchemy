@@ -11,7 +11,10 @@ build_asm.py re-verifies every region against the private ROM.
 """
 import argparse
 import json
+import re
 import struct
+import subprocess
+import tempfile
 from pathlib import Path
 
 from disassemble_function import disassemble
@@ -44,6 +47,74 @@ def returns(data):
     return False
 
 
+POOL_RANGE = re.compile(r"pool target 0x([0-9a-f]+) is out of range")
+
+
+def disassemble_extending(rom, address, size, ceiling):
+    """Disassemble, growing the region to cover trailing pool words it needs.
+
+    The function discovery undercounts functions whose literal pool follows the
+    body, so a pc-relative load can point past the recorded end. Grow to cover
+    that word (never past `ceiling`, the next function/claim) and retry. Returns
+    (listing, true_size).
+    """
+    for _ in range(16):
+        data = rom[address - ROM_BASE:address - ROM_BASE + size]
+        try:
+            return disassemble(data, address), size
+        except ValueError as error:
+            match = POOL_RANGE.search(str(error))
+            if not match:
+                raise
+            needed = int(match.group(1), 16) + 4 - address
+            if needed <= size or address + needed > ceiling:
+                raise
+            size = needed
+    raise ValueError("pool extension did not converge")
+
+
+def round_trips(rom, address, size, listing):
+    """Assemble a listing standalone and confirm it equals the ROM bytes.
+
+    Guards against data mis-decoded as code (e.g. an ARMv5 bkpt objdump emits
+    for a data halfword): such a listing fails to assemble or differs, and the
+    function is skipped rather than written.
+    """
+    with tempfile.TemporaryDirectory() as work:
+        work = Path(work)
+        source = work / "f.s"
+        source.write_text(listing)
+        obj = work / "f.o"
+        result = subprocess.run(
+            ["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
+             "-o", str(obj), str(source)],
+            capture_output=True, text=True)
+        if result.returncode:
+            return False
+        undefined = subprocess.run(
+            ["arm-none-eabi-nm", "-u", str(obj)], capture_output=True, text=True).stdout
+        symbols = work / "s.s"
+        names = [line.split()[-1] for line in undefined.splitlines() if line.split()]
+        symbols.write_text(".syntax unified\n.thumb\n" + "".join(
+            f".global {name}\n.thumb_func\n.set {name}, 0x{name.rsplit('_', 1)[1]}\n"
+            for name in names if re.fullmatch(r"(Func|Data|Value)_[0-9a-f]{8}", name)))
+        symbol_obj = work / "s.o"
+        subprocess.run(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
+                        "-o", str(symbol_obj), str(symbols)], check=True)
+        elf = work / "f.elf"
+        link = subprocess.run(
+            ["arm-none-eabi-ld", f"-Ttext=0x{address:08x}", "-e", f"0x{address:08x}",
+             "-o", str(elf), str(obj), str(symbol_obj)], capture_output=True, text=True)
+        if link.returncode:
+            return False
+        binary = work / "f.bin"
+        subprocess.run(["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text",
+                        str(elf), str(binary)], check=True)
+        built = binary.read_bytes()
+        return built == rom[address - ROM_BASE:address - ROM_BASE + len(built)] \
+            and len(built) == size
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("rom", type=Path, nargs="?", default="baserom.gba")
@@ -53,10 +124,17 @@ def main():
     rom = args.rom.read_bytes()
     functions = json.loads(args.functions.read_text())
     functions = functions.get("functions", functions)
+    starts = sorted({f["entry"] for f in functions} |
+                    {high for _, high in claimed_spans()})
     spans = claimed_spans()
 
     def claimed(address):
         return any(low <= address < high for low, high in spans)
+
+    def next_boundary(address):
+        import bisect
+        index = bisect.bisect_right(starts, address)
+        return starts[index] if index < len(starts) else ROM_BASE + len(rom)
 
     asm_dir = ROOT / "asm"
     asm_dir.mkdir(exist_ok=True)
@@ -71,9 +149,14 @@ def main():
         data = rom[address - ROM_BASE:address - ROM_BASE + size]
         if not returns(data):
             continue
+        ceiling = min(next_boundary(address), ROM_BASE + len(rom))
         try:
-            listing = disassemble(data, address)
+            listing, true_size = disassemble_extending(rom, address, size, ceiling)
         except Exception:
+            skipped += 1
+            continue
+        if claimed(address + true_size - 1) or not round_trips(
+                rom, address, true_size, listing):
             skipped += 1
             continue
         (asm_dir / f"{address:08x}.s").write_text(HEADER + listing)

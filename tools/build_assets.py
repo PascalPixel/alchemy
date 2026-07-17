@@ -13,6 +13,7 @@ from pairtable import import_pairs
 from f0_archive import build_archive as build_f0_archive
 from skip_sprite_archive import build_archive as build_skip_sprite_archive
 from kind2_resource import encode_kind2
+from kind1_map_grid import build_grid
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -133,6 +134,16 @@ def main():
                             "source": f"{directory}/charblock{bank}.4bpp.png",
                         }],
                     })
+        elif series.get("kind") == "golden-sun-map-grid-series":
+            for grid in series["grids"]:
+                name = str(grid["id"]).lower()
+                directory = f"assets/maps/resource_{name}/grid"
+                entries.append({
+                    "address": grid["address"], "size": grid["size"],
+                    "kind": "golden-sun-kind1-grid",
+                    "source": directory,
+                    "plan": f"{directory}/grid.kind1.json",
+                })
         else:
             raise ValueError("unsupported asset series")
     regions = []
@@ -204,6 +215,17 @@ def main():
             report = {"decoded_size": len(decoded),
                       "tokens": len(plan["tokens"]),
                       "components": component_reports}
+        elif kind == "golden-sun-kind1-grid":
+            directory = source_path(entry["source"])
+            plan_path = source_path(entry["plan"])
+            plan = json.loads(plan_path.read_text())
+            built_data = build_grid(plan, directory)
+            sources = [entry["plan"], *[
+                str(Path(entry["source"]) / name) for name in
+                ("value_low.png", "value_high.png", "attribute_a.png",
+                 "attribute_b.png", "sentinels.png")]]
+            report = {"decoded_size": number(plan["decoded_size"]),
+                      "tokens": len(plan["tokens"]), "planes": 4}
         elif kind == "golden-sun-offset-palette-lz":
             plan_path = source_path(entry["plan"])
             atlas_path = source_path(entry["source"])

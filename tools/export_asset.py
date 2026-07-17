@@ -105,9 +105,8 @@ def byte_png(raw, width):
             (len(raw) // width) % 8):
         raise ValueError("byte image dimensions must be nonzero multiples of eight")
     height = len(raw) // width
-    palette = bytearray()
-    for index in range(256):
-        palette.extend(((index & 31) * 8, (index >> 5) * 8, 0))
+    palette = bytes(channel for index in range(256)
+                    for channel in (index, index, index))
     scanlines = b"".join(
         b"\0" + raw[row * width:(row + 1) * width]
         for row in range(height))
@@ -115,7 +114,7 @@ def byte_png(raw, width):
         b"\x89PNG\r\n\x1a\n" +
         chunk(b"IHDR", struct.pack(">IIBBBBB",
                                     width, height, 8, 3, 0, 0, 0)) +
-        chunk(b"PLTE", bytes(palette)) +
+        chunk(b"PLTE", palette) +
         chunk(b"IDAT", zlib.compress(scanlines, 9)) +
         chunk(b"IEND", b"")
     )

@@ -104,3 +104,11 @@ charblocks 1-3. Their tag-2 codec uses LSB-first LZ tokens and move-to-front
 nibbles; payload-free plans reproduce all compressed bits and alignment bytes
 exactly. Palette-bank selection belongs to map data, so the tile PNGs use a
 neutral index legend rather than claiming one of fourteen 16-color banks.
+
+`maps/resource_12e/grid/` through `maps/resource_17c/grid/` reconstruct the
+same families' tagged kind-1 map components as 128x128 spatial record grids.
+Four grayscale PNG planes preserve the transformed 16-bit metatile/flag value
+and two independently accessed attribute bytes. A one-bit PNG records which
+pre-transform values were sentinels, avoiding the transform's otherwise
+ambiguous inverse. The kind-1 token trace plus these five source planes rebuild
+every compressed component and its alignment bytes exactly.

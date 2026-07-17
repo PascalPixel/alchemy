@@ -4,7 +4,7 @@ import argparse
 import struct
 from pathlib import Path
 
-from export_map_charblock_series import CONTAINER_BASES, ROM_BASE, pointer
+from export_map_charblock_series import ROM_BASE, discover_families, pointer
 from map_container_components import (
     export_blend_animation, export_descriptors, export_header,
     export_metatiles, export_queues, export_sparse,
@@ -19,8 +19,8 @@ def main():
     parser.add_argument("rom", type=Path)
     args = parser.parse_args()
     rom = args.rom.read_bytes()
-    claimed = 0
-    for base in CONTAINER_BASES:
+    claimed = count = 0
+    for base, _, _ in discover_families(rom):
         start = pointer(rom, base) - ROM_BASE
         end = pointer(rom, base + 1) - ROM_BASE
         container = rom[start:end]
@@ -61,11 +61,12 @@ def main():
         if sum(sizes) + len(data(2)) != len(container):
             raise ValueError("header and components do not tile the container")
         claimed += sum(sizes)
+        count += 1
         print(f"{base:x} mode={mode} metatiles={metatiles} "
               f"descriptors={descriptors} queues={queues} commands={commands} "
               f"blend_commands={blend_commands} blend_codec={blend_codec} "
               f"sparse={sparse} bytes={sum(sizes):#x}")
-    print(f"families={len(CONTAINER_BASES)} claimed_bytes={claimed:#x}")
+    print(f"families={count} claimed_bytes={claimed:#x}")
 
 
 if __name__ == "__main__":

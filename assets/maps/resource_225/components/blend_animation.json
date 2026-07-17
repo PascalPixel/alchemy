@@ -1,0 +1,37 @@
+{
+  "format": 1,
+  "word_size": 2,
+  "commands": [
+    {
+      "op": "set_blend_control",
+      "value": "0x3f42"
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x0f05",
+      "duration": 21
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x0f05",
+      "duration": 20
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x0f04",
+      "duration": 22
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x0f05",
+      "duration": 20
+    },
+    {
+      "op": "jump",
+      "target_pair": 0
+    },
+    {
+      "op": "reset"
+    }
+  ]
+}

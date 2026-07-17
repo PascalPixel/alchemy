@@ -1,0 +1,102 @@
+{
+  "format": 1,
+  "word_size": 2,
+  "commands": [
+    {
+      "op": "set_blend_control",
+      "value": "0x3f42"
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1008",
+      "duration": 10
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1009",
+      "duration": 10
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x100a",
+      "duration": 10
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x100b",
+      "duration": 10
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x100c",
+      "duration": 10
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x100d",
+      "duration": 10
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x100e",
+      "duration": 10
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x100f",
+      "duration": 10
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x100f",
+      "duration": 10
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x100e",
+      "duration": 10
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x100d",
+      "duration": 10
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x100c",
+      "duration": 10
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x100b",
+      "duration": 10
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x100a",
+      "duration": 10
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1009",
+      "duration": 10
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1008",
+      "duration": 10
+    },
+    {
+      "op": "write_blend_value",
+      "value": "0x1007",
+      "duration": 10
+    },
+    {
+      "op": "jump",
+      "target_pair": 0
+    },
+    {
+      "op": "reset"
+    }
+  ]
+}

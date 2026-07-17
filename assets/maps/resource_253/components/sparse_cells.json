@@ -1,0 +1,7 @@
+{
+  "format": 1,
+  "record_size": 3,
+  "terminator": "ffffff",
+  "alignment_zeros": 1,
+  "records": []
+}

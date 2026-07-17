@@ -97,53 +97,56 @@ copied from ROM `0x0800779c`; each `preview.atlas.png` is a generated contact
 sheet. Regenerate the series with `python3 tools/export_sprite_series.py
 baserom.gba`.
 
-`graphics/resource_128/` through `graphics/resource_1a2/` contain twenty-two
-map families with a 224-color BG palette, and all but family 182 add three
-0x4000-byte GBA charblocks as 4bpp tile PNGs. The generic loader copies each
-family's resources +2..+4 to
-charblocks 1-3. Their tag-2 codec uses LSB-first LZ tokens and move-to-front
+`graphics/resource_128/` through `graphics/resource_369/` contain the 121 map
+families whose container is directly followed by a 224-color BG palette
+stream and zero to four 0x4000-byte kind-2 tile banks. The first three banks
+are the VRAM charblocks the generic loader copies to charblocks 1-3; a fourth
+bank is the family's animation-source bank. Fifty of the families carry only
+the palette. The tag-2 codec uses LSB-first LZ tokens and move-to-front
 nibbles; payload-free plans reproduce all compressed bits and alignment bytes
-exactly. Family 128's palette stream is tag-1 palette-LZ rather than tag-0
+exactly. Nine palette streams are tag-1 palette-LZ rather than tag-0
 general-LZ, so each palette plan records its exact codec and tag.
 Palette-bank selection belongs to map data, so the tile PNGs use a
 neutral index legend rather than claiming one of fourteen 16-color banks.
+Regenerate with `python3 tools/export_map_charblock_series.py baserom.gba`;
+the exporter discovers containers 0x128 through 0x369 in the resource table
+and claims each family's greedy palette-plus-banks tail, leaving every
+resource that does not classify unclaimed.
 
-`maps/resource_128/grid/` through `maps/resource_1a2/grid/` reconstruct the
-twenty-three traced containers' tagged kind-1 map components as 128x128
-spatial record grids; container 16f sits between families 169 and 170 and has
-no palette or charblock resources of its own.
+`maps/resource_128/grid/` through `maps/resource_369/grid/` reconstruct all
+173 traced containers' tagged kind-1 map components as 128x128 spatial record
+grids; 52 containers have no palette or tile-bank resources of their own and
+share a neighbouring family's graphics.
 Four grayscale PNG planes preserve the transformed 16-bit metatile/flag value
 and two independently accessed attribute bytes. A one-bit PNG records which
 pre-transform values were sentinels, avoiding the transform's otherwise
 ambiguous inverse. The kind-1 token trace plus these five source planes rebuild
 every compressed component and its alignment bytes exactly.
 
-`maps/resource_128/components/` through `maps/resource_1a2/components/`
+`maps/resource_128/components/` through `maps/resource_369/components/`
 reconstruct each container's 0x3c-byte header and components 0, 1, 3, 4,
 and 5. `header.json` holds twelve opaque parameter bytes, three opaque
 four-u16 records whose second, third, and fourth words are 0x1010, 0x0000,
-and 0xffff in every traced family, and the six little-endian u32 component
-offsets. The build cross-checks every offset against the sibling component
-and grid claims of the same family and requires zero for absent components,
-so the header, grid, and component sources cannot drift apart.
-Component 0 is a text tilemap with four little-endian
-u16 entries per 2x2 metatile; its plan preserves the planar transform mode and
-the exact general-LZ token choices. Eighteen containers use XOR-chained
-mode 1, three (15E, 19C, 1A2) use mode 2, and two (128, 196) use mode 0;
-modes 0 and 2 both
-leave the planar values untransformed. Component 1 is a JSON sequence of
-opaque four-byte descriptor
-records. Present component-3 streams are JSON animation queues with their full
-FDxx headers, pairs of u16 command words, FE00 queue terminators, and a final
-FFFF; resources 128, 140, 158, and 184 have no component 3. Component 4 is
-present in sixteen containers and contains blend-register animation commands.
-Its semantic
-JSON distinguishes single-word blend-control writes, value/duration pairs,
-pair-index jumps, stream resets, and stops. The loader accepts both tag-0
-general-LZ and tag-1 palette-LZ forms, so each plan records the exact codec,
-token trace, and lookahead; families 128, 12E, 134, 13A, 140, 158, and 184
-have no component 4. Component 5 is a JSON sequence of three-byte sparse records plus
-its FFFFFF terminator and zero alignment. All compressed plans retain trailing
-lookahead bytes and reproduce their named component spans exactly. Regenerate
-the series with `python3
+and 0xffff in all but eight traced families, and the six little-endian u32
+component offsets. The build cross-checks every offset against the sibling
+component and grid claims of the same family and requires zero for absent
+components, so the header, grid, and component sources cannot drift apart.
+Every compressed component stream is tag-0 general-LZ or tag-1 palette-LZ,
+and each plan records the exact codec, token trace, and lookahead.
+Component 0 is a text tilemap with four little-endian u16 entries per 2x2
+metatile; its plan preserves the planar transform mode. Eighty-seven
+containers use XOR-chained mode 1, while modes 0 (34 containers) and
+2 (52 containers) both leave the planar values untransformed.
+Component 1 is a JSON sequence of opaque four-byte descriptor records.
+Component 3, absent in eighteen containers, is a JSON stream of animation
+queues with their full FDxx headers, pairs of u16 command words, FE00 queue
+terminators, and a final FFFF; container 225's stream deviates from that
+grammar, so its source is an opaque u16 word list instead, and the builder
+accepts either document shape. Component 4, absent in forty-five containers,
+holds blend-register animation commands. Its semantic JSON distinguishes
+single-word blend-control writes, value/duration pairs, pair-index jumps,
+stream resets, and stops. Component 5 is a JSON sequence of three-byte sparse
+records plus its FFFFFF terminator and zero alignment. All compressed plans
+retain trailing lookahead bytes and reproduce their named component spans
+exactly. Regenerate the series with `python3
 tools/export_map_component_series.py baserom.gba`.

@@ -45,6 +45,18 @@ def tagged_palette_plan(decoded, encoded, tokens, used, extra=None):
     return plan
 
 
+def decode_component(encoded):
+    if encoded and encoded[0] == 0:
+        decoded, used, tokens = decode_general_trace(
+            encoded, 0, len(encoded), 0x200000)
+        return decoded, used, tokens, general_plan
+    if encoded and encoded[0] == 1:
+        decoded, used, tokens = decode_palette_trace(
+            encoded, 1, len(encoded), 0x200000)
+        return decoded, used, tokens, tagged_palette_plan
+    raise ValueError("unsupported map-component compression tag")
+
+
 def encode_plan(decoded, plan):
     if plan.get("format") != 1 or plan.get("codec") not in (
             "golden-sun-general-lz", "golden-sun-tagged-palette-lz"):
@@ -140,11 +152,11 @@ def encode_metatiles(entries, mode):
 
 
 def export_metatiles(encoded, source, plan_path):
-    decoded, used, tokens = decode_general_trace(encoded, 0, len(encoded), 0x200000)
+    decoded, used, tokens, make_plan = decode_component(encoded)
     mode, entries = decode_metatiles(decoded)
     raw = struct.pack(f"<{len(entries)}H", *entries)
     source.write_text(export_tilemap(raw, 4))
-    plan = general_plan(decoded, encoded, tokens, used, {
+    plan = make_plan(decoded, encoded, tokens, used, {
         "component": "map-metatiles-2x2",
         "transform_mode": mode,
         "metatiles": len(entries) // 4,
@@ -164,7 +176,7 @@ def build_metatiles(source, plan_path):
 
 
 def export_descriptors(encoded, source, plan_path):
-    decoded, used, tokens = decode_general_trace(encoded, 0, len(encoded), 0x200000)
+    decoded, used, tokens, make_plan = decode_component(encoded)
     if len(decoded) % 4:
         raise ValueError("descriptor component is not a sequence of four-byte records")
     records = [list(decoded[offset:offset + 4])
@@ -172,7 +184,7 @@ def export_descriptors(encoded, source, plan_path):
     source.write_text(json.dumps({
         "format": 1, "record_size": 4, "records": records,
     }, indent=2) + "\n")
-    plan = general_plan(decoded, encoded, tokens, used, {
+    plan = make_plan(decoded, encoded, tokens, used, {
         "component": "map-descriptors-4byte", "records": len(records),
     })
     plan_path.write_text(json.dumps(plan, separators=(",", ":")) + "\n")
@@ -236,29 +248,54 @@ def encode_queues(queues):
     return struct.pack(f"<{len(words)}H", *words)
 
 
+def word_list_document(decoded):
+    if len(decoded) % 2:
+        raise ValueError("component word stream has a partial u16")
+    words = struct.unpack(f"<{len(decoded) // 2}H", decoded)
+    return {"format": 1, "word_size": 2,
+            "words": [f"0x{word:04x}" for word in words]}
+
+
+def encode_word_list(document):
+    words = [int(word, 0) for word in document["words"]]
+    if any(not 0 <= word <= 0xffff for word in words):
+        raise ValueError("component word is outside u16")
+    return struct.pack(f"<{len(words)}H", *words)
+
+
 def export_queues(encoded, source, plan_path):
-    decoded, used, tokens = decode_general_trace(encoded, 0, len(encoded), 0x200000)
-    queues = decode_queues(decoded)
-    source.write_text(json.dumps({
-        "format": 1, "terminators": ["0xfe00", "0xffff"], "queues": queues,
-    }, indent=2) + "\n")
-    commands = sum(len(queue["commands"]) for queue in queues)
-    plan = general_plan(decoded, encoded, tokens, used, {
-        "component": "map-animation-queues", "queues": len(queues),
-        "commands": commands,
-    })
+    decoded, used, tokens, make_plan = decode_component(encoded)
+    try:
+        queues = decode_queues(decoded)
+    except ValueError:
+        document = word_list_document(decoded)
+        report = {"component": "map-animation-words",
+                  "words": len(document["words"])}
+        counts = ("raw", len(document["words"]))
+    else:
+        document = {"format": 1, "terminators": ["0xfe00", "0xffff"],
+                    "queues": queues}
+        commands = sum(len(queue["commands"]) for queue in queues)
+        report = {"component": "map-animation-queues",
+                  "queues": len(queues), "commands": commands}
+        counts = (len(queues), commands)
+    source.write_text(json.dumps(document, indent=2) + "\n")
+    plan = make_plan(decoded, encoded, tokens, used, report)
     plan_path.write_text(json.dumps(plan, separators=(",", ":")) + "\n")
     if build_queues(source, plan_path) != encoded:
         raise AssertionError("animation queue component does not round-trip")
-    return len(queues), commands
+    return counts
 
 
 def build_queues(source, plan_path):
     document = json.loads(source.read_text())
     if document.get("format") != 1:
         raise ValueError("unsupported animation queue source")
-    return encode_plan(encode_queues(document["queues"]),
-                       json.loads(plan_path.read_text()))
+    if "queues" in document:
+        decoded = encode_queues(document["queues"])
+    else:
+        decoded = encode_word_list(document)
+    return encode_plan(decoded, json.loads(plan_path.read_text()))
 
 
 def decode_blend_commands(decoded):
@@ -325,38 +362,35 @@ def encode_blend_commands(commands):
 
 
 def export_blend_animation(encoded, source, plan_path):
-    if not encoded:
-        raise ValueError("empty blend animation component")
-    if encoded[0] == 0:
-        decoded, used, tokens = decode_general_trace(
-            encoded, 0, len(encoded), 0x200000)
-        make_plan = general_plan
-    elif encoded[0] == 1:
-        decoded, used, tokens = decode_palette_trace(
-            encoded, 1, len(encoded), 0x200000)
-        make_plan = tagged_palette_plan
+    decoded, used, tokens, make_plan = decode_component(encoded)
+    try:
+        commands = decode_blend_commands(decoded)
+    except ValueError:
+        document = word_list_document(decoded)
+        report = {"component": "map-blend-words",
+                  "words": len(document["words"])}
+        count = len(document["words"])
     else:
-        raise ValueError("blend animation has an unsupported compression tag")
-    commands = decode_blend_commands(decoded)
-    source.write_text(json.dumps({
-        "format": 1,
-        "word_size": 2,
-        "commands": commands,
-    }, indent=2) + "\n")
-    plan = make_plan(decoded, encoded, tokens, used, {
-        "component": "map-blend-animation", "commands": len(commands),
-    })
+        document = {"format": 1, "word_size": 2, "commands": commands}
+        report = {"component": "map-blend-animation",
+                  "commands": len(commands)}
+        count = len(commands)
+    source.write_text(json.dumps(document, indent=2) + "\n")
+    plan = make_plan(decoded, encoded, tokens, used, report)
     plan_path.write_text(json.dumps(plan, separators=(",", ":")) + "\n")
     if build_blend_animation(source, plan_path) != encoded:
         raise AssertionError("blend animation component does not round-trip")
-    return len(commands), plan["codec"]
+    return count, plan["codec"]
 
 
 def build_blend_animation(source, plan_path):
     document = json.loads(source.read_text())
     if document.get("format") != 1 or document.get("word_size") != 2:
         raise ValueError("unsupported blend animation source")
-    decoded = encode_blend_commands(document.get("commands", []))
+    if "commands" in document:
+        decoded = encode_blend_commands(document["commands"])
+    else:
+        decoded = encode_word_list(document)
     return encode_plan(decoded, json.loads(plan_path.read_text()))
 
 

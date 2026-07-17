@@ -42,6 +42,18 @@ may combine source tiles, palettes, maps, flips, or animation states, but does
 not itself claim extra ROM coverage. Source PNGs count only through a manifest
 encoder that reproduces their named ROM region byte-for-byte.
 
+`tools/compose_scene.py` is such a preview generator. It reads a map
+container's already-claimed byte-exact sources (the kind-1 grid, the
+metatile tilemap, the banked charblocks, and the palette) and paints the 2D
+scene the map renders: `grid cell -> metatile index (value_low | (value_high &
+1) << 8) -> 2x2 tile entries -> tile index & 0x0fff selects a tile from the
+charblock window (0x000/0x200/0x400/0x600) with palette bank index >> 12`.
+`--all` writes every self-contained map to the ignored `out/scenes/`. It is
+display-only, reads no build input the encoders do not already own, and is
+never read back by the build. Tile indices at or above 0x800 come from the
+per-map-group shared tileset, whose container linkage is not yet recovered, so
+those cells are left unpainted in the preview.
+
 Map-container semantic sources are claimed component-by-component. Their
 manifest entries must use the exact component span, never the enclosing
 container, so the existing kind-1 grid claim and any still-opaque component

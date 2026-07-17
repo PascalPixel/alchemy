@@ -4,7 +4,7 @@ import argparse
 import struct
 from pathlib import Path
 
-from export_map_charblock_series import BASES, ROM_BASE, pointer
+from export_map_charblock_series import CONTAINER_BASES, ROM_BASE, pointer
 from map_container_components import (
     export_blend_animation, export_descriptors, export_header,
     export_metatiles, export_queues, export_sparse,
@@ -20,7 +20,7 @@ def main():
     args = parser.parse_args()
     rom = args.rom.read_bytes()
     claimed = 0
-    for base in BASES:
+    for base in CONTAINER_BASES:
         start = pointer(rom, base) - ROM_BASE
         end = pointer(rom, base + 1) - ROM_BASE
         container = rom[start:end]
@@ -65,7 +65,7 @@ def main():
               f"descriptors={descriptors} queues={queues} commands={commands} "
               f"blend_commands={blend_commands} blend_codec={blend_codec} "
               f"sparse={sparse} bytes={sum(sizes):#x}")
-    print(f"families={len(BASES)} claimed_bytes={claimed:#x}")
+    print(f"families={len(CONTAINER_BASES)} claimed_bytes={claimed:#x}")
 
 
 if __name__ == "__main__":

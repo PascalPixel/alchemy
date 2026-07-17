@@ -421,6 +421,7 @@
     {
       "kind": "golden-sun-map-component-series",
       "families": [
+        {"id":"128","header":{"address":"0x084ba758","size":"0x3c"},"components":[{"slot":0,"address":"0x084ba794","size":"0x8"},{"slot":1,"address":"0x084ba79c","size":"0x8"},{"slot":5,"address":"0x084baaa0","size":"0x4"}]},
         {"id":"12e","header":{"address":"0x084bafc0","size":"0x3c"},"components":[{"slot":0,"address":"0x084baffc","size":"0x2dbc"},{"slot":1,"address":"0x084bddb8","size":"0xec"},{"slot":3,"address":"0x084c0264","size":"0x168"},{"slot":5,"address":"0x084c03cc","size":"0x4"}]},
         {"id":"134","header":{"address":"0x084c9b2c","size":"0x3c"},"components":[{"slot":0,"address":"0x084c9b68","size":"0x2dfc"},{"slot":1,"address":"0x084cc964","size":"0xec"},{"slot":3,"address":"0x084cebd8","size":"0x110"},{"slot":5,"address":"0x084cece8","size":"0xc"}]},
         {"id":"13a","header":{"address":"0x084d8790","size":"0x3c"},"components":[{"slot":0,"address":"0x084d87cc","size":"0x1ad8"},{"slot":1,"address":"0x084da2a4","size":"0x68"},{"slot":3,"address":"0x084db7e8","size":"0xdc"},{"slot":5,"address":"0x084db8c4","size":"0x8"}]},
@@ -432,6 +433,7 @@
         {"id":"15e","header":{"address":"0x0850be10","size":"0x3c"},"components":[{"slot":0,"address":"0x0850be4c","size":"0x618"},{"slot":1,"address":"0x0850c464","size":"0x8"},{"slot":3,"address":"0x0850cd30","size":"0x2c8"},{"slot":4,"address":"0x0850cff8","size":"0x2c"},{"slot":5,"address":"0x0850d024","size":"0x8"}]},
         {"id":"164","header":{"address":"0x085132dc","size":"0x3c"},"components":[{"slot":0,"address":"0x08513318","size":"0x41c"},{"slot":1,"address":"0x08513734","size":"0xc"},{"slot":3,"address":"0x08513f28","size":"0x118"},{"slot":4,"address":"0x08514040","size":"0x10"},{"slot":5,"address":"0x08514050","size":"0x4"}]},
         {"id":"169","header":{"address":"0x08517e64","size":"0x3c"},"components":[{"slot":0,"address":"0x08517ea0","size":"0x640"},{"slot":1,"address":"0x085184e0","size":"0x8"},{"slot":3,"address":"0x08518c8c","size":"0x28"},{"slot":4,"address":"0x08518cb4","size":"0x20"},{"slot":5,"address":"0x08518cd4","size":"0x8"}]},
+        {"id":"16f","header":{"address":"0x0851c56c","size":"0x3c"},"components":[{"slot":0,"address":"0x0851c5a8","size":"0x388"},{"slot":1,"address":"0x0851c930","size":"0x8"},{"slot":3,"address":"0x0851d220","size":"0x44"},{"slot":4,"address":"0x0851d264","size":"0x28"},{"slot":5,"address":"0x0851d28c","size":"0x8"}]},
         {"id":"170","header":{"address":"0x0851d294","size":"0x3c"},"components":[{"slot":0,"address":"0x0851d2d0","size":"0x2fc"},{"slot":1,"address":"0x0851d5cc","size":"0x8"},{"slot":3,"address":"0x0851de3c","size":"0x44"},{"slot":4,"address":"0x0851de80","size":"0x28"},{"slot":5,"address":"0x0851dea8","size":"0x4"}]},
         {"id":"176","header":{"address":"0x085200f0","size":"0x3c"},"components":[{"slot":0,"address":"0x0852012c","size":"0xb38"},{"slot":1,"address":"0x08520c64","size":"0x14"},{"slot":3,"address":"0x08521914","size":"0x260"},{"slot":4,"address":"0x08521b74","size":"0x24"},{"slot":5,"address":"0x08521b98","size":"0x4"}]},
         {"id":"17c","header":{"address":"0x08525930","size":"0x3c"},"components":[{"slot":0,"address":"0x0852596c","size":"0xefc"},{"slot":1,"address":"0x08526868","size":"0x8"},{"slot":3,"address":"0x085278d8","size":"0x38"},{"slot":4,"address":"0x08527910","size":"0x24"},{"slot":5,"address":"0x08527934","size":"0x4"}]}
@@ -440,6 +442,7 @@
     {
       "kind": "golden-sun-map-grid-series",
       "grids": [
+        {"id":"128","address":"0x084ba7a4","size":"0x2fc"},
         {"id":"12e","address":"0x084bdea4","size":"0x23c0"},
         {"id":"134","address":"0x084cca50","size":"0x2188"},
         {"id":"13a","address":"0x084da30c","size":"0x14dc"},
@@ -451,6 +454,7 @@
         {"id":"15e","address":"0x0850c46c","size":"0x8c4"},
         {"id":"164","address":"0x08513740","size":"0x7e8"},
         {"id":"169","address":"0x085184e8","size":"0x7a4"},
+        {"id":"16f","address":"0x0851c938","size":"0x8e8"},
         {"id":"170","address":"0x0851d5d4","size":"0x868"},
         {"id":"176","address":"0x08520c78","size":"0xc9c"},
         {"id":"17c","address":"0x08526870","size":"0x1068"}
@@ -460,6 +464,7 @@
       "kind": "golden-sun-map-charblock-series",
       "animation_layout": {"format":"sequential-gba-4bpp-tiles","purpose":"map-animation-source","virtual_base_tile":"0x600","tile_count":512,"tile_width":8,"tile_height":8,"columns":32,"rows":16},
       "families": [
+        {"id":"128","palette":{"address":"0x084baaa4","size":"0xc"},"charblocks":[{"address":"0x084baab0","size":"0x150"},{"address":"0x084bac00","size":"0x140"},{"address":"0x084bad40","size":"0x140"}],"animation_source":{"address":"0x084bae80","size":"0x140"}},
         {"id":"12e","palette":{"address":"0x084c03d0","size":"0x190"},"charblocks":[{"address":"0x084c0560","size":"0x2b34"},{"address":"0x084c3094","size":"0x252c"},{"address":"0x084c55c0","size":"0x26dc"}],"animation_source":{"address":"0x084c7c9c","size":"0x1e90"}},
         {"id":"134","palette":{"address":"0x084cecf4","size":"0x194"},"charblocks":[{"address":"0x084cee88","size":"0x2c54"},{"address":"0x084d1adc","size":"0x2608"},{"address":"0x084d40e4","size":"0x27e0"}],"animation_source":{"address":"0x084d68c4","size":"0x1ecc"}},
         {"id":"13a","palette":{"address":"0x084db8cc","size":"0x180"},"charblocks":[{"address":"0x084dba4c","size":"0x27bc"},{"address":"0x084de208","size":"0x2648"},{"address":"0x084e0850","size":"0x26e4"}],"animation_source":{"address":"0x084e2f34","size":"0x1074"}},

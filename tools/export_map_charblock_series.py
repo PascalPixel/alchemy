@@ -15,6 +15,17 @@ ROM_BASE = 0x08000000
 TABLE = 0x08320000 - ROM_BASE
 BASES = (0x12e, 0x134, 0x13a, 0x140, 0x146, 0x14c, 0x152,
          0x158, 0x15e, 0x164, 0x169, 0x170, 0x176, 0x17c)
+ANIMATION_BASES = tuple(base for base in BASES if base != 0x164)
+ANIMATION_LAYOUT = {
+    "format": "sequential-gba-4bpp-tiles",
+    "purpose": "map-animation-source",
+    "virtual_base_tile": "0x600",
+    "tile_count": 512,
+    "tile_width": 8,
+    "tile_height": 8,
+    "columns": 32,
+    "rows": 16,
+}
 
 
 def pointer(rom, resource):
@@ -65,8 +76,18 @@ def main():
                 directory / f"charblock{bank + 1}.kind2.json", 4, 16)
             if decoded != 0x4000:
                 raise ValueError(f"resource {resource:x} is not one charblock")
+        if base in ANIMATION_BASES:
+            resource = base + 5
+            start, end = span(rom, resource)
+            decoded, _, _ = export_resource(
+                rom[start:end], directory / "animation_source.4bpp.png",
+                directory / "animation_source.kind2.json", 4, 32,
+                layout=ANIMATION_LAYOUT)
+            if decoded != 0x4000:
+                raise ValueError(
+                    f"resource {resource:x} is not a 512-tile animation bank")
         count += 1
-    print(f"families={count} assets={count * 4}")
+    print(f"families={count} assets={count * 4 + len(ANIMATION_BASES)}")
 
 
 if __name__ == "__main__":

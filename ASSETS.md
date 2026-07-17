@@ -42,6 +42,14 @@ may combine source tiles, palettes, maps, flips, or animation states, but does
 not itself claim extra ROM coverage. Source PNGs count only through a manifest
 encoder that reproduces their named ROM region byte-for-byte.
 
+Map-container semantic sources are claimed component-by-component. Their
+manifest entries must use the exact component span, never the enclosing
+container, so the existing kind-1 grid claim and any still-opaque component
+remain non-overlapping. Metatile transform modes, optional queue and
+blend-animation components, compression tags and token choices,
+compressed-stream lookahead, and raw-list terminator padding are explicit
+source or plan fields rather than inferred build defaults.
+
 ## Map animation-source tile banks
 
 The map-family `animation_source.4bpp.png` files are lossless, sequential tile

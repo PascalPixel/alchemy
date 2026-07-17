@@ -112,3 +112,23 @@ and two independently accessed attribute bytes. A one-bit PNG records which
 pre-transform values were sentinels, avoiding the transform's otherwise
 ambiguous inverse. The kind-1 token trace plus these five source planes rebuild
 every compressed component and its alignment bytes exactly.
+
+`maps/resource_12e/components/` through `maps/resource_17c/components/`
+reconstruct container components 0, 1, 3, 4, and 5 without claiming the
+container headers. Component 0 is a text tilemap with four little-endian
+u16 entries per 2x2 metatile; its plan preserves the planar transform mode and
+the exact general-LZ token choices. Thirteen families use mode 1 and resource
+15E uses mode 2. Component 1 is a JSON sequence of opaque four-byte descriptor
+records. Present component-3 streams are JSON animation queues with their full
+FDxx headers, pairs of u16 command words, FE00 queue terminators, and a final
+FFFF; resources 140 and 158 have no component 3. Component 4 is present in
+nine families and contains blend-register animation commands. Its semantic
+JSON distinguishes single-word blend-control writes, value/duration pairs,
+pair-index jumps, stream resets, and stops. The loader accepts both tag-0
+general-LZ and tag-1 palette-LZ forms, so each plan records the exact codec,
+token trace, and lookahead; families 12E, 134, 13A, 140, and 158 have no
+component 4. Component 5 is a JSON sequence of three-byte sparse records plus
+its FFFFFF terminator and zero alignment. All compressed plans retain trailing
+lookahead bytes and reproduce their named component spans exactly. Regenerate
+the series with `python3
+tools/export_map_component_series.py baserom.gba`.

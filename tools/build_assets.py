@@ -15,8 +15,8 @@ from skip_sprite_archive import build_archive as build_skip_sprite_archive
 from kind2_resource import encode_kind2
 from kind1_map_grid import build_grid
 from map_container_components import (
-    build_blend_animation, build_descriptors, build_metatiles, build_queues,
-    build_sparse,
+    build_blend_animation, build_descriptors, build_header, build_metatiles,
+    build_queues, build_sparse,
 )
 
 
@@ -94,6 +94,11 @@ def main():
     output = args.output if args.output.is_absolute() else ROOT / args.output
     output.mkdir(parents=True, exist_ok=True)
     entries = list(manifest.get("regions", []))
+    grid_addresses = {
+        str(grid["id"]).lower(): number(grid["address"])
+        for series in manifest.get("series", [])
+        if series.get("kind") == "golden-sun-map-grid-series"
+        for grid in series["grids"]}
     for series in manifest.get("series", []):
         if series.get("kind") == "golden-sun-zero-skip-sprite-series":
             palette = series["palette"]
@@ -166,6 +171,19 @@ def main():
             for family in series["families"]:
                 name = str(family["id"]).lower()
                 directory = f"assets/maps/resource_{name}/components"
+                header = family["header"]
+                container = number(header["address"])
+                offsets_check = {
+                    int(component["slot"]):
+                        number(component["address"]) - container
+                    for component in family["components"]}
+                offsets_check[2] = grid_addresses[name] - container
+                entries.append({
+                    "address": header["address"], "size": header["size"],
+                    "kind": "golden-sun-map-container-header",
+                    "source": f"{directory}/header.json",
+                    "offsets_check": offsets_check,
+                })
                 for component in family["components"]:
                     slot = int(component["slot"])
                     sources = {
@@ -302,6 +320,13 @@ def main():
                 "tokens": len(plan["tokens"]),
                 "component": plan["component"],
             }
+        elif kind == "golden-sun-map-container-header":
+            source = source_path(entry["source"])
+            built_data = build_header(source, entry["offsets_check"])
+            document = json.loads(source.read_text())
+            sources = [entry["source"]]
+            report = {"records": len(document["records"]),
+                      "component_offsets": document["component_offsets"]}
         elif kind == "golden-sun-map-sparse-cells":
             source = source_path(entry["source"])
             built_data = build_sparse(source)

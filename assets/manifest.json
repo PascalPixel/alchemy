@@ -415,61 +415,28 @@
           "palette": "assets/graphics/0800777c.gbapal.png"
         }
       ]
-    },
-    {
-      "address": "0x084c03d0",
-      "size": "0x190",
-      "kind": "golden-sun-general-lz",
-      "plan": "assets/graphics/resource_12e/palette.lz.json",
-      "components": [
-        {
-          "kind": "gba-palette",
-          "size": "0x1c0",
-          "source": "assets/graphics/resource_12e/palette.224.png"
-        }
-      ]
-    },
-    {
-      "address": "0x084c0560",
-      "size": "0x2b34",
-      "kind": "golden-sun-kind2-lz",
-      "plan": "assets/graphics/resource_12e/charblock1.kind2.json",
-      "components": [
-        {
-          "kind": "gba-4bpp-tiles",
-          "size": "0x4000",
-          "source": "assets/graphics/resource_12e/charblock1.4bpp.png"
-        }
-      ]
-    },
-    {
-      "address": "0x084c3094",
-      "size": "0x252c",
-      "kind": "golden-sun-kind2-lz",
-      "plan": "assets/graphics/resource_12e/charblock2.kind2.json",
-      "components": [
-        {
-          "kind": "gba-4bpp-tiles",
-          "size": "0x4000",
-          "source": "assets/graphics/resource_12e/charblock2.4bpp.png"
-        }
-      ]
-    },
-    {
-      "address": "0x084c55c0",
-      "size": "0x26dc",
-      "kind": "golden-sun-kind2-lz",
-      "plan": "assets/graphics/resource_12e/charblock3.kind2.json",
-      "components": [
-        {
-          "kind": "gba-4bpp-tiles",
-          "size": "0x4000",
-          "source": "assets/graphics/resource_12e/charblock3.4bpp.png"
-        }
-      ]
     }
   ],
   "series": [
+    {
+      "kind": "golden-sun-map-charblock-series",
+      "families": [
+        {"id":"12e","palette":{"address":"0x084c03d0","size":"0x190"},"charblocks":[{"address":"0x084c0560","size":"0x2b34"},{"address":"0x084c3094","size":"0x252c"},{"address":"0x084c55c0","size":"0x26dc"}]},
+        {"id":"134","palette":{"address":"0x084cecf4","size":"0x194"},"charblocks":[{"address":"0x084cee88","size":"0x2c54"},{"address":"0x084d1adc","size":"0x2608"},{"address":"0x084d40e4","size":"0x27e0"}]},
+        {"id":"13a","palette":{"address":"0x084db8cc","size":"0x180"},"charblocks":[{"address":"0x084dba4c","size":"0x27bc"},{"address":"0x084de208","size":"0x2648"},{"address":"0x084e0850","size":"0x26e4"}]},
+        {"id":"140","palette":{"address":"0x084e60fc","size":"0x194"},"charblocks":[{"address":"0x084e6290","size":"0x2840"},{"address":"0x084e8ad0","size":"0x1e18"},{"address":"0x084ea8e8","size":"0x26e0"}]},
+        {"id":"146","palette":{"address":"0x084f1224","size":"0x1ac"},"charblocks":[{"address":"0x084f13d0","size":"0x1a7c"},{"address":"0x084f2e4c","size":"0x2540"},{"address":"0x084f538c","size":"0x15fc"}]},
+        {"id":"14c","palette":{"address":"0x084fb068","size":"0x190"},"charblocks":[{"address":"0x084fb1f8","size":"0x1db0"},{"address":"0x084fcfa8","size":"0x256c"},{"address":"0x084ff514","size":"0x160c"}]},
+        {"id":"152","palette":{"address":"0x08502c00","size":"0x100"},"charblocks":[{"address":"0x08502d00","size":"0x13e4"},{"address":"0x085040e4","size":"0x1184"},{"address":"0x08505268","size":"0x988"}]},
+        {"id":"158","palette":{"address":"0x0850886c","size":"0xe4"},"charblocks":[{"address":"0x08508950","size":"0x11ec"},{"address":"0x08509b3c","size":"0x1c88"},{"address":"0x0850b7c4","size":"0x50c"}]},
+        {"id":"15e","palette":{"address":"0x0850d02c","size":"0x15c"},"charblocks":[{"address":"0x0850d188","size":"0x29d8"},{"address":"0x0850fb60","size":"0x1a4c"},{"address":"0x085115ac","size":"0x14ec"}]},
+        {"id":"164","palette":{"address":"0x08514054","size":"0x134"},"charblocks":[{"address":"0x08514188","size":"0x2480"},{"address":"0x08516608","size":"0xd7c"},{"address":"0x08517384","size":"0xae0"}]},
+        {"id":"169","palette":{"address":"0x08518cdc","size":"0x154"},"charblocks":[{"address":"0x08518e30","size":"0x1f80"},{"address":"0x0851adb0","size":"0x948"},{"address":"0x0851b6f8","size":"0xc4c"}]},
+        {"id":"170","palette":{"address":"0x0851deac","size":"0x114"},"charblocks":[{"address":"0x0851dfc0","size":"0x10bc"},{"address":"0x0851f07c","size":"0x90c"},{"address":"0x0851f988","size":"0x148"}]},
+        {"id":"176","palette":{"address":"0x08521b9c","size":"0x128"},"charblocks":[{"address":"0x08521cc4","size":"0x1888"},{"address":"0x0852354c","size":"0x1364"},{"address":"0x085248b0","size":"0xf40"}]},
+        {"id":"17c","palette":{"address":"0x08527938","size":"0x10c"},"charblocks":[{"address":"0x08527a44","size":"0x1fe4"},{"address":"0x08529a28","size":"0x1724"},{"address":"0x0852b14c","size":"0xf74"}]}
+      ]
+    },
     {
       "kind": "golden-sun-zero-skip-sprite-series",
       "palette": "assets/graphics/0800777c.gbapal.png",

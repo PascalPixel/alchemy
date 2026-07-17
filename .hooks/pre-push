@@ -1,3 +1,9 @@
 #!/bin/sh
-echo "pure: pushing this repository is disabled" >&2
-exit 1
+# Publishing is allowed as source only. Refuse to push if any tracked file is a
+# ROM image or a build/binary artifact derived from the private ROM.
+bad=$(git ls-files | grep -Ei '(^|/)baserom|\.(gba|rom|bin|elf|o|a)$')
+if [ -n "$bad" ]; then
+    echo "pure: refusing to push ROM images or binary artifacts:" >&2
+    echo "$bad" >&2
+    exit 1
+fi

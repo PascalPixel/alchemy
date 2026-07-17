@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exact semantic converters for map-container components 0, 1, 3, 4, and 5."""
+"""Exact semantic converters for map-container headers and components."""
 import json
 import struct
 from pathlib import Path
@@ -58,6 +58,55 @@ def encode_plan(decoded, plan):
             raise ValueError("tagged palette-LZ plan is missing tag 1")
         encoded = b"\x01" + encode_palette(decoded, plan["tokens"])
     return encoded + bytes.fromhex(plan.get("lookahead", ""))
+
+
+def export_header(container, source):
+    header = container[:0x3c]
+    if len(header) != 0x3c:
+        raise ValueError("map container is shorter than its 0x3c header")
+    document = {
+        "format": 1,
+        "parameters": list(header[:0x0c]),
+        "records": [list(struct.unpack_from("<4H", header, 0x0c + 8 * index))
+                    for index in range(3)],
+        "component_offsets": [
+            f"0x{value:x}"
+            for value in struct.unpack_from("<6I", header, 0x24)],
+    }
+    source.write_text(json.dumps(document, indent=2) + "\n")
+    if build_header(source) != header:
+        raise AssertionError("container header does not round-trip")
+    return [int(value, 0) for value in document["component_offsets"]]
+
+
+def build_header(source, offsets_check=None):
+    document = json.loads(source.read_text())
+    if document.get("format") != 1:
+        raise ValueError("unsupported map container header source")
+    parameters = document["parameters"]
+    records = document["records"]
+    offsets = [int(value, 0) for value in document["component_offsets"]]
+    if len(parameters) != 12 or any(not 0 <= int(value) <= 0xff
+                                    for value in parameters):
+        raise ValueError("container header requires twelve parameter bytes")
+    if (len(records) != 3 or
+            any(len(record) != 4 or any(not 0 <= int(value) <= 0xffff
+                                        for value in record)
+                for record in records)):
+        raise ValueError("container header requires three four-u16 records")
+    if len(offsets) != 6 or any(not 0 <= value <= 0xffffffff
+                                for value in offsets):
+        raise ValueError("container header requires six u32 offsets")
+    if offsets_check is not None:
+        for slot in range(6):
+            if offsets[slot] != int(offsets_check.get(slot, 0)):
+                raise ValueError(
+                    f"header offset {slot} differs from the claimed "
+                    "component span")
+    return (bytes(int(value) for value in parameters) +
+            b"".join(struct.pack("<4H", *(int(value) for value in record))
+                     for record in records) +
+            struct.pack("<6I", *offsets))
 
 
 def decode_metatiles(decoded):

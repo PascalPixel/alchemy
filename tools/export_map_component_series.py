@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Export exact semantic sources for map-container components 0, 1, 3, 4, and 5."""
+"""Export exact semantic sources for map-container headers and components."""
 import argparse
 import struct
 from pathlib import Path
 
 from export_map_charblock_series import BASES, ROM_BASE, pointer
 from map_container_components import (
-    export_blend_animation, export_descriptors, export_metatiles, export_queues,
-    export_sparse,
+    export_blend_animation, export_descriptors, export_header,
+    export_metatiles, export_queues, export_sparse,
 )
 
 
@@ -27,6 +27,9 @@ def main():
         offsets = struct.unpack_from("<6I", container, 0x24)
         directory = ROOT / f"assets/maps/resource_{base:x}/components"
         directory.mkdir(parents=True, exist_ok=True)
+        header_offsets = export_header(container, directory / "header.json")
+        if header_offsets != list(offsets) or header_offsets[0] != 0x3c:
+            raise ValueError("header offsets differ from the component table")
 
         def data(index):
             begin = offsets[index]
@@ -51,10 +54,12 @@ def main():
                 data(4), directory / "blend_animation.json",
                 directory / "blend_animation.lz.json")
         sparse = export_sparse(container[offsets[5]:], directory / "sparse_cells.json")
-        sizes = [len(data(0)), len(data(1)),
+        sizes = [0x3c, len(data(0)), len(data(1)),
                  len(data(3)) if offsets[3] else 0,
                  len(data(4)) if offsets[4] else 0,
                  len(container) - offsets[5]]
+        if sum(sizes) + len(data(2)) != len(container):
+            raise ValueError("header and components do not tile the container")
         claimed += sum(sizes)
         print(f"{base:x} mode={mode} metatiles={metatiles} "
               f"descriptors={descriptors} queues={queues} commands={commands} "

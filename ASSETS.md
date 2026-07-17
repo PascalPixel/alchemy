@@ -48,7 +48,11 @@ container, so the existing kind-1 grid claim and any still-opaque component
 remain non-overlapping. Metatile transform modes, optional queue and
 blend-animation components, compression tags and token choices,
 compressed-stream lookahead, and raw-list terminator padding are explicit
-source or plan fields rather than inferred build defaults.
+source or plan fields rather than inferred build defaults. The 0x3c-byte
+container header is its own exact-span claim: its six component offsets are
+explicit source fields that the build verifies against the family's sibling
+component and grid claims, and its remaining parameter and record fields
+stay opaque until their semantics are independently established.
 
 ## Map animation-source tile banks
 

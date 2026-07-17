@@ -194,6 +194,26 @@ def gba_graphics(data, bpp):
     }
 
 
+def gba_4bpp_banked(data):
+    """Read an 8bpp banked tile PNG and pack it back to 4bpp tile bytes.
+
+    The exporter stored each pixel as ``bank * 16 + index``; the low nibble is
+    the original 4bpp index, so masking it recovers the exact ROM tile data
+    regardless of which palette bank the pixel was displayed with.
+    """
+    width, height, pixels, _ = indexed_png(data)
+    if width % 8 or height % 8:
+        raise ValueError("banked tiles require multiple-of-eight dimensions")
+    tiles = bytearray()
+    for top in range(0, height, 8):
+        for left in range(0, width, 8):
+            tile = [pixels[(top + y) * width + left + x] & 0x0F
+                    for y in range(8) for x in range(8)]
+            tiles.extend(tile[i] | tile[i + 1] << 4 for i in range(0, 64, 2))
+    return bytes(tiles), {"width": width, "height": height, "bpp": 4,
+                          "tiles": width // 8 * (height // 8)}
+
+
 def vlq(data, cursor):
     value = 0
     for _ in range(4):

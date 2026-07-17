@@ -32,8 +32,11 @@ Camelot. Non-commercial.
   reconstructed as Thumb assembly (control-flow-walked disassembly with the
   pointer tables kept as data) plus the exact compression plan; the build
   assembles the overlay, re-compresses it, and checks the result byte-for-byte.
-- Map animation-source PNGs preserve sequential 4bpp tiles and virtual IDs;
-  they are not presented as composed artwork.
+- Map tile PNGs preserve sequential 4bpp tiles and virtual IDs; they are not
+  presented as composed artwork. They are stored 8bpp so each tile can carry
+  the palette bank the map assigns it (pixel = bank * 16 + index), which shows
+  true colors while the low nibble still round-trips to the exact 4bpp indices;
+  index 0 is marked transparent, as the hardware treats it.
 - `python3 tools/build_claimed.py` links and verifies every claimed C region together.
 - `python3 tools/build_asm.py` assembles and verifies every claimed `asm/` region.
 - `python3 tools/build_assets.py` encodes and verifies every claimed asset.

@@ -110,6 +110,7 @@ def main():
                     }],
                 })
         elif series.get("kind") == "golden-sun-map-charblock-series":
+            animation_layout = series.get("animation_layout")
             for family in series["families"]:
                 name = str(family["id"]).lower()
                 directory = f"assets/graphics/resource_{name}"
@@ -132,6 +133,19 @@ def main():
                         "components": [{
                             "kind": "gba-4bpp-tiles", "size": "0x4000",
                             "source": f"{directory}/charblock{bank}.4bpp.png",
+                        }],
+                    })
+                animation = family.get("animation_source")
+                if animation is not None:
+                    entries.append({
+                        "address": animation["address"],
+                        "size": animation["size"],
+                        "kind": "golden-sun-kind2-lz",
+                        "plan": f"{directory}/animation_source.kind2.json",
+                        "layout": animation_layout,
+                        "components": [{
+                            "kind": "gba-4bpp-tiles", "size": "0x4000",
+                            "source": f"{directory}/animation_source.4bpp.png",
                         }],
                     })
         elif series.get("kind") == "golden-sun-map-grid-series":
@@ -208,12 +222,17 @@ def main():
             decoded = b"".join(parts)
             plan_path = source_path(entry["plan"])
             plan = json.loads(plan_path.read_text())
+            expected_layout = entry.get("layout")
+            if (expected_layout is not None and
+                    plan.get("layout") != expected_layout):
+                raise ValueError("tag-2 plan layout differs from manifest")
             if len(decoded) != number(plan["decoded_size"]):
                 raise ValueError("decoded tag-2 components do not match plan")
             built_data = encode_kind2(decoded, plan)
             sources.append(entry["plan"])
             report = {"decoded_size": len(decoded),
                       "tokens": len(plan["tokens"]),
+                      "layout": plan.get("layout"),
                       "components": component_reports}
         elif kind == "golden-sun-kind1-grid":
             directory = source_path(entry["source"])

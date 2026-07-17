@@ -1,23 +1,48 @@
 #!/usr/bin/env python3
-"""Claim the six compressed Thumb code overlays as reconstructed assembly.
+"""Claim the compressed Thumb code overlays as reconstructed assembly.
 
-Each overlay is a tag-1 palette-LZ resource whose decompressed payload is EWRAM
-code. For each one this captures the exact compression plan, reconstructs the
-decoded payload as assembly (overlay_disasm), verifies the full compressed round
-trip against the ROM, and records a manifest series that build_assets rebuilds
-and byte-verifies.
+Resources in the 0x19-0x3cd table whose decompressed payload begins with the
+interworking dispatch stub `ldr r4,[pc,#0]; bx r4` (bytes 00 4c 20 47) are
+EWRAM-resident (base 0x02000000) code overlays, not graphics. Both encodings
+appear: tag-0 general-LZ and tag-1 palette-LZ. For each, capture the exact
+compression plan, reconstruct the decoded payload as assembly (overlay_disasm),
+verify the full compressed round trip against the ROM, and record a manifest
+series that build_assets rebuilds and byte-verifies. Overlays whose disassembly
+does not re-assemble byte-identically are left unclaimed rather than dumped.
 """
 import argparse
 import json
 from pathlib import Path
 
 from export_map_charblock_series import pointer
-from extract_resource import decode_palette_trace, encode_palette
+from extract_resource import (decode_general_trace, decode_palette_trace,
+                              encode_general, encode_palette)
 from overlay_disasm import build_overlay_source, assemble_overlay, OVERLAY_BASE
 
 ROOT = Path(__file__).resolve().parents[1]
 ROM_BASE = 0x08000000
-OVERLAYS = (0x372, 0x374, 0x378, 0x39d, 0x3b1, 0x3c6)
+STUB = b"\x00\x4c\x20\x47"
+FIRST, LAST = 0x19, 0x3cd
+
+
+def decode_stream(rom, start, end):
+    comp = rom[start:end]
+    tag = comp[0]
+    if tag == 1:
+        decoded, _, plan = decode_palette_trace(comp, 1, len(comp), 0x400000)
+        body = b"\x01" + encode_palette(decoded, plan)
+        codec = "golden-sun-tagged-palette-lz"
+    elif tag == 0:
+        decoded, _, plan = decode_general_trace(comp, 0, len(comp), 0x400000)
+        body = encode_general(decoded, plan)
+        codec = "golden-sun-general-lz"
+    else:
+        return None
+    # The encoder must reproduce the compressed stream exactly; the ROM may pad
+    # it to an alignment boundary, so any trailing bytes become the lookahead.
+    if body != comp[:len(body)]:
+        return None
+    return decoded, plan, codec, comp[len(body):]
 
 
 def main():
@@ -27,42 +52,55 @@ def main():
     rom = args.rom.read_bytes()
 
     resources = []
-    for resource in OVERLAYS:
+    skipped = []
+    for resource in range(FIRST, LAST + 1):
         start = pointer(rom, resource) - ROM_BASE
         end = pointer(rom, resource + 1) - ROM_BASE
-        stream = rom[start:end]
-        if stream[0] != 1:
-            raise SystemExit(f"resource 0x{resource:x} is not a tag-1 stream")
-        decoded, cursor, groups = decode_palette_trace(
-            stream, 1, len(stream), 0x400000)
-        payload = encode_palette(decoded, groups)
-        lookahead = stream[cursor:]
-        if b"\x01" + payload + lookahead != stream:
-            raise SystemExit(f"resource 0x{resource:x} plan is not byte-exact")
-
-        source = build_overlay_source(decoded, OVERLAY_BASE)
-        if assemble_overlay(source, OVERLAY_BASE) != decoded:
-            raise SystemExit(f"resource 0x{resource:x} source is not byte-exact")
+        if not 0 <= start < end <= len(rom):
+            continue
+        try:
+            decoded = decode_stream(rom, start, end)
+        except Exception:
+            continue
+        if decoded is None:
+            continue
+        payload, plan, codec, lookahead = decoded
+        if payload[:4] != STUB or len(payload) % 2:
+            continue
+        try:
+            source = build_overlay_source(payload, OVERLAY_BASE)
+            if assemble_overlay(source, OVERLAY_BASE) != payload:
+                raise ValueError("not byte-exact")
+        except Exception:
+            skipped.append(resource)
+            continue
 
         directory = ROOT / f"assets/code/resource_{resource:x}"
         directory.mkdir(parents=True, exist_ok=True)
         (directory / "overlay.s").write_text(source)
-        (directory / "stream.lz.json").write_text(json.dumps({
-            "format": 1,
-            "codec": "golden-sun-tagged-palette-lz",
-            "tag": 1,
-            "decoded_size": f"0x{len(decoded):x}",
-            "lookahead": lookahead.hex(),
-            "tokens": groups,
-        }, indent=2) + "\n")
+        document = {
+            "format": 1, "codec": codec,
+            "decoded_size": f"0x{len(payload):x}",
+            "lookahead": lookahead.hex(), "tokens": plan,
+        }
+        if codec == "golden-sun-tagged-palette-lz":
+            document["tag"] = 1
+        (directory / "stream.lz.json").write_text(
+            json.dumps(document, indent=2) + "\n")
         resources.append({
             "id": f"{resource:x}",
             "address": f"0x{start + ROM_BASE:08x}",
             "size": f"0x{end - start:x}",
-            "decoded_size": f"0x{len(decoded):x}",
+            "decoded_size": f"0x{len(payload):x}",
         })
-        print(f"resource 0x{resource:x}: decoded 0x{len(decoded):x}, "
-              f"compressed 0x{end - start:x}, exact")
+
+    # Drop stale directories for resources no longer claimed.
+    for directory in (ROOT / "assets/code").glob("resource_*"):
+        name = directory.name.rsplit("_", 1)[1]
+        if not any(entry["id"] == name for entry in resources):
+            for child in directory.iterdir():
+                child.unlink()
+            directory.rmdir()
 
     manifest_path = ROOT / "assets/manifest.json"
     manifest = json.loads(manifest_path.read_text())
@@ -75,7 +113,8 @@ def main():
     })
     manifest["series"] = series
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
-    print(f"overlays={len(resources)}")
+    print(f"overlays={len(resources)} skipped={len(skipped)} "
+          f"({', '.join(f'0x{r:x}' for r in skipped)})")
 
 
 if __name__ == "__main__":

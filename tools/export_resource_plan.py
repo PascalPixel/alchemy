@@ -47,7 +47,7 @@ def main():
             rom, start, end, args.max_output)
         encoded = encode_palette(decoded, tokens)
         codec = "golden-sun-palette-lz"
-    original = rom[start:cursor]
+    original = rom[start:end]
     if not original.startswith(encoded):
         raise ValueError("token replay differs before decoder look-ahead")
     lookahead = original[len(encoded):]

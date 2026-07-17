@@ -50,8 +50,12 @@ def tile_png(raw, bpp, columns, palette_colors=None):
             scanlines.extend(row)
     colors = 16 if bpp == 4 else 256
     if palette_colors is None:
-        palette_colors = [((index & 31) * 8, (index >> 5) * 8, 0)
-                          for index in range(colors)]
+        palette_colors = (
+            [(index * 16,) * 3 for index in range(16)]
+            if bpp == 4 else
+            [((index & 31) * 8, (index >> 5) * 8, 0)
+             for index in range(256)]
+        )
     if not 1 <= len(palette_colors) <= colors:
         raise ValueError("palette does not fit the requested tile depth")
     if max(pixels) >= len(palette_colors):

@@ -12,6 +12,7 @@ from wordstream import import_words
 from pairtable import import_pairs
 from f0_archive import build_archive as build_f0_archive
 from skip_sprite_archive import build_archive as build_skip_sprite_archive
+from kind2_resource import encode_kind2
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -151,6 +152,28 @@ def main():
                 else encode_palette)
             built_data = (encoder(decoded, plan["tokens"]) +
                           bytes.fromhex(plan.get("lookahead", "")))
+            sources.append(entry["plan"])
+            report = {"decoded_size": len(decoded),
+                      "tokens": len(plan["tokens"]),
+                      "components": component_reports}
+        elif kind == "golden-sun-kind2-lz":
+            parts = []
+            component_reports = []
+            sources = []
+            for component in entry["components"]:
+                data, details = build_component(component)
+                parts.append(data)
+                sources.append(component["source"])
+                component_reports.append({
+                    "kind": component["kind"],
+                    "source": component["source"], "details": details,
+                })
+            decoded = b"".join(parts)
+            plan_path = source_path(entry["plan"])
+            plan = json.loads(plan_path.read_text())
+            if len(decoded) != number(plan["decoded_size"]):
+                raise ValueError("decoded tag-2 components do not match plan")
+            built_data = encode_kind2(decoded, plan)
             sources.append(entry["plan"])
             report = {"decoded_size": len(decoded),
                       "tokens": len(plan["tokens"]),

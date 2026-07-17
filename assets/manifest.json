@@ -10403,6 +10403,76 @@
           "decoded_size": "0x3bbf"
         }
       ]
+    },
+    {
+      "kind": "golden-sun-standalone-tile-series",
+      "resources": [
+        {
+          "id": "1e7",
+          "address": "0x085bd20c",
+          "size": "0x2b84"
+        },
+        {
+          "id": "1e8",
+          "address": "0x085bfd90",
+          "size": "0x1d70"
+        },
+        {
+          "id": "1e9",
+          "address": "0x085c1b00",
+          "size": "0x1044"
+        },
+        {
+          "id": "28e",
+          "address": "0x086addd0",
+          "size": "0x2c44"
+        },
+        {
+          "id": "28f",
+          "address": "0x086b0a14",
+          "size": "0x23e4"
+        },
+        {
+          "id": "2d7",
+          "address": "0x086f911c",
+          "size": "0x1c94"
+        },
+        {
+          "id": "2d8",
+          "address": "0x086fadb0",
+          "size": "0x1898"
+        },
+        {
+          "id": "2d9",
+          "address": "0x086fc648",
+          "size": "0x1908"
+        },
+        {
+          "id": "309",
+          "address": "0x08737ad0",
+          "size": "0x2618"
+        },
+        {
+          "id": "30a",
+          "address": "0x0873a0e8",
+          "size": "0x27b0"
+        },
+        {
+          "id": "30c",
+          "address": "0x0873d904",
+          "size": "0x1a28"
+        },
+        {
+          "id": "333",
+          "address": "0x0876ab10",
+          "size": "0x29c"
+        },
+        {
+          "id": "334",
+          "address": "0x0876adac",
+          "size": "0x2168"
+        }
+      ]
     }
   ]
 }

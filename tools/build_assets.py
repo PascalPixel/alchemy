@@ -183,6 +183,19 @@ def main():
                         "source": f"{directory}/palette.224.png",
                     }],
                 })
+        elif series.get("kind") == "golden-sun-standalone-tile-series":
+            for resource in series["resources"]:
+                name = str(resource["id"]).lower()
+                directory = f"assets/graphics/resource_{name}"
+                entries.append({
+                    "address": resource["address"], "size": resource["size"],
+                    "kind": "golden-sun-kind2-lz",
+                    "plan": f"{directory}/tiles.kind2.json",
+                    "components": [{
+                        "kind": "gba-4bpp-tiles", "size": "0x4000",
+                        "source": f"{directory}/tiles.4bpp.png",
+                    }],
+                })
         elif series.get("kind") == "golden-sun-prefill-lz-series":
             for resource in series["resources"]:
                 name = str(resource["id"]).lower()

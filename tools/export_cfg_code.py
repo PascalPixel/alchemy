@@ -107,8 +107,12 @@ def main():
     def overlaps(low, high):
         return any(a < high and low < b for a, b in spans)
 
+    # Code lives below the resource pointer table at 0x08320000; everything at
+    # or above it is resource data whose thumb-looking bytes are false positives.
+    code_limit = 0x08320000
     prologues = sorted({f["entry"] for f in functions
                         if f.get("mode") == "thumb"
+                        and f["entry"] < code_limit
                         and (struct.unpack_from("<H", rom, f["entry"] - ROM_BASE)[0]
                              & 0xff00) == 0xb500})
     boundaries = sorted(set(prologues) | {b for _, b in spans})

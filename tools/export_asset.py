@@ -18,7 +18,7 @@ def chunk(kind, payload):
             struct.pack(">I", zlib.crc32(body) & 0xffffffff))
 
 
-def tile_png(raw, bpp, columns):
+def tile_png(raw, bpp, columns, palette_colors=None):
     unit = 32 if bpp == 4 else 64
     if not raw or len(raw) % unit:
         raise ValueError("tile data must contain whole nonempty tiles")
@@ -49,14 +49,19 @@ def tile_png(raw, bpp, columns):
         else:
             scanlines.extend(row)
     colors = 16 if bpp == 4 else 256
-    palette = bytearray()
-    for index in range(colors):
-        palette.extend(((index & 31) * 8, (index >> 5) * 8, 0))
+    if palette_colors is None:
+        palette_colors = [((index & 31) * 8, (index >> 5) * 8, 0)
+                          for index in range(colors)]
+    if not 1 <= len(palette_colors) <= colors:
+        raise ValueError("palette does not fit the requested tile depth")
+    if max(pixels) >= len(palette_colors):
+        raise ValueError("tile pixels reference a missing palette entry")
+    palette = bytes(channel for color in palette_colors for channel in color)
     png = (
         b"\x89PNG\r\n\x1a\n" +
         chunk(b"IHDR", struct.pack(">IIBBBBB",
                                     width, height, bpp, 3, 0, 0, 0)) +
-        chunk(b"PLTE", bytes(palette)) +
+        chunk(b"PLTE", palette) +
         chunk(b"IDAT", zlib.compress(bytes(scanlines), 9)) +
         chunk(b"IEND", b"")
     )
@@ -154,6 +159,16 @@ def self_test():
         tiles, _, _ = gba_graphics(png, bpp)
         if tiles != raw:
             raise AssertionError(f"{bpp}bpp tile round-trip failed")
+    colors = [((index & 31) << 3, (index >> 3 & 31) << 3,
+               (index >> 6 & 3) << 3) for index in range(256)]
+    raw = bytes((index * 53 + 7) & 255 for index in range(64 * 4))
+    png, _ = tile_png(raw, 8, 4, colors)
+    tiles, palette, _ = gba_graphics(png, 8)
+    expected_palette = b"".join(
+        struct.pack("<H", (red >> 3) | (green >> 3) << 5 |
+                    (blue >> 3) << 10) for red, green, blue in colors)
+    if tiles != raw or palette != expected_palette:
+        raise AssertionError("palette-correct tile round-trip failed")
     raw = b"".join(struct.pack("<H", (index * 109) & 0x7fff)
                    for index in range(224))
     png, _ = palette_png(raw)
@@ -194,11 +209,13 @@ def main():
     tiles.add_argument("--size", type=number, required=True)
     tiles.add_argument("--bpp", type=int, choices=(4, 8), required=True)
     tiles.add_argument("--columns", type=int, required=True)
+    tiles.add_argument("--palette", type=Path)
     tiles.add_argument("-o", "--output", type=Path, required=True)
     tile_file = commands.add_parser("tiles-file")
     tile_file.add_argument("input", type=Path)
     tile_file.add_argument("--bpp", type=int, choices=(4, 8), required=True)
     tile_file.add_argument("--columns", type=int, required=True)
+    tile_file.add_argument("--palette", type=Path)
     tile_file.add_argument("-o", "--output", type=Path, required=True)
     palette = commands.add_parser("palette-file")
     palette.add_argument("input", type=Path)
@@ -234,12 +251,17 @@ def main():
             parser.error("tile range is outside the ROM or empty")
         if args.output.resolve() == args.rom.resolve():
             parser.error("refusing to overwrite the input ROM")
-        png, report = tile_png(rom[start:end], args.bpp, args.columns)
+        colors = (indexed_png(args.palette.read_bytes())[3]
+                  if args.palette is not None else None)
+        png, report = tile_png(
+            rom[start:end], args.bpp, args.columns, colors)
     elif args.command == "tiles-file":
         if args.output.resolve() == args.input.resolve():
             parser.error("refusing to overwrite the input")
+        colors = (indexed_png(args.palette.read_bytes())[3]
+                  if args.palette is not None else None)
         png, report = tile_png(
-            args.input.read_bytes(), args.bpp, args.columns)
+            args.input.read_bytes(), args.bpp, args.columns, colors)
     elif args.command == "palette-file":
         if args.output.resolve() == args.input.resolve():
             parser.error("refusing to overwrite the input")

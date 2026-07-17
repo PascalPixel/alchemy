@@ -6,16 +6,19 @@ import struct
 from pathlib import Path
 
 from export_asset import palette_png
-from extract_resource import decode_general_trace, encode_general
+from extract_resource import (
+    decode_general_trace, decode_palette_trace, encode_general, encode_palette,
+)
 from kind2_resource import export_resource
 
 
 ROOT = Path(__file__).resolve().parents[1]
 ROM_BASE = 0x08000000
 TABLE = 0x08320000 - ROM_BASE
-BASES = (0x12e, 0x134, 0x13a, 0x140, 0x146, 0x14c, 0x152,
+BASES = (0x128, 0x12e, 0x134, 0x13a, 0x140, 0x146, 0x14c, 0x152,
          0x158, 0x15e, 0x164, 0x169, 0x170, 0x176, 0x17c)
 ANIMATION_BASES = tuple(base for base in BASES if base != 0x164)
+CONTAINER_BASES = tuple(sorted(BASES + (0x16f,)))
 ANIMATION_LAYOUT = {
     "format": "sequential-gba-4bpp-tiles",
     "purpose": "map-animation-source",
@@ -42,14 +45,20 @@ def span(rom, resource):
 
 def export_palette(rom, resource, directory):
     start, end = span(rom, resource)
-    decoded, _, tokens = decode_general_trace(rom, start, end, 0x1c0)
+    if rom[start] == 1:
+        decoded, _, tokens = decode_palette_trace(rom, start + 1, end, 0x1c0)
+        encoded = b"\x01" + encode_palette(decoded, tokens)
+        codec = {"codec": "golden-sun-tagged-palette-lz", "tag": 1}
+    else:
+        decoded, _, tokens = decode_general_trace(rom, start, end, 0x1c0)
+        encoded = encode_general(decoded, tokens)
+        codec = {"codec": "golden-sun-general-lz"}
     if len(decoded) != 0x1c0:
         raise ValueError(f"resource {resource:x} is not a 224-color palette")
-    encoded = encode_general(decoded, tokens)
     original = rom[start:end]
     if not original.startswith(encoded):
         raise ValueError(f"resource {resource:x} token replay differs")
-    plan = {"format": 1, "codec": "golden-sun-general-lz",
+    plan = {"format": 1, **codec,
             "decoded_size": len(decoded), "encoded_size": len(original),
             "tokens": tokens, "lookahead": original[len(encoded):].hex()}
     (directory / "palette.lz.json").write_text(

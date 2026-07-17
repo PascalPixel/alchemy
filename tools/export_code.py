@@ -26,14 +26,27 @@ HEADER = ("@ Reconstructed thumb disassembly of a discovered function. The ROM's
           "@ exists yet; build_asm.py verifies these bytes against the ROM.\n")
 
 
+def number(value):
+    return int(value, 0) if isinstance(value, str) else int(value)
+
+
 def claimed_spans():
     spans = []
-    for name in ("out/claimed/manifest.json", "out/asm/manifest.json"):
+    for name in ("out/claimed/manifest.json", "out/asm/manifest.json",
+                 "out/assets/manifest.json"):
         path = ROOT / name
         if path.exists():
             for region in json.loads(path.read_text())["regions"]:
-                spans.append((region["address"],
-                              region["address"] + region["size"]))
+                spans.append((number(region["address"]),
+                              number(region["address"]) + number(region["size"])))
+    # Never disassemble inside the asset/data region declared by the source
+    # manifest, even before it is built: those bytes are data, not code.
+    asset_manifest = ROOT / "assets/manifest.json"
+    if asset_manifest.exists():
+        document = json.loads(asset_manifest.read_text())
+        for region in document.get("regions", []):
+            spans.append((number(region["address"]),
+                          number(region["address"]) + number(region["size"])))
     return spans
 
 
@@ -131,6 +144,9 @@ def main():
     def claimed(address):
         return any(low <= address < high for low, high in spans)
 
+    def overlaps(low_bound, high_bound):
+        return any(low < high_bound and low_bound < high for low, high in spans)
+
     def next_boundary(address):
         import bisect
         index = bisect.bisect_right(starts, address)
@@ -141,8 +157,10 @@ def main():
     emitted = skipped = 0
     for function in functions:
         address = function["entry"]
+        if function.get("max_address") is None or function.get("min_address") != address:
+            continue
         size = function["max_address"] - address
-        if (function.get("mode") != "thumb" or function.get("min_address") != address
+        if (function.get("mode") != "thumb"
                 or size < 4 or size % 2 or claimed(address)
                 or address - ROM_BASE + size > len(rom)):
             continue
@@ -155,7 +173,7 @@ def main():
         except Exception:
             skipped += 1
             continue
-        if claimed(address + true_size - 1) or not round_trips(
+        if overlaps(address, address + true_size) or not round_trips(
                 rom, address, true_size, listing):
             skipped += 1
             continue

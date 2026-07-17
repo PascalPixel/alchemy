@@ -1,7 +1,6 @@
 {
   "format": 1,
   "codec": "golden-sun-tagged-palette-lz",
-  "tag": 1,
   "decoded_size": "0x7f84",
   "lookahead": "",
   "tokens": [
@@ -41560,5 +41559,6 @@
         ]
       ]
     ]
-  ]
+  ],
+  "tag": 1
 }

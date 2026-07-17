@@ -14,6 +14,7 @@ from f0_archive import build_archive as build_f0_archive
 from skip_sprite_archive import build_archive as build_skip_sprite_archive
 from kind2_resource import encode_kind2
 from kind1_map_grid import build_grid
+from overlay_disasm import assemble_overlay
 from map_container_components import (
     build_blend_animation, build_descriptors, build_header, build_metatiles,
     build_queues, build_sparse,
@@ -69,6 +70,10 @@ def build_component(entry):
         details = {"images": int(plan["images"]),
                    "width": int(plan["width"]),
                    "height": int(plan["height"])}
+    elif kind == "golden-sun-thumb-overlay":
+        base = number(entry["base"])
+        data = assemble_overlay(source, base)
+        details = {"base": f"0x{base:08x}", "bytes": len(data)}
     else:
         raise ValueError(f"unsupported asset component: {kind}")
     size = number(entry["size"])
@@ -168,6 +173,22 @@ def main():
                     "components": [{
                         "kind": "gba-palette", "size": "0x1c0",
                         "source": f"{directory}/palette.224.png",
+                    }],
+                })
+        elif series.get("kind") == "golden-sun-thumb-overlay-series":
+            base = series["base"]
+            for resource in series["resources"]:
+                name = str(resource["id"]).lower()
+                directory = f"assets/code/resource_{name}"
+                entries.append({
+                    "address": resource["address"], "size": resource["size"],
+                    "kind": "golden-sun-general-lz",
+                    "plan": f"{directory}/stream.lz.json",
+                    "components": [{
+                        "kind": "golden-sun-thumb-overlay",
+                        "size": resource["decoded_size"],
+                        "source": f"{directory}/overlay.s",
+                        "base": base,
                     }],
                 })
         elif series.get("kind") == "golden-sun-map-grid-series":

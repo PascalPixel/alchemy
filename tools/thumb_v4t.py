@@ -113,15 +113,21 @@ def disassemble(halfword, following, address):
             imm = h & 0x7f
             return f"{'sub' if (h >> 7) & 1 else 'add'} sp, #{imm * 4}", 2, None
         if 0xb400 <= h < 0xb600:                       # PUSH
+            if not (h & 0xff) and not (h & 0x100):     # empty list: invalid
+                return None
             extra = "lr" if h & 0x100 else None
             return f"push {_reglist(h & 0xff, extra)}", 2, None
         if 0xbc00 <= h < 0xbe00:                       # POP
+            if not (h & 0xff) and not (h & 0x100):     # empty list: invalid
+                return None
             extra = "pc" if h & 0x100 else None
             return f"pop {_reglist(h & 0xff, extra)}", 2, None
         return None                                    # bkpt/cbz/nop: not v4t
 
     if top == 0xc:                                     # multiple load/store
         rb, mask = (h >> 8) & 7, h & 0xff
+        if not mask:                                   # empty list: invalid
+            return None
         load = (h >> 11) & 1
         return f"{'ldmia' if load else 'stmia'} {LO[rb]}!, {_reglist(mask)}", 2, None
 

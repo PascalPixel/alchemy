@@ -115,13 +115,33 @@ def main():
     asm_dir = ROOT / "asm"
     asm_dir.mkdir(exist_ok=True)
     emitted = skipped = 0
-    for entry in prologues:
-        if overlaps(entry, entry + 2):
+    claimed = set()
+    for candidate in prologues:
+        if overlaps(candidate, candidate + 2):
             continue
-        discovery.add_seed(entry, "thumb", "cfg")
-        try:
-            discovery.walk_function(entry)
-        except Exception:
+        # Resolve the true function start: if the walk reaches below the seed
+        # (a mid-function false prologue), re-seed from that minimum as long as
+        # it is itself a push prologue, so the whole enclosing function is taken.
+        entry = candidate
+        for _ in range(8):
+            discovery.add_seed(entry, "thumb", "cfg")
+            try:
+                discovery.walk_function(entry)
+            except Exception:
+                entry = None
+                break
+            insns = sorted(discovery.functions[entry]["instructions"])
+            if not insns:
+                entry = None
+                break
+            low = insns[0]
+            if low == entry:
+                break
+            if (struct.unpack_from("<H", rom, low - ROM_BASE)[0] & 0xff00) != 0xb500:
+                entry = None
+                break
+            entry = low
+        if entry is None or entry in claimed:
             skipped += 1
             continue
         insns = sorted(discovery.functions[entry]["instructions"])
@@ -142,6 +162,7 @@ def main():
             continue
         (asm_dir / f"{entry:08x}.s").write_text(HEADER + listing)
         spans.append((entry, entry + size))
+        claimed.add(entry)
         emitted += 1
     print(f"cfg_functions={emitted} skipped={skipped}")
 

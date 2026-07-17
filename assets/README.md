@@ -96,3 +96,11 @@ The shared 224-color OBJ palette is the independently reconstructed range
 copied from ROM `0x0800779c`; each `preview.atlas.png` is a generated contact
 sheet. Regenerate the series with `python3 tools/export_sprite_series.py
 baserom.gba`.
+
+`graphics/resource_12e/` contains the map family's 224-color BG palette and
+three 0x4000-byte GBA charblocks as 4bpp tile PNGs. The loader copies resources
+130-132 to charblocks 1-3. Their tag-2 codec uses LSB-first LZ tokens and
+move-to-front-coded nibbles; payload-free token plans reproduce all compressed
+bits and alignment bytes exactly. Palette-bank selection belongs to the map
+data, so the tile PNGs intentionally use an index legend rather than claiming
+one of the fourteen possible 16-color banks.

@@ -11,22 +11,14 @@ typedef int bool;
 #define M2C_FIELD(base, type, offset) \
     (*(type)((u8 *)(base) + (offset)))
 
-s32 Func_080030f8(s32);
-s32 Func_08009080(s32, s32);
 s32 Func_0808ec14();
-s32 Func_080f9010(s32);
 
-void Func_0808ec50(void) {
+s32 Func_0808ed4c(void) {
     s32 temp_r0;
-    s32 temp_r0_2;
 
     temp_r0 = Func_0808ec14();
-    if (temp_r0 != -1) {
-        { s32 _mb = *(s32 *)0x03001EBC; s32 _mo = temp_r0 * 8; temp_r0_2 = *(s32 *)((s32)_mb + (s32)_mo + (s32)0x11C); }
-        if (temp_r0_2 != 0) {
-            Func_08009080(temp_r0_2, 5);
-        }
-        Func_080f9010(0x7D);
-        Func_080030f8(0xC);
+    if (temp_r0 == -1) {
+        return 0;
     }
+    { s32 _mb = *(s32 *)0x03001EBC; s32 _mo = temp_r0 * 8; return *(s32 *)((s32)_mb + (s32)_mo + (s32)0x11C); }
 }

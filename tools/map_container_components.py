@@ -110,7 +110,7 @@ def build_header(source, offsets_check=None):
 
 
 def decode_metatiles(decoded):
-    if not decoded or decoded[0] not in (1, 2) or (len(decoded) - 1) % 8:
+    if not decoded or decoded[0] not in (0, 1, 2) or (len(decoded) - 1) % 8:
         raise ValueError("invalid planar 2x2-metatile component")
     mode = decoded[0]
     count = (len(decoded) - 1) // 2
@@ -126,8 +126,8 @@ def decode_metatiles(decoded):
 
 
 def encode_metatiles(entries, mode):
-    if mode not in (1, 2) or not entries or len(entries) % 4:
-        raise ValueError("metatiles require mode 1/2 and groups of four u16 entries")
+    if mode not in (0, 1, 2) or not entries or len(entries) % 4:
+        raise ValueError("metatiles require mode 0/1/2 and groups of four u16 entries")
     planar = []
     previous = 0
     for value in entries:

@@ -4,7 +4,7 @@ import argparse
 import struct
 from pathlib import Path
 
-from export_map_charblock_series import BASES, ROM_BASE, pointer
+from export_map_charblock_series import CONTAINER_BASES, ROM_BASE, pointer
 from kind1_map_grid import export_grid
 
 
@@ -17,7 +17,7 @@ def main():
     args = parser.parse_args()
     rom = args.rom.read_bytes()
     count = total = 0
-    for base in BASES:
+    for base in CONTAINER_BASES:
         container = pointer(rom, base) - ROM_BASE
         offsets = struct.unpack_from("<6I", rom, container + 0x24)
         begin = offsets[2]

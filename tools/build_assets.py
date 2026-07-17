@@ -249,15 +249,21 @@ def main():
             plan_path = source_path(entry["plan"])
             plan = json.loads(plan_path.read_text())
             if plan.get("format") != 1 or plan.get("codec") not in (
-                    "golden-sun-general-lz", "golden-sun-palette-lz"):
+                    "golden-sun-general-lz", "golden-sun-palette-lz",
+                    "golden-sun-tagged-palette-lz"):
                 raise ValueError("unsupported custom-LZ plan")
             if len(decoded) != number(plan["decoded_size"]):
                 raise ValueError("decoded components do not match plan size")
-            encoder = (
-                encode_general if plan["codec"] == "golden-sun-general-lz"
-                else encode_palette)
-            built_data = (encoder(decoded, plan["tokens"]) +
-                          bytes.fromhex(plan.get("lookahead", "")))
+            if plan["codec"] == "golden-sun-general-lz":
+                built_data = encode_general(decoded, plan["tokens"])
+            else:
+                built_data = encode_palette(decoded, plan["tokens"])
+                if plan["codec"] == "golden-sun-tagged-palette-lz":
+                    if int(plan.get("tag", -1)) != 1:
+                        raise ValueError(
+                            "tagged palette-LZ plan is missing tag 1")
+                    built_data = b"\x01" + built_data
+            built_data += bytes.fromhex(plan.get("lookahead", ""))
             sources.append(entry["plan"])
             report = {"decoded_size": len(decoded),
                       "tokens": len(plan["tokens"]),

@@ -9,3 +9,4 @@ out/
 *.o
 *.a
 *.log
+__pycache__/

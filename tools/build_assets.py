@@ -157,6 +157,19 @@ def main():
                             "source": f"{directory}/animation_source.4bpp.png",
                         }],
                     })
+        elif series.get("kind") == "golden-sun-standalone-palette-series":
+            for palette in series["palettes"]:
+                name = str(palette["id"]).lower()
+                directory = f"assets/graphics/resource_{name}"
+                entries.append({
+                    "address": palette["address"], "size": palette["size"],
+                    "kind": "golden-sun-general-lz",
+                    "plan": f"{directory}/palette.lz.json",
+                    "components": [{
+                        "kind": "gba-palette", "size": "0x1c0",
+                        "source": f"{directory}/palette.224.png",
+                    }],
+                })
         elif series.get("kind") == "golden-sun-map-grid-series":
             for grid in series["grids"]:
                 name = str(grid["id"]).lower()

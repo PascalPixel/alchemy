@@ -28,6 +28,10 @@ Camelot. Non-commercial.
   have an asm-free C match. These regions are reconstructed but not yet
   decompiled; each becomes a `src/` C file once its C builds byte-identically.
 - `assets/` contains only source assets with exact ROM ranges and encoders.
+- `assets/code/` holds the EWRAM code overlays that ship compressed in the ROM,
+  reconstructed as Thumb assembly (control-flow-walked disassembly with the
+  pointer tables kept as data) plus the exact compression plan; the build
+  assembles the overlay, re-compresses it, and checks the result byte-for-byte.
 - Map animation-source PNGs preserve sequential 4bpp tiles and virtual IDs;
   they are not presented as composed artwork.
 - `python3 tools/build_claimed.py` links and verifies every claimed C region together.

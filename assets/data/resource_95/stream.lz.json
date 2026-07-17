@@ -2,6 +2,7 @@
   "format": 1,
   "codec": "golden-sun-general-lz-prefill",
   "prefill": "0x1000",
+  "header": 1,
   "decoded_size": "0x1830",
   "lookahead": "1a",
   "tokens": [

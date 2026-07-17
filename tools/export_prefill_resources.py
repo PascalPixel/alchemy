@@ -42,6 +42,18 @@ def claimed_mask(rom):
             for index in range(start, start + number(region["size"])):
                 if 0 <= index < len(mask):
                     mask[index] = 1
+    # This exporter regenerates its own series, so treat its previous claims as
+    # unclaimed rather than skipping them as if another exporter owned them.
+    manifest = ROOT / "assets/manifest.json"
+    if manifest.exists():
+        for series in json.loads(manifest.read_text()).get("series", []):
+            if series.get("kind") != "golden-sun-prefill-lz-series":
+                continue
+            for resource in series["resources"]:
+                start = number(resource["address"]) - ROM_BASE
+                for index in range(start, start + number(resource["size"])):
+                    if 0 <= index < len(mask):
+                        mask[index] = 0
     return mask
 
 
@@ -59,22 +71,27 @@ def main():
         if not 0 <= start < end <= len(rom) or mask[start]:
             continue
         compressed = rom[start:end]
-        if compressed[0] != 0:
-            continue
-        # Only the resources a bare general-LZ decode cannot handle.
+        # Skip resources a bare general-LZ decode already handles.
         try:
             decode_general_trace(compressed, 0, len(compressed), 0x40000)
             continue
         except Exception:
             pass
-        try:
-            decoded, _, tokens = decode_general_prefill_trace(
-                compressed, 0, len(compressed), 0x40000, PREFILL)
-            rebuilt = encode_general_prefill(decoded, tokens, PREFILL)
-        except Exception:
+        # Try the usual kind-zero header and the headerless variant.
+        decoded = tokens = header = None
+        for candidate in (1, 0):
+            try:
+                payload, _, plan = decode_general_prefill_trace(
+                    compressed, 0, len(compressed), 0x40000, PREFILL, candidate)
+                rebuilt = encode_general_prefill(payload, plan, PREFILL, candidate)
+            except Exception:
+                continue
+            if rebuilt == compressed[:len(rebuilt)] and len(compressed) - len(rebuilt) <= 8:
+                decoded, tokens, header = payload, plan, candidate
+                break
+        if decoded is None:
             continue
-        if rebuilt != compressed[:len(rebuilt)] or len(compressed) - len(rebuilt) > 8:
-            continue
+        rebuilt = encode_general_prefill(decoded, tokens, PREFILL, header)
 
         directory = ROOT / f"assets/data/resource_{resource:x}"
         directory.mkdir(parents=True, exist_ok=True)
@@ -83,7 +100,7 @@ def main():
         (directory / "content.png").write_bytes(image)
         (directory / "stream.lz.json").write_text(json.dumps({
             "format": 1, "codec": "golden-sun-general-lz-prefill",
-            "prefill": f"0x{PREFILL:x}",
+            "prefill": f"0x{PREFILL:x}", "header": header,
             "decoded_size": f"0x{len(decoded):x}",
             "lookahead": compressed[len(rebuilt):].hex(),
             "tokens": tokens,

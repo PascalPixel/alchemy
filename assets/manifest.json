@@ -9666,6 +9666,12 @@
           "decoded_size": "0x2ffc"
         },
         {
+          "id": "39c",
+          "address": "0x087ac2d8",
+          "size": "0x4128",
+          "decoded_size": "0x7018"
+        },
+        {
           "id": "39d",
           "address": "0x087b0400",
           "size": "0x1c78",
@@ -9706,6 +9712,18 @@
           "address": "0x087b8cb0",
           "size": "0x1004",
           "decoded_size": "0x1eb0"
+        },
+        {
+          "id": "3a4",
+          "address": "0x087b9cb4",
+          "size": "0x29dc",
+          "decoded_size": "0x5238"
+        },
+        {
+          "id": "3a5",
+          "address": "0x087bc690",
+          "size": "0x1820",
+          "decoded_size": "0x26c2"
         },
         {
           "id": "3a6",

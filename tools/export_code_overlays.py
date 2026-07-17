@@ -17,7 +17,9 @@ from pathlib import Path
 from export_map_charblock_series import pointer
 from extract_resource import (decode_general_trace, decode_palette_trace,
                               encode_general, encode_palette)
-from overlay_disasm import build_overlay_source, assemble_overlay, OVERLAY_BASE
+from overlay_disasm import (build_overlay_source, assemble_overlay,
+                            OVERLAY_BASE, _reachable)
+from region_disasm import build_region
 
 ROOT = Path(__file__).resolve().parents[1]
 ROM_BASE = 0x08000000
@@ -45,6 +47,18 @@ def decode_stream(rom, start, end):
     return decoded, plan, codec, comp[len(body):]
 
 
+def _objdump_overlay(payload):
+    return build_overlay_source(payload, OVERLAY_BASE)
+
+
+def _v4t_overlay(payload):
+    instructions = _reachable(payload, OVERLAY_BASE)
+    source, _ = build_region(None, OVERLAY_BASE, OVERLAY_BASE + len(payload),
+                             instructions, {}, data=payload,
+                             data_base=OVERLAY_BASE, label="Overlay")
+    return source
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("rom", type=Path, nargs="?", default="baserom.gba")
@@ -67,11 +81,16 @@ def main():
         payload, plan, codec, lookahead = decoded
         if payload[:4] != STUB or len(payload) % 2:
             continue
-        try:
-            source = build_overlay_source(payload, OVERLAY_BASE)
-            if assemble_overlay(source, OVERLAY_BASE) != payload:
-                raise ValueError("not byte-exact")
-        except Exception:
+        source = None
+        for disassemble in (_objdump_overlay, _v4t_overlay):
+            try:
+                candidate = disassemble(payload)
+                if assemble_overlay(candidate, OVERLAY_BASE) == payload:
+                    source = candidate
+                    break
+            except Exception:
+                continue
+        if source is None:
             skipped.append(resource)
             continue
 

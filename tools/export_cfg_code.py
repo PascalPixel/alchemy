@@ -76,12 +76,13 @@ def round_trips(rom, address, size, listing):
         return len(built) == size and built == rom[address - ROM_BASE:address - ROM_BASE + size]
 
 
-def disassemble_with_pool(rom, entry, code_end, ceiling):
+def disassemble_with_pool(rom, entry, code_end, ceiling, tables):
     size = code_end - entry
     while True:
         data = rom[entry - ROM_BASE:entry - ROM_BASE + size]
+        words = [w for w in tables if entry <= w < entry + size]
         try:
-            return disassemble(data, entry), size
+            return disassemble(data, entry, data_words=words), size
         except ValueError as error:
             match = POOL_RANGE.search(str(error))
             if not match:
@@ -149,11 +150,17 @@ def main():
             skipped += 1
             continue
         code_end = insns[-1] + discovery.instructions[insns[-1]]["size"]
+        # Jump-table words inside this function are data (address lists), emit
+        # them as .4byte rather than decoding the addresses as instructions.
+        tables = set()
+        for table, targets in discovery.jump_tables.items():
+            if entry <= table < code_end + 0x400:
+                tables.update(table + 4 * i for i in range(len(targets)))
         from bisect import bisect_right
         ceiling = boundaries[bisect_right(boundaries, entry)] if bisect_right(
             boundaries, entry) < len(boundaries) else ROM_BASE + len(rom)
         listing, size = disassemble_with_pool(rom, entry, code_end,
-                                              min(ceiling, entry + 0x2000))
+                                              min(ceiling, entry + 0x2000), tables)
         if listing is None or overlaps(entry, entry + size):
             skipped += 1
             continue

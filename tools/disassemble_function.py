@@ -40,13 +40,19 @@ def objdump(data, address):
     return rows
 
 
-def disassemble(data, address, symbols=None):
+def disassemble(data, address, symbols=None, data_words=None):
     if len(data) % 2:
         raise ValueError("thumb function has an odd byte length")
     symbols = symbols or {}
     rows = objdump(data, address)
     pool_words = set()
+    for word in (data_words or ()):
+        if word % 4 or not address <= word < address + len(data):
+            raise ValueError(f"data word 0x{word:08x} is out of range")
+        pool_words.add(word)
     for addr, (_, mnemonic) in rows.items():
+        if addr in {w + s for w in pool_words for s in range(4)}:
+            continue
         found = LDR_PC.search(mnemonic)
         if found:
             target = (addr + 4 & ~3) + int(found.group(1))

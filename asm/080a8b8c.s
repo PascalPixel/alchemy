@@ -1,0 +1,84 @@
+@ Reconstructed thumb disassembly of a code-gap function, bounded by a
+@ control-flow walk. Verified byte-identical by build_asm.py.
+.syntax unified
+	.thumb
+	.global Func_080a8b8c
+	.thumb_func
+Func_080a8b8c:
+	push	{r5, r6, r7, lr}
+	mov	r7, fp
+	mov	r6, sl
+	mov	r5, r9
+	push	{r5, r6, r7}
+	mov	r7, r8
+	push	{r7}
+	ldr	r3, [pc, #140]
+	movs	r2, #134
+	ldr	r6, [r3, #0]
+	lsls	r2, r2, #2
+	mov	sl, r2
+	adds	r5, r1, #0
+	adds	r3, r6, #2
+	add	r5, sl
+	mov	r9, r0
+	ldrb	r0, [r3, r5]
+	mov	r8, r3
+	bl	Func_08077008
+	mov	r2, sl
+	ldrb	r7, [r6, r2]
+	mov	r2, r8
+	ldrb	r3, [r2, r5]
+	movs	r2, #152
+	lsls	r2, r2, #2
+	adds	r3, r3, r2
+	ldrsb	r6, [r6, r3]
+	adds	r3, r6, #1
+	mov	fp, r0
+	cmp	r3, r7
+	ble.n	.L0
+	subs	r6, r7, #1
+.L0:
+	cmp	r7, #0
+	bne.n	.L1
+	movs	r6, #0
+.L1:
+	movs	r1, #5
+	adds	r0, r6, #0
+	bl	Func_080022ec
+	movs	r1, #5
+	mov	sl, r0
+	adds	r0, r6, #0
+	bl	Func_080022fc
+	movs	r1, #5
+	mov	r8, r0
+	adds	r0, r7, #0
+	bl	Func_080022ec
+	movs	r1, #5
+	adds	r5, r0, #0
+	adds	r0, r7, #0
+	bl	Func_080022fc
+	cmp	r0, #0
+	beq.n	.L2
+	adds	r5, #1
+.L2:
+	mov	r2, r9
+	mov	r3, fp
+	str	r3, [r2, #0]
+	mov	r3, sl
+	str	r3, [r2, #8]
+	mov	r3, r8
+	str	r5, [r2, #12]
+	str	r3, [r2, #16]
+	str	r7, [r2, #20]
+	str	r6, [r2, #24]
+	movs	r0, #1
+	pop	{r3, r5, r6, r7}
+	mov	r8, r3
+	mov	r9, r5
+	mov	sl, r6
+	mov	fp, r7
+	pop	{r5, r6, r7}
+	pop	{r1}
+	bx	r1
+	movs	r0, r0
+	.4byte 0x03001f2c

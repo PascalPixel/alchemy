@@ -29,16 +29,19 @@ def number(value):
     return int(value, 0) if isinstance(value, str) else int(value)
 
 
-def natural_end(rom, entry, cap=0x1000):
-    """Linear thumb decode from entry to the end of the function.
+def end_candidates(rom, entry, cap=0x2000):
+    """Linear thumb decode from entry, yielding candidate function-end sizes.
 
-    Tracks pc-relative pool words as data, follows the 32-bit BL width, and ends
-    just past the first return that is followed by the function's pool and then a
-    new push prologue or alignment zero. Returns the byte size or None.
+    Each candidate is a position just past a return instruction plus the pool
+    words the function references so far. Tracks pc-relative pool words as data
+    and follows the 32-bit BL width. The caller round-trips candidates
+    largest-first to pick the true end. Stops early if it hits a word that is
+    neither a decodable position nor a tracked pool (a strong data signal).
     """
     off = entry - ROM_BASE
     pos = 0
     pools = set()
+    candidates = []
     while pos < cap and off + pos + 1 < len(rom):
         address = entry + pos
         if address in pools:
@@ -47,7 +50,7 @@ def natural_end(rom, entry, cap=0x1000):
         word = struct.unpack_from("<H", rom, off + pos)[0]
         if (word & 0xf800) == 0x4800:
             target = ((address + 4) & ~3) + ((word & 0xff) << 2)
-            if target >= entry:
+            if entry <= target < entry + cap:
                 pools.add(target)
         if ((word & 0xf800) == 0xf000 and off + pos + 3 < len(rom)
                 and (struct.unpack_from("<H", rom, off + pos + 2)[0] & 0xf800) == 0xf800):
@@ -60,12 +63,8 @@ def natural_end(rom, entry, cap=0x1000):
             end = pos
             while (entry + end) in pools:
                 end += 4
-            if off + end + 1 >= len(rom):
-                return end
-            nxt = struct.unpack_from("<H", rom, off + end)[0]
-            if (nxt & 0xff00) == 0xb500 or nxt == 0x0000 or (entry + end) % 4 == 0:
-                return end
-    return None
+            candidates.append(end)
+    return sorted(set(candidates), reverse=True)[:8]
 
 
 def claimed_spans():
@@ -138,20 +137,22 @@ def main():
     for index, entry in enumerate(prologues):
         if overlaps(entry, entry + 2):
             continue
-        nxt = prologues[index + 1] if index + 1 < len(prologues) else entry + 0x1000
-        size = natural_end(rom, entry, cap=min(nxt - entry, 0x1000))
-        if size is None or size < 4 or overlaps(entry, entry + size):
+        chosen = None
+        for size in end_candidates(rom, entry):
+            if size < 4 or overlaps(entry, entry + size):
+                continue
+            data = rom[entry - ROM_BASE:entry - ROM_BASE + size]
+            try:
+                listing = disassemble(data, entry)
+            except Exception:
+                continue
+            if round_trips(rom, entry, size, listing):
+                chosen = (size, listing)
+                break
+        if chosen is None:
             skipped += 1
             continue
-        data = rom[entry - ROM_BASE:entry - ROM_BASE + size]
-        try:
-            listing = disassemble(data, entry)
-        except Exception:
-            skipped += 1
-            continue
-        if not round_trips(rom, entry, size, listing):
-            skipped += 1
-            continue
+        size, listing = chosen
         (asm_dir / f"{entry:08x}.s").write_text(HEADER + listing)
         spans.append((entry, entry + size))
         emitted += 1

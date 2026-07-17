@@ -6,13 +6,19 @@ Local reconstruction of Golden Sun from one private ROM.
 - `toolchain/gcc296/` is the native code-generation oracle.
 - Host Python and ARM binutils provide generic analysis.
 - `tools/` contains independent analysis and matching code.
-- `src/` contains only byte-verified reconstructed C.
+- `src/` contains only byte-verified reconstructed C, with no inline `asm`.
+- `asm/` contains byte-verified reconstruction assembly for regions the approved
+  compiler cannot emit (the ROM-start dispatch stubs, the runtime-library
+  interworking thunks, the BIOS-call wrappers) and for functions that do not yet
+  have an asm-free C match. These regions are reconstructed but not yet
+  decompiled; each becomes a `src/` C file once its C builds byte-identically.
 - `assets/` contains only source assets with exact ROM ranges and encoders.
 - Map animation-source PNGs preserve sequential 4bpp tiles and virtual IDs;
   they are not presented as composed artwork.
-- `python3 tools/build_claimed.py` links and verifies every claimed source region together.
+- `python3 tools/build_claimed.py` links and verifies every claimed C region together.
+- `python3 tools/build_asm.py` assembles and verifies every claimed `asm/` region.
 - `python3 tools/build_assets.py` encodes and verifies every claimed asset.
 - `python3 tools/build_full.py` verifies the combined byte-identical private rebuild.
 
 Private inputs and generated artifacts are ignored; pushing is disabled.
-Complete means these tracked sources and generic tools, given only the private ROM and approved compiler, independently build a byte-identical full ROM; every decompiled region comes from compiled reconstructed source.
+Complete means these tracked sources and generic tools, given only the private ROM and approved compiler, independently build a byte-identical full ROM; every claimed region comes from reconstructed C or assembly, never copied ROM bytes. Full decompilation is the further goal of retiring every `asm/` region except the genuinely compiler-unproducible stubs.

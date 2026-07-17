@@ -1,0 +1,8 @@
+{
+  "format": 1,
+  "terminators": [
+    "0xfe00",
+    "0xffff"
+  ],
+  "queues": []
+}

@@ -53,7 +53,7 @@ def main():
             }, separators=(",", ":")) + "\n")
             image_count = export(
                 decoded, directory / "images", directory / "archive.json",
-                palette, directory / "preview.atlas.png",
+                palette, None,
                 int(resource["width"]), int(resource["height"]))
             count += 1
             images += image_count

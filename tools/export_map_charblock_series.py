@@ -16,9 +16,11 @@ ROOT = Path(__file__).resolve().parents[1]
 ROM_BASE = 0x08000000
 TABLE = 0x08320000 - ROM_BASE
 BASES = (0x128, 0x12e, 0x134, 0x13a, 0x140, 0x146, 0x14c, 0x152,
-         0x158, 0x15e, 0x164, 0x169, 0x170, 0x176, 0x17c)
+         0x158, 0x15e, 0x164, 0x169, 0x170, 0x176, 0x17c,
+         0x184, 0x18a, 0x190, 0x196, 0x19c, 0x1a2)
+PALETTE_BASES = (0x182,)
 ANIMATION_BASES = tuple(base for base in BASES if base != 0x164)
-CONTAINER_BASES = tuple(sorted(BASES + (0x16f,)))
+CONTAINER_BASES = tuple(sorted(BASES + PALETTE_BASES + (0x16f,)))
 ANIMATION_LAYOUT = {
     "format": "sequential-gba-4bpp-tiles",
     "purpose": "map-animation-source",
@@ -72,11 +74,15 @@ def main():
     parser.add_argument("rom", type=Path)
     args = parser.parse_args()
     rom = args.rom.read_bytes()
-    count = 0
-    for base in BASES:
+    count = assets = 0
+    for base in sorted(BASES + PALETTE_BASES):
         directory = ROOT / f"assets/graphics/resource_{base:x}"
         directory.mkdir(parents=True, exist_ok=True)
         export_palette(rom, base + 1, directory)
+        count += 1
+        assets += 1
+        if base in PALETTE_BASES:
+            continue
         for bank in range(3):
             resource = base + 2 + bank
             start, end = span(rom, resource)
@@ -85,6 +91,7 @@ def main():
                 directory / f"charblock{bank + 1}.kind2.json", 4, 16)
             if decoded != 0x4000:
                 raise ValueError(f"resource {resource:x} is not one charblock")
+        assets += 3
         if base in ANIMATION_BASES:
             resource = base + 5
             start, end = span(rom, resource)
@@ -95,8 +102,8 @@ def main():
             if decoded != 0x4000:
                 raise ValueError(
                     f"resource {resource:x} is not a 512-tile animation bank")
-        count += 1
-    print(f"families={count} assets={count * 4 + len(ANIMATION_BASES)}")
+            assets += 1
+    print(f"families={count} assets={assets}")
 
 
 if __name__ == "__main__":

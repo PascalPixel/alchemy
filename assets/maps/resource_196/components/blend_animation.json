@@ -1,0 +1,9 @@
+{
+  "format": 1,
+  "word_size": 2,
+  "commands": [
+    {
+      "op": "reset"
+    }
+  ]
+}

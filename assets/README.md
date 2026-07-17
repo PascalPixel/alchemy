@@ -27,12 +27,16 @@ dynamic states after applying the real palette, 32x32 tilemap, tile flips, and
 the runtime `0x340`-byte dynamic upload. Regenerate it with
 `python3 tools/render_resource_19.py -o assets/graphics/resource_19/preview.frames.png`.
 
-`graphics/resources_d8_e3/` contains two alternative six-resource graphics
-sets selected by a ROM-derived map condition. The palette streams use BGR555
-PNG sources. Four decoded banks per set are hardware-proven VRAM inputs; the
-last is a related RAM input whose downstream format is not yet established.
-Until tile depth is proven, these ten decoded banks use format-neutral indexed
-PNGs: one pixel index preserves one byte without asserting 4bpp or 8bpp.
+`graphics/resources_d8_e3/` contains two alternative six-resource affine
+background sets selected by a ROM-derived map condition. D8/DE are 224-color
+BGR555 BG palettes. D9-DC and DF-E2 are palette-correct 8bpp tile sheets: the
+loader fills affine BG3 charblock 2 and BG2 charblock 3 with their paired
+128-tile halves. DD/E3 are 256-tile streamed BG3 banks shown as 16x16 tile
+atlases. The runtime addresses them as virtual tile IDs 0x200-0x2ff, then a
+four-u16 source/count/destination/delay command stream reindexes selected tiles
+into BG3 charblock 2;
+the BG3 affine map is generated separately, so no full-scene composition is
+claimed from these banks alone.
 
 `maps/world_map/` reconstructs resources D4-D7 as one independently traced map
 subsystem. D4 is an offset-table archive of 640 compressed 16x16 chunks. Each

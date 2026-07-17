@@ -19,6 +19,14 @@ Local reconstruction of Golden Sun from one private ROM.
 - `python3 tools/build_asm.py` assembles and verifies every claimed `asm/` region.
 - `python3 tools/build_assets.py` encodes and verifies every claimed asset.
 - `python3 tools/build_full.py` verifies the combined byte-identical private rebuild.
+- `python3 tools/build_rom.py` assembles the ROM the pret way: a generated GNU
+  linker script (`ld_script.ld`) lays out every claimed region in address order
+  and fills each not-yet-reconstructed gap with `.incbin "baserom.gba", offset,
+  size` (the skeleton that shrinks as regions are claimed), linked with
+  `arm-none-eabi-ld` to a byte-identical ELF. A pure link of compiled objects at
+  fixed addresses needs the ROM's original compiler (gcc pads sections
+  differently), so each region contributes its verified bytes; the linker-script
+  and incbin-skeleton structure follows pret/pokeemerald, the golden reference.
 
 Private inputs and generated artifacts are ignored; pushing is disabled.
 Complete means these tracked sources and generic tools, given only the private ROM and approved compiler, independently build a byte-identical full ROM; every claimed region comes from reconstructed C or assembly, never copied ROM bytes. Full decompilation is the further goal of retiring every `asm/` region except the genuinely compiler-unproducible stubs.

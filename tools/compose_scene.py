@@ -64,13 +64,19 @@ def parse_metatiles(path):
     return [entries[i:i + 4] for i in range(0, len(entries), 4)]
 
 
-def cell_indices(grid_dir):
-    # The metatile index is 9 bits: value_low plus bit 0 of value_high. The
-    # upper bits of value_high (0x40/0x80/0xc0) are layer/priority attributes,
-    # not index bits, so they are masked off here.
+def cell_indices(grid_dir, metatile_count):
+    # A cell's metatile index is value_low plus the low bits of value_high. Only
+    # ceil(log2(metatile_count)) - 8 high bits are index; the remaining high bits
+    # (e.g. 0x40/0x80 seen in the wild) are layer/priority attributes. Deriving
+    # the width from the actual metatile count is essential: maps range from ~492
+    # metatiles (1 high bit) to ~2250 (4 high bits), so a fixed mask mis-decodes
+    # every cell whose index exceeds the assumed width.
+    import math
+    high_bits = max(0, math.ceil(math.log2(metatile_count)) - 8) if metatile_count > 1 else 0
+    high_mask = (1 << high_bits) - 1
     low = Image.open(grid_dir / "value_low.png").convert("P").load()
     high = Image.open(grid_dir / "value_high.png").convert("P").load()
-    return [[low[x, y] | ((high[x, y] & 1) << 8) for x in range(GRID)]
+    return [[low[x, y] | ((high[x, y] & high_mask) << 8) for x in range(GRID)]
             for y in range(GRID)]
 
 
@@ -87,7 +93,7 @@ def compose(map_dir, gfx_dir, shared_tiles=None):
     palette_path = next(gfx_dir.glob("palette.*.png"))
     palette = load_palette(palette_path)
     metatiles = parse_metatiles(map_dir / "components" / "metatiles.tilemap")
-    cells = cell_indices(map_dir / "grid")
+    cells = cell_indices(map_dir / "grid", len(metatiles))
 
     canvas = Image.new("RGB", (GRID * CELL, GRID * CELL), (0, 0, 0))
     out = canvas.load()

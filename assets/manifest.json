@@ -10473,6 +10473,86 @@
           "size": "0x2168"
         }
       ]
+    },
+    {
+      "kind": "golden-sun-color-table-series",
+      "resources": [
+        {
+          "id": "46",
+          "address": "0x083ccf04",
+          "size": "0x84"
+        },
+        {
+          "id": "47",
+          "address": "0x083ccf88",
+          "size": "0x84"
+        },
+        {
+          "id": "48",
+          "address": "0x083cd00c",
+          "size": "0x84"
+        },
+        {
+          "id": "60",
+          "address": "0x083d855c",
+          "size": "0x84"
+        },
+        {
+          "id": "77",
+          "address": "0x083e3c94",
+          "size": "0x84"
+        },
+        {
+          "id": "7c",
+          "address": "0x083e543c",
+          "size": "0x84"
+        },
+        {
+          "id": "87",
+          "address": "0x083eb834",
+          "size": "0x84"
+        },
+        {
+          "id": "9f",
+          "address": "0x083f5c34",
+          "size": "0x84"
+        },
+        {
+          "id": "a1",
+          "address": "0x083f5d3c",
+          "size": "0x84"
+        },
+        {
+          "id": "a2",
+          "address": "0x083f5dc0",
+          "size": "0x84"
+        },
+        {
+          "id": "a3",
+          "address": "0x083f5e44",
+          "size": "0x84"
+        },
+        {
+          "id": "a4",
+          "address": "0x083f5ec8",
+          "size": "0x84"
+        },
+        {
+          "id": "c8",
+          "address": "0x0840b958",
+          "size": "0x84"
+        },
+        {
+          "id": "ca",
+          "address": "0x0840bec4",
+          "size": "0x84"
+        },
+        {
+          "id": "cb",
+          "address": "0x0840bf48",
+          "size": "0x84"
+        }
+      ]
     }
   ]
 }

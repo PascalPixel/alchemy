@@ -114,8 +114,14 @@ ambiguous inverse. The kind-1 token trace plus these five source planes rebuild
 every compressed component and its alignment bytes exactly.
 
 `maps/resource_12e/components/` through `maps/resource_17c/components/`
-reconstruct container components 0, 1, 3, 4, and 5 without claiming the
-container headers. Component 0 is a text tilemap with four little-endian
+reconstruct each container's 0x3c-byte header and components 0, 1, 3, 4,
+and 5. `header.json` holds twelve opaque parameter bytes, three opaque
+four-u16 records whose second, third, and fourth words are 0x1010, 0x0000,
+and 0xffff in every traced family, and the six little-endian u32 component
+offsets. The build cross-checks every offset against the sibling component
+and grid claims of the same family and requires zero for absent components,
+so the header, grid, and component sources cannot drift apart.
+Component 0 is a text tilemap with four little-endian
 u16 entries per 2x2 metatile; its plan preserves the planar transform mode and
 the exact general-LZ token choices. Thirteen families use mode 1 and resource
 15E uses mode 2. Component 1 is a JSON sequence of opaque four-byte descriptor

@@ -5,7 +5,8 @@ import json
 from pathlib import Path
 
 from extract_resource import encode_general, encode_palette
-from import_asset import gba_graphics, gba_palette_rgba, indexed_png, rgba_png
+from import_asset import (gba_graphics, gba_palette_rgba, gba_4bpp_banked,
+                          indexed_png, rgba_png)
 from archive_asset import build_archive
 from tilemap import import_tilemap
 from wordstream import import_words
@@ -39,7 +40,9 @@ def source_path(name):
 def build_component(entry):
     kind = entry["kind"]
     source = source_path(entry["source"])
-    if kind in ("gba-4bpp-tiles", "gba-8bpp-tiles"):
+    if kind == "gba-4bpp-tiles-banked":
+        data, details = gba_4bpp_banked(source.read_bytes())
+    elif kind in ("gba-4bpp-tiles", "gba-8bpp-tiles"):
         bpp = 4 if kind == "gba-4bpp-tiles" else 8
         data, _, details = gba_graphics(source.read_bytes(), bpp)
     elif kind == "gba-palette":
@@ -145,8 +148,8 @@ def main():
                         "kind": "golden-sun-kind2-lz",
                         "plan": f"{directory}/charblock{bank}.kind2.json",
                         "components": [{
-                            "kind": "gba-4bpp-tiles", "size": "0x4000",
-                            "source": f"{directory}/charblock{bank}.4bpp.png",
+                            "kind": "gba-4bpp-tiles-banked", "size": "0x4000",
+                            "source": f"{directory}/charblock{bank}.banked.png",
                         }],
                     })
                 animation = family.get("animation_source")
@@ -158,8 +161,8 @@ def main():
                         "plan": f"{directory}/animation_source.kind2.json",
                         "layout": animation_layout,
                         "components": [{
-                            "kind": "gba-4bpp-tiles", "size": "0x4000",
-                            "source": f"{directory}/animation_source.4bpp.png",
+                            "kind": "gba-4bpp-tiles-banked", "size": "0x4000",
+                            "source": f"{directory}/animation_source.banked.png",
                         }],
                     })
         elif series.get("kind") == "golden-sun-standalone-palette-series":

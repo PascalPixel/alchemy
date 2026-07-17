@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
-from export_asset import tile_png
+from export_asset import tile_png, banked_tile_png
 from import_asset import indexed_png
 
 
@@ -185,11 +185,15 @@ def encode_kind2(decoded, plan):
 
 
 def export_resource(data, source, plan_path, bpp, columns, palette_path=None,
-                    layout=None):
+                    layout=None, banks=None, base_tile=0, default_bank=0):
     decoded, used, bit, tokens = decode_kind2(data)
     colors = (indexed_png(palette_path.read_bytes())[3]
               if palette_path is not None else None)
-    image, _ = tile_png(decoded, bpp, columns, colors)
+    if banks is not None:
+        image, _ = banked_tile_png(decoded, columns, colors, banks, base_tile,
+                                   default_bank)
+    else:
+        image, _ = tile_png(decoded, bpp, columns, colors)
     plan = {"format": 1, "codec": "golden-sun-kind2-lz",
             "decoded_size": len(decoded), "encoded_size": len(data),
             "tokens": tokens, "lookahead": data[used:].hex()}

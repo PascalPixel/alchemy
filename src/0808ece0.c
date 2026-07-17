@@ -16,7 +16,7 @@ s32 Func_08009080(s32, s32);
 s32 Func_0808ec14();
 s32 Func_080f9010(s32);
 
-void Func_0808ec50(void) {
+void Func_0808ece0(void) {
     s32 temp_r0;
     s32 temp_r0_2;
 
@@ -24,9 +24,9 @@ void Func_0808ec50(void) {
     if (temp_r0 != -1) {
         { s32 _mb = *(s32 *)0x03001EBC; s32 _mo = temp_r0 * 8; temp_r0_2 = *(s32 *)((s32)_mb + (s32)_mo + (s32)0x11C); }
         if (temp_r0_2 != 0) {
-            Func_08009080(temp_r0_2, 5);
+            Func_08009080(temp_r0_2, 4);
         }
-        Func_080f9010(0x7D);
+        Func_080f9010(0x7C);
         Func_080030f8(0xC);
     }
 }

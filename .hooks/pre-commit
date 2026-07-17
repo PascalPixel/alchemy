@@ -1,5 +1,5 @@
 #!/bin/sh
-test -z "$(git diff --cached --name-only | grep -Ev '^assets/.*\.json$' | grep -E '(^|/)(baserom|roms?|toolchain|work|out)(/|\.|$)|\.(gba|rom|bin|elf|o|a|s|asm|json|tsv|log)$')" || {
+test -z "$(git diff --cached --name-only | grep -Ev '^(assets/.*\.json|asm/[0-9a-f]{8}\.s)$' | grep -E '(^|/)(baserom|roms?|toolchain|work|out)(/|\.|$)|\.(gba|rom|bin|elf|o|a|s|asm|json|tsv|log)$')" || {
     echo "pure: private inputs and generated artifacts may not be committed" >&2
     exit 1
 }

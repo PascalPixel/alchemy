@@ -17,6 +17,7 @@ def main():
     parser.add_argument("rom", type=Path, nargs="?", default="baserom.gba")
     parser.add_argument("-o", "--output", type=Path, default="out/full/rebuilt.gba")
     parser.add_argument("--claimed-output", type=Path, default="out/full/claimed")
+    parser.add_argument("--asm-output", type=Path, default="out/full/asm")
     parser.add_argument("--asset-manifest", type=Path,
                         default=Path("assets/manifest.json"))
     parser.add_argument("--asset-output", type=Path,
@@ -47,6 +48,29 @@ def main():
         start = address - ROM_BASE
         rebuilt[start:start + size] = source
         claimed_mask[start:start + size] = b"\1" * size
+    asm_regions = []
+    if (Path("asm").exists() and any(Path("asm").glob("*.s"))):
+        subprocess.run([
+            "python3", "tools/build_asm.py", str(args.rom),
+            "--output", str(args.asm_output),
+        ], check=True)
+        asm_manifest = json.loads(
+            (Path(args.asm_output) / "manifest.json").read_text())
+        for region in asm_manifest["regions"]:
+            address = region["address"]
+            size = region["size"]
+            start = address - ROM_BASE
+            end = start + size
+            if any(claimed_mask[start:end]):
+                raise SystemExit(
+                    f"assembly overlaps another source at 0x{address:08x}")
+            source = Path(region["output"]).read_bytes()
+            if source != rom[start:end]:
+                raise SystemExit(
+                    f"assembly mismatch at 0x{address:08x} ({size:#x} bytes)")
+            rebuilt[start:end] = source
+            claimed_mask[start:end] = b"\1" * size
+            asm_regions.append(region)
     asset_regions = []
     if args.asset_manifest.exists():
         subprocess.run([
@@ -81,8 +105,10 @@ def main():
         "rom_base": ROM_BASE,
         "rom_size": len(rom),
         "code_regions": len(manifest["regions"]),
+        "asm_regions": len(asm_regions),
         "asset_regions": len(asset_regions),
-        "source_regions": len(manifest["regions"]) + len(asset_regions),
+        "source_regions": (len(manifest["regions"]) + len(asm_regions) +
+                           len(asset_regions)),
         "source_bytes": sum(claimed_mask),
         "rom_fallback_bytes": len(rom) - sum(claimed_mask),
         "byte_identical": True,
@@ -92,6 +118,7 @@ def main():
     report_path.write_text(json.dumps(report, indent=2) + "\n")
     print(
         f"identical={report['byte_identical']} regions={report['source_regions']} "
+        f"code={report['code_regions']} asm={report['asm_regions']} "
         f"assets={report['asset_regions']} "
         f"source_bytes={report['source_bytes']} "
         f"rom_fallback_bytes={report['rom_fallback_bytes']}"

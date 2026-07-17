@@ -184,7 +184,8 @@ def encode_kind2(decoded, plan):
     return encoded
 
 
-def export_resource(data, source, plan_path, bpp, columns, palette_path=None):
+def export_resource(data, source, plan_path, bpp, columns, palette_path=None,
+                    layout=None):
     decoded, used, bit, tokens = decode_kind2(data)
     colors = (indexed_png(palette_path.read_bytes())[3]
               if palette_path is not None else None)
@@ -192,6 +193,8 @@ def export_resource(data, source, plan_path, bpp, columns, palette_path=None):
     plan = {"format": 1, "codec": "golden-sun-kind2-lz",
             "decoded_size": len(decoded), "encoded_size": len(data),
             "tokens": tokens, "lookahead": data[used:].hex()}
+    if layout is not None:
+        plan["layout"] = layout
     if encode_kind2(decoded, plan) != data:
         raise AssertionError("tag-2 resource does not re-encode exactly")
     source.parent.mkdir(parents=True, exist_ok=True)

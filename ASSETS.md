@@ -41,3 +41,22 @@ Recognizable renderings and exact sources are distinct. A generated preview
 may combine source tiles, palettes, maps, flips, or animation states, but does
 not itself claim extra ROM coverage. Source PNGs count only through a manifest
 encoder that reproduces their named ROM region byte-for-byte.
+
+## Map animation-source tile banks
+
+The map-family `animation_source.4bpp.png` files are lossless, sequential tile
+sources, not composed scenes or animation previews. Each indexed PNG contains
+512 GBA 4bpp 8x8 tiles in ROM order, arranged 32 columns by 16 rows solely to
+make the linear bank editable. Tile 0 in the PNG has the engine's virtual tile
+ID `0x600`; tile 511 has ID `0x7ff`. Pixel indices are palette-independent.
+
+The adjacent `animation_source.kind2.json` records the exact tag-2 codec token
+plan, lookahead bytes, decoded size, and the explicit sequential layout. The
+PNG importer restores the exact 0x4000-byte packed tile bank, and the plan then
+reproduces the compressed ROM resource byte-for-byte. Palette application,
+destination tile IDs, timing, and composition belong to separate map animation
+commands and are deliberately not asserted by these source images.
+
+Thirteen of the fourteen traced map families have this field-5 tag-2 bank.
+Family `0x164` is excluded: its `base + 5` resource is the next container, not
+an animation-source bank.

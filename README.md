@@ -8,6 +8,8 @@ Local reconstruction of Golden Sun from one private ROM.
 - `tools/` contains independent analysis and matching code.
 - `src/` contains only byte-verified reconstructed C.
 - `assets/` contains only source assets with exact ROM ranges and encoders.
+- Map animation-source PNGs preserve sequential 4bpp tiles and virtual IDs;
+  they are not presented as composed artwork.
 - `python3 tools/build_claimed.py` links and verifies every claimed source region together.
 - `python3 tools/build_assets.py` encodes and verifies every claimed asset.
 - `python3 tools/build_full.py` verifies the combined byte-identical private rebuild.

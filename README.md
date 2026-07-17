@@ -1,1 +1,1 @@
-# Raw
+# goldensun-decomp-pure

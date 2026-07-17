@@ -180,7 +180,7 @@ def encode_general(decoded, tokens):
     return bytes(packed)
 
 
-def decode_general_prefill_trace(data, start, end, maximum, prefill):
+def decode_general_prefill_trace(data, start, end, maximum, prefill, header=1):
     """Decode a general-LZ stream whose output window starts pre-filled.
 
     Identical to decode_general_trace except the output buffer begins with
@@ -188,10 +188,14 @@ def decode_general_prefill_trace(data, start, end, maximum, prefill):
     decompression buffer. The prefill is not part of the decoded resource; the
     window used to size long distances excludes it. Golden Sun uses this for a
     large family of resources that a bare general-LZ decode rejects at offset 0.
+    ``header`` is the size of the leading kind-zero byte (1 for the usual
+    streams, 0 for a variant whose bit stream begins at the first byte).
     """
-    if start >= end or data[start] != 0:
+    if start >= end:
+        raise DecodeError("general stream is empty")
+    if header and data[start] != 0:
         raise DecodeError("general stream is missing its kind-zero header")
-    bits = LsbBits(data, start + 1, end)
+    bits = LsbBits(data, start + header, end)
     output = bytearray(prefill)
     tokens = []
     while True:
@@ -233,7 +237,7 @@ def decode_general_prefill_trace(data, start, end, maximum, prefill):
         append_copy(output, distance, length, prefill + maximum)
 
 
-def encode_general_prefill(decoded, tokens, prefill):
+def encode_general_prefill(decoded, tokens, prefill, header=1):
     """Re-encode a pre-filled general-LZ stream (inverse of the decoder)."""
     bits = []
     replay = bytearray(prefill)
@@ -299,7 +303,7 @@ def encode_general_prefill(decoded, tokens, prefill):
     put(bits, 31, 5)
     put(bits, 0, 2)
     put(bits, 0, 7)
-    packed = bytearray(b"\0")
+    packed = bytearray(b"\0" * header)
     for offset in range(0, len(bits), 8):
         packed.append(sum(
             bit << index for index, bit in enumerate(bits[offset:offset + 8])))

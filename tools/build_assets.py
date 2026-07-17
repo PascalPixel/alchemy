@@ -90,25 +90,51 @@ def main():
     output.mkdir(parents=True, exist_ok=True)
     entries = list(manifest.get("regions", []))
     for series in manifest.get("series", []):
-        if series.get("kind") != "golden-sun-zero-skip-sprite-series":
+        if series.get("kind") == "golden-sun-zero-skip-sprite-series":
+            palette = series["palette"]
+            for resource in series["resources"]:
+                name = str(resource["id"]).lower()
+                directory = f"assets/graphics/resource_{name}"
+                entries.append({
+                    "address": resource["address"],
+                    "size": resource["size"],
+                    "kind": "golden-sun-general-lz",
+                    "plan": f"{directory}/stream.lz.json",
+                    "components": [{
+                        "kind": "zero-skip-sprite-archive",
+                        "size": resource["decoded_size"],
+                        "source": f"{directory}/images",
+                        "plan": f"{directory}/archive.json",
+                        "palette": palette,
+                    }],
+                })
+        elif series.get("kind") == "golden-sun-map-charblock-series":
+            for family in series["families"]:
+                name = str(family["id"]).lower()
+                directory = f"assets/graphics/resource_{name}"
+                palette = family["palette"]
+                entries.append({
+                    "address": palette["address"], "size": palette["size"],
+                    "kind": "golden-sun-general-lz",
+                    "plan": f"{directory}/palette.lz.json",
+                    "components": [{
+                        "kind": "gba-palette", "size": "0x1c0",
+                        "source": f"{directory}/palette.224.png",
+                    }],
+                })
+                for bank, resource in enumerate(family["charblocks"], 1):
+                    entries.append({
+                        "address": resource["address"],
+                        "size": resource["size"],
+                        "kind": "golden-sun-kind2-lz",
+                        "plan": f"{directory}/charblock{bank}.kind2.json",
+                        "components": [{
+                            "kind": "gba-4bpp-tiles", "size": "0x4000",
+                            "source": f"{directory}/charblock{bank}.4bpp.png",
+                        }],
+                    })
+        else:
             raise ValueError("unsupported asset series")
-        palette = series["palette"]
-        for resource in series["resources"]:
-            name = str(resource["id"]).lower()
-            directory = f"assets/graphics/resource_{name}"
-            entries.append({
-                "address": resource["address"],
-                "size": resource["size"],
-                "kind": "golden-sun-general-lz",
-                "plan": f"{directory}/stream.lz.json",
-                "components": [{
-                    "kind": "zero-skip-sprite-archive",
-                    "size": resource["decoded_size"],
-                    "source": f"{directory}/images",
-                    "plan": f"{directory}/archive.json",
-                    "palette": palette,
-                }],
-            })
     regions = []
     previous_end = ROM_BASE
     for entry in sorted(entries,

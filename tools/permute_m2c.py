@@ -6,14 +6,18 @@ semantically right but the register allocator picks a different (equivalent)
 assignment than the original compiler did. A targeted source mutation recovers
 the ROM's choice without changing behaviour.
 
-The mutation implemented here handles the common state-block access
-``M2C_FIELD((*(s32 *)ADDR + (VAR * K)), TYPE, OFF)``: the whole statement is
-wrapped in a block that lifts the base pointer and the index into named
-temporaries before the load, which makes gcc296 keep the pointer in the same
-register the ROM used. Each candidate is compiled and byte-compared; a draft is
-accepted only when it re-produces the ROM bytes exactly. This is a narrow
-stopgap for one idiom, not a general permuter (use decomp-permuter for that);
-it exists so the matches it finds are reproducible.
+Two mutations are implemented, each of which lifts a subexpression into a named
+temporary to nudge gcc296's allocator toward the original compiler's choice:
+
+- state-block access ``M2C_FIELD((*(s32 *)ADDR + (VAR * K)), TYPE, OFF)``: the
+  statement is wrapped in a block that lifts the base pointer and index; and
+- address-like constants (0x02/0x03/0x08xxxxxx): each is lifted to a leading
+  temporary.
+
+Each candidate is compiled and byte-compared; a draft is accepted only when it
+reproduces the ROM bytes exactly. This is a stopgap covering a couple of common
+register-allocation idioms, not a general permuter (use decomp-permuter for the
+rest); it exists so the matches it finds are reproducible.
 """
 import argparse
 import json
@@ -33,14 +37,39 @@ STATEMENT = re.compile(
     r"(s32 \*|void \*\*|u32 \*|s16 \*|u8 \*|void \*), (0x[0-9A-Fa-f]+)\);")
 
 
-def mutate(body, swap):
+ADDRESS = re.compile(r"0x0[238][0-9A-Fa-f]{6}")
+
+
+def state_block(body, swap):
     def replace(match):
         indent, target, address, index, stride, kind, offset = match.groups()
-        terms = [f"(s32)_mo", f"(s32)_mb"] if swap else [f"(s32)_mb", f"(s32)_mo"]
+        terms = ["(s32)_mo", "(s32)_mb"] if swap else ["(s32)_mb", "(s32)_mo"]
         total = " + ".join(terms + [f"(s32){offset}"])
         return (f"{indent}{{ s32 _mb = *(s32 *){address}; "
                 f"s32 _mo = {index} * {stride}; {target}*({kind})({total}); }}")
     return STATEMENT.sub(replace, body)
+
+
+def lift_constants(body):
+    """Lift each address-like constant to a leading temporary."""
+    opening = re.search(r"\)\s*\{", body)
+    if not opening:
+        return body
+    cut = opening.end()
+    constants = sorted(set(ADDRESS.findall(body)))
+    declarations = "".join(
+        f"\n    s32 _c{index} = {value};"
+        for index, value in enumerate(constants))
+    rest = body[cut:]
+    for index, value in enumerate(constants):
+        rest = rest.replace(value, f"_c{index}")
+    return body[:cut] + declarations + rest
+
+
+def candidates(body):
+    yield state_block(body, False)
+    yield state_block(body, True)
+    yield lift_constants(body)
 
 
 def main():
@@ -71,10 +100,10 @@ def main():
         raw = draft.read_text()
         replacements = (("s32", "u32", "void *", "s16", "u16", "s8")
                         if "M2C_UNK" in raw else (None,))
+        hit = False
         for replacement in replacements:
             base = raw.replace("M2C_UNK", replacement) if replacement else raw
-            for swap in (False, True):
-                body = mutate(base, swap)
+            for body in candidates(base):
                 if body == base:
                     continue
                 candidate = output / f"{stem}.c"
@@ -90,11 +119,11 @@ def main():
                     if asm.exists():
                         asm.unlink()
                     matched += 1
+                    hit = True
                     print(f"matched {stem}")
                     break
-            else:
-                continue
-            break
+            if hit:
+                break
     print(f"matched={matched} of {len(near)} near-misses")
 
 

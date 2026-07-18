@@ -7,6 +7,12 @@ export interface DirectResourceCall {
   source: "literal" | "immediate";
 }
 
+export interface UnresolvedResourceCall {
+  function: string;
+  call_address: string;
+  nearest_r0_write: string | null;
+}
+
 function privateOutput(path: string): boolean {
   const normalized = path.replaceAll("\\", "/");
   return normalized.startsWith("out/") || normalized.includes("/out/") ||
@@ -28,15 +34,16 @@ export function directCalls(
   rom: Uint8Array,
   functionName: string,
   resourceCount: number,
-): { calls: DirectResourceCall[]; unresolved: number } {
+): { calls: DirectResourceCall[]; unresolved: UnresolvedResourceCall[] } {
   const lines = text.split(/\r?\n/);
   const view = new DataView(rom.buffer, rom.byteOffset, rom.byteLength);
   const calls: DirectResourceCall[] = [];
-  let unresolved = 0;
+  const unresolvedCalls: UnresolvedResourceCall[] = [];
   for (let index = 0; index < lines.length; index++) {
     if (!/\bbl\s+[0-9a-f]+ <Func_08002f40>/.test(lines[index])) continue;
     let resourceId: number | undefined;
     let source: DirectResourceCall["source"] | undefined;
+    let nearestWrite: string | null = null;
     for (let previous = index - 1; previous >= Math.max(0, index - 16); previous--) {
       const literal = lines[previous].match(/\bldr\s+r0, \[pc, #[^\]]+\].*\(([0-9a-f]+) /);
       if (literal) {
@@ -54,10 +61,18 @@ export function directCalls(
         source = "immediate";
         break;
       }
-      if (writesR0(lines[previous])) break;
+      if (writesR0(lines[previous])) {
+        nearestWrite = lines[previous].trim();
+        break;
+      }
     }
     if (resourceId === undefined || source === undefined || resourceId < 0 || resourceId >= resourceCount) {
-      unresolved++;
+      const address = lines[index].match(/^\s*([0-9a-f]+):/i)?.[1];
+      unresolvedCalls.push({
+        function: functionName,
+        call_address: `0x${address ?? "0"}`,
+        nearest_r0_write: nearestWrite,
+      });
       continue;
     }
     const address = lines[index].match(/^\s*([0-9a-f]+):/i)?.[1];
@@ -68,7 +83,7 @@ export function directCalls(
       source,
     });
   }
-  return { calls, unresolved };
+  return { calls, unresolved: unresolvedCalls };
 }
 
 export function selfTest(): void {
@@ -82,9 +97,10 @@ export function selfTest(): void {
 0800000c: 1c28 adds r0, r5, #0
 0800000e: f002 bl 8002f40 <Func_08002f40>`;
   const result = directCalls(text, rom, "Func_test", 0x100);
-  if (result.calls.length !== 2 || result.unresolved !== 1 ||
+  if (result.calls.length !== 2 || result.unresolved.length !== 1 ||
       result.calls[0].resource_id !== 0x2a || result.calls[0].source !== "literal" ||
-      result.calls[1].resource_id !== 17 || result.calls[1].source !== "immediate") {
+      result.calls[1].resource_id !== 17 || result.calls[1].source !== "immediate" ||
+      result.unresolved[0].nearest_r0_write === null) {
     throw new Error("resource-call scanner self-test failed");
   }
   console.log("self-test=ok");
@@ -107,7 +123,7 @@ async function main(args: string[]): Promise<void> {
   const rom = new Uint8Array(await Bun.file(positional[0]).arrayBuffer());
   const directory = positional[1].replace(/\/$/, "");
   const calls: DirectResourceCall[] = [];
-  let unresolved = 0;
+  const unresolved: UnresolvedResourceCall[] = [];
   let functions = 0;
   for (const leaf of new Bun.Glob("*.elf").scanSync(directory)) {
     const process = Bun.spawnSync(["arm-none-eabi-objdump", "-d", `${directory}/${leaf}`], {
@@ -118,7 +134,7 @@ async function main(args: string[]): Promise<void> {
     const functionName = `Func_${leaf.replace(/\.elf$/, "")}`;
     const result = directCalls(process.stdout.toString(), rom, functionName, resourceCount);
     calls.push(...result.calls);
-    unresolved += result.unresolved;
+    unresolved.push(...result.unresolved);
     functions++;
   }
   calls.sort((left, right) => left.resource_id - right.resource_id ||
@@ -133,7 +149,7 @@ async function main(args: string[]): Promise<void> {
     unresolved_calls: unresolved,
     resources: [...resources].map(([resource_id, direct_calls]) => ({ resource_id, direct_calls })),
   }, null, 2) + "\n");
-  console.log(`functions=${functions} resolved=${calls.length} unresolved=${unresolved} resources=${resources.size}`);
+  console.log(`functions=${functions} resolved=${calls.length} unresolved=${unresolved.length} resources=${resources.size}`);
 }
 
 if (import.meta.main) await main(Bun.argv.slice(2));

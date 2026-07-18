@@ -1,5 +1,5 @@
-@ 呼出しグラフから到達した領域の再構築サム逆アセンブル。
-@ （コードとデータが混在）。build_asm.tsでバイト一致確認済み。
+@ 複数領域に分割された呼出し可能関数の先頭部。
+@ 後続するリテラルプールを同一ファイルに保持する。
 .syntax unified
 	.thumb
 	.set sub_0800447c, 0x0800447c
@@ -9,8 +9,8 @@
 	.set sub_080120dc, 0x080120dc
 	.set sub_080770c0, 0x080770c0
 	.set sub_080f9010, 0x080f9010
-	.global Region_0800ebec
-Region_0800ebec:
+	.global FunctionHead_0800ebec
+FunctionHead_0800ebec:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -272,3 +272,15 @@ Region_0800ebec:
 	str r1, [sp, #12]
 	str r2, [sp, #0]
 	b sub_0800ef44
+
+	.global LiteralPool_0800edf0
+LiteralPool_0800edf0:
+	.4byte 0x03001f54
+	.4byte 0x03001810
+	.4byte 0x03001ae8
+	.4byte 0x02000240
+	.4byte 0x0000017f
+	.4byte 0x08013254
+	.4byte 0x0000ffff
+	.4byte 0xfffff000
+	.4byte 0xffffe000

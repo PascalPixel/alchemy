@@ -180,11 +180,13 @@
       "confidence": "strong",
       "evidence": [
         "iwram_copy_payload",
+        "mixed_thumb_arm_audio_mixer",
         "unrolled_64_byte_clear"
       ],
-      "expected_files": 1,
-      "expected_bytes": 22,
+      "expected_files": 2,
+      "expected_bytes": 954,
       "files": [
+        "080f9674",
         "080f9a18"
       ]
     },

@@ -41,3 +41,13 @@ Func_080f9a9a:
 	.align 2
 .Lsource:
 	.4byte 0x080fb7a0
+
+	.global Func_080f9ab4
+	.thumb_func
+Func_080f9ab4:
+	ldr	r2, [r1, #64]
+	adds	r3, r2, #1
+	str	r3, [r1, #64]
+	ldrb	r3, [r2, #0]
+	b.n	Func_080f9a9a
+	.2byte 0

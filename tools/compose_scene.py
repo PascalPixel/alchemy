@@ -210,7 +210,13 @@ def compose(map_dir, gfx_dir, shared_tiles=None):
 
     canvas = Image.new("RGB", (GRID * CELL, GRID * CELL), (0, 0, 0))
     out = canvas.load()
+    # Two distinct failures, previously conflated: a reference into the shared
+    # window this map's tileset run does not reach, versus a reference into a
+    # charblock the map does not own (it borrows that family's tiles, and the
+    # map->family linkage is not recovered). Counting them apart is what
+    # showed the remaining maps fail on the second, not the first.
     missing_shared = 0
+    missing_charblock = 0
     for cy in range(GRID):
         for cx in range(GRID):
             mt = cells[cy][cx]
@@ -229,7 +235,10 @@ def compose(map_dir, gfx_dir, shared_tiles=None):
                       and (index - 0x800) < len(shared_tiles)):
                     tile = shared_tiles[index - 0x800]
                 else:
-                    missing_shared += 1
+                    if index < 0x800:
+                        missing_charblock += 1
+                    else:
+                        missing_shared += 1
                     continue
                 ox = cx * CELL + (sub % CELL_TILES) * TILE
                 oy = cy * CELL + (sub // CELL_TILES) * TILE
@@ -237,7 +246,7 @@ def compose(map_dir, gfx_dir, shared_tiles=None):
                     for px in range(TILE):
                         color = palette[(bank * 16 + tile[py][px]) & 0xFF]
                         out[ox + px, oy + py] = color
-    return canvas, missing_shared
+    return canvas, missing_shared, missing_charblock
 
 
 def self_contained_maps():
@@ -255,7 +264,7 @@ def self_contained_maps():
 def render(cid, out_dir, crop=True):
     map_dir = ROOT / f"assets/maps/resource_{cid}"
     gfx_dir = ROOT / f"assets/graphics/resource_{cid}"
-    canvas, missing = compose(map_dir, gfx_dir)
+    canvas, missing, missing_cb = compose(map_dir, gfx_dir)
     if crop:
         from PIL import ImageChops
         bbox = ImageChops.difference(
@@ -265,7 +274,7 @@ def render(cid, out_dir, crop=True):
     out_dir.mkdir(parents=True, exist_ok=True)
     output = out_dir / f"scene_{cid}.png"
     canvas.save(output)
-    return output, canvas.size, missing
+    return output, canvas.size, missing, missing_cb
 
 
 def main():
@@ -280,17 +289,18 @@ def main():
         ids = self_contained_maps()
         print(f"rendering {len(ids)} self-contained map scenes to {out_dir}/")
         for cid in ids:
-            output, size, missing = render(cid, out_dir)
-            print(f"  {cid}: {size[0]}x{size[1]} (unresolved shared refs={missing})")
+            output, size, missing, missing_cb = render(cid, out_dir)
+            print(f"  {cid}: {size[0]}x{size[1]} "
+                  f"(unresolved shared={missing} charblock={missing_cb})")
         return
     if not args.container:
         parser.error("give a container id or --all")
-    output, size, missing = render(args.container, out_dir)
+    output, size, missing, missing_cb = render(args.container, out_dir)
     if args.output:
         Image.open(output).save(args.output)
         output = args.output
-    print(f"wrote {output} ({size[0]}x{size[1]}), "
-          f"unresolved shared-tile refs={missing}")
+    print(f"wrote {output} ({size[0]}x{size[1]}), unresolved "
+          f"shared={missing} charblock={missing_cb}")
 
 
 if __name__ == "__main__":

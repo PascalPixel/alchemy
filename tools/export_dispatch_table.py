@@ -3,7 +3,7 @@
 
 Each entry is a fixed thumb stub -- ldr r4, [pc]; bx r4; .4byte target --
 giving overlay code stable entry points into ROM routines. The table is not
-compiler output: gcc296 cannot emit a bare register tail-jump from C.
+compiler output: alchemy-gcc cannot emit a bare register tail-jump from C.
 """
 import argparse
 import struct

@@ -73,64 +73,6 @@ def tile_png(raw, bpp, columns, palette_colors=None):
                  "tiles": count, "columns": columns}
 
 
-def banked_tile_png(raw, columns, palette_colors, banks, base_tile=0,
-                    default_bank=0):
-    """Write 4bpp tiles as an 8bpp PNG that carries each tile's real palette
-    bank: every pixel becomes ``bank * 16 + index`` against the map's full
-    color table, so the sheet shows true colors. The importer masks the low
-    nibble back to the exact 4bpp indices, so the tile bytes are unchanged.
-    A tile is banked by its global index (``base_tile`` offsets each charblock);
-    tiles the map never places take ``default_bank`` (its most common bank), and
-    banks the palette cannot reach fall back to bank 0.
-    """
-    unit = 32
-    if not raw or len(raw) % unit:
-        raise ValueError("tile data must contain whole nonempty tiles")
-    count = len(raw) // unit
-    if columns <= 0 or count % columns:
-        raise ValueError("columns must divide the tile count exactly")
-    if not 1 <= len(palette_colors) <= 256:
-        raise ValueError("palette must contain 1..256 colors")
-    valid_banks = len(palette_colors) // 16
-    rows = count // columns
-    width, height = columns * 8, rows * 8
-    pixels = bytearray(width * height)
-    for tile in range(count):
-        source = raw[tile * unit:(tile + 1) * unit]
-        nibbles = [value for byte in source for value in (byte & 15, byte >> 4)]
-        bank = banks.get(base_tile + tile, default_bank)
-        if not 0 <= bank < valid_banks:
-            bank = 0
-        left = tile % columns * 8
-        top = tile // columns * 8
-        for y in range(8):
-            start = (top + y) * width + left
-            pixels[start:start + 8] = bytes(
-                bank * 16 + index for index in nibbles[y * 8:y * 8 + 8])
-    scanlines = bytearray()
-    for y in range(height):
-        scanlines.append(0)
-        scanlines.extend(pixels[y * width:(y + 1) * width])
-    if max(pixels) >= len(palette_colors):
-        raise ValueError("tile pixels reference a missing palette entry")
-    palette = bytes(channel for color in palette_colors for channel in color)
-    # GBA renders local color 0 of any bank as transparent, so mark every
-    # bank-base index transparent: blank tiles disappear instead of flooding
-    # the sheet with an arbitrary backdrop color.
-    transparency = bytes(0 if index % 16 == 0 else 255
-                         for index in range(len(palette_colors)))
-    png = (
-        b"\x89PNG\r\n\x1a\n" +
-        chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 3, 0, 0, 0)) +
-        chunk(b"PLTE", palette) +
-        chunk(b"tRNS", transparency) +
-        chunk(b"IDAT", zlib.compress(bytes(scanlines), 9)) +
-        chunk(b"IEND", b"")
-    )
-    return png, {"width": width, "height": height, "bpp": 4,
-                 "tiles": count, "columns": columns, "banked": True}
-
-
 def palette_png(raw):
     if not raw or len(raw) % 2 or len(raw) > 512:
         raise ValueError("palette must contain 1..256 BGR555 entries")

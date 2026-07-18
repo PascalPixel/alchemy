@@ -8,6 +8,12 @@
       "source": "assets/graphics/0800777c.gbapal.png"
     },
     {
+      "address": "0x08013784",
+      "size": "0x8b8",
+      "kind": "golden-sun-map-load-table",
+      "source": "assets/maps/map_load_table.json"
+    },
+    {
       "address": "0x08073812",
       "size": "0x40",
       "kind": "gba-palette",
@@ -6917,10 +6923,18 @@
     },
     {
       "kind": "golden-sun-map-charblock-series",
+      "charblock_layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      },
       "animation_layout": {
         "format": "sequential-gba-4bpp-tiles",
         "purpose": "map-animation-source",
-        "virtual_base_tile": "0x600",
         "tile_count": 512,
         "tile_width": 8,
         "tile_height": 8,
@@ -7116,7 +7130,8 @@
             },
             {
               "address": "0x085040e4",
-              "size": "0x1184"
+              "size": "0x1184",
+              "source": "assets/graphics/resource_152/charblock2.objects.json"
             },
             {
               "address": "0x08505268",
@@ -7366,7 +7381,8 @@
           "charblocks": [
             {
               "address": "0x085427c4",
-              "size": "0x112c"
+              "size": "0x112c",
+              "source": "assets/graphics/resource_190/charblock1.objects.json"
             },
             {
               "address": "0x085438f0",

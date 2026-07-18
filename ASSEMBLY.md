@@ -176,17 +176,20 @@ authorship.
 
 ## Deliberate performance assembly
 
-`080f9a18.s` is the presently proven file-level example. It lies inside the
-`0x080f9674..0x080f9a73` payload copied to `0x03007000..0x030073ff` for the
-sound path. It clears 64 bytes with four unrolled `stmia` instructions,
-temporarily holds `r4` in `ip`, and uses no stack frame. Both its IWRAM
-placement and instruction schedule are direct evidence of deliberately
-assembled performance code rather than an accidental compiler mismatch.
+`080f9674.s` reconstructs the complete 932-byte sound-mixing entry copied from
+ROM `0x080f9674` to IWRAM `0x03007000`. One callable entry deliberately switches
+Thumb to ARM, returns to Thumb for channel setup, switches back to ARM for the
+sample-buffer accumulation loops, and finally returns to Thumb for its epilogue.
+Its stored odd function pointer, copy destination, exact mixed-mode boundaries,
+and PC-relative mode switches prove both the run address and the instruction
+sets. The approved Thumb-only compiler cannot emit this module.
 
-The wider relocated payload contains mixed Thumb/ARM channel processing and
-sample-buffer stores. It is deliberately assembled code, although the ROM
-alone cannot prove whether Camelot wrote it or bundled it with a sound library.
-This repository records that uncertainty instead of inventing authorship.
+The adjacent `080f9a18.s` clears 64 bytes with four unrolled `stmia`
+instructions, temporarily holds `r4` in `ip`, and uses no stack frame. These
+two schedules are direct evidence of deliberately assembled performance code,
+although the ROM alone cannot prove whether Camelot wrote them or bundled them
+with a sound library. This repository records that uncertainty instead of
+inventing authorship.
 
 The startup copy at `0800300c` identifies a second hot payload:
 `0x08000770..0x08001b6f` is copied to `0x03000000..0x030013ff`. The first

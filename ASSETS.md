@@ -33,9 +33,17 @@ sample data. Those facts belong in future per-asset manifests, not heuristics.
 symbolic header references, proven player selectors, and still-unknown trailing
 halfwords rebuild the complete 312-entry selection table exactly. Every
 trailing halfword mirrors its player selector, a storage invariant encoded
-without assigning that field an unproven role. Sequence
-commands, tone banks, and samples remain separate recovery units rather than
+without assigning that field an unproven role. Sequence commands, tone banks,
+and samples remain separate recovery units rather than
 being flattened into MIDI or copied as opaque audio bytes.
+
+`assets/audio/sound_075/sequence.json` and `sound_106/sequence.json` are
+engine-native sequence units. They name tone banks and tracks symbolically,
+preserve header priority, reverb, and block count, and spell commands as native
+events. The seven-track `sound_075` source retains its pattern calls and
+running-status omissions; the compact `sound_106` source covers modulation,
+one note, its wait, and termination. The codec also represents repeats and
+unconditional loop targets without converting streams through MIDI.
 
 RGBA source PNGs may also be used as lossless four-byte record atlases. In that
 case the per-asset documentation defines the channel-to-field mapping; the
@@ -63,6 +71,16 @@ resolve through the same table the game uses instead of adjacency guesses.
 `--all` writes every loader-linked variant to the ignored `out/scenes/`. It is
 display-only, reads no build input the encoders do not already own, and is
 never read back by the build.
+
+`tools/bg_tile_usage.ts` expands the same linkage into a reusable background
+tile-usage index. Each resource and canonical charblock slot records every map
+position grouped by loader variant, header window, charblock role, palette
+bank, and horizontal/vertical flip state. Reports are analysis products and the
+tool refuses to write them outside ignored `out/`; for example,
+`bun tools/bg_tile_usage.ts 184` writes the available variants for container
+184 without modifying canonical assets. `--all` also lists load-table variants
+whose map geometry has not yet been reconstructed instead of silently
+inventing placements for them.
 
 Map-container semantic sources are claimed component-by-component. Their
 manifest entries must use the exact component span, never the enclosing

@@ -12,6 +12,14 @@ yet proven. Repeated empty slots share one symbol instead of duplicating bytes.
 The adjacent music-player records, sequence streams, tone banks, and wave data
 are not claimed by this table.
 
+`audio/sound_075/sequence.json` reconstructs a complete seven-track sequence,
+including two symbolically named patterns and their eleven calls.
+`audio/sound_106/sequence.json` reconstructs a compact one-track sequence.
+Both retain exact engine duration codes, symbolic track and tone-bank
+references, priority, reverb, and command-status choices. Their claims are
+limited to contiguous 612-byte and 28-byte units; neighboring data remains
+unclaimed.
+
 `graphics/080c5b30.4bpp.png` contains seven palette-independent 4bpp tiles.
 ROM code copies the seven consecutive 32-byte units to seven consecutive VRAM
 tile slots. The PNG palette is an index legend only; it does not claim the

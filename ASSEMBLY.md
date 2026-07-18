@@ -7,7 +7,8 @@ from the approved compiler reproduces it exactly. Linker products, runtime
 thunks, fixed hardware entries, and proven deliberately assembled kernels stay
 in assembly.
 
-The current boundary, after the eighteenth exact-C checkpoint and full IWRAM reconstruction, is:
+The current boundary, after the eighteenth exact-C checkpoint, full IWRAM
+reconstruction, and recovered pre-engine runtime tranche, is:
 
 | Classification | Files | Bytes | Long-term treatment |
 |---|---:|---:|---|
@@ -17,8 +18,10 @@ The current boundary, after the eighteenth exact-C checkpoint and full IWRAM rec
 | ROM dispatch table | 1 | 768 | Keep assembly |
 | Relocated IWRAM payload | 1 | 5,120 | Keep structured assembly |
 | IWRAM division veneers | 4 | 32 | Keep assembly |
-| Deliberate fixed-point math primitives | 2 | 56 | Keep assembly |
+| Fixed-point math and quarter-sine lookup module | 2 | 568 | Keep structured assembly/data |
 | Compiler/assembler literal pool | 1 | 32 | Keep structured data |
+| Relocated ARM runtime module | 4 | 2,196 | Keep structured assembly |
+| Shared-literal Thumb helper module | 1 | 40 | Keep structured assembly pending module-aware C |
 | Mixed or misbounded code/data regions | 30 | 27,338 | Split before decompiling |
 | Structured runtime relocation-helper module | 1 | 128 | Keep structured assembly |
 | Proven parent-function fragments with pools | 9 | 1,646 | Merge when each owner is reconstructed |
@@ -26,9 +29,9 @@ The current boundary, after the eighteenth exact-C checkpoint and full IWRAM rec
 | Proven multi-region function continuations with pools | 7 | 2,928 | Merge with their function owners before exact C |
 | Cross-function shared-literal module | 2 | 692 | Keep structured assembly pending module-aware C build |
 | Proven deliberate performance primitive | 1 | 22 | Keep assembly |
-| Likely ordinary compiler output | 1,353 | 458,798 | Convert to exact C |
+| Likely ordinary compiler output | 1,352 | 458,782 | Convert to exact C |
 | Probable data misidentified as functions | 27 | 314 | Recover semantic data form |
-| **Total** | **1,743** | **504,102** | |
+| **Total** | **1,747** | **506,834** | |
 
 These counts describe files, not callable entries. `080000c0.s` bundles 96
 fixed-width dispatch entries, `08006864.s` bundles two BIOS wrappers, and
@@ -138,6 +141,29 @@ relocated odd Thumb entry. Those source-position semantics are now represented
 by labels rather than an opaque instruction word. The same complete layout is
 present in the approved Japanese ROM, establishing a stable shared module but
 not an original name or author. It remains structured assembly.
+
+`0800230c.s` and `0800231c.s` form a fixed-point math and lookup module.
+`0800231c.s` now owns the complete 256-entry unsigned halfword table at
+`08002344`; every entry equals the rounded value of
+`65536 * sin(pi * index / 512)`. The classification records the 40-byte Thumb
+lookup routine and the 512-byte quarter-sine table as separate semantic
+subregions even though their PC-relative relationship requires one source
+unit. This mathematical identification does not establish an original symbol,
+filename, or author.
+
+The four files from `08002544.s` through `08002d5c.s` are caller-delimited ARM
+routines copied before execution: two decompression formats, a transfer-command
+executor, and a Thumb-BL relocation walker. Their instruction set and exact
+copy bounds are proven, while the approved compiler emits Thumb code only.
+They are therefore genuinely compiler-unproducible structured assembly rather
+than ordinary C debt. Their program-versus-library origin and authorship remain
+unknown.
+
+`08002dd8.s` now owns both callable Thumb helpers at `08002dd8` and `08002df0`,
+their intervening alignment, and the literal at `08002dfc` referenced across
+the former file boundary. The obsolete standalone `08002df0.s` boundary is
+removed. The merged source remains structured assembly pending a module-aware
+C match; neither its layout nor its shared literal establishes authorship.
 
 `080f9c44` is a callable 66-byte function followed by alignment and a local
 literal pool. Its first two PC-relative loads share literals at the end of the

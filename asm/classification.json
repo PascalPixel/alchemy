@@ -946,18 +946,127 @@
     {
       "kind": "deliberate_math_primitive",
       "origin": "program_or_library_assembly",
-      "retention": "keep_asm",
+      "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "carry_driven_branching",
         "shared_helper_entry",
-        "pc_relative_lookup_table"
+        "pc_relative_lookup_table",
+        "quarter_sine_values_match_rounded_formula"
       ],
       "expected_files": 2,
-      "expected_bytes": 56,
+      "expected_bytes": 568,
       "files": [
         "0800230c",
         "0800231c"
+      ],
+      "subregions": [
+        {
+          "load_address": "0x0800230c",
+          "size": 16,
+          "kind": "fixed_point_math_helper_thumb",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x0800231c",
+          "size": 40,
+          "kind": "fixed_point_sine_lookup_thumb",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x08002344",
+          "size": 512,
+          "kind": "quarter_sine_table_u16",
+          "authorship": "unknown"
+        }
+      ]
+    },
+    {
+      "kind": "relocated_arm_runtime_module",
+      "origin": "program_or_library_runtime",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "caller_copy_source_and_size_boundaries",
+        "arm_instruction_set",
+        "approved_compiler_thumb_only",
+        "byte_exact_reconstruction"
+      ],
+      "expected_files": 4,
+      "expected_bytes": 2196,
+      "files": [
+        "08002544",
+        "08002808",
+        "08002cf4",
+        "08002d5c"
+      ],
+      "subregions": [
+        {
+          "load_address": "0x08002544",
+          "size": 708,
+          "kind": "format_0_1_decompressor_arm",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x08002808",
+          "size": 1260,
+          "kind": "format_2_decompressor_arm",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x08002cf4",
+          "size": 104,
+          "kind": "transfer_command_executor_arm",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x08002d5c",
+          "size": 124,
+          "kind": "thumb_bl_relocation_walker_arm",
+          "authorship": "unknown"
+        }
+      ]
+    },
+    {
+      "kind": "shared_literal_thumb_helper_module",
+      "origin": "unknown",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "two_callable_thumb_helpers",
+        "cross_function_literal_pool",
+        "former_08002df0_boundary_merged"
+      ],
+      "expected_files": 1,
+      "expected_bytes": 40,
+      "files": [
+        "08002dd8"
+      ],
+      "subregions": [
+        {
+          "load_address": "0x08002dd8",
+          "size": 22,
+          "kind": "callable_thumb_helper",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x08002dee",
+          "size": 2,
+          "kind": "alignment",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x08002df0",
+          "size": 12,
+          "kind": "callable_thumb_helper",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x08002dfc",
+          "size": 4,
+          "kind": "shared_literal_pool",
+          "authorship": "unknown"
+        }
       ]
     },
     {

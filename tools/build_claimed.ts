@@ -90,7 +90,7 @@ function usage(): void {
 
 function parseArgs(argv: string[]): Options {
   const options: Options = {
-    rom: "baserom.gba",
+    rom: "gs1-en.gba",
     jobs: Math.min(16, navigator.hardwareConcurrency || 1),
     output: "out/claimed",
   };

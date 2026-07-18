@@ -196,8 +196,8 @@
       "evidence": [
         "mixed_or_invalid_function_boundary"
       ],
-      "expected_files": 60,
-      "expected_bytes": 35512,
+      "expected_files": 55,
+      "expected_bytes": 35140,
       "files": [
         "08006a78",
         "0800b168",
@@ -224,7 +224,6 @@
         "080d77b4",
         "080d7c08",
         "080d7ea0",
-        "080d8258",
         "080dd9c0",
         "080dda3c",
         "080ddb34",
@@ -233,15 +232,12 @@
         "080e15e8",
         "080e1724",
         "080e17c4",
-        "080e1a48",
         "080e1acc",
         "080e1df8",
         "080e21e8",
         "080e47b8",
-        "080e4ab8",
         "080e4b4c",
         "080e4e0c",
-        "080e547c",
         "080e5504",
         "080e57b4",
         "080e5afc",
@@ -257,8 +253,126 @@
         "080f4318",
         "080f47bc",
         "080f4af0",
-        "080f4f04",
-        "080f9c44"
+        "080f4f04"
+      ]
+    },
+    {
+      "kind": "parent_function_fragment",
+      "origin": "unknown",
+      "retention": "merge_with_owner",
+      "confidence": "proven",
+      "evidence": [
+        "direct_branch_without_call",
+        "live_parent_stack_and_high_register_state",
+        "adjacent_literal_or_constant_pool"
+      ],
+      "expected_files": 4,
+      "expected_bytes": 504,
+      "files": [
+        "080d8258",
+        "080e1a48",
+        "080e4ab8",
+        "080e547c"
+      ],
+      "subregions": [
+        {
+          "load_address": "0x080d8258",
+          "size": 80,
+          "kind": "parent_function_code_fragment",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080d82a8",
+          "size": 8,
+          "kind": "literal_pool",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e1a48",
+          "size": 80,
+          "kind": "parent_function_code_fragment",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e1a98",
+          "size": 52,
+          "kind": "constant_and_literal_pool",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e4ab8",
+          "size": 66,
+          "kind": "parent_function_code_fragment",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e4afa",
+          "size": 82,
+          "kind": "constant_and_literal_pool",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e547c",
+          "size": 80,
+          "kind": "parent_function_code_fragment",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e54cc",
+          "size": 56,
+          "kind": "literal_pool",
+          "authorship": "unknown"
+        }
+      ]
+    },
+    {
+      "kind": "shared_literal_function_module",
+      "origin": "unknown",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "bl_call_target",
+        "function_pointer_target",
+        "fallthrough_continuation",
+        "cross_function_literal_pool"
+      ],
+      "expected_files": 2,
+      "expected_bytes": 692,
+      "files": [
+        "080f9c44",
+        "080f9c90"
+      ],
+      "subregions": [
+        {
+          "load_address": "0x080f9c44",
+          "size": 66,
+          "kind": "callable_function_code",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080f9c86",
+          "size": 2,
+          "kind": "alignment",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080f9c88",
+          "size": 8,
+          "kind": "local_literal_pool",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080f9c90",
+          "size": 604,
+          "kind": "callable_function_code",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080f9eec",
+          "size": 12,
+          "kind": "shared_literal_pool",
+          "authorship": "unknown"
+        }
       ]
     },
     {

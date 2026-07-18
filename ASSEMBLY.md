@@ -7,7 +7,7 @@ from the approved compiler reproduces it exactly. Linker products, runtime
 thunks, fixed hardware entries, and proven deliberately assembled kernels stay
 in assembly.
 
-The current boundary, after the second exact-C checkpoint, is:
+The current boundary, after the second exact-C checkpoint and full IWRAM reconstruction, is:
 
 | Classification | Files | Bytes | Long-term treatment |
 |---|---:|---:|---|
@@ -15,14 +15,15 @@ The current boundary, after the second exact-C checkpoint, is:
 | `_call_via_rN` runtime thunk bundle | 1 | 56 | Keep assembly |
 | BIOS/SWI wrapper bundles | 2 | 16 | Keep assembly |
 | ROM dispatch table | 1 | 768 | Keep assembly |
-| Relocated IWRAM payload | 1 | 1,624 | Keep structured assembly |
+| Relocated IWRAM payload | 1 | 5,120 | Keep structured assembly |
 | IWRAM division veneers | 4 | 32 | Keep assembly |
+| Deliberate fixed-point math primitives | 2 | 56 | Keep assembly |
 | Compiler/assembler literal pool | 1 | 32 | Keep structured data |
 | Mixed or misbounded code/data regions | 60 | 35,512 | Split before decompiling |
 | Proven deliberate performance primitive | 1 | 22 | Keep assembly |
-| Likely ordinary compiler output | 1,472 | 464,784 | Convert to exact C |
+| Likely ordinary compiler output | 1,470 | 464,728 | Convert to exact C |
 | Probable data misidentified as functions | 27 | 314 | Recover semantic data form |
-| **Total** | **1,862** | **505,496** | |
+| **Total** | **1,862** | **508,992** | |
 
 These counts describe files, not callable entries. `080000c0.s` bundles 96
 fixed-width dispatch entries, `08006864.s` bundles two BIOS wrappers, and

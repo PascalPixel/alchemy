@@ -1,0 +1,118 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence",
+  "base": "0x08180bf8",
+  "externals": {
+    "tone_bank": "0x080fba78"
+  },
+  "layout": [
+    {
+      "kind": "stream",
+      "label": "track_1",
+      "events": [
+        ["key_shift",0],
+        ["tempo",70],
+        ["voice",24],
+        ["volume",78],
+        ["pan",80],
+        ["note",11,52,84],
+        ["note",11,55],
+        ["note",11,66],
+        ["wait",12],
+        ["note_running",11,54],
+        ["note",11,57],
+        ["note",11,67],
+        ["wait",12],
+        ["note_running",11,52],
+        ["note",11,55],
+        ["note",11,66],
+        ["wait",12],
+        ["note_running",11,54],
+        ["note",11,57],
+        ["note",11,67],
+        ["wait",12],
+        ["note_running",11,55],
+        ["note",11,59],
+        ["note",11,69],
+        ["wait",12],
+        ["note_running",11,57],
+        ["note",11,60],
+        ["note",11,71],
+        ["wait",12],
+        ["note",68,52],
+        ["note",68,56],
+        ["note",68,64],
+        ["wait",68],
+        ["wait",3],
+        ["fine"]
+      ]
+    },
+    {
+      "kind": "stream",
+      "label": "track_2",
+      "events": [
+        ["key_shift",0],
+        ["voice",47],
+        ["volume",100],
+        ["pan",50],
+        ["note",32,52,76],
+        ["wait",36],
+        ["note",11],
+        ["wait",12],
+        ["note",11],
+        ["wait",12],
+        ["note",11],
+        ["wait",12],
+        ["note",68],
+        ["wait",68],
+        ["wait",3],
+        ["fine"]
+      ]
+    },
+    {
+      "kind": "stream",
+      "label": "track_3",
+      "events": [
+        ["key_shift",0],
+        ["voice",48],
+        ["volume",100],
+        ["pan",64],
+        ["note",0,28,88],
+        ["note",0,40],
+        ["wait",72],
+        ["wait",68],
+        ["wait",3],
+        ["note_end",28],
+        ["note_end_running",40],
+        ["fine"]
+      ]
+    },
+    {
+      "kind": "stream",
+      "label": "track_4",
+      "events": [
+        ["key_shift",0],
+        ["voice",48],
+        ["volume",100],
+        ["pan",54],
+        ["note",68,55,84],
+        ["note",0,59],
+        ["wait",72],
+        ["note",68,56],
+        ["wait",68],
+        ["wait",3],
+        ["note_end",59],
+        ["fine"]
+      ]
+    },
+    {
+      "kind": "header",
+      "label": "sound_087",
+      "block_count": 0,
+      "priority": 0,
+      "reverb": 178,
+      "tone_bank": "tone_bank",
+      "tracks": ["track_1","track_2","track_3","track_4"]
+    }
+  ]
+}

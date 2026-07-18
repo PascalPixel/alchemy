@@ -20,6 +20,10 @@ export interface RegionMatch {
   size: number;
   covered_bytes: number;
   ratio: number;
+  supporting_spans?: number;
+  relocation_deltas?: number[];
+  maximum_occurrences?: number;
+  confidence?: "high" | "medium" | "ambiguous";
 }
 
 export interface RegionComparison {
@@ -39,6 +43,7 @@ interface NumericSpan {
   reference: number;
   candidate: number;
   end: number;
+  maximumOccurrences: number;
 }
 
 function address(value: number | string, label: string): number {
@@ -73,7 +78,12 @@ function numericSpans(source: MatchSpan[]): NumericSpan[] {
     if (!Number.isSafeInteger(span.size) || span.size <= 0) {
       throw new Error(`span ${index}: invalid size`);
     }
-    return { reference, candidate, end: reference + span.size };
+    return {
+      reference,
+      candidate,
+      end: reference + span.size,
+      maximumOccurrences: span.maximum_occurrences ?? 1,
+    };
   }).sort((left, right) => left.reference - right.reference || left.end - right.end);
 }
 
@@ -81,11 +91,20 @@ function regionCoverage(
   start: number,
   size: number,
   source: NumericSpan[],
-): { covered: number; candidate: number } {
+): {
+  covered: number;
+  candidate: number;
+  supportingSpans: number;
+  deltas: number[];
+  maximumOccurrences: number;
+} {
   const end = start + size;
   const intervals: Array<[number, number]> = [];
   let bestSize = 0;
   let candidate = 0;
+  let maximumOccurrences = 1;
+  const deltas = new Set<number>();
+  let supportingSpans = 0;
   for (const span of source) {
     if (span.end <= start) continue;
     if (span.reference >= end) break;
@@ -93,6 +112,9 @@ function regionCoverage(
     const right = Math.min(end, span.end);
     if (right <= left) continue;
     intervals.push([left, right]);
+    supportingSpans++;
+    maximumOccurrences = Math.max(maximumOccurrences, span.maximumOccurrences);
+    deltas.add(span.candidate - span.reference);
     if (right - left > bestSize) {
       bestSize = right - left;
       candidate = span.candidate + start - span.reference;
@@ -110,7 +132,13 @@ function regionCoverage(
       currentEnd = right;
     }
   }
-  return { covered, candidate };
+  return {
+    covered,
+    candidate,
+    supportingSpans,
+    deltas: [...deltas].sort((left, right) => left - right),
+    maximumOccurrences,
+  };
 }
 
 export function compareRegions(
@@ -146,6 +174,12 @@ export function compareRegions(
       size: region.size,
       covered_bytes: overlap.covered,
       ratio,
+      supporting_spans: overlap.supportingSpans,
+      relocation_deltas: overlap.deltas,
+      maximum_occurrences: overlap.maximumOccurrences,
+      confidence: overlap.deltas.length === 1 && overlap.maximumOccurrences === 1
+        ? "high"
+        : overlap.deltas.length === 1 ? "medium" : "ambiguous",
     });
   }
   regions.sort((left, right) => right.ratio - left.ratio || right.size - left.size ||

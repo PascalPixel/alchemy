@@ -7477,7 +7477,8 @@
           "charblocks": [
             {
               "address": "0x085581e0",
-              "size": "0x2c18"
+              "size": "0x2c18",
+              "source": "assets/graphics/resource_1a2/charblock1.objects.json"
             },
             {
               "address": "0x0855adf8",

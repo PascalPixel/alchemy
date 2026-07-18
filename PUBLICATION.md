@@ -31,7 +31,7 @@ representation, the superseded file is removed.
 
 ## Never publish
 
-- `baserom.gba`, any comparative regional ROM, a built `.gba`, or any other
+- `gs1-en.gba`, any comparative regional ROM, a built `.gba`, or any other
   playable ROM image.
 - Binary patches, cross-ROM difference spans, or private comparison reports
   that reproduce or expose ROM content.

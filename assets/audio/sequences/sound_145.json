@@ -1,0 +1,94 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence",
+  "base": "0x08181be0",
+  "externals": {
+    "tone_bank": "0x080fc138"
+  },
+  "layout": [
+    {
+      "kind": "stream",
+      "label": "track_1",
+      "events": [
+        ["volume",127],
+        ["key_shift",0],
+        ["tempo",50],
+        ["voice",20],
+        ["modulation_depth",1],
+        ["note",5,59,127],
+        ["wait",1],
+        ["pitch_bend",85],
+        ["wait",2],
+        ["control_running","pitch_bend",106],
+        ["wait",1],
+        ["control_running","pitch_bend",127],
+        ["wait",2],
+        ["control_running","pitch_bend",64],
+        ["note",23,64,100],
+        ["wait",18],
+        ["note",5,59,56],
+        ["wait",6],
+        ["note_running",5,58,52],
+        ["wait",6],
+        ["note_running",5,59,48],
+        ["wait",6],
+        ["note_running",5,58,44],
+        ["wait",6],
+        ["note_running",5,59,40],
+        ["wait",6],
+        ["note_running",5,58,36],
+        ["wait",6],
+        ["note_running",5,59,32],
+        ["wait",6],
+        ["note_running",5,58,28],
+        ["wait",6],
+        ["note_running",5,59,24],
+        ["wait",6],
+        ["note_running",5,58,20],
+        ["wait",6],
+        ["note_running",5,59,16],
+        ["wait",6],
+        ["note_running",5,58,12],
+        ["wait",5],
+        ["fine"]
+      ]
+    },
+    {
+      "kind": "stream",
+      "label": "track_2",
+      "events": [
+        ["volume",127],
+        ["key_shift",0],
+        ["voice",52],
+        ["modulation_depth",1],
+        ["note",92,48,127],
+        ["wait",1],
+        ["pitch_bend",85],
+        ["wait",2],
+        ["control_running","pitch_bend",106],
+        ["wait",1],
+        ["control_running","pitch_bend",127],
+        ["wait",2],
+        ["control_running","pitch_bend",64],
+        ["note",23,62,60],
+        ["wait",88],
+        ["wait",1],
+        ["fine"]
+      ]
+    },
+    {
+      "kind": "align",
+      "boundary": 4,
+      "fill": 0
+    },
+    {
+      "kind": "header",
+      "label": "sound_145",
+      "block_count": 0,
+      "priority": 100,
+      "reverb": 0,
+      "tone_bank": "tone_bank",
+      "tracks": ["track_1","track_2"]
+    }
+  ]
+}

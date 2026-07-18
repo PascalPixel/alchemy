@@ -5,14 +5,10 @@ import struct
 import subprocess
 from pathlib import Path
 
+from alchemy_gcc import CFLAGS, compiler_command
+
 ROOT = Path(__file__).resolve().parents[1]
 ROM_BASE = 0x08000000
-FLAGS = [
-    "-O2", "-mthumb", "-mthumb-interwork", "-mcpu=arm7tdmi",
-    "-fno-builtin", "-nostdinc", "-ffreestanding", "-fcall-used-r4",
-]
-
-
 def run(command):
     subprocess.run(command, cwd=ROOT, check=True,
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -290,11 +286,8 @@ def main():
         s_path = output_dir / f"{address:08x}.s"
         o_path = output_dir / f"{address:08x}.o"
         c_path.write_text(source)
-        run([
-            str(ROOT / "toolchain/gcc296/xgcc"),
-            f"-B{ROOT / 'toolchain/gcc296'}/", *FLAGS,
-            "-S", "-o", str(s_path), str(c_path),
-        ])
+        run(compiler_command(
+            *CFLAGS, "-S", "-o", s_path, c_path))
         run([
             "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
             "-o", str(o_path), str(s_path),

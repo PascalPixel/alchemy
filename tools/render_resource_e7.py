@@ -9,6 +9,7 @@ from render_resource_19 import bgr555, rgb_png
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "assets/graphics/resource_e7"
+DEFAULT_OUTPUT = ROOT / "out/previews/resource_e7.frames.png"
 
 
 def render():
@@ -44,7 +45,7 @@ def render():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-o", "--output", type=Path, required=True)
+    parser.add_argument("-o", "--output", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args()
     image = render()
     args.output.parent.mkdir(parents=True, exist_ok=True)

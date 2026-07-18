@@ -16,11 +16,9 @@ import subprocess
 import sys
 from pathlib import Path
 
+from alchemy_gcc import CFLAGS, compiler_command
+
 ROOT = Path(__file__).resolve().parents[1]
-FLAGS = [
-    "-O2", "-mthumb", "-mthumb-interwork", "-mcpu=arm7tdmi",
-    "-fno-builtin", "-nostdinc", "-ffreestanding", "-fcall-used-r4",
-]
 HELPER = re.compile(r"inline_fn|^(static|inline)\b", re.M)
 
 
@@ -50,8 +48,7 @@ def c_extent(stem, candidate, scratch):
     listing = scratch / f"{stem}.cprobe.s"
     obj = scratch / f"{stem}.cprobe.o"
     done = subprocess.run(
-        [str(ROOT / "toolchain/gcc296/xgcc"), f"-B{ROOT / 'toolchain/gcc296'}/",
-         *FLAGS, "-S", "-o", str(listing), str(candidate)],
+        compiler_command(*CFLAGS, "-S", "-o", listing, candidate),
         capture_output=True, text=True, cwd=ROOT)
     if done.returncode != 0:
         return None

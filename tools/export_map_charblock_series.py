@@ -5,14 +5,12 @@ import json
 import struct
 from pathlib import Path
 
-from collections import Counter, defaultdict
-
 from export_asset import palette_png
 from extract_resource import (
     decode_general_trace, decode_palette_trace, encode_general, encode_palette,
 )
-from kind2_resource import export_resource
-from map_container_components import decode_component, decode_metatiles
+from kind2_resource import decode_kind2, export_resource
+from tile_objects import build_bank as build_object_bank
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -20,10 +18,18 @@ ROM_BASE = 0x08000000
 TABLE = 0x08320000 - ROM_BASE
 FIRST_CONTAINER = 0x128
 LAST_CONTAINER = 0x369
+CHARBLOCK_LAYOUT = {
+    "format": "sequential-gba-4bpp-tiles",
+    "purpose": "map-charblock-source",
+    "tile_count": 512,
+    "tile_width": 8,
+    "tile_height": 8,
+    "columns": 32,
+    "rows": 16,
+}
 ANIMATION_LAYOUT = {
     "format": "sequential-gba-4bpp-tiles",
     "purpose": "map-animation-source",
-    "virtual_base_tile": "0x600",
     "tile_count": 512,
     "tile_width": 8,
     "tile_height": 8,
@@ -129,32 +135,6 @@ def export_palette(rom, resource, directory):
     (directory / "palette.224.png").write_bytes(image)
 
 
-def tile_palette_banks(rom, base):
-    """Map each virtual tile index to the palette bank the map assigns it.
-
-    The container's 2x2-metatile map holds one GBA cell per tile use, with the
-    palette bank in the top nibble and the virtual tile index in the low twelve
-    bits (charblock 1/2/3 at 0x000/0x200/0x400, the animation source at 0x600).
-    A tile placed under several banks takes its most frequent one.
-    """
-    start, end = span(rom, base)
-    container = rom[start:end]
-    offsets = struct.unpack_from("<6I", container, 0x24)
-    begin = offsets[0]
-    finish = min(value for value in offsets if value > begin)
-    decoded, _, _, _ = decode_component(container[begin:finish])
-    _, entries = decode_metatiles(decoded)
-    votes = defaultdict(Counter)
-    overall = Counter()
-    for value in entries:
-        votes[value & 0x0fff][value >> 12] += 1
-        overall[value >> 12] += 1
-    banks = {tile: counter.most_common(1)[0][0]
-             for tile, counter in votes.items()}
-    default_bank = overall.most_common(1)[0][0] if overall else 0
-    return banks, default_bank
-
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("rom", type=Path)
@@ -167,28 +147,33 @@ def main():
         directory = ROOT / f"assets/graphics/resource_{base:x}"
         directory.mkdir(parents=True, exist_ok=True)
         export_palette(rom, palette, directory)
-        palette_path = directory / "palette.224.png"
-        tile_banks, default_bank = tile_palette_banks(rom, base)
         count += 1
         assets += 1
         for bank, resource in enumerate(banks[:3], 1):
             start, end = span(rom, resource)
+            source_path = directory / f"charblock{bank}.4bpp.png"
+            object_plan = directory / f"charblock{bank}.objects.json"
             decoded, _, _ = export_resource(
-                rom[start:end], directory / f"charblock{bank}.banked.png",
-                directory / f"charblock{bank}.kind2.json", 4, 16,
-                palette_path=palette_path, banks=tile_banks,
-                base_tile=(bank - 1) * 0x200, default_bank=default_bank)
+                rom[start:end], source_path,
+                directory / f"charblock{bank}.kind2.json", 4, 32,
+                layout=CHARBLOCK_LAYOUT)
             if decoded != 0x4000:
                 raise ValueError(f"resource {resource:x} is not one charblock")
+            if object_plan.exists():
+                canonical, _, _, _ = decode_kind2(rom[start:end])
+                rebuilt, _, _ = build_object_bank(object_plan)
+                if rebuilt != canonical:
+                    raise ValueError(
+                        f"{object_plan}: semantic bank differs from resource")
+                source_path.unlink()
             assets += 1
         if len(banks) == 4:
             resource = banks[3]
             start, end = span(rom, resource)
             decoded, _, _ = export_resource(
-                rom[start:end], directory / "animation_source.banked.png",
+                rom[start:end], directory / "animation_source.4bpp.png",
                 directory / "animation_source.kind2.json", 4, 32,
-                layout=ANIMATION_LAYOUT, palette_path=palette_path,
-                banks=tile_banks, base_tile=0x600, default_bank=default_bank)
+                layout=ANIMATION_LAYOUT)
             if decoded != 0x4000:
                 raise ValueError(
                     f"resource {resource:x} is not a 512-tile animation bank")

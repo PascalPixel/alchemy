@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "regions": [
+    {
+      "source": "asm/08000770.s",
+      "address": "0x08000770",
+      "run_address": "0x03000000"
+    }
+  ]
+}

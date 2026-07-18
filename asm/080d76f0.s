@@ -1,5 +1,5 @@
-@ 呼出しグラフから到達した領域の再構築サム逆アセンブル。
-@ （コードとデータが混在）。build_asm.tsでバイト一致確認済み。
+@ 複数領域関数の継続部。
+@ 後続するリテラルプールを同一ファイルに保持する。
 .syntax unified
 	.thumb
 	.set sub_080030f8, 0x080030f8
@@ -9,8 +9,8 @@
 	.set sub_080dbb24, 0x080dbb24
 	.set sub_080e0524, 0x080e0524
 	.set sub_080ed408, 0x080ed408
-	.global Region_080d76f0
-Region_080d76f0:
+	.global Continuation_080d76f0
+Continuation_080d76f0:
 	ldr r1, [sp, #44]
 	ldr r0, [pc, #168]
 	movs r2, #1
@@ -80,3 +80,17 @@ Region_080d76f0:
 	ldr r5, [pc, #40]
 	mov r8, r1
 	b sub_080d77b4
+
+	.balign 4, 0
+	.global LiteralPool_080d778c
+LiteralPool_080d778c:
+	.4byte 0x00007741
+	.4byte 0x00000080
+	.4byte 0x00001010
+	.4byte 0x00003f44
+	.4byte 0x000000b9
+	.4byte 0x000000ba
+	.4byte 0x03001ce0
+	.4byte 0x0000003b
+	.4byte 0x00007784
+	.4byte 0x02010000

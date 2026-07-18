@@ -37,6 +37,9 @@ own. Not affiliated with or endorsed by Nintendo or Camelot. Non-commercial.
   [`ALCHEMY_GCC.md`](ALCHEMY_GCC.md) defines its minimal verified contents.
 - Bun and native ARM binutils provide the generic tooling runtime.
 - `tools/` contains independent analysis and matching code.
+- `compare_roms.ts` and `compare_regions.ts` produce private, ignored
+  relocation-aware reports that rank reconstructed regions as shared-engine
+  candidates; comparative ROMs and reports never become build inputs.
 - `src/` contains only byte-verified reconstructed C, with no inline `asm`.
 - `asm/` contains byte-verified reconstruction assembly for regions the approved
   compiler cannot emit (the ROM-start dispatch stubs, the runtime-library

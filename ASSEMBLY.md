@@ -7,7 +7,7 @@ from the approved compiler reproduces it exactly. Linker products, runtime
 thunks, fixed hardware entries, and proven deliberately assembled kernels stay
 in assembly.
 
-The current boundary, after the first Bun conversion batch, is:
+The current boundary, after the second exact-C checkpoint, is:
 
 | Classification | Files | Bytes | Long-term treatment |
 |---|---:|---:|---|
@@ -15,11 +15,14 @@ The current boundary, after the first Bun conversion batch, is:
 | `_call_via_rN` runtime thunk bundle | 1 | 56 | Keep assembly |
 | BIOS/SWI wrapper bundles | 2 | 16 | Keep assembly |
 | ROM dispatch table | 1 | 768 | Keep assembly |
-| Mixed or misbounded code/data regions | 63 | 36,048 | Split before decompiling |
+| Relocated IWRAM payload | 1 | 1,624 | Keep structured assembly |
+| IWRAM division veneers | 4 | 32 | Keep assembly |
+| Compiler/assembler literal pool | 1 | 32 | Keep structured data |
+| Mixed or misbounded code/data regions | 60 | 35,512 | Split before decompiling |
 | Proven deliberate performance primitive | 1 | 22 | Keep assembly |
-| Likely ordinary compiler output | 1,503 | 465,882 | Convert to exact C |
+| Likely ordinary compiler output | 1,472 | 464,784 | Convert to exact C |
 | Probable data misidentified as functions | 27 | 314 | Recover semantic data form |
-| **Total** | **1,890** | **505,442** | |
+| **Total** | **1,862** | **505,496** | |
 
 These counts describe files, not callable entries. `080000c0.s` bundles 96
 fixed-width dispatch entries, `08006864.s` bundles two BIOS wrappers, and
@@ -39,6 +42,16 @@ fixed-width dispatch entries, `08006864.s` bundles two BIOS wrappers, and
   four-byte stride from `0x080072e4`.
 - `08006864.s` and `08006870.s` contain direct BIOS software-interrupt
   wrappers. The fixed `swi`/`svc` instruction is not expressible in asm-free C.
+- `080022ec.s` through `08002304.s` are four fixed veneers into the division
+  runtime at `0x03000380..0x030003f0`. The adjacent ordinary routines now have
+  their own boundaries and remain C targets.
+- `0809b7e4.s` is the 32-byte PC-relative literal pool used by `0809b698`.
+  The false function at `0809b7f8` has been removed; the real function at
+  `0809b804` now builds exactly from C.
+
+`asm/classification.json` is the machine-readable boundary. `build_asm.ts`
+attaches its origin, retention decision, confidence, and evidence to every
+built region and rejects changes to the proven category counts.
 
 ## Deliberate performance assembly
 
@@ -54,14 +67,15 @@ sample-buffer stores. It is deliberately assembled code, although the ROM
 alone cannot prove whether Camelot wrote it or bundled it with a sound library.
 This repository records that uncertainty instead of inventing authorship.
 
-The startup copy at `0800300c` also identifies a second hot payload:
-`0x08000770..0x08001b6f` is copied to `0x03000000..0x030013ff`. Evidence inside
-it includes the ARM IRQ dispatcher, fixed-point `smull`/`smlal` math kernels,
-computed-entry unrolled clearing, packed-bit expansion, decompression, and a
-mixed-mode audio path. Those routines are strong deliberate-assembly
-candidates and must be reconstructed as structured assembly regions before
-the private ROM fallback can be retired. Stereotyped division helpers inside
-the payload remain compiler-runtime code, not game-specific optimization.
+The startup copy at `0800300c` identifies a second hot payload:
+`0x08000770..0x08001b6f` is copied to `0x03000000..0x030013ff`. The first
+`0x658` bytes now build exactly from `asm/08000770.s` at their IWRAM run
+address. That source separates the ARM IRQ dispatcher, fixed-point
+`smull`/`smlal` math kernels, computed-entry unrolled clearing, packed-bit
+expansion, transforms, decompression, and compiler-runtime division helpers.
+The remaining `0xda8` bytes at ROM `0x08000dc8..0x08001b6f` are the mixed-mode
+audio path and remain private-ROM fallback until their Thumb/ARM boundaries
+are reconstructed.
 
 ## Not assembly authorship evidence
 

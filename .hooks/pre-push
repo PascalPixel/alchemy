@@ -1,9 +1,9 @@
 #!/bin/sh
-# Publishing is allowed as source only. Refuse to push if any tracked file is a
-# ROM image or a build/binary artifact derived from the private ROM.
+# 公開対象はソースだけとする。ROM画像または非公開ROM由来の構築物が
+# 追跡されている場合は送信を拒否する。
 bad=$(git ls-files | grep -Ei '(^|/)baserom|\.(gba|rom|bin|elf|o|a)$')
 if [ -n "$bad" ]; then
-    echo "pure: refusing to push ROM images or binary artifacts:" >&2
+    echo "alchemy: refusing to push ROM images or binary artifacts:" >&2
     echo "$bad" >&2
     exit 1
 fi

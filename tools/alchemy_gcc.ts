@@ -1,0 +1,74 @@
+#!/usr/bin/env bun
+import { readFileSync, statSync } from "node:fs";
+import { dirname, join } from "node:path";
+
+export const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
+export const BUNDLE = join(ROOT, "alchemy-gcc");
+export const DRIVER = join(BUNDLE, "xgcc");
+export const M2C = join(BUNDLE, "m2c-venv/bin/m2c");
+export const CFLAGS = [
+  "-O2", "-mthumb", "-mthumb-interwork", "-mcpu=arm7tdmi",
+  "-fno-builtin", "-nostdinc", "-ffreestanding", "-fcall-used-r4",
+] as const;
+
+const EXPECTED: Record<string, string> = {
+  xgcc: "8087fb1911b00aafe8ba9dc1530ca84a98774206f24d95b3ac8a8f01bf8a6eb6",
+  cpp: "28621e18b2a6b663e1ea6e47750ca0133483f4287bc271265cc7e2fcfa69a2eb",
+  tradcpp: "88dae1204f5e928c7de003fd25263e91a18802f8ffde48b6f076e2ee1ea3e59a",
+  cc1: "14d4ad0a4fba9054250af66efd489d577d6f0397b54aeb75f9bcead65256fc5c",
+};
+
+let validated = false;
+
+function outputText(value: Uint8Array): string {
+  return Buffer.from(value).toString("utf8");
+}
+
+export function validateBundle(): void {
+  if (validated) return;
+  if (process.platform !== "darwin" || process.arch !== "arm64") {
+    throw new Error("alchemy-gcc requires native arm64 macOS");
+  }
+  for (const [name, expected] of Object.entries(EXPECTED)) {
+    const path = join(BUNDLE, name);
+    let mode = 0;
+    try {
+      mode = statSync(path).mode;
+    } catch {
+      throw new Error(`alchemy-gcc is missing executable ${name}`);
+    }
+    if ((mode & 0o111) === 0) {
+      throw new Error(`alchemy-gcc is missing executable ${name}`);
+    }
+    const actual = new Bun.CryptoHasher("sha256").update(readFileSync(path)).digest("hex");
+    if (actual !== expected) {
+      throw new Error(`alchemy-gcc/${name} has an unapproved digest`);
+    }
+  }
+  // 起動確認。並列処理の前に移設済み補助実行体を一つずつ起動する。
+  // 初回起動を同時に行うとmacOSの検証処理が競合する。
+  const smoke = Bun.spawnSync(
+    [DRIVER, `-B${BUNDLE}/`, "-S", "-x", "c", "-o", "/dev/null", "/dev/null"],
+    { cwd: ROOT, stdout: "pipe", stderr: "pipe" },
+  );
+  if (smoke.exitCode !== 0) {
+    const detail = (outputText(smoke.stderr) || outputText(smoke.stdout)).trim();
+    throw new Error(`alchemy-gcc smoke compile failed: ${detail}`);
+  }
+  validated = true;
+}
+
+export function compilerCommand(...arguments_: Array<string | number>): string[] {
+  validateBundle();
+  return [DRIVER, `-B${BUNDLE}/`, ...arguments_.map(String)];
+}
+
+function main(): void {
+  validateBundle();
+  const size = Object.keys(EXPECTED)
+    .map((name) => statSync(join(BUNDLE, name)).size)
+    .reduce((sum, value) => sum + value, 0);
+  console.log(`alchemy-gcc=ok host=arm64 files=${Object.keys(EXPECTED).length} bytes=${size}`);
+}
+
+if (import.meta.main) main();

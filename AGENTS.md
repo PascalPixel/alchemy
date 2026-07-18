@@ -19,6 +19,6 @@ any build, verify, or permuter loop (the top CPU consumers become `oahd` and
 `/opt/homebrew` supplies a native build. Binutils **2.46.1 was verified
 byte-identical to the previously pinned 2.33.1** across all claimed regions
 (same `identical=True`, same region and byte counts), so the upgrade is safe
-here; re-verify with a full `tools/build_full.py` before adopting any other
+here; re-verify with a full `bun tools/build_full.ts` before adopting any other
 assembler version, since GAS canonicalization differences do change encodings
 for some instructions.

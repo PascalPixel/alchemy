@@ -1,7 +1,7 @@
 # Assets
 
 Every entry in `manifest.json` names its exact ROM range and deterministic
-encoding. `tools/build_assets.py` refuses a region unless the tracked source
+encoding. `tools/build_assets.ts` refuses a region unless the tracked source
 re-encodes byte-for-byte to the private ROM, and rejects tracked images that
 are not inputs to that verified build.
 
@@ -23,11 +23,9 @@ sources are a BGR555 palette PNG, two 8bpp tile PNGs, a 32×32 text tilemap,
 and a payload-free custom-LZ token plan. The plan records literal positions
 and copy decisions; literal bytes come from the PNG/text components during
 the build. Together they re-encode the complete compressed ROM stream.
-A generated, non-source preview renders the four proven
-dynamic states after applying the real palette, 32x32 tilemap, tile flips, and
-the runtime `0x340`-byte dynamic upload. Regenerate it with
-`python3 tools/render_resource_19.py`; the ignored output is
-`out/previews/resource_19.frames.png`.
+A generated, non-source preview may render the four proven dynamic states after
+applying the real palette, 32x32 tilemap, tile flips, and the runtime
+`0x340`-byte dynamic upload. Such previews remain ignored build products.
 
 `graphics/resources_d8_e3/` contains two alternative six-resource affine
 background sets selected by a ROM-derived map condition. D8/DE are 224-color
@@ -77,9 +75,8 @@ runtime selector and coordinate system are not yet proven.
 five 16-color BGR555 palette banks and 256 4bpp tiles. Pixel-edge continuity
 fixes the native tile order at four tiles wide: every consecutive group of
 sixteen tiles is one coherent 32x32 frame, yielding sixteen frames and five
-color variants. A non-source preview is generated from those tracked sources
-with `python3 tools/render_resource_e7.py`; the ignored output is
-`out/previews/resource_e7.frames.png`.
+color variants. Non-source previews generated from those tracked sources remain
+ignored build products.
 
 `graphics/resource_f0/images/` contains 57 unique, palette-correct 32x32 4bpp
 images. The ROM's 80-entry 16-bit offset table contains 23 null slots and one
@@ -96,8 +93,7 @@ pixels, and zero terminates a frame. All 32x32 and 64x64 streams land exactly
 on their metadata-defined pixel boundary and greedily re-encode byte-for-byte.
 The shared 224-color OBJ palette is the independently reconstructed range
 copied from ROM `0x0800779c`; each `preview.atlas.png` is a generated contact
-sheet. Regenerate the series with `python3 tools/export_sprite_series.py
-baserom.gba`.
+sheet and remains ignored.
 
 `graphics/resource_128/` through `graphics/resource_369/` contain the 121 map
 families whose container is directly followed by a 224-color BG palette
@@ -116,13 +112,12 @@ neutral index legend rather than claiming one of fourteen 16-color banks.
 Their 512 tiles use the map-authored 32x16 sheet geometry: text entries advance
 by one tile across a row and by `0x20` down a row. A 16x32 wrap preserves bytes
 but folds coherent structures into misleading alternating strips.
-Regenerate with `python3 tools/export_map_charblock_series.py baserom.gba`;
-the exporter discovers containers 0x128 through 0x369 in the resource table
-and claims each family's greedy palette-plus-banks tail, leaving every
+The reconstructed series covers containers 0x128 through 0x369 in the resource
+table and claims each family's greedy palette-plus-banks tail, leaving every
 resource that does not classify unclaimed.
 
 Banks can be decompiled further into coherent object PNGs without losing their
-exact slot order. `tools/tile_objects.py extract-map` writes a colorized object,
+exact slot order. `tools/tile_objects.ts extract-map` writes a colorized object,
 its exact text tilemap, and a neutral remainder atlas; `--append` migrates more
 objects from the same bank later. Once the plan reproduces the complete bank,
 the tool updates the manifest and deletes the superseded sequential atlas. The
@@ -172,5 +167,4 @@ single-word blend-control writes, value/duration pairs, pair-index jumps,
 stream resets, and stops. Component 5 is a JSON sequence of three-byte sparse
 records plus its FFFFFF terminator and zero alignment. All compressed plans
 retain trailing lookahead bytes and reproduce their named component spans
-exactly. Regenerate the series with `python3
-tools/export_map_component_series.py baserom.gba`.
+exactly.

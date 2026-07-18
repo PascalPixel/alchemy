@@ -80,6 +80,104 @@ def cell_indices(grid_dir, metatile_count):
             for y in range(GRID)]
 
 
+def standalone_banks():
+    """The globally shared map tilesets, in resource order, grouped into runs
+    of adjacent resources. A map loads one run at virtual tile base 0x800."""
+    manifest = json.loads((ROOT / "assets/manifest.json").read_text())
+    ids = []
+    for series in manifest.get("series", []):
+        if series.get("kind") == "golden-sun-standalone-tile-series":
+            ids = [entry["id"] for entry in series["resources"]]
+    runs, current = [], []
+    for rid in ids:
+        if current and int(rid, 16) != int(current[-1], 16) + 1:
+            runs.append(current)
+            current = []
+        current.append(rid)
+    if current:
+        runs.append(current)
+    return runs
+
+
+def load_shared(ids):
+    tiles = []
+    for rid in ids:
+        path = ROOT / f"assets/graphics/resource_{rid}/tiles.4bpp.png"
+        if path.exists():
+            tiles.extend(load_bank_indices(path))
+    return tiles
+
+
+def pick_shared(map_dir, gfx_dir, metatiles, cells, sources, palette):
+    """Choose which shared tileset run this map loads.
+
+    The map data carries no tileset id we have recovered, so select the run
+    empirically: the correct tileset's tiles are continuous in colour with the
+    map tiles they sit beside, while a wrong one paints blocks that clash. Tile
+    STRUCTURE does not discriminate (wrong runs contain structured tiles too);
+    colour continuity across the shared/normal boundary does.
+    """
+    best, best_score = None, None
+    for run in standalone_banks():
+        tiles = load_shared(run)
+        if not tiles:
+            continue
+        total, count = 0.0, 0
+        for cy in range(0, GRID, 2):          # sample every other cell: same
+            for cx in range(0, GRID, 2):      # ranking, a quarter of the work
+                mt = cells[cy][cx]
+                if mt >= len(metatiles):
+                    continue
+                mine = cell_colour(metatiles[mt], sources, tiles, palette)
+                if mine is None or not mine[1]:
+                    continue
+                for dx, dy in ((1, 0), (0, 1)):
+                    nx, ny = cx + dx, cy + dy
+                    if not (0 <= nx < GRID and 0 <= ny < GRID):
+                        continue
+                    nmt = cells[ny][nx]
+                    if nmt >= len(metatiles):
+                        continue
+                    other = cell_colour(metatiles[nmt], sources, tiles, palette)
+                    if other is None or other[1]:
+                        continue
+                    total += sum(abs(a - b) for a, b in zip(mine[0], other[0]))
+                    count += 1
+        if count:
+            score = total / count
+            if best_score is None or score < best_score:
+                best, best_score = tiles, score
+    return best
+
+
+def cell_colour(quad, sources, shared, palette):
+    """(mean RGB, uses_shared) for one metatile, or None if nothing painted."""
+    acc = [0, 0, 0]
+    seen = 0
+    uses_shared = False
+    for entry in quad:
+        index = entry & 0x0FFF
+        bank = entry >> 12
+        window, local = index // WINDOW, index % WINDOW
+        if window < 4 and window in sources and local < len(sources[window]):
+            tile = sources[window][local]
+        elif shared is not None and 0x800 <= index and (index - 0x800) < len(shared):
+            tile = shared[index - 0x800]
+            uses_shared = True
+        else:
+            continue
+        for row in tile:
+            for value in row:
+                red, green, blue = palette[(bank * 16 + value) & 0xFF]
+                acc[0] += red
+                acc[1] += green
+                acc[2] += blue
+                seen += 1
+    if not seen:
+        return None
+    return ([channel / seen for channel in acc], uses_shared)
+
+
 def compose(map_dir, gfx_dir, shared_tiles=None):
     window_files = {
         0: "charblock1.banked.png",
@@ -94,6 +192,9 @@ def compose(map_dir, gfx_dir, shared_tiles=None):
     palette = load_palette(palette_path)
     metatiles = parse_metatiles(map_dir / "components" / "metatiles.tilemap")
     cells = cell_indices(map_dir / "grid", len(metatiles))
+    if shared_tiles is None:
+        shared_tiles = pick_shared(map_dir, gfx_dir, metatiles, cells,
+                                   sources, palette)
 
     canvas = Image.new("RGB", (GRID * CELL, GRID * CELL), (0, 0, 0))
     out = canvas.load()

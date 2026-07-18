@@ -15,7 +15,7 @@ The current local evidence divides the native data as follows:
 | `080fc624..080fc683` | eight music-player records | unclaimed |
 | `080fc684..080fd043` | 312-entry sound-selection table | `song_table.json` |
 | `080fd044..080fd047` | shared empty sound header | unclaimed |
-| `080fd048..0815fb77` | tone-referenced wave arena, including 32 signed-PCM records | unclaimed |
+| `080fd048..0815fb77` | tone-referenced wave arena, including 32 signed-PCM records | 32 PCM records claimed; five synthesizer descriptors remain |
 | `0815fb78..08184697` | native sequence arena selected by the sound table | 241 complete units claimed below |
 
 `song_table.json` uses symbols for header references and records the player
@@ -29,6 +29,13 @@ events, and 124,340 byte-verified bytes. `index.json` records every exact range
 and the 19 headers still rejected by the semantic decoder. Those failures stay
 unclaimed until their additional running-status form or nonzero separator can
 be represented; they are never stored as opaque ROM slices.
+
+`waves/` contains the 32 tone-referenced signed-PCM records as canonical mono
+8-bit WAV sources plus an index retaining the engine's exact fixed-point
+frequency and loop position. The builder reverses WAV's unsigned 8-bit bias,
+recreates the native 16-byte header, and checks zero alignment. The five
+zero-length synthesizer descriptors between the PCM banks are not mislabeled
+as audio samples and remain unclaimed.
 
 The sequence codec preserves loops, pattern calls, repeats, running-status
 omission, priorities, reverb, tone-bank references, and pointer targets. A

@@ -18,6 +18,12 @@ track and tone-bank references, priority, reverb, loops, pattern calls, and
 command-status choices. The indexed series claims 124,340 independently
 round-tripped bytes; 19 unsupported variants remain explicitly unclaimed.
 
+`audio/waves/` reconstructs all 32 tone-referenced signed-PCM records as
+standard mono 8-bit WAV sources. Its index preserves exact fixed-point
+frequencies and loop points, while the verified builder restores native signed
+samples, 16-byte headers, and alignment for 404,160 ROM bytes. Five adjacent
+zero-length synthesizer descriptors remain a separate recovery unit.
+
 `graphics/080c5b30.4bpp.png` contains seven palette-independent 4bpp tiles.
 ROM code copies the seven consecutive 32-byte units to seven consecutive VRAM
 tile slots. The PNG palette is an index legend only; it does not claim the

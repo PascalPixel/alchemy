@@ -8,7 +8,7 @@
     "build:assets": "bun tools/build_assets.ts",
     "build:full": "bun tools/build_full.ts",
     "build:rom": "bun tools/build_rom.ts",
-    "test": "bun tools/import_asset.ts --self-test && bun tools/export_asset.ts --self-test && bun tools/extract_resource.ts --self-test && bun tools/kind1_map_grid.ts --self-test && bun tools/kind2_resource.ts --self-test && bun tools/music.ts --self-test && bun tools/music_sequence.ts --self-test && bun tools/pairtable.ts --self-test && bun tools/skip_sprite_archive.ts --self-test && bun tools/text_bg.ts --self-test && bun tools/tilemap.ts --self-test && bun tools/bg_tile_usage.ts --self-test && bun tools/compare_roms.ts --self-test && bun tools/compare_regions.ts --self-test && bun tools/scan_decomp.ts --self-test && bun tools/build_claimed.ts --self-test && bun tools/build_full.ts --self-test"
+    "test": "bun tools/import_asset.ts --self-test && bun tools/export_asset.ts --self-test && bun tools/extract_resource.ts --self-test && bun tools/kind1_map_grid.ts --self-test && bun tools/kind2_resource.ts --self-test && bun tools/music.ts --self-test && bun tools/music_sequence.ts --self-test && bun tools/audio_wave.ts --self-test && bun tools/pairtable.ts --self-test && bun tools/skip_sprite_archive.ts --self-test && bun tools/text_bg.ts --self-test && bun tools/tilemap.ts --self-test && bun tools/bg_tile_usage.ts --self-test && bun tools/compare_roms.ts --self-test && bun tools/compare_regions.ts --self-test && bun tools/scan_decomp.ts --self-test && bun tools/build_claimed.ts --self-test && bun tools/build_full.ts --self-test"
   },
   "engines": {
     "bun": ">=1.3.0"

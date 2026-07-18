@@ -1,0 +1,81 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence",
+  "base": "0x08183248",
+  "externals": {
+    "tone_bank": "0x080fc138"
+  },
+  "layout": [
+    {
+      "kind": "stream",
+      "label": "track_1",
+      "events": [
+        ["volume",127],
+        ["key_shift",0],
+        ["tempo",125],
+        ["voice",26],
+        ["modulation_depth",1],
+        ["pitch_bend_range",6],
+        ["pitch_bend",127],
+        ["note",23,39,127],
+        ["wait",4],
+        ["pitch_bend",120],
+        ["wait",2],
+        ["control_running","pitch_bend",114],
+        ["wait",2],
+        ["control_running","pitch_bend",108],
+        ["wait",2],
+        ["control_running","pitch_bend",102],
+        ["wait",2],
+        ["control_running","pitch_bend",96],
+        ["wait",2],
+        ["control_running","pitch_bend",90],
+        ["wait",2],
+        ["control_running","pitch_bend",84],
+        ["wait",2],
+        ["control_running","pitch_bend",78],
+        ["wait",2],
+        ["control_running","pitch_bend",72],
+        ["wait",2],
+        ["control_running","pitch_bend",66],
+        ["wait",2],
+        ["control_running","pitch_bend",60],
+        ["wait",2],
+        ["control_running","pitch_bend",54],
+        ["wait",2],
+        ["control_running","pitch_bend",48],
+        ["wait",2],
+        ["control_running","pitch_bend",42],
+        ["wait",2],
+        ["control_running","pitch_bend",36],
+        ["wait",2],
+        ["control_running","pitch_bend",30],
+        ["wait",2],
+        ["control_running","pitch_bend",24],
+        ["wait",2],
+        ["control_running","pitch_bend",18],
+        ["wait",2],
+        ["control_running","pitch_bend",12],
+        ["wait",2],
+        ["control_running","pitch_bend",6],
+        ["wait",2],
+        ["control_running","pitch_bend",0],
+        ["fine"]
+      ]
+    },
+    {
+      "kind": "align",
+      "boundary": 4,
+      "fill": 0
+    },
+    {
+      "kind": "header",
+      "label": "sound_213",
+      "block_count": 0,
+      "priority": 100,
+      "reverb": 0,
+      "tone_bank": "tone_bank",
+      "tracks": ["track_1"]
+    }
+  ]
+}

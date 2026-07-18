@@ -32,18 +32,6 @@
       "source": "assets/audio/song_table.json"
     },
     {
-      "address": "0x0817fc08",
-      "size": "0x264",
-      "kind": "golden-sun-sound-sequence",
-      "source": "assets/audio/sound_075/sequence.json"
-    },
-    {
-      "address": "0x08181260",
-      "size": "0x1c",
-      "kind": "golden-sun-sound-sequence",
-      "source": "assets/audio/sound_106/sequence.json"
-    },
-    {
       "address": "0x08333fc8",
       "size": "0x182a",
       "kind": "golden-sun-general-lz",
@@ -442,6 +430,10 @@
     }
   ],
   "series": [
+    {
+      "kind": "golden-sun-sound-sequence-series",
+      "index": "assets/audio/sequences/index.json"
+    },
     {
       "kind": "golden-sun-map-component-series",
       "families": [

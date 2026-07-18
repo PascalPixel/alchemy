@@ -1,0 +1,91 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence",
+  "base": "0x0818231c",
+  "externals": {
+    "tone_bank": "0x080fc138"
+  },
+  "layout": [
+    {
+      "kind": "stream",
+      "label": "track_1",
+      "events": [
+        ["volume",127],
+        ["key_shift",0],
+        ["tempo",40],
+        ["voice",56],
+        ["modulation_depth",5],
+        ["note",1,33,84],
+        ["wait",1],
+        ["note_running",1,41,88],
+        ["wait",1],
+        ["note_running",1,44,96],
+        ["wait",1],
+        ["note_running",1,45,104],
+        ["wait",1],
+        ["note_running",1,46,112],
+        ["wait",1],
+        ["note_running",1,47,120],
+        ["wait",1],
+        ["note_running",1,48,127],
+        ["wait",1],
+        ["note_running",1,49],
+        ["wait",1],
+        ["note",84,56],
+        ["wait",4],
+        ["label","loop_1"],
+        ["wait",78],
+        ["goto","loop_1"],
+        ["wait",5],
+        ["fine"]
+      ]
+    },
+    {
+      "kind": "stream",
+      "label": "track_2",
+      "events": [
+        ["volume",127],
+        ["key_shift",0],
+        ["voice",28],
+        ["modulation_depth",24],
+        ["note",1,43,4],
+        ["wait",1],
+        ["note_running",1,51],
+        ["wait",1],
+        ["note_running",1,54],
+        ["wait",1],
+        ["note_running",1,55,8],
+        ["wait",1],
+        ["note_running",1,56,12],
+        ["wait",1],
+        ["note_running",1,57,16],
+        ["wait",1],
+        ["note_running",1,58,20],
+        ["wait",1],
+        ["note_running",1,59],
+        ["wait",1],
+        ["note",84,66],
+        ["wait",4],
+        ["label","loop_2"],
+        ["wait",78],
+        ["goto","loop_2"],
+        ["wait",5],
+        ["fine"]
+      ]
+    },
+    {
+      "kind": "align",
+      "boundary": 4,
+      "fill": 0
+    },
+    {
+      "kind": "header",
+      "label": "sound_180",
+      "block_count": 0,
+      "priority": 100,
+      "reverb": 0,
+      "tone_bank": "tone_bank",
+      "tracks": ["track_1","track_2"]
+    }
+  ]
+}

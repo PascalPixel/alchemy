@@ -296,7 +296,7 @@ export function build_sequence(source: SequenceSource): [Buffer, SequenceReport]
       eventCount += measured.events;
     } else if (segment.kind === "align") {
       byte(segment.fill, "alignment fill");
-      offset += alignmentSize(offset, segment.boundary);
+      offset += alignmentSize(base + offset, segment.boundary);
     } else if (segment.kind === "header") {
       addLabel(labels, symbol(segment.label, "header label"), base + offset);
       if (!Array.isArray(segment.tracks) || segment.tracks.length === 0 || segment.tracks.length > 16) {
@@ -336,7 +336,7 @@ export function build_sequence(source: SequenceSource): [Buffer, SequenceReport]
       parts.push(encoded.data);
       offset += encoded.data.length;
     } else if (segment.kind === "align") {
-      const size = alignmentSize(offset, segment.boundary);
+      const size = alignmentSize(base + offset, segment.boundary);
       parts.push(Buffer.alloc(size, segment.fill));
       offset += size;
     } else {
@@ -467,9 +467,9 @@ function decodeStream(
   throw new Error("sequence stream has no terminal command");
 }
 
-function alignForGap(offset: number, target: number): number | undefined {
+function alignForGap(address: number, target: number): number | undefined {
   for (const boundary of [4, 2, 8, 16, 32, 64, 128, 256]) {
-    if (offset + alignmentSize(offset, boundary) === target) return boundary;
+    if (address + alignmentSize(address, boundary) === target) return boundary;
   }
   return undefined;
 }
@@ -560,7 +560,7 @@ export function extract_sequence(
   let cursor = base;
   for (const target of [...decoded.keys()].sort((left, right) => left - right)) {
     if (target !== cursor) {
-      const boundary = alignForGap(cursor - base, target - base);
+      const boundary = alignForGap(cursor, target);
       const gap = data.subarray(cursor - 0x08000000, target - 0x08000000);
       if (boundary === undefined || gap.some((value) => value !== 0)) throw new Error("non-semantic bytes separate sequence streams");
       layout.push({ kind: "align", boundary, fill: 0 });
@@ -577,7 +577,7 @@ export function extract_sequence(
     cursor = block.end;
   }
   if (cursor !== header) {
-    const boundary = alignForGap(cursor - base, header - base);
+    const boundary = alignForGap(cursor, header);
     const gap = data.subarray(cursor - 0x08000000, header - 0x08000000);
     if (boundary === undefined || gap.some((value) => value !== 0)) throw new Error("non-semantic bytes precede sequence header");
     layout.push({ kind: "align", boundary, fill: 0 });

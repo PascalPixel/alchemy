@@ -16,7 +16,7 @@ The current local evidence divides the native data as follows:
 | `080fc684..080fd043` | 312-entry sound-selection table | `song_table.json` |
 | `080fd044..080fd047` | shared empty sound header | unclaimed |
 | `080fd048..0815fb77` | tone-referenced wave arena, including 32 signed-PCM records | 32 PCM records claimed; five synthesizer descriptors remain |
-| `0815fb78..08184697` | native sequence arena selected by the sound table | 259 complete units claimed below |
+| `0815fb78..08184697` | native sequence arena selected by the sound table | all 260 nonempty units claimed below |
 
 `song_table.json` uses symbols for header references and records the player
 selected by the ROM code. Its final halfword always duplicates that selector;
@@ -24,11 +24,10 @@ the source represents the proven duplication without inventing a meaning for
 the field. Forty-eight empty entries share `sound_empty`, and repeated real
 headers likewise reuse one symbol.
 
-`sequences/` contains 259 independently selected units: 617 tracks, 97,642
-events, and 150,224 byte-verified bytes. `index.json` records every exact range
-and the sole header still rejected because non-semantic bytes precede it. That
-unit stays unclaimed until the separator is understood; it is never stored as
-an opaque ROM slice.
+`sequences/` contains all 260 independently selected nonempty units: 618
+tracks, 97,652 events, and 150,254 byte-verified bytes. `index.json` records
+every exact range. Stream and header padding follows absolute ROM alignment,
+including units whose first track is not word-aligned.
 
 `waves/` contains the 32 tone-referenced signed-PCM records as canonical mono
 8-bit WAV sources plus an index retaining the engine's exact fixed-point

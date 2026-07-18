@@ -23,6 +23,7 @@ import {
   build_sparse,
 } from "./map_container_components.ts";
 import { build_table as build_map_load_table } from "./map_load_table.ts";
+import { build_sound_table } from "./music.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -455,6 +456,12 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     const built = build_map_load_table(source);
     const document = JSON.parse(readFileSync(source, "utf8"));
     return [built, [String(entry.source)], { records: document.records.length, record_size: 12 }];
+  }
+  if (kind === "golden-sun-sound-table") {
+    const source = sourcePath(String(entry.source));
+    const document = JSON.parse(readFileSync(source, "utf8"));
+    const [built, report] = build_sound_table(document);
+    return [built, [String(entry.source)], report];
   }
   if (kind === "golden-sun-offset-palette-lz") {
     const planPath = sourcePath(String(entry.plan));

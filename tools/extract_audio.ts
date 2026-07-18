@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 import { build_sequence, extract_sequence } from "./music_sequence.ts";
+import { wavFromSignedPcm } from "./audio_wave.ts";
 
 interface SequenceIndexEntry {
   name: string;
@@ -106,11 +107,55 @@ export async function extractSequences(
 }
 
 async function main(args: string[]): Promise<void> {
-  if (args[0] !== "extract-sequences" || !args[1]) {
+  if (!args[1] || !["extract-sequences", "extract-waves"].includes(args[0])) {
     console.log("usage: extract_audio.ts extract-sequences ROM --table TABLE -o DIRECTORY");
+    console.log("       extract_audio.ts extract-waves ROM --tone-start ADDRESS --tone-end ADDRESS --arena-start ADDRESS --arena-end ADDRESS -o DIRECTORY");
     return;
   }
   const rom = new Uint8Array(await Bun.file(args[1]).arrayBuffer());
+  if (args[0] === "extract-waves") {
+    const toneStart = Number(option(args, "--tone-start"));
+    const toneEnd = Number(option(args, "--tone-end"));
+    const arenaStart = Number(option(args, "--arena-start"));
+    const arenaEnd = Number(option(args, "--arena-end"));
+    const output = option(args, "-o");
+    const view = new DataView(rom.buffer, rom.byteOffset, rom.byteLength);
+    const pointers = new Set<number>();
+    for (let address = toneStart; address + 4 <= toneEnd; address += 4) {
+      const pointer = view.getUint32(address - 0x08000000, true);
+      if (pointer >= arenaStart && pointer < arenaEnd) pointers.add(pointer);
+    }
+    const addresses = [...pointers].sort((left, right) => left - right);
+    await Bun.$`mkdir -p ${output}`.quiet();
+    const waves: Record<string, unknown>[] = [];
+    for (const [pointerIndex, address] of addresses.entries()) {
+      const offset = address - 0x08000000;
+      const flags = view.getUint32(offset, true);
+      const frequency = view.getUint32(offset + 4, true);
+      const loopStart = view.getUint32(offset + 8, true);
+      const sampleCount = view.getUint32(offset + 12, true) + 1;
+      const next = addresses[pointerIndex + 1] ?? arenaEnd;
+      const padding = rom.subarray(offset + 16 + sampleCount, next - 0x08000000);
+      if (sampleCount <= 1 || ![0, 0x40000000].includes(flags) || padding.length > 3 ||
+          padding.some((value) => value !== 0)) continue;
+      const name = `wave_${String(waves.length).padStart(2, "0")}`;
+      const filename = `${name}.pcm8.wav`;
+      const samples = rom.subarray(offset + 16, offset + 16 + sampleCount);
+      await Bun.write(`${output}/${filename}`, wavFromSignedPcm(samples, Math.round(frequency / 1024)));
+      waves.push({
+        name,
+        address: hexadecimal(address),
+        size: hexadecimal(next - address),
+        frequency,
+        loop_start: flags === 0 ? null : loopStart,
+        source: filename,
+      });
+    }
+    const index = { format: 1, engine: "smsh-pcm-wave-series", waves };
+    await Bun.write(`${output}/index.json`, JSON.stringify(index, null, 2) + "\n");
+    console.log(`waves=${waves.length} bytes=${waves.reduce((sum, wave) => sum + Number(wave.size), 0)}`);
+    return;
+  }
   const table = await Bun.file(option(args, "--table")).json();
   if (table.format !== 1 || typeof table.symbols !== "object") {
     throw new Error("unsupported sound table");

@@ -25,7 +25,11 @@ export function prune_files(directory: string, pattern: string, keep: Iterable<s
 
 export interface AssetRegion { sources?: string[] }
 
-export function unused_tracked_images(root: string, regions: Iterable<AssetRegion>): string[] {
+export function unused_tracked_images(
+  root: string,
+  regions: Iterable<AssetRegion>,
+  ignoredPrefixes: Iterable<string> = [],
+): string[] {
   root = resolve(root);
   if (!existsSync(resolve(root, ".git"))) return [];
   const process = Bun.spawnSync(["git", "ls-files", "-z", "--", ...IMAGE_SUFFIXES.map((suffix) => `*${suffix}`)], { cwd: root });
@@ -36,5 +40,8 @@ export function unused_tracked_images(root: string, regions: Iterable<AssetRegio
     if (!IMAGE_SUFFIXES.includes(extname(name).toLowerCase() as typeof IMAGE_SUFFIXES[number])) continue;
     sources.add((isAbsolute(name) ? relative(root, resolve(name)) : name).replaceAll("\\", "/"));
   }
-  return Array.from(tracked).filter((name) => !sources.has(name) && existsSync(resolve(root, name))).sort();
+  const ignored = Array.from(ignoredPrefixes, (prefix) => prefix.replaceAll("\\", "/"));
+  return Array.from(tracked).filter((name) =>
+    !sources.has(name) && !ignored.some((prefix) => name.startsWith(prefix)) && existsSync(resolve(root, name)),
+  ).sort();
 }

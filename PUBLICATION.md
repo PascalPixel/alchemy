@@ -31,7 +31,10 @@ representation, the superseded file is removed.
 
 ## Never publish
 
-- `baserom.gba`, a built `.gba`, or any other playable ROM image.
+- `baserom.gba`, any comparative regional ROM, a built `.gba`, or any other
+  playable ROM image.
+- Binary patches, cross-ROM difference spans, or private comparison reports
+  that reproduce or expose ROM content.
 - Copied ROM gaps, committed `.incbin` payloads, or raw ROM ranges kept only to
   make an incomplete reconstruction link.
 - Opaque bulk extraction dumps whose only function is to substitute for ROM

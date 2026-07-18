@@ -14,7 +14,10 @@ can take a clean-room decompilation together. It is a hobby/research project,
 not a serious or community-driven decomp, and it is nowhere near complete.
 
 A clean-room, in-progress decompilation of Golden Sun (GBA), reconstructed
-entirely from a single privately-supplied ROM using only generic tools.
+from privately supplied regional ROMs using only generic tools. The English
+Golden Sun ROM is the sole byte-identical build target; the other approved
+regional ROMs are local differential evidence for separating shared engine
+code and data from localization, graphics, and story content.
 
 This repository is **source only** under the practical
 [`pret/pokeemerald` publication boundary](PUBLICATION.md). It ships no ROM, no
@@ -26,7 +29,10 @@ not-yet-reconstructed region is filled from that private ROM at build time (the
 pret-style incbin skeleton), so nothing here reproduces a playable game on its
 own. Not affiliated with or endorsed by Nintendo or Camelot. Non-commercial.
 
-- `baserom.gba` (your own dump, git-ignored) is the sole game-specific input.
+- `baserom.gba` is an ignored local alias for the English Golden Sun dump and
+  remains the canonical build target checked by `rom.sha1`.
+- Optional private GS1 and GS2 regional dumps may be used only for local
+  differential analysis. They are not build inputs and are never tracked.
 - `alchemy-gcc/` is the ignored, fully native arm64 code-generation oracle;
   [`ALCHEMY_GCC.md`](ALCHEMY_GCC.md) defines its minimal verified contents.
 - Bun and native ARM binutils provide the generic tooling runtime.
@@ -64,9 +70,9 @@ own. Not affiliated with or endorsed by Nintendo or Camelot. Non-commercial.
   differently), so each region contributes its verified bytes; the linker-script
   and incbin-skeleton structure follows pret/pokeemerald, the golden reference.
 
-The private ROM, `alchemy-gcc` bundle, and generated artifacts are git-ignored;
+All private ROMs, the `alchemy-gcc` bundle, and generated artifacts are git-ignored;
 only reconstructed source and generic tools are tracked. Complete means these
-tracked sources and generic tools, given only your ROM and the approved compiler,
+tracked sources and generic tools, given the canonical English ROM and the approved compiler,
 independently build a byte-identical full ROM; every claimed region comes from
 reconstructed C or assembly, never copied ROM bytes. Full decompilation is the
 further goal of retiring every `asm/` region except the genuinely

@@ -3,6 +3,12 @@
   "engine": "smsh-sequence-series",
   "sequences": [
     {
+      "name": "sound_000",
+      "address": "0x0815fb78",
+      "size": "0x0000095c",
+      "source": "sound_000.json"
+    },
+    {
       "name": "sound_001",
       "address": "0x081604d4",
       "size": "0x00000aec",
@@ -21,10 +27,28 @@
       "source": "sound_003.json"
     },
     {
+      "name": "sound_004",
+      "address": "0x08161cc8",
+      "size": "0x000003a4",
+      "source": "sound_004.json"
+    },
+    {
       "name": "sound_005",
       "address": "0x0816206c",
       "size": "0x000008d4",
       "source": "sound_005.json"
+    },
+    {
+      "name": "sound_006",
+      "address": "0x08162940",
+      "size": "0x000009e4",
+      "source": "sound_006.json"
+    },
+    {
+      "name": "sound_007",
+      "address": "0x08163324",
+      "size": "0x00000a54",
+      "source": "sound_007.json"
     },
     {
       "name": "sound_008",
@@ -57,6 +81,18 @@
       "source": "sound_021.json"
     },
     {
+      "name": "sound_022",
+      "address": "0x081664b4",
+      "size": "0x000012e8",
+      "source": "sound_022.json"
+    },
+    {
+      "name": "sound_023",
+      "address": "0x0816779c",
+      "size": "0x00000f10",
+      "source": "sound_023.json"
+    },
+    {
       "name": "sound_024",
       "address": "0x081686ac",
       "size": "0x000012dc",
@@ -73,6 +109,12 @@
       "address": "0x0816a620",
       "size": "0x000006dc",
       "source": "sound_026.json"
+    },
+    {
+      "name": "sound_027",
+      "address": "0x0816acfc",
+      "size": "0x00000e9c",
+      "source": "sound_027.json"
     },
     {
       "name": "sound_028",
@@ -109,6 +151,12 @@
       "address": "0x0816f61c",
       "size": "0x00000c0c",
       "source": "sound_042.json"
+    },
+    {
+      "name": "sound_043",
+      "address": "0x08170228",
+      "size": "0x00000dbc",
+      "source": "sound_043.json"
     },
     {
       "name": "sound_050",
@@ -151,6 +199,12 @@
       "address": "0x081799e0",
       "size": "0x0000039c",
       "source": "sound_058.json"
+    },
+    {
+      "name": "sound_059",
+      "address": "0x08179d7c",
+      "size": "0x000001d0",
+      "source": "sound_059.json"
     },
     {
       "name": "sound_060",
@@ -261,6 +315,18 @@
       "source": "sound_086.json"
     },
     {
+      "name": "sound_087",
+      "address": "0x08180bf8",
+      "size": "0x00000090",
+      "source": "sound_087.json"
+    },
+    {
+      "name": "sound_088",
+      "address": "0x08180c88",
+      "size": "0x000000c4",
+      "source": "sound_088.json"
+    },
+    {
       "name": "sound_089",
       "address": "0x08180d4c",
       "size": "0x000000dc",
@@ -325,6 +391,12 @@
       "address": "0x08181260",
       "size": "0x0000001c",
       "source": "sound_106.json"
+    },
+    {
+      "name": "sound_107",
+      "address": "0x0818127c",
+      "size": "0x00000074",
+      "source": "sound_107.json"
     },
     {
       "name": "sound_108",
@@ -699,6 +771,18 @@
       "source": "sound_170.json"
     },
     {
+      "name": "sound_171",
+      "address": "0x081820d4",
+      "size": "0x00000024",
+      "source": "sound_171.json"
+    },
+    {
+      "name": "sound_172",
+      "address": "0x081820f8",
+      "size": "0x00000024",
+      "source": "sound_172.json"
+    },
+    {
       "name": "sound_173",
       "address": "0x0818211c",
       "size": "0x00000054",
@@ -727,6 +811,12 @@
       "address": "0x08182244",
       "size": "0x0000002c",
       "source": "sound_177.json"
+    },
+    {
+      "name": "sound_178",
+      "address": "0x08182270",
+      "size": "0x00000068",
+      "source": "sound_178.json"
     },
     {
       "name": "sound_179",
@@ -1131,6 +1221,12 @@
       "source": "sound_246.json"
     },
     {
+      "name": "sound_247",
+      "address": "0x08183bf4",
+      "size": "0x00000028",
+      "source": "sound_247.json"
+    },
+    {
       "name": "sound_248",
       "address": "0x08183c1c",
       "size": "0x00000044",
@@ -1371,6 +1467,12 @@
       "source": "sound_290.json"
     },
     {
+      "name": "sound_291",
+      "address": "0x0818428c",
+      "size": "0x0000005c",
+      "source": "sound_291.json"
+    },
+    {
       "name": "sound_292",
       "address": "0x081842e8",
       "size": "0x00000038",
@@ -1447,103 +1549,19 @@
       "address": "0x0818457c",
       "size": "0x00000054",
       "source": "sound_310.json"
+    },
+    {
+      "name": "sound_311",
+      "address": "0x081845d0",
+      "size": "0x000000c8",
+      "source": "sound_311.json"
     }
   ],
   "failures": [
     {
-      "name": "sound_000",
-      "header": "0x081604ac",
-      "reason": "unsupported running-status command"
-    },
-    {
-      "name": "sound_004",
-      "header": "0x08162058",
-      "reason": "unsupported running-status command"
-    },
-    {
-      "name": "sound_006",
-      "header": "0x081632f8",
-      "reason": "unsupported running-status command"
-    },
-    {
-      "name": "sound_007",
-      "header": "0x08163d54",
-      "reason": "unsupported running-status command"
-    },
-    {
-      "name": "sound_022",
-      "header": "0x0816776c",
-      "reason": "unsupported running-status command"
-    },
-    {
-      "name": "sound_023",
-      "header": "0x0816868c",
-      "reason": "unsupported running-status command"
-    },
-    {
-      "name": "sound_027",
-      "header": "0x0816bb78",
-      "reason": "unsupported running-status command"
-    },
-    {
-      "name": "sound_043",
-      "header": "0x08170fb4",
-      "reason": "unsupported running-status command"
-    },
-    {
-      "name": "sound_059",
-      "header": "0x08179f38",
-      "reason": "unsupported running-status command"
-    },
-    {
-      "name": "sound_087",
-      "header": "0x08180c70",
-      "reason": "unsupported running-status command"
-    },
-    {
-      "name": "sound_088",
-      "header": "0x08180d34",
-      "reason": "unsupported running-status command"
-    },
-    {
-      "name": "sound_107",
-      "header": "0x081812e4",
-      "reason": "unsupported running-status command"
-    },
-    {
       "name": "sound_139",
       "header": "0x081819d4",
       "reason": "non-semantic bytes precede sequence header"
-    },
-    {
-      "name": "sound_171",
-      "header": "0x081820ec",
-      "reason": "unsupported running-status command"
-    },
-    {
-      "name": "sound_172",
-      "header": "0x08182110",
-      "reason": "unsupported running-status command"
-    },
-    {
-      "name": "sound_178",
-      "header": "0x081822c8",
-      "reason": "unsupported running-status command"
-    },
-    {
-      "name": "sound_247",
-      "header": "0x08183c10",
-      "reason": "unsupported running-status command"
-    },
-    {
-      "name": "sound_291",
-      "header": "0x081842d8",
-      "reason": "unsupported running-status command"
-    },
-    {
-      "name": "sound_311",
-      "header": "0x08184680",
-      "reason": "unsupported running-status command"
     }
   ]
 }

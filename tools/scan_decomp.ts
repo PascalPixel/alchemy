@@ -41,6 +41,7 @@ export interface WorkItem {
   normalized_supporters: number;
   cross_title_supporters: number;
   ambiguous: boolean;
+  low_information: boolean;
   evidence: Evidence[];
 }
 
@@ -84,6 +85,11 @@ function entropy(source: Uint8Array): { entropy: number; dominant: number } {
     maximum = Math.max(maximum, count);
   }
   return { entropy: result, dominant: maximum / source.length };
+}
+
+function lowInformation(size: number, metrics: { entropy: number; dominant: number }): boolean {
+  return (size >= 64 && (metrics.entropy < 2 || metrics.dominant >= 0.75)) ||
+    (size <= 2 && metrics.entropy === 0);
 }
 
 function evidence(
@@ -153,10 +159,11 @@ export function buildWorkQueue(
     const best = allEvidence[0];
     const ambiguous = best.confidence === "ambiguous" || best.maximum_occurrences > 1;
     const metrics = entropy(reference.subarray(start - base, start - base + region.size));
+    const lowInformationRegion = lowInformation(region.size, metrics);
     const area = start < codeEnd ? "code" : "data";
     let priority: WorkItem["priority"];
-    if (area === "code" && exact.length > 0 && !ambiguous) priority = "A";
-    else if (area === "code" && normalized.length > 0 && !ambiguous) priority = "B";
+    if (area === "code" && exact.length > 0 && !ambiguous && !lowInformationRegion) priority = "A";
+    else if (area === "code" && normalized.length > 0 && !ambiguous && !lowInformationRegion) priority = "B";
     else if (area === "data" && exact.length > 0 && metrics.entropy >= 4 &&
         metrics.dominant < 0.5 && region.size >= 64 && !ambiguous) priority = "C";
     else if (best.ratio >= 0.5 && !ambiguous) priority = "D";
@@ -182,6 +189,7 @@ export function buildWorkQueue(
       normalized_supporters: new Set(normalized.map((item) => item.candidate)).size,
       cross_title_supporters: crossTitle,
       ambiguous,
+      low_information: lowInformationRegion,
       evidence: allEvidence,
     });
   }
@@ -260,6 +268,11 @@ export function selfTest(): void {
   if (queue.items.length !== 1 || queue.items[0].priority !== "A" ||
       queue.items[0].cross_title_supporters !== 1 || queue.reference !== "gs1-en.gba") {
     throw new Error("decompilation queue self-test failed");
+  }
+  if (!lowInformation(4096, { entropy: 0.1, dominant: 0.99 }) ||
+      !lowInformation(2, { entropy: 0, dominant: 1 }) ||
+      lowInformation(8, { entropy: 1, dominant: 0.75 })) {
+    throw new Error("low-information queue diagnosis self-test failed");
   }
   console.log("self-test=ok");
 }

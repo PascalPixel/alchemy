@@ -19,16 +19,16 @@ The current boundary, after the fifteenth exact-C checkpoint and full IWRAM reco
 | IWRAM division veneers | 4 | 32 | Keep assembly |
 | Deliberate fixed-point math primitives | 2 | 56 | Keep assembly |
 | Compiler/assembler literal pool | 1 | 32 | Keep structured data |
-| Mixed or misbounded code/data regions | 45 | 33,798 | Split before decompiling |
+| Mixed or misbounded code/data regions | 40 | 32,296 | Split before decompiling |
 | Structured runtime relocation-helper module | 1 | 128 | Keep structured assembly |
-| Proven parent-function fragments with pools | 7 | 940 | Merge when each owner is reconstructed |
-| Proven multi-region function heads with pools | 3 | 416 | Merge with their continuations before exact C |
+| Proven parent-function fragments with pools | 8 | 1,194 | Merge when each owner is reconstructed |
+| Proven multi-region function heads with pools | 7 | 2,256 | Merge with their continuations before exact C |
 | Proven multi-region function continuations with pools | 3 | 656 | Merge with their function owners before exact C |
 | Cross-function shared-literal module | 2 | 692 | Keep structured assembly pending module-aware C build |
 | Proven deliberate performance primitive | 1 | 22 | Keep assembly |
 | Likely ordinary compiler output | 1,357 | 457,730 | Convert to exact C |
 | Probable data misidentified as functions | 27 | 314 | Recover semantic data form |
-| **Total** | **1,750** | **503,112** | |
+| **Total** | **1,750** | **503,704** | |
 
 These counts describe files, not callable entries. `080000c0.s` bundles 96
 fixed-width dispatch entries, `08006864.s` bundles two BIOS wrappers, and
@@ -61,13 +61,13 @@ built region and rejects changes to the proven category counts.
 
 ## Recovered fragment and pool boundaries
 
-The smallest former mixed regions at `0808b7b8`, `080d12a8`, `080d8258`,
-`080e1724`, `080e1a48`, `080e4ab8`, and `080e547c` are not callable functions.
-Direct branches enter them while the parent function's stack frame and high
-registers remain live, and each fragment branches back into or returns through
-that parent. Their adjacent constant and literal pools are now explicit
-structured data. Authorship is unknown; they remain assembly only until their
-complete owning functions can be reconstructed as single units.
+The smallest former mixed regions at `0800f1fa`, `0808b7b8`, `080d12a8`,
+`080d8258`, `080e1724`, `080e1a48`, `080e4ab8`, and `080e547c` are not callable
+functions. Direct branches enter them while the parent function's stack frame
+and high registers remain live, and each fragment branches back into or returns
+through that parent. Their internal pools, adjacent pools, and alignment are
+now explicit structured data. Authorship is unknown; they remain assembly only
+until their complete owning functions can be reconstructed as single units.
 
 The former mixed regions at `080d765c`, `080dd9c0`, and `080ec100` are proven
 callable function heads, not complete functions. Each begins with a complete
@@ -76,6 +76,15 @@ across a local pool into a later continuation file. Direct calls prove the first
 and third entries; a stored Thumb function pointer proves the second. Their
 alignment and pools are now explicit, but exact C requires merging each whole
 multi-region function first. Authorship remains unknown.
+
+Four more callable heads at `0808b674`, `080e15e8`, `080e47b8`, and `080f4168`
+now include their formerly omitted structured tails. The first, second, and
+fourth branch into later files with their stack frames live; the third dispatches
+through an explicit 101-entry table into its continuation fragments. The first
+two corrected layouts match their approved Japanese counterparts after address
+normalization. The fourth preserves the same layout with localized constants,
+while the third has an identical code prefix and all 101 table targets relocate
+by the same offset. This is boundary evidence only; authorship remains unknown.
 
 The former mixed regions at `080d76f0`, `080dda3c`, and `080ec190` are
 continuations of those same three functions. They are entered by direct branch

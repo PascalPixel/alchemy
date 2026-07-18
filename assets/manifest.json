@@ -7170,7 +7170,8 @@
           "charblocks": [
             {
               "address": "0x08508950",
-              "size": "0x11ec"
+              "size": "0x11ec",
+              "source": "assets/graphics/resource_158/charblock1.objects.json"
             },
             {
               "address": "0x08509b3c",

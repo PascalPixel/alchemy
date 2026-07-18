@@ -30,10 +30,10 @@ from tile_objects import build_bank as build_object_bank, unpack_tile
 
 ROOT = Path(__file__).resolve().parents[1]
 TILE = 8
-CELL_TILES = 2                      # metatile is 2x2 tiles
-CELL = TILE * CELL_TILES           # 16 px per grid cell
-GRID = 128                          # cells per side
-WINDOW = 0x200                      # tiles per source window
+CELL_TILES = 2                      # メタタイルは2×2タイル
+CELL = TILE * CELL_TILES           # グリッドセルは16画素
+GRID = 128                          # 一辺のセル数
+WINDOW = 0x200                      # ソース窓あたりのタイル数
 LOAD_TABLE = ROOT / "assets/maps/map_load_table.json"
 MANIFEST = ROOT / "assets/manifest.json"
 
@@ -141,7 +141,7 @@ def load_palette(path):
     for y in range(height):
         for x in range(width):
             colors.append(image.getpixel((x, y)))
-    return colors                    # 256 entries: bank*16 + index
+    return colors                    # 256色：バンク×16＋色番号
 
 
 def parse_metatiles(path):
@@ -152,8 +152,8 @@ def parse_metatiles(path):
 
 
 def cell_indices(grid_dir, metatile_count):
-    # セル番号は下位12bit。The upper nibble is an independent record field;
-    # deriving an index width from one map only hides this family-wide split.
+    # セル番号は下位12bit。上位4bitは独立した属性値である。
+    # 単一マップから番号幅を推定すると系列全体の分離規則を隠してしまう。
     low = Image.open(grid_dir / "value_low.png").convert("P").load()
     high = Image.open(grid_dir / "value_high.png").convert("P").load()
     cells = [[low[x, y] | ((high[x, y] & 0x0F) << 8)

@@ -1,5 +1,5 @@
-@ Reconstructed thumb disassembly of a code-gap function, bounded by a
-@ control-flow walk. Verified byte-identical by build_asm.py.
+@ コード間隙関数の再構築サム逆アセンブル。範囲は
+@ 制御フロー走査で確定。build_asm.pyでバイト一致確認済み。
 .syntax unified
 	.thumb
 	.global Func_0808b2b0

@@ -19,8 +19,8 @@ from region_disasm import build_region
 
 ROOT = Path(__file__).resolve().parents[1]
 CODE_LIMIT = 0x08320000
-HEADER = ("@ Reconstructed thumb disassembly of a call-graph-reached code region\n"
-          "@ (code interleaved with its data), verified byte-identical by build_asm.\n")
+HEADER = ("@ 呼出しグラフから到達した領域の再構築サム逆アセンブル。\n"
+          "@ （コードとデータが混在）。build_asm.pyでバイト一致確認済み。\n")
 
 
 def number(value):
@@ -61,7 +61,7 @@ def main():
     jump_tables = discovery.jump_tables
     mask = claimed_mask(rom)
 
-    # Instruction-start addresses that are wholly unclaimed, in order.
+    # 全体が未確定の命令開始アドレスを順に並べる。
     starts = sorted(address for address in instructions
                     if address < CODE_LIMIT
                     and not any(mask[address - ROM_BASE + offset]
@@ -74,8 +74,8 @@ def main():
         start = starts[index]
         end = start + instructions[start]
         index += 1
-        # Extend across adjacent unclaimed instructions and the small data gaps
-        # between them, stopping at any claimed byte.
+        # 隣接する未確定命令と小さなデータ間隙をまとめ、
+        # 確定済みバイトの直前で止める。
         while index < len(starts):
             nxt = starts[index]
             if nxt > end + 0x20 or any(mask[byte - ROM_BASE]

@@ -42,8 +42,8 @@ def claimed_mask(rom):
             for index in range(start, start + number(region["size"])):
                 if 0 <= index < len(mask):
                     mask[index] = 1
-    # This exporter regenerates its own series, so treat its previous claims as
-    # unclaimed rather than skipping them as if another exporter owned them.
+    # この出力器は担当系列を再生成するため、以前の確定領域は
+    # 未確定として扱い、他の出力器の所有物として除外しない。
     manifest = ROOT / "assets/manifest.json"
     if manifest.exists():
         for series in json.loads(manifest.read_text()).get("series", []):
@@ -71,13 +71,13 @@ def main():
         if not 0 <= start < end <= len(rom) or mask[start]:
             continue
         compressed = rom[start:end]
-        # Skip resources a bare general-LZ decode already handles.
+        # 通常のgeneral-LZ展開だけで扱えるリソースは除外する。
         try:
             decode_general_trace(compressed, 0, len(compressed), 0x40000)
             continue
         except Exception:
             pass
-        # Try the usual kind-zero header and the headerless variant.
+        # 通常の種別0ヘッダとヘッダなし形式を試す。
         decoded = tokens = header = None
         for candidate in (1, 0):
             try:
@@ -114,7 +114,7 @@ def main():
 
     claimed_ids = {entry["id"] for entry in resources}
     for directory in (ROOT / "assets/data").glob("resource_*"):
-        # Only prune directories this exporter owns (they hold a content.png).
+        # この出力器が所有するcontent.png入りディレクトリだけを削除する。
         if not (directory / "content.png").exists():
             continue
         if directory.name.rsplit("_", 1)[1] not in claimed_ids:

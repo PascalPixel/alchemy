@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 import type { ComparisonReport } from "./compare_roms.ts";
+import type { DirectResourceCall } from "./scan_resource_calls.ts";
 import { compareRegions } from "./compare_regions.ts";
 import { splitManifestAtPointers } from "./scan_decomp.ts";
 
@@ -12,6 +13,11 @@ interface Region {
 
 interface Manifest {
   regions: Region[];
+}
+
+interface ResourceCallReport {
+  format: number;
+  resources: Array<{ resource_id: number; direct_calls: DirectResourceCall[] }>;
 }
 
 interface DeltaDiagnosis {
@@ -163,7 +169,7 @@ function option(args: string[], name: string, fallback?: string): string {
 }
 
 function positional(args: string[]): string[] {
-  const valued = new Set(["-o", "--resource-table", "--resource-count", "--code-end"]);
+  const valued = new Set(["-o", "--resource-table", "--resource-count", "--code-end", "--calls"]);
   const result: string[] = [];
   for (let index = 0; index < args.length; index++) {
     if (valued.has(args[index])) index++;
@@ -195,7 +201,7 @@ async function main(args: string[]): Promise<void> {
   }
   const inputs = positional(args);
   if (inputs.length < 3) {
-    console.log("usage: scan_data_v2.ts REFERENCE FALLBACK COMPARISON... -o OUT --resource-table ADDRESS --resource-count COUNT [--code-end ADDRESS]");
+    console.log("usage: scan_data_v2.ts REFERENCE FALLBACK COMPARISON... -o OUT --resource-table ADDRESS --resource-count COUNT [--code-end ADDRESS] [--calls REPORT]");
     return;
   }
   const output = option(args, "-o");
@@ -209,6 +215,13 @@ async function main(args: string[]): Promise<void> {
   manifest.regions = manifest.regions.filter((region) => numeric(region.address) >= codeEnd);
   const reports = await Promise.all(inputs.slice(2).map(async (path) =>
     await Bun.file(path).json() as ComparisonReport
+  ));
+  const callReport = args.includes("--calls")
+    ? await Bun.file(option(args, "--calls")).json() as ResourceCallReport
+    : undefined;
+  if (callReport !== undefined && callReport.format !== 1) throw new Error("unsupported resource-call report");
+  const directCalls = new Map((callReport?.resources ?? []).map((entry) =>
+    [entry.resource_id, entry.direct_calls] as const
   ));
   const matches = new Map<string, Record<string, { ratio: number; address: string; confidence: string }>>();
   for (const report of reports) {
@@ -241,6 +254,7 @@ async function main(args: string[]): Promise<void> {
     const gs1Full = gs1.filter(([, item]) => item.ratio >= 0.99).length;
     const gs2Full = gs2.filter(([, item]) => item.ratio >= 0.99).length;
     const ids = pointerIds.get(address) ?? [];
+    const calls = ids.flatMap((id) => directCalls.get(id) ?? []);
     const delta = diagnoseDeltaArchive(bytes);
     const stateful = ids.length > 0 && delta.archive_confidence !== "none" &&
       delta.maximum_distance <= 0xfff && delta.prefill_references > 0;
@@ -259,6 +273,8 @@ async function main(args: string[]): Promise<void> {
       address: hexadecimal(address),
       size: region.size,
       resource_ids: ids.map((id) => `0x${id.toString(16)}`),
+      selection_mode: calls.length > 0 ? "direct" : ids.length > 0 ? "table_or_indirect" : "not_resource",
+      direct_calls: calls,
       entropy: Number(information.toFixed(4)),
       dominant_byte_ratio: Number(dominant.toFixed(6)),
       gs1_full_supporters: gs1Full,

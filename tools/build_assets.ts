@@ -24,6 +24,7 @@ import {
 } from "./map_container_components.ts";
 import { build_table as build_map_load_table } from "./map_load_table.ts";
 import { build_sound_table } from "./music.ts";
+import { build_sequence as build_sound_sequence } from "./music_sequence.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -463,6 +464,13 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     const [built, report] = build_sound_table(document);
     return [built, [String(entry.source)], report];
   }
+  if (kind === "golden-sun-sound-sequence") {
+    const source = sourcePath(String(entry.source));
+    const document = JSON.parse(readFileSync(source, "utf8"));
+    if (number(document.base) !== number(entry.address)) throw new Error("sound-sequence base differs from manifest");
+    const [built, report] = build_sound_sequence(document);
+    return [built, [String(entry.source)], report];
+  }
   if (kind === "golden-sun-offset-palette-lz") {
     const planPath = sourcePath(String(entry.plan));
     const atlasPath = sourcePath(String(entry.source));
@@ -563,7 +571,7 @@ function main(): void {
       sources, output: built, details: report,
     });
   }
-  const unusedImages = unused_tracked_images(ROOT, regions);
+  const unusedImages = unused_tracked_images(ROOT, regions, ["assets/readme/"]);
   if (unusedImages.length !== 0) {
     let listing = unusedImages.slice(0, 20).map((name) => `  ${name}`).join("\n");
     if (unusedImages.length > 20) listing += `\n  ... and ${unusedImages.length - 20} more`;

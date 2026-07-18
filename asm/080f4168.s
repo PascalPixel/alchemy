@@ -1,5 +1,5 @@
-@ 呼出しグラフから到達した領域の再構築サム逆アセンブル。
-@ （コードとデータが混在）。build_asm.tsでバイト一致確認済み。
+@ 複数領域に分割された呼出し可能関数の先頭部。
+@ 後続する定数兼リテラルプールを同一ファイルに保持する。
 .syntax unified
 	.thumb
 	.set sub_08002f3c, 0x08002f3c
@@ -11,8 +11,8 @@
 	.set sub_080f4028, 0x080f4028
 	.set sub_080f4100, 0x080f4100
 	.set sub_080f4318, 0x080f4318
-	.global Region_080f4168
-Region_080f4168:
+	.global FunctionHead_080f4168
+FunctionHead_080f4168:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -163,3 +163,33 @@ Region_080f4168:
 	ldr r1, [pc, #28]
 	strh r2, [r3, #0]
 	b sub_080f4318
+
+	.global LiteralPool_080f42ac
+LiteralPool_080f42ac:
+	.4byte 0x00000686
+	.4byte 0x00003737
+	.4byte 0x00002723
+	.4byte 0x00003340
+	.4byte 0x00003f44
+	.4byte 0x00000810
+	.4byte 0x0000ff60
+	.4byte 0xfffffd00
+	.4byte 0x0000060e
+	.4byte 0x0000782c
+	.4byte 0x0000000c
+	.4byte 0x03001d18
+	.4byte 0x06003000
+	.4byte 0x00000042
+	.4byte 0x040000d4
+	.4byte 0x84000070
+	.4byte 0x84000080
+	.4byte 0x02010000
+	.4byte 0x06004000
+	.4byte 0x84002580
+	.4byte 0x00000043
+	.4byte 0x05000200
+	.4byte 0x06010000
+	.4byte 0x84001f00
+	.4byte 0x0400000a
+	.4byte 0x03001ad0
+	.4byte 0x04000014

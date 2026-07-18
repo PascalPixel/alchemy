@@ -1,5 +1,5 @@
-@ 呼出しグラフから到達した領域の再構築サム逆アセンブル。
-@ （コードとデータが混在）。build_asm.tsでバイト一致確認済み。
+@ 複数領域に分割された呼出し可能関数の分岐先頭部。
+@ 後続する百一項目の分岐表を同一ファイルに保持する。
 .syntax unified
 	.thumb
 	.set sub_080cd594, 0x080cd594
@@ -7,8 +7,8 @@
 	.set sub_080df9d0, 0x080df9d0
 	.set sub_080e0524, 0x080e0524
 	.set sub_080e4ade, 0x080e4ade
-	.global Region_080e47b8
-Region_080e47b8:
+	.global FunctionHead_080e47b8
+FunctionHead_080e47b8:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -193,3 +193,34 @@ Region_080e47b8:
 	lsls r3, r1, #2
 	ldr r3, [r3, r2]
 	mov pc, r3
+
+	.balign 4, 0
+	.global JumpTable_080e4924
+JumpTable_080e4924:
+	.4byte 0x080e4ab8
+	.4byte 0x080e4ac4
+	.4byte 0x080e4abc
+	.4byte 0x080e4ac0
+	.4byte 0x080e4ab8
+	.4byte 0x080e4ac0
+	.4byte 0x080e4ac4
+	.rept 7
+	.4byte 0x080e4ab8
+	.endr
+	.rept 6
+	.4byte 0x080e4abc
+	.endr
+	.rept 6
+	.4byte 0x080e4ac0
+	.endr
+	.rept 7
+	.4byte 0x080e4ac4
+	.endr
+	.4byte 0x080e4ab8
+	.rept 2
+	.4byte 0x080e4ac0
+	.endr
+	.rept 64
+	.4byte 0x080e4ade
+	.endr
+	.4byte 0x080e4ad2

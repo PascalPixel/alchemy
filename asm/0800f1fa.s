@@ -1,13 +1,13 @@
-@ 呼出しグラフから到達した領域の再構築サム逆アセンブル。
-@ （コードとデータが混在）。build_asm.tsでバイト一致確認済み。
+@ 親関数の終端断片。
+@ 後続関数との境界にある整列領域を保持する。
 .syntax unified
 	.thumb
 	.set sub_0800ba30, 0x0800ba30
 	.set sub_0800c150, 0x0800c150
 	.set sub_0800c2d8, 0x0800c2d8
 	.set sub_0800eaf8, 0x0800eaf8
-	.global Region_0800f1fa
-Region_0800f1fa:
+	.global Fragment_0800f1fa
+Fragment_0800f1fa:
 	ldr r3, [pc, #188]
 	ldr r3, [r3, #0]
 	ldr r2, [sp, #4]
@@ -130,3 +130,5 @@ Region_0800f1fa:
 	pop {r5, r6, r7}
 	pop {r1}
 	bx r1
+
+	.2byte 0x0000

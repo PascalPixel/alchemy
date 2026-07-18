@@ -196,17 +196,15 @@
       "evidence": [
         "mixed_or_invalid_function_boundary"
       ],
-      "expected_files": 45,
-      "expected_bytes": 33798,
+      "expected_files": 40,
+      "expected_bytes": 32296,
       "files": [
         "0800b168",
         "0800ebec",
         "0800ee14",
-        "0800f1fa",
         "08026080",
         "0802691c",
         "08026b44",
-        "0808b674",
         "08093fa0",
         "080be378",
         "080be76c",
@@ -222,12 +220,10 @@
         "080ddb34",
         "080ddde0",
         "080de0d4",
-        "080e15e8",
         "080e17c4",
         "080e1acc",
         "080e1df8",
         "080e21e8",
-        "080e47b8",
         "080e4b4c",
         "080e4e0c",
         "080e5504",
@@ -239,7 +235,6 @@
         "080ec474",
         "080ec728",
         "080ecae8",
-        "080f4168",
         "080f4318",
         "080f47bc",
         "080f4af0",
@@ -317,9 +312,10 @@
         "live_parent_stack_and_high_register_state",
         "adjacent_literal_or_constant_pool"
       ],
-      "expected_files": 7,
-      "expected_bytes": 940,
+      "expected_files": 8,
+      "expected_bytes": 1194,
       "files": [
+        "0800f1fa",
         "0808b7b8",
         "080d12a8",
         "080d8258",
@@ -329,6 +325,48 @@
         "080e547c"
       ],
       "subregions": [
+        {
+          "load_address": "0x0800f1fa",
+          "size": 180,
+          "kind": "parent_function_code_fragment",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x0800f2ae",
+          "size": 2,
+          "kind": "alignment",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x0800f2b0",
+          "size": 16,
+          "kind": "internal_literal_pool",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x0800f2c0",
+          "size": 20,
+          "kind": "parent_function_code_fragment",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x0800f2d4",
+          "size": 4,
+          "kind": "internal_literal_pool",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x0800f2d8",
+          "size": 30,
+          "kind": "parent_function_code_fragment",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x0800f2f6",
+          "size": 2,
+          "kind": "alignment",
+          "authorship": "unknown"
+        },
         {
           "load_address": "0x0808b7b8",
           "size": 98,
@@ -507,14 +545,36 @@
         "direct_branch_to_continuation",
         "adjacent_literal_or_constant_pool"
       ],
-      "expected_files": 3,
-      "expected_bytes": 416,
+      "expected_files": 7,
+      "expected_bytes": 2256,
       "files": [
+        "0808b674",
         "080d765c",
         "080dd9c0",
-        "080ec100"
+        "080e15e8",
+        "080e47b8",
+        "080ec100",
+        "080f4168"
       ],
       "subregions": [
+        {
+          "load_address": "0x0808b674",
+          "size": 282,
+          "kind": "callable_function_head",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x0808b78e",
+          "size": 2,
+          "kind": "alignment",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x0808b790",
+          "size": 40,
+          "kind": "literal_pool",
+          "authorship": "unknown"
+        },
         {
           "load_address": "0x080d765c",
           "size": 114,
@@ -552,6 +612,91 @@
           "authorship": "unknown"
         },
         {
+          "load_address": "0x080e15e8",
+          "size": 120,
+          "kind": "callable_function_head",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e1660",
+          "size": 28,
+          "kind": "internal_literal_pool",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e167c",
+          "size": 134,
+          "kind": "function_code_continuation",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e1702",
+          "size": 2,
+          "kind": "alignment",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e1704",
+          "size": 32,
+          "kind": "literal_pool",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e47b8",
+          "size": 74,
+          "kind": "callable_function_head",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e4802",
+          "size": 2,
+          "kind": "alignment",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e4804",
+          "size": 8,
+          "kind": "internal_literal_pool",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e480c",
+          "size": 70,
+          "kind": "function_code_continuation",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e4852",
+          "size": 2,
+          "kind": "alignment",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e4854",
+          "size": 24,
+          "kind": "internal_literal_pool",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e486c",
+          "size": 182,
+          "kind": "dispatching_function_code",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e4922",
+          "size": 2,
+          "kind": "alignment",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e4924",
+          "size": 404,
+          "kind": "jump_table",
+          "entry_count": 101,
+          "authorship": "unknown"
+        },
+        {
           "load_address": "0x080ec100",
           "size": 110,
           "kind": "callable_function_head",
@@ -567,6 +712,18 @@
           "load_address": "0x080ec170",
           "size": 32,
           "kind": "literal_pool",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080f4168",
+          "size": 324,
+          "kind": "callable_function_head",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080f42ac",
+          "size": 108,
+          "kind": "constant_and_literal_pool",
           "authorship": "unknown"
         }
       ]

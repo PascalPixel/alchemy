@@ -6,14 +6,13 @@
   "require_blank_fallback": true,
   "objects": [
     {
-      "name": "iwamuro",
-      "source": "objects/iwamuro.png",
-      "tilemap": "objects/iwamuro.tilemap",
+      "name": "hoshikusa",
+      "source": "objects/hoshikusa.png",
+      "tilemap": "objects/hoshikusa.tilemap",
       "palette": "palette.224.png",
       "base_tile": "0x200",
-      "mixed_windows": true,
-      "name_ja": "\u5ca9\u5ba4",
-      "name_en": "rock chamber"
+      "name_ja": "\u5e72\u8349",
+      "name_en": "haystack"
     }
   ]
 }

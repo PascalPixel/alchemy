@@ -35,7 +35,7 @@
         "compiler_runtime_division"
       ],
       "expected_files": 1,
-      "expected_bytes": 1624,
+      "expected_bytes": 5120,
       "files": [
         "08000770"
       ],
@@ -77,6 +77,54 @@
           "run_address": "0x030005c0",
           "size": 152,
           "kind": "decompressor",
+          "origin": "program_or_library_assembly",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x08000dc8",
+          "run_address": "0x03000658",
+          "size": 196,
+          "kind": "audio_channel_update_thumb",
+          "origin": "program_or_library_assembly",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x08000e8c",
+          "run_address": "0x0300071c",
+          "size": 960,
+          "kind": "audio_mixer_arm",
+          "origin": "program_or_library_assembly",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x0800124c",
+          "run_address": "0x03000adc",
+          "size": 16,
+          "kind": "audio_mode_bridge_thumb",
+          "origin": "program_or_library_assembly",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x0800125c",
+          "run_address": "0x03000aec",
+          "size": 780,
+          "kind": "audio_format_and_wave_helpers_arm",
+          "origin": "program_or_library_assembly",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x08001568",
+          "run_address": "0x03000df8",
+          "size": 1424,
+          "kind": "audio_work_area_zero_init",
+          "origin": "runtime_data",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x08001af8",
+          "run_address": "0x03001388",
+          "size": 120,
+          "kind": "word_copy_kernel_arm",
           "origin": "program_or_library_assembly",
           "authorship": "unknown"
         }
@@ -228,6 +276,23 @@
         "080022f4",
         "080022fc",
         "08002304"
+      ]
+    },
+    {
+      "kind": "deliberate_math_primitive",
+      "origin": "program_or_library_assembly",
+      "retention": "keep_asm",
+      "confidence": "strong",
+      "evidence": [
+        "carry_driven_branching",
+        "shared_helper_entry",
+        "pc_relative_lookup_table"
+      ],
+      "expected_files": 2,
+      "expected_bytes": 56,
+      "files": [
+        "0800230c",
+        "0800231c"
       ]
     },
     {

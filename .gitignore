@@ -11,4 +11,4 @@ out/
 *.o
 *.a
 *.log
-__pycache__/
+node_modules/

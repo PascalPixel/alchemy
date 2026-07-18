@@ -1,6 +1,5 @@
 @ ROM先頭ディスパッチスタブ表。サム用の固定入口から
 @ 別領域へロードされるコードからROM内処理を呼ぶ。再生成コマンド：
-@ 再生成：python3 tools/export_dispatch_table.py baserom.gba
 	.thumb
 
 	.macro dispatch target

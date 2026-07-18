@@ -1,5 +1,5 @@
 @ 呼出しグラフから到達した領域の再構築サム逆アセンブル。
-@ （コードとデータが混在）。build_asm.pyでバイト一致確認済み。
+@ （コードとデータが混在）。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
 	.global Region_080022ec

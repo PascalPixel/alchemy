@@ -7,7 +7,7 @@ from the approved compiler reproduces it exactly. Linker products, runtime
 thunks, fixed hardware entries, and proven deliberately assembled kernels stay
 in assembly.
 
-The current boundary, after the fourth exact-C checkpoint and full IWRAM reconstruction, is:
+The current boundary, after the fifth exact-C checkpoint and full IWRAM reconstruction, is:
 
 | Classification | Files | Bytes | Long-term treatment |
 |---|---:|---:|---|
@@ -21,9 +21,9 @@ The current boundary, after the fourth exact-C checkpoint and full IWRAM reconst
 | Compiler/assembler literal pool | 1 | 32 | Keep structured data |
 | Mixed or misbounded code/data regions | 60 | 35,512 | Split before decompiling |
 | Proven deliberate performance primitive | 1 | 22 | Keep assembly |
-| Likely ordinary compiler output | 1,432 | 462,776 | Convert to exact C |
+| Likely ordinary compiler output | 1,422 | 462,258 | Convert to exact C |
 | Probable data misidentified as functions | 27 | 314 | Recover semantic data form |
-| **Total** | **1,824** | **507,040** | |
+| **Total** | **1,814** | **506,522** | |
 
 These counts describe files, not callable entries. `080000c0.s` bundles 96
 fixed-width dispatch entries, `08006864.s` bundles two BIOS wrappers, and

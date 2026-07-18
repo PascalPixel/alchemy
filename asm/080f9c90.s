@@ -1,10 +1,18 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 関数ポインタから到達する開始点を復元した関数。
+@ 条件成立時は従来誤認されていた途中位置へ連続して実行する。
 .syntax unified
 	.thumb
-	.global Func_080f9c9e
+	.global Func_080f9c90
 	.thumb_func
-Func_080f9c9e:
+Func_080f9c90:
+	ldr	r2, [pc, #608]
+	ldr	r3, [r0, #52]
+	cmp	r2, r3
+	beq.n	.L_080f9c9a
+	bx	lr
+.L_080f9c9a:
+	adds	r3, #1
+	str	r3, [r0, #52]
 	push	{r0, lr}
 	ldr	r3, [r0, #56]
 	cmp	r3, #0

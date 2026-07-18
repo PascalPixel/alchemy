@@ -1,12 +1,12 @@
-@ 呼出しグラフから到達した領域の再構築サム逆アセンブル。
-@ （コードとデータが混在）。build_asm.tsでバイト一致確認済み。
+@ 親関数の分岐表から到達し、同じスタック枠を使う内部断片。
+@ 後続82バイトは定数・リテラル表。
 .syntax unified
 	.thumb
 	.set sub_080e0524, 0x080e0524
 	.set sub_080e4b4c, 0x080e4b4c
 	.set sub_080e4b54, 0x080e4b54
-	.global Region_080e4ab8
-Region_080e4ab8:
+	.global Fragment_080e4ab8
+Fragment_080e4ab8:
 	ldr r0, [pc, #120]
 	b .L_080e4ac6
 	ldr r0, [pc, #120]
@@ -40,3 +40,26 @@ Region_080e4ab8:
 	adds r2, r1, r3
 	movs r3, #75
 	b sub_080e4b54
+	.balign 4, 0
+	.global LiteralPool_080e4afc
+LiteralPool_080e4afc:
+	.4byte 0x0000007d
+	.4byte 0x000000a9
+	.4byte 0x000000ce
+	.4byte 0x02010000
+	.4byte 0x000000c4
+	.4byte 0x02010c56
+	.4byte 0x00000079
+	.4byte 0x000000c3
+	.4byte 0x0000006f
+	.4byte 0x000000b8
+	.4byte 0x000000b4
+	.4byte 0x00000053
+	.4byte 0x0000009e
+	.4byte 0x080e4924
+	.4byte 0x00000094
+	.4byte 0x00000092
+	.4byte 0x0000008e
+	.4byte 0x00000090
+	.4byte 0x02013c56
+	.4byte 0x00007784

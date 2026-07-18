@@ -1,5 +1,5 @@
-@ 呼出しグラフから到達した領域の再構築サム逆アセンブル。
-@ （コードとデータが混在）。build_asm.tsでバイト一致確認済み。
+@ 親関数のスタック枠と高位レジスタを引き継ぐ終端断片。
+@ 後続8バイトはこの断片が参照するリテラル表。
 .syntax unified
 	.thumb
 	.set sub_08002dd8, 0x08002dd8
@@ -8,8 +8,8 @@
 	.set sub_080cdbc0, 0x080cdbc0
 	.set sub_080d7f08, 0x080d7f08
 	.set sub_080e155c, 0x080e155c
-	.global Region_080d8258
-Region_080d8258:
+	.global Fragment_080d8258
+Fragment_080d8258:
 	movs r0, #2
 	movs r1, #2
 	bl sub_080e155c
@@ -45,3 +45,7 @@ Region_080d8258:
 	pop {r5, r6, r7}
 	pop {r0}
 	bx r0
+	.global LiteralPool_080d82a8
+LiteralPool_080d82a8:
+	.4byte 0x00007824
+	.4byte 0x080cd261

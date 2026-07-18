@@ -1,11 +1,10 @@
 #!/usr/bin/env bun
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
-import { CFLAGS, compilerCommand } from "./alchemy_gcc.ts";
+import { CFLAGS, compilerCommand, externalSymbol, externalSymbolAssembly } from "./alchemy_gcc.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
-const EXTERNAL = /^(Func|Data|Value)_([0-9a-f]{8})$/;
 
 interface RunResult {
   stdout: string;
@@ -64,7 +63,7 @@ async function compileSource(source: string, objectDir: string): Promise<Compile
   const undefinedNames = (await run(["arm-none-eabi-nm", "-u", object])).stdout
     .split(/\r?\n/).filter(Boolean).map((line) => line.trim().split(/\s+/).at(-1)!);
   for (const external of undefinedNames) {
-    if (!EXTERNAL.test(external)) {
+    if (externalSymbol(external) === null) {
       throw new Error(`${basename(source)}: unsupported external ${external}`);
     }
   }
@@ -144,10 +143,7 @@ async function main(): Promise<void> {
     .filter((name) => !defined.has(name)))].sort();
   const symbolsSource = join(output, "externals.s");
   const symbolsObject = join(output, "externals.o");
-  writeFileSync(symbolsSource, ".syntax unified\n.thumb\n" + undefinedNames.map((name) => {
-    const match = name.match(EXTERNAL)!;
-    return `.global ${name}\n${name.startsWith("Func_") ? ".thumb_func\n" : ""}.set ${name}, 0x${match[2]}\n`;
-  }).join(""));
+  writeFileSync(symbolsSource, ".syntax unified\n.thumb\n" + undefinedNames.map(externalSymbolAssembly).join(""));
   await run([
     "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
     "-o", symbolsObject, symbolsSource,

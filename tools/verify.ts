@@ -1,11 +1,10 @@
 #!/usr/bin/env bun
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, join } from "node:path";
-import { CFLAGS, compilerCommand } from "./alchemy_gcc.ts";
+import { CFLAGS, compilerCommand, externalSymbol, externalSymbolAssembly } from "./alchemy_gcc.ts";
 
 export const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 export const ROM_BASE = 0x08000000;
-const EXTERNAL = /^(Func|Data|Value)_[0-9a-f]{8}$/;
 
 function text(value: Uint8Array): string {
   return Buffer.from(value).toString("utf8");
@@ -64,13 +63,10 @@ export function verify(
   const names: string[] = [];
   for (const line of run(["arm-none-eabi-nm", "-u", object]).split(/\r?\n/).filter(Boolean)) {
     const external = line.trim().split(/\s+/).at(-1)!;
-    if (!EXTERNAL.test(external)) throw new Error(`unsupported external symbol: ${external}`);
+    if (externalSymbol(external) === null) throw new Error(`unsupported external symbol: ${external}`);
     names.push(external);
   }
-  writeFileSync(symbolsSource, ".syntax unified\n.thumb\n" + names.map((external) =>
-    `.global ${external}\n${external.startsWith("Func_") ? ".thumb_func\n" : ""}` +
-    `.set ${external}, 0x${external.slice(external.lastIndexOf("_") + 1)}\n`,
-  ).join(""));
+  writeFileSync(symbolsSource, ".syntax unified\n.thumb\n" + names.map(externalSymbolAssembly).join(""));
   run([
     "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
     "-o", symbolsObject, symbolsSource,

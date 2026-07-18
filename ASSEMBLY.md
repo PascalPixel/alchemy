@@ -209,6 +209,13 @@ remaining files still look like ordinary optimized C and remain conversion
 targets. Likewise, a failed register-pinning experiment says nothing about the
 original source language.
 
+The sound helpers around `080f9a80` demonstrate another structural boundary
+problem. Entries at `080f9a98` and `080f9a9a` share one function tail, while
+`080f9b10` branches directly into the middle of `080f9ac0` with live state.
+Their present modules preserve those relationships and their alignment words;
+they remain C debt unless a module-level asm-free compilation reproduces the
+same entry and continuation layout.
+
 Twenty-seven unreachable files above `0x0803e976` have incoherent stack
 restoration, impossible fall-through, undefined instructions, or no credible
 callers. Their headers mark them as probable data false positives. They do not

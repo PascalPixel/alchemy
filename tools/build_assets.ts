@@ -302,6 +302,21 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           entries.push(entry);
         }
       }
+    } else if (series.kind === "golden-sun-sound-sequence-series") {
+      const index = JSON.parse(readFileSync(sourcePath(String(series.index)), "utf8"));
+      if (index.format !== 1 || index.engine !== "smsh-sequence-series" ||
+          !Array.isArray(index.sequences)) {
+        throw new Error("unsupported sound-sequence series");
+      }
+      const directory = dirname(String(series.index));
+      for (const sequence of index.sequences) {
+        entries.push({
+          address: sequence.address,
+          size: sequence.size,
+          kind: "golden-sun-sound-sequence",
+          source: join(directory, String(sequence.source)),
+        });
+      }
     } else {
       throw new Error("unsupported asset series");
     }

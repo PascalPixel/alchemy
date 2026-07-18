@@ -1,0 +1,37 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence",
+  "base": "0x08183d7c",
+  "externals": {
+    "tone_bank": "0x080fc138"
+  },
+  "layout": [
+    {
+      "kind": "stream",
+      "label": "track_1",
+      "events": [
+        ["volume",85],
+        ["key_shift",0],
+        ["tempo",125],
+        ["voice",64],
+        ["modulation_depth",0],
+        ["note",13,91,120],
+        ["wait",2],
+        ["modulation_depth",127],
+        ["wait",8],
+        ["control_running","modulation_depth",0],
+        ["wait",3],
+        ["fine"]
+      ]
+    },
+    {
+      "kind": "header",
+      "label": "sound_256",
+      "block_count": 0,
+      "priority": 100,
+      "reverb": 0,
+      "tone_bank": "tone_bank",
+      "tracks": ["track_1"]
+    }
+  ]
+}

@@ -23,14 +23,14 @@ This repository is **source only** under the practical
 [`pret/pokeemerald` publication boundary](PUBLICATION.md). It ships no ROM, no
 game binaries, and no playable output, but it does track canonical reconstructed
 source assets and metadata such as PNGs, palettes, tilemaps, and JSON. To build
-or verify anything you must supply your own legally obtained Golden Sun ROM as
-`baserom.gba`; it must match the checksum in `rom.sha1`. Every
+or verify anything you must supply your own legally obtained English Golden Sun ROM as
+`gs1-en.gba`; it must match the checksum in `rom.sha1`. Every
 not-yet-reconstructed region is filled from that private ROM at build time (the
 pret-style incbin skeleton), so nothing here reproduces a playable game on its
 own. Not affiliated with or endorsed by Nintendo or Camelot. Non-commercial.
 
-- `baserom.gba` is an ignored local alias for the English Golden Sun dump and
-  remains the canonical build target checked by `rom.sha1`.
+- `gs1-en.gba` is the ignored canonical English Golden Sun build target checked
+  by `rom.sha1`.
 - Optional private GS1 and GS2 regional dumps may be used only for local
   differential analysis. They are not build inputs and are never tracked.
 - `alchemy-gcc/` is the ignored, fully native arm64 code-generation oracle;
@@ -63,7 +63,7 @@ own. Not affiliated with or endorsed by Nintendo or Camelot. Non-commercial.
 - `bun tools/build_full.ts` verifies the combined byte-identical private rebuild.
 - `bun tools/build_rom.ts` assembles the ROM the pret way: a generated GNU
   linker script (`ld_script.ld`) lays out every claimed region in address order
-  and fills each not-yet-reconstructed gap with `.incbin "baserom.gba", offset,
+  and fills each not-yet-reconstructed gap with `.incbin "gs1-en.gba", offset,
   size` (the skeleton that shrinks as regions are claimed), linked with
   `arm-none-eabi-ld` to a byte-identical ELF. A pure link of compiled objects at
   fixed addresses needs the ROM's original compiler (gcc pads sections

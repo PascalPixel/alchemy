@@ -26,6 +26,12 @@
       "source": "assets/graphics/080c5b30.4bpp.png"
     },
     {
+      "address": "0x080fc684",
+      "size": "0x9c0",
+      "kind": "golden-sun-sound-table",
+      "source": "assets/audio/song_table.json"
+    },
+    {
       "address": "0x08333fc8",
       "size": "0x182a",
       "kind": "golden-sun-general-lz",

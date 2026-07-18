@@ -21,8 +21,8 @@ from discover import Discovery, ROM_BASE
 from disassemble_function import disassemble
 
 ROOT = Path(__file__).resolve().parents[1]
-HEADER = ("@ Reconstructed thumb disassembly of a code-gap function, bounded by a\n"
-          "@ control-flow walk. Verified byte-identical by build_asm.py.\n")
+HEADER = ("@ コード間隙関数の再構築サム逆アセンブル。範囲は\n"
+          "@ 制御フロー走査で確定。build_asm.pyでバイト一致確認済み。\n")
 POOL_RANGE = re.compile(r"pool target 0x([0-9a-f]+) is out of range")
 
 
@@ -56,9 +56,9 @@ def round_trips(rom, address, size, listing):
                            "-o", str(obj), str(work / "f.s")],
                           capture_output=True).returncode:
             return False
-        undefined = subprocess.run(["arm-none-eabi-nm", "-u", str(obj)],
+        未定義 = subprocess.run(["arm-none-eabi-nm", "-u", str(obj)],
                                    capture_output=True, text=True).stdout
-        names = [line.split()[-1] for line in undefined.splitlines() if line.split()]
+        names = [line.split()[-1] for line in 未定義.splitlines() if line.split()]
         (work / "s.s").write_text(".syntax unified\n.thumb\n" + "".join(
             f".global {n}\n.thumb_func\n.set {n}, 0x{n.rsplit('_', 1)[1]}\n"
             for n in names if re.fullmatch(r"(Func|Data|Value)_[0-9a-f]{8}", n)))
@@ -107,8 +107,8 @@ def main():
     def overlaps(low, high):
         return any(a < high and low < b for a, b in spans)
 
-    # Code lives below the resource pointer table at 0x08320000; everything at
-    # or above it is resource data whose thumb-looking bytes are false positives.
+    # コードはリソースポインタ表0x08320000より下にあり、それ以上は
+    # リソースデータであり、サム命令に見えるバイト列は誤検出である。
     code_limit = 0x08320000
     prologues = sorted({f["entry"] for f in functions
                         if f.get("mode") == "thumb"
@@ -124,9 +124,9 @@ def main():
     for candidate in prologues:
         if overlaps(candidate, candidate + 2):
             continue
-        # Resolve the true function start: if the walk reaches below the seed
-        # (a mid-function false prologue), re-seed from that minimum as long as
-        # it is itself a push prologue, so the whole enclosing function is taken.
+        # 真の関数先頭を求める。走査が開始候補より下へ到達した場合
+        # （関数途中の偽プロローグ）なら、その最小位置が
+        # PUSHプロローグなら、そこから関数全体を取り直す。
         entry = candidate
         for _ in range(8):
             discovery.add_seed(entry, "thumb", "cfg")
@@ -154,8 +154,8 @@ def main():
             skipped += 1
             continue
         code_end = insns[-1] + discovery.instructions[insns[-1]]["size"]
-        # Jump-table words inside this function are data (address lists), emit
-        # them as .4byte rather than decoding the addresses as instructions.
+        # 関数内の分岐表ワードはデータ（アドレス列）なので、
+        # アドレスを命令として解釈せず.4byteで出力する。
         tables = set()
         for table, targets in discovery.jump_tables.items():
             if entry <= table < code_end + 0x400:

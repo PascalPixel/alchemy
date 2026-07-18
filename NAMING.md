@@ -31,13 +31,16 @@ Comments diagnose the overall pipeline, never one screenshot. State the data
 relationship, invariant, or failure class and the family of outputs it affects.
 A particular scene may be a regression fixture, but it is not the explanation.
 
-Keep comments short and period-practical: Japanese diagnosis first, then a
-plain English mirror when it helps present-day contributors. Good examples:
+ソース内のコメントはUTF-8の日本語だけで記述する。英文の併記はしない。
+当時らしい簡潔な漢字かな交じり文を基本とし、外来語にはカタカナを使う。
+半角カナも使用できるが、識別子、命令名、数値など必要なASCII表記はそのまま残す。
+コメントは画像一枚の感想ではなく、処理系全体の関係、不変条件、障害分類を書く。
+例：
 
 ```text
-マップチップ切替。The header selects which charblock occupies each tile window.
-セル番号は下位12bit。The upper nibble is a separate record field.
-左右反転を戻す。Reverse the display flip before restoring the canonical tile.
+マップチップ切替。ヘッダ値に従い表示窓へ文字ブロックを割り当てる。
+セル番号は下位12bit。上位4bitは別の属性値として扱う。
+左右反転を戻す。表示時の反転を取り消して標準タイルへ戻す。
 ```
 
 Avoid diary comments, image-by-image observations, model speculation, and

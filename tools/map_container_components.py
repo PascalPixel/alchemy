@@ -135,8 +135,8 @@ def decode_metatiles(decoded):
                 previous = entries[index]
         return mode, entries
 
-    # Mode 1 stores high and low bytes in separate planes and predicts each
-    # entry from the preceding reconstructed entry.
+    # モード1は上位・下位バイトを別平面に置き、各値を
+    # 直前の復元値から予測する。
     count = (len(decoded) - 1) // 2
     previous = 0
     entries = []

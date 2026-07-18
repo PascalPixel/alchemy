@@ -1,5 +1,5 @@
-@ Reconstructed thumb disassembly of a code-gap function the call-graph
-@ discovery never reached. Verified byte-identical by build_asm.py.
+@ 呼出しグラフで未到達だったコード間隙関数の再構築サム逆アセンブル。
+@ 探索では未到達。build_asm.pyでバイト一致確認済み。
 .syntax unified
 	.thumb
 	.global Func_0801a4fc

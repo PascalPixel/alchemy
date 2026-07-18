@@ -45,7 +45,7 @@ def claimed_mask(rom):
                     mask[index] = 1
         for series in data.get("series", []):
             if series.get("kind") == "golden-sun-color-table-series":
-                continue  # do not count our own prior claims as blocking
+                continue  # 自分の以前の確定領域は競合として数えない
             _mark_series(series, mask)
     return mask
 
@@ -84,7 +84,7 @@ def write_rgba_strip(path, colors):
     width, height = len(colors), 1
     header = struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0)
     raw = bytearray()
-    raw.append(0)  # filter: none
+    raw.append(0)  # フィルタなし
     for value in colors:
         red = (value & 0x1F) << 3
         green = ((value >> 5) & 0x1F) << 3

@@ -1,5 +1,5 @@
-@ Reconstructed thumb disassembly of a call-graph-reached code region
-@ (code interleaved with its data), verified byte-identical by build_asm.
+@ 呼出しグラフから到達した領域の再構築サム逆アセンブル。
+@ （コードとデータが混在）。build_asm.pyでバイト一致確認済み。
 .syntax unified
 	.thumb
 	.set sub_080e0524, 0x080e0524

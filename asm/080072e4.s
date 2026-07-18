@@ -1,6 +1,6 @@
-@ Thumb interworking thunks matching the compiler runtime's _call_via_rX
-@ helpers: alchemy-gcc calls indirect targets with bl _call_via_rN, and each thunk
-@ is a register branch padded to word alignment with a mov r8, r8 nop.
+@ コンパイラ実行時処理の_call_via_rXに一致するサム用モード間サンク。
+@ alchemy-gccは間接呼出しにbl _call_via_rNを用い、各サンクは
+@ レジスタ分岐後、mov r8,r8のnopでワード境界まで埋める。
 	.thumb
 
 	.macro call_via register

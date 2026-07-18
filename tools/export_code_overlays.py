@@ -40,8 +40,8 @@ def decode_stream(rom, start, end):
         codec = "golden-sun-general-lz"
     else:
         return None
-    # The encoder must reproduce the compressed stream exactly; the ROM may pad
-    # it to an alignment boundary, so any trailing bytes become the lookahead.
+    # 符号器は圧縮列を正確に再現する。ROM側で境界まで埋める場合、
+    # 末尾バイトは先読み分として保持する。
     if body != comp[:len(body)]:
         return None
     return decoded, plan, codec, comp[len(body):]
@@ -113,7 +113,7 @@ def main():
             "decoded_size": f"0x{len(payload):x}",
         })
 
-    # Drop stale directories for resources no longer claimed.
+    # 未使用になったリソース用ディレクトリを削除する。
     for directory in (ROOT / "assets/code").glob("resource_*"):
         name = directory.name.rsplit("_", 1)[1]
         if not any(entry["id"] == name for entry in resources):

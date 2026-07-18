@@ -1,0 +1,289 @@
+{
+  "format": 1,
+  "default": {
+    "kind": "compiler_output",
+    "origin": "compiler",
+    "retention": "c_candidate",
+    "confidence": "likely",
+    "evidence": [
+      "ordinary_thumb_calling_convention"
+    ]
+  },
+  "structural": [
+    {
+      "kind": "linker_veneer",
+      "origin": "linker",
+      "retention": "keep_asm",
+      "confidence": "proven",
+      "evidence": [
+        "fixed_ldr_r4_bx_r4_literal"
+      ],
+      "expected_files": 292,
+      "expected_bytes": 2336
+    }
+  ],
+  "groups": [
+    {
+      "kind": "relocated_iwram_payload",
+      "origin": "mixed_deliberate_and_compiler_runtime_assembly",
+      "retention": "keep_asm",
+      "confidence": "proven",
+      "evidence": [
+        "startup_copy_to_iwram",
+        "arm_irq_entry",
+        "scheduled_math_and_clear_kernels",
+        "compiler_runtime_division"
+      ],
+      "expected_files": 1,
+      "expected_bytes": 1624,
+      "files": [
+        "08000770"
+      ],
+      "subregions": [
+        {
+          "load_address": "0x08000770",
+          "run_address": "0x03000000",
+          "size": 224,
+          "kind": "irq_entry",
+          "origin": "program_or_runtime_assembly",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x08000850",
+          "run_address": "0x030000e0",
+          "size": 56,
+          "kind": "irq_handler_table",
+          "origin": "runtime_data",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x08000888",
+          "run_address": "0x03000118",
+          "size": 616,
+          "kind": "scheduled_math_clear_and_transform_kernels",
+          "origin": "program_or_library_assembly",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x08000af0",
+          "run_address": "0x03000380",
+          "size": 576,
+          "kind": "division_runtime",
+          "origin": "compiler_runtime",
+          "authorship": "compiler_vendor"
+        },
+        {
+          "load_address": "0x08000d30",
+          "run_address": "0x030005c0",
+          "size": 152,
+          "kind": "decompressor",
+          "origin": "program_or_library_assembly",
+          "authorship": "unknown"
+        }
+      ]
+    },
+    {
+      "kind": "rom_dispatch_table",
+      "origin": "linker_or_runtime",
+      "retention": "keep_asm",
+      "confidence": "proven",
+      "evidence": [
+        "fixed_width_dispatch_entries"
+      ],
+      "expected_files": 1,
+      "expected_bytes": 768,
+      "files": [
+        "080000c0"
+      ]
+    },
+    {
+      "kind": "runtime_thunk_bundle",
+      "origin": "compiler_runtime",
+      "retention": "keep_asm",
+      "confidence": "proven",
+      "evidence": [
+        "approved_compiler_call_via_symbols"
+      ],
+      "expected_files": 1,
+      "expected_bytes": 56,
+      "files": [
+        "080072e4"
+      ]
+    },
+    {
+      "kind": "bios_wrapper",
+      "origin": "bios_interface",
+      "retention": "keep_asm",
+      "confidence": "proven",
+      "evidence": [
+        "fixed_software_interrupt_instruction"
+      ],
+      "expected_files": 2,
+      "expected_bytes": 16,
+      "files": [
+        "08006864",
+        "08006870"
+      ]
+    },
+    {
+      "kind": "deliberate_performance",
+      "origin": "program_or_library_assembly",
+      "retention": "keep_asm",
+      "confidence": "strong",
+      "evidence": [
+        "iwram_copy_payload",
+        "unrolled_64_byte_clear"
+      ],
+      "expected_files": 1,
+      "expected_bytes": 22,
+      "files": [
+        "080f9a18"
+      ]
+    },
+    {
+      "kind": "mixed_region",
+      "origin": "unknown",
+      "retention": "split_first",
+      "confidence": "proven",
+      "evidence": [
+        "mixed_or_invalid_function_boundary"
+      ],
+      "expected_files": 60,
+      "expected_bytes": 35512,
+      "files": [
+        "08006a78",
+        "0800b168",
+        "0800ebec",
+        "0800ee14",
+        "0800f1fa",
+        "08026080",
+        "0802691c",
+        "08026b44",
+        "0808b674",
+        "0808b7b8",
+        "08093fa0",
+        "080be378",
+        "080be76c",
+        "080beb08",
+        "080bef88",
+        "080d0ee0",
+        "080d12a8",
+        "080d4ce8",
+        "080d5094",
+        "080d5c48",
+        "080d765c",
+        "080d76f0",
+        "080d77b4",
+        "080d7c08",
+        "080d7ea0",
+        "080d8258",
+        "080dd9c0",
+        "080dda3c",
+        "080ddb34",
+        "080ddde0",
+        "080de0d4",
+        "080e15e8",
+        "080e1724",
+        "080e17c4",
+        "080e1a48",
+        "080e1acc",
+        "080e1df8",
+        "080e21e8",
+        "080e47b8",
+        "080e4ab8",
+        "080e4b4c",
+        "080e4e0c",
+        "080e547c",
+        "080e5504",
+        "080e57b4",
+        "080e5afc",
+        "080e5e28",
+        "080e6288",
+        "080ec100",
+        "080ec190",
+        "080ec264",
+        "080ec474",
+        "080ec728",
+        "080ecae8",
+        "080f4168",
+        "080f4318",
+        "080f47bc",
+        "080f4af0",
+        "080f4f04",
+        "080f9c44"
+      ]
+    },
+    {
+      "kind": "iwram_runtime_veneer",
+      "origin": "compiler_runtime",
+      "retention": "keep_asm",
+      "confidence": "proven",
+      "evidence": [
+        "fixed_ldr_r3_bx_r3_iwram_target"
+      ],
+      "expected_files": 4,
+      "expected_bytes": 32,
+      "files": [
+        "080022ec",
+        "080022f4",
+        "080022fc",
+        "08002304"
+      ]
+    },
+    {
+      "kind": "literal_pool",
+      "origin": "compiler_or_assembler",
+      "retention": "keep_asm",
+      "confidence": "proven",
+      "evidence": [
+        "pc_relative_references_from_0809b698"
+      ],
+      "expected_files": 1,
+      "expected_bytes": 32,
+      "files": [
+        "0809b7e4"
+      ]
+    },
+    {
+      "kind": "probable_data",
+      "origin": "unknown",
+      "retention": "recover_data",
+      "confidence": "strong",
+      "evidence": [
+        "no_function_reachability",
+        "incoherent_thumb_control_flow"
+      ],
+      "expected_files": 27,
+      "expected_bytes": 314,
+      "files": [
+        "0803e976",
+        "0803ff3e",
+        "080408e4",
+        "0804d352",
+        "08060f28",
+        "08064278",
+        "081064ae",
+        "0811108c",
+        "0811b246",
+        "08135260",
+        "0815373e",
+        "0817b764",
+        "0819a56a",
+        "081a2da0",
+        "081e1e34",
+        "081eccfc",
+        "0820514e",
+        "0820aada",
+        "08220924",
+        "082461aa",
+        "08286802",
+        "0828e128",
+        "0828f382",
+        "082b4e4a",
+        "08300806",
+        "08314e44",
+        "08317742"
+      ]
+    }
+  ]
+}

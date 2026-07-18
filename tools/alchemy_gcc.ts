@@ -11,6 +11,39 @@ export const CFLAGS = [
   "-fno-builtin", "-nostdinc", "-ffreestanding", "-fcall-used-r4",
 ] as const;
 
+const ADDRESS_SYMBOL = /^(Func|Data|Value)_([0-9a-f]{8})$/;
+const CALL_VIA_SYMBOL = /^_call_via_r(1[0-3]|[0-9])$/;
+const CALL_VIA_BASE = 0x080072e4;
+
+export interface ExternalSymbol {
+  address: number;
+  thumb: boolean;
+}
+
+export function externalSymbol(name: string): ExternalSymbol | null {
+  const addressed = name.match(ADDRESS_SYMBOL);
+  if (addressed !== null) {
+    return {
+      address: Number.parseInt(addressed[2], 16),
+      thumb: addressed[1] === "Func",
+    };
+  }
+  const callVia = name.match(CALL_VIA_SYMBOL);
+  if (callVia !== null) {
+    return {
+      address: CALL_VIA_BASE + Number.parseInt(callVia[1], 10) * 4,
+      thumb: true,
+    };
+  }
+  return null;
+}
+
+export function externalSymbolAssembly(name: string): string {
+  const symbol = externalSymbol(name);
+  if (symbol === null) throw new Error(`unsupported external symbol: ${name}`);
+  return `.global ${name}\n${symbol.thumb ? ".thumb_func\n" : ""}.set ${name}, 0x${symbol.address.toString(16).padStart(8, "0")}\n`;
+}
+
 const EXPECTED: Record<string, string> = {
   xgcc: "8087fb1911b00aafe8ba9dc1530ca84a98774206f24d95b3ac8a8f01bf8a6eb6",
   cpp: "28621e18b2a6b663e1ea6e47750ca0133483f4287bc271265cc7e2fcfa69a2eb",

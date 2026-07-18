@@ -5,6 +5,13 @@ encoding. `tools/build_assets.ts` refuses a region unless the tracked source
 re-encodes byte-for-byte to the private ROM, and rejects tracked images that
 are not inputs to that verified build.
 
+`audio/song_table.json` reconstructs the sound engine's 312-entry selection
+table. Each eight-byte entry names a symbolic sequence header, the player index
+read by the ROM-side selector, and a mirrored second halfword whose role is not
+yet proven. Repeated empty slots share one symbol instead of duplicating bytes.
+The adjacent music-player records, sequence streams, tone banks, and wave data
+are not claimed by this table.
+
 `graphics/080c5b30.4bpp.png` contains seven palette-independent 4bpp tiles.
 ROM code copies the seven consecutive 32-byte units to seven consecutive VRAM
 tile slots. The PNG palette is an index legend only; it does not claim the

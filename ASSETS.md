@@ -29,6 +29,14 @@ length, tilemaps, flips, compression, and alignment are represented explicitly.
 MIDI alone is insufficient to preserve engine commands, voice allocation, and
 sample data. Those facts belong in future per-asset manifests, not heuristics.
 
+`assets/audio/song_table.json` is the first engine-native audio source. Its
+symbolic header references, proven player selectors, and still-unknown trailing
+halfwords rebuild the complete 312-entry selection table exactly. Every
+trailing halfword mirrors its player selector, a storage invariant encoded
+without assigning that field an unproven role. Sequence
+commands, tone banks, and samples remain separate recovery units rather than
+being flattened into MIDI or copied as opaque audio bytes.
+
 RGBA source PNGs may also be used as lossless four-byte record atlases. In that
 case the per-asset documentation defines the channel-to-field mapping; the
 colors are data visualization, not a claim that the records are display pixels.

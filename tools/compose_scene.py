@@ -117,10 +117,22 @@ def pick_shared(map_dir, gfx_dir, metatiles, cells, sources, palette):
     STRUCTURE does not discriminate (wrong runs contain structured tiles too);
     colour continuity across the shared/normal boundary does.
     """
+    # How far into the shared window this map actually reaches. A run shorter
+    # than this cannot paint every reference no matter how well it blends, so
+    # coverage is a hard filter applied before the colour ranking.
+    reach = 0
+    for row in cells:
+        for mt in row:
+            if mt < len(metatiles):
+                for entry in metatiles[mt]:
+                    index = entry & 0x0FFF
+                    if index >= 0x800:
+                        reach = max(reach, index - 0x800 + 1)
+
     best, best_score = None, None
     for run in standalone_banks():
         tiles = load_shared(run)
-        if not tiles:
+        if not tiles or len(tiles) < reach:
             continue
         total, count = 0.0, 0
         for cy in range(0, GRID, 2):          # sample every other cell: same

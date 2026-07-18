@@ -18,8 +18,8 @@
       "evidence": [
         "fixed_ldr_r4_bx_r4_literal"
       ],
-      "expected_files": 309,
-      "expected_bytes": 2472
+      "expected_files": 317,
+      "expected_bytes": 2536
     }
   ],
   "groups": [
@@ -981,6 +981,22 @@
           "kind": "quarter_sine_table_u16",
           "authorship": "unknown"
         }
+      ]
+    },
+    {
+      "kind": "mixed_mode_multiply_helper",
+      "origin": "program_or_library_assembly",
+      "retention": "keep_asm",
+      "confidence": "proven",
+      "evidence": [
+        "thumb_to_arm_pc_switch",
+        "single_umull_high_word",
+        "approved_compiler_is_thumb_only"
+      ],
+      "expected_files": 1,
+      "expected_bytes": 16,
+      "files": [
+        "080f95e0"
       ]
     },
     {

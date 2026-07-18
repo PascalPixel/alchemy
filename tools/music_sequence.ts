@@ -13,6 +13,7 @@ export type SequenceEvent =
   ["repeat", number, string] |
   ["note", number, ...number[]] |
   ["note_running", number, ...number[]] |
+  ["note_end_running", number] |
   ["control_running", ControlName, number] |
   ["note_end"] |
   ["note_end", number] |
@@ -228,6 +229,13 @@ function encodeStream(events: SequenceEvent[], resolve?: (name: string) => numbe
       }
       encoded = Buffer.from([value]);
       running = CONTROL_OPCODES[name];
+    } else if (kind === "note_end_running") {
+      const value = noteParameters([event[1]], "running note_end")[0];
+      if (running !== undefined && running !== 0xce) {
+        throw new Error("running note_end status differs from active status");
+      }
+      encoded = Buffer.from([value]);
+      running = 0xce;
     } else if (kind === "note_end") {
       if (event.length > 2) throw new Error("note_end has too many parameters");
       const values = event.length === 2 ? noteParameters([event[1]], "note_end") : [];
@@ -409,6 +417,8 @@ function decodeStream(
         const values = [opcode];
         while (values.length < 3 && cursor < limit && data[cursor] < 0x80) values.push(take());
         event = ["note_running", DURATIONS[running - 0xcf], ...values];
+      } else if (running === 0xce) {
+        event = ["note_end_running", opcode];
       } else {
         const name = OPCODE_CONTROLS.get(running);
         if (name === undefined || running < 0xbd) throw new Error("unsupported running-status command");
@@ -669,6 +679,36 @@ export function self_test_sequence(): void {
   );
   const [flowRoundTrip] = build_sequence(flowExtracted);
   if (!flowRoundTrip.equals(flowBuilt)) throw new Error("control-flow sequence round-trip failed");
+  const runningEnd: SequenceSource = {
+    format: 1,
+    engine: "smsh-sequence",
+    base: "0x08000300",
+    externals: { tone_bank: "0x08002000" },
+    layout: [
+      {
+        kind: "stream",
+        label: "track_1",
+        events: [["note_end", 60], ["note_end_running", 61], ["fine"]],
+      },
+      { kind: "align", boundary: 4, fill: 0 },
+      {
+        kind: "header", label: "sound_end", block_count: 0, priority: 0,
+        reverb: 0, tone_bank: "tone_bank", tracks: ["track_1"],
+      },
+    ],
+  };
+  const [runningEndBuilt] = build_sequence(runningEnd);
+  const runningEndRom = Buffer.alloc(0x300 + runningEndBuilt.length);
+  runningEndBuilt.copy(runningEndRom, 0x300);
+  const runningEndExtracted = extract_sequence(
+    runningEndRom,
+    0x08000300,
+    0x08000304,
+    "sound_end",
+  );
+  if (!build_sequence(runningEndExtracted)[0].equals(runningEndBuilt)) {
+    throw new Error("running note-end round-trip failed");
+  }
   console.log("self-test=ok");
 }
 

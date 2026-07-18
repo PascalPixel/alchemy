@@ -435,6 +435,10 @@
       "index": "assets/audio/sequences/index.json"
     },
     {
+      "kind": "golden-sun-pcm-wave-series",
+      "index": "assets/audio/waves/index.json"
+    },
+    {
       "kind": "golden-sun-map-component-series",
       "families": [
         {

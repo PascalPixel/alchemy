@@ -25,6 +25,7 @@ import {
 import { build_table as build_map_load_table } from "./map_load_table.ts";
 import { build_sound_table } from "./music.ts";
 import { build_sequence as build_sound_sequence } from "./music_sequence.ts";
+import { buildWaveRecord } from "./audio_wave.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -317,6 +318,20 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           source: join(directory, String(sequence.source)),
         });
       }
+    } else if (series.kind === "golden-sun-pcm-wave-series") {
+      const index = JSON.parse(readFileSync(sourcePath(String(series.index)), "utf8"));
+      if (index.format !== 1 || index.engine !== "smsh-pcm-wave-series" ||
+          !Array.isArray(index.waves)) {
+        throw new Error("unsupported PCM-wave series");
+      }
+      const directory = dirname(String(series.index));
+      for (const wave of index.waves) {
+        entries.push({
+          ...wave,
+          kind: "golden-sun-pcm-wave",
+          source: join(directory, String(wave.source)),
+        });
+      }
     } else {
       throw new Error("unsupported asset series");
     }
@@ -484,6 +499,11 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     const document = JSON.parse(readFileSync(source, "utf8"));
     if (number(document.base) !== number(entry.address)) throw new Error("sound-sequence base differs from manifest");
     const [built, report] = build_sound_sequence(document);
+    return [built, [String(entry.source)], report];
+  }
+  if (kind === "golden-sun-pcm-wave") {
+    const source = sourcePath(String(entry.source));
+    const [built, report] = buildWaveRecord(entry, readFileSync(source));
     return [built, [String(entry.source)], report];
   }
   if (kind === "golden-sun-offset-palette-lz") {

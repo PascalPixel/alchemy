@@ -1,0 +1,262 @@
+{
+  "format": 1,
+  "engine": "smsh-pcm-wave-series",
+  "waves": [
+    {
+      "name": "wave_00",
+      "address": "0x080fd048",
+      "size": "0x000002ac",
+      "frequency": 22579200,
+      "loop_start": 645,
+      "source": "wave_00.pcm8.wav"
+    },
+    {
+      "name": "wave_01",
+      "address": "0x080fd2f4",
+      "size": "0x0000330c",
+      "frequency": 22579200,
+      "loop_start": 12544,
+      "source": "wave_01.pcm8.wav"
+    },
+    {
+      "name": "wave_02",
+      "address": "0x08100600",
+      "size": "0x00002b58",
+      "frequency": 22579200,
+      "loop_start": 9392,
+      "source": "wave_02.pcm8.wav"
+    },
+    {
+      "name": "wave_03",
+      "address": "0x08103158",
+      "size": "0x00001d80",
+      "frequency": 22579200,
+      "loop_start": null,
+      "source": "wave_03.pcm8.wav"
+    },
+    {
+      "name": "wave_04",
+      "address": "0x08104ed8",
+      "size": "0x00000734",
+      "frequency": 22579200,
+      "loop_start": 1804,
+      "source": "wave_04.pcm8.wav"
+    },
+    {
+      "name": "wave_05",
+      "address": "0x0810560c",
+      "size": "0x00004c58",
+      "frequency": 22579200,
+      "loop_start": null,
+      "source": "wave_05.pcm8.wav"
+    },
+    {
+      "name": "wave_06",
+      "address": "0x0810a264",
+      "size": "0x000041d0",
+      "frequency": 16146432,
+      "loop_start": 7820,
+      "source": "wave_06.pcm8.wav"
+    },
+    {
+      "name": "wave_07",
+      "address": "0x0810e434",
+      "size": "0x00003eac",
+      "frequency": 22579200,
+      "loop_start": 5616,
+      "source": "wave_07.pcm8.wav"
+    },
+    {
+      "name": "wave_08",
+      "address": "0x081122e0",
+      "size": "0x00000a00",
+      "frequency": 22579200,
+      "loop_start": 2500,
+      "source": "wave_08.pcm8.wav"
+    },
+    {
+      "name": "wave_09",
+      "address": "0x08112ce0",
+      "size": "0x000033f8",
+      "frequency": 22579200,
+      "loop_start": 7020,
+      "source": "wave_09.pcm8.wav"
+    },
+    {
+      "name": "wave_10",
+      "address": "0x081160d8",
+      "size": "0x00001fa0",
+      "frequency": 22579200,
+      "loop_start": 8037,
+      "source": "wave_10.pcm8.wav"
+    },
+    {
+      "name": "wave_11",
+      "address": "0x08118078",
+      "size": "0x00000818",
+      "frequency": 22579200,
+      "loop_start": 2010,
+      "source": "wave_11.pcm8.wav"
+    },
+    {
+      "name": "wave_12",
+      "address": "0x08118890",
+      "size": "0x00002fe8",
+      "frequency": 22579200,
+      "loop_start": 8064,
+      "source": "wave_12.pcm8.wav"
+    },
+    {
+      "name": "wave_13",
+      "address": "0x0811b878",
+      "size": "0x00002250",
+      "frequency": 22579200,
+      "loop_start": 3625,
+      "source": "wave_13.pcm8.wav"
+    },
+    {
+      "name": "wave_14",
+      "address": "0x0811db38",
+      "size": "0x00000ff4",
+      "frequency": 22579200,
+      "loop_start": null,
+      "source": "wave_14.pcm8.wav"
+    },
+    {
+      "name": "wave_15",
+      "address": "0x0811eb2c",
+      "size": "0x00001b68",
+      "frequency": 22579200,
+      "loop_start": null,
+      "source": "wave_15.pcm8.wav"
+    },
+    {
+      "name": "wave_16",
+      "address": "0x08120694",
+      "size": "0x00002a84",
+      "frequency": 22579200,
+      "loop_start": null,
+      "source": "wave_16.pcm8.wav"
+    },
+    {
+      "name": "wave_17",
+      "address": "0x08123118",
+      "size": "0x0000088c",
+      "frequency": 22579200,
+      "loop_start": null,
+      "source": "wave_17.pcm8.wav"
+    },
+    {
+      "name": "wave_18",
+      "address": "0x081239a4",
+      "size": "0x0000c030",
+      "frequency": 45158400,
+      "loop_start": null,
+      "source": "wave_18.pcm8.wav"
+    },
+    {
+      "name": "wave_19",
+      "address": "0x0812f9d4",
+      "size": "0x00001bfc",
+      "frequency": 22579200,
+      "loop_start": 5454,
+      "source": "wave_19.pcm8.wav"
+    },
+    {
+      "name": "wave_20",
+      "address": "0x081315d0",
+      "size": "0x00003088",
+      "frequency": 21528576,
+      "loop_start": 5306,
+      "source": "wave_20.pcm8.wav"
+    },
+    {
+      "name": "wave_21",
+      "address": "0x08134658",
+      "size": "0x000063b8",
+      "frequency": 21528576,
+      "loop_start": 631,
+      "source": "wave_21.pcm8.wav"
+    },
+    {
+      "name": "wave_22",
+      "address": "0x0813aa10",
+      "size": "0x00008070",
+      "frequency": 21528576,
+      "loop_start": null,
+      "source": "wave_22.pcm8.wav"
+    },
+    {
+      "name": "wave_23",
+      "address": "0x08142a80",
+      "size": "0x00002678",
+      "frequency": 21528576,
+      "loop_start": 2446,
+      "source": "wave_23.pcm8.wav"
+    },
+    {
+      "name": "wave_24",
+      "address": "0x081450f8",
+      "size": "0x000052c0",
+      "frequency": 22542336,
+      "loop_start": null,
+      "source": "wave_24.pcm8.wav"
+    },
+    {
+      "name": "wave_25",
+      "address": "0x0814a3b8",
+      "size": "0x000081b4",
+      "frequency": 22542336,
+      "loop_start": null,
+      "source": "wave_25.pcm8.wav"
+    },
+    {
+      "name": "wave_26",
+      "address": "0x0815256c",
+      "size": "0x00000898",
+      "frequency": 21528576,
+      "loop_start": 0,
+      "source": "wave_26.pcm8.wav"
+    },
+    {
+      "name": "wave_27",
+      "address": "0x08152e04",
+      "size": "0x00002a5c",
+      "frequency": 21528576,
+      "loop_start": null,
+      "source": "wave_27.pcm8.wav"
+    },
+    {
+      "name": "wave_28",
+      "address": "0x08155860",
+      "size": "0x00000fa4",
+      "frequency": 21528576,
+      "loop_start": null,
+      "source": "wave_28.pcm8.wav"
+    },
+    {
+      "name": "wave_29",
+      "address": "0x08156804",
+      "size": "0x00000b88",
+      "frequency": 21528576,
+      "loop_start": null,
+      "source": "wave_29.pcm8.wav"
+    },
+    {
+      "name": "wave_30",
+      "address": "0x0815738c",
+      "size": "0x00004020",
+      "frequency": 21528576,
+      "loop_start": 7860,
+      "source": "wave_30.pcm8.wav"
+    },
+    {
+      "name": "wave_31",
+      "address": "0x0815b3ac",
+      "size": "0x000047cc",
+      "frequency": 10764288,
+      "loop_start": 500,
+      "source": "wave_31.pcm8.wav"
+    }
+  ]
+}

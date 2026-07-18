@@ -29,12 +29,33 @@ export interface ComparisonReport {
     matched_bytes: number;
     longest_spans: MatchSpan[];
   };
+  thumb_relocated?: {
+    block_size: number;
+    step: number;
+    span_count: number;
+    matched_bytes: number;
+    exact_matched_bytes: number;
+    improvement_bytes: number;
+    normalization: {
+      reference_long_calls: number;
+      reference_rom_pointer_literals: number;
+      candidate_long_calls: number;
+      candidate_rom_pointer_literals: number;
+    };
+    longest_spans: MatchSpan[];
+  };
 }
 
 interface RelativeSpan {
   reference: number;
   candidate: number;
   size: number;
+}
+
+export interface ThumbNormalization {
+  data: Uint8Array;
+  long_calls: number;
+  rom_pointer_literals: number;
 }
 
 function integer(value: string, label: string): number {
@@ -58,6 +79,79 @@ function hashBlock(data: Uint8Array, start: number, size: number): number {
     hash = Math.imul(hash ^ data[index], 0x01000193) >>> 0;
   }
   return hash;
+}
+
+function readU16(data: Uint8Array, offset: number): number {
+  return data[offset] | data[offset + 1] << 8;
+}
+
+function readU32(data: Uint8Array, offset: number): number {
+  return (data[offset] | data[offset + 1] << 8 | data[offset + 2] << 16 |
+    data[offset + 3] << 24) >>> 0;
+}
+
+function writeU16(data: Uint8Array, offset: number, value: number): void {
+  data[offset] = value;
+  data[offset + 1] = value >>> 8;
+}
+
+function writeU32(data: Uint8Array, offset: number, value: number): void {
+  data[offset] = value;
+  data[offset + 1] = value >>> 8;
+  data[offset + 2] = value >>> 16;
+  data[offset + 3] = value >>> 24;
+}
+
+function thumbLongCallTarget(data: Uint8Array, offset: number, base: number): number | null {
+  if (offset < 0 || offset + 4 > data.length || (offset & 1) !== 0) return null;
+  const first = readU16(data, offset);
+  const second = readU16(data, offset + 2);
+  if ((first & 0xf800) !== 0xf000 || (second & 0xf800) !== 0xf800) return null;
+  let high = first & 0x07ff;
+  if ((high & 0x0400) !== 0) high -= 0x0800;
+  return base + offset + 4 + high * 0x1000 + (second & 0x07ff) * 2;
+}
+
+function romPointer(value: number, base: number, size: number): boolean {
+  const address = value - (value & 1);
+  return address >= base && address < base + size;
+}
+
+export function normalizeThumbRelocations(
+  source: Uint8Array,
+  base = 0x08000000,
+): ThumbNormalization {
+  if (!Number.isSafeInteger(base) || base < 0 || base > 0xffffffff) {
+    throw new Error("base must be a u32 address");
+  }
+  const data = Uint8Array.from(source);
+  const literalOffsets = new Set<number>();
+  let longCalls = 0;
+  for (let offset = 0; offset + 4 <= source.length; offset += 2) {
+    const target = thumbLongCallTarget(source, offset, base);
+    if (target !== null && target >= base && target < base + source.length && (target & 1) === 0) {
+      writeU16(data, offset, 0xf000);
+      writeU16(data, offset + 2, 0xf800);
+      longCalls++;
+    }
+    const instruction = readU16(source, offset);
+    if ((instruction & 0xf800) === 0x4800) {
+      const literal = ((offset + 4) & ~3) + (instruction & 0xff) * 4;
+      if (literal + 4 <= source.length && (literal & 3) === 0 &&
+          romPointer(readU32(source, literal), base, source.length)) {
+        literalOffsets.add(literal);
+      }
+    }
+  }
+  for (const offset of literalOffsets) {
+    const value = readU32(source, offset);
+    writeU32(data, offset, (base | (value & 1)) >>> 0);
+  }
+  return {
+    data,
+    long_calls: longCalls,
+    rom_pointer_literals: literalOffsets.size,
+  };
 }
 
 function equalAt(
@@ -165,13 +259,14 @@ export function compare(
   step: number,
   limit: number,
   base = 0x08000000,
+  thumbRelocations = false,
 ): ComparisonReport {
   if (!Number.isSafeInteger(limit) || limit <= 0) throw new Error("limit must be positive");
   const same = sameOffsetRuns(reference, candidate, minimumRun);
   const relocated = relocatedMatches(reference, candidate, blockSize, step);
   const longestSame = [...same.runs].sort((left, right) => right.size - left.size).slice(0, limit);
   const longestRelocated = [...relocated].sort((left, right) => right.size - left.size).slice(0, limit);
-  return {
+  const report: ComparisonReport = {
     format: 1,
     reference: basename(referenceName),
     candidate: basename(candidateName),
@@ -199,6 +294,38 @@ export function compare(
       })),
     },
   };
+  if (thumbRelocations) {
+    const normalizedReference = normalizeThumbRelocations(reference, base);
+    const normalizedCandidate = normalizeThumbRelocations(candidate, base);
+    const normalized = relocatedMatches(
+      normalizedReference.data, normalizedCandidate.data, blockSize, step,
+    );
+    const longestNormalized = [...normalized]
+      .sort((left, right) => right.size - left.size)
+      .slice(0, limit);
+    const matchedBytes = normalized.reduce((sum, span) => sum + span.size, 0);
+    const exactMatchedBytes = report.relocated.matched_bytes;
+    report.thumb_relocated = {
+      block_size: blockSize,
+      step,
+      span_count: normalized.length,
+      matched_bytes: matchedBytes,
+      exact_matched_bytes: exactMatchedBytes,
+      improvement_bytes: matchedBytes - exactMatchedBytes,
+      normalization: {
+        reference_long_calls: normalizedReference.long_calls,
+        reference_rom_pointer_literals: normalizedReference.rom_pointer_literals,
+        candidate_long_calls: normalizedCandidate.long_calls,
+        candidate_rom_pointer_literals: normalizedCandidate.rom_pointer_literals,
+      },
+      longest_spans: longestNormalized.map((span) => ({
+        reference_address: hexadecimal(span.reference, base),
+        candidate_address: hexadecimal(span.candidate, base),
+        size: span.size,
+      })),
+    };
+  }
+  return report;
 }
 
 function synthetic(seed: number, size: number): Uint8Array {
@@ -211,6 +338,15 @@ function synthetic(seed: number, size: number): Uint8Array {
     data[index] = state;
   }
   return data;
+}
+
+function encodeThumbLongCall(data: Uint8Array, offset: number, target: number, base: number): void {
+  const displacement = target - (base + offset + 4);
+  if ((displacement & 1) !== 0 || displacement < -0x400000 || displacement > 0x3ffffe) {
+    throw new Error("synthetic long call is outside Thumb range");
+  }
+  writeU16(data, offset, 0xf000 | displacement >> 12 & 0x07ff);
+  writeU16(data, offset + 2, 0xf800 | displacement >> 1 & 0x07ff);
 }
 
 export function selfTest(): void {
@@ -226,6 +362,42 @@ export function selfTest(): void {
   const same = sameOffsetRuns(reference, sameCandidate, 32);
   if (same.matching !== 992 || same.runs.length !== 2 || same.runs[0].size !== 96) {
     throw new Error("same-offset comparison self-test failed");
+  }
+  const base = 0x08000000;
+  const instructions = new Uint8Array(64);
+  writeU16(instructions, 0, 0x4803);
+  encodeThumbLongCall(instructions, 4, base + 48, base);
+  writeU16(instructions, 8, 0xe001);
+  writeU32(instructions, 16, base + 41);
+  writeU32(instructions, 20, base + 45);
+  const normalizedInstructions = normalizeThumbRelocations(instructions, base);
+  if (normalizedInstructions.long_calls !== 1 || normalizedInstructions.rom_pointer_literals !== 1 ||
+      readU16(normalizedInstructions.data, 4) !== 0xf000 ||
+      readU16(normalizedInstructions.data, 6) !== 0xf800 ||
+      readU16(normalizedInstructions.data, 8) !== 0xe001 ||
+      readU32(normalizedInstructions.data, 16) !== base + 1 ||
+      readU32(normalizedInstructions.data, 20) !== base + 45) {
+    throw new Error("Thumb relocation normalization self-test failed");
+  }
+  const relocatedReference = synthetic(3, 1024);
+  const relocatedCandidate = synthetic(4, 1280);
+  relocatedCandidate.set(relocatedReference.subarray(128, 256), 400);
+  writeU16(relocatedReference, 128, 0x4807);
+  writeU16(relocatedCandidate, 400, 0x4807);
+  encodeThumbLongCall(relocatedReference, 136, base + 800, base);
+  encodeThumbLongCall(relocatedCandidate, 408, base + 1000, base);
+  writeU32(relocatedReference, 160, base + 701);
+  writeU32(relocatedCandidate, 432, base + 901);
+  const exactMoved = relocatedMatches(relocatedReference, relocatedCandidate, 64, 16);
+  const normalizedMoved = relocatedMatches(
+    normalizeThumbRelocations(relocatedReference, base).data,
+    normalizeThumbRelocations(relocatedCandidate, base).data,
+    64,
+    16,
+  );
+  if (exactMoved.some((span) => span.reference === 128 && span.candidate === 400 && span.size >= 128) ||
+      !normalizedMoved.some((span) => span.reference === 128 && span.candidate === 400 && span.size >= 128)) {
+    throw new Error("Thumb-aware relocated comparison self-test failed");
   }
   console.log("self-test=ok");
 }
@@ -254,7 +426,7 @@ async function main(args: string[]): Promise<void> {
   const positional = args.filter((argument, index) =>
     !argument.startsWith("-") && (index === 0 || !args[index - 1].startsWith("-")));
   if (positional.length < 2) {
-    console.log("usage: compare_roms.ts REFERENCE CANDIDATE -o OUT [--min-run N] [--block-size N] [--step N] [--limit N]");
+    console.log("usage: compare_roms.ts REFERENCE CANDIDATE -o OUT [--min-run N] [--block-size N] [--step N] [--limit N] [--thumb-relocations]");
     return;
   }
   const output = option(args, "-o");
@@ -272,11 +444,17 @@ async function main(args: string[]): Promise<void> {
     integer(option(args, "--block-size", "256"), "--block-size"),
     integer(option(args, "--step", "64"), "--step"),
     integer(option(args, "--limit", "128"), "--limit"),
+    0x08000000,
+    args.includes("--thumb-relocations"),
   );
   await Bun.write(output, JSON.stringify(report, null, 2) + "\n");
   console.log(`same_offset=${report.same_offset.matching_bytes}/${report.same_offset.compared_bytes} ` +
     `same_runs=${report.same_offset.run_count} relocated_spans=${report.relocated.span_count} ` +
-    `relocated_bytes=${report.relocated.matched_bytes}`);
+    `relocated_bytes=${report.relocated.matched_bytes}` +
+    (report.thumb_relocated === undefined ? "" :
+      ` thumb_relocated_spans=${report.thumb_relocated.span_count} ` +
+      `thumb_relocated_bytes=${report.thumb_relocated.matched_bytes} ` +
+      `thumb_improvement=${report.thumb_relocated.improvement_bytes}`));
 }
 
 if (import.meta.main) await main(Bun.argv.slice(2));

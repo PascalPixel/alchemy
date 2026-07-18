@@ -68,6 +68,50 @@ function hexadecimal(value: number): string {
   return `0x${value.toString(16).padStart(8, "0")}`;
 }
 
+function fallbackSource(address: number): string {
+  return `rom-fallback/${address.toString(16).padStart(8, "0")}`;
+}
+
+export function splitManifestAtPointers(
+  manifest: Manifest,
+  reference: Uint8Array,
+  table: number,
+  count: number,
+  base = 0x08000000,
+): Manifest {
+  const tableOffset = table - base;
+  if (!Number.isInteger(count) || count < 1 || tableOffset < 0 ||
+      tableOffset + count * 4 > reference.length) {
+    throw new Error("resource pointer table lies outside the reference ROM");
+  }
+  const view = new DataView(reference.buffer, reference.byteOffset, reference.byteLength);
+  const boundaries = new Set<number>();
+  for (let index = 0; index < count; index++) {
+    const pointer = view.getUint32(tableOffset + index * 4, true);
+    if (pointer >= base && pointer <= base + reference.length) boundaries.add(pointer);
+  }
+  const sorted = [...boundaries].sort((left, right) => left - right);
+  const regions: Region[] = [];
+  for (const region of manifest.regions) {
+    const start = numeric(region.address, region.source);
+    const end = start + region.size;
+    if (region.kind !== "rom_fallback" && !region.source.startsWith("rom-fallback/")) {
+      regions.push(region);
+      continue;
+    }
+    const cuts = [start, ...sorted.filter((pointer) => pointer > start && pointer < end), end];
+    for (let index = 0; index + 1 < cuts.length; index++) {
+      regions.push({
+        address: cuts[index],
+        size: cuts[index + 1] - cuts[index],
+        source: fallbackSource(cuts[index]),
+        ...(region.kind === undefined ? {} : { kind: region.kind }),
+      });
+    }
+  }
+  return { regions };
+}
+
 function leaf(path: string): string {
   return path.replaceAll("\\", "/").split("/").at(-1) ?? path;
 }
@@ -229,7 +273,9 @@ function option(args: string[], name: string, fallback?: string): string {
 }
 
 function positional(args: string[]): string[] {
-  const values = new Set(["-o", "--code-end", "--near-ratio"]);
+  const values = new Set([
+    "-o", "--code-end", "--near-ratio", "--resource-table", "--resource-count",
+  ]);
   const result: string[] = [];
   for (let index = 0; index < args.length; index++) {
     if (values.has(args[index])) index++;
@@ -274,6 +320,17 @@ export function selfTest(): void {
       lowInformation(8, { entropy: 1, dominant: 0.75 })) {
     throw new Error("low-information queue diagnosis self-test failed");
   }
+  const pointerReference = new Uint8Array(128);
+  const pointerView = new DataView(pointerReference.buffer);
+  pointerView.setUint32(0, 0x08000040, true);
+  pointerView.setUint32(4, 0x08000050, true);
+  const split = splitManifestAtPointers({
+    regions: [{ address: 0x08000030, size: 0x40, source: "rom-fallback/08000030", kind: "rom_fallback" }],
+  }, pointerReference, 0x08000000, 2);
+  if (split.regions.length !== 3 || split.regions[1].address !== 0x08000040 ||
+      split.regions[1].size !== 0x10 || split.regions[2].source !== "rom-fallback/08000050") {
+    throw new Error("resource-boundary queue split self-test failed");
+  }
   console.log("self-test=ok");
 }
 
@@ -286,14 +343,25 @@ async function main(args: string[]): Promise<void> {
   if (inputs.length < 3) {
     console.log(
       "usage: scan_decomp.ts REFERENCE MANIFEST COMPARISON... -o OUT " +
-      "[--code-end ADDRESS] [--near-ratio RATIO]",
+      "[--code-end ADDRESS] [--near-ratio RATIO] " +
+      "[--resource-table ADDRESS --resource-count COUNT]",
     );
     return;
   }
   const output = option(args, "-o");
   if (!privateOutput(output)) throw new Error("decompilation queues must stay under out/ or a temporary directory");
   const reference = new Uint8Array(await Bun.file(inputs[0]).arrayBuffer());
-  const manifest = await Bun.file(inputs[1]).json() as Manifest;
+  let manifest = await Bun.file(inputs[1]).json() as Manifest;
+  const resourceTable = args.includes("--resource-table") ?
+    Number(option(args, "--resource-table")) : undefined;
+  const resourceCount = args.includes("--resource-count") ?
+    Number(option(args, "--resource-count")) : undefined;
+  if ((resourceTable === undefined) !== (resourceCount === undefined)) {
+    throw new Error("resource table and count must be supplied together");
+  }
+  if (resourceTable !== undefined && resourceCount !== undefined) {
+    manifest = splitManifestAtPointers(manifest, reference, resourceTable, resourceCount);
+  }
   const reports = await Promise.all(inputs.slice(2).map(async (path) =>
     await Bun.file(path).json() as ComparisonReport
   ));

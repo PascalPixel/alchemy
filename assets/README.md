@@ -12,12 +12,12 @@ yet proven. Repeated empty slots share one symbol instead of duplicating bytes.
 The adjacent music-player records, sequence streams, tone banks, and wave data
 are not claimed by this table.
 
-`audio/sequences/` reconstructs 259 complete native sequence units selected by
+`audio/sequences/` reconstructs all 260 nonempty native sequence units selected by
 the sound table. The sources retain exact engine duration codes, symbolic
 track and tone-bank references, priority, reverb, loops, pattern calls, and
-command-status choices. The indexed series claims 150,224 independently
-round-tripped bytes; one unit with an unexplained separator remains explicitly
-unclaimed.
+command-status choices. The indexed series claims 150,254 independently
+round-tripped bytes, including absolute-address alignment between streams and
+headers.
 
 `audio/waves/` reconstructs all 32 tone-referenced signed-PCM records as
 standard mono 8-bit WAV sources. Its index preserves exact fixed-point

@@ -585,6 +585,12 @@
       "source": "sound_138.json"
     },
     {
+      "name": "sound_139",
+      "address": "0x081819c2",
+      "size": "0x0000001e",
+      "source": "sound_139.json"
+    },
+    {
       "name": "sound_140",
       "address": "0x081819e0",
       "size": "0x00000098",
@@ -1557,11 +1563,5 @@
       "source": "sound_311.json"
     }
   ],
-  "failures": [
-    {
-      "name": "sound_139",
-      "header": "0x081819d4",
-      "reason": "non-semantic bytes precede sequence header"
-    }
-  ]
+  "failures": []
 }

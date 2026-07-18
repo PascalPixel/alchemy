@@ -38,9 +38,13 @@ own. Not affiliated with or endorsed by Nintendo or Camelot. Non-commercial.
 - Bun and native ARM binutils provide the generic tooling runtime.
 - `tools/` contains independent analysis and matching code.
 - `compare_roms.ts`, `compare_regions.ts`, and `scan_decomp.ts` produce private,
-  ignored relocation-aware reports and a prioritized decompilation work queue.
+  ignored relocation-aware reports and a prioritized code-decompilation queue.
   The scanner uses phase-safe anchors, exact byte extension, unique coverage,
   ambiguity diagnostics, and code-range-only Thumb relocation normalization.
+  `scan_data_v2.ts` intersects the full 12-ROM comparison with fallback
+  coverage, splits resources at the `08320000` pointer table, distinguishes
+  same-game, regional, and cross-title data, and detects stateful 4 KiB-window
+  delta-stream archives without exporting their private payloads.
   Each full build also emits a private fallback-gap manifest for the same
   analysis; comparative ROMs and reports never become build inputs.
 - `src/` contains only byte-verified reconstructed C, with no inline `asm`.

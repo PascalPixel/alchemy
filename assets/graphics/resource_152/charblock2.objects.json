@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "kind": "gba-4bpp-object-bank",
+  "tile_count": 512,
+  "fallback": "charblock2.remaining.4bpp.png",
+  "require_blank_fallback": true,
+  "objects": [
+    {
+      "name": "ougonmon",
+      "source": "objects/ougonmon.png",
+      "tilemap": "objects/ougonmon.tilemap",
+      "palette": "palette.224.png",
+      "base_tile": "0x200",
+      "name_ja": "黄金門",
+      "name_en": "golden gate"
+    }
+  ]
+}

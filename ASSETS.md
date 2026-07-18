@@ -44,15 +44,17 @@ encoder that reproduces their named ROM region byte-for-byte.
 
 `tools/compose_scene.py` is such a preview generator. It reads a map
 container's already-claimed byte-exact sources (the kind-1 grid, the
-metatile tilemap, the banked charblocks, and the palette) and paints the 2D
-scene the map renders: `grid cell -> metatile index (value_low | (value_high &
-1) << 8) -> 2x2 tile entries -> tile index & 0x0fff selects a tile from the
-charblock window (0x000/0x200/0x400/0x600) with palette bank index >> 12`.
-`--all` writes every self-contained map to the ignored `out/scenes/`. It is
+metatile tilemap, the charblocks, and the palette) and paints the 2D scene the
+map renders: `grid cell -> low-12-bit metatile index -> 2x2 tile entries ->
+header-selected 0x200-tile character window -> loader-linked resource`, after
+which bits 10/11 flip the tile horizontally or vertically and bits 12-15 select
+its palette bank. `assets/maps/map_load_table.json` is the byte-exact semantic
+source for the runtime's 186 six-u16 records: map container, palette, three
+VRAM charblocks, and animation source. Shared and partial families therefore
+resolve through the same table the game uses instead of adjacency guesses.
+`--all` writes every loader-linked variant to the ignored `out/scenes/`. It is
 display-only, reads no build input the encoders do not already own, and is
-never read back by the build. Tile indices at or above 0x800 come from the
-per-map-group shared tileset, whose container linkage is not yet recovered, so
-those cells are left unpainted in the preview.
+never read back by the build.
 
 Map-container semantic sources are claimed component-by-component. Their
 manifest entries must use the exact component span, never the enclosing
@@ -66,23 +68,42 @@ explicit source fields that the build verifies against the family's sibling
 component and grid claims, and its remaining parameter and record fields
 stay opaque until their semantics are independently established.
 
-## Map animation-source tile banks
+## Map charblock and animation-source tile banks
 
-The map-family `animation_source.4bpp.png` files are lossless, sequential tile
-sources, not composed scenes or animation previews. Each indexed PNG contains
-512 GBA 4bpp 8x8 tiles in ROM order, arranged 32 columns by 16 rows solely to
-make the linear bank editable. Tile 0 in the PNG has the engine's virtual tile
-ID `0x600`; tile 511 has ID `0x7ff`. Pixel indices are palette-independent.
+The map-family `charblockN.4bpp.png` and `animation_source.4bpp.png` files are
+lossless, sequential tile sources, not composed scenes or animation previews.
+Each indexed PNG contains 512 GBA 4bpp 8x8 tiles in ROM order. Map tile entries
+establish the authored sheet geometry: adjacent 2x2 groups advance by `+1`
+horizontally and `+0x20` vertically, so both charblocks and animation banks are
+stored as 32-column by 16-row sheets. The previous 16-column debug wrap folded
+every authored row in half and made coherent structures look like interleaved
+strips even though their bytes were correct. Pixel indices are
+palette-independent. Colorized sheets are generated previews, not sources:
+palette-bank selection comes from the 16-bit text entry's top nibble, while
+bits 10 and 11 flip the selected 10-bit tile index horizontally and vertically.
 
-The adjacent `animation_source.kind2.json` records the exact tag-2 codec token
-plan, lookahead bytes, decoded size, and the explicit sequential layout. The
-PNG importer restores the exact 0x4000-byte packed tile bank, and the plan then
+The adjacent `charblockN.kind2.json` and `animation_source.kind2.json` record
+the exact tag-2 codec token plan, lookahead bytes, decoded size, and explicit
+32x16 sequential layout. The PNG importer restores the exact 0x4000-byte
+packed tile bank, and the plan then
 reproduces the compressed ROM resource byte-for-byte. Palette application,
 destination tile IDs, timing, and composition belong to separate map animation
 commands and are deliberately not asserted by these source images.
 
-Fifty-seven of the 121 traced map graphics families have this fourth tag-2
-bank after their three charblocks. Families with fewer banks stop at their
-last present bank, fifty families carry only a palette, and fifty-two
-containers have no graphics resources at all; each family's manifest entry
-lists exactly the resources its greedy palette-plus-banks tail classified.
+A tile bank may be migrated incrementally to coherent object sources with
+`tools/tile_objects.py`. An object PNG is accompanied by its exact text
+tilemap, whose tile IDs, palette banks, and flip flags map the displayed object
+back to canonical bank slots. The neutral `remaining.4bpp.png` fallback then
+covers only slots not yet represented by named objects. The builder requires
+all repeated uses of a slot to agree after reversing their display flips. A
+coherent rectangle may span both header-selected display windows: each bank
+plan reads the same object and claims only the slots it owns. After the rebuilt
+bank matches exactly, extraction switches the manifest to the object plan and
+removes the superseded sequential atlas; old and new source forms are never
+kept side by side.
+
+The storage directories retain each compressed resource exactly once. Runtime
+roles come from `map_load_table.json`, so a short adjacent group may contribute
+only a changed VRAM or animation bank while the other roles reference an
+earlier group. The manifest and preview resolver both use that linkage without
+copying shared PNGs or retaining alternate generated atlases.

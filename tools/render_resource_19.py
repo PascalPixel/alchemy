@@ -7,11 +7,13 @@ from pathlib import Path
 
 from export_asset import chunk
 from import_asset import gba_graphics
+from text_bg import decode_entry
 from tilemap import import_tilemap
 
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "assets/graphics/resource_19"
+DEFAULT_OUTPUT = ROOT / "out/previews/resource_19.frames.png"
 
 
 def bgr555(data):
@@ -29,9 +31,7 @@ def compose(tilemap, tiles, colors):
     pixels = bytearray(width * height * 3)
     for cell in range(32 * 32):
         entry = struct.unpack_from("<H", tilemap, cell * 2)[0]
-        tile = entry & 0x3ff
-        horizontal = bool(entry & 0x400)
-        vertical = bool(entry & 0x800)
+        tile, _, horizontal, vertical = decode_entry(entry)
         left, top = cell % 32 * 8, cell // 32 * 8
         for y in range(8):
             for x in range(8):
@@ -89,7 +89,7 @@ def render():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-o", "--output", type=Path, required=True)
+    parser.add_argument("-o", "--output", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args()
     image = render()
     args.output.parent.mkdir(parents=True, exist_ok=True)

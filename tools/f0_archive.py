@@ -7,6 +7,7 @@ import zlib
 from pathlib import Path
 
 from export_asset import chunk
+from generated_files import prune_files
 from import_asset import indexed_png
 
 
@@ -221,6 +222,9 @@ def main():
                         for offset in entries]}
     if build_archive(plan, args.images) != archive:
         raise ValueError("rebuilt F0 archive differs")
+    prune_files(
+        args.images, "image_*.png",
+        {f"image_{index:02d}.png" for index in range(len(unique))})
     args.plan.parent.mkdir(parents=True, exist_ok=True)
     args.plan.write_text(json.dumps(plan, separators=(",", ":")) + "\n")
     if args.preview is not None:

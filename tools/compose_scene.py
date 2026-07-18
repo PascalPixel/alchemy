@@ -7,12 +7,14 @@ actually renders, so a reviewer sees "four trees in a row" instead of a sheet of
 tile fragments. It changes no build inputs and is never read back by the build.
 
 Chain (all already extracted as clean-room assets):
-  grid (128x128 cells)  -- value_low|value_high<<8 --> metatile index
-  metatiles.tilemap     -- 492 metatiles, each 2x2 u16 tile entries
-  tile entry            -- index = entry & 0x0fff, palette bank = entry >> 12
-  index window          -- 0x000-0x1ff cb1, 0x200-0x3ff cb2, 0x400-0x5ff cb3,
-                           0x600-0x7ff animation, 0x800-0xfff shared tileset
-  charblock.banked.png  -- 8bpp where pixel & 0x0f is the real 4bpp index
+  header parameters 2/3 -- visible width/height in 8px tiles
+  header parameter 7    -- order of the two 0x200-tile display windows
+  map load table        -- container, palette, three VRAM banks, animation bank
+  grid (128x128 backing cells) -- value_low|value_high<<8 --> metatile index
+  metatiles.tilemap     -- variable-length 2x2 u16 tile-entry table
+  tile entry            -- 10-bit index, H/V flip flags, 4-bit palette bank
+  index half            -- 0x000-0x1ff / 0x200-0x3ff selected charblock
+  charblock.4bpp.png    -- palette-independent canonical 4bpp tile indices
   palette.NNN.png       -- 16 banks x 16 colours
 """
 import argparse
@@ -21,12 +23,51 @@ from pathlib import Path
 
 from PIL import Image
 
+from generated_files import prune_files
+from map_load_table import records_by_container
+from text_bg import decode_entry
+from tile_objects import build_bank as build_object_bank, unpack_tile
+
 ROOT = Path(__file__).resolve().parents[1]
 TILE = 8
 CELL_TILES = 2                      # metatile is 2x2 tiles
 CELL = TILE * CELL_TILES           # 16 px per grid cell
 GRID = 128                          # cells per side
 WINDOW = 0x200                      # tiles per source window
+LOAD_TABLE = ROOT / "assets/maps/map_load_table.json"
+MANIFEST = ROOT / "assets/manifest.json"
+
+
+def scene_dimensions(map_dir):
+    """Return the header-declared scene size in pixels and backing cells."""
+    document = json.loads((map_dir / "components" / "header.json").read_text())
+    parameters = document.get("parameters", [])
+    if len(parameters) != 12:
+        raise ValueError("map header requires twelve parameter bytes")
+    width = int(parameters[2]) * TILE
+    height = int(parameters[3]) * TILE
+    if not 0 < width <= GRID * CELL or not 0 < height <= GRID * CELL:
+        raise ValueError("map header dimensions exceed the 128x128-cell grid")
+    cells_wide = (width + CELL - 1) // CELL
+    cells_high = (height + CELL - 1) // CELL
+    return width, height, cells_wide, cells_high
+
+
+def tile_window_order(map_dir):
+    """Return the two loader charblock roles selected by the map header.
+
+    マップチップ切替。Tile indices stay local to the two 0x200-tile display
+    windows. The header orders those roles, then the map load table resolves
+    each role to the actual shared or local compressed resource.
+    """
+    document = json.loads((map_dir / "components" / "header.json").read_text())
+    parameters = document.get("parameters", [])
+    if len(parameters) != 12:
+        raise ValueError("map header requires twelve parameter bytes")
+    selector = int(parameters[7])
+    if selector not in (0, 1):
+        raise ValueError("map header tile-window selector must be zero or one")
+    return (2, 1) if selector == 0 else (1, 2)
 
 
 def load_bank_indices(path):
@@ -47,6 +88,52 @@ def load_bank_indices(path):
     return tiles
 
 
+def graphics_catalog():
+    """Index each tracked palette and tile resource by its loader resource id."""
+    manifest = json.loads(MANIFEST.read_text())
+    palettes = {}
+    banks = {}
+    for series in manifest.get("series", []):
+        kind = series.get("kind")
+        if kind == "golden-sun-map-charblock-series":
+            for family in series["families"]:
+                base = int(family["id"], 16)
+                directory = ROOT / f"assets/graphics/resource_{family['id']}"
+                palettes[f"{base + 1:x}"] = directory / "palette.224.png"
+                for number, resource in enumerate(family["charblocks"], 1):
+                    source = resource.get("source")
+                    banks[f"{base + 1 + number:x}"] = (
+                        ROOT / source if source else
+                        directory / f"charblock{number}.4bpp.png")
+                animation = family.get("animation_source")
+                if animation is not None:
+                    banks[f"{base + 5:x}"] = (
+                        directory / "animation_source.4bpp.png")
+        elif kind == "golden-sun-standalone-palette-series":
+            for palette in series["palettes"]:
+                resource = str(palette["id"]).lower()
+                palettes[resource] = (
+                    ROOT / f"assets/graphics/resource_{resource}/palette.224.png")
+        elif kind == "golden-sun-standalone-tile-series":
+            for bank in series["resources"]:
+                resource = str(bank["id"]).lower()
+                banks[resource] = (
+                    ROOT / f"assets/graphics/resource_{resource}/tiles.4bpp.png")
+    return palettes, banks
+
+
+def load_bank_source(source):
+    """Load a neutral atlas or a bank assembled from coherent objects."""
+    if source.suffix == ".json":
+        packed, _, _ = build_object_bank(source)
+        return [
+            [unpack_tile(packed[start:start + 32])[row * TILE:(row + 1) * TILE]
+             for row in range(TILE)]
+            for start in range(0, len(packed), 32)
+        ]
+    return load_bank_indices(source)
+
+
 def load_palette(path):
     image = Image.open(path).convert("RGB")
     width, height = image.size
@@ -65,206 +152,95 @@ def parse_metatiles(path):
 
 
 def cell_indices(grid_dir, metatile_count):
-    # A cell's metatile index is value_low plus the low bits of value_high. Only
-    # ceil(log2(metatile_count)) - 8 high bits are index; the remaining high bits
-    # (e.g. 0x40/0x80 seen in the wild) are layer/priority attributes. Deriving
-    # the width from the actual metatile count is essential: maps range from ~492
-    # metatiles (1 high bit) to ~2250 (4 high bits), so a fixed mask mis-decodes
-    # every cell whose index exceeds the assumed width.
-    import math
-    high_bits = max(0, math.ceil(math.log2(metatile_count)) - 8) if metatile_count > 1 else 0
-    high_mask = (1 << high_bits) - 1
+    # セル番号は下位12bit。The upper nibble is an independent record field;
+    # deriving an index width from one map only hides this family-wide split.
     low = Image.open(grid_dir / "value_low.png").convert("P").load()
     high = Image.open(grid_dir / "value_high.png").convert("P").load()
-    return [[low[x, y] | ((high[x, y] & high_mask) << 8) for x in range(GRID)]
-            for y in range(GRID)]
+    cells = [[low[x, y] | ((high[x, y] & 0x0F) << 8)
+              for x in range(GRID)] for y in range(GRID)]
+    if any(value >= metatile_count for row in cells for value in row):
+        raise ValueError("map grid references a metatile outside its table")
+    return cells
 
 
-def standalone_banks():
-    """The globally shared map tilesets, in resource order, grouped into runs
-    of adjacent resources. A map loads one run at virtual tile base 0x800."""
-    manifest = json.loads((ROOT / "assets/manifest.json").read_text())
-    ids = []
-    for series in manifest.get("series", []):
-        if series.get("kind") == "golden-sun-standalone-tile-series":
-            ids = [entry["id"] for entry in series["resources"]]
-    runs, current = [], []
-    for rid in ids:
-        if current and int(rid, 16) != int(current[-1], 16) + 1:
-            runs.append(current)
-            current = []
-        current.append(rid)
-    if current:
-        runs.append(current)
-    return runs
-
-
-def load_shared(ids):
-    tiles = []
-    for rid in ids:
-        path = ROOT / f"assets/graphics/resource_{rid}/tiles.4bpp.png"
-        if path.exists():
-            tiles.extend(load_bank_indices(path))
-    return tiles
-
-
-def pick_shared(map_dir, gfx_dir, metatiles, cells, sources, palette):
-    """Choose which shared tileset run this map loads.
-
-    The map data carries no tileset id we have recovered, so select the run
-    empirically: the correct tileset's tiles are continuous in colour with the
-    map tiles they sit beside, while a wrong one paints blocks that clash. Tile
-    STRUCTURE does not discriminate (wrong runs contain structured tiles too);
-    colour continuity across the shared/normal boundary does.
-    """
-    # How far into the shared window this map actually reaches. A run shorter
-    # than this cannot paint every reference no matter how well it blends, so
-    # coverage is a hard filter applied before the colour ranking.
-    reach = 0
-    for row in cells:
-        for mt in row:
-            if mt < len(metatiles):
-                for entry in metatiles[mt]:
-                    index = entry & 0x0FFF
-                    if index >= 0x800:
-                        reach = max(reach, index - 0x800 + 1)
-
-    best, best_score = None, None
-    for run in standalone_banks():
-        tiles = load_shared(run)
-        if not tiles or len(tiles) < reach:
-            continue
-        total, count = 0.0, 0
-        for cy in range(0, GRID, 2):          # sample every other cell: same
-            for cx in range(0, GRID, 2):      # ranking, a quarter of the work
-                mt = cells[cy][cx]
-                if mt >= len(metatiles):
-                    continue
-                mine = cell_colour(metatiles[mt], sources, tiles, palette)
-                if mine is None or not mine[1]:
-                    continue
-                for dx, dy in ((1, 0), (0, 1)):
-                    nx, ny = cx + dx, cy + dy
-                    if not (0 <= nx < GRID and 0 <= ny < GRID):
-                        continue
-                    nmt = cells[ny][nx]
-                    if nmt >= len(metatiles):
-                        continue
-                    other = cell_colour(metatiles[nmt], sources, tiles, palette)
-                    if other is None or other[1]:
-                        continue
-                    total += sum(abs(a - b) for a, b in zip(mine[0], other[0]))
-                    count += 1
-        if count:
-            score = total / count
-            if best_score is None or score < best_score:
-                best, best_score = tiles, score
-    return best
-
-
-def cell_colour(quad, sources, shared, palette):
-    """(mean RGB, uses_shared) for one metatile, or None if nothing painted."""
-    acc = [0, 0, 0]
-    seen = 0
-    uses_shared = False
-    for entry in quad:
-        index = entry & 0x0FFF
-        bank = entry >> 12
-        window, local = index // WINDOW, index % WINDOW
-        if window < 4 and window in sources and local < len(sources[window]):
-            tile = sources[window][local]
-        elif shared is not None and 0x800 <= index and (index - 0x800) < len(shared):
-            tile = shared[index - 0x800]
-            uses_shared = True
-        else:
-            continue
-        for row in tile:
-            for value in row:
-                red, green, blue = palette[(bank * 16 + value) & 0xFF]
-                acc[0] += red
-                acc[1] += green
-                acc[2] += blue
-                seen += 1
-    if not seen:
-        return None
-    return ([channel / seen for channel in acc], uses_shared)
-
-
-def compose(map_dir, gfx_dir, shared_tiles=None):
-    window_files = {
-        0: "charblock1.banked.png",
-        1: "charblock2.banked.png",
-        2: "charblock3.banked.png",
-        3: "animation_source.banked.png",
+def compose(map_dir, linkage):
+    palettes, banks = graphics_catalog()
+    sources = {
+        window: load_bank_source(banks[resource])
+        for window, charblock in enumerate(tile_window_order(map_dir))
+        if (resource := linkage[f"vram_charblock{charblock}"].lower()) in banks
     }
-    sources = {w: load_bank_indices(gfx_dir / name)
-               for w, name in window_files.items()
-               if (gfx_dir / name).exists()}
-    palette_path = next(gfx_dir.glob("palette.*.png"))
+    palette_path = palettes[linkage["palette"].lower()]
     palette = load_palette(palette_path)
     metatiles = parse_metatiles(map_dir / "components" / "metatiles.tilemap")
     cells = cell_indices(map_dir / "grid", len(metatiles))
-    if shared_tiles is None:
-        shared_tiles = pick_shared(map_dir, gfx_dir, metatiles, cells,
-                                   sources, palette)
+    width, height, cells_wide, cells_high = scene_dimensions(map_dir)
 
-    canvas = Image.new("RGB", (GRID * CELL, GRID * CELL), (0, 0, 0))
+    canvas = Image.new("RGB", (width, height), (0, 0, 0))
     out = canvas.load()
-    # Two distinct failures, previously conflated: a reference into the shared
-    # window this map's tileset run does not reach, versus a reference into a
-    # charblock the map does not own (it borrows that family's tiles, and the
-    # map->family linkage is not recovered). Counting them apart is what
-    # showed the remaining maps fail on the second, not the first.
-    missing_shared = 0
-    missing_charblock = 0
-    for cy in range(GRID):
-        for cx in range(GRID):
+    missing_tiles = 0
+    for cy in range(cells_high):
+        for cx in range(cells_wide):
             mt = cells[cy][cx]
             if mt >= len(metatiles):
                 continue
             quad = metatiles[mt]
             for sub in range(4):
                 entry = quad[sub]
-                index = entry & 0x0FFF
-                bank = entry >> 12
+                index, bank, hflip, vflip = decode_entry(entry)
                 window = index // WINDOW
                 local = index % WINDOW
-                if window < 4 and window in sources and local < len(sources[window]):
+                if window in sources and local < len(sources[window]):
                     tile = sources[window][local]
-                elif (shared_tiles is not None and index >= 0x800
-                      and (index - 0x800) < len(shared_tiles)):
-                    tile = shared_tiles[index - 0x800]
                 else:
-                    if index < 0x800:
-                        missing_charblock += 1
-                    else:
-                        missing_shared += 1
+                    missing_tiles += 1
                     continue
                 ox = cx * CELL + (sub % CELL_TILES) * TILE
                 oy = cy * CELL + (sub // CELL_TILES) * TILE
                 for py in range(TILE):
                     for px in range(TILE):
-                        color = palette[(bank * 16 + tile[py][px]) & 0xFF]
+                        if ox + px >= width or oy + py >= height:
+                            continue
+                        sx = TILE - 1 - px if hflip else px
+                        sy = TILE - 1 - py if vflip else py
+                        color = palette[(bank * 16 + tile[sy][sx]) & 0xFF]
                         out[ox + px, oy + py] = color
-    return canvas, missing_shared, missing_charblock
+    return canvas, missing_tiles
 
 
-def self_contained_maps():
-    """Map containers that own their charblocks (renderable without the shared
-    tileset / cross-container family linkage, which is not yet recovered)."""
-    ids = []
-    for grid in sorted((ROOT / "assets/maps").glob("resource_*/grid")):
-        cid = grid.parent.name.split("_")[1]
-        gfx = ROOT / f"assets/graphics/resource_{cid}"
-        if (gfx / "charblock1.banked.png").exists():
-            ids.append(cid)
-    return ids
+def renderable_records():
+    """Return loader records whose reconstructed map and graphics all exist."""
+    palettes, banks = graphics_catalog()
+    records = []
+    for rows in records_by_container(LOAD_TABLE).values():
+        for row in rows:
+            cid = row["container"].lower()
+            map_dir = ROOT / f"assets/maps/resource_{cid}"
+            order = tile_window_order(map_dir) if map_dir.exists() else ()
+            if (map_dir.exists() and row["palette"].lower() in palettes and
+                    all(row[f"vram_charblock{number}"].lower() in banks
+                        for number in order)):
+                records.append(row)
+    return records
 
 
-def render(cid, out_dir, crop=True):
+def select_record(cid, map_index=None):
+    rows = records_by_container(LOAD_TABLE).get(cid.lower(), [])
+    if map_index is not None:
+        rows = [row for row in rows if int(row["map_index"]) == map_index]
+    if not rows:
+        raise ValueError(f"no map load record for container {cid}")
+    if len(rows) > 1 and map_index is None:
+        indices = ", ".join(str(row["map_index"]) for row in rows)
+        raise ValueError(
+            f"container {cid} has map variants {indices}; give --map-index")
+    return rows[0]
+
+
+def render(cid, out_dir, crop=True, linkage=None, filename=None):
     map_dir = ROOT / f"assets/maps/resource_{cid}"
-    gfx_dir = ROOT / f"assets/graphics/resource_{cid}"
-    canvas, missing, missing_cb = compose(map_dir, gfx_dir)
+    linkage = linkage or select_record(cid)
+    canvas, missing = compose(map_dir, linkage)
     if crop:
         from PIL import ImageChops
         bbox = ImageChops.difference(
@@ -272,35 +248,51 @@ def render(cid, out_dir, crop=True):
         if bbox:
             canvas = canvas.crop(bbox)
     out_dir.mkdir(parents=True, exist_ok=True)
-    output = out_dir / f"scene_{cid}.png"
+    output = out_dir / (filename or f"scene_{cid}.png")
     canvas.save(output)
-    return output, canvas.size, missing, missing_cb
+    return output, canvas.size, missing
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("container", nargs="?", help="hex id, e.g. 152")
     parser.add_argument("-o", "--output", type=Path)
+    parser.add_argument("--map-index", type=int,
+                        help="select a loader-table variant for this container")
     parser.add_argument("--all", action="store_true",
-                        help="render every self-contained map to out/scenes/")
+                        help="render every loader-linked map to out/scenes/")
     args = parser.parse_args()
     out_dir = ROOT / "out/scenes"
     if args.all:
-        ids = self_contained_maps()
-        print(f"rendering {len(ids)} self-contained map scenes to {out_dir}/")
-        for cid in ids:
-            output, size, missing, missing_cb = render(cid, out_dir)
-            print(f"  {cid}: {size[0]}x{size[1]} "
-                  f"(unresolved shared={missing} charblock={missing_cb})")
+        records = renderable_records()
+        counts = {}
+        for row in records:
+            cid = row["container"].lower()
+            counts[cid] = counts.get(cid, 0) + 1
+        expected = set()
+        print(f"rendering {len(records)} loader-linked map scenes to {out_dir}/")
+        for row in records:
+            cid = row["container"].lower()
+            filename = (f"scene_{cid}.png" if counts[cid] == 1 else
+                        f"scene_{cid}_map{int(row['map_index']):03d}.png")
+            expected.add(filename)
+            output, size, missing = render(
+                cid, out_dir, linkage=row, filename=filename)
+            print(f"  {cid} map={row['map_index']}: {size[0]}x{size[1]} "
+                  f"(unresolved tiles={missing})")
+        removed = prune_files(out_dir, "scene_*.png", expected)
+        if removed:
+            print(f"pruned stale scenes={len(removed)}")
         return
     if not args.container:
         parser.error("give a container id or --all")
-    output, size, missing, missing_cb = render(args.container, out_dir)
+    linkage = select_record(args.container, args.map_index)
+    output, size, missing = render(args.container, out_dir, linkage=linkage)
     if args.output:
         Image.open(output).save(args.output)
         output = args.output
-    print(f"wrote {output} ({size[0]}x{size[1]}), unresolved "
-          f"shared={missing} charblock={missing_cb}")
+    print(f"wrote {output} ({size[0]}x{size[1]}), "
+          f"unresolved tiles={missing}")
 
 
 if __name__ == "__main__":

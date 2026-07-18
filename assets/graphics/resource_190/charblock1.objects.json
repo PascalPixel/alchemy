@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "kind": "gba-4bpp-object-bank",
+  "tile_count": 512,
+  "fallback": "charblock1.remaining.4bpp.png",
+  "require_blank_fallback": true,
+  "objects": [
+    {
+      "name": "iwamuro",
+      "source": "objects/iwamuro.png",
+      "tilemap": "objects/iwamuro.tilemap",
+      "palette": "palette.224.png",
+      "base_tile": "0x200",
+      "mixed_windows": true,
+      "name_ja": "\u5ca9\u5ba4",
+      "name_en": "rock chamber"
+    }
+  ]
+}

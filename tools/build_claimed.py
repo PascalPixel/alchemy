@@ -7,12 +7,10 @@ import subprocess
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+from alchemy_gcc import CFLAGS, compiler_command
+
 ROOT = Path(__file__).resolve().parents[1]
 ROM_BASE = 0x08000000
-FLAGS = [
-    "-O2", "-mthumb", "-mthumb-interwork", "-mcpu=arm7tdmi",
-    "-fno-builtin", "-nostdinc", "-ffreestanding", "-fcall-used-r4",
-]
 EXTERNAL = re.compile(r"(Func|Data|Value)_([0-9a-f]{8})")
 
 
@@ -32,11 +30,8 @@ def compile_source(source, object_dir):
     stem = source.stem
     assembly = object_dir / f"{stem}.s"
     obj = object_dir / f"{stem}.o"
-    run([
-        str(ROOT / "toolchain/gcc296/xgcc"),
-        f"-B{ROOT / 'toolchain/gcc296'}/", *FLAGS,
-        "-S", "-o", str(assembly), str(source),
-    ])
+    run(compiler_command(
+        *CFLAGS, "-S", "-o", assembly, source))
     run([
         "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
         "-o", str(obj), str(assembly),

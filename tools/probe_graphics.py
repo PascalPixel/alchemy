@@ -7,6 +7,8 @@ import zlib
 from collections import Counter
 from pathlib import Path
 
+from generated_files import prune_files
+
 ROM_BASE = 0x08000000
 KINDS = {0x10: "lz77", 0x30: "rle"}
 COMPRESSION_SWIS = {
@@ -550,6 +552,10 @@ def main():
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2) + "\n")
+    if args.png_dir:
+        removed = prune_files(args.png_dir, "*-index.png", preview_files)
+        if removed:
+            print(f"pruned stale previews={len(removed)}")
     print(
         f"pointers={len(pointers)} headers={sum(headers.values())} "
         f"valid={len(valid)} supported="

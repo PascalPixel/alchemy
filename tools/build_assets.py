@@ -6,14 +6,15 @@ from pathlib import Path
 
 from extract_resource import (encode_general, encode_palette,
                               encode_general_prefill)
-from import_asset import (gba_graphics, gba_palette_rgba, gba_4bpp_banked,
-                          indexed_png, rgba_png)
+from import_asset import gba_graphics, gba_palette_rgba, indexed_png, rgba_png
 from archive_asset import build_archive
 from tilemap import import_tilemap
 from wordstream import import_words
 from pairtable import import_pairs
 from f0_archive import build_archive as build_f0_archive
+from generated_files import unused_tracked_images
 from skip_sprite_archive import build_archive as build_skip_sprite_archive
+from tile_objects import build_bank as build_object_bank
 from kind2_resource import encode_kind2
 from kind1_map_grid import build_grid
 from overlay_disasm import assemble_overlay
@@ -21,6 +22,7 @@ from map_container_components import (
     build_blend_animation, build_descriptors, build_header, build_metatiles,
     build_queues, build_sparse,
 )
+from map_load_table import build_table as build_map_load_table
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,8 +43,11 @@ def source_path(name):
 def build_component(entry):
     kind = entry["kind"]
     source = source_path(entry["source"])
-    if kind == "gba-4bpp-tiles-banked":
-        data, details = gba_4bpp_banked(source.read_bytes())
+    if kind == "gba-4bpp-object-bank":
+        data, nested_sources, details = build_object_bank(source)
+        details["_sources"] = [
+            str(Path(path).resolve().relative_to(ROOT.resolve()))
+            for path in nested_sources]
     elif kind in ("gba-4bpp-tiles", "gba-8bpp-tiles"):
         bpp = 4 if kind == "gba-4bpp-tiles" else 8
         data, _, details = gba_graphics(source.read_bytes(), bpp)
@@ -132,6 +137,7 @@ def main():
                     }],
                 })
         elif series.get("kind") == "golden-sun-map-charblock-series":
+            charblock_layout = series.get("charblock_layout")
             animation_layout = series.get("animation_layout")
             for family in series["families"]:
                 name = str(family["id"]).lower()
@@ -147,14 +153,19 @@ def main():
                     }],
                 })
                 for bank, resource in enumerate(family["charblocks"], 1):
+                    object_source = resource.get("source")
                     entries.append({
                         "address": resource["address"],
                         "size": resource["size"],
                         "kind": "golden-sun-kind2-lz",
                         "plan": f"{directory}/charblock{bank}.kind2.json",
+                        "layout": charblock_layout,
                         "components": [{
-                            "kind": "gba-4bpp-tiles-banked", "size": "0x4000",
-                            "source": f"{directory}/charblock{bank}.banked.png",
+                            "kind": ("gba-4bpp-object-bank" if object_source
+                                     else "gba-4bpp-tiles"),
+                            "size": "0x4000",
+                            "source": (object_source or
+                                       f"{directory}/charblock{bank}.4bpp.png"),
                         }],
                     })
                 animation = family.get("animation_source")
@@ -166,8 +177,8 @@ def main():
                         "plan": f"{directory}/animation_source.kind2.json",
                         "layout": animation_layout,
                         "components": [{
-                            "kind": "gba-4bpp-tiles-banked", "size": "0x4000",
-                            "source": f"{directory}/animation_source.banked.png",
+                            "kind": "gba-4bpp-tiles", "size": "0x4000",
+                            "source": f"{directory}/animation_source.4bpp.png",
                         }],
                     })
         elif series.get("kind") == "golden-sun-standalone-palette-series":
@@ -316,9 +327,19 @@ def main():
             for component in entry["components"]:
                 data, details = build_component(component)
                 parts.append(data)
-                sources.append(component["source"])
                 if component["kind"] == "zero-skip-sprite-archive":
-                    sources.extend((component["plan"], component["palette"]))
+                    archive_plan = json.loads(
+                        source_path(component["plan"]).read_text())
+                    image_sources = [
+                        str(Path(component["source"]) /
+                            f"frame_{index:02d}.png")
+                        for index in range(int(archive_plan["images"]))
+                    ]
+                    sources.extend((
+                        *image_sources, component["plan"],
+                        component["palette"]))
+                else:
+                    sources.append(component["source"])
                 component_reports.append({
                     "kind": component["kind"],
                     "source": component["source"], "details": details,
@@ -358,7 +379,7 @@ def main():
             for component in entry["components"]:
                 data, details = build_component(component)
                 parts.append(data)
-                sources.append(component["source"])
+                sources.extend(details.pop("_sources", [component["source"]]))
                 component_reports.append({
                     "kind": component["kind"],
                     "source": component["source"], "details": details,
@@ -423,6 +444,13 @@ def main():
             sources = [entry["source"]]
             report = {"records": len(document["records"]),
                       "alignment_zeros": document["alignment_zeros"]}
+        elif kind == "golden-sun-map-load-table":
+            source = source_path(entry["source"])
+            built_data = build_map_load_table(source)
+            document = json.loads(source.read_text())
+            sources = [entry["source"]]
+            report = {"records": len(document["records"]),
+                      "record_size": 12}
         elif kind == "golden-sun-offset-palette-lz":
             plan_path = source_path(entry["plan"])
             atlas_path = source_path(entry["source"])
@@ -463,6 +491,13 @@ def main():
             "kind": kind, "sources": sources,
             "output": str(built), "details": report,
         })
+    unused_images = unused_tracked_images(ROOT, regions)
+    if unused_images:
+        listing = "\n".join(f"  {name}" for name in unused_images[:20])
+        if len(unused_images) > 20:
+            listing += f"\n  ... and {len(unused_images) - 20} more"
+        raise ValueError(
+            "tracked images are not byte-verified asset sources:\n" + listing)
     (output / "manifest.json").write_text(json.dumps({
         "format": 1, "rom_base": ROM_BASE, "rom_size": len(rom),
         "asset_bytes": sum(item["size"] for item in regions),

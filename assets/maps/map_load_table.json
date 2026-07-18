@@ -1,0 +1,1680 @@
+{
+  "format": 1,
+  "resource_base": "0x128",
+  "records": [
+    {
+      "map_index": 0,
+      "container": "128",
+      "palette": "129",
+      "vram_charblock1": "12a",
+      "vram_charblock2": "12b",
+      "vram_charblock3": "12c",
+      "animation_source": "12d"
+    },
+    {
+      "map_index": 1,
+      "container": "128",
+      "palette": "129",
+      "vram_charblock1": "12a",
+      "vram_charblock2": "12b",
+      "vram_charblock3": "12c",
+      "animation_source": "12d"
+    },
+    {
+      "map_index": 2,
+      "container": "12e",
+      "palette": "12f",
+      "vram_charblock1": "130",
+      "vram_charblock2": "131",
+      "vram_charblock3": "132",
+      "animation_source": "133"
+    },
+    {
+      "map_index": 3,
+      "container": "134",
+      "palette": "135",
+      "vram_charblock1": "136",
+      "vram_charblock2": "137",
+      "vram_charblock3": "138",
+      "animation_source": "139"
+    },
+    {
+      "map_index": 4,
+      "container": "13a",
+      "palette": "13b",
+      "vram_charblock1": "13c",
+      "vram_charblock2": "13d",
+      "vram_charblock3": "13e",
+      "animation_source": "13f"
+    },
+    {
+      "map_index": 5,
+      "container": "140",
+      "palette": "141",
+      "vram_charblock1": "142",
+      "vram_charblock2": "143",
+      "vram_charblock3": "144",
+      "animation_source": "145"
+    },
+    {
+      "map_index": 6,
+      "container": "146",
+      "palette": "147",
+      "vram_charblock1": "148",
+      "vram_charblock2": "149",
+      "vram_charblock3": "14a",
+      "animation_source": "14b"
+    },
+    {
+      "map_index": 7,
+      "container": "14c",
+      "palette": "14d",
+      "vram_charblock1": "14e",
+      "vram_charblock2": "14f",
+      "vram_charblock3": "150",
+      "animation_source": "151"
+    },
+    {
+      "map_index": 8,
+      "container": "152",
+      "palette": "153",
+      "vram_charblock1": "154",
+      "vram_charblock2": "155",
+      "vram_charblock3": "156",
+      "animation_source": "157"
+    },
+    {
+      "map_index": 9,
+      "container": "134",
+      "palette": "135",
+      "vram_charblock1": "136",
+      "vram_charblock2": "137",
+      "vram_charblock3": "138",
+      "animation_source": "139"
+    },
+    {
+      "map_index": 10,
+      "container": "158",
+      "palette": "159",
+      "vram_charblock1": "15a",
+      "vram_charblock2": "15b",
+      "vram_charblock3": "15c",
+      "animation_source": "15d"
+    },
+    {
+      "map_index": 11,
+      "container": "15e",
+      "palette": "15f",
+      "vram_charblock1": "160",
+      "vram_charblock2": "161",
+      "vram_charblock3": "162",
+      "animation_source": "163"
+    },
+    {
+      "map_index": 12,
+      "container": "164",
+      "palette": "165",
+      "vram_charblock1": "166",
+      "vram_charblock2": "167",
+      "vram_charblock3": "168",
+      "animation_source": "163"
+    },
+    {
+      "map_index": 13,
+      "container": "169",
+      "palette": "16a",
+      "vram_charblock1": "16b",
+      "vram_charblock2": "16c",
+      "vram_charblock3": "16d",
+      "animation_source": "16e"
+    },
+    {
+      "map_index": 14,
+      "container": "16f",
+      "palette": "15f",
+      "vram_charblock1": "160",
+      "vram_charblock2": "161",
+      "vram_charblock3": "162",
+      "animation_source": "163"
+    },
+    {
+      "map_index": 15,
+      "container": "170",
+      "palette": "171",
+      "vram_charblock1": "172",
+      "vram_charblock2": "173",
+      "vram_charblock3": "174",
+      "animation_source": "175"
+    },
+    {
+      "map_index": 16,
+      "container": "176",
+      "palette": "177",
+      "vram_charblock1": "178",
+      "vram_charblock2": "179",
+      "vram_charblock3": "17a",
+      "animation_source": "17b"
+    },
+    {
+      "map_index": 17,
+      "container": "17c",
+      "palette": "17d",
+      "vram_charblock1": "17e",
+      "vram_charblock2": "17f",
+      "vram_charblock3": "180",
+      "animation_source": "181"
+    },
+    {
+      "map_index": 18,
+      "container": "182",
+      "palette": "183",
+      "vram_charblock1": "160",
+      "vram_charblock2": "161",
+      "vram_charblock3": "162",
+      "animation_source": "163"
+    },
+    {
+      "map_index": 19,
+      "container": "184",
+      "palette": "185",
+      "vram_charblock1": "186",
+      "vram_charblock2": "187",
+      "vram_charblock3": "188",
+      "animation_source": "189"
+    },
+    {
+      "map_index": 20,
+      "container": "18a",
+      "palette": "18b",
+      "vram_charblock1": "18c",
+      "vram_charblock2": "18d",
+      "vram_charblock3": "18e",
+      "animation_source": "18f"
+    },
+    {
+      "map_index": 21,
+      "container": "190",
+      "palette": "191",
+      "vram_charblock1": "192",
+      "vram_charblock2": "193",
+      "vram_charblock3": "194",
+      "animation_source": "195"
+    },
+    {
+      "map_index": 22,
+      "container": "196",
+      "palette": "197",
+      "vram_charblock1": "198",
+      "vram_charblock2": "199",
+      "vram_charblock3": "19a",
+      "animation_source": "19b"
+    },
+    {
+      "map_index": 23,
+      "container": "19c",
+      "palette": "19d",
+      "vram_charblock1": "19e",
+      "vram_charblock2": "19f",
+      "vram_charblock3": "1a0",
+      "animation_source": "1a1"
+    },
+    {
+      "map_index": 24,
+      "container": "1a2",
+      "palette": "1a3",
+      "vram_charblock1": "1a4",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1a6",
+      "animation_source": "1a7"
+    },
+    {
+      "map_index": 25,
+      "container": "1a8",
+      "palette": "1a3",
+      "vram_charblock1": "1a4",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1a6",
+      "animation_source": "1a7"
+    },
+    {
+      "map_index": 26,
+      "container": "1a9",
+      "palette": "1a3",
+      "vram_charblock1": "1a4",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1a6",
+      "animation_source": "1a7"
+    },
+    {
+      "map_index": 27,
+      "container": "1aa",
+      "palette": "1ab",
+      "vram_charblock1": "1ac",
+      "vram_charblock2": "1ad",
+      "vram_charblock3": "1ae",
+      "animation_source": "1af"
+    },
+    {
+      "map_index": 28,
+      "container": "1b0",
+      "palette": "1ab",
+      "vram_charblock1": "1ac",
+      "vram_charblock2": "1ad",
+      "vram_charblock3": "1ae",
+      "animation_source": "1af"
+    },
+    {
+      "map_index": 29,
+      "container": "1b1",
+      "palette": "1ab",
+      "vram_charblock1": "1ac",
+      "vram_charblock2": "1ad",
+      "vram_charblock3": "1ae",
+      "animation_source": "1af"
+    },
+    {
+      "map_index": 30,
+      "container": "1b2",
+      "palette": "1b3",
+      "vram_charblock1": "1b4",
+      "vram_charblock2": "1b5",
+      "vram_charblock3": "1b6",
+      "animation_source": "1b7"
+    },
+    {
+      "map_index": 31,
+      "container": "1b8",
+      "palette": "1b9",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1bb",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 32,
+      "container": "1bd",
+      "palette": "1b9",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1bb",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 33,
+      "container": "1be",
+      "palette": "1bf",
+      "vram_charblock1": "1c0",
+      "vram_charblock2": "1c1",
+      "vram_charblock3": "1c2",
+      "animation_source": "1c3"
+    },
+    {
+      "map_index": 34,
+      "container": "1c4",
+      "palette": "1c5",
+      "vram_charblock1": "148",
+      "vram_charblock2": "149",
+      "vram_charblock3": "1c6",
+      "animation_source": "1c7"
+    },
+    {
+      "map_index": 35,
+      "container": "1c8",
+      "palette": "1c9",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1ca",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 36,
+      "container": "1cb",
+      "palette": "1cc",
+      "vram_charblock1": "1cd",
+      "vram_charblock2": "1ce",
+      "vram_charblock3": "13e",
+      "animation_source": "1cf"
+    },
+    {
+      "map_index": 37,
+      "container": "1d0",
+      "palette": "1d1",
+      "vram_charblock1": "1d2",
+      "vram_charblock2": "1d3",
+      "vram_charblock3": "1d4",
+      "animation_source": "1d5"
+    },
+    {
+      "map_index": 38,
+      "container": "1d6",
+      "palette": "1d7",
+      "vram_charblock1": "1d8",
+      "vram_charblock2": "1d9",
+      "vram_charblock3": "1da",
+      "animation_source": "1db"
+    },
+    {
+      "map_index": 39,
+      "container": "1dc",
+      "palette": "1dd",
+      "vram_charblock1": "1de",
+      "vram_charblock2": "1df",
+      "vram_charblock3": "1e0",
+      "animation_source": "1e1"
+    },
+    {
+      "map_index": 40,
+      "container": "1e2",
+      "palette": "1e3",
+      "vram_charblock1": "1e4",
+      "vram_charblock2": "18d",
+      "vram_charblock3": "18e",
+      "animation_source": "18f"
+    },
+    {
+      "map_index": 41,
+      "container": "1e5",
+      "palette": "1e6",
+      "vram_charblock1": "1e7",
+      "vram_charblock2": "1e8",
+      "vram_charblock3": "1e9",
+      "animation_source": "1ea"
+    },
+    {
+      "map_index": 42,
+      "container": "1eb",
+      "palette": "1ec",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1ca",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 43,
+      "container": "1ed",
+      "palette": "1ee",
+      "vram_charblock1": "1ef",
+      "vram_charblock2": "1f0",
+      "vram_charblock3": "1f1",
+      "animation_source": "1f2"
+    },
+    {
+      "map_index": 44,
+      "container": "1f3",
+      "palette": "1f4",
+      "vram_charblock1": "1ef",
+      "vram_charblock2": "1f0",
+      "vram_charblock3": "1f1",
+      "animation_source": "1f5"
+    },
+    {
+      "map_index": 45,
+      "container": "1f6",
+      "palette": "1f7",
+      "vram_charblock1": "1ef",
+      "vram_charblock2": "1f0",
+      "vram_charblock3": "1f1",
+      "animation_source": "1ea"
+    },
+    {
+      "map_index": 46,
+      "container": "1f8",
+      "palette": "1f9",
+      "vram_charblock1": "1fa",
+      "vram_charblock2": "1fb",
+      "vram_charblock3": "1fc",
+      "animation_source": "1fd"
+    },
+    {
+      "map_index": 47,
+      "container": "1fe",
+      "palette": "1ff",
+      "vram_charblock1": "200",
+      "vram_charblock2": "201",
+      "vram_charblock3": "202",
+      "animation_source": "203"
+    },
+    {
+      "map_index": 48,
+      "container": "204",
+      "palette": "205",
+      "vram_charblock1": "206",
+      "vram_charblock2": "207",
+      "vram_charblock3": "208",
+      "animation_source": "209"
+    },
+    {
+      "map_index": 49,
+      "container": "20a",
+      "palette": "20b",
+      "vram_charblock1": "20c",
+      "vram_charblock2": "20d",
+      "vram_charblock3": "20e",
+      "animation_source": "20f"
+    },
+    {
+      "map_index": 50,
+      "container": "210",
+      "palette": "211",
+      "vram_charblock1": "198",
+      "vram_charblock2": "199",
+      "vram_charblock3": "19a",
+      "animation_source": "212"
+    },
+    {
+      "map_index": 51,
+      "container": "213",
+      "palette": "214",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "215",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 52,
+      "container": "216",
+      "palette": "217",
+      "vram_charblock1": "218",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "215",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 53,
+      "container": "219",
+      "palette": "21a",
+      "vram_charblock1": "21b",
+      "vram_charblock2": "21c",
+      "vram_charblock3": "21d",
+      "animation_source": "21e"
+    },
+    {
+      "map_index": 54,
+      "container": "21f",
+      "palette": "220",
+      "vram_charblock1": "221",
+      "vram_charblock2": "222",
+      "vram_charblock3": "223",
+      "animation_source": "224"
+    },
+    {
+      "map_index": 55,
+      "container": "225",
+      "palette": "1a3",
+      "vram_charblock1": "1a4",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1a6",
+      "animation_source": "1a7"
+    },
+    {
+      "map_index": 56,
+      "container": "226",
+      "palette": "227",
+      "vram_charblock1": "228",
+      "vram_charblock2": "229",
+      "vram_charblock3": "22a",
+      "animation_source": "22b"
+    },
+    {
+      "map_index": 57,
+      "container": "22c",
+      "palette": "227",
+      "vram_charblock1": "228",
+      "vram_charblock2": "229",
+      "vram_charblock3": "22a",
+      "animation_source": "22b"
+    },
+    {
+      "map_index": 58,
+      "container": "22d",
+      "palette": "227",
+      "vram_charblock1": "228",
+      "vram_charblock2": "229",
+      "vram_charblock3": "22a",
+      "animation_source": "22b"
+    },
+    {
+      "map_index": 59,
+      "container": "22e",
+      "palette": "227",
+      "vram_charblock1": "228",
+      "vram_charblock2": "229",
+      "vram_charblock3": "22a",
+      "animation_source": "22b"
+    },
+    {
+      "map_index": 60,
+      "container": "22f",
+      "palette": "227",
+      "vram_charblock1": "228",
+      "vram_charblock2": "229",
+      "vram_charblock3": "22a",
+      "animation_source": "22b"
+    },
+    {
+      "map_index": 61,
+      "container": "230",
+      "palette": "227",
+      "vram_charblock1": "228",
+      "vram_charblock2": "229",
+      "vram_charblock3": "22a",
+      "animation_source": "22b"
+    },
+    {
+      "map_index": 62,
+      "container": "231",
+      "palette": "232",
+      "vram_charblock1": "1b4",
+      "vram_charblock2": "1b5",
+      "vram_charblock3": "233",
+      "animation_source": "1b7"
+    },
+    {
+      "map_index": 63,
+      "container": "234",
+      "palette": "235",
+      "vram_charblock1": "236",
+      "vram_charblock2": "237",
+      "vram_charblock3": "238",
+      "animation_source": "239"
+    },
+    {
+      "map_index": 64,
+      "container": "23a",
+      "palette": "23b",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1ca",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 65,
+      "container": "23c",
+      "palette": "23b",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1ca",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 66,
+      "container": "23d",
+      "palette": "23b",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1ca",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 67,
+      "container": "23e",
+      "palette": "23b",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1ca",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 68,
+      "container": "23f",
+      "palette": "23b",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1ca",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 69,
+      "container": "240",
+      "palette": "23b",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1ca",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 70,
+      "container": "241",
+      "palette": "242",
+      "vram_charblock1": "243",
+      "vram_charblock2": "244",
+      "vram_charblock3": "245",
+      "animation_source": "246"
+    },
+    {
+      "map_index": 71,
+      "container": "247",
+      "palette": "242",
+      "vram_charblock1": "243",
+      "vram_charblock2": "244",
+      "vram_charblock3": "245",
+      "animation_source": "246"
+    },
+    {
+      "map_index": 72,
+      "container": "248",
+      "palette": "242",
+      "vram_charblock1": "243",
+      "vram_charblock2": "244",
+      "vram_charblock3": "245",
+      "animation_source": "246"
+    },
+    {
+      "map_index": 73,
+      "container": "249",
+      "palette": "242",
+      "vram_charblock1": "243",
+      "vram_charblock2": "244",
+      "vram_charblock3": "245",
+      "animation_source": "246"
+    },
+    {
+      "map_index": 74,
+      "container": "24a",
+      "palette": "232",
+      "vram_charblock1": "1b4",
+      "vram_charblock2": "1b5",
+      "vram_charblock3": "233",
+      "animation_source": "1b7"
+    },
+    {
+      "map_index": 75,
+      "container": "24b",
+      "palette": "24c",
+      "vram_charblock1": "24d",
+      "vram_charblock2": "24e",
+      "vram_charblock3": "24f",
+      "animation_source": "250"
+    },
+    {
+      "map_index": 76,
+      "container": "251",
+      "palette": "252",
+      "vram_charblock1": "198",
+      "vram_charblock2": "199",
+      "vram_charblock3": "19a",
+      "animation_source": "19b"
+    },
+    {
+      "map_index": 77,
+      "container": "253",
+      "palette": "254",
+      "vram_charblock1": "255",
+      "vram_charblock2": "256",
+      "vram_charblock3": "257",
+      "animation_source": "258"
+    },
+    {
+      "map_index": 78,
+      "container": "259",
+      "palette": "25a",
+      "vram_charblock1": "148",
+      "vram_charblock2": "25b",
+      "vram_charblock3": "1c6",
+      "animation_source": "14b"
+    },
+    {
+      "map_index": 79,
+      "container": "25c",
+      "palette": "25d",
+      "vram_charblock1": "1ac",
+      "vram_charblock2": "1ad",
+      "vram_charblock3": "1ae",
+      "animation_source": "1af"
+    },
+    {
+      "map_index": 80,
+      "container": "25e",
+      "palette": "25d",
+      "vram_charblock1": "1ac",
+      "vram_charblock2": "1ad",
+      "vram_charblock3": "1ae",
+      "animation_source": "1af"
+    },
+    {
+      "map_index": 81,
+      "container": "25f",
+      "palette": "25d",
+      "vram_charblock1": "1ac",
+      "vram_charblock2": "1ad",
+      "vram_charblock3": "1ae",
+      "animation_source": "1af"
+    },
+    {
+      "map_index": 82,
+      "container": "260",
+      "palette": "25d",
+      "vram_charblock1": "1ac",
+      "vram_charblock2": "1ad",
+      "vram_charblock3": "1ae",
+      "animation_source": "1af"
+    },
+    {
+      "map_index": 83,
+      "container": "261",
+      "palette": "25d",
+      "vram_charblock1": "1ac",
+      "vram_charblock2": "1ad",
+      "vram_charblock3": "1ae",
+      "animation_source": "1af"
+    },
+    {
+      "map_index": 84,
+      "container": "262",
+      "palette": "25d",
+      "vram_charblock1": "1ac",
+      "vram_charblock2": "1ad",
+      "vram_charblock3": "1ae",
+      "animation_source": "1af"
+    },
+    {
+      "map_index": 85,
+      "container": "263",
+      "palette": "25d",
+      "vram_charblock1": "1ac",
+      "vram_charblock2": "1ad",
+      "vram_charblock3": "1ae",
+      "animation_source": "1af"
+    },
+    {
+      "map_index": 86,
+      "container": "264",
+      "palette": "25d",
+      "vram_charblock1": "1ac",
+      "vram_charblock2": "1ad",
+      "vram_charblock3": "1ae",
+      "animation_source": "1af"
+    },
+    {
+      "map_index": 87,
+      "container": "265",
+      "palette": "25d",
+      "vram_charblock1": "1ac",
+      "vram_charblock2": "1ad",
+      "vram_charblock3": "1ae",
+      "animation_source": "1af"
+    },
+    {
+      "map_index": 88,
+      "container": "266",
+      "palette": "267",
+      "vram_charblock1": "160",
+      "vram_charblock2": "161",
+      "vram_charblock3": "162",
+      "animation_source": "163"
+    },
+    {
+      "map_index": 89,
+      "container": "268",
+      "palette": "25d",
+      "vram_charblock1": "1ac",
+      "vram_charblock2": "1ad",
+      "vram_charblock3": "1ae",
+      "animation_source": "1af"
+    },
+    {
+      "map_index": 90,
+      "container": "269",
+      "palette": "26a",
+      "vram_charblock1": "1ac",
+      "vram_charblock2": "1ad",
+      "vram_charblock3": "1ae",
+      "animation_source": "1af"
+    },
+    {
+      "map_index": 91,
+      "container": "26b",
+      "palette": "232",
+      "vram_charblock1": "1b4",
+      "vram_charblock2": "1b5",
+      "vram_charblock3": "233",
+      "animation_source": "1b7"
+    },
+    {
+      "map_index": 92,
+      "container": "26c",
+      "palette": "26d",
+      "vram_charblock1": "26e",
+      "vram_charblock2": "26f",
+      "vram_charblock3": "270",
+      "animation_source": "271"
+    },
+    {
+      "map_index": 93,
+      "container": "272",
+      "palette": "26d",
+      "vram_charblock1": "26e",
+      "vram_charblock2": "26f",
+      "vram_charblock3": "270",
+      "animation_source": "271"
+    },
+    {
+      "map_index": 94,
+      "container": "273",
+      "palette": "26d",
+      "vram_charblock1": "26e",
+      "vram_charblock2": "26f",
+      "vram_charblock3": "270",
+      "animation_source": "271"
+    },
+    {
+      "map_index": 95,
+      "container": "274",
+      "palette": "275",
+      "vram_charblock1": "276",
+      "vram_charblock2": "277",
+      "vram_charblock3": "278",
+      "animation_source": "279"
+    },
+    {
+      "map_index": 96,
+      "container": "27a",
+      "palette": "27b",
+      "vram_charblock1": "27c",
+      "vram_charblock2": "27d",
+      "vram_charblock3": "27e",
+      "animation_source": "27f"
+    },
+    {
+      "map_index": 97,
+      "container": "280",
+      "palette": "27b",
+      "vram_charblock1": "27c",
+      "vram_charblock2": "27d",
+      "vram_charblock3": "27e",
+      "animation_source": "27f"
+    },
+    {
+      "map_index": 98,
+      "container": "281",
+      "palette": "275",
+      "vram_charblock1": "276",
+      "vram_charblock2": "277",
+      "vram_charblock3": "278",
+      "animation_source": "279"
+    },
+    {
+      "map_index": 99,
+      "container": "282",
+      "palette": "283",
+      "vram_charblock1": "1d8",
+      "vram_charblock2": "1d9",
+      "vram_charblock3": "1da",
+      "animation_source": "1db"
+    },
+    {
+      "map_index": 100,
+      "container": "284",
+      "palette": "285",
+      "vram_charblock1": "1c0",
+      "vram_charblock2": "1c1",
+      "vram_charblock3": "286",
+      "animation_source": "287"
+    },
+    {
+      "map_index": 101,
+      "container": "288",
+      "palette": "289",
+      "vram_charblock1": "221",
+      "vram_charblock2": "222",
+      "vram_charblock3": "223",
+      "animation_source": "224"
+    },
+    {
+      "map_index": 102,
+      "container": "28a",
+      "palette": "28b",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1ca",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 103,
+      "container": "28c",
+      "palette": "28d",
+      "vram_charblock1": "28e",
+      "vram_charblock2": "28f",
+      "vram_charblock3": "138",
+      "animation_source": "290"
+    },
+    {
+      "map_index": 104,
+      "container": "291",
+      "palette": "292",
+      "vram_charblock1": "148",
+      "vram_charblock2": "149",
+      "vram_charblock3": "293",
+      "animation_source": "14b"
+    },
+    {
+      "map_index": 105,
+      "container": "294",
+      "palette": "295",
+      "vram_charblock1": "296",
+      "vram_charblock2": "297",
+      "vram_charblock3": "298",
+      "animation_source": "299"
+    },
+    {
+      "map_index": 106,
+      "container": "29a",
+      "palette": "29b",
+      "vram_charblock1": "296",
+      "vram_charblock2": "297",
+      "vram_charblock3": "298",
+      "animation_source": "299"
+    },
+    {
+      "map_index": 107,
+      "container": "29c",
+      "palette": "29d",
+      "vram_charblock1": "29e",
+      "vram_charblock2": "29f",
+      "vram_charblock3": "2a0",
+      "animation_source": "2a1"
+    },
+    {
+      "map_index": 108,
+      "container": "2a2",
+      "palette": "2a3",
+      "vram_charblock1": "28e",
+      "vram_charblock2": "28f",
+      "vram_charblock3": "138",
+      "animation_source": "290"
+    },
+    {
+      "map_index": 109,
+      "container": "2a4",
+      "palette": "2a5",
+      "vram_charblock1": "136",
+      "vram_charblock2": "137",
+      "vram_charblock3": "138",
+      "animation_source": "139"
+    },
+    {
+      "map_index": 110,
+      "container": "2a6",
+      "palette": "2a7",
+      "vram_charblock1": "2a8",
+      "vram_charblock2": "2a9",
+      "vram_charblock3": "2aa",
+      "animation_source": "2ab"
+    },
+    {
+      "map_index": 111,
+      "container": "2ac",
+      "palette": "2ad",
+      "vram_charblock1": "228",
+      "vram_charblock2": "229",
+      "vram_charblock3": "22a",
+      "animation_source": "22b"
+    },
+    {
+      "map_index": 112,
+      "container": "2ae",
+      "palette": "2af",
+      "vram_charblock1": "228",
+      "vram_charblock2": "229",
+      "vram_charblock3": "22a",
+      "animation_source": "22b"
+    },
+    {
+      "map_index": 113,
+      "container": "2b0",
+      "palette": "2b1",
+      "vram_charblock1": "228",
+      "vram_charblock2": "229",
+      "vram_charblock3": "22a",
+      "animation_source": "22b"
+    },
+    {
+      "map_index": 114,
+      "container": "2b2",
+      "palette": "2b3",
+      "vram_charblock1": "1fa",
+      "vram_charblock2": "1fb",
+      "vram_charblock3": "1fc",
+      "animation_source": "1fd"
+    },
+    {
+      "map_index": 115,
+      "container": "2ae",
+      "palette": "2b4",
+      "vram_charblock1": "228",
+      "vram_charblock2": "229",
+      "vram_charblock3": "22a",
+      "animation_source": "22b"
+    },
+    {
+      "map_index": 116,
+      "container": "2b5",
+      "palette": "2b6",
+      "vram_charblock1": "2a8",
+      "vram_charblock2": "2a9",
+      "vram_charblock3": "2aa",
+      "animation_source": "2ab"
+    },
+    {
+      "map_index": 117,
+      "container": "2b7",
+      "palette": "2b8",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1ca",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 118,
+      "container": "2b9",
+      "palette": "2ba",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1ca",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 119,
+      "container": "2bb",
+      "palette": "2bc",
+      "vram_charblock1": "28e",
+      "vram_charblock2": "28f",
+      "vram_charblock3": "138",
+      "animation_source": "290"
+    },
+    {
+      "map_index": 120,
+      "container": "2bd",
+      "palette": "2be",
+      "vram_charblock1": "296",
+      "vram_charblock2": "297",
+      "vram_charblock3": "298",
+      "animation_source": "299"
+    },
+    {
+      "map_index": 121,
+      "container": "2bf",
+      "palette": "2c0",
+      "vram_charblock1": "1ac",
+      "vram_charblock2": "1ad",
+      "vram_charblock3": "1ae",
+      "animation_source": "1af"
+    },
+    {
+      "map_index": 122,
+      "container": "2c1",
+      "palette": "2c2",
+      "vram_charblock1": "276",
+      "vram_charblock2": "277",
+      "vram_charblock3": "278",
+      "animation_source": "279"
+    },
+    {
+      "map_index": 123,
+      "container": "2c3",
+      "palette": "2c4",
+      "vram_charblock1": "27c",
+      "vram_charblock2": "27d",
+      "vram_charblock3": "27e",
+      "animation_source": "27f"
+    },
+    {
+      "map_index": 124,
+      "container": "2c5",
+      "palette": "2c4",
+      "vram_charblock1": "27c",
+      "vram_charblock2": "27d",
+      "vram_charblock3": "27e",
+      "animation_source": "27f"
+    },
+    {
+      "map_index": 125,
+      "container": "2c6",
+      "palette": "2c7",
+      "vram_charblock1": "1d2",
+      "vram_charblock2": "1d3",
+      "vram_charblock3": "1d4",
+      "animation_source": "1d5"
+    },
+    {
+      "map_index": 126,
+      "container": "2c8",
+      "palette": "2c9",
+      "vram_charblock1": "1d8",
+      "vram_charblock2": "1d9",
+      "vram_charblock3": "1da",
+      "animation_source": "1db"
+    },
+    {
+      "map_index": 127,
+      "container": "2ca",
+      "palette": "2cb",
+      "vram_charblock1": "2cc",
+      "vram_charblock2": "2cd",
+      "vram_charblock3": "2ce",
+      "animation_source": "2cf"
+    },
+    {
+      "map_index": 128,
+      "container": "2d0",
+      "palette": "2d1",
+      "vram_charblock1": "2cc",
+      "vram_charblock2": "2cd",
+      "vram_charblock3": "2ce",
+      "animation_source": "2cf"
+    },
+    {
+      "map_index": 129,
+      "container": "2d2",
+      "palette": "2d3",
+      "vram_charblock1": "276",
+      "vram_charblock2": "277",
+      "vram_charblock3": "278",
+      "animation_source": "279"
+    },
+    {
+      "map_index": 130,
+      "container": "2d4",
+      "palette": "2d5",
+      "vram_charblock1": "2d6",
+      "vram_charblock2": "2d7",
+      "vram_charblock3": "2d8",
+      "animation_source": "2d9"
+    },
+    {
+      "map_index": 131,
+      "container": "2da",
+      "palette": "2db",
+      "vram_charblock1": "2dc",
+      "vram_charblock2": "2dd",
+      "vram_charblock3": "2de",
+      "animation_source": "2df"
+    },
+    {
+      "map_index": 132,
+      "container": "2e0",
+      "palette": "2e1",
+      "vram_charblock1": "2e2",
+      "vram_charblock2": "2e3",
+      "vram_charblock3": "2e4",
+      "animation_source": "2e5"
+    },
+    {
+      "map_index": 133,
+      "container": "2e6",
+      "palette": "2e7",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1ca",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 134,
+      "container": "2e8",
+      "palette": "2e7",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1ca",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 135,
+      "container": "2e9",
+      "palette": "2e7",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1ca",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 136,
+      "container": "2ea",
+      "palette": "2eb",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "215",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 137,
+      "container": "2ec",
+      "palette": "2e7",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1ca",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 138,
+      "container": "2ed",
+      "palette": "2eb",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "215",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 139,
+      "container": "2ee",
+      "palette": "2ef",
+      "vram_charblock1": "276",
+      "vram_charblock2": "277",
+      "vram_charblock3": "278",
+      "animation_source": "279"
+    },
+    {
+      "map_index": 140,
+      "container": "2f0",
+      "palette": "2f1",
+      "vram_charblock1": "1a4",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1a6",
+      "animation_source": "1a7"
+    },
+    {
+      "map_index": 141,
+      "container": "2f2",
+      "palette": "2f1",
+      "vram_charblock1": "1a4",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1a6",
+      "animation_source": "1a7"
+    },
+    {
+      "map_index": 142,
+      "container": "2f3",
+      "palette": "2f4",
+      "vram_charblock1": "1c0",
+      "vram_charblock2": "1c1",
+      "vram_charblock3": "1c2",
+      "animation_source": "1c3"
+    },
+    {
+      "map_index": 143,
+      "container": "2f5",
+      "palette": "2f6",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1bb",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 144,
+      "container": "2f7",
+      "palette": "2f6",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1bb",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 145,
+      "container": "2f8",
+      "palette": "2f6",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1bb",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 146,
+      "container": "2f9",
+      "palette": "2f6",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "1bb",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 147,
+      "container": "2fa",
+      "palette": "2fb",
+      "vram_charblock1": "1b4",
+      "vram_charblock2": "1b5",
+      "vram_charblock3": "1b6",
+      "animation_source": "1b7"
+    },
+    {
+      "map_index": 148,
+      "container": "2fc",
+      "palette": "2fd",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "215",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 149,
+      "container": "2fe",
+      "palette": "2ff",
+      "vram_charblock1": "300",
+      "vram_charblock2": "2cd",
+      "vram_charblock3": "2ce",
+      "animation_source": "2cf"
+    },
+    {
+      "map_index": 150,
+      "container": "301",
+      "palette": "2ff",
+      "vram_charblock1": "300",
+      "vram_charblock2": "2cd",
+      "vram_charblock3": "2ce",
+      "animation_source": "2cf"
+    },
+    {
+      "map_index": 151,
+      "container": "302",
+      "palette": "303",
+      "vram_charblock1": "26e",
+      "vram_charblock2": "26f",
+      "vram_charblock3": "270",
+      "animation_source": "271"
+    },
+    {
+      "map_index": 152,
+      "container": "304",
+      "palette": "303",
+      "vram_charblock1": "26e",
+      "vram_charblock2": "26f",
+      "vram_charblock3": "270",
+      "animation_source": "271"
+    },
+    {
+      "map_index": 153,
+      "container": "305",
+      "palette": "306",
+      "vram_charblock1": "1ac",
+      "vram_charblock2": "1ad",
+      "vram_charblock3": "1ae",
+      "animation_source": "1af"
+    },
+    {
+      "map_index": 154,
+      "container": "307",
+      "palette": "308",
+      "vram_charblock1": "309",
+      "vram_charblock2": "30a",
+      "vram_charblock3": "30b",
+      "animation_source": "30c"
+    },
+    {
+      "map_index": 155,
+      "container": "30d",
+      "palette": "30e",
+      "vram_charblock1": "30f",
+      "vram_charblock2": "310",
+      "vram_charblock3": "311",
+      "animation_source": "312"
+    },
+    {
+      "map_index": 156,
+      "container": "313",
+      "palette": "314",
+      "vram_charblock1": "1c0",
+      "vram_charblock2": "1c1",
+      "vram_charblock3": "1c2",
+      "animation_source": "1c3"
+    },
+    {
+      "map_index": 157,
+      "container": "315",
+      "palette": "314",
+      "vram_charblock1": "1c0",
+      "vram_charblock2": "1c1",
+      "vram_charblock3": "1c2",
+      "animation_source": "1c3"
+    },
+    {
+      "map_index": 158,
+      "container": "316",
+      "palette": "317",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "215",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 159,
+      "container": "318",
+      "palette": "319",
+      "vram_charblock1": "228",
+      "vram_charblock2": "229",
+      "vram_charblock3": "22a",
+      "animation_source": "22b"
+    },
+    {
+      "map_index": 160,
+      "container": "31a",
+      "palette": "319",
+      "vram_charblock1": "228",
+      "vram_charblock2": "229",
+      "vram_charblock3": "22a",
+      "animation_source": "22b"
+    },
+    {
+      "map_index": 161,
+      "container": "31b",
+      "palette": "31c",
+      "vram_charblock1": "2a8",
+      "vram_charblock2": "2a9",
+      "vram_charblock3": "2aa",
+      "animation_source": "2ab"
+    },
+    {
+      "map_index": 162,
+      "container": "2a6",
+      "palette": "31d",
+      "vram_charblock1": "2a8",
+      "vram_charblock2": "2a9",
+      "vram_charblock3": "2aa",
+      "animation_source": "2ab"
+    },
+    {
+      "map_index": 163,
+      "container": "31e",
+      "palette": "31f",
+      "vram_charblock1": "1ba",
+      "vram_charblock2": "1a5",
+      "vram_charblock3": "215",
+      "animation_source": "1bc"
+    },
+    {
+      "map_index": 164,
+      "container": "320",
+      "palette": "321",
+      "vram_charblock1": "309",
+      "vram_charblock2": "30a",
+      "vram_charblock3": "30b",
+      "animation_source": "30c"
+    },
+    {
+      "map_index": 165,
+      "container": "322",
+      "palette": "323",
+      "vram_charblock1": "30f",
+      "vram_charblock2": "310",
+      "vram_charblock3": "311",
+      "animation_source": "312"
+    },
+    {
+      "map_index": 166,
+      "container": "324",
+      "palette": "323",
+      "vram_charblock1": "30f",
+      "vram_charblock2": "310",
+      "vram_charblock3": "311",
+      "animation_source": "312"
+    },
+    {
+      "map_index": 167,
+      "container": "325",
+      "palette": "31c",
+      "vram_charblock1": "2a8",
+      "vram_charblock2": "2a9",
+      "vram_charblock3": "2aa",
+      "animation_source": "2ab"
+    },
+    {
+      "map_index": 168,
+      "container": "326",
+      "palette": "327",
+      "vram_charblock1": "15a",
+      "vram_charblock2": "15b",
+      "vram_charblock3": "15c",
+      "animation_source": "15d"
+    },
+    {
+      "map_index": 169,
+      "container": "328",
+      "palette": "329",
+      "vram_charblock1": "228",
+      "vram_charblock2": "229",
+      "vram_charblock3": "22a",
+      "animation_source": "22b"
+    },
+    {
+      "map_index": 170,
+      "container": "32a",
+      "palette": "32b",
+      "vram_charblock1": "228",
+      "vram_charblock2": "229",
+      "vram_charblock3": "22a",
+      "animation_source": "22b"
+    },
+    {
+      "map_index": 171,
+      "container": "32c",
+      "palette": "32b",
+      "vram_charblock1": "228",
+      "vram_charblock2": "229",
+      "vram_charblock3": "22a",
+      "animation_source": "22b"
+    },
+    {
+      "map_index": 172,
+      "container": "32d",
+      "palette": "32b",
+      "vram_charblock1": "228",
+      "vram_charblock2": "229",
+      "vram_charblock3": "22a",
+      "animation_source": "22b"
+    },
+    {
+      "map_index": 173,
+      "container": "32e",
+      "palette": "32b",
+      "vram_charblock1": "228",
+      "vram_charblock2": "229",
+      "vram_charblock3": "22a",
+      "animation_source": "22b"
+    },
+    {
+      "map_index": 174,
+      "container": "32f",
+      "palette": "330",
+      "vram_charblock1": "228",
+      "vram_charblock2": "229",
+      "vram_charblock3": "22a",
+      "animation_source": "22b"
+    },
+    {
+      "map_index": 175,
+      "container": "331",
+      "palette": "332",
+      "vram_charblock1": "333",
+      "vram_charblock2": "334",
+      "vram_charblock3": "335",
+      "animation_source": "336"
+    },
+    {
+      "map_index": 176,
+      "container": "337",
+      "palette": "338",
+      "vram_charblock1": "339",
+      "vram_charblock2": "33a",
+      "vram_charblock3": "33b",
+      "animation_source": "33c"
+    },
+    {
+      "map_index": 177,
+      "container": "33d",
+      "palette": "33e",
+      "vram_charblock1": "1d8",
+      "vram_charblock2": "1d9",
+      "vram_charblock3": "1da",
+      "animation_source": "1db"
+    },
+    {
+      "map_index": 178,
+      "container": "33f",
+      "palette": "340",
+      "vram_charblock1": "341",
+      "vram_charblock2": "342",
+      "vram_charblock3": "343",
+      "animation_source": "344"
+    },
+    {
+      "map_index": 179,
+      "container": "345",
+      "palette": "346",
+      "vram_charblock1": "347",
+      "vram_charblock2": "348",
+      "vram_charblock3": "349",
+      "animation_source": "34a"
+    },
+    {
+      "map_index": 180,
+      "container": "34b",
+      "palette": "34c",
+      "vram_charblock1": "34d",
+      "vram_charblock2": "34e",
+      "vram_charblock3": "34f",
+      "animation_source": "350"
+    },
+    {
+      "map_index": 181,
+      "container": "351",
+      "palette": "352",
+      "vram_charblock1": "353",
+      "vram_charblock2": "354",
+      "vram_charblock3": "355",
+      "animation_source": "356"
+    },
+    {
+      "map_index": 182,
+      "container": "357",
+      "palette": "358",
+      "vram_charblock1": "359",
+      "vram_charblock2": "35a",
+      "vram_charblock3": "35b",
+      "animation_source": "35c"
+    },
+    {
+      "map_index": 183,
+      "container": "35d",
+      "palette": "35e",
+      "vram_charblock1": "35f",
+      "vram_charblock2": "360",
+      "vram_charblock3": "361",
+      "animation_source": "362"
+    },
+    {
+      "map_index": 184,
+      "container": "363",
+      "palette": "364",
+      "vram_charblock1": "365",
+      "vram_charblock2": "366",
+      "vram_charblock3": "367",
+      "animation_source": "368"
+    },
+    {
+      "map_index": 185,
+      "container": "369",
+      "palette": "36a",
+      "vram_charblock1": "36b",
+      "vram_charblock2": "36c",
+      "vram_charblock3": "36d",
+      "animation_source": "36e"
+    }
+  ]
+}

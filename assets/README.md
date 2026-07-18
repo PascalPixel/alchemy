@@ -2,7 +2,8 @@
 
 Every entry in `manifest.json` names its exact ROM range and deterministic
 encoding. `tools/build_assets.py` refuses a region unless the tracked source
-re-encodes byte-for-byte to the private ROM.
+re-encodes byte-for-byte to the private ROM, and rejects tracked images that
+are not inputs to that verified build.
 
 `graphics/080c5b30.4bpp.png` contains seven palette-independent 4bpp tiles.
 ROM code copies the seven consecutive 32-byte units to seven consecutive VRAM
@@ -22,10 +23,11 @@ sources are a BGR555 palette PNG, two 8bpp tile PNGs, a 32×32 text tilemap,
 and a payload-free custom-LZ token plan. The plan records literal positions
 and copy decisions; literal bytes come from the PNG/text components during
 the build. Together they re-encode the complete compressed ROM stream.
-`preview.frames.png` is a generated, non-source rendering of the four proven
+A generated, non-source preview renders the four proven
 dynamic states after applying the real palette, 32x32 tilemap, tile flips, and
 the runtime `0x340`-byte dynamic upload. Regenerate it with
-`python3 tools/render_resource_19.py -o assets/graphics/resource_19/preview.frames.png`.
+`python3 tools/render_resource_19.py`; the ignored output is
+`out/previews/resource_19.frames.png`.
 
 `graphics/resources_d8_e3/` contains two alternative six-resource affine
 background sets selected by a ROM-derived map condition. D8/DE are 224-color
@@ -75,9 +77,9 @@ runtime selector and coordinate system are not yet proven.
 five 16-color BGR555 palette banks and 256 4bpp tiles. Pixel-edge continuity
 fixes the native tile order at four tiles wide: every consecutive group of
 sixteen tiles is one coherent 32x32 frame, yielding sixteen frames and five
-color variants. `preview.frames.png` is generated from those tracked sources
-with `python3 tools/render_resource_e7.py -o
-assets/graphics/resource_e7/preview.frames.png`.
+color variants. A non-source preview is generated from those tracked sources
+with `python3 tools/render_resource_e7.py`; the ignored output is
+`out/previews/resource_e7.frames.png`.
 
 `graphics/resource_f0/images/` contains 57 unique, palette-correct 32x32 4bpp
 images. The ROM's 80-entry 16-bit offset table contains 23 null slots and one
@@ -99,19 +101,39 @@ baserom.gba`.
 
 `graphics/resource_128/` through `graphics/resource_369/` contain the 121 map
 families whose container is directly followed by a 224-color BG palette
-stream and zero to four 0x4000-byte kind-2 tile banks. The first three banks
-are the VRAM charblocks the generic loader copies to charblocks 1-3; a fourth
-bank is the family's animation-source bank. Fifty of the families carry only
-the palette. The tag-2 codec uses LSB-first LZ tokens and move-to-front
+stream and zero to four 0x4000-byte kind-2 tile banks. These directories are
+canonical storage groups, not a claim that every adjacent bank is used by that
+container. `maps/map_load_table.json` reconstructs the loader's 186-record
+マップ読込表 and explicitly links each map index to its container, palette,
+three VRAM charblocks, and animation-source bank. Partial groups therefore
+reuse resources from another storage group without duplicating their PNGs.
+Fifty of the groups carry only the palette. The tag-2 codec uses LSB-first LZ tokens and move-to-front
 nibbles; payload-free plans reproduce all compressed bits and alignment bytes
 exactly. Nine palette streams are tag-1 palette-LZ rather than tag-0
 general-LZ, so each palette plan records its exact codec and tag.
 Palette-bank selection belongs to map data, so the tile PNGs use a
 neutral index legend rather than claiming one of fourteen 16-color banks.
+Their 512 tiles use the map-authored 32x16 sheet geometry: text entries advance
+by one tile across a row and by `0x20` down a row. A 16x32 wrap preserves bytes
+but folds coherent structures into misleading alternating strips.
 Regenerate with `python3 tools/export_map_charblock_series.py baserom.gba`;
 the exporter discovers containers 0x128 through 0x369 in the resource table
 and claims each family's greedy palette-plus-banks tail, leaving every
 resource that does not classify unclaimed.
+
+Banks can be decompiled further into coherent object PNGs without losing their
+exact slot order. `tools/tile_objects.py extract-map` writes a colorized object,
+its exact text tilemap, and a neutral remainder atlas; `--append` migrates more
+objects from the same bank later. Once the plan reproduces the complete bank,
+the tool updates the manifest and deletes the superseded sequential atlas. The
+object becomes the
+authoritative source for every referenced slot: the builder uses the tilemap's
+10-bit index, palette bank, and H/V flags to reverse display flips and restore
+the canonical 4bpp bank. The header selects which extracted charblock occupies
+each 0x200-tile display window; this selection is resolved before an object is
+assigned to a bank. `resource_152/objects/ougonmon.png` (黄金門) and
+`resource_190/objects/iwamuro.png` (岩室) are period-style semantic sources;
+their remaining unclaimed slots stay in neutral fallback atlases.
 
 `maps/resource_128/grid/` through `maps/resource_369/grid/` reconstruct all
 173 traced containers' tagged kind-1 map components as 128x128 spatial record
@@ -134,9 +156,11 @@ components, so the header, grid, and component sources cannot drift apart.
 Every compressed component stream is tag-0 general-LZ or tag-1 palette-LZ,
 and each plan records the exact codec, token trace, and lookahead.
 Component 0 is a text tilemap with four little-endian u16 entries per 2x2
-metatile; its plan preserves the planar transform mode. Eighty-seven
-containers use XOR-chained mode 1, while modes 0 (34 containers) and
-2 (52 containers) both leave the planar values untransformed.
+metatile; its plan preserves the runtime transform mode. Mode 0 stores direct
+little-endian entries, mode 1 splits high and low bytes into planes before an
+XOR chain, and mode 2 applies the same previous-entry XOR to direct
+little-endian words. The semantic decoder mirrors the byte-verified runtime
+routine and the inverse encoder reproduces every compressed component exactly.
 Component 1 is a JSON sequence of opaque four-byte descriptor records.
 Component 3, absent in eighteen containers, is a JSON stream of animation
 queues with their full FDxx headers, pairs of u16 command words, FE00 queue

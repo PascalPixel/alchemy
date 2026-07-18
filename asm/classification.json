@@ -196,27 +196,22 @@
       "evidence": [
         "mixed_or_invalid_function_boundary"
       ],
-      "expected_files": 35,
-      "expected_bytes": 29972,
+      "expected_files": 30,
+      "expected_bytes": 27338,
       "files": [
-        "0800b168",
-        "0800ebec",
         "0800ee14",
         "08026080",
         "08026b44",
-        "080be378",
         "080be76c",
         "080beb08",
         "080bef88",
         "080d0ee0",
         "080d4ce8",
-        "080d5c48",
         "080d77b4",
         "080d7c08",
         "080d7ea0",
         "080ddb34",
         "080ddde0",
-        "080e17c4",
         "080e1acc",
         "080e1df8",
         "080e21e8",
@@ -478,13 +473,14 @@
         "direct_branch_to_later_continuation",
         "adjacent_literal_or_constant_pool"
       ],
-      "expected_files": 6,
-      "expected_bytes": 2284,
+      "expected_files": 7,
+      "expected_bytes": 2928,
       "files": [
         "0802691c",
         "080d76f0",
         "080dda3c",
         "080de0d4",
+        "080e17c4",
         "080ec190",
         "080ec264"
       ],
@@ -553,6 +549,30 @@
           "load_address": "0x080de2c4",
           "size": 52,
           "kind": "literal_pool",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e17c4",
+          "size": 106,
+          "kind": "function_code_continuation",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e182e",
+          "size": 2,
+          "kind": "alignment",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e1830",
+          "size": 24,
+          "kind": "internal_literal_pool",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080e1848",
+          "size": 512,
+          "kind": "function_code_continuation",
           "authorship": "unknown"
         },
         {
@@ -628,10 +648,12 @@
         "direct_branch_to_continuation",
         "adjacent_literal_or_constant_pool"
       ],
-      "expected_files": 7,
-      "expected_bytes": 2256,
+      "expected_files": 9,
+      "expected_bytes": 3820,
       "files": [
+        "0800ebec",
         "0808b674",
+        "080be378",
         "080d765c",
         "080dd9c0",
         "080e15e8",
@@ -640,6 +662,18 @@
         "080f4168"
       ],
       "subregions": [
+        {
+          "load_address": "0x0800ebec",
+          "size": 516,
+          "kind": "callable_function_head",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x0800edf0",
+          "size": 36,
+          "kind": "literal_pool",
+          "authorship": "unknown"
+        },
         {
           "load_address": "0x0808b674",
           "size": 282,
@@ -655,6 +689,37 @@
         {
           "load_address": "0x0808b790",
           "size": 40,
+          "kind": "literal_pool",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080be378",
+          "size": 504,
+          "kind": "callable_function_head",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080be570",
+          "size": 400,
+          "kind": "jump_table",
+          "entry_count": 100,
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080be700",
+          "size": 54,
+          "kind": "function_code_continuation",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080be736",
+          "size": 2,
+          "kind": "alignment",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x080be738",
+          "size": 52,
           "kind": "literal_pool",
           "authorship": "unknown"
         },

@@ -1,5 +1,5 @@
-@ 呼出しグラフから到達した領域の再構築サム逆アセンブル。
-@ （コードとデータが混在）。build_asm.tsでバイト一致確認済み。
+@ 複数領域関数の継続部。
+@ 間接演算呼出し後のループ末尾までを同一ファイルに保持する。
 .syntax unified
 	.thumb
 	.set sub_080049ac, 0x080049ac
@@ -10,13 +10,14 @@
 	.set sub_08004cf0, 0x08004cf0
 	.set sub_08005258, 0x08005258
 	.set sub_080072f0, 0x080072f0
+	.set sub_080072f4, 0x080072f4
 	.set sub_080d40ec, 0x080d40ec
 	.set sub_080e1a48, 0x080e1a48
 	.set sub_080e1a64, 0x080e1a64
 	.set sub_080e1cc2, 0x080e1cc2
 	.set sub_080e3944, 0x080e3944
-	.global Region_080e17c4
-Region_080e17c4:
+	.global Continuation_080e17c4
+Continuation_080e17c4:
 	ldr r5, [sp, #128]
 	ldr r0, [pc, #108]
 	movs r3, #75
@@ -283,6 +284,7 @@ Region_080e17c4:
 	ldr r7, [pc, #216]
 	str r2, [sp, #92]
 	mov r11, r3
+.L_080e19e6:
 	adds r3, r6, #0
 	adds r3, #12
 	ldr r3, [r5, r3]
@@ -294,3 +296,40 @@ Region_080e17c4:
 	lsls r0, r0, #0
 	mov r12, pc
 	bx r7
+	adds r4, r4, r0
+	adds r3, r6, #0
+	ldr r0, [sp, #92]
+	adds r3, #16
+	ldr r2, [r5, r3]
+	ldr r3, [r5, r0]
+	subs r2, r2, r3
+	mov r0, r8
+	muls r0, r2
+	ldr r1, [pc, #176]
+	mov r12, pc
+	bx r7
+	adds r3, r3, r0
+	mov r2, r11
+	ldr r0, [pc, #168]
+	subs r2, #2
+	ldrh r1, [r0, r2]
+	ldr r2, [sp, #120]
+	ldr r0, [sp, #44]
+	adds r1, r2, r1
+	lsrs r2, r0, #31
+	ldr r0, [sp, #104]
+	adds r2, r0, r2
+	asrs r2, r2, #1
+	subs r4, r4, r2
+	mov r2, r11
+	subs r3, r3, r0
+	str r0, [sp, #0]
+	str r2, [sp, #4]
+	ldr r0, [sp, #124]
+	adds r2, r4, #0
+	ldr r4, [sp, #108]
+	bl sub_080072f4
+	movs r0, #1
+	add r8, r0
+	cmp r8, r10
+	bne .L_080e19e6

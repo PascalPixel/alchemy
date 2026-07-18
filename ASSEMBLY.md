@@ -19,16 +19,16 @@ The current boundary, after the eighteenth exact-C checkpoint and full IWRAM rec
 | IWRAM division veneers | 4 | 32 | Keep assembly |
 | Deliberate fixed-point math primitives | 2 | 56 | Keep assembly |
 | Compiler/assembler literal pool | 1 | 32 | Keep structured data |
-| Mixed or misbounded code/data regions | 35 | 29,972 | Split before decompiling |
+| Mixed or misbounded code/data regions | 30 | 27,338 | Split before decompiling |
 | Structured runtime relocation-helper module | 1 | 128 | Keep structured assembly |
 | Proven parent-function fragments with pools | 9 | 1,646 | Merge when each owner is reconstructed |
-| Proven multi-region function heads with pools | 7 | 2,256 | Merge with their continuations before exact C |
-| Proven multi-region function continuations with pools | 6 | 2,284 | Merge with their function owners before exact C |
+| Proven multi-region function heads with pools | 9 | 3,820 | Merge with their continuations before exact C |
+| Proven multi-region function continuations with pools | 7 | 2,928 | Merge with their function owners before exact C |
 | Cross-function shared-literal module | 2 | 692 | Keep structured assembly pending module-aware C build |
 | Proven deliberate performance primitive | 1 | 22 | Keep assembly |
-| Likely ordinary compiler output | 1,351 | 457,730 | Convert to exact C |
+| Likely ordinary compiler output | 1,353 | 458,798 | Convert to exact C |
 | Probable data misidentified as functions | 27 | 314 | Recover semantic data form |
-| **Total** | **1,743** | **503,460** | |
+| **Total** | **1,743** | **504,102** | |
 
 These counts describe files, not callable entries. `080000c0.s` bundles 96
 fixed-width dispatch entries, `08006864.s` bundles two BIOS wrappers, and
@@ -87,6 +87,16 @@ normalization. The fourth preserves the same layout with localized constants,
 while the third has an identical code prefix and all 101 table targets relocate
 by the same offset. This is boundary evidence only; authorship remains unknown.
 
+Two additional former mixed regions at `0800ebec` and `080be378` are callable
+heads with formerly omitted structured tails. `0800ebec` now includes its local
+literal pool before branching into later continuations with its frame live.
+`080be378` now exposes its 100-entry dispatch table, the final case body,
+alignment, and local pool before control continues in later fragments. The
+first corrected layout matches its approved Japanese counterpart after address
+normalization. For the second, the non-pointer layout matches and all 100 table
+entries relocate by the same offset. This is shared-boundary evidence only;
+authorship remains unknown.
+
 The former mixed regions at `080d76f0`, `080dda3c`, and `080ec190` are
 continuations of those same three functions. They are entered by direct branch
 with their owners' stack frames and high registers live, cross explicit local
@@ -102,10 +112,24 @@ normalization; the first retains 540 of 552 normalized bytes at its correspondin
 layout, with the same control-flow boundary. This establishes structure only,
 not authorship or original names.
 
+`080e17c4` is a further continuation of the function headed at `080e15e8`.
+It retains the owner's live frame across an internal pool and an indirect
+arithmetic helper, completes the following loop tail, and branches into the
+later `080e1a48` continuation. Its complete corrected layout matches the
+approved Japanese ROM after address normalization. This establishes a shared
+function boundary only, not authorship or an original name.
+
 `08093fa0` proved to be a complete callable function followed only by two bytes
 of alignment. After making that boundary explicit it returns to the ordinary
 compiler-output category and remains an exact-C candidate. Its complete layout
 also occurs intact in the approved Japanese ROM at the corresponding address.
+
+`0800b168` and `080d5c48` likewise proved to be complete callable functions.
+The former was missing only its trailing alignment, while the latter was
+missing its adjacent literal pool. Both corrected layouts occur intact at the
+corresponding approved Japanese addresses, so they return to the ordinary
+compiler-output category as exact-C candidates. The comparison establishes
+layout and boundary only, not authorship or original names.
 
 `08006a78` is a compact runtime relocation-helper module. It contains two
 direct-call entries, a four-byte Thumb helper template, and an installer that

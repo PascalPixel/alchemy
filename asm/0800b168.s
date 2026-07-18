@@ -1,12 +1,13 @@
-@ 呼出しグラフから到達した領域の再構築サム逆アセンブル。
-@ （コードとデータが混在）。build_asm.tsでバイト一致確認済み。
+@ 呼出し可能関数と後続関数との境界整列。
+@ 関数本体と整列領域を同一ファイルに保持する。
 .syntax unified
 	.thumb
 	.set sub_08003d28, 0x08003d28
 	.set sub_08003dec, 0x08003dec
 	.set sub_0800aa0c, 0x0800aa0c
-	.global Region_0800b168
-Region_0800b168:
+	.global Func_0800b168
+	.thumb_func
+Func_0800b168:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -278,3 +279,5 @@ Region_0800b168:
 	pop {r5, r6, r7}
 	pop {r0}
 	bx r0
+
+	.balign 4, 0

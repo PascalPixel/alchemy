@@ -7,6 +7,7 @@ import zlib
 from pathlib import Path
 
 from export_asset import chunk
+from generated_files import prune_files
 from import_asset import indexed_png
 
 
@@ -184,6 +185,9 @@ def export(decoded, directory, plan_path, palette_path, preview_path=None,
     plan_path.write_text(json.dumps(plan, separators=(",", ":")) + "\n")
     if build_archive(plan, directory, palette_path) != decoded:
         raise AssertionError("exported sprite archive does not round-trip")
+    prune_files(
+        directory, "frame_*.png",
+        {f"frame_{index:02d}.png" for index in range(len(images))})
     if preview_path is not None:
         preview_path.parent.mkdir(parents=True, exist_ok=True)
         preview_path.write_bytes(preview(images, width, height, palette))

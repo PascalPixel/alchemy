@@ -1,5 +1,7 @@
 baserom.gba
-toolchain/
+.DS_Store
+assets/**/preview*.png
+alchemy-gcc/
 work/
 out/
 *.gba

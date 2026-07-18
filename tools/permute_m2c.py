@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Close near-miss m2c drafts by nudging gcc296's register allocation.
+"""Close near-miss m2c drafts by nudging alchemy-gcc's register allocation.
 
 Many m2c drafts compile to within a couple of bytes of the ROM: the code is
 semantically right but the register allocator picks a different (equivalent)
@@ -7,7 +7,7 @@ assignment than the original compiler did. A targeted source mutation recovers
 the ROM's choice without changing behaviour.
 
 Two mutations are implemented, each of which lifts a subexpression into a named
-temporary to nudge gcc296's allocator toward the original compiler's choice:
+temporary to nudge alchemy-gcc's allocator toward the original compiler's choice:
 
 - state-block access ``M2C_FIELD((*(s32 *)ADDR + (VAR * K)), TYPE, OFF)``: the
   statement is wrapped in a block that lifts the base pointer and index; and

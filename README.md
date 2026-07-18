@@ -1,10 +1,10 @@
-# goldensun-decomp-pure
+# Alchemy — Golden Sun decompilation
 
-An all-AI, for-fun attempt at decompiling Golden Sun (GBA). Every line of the
-reconstruction and tooling in this repository was written by an AI (Anthropic's
-Claude, via Claude Code) as an experiment in how far a language model can get at
-a clean-room decompilation on its own. It is a hobby/research project, not a
-serious or community-driven decomp, and it is nowhere near complete.
+An all-AI, for-fun attempt at decompiling Golden Sun (GBA). The reconstruction
+and tooling in this repository are being written collaboratively with AI coding
+agents—Anthropic's Claude and OpenAI's Codex—as an experiment in how far they
+can take a clean-room decompilation together. It is a hobby/research project,
+not a serious or community-driven decomp, and it is nowhere near complete.
 
 A clean-room, in-progress decompilation of Golden Sun (GBA), reconstructed
 entirely from a single privately-supplied ROM using only generic tools.
@@ -18,7 +18,8 @@ playable game on its own. Not affiliated with or endorsed by Nintendo or
 Camelot. Non-commercial.
 
 - `baserom.gba` (your own dump, git-ignored) is the sole game-specific input.
-- `toolchain/gcc296/` is the native code-generation oracle.
+- `alchemy-gcc/` is the ignored, fully native arm64 code-generation oracle;
+  [`ALCHEMY_GCC.md`](ALCHEMY_GCC.md) defines its minimal verified contents.
 - Host Python and ARM binutils provide generic analysis.
 - `tools/` contains independent analysis and matching code.
 - `src/` contains only byte-verified reconstructed C, with no inline `asm`.
@@ -32,11 +33,15 @@ Camelot. Non-commercial.
   reconstructed as Thumb assembly (control-flow-walked disassembly with the
   pointer tables kept as data) plus the exact compression plan; the build
   assembles the overlay, re-compresses it, and checks the result byte-for-byte.
-- Map tile PNGs preserve sequential 4bpp tiles and virtual IDs; they are not
-  presented as composed artwork. They are stored 8bpp so each tile can carry
-  the palette bank the map assigns it (pixel = bank * 16 + index), which shows
-  true colors while the low nibble still round-trips to the exact 4bpp indices;
-  index 0 is marked transparent, as the hardware treats it.
+- Map graphics begin as neutral 32x16 sequential 4bpp sheets, following the
+  map's `+1`/`+0x20` tile adjacency. The reconstructed 186-record map load
+  table links shared palettes, three VRAM banks, and animation sources without
+  duplicating their PNGs. As banks are decompiled further, they are replaced by coherent,
+  palette-correct object PNGs plus exact text tilemaps; the tilemaps preserve
+  slot IDs, palette banks, and horizontal/vertical flip flags so the objects
+  remain byte-exact build sources rather than generated previews.
+- Reconstructed names and comments follow the period-authentic Japanese style
+  in [`NAMING.md`](NAMING.md).
 - `python3 tools/build_claimed.py` links and verifies every claimed C region together.
 - `python3 tools/build_asm.py` assembles and verifies every claimed `asm/` region.
 - `python3 tools/build_assets.py` encodes and verifies every claimed asset.
@@ -50,9 +55,9 @@ Camelot. Non-commercial.
   differently), so each region contributes its verified bytes; the linker-script
   and incbin-skeleton structure follows pret/pokeemerald, the golden reference.
 
-The private ROM, toolchains, and generated artifacts are git-ignored; only
-reconstructed source and generic tools are tracked. Complete means these tracked
-sources and generic tools, given only your ROM and the approved compiler,
+The private ROM, `alchemy-gcc` bundle, and generated artifacts are git-ignored;
+only reconstructed source and generic tools are tracked. Complete means these
+tracked sources and generic tools, given only your ROM and the approved compiler,
 independently build a byte-identical full ROM; every claimed region comes from
 reconstructed C or assembly, never copied ROM bytes. Full decompilation is the
 further goal of retiring every `asm/` region except the genuinely

@@ -8,6 +8,7 @@ from pathlib import Path
 
 from discover import Discovery
 from emit_function import emit_discovery
+from alchemy_gcc import M2C
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -48,8 +49,6 @@ def main():
     if args.limit is not None:
         candidates = candidates[:args.limit]
 
-    m2c = ROOT / "toolchain/m2c-venv/bin/m2c"
-
     def decompile(candidate):
         address, size = candidate
         assembly = args.output / f"{address:08x}.s"
@@ -57,7 +56,7 @@ def main():
         try:
             emit_discovery(rom, discovery, address, assembly)
             command = [
-                str(m2c), "-t", "gba", "--valid-syntax",
+                str(M2C), "-t", "gba", "--valid-syntax",
                 "--comment-style", "none", str(assembly),
             ]
             if args.context is not None:

@@ -9,10 +9,9 @@ permuter's assembly-diff scorer, so a candidate is accepted only when it
 re-produces the ROM bytes exactly, and each match is auto-committed: written to
 src/<addr>.c and its asm/<addr>.s retired.
 
-decomp-permuter is a user-supplied tool under toolchain/decomp-permuter (like
-gcc296); clone github simonlindholm/decomp-permuter there and `pip install
-pycparser toml`. Generic tooling, clean-room: it mutates the draft's own C, it
-never introduces game knowledge.
+decomp-permuter is a user-supplied helper inside the ignored alchemy-gcc bundle.
+Generic tooling, clean-room: it mutates the draft's own C and never introduces
+game knowledge.
 """
 import argparse
 import json
@@ -21,16 +20,16 @@ import subprocess
 import sys
 from pathlib import Path
 
+from alchemy_gcc import DECOMP_PERMUTER
 from verify import verify
 
 ROOT = Path(__file__).resolve().parents[1]
-PERMUTER = ROOT / "toolchain/decomp-permuter"
 TYPES = Path(__file__).with_name("match_m2c.py").read_text().split(
     'TYPES = """\\\n')[1].split('"""')[0]
 
 
 def load_permuter():
-    sys.path.insert(0, str(PERMUTER))
+    sys.path.insert(0, str(DECOMP_PERMUTER))
     from src.candidate import Candidate
     from src.perm.perm import EvalState
     from src.helpers import get_default_randomization_weights

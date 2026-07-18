@@ -3,14 +3,10 @@ import subprocess
 import re
 from pathlib import Path
 
+from alchemy_gcc import CFLAGS, compiler_command
+
 ROOT = Path(__file__).resolve().parents[1]
 ROM_BASE = 0x08000000
-FLAGS = [
-    "-O2", "-mthumb", "-mthumb-interwork", "-mcpu=arm7tdmi",
-    "-fno-builtin", "-nostdinc", "-ffreestanding", "-fcall-used-r4",
-]
-
-
 def run(command):
     subprocess.run(command, cwd=ROOT, check=True,
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -25,11 +21,8 @@ def verify(source, rom, output_dir, details=False):
     symbols_obj = output_dir / f"{source.stem}.symbols.o"
     elf = output_dir / f"{source.stem}.elf"
     binary = output_dir / f"{source.stem}.bin"
-    run([
-        str(ROOT / "toolchain/gcc296/xgcc"),
-        f"-B{ROOT / 'toolchain/gcc296'}/", *FLAGS,
-        "-S", "-o", str(assembly), str(source),
-    ])
+    run(compiler_command(
+        *CFLAGS, "-S", "-o", assembly, source))
     run([
         "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
         "-o", str(obj), str(assembly),

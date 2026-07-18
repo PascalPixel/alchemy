@@ -1,5 +1,5 @@
 @ Thumb interworking thunks matching the compiler runtime's _call_via_rX
-@ helpers: gcc296 calls indirect targets with bl _call_via_rN, and each thunk
+@ helpers: alchemy-gcc calls indirect targets with bl _call_via_rN, and each thunk
 @ is a register branch padded to word alignment with a mov r8, r8 nop.
 	.thumb
 

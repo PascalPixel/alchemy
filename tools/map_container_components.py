@@ -123,8 +123,20 @@ def build_header(source, offsets_check=None):
 
 def decode_metatiles(decoded):
     if not decoded or decoded[0] not in (0, 1, 2) or (len(decoded) - 1) % 8:
-        raise ValueError("invalid planar 2x2-metatile component")
+        raise ValueError("invalid 2x2-metatile component")
     mode = decoded[0]
+    if mode in (0, 2):
+        count = (len(decoded) - 1) // 2
+        entries = list(struct.unpack_from(f"<{count}H", decoded, 1))
+        if mode == 2:
+            previous = 0
+            for index, value in enumerate(entries):
+                entries[index] = value ^ previous
+                previous = entries[index]
+        return mode, entries
+
+    # Mode 1 stores high and low bytes in separate planes and predicts each
+    # entry from the preceding reconstructed entry.
     count = (len(decoded) - 1) // 2
     previous = 0
     entries = []
@@ -140,11 +152,20 @@ def decode_metatiles(decoded):
 def encode_metatiles(entries, mode):
     if mode not in (0, 1, 2) or not entries or len(entries) % 4:
         raise ValueError("metatiles require mode 0/1/2 and groups of four u16 entries")
+    if any(not 0 <= value <= 0xffff for value in entries):
+        raise ValueError("metatile entry is outside u16")
+    if mode in (0, 2):
+        transformed = []
+        previous = 0
+        for value in entries:
+            transformed.append(value ^ previous if mode == 2 else value)
+            previous = value
+        return bytes([mode]) + struct.pack(
+            f"<{len(transformed)}H", *transformed)
+
     planar = []
     previous = 0
     for value in entries:
-        if not 0 <= value <= 0xffff:
-            raise ValueError("metatile entry is outside u16")
         planar.append(value ^ previous if mode == 1 else value)
         previous = value
     return (bytes([mode]) + bytes(value >> 8 for value in planar) +

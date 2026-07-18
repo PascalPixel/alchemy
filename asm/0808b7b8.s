@@ -1,12 +1,12 @@
-@ 呼出しグラフから到達した領域の再構築サム逆アセンブル。
-@ （コードとデータが混在）。build_asm.tsでバイト一致確認済み。
+@ 親関数の共有終端断片。
+@ 後続するリテラルプールを同一ファイルに保持する。
 .syntax unified
 	.thumb
 	.set sub_08009048, 0x08009048
 	.set sub_080090c8, 0x080090c8
 	.set sub_080090e0, 0x080090e0
-	.global Region_0808b7b8
-Region_0808b7b8:
+	.global Fragment_0808b7b8
+Fragment_0808b7b8:
 	ldr r3, [pc, #96]
 	movs r0, #249
 	lsls r0, r0, #1
@@ -54,3 +54,9 @@ Region_0808b7b8:
 	pop {r5, r6, r7}
 	pop {r0}
 	bx r0
+
+	.balign 4, 0
+	.global LiteralPool_0808b81c
+LiteralPool_0808b81c:
+	.4byte 0x02000240
+	.4byte 0x03001e70

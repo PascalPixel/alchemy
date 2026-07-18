@@ -22,7 +22,7 @@ own. Not affiliated with or endorsed by Nintendo or Camelot. Non-commercial.
 - `baserom.gba` (your own dump, git-ignored) is the sole game-specific input.
 - `alchemy-gcc/` is the ignored, fully native arm64 code-generation oracle;
   [`ALCHEMY_GCC.md`](ALCHEMY_GCC.md) defines its minimal verified contents.
-- Host Python and ARM binutils provide generic analysis.
+- Bun and native ARM binutils provide the generic tooling runtime.
 - `tools/` contains independent analysis and matching code.
 - `src/` contains only byte-verified reconstructed C, with no inline `asm`.
 - `asm/` contains byte-verified reconstruction assembly for regions the approved
@@ -44,11 +44,11 @@ own. Not affiliated with or endorsed by Nintendo or Camelot. Non-commercial.
   remain byte-exact build sources rather than generated previews.
 - Reconstructed names and comments follow the period-authentic Japanese style
   in [`NAMING.md`](NAMING.md).
-- `python3 tools/build_claimed.py` links and verifies every claimed C region together.
-- `python3 tools/build_asm.py` assembles and verifies every claimed `asm/` region.
-- `python3 tools/build_assets.py` encodes and verifies every claimed asset.
-- `python3 tools/build_full.py` verifies the combined byte-identical private rebuild.
-- `python3 tools/build_rom.py` assembles the ROM the pret way: a generated GNU
+- `bun tools/build_claimed.ts` links and verifies every claimed C region together.
+- `bun tools/build_asm.ts` assembles and verifies every claimed `asm/` region.
+- `bun tools/build_assets.ts` encodes and verifies every claimed asset.
+- `bun tools/build_full.ts` verifies the combined byte-identical private rebuild.
+- `bun tools/build_rom.ts` assembles the ROM the pret way: a generated GNU
   linker script (`ld_script.ld`) lays out every claimed region in address order
   and fills each not-yet-reconstructed gap with `.incbin "baserom.gba", offset,
   size` (the skeleton that shrinks as regions are claimed), linked with

@@ -4,24 +4,24 @@ Private extractions and generated files stay under ignored `work/` or `out/`.
 Tracked assets are appropriate only after their ROM range, format, and exact
 re-encoding have been independently established.
 
-`tools/import_asset.py png` converts a non-interlaced indexed PNG into row-major
+`tools/import_asset.ts png` converts a non-interlaced indexed PNG into row-major
 GBA 8×8 tiles and a BGR555 palette. It does not quantize, reorder, deduplicate,
 compress, or infer a tilemap. Palette channels must be multiples of eight, so
 the conversion cannot silently lose color bits.
 
 ```
-python3 tools/import_asset.py png image.png --bpp 4 \
+bun tools/import_asset.ts png image.png --bpp 4 \
   --tiles out/image.4bpp --palette out/image.gbapal
 ```
 
-`tools/import_asset.py midi` validates format-0/1 PPQN Standard MIDI and writes
+`tools/import_asset.ts midi` validates format-0/1 PPQN Standard MIDI and writes
 a stable, lossless event JSON intermediate. It is not a GBA music encoder:
 the ROM's sequence, instrument, sample, timing, and compression formats must be
 recovered before a deterministic engine-specific backend can be written.
 
 ```
-python3 tools/import_asset.py midi song.mid -o out/song.events.json
-python3 tools/import_asset.py --self-test
+bun tools/import_asset.ts midi song.mid -o out/song.events.json
+bun tools/import_asset.ts --self-test
 ```
 
 For exact rebuilding, PNG alone is insufficient until tile ordering, palette
@@ -42,7 +42,7 @@ may combine source tiles, palettes, maps, flips, or animation states, but does
 not itself claim extra ROM coverage. Source PNGs count only through a manifest
 encoder that reproduces their named ROM region byte-for-byte.
 
-`tools/compose_scene.py` is such a preview generator. It reads a map
+`tools/compose_scene.ts` is such a preview generator. It reads a map
 container's already-claimed byte-exact sources (the kind-1 grid, the
 metatile tilemap, the charblocks, and the palette) and paints the 2D scene the
 map renders: `grid cell -> low-12-bit metatile index -> 2x2 tile entries ->
@@ -91,7 +91,7 @@ destination tile IDs, timing, and composition belong to separate map animation
 commands and are deliberately not asserted by these source images.
 
 A tile bank may be migrated incrementally to coherent object sources with
-`tools/tile_objects.py`. An object PNG is accompanied by its exact text
+`tools/tile_objects.ts`. An object PNG is accompanied by its exact text
 tilemap, whose tile IDs, palette banks, and flip flags map the displayed object
 back to canonical bank slots. The neutral `remaining.4bpp.png` fallback then
 covers only slots not yet represented by named objects. The builder requires

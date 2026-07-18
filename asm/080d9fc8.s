@@ -1,5 +1,5 @@
 @ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.pyでバイト一致確認済み。
+@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
 	.global Func_080d9fc8

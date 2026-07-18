@@ -21,6 +21,9 @@ interface DeltaDiagnosis {
   decoded_bytes: number;
   maximum_distance: number;
   prefill_references: number;
+  average_compressed_bytes: number;
+  streams_per_kibibyte: number;
+  archive_confidence: "none" | "medium" | "high";
 }
 
 type Category =
@@ -122,13 +125,24 @@ export function diagnoseDeltaArchive(data: Uint8Array): DeltaDiagnosis {
     }
   } catch {
   }
+  const consumedRatio = data.length === 0 ? 0 : cursor / data.length;
+  const averageCompressed = streams === 0 ? 0 : cursor / streams;
+  const density = data.length === 0 ? 0 : streams * 1024 / data.length;
+  const archiveConfidence = consumedRatio >= 0.7 && streams >= 8 && averageCompressed <= 4096
+    ? "high"
+    : consumedRatio >= 0.7 && streams >= 4 && averageCompressed <= 8192
+      ? "medium"
+      : "none";
   return {
     streams,
     consumed_bytes: cursor,
-    consumed_ratio: data.length === 0 ? 0 : cursor / data.length,
+    consumed_ratio: consumedRatio,
     decoded_bytes: decoded,
     maximum_distance: maximumDistance,
     prefill_references: prefillReferences,
+    average_compressed_bytes: averageCompressed,
+    streams_per_kibibyte: density,
+    archive_confidence: archiveConfidence,
   };
 }
 
@@ -162,8 +176,14 @@ export function selfTest(): void {
   const stream = Uint8Array.from([0, 1, 2, 3, 4, 5, 6, 7, 8, 0x80, 0, 0]);
   const diagnosis = diagnoseDeltaArchive(Uint8Array.from([...stream, ...stream]));
   if (diagnosis.streams !== 2 || diagnosis.consumed_ratio !== 1 ||
-      diagnosis.decoded_bytes !== 16 || diagnosis.maximum_distance !== 0) {
+      diagnosis.decoded_bytes !== 16 || diagnosis.maximum_distance !== 0 ||
+      diagnosis.archive_confidence !== "none") {
     throw new Error("data scanner delta diagnosis self-test failed");
+  }
+  const archive = diagnoseDeltaArchive(Uint8Array.from(Array(8).fill([...stream]).flat()));
+  if (archive.streams !== 8 || archive.archive_confidence !== "high" ||
+      archive.average_compressed_bytes !== stream.length) {
+    throw new Error("data scanner archive-confidence self-test failed");
   }
   console.log("self-test=ok");
 }
@@ -222,8 +242,8 @@ async function main(args: string[]): Promise<void> {
     const gs2Full = gs2.filter(([, item]) => item.ratio >= 0.99).length;
     const ids = pointerIds.get(address) ?? [];
     const delta = diagnoseDeltaArchive(bytes);
-    const stateful = ids.length > 0 && delta.streams >= 2 && delta.maximum_distance <= 0xfff &&
-      delta.prefill_references > 0 && delta.consumed_ratio >= 0.7;
+    const stateful = ids.length > 0 && delta.archive_confidence !== "none" &&
+      delta.maximum_distance <= 0xfff && delta.prefill_references > 0;
     let category: Category;
     if (stateful) category = "stateful_delta_archive";
     else if (gs2Full > 0) category = "cross_title_shared";

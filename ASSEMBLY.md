@@ -19,16 +19,16 @@ The current boundary, after the sixteenth exact-C checkpoint and full IWRAM reco
 | IWRAM division veneers | 4 | 32 | Keep assembly |
 | Deliberate fixed-point math primitives | 2 | 56 | Keep assembly |
 | Compiler/assembler literal pool | 1 | 32 | Keep structured data |
-| Mixed or misbounded code/data regions | 40 | 32,296 | Split before decompiling |
+| Mixed or misbounded code/data regions | 35 | 29,972 | Split before decompiling |
 | Structured runtime relocation-helper module | 1 | 128 | Keep structured assembly |
-| Proven parent-function fragments with pools | 8 | 1,194 | Merge when each owner is reconstructed |
+| Proven parent-function fragments with pools | 9 | 1,646 | Merge when each owner is reconstructed |
 | Proven multi-region function heads with pools | 7 | 2,256 | Merge with their continuations before exact C |
-| Proven multi-region function continuations with pools | 3 | 656 | Merge with their function owners before exact C |
+| Proven multi-region function continuations with pools | 6 | 2,284 | Merge with their function owners before exact C |
 | Cross-function shared-literal module | 2 | 692 | Keep structured assembly pending module-aware C build |
 | Proven deliberate performance primitive | 1 | 22 | Keep assembly |
-| Likely ordinary compiler output | 1,356 | 457,650 | Convert to exact C |
+| Likely ordinary compiler output | 1,357 | 458,086 | Convert to exact C |
 | Probable data misidentified as functions | 27 | 314 | Recover semantic data form |
-| **Total** | **1,749** | **503,624** | |
+| **Total** | **1,749** | **503,816** | |
 
 These counts describe files, not callable entries. `080000c0.s` bundles 96
 fixed-width dispatch entries, `08006864.s` bundles two BIOS wrappers, and
@@ -62,12 +62,13 @@ built region and rejects changes to the proven category counts.
 ## Recovered fragment and pool boundaries
 
 The smallest former mixed regions at `0800f1fa`, `0808b7b8`, `080d12a8`,
-`080d8258`, `080e1724`, `080e1a48`, `080e4ab8`, and `080e547c` are not callable
-functions. Direct branches enter them while the parent function's stack frame
-and high registers remain live, and each fragment branches back into or returns
-through that parent. Their internal pools, adjacent pools, and alignment are
-now explicit structured data. Authorship is unknown; they remain assembly only
-until their complete owning functions can be reconstructed as single units.
+`080d5094`, `080d8258`, `080e1724`, `080e1a48`, `080e4ab8`, and `080e547c` are
+not callable functions. Direct branches enter them while the parent function's
+stack frame and high registers remain live, and each fragment branches back
+into or returns through that parent. Their internal pools, adjacent pools, and
+alignment are now explicit structured data. Authorship is unknown; they remain
+assembly only until their complete owning functions can be reconstructed as
+single units.
 
 The former mixed regions at `080d765c`, `080dd9c0`, and `080ec100` are proven
 callable function heads, not complete functions. Each begins with a complete
@@ -93,6 +94,18 @@ pools, and branch onward into later continuation files. Their corresponding
 normalized layouts occur intact in the approved Japanese ROM. This confirms
 shared engine boundaries, not authorship; all three remain unknown-origin
 assembly until their complete functions can be reconstructed.
+
+The continuations at `0802691c`, `080de0d4`, and `080ec264` likewise use live
+owner frames and continue into later files after explicit pools. The complete
+corrected layouts for the latter two match the approved Japanese ROM after
+normalization; the first retains 540 of 552 normalized bytes at its corresponding
+layout, with the same control-flow boundary. This establishes structure only,
+not authorship or original names.
+
+`08093fa0` proved to be a complete callable function followed only by two bytes
+of alignment. After making that boundary explicit it returns to the ordinary
+compiler-output category and remains an exact-C candidate. Its complete layout
+also occurs intact in the approved Japanese ROM at the corresponding address.
 
 `08006a78` is a compact runtime relocation-helper module. It contains two
 direct-call entries, a four-byte Thumb helper template, and an installer that

@@ -47,6 +47,9 @@ own. Not affiliated with or endorsed by Nintendo or Camelot. Non-commercial.
   delta-stream archives without exporting their private payloads. Archive
   confidence uses complete-stream count, coverage, and average member size so
   isolated accidental terminators are not promoted into extraction targets.
+  `scan_resource_calls.ts` can add direct loader callsites from a private
+  `build_full.ts` assembly output; resources without a direct call are marked
+  as table-selected rather than being assigned invented per-file semantics.
   Each full build also emits a private fallback-gap manifest for the same
   analysis; comparative ROMs and reports never become build inputs.
 - `src/` contains only byte-verified reconstructed C, with no inline `asm`.

@@ -35,7 +35,7 @@ function usage(): void {
 
 function parseArgs(argv: string[]): Options {
   const options: Options = {
-    rom: "baserom.gba",
+    rom: "gs1-en.gba",
     output: "out/full/rebuilt.gba",
     claimedOutput: "out/full/claimed",
     asmOutput: "out/full/asm",

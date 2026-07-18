@@ -202,7 +202,7 @@ function usage(): void {
 }
 
 function parseArgs(argv: string[]): Options {
-  const options: Options = { rom: "baserom.gba", output: "out/asm" };
+  const options: Options = { rom: "gs1-en.gba", output: "out/asm" };
   let positional = false;
   for (let index = 0; index < argv.length; index++) {
     const argument = argv[index];

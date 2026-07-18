@@ -9,13 +9,15 @@ not a serious or community-driven decomp, and it is nowhere near complete.
 A clean-room, in-progress decompilation of Golden Sun (GBA), reconstructed
 entirely from a single privately-supplied ROM using only generic tools.
 
-This repository is **source only**. It ships no ROM, no game binaries, and no
-playable output. To build or verify anything you must supply your own legally
-obtained Golden Sun ROM as `baserom.gba`; it must match the checksum in
-`rom.sha1`. Every not-yet-reconstructed region is filled from that private ROM
-at build time (the pret-style incbin skeleton), so nothing here reproduces a
-playable game on its own. Not affiliated with or endorsed by Nintendo or
-Camelot. Non-commercial.
+This repository is **source only** under the practical
+[`pret/pokeemerald` publication boundary](PUBLICATION.md). It ships no ROM, no
+game binaries, and no playable output, but it does track canonical reconstructed
+source assets and metadata such as PNGs, palettes, tilemaps, and JSON. To build
+or verify anything you must supply your own legally obtained Golden Sun ROM as
+`baserom.gba`; it must match the checksum in `rom.sha1`. Every
+not-yet-reconstructed region is filled from that private ROM at build time (the
+pret-style incbin skeleton), so nothing here reproduces a playable game on its
+own. Not affiliated with or endorsed by Nintendo or Camelot. Non-commercial.
 
 - `baserom.gba` (your own dump, git-ignored) is the sole game-specific input.
 - `alchemy-gcc/` is the ignored, fully native arm64 code-generation oracle;

@@ -1,7 +1,7 @@
-@ Reconstructed thumb disassembly. This function reached byte-identity
-@ only through inline-asm register pins, which are disallowed in C, so
-@ it lives here until an asm-free C match is found. build_asm.py
-@ re-verifies it against the private ROM.
+@ 再構築サム逆アセンブル。この関数は
+@ インラインアセンブリによるレジスタ固定でしか一致せず、C内アセンブリは禁止のため、
+@ アセンブリなしのC一致が得られるまでここに置く。build_asm.pyで
+@ 非公開ROMとの一致を再確認する。
 .syntax unified
 	.thumb
 	.global Func_0808b248

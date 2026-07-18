@@ -27,10 +27,10 @@ def verify(source, rom, output_dir, details=False):
         "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
         "-o", str(obj), str(assembly),
     ])
-    undefined = subprocess.check_output(
+    未定義 = subprocess.check_output(
         ["arm-none-eabi-nm", "-u", str(obj)], text=True)
     names = []
-    for line in undefined.splitlines():
+    for line in 未定義.splitlines():
         name = line.split()[-1]
         if not re.fullmatch(r"(Func|Data|Value)_[0-9a-f]{8}", name):
             raise ValueError(f"unsupported external symbol: {name}")

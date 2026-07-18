@@ -21,9 +21,9 @@ from disassemble_function import disassemble
 
 ROOT = Path(__file__).resolve().parents[1]
 ROM_BASE = 0x08000000
-HEADER = ("@ Reconstructed thumb disassembly of a discovered function. The ROM's\n"
-          "@ compiler is not reproducible by free tools, so no asm-free C match\n"
-          "@ exists yet; build_asm.py verifies these bytes against the ROM.\n")
+HEADER = ("@ 検出済み関数の再構築サム逆アセンブル。ROM作成時の\n"
+          "@ コンパイラは自由配布ツールで再現不能なため、アセンブリなしのC一致は\n"
+          "@ 未達。build_asm.pyでROMとの一致を確認する。\n")
 
 
 def number(value):
@@ -39,8 +39,8 @@ def claimed_spans():
             for region in json.loads(path.read_text())["regions"]:
                 spans.append((number(region["address"]),
                               number(region["address"]) + number(region["size"])))
-    # Never disassemble inside the asset/data region declared by the source
-    # manifest, even before it is built: those bytes are data, not code.
+    # ソース一覧で宣言した素材・データ領域は、構築前でも
+    # 逆アセンブルしない。そのバイト列はコードではなくデータである。
     asset_manifest = ROOT / "assets/manifest.json"
     if asset_manifest.exists():
         document = json.loads(asset_manifest.read_text())
@@ -104,10 +104,10 @@ def round_trips(rom, address, size, listing):
             capture_output=True, text=True)
         if result.returncode:
             return False
-        undefined = subprocess.run(
+        未定義 = subprocess.run(
             ["arm-none-eabi-nm", "-u", str(obj)], capture_output=True, text=True).stdout
         symbols = work / "s.s"
-        names = [line.split()[-1] for line in undefined.splitlines() if line.split()]
+        names = [line.split()[-1] for line in 未定義.splitlines() if line.split()]
         symbols.write_text(".syntax unified\n.thumb\n" + "".join(
             f".global {name}\n.thumb_func\n.set {name}, 0x{name.rsplit('_', 1)[1]}\n"
             for name in names if re.fullmatch(r"(Func|Data|Value)_[0-9a-f]{8}", name)))

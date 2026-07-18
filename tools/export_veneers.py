@@ -18,8 +18,8 @@ from disassemble_function import disassemble
 
 ROOT = Path(__file__).resolve().parents[1]
 ROM_BASE = 0x08000000
-HEADER = ("@ Long-call interworking veneer: a fixed ldr r4,[pc]; bx r4 stub the\n"
-          "@ linker emits to reach a distant routine. Not expressible in C.\n")
+HEADER = ("@ 遠距離呼出し用モード間ベニア。固定のldr r4,[pc]; bx r4は\n"
+          "@ リンカが遠距離処理へ到達するために生成する。Cでは表現不能。\n")
 
 
 def claimed_spans():

@@ -45,14 +45,14 @@ def compile_source(source, object_dir):
     if defined != [expected]:
         raise ValueError(
             f"{source.name}: expected only {expected}, found {defined}")
-    undefined = [
+    未定義 = [
         line.split()[-1] for line in
         run(["arm-none-eabi-nm", "-u", str(obj)]).stdout.splitlines()
     ]
-    for name in undefined:
+    for name in 未定義:
         if EXTERNAL.fullmatch(name) is None:
             raise ValueError(f"{source.name}: unsupported external {name}")
-    return obj, undefined
+    return obj, 未定義
 
 
 def main():
@@ -83,7 +83,7 @@ def main():
 
     objects = [item[0] for item in compiled]
     defined = {f"Func_{source.stem}" for source in sources}
-    undefined = sorted({
+    未定義 = sorted({
         name for _, names in compiled for name in names if name not in defined
     })
     symbols_source = output / "externals.s"
@@ -94,7 +94,7 @@ def main():
             f".global {name}\n" +
             (".thumb_func\n" if name.startswith("Func_") else "") +
             f".set {name}, 0x{EXTERNAL.fullmatch(name).group(2)}\n"
-            for name in undefined
+            for name in 未定義
         )
     )
     run([

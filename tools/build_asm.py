@@ -34,9 +34,9 @@ def build_region(source, output_dir):
     binary = output_dir / f"{source.stem}.bin"
     run(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
          "-o", str(obj), str(source)])
-    undefined = run(["arm-none-eabi-nm", "-u", str(obj)]).stdout
+    未定義 = run(["arm-none-eabi-nm", "-u", str(obj)]).stdout
     names = []
-    for line in undefined.splitlines():
+    for line in 未定義.splitlines():
         name = line.split()[-1]
         if not EXTERNAL.fullmatch(name):
             raise ValueError(f"{source.name}: unsupported external symbol {name}")

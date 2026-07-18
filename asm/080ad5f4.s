@@ -1,6 +1,6 @@
-@ Reconstructed thumb disassembly of a discovered function. The ROM's
-@ compiler is not reproducible by free tools, so no asm-free C match
-@ exists yet; build_asm.py verifies these bytes against the ROM.
+@ 検出済み関数の再構築サム逆アセンブル。ROM作成時の
+@ コンパイラは自由配布ツールで再現不能なため、アセンブリなしのC一致は
+@ 未達。build_asm.pyでROMとの一致を確認する。
 .syntax unified
 	.thumb
 	.global Func_080ad5f4

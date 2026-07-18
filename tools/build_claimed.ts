@@ -13,6 +13,7 @@ interface RunResult {
 
 interface Compiled {
   object: string;
+  definedNames: string[];
   undefinedNames: string[];
 }
 
@@ -24,6 +25,32 @@ interface Options {
 
 function stem(path: string): string {
   return basename(path, extname(path));
+}
+
+export function moduleEnd(
+  names: string[],
+  symbols: Map<string, [number, number]>,
+): number {
+  if (names.length === 0) throw new Error("C module has no functions");
+  return Math.max(...names.map((name) => {
+    const symbol = symbols.get(name);
+    if (symbol === undefined || symbol[1] <= 0) throw new Error(`invalid module symbol ${name}`);
+    return symbol[0] + symbol[1];
+  }));
+}
+
+export function selfTest(): void {
+  const symbols = new Map<string, [number, number]>([
+    ["Func_0801c0c8", [0x0801c0c8, 2]],
+    ["Func_0801c0cc", [0x0801c0cc, 2]],
+    ["Func_0801c0d0", [0x0801c0d0, 2]],
+    ["Func_0801c0d4", [0x0801c0d4, 2]],
+    ["Func_0801c0d8", [0x0801c0d8, 2]],
+  ]);
+  if (moduleEnd([...symbols.keys()], symbols) !== 0x0801c0da) {
+    throw new Error("multi-function C module range self-test failed");
+  }
+  console.log("self-test=ok");
 }
 
 function rooted(path: string): string {
@@ -57,8 +84,8 @@ async function compileSource(source: string, objectDir: string): Promise<Compile
     "arm-none-eabi-nm", "-g", "--defined-only", object,
   ])).stdout.split(/\r?\n/).filter(Boolean).map((line) => line.trim().split(/\s+/).at(-1)!);
   const expected = `Func_${name}`;
-  if (defined.length !== 1 || defined[0] !== expected) {
-    throw new Error(`${basename(source)}: expected only ${expected}, found ${JSON.stringify(defined)}`);
+  if (!defined.includes(expected) || defined.some((symbol) => !/^Func_[0-9a-f]{8}$/.test(symbol))) {
+    throw new Error(`${basename(source)}: expected ${expected} and address-named functions, found ${JSON.stringify(defined)}`);
   }
   const undefinedNames = (await run(["arm-none-eabi-nm", "-u", object])).stdout
     .split(/\r?\n/).filter(Boolean).map((line) => line.trim().split(/\s+/).at(-1)!);
@@ -67,7 +94,7 @@ async function compileSource(source: string, objectDir: string): Promise<Compile
       throw new Error(`${basename(source)}: unsupported external ${external}`);
     }
   }
-  return { object, undefinedNames };
+  return { object, definedNames: defined, undefinedNames };
 }
 
 async function mapLimit<T, U>(items: T[], limit: number, action: (item: T) => Promise<U>): Promise<U[]> {
@@ -138,7 +165,9 @@ async function main(): Promise<void> {
   mkdirSync(objectDir, { recursive: true });
   const compiled = await mapLimit(sources, args.jobs, (source) => compileSource(source, objectDir));
   const objects = compiled.map((item) => item.object);
-  const defined = new Set(sources.map((source) => `Func_${stem(source)}`));
+  const definitions = compiled.flatMap((item) => item.definedNames);
+  const defined = new Set(definitions);
+  if (defined.size !== definitions.length) throw new Error("duplicate function definition across C modules");
   const undefinedNames = [...new Set(compiled.flatMap((item) => item.undefinedNames)
     .filter((name) => !defined.has(name)))].sort();
   const symbolsSource = join(output, "externals.s");
@@ -178,18 +207,23 @@ async function main(): Promise<void> {
 
   const image = readFileSync(binary);
   const imageBase = Math.min(...[...symbols.values()].map(([address]) => address));
-  const manifest: Array<Record<string, string | number>> = [];
+  const manifest: Array<Record<string, unknown>> = [];
   const failures: string[] = [];
   let total = 0;
   let previousEnd = 0;
-  for (const source of sources) {
+  for (let sourceIndex = 0; sourceIndex < sources.length; sourceIndex++) {
+    const source = sources[sourceIndex];
     const name = `Func_${stem(source)}`;
-    const [address, size] = symbols.get(name)!;
+    const [address] = symbols.get(name)!;
     if (address !== Number.parseInt(stem(source), 16)) {
       failures.push(`${basename(source)}: linked at 0x${address.toString(16).padStart(8, "0")}`);
       continue;
     }
-    const end = address + size;
+    const moduleSymbols = compiled[sourceIndex].definedNames.sort((left, right) =>
+      symbols.get(left)![0] - symbols.get(right)![0]
+    );
+    const end = moduleEnd(moduleSymbols, symbols);
+    const size = end - address;
     if (address < previousEnd) failures.push(`${basename(source)}: overlaps previous function`);
     previousEnd = Math.max(previousEnd, end);
     const offset = address - imageBase;
@@ -197,8 +231,14 @@ async function main(): Promise<void> {
     const expected = rom.subarray(address - ROM_BASE, end - ROM_BASE);
     if (!actual.equals(expected)) failures.push(`${basename(source)}: linked bytes differ`);
     total += size;
+    for (const symbol of moduleSymbols) {
+      const expectedAddress = Number.parseInt(symbol.slice(5), 16);
+      if (symbols.get(symbol)![0] !== expectedAddress || expectedAddress < address || expectedAddress >= end) {
+        failures.push(`${basename(source)}: invalid module symbol ${symbol}`);
+      }
+    }
     manifest.push({
-      source: relative(ROOT, source), symbol: name, address, size, end,
+      source: relative(ROOT, source), symbol: name, symbols: moduleSymbols, address, size, end,
     });
   }
   writeFileSync(join(output, "manifest.json"), JSON.stringify({
@@ -218,4 +258,7 @@ async function main(): Promise<void> {
   }
 }
 
-if (import.meta.main) await main();
+if (import.meta.main) {
+  if (Bun.argv.includes("--self-test")) selfTest();
+  else await main();
+}

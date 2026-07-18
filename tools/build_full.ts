@@ -21,6 +21,13 @@ interface Region {
   output: string;
 }
 
+export interface FallbackRegion {
+  address: number;
+  size: number;
+  source: string;
+  kind: "rom_fallback";
+}
+
 function rooted(path: string): string {
   return isAbsolute(path) ? path : resolve(ROOT, path);
 }
@@ -29,8 +36,47 @@ function usage(): void {
   console.log(
     "usage: build_full.ts [-h] [-o OUTPUT] [--claimed-output CLAIMED_OUTPUT] " +
     "[--asm-output ASM_OUTPUT] [--asset-manifest ASSET_MANIFEST] " +
-    "[--asset-output ASSET_OUTPUT] [--jobs JOBS] [rom]",
+    "[--asset-output ASSET_OUTPUT] [--jobs JOBS] [rom] | --self-test",
   );
+}
+
+function hexadecimal(value: number): string {
+  return value.toString(16).padStart(8, "0");
+}
+
+export function uncoveredRegions(mask: Uint8Array, base = ROM_BASE): FallbackRegion[] {
+  if (!Number.isSafeInteger(base) || base < 0 || base + mask.length > 0x100000000) {
+    throw new Error("invalid coverage base");
+  }
+  const regions: FallbackRegion[] = [];
+  let start = -1;
+  for (let index = 0; index <= mask.length; index++) {
+    const value = index === mask.length ? 1 : mask[index];
+    if (value !== 0 && value !== 1) throw new Error(`invalid coverage byte at ${index}`);
+    if (value === 0 && start < 0) {
+      start = index;
+    } else if (value === 1 && start >= 0) {
+      const address = base + start;
+      regions.push({
+        address,
+        size: index - start,
+        source: `rom-fallback/${hexadecimal(address)}`,
+        kind: "rom_fallback",
+      });
+      start = -1;
+    }
+  }
+  return regions;
+}
+
+export function selfTest(): void {
+  const regions = uncoveredRegions(Uint8Array.from([1, 0, 0, 1, 0]), 0x08000000);
+  if (regions.length !== 2 || regions[0].address !== 0x08000001 ||
+      regions[0].size !== 2 || regions[0].source !== "rom-fallback/08000001" ||
+      regions[1].address !== 0x08000004 || regions[1].size !== 1) {
+    throw new Error("fallback coverage self-test failed");
+  }
+  console.log("self-test=ok");
 }
 
 function parseArgs(argv: string[]): Options {
@@ -89,6 +135,10 @@ function readJson(path: string): any {
 }
 
 async function main(): Promise<void> {
+  if (Bun.argv.slice(2).includes("--self-test")) {
+    selfTest();
+    return;
+  }
   const args = parseArgs(Bun.argv.slice(2));
   const romPath = resolve(process.cwd(), args.rom);
   const rom = readFileSync(romPath);
@@ -171,6 +221,18 @@ async function main(): Promise<void> {
   mkdirSync(dirname(output), { recursive: true });
   writeFileSync(output, rebuilt);
   const sourceBytes = claimedMask.reduce((sum, value) => sum + value, 0);
+  const fallback = uncoveredRegions(claimedMask);
+  const fallbackBytes = fallback.reduce((sum, region) => sum + region.size, 0);
+  if (fallbackBytes !== rom.length - sourceBytes) throw new Error("fallback coverage count differs");
+  const suffix = extname(output);
+  const reportBase = suffix ? output.slice(0, -suffix.length) : output;
+  const fallbackPath = reportBase + ".fallback.json";
+  writeFileSync(fallbackPath, JSON.stringify({
+    format: 1,
+    rom_base: ROM_BASE,
+    rom_size: rom.length,
+    regions: fallback,
+  }, null, 2) + "\n");
   const report = {
     format: 1,
     rom_base: ROM_BASE,
@@ -181,11 +243,12 @@ async function main(): Promise<void> {
     source_regions: manifest.regions.length + asmRegions.length + assetRegions.length,
     source_bytes: sourceBytes,
     rom_fallback_bytes: rom.length - sourceBytes,
+    fallback_regions: fallback.length,
+    fallback_manifest: fallbackPath,
     byte_identical: true,
     output: args.output,
   };
-  const suffix = extname(output);
-  const reportPath = suffix ? output.slice(0, -suffix.length) + ".json" : output + ".json";
+  const reportPath = reportBase + ".json";
   writeFileSync(reportPath, JSON.stringify(report, null, 2) + "\n");
   console.log(
     `identical=True regions=${report.source_regions} code=${report.code_regions} ` +

@@ -1,9 +1,10 @@
-@ 呼出しグラフから到達した領域の再構築サム逆アセンブル。
-@ （コードとデータが混在）。build_asm.tsでバイト一致確認済み。
+@ 分岐呼出しから到達し、リンクレジスタへ戻る独立関数。
+@ 末尾の局所リテラルに加え、次関数末尾の共有リテラルを参照する。
 .syntax unified
 	.thumb
-	.global Region_080f9c44
-Region_080f9c44:
+	.global Func_080f9c44
+	.thumb_func
+Func_080f9c44:
 	ldr r0, [pc, #680]
 	ldr r0, [r0, #0]
 	ldr r2, [pc, #680]
@@ -40,3 +41,8 @@ Region_080f9c44:
 	strh r1, [r2, #22]
 .L_080f9c84:
 	bx lr
+	.balign 4, 0
+	.global LiteralPool_080f9c88
+LiteralPool_080f9c88:
+	.4byte 0x040000bc
+	.4byte 0x84400004

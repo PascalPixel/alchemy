@@ -13,7 +13,9 @@ export const CFLAGS = [
 
 const ADDRESS_SYMBOL = /^(Func|Data|Value)_([0-9a-f]{8})$/;
 const CALL_VIA_SYMBOL = /^_call_via_r(1[0-3]|[0-9])$/;
+const CALL_VIA_ALIAS = /^_call_via_(sl|fp|ip|sp)$/;
 const CALL_VIA_BASE = 0x080072e4;
+const CALL_VIA_REGISTERS: Record<string, number> = { sl: 10, fp: 11, ip: 12, sp: 13 };
 
 export interface ExternalSymbol {
   address: number;
@@ -32,6 +34,13 @@ export function externalSymbol(name: string): ExternalSymbol | null {
   if (callVia !== null) {
     return {
       address: CALL_VIA_BASE + Number.parseInt(callVia[1], 10) * 4,
+      thumb: true,
+    };
+  }
+  const callViaAlias = name.match(CALL_VIA_ALIAS);
+  if (callViaAlias !== null) {
+    return {
+      address: CALL_VIA_BASE + CALL_VIA_REGISTERS[callViaAlias[1]] * 4,
       thumb: true,
     };
   }

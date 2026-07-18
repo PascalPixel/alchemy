@@ -1,5 +1,5 @@
-@ Long-call interworking veneer: a fixed ldr r4,[pc]; bx r4 stub the
-@ linker emits to reach a distant routine. Not expressible in C.
+@ 遠距離呼出し用モード間ベニア。固定のldr r4,[pc]; bx r4は
+@ リンカが遠距離処理へ到達するために生成する。Cでは表現不能。
 .syntax unified
 	.thumb
 	.global Func_080153f8

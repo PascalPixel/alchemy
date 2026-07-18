@@ -1,4 +1,4 @@
-@ BIOS-call wrappers: software interrupts are not expressible in C.
+@ BIOS呼出しラッパ。ソフトウェア割込みはCでは表現不能。
 	.thumb
 
 	swi 0xb

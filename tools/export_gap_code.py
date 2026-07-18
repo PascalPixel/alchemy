@@ -21,8 +21,8 @@ from disassemble_function import disassemble
 
 ROOT = Path(__file__).resolve().parents[1]
 ROM_BASE = 0x08000000
-HEADER = ("@ Reconstructed thumb disassembly of a code-gap function the call-graph\n"
-          "@ discovery never reached. Verified byte-identical by build_asm.py.\n")
+HEADER = ("@ 呼出しグラフで未到達だったコード間隙関数の再構築サム逆アセンブル。\n"
+          "@ 探索では未到達。build_asm.pyでバイト一致確認済み。\n")
 
 
 def number(value):
@@ -93,9 +93,9 @@ def round_trips(rom, address, size, listing):
                            "-o", str(obj), str(work / "f.s")],
                           capture_output=True).returncode:
             return False
-        undefined = subprocess.run(["arm-none-eabi-nm", "-u", str(obj)],
+        未定義 = subprocess.run(["arm-none-eabi-nm", "-u", str(obj)],
                                    capture_output=True, text=True).stdout
-        names = [line.split()[-1] for line in undefined.splitlines() if line.split()]
+        names = [line.split()[-1] for line in 未定義.splitlines() if line.split()]
         (work / "s.s").write_text(".syntax unified\n.thumb\n" + "".join(
             f".global {n}\n.thumb_func\n.set {n}, 0x{n.rsplit('_', 1)[1]}\n"
             for n in names if re.fullmatch(r"(Func|Data|Value)_[0-9a-f]{8}", n)))

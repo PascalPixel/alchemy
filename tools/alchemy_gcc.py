@@ -44,8 +44,8 @@ def validate_bundle():
             actual = hashlib.sha256(path.read_bytes()).hexdigest()
             if actual != expected:
                 raise RuntimeError(f"alchemy-gcc/{name} has an unapproved digest")
-        # 起動確認。Warm the relocated helpers serially before parallel builds;
-        # otherwise macOS may gate several first launches at the same instant.
+        # 起動確認。並列処理の前に移設済み補助実行体を一つずつ起動する。
+        # 初回起動を同時に行うとmacOSの検証処理が競合する。
         smoke = subprocess.run(
             [str(DRIVER), f"-B{BUNDLE}/", "-S", "-x", "c",
              "-o", "/dev/null", "/dev/null"],

@@ -12,7 +12,7 @@ from pathlib import Path
 from export_map_charblock_series import ROM_BASE, export_palette, pointer
 
 ROOT = Path(__file__).resolve().parents[1]
-# Resources whose LZ stream decodes to a 0x1c0 palette and round-trips exactly.
+# LZ列が0x1c0バイトのパレットへ展開され、正確に往復するリソース。
 RESOURCES = (0x1e6, 0x1f4, 0x1f7, 0x28d, 0x2b4,
              0x2d5, 0x308, 0x31d, 0x321, 0x332)
 

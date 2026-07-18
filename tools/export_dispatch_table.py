@@ -30,9 +30,9 @@ def main():
     if any(not target & 1 for target in targets):
         raise ValueError("dispatch target is missing its thumb bit")
     lines = [
-        "@ ROM-start dispatch-stub table: stable thumb entry points into",
-        "@ ROM routines for code loaded elsewhere. Regenerate with",
-        "@ python3 tools/export_dispatch_table.py baserom.gba",
+        "@ ROM先頭ディスパッチスタブ表。サム用の固定入口から",
+        "@ 別領域へロードされるコードからROM内処理を呼ぶ。再生成コマンド：",
+        "@ 再生成：python3 tools/export_dispatch_table.py baserom.gba",
         "\t.thumb",
         "",
         "\t.macro dispatch target",

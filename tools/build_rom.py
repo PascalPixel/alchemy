@@ -40,21 +40,21 @@ def main():
     out = args.output
     out.mkdir(parents=True, exist_ok=True)
 
-    # Build the three source families; each writes a manifest of exact regions.
+    # 三種のソース群を構築し、それぞれ正確な領域一覧を出力する。
     run(["python3", "tools/build_claimed.py", str(args.rom),
          "--jobs", str(args.jobs), "--output", "out/claimed"])
     run(["python3", "tools/build_asm.py", str(args.rom), "--output", "out/asm"])
     run(["python3", "tools/build_assets.py", str(args.rom), "--output", "out/assets"])
 
-    # Every claimed region contributes its exact verified bytes. Objects are
-    # compiled/assembled from source and their bytes checked against the ROM by
-    # build_claimed/build_asm; the C compiler pads sections differently from the
-    # ROM's original (armcc) compiler, so pieces are incbin'd at their exact
-    # size rather than ld-linked as padded objects. build_bytes/ holds the
-    # per-region binaries the linker script places in address order.
+    # 各確定領域は検証済みの正確なバイト列を供給する。オブジェクトは
+    # ソースからコンパイル・アセンブルし、生成バイトを
+    # build_claimed/build_asmでROMと照合する。Cコンパイラは
+    # ROM作成時のarmccとは埋込み方が異なるため、断片は正確な
+    # サイズのincbinとして置く。build_bytes/には
+    # リンカスクリプトがアドレス順に置く領域別バイナリを格納する。
     bytes_dir = out / "regions"
     bytes_dir.mkdir(exist_ok=True)
-    pieces = []  # (address, size, kind, payload)
+    pieces = []  # （アドレス、サイズ、種別、内容）
     claimed = json.loads((ROOT / "out/claimed/manifest.json").read_text())
     image = (ROOT / "out/claimed/claimed.bin").read_bytes()
     image_base = claimed["image_base"]
@@ -74,7 +74,7 @@ def main():
                        str(Path(region["output"]).relative_to(ROOT))))
 
     pieces.sort()
-    # Fill every gap between claimed pieces with a baserom incbin skeleton.
+    # 確定済み断片間の全間隙をbaseromのincbin骨格で埋める。
     filled = []
     cursor = ROM_BASE
     for address, size, kind, payload in pieces:
@@ -82,14 +82,14 @@ def main():
             raise SystemExit(f"overlapping piece at 0x{address:08x}")
         if address > cursor:
             filled.append((cursor, address - cursor, "skeleton", None))
-        filled.append((address, size, kind, payload))
+        filled.append(（アドレス、サイズ、種別、内容）)
         cursor = address + size
     if cursor < ROM_BASE + len(rom):
         filled.append((cursor, ROM_BASE + len(rom) - cursor, "skeleton", None))
 
-    # One object holds every region as its own section: claimed bytes and
-    # asset bytes via `.incbin` of the verified per-region binary, skeleton gaps
-    # via `.incbin "baserom.gba", offset, size` (the pret incbin skeleton).
+    # 一つのオブジェクトに各領域を個別セクションとして格納する。確定バイトと
+    # 素材バイトは検証済み領域バイナリの.incbin、骨格間隙は
+    # baserom.gbaのoffset・size指定incbinで格納する（pret式incbin骨格）。
     fill_lines = [".syntax unified"]
     placements = []
     for address, size, kind, payload in filled:
@@ -105,8 +105,8 @@ def main():
     run(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
          "-o", str(out / "rom_fill.o"), str(out / "rom_fill.s")])
 
-    # Linker script: place every region's section in address order so the ROM
-    # is contiguous from 0x08000000.
+    # リンカスクリプトでは全領域のセクションをアドレス順に置き、ROMを
+    # 0x08000000から連続させる。
     (out / "ld_script.ld").write_text(
         "OUTPUT_ARCH(arm)\n"
         "MEMORY { ROM (rx) : ORIGIN = 0x08000000, LENGTH = 32M }\n"

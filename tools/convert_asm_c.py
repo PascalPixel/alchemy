@@ -14,10 +14,10 @@ from build_claimed import ROM_BASE
 from disassemble_function import disassemble
 
 ROOT = Path(__file__).resolve().parents[1]
-HEADER = ("@ Reconstructed thumb disassembly. This function reached byte-identity\n"
-          "@ only through inline-asm register pins, which are disallowed in C, so\n"
-          "@ it lives here until an asm-free C match is found. build_asm.py\n"
-          "@ re-verifies it against the private ROM.\n")
+HEADER = ("@ 再構築サム逆アセンブル。この関数は\n"
+          "@ インラインアセンブリによるレジスタ固定でしか一致せず、C内アセンブリは禁止のため、\n"
+          "@ アセンブリなしのC一致が得られるまでここに置く。build_asm.pyで\n"
+          "@ 非公開ROMとの一致を再確認する。\n")
 
 
 def main():

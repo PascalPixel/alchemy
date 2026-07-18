@@ -213,7 +213,8 @@ def compose(map_dir, gfx_dir, shared_tiles=None):
                 local = index % WINDOW
                 if window < 4 and window in sources and local < len(sources[window]):
                     tile = sources[window][local]
-                elif shared_tiles is not None and (index - 0x800) < len(shared_tiles):
+                elif (shared_tiles is not None and index >= 0x800
+                      and (index - 0x800) < len(shared_tiles)):
                     tile = shared_tiles[index - 0x800]
                 else:
                     missing_shared += 1

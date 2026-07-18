@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "kind": "gba-4bpp-object-bank",
+  "tile_count": 512,
+  "fallback": "charblock1.remaining.4bpp.png",
+  "require_blank_fallback": true,
+  "objects": [
+    {
+      "name": "iwaana",
+      "source": "objects/iwaana.png",
+      "tilemap": "objects/iwaana.tilemap",
+      "palette": "palette.224.png",
+      "base_tile": "0x200",
+      "name_ja": "\u5ca9\u7a74",
+      "name_en": "rock hollow"
+    }
+  ]
+}

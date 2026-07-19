@@ -1,8 +1,11 @@
 #!/usr/bin/env bun
+// コミット件名の進捗表記を検査する。表記は「C化済み実行領域の累計」で、
+// 形式は [X of Y]。XはC一致済みの実行関数領域数、Yは X と残る
+// C化対象アセンブリ領域数の合計。バイト被覆表記は役目を終えて廃止した。
+// 旧形式 [... of 8,388,608 bytes] の直前件名からの移行も受け付ける。
 
-const ROM_SIZE = 8_388_608;
-const SUFFIX = /\[([0-9]{1,3}(?:,[0-9]{3})*) of 8,388,608 bytes\]$/;
-const DELTA = /^Source coverage delta: \+([0-9]{1,3}(?:,[0-9]{3})*) bytes\.$/m;
+const SUFFIX = /\[([0-9]{1,3}(?:,[0-9]{3})*) of ([0-9]{1,3}(?:,[0-9]{3})*)\]$/;
+const LEGACY = / of 8,388,608 bytes\]$/;
 
 function commas(value: number): string {
   return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -11,44 +14,46 @@ function commas(value: number): string {
 function count(value: string, label: string): number {
   const parsed = Number(value.replaceAll(",", ""));
   if (!Number.isSafeInteger(parsed) || parsed < 0 || commas(parsed) !== value) {
-    throw new Error(`${label} is not a canonical byte count`);
+    throw new Error(`${label} is not a canonical count`);
   }
   return parsed;
 }
 
-function subjectTotal(subject: string): number | undefined {
+function subjectCounts(subject: string): [number, number] | undefined {
+  if (LEGACY.test(subject)) return undefined;
   const match = subject.match(SUFFIX);
-  return match === null ? undefined : count(match[1], "commit total");
+  if (match === null) return undefined;
+  return [count(match[1], "converted count"), count(match[2], "target total")];
 }
 
 export function checkCommitProgress(message: string, previousSubject?: string): void {
   const [subject = ""] = message.split(/\r?\n/, 1);
-  const total = subjectTotal(subject);
-  if (total === undefined) throw new Error("commit subject lacks the cumulative progress suffix");
-  if (total > ROM_SIZE) throw new Error("commit total exceeds the canonical ROM size");
-  const deltaMatch = message.match(DELTA);
-  if (deltaMatch === null) throw new Error("commit body lacks the source coverage delta");
-  const delta = count(deltaMatch[1], "commit delta");
+  const counts = subjectCounts(subject);
+  if (counts === undefined) {
+    throw new Error("commit subject lacks the [converted of total] C-conversion suffix");
+  }
+  const [converted, total] = counts;
+  if (converted > total) throw new Error("converted count exceeds the conversion target total");
   if (previousSubject === undefined) return;
-  const previous = subjectTotal(previousSubject);
-  if (previous !== undefined && total !== previous + delta) {
-    throw new Error(`commit total ${commas(total)} must equal ${commas(previous)} + ${commas(delta)}`);
+  const previous = subjectCounts(previousSubject);
+  if (previous !== undefined && converted < previous[0]) {
+    throw new Error(`converted count ${commas(converted)} regressed from ${commas(previous[0])}`);
   }
 }
 
 function selfTest(): void {
-  checkCommitProgress(
-    "assets: test [1,100,000 of 8,388,608 bytes]\n\nSource coverage delta: +100,000 bytes.\n",
-    "assets: prior [1,000,000 of 8,388,608 bytes]",
-  );
-  for (const message of [
-    "assets: delta [100,000 of 8,388,608 bytes]\n\nSource coverage delta: +100,000 bytes.\n",
-    "assets: malformed [1100000 of 8,388,608 bytes]\n\nSource coverage delta: +100,000 bytes.\n",
-    "assets: missing [1,100,000 of 8,388,608 bytes]\n",
-  ]) {
+  checkCommitProgress("decomp: test [812 of 2,203]", "decomp: prior [797 of 2,203]");
+  checkCommitProgress("decomp: first [797 of 2,203]", "closure: legacy [8,388,608 of 8,388,608 bytes]");
+  checkCommitProgress("decomp: total shift [812 of 2,199]", "decomp: prior [797 of 2,203]");
+  for (const [message, previous] of [
+    ["decomp: missing suffix", "decomp: prior [797 of 2,203]"],
+    ["decomp: malformed [812 of 2203]", "decomp: prior [797 of 2,203]"],
+    ["decomp: overshoot [2,204 of 2,203]", "decomp: prior [797 of 2,203]"],
+    ["decomp: regression [700 of 2,203]", "decomp: prior [797 of 2,203]"],
+  ] as const) {
     let rejected = false;
     try {
-      checkCommitProgress(message, "assets: prior [1,000,000 of 8,388,608 bytes]");
+      checkCommitProgress(message, previous);
     } catch {
       rejected = true;
     }

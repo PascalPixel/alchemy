@@ -126,19 +126,20 @@ The shared 224-color OBJ palette is the independently reconstructed range
 copied from ROM `0x0800779c`; each `preview.atlas.png` is a generated contact
 sheet and remains ignored.
 
-`graphics/chr_zenhan/` and `graphics/chr/` reconstruct 18 and 33 adjacent
-descriptor-linked static character banks as one palette-correct
-`koma.8bpp.png` (コマ) sheet per physical bank. The sheets hold 1,688 unique
+`graphics/chr_081a/`, `graphics/chr_zenhan/`, and `graphics/chr/` reconstruct
+22, 18, and 33 descriptor-linked static character banks as one palette-correct
+`koma.8bpp.png` (コマ) sheet per physical bank. The 73 sheets hold 2,593 unique
 32x32 frames instead of creating one file per frame. Their payload-free plans
 preserve logical pointer aliases and the outer source-dictionary recipe: a
 little-endian literal/control split, LSB-first flags, and back-references into
 earlier encoded bytes of the same bank. PNG pixels feed a canonical zero-skip
 encoder, zero alignment is explicit, and the builder emits the trailing
 absolute frame directories and null terminators. The complete
-`0x08220160..0x08244fc0` and `0x08244fc0..0x08287774` series re-encode
-byte-for-byte; the eight-byte separator is the latter series' explicit prefix.
-`zenhan` (前半) is a period-style reconstruction grouping, while numeric `chr`
-names remain because no historical character names have been recovered.
+`0x081a7020..0x081e120c`, `0x08220160..0x08244fc0`, and
+`0x08244fc0..0x08287774` series re-encode 661,504 bytes byte-for-byte; the
+eight-byte separator is the last series' explicit prefix. `zenhan` (前半) is a
+period-style reconstruction grouping. `chr_081a` and numeric bank names remain
+because no historical character names have been recovered.
 
 `graphics/resource_128/` through `graphics/resource_369/` contain the 121 map
 families whose container is directly followed by a 224-color BG palette

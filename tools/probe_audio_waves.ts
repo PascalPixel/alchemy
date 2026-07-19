@@ -90,6 +90,35 @@ export function probeReferencedWaveRange(
   });
 }
 
+export function verifyReferencedWaveRange(
+  image: Buffer,
+  imageBase: number,
+  start: number,
+  end: number,
+  entries: ProbedEntry[],
+): void {
+  if (entries.length === 0 || Number(entries[0].address) !== start ||
+      Number(entries.at(-1)!.address) + Number(entries.at(-1)!.size) !== end) {
+    throw new Error("wave entries do not cover the requested range");
+  }
+  let cursor = start;
+  for (const entry of entries) {
+    const address = Number(entry.address), size = Number(entry.size);
+    if (address !== cursor || size <= 0) throw new Error("wave entries are not contiguous");
+    const [rebuilt] = buildWaveRecord(entry, wavFromSignedPcm(
+      entry.samples,
+      Math.round(Number(entry.header.frequency) / 1024),
+    ));
+    const offset = address - imageBase;
+    if (offset < 0 || offset + size > image.length || rebuilt.length !== size ||
+        !rebuilt.equals(image.subarray(offset, offset + size))) {
+      throw new Error(`wave record ${entry.name} does not round-trip exactly`);
+    }
+    cursor += size;
+  }
+  if (cursor !== end) throw new Error("wave entries do not reach the requested end");
+}
+
 function serializable(entries: ProbedEntry[]): Record<string, unknown>[] {
   return entries.map(({ samples: _samples, ...entry }) => entry);
 }
@@ -136,6 +165,14 @@ async function selfTest(): Promise<void> {
     banks: [{ records: addresses.map((sample) => ({ kind: "pcm", sample: hexadecimal(sample) })) }],
   };
   const entries = probeReferencedWaveRange(Buffer.concat(parts), addresses[0], tones, addresses[0], end);
+  const image = Buffer.concat(parts);
+  verifyReferencedWaveRange(image, addresses[0], addresses[0], end, entries);
+  const changed = Buffer.from(image);
+  changed[changed.length - 1] ^= 1;
+  let rejected = false;
+  try { verifyReferencedWaveRange(changed, addresses[0], addresses[0], end, entries); }
+  catch { rejected = true; }
+  if (!rejected) throw new Error("changed wave range was accepted");
   if (entries.length !== 5 || entries.map((entry) => Number(entry.size)).join(",") !== "24,24,24,20,20" ||
       entries[1].header.control !== "0xc0000000" || entries[4].header.sample_count !== 4) {
     throw new Error("referenced wave-range probe self-test failed");
@@ -159,6 +196,7 @@ async function main(args: string[]): Promise<void> {
   const image = Buffer.from(await Bun.file(romPath).arrayBuffer());
   const tones = await Bun.file(tonePath).json() as ToneDocument;
   const entries = probeReferencedWaveRange(image, 0x08000000, tones, start, end);
+  verifyReferencedWaveRange(image, 0x08000000, start, end, entries);
   const outputIndex = args.indexOf("-o");
   if (outputIndex >= 0) {
     if (outputIndex + 1 >= args.length) throw new Error("-o is required");

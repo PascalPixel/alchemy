@@ -109,6 +109,15 @@ function rooted(path: string): string {
   return isAbsolute(path) ? path : resolve(ROOT, path);
 }
 
+function hasAssemblySources(directory: string): boolean {
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    if (entry.name.startsWith(".")) continue;
+    if (entry.isFile() && entry.name.endsWith(".s")) return true;
+    if (entry.isDirectory() && hasAssemblySources(join(directory, entry.name))) return true;
+  }
+  return false;
+}
+
 function usage(): void {
   console.log(
     "usage: build_full.ts [-h] [-o OUTPUT] [--claimed-output CLAIMED_OUTPUT] " +
@@ -480,7 +489,7 @@ async function main(): Promise<void> {
   const asmRegions: AssemblyRegion[] = [];
   let asmAccounting = assemblySourceAccounting([]);
   const asmDirectory = join(ROOT, "asm");
-  if (existsSync(asmDirectory) && readdirSync(asmDirectory).some((name) => name.endsWith(".s"))) {
+  if (existsSync(asmDirectory) && hasAssemblySources(asmDirectory)) {
     const asmOutput = rooted(args.asmOutput);
     const asmCommand = [process.execPath, "tools/build_asm.ts"];
     if (args.sourceOnly) asmCommand.push("--source-only");

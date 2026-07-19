@@ -3,6 +3,13 @@ import { dirname } from "node:path";
 import { byte_png, rgba_image } from "./export_asset.ts";
 import { decode_palette_trace, encode_palette, type PaletteGroup } from "./extract_resource.ts";
 import { indexed_png, rgba_png } from "./import_asset.ts";
+import {
+  build_alignment_tail,
+  inspect_alignment_tail,
+  parse_alignment_tail,
+  self_test_alignment_tail,
+  type AlignmentTail,
+} from "./alignment_tail.ts";
 
 export const ROM_BASE = 0x08000000;
 
@@ -25,6 +32,7 @@ export interface ArchivePlan {
   offset_width?: number;
   stream_alignment?: number;
   streams: ArchiveStream[];
+  alignment_tail?: AlignmentTail;
 }
 
 export function number(text: string): number { return Number(text); }
@@ -100,7 +108,17 @@ export function build_archive(atlas: Uint8Array, plan: ArchivePlan): Buffer {
     throw new Error("archive offsets do not fit their configured width");
   const table = Buffer.alloc(offsets.length * offsetWidth);
   offsets.forEach((value, index) => offsetWidth === 2 ? table.writeUInt16LE(value, index * 2) : table.writeUInt32LE(value, index * 4));
-  return Buffer.concat([table, ...slots]);
+  const archive = Buffer.concat([table, ...slots]);
+  if (plan.alignment_tail === undefined) return archive;
+  return Buffer.concat([
+    archive,
+    build_alignment_tail(parse_alignment_tail(plan.alignment_tail, plan.alignment_tail.size, 3, "archive alignment tail")),
+  ]);
+}
+
+export function self_test(): void {
+  self_test_alignment_tail();
+  console.log("self-test=ok");
 }
 
 function option(args: string[], name: string): string {
@@ -113,19 +131,28 @@ function integer(args: string[], name: string, fallback?: number): number {
 }
 
 function main(args: string[]): void {
+  if (args.includes("--self-test")) {
+    self_test();
+    args = args.filter((argument) => argument !== "--self-test");
+    if (!args.length) return;
+  }
   if (args.includes("-h") || args.includes("--help")) {
-    console.log("usage: archive_asset.ts ROM --address ADDRESS --input-end END --chunk-width WIDTH --chunk-height HEIGHT --columns COLUMNS --plan PLAN --atlas ATLAS [options]");
+    console.log("usage: archive_asset.ts [--self-test] ROM --address ADDRESS --input-end END --chunk-width WIDTH --chunk-height HEIGHT --columns COLUMNS --plan PLAN --atlas ATLAS [--source-end END] [options]");
     return;
   }
   const romPath = args[0]; if (!romPath) throw new Error("ROM is required");
   const address = integer(args, "--address"), inputEnd = integer(args, "--input-end");
+  const sourceEnd = integer(args, "--source-end", inputEnd);
   const chunkWidth = integer(args, "--chunk-width"), chunkHeight = integer(args, "--chunk-height"), columns = integer(args, "--columns");
   const pixelFormat = (args.includes("--pixel-format") ? option(args, "--pixel-format") : "rgba") as PixelFormat;
   if (!["rgba", "indexed8"].includes(pixelFormat)) throw new Error("unsupported archive pixel format");
   const offsetWidth = integer(args, "--offset-width", 4), streamAlignment = integer(args, "--stream-alignment", 1);
   if (![2, 4].includes(offsetWidth)) throw new Error("offset width must be 2 or 4");
   const planPath = option(args, "--plan"), atlasPath = option(args, "--atlas");
-  const rom = readFileSync(romPath), start = address - ROM_BASE, end = inputEnd - ROM_BASE, archive = rom.subarray(start, end);
+  if (sourceEnd < address || sourceEnd > inputEnd) throw new Error("archive source end lies outside its boundary");
+  const rom = readFileSync(romPath), start = address - ROM_BASE, end = sourceEnd - ROM_BASE, archive = rom.subarray(start, end);
+  const tail = rom.subarray(end, inputEnd - ROM_BASE);
+  if (tail.length > 3) throw new Error("archive alignment tail exceeds its bounded extent");
   if (archive.length < 4) throw new Error("archive is empty");
   if (streamAlignment <= 0) throw new Error("stream alignment must be positive");
   const first = offsetWidth === 2 ? archive.readUInt16LE(0) : archive.readUInt32LE(0);
@@ -148,12 +175,13 @@ function main(args: string[]): void {
     chunks.push(decoded); streams.push({ decoded_size: decoded.length, encoded_size: original.length, tokens, lookahead: lookahead.toString("hex") });
   });
   const plan: ArchivePlan = { format: 1, codec: "golden-sun-offset-palette-lz", chunk_width: chunkWidth, chunk_height: chunkHeight,
-    columns, pixel_format: pixelFormat, offset_width: offsetWidth, stream_alignment: streamAlignment, streams };
+    columns, pixel_format: pixelFormat, offset_width: offsetWidth, stream_alignment: streamAlignment, streams,
+    ...(tail.length ? { alignment_tail: inspect_alignment_tail(tail, 3) } : {}) };
   const atlas = make_atlas(chunks, chunkWidth, chunkHeight, columns, pixelFormat);
-  if (!build_archive(atlas, plan).equals(archive)) throw new Error("rebuilt archive differs");
+  if (!build_archive(atlas, plan).equals(rom.subarray(start, inputEnd - ROM_BASE))) throw new Error("rebuilt archive differs");
   mkdirSync(dirname(planPath), { recursive: true }); mkdirSync(dirname(atlasPath), { recursive: true });
   writeFileSync(planPath, JSON.stringify(plan) + "\n"); writeFileSync(atlasPath, atlas);
-  console.log(`streams=${count} decoded=${chunks.reduce((sum, chunk) => sum + chunk.length, 0)} encoded=${archive.length}`);
+  console.log(`streams=${count} decoded=${chunks.reduce((sum, chunk) => sum + chunk.length, 0)} encoded=${archive.length} alignment=${tail.length}`);
 }
 
 if (import.meta.main) main(process.argv.slice(2));

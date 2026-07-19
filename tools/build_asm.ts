@@ -67,6 +67,17 @@ function rooted(path: string): string {
   return isAbsolute(path) ? path : resolve(ROOT, path);
 }
 
+function assemblySources(directory: string): string[] {
+  const result: string[] = [];
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    if (entry.name.startsWith(".")) continue;
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) result.push(...assemblySources(path));
+    else if (entry.isFile() && entry.name.endsWith(".s")) result.push(path);
+  }
+  return result.sort();
+}
+
 async function run(command: string[]): Promise<string> {
   const child = Bun.spawn(command, { cwd: ROOT, stdout: "pipe", stderr: "pipe" });
   const [stdout, stderr, exitCode] = await Promise.all([
@@ -273,9 +284,13 @@ async function main(): Promise<void> {
   const rom = args.sourceOnly ? null : readFileSync(resolve(process.cwd(), args.rom));
   const output = rooted(args.output);
   mkdirSync(output, { recursive: true });
-  let sources = readdirSync(join(ROOT, "asm"), { withFileTypes: true })
-    .filter((entry) => entry.isFile() && entry.name.endsWith(".s"))
-    .map((entry) => join(ROOT, "asm", entry.name)).sort();
+  let sources = assemblySources(join(ROOT, "asm"));
+  const stems = new Set<string>();
+  for (const source of sources) {
+    const name = stem(source);
+    if (stems.has(name)) throw new Error(`duplicate assembly source stem: ${name}`);
+    stems.add(name);
+  }
   if (args.source !== undefined) {
     const selected = rooted(args.source);
     sources = sources.filter((source) => source === selected);

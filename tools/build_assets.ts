@@ -34,6 +34,8 @@ import { build_simple_resource } from "./simple_resources.ts";
 import { build_character_catalog } from "./character_catalog.ts";
 import { build_message_archive } from "./message_archive.ts";
 import { build_resource_5 } from "./resource_5.ts";
+import { build_localization_font } from "./localization_font.ts";
+import { build_localization_tables } from "./localization_tables.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -581,6 +583,36 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
       banks: document.banks.length,
       messages: document.banks.reduce((sum: number, bank: Json[]) => sum + bank.length, 0),
     }];
+  }
+  if (kind === "golden-sun-localization-font") {
+    const source = sourcePath(String(entry.source));
+    const document = JSON.parse(readFileSync(source, "utf8"));
+    if (number(document.address) !== number(entry.address) || number(document.size) !== number(entry.size)) {
+      throw new Error("localization-font extent differs from manifest");
+    }
+    const nested = [
+      ...document.direct_tiles.map((item: Json) => `assets/${String(item.source)}`),
+      ...document.mtf_banks.map((item: Json) => `assets/${String(item.source)}`),
+      `assets/${String(document.packed_images.source)}`,
+      `assets/${String(document.font.source)}`,
+    ];
+    nested.forEach(sourcePath);
+    const built = build_localization_font(document, join(ROOT, "assets"));
+    return [built, [String(entry.source), ...nested], {
+      mtf_images: document.mtf_banks.reduce((sum: number, bank: Json) => sum + number(bank.images), 0),
+      packed_images: document.packed_images.images,
+      font_glyphs: document.font.glyphs,
+      article_entries: document.articles.entries.length,
+    }];
+  }
+  if (kind === "golden-sun-localization-tables") {
+    const source = sourcePath(String(entry.source));
+    const document = JSON.parse(readFileSync(source, "utf8"));
+    if (number(document.address) !== number(entry.address) || number(document.size) !== number(entry.size)) {
+      throw new Error("localization-table extent differs from manifest");
+    }
+    const built = build_localization_tables(document);
+    return [built, [String(entry.source)], { segments: document.segments.length }];
   }
   if (kind === "golden-sun-gameplay-databases") {
     const source = sourcePath(String(entry.source));

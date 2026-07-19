@@ -1,6 +1,7 @@
 gs1-en.gba
 .DS_Store
 assets/**/preview*.png
+assets/readme/*.gif
 alchemy-gcc/
 work/
 out/

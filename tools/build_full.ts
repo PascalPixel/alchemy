@@ -49,10 +49,46 @@ export interface AssemblySourceAccounting {
   retainedStructuralBytes: number;
 }
 
-export interface TotalDecompilationProgress {
+export interface ByteReconstructionProgress {
   bytes: number;
   remainingBytes: number;
   percent: number;
+}
+
+export type TotalDecompilationProgress = ByteReconstructionProgress;
+
+export interface MeasuredProjectCriterion {
+  status: "measured";
+  bytes: number;
+  total_bytes: number;
+  remaining_bytes: number;
+  percent: number;
+}
+
+export interface ProjectCompletionAudit {
+  status: "audit_pending";
+  percent: null;
+  scoring: "withheld_until_all_dimensions_are_audited";
+  blockers: ["asset_semantics", "repository_organization"];
+  dimensions: {
+    source_ownership: MeasuredProjectCriterion;
+    byte_reconstruction: MeasuredProjectCriterion;
+    code_decompilation: MeasuredProjectCriterion;
+    asset_semantics: {
+      status: "audit_pending";
+      round_trip_regions: number;
+      round_trip_bytes: number;
+      classified_regions: 0;
+      classified_bytes: 0;
+      unclassified_regions: number;
+      unclassified_bytes: number;
+      classification_manifest: null;
+    };
+    repository_organization: {
+      status: "audit_pending";
+      audit_manifest: null;
+    };
+  };
 }
 
 const ASM_C_DEBT_RETENTIONS = new Set([
@@ -163,22 +199,79 @@ export function assemblySourceAccounting(
   return result;
 }
 
-export function totalDecompilationProgress(
+export function byteReconstructionProgress(
   romSize: number,
   codeBytes: number,
   assetBytes: number,
   retainedAssemblyBytes: number,
   assemblyDebtBytes: number,
   unownedBytes: number,
-): TotalDecompilationProgress {
+): ByteReconstructionProgress {
   const values = [romSize, codeBytes, assetBytes, retainedAssemblyBytes, assemblyDebtBytes, unownedBytes];
   if (values.some((value, index) => !Number.isSafeInteger(value) || value < (index === 0 ? 1 : 0))) {
-    throw new Error("invalid total decompilation count");
+    throw new Error("invalid byte reconstruction count");
   }
   const bytes = codeBytes + assetBytes + retainedAssemblyBytes;
   const remainingBytes = assemblyDebtBytes + unownedBytes;
-  if (bytes + remainingBytes !== romSize) throw new Error("total decompilation count differs");
+  if (bytes + remainingBytes !== romSize) throw new Error("byte reconstruction count differs");
   return { bytes, remainingBytes, percent: Number((bytes * 100 / romSize).toFixed(2)) };
+}
+
+export const totalDecompilationProgress = byteReconstructionProgress;
+
+function measuredProjectCriterion(bytes: number, totalBytes: number): MeasuredProjectCriterion {
+  if (!Number.isSafeInteger(bytes) || !Number.isSafeInteger(totalBytes) ||
+      bytes < 0 || totalBytes <= 0 || bytes > totalBytes) {
+    throw new Error("invalid measured project criterion");
+  }
+  return {
+    status: "measured",
+    bytes,
+    total_bytes: totalBytes,
+    remaining_bytes: totalBytes - bytes,
+    percent: Number((bytes * 100 / totalBytes).toFixed(2)),
+  };
+}
+
+export function projectCompletionAudit(
+  romSize: number,
+  sourceBytes: number,
+  byteReconstructionBytes: number,
+  codeBytes: number,
+  assemblyDebtBytes: number,
+  assetRegions: number,
+  assetBytes: number,
+): ProjectCompletionAudit {
+  const values = [romSize, sourceBytes, byteReconstructionBytes, codeBytes, assemblyDebtBytes, assetRegions, assetBytes];
+  if (values.some((value, index) => !Number.isSafeInteger(value) || value < (index === 0 ? 1 : 0)) ||
+      sourceBytes > romSize || byteReconstructionBytes > romSize || codeBytes + assemblyDebtBytes <= 0) {
+    throw new Error("invalid project completion audit count");
+  }
+  return {
+    status: "audit_pending",
+    percent: null,
+    scoring: "withheld_until_all_dimensions_are_audited",
+    blockers: ["asset_semantics", "repository_organization"],
+    dimensions: {
+      source_ownership: measuredProjectCriterion(sourceBytes, romSize),
+      byte_reconstruction: measuredProjectCriterion(byteReconstructionBytes, romSize),
+      code_decompilation: measuredProjectCriterion(codeBytes, codeBytes + assemblyDebtBytes),
+      asset_semantics: {
+        status: "audit_pending",
+        round_trip_regions: assetRegions,
+        round_trip_bytes: assetBytes,
+        classified_regions: 0,
+        classified_bytes: 0,
+        unclassified_regions: assetRegions,
+        unclassified_bytes: assetBytes,
+        classification_manifest: null,
+      },
+      repository_organization: {
+        status: "audit_pending",
+        audit_manifest: null,
+      },
+    },
+  };
 }
 
 export function selfTest(): void {
@@ -206,15 +299,25 @@ export function selfTest(): void {
       assembly.retainedStructuralRegions !== 2 || assembly.retainedStructuralBytes !== 10) {
     throw new Error("assembly source accounting self-test failed");
   }
-  const progress = totalDecompilationProgress(100, 10, 50, 5, 25, 10);
+  const progress = byteReconstructionProgress(100, 10, 50, 5, 25, 10);
   if (progress.bytes !== 65 || progress.remainingBytes !== 35 || progress.percent !== 65) {
-    throw new Error("total decompilation progress self-test failed");
+    throw new Error("byte reconstruction progress self-test failed");
   }
   try {
-    totalDecompilationProgress(100, 10, 50, 5, 25, 9);
-    throw new Error("incomplete total decompilation count was accepted");
+    byteReconstructionProgress(100, 10, 50, 5, 25, 9);
+    throw new Error("incomplete byte reconstruction count was accepted");
   } catch (error) {
-    if ((error as Error).message === "incomplete total decompilation count was accepted") throw error;
+    if ((error as Error).message === "incomplete byte reconstruction count was accepted") throw error;
+  }
+  const project = projectCompletionAudit(100, 90, 65, 10, 25, 4, 50);
+  if (project.status !== "audit_pending" || project.percent !== null || project.blockers.length !== 2 ||
+      project.dimensions.source_ownership.percent !== 90 ||
+      project.dimensions.byte_reconstruction.percent !== 65 ||
+      project.dimensions.code_decompilation.percent !== 28.57 ||
+      project.dimensions.asset_semantics.classified_regions !== 0 ||
+      project.dimensions.asset_semantics.unclassified_regions !== 4 ||
+      project.dimensions.repository_organization.audit_manifest !== null) {
+    throw new Error("project completion audit self-test failed");
   }
   try {
     assemblySourceAccounting([{ size: 4, retention: "unknown" }]);
@@ -410,13 +513,22 @@ async function main(): Promise<void> {
   const unowned = unownedRegions(claimedMask);
   const unownedBytes = unowned.reduce((sum, region) => sum + region.size, 0);
   if (unownedBytes !== romSize - sourceBytes) throw new Error("unowned coverage count differs");
-  const totalDecompilation = totalDecompilationProgress(
+  const byteReconstruction = byteReconstructionProgress(
     romSize,
     codeBytes,
     assetBytes,
     asmAccounting.retainedStructuralBytes,
     asmAccounting.cDebtBytes,
     unownedBytes,
+  );
+  const projectCompletion = projectCompletionAudit(
+    romSize,
+    sourceBytes,
+    byteReconstruction.bytes,
+    codeBytes,
+    asmAccounting.cDebtBytes,
+    assetRegions.length,
+    assetBytes,
   );
   const fallback = uncoveredRegions(claimedMask);
   const suffix = extname(output);
@@ -454,9 +566,14 @@ async function main(): Promise<void> {
     asset_bytes: assetBytes,
     source_regions: manifest.regions.length + asmRegions.length + assetRegions.length,
     source_bytes: sourceBytes,
-    total_decompilation_bytes: totalDecompilation.bytes,
-    total_decompilation_remaining_bytes: totalDecompilation.remainingBytes,
-    total_decompilation_percent: totalDecompilation.percent,
+    project_completion: projectCompletion,
+    byte_reconstruction_bytes: byteReconstruction.bytes,
+    byte_reconstruction_remaining_bytes: byteReconstruction.remainingBytes,
+    byte_reconstruction_percent: byteReconstruction.percent,
+    total_decompilation_bytes: byteReconstruction.bytes,
+    total_decompilation_remaining_bytes: byteReconstruction.remainingBytes,
+    total_decompilation_percent: byteReconstruction.percent,
+    total_decompilation_semantics: "deprecated_alias_for_byte_reconstruction",
     unowned_bytes: unownedBytes,
     unowned_regions: unowned.length,
     unowned_manifest: unownedPath,
@@ -475,7 +592,8 @@ async function main(): Promise<void> {
     `asm=${report.asm_regions} assets=${report.asset_regions} source_bytes=${report.source_bytes} ` +
     `unowned_bytes=${report.unowned_bytes} asm_c_debt_bytes=${report.asm_c_debt_bytes} ` +
     `asm_retained_structural_bytes=${report.asm_retained_structural_bytes} ` +
-    `total_decompilation=${report.total_decompilation_percent.toFixed(2)}%` +
+    `project_completion=${report.project_completion.status} ` +
+    `byte_reconstruction=${report.byte_reconstruction_percent.toFixed(2)}%` +
     (args.sourceOnly ? "" : ` rom_fallback_bytes=${report.rom_fallback_bytes}`),
   );
   console.log(formatProgress(report.source_bytes, report.rom_size));

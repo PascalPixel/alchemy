@@ -28,6 +28,8 @@ import { build_sequence as build_sound_sequence } from "./music_sequence.ts";
 import { buildWaveRecord } from "./audio_wave.ts";
 import { build_still } from "./indexed_still.ts";
 import { build_static_sprite_series } from "./static_sprite_series.ts";
+import { build_resource_directory } from "./resource_directory.ts";
+import { build_title_resource } from "./title_resources.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -541,6 +543,35 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
       sources.push(join(directory, String(item.source)), join(directory, String(item.plan)));
     }
     return [built, sources, report];
+  }
+  if (kind === "golden-sun-resource-directory") {
+    const source = sourcePath(String(entry.source));
+    const document = JSON.parse(readFileSync(source, "utf8"));
+    if (number(document.address) !== number(entry.address)) {
+      throw new Error("resource-directory address differs from manifest");
+    }
+    const built = build_resource_directory(document);
+    return [built, [String(entry.source)], { slots: built.length / 4 }];
+  }
+  if (kind === "golden-sun-title-lz") {
+    const source = sourcePath(String(entry.source));
+    const document = JSON.parse(readFileSync(source, "utf8"));
+    if (number(document.address) !== number(entry.address)) {
+      throw new Error("title-resource address differs from manifest");
+    }
+    const directory = dirname(String(entry.source));
+    const sources = [String(entry.source), ...document.components.map((component: Json) => {
+      const relativeSource = join(directory, String(component.source));
+      sourcePath(relativeSource);
+      return relativeSource;
+    })];
+    const built = build_title_resource(source);
+    return [built, sources, {
+      resource_id: number(document.resource_id),
+      decoded_size: number(document.decoded_size),
+      components: document.components.length,
+      fallback_tail: document.tail.policy === "fallback" ? number(document.tail.size) : 0,
+    }];
   }
   if (kind === "golden-sun-offset-palette-lz") {
     const planPath = sourcePath(String(entry.plan));

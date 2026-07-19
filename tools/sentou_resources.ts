@@ -1,6 +1,16 @@
 #!/usr/bin/env bun
-import { mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  realpathSync,
+  renameSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { basename, dirname, join, relative, resolve } from "node:path";
 import {
   decode_general_prefill_trace,
   decode_palette_trace,
@@ -11,6 +21,13 @@ import {
 } from "./extract_resource.ts";
 import { byte_png, palette_rgba_image, tile_png } from "./export_asset.ts";
 import { gba_graphics, gba_palette_rgba, indexed_png, type Rgb } from "./import_asset.ts";
+import {
+  build_alignment_tail,
+  inspect_alignment_tail,
+  parse_alignment_tail,
+  self_test_alignment_tail,
+  type AlignmentTail,
+} from "./alignment_tail.ts";
 
 const ROM_BASE = 0x08000000;
 const RESOURCE_TABLE = 0x08320000;
@@ -55,6 +72,7 @@ interface Plan {
     canvas_size: string;
     columns: number;
   };
+  boundary_suffix?: null | AlignmentTail;
 }
 
 interface IndexEntry {
@@ -317,10 +335,12 @@ function specFor(id: number, address: number): Spec {
 function parsePlan(value: unknown): [Plan, Spec] {
   if (typeof value !== "object" || value === null || Array.isArray(value)) throw new Error("sentou plan must be an object");
   const plan = value as Plan;
-  exactKeys(plan as unknown as Record<string, unknown>, [
+  const planKeys = [
     "format", "kind", "resource_id", "address", "resource_boundary_size", "source_size",
     "prefix_palette", "stream", "image",
-  ], "sentou plan");
+  ];
+  const hasBoundarySuffix = Object.prototype.hasOwnProperty.call(plan, "boundary_suffix");
+  exactKeys(plan as unknown as Record<string, unknown>, hasBoundarySuffix ? [...planKeys, "boundary_suffix"] : planKeys, "sentou plan");
   if (plan.format !== 1 || plan.kind !== "golden-sun-sentou-resource") throw new Error("unsupported sentou plan");
   if (!/^0x[0-9a-f]{3}$/.test(plan.resource_id)) throw new Error("sentou resource ID is not canonical");
   if (!/^0x[0-9a-f]{8}$/.test(plan.address)) throw new Error("sentou address is not canonical");
@@ -361,6 +381,14 @@ function parsePlan(value: unknown): [Plan, Spec] {
     if (integer(plan.prefix_palette.size, "sentou prefix palette size") !== spec.prefixPalette ||
         plan.prefix_palette.source !== "iro.rgba.png") {
       throw new Error("sentou prefix palette differs from the audited resource");
+    }
+  }
+  const suffixSize = spec.boundarySize - spec.sourceSize;
+  if (hasBoundarySuffix) {
+    if (suffixSize === 0) {
+      if (plan.boundary_suffix !== null) throw new Error("sentou resource has an unexpected boundary suffix");
+    } else {
+      plan.boundary_suffix = parse_alignment_tail(plan.boundary_suffix, suffixSize, 3, "sentou boundary suffix");
     }
   }
   return [plan, spec];
@@ -405,8 +433,11 @@ export function build_sentou_resource(planFile: string): [Buffer, string[]] {
   const encoded = spec.codec === "general-lz-prefill"
     ? encode_general_prefill(decoded, plan.stream.tokens as GeneralToken[], PREFILL, 1)
     : Buffer.concat([Buffer.from([1]), encode_palette(decoded, plan.stream.tokens as PaletteGroup[])]);
-  const built = Buffer.concat([prefix, encoded]);
-  if (built.length !== spec.sourceSize) throw new Error("sentou resource differs from its audited source size");
+  const source = Buffer.concat([prefix, encoded]);
+  if (source.length !== spec.sourceSize) throw new Error("sentou resource differs from its audited source size");
+  if (plan.boundary_suffix === undefined || plan.boundary_suffix === null) return [source, sources];
+  const built = Buffer.concat([source, build_alignment_tail(plan.boundary_suffix)]);
+  if (built.length !== spec.boundarySize) throw new Error("sentou resource differs from its audited boundary size");
   return [built, sources];
 }
 
@@ -423,8 +454,9 @@ function parseIndex(value: unknown): IndexDocument {
     exactKeys(entry as unknown as Record<string, unknown>, ["id", "address", "size", "resource_boundary_size", "source"], "sentou index entry");
     const spec = SENTOU_RESOURCES[position];
     const expectedSource = `${directoryName(spec)}/stream.json`;
+    const size = integer(entry.size, "sentou index source size");
     if (entry.id !== resourceId(spec.id) || entry.address !== hex(spec.address) ||
-        integer(entry.size, "sentou index source size") !== spec.sourceSize ||
+        (size !== spec.sourceSize && size !== spec.boundarySize) ||
         integer(entry.resource_boundary_size, "sentou index boundary size") !== spec.boundarySize ||
         entry.source !== expectedSource) {
       throw new Error("sentou index entry differs from the audited series");
@@ -438,6 +470,7 @@ export function build_sentou_series(indexFile: string): Array<{ address: number;
   const directory = dirname(indexFile);
   return index.resources.map((entry) => {
     const [data, sources] = build_sentou_resource(resolve(directory, entry.source));
+    if (data.length !== Number(entry.size)) throw new Error("sentou index size differs from its canonical source");
     return { address: Number(entry.address), data, sources: [indexFile, ...sources] };
   });
 }
@@ -521,22 +554,24 @@ function exportOne(rom: Buffer, root: string, spec: Spec): IndexEntry {
       canvas_size: shortHex(canvasSize(spec)),
       columns: spec.presentation === "naiyou" ? 64 : 30,
     },
+    boundary_suffix: spec.boundarySize === spec.sourceSize
+      ? null
+      : inspect_alignment_tail(original.subarray(spec.sourceSize), 3),
   };
   const streamFile = join(directory, "stream.json");
   writeFileSync(streamFile, `${JSON.stringify(plan)}\n`);
   const [rebuilt] = build_sentou_resource(streamFile);
-  if (!rebuilt.equals(original.subarray(0, spec.sourceSize))) throw new Error("sentou export does not round-trip");
+  if (!rebuilt.equals(original)) throw new Error("sentou export does not round-trip");
   return {
     id: resourceId(spec.id),
     address: hex(spec.address),
-    size: shortHex(spec.sourceSize),
+    size: shortHex(spec.boundarySize),
     resource_boundary_size: shortHex(spec.boundarySize),
     source: `${directoryName(spec)}/stream.json`,
   };
 }
 
-export function export_sentou_resources(romFile: string, directory: string): void {
-  const rom = readFileSync(romFile);
+function writeSentouPackage(rom: Buffer, directory: string): void {
   mkdirSync(directory, { recursive: true });
   const index: IndexDocument = {
     format: 1,
@@ -544,26 +579,109 @@ export function export_sentou_resources(romFile: string, directory: string): voi
     resources: SENTOU_RESOURCES.map((spec) => exportOne(rom, directory, spec)),
   };
   writeFileSync(join(directory, "index.json"), `${JSON.stringify(index, null, 2)}\n`);
-  verify_sentou_resources(romFile, directory);
 }
 
-export function verify_sentou_resources(romFile: string, directory: string): void {
-  const rom = readFileSync(romFile);
+function verifySentou(rom: Buffer, directory: string): { claimedBytes: number; boundaryBytes: number } {
   const built = build_sentou_series(join(directory, "index.json"));
-  let sourceBytes = 0;
+  let claimedBytes = 0;
   let boundaryBytes = 0;
   built.forEach((entry, position) => {
     const spec = SENTOU_RESOURCES[position];
-    if (entry.address !== spec.address || !entry.data.equals(checkedSource(rom, spec).subarray(0, spec.sourceSize))) {
+    if (entry.address !== spec.address || !entry.data.equals(checkedSource(rom, spec).subarray(0, entry.data.length))) {
       throw new Error(`sentou resource ${resourceId(spec.id)} differs from ROM`);
     }
-    sourceBytes += entry.data.length;
+    claimedBytes += entry.data.length;
     boundaryBytes += spec.boundarySize;
   });
-  console.log(`identical=true resources=${built.length} source_bytes=${sourceBytes} boundary_bytes=${boundaryBytes} suffix_fallback=${boundaryBytes - sourceBytes}`);
+  return { claimedBytes, boundaryBytes };
+}
+
+function validateExistingPackage(directory: string): void {
+  if (!existsSync(directory)) return;
+  const indexFile = join(directory, "index.json");
+  if (!existsSync(indexFile)) throw new Error("refusing to replace a directory that is not a sentou package");
+  try {
+    parseIndex(document(readFileSync(indexFile, "utf8"), true));
+  } catch {
+    throw new Error("refusing to replace a directory that is not a canonical sentou package");
+  }
+}
+
+function replacePackage(directory: string, populate: (staging: string) => void): void {
+  const destination = resolve(directory);
+  validateExistingPackage(destination);
+  const parent = dirname(destination);
+  mkdirSync(parent, { recursive: true });
+  const staging = mkdtempSync(join(parent, `.${basename(destination)}.tmp-`));
+  const backup = `${staging}.old`;
+  let movedOld = false;
+  let installed = false;
+  try {
+    populate(staging);
+    if (existsSync(destination)) {
+      renameSync(destination, backup);
+      movedOld = true;
+    }
+    renameSync(staging, destination);
+    installed = true;
+    if (movedOld) rmSync(backup, { recursive: true, force: true });
+  } catch (error) {
+    if (movedOld && !installed && !existsSync(destination) && existsSync(backup)) renameSync(backup, destination);
+    throw error;
+  } finally {
+    if (existsSync(staging)) rmSync(staging, { recursive: true, force: true });
+    if (installed && existsSync(backup)) rmSync(backup, { recursive: true, force: true });
+  }
+}
+
+export function export_sentou_resources(romFile: string, directory: string): void {
+  const rom = readFileSync(romFile);
+  replacePackage(directory, (staging) => {
+    writeSentouPackage(rom, staging);
+    const report = verifySentou(rom, staging);
+    if (report.claimedBytes !== report.boundaryBytes) throw new Error("sentou export left unclaimed boundary bytes");
+  });
+  verify_sentou_resources(romFile, directory);
+}
+
+export function promote_sentou_tails(romFile: string, directory: string): void {
+  const rom = readFileSync(romFile);
+  const sourceDirectory = resolve(directory);
+  validateExistingPackage(sourceDirectory);
+  if (!existsSync(sourceDirectory)) throw new Error("sentou package does not exist");
+  replacePackage(sourceDirectory, (staging) => {
+    cpSync(sourceDirectory, staging, { recursive: true });
+    const indexFile = join(staging, "index.json");
+    const index = parseIndex(document(readFileSync(indexFile, "utf8"), true));
+    index.resources.forEach((entry, position) => {
+      const spec = SENTOU_RESOURCES[position];
+      const planFile = resolve(staging, entry.source);
+      const [plan] = parsePlan(document(readFileSync(planFile, "utf8"), false));
+      const original = checkedSource(rom, spec);
+      const [before] = build_sentou_resource(planFile);
+      if (!before.equals(original.subarray(0, before.length))) {
+        throw new Error(`sentou resource ${resourceId(spec.id)} differs before tail promotion`);
+      }
+      plan.boundary_suffix = spec.boundarySize === spec.sourceSize
+        ? null
+        : inspect_alignment_tail(original.subarray(spec.sourceSize), 3);
+      writeFileSync(planFile, `${JSON.stringify(plan)}\n`);
+      entry.size = shortHex(spec.boundarySize);
+    });
+    writeFileSync(indexFile, `${JSON.stringify(index, null, 2)}\n`);
+    const report = verifySentou(rom, staging);
+    if (report.claimedBytes !== report.boundaryBytes) throw new Error("sentou tail promotion left unclaimed boundary bytes");
+  });
+  verify_sentou_resources(romFile, sourceDirectory);
+}
+
+export function verify_sentou_resources(romFile: string, directory: string): void {
+  const report = verifySentou(readFileSync(romFile), directory);
+  console.log(`identical=true resources=${SENTOU_RESOURCES.length} claimed_bytes=${report.claimedBytes} boundary_bytes=${report.boundaryBytes} suffix_fallback=${report.boundaryBytes - report.claimedBytes}`);
 }
 
 export function self_test(): void {
+  self_test_alignment_tail();
   if (SENTOU_RESOURCES.length !== 60 || SENTOU_RESOURCES.reduce((sum, spec) => sum + spec.sourceSize, 0) !== 137869 ||
       SENTOU_RESOURCES.reduce((sum, spec) => sum + spec.boundarySize, 0) !== 137956 ||
       canvasSize(specFor(0x042, 0x083c5678)) !== 0x9600 || canvasSize(specFor(0x044, 0x083cb4bc)) !== 0x7080) {
@@ -601,7 +719,7 @@ function same(left: string, right: string): boolean {
 
 function main(args: string[]): void {
   if (args.includes("-h") || args.includes("--help")) {
-    console.log("usage: sentou_resources.ts [--self-test] {export|verify} ROM --directory DIRECTORY");
+    console.log("usage: sentou_resources.ts [--self-test] {export|promote-tails|verify} ROM --directory DIRECTORY");
     return;
   }
   if (args.includes("--self-test")) {
@@ -610,10 +728,13 @@ function main(args: string[]): void {
     if (!args.length) return;
   }
   const [command, romFile] = args.filter((argument, index) => !argument.startsWith("-") && args[index - 1] !== "--directory");
-  if (!romFile || (command !== "export" && command !== "verify")) throw new Error("export or verify and a ROM are required");
+  if (!romFile || !["export", "promote-tails", "verify"].includes(command)) {
+    throw new Error("export, promote-tails, or verify and a ROM are required");
+  }
   const directory = option(args, "--directory");
   if (same(romFile, directory)) throw new Error("refusing to overwrite the input ROM");
   if (command === "export") export_sentou_resources(romFile, directory);
+  else if (command === "promote-tails") promote_sentou_tails(romFile, directory);
   else verify_sentou_resources(romFile, directory);
 }
 

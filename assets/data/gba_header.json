@@ -1,5 +1,5 @@
 {
-  "format": 1,
+  "format": 2,
   "kind": "gba-cartridge-header-standard-fields",
   "address": "0x08000000",
   "standard": {
@@ -24,6 +24,7 @@
       }
     ]
   },
+  "edition": null,
   "unresolved_fields": [
     {
       "name": "entry_branch",

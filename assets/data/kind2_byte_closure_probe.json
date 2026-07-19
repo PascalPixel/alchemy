@@ -1,0 +1,30 @@
+{
+  "format": 1,
+  "kind": "golden-sun-kind2-resource-probe",
+  "resources": [
+    {
+      "id": "0x066",
+      "address": "0x083dc854",
+      "size": "0x114",
+      "selected_prefix_palette_size": null,
+      "candidates": [
+        {
+          "prefix_palette_size": "0x0",
+          "image": {
+            "encoding": "naiyou",
+            "columns": 32,
+            "status": "provisional-neutral-byte-canvas"
+          }
+        },
+        {
+          "prefix_palette_size": "0x80",
+          "image": {
+            "encoding": "naiyou",
+            "columns": 32,
+            "status": "provisional-neutral-byte-canvas"
+          }
+        }
+      ]
+    }
+  ]
+}

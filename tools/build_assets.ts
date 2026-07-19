@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { encode_general, encode_general_prefill, encode_palette } from "./extract_resource.ts";
 import { gba_graphics, gba_palette_rgba, indexed_png, rgba_png } from "./import_asset.ts";
@@ -108,6 +108,159 @@ function sourcePath(name: string): string {
     throw new Error("asset source must stay inside the repository");
   }
   return source;
+}
+
+function canonicalJsonSource(name: string, label: string): Json {
+  const path = sourcePath(name);
+  const text = readFileSync(path, "utf8");
+  const value = JSON.parse(text);
+  if (typeof value !== "object" || value === null || Array.isArray(value) ||
+      text !== `${JSON.stringify(value, null, 2)}\n`) {
+    throw new Error(`${label} is not canonical JSON`);
+  }
+  return value;
+}
+
+function exactKeys(value: Json, keys: string[], label: string): void {
+  const actual = Object.keys(value).sort();
+  const expected = [...keys].sort();
+  if (actual.length !== expected.length || actual.some((key, index) => key !== expected[index])) {
+    throw new Error(`${label} fields differ`);
+  }
+}
+
+function closureCoverage(items: Json[], label: string): Array<{ address: number; end: number }> {
+  const regions = items.map((item, index) => {
+    if (typeof item !== "object" || item === null || Array.isArray(item)) {
+      throw new Error(`${label} region ${index} differs`);
+    }
+    const address = number(item.address);
+    const size = number(item.size);
+    if (!Number.isSafeInteger(address) || !Number.isSafeInteger(size) || size <= 0 ||
+        address < ROM_BASE || address + size > ROM_BASE + ROM_SIZE) {
+      throw new Error(`${label} region ${index} extent differs`);
+    }
+    return { address, end: address + size };
+  }).sort((left, right) => left.address - right.address);
+  const merged: Array<{ address: number; end: number }> = [];
+  for (const region of regions) {
+    const previous = merged.at(-1);
+    if (previous !== undefined && region.address < previous.end) throw new Error(`${label} regions overlap`);
+    if (previous !== undefined && region.address === previous.end) previous.end = region.end;
+    else merged.push(region);
+  }
+  return merged;
+}
+
+function expandClosurePackages(manifest: Json, entries: Json[]): void {
+  const supported = new Set([
+    "golden-sun-asset-fragment",
+    "golden-sun-kind2-resource-series",
+    "golden-sun-pcm-wave-series",
+  ]);
+  for (const [position, raw] of (manifest.closure_packages ?? []).entries()) {
+    if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
+      throw new Error(`closure package ${position} differs`);
+    }
+    const packageSpec = raw as Json;
+    exactKeys(packageSpec, ["id", "kind", "availability", "index", "expected_ranges"], `closure package ${position}`);
+    if (typeof packageSpec.id !== "string" || !/^[a-z][a-z0-9_]*$/.test(packageSpec.id) ||
+        !supported.has(String(packageSpec.kind)) ||
+        (packageSpec.availability !== "pending" && packageSpec.availability !== "required") ||
+        typeof packageSpec.index !== "string" || !Array.isArray(packageSpec.expected_ranges) ||
+        packageSpec.expected_ranges.length === 0) {
+      throw new Error(`closure package ${position} identity differs`);
+    }
+    const indexName = String(packageSpec.index);
+    const indexPath = sourcePath(indexName);
+    if (!existsSync(indexPath)) {
+      if (packageSpec.availability === "pending") continue;
+      throw new Error(`${packageSpec.id}: required closure package is missing`);
+    }
+    const document = canonicalJsonSource(indexName, `${packageSpec.id} closure package`);
+    const generated: Json[] = [];
+    if (packageSpec.kind === "golden-sun-asset-fragment") {
+      exactKeys(document, ["format", "kind", "id", "regions", "series"], `${packageSpec.id} closure package`);
+      if (document.format !== 1 || document.kind !== "golden-sun-asset-fragment" ||
+          document.id !== packageSpec.id || !Array.isArray(document.regions) || !Array.isArray(document.series)) {
+        throw new Error(`${packageSpec.id}: closure package identity differs`);
+      }
+      generated.push(...document.regions);
+      expandSeries({ series: document.series }, generated);
+    } else {
+      expandSeries({ series: [{ kind: packageSpec.kind, index: indexName }] }, generated);
+    }
+    const expected = closureCoverage(packageSpec.expected_ranges, `${packageSpec.id} expected coverage`);
+    const actual = closureCoverage(generated, `${packageSpec.id} generated coverage`);
+    if (expected.length !== actual.length || expected.some((region, index) =>
+      region.address !== actual[index].address || region.end !== actual[index].end)) {
+      throw new Error(`${packageSpec.id}: generated coverage differs from its declared extent`);
+    }
+    for (const entry of generated) {
+      if (entry._closure_package !== undefined) throw new Error(`${packageSpec.id}: nested closure provenance differs`);
+      entry._closure_package = indexName;
+      entries.push(entry);
+    }
+  }
+}
+
+function closureSources(entry: Json, sources: string[]): string[] {
+  if (entry._closure_package === undefined) return sources;
+  const packageSource = String(entry._closure_package);
+  sourcePath(packageSource);
+  return sources.includes(packageSource) ? sources : [packageSource, ...sources];
+}
+
+function closurePackageSelfTest(): void {
+  const missing = "assets/data/closure/__self_test_missing__/index.json";
+  if (existsSync(sourcePath(missing))) throw new Error("closure package self-test path exists");
+  const optional = {
+    closure_packages: [{
+      id: "missing_optional",
+      kind: "golden-sun-asset-fragment",
+      availability: "pending",
+      index: missing,
+      expected_ranges: [{ address: "0x08001000", size: "0x10" }],
+    }],
+  };
+  const absent: Json[] = [];
+  expandClosurePackages(optional, absent);
+  if (absent.length !== 0) throw new Error("missing optional closure package emitted regions");
+  let rejected = false;
+  try {
+    expandClosurePackages({
+      closure_packages: [{ ...optional.closure_packages[0], availability: "required" }],
+    }, []);
+  } catch { rejected = true; }
+  if (!rejected) throw new Error("missing required closure package was accepted");
+  const pcmIndex = "assets/audio/waves/index.json";
+  const pcm = canonicalJsonSource(pcmIndex, "PCM self-test index");
+  if (!Array.isArray(pcm.waves) || pcm.waves.length === 0) throw new Error("PCM self-test index differs");
+  const expectedRanges = pcm.waves.map((wave: Json) => ({ address: wave.address, size: wave.size }));
+  const entries: Json[] = [];
+  expandClosurePackages({
+    closure_packages: [{
+      id: "existing_pcm",
+      kind: "golden-sun-pcm-wave-series",
+      availability: "required",
+      index: pcmIndex,
+      expected_ranges: expectedRanges,
+    }],
+  }, entries);
+  if (entries.length !== pcm.waves.length || entries.some((entry) => entry._closure_package !== pcmIndex)) {
+    throw new Error("present closure package provenance differs");
+  }
+  const sources = closureSources(entries[0], [String(entries[0].source)]);
+  if (sources[0] !== pcmIndex || sources.length !== 2) throw new Error("closure package source provenance differs");
+  rejected = false;
+  try {
+    closureCoverage([
+      { address: "0x08001000", size: "0x10" },
+      { address: "0x08001008", size: "0x10" },
+    ], "overlap self-test");
+  } catch { rejected = true; }
+  if (!rejected) throw new Error("overlapping closure coverage was accepted");
+  console.log(`self-test=ok optional=skipped present_regions=${entries.length} provenance=verified`);
 }
 
 const tokushuMapCache = new Map<string, ReturnType<typeof build_tokushu_map_series>>();
@@ -547,6 +700,7 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           ...wave,
           kind: "golden-sun-pcm-wave",
           source: join(directory, String(wave.source)),
+          index: String(series.index),
         });
       }
     } else {
@@ -730,7 +884,12 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
   if (kind === "golden-sun-pcm-wave") {
     const source = sourcePath(String(entry.source));
     const [built, report] = buildWaveRecord(entry, readFileSync(source));
-    return [built, [String(entry.source)], report];
+    const sources = [String(entry.source)];
+    if (entry.index !== undefined) {
+      sourcePath(String(entry.index));
+      sources.unshift(String(entry.index));
+    }
+    return [built, sources, report];
   }
   if (kind === "golden-sun-delta7-still") {
     const source = sourcePath(String(entry.source));
@@ -1171,7 +1330,7 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
 }
 
 function usage(): void {
-  console.log("usage: build_assets.ts [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom]");
+  console.log("usage: build_assets.ts [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --self-test");
 }
 
 function parseArgs(argv: string[]): Options {
@@ -1208,6 +1367,10 @@ function parseArgs(argv: string[]): Options {
 }
 
 function main(): void {
+  if (Bun.argv.length === 3 && Bun.argv[2] === "--self-test") {
+    closurePackageSelfTest();
+    return;
+  }
   const args = parseArgs(Bun.argv.slice(2));
   const rom = args.sourceOnly ? null : readFileSync(resolve(process.cwd(), args.rom));
   const romSize = rom?.length ?? ROM_SIZE;
@@ -1217,6 +1380,7 @@ function main(): void {
   const output = isAbsolute(args.output) ? args.output : resolve(ROOT, args.output);
   mkdirSync(output, { recursive: true });
   const entries: Json[] = [...(manifest.regions ?? [])];
+  expandClosurePackages(manifest, entries);
   expandSeries(manifest, entries);
   const regions: Json[] = [];
   let previousEnd = ROM_BASE;
@@ -1231,7 +1395,8 @@ function main(): void {
     if (!(ROM_BASE <= address && address < previousEnd && previousEnd <= ROM_BASE + romSize)) {
       throw new Error(`asset region outside ROM at 0x${address.toString(16).padStart(8, "0")}`);
     }
-    const [builtData, sources, report] = buildEntry(entry);
+    const [builtData, builtSources, report] = buildEntry(entry);
+    const sources = closureSources(entry, builtSources);
     if (builtData.length !== size) {
       throw new Error(
         `asset at 0x${address.toString(16).padStart(8, "0")}: ` +

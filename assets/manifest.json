@@ -1,5 +1,135 @@
 {
   "format": 1,
+  "closure_packages": [
+    {
+      "id": "header_edition",
+      "kind": "golden-sun-asset-fragment",
+      "availability": "pending",
+      "index": "assets/data/closure/header_edition/index.json",
+      "expected_ranges": [
+        {
+          "address": "0x08000000",
+          "size": "0x04"
+        },
+        {
+          "address": "0x080000a0",
+          "size": "0x12"
+        },
+        {
+          "address": "0x080000bc",
+          "size": "0x02"
+        }
+      ]
+    },
+    {
+      "id": "early_runtime",
+      "kind": "golden-sun-asset-fragment",
+      "availability": "pending",
+      "index": "assets/data/closure/early_runtime/index.json",
+      "expected_ranges": [
+        {
+          "address": "0x08012f20",
+          "size": "0x864"
+        },
+        {
+          "address": "0x0801403c",
+          "size": "0xfc4"
+        }
+      ]
+    },
+    {
+      "id": "late_runtime",
+      "kind": "golden-sun-asset-fragment",
+      "availability": "pending",
+      "index": "assets/data/closure/late_runtime/index.json",
+      "expected_ranges": [
+        {
+          "address": "0x080f38bc",
+          "size": "0x744"
+        },
+        {
+          "address": "0x080f53ce",
+          "size": "0xc32"
+        },
+        {
+          "address": "0x080f86f8",
+          "size": "0x908"
+        }
+      ]
+    },
+    {
+      "id": "mixed_gap_data",
+      "kind": "golden-sun-asset-fragment",
+      "availability": "pending",
+      "index": "assets/data/closure/mixed_gap_data/index.json",
+      "expected_ranges": [
+        {
+          "address": "0x08000404",
+          "size": "0x2f8"
+        },
+        {
+          "address": "0x0800731c",
+          "size": "0x04"
+        },
+        {
+          "address": "0x08007358",
+          "size": "0x424"
+        }
+      ]
+    },
+    {
+      "id": "kind2_byte_closure",
+      "kind": "golden-sun-kind2-resource-series",
+      "availability": "pending",
+      "index": "assets/graphics/kind2_byte_closure/index.json",
+      "expected_ranges": [
+        {
+          "address": "0x083cd090",
+          "size": "0x488"
+        },
+        {
+          "address": "0x083cd518",
+          "size": "0x5ec"
+        },
+        {
+          "address": "0x083d85e0",
+          "size": "0x444"
+        },
+        {
+          "address": "0x083dc1f8",
+          "size": "0x220"
+        },
+        {
+          "address": "0x083dc854",
+          "size": "0x114"
+        },
+        {
+          "address": "0x083e2ae4",
+          "size": "0x29c"
+        },
+        {
+          "address": "0x083f5f4c",
+          "size": "0x7b0"
+        },
+        {
+          "address": "0x083f66fc",
+          "size": "0x518"
+        }
+      ]
+    },
+    {
+      "id": "residual_pcm_waves",
+      "kind": "golden-sun-pcm-wave-series",
+      "availability": "pending",
+      "index": "assets/audio/waves/residual/index.json",
+      "expected_ranges": [
+        {
+          "address": "0x0811dac8",
+          "size": "0x70"
+        }
+      ]
+    }
+  ],
   "regions": [
     {
       "address": "0x08000004",

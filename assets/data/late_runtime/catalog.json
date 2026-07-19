@@ -1,0 +1,227 @@
+{
+  "format": 1,
+  "kind": "golden-sun-late-runtime-data-layout",
+  "ranges": [
+    {
+      "name": "range_080f38bc",
+      "address": "0x080f38bc",
+      "end": "0x080f4000",
+      "components": [
+        {
+          "name": "haikei_stream",
+          "kind": "general_lz_stream",
+          "address": "0x080f38bc",
+          "end": "0x080f39ab",
+          "role": "compressed_background",
+          "consumers": [
+            "Func_080f26ec",
+            "Func_080053e8",
+            "Func_080072fc"
+          ],
+          "decoded_bytes": 600
+        },
+        {
+          "name": "haichi_hyou",
+          "kind": "u8_table",
+          "address": "0x080f39ab",
+          "end": "0x080f39b1",
+          "role": "placement_table",
+          "consumers": [
+            "Func_080f2028"
+          ],
+          "count": 6
+        },
+        {
+          "name": "henka_hyou",
+          "kind": "u8_table",
+          "address": "0x080f39b1",
+          "end": "0x080f39ed",
+          "role": "envelope_table",
+          "consumers": [
+            "Func_080f26ec"
+          ],
+          "count": 60
+        },
+        {
+          "name": "soroe_080f39ed",
+          "kind": "unresolved_fill",
+          "address": "0x080f39ed",
+          "end": "0x080f39ee",
+          "role": "alignment_candidate",
+          "consumers": [
+            "Func_080f3078"
+          ],
+          "reason": "value_unverified"
+        },
+        {
+          "name": "iro_henka_00",
+          "kind": "u16_table",
+          "address": "0x080f39ee",
+          "end": "0x080f3a2e",
+          "role": "color_curve",
+          "consumers": [
+            "Func_080f3078"
+          ],
+          "count": 32
+        },
+        {
+          "name": "iro_henka_01",
+          "kind": "u16_table",
+          "address": "0x080f3a2e",
+          "end": "0x080f3a6e",
+          "role": "color_curve",
+          "consumers": [
+            "Func_080f3078"
+          ],
+          "count": 32
+        },
+        {
+          "name": "iro_henka_02",
+          "kind": "u16_table",
+          "address": "0x080f3a6e",
+          "end": "0x080f3aae",
+          "role": "color_curve",
+          "consumers": [
+            "Func_080f3078"
+          ],
+          "count": 32
+        },
+        {
+          "name": "aki_080f3aae",
+          "kind": "unresolved_fill",
+          "address": "0x080f3aae",
+          "end": "0x080f4000",
+          "role": "tail_fill_candidate",
+          "consumers": [
+            "Func_080f4000"
+          ],
+          "reason": "value_unverified"
+        }
+      ]
+    },
+    {
+      "name": "range_080f53ce",
+      "address": "0x080f53ce",
+      "end": "0x080f6000",
+      "components": [
+        {
+          "name": "aki_080f53ce",
+          "kind": "unresolved_fill",
+          "address": "0x080f53ce",
+          "end": "0x080f541a",
+          "role": "leading_fill_candidate",
+          "consumers": [
+            "Func_080f4f04"
+          ],
+          "reason": "value_unverified"
+        },
+        {
+          "name": "hantei_dankai",
+          "kind": "s16_table",
+          "address": "0x080f541a",
+          "end": "0x080f5426",
+          "role": "comparison_thresholds",
+          "consumers": [
+            "Func_080f4f04"
+          ],
+          "count": 6
+        },
+        {
+          "name": "aki_080f5426",
+          "kind": "unresolved_fill",
+          "address": "0x080f5426",
+          "end": "0x080f6000",
+          "role": "tail_fill_candidate",
+          "consumers": [
+            "Func_080f6000"
+          ],
+          "reason": "value_unverified"
+        }
+      ]
+    },
+    {
+      "name": "range_080f86f8",
+      "address": "0x080f86f8",
+      "end": "0x080f9000",
+      "components": [
+        {
+          "name": "zahyoubisei_hyou",
+          "kind": "u16_table",
+          "address": "0x080f86f8",
+          "end": "0x080f870c",
+          "role": "coordinate_adjustments",
+          "consumers": [
+            "Func_080f7460"
+          ],
+          "count": 10
+        },
+        {
+          "name": "hyouji_shoki_hyou",
+          "kind": "u8_table",
+          "address": "0x080f870c",
+          "end": "0x080f8712",
+          "role": "display_setup",
+          "consumers": [
+            "Func_080f6440"
+          ],
+          "count": 6
+        },
+        {
+          "name": "haba_hyou_00",
+          "kind": "u8_table",
+          "address": "0x080f8712",
+          "end": "0x080f871a",
+          "role": "display_widths",
+          "consumers": [
+            "Func_080f6440"
+          ],
+          "count": 8
+        },
+        {
+          "name": "haichi_hyou_00",
+          "kind": "u8_table",
+          "address": "0x080f871a",
+          "end": "0x080f8728",
+          "role": "display_positions",
+          "consumers": [
+            "Func_080f6440"
+          ],
+          "count": 14
+        },
+        {
+          "name": "haichi_hyou_01",
+          "kind": "u8_table",
+          "address": "0x080f8728",
+          "end": "0x080f8736",
+          "role": "display_positions",
+          "consumers": [
+            "Func_080f6440"
+          ],
+          "count": 14
+        },
+        {
+          "name": "haba_hyou_01",
+          "kind": "u8_table",
+          "address": "0x080f8736",
+          "end": "0x080f873e",
+          "role": "display_widths",
+          "consumers": [
+            "Func_080f731c"
+          ],
+          "count": 8
+        },
+        {
+          "name": "aki_080f873e",
+          "kind": "unresolved_fill",
+          "address": "0x080f873e",
+          "end": "0x080f9000",
+          "role": "tail_fill_candidate",
+          "consumers": [
+            "Func_080f9000"
+          ],
+          "reason": "value_unverified"
+        }
+      ]
+    }
+  ]
+}

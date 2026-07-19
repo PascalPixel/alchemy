@@ -1,0 +1,3 @@
+#!/bin/sh
+# 件名の数値は差分ではなく、直前の累計値に本文の増分を加えた値とする。
+exec bun tools/check_commit_progress.ts "$1"

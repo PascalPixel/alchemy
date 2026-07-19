@@ -39,9 +39,15 @@ export interface ResidualAudit {
   source_bytes: number;
   unowned_bytes: number;
   gaps: number;
+  project_completion_status: "audit_pending";
+  project_completion_percent: null;
+  byte_reconstruction_bytes: number;
+  byte_reconstruction_remaining_bytes: number;
+  byte_reconstruction_percent: number;
   total_decompilation_bytes: number;
   total_decompilation_remaining_bytes: number;
   total_decompilation_percent: number;
+  total_decompilation_semantics: "deprecated_alias_for_byte_reconstruction";
   bands: BandReport[];
   missing_resources: MissingResource[];
   missing_resource_bytes: number;
@@ -264,14 +270,25 @@ export function auditResiduals(inputs: Inputs): ResidualAudit {
   const asmDebtBytes = integer(full.asm_c_debt_bytes, "full report asm_c_debt_bytes");
   const retainedAsmBytes = integer(full.asm_retained_structural_bytes, "full report asm_retained_structural_bytes");
   if (asmDebtBytes + retainedAsmBytes !== asmBytes) throw new Error("assembly accounting differs");
-  const totalDecompilationBytes = codeBytes + assetBytes + retainedAsmBytes;
-  const totalDecompilationRemainingBytes = asmDebtBytes + unownedBytes;
-  const totalDecompilationPercent = Number((totalDecompilationBytes * 100 / size).toFixed(2));
-  if (totalDecompilationBytes + totalDecompilationRemainingBytes !== size ||
-      integer(full.total_decompilation_bytes, "full report total_decompilation_bytes") !== totalDecompilationBytes ||
-      integer(full.total_decompilation_remaining_bytes, "full report total_decompilation_remaining_bytes") !== totalDecompilationRemainingBytes ||
-      full.total_decompilation_percent !== totalDecompilationPercent) {
-    throw new Error("total decompilation accounting differs");
+  const byteReconstructionBytes = codeBytes + assetBytes + retainedAsmBytes;
+  const byteReconstructionRemainingBytes = asmDebtBytes + unownedBytes;
+  const byteReconstructionPercent = Number((byteReconstructionBytes * 100 / size).toFixed(2));
+  if (byteReconstructionBytes + byteReconstructionRemainingBytes !== size ||
+      integer(full.byte_reconstruction_bytes, "full report byte_reconstruction_bytes") !== byteReconstructionBytes ||
+      integer(full.byte_reconstruction_remaining_bytes, "full report byte_reconstruction_remaining_bytes") !== byteReconstructionRemainingBytes ||
+      full.byte_reconstruction_percent !== byteReconstructionPercent) {
+    throw new Error("byte reconstruction accounting differs");
+  }
+  if (integer(full.total_decompilation_bytes, "full report total_decompilation_bytes") !== byteReconstructionBytes ||
+      integer(full.total_decompilation_remaining_bytes, "full report total_decompilation_remaining_bytes") !== byteReconstructionRemainingBytes ||
+      full.total_decompilation_percent !== byteReconstructionPercent ||
+      full.total_decompilation_semantics !== "deprecated_alias_for_byte_reconstruction") {
+    throw new Error("deprecated byte reconstruction aliases differ");
+  }
+  const projectCompletion = object(full.project_completion, "full report project_completion");
+  if (projectCompletion.status !== "audit_pending" || projectCompletion.percent !== null ||
+      projectCompletion.scoring !== "withheld_until_all_dimensions_are_audited") {
+    throw new Error("project completion must remain unscored while its audit is pending");
   }
   const resources = missingResources(mask, inputs.directory, base);
   const bands = [
@@ -292,9 +309,15 @@ export function auditResiduals(inputs: Inputs): ResidualAudit {
     source_bytes: sourceBytes,
     unowned_bytes: unownedBytes,
     gaps: gaps.length,
-    total_decompilation_bytes: totalDecompilationBytes,
-    total_decompilation_remaining_bytes: totalDecompilationRemainingBytes,
-    total_decompilation_percent: totalDecompilationPercent,
+    project_completion_status: "audit_pending",
+    project_completion_percent: null,
+    byte_reconstruction_bytes: byteReconstructionBytes,
+    byte_reconstruction_remaining_bytes: byteReconstructionRemainingBytes,
+    byte_reconstruction_percent: byteReconstructionPercent,
+    total_decompilation_bytes: byteReconstructionBytes,
+    total_decompilation_remaining_bytes: byteReconstructionRemainingBytes,
+    total_decompilation_percent: byteReconstructionPercent,
+    total_decompilation_semantics: "deprecated_alias_for_byte_reconstruction",
     bands,
     missing_resources: resources,
     missing_resource_bytes: resources.reduce((sum, resource) => sum + resource.size, 0),
@@ -322,8 +345,9 @@ function testInputs(): Inputs {
   const codeBytes = claimedRegions.reduce((sum, item) => sum + item.size, 0);
   const asmBytes = assemblyRegions.reduce((sum, item) => sum + item.size, 0);
   const assetBytes = assetRegions.reduce((sum, item) => sum + item.size, 0);
-  const totalDecompilationBytes = codeBytes + assetBytes;
-  const totalDecompilationRemainingBytes = asmBytes + unownedBytes;
+  const byteReconstructionBytes = codeBytes + assetBytes;
+  const byteReconstructionRemainingBytes = asmBytes + unownedBytes;
+  const byteReconstructionPercent = Number((byteReconstructionBytes * 100 / ROM_SIZE).toFixed(2));
   return {
     full: {
       format: 1,
@@ -341,9 +365,18 @@ function testInputs(): Inputs {
       source_bytes: ROM_SIZE - unownedBytes,
       unowned_bytes: unownedBytes,
       unowned_regions: gapList.length,
-      total_decompilation_bytes: totalDecompilationBytes,
-      total_decompilation_remaining_bytes: totalDecompilationRemainingBytes,
-      total_decompilation_percent: Number((totalDecompilationBytes * 100 / ROM_SIZE).toFixed(2)),
+      project_completion: {
+        status: "audit_pending",
+        percent: null,
+        scoring: "withheld_until_all_dimensions_are_audited",
+      },
+      byte_reconstruction_bytes: byteReconstructionBytes,
+      byte_reconstruction_remaining_bytes: byteReconstructionRemainingBytes,
+      byte_reconstruction_percent: byteReconstructionPercent,
+      total_decompilation_bytes: byteReconstructionBytes,
+      total_decompilation_remaining_bytes: byteReconstructionRemainingBytes,
+      total_decompilation_percent: byteReconstructionPercent,
+      total_decompilation_semantics: "deprecated_alias_for_byte_reconstruction",
       rom_fallback_bytes: unownedBytes,
       fallback_regions: gapList.length,
       verification: "source_only",
@@ -378,7 +411,8 @@ export function selfTest(): void {
   const inputs = testInputs();
   const report = auditResiduals(inputs);
   if (report.unowned_bytes !== 21 || report.gaps !== 3 || report.source_bytes !== ROM_SIZE - 21 ||
-      report.total_decompilation_bytes + report.total_decompilation_remaining_bytes !== ROM_SIZE ||
+      report.project_completion_status !== "audit_pending" || report.project_completion_percent !== null ||
+      report.byte_reconstruction_bytes + report.byte_reconstruction_remaining_bytes !== ROM_SIZE ||
       report.bands[0].unowned_bytes !== 2 || report.bands[0].gaps !== 1 ||
       report.bands[1].unowned_bytes !== 3 || report.bands[1].gaps !== 1 ||
       report.bands[2].unowned_bytes !== 16 || report.bands[2].gaps !== 1 ||
@@ -463,7 +497,8 @@ function printReport(report: ResidualAudit): void {
   console.log(
     `source_only=True source_regions=${report.source_regions} source_bytes=${report.source_bytes} ` +
     `unowned_bytes=${report.unowned_bytes} gaps=${report.gaps} ` +
-    `total_decompilation=${report.total_decompilation_percent.toFixed(2)}%`,
+    `project_completion=${report.project_completion_status} ` +
+    `byte_reconstruction=${report.byte_reconstruction_percent.toFixed(2)}%`,
   );
   for (const item of report.bands) {
     console.log(

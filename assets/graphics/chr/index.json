@@ -1,0 +1,309 @@
+{
+  "format": 1,
+  "codec": "golden-sun-static-sprite-series",
+  "address": "0x08244fc0",
+  "size": "0x000427b4",
+  "descriptor_table": "0x08185024",
+  "palette_offset": 16,
+  "palette_entries": 224,
+  "prefix_zeros": 8,
+  "packages": [
+    {
+      "id": "080",
+      "aliases": [],
+      "address": "0x08244fc8",
+      "size": "0x000026d8",
+      "directory": "0x08247618",
+      "source": "chr_080/koma.8bpp.png",
+      "plan": "chr_080/bank.json"
+    },
+    {
+      "id": "081",
+      "aliases": [],
+      "address": "0x082476a0",
+      "size": "0x0000221c",
+      "directory": "0x08249828",
+      "source": "chr_081/koma.8bpp.png",
+      "plan": "chr_081/bank.json"
+    },
+    {
+      "id": "083",
+      "aliases": [],
+      "address": "0x082498bc",
+      "size": "0x00002ae4",
+      "directory": "0x0824c2f4",
+      "source": "chr_083/koma.8bpp.png",
+      "plan": "chr_083/bank.json"
+    },
+    {
+      "id": "07b",
+      "aliases": [],
+      "address": "0x0824c3a0",
+      "size": "0x000023a8",
+      "directory": "0x0824e6d8",
+      "source": "chr_07b/koma.8bpp.png",
+      "plan": "chr_07b/bank.json"
+    },
+    {
+      "id": "082",
+      "aliases": [],
+      "address": "0x0824e748",
+      "size": "0x000034b0",
+      "directory": "0x08251b28",
+      "source": "chr_082/koma.8bpp.png",
+      "plan": "chr_082/bank.json"
+    },
+    {
+      "id": "084",
+      "aliases": [],
+      "address": "0x08251bf8",
+      "size": "0x00002768",
+      "directory": "0x082542e0",
+      "source": "chr_084/koma.8bpp.png",
+      "plan": "chr_084/bank.json"
+    },
+    {
+      "id": "085",
+      "aliases": [],
+      "address": "0x08254360",
+      "size": "0x000020cc",
+      "directory": "0x08256394",
+      "source": "chr_085/koma.8bpp.png",
+      "plan": "chr_085/bank.json"
+    },
+    {
+      "id": "086",
+      "aliases": [],
+      "address": "0x0825642c",
+      "size": "0x00002670",
+      "directory": "0x08258a10",
+      "source": "chr_086/koma.8bpp.png",
+      "plan": "chr_086/bank.json"
+    },
+    {
+      "id": "087",
+      "aliases": [],
+      "address": "0x08258a9c",
+      "size": "0x000026b0",
+      "directory": "0x0825b0c4",
+      "source": "chr_087/koma.8bpp.png",
+      "plan": "chr_087/bank.json"
+    },
+    {
+      "id": "088",
+      "aliases": [],
+      "address": "0x0825b14c",
+      "size": "0x00000f58",
+      "directory": "0x0825c034",
+      "source": "chr_088/koma.8bpp.png",
+      "plan": "chr_088/bank.json"
+    },
+    {
+      "id": "08f",
+      "aliases": [],
+      "address": "0x0825c0a4",
+      "size": "0x00002094",
+      "directory": "0x0825e0b0",
+      "source": "chr_08f/koma.8bpp.png",
+      "plan": "chr_08f/bank.json"
+    },
+    {
+      "id": "090",
+      "aliases": [],
+      "address": "0x0825e138",
+      "size": "0x0000239c",
+      "directory": "0x08260438",
+      "source": "chr_090/koma.8bpp.png",
+      "plan": "chr_090/bank.json"
+    },
+    {
+      "id": "091",
+      "aliases": [],
+      "address": "0x082604d4",
+      "size": "0x00001fd0",
+      "directory": "0x0826241c",
+      "source": "chr_091/koma.8bpp.png",
+      "plan": "chr_091/bank.json"
+    },
+    {
+      "id": "092",
+      "aliases": [],
+      "address": "0x082624a4",
+      "size": "0x00001ef8",
+      "directory": "0x08264314",
+      "source": "chr_092/koma.8bpp.png",
+      "plan": "chr_092/bank.json"
+    },
+    {
+      "id": "093",
+      "aliases": [],
+      "address": "0x0826439c",
+      "size": "0x000023c8",
+      "directory": "0x082666c8",
+      "source": "chr_093/koma.8bpp.png",
+      "plan": "chr_093/bank.json"
+    },
+    {
+      "id": "069",
+      "aliases": [],
+      "address": "0x08266764",
+      "size": "0x000004f8",
+      "directory": "0x08266c4c",
+      "source": "chr_069/koma.8bpp.png",
+      "plan": "chr_069/bank.json"
+    },
+    {
+      "id": "06e",
+      "aliases": [],
+      "address": "0x08266c5c",
+      "size": "0x0000030c",
+      "directory": "0x08266f58",
+      "source": "chr_06e/koma.8bpp.png",
+      "plan": "chr_06e/bank.json"
+    },
+    {
+      "id": "094",
+      "aliases": [],
+      "address": "0x08266f68",
+      "size": "0x0000263c",
+      "directory": "0x0826950c",
+      "source": "chr_094/koma.8bpp.png",
+      "plan": "chr_094/bank.json"
+    },
+    {
+      "id": "070",
+      "aliases": [],
+      "address": "0x082695a4",
+      "size": "0x00002394",
+      "directory": "0x0826b89c",
+      "source": "chr_070/koma.8bpp.png",
+      "plan": "chr_070/bank.json"
+    },
+    {
+      "id": "071",
+      "aliases": [],
+      "address": "0x0826b938",
+      "size": "0x000024a0",
+      "directory": "0x0826dd34",
+      "source": "chr_071/koma.8bpp.png",
+      "plan": "chr_071/bank.json"
+    },
+    {
+      "id": "095",
+      "aliases": [],
+      "address": "0x0826ddd8",
+      "size": "0x00001f90",
+      "directory": "0x0826fce0",
+      "source": "chr_095/koma.8bpp.png",
+      "plan": "chr_095/bank.json"
+    },
+    {
+      "id": "096",
+      "aliases": [],
+      "address": "0x0826fd68",
+      "size": "0x000020d4",
+      "directory": "0x08271db4",
+      "source": "chr_096/koma.8bpp.png",
+      "plan": "chr_096/bank.json"
+    },
+    {
+      "id": "097",
+      "aliases": [],
+      "address": "0x08271e3c",
+      "size": "0x000018e0",
+      "directory": "0x08273694",
+      "source": "chr_097/koma.8bpp.png",
+      "plan": "chr_097/bank.json"
+    },
+    {
+      "id": "098",
+      "aliases": [],
+      "address": "0x0827371c",
+      "size": "0x00002520",
+      "directory": "0x08275bb0",
+      "source": "chr_098/koma.8bpp.png",
+      "plan": "chr_098/bank.json"
+    },
+    {
+      "id": "099",
+      "aliases": [],
+      "address": "0x08275c3c",
+      "size": "0x0000236c",
+      "directory": "0x08277f14",
+      "source": "chr_099/koma.8bpp.png",
+      "plan": "chr_099/bank.json"
+    },
+    {
+      "id": "09b",
+      "aliases": [],
+      "address": "0x08277fa8",
+      "size": "0x00000140",
+      "directory": "0x082780d8",
+      "source": "chr_09b/koma.8bpp.png",
+      "plan": "chr_09b/bank.json"
+    },
+    {
+      "id": "09e",
+      "aliases": [],
+      "address": "0x082780e8",
+      "size": "0x0000235c",
+      "directory": "0x0827a3a0",
+      "source": "chr_09e/koma.8bpp.png",
+      "plan": "chr_09e/bank.json"
+    },
+    {
+      "id": "09c",
+      "aliases": [],
+      "address": "0x0827a444",
+      "size": "0x000022b4",
+      "directory": "0x0827c670",
+      "source": "chr_09c/koma.8bpp.png",
+      "plan": "chr_09c/bank.json"
+    },
+    {
+      "id": "09f",
+      "aliases": [],
+      "address": "0x0827c6f8",
+      "size": "0x000026e4",
+      "directory": "0x0827ed50",
+      "source": "chr_09f/koma.8bpp.png",
+      "plan": "chr_09f/bank.json"
+    },
+    {
+      "id": "0a0",
+      "aliases": [],
+      "address": "0x0827eddc",
+      "size": "0x00001fa4",
+      "directory": "0x08280cf8",
+      "source": "chr_0a0/koma.8bpp.png",
+      "plan": "chr_0a0/bank.json"
+    },
+    {
+      "id": "0a2",
+      "aliases": [],
+      "address": "0x08280d80",
+      "size": "0x0000278c",
+      "directory": "0x08283484",
+      "source": "chr_0a2/koma.8bpp.png",
+      "plan": "chr_0a2/bank.json"
+    },
+    {
+      "id": "0a3",
+      "aliases": [],
+      "address": "0x0828350c",
+      "size": "0x00002528",
+      "directory": "0x082859ac",
+      "source": "chr_0a3/koma.8bpp.png",
+      "plan": "chr_0a3/bank.json"
+    },
+    {
+      "id": "0a4",
+      "aliases": [],
+      "address": "0x08285a34",
+      "size": "0x00001d40",
+      "directory": "0x082876ec",
+      "source": "chr_0a4/koma.8bpp.png",
+      "plan": "chr_0a4/bank.json"
+    }
+  ]
+}

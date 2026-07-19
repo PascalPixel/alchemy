@@ -15,7 +15,7 @@
       "address": "0x082b5060",
       "size": "0x00000150",
       "directory": "0x082b5194",
-      "plan": "chr_019/bank.json"
+      "plan": "fenrir/bank.json"
     },
     {
       "id": "01a",
@@ -160,7 +160,7 @@
       "address": "0x082bb558",
       "size": "0x0000079c",
       "directory": "0x082bbce0",
-      "plan": "chr_0e4/bank.json"
+      "plan": "mimic/bank.json"
     },
     {
       "id": "0e5",
@@ -518,7 +518,7 @@
       "address": "0x082cbff0",
       "size": "0x00000328",
       "directory": "0x082cc310",
-      "plan": "chr_109/bank.json"
+      "plan": "nightmare/bank.json"
     },
     {
       "id": "10a",
@@ -527,7 +527,7 @@
       "address": "0x082cc318",
       "size": "0x000002c0",
       "directory": "0x082cc5d0",
-      "plan": "chr_10a/bank.json"
+      "plan": "recluse/bank.json"
     },
     {
       "id": "10b",

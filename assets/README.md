@@ -320,7 +320,13 @@ bank's `bank.json`, sized from the bank header. Each family directory keeps
 only its `index.json`; the descriptor-linked banks themselves are stored by
 role, large battle-animation banks under `graphics/battle/characters/chr_NNN/`
 and small field walk-sprite banks under `graphics/field/characters/chr_NNN/`,
-resolved back to their series by the index plan name. The 310 banks (279
+resolved back to their series by the index plan name. Banks whose sprite is
+referenced by exactly one enemy in the traced combatant table (ROM
+`0x08080ec8`) are renamed to that enemy's shipped, kebab-cased name (for
+example `battle/characters/bandit/`, `field/characters/fenrir/`), with the plan
+string in the owning `index.json` updated to match; `data/enemy_sprites.json`
+is the evidence register mapping every combatant record to its name, sprite id,
+and directory. The 310 banks (279
 battle, 31 field) hold 5,727 unique frames across as many files; the codec
 derives each frame's filename from its index, so no atlas geometry is stored. Their payload-free plans
 preserve logical pointer aliases and all three

@@ -80,7 +80,7 @@
       "address": "0x08209c90",
       "size": "0x00004780",
       "directory": "0x0820e300",
-      "plan": "chr_040/bank.json"
+      "plan": "grand-golem/bank.json"
     },
     {
       "id": "041",

@@ -184,7 +184,7 @@
       "address": "0x082ab9a8",
       "size": "0x00000508",
       "directory": "0x082abea4",
-      "plan": "chr_0c9/bank.json"
+      "plan": "killer-ape/bank.json"
     },
     {
       "id": "0ca",
@@ -290,7 +290,7 @@
       "address": "0x082b4b8c",
       "size": "0x00000230",
       "directory": "0x082b4db4",
-      "plan": "chr_01b/bank.json"
+      "plan": "bandit/bank.json"
     },
     {
       "id": "018",

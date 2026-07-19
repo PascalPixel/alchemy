@@ -1,0 +1,37 @@
+.syntax unified
+.text
+	.thumb
+	.global Fragment_080e24fa
+	.thumb_func
+Fragment_080e24fa:
+	.inst.n 0x0000
+	.inst.n 0x1f0c
+	.inst.n 0x0300
+	.inst.n 0x0c58
+	.inst.n 0x0201
+	.inst.n 0xffff
+	.inst.n 0x0000
+	.inst.n 0x038e
+	.inst.n 0x0000
+	.inst.n 0xffff
+	.inst.n 0x007e
+	.inst.n 0xde48
+	.inst.n 0x080e
+	.inst.n 0xc000
+	.inst.n 0xffff
+	.inst.n 0xdeca
+	.inst.n 0x080e
+	.inst.n 0xded0
+	.inst.n 0x080e
+	.inst.n 0xecae
+	.inst.n 0x080e
+	.inst.n 0xdebe
+	.inst.n 0x080e
+	.inst.n 0x0000
+	.inst.n 0x0201
+	.inst.n 0x7824
+	.inst.n 0x0000
+	.inst.n 0xd261
+	.inst.n 0x080c
+	.inst.n 0x77d8
+	.inst.n 0x0000

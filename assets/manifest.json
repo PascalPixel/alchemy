@@ -10979,6 +10979,10 @@
           "size": "0x84"
         }
       ]
+    },
+    {
+      "kind": "golden-sun-sentou-resource-series",
+      "index": "assets/graphics/sentou/index.json"
     }
   ]
 }

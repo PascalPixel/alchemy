@@ -1,22 +1,11 @@
-@ 呼出しグラフで未到達だったコード間隙関数の再構築サム逆アセンブル。
-@ 探索では未到達。build_asm.tsでバイト一致確認済み。
+@ 呼出しグラフで未到達だったコード間隙断片の再構築サム逆アセンブル。
+@ 先頭のFunc_08005e70はC一致で分離済み。探索では未到達。
+@ build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_08005e70
+	.global Func_08005e88
 	.thumb_func
-Func_08005e70:
-	push	{lr}
-	ldr	r2, [pc, #16]
-	ldrb	r3, [r2, #0]
-	cmp	r3, #0
-	beq.n	.L0
-	movs	r3, #1
-	strb	r3, [r2, #8]
-.L0:
-	pop	{r0}
-	bx	r0
-	movs	r0, r0
-	.4byte 0x02002240
+Func_08005e88:
 	ldr	r0, [pc, #56]
 	ldr	r4, [pc, #40]
 	ldr	r1, [pc, #56]

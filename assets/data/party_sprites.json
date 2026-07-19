@@ -1,0 +1,37 @@
+{
+  "format": 1,
+  "kind": "party-battle-sprites",
+  "evidence": "kihon actor_pose_rows idle pose 0x140+actor; names message_archive bank0 index 102+actor (felix hand-mapped bank0 106)",
+  "entries": [
+    {
+      "actor": 0,
+      "name": "Isaac",
+      "descriptor": "0x140",
+      "directory": "battle/characters/isaac"
+    },
+    {
+      "actor": 1,
+      "name": "Garet",
+      "descriptor": "0x141",
+      "directory": "battle/characters/garet"
+    },
+    {
+      "actor": 2,
+      "name": "Ivan",
+      "descriptor": "0x142",
+      "directory": "battle/characters/ivan"
+    },
+    {
+      "actor": 3,
+      "name": "Mia",
+      "descriptor": "0x143",
+      "directory": "battle/characters/mia"
+    },
+    {
+      "actor": 5,
+      "name": "Felix",
+      "descriptor": "0x145",
+      "directory": "battle/characters/felix"
+    }
+  ]
+}

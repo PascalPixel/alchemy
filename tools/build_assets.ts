@@ -38,6 +38,7 @@ import { build_localization_font } from "./localization_font.ts";
 import { build_localization_tables } from "./localization_tables.ts";
 import { build_battle_effect_data } from "./battle_effect_data.ts";
 import { build_sentou_hyouji } from "./sentou_hyouji.ts";
+import { build_sentou_kouka_runtime } from "./sentou_kouka_runtime.ts";
 import { build_sentou_resource, build_sentou_series } from "./sentou_resources.ts";
 import { build_encounter_regions } from "./encounter_data.ts";
 import { build_namae_nyuuryoku } from "./namae_nyuuryoku.ts";
@@ -734,6 +735,22 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     nested.forEach(sourcePath);
     const built = build_sentou_hyouji(source);
     return [built, nested, { source_bytes: built.length, typed_tables: 3, atlases: 2 }];
+  }
+  if (kind === "golden-sun-sentou-kouka-runtime") {
+    const sourceName = String(entry.source);
+    const source = sourcePath(sourceName);
+    const built = build_sentou_kouka_runtime(source);
+    if (number(entry.address) !== 0x080eda78 || built.length !== number(entry.size))
+      throw new Error("battle-effect runtime differs from manifest");
+    const document = JSON.parse(readFileSync(source, "utf8"));
+    const directory = dirname(sourceName);
+    const nested = [sourceName, ...Object.values(document.sources).map((name) => join(directory, String(name)))];
+    nested.forEach(sourcePath);
+    return [built, nested, {
+      source_bytes: built.length,
+      callback_slots: 407,
+      derived_zero_bytes: 4012,
+    }];
   }
   if (kind === "golden-sun-sentou-resource") {
     const source = sourcePath(String(entry.source));

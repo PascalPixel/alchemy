@@ -32,8 +32,8 @@ is:
 | Cross-function shared-literal module | 2 | 692 | Keep structured assembly pending module-aware C build |
 | Proven deliberate performance modules | 2 | 954 | Keep assembly |
 | Mixed-mode multiply helper | 1 | 16 | Keep assembly |
-| Likely ordinary compiler output | 1,335 | 457,980 | Convert to exact C |
-| **Total** | **1,750** | **510,522** | |
+| Likely ordinary compiler output | 1,329 | 457,422 | Convert to exact C |
+| **Total** | **1,744** | **509,964** | |
 
 These counts describe files, not callable entries. `080000c0.s` bundles 96
 fixed-width dispatch entries, `08006864.s` bundles two BIOS wrappers, and

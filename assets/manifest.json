@@ -74,6 +74,12 @@
       "source": "assets/graphics/08073812.gbapal.png"
     },
     {
+      "address": "0x08073852",
+      "size": "0x37ae",
+      "kind": "golden-sun-namae-nyuuryoku",
+      "source": "assets/graphics/namae_nyuuryoku/gamen.json"
+    },
+    {
       "address": "0x0807a828",
       "size": "0xf7d8",
       "kind": "golden-sun-gameplay-databases",

@@ -28,7 +28,7 @@ import { build_sound_table } from "./music.ts";
 import { build_sequence as build_sound_sequence } from "./music_sequence.ts";
 import { buildWaveRecord } from "./audio_wave.ts";
 import { build_still } from "./indexed_still.ts";
-import { build_static_sprite_series } from "./static_sprite_series.ts";
+import { build_static_sprite_series, static_sprite_frame_name } from "./static_sprite_series.ts";
 import { build_resource_directory } from "./resource_directory.ts";
 import { build_title_resource } from "./title_resources.ts";
 import { build_simple_resource } from "./simple_resources.ts";
@@ -954,8 +954,12 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
       const plan = JSON.parse(readFileSync(sourcePath(planSource), "utf8"));
       if (Array.isArray(plan.atlases)) {
         for (const atlas of plan.atlases) sources.push(join(dirname(planSource), String(atlas.source)));
-      } else {
+      } else if (plan.atlas_columns !== undefined) {
         sources.push(join(directory, String(item.source)));
+      } else {
+        for (let frame = 0; frame < plan.frames.length; frame++) {
+          sources.push(join(dirname(planSource), static_sprite_frame_name(frame)));
+        }
       }
     }
     return [built, sources, report];

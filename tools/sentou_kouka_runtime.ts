@@ -348,6 +348,7 @@ function exportMasks(data: Buffer): Json {
 
 interface InstructionRow {
   address: number;
+  word: string;
   text: string;
 }
 
@@ -367,7 +368,11 @@ function objdumpRows(data: Buffer, base: number, thumb = false): InstructionRow[
         ? /^\s*([0-9a-f]+):\s+[0-9a-f]{4}\s+(.+)$/.exec(line)
         : /^\s*([0-9a-f]+):\s+[0-9a-f]{8}\s+(.+)$/.exec(line);
       if (!match) continue;
-      rows.push({ address: Number.parseInt(match[1], 16), text: match[2].replace(/\s+@.*$/, "").trim() });
+      rows.push({
+        address: Number.parseInt(match[1], 16),
+        word: thumb ? "" : line.match(/^\s*[0-9a-f]+:\s+([0-9a-f]{8})\s+/)![1],
+        text: match[2].replace(/\s+@.*$/, "").trim(),
+      });
     }
     return rows;
   } finally {
@@ -376,6 +381,7 @@ function objdumpRows(data: Buffer, base: number, thumb = false): InstructionRow[
 }
 
 const BRANCH = /\b(b(?:l|eq|ne|cs|cc|mi|pl|vs|vc|hi|ls|ge|lt|gt|le|hs|lo)?)\s+0x([0-9a-f]+)\b/;
+const ARM_PC_LITERAL = /^ldr[a-z]*\s+(?:r\d+|sp|lr|ip),\s*\[pc,\s*#(-?\d+)\]/;
 
 function localLabel(address: number): string {
   return `.L_${address.toString(16).padStart(8, "0")}`;
@@ -385,11 +391,18 @@ function renderRows(rows: InstructionRow[], base: number, end: number, named: Re
   const byAddress = new Map(rows.map((row) => [row.address, row]));
   for (let address = base; address < end; address += 4) if (!byAddress.has(address)) throw new Error(`missing ARM row at ${hexadecimal(address)}`);
   const branchTargets = new Set<number>();
+  const literalWords = new Set<number>();
   for (const row of rows) {
     const match = BRANCH.exec(row.text);
-    if (!match) continue;
-    const target = Number.parseInt(match[2], 16);
-    if (base <= target && target < end) branchTargets.add(target);
+    if (match) {
+      const target = Number.parseInt(match[2], 16);
+      if (base <= target && target < end) branchTargets.add(target);
+    }
+    const literal = ARM_PC_LITERAL.exec(row.text);
+    if (literal !== null) {
+      const target = row.address + 8 + Number(literal[1]);
+      if ((target & 3) === 0 && base <= target && target + 4 <= end) literalWords.add(target);
+    }
   }
   const output: string[] = [];
   for (let address = base; address < end; address += 4) {
@@ -398,8 +411,17 @@ function renderRows(rows: InstructionRow[], base: number, end: number, named: Re
     if (branchTargets.has(address) && !name) output.push(`${localLabel(address)}:`);
     let text = byAddress.get(address)!.text;
     const undefinedWord = /^@ <UNDEFINED> instruction: (0x[0-9a-f]{8})$/.exec(text);
-    if (undefinedWord) text = `.4byte ${undefinedWord[1]}`;
+    if (literalWords.has(address)) text = `.4byte 0x${byAddress.get(address)!.word}`;
+    else if (undefinedWord) text = `.4byte ${undefinedWord[1]}`;
     else text = text.replace(/^\.word\s+(0x[0-9a-f]{8})$/, ".4byte $1");
+    // ARMv4T reserves PC writeback forms of halfword and signed loads. GNU
+    // objdump prints a mnemonic for them, but GAS correctly refuses to emit
+    // that architecturally-invalid spelling. Retain the explicitly bounded
+    // instruction word so the reconstructed helper stays byte exact.
+    if (/^ldr(?:h|sh|sb)[a-z]*\s+r\d+,\s*\[pc\],/.test(text) ||
+        /^tst[a-z]*\s+r\d+,\s+r\d+,\s+lsl r\d+$/.test(text)) {
+      text = `.4byte 0x${byAddress.get(address)!.word}`;
+    }
     text = text.replace(BRANCH, (whole, mnemonic: string, targetText: string) => {
       const target = Number.parseInt(targetText, 16);
       const namedTarget = named.get(target);

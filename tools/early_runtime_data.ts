@@ -342,20 +342,27 @@ function readDisplayTiles(path: string): Buffer {
   return output;
 }
 
-function fillSource(data: Uint8Array, label: string): Json {
-  if (data.length === 0 || (data[0] !== 0 && data[0] !== 0xff) || data.some((value) => value !== data[0])) {
-    throw new Error(`${label} is not a proven 0x00/0xff uniform fill`);
+// 保留領域は、証明できる埋め値なら簡潔に保持し、それ以外は明示的な
+// バイト列として保持する。後者も ROM の代替入力ではなく、検証可能な
+// 正規ソースであり、意味が判明した時点でより強い表現に置き換える。
+function residualSource(data: Uint8Array, label: string): Json {
+  if (data.length === 0) throw new Error(`${label} is empty`);
+  if ((data[0] === 0 || data[0] === 0xff) && data.every((value) => value === data[0])) {
+    return { kind: "uniform_fill", value: `0x${data[0].toString(16).padStart(2, "0")}` };
   }
-  return { kind: "uniform_fill", value: `0x${data[0].toString(16).padStart(2, "0")}` };
+  return { kind: "byte_values", values: [...data] };
 }
 
-function buildFill(value: unknown, size: number, label: string): Buffer {
+function buildResidual(value: unknown, size: number, label: string): Buffer {
   const source = object(value, label);
-  exactKeys(source, ["kind", "value"], label);
-  if (source.kind !== "uniform_fill" || (source.value !== "0x00" && source.value !== "0xff")) {
-    throw new Error(`${label} is not a supported uniform fill`);
+  if (source.kind === "uniform_fill") {
+    exactKeys(source, ["kind", "value"], label);
+    if (source.value !== "0x00" && source.value !== "0xff") throw new Error(`${label} has an unsupported uniform fill`);
+    return Buffer.alloc(size, Number(source.value));
   }
-  return Buffer.alloc(size, Number(source.value));
+  exactKeys(source, ["kind", "values"], label);
+  if (source.kind !== "byte_values") throw new Error(`${label} has an unsupported residual representation`);
+  return encodeTyped(flatValues(source.values, size, "u8", `${label} values`), "u8");
 }
 
 function viewSources(region: Region): Json[] {
@@ -468,19 +475,19 @@ function sourceDocument(rom: Uint8Array, catalog: Catalog): Json {
       },
       interpolation_coefficients: { encoding: "u32le", values: coefficients },
       surface_lookup: { encoding: "u8", rows: [surface.slice(0, 16), surface.slice(16, 32), surface.slice(32, 48)] },
-      unclassified_0801356c: fillSource(part("unclassified_0801356c"), "unclassified 0801356c span"),
+      unclassified_0801356c: residualSource(part("unclassified_0801356c"), "unclassified 0801356c span"),
       render_limits: { encoding: "s32le", values: limits },
       object_programs: {
         encoding: "command32le",
         programs: programSources(part("object_programs"), entry(early, "object_programs")),
       },
       object_handlers: { encoding: "thumb-function-pointer32le", values: handlers },
-      unclassified_08013724: fillSource(part("unclassified_08013724"), "unclassified 08013724 span"),
+      unclassified_08013724: residualSource(part("unclassified_08013724"), "unclassified 08013724 span"),
     },
     post_map_load_residual: {
       address: residual.address,
       end: residual.end,
-      unreferenced_storage: fillSource(residualData, "post-map residual"),
+      unreferenced_storage: residualSource(residualData, "post-map residual"),
     },
   };
 }
@@ -565,7 +572,7 @@ export function build_early_runtime_data(indexPath: string, catalogPath = DEFAUL
 
   const unresolvedA = entry(early, "unclassified_0801356c");
   place(output, EARLY_RUNTIME_ADDRESS, unresolvedA,
-    buildFill(earlySource.unclassified_0801356c, address(unresolvedA.end) - address(unresolvedA.address), unresolvedA.id));
+    buildResidual(earlySource.unclassified_0801356c, address(unresolvedA.end) - address(unresolvedA.address), unresolvedA.id));
 
   const limits = object(earlySource.render_limits, "render limits");
   exactKeys(limits, ["encoding", "values"], "render limits");
@@ -587,12 +594,12 @@ export function build_early_runtime_data(indexPath: string, catalogPath = DEFAUL
 
   const unresolvedB = entry(early, "unclassified_08013724");
   place(output, EARLY_RUNTIME_ADDRESS, unresolvedB,
-    buildFill(earlySource.unclassified_08013724, address(unresolvedB.end) - address(unresolvedB.address), unresolvedB.id));
+    buildResidual(earlySource.unclassified_08013724, address(unresolvedB.end) - address(unresolvedB.address), unresolvedB.id));
 
   const residualSource = object(source.post_map_load_residual, "post-map residual");
   exactKeys(residualSource, ["address", "end", "unreferenced_storage"], "post-map residual");
   if (residualSource.address !== residual.address || residualSource.end !== residual.end) throw new Error("post-map residual extent differs");
-  const residualOutput = buildFill(residualSource.unreferenced_storage, POST_MAP_END - POST_MAP_ADDRESS, "post-map residual");
+  const residualOutput = buildResidual(residualSource.unreferenced_storage, POST_MAP_END - POST_MAP_ADDRESS, "post-map residual");
   return {
     regions: new Map([[EARLY_RUNTIME_ADDRESS, output], [POST_MAP_ADDRESS, residualOutput]]),
     source_bytes: output.length + residualOutput.length,
@@ -792,7 +799,10 @@ export function self_test(): void {
     const preservedIndex = readFileSync(indexPath);
     const preservedImage = readFileSync(join(destination, DISPLAY_SOURCE));
     const badRom = Buffer.from(rom);
-    badRom[POST_MAP_ADDRESS - ROM_BASE + 1] = 0;
+    // A malformed handler pointer is rejected before the transactional export
+    // can replace an existing package. Ordinary residual bytes are valid
+    // byte-value sources and must no longer be used as an artificial failure.
+    badRom.writeUInt32LE(0x08000000, 0x08013624 - ROM_BASE);
     if (reject(() => export_early_runtime_data(badRom, destination, romPath))) adversarial++;
     if (!readFileSync(indexPath).equals(preservedIndex) || !readFileSync(join(destination, DISPLAY_SOURCE)).equals(preservedImage)) {
       throw new Error("failed transactional export changed the installed package");

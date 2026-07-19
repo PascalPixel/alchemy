@@ -1,0 +1,37 @@
+{
+  "format": 1,
+  "kind": "golden-sun-thumb-long-call-veneer-island-source",
+  "address": "0x080a1000",
+  "end": "0x080a1050",
+  "slot_size": 8,
+  "counts": {
+    "live_missing": 0,
+    "unknown": 3
+  },
+  "slots": [
+    {
+      "address": "0x080a1018",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x080a7381",
+      "ultimate_target": "0x080a7381",
+      "source": "080a1018.s"
+    },
+    {
+      "address": "0x080a1020",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x080a1779",
+      "ultimate_target": "0x080a1779",
+      "source": "080a1020.s"
+    },
+    {
+      "address": "0x080a1048",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x080a4925",
+      "ultimate_target": "0x080a4925",
+      "source": "080a1048.s"
+    }
+  ]
+}

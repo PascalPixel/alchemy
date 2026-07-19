@@ -399,6 +399,26 @@
           "maximum_undefined_words": 0
         }
       ]
+    },
+    {
+      "address": "0x080b5138",
+      "size": 560,
+      "classification": "executable",
+      "consumers": [
+        "dedicated-veneer-island-residual"
+      ],
+      "sections": [
+        {
+          "address": "0x080b5138",
+          "size": 560,
+          "kind": "thumb",
+          "source": "080b5138.s",
+          "symbols": [
+            "Func_080b5138"
+          ],
+          "maximum_undefined_words": 0
+        }
+      ]
     }
   ],
   "fragments": [
@@ -821,7 +841,7 @@
     },
     {
       "address": "0x080b5010",
-      "end": "0x080b5368",
+      "end": "0x080b5138",
       "kind": "dedicated-veneer-island"
     },
     {

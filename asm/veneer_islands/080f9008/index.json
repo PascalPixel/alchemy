@@ -1,0 +1,93 @@
+{
+  "format": 1,
+  "kind": "golden-sun-thumb-long-call-veneer-island-source",
+  "address": "0x080f9008",
+  "end": "0x080f9080",
+  "slot_size": 8,
+  "counts": {
+    "live_missing": 0,
+    "unknown": 10
+  },
+  "slots": [
+    {
+      "address": "0x080f9020",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x080f94c9",
+      "ultimate_target": "0x080f94c9",
+      "source": "080f9020.s"
+    },
+    {
+      "address": "0x080f9028",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x080f94e1",
+      "ultimate_target": "0x080f94e1",
+      "source": "080f9028.s"
+    },
+    {
+      "address": "0x080f9030",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x080f94f9",
+      "ultimate_target": "0x080f94f9",
+      "source": "080f9030.s"
+    },
+    {
+      "address": "0x080f9038",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x080f950d",
+      "ultimate_target": "0x080f950d",
+      "source": "080f9038.s"
+    },
+    {
+      "address": "0x080f9040",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x080f9539",
+      "ultimate_target": "0x080f9539",
+      "source": "080f9040.s"
+    },
+    {
+      "address": "0x080f9050",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x080f92fd",
+      "ultimate_target": "0x080f92fd",
+      "source": "080f9050.s"
+    },
+    {
+      "address": "0x080f9058",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x080f9559",
+      "ultimate_target": "0x080f9559",
+      "source": "080f9058.s"
+    },
+    {
+      "address": "0x080f9060",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x080f9565",
+      "ultimate_target": "0x080f9565",
+      "source": "080f9060.s"
+    },
+    {
+      "address": "0x080f9068",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x080f9571",
+      "ultimate_target": "0x080f9571",
+      "source": "080f9068.s"
+    },
+    {
+      "address": "0x080f9078",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x080f95a1",
+      "ultimate_target": "0x080f95a1",
+      "source": "080f9078.s"
+    }
+  ]
+}

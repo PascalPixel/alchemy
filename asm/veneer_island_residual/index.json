@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "kind": "golden-sun-executable-gap-source-package",
+  "rom_base": "0x08000000",
+  "limit": "0x080fb792",
+  "planned_gaps": 1,
+  "planned_gap_bytes": 560,
+  "gaps": [
+    {
+      "address": "0x080b5138",
+      "size": 560,
+      "sections": [
+        {
+          "address": "0x080b5138",
+          "size": 560,
+          "kind": "thumb",
+          "source": "080b5138.s",
+          "instruction_bytes": 560,
+          "literal_words": 0,
+          "undefined_words": 0
+        }
+      ]
+    }
+  ]
+}

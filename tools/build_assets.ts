@@ -2,7 +2,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { encode_general, encode_general_prefill, encode_palette } from "./extract_resource.ts";
-import { resourceGraphicsDir } from "./asset_paths.ts";
+import { characterBankPath, resourceGraphicsDir } from "./asset_paths.ts";
 import { gba_graphics, gba_palette_rgba, indexed_png, rgba_png } from "./import_asset.ts";
 import { build_archive as build_offset_archive } from "./archive_asset.ts";
 import { import_tilemap } from "./tilemap.ts";
@@ -949,7 +949,8 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     const directory = dirname(String(entry.source));
     const sources = [String(entry.source), String(entry.palette)];
     for (const item of index.packages ?? []) {
-      const planSource = join(directory, String(item.plan));
+      // 分類済みの battle/field 配下も追跡対象に含める。
+      const planSource = relative(ROOT, characterBankPath(resolve(ROOT, directory), String(item.plan)));
       sources.push(planSource);
       const plan = JSON.parse(readFileSync(sourcePath(planSource), "utf8"));
       if (Array.isArray(plan.atlases)) {

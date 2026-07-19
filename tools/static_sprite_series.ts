@@ -6,6 +6,7 @@ import {
 import { tmpdir } from "node:os";
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { prune_files } from "./generated_files.ts";
+import { characterBankPath } from "./asset_paths.ts";
 import { indexed_png, type Rgb } from "./import_asset.ts";
 import { png, read_palette } from "./skip_sprite_archive.ts";
 import {
@@ -432,7 +433,8 @@ export function build_static_sprite_series(indexPath: string, palettePath: strin
   for (const item of index.packages) {
     const address = number(item.address), end = address + number(item.size);
     if (base + result.length !== address) throw new Error(`sprite package ${item.id} is not contiguous`);
-    const planPath = confined(root, String(item.plan));
+    // 分類済みの battle/field 配下も許容する。plan は family 名を保つ。
+    const planPath = characterBankPath(root, String(item.plan));
     const plan = JSON.parse(readFileSync(planPath, "utf8"));
     if (plan.format !== 1 || plan.codec !== "golden-sun-static-sprite-bank" || !Array.isArray(plan.frames) || !Array.isArray(plan.directory)) {
       throw new Error(`unsupported sprite package plan: ${item.id}`);

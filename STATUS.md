@@ -24,13 +24,43 @@ bytes are presently retained structural assembly: linker veneers, runtime
 thunks, fixed hardware entry points, shared-literal modules, and proven
 compiler-unproducible kernels.
 
-Using the fan-facing “Total decompilation” definition, 7,859,997 of 8,388,608
-bytes are already in pret-level clean source form: canonical assets, exact C,
-or positively retained structural assembly. The remaining 528,611 bytes are
-the 492,294-byte assembly debt plus the 36,317 unowned bytes, giving 93.70%.
+The byte-reconstruction milestone is 7,859,997 of 8,388,608 bytes, or 93.70%.
+It counts exact C, deterministic asset round trips, and positively retained
+structural assembly. The remaining 528,611 bytes are the 492,294-byte assembly
+debt plus the 36,317 unowned bytes.
 
-Source ownership therefore measures whether every ROM address has a canonical
-tracked producer. It does not measure how much executable code has reached C.
+That milestone is deliberately not called project completion. Source ownership
+only asks whether an address has a canonical tracked producer, while byte
+reconstruction only asks whether a source form reproduces the right bytes. A
+round-tripping image can still have arbitrary columns, split objects, or
+packing bands; comparable provisional layouts can exist in maps, audio, and
+archives. Those sources remain useful build inputs, but do not receive semantic
+completion credit until the whole producing pipeline is audited.
+
+## Project-completion gates
+
+Project completion means reaching a pret-like source tree: byte-identical,
+readable C and justified structural assembly, coherent PNG/MID/WAV and semantic
+JSON sources, deterministic TypeScript encoders, and a flat, intentional file
+layout. The aggregate percentage is currently **withheld** rather than inferred
+from unrelated byte totals.
+
+| Dimension | Current result | Meaning |
+|---|---:|---|
+| Source ownership | 8,352,291 / 8,388,608 bytes (99.57%) | A tracked producer owns the address |
+| Byte reconstruction | 7,859,997 / 8,388,608 bytes (93.70%) | Exact C, round-tripping assets, or retained structural assembly |
+| Code decompilation | 29,654 / 521,948 identified executable bytes (5.68%) | Active executable work represented as exact C |
+| Asset semantic maturity | Audit pending | Round-trip success has not yet been classified as coherent or provisional |
+| Repository organization | Audit pending | Flatness, naming, source formats, and generated-file boundaries need a formal audit |
+| **Project completion** | **Audit pending** | No arbitrary weighted score is published |
+
+`build_full.ts` records these gates in `project_completion`. Until a tracked
+asset-maturity register exists, its formal classified count is zero and all
+2,276 round-tripping asset regions remain unclassified for project-completion
+purposes. That is not a claim that every asset is poor; it prevents unreviewed
+containers from silently receiving clean-source credit. The report also keeps
+the former `total_decompilation_*` fields as explicitly deprecated aliases for
+the byte-reconstruction milestone so existing local consumers do not break.
 
 ## The unowned 36,317 bytes
 
@@ -157,8 +187,11 @@ analysis, compiler output, and build products are git-ignored.
 
 ## Definition of completion
 
-Reconstruction is complete only when the tracked sources and generic tooling,
-given the canonical private English ROM and approved compiler, independently
-produce a byte-identical full ROM with no copied source gaps. Full C
-decompilation is the further condition that no assembly remains except regions
-with positive evidence that C cannot or should not reproduce them.
+Project completion is reached only when the tracked sources and generic
+tooling, given the canonical private English ROM and approved compiler,
+independently produce a byte-identical full ROM with no copied source gaps;
+ordinary executable assembly has become exact C; the remaining assembly has a
+positive structural reason; every canonical asset is semantically coherent
+rather than merely round-trippable; and the repository has a flat, intentional,
+source-only organization. The aggregate stays unscored until every one of those
+conditions has an auditable measurement.

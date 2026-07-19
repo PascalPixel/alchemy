@@ -18,8 +18,8 @@
       "evidence": [
         "fixed_ldr_r4_bx_r4_literal"
       ],
-      "expected_files": 320,
-      "expected_bytes": 2560
+      "expected_files": 321,
+      "expected_bytes": 2568
     }
   ],
   "groups": [
@@ -1027,13 +1027,19 @@
         "approved_compiler_thumb_only",
         "byte_exact_reconstruction"
       ],
-      "expected_files": 4,
-      "expected_bytes": 2196,
+      "expected_files": 10,
+      "expected_bytes": 5720,
       "files": [
         "08002544",
         "08002808",
         "08002cf4",
-        "08002d5c"
+        "08002d5c",
+        "08009bb8",
+        "08009e7c",
+        "0800a0f8",
+        "0800a37c",
+        "0800a418",
+        "0800a494"
       ],
       "subregions": [
         {
@@ -1058,6 +1064,42 @@
           "load_address": "0x08002d5c",
           "size": 124,
           "kind": "thumb_bl_relocation_walker_arm",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x08009bb8",
+          "size": 708,
+          "kind": "caller_bounded_arm_module",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x08009e7c",
+          "size": 636,
+          "kind": "caller_bounded_arm_module",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x0800a0f8",
+          "size": 644,
+          "kind": "caller_bounded_arm_module",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x0800a37c",
+          "size": 156,
+          "kind": "caller_bounded_arm_module",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x0800a418",
+          "size": 124,
+          "kind": "caller_bounded_arm_module",
+          "authorship": "unknown"
+        },
+        {
+          "load_address": "0x0800a494",
+          "size": 1256,
+          "kind": "caller_bounded_arm_module",
           "authorship": "unknown"
         }
       ]

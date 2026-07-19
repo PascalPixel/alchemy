@@ -39,6 +39,7 @@ import { build_localization_tables } from "./localization_tables.ts";
 import { build_battle_effect_prefix } from "./battle_effect_data.ts";
 import { build_sentou_resource, build_sentou_series } from "./sentou_resources.ts";
 import { build_encounter_regions } from "./encounter_data.ts";
+import { build_namae_nyuuryoku } from "./namae_nyuuryoku.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -672,6 +673,18 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     if (region === undefined || region.size !== number(entry.size))
       throw new Error("encounter-data region differs from manifest");
     return [region.data, [String(entry.source)], { source_bytes: region.data.length }];
+  }
+  if (kind === "golden-sun-namae-nyuuryoku") {
+    const source = sourcePath(String(entry.source));
+    const document = JSON.parse(readFileSync(source, "utf8"));
+    if (number(document.address) !== number(entry.address) ||
+        number(document.end) - number(document.address) !== number(entry.size))
+      throw new Error("name-entry extent differs from manifest");
+    const built = build_namae_nyuuryoku(document);
+    return [built, [String(entry.source)], {
+      resource_ids: document.resource_ids.length,
+      tilemap_entries: document.tilemap.tiles.reduce((sum: number, row: Json[]) => sum + row.length, 0),
+    }];
   }
   if (kind === "golden-sun-gameplay-databases") {
     const source = sourcePath(String(entry.source));

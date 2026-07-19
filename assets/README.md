@@ -43,6 +43,14 @@ pointer directory. Semantic tokens distinguish the ROM base, the table's self
 pointer, 971 unique resource targets, two aliases, and 25 reserved null slots;
 the builder resolves those tokens back to the exact 4,000-byte table.
 
+Resource 2 preserves its twelve-digit numeric stamp as text plus an explicit
+four-byte trailer. `graphics/resource_13/font.4bpp.png` is the complete 256-
+glyph 8x8 UI font in character-code order. Resource 14 preserves 1,120
+BGR555-compatible words in a neutral 16-column RGBA visualization without
+claiming unproven palette rows. Resource 18 is the coherent 240x160 8bpp
+Nintendo screen selected by `Func_080f2b70`; its indexed PNG carries the exact
+224-color palette and a payload-free tag-1 compression plan.
+
 `graphics/resource_15/` through `graphics/resource_17/` reconstruct the title
 sequence's native graphics packages. Resource 15 separates the OBJ light,
 sun, and rainbow pieces according to their runtime tile starts. Resource 16 is

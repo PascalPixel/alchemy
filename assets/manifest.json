@@ -80,6 +80,24 @@
       "source": "assets/data/resource_directory.json"
     },
     {
+      "address": "0x08320fa0",
+      "size": "0x10",
+      "kind": "golden-sun-simple-resource",
+      "resource_id": "0x2"
+    },
+    {
+      "address": "0x08320fb0",
+      "size": "0x2000",
+      "kind": "golden-sun-simple-resource",
+      "resource_id": "0x13"
+    },
+    {
+      "address": "0x08322fb0",
+      "size": "0x8c0",
+      "kind": "golden-sun-simple-resource",
+      "resource_id": "0x14"
+    },
+    {
       "address": "0x08323870",
       "size": "0x1177",
       "kind": "golden-sun-title-lz",
@@ -96,6 +114,12 @@
       "size": "0x86f8",
       "kind": "golden-sun-title-lz",
       "source": "assets/graphics/resource_17/container.json"
+    },
+    {
+      "address": "0x083337a0",
+      "size": "0x828",
+      "kind": "golden-sun-simple-resource",
+      "resource_id": "0x18"
     },
     {
       "address": "0x08333fc8",

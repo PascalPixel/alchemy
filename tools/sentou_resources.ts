@@ -111,6 +111,9 @@ export const SENTOU_RESOURCES: readonly Spec[] = [
   g(0x05c, 0x083d6010, 0x01b4, 0x01b4, 0x0300),
   p(0x05d, 0x083d61c4, 0x0398, 0x0395, 0x1200),
   p(0x05e, 0x083d655c, 0x1d88, 0x1d86, 0x564c),
+  g(0x05f, 0x083d82e4, 0x0278, 0x0277, 0x0480),
+  g(0x065, 0x083dc418, 0x043c, 0x043b, 0x08b0),
+  g(0x067, 0x083dc968, 0x019c, 0x019c, 0x035c),
   g(0x069, 0x083dd0e4, 0x04a0, 0x049d, 0x0a00),
   p(0x06a, 0x083dd584, 0x0d14, 0x0d12, 0x1deb),
   p(0x06c, 0x083de7d8, 0x0840, 0x083e, 0x1b00, 0),
@@ -178,6 +181,91 @@ function exactKeys(value: Record<string, unknown>, keys: readonly string[], labe
   if (actual.length !== expected.length || actual.some((key, index) => key !== expected[index])) {
     throw new Error(`${label} has unexpected fields`);
   }
+}
+
+function document(text: string, pretty: boolean): unknown {
+  const value: unknown = JSON.parse(text);
+  const canonical = `${JSON.stringify(value, null, pretty ? 2 : 0)}\n`;
+  if (text !== canonical) throw new Error("sentou JSON is not canonical");
+  return value;
+}
+
+function exactBytes(actual: Uint8Array, canonical: Uint8Array, label: string): void {
+  if (!Buffer.from(actual).equals(Buffer.from(canonical))) throw new Error(`${label} is not canonical`);
+}
+
+function tokenInteger(value: unknown, label: string): number {
+  if (typeof value !== "number" || !Number.isSafeInteger(value)) throw new Error(`${label} must be an integer`);
+  return value;
+}
+
+function validateGeneralTokens(value: unknown[], decodedSize: number): asserts value is GeneralToken[] {
+  let output = 0;
+  value.forEach((token, position) => {
+    if (!Array.isArray(token) || (token[0] !== "l" && token[0] !== "c")) {
+      throw new Error(`sentou general token ${position} has an invalid opcode`);
+    }
+    if (token[0] === "l") {
+      if (token.length !== 2) throw new Error(`sentou general token ${position} has the wrong arity`);
+      const length = tokenInteger(token[1], `sentou general token ${position} length`);
+      if (length < 1 || output + length > decodedSize) throw new Error(`sentou general token ${position} crossed decoded output`);
+      output += length;
+      return;
+    }
+    if (token.length !== 3) throw new Error(`sentou general token ${position} has the wrong arity`);
+    const length = tokenInteger(token[1], `sentou general token ${position} length`);
+    const distance = tokenInteger(token[2], `sentou general token ${position} distance`);
+    const window = output - 33;
+    const width = window >= 0 && window < 2048 ? (window === 0 ? 0 : Math.floor(Math.log2(window)) + 1) : 12;
+    if (length < 2 || length > 137 || distance < 1 || distance > PREFILL + output || output + length > decodedSize) {
+      throw new Error(`sentou general token ${position} crossed its replay bounds`);
+    }
+    if (distance > 32 && distance - 33 >= 2 ** width) {
+      throw new Error(`sentou general token ${position} exceeds its encoded distance width`);
+    }
+    output += length;
+  });
+  if (output !== decodedSize) throw new Error("sentou general tokens do not cover decoded output");
+}
+
+function validatePaletteTokens(value: unknown[], decodedSize: number): asserts value is PaletteGroup[] {
+  let output = 0;
+  let ended = false;
+  value.forEach((group, groupPosition) => {
+    if (!Array.isArray(group) || ended) throw new Error(`sentou palette group ${groupPosition} is invalid`);
+    if (group[0] === "z") {
+      if (group.length !== 1 || output + 8 > decodedSize) throw new Error(`sentou palette group ${groupPosition} is invalid`);
+      output += 8;
+      return;
+    }
+    if (group[0] !== "g" || group.length !== 2 || !Array.isArray(group[1]) || group[1].length < 1 || group[1].length > 8) {
+      throw new Error(`sentou palette group ${groupPosition} is invalid`);
+    }
+    group[1].forEach((token, tokenPosition) => {
+      if (!Array.isArray(token)) throw new Error(`sentou palette token ${groupPosition}:${tokenPosition} is invalid`);
+      if (token[0] === "l") {
+        if (token.length !== 1 || output >= decodedSize) throw new Error(`sentou palette token ${groupPosition}:${tokenPosition} is invalid`);
+        output++;
+        return;
+      }
+      if (token[0] === "e") {
+        if (token.length !== 1 || tokenPosition + 1 !== group[1].length) {
+          throw new Error(`sentou palette token ${groupPosition}:${tokenPosition} is invalid`);
+        }
+        ended = true;
+        return;
+      }
+      if (token[0] !== "c" || token.length !== 3) throw new Error(`sentou palette token ${groupPosition}:${tokenPosition} is invalid`);
+      const length = tokenInteger(token[1], `sentou palette token ${groupPosition}:${tokenPosition} length`);
+      const distance = tokenInteger(token[2], `sentou palette token ${groupPosition}:${tokenPosition} distance`);
+      if (length < 2 || length > 272 || distance < 1 || distance > output || distance > 0xfff || output + length > decodedSize) {
+        throw new Error(`sentou palette token ${groupPosition}:${tokenPosition} crossed its replay bounds`);
+      }
+      output += length;
+    });
+    if (!ended && group[1].length !== 8) throw new Error(`sentou palette group ${groupPosition} is incomplete`);
+  });
+  if (!ended || output !== decodedSize) throw new Error("sentou palette tokens do not cover decoded output");
 }
 
 function child(parent: string, name: string): string {
@@ -252,6 +340,8 @@ function parsePlan(value: unknown): [Plan, Spec] {
       integer(plan.stream.decoded_size, "sentou decoded size") !== spec.decodedSize || !Array.isArray(plan.stream.tokens)) {
     throw new Error("sentou stream layout differs from the audited resource");
   }
+  if (spec.codec === "general-lz-prefill") validateGeneralTokens(plan.stream.tokens, spec.decodedSize);
+  else validatePaletteTokens(plan.stream.tokens, spec.decodedSize);
   if (typeof plan.image !== "object" || plan.image === null || Array.isArray(plan.image)) {
     throw new Error("sentou image must be an object");
   }
@@ -278,16 +368,19 @@ function parsePlan(value: unknown): [Plan, Spec] {
 
 function buildDecoded(plan: Plan, spec: Spec, directory: string): Buffer {
   const source = child(directory, plan.image.source);
+  const image = readFileSync(source);
   let data: Buffer;
   if (spec.presentation === "naiyou") {
-    const [width, , pixels] = indexed_png(readFileSync(source));
+    const [width, , pixels] = indexed_png(image);
     if (width !== 64) throw new Error("sentou data image must be 64 bytes wide");
     data = Buffer.from(pixels);
+    exactBytes(image, byte_png(data, 64)[0], "sentou data image");
   } else {
     const bpp = spec.presentation === "koma-4bpp" ? 4 : 8;
-    const [pixels, , report] = gba_graphics(readFileSync(source), bpp);
+    const [pixels, , report] = gba_graphics(image, bpp);
     if (report.width !== 240) throw new Error("sentou graphics source must be 240 pixels wide");
     data = pixels;
+    exactBytes(image, tile_png(data, bpp, 30, indexed_png(image)[3])[0], "sentou graphics source");
   }
   if (data.length !== canvasSize(spec) || data.subarray(spec.decodedSize).some((value) => value !== 0)) {
     throw new Error("sentou source canvas has nonzero data outside the decoded stream");
@@ -296,15 +389,17 @@ function buildDecoded(plan: Plan, spec: Spec, directory: string): Buffer {
 }
 
 export function build_sentou_resource(planFile: string): [Buffer, string[]] {
-  const [plan, spec] = parsePlan(JSON.parse(readFileSync(planFile, "utf8")));
+  const [plan, spec] = parsePlan(document(readFileSync(planFile, "utf8"), false));
   const directory = dirname(planFile);
   const decoded = buildDecoded(plan, spec, directory);
   const sources = [planFile, child(directory, plan.image.source)];
   let prefix = Buffer.alloc(0);
   if (plan.prefix_palette !== null) {
     const paletteFile = child(directory, plan.prefix_palette.source);
-    prefix = gba_palette_rgba(readFileSync(paletteFile))[0];
+    const image = readFileSync(paletteFile);
+    prefix = gba_palette_rgba(image)[0];
     if (prefix.length !== spec.prefixPalette) throw new Error("sentou prefix palette source has the wrong size");
+    exactBytes(image, palette_rgba_image(prefix, 16)[0], "sentou prefix palette source");
     sources.push(paletteFile);
   }
   const encoded = spec.codec === "general-lz-prefill"
@@ -339,7 +434,7 @@ function parseIndex(value: unknown): IndexDocument {
 }
 
 export function build_sentou_series(indexFile: string): Array<{ address: number; data: Buffer; sources: string[] }> {
-  const index = parseIndex(JSON.parse(readFileSync(indexFile, "utf8")));
+  const index = parseIndex(document(readFileSync(indexFile, "utf8"), true));
   const directory = dirname(indexFile);
   return index.resources.map((entry) => {
     const [data, sources] = build_sentou_resource(resolve(directory, entry.source));
@@ -469,14 +564,27 @@ export function verify_sentou_resources(romFile: string, directory: string): voi
 }
 
 export function self_test(): void {
-  if (SENTOU_RESOURCES.length !== 57 || SENTOU_RESOURCES.reduce((sum, spec) => sum + spec.sourceSize, 0) !== 135743 ||
-      SENTOU_RESOURCES.reduce((sum, spec) => sum + spec.boundarySize, 0) !== 135828 ||
+  if (SENTOU_RESOURCES.length !== 60 || SENTOU_RESOURCES.reduce((sum, spec) => sum + spec.sourceSize, 0) !== 137869 ||
+      SENTOU_RESOURCES.reduce((sum, spec) => sum + spec.boundarySize, 0) !== 137956 ||
       canvasSize(specFor(0x042, 0x083c5678)) !== 0x9600 || canvasSize(specFor(0x044, 0x083cb4bc)) !== 0x7080) {
     throw new Error("sentou resource catalogue self-test failed");
   }
-  let rejected = false;
-  try { child("assets/graphics/sentou", "../private.png"); } catch { rejected = true; }
-  if (!rejected) throw new Error("sentou path escape was accepted");
+  const rejects = (action: () => void): boolean => { try { action(); return false; } catch { return true; } };
+  if (!rejects(() => child("assets/graphics/sentou", "../private.png")) ||
+      !rejects(() => document("{\"value\":1,\"value\":1}\n", false)) ||
+      !rejects(() => document("{} \n", false)) ||
+      !rejects(() => exactBytes(Buffer.concat([byte_png(Buffer.alloc(0x200), 64)[0], Buffer.from([0])]), byte_png(Buffer.alloc(0x200), 64)[0], "test image")) ||
+      !rejects(() => validateGeneralTokens([["l", "1"]] as unknown[], 1)) ||
+      !rejects(() => validateGeneralTokens([["x", 1]] as unknown[], 1)) ||
+      !rejects(() => validateGeneralTokens([["l", 1, 2]] as unknown[], 1)) ||
+      !rejects(() => validateGeneralTokens([["c", 2, PREFILL + 1]] as unknown[], 2)) ||
+      !rejects(() => validateGeneralTokens([["l", 33], ["c", 2, 34]] as unknown[], 35)) ||
+      !rejects(() => validateGeneralTokens([["l", 2]] as unknown[], 1)) ||
+      !rejects(() => validatePaletteTokens([["g", [["e"], ["l"]]]] as unknown[], 0)) ||
+      !rejects(() => validatePaletteTokens([["g", [["l"]]], ["g", [["e"]]]] as unknown[], 1)) ||
+      !rejects(() => validatePaletteTokens([["g", [["c", 2, 1]]], ["g", [["e"]]]] as unknown[], 2))) {
+    throw new Error("sentou adversarial plan self-test failed");
+  }
   console.log("self-test=ok");
 }
 

@@ -76,6 +76,11 @@ import {
   BYTE_HENKAN_SIZE,
   build_byte_henkan_tables,
 } from "./byte_henkan.ts";
+import {
+  build_staff_roll,
+  STAFF_ROLL_ADDRESS,
+  STAFF_ROLL_SIZE,
+} from "./staff_roll.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -886,6 +891,23 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
       source_bytes: built.length,
       atlases: 5,
       loadout_records: 35,
+    }];
+  }
+  if (kind === "golden-sun-staff-roll") {
+    const sourceName = String(entry.source);
+    const [built, nestedPaths] = build_staff_roll(sourcePath(sourceName));
+    if (number(entry.address) !== STAFF_ROLL_ADDRESS || number(entry.size) !== STAFF_ROLL_SIZE ||
+        built.length !== STAFF_ROLL_SIZE) {
+      throw new Error("staff-roll package differs from canonical manifest extent");
+    }
+    const nested = nestedPaths.map((name) => relative(ROOT, resolve(name)));
+    nested.forEach(sourcePath);
+    return [built, [...new Set([sourceName, ...nested])], {
+      source_bytes: built.length,
+      preload_slots: 33,
+      strings: 110,
+      line_entries: 339,
+      font_glyphs: 96,
     }];
   }
   if (kind === "golden-sun-sentou-resource") {

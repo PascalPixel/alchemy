@@ -164,6 +164,12 @@
       "source": "assets/code/sentou_kouka/index.json"
     },
     {
+      "address": "0x080f0a5c",
+      "size": "0x15a4",
+      "kind": "golden-sun-staff-roll",
+      "source": "assets/text/staff_roll/index.json"
+    },
+    {
       "address": "0x080fb792",
       "size": "0xef2",
       "kind": "golden-sun-audio-engine-data",

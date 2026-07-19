@@ -29,12 +29,12 @@ game.
 > 🟧 **Not honestly scoreable yet.**
 >
 > 🟩 Source ownership — 100% of ROM addresses have a tracked producer<br>
-> 🟨 Code decompilation — about 5.8% of identified executable work is exact C<br>
+> 🟨 Code decompilation — about 5.9% of identified executable work is exact C<br>
 > 🟧 Asset quality and repository organization — semantic audit in progress
 >
 > 🟩 done · 🟨 active · 🟧 unsure/auditing · 🟥 blocked · ⬜️ undone
 >
-> The often-quoted 93.70% only measures byte reconstruction. It does not measure
+> The often-quoted 94.07% only measures byte reconstruction. It does not measure
 > pret-level completion or time remaining. See [the technical status](STATUS.md)
 > for the full breakdown.
 

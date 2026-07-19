@@ -116,6 +116,12 @@
       "source": "assets/code/sentou_kouka/index.json"
     },
     {
+      "address": "0x080fb792",
+      "size": "0xef2",
+      "kind": "golden-sun-audio-engine-data",
+      "source": "assets/audio/engine/index.json"
+    },
+    {
       "address": "0x080fc684",
       "size": "0x9c0",
       "kind": "golden-sun-sound-table",

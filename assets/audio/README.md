@@ -9,10 +9,10 @@ The current local evidence divides the native data as follows:
 
 | ROM range | Evidence-backed role | Current source state |
 |---|---|---|
-| `080fb7a0..080fba77` | command-dispatch and pitch/volume lookup tables | unclaimed |
-| `080fba78..080fc4ff` | tone-bank area; song headers select roots at `080fba78` and `080fc138` | unclaimed |
-| `080fc500..080fc623` | engine configuration and lookup data | unclaimed |
-| `080fc624..080fc683` | eight music-player records | unclaimed |
+| `080fb792..080fba77` | alignment, command dispatch, and pitch/volume lookup tables | `engine/seigyo.json` |
+| `080fba78..080fc503` | 225 tone records in banks rooted at `080fba78` and `080fc138` | `engine/onshoku.json` |
+| `080fc504..080fc623` | eighteen 16-byte CGB waveforms | `engine/hakei.json` |
+| `080fc624..080fc683` | eight music-player records | `engine/saisei.json` |
 | `080fc684..080fd043` | 312-entry sound-selection table | `song_table.json` |
 | `080fd044..080fd047` | shared empty sound header | unclaimed |
 | `080fd048..0815fb77` | tone-referenced wave arena, including 32 signed-PCM records | 32 PCM records claimed; five synthesizer descriptors remain |

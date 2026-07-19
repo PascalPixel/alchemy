@@ -1,9 +1,3 @@
 #!/bin/sh
-# 公開対象はソースだけとする。ROM画像または非公開ROM由来の構築物が
-# 追跡されている場合は送信を拒否する。
-bad=$(git ls-files | grep -Ei '(^|/)baserom|\.(gba|rom|bin|elf|o|a)$')
-if [ -n "$bad" ]; then
-    echo "alchemy: refusing to push ROM images or binary artifacts:" >&2
-    echo "$bad" >&2
-    exit 1
-fi
+# 送信される全コミットを調べ、途中で削除済みの非公開物も拒否する。
+exec bun tools/check_publication.ts --pre-push

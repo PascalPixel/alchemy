@@ -67,6 +67,15 @@ regions rebuild the complete 56,148-byte `0x08029910..0x08037464` localization
 prefix. A four-byte scanner island inside the first package was packed glyph
 data, not a function.
 
+`graphics/namae_nyuuryoku/gamen.json` reconstructs the localized name-entry
+screen package (名前入力) as four resource IDs, a 24×13 tilemap with explicit
+24×9 consumer dimensions, palette and flip flags, its payload-free general-LZ
+decisions, the UI tile-bank pointer, and structural alignment. The builder
+derives the 13,972-byte section fill rather than storing it. The complete
+`0x08073852..0x08077000` package rebuilds all 14,254 bytes exactly; cross-ROM
+comparison was essential to avoid misclassifying its compressed stream as
+executable code.
+
 `data/resource_5/database.json` reconstructs the consumer-indexed gameplay
 tables shared byte-for-byte by all six Golden Sun localizations: eight level
 experience curves, inventory counters and party order, 324 item records, 519

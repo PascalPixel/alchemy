@@ -148,12 +148,12 @@ The shared 224-color OBJ palette is the independently reconstructed range
 copied from ROM `0x0800779c`; each `preview.atlas.png` is a generated contact
 sheet and remains ignored.
 
-`graphics/chr_081a/`, `graphics/chr_081e/`, `graphics/chr_081f/`,
-`graphics/chr_zenhan/`, `graphics/chr/`, `graphics/chr_0828/`,
-`graphics/chr_082b/`, and `graphics/chr_0830/` reconstruct 22, 10, 17, 18,
-33, 36, 105, and 64 descriptor-linked static character banks as one
-palette-correct `koma.8bpp.png` (コマ) sheet per physical bank. The 305 sheets
-hold 5,266
+`graphics/chr_0818/`, `graphics/chr_081a/`, `graphics/chr_081e/`,
+`graphics/chr_081f/`, `graphics/chr_zenhan/`, `graphics/chr/`,
+`graphics/chr_0828/`, `graphics/chr_082b/`, and `graphics/chr_0830/`
+reconstruct 3, 22, 10, 17, 18, 33, 36, 105, and 64 descriptor-linked static
+character banks as one palette-correct `koma.8bpp.png` (コマ) sheet per
+physical bank. The 308 sheets hold 5,645
 unique frames instead of creating one file per frame. Their payload-free plans
 preserve logical pointer aliases and all three
 descriptor-selected storage modes. Mode 0 is a canonical zero-skip stream;
@@ -162,11 +162,12 @@ tokens; mode 3 adds a little-endian literal/control split, LSB-first flags, and
 back-references into earlier encoded bytes of the same bank around that
 zero-skip stream. Zero alignment is explicit, and the builder emits the
 trailing absolute frame directories and null terminators. The complete
-`0x081a7020..0x081e120c`, `0x081e120c..0x081f60c8`,
+`0x0818d554..0x081a7020`, `0x081a7020..0x081e120c`,
+`0x081e120c..0x081f60c8`,
 `0x081f60c8..0x08220160`, `0x08220160..0x08244fc0`,
 `0x08244fc0..0x08287774`, `0x0828cfd8..0x082b5060`,
 `0x082b5060..0x08300f74`, and `0x08300f74..0x08320000` series re-encode
-1,521,532 bytes byte-for-byte. The new split records a four-byte zero suffix,
+1,626,696 bytes byte-for-byte. The middle split records a four-byte zero suffix,
 the `chr` series records its eight-byte prefix, and the final 4,136 zero bytes
 are explicit arena alignment.
 `zenhan` (前半) is a period-style reconstruction grouping. Numeric grouping

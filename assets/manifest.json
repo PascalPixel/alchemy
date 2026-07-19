@@ -2,6 +2,24 @@
   "format": 1,
   "regions": [
     {
+      "address": "0x08000004",
+      "size": "0x9c",
+      "kind": "gba-cartridge-header-standard-fields",
+      "source": "assets/data/gba_header.json"
+    },
+    {
+      "address": "0x080000b2",
+      "size": "0x0a",
+      "kind": "gba-cartridge-header-standard-fields",
+      "source": "assets/data/gba_header.json"
+    },
+    {
+      "address": "0x080000be",
+      "size": "0x02",
+      "kind": "gba-cartridge-header-standard-fields",
+      "source": "assets/data/gba_header.json"
+    },
+    {
       "address": "0x0800777c",
       "size": "0x1e0",
       "kind": "gba-palette",

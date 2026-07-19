@@ -1,0 +1,59 @@
+{
+  "format": 1,
+  "kind": "gba-cartridge-header-standard-fields",
+  "address": "0x08000000",
+  "standard": {
+    "logo": {
+      "codec": "gba-bios-huffman-logo",
+      "source": "assets/graphics/system/nintendo_logo.1bpp.png",
+      "width": 104,
+      "height": 16,
+      "bpp": 1
+    },
+    "fixed_value": "0x96",
+    "unit_code": "0x00",
+    "device_type": "0x00",
+    "reserved_zero_ranges": [
+      {
+        "address": "0x080000b5",
+        "size": 7
+      },
+      {
+        "address": "0x080000be",
+        "size": 2
+      }
+    ]
+  },
+  "unresolved_fields": [
+    {
+      "name": "entry_branch",
+      "address": "0x08000000",
+      "size": 4
+    },
+    {
+      "name": "title",
+      "address": "0x080000a0",
+      "size": 12
+    },
+    {
+      "name": "game_code",
+      "address": "0x080000ac",
+      "size": 4
+    },
+    {
+      "name": "maker_code",
+      "address": "0x080000b0",
+      "size": 2
+    },
+    {
+      "name": "software_version",
+      "address": "0x080000bc",
+      "size": 1
+    },
+    {
+      "name": "complement_checksum",
+      "address": "0x080000bd",
+      "size": 1
+    }
+  ]
+}

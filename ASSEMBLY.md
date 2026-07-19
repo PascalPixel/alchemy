@@ -7,12 +7,13 @@ from the approved compiler reproduces it exactly. Linker products, runtime
 thunks, fixed hardware entries, and proven deliberately assembled kernels stay
 in assembly.
 
-The current boundary, after the nineteenth exact-C checkpoint, full IWRAM
-reconstruction, and recovered pre-engine runtime tranche, is:
+The current boundary is generated and checked without a ROM by
+`bun tools/build_asm.ts --source-only`. After the latest exact-C checkpoint it
+is:
 
 | Classification | Files | Bytes | Long-term treatment |
 |---|---:|---:|---|
-| Linker long-call veneers | 292 | 2,336 | Keep assembly |
+| Linker long-call veneers | 330 | 2,640 | Keep assembly |
 | `_call_via_rN` runtime thunk bundle | 1 | 56 | Keep assembly |
 | BIOS/SWI wrapper bundles | 2 | 16 | Keep assembly |
 | ROM dispatch table | 1 | 768 | Keep assembly |
@@ -20,7 +21,8 @@ reconstruction, and recovered pre-engine runtime tranche, is:
 | IWRAM division veneers | 4 | 32 | Keep assembly |
 | Fixed-point math and quarter-sine lookup module | 2 | 568 | Keep structured assembly/data |
 | Compiler/assembler literal pool | 1 | 32 | Keep structured data |
-| Relocated ARM runtime module | 4 | 2,196 | Keep structured assembly |
+| Relocated ARM runtime modules | 10 | 5,720 | Keep structured assembly |
+| Relocated stack ARM kernel | 1 | 28 | Keep structured assembly |
 | Shared-literal Thumb helper module | 1 | 40 | Keep structured assembly pending module-aware C |
 | Mixed or misbounded code/data regions | 30 | 27,338 | Split before decompiling |
 | Structured runtime relocation-helper module | 1 | 128 | Keep structured assembly |
@@ -28,10 +30,10 @@ reconstruction, and recovered pre-engine runtime tranche, is:
 | Proven multi-region function heads with pools | 9 | 3,820 | Merge with their continuations before exact C |
 | Proven multi-region function continuations with pools | 7 | 2,928 | Merge with their function owners before exact C |
 | Cross-function shared-literal module | 2 | 692 | Keep structured assembly pending module-aware C build |
-| Proven deliberate performance primitive | 1 | 22 | Keep assembly |
-| Likely ordinary compiler output | 1,349 | 458,662 | Convert to exact C |
-| Probable data misidentified as functions | 27 | 314 | Recover semantic data form |
-| **Total** | **1,744** | **506,714** | |
+| Proven deliberate performance modules | 2 | 954 | Keep assembly |
+| Mixed-mode multiply helper | 1 | 16 | Keep assembly |
+| Likely ordinary compiler output | 1,339 | 458,256 | Convert to exact C |
+| **Total** | **1,754** | **510,798** | |
 
 These counts describe files, not callable entries. `080000c0.s` bundles 96
 fixed-width dispatch entries, `08006864.s` bundles two BIOS wrappers, and
@@ -42,7 +44,7 @@ fixed-width dispatch entries, `08006864.s` bundles two BIOS wrappers, and
 - `080000c0.s` is a 96-entry ROM dispatch table. Each eight-byte entry has the
   fixed `ldr r4; bx r4; literal` form. Its width, literal placement, and
   clobber contract are not C semantics.
-- The 292 long-call veneers are linker products with the exact
+- The 330 long-call veneers are linker products with the exact
   `ldr r4, [pc]; bx r4; .4byte target` form. They are not Camelot functions and
   do not count as C debt.
 - `080072e4.s` is the compiler runtime's fourteen-entry `_call_via_r0` through

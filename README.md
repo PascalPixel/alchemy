@@ -74,11 +74,15 @@ own. Not affiliated with or endorsed by Nintendo or Camelot. Non-commercial.
   remain byte-exact build sources rather than generated previews.
 - Reconstructed names and comments follow the period-authentic Japanese style
   in [`NAMING.md`](NAMING.md).
-- `bun tools/build_claimed.ts` links and verifies every claimed C region together.
+- `bun tools/build_claimed.ts` links and verifies every claimed C region together;
+  `--source-only` still checks compilation, symbols, placement, extents, and
+  overlap when the private ROM is unavailable.
 - `bun tools/integrate_matches.ts` accepts a C replacement only when its linked
   fixed-address bytes exactly match the tracked reconstruction assembly; size
   equality alone is never sufficient.
 - `bun tools/build_asm.ts` assembles and verifies every claimed `asm/` region.
+  Its `--source-only` mode checks placement, overlap, external symbols, and the
+  complete classification boundary when the private ROM is unavailable.
 - `bun tools/build_assets.ts` encodes and verifies every claimed asset.
 - `bun tools/build_full.ts` verifies the combined byte-identical private rebuild.
 - Commit-subject progress brackets use the full build's cumulative

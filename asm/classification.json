@@ -18,8 +18,8 @@
       "evidence": [
         "fixed_ldr_r4_bx_r4_literal"
       ],
-      "expected_files": 321,
-      "expected_bytes": 2568
+      "expected_files": 325,
+      "expected_bytes": 2600
     }
   ],
   "groups": [

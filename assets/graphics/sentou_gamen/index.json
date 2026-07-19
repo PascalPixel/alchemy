@@ -1,0 +1,258 @@
+{
+  "format": 1,
+  "kind": "golden-sun-sentou-gamen-data",
+  "address": "0x080aea4c",
+  "end": "0x080b0000",
+  "size": 5556,
+  "graphics": [
+    {
+      "address": "0x080aea4c",
+      "size": 1536,
+      "source": "koma.4bpp.png",
+      "role": "frame_atlas",
+      "frames": 12,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "columns": 3
+    },
+    {
+      "address": "0x080af04c",
+      "size": 64,
+      "source": "obi.4bpp.png",
+      "role": "horizontal_graphic",
+      "tiles_wide": 2,
+      "tiles_high": 1
+    },
+    {
+      "address": "0x080af08c",
+      "size": 256,
+      "source": "men.4bpp.png",
+      "role": "canvas",
+      "tiles_wide": 4,
+      "tiles_high": 2
+    },
+    {
+      "address": "0x080af18c",
+      "size": 128,
+      "source": "hyouji.4bpp.png",
+      "role": "graphic",
+      "tiles_wide": 2,
+      "tiles_high": 2
+    },
+    {
+      "address": "0x080af26c",
+      "size": 32,
+      "source": "masuku.4bpp.png",
+      "role": "xor_mask_tile",
+      "tiles_wide": 1,
+      "tiles_high": 1
+    }
+  ],
+  "display_glyphs": [
+    [
+      [
+        76,
+        118
+      ],
+      [
+        72,
+        80
+      ],
+      [
+        47
+      ],
+      [
+        80,
+        80
+      ]
+    ],
+    [
+      [
+        120
+      ],
+      [
+        46
+      ],
+      [
+        43
+      ],
+      [
+        45
+      ]
+    ],
+    [
+      [
+        76,
+        118
+      ],
+      [
+        47
+      ],
+      [
+        72,
+        80
+      ],
+      [
+        80,
+        80
+      ]
+    ]
+  ],
+  "mask_rows": [
+    [
+      348160,
+      0
+    ],
+    [
+      84234320,
+      0
+    ],
+    [
+      84234320,
+      5
+    ],
+    [
+      84234320,
+      1285
+    ],
+    [
+      84234320,
+      328965
+    ],
+    [
+      84234320,
+      84215045
+    ]
+  ],
+  "auxiliary_display_glyphs": [
+    [
+      76,
+      118
+    ],
+    [
+      47
+    ]
+  ],
+  "offsets": {
+    "x": [
+      0,
+      1,
+      1,
+      2,
+      2,
+      1,
+      1,
+      0,
+      0
+    ],
+    "y": [
+      0,
+      -1,
+      -1,
+      -2,
+      -2,
+      -1,
+      -1,
+      0,
+      0
+    ]
+  },
+  "orders": [
+    [
+      0,
+      1,
+      4,
+      3,
+      2,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    [
+      1,
+      4,
+      3,
+      2,
+      5,
+      6,
+      7,
+      8,
+      9,
+      0
+    ],
+    [
+      129,
+      132,
+      131,
+      130,
+      133,
+      134,
+      135,
+      136,
+      137,
+      1,
+      4,
+      3,
+      2,
+      5,
+      6,
+      7,
+      8,
+      9,
+      0
+    ],
+    [
+      129,
+      132,
+      131,
+      130,
+      133,
+      134,
+      135,
+      136,
+      137,
+      0,
+      1,
+      4,
+      3,
+      2,
+      5,
+      6,
+      7,
+      8,
+      9
+    ]
+  ],
+  "lookup_ids": [
+    [
+      86,
+      117,
+      166
+    ],
+    [
+      86,
+      117,
+      166
+    ]
+  ],
+  "mode_selectors": [
+    6,
+    7,
+    7,
+    6,
+    6
+  ],
+  "object_resource_ids": [
+    90,
+    91,
+    92,
+    93
+  ],
+  "alignment": {
+    "address": "0x080af314",
+    "end": "0x080b0000",
+    "fill": 0
+  }
+}

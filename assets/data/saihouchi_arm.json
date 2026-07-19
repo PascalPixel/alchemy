@@ -1,0 +1,110 @@
+{
+  "format": 1,
+  "kind": "golden-sun-relocated-arm-helpers",
+  "instruction_set": "armv4t",
+  "address": "0x08015430",
+  "end": "0x08015e8c",
+  "size": 2652,
+  "regions": [
+    {
+      "address": "0x08015430",
+      "size": 320,
+      "source": "08015430.s",
+      "symbols": [
+        {
+          "address": "0x08015430",
+          "name": "Func_08015430"
+        }
+      ],
+      "consumers": [
+        "Func_08018038",
+        "Func_080196c4"
+      ]
+    },
+    {
+      "address": "0x08015570",
+      "size": 96,
+      "source": "08015570.s",
+      "symbols": [
+        {
+          "address": "0x08015570",
+          "name": "Func_08015570"
+        }
+      ],
+      "consumers": [
+        "Func_08019bac"
+      ]
+    },
+    {
+      "address": "0x080155d0",
+      "size": 792,
+      "source": "080155d0.s",
+      "symbols": [
+        {
+          "address": "0x080155d0",
+          "name": "Func_080155d0"
+        }
+      ],
+      "consumers": [
+        "Func_08018cac"
+      ]
+    },
+    {
+      "address": "0x080158e8",
+      "size": 532,
+      "source": "080158e8.s",
+      "symbols": [
+        {
+          "address": "0x080158e8",
+          "name": "Func_080158e8"
+        }
+      ],
+      "consumers": [
+        "Func_0801edec"
+      ]
+    },
+    {
+      "address": "0x08015afc",
+      "size": 632,
+      "source": "08015afc.s",
+      "symbols": [
+        {
+          "address": "0x08015afc",
+          "name": "Func_08015afc"
+        }
+      ],
+      "consumers": [
+        "Func_0801a5a4",
+        "Func_08021be0"
+      ]
+    },
+    {
+      "address": "0x08015d74",
+      "size": 156,
+      "source": "08015d74.s",
+      "symbols": [
+        {
+          "address": "0x08015d74",
+          "name": "Func_08015d74"
+        }
+      ],
+      "consumers": [
+        "Func_0801a5a4"
+      ]
+    },
+    {
+      "address": "0x08015e10",
+      "size": 124,
+      "source": "08015e10.s",
+      "symbols": [
+        {
+          "address": "0x08015e10",
+          "name": "Func_08015e10"
+        }
+      ],
+      "consumers": [
+        "Func_0801a5a4"
+      ]
+    }
+  ]
+}

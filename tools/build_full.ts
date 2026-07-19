@@ -23,12 +23,51 @@ interface Region {
   output: string;
 }
 
+interface AssemblyRegion extends Region {
+  kind: string;
+  retention: string;
+}
+
+export interface UnownedRegion {
+  address: number;
+  size: number;
+  source: string;
+  kind: "unowned";
+}
+
 export interface FallbackRegion {
   address: number;
   size: number;
   source: string;
   kind: "rom_fallback";
 }
+
+export interface AssemblySourceAccounting {
+  cDebtRegions: number;
+  cDebtBytes: number;
+  retainedStructuralRegions: number;
+  retainedStructuralBytes: number;
+}
+
+export interface TotalDecompilationProgress {
+  bytes: number;
+  remainingBytes: number;
+  percent: number;
+}
+
+const ASM_C_DEBT_RETENTIONS = new Set([
+  "c_candidate",
+  "split_first",
+  "merge_with_owner",
+  "merge_with_function_owner",
+  "merge_with_continuations",
+]);
+
+const ASM_RETAINED_RETENTIONS = new Set([
+  "keep_asm",
+  "keep_structured_asm",
+  "adjacent_section_alignment",
+]);
 
 function rooted(path: string): string {
   return isAbsolute(path) ? path : resolve(ROOT, path);
@@ -64,11 +103,11 @@ export function formatProgress(sourceBytes: number, romSize: number): string {
   return `[${groupedDecimal(sourceBytes)} of ${groupedDecimal(romSize)} bytes]`;
 }
 
-export function uncoveredRegions(mask: Uint8Array, base = ROM_BASE): FallbackRegion[] {
+export function unownedRegions(mask: Uint8Array, base = ROM_BASE): UnownedRegion[] {
   if (!Number.isSafeInteger(base) || base < 0 || base + mask.length > 0x100000000) {
     throw new Error("invalid coverage base");
   }
-  const regions: FallbackRegion[] = [];
+  const regions: UnownedRegion[] = [];
   let start = -1;
   for (let index = 0; index <= mask.length; index++) {
     const value = index === mask.length ? 1 : mask[index];
@@ -80,8 +119,8 @@ export function uncoveredRegions(mask: Uint8Array, base = ROM_BASE): FallbackReg
       regions.push({
         address,
         size: index - start,
-        source: `rom-fallback/${hexadecimal(address)}`,
-        kind: "rom_fallback",
+        source: `unowned/${hexadecimal(address)}`,
+        kind: "unowned",
       });
       start = -1;
     }
@@ -89,12 +128,99 @@ export function uncoveredRegions(mask: Uint8Array, base = ROM_BASE): FallbackReg
   return regions;
 }
 
+export function uncoveredRegions(mask: Uint8Array, base = ROM_BASE): FallbackRegion[] {
+  return unownedRegions(mask, base).map((region) => ({
+    address: region.address,
+    size: region.size,
+    source: `rom-fallback/${hexadecimal(region.address)}`,
+    kind: "rom_fallback",
+  }));
+}
+
+export function assemblySourceAccounting(
+  regions: Array<{ size: number; retention: string }>,
+): AssemblySourceAccounting {
+  const result: AssemblySourceAccounting = {
+    cDebtRegions: 0,
+    cDebtBytes: 0,
+    retainedStructuralRegions: 0,
+    retainedStructuralBytes: 0,
+  };
+  for (const region of regions) {
+    if (!Number.isSafeInteger(region.size) || region.size <= 0) {
+      throw new Error("invalid assembly accounting size");
+    }
+    if (ASM_C_DEBT_RETENTIONS.has(region.retention)) {
+      result.cDebtRegions++;
+      result.cDebtBytes += region.size;
+    } else if (ASM_RETAINED_RETENTIONS.has(region.retention)) {
+      result.retainedStructuralRegions++;
+      result.retainedStructuralBytes += region.size;
+    } else {
+      throw new Error(`unsupported assembly retention: ${region.retention}`);
+    }
+  }
+  return result;
+}
+
+export function totalDecompilationProgress(
+  romSize: number,
+  codeBytes: number,
+  assetBytes: number,
+  retainedAssemblyBytes: number,
+  assemblyDebtBytes: number,
+  unownedBytes: number,
+): TotalDecompilationProgress {
+  const values = [romSize, codeBytes, assetBytes, retainedAssemblyBytes, assemblyDebtBytes, unownedBytes];
+  if (values.some((value, index) => !Number.isSafeInteger(value) || value < (index === 0 ? 1 : 0))) {
+    throw new Error("invalid total decompilation count");
+  }
+  const bytes = codeBytes + assetBytes + retainedAssemblyBytes;
+  const remainingBytes = assemblyDebtBytes + unownedBytes;
+  if (bytes + remainingBytes !== romSize) throw new Error("total decompilation count differs");
+  return { bytes, remainingBytes, percent: Number((bytes * 100 / romSize).toFixed(2)) };
+}
+
 export function selfTest(): void {
-  const regions = uncoveredRegions(Uint8Array.from([1, 0, 0, 1, 0]), 0x08000000);
-  if (regions.length !== 2 || regions[0].address !== 0x08000001 ||
-      regions[0].size !== 2 || regions[0].source !== "rom-fallback/08000001" ||
-      regions[1].address !== 0x08000004 || regions[1].size !== 1) {
+  const unowned = unownedRegions(Uint8Array.from([1, 0, 0, 1, 0]), 0x08000000);
+  if (unowned.length !== 2 || unowned[0].address !== 0x08000001 ||
+      unowned[0].size !== 2 || unowned[0].source !== "unowned/08000001" ||
+      unowned[0].kind !== "unowned" || unowned[1].address !== 0x08000004 ||
+      unowned[1].size !== 1) {
+    throw new Error("unowned coverage self-test failed");
+  }
+  const fallback = uncoveredRegions(Uint8Array.from([1, 0, 0, 1, 0]), 0x08000000);
+  if (fallback.length !== 2 || fallback[0].address !== 0x08000001 ||
+      fallback[0].size !== 2 || fallback[0].source !== "rom-fallback/08000001" ||
+      fallback[0].kind !== "rom_fallback" || fallback[1].address !== 0x08000004 ||
+      fallback[1].size !== 1) {
     throw new Error("fallback coverage self-test failed");
+  }
+  const assembly = assemblySourceAccounting([
+    { size: 12, retention: "c_candidate" },
+    { size: 6, retention: "split_first" },
+    { size: 8, retention: "keep_asm" },
+    { size: 2, retention: "adjacent_section_alignment" },
+  ]);
+  if (assembly.cDebtRegions !== 2 || assembly.cDebtBytes !== 18 ||
+      assembly.retainedStructuralRegions !== 2 || assembly.retainedStructuralBytes !== 10) {
+    throw new Error("assembly source accounting self-test failed");
+  }
+  const progress = totalDecompilationProgress(100, 10, 50, 5, 25, 10);
+  if (progress.bytes !== 65 || progress.remainingBytes !== 35 || progress.percent !== 65) {
+    throw new Error("total decompilation progress self-test failed");
+  }
+  try {
+    totalDecompilationProgress(100, 10, 50, 5, 25, 9);
+    throw new Error("incomplete total decompilation count was accepted");
+  } catch (error) {
+    if ((error as Error).message === "incomplete total decompilation count was accepted") throw error;
+  }
+  try {
+    assemblySourceAccounting([{ size: 4, retention: "unknown" }]);
+    throw new Error("unknown assembly retention was accepted");
+  } catch (error) {
+    if ((error as Error).message === "unknown assembly retention was accepted") throw error;
   }
   if (formatProgress(1234567, 8388608) !== "[1,234,567 of 8,388,608 bytes]") {
     throw new Error("progress formatting self-test failed");
@@ -206,7 +332,8 @@ async function main(): Promise<void> {
     claimedMask.fill(1, start, start + size);
   }
 
-  const asmRegions: Region[] = [];
+  const asmRegions: AssemblyRegion[] = [];
+  let asmAccounting = assemblySourceAccounting([]);
   const asmDirectory = join(ROOT, "asm");
   if (existsSync(asmDirectory) && readdirSync(asmDirectory).some((name) => name.endsWith(".s"))) {
     const asmOutput = rooted(args.asmOutput);
@@ -216,7 +343,8 @@ async function main(): Promise<void> {
     asmCommand.push("--output", asmOutput);
     await run(asmCommand);
     const asmManifest = readJson(join(asmOutput, "manifest.json"));
-    for (const region of asmManifest.regions as Region[]) {
+    asmAccounting = assemblySourceAccounting(asmManifest.regions as AssemblyRegion[]);
+    for (const region of asmManifest.regions as AssemblyRegion[]) {
       const address = Number(region.address);
       const size = Number(region.size);
       const start = address - ROM_BASE;
@@ -270,14 +398,42 @@ async function main(): Promise<void> {
   mkdirSync(dirname(output), { recursive: true });
   if (rebuilt !== null) writeFileSync(output, rebuilt);
   const sourceBytes = claimedMask.reduce((sum, value) => sum + value, 0);
+  const codeBytes = Number(manifest.claimed_bytes);
+  const asmBytes = asmRegions.reduce((sum, region) => sum + region.size, 0);
+  const assetBytes = assetRegions.reduce((sum, region) => sum + region.size, 0);
+  if (codeBytes + asmBytes + assetBytes !== sourceBytes) {
+    throw new Error("source component count differs");
+  }
+  if (asmAccounting.cDebtBytes + asmAccounting.retainedStructuralBytes !== asmBytes) {
+    throw new Error("assembly source accounting differs");
+  }
+  const unowned = unownedRegions(claimedMask);
+  const unownedBytes = unowned.reduce((sum, region) => sum + region.size, 0);
+  if (unownedBytes !== romSize - sourceBytes) throw new Error("unowned coverage count differs");
+  const totalDecompilation = totalDecompilationProgress(
+    romSize,
+    codeBytes,
+    assetBytes,
+    asmAccounting.retainedStructuralBytes,
+    asmAccounting.cDebtBytes,
+    unownedBytes,
+  );
   const fallback = uncoveredRegions(claimedMask);
-  const fallbackBytes = fallback.reduce((sum, region) => sum + region.size, 0);
-  if (fallbackBytes !== romSize - sourceBytes) throw new Error("fallback coverage count differs");
   const suffix = extname(output);
   const reportBase = suffix ? output.slice(0, -suffix.length) : output;
+  const unownedPath = reportBase + ".unowned.json";
+  writeFileSync(unownedPath, JSON.stringify({
+    format: 1,
+    semantics: "source_ownership",
+    verification: args.sourceOnly ? "source_only" : "rom",
+    rom_base: ROM_BASE,
+    rom_size: romSize,
+    regions: unowned,
+  }, null, 2) + "\n");
   const fallbackPath = reportBase + ".fallback.json";
   writeFileSync(fallbackPath, JSON.stringify({
     format: 1,
+    semantics: args.sourceOnly ? "compatibility_alias_for_unowned_ranges" : "private_rom_fallback",
     rom_base: ROM_BASE,
     rom_size: romSize,
     regions: fallback,
@@ -287,13 +443,27 @@ async function main(): Promise<void> {
     rom_base: ROM_BASE,
     rom_size: romSize,
     code_regions: manifest.regions.length,
+    code_bytes: codeBytes,
     asm_regions: asmRegions.length,
+    asm_bytes: asmBytes,
+    asm_c_debt_regions: asmAccounting.cDebtRegions,
+    asm_c_debt_bytes: asmAccounting.cDebtBytes,
+    asm_retained_structural_regions: asmAccounting.retainedStructuralRegions,
+    asm_retained_structural_bytes: asmAccounting.retainedStructuralBytes,
     asset_regions: assetRegions.length,
+    asset_bytes: assetBytes,
     source_regions: manifest.regions.length + asmRegions.length + assetRegions.length,
     source_bytes: sourceBytes,
-    rom_fallback_bytes: romSize - sourceBytes,
+    total_decompilation_bytes: totalDecompilation.bytes,
+    total_decompilation_remaining_bytes: totalDecompilation.remainingBytes,
+    total_decompilation_percent: totalDecompilation.percent,
+    unowned_bytes: unownedBytes,
+    unowned_regions: unowned.length,
+    unowned_manifest: unownedPath,
+    rom_fallback_bytes: unownedBytes,
     fallback_regions: fallback.length,
     fallback_manifest: fallbackPath,
+    rom_fallback_applicable: !args.sourceOnly,
     verification: args.sourceOnly ? "source_only" : "rom",
     byte_identical: !args.sourceOnly,
     output: args.sourceOnly ? null : args.output,
@@ -303,7 +473,10 @@ async function main(): Promise<void> {
   console.log(
     `${args.sourceOnly ? "source_only=True" : "identical=True"} regions=${report.source_regions} code=${report.code_regions} ` +
     `asm=${report.asm_regions} assets=${report.asset_regions} source_bytes=${report.source_bytes} ` +
-    `rom_fallback_bytes=${report.rom_fallback_bytes}`,
+    `unowned_bytes=${report.unowned_bytes} asm_c_debt_bytes=${report.asm_c_debt_bytes} ` +
+    `asm_retained_structural_bytes=${report.asm_retained_structural_bytes} ` +
+    `total_decompilation=${report.total_decompilation_percent.toFixed(2)}%` +
+    (args.sourceOnly ? "" : ` rom_fallback_bytes=${report.rom_fallback_bytes}`),
   );
   console.log(formatProgress(report.source_bytes, report.rom_size));
 }

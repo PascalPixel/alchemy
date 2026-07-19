@@ -1,1 +1,1 @@
-{"format":1,"codec":"golden-sun-static-sprite-bank","mode":0,"width":32,"height":64,"atlas_columns":1,"alignment_zeros":2,"frames":[{"format":1,"codec":"golden-sun-static-sprite-mode0","pixels":2048,"encoded_bytes":1250}],"directory":[0]}
+{"format":1,"codec":"golden-sun-static-sprite-bank","mode":0,"width":32,"height":64,"alignment_zeros":2,"frames":[{"format":1,"codec":"golden-sun-static-sprite-mode0","pixels":2048,"encoded_bytes":1250}],"directory":[0]}

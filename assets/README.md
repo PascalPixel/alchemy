@@ -38,6 +38,20 @@ and lengths come from the DMA setup; no scene names are inferred.
 fixed pointer-table IDs. Their call sites copy exactly `0x80` bytes to palette
 RAM; names beyond the independently derived IDs are intentionally omitted.
 
+`data/resource_directory.json` reconstructs the complete 1,000-slot resource
+pointer directory. Semantic tokens distinguish the ROM base, the table's self
+pointer, 971 unique resource targets, two aliases, and 25 reserved null slots;
+the builder resolves those tokens back to the exact 4,000-byte table.
+
+`graphics/resource_15/` through `graphics/resource_17/` reconstruct the title
+sequence's native graphics packages. Resource 15 separates the OBJ light,
+sun, and rainbow pieces according to their runtime tile starts. Resource 16 is
+the coherent 240x160 8bpp title raster. Resource 17 is a vertically streamed
+240x344 4bpp sky (`sora`) followed by a 240x184 8bpp mountain (`iwa`). Their
+256-color palettes live in the indexed PNGs, while payload-free flag/copy
+plans restore the compressed streams. Resources 16 and 17 include structural
+zero alignment; resource 15's final unproven nonzero byte remains fallback.
+
 `graphics/resource_19/` is one compressed graphics package. Its tracked
 sources are a BGR555 palette PNG, two 8bpp tile PNGs, a 32×32 text tilemap,
 and a payload-free custom-LZ token plan. The plan records literal positions

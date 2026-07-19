@@ -74,6 +74,30 @@
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
+      "address": "0x08320000",
+      "size": "0xfa0",
+      "kind": "golden-sun-resource-directory",
+      "source": "assets/data/resource_directory.json"
+    },
+    {
+      "address": "0x08323870",
+      "size": "0x1177",
+      "kind": "golden-sun-title-lz",
+      "source": "assets/graphics/resource_15/container.json"
+    },
+    {
+      "address": "0x083249e8",
+      "size": "0x66c0",
+      "kind": "golden-sun-title-lz",
+      "source": "assets/graphics/resource_16/container.json"
+    },
+    {
+      "address": "0x0832b0a8",
+      "size": "0x86f8",
+      "kind": "golden-sun-title-lz",
+      "source": "assets/graphics/resource_17/container.json"
+    },
+    {
       "address": "0x08333fc8",
       "size": "0x182a",
       "kind": "golden-sun-general-lz",

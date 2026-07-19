@@ -1,0 +1,36 @@
+{
+  "format": 1,
+  "kind": "golden-sun-final-battle-overlay",
+  "resource_id": "0x3ce",
+  "address": "0x087fcd20",
+  "decoded_address": "0x02000000",
+  "stream_size": "0x799",
+  "decoded_size": "0x168c",
+  "overlay": "overlay.s",
+  "compression_plan": "stream.lz.json",
+  "selection": {
+    "table": "0x0809f1a8",
+    "record_index": 200,
+    "record_address": "0x0809f7e8",
+    "resource_id": "0x3ce",
+    "group": 70,
+    "variant": 1,
+    "effect_id": 0,
+    "consumers": [
+      "Func_0808a8e4",
+      "Func_0808ab48",
+      "Func_0808ab74"
+    ]
+  },
+  "padding": {
+    "address": "0x087fd4b9",
+    "size": 3,
+    "alignment": 4,
+    "policy": "fallback"
+  },
+  "zero_fill": {
+    "address": "0x087fd4bc",
+    "end": "0x08800000",
+    "value": 0
+  }
+}

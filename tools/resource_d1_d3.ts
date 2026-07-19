@@ -21,6 +21,13 @@ import {
 } from "./extract_resource.ts";
 import { palette_rgba_image, tile_png } from "./export_asset.ts";
 import { gba_graphics, gba_palette_rgba, indexed_png, type Rgb } from "./import_asset.ts";
+import {
+  build_alignment_tail,
+  inspect_alignment_tail,
+  parse_alignment_tail,
+  self_test_alignment_tail,
+  type AlignmentTail,
+} from "./alignment_tail.ts";
 
 const ROM_BASE = 0x08000000;
 const ROM_SIZE = 0x00800000;
@@ -120,7 +127,7 @@ interface StreamPlan {
   suffix: {
     size: 3;
     policy: "fallback";
-  };
+  } | AlignmentTail;
 }
 
 interface MotionPlan {
@@ -345,9 +352,13 @@ function parseStream(value: unknown): StreamPlan {
     throw new Error("D1 image framing differs");
   }
   if (typeof plan.suffix !== "object" || plan.suffix === null || Array.isArray(plan.suffix)) throw new Error("D1 suffix must be an object");
-  exactKeys(plan.suffix as unknown as Record<string, unknown>, ["size", "policy"], "D1 suffix");
-  if (plan.suffix.size !== D1.boundarySize - D1.sourceSize || plan.suffix.policy !== "fallback") {
-    throw new Error("D1 suffix policy differs");
+  if ("policy" in plan.suffix) {
+    exactKeys(plan.suffix as unknown as Record<string, unknown>, ["size", "policy"], "D1 suffix");
+    if (plan.suffix.size !== D1.boundarySize - D1.sourceSize || plan.suffix.policy !== "fallback") {
+      throw new Error("D1 suffix policy differs");
+    }
+  } else {
+    plan.suffix = parse_alignment_tail(plan.suffix, D1.boundarySize - D1.sourceSize, 3, "D1 suffix");
   }
   return plan;
 }
@@ -433,7 +444,11 @@ function buildStream(path: string): [Buffer, string[]] {
   exactBytes(image, tile_png(decoded, 8, D1_COLUMNS, indexed_png(image)[3])[0], "D1 background image");
   const encoded = Buffer.concat([palette, Buffer.from([1]), encode_palette(decoded, plan.stream.tokens)]);
   if (encoded.length !== D1.sourceSize) throw new Error("D1 source differs from its audited encoded size");
-  return [encoded, [path, palettePath, imagePath]];
+  const data = "policy" in plan.suffix
+    ? encoded
+    : Buffer.concat([encoded, build_alignment_tail(plan.suffix)]);
+  if (data.length !== D1.sourceSize && data.length !== D1.boundarySize) throw new Error("D1 built size differs");
+  return [data, [path, palettePath, imagePath]];
 }
 
 function buildMotion(path: string, spec: Spec): Buffer {
@@ -463,7 +478,7 @@ export function build_resource_d1_d3(indexPath: string): BuiltD1D3Resource[] {
       data = buildMotion(source, spec);
       sources = [source];
     }
-    if (data.length !== spec.sourceSize) throw new Error(`${idText(spec.id)} built size differs`);
+    if (data.length !== spec.sourceSize && data.length !== spec.boundarySize) throw new Error(`${idText(spec.id)} built size differs`);
     return { id: spec.id, address: spec.address, boundarySize: spec.boundarySize, data, sources: [indexPath, ...sources] };
   });
 }
@@ -522,11 +537,11 @@ function exportStream(original: Buffer, root: string): void {
       height: D1_HEIGHT,
       columns: D1_COLUMNS,
     },
-    suffix: { size: 3, policy: "fallback" },
+    suffix: inspect_alignment_tail(original.subarray(D1.sourceSize), 3),
   };
   writeFileSync(join(root, D1.source), `${JSON.stringify(plan)}\n`);
   const [rebuilt] = buildStream(join(root, D1.source));
-  if (!rebuilt.equals(original.subarray(0, D1.sourceSize))) throw new Error("D1 export does not round-trip");
+  if (!rebuilt.equals(original)) throw new Error("D1 export does not round-trip");
 }
 
 function signed(byte: number): number {
@@ -585,21 +600,21 @@ function writePackage(rom: Buffer, directory: string): void {
   writeFileSync(join(directory, "index.json"), `${JSON.stringify(expectedIndex(), null, 2)}\n`);
 }
 
-function verifyBuilt(rom: Buffer, indexPath: string): { sourceBytes: number; boundaryBytes: number } {
+function verifyBuilt(rom: Buffer, indexPath: string): { claimedBytes: number; boundaryBytes: number } {
   const built = build_resource_d1_d3(indexPath);
-  let sourceBytes = 0;
+  let claimedBytes = 0;
   let boundaryBytes = 0;
   built.forEach((resource, position) => {
     const spec = SPECS[position];
     const original = checkedBoundary(rom, spec);
     if (resource.id !== spec.id || resource.address !== spec.address || resource.boundarySize !== spec.boundarySize ||
-        !resource.data.equals(original.subarray(0, spec.sourceSize))) {
+        !resource.data.equals(original.subarray(0, resource.data.length))) {
       throw new Error(`${idText(spec.id)} reconstructed source differs from ROM`);
     }
-    sourceBytes += resource.data.length;
+    claimedBytes += resource.data.length;
     boundaryBytes += resource.boundarySize;
   });
-  return { sourceBytes, boundaryBytes };
+  return { claimedBytes, boundaryBytes };
 }
 
 function validateExportDestination(romPath: string, directory: string): void {
@@ -663,8 +678,8 @@ export function verify_resource_d1_d3(romPath: string, indexPath: string): void 
   if (rom.length !== ROM_SIZE) throw new Error("canonical ROM must be exactly 8 MiB");
   const report = verifyBuilt(rom, indexPath);
   console.log(
-    `identical=true resources=3 source_bytes=${report.sourceBytes} ` +
-    `boundary_bytes=${report.boundaryBytes} suffix_fallback=${report.boundaryBytes - report.sourceBytes}`,
+    `identical=true resources=3 claimed_bytes=${report.claimedBytes} ` +
+    `boundary_bytes=${report.boundaryBytes} suffix_fallback=${report.boundaryBytes - report.claimedBytes}`,
   );
 }
 
@@ -678,6 +693,7 @@ function rejects(action: () => void): boolean {
 }
 
 export function selfTest(): void {
+  self_test_alignment_tail();
   if (SPECS.reduce((sum, spec) => sum + spec.sourceSize, 0) !== 4769 ||
       SPECS.reduce((sum, spec) => sum + spec.boundarySize, 0) !== D1_D3_BOUNDARY_SIZE ||
       D1.address + D1.boundarySize !== D2.address || D2.address + D2.boundarySize !== D3.address ||

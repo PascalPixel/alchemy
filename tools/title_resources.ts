@@ -3,6 +3,13 @@ import { dirname, join } from "node:path";
 import { decode_palette_trace, encode_palette, type PaletteGroup, type PaletteOperation } from "./extract_resource.ts";
 import { tile_png } from "./export_asset.ts";
 import { gba_graphics, type Rgb } from "./import_asset.ts";
+import {
+  build_alignment_tail,
+  inspect_alignment_tail,
+  parse_alignment_tail,
+  self_test_alignment_tail,
+  type AlignmentTail,
+} from "./alignment_tail.ts";
 
 const ROM_BASE = 0x08000000;
 const RESOURCE_TABLE = 0x08320000;
@@ -27,7 +34,7 @@ export interface TitlePlan {
   decoded_size: number;
   palette_entries: number;
   palette_upload_entries: number;
-  tail: { size: number; policy: "zero" | "fallback" };
+  tail: { size: number; policy: "zero" | "fallback" } | AlignmentTail;
   components: TitleComponent[];
   consumer: Record<string, unknown>;
   groups: CompactGroup[];
@@ -213,9 +220,12 @@ export function build_title_resource(planPath: string): Buffer {
   if (encoded.length !== plan.source_size) throw new Error("title source size differs from its plan");
   if (plan.tail.size !== plan.container_size - plan.source_size || plan.tail.size < 0)
     throw new Error("title tail size differs from its plan");
-  if (plan.tail.policy === "zero") return Buffer.concat([encoded, Buffer.alloc(plan.tail.size)]);
-  if (plan.tail.policy !== "fallback") throw new Error("unsupported title tail policy");
-  return encoded;
+  if ("policy" in plan.tail) {
+    if (plan.tail.policy === "zero") return Buffer.concat([encoded, Buffer.alloc(plan.tail.size)]);
+    if (plan.tail.policy !== "fallback") throw new Error("unsupported title tail policy");
+    return encoded;
+  }
+  return Buffer.concat([encoded, build_alignment_tail(parse_alignment_tail(plan.tail, plan.tail.size, 3, "title tail"))]);
 }
 
 function exportResource(rom: Buffer, root: string, fixed: FixedResource): [number, number] {
@@ -227,7 +237,6 @@ function exportResource(rom: Buffer, root: string, fixed: FixedResource): [numbe
   const replay = Buffer.concat([palette, encode_palette(decoded, tokens)]);
   if (!replay.equals(rom.subarray(start, cursor))) throw new Error("title codec replay differs");
   const tail = rom.subarray(cursor, end);
-  const tailPolicy = tail.every((value) => value === 0) ? "zero" : "fallback";
   const directory = join(root, `resource_${fixed.id.toString(16)}`);
   const components: TitleComponent[] = fixed.components.map((component) => ({
     ...component, size: componentSize(component),
@@ -254,7 +263,7 @@ function exportResource(rom: Buffer, root: string, fixed: FixedResource): [numbe
     decoded_size: decoded.length,
     palette_entries: 256,
     palette_upload_entries: fixed.paletteUpload,
-    tail: { size: tail.length, policy: tailPolicy },
+    tail: tail.length ? inspect_alignment_tail(tail, 3) : { size: 0, policy: "zero" },
     components,
     consumer: fixed.consumer,
     groups: compactGroups(tokens),
@@ -278,6 +287,7 @@ export function export_title_resources(romPath: string, root: string): [number, 
 }
 
 function selfTest(): void {
+  self_test_alignment_tail();
   for (const resource of RESOURCES) {
     const components = resource.components.map((component) => ({ ...component, size: componentSize(component) }));
     validateComponents(components, resource.decoded);

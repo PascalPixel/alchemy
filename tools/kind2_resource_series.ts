@@ -1,14 +1,16 @@
 #!/usr/bin/env bun
 import {
+  existsSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
   realpathSync,
+  renameSync,
   rmSync,
   writeFileSync,
 } from "fs";
 import { tmpdir } from "os";
-import { dirname, isAbsolute, join, relative, resolve } from "path";
+import { basename, dirname, isAbsolute, join, relative, resolve } from "path";
 import { byte_png, palette_rgba_image, tile_png } from "./export_asset.ts";
 import { gba_graphics, gba_palette_rgba, indexed_png, type Rgb } from "./import_asset.ts";
 import {
@@ -24,10 +26,12 @@ const MAX_RESOURCE_ID = 999;
 const MAX_LOOKAHEAD = 3;
 
 type Presentation = "koma-4bpp" | "haikei-8bpp" | "naiyou";
+type PresentationStatus = "audited" | "provisional-neutral-byte-canvas";
 
 interface ImageSpec {
   encoding: Presentation;
   columns: number;
+  status: PresentationStatus;
 }
 
 interface CatalogEntry {
@@ -44,10 +48,31 @@ interface CatalogDocument {
   resources: CatalogEntry[];
 }
 
+interface ProbeCandidate {
+  prefix_palette_size: string;
+  image: ImageSpec;
+}
+
+interface ProbeEntry {
+  id: string;
+  address: string;
+  size: string;
+  selected_prefix_palette_size: null;
+  candidates: ProbeCandidate[];
+}
+
+interface ProbeDocument {
+  format: 1;
+  kind: "golden-sun-kind2-resource-probe";
+  resources: ProbeEntry[];
+}
+
 interface IndexEntry {
   id: string;
   address: string;
   size: string;
+  prefix_palette_size: string;
+  presentation_status: PresentationStatus;
   source: string;
 }
 
@@ -80,6 +105,7 @@ interface ResourcePlan {
     source: "koma.4bpp.png" | "haikei.8bpp.png" | "naiyou.png";
     canvas_size: string;
     columns: number;
+    status: PresentationStatus;
   };
 }
 
@@ -87,6 +113,8 @@ export interface BuiltKind2Resource {
   id: number;
   address: number;
   data: Buffer;
+  prefixPaletteSize: number;
+  presentationStatus: PresentationStatus;
   sources: string[];
 }
 
@@ -199,8 +227,11 @@ function parseImage(value: unknown, label: string): ImageSpec {
     throw new Error(`${label} must be an object`);
   }
   const image = value as ImageSpec;
-  exactKeys(image as unknown as Record<string, unknown>, ["encoding", "columns"], label);
+  exactKeys(image as unknown as Record<string, unknown>, ["encoding", "columns", "status"], label);
   rowBytes(image.encoding, image.columns);
+  if (image.status !== "audited" && image.status !== "provisional-neutral-byte-canvas") {
+    throw new Error(`${label} status is unsupported`);
+  }
   return image;
 }
 
@@ -239,6 +270,61 @@ function parseCatalog(value: unknown): CatalogDocument {
   return catalog;
 }
 
+function parseProbe(value: unknown): ProbeDocument {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) throw new Error("kind-2 probe must be an object");
+  const probe = value as ProbeDocument;
+  exactKeys(probe as unknown as Record<string, unknown>, ["format", "kind", "resources"], "kind-2 probe");
+  if (probe.format !== 1 || probe.kind !== "golden-sun-kind2-resource-probe" || !Array.isArray(probe.resources)) {
+    throw new Error("unsupported kind-2 probe");
+  }
+  validateExtents(probe.resources, "kind-2 probe");
+  probe.resources.forEach((entry) => {
+    if (typeof entry !== "object" || entry === null || Array.isArray(entry)) throw new Error("kind-2 probe entry must be an object");
+    exactKeys(entry as unknown as Record<string, unknown>, [
+      "id", "address", "size", "selected_prefix_palette_size", "candidates",
+    ], "kind-2 probe entry");
+    if (entry.selected_prefix_palette_size !== null || !Array.isArray(entry.candidates) || entry.candidates.length < 2) {
+      throw new Error("kind-2 probe must remain unresolved with multiple candidates");
+    }
+    const size = Number(entry.size);
+    const prefixes = new Set<number>();
+    entry.candidates.forEach((candidate) => {
+      if (typeof candidate !== "object" || candidate === null || Array.isArray(candidate)) {
+        throw new Error("kind-2 probe candidate must be an object");
+      }
+      exactKeys(candidate as unknown as Record<string, unknown>, ["prefix_palette_size", "image"], "kind-2 probe candidate");
+      const prefix = parseHex(
+        candidate.prefix_palette_size,
+        candidate.prefix_palette_size.length - 2,
+        "kind-2 probe palette size",
+      );
+      if (prefix < 0 || prefix >= size || prefix % 2 || prefixes.has(prefix)) {
+        throw new Error("kind-2 probe palette candidate is invalid");
+      }
+      prefixes.add(prefix);
+      const image = parseImage(candidate.image, "kind-2 probe image");
+      if (image.status !== "provisional-neutral-byte-canvas") {
+        throw new Error("kind-2 unresolved probe presentation must remain provisional");
+      }
+    });
+  });
+  return probe;
+}
+
+export function validate_kind2_catalog(catalogFile: string, probeFile?: string): void {
+  const catalog = parseCatalog(canonicalJson(catalogFile, true, "kind-2 catalog"));
+  let probes = 0;
+  if (probeFile !== undefined) {
+    const probe = parseProbe(canonicalJson(probeFile, true, "kind-2 probe"));
+    const catalogIds = new Set(catalog.resources.map((entry) => Number(entry.id)));
+    if (probe.resources.some((entry) => catalogIds.has(Number(entry.id)))) {
+      throw new Error("kind-2 unresolved probe overlaps the extraction catalog");
+    }
+    probes = probe.resources.length;
+  }
+  console.log(`catalog=ok resources=${catalog.resources.length} unresolved_probes=${probes}`);
+}
+
 function parseIndex(value: unknown): IndexDocument {
   if (typeof value !== "object" || value === null || Array.isArray(value)) throw new Error("kind-2 index must be an object");
   const index = value as IndexDocument;
@@ -249,7 +335,15 @@ function parseIndex(value: unknown): IndexDocument {
   validateExtents(index.resources, "kind-2 index");
   index.resources.forEach((entry) => {
     if (typeof entry !== "object" || entry === null || Array.isArray(entry)) throw new Error("kind-2 index entry must be an object");
-    exactKeys(entry as unknown as Record<string, unknown>, ["id", "address", "size", "source"], "kind-2 index entry");
+    exactKeys(entry as unknown as Record<string, unknown>, [
+      "id", "address", "size", "prefix_palette_size", "presentation_status", "source",
+    ], "kind-2 index entry");
+    const size = Number(entry.size);
+    const prefix = parseHex(entry.prefix_palette_size, entry.prefix_palette_size.length - 2, "kind-2 index palette size");
+    if (prefix < 0 || prefix >= size || prefix % 2 ||
+        (entry.presentation_status !== "audited" && entry.presentation_status !== "provisional-neutral-byte-canvas")) {
+      throw new Error("kind-2 index provenance is invalid");
+    }
     indexedChild(".", entry.source, parseId(entry.id));
   });
   return index;
@@ -286,11 +380,16 @@ function parsePlan(value: unknown): ResourcePlan {
     throw new Error("kind-2 stream plan is invalid");
   }
   if (typeof plan.image !== "object" || plan.image === null || Array.isArray(plan.image)) throw new Error("kind-2 image plan must be an object");
-  exactKeys(plan.image as unknown as Record<string, unknown>, ["encoding", "source", "canvas_size", "columns"], "kind-2 image plan");
+  exactKeys(plan.image as unknown as Record<string, unknown>, [
+    "encoding", "source", "canvas_size", "columns", "status",
+  ], "kind-2 image plan");
   const expectedImage = imageName(plan.image.encoding);
   const expectedCanvas = canvasSize(decodedSize, plan.image.encoding, plan.image.columns);
   if (plan.image.source !== expectedImage || parseHex(plan.image.canvas_size, plan.image.canvas_size.length - 2, "kind-2 canvas size") !== expectedCanvas) {
     throw new Error("kind-2 image plan is invalid");
+  }
+  if (plan.image.status !== "audited" && plan.image.status !== "provisional-neutral-byte-canvas") {
+    throw new Error("kind-2 image plan status is unsupported");
   }
   return plan;
 }
@@ -345,7 +444,14 @@ export function build_kind2_resource(planFile: string): BuiltKind2Resource {
   if (stream.length !== Number(plan.stream.encoded_size)) throw new Error("kind-2 stream has the wrong encoded size");
   const data = Buffer.concat([prefix, stream]);
   if (data.length !== Number(plan.size)) throw new Error("kind-2 resource has the wrong size");
-  return { id: Number(plan.resource_id), address: Number(plan.address), data, sources };
+  return {
+    id: Number(plan.resource_id),
+    address: Number(plan.address),
+    data,
+    prefixPaletteSize: prefix.length,
+    presentationStatus: plan.image.status,
+    sources,
+  };
 }
 
 export function build_kind2_series(indexFile: string): BuiltKind2Resource[] {
@@ -355,6 +461,10 @@ export function build_kind2_series(indexFile: string): BuiltKind2Resource[] {
     const built = build_kind2_resource(indexedChild(directory, entry.source, Number(entry.id)));
     if (built.id !== Number(entry.id) || built.address !== Number(entry.address) || built.data.length !== Number(entry.size)) {
       throw new Error("kind-2 resource differs from its series index");
+    }
+    if (built.prefixPaletteSize !== Number(entry.prefix_palette_size) ||
+        built.presentationStatus !== entry.presentation_status) {
+      throw new Error("kind-2 resource provenance differs from its series index");
     }
     return { ...built, sources: [indexFile, ...built.sources] };
   });
@@ -375,7 +485,7 @@ function nextResourcePointer(rom: Buffer, id: number): number {
   throw new Error("kind-2 resource lacks a following directory pointer");
 }
 
-function checkedRange(rom: Buffer, entry: CatalogEntry): Buffer {
+function checkedRange(rom: Buffer, entry: Pick<CatalogEntry, "id" | "address" | "size">): Buffer {
   const id = Number(entry.id);
   const address = Number(entry.address);
   const size = Number(entry.size);
@@ -386,6 +496,61 @@ function checkedRange(rom: Buffer, entry: CatalogEntry): Buffer {
   const result = rom.subarray(start, start + size);
   if (result.length !== size) throw new Error("kind-2 resource is outside the ROM");
   return result;
+}
+
+function validProbeCandidate(original: Buffer, candidate: ProbeCandidate): boolean {
+  const prefixSize = Number(candidate.prefix_palette_size);
+  const encoded = original.subarray(prefixSize);
+  try {
+    const [decoded, used, , tokens] = decode_kind2(encoded);
+    const lookahead = encoded.subarray(used);
+    if (decoded.length === 0 || lookahead.length > MAX_LOOKAHEAD) return false;
+    const rebuilt = encode_kind2(decoded, {
+      format: 1,
+      codec: "golden-sun-kind2-lz",
+      decoded_size: decoded.length,
+      encoded_size: encoded.length,
+      tokens,
+      lookahead: lookahead.toString("hex"),
+    });
+    return rebuilt.equals(encoded);
+  } catch {
+    return false;
+  }
+}
+
+function uniqueProbeCandidate(id: string, candidates: ProbeCandidate[]): ProbeCandidate {
+  if (candidates.length !== 1) {
+    throw new Error(`kind-2 resource ${id} has ${candidates.length} valid prefix candidates`);
+  }
+  return candidates[0];
+}
+
+function resolveProbeEntries(rom: Buffer, probe: ProbeDocument): CatalogEntry[] {
+  return probe.resources.map((entry) => {
+    const original = checkedRange(rom, entry);
+    const selected = uniqueProbeCandidate(
+      entry.id,
+      entry.candidates.filter((candidate) => validProbeCandidate(original, candidate)),
+    );
+    return {
+      id: entry.id,
+      address: entry.address,
+      size: entry.size,
+      prefix_palette_size: selected.prefix_palette_size,
+      image: selected.image,
+    };
+  });
+}
+
+function combinedCatalog(catalog: CatalogDocument, resolved: CatalogEntry[]): CatalogDocument {
+  const resources = [...catalog.resources, ...resolved]
+    .sort((left, right) => Number(left.address) - Number(right.address));
+  validateExtents(resources, "resolved kind-2 catalog");
+  if (new Set(resources.map((entry) => Number(entry.id))).size !== resources.length) {
+    throw new Error("resolved kind-2 catalog repeats a resource ID");
+  }
+  return { format: 1, kind: "golden-sun-kind2-resource-catalog", resources };
 }
 
 function writeImage(directory: string, spec: ImageSpec, decoded: Buffer, palette: Buffer): [string, number] {
@@ -436,6 +601,7 @@ function exportOne(rom: Buffer, root: string, entry: CatalogEntry): IndexEntry {
       source,
       canvas_size: hexadecimal(canvas, Math.max(1, canvas.toString(16).length)),
       columns: entry.image.columns,
+      status: entry.image.status,
     },
   };
   const planFile = join(directory, "stream.json");
@@ -446,13 +612,13 @@ function exportOne(rom: Buffer, root: string, entry: CatalogEntry): IndexEntry {
     id: entry.id,
     address: entry.address,
     size: entry.size,
+    prefix_palette_size: entry.prefix_palette_size,
+    presentation_status: entry.image.status,
     source: `resource_${id.toString(16).padStart(3, "0")}/stream.json`,
   };
 }
 
-export function export_kind2_series(romFile: string, catalogFile: string, directory: string): void {
-  const catalog = parseCatalog(canonicalJson(catalogFile, true, "kind-2 catalog"));
-  const rom = readFileSync(romFile);
+function writeKind2Series(rom: Buffer, catalog: CatalogDocument, directory: string): string {
   mkdirSync(directory, { recursive: true });
   const index: IndexDocument = {
     format: 1,
@@ -463,11 +629,16 @@ export function export_kind2_series(romFile: string, catalogFile: string, direct
   writeFileSync(indexFile, `${JSON.stringify(index, null, 2)}\n`);
   const built = build_kind2_series(indexFile);
   if (built.length !== catalog.resources.length) throw new Error("kind-2 series export is incomplete");
+  return indexFile;
 }
 
-export function verify_kind2_series(romFile: string, indexFile: string): void {
+export function export_kind2_series(romFile: string, catalogFile: string, directory: string): void {
+  const catalog = parseCatalog(canonicalJson(catalogFile, true, "kind-2 catalog"));
   const rom = readFileSync(romFile);
-  const built = build_kind2_series(indexFile);
+  writeKind2Series(rom, catalog, directory);
+}
+
+function verifyBuiltResources(rom: Buffer, built: BuiltKind2Resource[]): number {
   let bytes = 0;
   for (const resource of built) {
     const start = resource.address - ROM_BASE;
@@ -477,6 +648,55 @@ export function verify_kind2_series(romFile: string, indexFile: string): void {
     }
     bytes += resource.data.length;
   }
+  return bytes;
+}
+
+export function probe_export_kind2_series(
+  romFile: string,
+  catalogFile: string,
+  probeFile: string,
+  directory: string,
+  expectedBytes?: number,
+): void {
+  const catalog = parseCatalog(canonicalJson(catalogFile, true, "kind-2 catalog"));
+  const probe = parseProbe(canonicalJson(probeFile, true, "kind-2 probe"));
+  const catalogIds = new Set(catalog.resources.map((entry) => Number(entry.id)));
+  if (probe.resources.some((entry) => catalogIds.has(Number(entry.id)))) {
+    throw new Error("kind-2 unresolved probe overlaps the extraction catalog");
+  }
+  const rom = readFileSync(romFile);
+  const resolved = combinedCatalog(catalog, resolveProbeEntries(rom, probe));
+  const declaredBytes = resolved.resources.reduce((sum, entry) => sum + Number(entry.size), 0);
+  if (expectedBytes !== undefined && declaredBytes !== expectedBytes) {
+    throw new Error(`resolved kind-2 catalog covers ${declaredBytes} bytes instead of ${expectedBytes}`);
+  }
+  const destination = resolve(directory);
+  if (existsSync(destination)) throw new Error("refusing to replace an existing kind-2 source directory");
+  const parent = dirname(destination);
+  const leaf = basename(destination);
+  if (!leaf) throw new Error("kind-2 source directory has no basename");
+  mkdirSync(parent, { recursive: true });
+  const temporary = mkdtempSync(join(parent, `.${leaf}-`));
+  let installed = false;
+  try {
+    const indexFile = writeKind2Series(rom, resolved, temporary);
+    const built = build_kind2_series(indexFile);
+    const bytes = verifyBuiltResources(rom, built);
+    if (bytes !== declaredBytes || built.length !== resolved.resources.length) {
+      throw new Error("resolved kind-2 series verification is incomplete");
+    }
+    renameSync(temporary, destination);
+    installed = true;
+    console.log(`identical=true resources=${built.length} source_bytes=${bytes} installed=${destination}`);
+  } finally {
+    if (!installed) rmSync(temporary, { recursive: true, force: true });
+  }
+}
+
+export function verify_kind2_series(romFile: string, indexFile: string): void {
+  const rom = readFileSync(romFile);
+  const built = build_kind2_series(indexFile);
+  const bytes = verifyBuiltResources(rom, built);
   console.log(`identical=true resources=${built.length} source_bytes=${bytes}`);
 }
 
@@ -519,14 +739,14 @@ export function self_test(): void {
           address: hexadecimal(firstAddress),
           size: hexadecimal(firstPrefix.length + firstStream.length, 3),
           prefix_palette_size: "0x20",
-          image: { encoding: "koma-4bpp", columns: 2 },
+          image: { encoding: "koma-4bpp", columns: 2, status: "audited" },
         },
         {
           id: "0x011",
           address: hexadecimal(secondAddress),
           size: hexadecimal(secondStream.length, 3),
           prefix_palette_size: "0x0",
-          image: { encoding: "naiyou", columns: 32 },
+          image: { encoding: "naiyou", columns: 32, status: "audited" },
         },
       ],
     };
@@ -543,7 +763,18 @@ export function self_test(): void {
     writeFileSync(planFile, `${JSON.stringify(plan)}\n`);
     if (!rejects(() => build_kind2_series(join(output, "index.json"))) ||
         !rejects(() => indexedChild(output, "../private/stream.json", 0x10)) ||
-        !rejects(() => parseCatalog({ format: 1, kind: "golden-sun-kind2-resource-catalog", resources: [] , extra: true }))) {
+        !rejects(() => parseCatalog({ format: 1, kind: "golden-sun-kind2-resource-catalog", resources: [] , extra: true })) ||
+        !rejects(() => parseProbe({
+          format: 1,
+          kind: "golden-sun-kind2-resource-probe",
+          resources: [{
+            id: "0x012",
+            address: hexadecimal(end),
+            size: "0x100",
+            selected_prefix_palette_size: "0x0",
+            candidates: [],
+          }],
+        }))) {
       throw new Error("kind-2 series adversarial self-test failed");
     }
   } finally {
@@ -558,6 +789,11 @@ function option(args: string[], name: string): string {
   return args[index + 1];
 }
 
+function optionalOption(args: string[], name: string): string | undefined {
+  const index = args.indexOf(name);
+  return index < 0 ? undefined : args[index + 1];
+}
+
 function same(left: string, right: string): boolean {
   try { return realpathSync(left) === realpathSync(right); }
   catch { return resolve(left) === resolve(right); }
@@ -565,7 +801,7 @@ function same(left: string, right: string): boolean {
 
 function main(args: string[]): void {
   if (args.includes("-h") || args.includes("--help")) {
-    console.log("usage: kind2_resource_series.ts [--self-test] {export ROM --catalog FILE --directory DIR | verify ROM --index FILE}");
+    console.log("usage: kind2_resource_series.ts [--self-test] {catalog --catalog FILE [--probe FILE] | probe-export ROM --catalog FILE --probe FILE --directory DIR [--expected-bytes N] | export ROM --catalog FILE --directory DIR | verify ROM --index FILE}");
     return;
   }
   if (args.includes("--self-test")) {
@@ -574,9 +810,30 @@ function main(args: string[]): void {
     if (!args.length) return;
   }
   const command = args[0];
+  if (command === "catalog") {
+    validate_kind2_catalog(option(args, "--catalog"), optionalOption(args, "--probe"));
+    return;
+  }
   const romFile = args[1];
-  if (!romFile || (command !== "export" && command !== "verify")) throw new Error("export or verify and a ROM are required");
-  if (command === "export") {
+  if (!romFile || (command !== "probe-export" && command !== "export" && command !== "verify")) {
+    throw new Error("probe-export, export, or verify and a ROM are required");
+  }
+  if (command === "probe-export") {
+    const catalog = option(args, "--catalog");
+    const probe = option(args, "--probe");
+    const directory = option(args, "--directory");
+    const expected = optionalOption(args, "--expected-bytes");
+    if (same(romFile, directory) || same(romFile, catalog) || same(romFile, probe)) {
+      throw new Error("refusing to overwrite the input ROM");
+    }
+    probe_export_kind2_series(
+      romFile,
+      catalog,
+      probe,
+      directory,
+      expected === undefined ? undefined : integer(expected, "expected kind-2 byte count"),
+    );
+  } else if (command === "export") {
     const catalog = option(args, "--catalog");
     const directory = option(args, "--directory");
     if (same(romFile, directory) || same(romFile, catalog)) throw new Error("refusing to overwrite the input ROM");

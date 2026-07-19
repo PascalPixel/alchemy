@@ -10,6 +10,7 @@ interface Options {
   rom: string;
   output: string;
   source?: string;
+  sourceOnly: boolean;
 }
 
 interface BuiltRegion {
@@ -198,17 +199,19 @@ async function buildRegion(source: string, outputDir: string, runAddress?: numbe
 }
 
 function usage(): void {
-  console.log("usage: build_asm.ts [-h] [--output OUTPUT] [--source SOURCE] [rom]");
+  console.log("usage: build_asm.ts [-h] [--source-only] [--output OUTPUT] [--source SOURCE] [rom]");
 }
 
 function parseArgs(argv: string[]): Options {
-  const options: Options = { rom: "gs1-en.gba", output: "out/asm" };
+  const options: Options = { rom: "gs1-en.gba", output: "out/asm", sourceOnly: false };
   let positional = false;
   for (let index = 0; index < argv.length; index++) {
     const argument = argv[index];
     if (argument === "-h" || argument === "--help") {
       usage();
       process.exit(0);
+    } else if (argument === "--source-only") {
+      options.sourceOnly = true;
     } else if (argument === "--output") {
       const value = argv[++index];
       if (value === undefined) throw new Error("--output requires a value");
@@ -228,12 +231,13 @@ function parseArgs(argv: string[]): Options {
       throw new Error(`unrecognized argument: ${argument}`);
     }
   }
+  if (options.sourceOnly && positional) throw new Error("--source-only does not accept a ROM");
   return options;
 }
 
 async function main(): Promise<void> {
   const args = parseArgs(Bun.argv.slice(2));
-  const rom = readFileSync(resolve(process.cwd(), args.rom));
+  const rom = args.sourceOnly ? null : readFileSync(resolve(process.cwd(), args.rom));
   const output = rooted(args.output);
   mkdirSync(output, { recursive: true });
   let sources = readdirSync(join(ROOT, "asm"), { withFileTypes: true })
@@ -263,13 +267,16 @@ async function main(): Promise<void> {
     const sourceName = relative(ROOT, source);
     const placement = layout.get(sourceName);
     const { address, runAddress, data } = await buildRegion(source, output, placement?.runAddress);
-    if (address < ROM_BASE || address >= ROM_BASE + rom.length || data.length === 0) {
+    const limit = rom === null ? ROM_BASE + 0x00800000 : ROM_BASE + rom.length;
+    if (address < ROM_BASE || address >= limit || data.length === 0 || address + data.length > limit) {
       throw new Error(`${basename(source)}: region outside ROM`);
     }
     if (address < previousEnd) throw new Error(`${basename(source)}: overlapping assembly region`);
     previousEnd = address + data.length;
-    const expected = rom.subarray(address - ROM_BASE, address - ROM_BASE + data.length);
-    if (!data.equals(expected)) throw new Error(`${basename(source)}: assembled bytes differ`);
+    if (rom !== null) {
+      const expected = rom.subarray(address - ROM_BASE, address - ROM_BASE + data.length);
+      if (!data.equals(expected)) throw new Error(`${basename(source)}: assembled bytes differ`);
+    }
     const name = stem(source);
     const category = classify(name, data, classification, explicit);
     const count = counts.get(category.kind) ?? { files: 0, bytes: 0 };
@@ -299,6 +306,7 @@ async function main(): Promise<void> {
   writeFileSync(join(output, "manifest.json"), JSON.stringify({
     format: 1,
     rom_base: ROM_BASE,
+    verification: args.sourceOnly ? "source_only" : "rom",
     classification: relative(ROOT, classificationPath),
     regions,
   }, null, 2) + "\n");

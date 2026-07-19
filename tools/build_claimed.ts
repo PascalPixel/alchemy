@@ -21,6 +21,7 @@ interface Options {
   rom: string;
   jobs: number;
   output: string;
+  sourceOnly: boolean;
 }
 
 function stem(path: string): string {
@@ -112,7 +113,7 @@ async function mapLimit<T, U>(items: T[], limit: number, action: (item: T) => Pr
 }
 
 function usage(): void {
-  console.log("usage: build_claimed.ts [-h] [--jobs JOBS] [--output OUTPUT] [rom]");
+  console.log("usage: build_claimed.ts [-h] [--source-only] [--jobs JOBS] [--output OUTPUT] [rom]");
 }
 
 function parseArgs(argv: string[]): Options {
@@ -120,6 +121,7 @@ function parseArgs(argv: string[]): Options {
     rom: "gs1-en.gba",
     jobs: Math.min(16, navigator.hardwareConcurrency || 1),
     output: "out/claimed",
+    sourceOnly: false,
   };
   let positional = false;
   for (let index = 0; index < argv.length; index++) {
@@ -127,6 +129,8 @@ function parseArgs(argv: string[]): Options {
     if (argument === "-h" || argument === "--help") {
       usage();
       process.exit(0);
+    } else if (argument === "--source-only") {
+      options.sourceOnly = true;
     } else if (argument === "--jobs" || argument === "--output") {
       const value = argv[++index];
       if (value === undefined) throw new Error(`${argument} requires a value`);
@@ -144,19 +148,21 @@ function parseArgs(argv: string[]): Options {
     }
   }
   if (!Number.isInteger(options.jobs) || options.jobs < 1) throw new Error("jobs must be positive");
+  if (options.sourceOnly && positional) throw new Error("--source-only does not accept a ROM");
   return options;
 }
 
 async function main(): Promise<void> {
   const args = parseArgs(Bun.argv.slice(2));
-  const rom = readFileSync(resolve(process.cwd(), args.rom));
+  const rom = args.sourceOnly ? null : readFileSync(resolve(process.cwd(), args.rom));
   const sources = readdirSync(join(ROOT, "src"), { withFileTypes: true })
     .filter((entry) => entry.isFile() && entry.name.endsWith(".c"))
     .map((entry) => join(ROOT, "src", entry.name)).sort();
   if (sources.length === 0) throw new Error("no reconstructed sources");
   const addresses = sources.map((source) => Number.parseInt(stem(source), 16));
   if (new Set(addresses).size !== addresses.length) throw new Error("duplicate source address");
-  if (addresses.some((address) => address < ROM_BASE || address >= ROM_BASE + rom.length)) {
+  const limit = rom === null ? ROM_BASE + 0x00800000 : ROM_BASE + rom.length;
+  if (addresses.some((address) => address < ROM_BASE || address >= limit)) {
     throw new Error("source address outside ROM");
   }
 
@@ -228,8 +234,11 @@ async function main(): Promise<void> {
     previousEnd = Math.max(previousEnd, end);
     const offset = address - imageBase;
     const actual = image.subarray(offset, offset + size);
-    const expected = rom.subarray(address - ROM_BASE, end - ROM_BASE);
-    if (!actual.equals(expected)) failures.push(`${basename(source)}: linked bytes differ`);
+    if (end > limit) failures.push(`${basename(source)}: linked extent outside ROM`);
+    if (rom !== null) {
+      const expected = rom.subarray(address - ROM_BASE, end - ROM_BASE);
+      if (!actual.equals(expected)) failures.push(`${basename(source)}: linked bytes differ`);
+    }
     total += size;
     for (const symbol of moduleSymbols) {
       const expectedAddress = Number.parseInt(symbol.slice(5), 16);
@@ -244,7 +253,8 @@ async function main(): Promise<void> {
   writeFileSync(join(output, "manifest.json"), JSON.stringify({
     format: 1,
     rom_base: ROM_BASE,
-    rom_size: rom.length,
+    rom_size: rom?.length ?? 0x00800000,
+    verification: args.sourceOnly ? "source_only" : "rom",
     image_base: imageBase,
     image_size: image.length,
     claimed_bytes: total,

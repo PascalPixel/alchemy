@@ -53,6 +53,10 @@ own. Not affiliated with or endorsed by Nintendo or Camelot. Non-commercial.
   have an asm-free C match. These regions are reconstructed but not yet
   decompiled; each becomes a `src/` C file once its C builds byte-identically.
 - `assets/` contains only source assets with exact ROM ranges and encoders.
+- The battle-screen package at `080aea4c` is reconstructed as five bounded 4bpp
+  sources plus typed display-glyph cells, masks, offset curves, orders, lookup
+  tables, selectors, object IDs, and derived alignment. Its following four
+  fixed long-call veneers remain structural assembly rather than invented C.
 - `assets/code/` holds the EWRAM code overlays that ship compressed in the ROM,
   reconstructed as Thumb assembly (control-flow-walked disassembly with the
   pointer tables kept as data) plus the exact compression plan; the build

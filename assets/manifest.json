@@ -134,6 +134,12 @@
       "source": "assets/data/battle_effect_data/layout.json"
     },
     {
+      "address": "0x080aea4c",
+      "size": "0x15b4",
+      "kind": "golden-sun-sentou-gamen-data",
+      "source": "assets/graphics/sentou_gamen/index.json"
+    },
+    {
       "address": "0x080b3940",
       "size": "0x16c0",
       "kind": "golden-sun-sentou-menu-data",

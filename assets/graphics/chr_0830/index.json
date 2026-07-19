@@ -53,7 +53,6 @@
       "address": "0x0830bd28",
       "size": "0x00000c04",
       "directory": "0x0830c904",
-      "source": "chr_172/koma.8bpp.png",
       "plan": "chr_172/bank.json"
     },
     {
@@ -63,7 +62,6 @@
       "address": "0x0830c92c",
       "size": "0x00000e84",
       "directory": "0x0830d788",
-      "source": "chr_173/koma.8bpp.png",
       "plan": "chr_173/bank.json"
     },
     {
@@ -73,7 +71,6 @@
       "address": "0x0830d7b0",
       "size": "0x0000157c",
       "directory": "0x0830ecf8",
-      "source": "chr_174/koma.8bpp.png",
       "plan": "chr_174/bank.json"
     },
     {
@@ -83,7 +80,6 @@
       "address": "0x0830ed2c",
       "size": "0x00000eb0",
       "directory": "0x0830fbb4",
-      "source": "chr_175/koma.8bpp.png",
       "plan": "chr_175/bank.json"
     },
     {
@@ -93,7 +89,6 @@
       "address": "0x0830fbdc",
       "size": "0x000014b8",
       "directory": "0x08311060",
-      "source": "chr_177/koma.8bpp.png",
       "plan": "chr_177/bank.json"
     },
     {
@@ -103,7 +98,6 @@
       "address": "0x08311094",
       "size": "0x00000aac",
       "directory": "0x08311b18",
-      "source": "chr_178/koma.8bpp.png",
       "plan": "chr_178/bank.json"
     },
     {
@@ -113,7 +107,6 @@
       "address": "0x08311b40",
       "size": "0x000013a4",
       "directory": "0x08312eb0",
-      "source": "chr_179/koma.8bpp.png",
       "plan": "chr_179/bank.json"
     },
     {
@@ -123,7 +116,6 @@
       "address": "0x08312ee4",
       "size": "0x00000968",
       "directory": "0x08313828",
-      "source": "chr_17a/koma.8bpp.png",
       "plan": "chr_17a/bank.json"
     },
     {
@@ -133,7 +125,6 @@
       "address": "0x0831384c",
       "size": "0x00000ce0",
       "directory": "0x08314504",
-      "source": "chr_17b/koma.8bpp.png",
       "plan": "chr_17b/bank.json"
     },
     {
@@ -143,7 +134,6 @@
       "address": "0x0831452c",
       "size": "0x000012c0",
       "directory": "0x083157b8",
-      "source": "chr_17c/koma.8bpp.png",
       "plan": "chr_17c/bank.json"
     },
     {
@@ -163,7 +153,6 @@
       "address": "0x08315d28",
       "size": "0x00002be0",
       "directory": "0x08318844",
-      "source": "chr_17e/koma.8bpp.png",
       "plan": "chr_17e/bank.json"
     },
     {

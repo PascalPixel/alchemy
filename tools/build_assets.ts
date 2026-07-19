@@ -723,7 +723,14 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     const directory = dirname(String(entry.source));
     const sources = [String(entry.source), String(entry.palette)];
     for (const item of index.packages ?? []) {
-      sources.push(join(directory, String(item.source)), join(directory, String(item.plan)));
+      const planSource = join(directory, String(item.plan));
+      sources.push(planSource);
+      const plan = JSON.parse(readFileSync(sourcePath(planSource), "utf8"));
+      if (Array.isArray(plan.atlases)) {
+        for (const atlas of plan.atlases) sources.push(join(dirname(planSource), String(atlas.source)));
+      } else {
+        sources.push(join(directory, String(item.source)));
+      }
     }
     return [built, sources, report];
   }

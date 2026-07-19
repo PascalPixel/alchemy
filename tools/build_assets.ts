@@ -57,6 +57,11 @@ import {
 } from "./resource_01c.ts";
 import { build_music_residuals } from "./music_residuals.ts";
 import { build_resource_d1_d3 } from "./resource_d1_d3.ts";
+import {
+  AUDIO_ENGINE_ADDRESS,
+  AUDIO_ENGINE_SIZE,
+  build_audio_engine_data,
+} from "./audio_engine_data.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -897,6 +902,23 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     nested.forEach(sourcePath);
     return [region.data, [...new Set([indexName, ...nested])], {
       source_bytes: region.data.length,
+    }];
+  }
+  if (kind === "golden-sun-audio-engine-data") {
+    const sourceName = String(entry.source);
+    const built = build_audio_engine_data(sourcePath(sourceName));
+    if (number(entry.address) !== AUDIO_ENGINE_ADDRESS || number(entry.size) !== AUDIO_ENGINE_SIZE ||
+        built.address !== AUDIO_ENGINE_ADDRESS || built.data.length !== AUDIO_ENGINE_SIZE) {
+      throw new Error("audio-engine data differs from canonical manifest extent");
+    }
+    const nested = built.sources.map((name) => relative(ROOT, resolve(name)));
+    nested.forEach(sourcePath);
+    return [built.data, [...new Set(nested)], {
+      source_bytes: built.data.length,
+      tone_records: 225,
+      waveforms: 18,
+      players: 8,
+      derived_alignment_bytes: 2,
     }];
   }
   if (kind === "golden-sun-d1-d3-resource") {

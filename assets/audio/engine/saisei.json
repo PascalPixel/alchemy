@@ -1,0 +1,56 @@
+{
+  "format": 1,
+  "kind": "golden-sun-music-players",
+  "address": "0x080fc624",
+  "end": "0x080fc684",
+  "players": [
+    {
+      "name": "player_0",
+      "state": "0x02004210",
+      "track_storage": "0x020043a0",
+      "max_tracks": 4
+    },
+    {
+      "name": "player_1",
+      "state": "0x02004290",
+      "track_storage": "0x020044e0",
+      "max_tracks": 10
+    },
+    {
+      "name": "player_2",
+      "state": "0x020042d0",
+      "track_storage": "0x02004800",
+      "max_tracks": 2
+    },
+    {
+      "name": "player_3",
+      "state": "0x02004360",
+      "track_storage": "0x020048a0",
+      "max_tracks": 2
+    },
+    {
+      "name": "player_4",
+      "state": "0x02004310",
+      "track_storage": "0x02004940",
+      "max_tracks": 2
+    },
+    {
+      "name": "player_5",
+      "state": "0x02004190",
+      "track_storage": "0x020049e0",
+      "max_tracks": 2
+    },
+    {
+      "name": "player_6",
+      "state": "0x020041d0",
+      "track_storage": "0x02004a80",
+      "max_tracks": 2
+    },
+    {
+      "name": "player_7",
+      "state": "0x02004250",
+      "track_storage": "0x02004b20",
+      "max_tracks": 2
+    }
+  ]
+}

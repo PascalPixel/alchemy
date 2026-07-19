@@ -1,0 +1,3164 @@
+{
+  "format": 1,
+  "kind": "golden-sun-audio-tone-banks",
+  "address": "0x080fba78",
+  "end": "0x080fc504",
+  "banks": [
+    {
+      "name": "bank_0",
+      "address": "0x080fba78",
+      "records": [
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x080fd048",
+          "envelope": [
+            255,
+            0,
+            255,
+            165
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x080fd2f4",
+          "envelope": [
+            255,
+            0,
+            255,
+            165
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x08100600",
+          "envelope": [
+            255,
+            0,
+            255,
+            165
+          ]
+        },
+        {
+          "kind": "wave",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "waveform": "wave_17",
+          "envelope": [
+            0,
+            2,
+            3,
+            3
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x08103158",
+          "envelope": [
+            255,
+            0,
+            255,
+            165
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x08104ed8",
+          "envelope": [
+            255,
+            0,
+            255,
+            165
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0810560c",
+          "envelope": [
+            255,
+            0,
+            255,
+            165
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0810a264",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0810e434",
+          "envelope": [
+            255,
+            0,
+            255,
+            165
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x081122e0",
+          "envelope": [
+            255,
+            0,
+            255,
+            165
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x08112ce0",
+          "envelope": [
+            255,
+            0,
+            255,
+            165
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x081160d8",
+          "envelope": [
+            255,
+            0,
+            255,
+            165
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x08118078",
+          "envelope": [
+            255,
+            0,
+            255,
+            165
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x08118890",
+          "envelope": [
+            255,
+            0,
+            255,
+            165
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811b878",
+          "envelope": [
+            255,
+            0,
+            255,
+            165
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811dac8",
+          "envelope": [
+            85,
+            165,
+            193,
+            178
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811dae0",
+          "envelope": [
+            85,
+            165,
+            193,
+            178
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811daf8",
+          "envelope": [
+            85,
+            165,
+            193,
+            178
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811db10",
+          "envelope": [
+            85,
+            165,
+            167,
+            178
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811db24",
+          "envelope": [
+            85,
+            127,
+            218,
+            165
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811dac8",
+          "envelope": [
+            22,
+            165,
+            193,
+            195
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811dae0",
+          "envelope": [
+            22,
+            165,
+            193,
+            195
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811daf8",
+          "envelope": [
+            22,
+            165,
+            193,
+            195
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811db10",
+          "envelope": [
+            22,
+            165,
+            167,
+            195
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811db24",
+          "envelope": [
+            22,
+            127,
+            218,
+            195
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811dac8",
+          "envelope": [
+            255,
+            235,
+            90,
+            178
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811dae0",
+          "envelope": [
+            255,
+            235,
+            90,
+            178
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811daf8",
+          "envelope": [
+            255,
+            235,
+            90,
+            178
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811db10",
+          "envelope": [
+            255,
+            235,
+            103,
+            178
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811db24",
+          "envelope": [
+            255,
+            235,
+            103,
+            165
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811dac8",
+          "envelope": [
+            255,
+            127,
+            90,
+            165
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811dac8",
+          "envelope": [
+            255,
+            127,
+            90,
+            165
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811daf8",
+          "envelope": [
+            255,
+            127,
+            90,
+            165
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811db10",
+          "envelope": [
+            255,
+            127,
+            90,
+            165
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811db24",
+          "envelope": [
+            255,
+            127,
+            103,
+            165
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 3,
+          "envelope": [
+            0,
+            1,
+            7,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_2",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 3,
+          "envelope": [
+            0,
+            1,
+            7,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "rhythm",
+          "key": 0,
+          "length": 0,
+          "pan_sweep": 0,
+          "tones": "bank_0_092",
+          "key_map": null
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 192,
+          "sample": "0x0811db38",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 192,
+          "sample": "0x0811db38",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 192,
+          "sample": "0x0811eb2c",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 192,
+          "sample": "0x0811eb2c",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 192,
+          "sample": "0x0811eb2c",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 55,
+          "length": 0,
+          "pan_sweep": 160,
+          "sample": "0x08120694",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 192,
+          "sample": "0x08123118",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 192,
+          "sample": "0x08120694",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 192,
+          "sample": "0x08120694",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 192,
+          "sample": "0x08120694",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 192,
+          "sample": "0x08120694",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 192,
+          "sample": "0x08120694",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 65,
+          "length": 0,
+          "pan_sweep": 224,
+          "sample": "0x08120694",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 192,
+          "sample": "0x081239a4",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 192,
+          "sample": "0x081239a4",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 192,
+          "sample": "0x0812f9d4",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        }
+      ]
+    },
+    {
+      "name": "bank_1",
+      "address": "0x080fc138",
+      "records": [
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            4,
+            0,
+            4
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            4,
+            0,
+            2
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            4,
+            0,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            7,
+            15,
+            7
+          ]
+        },
+        {
+          "kind": "pulse_2",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            4,
+            0,
+            4
+          ]
+        },
+        {
+          "kind": "pulse_2",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            4,
+            0,
+            2
+          ]
+        },
+        {
+          "kind": "pulse_2",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            4,
+            0,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_2",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            7,
+            15,
+            7
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 3,
+          "envelope": [
+            0,
+            1,
+            9,
+            4
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 3,
+          "envelope": [
+            0,
+            4,
+            0,
+            4
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 3,
+          "envelope": [
+            0,
+            4,
+            0,
+            2
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 3,
+          "envelope": [
+            0,
+            4,
+            0,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "noise",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 0,
+          "envelope": [
+            0,
+            4,
+            0,
+            4
+          ]
+        },
+        {
+          "kind": "noise",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 0,
+          "envelope": [
+            0,
+            4,
+            0,
+            2
+          ]
+        },
+        {
+          "kind": "noise",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 0,
+          "envelope": [
+            0,
+            4,
+            0,
+            0
+          ]
+        },
+        {
+          "kind": "noise",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 0,
+          "envelope": [
+            0,
+            7,
+            15,
+            7
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "noise",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 1,
+          "envelope": [
+            0,
+            4,
+            0,
+            4
+          ]
+        },
+        {
+          "kind": "noise",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 1,
+          "envelope": [
+            0,
+            4,
+            0,
+            2
+          ]
+        },
+        {
+          "kind": "noise",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 1,
+          "envelope": [
+            0,
+            4,
+            0,
+            0
+          ]
+        },
+        {
+          "kind": "noise",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 1,
+          "envelope": [
+            0,
+            7,
+            15,
+            7
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "noise",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 1,
+          "envelope": [
+            0,
+            4,
+            0,
+            4
+          ]
+        },
+        {
+          "kind": "noise",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 1,
+          "envelope": [
+            0,
+            4,
+            0,
+            2
+          ]
+        },
+        {
+          "kind": "noise",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 1,
+          "envelope": [
+            0,
+            4,
+            0,
+            0
+          ]
+        },
+        {
+          "kind": "noise",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 0,
+          "envelope": [
+            2,
+            0,
+            15,
+            2
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            1,
+            6,
+            0,
+            6
+          ]
+        },
+        {
+          "kind": "wave",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "waveform": "wave_16",
+          "envelope": [
+            0,
+            4,
+            0,
+            2
+          ]
+        },
+        {
+          "kind": "noise",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 0,
+          "envelope": [
+            2,
+            7,
+            10,
+            7
+          ]
+        },
+        {
+          "kind": "noise",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 0,
+          "envelope": [
+            0,
+            7,
+            4,
+            3
+          ]
+        },
+        {
+          "kind": "noise",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 0,
+          "envelope": [
+            5,
+            2,
+            6,
+            6
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x081315d0",
+          "envelope": [
+            255,
+            0,
+            255,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x08134658",
+          "envelope": [
+            255,
+            0,
+            255,
+            204
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0813aa10",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x08142a80",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x081450f8",
+          "envelope": [
+            255,
+            0,
+            255,
+            216
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0814a3b8",
+          "envelope": [
+            255,
+            0,
+            255,
+            188
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0815256c",
+          "envelope": [
+            255,
+            0,
+            255,
+            204
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x08152e04",
+          "envelope": [
+            255,
+            0,
+            255,
+            204
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x08155860",
+          "envelope": [
+            255,
+            188,
+            154,
+            226
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811daf8",
+          "envelope": [
+            64,
+            232,
+            0,
+            232
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811daf8",
+          "envelope": [
+            64,
+            232,
+            0,
+            195
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811daf8",
+          "envelope": [
+            64,
+            232,
+            0,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811daf8",
+          "envelope": [
+            64,
+            0,
+            255,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811dae0",
+          "envelope": [
+            64,
+            0,
+            255,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811dae0",
+          "envelope": [
+            64,
+            232,
+            0,
+            232
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811dae0",
+          "envelope": [
+            64,
+            232,
+            0,
+            195
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811dac8",
+          "envelope": [
+            64,
+            232,
+            0,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811dae0",
+          "envelope": [
+            64,
+            0,
+            255,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0811dac8",
+          "envelope": [
+            64,
+            0,
+            255,
+            0
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x08156804",
+          "envelope": [
+            255,
+            0,
+            255,
+            204
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0815738c",
+          "envelope": [
+            255,
+            242,
+            28,
+            165
+          ]
+        },
+        {
+          "kind": "pcm",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "sample": "0x0815b3ac",
+          "envelope": [
+            255,
+            0,
+            255,
+            226
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": false,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 2,
+          "envelope": [
+            0,
+            0,
+            15,
+            0
+          ]
+        },
+        {
+          "kind": "pulse_1",
+          "fixed_pitch": true,
+          "key": 60,
+          "length": 0,
+          "pan_sweep": 0,
+          "generator": 0,
+          "envelope": [
+            0,
+            6,
+            0,
+            3
+          ]
+        }
+      ]
+    }
+  ]
+}

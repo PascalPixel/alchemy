@@ -1,33 +1,44 @@
 # Technical status
 
-Alchemy is an in-progress, clean-room decompilation of the English Golden Sun
-release for Game Boy Advance. The tracked repository contains reconstructed
-source and independently authored tooling; private ROMs are evidence and
+Alchemy is an in-progress, clean-room decompilation of Golden Sun and Golden
+Sun: The Lost Age for Game Boy Advance. Its eventual target is one source tree
+for English, Japanese, German, Spanish, French, and Italian builds of both
+games. The tracked repository contains reconstructed source and independently
+authored tooling; the twelve approved private ROMs are evidence and local
 verification inputs, never published build inputs.
 
-## Current snapshot
+## Current Golden Sun English snapshot
 
 The source-only ownership build currently accounts for:
 
 | Source form | Regions | Bytes |
 |---|---:|---:|
-| Compiled C | 761 | 29,654 |
-| Reconstruction assembly | 1,730 | 509,122 |
+| Compiled C | 769 | 30,252 |
+| Reconstruction assembly | 1,722 | 508,524 |
 | Canonical assets | 2,276 | 7,813,515 |
 | **Source-owned total** | **4,767** | **8,352,291** |
 | **Unowned remainder** | **596 gaps** | **36,317** |
-| **Canonical ROM size** |  | **8,388,608** |
+| **Canonical target size** |  | **8,388,608** |
 
-Within the reconstruction assembly, approximately 492,294 bytes remain active
+The immediate milestone is **100% byte closure for `gs1-en.gba`**: all
+8,388,608 bytes must come from tracked C, reconstruction assembly, or canonical
+assets, with no copied gap or private-ROM fallback. That milestone is currently
+8,352,291 bytes, or 99.57%. Exact reconstruction assembly counts toward byte
+closure even when it remains C-decompilation work.
+
+Within the reconstruction assembly, approximately 491,696 bytes remain active
 C-decompilation, boundary-splitting, or function-merging work. The other 16,828
 bytes are presently retained structural assembly: linker veneers, runtime
 thunks, fixed hardware entry points, shared-literal modules, and proven
 compiler-unproducible kernels.
 
-The byte-reconstruction milestone is 7,859,997 of 8,388,608 bytes, or 93.70%.
-It counts exact C, deterministic asset round trips, and positively retained
-structural assembly. The remaining 528,611 bytes are the 492,294-byte assembly
-debt plus the 36,317 unowned bytes.
+The stricter build-report `byte_reconstruction` milestone is 7,860,595 of
+8,388,608 bytes, or 93.71%. It counts exact C, deterministic asset round trips,
+and positively retained structural assembly, while treating ordinary
+reconstruction assembly as unfinished C work. The remaining 528,013 bytes are
+the 491,696-byte assembly debt plus the 36,317 unowned bytes. It is useful for
+tracking source quality, but it is not the immediate no-fallback byte-closure
+milestone and it is not a forecast of time remaining.
 
 That milestone is deliberately not called project completion. Source ownership
 only asks whether an address has a canonical tracked producer, while byte
@@ -39,19 +50,22 @@ completion credit until the whole producing pipeline is audited.
 
 ## Project-completion gates
 
-Project completion means reaching a pret-like source tree: byte-identical,
-readable C and justified structural assembly, coherent PNG/MID/WAV and semantic
-JSON sources, deterministic TypeScript encoders, and a flat, intentional file
+Project completion means reaching a pret-like source tree for all twelve
+approved builds: byte-identical targets, readable shared or edition-specific C
+and justified structural assembly, coherent PNG/MID/WAV and semantic JSON
+sources, deterministic TypeScript encoders, and a flat, intentional file
 layout. The aggregate percentage is currently **withheld** rather than inferred
-from unrelated byte totals.
+from unrelated byte totals. Unless stated otherwise, the measured dimensions
+below describe only the current canonical Golden Sun English target.
 
 | Dimension | Current result | Meaning |
 |---|---:|---|
-| Source ownership | 8,352,291 / 8,388,608 bytes (99.57%) | A tracked producer owns the address |
-| Byte reconstruction | 7,859,997 / 8,388,608 bytes (93.70%) | Exact C, round-tripping assets, or retained structural assembly |
-| Code decompilation | 29,654 / 521,948 identified executable bytes (5.68%) | Active executable work represented as exact C |
+| GS1 English byte closure | 8,352,291 / 8,388,608 bytes (99.57%) | A tracked producer owns the address; immediate target is no fallback |
+| Byte reconstruction | 7,860,595 / 8,388,608 bytes (93.71%) | Exact C, round-tripping assets, or retained structural assembly |
+| Code decompilation | 30,252 / 521,948 identified executable bytes (5.80%) | Active executable work represented as exact C |
 | Asset semantic maturity | Audit pending | Round-trip success has not yet been classified as coherent or provisional |
 | Repository organization | Audit pending | Flatness, naming, source formats, and generated-file boundaries need a formal audit |
+| Build-target coverage | 1 active / 12 approved | GS1 English is canonical now; the other editions remain comparison evidence and future targets |
 | **Project completion** | **Audit pending** | No arbitrary weighted score is published |
 
 `build_full.ts` records these gates in `project_completion`. Until a tracked
@@ -90,12 +104,15 @@ bytes. The three early blocks occupy `08012f20..08013784`,
 C, assembly, and asset manifests, checks it against the full-build report, and
 names completely uncovered resource IDs automatically.
 
-## Evidence boundary
+## Evidence and target boundary
 
-The English Golden Sun ROM is the byte-identical build target. Approved private
-regional ROMs can provide local differential evidence for distinguishing
-shared engine code and data from localization, graphics, and story content.
-They never become tracked files or fallback build inputs.
+The approved evidence boundary consists only of
+`gs1-{en,ja,de,es,fr,it}.gba` and `gs2-{en,ja,de,es,fr,it}.gba`.
+`gs1-en.gba` is the immediate canonical byte-identical build target. The other
+eleven ROMs can provide local differential evidence for distinguishing shared
+engine code and data from localization, graphics, and story content, and each
+is an eventual independent build target of this same repository. They never
+become tracked files or fallback build inputs.
 
 All game knowledge is derived anew with generic tools. Cross-ROM equality can
 support a layout or shared-engine conclusion, but cannot establish original
@@ -167,10 +184,12 @@ machine-readable assembly classification boundary. `build_assets.ts` invokes
 every semantic encoder. `build_full.ts` combines the three ownership manifests,
 rejects overlap, and reports unowned ranges.
 
-For a private complete build, `build_rom.ts` generates a GNU linker script that
-places every reconstructed region in address order and fills only the remaining
-unowned skeleton from the user's private English ROM. Generated linker files,
-objects, ELFs, ROM images, reports, and work directories stay ignored.
+For the current private transitional build, `build_rom.ts` generates a GNU
+linker script that places every reconstructed region in address order and fills
+only the remaining unowned skeleton from the user's private English ROM. The
+immediate byte-closure milestone retires that fallback entirely. Generated
+linker files, objects, ELFs, ROM images, reports, and work directories stay
+ignored.
 
 ## Publication boundary
 
@@ -187,11 +206,12 @@ analysis, compiler output, and build products are git-ignored.
 
 ## Definition of completion
 
-Project completion is reached only when the tracked sources and generic
-tooling, given the canonical private English ROM and approved compiler,
-independently produce a byte-identical full ROM with no copied source gaps;
+The immediate byte-closure milestone is reached when the tracked sources and
+generic tooling independently produce a byte-identical `gs1-en.gba` with no
+copied source gaps or fallback bytes. Project completion is reached only when
+that is true for all twelve approved targets from this one source tree;
 ordinary executable assembly has become exact C; the remaining assembly has a
 positive structural reason; every canonical asset is semantically coherent
-rather than merely round-trippable; and the repository has a flat, intentional,
-source-only organization. The aggregate stays unscored until every one of those
-conditions has an auditable measurement.
+rather than merely round-trippable; and the repository has a flat,
+intentional, source-only organization. The aggregate stays unscored until
+every one of those conditions has an auditable measurement.

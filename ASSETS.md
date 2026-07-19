@@ -4,6 +4,16 @@ Private extractions and generated files stay under ignored `work/` or `out/`.
 Tracked assets are appropriate only after their ROM range, format, and exact
 re-encoding have been independently established.
 
+## Target scope
+
+Current ranges and byte totals describe the canonical Golden Sun English
+target. The other eleven approved ROMs may be compared locally to prove which
+assets are shared and which vary by game or language. Shared semantic sources
+should remain single sources; proven differences belong in explicit
+edition-aware metadata or separate canonical variants. Binary patches,
+cross-ROM diff payloads, and copied target spans are never asset sources. Each
+future target must encode completely from its own selected canonical inputs.
+
 `tools/import_asset.ts png` converts a non-interlaced indexed PNG into row-major
 GBA 8×8 tiles and a BGR555 palette. It does not quantize, reorder, deduplicate,
 compress, or infer a tilemap. Palette channels must be multiples of eight, so

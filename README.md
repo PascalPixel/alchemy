@@ -1,30 +1,36 @@
 # Alchemy — Golden Sun decompilation
 
-Alchemy is a fan-made attempt to recover the original **Golden Sun** for Game
-Boy Advance as readable, buildable source code. Towns, battle effects,
-characters, music, menus, text, Psynergy effects, and the engine beneath them
-are being taken apart and reconstructed piece by piece.
+An all-AI, for-fun attempt at decompiling Golden Sun (GBA). The reconstruction
+and tooling in this repository are being written collaboratively with AI coding
+agents—Anthropic's Claude and OpenAI's Codex—as an experiment in how far they
+can take a clean-room decompilation together. It is a hobby/research project,
+not a serious or community-driven decomp, and it is nowhere near complete.
 
-<table>
-  <tr>
-    <td bgcolor="#fff3b0">
-      <strong>Total decompilation — 93.70%</strong><br>
-      <code>[██████████████████▊░]</code> 🟨 pret-level clean source<br><br>
-      <strong>Earlier milestones</strong><br>
-      <code>[███████████████████▉]</code> 99.57% ROM addresses owned by source<br>
-      <code>[████████████████████]</code> 100% remaining assembly classified<br>
-      <code>[█▏░░░░░░░░░░░░░░░░░]</code> 5.68% active code debt moved to C
-    </td>
-  </tr>
-</table>
+```text
+Project completion — audit in progress
+[????????????????????] score withheld until every quality gate is measurable
 
-<sub>“Total decompilation” counts canonical assets, exact C, and assembly with
-positive structural reasons to remain. Unowned bytes and ordinary assembly
-still awaiting clean C are excluded.</sub>
+Measured milestones
+[###################.]  99.57% ROM addresses owned by source
+[##################..]  93.70% byte reconstruction
+[####################] 100.00% remaining assembly classified
+[#...................]   5.68% identified executable work moved to C
+[????????????????????] asset semantics audit pending
+[????????????????????] repository organization audit pending
+```
+
+<sub>“Project completion” means a byte-identical, pret-like source tree with
+clean code, coherent source art and audio, and a flat, intentional repository
+layout. No overall percentage is published until semantic asset maturity and
+repository organization have auditable criteria. Byte reconstruction only
+measures deterministic round trips; it does not certify that an atlas, map,
+sequence, or archive is already presented in its final human-readable form.</sub>
 
 <p align="center">
-  <img src="assets/graphics/resource_152/objects/ougonmon.png" alt="Recovered golden doorway" width="180">
-  <img src="assets/graphics/resource_158/objects/kirikabu.png" alt="Recovered giant tree stump interior" width="96">
+  <img src="assets/readme/djinn_101_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 101">
+  <img src="assets/readme/djinn_102_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 102">
+  <img src="assets/readme/djinn_103_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 103">
+  <img src="assets/readme/djinn_104_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 104">
 </p>
 
 The name comes from the moment alchemy is released upon Weyard. This project
@@ -56,9 +62,11 @@ previews: every asset is meant to encode back into its exact place in the game.
 ## Where the project stands
 
 The ROM layout is 99.57% represented by reconstructed source, but that is not
-the same as being 99.57% decompiled. A large body of byte-verified assembly
-still has to become matching C, while a smaller set of unowned data regions
-still needs a proper source representation.
+the same as being 99.57% complete. A large body of byte-verified assembly still
+has to become matching C, a smaller set of unowned data regions still needs a
+proper source representation, and round-tripping asset containers still need
+a semantic quality audit. Exact encoding is necessary, but a mechanically
+wrapped or fragmented source image is still provisional work.
 
 See [STATUS.md](STATUS.md) for the live byte counts, what has been recovered,
 what remains, and how verification works.
@@ -77,9 +85,8 @@ English Golden Sun ROM and the matching compiler described in the technical
 documents. ROMs, playable builds, private comparison reports, toolchains, and
 generated build products are never tracked here.
 
-This is an all-AI, for-fun collaboration between Anthropic's Claude and
-OpenAI's Codex, guided by Pascal Pixel. It is a hobby and research project, not
-affiliated with or endorsed by Nintendo or Camelot, and is non-commercial.
+Alchemy is guided by Pascal Pixel, is not affiliated with or endorsed by
+Nintendo or Camelot, and is non-commercial.
 
 ## Guide to every Markdown file
 

@@ -24,6 +24,15 @@ interface EmptyHeader {
   tone_bank: string;
 }
 
+interface SharedEmptyHeader {
+  name: "sound_empty";
+  address: "0x080fd044";
+  track_count: 0;
+  block_count: 0;
+  priority: 0;
+  reverb: 0;
+}
+
 interface OrphanStream {
   address: string;
   size: number;
@@ -41,10 +50,20 @@ interface TailAlignment {
 interface ResidualIndex {
   format: 1;
   kind: "golden-sun-music-residuals";
+  shared_empty_header: SharedEmptyHeader;
   empty_headers: EmptyHeader[];
   orphan_stream: OrphanStream;
   tail_alignment: TailAlignment;
 }
+
+const SHARED_EMPTY_HEADER: SharedEmptyHeader = {
+  name: "sound_empty",
+  address: "0x080fd044",
+  track_count: 0,
+  block_count: 0,
+  priority: 0,
+  reverb: 0,
+};
 
 export interface BuiltMusicResidual {
   address: number;
@@ -178,14 +197,31 @@ function emptyHeader(header: EmptyHeader): Buffer {
   return result;
 }
 
+function sharedEmptyHeader(header: SharedEmptyHeader): Buffer {
+  const result = Buffer.alloc(4);
+  result[0] = byte(header.track_count, "track count");
+  result[1] = byte(header.block_count, "block count");
+  result[2] = byte(header.priority, "priority");
+  result[3] = byte(header.reverb, "reverb");
+  return result;
+}
+
 function readIndex(indexPath: string): ResidualIndex {
   const value = jsonDocument(indexPath, "music residual index");
   if (typeof value !== "object" || value === null || Array.isArray(value)) throw new Error("music residual index must be an object");
   const index = value as ResidualIndex;
-  exactKeys(index as unknown as Record<string, unknown>, ["format", "kind", "empty_headers", "orphan_stream", "tail_alignment"], "music residual index");
+  exactKeys(index as unknown as Record<string, unknown>, [
+    "format", "kind", "shared_empty_header", "empty_headers", "orphan_stream", "tail_alignment",
+  ], "music residual index");
   if (index.format !== 1 || index.kind !== "golden-sun-music-residuals" || !Array.isArray(index.empty_headers) ||
       index.empty_headers.length !== EMPTY_HEADERS.length) {
     throw new Error("unsupported music residual index");
+  }
+  exactKeys(index.shared_empty_header as unknown as Record<string, unknown>, [
+    "name", "address", "track_count", "block_count", "priority", "reverb",
+  ], "shared empty sound header");
+  if (!Bun.deepEquals(index.shared_empty_header, SHARED_EMPTY_HEADER, true)) {
+    throw new Error("shared empty sound header differs from the audited catalog");
   }
   index.empty_headers.forEach((header, position) => {
     exactKeys(header as unknown as Record<string, unknown>, [
@@ -217,9 +253,13 @@ function readYobi(path: string): SequenceSource {
 export function build_music_residuals(indexPath: string): BuiltMusicResidual[] {
   const index = readIndex(indexPath);
   const canonicalIndex = realpathSync(indexPath);
-  const regions: BuiltMusicResidual[] = index.empty_headers.map((header) => ({
+  const regions: BuiltMusicResidual[] = [{
+    address: Number(index.shared_empty_header.address),
+    data: sharedEmptyHeader(index.shared_empty_header),
+    sources: [canonicalIndex],
+  }, ...index.empty_headers.map((header) => ({
     address: Number(header.address), data: emptyHeader(header), sources: [canonicalIndex],
-  }));
+  }))];
   const yobiPath = child(indexPath, index.orphan_stream.source);
   const [yobi, report] = build_sequence(readYobi(yobiPath));
   if (report.base !== Number(index.orphan_stream.address) || report.bytes !== index.orphan_stream.size ||
@@ -302,6 +342,7 @@ function writeMusicResiduals(rom: Buffer, directory: string): ResidualIndex {
   const index: ResidualIndex = {
     format: 1,
     kind: "golden-sun-music-residuals",
+    shared_empty_header: { ...SHARED_EMPTY_HEADER },
     empty_headers: EMPTY_HEADERS.map((header) => ({ ...header })),
     orphan_stream: {
       address: "0x081819b0",
@@ -332,10 +373,14 @@ export function verify_music_residuals(romPath: string, indexPath: string): void
   if (rom.length !== ROM_SIZE) throw new Error("music residual verifier requires the 8 MiB canonical ROM");
   verifySoundTableLinks(rom);
   const bytes = verifyRegions(rom, build_music_residuals(indexPath));
-  console.log(`identical=true regions=6 source_bytes=${bytes}`);
+  console.log(`identical=true regions=7 source_bytes=${bytes}`);
 }
 
 export function self_test(): void {
+  const shared = sharedEmptyHeader(SHARED_EMPTY_HEADER);
+  if (shared.length !== 4 || shared.readUInt32LE(0) !== 0) {
+    throw new Error("shared empty sound header self-test failed");
+  }
   for (const header of EMPTY_HEADERS) {
     const built = emptyHeader(header);
     if (built.length !== 8 || built[0] !== 0 || built.readUInt32LE(4) !== Number(header.tone_bank)) {
@@ -416,7 +461,7 @@ function main(args: string[]): void {
   }
   if (args.length === 4 && args[0] === "export" && args[2] === "--directory") {
     export_music_residuals(args[1], args[3]);
-    console.log(`regions=6 source_bytes=${ALIGNMENT_END - ALIGNMENT_ADDRESS + 50}`);
+    console.log(`regions=7 source_bytes=${ALIGNMENT_END - ALIGNMENT_ADDRESS + 54}`);
     return;
   }
   if (args.length === 4 && args[0] === "verify" && args[2] === "--index") {

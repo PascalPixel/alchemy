@@ -1141,7 +1141,7 @@ function usage(): void {
 
 function parseArgs(argv: string[]): Options {
   const options: Options = {
-    rom: "baserom.gba", manifest: join(ROOT, "assets/manifest.json"), output: join(ROOT, "out/assets"),
+    rom: "gs1-en.gba", manifest: join(ROOT, "assets/manifest.json"), output: join(ROOT, "out/assets"),
     sourceOnly: false,
   };
   let positional = false;

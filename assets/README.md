@@ -127,9 +127,10 @@ copied from ROM `0x0800779c`; each `preview.atlas.png` is a generated contact
 sheet and remains ignored.
 
 `graphics/chr_081a/`, `graphics/chr_zenhan/`, `graphics/chr/`,
-`graphics/chr_0828/`, and `graphics/chr_082b/` reconstruct 22, 18, 33, 36,
-and 105 descriptor-linked static character banks as one palette-correct
-`koma.8bpp.png` (コマ) sheet per physical bank. The 214 sheets hold 3,902
+`graphics/chr_0828/`, `graphics/chr_082b/`, and `graphics/chr_0830/`
+reconstruct 22, 18, 33, 36, 105, and 64 descriptor-linked static character
+banks as one palette-correct `koma.8bpp.png` (コマ) sheet per physical bank.
+The 278 sheets hold 4,327
 unique frames instead of creating one file per frame. Their payload-free plans
 preserve logical pointer aliases and all three
 descriptor-selected storage modes. Mode 0 is a canonical zero-skip stream;
@@ -140,10 +141,12 @@ zero-skip stream. Zero alignment is explicit, and the builder emits the
 trailing absolute frame directories and null terminators. The complete
 `0x081a7020..0x081e120c`, `0x08220160..0x08244fc0`,
 `0x08244fc0..0x08287774`, `0x0828cfd8..0x082b5060`, and
-`0x082b5060..0x08300f74` series re-encode 1,136,540 bytes byte-for-byte; the
-eight-byte separator is the third series' explicit prefix. `zenhan` (前半) is
-a period-style reconstruction grouping. Numeric grouping and bank names remain
-because no historical character names have been recovered.
+`0x082b5060..0x08300f74`, and `0x08300f74..0x08320000` series re-encode
+1,263,656 bytes byte-for-byte; the eight-byte separator is the third series'
+explicit prefix and the final 4,136 zero bytes are explicit arena alignment.
+`zenhan` (前半) is a period-style reconstruction grouping. Numeric grouping
+and bank names remain because no historical character names have been
+recovered.
 
 `graphics/resource_128/` through `graphics/resource_369/` contain the 121 map
 families whose container is directly followed by a 224-color BG palette

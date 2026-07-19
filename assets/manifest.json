@@ -10991,6 +10991,10 @@
       "index": "assets/graphics/sentou/index.json"
     },
     {
+      "kind": "golden-sun-tokushu-map-series",
+      "index": "assets/maps/tokushu/index.json"
+    },
+    {
       "kind": "golden-sun-encounter-data-series",
       "directory": "assets/data/encounter_data"
     }

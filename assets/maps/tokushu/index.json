@@ -1,0 +1,42 @@
+{
+  "format": 1,
+  "kind": "golden-sun-tokushu-map-series",
+  "resources": [
+    {
+      "id": "1f3",
+      "address": "0x085cd0d8",
+      "size": "0x1e00",
+      "directory": "resource_1f3"
+    },
+    {
+      "id": "1f6",
+      "address": "0x085d0188",
+      "size": "0x1d5c",
+      "directory": "resource_1f6"
+    },
+    {
+      "id": "28c",
+      "address": "0x086abcc0",
+      "size": "0x1f68",
+      "directory": "resource_28c"
+    },
+    {
+      "id": "2d4",
+      "address": "0x086f4ae8",
+      "size": "0x1b04",
+      "directory": "resource_2d4"
+    },
+    {
+      "id": "307",
+      "address": "0x08735e84",
+      "size": "0x1b68",
+      "directory": "resource_307"
+    },
+    {
+      "id": "331",
+      "address": "0x0876a00c",
+      "size": "0xa1c",
+      "directory": "resource_331"
+    }
+  ]
+}

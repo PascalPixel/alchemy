@@ -55,6 +55,15 @@ table, absolute bank pointer, and zero padding. It verifies the complete
 `0x08037464..0x08073808` package byte-for-byte. Six former assembly islands
 inside that range were scanner false positives in the packed message streams.
 
+`data/resource_5/database.json` reconstructs the consumer-indexed gameplay
+tables shared byte-for-byte by all six Golden Sun localizations: eight level
+experience curves, inventory counters and party order, 324 item records, 519
+abilities, 165 combatant templates, hero growth, summons, 203 classes,
+elemental profiles, interpolation curves, and 80 Djinn. Typed records omit
+reserved bytes and regenerate them as zero; the source also declares the final
+2,516-byte resource alignment. The complete `0x0807a828..0x0808a000` range is
+an exact build input, not a raw database slice.
+
 Resource 2 preserves its twelve-digit numeric stamp as text plus an explicit
 four-byte trailer. `graphics/resource_13/font.4bpp.png` is the complete 256-
 glyph 8x8 UI font in character-code order. Resource 14 preserves 1,120

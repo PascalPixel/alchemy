@@ -33,6 +33,7 @@ import { build_title_resource } from "./title_resources.ts";
 import { build_simple_resource } from "./simple_resources.ts";
 import { build_character_catalog } from "./character_catalog.ts";
 import { build_message_archive } from "./message_archive.ts";
+import { build_resource_5 } from "./resource_5.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -579,6 +580,22 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     return [built, [String(entry.source)], {
       banks: document.banks.length,
       messages: document.banks.reduce((sum: number, bank: Json[]) => sum + bank.length, 0),
+    }];
+  }
+  if (kind === "golden-sun-gameplay-databases") {
+    const source = sourcePath(String(entry.source));
+    const document = JSON.parse(readFileSync(source, "utf8"));
+    if (number(document.address) !== number(entry.address) || number(document.size) !== number(entry.size)) {
+      throw new Error("gameplay-database extent differs from manifest");
+    }
+    const built = build_resource_5(document);
+    return [built, [String(entry.source)], {
+      items: document.items.length,
+      abilities: document.abilities.length,
+      combatants: document.combatants.length,
+      classes: document.classes.length,
+      djinn: document.djinn.length,
+      alignment_bytes: document.alignment_bytes,
     }];
   }
   if (kind === "golden-sun-simple-resource") {

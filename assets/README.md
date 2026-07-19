@@ -109,6 +109,15 @@ A generated, non-source preview may render the four proven dynamic states after
 applying the real palette, 32x32 tilemap, tile flips, and the runtime
 `0x340`-byte dynamic upload. Such previews remain ignored build products.
 
+`graphics/sentou/index.json` groups 57 independently decoded battle-resource
+streams shared across both games. `sentou` (戦闘) is the period-style grouping;
+each resource keeps one canonical `koma` (コマ), `haikei` (背景), or neutral
+`naiyou` (内容) indexed image and, when present, its `iro` (色) palette. The
+token plans contain compression decisions rather than literal payload copies.
+Together the sources rebuild 135,743 bytes exactly. Eighty-five trailing
+compressor bytes remain fallback because they vary independently of the
+semantic decoded content instead of being mislabeled as image data.
+
 `graphics/resource_1d/` through `graphics/resource_3e/` each contain one
 palette-correct `ichimaie.8bpp.png` (一枚絵): a 128-color, 256×120 raster proven
 by the palette DMA and the fixed `15×8×32×8` ARM decode loop. The LSB-first

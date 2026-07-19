@@ -8,7 +8,10 @@ import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { prune_files } from "./generated_files.ts";
 import { indexed_png, type Rgb } from "./import_asset.ts";
 import { png, read_palette } from "./skip_sprite_archive.ts";
-import { decode_static_frame_trace, encode_static_frame_plan } from "./static_sprite_bank.ts";
+import {
+  decode_static_frame_trace, encode_static_frame_plan, static_sprite_plan_mode,
+  type StaticSpriteMode,
+} from "./static_sprite_bank.ts";
 
 const ROM_BASE = 0x08000000;
 export const STATIC_DESCRIPTOR_TABLE = 0x08185024;
@@ -27,6 +30,7 @@ interface Descriptor {
   id: number;
   width: number;
   height: number;
+  mode: StaticSpriteMode;
   directory: number;
 }
 
@@ -34,6 +38,7 @@ interface PackageLayout {
   ids: number[];
   width: number;
   height: number;
+  mode: StaticSpriteMode;
   address: number;
   directory: number;
   end: number;
@@ -126,8 +131,11 @@ function descriptorPackages(
     const offset = table + id * DESCRIPTOR_SIZE;
     const directory = rom.readUInt32LE(offset + 12);
     if (directory < seriesAddress || directory >= seriesEnd) continue;
-    if (rom[offset + 10] !== 3) throw new Error(`resource ${id.toString(16)} is not mode 3`);
-    const descriptor: Descriptor = { id, width: rom[offset], height: rom[offset + 1], directory };
+    const mode = rom[offset + 10];
+    if (mode !== 0 && mode !== 1 && mode !== 3) {
+      throw new Error(`resource ${id.toString(16)} has an unsupported sprite mode`);
+    }
+    const descriptor: Descriptor = { id, width: rom[offset], height: rom[offset + 1], mode, directory };
     const aliases = byDirectory.get(directory) ?? [];
     aliases.push(descriptor);
     byDirectory.set(directory, aliases);
@@ -153,8 +161,9 @@ function descriptorPackages(
     }
     const address = uniquePointers[0];
     const descriptors = byDirectory.get(directory)!;
-    if (descriptors.some((item) => item.width !== descriptors[0].width || item.height !== descriptors[0].height)) {
-      throw new Error(`sprite aliases at ${hex(directory)} disagree on dimensions`);
+    if (descriptors.some((item) => item.width !== descriptors[0].width ||
+        item.height !== descriptors[0].height || item.mode !== descriptors[0].mode)) {
+      throw new Error(`sprite aliases at ${hex(directory)} disagree on their descriptor`);
     }
     if (!descriptors[0].width || !descriptors[0].height || descriptors[0].width % 8 || descriptors[0].height % 8) {
       throw new Error(`sprite package ${hex(directory)} has invalid dimensions`);
@@ -163,6 +172,7 @@ function descriptorPackages(
       ids: descriptors.map((item) => item.id).sort((left, right) => left - right),
       width: descriptors[0].width,
       height: descriptors[0].height,
+      mode: descriptors[0].mode,
       address,
       directory,
       end,
@@ -261,9 +271,19 @@ export function build_static_sprite_series(indexPath: string, palettePath: strin
     if (plan.format !== 1 || plan.codec !== "golden-sun-static-sprite-bank" || !Array.isArray(plan.frames) || !Array.isArray(plan.directory)) {
       throw new Error(`unsupported sprite package plan: ${item.id}`);
     }
+    const planMode = plan.mode === undefined ? 3 : number(plan.mode);
+    if (planMode !== 0 && planMode !== 1 && planMode !== 3) {
+      throw new Error(`sprite package ${item.id} has an unsupported mode`);
+    }
+    if (item.mode !== undefined && number(item.mode) !== planMode) {
+      throw new Error(`sprite package ${item.id} mode differs from its index`);
+    }
     const frames = atlasFrames(readFileSync(imagePath), plan, palette);
     const offsets: number[] = [];
     for (const [frameIndex, frame] of frames.entries()) {
+      if (static_sprite_plan_mode(plan.frames[frameIndex]) !== planMode) {
+        throw new Error(`sprite package ${item.id} frame mode differs from its bank`);
+      }
       offsets.push(result.length);
       const encoded = encode_static_frame_plan(frame, plan.frames[frameIndex], result);
       result = Buffer.concat([result, encoded]);
@@ -313,8 +333,11 @@ export function export_static_sprite_series(
     const plans: Json[] = [];
     let alignment = 0;
     for (const [frameIndex, pointer] of item.uniquePointers.entries()) {
-      const trace = decode_static_frame_trace(arena, pointer - seriesAddress);
       const next = item.uniquePointers[frameIndex + 1] ?? item.directory;
+      const trace = decode_static_frame_trace(
+        arena, pointer - seriesAddress, item.mode, item.width * item.height,
+        next - seriesAddress,
+      );
       const gap = next - pointer - trace.encodedSize;
       if (frameIndex + 1 < item.uniquePointers.length) {
         if (gap !== 0) throw new Error(`resource ${id} frame ${frameIndex} does not fill its stream extent`);
@@ -332,6 +355,7 @@ export function export_static_sprite_series(
     const plan = {
       format: 1,
       codec: "golden-sun-static-sprite-bank",
+      ...(item.mode === 3 ? {} : { mode: item.mode }),
       width: item.width,
       height: item.height,
       atlas_columns: Math.min(ATLAS_COLUMNS, frames.length),
@@ -346,6 +370,7 @@ export function export_static_sprite_series(
     const relativeRoot = `chr_${id}`;
     packageEntries.push({
       id,
+      ...(item.mode === 3 ? {} : { mode: item.mode }),
       aliases: item.ids.slice(1).map((alias) => alias.toString(16)),
       address: hex(item.address),
       size: hex(item.end - item.address),

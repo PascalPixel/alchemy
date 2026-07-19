@@ -14,26 +14,29 @@ can take a clean-room decompilation together. It is a hobby/research project,
 not a serious or community-driven decomp, and it is nowhere near complete.
 
 The name comes from the moment alchemy is released upon Weyard. This project
-is similarly trying to release the game from one finished cartridge image into
-code, art, maps, and music that people can explore.
+is similarly trying to release the games from their finished cartridge images
+into code, art, maps, and music that people can explore.
 
 It is not a remake, ROM hack, emulator, or game download. The long-term target
-is a byte-perfect reconstruction of the English GBA release. The repository is
+is one byte-perfect source tree for Golden Sun and Golden Sun: The Lost Age in
+English, Japanese, German, Spanish, French, and Italian. The immediate target
+is 100% byte closure for the English Golden Sun release. The repository is
 still in active decompilation and does not yet provide a standalone playable
 game.
 
-```text
-Project completion — audit in progress
-[????????????????????] score withheld until every quality gate is measurable
-
-Measured milestones
-[###################.]  99.57% ROM addresses owned by source
-[##################..]  93.70% byte reconstruction
-[####################] 100.00% remaining assembly classified
-[#...................]   5.68% identified executable work moved to C
-[????????????????????] asset semantics audit pending
-[????????????????????] repository organization audit pending
-```
+> ### Project completion
+>
+> 🟧 **Not honestly scoreable yet.**
+>
+> 🟨 Source ownership — 99.57% of ROM addresses have a tracked producer<br>
+> 🟨 Code decompilation — about 5.8% of identified executable work is exact C<br>
+> 🟧 Asset quality and repository organization — semantic audit in progress
+>
+> 🟩 done · 🟨 active · 🟧 unsure/auditing · 🟥 blocked · ⬜️ undone
+>
+> The often-quoted 93.70% only measures byte reconstruction. It does not measure
+> pret-level completion or time remaining. See [the technical status](STATUS.md)
+> for the full breakdown.
 
 ## Explore what has been recovered
 
@@ -54,12 +57,16 @@ previews: every asset is meant to encode back into its exact place in the game.
 
 ## Where the project stands
 
-The ROM layout is 99.57% represented by reconstructed source, but that is not
-the same as being 99.57% complete. A large body of byte-verified assembly still
-has to become matching C, a smaller set of unowned data regions still needs a
-proper source representation, and round-tripping asset containers still need
-a semantic quality audit. Exact encoding is necessary, but a mechanically
-wrapped or fragmented source image is still provisional work.
+The canonical English Golden Sun ROM layout is 99.57% represented by
+reconstructed source, but that is not the same as the whole project being
+99.57% complete. The immediate milestone is to bring that first target to 100%
+byte closure: zero unowned or copied fallback bytes, so it can be produced from
+tracked source and verified against the private ROM. A large body of
+byte-verified assembly will still have to become matching C, the other eleven
+approved editions remain future build targets, and round-tripping asset
+containers still need a semantic quality audit. Exact encoding is necessary,
+but a mechanically wrapped or fragmented source image is still provisional
+work.
 
 See [STATUS.md](STATUS.md) for the live byte counts, what has been recovered,
 what remains, and how verification works.
@@ -73,10 +80,11 @@ bun run test
 bun tools/build_full.ts --source-only
 ```
 
-A complete private verification build requires your own legally obtained
+The current private verification build requires your own legally obtained
 English Golden Sun ROM and the matching compiler described in the technical
-documents. ROMs, playable builds, private comparison reports, toolchains, and
-generated build products are never tracked here.
+documents. Later targets will require the corresponding legally obtained ROM
+only for local verification. ROMs, playable builds, private comparison reports,
+toolchains, and generated build products are never tracked here.
 
 Alchemy is guided by Pascal Pixel, is not affiliated with or endorsed by
 Nintendo or Camelot, and is non-commercial.

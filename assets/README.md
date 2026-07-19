@@ -94,6 +94,13 @@ numeric. The package rebuilds all 19,440 bytes at
 `0x0809c410..0x080a1000` exactly, including structural alignment derived by the
 builder rather than stored payload.
 
+`code/sentou_kouka/` reconstructs the complete battle-effect runtime package:
+fixed-point constants, consumer-bounded lookup tables, a symbolic 407-slot
+callback directory, relocatable ARM composition fragments, the copied packed
+decoder, and 4,012 bytes of derived structural fill. Null callback slots and
+aliases are preserved explicitly. The package rebuilds all 10,204 bytes at
+`0x080eda78..0x080f0254` without copied executable blobs.
+
 `graphics/sentou_hyouji/` reconstructs the contiguous battle-display package
 as consumer-indexed actor poses, action descriptors, party layouts, debug-party
 presets, equipment and ability IDs, weapon classes, object curves, and two

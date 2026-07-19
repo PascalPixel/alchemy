@@ -104,6 +104,12 @@
       "source": "assets/graphics/080c5b30.4bpp.png"
     },
     {
+      "address": "0x080eda78",
+      "size": "0x27dc",
+      "kind": "golden-sun-sentou-kouka-runtime",
+      "source": "assets/code/sentou_kouka/index.json"
+    },
+    {
       "address": "0x080fc684",
       "size": "0x9c0",
       "kind": "golden-sun-sound-table",

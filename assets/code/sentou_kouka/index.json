@@ -1,0 +1,92 @@
+{
+  "format": 1,
+  "kind": "golden-sun-sentou-kouka-runtime",
+  "address": "0x080eda78",
+  "end": "0x080f0254",
+  "size": 10204,
+  "sources": {
+    "keisu": "keisu.json",
+    "gousei": "gousei.s",
+    "hyou_a": "hyou_a.json",
+    "kansuu": "kansuu_hyou.json",
+    "hyou_b": "hyou_b.json",
+    "gousei_iro": "gousei_iro.s",
+    "bit_mask": "bit_mask.json",
+    "tenkai": "tenkai.s"
+  },
+  "layout": {
+    "keisu": {
+      "address": "0x080eda78",
+      "size": 120
+    },
+    "gousei": {
+      "address": "0x080edaf0",
+      "size": 856
+    },
+    "hyou_a": {
+      "address": "0x080ede48",
+      "size": 1132
+    },
+    "kansuu": {
+      "address": "0x080ee2b4",
+      "size": 1628
+    },
+    "hyou_b": {
+      "address": "0x080ee910",
+      "size": 1684
+    },
+    "gousei_iro": {
+      "address": "0x080eefa4",
+      "size": 112
+    },
+    "bit_mask": {
+      "address": "0x080ef014",
+      "size": 64
+    },
+    "tenkai": {
+      "address": "0x080f0000",
+      "size": 596
+    }
+  },
+  "consumers": {
+    "fragment_composer": {
+      "symbol": "Func_080ed408",
+      "copy_sizes_words": [
+        2,
+        4,
+        25,
+        16,
+        6,
+        3,
+        97,
+        14
+      ]
+    },
+    "callback_lookup": {
+      "symbol": "Func_080d6660",
+      "slots": 407,
+      "index_bias": -1,
+      "stride": 4
+    },
+    "packed_decoder_copy": {
+      "symbol": "Func_080f02b0",
+      "source": "0x080f0024",
+      "size": 560
+    }
+  },
+  "zero_fill": {
+    "value": 0,
+    "spans": [
+      {
+        "address": "0x080ef054",
+        "end": "0x080ef800",
+        "size": 1964
+      },
+      {
+        "address": "0x080ef800",
+        "end": "0x080f0000",
+        "size": 2048
+      }
+    ]
+  }
+}

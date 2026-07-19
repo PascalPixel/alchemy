@@ -40,6 +40,7 @@ import { build_battle_effect_data } from "./battle_effect_data.ts";
 import { build_sentou_resource, build_sentou_series } from "./sentou_resources.ts";
 import { build_encounter_regions } from "./encounter_data.ts";
 import { build_namae_nyuuryoku } from "./namae_nyuuryoku.ts";
+import { build_tokushu_map_series } from "./tokushu_map_resources.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -63,6 +64,18 @@ function sourcePath(name: string): string {
     throw new Error("asset source must stay inside the repository");
   }
   return source;
+}
+
+const tokushuMapCache = new Map<string, ReturnType<typeof build_tokushu_map_series>>();
+
+function tokushuMaps(indexName: string): ReturnType<typeof build_tokushu_map_series> {
+  const indexPath = sourcePath(indexName);
+  let built = tokushuMapCache.get(indexPath);
+  if (built === undefined) {
+    built = build_tokushu_map_series(indexPath);
+    tokushuMapCache.set(indexPath, built);
+  }
+  return built;
 }
 
 function buildComponent(entry: Json): [Buffer, Json] {
@@ -343,6 +356,17 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           kind: "golden-sun-sentou-resource",
           source,
           index: String(series.index),
+        });
+      }
+    } else if (series.kind === "golden-sun-tokushu-map-series") {
+      const indexName = String(series.index);
+      for (const resource of tokushuMaps(indexName)) {
+        entries.push({
+          address: resource.address,
+          size: resource.data.length,
+          kind: "golden-sun-tokushu-map",
+          source: indexName,
+          resource_id: resource.id,
         });
       }
     } else if (series.kind === "golden-sun-encounter-data-series") {
@@ -668,6 +692,21 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     const sources = [String(entry.index), ...nested.map((name) => relative(ROOT, resolve(name)))];
     sources.forEach(sourcePath);
     return [built, [...new Set(sources)], { source_bytes: built.length }];
+  }
+  if (kind === "golden-sun-tokushu-map") {
+    const indexName = String(entry.source);
+    const id = number(entry.resource_id);
+    const resource = tokushuMaps(indexName).find((item) => item.id === id);
+    if (resource === undefined || resource.address !== number(entry.address) ||
+        resource.data.length !== number(entry.size)) {
+      throw new Error("special-map resource differs from manifest series");
+    }
+    const nested = resource.sources.map((name) => relative(ROOT, resolve(name)));
+    nested.forEach(sourcePath);
+    return [resource.data, [...new Set([indexName, ...nested])], {
+      resource_id: `0x${id.toString(16).padStart(3, "0")}`,
+      source_bytes: resource.data.length,
+    }];
   }
   if (kind === "golden-sun-encounter-data") {
     const source = sourcePath(String(entry.source));

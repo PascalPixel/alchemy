@@ -322,3 +322,11 @@ stream resets, and stops. Component 5 is a JSON sequence of three-byte sparse
 records plus its FFFFFF terminator and zero alignment. All compressed plans
 retain trailing lookahead bytes and reproduce their named component spans
 exactly.
+
+`maps/tokushu/` reconstructs six complete map containers that were absent from
+the original traced family list. The same strict header, metatile, descriptor,
+kind-1 grid, animation, blend, and sparse-cell codecs rebuild resources 1F3,
+1F6, 28C, 2D4, 307, and 331 without fallback bytes. Thirty indexed 128x128
+planes are active spatial sources; the remaining JSON and tilemaps preserve
+consumer-shaped records and payload-free compression decisions. Together the
+six containers contribute 39,756 exact source bytes.

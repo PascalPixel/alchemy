@@ -1,0 +1,610 @@
+{
+  "format": 1,
+  "kind": "golden-sun-sentou-menu-data",
+  "address": "0x080b3940",
+  "end": "0x080b5000",
+  "size": 5824,
+  "graphics": [
+    {
+      "address": "0x080b3940",
+      "size": 768,
+      "source": "hyouji_00.4bpp.png",
+      "frames": 6,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "columns": 6
+    },
+    {
+      "address": "0x080b3c40",
+      "size": 256,
+      "source": "hyouji_01.4bpp.png",
+      "frames": 2,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "columns": 2
+    },
+    {
+      "address": "0x080b3d40",
+      "size": 320,
+      "source": "moji.4bpp.png",
+      "frames": 10,
+      "frame_tiles_wide": 1,
+      "frame_tiles_high": 1,
+      "columns": 10
+    },
+    {
+      "address": "0x080b3e80",
+      "size": 256,
+      "source": "hyouji_02.4bpp.png",
+      "frames": 2,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "columns": 2
+    },
+    {
+      "address": "0x080b3f80",
+      "size": 384,
+      "source": "hyouji_03.4bpp.png",
+      "frames": 3,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "columns": 3
+    }
+  ],
+  "cell_offsets": [
+    0,
+    1,
+    2,
+    3,
+    32,
+    33,
+    34,
+    35,
+    64,
+    65,
+    66,
+    67,
+    96,
+    97,
+    98,
+    99,
+    128,
+    129,
+    130,
+    131,
+    160,
+    161,
+    162,
+    163,
+    192,
+    193,
+    194,
+    195,
+    224,
+    225
+  ],
+  "row_offsets": [
+    192,
+    144,
+    128,
+    80,
+    64
+  ],
+  "thresholds": [
+    [
+      300,
+      300,
+      300,
+      300,
+      300
+    ],
+    [
+      500,
+      500,
+      500,
+      500,
+      500
+    ],
+    [
+      1000,
+      1000,
+      1000,
+      1000,
+      1000
+    ],
+    [
+      2000,
+      2000,
+      2000,
+      2000,
+      2000
+    ],
+    [
+      4000,
+      4000,
+      4000,
+      4000,
+      4000
+    ],
+    [
+      8000,
+      8000,
+      8000,
+      8000,
+      8000
+    ]
+  ],
+  "selector_ids": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    16,
+    195,
+    38,
+    84,
+    89,
+    90,
+    180,
+    181,
+    190
+  ],
+  "loadouts": [
+    {
+      "main_ids": [],
+      "extra_ids": [],
+      "group": 0
+    },
+    {
+      "main_ids": [
+        1,
+        16,
+        43,
+        55
+      ],
+      "extra_ids": [],
+      "group": 1
+    },
+    {
+      "main_ids": [
+        89,
+        90,
+        103,
+        118,
+        127,
+        156
+      ],
+      "extra_ids": [],
+      "group": 2
+    },
+    {
+      "main_ids": [
+        180,
+        187
+      ],
+      "extra_ids": [],
+      "group": 0
+    },
+    {
+      "main_ids": [
+        1,
+        16,
+        31,
+        43
+      ],
+      "extra_ids": [
+        56
+      ],
+      "group": 1
+    },
+    {
+      "main_ids": [
+        90,
+        118,
+        127,
+        136,
+        156,
+        166
+      ],
+      "extra_ids": [],
+      "group": 2
+    },
+    {
+      "main_ids": [
+        180,
+        187
+      ],
+      "extra_ids": [],
+      "group": 0
+    },
+    {
+      "main_ids": [
+        1,
+        2,
+        17,
+        31,
+        44
+      ],
+      "extra_ids": [
+        57
+      ],
+      "group": 1
+    },
+    {
+      "main_ids": [
+        75,
+        90,
+        104,
+        119,
+        128,
+        136,
+        145,
+        157,
+        166
+      ],
+      "extra_ids": [],
+      "group": 2
+    },
+    {
+      "main_ids": [
+        180,
+        187,
+        188,
+        236
+      ],
+      "extra_ids": [],
+      "group": 0
+    },
+    {
+      "main_ids": [
+        2,
+        17,
+        31,
+        44
+      ],
+      "extra_ids": [
+        58
+      ],
+      "group": 1
+    },
+    {
+      "main_ids": [
+        75,
+        92,
+        119,
+        128,
+        136,
+        145,
+        157,
+        166
+      ],
+      "extra_ids": [],
+      "group": 2
+    },
+    {
+      "main_ids": [
+        180,
+        187,
+        188,
+        236
+      ],
+      "extra_ids": [],
+      "group": 0
+    },
+    {
+      "main_ids": [
+        2,
+        17,
+        32,
+        44
+      ],
+      "extra_ids": [],
+      "group": 1
+    },
+    {
+      "main_ids": [
+        75,
+        92,
+        119,
+        128,
+        137,
+        146,
+        157
+      ],
+      "extra_ids": [],
+      "group": 2
+    },
+    {
+      "main_ids": [
+        180,
+        187,
+        188,
+        236
+      ],
+      "extra_ids": [],
+      "group": 0
+    },
+    {
+      "main_ids": [
+        2,
+        18,
+        32,
+        45
+      ],
+      "extra_ids": [],
+      "group": 1
+    },
+    {
+      "main_ids": [
+        92,
+        105,
+        120,
+        137,
+        146,
+        157,
+        167
+      ],
+      "extra_ids": [
+        106
+      ],
+      "group": 2
+    },
+    {
+      "main_ids": [
+        180,
+        187,
+        188,
+        236
+      ],
+      "extra_ids": [],
+      "group": 0
+    },
+    {
+      "main_ids": [
+        3,
+        18,
+        32,
+        45
+      ],
+      "extra_ids": [
+        59
+      ],
+      "group": 1
+    },
+    {
+      "main_ids": [
+        77,
+        92,
+        105,
+        120,
+        129,
+        137,
+        147,
+        167
+      ],
+      "extra_ids": [],
+      "group": 2
+    },
+    {
+      "main_ids": [
+        180,
+        181,
+        187,
+        188,
+        236
+      ],
+      "extra_ids": [],
+      "group": 0
+    },
+    {
+      "main_ids": [
+        3,
+        18,
+        33,
+        45
+      ],
+      "extra_ids": [
+        60
+      ],
+      "group": 1
+    },
+    {
+      "main_ids": [
+        77,
+        107,
+        120,
+        129,
+        138,
+        147,
+        158,
+        167
+      ],
+      "extra_ids": [],
+      "group": 2
+    },
+    {
+      "main_ids": [
+        180,
+        181,
+        187,
+        188,
+        236
+      ],
+      "extra_ids": [],
+      "group": 0
+    },
+    {
+      "main_ids": [
+        180,
+        187,
+        188,
+        236
+      ],
+      "extra_ids": [],
+      "group": 0
+    },
+    {
+      "main_ids": [
+        4,
+        19,
+        33,
+        46
+      ],
+      "extra_ids": [
+        61
+      ],
+      "group": 1
+    },
+    {
+      "main_ids": [
+        78,
+        94,
+        107,
+        121,
+        129,
+        138,
+        148,
+        158,
+        168
+      ],
+      "extra_ids": [],
+      "group": 2
+    },
+    {
+      "main_ids": [
+        180,
+        181,
+        187,
+        188,
+        236
+      ],
+      "extra_ids": [
+        182,
+        189
+      ],
+      "group": 0
+    },
+    {
+      "main_ids": [
+        4,
+        19,
+        33,
+        46
+      ],
+      "extra_ids": [
+        5,
+        20,
+        34,
+        62
+      ],
+      "group": 1
+    },
+    {
+      "main_ids": [
+        79,
+        139,
+        149,
+        169
+      ],
+      "extra_ids": [
+        109,
+        131
+      ],
+      "group": 2
+    },
+    {
+      "main_ids": [
+        180,
+        181,
+        187,
+        188,
+        236
+      ],
+      "extra_ids": [
+        182,
+        183,
+        189,
+        186
+      ],
+      "group": 0
+    },
+    {
+      "main_ids": [
+        4,
+        19,
+        33,
+        46
+      ],
+      "extra_ids": [
+        6,
+        21,
+        47,
+        63
+      ],
+      "group": 1
+    },
+    {
+      "main_ids": [
+        80,
+        150,
+        169
+      ],
+      "extra_ids": [
+        110,
+        122,
+        140,
+        159
+      ],
+      "group": 2
+    },
+    {
+      "main_ids": [
+        180,
+        181,
+        187,
+        188,
+        236
+      ],
+      "extra_ids": [
+        182,
+        183,
+        189,
+        186
+      ],
+      "group": 0
+    }
+  ],
+  "sound_ids": [
+    82,
+    84,
+    88,
+    87
+  ],
+  "multipliers": [
+    2,
+    4,
+    7,
+    8,
+    8,
+    10,
+    12,
+    15,
+    20,
+    0,
+    18,
+    25,
+    0
+  ],
+  "alignment": {
+    "address": "0x080b4ac3",
+    "end": "0x080b5000",
+    "fill": 0
+  }
+}

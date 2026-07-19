@@ -39,6 +39,11 @@ import { build_localization_tables } from "./localization_tables.ts";
 import { build_battle_effect_data } from "./battle_effect_data.ts";
 import { build_sentou_hyouji } from "./sentou_hyouji.ts";
 import { build_sentou_kouka_runtime } from "./sentou_kouka_runtime.ts";
+import {
+  build_sentou_menu_data,
+  SENTOU_MENU_ADDRESS,
+  SENTOU_MENU_SIZE,
+} from "./sentou_menu_data.ts";
 import { build_sentou_resource, build_sentou_series } from "./sentou_resources.ts";
 import { build_encounter_regions } from "./encounter_data.ts";
 import { build_namae_nyuuryoku } from "./namae_nyuuryoku.ts";
@@ -800,6 +805,21 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
       source_bytes: built.length,
       callback_slots: 407,
       derived_zero_bytes: 4012,
+    }];
+  }
+  if (kind === "golden-sun-sentou-menu-data") {
+    const sourceName = String(entry.source);
+    const [built, nestedPaths] = build_sentou_menu_data(sourcePath(sourceName));
+    if (number(entry.address) !== SENTOU_MENU_ADDRESS || number(entry.size) !== SENTOU_MENU_SIZE ||
+        built.length !== SENTOU_MENU_SIZE) {
+      throw new Error("battle-menu package differs from canonical manifest extent");
+    }
+    const nested = nestedPaths.map((name) => relative(ROOT, resolve(name)));
+    nested.forEach(sourcePath);
+    return [built, [...new Set(nested)], {
+      source_bytes: built.length,
+      atlases: 5,
+      loadout_records: 35,
     }];
   }
   if (kind === "golden-sun-sentou-resource") {

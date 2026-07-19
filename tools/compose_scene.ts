@@ -17,6 +17,7 @@ import { dirname, extname, join, resolve } from "node:path";
 import { deflateSync } from "./zlib.ts";
 
 import { chunk } from "./export_asset.ts";
+import { resourceGraphicsDir } from "./asset_paths.ts";
 import { prune_files } from "./generated_files.ts";
 import { indexed_png, type Rgb } from "./import_asset.ts";
 import { records_by_container } from "./map_load_table.ts";
@@ -120,7 +121,7 @@ export function graphics_catalog(): Catalog {
     if (kind === "golden-sun-map-charblock-series") {
       for (const family of series.families) {
         const base = Number.parseInt(family.id, 16);
-        const directory = join(ROOT, `assets/graphics/resource_${family.id}`);
+        const directory = join(ROOT, resourceGraphicsDir(family.id));
         palettes[(base + 1).toString(16)] = join(directory, "palette.224.png");
         for (const [index, resource] of family.charblocks.entries()) {
           banks[(base + 2 + index).toString(16)] = resource.source
@@ -134,12 +135,12 @@ export function graphics_catalog(): Catalog {
     } else if (kind === "golden-sun-standalone-palette-series") {
       for (const palette of series.palettes) {
         const resource = String(palette.id).toLowerCase();
-        palettes[resource] = join(ROOT, `assets/graphics/resource_${resource}/palette.224.png`);
+        palettes[resource] = join(ROOT, resourceGraphicsDir(resource), "palette.224.png");
       }
     } else if (kind === "golden-sun-standalone-tile-series") {
       for (const bank of series.resources) {
         const resource = String(bank.id).toLowerCase();
-        banks[resource] = join(ROOT, `assets/graphics/resource_${resource}/tiles.4bpp.png`);
+        banks[resource] = join(ROOT, resourceGraphicsDir(resource), "tiles.4bpp.png");
       }
     }
   }

@@ -76,7 +76,7 @@ compiler emits Thumb only, and the preceding fixed long-call veneer remains
 linker reconstruction. Together these sources cover all 5,836 bytes at
 `0x080092b0..0x0800a97c`.
 
-`graphics/direct_palettes/` contains three 64-color resources selected by
+`graphics/palettes/direct_palettes/` contains three 64-color resources selected by
 fixed pointer-table IDs. Their call sites copy exactly `0x80` bytes to palette
 RAM; names beyond the independently derived IDs are intentionally omitted.
 
@@ -109,7 +109,7 @@ regions rebuild the complete 56,148-byte `0x08029910..0x08037464` localization
 prefix. A four-byte scanner island inside the first package was packed glyph
 data, not a function.
 
-`graphics/namae_nyuuryoku/gamen.json` reconstructs the localized name-entry
+`graphics/fonts/namae_nyuuryoku/gamen.json` reconstructs the localized name-entry
 screen package (名前入力) as four resource IDs, a 24×13 tilemap with explicit
 24×9 consumer dimensions, palette and flip flags, its payload-free general-LZ
 decisions, the UI tile-bank pointer, and structural alignment. The builder
@@ -262,7 +262,7 @@ RAM and uploads the result to VRAM. The archive uses a 16-bit offset table and
 32-byte-aligned compressed slots. Its final two table-range bytes are outside
 the proven archive boundary and remain ROM fallback bytes.
 
-`graphics/palette_animation_e8.rgba.png` through
+`graphics/palettes/palette_animation_e8.rgba.png` through
 `palette_animation_ef.rgba.png` are eight consecutive 128-color frames. A
 consumer selects `(counter & 7) + E8` and copies exactly `0x100` bytes through
 the palette allocator. RGB channels preserve the five-bit GBA color. Alpha
@@ -310,9 +310,9 @@ use semantic operations and 1,997 symbolic labels, preserving pointer aliases
 without embedding pointer bytes. The catalog and first three character banks
 form one exact 139,260-byte runtime unit.
 
-`graphics/chr_0818/`, `graphics/chr_081a/`, `graphics/chr_081e/`,
-`graphics/chr_081f/`, `graphics/chr_zenhan/`, `graphics/chr/`,
-`graphics/chr_0828/`, `graphics/chr_082b/`, and `graphics/chr_0830/`
+`graphics/characters/chr_0818/`, `graphics/characters/chr_081a/`, `graphics/characters/chr_081e/`,
+`graphics/characters/chr_081f/`, `graphics/characters/chr_zenhan/`, `graphics/characters/chr/`,
+`graphics/characters/chr_0828/`, `graphics/characters/chr_082b/`, and `graphics/characters/chr_0830/`
 reconstruct 3, 22, 10, 17, 18, 35, 36, 105, and 64 descriptor-linked static
 character banks as one or more palette-correct `koma` (コマ) composition PNGs
 per physical bank. The 310 banks hold 5,727
@@ -336,7 +336,7 @@ are explicit arena alignment.
 and bank names remain because no historical character names have been
 recovered.
 
-`graphics/resource_128/` through `graphics/resource_369/` contain the 121 map
+`graphics/map-tiles/resource_128/` through `graphics/map-tiles/resource_369/` contain the 121 map
 families whose container is directly followed by a 224-color BG palette
 stream and zero to four 0x4000-byte kind-2 tile banks. These directories are
 canonical storage groups, not a claim that every adjacent bank is used by that

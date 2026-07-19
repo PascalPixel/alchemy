@@ -7,13 +7,13 @@
     {
       "address": "0x08029910",
       "end": "0x08029a10",
-      "source": "graphics/localization_font/tile_08029910.4bpp.png",
+      "source": "graphics/fonts/localization_font/tile_08029910.4bpp.png",
       "columns": 2
     },
     {
       "address": "0x080310a4",
       "end": "0x08031864",
-      "source": "graphics/localization_font/tile_080310a4.4bpp.png",
+      "source": "graphics/fonts/localization_font/tile_080310a4.4bpp.png",
       "columns": 2
     }
   ],
@@ -30,7 +30,7 @@
       "images": 3,
       "columns": 3,
       "tail_zeros": 3,
-      "source": "graphics/localization_font/mtf_00.indexed.png"
+      "source": "graphics/fonts/localization_font/mtf_00.indexed.png"
     },
     {
       "address": "0x08029acc",
@@ -44,7 +44,7 @@
       "images": 3,
       "columns": 3,
       "tail_zeros": 3,
-      "source": "graphics/localization_font/mtf_01.indexed.png"
+      "source": "graphics/fonts/localization_font/mtf_01.indexed.png"
     },
     {
       "address": "0x08029b68",
@@ -68,7 +68,7 @@
       "images": 13,
       "columns": 13,
       "tail_zeros": 0,
-      "source": "graphics/localization_font/mtf_02.indexed.png"
+      "source": "graphics/fonts/localization_font/mtf_02.indexed.png"
     },
     {
       "address": "0x08029e00",
@@ -122,7 +122,7 @@
       "images": 1,
       "columns": 1,
       "tail_zeros": 3,
-      "source": "graphics/localization_font/mtf_03.indexed.png"
+      "source": "graphics/fonts/localization_font/mtf_03.indexed.png"
     },
     {
       "address": "0x08029ee4",
@@ -388,7 +388,7 @@
       "images": 255,
       "columns": 16,
       "tail_zeros": 2,
-      "source": "graphics/localization_font/mtf_04.indexed.png"
+      "source": "graphics/fonts/localization_font/mtf_04.indexed.png"
     },
     {
       "address": "0x0802de88",
@@ -559,7 +559,7 @@
       "images": 160,
       "columns": 16,
       "tail_zeros": 1,
-      "source": "graphics/localization_font/mtf_05.indexed.png"
+      "source": "graphics/fonts/localization_font/mtf_05.indexed.png"
     },
     {
       "address": "0x080308a0",
@@ -602,7 +602,7 @@
       "images": 32,
       "columns": 16,
       "tail_zeros": 5,
-      "source": "graphics/localization_font/mtf_06.indexed.png"
+      "source": "graphics/fonts/localization_font/mtf_06.indexed.png"
     }
   ],
   "packed_images": {
@@ -611,7 +611,7 @@
     "images": 8,
     "columns": 4,
     "tail_zeros": 1,
-    "source": "graphics/localization_font/packed_32x32.indexed.png",
+    "source": "graphics/fonts/localization_font/packed_32x32.indexed.png",
     "tokens": [
       [
         [
@@ -7406,7 +7406,7 @@
     "first_code": 32,
     "glyphs": 224,
     "columns": 16,
-    "source": "graphics/localization_font/glyphs_0020_00ff.1bpp.png",
+    "source": "graphics/fonts/localization_font/glyphs_0020_00ff.1bpp.png",
     "advances": [
       6,
       4,

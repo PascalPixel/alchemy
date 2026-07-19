@@ -57,6 +57,10 @@ own. Not affiliated with or endorsed by Nintendo or Camelot. Non-commercial.
   sources plus typed display-glyph cells, masks, offset curves, orders, lookup
   tables, selectors, object IDs, and derived alignment. Its following four
   fixed long-call veneers remain structural assembly rather than invented C.
+- The staff-roll package at `080f0a5c` is reconstructed as an explicit preload
+  table, canonical text pool, glyph widths, line references, a 1bpp font, and
+  derived alignment. Its following five fixed long-call veneers remain
+  structural assembly.
 - `assets/code/` holds the EWRAM code overlays that ship compressed in the ROM,
   reconstructed as Thumb assembly (control-flow-walked disassembly with the
   pointer tables kept as data) plus the exact compression plan; the build

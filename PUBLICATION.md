@@ -30,6 +30,10 @@ and build directories.
 - A narrowly scoped binary source format when it is the canonical named input
   for a reconstructed subsystem, is actively consumed by the build, and is
   not merely an opaque slice copied from the ROM.
+- A bounded, canonical JSON byte-value region when it is an actively verified
+  source input, names every reconstructed range, and is not a ROM, binary
+  patch, or fallback artifact. It establishes byte closure only; a semantic
+  producer should replace it when the data is understood.
 
 Tracked assets must be authoritative build inputs, not disposable extraction
 output. When a coherent semantic source replaces a provisional atlas or raw
@@ -61,6 +65,11 @@ needed by the tracked build or documentation. Verify that no forbidden file
 above is staged, then run the relevant byte-identical build checks. Repository
 size alone is not the boundary, but redundant and superseded assets must not
 accumulate.
+
+Commit subjects and public status text must name the demonstrated milestone:
+use **byte closure** or **byte-identical, zero-fallback rebuild** for complete
+address coverage. Do not say that all bytes are “identified,” “understood,” or
+“decompiled” unless the relevant semantic or C-decompilation gate is also met.
 
 The immediate verification target is `gs1-en.gba`. The other eleven approved
 ROMs are local comparison evidence and future independent build targets; none

@@ -3,6 +3,7 @@ import {
   existsSync,
   mkdirSync,
   mkdtempSync,
+  readdirSync,
   readFileSync,
   renameSync,
   rmSync,
@@ -202,6 +203,19 @@ function semanticFill(data: Uint8Array): 0 | 0xff | null {
 
 function sourceName(slot: number): string {
   return `${addressText(slot).slice(2)}.s`;
+}
+
+function trackedAssemblyStems(directory: string): Set<string> {
+  const result = new Set<string>();
+  const visit = (path: string): void => {
+    for (const entry of readdirSync(path, { withFileTypes: true })) {
+      const child = join(path, entry.name);
+      if (entry.isDirectory()) visit(child);
+      else if (entry.isFile() && /^080[0-9a-f]{5}\.s$/.test(entry.name)) result.add(entry.name.slice(0, -2));
+    }
+  };
+  if (existsSync(directory)) visit(directory);
+  return result;
 }
 
 export function veneerSource(slot: number, target: number): string {
@@ -455,6 +469,49 @@ export function verifyVeneerIsland(rom: Buffer, indexPath: string): Buffer {
   return built;
 }
 
+export function exportUnknownVeneerIsland(
+  rom: Buffer,
+  start: number,
+  end: number,
+  directory: string,
+  existingDirectory = resolve(ROOT, "asm"),
+): void {
+  if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || start < ROM_BASE || end <= start ||
+      (start & 7) !== 0 || (end - start) % 8 !== 0) throw new Error("unknown veneer island extent differs");
+  const tracked = trackedAssemblyStems(existingDirectory);
+  const slots = new Map<number, SlotClassification>();
+  for (let slot = start; slot < end; slot += 8) {
+    slots.set(slot, tracked.has(addressText(slot).slice(2)) ? "existing_veneer" : "unknown");
+  }
+  const layout: VeneerIslandLayout = {
+    address: start,
+    end,
+    slotSize: 8,
+    counts: {
+      existing_veneer: [...slots.values()].filter((value) => value === "existing_veneer").length,
+      live_missing: 0,
+      unknown: [...slots.values()].filter((value) => value === "unknown").length,
+    },
+    slots,
+    source: {},
+  };
+  const destination = resolve(directory), parent = dirname(destination);
+  if (destination === parent) throw new Error("unknown veneer export requires a dedicated directory");
+  mkdirSync(parent, { recursive: true });
+  const transaction = mkdtempSync(join(parent, ".unknown-veneer-export-"));
+  const staged = join(transaction, "new"), previous = join(transaction, "previous");
+  let installed = false;
+  try {
+    writePackage(rom, layout, staged);
+    if (existsSync(destination)) renameSync(destination, previous);
+    renameSync(staged, destination);
+    installed = true;
+  } finally {
+    if (!installed && existsSync(previous) && !existsSync(destination)) renameSync(previous, destination);
+    rmSync(transaction, { recursive: true, force: true });
+  }
+}
+
 function reject(action: () => unknown): boolean {
   try { action(); } catch { return true; }
   return false;
@@ -559,7 +616,7 @@ export function selfTest(layoutPath = resolve(ROOT, "assets/data/veneer_island.j
 }
 
 function usage(): never {
-  console.log("usage: veneer_island.ts export ROM LAYOUT --directory DIR | build INDEX -o OUTPUT | verify ROM INDEX | --self-test");
+  console.log("usage: veneer_island.ts export ROM LAYOUT --directory DIR | export-unknown ROM START END --directory DIR | build INDEX -o OUTPUT | verify ROM INDEX | --self-test");
   process.exit(0);
 }
 
@@ -567,6 +624,10 @@ function main(args: string[]): void {
   if (args.length === 1 && args[0] === "--self-test") { selfTest(); return; }
   if (args[0] === "export" && args.length === 5 && args[3] === "--directory") {
     exportVeneerIsland(readFileSync(args[1]), args[2], args[4]);
+    return;
+  }
+  if (args[0] === "export-unknown" && args.length === 6 && args[4] === "--directory") {
+    exportUnknownVeneerIsland(readFileSync(args[1]), Number(args[2]), Number(args[3]), args[5]);
     return;
   }
   if (args[0] === "build" && args.length === 4 && (args[2] === "-o" || args[2] === "--output")) {

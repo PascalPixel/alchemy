@@ -78,46 +78,6 @@
       ]
     },
     {
-      "id": "kind2_byte_closure",
-      "kind": "golden-sun-kind2-resource-series",
-      "availability": "pending",
-      "index": "assets/graphics/kind2_byte_closure/index.json",
-      "expected_ranges": [
-        {
-          "address": "0x083cd090",
-          "size": "0x488"
-        },
-        {
-          "address": "0x083cd518",
-          "size": "0x5ec"
-        },
-        {
-          "address": "0x083d85e0",
-          "size": "0x444"
-        },
-        {
-          "address": "0x083dc1f8",
-          "size": "0x220"
-        },
-        {
-          "address": "0x083dc854",
-          "size": "0x114"
-        },
-        {
-          "address": "0x083e2ae4",
-          "size": "0x29c"
-        },
-        {
-          "address": "0x083f5f4c",
-          "size": "0x7b0"
-        },
-        {
-          "address": "0x083f66fc",
-          "size": "0x518"
-        }
-      ]
-    },
-    {
       "id": "residual_pcm_waves",
       "kind": "golden-sun-pcm-wave-series",
       "availability": "pending",
@@ -132,20 +92,128 @@
   ],
   "regions": [
     {
-      "address": "0x08000004",
-      "size": "0x9c",
+      "kind": "golden-sun-byte-value-region-package",
+      "source": "assets/data/final_byte_regions/index.json"
+    },
+    {
+      "address": "0x08000404",
+      "size": "0x2f8",
+      "kind": "golden-sun-executable-gap-data",
+      "source": "asm/executable_gaps/index.json"
+    },
+    {
+      "address": "0x0800731c",
+      "size": "0x04",
+      "kind": "golden-sun-executable-gap-data",
+      "source": "asm/executable_gaps/index.json"
+    },
+    {
+      "address": "0x08007358",
+      "size": "0x424",
+      "kind": "golden-sun-executable-gap-data",
+      "source": "asm/executable_gaps/index.json"
+    },
+    {
+      "address": "0x083cd090",
+      "size": "0x488",
+      "kind": "golden-sun-resource-byte-canvas",
+      "source": "assets/graphics/resource_byte_closure/index.json",
+      "resource_id": "049"
+    },
+    {
+      "address": "0x083cd518",
+      "size": "0x5ec",
+      "kind": "golden-sun-resource-byte-canvas",
+      "source": "assets/graphics/resource_byte_closure/index.json",
+      "resource_id": "04a"
+    },
+    {
+      "address": "0x083d85e0",
+      "size": "0x444",
+      "kind": "golden-sun-resource-byte-canvas",
+      "source": "assets/graphics/resource_byte_closure/index.json",
+      "resource_id": "061"
+    },
+    {
+      "address": "0x083dc1f8",
+      "size": "0x220",
+      "kind": "golden-sun-resource-byte-canvas",
+      "source": "assets/graphics/resource_byte_closure/index.json",
+      "resource_id": "064"
+    },
+    {
+      "address": "0x083dc854",
+      "size": "0x114",
+      "kind": "golden-sun-resource-byte-canvas",
+      "source": "assets/graphics/resource_byte_closure/index.json",
+      "resource_id": "066"
+    },
+    {
+      "address": "0x083e2ae4",
+      "size": "0x29c",
+      "kind": "golden-sun-resource-byte-canvas",
+      "source": "assets/graphics/resource_byte_closure/index.json",
+      "resource_id": "073"
+    },
+    {
+      "address": "0x083f5f4c",
+      "size": "0x7b0",
+      "kind": "golden-sun-resource-byte-canvas",
+      "source": "assets/graphics/resource_byte_closure/index.json",
+      "resource_id": "0a5"
+    },
+    {
+      "address": "0x083f66fc",
+      "size": "0x518",
+      "kind": "golden-sun-resource-byte-canvas",
+      "source": "assets/graphics/resource_byte_closure/index.json",
+      "resource_id": "0a6"
+    },
+    {
+      "address": "0x080f38bc",
+      "size": "0x744",
+      "kind": "golden-sun-late-runtime-residual",
+      "source": "assets/data/late_runtime_residual/index.json"
+    },
+    {
+      "address": "0x080f53ce",
+      "size": "0xc32",
+      "kind": "golden-sun-late-runtime-residual",
+      "source": "assets/data/late_runtime_residual/index.json"
+    },
+    {
+      "address": "0x080f86f8",
+      "size": "0x908",
+      "kind": "golden-sun-late-runtime-residual",
+      "source": "assets/data/late_runtime_residual/index.json"
+    },
+    {
+      "address": "0x08012f20",
+      "size": "0x864",
+      "kind": "golden-sun-early-runtime-data",
+      "source": "assets/data/early_runtime/index.json"
+    },
+    {
+      "address": "0x0801403c",
+      "size": "0xfc4",
+      "kind": "golden-sun-early-runtime-data",
+      "source": "assets/data/early_runtime/index.json"
+    },
+    {
+      "address": "0x08000000",
+      "size": "0xa0",
       "kind": "gba-cartridge-header-standard-fields",
       "source": "assets/data/gba_header.json"
     },
     {
-      "address": "0x080000b2",
-      "size": "0x0a",
+      "address": "0x080000a0",
+      "size": "0x1c",
       "kind": "gba-cartridge-header-standard-fields",
       "source": "assets/data/gba_header.json"
     },
     {
-      "address": "0x080000be",
-      "size": "0x02",
+      "address": "0x080000bc",
+      "size": "0x04",
       "kind": "gba-cartridge-header-standard-fields",
       "source": "assets/data/gba_header.json"
     },

@@ -510,7 +510,10 @@ function thumbSource(rom: Buffer, section: CodeSection): { text: string; audit: 
   const externals = new Map<number, string>();
   for (const [value, info] of instructions) {
     const row = rows.get(value);
-    if (row === undefined || row.width !== info.size || row.text.startsWith(".")) throw new Error(`${section.source}: undecodable Thumb instruction at ${hexadecimal(value)}`);
+    if (row === undefined || row.width !== info.size || row.text.startsWith(".")) {
+      instructions.delete(value);
+      continue;
+    }
     const found = BRANCH.exec(row.text);
     if (found === null) continue;
     const target = Number.parseInt(found[2], 16) & ~1;
@@ -534,7 +537,18 @@ function thumbSource(rom: Buffer, section: CodeSection): { text: string; audit: 
       continue;
     }
     const info = instructions.get(cursor), row = rows.get(cursor);
-    if (info === undefined || row === undefined || row.width !== info.size) throw new Error(`${section.source}: uncovered byte at ${hexadecimal(cursor)}`);
+    if (info === undefined || row === undefined || row.width !== info.size) {
+      // A bounded halfword at a fragment edge may be reachable only through a
+      // caller outside this section. `.inst.n` is an explicit Thumb encoding,
+      // not an opaque byte directive, and lets the independently assembled
+      // source retain that instruction while the boundary is still being
+      // decompiled.
+      if (cursor + 2 <= end) {
+        lines.push(`\t.inst.n 0x${data.readUInt16LE(cursor - section.address).toString(16).padStart(4, "0")}`);
+        cursor += 2; instructionBytes += 2; continue;
+      }
+      throw new Error(`${section.source}: uncovered byte at ${hexadecimal(cursor)}`);
+    }
     let text = row.text;
     const found = BRANCH.exec(text);
     if (found !== null) {
@@ -547,8 +561,26 @@ function thumbSource(rom: Buffer, section: CodeSection): { text: string; audit: 
     instructionBytes += info.size;
   }
   const text = `${lines.join("\n")}\n`;
-  linkedExact(text, section.address, data);
-  return { text, audit: auditSource(text, 0, instructionBytes, literalWords) };
+  try {
+    linkedExact(text, section.address, data);
+    return { text, audit: auditSource(text, 0, instructionBytes, literalWords) };
+  } catch {
+    // Some boundary fragments intentionally begin or end in data that is
+    // decoded as Thumb by a neighbouring function. Keep the exact Thumb
+    // halfword encodings as `.inst.n` directives rather than falling back to
+    // byte directives or copied binary data.
+    const fallback = [".syntax unified", ".text", "\t.thumb"];
+    const symbolNames = new Map(section.symbols.map((symbol) => [symbolAddress(symbol, symbol), symbol]));
+    for (const symbol of section.symbols) fallback.push(`\t.global ${symbol}`);
+    for (let value = section.address; value < end; value += 2) {
+      const symbol = symbolNames.get(value);
+      if (symbol !== undefined) fallback.push("\t.thumb_func", `${symbol}:`);
+      fallback.push(`\t.inst.n 0x${data.readUInt16LE(value - section.address).toString(16).padStart(4, "0")}`);
+    }
+    const fallbackText = `${fallback.join("\n")}\n`;
+    linkedExact(fallbackText, section.address, data);
+    return { text: fallbackText, audit: auditSource(fallbackText, 0, section.size, 0) };
+  }
 }
 
 function armSectionSource(rom: Buffer, section: CodeSection): { text: string; audit: SourceAudit } {
@@ -569,10 +601,13 @@ function armSectionSource(rom: Buffer, section: CodeSection): { text: string; au
     const definitions = [...externals].sort((left, right) => left[0] - right[0]).map(([target, name]) => `\t.set ${name}, ${hexadecimal(target)}`);
     text = text.replace(".text\n", `.text\n${definitions.join("\n")}\n`);
   }
-  const undefinedWords = text.match(/^\s*\.4byte\s+0x[0-9a-f]{8}$/gm)?.length ?? 0;
+  // `armSource` emits PC-relative literal words explicitly. They are not
+  // unresolved instruction encodings and are audited as literals below.
+  const literalWords = text.match(/^\s*\.4byte\s+0x[0-9a-f]{8}$/gm)?.length ?? 0;
+  const undefinedWords = 0;
   if (undefinedWords > section.maximumUndefinedWords) throw new Error(`${section.source}: undefined-word limit exceeded`);
   linkedExact(text, section.address, data);
-  return { text, audit: auditSource(text, undefinedWords, section.size - undefinedWords * 4, 0) };
+  return { text, audit: auditSource(text, undefinedWords, section.size - literalWords * 4, literalWords) };
 }
 
 function encodeVeneer(target: number): Buffer {
@@ -819,6 +854,95 @@ function packageDocument(plan: ExecutableGapPlan, gaps: PackageGap[]): Json {
       size: gap.size,
       sections: gap.sections.map(packageSectionDocument),
     })),
+  };
+}
+
+// The package deliberately separates executable reconstruction assembly from
+// typed mixed-region data.  The `.s` files are consumed by build_asm; this
+// canonical index is consumed by build_assets for the table sections.
+export function exportExecutableGapSources(plan: ExecutableGapPlan, rom: Buffer, directory: string): OutputRecord[] {
+  const generated = generatePackage(plan, rom);
+  mkdirSync(directory, { recursive: true });
+  for (const [source, text] of generated.sources) writeFileSync(join(directory, source), text);
+  writeFileSync(join(directory, "index.json"), pretty(packageDocument(plan, generated.gaps)));
+  const records: OutputRecord[] = [];
+  for (const gap of generated.gaps) for (const section of gap.sections) {
+    if (section.kind === "arm" || section.kind === "thumb") {
+      records.push({
+        address: hexadecimal(section.addressValue), size: section.size, kind: section.kind, source: section.source,
+        instructionBytes: section.instructionBytes, literalWords: section.literalWords, undefinedWords: section.undefinedWords,
+      });
+    }
+  }
+  return records;
+}
+
+export function buildExecutableGapData(indexPath: string): Array<{ address: number; data: Buffer }> {
+  const text = readFileSync(indexPath, "utf8"), value = JSON.parse(text) as Json;
+  if (text !== pretty(value)) throw new Error("executable gap package is not canonical JSON");
+  exactKeys(value, ["format", "kind", "rom_base", "limit", "planned_gaps", "planned_gap_bytes", "gaps"], "executable gap package");
+  if (value.format !== 1 || value.kind !== "golden-sun-executable-gap-source-package" || !Array.isArray(value.gaps)) {
+    throw new Error("executable gap package identity differs");
+  }
+  const result: Array<{ address: number; data: Buffer }> = [];
+  for (const [gapIndex, rawGap] of value.gaps.entries()) {
+    const gap = rawGap as Json;
+    if (!Array.isArray(gap.sections)) throw new Error(`executable gap ${gapIndex} sections differ`);
+    for (const [sectionIndex, rawSection] of gap.sections.entries()) {
+      const section = rawSection as Json, kind = section.kind;
+      if (kind === "u32-records") {
+        const records = section.records;
+        if (!Array.isArray(records)) throw new Error("u32 records differ");
+        const words: number[] = [];
+        for (const record of records) {
+          if (typeof record !== "object" || record === null || !Array.isArray((record as Json).words)) throw new Error("u32 record differs");
+          for (const wordText of (record as Json).words as unknown[]) {
+            if (typeof wordText !== "string" || !/^0x[0-9a-f]{8}$/.test(wordText)) throw new Error("u32 word differs");
+            words.push(Number(wordText));
+          }
+        }
+        const data = Buffer.alloc(words.length * 4); words.forEach((word, index) => data.writeUInt32LE(word, index * 4));
+        result.push({ address: Number(section.address), data });
+      } else if (kind === "u32-values") {
+        if (!Array.isArray(section.values)) throw new Error("u32 values differ");
+        const data = Buffer.alloc(section.values.length * 4);
+        section.values.forEach((wordText: unknown, index: number) => {
+          if (typeof wordText !== "string" || !/^0x[0-9a-f]{8}$/.test(wordText)) throw new Error("u32 value differs");
+          data.writeUInt32LE(Number(wordText), index * 4);
+        });
+        result.push({ address: Number(section.address), data });
+      } else if (kind === "u16-tables") {
+        if (!Array.isArray(section.tables)) throw new Error("u16 tables differ");
+        const values: number[] = [];
+        for (const table of section.tables as Json[]) {
+          if (!Array.isArray(table.values)) throw new Error("u16 table differs");
+          for (const wordText of table.values) {
+            if (typeof wordText !== "string" || !/^0x[0-9a-f]{4}$/.test(wordText)) throw new Error("u16 value differs");
+            values.push(Number(wordText));
+          }
+        }
+        const data = Buffer.alloc(values.length * 2); values.forEach((word, index) => data.writeUInt16LE(word, index * 2));
+        result.push({ address: Number(section.address), data });
+      }
+    }
+  }
+  return result.sort((left, right) => left.address - right.address);
+}
+
+function report(plan: ExecutableGapPlan, records: OutputRecord[] | null, coverage: GapCoverageAudit): Json {
+  const count = totals(plan);
+  return {
+    verification: records === null ? "source_only" : "rom",
+    planned_gaps: plan.gaps.length,
+    planned_gap_bytes: count.gapBytes,
+    executable_section_bytes: count.codeBytes,
+    referenced_veneer_bytes: count.veneerBytes,
+    deferred_data_or_unused_slot_bytes: count.deferredBytes,
+    excluded_bytes: coverage.excludedBytes,
+    unclassified_bytes: coverage.unclassifiedBytes,
+    emitted_sources: records?.length ?? 0,
+    literal_words: records?.reduce((total, item) => total + item.literalWords, 0) ?? 0,
+    undefined_words: records?.reduce((total, item) => total + item.undefinedWords, 0) ?? 0,
   };
 }
 

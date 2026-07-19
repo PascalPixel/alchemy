@@ -178,7 +178,11 @@ function writePackage(rom: Buffer, layoutPath: string, directory: string): void 
   }
   const rebuilt = buildRelocatedArmHelpers(join(directory, "index.json"));
   const expected = rom.subarray(offset, end);
-  if (!rebuilt.data.equals(expected)) throw new Error("exported ARM helper package does not round-trip");
+  if (!rebuilt.data.equals(expected)) {
+    let mismatch = 0;
+    while (mismatch < rebuilt.data.length && rebuilt.data[mismatch] === expected[mismatch]) mismatch++;
+    throw new Error(`exported ARM helper package differs at ${hexadecimal(layout.address + mismatch)}`);
+  }
 }
 
 export function exportRelocatedArmHelpers(rom: Buffer, layoutPath: string, directory: string): void {

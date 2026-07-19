@@ -573,7 +573,9 @@ function exportOne(rom: Buffer, root: string, entry: CatalogEntry): IndexEntry {
   const prefixSize = Number(entry.prefix_palette_size);
   const prefix = original.subarray(0, prefixSize);
   const encoded = original.subarray(prefixSize);
-  const [decoded, used, , tokens] = decode_kind2(encoded);
+  let decoded: Buffer, used: number, tokens: Kind2Token[];
+  try { [decoded, used, , tokens] = decode_kind2(encoded); }
+  catch (error) { throw new Error(`kind-2 resource ${entry.id} cannot decode: ${String(error)}`); }
   const lookahead = encoded.subarray(used);
   if (lookahead.length > MAX_LOOKAHEAD) throw new Error("kind-2 stream leaves an opaque suffix");
   const id = Number(entry.id);

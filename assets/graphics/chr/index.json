@@ -4,6 +4,7 @@
   "address": "0x08244fc0",
   "size": "0x000427b4",
   "descriptor_table": "0x08185024",
+  "descriptor_count": 512,
   "palette_offset": 16,
   "palette_entries": 224,
   "prefix_zeros": 8,

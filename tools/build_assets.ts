@@ -577,7 +577,6 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     }
     const built = build_message_archive(document);
     return [built, [String(entry.source)], {
-      contexts: document.contexts.length,
       banks: document.banks.length,
       messages: document.banks.reduce((sum: number, bank: Json[]) => sum + bank.length, 0),
     }];

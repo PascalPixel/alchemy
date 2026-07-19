@@ -28,8 +28,6 @@ export interface MessageArchiveSource {
   address: string;
   size: string;
   bank_size: number;
-  absent_contexts: number[];
-  contexts: ContextSource[];
   banks: MessageSource[][];
 }
 
@@ -164,17 +162,12 @@ function compileContext(source: ContextSource): CompiledContext {
   return { root, paths };
 }
 
-function compileContexts(source: MessageArchiveSource): Map<number, CompiledContext> {
-  const absent = new Set(source.absent_contexts.map((value) => bounded(value, 0, CONTEXT_COUNT - 1, "absent context")));
-  if (absent.size !== source.absent_contexts.length) throw new Error("absent contexts are duplicated");
+function compileContexts(source: ContextSource[]): Map<number, CompiledContext> {
   const result = new Map<number, CompiledContext>();
-  for (const item of source.contexts) {
+  for (const item of source) {
     const id = bounded(item.id, 0, CONTEXT_COUNT - 1, "context ID");
-    if (absent.has(id) || result.has(id)) throw new Error(`context ${id} is duplicated or absent`);
+    if (result.has(id)) throw new Error(`context ${id} is duplicated`);
     result.set(id, compileContext(item));
-  }
-  for (let id = 0; id < CONTEXT_COUNT; id++) {
-    if (result.has(id) === absent.has(id)) throw new Error(`context ${id} classification is incomplete`);
   }
   return result;
 }
@@ -182,8 +175,7 @@ function compileContexts(source: MessageArchiveSource): Map<number, CompiledCont
 function parseDocument(value: unknown): MessageArchiveSource {
   if (typeof value !== "object" || value === null) throw new Error("message archive source must be an object");
   const source = value as Partial<MessageArchiveSource>;
-  if (Object.keys(source).sort().join(",") !==
-      "absent_contexts,address,bank_size,banks,contexts,format,kind,size") {
+  if (Object.keys(source).sort().join(",") !== "address,bank_size,banks,format,kind,size") {
     throw new Error("message archive source has unknown fields");
   }
   if (source.format !== 1 || source.kind !== "golden-sun-message-archive") {
@@ -193,8 +185,7 @@ function parseDocument(value: unknown): MessageArchiveSource {
       source.bank_size !== BANK_SIZE) {
     throw new Error("message archive layout differs");
   }
-  if (!Array.isArray(source.absent_contexts) || !Array.isArray(source.contexts) ||
-      !Array.isArray(source.banks) || source.banks.length !== BANK_COUNT) {
+  if (!Array.isArray(source.banks) || source.banks.length !== BANK_COUNT) {
     throw new Error("message archive collections differ");
   }
   source.banks.forEach((bank, index) => {
@@ -204,9 +195,9 @@ function parseDocument(value: unknown): MessageArchiveSource {
   return source as MessageArchiveSource;
 }
 
-function buildModel(source: MessageArchiveSource): { data: Buffer; contexts: Map<number, CompiledContext> } {
+function buildModel(source: ContextSource[]): { data: Buffer; contexts: Map<number, CompiledContext> } {
   const contexts = compileContexts(source);
-  const entries = new Map(source.contexts.map((item) => [item.id, item]));
+  const entries = new Map(source.map((item) => [item.id, item]));
   const records: Buffer[] = [];
   const offsets = Buffer.alloc(OFFSET_COUNT * 2);
   let cursor = 0;
@@ -273,6 +264,61 @@ function messageFromTokens(tokens: number[]): MessageSource {
   return atoms;
 }
 
+function derivedContexts(banks: MessageSource[][]): ContextSource[] {
+  const transitions = Array.from({ length: CONTEXT_COUNT }, () => new Map<number, { count: number; order: number }>());
+  for (const bank of banks) {
+    for (const message of bank) {
+      const tokens = tokensFromMessage(message);
+      if (tokens === null) continue;
+      let previous = 0;
+      for (const symbol of [...tokens, 0]) {
+        const context = transitions[previous];
+        if (context === undefined) throw new Error(`message enters unsupported context ${previous}`);
+        const item = context.get(symbol);
+        if (item === undefined) context.set(symbol, { count: 1, order: context.size });
+        else item.count++;
+        previous = symbol;
+      }
+    }
+  }
+
+  const result: ContextSource[] = [];
+  transitions.forEach((symbols, id) => {
+    if (symbols.size === 0) return;
+    let order = symbols.size;
+    const nodes = [...symbols].map(([symbol, item]) => ({
+      count: item.count,
+      order: item.order,
+      node: { symbol } as TreeNode,
+    }));
+    while (nodes.length > 1) {
+      nodes.sort((left, right) => left.count - right.count || left.order - right.order);
+      const left = nodes.shift()!;
+      const right = nodes.shift()!;
+      nodes.push({
+        count: left.count + right.count,
+        order: order++,
+        node: { left: left.node, right: right.node },
+      });
+    }
+    let tree = "";
+    const leaves: number[] = [];
+    const walk = (node: TreeNode): void => {
+      if ("symbol" in node) {
+        tree += "1";
+        leaves.push(node.symbol);
+      } else {
+        tree += "0";
+        walk(node.left);
+        walk(node.right);
+      }
+    };
+    walk(nodes[0].node);
+    result.push({ id, tree, leaves });
+  });
+  return result;
+}
+
 function encodeMessage(tokens: number[], contexts: Map<number, CompiledContext>): Buffer {
   let context = 0;
   let bits = "";
@@ -289,7 +335,7 @@ function encodeMessage(tokens: number[], contexts: Map<number, CompiledContext>)
 
 export function build_message_archive(value: unknown): Buffer {
   const source = parseDocument(value);
-  const model = buildModel(source);
+  const model = buildModel(derivedContexts(source.banks));
   if (model.data.length !== MESSAGE_ADDRESS - ARCHIVE_ADDRESS) throw new Error("context model extent differs");
   const banks: Buffer[] = [];
   const descriptors = Buffer.alloc(BANK_COUNT * 8);
@@ -403,11 +449,9 @@ export function export_message_archive(source: Uint8Array): MessageArchiveSource
     address: hex(ARCHIVE_ADDRESS),
     size: hex(ARCHIVE_END - ARCHIVE_ADDRESS),
     bank_size: BANK_SIZE,
-    absent_contexts: model.absent,
-    contexts: model.contexts,
     banks: [],
   };
-  const contexts = compileContexts(skeleton);
+  const contexts = compileContexts(model.contexts);
   const directory = romOffset(MESSAGE_DIRECTORY_ADDRESS, source);
   const banks: MessageSource[][] = [];
   for (let bank = 0; bank < BANK_COUNT; bank++) {
@@ -443,11 +487,6 @@ export function format_message_archive(source: MessageArchiveSource): string {
     `  "address": ${JSON.stringify(source.address)},`,
     `  "size": ${JSON.stringify(source.size)},`,
     `  "bank_size": ${source.bank_size},`,
-    `  "absent_contexts": ${JSON.stringify(source.absent_contexts)},`,
-    '  "contexts": [',
-    ...source.contexts.map((context, index) =>
-      `    ${JSON.stringify(context)}${index + 1 === source.contexts.length ? "" : ","}`),
-    "  ],",
     '  "banks": [',
   ];
   source.banks.forEach((bank, bankIndex) => {
@@ -496,7 +535,7 @@ async function main(args: string[]): Promise<void> {
     const rom = new Uint8Array(await Bun.file(input).arrayBuffer());
     const source = export_message_archive(rom);
     await Bun.write(output, format_message_archive(source));
-    console.log(`identical=true contexts=${source.contexts.length} messages=${source.banks.flat().length} bytes=${ARCHIVE_END - ARCHIVE_ADDRESS}`);
+    console.log(`identical=true contexts=${derivedContexts(source.banks).length} messages=${source.banks.flat().length} bytes=${ARCHIVE_END - ARCHIVE_ADDRESS}`);
     return;
   }
   if (command === "build") {

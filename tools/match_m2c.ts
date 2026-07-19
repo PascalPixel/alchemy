@@ -185,7 +185,7 @@ async function main(): Promise<void> {
     mkdirSync(functionOutput, { recursive: true });
     const source = readFileSync(draft, "utf8");
     const strategies: Array<string | null> = source.includes("M2C_UNK")
-      ? ["s32", "u32", "void *", "s16", "u16", "s8", "u8"]
+      ? ["void", "s32", "u32", "void *", "s16", "u16", "s8", "u8"]
       : [null];
     let best: {
       score: [number, number, number];

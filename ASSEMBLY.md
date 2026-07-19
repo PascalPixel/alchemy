@@ -13,7 +13,7 @@ is:
 
 | Classification | Files | Bytes | Long-term treatment |
 |---|---:|---:|---|
-| Linker long-call veneers | 330 | 2,640 | Keep assembly |
+| Linker long-call veneers | 608 | 4,864 | Keep assembly |
 | Declarative adjacent-section alignment | 328 | 656 | Keep as linker structure |
 | `_call_via_rN` runtime thunk bundle | 1 | 56 | Keep assembly |
 | BIOS/SWI wrapper bundles | 2 | 16 | Keep assembly |
@@ -34,8 +34,8 @@ is:
 | Proven deliberate performance modules | 2 | 954 | Keep assembly |
 | Proven register-only busy-wait | 1 | 14 | Keep assembly |
 | Mixed-mode multiply helper | 1 | 16 | Keep assembly |
-| Likely ordinary compiler output | 1,303 | 455,920 | Convert to exact C |
-| **Total** | **2,047** | **509,132** | |
+| Likely ordinary compiler output | 1,367 | 462,070 | Convert to exact C |
+| **Total** | **2,389** | **517,506** | |
 
 These counts describe files, not callable entries. `080000c0.s` bundles 96
 fixed-width dispatch entries, `08006864.s` bundles two BIOS wrappers, and

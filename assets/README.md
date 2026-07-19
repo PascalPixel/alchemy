@@ -46,12 +46,12 @@ the builder resolves those tokens back to the exact 4,000-byte table.
 `text/message_archive.json` reconstructs the English localization archive as
 10,723 message slots in 42 banks. Printable symbols are ordinary ASCII source;
 the remaining values are explicit numeric control atoms until their runtime
-meanings are independently proven. The same file records 107 context-selected
-prefix trees as preorder structure and symbolic leaf values. The builder derives
-every compressed message, length table, absolute bank pointer, and zero padding,
-then verifies the complete `0x08037464..0x08073808` package byte-for-byte. Six
-former assembly islands inside that range were scanner false positives in the
-packed message streams.
+meanings are independently proven. The builder derives all 107 context-selected
+prefix trees from transition frequencies using stable first-occurrence tie
+ordering, then derives every compressed message, length table, absolute bank
+pointer, and zero padding. It verifies the complete
+`0x08037464..0x08073808` package byte-for-byte. Six former assembly islands
+inside that range were scanner false positives in the packed message streams.
 
 Resource 2 preserves its twelve-digit numeric stamp as text plus an explicit
 four-byte trailer. `graphics/resource_13/font.4bpp.png` is the complete 256-

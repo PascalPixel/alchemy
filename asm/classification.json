@@ -1110,8 +1110,8 @@
         "no_function_reachability",
         "incoherent_thumb_control_flow"
       ],
-      "expected_files": 19,
-      "expected_bytes": 230,
+      "expected_files": 18,
+      "expected_bytes": 224,
       "files": [
         "0803e976",
         "0803ff3e",
@@ -1125,7 +1125,6 @@
         "081eccfc",
         "0820514e",
         "0820aada",
-        "08220924",
         "0828e128",
         "0828f382",
         "082b4e4a",

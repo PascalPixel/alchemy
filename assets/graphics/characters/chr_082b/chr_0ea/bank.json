@@ -1,1 +1,1 @@
-{"format":1,"codec":"golden-sun-static-sprite-bank","width":32,"height":32,"atlas_columns":1,"alignment_zeros":1,"frames":[{"format":1,"codec":"golden-sun-static-sprite-mode3","pixels":1024,"stream_bytes":325,"encoded_bytes":327,"wrapper":{"split":0}}],"directory":[0]}
+{"format":1,"codec":"golden-sun-static-sprite-bank","width":32,"height":32,"alignment_zeros":1,"frames":[{"format":1,"codec":"golden-sun-static-sprite-mode3","pixels":1024,"stream_bytes":325,"encoded_bytes":327,"wrapper":{"split":0}}],"directory":[0]}

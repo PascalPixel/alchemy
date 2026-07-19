@@ -1,0 +1,216 @@
+{
+  "format": 1,
+  "kind": "golden-sun-runtime-support-data",
+  "number_format": {
+    "address": "0x0800795c",
+    "end": "0x08007994",
+    "hexadecimal_digits": "0123456789ABCDEF",
+    "trailing_zero_bytes": 4,
+    "decimal_divisors": [
+      1000000000,
+      100000000,
+      10000000,
+      1000000,
+      100000,
+      10000,
+      1000,
+      100,
+      10
+    ]
+  },
+  "transfer_test": {
+    "address": "0x080079b0",
+    "end": "0x08007a20",
+    "identity": "CAMELOT",
+    "identity_field_bytes": 8,
+    "record_marker": "CAMELOTT",
+    "reserved_zero_bytes": 4,
+    "packets": [
+      {
+        "text": "Trans Data A: This is a pen.",
+        "field_bytes": 32
+      },
+      {
+        "text": "Trans Data B: Hello world.",
+        "field_bytes": 28
+      }
+    ],
+    "flash_version": "FLASH_V123",
+    "flash_version_field_bytes": 12
+  },
+  "flash_directory": {
+    "address": "0x08007a0c",
+    "devices": [
+      "bf_d4",
+      "1f_3d_4k",
+      "c2_1c",
+      "32_1b",
+      "generic"
+    ]
+  },
+  "timing_sets": {
+    "flash_common": {
+      "address": "0x08007aa4",
+      "slots": [
+        [10, -67, 194],
+        [10, -67, 194],
+        [40, -67, 194],
+        [200, -67, 194]
+      ]
+    },
+    "flash_c2_1c": {
+      "address": "0x08007b3c",
+      "slots": [
+        [10, -67, 194],
+        [10, -67, 194],
+        [2000, -67, 194],
+        [2000, -67, 194]
+      ]
+    },
+    "flash_32_1b": {
+      "address": "0x08007b54",
+      "slots": [
+        [10, -67, 194],
+        [10, -67, 194],
+        [500, -67, 194],
+        [500, -67, 194]
+      ]
+    },
+    "flash_1f_3d": {
+      "address": "0x08007bcc",
+      "slots": [
+        [10, -67, 194],
+        [40, -67, 194],
+        [0, 0, 0],
+        [40, -67, 194]
+      ]
+    }
+  },
+  "flash_devices": {
+    "generic": {
+      "address": "0x08007abc",
+      "callbacks": {
+        "program_sector": "Func_08006e24",
+        "erase_chip": "Func_08006cdc",
+        "erase_sector": "Func_08006d50",
+        "wait_write": "Func_08006af8"
+      },
+      "timing": "flash_common",
+      "geometry": {
+        "total_bytes": 65536,
+        "sector_bytes": 4096,
+        "sector_shift": 12,
+        "sector_count": 16,
+        "top_sector": 0
+      },
+      "wait_control": [3, 3],
+      "manufacturer_id": "0x00",
+      "device_id": "0x00"
+    },
+    "bf_d4": {
+      "address": "0x08007ae8",
+      "callbacks": {
+        "program_sector": "Func_08006e24",
+        "erase_chip": "Func_08006cdc",
+        "erase_sector": "Func_08006d50",
+        "wait_write": "Func_08006af8"
+      },
+      "timing": "flash_common",
+      "geometry": {
+        "total_bytes": 65536,
+        "sector_bytes": 4096,
+        "sector_shift": 12,
+        "sector_count": 16,
+        "top_sector": 0
+      },
+      "wait_control": [1, 2],
+      "manufacturer_id": "0xbf",
+      "device_id": "0xd4"
+    },
+    "c2_1c": {
+      "address": "0x08007b6c",
+      "callbacks": {
+        "program_sector": "Func_08006f84",
+        "erase_chip": "Func_08006cdc",
+        "erase_sector": "Func_08006d50",
+        "wait_write": "Func_08006af8"
+      },
+      "timing": "flash_c2_1c",
+      "geometry": {
+        "total_bytes": 65536,
+        "sector_bytes": 4096,
+        "sector_shift": 12,
+        "sector_count": 16,
+        "top_sector": 0
+      },
+      "wait_control": [3, 1],
+      "manufacturer_id": "0xc2",
+      "device_id": "0x1c"
+    },
+    "32_1b": {
+      "address": "0x08007b98",
+      "callbacks": {
+        "program_sector": "Func_08006f84",
+        "erase_chip": "Func_08006cdc",
+        "erase_sector": "Func_08006d50",
+        "wait_write": "Func_08006af8"
+      },
+      "timing": "flash_32_1b",
+      "geometry": {
+        "total_bytes": 65536,
+        "sector_bytes": 4096,
+        "sector_shift": 12,
+        "sector_count": 16,
+        "top_sector": 0
+      },
+      "wait_control": [0, 2],
+      "manufacturer_id": "0x32",
+      "device_id": "0x1b"
+    },
+    "1f_3d_4k": {
+      "address": "0x08007be4",
+      "callbacks": {
+        "program_sector": "Func_08007220",
+        "erase_chip": "Func_08007028",
+        "erase_sector": "Func_0800711c",
+        "wait_write": "Func_08006af8"
+      },
+      "timing": "flash_1f_3d",
+      "geometry": {
+        "total_bytes": 65536,
+        "sector_bytes": 4096,
+        "sector_shift": 12,
+        "sector_count": 16,
+        "top_sector": 0
+      },
+      "wait_control": [3, 3],
+      "manufacturer_id": "0x1f",
+      "device_id": "0x3d"
+    },
+    "1f_3d_128": {
+      "address": "0x08007c10",
+      "callbacks": {
+        "program_sector": "Func_080071a8",
+        "erase_chip": "Func_08007028",
+        "erase_sector": "Func_08007098",
+        "wait_write": "Func_08006af8"
+      },
+      "timing": "flash_1f_3d",
+      "geometry": {
+        "total_bytes": 65536,
+        "sector_bytes": 128,
+        "sector_shift": 7,
+        "sector_count": 512,
+        "top_sector": 0
+      },
+      "wait_control": [3, 3],
+      "manufacturer_id": "0x1f",
+      "device_id": "0x3d"
+    }
+  },
+  "alignment_fill": {
+    "address": "0x08007c64",
+    "end": "0x08009000",
+    "value": 0
+  }
+}

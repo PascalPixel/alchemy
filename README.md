@@ -77,6 +77,10 @@ own. Not affiliated with or endorsed by Nintendo or Camelot. Non-commercial.
 - `bun tools/build_asm.ts` assembles and verifies every claimed `asm/` region.
 - `bun tools/build_assets.ts` encodes and verifies every claimed asset.
 - `bun tools/build_full.ts` verifies the combined byte-identical private rebuild.
+- Commit-subject progress brackets use the full build's cumulative
+  `source_bytes` after that commit against the canonical `rom_size`; they never
+  report only the bytes added by that commit. Subsystem deltas belong in the
+  commit body.
 - `bun tools/build_rom.ts` assembles the ROM the pret way: a generated GNU
   linker script (`ld_script.ld`) lays out every claimed region in address order
   and fills each not-yet-reconstructed gap with `.incbin "gs1-en.gba", offset,

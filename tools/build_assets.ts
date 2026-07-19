@@ -37,6 +37,11 @@ import { build_resource_5 } from "./resource_5.ts";
 import { build_localization_font } from "./localization_font.ts";
 import { build_localization_tables } from "./localization_tables.ts";
 import { build_battle_effect_data } from "./battle_effect_data.ts";
+import {
+  build_sentou_gamen_data,
+  SENTOU_GAMEN_ADDRESS,
+  SENTOU_GAMEN_SIZE,
+} from "./sentou_gamen_data.ts";
 import { build_sentou_hyouji } from "./sentou_hyouji.ts";
 import { build_sentou_kouka_runtime } from "./sentou_kouka_runtime.ts";
 import {
@@ -815,6 +820,22 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
       graphics: document.direct_graphics.length + 1 + document.palette_graphics.length,
       weighted_records: document.weighted_records.records.length,
       typed_tables: document.typed_tables.length,
+    }];
+  }
+  if (kind === "golden-sun-sentou-gamen-data") {
+    const sourceName = String(entry.source);
+    const [built, nestedPaths] = build_sentou_gamen_data(sourcePath(sourceName));
+    if (number(entry.address) !== SENTOU_GAMEN_ADDRESS || number(entry.size) !== SENTOU_GAMEN_SIZE ||
+        built.length !== SENTOU_GAMEN_SIZE) {
+      throw new Error("battle-screen package differs from canonical manifest extent");
+    }
+    const nested = nestedPaths.map((name) => relative(ROOT, resolve(name)));
+    nested.forEach(sourcePath);
+    return [built, [...new Set([sourceName, ...nested])], {
+      source_bytes: built.length,
+      graphics: 5,
+      display_glyph_cells: 14,
+      derived_zero_bytes: 3308,
     }];
   }
   if (kind === "golden-sun-sentou-hyouji") {

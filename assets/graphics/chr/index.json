@@ -2,7 +2,7 @@
   "format": 1,
   "codec": "golden-sun-static-sprite-series",
   "address": "0x08244fc0",
-  "size": "0x000427b4",
+  "size": "0x00048018",
   "descriptor_table": "0x08185024",
   "descriptor_count": 512,
   "palette_offset": 16,
@@ -305,6 +305,24 @@
       "directory": "0x082876ec",
       "source": "chr_0a4/koma.8bpp.png",
       "plan": "chr_0a4/bank.json"
+    },
+    {
+      "id": "0a5",
+      "aliases": [],
+      "address": "0x08287774",
+      "size": "0x00003988",
+      "directory": "0x0828b014",
+      "source": "chr_0a5/koma.8bpp.png",
+      "plan": "chr_0a5/bank.json"
+    },
+    {
+      "id": "0a6",
+      "aliases": [],
+      "address": "0x0828b0fc",
+      "size": "0x00001edc",
+      "directory": "0x0828cf50",
+      "source": "chr_0a6/koma.8bpp.png",
+      "plan": "chr_0a6/bank.json"
     }
   ]
 }

@@ -55,6 +55,18 @@ table, absolute bank pointer, and zero padding. It verifies the complete
 `0x08037464..0x08073808` package byte-for-byte. Six former assembly islands
 inside that range were scanner false positives in the packed message streams.
 
+`text/localization_font.json` reconstructs the localization renderer's font
+package. Seven pointer/alias banks select 467 unique 16x16 MTF-coded glyph
+images; eight palette-LZ records are coherent 32x32 symbols; the proportional
+font stores 224 16x15 one-bit glyphs and their advance widths; and the article
+table names its printable ASCII strings and pointer aliases. Direct 4bpp banks
+remain atlas PNGs because their consumers address complete tile sequences.
+Three intervening JSON sources retain the consumer-indexed numeric tables and
+fixed ASCII labels with exact element types and strides. Together these eight
+regions rebuild the complete 56,148-byte `0x08029910..0x08037464` localization
+prefix. A four-byte scanner island inside the first package was packed glyph
+data, not a function.
+
 `data/resource_5/database.json` reconstructs the consumer-indexed gameplay
 tables shared byte-for-byte by all six Golden Sun localizations: eight level
 experience curves, inventory counters and party order, 324 item records, 519
@@ -180,9 +192,9 @@ form one exact 139,260-byte runtime unit.
 `graphics/chr_0818/`, `graphics/chr_081a/`, `graphics/chr_081e/`,
 `graphics/chr_081f/`, `graphics/chr_zenhan/`, `graphics/chr/`,
 `graphics/chr_0828/`, `graphics/chr_082b/`, and `graphics/chr_0830/`
-reconstruct 3, 22, 10, 17, 18, 33, 36, 105, and 64 descriptor-linked static
+reconstruct 3, 22, 10, 17, 18, 35, 36, 105, and 64 descriptor-linked static
 character banks as one palette-correct `koma.8bpp.png` (コマ) sheet per
-physical bank. The 308 sheets hold 5,645
+physical bank. The 310 sheets hold 5,727
 unique frames instead of creating one file per frame. Their payload-free plans
 preserve logical pointer aliases and all three
 descriptor-selected storage modes. Mode 0 is a canonical zero-skip stream;
@@ -194,9 +206,9 @@ trailing absolute frame directories and null terminators. The complete
 `0x0818d554..0x081a7020`, `0x081a7020..0x081e120c`,
 `0x081e120c..0x081f60c8`,
 `0x081f60c8..0x08220160`, `0x08220160..0x08244fc0`,
-`0x08244fc0..0x08287774`, `0x0828cfd8..0x082b5060`,
+`0x08244fc0..0x0828cfd8`, `0x0828cfd8..0x082b5060`,
 `0x082b5060..0x08300f74`, and `0x08300f74..0x08320000` series re-encode
-1,626,696 bytes byte-for-byte. The middle split records a four-byte zero suffix,
+1,649,324 bytes byte-for-byte. The middle split records a four-byte zero suffix,
 the `chr` series records its eight-byte prefix, and the final 4,136 zero bytes
 are explicit arena alignment.
 `zenhan` (前半) is a period-style reconstruction grouping. Numeric grouping

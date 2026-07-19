@@ -14,6 +14,54 @@
       "source": "assets/maps/map_load_table.json"
     },
     {
+      "address": "0x08029910",
+      "size": "0xa550",
+      "kind": "golden-sun-localization-font",
+      "source": "assets/text/localization_font.json"
+    },
+    {
+      "address": "0x08033e60",
+      "size": "0x98",
+      "kind": "golden-sun-localization-tables",
+      "source": "assets/data/localization_tables/table_08033e60.json"
+    },
+    {
+      "address": "0x08033ef8",
+      "size": "0x400",
+      "kind": "gba-4bpp-tiles",
+      "source": "assets/graphics/localization_font/tile_08033ef8.4bpp.png"
+    },
+    {
+      "address": "0x080342f8",
+      "size": "0x400",
+      "kind": "gba-4bpp-tiles",
+      "source": "assets/graphics/localization_font/tile_080342f8.4bpp.png"
+    },
+    {
+      "address": "0x080346f8",
+      "size": "0x2000",
+      "kind": "gba-4bpp-tiles",
+      "source": "assets/graphics/localization_font/tile_080346f8.4bpp.png"
+    },
+    {
+      "address": "0x080366f8",
+      "size": "0x1dc",
+      "kind": "golden-sun-localization-tables",
+      "source": "assets/data/localization_tables/table_080366f8.json"
+    },
+    {
+      "address": "0x080368d4",
+      "size": "0x800",
+      "kind": "gba-4bpp-tiles",
+      "source": "assets/graphics/localization_font/tile_080368d4.4bpp.png"
+    },
+    {
+      "address": "0x080370d4",
+      "size": "0x390",
+      "kind": "golden-sun-localization-tables",
+      "source": "assets/data/localization_tables/table_080370d4.json"
+    },
+    {
       "address": "0x08037464",
       "size": "0x3c3a4",
       "kind": "golden-sun-message-archive",
@@ -86,7 +134,7 @@
     },
     {
       "address": "0x08244fc0",
-      "size": "0x427b4",
+      "size": "0x48018",
       "kind": "golden-sun-static-sprite-series",
       "source": "assets/graphics/chr/index.json",
       "palette": "assets/graphics/0800777c.gbapal.png"

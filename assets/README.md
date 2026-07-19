@@ -49,6 +49,14 @@ scene's active colors.
 BGR555 colors copied directly from ROM into palette RAM by DMA. Their ranges
 and lengths come from the DMA setup; no scene names are inferred.
 
+`data/runtime_support.json` reconstructs the early runtime's hexadecimal and
+decimal formatting tables, transfer-test identity and packet defaults, flash
+device directory, four timing schedules, six typed device descriptors, and
+the proven zero alignment ending at `0x08009000`. The adjacent seven-word ARM
+dot-product kernel is reconstructed as instructions because its caller copies
+it to the stack before execution. Four unreferenced address pools totaling 220
+bytes remain fallback until their ownership is independently proven.
+
 `graphics/direct_palettes/` contains three 64-color resources selected by
 fixed pointer-table IDs. Their call sites copy exactly `0x80` bytes to palette
 RAM; names beyond the independently derived IDs are intentionally omitted.

@@ -8,6 +8,42 @@
       "source": "assets/graphics/0800777c.gbapal.png"
     },
     {
+      "address": "0x0800795c",
+      "size": "0x38",
+      "kind": "golden-sun-runtime-support-data",
+      "source": "assets/data/runtime_support.json"
+    },
+    {
+      "address": "0x080079b0",
+      "size": "0x70",
+      "kind": "golden-sun-runtime-support-data",
+      "source": "assets/data/runtime_support.json"
+    },
+    {
+      "address": "0x08007aa4",
+      "size": "0x70",
+      "kind": "golden-sun-runtime-support-data",
+      "source": "assets/data/runtime_support.json"
+    },
+    {
+      "address": "0x08007b3c",
+      "size": "0x88",
+      "kind": "golden-sun-runtime-support-data",
+      "source": "assets/data/runtime_support.json"
+    },
+    {
+      "address": "0x08007bcc",
+      "size": "0x70",
+      "kind": "golden-sun-runtime-support-data",
+      "source": "assets/data/runtime_support.json"
+    },
+    {
+      "address": "0x08007c64",
+      "size": "0x139c",
+      "kind": "golden-sun-runtime-support-data",
+      "source": "assets/data/runtime_support.json"
+    },
+    {
       "address": "0x08013784",
       "size": "0x8b8",
       "kind": "golden-sun-map-load-table",

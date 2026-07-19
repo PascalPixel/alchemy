@@ -1,7 +1,18 @@
+import {
+  decode_general_trace,
+  decode_palette_trace,
+  encode_general,
+  encode_palette,
+  type GeneralToken,
+  type PaletteGroup,
+} from "./extract_resource.ts";
+
 export interface ZeroSkipDecoded {
   pixels: Buffer;
   bytes: number;
 }
+
+export type StaticSpriteMode = 0 | 1 | 3;
 
 export type StaticMode3Operation = ["l", number] | ["c", number, number];
 
@@ -17,14 +28,38 @@ export interface StaticMode3Decoded {
   plan: StaticMode3Plan;
 }
 
-export interface StaticSpritePlan {
+export interface StaticMode0SpritePlan {
   format: number;
-  codec: string;
+  codec: "golden-sun-static-sprite-mode0";
+  pixels: number;
+  encoded_bytes: number;
+}
+
+export type StaticMode1Compression =
+  | { kind: 0; tokens: GeneralToken[] }
+  | { kind: 1; groups: PaletteGroup[] };
+
+export interface StaticMode1SpritePlan {
+  format: number;
+  codec: "golden-sun-static-sprite-mode1";
+  pixels: number;
+  encoded_bytes: number;
+  compression: StaticMode1Compression;
+}
+
+export interface StaticMode3SpritePlan {
+  format: number;
+  codec: "golden-sun-static-sprite-mode3";
   pixels: number;
   stream_bytes: number;
   encoded_bytes: number;
   wrapper: StaticMode3Plan;
 }
+
+export type StaticSpritePlan =
+  | StaticMode0SpritePlan
+  | StaticMode1SpritePlan
+  | StaticMode3SpritePlan;
 
 export interface StaticSpriteDecoded {
   pixels: Buffer;
@@ -33,7 +68,9 @@ export interface StaticSpriteDecoded {
   plan: StaticSpritePlan;
 }
 
-const STATIC_CODEC = "golden-sun-static-sprite-mode3";
+export const STATIC_MODE0_CODEC = "golden-sun-static-sprite-mode0";
+export const STATIC_MODE1_CODEC = "golden-sun-static-sprite-mode1";
+export const STATIC_MODE3_CODEC = "golden-sun-static-sprite-mode3";
 const MAX_PIXELS = 0x1000000;
 
 function integer(value: number, minimum: number, maximum: number, name: string): void {
@@ -48,6 +85,11 @@ function byte(data: Uint8Array, offset: number, name: string): number {
 
 function be16(data: Uint8Array, offset: number, name: string): number {
   return byte(data, offset, name) << 8 | byte(data, offset + 1, name);
+}
+
+function static_pixels(pixels: Uint8Array): void {
+  if (pixels.some((value) => value > 0xdf))
+    throw new Error("static-sprite pixel exceeds the shared palette");
 }
 
 export function decode_zero_skip_trace(
@@ -257,19 +299,97 @@ export function encode_mode3_plan(
 }
 
 export function decode_static_frame_trace(
-  arena: Uint8Array, frameOffset: number,
+  arena: Uint8Array, frameOffset: number, mode: StaticSpriteMode = 3,
+  expectedPixels?: number, physicalEnd?: number,
 ): StaticSpriteDecoded {
+  if (mode !== 0 && mode !== 1 && mode !== 3) throw new Error("unsupported static-sprite mode");
+  const maximum = expectedPixels === undefined ? MAX_PIXELS : expectedPixels;
+  integer(maximum, 0, MAX_PIXELS, "static-sprite pixel count");
+  const frameEnd = physicalEnd === undefined ? arena.length : physicalEnd;
+  integer(frameOffset, 0, arena.length, "static-sprite frame offset");
+  integer(frameEnd, frameOffset, arena.length, "static-sprite physical end");
+  if (mode === 0) {
+    const decoded = decode_zero_skip_trace(arena.subarray(0, frameEnd), frameOffset, maximum);
+    static_pixels(decoded.pixels);
+    if (expectedPixels !== undefined && decoded.pixels.length !== expectedPixels)
+      throw new Error("mode-0 pixel count differs from its descriptor");
+    const stream = encode_zero_skip(decoded.pixels);
+    const source = Buffer.from(arena.subarray(frameOffset, frameOffset + decoded.bytes));
+    if (stream.length !== decoded.bytes || !source.equals(stream))
+      throw new Error("mode-0 structural replay differs from its encoded frame");
+    return {
+      pixels: decoded.pixels,
+      stream,
+      encodedSize: decoded.bytes,
+      plan: {
+        format: 1,
+        codec: STATIC_MODE0_CODEC,
+        pixels: decoded.pixels.length,
+        encoded_bytes: decoded.bytes,
+      },
+    };
+  }
+  if (mode === 1) {
+    const kind = byte(arena, frameOffset, "mode-1 compression kind");
+    let pixels: Buffer;
+    let encoded: Buffer;
+    let decodedEnd: number;
+    let compression: StaticMode1Compression;
+    if (kind === 0) {
+      const readableEnd = Math.min(arena.length, frameEnd + 1);
+      const [decoded, cursor, tokens] = decode_general_trace(arena, frameOffset, readableEnd, maximum);
+      pixels = decoded;
+      decodedEnd = cursor;
+      encoded = encode_general(pixels, tokens);
+      compression = { kind: 0, tokens };
+    } else if (kind === 1) {
+      const [decoded, cursor, groups] = decode_palette_trace(arena, frameOffset + 1, frameEnd, maximum);
+      pixels = decoded;
+      decodedEnd = cursor;
+      encoded = Buffer.concat([Buffer.from([1]), encode_palette(pixels, groups)]);
+      compression = { kind: 1, groups };
+    } else {
+      throw new Error("unsupported mode-1 compression kind");
+    }
+    static_pixels(pixels);
+    if (expectedPixels !== undefined && pixels.length !== expectedPixels)
+      throw new Error("mode-1 pixel count differs from its descriptor");
+    const source = Buffer.from(arena.subarray(frameOffset, frameOffset + encoded.length));
+    if (source.length !== encoded.length || !source.equals(encoded))
+      throw new Error("mode-1 structural replay differs from its encoded frame");
+    const replayEnd = frameOffset + encoded.length;
+    if (replayEnd > frameEnd) throw new Error("mode-1 frame crossed its physical end");
+    const lookahead = decodedEnd - replayEnd;
+    if (lookahead < 0 || lookahead > (kind === 0 ? 1 : 0))
+      throw new Error("mode-1 decoder cursor differs from its structural replay");
+    return {
+      pixels,
+      stream: Buffer.from(pixels),
+      encodedSize: encoded.length,
+      plan: {
+        format: 1,
+        codec: STATIC_MODE1_CODEC,
+        pixels: pixels.length,
+        encoded_bytes: encoded.length,
+        compression,
+      },
+    };
+  }
   const wrapper = decode_mode3_trace(arena, frameOffset);
-  const zeroSkip = decode_zero_skip_trace(wrapper.stream);
+  if (frameOffset + wrapper.bytes > frameEnd) throw new Error("mode-3 frame crossed its physical end");
+  const zeroSkip = decode_zero_skip_trace(wrapper.stream, 0, maximum);
   if (zeroSkip.bytes !== wrapper.stream.length)
     throw new Error("mode-3 output continues after the zero-skip terminator");
+  static_pixels(zeroSkip.pixels);
+  if (expectedPixels !== undefined && zeroSkip.pixels.length !== expectedPixels)
+    throw new Error("mode-3 pixel count differs from its descriptor");
   return {
     pixels: zeroSkip.pixels,
     stream: wrapper.stream,
     encodedSize: wrapper.bytes,
     plan: {
       format: 1,
-      codec: STATIC_CODEC,
+      codec: STATIC_MODE3_CODEC,
       pixels: zeroSkip.pixels.length,
       stream_bytes: wrapper.stream.length,
       encoded_bytes: wrapper.bytes,
@@ -278,13 +398,43 @@ export function decode_static_frame_trace(
   };
 }
 
+export function static_sprite_plan_mode(plan: unknown): StaticSpriteMode {
+  if (!plan || typeof plan !== "object") throw new Error("invalid static-sprite plan");
+  const codec = (plan as { codec?: unknown }).codec;
+  if (codec === STATIC_MODE0_CODEC) return 0;
+  if (codec === STATIC_MODE1_CODEC) return 1;
+  if (codec === STATIC_MODE3_CODEC) return 3;
+  throw new Error("unsupported static-sprite plan");
+}
+
 export function encode_static_frame_plan(
   pixels: Uint8Array, plan: StaticSpritePlan, precedingArena: Uint8Array,
 ): Buffer {
-  if (!plan || plan.format !== 1 || plan.codec !== STATIC_CODEC)
-    throw new Error("unsupported static-sprite plan");
+  static_sprite_plan_mode(plan);
+  if (plan.format !== 1) throw new Error("unsupported static-sprite plan format");
   if (pixels.length !== Number(plan.pixels))
     throw new Error("static-sprite pixel count differs from plan");
+  static_pixels(pixels);
+  if (plan.codec === STATIC_MODE0_CODEC) {
+    const frame = encode_zero_skip(pixels);
+    if (frame.length !== Number(plan.encoded_bytes))
+      throw new Error("mode-0 encoded size differs from plan");
+    return frame;
+  }
+  if (plan.codec === STATIC_MODE1_CODEC) {
+    const compression = plan.compression;
+    let frame: Buffer;
+    if (compression?.kind === 0 && Array.isArray(compression.tokens) && !("groups" in compression)) {
+      frame = encode_general(pixels, compression.tokens);
+    } else if (compression?.kind === 1 && Array.isArray(compression.groups) && !("tokens" in compression)) {
+      frame = Buffer.concat([Buffer.from([1]), encode_palette(pixels, compression.groups)]);
+    } else {
+      throw new Error("invalid mode-1 structural plan");
+    }
+    if (frame.length !== Number(plan.encoded_bytes))
+      throw new Error("mode-1 encoded size differs from plan");
+    return frame;
+  }
   const stream = encode_zero_skip(pixels);
   if (stream.length !== Number(plan.stream_bytes))
     throw new Error("static-sprite stream size differs from plan");
@@ -301,6 +451,43 @@ function expect_failure(action: () => unknown, text: string): void {
 
 export function self_test(): void {
   const rawPixels = Buffer.concat([Buffer.from([7]), Buffer.alloc(37), Buffer.from([9])]);
+  const mode0Frame = encode_zero_skip(rawPixels);
+  const mode0 = decode_static_frame_trace(mode0Frame, 0, 0, rawPixels.length);
+  if (!mode0.pixels.equals(rawPixels) || mode0.encodedSize !== mode0Frame.length ||
+      static_sprite_plan_mode(mode0.plan) !== 0 ||
+      !encode_static_frame_plan(mode0.pixels, mode0.plan, Buffer.alloc(0)).equals(mode0Frame)) {
+    throw new Error("mode-0 static-sprite replay failed");
+  }
+  expect_failure(
+    () => decode_static_frame_trace(Buffer.from([0xe0, 0xe0, 0]), 0, 0, 2),
+    "noncanonical mode-0 frame was accepted",
+  );
+
+  const mode1Kind0Pixels = Buffer.from({ length: 53 }, (_, index) => index + 1);
+  const mode1Kind0Frame = encode_general(mode1Kind0Pixels, [["l", mode1Kind0Pixels.length]]);
+  const mode1Kind0Arena = Buffer.concat([mode1Kind0Frame, Buffer.from([1])]);
+  const [, prefetched] = decode_general_trace(
+    mode1Kind0Arena, 0, mode1Kind0Arena.length, mode1Kind0Pixels.length,
+  );
+  const mode1Kind0 = decode_static_frame_trace(
+    mode1Kind0Arena, 0, 1, mode1Kind0Pixels.length, mode1Kind0Frame.length,
+  );
+  if (mode1Kind0Frame.length !== 63 || prefetched !== mode1Kind0Frame.length + 1 ||
+      mode1Kind0.encodedSize !== mode1Kind0Frame.length ||
+      !mode1Kind0.pixels.equals(mode1Kind0Pixels) || static_sprite_plan_mode(mode1Kind0.plan) !== 1 ||
+      !encode_static_frame_plan(mode1Kind0.pixels, mode1Kind0.plan, Buffer.alloc(0)).equals(mode1Kind0Frame)) {
+    throw new Error("mode-1 kind-zero static-sprite replay failed");
+  }
+
+  const mode1Kind1Frame = Buffer.from([1, 0x30, 65, 66, 0x01, 0x02, 0, 0]);
+  const mode1Kind1Pixels = Buffer.from("ABAB");
+  const mode1Kind1 = decode_static_frame_trace(mode1Kind1Frame, 0, 1, 4, mode1Kind1Frame.length);
+  if (!mode1Kind1.pixels.equals(mode1Kind1Pixels) || mode1Kind1.encodedSize !== mode1Kind1Frame.length ||
+      static_sprite_plan_mode(mode1Kind1.plan) !== 1 ||
+      !encode_static_frame_plan(mode1Kind1.pixels, mode1Kind1.plan, Buffer.alloc(0)).equals(mode1Kind1Frame)) {
+    throw new Error("mode-1 kind-one static-sprite replay failed");
+  }
+
   const rawStream = Buffer.from([7, 0xff, 0xe4, 9, 0]);
   const rawFrame = Buffer.concat([Buffer.alloc(2), rawStream]);
   const raw = decode_static_frame_trace(rawFrame, 0);
@@ -327,6 +514,7 @@ export function self_test(): void {
   if (!compressed.pixels.equals(expectedPixels) ||
       !encode_static_frame_plan(compressed.pixels, compressed.plan, preceding).equals(compressedFrame))
     throw new Error("compressed static-sprite replay failed");
+  if (compressed.plan.codec !== STATIC_MODE3_CODEC) throw new Error("mode-3 plan was mislabeled");
   const operations = compressed.plan.wrapper.operations!;
   if (operations.length !== 10 || !operations.some((operation) =>
     operation[0] === "c" && operation[2] === 18))
@@ -347,6 +535,10 @@ export function self_test(): void {
   expect_failure(
     () => decode_static_frame_trace(truncated, preceding.length),
     "truncated mode-3 terminator was accepted",
+  );
+  expect_failure(
+    () => decode_static_frame_trace(mode0Frame, 0, 2 as StaticSpriteMode),
+    "unknown static-sprite mode was accepted",
   );
   console.log("self-test=ok");
 }

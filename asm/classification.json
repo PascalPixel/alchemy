@@ -20,6 +20,17 @@
       ],
       "expected_files": 330,
       "expected_bytes": 2640
+    },
+    {
+      "kind": "alignment_padding",
+      "origin": "assembler",
+      "retention": "adjacent_section_alignment",
+      "confidence": "proven",
+      "evidence": [
+        "two_byte_zero_alignment"
+      ],
+      "expected_files": 2,
+      "expected_bytes": 4
     }
   ],
   "groups": [
@@ -205,6 +216,22 @@
       "files": [
         "080f9674",
         "080f9a18"
+      ]
+    },
+    {
+      "kind": "deliberate_busy_wait",
+      "origin": "program_assembly",
+      "retention": "keep_asm",
+      "confidence": "proven",
+      "evidence": [
+        "register_only_empty_loop",
+        "optimized_c_erases_loop",
+        "volatile_c_changes_timing"
+      ],
+      "expected_files": 1,
+      "expected_bytes": 14,
+      "files": [
+        "080a8904"
       ]
     },
     {

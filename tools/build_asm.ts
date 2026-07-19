@@ -126,6 +126,10 @@ function longCallVeneer(data: Buffer): boolean {
     (data.readUInt32LE(4) & 1) !== 0;
 }
 
+function alignmentPadding(data: Buffer): boolean {
+  return data.length === 2 && data.readUInt16LE(0) === 0;
+}
+
 function classify(
   name: string,
   data: Buffer,
@@ -138,6 +142,11 @@ function classify(
     const veneer = config.structural.find((rule) => rule.kind === "linker_veneer");
     if (veneer === undefined) throw new Error("missing linker veneer classification");
     return veneer;
+  }
+  if (alignmentPadding(data)) {
+    const padding = config.structural.find((rule) => rule.kind === "alignment_padding");
+    if (padding === undefined) throw new Error("missing alignment padding classification");
+    return padding;
   }
   return config.default;
 }

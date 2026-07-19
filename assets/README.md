@@ -202,6 +202,15 @@ into BG3 charblock 2;
 the BG3 affine map is generated separately, so no full-scene composition is
 claimed from these banks alone.
 
+`graphics/resources_d1_d3/` reconstructs the three directory entries directly
+before the world-map package. D1 is the consumer-framed 64-color BG palette
+and tag-1 compressed 8bpp tile bank loaded by `Func_080d41a4`; its 112x96 PNG
+is a presentational 14x12 tile wrap, while linear tile order remains canonical.
+D2 and D3 are big-endian initial coordinate pairs followed by signed-byte XY
+motion deltas consumed by `Func_080dc968` and `Func_080e89ec`. D2 preserves one
+additional boundary delta as a named semantic record. The package rebuilds
+4,769 bytes; D1's three nonsemantic suffix bytes remain explicit fallback.
+
 `maps/world_map/` reconstructs resources D4-D7 as one independently traced map
 subsystem. D4 is an offset-table archive of 640 compressed 16x16 chunks. Each
 RGBA atlas pixel stores one little-endian 16-bit tile-pair index and one

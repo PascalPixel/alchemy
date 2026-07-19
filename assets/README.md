@@ -19,13 +19,14 @@ command-status choices. The indexed series claims 150,254 independently
 round-tripped bytes, including absolute-address alignment between streams and
 headers.
 
-`audio/residuals/` reconstructs six regions left outside the nonempty sequence
-series: four sound-table-selected eight-byte empty SMSH headers, the 18-byte
-`yobi` (予備) command stream between sounds 138 and 139, and the 2,408-byte
-zero alignment ending at `0x08185000`. The sources retain typed header fields
-and semantic sequence events rather than copied binary spans, while the
-verifier proves the relevant sound-table links and both neighbouring one-track
-headers. Together they rebuild 2,458 bytes exactly.
+`audio/residuals/` reconstructs seven regions left outside the nonempty sequence
+series: the shared four-byte empty header, four sound-table-selected eight-byte
+empty SMSH headers, the 18-byte `yobi` (予備) command stream between sounds
+138 and 139, and the 2,408-byte zero alignment ending at `0x08185000`. The
+sources retain typed header fields and semantic sequence events rather than
+copied binary spans, while the verifier proves the relevant sound-table links
+and both neighbouring one-track headers. Together they rebuild 2,462 bytes
+exactly.
 
 `audio/engine/` reconstructs the complete 3,826-byte native audio-data prefix
 at `0x080fb792..0x080fc684`: derived alignment, consumer-sized command and
@@ -199,7 +200,7 @@ streams shared across both games. `sentou` (戦闘) is the period-style grouping
 each resource keeps one canonical `koma` (コマ), `haikei` (背景), or neutral
 `naiyou` (内容) indexed image and, when present, its `iro` (色) palette. The
 token plans contain compression decisions rather than literal payload copies.
-Together the sources rebuild 135,743 bytes exactly. Eighty-five trailing
+Together the sources rebuild 135,743 bytes exactly. Eighty-seven trailing
 compressor bytes remain fallback because they vary independently of the
 semantic decoded content instead of being mislabeled as image data.
 

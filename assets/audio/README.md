@@ -14,7 +14,7 @@ The current local evidence divides the native data as follows:
 | `080fc504..080fc623` | eighteen 16-byte CGB waveforms | `engine/hakei.json` |
 | `080fc624..080fc683` | eight music-player records | `engine/saisei.json` |
 | `080fc684..080fd043` | 312-entry sound-selection table | `song_table.json` |
-| `080fd044..080fd047` | shared empty sound header | unclaimed |
+| `080fd044..080fd047` | shared empty sound header | `residuals/index.json` |
 | `080fd048..0815fb77` | tone-referenced wave arena, including 32 signed-PCM records | 32 PCM records claimed; five synthesizer descriptors remain |
 | `0815fb78..08184697` | native sequence arena selected by the sound table | all 260 nonempty units claimed below |
 
@@ -34,7 +34,9 @@ including units whose first track is not word-aligned.
 frequency and loop position. The builder reverses WAV's unsigned 8-bit bias,
 recreates the native 16-byte header, and checks zero alignment. The five
 zero-length synthesizer descriptors between the PCM banks are not mislabeled
-as audio samples and remain unclaimed.
+as audio samples and remain unclaimed. The sound-table exporter assigns the
+`sound_empty` symbol only after proving that its complete 32-bit header word is
+zero, so `residuals/index.json` retains those four bytes as typed header fields.
 
 The sequence codec preserves loops, pattern calls, repeats, running-status
 omission, priorities, reverb, tone-bank references, and pointer targets. A

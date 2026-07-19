@@ -199,6 +199,26 @@ export function assemblySourceAccounting(
   return result;
 }
 
+export function validateAssemblyAlignments(
+  claimed: Array<{ address: number; size: number }>,
+  assembly: AssemblyRegion[],
+): void {
+  const bodies = [
+    ...claimed,
+    ...assembly.filter((region) => region.kind !== "alignment_padding"),
+  ];
+  const starts = new Set(bodies.map((region) => Number(region.address)));
+  const ends = new Set(bodies.map((region) => Number(region.address) + Number(region.size)));
+  for (const region of assembly.filter((item) => item.kind === "alignment_padding")) {
+    const address = Number(region.address);
+    if (Number(region.size) !== 2 || (address & 3) !== 2 ||
+        region.retention !== "adjacent_section_alignment" ||
+        !ends.has(address) || !starts.has(address + 2)) {
+      throw new Error(`unproven assembly alignment at 0x${hexadecimal(address)}`);
+    }
+  }
+}
+
 export function byteReconstructionProgress(
   romSize: number,
   codeBytes: number,
@@ -299,6 +319,28 @@ export function selfTest(): void {
       assembly.retainedStructuralRegions !== 2 || assembly.retainedStructuralBytes !== 10) {
     throw new Error("assembly source accounting self-test failed");
   }
+  validateAssemblyAlignments(
+    [{ address: ROM_BASE, size: 6 }, { address: ROM_BASE + 8, size: 4 }],
+    [{
+      address: ROM_BASE + 6,
+      size: 2,
+      output: "",
+      kind: "alignment_padding",
+      retention: "adjacent_section_alignment",
+    }],
+  );
+  try {
+    validateAssemblyAlignments([], [{
+      address: ROM_BASE + 6,
+      size: 2,
+      output: "",
+      kind: "alignment_padding",
+      retention: "adjacent_section_alignment",
+    }]);
+    throw new Error("unbounded assembly alignment was accepted");
+  } catch (error) {
+    if ((error as Error).message === "unbounded assembly alignment was accepted") throw error;
+  }
   const progress = byteReconstructionProgress(100, 10, 50, 5, 25, 10);
   if (progress.bytes !== 65 || progress.remainingBytes !== 35 || progress.percent !== 65) {
     throw new Error("byte reconstruction progress self-test failed");
@@ -341,7 +383,7 @@ export function selfTest(): void {
 
 function parseArgs(argv: string[]): Options {
   const options: Options = {
-    rom: "baserom.gba",
+    rom: "gs1-en.gba",
     sourceOnly: false,
     output: "out/full/rebuilt.gba",
     claimedOutput: "out/full/claimed",
@@ -446,6 +488,7 @@ async function main(): Promise<void> {
     asmCommand.push("--output", asmOutput);
     await run(asmCommand);
     const asmManifest = readJson(join(asmOutput, "manifest.json"));
+    validateAssemblyAlignments(manifest.regions as Region[], asmManifest.regions as AssemblyRegion[]);
     asmAccounting = assemblySourceAccounting(asmManifest.regions as AssemblyRegion[]);
     for (const region of asmManifest.regions as AssemblyRegion[]) {
       const address = Number(region.address);

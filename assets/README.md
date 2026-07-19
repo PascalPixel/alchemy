@@ -94,6 +94,13 @@ numeric. The package rebuilds all 19,440 bytes at
 `0x0809c410..0x080a1000` exactly, including structural alignment derived by the
 builder rather than stored payload.
 
+`code/resource_3ce/` reconstructs the battle descriptor's final compressed
+Thumb overlay as relocatable assembly and a payload-free general-LZ token plan.
+The 1,945-byte stream expands to 5,772 bytes at `0x02000000`; the builder also
+derives the final 11,076-byte zero-filled ROM tail. Three unconsumed alignment
+bytes remain fallback rather than being hidden in the compression source, so
+the package contributes 13,021 exact source bytes.
+
 `data/encounter_data/` reconstructs the consumer-proven encounter database as
 two signed brightness phases, 380 formations, 20 preload IDs, 172 metadata
 records, and explicit zero alignment to the next code section. Reserved record

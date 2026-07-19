@@ -41,6 +41,7 @@ import { build_sentou_resource, build_sentou_series } from "./sentou_resources.t
 import { build_encounter_regions } from "./encounter_data.ts";
 import { build_namae_nyuuryoku } from "./namae_nyuuryoku.ts";
 import { build_tokushu_map_series } from "./tokushu_map_resources.ts";
+import { build_resource_3ce } from "./resource_3ce.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -67,6 +68,7 @@ function sourcePath(name: string): string {
 }
 
 const tokushuMapCache = new Map<string, ReturnType<typeof build_tokushu_map_series>>();
+const resource3ceCache = new Map<string, ReturnType<typeof build_resource_3ce>>();
 
 function tokushuMaps(indexName: string): ReturnType<typeof build_tokushu_map_series> {
   const indexPath = sourcePath(indexName);
@@ -74,6 +76,16 @@ function tokushuMaps(indexName: string): ReturnType<typeof build_tokushu_map_ser
   if (built === undefined) {
     built = build_tokushu_map_series(indexPath);
     tokushuMapCache.set(indexPath, built);
+  }
+  return built;
+}
+
+function resource3ce(layoutName: string): ReturnType<typeof build_resource_3ce> {
+  const layoutPath = sourcePath(layoutName);
+  let built = resource3ceCache.get(layoutPath);
+  if (built === undefined) {
+    built = build_resource_3ce(layoutPath);
+    resource3ceCache.set(layoutPath, built);
   }
   return built;
 }
@@ -369,6 +381,23 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           resource_id: resource.id,
         });
       }
+    } else if (series.kind === "golden-sun-final-battle-overlay-series") {
+      const source = String(series.source);
+      const built = resource3ce(source);
+      entries.push({
+        address: built.stream_address,
+        size: built.stream.length,
+        kind: "golden-sun-final-battle-overlay",
+        source,
+        component: "stream",
+      });
+      entries.push({
+        address: built.fill_address,
+        size: built.fill.length,
+        kind: "golden-sun-final-battle-overlay",
+        source,
+        component: "fill",
+      });
     } else if (series.kind === "golden-sun-encounter-data-series") {
       const directoryName = String(series.directory);
       const directory = sourcePath(directoryName);
@@ -706,6 +735,25 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     return [resource.data, [...new Set([indexName, ...nested])], {
       resource_id: `0x${id.toString(16).padStart(3, "0")}`,
       source_bytes: resource.data.length,
+    }];
+  }
+  if (kind === "golden-sun-final-battle-overlay") {
+    const source = String(entry.source);
+    const built = resource3ce(source);
+    const component = String(entry.component);
+    const address = component === "stream" ? built.stream_address : built.fill_address;
+    const data = component === "stream" ? built.stream : built.fill;
+    if (!["stream", "fill"].includes(component) || address !== number(entry.address) ||
+        data.length !== number(entry.size)) {
+      throw new Error("final battle overlay component differs from manifest series");
+    }
+    const directory = dirname(source);
+    const nested = [source, join(directory, "overlay.s"), join(directory, "stream.lz.json")];
+    nested.forEach(sourcePath);
+    return [data, nested, {
+      component,
+      source_bytes: data.length,
+      ...(component === "stream" ? { fallback_bytes: built.fallback_size } : {}),
     }];
   }
   if (kind === "golden-sun-encounter-data") {

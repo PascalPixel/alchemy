@@ -43,10 +43,11 @@ own. Not affiliated with or endorsed by Nintendo or Camelot. Non-commercial.
   ambiguity diagnostics, and code-range-only Thumb relocation normalization.
   `scan_data_v2.ts` intersects the full 12-ROM comparison with fallback
   coverage, splits resources at the `08320000` pointer table, distinguishes
-  same-game, regional, and cross-title data, and detects stateful 4 KiB-window
-  delta-stream archives without exporting their private payloads. Archive
-  confidence uses complete-stream count, coverage, and average member size so
-  isolated accidental terminators are not promoted into extraction targets.
+  same-game, regional, and cross-title data, and recognizes the fixed-size
+  delta7 indexed-still family without exporting private payloads. The generic
+  4 KiB-window probe rejects back-references before produced output; random
+  high-entropy data is no longer promoted as a stateful archive merely because
+  it contains accidental terminators.
   `scan_resource_calls.ts` can add direct loader callsites from a private
   `build_full.ts` assembly output; resources without a direct call are marked
   as table-selected rather than being assigned invented per-file semantics.

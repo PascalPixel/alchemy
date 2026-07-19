@@ -1,0 +1,83 @@
+{
+  "format": 1,
+  "kind": "golden-sun-kind2-resource-catalog",
+  "resources": [
+    {
+      "id": "0x049",
+      "address": "0x083cd090",
+      "size": "0x488",
+      "prefix_palette_size": "0x80",
+      "image": {
+        "encoding": "naiyou",
+        "columns": 32,
+        "status": "provisional-neutral-byte-canvas"
+      }
+    },
+    {
+      "id": "0x04a",
+      "address": "0x083cd518",
+      "size": "0x5ec",
+      "prefix_palette_size": "0x80",
+      "image": {
+        "encoding": "naiyou",
+        "columns": 32,
+        "status": "provisional-neutral-byte-canvas"
+      }
+    },
+    {
+      "id": "0x061",
+      "address": "0x083d85e0",
+      "size": "0x444",
+      "prefix_palette_size": "0x80",
+      "image": {
+        "encoding": "naiyou",
+        "columns": 32,
+        "status": "provisional-neutral-byte-canvas"
+      }
+    },
+    {
+      "id": "0x064",
+      "address": "0x083dc1f8",
+      "size": "0x220",
+      "prefix_palette_size": "0x80",
+      "image": {
+        "encoding": "naiyou",
+        "columns": 32,
+        "status": "provisional-neutral-byte-canvas"
+      }
+    },
+    {
+      "id": "0x073",
+      "address": "0x083e2ae4",
+      "size": "0x29c",
+      "prefix_palette_size": "0x0",
+      "image": {
+        "encoding": "naiyou",
+        "columns": 32,
+        "status": "provisional-neutral-byte-canvas"
+      }
+    },
+    {
+      "id": "0x0a5",
+      "address": "0x083f5f4c",
+      "size": "0x7b0",
+      "prefix_palette_size": "0x80",
+      "image": {
+        "encoding": "naiyou",
+        "columns": 32,
+        "status": "provisional-neutral-byte-canvas"
+      }
+    },
+    {
+      "id": "0x0a6",
+      "address": "0x083f66fc",
+      "size": "0x518",
+      "prefix_palette_size": "0x80",
+      "image": {
+        "encoding": "naiyou",
+        "columns": 32,
+        "status": "provisional-neutral-byte-canvas"
+      }
+    }
+  ]
+}

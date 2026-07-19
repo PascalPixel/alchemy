@@ -216,11 +216,12 @@ Their present modules preserve those relationships and their alignment words;
 they remain C debt unless a module-level asm-free compilation reproduces the
 same entry and continuation layout.
 
-Twenty-seven unreachable files above `0x0803e976` have incoherent stack
-restoration, impossible fall-through, undefined instructions, or no credible
-callers. Their headers mark them as probable data false positives. They do not
-count as deliberate assembly or legitimate C functions; semantic data recovery
-must replace the provisional instruction spelling.
+Six unreachable files inside `0x08037464..0x08073808` had incoherent stack
+restoration and impossible fall-through because the scanner had decoded packed
+message bits as Thumb instructions. The semantic context-code and message-bank
+reconstruction now replaces every one of them. This is a pipeline-level guard:
+unreachable islands inside a consumer-proven data package remain data recovery
+work and never become assembly or C merely because a disassembler accepts them.
 
 ## Acceptance rule
 

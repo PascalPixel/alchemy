@@ -14,6 +14,12 @@
       "source": "assets/maps/map_load_table.json"
     },
     {
+      "address": "0x08037464",
+      "size": "0x3c3a4",
+      "kind": "golden-sun-message-archive",
+      "source": "assets/text/message_archive.json"
+    },
+    {
       "address": "0x08073812",
       "size": "0x40",
       "kind": "gba-palette",

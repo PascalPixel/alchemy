@@ -1100,26 +1100,6 @@
       "files": [
         "0809b7e4"
       ]
-    },
-    {
-      "kind": "probable_data",
-      "origin": "unknown",
-      "retention": "recover_data",
-      "confidence": "strong",
-      "evidence": [
-        "no_function_reachability",
-        "incoherent_thumb_control_flow"
-      ],
-      "expected_files": 6,
-      "expected_bytes": 62,
-      "files": [
-        "0803e976",
-        "0803ff3e",
-        "080408e4",
-        "0804d352",
-        "08060f28",
-        "08064278"
-      ]
     }
   ]
 }

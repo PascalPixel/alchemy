@@ -439,6 +439,184 @@
       "index": "assets/audio/waves/index.json"
     },
     {
+      "kind": "golden-sun-delta7-still-series",
+      "width": 256,
+      "height": 120,
+      "palette_entries": 128,
+      "resources": [
+        {
+          "id": "1d",
+          "address": "0x0833aebc",
+          "size": "0x4442"
+        },
+        {
+          "id": "1e",
+          "address": "0x0833f300",
+          "size": "0x4700"
+        },
+        {
+          "id": "1f",
+          "address": "0x08343a00",
+          "size": "0x411c"
+        },
+        {
+          "id": "20",
+          "address": "0x08347b1c",
+          "size": "0x4218"
+        },
+        {
+          "id": "21",
+          "address": "0x0834bd34",
+          "size": "0x3d3a"
+        },
+        {
+          "id": "22",
+          "address": "0x0834fa70",
+          "size": "0x35ee"
+        },
+        {
+          "id": "23",
+          "address": "0x08353060",
+          "size": "0x3e58"
+        },
+        {
+          "id": "24",
+          "address": "0x08356eb8",
+          "size": "0x3b74"
+        },
+        {
+          "id": "25",
+          "address": "0x0835aa2c",
+          "size": "0x40d6"
+        },
+        {
+          "id": "26",
+          "address": "0x0835eb04",
+          "size": "0x3f7c"
+        },
+        {
+          "id": "27",
+          "address": "0x08362a80",
+          "size": "0x4400"
+        },
+        {
+          "id": "28",
+          "address": "0x08366e80",
+          "size": "0x400c"
+        },
+        {
+          "id": "29",
+          "address": "0x0836ae8c",
+          "size": "0x4326"
+        },
+        {
+          "id": "2a",
+          "address": "0x0836f1b4",
+          "size": "0x3a28"
+        },
+        {
+          "id": "2b",
+          "address": "0x08372bdc",
+          "size": "0x4076"
+        },
+        {
+          "id": "2c",
+          "address": "0x08376c54",
+          "size": "0x383e"
+        },
+        {
+          "id": "2d",
+          "address": "0x0837a494",
+          "size": "0x4a36"
+        },
+        {
+          "id": "2e",
+          "address": "0x0837eecc",
+          "size": "0x49fa"
+        },
+        {
+          "id": "2f",
+          "address": "0x083838c8",
+          "size": "0x427a"
+        },
+        {
+          "id": "30",
+          "address": "0x08387b44",
+          "size": "0x3660"
+        },
+        {
+          "id": "31",
+          "address": "0x0838b1a4",
+          "size": "0x3b4a"
+        },
+        {
+          "id": "32",
+          "address": "0x0838ecf0",
+          "size": "0x3e88"
+        },
+        {
+          "id": "33",
+          "address": "0x08392b78",
+          "size": "0x4032"
+        },
+        {
+          "id": "34",
+          "address": "0x08396bac",
+          "size": "0x4a8e"
+        },
+        {
+          "id": "35",
+          "address": "0x0839b63c",
+          "size": "0x42b2"
+        },
+        {
+          "id": "36",
+          "address": "0x0839f8f0",
+          "size": "0x397e"
+        },
+        {
+          "id": "37",
+          "address": "0x083a3270",
+          "size": "0x4210"
+        },
+        {
+          "id": "38",
+          "address": "0x083a7480",
+          "size": "0x4374"
+        },
+        {
+          "id": "39",
+          "address": "0x083ab7f4",
+          "size": "0x42b6"
+        },
+        {
+          "id": "3a",
+          "address": "0x083afaac",
+          "size": "0x471c"
+        },
+        {
+          "id": "3b",
+          "address": "0x083b41c8",
+          "size": "0x3484"
+        },
+        {
+          "id": "3c",
+          "address": "0x083b764c",
+          "size": "0x33fc"
+        },
+        {
+          "id": "3d",
+          "address": "0x083baa48",
+          "size": "0x39aa"
+        },
+        {
+          "id": "3e",
+          "address": "0x083be3f4",
+          "size": "0x517e"
+        }
+      ]
+    },
+    {
       "kind": "golden-sun-map-component-series",
       "families": [
         {

@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, isAbsolute, join, relative, resolve } from "node:path";
+import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { encode_general, encode_general_prefill, encode_palette } from "./extract_resource.ts";
 import { gba_graphics, gba_palette_rgba, indexed_png, rgba_png } from "./import_asset.ts";
 import { build_archive as build_offset_archive } from "./archive_asset.ts";
@@ -8,7 +8,7 @@ import { import_tilemap } from "./tilemap.ts";
 import { import_words } from "./wordstream.ts";
 import { import_pairs } from "./pairtable.ts";
 import { build_archive as build_f0_archive } from "./f0_archive.ts";
-import { unused_tracked_images } from "./generated_files.ts";
+import { prune_files, unused_tracked_images } from "./generated_files.ts";
 import { build_archive as build_skip_sprite_archive } from "./skip_sprite_archive.ts";
 import { build_bank as build_object_bank } from "./tile_objects.ts";
 import { encode_kind2 } from "./kind2_resource.ts";
@@ -26,6 +26,7 @@ import { build_table as build_map_load_table } from "./map_load_table.ts";
 import { build_sound_table } from "./music.ts";
 import { build_sequence as build_sound_sequence } from "./music_sequence.ts";
 import { buildWaveRecord } from "./audio_wave.ts";
+import { build_still } from "./indexed_still.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -122,7 +123,21 @@ function expandSeries(manifest: Json, entries: Json[]): void {
     for (const grid of series.grids) gridAddresses[String(grid.id).toLowerCase()] = number(grid.address);
   }
   for (const series of manifest.series ?? []) {
-    if (series.kind === "golden-sun-zero-skip-sprite-series") {
+    if (series.kind === "golden-sun-delta7-still-series") {
+      if (number(series.width) !== 256 || number(series.height) !== 120 ||
+          number(series.palette_entries) !== 128) {
+        throw new Error("unsupported delta7-still layout");
+      }
+      for (const resource of series.resources) {
+        const name = String(resource.id).toLowerCase();
+        entries.push({
+          address: resource.address,
+          size: resource.size,
+          kind: "golden-sun-delta7-still",
+          source: `assets/graphics/resource_${name}/ichimaie.8bpp.png`,
+        });
+      }
+    } else if (series.kind === "golden-sun-zero-skip-sprite-series") {
       for (const resource of series.resources) {
         const name = String(resource.id).toLowerCase();
         const directory = `assets/graphics/resource_${name}`;
@@ -506,6 +521,11 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     const [built, report] = buildWaveRecord(entry, readFileSync(source));
     return [built, [String(entry.source)], report];
   }
+  if (kind === "golden-sun-delta7-still") {
+    const source = sourcePath(String(entry.source));
+    const [built, report] = build_still(readFileSync(source));
+    return [built, [String(entry.source)], report];
+  }
   if (kind === "golden-sun-offset-palette-lz") {
     const planPath = sourcePath(String(entry.plan));
     const atlasPath = sourcePath(String(entry.source));
@@ -606,6 +626,7 @@ function main(): void {
       sources, output: built, details: report,
     });
   }
+  prune_files(output, "*.bin", regions.map((region) => basename(String(region.output))));
   const unusedImages = unused_tracked_images(ROOT, regions, ["assets/readme/"]);
   if (unusedImages.length !== 0) {
     let listing = unusedImages.slice(0, 20).map((name) => `  ${name}`).join("\n");

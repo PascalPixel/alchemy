@@ -12,7 +12,7 @@ export const OFFSET_COUNT = 124;
 export const BANK_COUNT = 42;
 export const BANK_SIZE = 256;
 
-type Atom = string | { control: number };
+type Atom = string | { control: number } | { command: string; argument?: number };
 type MessageSource = null | string | Atom[];
 type TreeNode = { symbol: number } | { left: TreeNode; right: TreeNode };
 
@@ -35,6 +35,39 @@ interface CompiledContext {
   root: TreeNode;
   paths: Map<number, string>;
 }
+
+const COMMANDS = [
+  [1, "page_break", 0],
+  [2, "end_wait", 0],
+  [3, "line_break", 0],
+  [4, "pause_60", 0],
+  [5, "pause_20_skippable", 0],
+  [6, "pause_120_skippable", 0],
+  [7, "reset_text_style", 0],
+  [8, "text_color", 1],
+  [9, "text_effect", 1],
+  [16, "protagonist_name", 0],
+  [17, "actor_name", 1],
+  [18, "argument_actor_name", 1],
+  [19, "argument_class_name", 1],
+  [20, "argument_item_name", 1],
+  [21, "argument_ability_name", 0],
+  [22, "argument_signed_number", 0],
+  [23, "argument_location_name", 0],
+  [24, "em_dash", 0],
+  [25, "plural_suffix", 0],
+  [26, "button_icon", 1],
+  [27, "possessive_suffix", 0],
+  [29, "article_class", 1],
+  [30, "end_now", 0],
+] as const;
+
+const COMMAND_BY_OPCODE = new Map<number, { name: string; arguments: number }>(
+  COMMANDS.map(([opcode, name, arguments_]) => [opcode, { name, arguments: arguments_ }]),
+);
+const COMMAND_BY_NAME = new Map<string, { opcode: number; arguments: number }>(
+  COMMANDS.map(([opcode, name, arguments_]) => [name, { opcode, arguments: arguments_ }]),
+);
 
 class BitReader {
   readonly source: Uint8Array;
@@ -236,7 +269,20 @@ function tokensFromMessage(source: MessageSource): number[] | null {
       continue;
     }
     if (typeof atom !== "object" || atom === null || Object.keys(atom).length !== 1 || !("control" in atom)) {
-      throw new Error("message control atom is invalid");
+      if (typeof atom !== "object" || atom === null || !("command" in atom) || typeof atom.command !== "string") {
+        throw new Error("message command atom is invalid");
+      }
+      const command = COMMAND_BY_NAME.get(atom.command);
+      if (command === undefined) throw new Error(`unknown message command ${atom.command}`);
+      const keys = Object.keys(atom).sort().join(",");
+      if (command.arguments === 0) {
+        if (keys !== "command") throw new Error(`message command ${atom.command} takes no argument`);
+        tokens.push(command.opcode);
+      } else {
+        if (keys !== "argument,command") throw new Error(`message command ${atom.command} requires an argument`);
+        tokens.push(command.opcode, bounded(atom.argument, 0, 122, "message command argument"));
+      }
+      continue;
     }
     tokens.push(bounded(atom.control, 1, 31, "message control"));
   }
@@ -250,12 +296,19 @@ function messageFromTokens(tokens: number[]): MessageSource {
     if (text !== "") atoms.push(text);
     text = "";
   };
-  for (const token of tokens) {
+  for (let index = 0; index < tokens.length; index++) {
+    const token = tokens[index];
     if (token >= 32 && token <= 122) text += String.fromCodePoint(token);
     else {
       if (token <= 0 || token > 31) throw new Error(`message symbol ${token} has no source representation`);
       flush();
-      atoms.push({ control: token });
+      const command = COMMAND_BY_OPCODE.get(token);
+      if (command === undefined) atoms.push({ control: token });
+      else if (command.arguments === 0) atoms.push({ command: command.name });
+      else {
+        if (index + 1 >= tokens.length) throw new Error(`message command ${command.name} lacks an argument`);
+        atoms.push({ command: command.name, argument: tokens[++index] });
+      }
     }
   }
   flush();
@@ -333,6 +386,17 @@ function encodeMessage(tokens: number[], contexts: Map<number, CompiledContext>)
   return bitBuffer(bits);
 }
 
+function encodedLength(size: number): number[] {
+  bounded(size, 0, 0xffff, "encoded message size");
+  const result: number[] = [];
+  while (size >= 0xff) {
+    result.push(0xff);
+    size -= 0xff;
+  }
+  result.push(size);
+  return result;
+}
+
 export function build_message_archive(value: unknown): Buffer {
   const source = parseDocument(value);
   const model = buildModel(derivedContexts(source.banks));
@@ -342,18 +406,18 @@ export function build_message_archive(value: unknown): Buffer {
   let address = MESSAGE_ADDRESS;
   source.banks.forEach((messages, bank) => {
     const payloads: Buffer[] = [];
-    const lengths = Buffer.alloc(messages.length);
+    const lengthValues: number[] = [];
     messages.forEach((message, index) => {
       const tokens = tokensFromMessage(message);
       const encoded = tokens === null ? Buffer.alloc(0) : encodeMessage(tokens, model.contexts);
-      if (encoded.length > 0xfe) throw new Error(`message ${hex((bank << 8) | index, 4)} is too large`);
       if (encoded.length === 0 && !(bank + 1 === BANK_COUNT && index + 1 === messages.length && message === null)) {
         throw new Error(`message ${hex((bank << 8) | index, 4)} is unexpectedly null`);
       }
-      lengths[index] = encoded.length;
+      lengthValues.push(...encodedLength(encoded.length));
       payloads.push(encoded);
     });
     const payload = Buffer.concat(payloads);
+    const lengths = Buffer.from(lengthValues);
     descriptors.writeUInt32LE(address, bank * 8);
     descriptors.writeUInt32LE(address + payload.length, bank * 8 + 4);
     banks.push(payload, lengths);
@@ -457,17 +521,26 @@ export function export_message_archive(source: Uint8Array): MessageArchiveSource
   for (let bank = 0; bank < BANK_COUNT; bank++) {
     const payload = romOffset(pointer(source, directory + bank * 8), source);
     const lengths = romOffset(pointer(source, directory + bank * 8 + 4), source);
-    const count = bank + 1 === BANK_COUNT ? directory - lengths : BANK_SIZE;
-    if (count <= 0 || count > BANK_SIZE) throw new Error(`message bank ${bank} has an invalid count`);
+    const count = bank + 1 === BANK_COUNT ? 227 : BANK_SIZE;
     const messages: MessageSource[] = [];
     let byte = payload;
+    let length = lengths;
     for (let index = 0; index < count; index++) {
-      const size = source[lengths + index];
+      let size = 0;
+      let part: number;
+      do {
+        if (length >= directory) throw new Error(`message bank ${bank} length table is truncated`);
+        part = source[length++];
+        size += part;
+      } while (part === 0xff);
       if (size === 0) messages.push(null);
       else messages.push(messageFromTokens(decodeMessage(source, byte, size, contexts)));
       byte += size;
     }
-    if (byte !== lengths) throw new Error(`message bank ${bank} payload extent differs`);
+    const next = bank + 1 === BANK_COUNT
+      ? directory
+      : romOffset(pointer(source, directory + (bank + 1) * 8), source);
+    if (byte !== lengths || length !== next) throw new Error(`message bank ${bank} extent differs`);
     banks.push(messages);
   }
   skeleton.banks = banks;
@@ -514,6 +587,14 @@ function selfTest(): void {
   const packedBits = bitBuffer(bits);
   const reader = new BitReader(packedBits, 0, bits.length);
   if ([...bits].some((bit) => reader.read() !== Number(bit))) throw new Error("bit stream self-test failed");
+  if (encodedLength(0).join(",") !== "0" || encodedLength(255).join(",") !== "255,0" ||
+      encodedLength(510).join(",") !== "255,255,0") {
+    throw new Error("message length self-test failed");
+  }
+  const message = messageFromTokens([65, 3, 8, 4, 66]);
+  if (!Bun.deepEquals(tokensFromMessage(message), [65, 3, 8, 4, 66], true)) {
+    throw new Error("message command self-test failed");
+  }
 }
 
 function option(args: string[], name: string): string | undefined {

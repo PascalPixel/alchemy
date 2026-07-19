@@ -34,8 +34,8 @@ is:
 | Proven deliberate performance modules | 2 | 954 | Keep assembly |
 | Proven register-only busy-wait | 1 | 14 | Keep assembly |
 | Mixed-mode multiply helper | 1 | 16 | Keep assembly |
-| Likely ordinary compiler output | 1,304 | 455,964 | Convert to exact C |
-| **Total** | **2,048** | **509,176** | |
+| Likely ordinary compiler output | 1,303 | 455,920 | Convert to exact C |
+| **Total** | **2,047** | **509,132** | |
 
 These counts describe files, not callable entries. `080000c0.s` bundles 96
 fixed-width dispatch entries, `08006864.s` bundles two BIOS wrappers, and

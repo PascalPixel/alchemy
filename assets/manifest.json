@@ -32,6 +32,12 @@
       "source": "assets/audio/song_table.json"
     },
     {
+      "address": "0x08185024",
+      "size": "0x8530",
+      "kind": "golden-sun-character-catalog",
+      "source": "assets/data/chr_catalog.json"
+    },
+    {
       "address": "0x0818d554",
       "size": "0x19acc",
       "kind": "golden-sun-static-sprite-series",

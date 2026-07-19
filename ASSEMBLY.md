@@ -14,6 +14,7 @@ is:
 | Classification | Files | Bytes | Long-term treatment |
 |---|---:|---:|---|
 | Linker long-call veneers | 330 | 2,640 | Keep assembly |
+| Standalone alignment words | 2 | 4 | Fold into adjacent section alignment |
 | `_call_via_rN` runtime thunk bundle | 1 | 56 | Keep assembly |
 | BIOS/SWI wrapper bundles | 2 | 16 | Keep assembly |
 | ROM dispatch table | 1 | 768 | Keep assembly |
@@ -31,9 +32,10 @@ is:
 | Proven multi-region function continuations with pools | 7 | 2,928 | Merge with their function owners before exact C |
 | Cross-function shared-literal module | 2 | 692 | Keep structured assembly pending module-aware C build |
 | Proven deliberate performance modules | 2 | 954 | Keep assembly |
+| Proven register-only busy-wait | 1 | 14 | Keep assembly |
 | Mixed-mode multiply helper | 1 | 16 | Keep assembly |
-| Likely ordinary compiler output | 1,329 | 457,422 | Convert to exact C |
-| **Total** | **1,744** | **509,964** | |
+| Likely ordinary compiler output | 1,318 | 456,812 | Convert to exact C |
+| **Total** | **1,736** | **509,372** | |
 
 These counts describe files, not callable entries. `080000c0.s` bundles 96
 fixed-width dispatch entries, `08006864.s` bundles two BIOS wrappers, and

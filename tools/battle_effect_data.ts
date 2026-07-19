@@ -358,7 +358,7 @@ function parse(value: unknown): BattleEffectSource {
 }
 
 function graphicPath(root: string, source: string): string {
-  if (!/^graphics\/battle_effect_data\/[a-z0-9_.-]+\.png$/.test(source))
+  if (!/^graphics\/battle-effects\/[a-z0-9_.-]+\.png$/.test(source))
     throw new Error("battle-effect graphic path differs");
   return join(root, source);
 }
@@ -819,10 +819,10 @@ function exportHalfwordGraphic(rom: Uint8Array, root: string): CompressedGraphic
   const [decoded, tokens] = decodeHalfwordTrace(encoded);
   if (decoded.length !== 0x600) throw new Error("halfword graphic decoded size differs");
   const name = "battle_glyphs.4bpp.png";
-  writeFileSync(join(root, `graphics/battle_effect_data/${name}`), tile_png(decoded, 4, 12)[0]);
+  writeFileSync(join(root, `graphics/battle-effects/${name}`), tile_png(decoded, 4, 12)[0]);
   return {
     address: hex(RULE_TABLES_END), end: hex(HALFWORD_GRAPHIC_END), decoded_bytes: decoded.length,
-    source: `graphics/battle_effect_data/${name}`, bpp: 4, columns: 12, codec: "halfword-lz", tokens,
+    source: `graphics/battle-effects/${name}`, bpp: 4, columns: 12, codec: "halfword-lz", tokens,
   };
 }
 
@@ -897,10 +897,10 @@ function exportPaletteGraphics(rom: Uint8Array, root: string): CompressedGraphic
     const [decoded, cursor, tokens] = decode_palette_trace(encoded, 0, encoded.length, decodedBytes);
     if (cursor !== encoded.length || decoded.length !== decodedBytes)
       throw new Error("palette graphic stream extent differs");
-    writeFileSync(join(root, `graphics/battle_effect_data/${name}`), tile_png(decoded, 4, 2)[0]);
+    writeFileSync(join(root, `graphics/battle-effects/${name}`), tile_png(decoded, 4, 2)[0]);
     return {
       address: hex(start), end: hex(end), decoded_bytes: decodedBytes,
-      source: `graphics/battle_effect_data/${name}`, bpp: 4 as const, columns: 2,
+      source: `graphics/battle-effects/${name}`, bpp: 4 as const, columns: 2,
       codec: "palette-lz" as const, tokens,
     };
   });
@@ -944,7 +944,7 @@ export function build_battle_effect_data(value: unknown, root: string): Buffer {
 }
 
 export function export_battle_effect_data(rom: Uint8Array, root: string): BattleEffectSource {
-  const graphicsRoot = join(root, "graphics/battle_effect_data");
+  const graphicsRoot = join(root, "graphics/battle-effects");
   mkdirSync(graphicsRoot, { recursive: true });
   const direct: DirectGraphicSource[] = [];
   for (const [name, start, end] of [
@@ -955,7 +955,7 @@ export function export_battle_effect_data(rom: Uint8Array, root: string): Battle
     writeFileSync(path, tile_png(range(rom, start, end), 4, 4)[0]);
     direct.push({
       address: hex(start), end: hex(end),
-      source: `graphics/battle_effect_data/${name}`, bpp: 4, columns: 4, role: "obj_tiles",
+      source: `graphics/battle-effects/${name}`, bpp: 4, columns: 4, role: "obj_tiles",
     });
   }
   const raw = range(rom, DIRECT_GRAPHICS_END, WEIGHTED_RECORDS_END);

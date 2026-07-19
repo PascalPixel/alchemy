@@ -40,13 +40,13 @@ game.
 
 ## Explore what has been recovered
 
-- Browse [character animation art](assets/graphics/chr), including party
+- Browse [character animation art](assets/graphics/characters/chr), including party
   members, NPCs, monsters, and field sprites.
 - Explore [map sources](assets/maps) and recovered world objects such as the
-  [golden doorway](assets/graphics/resource_152/objects/ougonmon.png),
-  [giant tree stump](assets/graphics/resource_158/objects/kirikabu.png), and
-  [rock formations](assets/graphics/resource_184/objects/iwa.png).
-- See reconstructed [battle-effect graphics](assets/graphics/battle_effect_data)
+  [golden doorway](assets/graphics/map-tiles/resource_152/objects/ougonmon.png),
+  [giant tree stump](assets/graphics/map-tiles/resource_158/objects/kirikabu.png), and
+  [rock formations](assets/graphics/map-tiles/resource_184/objects/iwa.png).
+- See reconstructed [battle-effect graphics](assets/graphics/battle-effects)
   and [battle-menu art](assets/data/sentou_menu).
 - Browse the [music sequences](assets/audio/sequences),
   [instrument samples](assets/audio/waves), and recovered audio-engine data.

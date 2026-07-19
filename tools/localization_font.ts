@@ -102,7 +102,7 @@ function exactKeys(value: object, keys: string[], label: string): void {
 }
 
 function imagePath(root: string, source: string): string {
-  if (!/^graphics\/localization_font\/[a-z0-9_.-]+\.png$/.test(source)) {
+  if (!/^graphics\/fonts\/localization_font\/[a-z0-9_.-]+\.png$/.test(source)) {
     throw new Error("localization-font image path differs");
   }
   return join(root, source);
@@ -350,7 +350,7 @@ function relative(path: string, root: string): string {
 
 export function export_localization_font(rom: Uint8Array, outputRoot: string): LocalizationFontSource {
   const root = outputRoot.replace(/\/$/, "");
-  const imageRoot = join(root, "graphics/localization_font");
+  const imageRoot = join(root, "graphics/fonts/localization_font");
   mkdirSync(imageRoot, { recursive: true });
   const direct: LocalizationFontSource["direct_tiles"] = [];
   for (const [name, start, end, columns] of [

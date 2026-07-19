@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "record_size": 3,
+  "terminator": "ffffff",
+  "alignment_zeros": 0,
+  "records": [
+    [
+      28,
+      5,
+      100
+    ],
+    [
+      48,
+      6,
+      101
+    ],
+    [
+      61,
+      13,
+      103
+    ]
+  ]
+}

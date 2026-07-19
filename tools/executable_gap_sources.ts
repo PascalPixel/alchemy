@@ -953,7 +953,7 @@ function reject(action: () => void): boolean {
 
 export function selfTest(planPath = join(ROOT, "assets/data/executable_gap_plan.json")): void {
   const plan = parseExecutableGapPlan(planPath), count = totals(plan);
-  if (plan.gaps.length !== 79 || count.gapBytes !== 5716 || count.codeBytes !== 3636 || count.veneerBytes !== 136 || count.deferredBytes !== 1944) {
+  if (plan.gaps.length !== 80 || count.gapBytes !== 6276 || count.codeBytes !== 4196 || count.veneerBytes !== 136 || count.deferredBytes !== 1944) {
     throw new Error("executable gap plan totals differ");
   }
   if (!reject(() => auditSource(".syntax unified\n.byte 0\n", 0, 0, 0)) ||

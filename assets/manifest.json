@@ -92,6 +92,12 @@
       "source": "assets/data/battle_effect_data/layout.json"
     },
     {
+      "address": "0x080c2a0a",
+      "size": "0x3126",
+      "kind": "golden-sun-sentou-hyouji",
+      "source": "assets/graphics/sentou_hyouji/index.json"
+    },
+    {
       "address": "0x080c5b30",
       "size": "0xe0",
       "kind": "gba-4bpp-tiles",

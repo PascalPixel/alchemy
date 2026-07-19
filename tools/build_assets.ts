@@ -37,6 +37,7 @@ import { build_resource_5 } from "./resource_5.ts";
 import { build_localization_font } from "./localization_font.ts";
 import { build_localization_tables } from "./localization_tables.ts";
 import { build_battle_effect_data } from "./battle_effect_data.ts";
+import { build_sentou_hyouji } from "./sentou_hyouji.ts";
 import { build_sentou_resource, build_sentou_series } from "./sentou_resources.ts";
 import { build_encounter_regions } from "./encounter_data.ts";
 import { build_namae_nyuuryoku } from "./namae_nyuuryoku.ts";
@@ -714,6 +715,25 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
       weighted_records: document.weighted_records.records.length,
       typed_tables: document.typed_tables.length,
     }];
+  }
+  if (kind === "golden-sun-sentou-hyouji") {
+    const sourceName = String(entry.source);
+    const source = sourcePath(sourceName);
+    const document = JSON.parse(readFileSync(source, "utf8"));
+    if (number(document.address) !== number(entry.address) || number(document.size) !== number(entry.size))
+      throw new Error("battle-display extent differs from manifest");
+    const directory = dirname(sourceName);
+    const nested = [
+      sourceName,
+      join(directory, String(document.sources.kihon)),
+      join(directory, String(document.sources.koma.source)),
+      join(directory, String(document.sources.haichi)),
+      join(directory, String(document.sources.hosei)),
+      join(directory, String(document.sources.gauge.source)),
+    ];
+    nested.forEach(sourcePath);
+    const built = build_sentou_hyouji(source);
+    return [built, nested, { source_bytes: built.length, typed_tables: 3, atlases: 2 }];
   }
   if (kind === "golden-sun-sentou-resource") {
     const source = sourcePath(String(entry.source));

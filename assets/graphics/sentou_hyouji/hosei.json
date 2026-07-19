@@ -1,0 +1,259 @@
+{
+  "format": 1,
+  "address": "0x080c5938",
+  "size": 248,
+  "object_descriptor": 16,
+  "weapon_map": [
+    {
+      "item_id": 1,
+      "weapon_class": 0
+    },
+    {
+      "item_id": 2,
+      "weapon_class": 0
+    },
+    {
+      "item_id": 3,
+      "weapon_class": 0
+    },
+    {
+      "item_id": 4,
+      "weapon_class": 0
+    },
+    {
+      "item_id": 5,
+      "weapon_class": 0
+    },
+    {
+      "item_id": 6,
+      "weapon_class": 0
+    },
+    {
+      "item_id": 7,
+      "weapon_class": 0
+    },
+    {
+      "item_id": 8,
+      "weapon_class": 0
+    },
+    {
+      "item_id": 9,
+      "weapon_class": 0
+    },
+    {
+      "item_id": 10,
+      "weapon_class": 0
+    },
+    {
+      "item_id": 11,
+      "weapon_class": 0
+    },
+    {
+      "item_id": 15,
+      "weapon_class": 1
+    },
+    {
+      "item_id": 16,
+      "weapon_class": 1
+    },
+    {
+      "item_id": 17,
+      "weapon_class": 1
+    },
+    {
+      "item_id": 18,
+      "weapon_class": 1
+    },
+    {
+      "item_id": 19,
+      "weapon_class": 1
+    },
+    {
+      "item_id": 20,
+      "weapon_class": 1
+    },
+    {
+      "item_id": 21,
+      "weapon_class": 1
+    },
+    {
+      "item_id": 22,
+      "weapon_class": 1
+    },
+    {
+      "item_id": 23,
+      "weapon_class": 1
+    },
+    {
+      "item_id": 24,
+      "weapon_class": 1
+    },
+    {
+      "item_id": 25,
+      "weapon_class": 1
+    },
+    {
+      "item_id": 26,
+      "weapon_class": 1
+    },
+    {
+      "item_id": 27,
+      "weapon_class": 1
+    },
+    {
+      "item_id": 31,
+      "weapon_class": 2
+    },
+    {
+      "item_id": 32,
+      "weapon_class": 2
+    },
+    {
+      "item_id": 33,
+      "weapon_class": 2
+    },
+    {
+      "item_id": 34,
+      "weapon_class": 2
+    },
+    {
+      "item_id": 35,
+      "weapon_class": 2
+    },
+    {
+      "item_id": 36,
+      "weapon_class": 2
+    },
+    {
+      "item_id": 37,
+      "weapon_class": 2
+    },
+    {
+      "item_id": 38,
+      "weapon_class": 2
+    },
+    {
+      "item_id": 43,
+      "weapon_class": 3
+    },
+    {
+      "item_id": 44,
+      "weapon_class": 3
+    },
+    {
+      "item_id": 45,
+      "weapon_class": 3
+    },
+    {
+      "item_id": 46,
+      "weapon_class": 3
+    },
+    {
+      "item_id": 47,
+      "weapon_class": 3
+    },
+    {
+      "item_id": 48,
+      "weapon_class": 3
+    },
+    {
+      "item_id": 49,
+      "weapon_class": 3
+    },
+    {
+      "item_id": 50,
+      "weapon_class": 3
+    },
+    {
+      "item_id": 55,
+      "weapon_class": 4
+    },
+    {
+      "item_id": 56,
+      "weapon_class": 4
+    },
+    {
+      "item_id": 57,
+      "weapon_class": 4
+    },
+    {
+      "item_id": 58,
+      "weapon_class": 5
+    },
+    {
+      "item_id": 59,
+      "weapon_class": 4
+    },
+    {
+      "item_id": 60,
+      "weapon_class": 4
+    },
+    {
+      "item_id": 61,
+      "weapon_class": 5
+    },
+    {
+      "item_id": 62,
+      "weapon_class": 4
+    },
+    {
+      "item_id": 63,
+      "weapon_class": 4
+    },
+    {
+      "item_id": 64,
+      "weapon_class": 4
+    },
+    {
+      "item_id": 65,
+      "weapon_class": 4
+    }
+  ],
+  "object_curves": {
+    "field_52_q16": [
+      65536,
+      65536,
+      65536,
+      65536,
+      524288,
+      65536,
+      65536,
+      65536
+    ],
+    "field_48_q16": [
+      262144,
+      262144,
+      262144,
+      262144,
+      1310720,
+      262144,
+      262144,
+      262144
+    ],
+    "field_40_q16": [
+      196608,
+      393216,
+      458752,
+      655360,
+      327680,
+      131072,
+      196608,
+      360448
+    ],
+    "effect_percent": [
+      140,
+      140,
+      150,
+      200,
+      200,
+      150,
+      100,
+      100
+    ]
+  },
+  "control": [
+    0,
+    20,
+    27
+  ]
+}

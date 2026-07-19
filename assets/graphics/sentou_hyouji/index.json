@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "kind": "golden-sun-sentou-hyouji",
+  "address": "0x080c2a0a",
+  "size": 12582,
+  "end": "0x080c5b30",
+  "sources": {
+    "kihon": "kihon.json",
+    "koma": {
+      "source": "koma.4bpp.png",
+      "banks": 2,
+      "frames_per_bank": 8,
+      "width": 16,
+      "height": 16
+    },
+    "haichi": "haichi.json",
+    "hosei": "hosei.json",
+    "gauge": {
+      "source": "gauge.4bpp.png",
+      "frames": 8,
+      "width": 8,
+      "height": 8
+    }
+  }
+}

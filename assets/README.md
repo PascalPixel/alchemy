@@ -94,6 +94,13 @@ numeric. The package rebuilds all 19,440 bytes at
 `0x0809c410..0x080a1000` exactly, including structural alignment derived by the
 builder rather than stored payload.
 
+`graphics/sentou_hyouji/` reconstructs the contiguous battle-display package
+as consumer-indexed actor poses, action descriptors, party layouts, debug-party
+presets, equipment and ability IDs, weapon classes, object curves, and two
+frame-arranged 4bpp atlases. The atlas geometry preserves the runtime frame
+boundaries instead of presenting the banks as arbitrary tile sheets. Together
+the sources rebuild all 12,582 bytes at `0x080c2a0a..0x080c5b30` exactly.
+
 `code/resource_3ce/` reconstructs the battle descriptor's final compressed
 Thumb overlay as relocatable assembly and a payload-free general-LZ token plan.
 The 1,945-byte stream expands to 5,772 bytes at `0x02000000`; the builder also

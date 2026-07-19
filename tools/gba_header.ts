@@ -534,8 +534,15 @@ function syntheticSource(template: GbaHeaderSource): GbaHeaderSource {
 }
 
 function selfTest(): void {
-  const template = readGbaHeaderSource(DEFAULT_SOURCE);
-  if (template.edition !== null) throw new Error("canonical GBA header template unexpectedly resolved");
+  const canonical = readGbaHeaderSource(DEFAULT_SOURCE);
+  if (canonical.edition === null || canonical.unresolved_fields.length !== 0) {
+    throw new Error("canonical GBA header source must be fully resolved after byte closure");
+  }
+  const template = parseGbaHeaderSource({
+    ...structuredClone(canonical) as unknown as JsonObject,
+    edition: null,
+    unresolved_fields: structuredClone(EXPECTED_UNRESOLVED),
+  });
   const logoImage = readFileSync(logoSourcePath(template));
   const source = syntheticSource(template);
   const built = buildGbaHeader(source, logoImage);

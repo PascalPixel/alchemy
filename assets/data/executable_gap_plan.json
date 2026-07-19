@@ -658,6 +658,11 @@
       "evidence": "asm/080f4af0.s -> asm/080f4f04.s"
     },
     {
+      "address": "0x080f9000",
+      "size": 8,
+      "evidence": "assets/data/late_runtime/catalog.json -> Func_080f9000"
+    },
+    {
       "address": "0x080f94f8",
       "size": 20,
       "evidence": "src/080f94e0.c -> src/080f950c.c"
@@ -841,7 +846,7 @@
     },
     {
       "address": "0x080f86f8",
-      "end": "0x080f9008",
+      "end": "0x080f9000",
       "kind": "dedicated-late-data"
     },
     {

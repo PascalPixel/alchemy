@@ -38,6 +38,7 @@ import { build_localization_font } from "./localization_font.ts";
 import { build_localization_tables } from "./localization_tables.ts";
 import { build_battle_effect_prefix } from "./battle_effect_data.ts";
 import { build_sentou_resource, build_sentou_series } from "./sentou_resources.ts";
+import { build_encounter_regions } from "./encounter_data.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -341,6 +342,17 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           kind: "golden-sun-sentou-resource",
           source,
           index: String(series.index),
+        });
+      }
+    } else if (series.kind === "golden-sun-encounter-data-series") {
+      const directoryName = String(series.directory);
+      const directory = sourcePath(directoryName);
+      for (const region of build_encounter_regions(directory)) {
+        entries.push({
+          address: region.address,
+          size: region.size,
+          kind: "golden-sun-encounter-data",
+          source: join(directoryName, region.source),
         });
       }
     } else if (series.kind === "golden-sun-sound-sequence-series") {
@@ -651,6 +663,15 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     const sources = [String(entry.index), ...nested.map((name) => relative(ROOT, resolve(name)))];
     sources.forEach(sourcePath);
     return [built, [...new Set(sources)], { source_bytes: built.length }];
+  }
+  if (kind === "golden-sun-encounter-data") {
+    const source = sourcePath(String(entry.source));
+    const address = number(entry.address);
+    const region = build_encounter_regions(dirname(source)).find((item) =>
+      item.address === address && item.source === basename(source));
+    if (region === undefined || region.size !== number(entry.size))
+      throw new Error("encounter-data region differs from manifest");
+    return [region.data, [String(entry.source)], { source_bytes: region.data.length }];
   }
   if (kind === "golden-sun-gameplay-databases") {
     const source = sourcePath(String(entry.source));

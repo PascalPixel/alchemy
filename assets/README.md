@@ -83,6 +83,13 @@ follow the runtime consumers; selectors with no proven semantic name remain
 numeric. The package rebuilds all 8,382 bytes at
 `0x0809c410..0x0809e4ce` exactly and ends at the next compression boundary.
 
+`data/encounter_data/` reconstructs the consumer-proven encounter database as
+two signed brightness phases, 380 formations, 20 preload IDs, 172 metadata
+records, and explicit zero alignment to the next code section. Reserved record
+bytes are regenerated structurally. Three source regions rebuild 13,288 bytes
+inside `0x080c5c10..0x080c9000`; the intervening eight bytes remain fallback
+because no consumer proves their meaning.
+
 Resource 2 preserves its twelve-digit numeric stamp as text plus an explicit
 four-byte trailer. `graphics/resource_13/font.4bpp.png` is the complete 256-
 glyph 8x8 UI font in character-code order. Resource 14 preserves 1,120

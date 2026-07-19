@@ -10983,6 +10983,10 @@
     {
       "kind": "golden-sun-sentou-resource-series",
       "index": "assets/graphics/sentou/index.json"
+    },
+    {
+      "kind": "golden-sun-encounter-data-series",
+      "directory": "assets/data/encounter_data"
     }
   ]
 }

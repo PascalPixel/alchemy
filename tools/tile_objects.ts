@@ -15,6 +15,7 @@ import {
 } from "node:fs";
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 
+import { resourceGraphicsDir } from "./asset_paths.ts";
 import { tile_png } from "./export_asset.ts";
 import { gba_graphics, indexed_png } from "./import_asset.ts";
 import { decode_entry, flip_tile } from "./text_bg.ts";
@@ -315,7 +316,7 @@ export function extract_map_object(
   if (Math.min(left, top) < 0 || Math.min(width_tiles, height_tiles) <= 0) {
     throw new Error("object rectangle must be positive");
   }
-  const directory = join(ROOT, `assets/graphics/resource_${container}`);
+  const directory = join(ROOT, resourceGraphicsDir(container));
   const map_dir = join(ROOT, `assets/maps/resource_${container}`);
   const bank_path = join(directory, `charblock${charblock}.4bpp.png`);
   const plan_path = join(directory, `charblock${charblock}.objects.json`);

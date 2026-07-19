@@ -13,6 +13,14 @@ interface Options {
   sourceOnly: boolean;
 }
 
+interface AlignmentSource {
+  format: 1;
+  kind: "thumb-function-alignment";
+  width: 2;
+  value: 0;
+  addresses: string[];
+}
+
 interface BuiltRegion {
   address: number;
   runAddress: number;
@@ -105,6 +113,22 @@ function loadClassification(path: string): ClassificationConfig {
   const config = JSON.parse(readFileSync(path, "utf8")) as ClassificationConfig;
   if (config.format !== 1) throw new Error(`unsupported assembly classification format: ${config.format}`);
   return config;
+}
+
+function loadAlignments(path: string): Array<{ address: number; data: Buffer }> {
+  const source = JSON.parse(readFileSync(path, "utf8")) as AlignmentSource;
+  if (source.format !== 1 || source.kind !== "thumb-function-alignment" ||
+      source.width !== 2 || source.value !== 0 || !Array.isArray(source.addresses)) {
+    throw new Error("unsupported alignment source");
+  }
+  const found = new Set<number>();
+  return source.addresses.map((text, index) => {
+    if (!/^0x080[0-9a-f]{5}$/.test(text)) throw new Error(`alignment ${index}: invalid address`);
+    const address = Number(text);
+    if ((address & 3) !== 2 || found.has(address)) throw new Error(`alignment ${index}: invalid boundary`);
+    found.add(address);
+    return { address, data: Buffer.alloc(2) };
+  }).sort((left, right) => left.address - right.address);
 }
 
 function explicitClassifications(config: ClassificationConfig): Map<string, ClassificationRule> {
@@ -271,7 +295,6 @@ async function main(): Promise<void> {
     }
   }
   const regions: Array<Record<string, string | number>> = [];
-  let previousEnd = 0;
   for (const source of sources) {
     const sourceName = relative(ROOT, source);
     const placement = layout.get(sourceName);
@@ -280,8 +303,6 @@ async function main(): Promise<void> {
     if (address < ROM_BASE || address >= limit || data.length === 0 || address + data.length > limit) {
       throw new Error(`${basename(source)}: region outside ROM`);
     }
-    if (address < previousEnd) throw new Error(`${basename(source)}: overlapping assembly region`);
-    previousEnd = address + data.length;
     if (rom !== null) {
       const expected = rom.subarray(address - ROM_BASE, address - ROM_BASE + data.length);
       if (!data.equals(expected)) throw new Error(`${basename(source)}: assembled bytes differ`);
@@ -305,6 +326,43 @@ async function main(): Promise<void> {
       confidence: category.confidence,
       evidence: category.evidence.join(","),
     });
+  }
+  if (args.source === undefined) {
+    const alignmentPath = join(ROOT, "asm/alignment.json");
+    const category = classification.structural.find((item) => item.kind === "alignment_padding");
+    if (category === undefined) throw new Error("missing alignment padding classification");
+    for (const { address, data } of loadAlignments(alignmentPath)) {
+      const name = address.toString(16).padStart(8, "0");
+      const outputPath = join(output, `${name}.bin`);
+      if (rom !== null) {
+        const expected = rom.subarray(address - ROM_BASE, address - ROM_BASE + data.length);
+        if (!data.equals(expected)) throw new Error(`${name}: alignment bytes differ`);
+      }
+      writeFileSync(outputPath, data);
+      const count = counts.get(category.kind) ?? { files: 0, bytes: 0 };
+      count.files++;
+      count.bytes += data.length;
+      counts.set(category.kind, count);
+      regions.push({
+        address,
+        run_address: address,
+        size: data.length,
+        source: relative(ROOT, alignmentPath),
+        output: outputPath,
+        kind: category.kind,
+        origin: category.origin,
+        retention: category.retention,
+        confidence: category.confidence,
+        evidence: category.evidence.join(","),
+      });
+    }
+  }
+  regions.sort((left, right) => Number(left.address) - Number(right.address));
+  let previousEnd = 0;
+  for (const region of regions) {
+    const address = Number(region.address);
+    if (address < previousEnd) throw new Error(`overlapping assembly region at 0x${address.toString(16)}`);
+    previousEnd = address + Number(region.size);
   }
   if (args.source === undefined) {
     for (const name of explicit.keys()) {

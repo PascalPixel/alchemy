@@ -26,6 +26,12 @@
       "source": "assets/graphics/08073812.gbapal.png"
     },
     {
+      "address": "0x0807a828",
+      "size": "0xf7d8",
+      "kind": "golden-sun-gameplay-databases",
+      "source": "assets/data/resource_5/database.json"
+    },
+    {
       "address": "0x080c5b30",
       "size": "0xe0",
       "kind": "gba-4bpp-tiles",

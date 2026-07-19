@@ -27,6 +27,7 @@ import { build_sound_table } from "./music.ts";
 import { build_sequence as build_sound_sequence } from "./music_sequence.ts";
 import { buildWaveRecord } from "./audio_wave.ts";
 import { build_still } from "./indexed_still.ts";
+import { build_static_sprite_series } from "./static_sprite_series.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -525,6 +526,18 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     const source = sourcePath(String(entry.source));
     const [built, report] = build_still(readFileSync(source));
     return [built, [String(entry.source)], report];
+  }
+  if (kind === "golden-sun-static-sprite-series") {
+    const indexPath = sourcePath(String(entry.source));
+    const palettePath = sourcePath(String(entry.palette));
+    const index = JSON.parse(readFileSync(indexPath, "utf8"));
+    const [built, report] = build_static_sprite_series(indexPath, palettePath);
+    const directory = dirname(String(entry.source));
+    const sources = [String(entry.source), String(entry.palette)];
+    for (const item of index.packages ?? []) {
+      sources.push(join(directory, String(item.source)), join(directory, String(item.plan)));
+    }
+    return [built, sources, report];
   }
   if (kind === "golden-sun-offset-palette-lz") {
     const planPath = sourcePath(String(entry.plan));

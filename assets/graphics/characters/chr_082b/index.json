@@ -743,7 +743,7 @@
       "address": "0x082ddcc8",
       "size": "0x00000e40",
       "directory": "0x082deab4",
-      "plan": "chr_140/bank.json"
+      "plan": "isaac/bank.json"
     },
     {
       "id": "14e",
@@ -784,7 +784,7 @@
       "address": "0x082e7a70",
       "size": "0x00001044",
       "directory": "0x082e8a60",
-      "plan": "chr_141/bank.json"
+      "plan": "garet/bank.json"
     },
     {
       "id": "148",
@@ -825,7 +825,7 @@
       "address": "0x082f1c90",
       "size": "0x00000e70",
       "directory": "0x082f2aac",
-      "plan": "chr_145/bank.json"
+      "plan": "felix/bank.json"
     },
     {
       "id": "150",
@@ -850,7 +850,7 @@
       "address": "0x082f8190",
       "size": "0x00000c34",
       "directory": "0x082f8d70",
-      "plan": "chr_142/bank.json"
+      "plan": "ivan/bank.json"
     },
     {
       "id": "14a",
@@ -883,7 +883,7 @@
       "address": "0x08300110",
       "size": "0x00000e64",
       "directory": "0x08300f20",
-      "plan": "chr_143/bank.json"
+      "plan": "mia/bank.json"
     }
   ]
 }

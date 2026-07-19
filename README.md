@@ -75,6 +75,9 @@ own. Not affiliated with or endorsed by Nintendo or Camelot. Non-commercial.
 - Reconstructed names and comments follow the period-authentic Japanese style
   in [`NAMING.md`](NAMING.md).
 - `bun tools/build_claimed.ts` links and verifies every claimed C region together.
+- `bun tools/integrate_matches.ts` accepts a C replacement only when its linked
+  fixed-address bytes exactly match the tracked reconstruction assembly; size
+  equality alone is never sufficient.
 - `bun tools/build_asm.ts` assembles and verifies every claimed `asm/` region.
 - `bun tools/build_assets.ts` encodes and verifies every claimed asset.
 - `bun tools/build_full.ts` verifies the combined byte-identical private rebuild.

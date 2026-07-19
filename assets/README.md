@@ -5,6 +5,14 @@ encoding. `tools/build_assets.ts` refuses a region unless the tracked source
 re-encodes byte-for-byte to the private ROM, and rejects tracked images that
 are not inputs to that verified build.
 
+`graphics/system/nintendo_logo.1bpp.png` is the canonical 104×16 monochrome
+firmware-logo source required by every GBA cartridge header. Its encoder
+recreates the tiled 1bpp bitmap, additive halfword transform, and fixed Huffman
+field; typed metadata supplies the standard fixed, unit, device, and reserved
+fields. These edition-independent sources own 168 header bytes. The entry
+branch, title and product identity, software version, and dependent checksum
+remain explicit edition-specific work rather than being copied into the logo.
+
 `audio/song_table.json` reconstructs the sound engine's 312-entry selection
 table. Each eight-byte entry names a symbolic sequence header, the player index
 read by the ROM-side selector, and a mirrored second halfword whose role is not
@@ -35,11 +43,13 @@ CGB waveforms, and eight music-player records. The corrected waveform boundary
 is `0x080fc504`; the preceding twelve bytes complete tone-bank record 81 rather
 than belonging to an arbitrary configuration span.
 
-`audio/waves/` reconstructs all 32 tone-referenced signed-PCM records as
+`audio/waves/` reconstructs 32 tone-referenced signed-PCM records as
 standard mono 8-bit WAV sources. Its index preserves exact fixed-point
 frequencies and loop points, while the verified builder restores native signed
 samples, 16-byte headers, and alignment for 404,160 ROM bytes. Five adjacent
-zero-length synthesizer descriptors remain a separate recovery unit.
+tone-referenced Direct Sound records remain a separate 112-byte recovery unit;
+the pointer-driven probe now preserves their exact headers and padding without
+guessing their sample parameters.
 
 `graphics/080c5b30.4bpp.png` contains seven palette-independent 4bpp tiles.
 ROM code copies the seven consecutive 32-byte units to seven consecutive VRAM

@@ -397,6 +397,9 @@ function renderRows(rows: InstructionRow[], base: number, end: number, named: Re
     if (name) output.push(`${name}:`);
     if (branchTargets.has(address) && !name) output.push(`${localLabel(address)}:`);
     let text = byAddress.get(address)!.text;
+    const undefinedWord = /^@ <UNDEFINED> instruction: (0x[0-9a-f]{8})$/.exec(text);
+    if (undefinedWord) text = `.4byte ${undefinedWord[1]}`;
+    else text = text.replace(/^\.word\s+(0x[0-9a-f]{8})$/, ".4byte $1");
     text = text.replace(BRANCH, (whole, mnemonic: string, targetText: string) => {
       const target = Number.parseInt(targetText, 16);
       const namedTarget = named.get(target);
@@ -409,7 +412,7 @@ function renderRows(rows: InstructionRow[], base: number, end: number, named: Re
   return output;
 }
 
-function armSource(data: Buffer, base: number, end: number, names: ReadonlyMap<number, string>): string {
+export function armSource(data: Buffer, base: number, end: number, names: ReadonlyMap<number, string>): string {
   const rows = objdumpRows(data, base);
   if (rows.length !== data.length / 4) throw new Error("ARM fragment disassembly is incomplete");
   return `${[
@@ -475,7 +478,13 @@ function tenkaiSource(data: Buffer): string {
   return `${output.join("\n")}\n`;
 }
 
-function validateAssembly(text: string, name: string, required: readonly string[], allowData: boolean): void {
+function validateAssembly(
+  text: string,
+  name: string,
+  required: readonly string[],
+  allowData: boolean,
+  allowRawWords = false,
+): void {
   if (!text.endsWith("\n") || text.includes("\r") || text.includes("\0")) throw new Error(`${name} is not canonical text`);
   if (/[;@]|\/\*|\/\//.test(text)) throw new Error(`${name} contains a comment`);
   const directive = /^\.(?:syntax unified|text)$|^\.(?:arm|thumb|thumb_func)$|^\.global [A-Za-z_][A-Za-z0-9_]*$/;
@@ -488,6 +497,7 @@ function validateAssembly(text: string, name: string, required: readonly string[
       continue;
     }
     const data = allowData && (/^\.set Func_080f03f0, 0x080f03f0$/.test(trimmed) ||
+      (allowRawWords && /^\.4byte 0x[0-9a-f]{8}$/.test(trimmed)) ||
       /^\.4byte (?:Func_080f03f0 \+ 1|\.L_[A-Za-z0-9_]+|0x80808080)$/.test(trimmed) ||
       /^\.space 32, 0$/.test(trimmed));
     if (!directive.test(trimmed) && !data) throw new Error(`${name} contains an unsupported directive`);
@@ -501,9 +511,16 @@ function validateAssembly(text: string, name: string, required: readonly string[
   }
 }
 
-function assembleAt(sourcePath: string, base: number, expectedSize: number, required: readonly string[], allowData = false): Buffer {
+export function assembleAt(
+  sourcePath: string,
+  base: number,
+  expectedSize: number,
+  required: readonly string[],
+  allowData = false,
+  allowRawWords = false,
+): Buffer {
   const text = readFileSync(sourcePath, "utf8");
-  validateAssembly(text, sourcePath, required, allowData);
+  validateAssembly(text, sourcePath, required, allowData, allowRawWords);
   const work = mkdtempSync(join(TMPDIR, "sentou-kouka-assemble-"));
   try {
     const object = join(work, "source.o"), elf = join(work, "source.elf"), binary = join(work, "source.bin");
@@ -693,6 +710,7 @@ export function selfTest(): void {
     reject(() => validateAssembly(".syntax unified\n.incbin \"x.bin\"\n", "test assembly", [], true));
     reject(() => validateAssembly(".syntax unified\n.byte 1\n", "test assembly", [], true));
     reject(() => validateAssembly(".syntax unified\n.long 1\n", "test assembly", [], true));
+    reject(() => validateAssembly(".syntax unified\n.4byte 0x12345678\n", "test assembly", [], true));
     reject(() => validateAssembly(".syntax unified\nHidden: .long 1\n", "test assembly", [], true));
     reject(() => validateAssembly(".syntax unified\n@ 注釈\n", "test assembly", [], true));
     reject(() => validateAssembly(".syntax unified\n\tb 0x08000000\n", "test assembly", [], true));
@@ -700,7 +718,7 @@ export function selfTest(): void {
     const duplicate = join(temporary, "duplicate.json");
     writeFileSync(duplicate, "{\"format\":0,\"format\":1}\n");
     reject(() => document(duplicate));
-    if (rejected !== 14) throw new Error("adversarial source validation failed");
+    if (rejected !== 15) throw new Error("adversarial source validation failed");
   } finally {
     rmSync(temporary, { recursive: true, force: true });
   }

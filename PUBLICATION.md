@@ -6,10 +6,14 @@ operational publication rule, not a claim that precedent creates a licence or
 guarantees that a host or rights holder will agree with every publication.
 
 The boundary is based on a file's role, not on the fact that reconstruction
-began with a private ROM. `pokeemerald` publicly tracks reconstructed C and
-assembly, map JSON, source PNG graphics and palettes, and canonical binary map
-sources such as metatiles. It ignores the built ROM, object and ELF files,
-generated hardware graphics encodings, dumps, and build directories.
+began with private ROM evidence. This project may compare only the twelve
+approved Golden Sun and Golden Sun: The Lost Age ROMs locally. Those comparisons
+may guide one edition-aware reconstruction, but they do not make ROMs, binary
+diffs, or private analysis into publishable source. `pokeemerald` publicly
+tracks reconstructed C and assembly, map JSON, source PNG graphics and
+palettes, and canonical binary map sources such as metatiles. It ignores the
+built ROM, object and ELF files, generated hardware graphics encodings, dumps,
+and build directories.
 
 ## Publishable source
 
@@ -19,6 +23,8 @@ generated hardware graphics encodings, dumps, and build directories.
   semantic JSON required to understand or rebuild the game.
 - Canonical source assets such as PNGs, palettes, audio sources, maps,
   tilemaps, metatiles, and animation data.
+- Edition- and language-aware source metadata that lets one reconstruction
+  express proven differences among the twelve approved build targets.
 - Deterministic encoder descriptions and payload-free compression plans that
   turn those source forms back into the verified ROM representation.
 - A narrowly scoped binary source format when it is the canonical named input
@@ -31,8 +37,9 @@ representation, the superseded file is removed.
 
 ## Never publish
 
-- `gs1-en.gba`, any comparative regional ROM, a built `.gba`, or any other
-  playable ROM image.
+- Any of `gs1-{en,ja,de,es,fr,it}.gba` or
+  `gs2-{en,ja,de,es,fr,it}.gba`, a built `.gba`, or any other playable ROM
+  image.
 - Binary patches, cross-ROM difference spans, or private comparison reports
   that reproduce or expose ROM content.
 - Copied ROM gaps, committed `.incbin` payloads, or raw ROM ranges kept only to
@@ -54,6 +61,12 @@ needed by the tracked build or documentation. Verify that no forbidden file
 above is staged, then run the relevant byte-identical build checks. Repository
 size alone is not the boundary, but redundant and superseded assets must not
 accumulate.
+
+The immediate verification target is `gs1-en.gba`. The other eleven approved
+ROMs are local comparison evidence and future independent build targets; none
+may supply fallback bytes to another target. Adding a target means expressing
+its differences as canonical source or configuration and verifying its whole
+output, not publishing a patch or a copied ROM span.
 
 Useful upstream examples are `pokeemerald`'s
 [`data/tilesets/primary/general`](https://github.com/pret/pokeemerald/tree/master/data/tilesets/primary/general),

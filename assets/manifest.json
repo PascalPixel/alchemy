@@ -3008,6 +3008,40 @@
           ]
         },
         {
+          "id": "24a",
+          "header": {
+            "address": "0x08649cc8",
+            "size": "0x3c"
+          },
+          "components": [
+            {
+              "slot": 0,
+              "address": "0x08649d04",
+              "size": "0x2790"
+            },
+            {
+              "slot": 1,
+              "address": "0x0864c494",
+              "size": "0x48"
+            },
+            {
+              "slot": 3,
+              "address": "0x0864dba8",
+              "size": "0x16c"
+            },
+            {
+              "slot": 4,
+              "address": "0x0864dd14",
+              "size": "0x8"
+            },
+            {
+              "slot": 5,
+              "address": "0x0864dd1c",
+              "size": "0xc"
+            }
+          ]
+        },
+        {
           "id": "24b",
           "header": {
             "address": "0x0864dd28",
@@ -6767,6 +6801,11 @@
           "id": "249",
           "address": "0x086480cc",
           "size": "0x1bf4"
+        },
+        {
+          "id": "24a",
+          "address": "0x0864c4dc",
+          "size": "0x16cc"
         },
         {
           "id": "24b",

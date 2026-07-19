@@ -14,8 +14,8 @@ can take a clean-room decompilation together. It is a hobby/research project,
 not a serious or community-driven decomp, and it is nowhere near complete.
 
 The name comes from the moment alchemy is released upon Weyard. This project
-is similarly trying to release the game from one finished cartridge image into
-code, art, maps, and music that people can explore.
+is similarly trying to release the games from their finished cartridge images
+into code, art, maps, and music that people can explore.
 
 ## Where the project stands
 

@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "kind": "golden-sun-audio-engine-data",
+  "address": "0x080fb792",
+  "end": "0x080fc684",
+  "size": 3826,
+  "sources": {
+    "control": "seigyo.json",
+    "tones": "onshoku.json",
+    "waveforms": "hakei.json",
+    "players": "saisei.json"
+  }
+}

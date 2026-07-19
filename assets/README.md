@@ -27,6 +27,13 @@ and semantic sequence events rather than copied binary spans, while the
 verifier proves the relevant sound-table links and both neighbouring one-track
 headers. Together they rebuild 2,458 bytes exactly.
 
+`audio/engine/` reconstructs the complete 3,826-byte native audio-data prefix
+at `0x080fb792..0x080fc684`: derived alignment, consumer-sized command and
+pitch/volume tables, two tone banks with 225 typed records, eighteen 16-byte
+CGB waveforms, and eight music-player records. The corrected waveform boundary
+is `0x080fc504`; the preceding twelve bytes complete tone-bank record 81 rather
+than belonging to an arbitrary configuration span.
+
 `audio/waves/` reconstructs all 32 tone-referenced signed-PCM records as
 standard mono 8-bit WAV sources. Its index preserves exact fixed-point
 frequencies and loop points, while the verified builder restores native signed

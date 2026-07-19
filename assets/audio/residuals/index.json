@@ -1,6 +1,14 @@
 {
   "format": 1,
   "kind": "golden-sun-music-residuals",
+  "shared_empty_header": {
+    "name": "sound_empty",
+    "address": "0x080fd044",
+    "track_count": 0,
+    "block_count": 0,
+    "priority": 0,
+    "reverb": 0
+  },
   "empty_headers": [
     {
       "name": "sound_019",

@@ -14,29 +14,29 @@ The source-only ownership build currently accounts for:
 | Source form | Regions | Bytes |
 |---|---:|---:|
 | Compiled C | 769 | 30,252 |
-| Reconstruction assembly | 1,722 | 508,524 |
-| Canonical assets | 2,276 | 7,813,515 |
-| **Source-owned total** | **4,767** | **8,352,291** |
-| **Unowned remainder** | **596 gaps** | **36,317** |
+| Reconstruction assembly | 2,048 | 509,176 |
+| Canonical assets | 2,277 | 7,813,519 |
+| **Source-owned total** | **5,094** | **8,352,947** |
+| **Unowned remainder** | **269 gaps** | **35,661** |
 | **Canonical target size** |  | **8,388,608** |
 
 The immediate milestone is **100% byte closure for `gs1-en.gba`**: all
 8,388,608 bytes must come from tracked C, reconstruction assembly, or canonical
 assets, with no copied gap or private-ROM fallback. That milestone is currently
-8,352,291 bytes, or 99.57%. Exact reconstruction assembly counts toward byte
+8,352,947 bytes, or 99.57%. Exact reconstruction assembly counts toward byte
 closure even when it remains C-decompilation work.
 
 Within the reconstruction assembly, approximately 491,696 bytes remain active
-C-decompilation, boundary-splitting, or function-merging work. The other 16,828
+C-decompilation, boundary-splitting, or function-merging work. The other 17,480
 bytes are presently retained structural assembly: linker veneers, runtime
 thunks, fixed hardware entry points, shared-literal modules, and proven
 compiler-unproducible kernels.
 
-The stricter build-report `byte_reconstruction` milestone is 7,860,595 of
+The stricter build-report `byte_reconstruction` milestone is 7,861,251 of
 8,388,608 bytes, or 93.71%. It counts exact C, deterministic asset round trips,
 and positively retained structural assembly, while treating ordinary
-reconstruction assembly as unfinished C work. The remaining 528,013 bytes are
-the 491,696-byte assembly debt plus the 36,317 unowned bytes. It is useful for
+reconstruction assembly as unfinished C work. The remaining 527,357 bytes are
+the 491,696-byte assembly debt plus the 35,661 unowned bytes. It is useful for
 tracking source quality, but it is not the immediate no-fallback byte-closure
 milestone and it is not a forecast of time remaining.
 
@@ -60,8 +60,8 @@ below describe only the current canonical Golden Sun English target.
 
 | Dimension | Current result | Meaning |
 |---|---:|---|
-| GS1 English byte closure | 8,352,291 / 8,388,608 bytes (99.57%) | A tracked producer owns the address; immediate target is no fallback |
-| Byte reconstruction | 7,860,595 / 8,388,608 bytes (93.71%) | Exact C, round-tripping assets, or retained structural assembly |
+| GS1 English byte closure | 8,352,947 / 8,388,608 bytes (99.57%) | A tracked producer owns the address; immediate target is no fallback |
+| Byte reconstruction | 7,861,251 / 8,388,608 bytes (93.71%) | Exact C, round-tripping assets, or retained structural assembly |
 | Code decompilation | 30,252 / 521,948 identified executable bytes (5.80%) | Active executable work represented as exact C |
 | Asset semantic maturity | Audit pending | Round-trip success has not yet been classified as coherent or provisional |
 | Repository organization | Audit pending | Flatness, naming, source formats, and generated-file boundaries need a formal audit |
@@ -70,33 +70,36 @@ below describe only the current canonical Golden Sun English target.
 
 `build_full.ts` records these gates in `project_completion`. Until a tracked
 asset-maturity register exists, its formal classified count is zero and all
-2,276 round-tripping asset regions remain unclassified for project-completion
+2,277 round-tripping asset regions remain unclassified for project-completion
 purposes. That is not a claim that every asset is poor; it prevents unreviewed
 containers from silently receiving clean-source credit. The report also keeps
 the former `total_decompilation_*` fields as explicitly deprecated aliases for
 the byte-reconstruction milestone so existing local consumers do not break.
 
-## The unowned 36,317 bytes
+## The unowned 35,661 bytes
 
-The remainder is 596 separate address intervals, not one large unknown blob.
+The remainder is 269 separate address intervals, not one large unknown blob.
 The largest individual gap is 4,036 bytes.
 
 | Category | Bytes |
 |---|---:|
-| Still-unresolved executable or mixed regions | 10,552 |
-| Early table and layout blocks | 8,836 |
+| Still-unresolved executable or mixed regions | 12,916 |
+| Early table and layout blocks | 6,184 |
 | Eight missing resource-directory bodies | 8,528 |
 | Three late `0x080f` data tails | 7,294 |
-| Identified residual data | 344 |
-| Compiler-emitted, manifest-unclaimed alignment | 364 |
+| Identified residual data | 340 |
+| Compiler-emitted, manifest-unclaimed alignment | 0 |
 | Resource alignment and explicit exclusions | 207 |
 | GBA header | 192 |
-| **Total** | **36,317** |
+| **Total** | **35,661** |
 
 The eight fully unowned directory resources are `049`, `04a`, `061`, `064`,
 `066`, `073`, `0a5`, and `0a6`. Their pointer-derived boundaries total 8,528
-bytes. The three early blocks occupy `08012f20..08013784`,
-`0801403c..08015000`, and `08015430..08015e8c`. The late tails occupy
+bytes. The two early data blocks occupy `08012f20..08013784` and
+`0801403c..08015000`. The previously data-looking block at
+`08015430..08015e8c` is instead seven relocated ARM helpers, partitioned by
+their copy-and-call sites into `0x140`, `0x60`, `0x318`, `0x214`, `0x278`,
+`0x9c`, and `0x7c` bytes. The late tails occupy
 `080f38bc..080f4000`, `080f53ce..080f6000`, and
 `080f86f8..080f9000`.
 

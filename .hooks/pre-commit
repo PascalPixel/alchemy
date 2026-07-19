@@ -1,5 +1,3 @@
 #!/bin/sh
-test -z "$(git diff --cached --name-only | grep -Ev '^(package\.json|tsconfig\.json|assets/.*\.(json|s)|asm/([0-9a-f]{8}\.s|(classification|manifest)\.json)|rom\.sha1)$' | grep -E '(^|/)(baserom|roms?|toolchain|work|out)(/|\.|$)|\.(gba|rom|bin|elf|o|a|s|asm|json|tsv|log)$')" || {
-    echo "alchemy: private inputs and generated artifacts may not be committed" >&2
-    exit 1
-}
+# 登録予定の内容を公開可能な正準ソースに限定する。
+exec bun tools/check_publication.ts --staged

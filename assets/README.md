@@ -76,6 +76,13 @@ reserved bytes and regenerate them as zero; the source also declares the final
 2,516-byte resource alignment. The complete `0x0807a828..0x0808a000` range is
 an exact build input, not a raw database slice.
 
+`data/battle_effect_data/layout.json` reconstructs the first coherent battle
+effect data package as two 4bpp object-tile sheets, 104 weighted result records,
+and eight consumer-indexed rule and mapping tables. Field widths and signedness
+follow the runtime consumers; selectors with no proven semantic name remain
+numeric. The package rebuilds all 8,382 bytes at
+`0x0809c410..0x0809e4ce` exactly and ends at the next compression boundary.
+
 Resource 2 preserves its twelve-digit numeric stamp as text plus an explicit
 four-byte trailer. `graphics/resource_13/font.4bpp.png` is the complete 256-
 glyph 8x8 UI font in character-code order. Resource 14 preserves 1,120

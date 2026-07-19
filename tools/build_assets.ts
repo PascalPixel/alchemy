@@ -2,6 +2,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { encode_general, encode_general_prefill, encode_palette } from "./extract_resource.ts";
+import { resourceGraphicsDir } from "./asset_paths.ts";
 import { gba_graphics, gba_palette_rgba, indexed_png, rgba_png } from "./import_asset.ts";
 import { build_archive as build_offset_archive } from "./archive_asset.ts";
 import { import_tilemap } from "./tilemap.ts";
@@ -406,13 +407,13 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           address: resource.address,
           size: resource.size,
           kind: "golden-sun-delta7-still",
-          source: `assets/graphics/resource_${name}/ichimaie.8bpp.png`,
+          source: `${resourceGraphicsDir(name)}/ichimaie.8bpp.png`,
         });
       }
     } else if (series.kind === "golden-sun-zero-skip-sprite-series") {
       for (const resource of series.resources) {
         const name = String(resource.id).toLowerCase();
-        const directory = `assets/graphics/resource_${name}`;
+        const directory = resourceGraphicsDir(name);
         entries.push({
           address: resource.address,
           size: resource.size,
@@ -432,7 +433,7 @@ function expandSeries(manifest: Json, entries: Json[]): void {
       const animationLayout = series.animation_layout;
       for (const family of series.families) {
         const name = String(family.id).toLowerCase();
-        const directory = `assets/graphics/resource_${name}`;
+        const directory = resourceGraphicsDir(name);
         const palette = family.palette;
         entries.push({
           address: palette.address,
@@ -477,7 +478,7 @@ function expandSeries(manifest: Json, entries: Json[]): void {
     } else if (series.kind === "golden-sun-standalone-palette-series") {
       for (const palette of series.palettes) {
         const name = String(palette.id).toLowerCase();
-        const directory = `assets/graphics/resource_${name}`;
+        const directory = resourceGraphicsDir(name);
         entries.push({
           address: palette.address,
           size: palette.size,
@@ -491,7 +492,7 @@ function expandSeries(manifest: Json, entries: Json[]): void {
     } else if (series.kind === "golden-sun-color-table-series") {
       for (const resource of series.resources) {
         const name = String(resource.id).toLowerCase();
-        const directory = `assets/graphics/resource_${name}`;
+        const directory = resourceGraphicsDir(name);
         entries.push({
           address: resource.address, size: resource.size,
           kind: "gba-palette-rgba", source: `${directory}/color_table.rgba.png`,
@@ -500,7 +501,7 @@ function expandSeries(manifest: Json, entries: Json[]): void {
     } else if (series.kind === "golden-sun-standalone-tile-series") {
       for (const resource of series.resources) {
         const name = String(resource.id).toLowerCase();
-        const directory = `assets/graphics/resource_${name}`;
+        const directory = resourceGraphicsDir(name);
         entries.push({
           address: resource.address,
           size: resource.size,

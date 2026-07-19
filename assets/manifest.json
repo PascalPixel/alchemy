@@ -287,19 +287,19 @@
       "address": "0x08033ef8",
       "size": "0x400",
       "kind": "gba-4bpp-tiles",
-      "source": "assets/graphics/localization_font/tile_08033ef8.4bpp.png"
+      "source": "assets/graphics/fonts/localization_font/tile_08033ef8.4bpp.png"
     },
     {
       "address": "0x080342f8",
       "size": "0x400",
       "kind": "gba-4bpp-tiles",
-      "source": "assets/graphics/localization_font/tile_080342f8.4bpp.png"
+      "source": "assets/graphics/fonts/localization_font/tile_080342f8.4bpp.png"
     },
     {
       "address": "0x080346f8",
       "size": "0x2000",
       "kind": "gba-4bpp-tiles",
-      "source": "assets/graphics/localization_font/tile_080346f8.4bpp.png"
+      "source": "assets/graphics/fonts/localization_font/tile_080346f8.4bpp.png"
     },
     {
       "address": "0x080366f8",
@@ -311,7 +311,7 @@
       "address": "0x080368d4",
       "size": "0x800",
       "kind": "gba-4bpp-tiles",
-      "source": "assets/graphics/localization_font/tile_080368d4.4bpp.png"
+      "source": "assets/graphics/fonts/localization_font/tile_080368d4.4bpp.png"
     },
     {
       "address": "0x080370d4",
@@ -335,7 +335,7 @@
       "address": "0x08073852",
       "size": "0x37ae",
       "kind": "golden-sun-namae-nyuuryoku",
-      "source": "assets/graphics/namae_nyuuryoku/gamen.json"
+      "source": "assets/graphics/fonts/namae_nyuuryoku/gamen.json"
     },
     {
       "address": "0x0807a828",
@@ -407,63 +407,63 @@
       "address": "0x0818d554",
       "size": "0x19acc",
       "kind": "golden-sun-static-sprite-series",
-      "source": "assets/graphics/chr_0818/index.json",
+      "source": "assets/graphics/characters/chr_0818/index.json",
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
       "address": "0x081a7020",
       "size": "0x3a1ec",
       "kind": "golden-sun-static-sprite-series",
-      "source": "assets/graphics/chr_081a/index.json",
+      "source": "assets/graphics/characters/chr_081a/index.json",
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
       "address": "0x081e120c",
       "size": "0x14ebc",
       "kind": "golden-sun-static-sprite-series",
-      "source": "assets/graphics/chr_081e/index.json",
+      "source": "assets/graphics/characters/chr_081e/index.json",
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
       "address": "0x081f60c8",
       "size": "0x2a098",
       "kind": "golden-sun-static-sprite-series",
-      "source": "assets/graphics/chr_081f/index.json",
+      "source": "assets/graphics/characters/chr_081f/index.json",
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
       "address": "0x08220160",
       "size": "0x24e60",
       "kind": "golden-sun-static-sprite-series",
-      "source": "assets/graphics/chr_zenhan/index.json",
+      "source": "assets/graphics/characters/chr_zenhan/index.json",
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
       "address": "0x08244fc0",
       "size": "0x48018",
       "kind": "golden-sun-static-sprite-series",
-      "source": "assets/graphics/chr/index.json",
+      "source": "assets/graphics/characters/chr/index.json",
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
       "address": "0x0828cfd8",
       "size": "0x28088",
       "kind": "golden-sun-static-sprite-series",
-      "source": "assets/graphics/chr_0828/index.json",
+      "source": "assets/graphics/characters/chr_0828/index.json",
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
       "address": "0x082b5060",
       "size": "0x4bf14",
       "kind": "golden-sun-static-sprite-series",
-      "source": "assets/graphics/chr_082b/index.json",
+      "source": "assets/graphics/characters/chr_082b/index.json",
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
       "address": "0x08300f74",
       "size": "0x1f08c",
       "kind": "golden-sun-static-sprite-series",
-      "source": "assets/graphics/chr_0830/index.json",
+      "source": "assets/graphics/characters/chr_0830/index.json",
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
@@ -552,19 +552,19 @@
       "address": "0x083ee384",
       "size": "0x80",
       "kind": "gba-palette",
-      "source": "assets/graphics/direct_palettes/8d.png"
+      "source": "assets/graphics/palettes/direct_palettes/8d.png"
     },
     {
       "address": "0x08403388",
       "size": "0x80",
       "kind": "gba-palette",
-      "source": "assets/graphics/direct_palettes/bb.png"
+      "source": "assets/graphics/palettes/direct_palettes/bb.png"
     },
     {
       "address": "0x084090cc",
       "size": "0x80",
       "kind": "gba-palette",
-      "source": "assets/graphics/direct_palettes/c4.png"
+      "source": "assets/graphics/palettes/direct_palettes/c4.png"
     },
     {
       "address": "0x084101d0",
@@ -850,49 +850,49 @@
       "address": "0x08435ef8",
       "size": "0x100",
       "kind": "gba-palette-rgba",
-      "source": "assets/graphics/palette_animation_e8.rgba.png"
+      "source": "assets/graphics/palettes/palette_animation_e8.rgba.png"
     },
     {
       "address": "0x08435ff8",
       "size": "0x100",
       "kind": "gba-palette-rgba",
-      "source": "assets/graphics/palette_animation_e9.rgba.png"
+      "source": "assets/graphics/palettes/palette_animation_e9.rgba.png"
     },
     {
       "address": "0x084360f8",
       "size": "0x100",
       "kind": "gba-palette-rgba",
-      "source": "assets/graphics/palette_animation_ea.rgba.png"
+      "source": "assets/graphics/palettes/palette_animation_ea.rgba.png"
     },
     {
       "address": "0x084361f8",
       "size": "0x100",
       "kind": "gba-palette-rgba",
-      "source": "assets/graphics/palette_animation_eb.rgba.png"
+      "source": "assets/graphics/palettes/palette_animation_eb.rgba.png"
     },
     {
       "address": "0x084362f8",
       "size": "0x100",
       "kind": "gba-palette-rgba",
-      "source": "assets/graphics/palette_animation_ec.rgba.png"
+      "source": "assets/graphics/palettes/palette_animation_ec.rgba.png"
     },
     {
       "address": "0x084363f8",
       "size": "0x100",
       "kind": "gba-palette-rgba",
-      "source": "assets/graphics/palette_animation_ed.rgba.png"
+      "source": "assets/graphics/palettes/palette_animation_ed.rgba.png"
     },
     {
       "address": "0x084364f8",
       "size": "0x100",
       "kind": "gba-palette-rgba",
-      "source": "assets/graphics/palette_animation_ee.rgba.png"
+      "source": "assets/graphics/palettes/palette_animation_ee.rgba.png"
     },
     {
       "address": "0x084365f8",
       "size": "0x100",
       "kind": "gba-palette-rgba",
-      "source": "assets/graphics/palette_animation_ef.rgba.png"
+      "source": "assets/graphics/palettes/palette_animation_ef.rgba.png"
     },
     {
       "address": "0x084366f8",
@@ -7876,7 +7876,7 @@
             {
               "address": "0x085040e4",
               "size": "0x1184",
-              "source": "assets/graphics/resource_152/charblock2.objects.json"
+              "source": "assets/graphics/map-tiles/resource_152/charblock2.objects.json"
             },
             {
               "address": "0x08505268",
@@ -7898,7 +7898,7 @@
             {
               "address": "0x08508950",
               "size": "0x11ec",
-              "source": "assets/graphics/resource_158/charblock1.objects.json"
+              "source": "assets/graphics/map-tiles/resource_158/charblock1.objects.json"
             },
             {
               "address": "0x08509b3c",
@@ -8078,7 +8078,7 @@
             {
               "address": "0x08530110",
               "size": "0x2b54",
-              "source": "assets/graphics/resource_184/charblock1.objects.json"
+              "source": "assets/graphics/map-tiles/resource_184/charblock1.objects.json"
             },
             {
               "address": "0x08532c64",
@@ -8129,7 +8129,7 @@
             {
               "address": "0x085427c4",
               "size": "0x112c",
-              "source": "assets/graphics/resource_190/charblock1.objects.json"
+              "source": "assets/graphics/map-tiles/resource_190/charblock1.objects.json"
             },
             {
               "address": "0x085438f0",
@@ -8205,7 +8205,7 @@
             {
               "address": "0x085581e0",
               "size": "0x2c18",
-              "source": "assets/graphics/resource_1a2/charblock1.objects.json"
+              "source": "assets/graphics/map-tiles/resource_1a2/charblock1.objects.json"
             },
             {
               "address": "0x0855adf8",

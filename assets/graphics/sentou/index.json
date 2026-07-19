@@ -115,6 +115,27 @@
       "source": "resource_05e/stream.json"
     },
     {
+      "id": "0x05f",
+      "address": "0x083d82e4",
+      "size": "0x277",
+      "resource_boundary_size": "0x278",
+      "source": "resource_05f/stream.json"
+    },
+    {
+      "id": "0x065",
+      "address": "0x083dc418",
+      "size": "0x43b",
+      "resource_boundary_size": "0x43c",
+      "source": "resource_065/stream.json"
+    },
+    {
+      "id": "0x067",
+      "address": "0x083dc968",
+      "size": "0x19c",
+      "resource_boundary_size": "0x19c",
+      "source": "resource_067/stream.json"
+    },
+    {
       "id": "0x069",
       "address": "0x083dd0e4",
       "size": "0x49d",

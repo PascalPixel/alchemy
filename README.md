@@ -83,8 +83,13 @@ own. Not affiliated with or endorsed by Nintendo or Camelot. Non-commercial.
 - `bun tools/build_asm.ts` assembles and verifies every claimed `asm/` region.
   Its `--source-only` mode checks placement, overlap, external symbols, and the
   complete classification boundary when the private ROM is unavailable.
-- `bun tools/build_assets.ts` encodes and verifies every claimed asset.
+- `bun tools/build_assets.ts` encodes and verifies every claimed asset. Its
+  `--source-only` mode runs every encoder and structural check without reading
+  a ROM.
 - `bun tools/build_full.ts` verifies the combined byte-identical private rebuild.
+  With `--source-only`, it regenerates the complete ownership mask and fallback
+  manifest without writing a ROM; that report proves source layout, not ROM
+  equality.
 - Commit-subject progress brackets use the full build's cumulative
   `source_bytes` after that commit against the canonical `rom_size`; they never
   report only the bytes added by that commit. Subsystem deltas belong in the

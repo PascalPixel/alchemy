@@ -316,9 +316,13 @@ form one exact 139,260-byte runtime unit.
 reconstruct 3, 22, 10, 17, 18, 35, 36, 105, and 64 descriptor-linked static
 character banks as per-frame palette-correct `koma` (コマ) PNGs, one
 `koma_NNN.png` (zero-padded to three digits) per unique frame beside each
-bank's `bank.json`, sized from the bank header. The 310 banks hold 5,727
-unique frames across as many files; the codec derives each frame's filename
-from its index, so no atlas geometry is stored. Their payload-free plans
+bank's `bank.json`, sized from the bank header. Each family directory keeps
+only its `index.json`; the descriptor-linked banks themselves are stored by
+role, large battle-animation banks under `graphics/battle/characters/chr_NNN/`
+and small field walk-sprite banks under `graphics/field/characters/chr_NNN/`,
+resolved back to their series by the index plan name. The 310 banks (279
+battle, 31 field) hold 5,727 unique frames across as many files; the codec
+derives each frame's filename from its index, so no atlas geometry is stored. Their payload-free plans
 preserve logical pointer aliases and all three
 descriptor-selected storage modes. Mode 0 is a canonical zero-skip stream;
 mode 1 preserves either the kind-zero bitstream tokens or kind-one flag-group
@@ -338,7 +342,7 @@ are explicit arena alignment.
 and bank names remain because no historical character names have been
 recovered.
 
-`graphics/map-tiles/resource_128/` through `graphics/map-tiles/resource_369/` contain the 121 map
+`graphics/map/resource_128/` through `graphics/map/resource_369/` contain the 121 map
 families whose container is directly followed by a 224-color BG palette
 stream and zero to four 0x4000-byte kind-2 tile banks. These directories are
 canonical storage groups, not a claim that every adjacent bank is used by that

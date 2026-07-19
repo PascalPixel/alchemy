@@ -32,6 +32,13 @@
       "source": "assets/audio/song_table.json"
     },
     {
+      "address": "0x0818d554",
+      "size": "0x19acc",
+      "kind": "golden-sun-static-sprite-series",
+      "source": "assets/graphics/chr_0818/index.json",
+      "palette": "assets/graphics/0800777c.gbapal.png"
+    },
+    {
       "address": "0x081a7020",
       "size": "0x3a1ec",
       "kind": "golden-sun-static-sprite-series",

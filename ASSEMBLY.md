@@ -205,6 +205,19 @@ The remaining `0xda8` bytes at ROM `0x08000dc8..0x08001b6f` are the mixed-mode
 audio path and remain private-ROM fallback until their Thumb/ARM boundaries
 are reconstructed.
 
+## Approved-compiler prologue evidence
+
+The approved compiler saves `lr` in every Thumb function that contains any
+conditional branch or loop, even a leaf; only straight-line leaves compile to a
+bare `bx lr` return. A byte-verified region that branches internally, never
+saves `lr`, and returns through `bx lr` is therefore positive evidence of a
+different toolchain or hand assembly, not ordinary C debt. The regions matching
+that signature concentrate in the relocated runtime modules, the fixed-point
+math module, and the sound engine around `080f9a30..080fb410`, alongside the
+already-classified helpers. Two-byte `bx r3` trampolines inside the sound
+engine and the bare multi-region epilogue fragments carry the same weight: the
+approved compiler cannot emit them as standalone functions.
+
 ## Not assembly authorship evidence
 
 Hardware-register literals, high-register allocation, `ldmia`/`stmia`, or an

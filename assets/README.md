@@ -303,8 +303,8 @@ form one exact 139,260-byte runtime unit.
 `graphics/chr_081f/`, `graphics/chr_zenhan/`, `graphics/chr/`,
 `graphics/chr_0828/`, `graphics/chr_082b/`, and `graphics/chr_0830/`
 reconstruct 3, 22, 10, 17, 18, 35, 36, 105, and 64 descriptor-linked static
-character banks as one palette-correct `koma.8bpp.png` (コマ) sheet per
-physical bank. The 310 sheets hold 5,727
+character banks as one or more palette-correct `koma` (コマ) composition PNGs
+per physical bank. The 310 banks hold 5,727
 unique frames instead of creating one file per frame. Their payload-free plans
 preserve logical pointer aliases and all three
 descriptor-selected storage modes. Mode 0 is a canonical zero-skip stream;

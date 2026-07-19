@@ -1,0 +1,30 @@
+{
+  "format": 1,
+  "kind": "golden-sun-d1-d3-package",
+  "address": "0x084101d0",
+  "end": "0x08411474",
+  "boundary_size": "0x12a4",
+  "resources": [
+    {
+      "id": "0x0d1",
+      "address": "0x084101d0",
+      "resource_boundary_size": "0x10a8",
+      "source_size": "0x10a5",
+      "source": "stream.json"
+    },
+    {
+      "id": "0x0d2",
+      "address": "0x08411278",
+      "resource_boundary_size": "0x01a8",
+      "source_size": "0x01a8",
+      "source": "idou_d2.json"
+    },
+    {
+      "id": "0x0d3",
+      "address": "0x08411420",
+      "resource_boundary_size": "0x0054",
+      "source_size": "0x0054",
+      "source": "idou_d3.json"
+    }
+  ]
+}

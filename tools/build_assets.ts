@@ -32,6 +32,7 @@ import { build_resource_directory } from "./resource_directory.ts";
 import { build_title_resource } from "./title_resources.ts";
 import { build_simple_resource } from "./simple_resources.ts";
 import { build_character_catalog } from "./character_catalog.ts";
+import { build_message_archive } from "./message_archive.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -566,6 +567,19 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
       descriptors: Object.keys(document.descriptors).length,
       animation_groups: document.animation_groups.length,
       frame_directories: document.frame_directories.length,
+    }];
+  }
+  if (kind === "golden-sun-message-archive") {
+    const source = sourcePath(String(entry.source));
+    const document = JSON.parse(readFileSync(source, "utf8"));
+    if (number(document.address) !== number(entry.address) || number(document.size) !== number(entry.size)) {
+      throw new Error("message-archive extent differs from manifest");
+    }
+    const built = build_message_archive(document);
+    return [built, [String(entry.source)], {
+      contexts: document.contexts.length,
+      banks: document.banks.length,
+      messages: document.banks.reduce((sum: number, bank: Json[]) => sum + bank.length, 0),
     }];
   }
   if (kind === "golden-sun-simple-resource") {

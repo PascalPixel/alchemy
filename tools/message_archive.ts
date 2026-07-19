@@ -134,6 +134,9 @@ function packedLeaves(leaves: unknown): Buffer {
 }
 
 function compileContext(source: ContextSource): CompiledContext {
+  if (Object.keys(source).sort().join(",") !== "id,leaves,tree") {
+    throw new Error("context source has unknown fields");
+  }
   const bits = String(source.tree);
   if (!/^[01]+$/.test(bits)) throw new Error(`context ${source.id} has an invalid tree`);
   if (!Array.isArray(source.leaves) || source.leaves.length === 0) {
@@ -179,6 +182,10 @@ function compileContexts(source: MessageArchiveSource): Map<number, CompiledCont
 function parseDocument(value: unknown): MessageArchiveSource {
   if (typeof value !== "object" || value === null) throw new Error("message archive source must be an object");
   const source = value as Partial<MessageArchiveSource>;
+  if (Object.keys(source).sort().join(",") !==
+      "absent_contexts,address,bank_size,banks,contexts,format,kind,size") {
+    throw new Error("message archive source has unknown fields");
+  }
   if (source.format !== 1 || source.kind !== "golden-sun-message-archive") {
     throw new Error("unsupported message archive source");
   }

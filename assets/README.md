@@ -314,9 +314,11 @@ form one exact 139,260-byte runtime unit.
 `graphics/characters/chr_081f/`, `graphics/characters/chr_zenhan/`, `graphics/characters/chr/`,
 `graphics/characters/chr_0828/`, `graphics/characters/chr_082b/`, and `graphics/characters/chr_0830/`
 reconstruct 3, 22, 10, 17, 18, 35, 36, 105, and 64 descriptor-linked static
-character banks as one or more palette-correct `koma` (コマ) composition PNGs
-per physical bank. The 310 banks hold 5,727
-unique frames instead of creating one file per frame. Their payload-free plans
+character banks as per-frame palette-correct `koma` (コマ) PNGs, one
+`koma_NNN.png` (zero-padded to three digits) per unique frame beside each
+bank's `bank.json`, sized from the bank header. The 310 banks hold 5,727
+unique frames across as many files; the codec derives each frame's filename
+from its index, so no atlas geometry is stored. Their payload-free plans
 preserve logical pointer aliases and all three
 descriptor-selected storage modes. Mode 0 is a canonical zero-skip stream;
 mode 1 preserves either the kind-zero bitstream tokens or kind-one flag-group

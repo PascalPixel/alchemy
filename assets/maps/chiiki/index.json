@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "kind": "golden-sun-chiiki-map-series",
+  "resources": [
+    {
+      "id": "1e5",
+      "address": "0x085bb860",
+      "size": "0x182c",
+      "directory": "resource_1e5"
+    },
+    {
+      "id": "320",
+      "address": "0x08753b18",
+      "size": "0x2040",
+      "directory": "resource_320"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence",
+  "base": "0x081819b0",
+  "externals": {},
+  "layout": [
+    {
+      "kind": "stream",
+      "label": "yobi_track",
+      "events": [
+        [
+          "volume",
+          120
+        ],
+        [
+          "key_shift",
+          0
+        ],
+        [
+          "tempo",
+          30
+        ],
+        [
+          "voice",
+          21
+        ],
+        [
+          "note",
+          1,
+          61,
+          127
+        ],
+        [
+          "wait",
+          1
+        ],
+        [
+          "note_running",
+          1,
+          66
+        ],
+        [
+          "wait",
+          1
+        ],
+        [
+          "note",
+          44,
+          69
+        ],
+        [
+          "wait",
+          48
+        ],
+        [
+          "fine"
+        ]
+      ]
+    }
+  ]
+}

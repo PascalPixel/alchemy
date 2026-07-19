@@ -44,6 +44,13 @@ import { build_encounter_regions } from "./encounter_data.ts";
 import { build_namae_nyuuryoku } from "./namae_nyuuryoku.ts";
 import { build_tokushu_map_series } from "./tokushu_map_resources.ts";
 import { build_resource_3ce } from "./resource_3ce.ts";
+import { build_chiiki_map_series } from "./chiiki_map_resources.ts";
+import {
+  build_resource_01c,
+  RESOURCE_ADDRESS as RESOURCE_01C_ADDRESS,
+  RESOURCE_SIZE as RESOURCE_01C_SIZE,
+} from "./resource_01c.ts";
+import { build_music_residuals } from "./music_residuals.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -71,6 +78,8 @@ function sourcePath(name: string): string {
 
 const tokushuMapCache = new Map<string, ReturnType<typeof build_tokushu_map_series>>();
 const resource3ceCache = new Map<string, ReturnType<typeof build_resource_3ce>>();
+const chiikiMapCache = new Map<string, ReturnType<typeof build_chiiki_map_series>>();
+const musicResidualCache = new Map<string, ReturnType<typeof build_music_residuals>>();
 
 function tokushuMaps(indexName: string): ReturnType<typeof build_tokushu_map_series> {
   const indexPath = sourcePath(indexName);
@@ -88,6 +97,26 @@ function resource3ce(layoutName: string): ReturnType<typeof build_resource_3ce> 
   if (built === undefined) {
     built = build_resource_3ce(layoutPath);
     resource3ceCache.set(layoutPath, built);
+  }
+  return built;
+}
+
+function chiikiMaps(indexName: string): ReturnType<typeof build_chiiki_map_series> {
+  const indexPath = sourcePath(indexName);
+  let built = chiikiMapCache.get(indexPath);
+  if (built === undefined) {
+    built = build_chiiki_map_series(indexPath);
+    chiikiMapCache.set(indexPath, built);
+  }
+  return built;
+}
+
+function musicResiduals(indexName: string): ReturnType<typeof build_music_residuals> {
+  const indexPath = sourcePath(indexName);
+  let built = musicResidualCache.get(indexPath);
+  if (built === undefined) {
+    built = build_music_residuals(indexPath);
+    musicResidualCache.set(indexPath, built);
   }
   return built;
 }
@@ -383,6 +412,17 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           resource_id: resource.id,
         });
       }
+    } else if (series.kind === "golden-sun-chiiki-map-series") {
+      const indexName = String(series.index);
+      for (const resource of chiikiMaps(indexName)) {
+        entries.push({
+          address: resource.address,
+          size: resource.data.length,
+          kind: "golden-sun-chiiki-map",
+          source: indexName,
+          resource_id: resource.id,
+        });
+      }
     } else if (series.kind === "golden-sun-final-battle-overlay-series") {
       const source = String(series.source);
       const built = resource3ce(source);
@@ -409,6 +449,16 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           size: region.size,
           kind: "golden-sun-encounter-data",
           source: join(directoryName, region.source),
+        });
+      }
+    } else if (series.kind === "golden-sun-music-residuals") {
+      const indexName = String(series.index);
+      for (const region of musicResiduals(indexName)) {
+        entries.push({
+          address: region.address,
+          size: region.data.length,
+          kind: "golden-sun-music-residual",
+          source: indexName,
         });
       }
     } else if (series.kind === "golden-sun-sound-sequence-series") {
@@ -772,6 +822,49 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     return [resource.data, [...new Set([indexName, ...nested])], {
       resource_id: `0x${id.toString(16).padStart(3, "0")}`,
       source_bytes: resource.data.length,
+    }];
+  }
+  if (kind === "golden-sun-chiiki-map") {
+    const indexName = String(entry.source);
+    const id = number(entry.resource_id);
+    const resource = chiikiMaps(indexName).find((item) => item.id === id);
+    if (resource === undefined || resource.address !== number(entry.address) ||
+        resource.data.length !== number(entry.size)) {
+      throw new Error("regional-map resource differs from manifest series");
+    }
+    const nested = resource.sources.map((name) => relative(ROOT, resolve(name)));
+    nested.forEach(sourcePath);
+    return [resource.data, [...new Set([indexName, ...nested])], {
+      resource_id: `0x${id.toString(16).padStart(3, "0")}`,
+      source_bytes: resource.data.length,
+    }];
+  }
+  if (kind === "golden-sun-kana-glyph-bank") {
+    const sourceName = String(entry.source);
+    const source = sourcePath(sourceName);
+    const [built, sources] = build_resource_01c(source);
+    if (number(entry.address) !== RESOURCE_01C_ADDRESS || number(entry.size) !== RESOURCE_01C_SIZE ||
+        built.length !== RESOURCE_01C_SIZE) {
+      throw new Error("kana glyph bank differs from canonical manifest extent");
+    }
+    const nested = sources.map((name) => relative(ROOT, resolve(name)));
+    nested.forEach(sourcePath);
+    return [built, [...new Set([sourceName, ...nested])], {
+      glyphs: 36,
+      source_bytes: built.length,
+    }];
+  }
+  if (kind === "golden-sun-music-residual") {
+    const indexName = String(entry.source);
+    const address = number(entry.address);
+    const region = musicResiduals(indexName).find((item) => item.address === address);
+    if (region === undefined || region.data.length !== number(entry.size)) {
+      throw new Error("music residual differs from manifest series");
+    }
+    const nested = region.sources.map((name) => relative(ROOT, resolve(name)));
+    nested.forEach(sourcePath);
+    return [region.data, [...new Set([indexName, ...nested])], {
+      source_bytes: region.data.length,
     }];
   }
   if (kind === "golden-sun-final-battle-overlay") {

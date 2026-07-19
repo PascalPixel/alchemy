@@ -1,0 +1,57 @@
+{
+  "format": 1,
+  "kind": "golden-sun-music-residuals",
+  "empty_headers": [
+    {
+      "name": "sound_019",
+      "address": "0x081652d8",
+      "track_count": 0,
+      "block_count": 0,
+      "priority": 0,
+      "reverb": 178,
+      "tone_bank": "0x080fba78"
+    },
+    {
+      "name": "sound_095",
+      "address": "0x081810b8",
+      "track_count": 0,
+      "block_count": 0,
+      "priority": 0,
+      "reverb": 178,
+      "tone_bank": "0x080fba78"
+    },
+    {
+      "name": "sound_288",
+      "address": "0x081841f8",
+      "track_count": 0,
+      "block_count": 0,
+      "priority": 120,
+      "reverb": 0,
+      "tone_bank": "0x080fc138"
+    },
+    {
+      "name": "sound_298",
+      "address": "0x08184358",
+      "track_count": 0,
+      "block_count": 0,
+      "priority": 120,
+      "reverb": 0,
+      "tone_bank": "0x080fc138"
+    }
+  ],
+  "orphan_stream": {
+    "address": "0x081819b0",
+    "size": 18,
+    "source": "sound_138_yobi.json",
+    "between": [
+      "sound_138",
+      "sound_139"
+    ]
+  },
+  "tail_alignment": {
+    "address": "0x08184698",
+    "end": "0x08185000",
+    "boundary": 4096,
+    "fill": 0
+  }
+}

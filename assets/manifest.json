@@ -261,6 +261,12 @@
       ]
     },
     {
+      "address": "0x0833ac08",
+      "size": "0x2b4",
+      "kind": "golden-sun-kana-glyph-bank",
+      "source": "assets/graphics/resource_01c/stream.json"
+    },
+    {
       "address": "0x083ee384",
       "size": "0x80",
       "kind": "gba-palette",
@@ -634,6 +640,10 @@
     {
       "kind": "golden-sun-sound-sequence-series",
       "index": "assets/audio/sequences/index.json"
+    },
+    {
+      "kind": "golden-sun-music-residuals",
+      "index": "assets/audio/residuals/index.json"
     },
     {
       "kind": "golden-sun-pcm-wave-series",
@@ -11005,6 +11015,10 @@
     {
       "kind": "golden-sun-tokushu-map-series",
       "index": "assets/maps/tokushu/index.json"
+    },
+    {
+      "kind": "golden-sun-chiiki-map-series",
+      "index": "assets/maps/chiiki/index.json"
     },
     {
       "kind": "golden-sun-final-battle-overlay-series",

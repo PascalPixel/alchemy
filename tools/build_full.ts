@@ -4,9 +4,11 @@ import { dirname, extname, isAbsolute, join, resolve } from "node:path";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
+const ROM_SIZE = 0x00800000;
 
 interface Options {
   rom: string;
+  sourceOnly: boolean;
   output: string;
   claimedOutput: string;
   asmOutput: string;
@@ -36,7 +38,7 @@ function usage(): void {
   console.log(
     "usage: build_full.ts [-h] [-o OUTPUT] [--claimed-output CLAIMED_OUTPUT] " +
     "[--asm-output ASM_OUTPUT] [--asset-manifest ASSET_MANIFEST] " +
-    "[--asset-output ASSET_OUTPUT] [--jobs JOBS] [rom] | --self-test",
+    "[--asset-output ASSET_OUTPUT] [--jobs JOBS] [--source-only] [rom] | --self-test",
   );
 }
 
@@ -110,7 +112,8 @@ export function selfTest(): void {
 
 function parseArgs(argv: string[]): Options {
   const options: Options = {
-    rom: "gs1-en.gba",
+    rom: "baserom.gba",
+    sourceOnly: false,
     output: "out/full/rebuilt.gba",
     claimedOutput: "out/full/claimed",
     asmOutput: "out/full/asm",
@@ -134,6 +137,10 @@ function parseArgs(argv: string[]): Options {
       usage();
       process.exit(0);
     }
+    if (argument === "--source-only") {
+      options.sourceOnly = true;
+      continue;
+    }
     const equal = argument.indexOf("=");
     const option = equal >= 0 ? argument.slice(0, equal) : argument;
     if (option in keys) {
@@ -150,6 +157,7 @@ function parseArgs(argv: string[]): Options {
     }
   }
   if (!Number.isInteger(options.jobs) || options.jobs < 1) throw new Error("jobs must be positive");
+  if (options.sourceOnly && positional) throw new Error("--source-only does not accept a ROM");
   return options;
 }
 
@@ -170,27 +178,31 @@ async function main(): Promise<void> {
   }
   const args = parseArgs(Bun.argv.slice(2));
   const romPath = resolve(process.cwd(), args.rom);
-  const rom = readFileSync(romPath);
+  const rom = args.sourceOnly ? null : readFileSync(romPath);
+  const romSize = rom?.length ?? ROM_SIZE;
   const claimed = rooted(args.claimedOutput);
-  await run([
-    process.execPath, "tools/build_claimed.ts", romPath,
-    "--jobs", String(args.jobs), "--output", claimed,
-  ]);
+  const claimedCommand = [process.execPath, "tools/build_claimed.ts"];
+  if (args.sourceOnly) claimedCommand.push("--source-only");
+  else claimedCommand.push(romPath);
+  claimedCommand.push("--jobs", String(args.jobs), "--output", claimed);
+  await run(claimedCommand);
   const manifest = readJson(join(claimed, "manifest.json"));
   const image = readFileSync(join(claimed, "claimed.bin"));
   const imageBase = Number(manifest.image_base);
-  const rebuilt = Buffer.from(rom);
-  const claimedMask = Buffer.alloc(rom.length);
+  const rebuilt = rom === null ? null : Buffer.from(rom);
+  const claimedMask = Buffer.alloc(romSize);
   for (const region of manifest.regions as Region[]) {
     const address = Number(region.address);
     const size = Number(region.size);
+    const start = address - ROM_BASE;
+    const end = start + size;
+    if (start < 0 || end > romSize || end <= start) throw new Error(`source outside image at 0x${hexadecimal(address)}`);
     const source = image.subarray(address - imageBase, address - imageBase + size);
-    const expected = rom.subarray(address - ROM_BASE, address - ROM_BASE + size);
-    if (!source.equals(expected)) {
+    const expected = rom?.subarray(start, end);
+    if (expected !== undefined && !source.equals(expected)) {
       throw new Error(`source mismatch at 0x${address.toString(16).padStart(8, "0")} (0x${size.toString(16)} bytes)`);
     }
-    const start = address - ROM_BASE;
-    source.copy(rebuilt, start);
+    if (rebuilt !== null) source.copy(rebuilt, start);
     claimedMask.fill(1, start, start + size);
   }
 
@@ -198,21 +210,27 @@ async function main(): Promise<void> {
   const asmDirectory = join(ROOT, "asm");
   if (existsSync(asmDirectory) && readdirSync(asmDirectory).some((name) => name.endsWith(".s"))) {
     const asmOutput = rooted(args.asmOutput);
-    await run([process.execPath, "tools/build_asm.ts", romPath, "--output", asmOutput]);
+    const asmCommand = [process.execPath, "tools/build_asm.ts"];
+    if (args.sourceOnly) asmCommand.push("--source-only");
+    else asmCommand.push(romPath);
+    asmCommand.push("--output", asmOutput);
+    await run(asmCommand);
     const asmManifest = readJson(join(asmOutput, "manifest.json"));
     for (const region of asmManifest.regions as Region[]) {
       const address = Number(region.address);
       const size = Number(region.size);
       const start = address - ROM_BASE;
       const end = start + size;
+      if (start < 0 || end > romSize || end <= start) throw new Error(`assembly outside image at 0x${hexadecimal(address)}`);
       if (claimedMask.subarray(start, end).some((value) => value !== 0)) {
         throw new Error(`assembly overlaps another source at 0x${address.toString(16).padStart(8, "0")}`);
       }
       const source = readFileSync(region.output);
-      if (!source.equals(rom.subarray(start, end))) {
+      const expected = rom?.subarray(start, end);
+      if (expected !== undefined && !source.equals(expected)) {
         throw new Error(`assembly mismatch at 0x${address.toString(16).padStart(8, "0")} (0x${size.toString(16)} bytes)`);
       }
-      source.copy(rebuilt, start);
+      if (rebuilt !== null) source.copy(rebuilt, start);
       claimedMask.fill(1, start, end);
       asmRegions.push(region);
     }
@@ -222,65 +240,68 @@ async function main(): Promise<void> {
   const assetManifestPath = rooted(args.assetManifest);
   if (existsSync(assetManifestPath)) {
     const assetOutput = rooted(args.assetOutput);
-    await run([
-      process.execPath, "tools/build_assets.ts", romPath,
-      "--manifest", assetManifestPath, "--output", assetOutput,
-    ]);
+    const assetCommand = [process.execPath, "tools/build_assets.ts"];
+    if (args.sourceOnly) assetCommand.push("--source-only");
+    else assetCommand.push(romPath);
+    assetCommand.push("--manifest", assetManifestPath, "--output", assetOutput);
+    await run(assetCommand);
     const assetManifest = readJson(join(assetOutput, "manifest.json"));
     for (const region of assetManifest.regions as Region[]) {
       const address = Number(region.address);
       const size = Number(region.size);
       const start = address - ROM_BASE;
       const end = start + size;
+      if (start < 0 || end > romSize || end <= start) throw new Error(`asset outside image at 0x${hexadecimal(address)}`);
       if (claimedMask.subarray(start, end).some((value) => value !== 0)) {
         throw new Error(`asset overlaps another source at 0x${address.toString(16).padStart(8, "0")}`);
       }
       const source = readFileSync(region.output);
-      const expected = rom.subarray(start, end);
-      if (!source.equals(expected)) {
+      const expected = rom?.subarray(start, end);
+      if (expected !== undefined && !source.equals(expected)) {
         throw new Error(`asset mismatch at 0x${address.toString(16).padStart(8, "0")} (0x${size.toString(16)} bytes)`);
       }
-      source.copy(rebuilt, start);
+      if (rebuilt !== null) source.copy(rebuilt, start);
       claimedMask.fill(1, start, end);
       assetRegions.push(region);
     }
   }
-  if (!rebuilt.equals(rom)) throw new Error("full rebuild differs from private ROM");
+  if (rebuilt !== null && rom !== null && !rebuilt.equals(rom)) throw new Error("full rebuild differs from private ROM");
   const output = rooted(args.output);
   mkdirSync(dirname(output), { recursive: true });
-  writeFileSync(output, rebuilt);
+  if (rebuilt !== null) writeFileSync(output, rebuilt);
   const sourceBytes = claimedMask.reduce((sum, value) => sum + value, 0);
   const fallback = uncoveredRegions(claimedMask);
   const fallbackBytes = fallback.reduce((sum, region) => sum + region.size, 0);
-  if (fallbackBytes !== rom.length - sourceBytes) throw new Error("fallback coverage count differs");
+  if (fallbackBytes !== romSize - sourceBytes) throw new Error("fallback coverage count differs");
   const suffix = extname(output);
   const reportBase = suffix ? output.slice(0, -suffix.length) : output;
   const fallbackPath = reportBase + ".fallback.json";
   writeFileSync(fallbackPath, JSON.stringify({
     format: 1,
     rom_base: ROM_BASE,
-    rom_size: rom.length,
+    rom_size: romSize,
     regions: fallback,
   }, null, 2) + "\n");
   const report = {
     format: 1,
     rom_base: ROM_BASE,
-    rom_size: rom.length,
+    rom_size: romSize,
     code_regions: manifest.regions.length,
     asm_regions: asmRegions.length,
     asset_regions: assetRegions.length,
     source_regions: manifest.regions.length + asmRegions.length + assetRegions.length,
     source_bytes: sourceBytes,
-    rom_fallback_bytes: rom.length - sourceBytes,
+    rom_fallback_bytes: romSize - sourceBytes,
     fallback_regions: fallback.length,
     fallback_manifest: fallbackPath,
-    byte_identical: true,
-    output: args.output,
+    verification: args.sourceOnly ? "source_only" : "rom",
+    byte_identical: !args.sourceOnly,
+    output: args.sourceOnly ? null : args.output,
   };
   const reportPath = reportBase + ".json";
   writeFileSync(reportPath, JSON.stringify(report, null, 2) + "\n");
   console.log(
-    `identical=True regions=${report.source_regions} code=${report.code_regions} ` +
+    `${args.sourceOnly ? "source_only=True" : "identical=True"} regions=${report.source_regions} code=${report.code_regions} ` +
     `asm=${report.asm_regions} assets=${report.asset_regions} source_bytes=${report.source_bytes} ` +
     `rom_fallback_bytes=${report.rom_fallback_bytes}`,
   );

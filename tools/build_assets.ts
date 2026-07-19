@@ -531,6 +531,9 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     const indexPath = sourcePath(String(entry.source));
     const palettePath = sourcePath(String(entry.palette));
     const index = JSON.parse(readFileSync(indexPath, "utf8"));
+    if (number(index.address) !== number(entry.address) || number(index.size) !== number(entry.size)) {
+      throw new Error("static-sprite manifest extent differs from its index");
+    }
     const [built, report] = build_static_sprite_series(indexPath, palettePath);
     const directory = dirname(String(entry.source));
     const sources = [String(entry.source), String(entry.palette)];

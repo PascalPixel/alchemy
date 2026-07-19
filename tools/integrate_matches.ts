@@ -89,17 +89,8 @@ function linkedBytes(stem: string, source: string, scratch: string, kind: "asm" 
   if (kind === "asm") return bytes;
   const symbolResult = run(["arm-none-eabi-nm", "-S", "--defined-only", elf]);
   if (symbolResult.code !== 0) throw new Error(`nm failed: ${commandError(symbolResult)}`);
-  const functions = symbolResult.stdout.split(/\r?\n/).filter((line) => /\sFunc_[0-9a-f]{8}$/.test(line))
-    .map((line) => {
-      const fields = line.trim().split(/\s+/);
-      return { address: Number.parseInt(fields[0], 16), size: Number.parseInt(fields[1], 16), name: fields.at(-1)! };
-    });
-  if (!functions.some((entry) => entry.name === `Func_${formatted}`) ||
-      functions.some((entry) => !Number.isSafeInteger(entry.address) || !Number.isSafeInteger(entry.size) || entry.size <= 0))
-    throw new Error("compiled function symbols differ");
-  const end = Math.max(...functions.map((entry) => entry.address + entry.size));
-  if (end <= address || end - address > bytes.length) throw new Error("compiled function extent differs");
-  return bytes.subarray(0, end - address);
+  const extent = linkedFunctionExtent(symbolResult.stdout, `Func_${formatted}`, address, bytes.length);
+  return bytes.subarray(0, extent);
 }
 
 export function mismatch(left: Uint8Array, right: Uint8Array): { offset: number; left?: number; right?: number } | null {
@@ -108,6 +99,26 @@ export function mismatch(left: Uint8Array, right: Uint8Array): { offset: number;
     if (left[offset] !== right[offset]) return { offset, left: left[offset], right: right[offset] };
   }
   return left.length === right.length ? null : { offset: shared, left: left[shared], right: right[shared] };
+}
+
+export function linkedFunctionExtent(output: string, target: string, address: number, byteLength: number): number {
+  const functions = output.split(/\r?\n/).filter(Boolean)
+    .map((line) => line.trim().split(/\s+/))
+    .filter((fields) => fields.length >= 4 && /^[Tt]$/.test(fields.at(-2)!) && /^Func_[0-9a-f]{8}$/.test(fields.at(-1)!))
+    .map((fields) => ({
+      address: Number.parseInt(fields[0], 16),
+      size: Number.parseInt(fields[1], 16),
+      name: fields.at(-1)!,
+    }))
+    .filter((entry) => entry.address >= address && entry.address < address + byteLength);
+  if (!functions.some((entry) => entry.name === target && entry.address === address) ||
+      functions.some((entry) => !Number.isSafeInteger(entry.address) ||
+        !Number.isSafeInteger(entry.size) || entry.size <= 0)) {
+    throw new Error("compiled function symbols differ");
+  }
+  const end = Math.max(...functions.map((entry) => entry.address + entry.size));
+  if (end <= address || end - address > byteLength) throw new Error("compiled function extent differs");
+  return end - address;
 }
 
 function selfTest(): void {
@@ -119,6 +130,13 @@ function selfTest(): void {
   const short = mismatch(Buffer.from([1]), Buffer.from([1, 2]));
   if (short?.offset !== 1 || short.left !== undefined || short.right !== 2)
     throw new Error("source-byte extent mismatch differs");
+  const symbols = [
+    "08021360 00000030 T Func_08021360",
+    "080770c1 A Func_080770c0",
+  ].join("\n");
+  if (linkedFunctionExtent(symbols, "Func_08021360", 0x08021360, 48) !== 48) {
+    throw new Error("absolute external symbol changed compiled extent");
+  }
   console.log("self-test=ok");
 }
 

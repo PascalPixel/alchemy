@@ -30,6 +30,7 @@ import { build_still } from "./indexed_still.ts";
 import { build_static_sprite_series } from "./static_sprite_series.ts";
 import { build_resource_directory } from "./resource_directory.ts";
 import { build_title_resource } from "./title_resources.ts";
+import { build_simple_resource } from "./simple_resources.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -552,6 +553,20 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     }
     const built = build_resource_directory(document);
     return [built, [String(entry.source)], { slots: built.length / 4 }];
+  }
+  if (kind === "golden-sun-simple-resource") {
+    const id = number(entry.resource_id);
+    const sourceLists: Record<number, string[]> = {
+      2: ["assets/data/resource_2/build_stamp.txt", "assets/data/resource_2/layout.json"],
+      0x13: ["assets/graphics/resource_13/font.4bpp.png"],
+      0x14: ["assets/graphics/resource_14/words.rgba.png"],
+      0x18: ["assets/graphics/resource_18/screen.8bpp.png", "assets/graphics/resource_18/screen.lz.json"],
+    };
+    const sources = sourceLists[id];
+    if (sources === undefined) throw new Error("unsupported simple resource");
+    sources.forEach(sourcePath);
+    const built = build_simple_resource(id as 2 | 0x13 | 0x14 | 0x18, join(ROOT, "assets"));
+    return [built, sources, { resource_id: id }];
   }
   if (kind === "golden-sun-title-lz") {
     const source = sourcePath(String(entry.source));

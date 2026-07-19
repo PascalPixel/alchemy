@@ -53,6 +53,7 @@ export interface StaticSpriteSeriesOptions {
   descriptorCount: number;
   paletteOffset: number;
   paletteEntries: number;
+  suffixZeros: number;
 }
 
 function number(value: string | number): number {
@@ -114,6 +115,20 @@ function seriesExtent(address: number, size: number): [number, number] {
     throw new Error("invalid static-sprite series extent");
   }
   return [address, address + size];
+}
+
+function appendZeroSuffix(result: Buffer, expectedSize: number, suffix: number): Buffer {
+  if (result.length !== expectedSize - suffix) throw new Error("static-sprite series size differs");
+  return Buffer.concat([result, Buffer.alloc(suffix)]);
+}
+
+function contentSizeBeforeZeroSuffix(arena: Uint8Array, suffix: number): number {
+  integer(suffix, 0, arena.length - 1, "static-sprite suffix alignment");
+  const contentSize = arena.length - suffix;
+  if (arena.subarray(contentSize).some((byte) => byte !== 0)) {
+    throw new Error("static-sprite suffix alignment is not zero");
+  }
+  return contentSize;
 }
 
 function descriptorPackages(
@@ -248,6 +263,7 @@ export function build_static_sprite_series(indexPath: string, palettePath: strin
   }
   const base = number(index.address), expectedSize = number(index.size);
   const prefix = number(index.prefix_zeros);
+  const suffix = number(index.suffix_zeros ?? 0);
   seriesExtent(base, expectedSize);
   const descriptorTable = number(index.descriptor_table), descriptorCount = number(index.descriptor_count);
   const paletteOffset = number(index.palette_offset), paletteEntries = number(index.palette_entries);
@@ -255,7 +271,8 @@ export function build_static_sprite_series(indexPath: string, palettePath: strin
       descriptorCount < 1 || descriptorCount > 0x10000 ||
       paletteOffset < 0 || paletteOffset > 255 ||
       paletteEntries < 1 || paletteOffset + paletteEntries > 256 ||
-      prefix < 0 || prefix > expectedSize || !Array.isArray(index.packages) || index.packages.length === 0) {
+      prefix < 0 || suffix < 0 || prefix + suffix > expectedSize ||
+      !Array.isArray(index.packages) || index.packages.length === 0) {
     throw new Error("invalid static-sprite series index");
   }
   const palette = selectedPalette(palettePath, paletteOffset, paletteEntries);
@@ -303,7 +320,7 @@ export function build_static_sprite_series(indexPath: string, palettePath: strin
     framesBuilt += frames.length;
     directoryEntries += plan.directory.length;
   }
-  if (result.length !== expectedSize) throw new Error("static-sprite series size differs");
+  result = appendZeroSuffix(result, expectedSize, suffix);
   return [result, { packages: index.packages.length, frames: framesBuilt, directory_entries: directoryEntries }];
 }
 
@@ -317,11 +334,13 @@ export function export_static_sprite_series(
   const descriptorCount = options.descriptorCount ?? STATIC_DESCRIPTOR_COUNT;
   const paletteOffset = options.paletteOffset ?? STATIC_PALETTE_OFFSET;
   const paletteEntries = options.paletteEntries ?? STATIC_PALETTE_ENTRIES;
+  const suffixZeros = options.suffixZeros ?? 0;
   const [, checkedEnd] = seriesExtent(seriesAddress, seriesEnd - seriesAddress);
   if (checkedEnd - ROM_BASE > rom.length) throw new Error("ROM is too small for the static-sprite series");
-  const packages = descriptorPackages(rom, seriesAddress, checkedEnd, descriptorTable, descriptorCount);
-  const palette = selectedPalette(palettePath, paletteOffset, paletteEntries);
   const arena = rom.subarray(seriesAddress - ROM_BASE, checkedEnd - ROM_BASE);
+  const contentEnd = seriesAddress + contentSizeBeforeZeroSuffix(arena, suffixZeros);
+  const packages = descriptorPackages(rom, seriesAddress, contentEnd, descriptorTable, descriptorCount);
+  const palette = selectedPalette(palettePath, paletteOffset, paletteEntries);
   const prefix = packages[0].address - seriesAddress;
   const packageEntries: Json[] = [];
   for (const item of packages) {
@@ -389,6 +408,7 @@ export function export_static_sprite_series(
     palette_offset: paletteOffset,
     palette_entries: paletteEntries,
     prefix_zeros: prefix,
+    ...(suffixZeros ? { suffix_zeros: suffixZeros } : {}),
     packages: packageEntries,
   };
   const indexPath = join(directory, "index.json");
@@ -408,6 +428,17 @@ export function selfTest(): void {
   }
   if (seriesExtent(0x08000100, 0x200)[1] !== 0x08000300) {
     throw new Error("static-sprite extent self-test failed");
+  }
+  const aligned = appendZeroSuffix(Buffer.from([1, 2, 3]), 7, 4);
+  if (!aligned.equals(Buffer.from([1, 2, 3, 0, 0, 0, 0])) ||
+      contentSizeBeforeZeroSuffix(aligned, 4) !== 3) {
+    throw new Error("static-sprite suffix self-test failed");
+  }
+  try {
+    contentSizeBeforeZeroSuffix(Buffer.from([1, 2, 0, 3]), 2);
+    throw new Error("nonzero static-sprite suffix was accepted");
+  } catch (error) {
+    if ((error as Error).message === "nonzero static-sprite suffix was accepted") throw error;
   }
   const temporary = mkdtempSync(join(tmpdir(), "alchemy-static-series-"));
   try {
@@ -456,7 +487,7 @@ function main(args: string[]): void {
     return;
   }
   if (args.includes("-h") || args.includes("--help")) {
-    console.log("usage: static_sprite_series.ts export-series ROM --directory DIR --palette PNG [--address N --end N] [--descriptor-table N --descriptor-count N] [--palette-offset N --palette-entries N]");
+    console.log("usage: static_sprite_series.ts export-series ROM --directory DIR --palette PNG [--address N --end N] [--descriptor-table N --descriptor-count N] [--palette-offset N --palette-entries N] [--suffix-zeros N]");
     return;
   }
   if (args[0] !== "export-series" || !args[1]) throw new Error("a static-sprite series command and ROM are required");
@@ -469,9 +500,10 @@ function main(args: string[]): void {
   const descriptorCount = number(optional(args, "--descriptor-count") ?? STATIC_DESCRIPTOR_COUNT);
   const paletteOffset = number(optional(args, "--palette-offset") ?? STATIC_PALETTE_OFFSET);
   const paletteEntries = number(optional(args, "--palette-entries") ?? STATIC_PALETTE_ENTRIES);
+  const suffixZeros = number(optional(args, "--suffix-zeros") ?? 0);
   if (same(romPath, directory) || same(romPath, palette)) throw new Error("refusing to overwrite an input");
   const index = export_static_sprite_series(readFileSync(romPath), directory, palette, {
-    address, end, descriptorTable, descriptorCount, paletteOffset, paletteEntries,
+    address, end, descriptorTable, descriptorCount, paletteOffset, paletteEntries, suffixZeros,
   });
   const frames = index.packages.reduce((sum: number, item: Json) => {
     const plan = JSON.parse(readFileSync(join(directory, item.plan), "utf8"));

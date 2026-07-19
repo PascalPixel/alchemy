@@ -84,6 +84,7 @@ import {
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
+const ROM_SIZE = 0x00800000;
 
 type Json = Record<string, any>;
 
@@ -91,6 +92,7 @@ interface Options {
   rom: string;
   manifest: string;
   output: string;
+  sourceOnly: boolean;
 }
 
 function number(value: string | number): number {
@@ -1127,12 +1129,13 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
 }
 
 function usage(): void {
-  console.log("usage: build_assets.ts [-h] [--manifest MANIFEST] [-o OUTPUT] [rom]");
+  console.log("usage: build_assets.ts [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom]");
 }
 
 function parseArgs(argv: string[]): Options {
   const options: Options = {
-    rom: "gs1-en.gba", manifest: join(ROOT, "assets/manifest.json"), output: join(ROOT, "out/assets"),
+    rom: "baserom.gba", manifest: join(ROOT, "assets/manifest.json"), output: join(ROOT, "out/assets"),
+    sourceOnly: false,
   };
   let positional = false;
   for (let index = 0; index < argv.length; index++) {
@@ -1140,6 +1143,9 @@ function parseArgs(argv: string[]): Options {
     if (argument === "-h" || argument === "--help") {
       usage();
       process.exit(0);
+    } else if (argument === "--source-only") {
+      options.sourceOnly = true;
+      continue;
     }
     const equal = argument.indexOf("=");
     const option = equal >= 0 ? argument.slice(0, equal) : argument;
@@ -1155,12 +1161,14 @@ function parseArgs(argv: string[]): Options {
       throw new Error(`unrecognized argument: ${argument}`);
     }
   }
+  if (options.sourceOnly && positional) throw new Error("--source-only does not accept a ROM");
   return options;
 }
 
 function main(): void {
   const args = parseArgs(Bun.argv.slice(2));
-  const rom = readFileSync(resolve(process.cwd(), args.rom));
+  const rom = args.sourceOnly ? null : readFileSync(resolve(process.cwd(), args.rom));
+  const romSize = rom?.length ?? ROM_SIZE;
   const manifestPath = isAbsolute(args.manifest) ? args.manifest : resolve(process.cwd(), args.manifest);
   const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
   if (manifest.format !== 1) throw new Error("unsupported asset manifest format");
@@ -1178,7 +1186,7 @@ function main(): void {
       throw new Error(`overlapping asset region at 0x${address.toString(16).padStart(8, "0")}`);
     }
     previousEnd = address + size;
-    if (!(ROM_BASE <= address && address < previousEnd && previousEnd <= ROM_BASE + rom.length)) {
+    if (!(ROM_BASE <= address && address < previousEnd && previousEnd <= ROM_BASE + romSize)) {
       throw new Error(`asset region outside ROM at 0x${address.toString(16).padStart(8, "0")}`);
     }
     const [builtData, sources, report] = buildEntry(entry);
@@ -1188,9 +1196,11 @@ function main(): void {
         `built 0x${builtData.length.toString(16)}, expected 0x${size.toString(16)}`,
       );
     }
-    const expected = rom.subarray(address - ROM_BASE, address - ROM_BASE + size);
-    if (!builtData.equals(expected)) {
-      throw new Error(`asset at 0x${address.toString(16).padStart(8, "0")}: encoded bytes differ`);
+    if (rom !== null) {
+      const expected = rom.subarray(address - ROM_BASE, address - ROM_BASE + size);
+      if (!builtData.equals(expected)) {
+        throw new Error(`asset at 0x${address.toString(16).padStart(8, "0")}: encoded bytes differ`);
+      }
     }
     const built = join(output, `${address.toString(16).padStart(8, "0")}.bin`);
     writeFileSync(built, builtData);
@@ -1210,7 +1220,8 @@ function main(): void {
   writeFileSync(join(output, "manifest.json"), JSON.stringify({
     format: 1,
     rom_base: ROM_BASE,
-    rom_size: rom.length,
+    rom_size: romSize,
+    verification: args.sourceOnly ? "source_only" : "rom",
     asset_bytes: assetBytes,
     regions,
   }, null, 2) + "\n");

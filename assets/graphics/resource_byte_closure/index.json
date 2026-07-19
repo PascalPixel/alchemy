@@ -1,0 +1,54 @@
+{
+  "format": 1,
+  "kind": "golden-sun-resource-byte-canvas-series",
+  "resources": [
+    {
+      "id": "049",
+      "address": 138203280,
+      "size": 1160,
+      "source": "resource_049.png"
+    },
+    {
+      "id": "04a",
+      "address": 138204440,
+      "size": 1516,
+      "source": "resource_04a.png"
+    },
+    {
+      "id": "061",
+      "address": 138249696,
+      "size": 1092,
+      "source": "resource_061.png"
+    },
+    {
+      "id": "064",
+      "address": 138265080,
+      "size": 544,
+      "source": "resource_064.png"
+    },
+    {
+      "id": "066",
+      "address": 138266708,
+      "size": 276,
+      "source": "resource_066.png"
+    },
+    {
+      "id": "073",
+      "address": 138291940,
+      "size": 668,
+      "source": "resource_073.png"
+    },
+    {
+      "id": "0a5",
+      "address": 138370892,
+      "size": 1968,
+      "source": "resource_0a5.png"
+    },
+    {
+      "id": "0a6",
+      "address": 138372860,
+      "size": 1304,
+      "source": "resource_0a6.png"
+    }
+  ]
+}

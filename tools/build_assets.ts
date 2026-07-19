@@ -83,6 +83,11 @@ import {
   STAFF_ROLL_SIZE,
 } from "./staff_roll.ts";
 import { buildGbaHeaderComponent, parseGbaHeaderSource } from "./gba_header.ts";
+import { build_early_runtime_data } from "./early_runtime_data.ts";
+import { buildLateRuntimeResidual } from "./late_runtime_residual.ts";
+import { buildResourceByteCanvases } from "./resource_byte_canvases.ts";
+import { buildByteValueRegions } from "./byte_value_regions.ts";
+import { buildExecutableGapData } from "./executable_gap_sources.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -719,6 +724,42 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
       document, readFileSync(sourcePath(logoName)), number(entry.address), number(entry.size),
     );
     return [built, [sourceName, logoName], { standard_header_bytes: built.length }];
+  }
+  if (kind === "golden-sun-early-runtime-data") {
+    const sourceName = String(entry.source);
+    const built = build_early_runtime_data(sourcePath(sourceName));
+    const address = number(entry.address);
+    const region = built.regions.get(address);
+    if (region === undefined) throw new Error("early-runtime asset address is not a produced region");
+    return [region, [sourceName, join(dirname(sourceName), "display.4bpp.png")], {
+      source_bytes: built.source_bytes,
+      region_address: `0x${address.toString(16).padStart(8, "0")}`,
+    }];
+  }
+  if (kind === "golden-sun-late-runtime-residual") {
+    const sourceName = String(entry.source);
+    const built = buildLateRuntimeResidual(sourcePath(sourceName));
+    const address = number(entry.address), region = built.regions.get(address);
+    if (region === undefined) throw new Error("late-runtime asset address is not a produced region");
+    return [region, [sourceName], { source_bytes: built.sourceBytes, region_address: `0x${address.toString(16).padStart(8, "0")}` }];
+  }
+  if (kind === "golden-sun-resource-byte-canvas") {
+    const sourceName = String(entry.source), resource = String(entry.resource_id).toLowerCase();
+    const built = buildResourceByteCanvases(sourcePath(sourceName)).find((item) => item.id === resource);
+    if (built === undefined) throw new Error(`resource byte canvas ${resource} is absent`);
+    return [built.data, [sourceName, join(dirname(sourceName), built.source)], { resource_id: `0x${resource}`, representation: "provisional-neutral-byte-canvas" }];
+  }
+  if (kind === "golden-sun-byte-value-regions") {
+    const sourceName = String(entry.source), address = number(entry.address);
+    const region = buildByteValueRegions(sourcePath(sourceName)).find((item) => item.address === address);
+    if (region === undefined || region.data.length !== number(entry.size)) throw new Error("byte-value region differs from manifest");
+    return [region.data, [sourceName], { representation: "structured byte values", region_address: `0x${address.toString(16).padStart(8, "0")}` }];
+  }
+  if (kind === "golden-sun-executable-gap-data") {
+    const sourceName = String(entry.source), address = number(entry.address);
+    const built = buildExecutableGapData(sourcePath(sourceName)).find((item) => item.address === address);
+    if (built === undefined) throw new Error("executable gap data address is not a produced region");
+    return [built.data, [sourceName], { representation: "typed mixed-region table", region_address: `0x${address.toString(16).padStart(8, "0")}` }];
   }
   if (["gba-4bpp-tiles", "gba-8bpp-tiles", "gba-palette", "gba-palette-rgba"].includes(kind)) {
     const [built, report] = buildComponent(entry);
@@ -1382,6 +1423,17 @@ function main(): void {
   const entries: Json[] = [...(manifest.regions ?? [])];
   expandClosurePackages(manifest, entries);
   expandSeries(manifest, entries);
+  for (const packageEntry of [...entries]) {
+    if (packageEntry.kind !== "golden-sun-byte-value-region-package") continue;
+    const source = String(packageEntry.source), document = JSON.parse(readFileSync(sourcePath(source), "utf8"));
+    if (document.kind !== "golden-sun-byte-value-regions" || !Array.isArray(document.regions)) {
+      throw new Error("byte-value package source differs");
+    }
+    const index = entries.indexOf(packageEntry); entries.splice(index, 1, ...document.regions.map((region: Json) => ({
+      address: region.address, size: Array.isArray(region.values) ? region.values.length : 0,
+      kind: "golden-sun-byte-value-regions", source,
+    })));
+  }
   const regions: Json[] = [];
   let previousEnd = ROM_BASE;
   entries.sort((left, right) => number(left.address) - number(right.address));

@@ -1,0 +1,9 @@
+.syntax unified
+.text
+	.thumb
+	.global Veneer_080091a0
+	.thumb_func
+Veneer_080091a0:
+	ldr r4, [pc, #0]
+	bx r4
+	.4byte 0x08011ae1

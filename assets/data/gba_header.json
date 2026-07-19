@@ -24,37 +24,21 @@
       }
     ]
   },
-  "edition": null,
-  "unresolved_fields": [
-    {
-      "name": "entry_branch",
-      "address": "0x08000000",
-      "size": 4
+  "edition": {
+    "entry_branch": {
+      "instruction_set": "arm",
+      "operation": "b",
+      "target": "0x080003c0"
     },
-    {
-      "name": "title",
-      "address": "0x080000a0",
-      "size": 12
+    "title": {
+      "text": "Golden_Sun_A",
+      "padding": "nul",
+      "field_bytes": 12
     },
-    {
-      "name": "game_code",
-      "address": "0x080000ac",
-      "size": 4
-    },
-    {
-      "name": "maker_code",
-      "address": "0x080000b0",
-      "size": 2
-    },
-    {
-      "name": "software_version",
-      "address": "0x080000bc",
-      "size": 1
-    },
-    {
-      "name": "complement_checksum",
-      "address": "0x080000bd",
-      "size": 1
-    }
-  ]
+    "game_code": "AGSE",
+    "maker_code": "01",
+    "software_version": 0,
+    "complement_checksum": "derived"
+  },
+  "unresolved_fields": []
 }

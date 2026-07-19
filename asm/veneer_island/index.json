@@ -1,0 +1,461 @@
+{
+  "format": 1,
+  "kind": "golden-sun-thumb-long-call-veneer-island-source",
+  "address": "0x08015000",
+  "end": "0x08015430",
+  "slot_size": 8,
+  "counts": {
+    "live_missing": 21,
+    "unknown": 35
+  },
+  "slots": [
+    {
+      "address": "0x08015088",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x0801e859",
+      "ultimate_target": "0x0801e859",
+      "source": "08015088.s"
+    },
+    {
+      "address": "0x080150a0",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x0801e9a1",
+      "ultimate_target": "0x0801e9a1",
+      "source": "080150a0.s"
+    },
+    {
+      "address": "0x080150c0",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801e739",
+      "ultimate_target": "0x0801e739",
+      "source": "080150c0.s"
+    },
+    {
+      "address": "0x080150e8",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801edcd",
+      "ultimate_target": "0x0801edcd",
+      "source": "080150e8.s"
+    },
+    {
+      "address": "0x080150f0",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801eddd",
+      "ultimate_target": "0x0801eddd",
+      "source": "080150f0.s"
+    },
+    {
+      "address": "0x08015150",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801a66d",
+      "ultimate_target": "0x0801a66d",
+      "source": "08015150.s"
+    },
+    {
+      "address": "0x08015158",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801a779",
+      "ultimate_target": "0x0801a779",
+      "source": "08015158.s"
+    },
+    {
+      "address": "0x08015160",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801a7c1",
+      "ultimate_target": "0x0801a7c1",
+      "source": "08015160.s"
+    },
+    {
+      "address": "0x08015168",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801a969",
+      "ultimate_target": "0x0801a969",
+      "source": "08015168.s"
+    },
+    {
+      "address": "0x08015170",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801a97d",
+      "ultimate_target": "0x0801a97d",
+      "source": "08015170.s"
+    },
+    {
+      "address": "0x08015178",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801b011",
+      "ultimate_target": "0x0801b011",
+      "source": "08015178.s"
+    },
+    {
+      "address": "0x08015180",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801b149",
+      "ultimate_target": "0x0801b149",
+      "source": "08015180.s"
+    },
+    {
+      "address": "0x08015188",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801b229",
+      "ultimate_target": "0x0801b229",
+      "source": "08015188.s"
+    },
+    {
+      "address": "0x08015190",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801b399",
+      "ultimate_target": "0x0801b399",
+      "source": "08015190.s"
+    },
+    {
+      "address": "0x08015198",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801b425",
+      "ultimate_target": "0x0801b425",
+      "source": "08015198.s"
+    },
+    {
+      "address": "0x080151a0",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801c0c9",
+      "ultimate_target": "0x0801c0c9",
+      "source": "080151a0.s"
+    },
+    {
+      "address": "0x080151a8",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801c0cd",
+      "ultimate_target": "0x0801c0cd",
+      "source": "080151a8.s"
+    },
+    {
+      "address": "0x080151b0",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801a7f5",
+      "ultimate_target": "0x0801a7f5",
+      "source": "080151b0.s"
+    },
+    {
+      "address": "0x080151b8",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801a90d",
+      "ultimate_target": "0x0801a90d",
+      "source": "080151b8.s"
+    },
+    {
+      "address": "0x080151d8",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801c0d9",
+      "ultimate_target": "0x0801c0d9",
+      "source": "080151d8.s"
+    },
+    {
+      "address": "0x080151f0",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x080289e9",
+      "ultimate_target": "0x080289e9",
+      "source": "080151f0.s"
+    },
+    {
+      "address": "0x080151f8",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x08028c05",
+      "ultimate_target": "0x08028c05",
+      "source": "080151f8.s"
+    },
+    {
+      "address": "0x08015210",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x08019aa1",
+      "ultimate_target": "0x08019aa1",
+      "source": "08015210.s"
+    },
+    {
+      "address": "0x08015228",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x0801c0dd",
+      "ultimate_target": "0x0801c0dd",
+      "source": "08015228.s"
+    },
+    {
+      "address": "0x08015230",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x0801c155",
+      "ultimate_target": "0x0801c155",
+      "source": "08015230.s"
+    },
+    {
+      "address": "0x08015238",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x0801c17d",
+      "ultimate_target": "0x0801c17d",
+      "source": "08015238.s"
+    },
+    {
+      "address": "0x08015240",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801c925",
+      "ultimate_target": "0x0801c925",
+      "source": "08015240.s"
+    },
+    {
+      "address": "0x08015248",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801c459",
+      "ultimate_target": "0x0801c459",
+      "source": "08015248.s"
+    },
+    {
+      "address": "0x08015260",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801cf45",
+      "ultimate_target": "0x0801cf45",
+      "source": "08015260.s"
+    },
+    {
+      "address": "0x080152a0",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801c49d",
+      "ultimate_target": "0x0801c49d",
+      "source": "080152a0.s"
+    },
+    {
+      "address": "0x080152b0",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801a089",
+      "ultimate_target": "0x0801a089",
+      "source": "080152b0.s"
+    },
+    {
+      "address": "0x080152c0",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x08019fcd",
+      "ultimate_target": "0x08019fcd",
+      "source": "080152c0.s"
+    },
+    {
+      "address": "0x080152c8",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801a405",
+      "ultimate_target": "0x0801a405",
+      "source": "080152c8.s"
+    },
+    {
+      "address": "0x080152d8",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801ec25",
+      "ultimate_target": "0x0801ec25",
+      "source": "080152d8.s"
+    },
+    {
+      "address": "0x080152e0",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801f9b5",
+      "ultimate_target": "0x0801f9b5",
+      "source": "080152e0.s"
+    },
+    {
+      "address": "0x080152e8",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x080207c5",
+      "ultimate_target": "0x080207c5",
+      "source": "080152e8.s"
+    },
+    {
+      "address": "0x080152f0",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x080208e5",
+      "ultimate_target": "0x080208e5",
+      "source": "080152f0.s"
+    },
+    {
+      "address": "0x080152f8",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x0801fba9",
+      "ultimate_target": "0x0801fba9",
+      "source": "080152f8.s"
+    },
+    {
+      "address": "0x08015300",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x0801fc85",
+      "ultimate_target": "0x0801fc85",
+      "source": "08015300.s"
+    },
+    {
+      "address": "0x08015308",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x0801faa9",
+      "ultimate_target": "0x0801faa9",
+      "source": "08015308.s"
+    },
+    {
+      "address": "0x08015310",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801fa3d",
+      "ultimate_target": "0x0801fa3d",
+      "source": "08015310.s"
+    },
+    {
+      "address": "0x08015318",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x0801f77d",
+      "ultimate_target": "0x0801f77d",
+      "source": "08015318.s"
+    },
+    {
+      "address": "0x08015320",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x08020bd9",
+      "ultimate_target": "0x08020bd9",
+      "source": "08015320.s"
+    },
+    {
+      "address": "0x08015328",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x08020aed",
+      "ultimate_target": "0x08020aed",
+      "source": "08015328.s"
+    },
+    {
+      "address": "0x08015330",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x08020b01",
+      "ultimate_target": "0x08020b01",
+      "source": "08015330.s"
+    },
+    {
+      "address": "0x08015338",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801b1ed",
+      "ultimate_target": "0x0801b1ed",
+      "source": "08015338.s"
+    },
+    {
+      "address": "0x08015340",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x08029555",
+      "ultimate_target": "0x08029555",
+      "source": "08015340.s"
+    },
+    {
+      "address": "0x08015348",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x0802977d",
+      "ultimate_target": "0x0802977d",
+      "source": "08015348.s"
+    },
+    {
+      "address": "0x08015350",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801c469",
+      "ultimate_target": "0x0801c469",
+      "source": "08015350.s"
+    },
+    {
+      "address": "0x08015368",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801d4cd",
+      "ultimate_target": "0x0801d4cd",
+      "source": "08015368.s"
+    },
+    {
+      "address": "0x08015378",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801ee69",
+      "ultimate_target": "0x0801ee69",
+      "source": "08015378.s"
+    },
+    {
+      "address": "0x08015398",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x08028ea9",
+      "ultimate_target": "0x08028ea9",
+      "source": "08015398.s"
+    },
+    {
+      "address": "0x080153a0",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x0802106d",
+      "ultimate_target": "0x0802106d",
+      "source": "080153a0.s"
+    },
+    {
+      "address": "0x080153a8",
+      "classification": "unknown",
+      "kind": "veneer",
+      "target": "0x0801a32d",
+      "ultimate_target": "0x0801a32d",
+      "source": "080153a8.s"
+    },
+    {
+      "address": "0x080153e8",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x0802899d",
+      "ultimate_target": "0x0802899d",
+      "source": "080153e8.s"
+    },
+    {
+      "address": "0x08015400",
+      "classification": "live_missing",
+      "kind": "veneer",
+      "target": "0x0801f731",
+      "ultimate_target": "0x0801f731",
+      "source": "08015400.s"
+    }
+  ]
+}

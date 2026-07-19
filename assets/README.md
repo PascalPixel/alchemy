@@ -19,6 +19,14 @@ command-status choices. The indexed series claims 150,254 independently
 round-tripped bytes, including absolute-address alignment between streams and
 headers.
 
+`audio/residuals/` reconstructs six regions left outside the nonempty sequence
+series: four sound-table-selected eight-byte empty SMSH headers, the 18-byte
+`yobi` (予備) command stream between sounds 138 and 139, and the 2,408-byte
+zero alignment ending at `0x08185000`. The sources retain typed header fields
+and semantic sequence events rather than copied binary spans, while the
+verifier proves the relevant sound-table links and both neighbouring one-track
+headers. Together they rebuild 2,458 bytes exactly.
+
 `audio/waves/` reconstructs all 32 tone-referenced signed-PCM records as
 standard mono 8-bit WAV sources. Its index preserves exact fixed-point
 frequencies and loop points, while the verified builder restores native signed
@@ -147,6 +155,13 @@ the build. Together they re-encode the complete compressed ROM stream.
 A generated, non-source preview may render the four proven dynamic states after
 applying the real palette, 32x32 tilemap, tile flips, and the runtime
 `0x340`-byte dynamic upload. Such previews remain ignored build products.
+
+`graphics/resource_01c/` reconstructs resource 1C as a 16-color glyph bank:
+one 16-entry BGR555 palette followed by thirty-six 8×8 4bpp glyphs, stored as
+one canonical 9×4 indexed PNG. A payload-free general-LZ token plan restores
+the complete 692-byte stream at `0x0833ac08..0x0833aebc` exactly. `kana` is a
+semantic reconstruction label, not a claim that the historical filename
+survived.
 
 `graphics/sentou/index.json` groups 57 independently decoded battle-resource
 streams shared across both games. `sentou` (戦闘) is the period-style grouping;
@@ -351,3 +366,11 @@ kind-1 grid, animation, blend, and sparse-cell codecs rebuild resources 1F3,
 planes are active spatial sources; the remaining JSON and tilemaps preserve
 consumer-shaped records and payload-free compression decisions. Together the
 six containers contribute 39,756 exact source bytes.
+
+`maps/chiiki/` reconstructs complete map containers 1E5 and 320 using the same
+consumer-shaped codecs as the main map series: headers, metatile tilemaps,
+descriptor records, five-plane 128×128 spatial grids, animation queues,
+optional blend commands, and sparse cells. Payload-free compression plans
+rebuild 6,188 bytes at `0x085bb860` and 8,256 bytes at `0x08753b18`, for
+14,444 exact source bytes. `chiiki` (地域) is a period-style reconstruction
+grouping, not a recovered historical filename.

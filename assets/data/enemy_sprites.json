@@ -1,0 +1,1146 @@
+{
+  "format": 1,
+  "entries": [
+    {
+      "member_id": 1,
+      "name_text_id": "0x0290",
+      "name": "Vermin",
+      "sprite_id": 180,
+      "directory": null
+    },
+    {
+      "member_id": 2,
+      "name_text_id": "0x0291",
+      "name": "Vermin",
+      "sprite_id": 180,
+      "directory": null
+    },
+    {
+      "member_id": 3,
+      "name_text_id": "0x0292",
+      "name": "Mad Vermin",
+      "sprite_id": 180,
+      "directory": null
+    },
+    {
+      "member_id": 4,
+      "name_text_id": "0x0293",
+      "name": "Bat",
+      "sprite_id": 180,
+      "directory": null
+    },
+    {
+      "member_id": 5,
+      "name_text_id": "0x0294",
+      "name": "Bat",
+      "sprite_id": 180,
+      "directory": null
+    },
+    {
+      "member_id": 6,
+      "name_text_id": "0x0295",
+      "name": "Rabid Bat",
+      "sprite_id": 227,
+      "directory": "chr_0e3"
+    },
+    {
+      "member_id": 7,
+      "name_text_id": "0x0296",
+      "name": "Wild Mushroom",
+      "sprite_id": 226,
+      "directory": "chr_0e2"
+    },
+    {
+      "member_id": 8,
+      "name_text_id": "0x0297",
+      "name": "Wild Mushroom",
+      "sprite_id": 226,
+      "directory": "chr_0e2"
+    },
+    {
+      "member_id": 9,
+      "name_text_id": "0x0298",
+      "name": "Death Cap",
+      "sprite_id": 227,
+      "directory": "chr_0e3"
+    },
+    {
+      "member_id": 10,
+      "name_text_id": "0x0299",
+      "name": "Slime",
+      "sprite_id": 180,
+      "directory": null
+    },
+    {
+      "member_id": 11,
+      "name_text_id": "0x029a",
+      "name": "Slime",
+      "sprite_id": 180,
+      "directory": null
+    },
+    {
+      "member_id": 12,
+      "name_text_id": "0x029b",
+      "name": "Ooze",
+      "sprite_id": 180,
+      "directory": null
+    },
+    {
+      "member_id": 13,
+      "name_text_id": "0x029c",
+      "name": "Slime Beast",
+      "sprite_id": 180,
+      "directory": null
+    },
+    {
+      "member_id": 14,
+      "name_text_id": "0x029d",
+      "name": "Ghost",
+      "sprite_id": 238,
+      "directory": "chr_0ee"
+    },
+    {
+      "member_id": 15,
+      "name_text_id": "0x029e",
+      "name": "Ghost Mage",
+      "sprite_id": 240,
+      "directory": "chr_0f0"
+    },
+    {
+      "member_id": 16,
+      "name_text_id": "0x029f",
+      "name": "Horned Ghost",
+      "sprite_id": 188,
+      "directory": "chr_0bc"
+    },
+    {
+      "member_id": 17,
+      "name_text_id": "0x02a0",
+      "name": "Lich",
+      "sprite_id": 186,
+      "directory": null
+    },
+    {
+      "member_id": 18,
+      "name_text_id": "0x02a1",
+      "name": "Zombie",
+      "sprite_id": 180,
+      "directory": null
+    },
+    {
+      "member_id": 19,
+      "name_text_id": "0x02a2",
+      "name": "Undead",
+      "sprite_id": 187,
+      "directory": "chr_0bb"
+    },
+    {
+      "member_id": 20,
+      "name_text_id": "0x02a3",
+      "name": "Wight",
+      "sprite_id": 188,
+      "directory": "chr_0bc"
+    },
+    {
+      "member_id": 21,
+      "name_text_id": "0x02a4",
+      "name": "Bandit",
+      "sprite_id": 27,
+      "directory": "bandit"
+    },
+    {
+      "member_id": 22,
+      "name_text_id": "0x02a5",
+      "name": "Thief",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 23,
+      "name_text_id": "0x02a6",
+      "name": "Brigand",
+      "sprite_id": 241,
+      "directory": "chr_0f1"
+    },
+    {
+      "member_id": 24,
+      "name_text_id": "0x02a7",
+      "name": "Skeleton",
+      "sprite_id": 180,
+      "directory": null
+    },
+    {
+      "member_id": 25,
+      "name_text_id": "0x02a8",
+      "name": "Bone Fighter",
+      "sprite_id": 227,
+      "directory": "chr_0e3"
+    },
+    {
+      "member_id": 26,
+      "name_text_id": "0x02a9",
+      "name": "Skull Warrior",
+      "sprite_id": 182,
+      "directory": null
+    },
+    {
+      "member_id": 27,
+      "name_text_id": "0x02aa",
+      "name": "Will Head",
+      "sprite_id": 226,
+      "directory": "chr_0e2"
+    },
+    {
+      "member_id": 28,
+      "name_text_id": "0x02ab",
+      "name": "Death Head",
+      "sprite_id": 181,
+      "directory": null
+    },
+    {
+      "member_id": 29,
+      "name_text_id": "0x02ac",
+      "name": "Willowisp",
+      "sprite_id": 181,
+      "directory": null
+    },
+    {
+      "member_id": 30,
+      "name_text_id": "0x02ad",
+      "name": "Rat",
+      "sprite_id": 180,
+      "directory": null
+    },
+    {
+      "member_id": 31,
+      "name_text_id": "0x02ae",
+      "name": "Armored Rat",
+      "sprite_id": 180,
+      "directory": null
+    },
+    {
+      "member_id": 32,
+      "name_text_id": "0x02af",
+      "name": "Plated Rat",
+      "sprite_id": 188,
+      "directory": "chr_0bc"
+    },
+    {
+      "member_id": 33,
+      "name_text_id": "0x02b0",
+      "name": "Rat Soldier",
+      "sprite_id": 226,
+      "directory": "chr_0e2"
+    },
+    {
+      "member_id": 34,
+      "name_text_id": "0x02b1",
+      "name": "Rat Fighter",
+      "sprite_id": 226,
+      "directory": "chr_0e2"
+    },
+    {
+      "member_id": 35,
+      "name_text_id": "0x02b2",
+      "name": "Rat Warrior",
+      "sprite_id": 240,
+      "directory": "chr_0f0"
+    },
+    {
+      "member_id": 36,
+      "name_text_id": "0x02b3",
+      "name": "Drone Bee",
+      "sprite_id": 188,
+      "directory": "chr_0bc"
+    },
+    {
+      "member_id": 37,
+      "name_text_id": "0x02b4",
+      "name": "Fighter Bee",
+      "sprite_id": 188,
+      "directory": "chr_0bc"
+    },
+    {
+      "member_id": 38,
+      "name_text_id": "0x02b5",
+      "name": "Warrior Bee",
+      "sprite_id": 188,
+      "directory": "chr_0bc"
+    },
+    {
+      "member_id": 39,
+      "name_text_id": "0x02b6",
+      "name": "Troll",
+      "sprite_id": 181,
+      "directory": null
+    },
+    {
+      "member_id": 40,
+      "name_text_id": "0x02b7",
+      "name": "Cave Troll",
+      "sprite_id": 181,
+      "directory": null
+    },
+    {
+      "member_id": 41,
+      "name_text_id": "0x02b8",
+      "name": "Brutal Troll",
+      "sprite_id": 181,
+      "directory": null
+    },
+    {
+      "member_id": 42,
+      "name_text_id": "0x02b9",
+      "name": "Spider",
+      "sprite_id": 187,
+      "directory": "chr_0bb"
+    },
+    {
+      "member_id": 43,
+      "name_text_id": "0x02ba",
+      "name": "Tarantula",
+      "sprite_id": 187,
+      "directory": "chr_0bb"
+    },
+    {
+      "member_id": 44,
+      "name_text_id": "0x02bb",
+      "name": "Recluse",
+      "sprite_id": 266,
+      "directory": "recluse"
+    },
+    {
+      "member_id": 45,
+      "name_text_id": "0x02bc",
+      "name": "Gnome",
+      "sprite_id": 238,
+      "directory": "chr_0ee"
+    },
+    {
+      "member_id": 46,
+      "name_text_id": "0x02bd",
+      "name": "Gnome Mage",
+      "sprite_id": 241,
+      "directory": "chr_0f1"
+    },
+    {
+      "member_id": 47,
+      "name_text_id": "0x02be",
+      "name": "Gnome Wizard",
+      "sprite_id": 241,
+      "directory": "chr_0f1"
+    },
+    {
+      "member_id": 48,
+      "name_text_id": "0x02bf",
+      "name": "Ghoul",
+      "sprite_id": 187,
+      "directory": "chr_0bb"
+    },
+    {
+      "member_id": 49,
+      "name_text_id": "0x02c0",
+      "name": "Fiendish Ghoul",
+      "sprite_id": 187,
+      "directory": "chr_0bb"
+    },
+    {
+      "member_id": 50,
+      "name_text_id": "0x02c1",
+      "name": "Cannibal Ghoul",
+      "sprite_id": 187,
+      "directory": "chr_0bb"
+    },
+    {
+      "member_id": 51,
+      "name_text_id": "0x02c2",
+      "name": "Mauler",
+      "sprite_id": 181,
+      "directory": null
+    },
+    {
+      "member_id": 52,
+      "name_text_id": "0x02c3",
+      "name": "Ravager",
+      "sprite_id": 188,
+      "directory": "chr_0bc"
+    },
+    {
+      "member_id": 53,
+      "name_text_id": "0x02c4",
+      "name": "Grisly",
+      "sprite_id": 183,
+      "directory": null
+    },
+    {
+      "member_id": 54,
+      "name_text_id": "0x02c5",
+      "name": "Cuttle",
+      "sprite_id": 227,
+      "directory": "chr_0e3"
+    },
+    {
+      "member_id": 55,
+      "name_text_id": "0x02c6",
+      "name": "Calamar",
+      "sprite_id": 188,
+      "directory": "chr_0bc"
+    },
+    {
+      "member_id": 56,
+      "name_text_id": "0x02c7",
+      "name": "Man o' War",
+      "sprite_id": 187,
+      "directory": "chr_0bb"
+    },
+    {
+      "member_id": 57,
+      "name_text_id": "0x02c8",
+      "name": "Harpy",
+      "sprite_id": 188,
+      "directory": "chr_0bc"
+    },
+    {
+      "member_id": 58,
+      "name_text_id": "0x02c9",
+      "name": "Virago",
+      "sprite_id": 188,
+      "directory": "chr_0bc"
+    },
+    {
+      "member_id": 59,
+      "name_text_id": "0x02ca",
+      "name": "Harridan",
+      "sprite_id": 181,
+      "directory": null
+    },
+    {
+      "member_id": 60,
+      "name_text_id": "0x02cb",
+      "name": "Siren",
+      "sprite_id": 241,
+      "directory": "chr_0f1"
+    },
+    {
+      "member_id": 61,
+      "name_text_id": "0x02cc",
+      "name": "Succubus",
+      "sprite_id": 241,
+      "directory": "chr_0f1"
+    },
+    {
+      "member_id": 62,
+      "name_text_id": "0x02cd",
+      "name": "Nightmare",
+      "sprite_id": 265,
+      "directory": "nightmare"
+    },
+    {
+      "member_id": 63,
+      "name_text_id": "0x02ce",
+      "name": "Mole",
+      "sprite_id": 240,
+      "directory": "chr_0f0"
+    },
+    {
+      "member_id": 64,
+      "name_text_id": "0x02cf",
+      "name": "Mad Mole",
+      "sprite_id": 240,
+      "directory": "chr_0f0"
+    },
+    {
+      "member_id": 65,
+      "name_text_id": "0x02d0",
+      "name": "Mole Mage",
+      "sprite_id": 187,
+      "directory": "chr_0bb"
+    },
+    {
+      "member_id": 66,
+      "name_text_id": "0x02d1",
+      "name": "Dirge",
+      "sprite_id": 181,
+      "directory": null
+    },
+    {
+      "member_id": 67,
+      "name_text_id": "0x02d2",
+      "name": "Foul Dirge",
+      "sprite_id": 226,
+      "directory": "chr_0e2"
+    },
+    {
+      "member_id": 68,
+      "name_text_id": "0x02d3",
+      "name": "Vile Dirge",
+      "sprite_id": 239,
+      "directory": "chr_0ef"
+    },
+    {
+      "member_id": 69,
+      "name_text_id": "0x02d4",
+      "name": "Ape",
+      "sprite_id": 182,
+      "directory": null
+    },
+    {
+      "member_id": 70,
+      "name_text_id": "0x02d5",
+      "name": "Killer Ape",
+      "sprite_id": 201,
+      "directory": "killer-ape"
+    },
+    {
+      "member_id": 71,
+      "name_text_id": "0x02d6",
+      "name": "Dirty Ape",
+      "sprite_id": 187,
+      "directory": "chr_0bb"
+    },
+    {
+      "member_id": 72,
+      "name_text_id": "0x02d7",
+      "name": "Grub",
+      "sprite_id": 187,
+      "directory": "chr_0bb"
+    },
+    {
+      "member_id": 73,
+      "name_text_id": "0x02d8",
+      "name": "Worm",
+      "sprite_id": 180,
+      "directory": null
+    },
+    {
+      "member_id": 74,
+      "name_text_id": "0x02d9",
+      "name": "Acid Maggot",
+      "sprite_id": 227,
+      "directory": "chr_0e3"
+    },
+    {
+      "member_id": 75,
+      "name_text_id": "0x02da",
+      "name": "Orc",
+      "sprite_id": 181,
+      "directory": null
+    },
+    {
+      "member_id": 76,
+      "name_text_id": "0x02db",
+      "name": "Orc Captain",
+      "sprite_id": 226,
+      "directory": "chr_0e2"
+    },
+    {
+      "member_id": 77,
+      "name_text_id": "0x02dc",
+      "name": "Orc Lord",
+      "sprite_id": 229,
+      "directory": "chr_0e5"
+    },
+    {
+      "member_id": 78,
+      "name_text_id": "0x02dd",
+      "name": "Salamander",
+      "sprite_id": 238,
+      "directory": "chr_0ee"
+    },
+    {
+      "member_id": 79,
+      "name_text_id": "0x02de",
+      "name": "Earth Lizard",
+      "sprite_id": 189,
+      "directory": "chr_0bd"
+    },
+    {
+      "member_id": 80,
+      "name_text_id": "0x02df",
+      "name": "Thunder Lizard",
+      "sprite_id": 49,
+      "directory": "thunder-lizard"
+    },
+    {
+      "member_id": 81,
+      "name_text_id": "0x02e0",
+      "name": "Manticore",
+      "sprite_id": 186,
+      "directory": null
+    },
+    {
+      "member_id": 82,
+      "name_text_id": "0x02e1",
+      "name": "Magicore",
+      "sprite_id": 134,
+      "directory": "magicore"
+    },
+    {
+      "member_id": 83,
+      "name_text_id": "0x02e2",
+      "name": "Manticore King",
+      "sprite_id": 186,
+      "directory": null
+    },
+    {
+      "member_id": 84,
+      "name_text_id": "0x02e3",
+      "name": "Kobold",
+      "sprite_id": 227,
+      "directory": "chr_0e3"
+    },
+    {
+      "member_id": 85,
+      "name_text_id": "0x02e4",
+      "name": "Goblin",
+      "sprite_id": 182,
+      "directory": null
+    },
+    {
+      "member_id": 86,
+      "name_text_id": "0x02e5",
+      "name": "Hobgoblin",
+      "sprite_id": 229,
+      "directory": "chr_0e5"
+    },
+    {
+      "member_id": 87,
+      "name_text_id": "0x02e6",
+      "name": "Gargoyle",
+      "sprite_id": 227,
+      "directory": "chr_0e3"
+    },
+    {
+      "member_id": 88,
+      "name_text_id": "0x02e7",
+      "name": "Clay Gargoyle",
+      "sprite_id": 181,
+      "directory": null
+    },
+    {
+      "member_id": 89,
+      "name_text_id": "0x02e8",
+      "name": "Ice Gargoyle",
+      "sprite_id": 183,
+      "directory": null
+    },
+    {
+      "member_id": 90,
+      "name_text_id": "0x02e9",
+      "name": "Gryphon",
+      "sprite_id": 183,
+      "directory": null
+    },
+    {
+      "member_id": 91,
+      "name_text_id": "0x02ea",
+      "name": "Wild Gryphon",
+      "sprite_id": 112,
+      "directory": "wild-gryphon"
+    },
+    {
+      "member_id": 92,
+      "name_text_id": "0x02eb",
+      "name": "Wise Gryphon",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 93,
+      "name_text_id": "0x02ec",
+      "name": "Golem",
+      "sprite_id": 182,
+      "directory": null
+    },
+    {
+      "member_id": 94,
+      "name_text_id": "0x02ed",
+      "name": "Earth Golem",
+      "sprite_id": 35,
+      "directory": "earth-golem"
+    },
+    {
+      "member_id": 95,
+      "name_text_id": "0x02ee",
+      "name": "Grand Golem",
+      "sprite_id": 64,
+      "directory": "grand-golem"
+    },
+    {
+      "member_id": 96,
+      "name_text_id": "0x02ef",
+      "name": "Dread Hound",
+      "sprite_id": 163,
+      "directory": "dread-hound"
+    },
+    {
+      "member_id": 97,
+      "name_text_id": "0x02f0",
+      "name": "Cerebus",
+      "sprite_id": 186,
+      "directory": null
+    },
+    {
+      "member_id": 98,
+      "name_text_id": "0x02f1",
+      "name": "Fenrir",
+      "sprite_id": 25,
+      "directory": "fenrir"
+    },
+    {
+      "member_id": 99,
+      "name_text_id": "0x02f2",
+      "name": "Stone Soldier",
+      "sprite_id": 188,
+      "directory": "chr_0bc"
+    },
+    {
+      "member_id": 100,
+      "name_text_id": "0x02f3",
+      "name": "Boulder Beast",
+      "sprite_id": 189,
+      "directory": "chr_0bd"
+    },
+    {
+      "member_id": 101,
+      "name_text_id": "0x02f4",
+      "name": "Raging Rock",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 102,
+      "name_text_id": "0x02f5",
+      "name": "Chimera",
+      "sprite_id": 183,
+      "directory": null
+    },
+    {
+      "member_id": 103,
+      "name_text_id": "0x02f6",
+      "name": "Chimera Mage",
+      "sprite_id": 85,
+      "directory": null
+    },
+    {
+      "member_id": 104,
+      "name_text_id": "0x02f7",
+      "name": "?",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 105,
+      "name_text_id": "0x02f8",
+      "name": "Amaze",
+      "sprite_id": 238,
+      "directory": "chr_0ee"
+    },
+    {
+      "member_id": 106,
+      "name_text_id": "0x02f9",
+      "name": "Amaze",
+      "sprite_id": 238,
+      "directory": "chr_0ee"
+    },
+    {
+      "member_id": 107,
+      "name_text_id": "0x02fa",
+      "name": "Creeper",
+      "sprite_id": 239,
+      "directory": "chr_0ef"
+    },
+    {
+      "member_id": 108,
+      "name_text_id": "0x02fb",
+      "name": "Spirit",
+      "sprite_id": 241,
+      "directory": "chr_0f1"
+    },
+    {
+      "member_id": 109,
+      "name_text_id": "0x02fc",
+      "name": "Zombie",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 110,
+      "name_text_id": "0x02fd",
+      "name": "?",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 111,
+      "name_text_id": "0x02fe",
+      "name": "?",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 112,
+      "name_text_id": "0x02ff",
+      "name": "?",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 113,
+      "name_text_id": "0x0300",
+      "name": "Kraken",
+      "sprite_id": 189,
+      "directory": "chr_0bd"
+    },
+    {
+      "member_id": 114,
+      "name_text_id": "0x0301",
+      "name": "Mystery Man",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 115,
+      "name_text_id": "0x0302",
+      "name": "Saturos",
+      "sprite_id": 186,
+      "directory": null
+    },
+    {
+      "member_id": 116,
+      "name_text_id": "0x0303",
+      "name": "Saturos",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 117,
+      "name_text_id": "0x0304",
+      "name": "Mystery Woman",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 118,
+      "name_text_id": "0x0305",
+      "name": "Menardi",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 119,
+      "name_text_id": "0x0306",
+      "name": "Lizard Man",
+      "sprite_id": 181,
+      "directory": null
+    },
+    {
+      "member_id": 120,
+      "name_text_id": "0x0307",
+      "name": "Lizard Fighter",
+      "sprite_id": 181,
+      "directory": null
+    },
+    {
+      "member_id": 121,
+      "name_text_id": "0x0308",
+      "name": "Lizard King",
+      "sprite_id": 186,
+      "directory": null
+    },
+    {
+      "member_id": 122,
+      "name_text_id": "0x0309",
+      "name": "Living Statue",
+      "sprite_id": 182,
+      "directory": null
+    },
+    {
+      "member_id": 123,
+      "name_text_id": "0x030a",
+      "name": "Hydros Statue",
+      "sprite_id": 229,
+      "directory": "chr_0e5"
+    },
+    {
+      "member_id": 124,
+      "name_text_id": "0x030b",
+      "name": "Azart",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 125,
+      "name_text_id": "0x030c",
+      "name": "Azart",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 126,
+      "name_text_id": "0x030d",
+      "name": "Satrage",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 127,
+      "name_text_id": "0x030e",
+      "name": "Satrage",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 128,
+      "name_text_id": "0x030f",
+      "name": "Navampa",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 129,
+      "name_text_id": "0x0310",
+      "name": "Navampa",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 130,
+      "name_text_id": "0x0311",
+      "name": "Ant Lion",
+      "sprite_id": 182,
+      "directory": null
+    },
+    {
+      "member_id": 131,
+      "name_text_id": "0x0312",
+      "name": "Roach",
+      "sprite_id": 240,
+      "directory": "chr_0f0"
+    },
+    {
+      "member_id": 132,
+      "name_text_id": "0x0313",
+      "name": "Doodle Bug",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 133,
+      "name_text_id": "0x0314",
+      "name": "Toadonpa",
+      "sprite_id": 186,
+      "directory": null
+    },
+    {
+      "member_id": 134,
+      "name_text_id": "0x0315",
+      "name": "Poison Toad",
+      "sprite_id": 189,
+      "directory": "chr_0bd"
+    },
+    {
+      "member_id": 135,
+      "name_text_id": "0x0316",
+      "name": "?",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 136,
+      "name_text_id": "0x0317",
+      "name": "Tornado Lizard",
+      "sprite_id": 239,
+      "directory": "chr_0ef"
+    },
+    {
+      "member_id": 137,
+      "name_text_id": "0x0318",
+      "name": "Storm Lizard",
+      "sprite_id": 186,
+      "directory": null
+    },
+    {
+      "member_id": 138,
+      "name_text_id": "0x0319",
+      "name": "Tempest Lizard",
+      "sprite_id": 183,
+      "directory": null
+    },
+    {
+      "member_id": 139,
+      "name_text_id": "0x031a",
+      "name": "Tret",
+      "sprite_id": 183,
+      "directory": null
+    },
+    {
+      "member_id": 140,
+      "name_text_id": "0x031b",
+      "name": "Fusion Dragon",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 141,
+      "name_text_id": "0x031c",
+      "name": "Deadbeard",
+      "sprite_id": 189,
+      "directory": "chr_0bd"
+    },
+    {
+      "member_id": 142,
+      "name_text_id": "0x031d",
+      "name": "Mimic",
+      "sprite_id": 189,
+      "directory": "chr_0bd"
+    },
+    {
+      "member_id": 143,
+      "name_text_id": "0x031e",
+      "name": "Mimic",
+      "sprite_id": 228,
+      "directory": "mimic"
+    },
+    {
+      "member_id": 144,
+      "name_text_id": "0x031f",
+      "name": "Mimic",
+      "sprite_id": 228,
+      "directory": "mimic"
+    },
+    {
+      "member_id": 145,
+      "name_text_id": "0x0320",
+      "name": "Mimic",
+      "sprite_id": 182,
+      "directory": null
+    },
+    {
+      "member_id": 146,
+      "name_text_id": "0x0321",
+      "name": "Mimic",
+      "sprite_id": 183,
+      "directory": null
+    },
+    {
+      "member_id": 147,
+      "name_text_id": "0x0322",
+      "name": "Mimic",
+      "sprite_id": 189,
+      "directory": "chr_0bd"
+    },
+    {
+      "member_id": 148,
+      "name_text_id": "0x0323",
+      "name": "Mimic",
+      "sprite_id": 189,
+      "directory": "chr_0bd"
+    },
+    {
+      "member_id": 149,
+      "name_text_id": "0x0324",
+      "name": "Mimic",
+      "sprite_id": 183,
+      "directory": null
+    },
+    {
+      "member_id": 150,
+      "name_text_id": "0x0325",
+      "name": "Venus Djinni",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 151,
+      "name_text_id": "0x0326",
+      "name": "Venus Djinni",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 152,
+      "name_text_id": "0x0327",
+      "name": "Venus Djinni",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 153,
+      "name_text_id": "0x0328",
+      "name": "Mercury Djinni",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 154,
+      "name_text_id": "0x0329",
+      "name": "Mercury Djinni",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 155,
+      "name_text_id": "0x032a",
+      "name": "Mercury Djinni",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 156,
+      "name_text_id": "0x032b",
+      "name": "Mercury Djinni",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 157,
+      "name_text_id": "0x032c",
+      "name": "Mars Djinni",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 158,
+      "name_text_id": "0x032d",
+      "name": "Mars Djinni",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 159,
+      "name_text_id": "0x032e",
+      "name": "Mars Djinni",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 160,
+      "name_text_id": "0x032f",
+      "name": "Jupiter Djinni",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 161,
+      "name_text_id": "0x0330",
+      "name": "Jupiter Djinni",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 162,
+      "name_text_id": "0x0331",
+      "name": "Jupiter Djinni",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    },
+    {
+      "member_id": 163,
+      "name_text_id": "0x0332",
+      "name": "Jupiter Djinni",
+      "sprite_id": 0,
+      "directory": "chr_000"
+    }
+  ]
+}

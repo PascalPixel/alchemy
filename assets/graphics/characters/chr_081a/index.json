@@ -103,7 +103,7 @@
       "address": "0x081c9344",
       "size": "0x000022c4",
       "directory": "0x081cb578",
-      "plan": "chr_023/bank.json"
+      "plan": "earth-golem/bank.json"
     },
     {
       "id": "024",

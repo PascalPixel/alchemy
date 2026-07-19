@@ -40,7 +40,7 @@
       "address": "0x081e7230",
       "size": "0x00002650",
       "directory": "0x081e97f8",
-      "plan": "chr_031/bank.json"
+      "plan": "thunder-lizard/bank.json"
     },
     {
       "id": "032",

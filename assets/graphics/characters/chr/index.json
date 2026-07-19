@@ -71,7 +71,7 @@
       "address": "0x0825642c",
       "size": "0x00002670",
       "directory": "0x08258a10",
-      "plan": "chr_086/bank.json"
+      "plan": "magicore/bank.json"
     },
     {
       "id": "087",
@@ -159,7 +159,7 @@
       "address": "0x082695a4",
       "size": "0x00002394",
       "directory": "0x0826b89c",
-      "plan": "chr_070/bank.json"
+      "plan": "wild-gryphon/bank.json"
     },
     {
       "id": "071",
@@ -263,7 +263,7 @@
       "address": "0x0828350c",
       "size": "0x00002528",
       "directory": "0x082859ac",
-      "plan": "chr_0a3/bank.json"
+      "plan": "dread-hound/bank.json"
     },
     {
       "id": "0a4",

@@ -37,6 +37,7 @@ import { build_resource_5 } from "./resource_5.ts";
 import { build_localization_font } from "./localization_font.ts";
 import { build_localization_tables } from "./localization_tables.ts";
 import { build_battle_effect_prefix } from "./battle_effect_data.ts";
+import { build_sentou_resource, build_sentou_series } from "./sentou_resources.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -327,6 +328,20 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           if (plan !== null) entry.plan = plan;
           entries.push(entry);
         }
+      }
+    } else if (series.kind === "golden-sun-sentou-resource-series") {
+      const indexFile = sourcePath(String(series.index));
+      const resources = build_sentou_series(indexFile);
+      for (const resource of resources) {
+        const source = relative(ROOT, resolve(resource.sources[1]));
+        sourcePath(source);
+        entries.push({
+          address: resource.address,
+          size: resource.data.length,
+          kind: "golden-sun-sentou-resource",
+          source,
+          index: String(series.index),
+        });
       }
     } else if (series.kind === "golden-sun-sound-sequence-series") {
       const index = JSON.parse(readFileSync(sourcePath(String(series.index)), "utf8"));
@@ -629,6 +644,13 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
       weighted_records: document.weighted_records.records.length,
       typed_tables: document.typed_tables.length,
     }];
+  }
+  if (kind === "golden-sun-sentou-resource") {
+    const source = sourcePath(String(entry.source));
+    const [built, nested] = build_sentou_resource(source);
+    const sources = [String(entry.index), ...nested.map((name) => relative(ROOT, resolve(name)))];
+    sources.forEach(sourcePath);
+    return [built, [...new Set(sources)], { source_bytes: built.length }];
   }
   if (kind === "golden-sun-gameplay-databases") {
     const source = sourcePath(String(entry.source));

@@ -39,6 +39,20 @@
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
+      "address": "0x081e120c",
+      "size": "0x14ebc",
+      "kind": "golden-sun-static-sprite-series",
+      "source": "assets/graphics/chr_081e/index.json",
+      "palette": "assets/graphics/0800777c.gbapal.png"
+    },
+    {
+      "address": "0x081f60c8",
+      "size": "0x2a098",
+      "kind": "golden-sun-static-sprite-series",
+      "source": "assets/graphics/chr_081f/index.json",
+      "palette": "assets/graphics/0800777c.gbapal.png"
+    },
+    {
       "address": "0x08220160",
       "size": "0x24e60",
       "kind": "golden-sun-static-sprite-series",

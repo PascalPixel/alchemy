@@ -148,6 +148,14 @@ The shared 224-color OBJ palette is the independently reconstructed range
 copied from ROM `0x0800779c`; each `preview.atlas.png` is a generated contact
 sheet and remains ignored.
 
+`data/chr_catalog.json` reconstructs the 512-record character descriptor table
+and its adjacent animation archive. The 367 active descriptors name dimensions,
+scale, draw kind, anchors, frame codec, and symbolic frame/animation tables;
+the other 145 records are implicit zero entries. The 7,804 animation commands
+use semantic operations and 1,997 symbolic labels, preserving pointer aliases
+without embedding pointer bytes. The catalog and first three character banks
+form one exact 139,260-byte runtime unit.
+
 `graphics/chr_0818/`, `graphics/chr_081a/`, `graphics/chr_081e/`,
 `graphics/chr_081f/`, `graphics/chr_zenhan/`, `graphics/chr/`,
 `graphics/chr_0828/`, `graphics/chr_082b/`, and `graphics/chr_0830/`

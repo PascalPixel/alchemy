@@ -102,6 +102,14 @@ numeric. The package rebuilds all 19,440 bytes at
 `0x0809c410..0x080a1000` exactly, including structural alignment derived by the
 builder rather than stored payload.
 
+`data/sentou_menu/` reconstructs the battle-menu display package as five
+consumer-framed 4bpp atlases, cell and row offsets, threshold and selector
+tables, 35 fixed-stride loadout records, sound selectors, multipliers, and
+derived structural alignment. Two following long-branch veneers remain
+assembly because their fixed linker form is not representable in C. Together
+the package and veneers cover all 5,840 bytes at
+`0x080b3940..0x080b5010` without an arbitrary tile-sheet dump.
+
 `code/sentou_kouka/` reconstructs the complete battle-effect runtime package:
 fixed-point constants, consumer-bounded lookup tables, a symbolic 407-slot
 callback directory, relocatable ARM composition fragments, the copied packed

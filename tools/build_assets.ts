@@ -36,6 +36,7 @@ import { build_message_archive } from "./message_archive.ts";
 import { build_resource_5 } from "./resource_5.ts";
 import { build_localization_font } from "./localization_font.ts";
 import { build_localization_tables } from "./localization_tables.ts";
+import { build_battle_effect_prefix } from "./battle_effect_data.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -613,6 +614,21 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     }
     const built = build_localization_tables(document);
     return [built, [String(entry.source)], { segments: document.segments.length }];
+  }
+  if (kind === "golden-sun-battle-effect-data") {
+    const source = sourcePath(String(entry.source));
+    const document = JSON.parse(readFileSync(source, "utf8"));
+    if (number(document.address) !== number(entry.address) ||
+        number(document.end) - number(document.address) !== number(entry.size))
+      throw new Error("battle-effect extent differs from manifest");
+    const nested = document.direct_graphics.map((item: Json) => `assets/${String(item.source)}`);
+    nested.forEach(sourcePath);
+    const built = build_battle_effect_prefix(document, join(ROOT, "assets"));
+    return [built, [String(entry.source), ...nested], {
+      graphics: document.direct_graphics.length,
+      weighted_records: document.weighted_records.records.length,
+      typed_tables: document.typed_tables.length,
+    }];
   }
   if (kind === "golden-sun-gameplay-databases") {
     const source = sourcePath(String(entry.source));

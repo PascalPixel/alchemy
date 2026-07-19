@@ -21,6 +21,7 @@ interface Options {
   jobs: number;
   limit?: number;
   shard?: [number, number];
+  seed: number;
 }
 
 function parseArguments(argv: string[]): Options {
@@ -32,6 +33,7 @@ function parseArguments(argv: string[]): Options {
     steps: 400,
     restarts: 6,
     jobs: Math.max(2, Math.min(14, (navigator.hardwareConcurrency || 4) - 2)),
+    seed: 0,
   };
   for (let index = 0; index < argv.length; index++) {
     const argument = argv[index];
@@ -42,6 +44,7 @@ function parseArguments(argv: string[]): Options {
     else if (argument === "--restarts") options.restarts = Number(argv[++index]);
     else if (argument === "--jobs") options.jobs = Number(argv[++index]);
     else if (argument === "--limit") options.limit = Number(argv[++index]);
+    else if (argument === "--seed") options.seed = Number(argv[++index]);
     else if (argument === "--shard") {
       const [part, total] = argv[++index].split("/").map(Number);
       options.shard = [part, total];
@@ -154,7 +157,27 @@ function mutate(body: string, random: () => number): string {
     }
     return body;
   }
-  if (roll < 0.9) return volatileHardware(body);
+  if (roll < 0.86) {
+    // 条件反転: if (X) A else B ↔ if (!(X)) B else A
+    const pattern = /if \(([^)]+)\) \{\n([\s\S]+?\n)(\s+)\} else \{\n([\s\S]+?\n)(\s+)\}/;
+    const match = pattern.exec(body);
+    if (match === null) return body;
+    return body.replace(pattern, `if (!(${match[1]})) {\n${match[4]}${match[3]}} else {\n${match[2]}${match[5]}}`);
+  }
+  if (roll < 0.92) {
+    // 複合代入の展開と圧縮: x += K ↔ x = x + K
+    if (random() < 0.5) {
+      const pattern = /(\w+) \+= ([^;]+);/;
+      const match = pattern.exec(body);
+      if (match === null) return body;
+      return body.replace(pattern, `${match[1]} = ${match[1]} + ${match[2]};`);
+    }
+    const pattern = /(\w+) =  \+ ([^;]+);/;
+    const match = pattern.exec(body);
+    if (match === null) return body;
+    return body.replace(pattern, `${match[1]} += ${match[2]};`);
+  }
+  if (roll < 0.96) return volatileHardware(body);
   return postIncrementWalk(body);
 }
 
@@ -204,6 +227,9 @@ async function main(): Promise<void> {
       const target = targets[index];
       const raw = readFileSync(join(options.drafts, `${target.stem}.c`), "utf8");
       const bases: string[] = [];
+      // 前回までの最良候補があれば出発点に加える。
+      const saved = join(ROOT, "out/brute/best", `${target.stem}.c`);
+      if (existsSync(saved)) bases.push(readFileSync(saved, "utf8").replace(M2C_PREAMBLE, ""));
       const unknowns = raw.includes("M2C_UNK") ? ["void", "s32", "u32", "u8"] : [null as unknown as string];
       for (const unknown of unknowns) {
         const seeded = unknown === null ? raw : raw.replaceAll("M2C_UNK", unknown);
@@ -217,7 +243,7 @@ async function main(): Promise<void> {
       if (best === null || best.mismatch > 96) continue;
       let done = false;
       for (let restart = 0; restart < options.restarts && !done; restart++) {
-        const random = makeRandom(Number.parseInt(target.stem, 16) ^ (restart * 0x9e3779b9));
+        const random = makeRandom(Number.parseInt(target.stem, 16) ^ ((restart + options.seed * 64) * 0x9e3779b9));
         let current = { ...best };
         let sinceImprovement = 0;
         for (let step = 0; step < options.steps; step++) {
@@ -247,7 +273,12 @@ async function main(): Promise<void> {
           }
         }
       }
-      if (!done) console.log(`floor ${target.stem}: ${best.mismatch} (start=${target.mismatch})`);
+      if (!done) {
+        // 到達した最良体を保存し、次回の出発点にする。
+        mkdirSync(join(ROOT, "out/brute/best"), { recursive: true });
+        writeFileSync(join(ROOT, "out/brute/best", `${target.stem}.c`), M2C_PREAMBLE + best.body);
+        console.log(`floor ${target.stem}: ${best.mismatch} (start=${target.mismatch})`);
+      }
     }
   }
   await Promise.all(Array.from({ length: options.jobs }, (_, index) => worker(index)));

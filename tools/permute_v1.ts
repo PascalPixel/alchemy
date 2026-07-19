@@ -70,9 +70,10 @@ function makeRandom(seed: number): () => number {
 
 // ---- 採点 -------------------------------------------------------------
 
-function run(command: string[]): { code: number; stdout: string } {
-  const result = Bun.spawnSync(command, { cwd: ROOT, stdout: "pipe", stderr: "pipe" });
-  return { code: result.exitCode, stdout: Buffer.from(result.stdout).toString("utf8") };
+async function run(command: string[]): Promise<{ code: number; stdout: string }> {
+  const child = Bun.spawn(command, { cwd: ROOT, stdout: "pipe", stderr: "pipe" });
+  const [stdout, code] = await Promise.all([new Response(child.stdout).text(), child.exited]);
+  return { code, stdout };
 }
 
 class Scorer {
@@ -89,23 +90,23 @@ class Scorer {
 
   // 完全リンクでバイト列を得る。外部シンボル束は未定義集合が変わった
   // ときだけ作り直す。失敗は巨大コストとして返す。
-  bytes(source: string): Buffer | null {
+  async bytes(source: string): Promise<Buffer | null> {
     const prefix = join(this.scratch, this.stem);
     const cFile = `${prefix}.c`, sFile = `${prefix}.s`, oFile = `${prefix}.o`;
     const elf = `${prefix}.elf`, bin = `${prefix}.bin`;
     writeFileSync(cFile, source);
-    if (run(compilerCommand(...CFLAGS, "-S", "-o", sFile, cFile)).code !== 0) return null;
-    if (run(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", oFile, sFile]).code !== 0) return null;
+    if ((await run(compilerCommand(...CFLAGS, "-S", "-o", sFile, cFile))).code !== 0) return null;
+    if ((await run(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", oFile, sFile])).code !== 0) return null;
     const address = `0x${this.stem}`;
     const link = () => run([
       "arm-none-eabi-ld", `-Ttext=${address}`, "-e", `Func_${this.stem}`,
       "-o", elf, oFile, ...(this.symbolsObject ? [this.symbolsObject] : []),
     ]);
-    let linked = link();
+    let linked = await link();
     if (linked.code !== 0) {
       // 未定義シンボルの束を再生成して一度だけ再試行する。
       const undefinedNames: string[] = [];
-      for (const line of run(["arm-none-eabi-nm", "-u", oFile]).stdout.split(/\r?\n/).filter(Boolean)) {
+      for (const line of (await run(["arm-none-eabi-nm", "-u", oFile])).stdout.split(/\r?\n/).filter(Boolean)) {
         const name = line.trim().split(/\s+/).at(-1)!;
         if (externalSymbol(name) === null) return null;
         undefinedNames.push(name);
@@ -114,23 +115,23 @@ class Scorer {
       const symbolsSource = `${prefix}.symbols.s`;
       writeFileSync(symbolsSource, ".syntax unified\n.thumb\n" + undefinedNames.map(externalSymbolAssembly).join(""));
       const symbolsObject = `${prefix}.symbols.o`;
-      if (run(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", symbolsObject, symbolsSource]).code !== 0) return null;
+      if ((await run(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", symbolsObject, symbolsSource])).code !== 0) return null;
       this.symbolsObject = symbolsObject;
       this.symbolsKey = key;
-      linked = link();
+      linked = await link();
       if (linked.code !== 0) return null;
     }
-    if (run(["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", elf, bin]).code !== 0) return null;
+    if ((await run(["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", elf, bin])).code !== 0) return null;
     return readFileSync(bin).subarray(0, Math.max(this.expected.length, 4));
   }
 
   // 重み付き半語編集距離。同系オペコードのレジスタ差は軽く、
   // 系統違いは重く、長さずれは最も重く数える。
-  score(source: string): number {
+  async score(source: string): Promise<number> {
     const key = `${this.stem}:${Bun.hash(source).toString(36)}`;
     const cached = Scorer.cache.get(key);
     if (cached !== undefined) return cached;
-    const actual = this.bytes(source);
+    const actual = await this.bytes(source);
     const value = actual === null ? Number.MAX_SAFE_INTEGER : weightedDiff(actual, this.expected);
     Scorer.cache.set(key, value);
     if (Scorer.cacheFile !== "" && value !== Number.MAX_SAFE_INTEGER) {
@@ -552,7 +553,9 @@ async function main(): Promise<void> {
   console.log(`cache=${Scorer.cache.size}`);
   const recipes = loadRecipes();
   let matchedCount = 0;
-  for (const stem of stems) {
+  let cursor = 0;
+  const concurrency = Math.max(4, Math.min(20, (navigator.hardwareConcurrency || 8) - 2));
+  async function processTarget(stem: string): Promise<void> {
     const scratch = join(output, stem);
     mkdirSync(scratch, { recursive: true });
     // 期待バイトはROMの当該領域そのもの。完全リンク採点なので直接使える。
@@ -582,11 +585,11 @@ async function main(): Promise<void> {
           scorer = new Scorer(stem, expected, scratch);
         } catch { continue; }
       }
-      const value = scorer!.score(probeSource);
+      const value = await scorer!.score(probeSource);
       const body = probeSource.replace(M2C_PREAMBLE, "");
       if (best === null || value < best.score) best = { body, score: value };
     }
-    if (best === null || scorer === null || best.score > 400) { console.log(`unusable ${stem}`); continue; }
+    if (best === null || scorer === null || best.score > 400) { console.log(`unusable ${stem}`); return; }
 
     // 成功手順の再演を最初に試す。
     let done = false;
@@ -599,7 +602,7 @@ async function main(): Promise<void> {
         const next = operator(body, random);
         if (next !== null) body = next;
       }
-      const value = scorer.score(M2C_PREAMBLE + body);
+      const value = await scorer.score(M2C_PREAMBLE + body);
       if (value === 0 && install(stem, M2C_PREAMBLE + body, rom, scratch)) {
         console.log(`matched ${stem} (recipe)`);
         matchedCount++; done = true; break;
@@ -624,7 +627,7 @@ async function main(): Promise<void> {
         const record = (state.operators[operatorName] ??= { tried: 0, accepted: 0 });
         record.tried++;
         if (next === null || next === current.body) continue;
-        const value = scorer.score(M2C_PREAMBLE + next);
+        const value = await scorer.score(M2C_PREAMBLE + next);
         sinceImprovement++;
         const delta = value - current.score;
         if (delta <= 0 || random() < Math.exp(-delta / temperature)) {
@@ -662,6 +665,14 @@ async function main(): Promise<void> {
       rmSync(join(STATE_DIR, `${stem}.json`), { force: true });
     }
   }
+  async function pump(): Promise<void> {
+    while (true) {
+      const index = cursor++;
+      if (index >= stems.length) return;
+      await processTarget(stems[index]);
+    }
+  }
+  await Promise.all(Array.from({ length: concurrency }, pump));
   console.log(`matched=${matchedCount} of ${stems.length}`);
 }
 

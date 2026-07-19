@@ -85,12 +85,14 @@ reserved bytes and regenerate them as zero; the source also declares the final
 2,516-byte resource alignment. The complete `0x0807a828..0x0808a000` range is
 an exact build input, not a raw database slice.
 
-`data/battle_effect_data/layout.json` reconstructs the first coherent battle
-effect data package as two 4bpp object-tile sheets, 104 weighted result records,
-and eight consumer-indexed rule and mapping tables. Field widths and signedness
+`data/battle_effect_data/layout.json` reconstructs the complete coherent battle
+effect data package as six object-tile sheets, 104 weighted result records,
+consumer-indexed rule and lookup tables, a generated sine curve, 32 gradients,
+symbolic pointers, and 29 typed object scripts. Field widths and signedness
 follow the runtime consumers; selectors with no proven semantic name remain
-numeric. The package rebuilds all 8,382 bytes at
-`0x0809c410..0x0809e4ce` exactly and ends at the next compression boundary.
+numeric. The package rebuilds all 19,440 bytes at
+`0x0809c410..0x080a1000` exactly, including structural alignment derived by the
+builder rather than stored payload.
 
 `data/encounter_data/` reconstructs the consumer-proven encounter database as
 two signed brightness phases, 380 formations, 20 preload IDs, 172 metadata

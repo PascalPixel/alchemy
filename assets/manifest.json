@@ -87,7 +87,7 @@
     },
     {
       "address": "0x0809c410",
-      "size": "0x20be",
+      "size": "0x4bf0",
       "kind": "golden-sun-battle-effect-data",
       "source": "assets/data/battle_effect_data/layout.json"
     },

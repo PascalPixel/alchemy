@@ -36,7 +36,7 @@ import { build_message_archive } from "./message_archive.ts";
 import { build_resource_5 } from "./resource_5.ts";
 import { build_localization_font } from "./localization_font.ts";
 import { build_localization_tables } from "./localization_tables.ts";
-import { build_battle_effect_prefix } from "./battle_effect_data.ts";
+import { build_battle_effect_data } from "./battle_effect_data.ts";
 import { build_sentou_resource, build_sentou_series } from "./sentou_resources.ts";
 import { build_encounter_regions } from "./encounter_data.ts";
 import { build_namae_nyuuryoku } from "./namae_nyuuryoku.ts";
@@ -649,11 +649,15 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     if (number(document.address) !== number(entry.address) ||
         number(document.end) - number(document.address) !== number(entry.size))
       throw new Error("battle-effect extent differs from manifest");
-    const nested = document.direct_graphics.map((item: Json) => `assets/${String(item.source)}`);
+    const nested = [
+      ...document.direct_graphics.map((item: Json) => `assets/${String(item.source)}`),
+      `assets/${String(document.halfword_graphic.source)}`,
+      ...document.palette_graphics.map((item: Json) => `assets/${String(item.source)}`),
+    ];
     nested.forEach(sourcePath);
-    const built = build_battle_effect_prefix(document, join(ROOT, "assets"));
+    const built = build_battle_effect_data(document, join(ROOT, "assets"));
     return [built, [String(entry.source), ...nested], {
-      graphics: document.direct_graphics.length,
+      graphics: document.direct_graphics.length + 1 + document.palette_graphics.length,
       weighted_records: document.weighted_records.records.length,
       typed_tables: document.typed_tables.length,
     }];

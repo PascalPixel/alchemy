@@ -60,6 +60,13 @@
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
+      "address": "0x082b5060",
+      "size": "0x4bf14",
+      "kind": "golden-sun-static-sprite-series",
+      "source": "assets/graphics/chr_082b/index.json",
+      "palette": "assets/graphics/0800777c.gbapal.png"
+    },
+    {
       "address": "0x08333fc8",
       "size": "0x182a",
       "kind": "golden-sun-general-lz",

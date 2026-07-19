@@ -44,6 +44,12 @@
       "source": "assets/data/runtime_support.json"
     },
     {
+      "address": "0x080092b8",
+      "size": "0x900",
+      "kind": "golden-sun-byte-henkan-tables",
+      "source": "assets/data/byte_henkan/hyou.json"
+    },
+    {
       "address": "0x08013784",
       "size": "0x8b8",
       "kind": "golden-sun-map-load-table",

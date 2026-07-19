@@ -57,6 +57,14 @@ dot-product kernel is reconstructed as instructions because its caller copies
 it to the stack before execution. Four unreferenced address pools totaling 220
 bytes remain fallback until their ownership is independently proven.
 
+`data/byte_henkan/hyou.json` reconstructs nine 256-byte conversion tables as
+fourteen explicit 16-byte rows followed by two derived zero rows. Five tables
+are complete permutations of `0..223`; four are bounded mappings. The adjacent
+caller-sized ARM modules remain structured assembly because the approved
+compiler emits Thumb only, and the preceding fixed long-call veneer remains
+linker reconstruction. Together these sources cover all 5,836 bytes at
+`0x080092b0..0x0800a97c`.
+
 `graphics/direct_palettes/` contains three 64-color resources selected by
 fixed pointer-table IDs. Their call sites copy exactly `0x80` bytes to palette
 RAM; names beyond the independently derived IDs are intentionally omitted.

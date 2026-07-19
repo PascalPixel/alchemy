@@ -66,6 +66,11 @@ import {
   build_runtime_support_component,
   parse_runtime_support_source,
 } from "./runtime_support_data.ts";
+import {
+  BYTE_HENKAN_ADDRESS,
+  BYTE_HENKAN_SIZE,
+  build_byte_henkan_tables,
+} from "./byte_henkan.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -724,6 +729,19 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     const document = parse_runtime_support_source(readFileSync(source, "utf8"));
     const built = build_runtime_support_component(document, number(entry.address), number(entry.size));
     return [built, [String(entry.source)], { component_address: entry.address, bytes: built.length }];
+  }
+  if (kind === "golden-sun-byte-henkan-tables") {
+    const sourceName = String(entry.source);
+    const built = build_byte_henkan_tables(sourcePath(sourceName));
+    if (number(entry.address) !== BYTE_HENKAN_ADDRESS || number(entry.size) !== BYTE_HENKAN_SIZE ||
+        built.length !== BYTE_HENKAN_SIZE) {
+      throw new Error("byte-conversion tables differ from canonical manifest extent");
+    }
+    return [built, [sourceName], {
+      source_bytes: built.length,
+      tables: 9,
+      derived_zero_bytes: 288,
+    }];
   }
   if (kind === "golden-sun-character-catalog") {
     const source = sourcePath(String(entry.source));

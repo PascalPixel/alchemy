@@ -22,7 +22,7 @@ export const STATIC_PALETTE_OFFSET = 16;
 export const STATIC_PALETTE_ENTRIES = 224;
 const DESCRIPTOR_SIZE = 20;
 export const STATIC_DESCRIPTOR_COUNT = 0x200;
-const ATLAS_COLUMNS = 8;
+const DEFAULT_ATLAS_COLUMNS = 8;
 
 type Json = Record<string, any>;
 
@@ -44,6 +44,18 @@ interface PackageLayout {
   end: number;
   pointers: number[];
   uniquePointers: number[];
+}
+
+export interface StaticSpriteAtlasLayout {
+  source?: string;
+  columns: number;
+  frames: Array<number | null>;
+}
+
+interface AtlasDefinition {
+  source: string;
+  columns: number;
+  frames: Array<number | null>;
 }
 
 export interface StaticSpriteSeriesOptions {
@@ -202,9 +214,48 @@ function descriptorPackages(
   return packages;
 }
 
-function makeAtlas(frames: readonly Uint8Array[], width: number, height: number, palette: readonly Rgb[]): Buffer {
+function atlasDefinitions(value: unknown, frameCount: number): AtlasDefinition[] {
+  if (!Array.isArray(value) || value.length === 0) throw new Error("sprite atlas list is empty");
+  const definitions: AtlasDefinition[] = [];
+  const covered = new Set<number>();
+  const sources = new Set<string>();
+  for (const item of value) {
+    if (!item || typeof item !== "object") throw new Error("invalid sprite atlas entry");
+    const source = String((item as Json).source ?? "");
+    if (!/^koma(?:_[0-9a-f]{2})?\.8bpp\.png$/.test(source) || sources.has(source)) {
+      throw new Error("invalid sprite atlas source");
+    }
+    sources.add(source);
+    const columns = number((item as Json).columns);
+    const sourceFrames = (item as Json).frames;
+    if (!Array.isArray(sourceFrames) || sourceFrames.length === 0 || columns < 1 || columns > sourceFrames.length) {
+      throw new Error("invalid sprite atlas layout");
+    }
+    const frames = sourceFrames.map((entry: unknown) => entry === null ? null : number(entry as number));
+    const present = frames.filter((frame): frame is number => frame !== null);
+    if (new Set(present).size !== present.length) throw new Error("sprite atlas repeats a frame");
+    for (const frame of frames) {
+      if (frame === null) continue;
+      if (frame < 0 || frame >= frameCount) throw new Error("sprite atlas frame is outside its bank");
+      covered.add(frame);
+    }
+    definitions.push({ source, columns, frames });
+  }
+  if (covered.size !== frameCount) throw new Error("sprite atlases do not cover their bank");
+  return definitions;
+}
+
+function localAtlasPath(directory: string, source: string, existing: boolean): string {
+  if (!/^koma(?:_[0-9a-f]{2})?\.8bpp\.png$/.test(source)) throw new Error("invalid sprite atlas source");
+  return existing ? confined(directory, source) : join(directory, source);
+}
+
+function makeAtlas(
+  frames: readonly Uint8Array[], width: number, height: number,
+  palette: readonly Rgb[], columns: number,
+): Buffer {
   if (frames.length === 0) throw new Error("sprite atlas cannot be empty");
-  const columns = Math.min(ATLAS_COLUMNS, frames.length);
+  integer(columns, 1, frames.length, "sprite atlas columns");
   const rows = Math.ceil(frames.length / columns);
   const atlasWidth = columns * width;
   const atlas = Buffer.alloc(atlasWidth * rows * height);
@@ -219,16 +270,21 @@ function makeAtlas(frames: readonly Uint8Array[], width: number, height: number,
   return png(atlas, atlasWidth, rows * height, [...palette]);
 }
 
-function atlasFrames(image: Uint8Array, plan: Json, palette: readonly Rgb[]): Buffer[] {
+function atlasFrames(
+  image: Uint8Array, frameWidth: number, frameHeight: number,
+  frameCount: number, columns: number, palette: readonly Rgb[],
+): Buffer[] {
   const [width, height, sourcePixels, actualPalette] = indexed_png(image);
   const pixels = Buffer.from(sourcePixels);
   if (!Bun.deepEquals(actualPalette, palette, true)) {
     throw new Error("sprite atlas does not use the shared OBJ palette");
   }
-  const frameWidth = number(plan.width), frameHeight = number(plan.height);
-  const frameCount = plan.frames.length, columns = number(plan.atlas_columns);
+  integer(frameWidth, 1, 0x10000, "sprite frame width");
+  integer(frameHeight, 1, 0x10000, "sprite frame height");
+  integer(frameCount, 1, 0x100000, "sprite atlas frame count");
+  integer(columns, 1, frameCount, "sprite atlas columns");
   const rows = Math.ceil(frameCount / columns);
-  if (columns !== Math.min(ATLAS_COLUMNS, frameCount) || width !== columns * frameWidth || height !== rows * frameHeight) {
+  if (width !== columns * frameWidth || height !== rows * frameHeight) {
     throw new Error("sprite atlas dimensions differ from its plan");
   }
   const frames: Buffer[] = [];
@@ -254,6 +310,69 @@ function atlasFrames(image: Uint8Array, plan: Json, palette: readonly Rgb[]): Bu
     }
   }
   return frames;
+}
+
+function readAtlasFrames(
+  root: string, item: Json, planPath: string, plan: Json, palette: readonly Rgb[],
+): Buffer[] {
+  const frameWidth = number(plan.width), frameHeight = number(plan.height);
+  const frameCount = plan.frames.length;
+  if (plan.atlases === undefined) {
+    if (typeof item.source !== "string") throw new Error(`sprite package ${item.id} lacks its atlas source`);
+    const columns = number(plan.atlas_columns);
+    return atlasFrames(
+      readFileSync(confined(root, item.source)), frameWidth, frameHeight,
+      frameCount, columns, palette,
+    );
+  }
+  if (item.source !== undefined || plan.atlas_columns !== undefined) {
+    throw new Error(`sprite package ${item.id} mixes atlas layouts`);
+  }
+  const definitions = atlasDefinitions(plan.atlases, frameCount);
+  const frames: Array<Buffer | undefined> = Array(frameCount);
+  for (const definition of definitions) {
+    const sourceFrames = atlasFrames(
+      readFileSync(localAtlasPath(dirname(planPath), definition.source, true)),
+      frameWidth, frameHeight, definition.frames.length, definition.columns, palette,
+    );
+    definition.frames.forEach((frameIndex, index) => {
+      if (frameIndex === null) {
+        if (sourceFrames[index].some((pixel) => pixel !== 0)) {
+          throw new Error(`sprite package ${item.id} atlas spacer is not transparent`);
+        }
+        return;
+      }
+      const previous = frames[frameIndex];
+      if (previous && !previous.equals(sourceFrames[index])) {
+        throw new Error(`sprite package ${item.id} shared frame differs between atlases`);
+      }
+      frames[frameIndex] = sourceFrames[index];
+    });
+  }
+  if (frames.some((frame) => frame === undefined)) throw new Error(`sprite package ${item.id} lacks a frame`);
+  return frames as Buffer[];
+}
+
+function storedAtlasDefinitions(planPath: string, frameCount: number): AtlasDefinition[] | undefined {
+  if (!existsSync(planPath)) return undefined;
+  const plan = JSON.parse(readFileSync(planPath, "utf8"));
+  if (plan.atlases === undefined) return undefined;
+  return atlasDefinitions(plan.atlases, frameCount);
+}
+
+function writeAtlases(
+  directory: string, definitions: readonly AtlasDefinition[], frames: readonly Buffer[],
+  width: number, height: number, palette: readonly Rgb[],
+): string[] {
+  const paths: string[] = [];
+  for (const definition of definitions) {
+    const path = localAtlasPath(directory, definition.source, false);
+    const selected = definition.frames.map((frame) =>
+      frame === null ? Buffer.alloc(width * height) : frames[frame]);
+    writeFileSync(path, makeAtlas(selected, width, height, palette, definition.columns));
+    paths.push(path);
+  }
+  return paths;
 }
 
 export function build_static_sprite_series(indexPath: string, palettePath: string): [Buffer, Json] {
@@ -283,7 +402,6 @@ export function build_static_sprite_series(indexPath: string, palettePath: strin
     const address = number(item.address), end = address + number(item.size);
     if (base + result.length !== address) throw new Error(`sprite package ${item.id} is not contiguous`);
     const planPath = confined(root, String(item.plan));
-    const imagePath = confined(root, String(item.source));
     const plan = JSON.parse(readFileSync(planPath, "utf8"));
     if (plan.format !== 1 || plan.codec !== "golden-sun-static-sprite-bank" || !Array.isArray(plan.frames) || !Array.isArray(plan.directory)) {
       throw new Error(`unsupported sprite package plan: ${item.id}`);
@@ -295,7 +413,7 @@ export function build_static_sprite_series(indexPath: string, palettePath: strin
     if (item.mode !== undefined && number(item.mode) !== planMode) {
       throw new Error(`sprite package ${item.id} mode differs from its index`);
     }
-    const frames = atlasFrames(readFileSync(imagePath), plan, palette);
+    const frames = readAtlasFrames(root, item, planPath, plan, palette);
     const offsets: number[] = [];
     for (const [frameIndex, frame] of frames.entries()) {
       if (static_sprite_plan_mode(plan.frames[frameIndex]) !== planMode) {
@@ -346,7 +464,6 @@ export function export_static_sprite_series(
   for (const item of packages) {
     const id = item.ids[0].toString(16).padStart(3, "0");
     const resourceDirectory = join(directory, `chr_${id}`);
-    const imagePath = join(resourceDirectory, "koma.8bpp.png");
     const planPath = join(resourceDirectory, "bank.json");
     const frames: Buffer[] = [];
     const plans: Json[] = [];
@@ -371,21 +488,27 @@ export function export_static_sprite_series(
       plans.push(trace.plan);
     }
     const pointerIndex = new Map(item.uniquePointers.map((pointer, index) => [pointer, index]));
+    const storedDefinitions = storedAtlasDefinitions(planPath, frames.length);
+    const definitions = storedDefinitions ?? [{
+      source: "koma.8bpp.png",
+      columns: Math.min(DEFAULT_ATLAS_COLUMNS, frames.length),
+      frames: Array.from({ length: frames.length }, (_, index) => index),
+    }];
     const plan = {
       format: 1,
       codec: "golden-sun-static-sprite-bank",
       ...(item.mode === 3 ? {} : { mode: item.mode }),
       width: item.width,
       height: item.height,
-      atlas_columns: Math.min(ATLAS_COLUMNS, frames.length),
+      ...(storedDefinitions ? { atlases: definitions } : { atlas_columns: definitions[0].columns }),
       alignment_zeros: alignment,
       frames: plans,
       directory: item.pointers.map((pointer) => pointerIndex.get(pointer)),
     };
     mkdirSync(resourceDirectory, { recursive: true });
-    writeFileSync(imagePath, makeAtlas(frames, item.width, item.height, palette));
+    const imagePaths = writeAtlases(resourceDirectory, definitions, frames, item.width, item.height, palette);
     writeFileSync(planPath, JSON.stringify(plan) + "\n");
-    prune_files(resourceDirectory, "koma*.png", [imagePath]);
+    prune_files(resourceDirectory, "koma*.png", imagePaths);
     const relativeRoot = `chr_${id}`;
     packageEntries.push({
       id,
@@ -394,7 +517,7 @@ export function export_static_sprite_series(
       address: hex(item.address),
       size: hex(item.end - item.address),
       directory: hex(item.directory),
-      source: `${relativeRoot}/koma.8bpp.png`,
+      ...(storedDefinitions ? {} : { source: `${relativeRoot}/koma.8bpp.png` }),
       plan: `${relativeRoot}/bank.json`,
     });
   }
@@ -419,6 +542,71 @@ export function export_static_sprite_series(
   return index;
 }
 
+export function repack_static_sprite_atlases(
+  indexPath: string, palettePath: string,
+  layouts: Readonly<Record<string, readonly StaticSpriteAtlasLayout[]>>,
+): Json {
+  const index = JSON.parse(readFileSync(indexPath, "utf8"));
+  if (index.format !== 1 || index.codec !== "golden-sun-static-sprite-series" || !Array.isArray(index.packages)) {
+    throw new Error("unsupported static-sprite series index");
+  }
+  const [before] = build_static_sprite_series(indexPath, palettePath);
+  const palette = selectedPalette(palettePath, number(index.palette_offset), number(index.palette_entries));
+  const root = dirname(indexPath);
+  const prepared: Array<{
+    item: Json;
+    plan: Json;
+    planPath: string;
+    directory: string;
+    frames: Buffer[];
+    definitions: AtlasDefinition[];
+  }> = [];
+  let atlasCount = 0, sourceCells = 0, uniqueFrames = 0;
+  for (const [id, requested] of Object.entries(layouts)) {
+    const item = index.packages.find((entry: Json) => String(entry.id) === id);
+    if (!item) throw new Error(`sprite package ${id} is absent`);
+    const planPath = confined(root, String(item.plan));
+    const plan = JSON.parse(readFileSync(planPath, "utf8"));
+    if (plan.format !== 1 || plan.codec !== "golden-sun-static-sprite-bank" || !Array.isArray(plan.frames)) {
+      throw new Error(`unsupported sprite package plan: ${id}`);
+    }
+    const frames = readAtlasFrames(root, item, planPath, plan, palette);
+    const generated = requested.map((entry, atlasIndex) => ({
+      source: entry.source ?? (requested.length === 1
+        ? "koma.8bpp.png"
+        : `koma_${atlasIndex.toString(16).padStart(2, "0")}.8bpp.png`),
+      columns: entry.columns,
+      frames: [...entry.frames],
+    }));
+    const definitions = atlasDefinitions(generated, frames.length);
+    prepared.push({ item, plan, planPath, directory: dirname(planPath), frames, definitions });
+    atlasCount += definitions.length;
+    sourceCells += definitions.reduce((sum, entry) => sum + entry.frames.length, 0);
+    uniqueFrames += frames.length;
+  }
+  for (const entry of prepared) {
+    const paths = writeAtlases(
+      entry.directory, entry.definitions, entry.frames,
+      number(entry.plan.width), number(entry.plan.height), palette,
+    );
+    delete entry.plan.atlas_columns;
+    entry.plan.atlases = entry.definitions;
+    writeFileSync(entry.planPath, JSON.stringify(entry.plan) + "\n");
+    delete entry.item.source;
+    prune_files(entry.directory, "koma*.png", paths);
+  }
+  writeFileSync(indexPath, JSON.stringify(index, null, 2) + "\n");
+  const [after] = build_static_sprite_series(indexPath, palettePath);
+  if (!after.equals(before)) throw new Error("repacked sprite atlases do not round trip");
+  return {
+    packages: prepared.length,
+    atlases: atlasCount,
+    source_cells: sourceCells,
+    unique_frames: uniqueFrames,
+    bytes: after.length,
+  };
+}
+
 export function selfTest(): void {
   try {
     number(1.5);
@@ -439,6 +627,22 @@ export function selfTest(): void {
     throw new Error("nonzero static-sprite suffix was accepted");
   } catch (error) {
     if ((error as Error).message === "nonzero static-sprite suffix was accepted") throw error;
+  }
+  const testPalette: Rgb[] = [[0, 0, 0], [255, 255, 255]];
+  const testFrames = [
+    Buffer.alloc(64, 0), Buffer.alloc(64, 1), Buffer.from(Array.from({ length: 64 }, (_, index) => index & 1)),
+  ];
+  const testAtlas = makeAtlas(testFrames, 8, 8, testPalette, 2);
+  const replayFrames = atlasFrames(testAtlas, 8, 8, testFrames.length, 2, testPalette);
+  if (!replayFrames.every((frame, index) => frame.equals(testFrames[index]))) {
+    throw new Error("static-sprite atlas layout self-test failed");
+  }
+  const shared = atlasDefinitions([
+    { source: "koma_00.8bpp.png", columns: 2, frames: [null, 0, 1] },
+    { source: "koma_01.8bpp.png", columns: 2, frames: [0, 2] },
+  ], 3);
+  if (shared.length !== 2 || shared[0].frames[0] !== null || shared[1].frames[1] !== 2) {
+    throw new Error("static-sprite shared-atlas self-test failed");
   }
   const temporary = mkdtempSync(join(tmpdir(), "alchemy-static-series-"));
   try {

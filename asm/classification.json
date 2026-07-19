@@ -18,8 +18,8 @@
       "evidence": [
         "fixed_ldr_r4_bx_r4_literal"
       ],
-      "expected_files": 319,
-      "expected_bytes": 2552
+      "expected_files": 320,
+      "expected_bytes": 2560
     }
   ],
   "groups": [
@@ -128,6 +128,23 @@
           "origin": "program_or_library_assembly",
           "authorship": "unknown"
         }
+      ]
+    },
+    {
+      "kind": "relocated_stack_arm_kernel",
+      "origin": "program_or_library_runtime",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "dma_copy_to_stack",
+        "arm_instruction_set",
+        "indirect_call_through_relocated_entry",
+        "signed_q16_three_term_dot_product"
+      ],
+      "expected_files": 1,
+      "expected_bytes": 28,
+      "files": [
+        "08007994"
       ]
     },
     {

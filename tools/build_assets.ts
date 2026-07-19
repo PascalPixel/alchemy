@@ -62,6 +62,10 @@ import {
   AUDIO_ENGINE_SIZE,
   build_audio_engine_data,
 } from "./audio_engine_data.ts";
+import {
+  build_runtime_support_component,
+  parse_runtime_support_source,
+} from "./runtime_support_data.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -714,6 +718,12 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     }
     const built = build_resource_directory(document);
     return [built, [String(entry.source)], { slots: built.length / 4 }];
+  }
+  if (kind === "golden-sun-runtime-support-data") {
+    const source = sourcePath(String(entry.source));
+    const document = parse_runtime_support_source(readFileSync(source, "utf8"));
+    const built = build_runtime_support_component(document, number(entry.address), number(entry.size));
+    return [built, [String(entry.source)], { component_address: entry.address, bytes: built.length }];
   }
   if (kind === "golden-sun-character-catalog") {
     const source = sourcePath(String(entry.source));

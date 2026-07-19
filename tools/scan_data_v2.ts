@@ -3,6 +3,7 @@ import type { ComparisonReport } from "./compare_roms.ts";
 import type { DirectResourceCall } from "./scan_resource_calls.ts";
 import { compareRegions } from "./compare_regions.ts";
 import { splitManifestAtPointers } from "./scan_decomp.ts";
+import { diagnose_still, encode_delta7, STILL_PIXELS } from "./indexed_still.ts";
 
 interface Region {
   address: number | string;
@@ -33,7 +34,7 @@ interface DeltaDiagnosis {
 }
 
 type Category =
-  "stateful_delta_archive" |
+  "delta7_indexed_still" |
   "cross_title_shared" |
   "same_game_shared" |
   "regional_variant_shared" |
@@ -107,7 +108,7 @@ function scanDeltaStream(data: Uint8Array, start: number, end: number): {
         length++;
       }
       maximumDistance = Math.max(maximumDistance, distance);
-      if (distance > decoded) prefillReferences++;
+      if (distance > decoded) throw new Error("delta stream has an invalid back-reference");
       decoded += length;
     }
   }
@@ -191,6 +192,14 @@ export function selfTest(): void {
       archive.average_compressed_bytes !== stream.length) {
     throw new Error("data scanner archive-confidence self-test failed");
   }
+  const invalid = diagnoseDeltaArchive(Uint8Array.from([0x80, 0x10, 1, 0, 0]));
+  if (invalid.streams !== 0 || invalid.prefill_references !== 0) {
+    throw new Error("data scanner accepted an invalid back-reference");
+  }
+  const still = Buffer.concat([Buffer.alloc(0x100), encode_delta7(Buffer.alloc(STILL_PIXELS))]);
+  if (diagnose_still(still)?.source_bytes !== still.length) {
+    throw new Error("data scanner delta7-still diagnosis self-test failed");
+  }
   console.log("self-test=ok");
 }
 
@@ -256,16 +265,15 @@ async function main(args: string[]): Promise<void> {
     const ids = pointerIds.get(address) ?? [];
     const calls = ids.flatMap((id) => directCalls.get(id) ?? []);
     const delta = diagnoseDeltaArchive(bytes);
-    const stateful = ids.length > 0 && delta.archive_confidence !== "none" &&
-      delta.maximum_distance <= 0xfff && delta.prefill_references > 0;
+    const still = ids.length > 0 ? diagnose_still(bytes) : null;
     let category: Category;
-    if (stateful) category = "stateful_delta_archive";
+    if (still !== null) category = "delta7_indexed_still";
     else if (gs2Full > 0) category = "cross_title_shared";
     else if (gs1Full >= 3) category = "same_game_shared";
     else if (gs1Full > 0) category = "regional_variant_shared";
     else if (region.size >= 4096 && information >= 5) category = "localization_or_unique_archive";
     else category = "unique_data";
-    const score = region.size * (category === "stateful_delta_archive" ? 1.5 :
+    const score = region.size * (category === "delta7_indexed_still" ? 1.5 :
       category === "cross_title_shared" ? 1.35 : category === "same_game_shared" ? 1.2 : 1);
     return {
       category,
@@ -281,6 +289,7 @@ async function main(args: string[]): Promise<void> {
       gs2_full_supporters: gs2Full,
       best_gs1_ratio: Math.max(0, ...gs1.map(([, item]) => item.ratio)),
       best_gs2_ratio: Math.max(0, ...gs2.map(([, item]) => item.ratio)),
+      delta7_still: still,
       delta,
       evidence,
     };

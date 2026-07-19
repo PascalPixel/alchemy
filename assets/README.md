@@ -251,8 +251,8 @@ assigned to a bank. `resource_152/objects/ougonmon.png` (黄金門) and
 their remaining unclaimed slots stay in neutral fallback atlases.
 
 `maps/resource_128/grid/` through `maps/resource_369/grid/` reconstruct all
-173 traced containers' tagged kind-1 map components as 128x128 spatial record
-grids; 52 containers have no palette or tile-bank resources of their own and
+174 traced containers' tagged kind-1 map components as 128x128 spatial record
+grids; 53 containers have no palette or tile-bank resources of their own and
 share a neighbouring family's graphics.
 Four grayscale PNG planes preserve the transformed 16-bit metatile/flag value
 and two independently accessed attribute bytes. A one-bit PNG records which

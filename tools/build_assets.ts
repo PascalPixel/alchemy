@@ -56,6 +56,7 @@ import {
   RESOURCE_SIZE as RESOURCE_01C_SIZE,
 } from "./resource_01c.ts";
 import { build_music_residuals } from "./music_residuals.ts";
+import { build_resource_d1_d3 } from "./resource_d1_d3.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -85,6 +86,7 @@ const tokushuMapCache = new Map<string, ReturnType<typeof build_tokushu_map_seri
 const resource3ceCache = new Map<string, ReturnType<typeof build_resource_3ce>>();
 const chiikiMapCache = new Map<string, ReturnType<typeof build_chiiki_map_series>>();
 const musicResidualCache = new Map<string, ReturnType<typeof build_music_residuals>>();
+const resourceD1D3Cache = new Map<string, ReturnType<typeof build_resource_d1_d3>>();
 
 function tokushuMaps(indexName: string): ReturnType<typeof build_tokushu_map_series> {
   const indexPath = sourcePath(indexName);
@@ -122,6 +124,16 @@ function musicResiduals(indexName: string): ReturnType<typeof build_music_residu
   if (built === undefined) {
     built = build_music_residuals(indexPath);
     musicResidualCache.set(indexPath, built);
+  }
+  return built;
+}
+
+function resourcesD1D3(indexName: string): ReturnType<typeof build_resource_d1_d3> {
+  const indexPath = sourcePath(indexName);
+  let built = resourceD1D3Cache.get(indexPath);
+  if (built === undefined) {
+    built = build_resource_d1_d3(indexPath);
+    resourceD1D3Cache.set(indexPath, built);
   }
   return built;
 }
@@ -885,6 +897,23 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     nested.forEach(sourcePath);
     return [region.data, [...new Set([indexName, ...nested])], {
       source_bytes: region.data.length,
+    }];
+  }
+  if (kind === "golden-sun-d1-d3-resource") {
+    const indexName = String(entry.source);
+    const id = number(entry.resource_id);
+    const resource = resourcesD1D3(indexName).find((item) => item.id === id);
+    if (resource === undefined || resource.address !== number(entry.address) ||
+        resource.data.length !== number(entry.size)) {
+      throw new Error("D1-D3 resource differs from canonical manifest extent");
+    }
+    const nested = resource.sources.map((name) => relative(ROOT, resolve(name)));
+    nested.forEach(sourcePath);
+    return [resource.data, [...new Set([indexName, ...nested])], {
+      resource_id: `0x${id.toString(16).padStart(3, "0")}`,
+      source_bytes: resource.data.length,
+      boundary_bytes: resource.boundarySize,
+      suffix_fallback: resource.boundarySize - resource.data.length,
     }];
   }
   if (kind === "golden-sun-final-battle-overlay") {

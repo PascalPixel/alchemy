@@ -291,6 +291,27 @@
       "source": "assets/graphics/direct_palettes/c4.png"
     },
     {
+      "address": "0x084101d0",
+      "size": "0x10a5",
+      "kind": "golden-sun-d1-d3-resource",
+      "resource_id": "0x0d1",
+      "source": "assets/graphics/resources_d1_d3/index.json"
+    },
+    {
+      "address": "0x08411278",
+      "size": "0x1a8",
+      "kind": "golden-sun-d1-d3-resource",
+      "resource_id": "0x0d2",
+      "source": "assets/graphics/resources_d1_d3/index.json"
+    },
+    {
+      "address": "0x08411420",
+      "size": "0x54",
+      "kind": "golden-sun-d1-d3-resource",
+      "resource_id": "0x0d3",
+      "source": "assets/graphics/resources_d1_d3/index.json"
+    },
+    {
       "address": "0x08411474",
       "size": "0xf828",
       "kind": "golden-sun-offset-palette-lz",

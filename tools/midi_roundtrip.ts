@@ -105,10 +105,29 @@ function metaBytes(metaType: number, payload: number[]): number[] {
 const CUE_META = 0x07;
 const TEMPO_META = 0x51;
 
+// 1 エンジン tick = 1 MIDI tick。四分音符あたり 96 tick (wait 表の最大値 = 全音符)。
+const PPQN = 96;
+
+// ── エンジンの実 tick 速度 (ROM 実測から導出) ──────────────────────
+//   ・毎フレーム (VBlank) 累算器 += tempoI、150 を超えるたびに 1 tick 進む
+//     (Func_080f9c90: accumulator[+34] += tempoI[+32]; while >=150 subtract 150)。
+//   ・tempo コマンドは制御値を 2 倍して tempoI にする
+//     (Func_080f9b4c: lsls #1 → ×scale(0x100)>>8; 既定 scale=256 なので tempoI = 2×value。
+//      Func_080faa58 の初期化も既定値 75×2 = 150 = 1 tick/frame と整合)。
+//   ・VBlank 周波数 = GBA のフレーム周期 280896 サイクル / 16.78MHz。
+//   ⇒ ticks/sec = fps × 2 × value / 150。壁時計 = 総 tick / この値。
+const FRAMES_PER_SECOND = 16777216 / 280896; // ≈ 59.7275 Hz (GBA VBlank)
+const TEMPO_THRESHOLD = 150; // 累算器のしきい値 (Func_080f9c90)
+const TEMPO_MULTIPLIER = 2; // tempo コマンドの 2 倍 (Func_080f9b4c, 既定 scale)
+
+export function ticksPerSecond(controlValue: number): number {
+  return (FRAMES_PER_SECOND * TEMPO_MULTIPLIER * controlValue) / TEMPO_THRESHOLD;
+}
+
 // テンポ制御値 → MIDI set-tempo ペイロード (1拍あたりマイクロ秒, 3バイト BE)。
+// 四分音符 = PPQN tick なので microsPerQuarter = PPQN / ticksPerSecond。
 function tempoPayload(controlValue: number): number[] {
-  const bpm = 2 * controlValue; // このエンジンの tempo バイトは BPM/2。
-  const microsPerQuarter = Math.round(60_000_000 / bpm);
+  const microsPerQuarter = Math.round((PPQN * 1_000_000) / ticksPerSecond(controlValue));
   return [
     (microsPerQuarter >> 16) & 0xff,
     (microsPerQuarter >> 8) & 0xff,
@@ -169,7 +188,6 @@ function effectiveNoteParams(
 
 // ── sequence-JSON → SMF バイト列 ───────────────────────────────────
 export function sequenceToMidi(source: SequenceSource): Buffer {
-  const PPQN = 96; // 1 エンジン tick = 1 MIDI tick。
   const streamSegments = source.layout.filter(
     (s): s is Extract<SequenceSegment, { kind: "stream" }> => s.kind === "stream",
   );

@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence-sidecar",
+  "name": "sound_082",
+  "tracks": {
+    "track_2": {
+      "events": 21,
+      "hash": "66607563edd7e69f",
+      "deviations": [
+        [17,1,["wait",1],["wait",11]]
+      ]
+    },
+    "track_3": {
+      "events": 15,
+      "hash": "e0fcdaf4c4737353",
+      "deviations": [
+        [5,1,["note",32,61]],
+        [8,1,["note",32,62]],
+        [11,1,["note",68,57]]
+      ]
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence-sidecar",
+  "name": "sound_084",
+  "tracks": {
+    "track_1": {
+      "events": 54,
+      "hash": "9cdcfa3789f3d6ce",
+      "deviations": [
+        [52,1,["wait",4],["wait",1]]
+      ]
+    }
+  }
+}

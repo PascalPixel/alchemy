@@ -1,0 +1,68 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence-sidecar",
+  "name": "sound_064",
+  "tracks": {
+    "track_1": {
+      "events": 134,
+      "hash": "cce099c786fd3c25",
+      "deviations": [
+        [25,1,["wait",24],["wait",12]]
+      ]
+    },
+    "track_2": {
+      "events": 121,
+      "hash": "7f50f026886c163c",
+      "deviations": [
+        [10,1,["note",44,45]],
+        [11,1,["wait",24],["wait",24]],
+        [13,1,["note",44,44]],
+        [14,1,["wait",24],["wait",24]],
+        [16,1,["note",44,43]],
+        [17,1,["wait",24],["wait",24]],
+        [19,1,["note",44,42]],
+        [20,1,["wait",24],["wait",24]],
+        [23,1,["note",92,41]]
+      ]
+    },
+    "track_3": {
+      "events": 73,
+      "hash": "1766c1341fd24e3e",
+      "deviations": [
+        [70,2,["wait",24],["wait",23]]
+      ]
+    },
+    "track_4": {
+      "events": 73,
+      "hash": "0816008510bd5369",
+      "deviations": [
+        [8,2,["wait",24],["wait",5]],
+        [15,1,["wait",3],["wait",5]],
+        [21,1,["wait",3],["wait",5]],
+        [27,1,["wait",3],["wait",5]],
+        [33,1,["wait",3],["wait",5]],
+        [39,1,["wait",3],["wait",5]],
+        [45,1,["wait",3],["wait",5]],
+        [51,1,["wait",3],["wait",5]],
+        [57,1,["wait",3],["wait",5]],
+        [63,1,["wait",3],["wait",5]],
+        [69,1,["wait",3],["wait",5]],
+        [71,1,["wait",19],["wait",23]]
+      ]
+    },
+    "track_5": {
+      "events": 127,
+      "hash": "69c415cd4e7cf607",
+      "deviations": [
+        [15,1,["wait",2],["wait",6]],
+        [17,1,["wait",18],["wait",6]],
+        [19,1,["wait",18],["wait",6]],
+        [21,1,["wait",18],["wait",6]],
+        [23,1,["wait",18],["wait",6]],
+        [25,1,["wait",18],["wait",18]],
+        [31,1,["wait",18],["wait",6]],
+        [33,1,["wait",18],["wait",6]]
+      ]
+    }
+  }
+}

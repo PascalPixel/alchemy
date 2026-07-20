@@ -20,12 +20,16 @@ yet proven. Repeated empty slots share one symbol instead of duplicating bytes.
 The adjacent music-player records, sequence streams, tone banks, and wave data
 are not claimed by this table.
 
-`audio/sequences/` reconstructs all 260 nonempty native sequence units selected by
-the sound table. The sources retain exact engine duration codes, symbolic
-track and tone-bank references, priority, reverb, loops, pattern calls, and
-command-status choices. The indexed series claims 150,254 independently
-round-tripped bytes, including absolute-address alignment between streams and
-headers.
+`audio/midi/` and `audio/data/` reconstruct all 260 nonempty native sequence
+units selected by the sound table. Each unit is a tracked Standard MIDI file
+(`audio/midi/sound_NNN.mid`, the canonical core) plus a minimal deviation
+sidecar (`audio/data/sound_NNN.json`) that records only where the ROM's byte
+encoding departs from the codec's default running-status, note-parameter, and
+wait-split rules; 163 units match the defaults exactly and carry no sidecar.
+The pair retains exact engine duration codes, symbolic track and tone-bank
+references, priority, reverb, loops, pattern calls, and command-status choices,
+and rebuilds 150,254 byte-verified bytes, including absolute-address alignment
+between streams and headers.
 
 `audio/residuals/` reconstructs seven regions left outside the nonempty sequence
 series: the shared four-byte empty header, four sound-table-selected eight-byte

@@ -47,13 +47,25 @@ without assigning that field an unproven role. Sequence commands, tone banks,
 and samples remain separate recovery units rather than
 being flattened into MIDI or copied as opaque audio bytes.
 
-`assets/audio/sound_075/sequence.json` and `sound_106/sequence.json` are
-engine-native sequence units. They name tone banks and tracks symbolically,
-preserve header priority, reverb, and block count, and spell commands as native
-events. The seven-track `sound_075` source retains its pattern calls and
-running-status omissions; the compact `sound_106` source covers modulation,
-one note, its wait, and termination. The codec also represents repeats and
-unconditional loop targets without converting streams through MIDI.
+`assets/audio/midi/sound_NNN.mid` plus the optional sidecar
+`assets/audio/data/sound_NNN.json` are the engine-native sequence units. The
+`.mid` is the canonical core: it carries notes as note-on/off, waits as
+delta-time, and engine control and structural commands (voice, volume, pan,
+pattern calls, repeats, unconditional loop targets, running-status markers) as
+verbatim events, with tone banks, tracks, priority, reverb, and block count in
+its conductor skeleton. The sidecar records only per-event exceptions where the
+ROM's byte encoding departs from the codec's default rules: greedy
+running-status, omission of note parameters equal to the running value, and
+greedy largest-first wait-table splits. Those defaults match the ROM's
+dominant encoding, so 163 of 260 units carry no sidecar. Each sidecar
+reference is a stable `(track, event-index)` splice against the default stream,
+fingerprinted by event count and hash so `tools/midi_sequence.ts` fails loudly
+when a `.mid` and its sidecar disagree. The compact `sound_106` unit (one note,
+its wait, modulation, and termination) is sidecar-free; the seven-track
+`sound_075` unit keeps its pattern calls and non-canonical status choices in a
+sidecar. `tools/midi_sequence.ts` is the codec, converter, and validator;
+`tools/midi_roundtrip.ts` documents the underlying sequence-JSON↔SMF mapping
+and its losses.
 
 RGBA source PNGs may also be used as lossless four-byte record atlases. In that
 case the per-asset documentation defines the channel-to-field mapping; the

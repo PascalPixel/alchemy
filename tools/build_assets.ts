@@ -25,7 +25,7 @@ import {
 } from "./map_container_components.ts";
 import { build_table as build_map_load_table } from "./map_load_table.ts";
 import { build_sound_table } from "./music.ts";
-import { build_sequence as build_sound_sequence } from "./music_sequence.ts";
+import { build_from_midi_sidecar, type Sidecar } from "./midi_sequence.ts";
 import { buildWaveRecord } from "./audio_wave.ts";
 import { build_still } from "./indexed_still.ts";
 import { build_static_sprite_series, static_sprite_frame_name } from "./static_sprite_series.ts";
@@ -691,7 +691,8 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           address: sequence.address,
           size: sequence.size,
           kind: "golden-sun-sound-sequence",
-          source: join(directory, String(sequence.source)),
+          source: join(directory, String(sequence.midi)),
+          sidecar: sequence.sidecar === undefined ? undefined : join(directory, String(sequence.sidecar)),
         });
       }
     } else if (series.kind === "golden-sun-pcm-wave-series") {
@@ -917,11 +918,18 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     return [built, [String(entry.source)], report];
   }
   if (kind === "golden-sun-sound-sequence") {
-    const source = sourcePath(String(entry.source));
-    const document = JSON.parse(readFileSync(source, "utf8"));
-    if (number(document.base) !== number(entry.address)) throw new Error("sound-sequence base differs from manifest");
-    const [built, report] = build_sound_sequence(document);
-    return [built, [String(entry.source)], report];
+    const midiSource = String(entry.source);
+    const midi = readFileSync(sourcePath(midiSource));
+    const sources = [midiSource];
+    let sidecar: Sidecar | null = null;
+    if (entry.sidecar !== undefined) {
+      const sidecarSource = String(entry.sidecar);
+      sidecar = JSON.parse(readFileSync(sourcePath(sidecarSource), "utf8")) as Sidecar;
+      sources.push(sidecarSource);
+    }
+    const [built, report] = build_from_midi_sidecar(midi, sidecar);
+    if (report.base !== number(entry.address)) throw new Error("sound-sequence base differs from manifest");
+    return [built, sources, report];
   }
   if (kind === "golden-sun-pcm-wave") {
     const source = sourcePath(String(entry.source));

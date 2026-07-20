@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence-sidecar",
+  "name": "sound_290",
+  "tracks": {
+    "track_1": {
+      "events": 25,
+      "hash": "47ace84d818d66b6",
+      "deviations": [
+        [17,2,["wait",72],["wait",90]],
+        [20,3,["wait",6],["wait",96],["wait",23]]
+      ]
+    },
+    "track_2": {
+      "events": 20,
+      "hash": "84e4032dabcbd7d1",
+      "deviations": [
+        [16,2,["wait",72],["wait",90]]
+      ]
+    }
+  }
+}

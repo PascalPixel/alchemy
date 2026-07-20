@@ -1,0 +1,36 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence-sidecar",
+  "name": "sound_311",
+  "tracks": {
+    "track_1": {
+      "events": 16,
+      "hash": "59c4fb98c422f09b",
+      "deviations": [
+        [6,1,["note",0,60]],
+        [11,2,["wait",24],["wait",92],["wait",3]]
+      ]
+    },
+    "track_2": {
+      "events": 34,
+      "hash": "e6b0e053f227fd51",
+      "deviations": [
+        [30,2,["wait",24],["wait",92],["wait",3]]
+      ]
+    },
+    "track_3": {
+      "events": 29,
+      "hash": "2dbb4a3000acbb8a",
+      "deviations": [
+        [25,2,["wait",24],["wait",92],["wait",3]]
+      ]
+    },
+    "track_4": {
+      "events": 15,
+      "hash": "f1c8d0d3832a5088",
+      "deviations": [
+        [11,2,["wait",24],["wait",92],["wait",3]]
+      ]
+    }
+  }
+}

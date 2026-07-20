@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence-sidecar",
+  "name": "sound_170",
+  "tracks": {
+    "track_1": {
+      "events": 16,
+      "hash": "1f0eccf0b9fa2715",
+      "deviations": [
+        [8,4,["wait",90],["wait",96],["wait",96],["wait",90]]
+      ]
+    }
+  }
+}

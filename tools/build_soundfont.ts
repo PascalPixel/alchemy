@@ -136,7 +136,7 @@ const GEN = {
   decayVolEnv: 36,
   sustainVolEnv: 37,
   releaseVolEnv: 38,
-  freqVibLfo: 8,
+  freqVibLfo: 24, // SF2 仕様 8.1.3: ビブラート LFO 周波数 (絶対セント)。8=initialFilterFc なので厳禁。
   initialAttenuation: 48,
   scaleTuning: 56,
   overridingRootKey: 58,

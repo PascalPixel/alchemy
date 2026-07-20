@@ -37,8 +37,8 @@
 //          bun tools/midi_sequence.ts --self-test
 
 import { createHash } from "node:crypto";
-import { readdirSync, readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { readdirSync, readFileSync, writeFileSync, mkdirSync, existsSync, renameSync, rmdirSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
 import { sequenceToMidi, midiToSequence } from "./midi_roundtrip.ts";
 import {
   build_sequence,
@@ -324,6 +324,144 @@ const SEQUENCES_DIR = "assets/audio/sequences";
 const MIDI_DIR = "assets/audio/midi";
 const DATA_DIR = "assets/audio/data";
 
+// ── 配置換え (relayout): 番号+名前の浅いフォルダへ移す ────────────────
+//   sound_NNN の平坦な列を、所有者要望の浅い構成へ移す:
+//     assets/audio/music/「NNN. stem.mid」   (BGM + ジングル)
+//     assets/audio/sfx/  「NNN. stem.mid」   (効果音)
+//   NNN は song_table.json の 0..311 表索引 (= sound_NNN の N)。music/sfx の
+//   別は「どの player が選ばれるか」で決まり、その境界は saisei.json の
+//   max_tracks から導く (>=4 トラックの player 0/1 は楽曲、2 トラックの
+//   player 2..7 は効果音)。曲名は rename_map.json の stem を編集し relayout を
+//   再実行すれば反映される (名前が判明するたび再走可能)。
+const AUDIO_ROOT = "assets/audio";
+const SONG_TABLE = join(AUDIO_ROOT, "song_table.json");
+const SAISEI = join(AUDIO_ROOT, "engine/saisei.json");
+const RENAME_MAP = join(AUDIO_ROOT, "rename_map.json");
+
+type SongClass = "music" | "sfx";
+
+interface RenameEntry {
+  song_id: number;
+  symbol: string; // sound_NNN (安定シンボル)
+  class: SongClass;
+  stem: string; // kebab 名 (判明後) か既定の sound_NNN
+  file: string | null; // AUDIO_ROOT からの .mid 相対パス。本体無しは null。
+  sidecar: string | null; // 同 .json 相対パス。逸脱サイドカー無しは null。
+}
+
+interface RenameMap {
+  format: 1;
+  entries: RenameEntry[];
+}
+
+const pad3 = (n: number): string => String(n).padStart(3, "0");
+
+// song_id と class と stem から目標の相対パス (AUDIO_ROOT 基準) を導く。
+function targetRelative(entry: RenameEntry, ext: "mid" | "json"): string {
+  return `${entry.class}/${pad3(entry.song_id)}. ${entry.stem}.${ext}`;
+}
+
+// song_table.json + saisei.json から分類を導き rename_map.json を生成する。
+// 既存 rename_map.json があれば stem を引き継ぐ (編集済みの名前を潰さない)。
+function buildRenameMap(): void {
+  const table = JSON.parse(readFileSync(SONG_TABLE, "utf8"));
+  const saisei = JSON.parse(readFileSync(SAISEI, "utf8"));
+  // player 索引 → max_tracks。>=4 なら楽曲、それ未満は効果音。
+  const maxTracks: number[] = saisei.players.map((p: { max_tracks: number }) => p.max_tracks);
+  // symbol → player (最初の出現)。sound_empty は除く。
+  const symbolPlayer = new Map<string, number>();
+  for (const [symbol, player] of table.entries as [string, number][]) {
+    if (symbol !== "sound_empty" && !symbolPlayer.has(symbol)) symbolPlayer.set(symbol, player);
+  }
+  // 現 index から本体・サイドカーの有無を得る (本体の無い 4 ヘッダは file:null)。
+  const index = JSON.parse(readFileSync(join(MIDI_DIR, "index.json"), "utf8"));
+  const hasBody = new Set<string>();
+  const hasSidecar = new Set<string>();
+  for (const seq of index.sequences) {
+    hasBody.add(String(seq.name));
+    if (seq.sidecar !== undefined) hasSidecar.add(String(seq.name));
+  }
+  // 既存 stem を引き継ぐ。
+  const priorStem = new Map<number, string>();
+  if (existsSync(RENAME_MAP)) {
+    const prior = JSON.parse(readFileSync(RENAME_MAP, "utf8")) as RenameMap;
+    for (const e of prior.entries) priorStem.set(e.song_id, e.stem);
+  }
+  const entries: RenameEntry[] = [];
+  for (const [symbol, player] of [...symbolPlayer.entries()].sort(
+    (a, b) => Number(a[0].split("_")[1]) - Number(b[0].split("_")[1]),
+  )) {
+    const song_id = Number(symbol.split("_")[1]);
+    const cls: SongClass = (maxTracks[player] ?? 0) >= 4 ? "music" : "sfx";
+    const stem = priorStem.get(song_id) ?? symbol;
+    const entry: RenameEntry = { song_id, symbol, class: cls, stem, file: null, sidecar: null };
+    if (hasBody.has(symbol)) {
+      entry.file = targetRelative(entry, "mid");
+      entry.sidecar = hasSidecar.has(symbol) ? targetRelative(entry, "json") : null;
+    }
+    entries.push(entry);
+  }
+  const map: RenameMap = { format: 1, entries };
+  writeFileSync(RENAME_MAP, JSON.stringify(map, null, 2) + "\n");
+  const music = entries.filter((e) => e.class === "music").length;
+  const sfx = entries.length - music;
+  const bodies = entries.filter((e) => e.file !== null).length;
+  console.log(`rename-map entries=${entries.length} music=${music} sfx=${sfx} bodies=${bodies} named=${entries.filter((e) => e.stem !== e.symbol).length}`);
+}
+
+// rename_map.json を適用: 260 の .mid+サイドカーを music/ ・ sfx/ の
+// 「NNN. stem」名へ移し、midi/index.json のパスを書き換える。冪等・再走可能。
+function relayout(): void {
+  if (!existsSync(RENAME_MAP)) throw new Error(`${RENAME_MAP} が無い (先に build-rename-map)`);
+  const map = JSON.parse(readFileSync(RENAME_MAP, "utf8")) as RenameMap;
+  const bySongId = new Map<number, RenameEntry>();
+  for (const e of map.entries) bySongId.set(e.song_id, e);
+  const indexPath = join(MIDI_DIR, "index.json");
+  const index = JSON.parse(readFileSync(indexPath, "utf8"));
+  let moved = 0;
+  const sequences: Record<string, unknown>[] = [];
+  for (const seq of index.sequences) {
+    const name = String(seq.name);
+    const song_id = Number(name.split("_")[1]);
+    const entry = bySongId.get(song_id);
+    if (entry === undefined) throw new Error(`${name}: rename_map に song_id=${song_id} が無い`);
+    // .mid を移す (stem から目標を導く。file 欄が古くても stem が正)。
+    const midiTargetRel = targetRelative(entry, "mid");
+    const midiCurrent = join(MIDI_DIR, String(seq.midi));
+    const midiTarget = join(AUDIO_ROOT, midiTargetRel);
+    if (midiCurrent !== midiTarget) {
+      if (!existsSync(midiCurrent)) throw new Error(`${name}: .mid が見つからない (${midiCurrent})`);
+      mkdirSync(dirname(midiTarget), { recursive: true });
+      renameSync(midiCurrent, midiTarget);
+      moved += 1;
+    }
+    const record: Record<string, unknown> = {
+      name,
+      song_id,
+      class: entry.class,
+      address: seq.address,
+      size: seq.size,
+      midi: `../${midiTargetRel}`, // MIDI_DIR 基準の相対
+    };
+    if (seq.sidecar !== undefined) {
+      const scTargetRel = targetRelative(entry, "json");
+      const scCurrent = join(MIDI_DIR, String(seq.sidecar));
+      const scTarget = join(AUDIO_ROOT, scTargetRel);
+      if (scCurrent !== scTarget) {
+        if (!existsSync(scCurrent)) throw new Error(`${name}: サイドカーが見つからない (${scCurrent})`);
+        mkdirSync(dirname(scTarget), { recursive: true });
+        renameSync(scCurrent, scTarget);
+      }
+      record.sidecar = `../${scTargetRel}`;
+    }
+    sequences.push(record);
+  }
+  writeFileSync(indexPath, JSON.stringify({ format: 1, engine: "smsh-sequence-series", sequences }, null, 2) + "\n");
+  // 空になった旧 data/ ディレクトリを片付ける。
+  if (existsSync(DATA_DIR) && readdirSync(DATA_DIR).length === 0) rmdirSync(DATA_DIR);
+  console.log(`relayout moved=${moved} sequences=${sequences.length}`);
+}
+
 function convertAll(): void {
   // 一度きりの移行バッチ。冗長 sequence-JSON 群を .mid + サイドカー + 新 index に
   // 変換する。移行済み (旧ディレクトリ撤去済み) なら何もしない。再変換が要るときは
@@ -368,8 +506,22 @@ function convertAll(): void {
   console.log(`converted=${sequences.length} empty=${empty} nonempty=${nonempty} sidecar-bytes(min/median/max)=${sidecarBytes[0] ?? 0}/${median}/${sidecarBytes.at(-1) ?? 0}`);
 }
 
+// ファイル名「NNN. stem.mid」から番号と stem を取り出す。
+function parseNumberedName(midiField: string): { num: number; stem: string } | null {
+  const stemmed = basename(midiField).replace(/\.mid$/, "");
+  const m = /^(\d+)\. (.+)$/.exec(stemmed);
+  if (m === null) return null;
+  return { num: Number(m[1]), stem: m[2]! };
+}
+
 function validateAll(): void {
   const index = JSON.parse(readFileSync(join(MIDI_DIR, "index.json"), "utf8"));
+  // 番号+名前の配置なら rename_map と突き合わせる (配置前は未生成なので任意)。
+  const renameStem = new Map<number, string>();
+  if (existsSync(RENAME_MAP)) {
+    const map = JSON.parse(readFileSync(RENAME_MAP, "utf8")) as RenameMap;
+    for (const e of map.entries) renameStem.set(e.song_id, e.stem);
+  }
   let checked = 0;
   for (const entry of index.sequences) {
     const name = String(entry.name);
@@ -382,6 +534,20 @@ function validateAll(): void {
     // base が index の address と一致することも確認。
     const [, report] = build_from_midi_sidecar(midi, sidecar);
     if (report.base !== Number(entry.address)) throw new Error(`${name}: base が index の address と不一致`);
+    // ── 配置換え後の 2 つのガード (entry.song_id が付いた曲だけ) ──
+    if (entry.song_id !== undefined) {
+      const parsed = parseNumberedName(String(entry.midi));
+      if (parsed === null) throw new Error(`${name}: .mid 名が「NNN. stem.mid」形式でない (${entry.midi})`);
+      // (1) ファイル名の番号接頭辞 == song_id。
+      if (parsed.num !== Number(entry.song_id)) {
+        throw new Error(`${name}: 番号接頭辞 ${parsed.num} が song_id ${entry.song_id} と不一致`);
+      }
+      // (2) ファイル名の stem == rename_map の stem。
+      const mapStem = renameStem.get(Number(entry.song_id));
+      if (mapStem !== undefined && parsed.stem !== mapStem) {
+        throw new Error(`${name}: stem「${parsed.stem}」が rename_map「${mapStem}」と不一致`);
+      }
+    }
     checked += 1;
   }
   console.log(`validated=${checked}`);
@@ -457,7 +623,15 @@ async function main(args: string[]): Promise<void> {
     validateAll();
     return;
   }
-  console.log("usage: midi_sequence.ts convert-all | validate-all | --self-test");
+  if (args[0] === "build-rename-map") {
+    buildRenameMap();
+    return;
+  }
+  if (args[0] === "relayout") {
+    relayout();
+    return;
+  }
+  console.log("usage: midi_sequence.ts convert-all | validate-all | build-rename-map | relayout | --self-test");
 }
 
 if (import.meta.main) await main(Bun.argv.slice(2));

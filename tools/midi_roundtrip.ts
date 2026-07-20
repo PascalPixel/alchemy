@@ -45,6 +45,18 @@
 //     ・バンクセレクト MSB (CC0) ← ソングの externals.tone_bank。
 //         0x080fba78 → bank 0、0x080fc138 → bank 1。曲頭で一度送る (曲内で不変)。
 //         これで各曲が正しいトーンバンクのプリセット群を引く。
+//     ・ピッチホイール (0xE0) ← pitch_bend コマンド (走行形含む)。エンジンの実ベンド量
+//         (引数 − 64) を正規化した 14bit ホイールに写す。曲頭で RPN0 = 既定幅 2 半音を
+//         設定し、pitch_bend_range が来ればその値で RPN0 を上書きする。asm 実測
+//         (Func_080fac44/080f9bcc/080f9be0) から幅と写像を導いた (本ファイル下部の定数)。
+//     ・チャンネルボリューム (CC7) ← volume コマンド (エンジン音量 #18、0..127 直値)。
+//     ・パン (CC10) ← pan コマンド (エンジン定位 #20、中立 64)。
+//     ・微調律 RPN1 (CC101/100/6/38) ← tuning コマンド (引数 − 64、±1 半音域)。
+//         Func_080f9c18 が #12 に格納しピッチ端数へ寄与する微調律を写す。
+//   写せない命令 (標準 MIDI・現行 SF2 で確実に鳴る対応が無い): priority (発音優先度)・
+//   key_shift (全 260 曲で 0)・lfo_speed/lfo_delay (SF2 は CC1→ビブラート幅のモジュレータ
+//   のみ配線、CC76/78 は未配線)・modulation_type (全曲 0 のエンジン内部ルーティング旗)。
+//   これらはマーカ 0x06 に逐語保持され続け、ROM 復元には元から使われる。
 //   チャンネル割当: GM のドラムチャンネル (ch9) は打楽器バンクに固定されるため
 //   旋律トラックが載らないよう回避する (ch0..8, 10..15 を使う)。
 //   これらの CC/プログラム追加で .mid のバイト列は変わるが、逆写像・サイドカー・
@@ -136,8 +148,44 @@ const TEMPO_META = 0x51;
 // ── 再生用チャンネルコントローラ番号 (逆写像では読み飛ばす) ──────────
 const CC_BANK_MSB = 0; // バンクセレクト MSB ← externals.tone_bank
 const CC_MODWHEEL = 1; // モジュレーションホイール ← modulation_depth (ビブラート深さ)
+const CC_VOLUME = 7; // チャンネルボリューム ← volume コマンド (エンジンの音量 #18)
+const CC_PAN = 10; // パン ← pan コマンド (エンジンの定位 #20)
 const CC_REVERB = 91; // エフェクト1深度 = リバーブ送り ← ヘッダ reverb バイト
+// RPN (登録済みパラメータ番号) 用データエントリ。ピッチベンド幅・微調律に使う。
+const CC_DATA_MSB = 6; // データエントリ MSB
+const CC_DATA_LSB = 38; // データエントリ LSB
+const CC_RPN_LSB = 100; // RPN 選択 LSB
+const CC_RPN_MSB = 101; // RPN 選択 MSB
+const RPN_BEND_RANGE = 0; // RPN 0x0000 = ピッチベンド幅 (半音)
+const RPN_FINE_TUNE = 1; // RPN 0x0001 = チャンネル微調律 (±100 セント = ±1 半音)
 const DRUM_CHANNEL = 9; // GM 打楽器チャンネル (旋律トラックを載せない)
+
+// ── エンジンのピッチ合成から導いた定数 (asm 実測) ─────────────────────
+//   Func_080fac44 のピッチ合成: r1 = (tuning#12 + bend#14×bendRange#15)<<2
+//     + keyShift#10<<8 + … 、[#8]=r1>>8 が整数半音・[#9]=端数 (1/256 半音単位)。
+//   ・pitch_bend ハンドラ Func_080f9bcc は「引数バイト − 64」を #14 に格納するので
+//     エンジンの実ベンド量 = (引数 − 64) ∈ [-64,63] (中立 = 64)。
+//   ・ピッチ寄与 = bend×range<<2 / 256 = bend×range/64 半音。よって最大偏移
+//     (bend=±64) = ±range 半音 ⇒ MIDI ピッチホイール全振り = range 半音に一致し、
+//     RPN0 に range をそのまま設定すれば良い (ホイール値は range に依らず正規化)。
+//   ・pitch_bend_range ハンドラ Func_080f9be0 は #15 に直値を格納 (半音数)。
+//     トラック初期化 (Func_080f9c90) が #15 = 2 を既定にするので既定幅は 2 半音。
+//   ・tuning ハンドラ Func_080f9c18 は「引数 − 64」を #12 に格納し、寄与 = (引数−64)/64
+//     半音の微調律 (中立 = 64)。RPN1 (±1 半音 = 14bit) に写す。
+//   ・volume ハンドラ Func_080f9ba4 は #18 に直値 (0..127)、pan ハンドラ Func_080f9bb8 は
+//     「引数 − 64」を #20 に格納 (中立 = 64、生の引数 = MIDI パン域)。
+const BEND_CENTER = 64; // 引数バイトの中立点 (asm の subs #64)
+const DEFAULT_BEND_RANGE = 2; // #15 の既定値 (Func_080f9c90 のトラック初期化)
+const MIDI_BEND_CENTER = 0x2000; // 14bit ピッチホイールの中立 (8192)
+// エンジンの中立差 1 単位 = 全振り (8192) の 1/64 ⇒ 128 を掛ける。
+const BEND_UNIT_TO_WHEEL = MIDI_BEND_CENTER / BEND_CENTER; // = 128
+
+// 制御命令名の集合 (explicit 形の kind 判定に使う)。
+const CONTROL_NAMES = new Set<ControlName>([
+  "priority", "tempo", "key_shift", "voice", "volume", "pan",
+  "pitch_bend", "pitch_bend_range", "lfo_speed", "lfo_delay",
+  "modulation_depth", "modulation_type", "tuning",
+]);
 
 // トーンバンクアドレス → SF2 バンク番号 (build_soundfont.ts と一致)。
 const TONE_BANK_TO_SF2: Record<string, number> = {
@@ -153,6 +201,31 @@ function controlChange(channel: number, controller: number, value: number): numb
 // プログラムチェンジのバイト列 (ステータス 0xC0 | channel)。
 function programChange(channel: number, program: number): number[] {
   return [0xc0 | channel, program & 0x7f];
+}
+
+// ピッチホイールのバイト列 (ステータス 0xE0 | channel、14bit を LSB→MSB で載せる)。
+function pitchWheel(channel: number, value14: number): number[] {
+  const v = Math.max(0, Math.min(0x3fff, value14));
+  return [0xe0 | channel, v & 0x7f, (v >> 7) & 0x7f];
+}
+
+// エンジンの中立差 (引数 − 64) → 14bit ピッチホイール値 (中立 8192)。
+function bendToWheel(controlValue: number): number {
+  return MIDI_BEND_CENTER + (controlValue - BEND_CENTER) * BEND_UNIT_TO_WHEEL;
+}
+
+// RPN を選択してデータエントリを書き込むコントロールチェンジ列を返す
+// (選択 MSB/LSB → データ MSB[→LSB])。tick が同じでも順序保持のため配列で返す。
+function rpnWrite(
+  channel: number, rpnMsb: number, rpnLsb: number, dataMsb: number, dataLsb?: number,
+): number[][] {
+  const seq = [
+    controlChange(channel, CC_RPN_MSB, rpnMsb),
+    controlChange(channel, CC_RPN_LSB, rpnLsb),
+    controlChange(channel, CC_DATA_MSB, dataMsb),
+  ];
+  if (dataLsb !== undefined) seq.push(controlChange(channel, CC_DATA_LSB, dataLsb));
+  return seq;
 }
 
 // externals.tone_bank → SF2 バンク番号 (未知は 0)。
@@ -301,6 +374,11 @@ export function sequenceToMidi(source: SequenceSource): Buffer {
     // チェンジより前に置く必要がある (プレイヤがバンクを確定してから音色を引く)。再生専用。
     raw.push({ tick: 0, seq: seq++, bytes: controlChange(channel, CC_BANK_MSB, bankMSB) });
     raw.push({ tick: 0, seq: seq++, bytes: controlChange(channel, CC_REVERB, reverbCC) });
+    // 既定のピッチベンド幅 (エンジンのトラック初期値 = 2 半音) を RPN0 で確定する。
+    // pitch_bend_range コマンドが来ればその都度上書きされる。再生専用。
+    for (const cc of rpnWrite(channel, 0, RPN_BEND_RANGE, DEFAULT_BEND_RANGE, 0)) {
+      raw.push({ tick: 0, seq: seq++, bytes: cc });
+    }
 
     // 現在 tick に note-on / note-off を積む (再生用の実音)。
     const emitNote = (event: SequenceEvent, state: { key: number; vel: number }): void => {
@@ -343,16 +421,61 @@ export function sequenceToMidi(source: SequenceSource): Buffer {
         if (kind === "tempo") {
           raw.push({ tick: cursor, seq: seq++, bytes: metaBytes(TEMPO_META, tempoPayload(event[1] as number)) });
         }
-        // modulation_depth (走行形含む) は CC1 に写してビブラートを掛ける。再生専用。
-        let modValue: number | null = null;
-        if (kind === "modulation_depth") modValue = event[1] as number;
-        else if (kind === "control_running" && event[1] === "modulation_depth") modValue = event[2] as number;
-        if (modValue !== null) {
-          raw.push({ tick: cursor, seq: seq++, bytes: controlChange(channel, CC_MODWHEEL, modValue) });
+
+        // ── 再生専用チャンネルイベントへの写像 ──────────────────────
+        // explicit 形 (["name", v]) と走行形 (["control_running","name", v]) を
+        // 制御名・値に正規化してから写す。写せない命令はマーカだけ残る。
+        let ctrlName: ControlName | null = null;
+        let ctrlValue = 0;
+        if (kind === "control_running") {
+          ctrlName = event[1] as ControlName;
+          ctrlValue = event[2] as number;
+        } else if (CONTROL_NAMES.has(kind as ControlName)) {
+          ctrlName = kind as ControlName;
+          ctrlValue = event[1] as number;
         }
-        // voice は音色選択 → プログラムチェンジに写す。再生専用。
-        if (kind === "voice") {
-          raw.push({ tick: cursor, seq: seq++, bytes: programChange(channel, event[1] as number) });
+        const emit = (bytes: number[]): void => {
+          raw.push({ tick: cursor, seq: seq++, bytes });
+        };
+        switch (ctrlName) {
+          case "voice":
+            // 音色選択 → プログラムチェンジ。
+            emit(programChange(channel, ctrlValue));
+            break;
+          case "volume":
+            // エンジンの音量 (#18、0..127 直値) → チャンネルボリューム CC7。
+            emit(controlChange(channel, CC_VOLUME, ctrlValue & 0x7f));
+            break;
+          case "pan":
+            // エンジンの定位 (中立 64、生の引数が MIDI パン域) → パン CC10。
+            emit(controlChange(channel, CC_PAN, ((ctrlValue % 256) + 256) & 0x7f));
+            break;
+          case "modulation_depth":
+            // トラック LFO 深さ → CC1 (SF2 の既定モジュレータがビブラートを掛ける)。
+            emit(controlChange(channel, CC_MODWHEEL, ctrlValue & 0x7f));
+            break;
+          case "pitch_bend":
+            // 実ベンド量 (引数 − 64) を正規化した 14bit ホイールに写す。RPN0 に幅を
+            // 設定済みなので、プレイヤは range 半音を全振りとして鳴らす。
+            emit(pitchWheel(channel, bendToWheel(ctrlValue)));
+            break;
+          case "pitch_bend_range":
+            // ベンド幅 (半音) を RPN0 に設定する。以後のホイールがこの幅で鳴る。
+            for (const cc of rpnWrite(channel, 0, RPN_BEND_RANGE, ctrlValue & 0x7f, 0)) emit(cc);
+            break;
+          case "tuning":
+            // 微調律 (引数 − 64、±1 半音域) を RPN1 (14bit) に写す。
+            {
+              const value14 = Math.max(0, Math.min(0x3fff, bendToWheel(ctrlValue)));
+              for (const cc of rpnWrite(channel, 0, RPN_FINE_TUNE, (value14 >> 7) & 0x7f, value14 & 0x7f)) {
+                emit(cc);
+              }
+            }
+            break;
+          default:
+            // priority / key_shift(全曲 0) / lfo_speed / lfo_delay / modulation_type:
+            // 標準 MIDI・現行 SF2 で確実に鳴る対応が無いためマーカのみ (下記コメント参照)。
+            break;
         }
       }
     }
@@ -471,8 +594,8 @@ function reconstructStream(events: MidiEvent[]): SequenceEvent[] {
     }
     if (e.type === "channel" && e.status !== undefined) {
       const kind = e.status & 0xf0;
-      // note-on/off 以外の再生専用チャンネルイベント (バンクセレクト/CC1/CC91/
-      // プログラムチェンジ等) は逆写像で無視する。
+      // note-on/off 以外の再生専用チャンネルイベント (バンクセレクト/CC1/CC7/CC10/
+      // CC91/プログラムチェンジ/ピッチホイール 0xE0/RPN 各 CC 等) は逆写像で無視する。
       if (kind !== 0x90 && kind !== 0x80) continue;
       const [d0, d1] = e.data as number[];
       if (kind === 0x90 && d1 > 0) {

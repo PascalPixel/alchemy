@@ -1,0 +1,2117 @@
+{
+  "format": 1,
+  "entries": [
+    {
+      "song_id": 0,
+      "symbol": "sound_000",
+      "class": "music",
+      "stem": "sound_000",
+      "file": "music/000. sound_000.mid",
+      "sidecar": "music/000. sound_000.json"
+    },
+    {
+      "song_id": 1,
+      "symbol": "sound_001",
+      "class": "music",
+      "stem": "sound_001",
+      "file": "music/001. sound_001.mid",
+      "sidecar": "music/001. sound_001.json"
+    },
+    {
+      "song_id": 2,
+      "symbol": "sound_002",
+      "class": "music",
+      "stem": "sound_002",
+      "file": "music/002. sound_002.mid",
+      "sidecar": "music/002. sound_002.json"
+    },
+    {
+      "song_id": 3,
+      "symbol": "sound_003",
+      "class": "music",
+      "stem": "sound_003",
+      "file": "music/003. sound_003.mid",
+      "sidecar": "music/003. sound_003.json"
+    },
+    {
+      "song_id": 4,
+      "symbol": "sound_004",
+      "class": "music",
+      "stem": "sound_004",
+      "file": "music/004. sound_004.mid",
+      "sidecar": "music/004. sound_004.json"
+    },
+    {
+      "song_id": 5,
+      "symbol": "sound_005",
+      "class": "music",
+      "stem": "sound_005",
+      "file": "music/005. sound_005.mid",
+      "sidecar": "music/005. sound_005.json"
+    },
+    {
+      "song_id": 6,
+      "symbol": "sound_006",
+      "class": "music",
+      "stem": "sound_006",
+      "file": "music/006. sound_006.mid",
+      "sidecar": "music/006. sound_006.json"
+    },
+    {
+      "song_id": 7,
+      "symbol": "sound_007",
+      "class": "music",
+      "stem": "sound_007",
+      "file": "music/007. sound_007.mid",
+      "sidecar": "music/007. sound_007.json"
+    },
+    {
+      "song_id": 8,
+      "symbol": "sound_008",
+      "class": "music",
+      "stem": "sound_008",
+      "file": "music/008. sound_008.mid",
+      "sidecar": "music/008. sound_008.json"
+    },
+    {
+      "song_id": 9,
+      "symbol": "sound_009",
+      "class": "music",
+      "stem": "sound_009",
+      "file": "music/009. sound_009.mid",
+      "sidecar": "music/009. sound_009.json"
+    },
+    {
+      "song_id": 10,
+      "symbol": "sound_010",
+      "class": "music",
+      "stem": "sound_010",
+      "file": "music/010. sound_010.mid",
+      "sidecar": "music/010. sound_010.json"
+    },
+    {
+      "song_id": 19,
+      "symbol": "sound_019",
+      "class": "music",
+      "stem": "sound_019",
+      "file": null,
+      "sidecar": null
+    },
+    {
+      "song_id": 20,
+      "symbol": "sound_020",
+      "class": "music",
+      "stem": "sound_020",
+      "file": "music/020. sound_020.mid",
+      "sidecar": "music/020. sound_020.json"
+    },
+    {
+      "song_id": 21,
+      "symbol": "sound_021",
+      "class": "music",
+      "stem": "sound_021",
+      "file": "music/021. sound_021.mid",
+      "sidecar": "music/021. sound_021.json"
+    },
+    {
+      "song_id": 22,
+      "symbol": "sound_022",
+      "class": "music",
+      "stem": "sound_022",
+      "file": "music/022. sound_022.mid",
+      "sidecar": "music/022. sound_022.json"
+    },
+    {
+      "song_id": 23,
+      "symbol": "sound_023",
+      "class": "music",
+      "stem": "sound_023",
+      "file": "music/023. sound_023.mid",
+      "sidecar": "music/023. sound_023.json"
+    },
+    {
+      "song_id": 24,
+      "symbol": "sound_024",
+      "class": "music",
+      "stem": "sound_024",
+      "file": "music/024. sound_024.mid",
+      "sidecar": "music/024. sound_024.json"
+    },
+    {
+      "song_id": 25,
+      "symbol": "sound_025",
+      "class": "music",
+      "stem": "sound_025",
+      "file": "music/025. sound_025.mid",
+      "sidecar": "music/025. sound_025.json"
+    },
+    {
+      "song_id": 26,
+      "symbol": "sound_026",
+      "class": "music",
+      "stem": "sound_026",
+      "file": "music/026. sound_026.mid",
+      "sidecar": "music/026. sound_026.json"
+    },
+    {
+      "song_id": 27,
+      "symbol": "sound_027",
+      "class": "music",
+      "stem": "sound_027",
+      "file": "music/027. sound_027.mid",
+      "sidecar": "music/027. sound_027.json"
+    },
+    {
+      "song_id": 28,
+      "symbol": "sound_028",
+      "class": "music",
+      "stem": "sound_028",
+      "file": "music/028. sound_028.mid",
+      "sidecar": "music/028. sound_028.json"
+    },
+    {
+      "song_id": 29,
+      "symbol": "sound_029",
+      "class": "music",
+      "stem": "sound_029",
+      "file": "music/029. sound_029.mid",
+      "sidecar": "music/029. sound_029.json"
+    },
+    {
+      "song_id": 30,
+      "symbol": "sound_030",
+      "class": "music",
+      "stem": "sound_030",
+      "file": "music/030. sound_030.mid",
+      "sidecar": "music/030. sound_030.json"
+    },
+    {
+      "song_id": 40,
+      "symbol": "sound_040",
+      "class": "music",
+      "stem": "sound_040",
+      "file": "music/040. sound_040.mid",
+      "sidecar": "music/040. sound_040.json"
+    },
+    {
+      "song_id": 41,
+      "symbol": "sound_041",
+      "class": "music",
+      "stem": "sound_041",
+      "file": "music/041. sound_041.mid",
+      "sidecar": "music/041. sound_041.json"
+    },
+    {
+      "song_id": 42,
+      "symbol": "sound_042",
+      "class": "music",
+      "stem": "sound_042",
+      "file": "music/042. sound_042.mid",
+      "sidecar": "music/042. sound_042.json"
+    },
+    {
+      "song_id": 43,
+      "symbol": "sound_043",
+      "class": "music",
+      "stem": "sound_043",
+      "file": "music/043. sound_043.mid",
+      "sidecar": "music/043. sound_043.json"
+    },
+    {
+      "song_id": 50,
+      "symbol": "sound_050",
+      "class": "music",
+      "stem": "sound_050",
+      "file": "music/050. sound_050.mid",
+      "sidecar": "music/050. sound_050.json"
+    },
+    {
+      "song_id": 51,
+      "symbol": "sound_051",
+      "class": "music",
+      "stem": "sound_051",
+      "file": "music/051. sound_051.mid",
+      "sidecar": "music/051. sound_051.json"
+    },
+    {
+      "song_id": 52,
+      "symbol": "sound_052",
+      "class": "music",
+      "stem": "sound_052",
+      "file": "music/052. sound_052.mid",
+      "sidecar": "music/052. sound_052.json"
+    },
+    {
+      "song_id": 53,
+      "symbol": "sound_053",
+      "class": "music",
+      "stem": "sound_053",
+      "file": "music/053. sound_053.mid",
+      "sidecar": "music/053. sound_053.json"
+    },
+    {
+      "song_id": 54,
+      "symbol": "sound_054",
+      "class": "music",
+      "stem": "sound_054",
+      "file": "music/054. sound_054.mid",
+      "sidecar": "music/054. sound_054.json"
+    },
+    {
+      "song_id": 55,
+      "symbol": "sound_055",
+      "class": "music",
+      "stem": "sound_055",
+      "file": "music/055. sound_055.mid",
+      "sidecar": "music/055. sound_055.json"
+    },
+    {
+      "song_id": 58,
+      "symbol": "sound_058",
+      "class": "music",
+      "stem": "sound_058",
+      "file": "music/058. sound_058.mid",
+      "sidecar": "music/058. sound_058.json"
+    },
+    {
+      "song_id": 59,
+      "symbol": "sound_059",
+      "class": "music",
+      "stem": "sound_059",
+      "file": "music/059. sound_059.mid",
+      "sidecar": "music/059. sound_059.json"
+    },
+    {
+      "song_id": 60,
+      "symbol": "sound_060",
+      "class": "music",
+      "stem": "sound_060",
+      "file": "music/060. sound_060.mid",
+      "sidecar": "music/060. sound_060.json"
+    },
+    {
+      "song_id": 61,
+      "symbol": "sound_061",
+      "class": "music",
+      "stem": "sound_061",
+      "file": "music/061. sound_061.mid",
+      "sidecar": "music/061. sound_061.json"
+    },
+    {
+      "song_id": 62,
+      "symbol": "sound_062",
+      "class": "music",
+      "stem": "sound_062",
+      "file": "music/062. sound_062.mid",
+      "sidecar": "music/062. sound_062.json"
+    },
+    {
+      "song_id": 63,
+      "symbol": "sound_063",
+      "class": "music",
+      "stem": "sound_063",
+      "file": "music/063. sound_063.mid",
+      "sidecar": "music/063. sound_063.json"
+    },
+    {
+      "song_id": 64,
+      "symbol": "sound_064",
+      "class": "music",
+      "stem": "sound_064",
+      "file": "music/064. sound_064.mid",
+      "sidecar": "music/064. sound_064.json"
+    },
+    {
+      "song_id": 67,
+      "symbol": "sound_067",
+      "class": "music",
+      "stem": "sound_067",
+      "file": "music/067. sound_067.mid",
+      "sidecar": "music/067. sound_067.json"
+    },
+    {
+      "song_id": 70,
+      "symbol": "sound_070",
+      "class": "music",
+      "stem": "sound_070",
+      "file": "music/070. sound_070.mid",
+      "sidecar": "music/070. sound_070.json"
+    },
+    {
+      "song_id": 72,
+      "symbol": "sound_072",
+      "class": "music",
+      "stem": "sound_072",
+      "file": "music/072. sound_072.mid",
+      "sidecar": "music/072. sound_072.json"
+    },
+    {
+      "song_id": 74,
+      "symbol": "sound_074",
+      "class": "music",
+      "stem": "sound_074",
+      "file": "music/074. sound_074.mid",
+      "sidecar": "music/074. sound_074.json"
+    },
+    {
+      "song_id": 75,
+      "symbol": "sound_075",
+      "class": "music",
+      "stem": "sound_075",
+      "file": "music/075. sound_075.mid",
+      "sidecar": "music/075. sound_075.json"
+    },
+    {
+      "song_id": 76,
+      "symbol": "sound_076",
+      "class": "music",
+      "stem": "sound_076",
+      "file": "music/076. sound_076.mid",
+      "sidecar": "music/076. sound_076.json"
+    },
+    {
+      "song_id": 80,
+      "symbol": "sound_080",
+      "class": "music",
+      "stem": "sound_080",
+      "file": "music/080. sound_080.mid",
+      "sidecar": "music/080. sound_080.json"
+    },
+    {
+      "song_id": 81,
+      "symbol": "sound_081",
+      "class": "music",
+      "stem": "sound_081",
+      "file": "music/081. sound_081.mid",
+      "sidecar": "music/081. sound_081.json"
+    },
+    {
+      "song_id": 82,
+      "symbol": "sound_082",
+      "class": "music",
+      "stem": "sound_082",
+      "file": "music/082. sound_082.mid",
+      "sidecar": "music/082. sound_082.json"
+    },
+    {
+      "song_id": 83,
+      "symbol": "sound_083",
+      "class": "music",
+      "stem": "sound_083",
+      "file": "music/083. sound_083.mid",
+      "sidecar": "music/083. sound_083.json"
+    },
+    {
+      "song_id": 84,
+      "symbol": "sound_084",
+      "class": "music",
+      "stem": "sound_084",
+      "file": "music/084. sound_084.mid",
+      "sidecar": "music/084. sound_084.json"
+    },
+    {
+      "song_id": 85,
+      "symbol": "sound_085",
+      "class": "music",
+      "stem": "sound_085",
+      "file": "music/085. sound_085.mid",
+      "sidecar": "music/085. sound_085.json"
+    },
+    {
+      "song_id": 86,
+      "symbol": "sound_086",
+      "class": "music",
+      "stem": "sound_086",
+      "file": "music/086. sound_086.mid",
+      "sidecar": "music/086. sound_086.json"
+    },
+    {
+      "song_id": 87,
+      "symbol": "sound_087",
+      "class": "music",
+      "stem": "sound_087",
+      "file": "music/087. sound_087.mid",
+      "sidecar": "music/087. sound_087.json"
+    },
+    {
+      "song_id": 88,
+      "symbol": "sound_088",
+      "class": "music",
+      "stem": "sound_088",
+      "file": "music/088. sound_088.mid",
+      "sidecar": "music/088. sound_088.json"
+    },
+    {
+      "song_id": 89,
+      "symbol": "sound_089",
+      "class": "music",
+      "stem": "sound_089",
+      "file": "music/089. sound_089.mid",
+      "sidecar": "music/089. sound_089.json"
+    },
+    {
+      "song_id": 91,
+      "symbol": "sound_091",
+      "class": "music",
+      "stem": "sound_091",
+      "file": "music/091. sound_091.mid",
+      "sidecar": "music/091. sound_091.json"
+    },
+    {
+      "song_id": 92,
+      "symbol": "sound_092",
+      "class": "music",
+      "stem": "sound_092",
+      "file": "music/092. sound_092.mid",
+      "sidecar": "music/092. sound_092.json"
+    },
+    {
+      "song_id": 93,
+      "symbol": "sound_093",
+      "class": "music",
+      "stem": "sound_093",
+      "file": "music/093. sound_093.mid",
+      "sidecar": "music/093. sound_093.json"
+    },
+    {
+      "song_id": 95,
+      "symbol": "sound_095",
+      "class": "music",
+      "stem": "sound_095",
+      "file": null,
+      "sidecar": null
+    },
+    {
+      "song_id": 100,
+      "symbol": "sound_100",
+      "class": "sfx",
+      "stem": "sound_100",
+      "file": "sfx/100. sound_100.mid",
+      "sidecar": "sfx/100. sound_100.json"
+    },
+    {
+      "song_id": 101,
+      "symbol": "sound_101",
+      "class": "sfx",
+      "stem": "sound_101",
+      "file": "sfx/101. sound_101.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 102,
+      "symbol": "sound_102",
+      "class": "sfx",
+      "stem": "sound_102",
+      "file": "sfx/102. sound_102.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 103,
+      "symbol": "sound_103",
+      "class": "sfx",
+      "stem": "sound_103",
+      "file": "sfx/103. sound_103.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 104,
+      "symbol": "sound_104",
+      "class": "sfx",
+      "stem": "sound_104",
+      "file": "sfx/104. sound_104.mid",
+      "sidecar": "sfx/104. sound_104.json"
+    },
+    {
+      "song_id": 105,
+      "symbol": "sound_105",
+      "class": "sfx",
+      "stem": "sound_105",
+      "file": "sfx/105. sound_105.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 106,
+      "symbol": "sound_106",
+      "class": "sfx",
+      "stem": "sound_106",
+      "file": "sfx/106. sound_106.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 107,
+      "symbol": "sound_107",
+      "class": "sfx",
+      "stem": "sound_107",
+      "file": "sfx/107. sound_107.mid",
+      "sidecar": "sfx/107. sound_107.json"
+    },
+    {
+      "song_id": 108,
+      "symbol": "sound_108",
+      "class": "sfx",
+      "stem": "sound_108",
+      "file": "sfx/108. sound_108.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 109,
+      "symbol": "sound_109",
+      "class": "sfx",
+      "stem": "sound_109",
+      "file": "sfx/109. sound_109.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 110,
+      "symbol": "sound_110",
+      "class": "sfx",
+      "stem": "sound_110",
+      "file": "sfx/110. sound_110.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 111,
+      "symbol": "sound_111",
+      "class": "sfx",
+      "stem": "sound_111",
+      "file": "sfx/111. sound_111.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 112,
+      "symbol": "sound_112",
+      "class": "sfx",
+      "stem": "sound_112",
+      "file": "sfx/112. sound_112.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 113,
+      "symbol": "sound_113",
+      "class": "sfx",
+      "stem": "sound_113",
+      "file": "sfx/113. sound_113.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 114,
+      "symbol": "sound_114",
+      "class": "sfx",
+      "stem": "sound_114",
+      "file": "sfx/114. sound_114.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 115,
+      "symbol": "sound_115",
+      "class": "sfx",
+      "stem": "sound_115",
+      "file": "sfx/115. sound_115.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 116,
+      "symbol": "sound_116",
+      "class": "sfx",
+      "stem": "sound_116",
+      "file": "sfx/116. sound_116.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 117,
+      "symbol": "sound_117",
+      "class": "sfx",
+      "stem": "sound_117",
+      "file": "sfx/117. sound_117.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 118,
+      "symbol": "sound_118",
+      "class": "sfx",
+      "stem": "sound_118",
+      "file": "sfx/118. sound_118.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 119,
+      "symbol": "sound_119",
+      "class": "sfx",
+      "stem": "sound_119",
+      "file": "sfx/119. sound_119.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 120,
+      "symbol": "sound_120",
+      "class": "sfx",
+      "stem": "sound_120",
+      "file": "sfx/120. sound_120.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 121,
+      "symbol": "sound_121",
+      "class": "sfx",
+      "stem": "sound_121",
+      "file": "sfx/121. sound_121.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 122,
+      "symbol": "sound_122",
+      "class": "sfx",
+      "stem": "sound_122",
+      "file": "sfx/122. sound_122.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 123,
+      "symbol": "sound_123",
+      "class": "sfx",
+      "stem": "sound_123",
+      "file": "sfx/123. sound_123.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 124,
+      "symbol": "sound_124",
+      "class": "sfx",
+      "stem": "sound_124",
+      "file": "sfx/124. sound_124.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 125,
+      "symbol": "sound_125",
+      "class": "sfx",
+      "stem": "sound_125",
+      "file": "sfx/125. sound_125.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 126,
+      "symbol": "sound_126",
+      "class": "sfx",
+      "stem": "sound_126",
+      "file": "sfx/126. sound_126.mid",
+      "sidecar": "sfx/126. sound_126.json"
+    },
+    {
+      "song_id": 127,
+      "symbol": "sound_127",
+      "class": "sfx",
+      "stem": "sound_127",
+      "file": "sfx/127. sound_127.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 128,
+      "symbol": "sound_128",
+      "class": "sfx",
+      "stem": "sound_128",
+      "file": "sfx/128. sound_128.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 129,
+      "symbol": "sound_129",
+      "class": "sfx",
+      "stem": "sound_129",
+      "file": "sfx/129. sound_129.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 130,
+      "symbol": "sound_130",
+      "class": "sfx",
+      "stem": "sound_130",
+      "file": "sfx/130. sound_130.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 131,
+      "symbol": "sound_131",
+      "class": "sfx",
+      "stem": "sound_131",
+      "file": "sfx/131. sound_131.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 132,
+      "symbol": "sound_132",
+      "class": "sfx",
+      "stem": "sound_132",
+      "file": "sfx/132. sound_132.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 133,
+      "symbol": "sound_133",
+      "class": "sfx",
+      "stem": "sound_133",
+      "file": "sfx/133. sound_133.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 134,
+      "symbol": "sound_134",
+      "class": "sfx",
+      "stem": "sound_134",
+      "file": "sfx/134. sound_134.mid",
+      "sidecar": "sfx/134. sound_134.json"
+    },
+    {
+      "song_id": 135,
+      "symbol": "sound_135",
+      "class": "sfx",
+      "stem": "sound_135",
+      "file": "sfx/135. sound_135.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 136,
+      "symbol": "sound_136",
+      "class": "sfx",
+      "stem": "sound_136",
+      "file": "sfx/136. sound_136.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 137,
+      "symbol": "sound_137",
+      "class": "sfx",
+      "stem": "sound_137",
+      "file": "sfx/137. sound_137.mid",
+      "sidecar": "sfx/137. sound_137.json"
+    },
+    {
+      "song_id": 138,
+      "symbol": "sound_138",
+      "class": "sfx",
+      "stem": "sound_138",
+      "file": "sfx/138. sound_138.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 139,
+      "symbol": "sound_139",
+      "class": "sfx",
+      "stem": "sound_139",
+      "file": "sfx/139. sound_139.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 140,
+      "symbol": "sound_140",
+      "class": "sfx",
+      "stem": "sound_140",
+      "file": "sfx/140. sound_140.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 141,
+      "symbol": "sound_141",
+      "class": "sfx",
+      "stem": "sound_141",
+      "file": "sfx/141. sound_141.mid",
+      "sidecar": "sfx/141. sound_141.json"
+    },
+    {
+      "song_id": 142,
+      "symbol": "sound_142",
+      "class": "sfx",
+      "stem": "sound_142",
+      "file": "sfx/142. sound_142.mid",
+      "sidecar": "sfx/142. sound_142.json"
+    },
+    {
+      "song_id": 143,
+      "symbol": "sound_143",
+      "class": "sfx",
+      "stem": "sound_143",
+      "file": "sfx/143. sound_143.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 144,
+      "symbol": "sound_144",
+      "class": "sfx",
+      "stem": "sound_144",
+      "file": "sfx/144. sound_144.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 145,
+      "symbol": "sound_145",
+      "class": "sfx",
+      "stem": "sound_145",
+      "file": "sfx/145. sound_145.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 146,
+      "symbol": "sound_146",
+      "class": "sfx",
+      "stem": "sound_146",
+      "file": "sfx/146. sound_146.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 147,
+      "symbol": "sound_147",
+      "class": "sfx",
+      "stem": "sound_147",
+      "file": "sfx/147. sound_147.mid",
+      "sidecar": "sfx/147. sound_147.json"
+    },
+    {
+      "song_id": 148,
+      "symbol": "sound_148",
+      "class": "sfx",
+      "stem": "sound_148",
+      "file": "sfx/148. sound_148.mid",
+      "sidecar": "sfx/148. sound_148.json"
+    },
+    {
+      "song_id": 149,
+      "symbol": "sound_149",
+      "class": "sfx",
+      "stem": "sound_149",
+      "file": "sfx/149. sound_149.mid",
+      "sidecar": "sfx/149. sound_149.json"
+    },
+    {
+      "song_id": 150,
+      "symbol": "sound_150",
+      "class": "sfx",
+      "stem": "sound_150",
+      "file": "sfx/150. sound_150.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 151,
+      "symbol": "sound_151",
+      "class": "sfx",
+      "stem": "sound_151",
+      "file": "sfx/151. sound_151.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 152,
+      "symbol": "sound_152",
+      "class": "sfx",
+      "stem": "sound_152",
+      "file": "sfx/152. sound_152.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 153,
+      "symbol": "sound_153",
+      "class": "sfx",
+      "stem": "sound_153",
+      "file": "sfx/153. sound_153.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 154,
+      "symbol": "sound_154",
+      "class": "sfx",
+      "stem": "sound_154",
+      "file": "sfx/154. sound_154.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 155,
+      "symbol": "sound_155",
+      "class": "sfx",
+      "stem": "sound_155",
+      "file": "sfx/155. sound_155.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 156,
+      "symbol": "sound_156",
+      "class": "sfx",
+      "stem": "sound_156",
+      "file": "sfx/156. sound_156.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 157,
+      "symbol": "sound_157",
+      "class": "sfx",
+      "stem": "sound_157",
+      "file": "sfx/157. sound_157.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 158,
+      "symbol": "sound_158",
+      "class": "sfx",
+      "stem": "sound_158",
+      "file": "sfx/158. sound_158.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 159,
+      "symbol": "sound_159",
+      "class": "sfx",
+      "stem": "sound_159",
+      "file": "sfx/159. sound_159.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 160,
+      "symbol": "sound_160",
+      "class": "sfx",
+      "stem": "sound_160",
+      "file": "sfx/160. sound_160.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 161,
+      "symbol": "sound_161",
+      "class": "sfx",
+      "stem": "sound_161",
+      "file": "sfx/161. sound_161.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 162,
+      "symbol": "sound_162",
+      "class": "sfx",
+      "stem": "sound_162",
+      "file": "sfx/162. sound_162.mid",
+      "sidecar": "sfx/162. sound_162.json"
+    },
+    {
+      "song_id": 163,
+      "symbol": "sound_163",
+      "class": "sfx",
+      "stem": "sound_163",
+      "file": "sfx/163. sound_163.mid",
+      "sidecar": "sfx/163. sound_163.json"
+    },
+    {
+      "song_id": 164,
+      "symbol": "sound_164",
+      "class": "sfx",
+      "stem": "sound_164",
+      "file": "sfx/164. sound_164.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 165,
+      "symbol": "sound_165",
+      "class": "sfx",
+      "stem": "sound_165",
+      "file": "sfx/165. sound_165.mid",
+      "sidecar": "sfx/165. sound_165.json"
+    },
+    {
+      "song_id": 166,
+      "symbol": "sound_166",
+      "class": "sfx",
+      "stem": "sound_166",
+      "file": "sfx/166. sound_166.mid",
+      "sidecar": "sfx/166. sound_166.json"
+    },
+    {
+      "song_id": 167,
+      "symbol": "sound_167",
+      "class": "sfx",
+      "stem": "sound_167",
+      "file": "sfx/167. sound_167.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 168,
+      "symbol": "sound_168",
+      "class": "sfx",
+      "stem": "sound_168",
+      "file": "sfx/168. sound_168.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 169,
+      "symbol": "sound_169",
+      "class": "sfx",
+      "stem": "sound_169",
+      "file": "sfx/169. sound_169.mid",
+      "sidecar": "sfx/169. sound_169.json"
+    },
+    {
+      "song_id": 170,
+      "symbol": "sound_170",
+      "class": "sfx",
+      "stem": "sound_170",
+      "file": "sfx/170. sound_170.mid",
+      "sidecar": "sfx/170. sound_170.json"
+    },
+    {
+      "song_id": 171,
+      "symbol": "sound_171",
+      "class": "sfx",
+      "stem": "sound_171",
+      "file": "sfx/171. sound_171.mid",
+      "sidecar": "sfx/171. sound_171.json"
+    },
+    {
+      "song_id": 172,
+      "symbol": "sound_172",
+      "class": "sfx",
+      "stem": "sound_172",
+      "file": "sfx/172. sound_172.mid",
+      "sidecar": "sfx/172. sound_172.json"
+    },
+    {
+      "song_id": 173,
+      "symbol": "sound_173",
+      "class": "sfx",
+      "stem": "sound_173",
+      "file": "sfx/173. sound_173.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 174,
+      "symbol": "sound_174",
+      "class": "sfx",
+      "stem": "sound_174",
+      "file": "sfx/174. sound_174.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 175,
+      "symbol": "sound_175",
+      "class": "sfx",
+      "stem": "sound_175",
+      "file": "sfx/175. sound_175.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 176,
+      "symbol": "sound_176",
+      "class": "sfx",
+      "stem": "sound_176",
+      "file": "sfx/176. sound_176.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 177,
+      "symbol": "sound_177",
+      "class": "sfx",
+      "stem": "sound_177",
+      "file": "sfx/177. sound_177.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 178,
+      "symbol": "sound_178",
+      "class": "sfx",
+      "stem": "sound_178",
+      "file": "sfx/178. sound_178.mid",
+      "sidecar": "sfx/178. sound_178.json"
+    },
+    {
+      "song_id": 179,
+      "symbol": "sound_179",
+      "class": "sfx",
+      "stem": "sound_179",
+      "file": "sfx/179. sound_179.mid",
+      "sidecar": "sfx/179. sound_179.json"
+    },
+    {
+      "song_id": 180,
+      "symbol": "sound_180",
+      "class": "sfx",
+      "stem": "sound_180",
+      "file": "sfx/180. sound_180.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 181,
+      "symbol": "sound_181",
+      "class": "sfx",
+      "stem": "sound_181",
+      "file": "sfx/181. sound_181.mid",
+      "sidecar": "sfx/181. sound_181.json"
+    },
+    {
+      "song_id": 182,
+      "symbol": "sound_182",
+      "class": "sfx",
+      "stem": "sound_182",
+      "file": "sfx/182. sound_182.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 183,
+      "symbol": "sound_183",
+      "class": "sfx",
+      "stem": "sound_183",
+      "file": "sfx/183. sound_183.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 184,
+      "symbol": "sound_184",
+      "class": "sfx",
+      "stem": "sound_184",
+      "file": "sfx/184. sound_184.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 185,
+      "symbol": "sound_185",
+      "class": "sfx",
+      "stem": "sound_185",
+      "file": "sfx/185. sound_185.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 186,
+      "symbol": "sound_186",
+      "class": "sfx",
+      "stem": "sound_186",
+      "file": "sfx/186. sound_186.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 187,
+      "symbol": "sound_187",
+      "class": "sfx",
+      "stem": "sound_187",
+      "file": "sfx/187. sound_187.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 188,
+      "symbol": "sound_188",
+      "class": "sfx",
+      "stem": "sound_188",
+      "file": "sfx/188. sound_188.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 189,
+      "symbol": "sound_189",
+      "class": "sfx",
+      "stem": "sound_189",
+      "file": "sfx/189. sound_189.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 190,
+      "symbol": "sound_190",
+      "class": "sfx",
+      "stem": "sound_190",
+      "file": "sfx/190. sound_190.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 191,
+      "symbol": "sound_191",
+      "class": "sfx",
+      "stem": "sound_191",
+      "file": "sfx/191. sound_191.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 192,
+      "symbol": "sound_192",
+      "class": "sfx",
+      "stem": "sound_192",
+      "file": "sfx/192. sound_192.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 193,
+      "symbol": "sound_193",
+      "class": "sfx",
+      "stem": "sound_193",
+      "file": "sfx/193. sound_193.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 194,
+      "symbol": "sound_194",
+      "class": "sfx",
+      "stem": "sound_194",
+      "file": "sfx/194. sound_194.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 195,
+      "symbol": "sound_195",
+      "class": "sfx",
+      "stem": "sound_195",
+      "file": "sfx/195. sound_195.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 196,
+      "symbol": "sound_196",
+      "class": "sfx",
+      "stem": "sound_196",
+      "file": "sfx/196. sound_196.mid",
+      "sidecar": "sfx/196. sound_196.json"
+    },
+    {
+      "song_id": 197,
+      "symbol": "sound_197",
+      "class": "sfx",
+      "stem": "sound_197",
+      "file": "sfx/197. sound_197.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 198,
+      "symbol": "sound_198",
+      "class": "sfx",
+      "stem": "sound_198",
+      "file": "sfx/198. sound_198.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 199,
+      "symbol": "sound_199",
+      "class": "sfx",
+      "stem": "sound_199",
+      "file": "sfx/199. sound_199.mid",
+      "sidecar": "sfx/199. sound_199.json"
+    },
+    {
+      "song_id": 200,
+      "symbol": "sound_200",
+      "class": "sfx",
+      "stem": "sound_200",
+      "file": "sfx/200. sound_200.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 201,
+      "symbol": "sound_201",
+      "class": "sfx",
+      "stem": "sound_201",
+      "file": "sfx/201. sound_201.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 202,
+      "symbol": "sound_202",
+      "class": "sfx",
+      "stem": "sound_202",
+      "file": "sfx/202. sound_202.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 203,
+      "symbol": "sound_203",
+      "class": "sfx",
+      "stem": "sound_203",
+      "file": "sfx/203. sound_203.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 204,
+      "symbol": "sound_204",
+      "class": "sfx",
+      "stem": "sound_204",
+      "file": "sfx/204. sound_204.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 205,
+      "symbol": "sound_205",
+      "class": "sfx",
+      "stem": "sound_205",
+      "file": "sfx/205. sound_205.mid",
+      "sidecar": "sfx/205. sound_205.json"
+    },
+    {
+      "song_id": 206,
+      "symbol": "sound_206",
+      "class": "sfx",
+      "stem": "sound_206",
+      "file": "sfx/206. sound_206.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 208,
+      "symbol": "sound_208",
+      "class": "sfx",
+      "stem": "sound_208",
+      "file": "sfx/208. sound_208.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 209,
+      "symbol": "sound_209",
+      "class": "sfx",
+      "stem": "sound_209",
+      "file": "sfx/209. sound_209.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 210,
+      "symbol": "sound_210",
+      "class": "sfx",
+      "stem": "sound_210",
+      "file": "sfx/210. sound_210.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 211,
+      "symbol": "sound_211",
+      "class": "sfx",
+      "stem": "sound_211",
+      "file": "sfx/211. sound_211.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 212,
+      "symbol": "sound_212",
+      "class": "sfx",
+      "stem": "sound_212",
+      "file": "sfx/212. sound_212.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 213,
+      "symbol": "sound_213",
+      "class": "sfx",
+      "stem": "sound_213",
+      "file": "sfx/213. sound_213.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 214,
+      "symbol": "sound_214",
+      "class": "sfx",
+      "stem": "sound_214",
+      "file": "sfx/214. sound_214.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 215,
+      "symbol": "sound_215",
+      "class": "sfx",
+      "stem": "sound_215",
+      "file": "sfx/215. sound_215.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 216,
+      "symbol": "sound_216",
+      "class": "sfx",
+      "stem": "sound_216",
+      "file": "sfx/216. sound_216.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 217,
+      "symbol": "sound_217",
+      "class": "sfx",
+      "stem": "sound_217",
+      "file": "sfx/217. sound_217.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 218,
+      "symbol": "sound_218",
+      "class": "sfx",
+      "stem": "sound_218",
+      "file": "sfx/218. sound_218.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 219,
+      "symbol": "sound_219",
+      "class": "sfx",
+      "stem": "sound_219",
+      "file": "sfx/219. sound_219.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 220,
+      "symbol": "sound_220",
+      "class": "sfx",
+      "stem": "sound_220",
+      "file": "sfx/220. sound_220.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 221,
+      "symbol": "sound_221",
+      "class": "sfx",
+      "stem": "sound_221",
+      "file": "sfx/221. sound_221.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 222,
+      "symbol": "sound_222",
+      "class": "sfx",
+      "stem": "sound_222",
+      "file": "sfx/222. sound_222.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 223,
+      "symbol": "sound_223",
+      "class": "sfx",
+      "stem": "sound_223",
+      "file": "sfx/223. sound_223.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 224,
+      "symbol": "sound_224",
+      "class": "sfx",
+      "stem": "sound_224",
+      "file": "sfx/224. sound_224.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 225,
+      "symbol": "sound_225",
+      "class": "sfx",
+      "stem": "sound_225",
+      "file": "sfx/225. sound_225.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 226,
+      "symbol": "sound_226",
+      "class": "sfx",
+      "stem": "sound_226",
+      "file": "sfx/226. sound_226.mid",
+      "sidecar": "sfx/226. sound_226.json"
+    },
+    {
+      "song_id": 227,
+      "symbol": "sound_227",
+      "class": "sfx",
+      "stem": "sound_227",
+      "file": "sfx/227. sound_227.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 228,
+      "symbol": "sound_228",
+      "class": "sfx",
+      "stem": "sound_228",
+      "file": "sfx/228. sound_228.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 229,
+      "symbol": "sound_229",
+      "class": "sfx",
+      "stem": "sound_229",
+      "file": "sfx/229. sound_229.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 230,
+      "symbol": "sound_230",
+      "class": "sfx",
+      "stem": "sound_230",
+      "file": "sfx/230. sound_230.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 231,
+      "symbol": "sound_231",
+      "class": "sfx",
+      "stem": "sound_231",
+      "file": "sfx/231. sound_231.mid",
+      "sidecar": "sfx/231. sound_231.json"
+    },
+    {
+      "song_id": 232,
+      "symbol": "sound_232",
+      "class": "sfx",
+      "stem": "sound_232",
+      "file": "sfx/232. sound_232.mid",
+      "sidecar": "sfx/232. sound_232.json"
+    },
+    {
+      "song_id": 233,
+      "symbol": "sound_233",
+      "class": "sfx",
+      "stem": "sound_233",
+      "file": "sfx/233. sound_233.mid",
+      "sidecar": "sfx/233. sound_233.json"
+    },
+    {
+      "song_id": 234,
+      "symbol": "sound_234",
+      "class": "sfx",
+      "stem": "sound_234",
+      "file": "sfx/234. sound_234.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 235,
+      "symbol": "sound_235",
+      "class": "sfx",
+      "stem": "sound_235",
+      "file": "sfx/235. sound_235.mid",
+      "sidecar": "sfx/235. sound_235.json"
+    },
+    {
+      "song_id": 236,
+      "symbol": "sound_236",
+      "class": "sfx",
+      "stem": "sound_236",
+      "file": "sfx/236. sound_236.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 237,
+      "symbol": "sound_237",
+      "class": "sfx",
+      "stem": "sound_237",
+      "file": "sfx/237. sound_237.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 238,
+      "symbol": "sound_238",
+      "class": "sfx",
+      "stem": "sound_238",
+      "file": "sfx/238. sound_238.mid",
+      "sidecar": "sfx/238. sound_238.json"
+    },
+    {
+      "song_id": 239,
+      "symbol": "sound_239",
+      "class": "sfx",
+      "stem": "sound_239",
+      "file": "sfx/239. sound_239.mid",
+      "sidecar": "sfx/239. sound_239.json"
+    },
+    {
+      "song_id": 240,
+      "symbol": "sound_240",
+      "class": "sfx",
+      "stem": "sound_240",
+      "file": "sfx/240. sound_240.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 241,
+      "symbol": "sound_241",
+      "class": "sfx",
+      "stem": "sound_241",
+      "file": "sfx/241. sound_241.mid",
+      "sidecar": "sfx/241. sound_241.json"
+    },
+    {
+      "song_id": 242,
+      "symbol": "sound_242",
+      "class": "sfx",
+      "stem": "sound_242",
+      "file": "sfx/242. sound_242.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 243,
+      "symbol": "sound_243",
+      "class": "sfx",
+      "stem": "sound_243",
+      "file": "sfx/243. sound_243.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 244,
+      "symbol": "sound_244",
+      "class": "sfx",
+      "stem": "sound_244",
+      "file": "sfx/244. sound_244.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 245,
+      "symbol": "sound_245",
+      "class": "sfx",
+      "stem": "sound_245",
+      "file": "sfx/245. sound_245.mid",
+      "sidecar": "sfx/245. sound_245.json"
+    },
+    {
+      "song_id": 246,
+      "symbol": "sound_246",
+      "class": "sfx",
+      "stem": "sound_246",
+      "file": "sfx/246. sound_246.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 247,
+      "symbol": "sound_247",
+      "class": "sfx",
+      "stem": "sound_247",
+      "file": "sfx/247. sound_247.mid",
+      "sidecar": "sfx/247. sound_247.json"
+    },
+    {
+      "song_id": 248,
+      "symbol": "sound_248",
+      "class": "sfx",
+      "stem": "sound_248",
+      "file": "sfx/248. sound_248.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 249,
+      "symbol": "sound_249",
+      "class": "sfx",
+      "stem": "sound_249",
+      "file": "sfx/249. sound_249.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 250,
+      "symbol": "sound_250",
+      "class": "sfx",
+      "stem": "sound_250",
+      "file": "sfx/250. sound_250.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 251,
+      "symbol": "sound_251",
+      "class": "sfx",
+      "stem": "sound_251",
+      "file": "sfx/251. sound_251.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 252,
+      "symbol": "sound_252",
+      "class": "sfx",
+      "stem": "sound_252",
+      "file": "sfx/252. sound_252.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 253,
+      "symbol": "sound_253",
+      "class": "sfx",
+      "stem": "sound_253",
+      "file": "sfx/253. sound_253.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 256,
+      "symbol": "sound_256",
+      "class": "sfx",
+      "stem": "sound_256",
+      "file": "sfx/256. sound_256.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 257,
+      "symbol": "sound_257",
+      "class": "sfx",
+      "stem": "sound_257",
+      "file": "sfx/257. sound_257.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 258,
+      "symbol": "sound_258",
+      "class": "sfx",
+      "stem": "sound_258",
+      "file": "sfx/258. sound_258.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 259,
+      "symbol": "sound_259",
+      "class": "sfx",
+      "stem": "sound_259",
+      "file": "sfx/259. sound_259.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 260,
+      "symbol": "sound_260",
+      "class": "sfx",
+      "stem": "sound_260",
+      "file": "sfx/260. sound_260.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 261,
+      "symbol": "sound_261",
+      "class": "sfx",
+      "stem": "sound_261",
+      "file": "sfx/261. sound_261.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 262,
+      "symbol": "sound_262",
+      "class": "sfx",
+      "stem": "sound_262",
+      "file": "sfx/262. sound_262.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 263,
+      "symbol": "sound_263",
+      "class": "sfx",
+      "stem": "sound_263",
+      "file": "sfx/263. sound_263.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 264,
+      "symbol": "sound_264",
+      "class": "sfx",
+      "stem": "sound_264",
+      "file": "sfx/264. sound_264.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 265,
+      "symbol": "sound_265",
+      "class": "sfx",
+      "stem": "sound_265",
+      "file": "sfx/265. sound_265.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 266,
+      "symbol": "sound_266",
+      "class": "sfx",
+      "stem": "sound_266",
+      "file": "sfx/266. sound_266.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 267,
+      "symbol": "sound_267",
+      "class": "sfx",
+      "stem": "sound_267",
+      "file": "sfx/267. sound_267.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 268,
+      "symbol": "sound_268",
+      "class": "sfx",
+      "stem": "sound_268",
+      "file": "sfx/268. sound_268.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 269,
+      "symbol": "sound_269",
+      "class": "sfx",
+      "stem": "sound_269",
+      "file": "sfx/269. sound_269.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 270,
+      "symbol": "sound_270",
+      "class": "sfx",
+      "stem": "sound_270",
+      "file": "sfx/270. sound_270.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 271,
+      "symbol": "sound_271",
+      "class": "sfx",
+      "stem": "sound_271",
+      "file": "sfx/271. sound_271.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 272,
+      "symbol": "sound_272",
+      "class": "sfx",
+      "stem": "sound_272",
+      "file": "sfx/272. sound_272.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 273,
+      "symbol": "sound_273",
+      "class": "sfx",
+      "stem": "sound_273",
+      "file": "sfx/273. sound_273.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 274,
+      "symbol": "sound_274",
+      "class": "sfx",
+      "stem": "sound_274",
+      "file": "sfx/274. sound_274.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 275,
+      "symbol": "sound_275",
+      "class": "sfx",
+      "stem": "sound_275",
+      "file": "sfx/275. sound_275.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 276,
+      "symbol": "sound_276",
+      "class": "sfx",
+      "stem": "sound_276",
+      "file": "sfx/276. sound_276.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 277,
+      "symbol": "sound_277",
+      "class": "sfx",
+      "stem": "sound_277",
+      "file": "sfx/277. sound_277.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 278,
+      "symbol": "sound_278",
+      "class": "sfx",
+      "stem": "sound_278",
+      "file": "sfx/278. sound_278.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 279,
+      "symbol": "sound_279",
+      "class": "sfx",
+      "stem": "sound_279",
+      "file": "sfx/279. sound_279.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 280,
+      "symbol": "sound_280",
+      "class": "sfx",
+      "stem": "sound_280",
+      "file": "sfx/280. sound_280.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 281,
+      "symbol": "sound_281",
+      "class": "sfx",
+      "stem": "sound_281",
+      "file": "sfx/281. sound_281.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 282,
+      "symbol": "sound_282",
+      "class": "sfx",
+      "stem": "sound_282",
+      "file": "sfx/282. sound_282.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 283,
+      "symbol": "sound_283",
+      "class": "sfx",
+      "stem": "sound_283",
+      "file": "sfx/283. sound_283.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 284,
+      "symbol": "sound_284",
+      "class": "sfx",
+      "stem": "sound_284",
+      "file": "sfx/284. sound_284.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 285,
+      "symbol": "sound_285",
+      "class": "sfx",
+      "stem": "sound_285",
+      "file": "sfx/285. sound_285.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 286,
+      "symbol": "sound_286",
+      "class": "sfx",
+      "stem": "sound_286",
+      "file": "sfx/286. sound_286.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 287,
+      "symbol": "sound_287",
+      "class": "sfx",
+      "stem": "sound_287",
+      "file": "sfx/287. sound_287.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 288,
+      "symbol": "sound_288",
+      "class": "sfx",
+      "stem": "sound_288",
+      "file": null,
+      "sidecar": null
+    },
+    {
+      "song_id": 289,
+      "symbol": "sound_289",
+      "class": "sfx",
+      "stem": "sound_289",
+      "file": "sfx/289. sound_289.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 290,
+      "symbol": "sound_290",
+      "class": "sfx",
+      "stem": "sound_290",
+      "file": "sfx/290. sound_290.mid",
+      "sidecar": "sfx/290. sound_290.json"
+    },
+    {
+      "song_id": 291,
+      "symbol": "sound_291",
+      "class": "sfx",
+      "stem": "sound_291",
+      "file": "sfx/291. sound_291.mid",
+      "sidecar": "sfx/291. sound_291.json"
+    },
+    {
+      "song_id": 292,
+      "symbol": "sound_292",
+      "class": "sfx",
+      "stem": "sound_292",
+      "file": "sfx/292. sound_292.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 293,
+      "symbol": "sound_293",
+      "class": "sfx",
+      "stem": "sound_293",
+      "file": "sfx/293. sound_293.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 298,
+      "symbol": "sound_298",
+      "class": "sfx",
+      "stem": "sound_298",
+      "file": null,
+      "sidecar": null
+    },
+    {
+      "song_id": 300,
+      "symbol": "sound_300",
+      "class": "sfx",
+      "stem": "sound_300",
+      "file": "sfx/300. sound_300.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 301,
+      "symbol": "sound_301",
+      "class": "sfx",
+      "stem": "sound_301",
+      "file": "sfx/301. sound_301.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 302,
+      "symbol": "sound_302",
+      "class": "sfx",
+      "stem": "sound_302",
+      "file": "sfx/302. sound_302.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 303,
+      "symbol": "sound_303",
+      "class": "sfx",
+      "stem": "sound_303",
+      "file": "sfx/303. sound_303.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 304,
+      "symbol": "sound_304",
+      "class": "sfx",
+      "stem": "sound_304",
+      "file": "sfx/304. sound_304.mid",
+      "sidecar": "sfx/304. sound_304.json"
+    },
+    {
+      "song_id": 305,
+      "symbol": "sound_305",
+      "class": "sfx",
+      "stem": "sound_305",
+      "file": "sfx/305. sound_305.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 306,
+      "symbol": "sound_306",
+      "class": "sfx",
+      "stem": "sound_306",
+      "file": "sfx/306. sound_306.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 307,
+      "symbol": "sound_307",
+      "class": "sfx",
+      "stem": "sound_307",
+      "file": "sfx/307. sound_307.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 308,
+      "symbol": "sound_308",
+      "class": "sfx",
+      "stem": "sound_308",
+      "file": "sfx/308. sound_308.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 309,
+      "symbol": "sound_309",
+      "class": "sfx",
+      "stem": "sound_309",
+      "file": "sfx/309. sound_309.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 310,
+      "symbol": "sound_310",
+      "class": "sfx",
+      "stem": "sound_310",
+      "file": "sfx/310. sound_310.mid",
+      "sidecar": null
+    },
+    {
+      "song_id": 311,
+      "symbol": "sound_311",
+      "class": "sfx",
+      "stem": "sound_311",
+      "file": "sfx/311. sound_311.mid",
+      "sidecar": "sfx/311. sound_311.json"
+    }
+  ]
+}

@@ -294,7 +294,7 @@ export function convert_sequence(source: SequenceSource, name: string): { midi: 
 }
 
 // サイドカー JSON を安定した体裁で直列化する (逸脱 1 件を 1 行に)。
-function serializeSidecar(sidecar: Sidecar): string {
+export function serializeSidecar(sidecar: Sidecar): string {
   const lines: string[] = ["{"];
   lines.push(`  "format": ${sidecar.format},`);
   lines.push(`  "engine": ${JSON.stringify(sidecar.engine)},`);

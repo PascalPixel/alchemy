@@ -1,0 +1,80 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence-sidecar",
+  "name": "sound_075",
+  "tracks": {
+    "track_1": {
+      "events": 67,
+      "hash": "c237d21e91f39721",
+      "deviations": [
+        [25,1,["wait",24],["wait",12]],
+        [33,1,["wait",8],["wait",8]],
+        [59,1,["wait",8],["wait",8]],
+        [63,1,["note",92,69]],
+        [64,2,["wait",24],["wait",24],["wait",24],["wait",23]]
+      ]
+    },
+    "track_2": {
+      "events": 86,
+      "hash": "0149f12a92dd4ccb",
+      "deviations": [
+        [16,1,["note",23,52]],
+        [19,1,["note",23,52]],
+        [22,1,["note",44,52]],
+        [23,1,["wait",24],["wait",24]],
+        [25,1,["note",44,50]],
+        [26,1,["wait",24],["wait",24]],
+        [28,1,["note",23,52]],
+        [31,1,["note",23,52]],
+        [82,1,["note",92,57]],
+        [83,2,["wait",24],["wait",24],["wait",24],["wait",23]]
+      ]
+    },
+    "track_3": {
+      "events": 40,
+      "hash": "af547c7ed585ecca",
+      "deviations": [
+        [27,1,["wait",24],["wait",24]],
+        [29,1,["wait",24],["wait",24]],
+        [31,1,["wait",24],["wait",24]],
+        [37,2,["wait",24],["wait",24],["wait",24],["wait",23]]
+      ]
+    },
+    "track_4": {
+      "events": 48,
+      "hash": "72e3ffc680579616",
+      "deviations": [
+        [9,3,["wait",24],["wait",24],["wait",24],["wait",24],["wait",24],["wait",24],["wait",24],["wait",24],["wait",24]],
+        [45,2,["wait",24],["wait",24],["wait",24],["wait",23]]
+      ]
+    },
+    "track_5": {
+      "events": 50,
+      "hash": "ac21f86a1e136c1b",
+      "deviations": [
+        [47,2,["wait",24],["wait",24],["wait",24],["wait",23]]
+      ]
+    },
+    "track_6": {
+      "events": 23,
+      "hash": "642c9d1714669340",
+      "deviations": [
+        [7,2,["wait",24],["wait",24],["wait",24],["wait",24],["wait",24],["wait",24]],
+        [14,1,["wait",24],["wait",24],["wait",24],["wait",24]],
+        [16,1,["wait",24],["wait",24]],
+        [18,1,["wait",24],["wait",24]],
+        [20,2,["wait",24],["wait",24],["wait",24],["wait",23]]
+      ]
+    },
+    "track_7": {
+      "events": 61,
+      "hash": "497c075e10f41ff8",
+      "deviations": [
+        [12,1,["note",7,38,127]],
+        [24,1,["note",7,38,127]],
+        [37,1,["note",7,38,80]],
+        [44,1,["note",2,38,80]]
+      ]
+    }
+  }
+}

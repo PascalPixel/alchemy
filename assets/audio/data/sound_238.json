@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence-sidecar",
+  "name": "sound_238",
+  "tracks": {
+    "track_2": {
+      "events": 70,
+      "hash": "4e978610868633fb",
+      "deviations": [
+        [20,1,["note",1,52,127]],
+        [29,1,["note",1,52,127]]
+      ]
+    }
+  }
+}

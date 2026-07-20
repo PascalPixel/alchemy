@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence-sidecar",
+  "name": "sound_235",
+  "tracks": {
+    "track_1": {
+      "events": 16,
+      "hash": "8fcce1f469fe4472",
+      "deviations": [
+        [9,1,["note",92,55]]
+      ]
+    },
+    "track_2": {
+      "events": 72,
+      "hash": "7026a5b37c8c25b2",
+      "deviations": [
+        [18,1,["note",3,54,52]],
+        [67,1,["note",3,54,52]]
+      ]
+    }
+  }
+}

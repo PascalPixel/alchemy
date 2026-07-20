@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence-sidecar",
+  "name": "sound_141",
+  "tracks": {
+    "track_1": {
+      "events": 39,
+      "hash": "a1ae50e0fe881988",
+      "deviations": [
+        [8,2,["wait",90],["wait",4]],
+        [15,1,["wait",36],["wait",18]],
+        [19,1,["wait",24],["wait",24]],
+        [23,1,["wait",12],["wait",30]],
+        [25,1,["wait",66],["wait",12]],
+        [29,1,["wait",48],["wait",6]],
+        [33,2,["wait",30],["wait",90]]
+      ]
+    }
+  }
+}

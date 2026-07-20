@@ -16,7 +16,7 @@ The current local evidence divides the native data as follows:
 | `080fc684..080fd043` | 312-entry sound-selection table | `song_table.json` |
 | `080fd044..080fd047` | shared empty sound header | `residuals/index.json` |
 | `080fd048..0815fb77` | tone-referenced wave arena, including 32 signed-PCM records | 32 PCM records claimed; five synthesizer descriptors remain |
-| `0815fb78..08184697` | native sequence arena selected by the sound table | all 260 nonempty units claimed below |
+| `0815fb78..08184697` | native sequence arena selected by the sound table | 260 `.mid` + deviation sidecars claimed below |
 
 `song_table.json` uses symbols for header references and records the player
 selected by the ROM code. Its final halfword always duplicates that selector;
@@ -24,10 +24,24 @@ the source represents the proven duplication without inventing a meaning for
 the field. Forty-eight empty entries share `sound_empty`, and repeated real
 headers likewise reuse one symbol.
 
-`sequences/` contains all 260 independently selected nonempty units: 618
-tracks, 97,652 events, and 150,254 byte-verified bytes. `index.json` records
-every exact range. Stream and header padding follows absolute ROM alignment,
-including units whose first track is not word-aligned.
+`midi/` and `data/` hold all 260 independently selected nonempty units. Each
+unit is a tracked Standard MIDI file `midi/sound_NNN.mid` (the canonical core:
+notes as note-on/off, waits as delta-time, engine control and structural
+commands as verbatim markers) plus, only when the ROM's byte encoding departs
+from the codec's default rules, a minimal deviation sidecar
+`data/sound_NNN.json`. The default rules are greedy running-status (reuse the
+active status whenever legal), note-parameter omission (drop trailing key or
+velocity equal to the running value), and greedy largest-first wait-table
+splits; these match the ROM's dominant encoding, so 163 of the 260 units carry
+no sidecar at all. A sidecar records per-event exceptions addressed by stable
+`(track, event-index)` references into the default stream, and each track
+entry fingerprints the default stream's event count and hash so a `.mid` that
+drifts from its sidecar fails loudly. `midi/index.json` records every exact
+range. `tools/midi_sequence.ts` is the codec (`.mid` + sidecar → engine
+bytes), the converter (`convert-all`), and the validator (`validate-all`);
+`tools/midi_roundtrip.ts` holds the underlying sequence-JSON↔SMF mapping and
+its documented losses. Stream and header padding follows absolute ROM
+alignment, including units whose first track is not word-aligned.
 
 `waves/` contains the 32 tone-referenced signed-PCM records as canonical mono
 8-bit WAV sources plus an index retaining the engine's exact fixed-point
@@ -38,8 +52,10 @@ as audio samples and remain unclaimed. The sound-table exporter assigns the
 `sound_empty` symbol only after proving that its complete 32-bit header word is
 zero, so `residuals/index.json` retains those four bytes as typed header fields.
 
-The sequence codec preserves loops, pattern calls, repeats, running-status
-omission, priorities, reverb, tone-bank references, and pointer targets. A
-MIDI export may later be generated from the native documents, but must never
-become the input used to rebuild the ROM. Tone banks and signed-PCM records
-remain separate recovery units.
+The `.mid` + sidecar pair rebuilds the exact engine bytes, preserving loops,
+pattern calls, repeats, running-status omission, priorities, reverb, tone-bank
+references, and pointer targets. The MIDI carries the canonical musical core
+and the sidecar carries only the ROM's non-canonical encoding choices, so the
+two together are the byte-exact source: neither the MIDI nor a rendered audio
+preview is a source on its own. Tone banks and signed-PCM records remain
+separate recovery units.

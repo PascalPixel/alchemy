@@ -1,0 +1,1663 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence-series",
+  "sequences": [
+    {
+      "name": "sound_000",
+      "address": "0x0815fb78",
+      "size": "0x0000095c",
+      "midi": "sound_000.mid",
+      "sidecar": "../data/sound_000.json"
+    },
+    {
+      "name": "sound_001",
+      "address": "0x081604d4",
+      "size": "0x00000aec",
+      "midi": "sound_001.mid",
+      "sidecar": "../data/sound_001.json"
+    },
+    {
+      "name": "sound_002",
+      "address": "0x08160fc0",
+      "size": "0x000005bc",
+      "midi": "sound_002.mid",
+      "sidecar": "../data/sound_002.json"
+    },
+    {
+      "name": "sound_003",
+      "address": "0x0816157c",
+      "size": "0x0000074c",
+      "midi": "sound_003.mid",
+      "sidecar": "../data/sound_003.json"
+    },
+    {
+      "name": "sound_004",
+      "address": "0x08161cc8",
+      "size": "0x000003a4",
+      "midi": "sound_004.mid",
+      "sidecar": "../data/sound_004.json"
+    },
+    {
+      "name": "sound_005",
+      "address": "0x0816206c",
+      "size": "0x000008d4",
+      "midi": "sound_005.mid",
+      "sidecar": "../data/sound_005.json"
+    },
+    {
+      "name": "sound_006",
+      "address": "0x08162940",
+      "size": "0x000009e4",
+      "midi": "sound_006.mid",
+      "sidecar": "../data/sound_006.json"
+    },
+    {
+      "name": "sound_007",
+      "address": "0x08163324",
+      "size": "0x00000a54",
+      "midi": "sound_007.mid",
+      "sidecar": "../data/sound_007.json"
+    },
+    {
+      "name": "sound_008",
+      "address": "0x08163d78",
+      "size": "0x00000668",
+      "midi": "sound_008.mid",
+      "sidecar": "../data/sound_008.json"
+    },
+    {
+      "name": "sound_009",
+      "address": "0x081643e0",
+      "size": "0x0000081c",
+      "midi": "sound_009.mid",
+      "sidecar": "../data/sound_009.json"
+    },
+    {
+      "name": "sound_010",
+      "address": "0x08164bfc",
+      "size": "0x000006dc",
+      "midi": "sound_010.mid",
+      "sidecar": "../data/sound_010.json"
+    },
+    {
+      "name": "sound_020",
+      "address": "0x081652e0",
+      "size": "0x00000a98",
+      "midi": "sound_020.mid",
+      "sidecar": "../data/sound_020.json"
+    },
+    {
+      "name": "sound_021",
+      "address": "0x08165d78",
+      "size": "0x0000073c",
+      "midi": "sound_021.mid",
+      "sidecar": "../data/sound_021.json"
+    },
+    {
+      "name": "sound_022",
+      "address": "0x081664b4",
+      "size": "0x000012e8",
+      "midi": "sound_022.mid",
+      "sidecar": "../data/sound_022.json"
+    },
+    {
+      "name": "sound_023",
+      "address": "0x0816779c",
+      "size": "0x00000f10",
+      "midi": "sound_023.mid",
+      "sidecar": "../data/sound_023.json"
+    },
+    {
+      "name": "sound_024",
+      "address": "0x081686ac",
+      "size": "0x000012dc",
+      "midi": "sound_024.mid",
+      "sidecar": "../data/sound_024.json"
+    },
+    {
+      "name": "sound_025",
+      "address": "0x08169988",
+      "size": "0x00000c98",
+      "midi": "sound_025.mid",
+      "sidecar": "../data/sound_025.json"
+    },
+    {
+      "name": "sound_026",
+      "address": "0x0816a620",
+      "size": "0x000006dc",
+      "midi": "sound_026.mid",
+      "sidecar": "../data/sound_026.json"
+    },
+    {
+      "name": "sound_027",
+      "address": "0x0816acfc",
+      "size": "0x00000e9c",
+      "midi": "sound_027.mid",
+      "sidecar": "../data/sound_027.json"
+    },
+    {
+      "name": "sound_028",
+      "address": "0x0816bb98",
+      "size": "0x00000c14",
+      "midi": "sound_028.mid",
+      "sidecar": "../data/sound_028.json"
+    },
+    {
+      "name": "sound_029",
+      "address": "0x0816c7ac",
+      "size": "0x0000131c",
+      "midi": "sound_029.mid",
+      "sidecar": "../data/sound_029.json"
+    },
+    {
+      "name": "sound_030",
+      "address": "0x0816dac8",
+      "size": "0x000005f0",
+      "midi": "sound_030.mid",
+      "sidecar": "../data/sound_030.json"
+    },
+    {
+      "name": "sound_040",
+      "address": "0x0816e0b8",
+      "size": "0x00000a9c",
+      "midi": "sound_040.mid",
+      "sidecar": "../data/sound_040.json"
+    },
+    {
+      "name": "sound_041",
+      "address": "0x0816eb54",
+      "size": "0x00000ac8",
+      "midi": "sound_041.mid",
+      "sidecar": "../data/sound_041.json"
+    },
+    {
+      "name": "sound_042",
+      "address": "0x0816f61c",
+      "size": "0x00000c0c",
+      "midi": "sound_042.mid",
+      "sidecar": "../data/sound_042.json"
+    },
+    {
+      "name": "sound_043",
+      "address": "0x08170228",
+      "size": "0x00000dbc",
+      "midi": "sound_043.mid",
+      "sidecar": "../data/sound_043.json"
+    },
+    {
+      "name": "sound_050",
+      "address": "0x08170fe4",
+      "size": "0x00000b34",
+      "midi": "sound_050.mid",
+      "sidecar": "../data/sound_050.json"
+    },
+    {
+      "name": "sound_051",
+      "address": "0x08171b18",
+      "size": "0x00001f24",
+      "midi": "sound_051.mid",
+      "sidecar": "../data/sound_051.json"
+    },
+    {
+      "name": "sound_052",
+      "address": "0x08173a3c",
+      "size": "0x00001964",
+      "midi": "sound_052.mid",
+      "sidecar": "../data/sound_052.json"
+    },
+    {
+      "name": "sound_053",
+      "address": "0x081753a0",
+      "size": "0x00001c0c",
+      "midi": "sound_053.mid",
+      "sidecar": "../data/sound_053.json"
+    },
+    {
+      "name": "sound_054",
+      "address": "0x08176fac",
+      "size": "0x00001f1c",
+      "midi": "sound_054.mid",
+      "sidecar": "../data/sound_054.json"
+    },
+    {
+      "name": "sound_055",
+      "address": "0x08178ec8",
+      "size": "0x00000b18",
+      "midi": "sound_055.mid",
+      "sidecar": "../data/sound_055.json"
+    },
+    {
+      "name": "sound_058",
+      "address": "0x081799e0",
+      "size": "0x0000039c",
+      "midi": "sound_058.mid",
+      "sidecar": "../data/sound_058.json"
+    },
+    {
+      "name": "sound_059",
+      "address": "0x08179d7c",
+      "size": "0x000001d0",
+      "midi": "sound_059.mid",
+      "sidecar": "../data/sound_059.json"
+    },
+    {
+      "name": "sound_060",
+      "address": "0x08179f4c",
+      "size": "0x00000644",
+      "midi": "sound_060.mid",
+      "sidecar": "../data/sound_060.json"
+    },
+    {
+      "name": "sound_061",
+      "address": "0x0817a590",
+      "size": "0x00000798",
+      "midi": "sound_061.mid",
+      "sidecar": "../data/sound_061.json"
+    },
+    {
+      "name": "sound_062",
+      "address": "0x0817ad28",
+      "size": "0x0000035c",
+      "midi": "sound_062.mid",
+      "sidecar": "../data/sound_062.json"
+    },
+    {
+      "name": "sound_063",
+      "address": "0x0817b084",
+      "size": "0x00000dd0",
+      "midi": "sound_063.mid",
+      "sidecar": "../data/sound_063.json"
+    },
+    {
+      "name": "sound_064",
+      "address": "0x0817be54",
+      "size": "0x00000298",
+      "midi": "sound_064.mid",
+      "sidecar": "../data/sound_064.json"
+    },
+    {
+      "name": "sound_067",
+      "address": "0x0817c0ec",
+      "size": "0x00001d68",
+      "midi": "sound_067.mid",
+      "sidecar": "../data/sound_067.json"
+    },
+    {
+      "name": "sound_070",
+      "address": "0x0817de54",
+      "size": "0x00000ab8",
+      "midi": "sound_070.mid",
+      "sidecar": "../data/sound_070.json"
+    },
+    {
+      "name": "sound_072",
+      "address": "0x0817e90c",
+      "size": "0x000007e0",
+      "midi": "sound_072.mid",
+      "sidecar": "../data/sound_072.json"
+    },
+    {
+      "name": "sound_074",
+      "address": "0x0817f0ec",
+      "size": "0x00000b1c",
+      "midi": "sound_074.mid",
+      "sidecar": "../data/sound_074.json"
+    },
+    {
+      "name": "sound_075",
+      "address": "0x0817fc08",
+      "size": "0x00000264",
+      "midi": "sound_075.mid",
+      "sidecar": "../data/sound_075.json"
+    },
+    {
+      "name": "sound_076",
+      "address": "0x0817fe6c",
+      "size": "0x00000774",
+      "midi": "sound_076.mid",
+      "sidecar": "../data/sound_076.json"
+    },
+    {
+      "name": "sound_080",
+      "address": "0x081805e0",
+      "size": "0x000000c0",
+      "midi": "sound_080.mid",
+      "sidecar": "../data/sound_080.json"
+    },
+    {
+      "name": "sound_081",
+      "address": "0x081806a0",
+      "size": "0x000000f8",
+      "midi": "sound_081.mid",
+      "sidecar": "../data/sound_081.json"
+    },
+    {
+      "name": "sound_082",
+      "address": "0x08180798",
+      "size": "0x000000bc",
+      "midi": "sound_082.mid",
+      "sidecar": "../data/sound_082.json"
+    },
+    {
+      "name": "sound_083",
+      "address": "0x08180854",
+      "size": "0x000000f8",
+      "midi": "sound_083.mid",
+      "sidecar": "../data/sound_083.json"
+    },
+    {
+      "name": "sound_084",
+      "address": "0x0818094c",
+      "size": "0x000000c8",
+      "midi": "sound_084.mid",
+      "sidecar": "../data/sound_084.json"
+    },
+    {
+      "name": "sound_085",
+      "address": "0x08180a14",
+      "size": "0x00000060",
+      "midi": "sound_085.mid",
+      "sidecar": "../data/sound_085.json"
+    },
+    {
+      "name": "sound_086",
+      "address": "0x08180a74",
+      "size": "0x00000184",
+      "midi": "sound_086.mid",
+      "sidecar": "../data/sound_086.json"
+    },
+    {
+      "name": "sound_087",
+      "address": "0x08180bf8",
+      "size": "0x00000090",
+      "midi": "sound_087.mid",
+      "sidecar": "../data/sound_087.json"
+    },
+    {
+      "name": "sound_088",
+      "address": "0x08180c88",
+      "size": "0x000000c4",
+      "midi": "sound_088.mid",
+      "sidecar": "../data/sound_088.json"
+    },
+    {
+      "name": "sound_089",
+      "address": "0x08180d4c",
+      "size": "0x000000dc",
+      "midi": "sound_089.mid",
+      "sidecar": "../data/sound_089.json"
+    },
+    {
+      "name": "sound_091",
+      "address": "0x08180e28",
+      "size": "0x00000064",
+      "midi": "sound_091.mid",
+      "sidecar": "../data/sound_091.json"
+    },
+    {
+      "name": "sound_092",
+      "address": "0x08180e8c",
+      "size": "0x000000bc",
+      "midi": "sound_092.mid",
+      "sidecar": "../data/sound_092.json"
+    },
+    {
+      "name": "sound_093",
+      "address": "0x08180f48",
+      "size": "0x00000170",
+      "midi": "sound_093.mid",
+      "sidecar": "../data/sound_093.json"
+    },
+    {
+      "name": "sound_100",
+      "address": "0x081810c0",
+      "size": "0x0000002c",
+      "midi": "sound_100.mid",
+      "sidecar": "../data/sound_100.json"
+    },
+    {
+      "name": "sound_101",
+      "address": "0x081810ec",
+      "size": "0x00000038",
+      "midi": "sound_101.mid"
+    },
+    {
+      "name": "sound_102",
+      "address": "0x08181124",
+      "size": "0x0000003c",
+      "midi": "sound_102.mid"
+    },
+    {
+      "name": "sound_103",
+      "address": "0x08181160",
+      "size": "0x00000050",
+      "midi": "sound_103.mid"
+    },
+    {
+      "name": "sound_104",
+      "address": "0x081811b0",
+      "size": "0x00000048",
+      "midi": "sound_104.mid",
+      "sidecar": "../data/sound_104.json"
+    },
+    {
+      "name": "sound_105",
+      "address": "0x081811f8",
+      "size": "0x00000068",
+      "midi": "sound_105.mid"
+    },
+    {
+      "name": "sound_106",
+      "address": "0x08181260",
+      "size": "0x0000001c",
+      "midi": "sound_106.mid"
+    },
+    {
+      "name": "sound_107",
+      "address": "0x0818127c",
+      "size": "0x00000074",
+      "midi": "sound_107.mid",
+      "sidecar": "../data/sound_107.json"
+    },
+    {
+      "name": "sound_108",
+      "address": "0x081812f0",
+      "size": "0x00000024",
+      "midi": "sound_108.mid"
+    },
+    {
+      "name": "sound_109",
+      "address": "0x08181314",
+      "size": "0x00000024",
+      "midi": "sound_109.mid"
+    },
+    {
+      "name": "sound_110",
+      "address": "0x08181338",
+      "size": "0x00000020",
+      "midi": "sound_110.mid"
+    },
+    {
+      "name": "sound_111",
+      "address": "0x08181358",
+      "size": "0x00000030",
+      "midi": "sound_111.mid"
+    },
+    {
+      "name": "sound_112",
+      "address": "0x08181388",
+      "size": "0x00000054",
+      "midi": "sound_112.mid"
+    },
+    {
+      "name": "sound_113",
+      "address": "0x081813dc",
+      "size": "0x00000058",
+      "midi": "sound_113.mid"
+    },
+    {
+      "name": "sound_114",
+      "address": "0x08181434",
+      "size": "0x00000060",
+      "midi": "sound_114.mid"
+    },
+    {
+      "name": "sound_115",
+      "address": "0x08181494",
+      "size": "0x00000044",
+      "midi": "sound_115.mid"
+    },
+    {
+      "name": "sound_116",
+      "address": "0x081814d8",
+      "size": "0x00000028",
+      "midi": "sound_116.mid"
+    },
+    {
+      "name": "sound_117",
+      "address": "0x08181500",
+      "size": "0x00000024",
+      "midi": "sound_117.mid"
+    },
+    {
+      "name": "sound_118",
+      "address": "0x08181524",
+      "size": "0x0000001c",
+      "midi": "sound_118.mid"
+    },
+    {
+      "name": "sound_119",
+      "address": "0x08181540",
+      "size": "0x0000001c",
+      "midi": "sound_119.mid"
+    },
+    {
+      "name": "sound_120",
+      "address": "0x0818155c",
+      "size": "0x00000028",
+      "midi": "sound_120.mid"
+    },
+    {
+      "name": "sound_121",
+      "address": "0x08181584",
+      "size": "0x00000048",
+      "midi": "sound_121.mid"
+    },
+    {
+      "name": "sound_122",
+      "address": "0x081815cc",
+      "size": "0x0000003c",
+      "midi": "sound_122.mid"
+    },
+    {
+      "name": "sound_123",
+      "address": "0x08181608",
+      "size": "0x00000064",
+      "midi": "sound_123.mid"
+    },
+    {
+      "name": "sound_124",
+      "address": "0x0818166c",
+      "size": "0x00000020",
+      "midi": "sound_124.mid"
+    },
+    {
+      "name": "sound_125",
+      "address": "0x0818168c",
+      "size": "0x00000020",
+      "midi": "sound_125.mid"
+    },
+    {
+      "name": "sound_126",
+      "address": "0x081816ac",
+      "size": "0x00000070",
+      "midi": "sound_126.mid",
+      "sidecar": "../data/sound_126.json"
+    },
+    {
+      "name": "sound_127",
+      "address": "0x0818171c",
+      "size": "0x00000028",
+      "midi": "sound_127.mid"
+    },
+    {
+      "name": "sound_128",
+      "address": "0x08181744",
+      "size": "0x00000038",
+      "midi": "sound_128.mid"
+    },
+    {
+      "name": "sound_129",
+      "address": "0x0818177c",
+      "size": "0x00000038",
+      "midi": "sound_129.mid"
+    },
+    {
+      "name": "sound_130",
+      "address": "0x081817b4",
+      "size": "0x00000028",
+      "midi": "sound_130.mid"
+    },
+    {
+      "name": "sound_131",
+      "address": "0x081817dc",
+      "size": "0x00000044",
+      "midi": "sound_131.mid"
+    },
+    {
+      "name": "sound_132",
+      "address": "0x08181820",
+      "size": "0x00000028",
+      "midi": "sound_132.mid"
+    },
+    {
+      "name": "sound_133",
+      "address": "0x08181848",
+      "size": "0x00000034",
+      "midi": "sound_133.mid"
+    },
+    {
+      "name": "sound_134",
+      "address": "0x0818187c",
+      "size": "0x00000058",
+      "midi": "sound_134.mid",
+      "sidecar": "../data/sound_134.json"
+    },
+    {
+      "name": "sound_135",
+      "address": "0x081818d4",
+      "size": "0x00000050",
+      "midi": "sound_135.mid"
+    },
+    {
+      "name": "sound_136",
+      "address": "0x08181924",
+      "size": "0x00000028",
+      "midi": "sound_136.mid"
+    },
+    {
+      "name": "sound_137",
+      "address": "0x0818194c",
+      "size": "0x0000003c",
+      "midi": "sound_137.mid",
+      "sidecar": "../data/sound_137.json"
+    },
+    {
+      "name": "sound_138",
+      "address": "0x08181988",
+      "size": "0x00000028",
+      "midi": "sound_138.mid"
+    },
+    {
+      "name": "sound_139",
+      "address": "0x081819c2",
+      "size": "0x0000001e",
+      "midi": "sound_139.mid"
+    },
+    {
+      "name": "sound_140",
+      "address": "0x081819e0",
+      "size": "0x00000098",
+      "midi": "sound_140.mid"
+    },
+    {
+      "name": "sound_141",
+      "address": "0x08181a78",
+      "size": "0x00000058",
+      "midi": "sound_141.mid",
+      "sidecar": "../data/sound_141.json"
+    },
+    {
+      "name": "sound_142",
+      "address": "0x08181ad0",
+      "size": "0x00000080",
+      "midi": "sound_142.mid",
+      "sidecar": "../data/sound_142.json"
+    },
+    {
+      "name": "sound_143",
+      "address": "0x08181b50",
+      "size": "0x00000024",
+      "midi": "sound_143.mid"
+    },
+    {
+      "name": "sound_144",
+      "address": "0x08181b74",
+      "size": "0x0000006c",
+      "midi": "sound_144.mid"
+    },
+    {
+      "name": "sound_145",
+      "address": "0x08181be0",
+      "size": "0x0000006c",
+      "midi": "sound_145.mid"
+    },
+    {
+      "name": "sound_146",
+      "address": "0x08181c4c",
+      "size": "0x0000001c",
+      "midi": "sound_146.mid"
+    },
+    {
+      "name": "sound_147",
+      "address": "0x08181c68",
+      "size": "0x00000020",
+      "midi": "sound_147.mid",
+      "sidecar": "../data/sound_147.json"
+    },
+    {
+      "name": "sound_148",
+      "address": "0x08181c88",
+      "size": "0x00000020",
+      "midi": "sound_148.mid",
+      "sidecar": "../data/sound_148.json"
+    },
+    {
+      "name": "sound_149",
+      "address": "0x08181ca8",
+      "size": "0x00000034",
+      "midi": "sound_149.mid",
+      "sidecar": "../data/sound_149.json"
+    },
+    {
+      "name": "sound_150",
+      "address": "0x08181cdc",
+      "size": "0x00000020",
+      "midi": "sound_150.mid"
+    },
+    {
+      "name": "sound_151",
+      "address": "0x08181cfc",
+      "size": "0x00000044",
+      "midi": "sound_151.mid"
+    },
+    {
+      "name": "sound_152",
+      "address": "0x08181d40",
+      "size": "0x00000038",
+      "midi": "sound_152.mid"
+    },
+    {
+      "name": "sound_153",
+      "address": "0x08181d78",
+      "size": "0x00000040",
+      "midi": "sound_153.mid"
+    },
+    {
+      "name": "sound_154",
+      "address": "0x08181db8",
+      "size": "0x0000004c",
+      "midi": "sound_154.mid"
+    },
+    {
+      "name": "sound_155",
+      "address": "0x08181e04",
+      "size": "0x00000028",
+      "midi": "sound_155.mid"
+    },
+    {
+      "name": "sound_156",
+      "address": "0x08181e2c",
+      "size": "0x0000001c",
+      "midi": "sound_156.mid"
+    },
+    {
+      "name": "sound_157",
+      "address": "0x08181e48",
+      "size": "0x00000020",
+      "midi": "sound_157.mid"
+    },
+    {
+      "name": "sound_158",
+      "address": "0x08181e68",
+      "size": "0x00000038",
+      "midi": "sound_158.mid"
+    },
+    {
+      "name": "sound_159",
+      "address": "0x08181ea0",
+      "size": "0x00000024",
+      "midi": "sound_159.mid"
+    },
+    {
+      "name": "sound_160",
+      "address": "0x08181ec4",
+      "size": "0x00000028",
+      "midi": "sound_160.mid"
+    },
+    {
+      "name": "sound_161",
+      "address": "0x08181eec",
+      "size": "0x00000024",
+      "midi": "sound_161.mid"
+    },
+    {
+      "name": "sound_162",
+      "address": "0x08181f10",
+      "size": "0x0000002c",
+      "midi": "sound_162.mid",
+      "sidecar": "../data/sound_162.json"
+    },
+    {
+      "name": "sound_163",
+      "address": "0x08181f3c",
+      "size": "0x0000002c",
+      "midi": "sound_163.mid",
+      "sidecar": "../data/sound_163.json"
+    },
+    {
+      "name": "sound_164",
+      "address": "0x08181f68",
+      "size": "0x00000020",
+      "midi": "sound_164.mid"
+    },
+    {
+      "name": "sound_165",
+      "address": "0x08181f88",
+      "size": "0x00000078",
+      "midi": "sound_165.mid",
+      "sidecar": "../data/sound_165.json"
+    },
+    {
+      "name": "sound_166",
+      "address": "0x08182000",
+      "size": "0x00000028",
+      "midi": "sound_166.mid",
+      "sidecar": "../data/sound_166.json"
+    },
+    {
+      "name": "sound_167",
+      "address": "0x08182028",
+      "size": "0x00000028",
+      "midi": "sound_167.mid"
+    },
+    {
+      "name": "sound_168",
+      "address": "0x08182050",
+      "size": "0x00000034",
+      "midi": "sound_168.mid"
+    },
+    {
+      "name": "sound_169",
+      "address": "0x08182084",
+      "size": "0x00000028",
+      "midi": "sound_169.mid",
+      "sidecar": "../data/sound_169.json"
+    },
+    {
+      "name": "sound_170",
+      "address": "0x081820ac",
+      "size": "0x00000028",
+      "midi": "sound_170.mid",
+      "sidecar": "../data/sound_170.json"
+    },
+    {
+      "name": "sound_171",
+      "address": "0x081820d4",
+      "size": "0x00000024",
+      "midi": "sound_171.mid",
+      "sidecar": "../data/sound_171.json"
+    },
+    {
+      "name": "sound_172",
+      "address": "0x081820f8",
+      "size": "0x00000024",
+      "midi": "sound_172.mid",
+      "sidecar": "../data/sound_172.json"
+    },
+    {
+      "name": "sound_173",
+      "address": "0x0818211c",
+      "size": "0x00000054",
+      "midi": "sound_173.mid"
+    },
+    {
+      "name": "sound_174",
+      "address": "0x08182170",
+      "size": "0x00000054",
+      "midi": "sound_174.mid"
+    },
+    {
+      "name": "sound_175",
+      "address": "0x081821c4",
+      "size": "0x00000054",
+      "midi": "sound_175.mid"
+    },
+    {
+      "name": "sound_176",
+      "address": "0x08182218",
+      "size": "0x0000002c",
+      "midi": "sound_176.mid"
+    },
+    {
+      "name": "sound_177",
+      "address": "0x08182244",
+      "size": "0x0000002c",
+      "midi": "sound_177.mid"
+    },
+    {
+      "name": "sound_178",
+      "address": "0x08182270",
+      "size": "0x00000068",
+      "midi": "sound_178.mid",
+      "sidecar": "../data/sound_178.json"
+    },
+    {
+      "name": "sound_179",
+      "address": "0x081822d8",
+      "size": "0x00000044",
+      "midi": "sound_179.mid",
+      "sidecar": "../data/sound_179.json"
+    },
+    {
+      "name": "sound_180",
+      "address": "0x0818231c",
+      "size": "0x00000068",
+      "midi": "sound_180.mid"
+    },
+    {
+      "name": "sound_181",
+      "address": "0x08182384",
+      "size": "0x0000003c",
+      "midi": "sound_181.mid",
+      "sidecar": "../data/sound_181.json"
+    },
+    {
+      "name": "sound_182",
+      "address": "0x081823c0",
+      "size": "0x00000060",
+      "midi": "sound_182.mid"
+    },
+    {
+      "name": "sound_183",
+      "address": "0x08182420",
+      "size": "0x00000038",
+      "midi": "sound_183.mid"
+    },
+    {
+      "name": "sound_184",
+      "address": "0x08182458",
+      "size": "0x000000d4",
+      "midi": "sound_184.mid"
+    },
+    {
+      "name": "sound_185",
+      "address": "0x0818252c",
+      "size": "0x00000028",
+      "midi": "sound_185.mid"
+    },
+    {
+      "name": "sound_186",
+      "address": "0x08182554",
+      "size": "0x00000028",
+      "midi": "sound_186.mid"
+    },
+    {
+      "name": "sound_187",
+      "address": "0x0818257c",
+      "size": "0x00000028",
+      "midi": "sound_187.mid"
+    },
+    {
+      "name": "sound_188",
+      "address": "0x081825a4",
+      "size": "0x00000028",
+      "midi": "sound_188.mid"
+    },
+    {
+      "name": "sound_189",
+      "address": "0x081825cc",
+      "size": "0x00000060",
+      "midi": "sound_189.mid"
+    },
+    {
+      "name": "sound_190",
+      "address": "0x0818262c",
+      "size": "0x00000084",
+      "midi": "sound_190.mid"
+    },
+    {
+      "name": "sound_191",
+      "address": "0x081826b0",
+      "size": "0x0000001c",
+      "midi": "sound_191.mid"
+    },
+    {
+      "name": "sound_192",
+      "address": "0x081826cc",
+      "size": "0x00000030",
+      "midi": "sound_192.mid"
+    },
+    {
+      "name": "sound_193",
+      "address": "0x081826fc",
+      "size": "0x00000074",
+      "midi": "sound_193.mid"
+    },
+    {
+      "name": "sound_194",
+      "address": "0x08182770",
+      "size": "0x00000038",
+      "midi": "sound_194.mid"
+    },
+    {
+      "name": "sound_195",
+      "address": "0x081827a8",
+      "size": "0x00000030",
+      "midi": "sound_195.mid"
+    },
+    {
+      "name": "sound_196",
+      "address": "0x081827d8",
+      "size": "0x00000058",
+      "midi": "sound_196.mid",
+      "sidecar": "../data/sound_196.json"
+    },
+    {
+      "name": "sound_197",
+      "address": "0x08182830",
+      "size": "0x00000234",
+      "midi": "sound_197.mid"
+    },
+    {
+      "name": "sound_198",
+      "address": "0x08182a64",
+      "size": "0x0000019c",
+      "midi": "sound_198.mid"
+    },
+    {
+      "name": "sound_199",
+      "address": "0x08182c00",
+      "size": "0x000001d8",
+      "midi": "sound_199.mid",
+      "sidecar": "../data/sound_199.json"
+    },
+    {
+      "name": "sound_200",
+      "address": "0x08182dd8",
+      "size": "0x00000140",
+      "midi": "sound_200.mid"
+    },
+    {
+      "name": "sound_201",
+      "address": "0x08182f18",
+      "size": "0x00000050",
+      "midi": "sound_201.mid"
+    },
+    {
+      "name": "sound_202",
+      "address": "0x08182f68",
+      "size": "0x00000034",
+      "midi": "sound_202.mid"
+    },
+    {
+      "name": "sound_203",
+      "address": "0x08182f9c",
+      "size": "0x00000024",
+      "midi": "sound_203.mid"
+    },
+    {
+      "name": "sound_204",
+      "address": "0x08182fc0",
+      "size": "0x0000008c",
+      "midi": "sound_204.mid"
+    },
+    {
+      "name": "sound_205",
+      "address": "0x0818304c",
+      "size": "0x00000030",
+      "midi": "sound_205.mid",
+      "sidecar": "../data/sound_205.json"
+    },
+    {
+      "name": "sound_206",
+      "address": "0x0818307c",
+      "size": "0x00000034",
+      "midi": "sound_206.mid"
+    },
+    {
+      "name": "sound_208",
+      "address": "0x081830b0",
+      "size": "0x00000050",
+      "midi": "sound_208.mid"
+    },
+    {
+      "name": "sound_209",
+      "address": "0x08183100",
+      "size": "0x0000009c",
+      "midi": "sound_209.mid"
+    },
+    {
+      "name": "sound_210",
+      "address": "0x0818319c",
+      "size": "0x00000040",
+      "midi": "sound_210.mid"
+    },
+    {
+      "name": "sound_211",
+      "address": "0x081831dc",
+      "size": "0x00000038",
+      "midi": "sound_211.mid"
+    },
+    {
+      "name": "sound_212",
+      "address": "0x08183214",
+      "size": "0x00000034",
+      "midi": "sound_212.mid"
+    },
+    {
+      "name": "sound_213",
+      "address": "0x08183248",
+      "size": "0x0000004c",
+      "midi": "sound_213.mid"
+    },
+    {
+      "name": "sound_214",
+      "address": "0x08183294",
+      "size": "0x0000004c",
+      "midi": "sound_214.mid"
+    },
+    {
+      "name": "sound_215",
+      "address": "0x081832e0",
+      "size": "0x00000038",
+      "midi": "sound_215.mid"
+    },
+    {
+      "name": "sound_216",
+      "address": "0x08183318",
+      "size": "0x00000038",
+      "midi": "sound_216.mid"
+    },
+    {
+      "name": "sound_217",
+      "address": "0x08183350",
+      "size": "0x00000030",
+      "midi": "sound_217.mid"
+    },
+    {
+      "name": "sound_218",
+      "address": "0x08183380",
+      "size": "0x0000001c",
+      "midi": "sound_218.mid"
+    },
+    {
+      "name": "sound_219",
+      "address": "0x0818339c",
+      "size": "0x0000002c",
+      "midi": "sound_219.mid"
+    },
+    {
+      "name": "sound_220",
+      "address": "0x081833c8",
+      "size": "0x00000094",
+      "midi": "sound_220.mid"
+    },
+    {
+      "name": "sound_221",
+      "address": "0x0818345c",
+      "size": "0x0000002c",
+      "midi": "sound_221.mid"
+    },
+    {
+      "name": "sound_222",
+      "address": "0x08183488",
+      "size": "0x0000003c",
+      "midi": "sound_222.mid"
+    },
+    {
+      "name": "sound_223",
+      "address": "0x081834c4",
+      "size": "0x00000028",
+      "midi": "sound_223.mid"
+    },
+    {
+      "name": "sound_224",
+      "address": "0x081834ec",
+      "size": "0x00000030",
+      "midi": "sound_224.mid"
+    },
+    {
+      "name": "sound_225",
+      "address": "0x0818351c",
+      "size": "0x00000024",
+      "midi": "sound_225.mid"
+    },
+    {
+      "name": "sound_226",
+      "address": "0x08183540",
+      "size": "0x00000038",
+      "midi": "sound_226.mid",
+      "sidecar": "../data/sound_226.json"
+    },
+    {
+      "name": "sound_227",
+      "address": "0x08183578",
+      "size": "0x00000034",
+      "midi": "sound_227.mid"
+    },
+    {
+      "name": "sound_228",
+      "address": "0x081835ac",
+      "size": "0x00000024",
+      "midi": "sound_228.mid"
+    },
+    {
+      "name": "sound_229",
+      "address": "0x081835d0",
+      "size": "0x00000024",
+      "midi": "sound_229.mid"
+    },
+    {
+      "name": "sound_230",
+      "address": "0x081835f4",
+      "size": "0x00000028",
+      "midi": "sound_230.mid"
+    },
+    {
+      "name": "sound_231",
+      "address": "0x0818361c",
+      "size": "0x00000040",
+      "midi": "sound_231.mid",
+      "sidecar": "../data/sound_231.json"
+    },
+    {
+      "name": "sound_232",
+      "address": "0x0818365c",
+      "size": "0x00000038",
+      "midi": "sound_232.mid",
+      "sidecar": "../data/sound_232.json"
+    },
+    {
+      "name": "sound_233",
+      "address": "0x08183694",
+      "size": "0x000000a0",
+      "midi": "sound_233.mid",
+      "sidecar": "../data/sound_233.json"
+    },
+    {
+      "name": "sound_234",
+      "address": "0x08183734",
+      "size": "0x0000001c",
+      "midi": "sound_234.mid"
+    },
+    {
+      "name": "sound_235",
+      "address": "0x08183750",
+      "size": "0x000000a0",
+      "midi": "sound_235.mid",
+      "sidecar": "../data/sound_235.json"
+    },
+    {
+      "name": "sound_236",
+      "address": "0x081837f0",
+      "size": "0x00000024",
+      "midi": "sound_236.mid"
+    },
+    {
+      "name": "sound_237",
+      "address": "0x08183814",
+      "size": "0x0000002c",
+      "midi": "sound_237.mid"
+    },
+    {
+      "name": "sound_238",
+      "address": "0x08183840",
+      "size": "0x00000078",
+      "midi": "sound_238.mid",
+      "sidecar": "../data/sound_238.json"
+    },
+    {
+      "name": "sound_239",
+      "address": "0x081838b8",
+      "size": "0x0000008c",
+      "midi": "sound_239.mid",
+      "sidecar": "../data/sound_239.json"
+    },
+    {
+      "name": "sound_240",
+      "address": "0x08183944",
+      "size": "0x0000002c",
+      "midi": "sound_240.mid"
+    },
+    {
+      "name": "sound_241",
+      "address": "0x08183970",
+      "size": "0x000000c8",
+      "midi": "sound_241.mid",
+      "sidecar": "../data/sound_241.json"
+    },
+    {
+      "name": "sound_242",
+      "address": "0x08183a38",
+      "size": "0x00000060",
+      "midi": "sound_242.mid"
+    },
+    {
+      "name": "sound_243",
+      "address": "0x08183a98",
+      "size": "0x00000034",
+      "midi": "sound_243.mid"
+    },
+    {
+      "name": "sound_244",
+      "address": "0x08183acc",
+      "size": "0x00000078",
+      "midi": "sound_244.mid"
+    },
+    {
+      "name": "sound_245",
+      "address": "0x08183b44",
+      "size": "0x00000038",
+      "midi": "sound_245.mid",
+      "sidecar": "../data/sound_245.json"
+    },
+    {
+      "name": "sound_246",
+      "address": "0x08183b7c",
+      "size": "0x00000078",
+      "midi": "sound_246.mid"
+    },
+    {
+      "name": "sound_247",
+      "address": "0x08183bf4",
+      "size": "0x00000028",
+      "midi": "sound_247.mid",
+      "sidecar": "../data/sound_247.json"
+    },
+    {
+      "name": "sound_248",
+      "address": "0x08183c1c",
+      "size": "0x00000044",
+      "midi": "sound_248.mid"
+    },
+    {
+      "name": "sound_249",
+      "address": "0x08183c60",
+      "size": "0x00000034",
+      "midi": "sound_249.mid"
+    },
+    {
+      "name": "sound_250",
+      "address": "0x08183c94",
+      "size": "0x00000030",
+      "midi": "sound_250.mid"
+    },
+    {
+      "name": "sound_251",
+      "address": "0x08183cc4",
+      "size": "0x00000030",
+      "midi": "sound_251.mid"
+    },
+    {
+      "name": "sound_252",
+      "address": "0x08183cf4",
+      "size": "0x00000030",
+      "midi": "sound_252.mid"
+    },
+    {
+      "name": "sound_253",
+      "address": "0x08183d24",
+      "size": "0x00000058",
+      "midi": "sound_253.mid"
+    },
+    {
+      "name": "sound_256",
+      "address": "0x08183d7c",
+      "size": "0x00000020",
+      "midi": "sound_256.mid"
+    },
+    {
+      "name": "sound_257",
+      "address": "0x08183d9c",
+      "size": "0x00000020",
+      "midi": "sound_257.mid"
+    },
+    {
+      "name": "sound_258",
+      "address": "0x08183dbc",
+      "size": "0x00000020",
+      "midi": "sound_258.mid"
+    },
+    {
+      "name": "sound_259",
+      "address": "0x08183ddc",
+      "size": "0x00000020",
+      "midi": "sound_259.mid"
+    },
+    {
+      "name": "sound_260",
+      "address": "0x08183dfc",
+      "size": "0x00000020",
+      "midi": "sound_260.mid"
+    },
+    {
+      "name": "sound_261",
+      "address": "0x08183e1c",
+      "size": "0x00000020",
+      "midi": "sound_261.mid"
+    },
+    {
+      "name": "sound_262",
+      "address": "0x08183e3c",
+      "size": "0x00000020",
+      "midi": "sound_262.mid"
+    },
+    {
+      "name": "sound_263",
+      "address": "0x08183e5c",
+      "size": "0x00000024",
+      "midi": "sound_263.mid"
+    },
+    {
+      "name": "sound_264",
+      "address": "0x08183e80",
+      "size": "0x00000024",
+      "midi": "sound_264.mid"
+    },
+    {
+      "name": "sound_265",
+      "address": "0x08183ea4",
+      "size": "0x00000024",
+      "midi": "sound_265.mid"
+    },
+    {
+      "name": "sound_266",
+      "address": "0x08183ec8",
+      "size": "0x00000024",
+      "midi": "sound_266.mid"
+    },
+    {
+      "name": "sound_267",
+      "address": "0x08183eec",
+      "size": "0x00000024",
+      "midi": "sound_267.mid"
+    },
+    {
+      "name": "sound_268",
+      "address": "0x08183f10",
+      "size": "0x00000024",
+      "midi": "sound_268.mid"
+    },
+    {
+      "name": "sound_269",
+      "address": "0x08183f34",
+      "size": "0x00000024",
+      "midi": "sound_269.mid"
+    },
+    {
+      "name": "sound_270",
+      "address": "0x08183f58",
+      "size": "0x00000024",
+      "midi": "sound_270.mid"
+    },
+    {
+      "name": "sound_271",
+      "address": "0x08183f7c",
+      "size": "0x00000024",
+      "midi": "sound_271.mid"
+    },
+    {
+      "name": "sound_272",
+      "address": "0x08183fa0",
+      "size": "0x00000024",
+      "midi": "sound_272.mid"
+    },
+    {
+      "name": "sound_273",
+      "address": "0x08183fc4",
+      "size": "0x00000024",
+      "midi": "sound_273.mid"
+    },
+    {
+      "name": "sound_274",
+      "address": "0x08183fe8",
+      "size": "0x00000024",
+      "midi": "sound_274.mid"
+    },
+    {
+      "name": "sound_275",
+      "address": "0x0818400c",
+      "size": "0x00000024",
+      "midi": "sound_275.mid"
+    },
+    {
+      "name": "sound_276",
+      "address": "0x08184030",
+      "size": "0x00000024",
+      "midi": "sound_276.mid"
+    },
+    {
+      "name": "sound_277",
+      "address": "0x08184054",
+      "size": "0x00000024",
+      "midi": "sound_277.mid"
+    },
+    {
+      "name": "sound_278",
+      "address": "0x08184078",
+      "size": "0x00000024",
+      "midi": "sound_278.mid"
+    },
+    {
+      "name": "sound_279",
+      "address": "0x0818409c",
+      "size": "0x00000024",
+      "midi": "sound_279.mid"
+    },
+    {
+      "name": "sound_280",
+      "address": "0x081840c0",
+      "size": "0x00000028",
+      "midi": "sound_280.mid"
+    },
+    {
+      "name": "sound_281",
+      "address": "0x081840e8",
+      "size": "0x00000028",
+      "midi": "sound_281.mid"
+    },
+    {
+      "name": "sound_282",
+      "address": "0x08184110",
+      "size": "0x00000028",
+      "midi": "sound_282.mid"
+    },
+    {
+      "name": "sound_283",
+      "address": "0x08184138",
+      "size": "0x00000028",
+      "midi": "sound_283.mid"
+    },
+    {
+      "name": "sound_284",
+      "address": "0x08184160",
+      "size": "0x00000024",
+      "midi": "sound_284.mid"
+    },
+    {
+      "name": "sound_285",
+      "address": "0x08184184",
+      "size": "0x00000024",
+      "midi": "sound_285.mid"
+    },
+    {
+      "name": "sound_286",
+      "address": "0x081841a8",
+      "size": "0x00000028",
+      "midi": "sound_286.mid"
+    },
+    {
+      "name": "sound_287",
+      "address": "0x081841d0",
+      "size": "0x00000028",
+      "midi": "sound_287.mid"
+    },
+    {
+      "name": "sound_289",
+      "address": "0x08184200",
+      "size": "0x00000034",
+      "midi": "sound_289.mid"
+    },
+    {
+      "name": "sound_290",
+      "address": "0x08184234",
+      "size": "0x00000058",
+      "midi": "sound_290.mid",
+      "sidecar": "../data/sound_290.json"
+    },
+    {
+      "name": "sound_291",
+      "address": "0x0818428c",
+      "size": "0x0000005c",
+      "midi": "sound_291.mid",
+      "sidecar": "../data/sound_291.json"
+    },
+    {
+      "name": "sound_292",
+      "address": "0x081842e8",
+      "size": "0x00000038",
+      "midi": "sound_292.mid"
+    },
+    {
+      "name": "sound_293",
+      "address": "0x08184320",
+      "size": "0x00000038",
+      "midi": "sound_293.mid"
+    },
+    {
+      "name": "sound_300",
+      "address": "0x08184360",
+      "size": "0x00000028",
+      "midi": "sound_300.mid"
+    },
+    {
+      "name": "sound_301",
+      "address": "0x08184388",
+      "size": "0x00000024",
+      "midi": "sound_301.mid"
+    },
+    {
+      "name": "sound_302",
+      "address": "0x081843ac",
+      "size": "0x0000001c",
+      "midi": "sound_302.mid"
+    },
+    {
+      "name": "sound_303",
+      "address": "0x081843c8",
+      "size": "0x00000024",
+      "midi": "sound_303.mid"
+    },
+    {
+      "name": "sound_304",
+      "address": "0x081843ec",
+      "size": "0x00000038",
+      "midi": "sound_304.mid",
+      "sidecar": "../data/sound_304.json"
+    },
+    {
+      "name": "sound_305",
+      "address": "0x08184424",
+      "size": "0x0000002c",
+      "midi": "sound_305.mid"
+    },
+    {
+      "name": "sound_306",
+      "address": "0x08184450",
+      "size": "0x0000002c",
+      "midi": "sound_306.mid"
+    },
+    {
+      "name": "sound_307",
+      "address": "0x0818447c",
+      "size": "0x00000034",
+      "midi": "sound_307.mid"
+    },
+    {
+      "name": "sound_308",
+      "address": "0x081844b0",
+      "size": "0x00000090",
+      "midi": "sound_308.mid"
+    },
+    {
+      "name": "sound_309",
+      "address": "0x08184540",
+      "size": "0x0000003c",
+      "midi": "sound_309.mid"
+    },
+    {
+      "name": "sound_310",
+      "address": "0x0818457c",
+      "size": "0x00000054",
+      "midi": "sound_310.mid"
+    },
+    {
+      "name": "sound_311",
+      "address": "0x081845d0",
+      "size": "0x000000c8",
+      "midi": "sound_311.mid",
+      "sidecar": "../data/sound_311.json"
+    }
+  ]
+}

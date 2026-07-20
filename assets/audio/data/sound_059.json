@@ -1,0 +1,30 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence-sidecar",
+  "name": "sound_059",
+  "tracks": {
+    "track_2": {
+      "events": 109,
+      "hash": "af287340d9499f19",
+      "deviations": [
+        [21,1,["wait",24],["wait",1],["wait",11]],
+        [33,1,["wait",24],["wait",1],["wait",11]],
+        [45,1,["wait",24],["wait",1],["wait",11]],
+        [57,1,["wait",24],["wait",1],["wait",11]],
+        [69,1,["wait",24],["wait",1],["wait",11]],
+        [81,1,["wait",24],["wait",1],["wait",11]],
+        [93,1,["wait",24],["wait",1],["wait",11]]
+      ]
+    },
+    "track_3": {
+      "events": 31,
+      "hash": "58c86c04a4787ed8",
+      "deviations": [
+        [6,1,["note",0,45]],
+        [15,1,["note",92,44]],
+        [18,1,["note",0,45]],
+        [27,1,["note",92,44]]
+      ]
+    }
+  }
+}

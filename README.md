@@ -48,7 +48,7 @@ game.
   [rock formations](assets/graphics/map/resource_184/objects/iwa.png).
 - See reconstructed [battle-effect graphics](assets/graphics/battle/effects)
   and [battle-menu art](assets/data/sentou_menu).
-- Browse the [music sequences](assets/audio/sequences),
+- Browse the [music sequences](assets/audio/midi),
   [instrument samples](assets/audio/waves), and recovered audio-engine data.
 - Explore the [message, font, and staff-roll sources](assets/text).
 

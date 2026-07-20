@@ -1,0 +1,53 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence-sidecar",
+  "name": "sound_081",
+  "tracks": {
+    "track_1": {
+      "events": 20,
+      "hash": "0479bdf4dfcabb92",
+      "deviations": [
+        [7,1,["note",11,64]],
+        [10,1,["note",11,66]],
+        [13,1,["note",11,69]],
+        [16,1,["note",32,68]],
+        [17,2,["wait",18],["wait",17]]
+      ]
+    },
+    "track_2": {
+      "events": 21,
+      "hash": "dbb9c442a5962e1e",
+      "deviations": [
+        [18,2,["wait",18],["wait",17]]
+      ]
+    },
+    "track_3": {
+      "events": 15,
+      "hash": "3a9b9b21e6c92cd1",
+      "deviations": [
+        [12,2,["wait",18],["wait",17]]
+      ]
+    },
+    "track_4": {
+      "events": 30,
+      "hash": "77ff2d5e5b882b2d",
+      "deviations": [
+        [27,2,["wait",18],["wait",17]]
+      ]
+    },
+    "track_5": {
+      "events": 34,
+      "hash": "50ebc4ad6f058135",
+      "deviations": [
+        [31,2,["wait",18],["wait",17]]
+      ]
+    },
+    "track_6": {
+      "events": 22,
+      "hash": "73b355b27ca55852",
+      "deviations": [
+        [19,2,["wait",18],["wait",17]]
+      ]
+    }
+  }
+}

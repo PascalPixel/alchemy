@@ -277,11 +277,46 @@ function cgbWaveSample(index: number, nibbles: number[]): SampleDef {
   };
 }
 
-// 無音サンプル (シンセ記述子を指すレコードの受け皿)。
+// 無音サンプル (rhythm キットの空ゾーン用の受け皿)。
 function silenceSample(): SampleDef {
   return {
     name: "silence", data: new Int16Array(48), rate: 22050, rootKey: 60,
     loopStart: 0, loopEnd: 48, looped: true,
+  };
+}
+
+// GS シンセ楽器の近似波形 (帯域制限ノコギリ波)。
+//   ゴールデンサンの「シンセ」音色 (bank_0 のプログラム 80..99、bank_1 の 60..69) は
+//   ROM 上ではゼロ長 WaveData 記述子 (0x0811dac8..) を指し、実サンプルを持たない。
+//   実機ではソフトウェアシンセが波形を手続き的に生成する (本リポジトリ内では合成規則を
+//   完全には回収できていない)。そのため無音に落とすと当該パート (例: sound_000 の
+//   ch4/ch7) が丸ごと消える。66/260 曲がこの音色を使うため、無音の代わりに汎用の
+//   帯域制限ノコギリ波を当て、音程・リズム・エンベロープは正しく鳴らす (音色のみ近似)。
+//   ノコギリ波は GS シンセのリード/パッド (矩形/鋸系) に近い無難な代替。
+// gs_synth は DirectSound (kind=pcm) 音色として実 PCM と同じミキサ経路
+// (Func_080f9674: 標本値 × envVol × chanVol) を通る。したがって同一エンベロープ・
+// 速度で実 PCM 音色と釣り合うよう、波形の RMS を実 PCM サンプル群の中央値 RMS に
+// 合わせる (targetRms)。ピーク合わせだと鋸波は RMS が高く相対的に大きすぎるため
+// RMS 基準で正規化する。
+function synthLeadSample(targetRms: number): SampleDef {
+  const N = 128; // 1 周期のサンプル数
+  const H = 24; // 加算する倍音数 (エイリアス抑制のための帯域制限)
+  const raw = new Float64Array(N);
+  let sumSq = 0;
+  for (let i = 0; i < N; i++) {
+    let v = 0;
+    for (let k = 1; k <= H; k++) v += Math.sin((2 * Math.PI * k * i) / N) / k; // 鋸波のフーリエ和
+    raw[i] = v;
+    sumSq += v * v;
+  }
+  const rawRms = Math.sqrt(sumSq / N);
+  const gain = targetRms / rawRms; // RMS を実 PCM 中央値に合わせる
+  const data = new Int16Array(N);
+  for (let i = 0; i < N; i++) data[i] = Math.round(clamp(raw[i] * gain, -32767, 32767));
+  const rate = Math.round(N * freqOfKey(60)); // 基準キー60で中央ハ
+  return {
+    name: "gs_synth", data, rate, rootKey: 60,
+    loopStart: 0, loopEnd: N, looped: true,
   };
 }
 
@@ -480,11 +515,13 @@ function toneZoneGens(
   return gens;
 }
 
-// pcm レコードの sample アドレスからサンプル名を解決 (未登録=シンセ記述子は silence)。
+// pcm レコードの sample アドレスからサンプル名を解決。未登録アドレスは実サンプルを
+// 持たない GS シンセ記述子 (ゼロ長 WaveData) なので、無音ではなく合成リード波形
+// gs_synth に写す (音程・リズム・エンベロープは正しく鳴らし音色のみ近似)。
 let pcmAddrToName: Map<string, string>;
 let sampleLoopedByName: Map<string, boolean>;
 function pcmSampleName(addr: string): string {
-  return pcmAddrToName.get(addr.toLowerCase()) ?? "silence";
+  return pcmAddrToName.get(addr.toLowerCase()) ?? "gs_synth";
 }
 function sampleLooped(name: string): boolean {
   return sampleLoopedByName.get(name) ?? false;
@@ -495,7 +532,7 @@ interface BuildResult {
   sf2: Buffer;
   stats: {
     pcmSamples: number; psgSamples: number; totalSamples: number;
-    instruments: number; presets: number; silentPcmRecords: number; rhythmZones: number;
+    instruments: number; presets: number; synthLeadRecords: number; rhythmZones: number;
   };
 }
 
@@ -524,6 +561,16 @@ function buildSoundFont(): BuildResult {
   }
   const pcmCount = samples.length;
 
+  // 実 PCM サンプルの RMS 中央値。gs_synth (同じ DirectSound ミキサ経路) の音量を
+  // これに合わせ、シンセ音色が実 PCM 音色と釣り合うようにする。
+  const rmsOf = (d: Int16Array): number => {
+    let s = 0;
+    for (let i = 0; i < d.length; i++) s += d[i] * d[i];
+    return Math.sqrt(s / Math.max(1, d.length));
+  };
+  const pcmRms = samples.map((s) => rmsOf(s.data)).sort((a, b) => a - b);
+  const medianPcmRms = pcmRms[Math.floor(pcmRms.length / 2)] ?? 8000;
+
   // 2) 参照される PSG サンプルだけを合成する。
   const usedSquares = new Set<number>();
   const usedNoise = new Set<number>();
@@ -549,7 +596,9 @@ function buildSoundFont(): BuildResult {
   }
   const silence = silenceSample();
   samples.push(silence); sampleLoopedByName.set("silence", true);
-  const psgCount = samples.length - pcmCount - 1;
+  const synthLead = synthLeadSample(medianPcmRms);
+  samples.push(synthLead); sampleLoopedByName.set("gs_synth", true);
+  const psgCount = samples.length - pcmCount - 2; // silence と gs_synth を除く
 
   const sampleIndexByName = new Map<string, number>();
   samples.forEach((s, i) => sampleIndexByName.set(s.name, i));
@@ -563,7 +612,7 @@ function buildSoundFont(): BuildResult {
   //    bank_0 は preset 0..127、bank_1 は preset 0..80。
   const instruments: Instrument[] = [];
   const instrumentIndexByKey = new Map<string, number>();
-  let silentPcmRecords = 0;
+  let synthLeadRecords = 0;
   let rhythmZones = 0;
 
   const bankRecords = [onshoku.banks[0].records, onshoku.banks[1].records];
@@ -586,17 +635,18 @@ function buildSoundFont(): BuildResult {
         if (target >= BANK_0_COUNT) break;
         const sub = bankRecords[0][target];
         if (sub.kind === "rhythm") continue; // 入れ子は展開しない。
-        if (sub.kind === "pcm" && pcmSampleName(sub.sample) === "silence") continue;
+        // ドラムのサブ音がシンセ記述子 (gs_synth) を指す場合は従来どおり鳴らさない
+        // (打楽器ゾーンを合成リードで埋めない)。
+        if (sub.kind === "pcm" && pcmSampleName(sub.sample) === "gs_synth") continue;
         zones.push({ gens: toneZoneGens(sub, sampleIndexOf, [note, note]) });
         rhythmZones++;
       }
       if (zones.length === 0) {
         zones.push({ gens: silentZone(sampleIndexOf) });
       }
-    } else if (record.kind === "pcm" && pcmSampleName(record.sample) === "silence") {
-      silentPcmRecords++;
-      zones.push({ gens: silentZone(sampleIndexOf) });
     } else {
+      // 旋律レコード。GS シンセ記述子は gs_synth 波形で鳴らす (無音にしない)。
+      if (record.kind === "pcm" && pcmSampleName(record.sample) === "gs_synth") synthLeadRecords++;
       zones.push({ gens: toneZoneGens(record, sampleIndexOf, null) });
     }
 
@@ -650,7 +700,7 @@ function buildSoundFont(): BuildResult {
     sf2,
     stats: {
       pcmSamples: pcmCount, psgSamples: psgCount, totalSamples: samples.length,
-      instruments: instruments.length, presets: presets.length, silentPcmRecords, rhythmZones,
+      instruments: instruments.length, presets: presets.length, synthLeadRecords, rhythmZones,
     },
   };
 }
@@ -827,7 +877,7 @@ function main(args: string[]): void {
     `wrote ${OUT_SF2} bytes=${sf2.length}\n` +
     `pcm_samples=${stats.pcmSamples} psg_samples=${stats.psgSamples} total_samples=${stats.totalSamples}\n` +
     `instruments=${stats.instruments} presets=${stats.presets} ` +
-    `silent_pcm_records=${stats.silentPcmRecords} rhythm_zones=${stats.rhythmZones}`,
+    `synth_lead_records=${stats.synthLeadRecords} rhythm_zones=${stats.rhythmZones}`,
   );
   fluidsynthSmoke(OUT_SF2);
 }

@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence-sidecar",
+  "name": "sound_205",
+  "tracks": {
+    "track_1": {
+      "events": 18,
+      "hash": "d20e51163c99c14c",
+      "deviations": [
+        [13,3,["wait",80],["wait",2],["wait",92],["wait",3]]
+      ]
+    }
+  }
+}

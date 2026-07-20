@@ -942,7 +942,7 @@
   "series": [
     {
       "kind": "golden-sun-sound-sequence-series",
-      "index": "assets/audio/sequences/index.json"
+      "index": "assets/audio/midi/index.json"
     },
     {
       "kind": "golden-sun-music-residuals",

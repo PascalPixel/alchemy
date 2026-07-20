@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence-sidecar",
+  "name": "sound_179",
+  "tracks": {
+    "track_1": {
+      "events": 31,
+      "hash": "cb02f498b996c360",
+      "deviations": [
+        [11,2,["wait",72],["wait",96],["wait",12]],
+        [14,3,["wait",84],["wait",96],["wait",18]],
+        [18,3,["wait",78],["wait",96],["wait",78]],
+        [22,3,["wait",18],["wait",96],["wait",96],["wait",18]],
+        [26,3,["wait",78],["wait",96],["wait",96]]
+      ]
+    }
+  }
+}

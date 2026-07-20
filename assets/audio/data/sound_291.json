@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "engine": "smsh-sequence-sidecar",
+  "name": "sound_291",
+  "tracks": {
+    "track_1": {
+      "events": 26,
+      "hash": "c8abd1b615799962",
+      "deviations": [
+        [15,1,["note",0,43]],
+        [18,2,["wait",72],["wait",90]],
+        [21,2,["wait",6],["wait",92],["wait",3]]
+      ]
+    },
+    "track_2": {
+      "events": 20,
+      "hash": "35b3ea7b18d6a706",
+      "deviations": [
+        [16,2,["wait",72],["wait",90]]
+      ]
+    }
+  }
+}

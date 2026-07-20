@@ -105,6 +105,29 @@ export function compilerCommand(...arguments_: Array<string | number>): string[]
   return [DRIVER, `-B${BUNDLE}/`, ...arguments_.map(String)];
 }
 
+// Hot-search pipeline: invoke the approved preprocessor and cc1 directly, saving
+// one driver process per candidate. These arguments are the exact subprocesses
+// emitted by xgcc for CFLAGS; ordinary builds continue to use compilerCommand.
+export function directPreprocessorCommand(input: string, output: string): string[] {
+  validateBundle();
+  return [
+    join(BUNDLE, "cpp"), "-lang-c", "-nostdinc",
+    "-D__GNUC__=2", "-D__GNUC_MINOR__=96", "-D__GNUC_PATCHLEVEL__=0",
+    "-Acpu(arm)", "-Amachine(arm)", "-D__CHAR_UNSIGNED__", "-D__OPTIMIZE__",
+    "-D__ARM_ARCH_4T__", "-D__APCS_32__", "-D__ARMEL__", "-D__THUMBEL__",
+    "-Darm_elf", "-D__ELF__", "-Dthumb", "-D__thumb__", input, output,
+  ];
+}
+
+export function directCompilerCommand(input: string, output: string, dumpbase: string): string[] {
+  validateBundle();
+  return [
+    join(BUNDLE, "cc1"), input, "-quiet", "-dumpbase", dumpbase,
+    "-mthumb", "-mthumb-interwork", "-mcpu=arm7tdmi", "-O2",
+    "-fno-builtin", "-ffreestanding", "-fcall-used-r4", "-o", output,
+  ];
+}
+
 function main(): void {
   validateBundle();
   const size = Object.keys(EXPECTED)

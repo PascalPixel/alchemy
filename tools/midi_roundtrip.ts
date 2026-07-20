@@ -88,6 +88,57 @@ function metaText(metaType: number, text: string): number[] {
   return [0xff, metaType, ...vlqEncode(payload.length), ...payload];
 }
 
+// 生バイトのメタイベント (テンポ 0x51 など、非テキストのペイロード用)。
+function metaBytes(metaType: number, payload: number[]): number[] {
+  return [0xff, metaType, ...vlqEncode(payload.length), ...payload];
+}
+
+// ── 再生用メタの型 (再構築では無視される) ──────────────────────────
+//   ・0x07 (cue point): 構造キュー。ペイロードのテキストで種別を区別する。
+//       "loopStart" / "loopEnd"  : ループ区間の目印 (RPG 系の慣習)。
+//       "pattern+"  / "pattern-" : パターン展開ブラケットの開閉。
+//         ブラケット内の note-on と 0x06 マーカは「展開複製」なので、
+//         midiToSequence は再構築時にこれらを捨て、ブラケットの tick 長を
+//         コンパクト時間軸から差し引く (= 逆写像が元の compact stream を復元)。
+//   ・0x51 (set tempo): 実テンポ。プレイヤが 120BPM 既定にならないよう出す。
+//       エンジンの tempo 制御値 v から BPM = 2v (このエンジン系の慣習)。
+const CUE_META = 0x07;
+const TEMPO_META = 0x51;
+
+// テンポ制御値 → MIDI set-tempo ペイロード (1拍あたりマイクロ秒, 3バイト BE)。
+function tempoPayload(controlValue: number): number[] {
+  const bpm = 2 * controlValue; // このエンジンの tempo バイトは BPM/2。
+  const microsPerQuarter = Math.round(60_000_000 / bpm);
+  return [
+    (microsPerQuarter >> 16) & 0xff,
+    (microsPerQuarter >> 8) & 0xff,
+    microsPerQuarter & 0xff,
+  ];
+}
+
+// ── パターン定義の本体を索引化 ──────────────────────────────────────
+// このデータでは pattern 呼び出しはすべて後方参照・入れ子なし・repeat なし。
+// 定義は `["label", P]` から最初の `["pattern_end"]` までの区間。呼び出し時に
+// この本体の音符と wait を現在 tick へインライン展開する (再生を時間正確に)。
+function patternBodies(events: SequenceEvent[]): Map<string, SequenceEvent[]> {
+  const targets = new Set(
+    events.filter((e) => e[0] === "pattern").map((e) => e[1] as string),
+  );
+  const bodies = new Map<string, SequenceEvent[]>();
+  for (let i = 0; i < events.length; i++) {
+    const event = events[i]!;
+    if (event[0] === "label" && targets.has(event[1] as string) && !bodies.has(event[1] as string)) {
+      const body: SequenceEvent[] = [];
+      for (let k = i + 1; k < events.length; k++) {
+        if (events[k]![0] === "pattern_end") break;
+        body.push(events[k]!);
+      }
+      bodies.set(event[1] as string, body);
+    }
+  }
+  return bodies;
+}
+
 function buildMTrk(events: RawMidiEvent[]): Buffer {
   // tick 昇順 → 同一 tick は seq 昇順で安定ソート。
   const ordered = [...events].sort((a, b) => a.tick - b.tick || a.seq - b.seq);
@@ -149,30 +200,53 @@ export function sequenceToMidi(source: SequenceSource): Buffer {
     // ゲート満了イベントは大きな seq を与えて同一 tick の grid イベントの後に置く。
     let offSeqBase = 1_000_000;
 
+    const bodies = patternBodies(segment.events);
+    // goto の飛び先ラベル (= ループ開始点) に loopStart キューを添える。
+    const loopTargets = new Set(
+      segment.events.filter((e) => e[0] === "goto").map((e) => e[1] as string),
+    );
+
+    // 現在 tick に note-on / note-off を積む (再生用の実音)。
+    const emitNote = (event: SequenceEvent, state: { key: number; vel: number }): void => {
+      const { dur, key, vel } = effectiveNoteParams(event, state);
+      raw.push({ tick: cursor, seq: seq++, bytes: [0x90 | channel, key & 0x7f, vel & 0x7f] });
+      raw.push({ tick: cursor + dur, seq: offSeqBase++, bytes: [0x80 | channel, key & 0x7f, 0x40] });
+    };
+
     for (const event of segment.events) {
       const kind = event[0];
       if (isNote(event)) {
-        const { dur, key, vel } = effectiveNoteParams(event, noteState);
-        raw.push({
-          tick: cursor,
-          seq: seq++,
-          bytes: [0x90 | channel, key & 0x7f, vel & 0x7f],
-        });
-        raw.push({
-          tick: cursor + dur,
-          seq: offSeqBase++,
-          bytes: [0x80 | channel, key & 0x7f, 0x40],
-        });
+        emitNote(event, noteState);
       } else if (isWait(event)) {
         cursor += event[1] as number;
+      } else if (kind === "label") {
+        raw.push({ tick: cursor, seq: seq++, bytes: metaText(0x06, JSON.stringify(event)) });
+        if (loopTargets.has(event[1] as string)) {
+          raw.push({ tick: cursor, seq: seq++, bytes: metaText(CUE_META, "loopStart") });
+        }
+      } else if (kind === "pattern") {
+        // 逐語マーカ (再構築で保持) を先に置き、その後に展開ブラケットを開く。
+        raw.push({ tick: cursor, seq: seq++, bytes: metaText(0x06, JSON.stringify(event)) });
+        raw.push({ tick: cursor, seq: seq++, bytes: metaText(CUE_META, "pattern+") });
+        // 本体の音符を現在 tick へインライン (走行状態は複製して外側を汚さない)。
+        const clone = { ...noteState };
+        for (const bodyEvent of bodies.get(event[1] as string) ?? []) {
+          if (isNote(bodyEvent)) emitNote(bodyEvent, clone);
+          else if (isWait(bodyEvent)) cursor += bodyEvent[1] as number;
+          // 本体内の control 等は再生に寄与せず再構築でも捨てるので出さない。
+        }
+        raw.push({ tick: cursor, seq: seq++, bytes: metaText(CUE_META, "pattern-") });
+      } else if (kind === "goto") {
+        // 上位ループは一度だけ本体を鳴らして goto では飛ばない (fine で止める)。
+        raw.push({ tick: cursor, seq: seq++, bytes: metaText(CUE_META, "loopEnd") });
+        raw.push({ tick: cursor, seq: seq++, bytes: metaText(0x06, JSON.stringify(event)) });
       } else {
-        // control / fine / label / pattern / pattern_end / goto / repeat /
-        // note_end / *_running — 逐語マーカとして現 tick に置く。
-        raw.push({
-          tick: cursor,
-          seq: seq++,
-          bytes: metaText(0x06, JSON.stringify(event)),
-        });
+        // control / fine / pattern_end / note_end / *_running — 逐語マーカ。
+        raw.push({ tick: cursor, seq: seq++, bytes: metaText(0x06, JSON.stringify(event)) });
+        // tempo 制御には実テンポメタも重ねる (プレイヤの 120BPM 既定を防ぐ)。
+        if (kind === "tempo") {
+          raw.push({ tick: cursor, seq: seq++, bytes: metaBytes(TEMPO_META, tempoPayload(event[1] as number)) });
+        }
       }
     }
     trackChunks.push(buildMTrk(raw));
@@ -243,24 +317,49 @@ export function midiToSequence(midi: Buffer): SequenceSource {
 }
 
 // 1 本の MTrk のイベント列から stream の event 配列を再構成する。
+//
+// 逆写像の要点: sequenceToMidi はパターン呼び出しの本体を展開複製し、上位ループを
+// 一度だけ鳴らす。これらは 0x07 キューで括られる。ここではブラケット内の note-on と
+// 0x06 マーカを捨て、ブラケットの tick 長を「コンパクト時間軸」から差し引くことで、
+// 展開前の compact stream (= 元のエンジンイベント列) をバイト完全に復元する。
+// loopStart/loopEnd と set-tempo(0x51) は再生専用なので無視する。
 function reconstructStream(events: MidiEvent[]): SequenceEvent[] {
-  // grid イベント (note-on / マーカ) と note-off を分離。
-  interface Grid {
-    tick: number;
+  interface Node {
+    compactTick: number; // ブラケット長を除いた時間軸 (元の compact 位置)
+    rawTick: number; // 展開後の実 tick (ゲート算出に使う)
     order: number;
     event: SequenceEvent;
+    dropped: boolean; // ブラケット内 (展開複製) なら true
   }
-  const grid: Grid[] = [];
-  // ピッチごとの note-on 待ち行列 (FIFO) で note-off とゲートを対応付ける。
-  const pending = new Map<number, { tick: number; ref: Grid }[]>();
+  const grid: Node[] = []; // 保持ノード (dropped でないもの) のみ
+  // ピッチごとの note-on 待ち行列 (FIFO)。展開複製も含めゲート対応に使う。
+  const pending = new Map<number, Node[]>();
+
+  let depth = 0; // パターン展開ブラケットの入れ子深さ
+  let bracketStart = 0; // 現ブラケットの開始 tick
+  let removed = 0; // これまでに閉じたブラケット長の総和
 
   for (const e of events) {
     if (e.type === "meta" && e.meta === 0x2f) continue; // EOT
+    if (e.type === "meta" && e.meta === TEMPO_META) continue; // 再生用テンポは無視
+    if (e.type === "meta" && e.meta === CUE_META) {
+      const text = Buffer.from(e.data as string, "hex").toString("utf8");
+      if (text === "pattern+") {
+        if (depth === 0) bracketStart = e.tick;
+        depth += 1;
+      } else if (text === "pattern-") {
+        depth -= 1;
+        if (depth === 0) removed += e.tick - bracketStart;
+      }
+      // loopStart / loopEnd: 目印のみ。構造は 0x06 の label/goto が担うので無視。
+      continue;
+    }
     if (e.type === "meta" && e.meta === 0x06) {
+      if (depth > 0) continue; // 展開複製の control マーカ → 捨てる
       const parsed = JSON.parse(
         Buffer.from(e.data as string, "hex").toString("utf8"),
       ) as SequenceEvent;
-      grid.push({ tick: e.tick, order: e.order, event: parsed });
+      grid.push({ compactTick: e.tick - removed, rawTick: e.tick, order: e.order, event: parsed, dropped: false });
       continue;
     }
     if (e.type === "channel" && e.status !== undefined) {
@@ -268,32 +367,35 @@ function reconstructStream(events: MidiEvent[]): SequenceEvent[] {
       const [d0, d1] = e.data as number[];
       if (kind === 0x90 && d1 > 0) {
         // note-on。ゲートは後で note-off から確定 (仮に 0)。
-        const node: Grid = { tick: e.tick, order: e.order, event: ["note", 0, d0, d1] };
-        grid.push(node);
+        const node: Node = {
+          compactTick: e.tick - removed, rawTick: e.tick, order: e.order,
+          event: ["note", 0, d0, d1], dropped: depth > 0,
+        };
+        if (!node.dropped) grid.push(node);
         if (!pending.has(d0)) pending.set(d0, []);
-        pending.get(d0)!.push({ tick: e.tick, ref: node });
+        pending.get(d0)!.push(node);
       } else if (kind === 0x80 || (kind === 0x90 && d1 === 0)) {
-        // note-off。対応する最古の note-on にゲートを書き込む。
+        // note-off。対応する最古の note-on にゲート (展開後 tick 差) を書き込む。
         const queue = pending.get(d0);
         if (!queue || queue.length === 0) throw new Error("対応しない note-off");
         const on = queue.shift()!;
-        const dur = e.tick - on.tick;
-        (on.ref.event as [string, number, number, number])[1] = dur;
+        (on.event as [string, number, number, number])[1] = e.tick - on.rawTick;
       }
     }
   }
   if ([...pending.values()].some((q) => q.length > 0)) {
     throw new Error("閉じていない note-on が残っている");
   }
+  if (depth !== 0) throw new Error("パターン展開ブラケットが閉じていない");
 
-  // grid を tick・order でソートし、隣接 tick 間のギャップを wait に分解して挿入。
-  grid.sort((a, b) => a.tick - b.tick || a.order - b.order);
+  // 保持ノードを compact 時間軸で並べ、隣接ギャップを wait に分解して挿入。
+  grid.sort((a, b) => a.compactTick - b.compactTick || a.order - b.order);
   const out: SequenceEvent[] = [];
   let cursor = 0;
   for (const g of grid) {
-    if (g.tick > cursor) {
-      out.push(...tokenizeWait(g.tick - cursor));
-      cursor = g.tick;
+    if (g.compactTick > cursor) {
+      out.push(...tokenizeWait(g.compactTick - cursor));
+      cursor = g.compactTick;
     }
     out.push(g.event);
   }

@@ -6,9 +6,10 @@
 import { appendFileSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { M2C_PREAMBLE } from "./match_m2c.ts";
-import { candidates as seedCandidates, replaceableAssembly } from "./permute_m2c.ts";
+import { candidates as seedCandidates, replaceableAssembly, retainedAssemblyStems } from "./permute_m2c.ts";
 import { verify } from "./verify.ts";
-import { CFLAGS, compilerCommand, externalSymbol, externalSymbolAssembly } from "./alchemy_gcc.ts";
+import { directCompilerCommand, directPreprocessorCommand, externalSymbol, externalSymbolAssembly } from "./alchemy_gcc.ts";
+import { CONSTRAINT_OPERATORS } from "./decomp_constraints.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const STATE_DIR = join(ROOT, "out/permute1/state");
@@ -21,6 +22,7 @@ interface Options {
   steps: number;
   restarts: number;
   seed: number;
+  jobs: number;
   maxMismatch: number;
   limit?: number;
   shard?: [number, number];
@@ -35,6 +37,7 @@ function parseArguments(argv: string[]): Options {
     steps: 3000,
     restarts: 6,
     seed: 0,
+    jobs: Math.max(2, Math.min(16, (navigator.hardwareConcurrency || 8) - 2)),
     maxMismatch: 100000,
   };
   for (let index = 0; index < argv.length; index++) {
@@ -44,6 +47,7 @@ function parseArguments(argv: string[]): Options {
     else if (argument === "--steps") options.steps = Number(argv[++index]);
     else if (argument === "--restarts") options.restarts = Number(argv[++index]);
     else if (argument === "--seed") options.seed = Number(argv[++index]);
+    else if (argument === "--jobs") options.jobs = Number(argv[++index]);
     else if (argument === "--max-mismatch") options.maxMismatch = Number(argv[++index]);
     else if (argument === "--limit") options.limit = Number(argv[++index]);
     else if (argument === "--targets") options.targetsFile = argv[++index];
@@ -51,7 +55,7 @@ function parseArguments(argv: string[]): Options {
       const [part, total] = argv[++index].split("/").map(Number);
       options.shard = [part, total];
     } else if (argument === "-h" || argument === "--help") {
-      console.log("usage: permute_v1.ts [--drafts DIR] [--report FILE] [--steps N] [--restarts N] [--seed N] [--shard K/N] [--limit N] [--targets FILE]");
+      console.log("usage: permute_v1.ts [--drafts DIR] [--report FILE] [--steps N] [--restarts N] [--seed N] [--jobs N] [--shard K/N] [--limit N] [--targets FILE]");
       process.exit(0);
     } else options.rom = argument;
   }
@@ -92,10 +96,11 @@ class Scorer {
   // ときだけ作り直す。失敗は巨大コストとして返す。
   async bytes(source: string): Promise<Buffer | null> {
     const prefix = join(this.scratch, this.stem);
-    const cFile = `${prefix}.c`, sFile = `${prefix}.s`, oFile = `${prefix}.o`;
+    const cFile = `${prefix}.c`, iFile = `${prefix}.i`, sFile = `${prefix}.s`, oFile = `${prefix}.o`;
     const elf = `${prefix}.elf`, bin = `${prefix}.bin`;
     writeFileSync(cFile, source);
-    if ((await run(compilerCommand(...CFLAGS, "-S", "-o", sFile, cFile))).code !== 0) return null;
+    if ((await run(directPreprocessorCommand(cFile, iFile))).code !== 0) return null;
+    if ((await run(directCompilerCommand(iFile, sFile, `${this.stem}.c`))).code !== 0) return null;
     if ((await run(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", oFile, sFile])).code !== 0) return null;
     const address = `0x${this.stem}`;
     const link = () => run([
@@ -128,7 +133,9 @@ class Scorer {
   // 重み付き半語編集距離。同系オペコードのレジスタ差は軽く、
   // 系統違いは重く、長さずれは最も重く数える。
   async score(source: string): Promise<number> {
-    const key = `${this.stem}:${Bun.hash(source).toString(36)}`;
+    // v2 includes the true assembly extent. The earlier cache scored only the
+    // candidate-sized ROM prefix and is unsafe for length-mismatched candidates.
+    const key = `v2:${this.stem}:${this.expected.length}:${Bun.hash(source).toString(36)}`;
     const cached = Scorer.cache.get(key);
     if (cached !== undefined) return cached;
     const actual = await this.bytes(source);
@@ -390,6 +397,17 @@ function loadIdioms(): Record<string, string[]> {
   if (IDIOMS === null) {
     const path = join(ROOT, "out/permute1/idioms.json");
     IDIOMS = existsSync(path) ? (JSON.parse(readFileSync(path, "utf8")).dictionary as Record<string, string[]>) : {};
+    // Merge templates whose C statements have already been aligned to concrete
+    // compiler instruction blocks. These are stronger than syntax-only idioms.
+    const blocks = join(ROOT, "out/rebuild/idiom_blocks.jsonl");
+    if (existsSync(blocks)) {
+      for (const line of readFileSync(blocks, "utf8").split("\n").filter(Boolean)) {
+        const record = JSON.parse(line) as { anchor?: string; template?: string; normalized_instructions?: string[] };
+        if (!record.anchor || !record.template || !record.normalized_instructions?.length) continue;
+        const entries = (IDIOMS[record.anchor] ??= []);
+        if (!entries.includes(record.template)) entries.push(record.template);
+      }
+    }
   }
   return IDIOMS;
 }
@@ -439,6 +457,7 @@ const OPERATORS: Array<[string, Operator]> = [
   ["condinvert", conditionInvert],
   ["looprotate", loopRotate],
   ["compound", compoundAssign],
+  ...CONSTRAINT_OPERATORS,
 ];
 
 // ---- 状態と予算 -------------------------------------------------------
@@ -469,10 +488,14 @@ function budget(state: TargetState, base: number): number {
   return base;
 }
 
-function pickOperator(state: TargetState, random: () => number): [string, Operator] {
+function pickOperator(state: TargetState, random: () => number, registerFraction = 0, semanticFraction = 0, suggestions = new Set<string>()): [string, Operator] {
   const weights = OPERATORS.map(([name]) => {
     const record = state.operators[name] ?? { tried: 0, accepted: 0 };
-    return (record.accepted + 1) / (record.tried + 8);
+    let guidance = 1;
+    if (registerFraction >= 0.5 && /^(argshift|pointerstep|postincrement|splitload|declshuffle|swap|hoist|inline)$/.test(name)) guidance = 3;
+    if (semanticFraction >= 0.35 && /^(signature|typeflip|fieldtype|fieldsyntax|volatile|condinvert|rounding|borrow)$/.test(name)) guidance = 2.5;
+    if (suggestions.has(name)) guidance *= 2;
+    return guidance * (record.accepted + 1) / (record.tried + 8);
   });
   const total = weights.reduce((sum, value) => sum + value, 0);
   let roll = random() * total;
@@ -524,6 +547,7 @@ async function main(): Promise<void> {
   const output = join(ROOT, "out/permute1/work");
   mkdirSync(output, { recursive: true });
   const tracked = new Set(readdirSync(join(ROOT, "src")).filter((name) => name.endsWith(".c")).map((name) => basename(name, ".c")));
+  const retained = retainedAssemblyStems();
   let stems: string[];
   if (options.targetsFile !== undefined) {
     stems = readFileSync(options.targetsFile, "utf8").split(/\s+/).filter(Boolean);
@@ -534,7 +558,7 @@ async function main(): Promise<void> {
       .sort((left, right) => (left.mismatched_bytes ?? 0) - (right.mismatched_bytes ?? 0))
       .map((row) => row.entry.toString(16).padStart(8, "0"));
   }
-  stems = stems.filter((stem) => !tracked.has(stem) &&
+  stems = stems.filter((stem) => !tracked.has(stem) && !retained.has(stem) &&
     existsSync(join(ROOT, "asm", `${stem}.s`)) && existsSync(join(options.drafts, `${stem}.c`)));
   if (options.shard) stems = stems.filter((_, index) => index % options.shard![1] === options.shard![0]);
   if (options.limit !== undefined) stems = stems.slice(0, options.limit);
@@ -546,21 +570,38 @@ async function main(): Promise<void> {
   for (const name of readdirSync(cacheDir).filter((entry) => entry.endsWith(".log"))) {
     for (const line of readFileSync(join(cacheDir, name), "utf8").split("\n")) {
       const space = line.indexOf(" ");
-      if (space > 0) Scorer.cache.set(line.slice(0, space), Number(line.slice(space + 1)));
+      if (space > 0 && line.startsWith("v2:")) Scorer.cache.set(line.slice(0, space), Number(line.slice(space + 1)));
     }
   }
   Scorer.cacheFile = join(cacheDir, `shard${options.shard ? options.shard[0] : 0}.log`);
   console.log(`cache=${Scorer.cache.size}`);
   const recipes = loadRecipes();
+  const asmSizes = new Map<string, number>();
+  const asmManifest = [join(ROOT, "out/full/asm/manifest.json"), join(ROOT, "out/asm/manifest.json")].find(existsSync);
+  if (asmManifest) {
+    const document = JSON.parse(readFileSync(asmManifest, "utf8")) as { regions?: Array<{ source: string; size: number }> };
+    for (const region of document.regions ?? []) asmSizes.set(basename(region.source, ".s"), region.size);
+  }
+  const diagnosisPath = join(ROOT, "out/decomp/queue.json");
+  const diagnoses = new Map<string, { register_fraction: number; semantic_fraction: number }>();
+  if (existsSync(diagnosisPath)) {
+    const document = JSON.parse(readFileSync(diagnosisPath, "utf8")) as { items?: Array<{ stem: string; diagnosis: { register_fraction: number; semantic_fraction: number } }> };
+    for (const item of document.items ?? []) diagnoses.set(item.stem, item.diagnosis);
+  }
   let matchedCount = 0;
   let cursor = 0;
-  const concurrency = Math.max(4, Math.min(20, (navigator.hardwareConcurrency || 8) - 2));
+  const concurrency = options.jobs;
   async function processTarget(stem: string): Promise<void> {
     const scratch = join(output, stem);
     mkdirSync(scratch, { recursive: true });
     // 期待バイトはROMの当該領域そのもの。完全リンク採点なので直接使える。
     const address = Number.parseInt(stem, 16) - 0x08000000;
     const state = loadState(stem);
+    const diagnosis = diagnoses.get(stem) ?? { register_fraction: 0, semantic_fraction: 0 };
+    const constraintPath = join(ROOT, "out/decomp/constraints", `${stem}.json`);
+    const suggestions = existsSync(constraintPath)
+      ? new Set((JSON.parse(readFileSync(constraintPath, "utf8")) as { suggested_operators?: string[] }).suggested_operators ?? [])
+      : new Set<string>();
     const raw = readFileSync(join(options.drafts, `${stem}.c`), "utf8");
     const bases: string[] = [];
     if (state.best !== null) bases.push(state.best.body);
@@ -580,16 +621,23 @@ async function main(): Promise<void> {
         const probePath = join(scratch, `${stem}.c`);
         writeFileSync(probePath, probeSource);
         try {
-          const [actual, expectedBytes] = verify(probePath, rom, scratch, true);
-          expected = Buffer.from(rom.subarray(address, address + expectedBytes.length));
+          const [actual] = verify(probePath, rom, scratch, true);
+          const targetSize = asmSizes.get(stem) ?? actual.length;
+          expected = Buffer.from(rom.subarray(address, address + targetSize));
           scorer = new Scorer(stem, expected, scratch);
-        } catch { continue; }
+        } catch (error) {
+          console.log(`probe-failed ${stem}: ${(error as Error).message}`);
+          continue;
+        }
       }
       const value = await scorer!.score(probeSource);
       const body = probeSource.replace(M2C_PREAMBLE, "");
       if (best === null || value < best.score) best = { body, score: value };
     }
-    if (best === null || scorer === null || best.score > 400) { console.log(`unusable ${stem}`); return; }
+    if (best === null || scorer === null || best.score > 400) {
+      console.log(`unusable ${stem} score=${best?.score ?? "none"} scorer=${scorer !== null}`);
+      return;
+    }
 
     // 成功手順の再演を最初に試す。
     let done = false;
@@ -622,7 +670,7 @@ async function main(): Promise<void> {
       let sinceImprovement = 0;
       for (let step = 0; step < stepsBudget; step++) {
         if (sinceImprovement >= 400) break;
-        const [operatorName, operator] = pickOperator(state, random);
+        const [operatorName, operator] = pickOperator(state, random, diagnosis.register_fraction, diagnosis.semantic_fraction, suggestions);
         const next = operator(current.body, random);
         const record = (state.operators[operatorName] ??= { tried: 0, accepted: 0 });
         record.tried++;

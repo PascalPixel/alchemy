@@ -1,0 +1,24 @@
+typedef signed char s8;
+typedef unsigned char u8;
+typedef signed short s16;
+typedef unsigned short u16;
+typedef signed int s32;
+typedef unsigned int u32;
+typedef signed long long s64;
+typedef unsigned long long u64;
+typedef int bool;
+#define NULL ((void *)0)
+#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+
+extern volatile u16 Data_03001f64;
+extern volatile u32 Data_04000128;
+void Func_080030f8(u32);
+
+u32 Func_08006384(s32 arg0) {
+    if ((arg0 & Data_03001f64) != arg0) {
+        do {
+            Func_080030f8(1);
+        } while ((arg0 & Data_03001f64) != arg0);
+    }
+    return (Data_04000128 << 0x1A) >> 0x1E;
+}

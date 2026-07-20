@@ -30,8 +30,13 @@ interface Norm {
 
 const BRANCH = /^(b|bl|blx|bx|beq|bne|bgt|blt|bge|ble|bhi|bls|bcs|bcc|bmi|bpl)$/;
 
+// Thumbのフラグ設定形は逆アセンブラが末尾sを付す（movs/adds/subs…）が、
+// 承認コンパイラの-S出力は付さない（mov/add/sub…）。同一命令なので辞書側と
+// 対象側を突き合わせる前に、この末尾sを剥がして正規名へ揃える。
+const FLAG_S = /^(mov|mvn|add|adc|sub|sbc|rsb|and|orr|eor|bic|lsl|lsr|asr|ror|neg|mul)s$/;
 function stripSuffix(mnemonic: string): string {
-  return mnemonic.toLowerCase().replace(/\.(n|w)$/, "");
+  const base = mnemonic.toLowerCase().replace(/\.(n|w)$/, "");
+  return FLAG_S.test(base) ? base.slice(0, -1) : base;
 }
 
 // 一区間のレジスタを局所的にrA,rB…へ束ね直し、正規命令列を返す。
@@ -220,13 +225,29 @@ function typeName(count: number): string {
   return count === 0 ? "void" : "s32";
 }
 
-// 推定シグネチャと本文からC関数を組み立てる。
+// 推定シグネチャと本文からC関数を組み立てる。雛形の%vNプレースホルダは
+// 出現順に束縛する。先頭args個は引数argNへ、残りはローカルへ宣言する。
 function wrapFunction(stem: string, signature: { returns: boolean; args: number }, statements: string[]): string {
   const parameters = signature.args === 0 ? "void" : Array.from({ length: signature.args }, (_, i) => `s32 arg${i}`).join(", ");
   const returnType = signature.returns ? "s32" : "void";
-  const body = statements.map((s) => `    ${s}`).join("\n");
+  // 全文を走査して%vNを一意に集め、出現順に名前を割り当てる。
+  const slots: number[] = [];
+  for (const s of statements) for (const m of s.matchAll(/%v(\d+)/g)) if (!slots.includes(Number(m[1]))) slots.push(Number(m[1]));
+  const binding = new Map<number, string>();
+  const locals: string[] = [];
+  slots.forEach((slot, index) => {
+    if (index < signature.args) binding.set(slot, `arg${index}`);
+    else {
+      const name = `v${index}`;
+      binding.set(slot, name);
+      locals.push(`    s32 ${name};`);
+    }
+  });
+  const bind = (s: string) => s.replace(/%v(\d+)/g, (_, n) => binding.get(Number(n)) ?? `arg0`);
+  const declarations = locals.length > 0 ? locals.join("\n") + "\n" : "";
+  const body = statements.map((s) => `    ${bind(s)}`).join("\n");
   const tail = signature.returns ? "\n    return 0;" : "";
-  return `${M2C_PREAMBLE}${returnType} Func_${stem}(${parameters}) {\n${body}${tail}\n}\n`;
+  return `${M2C_PREAMBLE}${returnType} Func_${stem}(${parameters}) {\n${declarations}${body}${tail}\n}\n`;
 }
 
 function main(): void {

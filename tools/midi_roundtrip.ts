@@ -37,8 +37,18 @@
 //         bit7=有効・下位7bit=量。有効なら量を、無効/0 なら 0 を tick 0 で送る。
 //         曲ごとに異なる (0/有効0/50) ため全曲共有の SF2 では表せず、曲固有値として
 //         ここで CC91 に写す。0 を明示送出して既定リバーブの誤混入も防ぐ。
-//   これらの CC 追加で .mid のバイト列は変わるが、逆写像・サイドカー・ROM 復元は
-//   不変 (CC は読み飛ばされ、既定ストリームのハッシュも変わらない)。
+//     ・プログラムチェンジ (0xC0) ← voice コマンド。エンジンの音色選択。SF2 は
+//         「バンク × プログラム」で音色を並べる (bank 0 = トーンバンク bank_0 の
+//         レコード N、bank 1 = bank_1 のレコード N)。voice の値 N (全曲 0..127) を
+//         そのままプログラム番号にする。これを出さないと全チャンネルが既定の
+//         bank0/program0 で鳴り「楽器が総取り違え」になる (本修正の主眼)。
+//     ・バンクセレクト MSB (CC0) ← ソングの externals.tone_bank。
+//         0x080fba78 → bank 0、0x080fc138 → bank 1。曲頭で一度送る (曲内で不変)。
+//         これで各曲が正しいトーンバンクのプリセット群を引く。
+//   チャンネル割当: GM のドラムチャンネル (ch9) は打楽器バンクに固定されるため
+//   旋律トラックが載らないよう回避する (ch0..8, 10..15 を使う)。
+//   これらの CC/プログラム追加で .mid のバイト列は変わるが、逆写像・サイドカー・
+//   ROM 復元は不変 (これらは読み飛ばされ、既定ストリームのハッシュも変わらない)。
 //
 // ── 逆写像 (SMF → sequence-JSON) の正準化方針 ──────────────────────────
 //   MIDI の note-on/off とデルタタイムには、下記の「格納選択 (storage
@@ -124,12 +134,35 @@ const CUE_META = 0x07;
 const TEMPO_META = 0x51;
 
 // ── 再生用チャンネルコントローラ番号 (逆写像では読み飛ばす) ──────────
+const CC_BANK_MSB = 0; // バンクセレクト MSB ← externals.tone_bank
 const CC_MODWHEEL = 1; // モジュレーションホイール ← modulation_depth (ビブラート深さ)
 const CC_REVERB = 91; // エフェクト1深度 = リバーブ送り ← ヘッダ reverb バイト
+const DRUM_CHANNEL = 9; // GM 打楽器チャンネル (旋律トラックを載せない)
+
+// トーンバンクアドレス → SF2 バンク番号 (build_soundfont.ts と一致)。
+const TONE_BANK_TO_SF2: Record<string, number> = {
+  "0x080fba78": 0, // bank_0 (144 レコード)
+  "0x080fc138": 1, // bank_1 (81 レコード)
+};
 
 // コントロールチェンジのバイト列 (ステータス 0xB0 | channel)。
 function controlChange(channel: number, controller: number, value: number): number[] {
   return [0xb0 | channel, controller & 0x7f, value & 0x7f];
+}
+
+// プログラムチェンジのバイト列 (ステータス 0xC0 | channel)。
+function programChange(channel: number, program: number): number[] {
+  return [0xc0 | channel, program & 0x7f];
+}
+
+// externals.tone_bank → SF2 バンク番号 (未知は 0)。
+function bankSelectFor(toneBank: string | undefined): number {
+  return TONE_BANK_TO_SF2[String(toneBank ?? "").toLowerCase()] ?? 0;
+}
+
+// ストリーム番号 → MIDI チャンネル (ドラムチャンネル 9 を飛ばす)。
+function streamChannel(index: number): number {
+  return (index < DRUM_CHANNEL ? index : index + 1) % 16;
 }
 
 // ヘッダの reverb バイト → CC91 送り量。bit7 有効なら下位7bit、無効/0 なら 0。
@@ -246,9 +279,11 @@ export function sequenceToMidi(source: SequenceSource): Buffer {
     (s): s is Extract<SequenceSegment, { kind: "header" }> => s.kind === "header",
   );
   const reverbCC = reverbSend(Number(headerSegment?.reverb ?? 0));
+  // 曲がどのトーンバンクを参照するか (全チャンネル共通)。
+  const bankMSB = bankSelectFor(source.externals?.tone_bank as string | undefined);
 
   streamSegments.forEach((segment, index) => {
-    const channel = index % 16;
+    const channel = streamChannel(index);
     const raw: RawMidiEvent[] = [];
     let cursor = 0; // 時間カーソル (tick)
     let seq = 0;
@@ -262,8 +297,9 @@ export function sequenceToMidi(source: SequenceSource): Buffer {
       segment.events.filter((e) => e[0] === "goto").map((e) => e[1] as string),
     );
 
-    // 曲頭でリバーブ送り (CC91) を明示する。0 を含め毎トラック送出し、曲固有の
-    // リバーブ量をプレイヤに与える (既定リバーブの誤混入も防ぐ)。再生専用。
+    // 曲頭で (1) バンクセレクト → (2) リバーブ送りを送る。バンクはプログラム
+    // チェンジより前に置く必要がある (プレイヤがバンクを確定してから音色を引く)。再生専用。
+    raw.push({ tick: 0, seq: seq++, bytes: controlChange(channel, CC_BANK_MSB, bankMSB) });
     raw.push({ tick: 0, seq: seq++, bytes: controlChange(channel, CC_REVERB, reverbCC) });
 
     // 現在 tick に note-on / note-off を積む (再生用の実音)。
@@ -313,6 +349,10 @@ export function sequenceToMidi(source: SequenceSource): Buffer {
         else if (kind === "control_running" && event[1] === "modulation_depth") modValue = event[2] as number;
         if (modValue !== null) {
           raw.push({ tick: cursor, seq: seq++, bytes: controlChange(channel, CC_MODWHEEL, modValue) });
+        }
+        // voice は音色選択 → プログラムチェンジに写す。再生専用。
+        if (kind === "voice") {
+          raw.push({ tick: cursor, seq: seq++, bytes: programChange(channel, event[1] as number) });
         }
       }
     }
@@ -431,7 +471,9 @@ function reconstructStream(events: MidiEvent[]): SequenceEvent[] {
     }
     if (e.type === "channel" && e.status !== undefined) {
       const kind = e.status & 0xf0;
-      if (kind === 0xb0) continue; // 再生専用 CC (CC1 ビブラート / CC91 リバーブ) は逆写像で無視。
+      // note-on/off 以外の再生専用チャンネルイベント (バンクセレクト/CC1/CC91/
+      // プログラムチェンジ等) は逆写像で無視する。
+      if (kind !== 0x90 && kind !== 0x80) continue;
       const [d0, d1] = e.data as number[];
       if (kind === 0x90 && d1 > 0) {
         // note-on。ゲートは後で note-off から確定 (仮に 0)。

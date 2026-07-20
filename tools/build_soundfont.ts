@@ -285,27 +285,64 @@ function silenceSample(): SampleDef {
   };
 }
 
-// GS シンセ楽器の近似波形 (帯域制限ノコギリ波)。
+// GS シンセ楽器の近似波形 (種別ごとに帯域制限の別波形)。
 //   ゴールデンサンの「シンセ」音色 (bank_0 のプログラム 80..99、bank_1 の 60..69) は
-//   ROM 上ではゼロ長 WaveData 記述子 (0x0811dac8..) を指し、実サンプルを持たない。
-//   実機ではソフトウェアシンセが波形を手続き的に生成する (本リポジトリ内では合成規則を
-//   完全には回収できていない)。そのため無音に落とすと当該パート (例: sound_000 の
-//   ch4/ch7) が丸ごと消える。66/260 曲がこの音色を使うため、無音の代わりに汎用の
-//   帯域制限ノコギリ波を当て、音程・リズム・エンベロープは正しく鳴らす (音色のみ近似)。
-//   ノコギリ波は GS シンセのリード/パッド (矩形/鋸系) に近い無難な代替。
-// gs_synth は DirectSound (kind=pcm) 音色として実 PCM と同じミキサ経路
+//   ROM 上ではゼロ長 WaveData 記述子 (0x0811dac8..0x0811db24 の 5 個) を指し、実サンプルを
+//   持たない (WaveData ヘッダの length=0。実 PCM 例 wave_00 は length=666 とサイズ整合し、
+//   このゼロ長を確定)。実機ではソフトウェアシンセが波形を手続き的に生成する。
+//   ── 記述子の判別 (ROM 実測) ───────────────────────────────────────────
+//   各記述子はヘッダ 16 バイトの直後に 8 バイトのシンセパラメータを持ち、先頭バイトは
+//   すべて 0x80 (シンセ標識)、続く第2バイトが波形種別を選ぶ。5 記述子の実測値:
+//     0x0811dac8: 80 00 10 f0 e0 80 00 00  … 種別 0
+//     0x0811dae0: 80 00 60 20 40 80 00 00  … 種別 0
+//     0x0811daf8: 80 00 80 40 40 40 00 00  … 種別 0
+//     0x0811db10: 80 01 00 00 00 00 00 40  … 種別 1
+//     0x0811db24: 80 02 00 00 00 00 00 00  … 種別 2
+//   第2バイトが 0/1/2 の 3 系統に分かれる (種別 0 のみ整形バイトを伴う)。従来はこの 5 個を
+//   すべて 1 本のノコギリ波 (gs_synth) に潰していたため、種別の異なる音色 (例: sound_000 の
+//   最後まで鳴る鋸→矩形系リード) が同じ音になっていた。ここで種別ごとに波形を分ける:
+//     種別 0 → 帯域制限ノコギリ波 (従来と同一。多数の種別0曲を回帰させない)。
+//     種別 1 → 帯域制限三角波 (柔らかいリード)。
+//     種別 2 → 帯域制限矩形波 50% (中空のリード)。
+//   (エンジンの厳密な合成規則は本リポジトリ内で完全には回収できていないため音色は近似。
+//    種別の分離のみ ROM バイトに基づく確定事実。)
+// いずれも DirectSound (kind=pcm) 音色として実 PCM と同じミキサ経路
 // (Func_080f9674: 標本値 × envVol × chanVol) を通る。したがって同一エンベロープ・
 // 速度で実 PCM 音色と釣り合うよう、波形の RMS を実 PCM サンプル群の中央値 RMS に
-// 合わせる (targetRms)。ピーク合わせだと鋸波は RMS が高く相対的に大きすぎるため
-// RMS 基準で正規化する。
-function synthLeadSample(targetRms: number): SampleDef {
+// 合わせる (targetRms)。
+type SynthFamily = 0 | 1 | 2;
+const SYNTH_NAME: Record<SynthFamily, string> = {
+  0: "gs_synth_saw",
+  1: "gs_synth_tri",
+  2: "gs_synth_pulse",
+};
+
+// ゼロ長シンセ記述子アドレス → 波形種別 (第2バイト)。ROM 実測 (上表)。
+const SYNTH_DESCRIPTORS: Record<string, SynthFamily> = {
+  "0x0811dac8": 0,
+  "0x0811dae0": 0,
+  "0x0811daf8": 0,
+  "0x0811db10": 1,
+  "0x0811db24": 2,
+};
+
+function synthLeadSample(family: SynthFamily, targetRms: number): SampleDef {
   const N = 128; // 1 周期のサンプル数
   const H = 24; // 加算する倍音数 (エイリアス抑制のための帯域制限)
   const raw = new Float64Array(N);
   let sumSq = 0;
   for (let i = 0; i < N; i++) {
     let v = 0;
-    for (let k = 1; k <= H; k++) v += Math.sin((2 * Math.PI * k * i) / N) / k; // 鋸波のフーリエ和
+    for (let k = 1; k <= H; k++) {
+      const phase = (2 * Math.PI * k * i) / N;
+      if (family === 0) {
+        v += Math.sin(phase) / k; // 鋸波: 全倍音、振幅 1/k。
+      } else if (family === 1) {
+        if (k % 2 === 1) v += (((k - 1) / 2) % 2 === 0 ? 1 : -1) * Math.sin(phase) / (k * k); // 三角波: 奇数倍音、1/k^2 交番。
+      } else {
+        if (k % 2 === 1) v += Math.sin(phase) / k; // 矩形波 50%: 奇数倍音、1/k。
+      }
+    }
     raw[i] = v;
     sumSq += v * v;
   }
@@ -315,7 +352,7 @@ function synthLeadSample(targetRms: number): SampleDef {
   for (let i = 0; i < N; i++) data[i] = Math.round(clamp(raw[i] * gain, -32767, 32767));
   const rate = Math.round(N * freqOfKey(60)); // 基準キー60で中央ハ
   return {
-    name: "gs_synth", data, rate, rootKey: 60,
+    name: SYNTH_NAME[family], data, rate, rootKey: 60,
     loopStart: 0, loopEnd: N, looped: true,
   };
 }
@@ -516,12 +553,20 @@ function toneZoneGens(
 }
 
 // pcm レコードの sample アドレスからサンプル名を解決。未登録アドレスは実サンプルを
-// 持たない GS シンセ記述子 (ゼロ長 WaveData) なので、無音ではなく合成リード波形
-// gs_synth に写す (音程・リズム・エンベロープは正しく鳴らし音色のみ近似)。
+// 持たない GS シンセ記述子 (ゼロ長 WaveData) なので、無音ではなく種別別の合成リード波形
+// (gs_synth_saw/tri/pulse) に写す (音程・リズム・エンベロープは正しく鳴らし音色のみ近似)。
 let pcmAddrToName: Map<string, string>;
 let sampleLoopedByName: Map<string, boolean>;
 function pcmSampleName(addr: string): string {
-  return pcmAddrToName.get(addr.toLowerCase()) ?? "gs_synth";
+  const key = addr.toLowerCase();
+  const known = pcmAddrToName.get(key);
+  if (known !== undefined) return known;
+  const family = SYNTH_DESCRIPTORS[key] ?? 0; // 未知アドレスは安全側で鋸波。
+  return SYNTH_NAME[family];
+}
+// gs_synth_* (合成リード) 系サンプル名か。
+function isSynthName(name: string): boolean {
+  return name === SYNTH_NAME[0] || name === SYNTH_NAME[1] || name === SYNTH_NAME[2];
 }
 function sampleLooped(name: string): boolean {
   return sampleLoopedByName.get(name) ?? false;
@@ -596,9 +641,12 @@ function buildSoundFont(): BuildResult {
   }
   const silence = silenceSample();
   samples.push(silence); sampleLoopedByName.set("silence", true);
-  const synthLead = synthLeadSample(medianPcmRms);
-  samples.push(synthLead); sampleLoopedByName.set("gs_synth", true);
-  const psgCount = samples.length - pcmCount - 2; // silence と gs_synth を除く
+  // GS シンセ 3 系統 (鋸/三角/矩形) を種別ごとに合成する。
+  for (const family of [0, 1, 2] as SynthFamily[]) {
+    const s = synthLeadSample(family, medianPcmRms);
+    samples.push(s); sampleLoopedByName.set(s.name, true);
+  }
+  const psgCount = samples.length - pcmCount - 4; // silence と gs_synth 3 系統を除く
 
   const sampleIndexByName = new Map<string, number>();
   samples.forEach((s, i) => sampleIndexByName.set(s.name, i));
@@ -637,7 +685,7 @@ function buildSoundFont(): BuildResult {
         if (sub.kind === "rhythm") continue; // 入れ子は展開しない。
         // ドラムのサブ音がシンセ記述子 (gs_synth) を指す場合は従来どおり鳴らさない
         // (打楽器ゾーンを合成リードで埋めない)。
-        if (sub.kind === "pcm" && pcmSampleName(sub.sample) === "gs_synth") continue;
+        if (sub.kind === "pcm" && isSynthName(pcmSampleName(sub.sample))) continue;
         zones.push({ gens: toneZoneGens(sub, sampleIndexOf, [note, note]) });
         rhythmZones++;
       }
@@ -646,7 +694,7 @@ function buildSoundFont(): BuildResult {
       }
     } else {
       // 旋律レコード。GS シンセ記述子は gs_synth 波形で鳴らす (無音にしない)。
-      if (record.kind === "pcm" && pcmSampleName(record.sample) === "gs_synth") synthLeadRecords++;
+      if (record.kind === "pcm" && isSynthName(pcmSampleName(record.sample))) synthLeadRecords++;
       zones.push({ gens: toneZoneGens(record, sampleIndexOf, null) });
     }
 

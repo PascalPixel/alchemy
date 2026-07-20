@@ -22,6 +22,24 @@
 //     現在の tick 位置にマーカ用メタ 0x06 を置き、ペイロードに
 //     イベント配列そのものを JSON で逐語格納する (可逆)。
 //
+// ── 再生用チャンネルコントローラ (GBA エンジンの発音を再現する追加出力) ──
+//   往復の可逆性は上記 0x06 マーカが担保する。それとは別に、実プレイヤ
+//   (fluidsynth 等) が GBA エンジンらしく鳴らせるよう、下記の標準 MIDI
+//   コントロールチェンジ (0xB0) を「再生専用」に重ねて出力する。これらは
+//   midiToSequence の逆写像では読み飛ばす (set-tempo 0x51・キュー 0x07 と同様)
+//   ため、ROM バイト列の復元には一切影響しない。
+//     ・CC1  (モジュレーションホイール) ← modulation_depth コマンド。
+//         エンジンのトラック LFO 深さ。SF2 側の既定モジュレータ
+//         (CC1 → vibLfoToPitch, +50 セント) がこれを受けてビブラートを掛ける。
+//         modulation_type は全 260 曲で 0 (ピッチ変調) のため常にビブラートに写す。
+//         MOD 値 (0..127) をそのまま CC1 値にする (mp2k MOD と MIDI CC1 は同域)。
+//     ・CC91 (エフェクト1深度 = リバーブ送り) ← ソングヘッダの reverb バイト。
+//         bit7=有効・下位7bit=量。有効なら量を、無効/0 なら 0 を tick 0 で送る。
+//         曲ごとに異なる (0/有効0/50) ため全曲共有の SF2 では表せず、曲固有値として
+//         ここで CC91 に写す。0 を明示送出して既定リバーブの誤混入も防ぐ。
+//   これらの CC 追加で .mid のバイト列は変わるが、逆写像・サイドカー・ROM 復元は
+//   不変 (CC は読み飛ばされ、既定ストリームのハッシュも変わらない)。
+//
 // ── 逆写像 (SMF → sequence-JSON) の正準化方針 ──────────────────────────
 //   MIDI の note-on/off とデルタタイムには、下記の「格納選択 (storage
 //   choice)」を表す情報が存在しない。よって逆写像は各々を一意な正準形に
@@ -104,6 +122,20 @@ function metaBytes(metaType: number, payload: number[]): number[] {
 //       エンジンの tempo 制御値 v から BPM = 2v (このエンジン系の慣習)。
 const CUE_META = 0x07;
 const TEMPO_META = 0x51;
+
+// ── 再生用チャンネルコントローラ番号 (逆写像では読み飛ばす) ──────────
+const CC_MODWHEEL = 1; // モジュレーションホイール ← modulation_depth (ビブラート深さ)
+const CC_REVERB = 91; // エフェクト1深度 = リバーブ送り ← ヘッダ reverb バイト
+
+// コントロールチェンジのバイト列 (ステータス 0xB0 | channel)。
+function controlChange(channel: number, controller: number, value: number): number[] {
+  return [0xb0 | channel, controller & 0x7f, value & 0x7f];
+}
+
+// ヘッダの reverb バイト → CC91 送り量。bit7 有効なら下位7bit、無効/0 なら 0。
+function reverbSend(reverbByte: number): number {
+  return (reverbByte & 0x80) !== 0 ? reverbByte & 0x7f : 0;
+}
 
 // 1 エンジン tick = 1 MIDI tick。四分音符あたり 96 tick (wait 表の最大値 = 全音符)。
 const PPQN = 96;
@@ -209,6 +241,12 @@ export function sequenceToMidi(source: SequenceSource): Buffer {
 
   const trackChunks: Buffer[] = [conductor];
 
+  // ソングヘッダのリバーブ量 (曲全体に適用)。ヘッダが無い試作曲は 0 (ドライ)。
+  const headerSegment = source.layout.find(
+    (s): s is Extract<SequenceSegment, { kind: "header" }> => s.kind === "header",
+  );
+  const reverbCC = reverbSend(Number(headerSegment?.reverb ?? 0));
+
   streamSegments.forEach((segment, index) => {
     const channel = index % 16;
     const raw: RawMidiEvent[] = [];
@@ -223,6 +261,10 @@ export function sequenceToMidi(source: SequenceSource): Buffer {
     const loopTargets = new Set(
       segment.events.filter((e) => e[0] === "goto").map((e) => e[1] as string),
     );
+
+    // 曲頭でリバーブ送り (CC91) を明示する。0 を含め毎トラック送出し、曲固有の
+    // リバーブ量をプレイヤに与える (既定リバーブの誤混入も防ぐ)。再生専用。
+    raw.push({ tick: 0, seq: seq++, bytes: controlChange(channel, CC_REVERB, reverbCC) });
 
     // 現在 tick に note-on / note-off を積む (再生用の実音)。
     const emitNote = (event: SequenceEvent, state: { key: number; vel: number }): void => {
@@ -264,6 +306,13 @@ export function sequenceToMidi(source: SequenceSource): Buffer {
         // tempo 制御には実テンポメタも重ねる (プレイヤの 120BPM 既定を防ぐ)。
         if (kind === "tempo") {
           raw.push({ tick: cursor, seq: seq++, bytes: metaBytes(TEMPO_META, tempoPayload(event[1] as number)) });
+        }
+        // modulation_depth (走行形含む) は CC1 に写してビブラートを掛ける。再生専用。
+        let modValue: number | null = null;
+        if (kind === "modulation_depth") modValue = event[1] as number;
+        else if (kind === "control_running" && event[1] === "modulation_depth") modValue = event[2] as number;
+        if (modValue !== null) {
+          raw.push({ tick: cursor, seq: seq++, bytes: controlChange(channel, CC_MODWHEEL, modValue) });
         }
       }
     }
@@ -382,6 +431,7 @@ function reconstructStream(events: MidiEvent[]): SequenceEvent[] {
     }
     if (e.type === "channel" && e.status !== undefined) {
       const kind = e.status & 0xf0;
+      if (kind === 0xb0) continue; // 再生専用 CC (CC1 ビブラート / CC91 リバーブ) は逆写像で無視。
       const [d0, d1] = e.data as number[];
       if (kind === 0x90 && d1 > 0) {
         // note-on。ゲートは後で note-off から確定 (仮に 0)。

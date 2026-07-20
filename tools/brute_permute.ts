@@ -5,9 +5,8 @@
 // 一致した関数は長さ検査の上でsrc/へ設置し、対応するasm/を退役させる。
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
-import { M2C_PREAMBLE } from "./match_m2c.ts";
-import { candidates, replaceableAssembly, threadLeadingArgument, volatileHardware, postIncrementWalk } from "./permute_m2c.ts";
-import { verify } from "./verify.ts";
+import { M2C_PREAMBLE, verifyCandidate } from "./match_m2c.ts";
+import { candidates, replaceableAssembly, retainedAssemblyStems, threadLeadingArgument, volatileHardware, postIncrementWalk } from "./permute_m2c.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 
@@ -172,7 +171,7 @@ function mutate(body: string, random: () => number): string {
       if (match === null) return body;
       return body.replace(pattern, `${match[1]} = ${match[1]} + ${match[2]};`);
     }
-    const pattern = /(\w+) =  \+ ([^;]+);/;
+    const pattern = /(\w+) = \1 \+ ([^;]+);/;
     const match = pattern.exec(body);
     if (match === null) return body;
     return body.replace(pattern, `${match[1]} += ${match[2]};`);
@@ -186,17 +185,26 @@ interface Target {
   mismatch: number;
 }
 
-function score(source: string, stem: string, rom: Uint8Array, scratch: string): number {
+interface Score {
+  mismatch: number;
+  size: number;
+}
+
+async function score(source: string, stem: string, rom: Uint8Array, scratch: string, expectedSize: number): Promise<Score> {
   const candidate = join(scratch, `${stem}.c`);
   writeFileSync(candidate, source);
   try {
-    const [actual, expected] = verify(candidate, rom, scratch, true);
-    if (actual.length !== expected.length) return Math.abs(actual.length - expected.length) + 64;
+    const { actual, size } = await verifyCandidate(candidate, rom, scratch);
+    const address = Number.parseInt(stem, 16) - 0x08000000;
+    const expected = Buffer.from(rom).subarray(address, address + expectedSize);
+    if (actual.length !== expected.length) {
+      return { mismatch: Math.abs(actual.length - expected.length) + 64, size };
+    }
     let mismatch = 0;
     for (let index = 0; index < actual.length; index++) if (actual[index] !== expected[index]) mismatch++;
-    return mismatch;
+    return { mismatch, size };
   } catch {
-    return Number.MAX_SAFE_INTEGER;
+    return { mismatch: Number.MAX_SAFE_INTEGER, size: 0 };
   }
 }
 
@@ -206,11 +214,18 @@ async function main(): Promise<void> {
   const output = join(ROOT, "out/brute");
   mkdirSync(output, { recursive: true });
   const tracked = new Set(readdirSync(join(ROOT, "src")).filter((name) => name.endsWith(".c")).map((name) => basename(name, ".c")));
+  const retained = retainedAssemblyStems();
+  const asmSizes = new Map<string, number>();
+  const asmManifest = [join(ROOT, "out/full/asm/manifest.json"), join(ROOT, "out/asm/manifest.json")].find(existsSync);
+  if (asmManifest) {
+    const document = JSON.parse(readFileSync(asmManifest, "utf8")) as { regions?: Array<{ source: string; size: number }> };
+    for (const region of document.regions ?? []) asmSizes.set(basename(region.source, ".s"), region.size);
+  }
   const rows = JSON.parse(readFileSync(options.report, "utf8")) as Array<{ entry: number; matched?: boolean; mismatched_bytes?: number }>;
   let targets: Target[] = rows
     .filter((row) => !row.matched && (row.mismatched_bytes ?? 9999) <= options.maxMismatch)
     .map((row) => ({ stem: row.entry.toString(16).padStart(8, "0"), mismatch: row.mismatched_bytes ?? 9999 }))
-    .filter((target) => !tracked.has(target.stem) && existsSync(join(ROOT, "asm", `${target.stem}.s`)) && existsSync(join(options.drafts, `${target.stem}.c`)))
+    .filter((target) => !tracked.has(target.stem) && !retained.has(target.stem) && existsSync(join(ROOT, "asm", `${target.stem}.s`)) && existsSync(join(options.drafts, `${target.stem}.c`)))
     .sort((left, right) => left.mismatch - right.mismatch);
   if (options.shard !== undefined) targets = targets.filter((_, index) => index % options.shard![1] === options.shard![0]);
   if (options.limit !== undefined) targets = targets.slice(0, options.limit);
@@ -236,9 +251,11 @@ async function main(): Promise<void> {
         bases.push(seeded, ...candidates(seeded));
       }
       let best: { body: string; mismatch: number } | null = null;
+      const expectedSize = asmSizes.get(target.stem);
+      if (expectedSize === undefined) continue;
       for (const base of new Set(bases)) {
-        const value = score(M2C_PREAMBLE + base, target.stem, rom, scratch);
-        if (best === null || value < best.mismatch) best = { body: base, mismatch: value };
+        const { mismatch } = await score(M2C_PREAMBLE + base, target.stem, rom, scratch, expectedSize);
+        if (best === null || mismatch < best.mismatch) best = { body: base, mismatch };
       }
       if (best === null || best.mismatch > 96) continue;
       let done = false;
@@ -251,7 +268,7 @@ async function main(): Promise<void> {
           if (sinceImprovement >= 300) break;
           const next = mutate(current.body, random);
           if (next === current.body) continue;
-          const value = score(M2C_PREAMBLE + next, target.stem, rom, scratch);
+          const { mismatch: value, size } = await score(M2C_PREAMBLE + next, target.stem, rom, scratch, expectedSize);
           sinceImprovement++;
           if (value < current.mismatch || (value === current.mismatch && random() < 0.25)) {
             if (value < current.mismatch) sinceImprovement = 0;
@@ -260,7 +277,7 @@ async function main(): Promise<void> {
           }
           if (value === 0) {
             const installed = M2C_PREAMBLE + next;
-            if (!replaceableAssembly(target.stem, verify(join(scratch, `${target.stem}.c`), rom, scratch)[1] as number, scratch)) {
+            if (!replaceableAssembly(target.stem, size, scratch)) {
               console.log(`skip ${target.stem}: asm region longer than matched C`);
             } else {
               writeFileSync(join(ROOT, "src", `${target.stem}.c`), installed);

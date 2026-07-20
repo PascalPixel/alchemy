@@ -89,6 +89,34 @@ export function replaceableAssembly(stem: string, linkedSize: number, scratch: s
   return readFileSync(binary).length === linkedSize;
 }
 
+// Regions with positive evidence for a permanent non-C source form. Explicit
+// modules are listed in the classification; the numerous fixed long-call
+// veneers are recognized from their canonical source form instead of copying
+// 608 generated filenames into that document.
+export function retainedAssemblyStems(): Set<string> {
+  const result = new Set<string>();
+  const classification = JSON.parse(
+    readFileSync(join(ROOT, "asm", "classification.json"), "utf8"),
+  ) as { groups?: Array<{ files?: string[] }> };
+  for (const group of classification.groups ?? []) {
+    for (const stem of group.files ?? []) result.add(stem.toLowerCase());
+  }
+  for (const name of readdirSync(join(ROOT, "asm")).filter((entry) => /^[0-9a-f]{8}\.s$/.test(entry))) {
+    const stem = basename(name, ".s");
+    const rows = readFileSync(join(ROOT, "asm", name), "utf8")
+      .split(/\r?\n/)
+      .map((row) => row.replace(/@.*$/, "").trim())
+      .filter(Boolean);
+    const entry = rows.indexOf(`Func_${stem}:`);
+    if (entry < 0 || entry + 3 >= rows.length) continue;
+    const load = /^ldr\s+r4,\s*\[pc,\s*#0\]$/.test(rows[entry + 1]);
+    const branch = /^bx\s+r4$/.test(rows[entry + 2]);
+    const literal = rows[entry + 3].match(/^\.4byte\s+(0x[0-9a-f]+)$/i);
+    if (load && branch && literal !== null && (Number(literal[1]) & 1) !== 0) result.add(stem);
+  }
+  return result;
+}
+
 // ハードウェアレジスタとカートリッジRAMへの直接アクセスは原典では
 // volatileであることが多く、命令の並びと持ち上げ抑制を変える。
 export function volatileHardware(body: string): string {
@@ -156,6 +184,7 @@ function main(): void {
       .filter((name) => name.endsWith(".c"))
       .map((name) => basename(name, ".c")),
   );
+  const retained = retainedAssemblyStems();
   const document = JSON.parse(readFileSync(options.report, "utf8")) as MatchRow[] | { results?: MatchRow[] };
   const rows = Array.isArray(document) ? document : (document.results ?? []);
   const near = rows
@@ -165,7 +194,7 @@ function main(): void {
   let matched = 0;
   for (const row of near) {
     const stem = row.entry.toString(16).padStart(8, "0");
-    if (tracked.has(stem)) continue;
+    if (tracked.has(stem) || retained.has(stem)) continue;
     const draft = join(options.drafts, `${stem}.c`);
     if (!existsSync(draft)) continue;
     const raw = readFileSync(draft, "utf8");

@@ -36,18 +36,47 @@
 //   frequency/1024。ループは wave メタの loop_start (null なら非ループ)。ルートキーは
 //   トーンレコードの key フィールド (bank_0 では 55/60/65 が出現する)。
 //
-// ── エンベロープ ────────────────────────────────────────────────────────
-//   PCM (DirectSound) トーンの 4 バイト ADSR は次の周知の意味で解釈する。
-//   エンジンフレーム (60Hz と仮定) 毎に:
-//     Attack : envVol += attack        (255 で頂点、加算)
-//     Decay  : envVol  = envVol*decay/256 まで下降し sustain に到達で保持 (指数)
-//     Sustain: sustain レベルを保持 (0..255)
-//     Release: envVol  = envVol*release/256 (指数)
-//   これを SF2 の timecents / centibels に変換する (下記 dsEnvelope)。
+// ── エンベロープ (ROM 実測で確定) ───────────────────────────────────────
+//   トーンレコードのバイト 8..11 = [attack, decay, sustain, release]。この意味は
+//   混合器の音量更新ループ Func_080f9674 (asm/080f9674.s) の逐次解析で確定した。
+//   ボイス構造体 r4 のフェーズ処理 (毎サウンドフレーム 1 回):
+//     Attack  (.L0300714a): envVol += attack   ; ldrb [r4,#4]→adds r5,r5,r0、255 で飽和
+//                           → 立ち上がりは「加算」。到達フレーム数 = ceil(255/attack)。
+//     Decay   (.L03007128): envVol  = envVol*decay>>8 ; ldrb [r4,#5]→muls,lsrs #8
+//                           sustain ([r4,#6]) 以下で保持 → 指数減衰。
+//     Sustain (.L0300711a): sustain レベル ([r4,#6], 0..255) を保持。
+//     Release (.L03007108): envVol  = envVol*release>>8 ; ldrb [r4,#7]→muls,lsrs #8
+//                           → 指数減衰。0x40 (stop) フラグ成立で突入。
+//   すなわち Attack は線形加算、Decay/Release は 256 を分母とする乗算指数減衰。
+//   これを SF2 の timecents (時間、1200×log2(秒)) / centibels (減衰量、-200×log10(比))
+//   に変換する (下記 dsEnvelope)。フレームレートは GBA VBlank ≒ 59.7275Hz だが、
+//   従来どおり 60Hz 近似 (FRAME_HZ) を用いる (差は 0.5% で可聴閾以下)。
 //   PSG (CGB) トーンの 4 バイトは CGB ハードウェア寄りの意味 (0..15 のカウンタ/レベル)
 //   であり、正確な再現規則は本リポジトリ内で完全には回収できていない。よって PSG は
 //   「合成サンプル近似」として簡易 CGB エンベロープ (cgbEnvelope) を当て、
 //   ヘッダーに近似である旨を明記する。
+//
+// ── ビブラート (LFO → ピッチ変調) ───────────────────────────────────────
+//   エンジンのトラック処理 Func_080f9c90 (asm/080f9c90.s) は各ボイスに三角波 LFO を
+//   持ち、既定 LFO 速度 22 を [r5,#25] に書き込む (movs r0,#22)。LFO 位相 [r5,#26] は
+//   毎フレーム速度分だけ進み、256 で 1 周する。したがって既定ビブラート周波数 =
+//   22 × VBlank(≒59.7275Hz) / 256 ≒ 5.13Hz。これを SF2 の freqVibLfo (絶対セント、
+//   基準 8.176Hz) に変換して全メロディゾーンへ与える (VIB_LFO_CENTS)。
+//   変調の深さはシーケンスの modulation_depth コマンドが決める。これを
+//   midi_roundtrip.ts の書き出しで標準 MIDI の CC1 (モジュレーションホイール) に写す。
+//   SF2 仕様 8.4.2 の既定モジュレータ集合には「CC1 → vibLfoToPitch (+50 セント)」が
+//   含まれ、fluidsynth はこれを自動適用する。よって CC1 が 0..127 を動くと最大 ±50
+//   セント (半音幅 p-p) のビブラートが掛かり、深さがトラックの MOD 値に追従する。
+//   (エンジンの MOD→セント厳密係数は本リポジトリ内で数値化されていないため、深さは
+//    SF2 既定モジュレータ由来の musical な値を用い、速度のみエンジン実測に合わせる。)
+//   modulation_type は 260 曲すべてで 0 (ピッチ=ビブラート) のため、種別分岐は不要。
+//
+// ── リバーブ ────────────────────────────────────────────────────────────
+//   リバーブ量は曲ごとにソングヘッダのバイトで数値化されている (bit7=有効、下位7bit=量)。
+//   実測分布: 0 → 186 曲、128(=有効/量0) → 16 曲、178(=有効/量50) → 58 曲。曲ごとに
+//   異なるため、全曲共有の SF2 では単一の reverbEffectsSend ジェネレータで表せない。
+//   よって曲固有値として midi_roundtrip.ts の書き出しで CC91 (リバーブ送り) に写し、
+//   プレイヤ (fluidsynth 既定リバーブ) 側で曲ごとに掛ける。SF2 側では静的量を付けない。
 //
 // ── PSG チャンネル (トーンバンクが参照するため合成近似を同梱する) ───────
 //   ・pulse_1 / pulse_2 … デューティ矩形波 (generator 0/1/2/3 = 12.5/25/50/75%)。
@@ -87,6 +116,11 @@ const BANK_1_COUNT = 81;
 
 // ── エンジン想定値 ──────────────────────────────────────────────────────
 const FRAME_HZ = 60; // mp2k のエンベロープ更新フレームレート (仮定)。
+const VBLANK_HZ = 16777216 / 280896; // GBA VBlank ≒ 59.7275Hz (LFO 周波数の導出に使用)。
+const MP2K_LFO_SPEED = 22; // 既定 LFO 速度 (Func_080f9c90 が [r5,#25] に書く値)。
+// 既定ビブラート周波数 = speed × VBlank / 256。SF2 freqVibLfo は 8.176Hz 基準の絶対セント。
+const VIB_LFO_HZ = (MP2K_LFO_SPEED * VBLANK_HZ) / 256; // ≒ 5.13Hz
+const VIB_LFO_CENTS = Math.round(1200 * Math.log2(VIB_LFO_HZ / 8.176)); // ≒ -807
 
 // ── 合成 PSG のパラメータ ───────────────────────────────────────────────
 const SQUARE_PERIOD = 64; // 1 周期のサンプル数 (デューティ分解能)。
@@ -102,6 +136,7 @@ const GEN = {
   decayVolEnv: 36,
   sustainVolEnv: 37,
   releaseVolEnv: 38,
+  freqVibLfo: 8,
   initialAttenuation: 48,
   scaleTuning: 56,
   overridingRootKey: 58,
@@ -427,6 +462,10 @@ function toneZoneGens(
   if (env.decay > -12000) gens.push([GEN.decayVolEnv, env.decay]);
   if (env.sustain > 0) gens.push([GEN.sustainVolEnv, env.sustain]);
   if (env.release > -12000) gens.push([GEN.releaseVolEnv, env.release]);
+
+  // ビブラート LFO 速度をエンジン既定 (≒5.13Hz) に設定する。深さは CC1 → vibLfoToPitch の
+  // SF2 既定モジュレータが与える (シーケンスの modulation_depth が CC1 を動かす)。
+  gens.push([GEN.freqVibLfo, VIB_LFO_CENTS]);
 
   if (kind === "pcm") {
     const pan = dsPan(record.pan_sweep);

@@ -59,3 +59,25 @@ and the sidecar carries only the ROM's non-canonical encoding choices, so the
 two together are the byte-exact source: neither the MIDI nor a rendered audio
 preview is a source on its own. Tone banks and signed-PCM records remain
 separate recovery units.
+
+## Song usage ledger
+
+`../data/song_usage.json` (`{format:1, entries:[{song_id, symbol, name,
+evidence}]}`) tracks the effort to give the 260 sequence songs usage-derived
+reconstruction labels. Each entry is keyed by the song's index into the
+312-entry `song_table.json` and its `sound_NNN` symbol. A song is renamed only
+when it is provably played in exactly one named game context; otherwise it
+keeps `sound_NNN` and records `name: null`. The `evidence` line states what the
+trace found.
+
+Current state: every entry is `null`. The play mechanism is fully decoded, the
+context is not. Game code plays a song by passing its table index (low 12 bits
+of the request word) to the sound dispatcher `Func_080f9080` through the veneer
+`Func_080f9010`; 574 such call sites resolve to 68 distinct song indices in the
+current tree. But those call sites live in address-named functions with no
+in-repo reference that ties them to a bank-9 place name (`World Map`, `Vale
+Sanctum`, `Venus Lighthouse`, ...) or a bank-10 scene code (`TITLE`, `WORLD`,
+...), and no map, encounter, or scene table in `assets/` carries a song-id
+field. With no decodable link from a song id to a named context, no label can
+be proven, so none is invented. The ledger records the per-song play-site facts
+so labels can be filled in once the semantic callers are decompiled and named.

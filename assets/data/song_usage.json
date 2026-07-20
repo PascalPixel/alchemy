@@ -1,0 +1,1565 @@
+{
+  "format": 1,
+  "entries": [
+    {
+      "song_id": 0,
+      "symbol": "sound_000",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=0 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 1,
+      "symbol": "sound_001",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=1 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 2,
+      "symbol": "sound_002",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=2 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 3,
+      "symbol": "sound_003",
+      "name": null,
+      "evidence": "1 call site(s) pass id=3 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0800679c; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 4,
+      "symbol": "sound_004",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=4 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 5,
+      "symbol": "sound_005",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=5 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 6,
+      "symbol": "sound_006",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=6 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 7,
+      "symbol": "sound_007",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=7 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 8,
+      "symbol": "sound_008",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=8 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 9,
+      "symbol": "sound_009",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=9 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 10,
+      "symbol": "sound_010",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=10 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 20,
+      "symbol": "sound_020",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=20 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 21,
+      "symbol": "sound_021",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=21 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 22,
+      "symbol": "sound_022",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=22 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 23,
+      "symbol": "sound_023",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=23 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 24,
+      "symbol": "sound_024",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=24 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 25,
+      "symbol": "sound_025",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=25 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 26,
+      "symbol": "sound_026",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=26 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 27,
+      "symbol": "sound_027",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=27 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 28,
+      "symbol": "sound_028",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=28 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 29,
+      "symbol": "sound_029",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=29 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 30,
+      "symbol": "sound_030",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=30 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 40,
+      "symbol": "sound_040",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=40 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 41,
+      "symbol": "sound_041",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=41 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 42,
+      "symbol": "sound_042",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=42 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 43,
+      "symbol": "sound_043",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=43 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 50,
+      "symbol": "sound_050",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=50 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 51,
+      "symbol": "sound_051",
+      "name": null,
+      "evidence": "1 call site(s) pass id=51 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080b63c8; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 52,
+      "symbol": "sound_052",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=52 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 53,
+      "symbol": "sound_053",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=53 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 54,
+      "symbol": "sound_054",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=54 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 55,
+      "symbol": "sound_055",
+      "name": null,
+      "evidence": "1 call site(s) pass id=55 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080b63c8; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 58,
+      "symbol": "sound_058",
+      "name": null,
+      "evidence": "2 call site(s) pass id=58 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080b63c8; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 59,
+      "symbol": "sound_059",
+      "name": null,
+      "evidence": "2 call site(s) pass id=59 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0808c4f8, Func_080b63c8; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 60,
+      "symbol": "sound_060",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=60 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 61,
+      "symbol": "sound_061",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=61 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 62,
+      "symbol": "sound_062",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=62 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 63,
+      "symbol": "sound_063",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=63 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 64,
+      "symbol": "sound_064",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=64 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 67,
+      "symbol": "sound_067",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=67 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 70,
+      "symbol": "sound_070",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=70 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 72,
+      "symbol": "sound_072",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=72 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 74,
+      "symbol": "sound_074",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=74 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 75,
+      "symbol": "sound_075",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=75 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 76,
+      "symbol": "sound_076",
+      "name": null,
+      "evidence": "1 call site(s) pass id=76 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080b63c8; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 80,
+      "symbol": "sound_080",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=80 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 81,
+      "symbol": "sound_081",
+      "name": null,
+      "evidence": "3 call site(s) pass id=81 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08021228, Func_08021390, Func_08021488; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 82,
+      "symbol": "sound_082",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=82 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 83,
+      "symbol": "sound_083",
+      "name": null,
+      "evidence": "5 call site(s) pass id=83 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0808d9a4, Func_08091a58; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 84,
+      "symbol": "sound_084",
+      "name": null,
+      "evidence": "1 call site(s) pass id=84 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080994d0; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 85,
+      "symbol": "sound_085",
+      "name": null,
+      "evidence": "2 call site(s) pass id=85 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0801fb48, Func_080207c4; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 86,
+      "symbol": "sound_086",
+      "name": null,
+      "evidence": "1 call site(s) pass id=86 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080b3398; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 87,
+      "symbol": "sound_087",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=87 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 88,
+      "symbol": "sound_088",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=88 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 89,
+      "symbol": "sound_089",
+      "name": null,
+      "evidence": "1 call site(s) pass id=89 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080c2724; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 91,
+      "symbol": "sound_091",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=91 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 92,
+      "symbol": "sound_092",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=92 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 93,
+      "symbol": "sound_093",
+      "name": null,
+      "evidence": "1 call site(s) pass id=93 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080f6440; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 100,
+      "symbol": "sound_100",
+      "name": null,
+      "evidence": "3 call site(s) pass id=100 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080b2328; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 101,
+      "symbol": "sound_101",
+      "name": null,
+      "evidence": "1 call site(s) pass id=101 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080b24e4; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 102,
+      "symbol": "sound_102",
+      "name": null,
+      "evidence": "1 call site(s) pass id=102 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080b1f4c; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 103,
+      "symbol": "sound_103",
+      "name": null,
+      "evidence": "5 call site(s) pass id=103 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080a2680, Func_080b1868, Func_080cf8e0; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 104,
+      "symbol": "sound_104",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=104 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 105,
+      "symbol": "sound_105",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=105 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 106,
+      "symbol": "sound_106",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=106 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 107,
+      "symbol": "sound_107",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=107 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 108,
+      "symbol": "sound_108",
+      "name": null,
+      "evidence": "4 call site(s) pass id=108 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08026e80, Func_0809abb4; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 109,
+      "symbol": "sound_109",
+      "name": null,
+      "evidence": "1 call site(s) pass id=109 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0809abb4; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 110,
+      "symbol": "sound_110",
+      "name": null,
+      "evidence": "3 call site(s) pass id=110 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08027114, Func_080937b8, Func_080f2b70; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 111,
+      "symbol": "sound_111",
+      "name": null,
+      "evidence": "132 call site(s) pass id=111 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0801b424, Func_0801c49c, Func_0801d4cc +45 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 112,
+      "symbol": "sound_112",
+      "name": null,
+      "evidence": "53 call site(s) pass id=112 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0801b424, Func_0801c49c, Func_0801d4cc +32 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 113,
+      "symbol": "sound_113",
+      "name": null,
+      "evidence": "57 call site(s) pass id=113 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0801b424, Func_0801c49c, Func_0801d4cc +40 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 114,
+      "symbol": "sound_114",
+      "name": null,
+      "evidence": "22 call site(s) pass id=114 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08023e70, Func_08025200, Func_08027114 +13 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 115,
+      "symbol": "sound_115",
+      "name": null,
+      "evidence": "4 call site(s) pass id=115 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08099160, Func_080c91dc, Func_080dab74; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 116,
+      "symbol": "sound_116",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=116 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 117,
+      "symbol": "sound_117",
+      "name": null,
+      "evidence": "1 call site(s) pass id=117 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080a414c; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 118,
+      "symbol": "sound_118",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=118 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 119,
+      "symbol": "sound_119",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=119 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 120,
+      "symbol": "sound_120",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=120 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 121,
+      "symbol": "sound_121",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=121 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 122,
+      "symbol": "sound_122",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=122 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 123,
+      "symbol": "sound_123",
+      "name": null,
+      "evidence": "2 call site(s) pass id=123 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0808bde0, Func_0808d828; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 124,
+      "symbol": "sound_124",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=124 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 125,
+      "symbol": "sound_125",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=125 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 126,
+      "symbol": "sound_126",
+      "name": null,
+      "evidence": "9 call site(s) pass id=126 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0808c30c, Func_0808d9a4, Func_080aa768 +5 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 127,
+      "symbol": "sound_127",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=127 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 128,
+      "symbol": "sound_128",
+      "name": null,
+      "evidence": "1 call site(s) pass id=128 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0808d828; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 129,
+      "symbol": "sound_129",
+      "name": null,
+      "evidence": "1 call site(s) pass id=129 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0808d828; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 130,
+      "symbol": "sound_130",
+      "name": null,
+      "evidence": "8 call site(s) pass id=130 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08097644, Func_08098848, Func_08098cd8 +4 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 131,
+      "symbol": "sound_131",
+      "name": null,
+      "evidence": "6 call site(s) pass id=131 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080981b0, Func_080983a0, Func_08098698 +3 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 132,
+      "symbol": "sound_132",
+      "name": null,
+      "evidence": "5 call site(s) pass id=132 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080999f0, Func_0809ae64, Func_080c972c +2 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 133,
+      "symbol": "sound_133",
+      "name": null,
+      "evidence": "11 call site(s) pass id=133 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0808c30c, Func_0808c3a4, Func_080c9ca8 +7 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 134,
+      "symbol": "sound_134",
+      "name": null,
+      "evidence": "17 call site(s) pass id=134 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0808c30c, Func_08095c08, Func_080985fc +14 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 135,
+      "symbol": "sound_135",
+      "name": null,
+      "evidence": "2 call site(s) pass id=135 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08099da4; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 136,
+      "symbol": "sound_136",
+      "name": null,
+      "evidence": "16 call site(s) pass id=136 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0809537c, Func_0809a8c4, Func_080cb1a4 +11 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 137,
+      "symbol": "sound_137",
+      "name": null,
+      "evidence": "1 call site(s) pass id=137 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080eb754; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 138,
+      "symbol": "sound_138",
+      "name": null,
+      "evidence": "6 call site(s) pass id=138 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08098070, Func_08098a84, Func_080999f0 +3 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 139,
+      "symbol": "sound_139",
+      "name": null,
+      "evidence": "4 call site(s) pass id=139 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0808bec0, Func_080aa768, Func_080ab5e4; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 140,
+      "symbol": "sound_140",
+      "name": null,
+      "evidence": "5 call site(s) pass id=140 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08095a44, Func_08095dd0, Func_08096140 +2 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 141,
+      "symbol": "sound_141",
+      "name": null,
+      "evidence": "9 call site(s) pass id=141 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080d1714, Func_080d2464, Func_080d3854 +6 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 142,
+      "symbol": "sound_142",
+      "name": null,
+      "evidence": "9 call site(s) pass id=142 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080ce4e8, Func_080d05fc, Func_080d0ad4 +6 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 143,
+      "symbol": "sound_143",
+      "name": null,
+      "evidence": "5 call site(s) pass id=143 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0809641c, Func_080ccebc, Func_080d82b0 +2 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 144,
+      "symbol": "sound_144",
+      "name": null,
+      "evidence": "4 call site(s) pass id=144 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08096048, Func_080d2d98, Func_080d3c80 +1 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 145,
+      "symbol": "sound_145",
+      "name": null,
+      "evidence": "15 call site(s) pass id=145 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08095c08, Func_080cbc0c, Func_080d2464 +10 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 146,
+      "symbol": "sound_146",
+      "name": null,
+      "evidence": "1 call site(s) pass id=146 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080ceb54; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 147,
+      "symbol": "sound_147",
+      "name": null,
+      "evidence": "1 call site(s) pass id=147 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080941e0; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 148,
+      "symbol": "sound_148",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=148 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 149,
+      "symbol": "sound_149",
+      "name": null,
+      "evidence": "1 call site(s) pass id=149 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080cbc0c; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 150,
+      "symbol": "sound_150",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=150 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 151,
+      "symbol": "sound_151",
+      "name": null,
+      "evidence": "1 call site(s) pass id=151 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08096140; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 152,
+      "symbol": "sound_152",
+      "name": null,
+      "evidence": "9 call site(s) pass id=152 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08093c00, Func_0809537c, Func_08096140 +1 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 153,
+      "symbol": "sound_153",
+      "name": null,
+      "evidence": "3 call site(s) pass id=153 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08095a44, Func_08096140, Func_080965a8; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 154,
+      "symbol": "sound_154",
+      "name": null,
+      "evidence": "10 call site(s) pass id=154 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08027114, Func_080981b0, Func_08099738 +5 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 155,
+      "symbol": "sound_155",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=155 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 156,
+      "symbol": "sound_156",
+      "name": null,
+      "evidence": "6 call site(s) pass id=156 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080d6970, Func_080e7404, Func_080e823c +1 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 157,
+      "symbol": "sound_157",
+      "name": null,
+      "evidence": "2 call site(s) pass id=157 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080d6970, Func_080ea0d8; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 158,
+      "symbol": "sound_158",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=158 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 159,
+      "symbol": "sound_159",
+      "name": null,
+      "evidence": "1 call site(s) pass id=159 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08094428; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 160,
+      "symbol": "sound_160",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=160 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 161,
+      "symbol": "sound_161",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=161 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 162,
+      "symbol": "sound_162",
+      "name": null,
+      "evidence": "2 call site(s) pass id=162 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080dfe2c, Func_080ea0d8; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 163,
+      "symbol": "sound_163",
+      "name": null,
+      "evidence": "1 call site(s) pass id=163 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0809a8c4; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 164,
+      "symbol": "sound_164",
+      "name": null,
+      "evidence": "5 call site(s) pass id=164 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08095a44, Func_080d2d98, Func_080d33c0 +1 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 165,
+      "symbol": "sound_165",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=165 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 166,
+      "symbol": "sound_166",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=166 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 167,
+      "symbol": "sound_167",
+      "name": null,
+      "evidence": "1 call site(s) pass id=167 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080984c0; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 168,
+      "symbol": "sound_168",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=168 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 169,
+      "symbol": "sound_169",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=169 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 170,
+      "symbol": "sound_170",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=170 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 171,
+      "symbol": "sound_171",
+      "name": null,
+      "evidence": "3 call site(s) pass id=171 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080949a8, Func_080e01e4, Func_080f6440; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 172,
+      "symbol": "sound_172",
+      "name": null,
+      "evidence": "1 call site(s) pass id=172 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080949a8; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 173,
+      "symbol": "sound_173",
+      "name": null,
+      "evidence": "6 call site(s) pass id=173 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0809537c, Func_08095a44, Func_08095dd0 +3 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 174,
+      "symbol": "sound_174",
+      "name": null,
+      "evidence": "4 call site(s) pass id=174 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08095a44, Func_08095dd0, Func_080a414c +1 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 175,
+      "symbol": "sound_175",
+      "name": null,
+      "evidence": "13 call site(s) pass id=175 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0809537c, Func_08095a44, Func_08095dd0 +8 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 176,
+      "symbol": "sound_176",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=176 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 177,
+      "symbol": "sound_177",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=177 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 178,
+      "symbol": "sound_178",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=178 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 179,
+      "symbol": "sound_179",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=179 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 180,
+      "symbol": "sound_180",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=180 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 181,
+      "symbol": "sound_181",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=181 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 182,
+      "symbol": "sound_182",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=182 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 183,
+      "symbol": "sound_183",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=183 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 184,
+      "symbol": "sound_184",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=184 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 185,
+      "symbol": "sound_185",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=185 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 186,
+      "symbol": "sound_186",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=186 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 187,
+      "symbol": "sound_187",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=187 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 188,
+      "symbol": "sound_188",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=188 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 189,
+      "symbol": "sound_189",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=189 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 190,
+      "symbol": "sound_190",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=190 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 191,
+      "symbol": "sound_191",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=191 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 192,
+      "symbol": "sound_192",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=192 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 193,
+      "symbol": "sound_193",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=193 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 194,
+      "symbol": "sound_194",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=194 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 195,
+      "symbol": "sound_195",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=195 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 196,
+      "symbol": "sound_196",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=196 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 197,
+      "symbol": "sound_197",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=197 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 198,
+      "symbol": "sound_198",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=198 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 199,
+      "symbol": "sound_199",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=199 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 200,
+      "symbol": "sound_200",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=200 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 201,
+      "symbol": "sound_201",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=201 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 202,
+      "symbol": "sound_202",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=202 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 203,
+      "symbol": "sound_203",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=203 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 204,
+      "symbol": "sound_204",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=204 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 205,
+      "symbol": "sound_205",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=205 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 206,
+      "symbol": "sound_206",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=206 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 208,
+      "symbol": "sound_208",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=208 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 209,
+      "symbol": "sound_209",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=209 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 210,
+      "symbol": "sound_210",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=210 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 211,
+      "symbol": "sound_211",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=211 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 212,
+      "symbol": "sound_212",
+      "name": null,
+      "evidence": "27 call site(s) pass id=212 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0809728c, Func_08099160, Func_080bf678 +19 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 213,
+      "symbol": "sound_213",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=213 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 214,
+      "symbol": "sound_214",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=214 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 215,
+      "symbol": "sound_215",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=215 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 216,
+      "symbol": "sound_216",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=216 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 217,
+      "symbol": "sound_217",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=217 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 218,
+      "symbol": "sound_218",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=218 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 219,
+      "symbol": "sound_219",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=219 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 220,
+      "symbol": "sound_220",
+      "name": null,
+      "evidence": "2 call site(s) pass id=220 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08099160, Func_0809b208; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 221,
+      "symbol": "sound_221",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=221 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 222,
+      "symbol": "sound_222",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=222 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 223,
+      "symbol": "sound_223",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=223 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 224,
+      "symbol": "sound_224",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=224 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 225,
+      "symbol": "sound_225",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=225 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 226,
+      "symbol": "sound_226",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=226 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 227,
+      "symbol": "sound_227",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=227 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 228,
+      "symbol": "sound_228",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=228 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 229,
+      "symbol": "sound_229",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=229 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 230,
+      "symbol": "sound_230",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=230 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 231,
+      "symbol": "sound_231",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=231 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 232,
+      "symbol": "sound_232",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=232 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 233,
+      "symbol": "sound_233",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=233 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 234,
+      "symbol": "sound_234",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=234 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 235,
+      "symbol": "sound_235",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=235 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 236,
+      "symbol": "sound_236",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=236 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 237,
+      "symbol": "sound_237",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=237 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 238,
+      "symbol": "sound_238",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=238 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 239,
+      "symbol": "sound_239",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=239 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 240,
+      "symbol": "sound_240",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=240 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 241,
+      "symbol": "sound_241",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=241 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 242,
+      "symbol": "sound_242",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=242 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 243,
+      "symbol": "sound_243",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=243 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 244,
+      "symbol": "sound_244",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=244 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 245,
+      "symbol": "sound_245",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=245 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 246,
+      "symbol": "sound_246",
+      "name": null,
+      "evidence": "2 call site(s) pass id=246 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0808d9a4, Func_0809b11c; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+    },
+    {
+      "song_id": 247,
+      "symbol": "sound_247",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=247 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 248,
+      "symbol": "sound_248",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=248 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 249,
+      "symbol": "sound_249",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=249 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 250,
+      "symbol": "sound_250",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=250 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 251,
+      "symbol": "sound_251",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=251 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 252,
+      "symbol": "sound_252",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=252 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 253,
+      "symbol": "sound_253",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=253 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 256,
+      "symbol": "sound_256",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=256 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 257,
+      "symbol": "sound_257",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=257 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 258,
+      "symbol": "sound_258",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=258 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 259,
+      "symbol": "sound_259",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=259 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 260,
+      "symbol": "sound_260",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=260 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 261,
+      "symbol": "sound_261",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=261 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 262,
+      "symbol": "sound_262",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=262 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 263,
+      "symbol": "sound_263",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=263 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 264,
+      "symbol": "sound_264",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=264 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 265,
+      "symbol": "sound_265",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=265 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 266,
+      "symbol": "sound_266",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=266 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 267,
+      "symbol": "sound_267",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=267 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 268,
+      "symbol": "sound_268",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=268 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 269,
+      "symbol": "sound_269",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=269 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 270,
+      "symbol": "sound_270",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=270 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 271,
+      "symbol": "sound_271",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=271 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 272,
+      "symbol": "sound_272",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=272 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 273,
+      "symbol": "sound_273",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=273 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 274,
+      "symbol": "sound_274",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=274 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 275,
+      "symbol": "sound_275",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=275 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 276,
+      "symbol": "sound_276",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=276 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 277,
+      "symbol": "sound_277",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=277 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 278,
+      "symbol": "sound_278",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=278 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 279,
+      "symbol": "sound_279",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=279 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 280,
+      "symbol": "sound_280",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=280 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 281,
+      "symbol": "sound_281",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=281 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 282,
+      "symbol": "sound_282",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=282 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 283,
+      "symbol": "sound_283",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=283 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 284,
+      "symbol": "sound_284",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=284 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 285,
+      "symbol": "sound_285",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=285 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 286,
+      "symbol": "sound_286",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=286 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 287,
+      "symbol": "sound_287",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=287 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 289,
+      "symbol": "sound_289",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=289 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 290,
+      "symbol": "sound_290",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=290 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 291,
+      "symbol": "sound_291",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=291 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 292,
+      "symbol": "sound_292",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=292 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 293,
+      "symbol": "sound_293",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=293 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 300,
+      "symbol": "sound_300",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=300 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 301,
+      "symbol": "sound_301",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=301 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 302,
+      "symbol": "sound_302",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=302 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 303,
+      "symbol": "sound_303",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=303 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 304,
+      "symbol": "sound_304",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=304 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 305,
+      "symbol": "sound_305",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=305 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 306,
+      "symbol": "sound_306",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=306 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 307,
+      "symbol": "sound_307",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=307 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 308,
+      "symbol": "sound_308",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=308 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 309,
+      "symbol": "sound_309",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=309 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 310,
+      "symbol": "sound_310",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=310 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    },
+    {
+      "song_id": 311,
+      "symbol": "sound_311",
+      "name": null,
+      "evidence": "no installed game-code call site passes id=311 to sound dispatch Func_080f9080 in the current tree (semantic callers not yet decompiled); named context unproven"
+    }
+  ]
+}

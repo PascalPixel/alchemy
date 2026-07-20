@@ -49,6 +49,7 @@ import {
   type SequenceEvent,
   type ControlName,
 } from "./music_sequence.ts";
+import { decode_midi_sidecar, type Sidecar } from "./midi_sequence.ts";
 
 // エンジンのデュレーション表 (music_sequence.ts と同一。wait 分割に使う)。
 const DURATIONS = [
@@ -340,9 +341,7 @@ interface SongResult {
   diffs: string[];
 }
 
-async function roundTripSong(name: string, jsonPath: string, outDir: string): Promise<SongResult> {
-  const source = JSON.parse(await Bun.file(jsonPath).text()) as SequenceSource;
-
+async function roundTripSong(name: string, source: SequenceSource, outDir: string): Promise<SongResult> {
   const midi = sequenceToMidi(source);
   await Bun.write(`${outDir}/${name}.mid`, midi);
 
@@ -462,14 +461,19 @@ async function main(): Promise<void> {
   const { mkdirSync } = await import("node:fs");
   mkdirSync(outDir, { recursive: true });
 
-  const songs = [
-    ["sound_075", "assets/audio/sequences/sound_075.json"],
-    ["sound_106", "assets/audio/sequences/sound_106.json"],
-  ] as const;
+  // デモ曲は追跡中の .mid + サイドカーから正典ソースを復元して往復させる
+  // (冗長な旧 sequence-JSON は撤去済み)。
+  const songs = ["sound_075", "sound_106"] as const;
 
   const results: SongResult[] = [];
-  for (const [name, path] of songs) {
-    results.push(await roundTripSong(name, path, outDir));
+  for (const name of songs) {
+    const midiSource = await Bun.file(`assets/audio/midi/${name}.mid`).arrayBuffer();
+    const sidecarPath = `assets/audio/data/${name}.json`;
+    const sidecar = (await Bun.file(sidecarPath).exists())
+      ? (JSON.parse(await Bun.file(sidecarPath).text()) as Sidecar)
+      : null;
+    const source = decode_midi_sidecar(Buffer.from(midiSource), sidecar);
+    results.push(await roundTripSong(name, source, outDir));
   }
 
   const proofs = nonInjectivityProof();

@@ -443,7 +443,28 @@ function borrowIdiom(body: string, random: () => number): string | null {
   return declared.replace(pick.statement.text, instantiated);
 }
 
+// 逆CSE: 記憶読取りを一時変数に溜めず、使用箇所ごとに読み直す形へ戻す。
+// 回転級の鍵。単純な再読込で意味が変わらない読取り式だけを対象とする。
+function unCse(body: string, random: () => number): string | null {
+  const pattern = /^(\s+)(\w+) = (M2C_FIELD\([^;]+\)|\w+\[\w+\]|\*\(\w+ \*\)0x[0-9A-Fa-f]+);\n/gm;
+  const matches = [...body.matchAll(pattern)];
+  if (matches.length === 0) return null;
+  const target = matches[Math.floor(random() * matches.length)];
+  const name = target[2], expression = target[3];
+  const after = body.slice(target.index! + target[0].length);
+  const uses = (after.match(new RegExp(`\\b${name}\\b`, "g")) ?? []).length;
+  if (uses === 0 || uses > 4) return null;
+  // 対象変数への再代入があるなら畳み込まない
+  if (new RegExp(`\\b${name}\\s*=[^=]`).test(after)) return null;
+  let result = body.slice(0, target.index) + body.slice(target.index! + target[0].length);
+  result = result.replace(new RegExp(`\\b${name}\\b`, "g"), `(${expression})`);
+  // 宣言行の掃除
+  result = result.replace(new RegExp(`^\\s+(?:s8|u8|s16|u16|s32|u32|void \\*+|int)\\s+\\(?${name.replace(/[.*+?^${}()|[\]\\]/g, "")}\\)?;\\n`, "m"), "");
+  return result === body ? null : result;
+}
+
 const OPERATORS: Array<[string, Operator]> = [
+  ["uncse", unCse],
   ["borrow", borrowIdiom],
   ["swap", swapStatements],
   ["hoist", hoistSubexpression],
@@ -618,6 +639,13 @@ async function main(): Promise<void> {
         minimal = next;
       }
       if (minimal !== seeded) bases.push(minimal);
+      let reread = seeded;
+      for (let round = 0; round < 12; round++) {
+        const next = unCse(reread, makeRandom(round + 31));
+        if (next === null) break;
+        reread = next;
+      }
+      if (reread !== seeded) bases.push(reread);
     }
     // 参照長は最初に確定させる: 素の下書きを一度リンクして期待長を得る。
     let expected: Buffer | null = null;

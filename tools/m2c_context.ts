@@ -89,10 +89,29 @@ export function collectContext(sourceDirectory = join(ROOT, "src")): string {
 }
 
 function main(): void {
+  // 採掘済み構造体を文脈へ畳み込む。強い基底だけを機械名で型化し、
+  // m2cの推測をフィールド幅で導く(第三段)。
+  let structs = "";
+  try {
+    const mined = JSON.parse(readFileSync(join(ROOT, "work/base_structs.json"), "utf8"));
+    for (const row of mined.structs.slice(0, 40)) {
+      const address = row.base.replace(/[^0-9a-fx]/g, "").slice(-8);
+      const name = `Work_${address}`;
+      let cursor = 0;
+      let body = "";
+      for (const field of row.fields) {
+        if (field.count < 3 || field.offset < cursor) continue;
+        if (field.offset > cursor) body += `    u8 pad_${cursor.toString(16)}[${field.offset - cursor}];\n`;
+        body += `    ${field.width === 1 ? "u8" : field.width === 2 ? "u16" : "s32"} field_${field.offset.toString(16)};\n`;
+        cursor = field.offset + field.width;
+      }
+      if (body.split("\n").length >= 5) structs += `struct ${name} {\n${body}};\n`;
+    }
+  } catch {}
   const output = join(ROOT, "work/m2c_context.c");
   mkdirSync(dirname(output), { recursive: true });
   const text = collectContext();
-  writeFileSync(output, text);
+  writeFileSync(output, structs + text);
   const declarations = text.split("\n").filter((line) => line.includes("Func_")).length;
   console.log(`context=${output} functions=${declarations}`);
 }

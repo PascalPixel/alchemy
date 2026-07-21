@@ -610,6 +610,14 @@ async function main(): Promise<void> {
     for (const unknown of unknowns) {
       const seeded = unknown === "" ? raw : raw.replaceAll("M2C_UNK", unknown);
       bases.push(seeded, ...seedCandidates(seeded));
+      // 最小変数形: 単回使用の一時変数を不動点まで畳み込む。回転級の鍵。
+      let minimal = seeded;
+      for (let round = 0; round < 12; round++) {
+        const next = inlineTemporary(minimal, makeRandom(round + 1));
+        if (next === null) break;
+        minimal = next;
+      }
+      if (minimal !== seeded) bases.push(minimal);
     }
     // 参照長は最初に確定させる: 素の下書きを一度リンクして期待長を得る。
     let expected: Buffer | null = null;

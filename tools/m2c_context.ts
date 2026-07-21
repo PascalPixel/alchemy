@@ -80,9 +80,22 @@ export function collectContext(sourceDirectory = join(ROOT, "src")): string {
   }
   const lines: string[] = [];
   for (const symbol of [...data].sort()) lines.push(`extern u8 ${symbol}[];`);
+  // 第四段: 引数→基底の束縛から型付きシグネチャを出す。
+  let bindings: Record<string, string> = {};
+  try { bindings = JSON.parse(readFileSync(join(ROOT, "work/base_structs.json"), "utf8")).bindings ?? {}; } catch {}
+  const structName = (root: string) => `struct Work_${root.replace(/[^0-9a-fx]/g, "").slice(-8)} *`;
   for (const [symbol, signature] of [...signatures].sort(([a], [b]) => a.localeCompare(b))) {
     if (!primitiveOnly(signature)) continue;
-    const params = signature.parameters === "" ? "void" : signature.parameters;
+    let params = signature.parameters === "" ? "void" : signature.parameters;
+    const stem = symbol.replace("Func_", "");
+    if (params !== "void") {
+      const pieces = params.split(", ");
+      for (let index = 0; index < pieces.length; index++) {
+        const root = bindings[`arg:${stem}:${index}`];
+        if (root !== undefined && pieces[index] === "s32") pieces[index] = structName(root);
+      }
+      params = pieces.join(", ");
+    }
     lines.push(`${signature.returnType} ${symbol}(${params});`);
   }
   return PREAMBLE + lines.join("\n") + "\n";

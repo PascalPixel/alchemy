@@ -102,7 +102,13 @@ function main(): void {
     .map(([base, fields]) => ({ base, fields: [...fields.entries()].sort((a, b) => a[0] - b[0]).map(([offset, f]) => ({ offset, ...f })), total: [...fields.values()].reduce((s, f) => s + f.count, 0) }))
     .filter((row) => row.fields.length >= 4)
     .sort((a, b) => b.total - a.total);
-  writeFileSync(join(ROOT, "work/base_structs.json"), JSON.stringify({ format: 1, structs: rows }, null, 1));
+  // 引数→基底の束縛表。第四段: 型付きシグネチャの根拠になる。
+  const bindings: Record<string, string> = {};
+  for (const tag of accesses.keys()) {
+    const root = find(tag);
+    if (tag.startsWith("arg:") && merged.has(root) && (merged.get(root)!.size >= 4)) bindings[tag] = root;
+  }
+  writeFileSync(join(ROOT, "work/base_structs.json"), JSON.stringify({ format: 1, structs: rows, bindings }, null, 1));
   console.log(`bases=${merged.size} strong=${rows.length} top=${rows.slice(0, 5).map((r) => `${r.base}(${r.fields.length}f/${r.total}a)`).join(" ")}`);
 }
 

@@ -218,16 +218,18 @@ Together the sources rebuild 135,743 bytes exactly. Eighty-seven trailing
 compressor bytes remain fallback because they vary independently of the
 semantic decoded content instead of being mislabeled as image data.
 
-`graphics/resource_1d/` through `graphics/resource_3e/` each contain one
-palette-correct `ichimaie.8bpp.png` (一枚絵): a 128-color, 256×120 raster proven
+`graphics/Pre-rendered Backgrounds/` contains 34 descriptively named,
+palette-correct indexed PNGs for resources 1D through 3E: each is a 128-color,
+256×120 raster proven
 by the palette DMA and the fixed `15×8×32×8` ARM decode loop. The LSB-first
 delta7 predictor is continuous in raster order, wraps modulo 128, and has a
 unique shortest-code inverse, so the PNG needs no opaque token-plan sidecar.
 The encoder restores every meaningful bit and the zero padding through the
 last halfword. Eighteen records have a separate two-byte alignment gap; those
 36 bytes remain fallback rather than being disguised as image lookahead.
-`ichimaie` is a canonical period-style reconstruction name, not a claim that
-the historical source filename survived.
+`index.json` preserves the resource IDs and separates visible scene descriptions
+from independently proven in-game location names. The earlier `ichimaie`
+(一枚絵) working name was not a claim that a historical filename survived.
 
 `graphics/resources_d8_e3/` contains two alternative six-resource affine
 background sets selected by a ROM-derived map condition. D8/DE are 224-color

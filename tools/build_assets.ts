@@ -27,7 +27,7 @@ import { build_table as build_map_load_table } from "./map_load_table.ts";
 import { build_sound_table } from "./music.ts";
 import { build_from_midi_sidecar, type Sidecar } from "./midi_sequence.ts";
 import { buildWaveRecord } from "./audio_wave.ts";
-import { build_still } from "./indexed_still.ts";
+import { build_still, read_still_index } from "./indexed_still.ts";
 import { build_static_sprite_series, static_sprite_frame_name } from "./static_sprite_series.ts";
 import { build_resource_directory } from "./resource_directory.ts";
 import { build_title_resource } from "./title_resources.ts";
@@ -401,13 +401,16 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           number(series.palette_entries) !== 128) {
         throw new Error("unsupported delta7-still layout");
       }
+      const stillIndex = read_still_index(String(series.index));
       for (const resource of series.resources) {
         const name = String(resource.id).toLowerCase();
+        const indexed = stillIndex.get(name);
+        if (indexed === undefined) throw new Error(`pre-rendered background index has no resource ${name}`);
         entries.push({
           address: resource.address,
           size: resource.size,
           kind: "golden-sun-delta7-still",
-          source: `${resourceGraphicsDir(name)}/ichimaie.8bpp.png`,
+          source: join(dirname(String(series.index)), indexed.file),
         });
       }
     } else if (series.kind === "golden-sun-zero-skip-sprite-series") {

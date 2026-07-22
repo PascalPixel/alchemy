@@ -954,6 +954,7 @@
     },
     {
       "kind": "golden-sun-delta7-still-series",
+      "index": "assets/graphics/Pre-rendered Backgrounds/index.json",
       "width": 256,
       "height": 120,
       "palette_entries": 128,

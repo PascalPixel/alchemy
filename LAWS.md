@@ -106,6 +106,21 @@ must be tested on more than one function before being generalized.
   assembly.
 - **Recorded:** 2026-07-22.
 
+### Scheduler trace instrumentation (native)
+
+- **Capability:** the approved cc1 natively emits the full second-pass
+  scheduler decision trace: `-dR -fsched-verbose=7` writes
+  `<file>.c.23.sched2` containing per-cycle ready lists (173 snapshots
+  on a 184-byte function), chosen insns, priorities, and a
+  clock-by-clock schedule visualization. `-dS` covers the first pass.
+- **Use:** the register/scheduling tie-break plateau (0807808c,
+  0809802c, 08092b54, 0801c154, 0801fda8 class — the tier both
+  deterministic search and 400k-step permutation cannot reach) becomes
+  mechanically diagnosable: read which insn the ready list preferred at
+  the divergence cycle and shape the source to flip that single
+  decision, or derive the law that no shape can.
+- **Recorded:** 2026-07-22.
+
 ## Hypotheses
 
 Hypotheses are useful search leads, not accepted compiler laws. Promote one only

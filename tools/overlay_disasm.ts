@@ -1,6 +1,7 @@
 // Tool role: library; imported by tools/build_assets.ts, tools/compiler_template_index.ts, tools/executable_gap_sources.ts (+4 more).
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { basename, dirname, extname, join } from "node:path";
+import { cflagsForSource, compilerCommand, externalSymbol, externalSymbolAssembly } from "./alchemy_gcc.ts";
 import { Discovery } from "./discover.ts";
 
 export const ROM_BASE = 0x08000000;
@@ -62,6 +63,68 @@ function sourceText(source: string | URL): string {
   return source;
 }
 
+export function overlayCSources(source: string | URL): string[] {
+  if (source instanceof URL || source.includes("\n") || !existsSync(source)) return [];
+  const directory = join(dirname(source), "c");
+  if (!existsSync(directory)) return [];
+  return readdirSync(directory)
+    .filter((name) => name.endsWith(".c"))
+    .sort()
+    .map((name) => join(directory, name));
+}
+
+export function overlayCAddresses(source: string | URL): Set<number> {
+  return new Set(overlayCSources(source).map((path) => {
+    const stem = basename(path, extname(path));
+    if (!/^[0-9a-f]{8}$/i.test(stem)) throw new Error(`overlay C filename is not an address: ${path}`);
+    return Number.parseInt(stem, 16);
+  }));
+}
+
+function checked(command: string[], cwd: string): string {
+  const process = Bun.spawnSync(command, { cwd, stdout: "pipe", stderr: "pipe" });
+  if (process.exitCode !== 0) {
+    const detail = (process.stderr.toString() || process.stdout.toString()).trim();
+    throw new Error(`${basename(command[0])} failed${detail ? `: ${detail}` : ""}`);
+  }
+  return process.stdout.toString();
+}
+
+function compileOverlayC(source: string, work: string): { address: number; data: Buffer } {
+  const stem = basename(source, extname(source));
+  if (!/^[0-9a-f]{8}$/i.test(stem)) throw new Error(`overlay C filename is not an address: ${source}`);
+  const address = Number.parseInt(stem, 16);
+  const symbol = `Func_${stem.toLowerCase()}`;
+  if (!new RegExp(`\\b${symbol}\\s*\\([^;{}]*\\)\\s*\\{`).test(readFileSync(source, "utf8"))) {
+    throw new Error(`overlay C source does not define ${symbol}: ${source}`);
+  }
+  const assembly = join(work, `${stem}.s`);
+  const object = join(work, `${stem}.o`);
+  const symbolsSource = join(work, `${stem}.symbols.s`);
+  const symbolsObject = join(work, `${stem}.symbols.o`);
+  const elf = join(work, `${stem}.elf`);
+  const binary = join(work, `${stem}.bin`);
+  checked(compilerCommand(...cflagsForSource(source), "-S", "-o", assembly, source), work);
+  checked(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", object, assembly], work);
+  const undefinedSymbols = checked(["arm-none-eabi-nm", "-u", object], work)
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .map((line) => line.trim().split(/\s+/).at(-1)!);
+  for (const external of undefinedSymbols) {
+    if (externalSymbol(external) === null) throw new Error(`unsupported overlay C external symbol: ${external}`);
+  }
+  writeFileSync(symbolsSource, ".syntax unified\n.thumb\n" + undefinedSymbols.map(externalSymbolAssembly).join(""));
+  checked(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", symbolsObject, symbolsSource], work);
+  checked(["arm-none-eabi-ld", `-Ttext=0x${hex(address)}`, "-e", symbol, "-o", elf, object, symbolsObject], work);
+  checked(["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", elf, binary], work);
+  const row = checked(["arm-none-eabi-nm", "-S", elf], work)
+    .split(/\r?\n/)
+    .find((line) => line.endsWith(` ${symbol}`));
+  if (row === undefined) throw new Error(`missing linked overlay C symbol: ${symbol}`);
+  const size = Number.parseInt(row.trim().split(/\s+/)[1], 16);
+  return { address, data: readFileSync(binary).subarray(0, size) };
+}
+
 export function assembleOverlay(source: string | URL, base = OVERLAY_BASE): Buffer {
   const work = mkdtempSync(join(TMPDIR, "alchemy-overlay-"));
   try {
@@ -76,7 +139,22 @@ export function assembleOverlay(source: string | URL, base = OVERLAY_BASE): Buff
     if (linked.exitCode !== 0) throw new Error(linked.stderr.toString().trim());
     const copied = Bun.spawnSync(["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", elf, binary], { stdout: "pipe", stderr: "pipe" });
     if (copied.exitCode !== 0) throw new Error(copied.stderr.toString().trim());
-    return readFileSync(binary);
+    const result = Buffer.from(readFileSync(binary));
+    const occupied = new Set<number>();
+    for (const cSource of overlayCSources(source)) {
+      const compiled = compileOverlayC(cSource, work);
+      const offset = compiled.address - base;
+      if (offset < 0 || offset + compiled.data.length > result.length) {
+        throw new Error(`overlay C span is outside ${source}: ${cSource}`);
+      }
+      for (let byte = offset; byte < offset + compiled.data.length; byte++) {
+        if (occupied.has(byte)) throw new Error(`overlapping overlay C span: ${cSource}`);
+        occupied.add(byte);
+        if (result[byte] !== 0) throw new Error(`overlay C placeholder is not zero at 0x${hex(base + byte)}`);
+      }
+      compiled.data.copy(result, offset);
+    }
+    return result;
   } finally {
     rmSync(work, { recursive: true, force: true });
   }

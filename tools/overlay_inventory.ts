@@ -6,7 +6,7 @@
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { Discovery, sx } from "./discover.ts";
-import { assembleOverlay, OVERLAY_BASE } from "./overlay_disasm.ts";
+import { assembleOverlay, overlayCAddresses, OVERLAY_BASE } from "./overlay_disasm.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 
@@ -150,12 +150,14 @@ function main(): void {
   let decodedBytes = 0, instructionBytes = 0, unresolved = 0, jumpTables = 0;
   for (const overlay of overlays) {
     const data = assembleOverlay(overlay.source, OVERLAY_BASE);
+    const converted = overlayCAddresses(overlay.source);
     decodedBytes += data.length;
     const discovery = discoverOverlay(data);
     instructionBytes += [...discovery.instructions.values()].reduce((sum, item) => sum + item.size, 0);
     unresolved += discovery.unresolved.size;
     jumpTables += discovery.jump_tables.size;
     for (const [entry, fn] of [...discovery.functions].sort((a, b) => a[0] - b[0])) {
+      if (converted.has(entry)) continue;
       const addresses = [...fn.instructions].sort((a, b) => a - b);
       if (addresses.length === 0 || addresses[0] !== entry) continue;
       let end = Math.max(...addresses.map((address) => address + discovery.instructions.get(address)!.size));

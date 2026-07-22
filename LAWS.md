@@ -102,8 +102,12 @@ against the approved bundle; full sourced notes in
   `-fprologue-bugfix` as suppressing unnecessary `lr` saves in leaf
   functions that newer vintages otherwise emit. Our confirmed
   Thumb-prologue law (branch implies lr save) may be the unfixed-vintage
-  behavior; probe whether the approved driver accepts the flag and what
-  it changes.
+  behavior. LOCALLY PROBED 2026-07-22: the approved cc1 REJECTS
+  `-fprologue-bugfix` and `-fhex-asm` (`Unrecognized option`) — the
+  approved bundle is not pret's agbcc but an earlier or vanilla
+  GCC 2.95-class vintage, consistent with its lr-save-on-branch
+  behavior, end-of-function pool barriers, and HImode `ldrh .L`
+  emission.
 - **Long-branch `bl` substitution:** agbcc substitutes `bl` for internal
   branches beyond `b` range in large functions. Candidate ordinary-
   compiler explanation for `nonstandard_thumb_call_module` regions;

@@ -109,19 +109,23 @@ evidence.
   no unconditional branch survives jump optimization to anchor the
   pool). The approved compiler has not produced a pre-epilogue pool in
   any tested configuration WITHOUT a call before the epilogue.
-- **Mechanism found (2026-07-22, later):** the approved compiler emits
-  the b.n-over-pool pre-epilogue layout for CONST-INT pool entries
-  (minipool with inserted branch), while SYMBOL entries route to the
-  after-epilogue pool. Direct experiment: the `0801e940` shape with a
-  const terminator (`0x123`) dumps `b .L; .word 291; pop`, and the same
-  shape with `&Data_00000000` dumps after `bx`. The `0801c154` shape
-  reproduces the exact layout at size parity (best candidate 4
-  mismatched bytes, register roles only). Pool-content classification of
-  all 31 members: 28 carry at least one const-int word and are therefore
-  reachable (the const anchors the minipool; pending symbol entries dump
-  into it); only `0801e940`, `08020b14`, and `080b09fc` have pure
-  symbol/zero pools and remain open — the question is now specifically
-  what places a lone symbol entry pre-epilogue.
+- **Mechanism found (2026-07-22, later, twice corrected):** the layout
+  is driven by the POOL REFERENCE MODE. Halfword-context (HImode)
+  references — the compiler emits `ldrh rX, .Ln` when a pooled constant
+  feeds a u16 expression — carry a short range, so the minipool dumps
+  nearby behind an inserted branch. Word (SImode) references reach the
+  after-epilogue pool. Evidence: the `0801c154` shape (u16 field merge)
+  emits `ldrh r4, .L3` refs and reproduces the exact `b .L; .word ×2;
+  pop` layout at size parity (best candidate 4 mismatched bytes,
+  register roles only); the `0801e940` shape with an SImode terminator
+  ref dumps after `bx` in every variant, as do synthetic SImode-store
+  probes with one or two pool words, with and without frames, with a
+  trailing call. Pool-content classification of the 31 members: 28
+  carry halfword-value const words (u16 store/compare contexts) and are
+  reachable; `0801e940`, `08020b14`, and `080b09fc` load their entries
+  with word-mode `ldr` yet still sit pre-epilogue — the open question
+  is what gives a word-mode entry (a zero-valued symbol) the short
+  range there.
 - **Next test:** reproduce with several functions and interleaved pool
   pressure in one unit via `decomp_module.ts`-style multi-region compiles;
   study which insn the reorg pass anchors the minipool to when the epilogue

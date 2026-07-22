@@ -109,14 +109,19 @@ evidence.
   no unconditional branch survives jump optimization to anchor the
   pool). The approved compiler has not produced a pre-epilogue pool in
   any tested configuration WITHOUT a call before the epilogue.
-- **Partially confirmed (2026-07-22, later):** the approved compiler DOES
-  emit the b.n-over-pool pre-epilogue layout when the function body ends
-  with a `bl` and pool entries are pending: the `0801c154` shape
-  reproduces the exact layout at size parity (best candidate 4 mismatched
-  bytes, register roles only). Cohort members whose bodies end in a call
-  are therefore reachable by ordinary source shapes; the call-less
-  members (`080b09fc`) remain open, with a pre-jump-opt pool phase or a
-  second toolchain variant as surviving explanations for those only.
+- **Mechanism found (2026-07-22, later):** the approved compiler emits
+  the b.n-over-pool pre-epilogue layout for CONST-INT pool entries
+  (minipool with inserted branch), while SYMBOL entries route to the
+  after-epilogue pool. Direct experiment: the `0801e940` shape with a
+  const terminator (`0x123`) dumps `b .L; .word 291; pop`, and the same
+  shape with `&Data_00000000` dumps after `bx`. The `0801c154` shape
+  reproduces the exact layout at size parity (best candidate 4
+  mismatched bytes, register roles only). Pool-content classification of
+  all 31 members: 28 carry at least one const-int word and are therefore
+  reachable (the const anchors the minipool; pending symbol entries dump
+  into it); only `0801e940`, `08020b14`, and `080b09fc` have pure
+  symbol/zero pools and remain open — the question is now specifically
+  what places a lone symbol entry pre-epilogue.
 - **Next test:** reproduce with several functions and interleaved pool
   pressure in one unit via `decomp_module.ts`-style multi-region compiles;
   study which insn the reorg pass anchors the minipool to when the epilogue

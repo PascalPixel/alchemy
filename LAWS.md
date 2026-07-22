@@ -53,6 +53,27 @@ must be tested on more than one function before being generalized.
   regions documented in [ASSEMBLY.md](ASSEMBLY.md#approved-compiler-prologue-evidence).
 - **Confirmed:** 2026-07-19.
 
+### Volatile stores fence load hoisting
+
+- **Fingerprint:** a pure instruction-reorder mismatch in which the candidate
+  hoists later loads above earlier stores that the reference keeps in program
+  order, while register-only moves still interleave freely and independent
+  loads inside one statement still swap.
+- **Producing idiom:** the reference statement's store lvalue is
+  `volatile`-qualified. The scheduler never moves a later load above a volatile
+  store, keeps volatile accesses in program order among themselves, and still
+  hoists plain loads above volatile *reads*. A volatile *read* also pins its own
+  position among other volatile accesses, which fixes leading temp-load order.
+- **Scope:** confirmed for `0809a65c` (all three hoist sites plus the leading
+  temp-load site resolved by volatile store lvalues plus one volatile init
+  read). The same qualifier did not resolve the `0809802c` prologue
+  `sub sp` placement, so this law governs load-versus-store order only, not
+  stack-allocation scheduling.
+- **Evidence:** exact installed match [src/0809a65c.c](src/0809a65c.c);
+  bounded flag experiments (`-fno-schedule-insns{,2}`, `-mtune` sweep,
+  sched-spec flags) reproduced the hoist under every non-volatile shape.
+- **Confirmed:** 2026-07-22.
+
 ### Register-reservation flags are module declarations
 
 - **Fingerprint:** a neighboring handler bundle consistently avoids the same

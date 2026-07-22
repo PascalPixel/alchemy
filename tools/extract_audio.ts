@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Tool role: dead; no tracked importer or invocation; audit before use.
+// Tool role: entrypoint; invoked by assets/audio/README.md.
 import { build_sequence, extract_sequence } from "./music_sequence.ts";
 import { wavFromSignedPcm } from "./audio_wave.ts";
 

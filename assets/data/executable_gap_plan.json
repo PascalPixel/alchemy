@@ -103,12 +103,9 @@
         {
           "address": "0x08007320",
           "size": 56,
-          "kind": "arm",
-          "source": "08007320.s",
-          "symbols": [
-            "RelocatedArm_08007320"
-          ],
-          "maximum_undefined_words": 0
+          "kind": "u32-values",
+          "name": "iwram_dispatch_pointers_08007320",
+          "count": 14
         },
         {
           "address": "0x08007358",

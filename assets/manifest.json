@@ -72,6 +72,10 @@
           "size": "0x04"
         },
         {
+          "address": "0x08007320",
+          "size": "0x38"
+        },
+        {
           "address": "0x08007358",
           "size": "0x424"
         }
@@ -104,6 +108,12 @@
     {
       "address": "0x0800731c",
       "size": "0x04",
+      "kind": "golden-sun-executable-gap-data",
+      "source": "asm/executable_gaps/index.json"
+    },
+    {
+      "address": "0x08007320",
+      "size": "0x38",
       "kind": "golden-sun-executable-gap-data",
       "source": "asm/executable_gaps/index.json"
     },

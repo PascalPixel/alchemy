@@ -17,6 +17,8 @@ const TYPES = ["s32", "u32", "s16", "u16", "s8", "u8", "void *"];
 const DECLARATION = /^(?<return>[A-Za-z_][A-Za-z0-9_ ]*?\*?)\s+(?<name>Func_[0-9a-f]{8})\((?<params>[^;{}]*)\);$/gm;
 const DEFINITION = /^(?<return>[A-Za-z_][A-Za-z0-9_ ]*?\*?)\s+(?<name>Func_[0-9a-f]{8})\((?<params>[^;{}]*)\)\s*\{/m;
 const LOCAL = /^(?<indent>\s{4})(?<type>s32|u32|s16|u16|s8|u8|void \*)(?<space>\s+)(?<name>[A-Za-z_][A-Za-z0-9_]*)\s*;$/gm;
+const SMALL_INTEGER = /^(?:\([su](?:8|16|32)\)\s*)?(?<literal>0[xX][0-9a-fA-F]+|[1-9][0-9]*)$/;
+const COMPARISON_INTEGER = /(?:==|!=)\s*(?<literal>0[xX][0-9a-fA-F]+|[1-9][0-9]*)\b/g;
 
 type Operation = [string, (source: string) => string];
 type Task = [number, number, string, string];
@@ -134,6 +136,94 @@ export function localOperations(source: string): Operation[] {
   return operations;
 }
 
+interface AddressLiteralSite {
+  kind: "call" | "compare";
+  start: number;
+  end: number;
+  value: number;
+}
+
+function directCallLiteralSites(source: string): AddressLiteralSite[] {
+  const sites: AddressLiteralSite[] = [];
+  const calls = /\bFunc_[0-9a-f]{8}\s*\(/g;
+  for (const call of source.matchAll(calls)) {
+    const open = call.index + call[0].lastIndexOf("(");
+    let argumentStart = open + 1;
+    let depth = 0;
+    for (let cursor = open + 1; cursor < source.length; cursor++) {
+      const character = source[cursor];
+      if (character === "(") depth++;
+      else if (character === ")" && depth > 0) depth--;
+      else if ((character === "," || character === ")") && depth === 0) {
+        const argument = source.slice(argumentStart, cursor);
+        const trimmed = argument.trim();
+        const integer = SMALL_INTEGER.exec(trimmed);
+        if (integer?.groups !== undefined) {
+          const literal = integer.groups.literal;
+          const relative = argument.indexOf(literal);
+          const start = argumentStart + relative;
+          const value = Number.parseInt(literal, literal.toLowerCase().startsWith("0x") ? 16 : 10);
+          if (value > 0 && value <= 0xffff) {
+            sites.push({ kind: "call", start, end: start + literal.length, value });
+          }
+        }
+        argumentStart = cursor + 1;
+        if (character === ")") break;
+      }
+    }
+  }
+  return sites;
+}
+
+function addressLiteralSites(source: string): AddressLiteralSite[] {
+  const sites = directCallLiteralSites(source);
+  for (const comparison of source.matchAll(COMPARISON_INTEGER)) {
+    const literal = comparison.groups!.literal;
+    const relative = comparison[0].lastIndexOf(literal);
+    const start = comparison.index + relative;
+    const value = Number.parseInt(literal, literal.toLowerCase().startsWith("0x") ? 16 : 10);
+    if (value > 0 && value <= 0xffff) {
+      sites.push({ kind: "compare", start, end: start + literal.length, value });
+    }
+  }
+  sites.sort((left, right) => left.start - right.start);
+  return sites;
+}
+
+function declareAddressValue(source: string, value: number): string {
+  const symbol = `Value_${value.toString(16).padStart(8, "0")}`;
+  if (new RegExp(`^extern (?:u8|unsigned char) ${symbol};$`, "m").test(source)) return source;
+  const declaration = `extern ${/^typedef unsigned char u8;$/m.test(source) ? "u8" : "unsigned char"} ${symbol};`;
+  const typedefs = [...source.matchAll(/^typedef [^;]+;$/gm)];
+  if (typedefs.length === 0) return `${declaration}\n\n${source}`;
+  const last = typedefs[typedefs.length - 1];
+  const insertion = last.index + last[0].length;
+  return `${source.slice(0, insertion)}\n${declaration}${source.slice(insertion)}`;
+}
+
+// Address-valued small constants preserve relocation-backed pool loads
+// (LAWS.md). Generate only call-argument and equality-test probes; byte
+// verification remains the gate that distinguishes addresses from integers.
+export function addressValueOperations(source: string): Operation[] {
+  const operations: Operation[] = [];
+  const ordinals = new Map<string, number>();
+  for (const site of addressLiteralSites(source)) {
+    const key = `${site.kind}:${site.value}`;
+    const ordinal = ordinals.get(key) ?? 0;
+    ordinals.set(key, ordinal + 1);
+    const symbol = `Value_${site.value.toString(16).padStart(8, "0")}`;
+    operations.push([`address:${site.kind}=${site.value.toString(16)}`, (body) => {
+      const current = addressLiteralSites(body)
+        .filter((candidate) => candidate.kind === site.kind && candidate.value === site.value)[ordinal];
+      if (current === undefined) return body;
+      const cast = /^typedef signed int s32;$/m.test(body) ? "s32" : "signed int";
+      const changed = `${body.slice(0, current.start)}(${cast})&${symbol}${body.slice(current.end)}`;
+      return declareAddressValue(changed, site.value);
+    }]);
+  }
+  return operations;
+}
+
 // 揮発ストア柵の法則(LAWS.md)に基づく記憶アクセス限定子の変種。
 // スケジューラはvolatileストアを越えて後続ロードを持ち上げない。
 const CAST_TYPE = "(?:s8|u8|s16|u16|s32|u32|s64|u64|void|[A-Za-z_][A-Za-z0-9_]*)";
@@ -212,6 +302,7 @@ export function memoryOperations(source: string): Operation[] {
 
 export function variants(source: string, maximum: number): Array<[string, string]> {
   const operations = [
+    ...addressValueOperations(source),
     ...declarationOperations(source),
     ...definitionOperations(source),
     ...localOperations(source),
@@ -237,6 +328,35 @@ export function variants(source: string, maximum: number): Array<[string, string
     if (unique.length >= maximum) break;
   }
   return unique;
+}
+
+function selfTest(): void {
+  const source = [
+    "typedef unsigned char u8;",
+    "typedef signed int s32;",
+    "",
+    "s32 Func_08000000(s32, s32);",
+    "s32 Func_08000004(void) {",
+    "    if (Func_08000000(0xA, 2) != 0)",
+    "        return 7;",
+    "    return *(s32 *)0x02000000 == 1;",
+    "}",
+    "",
+  ].join("\n");
+  const generated = addressValueOperations(source).map(([label, operation]) => [label, operation(source)] as const);
+  if (generated.length !== 3) throw new Error("address-value operation count self-test failed");
+  const call = generated.find(([label]) => label === "address:call=a")?.[1] ?? "";
+  const compare = generated.find(([label]) => label === "address:compare=1")?.[1] ?? "";
+  if (!call.includes("extern u8 Value_0000000a;") || !call.includes("Func_08000000((s32)&Value_0000000a, 2)")) {
+    throw new Error("address-value call self-test failed");
+  }
+  if (!compare.includes("extern u8 Value_00000001;") || !compare.includes("== (s32)&Value_00000001")) {
+    throw new Error("address-value comparison self-test failed");
+  }
+  if (generated.some(([, body]) => body.includes("Value_00000007"))) {
+    throw new Error("address-value arithmetic self-test failed");
+  }
+  console.log("self-test=ok");
 }
 
 async function parallelMap<T, R>(items: T[], jobs: number, operation: (item: T) => Promise<R>): Promise<R[]> {
@@ -450,4 +570,7 @@ async function main(): Promise<void> {
   }
 }
 
-if (import.meta.main) await main();
+if (import.meta.main) {
+  if (Bun.argv.length === 3 && Bun.argv[2] === "--self-test") selfTest();
+  else await main();
+}

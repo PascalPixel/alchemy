@@ -180,6 +180,21 @@ bun tools/permute_v1.ts --targets out/decomp/targets.txt \
 The numeric limits are starting budgets, not promises. Reduce them when a lane
 is unproductive; increase them only when recent results justify the cost.
 
+`search_queue_variants.ts` also reads the optional ignored
+`work/decomp-seeds.json` manifest. Its `seeds` object maps an eight-digit entry
+stem to one path or an array of paths containing semantics-reviewed hand
+candidates. The queue draft remains a seed too. This is the feedback bridge
+from hand diagnosis into deterministic search; do not list a candidate merely
+because it has a low byte-mismatch score. Use `--no-seeds` for a queue-only
+control run or `--seeds FILE` for another manifest.
+
+Prefer permutation targets that are the smallest independently verifiable
+whole function or block preserving the mismatch. Small inputs improve compile
+throughput and shrink the mutation space, but do not repeatedly permute a
+register-only or scheduler-only plateau: reducing such a function can remove
+the live ranges that produce the reference allocation. After a bounded run,
+route those plateaus to compiler trace diagnosis.
+
 For unattended hours, chain these stages with `bun tools/decomp_overnight.ts`
 (resumable, checkpointed waves). It references optional stages that do not
 exist yet (`cfg_extract.ts`, `synthesize_expr.ts`, `synthesize_block.ts`,

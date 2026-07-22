@@ -70,6 +70,7 @@ export async function verifyCandidate(
   source: string,
   rom: Uint8Array,
   outputDirectory: string,
+  extraCompilerFlags: readonly string[] = [],
 ): Promise<Verification> {
   const stem = sourceStem(source);
   const address = parseHex(stem);
@@ -80,7 +81,11 @@ export async function verifyCandidate(
   const symbolsObject = join(outputDirectory, `${stem}.symbols.o`);
   const elf = join(outputDirectory, `${stem}.elf`);
   const binary = join(outputDirectory, `${stem}.bin`);
-  await run(compilerCommand(...cflagsForSource(source), "-S", "-o", assembly, source));
+  await run(compilerCommand(
+    ...cflagsForSource(source),
+    ...extraCompilerFlags,
+    "-S", "-o", assembly, source,
+  ));
   await run([
     "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
     "-o", object, assembly,

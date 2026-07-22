@@ -112,6 +112,27 @@ evidence.
   falls through versus branches.
 - **Recorded:** 2026-07-22.
 
+### Queue-push family head order
+
+- **Claim:** the nine-member IME-guarded queue-push family
+  (`0800383c 0800387c 080038bc 080038fc 0800393c 0800397c 080039bc
+  08003a3c 080039fc`, fingerprint `2ljmmtrr4j1a0`, 576 bytes) all begin
+  `ldr r4, =queue` BEFORE the first parameter copy `adds r6, r0`. With
+  the critical-section body solved (count read inside the IME-disabled
+  window, `-fno-schedule-insns2` shape at exactly 4 mismatched bytes on
+  both probed members), this head transposition is the single gate for
+  all nine.
+- **Disproved so far (2026-07-22):** every declaration order of the
+  count/first/second temps with and without `register`, register-
+  qualified parameters, `-fschedule-insns`-only crossed with ten
+  `-mtune` cores, and all scheduling flag pairs — the approved compiler
+  emits the parameter copy first in every configuration (30+ probes).
+- **Next test:** search installed matches for any function whose first
+  emitted body instruction precedes a parameter copy and study its
+  shape; consider whether the family's translation unit used a
+  mechanism outside the probed flag space.
+- **Recorded:** 2026-07-22.
+
 ### Store-multiple transfer idiom
 
 - **Claim:** a family of DMA-style regions ends in

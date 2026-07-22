@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: entrypoint; invoked by PLAYBOOK.md.
 // Compare ordinary overlay functions with Alchemy's own byte-verified C corpus.
 // Exact fingerprints retain compiler register allocation and instruction choice;
 // structural fingerprints normalize registers and immediates for candidate

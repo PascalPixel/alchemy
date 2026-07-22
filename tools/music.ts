@@ -1,3 +1,4 @@
+// Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
 export type SoundTableEntry = [header: string, player: number];
 
 export interface SoundTableSource {

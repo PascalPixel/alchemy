@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: entrypoint; invoked by STATUS.md, assets/README.md, package.json (+2 more).
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { encode_general, encode_general_prefill, encode_palette } from "./extract_resource.ts";

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
 import { mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { decode_palette_trace, encode_palette, type PaletteGroup } from "./extract_resource.ts";

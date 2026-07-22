@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: library; imported by tools/decomp_queue.ts, tools/permute_v1.ts.
 import {
   existsSync,
   mkdirSync,

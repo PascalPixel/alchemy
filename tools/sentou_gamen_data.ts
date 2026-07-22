@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
 import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, renameSync, rmSync, writeFileSync,
 } from "node:fs";

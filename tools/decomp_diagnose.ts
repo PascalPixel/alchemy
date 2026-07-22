@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: library; imported by tools/decomp_queue.ts.
 // Exact-C candidate diagnostics. Candidate and reference bytes remain in ignored
 // scratch space; the durable report contains only aggregate mismatch classes.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";

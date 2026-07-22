@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { chunk, tile_png } from "./export_asset.ts";

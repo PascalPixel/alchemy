@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: library; imported by tools/build_assets.ts.
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "fs";
 import { dirname, join, resolve } from "path";
 import { readLateRuntimeCatalog, ROM_BASE, type LateRuntimeComponent } from "./late_runtime_data.ts";

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: both; imported by tools/scan_data_v2.ts; invoked by package.json.
 
 export interface DirectResourceCall {
   resource_id: number;

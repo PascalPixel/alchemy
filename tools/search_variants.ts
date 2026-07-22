@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: library; imported by tools/overlay_match.ts, tools/search_queue_variants.ts.
 import {
   copyFileSync,
   existsSync,

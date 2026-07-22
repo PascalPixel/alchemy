@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { build_static_sprite_series } from "./static_sprite_series.ts";

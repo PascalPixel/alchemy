@@ -1,3 +1,4 @@
+// Tool role: both; imported by tools/bg_tile_usage.ts, tools/compose_scene.ts, tools/tile_objects.ts; invoked by package.json.
 export const TILE_INDEX_MASK = 0x03ff;
 export const HFLIP = 0x0400;
 export const VFLIP = 0x0800;

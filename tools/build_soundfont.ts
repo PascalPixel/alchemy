@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: dead; no tracked importer or invocation; audit before use.
 // build_soundfont.ts — 回収済み音声データから SoundFont (SF2 v2.01) を決定論的に生成する。
 //
 // ── 目的 ────────────────────────────────────────────────────────────────

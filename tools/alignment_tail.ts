@@ -1,3 +1,4 @@
+// Tool role: library; imported by tools/archive_asset.ts, tools/resource_d1_d3.ts, tools/sentou_resources.ts (+1 more).
 export type AlignmentTail =
   | { size: number; encoding: "fill"; value: number }
   | { size: number; encoding: "bytes"; values: number[] };

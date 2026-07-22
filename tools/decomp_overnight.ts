@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: entrypoint; invoked by PLAYBOOK.md.
 // Resumable end-to-end exact-C campaign for a high-core-count workstation.
 // It refreshes learned dictionaries, diagnoses and constrains ranked candidates,
 // probes adjacent modules, and then runs guided annealing.

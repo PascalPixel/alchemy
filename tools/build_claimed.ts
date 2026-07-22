@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: entrypoint; invoked by STATUS.md, package.json, tools/build_full.ts (+1 more).
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
 import { cflagsForSource, compilerCommand, externalSymbol, externalSymbolAssembly } from "./alchemy_gcc.ts";

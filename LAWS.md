@@ -210,6 +210,15 @@ against the approved bundle; full sourced notes in
   emitted body instruction precedes a parameter copy and study its
   shape; consider whether the family's translation unit used a
   mechanism outside the probed flag space.
+- **Vintage sweep negative (2026-07-22, late):** the family matches
+  neither sibling compiler. Natively built `old_agbcc` saves r4 and
+  keeps copies-first; Rosetta-built gcc-3.0 with `-fcall-used-r4`
+  reproduces the register discipline but still emits copies-first heads
+  and uses `mov` move forms where the reference bytes encode the
+  2.96-style `adds rd, rn, #0`. The reference remains 2.96-class
+  output with an unexplained head schedule; an intermediate 2.96-line
+  SDK snapshot (compare the dated `arm_010110a`/`arm_020422` backends
+  preserved in pret/agbcc) is the remaining vintage hypothesis.
 - **Witness scan (2026-07-22, late):** eleven installed matches begin
   push, pool load, arg copy (e.g. [src/08019908.c](src/08019908.c),
   [src/08006384.c](src/08006384.c)). In every witness the pool load

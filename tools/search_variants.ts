@@ -156,6 +156,36 @@ function withoutVolatile(operation: (source: string) => string): (source: string
   return (source) => operation(source).replaceAll("volatile volatile ", "volatile ");
 }
 
+// 生成ドラフト正規化: 早置きされた一時ロード文を最初の使用直前へ沈める。
+// バイト同一性検証が正しさの神託なので、別名解析は不要(誤変換は不一致で落ちる)。
+const SIMPLE_STATEMENT = /^\s{4}(?:\([a-z0-9 ]+\)\s*)?(?<name>_v1[a-z]*\d+|temp_r\d+|var_r\d+)\s*=\s*(?<expr>[^;]*(?:M2C_FIELD|\*\s*\()[^;]*);\s*$/;
+const BLOCK_BARRIER = /[{}]|^\s*(?:if|for|while|do|else|switch|return|goto)\b|:\s*$/;
+
+export function sinkLoads(source: string): string {
+  const lines = source.split("\n");
+  for (let pass = 0; pass < 64; pass++) {
+    let moved = false;
+    for (let index = 0; index < lines.length; index++) {
+      const statement = SIMPLE_STATEMENT.exec(lines[index]);
+      if (statement === null) continue;
+      const name = statement.groups!.name;
+      const reference = new RegExp(`\\b${name}\\b`);
+      let destination = index;
+      for (let ahead = index + 1; ahead < lines.length; ahead++) {
+        if (BLOCK_BARRIER.test(lines[ahead]) || reference.test(lines[ahead])) break;
+        if (lines[ahead].trim() !== "") destination = ahead;
+      }
+      if (destination > index) {
+        const [line] = lines.splice(index, 1);
+        lines.splice(destination, 0, line);
+        moved = true;
+      }
+    }
+    if (!moved) break;
+  }
+  return lines.join("\n");
+}
+
 export function memoryOperations(source: string): Operation[] {
   const operations: Operation[] = [];
   const stores = (body: string): string => body
@@ -171,6 +201,8 @@ export function memoryOperations(source: string): Operation[] {
     ["memory:stores=volatile", stores],
     ["memory:all=volatile", everything],
     ["memory:absolute=volatile", absolutes],
+    ["memory:sink-loads", sinkLoads],
+    ["memory:sink-loads+stores=volatile", (body: string) => stores(sinkLoads(body))],
   ] as const) {
     const changed = withoutVolatile(operation);
     if (changed(source) !== source) operations.push([label, changed]);

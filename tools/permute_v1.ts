@@ -514,7 +514,7 @@ function pickOperator(state: TargetState, random: () => number, registerFraction
   const weights = OPERATORS.map(([name]) => {
     const record = state.operators[name] ?? { tried: 0, accepted: 0 };
     let guidance = 1;
-    if (registerFraction >= 0.5 && /^(argshift|pointerstep|postincrement|splitload|declshuffle|swap|hoist|inline)$/.test(name)) guidance = 3;
+    if (registerFraction >= 0.5 && /^(argshift|pointerstep|postincrement|splitload|declshuffle|swap|hoist|inline|volatilize)$/.test(name)) guidance = 3;
     if (semanticFraction >= 0.35 && /^(signature|typeflip|fieldtype|fieldsyntax|volatile|condinvert|rounding|borrow)$/.test(name)) guidance = 2.5;
     if (suggestions.has(name)) guidance *= 2;
     return guidance * (record.accepted + 1) / (record.tried + 8);

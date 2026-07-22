@@ -91,6 +91,47 @@ Hypotheses are useful search leads, not accepted compiler laws. Promote one only
 after an approved local experiment or exact installed match supplies the stated
 evidence.
 
+### Externally sourced compiler lore (2026-07-22 research pass)
+
+Recorded from public compiler source and generic community documentation
+(no Golden Sun material). Each item is a hypothesis until reproduced
+against the approved bundle; full sourced notes in
+`work/research/gba-decomp-craft.md` (ignored analysis).
+
+- **Prologue lr-save flag:** community agbcc documents
+  `-fprologue-bugfix` as suppressing unnecessary `lr` saves in leaf
+  functions that newer vintages otherwise emit. Our confirmed
+  Thumb-prologue law (branch implies lr save) may be the unfixed-vintage
+  behavior; probe whether the approved driver accepts the flag and what
+  it changes.
+- **Long-branch `bl` substitution:** agbcc substitutes `bl` for internal
+  branches beyond `b` range in large functions. Candidate ordinary-
+  compiler explanation for `nonstandard_thumb_call_module` regions;
+  verify against member sizes and branch distances before any
+  reclassification.
+- **Public thumb_reorg pool algorithm:** first pool-needing insn +
+  ≤1000-byte forward scan for an existing barrier, else insert
+  `b label; pool; label:` just before trailing jumps; HImode constant
+  loads are converted to SImode pool entries. With text epilogues this
+  yields pre-epilogue pools for straight-line functions. Our approved
+  cc1 shows end-of-function placement in most shapes — treat pool
+  placement, HImode `ldrh .L` emission, and prologue policy as
+  compiler-vintage markers.
+- **Per-TU compiler vintages are period-normal:** pokeruby's Makefile
+  compiles the m4a sound library and libisagbprn with `old_agbcc` while
+  game code uses agbcc. Retail GBA images mixing TUs from different
+  compiler snapshots is established practice; the three pure-symbol
+  pre-epilogue pools, the queue-push head order, and the store-multiple
+  idiom are candidates for a second-vintage explanation. Any second
+  approved bundle is a project decision with its own evidence bar.
+- **Permuter craft imports:** upstream decomp-permuter's manual-mode
+  PERM macro family (alternative sets, statement lineswap, deferred
+  meta-variables) and per-compiler weight files are proven mechanisms to
+  port into `permute_v1.ts`; scoring uses graded objdump-diff penalties
+  with stack offsets excluded by default. Matched-example retrieval into
+  drafting prompts is the community's highest-value context signal
+  (validates tool-investment priority 5).
+
 ### Pre-epilogue literal pool
 
 - **Claim:** 31 remaining C-debt regions share a structural signature the

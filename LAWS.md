@@ -281,6 +281,24 @@ against the approved bundle; full sourced notes in
   in the queue; promote once an exact match installs with the shape.
 - **Recorded:** 2026-07-22.
 
+### Shared-term cancellation across subtraction
+
+- **Claim (agent lane, 2026-07-22):** at -O2 the approved compiler
+  cancels a shared additive term across a subtraction —
+  `(y1 + base) - (y0 + base)` folds to `y1 - y0` — where the reference
+  build keeps both additions. `volatile s32` on the intermediates blocks
+  the fold but permanently costs two stack slots (old GCC does not
+  reuse volatile slots), leaving a +4-byte size gap. Second finding from
+  the same investigation: inlining `+1` adjustments at their use sites
+  reproduces the reference prologue's r8-spill exactly, while naming
+  them promotes a spurious value to r10.
+- **Current evidence:** `080164d4` best candidate (128 mismatched, size
+  +4) and twelve falsified variants under `work/agents/080164d4/`.
+- **Next test:** an anti-cancellation shape without volatile stack
+  slots — e.g. reading one term through a call boundary or a
+  known-clobbering construct; check the tilemap-clip cohort siblings.
+- **Recorded:** 2026-07-22.
+
 ### Cast-literal table access
 
 - **Claim:** `((s32 *)ADDRESS)[index]` can produce an add-then-load address shape

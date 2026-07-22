@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, join } from "node:path";
-import { CFLAGS, compilerCommand, externalSymbol, externalSymbolAssembly } from "./alchemy_gcc.ts";
+import { cflagsForSource, compilerCommand, externalSymbol, externalSymbolAssembly } from "./alchemy_gcc.ts";
 
 export const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 export const ROM_BASE = 0x08000000;
@@ -55,7 +55,7 @@ export function verify(
   const symbolsObject = join(outputDir, `${name}.symbols.o`);
   const elf = join(outputDir, `${name}.elf`);
   const binary = join(outputDir, `${name}.bin`);
-  run(compilerCommand(...CFLAGS, "-S", "-o", assembly, source));
+  run(compilerCommand(...cflagsForSource(source), "-S", "-o", assembly, source));
   run([
     "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
     "-o", object, assembly,

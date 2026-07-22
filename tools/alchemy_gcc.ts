@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 import { readFileSync, statSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { basename, dirname, extname, join } from "node:path";
 
 export const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 export const BUNDLE = join(ROOT, "alchemy-gcc");
@@ -10,6 +10,32 @@ export const CFLAGS = [
   "-O2", "-mthumb", "-mthumb-interwork", "-mcpu=arm7tdmi",
   "-fno-builtin", "-nostdinc", "-ffreestanding", "-fcall-used-r4",
 ] as const;
+
+// These tiny command-stream handlers never use r3 in the reference code.  GCC
+// reproduces their allocation exactly when the translation unit reserves r3,
+// consistent with an original file-scope register assignment.  Keep this
+// evidence as compiler configuration instead of expressing a register pin in C.
+const FIXED_R3_SOURCES = new Set([
+  "080fb6ec", "080fb700", "080fb714", "080fb728", "080fb73c",
+  "080fb750", "080fb75c", "080fb768", "080fb77c",
+]);
+const UNSCHEDULED_SOURCES = new Set([
+  "080fb714", "080fb728", "080fb73c", "080fb750", "080fb75c",
+  "080fb768", "080fb77c",
+]);
+
+function sourceStem(source: string): string {
+  return basename(source, extname(source));
+}
+
+export function cflagsForSource(source: string): readonly string[] {
+  const stem = sourceStem(source);
+  return [
+    ...CFLAGS,
+    ...(FIXED_R3_SOURCES.has(stem) ? ["-ffixed-r3"] : []),
+    ...(UNSCHEDULED_SOURCES.has(stem) ? ["-fno-schedule-insns", "-fno-schedule-insns2"] : []),
+  ];
+}
 
 const ADDRESS_SYMBOL = /^(Func|Data|Value)_([0-9a-f]{8})$/;
 const CALL_VIA_SYMBOL = /^_call_via_r(1[0-3]|[0-9])$/;
@@ -120,11 +146,15 @@ export function directPreprocessorCommand(input: string, output: string): string
 }
 
 export function directCompilerCommand(input: string, output: string, dumpbase: string): string[] {
+  const stem = sourceStem(dumpbase);
   validateBundle();
   return [
     join(BUNDLE, "cc1"), input, "-quiet", "-dumpbase", dumpbase,
     "-mthumb", "-mthumb-interwork", "-mcpu=arm7tdmi", "-O2",
-    "-fno-builtin", "-ffreestanding", "-fcall-used-r4", "-o", output,
+    "-fno-builtin", "-ffreestanding", "-fcall-used-r4",
+    ...(FIXED_R3_SOURCES.has(stem) ? ["-ffixed-r3"] : []),
+    ...(UNSCHEDULED_SOURCES.has(stem) ? ["-fno-schedule-insns", "-fno-schedule-insns2"] : []),
+    "-o", output,
   ];
 }
 

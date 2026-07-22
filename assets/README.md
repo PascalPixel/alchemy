@@ -443,3 +443,11 @@ optional blend commands, and sparse cells. Payload-free compression plans
 rebuild 6,188 bytes at `0x085bb860` and 8,256 bytes at `0x08753b18`, for
 14,444 exact source bytes. `chiiki` (地域) is a period-style reconstruction
 grouping, not a recovered historical filename.
+
+Three manual entrypoints support asset maintenance and presentation:
+`bun tools/split_sprite_bank.ts` splits an atlas-shaped bank into per-frame
+PNGs during asset work, `bun tools/rewrap_tiles.ts` losslessly renormalizes a
+sequential tile-bank PNG to the 32-column authoring wrap and verifies the
+tile stream is unchanged, and `bun tools/render_djinn_idle_gifs.ts`
+regenerates the README's tracked Djinn idle animations from recovered
+graphics sources. None of them is a canonical build stage.

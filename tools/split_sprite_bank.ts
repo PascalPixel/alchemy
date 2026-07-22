@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Tool role: dead; no tracked importer or invocation; audit before use.
+// Tool role: entrypoint; invoked by assets/README.md.
 import { split_static_sprite_banks } from "./static_sprite_series.ts";
 
 // アトラス由来の銀行をフレーム毎PNGへ分割する薄い入口。

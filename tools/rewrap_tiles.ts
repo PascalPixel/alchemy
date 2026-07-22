@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Tool role: dead; no tracked importer or invocation; audit before use.
+// Tool role: entrypoint; invoked by assets/README.md.
 // 連番タイル銀行PNGの折返し列数を32列へ正規化する。タイル順序と
 // パレットは不変で、見た目の折返しだけを著作時の32x16へ直す。
 // 取込み側は行優先でタイルを読むため、符号化結果は変わらない。

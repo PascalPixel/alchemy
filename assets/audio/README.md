@@ -52,6 +52,13 @@ as audio samples and remain unclaimed. The sound-table exporter assigns the
 `sound_empty` symbol only after proving that its complete 32-bit header word is
 zero, so `residuals/index.json` retains those four bytes as typed header fields.
 
+Two manual entrypoints render ignored listening previews under `out/`:
+`bun tools/extract_audio.ts` exports sequences and PCM records for audition,
+and `bun tools/build_soundfont.ts` deterministically builds the SoundFont
+projection `out/audio_midi/golden-sun.sf2` from recovered tracked sources.
+Previews aid verification; neither output is a canonical source and neither is
+ever committed.
+
 The `.mid` + sidecar pair rebuilds the exact engine bytes, preserving loops,
 pattern calls, repeats, running-status omission, priorities, reverb, tone-bank
 references, and pointer targets. The MIDI carries the canonical musical core

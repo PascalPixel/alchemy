@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
-import { CFLAGS, compilerCommand, externalSymbol, externalSymbolAssembly } from "./alchemy_gcc.ts";
+import { cflagsForSource, compilerCommand, externalSymbol, externalSymbolAssembly } from "./alchemy_gcc.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -76,7 +76,7 @@ async function compileSource(source: string, objectDir: string): Promise<Compile
   const name = stem(source);
   const assembly = join(objectDir, `${name}.s`);
   const object = join(objectDir, `${name}.o`);
-  await run(compilerCommand(...CFLAGS, "-S", "-o", assembly, source));
+  await run(compilerCommand(...cflagsForSource(source), "-S", "-o", assembly, source));
   await run([
     "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
     "-o", object, assembly,

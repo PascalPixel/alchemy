@@ -104,8 +104,13 @@ evidence.
   the trigger), `-mno-sched-prolog` (accepted by the driver, changes
   bytes, does not move the pool), and a real multi-function
   `decomp_module.ts` unit (`080b09fc`+`080b0a20`: pool still lands after
-  `bx r0`). The approved compiler has not produced a pre-epilogue pool in
-  any tested configuration.
+  `bx r0`), and an early-return guard around the body (the conditional
+  jumps forward and the body still falls through into the epilogue, so
+  no unconditional branch survives jump optimization to anchor the
+  pool). The approved compiler has not produced a pre-epilogue pool in
+  any tested configuration; the surviving explanations are a pool phase
+  that runs before jump optimization in the original toolchain, or a
+  second period toolchain variant for these translation units.
 - **Next test:** reproduce with several functions and interleaved pool
   pressure in one unit via `decomp_module.ts`-style multi-region compiles;
   study which insn the reorg pass anchors the minipool to when the epilogue

@@ -29,6 +29,12 @@ const UNSCHEDULED_SOURCES = new Set([
   "080fb714", "080fb728", "080fb73c", "080fb750", "080fb75c",
   "080fb768", "080fb77c",
 ]);
+// 既定ABI(標準のr4被呼出保存)で構築された収蔵ライブラリ翻訳単位。
+// 証拠: 呼出前に死ぬr4を保存する序文は -fcall-used-r4 の下では出ない
+// (フラッシュ書込列 08006dec、LAWS.md「第四層」)。同一cc1・既定フラグ。
+const DEFAULT_ABI_SOURCES = new Set([
+  "08006dec",
+]);
 
 function sourceStem(source: string): string {
   return basename(source, extname(source));
@@ -36,8 +42,11 @@ function sourceStem(source: string): string {
 
 export function cflagsForSource(source: string): readonly string[] {
   const stem = sourceStem(source);
+  const base = DEFAULT_ABI_SOURCES.has(stem)
+    ? CFLAGS.filter((flag) => flag !== "-fcall-used-r4")
+    : [...CFLAGS];
   return [
-    ...CFLAGS,
+    ...base,
     ...(FIXED_R3_SOURCES.has(stem) ? ["-ffixed-r3"] : []),
     ...(OPTIMIZE_O1_SOURCES.has(stem) ? ["-O1"] : []),
     ...(UNSCHEDULED_SOURCES.has(stem) ? ["-fno-schedule-insns", "-fno-schedule-insns2"] : []),
@@ -158,7 +167,8 @@ export function directCompilerCommand(input: string, output: string, dumpbase: s
   return [
     join(BUNDLE, "cc1"), input, "-quiet", "-dumpbase", dumpbase,
     "-mthumb", "-mthumb-interwork", "-mcpu=arm7tdmi", "-O2",
-    "-fno-builtin", "-ffreestanding", "-fcall-used-r4",
+    "-fno-builtin", "-ffreestanding",
+    ...(DEFAULT_ABI_SOURCES.has(stem) ? [] : ["-fcall-used-r4"]),
     ...(FIXED_R3_SOURCES.has(stem) ? ["-ffixed-r3"] : []),
     ...(OPTIMIZE_O1_SOURCES.has(stem) ? ["-O1"] : []),
     ...(UNSCHEDULED_SOURCES.has(stem) ? ["-fno-schedule-insns", "-fno-schedule-insns2"] : []),

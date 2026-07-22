@@ -72,6 +72,10 @@ export function inferAssemblyConstraints(stem: string, source: string): Assembly
   if (calls > 0) suggestions.add("signature");
   if (longest >= 8) { suggestions.add("declshuffle"); suggestions.add("splitload"); suggestions.add("postincrement"); }
   if (conditions.signed + conditions.unsigned + conditions.equality > 0) suggestions.add("condinvert");
+  // 直後にロードが続くストアは揮発ストア柵の指紋(LAWS.md): スケジューラなら持ち上げる並び。
+  if (rows.some((row, at) => /^str/.test(row.mnemonic) && at + 1 < rows.length && /^ldr/.test(rows[at + 1].mnemonic))) {
+    suggestions.add("volatilize");
+  }
   return {
     stem, instructions: rows.length, inferred_arguments: maximumArgument + 1, calls, memory, conditions,
     distinct_offsets: offsets.size, longest_register_span: longest, stack_argument_accesses: stack,
@@ -148,6 +152,27 @@ function volatileConstraint(body: string, random: () => number): string | null {
   return body.slice(0, target.index) + replacement + body.slice(target.index! + target[0].length);
 }
 
+// 揮発ストア柵の法則(LAWS.md): 記憶アクセスの左辺値へ volatile を付与または除去する。
+// スケジューラはvolatileストアを越えて後続ロードを持ち上げない(src/0809a65c.c)。
+function volatilizeAccess(body: string, random: () => number): string | null {
+  if (random() < 0.3) {
+    const qualified = [...body.matchAll(/volatile (?=(?:s8|u8|s16|u16|s32|u32|s64|u64|void|[A-Za-z_][A-Za-z0-9_]*) \*[,)])/g)];
+    const target = pick(qualified, random);
+    if (!target) return null;
+    return body.slice(0, target.index) + body.slice(target.index! + "volatile ".length);
+  }
+  const sites = [...body.matchAll(
+    /\*\((?!volatile )((?:s8|u8|s16|u16|s32|u32|s64|u64|void|[A-Za-z_][A-Za-z0-9_]*)) \*\)|M2C_FIELD\(([^,()]+),\s*(?!volatile )((?:s8|u8|s16|u16|s32|u32))(\s*\*),/g,
+  )];
+  const target = pick(sites, random);
+  if (!target) return null;
+  const whole = target[0];
+  const replacement = whole.startsWith("M2C_FIELD")
+    ? whole.replace(/,\s*((?:s8|u8|s16|u16|s32|u32))(\s*\*),/, ", volatile $1$2,")
+    : whole.replace("*(", "*(volatile ");
+  return body.slice(0, target.index) + replacement + body.slice(target.index! + whole.length);
+}
+
 function fieldTypeConstraint(body: string, random: () => number): string | null {
   const matches = [...body.matchAll(/M2C_FIELD\(([^,()]+),\s*(s8|u8|s16|u16|s32|u32)(\s*\*?),\s*(0x[0-9a-fA-F]+|\d+)\)/g)];
   const target = pick(matches, random);
@@ -188,7 +213,8 @@ function roundingConstraint(body: string, random: () => number): string | null {
 
 export const CONSTRAINT_OPERATORS: Array<[string, ConstraintOperator]> = [
   ["signature", signatureType], ["argshift", unusedLeadingArgument], ["pointerstep", pointerStep],
-  ["postincrement", fusePostIncrement], ["volatile", volatileConstraint], ["fieldtype", fieldTypeConstraint],
+  ["postincrement", fusePostIncrement], ["volatile", volatileConstraint], ["volatilize", volatilizeAccess],
+  ["fieldtype", fieldTypeConstraint],
   ["fieldsyntax", fieldSyntaxConstraint], ["splitload", splitMemoryLoad], ["rounding", roundingConstraint],
 ];
 

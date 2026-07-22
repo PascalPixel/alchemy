@@ -134,11 +134,56 @@ export function localOperations(source: string): Operation[] {
   return operations;
 }
 
+// 揮発ストア柵の法則(LAWS.md)に基づく記憶アクセス限定子の変種。
+// スケジューラはvolatileストアを越えて後続ロードを持ち上げない。
+const CAST_TYPE = "(?:s8|u8|s16|u16|s32|u32|s64|u64|void|[A-Za-z_][A-Za-z0-9_]*)";
+const BALANCED = "(?:[^()]|\\((?:[^()]|\\([^()]*\\))*\\))*";
+const ASSIGN = "(?:=(?!=)|\\+=|-=|\\|=|&=|\\^=|<<=|>>=)";
+const CAST_STORE = new RegExp(
+  `\\*\\((${CAST_TYPE}) \\*\\)(\\(${BALANCED}\\)|0x[0-9a-fA-F]+|[A-Za-z_][A-Za-z0-9_]*)(\\s*)${ASSIGN}`,
+  "g",
+);
+const FIELD_STORE = new RegExp(
+  `M2C_FIELD\\(([^,]+), (${CAST_TYPE}) \\*, ([^)]+)\\)(\\s*)${ASSIGN}`,
+  "g",
+);
+const CAST_ANY = new RegExp(`\\*\\((${CAST_TYPE}) \\*\\)`, "g");
+const FIELD_ANY = new RegExp(`M2C_FIELD\\(([^,]+), (${CAST_TYPE}) \\*,`, "g");
+const CAST_ABSOLUTE = new RegExp(`\\*\\((${CAST_TYPE}) \\*\\)(0x[0-9a-fA-F]+)`, "g");
+const CAST_POINTER_ABSOLUTE = new RegExp(`\\*\\((${CAST_TYPE}) \\*\\*\\)(0x[0-9a-fA-F]+)`, "g");
+
+function withoutVolatile(operation: (source: string) => string): (source: string) => string {
+  return (source) => operation(source).replaceAll("volatile volatile ", "volatile ");
+}
+
+export function memoryOperations(source: string): Operation[] {
+  const operations: Operation[] = [];
+  const stores = (body: string): string => body
+    .replace(CAST_STORE, (whole, type) => whole.replace(`*(${type} *)`, `*(volatile ${type} *)`))
+    .replace(FIELD_STORE, (whole, _base, type) => whole.replace(`${type} *,`, `volatile ${type} *,`));
+  const everything = (body: string): string => body
+    .replace(CAST_ANY, "*(volatile $1 *)")
+    .replace(FIELD_ANY, "M2C_FIELD($1, volatile $2 *,");
+  const absolutes = (body: string): string => body
+    .replace(CAST_POINTER_ABSOLUTE, "*($1 *volatile *)$2")
+    .replace(CAST_ABSOLUTE, "*(volatile $1 *)$2");
+  for (const [label, operation] of [
+    ["memory:stores=volatile", stores],
+    ["memory:all=volatile", everything],
+    ["memory:absolute=volatile", absolutes],
+  ] as const) {
+    const changed = withoutVolatile(operation);
+    if (changed(source) !== source) operations.push([label, changed]);
+  }
+  return operations;
+}
+
 export function variants(source: string, maximum: number): Array<[string, string]> {
   const operations = [
     ...declarationOperations(source),
     ...definitionOperations(source),
     ...localOperations(source),
+    ...memoryOperations(source),
   ];
   const generated: Array<[string, string]> = [["baseline", source]];
   for (const [label, operation] of operations) generated.push([label, operation(source)]);

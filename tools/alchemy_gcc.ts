@@ -19,6 +19,9 @@ const FIXED_R3_SOURCES = new Set([
   "080fb6ec", "080fb700", "080fb714", "080fb728", "080fb73c",
   "080fb750", "080fb75c", "080fb768", "080fb77c",
 ]);
+// This hardware setup helper matches the reference's compact load/store order
+// at -O1; -O2 only swaps two independent setup instructions.
+const OPTIMIZE_O1_SOURCES = new Set(["08021e28"]);
 const UNSCHEDULED_SOURCES = new Set([
   "080fb714", "080fb728", "080fb73c", "080fb750", "080fb75c",
   "080fb768", "080fb77c",
@@ -33,6 +36,7 @@ export function cflagsForSource(source: string): readonly string[] {
   return [
     ...CFLAGS,
     ...(FIXED_R3_SOURCES.has(stem) ? ["-ffixed-r3"] : []),
+    ...(OPTIMIZE_O1_SOURCES.has(stem) ? ["-O1"] : []),
     ...(UNSCHEDULED_SOURCES.has(stem) ? ["-fno-schedule-insns", "-fno-schedule-insns2"] : []),
   ];
 }
@@ -153,6 +157,7 @@ export function directCompilerCommand(input: string, output: string, dumpbase: s
     "-mthumb", "-mthumb-interwork", "-mcpu=arm7tdmi", "-O2",
     "-fno-builtin", "-ffreestanding", "-fcall-used-r4",
     ...(FIXED_R3_SOURCES.has(stem) ? ["-ffixed-r3"] : []),
+    ...(OPTIMIZE_O1_SOURCES.has(stem) ? ["-O1"] : []),
     ...(UNSCHEDULED_SOURCES.has(stem) ? ["-fno-schedule-insns", "-fno-schedule-insns2"] : []),
     "-o", output,
   ];

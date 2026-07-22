@@ -16,6 +16,7 @@ interface FunctionRow {
   entry: number;
   offset: number;
   instruction_count: number;
+  instruction_offsets: number[];
   code_bytes: number;
   span_bytes: number;
   calls: number;
@@ -156,7 +157,13 @@ function main(): void {
     for (const [entry, fn] of [...discovery.functions].sort((a, b) => a[0] - b[0])) {
       const addresses = [...fn.instructions].sort((a, b) => a - b);
       if (addresses.length === 0 || addresses[0] !== entry) continue;
-      const end = Math.max(...addresses.map((address) => address + discovery.instructions.get(address)!.size));
+      let end = Math.max(...addresses.map((address) => address + discovery.instructions.get(address)!.size));
+      for (const address of addresses) {
+        const half = discovery.u16(address);
+        if ((half & 0xf800) !== 0x4800) continue;
+        const literal = ((address + 4) & ~3) + ((half & 0xff) << 2);
+        if (discovery.inside(literal, 4)) end = Math.max(end, literal + 4);
+      }
       const offset = entry - OVERLAY_BASE;
       functions.push({
         id: `${overlay.name}:${offset.toString(16).padStart(4, "0")}`,
@@ -164,6 +171,7 @@ function main(): void {
         entry,
         offset,
         instruction_count: addresses.length,
+        instruction_offsets: addresses.map((address) => address - entry),
         code_bytes: addresses.reduce((sum, address) => sum + discovery.instructions.get(address)!.size, 0),
         span_bytes: end - entry,
         calls: fn.callees.size + fn.external_callees.size,
@@ -175,7 +183,7 @@ function main(): void {
     }
   }
   const ordinary = functions.filter((fn) => fn.unresolved === 0 && fn.jump_tables === 0 &&
-    fn.code_bytes >= 8 && fn.code_bytes === fn.span_bytes);
+    fn.code_bytes >= 8 && fn.span_bytes - fn.code_bytes <= 64);
   const groups = new Map<string, FunctionRow[]>();
   for (const fn of ordinary) {
     if (!groups.has(fn.fingerprint)) groups.set(fn.fingerprint, []);

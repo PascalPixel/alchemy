@@ -1,6 +1,5 @@
 .DS_Store
 assets/**/preview*.png
-alchemy-gcc/
 .cache/
 .cmatch*/
 toolchain/

@@ -26,7 +26,7 @@ function optionsOf(arguments_: string[]): Options {
     variants: 128,
     jobs: Math.min(18, navigator.hardwareConcurrency || 1),
     queue: join(ROOT, "out/decomp/queue.json"),
-    rom: join(ROOT, "gs1-en.gba"),
+    rom: join(ROOT, "roms", "gs1-en.gba"),
     targets: null,
   };
   for (let index = 0; index < arguments_.length; index++) {

@@ -191,7 +191,7 @@ async function main(): Promise<void> {
   if (arguments_.length === 1 && arguments_[0] === "--self-test") { selfTest(); return; }
   const source = arguments_.find((item) => item.endsWith(".c"));
   if (source === undefined) throw new Error("usage: decomp_diagnose.ts --self-test | CANDIDATE.c [ROM]");
-  const romPath = arguments_.find((item) => item.endsWith(".gba")) ?? join(ROOT, "gs1-en.gba");
+  const romPath = arguments_.find((item) => item.endsWith(".gba")) ?? join(ROOT, "roms", "gs1-en.gba");
   const scratch = join(ROOT, "out", "decomp", "diagnose", basename(source, ".c"));
   console.log(JSON.stringify(await diagnoseCandidate(source, readFileSync(romPath), scratch), null, 2));
 }

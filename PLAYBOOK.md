@@ -159,10 +159,10 @@ bun tools/m2c_context.ts
 #    not the drafting, or the large regions that hold most of the remaining
 #    bytes never receive a draft at all.
 bun tools/decompile_batch.ts --context work/m2c_context.c \
-  --max-bytes 8192 --jobs 16 -o work/m2c-ctx gs1-en.gba
+  --max-bytes 8192 --jobs 16 -o work/m2c-ctx roms/gs1-en.gba
 
 # 4. Perform the cheap exact sweep.
-bun tools/match_m2c.ts --jobs 16 gs1-en.gba work/m2c-ctx
+bun tools/match_m2c.ts --jobs 16 roms/gs1-en.gba work/m2c-ctx
 
 # 5. Diagnose and rerank failures.
 bun tools/decomp_queue.ts --refresh --jobs 16 --limit 400 \

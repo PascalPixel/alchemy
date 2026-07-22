@@ -119,7 +119,7 @@ function usage(): void {
 
 function parseArgs(argv: string[]): Options {
   const options: Options = {
-    rom: "gs1-en.gba",
+    rom: "roms/gs1-en.gba",
     jobs: Math.min(16, navigator.hardwareConcurrency || 1),
     output: "out/claimed",
     sourceOnly: false,

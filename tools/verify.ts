@@ -93,7 +93,7 @@ function main(): void {
     return;
   }
   if (Bun.argv.length > 2) throw new Error(`unrecognized argument: ${Bun.argv[2]}`);
-  const rom = readFileSync(join(ROOT, "gs1-en.gba"));
+  const rom = readFileSync(join(ROOT, "roms", "gs1-en.gba"));
   const outputDir = join(ROOT, "out/verify");
   mkdirSync(outputDir, { recursive: true });
   const sources = readdirSync(join(ROOT, "src"), { withFileTypes: true })

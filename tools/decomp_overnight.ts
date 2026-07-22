@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // Resumable end-to-end exact-C campaign for a high-core-count workstation.
-// It refreshes learned dictionaries, diagnoses/ranks candidates, tries semantic
-// and block synthesis, probes adjacent modules, and then runs guided annealing.
+// It refreshes learned dictionaries, diagnoses and constrains ranked candidates,
+// probes adjacent modules, and then runs guided annealing.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
@@ -47,28 +47,9 @@ async function run(command: string[], tolerate = false): Promise<{ code: number;
   return { code, output };
 }
 
-function tool(name: string): string | null {
-  const path = join(ROOT, "tools", name);
-  if (existsSync(path)) return path;
-  console.log(`skip unavailable optional stage: tools/${name}`);
-  return null;
-}
-
 function save(checkpoint: Checkpoint, stage: string, wave = checkpoint.completed_wave): void {
   checkpoint.stage = stage; checkpoint.completed_wave = wave; checkpoint.updated_at = new Date().toISOString();
   writeFileSync(CHECKPOINT, JSON.stringify(checkpoint, null, 2) + "\n");
-}
-
-async function parallel(items: string[], jobs: number, operation: (item: string) => Promise<void>): Promise<void> {
-  let cursor = 0;
-  async function worker(): Promise<void> {
-    while (true) {
-      const index = cursor++;
-      if (index >= items.length) return;
-      await operation(items[index]);
-    }
-  }
-  await Promise.all(Array.from({ length: Math.min(jobs, items.length) }, worker));
 }
 
 function targets(): string[] {
@@ -101,7 +82,7 @@ async function main(): Promise<void> {
   mkdirSync(OUT, { recursive: true });
   if (options.dryRun) {
     console.log(`dry-run jobs=${options.jobs} limit=${options.limit} waves=${options.waves} steps=${options.steps} restarts=${options.restarts}`);
-    console.log("stages=learn,queue,cfg,constraints,expression-synthesis,block-synthesis,module-probes,guided-permutation,full-build");
+    console.log("stages=learn,queue,constraints,module-probes,guided-permutation,full-build");
     return;
   }
   const checkpoint: Checkpoint = !options.fresh && existsSync(CHECKPOINT)
@@ -109,29 +90,16 @@ async function main(): Promise<void> {
   if (!checkpoint.learned) {
     save(checkpoint, "learn");
     await run(["bun", "tools/mine_idioms.ts"]);
-    if (tool("mine_blocks.ts")) await run(["bun", "tools/mine_blocks.ts"]);
     checkpoint.learned = true; save(checkpoint, "learned");
   }
   for (let wave = checkpoint.completed_wave; wave < options.waves; wave++) {
     save(checkpoint, "queue", wave);
     const queue = await run(["bun", "tools/decomp_queue.ts", "--refresh", "--jobs", String(options.jobs), "--limit", String(options.limit), "--targets-out", join(OUT, "targets.txt")]);
     console.log(`wave=${wave + 1}/${options.waves} ${queue.output.split("\n")[0]}`);
-    let stems = targets();
+    const stems = targets();
     if (stems.length === 0) break;
-    save(checkpoint, "cfg", wave);
-    if (tool("cfg_extract.ts")) await run(["bun", "tools/cfg_extract.ts", ...stems]);
     save(checkpoint, "constraints", wave);
     await run(["bun", "tools/decomp_constraints.ts", ...stems]);
-    save(checkpoint, "expression-synthesis", wave);
-    if (tool("synthesize_expr.ts")) {
-      await parallel(stems, Math.min(4, options.jobs), async (stem) => { await run(["bun", "tools/synthesize_expr.ts", stem, "--install"], true); });
-    }
-    stems = stems.filter((stem) => existsSync(join(ROOT, "asm", `${stem}.s`)));
-    save(checkpoint, "block-synthesis", wave);
-    if (tool("synthesize_block.ts")) {
-      await parallel(stems, Math.min(4, options.jobs), async (stem) => { await run(["bun", "tools/synthesize_block.ts", stem, "--install", "--width", "300"], true); });
-    }
-    stems = stems.filter((stem) => existsSync(join(ROOT, "asm", `${stem}.s`)));
     save(checkpoint, "module-probes", wave);
     const modules = await moduleProbes(stems);
     if (modules > 0) console.log(`module_matches=${modules}`);

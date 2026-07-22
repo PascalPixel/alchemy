@@ -85,6 +85,27 @@ must be tested on more than one function before being generalized.
   [tools/alchemy_gcc.ts](tools/alchemy_gcc.ts).
 - **Confirmed:** 2026-07-21.
 
+### Three-stratum compiler census
+
+- **Fingerprint:** prologue register discipline splits the executable
+  image: Camelot code never saves r4 (`-fcall-used-r4` ABI, 988
+  installed matches), while two functions inside the audio bank
+  (`080f95f0`, `080f9a50`) push r4 as callee-saved — the stock-library
+  ABI. Hand-scheduled kernels form the third stratum (retained classes).
+- **Evidence:** an identical natural draft of `080f9a50` scores 31
+  mismatched bytes under natively built `old_agbcc` (structure aligned,
+  ands/tst fusion residue) versus 58 under the approved gcc-2.96 —
+  the strongest per-TU vintage discrimination available without an
+  installed match. Consistent with the sibling repository's finding
+  that the `rom_f9000` audio bank links the prebuilt stock m4a library,
+  and with `pret/pokeruby` compiling its m4a unit with `old_agbcc`.
+- **Governance:** adopting `old_agbcc` as a second approved compiler
+  for the identified stock-library functions is Pascal's call; the
+  provenance section of [ALCHEMY_GCC.md](ALCHEMY_GCC.md) holds the
+  pending decision. Until adopted, these functions stay reconstruction
+  assembly.
+- **Recorded:** 2026-07-22.
+
 ## Hypotheses
 
 Hypotheses are useful search leads, not accepted compiler laws. Promote one only

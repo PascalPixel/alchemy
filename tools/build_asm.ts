@@ -248,7 +248,7 @@ function usage(): void {
 }
 
 function parseArgs(argv: string[]): Options {
-  const options: Options = { rom: "gs1-en.gba", output: "out/asm", sourceOnly: false };
+  const options: Options = { rom: "roms/gs1-en.gba", output: "out/asm", sourceOnly: false };
   let positional = false;
   for (let index = 0; index < argv.length; index++) {
     const argument = argv[index];

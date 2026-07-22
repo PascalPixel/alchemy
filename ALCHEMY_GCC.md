@@ -1,13 +1,14 @@
 # alchemy-gcc
 
-`alchemy-gcc/` is the local compiler forge for this reconstruction: releasing
-the approved code-generation alchemy into the build while keeping compiler
-binaries and third-party environments out of the published source tree.
+The approved compiler bundle lives in the sibling repository checkout
+`../alchemy-gcc/dist/` ([PascalPixel/alchemy-gcc](https://github.com/PascalPixel/alchemy-gcc)):
+compiler source, build scripts, and the ignored runtime bundle stay out of
+this reconstruction tree entirely.
 
-The ignored directory has one boundary and three roles:
+The bundle directory has one boundary and three roles:
 
 ```text
-alchemy-gcc/
+../alchemy-gcc/dist/
 ├── xgcc
 ├── cc1
 ├── cpp
@@ -28,7 +29,7 @@ and approved SHA-256 digests before compiler use. Every build and matching tool
 constructs its compiler invocation through that module; no second compiler
 path is permitted.
 
-The directory stays ignored. Public commits contain only this specification,
+The bundle stays outside this repository. Public commits contain only this specification,
 the validator, reconstructed source, and generic tooling—not compiler binaries
 or third-party checkouts.
 

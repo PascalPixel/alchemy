@@ -119,8 +119,8 @@ as generic repository and publication precedent.
   Thumb assembly plus exact compression plans.
 - `tools/` contains the independent Bun-based analysis, extraction, encoding,
   matching, linking, and verification pipeline.
-- `alchemy-gcc/` is an ignored private compiler bundle. Its required contents
-  are specified in [ALCHEMY_GCC.md](ALCHEMY_GCC.md).
+- The approved compiler bundle lives in the sibling `alchemy-gcc` repository
+  checkout; its required contents are specified in [ALCHEMY_GCC.md](ALCHEMY_GCC.md).
 
 ## Recovered systems and assets
 

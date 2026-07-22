@@ -71,6 +71,7 @@ export async function verifyCandidate(
   rom: Uint8Array,
   outputDirectory: string,
   extraCompilerFlags: readonly string[] = [],
+  imageBase = ROM_BASE,
 ): Promise<Verification> {
   const stem = sourceStem(source);
   const address = parseHex(stem);
@@ -112,7 +113,7 @@ export async function verifyCandidate(
   if (row === undefined) throw new StopIteration(`missing linked symbol: ${symbol}`);
   const size = parseHex(row.trim().split(/\s+/)[1]);
   const actual = readFileSync(binary).subarray(0, size);
-  const expected = Buffer.from(rom).subarray(address - ROM_BASE, address - ROM_BASE + size);
+  const expected = Buffer.from(rom).subarray(address - imageBase, address - imageBase + size);
   return { actual, expected, size };
 }
 

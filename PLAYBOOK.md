@@ -19,6 +19,12 @@ game-specific claim as an untrusted hypothesis until it is independently
 supported by approved evidence. Do not put an unverified hypothesis into source
 or documentation.
 
+Generic public tools and public architecture or compiler documentation remain
+allowed, exactly as AGENTS.md rule 2 states. The boundary excludes game
+knowledge from other Golden Sun work, not generic methodology: clean-room
+caution is not a reason to delete legitimate generic tooling, and tooling is
+not a cover for importing game facts.
+
 Never send ROM bytes, ROM-derived assembly, private analysis, toolchains, or
 build products to a network service. All matching work stays local.
 
@@ -40,18 +46,30 @@ completion is the larger twelve-ROM and repository-quality milestone defined in
 1. **Work the queue, not the address order.** Rank by exact reuse, structural
    family leverage, candidate closeness, type confidence, complexity, and
    expected conversions per unit time.
-2. **Run batch-first.** Spend most effort on `reuse` and `family` lanes. A hard
-   singleton must not block bulk delivery.
-3. **Timebox hand tuning.** Stop after **10 minutes or three meaningful source
-   variants**, whichever comes first. Record the best result, diagnosis, and
-   next hypothesis, then rotate to another family or lane.
+2. **Run batch-first.** Batch means whole-queue waves and cohort levers, not a
+   fixed lane preference. Clear `reuse` and `family` members whenever they
+   exist, but when the regenerated lane totals show the queue dominated by
+   `research` singletons, the batch lever is context, draft normalization, and
+   diagnosis-cohort work that lifts many singletons at once. A hard singleton
+   must not block bulk delivery.
+3. **Timebox hand work by kind.** Shape tuning against an existing draft stops
+   after **10 minutes or three meaningful source variants**, whichever comes
+   first. Semantics-first drafting, for functions the draft generator rejects
+   (`M2C_ERROR`, `M2C_BITFIELD`, `M2C_MEMSET`, `M2C_MEMCPY`) or structurally
+   mangles, is a separate activity with its own budget: up to **45 minutes**
+   to produce a correct natural draft, which then enters the automated lanes
+   instead of being tuned toward byte identity by hand. Either way, record the
+   best result, diagnosis, and next hypothesis, then rotate.
 4. **Prefer deterministic searches.** Search declarations, signedness,
    parameter types, expression order, temporary lifetime, common-subexpression
    boundaries, control-flow shape, and supported compiler modes before using an
    expensive permutation search.
 5. **Solve families through representatives.** Normalize remaining assembly,
    group related regions, solve one representative, then independently compile
-   and verify the source shape against every member.
+   and verify the source shape against every member. When structural families
+   are exhausted, group by diagnosis signature instead (register-rotation,
+   epilogue-shape, scheduler-hoist, entry-register classes) and design one
+   lever per cohort; a cohort sharing one gate falls like a family.
 6. **Turn discoveries into leverage.** A hand-won match should leave a
    generalized operator, template, type constraint, boundary rule, or concise
    independently evidenced note when the lesson is reusable.
@@ -78,12 +96,19 @@ Report at least:
 - remaining ordinary assembly regions and bytes;
 - retained structural assembly regions and bytes;
 - candidates attempted and exact matches by lane;
+- dominant-mismatch-class mix of the diagnosed failures (context improvements
+  must shrink the semantic share; normalization must shrink the register-only
+  share);
 - compiler invocations and cache-hit rate when available;
 - median wall-clock time per successful conversion;
 - full-build identity and fallback-byte count.
 
 If a lane produces no match within its declared budget, stop it and record the
 failure mode. Do not silently continue a low-yield loop.
+
+Plan against the C-debt regions and bytes in the families report, never
+against the byte-reconstruction percentage: that percentage includes assets
+and retained structural assembly and does not forecast decompilation time.
 
 ## Work lanes
 
@@ -130,9 +155,11 @@ bun tools/track_bases.ts
 bun tools/mine_structs.ts
 bun tools/m2c_context.ts
 
-# 3. Generate bounded drafts. Raise limits deliberately by lane.
+# 3. Draft the whole queue. Drafting is cheap; bound the search stages,
+#    not the drafting, or the large regions that hold most of the remaining
+#    bytes never receive a draft at all.
 bun tools/decompile_batch.ts --context work/m2c_context.c \
-  --max-bytes 512 --jobs 16 -o work/m2c-ctx gs1-en.gba
+  --max-bytes 8192 --jobs 16 -o work/m2c-ctx gs1-en.gba
 
 # 4. Perform the cheap exact sweep.
 bun tools/match_m2c.ts --jobs 16 gs1-en.gba work/m2c-ctx
@@ -153,10 +180,21 @@ bun tools/permute_v1.ts --targets out/decomp/targets.txt \
 The numeric limits are starting budgets, not promises. Reduce them when a lane
 is unproductive; increase them only when recent results justify the cost.
 
+For unattended hours, chain these stages with `bun tools/decomp_overnight.ts`
+(resumable, checkpointed waves). It references optional stages that do not
+exist yet (`cfg_extract.ts`, `synthesize_expr.ts`, `synthesize_block.ts`,
+`mine_blocks.ts`): build them or delete the references. A campaign script must
+not imply capacity that is not there.
+
 ## Overlay wave
 
 Overlay code has independent load addresses and boundary concerns. Do not feed
 it blindly through the ordinary fixed-image pipeline.
+
+Overlay conversions also sit outside the `[N of M]` commit counter, which
+counts main-ROM C-target regions (`tools/check_commit_progress.ts`). Track
+overlay progress separately, or widen the denominator in the same commit that
+first counts overlay work; never let the primary metric drift silently.
 
 ```sh
 # Inventory executable entries, boundaries, and structural families.
@@ -193,6 +231,40 @@ Compiler flags describe an original translation unit; they are not arbitrary
 per-function matching knobs. Accept a flag only with independently reproduced
 module-level or ABI evidence, and document that evidence beside its build-rule
 implementation.
+
+## Law ledger
+
+Confirmed compiler behavior is a compounding asset; sessions must not relearn
+it. Maintain a tracked `LAWS.md` with one entry per law: the assembly
+fingerprint, the producing C idiom, one in-repo example (address and source
+file), the evidence source, and the confirmation date. A law enters the ledger
+only with in-repo provenance (an installed match, a tracked document, or an
+evidenced build rule). Externally suggested compiler lore goes in a separate
+hypothesis section until reproduced locally. Operating rule 6 has no force
+without this durable home, and every hand-won match must end with a ledger
+append or an operator/tool improvement.
+
+Seed entries with in-repo provenance today:
+
+- **Minimal live-variable form** reproduces the original allocation; each
+  extra named temporary rotates the allocator. Confirmed by installed
+  counter-family matches (`src/08079338.c`, `src/08079358.c`). Because the
+  draft generator names every intermediate, temporary elimination to fixpoint
+  is a normalization pass, not a search dimension.
+- **Dual-use pre-read**: a fresh-destination shift pair appears when the
+  shifted value has a second read before the shift; single-use forms fold in
+  place. Confirmed during the same counter-family investigation.
+- **Cast-literal table access** (`((s32 *)ADDR)[i]`) reproduces add-then-load
+  addressing that array declarations do not. Structure confirmed at the still
+  unconverted `080fb670`; treat the register floor there as a separate open
+  gate.
+- **Prologue `lr` rule**: the approved compiler saves `lr` in any Thumb
+  function containing a branch, even a leaf ([ASSEMBLY.md](ASSEMBLY.md)). An
+  internal branch without an `lr` save is reclassification evidence, not
+  C debt.
+- **Register-reservation flags are module declarations**, accepted only with
+  bundle-level evidence and a comment, as implemented for the fixed-register
+  handler bundle in `tools/alchemy_gcc.ts`.
 
 ## Hand-session protocol
 
@@ -259,16 +331,36 @@ Prefer improvements that reduce work across many candidates:
 1. authoritative debt and family classification;
 2. type/signature constraint propagation;
 3. generated-draft normalization and temporary-lifetime reduction;
-4. exact-C corpus templates with safe symbol parameterization;
-5. literal-pool, alignment, and function-boundary ownership;
-6. mismatch-block-focused deterministic mutations;
-7. compiler-result caching and batch verification;
-8. automatic, atomic integration and generated progress reporting.
+4. permuter operator coverage: audit `permute_v1.ts` against the generic
+   operator families public permuters document (temporary introduction and
+   elimination, statement reordering, type flips, control-shape rewrites) and
+   port what is missing, benchmarked on a fixed target set by matches per
+   CPU-hour;
+5. nearest matched-pair retrieval: given a target's normalized fingerprint,
+   surface the closest installed matches and their C beside every dossier and
+   hand session;
+6. exact-C corpus templates with safe symbol parameterization;
+7. literal-pool, alignment, and function-boundary ownership;
+8. mismatch-block-focused deterministic mutations;
+9. compiler-result caching and batch verification (a persistent compile server
+   only if profiling shows process spawn dominating a search loop);
+10. automatic, atomic integration and generated progress reporting.
 
 Every tool spike needs a measurable acceptance test, such as more exact matches,
 lower median mismatch, fewer compiler calls per success, or a resolved boundary
 cohort. Park a tool idea that does not move its metric within the declared
 budget.
+
+## Endgame ordering
+
+When the queue thins, sequence the last mile deliberately: split the mixed
+code/data regions first (boundary debt precedes matching); merge proven
+multi-region functions before attempting their C; clear module windows around
+shared-pool walls; document every accepted flag set with its evidence; confirm
+every surviving `asm/` file carries a positive structural justification in
+`asm/classification.json`, where absence of a C match is never a
+justification; then regenerate STATUS.md from the tools and re-verify the
+full build.
 
 ## End-of-cycle checklist
 

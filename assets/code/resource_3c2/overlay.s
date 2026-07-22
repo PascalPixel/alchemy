@@ -288,23 +288,7 @@ Overlay_02000000:
 	.4byte 0x47704800
 	.2byte 0x8dd4
 	.2byte 0x0200
-	push	{lr}
-	ldr	r0, [pc, #20]
-	bl	sub_02000b82
-	cmp	r0, #0
-	beq.n	.L_02000058
-	ldr	r0, [pc, #12]
-	b.n	.L_0200005a
-.L_02000058:
-	ldr	r0, [pc, #12]
-.L_0200005a:
-	pop	{r1}
-	bx	r1
-	.2byte 0x0000
-	.4byte 0x0000096f
-	.4byte 0x02008f28
-	.2byte 0x8e08
-	.2byte 0x0200
+	.space 0x24
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
 	movs	r0, #0

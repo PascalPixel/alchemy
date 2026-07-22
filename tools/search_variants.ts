@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 import {
   copyFileSync,
+  existsSync,
   mkdirSync,
   readFileSync,
   readdirSync,
@@ -111,6 +112,12 @@ export function definitionOperations(source: string): Operation[] {
     const changedParameters = fields.length === 0 ? prefix : `${prefix}, ${parameters}`;
     const changed = line.replace(groups.params, changedParameters);
     operations.push([`definition:prepend=${count}`, replaceOnce(line, changed)]);
+  }
+  for (let index = 1; index <= fields.length; index++) {
+    const changedFields = [...fields];
+    changedFields.splice(index, 0, `s32 unused${index}`);
+    const changed = line.replace(groups.params, changedFields.join(", "));
+    operations.push([`definition:insert-unused=${index}`, replaceOnce(line, changed)]);
   }
   return operations;
 }
@@ -236,11 +243,19 @@ async function main(): Promise<void> {
       .filter((name) => name.endsWith(".c"))
       .map((name) => Number.parseInt(basename(name, ".c"), 16)),
   );
+  const manifestPath = join(ROOT, "out/full/asm/manifest.json");
+  const eligible = existsSync(manifestPath)
+    ? new Set((JSON.parse(readFileSync(manifestPath, "utf8")) as {
+        regions: Array<{ address: number; retention: string }>;
+      }).regions.filter((region) => region.retention === "c_candidate")
+        .map((region) => region.address))
+    : null;
   let addresses = readdirSync(options.candidates)
     .filter((name) => name.endsWith(".c"))
     .sort()
     .map((name) => Number.parseInt(basename(name, ".c"), 16))
-    .filter((address) => spans.has(address) && !tracked.has(address));
+    .filter((address) => spans.has(address) && !tracked.has(address) &&
+      (eligible === null || eligible.has(address)));
   if (options.ranking !== null) {
     const ranking = JSON.parse(readFileSync(options.ranking, "utf8")) as Array<Record<string, unknown>>;
     const scores = new Map<number, [number, number, number]>();

@@ -119,6 +119,13 @@ must be tested on more than one function before being generalized.
   mechanically diagnosable: read which insn the ready list preferred at
   the divergence cycle and shape the source to flip that single
   decision, or derive the law that no shape can.
+- **First application (0807808c):** the trace proves its transposition
+  is priority-forced — the sign-extend chain outranks the store's
+  direct call edge by its intermediate hops, and no intra-block source
+  construct can change either chain. The reference schedule therefore
+  implies a different latency/priority table: the precise experiment is
+  a diagnostic 2.96 build carrying the dated pret/agbcc ARM backend
+  tables (arm_010110a / arm_020422) run against the tie-break battery.
 - **Recorded:** 2026-07-22.
 
 ## Hypotheses

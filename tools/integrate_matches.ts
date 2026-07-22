@@ -2,12 +2,14 @@
 import {
   copyFileSync,
   existsSync,
+  mkdtempSync,
   mkdirSync,
   readFileSync,
   readdirSync,
   rmSync,
   writeFileSync,
 } from "node:fs";
+import { tmpdir } from "node:os";
 import { basename, dirname, join } from "node:path";
 import {
   cflagsForSource,
@@ -44,6 +46,32 @@ function hexadecimal(value: number): string {
 
 function commandError(result: ReturnType<typeof run>): string {
   return (result.stderr || result.stdout).trim();
+}
+
+export function cleanupInstalledScratch(
+  stem: string,
+  workRoot = join(ROOT, "work"),
+  date = new Date().toISOString().slice(0, 10),
+): { removed: string[]; dossierClosed: boolean } {
+  if (!/^08[0-9a-f]{6}$/.test(stem)) throw new Error("invalid cleanup address");
+  const removed: string[] = [];
+  if (existsSync(workRoot)) {
+    for (const entry of readdirSync(workRoot, { withFileTypes: true })) {
+      if (!entry.isFile() || !entry.name.startsWith(`${stem}.`)) continue;
+      rmSync(join(workRoot, entry.name));
+      removed.push(entry.name);
+    }
+  }
+  removed.sort();
+  const dossier = join(workRoot, "walls", `${stem}.md`);
+  if (!existsSync(dossier)) return { removed, dossierClosed: false };
+  const source = readFileSync(dossier, "utf8");
+  const state = `State: CLOSED — ${date}. Installed by \`tools/integrate_matches.ts\`.`;
+  const updated = /^State:.*$/m.test(source)
+    ? source.replace(/^State:.*$/m, state)
+    : source.replace(/^(#[^\n]*\n)/, `$1\n${state}\n`);
+  writeFileSync(dossier, updated);
+  return { removed, dossierClosed: true };
 }
 
 function linkedBytes(stem: string, source: string, scratch: string, kind: "asm" | "c"): Buffer {
@@ -137,6 +165,22 @@ function selfTest(): void {
   if (linkedFunctionExtent(symbols, "Func_08021360", 0x08021360, 48) !== 48) {
     throw new Error("absolute external symbol changed compiled extent");
   }
+  const temporary = mkdtempSync(join(tmpdir(), "alchemy-integrate-test-"));
+  try {
+    mkdirSync(join(temporary, "walls"));
+    writeFileSync(join(temporary, "08021360.c"), "candidate\n");
+    writeFileSync(join(temporary, "08021360.txt"), "notes\n");
+    writeFileSync(join(temporary, "unrelated.c"), "keep\n");
+    writeFileSync(join(temporary, "walls", "08021360.md"), "# 08021360\n\nState: OPEN — test.\n");
+    const cleaned = cleanupInstalledScratch("08021360", temporary, "2026-07-22");
+    if (cleaned.removed.join(",") !== "08021360.c,08021360.txt" || !cleaned.dossierClosed ||
+        existsSync(join(temporary, "08021360.c")) || !existsSync(join(temporary, "unrelated.c")) ||
+        !readFileSync(join(temporary, "walls", "08021360.md"), "utf8").includes("State: CLOSED — 2026-07-22")) {
+      throw new Error("installed scratch cleanup differs");
+    }
+  } finally {
+    rmSync(temporary, { recursive: true, force: true });
+  }
   console.log("self-test=ok");
 }
 
@@ -214,6 +258,10 @@ function main(): void {
     if (options.apply) {
       copyFileSync(join(options.directory, `src_${stem}.c`), join(ROOT, "src", `${stem}.c`));
       rmSync(join(ROOT, "asm", `${stem}.s`), { force: true });
+      const cleaned = cleanupInstalledScratch(stem);
+      if (cleaned.removed.length > 0 || cleaned.dossierClosed) {
+        console.log(`clean ${stem} scratch=${cleaned.removed.length} wall=${cleaned.dossierClosed ? "closed" : "absent"}`);
+      }
     }
   }
   for (const [stem, reason] of rejected) console.log(`reject ${stem}: ${reason}`);

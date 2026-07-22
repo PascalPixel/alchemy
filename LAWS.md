@@ -150,6 +150,19 @@ evidence.
   forwarding).
 - **Next test:** `inline` helper taking the struct by value or returning
   it; aggregate function arguments that the ABI splits into r0-r2.
+- **Sharpened (2026-07-22, later):** the family extends to the alloca
+  DMA staging function `080054e4` (family `180iruo8kyxn2`, four
+  members), where the reference evacuates its three scalar arguments to
+  r5/r6/ip because the store-multiple consumes hard r0-r2 — the
+  signature of a fixed-register pattern. Two ideal-condition probes
+  (`work/probe/stm_test.c`, `stm_test2.c`: values already in r0-r2,
+  base r3, base live after) still emit three `str`. The approved
+  compiler has not produced a non-block-move `stmia` in any C shape or
+  flag probed; treat surviving members as candidates for a mechanism
+  outside the probed space before considering reclassification. The
+  alloca frame, single pool word via a `Value_`-style absolute size
+  symbol, and `__builtin_alloca` availability under `-fno-builtin` are
+  all confirmed reproductions from the same investigation.
 - **Recorded:** 2026-07-22.
 
 ### Cast-literal table access

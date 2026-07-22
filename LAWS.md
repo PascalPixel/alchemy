@@ -91,6 +91,24 @@ Hypotheses are useful search leads, not accepted compiler laws. Promote one only
 after an approved local experiment or exact installed match supplies the stated
 evidence.
 
+### Pre-epilogue literal pool
+
+- **Claim:** 31 remaining C-debt regions share a structural signature the
+  per-function harness has not reproduced: the literal pool is dumped before
+  the epilogue behind an inserted `b.n`, instead of after the final `bx`.
+  Example: `080b09fc` (candidate exact except pool placement plus one
+  scheduling transposition). Enumerated by matching
+  `b <label>; <data words>; <label>: pop` in `asm/*.s`.
+- **Disproved so far (2026-07-22):** a trailing function in the same
+  translation unit (both tiny and >1KB, so simple pool-range pressure is not
+  the trigger), and `-mno-sched-prolog` (accepted by the driver, changes
+  bytes, does not move the pool).
+- **Next test:** reproduce with several functions and interleaved pool
+  pressure in one unit via `decomp_module.ts`-style multi-region compiles;
+  study which insn the reorg pass anchors the minipool to when the epilogue
+  falls through versus branches.
+- **Recorded:** 2026-07-22.
+
 ### Cast-literal table access
 
 - **Claim:** `((s32 *)ADDRESS)[index]` can produce an add-then-load address shape

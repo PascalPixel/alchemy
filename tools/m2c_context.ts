@@ -79,8 +79,24 @@ export function collectContext(sourceDirectory = join(ROOT, "src")): string {
     }
     for (const match of text.matchAll(DATA)) data.add(match[0]);
   }
+  // 手作業選別基底には型付きexternを出し、汎用のu8[]宣言を置換する。
+  const curatedExtern = new Map<string, string>();
+  try {
+    const curated = JSON.parse(readFileSync(join(ROOT, "work/structs_curated.json"), "utf8"));
+    for (const row of curated.structs ?? []) {
+      const address = row.base.replace(/[^0-9a-fx]/g, "").slice(-8);
+      const symbol = `Data_${address}`;
+      curatedExtern.set(symbol, row.base.startsWith("ptr:")
+        ? `extern struct Work_${address} *${symbol};`
+        : `extern struct Work_${address} ${symbol};`);
+    }
+  } catch {}
   const lines: string[] = [];
-  for (const symbol of [...data].sort()) lines.push(`extern u8 ${symbol}[];`);
+  for (const symbol of [...data].sort()) {
+    lines.push(curatedExtern.get(symbol) ?? `extern u8 ${symbol}[];`);
+    curatedExtern.delete(symbol);
+  }
+  for (const declaration of [...curatedExtern.values()].sort()) lines.push(declaration);
   // 第四段: 引数→基底の束縛から型付きシグネチャを出す。
   let bindings: Record<string, string> = {};
   try { bindings = JSON.parse(readFileSync(join(ROOT, "work/base_structs.json"), "utf8")).bindings ?? {}; } catch {}
@@ -105,10 +121,21 @@ export function collectContext(sourceDirectory = join(ROOT, "src")): string {
 function main(): void {
   // 採掘済み構造体を文脈へ畳み込む。強い基底だけを機械名で型化し、
   // m2cの推測をフィールド幅で導く(第三段)。
+  // 手作業選別(work/structs_curated.json)は採掘結果より優先する:
+  // 導入済み一致と検証済みasmの実測配置だけを収め、同一基底の採掘行を置換する。
   let structs = "";
   try {
     const mined = JSON.parse(readFileSync(join(ROOT, "work/base_structs.json"), "utf8"));
-    for (const row of mined.structs.slice(0, 40)) {
+    let curatedRows: Array<{ base: string; fields: Array<Record<string, unknown>> }> = [];
+    try {
+      curatedRows = JSON.parse(readFileSync(join(ROOT, "work/structs_curated.json"), "utf8")).structs ?? [];
+    } catch {}
+    const curatedBases = new Set(curatedRows.map((row) => row.base));
+    const rows = [
+      ...curatedRows,
+      ...mined.structs.filter((row: { base: string }) => !curatedBases.has(row.base)),
+    ];
+    for (const row of rows.slice(0, 40)) {
       const address = row.base.replace(/[^0-9a-fx]/g, "").slice(-8);
       const name = `Work_${address}`;
       let cursor = 0;

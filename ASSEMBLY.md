@@ -31,6 +31,7 @@ Figures regenerated 2026-07-22 via `bun tools/build_asm.ts --source-only`:
 | Mixed or misbounded code/data regions | 30 | 27,338 | Split before decompiling |
 | Structured runtime relocation-helper module | 1 | 128 | Keep structured assembly |
 | Proven parent-function fragments with pools | 9 | 1,646 | Merge when each owner is reconstructed |
+| Branch-connected executable-gap continuations | 43 | 2,812 | Merge with their tracked owners |
 | Proven multi-region function heads with pools | 9 | 3,820 | Merge with their continuations before exact C |
 | Proven multi-region function continuations with pools | 7 | 2,928 | Merge with their function owners before exact C |
 | Cross-function shared-literal module | 2 | 692 | Keep structured assembly pending module-aware C build |
@@ -39,7 +40,7 @@ Figures regenerated 2026-07-22 via `bun tools/build_asm.ts --source-only`:
 | Nonstandard Thumb branch modules | 13 | 576 | Keep structured assembly |
 | Proven register-only busy-wait | 1 | 14 | Keep assembly |
 | Mixed-mode multiply helper | 1 | 16 | Keep assembly |
-| Likely ordinary compiler output | 1,133 | 442,722 | Convert to exact C |
+| Likely ordinary compiler output | 1,090 | 439,910 | Convert to exact C |
 | **Total** | **2,191** | **501,802** | |
 
 These counts describe files, not callable entries. `080000c0.s` bundles 96
@@ -92,6 +93,13 @@ into or returns through that parent. Their internal pools, adjacent pools, and
 alignment are now explicit structured data. Authorship is unknown; they remain
 assembly only until their complete owning functions can be reconstructed as
 single units.
+
+The executable-gap package contributes another 43 continuation units totaling
+2,812 bytes. Each has a tracked incoming owner edge; the units either inherit
+live stack and high-register state or lie between the owner's branch and next
+entry. The large continuation at `0800fd5c`, for example, returns through the
+frame established by `0800fb38`. These bytes remain active decompilation work,
+but they are merge-with-owner work rather than 43 independent C searches.
 
 The former mixed regions at `080d765c`, `080dd9c0`, and `080ec100` are proven
 callable function heads, not complete functions. Each begins with a complete

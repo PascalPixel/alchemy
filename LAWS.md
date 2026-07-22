@@ -85,6 +85,23 @@ must be tested on more than one function before being generalized.
   [tools/alchemy_gcc.ts](tools/alchemy_gcc.ts).
 - **Confirmed:** 2026-07-21.
 
+### Fourth stratum: default-ABI library units
+
+- **Fingerprint:** functions saving r4 that dies before any call —
+  impossible under Camelot's `-fcall-used-r4`. First member: the flash
+  byte-program sequence `08006dec` (0x0E005555/0x2AAA command writes).
+- **Evidence:** the identical draft under our approved cc1 WITHOUT
+  `-fcall-used-r4` reproduces the r4 discipline and reaches 13
+  mismatched bytes (one pool-load-vs-volatile-store scheduling
+  decision), versus 44 under `old_agbcc` — this stratum is
+  same-compiler, default-flags: a per-stem flag registry case exactly
+  like `FIXED_R3_SOURCES`, needing no second binary.
+- **Also observed:** our vintage exempts constant-pool loads from the
+  volatile-store fence (readonly memory class); the reference pins
+  them. A vintage marker within the same scheduling-divergence family
+  as the LUID prologue ordering.
+- **Recorded:** 2026-07-22.
+
 ### Three-stratum compiler census
 
 - **Fingerprint:** prologue register discipline splits the executable

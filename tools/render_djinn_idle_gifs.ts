@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: dead; no tracked importer or invocation; audit before use.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { indexed_png } from "./import_asset.ts";

@@ -1,3 +1,4 @@
+// Tool role: both; imported by tools/permute_v1.ts; invoked by tools/decomp_overnight.ts.
 // Compiler-aware source constraints used by permute_v1. Each mutation preserves
 // the likely intent or ABI search space while changing type inference, live ranges,
 // pointer scheduling, or expression lowering.

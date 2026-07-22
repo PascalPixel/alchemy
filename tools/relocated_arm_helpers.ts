@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: entrypoint; invoked by package.json.
 import {
   existsSync,
   mkdirSync,

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: dead; no tracked importer or invocation; audit before use.
 import { build_sequence, extract_sequence } from "./music_sequence.ts";
 import { wavFromSignedPcm } from "./audio_wave.ts";
 

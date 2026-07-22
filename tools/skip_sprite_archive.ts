@@ -1,3 +1,4 @@
+// Tool role: both; imported by tools/build_assets.ts, tools/early_runtime_data.ts, tools/sentou_gamen_data.ts (+4 more); invoked by package.json.
 import { mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { deflateSync } from "./zlib.ts";

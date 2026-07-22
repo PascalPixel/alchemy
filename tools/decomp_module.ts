@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: entrypoint; invoked by PLAYBOOK.md, tools/decomp_overnight.ts.
 // Compile adjacent drafts as one translation unit. This exposes shared literal
 // pools and cross-function register/code-generation effects that per-function
 // matching cannot represent. Installation is guarded by exact whole-module bytes

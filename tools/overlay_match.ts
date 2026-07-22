@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: entrypoint; invoked by PLAYBOOK.md.
 // Generate and byte-test m2c drafts for high-confidence duplicate overlay
 // functions. Private compiler products and generated drafts remain ignored.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";

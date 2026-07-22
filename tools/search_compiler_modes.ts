@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: entrypoint; invoked by PLAYBOOK.md.
 // Batch-probe ordinary source-level compiler modes against the ranked C-debt
 // queue. Private binaries and diagnostics remain below ignored out/.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";

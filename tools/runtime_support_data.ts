@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
 import { lstatSync, renameSync, statSync, unlinkSync } from "fs";
 
 export const RUNTIME_SUPPORT_ADDRESS = 0x0800795c;

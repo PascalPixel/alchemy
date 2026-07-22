@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: dead; no tracked importer or invocation; audit before use.
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: entrypoint; invoked by PLAYBOOK.md.
 // m2cコンテキスト生成。src/の確定Cから関数定義と宣言を集め、
 // 逆コンパイル下書きの型推定に使う一つの宣言ファイルを書き出す。
 // 定義を最優先し、宣言同士は引数情報の多いものを残す。

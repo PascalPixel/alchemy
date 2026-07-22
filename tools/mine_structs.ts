@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: entrypoint; invoked by PLAYBOOK.md.
 // 構造体採掘。全一致済みCと全再構築アセンブリからフィールド接近を集計し、
 // 基底ごとの型付き構造体候補を推定してm2c文脈ヘッダを豊かにする。
 // 幅はldrh/strh/ldrb等の命令幅とM2C_FIELDの型から取り、多数決で確定する。

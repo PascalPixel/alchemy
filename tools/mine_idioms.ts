@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: entrypoint; invoked by tools/decomp_overnight.ts.
 // 慣用句採掘。一致済みCの各文を錨（呼出し先やフィールド接近の形）で
 // 索引し、証明済みの言い回し雛形を辞書として書き出す。雛形の局所
 // 変数は位置プレースホルダへ抽象化し、他関数の同型文へ移植できる。

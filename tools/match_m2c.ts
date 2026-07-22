@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: both; imported by tools/decomp_diagnose.ts, tools/decomp_module.ts, tools/decomp_queue.ts (+7 more); invoked by PLAYBOOK.md.
 import {
   existsSync,
   mkdirSync,

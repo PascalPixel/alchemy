@@ -1,3 +1,4 @@
+// Tool role: library; imported by tools/build_assets.ts, tools/compiler_template_index.ts, tools/executable_gap_sources.ts (+4 more).
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { Discovery } from "./discover.ts";

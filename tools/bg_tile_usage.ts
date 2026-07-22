@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: entrypoint; invoked by ASSETS.md, package.json.
 /**
  * 地図読込表、グリッド、メタタイルから背景タイルの使用箇所を索引化する。
  *

@@ -318,6 +318,14 @@ against the approved bundle; full sourced notes in
   sites are retained-structural kernels inside otherwise ordinary
   functions (mixed-region splits), not C debt. Positive-classification
   decision deferred to the classification framework and Pascal.
+- **Fourth and fifth negatives (2026-07-22, late):** Rosetta-built
+  gcc-3.0 emits three separate `str` under the same ideal conditions,
+  and volatile scalar stores (the community DmaSet macro shape) emit
+  three `str` under our cc1. New family member `08002f10` sharpens the
+  story: its stmia source operand is a live call result and, like every
+  member, the destination is a DMA-register block — reading as one
+  project-wide DMA-kick macro using a store-multiple for compact atomic
+  write ordering.
 - **Recorded:** 2026-07-22.
 
 ### Complement-form wide masks

@@ -9,14 +9,17 @@ verification inputs, never published build inputs.
 
 ## Current Golden Sun English snapshot
 
+Figures in this snapshot and the project-completion table were regenerated on
+2026-07-22 via `bun tools/build_full.ts --source-only`.
+
 The source-only ownership build currently accounts for:
 
 | Source form | Regions | Bytes |
 |---|---:|---:|
-| Compiled C | 797 | 32,254 |
-| Reconstruction assembly | 2,373 | 516,238 |
+| Compiled C | 979 | 46,634 |
+| Reconstruction assembly | 2,192 | 501,858 |
 | Canonical assets | 2,427 | 7,840,116 |
-| **Source-owned total** | **5,597** | **8,388,608** |
+| **Source-owned total** | **5,598** | **8,388,608** |
 | **Unowned remainder** | **0 gaps** | **0** |
 | **Canonical target size** |  | **8,388,608** |
 
@@ -26,16 +29,16 @@ assets, with no copied gap or private-ROM fallback. That milestone is achieved:
 8,388,608 bytes, or 100.00%. Exact reconstruction assembly counts toward byte
 closure even when it remains C-decompilation work.
 
-Within the reconstruction assembly, approximately 496,534 bytes remain active
+Within the reconstruction assembly, 482,154 bytes remain active
 C-decompilation, boundary-splitting, or function-merging work. The other 19,704
 bytes are presently retained structural assembly: linker veneers, runtime
 thunks, fixed hardware entry points, shared-literal modules, and proven
 compiler-unproducible kernels.
 
-The stricter build-report `byte_reconstruction` milestone is 7,892,074 of
-8,388,608 bytes, or 94.08%. It counts exact C, deterministic asset round trips,
+The stricter build-report `byte_reconstruction` milestone is 7,906,454 of
+8,388,608 bytes, or 94.25%. It counts exact C, deterministic asset round trips,
 and positively retained structural assembly, while treating ordinary
-reconstruction assembly as unfinished C work. The remaining 496,534 bytes are
+reconstruction assembly as unfinished C work. The remaining 482,154 bytes are
 the assembly debt. It is useful for
 tracking source quality, but it is not the immediate no-fallback byte-closure
 milestone and it is not a forecast of time remaining.
@@ -61,8 +64,8 @@ below describe only the current canonical Golden Sun English target.
 | Dimension | Current result | Meaning |
 |---|---:|---|
 | GS1 English byte closure | 8,388,608 / 8,388,608 bytes (100.00%) | Every address has a tracked producer; canonical build uses no fallback |
-| Byte reconstruction | 7,892,074 / 8,388,608 bytes (94.08%) | Exact C, round-tripping assets, or retained structural assembly |
-| Code decompilation | 32,254 / 528,788 identified executable bytes (6.10%) | Active executable work represented as exact C |
+| Byte reconstruction | 7,906,454 / 8,388,608 bytes (94.25%) | Exact C, round-tripping assets, or retained structural assembly |
+| Code decompilation | 46,634 / 528,788 identified executable bytes (8.82%) | Active executable work represented as exact C |
 | Asset semantic maturity | Audit pending | Round-trip success has not yet been classified as coherent or provisional |
 | Repository organization | Audit pending | Flatness, naming, source formats, and generated-file boundaries need a formal audit |
 | Build-target coverage | 1 active / 12 approved | GS1 English is canonical now; the other editions remain comparison evidence and future targets |
@@ -70,7 +73,7 @@ below describe only the current canonical Golden Sun English target.
 
 `build_full.ts` records these gates in `project_completion`. Until a tracked
 asset-maturity register exists, its formal classified count is zero and all
-2,280 round-tripping asset regions remain unclassified for project-completion
+2,427 round-tripping asset regions remain unclassified for project-completion
 purposes. That is not a claim that every asset is poor; it prevents unreviewed
 containers from silently receiving clean-source credit. The report also keeps
 the former `total_decompilation_*` fields as explicitly deprecated aliases for

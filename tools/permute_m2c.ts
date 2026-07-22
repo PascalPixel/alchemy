@@ -144,7 +144,7 @@ function usage(): void {
 }
 
 function parseArguments(arguments_: string[]): Options {
-  let rom = "gs1-en.gba";
+  let rom = "roms/gs1-en.gba";
   let drafts = join(ROOT, "work/m2c-all");
   let report = join(ROOT, "work/matches/m2c.json");
   let foundRom = false;

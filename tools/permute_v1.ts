@@ -32,7 +32,7 @@ interface Options {
 
 function parseArguments(argv: string[]): Options {
   const options: Options = {
-    rom: join(ROOT, "gs1-en.gba"),
+    rom: join(ROOT, "roms", "gs1-en.gba"),
     drafts: join(ROOT, "work/m2c-ctx"),
     report: join(ROOT, "work/matches/m2c.json"),
     steps: 3000,

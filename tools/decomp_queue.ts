@@ -100,7 +100,7 @@ async function main(): Promise<void> {
   }
   pending.sort((left, right) => (left.state.best?.score ?? Infinity) - (right.state.best?.score ?? Infinity));
   const selected = pending.slice(0, options.limit);
-  const rom = readFileSync(join(ROOT, "gs1-en.gba"));
+  const rom = readFileSync(join(ROOT, "roms", "gs1-en.gba"));
   const items = new Array<QueueItem | null>(selected.length).fill(null);
   let cursor = 0;
   async function worker(): Promise<void> {

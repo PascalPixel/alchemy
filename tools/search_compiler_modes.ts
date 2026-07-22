@@ -32,7 +32,7 @@ function optionsOf(arguments_: string[]): Options {
     limit: 250,
     jobs: Math.min(12, navigator.hardwareConcurrency || 1),
     queue: join(ROOT, "out/decomp/queue.json"),
-    rom: join(ROOT, "gs1-en.gba"),
+    rom: join(ROOT, "roms", "gs1-en.gba"),
   };
   for (let index = 0; index < arguments_.length; index++) {
     const argument = arguments_[index];

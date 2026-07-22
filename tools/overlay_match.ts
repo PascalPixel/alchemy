@@ -82,7 +82,7 @@ async function main(): Promise<void> {
   const duplicate = new Set(inventory.families.filter((family) => family.count > 1).map((family) => family.fingerprint));
   const selected = inventory.functions
     .filter((fn) => duplicate.has(fn.fingerprint) && fn.unresolved === 0 && fn.jump_tables === 0 &&
-      fn.code_bytes >= 8 && fn.code_bytes <= options.maxBytes && fn.code_bytes === fn.span_bytes &&
+      fn.code_bytes >= 8 && fn.code_bytes <= options.maxBytes && fn.span_bytes - fn.code_bytes <= 64 &&
       (options.targets === null || options.targets.has(fn.id)))
     .sort((left, right) => left.code_bytes - right.code_bytes || left.id.localeCompare(right.id))
     .slice(0, options.limit);

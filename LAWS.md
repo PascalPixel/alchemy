@@ -145,6 +145,24 @@ must be tested on more than one function before being generalized.
   tables (arm_010110a / arm_020422) run against the tie-break battery.
 - **Recorded:** 2026-07-22.
 
+### Address-valued small constants preserve pool loads
+
+- **Fingerprint:** the reference loads a very small numeric word from a literal
+  pool and compares it as a full register value, while natural C with the same
+  integer literal selects an immediate compare and changes downstream register
+  allocation.
+- **Producing idiom:** represent the value as the address of a canonical
+  absolute symbol, for example `(s32)&Value_00000001`, when the linked pool word
+  is independently verified to be that address. The compiler must then retain
+  the relocation-backed pool load instead of folding the value to an immediate.
+- **Scope:** confirmed for the shared `Data_02000240[237]` state test. This is
+  not permission to recast arbitrary integer constants as addresses; the pool
+  word and its use must independently support the address-valued reading.
+- **Evidence:** exact installed matches [src/0809b5dc.c](src/0809b5dc.c) and
+  [src/0809b364.c](src/0809b364.c). In the latter, preserving the pool load and
+  delaying the position read also removes an unnecessary r7 live range.
+- **Confirmed:** 2026-07-22.
+
 ## Hypotheses
 
 Hypotheses are useful search leads, not accepted compiler laws. Promote one only

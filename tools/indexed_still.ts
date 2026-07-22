@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 import { mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import { tile_png } from "./export_asset.ts";
 import { prune_files } from "./generated_files.ts";
 import { indexed_png, type Rgb } from "./import_asset.ts";
@@ -12,6 +12,37 @@ export const STILL_PALETTE_ENTRIES = 128;
 export const STILL_PALETTE_BYTES = STILL_PALETTE_ENTRIES * 2;
 export const RESOURCE_TABLE = 0x08320000;
 const ROM_BASE = 0x08000000;
+const DEFAULT_INDEX = resolve(import.meta.dir, "../assets/graphics/Pre-rendered Backgrounds/index.json");
+
+export interface StillIndexEntry {
+  id: string;
+  file: string;
+  scene: string;
+  location: string | null;
+}
+
+export function read_still_index(path = DEFAULT_INDEX): Map<string, StillIndexEntry> {
+  const document = JSON.parse(readFileSync(path, "utf8")) as {
+    format?: number;
+    kind?: string;
+    resources?: StillIndexEntry[];
+  };
+  if (document.format !== 1 || document.kind !== "golden-sun-pre-rendered-background-index" ||
+      !Array.isArray(document.resources)) throw new Error("invalid pre-rendered background index");
+  const result = new Map<string, StillIndexEntry>();
+  for (const [offset, entry] of document.resources.entries()) {
+    const expected = (0x1d + offset).toString(16);
+    if (entry.id !== expected || basename(entry.file) !== entry.file ||
+        !new RegExp(`^resource_${entry.id}_[a-z0-9_]+\\.8bpp\\.png$`).test(entry.file) ||
+        typeof entry.scene !== "string" || entry.scene.length === 0 ||
+        !(entry.location === null || typeof entry.location === "string")) {
+      throw new Error(`invalid pre-rendered background index entry ${offset}`);
+    }
+    result.set(entry.id, entry);
+  }
+  if (result.size !== 0x3e - 0x1d + 1) throw new Error("pre-rendered background index is incomplete");
+  return result;
+}
 
 export interface Delta7Decoded {
   pixels: Buffer;
@@ -230,6 +261,11 @@ function option(args: string[], ...names: string[]): string {
   return args[index + 1];
 }
 
+function optional_option(args: string[], ...names: string[]): string | undefined {
+  const index = args.findIndex((argument) => names.includes(argument));
+  return index < 0 ? undefined : option(args, ...names);
+}
+
 function same(left: string, right: string): boolean {
   try { return realpathSync(left) === realpathSync(right); } catch { return resolve(left) === resolve(right); }
 }
@@ -245,33 +281,38 @@ function resource_span(rom: Buffer, id: number): Buffer {
 
 function main(args: string[]): void {
   if (args.includes("-h") || args.includes("--help")) {
-    console.log("usage: indexed_still.ts [--self-test] export-series ROM --directory DIR");
+    console.log("usage: indexed_still.ts [--self-test] export-series ROM [--index FILE] [--directory DIR]");
     return;
   }
   if (args.includes("--self-test")) {
     self_test();
+    read_still_index();
     args = args.filter((argument) => argument !== "--self-test");
     if (args.length === 0) return;
   }
   if (args[0] !== "export-series" || !args[1]) throw new Error("an indexed-still command and ROM are required");
   const romPath = args[1];
-  const directory = option(args, "--directory");
+  const indexPath = optional_option(args, "--index") ?? DEFAULT_INDEX;
+  const directory = optional_option(args, "--directory") ?? dirname(indexPath);
+  const names = read_still_index(indexPath);
   if (same(romPath, directory)) throw new Error("refusing to overwrite the input ROM");
   const rom = readFileSync(romPath);
   let bytes = 0;
+  const outputs: string[] = [];
   for (let id = 0x1d; id <= 0x3e; id++) {
     const record = resource_span(rom, id);
     const decoded = decode_still(record);
     const [image] = export_still(record);
     const name = id.toString(16);
-    const output = join(directory, `resource_${name}`, "ichimaie.8bpp.png");
+    const output = join(directory, names.get(name)!.file);
     mkdirSync(dirname(output), { recursive: true });
     writeFileSync(output, image);
-    prune_files(dirname(output), "ichimaie*.png", [output]);
+    outputs.push(output);
     const [rebuilt] = build_still(image);
     if (!rebuilt.equals(record.subarray(0, decoded.size))) throw new Error(`resource ${name} round trip differs`);
     bytes += decoded.size;
   }
+  prune_files(directory, "resource_*.8bpp.png", outputs);
   console.log(`images=34 bytes=${bytes}`);
 }
 

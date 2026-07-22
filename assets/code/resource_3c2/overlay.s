@@ -288,6 +288,7 @@ Overlay_02000000:
 	.4byte 0x47704800
 	.2byte 0x8dd4
 	.2byte 0x0200
+AlchemyC_02000048:
 	.space 0x24
 	push	{r5, r6, lr}
 	adds	r6, r0, #0

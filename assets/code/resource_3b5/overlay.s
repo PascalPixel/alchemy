@@ -240,13 +240,8 @@ Overlay_02000000:
 	.4byte 0x47204c00
 	.2byte 0x8211
 	.2byte 0x0200
-	push	{lr}
-	movs	r0, #31
-	movs	r1, #2
-	movs	r2, #4
-	bl	sub_02000e96
-	pop	{r0}
-	bx	r0
+AlchemyC_02000030:
+	.space 0x10
 	push	{r5, lr}
 	ldmia	r0!, {r5}
 	ldmia	r1!, {r3}

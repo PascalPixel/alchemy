@@ -48,6 +48,7 @@ Overlay_02000000:
 	.4byte 0x47704800
 	.2byte 0x83c8
 	.2byte 0x0200
+AlchemyC_02000044:
 	.space 0x24
 	push	{r5, r6, lr}
 	ldr	r5, [pc, #64]

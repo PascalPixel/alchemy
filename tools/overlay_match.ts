@@ -20,6 +20,7 @@ interface Options {
   maxBytes: number;
   jobs: number;
   variants: number;
+  all: boolean;
   targets: Set<string> | null;
   output: string;
 }
@@ -42,6 +43,7 @@ function optionsOf(argv: string[]): Options {
     maxBytes: 96,
     jobs: Math.min(16, navigator.hardwareConcurrency || 1),
     variants: 1,
+    all: false,
     targets: null,
     output: join(ROOT, "out/decomp/overlay-matches"),
   };
@@ -52,10 +54,11 @@ function optionsOf(argv: string[]): Options {
     else if (argument === "--max-bytes") options.maxBytes = Number(argv[++index]);
     else if (argument === "--jobs") options.jobs = Number(argv[++index]);
     else if (argument === "--variants") options.variants = Number(argv[++index]);
+    else if (argument === "--all") options.all = true;
     else if (argument === "--targets") options.targets = new Set(argv[++index].split(",").filter(Boolean));
     else if (argument === "--output" || argument === "-o") options.output = argv[++index];
     else if (argument === "-h" || argument === "--help") {
-      console.log("usage: overlay_match.ts [--inventory FILE] [--limit N] [--max-bytes N] [--jobs N] [--variants N] [--targets ID,...] [-o DIR]");
+      console.log("usage: overlay_match.ts [--inventory FILE] [--limit N] [--max-bytes N] [--jobs N] [--variants N] [--all] [--targets ID,...] [-o DIR]");
       process.exit(0);
     } else throw new Error(`unrecognized argument: ${argument}`);
   }
@@ -82,7 +85,7 @@ async function main(): Promise<void> {
   };
   const duplicate = new Set(inventory.families.filter((family) => family.count > 1).map((family) => family.fingerprint));
   const selected = inventory.functions
-    .filter((fn) => duplicate.has(fn.fingerprint) && fn.unresolved === 0 && fn.jump_tables === 0 &&
+    .filter((fn) => (options.all || duplicate.has(fn.fingerprint)) && fn.unresolved === 0 && fn.jump_tables === 0 &&
       fn.code_bytes >= 8 && fn.code_bytes <= options.maxBytes && fn.span_bytes - fn.code_bytes <= 64 &&
       (options.targets === null || options.targets.has(fn.id)))
     .sort((left, right) => left.code_bytes - right.code_bytes || left.id.localeCompare(right.id))

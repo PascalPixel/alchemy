@@ -393,7 +393,7 @@ export function selfTest(): void {
 
 function parseArgs(argv: string[]): Options {
   const options: Options = {
-    rom: "gs1-en.gba",
+    rom: "roms/gs1-en.gba",
     sourceOnly: false,
     output: "out/full/rebuilt.gba",
     claimedOutput: "out/full/claimed",

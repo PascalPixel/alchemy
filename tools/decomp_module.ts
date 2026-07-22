@@ -94,7 +94,7 @@ async function main(): Promise<void> {
   const misplaced = stems.filter((stem) => addresses.get(`Func_${stem}`) !== Number.parseInt(stem, 16));
   const actual = readFileSync(binary);
   const expectedSize = regions.at(-1)!.address + regions.at(-1)!.size - regions[0].address;
-  const rom = readFileSync(join(ROOT, "gs1-en.gba"));
+  const rom = readFileSync(join(ROOT, "roms", "gs1-en.gba"));
   const expected = rom.subarray(regions[0].address - ROM_BASE, regions[0].address - ROM_BASE + expectedSize);
   let mismatches = Math.abs(actual.length - expected.length);
   for (let index = 0; index < Math.min(actual.length, expected.length); index++) if (actual[index] !== expected[index]) mismatches++;

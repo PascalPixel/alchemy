@@ -9,22 +9,41 @@ import { variants } from "./search_variants.ts";
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const OUT = join(ROOT, "out/decomp/queue-variants");
 
-interface Options { limit: number; variants: number; jobs: number }
+interface Options {
+  limit: number;
+  variants: number;
+  jobs: number;
+  queue: string;
+  rom: string;
+  targets: Set<string> | null;
+}
 interface Item { stem: string; candidate: string; diagnosis: { expected_size: number } }
 
 function optionsOf(arguments_: string[]): Options {
-  const options = { limit: 50, variants: 128, jobs: Math.min(18, navigator.hardwareConcurrency || 1) };
+  const options: Options = {
+    limit: 50,
+    variants: 128,
+    jobs: Math.min(18, navigator.hardwareConcurrency || 1),
+    queue: join(ROOT, "out/decomp/queue.json"),
+    rom: join(ROOT, "gs1-en.gba"),
+    targets: null,
+  };
   for (let index = 0; index < arguments_.length; index++) {
     const argument = arguments_[index];
     if (argument === "--limit") options.limit = Number(arguments_[++index]);
     else if (argument === "--variants") options.variants = Number(arguments_[++index]);
     else if (argument === "--jobs") options.jobs = Number(arguments_[++index]);
+    else if (argument === "--queue") options.queue = arguments_[++index];
+    else if (argument === "--rom") options.rom = arguments_[++index];
+    else if (argument === "--targets") {
+      options.targets = new Set(arguments_[++index].split(",").filter(Boolean));
+    }
     else if (argument === "-h" || argument === "--help") {
-      console.log("usage: search_queue_variants.ts [--limit N] [--variants N] [--jobs N]");
+      console.log("usage: search_queue_variants.ts [--limit N] [--variants N] [--jobs N] [--queue FILE] [--rom FILE] [--targets STEM,...]");
       process.exit(0);
     } else throw new Error(`unrecognized argument: ${argument}`);
   }
-  for (const value of Object.values(options)) {
+  for (const value of [options.limit, options.variants, options.jobs]) {
     if (!Number.isInteger(value) || value < 1) throw new Error("numeric options must be positive integers");
   }
   return options;
@@ -32,9 +51,11 @@ function optionsOf(arguments_: string[]): Options {
 
 async function main(): Promise<void> {
   const options = optionsOf(Bun.argv.slice(2));
-  const queue = JSON.parse(readFileSync(join(ROOT, "out/decomp/queue.json"), "utf8")) as { items: Item[] };
-  const rom = readFileSync(join(ROOT, "gs1-en.gba"));
-  const items = queue.items.slice(0, options.limit);
+  const queue = JSON.parse(readFileSync(options.queue, "utf8")) as { items: Item[] };
+  const rom = readFileSync(options.rom);
+  const items = queue.items
+    .filter((item) => options.targets === null || options.targets.has(item.stem))
+    .slice(0, options.limit);
   const tasks = items.flatMap((item) => {
     const source = readFileSync(join(ROOT, item.candidate), "utf8");
     return variants(source, options.variants).map(([label, body], index) => ({ item, label, body, index }));

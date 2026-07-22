@@ -6,8 +6,8 @@ function hex(value: number): string {
   return value.toString(16).padStart(8, "0");
 }
 
-export function branchTarget(data: Uint8Array, address: number, kind: string): number | null {
-  const offset = address - ROM_BASE;
+export function branchTarget(data: Uint8Array, address: number, kind: string, base = ROM_BASE): number | null {
+  const offset = address - base;
   const half = Buffer.from(data).readUInt16LE(offset);
   if (kind === "branch") return address + 4 + (sx(half & 0x7ff, 11) << 1);
   if (kind === "conditional") return address + 4 + (sx(half & 0xff, 8) << 1);
@@ -21,6 +21,7 @@ export function disassemble(
   end: number,
   instructions: Map<number, Instruction>,
   outputDir: string,
+  base = ROM_BASE,
 ): Map<number, string> {
   const binary = join(outputDir, `${hex(start)}.bin`);
   const masked = Buffer.alloc(Math.ceil((end - start) / 2) * 2);
@@ -30,7 +31,7 @@ export function disassemble(
   }
   const sourceData = Buffer.from(data);
   for (const [address, instruction] of instructions) {
-    const source = address - ROM_BASE;
+    const source = address - base;
     sourceData.copy(masked, address - start, source, source + instruction.size);
   }
   writeFileSync(binary, masked.subarray(0, end - start));
@@ -56,14 +57,14 @@ export function emitDiscovery(rom: Uint8Array, discovery: Discovery, address: nu
   const outputDir = dirname(output);
   mkdirSync(outputDir, { recursive: true });
   const functionInstructions = new Map(instructions.map((item) => [item, discovery.instructions.get(item)!]));
-  const decoded = disassemble(rom, start, end, functionInstructions, outputDir);
+  const decoded = disassemble(rom, start, end, functionInstructions, outputDir, discovery.base);
   const calls = new Map<number, number>();
   for (const [source, target, mode] of discovery.calls) if (fn.instructions.has(source) && mode === "thumb") calls.set(source, target);
   const jumpTables = new Map<number, number[]>();
   for (const [site, table] of discovery.jump_table_sites) if (fn.instructions.has(site)) jumpTables.set(table, discovery.jump_tables.get(table)!);
   const labels = new Set<number>();
   for (const item of instructions) {
-    const target = branchTarget(rom, item, discovery.instructions.get(item)!.kind);
+    const target = branchTarget(rom, item, discovery.instructions.get(item)!.kind, discovery.base);
     if (target !== null && fn.instructions.has(target)) labels.add(target);
   }
   for (const targets of jumpTables.values()) for (const target of targets) if (fn.instructions.has(target)) labels.add(target);
@@ -75,7 +76,7 @@ export function emitDiscovery(rom: Uint8Array, discovery: Discovery, address: nu
     const kind = discovery.instructions.get(item)!.kind;
     if (kind === "call" && calls.has(item)) instruction = `${instruction.split(/\s+/, 1)[0]} Func_${hex(calls.get(item)!)}`;
     else if (kind === "branch" || kind === "conditional") {
-      const target = branchTarget(rom, item, kind)!;
+      const target = branchTarget(rom, item, kind, discovery.base)!;
       if (fn.instructions.has(target)) instruction = `${instruction.split(/\s+/, 1)[0]} .L_${hex(target)}`;
     }
     const half = discovery.u16(item);

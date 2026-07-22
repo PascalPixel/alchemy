@@ -110,9 +110,11 @@ against the approved bundle; full sourced notes in
   emission.
 - **Long-branch `bl` substitution:** agbcc substitutes `bl` for internal
   branches beyond `b` range in large functions. Candidate ordinary-
-  compiler explanation for `nonstandard_thumb_call_module` regions;
-  verify against member sizes and branch distances before any
-  reclassification.
+  compiler explanation for `nonstandard_thumb_call_module` regions
+  (15 regions, 348 bytes): verify member-by-member that the `bl` target
+  distance exceeds ±2KB `b` range inside one logical function before
+  any reclassification — distance within range disproves it for that
+  member.
 - **Public thumb_reorg pool algorithm:** first pool-needing insn +
   ≤1000-byte forward scan for an existing barrier, else insert
   `b label; pool; label:` just before trailing jumps; HImode constant
@@ -171,6 +173,17 @@ against the approved bundle; full sourced notes in
   with word-mode `ldr` yet still sit pre-epilogue — the open question
   is what gives a word-mode entry (a zero-valued symbol) the short
   range there.
+- **Horizon confirmed locally (2026-07-22, research pass):** a
+  synthetic >1.2KB straight-line function makes our approved cc1 insert
+  the `b .L; .word; .L:` dump mid-function at ~1030 bytes — our vintage
+  has the same ~1KB `find_barrier` scan the public `thumb_reorg`
+  documents (first pool-needing insn, forward scan for an existing
+  barrier, else insert). Consequently the large add-sp cohort members
+  (bodies longer than the horizon past their first pool reference) are
+  reachable with ordinary shapes; combined with the HImode short-range
+  rule, only the three small pure-symbol members remain open, and
+  per-TU vintage (pokeruby `old_agbcc` precedent) is their leading
+  explanation.
 - **Next test:** reproduce with several functions and interleaved pool
   pressure in one unit via `decomp_module.ts`-style multi-region compiles;
   study which insn the reorg pass anchors the minipool to when the epilogue
@@ -234,11 +247,24 @@ against the approved bundle; full sourced notes in
   (`work/probe/stm_test.c`, `stm_test2.c`: values already in r0-r2,
   base r3, base live after) still emit three `str`. The approved
   compiler has not produced a non-block-move `stmia` in any C shape or
-  flag probed; treat surviving members as candidates for a mechanism
-  outside the probed space before considering reclassification. The
-  alloca frame, single pool word via a `Value_`-style absolute size
-  symbol, and `__builtin_alloca` availability under `-fno-builtin` are
-  all confirmed reproductions from the same investigation.
+  flag probed. The alloca frame, single pool word via a `Value_`-style
+  absolute size symbol, and `__builtin_alloca` availability under
+  `-fno-builtin` are all confirmed reproductions from the same
+  investigation.
+- **Three-backend negative (2026-07-22, research pass):** both public
+  agbcc Thumb backends (`gcc/thumb.md` and `gcc_arm/config/arm/thumb.md`)
+  contain NO pattern emitting a three-register `stmia` from computed
+  values: their block moves are strictly `ldmia`/`stmia` register-pair
+  chunks (`movmem12b`/`movmem8b` via `thumb_expand_movstrqi`, align-4,
+  ≤48 bytes), and the only direct multi-register store is the DImode
+  pair `stmia {%1, %H1}`. Combined with our cc1's ideal-condition
+  refusal, the parsimonious hypothesis is now that these sites were
+  INLINE ASSEMBLY in the original source (period-normal for DMA
+  macros): hard r0-r2 consumption forcing argument evacuation is
+  exactly a fixed hand-written sequence's signature. If accepted, the
+  sites are retained-structural kernels inside otherwise ordinary
+  functions (mixed-region splits), not C debt. Positive-classification
+  decision deferred to the classification framework and Pascal.
 - **Recorded:** 2026-07-22.
 
 ### Complement-form wide masks

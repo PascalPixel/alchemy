@@ -17,6 +17,20 @@ The name comes from the moment alchemy is released upon Weyard. This project
 is similarly trying to release the games from their finished cartridge images
 into code, art, maps, and music that people can explore.
 
+> ### Project completion
+>
+> 🟧 **Not honestly scoreable yet.**
+>
+> 🟩 Source ownership — complete for the canonical English layout<br>
+> 🟨 Code decompilation — active; see [STATUS.md](STATUS.md) for generated coverage<br>
+> 🟧 Asset quality and repository organization — semantic audit in progress
+>
+> 🟩 done · 🟨 active · 🟧 unsure/auditing · 🟥 blocked · ⬜️ undone
+>
+> The byte-reconstruction percentage does not measure pret-level completion or
+> time remaining. See [the technical status](STATUS.md) for the dated, generated
+> figures and full breakdown.
+
 ## Where the project stands
 
 See [STATUS.md](STATUS.md) for the live byte counts, what has been recovered,

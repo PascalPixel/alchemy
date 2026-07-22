@@ -26,14 +26,16 @@ const FIXED_R3_SOURCES = new Set([
 // at -O1; -O2 only swaps two independent setup instructions.
 const OPTIMIZE_O1_SOURCES = new Set(["08021e28"]);
 const UNSCHEDULED_SOURCES = new Set([
+  "08006b84",
   "080fb714", "080fb728", "080fb73c", "080fb750", "080fb75c",
   "080fb768", "080fb77c",
 ]);
 // 既定ABI(標準のr4被呼出保存)で構築された収蔵ライブラリ翻訳単位。
-// 証拠: 呼出前に死ぬr4を保存する序文は -fcall-used-r4 の下では出ない
-// (フラッシュ書込列 08006dec、LAWS.md「第四層」)。同一cc1・既定フラグ。
+// 証拠: r4を保存する序文は -fcall-used-r4 の下では出ない
+// (バイト複写08006b84、フラッシュ書込列08006dec、LAWS.md「第四層」)。
+// 同一cc1・既定フラグ。
 const DEFAULT_ABI_SOURCES = new Set([
-  "08006dec",
+  "08006b84", "08006dec",
 ]);
 
 function sourceStem(source: string): string {

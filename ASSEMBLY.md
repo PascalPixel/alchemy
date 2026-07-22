@@ -8,8 +8,9 @@ thunks, fixed hardware entries, and proven deliberately assembled kernels stay
 in assembly.
 
 The current boundary is generated and checked without a ROM by
-`bun tools/build_asm.ts --source-only`. After the latest exact-C checkpoint it
-is:
+`bun tools/build_asm.ts --source-only`.
+
+Figures regenerated 2026-07-22 via `bun tools/build_asm.ts --source-only`:
 
 | Classification | Files | Bytes | Long-term treatment |
 |---|---:|---:|---|
@@ -34,8 +35,8 @@ is:
 | Proven deliberate performance modules | 2 | 954 | Keep assembly |
 | Proven register-only busy-wait | 1 | 14 | Keep assembly |
 | Mixed-mode multiply helper | 1 | 16 | Keep assembly |
-| Likely ordinary compiler output | 1,367 | 462,070 | Convert to exact C |
-| **Total** | **2,389** | **517,506** | |
+| Likely ordinary compiler output | 1,170 | 446,422 | Convert to exact C |
+| **Total** | **2,192** | **501,858** | |
 
 These counts describe files, not callable entries. `080000c0.s` bundles 96
 fixed-width dispatch entries, `08006864.s` bundles two BIOS wrappers, and

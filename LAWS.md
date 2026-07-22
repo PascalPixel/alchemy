@@ -111,10 +111,11 @@ against the approved bundle; full sourced notes in
 - **Long-branch `bl` substitution:** agbcc substitutes `bl` for internal
   branches beyond `b` range in large functions. Candidate ordinary-
   compiler explanation for `nonstandard_thumb_call_module` regions
-  (15 regions, 348 bytes): verify member-by-member that the `bl` target
-  distance exceeds ±2KB `b` range inside one logical function before
-  any reclassification — distance within range disproves it for that
-  member.
+  (15 regions, 348 bytes). DISPROVED for all 15 members (2026-07-22):
+  measured `bl` distances are 12-374 bytes, far inside `b` range — the
+  substitution rule cannot explain them. They are the 080f9axx-cluster
+  multi-entry shared-tail audio units with genuinely nonstandard
+  conventions; their retained-structural classification stands.
 - **Public thumb_reorg pool algorithm:** first pool-needing insn +
   ≤1000-byte forward scan for an existing barrier, else insert
   `b label; pool; label:` just before trailing jumps; HImode constant

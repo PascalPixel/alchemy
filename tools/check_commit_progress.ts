@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: entrypoint; invoked by PLAYBOOK.md, package.json.
 // コミット件名の進捗表記を検査する。表記は「C化済み実行領域の累計」で、
 // 形式は [X of Y]。XはC一致済みの実行関数領域数、Yは X と残る
 // C化対象アセンブリ領域数の合計。バイト被覆表記は役目を終えて廃止した。

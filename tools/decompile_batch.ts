@@ -1,3 +1,4 @@
+// Tool role: entrypoint; invoked by PLAYBOOK.md.
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, join, resolve } from "node:path";
 import { Discovery } from "./discover.ts";

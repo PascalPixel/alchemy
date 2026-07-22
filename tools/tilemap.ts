@@ -1,3 +1,4 @@
+// Tool role: both; imported by tools/build_assets.ts, tools/chiiki_map_resources.ts, tools/map_container_components.ts (+1 more); invoked by package.json.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 

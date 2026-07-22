@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
 
 export const ROM_BASE = 0x08000000;
 export const DIRECTORY_ADDRESS = 0x08320000;

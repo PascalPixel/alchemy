@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: entrypoint; invoked by PLAYBOOK.md, package.json.
 import {
   copyFileSync,
   existsSync,

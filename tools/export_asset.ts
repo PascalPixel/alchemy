@@ -1,3 +1,4 @@
+// Tool role: both; imported by tools/archive_asset.ts, tools/battle_effect_data.ts, tools/chiiki_map_resources.ts (+18 more); invoked by package.json.
 import { mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { crc32, deflateSync } from "./zlib.ts";

@@ -1,3 +1,4 @@
+// Tool role: library; imported by tools/decompile_batch.ts, tools/overlay_match.ts.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { Discovery, ROM_BASE, sx, type Instruction } from "./discover.ts";

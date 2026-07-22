@@ -1,3 +1,4 @@
+// Tool role: library; imported by tools/compose_scene.ts, tools/export_asset.ts, tools/f0_archive.ts (+5 more).
 interface DeflateOptions {
   level?: 6 | 9;
 }

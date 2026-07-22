@@ -1,3 +1,4 @@
+// Tool role: both; imported by tools/midi_sequence.ts; invoked by ASSETS.md, assets/audio/README.md, tools/build_soundfont.ts.
 // midi_roundtrip.ts — 試作 (prototype)
 //
 // 目的: エンジン固有の sequence-JSON (tools/music_sequence.ts のコーデック) を

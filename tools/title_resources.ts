@@ -1,3 +1,4 @@
+// Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { decode_palette_trace, encode_palette, type PaletteGroup, type PaletteOperation } from "./extract_resource.ts";

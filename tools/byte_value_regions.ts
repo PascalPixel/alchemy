@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: library; imported by tools/build_assets.ts.
 import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
 

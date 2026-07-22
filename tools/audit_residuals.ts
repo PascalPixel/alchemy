@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: entrypoint; invoked by STATUS.md, package.json.
 
 export const ROM_BASE = 0x08000000;
 export const ROM_SIZE = 0x00800000;

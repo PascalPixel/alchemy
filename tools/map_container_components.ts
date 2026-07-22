@@ -1,3 +1,4 @@
+// Tool role: library; imported by tools/build_assets.ts, tools/chiiki_map_resources.ts, tools/tokushu_map_resources.ts.
 import { readFileSync, writeFileSync } from "node:fs";
 import {
   decode_general_trace, decode_palette_trace, encode_general, encode_palette,

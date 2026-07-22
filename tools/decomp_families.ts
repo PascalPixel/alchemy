@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: entrypoint; invoked by PLAYBOOK.md.
 // Authoritative C-debt queue and structural-family report. This consumes only
 // repository assembly claims and local compiler diagnostics; generated reports
 // remain below ignored out/.

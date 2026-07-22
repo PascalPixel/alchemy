@@ -1,3 +1,4 @@
+// Tool role: library; imported by tools/build_assets.ts, tools/compose_scene.ts, tools/f0_archive.ts (+3 more).
 import { existsSync, readdirSync, statSync, unlinkSync } from "node:fs";
 import { basename, extname, isAbsolute, relative, resolve } from "node:path";
 

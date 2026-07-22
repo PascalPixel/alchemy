@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: both; imported by tools/build_claimed.ts, tools/decomp_module.ts, tools/decompile_batch.ts (+5 more); invoked by ALCHEMY_GCC.md, LAWS.md, PLAYBOOK.md.
 import { readFileSync, statSync } from "node:fs";
 import { basename, dirname, extname, join } from "node:path";
 

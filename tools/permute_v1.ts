@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: entrypoint; invoked by PLAYBOOK.md, tools/decomp_overnight.ts.
 // 置換探索v1。m2c下書きを文モデルで変形し、焼きなましと重み付き
 // 編集距離で承認コンパイラのバイト差分を縮める。対象ごとの成績を
 // 保存して次波の予算を配分し、成功手順は他関数へ再演する。

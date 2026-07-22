@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
 import { readFileSync } from "fs";
 
 export const BYTE_HENKAN_ADDRESS = 0x080092b8;

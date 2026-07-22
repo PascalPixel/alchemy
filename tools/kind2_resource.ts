@@ -1,3 +1,4 @@
+// Tool role: both; imported by tools/build_assets.ts, tools/kind2_resource_series.ts; invoked by package.json.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { tile_png } from "./export_asset.ts";

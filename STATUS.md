@@ -16,10 +16,10 @@ The source-only ownership build currently accounts for:
 
 | Source form | Regions | Bytes |
 |---|---:|---:|
-| Compiled C | 979 | 46,634 |
-| Reconstruction assembly | 2,191 | 501,802 |
+| Compiled C | 981 | 46,778 |
+| Reconstruction assembly | 2,190 | 501,658 |
 | Canonical assets | 2,428 | 7,840,172 |
-| **Source-owned total** | **5,598** | **8,388,608** |
+| **Source-owned total** | **5,599** | **8,388,608** |
 | **Unowned remainder** | **0 gaps** | **0** |
 | **Canonical target size** |  | **8,388,608** |
 
@@ -29,16 +29,16 @@ assets, with no copied gap or private-ROM fallback. That milestone is achieved:
 8,388,608 bytes, or 100.00%. Exact reconstruction assembly counts toward byte
 closure even when it remains C-decompilation work.
 
-Within the reconstruction assembly, 478,454 bytes remain active
+Within the reconstruction assembly, 478,310 bytes remain active
 C-decompilation, boundary-splitting, or function-merging work. The other 23,348
 bytes are presently retained structural assembly: linker veneers, runtime
 thunks, fixed hardware entry points, shared-literal modules, and proven
 compiler-unproducible kernels.
 
-The stricter build-report `byte_reconstruction` milestone is 7,910,154 of
+The stricter build-report `byte_reconstruction` milestone is 7,910,298 of
 8,388,608 bytes, or 94.30%. It counts exact C, deterministic asset round trips,
 and positively retained structural assembly, while treating ordinary
-reconstruction assembly as unfinished C work. The remaining 478,454 bytes are
+reconstruction assembly as unfinished C work. The remaining 478,310 bytes are
 the assembly debt. It is useful for
 tracking source quality, but it is not the immediate no-fallback byte-closure
 milestone and it is not a forecast of time remaining.
@@ -64,8 +64,8 @@ below describe only the current canonical Golden Sun English target.
 | Dimension | Current result | Meaning |
 |---|---:|---|
 | GS1 English byte closure | 8,388,608 / 8,388,608 bytes (100.00%) | Every address has a tracked producer; canonical build uses no fallback |
-| Byte reconstruction | 7,910,154 / 8,388,608 bytes (94.30%) | Exact C, round-tripping assets, or retained structural assembly |
-| Code decompilation | 46,634 / 525,088 identified executable bytes (8.88%) | Active executable work represented as exact C |
+| Byte reconstruction | 7,910,298 / 8,388,608 bytes (94.30%) | Exact C, round-tripping assets, or retained structural assembly |
+| Code decompilation | 46,778 / 525,088 identified executable bytes (8.91%) | Active executable work represented as exact C |
 | Asset semantic maturity | Audit pending | Round-trip success has not yet been classified as coherent or provisional |
 | Repository organization | Audit pending | Flatness, naming, source formats, and generated-file boundaries need a formal audit |
 | Build-target coverage | 1 active / 12 approved | GS1 English is canonical now; the other editions remain comparison evidence and future targets |

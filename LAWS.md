@@ -136,6 +136,17 @@ evidence.
   emitted body instruction precedes a parameter copy and study its
   shape; consider whether the family's translation unit used a
   mechanism outside the probed flag space.
+- **Witness scan (2026-07-22, late):** eleven installed matches begin
+  push, pool load, arg copy (e.g. [src/08019908.c](src/08019908.c),
+  [src/08006384.c](src/08006384.c)). In every witness the pool load
+  feeds a dependent dereference two slots later: the scheduler hoists
+  the load for latency and fills the stall with the arg copy. The
+  queue-push family's `ldr r4, =queue` has no nearby dependent use
+  (the count read sits far below, behind the volatile IME store), so
+  the witnesses' mechanism does not apply to the reconstructed shape —
+  which suggests the original first statement created a short
+  dependent chain on the queue base that the current reconstruction
+  lacks, rather than a bare address materialization.
 - **Recorded:** 2026-07-22.
 
 ### Store-multiple transfer idiom

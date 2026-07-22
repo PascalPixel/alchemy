@@ -101,12 +101,34 @@ evidence.
   `b <label>; <data words>; <label>: pop` in `asm/*.s`.
 - **Disproved so far (2026-07-22):** a trailing function in the same
   translation unit (both tiny and >1KB, so simple pool-range pressure is not
-  the trigger), and `-mno-sched-prolog` (accepted by the driver, changes
-  bytes, does not move the pool).
+  the trigger), `-mno-sched-prolog` (accepted by the driver, changes
+  bytes, does not move the pool), and a real multi-function
+  `decomp_module.ts` unit (`080b09fc`+`080b0a20`: pool still lands after
+  `bx r0`). The approved compiler has not produced a pre-epilogue pool in
+  any tested configuration.
 - **Next test:** reproduce with several functions and interleaved pool
   pressure in one unit via `decomp_module.ts`-style multi-region compiles;
   study which insn the reorg pass anchors the minipool to when the epilogue
   falls through versus branches.
+- **Recorded:** 2026-07-22.
+
+### Store-multiple transfer idiom
+
+- **Claim:** a family of DMA-style regions ends in
+  `stmia rB!, {r0, r1, r2}` + `subs rB, #12` with the three words either
+  pool constants (`08004838`) or computed in registers (`080b0840`).
+  With the adjacent-store peephole disproved (ideal-conditions probe
+  emits three `str`), this must be an aggregate store whose load side is
+  register-forwarded — a hybrid the harness has not produced.
+- **Disproved so far (2026-07-22):** memberwise stores in every
+  declaration/init order (loads group but stores stay `str`, registers
+  allocate r2/r1 against the needed ascending order); const-local struct
+  copy (stack round-trip); static-const and GNU constructor-expression
+  copies (direct `ldmia`/`stmia` pair, source outside region); volatile
+  destination with memberwise temp (full stack round-trip, no
+  forwarding).
+- **Next test:** `inline` helper taking the struct by value or returning
+  it; aggregate function arguments that the ABI splits into r0-r2.
 - **Recorded:** 2026-07-22.
 
 ### Cast-literal table access

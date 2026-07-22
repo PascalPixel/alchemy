@@ -1,1355 +1,1354 @@
 {
-  "format": 1,
-  "default": {
-    "kind": "compiler_output",
-    "origin": "compiler",
-    "retention": "c_candidate",
-    "confidence": "likely",
-    "evidence": [
-      "ordinary_thumb_calling_convention"
-    ]
-  },
-  "structural": [
-    {
-      "kind": "linker_veneer",
-      "origin": "linker",
-      "retention": "keep_asm",
-      "confidence": "proven",
-      "evidence": [
-        "fixed_ldr_r4_bx_r4_literal"
-      ],
-      "expected_files": 608,
-      "expected_bytes": 4864
-    },
-    {
-      "kind": "alignment_padding",
-      "origin": "assembler",
-      "retention": "adjacent_section_alignment",
-      "confidence": "proven",
-      "evidence": [
-        "two_byte_zero_alignment"
-      ],
-      "expected_files": 328,
-      "expected_bytes": 656
-    }
-  ],
-  "groups": [
-    {
-      "kind": "relocated_iwram_payload",
-      "origin": "mixed_deliberate_and_compiler_runtime_assembly",
-      "retention": "keep_asm",
-      "confidence": "proven",
-      "evidence": [
-        "startup_copy_to_iwram",
-        "arm_irq_entry",
-        "scheduled_math_and_clear_kernels",
-        "compiler_runtime_division"
-      ],
-      "expected_files": 1,
-      "expected_bytes": 5120,
-      "files": [
-        "08000770"
-      ],
-      "subregions": [
-        {
-          "load_address": "0x08000770",
-          "run_address": "0x03000000",
-          "size": 224,
-          "kind": "irq_entry",
-          "origin": "program_or_runtime_assembly",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08000850",
-          "run_address": "0x030000e0",
-          "size": 56,
-          "kind": "irq_handler_table",
-          "origin": "runtime_data",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08000888",
-          "run_address": "0x03000118",
-          "size": 616,
-          "kind": "scheduled_math_clear_and_transform_kernels",
-          "origin": "program_or_library_assembly",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08000af0",
-          "run_address": "0x03000380",
-          "size": 576,
-          "kind": "division_runtime",
-          "origin": "compiler_runtime",
-          "authorship": "compiler_vendor"
-        },
-        {
-          "load_address": "0x08000d30",
-          "run_address": "0x030005c0",
-          "size": 152,
-          "kind": "decompressor",
-          "origin": "program_or_library_assembly",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08000dc8",
-          "run_address": "0x03000658",
-          "size": 196,
-          "kind": "audio_channel_update_thumb",
-          "origin": "program_or_library_assembly",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08000e8c",
-          "run_address": "0x0300071c",
-          "size": 960,
-          "kind": "audio_mixer_arm",
-          "origin": "program_or_library_assembly",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0800124c",
-          "run_address": "0x03000adc",
-          "size": 16,
-          "kind": "audio_mode_bridge_thumb",
-          "origin": "program_or_library_assembly",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0800125c",
-          "run_address": "0x03000aec",
-          "size": 780,
-          "kind": "audio_format_and_wave_helpers_arm",
-          "origin": "program_or_library_assembly",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08001568",
-          "run_address": "0x03000df8",
-          "size": 1424,
-          "kind": "audio_work_area_zero_init",
-          "origin": "runtime_data",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08001af8",
-          "run_address": "0x03001388",
-          "size": 120,
-          "kind": "word_copy_kernel_arm",
-          "origin": "program_or_library_assembly",
-          "authorship": "unknown"
-        }
-      ]
-    },
-    {
-      "kind": "relocated_stack_arm_kernel",
-      "origin": "program_or_library_runtime",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "dma_copy_to_stack",
-        "arm_instruction_set",
-        "indirect_call_through_relocated_entry",
-        "signed_q16_three_term_dot_product"
-      ],
-      "expected_files": 1,
-      "expected_bytes": 28,
-      "files": [
-        "08007994"
-      ]
-    },
-    {
-      "kind": "rom_dispatch_table",
-      "origin": "linker_or_runtime",
-      "retention": "keep_asm",
-      "confidence": "proven",
-      "evidence": [
-        "fixed_width_dispatch_entries"
-      ],
-      "expected_files": 1,
-      "expected_bytes": 768,
-      "files": [
-        "080000c0"
-      ]
-    },
-    {
-      "kind": "runtime_thunk_bundle",
-      "origin": "compiler_runtime",
-      "retention": "keep_asm",
-      "confidence": "proven",
-      "evidence": [
-        "approved_compiler_call_via_symbols"
-      ],
-      "expected_files": 1,
-      "expected_bytes": 56,
-      "files": [
-        "080072e4"
-      ]
-    },
-    {
-      "kind": "bios_wrapper",
-      "origin": "bios_interface",
-      "retention": "keep_asm",
-      "confidence": "proven",
-      "evidence": [
-        "fixed_software_interrupt_instruction"
-      ],
-      "expected_files": 2,
-      "expected_bytes": 16,
-      "files": [
-        "08006864",
-        "08006870"
-      ]
-    },
-    {
-      "kind": "deliberate_performance",
-      "origin": "program_or_library_assembly",
-      "retention": "keep_asm",
-      "confidence": "strong",
-      "evidence": [
-        "iwram_copy_payload",
-        "mixed_thumb_arm_audio_mixer",
-        "unrolled_64_byte_clear"
-      ],
-      "expected_files": 2,
-      "expected_bytes": 954,
-      "files": [
-        "080f9674",
-        "080f9a18"
-      ]
-    },
-    {
-      "kind": "nonstandard_thumb_call_module",
-      "origin": "program_or_library_runtime",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "manual_return_address_preserved_in_ip",
-        "direct_bl_clobbers_lr",
-        "no_lr_stack_save",
-        "approved_compiler_call_prologue_mismatch",
-        "byte_exact_reconstruction"
-      ],
-      "expected_files": 15,
-      "expected_bytes": 348,
-      "files": [
-        "080f9a80",
-        "080f9b40",
-        "080f9b4c",
-        "080f9b60",
-        "080f9b74",
-        "080f9ba4",
-        "080f9bb8",
-        "080f9bcc",
-        "080f9be0",
-        "080f9bf4",
-        "080f9c00",
-        "080f9c18",
-        "080f9c2c",
-        "080fa1d4",
-        "080fa1e8"
-      ]
-    },
-    {
-      "kind": "armv4t_helper_bank",
-      "origin": "program_or_library_runtime",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "arm_instruction_set",
-        "approved_compiler_thumb_only",
-        "contiguous_seven_region_bank",
-        "consumer_call_references",
-        "byte_exact_reconstruction"
-      ],
-      "expected_files": 7,
-      "expected_bytes": 2652,
-      "files": [
-        "08015430",
-        "08015570",
-        "080155d0",
-        "080158e8",
-        "08015afc",
-        "08015d74",
-        "08015e10"
-      ]
-    },
-    {
-      "kind": "gba_arm_entry",
-      "origin": "hardware_entry",
-      "retention": "keep_asm",
-      "confidence": "proven",
-      "evidence": [
-        "gba_header_branch_target",
-        "arm_cpu_mode_switch",
-        "fixed_irq_and_system_stack_setup",
-        "approved_compiler_thumb_only",
-        "byte_exact_reconstruction"
-      ],
-      "expected_files": 1,
-      "expected_bytes": 68,
-      "files": [
-        "080003c0"
-      ]
-    },
-    {
-      "kind": "nonstandard_thumb_branch_module",
-      "origin": "program_or_library_runtime",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "conditional_branch_or_loop",
-        "bare_bx_lr_return",
-        "no_lr_save",
-        "approved_compiler_prologue_mismatch",
-        "byte_exact_reconstruction"
-      ],
-      "expected_files": 13,
-      "expected_bytes": 576,
-      "files": [
-        "080006fc",
-        "080069a4",
-        "08006f48",
-        "080f9a30",
-        "080f9afc",
-        "080f9f3c",
-        "080fa16c",
-        "080fa1ac",
-        "080fa264",
-        "080fa280",
-        "080fa4cc",
-        "080fada0",
-        "080fb410"
-      ]
-    },
-    {
-      "kind": "deliberate_busy_wait",
-      "origin": "program_assembly",
-      "retention": "keep_asm",
-      "confidence": "proven",
-      "evidence": [
-        "register_only_empty_loop",
-        "optimized_c_erases_loop",
-        "volatile_c_changes_timing"
-      ],
-      "expected_files": 1,
-      "expected_bytes": 14,
-      "files": [
-        "080a8904"
-      ]
-    },
-    {
-      "kind": "mixed_region",
-      "origin": "unknown",
-      "retention": "split_first",
-      "confidence": "proven",
-      "evidence": [
-        "mixed_or_invalid_function_boundary"
-      ],
-      "expected_files": 30,
-      "expected_bytes": 27338,
-      "files": [
-        "0800ee14",
-        "08026080",
-        "08026b44",
-        "080be76c",
-        "080beb08",
-        "080bef88",
-        "080d0ee0",
-        "080d4ce8",
-        "080d77b4",
-        "080d7c08",
-        "080d7ea0",
-        "080ddb34",
-        "080ddde0",
-        "080e1acc",
-        "080e1df8",
-        "080e21e8",
-        "080e4b4c",
-        "080e4e0c",
-        "080e5504",
-        "080e57b4",
-        "080e5afc",
-        "080e5e28",
-        "080e6288",
-        "080ec474",
-        "080ec728",
-        "080ecae8",
-        "080f4318",
-        "080f47bc",
-        "080f4af0",
-        "080f4f04"
-      ]
-    },
-    {
-      "kind": "runtime_relocation_helper_module",
-      "origin": "program_or_library_runtime",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "two_direct_call_targets",
-        "embedded_thumb_helper_template",
-        "copies_helper_from_start_and_end_addresses",
-        "stores_relocated_thumb_entry"
-      ],
-      "expected_files": 1,
-      "expected_bytes": 128,
-      "files": [
-        "08006a78"
-      ],
-      "subregions": [
-        {
-          "load_address": "0x08006a78",
-          "size": 46,
-          "kind": "callable_function_code",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08006aa6",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08006aa8",
-          "size": 20,
-          "kind": "literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08006abc",
-          "size": 4,
-          "kind": "relocatable_thumb_helper_template",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08006ac0",
-          "size": 24,
-          "kind": "relocation_installer_code",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08006ad8",
-          "size": 12,
-          "kind": "literal_pool_with_helper_bounds",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08006ae4",
-          "size": 20,
-          "kind": "relocation_installer_code",
-          "authorship": "unknown"
-        }
-      ]
-    },
-    {
-      "kind": "parent_function_fragment",
-      "origin": "unknown",
-      "retention": "merge_with_owner",
-      "confidence": "proven",
-      "evidence": [
-        "direct_branch_without_call",
-        "live_parent_stack_and_high_register_state",
-        "adjacent_literal_or_constant_pool"
-      ],
-      "expected_files": 9,
-      "expected_bytes": 1646,
-      "files": [
-        "0800f1fa",
-        "0808b7b8",
-        "080d12a8",
-        "080d5094",
-        "080d8258",
-        "080e1724",
-        "080e1a48",
-        "080e4ab8",
-        "080e547c"
-      ],
-      "subregions": [
-        {
-          "load_address": "0x0800f1fa",
-          "size": 180,
-          "kind": "parent_function_code_fragment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0800f2ae",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0800f2b0",
-          "size": 16,
-          "kind": "internal_literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0800f2c0",
-          "size": 20,
-          "kind": "parent_function_code_fragment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0800f2d4",
-          "size": 4,
-          "kind": "internal_literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0800f2d8",
-          "size": 30,
-          "kind": "parent_function_code_fragment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0800f2f6",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0808b7b8",
-          "size": 98,
-          "kind": "parent_function_code_fragment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0808b81a",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0808b81c",
-          "size": 8,
-          "kind": "literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080d12a8",
-          "size": 152,
-          "kind": "parent_function_code_fragment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080d1340",
-          "size": 16,
-          "kind": "literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080d5094",
-          "size": 420,
-          "kind": "parent_function_code_fragment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080d5238",
-          "size": 32,
-          "kind": "literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080d8258",
-          "size": 80,
-          "kind": "parent_function_code_fragment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080d82a8",
-          "size": 8,
-          "kind": "literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e1724",
-          "size": 120,
-          "kind": "parent_function_code_fragment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e179c",
-          "size": 40,
-          "kind": "constant_and_literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e1a48",
-          "size": 80,
-          "kind": "parent_function_code_fragment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e1a98",
-          "size": 52,
-          "kind": "constant_and_literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e4ab8",
-          "size": 66,
-          "kind": "parent_function_code_fragment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e4afa",
-          "size": 82,
-          "kind": "constant_and_literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e547c",
-          "size": 80,
-          "kind": "parent_function_code_fragment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e54cc",
-          "size": 56,
-          "kind": "literal_pool",
-          "authorship": "unknown"
-        }
-      ]
-    },
-    {
-      "kind": "executable_gap_continuation",
-      "origin": "compiler",
-      "retention": "merge_with_owner",
-      "confidence": "proven",
-      "evidence": [
-        "branch_connected_continuation",
-        "no_independent_entry",
-        "live_parent_state",
-        "tracked_owner_edge",
-        "byte_exact_reconstruction"
-      ],
-      "expected_files": 43,
-      "expected_bytes": 2812,
-      "files": [
-        "0800f1bc",
-        "0800fd5c",
-        "080108c4",
-        "08011568",
-        "0801c9be",
-        "08021dfa",
-        "080268da",
-        "08026e72",
-        "08079390",
-        "08079418",
-        "0808f498",
-        "080944ec",
-        "080b7410",
-        "080bea9c",
-        "080bef58",
-        "080bf1e8",
-        "080c0ea6",
-        "080c91a4",
-        "080d126c",
-        "080d5052",
-        "080d7bd2",
-        "080d7e5c",
-        "080d821a",
-        "080dbb9a",
-        "080dddb8",
-        "080de08c",
-        "080e1daa",
-        "080e21ae",
-        "080e24fa",
-        "080e4ddc",
-        "080e53f4",
-        "080e5790",
-        "080e5acc",
-        "080e5dee",
-        "080e6252",
-        "080e660a",
-        "080e72de",
-        "080ec6f4",
-        "080ecaba",
-        "080ece52",
-        "080f474a",
-        "080f4ab2",
-        "080f4eca"
-      ]
-    },
-    {
-      "kind": "multi_region_function_continuation",
-      "origin": "unknown",
-      "retention": "merge_with_function_owner",
-      "confidence": "proven",
-      "evidence": [
-        "direct_branch_from_function_head_or_continuation",
-        "live_owner_stack_and_high_register_state",
-        "direct_branch_to_later_continuation",
-        "adjacent_literal_or_constant_pool"
-      ],
-      "expected_files": 7,
-      "expected_bytes": 2928,
-      "files": [
-        "0802691c",
-        "080d76f0",
-        "080dda3c",
-        "080de0d4",
-        "080e17c4",
-        "080ec190",
-        "080ec264"
-      ],
-      "subregions": [
-        {
-          "load_address": "0x0802691c",
-          "size": 490,
-          "kind": "function_code_continuation",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08026b06",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08026b08",
-          "size": 60,
-          "kind": "constant_and_literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080d76f0",
-          "size": 154,
-          "kind": "function_code_continuation",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080d778a",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080d778c",
-          "size": 40,
-          "kind": "literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080dda3c",
-          "size": 208,
-          "kind": "function_code_continuation",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080ddb0c",
-          "size": 40,
-          "kind": "literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080de0d4",
-          "size": 494,
-          "kind": "function_code_continuation",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080de2c2",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080de2c4",
-          "size": 52,
-          "kind": "literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e17c4",
-          "size": 106,
-          "kind": "function_code_continuation",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e182e",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e1830",
-          "size": 24,
-          "kind": "internal_literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e1848",
-          "size": 512,
-          "kind": "function_code_continuation",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080ec190",
-          "size": 68,
-          "kind": "function_code_continuation",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080ec1d4",
-          "size": 20,
-          "kind": "internal_literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080ec1e8",
-          "size": 84,
-          "kind": "function_code_continuation",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080ec23c",
-          "size": 40,
-          "kind": "literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080ec264",
-          "size": 126,
-          "kind": "function_code_continuation",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080ec2e2",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080ec2e4",
-          "size": 20,
-          "kind": "internal_literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080ec2f8",
-          "size": 338,
-          "kind": "function_code_continuation",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080ec44a",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080ec44c",
-          "size": 40,
-          "kind": "literal_pool",
-          "authorship": "unknown"
-        }
-      ]
-    },
-    {
-      "kind": "multi_region_function_head",
-      "origin": "unknown",
-      "retention": "merge_with_continuations",
-      "confidence": "proven",
-      "evidence": [
-        "callable_entry",
-        "complete_prologue",
-        "direct_branch_to_continuation",
-        "adjacent_literal_or_constant_pool"
-      ],
-      "expected_files": 9,
-      "expected_bytes": 3820,
-      "files": [
-        "0800ebec",
-        "0808b674",
-        "080be378",
-        "080d765c",
-        "080dd9c0",
-        "080e15e8",
-        "080e47b8",
-        "080ec100",
-        "080f4168"
-      ],
-      "subregions": [
-        {
-          "load_address": "0x0800ebec",
-          "size": 516,
-          "kind": "callable_function_head",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0800edf0",
-          "size": 36,
-          "kind": "literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0808b674",
-          "size": 282,
-          "kind": "callable_function_head",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0808b78e",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0808b790",
-          "size": 40,
-          "kind": "literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080be378",
-          "size": 504,
-          "kind": "callable_function_head",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080be570",
-          "size": 400,
-          "kind": "jump_table",
-          "entry_count": 100,
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080be700",
-          "size": 54,
-          "kind": "function_code_continuation",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080be736",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080be738",
-          "size": 52,
-          "kind": "literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080d765c",
-          "size": 114,
-          "kind": "callable_function_head",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080d76ce",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080d76d0",
-          "size": 32,
-          "kind": "literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080dd9c0",
-          "size": 86,
-          "kind": "callable_function_head",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080dda16",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080dda18",
-          "size": 36,
-          "kind": "literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e15e8",
-          "size": 120,
-          "kind": "callable_function_head",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e1660",
-          "size": 28,
-          "kind": "internal_literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e167c",
-          "size": 134,
-          "kind": "function_code_continuation",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e1702",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e1704",
-          "size": 32,
-          "kind": "literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e47b8",
-          "size": 74,
-          "kind": "callable_function_head",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e4802",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e4804",
-          "size": 8,
-          "kind": "internal_literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e480c",
-          "size": 70,
-          "kind": "function_code_continuation",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e4852",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e4854",
-          "size": 24,
-          "kind": "internal_literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e486c",
-          "size": 182,
-          "kind": "dispatching_function_code",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e4922",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080e4924",
-          "size": 404,
-          "kind": "jump_table",
-          "entry_count": 101,
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080ec100",
-          "size": 110,
-          "kind": "callable_function_head",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080ec16e",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080ec170",
-          "size": 32,
-          "kind": "literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080f4168",
-          "size": 324,
-          "kind": "callable_function_head",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080f42ac",
-          "size": 108,
-          "kind": "constant_and_literal_pool",
-          "authorship": "unknown"
-        }
-      ]
-    },
-    {
-      "kind": "shared_literal_function_module",
-      "origin": "unknown",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "bl_call_target",
-        "function_pointer_target",
-        "fallthrough_continuation",
-        "cross_function_literal_pool"
-      ],
-      "expected_files": 2,
-      "expected_bytes": 692,
-      "files": [
-        "080f9c44",
-        "080f9c90"
-      ],
-      "subregions": [
-        {
-          "load_address": "0x080f9c44",
-          "size": 66,
-          "kind": "callable_function_code",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080f9c86",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080f9c88",
-          "size": 8,
-          "kind": "local_literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080f9c90",
-          "size": 604,
-          "kind": "callable_function_code",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x080f9eec",
-          "size": 12,
-          "kind": "shared_literal_pool",
-          "authorship": "unknown"
-        }
-      ]
-    },
-    {
-      "kind": "iwram_runtime_veneer",
-      "origin": "compiler_runtime",
-      "retention": "keep_asm",
-      "confidence": "proven",
-      "evidence": [
-        "fixed_ldr_r3_bx_r3_iwram_target"
-      ],
-      "expected_files": 4,
-      "expected_bytes": 32,
-      "files": [
-        "080022ec",
-        "080022f4",
-        "080022fc",
-        "08002304"
-      ]
-    },
-    {
-      "kind": "deliberate_math_primitive",
-      "origin": "program_or_library_assembly",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "carry_driven_branching",
-        "shared_helper_entry",
-        "pc_relative_lookup_table",
-        "quarter_sine_values_match_rounded_formula"
-      ],
-      "expected_files": 2,
-      "expected_bytes": 568,
-      "files": [
-        "0800230c",
-        "0800231c"
-      ],
-      "subregions": [
-        {
-          "load_address": "0x0800230c",
-          "size": 16,
-          "kind": "fixed_point_math_helper_thumb",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0800231c",
-          "size": 40,
-          "kind": "fixed_point_sine_lookup_thumb",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08002344",
-          "size": 512,
-          "kind": "quarter_sine_table_u16",
-          "authorship": "unknown"
-        }
-      ]
-    },
-    {
-      "kind": "mixed_mode_multiply_helper",
-      "origin": "program_or_library_assembly",
-      "retention": "keep_asm",
-      "confidence": "proven",
-      "evidence": [
-        "thumb_to_arm_pc_switch",
-        "single_umull_high_word",
-        "approved_compiler_is_thumb_only"
-      ],
-      "expected_files": 1,
-      "expected_bytes": 16,
-      "files": [
-        "080f95e0"
-      ]
-    },
-    {
-      "kind": "relocated_arm_runtime_module",
-      "origin": "program_or_library_runtime",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "caller_copy_source_and_size_boundaries",
-        "arm_instruction_set",
-        "approved_compiler_thumb_only",
-        "byte_exact_reconstruction"
-      ],
-      "expected_files": 10,
-      "expected_bytes": 5720,
-      "files": [
-        "08002544",
-        "08002808",
-        "08002cf4",
-        "08002d5c",
-        "08009bb8",
-        "08009e7c",
-        "0800a0f8",
-        "0800a37c",
-        "0800a418",
-        "0800a494"
-      ],
-      "subregions": [
-        {
-          "load_address": "0x08002544",
-          "size": 708,
-          "kind": "format_0_1_decompressor_arm",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08002808",
-          "size": 1260,
-          "kind": "format_2_decompressor_arm",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08002cf4",
-          "size": 104,
-          "kind": "transfer_command_executor_arm",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08002d5c",
-          "size": 124,
-          "kind": "thumb_bl_relocation_walker_arm",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08009bb8",
-          "size": 708,
-          "kind": "caller_bounded_arm_module",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08009e7c",
-          "size": 636,
-          "kind": "caller_bounded_arm_module",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0800a0f8",
-          "size": 644,
-          "kind": "caller_bounded_arm_module",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0800a37c",
-          "size": 156,
-          "kind": "caller_bounded_arm_module",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0800a418",
-          "size": 124,
-          "kind": "caller_bounded_arm_module",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x0800a494",
-          "size": 1256,
-          "kind": "caller_bounded_arm_module",
-          "authorship": "unknown"
-        }
-      ]
-    },
-    {
-      "kind": "shared_literal_thumb_helper_module",
-      "origin": "unknown",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "two_callable_thumb_helpers",
-        "cross_function_literal_pool",
-        "former_08002df0_boundary_merged"
-      ],
-      "expected_files": 1,
-      "expected_bytes": 40,
-      "files": [
-        "08002dd8"
-      ],
-      "subregions": [
-        {
-          "load_address": "0x08002dd8",
-          "size": 22,
-          "kind": "callable_thumb_helper",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08002dee",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08002df0",
-          "size": 12,
-          "kind": "callable_thumb_helper",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08002dfc",
-          "size": 4,
-          "kind": "shared_literal_pool",
-          "authorship": "unknown"
-        }
-      ]
-    },
-    {
-      "kind": "literal_pool",
-      "origin": "compiler_or_assembler",
-      "retention": "keep_asm",
-      "confidence": "proven",
-      "evidence": [
-        "pc_relative_references_from_0809b698"
-      ],
-      "expected_files": 1,
-      "expected_bytes": 32,
-      "files": [
-        "0809b7e4"
-      ]
-    }
+ "format": 1,
+ "default": {
+  "kind": "compiler_output",
+  "origin": "compiler",
+  "retention": "c_candidate",
+  "confidence": "likely",
+  "evidence": [
+   "ordinary_thumb_calling_convention"
   ]
+ },
+ "structural": [
+  {
+   "kind": "linker_veneer",
+   "origin": "linker",
+   "retention": "keep_asm",
+   "confidence": "proven",
+   "evidence": [
+    "fixed_ldr_r4_bx_r4_literal"
+   ],
+   "expected_files": 608,
+   "expected_bytes": 4864
+  },
+  {
+   "kind": "alignment_padding",
+   "origin": "assembler",
+   "retention": "adjacent_section_alignment",
+   "confidence": "proven",
+   "evidence": [
+    "two_byte_zero_alignment"
+   ],
+   "expected_files": 328,
+   "expected_bytes": 656
+  }
+ ],
+ "groups": [
+  {
+   "kind": "relocated_iwram_payload",
+   "origin": "mixed_deliberate_and_compiler_runtime_assembly",
+   "retention": "keep_asm",
+   "confidence": "proven",
+   "evidence": [
+    "startup_copy_to_iwram",
+    "arm_irq_entry",
+    "scheduled_math_and_clear_kernels",
+    "compiler_runtime_division"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 5120,
+   "files": [
+    "08000770"
+   ],
+   "subregions": [
+    {
+     "load_address": "0x08000770",
+     "run_address": "0x03000000",
+     "size": 224,
+     "kind": "irq_entry",
+     "origin": "program_or_runtime_assembly",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08000850",
+     "run_address": "0x030000e0",
+     "size": 56,
+     "kind": "irq_handler_table",
+     "origin": "runtime_data",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08000888",
+     "run_address": "0x03000118",
+     "size": 616,
+     "kind": "scheduled_math_clear_and_transform_kernels",
+     "origin": "program_or_library_assembly",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08000af0",
+     "run_address": "0x03000380",
+     "size": 576,
+     "kind": "division_runtime",
+     "origin": "compiler_runtime",
+     "authorship": "compiler_vendor"
+    },
+    {
+     "load_address": "0x08000d30",
+     "run_address": "0x030005c0",
+     "size": 152,
+     "kind": "decompressor",
+     "origin": "program_or_library_assembly",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08000dc8",
+     "run_address": "0x03000658",
+     "size": 196,
+     "kind": "audio_channel_update_thumb",
+     "origin": "program_or_library_assembly",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08000e8c",
+     "run_address": "0x0300071c",
+     "size": 960,
+     "kind": "audio_mixer_arm",
+     "origin": "program_or_library_assembly",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0800124c",
+     "run_address": "0x03000adc",
+     "size": 16,
+     "kind": "audio_mode_bridge_thumb",
+     "origin": "program_or_library_assembly",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0800125c",
+     "run_address": "0x03000aec",
+     "size": 780,
+     "kind": "audio_format_and_wave_helpers_arm",
+     "origin": "program_or_library_assembly",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08001568",
+     "run_address": "0x03000df8",
+     "size": 1424,
+     "kind": "audio_work_area_zero_init",
+     "origin": "runtime_data",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08001af8",
+     "run_address": "0x03001388",
+     "size": 120,
+     "kind": "word_copy_kernel_arm",
+     "origin": "program_or_library_assembly",
+     "authorship": "unknown"
+    }
+   ]
+  },
+  {
+   "kind": "relocated_stack_arm_kernel",
+   "origin": "program_or_library_runtime",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "dma_copy_to_stack",
+    "arm_instruction_set",
+    "indirect_call_through_relocated_entry",
+    "signed_q16_three_term_dot_product"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 28,
+   "files": [
+    "08007994"
+   ]
+  },
+  {
+   "kind": "rom_dispatch_table",
+   "origin": "linker_or_runtime",
+   "retention": "keep_asm",
+   "confidence": "proven",
+   "evidence": [
+    "fixed_width_dispatch_entries"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 768,
+   "files": [
+    "080000c0"
+   ]
+  },
+  {
+   "kind": "runtime_thunk_bundle",
+   "origin": "compiler_runtime",
+   "retention": "keep_asm",
+   "confidence": "proven",
+   "evidence": [
+    "approved_compiler_call_via_symbols"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 56,
+   "files": [
+    "080072e4"
+   ]
+  },
+  {
+   "kind": "bios_wrapper",
+   "origin": "bios_interface",
+   "retention": "keep_asm",
+   "confidence": "proven",
+   "evidence": [
+    "fixed_software_interrupt_instruction"
+   ],
+   "expected_files": 2,
+   "expected_bytes": 16,
+   "files": [
+    "08006864",
+    "08006870"
+   ]
+  },
+  {
+   "kind": "deliberate_performance",
+   "origin": "program_or_library_assembly",
+   "retention": "keep_asm",
+   "confidence": "strong",
+   "evidence": [
+    "iwram_copy_payload",
+    "mixed_thumb_arm_audio_mixer",
+    "unrolled_64_byte_clear"
+   ],
+   "expected_files": 2,
+   "expected_bytes": 954,
+   "files": [
+    "080f9674",
+    "080f9a18"
+   ]
+  },
+  {
+   "kind": "nonstandard_thumb_call_module",
+   "origin": "program_or_library_runtime",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "manual_return_address_preserved_in_ip",
+    "direct_bl_clobbers_lr",
+    "no_lr_stack_save",
+    "approved_compiler_call_prologue_mismatch",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 15,
+   "expected_bytes": 348,
+   "files": [
+    "080f9a80",
+    "080f9b40",
+    "080f9b4c",
+    "080f9b60",
+    "080f9b74",
+    "080f9ba4",
+    "080f9bb8",
+    "080f9bcc",
+    "080f9be0",
+    "080f9bf4",
+    "080f9c00",
+    "080f9c18",
+    "080f9c2c",
+    "080fa1d4",
+    "080fa1e8"
+   ]
+  },
+  {
+   "kind": "armv4t_helper_bank",
+   "origin": "program_or_library_runtime",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "arm_instruction_set",
+    "approved_compiler_thumb_only",
+    "contiguous_seven_region_bank",
+    "consumer_call_references",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 7,
+   "expected_bytes": 2652,
+   "files": [
+    "08015430",
+    "08015570",
+    "080155d0",
+    "080158e8",
+    "08015afc",
+    "08015d74",
+    "08015e10"
+   ]
+  },
+  {
+   "kind": "gba_arm_entry",
+   "origin": "hardware_entry",
+   "retention": "keep_asm",
+   "confidence": "proven",
+   "evidence": [
+    "gba_header_branch_target",
+    "arm_cpu_mode_switch",
+    "fixed_irq_and_system_stack_setup",
+    "approved_compiler_thumb_only",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 68,
+   "files": [
+    "080003c0"
+   ]
+  },
+  {
+   "kind": "nonstandard_thumb_branch_module",
+   "origin": "program_or_library_runtime",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "conditional_branch_or_loop",
+    "bare_bx_lr_return",
+    "no_lr_save",
+    "approved_compiler_prologue_mismatch",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 13,
+   "expected_bytes": 576,
+   "files": [
+    "080006fc",
+    "080069a4",
+    "08006f48",
+    "080f9a30",
+    "080f9afc",
+    "080f9f3c",
+    "080fa16c",
+    "080fa1ac",
+    "080fa264",
+    "080fa280",
+    "080fa4cc",
+    "080fada0",
+    "080fb410"
+   ]
+  },
+  {
+   "kind": "deliberate_busy_wait",
+   "origin": "program_assembly",
+   "retention": "keep_asm",
+   "confidence": "proven",
+   "evidence": [
+    "register_only_empty_loop",
+    "optimized_c_erases_loop",
+    "volatile_c_changes_timing"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 14,
+   "files": [
+    "080a8904"
+   ]
+  },
+  {
+   "kind": "mixed_region",
+   "origin": "unknown",
+   "retention": "split_first",
+   "confidence": "proven",
+   "evidence": [
+    "mixed_or_invalid_function_boundary"
+   ],
+   "expected_files": 30,
+   "expected_bytes": 27352,
+   "files": [
+    "0800ee14",
+    "08026080",
+    "08026b44",
+    "080be76c",
+    "080beb08",
+    "080bef88",
+    "080d0ee0",
+    "080d4ce8",
+    "080d77b4",
+    "080d7c08",
+    "080d7ea0",
+    "080ddb34",
+    "080ddde0",
+    "080e1acc",
+    "080e1df8",
+    "080e21e8",
+    "080e4b4c",
+    "080e4e0c",
+    "080e5504",
+    "080e57b4",
+    "080e5afc",
+    "080e5e28",
+    "080e6288",
+    "080ec474",
+    "080ec728",
+    "080ecae8",
+    "080f4318",
+    "080f47bc",
+    "080f4af0",
+    "080f4f04"
+   ]
+  },
+  {
+   "kind": "runtime_relocation_helper_module",
+   "origin": "program_or_library_runtime",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "two_direct_call_targets",
+    "embedded_thumb_helper_template",
+    "copies_helper_from_start_and_end_addresses",
+    "stores_relocated_thumb_entry"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 128,
+   "files": [
+    "08006a78"
+   ],
+   "subregions": [
+    {
+     "load_address": "0x08006a78",
+     "size": 46,
+     "kind": "callable_function_code",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08006aa6",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08006aa8",
+     "size": 20,
+     "kind": "literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08006abc",
+     "size": 4,
+     "kind": "relocatable_thumb_helper_template",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08006ac0",
+     "size": 24,
+     "kind": "relocation_installer_code",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08006ad8",
+     "size": 12,
+     "kind": "literal_pool_with_helper_bounds",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08006ae4",
+     "size": 20,
+     "kind": "relocation_installer_code",
+     "authorship": "unknown"
+    }
+   ]
+  },
+  {
+   "kind": "parent_function_fragment",
+   "origin": "unknown",
+   "retention": "merge_with_owner",
+   "confidence": "proven",
+   "evidence": [
+    "direct_branch_without_call",
+    "live_parent_stack_and_high_register_state",
+    "adjacent_literal_or_constant_pool"
+   ],
+   "expected_files": 9,
+   "expected_bytes": 1646,
+   "files": [
+    "0800f1fa",
+    "0808b7b8",
+    "080d12a8",
+    "080d5094",
+    "080d8258",
+    "080e1724",
+    "080e1a48",
+    "080e4ab8",
+    "080e547c"
+   ],
+   "subregions": [
+    {
+     "load_address": "0x0800f1fa",
+     "size": 180,
+     "kind": "parent_function_code_fragment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0800f2ae",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0800f2b0",
+     "size": 16,
+     "kind": "internal_literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0800f2c0",
+     "size": 20,
+     "kind": "parent_function_code_fragment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0800f2d4",
+     "size": 4,
+     "kind": "internal_literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0800f2d8",
+     "size": 30,
+     "kind": "parent_function_code_fragment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0800f2f6",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0808b7b8",
+     "size": 98,
+     "kind": "parent_function_code_fragment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0808b81a",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0808b81c",
+     "size": 8,
+     "kind": "literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080d12a8",
+     "size": 152,
+     "kind": "parent_function_code_fragment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080d1340",
+     "size": 16,
+     "kind": "literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080d5094",
+     "size": 420,
+     "kind": "parent_function_code_fragment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080d5238",
+     "size": 32,
+     "kind": "literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080d8258",
+     "size": 80,
+     "kind": "parent_function_code_fragment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080d82a8",
+     "size": 8,
+     "kind": "literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e1724",
+     "size": 120,
+     "kind": "parent_function_code_fragment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e179c",
+     "size": 40,
+     "kind": "constant_and_literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e1a48",
+     "size": 80,
+     "kind": "parent_function_code_fragment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e1a98",
+     "size": 52,
+     "kind": "constant_and_literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e4ab8",
+     "size": 66,
+     "kind": "parent_function_code_fragment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e4afa",
+     "size": 82,
+     "kind": "constant_and_literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e547c",
+     "size": 80,
+     "kind": "parent_function_code_fragment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e54cc",
+     "size": 56,
+     "kind": "literal_pool",
+     "authorship": "unknown"
+    }
+   ]
+  },
+  {
+   "kind": "executable_gap_continuation",
+   "origin": "compiler",
+   "retention": "merge_with_owner",
+   "confidence": "proven",
+   "evidence": [
+    "branch_connected_continuation",
+    "no_independent_entry",
+    "live_parent_state",
+    "tracked_owner_edge",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 42,
+   "expected_bytes": 2798,
+   "files": [
+    "0800f1bc",
+    "0800fd5c",
+    "080108c4",
+    "08011568",
+    "0801c9be",
+    "08021dfa",
+    "080268da",
+    "08079390",
+    "08079418",
+    "0808f498",
+    "080944ec",
+    "080b7410",
+    "080bea9c",
+    "080bef58",
+    "080bf1e8",
+    "080c0ea6",
+    "080c91a4",
+    "080d126c",
+    "080d5052",
+    "080d7bd2",
+    "080d7e5c",
+    "080d821a",
+    "080dbb9a",
+    "080dddb8",
+    "080de08c",
+    "080e1daa",
+    "080e21ae",
+    "080e24fa",
+    "080e4ddc",
+    "080e53f4",
+    "080e5790",
+    "080e5acc",
+    "080e5dee",
+    "080e6252",
+    "080e660a",
+    "080e72de",
+    "080ec6f4",
+    "080ecaba",
+    "080ece52",
+    "080f474a",
+    "080f4ab2",
+    "080f4eca"
+   ]
+  },
+  {
+   "kind": "multi_region_function_continuation",
+   "origin": "unknown",
+   "retention": "merge_with_function_owner",
+   "confidence": "proven",
+   "evidence": [
+    "direct_branch_from_function_head_or_continuation",
+    "live_owner_stack_and_high_register_state",
+    "direct_branch_to_later_continuation",
+    "adjacent_literal_or_constant_pool"
+   ],
+   "expected_files": 7,
+   "expected_bytes": 2928,
+   "files": [
+    "0802691c",
+    "080d76f0",
+    "080dda3c",
+    "080de0d4",
+    "080e17c4",
+    "080ec190",
+    "080ec264"
+   ],
+   "subregions": [
+    {
+     "load_address": "0x0802691c",
+     "size": 490,
+     "kind": "function_code_continuation",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08026b06",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08026b08",
+     "size": 60,
+     "kind": "constant_and_literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080d76f0",
+     "size": 154,
+     "kind": "function_code_continuation",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080d778a",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080d778c",
+     "size": 40,
+     "kind": "literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080dda3c",
+     "size": 208,
+     "kind": "function_code_continuation",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080ddb0c",
+     "size": 40,
+     "kind": "literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080de0d4",
+     "size": 494,
+     "kind": "function_code_continuation",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080de2c2",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080de2c4",
+     "size": 52,
+     "kind": "literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e17c4",
+     "size": 106,
+     "kind": "function_code_continuation",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e182e",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e1830",
+     "size": 24,
+     "kind": "internal_literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e1848",
+     "size": 512,
+     "kind": "function_code_continuation",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080ec190",
+     "size": 68,
+     "kind": "function_code_continuation",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080ec1d4",
+     "size": 20,
+     "kind": "internal_literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080ec1e8",
+     "size": 84,
+     "kind": "function_code_continuation",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080ec23c",
+     "size": 40,
+     "kind": "literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080ec264",
+     "size": 126,
+     "kind": "function_code_continuation",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080ec2e2",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080ec2e4",
+     "size": 20,
+     "kind": "internal_literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080ec2f8",
+     "size": 338,
+     "kind": "function_code_continuation",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080ec44a",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080ec44c",
+     "size": 40,
+     "kind": "literal_pool",
+     "authorship": "unknown"
+    }
+   ]
+  },
+  {
+   "kind": "multi_region_function_head",
+   "origin": "unknown",
+   "retention": "merge_with_continuations",
+   "confidence": "proven",
+   "evidence": [
+    "callable_entry",
+    "complete_prologue",
+    "direct_branch_to_continuation",
+    "adjacent_literal_or_constant_pool"
+   ],
+   "expected_files": 9,
+   "expected_bytes": 3820,
+   "files": [
+    "0800ebec",
+    "0808b674",
+    "080be378",
+    "080d765c",
+    "080dd9c0",
+    "080e15e8",
+    "080e47b8",
+    "080ec100",
+    "080f4168"
+   ],
+   "subregions": [
+    {
+     "load_address": "0x0800ebec",
+     "size": 516,
+     "kind": "callable_function_head",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0800edf0",
+     "size": 36,
+     "kind": "literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0808b674",
+     "size": 282,
+     "kind": "callable_function_head",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0808b78e",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0808b790",
+     "size": 40,
+     "kind": "literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080be378",
+     "size": 504,
+     "kind": "callable_function_head",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080be570",
+     "size": 400,
+     "kind": "jump_table",
+     "entry_count": 100,
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080be700",
+     "size": 54,
+     "kind": "function_code_continuation",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080be736",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080be738",
+     "size": 52,
+     "kind": "literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080d765c",
+     "size": 114,
+     "kind": "callable_function_head",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080d76ce",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080d76d0",
+     "size": 32,
+     "kind": "literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080dd9c0",
+     "size": 86,
+     "kind": "callable_function_head",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080dda16",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080dda18",
+     "size": 36,
+     "kind": "literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e15e8",
+     "size": 120,
+     "kind": "callable_function_head",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e1660",
+     "size": 28,
+     "kind": "internal_literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e167c",
+     "size": 134,
+     "kind": "function_code_continuation",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e1702",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e1704",
+     "size": 32,
+     "kind": "literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e47b8",
+     "size": 74,
+     "kind": "callable_function_head",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e4802",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e4804",
+     "size": 8,
+     "kind": "internal_literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e480c",
+     "size": 70,
+     "kind": "function_code_continuation",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e4852",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e4854",
+     "size": 24,
+     "kind": "internal_literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e486c",
+     "size": 182,
+     "kind": "dispatching_function_code",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e4922",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e4924",
+     "size": 404,
+     "kind": "jump_table",
+     "entry_count": 101,
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080ec100",
+     "size": 110,
+     "kind": "callable_function_head",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080ec16e",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080ec170",
+     "size": 32,
+     "kind": "literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080f4168",
+     "size": 324,
+     "kind": "callable_function_head",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080f42ac",
+     "size": 108,
+     "kind": "constant_and_literal_pool",
+     "authorship": "unknown"
+    }
+   ]
+  },
+  {
+   "kind": "shared_literal_function_module",
+   "origin": "unknown",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "bl_call_target",
+    "function_pointer_target",
+    "fallthrough_continuation",
+    "cross_function_literal_pool"
+   ],
+   "expected_files": 2,
+   "expected_bytes": 692,
+   "files": [
+    "080f9c44",
+    "080f9c90"
+   ],
+   "subregions": [
+    {
+     "load_address": "0x080f9c44",
+     "size": 66,
+     "kind": "callable_function_code",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080f9c86",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080f9c88",
+     "size": 8,
+     "kind": "local_literal_pool",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080f9c90",
+     "size": 604,
+     "kind": "callable_function_code",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080f9eec",
+     "size": 12,
+     "kind": "shared_literal_pool",
+     "authorship": "unknown"
+    }
+   ]
+  },
+  {
+   "kind": "iwram_runtime_veneer",
+   "origin": "compiler_runtime",
+   "retention": "keep_asm",
+   "confidence": "proven",
+   "evidence": [
+    "fixed_ldr_r3_bx_r3_iwram_target"
+   ],
+   "expected_files": 4,
+   "expected_bytes": 32,
+   "files": [
+    "080022ec",
+    "080022f4",
+    "080022fc",
+    "08002304"
+   ]
+  },
+  {
+   "kind": "deliberate_math_primitive",
+   "origin": "program_or_library_assembly",
+   "retention": "keep_structured_asm",
+   "confidence": "strong",
+   "evidence": [
+    "carry_driven_branching",
+    "shared_helper_entry",
+    "pc_relative_lookup_table",
+    "quarter_sine_values_match_rounded_formula"
+   ],
+   "expected_files": 2,
+   "expected_bytes": 568,
+   "files": [
+    "0800230c",
+    "0800231c"
+   ],
+   "subregions": [
+    {
+     "load_address": "0x0800230c",
+     "size": 16,
+     "kind": "fixed_point_math_helper_thumb",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0800231c",
+     "size": 40,
+     "kind": "fixed_point_sine_lookup_thumb",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08002344",
+     "size": 512,
+     "kind": "quarter_sine_table_u16",
+     "authorship": "unknown"
+    }
+   ]
+  },
+  {
+   "kind": "mixed_mode_multiply_helper",
+   "origin": "program_or_library_assembly",
+   "retention": "keep_asm",
+   "confidence": "proven",
+   "evidence": [
+    "thumb_to_arm_pc_switch",
+    "single_umull_high_word",
+    "approved_compiler_is_thumb_only"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 16,
+   "files": [
+    "080f95e0"
+   ]
+  },
+  {
+   "kind": "relocated_arm_runtime_module",
+   "origin": "program_or_library_runtime",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "caller_copy_source_and_size_boundaries",
+    "arm_instruction_set",
+    "approved_compiler_thumb_only",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 10,
+   "expected_bytes": 5720,
+   "files": [
+    "08002544",
+    "08002808",
+    "08002cf4",
+    "08002d5c",
+    "08009bb8",
+    "08009e7c",
+    "0800a0f8",
+    "0800a37c",
+    "0800a418",
+    "0800a494"
+   ],
+   "subregions": [
+    {
+     "load_address": "0x08002544",
+     "size": 708,
+     "kind": "format_0_1_decompressor_arm",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08002808",
+     "size": 1260,
+     "kind": "format_2_decompressor_arm",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08002cf4",
+     "size": 104,
+     "kind": "transfer_command_executor_arm",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08002d5c",
+     "size": 124,
+     "kind": "thumb_bl_relocation_walker_arm",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08009bb8",
+     "size": 708,
+     "kind": "caller_bounded_arm_module",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08009e7c",
+     "size": 636,
+     "kind": "caller_bounded_arm_module",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0800a0f8",
+     "size": 644,
+     "kind": "caller_bounded_arm_module",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0800a37c",
+     "size": 156,
+     "kind": "caller_bounded_arm_module",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0800a418",
+     "size": 124,
+     "kind": "caller_bounded_arm_module",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0800a494",
+     "size": 1256,
+     "kind": "caller_bounded_arm_module",
+     "authorship": "unknown"
+    }
+   ]
+  },
+  {
+   "kind": "shared_literal_thumb_helper_module",
+   "origin": "unknown",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "two_callable_thumb_helpers",
+    "cross_function_literal_pool",
+    "former_08002df0_boundary_merged"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 40,
+   "files": [
+    "08002dd8"
+   ],
+   "subregions": [
+    {
+     "load_address": "0x08002dd8",
+     "size": 22,
+     "kind": "callable_thumb_helper",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08002dee",
+     "size": 2,
+     "kind": "alignment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08002df0",
+     "size": 12,
+     "kind": "callable_thumb_helper",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08002dfc",
+     "size": 4,
+     "kind": "shared_literal_pool",
+     "authorship": "unknown"
+    }
+   ]
+  },
+  {
+   "kind": "literal_pool",
+   "origin": "compiler_or_assembler",
+   "retention": "keep_asm",
+   "confidence": "proven",
+   "evidence": [
+    "pc_relative_references_from_0809b698"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 32,
+   "files": [
+    "0809b7e4"
+   ]
+  }
+ ]
 }

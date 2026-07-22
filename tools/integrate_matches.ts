@@ -63,6 +63,11 @@ export function cleanupInstalledScratch(
       removed.push(entry.name);
     }
   }
+  const handDirectory = join(workRoot, "hand", stem);
+  if (existsSync(handDirectory)) {
+    rmSync(handDirectory, { recursive: true, force: true });
+    removed.push(`hand/${stem}/`);
+  }
   removed.sort();
   const dossier = join(workRoot, "walls", `${stem}.md`);
   if (!existsSync(dossier)) return { removed, dossierClosed: false };
@@ -169,13 +174,16 @@ function selfTest(): void {
   const temporary = mkdtempSync(join(tmpdir(), "alchemy-integrate-test-"));
   try {
     mkdirSync(join(temporary, "walls"));
+    mkdirSync(join(temporary, "hand", "08021360"), { recursive: true });
+    writeFileSync(join(temporary, "hand", "08021360", "shape.c"), "champion\n");
     writeFileSync(join(temporary, "08021360.c"), "candidate\n");
     writeFileSync(join(temporary, "08021360.txt"), "notes\n");
     writeFileSync(join(temporary, "unrelated.c"), "keep\n");
     writeFileSync(join(temporary, "walls", "08021360.md"), "# 08021360\n\nState: OPEN — test.\n");
     const cleaned = cleanupInstalledScratch("08021360", temporary, "2026-07-22");
-    if (cleaned.removed.join(",") !== "08021360.c,08021360.txt" || !cleaned.dossierClosed ||
-        existsSync(join(temporary, "08021360.c")) || !existsSync(join(temporary, "unrelated.c")) ||
+    if (cleaned.removed.join(",") !== "08021360.c,08021360.txt,hand/08021360/" || !cleaned.dossierClosed ||
+        existsSync(join(temporary, "08021360.c")) || existsSync(join(temporary, "hand", "08021360")) ||
+        !existsSync(join(temporary, "unrelated.c")) ||
         !readFileSync(join(temporary, "walls", "08021360.md"), "utf8").includes("State: CLOSED — 2026-07-22")) {
       throw new Error("installed scratch cleanup differs");
     }

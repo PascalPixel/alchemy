@@ -19,11 +19,13 @@ Figures regenerated 2026-07-22 via `bun tools/build_asm.ts --source-only`:
 | `_call_via_rN` runtime thunk bundle | 1 | 56 | Keep assembly |
 | BIOS/SWI wrapper bundles | 2 | 16 | Keep assembly |
 | ROM dispatch table | 1 | 768 | Keep assembly |
+| Fixed ARM cartridge entry | 1 | 68 | Keep assembly |
 | Relocated IWRAM payload | 1 | 5,120 | Keep structured assembly |
 | IWRAM division veneers | 4 | 32 | Keep assembly |
 | Fixed-point math and quarter-sine lookup module | 2 | 568 | Keep structured assembly/data |
 | Compiler/assembler literal pool | 1 | 32 | Keep structured data |
 | Relocated ARM runtime modules | 10 | 5,720 | Keep structured assembly |
+| Contiguous ARMv4T helper bank | 7 | 2,652 | Keep structured assembly |
 | Relocated stack ARM kernel | 1 | 28 | Keep structured assembly |
 | Shared-literal Thumb helper module | 1 | 40 | Keep structured assembly pending module-aware C |
 | Mixed or misbounded code/data regions | 30 | 27,338 | Split before decompiling |
@@ -34,10 +36,11 @@ Figures regenerated 2026-07-22 via `bun tools/build_asm.ts --source-only`:
 | Cross-function shared-literal module | 2 | 692 | Keep structured assembly pending module-aware C build |
 | Proven deliberate performance modules | 2 | 954 | Keep assembly |
 | Nonstandard Thumb call modules | 15 | 348 | Keep structured assembly |
+| Nonstandard Thumb branch modules | 13 | 576 | Keep structured assembly |
 | Proven register-only busy-wait | 1 | 14 | Keep assembly |
 | Mixed-mode multiply helper | 1 | 16 | Keep assembly |
-| Likely ordinary compiler output | 1,155 | 446,074 | Convert to exact C |
-| **Total** | **2,192** | **501,858** | |
+| Likely ordinary compiler output | 1,133 | 442,722 | Convert to exact C |
+| **Total** | **2,191** | **501,802** | |
 
 These counts describe files, not callable entries. `080000c0.s` bundles 96
 fixed-width dispatch entries, `08006864.s` bundles two BIOS wrappers, and
@@ -57,6 +60,11 @@ fixed-width dispatch entries, `08006864.s` bundles two BIOS wrappers, and
   four-byte stride from `0x080072e4`.
 - `08006864.s` and `08006870.s` contain direct BIOS software-interrupt
   wrappers. The fixed `swi`/`svc` instruction is not expressible in asm-free C.
+- `080003c0.s` is the ARM entry selected by the cartridge header. It switches
+  CPU modes, installs the IRQ and system stack pointers, calls the Thumb
+  initialization entry, and loops back to the fixed entry address if that call
+  returns. Those hardware-entry and instruction-set contracts are not ordinary
+  Thumb C.
 - `080022ec.s` through `08002304.s` are four fixed veneers into the division
   runtime at `0x03000380..0x030003f0`. The adjacent ordinary routines now have
   their own boundaries and remain C targets.
@@ -67,6 +75,12 @@ fixed-width dispatch entries, `08006864.s` bundles two BIOS wrappers, and
 `asm/classification.json` is the machine-readable boundary. `build_asm.ts`
 attaches its origin, retention decision, confidence, and evidence to every
 built region and rejects changes to the proven category counts.
+
+The former `08007320.s` was a false ARM decode. All fourteen words are odd
+Thumb pointers—twelve repetitions of `08003009`, one `08003811`, then another
+`08003009`—and `0800300c` DMA-copies the complete 56-byte span into the IWRAM
+dispatch area at `030000e0`. It is now typed pointer-table data in the
+executable-gap source package, not assembly or C debt.
 
 ## Recovered fragment and pool boundaries
 
@@ -165,6 +179,14 @@ They are therefore genuinely compiler-unproducible structured assembly rather
 than ordinary C debt. Their program-versus-library origin and authorship remain
 unknown.
 
+The contiguous seven-region bank at `08015430..08015e8c` is likewise explicit
+ARMv4T code. Its tracked index records the complete 2,652-byte span, seven
+source boundaries, and independently recovered consumers. Every source unit
+assembles in ARM mode while the approved compiler is configured and verified
+as Thumb-only, so the bank cannot be ordinary approved-compiler C. It remains
+structured assembly; the program-versus-library origin and authorship are not
+inferred from that instruction-set boundary.
+
 `08002dd8.s` now owns both callable Thumb helpers at `08002dd8` and `08002df0`,
 their intervening alignment, and the literal at `08002dfc` referenced across
 the former file boundary. The obsolete standalone `08002df0.s` boundary is
@@ -227,6 +249,13 @@ direct `bl` that overwrites `lr`, and return through `bx ip` without saving
 near-miss from ordinary C: the approved compiler's reproduced call prologue
 cannot emit it. The complete 348-byte cohort therefore remains byte-exact
 structured assembly with program-versus-library origin and authorship unknown.
+
+Thirteen further source units—three early executable-gap modules and ten sound
+runtime modules—contain conditional control flow or loops, never save `lr`,
+and return through bare `bx lr`. Their exact boundaries and bytes are verified,
+and the approved compiler's reproduced prologue rule excludes an exact C
+emission. They remain structured assembly for that positive ABI reason, not
+merely because a candidate search failed.
 
 ## Not assembly authorship evidence
 

@@ -251,6 +251,78 @@
       ]
     },
     {
+      "kind": "armv4t_helper_bank",
+      "origin": "program_or_library_runtime",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "arm_instruction_set",
+        "approved_compiler_thumb_only",
+        "contiguous_seven_region_bank",
+        "consumer_call_references",
+        "byte_exact_reconstruction"
+      ],
+      "expected_files": 7,
+      "expected_bytes": 2652,
+      "files": [
+        "08015430",
+        "08015570",
+        "080155d0",
+        "080158e8",
+        "08015afc",
+        "08015d74",
+        "08015e10"
+      ]
+    },
+    {
+      "kind": "gba_arm_entry",
+      "origin": "hardware_entry",
+      "retention": "keep_asm",
+      "confidence": "proven",
+      "evidence": [
+        "gba_header_branch_target",
+        "arm_cpu_mode_switch",
+        "fixed_irq_and_system_stack_setup",
+        "approved_compiler_thumb_only",
+        "byte_exact_reconstruction"
+      ],
+      "expected_files": 1,
+      "expected_bytes": 68,
+      "files": [
+        "080003c0"
+      ]
+    },
+    {
+      "kind": "nonstandard_thumb_branch_module",
+      "origin": "program_or_library_runtime",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "conditional_branch_or_loop",
+        "bare_bx_lr_return",
+        "no_lr_save",
+        "approved_compiler_prologue_mismatch",
+        "byte_exact_reconstruction"
+      ],
+      "expected_files": 13,
+      "expected_bytes": 576,
+      "files": [
+        "080006fc",
+        "080069a4",
+        "08006f48",
+        "080f9a30",
+        "080f9afc",
+        "080f9f3c",
+        "080fa16c",
+        "080fa1ac",
+        "080fa264",
+        "080fa280",
+        "080fa4cc",
+        "080fada0",
+        "080fb410"
+      ]
+    },
+    {
       "kind": "deliberate_busy_wait",
       "origin": "program_assembly",
       "retention": "keep_asm",

@@ -1,0 +1,96 @@
+# Compiler law ledger
+
+This ledger records compiler behavior that Alchemy has reproduced from its
+approved evidence and exact, installed C matches. It prevents later sessions
+from rediscovering the same source-shape constraints.
+
+The clean-room and publication rules in [AGENTS.md](AGENTS.md) apply here.
+Externally suggested compiler behavior remains a hypothesis until reproduced
+locally. A confirmed law must name its in-repository evidence, scope, and
+confirmation date. An exact match proves the cited source shape; broader claims
+must be tested on more than one function before being generalized.
+
+## Confirmed laws
+
+### Minimal live-variable form
+
+- **Fingerprint:** a semantically correct candidate contains the expected
+  operations but allocates a related value to a different register after extra
+  named temporaries extend live ranges.
+- **Producing idiom:** use the fewest independently named intermediates that the
+  expression requires; eliminate generator-created copy temporaries before
+  searching arbitrary declaration orders.
+- **Scope:** confirmed for the `0807933x` counter cohort. This is a normalization
+  priority, not a universal promise that removing temporaries fixes every
+  register-only mismatch.
+- **Evidence:** exact installed matches [src/08079338.c](src/08079338.c) and
+  [src/08079358.c](src/08079358.c), with the bounded counter-family experiment
+  recorded in the former local wall ledger.
+- **Confirmed:** 2026-07-21.
+
+### Dual-use pre-read
+
+- **Fingerprint:** a left/right shift pair uses a fresh destination and then
+  returns to the argument register, rather than folding the operation in place.
+- **Producing idiom:** the source value has another use before the shift, which
+  changes its live range; in the confirmed counter cohort the mask expression
+  reads the argument before the index conversion.
+- **Scope:** confirmed for the `0807933x` counter cohort. Treat other occurrences
+  as hypotheses until their second use is independently found.
+- **Evidence:** exact installed counter shapes in
+  [src/08079338.c](src/08079338.c), [src/08079358.c](src/08079358.c), and their
+  neighboring installed cohort members.
+- **Confirmed:** 2026-07-21.
+
+### Approved-compiler Thumb prologue
+
+- **Fingerprint:** any Thumb function containing a conditional branch or loop
+  saves `lr`; only straight-line leaf functions use a bare `bx lr` return.
+- **Consequence:** an internally branching region that never saves `lr` and
+  returns through `bx lr` is evidence for reclassification, a different
+  toolchain, or deliberate assembly rather than ordinary approved-compiler C.
+- **Evidence:** the independently reproduced compiler experiment and classified
+  regions documented in [ASSEMBLY.md](ASSEMBLY.md#approved-compiler-prologue-evidence).
+- **Confirmed:** 2026-07-19.
+
+### Register-reservation flags are module declarations
+
+- **Fingerprint:** a neighboring handler bundle consistently avoids the same
+  register, and the bundle matches when that register is reserved for the
+  translation unit.
+- **Producing configuration:** an evidenced translation-unit flag, never an
+  inline register pin or arbitrary per-function matching knob.
+- **Evidence:** the `FIXED_R3_SOURCES` bundle and rationale in
+  [tools/alchemy_gcc.ts](tools/alchemy_gcc.ts).
+- **Confirmed:** 2026-07-21.
+
+## Hypotheses
+
+Hypotheses are useful search leads, not accepted compiler laws. Promote one only
+after an approved local experiment or exact installed match supplies the stated
+evidence.
+
+### Cast-literal table access
+
+- **Claim:** `((s32 *)ADDRESS)[index]` can produce an add-then-load address shape
+  that an array declaration does not.
+- **Current evidence:** this shape improves the still-unconverted `080fb670`
+  candidate, but its remaining register floor is open. The function is not
+  evidence for a confirmed exact-producing law yet.
+- **Next test:** retain the cast-literal shape while independently solving or
+  disproving the remaining allocation mismatch.
+- **Recorded:** 2026-07-22.
+
+## Retired approaches
+
+Retirement records why a dead angle should not be restarted casually. A future
+replacement must state what changed and define an acceptance test.
+
+| Approach | Active/retired | Reason and replacement |
+|---|---|---|
+| `brute_permute.ts` | retired 2026-07-21 (`8269ce7c`) | Exhaustive prototype superseded by the guided annealer in `permute_v1.ts`. |
+| `cfg_extract.ts` | retired 2026-07-21 (`8269ce7c`) | Rebuilder prototype delivered its diagnostic conclusions; surviving queue and permuter operators replaced the stage. |
+| `mine_blocks.ts` | retired 2026-07-21 (`8269ce7c`) | Block-mining prototype was folded into the surviving matching approach. |
+| `synthesize_expr.ts` | retired 2026-07-21 (`8269ce7c`) | Expression synthesizer completed its diagnostic role; targeted variants and guided permutation replaced it. |
+| `synthesize_block.ts` | retired 2026-07-21 (`8269ce7c`) | Block synthesizer completed its diagnostic role; targeted variants and guided permutation replaced it. |
+| `permute_decompperm.py` | removed 2026-07-18 (`3ceeab70`) | The Python-era decomp-permuter bridge was removed in the Bun migration. It had produced exact matches on 2026-07-17 (`9ef88b5e`); review that history before deciding whether a Bun bridge is worth rebuilding. |

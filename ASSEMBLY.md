@@ -33,9 +33,10 @@ Figures regenerated 2026-07-22 via `bun tools/build_asm.ts --source-only`:
 | Proven multi-region function continuations with pools | 7 | 2,928 | Merge with their function owners before exact C |
 | Cross-function shared-literal module | 2 | 692 | Keep structured assembly pending module-aware C build |
 | Proven deliberate performance modules | 2 | 954 | Keep assembly |
+| Nonstandard Thumb call modules | 15 | 348 | Keep structured assembly |
 | Proven register-only busy-wait | 1 | 14 | Keep assembly |
 | Mixed-mode multiply helper | 1 | 16 | Keep assembly |
-| Likely ordinary compiler output | 1,170 | 446,422 | Convert to exact C |
+| Likely ordinary compiler output | 1,155 | 446,074 | Convert to exact C |
 | **Total** | **2,192** | **501,858** | |
 
 These counts describe files, not callable entries. `080000c0.s` bundles 96
@@ -219,6 +220,14 @@ already-classified helpers. Two-byte `bx r3` trampolines inside the sound
 engine and the bare multi-region epilogue fragments carry the same weight: the
 approved compiler cannot emit them as standalone functions.
 
+Fifteen sound-runtime source units at `080f9a80`, `080f9b40..080f9c2c`, and
+`080fa1d4..080fa1e8` preserve the incoming return address in `ip`, issue a
+direct `bl` that overwrites `lr`, and return through `bx ip` without saving
+`lr` on the stack. This is a positive calling-convention boundary, not a
+near-miss from ordinary C: the approved compiler's reproduced call prologue
+cannot emit it. The complete 348-byte cohort therefore remains byte-exact
+structured assembly with program-versus-library origin and authorship unknown.
+
 ## Not assembly authorship evidence
 
 Hardware-register literals, high-register allocation, `ldmia`/`stmia`, or an
@@ -227,12 +236,12 @@ remaining files still look like ordinary optimized C and remain conversion
 targets. Likewise, a failed register-pinning experiment says nothing about the
 original source language.
 
-The sound helpers around `080f9a80` demonstrate another structural boundary
-problem. Entries at `080f9a98` and `080f9a9a` share one function tail, while
-`080f9b10` branches directly into the middle of `080f9ac0` with live state.
-Their present modules preserve those relationships and their alignment words;
-they remain C debt unless a module-level asm-free compilation reproduces the
-same entry and continuation layout.
+The retained `080f9a80` source unit also owns the shared-tail entries at
+`080f9a98` and `080f9a9a`; keeping the complete unit preserves that additional
+structural relationship and its alignment word. Separately, `080f9b10`
+branches directly into the middle of `080f9ac0` with live state. That still-
+ordinary module remains C debt unless a module-level asm-free compilation
+reproduces the same entry and continuation layout.
 
 Six unreachable files inside `0x08037464..0x08073808` had incoherent stack
 restoration and impossible fall-through because the scanner had decoded packed

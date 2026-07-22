@@ -219,6 +219,38 @@
       ]
     },
     {
+      "kind": "nonstandard_thumb_call_module",
+      "origin": "program_or_library_runtime",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "manual_return_address_preserved_in_ip",
+        "direct_bl_clobbers_lr",
+        "no_lr_stack_save",
+        "approved_compiler_call_prologue_mismatch",
+        "byte_exact_reconstruction"
+      ],
+      "expected_files": 15,
+      "expected_bytes": 348,
+      "files": [
+        "080f9a80",
+        "080f9b40",
+        "080f9b4c",
+        "080f9b60",
+        "080f9b74",
+        "080f9ba4",
+        "080f9bb8",
+        "080f9bcc",
+        "080f9be0",
+        "080f9bf4",
+        "080f9c00",
+        "080f9c18",
+        "080f9c2c",
+        "080fa1d4",
+        "080fa1e8"
+      ]
+    },
+    {
       "kind": "deliberate_busy_wait",
       "origin": "program_assembly",
       "retention": "keep_asm",

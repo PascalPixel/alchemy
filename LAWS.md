@@ -108,9 +108,15 @@ evidence.
   jumps forward and the body still falls through into the epilogue, so
   no unconditional branch survives jump optimization to anchor the
   pool). The approved compiler has not produced a pre-epilogue pool in
-  any tested configuration; the surviving explanations are a pool phase
-  that runs before jump optimization in the original toolchain, or a
-  second period toolchain variant for these translation units.
+  any tested configuration WITHOUT a call before the epilogue.
+- **Partially confirmed (2026-07-22, later):** the approved compiler DOES
+  emit the b.n-over-pool pre-epilogue layout when the function body ends
+  with a `bl` and pool entries are pending: the `0801c154` shape
+  reproduces the exact layout at size parity (best candidate 4 mismatched
+  bytes, register roles only). Cohort members whose bodies end in a call
+  are therefore reachable by ordinary source shapes; the call-less
+  members (`080b09fc`) remain open, with a pre-jump-opt pool phase or a
+  second toolchain variant as surviving explanations for those only.
 - **Next test:** reproduce with several functions and interleaved pool
   pressure in one unit via `decomp_module.ts`-style multi-region compiles;
   study which insn the reorg pass anchors the minipool to when the epilogue
@@ -179,6 +185,19 @@ evidence.
   alloca frame, single pool word via a `Value_`-style absolute size
   symbol, and `__builtin_alloca` availability under `-fno-builtin` are
   all confirmed reproductions from the same investigation.
+- **Recorded:** 2026-07-22.
+
+### Complement-form wide masks
+
+- **Claim:** writing a clear-mask as a complement (`field & ~0x1FF`)
+  preserves the wide pooled constant `0xFFFFFE00`, while the literal
+  `0xFFFFFE00` is narrowed to `0xFE00` through a following u16 store's
+  truncation and pools the narrowed word.
+- **Current evidence:** `0801c154` candidate (`work/hand/0801c154/`),
+  where the complement form fixed the pool word and dropped the
+  mismatch from 6 to 4 bytes. Not yet backed by an installed match.
+- **Next test:** apply to other masked read-modify-write halfword sites
+  in the queue; promote once an exact match installs with the shape.
 - **Recorded:** 2026-07-22.
 
 ### Cast-literal table access

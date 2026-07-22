@@ -47,6 +47,13 @@ async function run(command: string[], tolerate = false): Promise<{ code: number;
   return { code, output };
 }
 
+function tool(name: string): string | null {
+  const path = join(ROOT, "tools", name);
+  if (existsSync(path)) return path;
+  console.log(`skip unavailable optional stage: tools/${name}`);
+  return null;
+}
+
 function save(checkpoint: Checkpoint, stage: string, wave = checkpoint.completed_wave): void {
   checkpoint.stage = stage; checkpoint.completed_wave = wave; checkpoint.updated_at = new Date().toISOString();
   writeFileSync(CHECKPOINT, JSON.stringify(checkpoint, null, 2) + "\n");
@@ -102,7 +109,7 @@ async function main(): Promise<void> {
   if (!checkpoint.learned) {
     save(checkpoint, "learn");
     await run(["bun", "tools/mine_idioms.ts"]);
-    await run(["bun", "tools/mine_blocks.ts"]);
+    if (tool("mine_blocks.ts")) await run(["bun", "tools/mine_blocks.ts"]);
     checkpoint.learned = true; save(checkpoint, "learned");
   }
   for (let wave = checkpoint.completed_wave; wave < options.waves; wave++) {
@@ -112,14 +119,18 @@ async function main(): Promise<void> {
     let stems = targets();
     if (stems.length === 0) break;
     save(checkpoint, "cfg", wave);
-    await run(["bun", "tools/cfg_extract.ts", ...stems]);
+    if (tool("cfg_extract.ts")) await run(["bun", "tools/cfg_extract.ts", ...stems]);
     save(checkpoint, "constraints", wave);
     await run(["bun", "tools/decomp_constraints.ts", ...stems]);
     save(checkpoint, "expression-synthesis", wave);
-    await parallel(stems, Math.min(4, options.jobs), async (stem) => { await run(["bun", "tools/synthesize_expr.ts", stem, "--install"], true); });
+    if (tool("synthesize_expr.ts")) {
+      await parallel(stems, Math.min(4, options.jobs), async (stem) => { await run(["bun", "tools/synthesize_expr.ts", stem, "--install"], true); });
+    }
     stems = stems.filter((stem) => existsSync(join(ROOT, "asm", `${stem}.s`)));
     save(checkpoint, "block-synthesis", wave);
-    await parallel(stems, Math.min(4, options.jobs), async (stem) => { await run(["bun", "tools/synthesize_block.ts", stem, "--install", "--width", "300"], true); });
+    if (tool("synthesize_block.ts")) {
+      await parallel(stems, Math.min(4, options.jobs), async (stem) => { await run(["bun", "tools/synthesize_block.ts", stem, "--install", "--width", "300"], true); });
+    }
     stems = stems.filter((stem) => existsSync(join(ROOT, "asm", `${stem}.s`)));
     save(checkpoint, "module-probes", wave);
     const modules = await moduleProbes(stems);

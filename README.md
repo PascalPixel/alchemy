@@ -28,15 +28,15 @@ game.
 >
 > 🟧 **Not honestly scoreable yet.**
 >
-> 🟩 Source ownership — 100% of ROM addresses have a tracked producer<br>
-> 🟨 Code decompilation — about 6.1% of identified executable work is exact C<br>
+> 🟩 Source ownership — complete for the canonical English layout<br>
+> 🟨 Code decompilation — active; see [STATUS.md](STATUS.md) for generated coverage<br>
 > 🟧 Asset quality and repository organization — semantic audit in progress
 >
 > 🟩 done · 🟨 active · 🟧 unsure/auditing · 🟥 blocked · ⬜️ undone
 >
-> The often-quoted 94.08% only measures byte reconstruction. It does not measure
-> pret-level completion or time remaining. See [the technical status](STATUS.md)
-> for the full breakdown.
+> The byte-reconstruction percentage does not measure pret-level completion or
+> time remaining. See [the technical status](STATUS.md) for the dated, generated
+> figures and full breakdown.
 
 ## Explore what has been recovered
 
@@ -57,9 +57,9 @@ previews: every asset is meant to encode back into its exact place in the game.
 
 ## Where the project stands
 
-The canonical English Golden Sun ROM layout is 100% represented by
+The canonical English Golden Sun ROM layout is fully represented by
 reconstructed source and builds byte-identically without a ROM fallback. That
-does not make the whole project 100% complete. A large body of
+does not make the whole project complete. A large body of
 byte-verified assembly will still have to become matching C, the other eleven
 approved editions remain future build targets, and round-tripping asset
 containers still need a semantic quality audit. Exact encoding is necessary,

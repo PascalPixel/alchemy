@@ -262,15 +262,16 @@
    "retention": "keep_structured_asm",
    "confidence": "proven",
    "evidence": [
-    "caller_passes_context_in_r9",
-    "r0_r1_r2_hold_ordinary_arguments",
+    "callee_saved_registers_carry_implicit_context",
+    "ordinary_arguments_remain_in_standard_abi_registers",
     "approved_compiler_cannot_express_hidden_register_abi",
     "register_pins_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 1,
-   "expected_bytes": 102,
+   "expected_files": 2,
+   "expected_bytes": 262,
    "files": [
+    "080930bc",
     "080e7338"
    ]
   },
@@ -381,6 +382,44 @@
     "080fa4cc",
     "080fada0",
     "080fb410"
+   ]
+  },
+  {
+   "kind": "link_free_continuation_dispatcher",
+   "origin": "program_or_library_runtime",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "external_transfers_are_b_not_bl",
+    "incoming_lr_is_preserved_without_stack_save",
+    "approved_compiler_emits_linked_calls",
+    "inline_assembly_and_register_pins_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 28,
+   "files": [
+    "080f9ae0"
+   ]
+  },
+  {
+   "kind": "shared_stack_continuation_module",
+   "origin": "program_or_library_runtime",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "branches_into_post_prologue_interior_entry",
+    "continuation_consumes_callers_live_stack_frame",
+    "private_result_register_is_r3",
+    "call_clobbered_ip_is_live_across_private_call",
+    "approved_compiler_c_abi_cannot_express_contract",
+    "inline_assembly_and_register_pins_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 48,
+   "files": [
+    "080f9b10"
    ]
   },
   {

@@ -10,7 +10,7 @@ import {
 import { basename, dirname, extname, join } from "node:path";
 import {
   cflagsForTargetSource,
-  compilerCommandForTarget,
+  compilerCommandForTargetSource,
   externalSymbol,
   externalSymbolAssembly,
   type CompilerTarget,
@@ -97,8 +97,9 @@ export async function verifyCandidate(
   const symbolsObject = join(outputDirectory, `${stem}.symbols.o`);
   const elf = join(outputDirectory, `${stem}.elf`);
   const binary = join(outputDirectory, `${stem}.bin`);
-  await run(compilerCommandForTarget(
+  await run(compilerCommandForTargetSource(
     compiler,
+    source,
     ...cflagsForTargetSource(compiler, source),
     ...extraCompilerFlags,
     "-S", "-o", assembly, source,

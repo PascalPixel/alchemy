@@ -189,8 +189,7 @@ function selfTest(): void {
     "src/main.c", "asm/080000c0.s", "assets/graphics/title.png", "assets/audio/theme.mid",
     "assets/audio/wave.wav", "assets/data/layout.json", "tools/compare_roms.ts", "tools/build_full.ts",
     "assets/data/resource_2_build_stamp.txt", "assets/maps/town/metatiles.bin",
-    "assets/maps/town/metatile_attributes.bin", "rom.sha1", "PUBLICATION.md",
-  ]) mustAcceptPath(path);
+    "assets/maps/town/metatile_attributes.bin", "rom.sha1",   ]) mustAcceptPath(path);
   const rom = Buffer.alloc(0x8000);
   rom[0xb2] = 0x96;
   let sum = 0;

@@ -109,7 +109,7 @@ Nintendo or Camelot, and is non-commercial.
   game data become canonical source assets.
 - [CONVENTIONS.md](CONVENTIONS.md) — the period-authentic Japanese naming and comment
   conventions used by the reconstruction.
-- [PUBLICATION.md](PUBLICATION.md) — the source-only publication boundary and
+- [AGENTS.md](AGENTS.md#publication-boundary) — the source-only publication boundary and
   the material that must never enter the public repository.
 - [assets/README.md](assets/README.md) — the asset tree, manifests, encoders, and
   exact round-trip requirements.

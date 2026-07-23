@@ -604,7 +604,7 @@ The GS1 compiler also exposes a default-off `-mgrouped-dma-store` compatibility
 mode for the historical three-word Thumb DMA descriptor sequence. It lowers
 three explicit scalar words to `stmia` plus a base restore without inline
 assembly or register pins. Only the independently verified `080049e8`,
-`08004a28`, `08004a5c`, `080958a8`, and `0809bb34` sources enable it;
+`08004a28`, `08004a44`, `08004a5c`, `080958a8`, and `0809bb34` sources enable it;
 ordinary GS1 sources retain the default code generation path. `080049e8`
 also uses the existing source-scoped `-O1` route because `-O2` swaps two
 independent descriptor loads.

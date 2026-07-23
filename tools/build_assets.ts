@@ -585,18 +585,20 @@ function expandSeries(manifest: Json, entries: Json[]): void {
       }
     } else if (series.kind === "golden-sun-map-component-series") {
       for (const family of series.families) {
-        const name = String(family.id).toLowerCase();
+        // Tuple schema: [id, headerAddress, headerSize, [slot, address, size]...].
+        const [familyId, headerAddress, headerSize, ...familyComponents] =
+          family as [string, string, string, ...Array<[number, string, string]>];
+        const name = String(familyId).toLowerCase();
         const directory = `assets/maps/resource_${name}`;
-        const header = family.header;
-        const container = number(header.address);
+        const container = number(headerAddress);
         const offsetsCheck: Record<number, number> = {};
-        for (const component of family.components) {
-          offsetsCheck[number(component.slot)] = number(component.address) - container;
+        for (const [slot, componentAddress] of familyComponents) {
+          offsetsCheck[number(slot)] = number(componentAddress) - container;
         }
         offsetsCheck[2] = gridAddresses[name] - container;
         entries.push({
-          address: header.address,
-          size: header.size,
+          address: headerAddress,
+          size: headerSize,
           kind: "golden-sun-map-container-header",
           source: `${directory}_header.json`,
           offsets_check: offsetsCheck,
@@ -608,12 +610,12 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           4: ["golden-sun-map-blend-animation", `${directory}_blend_animation.json`, `${directory}_blend_animation.lz.json`],
           5: ["golden-sun-map-sparse-cells", `${directory}_sparse_cells.json`, null],
         };
-        for (const component of family.components) {
-          const slot = number(component.slot);
+        for (const [slotRaw, componentAddress, componentSize] of familyComponents) {
+          const slot = number(slotRaw);
           if (!(slot in sources)) throw new Error("unsupported map component slot");
           const [kind, source, plan] = sources[slot];
           const entry: Json = {
-            address: component.address, size: component.size, kind, source,
+            address: componentAddress, size: componentSize, kind, source,
           };
           if (plan !== null) entry.plan = plan;
           entries.push(entry);

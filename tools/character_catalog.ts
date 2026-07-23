@@ -3,6 +3,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { build_static_sprite_series } from "./static_sprite_series.ts";
+import { canonicalJson } from "./canonical_json.ts";
 
 const ROM_BASE = 0x08000000;
 export const CHARACTER_DESCRIPTOR_ADDRESS = 0x08185024;
@@ -323,7 +324,7 @@ export function export_character_catalog(rom: Buffer): CharacterCatalogJson {
 }
 
 export function format_character_catalog(index: CharacterCatalogJson): string {
-  return `${JSON.stringify(index, null, 2).replace(
+  return `${canonicalJson(index).replace(
     /^([ ]*)\[\n[ ]+"(frame|end|set_draw|hold|jump|select|blank)",\n[ ]+(\d+)(?:,\n[ ]+(\d+))?\n[ ]+\]/gm,
     (_match, indent: string, operation: string, first: string, second: string | undefined) =>
       `${indent}["${operation}", ${first}${second === undefined ? "" : `, ${second}`}]`,

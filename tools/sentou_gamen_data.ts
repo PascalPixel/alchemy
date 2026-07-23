@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, renameSync, rmSync, writeFileSync,
 } from "node:fs";
@@ -95,7 +96,7 @@ function hexadecimal(value: number): string {
 }
 
 function pretty(value: unknown): string {
-  return `${JSON.stringify(value, null, 2)}\n`;
+  return `${canonicalJson(value)}\n`;
 }
 
 function exactKeys(value: unknown, keys: readonly string[], label: string): asserts value is Json {
@@ -122,7 +123,7 @@ function document(path: string): Json {
     "format", "kind", "address", "end", "size", "graphics", "display_glyphs", "mask_rows",
     "auxiliary_display_glyphs", "offsets", "orders", "lookup_ids", "mode_selectors", "object_resource_ids", "alignment",
   ], "battle-screen source");
-  if (text !== pretty(value)) throw new Error("battle-screen source is not canonical JSON");
+  if (!isCanonicalJsonText(text, value)) throw new Error("battle-screen source is not canonical JSON");
   if (value.format !== 1 || value.kind !== "golden-sun-sentou-gamen-data" ||
       value.address !== hexadecimal(SENTOU_GAMEN_ADDRESS) || value.end !== hexadecimal(SENTOU_GAMEN_END) ||
       value.size !== SENTOU_GAMEN_SIZE) throw new Error("battle-screen extent differs");

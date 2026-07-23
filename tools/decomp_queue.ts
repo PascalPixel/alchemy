@@ -7,6 +7,7 @@ import { basename, dirname, join } from "node:path";
 import { diagnoseCandidate, type CandidateDiagnosis } from "./decomp_diagnose.ts";
 import { M2C_PREAMBLE } from "./match_m2c.ts";
 import { retainedAssemblyStems } from "./permute_m2c.ts";
+import { canonicalJson } from "./canonical_json.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const OUT = join(ROOT, "out", "decomp");
@@ -127,7 +128,7 @@ async function main(): Promise<void> {
   const ranked = items.filter((item): item is QueueItem => item !== null)
     .sort((left, right) => right.expected_value - left.expected_value || left.stem.localeCompare(right.stem));
   const report: QueueReport = { format: 1, generated_at: new Date().toISOString(), items: ranked };
-  writeFileSync(reportPath, JSON.stringify(report, null, 2) + "\n");
+  writeFileSync(reportPath, canonicalJson(report) + "\n");
   if (options.targetsOut) writeFileSync(options.targetsOut, ranked.map((item) => item.stem).join("\n") + "\n");
   const plateaus = ranked.filter((item) => item.plateau).length;
   const registerLed = ranked.filter((item) => item.diagnosis.register_fraction >= 0.5).length;

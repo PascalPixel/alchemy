@@ -5,6 +5,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { ROM_BASE, verifyCandidate } from "./match_m2c.ts";
+import { canonicalJson } from "./canonical_json.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const OUT = join(ROOT, "out/decomp/compiler-modes");
@@ -87,7 +88,7 @@ async function main(): Promise<void> {
   }
   await Promise.all(Array.from({ length: Math.min(options.jobs, tasks.length) }, worker));
   const report = { format: 1, attempted, compiled, modes: MODES, matches };
-  writeFileSync(join(OUT, "report.json"), JSON.stringify(report, null, 2) + "\n");
+  writeFileSync(join(OUT, "report.json"), canonicalJson(report) + "\n");
   console.log(`attempted=${attempted} compiled=${compiled} matches=${matches.length} report=${join(OUT, "report.json")}`);
 }
 

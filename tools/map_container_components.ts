@@ -1,4 +1,5 @@
 // Tool role: library; imported by tools/build_assets.ts, tools/chiiki_map_resources.ts, tools/tokushu_map_resources.ts.
+import { canonicalJson } from "./canonical_json.ts";
 import { readFileSync, writeFileSync } from "node:fs";
 import {
   decode_general_trace, decode_palette_trace, encode_general, encode_palette,
@@ -12,7 +13,7 @@ type PlanFactory = (
 
 function hex(data: Uint8Array): string { return Buffer.from(data).toString("hex"); }
 function compact(document: unknown): string { return `${JSON.stringify(document)}\n`; }
-function pretty(document: unknown): string { return `${JSON.stringify(document, null, 2)}\n`; }
+function pretty(document: unknown): string { return `${canonicalJson(document)}\n`; }
 
 function u16s(data: Uint8Array): number[] {
   if (data.length % 2) throw new Error("partial u16");

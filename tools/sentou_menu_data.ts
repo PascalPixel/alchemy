@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, renameSync, rmSync, writeFileSync,
 } from "node:fs";
@@ -42,7 +43,7 @@ function hex(value: number): string {
 }
 
 function pretty(value: unknown): string {
-  return `${JSON.stringify(value, null, 2)}\n`;
+  return `${canonicalJson(value)}\n`;
 }
 
 function exactKeys(value: unknown, keys: readonly string[], label: string): asserts value is Json {
@@ -69,7 +70,7 @@ function document(path: string): Json {
     "format", "kind", "address", "end", "size", "graphics", "cell_offsets", "row_offsets",
     "thresholds", "selector_ids", "loadouts", "sound_ids", "multipliers", "alignment",
   ], "battle-menu source");
-  if (text !== pretty(value)) throw new Error("battle-menu source is not canonical JSON");
+  if (!isCanonicalJsonText(text, value)) throw new Error("battle-menu source is not canonical JSON");
   if (value.format !== 1 || value.kind !== "golden-sun-sentou-menu-data" ||
       value.address !== hex(SENTOU_MENU_ADDRESS) || value.end !== hex(SENTOU_MENU_END) ||
       value.size !== SENTOU_MENU_SIZE) throw new Error("battle-menu extent differs");

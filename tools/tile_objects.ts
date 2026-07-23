@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts, tools/compose_scene.ts; invoked by ASSETS.md, assets/README.md.
+import { canonicalJson } from "./canonical_json.ts";
 /**
  * 地図上で合成した物体画像から4bppタイルバンクを正確に構築する。
  *
@@ -93,7 +94,7 @@ export function child(plan_path: string, name: string): string {
 }
 
 function json_text(value: unknown): string {
-  const text = JSON.stringify(value, null, 2);
+  const text = canonicalJson(value);
   if (text === undefined) {
     throw new Error("value cannot be represented as JSON");
   }

@@ -36,6 +36,7 @@
 // 使い方:  bun tools/midi_sequence.ts convert-all      # 旧 JSON から .mid+サイドカー生成
 //          bun tools/midi_sequence.ts validate-all      # 追跡中の .mid+サイドカーを検証
 //          bun tools/midi_sequence.ts --self-test
+import { canonicalJson } from "./canonical_json.ts";
 
 import { createHash } from "node:crypto";
 import { readdirSync, readFileSync, writeFileSync, mkdirSync, existsSync, renameSync, rmdirSync } from "node:fs";
@@ -403,7 +404,7 @@ function buildRenameMap(): void {
     entries.push(entry);
   }
   const map: RenameMap = { format: 1, entries };
-  writeFileSync(RENAME_MAP, JSON.stringify(map, null, 2) + "\n");
+  writeFileSync(RENAME_MAP, canonicalJson(map) + "\n");
   const music = entries.filter((e) => e.class === "music").length;
   const sfx = entries.length - music;
   const bodies = entries.filter((e) => e.file !== null).length;
@@ -457,7 +458,7 @@ function relayout(): void {
     }
     sequences.push(record);
   }
-  writeFileSync(indexPath, JSON.stringify({ format: 1, engine: "smsh-sequence-series", sequences }, null, 2) + "\n");
+  writeFileSync(indexPath, canonicalJson({ format: 1, engine: "smsh-sequence-series", sequences }) + "\n");
   // 空になった旧 data/ ディレクトリを片付ける。
   if (existsSync(DATA_DIR) && readdirSync(DATA_DIR).length === 0) rmdirSync(DATA_DIR);
   console.log(`relayout moved=${moved} sequences=${sequences.length}`);
@@ -501,7 +502,7 @@ function convertAll(): void {
     sequences.push(record);
   }
   const newIndex = { format: 1, engine: "smsh-sequence-series", sequences };
-  writeFileSync(join(MIDI_DIR, "index.json"), JSON.stringify(newIndex, null, 2) + "\n");
+  writeFileSync(join(MIDI_DIR, "index.json"), canonicalJson(newIndex) + "\n");
   sidecarBytes.sort((a, b) => a - b);
   const median = sidecarBytes.length ? sidecarBytes[Math.floor(sidecarBytes.length / 2)] : 0;
   console.log(`converted=${sequences.length} empty=${empty} nonempty=${nonempty} sidecar-bytes(min/median/max)=${sidecarBytes[0] ?? 0}/${median}/${sidecarBytes.at(-1) ?? 0}`);

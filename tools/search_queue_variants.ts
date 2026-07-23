@@ -6,6 +6,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, isAbsolute, join } from "node:path";
 import { ROM_BASE, verifyCandidate } from "./match_m2c.ts";
 import { variants } from "./search_variants.ts";
+import { canonicalJson } from "./canonical_json.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const OUT = join(ROOT, "out/decomp/queue-variants");
@@ -118,7 +119,7 @@ async function main(): Promise<void> {
   }
   await Promise.all(Array.from({ length: Math.min(options.jobs, tasks.length) }, worker));
   const report = { format: 1, targets: items.length, seed_sources: seedSources, variants: tasks.length, compiled, matches };
-  writeFileSync(join(OUT, "report.json"), JSON.stringify(report, null, 2) + "\n");
+  writeFileSync(join(OUT, "report.json"), canonicalJson(report) + "\n");
   console.log(`targets=${items.length} seed_sources=${seedSources} variants=${tasks.length} compiled=${compiled} matches=${matches.length}`);
 }
 

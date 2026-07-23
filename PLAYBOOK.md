@@ -195,9 +195,20 @@ register-only or scheduler-only plateau: reducing such a function can remove
 the live ranges that produce the reference allocation. After a bounded run,
 route those plateaus to compiler trace diagnosis.
 
-For unattended hours, chain these stages with `bun tools/decomp_overnight.ts`
-(resumable, checkpointed waves). It references optional stages that do not
-exist yet (`cfg_extract.ts`, `synthesize_expr.ts`, `synthesize_block.ts`,
+**Overnight annealing is a recorded failure mode, not a default.** Repeated
+unattended `decomp_overnight.ts` campaigns have spent 8–9 hours and produced
+zero exact matches (Pascal, 2026-07-23): the remaining queue is dominated by
+scheduler/allocation plateaus that statement-level mutation cannot reach at
+any step count — a 40,000-step × 8-restart run floors exactly where a 3,000-step
+run does. Short, bounded permuter attempts (minutes) followed by diagnosis of
+the floor — mismatch class, pass-dump evidence, one recorded hypothesis — beat
+unattended hours every time so far. Do not start an unattended overnight
+campaign unless a specific recent result (new context, new operator, new
+compiler mode) justifies re-sweeping the queue, and say which result that is.
+
+For genuinely unattended hours, `bun tools/decomp_overnight.ts` remains
+available (resumable, checkpointed waves). It references optional stages that
+do not exist yet (`cfg_extract.ts`, `synthesize_expr.ts`, `synthesize_block.ts`,
 `mine_blocks.ts`): build them or delete the references. A campaign script must
 not imply capacity that is not there.
 

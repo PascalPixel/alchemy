@@ -5,6 +5,7 @@ import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, renameSync, rmSync,
   symlinkSync, writeFileSync,
 } from "fs";
+import { tmpdir } from "node:os";
 import { basename, dirname, isAbsolute, join, relative, resolve } from "path";
 
 const ROM_BASE = 0x08000000;
@@ -653,7 +654,7 @@ export function verify_audio_engine_data(romPath: string, indexPath: string): vo
 }
 
 export function self_test(): void {
-  const temporary = mkdtempSync("/private/tmp/audio-engine-self-test-");
+  const temporary = mkdtempSync(join(tmpdir(), "audio-engine-self-test-"));
   let rejected = 0;
   const reject = (action: () => void): void => { try { action(); } catch { rejected++; } };
   try {

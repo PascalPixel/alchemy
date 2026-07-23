@@ -4,6 +4,7 @@ import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, renameSync, rmSync, writeFileSync,
 } from "node:fs";
+import { tmpdir } from "node:os";
 import { basename, dirname, join, relative, resolve } from "node:path";
 import { indexed_png } from "./import_asset.ts";
 import { png, type Rgb } from "./skip_sprite_archive.ts";
@@ -317,7 +318,7 @@ export function verify_sentou_menu_data(rom: Buffer, indexPath: string): void {
 }
 
 export function self_test(): void {
-  const temporary = mkdtempSync("/private/tmp/sentou-menu-self-test-");
+  const temporary = mkdtempSync(join(tmpdir(), "sentou-menu-self-test-"));
   try {
     const spec = GRAPHICS[0], raw = Buffer.alloc(spec.size);
     for (let index = 0; index < raw.length; index++) raw[index] = index * 41 + 7;

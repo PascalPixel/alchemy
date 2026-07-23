@@ -158,10 +158,10 @@ function parseHex(value: unknown, width: number, label: string): number {
   return Number(value);
 }
 
-function canonicalJson(path: string, pretty: boolean, label: string): unknown {
+function readCanonicalJson(path: string, pretty: boolean, label: string): unknown {
   const text = readFileSync(path, "utf8");
   const value: unknown = JSON.parse(text);
-    if (!isCanonicalJsonText(text, value)) throw new Error(`${label} is not canonical JSON`);
+  if (!isCanonicalJsonText(text, value)) throw new Error(`${label} is not canonical JSON`);
   return value;
 }
 
@@ -181,7 +181,7 @@ function child(root: string, name: string): string {
 }
 
 function indexedChild(root: string, name: string, id: number): string {
-  const expected = `resource_${id.toString(16).padStart(3, "0")}_stream.json`;
+  const expected = `resource_${id.toString(16).padStart(3, "0")}/stream.json`;
   if (name !== expected) throw new Error("kind-2 index source name is not canonical");
   const result = resolve(root, name);
   if (!contained(resolve(root), result)) throw new Error("kind-2 index source escaped its series");
@@ -313,10 +313,10 @@ function parseProbe(value: unknown): ProbeDocument {
 }
 
 export function validate_kind2_catalog(catalogFile: string, probeFile?: string): void {
-  const catalog = parseCatalog(canonicalJson(catalogFile, true, "kind-2 catalog"));
+  const catalog = parseCatalog(readCanonicalJson(catalogFile, true, "kind-2 catalog"));
   let probes = 0;
   if (probeFile !== undefined) {
-    const probe = parseProbe(canonicalJson(probeFile, true, "kind-2 probe"));
+    const probe = parseProbe(readCanonicalJson(probeFile, true, "kind-2 probe"));
     const catalogIds = new Set(catalog.resources.map((entry) => Number(entry.id)));
     if (probe.resources.some((entry) => catalogIds.has(Number(entry.id)))) {
       throw new Error("kind-2 unresolved probe overlaps the extraction catalog");
@@ -420,7 +420,7 @@ function buildDecoded(plan: ResourcePlan, directory: string): Buffer {
 }
 
 export function build_kind2_resource(planFile: string): BuiltKind2Resource {
-  const plan = parsePlan(canonicalJson(planFile, false, "kind-2 plan"));
+  const plan = parsePlan(readCanonicalJson(planFile, false, "kind-2 plan"));
   const directory = dirname(planFile);
   const sources = [planFile, child(directory, plan.image.source)];
   const decoded = buildDecoded(plan, directory);
@@ -456,7 +456,7 @@ export function build_kind2_resource(planFile: string): BuiltKind2Resource {
 }
 
 export function build_kind2_series(indexFile: string): BuiltKind2Resource[] {
-  const index = parseIndex(canonicalJson(indexFile, true, "kind-2 index"));
+  const index = parseIndex(readCanonicalJson(indexFile, true, "kind-2 index"));
   const directory = dirname(indexFile);
   return index.resources.map((entry) => {
     const built = build_kind2_resource(indexedChild(directory, entry.source, Number(entry.id)));
@@ -617,7 +617,7 @@ function exportOne(rom: Buffer, root: string, entry: CatalogEntry): IndexEntry {
     size: entry.size,
     prefix_palette_size: entry.prefix_palette_size,
     presentation_status: entry.image.status,
-    source: `resource_${id.toString(16).padStart(3, "0")}_stream.json`,
+    source: `resource_${id.toString(16).padStart(3, "0")}/stream.json`,
   };
 }
 
@@ -636,7 +636,7 @@ function writeKind2Series(rom: Buffer, catalog: CatalogDocument, directory: stri
 }
 
 export function export_kind2_series(romFile: string, catalogFile: string, directory: string): void {
-  const catalog = parseCatalog(canonicalJson(catalogFile, true, "kind-2 catalog"));
+  const catalog = parseCatalog(readCanonicalJson(catalogFile, true, "kind-2 catalog"));
   const rom = readFileSync(romFile);
   writeKind2Series(rom, catalog, directory);
 }
@@ -661,8 +661,8 @@ export function probe_export_kind2_series(
   directory: string,
   expectedBytes?: number,
 ): void {
-  const catalog = parseCatalog(canonicalJson(catalogFile, true, "kind-2 catalog"));
-  const probe = parseProbe(canonicalJson(probeFile, true, "kind-2 probe"));
+  const catalog = parseCatalog(readCanonicalJson(catalogFile, true, "kind-2 catalog"));
+  const probe = parseProbe(readCanonicalJson(probeFile, true, "kind-2 probe"));
   const catalogIds = new Set(catalog.resources.map((entry) => Number(entry.id)));
   if (probe.resources.some((entry) => catalogIds.has(Number(entry.id)))) {
     throw new Error("kind-2 unresolved probe overlaps the extraction catalog");

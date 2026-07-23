@@ -5,6 +5,7 @@ import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, renameSync, realpathSync, rmSync, symlinkSync,
   writeFileSync,
 } from "node:fs";
+import { tmpdir } from "node:os";
 import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { tile_png, type Rgb } from "./export_asset.ts";
 import { decode_general_trace, encode_general, type GeneralToken } from "./extract_resource.ts";
@@ -277,7 +278,7 @@ export function self_test(): void {
   let rejected = false;
   try { validateTokens([["l", 1, "ignored"]]); } catch { rejected = true; }
   if (!rejected) throw new Error("kana token strictness self-test failed");
-  const temporary = mkdtempSync("/private/tmp/kana-resource-self-test-");
+  const temporary = mkdtempSync(join(tmpdir(), "kana-resource-self-test-"));
   try {
     const reject = (action: () => void): void => {
       let failed = false;

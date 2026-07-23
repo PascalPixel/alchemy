@@ -460,24 +460,28 @@ function expandSeries(manifest: Json, entries: Json[]): void {
       const charblockLayout = series.charblock_layout;
       const animationLayout = series.animation_layout;
       for (const family of series.families) {
-        const name = String(family.id).toLowerCase();
+        // Tuple schema: [id, palAddr, palSize, animAddr|null, animSize|null,
+        // [charblockAddr, charblockSize, objectSource|null]...].
+        const [familyId, palAddr, palSize, animAddr, animSize, ...charblockTuples] =
+          family as [string, string, string, string | null, string | null,
+                     ...Array<[string, string, string | null]>];
+        const name = String(familyId).toLowerCase();
         const directory = resourceGraphicsDir(name);
-        const palette = family.palette;
         entries.push({
-          address: palette.address,
-          size: palette.size,
+          address: palAddr,
+          size: palSize,
           kind: "golden-sun-general-lz",
           plan: `${directory}_palette.lz.json`,
           components: [{
             kind: "gba-palette", size: "0x1c0", source: `${directory}_palette.224.png`,
           }],
         });
-        family.charblocks.forEach((resource: Json, index: number) => {
+        charblockTuples.forEach(([cbAddr, cbSize, cbSource], index: number) => {
           const bank = index + 1;
-          const objectSource = resource.source;
+          const objectSource = cbSource ?? undefined;
           entries.push({
-            address: resource.address,
-            size: resource.size,
+            address: cbAddr,
+            size: cbSize,
             kind: "golden-sun-kind2-lz",
             plan: `${directory}_charblock${bank}.kind2.json`,
             layout: charblockLayout,
@@ -488,11 +492,10 @@ function expandSeries(manifest: Json, entries: Json[]): void {
             }],
           });
         });
-        const animation = family.animation_source;
-        if (animation !== undefined && animation !== null) {
+        if (animAddr !== null && animAddr !== undefined) {
           entries.push({
-            address: animation.address,
-            size: animation.size,
+            address: animAddr,
+            size: animSize,
             kind: "golden-sun-kind2-lz",
             plan: `${directory}_animation_source.kind2.json`,
             layout: animationLayout,

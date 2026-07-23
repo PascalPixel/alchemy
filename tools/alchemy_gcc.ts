@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_claimed.ts, tools/decomp_module.ts, tools/decompile_batch.ts (+6 more); invoked by ALCHEMY_GCC.md, LAWS.md, PLAYBOOK.md (+1 more).
 import { readFileSync, statSync } from "node:fs";
-import { basename, dirname, extname, join } from "node:path";
+import { basename, dirname, extname, join, relative, resolve, sep } from "node:path";
 
 export const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 // 承認済みコンパイラ束は姉妹リポジトリ PascalPixel/alchemy-gcc の dist/ に住む。
@@ -82,6 +82,31 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 const GROUPED_DMA_STORE_SOURCES = new Set([
   "080049e8", "08004a28", "08004a5c", "080958a8", "0809bb34",
 ]);
+// These overlay-local object constructors share one exact compiler fingerprint:
+// immediately before a call, the independent r0 register copy precedes the r1
+// immediate. Their common filename is not unique, so routing must use the
+// canonical resource path rather than the 020000a0 stem.
+const CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_380/c/020000a0.c",
+  "assets/code/resource_382/c/020000a0.c",
+  "assets/code/resource_385/c/020000a0.c",
+  "assets/code/resource_387/c/020000a0.c",
+  "assets/code/resource_38a/c/020000a0.c",
+  "assets/code/resource_396/c/020000a0.c",
+  "assets/code/resource_39b/c/020000a0.c",
+  "assets/code/resource_39c/c/020000a0.c",
+  "assets/code/resource_39d/c/020000a0.c",
+  "assets/code/resource_39e/c/020000a0.c",
+  "assets/code/resource_3a0/c/020000a0.c",
+  "assets/code/resource_3a1/c/020000a0.c",
+  "assets/code/resource_3a5/c/020000a0.c",
+  "assets/code/resource_3a6/c/020000a0.c",
+  "assets/code/resource_3ab/c/020000a0.c",
+  "assets/code/resource_3b3/c/020000a0.c",
+  "assets/code/resource_3be/c/020000a0.c",
+  "assets/code/resource_3c0/c/020000a0.c",
+  "assets/code/resource_3c9/c/020000a0.c",
+]);
 // 既定ABI(標準のr4被呼出保存)で構築された収蔵ライブラリ翻訳単位。
 // 証拠: r4を保存する序文は -fcall-used-r4 の下では出ない
 // (割込保護記録08006a00、バイト複写08006b84、比較08006c24、
@@ -114,6 +139,10 @@ function sourceStem(source: string): string {
   return basename(source, extname(source));
 }
 
+function sourceKey(source: string): string {
+  return relative(ROOT, resolve(ROOT, source)).split(sep).join("/");
+}
+
 export function cflagsForSource(source: string): readonly string[] {
   const stem = sourceStem(source);
   const base = DEFAULT_ABI_SOURCES.has(stem)
@@ -131,6 +160,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
+    ...(CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-mcall-arg0-move-first"]
+      : []),
   ];
 }
 
@@ -204,7 +236,7 @@ const EXPECTED: Record<CompilerTarget, Record<string, string>> = {
     xgcc: "87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed",
     cpp: "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
     tradcpp: "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
-    cc1: "4555405981e014b73d3db14023324948afe7533ee38effccb8d62745bd11977b",
+    cc1: "dc670142e6a2daeaaf64a67fa50b391af79cb7b167305dfa559576a818a90db3",
   },
   gs2: {
     xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",
@@ -216,7 +248,7 @@ const EXPECTED: Record<CompilerTarget, Record<string, string>> = {
 
 const validated = new Set<CompilerTarget>();
 let agbccValidated = false;
-const AGBCC_EXPECTED = "1bb2b349c3090f2969e2039824d2b377ffe5b12327a6a65f0bf1d5c4a484272a";
+const AGBCC_EXPECTED = "4f7664872d10a737184fb2e0502c407c9d74505f0cff7313ba4e9083736c2207";
 
 function outputText(value: Uint8Array): string {
   return Buffer.from(value).toString("utf8");
@@ -328,8 +360,13 @@ export function directPreprocessorCommand(input: string, output: string): string
   ];
 }
 
-export function directCompilerCommand(input: string, output: string, dumpbase: string): string[] {
-  const stem = sourceStem(dumpbase);
+export function directCompilerCommand(
+  input: string,
+  output: string,
+  dumpbase: string,
+  source = dumpbase,
+): string[] {
+  const stem = sourceStem(source);
   validateBundle();
   return [
     join(BUNDLE, "cc1"), input, "-quiet", "-dumpbase", dumpbase,
@@ -345,6 +382,9 @@ export function directCompilerCommand(input: string, output: string, dumpbase: s
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
+    ...(CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-mcall-arg0-move-first"]
+      : []),
     "-o", output,
   ];
 }
@@ -356,7 +396,7 @@ export function directCompilerCommandForSource(
   dumpbase: string,
 ): string[] {
   if (!usesAgbccCompiler("gs1", source)) {
-    return directCompilerCommand(input, output, dumpbase);
+    return directCompilerCommand(input, output, dumpbase, source);
   }
   validateAgbccBundle();
   return [
@@ -418,7 +458,22 @@ function selfTest(): void {
       cflagsForTargetSource("gs2", "/tmp/080049e8.c").includes("-O1")) {
     throw new Error("grouped DMA O1 routing self-test failed");
   }
-  console.log(`self-test=ok agbcc_sources=${expected.length} grouped_dma_sources=${groupedDma.length}`);
+  const callArg0MoveFirstOverlays = [...CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES].sort();
+  if (callArg0MoveFirstOverlays.length !== 19) {
+    throw new Error("overlay call-argument source allowlist self-test failed");
+  }
+  for (const path of callArg0MoveFirstOverlays) {
+    if (!cflagsForTargetSource("gs1", join(ROOT, path)).includes("-mcall-arg0-move-first") ||
+        cflagsForTargetSource("gs2", join(ROOT, path)).includes("-mcall-arg0-move-first")) {
+      throw new Error(`overlay call-argument flags self-test failed for ${path}`);
+    }
+  }
+  if (cflagsForTargetSource("gs1", "/tmp/020000a0.c").includes("-mcall-arg0-move-first") ||
+      cflagsForTargetSource("gs1", join(ROOT, "assets/code/resource_381/c/020000a0.c"))
+        .includes("-mcall-arg0-move-first")) {
+    throw new Error("overlay call-argument unrelated-source routing self-test failed");
+  }
+  console.log(`self-test=ok agbcc_sources=${expected.length} grouped_dma_sources=${groupedDma.length} overlay_call_arg_sources=${callArg0MoveFirstOverlays.length}`);
 }
 
 function main(): void {

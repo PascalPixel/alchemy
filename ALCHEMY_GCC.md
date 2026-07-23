@@ -100,3 +100,14 @@ assembly or register pins. Only the independently verified `080049e8`,
 ordinary GS1 sources retain the default code generation path. `080049e8`
 also uses the existing source-scoped `-O1` route because `-O2` swaps two
 independent descriptor loads.
+
+Nineteen independently verified overlay constructors enable GCC 2.96's
+default-off `-mcall-arg0-move-first` compatibility mode. Immediately before a
+call, it moves an independent `r0` register copy ahead of an adjacent `r1`
+immediate; dependency and call adjacency checks prevent a broader scheduling
+change. The cohort is `resource_380`, `382`, `385`, `387`, `38a`, `396`, `39b`,
+`39c`, `39d`, `39e`, `3a0`, `3a1`, `3a5`, `3a6`, `3ab`, `3b3`, `3be`, `3c0`,
+and `3c9`, each at `020000a0`. Because every member has the same source
+filename, `tools/alchemy_gcc.ts` routes this mode by the complete canonical
+resource path rather than by address stem. Sources with the same stem in any
+other overlay, and every GS2 source, retain default ordering.

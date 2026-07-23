@@ -23,6 +23,16 @@ The source-only ownership build currently accounts for:
 | **Unowned remainder** | **0 gaps** | **0** |
 | **Canonical target size** |  | **8,388,608** |
 
+Compressed EWRAM overlay code is tracked separately because its compiled form
+sits inside the canonical compressed assets above and is intentionally outside
+the main-ROM `[N of M]` counter. Across 96 overlay packages, 70 exact,
+asm-free C sources now replace 4,522 decoded span bytes (4,394 discovered
+instruction bytes). The remaining automatic inventory is not assigned a
+function-completion percentage: conservative discovery still mixes callable
+shared tails, internal labels, veneers, overlaps, and data. Until CFG/root
+recovery classifies those entries, overlay progress is reported as verified C
+files and bytes alongside the remaining structured assembly.
+
 The immediate milestone is **100% byte closure for `gs1-en.gba`**: all
 8,388,608 bytes must come from tracked C, reconstruction assembly, or canonical
 assets, with no copied gap or private-ROM fallback. That milestone is achieved:

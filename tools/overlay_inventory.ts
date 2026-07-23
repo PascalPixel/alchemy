@@ -21,10 +21,14 @@ interface FunctionRow {
   code_bytes: number;
   span_bytes: number;
   calls: number;
+  returns: number;
+  starts_with_prologue: boolean;
   unresolved: number;
   unresolved_sites: number[];
   jump_tables: number;
   fingerprint: string;
+  seed_sources: string[];
+  contained_by: string[];
 }
 
 function optionsOf(argv: string[]): Options {
@@ -139,6 +143,28 @@ function fingerprint(discovery: Discovery, addresses: number[]): string {
   return Bun.hash(tokens.join(" ")).toString(36);
 }
 
+function convertedPlaceholders(source: string): Map<number, number> {
+  const placeholders = new Map<number, number>();
+  const text = readFileSync(source, "utf8");
+  const pattern = /^AlchemyC_([0-9a-f]{8}):[ \t]*$/gim;
+  for (const match of text.matchAll(pattern)) {
+    const address = Number.parseInt(match[1], 16);
+    if (placeholders.has(address)) throw new Error(`duplicate overlay C placeholder: ${source}:0x${address.toString(16)}`);
+    let size = 0;
+    const tail = text.slice(match.index! + match[0].length);
+    for (const raw of tail.split(/\r?\n/).slice(1)) {
+      const line = raw.trim();
+      if (line === "" || /^\.L_[0-9a-z_.$]+:$/i.test(line)) continue;
+      const space = /^\.space\s+(0x[0-9a-f]+|[0-9]+)\b/i.exec(line);
+      if (space === null) break;
+      size += Number.parseInt(space[1], 0);
+    }
+    if (size === 0) throw new Error(`overlay C placeholder has no space: ${source}:0x${address.toString(16)}`);
+    placeholders.set(address, size);
+  }
+  return placeholders;
+}
+
 function main(): void {
   const options = optionsOf(Bun.argv.slice(2));
   const overlays = readdirSync(options.assets)
@@ -148,18 +174,42 @@ function main(): void {
     .filter((item) => Bun.file(item.source).size > 0);
   const functions: FunctionRow[] = [];
   let decodedBytes = 0, instructionBytes = 0, unresolved = 0, jumpTables = 0;
+  let convertedFunctions = 0, convertedInstructionBytes = 0, convertedSpanBytes = 0;
+  let convertedInternalEntries = 0, undiscoveredConvertedFunctions = 0;
   for (const overlay of overlays) {
     const data = assembleOverlay(overlay.source, OVERLAY_BASE);
     const converted = overlayCAddresses(overlay.source);
+    const placeholders = convertedPlaceholders(overlay.source);
+    const missing = [...converted].filter((address) => !placeholders.has(address));
+    const orphaned = [...placeholders.keys()].filter((address) => !converted.has(address));
+    if (missing.length > 0 || orphaned.length > 0) {
+      const detail = [
+        missing.length > 0 ? `missing placeholders=${missing.map((address) => `0x${address.toString(16)}`).join(",")}` : "",
+        orphaned.length > 0 ? `orphaned placeholders=${orphaned.map((address) => `0x${address.toString(16)}`).join(",")}` : "",
+      ].filter(Boolean).join(" ");
+      throw new Error(`overlay C/source mismatch: ${overlay.name}: ${detail}`);
+    }
+    convertedFunctions += converted.size;
+    convertedSpanBytes += [...placeholders.values()].reduce((sum, size) => sum + size, 0);
+    const convertedSpans = [...placeholders];
     decodedBytes += data.length;
     const discovery = discoverOverlay(data);
     instructionBytes += [...discovery.instructions.values()].reduce((sum, item) => sum + item.size, 0);
+    convertedInstructionBytes += [...discovery.instructions].filter(([address]) =>
+      convertedSpans.some(([start, size]) => start <= address && address < start + size))
+      .reduce((sum, [, item]) => sum + item.size, 0);
     unresolved += discovery.unresolved.size;
     jumpTables += discovery.jump_tables.size;
+    const discoveredConverted = new Set<number>();
     for (const [entry, fn] of [...discovery.functions].sort((a, b) => a[0] - b[0])) {
-      if (converted.has(entry)) continue;
       const addresses = [...fn.instructions].sort((a, b) => a - b);
       if (addresses.length === 0 || addresses[0] !== entry) continue;
+      const convertedOwner = convertedSpans.find(([start, size]) => start <= entry && entry < start + size)?.[0];
+      if (convertedOwner !== undefined) {
+        if (entry === convertedOwner) discoveredConverted.add(entry);
+        else convertedInternalEntries++;
+        continue;
+      }
       let end = Math.max(...addresses.map((address) => address + discovery.instructions.get(address)!.size));
       for (const address of addresses) {
         const half = discovery.u16(address);
@@ -178,15 +228,40 @@ function main(): void {
         code_bytes: addresses.reduce((sum, address) => sum + discovery.instructions.get(address)!.size, 0),
         span_bytes: end - entry,
         calls: fn.callees.size + fn.external_callees.size,
+        returns: addresses.filter((address) => discovery.instructions.get(address)!.kind === "return").length,
+        starts_with_prologue: (discovery.u16(entry) & 0xff00) === 0xb500,
         unresolved: fn.unresolved.size,
         unresolved_sites: [...fn.unresolved].sort((a, b) => a - b).map((site) => site - OVERLAY_BASE),
         jump_tables: [...discovery.jump_table_sites.keys()].filter((site) => fn.instructions.has(site)).length,
         fingerprint: fingerprint(discovery, addresses),
+        seed_sources: [...fn.sources].sort(),
+        contained_by: [],
       });
     }
+    undiscoveredConvertedFunctions += [...converted].filter((address) => !discoveredConverted.has(address)).length;
+  }
+  const instructionOwners = new Map<string, Map<number, string[]>>();
+  for (const fn of functions) {
+    if (!instructionOwners.has(fn.overlay)) instructionOwners.set(fn.overlay, new Map());
+    const owners = instructionOwners.get(fn.overlay)!;
+    for (const offset of fn.instruction_offsets) {
+      const address = fn.entry + offset;
+      if (!owners.has(address)) owners.set(address, []);
+      owners.get(address)!.push(fn.id);
+    }
+  }
+  for (const fn of functions) {
+    fn.contained_by = (instructionOwners.get(fn.overlay)!.get(fn.entry) ?? [])
+      .filter((id) => id !== fn.id)
+      .sort();
   }
   const ordinary = functions.filter((fn) => fn.unresolved === 0 && fn.jump_tables === 0 &&
     fn.code_bytes >= 8 && fn.span_bytes - fn.code_bytes <= 64);
+  const tiny = functions.filter((fn) => fn.code_bytes <= 6);
+  const contained = functions.filter((fn) => fn.contained_by.length > 0);
+  const returning = functions.filter((fn) => fn.returns > 0);
+  const ordinaryPrologueReturn = ordinary.filter((fn) =>
+    fn.contained_by.length === 0 && fn.starts_with_prologue && fn.returns > 0);
   const groups = new Map<string, FunctionRow[]>();
   for (const fn of ordinary) {
     if (!groups.has(fn.fingerprint)) groups.set(fn.fingerprint, []);
@@ -205,9 +280,20 @@ function main(): void {
     totals: {
       overlays: overlays.length,
       decoded_bytes: decodedBytes,
+      converted_functions: convertedFunctions,
+      unconverted_discoveries: functions.length,
+      tiny_unconverted_discoveries: tiny.length,
+      contained_unconverted_discoveries: contained.length,
+      returning_unconverted_discoveries: returning.length,
+      ordinary_prologue_return_discoveries: ordinaryPrologueReturn.length,
+      converted_internal_entries: convertedInternalEntries,
+      undiscovered_converted_functions: undiscoveredConvertedFunctions,
       functions: functions.length,
+      ordinary_unconverted_discoveries: ordinary.length,
       ordinary_functions: ordinary.length,
       instruction_bytes: instructionBytes,
+      converted_instruction_bytes: convertedInstructionBytes,
+      converted_span_bytes: convertedSpanBytes,
       unresolved,
       jump_tables: jumpTables,
       duplicate_families: families.filter((family) => family.count > 1).length,
@@ -218,7 +304,8 @@ function main(): void {
   };
   mkdirSync(dirname(options.output), { recursive: true });
   writeFileSync(options.output, JSON.stringify(report, null, 2) + "\n");
-  console.log(`overlays=${report.totals.overlays} functions=${report.totals.functions} ordinary=${report.totals.ordinary_functions} decoded_bytes=${decodedBytes} instruction_bytes=${instructionBytes} unresolved=${unresolved} jump_tables=${jumpTables}`);
+  console.log(`overlays=${report.totals.overlays} converted_functions=${convertedFunctions} unconverted_discoveries=${functions.length} ordinary_unconverted_discoveries=${ordinary.length} tiny_unconverted_discoveries=${tiny.length} contained_unconverted_discoveries=${contained.length} returning_unconverted_discoveries=${returning.length} ordinary_prologue_return_discoveries=${ordinaryPrologueReturn.length}`);
+  console.log(`decoded_bytes=${decodedBytes} instruction_bytes=${instructionBytes} converted_instruction_bytes=${convertedInstructionBytes} converted_span_bytes=${convertedSpanBytes} converted_internal_entries=${convertedInternalEntries} undiscovered_converted_functions=${undiscoveredConvertedFunctions} unresolved=${unresolved} jump_tables=${jumpTables}`);
   console.log(`duplicate_families=${report.totals.duplicate_families} duplicate_functions=${report.totals.duplicate_functions}`);
   for (const family of families.filter((item) => item.count > 1).slice(0, options.top)) {
     const sample = family.members.slice(0, 12).join(",");

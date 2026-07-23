@@ -139,7 +139,7 @@ function render(resource: string, frameNumbers: readonly number[]): [string, Buf
   let palette: number[][] = [];
   for (const frameNumber of frameNumbers) {
     const name = `frame_${frameNumber.toString().padStart(2, "0")}.png`;
-    const path = join(ROOT, "assets", "graphics", `resource_${resource}`, "images", name);
+    const path = join(ROOT, "assets", "graphics", `resource_${resource}`, `images_${name}`);
     const [frameWidth, frameHeight, indices, colors] = indexed_png(readFileSync(path));
     if (frames.length === 0) {
       width = frameWidth;

@@ -152,9 +152,9 @@ function componentSources(directory: string, slot: number): string[] {
   if (slot === 0) return [join(components, "metatiles.tilemap"), join(components, "metatiles.lz.json")];
   if (slot === 1) return [join(components, "descriptors.json"), join(components, "descriptors.lz.json")];
   if (slot === 2) return [
-    join(directory, "grid/grid.kind1.json"),
+    join(directory, "grid_grid.kind1.json"),
     ...["value_low.png", "value_high.png", "attribute_a.png", "attribute_b.png", "sentinels.png"]
-      .map((name) => join(directory, "grid", name)),
+      .map((name) => join(directory, `grid_${name}`)),
   ];
   if (slot === 3) return [join(components, "animation_queues.json"), join(components, "animation_queues.lz.json")];
   if (slot === 4) return [join(components, "blend_animation.json"), join(components, "blend_animation.lz.json")];
@@ -166,7 +166,7 @@ function buildComponent(directory: string, slot: number): Buffer {
   const sources = componentSources(directory, slot);
   if (slot === 0) return build_metatiles(sources[0], sources[1]);
   if (slot === 1) return build_descriptors(sources[0], sources[1]);
-  if (slot === 2) return build_grid(JSON.parse(readFileSync(sources[0], "utf8")), join(directory, "grid"));
+  if (slot === 2) return build_grid(JSON.parse(readFileSync(sources[0], "utf8")), directory);
   if (slot === 3) return build_queues(sources[0], sources[1]);
   if (slot === 4) return build_blend_animation(sources[0], sources[1]);
   return build_sparse(sources[0]);
@@ -204,7 +204,7 @@ function exportComponent(container: Buffer, directory: string, offsets: readonly
   const sources = componentSources(directory, slot);
   if (slot === 0) export_metatiles(encoded, sources[0], sources[1]);
   else if (slot === 1) export_descriptors(encoded, sources[0], sources[1]);
-  else if (slot === 2) export_grid(encoded, join(directory, "grid"));
+  else if (slot === 2) export_grid(encoded, directory);
   else if (slot === 3) export_queues(encoded, sources[0], sources[1]);
   else if (slot === 4) export_blend_animation(encoded, sources[0], sources[1]);
   else export_sparse(encoded, sources[0]);

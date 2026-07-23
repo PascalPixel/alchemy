@@ -230,9 +230,12 @@
     "approved_compiler_call_prologue_mismatch",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 15,
-   "expected_bytes": 348,
+   "expected_files": 18,
+   "expected_bytes": 668,
    "files": [
+    "080979a4",
+    "080b845c",
+    "080b84c0",
     "080f9a80",
     "080f9b40",
     "080f9b4c",
@@ -248,6 +251,42 @@
     "080f9c2c",
     "080fa1d4",
     "080fa1e8"
+   ]
+  },
+  {
+   "kind": "hidden_register_context_module",
+   "origin": "program_or_library_runtime",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "caller_passes_context_in_r9",
+    "r0_r1_r2_hold_ordinary_arguments",
+    "approved_compiler_cannot_express_hidden_register_abi",
+    "register_pins_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 102,
+   "files": [
+    "080e7338"
+   ]
+  },
+  {
+   "kind": "implicit_callee_saved_input_module",
+   "origin": "program_or_library_runtime",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "incoming_r6_used_as_fallback_value",
+    "no_c_parameter_or_initialization_defines_value",
+    "approved_compiler_cannot_express_implicit_register_input",
+    "register_pins_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 120,
+   "files": [
+    "0808b320"
    ]
   },
   {

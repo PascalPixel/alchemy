@@ -136,7 +136,7 @@ const EXPECTED: Record<string, string> = {
   xgcc: "8087fb1911b00aafe8ba9dc1530ca84a98774206f24d95b3ac8a8f01bf8a6eb6",
   cpp: "28621e18b2a6b663e1ea6e47750ca0133483f4287bc271265cc7e2fcfa69a2eb",
   tradcpp: "88dae1204f5e928c7de003fd25263e91a18802f8ffde48b6f076e2ee1ea3e59a",
-  cc1: "8abb3507acbc28af3ebfba511556725988061a53371ba95d6c31cac74784c9d6",
+  cc1: "887a5136e598bda5075d46c76c79c48aa3dcec0b7730c9f02474d8ff709f9f14",
 };
 
 let validated = false;

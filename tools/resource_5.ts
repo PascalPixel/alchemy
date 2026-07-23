@@ -123,47 +123,38 @@ function exportItem(data: Buffer): Json {
   for (const offset of [26, 27, 30, 31, 34, 35, 38, 39, 42, 43]) {
     if (data[offset] !== 0) throw new Error(`item has a nonzero reserved byte at +0x${offset.toString(16)}`);
   }
-  return {
-    name_message: data.readUInt16LE(0),
-    category: data[2],
-    flags: data[3],
-    equip_mask: data.readUInt16LE(4),
-    icon: data.readUInt16LE(6),
-    primary_bonus: data.readInt16LE(8),
-    secondary_bonus: signedByte(data, 10),
-    secondary_flags: data[11],
-    use_type: data[12],
-    description_message: data.readUInt16LE(14),
-    element: data[20],
-    effects: [24, 28, 32, 36].map((offset) => ({ kind: data[offset], amount: signedByte(data, offset + 1) })),
-    unleash_ability: data.readUInt16LE(40),
-  };
+  return [
+    data.readUInt16LE(0), data[2], data[3], data.readUInt16LE(4), data.readUInt16LE(6),
+    data.readInt16LE(8), signedByte(data, 10), data[11], data[12], data.readUInt16LE(14), data[20],
+    ...[24, 28, 32, 36].flatMap((offset) => [data[offset], signedByte(data, offset + 1)]),
+    data.readUInt16LE(40),
+  ];
 }
 
 function buildItem(value: unknown, index: number): Buffer {
-  const item = object(value, `items[${index}]`);
-  exactKeys(item, ["name_message", "category", "flags", "equip_mask", "icon", "primary_bonus", "secondary_bonus",
-    "secondary_flags", "use_type", "description_message", "element", "effects", "unleash_ability"], `items[${index}]`);
+  // Tuple schema: [name_message, category, flags, equip_mask, icon,
+  // primary_bonus, secondary_bonus, secondary_flags, use_type,
+  // description_message, element, k0, a0, k1, a1, k2, a2, k3, a3,
+  // unleash_ability]. Position is the field name.
+  const item = list(value, 20, `items[${index}]`) as number[];
   const result = Buffer.alloc(44);
-  result.writeUInt16LE(u16(item.name_message, "item name_message"), 0);
-  result[2] = u8(item.category, "item category");
-  result[3] = u8(item.flags, "item flags");
-  result.writeUInt16LE(u16(item.equip_mask, "item equip_mask"), 4);
-  result.writeUInt16LE(u16(item.icon, "item icon"), 6);
-  result.writeInt16LE(s16(item.primary_bonus, "item primary_bonus"), 8);
-  result.writeInt8(s8(item.secondary_bonus, "item secondary_bonus"), 10);
-  result[11] = u8(item.secondary_flags, "item secondary_flags");
-  result[12] = u8(item.use_type, "item use_type");
-  result.writeUInt16LE(u16(item.description_message, "item description_message"), 14);
-  result[20] = u8(item.element, "item element");
-  list(item.effects, 4, "item effects").forEach((raw, effectIndex) => {
-    const effect = object(raw, "item effect");
-    exactKeys(effect, ["kind", "amount"], "item effect");
+  result.writeUInt16LE(u16(item[0], "item name_message"), 0);
+  result[2] = u8(item[1], "item category");
+  result[3] = u8(item[2], "item flags");
+  result.writeUInt16LE(u16(item[3], "item equip_mask"), 4);
+  result.writeUInt16LE(u16(item[4], "item icon"), 6);
+  result.writeInt16LE(s16(item[5], "item primary_bonus"), 8);
+  result.writeInt8(s8(item[6], "item secondary_bonus"), 10);
+  result[11] = u8(item[7], "item secondary_flags");
+  result[12] = u8(item[8], "item use_type");
+  result.writeUInt16LE(u16(item[9], "item description_message"), 14);
+  result[20] = u8(item[10], "item element");
+  for (let effectIndex = 0; effectIndex < 4; effectIndex++) {
     const offset = 24 + effectIndex * 4;
-    result[offset] = u8(effect.kind, "item effect kind");
-    result.writeInt8(s8(effect.amount, "item effect amount"), offset + 1);
-  });
-  result.writeUInt16LE(u16(item.unleash_ability, "item unleash_ability"), 40);
+    result[offset] = u8(item[11 + effectIndex * 2], "item effect kind");
+    result.writeInt8(s8(item[12 + effectIndex * 2], "item effect amount"), offset + 1);
+  }
+  result.writeUInt16LE(u16(item[19], "item unleash_ability"), 40);
   return result;
 }
 

@@ -297,6 +297,20 @@ against the approved bundle; full sourced notes in
   output with an unexplained head schedule; an intermediate 2.96-line
   SDK snapshot (compare the dated `arm_010110a`/`arm_020422` backends
   preserved in pret/agbcc) is the remaining vintage hypothesis.
+- **Era thumb-backend test (2026-07-23):** pret/agbcc's `gcc_arm`
+  (2.9-arm-000512, CYGNUS) built natively for `--target=thumb-elf` (the
+  separate 2.95-era thumb backend, no function units) still emits
+  copies-first heads for every probed declaration shape, while the SAME
+  vintage built for `--target=arm-elf` emits pool-load-first heads at
+  emission in ARM mode. The era thumb backend does uniquely pin the
+  saved-IME copy directly after its read, matching the reference where
+  our 2.96 sinks it. Combined with the prior 2.96 flag/tune/unit sweeps,
+  gcc-3.0, and old_agbcc negatives, the head transposition is not
+  source-reachable in any available compiler: the family is
+  vintage-blocked, not shape-blocked. Do not spend further source-shape
+  or permutation budget on the nine members; the remaining explanation
+  is a Camelot SDK snapshot whose thumb expand shares the ARM backend's
+  address-materialization order.
 - **Witness scan (2026-07-22, late):** eleven installed matches begin
   push, pool load, arg copy (e.g. [src/08019908.c](src/08019908.c),
   [src/08006384.c](src/08006384.c)). In every witness the pool load

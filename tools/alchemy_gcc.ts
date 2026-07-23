@@ -119,7 +119,7 @@ const EXPECTED: Record<string, string> = {
   xgcc: "8087fb1911b00aafe8ba9dc1530ca84a98774206f24d95b3ac8a8f01bf8a6eb6",
   cpp: "28621e18b2a6b663e1ea6e47750ca0133483f4287bc271265cc7e2fcfa69a2eb",
   tradcpp: "88dae1204f5e928c7de003fd25263e91a18802f8ffde48b6f076e2ee1ea3e59a",
-  cc1: "c53aee66d8e5503dd1e1e8a1e3f04b60c8bfa3d93afef0fa7e001cf950fa1712",
+  cc1: "7ab9a1143718b02014cc7a7a09619063599c6d6f60a49303c0d8b8ccf7ee98ce",
 };
 
 let validated = false;

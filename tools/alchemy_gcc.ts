@@ -47,9 +47,9 @@ const FIXED_R3_SOURCES = new Set([
 // constants in r8/r9; allowing lr as a general register changes the prologue
 // and allocation before source shaping can affect either.
 const FIXED_LR_SOURCES = new Set<string>();
-// This hardware setup helper matches the reference's compact load/store order
-// at -O1; -O2 only swaps two independent setup instructions.
-const OPTIMIZE_O1_SOURCES = new Set(["08021e28"]);
+// These compact hardware helpers match the reference load/store order at -O1;
+// -O2 only swaps independent descriptor setup instructions.
+const OPTIMIZE_O1_SOURCES = new Set(["080049e8", "08021e28"]);
 const UNSCHEDULED_SOURCES = new Set([
   "08006b84",
   "08004198", "08004358", "0800439c",
@@ -79,7 +79,9 @@ const NO_STRENGTH_REDUCE_SOURCES = new Set(["080200cc"]);
 const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // These functions construct a three-word DMA descriptor whose historical
 // Thumb lowering uses one writeback STMIA and restores the descriptor base.
-const GROUPED_DMA_STORE_SOURCES = new Set(["080958a8", "0809bb34"]);
+const GROUPED_DMA_STORE_SOURCES = new Set([
+  "080049e8", "08004a28", "08004a5c", "080958a8", "0809bb34",
+]);
 // 既定ABI(標準のr4被呼出保存)で構築された収蔵ライブラリ翻訳単位。
 // 証拠: r4を保存する序文は -fcall-used-r4 の下では出ない
 // (割込保護記録08006a00、バイト複写08006b84、比較08006c24、
@@ -396,7 +398,9 @@ function selfTest(): void {
     throw new Error("old_agbcc unrelated-source routing self-test failed");
   }
   const groupedDma = [...GROUPED_DMA_STORE_SOURCES].sort();
-  if (JSON.stringify(groupedDma) !== JSON.stringify(["080958a8", "0809bb34"])) {
+  if (JSON.stringify(groupedDma) !== JSON.stringify([
+    "080049e8", "08004a28", "08004a5c", "080958a8", "0809bb34",
+  ])) {
     throw new Error("grouped DMA source allowlist self-test failed");
   }
   for (const stem of groupedDma) {
@@ -407,6 +411,12 @@ function selfTest(): void {
   if (cflagsForTargetSource("gs1", "/tmp/080000c0.c").includes("-mgrouped-dma-store") ||
       cflagsForTargetSource("gs2", "/tmp/080958a8.c").includes("-mgrouped-dma-store")) {
     throw new Error("grouped DMA unrelated-source routing self-test failed");
+  }
+  if (!cflagsForTargetSource("gs1", "/tmp/080049e8.c").includes("-O1") ||
+      cflagsForTargetSource("gs1", "/tmp/08004a28.c").includes("-O1") ||
+      cflagsForTargetSource("gs1", "/tmp/08004a5c.c").includes("-O1") ||
+      cflagsForTargetSource("gs2", "/tmp/080049e8.c").includes("-O1")) {
+    throw new Error("grouped DMA O1 routing self-test failed");
   }
   console.log(`self-test=ok agbcc_sources=${expected.length} grouped_dma_sources=${groupedDma.length}`);
 }

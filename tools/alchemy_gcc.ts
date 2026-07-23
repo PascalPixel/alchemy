@@ -49,14 +49,18 @@ const NO_GCSE_SOURCES = new Set(["080a45cc"]);
 // when GCC does not perform its expensive-expression rewrite.  The rewrite
 // rotates r0-r2 and folds each signed clamp into a shorter non-reference form.
 const NO_EXPENSIVE_SOURCES = new Set(["08092878"]);
+// This four-step signed index loop is emitted as an ascending loop in the
+// reference translation unit. Strength reduction rewrites it to a descending
+// counter and changes both the allocation and loop tail.
+const NO_STRENGTH_REDUCE_SOURCES = new Set(["080200cc"]);
 // 既定ABI(標準のr4被呼出保存)で構築された収蔵ライブラリ翻訳単位。
 // 証拠: r4を保存する序文は -fcall-used-r4 の下では出ない
 // (割込保護記録08006a00、バイト複写08006b84、比較08006c24、
 // フラッシュ書込列08006dec、LAWS.md「第四層」)。
 // 同一cc1・既定フラグ。
 const DEFAULT_ABI_SOURCES = new Set([
-  "08006a00", "08006b84", "08006ba8", "08006c24", "08006dec", "080fa9e0",
-  "080fadf0", "080fb2cc",
+  "08006a00", "08006b84", "08006ba8", "08006c24", "08006dec", "08007098",
+  "080fa9e0", "080fadf0", "080fb2cc",
 ]);
 
 function sourceStem(source: string): string {
@@ -77,6 +81,7 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_CSE_FOLLOW_SOURCES.has(stem) ? ["-fno-cse-follow-jumps"] : []),
     ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
+    ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
   ];
 }
 
@@ -203,6 +208,7 @@ export function directCompilerCommand(input: string, output: string, dumpbase: s
     ...(NO_CSE_FOLLOW_SOURCES.has(stem) ? ["-fno-cse-follow-jumps"] : []),
     ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
+    ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
     "-o", output,
   ];
 }

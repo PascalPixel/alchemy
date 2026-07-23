@@ -14,15 +14,9 @@
           "address": "0x08012f20",
           "end": "0x08012fa0",
           "encoding": "gba_4bpp_tiles",
-          "shape": [
-            4,
-            8,
-            8
-          ],
+          "shape": [4, 8, 8],
           "source_state": "semantic_source_pending",
-          "consumers": [
-            "asm/0800bb20.s"
-          ]
+          "consumers": ["asm/0800bb20.s"]
         },
         {
           "id": "shared_lookup_storage",
@@ -30,47 +24,25 @@
           "end": "0x080134fc",
           "encoding": "overlapping_views",
           "source_state": "semantic_source_pending",
-          "consumers": [
-            "asm/0800b6b8.s",
-            "asm/0800aa0c.s",
-            "asm/0800be70.s",
-            "asm/0800c880.s",
-            "asm/0800cacc.s",
-            "asm/0800f2f8.s",
-            "asm/0800f7f4.s",
-            "asm/08010e14.s",
-            "asm/08011e2c.s",
-            "src/08011f14.c",
-            "src/08011f28.c"
-          ]
+          "consumers": ["asm/0800b6b8.s", "asm/0800aa0c.s", "asm/0800be70.s", "asm/0800c880.s", "asm/0800cacc.s", "asm/0800f2f8.s", "asm/0800f7f4.s", "asm/08010e14.s", "asm/08011e2c.s", "src/08011f14.c", "src/08011f28.c"]
         },
         {
           "id": "interpolation_coefficients",
           "address": "0x080134fc",
           "end": "0x0801353c",
           "encoding": "u32le",
-          "shape": [
-            16
-          ],
+          "shape": [16],
           "source_state": "typed_values_pending",
-          "consumers": [
-            "asm/08011f54.s",
-            "asm/080120dc.s"
-          ]
+          "consumers": ["asm/08011f54.s", "asm/080120dc.s"]
         },
         {
           "id": "surface_lookup",
           "address": "0x0801353c",
           "end": "0x0801356c",
           "encoding": "u8",
-          "shape": [
-            3,
-            16
-          ],
+          "shape": [3, 16],
           "source_state": "typed_values_pending",
-          "consumers": [
-            "asm/080122c8.s"
-          ]
+          "consumers": ["asm/080122c8.s"]
         },
         {
           "id": "unclassified_0801356c",
@@ -85,60 +57,28 @@
           "address": "0x08013584",
           "end": "0x0801358c",
           "encoding": "s32le",
-          "shape": [
-            2
-          ],
+          "shape": [2],
           "source_state": "typed_values_pending",
-          "consumers": [
-            "asm/08012e28.s"
-          ]
+          "consumers": ["asm/08012e28.s"]
         },
         {
           "id": "object_programs",
           "address": "0x0801358c",
           "end": "0x08013624",
           "encoding": "command32le",
-          "shape": [
-            38
-          ],
-          "segments": [
-            1,
-            6,
-            6,
-            6,
-            6,
-            6,
-            6,
-            1
-          ],
+          "shape": [38],
+          "segments": [1, 6, 6, 6, 6, 6, 6, 1],
           "source_state": "typed_values_pending",
-          "consumers": [
-            "asm/0800c150.s",
-            "src/0800c46c.c",
-            "src/0800c47c.c",
-            "src/0800c48c.c",
-            "src/0800c49c.c",
-            "src/0800c4bc.c",
-            "src/0800c454.c",
-            "src/0800c4ac.c"
-          ]
+          "consumers": ["asm/0800c150.s", "src/0800c46c.c", "src/0800c47c.c", "src/0800c48c.c", "src/0800c49c.c", "src/0800c4bc.c", "src/0800c454.c", "src/0800c4ac.c"]
         },
         {
           "id": "object_handlers",
           "address": "0x08013624",
           "end": "0x08013724",
           "encoding": "pointer32le",
-          "shape": [
-            64
-          ],
+          "shape": [64],
           "source_state": "typed_values_pending",
-          "consumers": [
-            "asm/0800a494.s",
-            "asm/0800cacc.s",
-            "src/0800e9a0.c",
-            "src/0800e9dc.c",
-            "src/0800ea18.c"
-          ]
+          "consumers": ["asm/0800a494.s", "asm/0800cacc.s", "src/0800e9a0.c", "src/0800e9dc.c", "src/0800ea18.c"]
         },
         {
           "id": "unclassified_08013724",
@@ -155,67 +95,40 @@
           "address": "0x08012fa0",
           "end": "0x080134a0",
           "encoding": "u8",
-          "shape": [
-            5,
-            256
-          ],
-          "consumers": [
-            "asm/0800b6b8.s"
-          ]
+          "shape": [5, 256],
+          "consumers": ["asm/0800b6b8.s"]
         },
         {
           "id": "grid_lookup_a",
           "address": "0x080132fc",
           "end": "0x080133fc",
           "encoding": "u8",
-          "shape": [
-            16,
-            16
-          ],
-          "consumers": [
-            "asm/08011e2c.s"
-          ]
+          "shape": [16, 16],
+          "consumers": ["asm/08011e2c.s"]
         },
         {
           "id": "grid_lookup_b",
           "address": "0x080133fc",
           "end": "0x080134fc",
           "encoding": "u8",
-          "shape": [
-            16,
-            16
-          ],
-          "consumers": [
-            "src/08011f14.c",
-            "src/08011f28.c"
-          ]
+          "shape": [16, 16],
+          "consumers": ["src/08011f14.c", "src/08011f28.c"]
         },
         {
           "id": "resource_slot_descriptors",
           "address": "0x080132cc",
           "end": "0x080132fc",
           "encoding": "u32le",
-          "shape": [
-            2,
-            6
-          ],
-          "consumers": [
-            "asm/08010e14.s"
-          ]
+          "shape": [2, 6],
+          "consumers": ["asm/08010e14.s"]
         },
         {
           "id": "signed_mode_table",
           "address": "0x08013254",
           "end": "0x08013274",
           "encoding": "s16le",
-          "shape": [
-            16
-          ],
-          "consumers": [
-            "asm/0800ebec.s",
-            "asm/0800f2f8.s",
-            "asm/0800f7f4.s"
-          ]
+          "shape": [16],
+          "consumers": ["asm/0800ebec.s", "asm/0800f2f8.s", "asm/0800f7f4.s"]
         }
       ]
     },

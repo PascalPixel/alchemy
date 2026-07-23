@@ -6,17 +6,7 @@
     "end": "0x08007994",
     "hexadecimal_digits": "0123456789ABCDEF",
     "trailing_zero_bytes": 4,
-    "decimal_divisors": [
-      1000000000,
-      100000000,
-      10000000,
-      1000000,
-      100000,
-      10000,
-      1000,
-      100,
-      10
-    ]
+    "decimal_divisors": [1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10]
   },
   "transfer_test": {
     "address": "0x080079b0",
@@ -40,13 +30,7 @@
   },
   "flash_directory": {
     "address": "0x08007a0c",
-    "devices": [
-      "bf_d4",
-      "1f_3d_4k",
-      "c2_1c",
-      "32_1b",
-      "generic"
-    ]
+    "devices": ["bf_d4", "1f_3d_4k", "c2_1c", "32_1b", "generic"]
   },
   "timing_sets": {
     "flash_common": {

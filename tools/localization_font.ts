@@ -7,6 +7,7 @@ import { decode_pixels, encode_pixels } from "./f0_archive.ts";
 import { decode_palette_trace, encode_palette, type PaletteGroup } from "./extract_resource.ts";
 import { indexed_png, gba_graphics } from "./import_asset.ts";
 import { deflateSync } from "./zlib.ts";
+import { canonicalJson } from "./canonical_json.ts";
 
 export const ROM_BASE = 0x08000000;
 export const PREFIX_ADDRESS = 0x08029910;
@@ -515,7 +516,7 @@ function main(args: string[]): void {
     if (!romPath || !output || !root) throw new Error("usage: localization_font.ts export ROM --root ASSETS --output SOURCE");
     const source = export_localization_font(readFileSync(romPath), root);
     mkdirSync(dirname(output), { recursive: true });
-    writeFileSync(output, `${JSON.stringify(source, null, 2)}\n`);
+    writeFileSync(output, `${canonicalJson(source)}\n`);
     console.log(`identical=true bytes=${PREFIX_END - PREFIX_ADDRESS} glyphs=224 mtf_images=${source.mtf_banks.reduce((sum, bank) => sum + bank.images, 0)}`);
     return;
   }

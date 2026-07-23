@@ -4,6 +4,7 @@
 // pointer scheduling, or expression lowering.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
+import { canonicalJson } from "./canonical_json.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 
@@ -236,7 +237,7 @@ function main(): void {
   for (const stem of stems) {
     const path = join(ROOT, "asm", `${stem}.s`);
     const result = inferAssemblyConstraints(stem, readFileSync(path, "utf8"));
-    writeFileSync(join(output, `${stem}.json`), JSON.stringify(result, null, 2) + "\n");
+    writeFileSync(join(output, `${stem}.json`), canonicalJson(result) + "\n");
     console.log(`${stem}: insns=${result.instructions} args=${result.inferred_arguments} calls=${result.calls} suggestions=${result.suggested_operators.join(",")}`);
   }
 }

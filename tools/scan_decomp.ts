@@ -2,6 +2,7 @@
 // Tool role: both; imported by tools/scan_data_v2.ts; invoked by package.json.
 import type { ComparisonReport } from "./compare_roms.ts";
 import { compareRegions, type RegionMatch } from "./compare_regions.ts";
+import { canonicalJson } from "./canonical_json.ts";
 
 interface Region {
   address: number | string;
@@ -374,7 +375,7 @@ async function main(args: string[]): Promise<void> {
     Number(option(args, "--code-end", "0x08100000")),
     Number(option(args, "--near-ratio", "0.99")),
   );
-  await Bun.write(output, JSON.stringify(queue, null, 2) + "\n");
+  await Bun.write(output, canonicalJson(queue) + "\n");
   console.log(`items=${queue.items.length} A=${queue.priorities.A} B=${queue.priorities.B} ` +
     `C=${queue.priorities.C} D=${queue.priorities.D} E=${queue.priorities.E}`);
 }

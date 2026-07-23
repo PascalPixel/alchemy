@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: entrypoint; invoked by AGENTS.md, PLAYBOOK.md, README.md (+5 more).
+import { canonicalJson } from "./canonical_json.ts";
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, extname, isAbsolute, join, resolve } from "node:path";
 import {
@@ -623,22 +624,22 @@ async function main(): Promise<void> {
   const suffix = extname(output);
   const reportBase = suffix ? output.slice(0, -suffix.length) : output;
   const unownedPath = reportBase + ".unowned.json";
-  writeFileSync(unownedPath, JSON.stringify({
+  writeFileSync(unownedPath, canonicalJson({
     format: 1,
     semantics: "source_ownership",
     verification: args.sourceOnly ? "source_only" : "rom",
     rom_base: ROM_BASE,
     rom_size: romSize,
     regions: unowned,
-  }, null, 2) + "\n");
+  }) + "\n");
   const fallbackPath = reportBase + ".fallback.json";
-  writeFileSync(fallbackPath, JSON.stringify({
+  writeFileSync(fallbackPath, canonicalJson({
     format: 1,
     semantics: args.sourceOnly ? "compatibility_alias_for_unowned_ranges" : "private_rom_fallback",
     rom_base: ROM_BASE,
     rom_size: romSize,
     regions: fallback,
-  }, null, 2) + "\n");
+  }) + "\n");
   const report = {
     format: 1,
     target: target.id,
@@ -677,7 +678,7 @@ async function main(): Promise<void> {
     output: args.sourceOnly ? null : args.output,
   };
   const reportPath = reportBase + ".json";
-  writeFileSync(reportPath, JSON.stringify(report, null, 2) + "\n");
+  writeFileSync(reportPath, canonicalJson(report) + "\n");
   console.log(
     `${args.sourceOnly ? "source_only=True" : "identical=True"} regions=${report.source_regions} code=${report.code_regions} ` +
     `asm=${report.asm_regions} assets=${report.asset_regions} source_bytes=${report.source_bytes} ` +

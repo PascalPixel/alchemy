@@ -77,6 +77,7 @@
 //
 // 使い方:  bun tools/midi_roundtrip.ts            # 2曲を往復し結果を out/ に出力
 //          bun tools/midi_roundtrip.ts --self-test
+import { canonicalJson } from "./canonical_json.ts";
 
 import {
   midi_events,
@@ -682,7 +683,7 @@ async function roundTripSong(name: string, source: SequenceSource, outDir: strin
   await Bun.write(`${outDir}/${name}.mid`, midi);
 
   const rebuilt = midiToSequence(midi);
-  await Bun.write(`${outDir}/${name}.roundtrip.json`, JSON.stringify(rebuilt, null, 2) + "\n");
+  await Bun.write(`${outDir}/${name}.roundtrip.json`, canonicalJson(rebuilt) + "\n");
 
   const diffs: string[] = [];
   diffValue(source, rebuilt, "$", diffs);

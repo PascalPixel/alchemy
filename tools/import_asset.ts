@@ -2,6 +2,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { crc32, deflateSync, inflateSync } from "./zlib.ts";
+import { canonicalJson } from "./canonical_json.ts";
 
 export type Rgb = [number, number, number];
 export type Report = Record<string, number>;
@@ -315,7 +316,7 @@ async function main(args: string[]): Promise<void> {
   } else if (command === "midi") {
     const output = option(args, args.includes("-o") ? "-o" : "--output");
     const report = midi_events(readFileSync(input));
-    mkdirSync(dirname(output), { recursive: true }); writeFileSync(output, JSON.stringify(report, null, 2) + "\n");
+    mkdirSync(dirname(output), { recursive: true }); writeFileSync(output, canonicalJson(report) + "\n");
     console.log(`tracks=${report.tracks} events=${report.events.length}`);
   } else throw new Error("an asset command is required");
 }

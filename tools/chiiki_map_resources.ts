@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, renameSync, realpathSync, rmSync, symlinkSync,
   writeFileSync,
@@ -88,8 +89,7 @@ function object(value: unknown, label: string): JsonObject {
 function document(path: string, label: string, compact = false): JsonObject {
   const text = readFileSync(path, "utf8");
   const value = JSON.parse(text);
-  const canonical = `${JSON.stringify(value, null, compact ? undefined : 2)}\n`;
-  if (text !== canonical) throw new Error(`${label} is not canonical JSON`);
+  if (!isCanonicalJsonText(text, value)) throw new Error(`${label} is not canonical JSON`);
   return object(value, label);
 }
 
@@ -572,7 +572,7 @@ function writeChiikiMapSeries(rom: Buffer, directory: string): IndexDocument {
   }
   const index: IndexDocument = { format: 1, kind: "golden-sun-chiiki-map-series", resources };
   const indexPath = join(directory, "index.json");
-  writeFileSync(indexPath, `${JSON.stringify(index, null, 2)}\n`);
+  writeFileSync(indexPath, `${canonicalJson(index)}\n`);
   const built = build_chiiki_map_series(indexPath);
   built.forEach((item, position) => {
     const spec = CHIIKI_MAP_RESOURCES[position];

@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync,
   renameSync, rmSync, symlinkSync, unlinkSync, writeFileSync,
@@ -71,7 +72,7 @@ const TYPED_WIDTH: Partial<Record<Encoding, number>> = {
 };
 
 function pretty(value: unknown): string {
-  return `${JSON.stringify(value, null, 2)}\n`;
+  return `${canonicalJson(value)}\n`;
 }
 
 function hexadecimal(value: number): string {
@@ -247,7 +248,7 @@ export function validateCatalog(catalog: Catalog): void {
 function loadCatalog(path = DEFAULT_CATALOG): Catalog {
   const text = readFileSync(path, "utf8");
   const catalog = JSON.parse(text) as Catalog;
-  if (text !== pretty(catalog)) throw new Error("early-runtime catalog is not canonical JSON");
+  if (!isCanonicalJsonText(text, catalog)) throw new Error("early-runtime catalog is not canonical JSON");
   validateCatalog(catalog);
   return catalog;
 }
@@ -496,7 +497,7 @@ function sourceDocument(rom: Uint8Array, catalog: Catalog): Json {
 function sourceIndex(path: string, catalog: Catalog): Json {
   const text = readFileSync(path, "utf8");
   const source = object(JSON.parse(text), "early-runtime source");
-  if (text !== pretty(source)) throw new Error("early-runtime source is not canonical JSON");
+  if (!isCanonicalJsonText(text, source)) throw new Error("early-runtime source is not canonical JSON");
   exactKeys(source, [
     "format", "kind", "catalog_format", "source_bytes", "early_runtime_tables", "post_map_load_residual",
   ], "early-runtime source");

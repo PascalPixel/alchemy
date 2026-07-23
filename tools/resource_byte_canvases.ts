@@ -4,6 +4,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
 import { byte_png } from "./export_asset.ts";
 import { indexed_png } from "./import_asset.ts";
+import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -17,14 +18,14 @@ const RESOURCES: Spec[] = [
   ["066", 0x083dc854, 0x114], ["073", 0x083e2ae4, 0x29c], ["0a5", 0x083f5f4c, 0x7b0], ["0a6", 0x083f66fc, 0x518],
 ].map(([id, address, size]) => ({ id: String(id), address: Number(address), size: Number(size), source: `resource_${id}.png` }));
 
-function pretty(value: unknown): string { return `${JSON.stringify(value, null, 2)}\n`; }
+function pretty(value: unknown): string { return `${canonicalJson(value)}\n`; }
 function hex(value: number): string { return `0x${value.toString(16).padStart(8, "0")}`; }
 function width(_: number): number { return 32; }
 function height(size: number): number { return Math.ceil(Math.ceil(size / width(size)) / 8) * 8; }
 
 function parse(indexPath: string): Index {
   const text = readFileSync(indexPath, "utf8"), value = JSON.parse(text);
-  if (text !== pretty(value) || typeof value !== "object" || value === null || Array.isArray(value)) throw new Error("resource canvas index differs");
+  if (!isCanonicalJsonText(text, value) || typeof value !== "object" || value === null || Array.isArray(value)) throw new Error("resource canvas index differs");
   const source = value as Index;
   if (source.format !== 1 || source.kind !== "golden-sun-resource-byte-canvas-series" || !Array.isArray(source.resources) ||
       source.resources.length !== RESOURCES.length) throw new Error("resource canvas index identity differs");

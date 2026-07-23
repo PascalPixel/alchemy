@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   cpSync,
   existsSync,
@@ -204,8 +205,7 @@ function exactKeys(value: Record<string, unknown>, keys: readonly string[], labe
 
 function document(text: string, pretty: boolean): unknown {
   const value: unknown = JSON.parse(text);
-  const canonical = `${JSON.stringify(value, null, pretty ? 2 : 0)}\n`;
-  if (text !== canonical) throw new Error("sentou JSON is not canonical");
+    if (!isCanonicalJsonText(text, value)) throw new Error("sentou JSON is not canonical");
   return value;
 }
 
@@ -579,7 +579,7 @@ function writeSentouPackage(rom: Buffer, directory: string): void {
     kind: "golden-sun-sentou-series",
     resources: SENTOU_RESOURCES.map((spec) => exportOne(rom, directory, spec)),
   };
-  writeFileSync(join(directory, "index.json"), `${JSON.stringify(index, null, 2)}\n`);
+  writeFileSync(join(directory, "index.json"), `${canonicalJson(index)}\n`);
 }
 
 function verifySentou(rom: Buffer, directory: string): { claimedBytes: number; boundaryBytes: number } {
@@ -669,7 +669,7 @@ export function promote_sentou_tails(romFile: string, directory: string): void {
       writeFileSync(planFile, `${JSON.stringify(plan)}\n`);
       entry.size = shortHex(spec.boundarySize);
     });
-    writeFileSync(indexFile, `${JSON.stringify(index, null, 2)}\n`);
+    writeFileSync(indexFile, `${canonicalJson(index)}\n`);
     const report = verifySentou(rom, staging);
     if (report.claimedBytes !== report.boundaryBytes) throw new Error("sentou tail promotion left unclaimed boundary bytes");
   });

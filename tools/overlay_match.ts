@@ -10,6 +10,7 @@ import { M2C_PREAMBLE, verifyCandidate } from "./match_m2c.ts";
 import { assembleOverlay, OVERLAY_BASE } from "./overlay_disasm.ts";
 import { discoverOverlay } from "./overlay_inventory.ts";
 import { variants } from "./search_variants.ts";
+import { canonicalJson } from "./canonical_json.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const REJECT = ["M2C_ERROR", "M2C_BITFIELD", "M2C_MEMSET", "M2C_MEMCPY"];
@@ -157,7 +158,7 @@ async function main(): Promise<void> {
   }
   await Promise.all(Array.from({ length: Math.min(options.jobs, selected.length) }, worker));
   const report = { format: 1, targets: selected.length, compiled, matched, results };
-  writeFileSync(join(options.output, "report.json"), JSON.stringify(report, null, 2) + "\n");
+  writeFileSync(join(options.output, "report.json"), canonicalJson(report) + "\n");
   console.log(`targets=${selected.length} compiled=${compiled} matches=${matched} report=${join(options.output, "report.json")}`);
 }
 

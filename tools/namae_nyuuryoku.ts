@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { canonicalJson } from "./canonical_json.ts";
 import {
   decode_general_trace,
   encode_general,
@@ -296,7 +297,7 @@ async function main(args: string[]): Promise<void> {
     const output = option(args, "--output");
     if (!romPath || !output) throw new Error("usage: namae_nyuuryoku.ts export ROM --output SOURCE");
     const source = export_namae_nyuuryoku(await readRom(romPath));
-    await Bun.write(output, `${JSON.stringify(source, null, 2)}\n`);
+    await Bun.write(output, `${canonicalJson(source)}\n`);
     const built = build_namae_nyuuryoku(source);
     console.log(`identical=true bytes=${built.length} tilemap_entries=${TILEMAP_ENTRIES}`);
     return;

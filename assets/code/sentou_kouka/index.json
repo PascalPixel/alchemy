@@ -51,16 +51,7 @@
   "consumers": {
     "fragment_composer": {
       "symbol": "Func_080ed408",
-      "copy_sizes_words": [
-        2,
-        4,
-        25,
-        16,
-        6,
-        3,
-        97,
-        14
-      ]
+      "copy_sizes_words": [2, 4, 25, 16, 6, 3, 97, 14]
     },
     "callback_lookup": {
       "symbol": "Func_080d6660",

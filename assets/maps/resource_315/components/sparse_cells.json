@@ -4,10 +4,6 @@
   "terminator": "ffffff",
   "alignment_zeros": 2,
   "records": [
-    [
-      10,
-      22,
-      100
-    ]
+    [10, 22, 100]
   ]
 }

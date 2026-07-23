@@ -85,9 +85,7 @@
     {
       "id": "037",
       "mode": 0,
-      "aliases": [
-        "47"
-      ],
+      "aliases": ["47"],
       "address": "0x081f4968",
       "size": "0x0000175c",
       "directory": "0x081f6098",

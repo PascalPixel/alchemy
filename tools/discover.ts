@@ -1,5 +1,6 @@
 // Tool role: library; imported by tools/decompile_batch.ts, tools/emit_function.ts, tools/executable_gap_sources.ts (+2 more).
 import { readFileSync, writeFileSync } from "node:fs";
+import { canonicalJson } from "./canonical_json.ts";
 
 export let ROM_BASE = 0x08000000;
 export type Mode = "arm" | "thumb";
@@ -721,7 +722,7 @@ export function main(argv = process.argv.slice(2)): void {
   const discovery = new Discovery(readFileSync(rom));
   const entry = discovery.run();
   const report = discovery.report(entry, details) as Record<string, any>;
-  writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`);
+  writeFileSync(output, `${canonicalJson(report)}\n`);
   console.log(`functions=${report.function_count} instructions=${report.instruction_count} calls=${report.call_count} external_calls=${report.external_call_count} unresolved=${report.unresolved_count} jump_tables=${report.jump_table_count} conflicts=${report.conflicts.length}`);
 }
 

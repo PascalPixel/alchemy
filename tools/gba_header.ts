@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   mkdirSync,
   mkdtempSync,
@@ -91,7 +92,7 @@ const EXPECTED_UNRESOLVED = [
 ];
 
 function pretty(value: unknown): string {
-  return `${JSON.stringify(value, null, 2)}\n`;
+  return `${canonicalJson(value)}\n`;
 }
 
 function object(value: unknown, label: string): JsonObject {
@@ -220,7 +221,7 @@ export function parseGbaHeaderSource(value: unknown): GbaHeaderSource {
 export function readGbaHeaderSource(path: string): GbaHeaderSource {
   const text = readFileSync(path, "utf8");
   const value = JSON.parse(text);
-  if (text !== pretty(value)) throw new Error(`${path}: source is not canonical JSON`);
+  if (!isCanonicalJsonText(text, value)) throw new Error(`${path}: source is not canonical JSON`);
   return parseGbaHeaderSource(value);
 }
 

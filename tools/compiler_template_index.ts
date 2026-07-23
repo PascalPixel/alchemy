@@ -7,6 +7,7 @@
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { assembleOverlay, OVERLAY_BASE } from "./overlay_disasm.ts";
+import { canonicalJson } from "./canonical_json.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 
@@ -176,7 +177,7 @@ async function main(): Promise<void> {
     structural_hits: structuralHits,
   };
   mkdirSync(dirname(options.output), { recursive: true });
-  writeFileSync(options.output, JSON.stringify(report, null, 2) + "\n");
+  writeFileSync(options.output, canonicalJson(report) + "\n");
   console.log(`c_templates=${templates.length} overlay_functions=${results.length} exact_hits=${exactHits.length} structural_hits=${structuralHits.length}`);
   for (const hit of [...exactHits, ...structuralHits.filter((item) => item.exact_templates.length === 0)].slice(0, options.top)) {
     console.log(`${hit.id}\texact=${hit.exact_templates.join(",") || "-"}\tstructural=${hit.structural_templates.slice(0, 5).join(",") || "-"}`);

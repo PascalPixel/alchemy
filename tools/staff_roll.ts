@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   existsSync,
   mkdirSync,
@@ -43,7 +44,7 @@ function hexadecimal(value: number): string {
 }
 
 function pretty(value: unknown): string {
-  return `${JSON.stringify(value, null, 2)}\n`;
+  return `${canonicalJson(value)}\n`;
 }
 
 function exactKeys(value: unknown, keys: readonly string[], name: string): asserts value is Json {
@@ -66,7 +67,7 @@ function array(value: unknown, count: number, name: string): unknown[] {
 
 function document(path: string): Json {
   const text = readFileSync(path, "utf8"), value = JSON.parse(text);
-  if (text !== pretty(value)) throw new Error(`${path}: source is not canonical JSON`);
+  if (!isCanonicalJsonText(text, value)) throw new Error(`${path}: source is not canonical JSON`);
   exactKeys(value, [
     "format", "kind", "address", "end", "size", "preload_table", "text_pool", "glyph_widths", "lines", "font", "alignment",
   ], "staff-roll source");

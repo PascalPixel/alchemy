@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: entrypoint; invoked by STATUS.md, assets/README.md, package.json (+2 more).
+import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { encode_general, encode_general_prefill, encode_palette } from "./extract_resource.ts";
@@ -122,7 +123,7 @@ function canonicalJsonSource(name: string, label: string): Json {
   const text = readFileSync(path, "utf8");
   const value = JSON.parse(text);
   if (typeof value !== "object" || value === null || Array.isArray(value) ||
-      text !== `${JSON.stringify(value, null, 2)}\n`) {
+      !isCanonicalJsonText(text, value)) {
     throw new Error(`${label} is not canonical JSON`);
   }
   return value;
@@ -1494,14 +1495,14 @@ function main(): void {
     throw new Error(`tracked images are not byte-verified asset sources:\n${listing}`);
   }
   const assetBytes = regions.reduce((sum, item) => sum + number(item.size), 0);
-  writeFileSync(join(output, "manifest.json"), JSON.stringify({
+  writeFileSync(join(output, "manifest.json"), canonicalJson({
     format: 1,
     rom_base: ROM_BASE,
     rom_size: romSize,
     verification: args.sourceOnly ? "source_only" : "rom",
     asset_bytes: assetBytes,
     regions,
-  }, null, 2) + "\n");
+  }) + "\n");
   console.log(`assets=${regions.length} bytes=${assetBytes}`);
 }
 

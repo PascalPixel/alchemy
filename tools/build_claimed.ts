@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: entrypoint; invoked by STATUS.md, package.json, tools/build_full.ts (+1 more).
+import { canonicalJson } from "./canonical_json.ts";
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
 import {
@@ -302,7 +303,7 @@ async function main(): Promise<void> {
       source: relative(ROOT, source), symbol: name, symbols: moduleSymbols, address, size, end,
     });
   }
-  writeFileSync(join(output, "manifest.json"), JSON.stringify({
+  writeFileSync(join(output, "manifest.json"), canonicalJson({
     format: 1,
     target: target.id,
     compiler: target.compiler,
@@ -313,7 +314,7 @@ async function main(): Promise<void> {
     image_size: image.length,
     claimed_bytes: total,
     regions: manifest,
-  }, null, 2) + "\n");
+  }) + "\n");
 
   console.log(`linked=${manifest.length} failures=${failures.length} claimed_bytes=${total} image_bytes=${image.length}`);
   if (failures.length !== 0) {

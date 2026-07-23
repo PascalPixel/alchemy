@@ -27,6 +27,7 @@ const FIXED_R3_SOURCES = new Set([
 const OPTIMIZE_O1_SOURCES = new Set(["08021e28"]);
 const UNSCHEDULED_SOURCES = new Set([
   "08006b84",
+  "08004198", "08004358", "0800439c",
   "080fb714", "080fb728", "080fb73c", "080fb750", "080fb75c",
   "080fb768", "080fb77c",
 ]);
@@ -116,7 +117,7 @@ const EXPECTED: Record<string, string> = {
   xgcc: "8087fb1911b00aafe8ba9dc1530ca84a98774206f24d95b3ac8a8f01bf8a6eb6",
   cpp: "28621e18b2a6b663e1ea6e47750ca0133483f4287bc271265cc7e2fcfa69a2eb",
   tradcpp: "88dae1204f5e928c7de003fd25263e91a18802f8ffde48b6f076e2ee1ea3e59a",
-  cc1: "14d4ad0a4fba9054250af66efd489d577d6f0397b54aeb75f9bcead65256fc5c",
+  cc1: "c53aee66d8e5503dd1e1e8a1e3f04b60c8bfa3d93afef0fa7e001cf950fa1712",
 };
 
 let validated = false;

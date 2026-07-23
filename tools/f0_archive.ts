@@ -129,7 +129,7 @@ export function preview_png(directory: string, count: number, columns = 8, scale
   const height = rows * 32 * scale;
   const output = Buffer.alloc(width * height * 3, 255);
   for (let index = 0; index < count; index++) {
-    const [pixels, palette] = read_image(readFileSync(join(directory, `image_${index.toString().padStart(2, "0")}.png`)));
+    const [pixels, palette] = read_image(readFileSync(join(directory, `images_image_${index.toString().padStart(2, "0")}.png`)));
     const colors: number[][] = [];
     for (let colorIndex = 0; colorIndex < 16; colorIndex++) {
       const value = palette.readUInt16LE(colorIndex * 2);
@@ -162,7 +162,7 @@ export function package_image(image: Uint8Array): Buffer {
 export function build_archive(plan: F0Plan, directory: string): Buffer {
   const count = Number(plan.images);
   const packages = Array.from({ length: count }, (_, index) =>
-    package_image(readFileSync(join(directory, `image_${index.toString().padStart(2, "0")}.png`))));
+    package_image(readFileSync(join(directory, `images_image_${index.toString().padStart(2, "0")}.png`))));
   let offset = plan.entries.length * 2;
   const offsets: number[] = [];
   for (const payload of packages) { offsets.push(offset); offset += payload.length; }

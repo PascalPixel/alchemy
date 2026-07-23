@@ -211,7 +211,7 @@ private differential reports, opaque extraction dumps, compiler bundles,
 objects, ELFs, and generated builds are not.
 
 The full operational rule and commit gate are in
-[PUBLICATION.md](PUBLICATION.md). All private ROMs, `alchemy-gcc`, generated
+[AGENTS.md](AGENTS.md#publication-boundary). All private ROMs, `alchemy-gcc`, generated
 analysis, compiler output, and build products are git-ignored.
 
 ## Definition of completion

@@ -4,7 +4,7 @@ This is the operating guide for converting Alchemy's remaining reconstructed
 assembly into byte-exact C. It optimizes verified conversions per wall-clock
 hour. The evidence, clean-room, build, and publication rules in
 [AGENTS.md](AGENTS.md), [STATUS.md](STATUS.md), and
-[PUBLICATION.md](PUBLICATION.md) take precedence.
+[AGENTS.md](AGENTS.md#publication-boundary) take precedence.
 
 ## Evidence boundary
 

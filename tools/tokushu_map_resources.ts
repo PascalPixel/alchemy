@@ -148,7 +148,7 @@ function componentEnd(offsets: readonly number[], slot: number, size: number): n
 }
 
 function componentSources(directory: string, slot: number): string[] {
-  const components = join(directory, "components");
+  const components = directory;
   if (slot === 0) return [join(components, "metatiles.tilemap"), join(components, "metatiles.lz.json")];
   if (slot === 1) return [join(components, "descriptors.json"), join(components, "descriptors.lz.json")];
   if (slot === 2) return [
@@ -174,7 +174,7 @@ function buildComponent(directory: string, slot: number): Buffer {
 
 function buildResource(entry: ResourceEntry, spec: ResourceSpec, root: string): BuiltTokushuMap {
   const directory = confined(root, entry.directory);
-  const headerPath = join(directory, "components/header.json");
+  const headerPath = join(directory, "header.json");
   const header = build_header(headerPath);
   const offsets = componentOffsets(header, spec.size);
   const parts = [header];
@@ -229,7 +229,7 @@ export function export_tokushu_map_series(romPath: string, directory: string): I
     if (container.length !== spec.size) throw new Error(`resource ${idText(spec.id)} is outside the ROM`);
     const name = `resource_${idText(spec.id)}`;
     const resourceDirectory = join(directory, name);
-    const components = join(resourceDirectory, "components");
+    const components = resourceDirectory;
     mkdirSync(components, { recursive: true });
     const offsets = export_header(container, join(components, "header.json"));
     componentOffsets(container.subarray(0, HEADER_SIZE), spec.size);

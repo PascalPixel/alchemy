@@ -34,6 +34,10 @@ const UNSCHEDULED_SOURCES = new Set([
 // base.  Following jumps during CSE rematerializes one arm's base in r3;
 // disabling that pass preserves the reference's r6 lifetime and coalescing.
 const NO_CSE_FOLLOW_SOURCES = new Set(["0800f9f4"]);
+// This unrolled six-item display setup shares one resource-ID base and one
+// signed sentinel.  Global CSE expands them back into independent constants;
+// disabling it preserves the reference's r7/r8 lifetimes.
+const NO_GCSE_SOURCES = new Set(["080a45cc"]);
 // This bounded-angle convergence loop only retains the reference allocation
 // when GCC does not perform its expensive-expression rewrite.  The rewrite
 // rotates r0-r2 and folds each signed clamp into a shorter non-reference form.
@@ -61,6 +65,7 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(OPTIMIZE_O1_SOURCES.has(stem) ? ["-O1"] : []),
     ...(UNSCHEDULED_SOURCES.has(stem) ? ["-fno-schedule-insns", "-fno-schedule-insns2"] : []),
     ...(NO_CSE_FOLLOW_SOURCES.has(stem) ? ["-fno-cse-follow-jumps"] : []),
+    ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
   ];
 }

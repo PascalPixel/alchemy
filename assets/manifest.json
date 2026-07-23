@@ -997,33 +997,9 @@
       "kind": "golden-sun-map-component-series",
       "families": [
         ["128",  "0x084ba758",  "0x3c",  [0,  "0x084ba794",  "0x8"],  [1,  "0x084ba79c",  "0x8"],  [5,  "0x084baaa0",  "0x4"]],
-        [
-          "12e",
-          "0x084bafc0",
-          "0x3c",
-          [0, "0x084baffc", "0x2dbc"],
-          [1, "0x084bddb8", "0xec"],
-          [3, "0x084c0264", "0x168"],
-          [5, "0x084c03cc", "0x4"]
-        ],
-        [
-          "134",
-          "0x084c9b2c",
-          "0x3c",
-          [0, "0x084c9b68", "0x2dfc"],
-          [1, "0x084cc964", "0xec"],
-          [3, "0x084cebd8", "0x110"],
-          [5, "0x084cece8", "0xc"]
-        ],
-        [
-          "13a",
-          "0x084d8790",
-          "0x3c",
-          [0, "0x084d87cc", "0x1ad8"],
-          [1, "0x084da2a4", "0x68"],
-          [3, "0x084db7e8", "0xdc"],
-          [5, "0x084db8c4", "0x8"]
-        ],
+        ["12e",  "0x084bafc0",  "0x3c",  [0,  "0x084baffc",  "0x2dbc"],  [1,  "0x084bddb8",  "0xec"],  [3,  "0x084c0264",  "0x168"],  [5,  "0x084c03cc",  "0x4"]],
+        ["134",  "0x084c9b2c",  "0x3c",  [0,  "0x084c9b68",  "0x2dfc"],  [1,  "0x084cc964",  "0xec"],  [3,  "0x084cebd8",  "0x110"],  [5,  "0x084cece8",  "0xc"]],
+        ["13a",  "0x084d8790",  "0x3c",  [0,  "0x084d87cc",  "0x1ad8"],  [1,  "0x084da2a4",  "0x68"],  [3,  "0x084db7e8",  "0xdc"],  [5,  "0x084db8c4",  "0x8"]],
         ["140",  "0x084e3fa8",  "0x3c",  [0,  "0x084e3fe4",  "0x12e8"],  [1,  "0x084e52cc",  "0x3c"],  [5,  "0x084e60f4",  "0x8"]],
         [
           "146",
@@ -1257,15 +1233,7 @@
           [4, "0x0857d518", "0x10"],
           [5, "0x0857d528", "0xc"]
         ],
-        [
-          "1bd",
-          "0x08582120",
-          "0x3c",
-          [0, "0x0858215c", "0x2f8"],
-          [1, "0x08582454", "0x24"],
-          [3, "0x085832c8", "0x158"],
-          [5, "0x08583420", "0x4"]
-        ],
+        ["1bd",  "0x08582120",  "0x3c",  [0,  "0x0858215c",  "0x2f8"],  [1,  "0x08582454",  "0x24"],  [3,  "0x085832c8",  "0x158"],  [5,  "0x08583420",  "0x4"]],
         [
           "1be",
           "0x08583424",
@@ -1296,15 +1264,7 @@
           [4, "0x08594824", "0x1c"],
           [5, "0x08594840", "0x4"]
         ],
-        [
-          "1cb",
-          "0x085965fc",
-          "0x3c",
-          [0, "0x08596638", "0xde0"],
-          [1, "0x08597418", "0x28"],
-          [3, "0x08597d80", "0x114"],
-          [5, "0x08597e94", "0x4"]
-        ],
+        ["1cb",  "0x085965fc",  "0x3c",  [0,  "0x08596638",  "0xde0"],  [1,  "0x08597418",  "0x28"],  [3,  "0x08597d80",  "0x114"],  [5,  "0x08597e94",  "0x4"]],
         ["1d0",  "0x0859e2c0",  "0x3c",  [0,  "0x0859e2fc",  "0xc24"],  [1,  "0x0859ef20",  "0x30"],  [5,  "0x0859f988",  "0x4"]],
         [
           "1d6",
@@ -1346,24 +1306,8 @@
           [4, "0x085c4c90", "0x18"],
           [5, "0x085c4ca8", "0x4"]
         ],
-        [
-          "1ed",
-          "0x085c4e08",
-          "0x3c",
-          [0, "0x085c4e44", "0x15c0"],
-          [1, "0x085c6404", "0xc"],
-          [3, "0x085c7344", "0x7c"],
-          [5, "0x085c73c0", "0x4"]
-        ],
-        [
-          "1f8",
-          "0x085d204c",
-          "0x3c",
-          [0, "0x085d2088", "0x12d0"],
-          [1, "0x085d3358", "0x24"],
-          [3, "0x085d46c4", "0x20c"],
-          [5, "0x085d48d0", "0xc"]
-        ],
+        ["1ed",  "0x085c4e08",  "0x3c",  [0,  "0x085c4e44",  "0x15c0"],  [1,  "0x085c6404",  "0xc"],  [3,  "0x085c7344",  "0x7c"],  [5,  "0x085c73c0",  "0x4"]],
+        ["1f8",  "0x085d204c",  "0x3c",  [0,  "0x085d2088",  "0x12d0"],  [1,  "0x085d3358",  "0x24"],  [3,  "0x085d46c4",  "0x20c"],  [5,  "0x085d48d0",  "0xc"]],
         ["1fe",  "0x085dc868",  "0x3c",  [0,  "0x085dc8a4",  "0xe54"],  [1,  "0x085dd6f8",  "0x10"],  [5,  "0x085de134",  "0x4"]],
         [
           "204",
@@ -1395,24 +1339,8 @@
           [4, "0x085f60ec", "0x8"],
           [5, "0x085f60f4", "0x4"]
         ],
-        [
-          "213",
-          "0x085f7674",
-          "0x3c",
-          [0, "0x085f76b0", "0x428"],
-          [1, "0x085f7ad8", "0x2c"],
-          [3, "0x085f89a4", "0x204"],
-          [5, "0x085f8ba8", "0x8"]
-        ],
-        [
-          "216",
-          "0x085faff8",
-          "0x3c",
-          [0, "0x085fb034", "0x418"],
-          [1, "0x085fb44c", "0x2c"],
-          [3, "0x085fc540", "0x204"],
-          [5, "0x085fc744", "0xc"]
-        ],
+        ["213",  "0x085f7674",  "0x3c",  [0,  "0x085f76b0",  "0x428"],  [1,  "0x085f7ad8",  "0x2c"],  [3,  "0x085f89a4",  "0x204"],  [5,  "0x085f8ba8",  "0x8"]],
+        ["216",  "0x085faff8",  "0x3c",  [0,  "0x085fb034",  "0x418"],  [1,  "0x085fb44c",  "0x2c"],  [3,  "0x085fc540",  "0x204"],  [5,  "0x085fc744",  "0xc"]],
         [
           "219",
           "0x085ff240",
@@ -1493,15 +1421,7 @@
           [4, "0x08622ac4", "0x20"],
           [5, "0x08622ae4", "0x4"]
         ],
-        [
-          "230",
-          "0x08622ae8",
-          "0x3c",
-          [0, "0x08622b24", "0x448"],
-          [1, "0x08622f6c", "0x38"],
-          [3, "0x086237a0", "0x268"],
-          [5, "0x08623a08", "0x8"]
-        ],
+        ["230",  "0x08622ae8",  "0x3c",  [0,  "0x08622b24",  "0x448"],  [1,  "0x08622f6c",  "0x38"],  [3,  "0x086237a0",  "0x268"],  [5,  "0x08623a08",  "0x8"]],
         [
           "231",
           "0x08623a10",
@@ -1582,33 +1502,9 @@
           [4, "0x08635940", "0x1c"],
           [5, "0x0863595c", "0x4"]
         ],
-        [
-          "241",
-          "0x08635960",
-          "0x3c",
-          [0, "0x0863599c", "0x1b90"],
-          [1, "0x0863752c", "0x24"],
-          [3, "0x08638a60", "0xc4"],
-          [5, "0x08638b24", "0x4"]
-        ],
-        [
-          "247",
-          "0x0863eedc",
-          "0x3c",
-          [0, "0x0863ef18", "0x1dec"],
-          [1, "0x08640d04", "0x24"],
-          [3, "0x086423e4", "0xc4"],
-          [5, "0x086424a8", "0x8"]
-        ],
-        [
-          "248",
-          "0x086424b0",
-          "0x3c",
-          [0, "0x086424ec", "0x20b8"],
-          [1, "0x086445a4", "0x28"],
-          [3, "0x08645eec", "0xc4"],
-          [5, "0x08645fb0", "0x8"]
-        ],
+        ["241",  "0x08635960",  "0x3c",  [0,  "0x0863599c",  "0x1b90"],  [1,  "0x0863752c",  "0x24"],  [3,  "0x08638a60",  "0xc4"],  [5,  "0x08638b24",  "0x4"]],
+        ["247",  "0x0863eedc",  "0x3c",  [0,  "0x0863ef18",  "0x1dec"],  [1,  "0x08640d04",  "0x24"],  [3,  "0x086423e4",  "0xc4"],  [5,  "0x086424a8",  "0x8"]],
+        ["248",  "0x086424b0",  "0x3c",  [0,  "0x086424ec",  "0x20b8"],  [1,  "0x086445a4",  "0x28"],  [3,  "0x08645eec",  "0xc4"],  [5,  "0x08645fb0",  "0x8"]],
         ["249",  "0x08645fb8",  "0x3c",  [0,  "0x08645ff4",  "0x20cc"],  [1,  "0x086480c0",  "0xc"],  [5,  "0x08649cc0",  "0x8"]],
         [
           "24a",
@@ -1790,33 +1686,9 @@
           [4, "0x0867f32c", "0x8"],
           [5, "0x0867f334", "0xc"]
         ],
-        [
-          "26c",
-          "0x0867f340",
-          "0x3c",
-          [0, "0x0867f37c", "0xf14"],
-          [1, "0x08680290", "0x14"],
-          [3, "0x086819c0", "0x194"],
-          [5, "0x08681b54", "0xc"]
-        ],
-        [
-          "272",
-          "0x086882a8",
-          "0x3c",
-          [0, "0x086882e4", "0xc10"],
-          [1, "0x08688ef4", "0x18"],
-          [3, "0x0868a5dc", "0x198"],
-          [5, "0x0868a774", "0x14"]
-        ],
-        [
-          "273",
-          "0x0868a788",
-          "0x3c",
-          [0, "0x0868a7c4", "0xcc8"],
-          [1, "0x0868b48c", "0x34"],
-          [3, "0x0868ced0", "0x198"],
-          [5, "0x0868d068", "0x8"]
-        ],
+        ["26c",  "0x0867f340",  "0x3c",  [0,  "0x0867f37c",  "0xf14"],  [1,  "0x08680290",  "0x14"],  [3,  "0x086819c0",  "0x194"],  [5,  "0x08681b54",  "0xc"]],
+        ["272",  "0x086882a8",  "0x3c",  [0,  "0x086882e4",  "0xc10"],  [1,  "0x08688ef4",  "0x18"],  [3,  "0x0868a5dc",  "0x198"],  [5,  "0x0868a774",  "0x14"]],
+        ["273",  "0x0868a788",  "0x3c",  [0,  "0x0868a7c4",  "0xcc8"],  [1,  "0x0868b48c",  "0x34"],  [3,  "0x0868ced0",  "0x198"],  [5,  "0x0868d068",  "0x8"]],
         [
           "274",
           "0x0868d070",
@@ -1907,24 +1779,8 @@
           [4, "0x086b5b74", "0x10"],
           [5, "0x086b5b84", "0x4"]
         ],
-        [
-          "294",
-          "0x086b70a0",
-          "0x3c",
-          [0, "0x086b70dc", "0x918"],
-          [1, "0x086b79f4", "0x40"],
-          [3, "0x086b8200", "0x38"],
-          [5, "0x086b8238", "0x4"]
-        ],
-        [
-          "29a",
-          "0x086bf154",
-          "0x3c",
-          [0, "0x086bf190", "0x46c"],
-          [1, "0x086bf5fc", "0x10"],
-          [3, "0x086bfc18", "0x24"],
-          [5, "0x086bfc3c", "0x4"]
-        ],
+        ["294",  "0x086b70a0",  "0x3c",  [0,  "0x086b70dc",  "0x918"],  [1,  "0x086b79f4",  "0x40"],  [3,  "0x086b8200",  "0x38"],  [5,  "0x086b8238",  "0x4"]],
+        ["29a",  "0x086bf154",  "0x3c",  [0,  "0x086bf190",  "0x46c"],  [1,  "0x086bf5fc",  "0x10"],  [3,  "0x086bfc18",  "0x24"],  [5,  "0x086bfc3c",  "0x4"]],
         [
           "29c",
           "0x086bfe14",
@@ -1935,24 +1791,8 @@
           [4, "0x086c1150", "0x10"],
           [5, "0x086c1160", "0xc"]
         ],
-        [
-          "2a2",
-          "0x086c56b8",
-          "0x3c",
-          [0, "0x086c56f4", "0xea0"],
-          [1, "0x086c6594", "0x48"],
-          [3, "0x086c73a4", "0x88"],
-          [5, "0x086c742c", "0xc"]
-        ],
-        [
-          "2a4",
-          "0x086c75e0",
-          "0x3c",
-          [0, "0x086c761c", "0x1450"],
-          [1, "0x086c8a6c", "0x48"],
-          [3, "0x086c964c", "0x140"],
-          [5, "0x086c978c", "0xc"]
-        ],
+        ["2a2",  "0x086c56b8",  "0x3c",  [0,  "0x086c56f4",  "0xea0"],  [1,  "0x086c6594",  "0x48"],  [3,  "0x086c73a4",  "0x88"],  [5,  "0x086c742c",  "0xc"]],
+        ["2a4",  "0x086c75e0",  "0x3c",  [0,  "0x086c761c",  "0x1450"],  [1,  "0x086c8a6c",  "0x48"],  [3,  "0x086c964c",  "0x140"],  [5,  "0x086c978c",  "0xc"]],
         [
           "2a6",
           "0x086c992c",
@@ -1973,15 +1813,7 @@
           [4, "0x086d0118", "0x28"],
           [5, "0x086d0140", "0x10"]
         ],
-        [
-          "2ae",
-          "0x086d02d0",
-          "0x3c",
-          [0, "0x086d030c", "0x6d0"],
-          [1, "0x086d09dc", "0x14"],
-          [3, "0x086d18d4", "0x298"],
-          [5, "0x086d1b6c", "0x1c"]
-        ],
+        ["2ae",  "0x086d02d0",  "0x3c",  [0,  "0x086d030c",  "0x6d0"],  [1,  "0x086d09dc",  "0x14"],  [3,  "0x086d18d4",  "0x298"],  [5,  "0x086d1b6c",  "0x1c"]],
         [
           "2b0",
           "0x086d1d0c",
@@ -1992,15 +1824,7 @@
           [4, "0x086d3784", "0x8"],
           [5, "0x086d378c", "0x10"]
         ],
-        [
-          "2b2",
-          "0x086d3918",
-          "0x3c",
-          [0, "0x086d3954", "0x920"],
-          [1, "0x086d4274", "0x48"],
-          [3, "0x086d5434", "0x210"],
-          [5, "0x086d5644", "0x10"]
-        ],
+        ["2b2",  "0x086d3918",  "0x3c",  [0,  "0x086d3954",  "0x920"],  [1,  "0x086d4274",  "0x48"],  [3,  "0x086d5434",  "0x210"],  [5,  "0x086d5644",  "0x10"]],
         [
           "2b5",
           "0x086d58f8",
@@ -2031,24 +1855,8 @@
           [4, "0x086d9af8", "0x1c"],
           [5, "0x086d9b14", "0x10"]
         ],
-        [
-          "2bb",
-          "0x086d9ce0",
-          "0x3c",
-          [0, "0x086d9d1c", "0x19c4"],
-          [1, "0x086db6e0", "0x3c"],
-          [3, "0x086dc6f4", "0x88"],
-          [5, "0x086dc77c", "0x8"]
-        ],
-        [
-          "2bd",
-          "0x086dc8f8",
-          "0x3c",
-          [0, "0x086dc934", "0xac8"],
-          [1, "0x086dd3fc", "0x3c"],
-          [3, "0x086ddc9c", "0x38"],
-          [5, "0x086ddcd4", "0xc"]
-        ],
+        ["2bb",  "0x086d9ce0",  "0x3c",  [0,  "0x086d9d1c",  "0x19c4"],  [1,  "0x086db6e0",  "0x3c"],  [3,  "0x086dc6f4",  "0x88"],  [5,  "0x086dc77c",  "0x8"]],
+        ["2bd",  "0x086dc8f8",  "0x3c",  [0,  "0x086dc934",  "0xac8"],  [1,  "0x086dd3fc",  "0x3c"],  [3,  "0x086ddc9c",  "0x38"],  [5,  "0x086ddcd4",  "0xc"]],
         [
           "2bf",
           "0x086dde98",
@@ -2330,15 +2138,7 @@
           [4, "0x0872f64c", "0x2c"],
           [5, "0x0872f678", "0x18"]
         ],
-        [
-          "302",
-          "0x0872f690",
-          "0x3c",
-          [0, "0x0872f6cc", "0xc68"],
-          [1, "0x08730334", "0x10"],
-          [3, "0x0873172c", "0x198"],
-          [5, "0x087318c4", "0xc"]
-        ],
+        ["302",  "0x0872f690",  "0x3c",  [0,  "0x0872f6cc",  "0xc68"],  [1,  "0x08730334",  "0x10"],  [3,  "0x0873172c",  "0x198"],  [5,  "0x087318c4",  "0xc"]],
         ["304",  "0x087319c8",  "0x3c",  [0,  "0x08731a04",  "0x10ac"],  [1,  "0x08732ab0",  "0x28"],  [5,  "0x0873442c",  "0xc"]],
         [
           "305",
@@ -2420,15 +2220,7 @@
           [4, "0x08752a1c", "0x8"],
           [5, "0x08752a24", "0x10"]
         ],
-        [
-          "31e",
-          "0x08752d30",
-          "0x3c",
-          [0, "0x08752d6c", "0x2a0"],
-          [1, "0x0875300c", "0x18"],
-          [3, "0x08753768", "0x204"],
-          [5, "0x0875396c", "0x4"]
-        ],
+        ["31e",  "0x08752d30",  "0x3c",  [0,  "0x08752d6c",  "0x2a0"],  [1,  "0x0875300c",  "0x18"],  [3,  "0x08753768",  "0x204"],  [5,  "0x0875396c",  "0x4"]],
         [
           "322",
           "0x08755c3c",
@@ -2510,15 +2302,7 @@
           [4, "0x08768598", "0x10"],
           [5, "0x087685a8", "0xc"]
         ],
-        [
-          "32f",
-          "0x087685b4",
-          "0x3c",
-          [0, "0x087685f0", "0x7dc"],
-          [1, "0x08768dcc", "0x30"],
-          [3, "0x08769c9c", "0x268"],
-          [5, "0x08769f04", "0x4"]
-        ],
+        ["32f",  "0x087685b4",  "0x3c",  [0,  "0x087685f0",  "0x7dc"],  [1,  "0x08768dcc",  "0x30"],  [3,  "0x08769c9c",  "0x268"],  [5,  "0x08769f04",  "0x4"]],
         [
           "337",
           "0x0876f3bc",
@@ -3500,1272 +3284,172 @@
         "rows": 16
       },
       "families": [
-        {
-          "id": "128",
-          "palette": {
-            "address": "0x084baaa4",
-            "size": "0xc"
-          },
-          "charblocks": [{"address": "0x084baab0",  "size": "0x150"},  {"address": "0x084bac00",  "size": "0x140"},  {"address": "0x084bad40",  "size": "0x140"}],
-          "animation_source": {
-            "address": "0x084bae80",
-            "size": "0x140"
-          }
-        },
-        {
-          "id": "12e",
-          "palette": {
-            "address": "0x084c03d0",
-            "size": "0x190"
-          },
-          "charblocks": [{"address": "0x084c0560",  "size": "0x2b34"},  {"address": "0x084c3094",  "size": "0x252c"},  {"address": "0x084c55c0",  "size": "0x26dc"}],
-          "animation_source": {
-            "address": "0x084c7c9c",
-            "size": "0x1e90"
-          }
-        },
-        {
-          "id": "134",
-          "palette": {
-            "address": "0x084cecf4",
-            "size": "0x194"
-          },
-          "charblocks": [{"address": "0x084cee88",  "size": "0x2c54"},  {"address": "0x084d1adc",  "size": "0x2608"},  {"address": "0x084d40e4",  "size": "0x27e0"}],
-          "animation_source": {
-            "address": "0x084d68c4",
-            "size": "0x1ecc"
-          }
-        },
-        {
-          "id": "13a",
-          "palette": {
-            "address": "0x084db8cc",
-            "size": "0x180"
-          },
-          "charblocks": [{"address": "0x084dba4c",  "size": "0x27bc"},  {"address": "0x084de208",  "size": "0x2648"},  {"address": "0x084e0850",  "size": "0x26e4"}],
-          "animation_source": {
-            "address": "0x084e2f34",
-            "size": "0x1074"
-          }
-        },
-        {
-          "id": "140",
-          "palette": {
-            "address": "0x084e60fc",
-            "size": "0x194"
-          },
-          "charblocks": [{"address": "0x084e6290",  "size": "0x2840"},  {"address": "0x084e8ad0",  "size": "0x1e18"},  {"address": "0x084ea8e8",  "size": "0x26e0"}],
-          "animation_source": {
-            "address": "0x084ecfc8",
-            "size": "0x1148"
-          }
-        },
-        {
-          "id": "146",
-          "palette": {
-            "address": "0x084f1224",
-            "size": "0x1ac"
-          },
-          "charblocks": [{"address": "0x084f13d0",  "size": "0x1a7c"},  {"address": "0x084f2e4c",  "size": "0x2540"},  {"address": "0x084f538c",  "size": "0x15fc"}],
-          "animation_source": {
-            "address": "0x084f6988",
-            "size": "0x12c8"
-          }
-        },
-        {
-          "id": "14c",
-          "palette": {
-            "address": "0x084fb068",
-            "size": "0x190"
-          },
-          "charblocks": [{"address": "0x084fb1f8",  "size": "0x1db0"},  {"address": "0x084fcfa8",  "size": "0x256c"},  {"address": "0x084ff514",  "size": "0x160c"}],
-          "animation_source": {
-            "address": "0x08500b20",
-            "size": "0x150c"
-          }
-        },
-        {
-          "id": "152",
-          "palette": {
-            "address": "0x08502c00",
-            "size": "0x100"
-          },
-          "charblocks": [
-            {
-              "address": "0x08502d00",
-              "size": "0x13e4"
-            },
-            {
-              "address": "0x085040e4",
-              "size": "0x1184",
-              "source": "assets/graphics/map_resource_152_charblock2.objects.json"
-            },
-            {
-              "address": "0x08505268",
-              "size": "0x988"
-            }
-          ],
-          "animation_source": {
-            "address": "0x08505bf0",
-            "size": "0x854"
-          }
-        },
-        {
-          "id": "158",
-          "palette": {
-            "address": "0x0850886c",
-            "size": "0xe4"
-          },
-          "charblocks": [
-            {
-              "address": "0x08508950",
-              "size": "0x11ec",
-              "source": "assets/graphics/map_resource_158_charblock1.objects.json"
-            },
-            {
-              "address": "0x08509b3c",
-              "size": "0x1c88"
-            },
-            {
-              "address": "0x0850b7c4",
-              "size": "0x50c"
-            }
-          ],
-          "animation_source": {
-            "address": "0x0850bcd0",
-            "size": "0x140"
-          }
-        },
-        {
-          "id": "15e",
-          "palette": {
-            "address": "0x0850d02c",
-            "size": "0x15c"
-          },
-          "charblocks": [{"address": "0x0850d188",  "size": "0x29d8"},  {"address": "0x0850fb60",  "size": "0x1a4c"},  {"address": "0x085115ac",  "size": "0x14ec"}],
-          "animation_source": {
-            "address": "0x08512a98",
-            "size": "0x844"
-          }
-        },
-        {
-          "id": "164",
-          "palette": {
-            "address": "0x08514054",
-            "size": "0x134"
-          },
-          "charblocks": [{"address": "0x08514188",  "size": "0x2480"},  {"address": "0x08516608",  "size": "0xd7c"},  {"address": "0x08517384",  "size": "0xae0"}]
-        },
-        {
-          "id": "169",
-          "palette": {
-            "address": "0x08518cdc",
-            "size": "0x154"
-          },
-          "charblocks": [{"address": "0x08518e30",  "size": "0x1f80"},  {"address": "0x0851adb0",  "size": "0x948"},  {"address": "0x0851b6f8",  "size": "0xc4c"}],
-          "animation_source": {
-            "address": "0x0851c344",
-            "size": "0x228"
-          }
-        },
-        {
-          "id": "170",
-          "palette": {
-            "address": "0x0851deac",
-            "size": "0x114"
-          },
-          "charblocks": [{"address": "0x0851dfc0",  "size": "0x10bc"},  {"address": "0x0851f07c",  "size": "0x90c"},  {"address": "0x0851f988",  "size": "0x148"}],
-          "animation_source": {
-            "address": "0x0851fad0",
-            "size": "0x620"
-          }
-        },
-        {
-          "id": "176",
-          "palette": {
-            "address": "0x08521b9c",
-            "size": "0x128"
-          },
-          "charblocks": [{"address": "0x08521cc4",  "size": "0x1888"},  {"address": "0x0852354c",  "size": "0x1364"},  {"address": "0x085248b0",  "size": "0xf40"}],
-          "animation_source": {
-            "address": "0x085257f0",
-            "size": "0x140"
-          }
-        },
-        {
-          "id": "17c",
-          "palette": {
-            "address": "0x08527938",
-            "size": "0x10c"
-          },
-          "charblocks": [{"address": "0x08527a44",  "size": "0x1fe4"},  {"address": "0x08529a28",  "size": "0x1724"},  {"address": "0x0852b14c",  "size": "0xf74"}],
-          "animation_source": {
-            "address": "0x0852c0c0",
-            "size": "0x140"
-          }
-        },
-        {
-          "id": "182",
-          "palette": {
-            "address": "0x0852dee8",
-            "size": "0x15c"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "184",
-          "palette": {
-            "address": "0x0852ff8c",
-            "size": "0x184"
-          },
-          "charblocks": [
-            {
-              "address": "0x08530110",
-              "size": "0x2b54",
-              "source": "assets/graphics/map_resource_184_charblock1.objects.json"
-            },
-            {
-              "address": "0x08532c64",
-              "size": "0x26c4"
-            },
-            {
-              "address": "0x08535328",
-              "size": "0x2758"
-            }
-          ],
-          "animation_source": {
-            "address": "0x08537a80",
-            "size": "0x1854"
-          }
-        },
-        {
-          "id": "18a",
-          "palette": {
-            "address": "0x0853b9d4",
-            "size": "0x1a0"
-          },
-          "charblocks": [{"address": "0x0853bb74",  "size": "0x1c2c"},  {"address": "0x0853d7a0",  "size": "0x2548"},  {"address": "0x0853fce8",  "size": "0x12cc"}],
-          "animation_source": {
-            "address": "0x08540fb4",
-            "size": "0xcb0"
-          }
-        },
-        {
-          "id": "190",
-          "palette": {
-            "address": "0x085426d0",
-            "size": "0xf4"
-          },
-          "charblocks": [
-            {
-              "address": "0x085427c4",
-              "size": "0x112c",
-              "source": "assets/graphics/map_resource_190_charblock1.objects.json"
-            },
-            {
-              "address": "0x085438f0",
-              "size": "0x7ac"
-            },
-            {
-              "address": "0x0854409c",
-              "size": "0x188"
-            }
-          ],
-          "animation_source": {
-            "address": "0x08544224",
-            "size": "0xda4"
-          }
-        },
-        {
-          "id": "196",
-          "palette": {
-            "address": "0x08546b00",
-            "size": "0x19c"
-          },
-          "charblocks": [{"address": "0x08546c9c",  "size": "0x2d54"},  {"address": "0x085499f0",  "size": "0x268c"},  {"address": "0x0854c07c",  "size": "0x27e0"}],
-          "animation_source": {
-            "address": "0x0854e85c",
-            "size": "0x1884"
-          }
-        },
-        {
-          "id": "19c",
-          "palette": {
-            "address": "0x085511d4",
-            "size": "0xcc"
-          },
-          "charblocks": [{"address": "0x085512a0",  "size": "0x27a4"},  {"address": "0x08553a44",  "size": "0x215c"},  {"address": "0x08555ba0",  "size": "0xfac"}],
-          "animation_source": {
-            "address": "0x08556b4c",
-            "size": "0x140"
-          }
-        },
-        {
-          "id": "1a2",
-          "palette": {
-            "address": "0x085580bc",
-            "size": "0x124"
-          },
-          "charblocks": [
-            {
-              "address": "0x085581e0",
-              "size": "0x2c18",
-              "source": "assets/graphics/map_resource_1a2_charblock1.objects.json"
-            },
-            {
-              "address": "0x0855adf8",
-              "size": "0x20fc"
-            },
-            {
-              "address": "0x0855cef4",
-              "size": "0x1da4"
-            }
-          ],
-          "animation_source": {
-            "address": "0x0855ec98",
-            "size": "0x614"
-          }
-        },
-        {
-          "id": "1aa",
-          "palette": {
-            "address": "0x085648fc",
-            "size": "0x19c"
-          },
-          "charblocks": [{"address": "0x08564a98",  "size": "0x2444"},  {"address": "0x08566edc",  "size": "0x2458"},  {"address": "0x08569334",  "size": "0xac8"}],
-          "animation_source": {
-            "address": "0x08569dfc",
-            "size": "0x1a38"
-          }
-        },
-        {
-          "id": "1b2",
-          "palette": {
-            "address": "0x08573224",
-            "size": "0x19c"
-          },
-          "charblocks": [{"address": "0x085733c0",  "size": "0x2bb0"},  {"address": "0x08575f70",  "size": "0x20d4"},  {"address": "0x08578044",  "size": "0x2058"}],
-          "animation_source": {
-            "address": "0x0857a09c",
-            "size": "0x1cec"
-          }
-        },
-        {
-          "id": "1b8",
-          "palette": {
-            "address": "0x0857d534",
-            "size": "0x19c"
-          },
-          "charblocks": [{"address": "0x0857d6d0",  "size": "0x2b40"},  {"address": "0x08580210",  "size": "0x1dd0"},  {"address": "0x08581fe0",  "size": "0x140"}]
-        },
-        {
-          "id": "1be",
-          "palette": {
-            "address": "0x0858517c",
-            "size": "0x184"
-          },
-          "charblocks": [{"address": "0x08585300",  "size": "0x2df8"},  {"address": "0x085880f8",  "size": "0x28c8"},  {"address": "0x0858a9c0",  "size": "0x295c"}],
-          "animation_source": {
-            "address": "0x0858d31c",
-            "size": "0x1b98"
-          }
-        },
-        {
-          "id": "1c4",
-          "palette": {
-            "address": "0x08591928",
-            "size": "0x1a8"
-          },
-          "charblocks": [{"address": "0x08591ad0",  "size": "0x16fc"},  {"address": "0x085931cc",  "size": "0x900"}]
-        },
-        {
-          "id": "1c8",
-          "palette": {
-            "address": "0x08594844",
-            "size": "0x160"
-          },
-          "charblocks": [{"address": "0x085949a4",  "size": "0x1c58"}]
-        },
-        {
-          "id": "1cb",
-          "palette": {
-            "address": "0x08597e98",
-            "size": "0x184"
-          },
-          "charblocks": [{"address": "0x0859801c",  "size": "0x2b3c"},  {"address": "0x0859ab58",  "size": "0x277c"},  {"address": "0x0859d2d4",  "size": "0xfec"}]
-        },
-        {
-          "id": "1d0",
-          "palette": {
-            "address": "0x0859f98c",
-            "size": "0x1ac"
-          },
-          "charblocks": [{"address": "0x0859fb38",  "size": "0x2d94"},  {"address": "0x085a28cc",  "size": "0x2718"},  {"address": "0x085a4fe4",  "size": "0x197c"}],
-          "animation_source": {
-            "address": "0x085a6960",
-            "size": "0x140"
-          }
-        },
-        {
-          "id": "1d6",
-          "palette": {
-            "address": "0x085a8968",
-            "size": "0x1a4"
-          },
-          "charblocks": [{"address": "0x085a8b0c",  "size": "0x20a0"},  {"address": "0x085aabac",  "size": "0xf8c"},  {"address": "0x085abb38",  "size": "0x22d8"}],
-          "animation_source": {
-            "address": "0x085ade10",
-            "size": "0x1254"
-          }
-        },
-        {
-          "id": "1dc",
-          "palette": {
-            "address": "0x085b0904",
-            "size": "0x184"
-          },
-          "charblocks": [{"address": "0x085b0a88",  "size": "0x2c20"},  {"address": "0x085b36a8",  "size": "0x22e4"},  {"address": "0x085b598c",  "size": "0x2848"}],
-          "animation_source": {
-            "address": "0x085b81d4",
-            "size": "0x50c"
-          }
-        },
-        {
-          "id": "1e2",
-          "palette": {
-            "address": "0x085b9db8",
-            "size": "0x1a4"
-          },
-          "charblocks": [{"address": "0x085b9f5c",  "size": "0x1904"}]
-        },
-        {
-          "id": "1eb",
-          "palette": {
-            "address": "0x085c4cac",
-            "size": "0x15c"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "1ed",
-          "palette": {
-            "address": "0x085c73c4",
-            "size": "0x178"
-          },
-          "charblocks": [{"address": "0x085c753c",  "size": "0x2b84"},  {"address": "0x085ca0c0",  "size": "0x1d70"},  {"address": "0x085cbe30",  "size": "0xa68"}],
-          "animation_source": {
-            "address": "0x085cc898",
-            "size": "0x840"
-          }
-        },
-        {
-          "id": "1f8",
-          "palette": {
-            "address": "0x085d48dc",
-            "size": "0x134"
-          },
-          "charblocks": [{"address": "0x085d4a10",  "size": "0x2c3c"},  {"address": "0x085d764c",  "size": "0x1fdc"},  {"address": "0x085d9628",  "size": "0x17c4"}],
-          "animation_source": {
-            "address": "0x085dadec",
-            "size": "0x1a7c"
-          }
-        },
-        {
-          "id": "1fe",
-          "palette": {
-            "address": "0x085de138",
-            "size": "0x17c"
-          },
-          "charblocks": [{"address": "0x085de2b4",  "size": "0x2bb0"},  {"address": "0x085e0e64",  "size": "0x2274"},  {"address": "0x085e30d8",  "size": "0x2870"}],
-          "animation_source": {
-            "address": "0x085e5948",
-            "size": "0xed8"
-          }
-        },
-        {
-          "id": "204",
-          "palette": {
-            "address": "0x085e8cac",
-            "size": "0x190"
-          },
-          "charblocks": [{"address": "0x085e8e3c",  "size": "0x1fe4"},  {"address": "0x085eae20",  "size": "0x2c44"},  {"address": "0x085eda64",  "size": "0xc84"}],
-          "animation_source": {
-            "address": "0x085ee6e8",
-            "size": "0x140"
-          }
-        },
-        {
-          "id": "20a",
-          "palette": {
-            "address": "0x085efd98",
-            "size": "0x16c"
-          },
-          "charblocks": [{"address": "0x085eff04",  "size": "0x1d5c"},  {"address": "0x085f1c60",  "size": "0x140"},  {"address": "0x085f1da0",  "size": "0x2800"}],
-          "animation_source": {
-            "address": "0x085f45a0",
-            "size": "0x140"
-          }
-        },
-        {
-          "id": "210",
-          "palette": {
-            "address": "0x085f60f8",
-            "size": "0x1a0"
-          },
-          "charblocks": [{"address": "0x085f6298",  "size": "0x13dc"}]
-        },
-        {
-          "id": "213",
-          "palette": {
-            "address": "0x085f8bb0",
-            "size": "0x190"
-          },
-          "charblocks": [{"address": "0x085f8d40",  "size": "0x22b8"}]
-        },
-        {
-          "id": "216",
-          "palette": {
-            "address": "0x085fc750",
-            "size": "0x188"
-          },
-          "charblocks": [{"address": "0x085fc8d8",  "size": "0x2968"}]
-        },
-        {
-          "id": "219",
-          "palette": {
-            "address": "0x08600ed8",
-            "size": "0x148"
-          },
-          "charblocks": [{"address": "0x08601020",  "size": "0x1cf4"},  {"address": "0x08602d14",  "size": "0x14b8"},  {"address": "0x086041cc",  "size": "0x2634"}],
-          "animation_source": {
-            "address": "0x08606800",
-            "size": "0x29c"
-          }
-        },
-        {
-          "id": "21f",
-          "palette": {
-            "address": "0x08609358",
-            "size": "0x1c8"
-          },
-          "charblocks": [{"address": "0x08609520",  "size": "0x2904"},  {"address": "0x0860be24",  "size": "0x1eac"},  {"address": "0x0860dcd0",  "size": "0x1c5c"}],
-          "animation_source": {
-            "address": "0x0860f92c",
-            "size": "0x1570"
-          }
-        },
-        {
-          "id": "226",
-          "palette": {
-            "address": "0x086136c4",
-            "size": "0x170"
-          },
-          "charblocks": [{"address": "0x08613834",  "size": "0x28c0"},  {"address": "0x086160f4",  "size": "0x27c8"},  {"address": "0x086188bc",  "size": "0x12fc"}],
-          "animation_source": {
-            "address": "0x08619bb8",
-            "size": "0x1944"
-          }
-        },
-        {
-          "id": "231",
-          "palette": {
-            "address": "0x08626990",
-            "size": "0x1c0"
-          },
-          "charblocks": [{"address": "0x08626b50",  "size": "0x21b8"}]
-        },
-        {
-          "id": "234",
-          "palette": {
-            "address": "0x08629cdc",
-            "size": "0x1dc"
-          },
-          "charblocks": [{"address": "0x08629eb8",  "size": "0x24f0"},  {"address": "0x0862c3a8",  "size": "0x186c"},  {"address": "0x0862dc14",  "size": "0x1574"}],
-          "animation_source": {
-            "address": "0x0862f188",
-            "size": "0xb9c"
-          }
-        },
-        {
-          "id": "23a",
-          "palette": {
-            "address": "0x08630b84",
-            "size": "0x158"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "241",
-          "palette": {
-            "address": "0x08638b28",
-            "size": "0x16c"
-          },
-          "charblocks": [{"address": "0x08638c94",  "size": "0x2d9c"},  {"address": "0x0863ba30",  "size": "0x2190"},  {"address": "0x0863dbc0",  "size": "0x708"}],
-          "animation_source": {
-            "address": "0x0863e2c8",
-            "size": "0xc14"
-          }
-        },
-        {
-          "id": "24b",
-          "palette": {
-            "address": "0x0864ffb0",
-            "size": "0x194"
-          },
-          "charblocks": [{"address": "0x08650144",  "size": "0x1510"},  {"address": "0x08651654",  "size": "0x1de4"},  {"address": "0x08653438",  "size": "0x1094"}],
-          "animation_source": {
-            "address": "0x086544cc",
-            "size": "0x554"
-          }
-        },
-        {
-          "id": "251",
-          "palette": {
-            "address": "0x0865673c",
-            "size": "0x198"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "253",
-          "palette": {
-            "address": "0x08658878",
-            "size": "0x164"
-          },
-          "charblocks": [{"address": "0x086589dc",  "size": "0x2c10"},  {"address": "0x0865b5ec",  "size": "0x2064"},  {"address": "0x0865d650",  "size": "0x2754"}],
-          "animation_source": {
-            "address": "0x0865fda4",
-            "size": "0x130c"
-          }
-        },
-        {
-          "id": "259",
-          "palette": {
-            "address": "0x08663c1c",
-            "size": "0x1cc"
-          },
-          "charblocks": [{"address": "0x08663de8",  "size": "0x2348"}]
-        },
-        {
-          "id": "25c",
-          "palette": {
-            "address": "0x0866790c",
-            "size": "0x1b4"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "266",
-          "palette": {
-            "address": "0x08678460",
-            "size": "0x160"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "269",
-          "palette": {
-            "address": "0x0867bd18",
-            "size": "0x164"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "26c",
-          "palette": {
-            "address": "0x08681b60",
-            "size": "0xf4"
-          },
-          "charblocks": [{"address": "0x08681c54",  "size": "0x28f0"},  {"address": "0x08684544",  "size": "0x220c"},  {"address": "0x08686750",  "size": "0x140"}],
-          "animation_source": {
-            "address": "0x08686890",
-            "size": "0x1a18"
-          }
-        },
-        {
-          "id": "274",
-          "palette": {
-            "address": "0x0868f010",
-            "size": "0x17c"
-          },
-          "charblocks": [{"address": "0x0868f18c",  "size": "0x1fac"},  {"address": "0x08691138",  "size": "0x2778"},  {"address": "0x086938b0",  "size": "0x1868"}],
-          "animation_source": {
-            "address": "0x08695118",
-            "size": "0xc04"
-          }
-        },
-        {
-          "id": "27a",
-          "palette": {
-            "address": "0x08698b38",
-            "size": "0x1c8"
-          },
-          "charblocks": [{"address": "0x08698d00",  "size": "0x2378"},  {"address": "0x0869b078",  "size": "0x206c"},  {"address": "0x0869d0e4",  "size": "0x1bf8"}],
-          "animation_source": {
-            "address": "0x0869ecdc",
-            "size": "0x12d4"
-          }
-        },
-        {
-          "id": "282",
-          "palette": {
-            "address": "0x086a3ce8",
-            "size": "0x184"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "284",
-          "palette": {
-            "address": "0x086a5e34",
-            "size": "0x18c"
-          },
-          "charblocks": [{"address": "0x086a5fc0",  "size": "0x1a84"},  {"address": "0x086a7a44",  "size": "0x97c"}]
-        },
-        {
-          "id": "288",
-          "palette": {
-            "address": "0x086aaa7c",
-            "size": "0x1c4"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "28a",
-          "palette": {
-            "address": "0x086abb74",
-            "size": "0x14c"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "291",
-          "palette": {
-            "address": "0x086b5b88",
-            "size": "0x1c0"
-          },
-          "charblocks": [{"address": "0x086b5d48",  "size": "0x1358"}]
-        },
-        {
-          "id": "294",
-          "palette": {
-            "address": "0x086b823c",
-            "size": "0x1d4"
-          },
-          "charblocks": [{"address": "0x086b8410",  "size": "0x2090"},  {"address": "0x086ba4a0",  "size": "0x2100"},  {"address": "0x086bc5a0",  "size": "0x2218"}],
-          "animation_source": {
-            "address": "0x086be7b8",
-            "size": "0x99c"
-          }
-        },
-        {
-          "id": "29a",
-          "palette": {
-            "address": "0x086bfc40",
-            "size": "0x1d4"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "29c",
-          "palette": {
-            "address": "0x086c116c",
-            "size": "0x1e4"
-          },
-          "charblocks": [{"address": "0x086c1350",  "size": "0x13f4"},  {"address": "0x086c2744",  "size": "0x1798"},  {"address": "0x086c3edc",  "size": "0x1274"}],
-          "animation_source": {
-            "address": "0x086c5150",
-            "size": "0x568"
-          }
-        },
-        {
-          "id": "2a2",
-          "palette": {
-            "address": "0x086c7438",
-            "size": "0x1a8"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2a4",
-          "palette": {
-            "address": "0x086c9798",
-            "size": "0x194"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2a6",
-          "palette": {
-            "address": "0x086cab14",
-            "size": "0x188"
-          },
-          "charblocks": [{"address": "0x086cac9c",  "size": "0x1ed8"},  {"address": "0x086ccb74",  "size": "0x2674"},  {"address": "0x086cf1e8",  "size": "0x154"}],
-          "animation_source": {
-            "address": "0x086cf33c",
-            "size": "0x140"
-          }
-        },
-        {
-          "id": "2ac",
-          "palette": {
-            "address": "0x086d0150",
-            "size": "0x180"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2ae",
-          "palette": {
-            "address": "0x086d1b88",
-            "size": "0x184"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2b0",
-          "palette": {
-            "address": "0x086d379c",
-            "size": "0x17c"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2b2",
-          "palette": {
-            "address": "0x086d5654",
-            "size": "0x12c"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2b5",
-          "palette": {
-            "address": "0x086d779c",
-            "size": "0x188"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2b7",
-          "palette": {
-            "address": "0x086d8880",
-            "size": "0x198"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2b9",
-          "palette": {
-            "address": "0x086d9b24",
-            "size": "0x1bc"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2bb",
-          "palette": {
-            "address": "0x086dc784",
-            "size": "0x174"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2bd",
-          "palette": {
-            "address": "0x086ddce0",
-            "size": "0x1b8"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2bf",
-          "palette": {
-            "address": "0x086e07c0",
-            "size": "0x1a8"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2c1",
-          "palette": {
-            "address": "0x086e2d64",
-            "size": "0x190"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2c3",
-          "palette": {
-            "address": "0x086e6174",
-            "size": "0x1e0"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2c6",
-          "palette": {
-            "address": "0x086e88e8",
-            "size": "0x190"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2c8",
-          "palette": {
-            "address": "0x086eb4e8",
-            "size": "0x188"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2ca",
-          "palette": {
-            "address": "0x086ec1bc",
-            "size": "0x168"
-          },
-          "charblocks": [{"address": "0x086ec324",  "size": "0x2a14"},  {"address": "0x086eed38",  "size": "0x1c40"},  {"address": "0x086f0978",  "size": "0x4bc"}],
-          "animation_source": {
-            "address": "0x086f0e34",
-            "size": "0x1378"
-          }
-        },
-        {
-          "id": "2d0",
-          "palette": {
-            "address": "0x086f36f0",
-            "size": "0x18c"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2d2",
-          "palette": {
-            "address": "0x086f4958",
-            "size": "0x190"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2da",
-          "palette": {
-            "address": "0x086ffff8",
-            "size": "0x14c"
-          },
-          "charblocks": [{"address": "0x08700144",  "size": "0x2908"},  {"address": "0x08702a4c",  "size": "0x1c4c"},  {"address": "0x08704698",  "size": "0x1448"}],
-          "animation_source": {
-            "address": "0x08705ae0",
-            "size": "0x1e80"
-          }
-        },
-        {
-          "id": "2e0",
-          "palette": {
-            "address": "0x087093f4",
-            "size": "0x13c"
-          },
-          "charblocks": [{"address": "0x08709530",  "size": "0x2734"},  {"address": "0x0870bc64",  "size": "0x1c44"},  {"address": "0x0870d8a8",  "size": "0x1448"}],
-          "animation_source": {
-            "address": "0x0870ecf0",
-            "size": "0x1b7c"
-          }
-        },
-        {
-          "id": "2e6",
-          "palette": {
-            "address": "0x08711a9c",
-            "size": "0x15c"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2ea",
-          "palette": {
-            "address": "0x087150f4",
-            "size": "0x16c"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2ee",
-          "palette": {
-            "address": "0x08718cf0",
-            "size": "0x19c"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2f0",
-          "palette": {
-            "address": "0x0871a4d8",
-            "size": "0x140"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2f3",
-          "palette": {
-            "address": "0x0871d71c",
-            "size": "0x17c"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2f5",
-          "palette": {
-            "address": "0x08720014",
-            "size": "0x198"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2fa",
-          "palette": {
-            "address": "0x0872934c",
-            "size": "0x1c0"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2fc",
-          "palette": {
-            "address": "0x0872a67c",
-            "size": "0x158"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "2fe",
-          "palette": {
-            "address": "0x0872b874",
-            "size": "0x164"
-          },
-          "charblocks": [{"address": "0x0872b9d8",  "size": "0x29cc"}]
-        },
-        {
-          "id": "302",
-          "palette": {
-            "address": "0x087318d0",
-            "size": "0xf8"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "305",
-          "palette": {
-            "address": "0x08735d10",
-            "size": "0x174"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "30d",
-          "palette": {
-            "address": "0x087419d8",
-            "size": "0x1e4"
-          },
-          "charblocks": [{"address": "0x08741bbc",  "size": "0x1e80"},  {"address": "0x08743a3c",  "size": "0x1ebc"},  {"address": "0x087458f8",  "size": "0x1c3c"}],
-          "animation_source": {
-            "address": "0x08747534",
-            "size": "0x1610"
-          }
-        },
-        {
-          "id": "313",
-          "palette": {
-            "address": "0x0874a504",
-            "size": "0x174"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "316",
-          "palette": {
-            "address": "0x0874d684",
-            "size": "0x1b8"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "318",
-          "palette": {
-            "address": "0x0874f0ac",
-            "size": "0x180"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "31b",
-          "palette": {
-            "address": "0x08752a34",
-            "size": "0x174"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "31e",
-          "palette": {
-            "address": "0x08753970",
-            "size": "0x1a8"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "322",
-          "palette": {
-            "address": "0x08758954",
-            "size": "0x1e8"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "326",
-          "palette": {
-            "address": "0x087603dc",
-            "size": "0x108"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "328",
-          "palette": {
-            "address": "0x087620b8",
-            "size": "0x170"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "32a",
-          "palette": {
-            "address": "0x08763b68",
-            "size": "0x15c"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "32f",
-          "palette": {
-            "address": "0x08769f08",
-            "size": "0x104"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "337",
-          "palette": {
-            "address": "0x08770350",
-            "size": "0x1ac"
-          },
-          "charblocks": [{"address": "0x087704fc",  "size": "0x1858"},  {"address": "0x08771d54",  "size": "0xc70"},  {"address": "0x087729c4",  "size": "0x2a8"}],
-          "animation_source": {
-            "address": "0x08772c6c",
-            "size": "0xe84"
-          }
-        },
-        {
-          "id": "33d",
-          "palette": {
-            "address": "0x08774c80",
-            "size": "0x1c8"
-          },
-          "charblocks": []
-        },
-        {
-          "id": "33f",
-          "palette": {
-            "address": "0x08775194",
-            "size": "0xc"
-          },
-          "charblocks": [{"address": "0x087751a0",  "size": "0x150"},  {"address": "0x087752f0",  "size": "0x140"},  {"address": "0x08775430",  "size": "0x140"}],
-          "animation_source": {
-            "address": "0x08775570",
-            "size": "0x140"
-          }
-        },
-        {
-          "id": "345",
-          "palette": {
-            "address": "0x087759fc",
-            "size": "0xc"
-          },
-          "charblocks": [{"address": "0x08775a08",  "size": "0x150"},  {"address": "0x08775b58",  "size": "0x140"},  {"address": "0x08775c98",  "size": "0x140"}],
-          "animation_source": {
-            "address": "0x08775dd8",
-            "size": "0x140"
-          }
-        },
-        {
-          "id": "34b",
-          "palette": {
-            "address": "0x08776264",
-            "size": "0xc"
-          },
-          "charblocks": [{"address": "0x08776270",  "size": "0x150"},  {"address": "0x087763c0",  "size": "0x140"},  {"address": "0x08776500",  "size": "0x140"}],
-          "animation_source": {
-            "address": "0x08776640",
-            "size": "0x140"
-          }
-        },
-        {
-          "id": "351",
-          "palette": {
-            "address": "0x08776acc",
-            "size": "0xc"
-          },
-          "charblocks": [{"address": "0x08776ad8",  "size": "0x150"},  {"address": "0x08776c28",  "size": "0x140"},  {"address": "0x08776d68",  "size": "0x140"}],
-          "animation_source": {
-            "address": "0x08776ea8",
-            "size": "0x140"
-          }
-        },
-        {
-          "id": "357",
-          "palette": {
-            "address": "0x08777334",
-            "size": "0xc"
-          },
-          "charblocks": [{"address": "0x08777340",  "size": "0x150"},  {"address": "0x08777490",  "size": "0x140"},  {"address": "0x087775d0",  "size": "0x140"}],
-          "animation_source": {
-            "address": "0x08777710",
-            "size": "0x140"
-          }
-        },
-        {
-          "id": "35d",
-          "palette": {
-            "address": "0x08777b9c",
-            "size": "0xc"
-          },
-          "charblocks": [{"address": "0x08777ba8",  "size": "0x150"},  {"address": "0x08777cf8",  "size": "0x140"},  {"address": "0x08777e38",  "size": "0x140"}],
-          "animation_source": {
-            "address": "0x08777f78",
-            "size": "0x140"
-          }
-        },
-        {
-          "id": "363",
-          "palette": {
-            "address": "0x08778404",
-            "size": "0xc"
-          },
-          "charblocks": [{"address": "0x08778410",  "size": "0x150"},  {"address": "0x08778560",  "size": "0x140"},  {"address": "0x087786a0",  "size": "0x140"}],
-          "animation_source": {
-            "address": "0x087787e0",
-            "size": "0x140"
-          }
-        },
-        {
-          "id": "369",
-          "palette": {
-            "address": "0x08778c6c",
-            "size": "0xc"
-          },
-          "charblocks": [{"address": "0x08778c78",  "size": "0x150"},  {"address": "0x08778dc8",  "size": "0x140"},  {"address": "0x08778f08",  "size": "0x140"}],
-          "animation_source": {
-            "address": "0x08779048",
-            "size": "0x140"
-          }
-        }
+        ["128",  "0x084baaa4",  "0xc",  "0x084bae80",  "0x140",  ["0x084baab0",  "0x150",  null],  ["0x084bac00",  "0x140",  null],  ["0x084bad40",  "0x140",  null]],
+        ["12e",  "0x084c03d0",  "0x190",  "0x084c7c9c",  "0x1e90",  ["0x084c0560",  "0x2b34",  null],  ["0x084c3094",  "0x252c",  null],  ["0x084c55c0",  "0x26dc",  null]],
+        ["134",  "0x084cecf4",  "0x194",  "0x084d68c4",  "0x1ecc",  ["0x084cee88",  "0x2c54",  null],  ["0x084d1adc",  "0x2608",  null],  ["0x084d40e4",  "0x27e0",  null]],
+        ["13a",  "0x084db8cc",  "0x180",  "0x084e2f34",  "0x1074",  ["0x084dba4c",  "0x27bc",  null],  ["0x084de208",  "0x2648",  null],  ["0x084e0850",  "0x26e4",  null]],
+        ["140",  "0x084e60fc",  "0x194",  "0x084ecfc8",  "0x1148",  ["0x084e6290",  "0x2840",  null],  ["0x084e8ad0",  "0x1e18",  null],  ["0x084ea8e8",  "0x26e0",  null]],
+        ["146",  "0x084f1224",  "0x1ac",  "0x084f6988",  "0x12c8",  ["0x084f13d0",  "0x1a7c",  null],  ["0x084f2e4c",  "0x2540",  null],  ["0x084f538c",  "0x15fc",  null]],
+        ["14c",  "0x084fb068",  "0x190",  "0x08500b20",  "0x150c",  ["0x084fb1f8",  "0x1db0",  null],  ["0x084fcfa8",  "0x256c",  null],  ["0x084ff514",  "0x160c",  null]],
+        [
+          "152",
+          "0x08502c00",
+          "0x100",
+          "0x08505bf0",
+          "0x854",
+          ["0x08502d00", "0x13e4", null],
+          ["0x085040e4", "0x1184", "assets/graphics/map_resource_152_charblock2.objects.json"],
+          ["0x08505268", "0x988", null]
+        ],
+        [
+          "158",
+          "0x0850886c",
+          "0xe4",
+          "0x0850bcd0",
+          "0x140",
+          ["0x08508950", "0x11ec", "assets/graphics/map_resource_158_charblock1.objects.json"],
+          ["0x08509b3c", "0x1c88", null],
+          ["0x0850b7c4", "0x50c", null]
+        ],
+        ["15e",  "0x0850d02c",  "0x15c",  "0x08512a98",  "0x844",  ["0x0850d188",  "0x29d8",  null],  ["0x0850fb60",  "0x1a4c",  null],  ["0x085115ac",  "0x14ec",  null]],
+        ["164",  "0x08514054",  "0x134",  null,  null,  ["0x08514188",  "0x2480",  null],  ["0x08516608",  "0xd7c",  null],  ["0x08517384",  "0xae0",  null]],
+        ["169",  "0x08518cdc",  "0x154",  "0x0851c344",  "0x228",  ["0x08518e30",  "0x1f80",  null],  ["0x0851adb0",  "0x948",  null],  ["0x0851b6f8",  "0xc4c",  null]],
+        ["170",  "0x0851deac",  "0x114",  "0x0851fad0",  "0x620",  ["0x0851dfc0",  "0x10bc",  null],  ["0x0851f07c",  "0x90c",  null],  ["0x0851f988",  "0x148",  null]],
+        ["176",  "0x08521b9c",  "0x128",  "0x085257f0",  "0x140",  ["0x08521cc4",  "0x1888",  null],  ["0x0852354c",  "0x1364",  null],  ["0x085248b0",  "0xf40",  null]],
+        ["17c",  "0x08527938",  "0x10c",  "0x0852c0c0",  "0x140",  ["0x08527a44",  "0x1fe4",  null],  ["0x08529a28",  "0x1724",  null],  ["0x0852b14c",  "0xf74",  null]],
+        ["182", "0x0852dee8", "0x15c", null, null],
+        [
+          "184",
+          "0x0852ff8c",
+          "0x184",
+          "0x08537a80",
+          "0x1854",
+          ["0x08530110", "0x2b54", "assets/graphics/map_resource_184_charblock1.objects.json"],
+          ["0x08532c64", "0x26c4", null],
+          ["0x08535328", "0x2758", null]
+        ],
+        ["18a",  "0x0853b9d4",  "0x1a0",  "0x08540fb4",  "0xcb0",  ["0x0853bb74",  "0x1c2c",  null],  ["0x0853d7a0",  "0x2548",  null],  ["0x0853fce8",  "0x12cc",  null]],
+        [
+          "190",
+          "0x085426d0",
+          "0xf4",
+          "0x08544224",
+          "0xda4",
+          ["0x085427c4", "0x112c", "assets/graphics/map_resource_190_charblock1.objects.json"],
+          ["0x085438f0", "0x7ac", null],
+          ["0x0854409c", "0x188", null]
+        ],
+        ["196",  "0x08546b00",  "0x19c",  "0x0854e85c",  "0x1884",  ["0x08546c9c",  "0x2d54",  null],  ["0x085499f0",  "0x268c",  null],  ["0x0854c07c",  "0x27e0",  null]],
+        ["19c",  "0x085511d4",  "0xcc",  "0x08556b4c",  "0x140",  ["0x085512a0",  "0x27a4",  null],  ["0x08553a44",  "0x215c",  null],  ["0x08555ba0",  "0xfac",  null]],
+        [
+          "1a2",
+          "0x085580bc",
+          "0x124",
+          "0x0855ec98",
+          "0x614",
+          ["0x085581e0", "0x2c18", "assets/graphics/map_resource_1a2_charblock1.objects.json"],
+          ["0x0855adf8", "0x20fc", null],
+          ["0x0855cef4", "0x1da4", null]
+        ],
+        ["1aa",  "0x085648fc",  "0x19c",  "0x08569dfc",  "0x1a38",  ["0x08564a98",  "0x2444",  null],  ["0x08566edc",  "0x2458",  null],  ["0x08569334",  "0xac8",  null]],
+        ["1b2",  "0x08573224",  "0x19c",  "0x0857a09c",  "0x1cec",  ["0x085733c0",  "0x2bb0",  null],  ["0x08575f70",  "0x20d4",  null],  ["0x08578044",  "0x2058",  null]],
+        ["1b8",  "0x0857d534",  "0x19c",  null,  null,  ["0x0857d6d0",  "0x2b40",  null],  ["0x08580210",  "0x1dd0",  null],  ["0x08581fe0",  "0x140",  null]],
+        ["1be",  "0x0858517c",  "0x184",  "0x0858d31c",  "0x1b98",  ["0x08585300",  "0x2df8",  null],  ["0x085880f8",  "0x28c8",  null],  ["0x0858a9c0",  "0x295c",  null]],
+        ["1c4",  "0x08591928",  "0x1a8",  null,  null,  ["0x08591ad0",  "0x16fc",  null],  ["0x085931cc",  "0x900",  null]],
+        ["1c8",  "0x08594844",  "0x160",  null,  null,  ["0x085949a4",  "0x1c58",  null]],
+        ["1cb",  "0x08597e98",  "0x184",  null,  null,  ["0x0859801c",  "0x2b3c",  null],  ["0x0859ab58",  "0x277c",  null],  ["0x0859d2d4",  "0xfec",  null]],
+        ["1d0",  "0x0859f98c",  "0x1ac",  "0x085a6960",  "0x140",  ["0x0859fb38",  "0x2d94",  null],  ["0x085a28cc",  "0x2718",  null],  ["0x085a4fe4",  "0x197c",  null]],
+        ["1d6",  "0x085a8968",  "0x1a4",  "0x085ade10",  "0x1254",  ["0x085a8b0c",  "0x20a0",  null],  ["0x085aabac",  "0xf8c",  null],  ["0x085abb38",  "0x22d8",  null]],
+        ["1dc",  "0x085b0904",  "0x184",  "0x085b81d4",  "0x50c",  ["0x085b0a88",  "0x2c20",  null],  ["0x085b36a8",  "0x22e4",  null],  ["0x085b598c",  "0x2848",  null]],
+        ["1e2",  "0x085b9db8",  "0x1a4",  null,  null,  ["0x085b9f5c",  "0x1904",  null]],
+        ["1eb", "0x085c4cac", "0x15c", null, null],
+        ["1ed",  "0x085c73c4",  "0x178",  "0x085cc898",  "0x840",  ["0x085c753c",  "0x2b84",  null],  ["0x085ca0c0",  "0x1d70",  null],  ["0x085cbe30",  "0xa68",  null]],
+        ["1f8",  "0x085d48dc",  "0x134",  "0x085dadec",  "0x1a7c",  ["0x085d4a10",  "0x2c3c",  null],  ["0x085d764c",  "0x1fdc",  null],  ["0x085d9628",  "0x17c4",  null]],
+        ["1fe",  "0x085de138",  "0x17c",  "0x085e5948",  "0xed8",  ["0x085de2b4",  "0x2bb0",  null],  ["0x085e0e64",  "0x2274",  null],  ["0x085e30d8",  "0x2870",  null]],
+        ["204",  "0x085e8cac",  "0x190",  "0x085ee6e8",  "0x140",  ["0x085e8e3c",  "0x1fe4",  null],  ["0x085eae20",  "0x2c44",  null],  ["0x085eda64",  "0xc84",  null]],
+        ["20a",  "0x085efd98",  "0x16c",  "0x085f45a0",  "0x140",  ["0x085eff04",  "0x1d5c",  null],  ["0x085f1c60",  "0x140",  null],  ["0x085f1da0",  "0x2800",  null]],
+        ["210",  "0x085f60f8",  "0x1a0",  null,  null,  ["0x085f6298",  "0x13dc",  null]],
+        ["213",  "0x085f8bb0",  "0x190",  null,  null,  ["0x085f8d40",  "0x22b8",  null]],
+        ["216",  "0x085fc750",  "0x188",  null,  null,  ["0x085fc8d8",  "0x2968",  null]],
+        ["219",  "0x08600ed8",  "0x148",  "0x08606800",  "0x29c",  ["0x08601020",  "0x1cf4",  null],  ["0x08602d14",  "0x14b8",  null],  ["0x086041cc",  "0x2634",  null]],
+        ["21f",  "0x08609358",  "0x1c8",  "0x0860f92c",  "0x1570",  ["0x08609520",  "0x2904",  null],  ["0x0860be24",  "0x1eac",  null],  ["0x0860dcd0",  "0x1c5c",  null]],
+        ["226",  "0x086136c4",  "0x170",  "0x08619bb8",  "0x1944",  ["0x08613834",  "0x28c0",  null],  ["0x086160f4",  "0x27c8",  null],  ["0x086188bc",  "0x12fc",  null]],
+        ["231",  "0x08626990",  "0x1c0",  null,  null,  ["0x08626b50",  "0x21b8",  null]],
+        ["234",  "0x08629cdc",  "0x1dc",  "0x0862f188",  "0xb9c",  ["0x08629eb8",  "0x24f0",  null],  ["0x0862c3a8",  "0x186c",  null],  ["0x0862dc14",  "0x1574",  null]],
+        ["23a", "0x08630b84", "0x158", null, null],
+        ["241",  "0x08638b28",  "0x16c",  "0x0863e2c8",  "0xc14",  ["0x08638c94",  "0x2d9c",  null],  ["0x0863ba30",  "0x2190",  null],  ["0x0863dbc0",  "0x708",  null]],
+        ["24b",  "0x0864ffb0",  "0x194",  "0x086544cc",  "0x554",  ["0x08650144",  "0x1510",  null],  ["0x08651654",  "0x1de4",  null],  ["0x08653438",  "0x1094",  null]],
+        ["251", "0x0865673c", "0x198", null, null],
+        ["253",  "0x08658878",  "0x164",  "0x0865fda4",  "0x130c",  ["0x086589dc",  "0x2c10",  null],  ["0x0865b5ec",  "0x2064",  null],  ["0x0865d650",  "0x2754",  null]],
+        ["259",  "0x08663c1c",  "0x1cc",  null,  null,  ["0x08663de8",  "0x2348",  null]],
+        ["25c", "0x0866790c", "0x1b4", null, null],
+        ["266", "0x08678460", "0x160", null, null],
+        ["269", "0x0867bd18", "0x164", null, null],
+        ["26c",  "0x08681b60",  "0xf4",  "0x08686890",  "0x1a18",  ["0x08681c54",  "0x28f0",  null],  ["0x08684544",  "0x220c",  null],  ["0x08686750",  "0x140",  null]],
+        ["274",  "0x0868f010",  "0x17c",  "0x08695118",  "0xc04",  ["0x0868f18c",  "0x1fac",  null],  ["0x08691138",  "0x2778",  null],  ["0x086938b0",  "0x1868",  null]],
+        ["27a",  "0x08698b38",  "0x1c8",  "0x0869ecdc",  "0x12d4",  ["0x08698d00",  "0x2378",  null],  ["0x0869b078",  "0x206c",  null],  ["0x0869d0e4",  "0x1bf8",  null]],
+        ["282", "0x086a3ce8", "0x184", null, null],
+        ["284",  "0x086a5e34",  "0x18c",  null,  null,  ["0x086a5fc0",  "0x1a84",  null],  ["0x086a7a44",  "0x97c",  null]],
+        ["288", "0x086aaa7c", "0x1c4", null, null],
+        ["28a", "0x086abb74", "0x14c", null, null],
+        ["291",  "0x086b5b88",  "0x1c0",  null,  null,  ["0x086b5d48",  "0x1358",  null]],
+        ["294",  "0x086b823c",  "0x1d4",  "0x086be7b8",  "0x99c",  ["0x086b8410",  "0x2090",  null],  ["0x086ba4a0",  "0x2100",  null],  ["0x086bc5a0",  "0x2218",  null]],
+        ["29a", "0x086bfc40", "0x1d4", null, null],
+        ["29c",  "0x086c116c",  "0x1e4",  "0x086c5150",  "0x568",  ["0x086c1350",  "0x13f4",  null],  ["0x086c2744",  "0x1798",  null],  ["0x086c3edc",  "0x1274",  null]],
+        ["2a2", "0x086c7438", "0x1a8", null, null],
+        ["2a4", "0x086c9798", "0x194", null, null],
+        ["2a6",  "0x086cab14",  "0x188",  "0x086cf33c",  "0x140",  ["0x086cac9c",  "0x1ed8",  null],  ["0x086ccb74",  "0x2674",  null],  ["0x086cf1e8",  "0x154",  null]],
+        ["2ac", "0x086d0150", "0x180", null, null],
+        ["2ae", "0x086d1b88", "0x184", null, null],
+        ["2b0", "0x086d379c", "0x17c", null, null],
+        ["2b2", "0x086d5654", "0x12c", null, null],
+        ["2b5", "0x086d779c", "0x188", null, null],
+        ["2b7", "0x086d8880", "0x198", null, null],
+        ["2b9", "0x086d9b24", "0x1bc", null, null],
+        ["2bb", "0x086dc784", "0x174", null, null],
+        ["2bd", "0x086ddce0", "0x1b8", null, null],
+        ["2bf", "0x086e07c0", "0x1a8", null, null],
+        ["2c1", "0x086e2d64", "0x190", null, null],
+        ["2c3", "0x086e6174", "0x1e0", null, null],
+        ["2c6", "0x086e88e8", "0x190", null, null],
+        ["2c8", "0x086eb4e8", "0x188", null, null],
+        ["2ca",  "0x086ec1bc",  "0x168",  "0x086f0e34",  "0x1378",  ["0x086ec324",  "0x2a14",  null],  ["0x086eed38",  "0x1c40",  null],  ["0x086f0978",  "0x4bc",  null]],
+        ["2d0", "0x086f36f0", "0x18c", null, null],
+        ["2d2", "0x086f4958", "0x190", null, null],
+        ["2da",  "0x086ffff8",  "0x14c",  "0x08705ae0",  "0x1e80",  ["0x08700144",  "0x2908",  null],  ["0x08702a4c",  "0x1c4c",  null],  ["0x08704698",  "0x1448",  null]],
+        ["2e0",  "0x087093f4",  "0x13c",  "0x0870ecf0",  "0x1b7c",  ["0x08709530",  "0x2734",  null],  ["0x0870bc64",  "0x1c44",  null],  ["0x0870d8a8",  "0x1448",  null]],
+        ["2e6", "0x08711a9c", "0x15c", null, null],
+        ["2ea", "0x087150f4", "0x16c", null, null],
+        ["2ee", "0x08718cf0", "0x19c", null, null],
+        ["2f0", "0x0871a4d8", "0x140", null, null],
+        ["2f3", "0x0871d71c", "0x17c", null, null],
+        ["2f5", "0x08720014", "0x198", null, null],
+        ["2fa", "0x0872934c", "0x1c0", null, null],
+        ["2fc", "0x0872a67c", "0x158", null, null],
+        ["2fe",  "0x0872b874",  "0x164",  null,  null,  ["0x0872b9d8",  "0x29cc",  null]],
+        ["302", "0x087318d0", "0xf8", null, null],
+        ["305", "0x08735d10", "0x174", null, null],
+        ["30d",  "0x087419d8",  "0x1e4",  "0x08747534",  "0x1610",  ["0x08741bbc",  "0x1e80",  null],  ["0x08743a3c",  "0x1ebc",  null],  ["0x087458f8",  "0x1c3c",  null]],
+        ["313", "0x0874a504", "0x174", null, null],
+        ["316", "0x0874d684", "0x1b8", null, null],
+        ["318", "0x0874f0ac", "0x180", null, null],
+        ["31b", "0x08752a34", "0x174", null, null],
+        ["31e", "0x08753970", "0x1a8", null, null],
+        ["322", "0x08758954", "0x1e8", null, null],
+        ["326", "0x087603dc", "0x108", null, null],
+        ["328", "0x087620b8", "0x170", null, null],
+        ["32a", "0x08763b68", "0x15c", null, null],
+        ["32f", "0x08769f08", "0x104", null, null],
+        ["337",  "0x08770350",  "0x1ac",  "0x08772c6c",  "0xe84",  ["0x087704fc",  "0x1858",  null],  ["0x08771d54",  "0xc70",  null],  ["0x087729c4",  "0x2a8",  null]],
+        ["33d", "0x08774c80", "0x1c8", null, null],
+        ["33f",  "0x08775194",  "0xc",  "0x08775570",  "0x140",  ["0x087751a0",  "0x150",  null],  ["0x087752f0",  "0x140",  null],  ["0x08775430",  "0x140",  null]],
+        ["345",  "0x087759fc",  "0xc",  "0x08775dd8",  "0x140",  ["0x08775a08",  "0x150",  null],  ["0x08775b58",  "0x140",  null],  ["0x08775c98",  "0x140",  null]],
+        ["34b",  "0x08776264",  "0xc",  "0x08776640",  "0x140",  ["0x08776270",  "0x150",  null],  ["0x087763c0",  "0x140",  null],  ["0x08776500",  "0x140",  null]],
+        ["351",  "0x08776acc",  "0xc",  "0x08776ea8",  "0x140",  ["0x08776ad8",  "0x150",  null],  ["0x08776c28",  "0x140",  null],  ["0x08776d68",  "0x140",  null]],
+        ["357",  "0x08777334",  "0xc",  "0x08777710",  "0x140",  ["0x08777340",  "0x150",  null],  ["0x08777490",  "0x140",  null],  ["0x087775d0",  "0x140",  null]],
+        ["35d",  "0x08777b9c",  "0xc",  "0x08777f78",  "0x140",  ["0x08777ba8",  "0x150",  null],  ["0x08777cf8",  "0x140",  null],  ["0x08777e38",  "0x140",  null]],
+        ["363",  "0x08778404",  "0xc",  "0x087787e0",  "0x140",  ["0x08778410",  "0x150",  null],  ["0x08778560",  "0x140",  null],  ["0x087786a0",  "0x140",  null]],
+        ["369",  "0x08778c6c",  "0xc",  "0x08779048",  "0x140",  ["0x08778c78",  "0x150",  null],  ["0x08778dc8",  "0x140",  null],  ["0x08778f08",  "0x140",  null]]
       ]
     },
     {

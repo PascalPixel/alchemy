@@ -153,7 +153,7 @@ as generic repository and publication precedent.
   animation banks, music sequences, PCM samples, and sound-engine tables have
   dedicated semantic encoders.
 - Reconstructed names and source comments follow the period-authentic Japanese
-  rules in [NAMING.md](NAMING.md).
+  rules in [CONVENTIONS.md](CONVENTIONS.md).
 
 ## Verification workflow
 

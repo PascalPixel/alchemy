@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Tool role: entrypoint; invoked by ASSEMBLY.md, STATUS.md, package.json (+3 more).
+// Tool role: entrypoint; invoked by CONVENTIONS.md, STATUS.md, package.json (+3 more).
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
 import { canonicalJson } from "./canonical_json.ts";

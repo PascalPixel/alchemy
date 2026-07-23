@@ -4,7 +4,7 @@ import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, join } from "node:path";
 import {
   cflagsForTargetSource,
-  compilerCommandForTarget,
+  compilerCommandForTargetSource,
   externalSymbol,
   externalSymbolAssembly,
   type CompilerTarget,
@@ -66,8 +66,9 @@ export function verify(
   const symbolsObject = join(outputDir, `${name}.symbols.o`);
   const elf = join(outputDir, `${name}.elf`);
   const binary = join(outputDir, `${name}.bin`);
-  run(compilerCommandForTarget(
+  run(compilerCommandForTargetSource(
     compiler,
+    source,
     ...cflagsForTargetSource(compiler, source),
     "-S", "-o", assembly, source,
   ));

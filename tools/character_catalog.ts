@@ -357,10 +357,12 @@ function buildAnimations(index: CharacterCatalogJson): {
     });
     const labelIndexes = new Set<number>();
     for (const label of group.labels) {
-      const command = bounded(label.command, 0, group.commands.length - 1, "animation label command");
+      // Tuple schema: [name, command].
+      const [labelName, labelCommand] = label as [string, number];
+      const command = bounded(labelCommand, 0, group.commands.length - 1, "animation label command");
       if (labelIndexes.has(command)) throw new Error(`duplicate command label in ${group.name}`);
       labelIndexes.add(command);
-      define(label.name, cursor + command * 2);
+      define(labelName, cursor + command * 2);
     }
     chunks.push(commandBytes);
     cursor += commandBytes.length;
@@ -415,9 +417,11 @@ export function build_character_catalog(index: CharacterCatalogJson): Buffer {
 
   const frames = new Map<string, number>();
   for (const item of index.frame_directories) {
-    const name = text(item.name, "frame directory name");
+    // Tuple schema: [name, address, ids].
+    const [itemName, itemAddress] = item as [string, number | string, unknown];
+    const name = text(itemName, "frame directory name");
     if (frames.has(name)) throw new Error(`duplicate frame directory ${name}`);
-    frames.set(name, bounded(item.address, ROM_BASE, 0xffffffff, "frame directory address"));
+    frames.set(name, bounded(itemAddress, ROM_BASE, 0xffffffff, "frame directory address"));
   }
 
   const animation = buildAnimations(index);

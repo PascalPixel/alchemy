@@ -510,16 +510,18 @@ function sourceIndex(path: string, catalog: Catalog): Json {
 
 function child(indexPath: string, name: unknown): string {
   if (name !== DISPLAY_SOURCE) throw new Error("display tile source name differs");
+  const prefix = basename(indexPath).replace(/index\.json$/, "");
   const root = realpathSync(dirname(indexPath));
-  const path = realpathSync(resolve(root, name));
-  if (relative(root, path) !== name) throw new Error("display tile source escaped its package");
+  const path = realpathSync(resolve(root, prefix + name));
+  if (relative(root, path) !== prefix + name) throw new Error("display tile source escaped its package");
   return path;
 }
 
 function checkedPackageFiles(indexPath: string): void {
   const root = dirname(indexPath);
-  const names = readdirSync(root).sort();
-  const expected = [DISPLAY_SOURCE, "index.json"].sort();
+  const prefix = basename(indexPath).replace(/index\.json$/, "");
+  const expected = [prefix + DISPLAY_SOURCE, prefix + "index.json"].sort();
+  const names = readdirSync(root).filter((name) => expected.includes(name)).sort();
   if (names.length !== expected.length || names.some((name, index) => name !== expected[index])) {
     throw new Error("early-runtime package contains unexpected files");
   }

@@ -5,7 +5,7 @@ import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, renameSync, realpathSync, rmSync, symlinkSync,
   writeFileSync,
 } from "node:fs";
-import { dirname, isAbsolute, join, relative, resolve } from "node:path";
+import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { tile_png, type Rgb } from "./export_asset.ts";
 import { decode_general_trace, encode_general, type GeneralToken } from "./extract_resource.ts";
 import { gba_graphics } from "./import_asset.ts";
@@ -91,10 +91,11 @@ function validateExportDestination(romPath: string, directory: string): void {
 
 function sourcePath(planPath: string, name: string): string {
   if (name !== "kana.4bpp.png") throw new Error("kana source name differs");
+  const prefix = basename(planPath).replace(/[a-z0-9_.]+$/, (t) => t.includes("_") ? t.slice(0, t.lastIndexOf("_") + 1) : "");
   const root = realpathSync(dirname(planPath));
-  const path = realpathSync(resolve(root, name));
+  const path = realpathSync(resolve(root, prefix + name));
   const position = relative(root, path);
-  if (position !== name) throw new Error("kana source escaped its directory");
+  if (position !== prefix + name) throw new Error("kana source escaped its directory");
   return path;
 }
 

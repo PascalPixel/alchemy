@@ -4,7 +4,7 @@ import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, renameSync, rmSync, writeFileSync,
 } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import { basename, dirname, join, relative, resolve } from "node:path";
 import { indexed_png } from "./import_asset.ts";
 import { png, type Rgb } from "./skip_sprite_archive.ts";
 
@@ -79,8 +79,9 @@ function document(path: string): Json {
 
 function child(indexPath: string, name: string): string {
   if (!GRAPHICS.some((item) => item.source === name)) throw new Error("battle-menu graphic name differs");
-  const root = realpathSync(dirname(indexPath)), path = realpathSync(resolve(root, name));
-  if (relative(root, path) !== name) throw new Error("battle-menu graphic escaped its directory");
+  const prefix = basename(indexPath).replace(/index\.json$/, "");
+  const root = realpathSync(dirname(indexPath)), path = realpathSync(resolve(root, prefix + name));
+  if (relative(root, path) !== prefix + name) throw new Error("battle-menu graphic escaped its directory");
   return path;
 }
 

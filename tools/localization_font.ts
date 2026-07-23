@@ -107,7 +107,8 @@ function imagePath(root: string, source: string): string {
   if (!/^graphics\/fonts\/localization_font\/[a-z0-9_.-]+\.png$/.test(source)) {
     throw new Error("localization-font image path differs");
   }
-  return join(root, source);
+  // Flat layout: path segments collapse into an underscore-joined file name.
+  return join(root, source.replace(/^graphics\/fonts\/localization_font\//, "graphics/fonts_localization_font_"));
 }
 
 function view(source: Uint8Array): DataView {
@@ -352,14 +353,14 @@ function relative(path: string, root: string): string {
 
 export function export_localization_font(rom: Uint8Array, outputRoot: string): LocalizationFontSource {
   const root = outputRoot.replace(/\/$/, "");
-  const imageRoot = join(root, "graphics/fonts/localization_font");
-  mkdirSync(imageRoot, { recursive: true });
+  const imageRoot = join(root, "graphics/fonts_localization_font");
+  mkdirSync(dirname(imageRoot), { recursive: true });
   const direct: LocalizationFontSource["direct_tiles"] = [];
   for (const [name, start, end, columns] of [
     ["tile_08029910.4bpp.png", TILE0_ADDRESS, TILE0_END, 2],
     ["tile_080310a4.4bpp.png", UI_TILE_ADDRESS, UI_TILE_END, 2],
   ] as const) {
-    const path = join(imageRoot, name);
+    const path = `${imageRoot}_${name}`;
     writeFileSync(path, tile_png(range(rom, start, end), 4, columns)[0]);
     direct.push({ address: hex(start), end: hex(end), source: relative(path, root), columns });
   }
@@ -387,7 +388,7 @@ export function export_localization_font(rom: Uint8Array, outputRoot: string): L
     const tail = range(rom, encodedEnd, end);
     if (tail.some((value) => value !== 0)) throw new Error(`MTF bank ${index} has nonzero tail data`);
     const columns = Math.min(16, frames.length);
-    const path = join(imageRoot, `mtf_${index.toString().padStart(2, "0")}.indexed.png`);
+    const path = `${imageRoot}_mtf_${index.toString().padStart(2, "0")}.indexed.png`;
     writeFileSync(path, atlas(frames, 16, 16, columns));
     const imageByPointer = new Map(pointers.map((value, image) => [value, image]));
     banks.push({

@@ -5,7 +5,7 @@ import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, renameSync, rmSync,
   symlinkSync, writeFileSync,
 } from "fs";
-import { dirname, isAbsolute, join, relative, resolve } from "path";
+import { basename, dirname, isAbsolute, join, relative, resolve } from "path";
 
 const ROM_BASE = 0x08000000;
 const ROM_SIZE = 0x00800000;
@@ -153,8 +153,9 @@ function containsPath(directory: string, path: string): boolean {
 
 function child(indexPath: string, name: string): string {
   if (!Object.values(SOURCE_NAMES).includes(name as never)) throw new Error("audio-engine source name differs");
-  const root = realpathSync(dirname(indexPath)), path = realpathSync(resolve(root, name));
-  if (relative(root, path) !== name || !lstatSync(path).isFile()) throw new Error("audio-engine source escaped its directory");
+  const prefix = basename(indexPath).replace(/index\.json$/, "");
+  const root = realpathSync(dirname(indexPath)), path = realpathSync(resolve(root, prefix + name));
+  if (relative(root, path) !== prefix + name || !lstatSync(path).isFile()) throw new Error("audio-engine source escaped its directory");
   return path;
 }
 

@@ -92,8 +92,9 @@ function same(left: string, right: string): boolean {
 }
 
 function confined(root: string, name: string): string {
-  const canonicalRoot = realpathSync(root);
-  const path = realpathSync(resolve(root, name));
+  // Flat layout: root may be a file-name prefix rather than a directory.
+  const canonicalRoot = realpathSync(existsSync(root) ? root : dirname(root));
+  const path = realpathSync(existsSync(root) ? resolve(root, name) : `${root}${name}`);
   const position = relative(canonicalRoot, path);
   if (position === ".." || position.startsWith("../") || position.startsWith("..\\") || isAbsolute(position)) {
     throw new Error("static-sprite source must stay beneath its index directory");
@@ -250,7 +251,7 @@ function atlasDefinitions(value: unknown, frameCount: number): AtlasDefinition[]
 
 function localAtlasPath(directory: string, source: string, existing: boolean): string {
   if (!/^koma(?:_[0-9a-f]{2})?\.8bpp\.png$/.test(source)) throw new Error("invalid sprite atlas source");
-  return existing ? confined(directory, source) : join(directory, source);
+  return existing ? confined(directory, source) : `${directory}${source}`;
 }
 
 function makeAtlas(
@@ -329,7 +330,7 @@ function readFrameImages(
   integer(frameCount, 1, 0x100000, "sprite frame count");
   const frames: Buffer[] = [];
   for (let frameIndex = 0; frameIndex < frameCount; frameIndex++) {
-    const path = join(directory, static_sprite_frame_name(frameIndex));
+    const path = `${directory}${static_sprite_frame_name(frameIndex)}`;
     const [width, height, sourcePixels, actualPalette] = indexed_png(readFileSync(path));
     if (width !== frameWidth || height !== frameHeight) {
       throw new Error("sprite frame image differs from its plan");
@@ -349,7 +350,7 @@ function readAtlasFrames(
   const frameCount = plan.frames.length;
   if (plan.atlases === undefined && plan.atlas_columns === undefined) {
     if (item.source !== undefined) throw new Error(`sprite package ${item.id} mixes atlas layouts`);
-    return readFrameImages(dirname(planPath), frameWidth, frameHeight, frameCount, palette);
+    return readFrameImages(planPath.replace(/bank\.json$/, ""), frameWidth, frameHeight, frameCount, palette);
   }
   if (plan.atlases === undefined) {
     if (typeof item.source !== "string") throw new Error(`sprite package ${item.id} lacks its atlas source`);
@@ -366,7 +367,7 @@ function readAtlasFrames(
   const frames: Array<Buffer | undefined> = Array(frameCount);
   for (const definition of definitions) {
     const sourceFrames = atlasFrames(
-      readFileSync(localAtlasPath(dirname(planPath), definition.source, true)),
+      readFileSync(localAtlasPath(planPath.replace(/bank\.json$/, ""), definition.source, true)),
       frameWidth, frameHeight, definition.frames.length, definition.columns, palette,
     );
     definition.frames.forEach((frameIndex, index) => {
@@ -667,7 +668,7 @@ export function split_static_sprite_banks(indexPath: string, palettePath: string
       const width = number(plan.width), height = number(plan.height);
       const frames = readAtlasFrames(root, item, planPath, plan, palette);
       frames.forEach((frame, frameIndex) => {
-        const path = join(directory, static_sprite_frame_name(frameIndex));
+        const path = `${directory}${static_sprite_frame_name(frameIndex)}`;
         writeFileSync(path, png(frame, width, height, [...palette]));
         written.push(path);
       });

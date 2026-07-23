@@ -6,7 +6,7 @@ import { readLateRuntimeCatalog, ROM_BASE, type LateRuntimeComponent } from "./l
 import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
-const DEFAULT_CATALOG = join(ROOT, "assets/data/late_runtime/catalog.json");
+const DEFAULT_CATALOG = join(ROOT, "assets/data/late_runtime_catalog.json");
 
 type Json = Record<string, unknown>;
 type Values = { representation: "uniform_fill"; value: 0 | 255 } | { representation: "byte_values"; values: number[] };

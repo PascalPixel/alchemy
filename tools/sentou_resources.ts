@@ -302,7 +302,7 @@ function directoryName(spec: Spec): string {
 }
 
 function planPath(directory: string, spec: Spec): string {
-  return join(directory, directoryName(spec), "stream.json");
+  return join(directory, `${directoryName(spec)}_stream.json`);
 }
 
 function imageName(presentation: Presentation): Plan["image"]["source"] {
@@ -395,8 +395,8 @@ function parsePlan(value: unknown): [Plan, Spec] {
   return [plan, spec];
 }
 
-function buildDecoded(plan: Plan, spec: Spec, directory: string): Buffer {
-  const source = child(directory, plan.image.source);
+function buildDecoded(plan: Plan, spec: Spec, directory: string, flatPrefix: string): Buffer {
+  const source = child(directory, flatPrefix + plan.image.source);
   const image = readFileSync(source);
   let data: Buffer;
   if (spec.presentation === "naiyou") {
@@ -420,11 +420,13 @@ function buildDecoded(plan: Plan, spec: Spec, directory: string): Buffer {
 export function build_sentou_resource(planFile: string): [Buffer, string[]] {
   const [plan, spec] = parsePlan(document(readFileSync(planFile, "utf8"), false));
   const directory = dirname(planFile);
-  const decoded = buildDecoded(plan, spec, directory);
-  const sources = [planFile, child(directory, plan.image.source)];
+  // Flat layout: sibling files share the plan's resource_NNN_ name prefix.
+  const flatPrefix = basename(planFile).replace(/stream\.json$/, "");
+  const decoded = buildDecoded(plan, spec, directory, flatPrefix);
+  const sources = [planFile, child(directory, flatPrefix + plan.image.source)];
   let prefix = Buffer.alloc(0);
   if (plan.prefix_palette !== null) {
-    const paletteFile = child(directory, plan.prefix_palette.source);
+    const paletteFile = child(directory, flatPrefix + plan.prefix_palette.source);
     const image = readFileSync(paletteFile);
     prefix = gba_palette_rgba(image)[0];
     if (prefix.length !== spec.prefixPalette) throw new Error("sentou prefix palette source has the wrong size");
@@ -454,7 +456,7 @@ function parseIndex(value: unknown): IndexDocument {
     if (typeof entry !== "object" || entry === null || Array.isArray(entry)) throw new Error("sentou index entry must be an object");
     exactKeys(entry as unknown as Record<string, unknown>, ["id", "address", "size", "resource_boundary_size", "source"], "sentou index entry");
     const spec = SENTOU_RESOURCES[position];
-    const expectedSource = `${directoryName(spec)}/stream.json`;
+    const expectedSource = `${directoryName(spec)}_stream.json`;
     const size = integer(entry.size, "sentou index source size");
     if (entry.id !== resourceId(spec.id) || entry.address !== hex(spec.address) ||
         (size !== spec.sourceSize && size !== spec.boundarySize) ||
@@ -469,8 +471,9 @@ function parseIndex(value: unknown): IndexDocument {
 export function build_sentou_series(indexFile: string): Array<{ address: number; data: Buffer; sources: string[] }> {
   const index = parseIndex(document(readFileSync(indexFile, "utf8"), true));
   const directory = dirname(indexFile);
+  const indexPrefix = basename(indexFile).replace(/index\.json$/, "");
   return index.resources.map((entry) => {
-    const [data, sources] = build_sentou_resource(resolve(directory, entry.source));
+    const [data, sources] = build_sentou_resource(resolve(directory, indexPrefix + entry.source));
     if (data.length !== Number(entry.size)) throw new Error("sentou index size differs from its canonical source");
     return { address: Number(entry.address), data, sources: [indexFile, ...sources] };
   });
@@ -529,7 +532,7 @@ function exportOne(rom: Buffer, root: string, spec: Spec): IndexEntry {
   if (decoded.length !== spec.decodedSize) throw new Error("sentou decoded size differs from its audited layout");
   const directory = join(root, directoryName(spec));
   mkdirSync(directory, { recursive: true });
-  if (spec.prefixPalette) writeFileSync(join(directory, "iro.rgba.png"), palette_rgba_image(prefix, 16)[0]);
+  if (spec.prefixPalette) writeFileSync(`${directory}_iro.rgba.png`, palette_rgba_image(prefix, 16)[0]);
   const displayPalette = spec.displayPaletteBack
     ? rom.subarray(spec.address - ROM_BASE - spec.displayPaletteBack, spec.address - ROM_BASE)
     : prefix;
@@ -559,7 +562,7 @@ function exportOne(rom: Buffer, root: string, spec: Spec): IndexEntry {
       ? null
       : inspect_alignment_tail(original.subarray(spec.sourceSize), 3),
   };
-  const streamFile = join(directory, "stream.json");
+  const streamFile = `${directory}_stream.json`;
   writeFileSync(streamFile, `${JSON.stringify(plan)}\n`);
   const [rebuilt] = build_sentou_resource(streamFile);
   if (!rebuilt.equals(original)) throw new Error("sentou export does not round-trip");
@@ -568,7 +571,7 @@ function exportOne(rom: Buffer, root: string, spec: Spec): IndexEntry {
     address: hex(spec.address),
     size: shortHex(spec.boundarySize),
     resource_boundary_size: shortHex(spec.boundarySize),
-    source: `${directoryName(spec)}/stream.json`,
+    source: `${directoryName(spec)}_stream.json`,
   };
 }
 
@@ -579,11 +582,11 @@ function writeSentouPackage(rom: Buffer, directory: string): void {
     kind: "golden-sun-sentou-series",
     resources: SENTOU_RESOURCES.map((spec) => exportOne(rom, directory, spec)),
   };
-  writeFileSync(join(directory, "index.json"), `${canonicalJson(index)}\n`);
+  writeFileSync(`${directory}_index.json`, `${canonicalJson(index)}\n`);
 }
 
 function verifySentou(rom: Buffer, directory: string): { claimedBytes: number; boundaryBytes: number } {
-  const built = build_sentou_series(join(directory, "index.json"));
+  const built = build_sentou_series(`${directory}_index.json`);
   let claimedBytes = 0;
   let boundaryBytes = 0;
   built.forEach((entry, position) => {
@@ -599,7 +602,7 @@ function verifySentou(rom: Buffer, directory: string): { claimedBytes: number; b
 
 function validateExistingPackage(directory: string): void {
   if (!existsSync(directory)) return;
-  const indexFile = join(directory, "index.json");
+  const indexFile = `${directory}_index.json`;
   if (!existsSync(indexFile)) throw new Error("refusing to replace a directory that is not a sentou package");
   try {
     parseIndex(document(readFileSync(indexFile, "utf8"), true));

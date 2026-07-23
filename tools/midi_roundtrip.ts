@@ -804,8 +804,8 @@ async function main(): Promise<void> {
 
   const results: SongResult[] = [];
   for (const name of songs) {
-    const midiSource = await Bun.file(`assets/audio/midi/${name}.mid`).arrayBuffer();
-    const sidecarPath = `assets/audio/data/${name}.json`;
+    const midiSource = await Bun.file(`assets/audio/midi_${name}.mid`).arrayBuffer();
+    const sidecarPath = `assets/audio/data_${name}.json`;
     const sidecar = (await Bun.file(sidecarPath).exists())
       ? (JSON.parse(await Bun.file(sidecarPath).text()) as Sidecar)
       : null;

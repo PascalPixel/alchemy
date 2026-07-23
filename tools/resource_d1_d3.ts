@@ -430,8 +430,9 @@ function parseMotion(value: unknown, spec: Spec): MotionPlan {
 function buildStream(path: string): [Buffer, string[]] {
   const plan = parseStream(jsonDocument(path, false, "D1 stream plan"));
   const root = dirname(path);
-  const palettePath = child(root, plan.palette.source);
-  const imagePath = child(root, plan.image.source);
+  const planPrefix = basename(path).replace(/stream\.json$/, "");
+  const palettePath = child(root, planPrefix + plan.palette.source);
+  const imagePath = child(root, planPrefix + plan.image.source);
   const paletteImage = readFileSync(palettePath);
   const palette = gba_palette_rgba(paletteImage)[0];
   if (palette.length !== D1_PALETTE_SIZE) throw new Error("D1 palette has the wrong size");
@@ -469,9 +470,10 @@ function buildMotion(path: string, spec: Spec): Buffer {
 export function build_resource_d1_d3(indexPath: string): BuiltD1D3Resource[] {
   const index = parseIndex(jsonDocument(indexPath, true, "D1-D3 index"));
   const root = dirname(indexPath);
+  const prefix = basename(indexPath).replace(/index\.json$/, "");
   return index.resources.map((entry, position) => {
     const spec = SPECS[position];
-    const source = child(root, entry.source);
+    const source = child(root, prefix + entry.source);
     let data: Buffer;
     let sources: string[];
     if (spec.id === D1.id) [data, sources] = buildStream(source);

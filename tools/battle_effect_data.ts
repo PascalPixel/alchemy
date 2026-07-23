@@ -362,7 +362,8 @@ function parse(value: unknown): BattleEffectSource {
 function graphicPath(root: string, source: string): string {
   if (!/^graphics\/battle\/effects\/[a-z0-9_.-]+\.png$/.test(source))
     throw new Error("battle-effect graphic path differs");
-  return join(root, source);
+  // Flat layout: collapse the package segments into the file name.
+  return join(root, source.replace(/^graphics\/battle\/effects\//, "graphics/battle_effects_"));
 }
 
 function buildDirectGraphics(source: BattleEffectSource, root: string): Buffer {

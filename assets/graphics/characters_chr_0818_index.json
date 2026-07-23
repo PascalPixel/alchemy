@@ -1,0 +1,37 @@
+{
+  "format": 1,
+  "codec": "golden-sun-static-sprite-series",
+  "address": "0x0818d554",
+  "size": "0x00019acc",
+  "descriptor_table": "0x08185024",
+  "descriptor_count": 512,
+  "palette_offset": 16,
+  "palette_entries": 224,
+  "prefix_zeros": 0,
+  "packages": [
+    {
+      "id": "000",
+      "aliases": [],
+      "address": "0x0818d554",
+      "size": "0x0000e8f0",
+      "directory": "0x0819baf8",
+      "plan": "chr_000_bank.json"
+    },
+    {
+      "id": "001",
+      "aliases": [],
+      "address": "0x0819be44",
+      "size": "0x00005e9c",
+      "directory": "0x081a1b68",
+      "plan": "chr_001_bank.json"
+    },
+    {
+      "id": "002",
+      "aliases": [],
+      "address": "0x081a1ce0",
+      "size": "0x00005340",
+      "directory": "0x081a6eec",
+      "plan": "chr_002_bank.json"
+    }
+  ]
+}

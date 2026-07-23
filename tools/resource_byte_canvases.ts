@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // Tool role: library; imported by tools/build_assets.ts.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
-import { dirname, join } from "path";
+import { basename, dirname, join } from "path";
 import { byte_png } from "./export_asset.ts";
 import { indexed_png } from "./import_asset.ts";
 import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
@@ -40,8 +40,9 @@ function parse(indexPath: string): Index {
 
 export function buildResourceByteCanvases(indexPath: string): BuiltResource[] {
   const index = parse(indexPath), directory = dirname(indexPath);
+  const prefix = basename(indexPath).replace(/index\.json$/, "");
   return index.resources.map((resource) => {
-    const path = join(directory, resource.source), [imageWidth, imageHeight, pixels] = indexed_png(readFileSync(path));
+    const path = join(directory, prefix + resource.source), [imageWidth, imageHeight, pixels] = indexed_png(readFileSync(path));
     if (imageWidth !== width(resource.size) || imageHeight !== height(resource.size) || pixels.length !== imageWidth * imageHeight ||
         pixels.slice(resource.size).some(Boolean)) throw new Error(`resource ${resource.id} canvas differs`);
     const canvas = Buffer.from(pixels);

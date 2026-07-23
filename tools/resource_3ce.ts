@@ -256,8 +256,10 @@ function same(left: string, right: string): boolean {
 export function build_resource_3ce(layoutPath: string): Resource3ceBuild {
   const source = parseLayout(JSON.parse(readFileSync(layoutPath, "utf8")));
   const directory = dirname(layoutPath);
-  const overlayPath = pathInside(directory, source.overlay);
-  const planPath = pathInside(directory, source.compression_plan);
+  // Flat layout: sibling files carry the layout's resource prefix.
+  const flatPrefix = basename(layoutPath).replace(/layout\.json$/, "");
+  const overlayPath = pathInside(directory, flatPrefix + source.overlay);
+  const planPath = pathInside(directory, flatPrefix + source.compression_plan);
   const decoded = assemble_overlay(overlayPath, DECODED_ADDRESS);
   if (decoded.length !== DECODED_SIZE) throw new Error("resource 3ce overlay size differs");
   const plan = parsePlan(JSON.parse(readFileSync(planPath, "utf8")));

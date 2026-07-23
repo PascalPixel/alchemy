@@ -5,7 +5,7 @@ import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, renameSync, realpathSync, rmSync, symlinkSync,
   writeFileSync,
 } from "node:fs";
-import { dirname, isAbsolute, join, relative, resolve } from "node:path";
+import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { build_sequence, type SequenceSource } from "./music_sequence.ts";
 
 const ROM_BASE = 0x08000000;
@@ -174,9 +174,11 @@ function validateExportDestination(romPath: string, directory: string): void {
 
 function child(indexPath: string, name: string): string {
   if (name !== "sound_138_yobi.json") throw new Error("music residual source name differs");
+  // Flat layout: siblings carry the index's name prefix.
+  const prefix = basename(indexPath).replace(/index\.json$/, "");
   const root = realpathSync(dirname(indexPath));
-  const path = realpathSync(resolve(root, name));
-  if (relative(root, path) !== name) throw new Error("music residual source escaped its directory");
+  const path = realpathSync(resolve(root, prefix + name));
+  if (relative(root, path) !== prefix + name) throw new Error("music residual source escaped its directory");
   return path;
 }
 

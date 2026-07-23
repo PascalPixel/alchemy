@@ -10,7 +10,7 @@ import {
   rmSync,
   writeFileSync,
 } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 
 export const ROM_BASE = 0x08000000;
 export const SENTOU_KOUKA_ADDRESS = 0x080eda78;
@@ -616,17 +616,18 @@ function parseIndex(indexPath: string): Json {
 
 export function build_sentou_kouka_runtime(indexPath: string): Buffer {
   const index = parseIndex(indexPath), directory = dirname(indexPath);
+  const prefix = basename(indexPath).replace(/index\.json$/, "");
   const gouseiLabels = [...GOUSEI_LABELS.values()], colorLabels = [...GOUSEI_IRO_LABELS.values()];
   const output = Buffer.concat([
-    buildKeisu(join(directory, index.sources.keisu)),
-    assembleAt(join(directory, index.sources.gousei), GOUSEI_ADDRESS, HYOU_A_ADDRESS - GOUSEI_ADDRESS, gouseiLabels),
-    parseTableDocument(join(directory, index.sources.hyou_a), HYOU_A_SPECS, HYOU_A_ADDRESS, KANSUU_ADDRESS),
-    buildCallbacks(join(directory, index.sources.kansuu)),
-    parseTableDocument(join(directory, index.sources.hyou_b), HYOU_B_SPECS, HYOU_B_ADDRESS, GOUSEI_IRO_ADDRESS),
-    assembleAt(join(directory, index.sources.gousei_iro), GOUSEI_IRO_ADDRESS, BIT_MASK_ADDRESS - GOUSEI_IRO_ADDRESS, colorLabels),
-    buildMasks(join(directory, index.sources.bit_mask)),
+    buildKeisu(join(directory, prefix + index.sources.keisu)),
+    assembleAt(join(directory, prefix + index.sources.gousei), GOUSEI_ADDRESS, HYOU_A_ADDRESS - GOUSEI_ADDRESS, gouseiLabels),
+    parseTableDocument(join(directory, prefix + index.sources.hyou_a), HYOU_A_SPECS, HYOU_A_ADDRESS, KANSUU_ADDRESS),
+    buildCallbacks(join(directory, prefix + index.sources.kansuu)),
+    parseTableDocument(join(directory, prefix + index.sources.hyou_b), HYOU_B_SPECS, HYOU_B_ADDRESS, GOUSEI_IRO_ADDRESS),
+    assembleAt(join(directory, prefix + index.sources.gousei_iro), GOUSEI_IRO_ADDRESS, BIT_MASK_ADDRESS - GOUSEI_IRO_ADDRESS, colorLabels),
+    buildMasks(join(directory, prefix + index.sources.bit_mask)),
     Buffer.alloc(TENKAI_ADDRESS - ZERO_FILL_ADDRESS),
-    assembleAt(join(directory, index.sources.tenkai), TENKAI_ADDRESS, SENTOU_KOUKA_END - TENKAI_ADDRESS,
+    assembleAt(join(directory, prefix + index.sources.tenkai), TENKAI_ADDRESS, SENTOU_KOUKA_END - TENKAI_ADDRESS,
       ["SentouKouka_Tobikomi", "SentouKouka_SekiWa", "SentouKouka_Tenkai", "SentouKouka_TenkaiYomi"], true),
   ]);
   if (output.length !== SENTOU_KOUKA_SIZE) throw new Error("battle effect runtime output size differs");

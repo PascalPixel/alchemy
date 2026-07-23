@@ -181,7 +181,7 @@ function child(root: string, name: string): string {
 }
 
 function indexedChild(root: string, name: string, id: number): string {
-  const expected = `resource_${id.toString(16).padStart(3, "0")}/stream.json`;
+  const expected = `resource_${id.toString(16).padStart(3, "0")}_stream.json`;
   if (name !== expected) throw new Error("kind-2 index source name is not canonical");
   const result = resolve(root, name);
   if (!contained(resolve(root), result)) throw new Error("kind-2 index source escaped its series");
@@ -617,7 +617,7 @@ function exportOne(rom: Buffer, root: string, entry: CatalogEntry): IndexEntry {
     size: entry.size,
     prefix_palette_size: entry.prefix_palette_size,
     presentation_status: entry.image.status,
-    source: `resource_${id.toString(16).padStart(3, "0")}/stream.json`,
+    source: `resource_${id.toString(16).padStart(3, "0")}_stream.json`,
   };
 }
 

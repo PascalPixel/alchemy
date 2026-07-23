@@ -96,8 +96,8 @@ function fontPalette(rom: Buffer): Rgb[] {
 }
 
 function stampPaths(root: string): [string, string] {
-  const directory = join(root, "data/resource_2");
-  return [join(directory, "build_stamp.txt"), join(directory, "layout.json")];
+  const prefix = join(root, "data/resource_2");
+  return [`${prefix}_build_stamp.txt`, `${prefix}_layout.json`];
 }
 
 export function build_resource_2(root: string): Buffer {
@@ -113,22 +113,22 @@ export function build_resource_2(root: string): Buffer {
 }
 
 export function build_resource_13(root: string): Buffer {
-  const [tiles, , report] = gba_graphics(readFileSync(join(root, "graphics/resource_13/font.4bpp.png")), 4);
+  const [tiles, , report] = gba_graphics(readFileSync(join(root, "graphics/resource_13_font.4bpp.png")), 4);
   if (report.width !== 128 || report.height !== 128 || tiles.length !== FIXED[0x13].size)
     throw new Error("font source must be a 16 by 16 grid of 8 by 8 glyphs");
   return tiles;
 }
 
 export function build_resource_14(root: string): Buffer {
-  const [words, report] = gba_palette_rgba(readFileSync(join(root, "graphics/resource_14/words.rgba.png")));
+  const [words, report] = gba_palette_rgba(readFileSync(join(root, "graphics/resource_14_words.rgba.png")));
   if (report.width !== 16 || report.height !== 70 || words.length !== FIXED[0x14].size)
     throw new Error("resource 14 word image must contain 1120 BGR555-compatible values");
   return words;
 }
 
 export function build_resource_18_full(root: string): Buffer {
-  const directory = join(root, "graphics/resource_18");
-  const plan = json(join(directory, "screen.lz.json")) as ScreenPlan;
+  const prefix = join(root, "graphics/resource_18");
+  const plan = json(`${prefix}_screen.lz.json`) as ScreenPlan;
   if (plan.format !== 1 || plan.codec !== "golden-sun-tagged-palette-screen" ||
       plan.resource_id !== "18" || number(plan.address) !== FIXED[0x18].address ||
       number(plan.container_size) !== FIXED[0x18].size || number(plan.decoded_size) !== FIXED[0x18].decodedSize ||
@@ -136,7 +136,7 @@ export function build_resource_18_full(root: string): Buffer {
       plan.consumer.function !== "Func_080f2b70" || number(plan.consumer.palette_bytes) !== 0x1c0 ||
       number(plan.consumer.stream_offset) !== 0x1c0 || plan.consumer.tile_depth !== 8)
     throw new Error("resource 18 screen plan differs from its consumer layout");
-  const [tiles, palette, report] = gba_graphics(readFileSync(join(directory, "screen.8bpp.png")), 8);
+  const [tiles, palette, report] = gba_graphics(readFileSync(`${prefix}_screen.8bpp.png`), 8);
   if (report.width !== 240 || report.height !== 160 || tiles.length !== FIXED[0x18].decodedSize || palette.length !== 0x1c0)
     throw new Error("resource 18 source must be a 240 by 160 screen with 224 colors");
   const built = Buffer.concat([palette, Buffer.from([1]), encode_palette(tiles, plan.tokens)]);
@@ -167,13 +167,13 @@ export function export_simple_resources(romPath: string, root: string): void {
   if (!build_resource_2(root).equals(stamp)) throw new Error("resource 2 round trip differs");
 
   const font = checkedRange(rom, 0x13);
-  const fontPath = join(root, "graphics/resource_13/font.4bpp.png");
+  const fontPath = join(root, "graphics/resource_13_font.4bpp.png");
   mkdirSync(dirname(fontPath), { recursive: true });
   writeFileSync(fontPath, tile_png(font, 4, 16, fontPalette(rom))[0]);
   if (!build_resource_13(root).equals(font)) throw new Error("resource 13 round trip differs");
 
   const words = checkedRange(rom, 0x14);
-  const wordsPath = join(root, "graphics/resource_14/words.rgba.png");
+  const wordsPath = join(root, "graphics/resource_14_words.rgba.png");
   mkdirSync(dirname(wordsPath), { recursive: true });
   writeFileSync(wordsPath, palette_rgba_image(words, 16)[0]);
   if (!build_resource_14(root).equals(words)) throw new Error("resource 14 round trip differs");
@@ -185,8 +185,8 @@ export function export_simple_resources(romPath: string, root: string): void {
   const [decoded, cursor, tokens] = decode_palette_trace(rom, start + 0x1c1, start + screen.length, 0x9600);
   if (decoded.length !== FIXED[0x18].decodedSize || cursor !== start + screen.length)
     throw new Error("resource 18 screen stream differs from its consumer bounds");
-  const screenPath = join(root, "graphics/resource_18/screen.8bpp.png");
-  const streamPath = join(root, "graphics/resource_18/screen.lz.json");
+  const screenPath = join(root, "graphics/resource_18_screen.8bpp.png");
+  const streamPath = join(root, "graphics/resource_18_screen.lz.json");
   mkdirSync(dirname(screenPath), { recursive: true });
   writeFileSync(screenPath, tile_png(decoded, 8, 30, bgr555(palette))[0]);
   writeFileSync(streamPath, `${JSON.stringify({

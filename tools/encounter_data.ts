@@ -162,7 +162,7 @@ export function build_encounter_regions(directory: string): EncounterRegion[] {
     [ALIGNMENT_ADDRESS, ALIGNMENT_SIZE, "alignment.json", build_alignment],
   ] as const;
   return sources.map(([address, size, source, builder]) => {
-    const data = builder(join(directory, source));
+    const data = builder(`${directory}_${source}`);
     if (data.length !== size) throw new Error(`${source}: built size differs`);
     return { address, size, source, data };
   });

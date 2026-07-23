@@ -97,7 +97,7 @@
   "regions": [
     {
       "kind": "golden-sun-byte-value-region-package",
-      "source": "assets/data/final_byte_regions/index.json"
+      "source": "assets/data/final_byte_regions_index.json"
     },
     {
       "address": "0x08000404",
@@ -127,87 +127,87 @@
       "address": "0x083cd090",
       "size": "0x488",
       "kind": "golden-sun-resource-byte-canvas",
-      "source": "assets/graphics/resource_byte_closure/index.json",
+      "source": "assets/graphics/resource_byte_closure_index.json",
       "resource_id": "049"
     },
     {
       "address": "0x083cd518",
       "size": "0x5ec",
       "kind": "golden-sun-resource-byte-canvas",
-      "source": "assets/graphics/resource_byte_closure/index.json",
+      "source": "assets/graphics/resource_byte_closure_index.json",
       "resource_id": "04a"
     },
     {
       "address": "0x083d85e0",
       "size": "0x444",
       "kind": "golden-sun-resource-byte-canvas",
-      "source": "assets/graphics/resource_byte_closure/index.json",
+      "source": "assets/graphics/resource_byte_closure_index.json",
       "resource_id": "061"
     },
     {
       "address": "0x083dc1f8",
       "size": "0x220",
       "kind": "golden-sun-resource-byte-canvas",
-      "source": "assets/graphics/resource_byte_closure/index.json",
+      "source": "assets/graphics/resource_byte_closure_index.json",
       "resource_id": "064"
     },
     {
       "address": "0x083dc854",
       "size": "0x114",
       "kind": "golden-sun-resource-byte-canvas",
-      "source": "assets/graphics/resource_byte_closure/index.json",
+      "source": "assets/graphics/resource_byte_closure_index.json",
       "resource_id": "066"
     },
     {
       "address": "0x083e2ae4",
       "size": "0x29c",
       "kind": "golden-sun-resource-byte-canvas",
-      "source": "assets/graphics/resource_byte_closure/index.json",
+      "source": "assets/graphics/resource_byte_closure_index.json",
       "resource_id": "073"
     },
     {
       "address": "0x083f5f4c",
       "size": "0x7b0",
       "kind": "golden-sun-resource-byte-canvas",
-      "source": "assets/graphics/resource_byte_closure/index.json",
+      "source": "assets/graphics/resource_byte_closure_index.json",
       "resource_id": "0a5"
     },
     {
       "address": "0x083f66fc",
       "size": "0x518",
       "kind": "golden-sun-resource-byte-canvas",
-      "source": "assets/graphics/resource_byte_closure/index.json",
+      "source": "assets/graphics/resource_byte_closure_index.json",
       "resource_id": "0a6"
     },
     {
       "address": "0x080f38bc",
       "size": "0x744",
       "kind": "golden-sun-late-runtime-residual",
-      "source": "assets/data/late_runtime_residual/index.json"
+      "source": "assets/data/late_runtime_residual_index.json"
     },
     {
       "address": "0x080f53ce",
       "size": "0xc32",
       "kind": "golden-sun-late-runtime-residual",
-      "source": "assets/data/late_runtime_residual/index.json"
+      "source": "assets/data/late_runtime_residual_index.json"
     },
     {
       "address": "0x080f86f8",
       "size": "0x908",
       "kind": "golden-sun-late-runtime-residual",
-      "source": "assets/data/late_runtime_residual/index.json"
+      "source": "assets/data/late_runtime_residual_index.json"
     },
     {
       "address": "0x08012f20",
       "size": "0x864",
       "kind": "golden-sun-early-runtime-data",
-      "source": "assets/data/early_runtime/index.json"
+      "source": "assets/data/early_runtime_index.json"
     },
     {
       "address": "0x0801403c",
       "size": "0xfc4",
       "kind": "golden-sun-early-runtime-data",
-      "source": "assets/data/early_runtime/index.json"
+      "source": "assets/data/early_runtime_index.json"
     },
     {
       "address": "0x08000000",
@@ -273,7 +273,7 @@
       "address": "0x080092b8",
       "size": "0x900",
       "kind": "golden-sun-byte-henkan-tables",
-      "source": "assets/data/byte_henkan/hyou.json"
+      "source": "assets/data/byte_henkan_hyou.json"
     },
     {
       "address": "0x08013784",
@@ -291,43 +291,43 @@
       "address": "0x08033e60",
       "size": "0x98",
       "kind": "golden-sun-localization-tables",
-      "source": "assets/data/localization_tables/table_08033e60.json"
+      "source": "assets/data/localization_tables_table_08033e60.json"
     },
     {
       "address": "0x08033ef8",
       "size": "0x400",
       "kind": "gba-4bpp-tiles",
-      "source": "assets/graphics/fonts/localization_font/tile_08033ef8.4bpp.png"
+      "source": "assets/graphics/fonts_localization_font_tile_08033ef8.4bpp.png"
     },
     {
       "address": "0x080342f8",
       "size": "0x400",
       "kind": "gba-4bpp-tiles",
-      "source": "assets/graphics/fonts/localization_font/tile_080342f8.4bpp.png"
+      "source": "assets/graphics/fonts_localization_font_tile_080342f8.4bpp.png"
     },
     {
       "address": "0x080346f8",
       "size": "0x2000",
       "kind": "gba-4bpp-tiles",
-      "source": "assets/graphics/fonts/localization_font/tile_080346f8.4bpp.png"
+      "source": "assets/graphics/fonts_localization_font_tile_080346f8.4bpp.png"
     },
     {
       "address": "0x080366f8",
       "size": "0x1dc",
       "kind": "golden-sun-localization-tables",
-      "source": "assets/data/localization_tables/table_080366f8.json"
+      "source": "assets/data/localization_tables_table_080366f8.json"
     },
     {
       "address": "0x080368d4",
       "size": "0x800",
       "kind": "gba-4bpp-tiles",
-      "source": "assets/graphics/fonts/localization_font/tile_080368d4.4bpp.png"
+      "source": "assets/graphics/fonts_localization_font_tile_080368d4.4bpp.png"
     },
     {
       "address": "0x080370d4",
       "size": "0x390",
       "kind": "golden-sun-localization-tables",
-      "source": "assets/data/localization_tables/table_080370d4.json"
+      "source": "assets/data/localization_tables_table_080370d4.json"
     },
     {
       "address": "0x08037464",
@@ -345,37 +345,37 @@
       "address": "0x08073852",
       "size": "0x37ae",
       "kind": "golden-sun-namae-nyuuryoku",
-      "source": "assets/graphics/fonts/namae_nyuuryoku/gamen.json"
+      "source": "assets/graphics/fonts_namae_nyuuryoku_gamen.json"
     },
     {
       "address": "0x0807a828",
       "size": "0xf7d8",
       "kind": "golden-sun-gameplay-databases",
-      "source": "assets/data/resource_5/database.json"
+      "source": "assets/data/resource_5_database.json"
     },
     {
       "address": "0x0809c410",
       "size": "0x4bf0",
       "kind": "golden-sun-battle-effect-data",
-      "source": "assets/data/battle_effect_data/layout.json"
+      "source": "assets/data/battle_effect_data_layout.json"
     },
     {
       "address": "0x080aea4c",
       "size": "0x15b4",
       "kind": "golden-sun-sentou-gamen-data",
-      "source": "assets/graphics/sentou_gamen/index.json"
+      "source": "assets/graphics/sentou_gamen_index.json"
     },
     {
       "address": "0x080b3940",
       "size": "0x16c0",
       "kind": "golden-sun-sentou-menu-data",
-      "source": "assets/data/sentou_menu/index.json"
+      "source": "assets/data/sentou_menu_index.json"
     },
     {
       "address": "0x080c2a0a",
       "size": "0x3126",
       "kind": "golden-sun-sentou-hyouji",
-      "source": "assets/graphics/sentou_hyouji/index.json"
+      "source": "assets/graphics/sentou_hyouji_index.json"
     },
     {
       "address": "0x080c5b30",
@@ -387,19 +387,19 @@
       "address": "0x080eda78",
       "size": "0x27dc",
       "kind": "golden-sun-sentou-kouka-runtime",
-      "source": "assets/code/sentou_kouka/index.json"
+      "source": "assets/code/sentou_kouka_index.json"
     },
     {
       "address": "0x080f0a5c",
       "size": "0x15a4",
       "kind": "golden-sun-staff-roll",
-      "source": "assets/text/staff_roll/index.json"
+      "source": "assets/text/staff_roll_index.json"
     },
     {
       "address": "0x080fb792",
       "size": "0xef2",
       "kind": "golden-sun-audio-engine-data",
-      "source": "assets/audio/engine/index.json"
+      "source": "assets/audio/engine_index.json"
     },
     {
       "address": "0x080fc684",
@@ -417,63 +417,63 @@
       "address": "0x0818d554",
       "size": "0x19acc",
       "kind": "golden-sun-static-sprite-series",
-      "source": "assets/graphics/characters/chr_0818/index.json",
+      "source": "assets/graphics/characters_chr_0818_index.json",
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
       "address": "0x081a7020",
       "size": "0x3a1ec",
       "kind": "golden-sun-static-sprite-series",
-      "source": "assets/graphics/characters/chr_081a/index.json",
+      "source": "assets/graphics/characters_chr_081a_index.json",
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
       "address": "0x081e120c",
       "size": "0x14ebc",
       "kind": "golden-sun-static-sprite-series",
-      "source": "assets/graphics/characters/chr_081e/index.json",
+      "source": "assets/graphics/characters_chr_081e_index.json",
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
       "address": "0x081f60c8",
       "size": "0x2a098",
       "kind": "golden-sun-static-sprite-series",
-      "source": "assets/graphics/characters/chr_081f/index.json",
+      "source": "assets/graphics/characters_chr_081f_index.json",
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
       "address": "0x08220160",
       "size": "0x24e60",
       "kind": "golden-sun-static-sprite-series",
-      "source": "assets/graphics/characters/chr_zenhan/index.json",
+      "source": "assets/graphics/characters_chr_zenhan_index.json",
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
       "address": "0x08244fc0",
       "size": "0x48018",
       "kind": "golden-sun-static-sprite-series",
-      "source": "assets/graphics/characters/chr/index.json",
+      "source": "assets/graphics/characters_chr_index.json",
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
       "address": "0x0828cfd8",
       "size": "0x28088",
       "kind": "golden-sun-static-sprite-series",
-      "source": "assets/graphics/characters/chr_0828/index.json",
+      "source": "assets/graphics/characters_chr_0828_index.json",
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
       "address": "0x082b5060",
       "size": "0x4bf14",
       "kind": "golden-sun-static-sprite-series",
-      "source": "assets/graphics/characters/chr_082b/index.json",
+      "source": "assets/graphics/characters_chr_082b_index.json",
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
       "address": "0x08300f74",
       "size": "0x1f08c",
       "kind": "golden-sun-static-sprite-series",
-      "source": "assets/graphics/characters/chr_0830/index.json",
+      "source": "assets/graphics/characters_chr_0830_index.json",
       "palette": "assets/graphics/0800777c.gbapal.png"
     },
     {
@@ -504,19 +504,19 @@
       "address": "0x08323870",
       "size": "0x1177",
       "kind": "golden-sun-title-lz",
-      "source": "assets/graphics/resource_15/container.json"
+      "source": "assets/graphics/resource_15_container.json"
     },
     {
       "address": "0x083249e8",
       "size": "0x66c0",
       "kind": "golden-sun-title-lz",
-      "source": "assets/graphics/resource_16/container.json"
+      "source": "assets/graphics/resource_16_container.json"
     },
     {
       "address": "0x0832b0a8",
       "size": "0x86f8",
       "kind": "golden-sun-title-lz",
-      "source": "assets/graphics/resource_17/container.json"
+      "source": "assets/graphics/resource_17_container.json"
     },
     {
       "address": "0x083337a0",
@@ -528,27 +528,27 @@
       "address": "0x08333fc8",
       "size": "0x182a",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/graphics/resource_19/stream.lz.json",
+      "plan": "assets/graphics/resource_19_stream.lz.json",
       "components": [
         {
           "kind": "gba-palette",
           "size": "0x1c0",
-          "source": "assets/graphics/resource_19/palette.png"
+          "source": "assets/graphics/resource_19_palette.png"
         },
         {
           "kind": "gba-tilemap16",
           "size": "0x800",
-          "source": "assets/graphics/resource_19/bg2.tilemap"
+          "source": "assets/graphics/resource_19_bg2.tilemap"
         },
         {
           "kind": "gba-8bpp-tiles",
           "size": "0x4000",
-          "source": "assets/graphics/resource_19/static.8bpp.png"
+          "source": "assets/graphics/resource_19_static.8bpp.png"
         },
         {
           "kind": "gba-8bpp-tiles",
           "size": "0x1000",
-          "source": "assets/graphics/resource_19/dynamic.8bpp.png"
+          "source": "assets/graphics/resource_19_dynamic.8bpp.png"
         }
       ]
     },
@@ -556,64 +556,64 @@
       "address": "0x0833ac08",
       "size": "0x2b4",
       "kind": "golden-sun-kana-glyph-bank",
-      "source": "assets/graphics/resource_01c/stream.json"
+      "source": "assets/graphics/resource_01c_stream.json"
     },
     {
       "address": "0x083ee384",
       "size": "0x80",
       "kind": "gba-palette",
-      "source": "assets/graphics/palettes/direct_palettes/8d.png"
+      "source": "assets/graphics/palettes_direct_palettes_8d.png"
     },
     {
       "address": "0x08403388",
       "size": "0x80",
       "kind": "gba-palette",
-      "source": "assets/graphics/palettes/direct_palettes/bb.png"
+      "source": "assets/graphics/palettes_direct_palettes_bb.png"
     },
     {
       "address": "0x084090cc",
       "size": "0x80",
       "kind": "gba-palette",
-      "source": "assets/graphics/palettes/direct_palettes/c4.png"
+      "source": "assets/graphics/palettes_direct_palettes_c4.png"
     },
     {
       "address": "0x084101d0",
       "size": "0x10a5",
       "kind": "golden-sun-d1-d3-resource",
       "resource_id": "0x0d1",
-      "source": "assets/graphics/resources_d1_d3/index.json"
+      "source": "assets/graphics/resources_d1_d3_index.json"
     },
     {
       "address": "0x08411278",
       "size": "0x1a8",
       "kind": "golden-sun-d1-d3-resource",
       "resource_id": "0x0d2",
-      "source": "assets/graphics/resources_d1_d3/index.json"
+      "source": "assets/graphics/resources_d1_d3_index.json"
     },
     {
       "address": "0x08411420",
       "size": "0x54",
       "kind": "golden-sun-d1-d3-resource",
       "resource_id": "0x0d3",
-      "source": "assets/graphics/resources_d1_d3/index.json"
+      "source": "assets/graphics/resources_d1_d3_index.json"
     },
     {
       "address": "0x08411474",
       "size": "0xf828",
       "kind": "golden-sun-offset-palette-lz",
-      "source": "assets/maps/world_map/chunks.rgba.png",
-      "plan": "assets/maps/world_map/chunks.archive.json"
+      "source": "assets/maps/world_map_chunks.rgba.png",
+      "plan": "assets/maps/world_map_chunks.archive.json"
     },
     {
       "address": "0x08420c9c",
       "size": "0x39ec",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/maps/world_map/tile_pairs.lz.json",
+      "plan": "assets/maps/world_map_tile_pairs.lz.json",
       "components": [
         {
           "kind": "rgba-bytes",
           "size": "0x4488",
-          "source": "assets/maps/world_map/tile_pairs.rgba.png"
+          "source": "assets/maps/world_map_tile_pairs.rgba.png"
         }
       ]
     },
@@ -621,12 +621,12 @@
       "address": "0x08424688",
       "size": "0x152",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/maps/world_map/animation.lz.json",
+      "plan": "assets/maps/world_map_animation.lz.json",
       "components": [
         {
           "kind": "little-u16-text",
           "size": "0x3a2",
-          "source": "assets/maps/world_map/animation.commands.txt"
+          "source": "assets/maps/world_map_animation.commands.txt"
         }
       ]
     },
@@ -634,12 +634,12 @@
       "address": "0x084247dc",
       "size": "0x48e",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/maps/world_map/terrain.lz.json",
+      "plan": "assets/maps/world_map_terrain.lz.json",
       "components": [
         {
           "kind": "rgba-bytes",
           "size": "0x1000",
-          "source": "assets/maps/world_map/terrain.rgba.png"
+          "source": "assets/maps/world_map_terrain.rgba.png"
         }
       ]
     },
@@ -647,12 +647,12 @@
       "address": "0x08424c6c",
       "size": "0x1f5",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/graphics/resources_d8_e3/d8.lz.json",
+      "plan": "assets/graphics/resources_d8_e3_d8.lz.json",
       "components": [
         {
           "kind": "gba-palette",
           "size": "0x1c0",
-          "source": "assets/graphics/resources_d8_e3/d8.palette.png"
+          "source": "assets/graphics/resources_d8_e3_d8.palette.png"
         }
       ]
     },
@@ -660,12 +660,12 @@
       "address": "0x08424e64",
       "size": "0x16ba",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/graphics/resources_d8_e3/d9.lz.json",
+      "plan": "assets/graphics/resources_d8_e3_d9.lz.json",
       "components": [
         {
           "kind": "gba-8bpp-tiles",
           "size": "0x2000",
-          "source": "assets/graphics/resources_d8_e3/d9.tiles.8bpp.png"
+          "source": "assets/graphics/resources_d8_e3_d9.tiles.8bpp.png"
         }
       ]
     },
@@ -673,12 +673,12 @@
       "address": "0x08426520",
       "size": "0x151e",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/graphics/resources_d8_e3/da.lz.json",
+      "plan": "assets/graphics/resources_d8_e3_da.lz.json",
       "components": [
         {
           "kind": "gba-8bpp-tiles",
           "size": "0x2000",
-          "source": "assets/graphics/resources_d8_e3/da.tiles.8bpp.png"
+          "source": "assets/graphics/resources_d8_e3_da.tiles.8bpp.png"
         }
       ]
     },
@@ -686,12 +686,12 @@
       "address": "0x08427a40",
       "size": "0xbca",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/graphics/resources_d8_e3/db.lz.json",
+      "plan": "assets/graphics/resources_d8_e3_db.lz.json",
       "components": [
         {
           "kind": "gba-8bpp-tiles",
           "size": "0x2000",
-          "source": "assets/graphics/resources_d8_e3/db.tiles.8bpp.png"
+          "source": "assets/graphics/resources_d8_e3_db.tiles.8bpp.png"
         }
       ]
     },
@@ -699,12 +699,12 @@
       "address": "0x0842860c",
       "size": "0xb72",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/graphics/resources_d8_e3/dc.lz.json",
+      "plan": "assets/graphics/resources_d8_e3_dc.lz.json",
       "components": [
         {
           "kind": "gba-8bpp-tiles",
           "size": "0x2000",
-          "source": "assets/graphics/resources_d8_e3/dc.tiles.8bpp.png"
+          "source": "assets/graphics/resources_d8_e3_dc.tiles.8bpp.png"
         }
       ]
     },
@@ -712,12 +712,12 @@
       "address": "0x08429180",
       "size": "0x1ea8",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/graphics/resources_d8_e3/dd.lz.json",
+      "plan": "assets/graphics/resources_d8_e3_dd.lz.json",
       "components": [
         {
           "kind": "gba-8bpp-tiles",
           "size": "0x4000",
-          "source": "assets/graphics/resources_d8_e3/dd.tiles.8bpp.png"
+          "source": "assets/graphics/resources_d8_e3_dd.tiles.8bpp.png"
         }
       ]
     },
@@ -725,12 +725,12 @@
       "address": "0x0842b028",
       "size": "0x1f0",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/graphics/resources_d8_e3/de.lz.json",
+      "plan": "assets/graphics/resources_d8_e3_de.lz.json",
       "components": [
         {
           "kind": "gba-palette",
           "size": "0x1c0",
-          "source": "assets/graphics/resources_d8_e3/de.palette.png"
+          "source": "assets/graphics/resources_d8_e3_de.palette.png"
         }
       ]
     },
@@ -738,12 +738,12 @@
       "address": "0x0842b218",
       "size": "0x159e",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/graphics/resources_d8_e3/df.lz.json",
+      "plan": "assets/graphics/resources_d8_e3_df.lz.json",
       "components": [
         {
           "kind": "gba-8bpp-tiles",
           "size": "0x2000",
-          "source": "assets/graphics/resources_d8_e3/df.tiles.8bpp.png"
+          "source": "assets/graphics/resources_d8_e3_df.tiles.8bpp.png"
         }
       ]
     },
@@ -751,12 +751,12 @@
       "address": "0x0842c7b8",
       "size": "0x14ae",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/graphics/resources_d8_e3/e0.lz.json",
+      "plan": "assets/graphics/resources_d8_e3_e0.lz.json",
       "components": [
         {
           "kind": "gba-8bpp-tiles",
           "size": "0x2000",
-          "source": "assets/graphics/resources_d8_e3/e0.tiles.8bpp.png"
+          "source": "assets/graphics/resources_d8_e3_e0.tiles.8bpp.png"
         }
       ]
     },
@@ -764,12 +764,12 @@
       "address": "0x0842dc68",
       "size": "0x908",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/graphics/resources_d8_e3/e1.lz.json",
+      "plan": "assets/graphics/resources_d8_e3_e1.lz.json",
       "components": [
         {
           "kind": "gba-8bpp-tiles",
           "size": "0x2000",
-          "source": "assets/graphics/resources_d8_e3/e1.tiles.8bpp.png"
+          "source": "assets/graphics/resources_d8_e3_e1.tiles.8bpp.png"
         }
       ]
     },
@@ -777,12 +777,12 @@
       "address": "0x0842e570",
       "size": "0x904",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/graphics/resources_d8_e3/e2.lz.json",
+      "plan": "assets/graphics/resources_d8_e3_e2.lz.json",
       "components": [
         {
           "kind": "gba-8bpp-tiles",
           "size": "0x2000",
-          "source": "assets/graphics/resources_d8_e3/e2.tiles.8bpp.png"
+          "source": "assets/graphics/resources_d8_e3_e2.tiles.8bpp.png"
         }
       ]
     },
@@ -790,12 +790,12 @@
       "address": "0x0842ee74",
       "size": "0x1540",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/graphics/resources_d8_e3/e3.lz.json",
+      "plan": "assets/graphics/resources_d8_e3_e3.lz.json",
       "components": [
         {
           "kind": "gba-8bpp-tiles",
           "size": "0x4000",
-          "source": "assets/graphics/resources_d8_e3/e3.tiles.8bpp.png"
+          "source": "assets/graphics/resources_d8_e3_e3.tiles.8bpp.png"
         }
       ]
     },
@@ -803,12 +803,12 @@
       "address": "0x084303b4",
       "size": "0x189a",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/data/resource_e4_e6/e4.lz.json",
+      "plan": "assets/data/resource_e4_e6_e4.lz.json",
       "components": [
         {
           "kind": "little-u16-pairs",
           "size": "0x7080",
-          "source": "assets/data/resource_e4_e6/e4.pairs.txt"
+          "source": "assets/data/resource_e4_e6_e4.pairs.txt"
         }
       ]
     },
@@ -816,12 +816,12 @@
       "address": "0x08431c50",
       "size": "0x15c6",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/data/resource_e4_e6/e5.lz.json",
+      "plan": "assets/data/resource_e4_e6_e5.lz.json",
       "components": [
         {
           "kind": "little-u16-pairs",
           "size": "0x7080",
-          "source": "assets/data/resource_e4_e6/e5.pairs.txt"
+          "source": "assets/data/resource_e4_e6_e5.pairs.txt"
         }
       ]
     },
@@ -829,12 +829,12 @@
       "address": "0x08433218",
       "size": "0x1a8e",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/data/resource_e4_e6/e6.lz.json",
+      "plan": "assets/data/resource_e4_e6_e6.lz.json",
       "components": [
         {
           "kind": "little-u16-pairs",
           "size": "0x7080",
-          "source": "assets/data/resource_e4_e6/e6.pairs.txt"
+          "source": "assets/data/resource_e4_e6_e6.pairs.txt"
         }
       ]
     },
@@ -842,17 +842,17 @@
       "address": "0x08434ca8",
       "size": "0x1250",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/graphics/resource_e7/stream.lz.json",
+      "plan": "assets/graphics/resource_e7_stream.lz.json",
       "components": [
         {
           "kind": "gba-palette",
           "size": "0xa0",
-          "source": "assets/graphics/resource_e7/palettes.png"
+          "source": "assets/graphics/resource_e7_palettes.png"
         },
         {
           "kind": "gba-4bpp-tiles",
           "size": "0x2000",
-          "source": "assets/graphics/resource_e7/frames.4bpp.png"
+          "source": "assets/graphics/resource_e7_frames.4bpp.png"
         }
       ]
     },
@@ -860,75 +860,75 @@
       "address": "0x08435ef8",
       "size": "0x100",
       "kind": "gba-palette-rgba",
-      "source": "assets/graphics/palettes/palette_animation_e8.rgba.png"
+      "source": "assets/graphics/palettes_palette_animation_e8.rgba.png"
     },
     {
       "address": "0x08435ff8",
       "size": "0x100",
       "kind": "gba-palette-rgba",
-      "source": "assets/graphics/palettes/palette_animation_e9.rgba.png"
+      "source": "assets/graphics/palettes_palette_animation_e9.rgba.png"
     },
     {
       "address": "0x084360f8",
       "size": "0x100",
       "kind": "gba-palette-rgba",
-      "source": "assets/graphics/palettes/palette_animation_ea.rgba.png"
+      "source": "assets/graphics/palettes_palette_animation_ea.rgba.png"
     },
     {
       "address": "0x084361f8",
       "size": "0x100",
       "kind": "gba-palette-rgba",
-      "source": "assets/graphics/palettes/palette_animation_eb.rgba.png"
+      "source": "assets/graphics/palettes_palette_animation_eb.rgba.png"
     },
     {
       "address": "0x084362f8",
       "size": "0x100",
       "kind": "gba-palette-rgba",
-      "source": "assets/graphics/palettes/palette_animation_ec.rgba.png"
+      "source": "assets/graphics/palettes_palette_animation_ec.rgba.png"
     },
     {
       "address": "0x084363f8",
       "size": "0x100",
       "kind": "gba-palette-rgba",
-      "source": "assets/graphics/palettes/palette_animation_ed.rgba.png"
+      "source": "assets/graphics/palettes_palette_animation_ed.rgba.png"
     },
     {
       "address": "0x084364f8",
       "size": "0x100",
       "kind": "gba-palette-rgba",
-      "source": "assets/graphics/palettes/palette_animation_ee.rgba.png"
+      "source": "assets/graphics/palettes_palette_animation_ee.rgba.png"
     },
     {
       "address": "0x084365f8",
       "size": "0x100",
       "kind": "gba-palette-rgba",
-      "source": "assets/graphics/palettes/palette_animation_ef.rgba.png"
+      "source": "assets/graphics/palettes_palette_animation_ef.rgba.png"
     },
     {
       "address": "0x084366f8",
       "size": "0x592c",
       "kind": "golden-sun-mtf4-archive",
       "source": "assets/graphics/resource_f0",
-      "plan": "assets/graphics/resource_f0/archive.json"
+      "plan": "assets/graphics/resource_f0_archive.json"
     },
     {
       "address": "0x0843c024",
       "size": "0x3842",
       "kind": "golden-sun-offset-palette-lz",
-      "source": "assets/graphics/resource_f1/atlas.8bpp.png",
-      "plan": "assets/graphics/resource_f1/stream.archive.json"
+      "source": "assets/graphics/resource_f1_atlas.8bpp.png",
+      "plan": "assets/graphics/resource_f1_stream.archive.json"
     },
     {
       "address": "0x0843f868",
       "size": "0x21b2",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/graphics/resource_f2/stream.lz.json",
+      "plan": "assets/graphics/resource_f2_stream.lz.json",
       "components": [
         {
           "kind": "zero-skip-sprite-archive",
           "size": "0x35ac",
           "source": "assets/graphics/resource_f2",
-          "plan": "assets/graphics/resource_f2/archive.json",
+          "plan": "assets/graphics/resource_f2_archive.json",
           "palette": "assets/graphics/0800777c.gbapal.png"
         }
       ]
@@ -937,13 +937,13 @@
       "address": "0x08441a1c",
       "size": "0x18f4",
       "kind": "golden-sun-general-lz",
-      "plan": "assets/graphics/resource_f3/stream.lz.json",
+      "plan": "assets/graphics/resource_f3_stream.lz.json",
       "components": [
         {
           "kind": "zero-skip-sprite-archive",
           "size": "0x2844",
           "source": "assets/graphics/resource_f3",
-          "plan": "assets/graphics/resource_f3/archive.json",
+          "plan": "assets/graphics/resource_f3_archive.json",
           "palette": "assets/graphics/0800777c.gbapal.png"
         }
       ]
@@ -952,19 +952,19 @@
   "series": [
     {
       "kind": "golden-sun-sound-sequence-series",
-      "index": "assets/audio/midi/index.json"
+      "index": "assets/audio/midi_index.json"
     },
     {
       "kind": "golden-sun-music-residuals",
-      "index": "assets/audio/residuals/index.json"
+      "index": "assets/audio/residuals_index.json"
     },
     {
       "kind": "golden-sun-pcm-wave-series",
-      "index": "assets/audio/waves/index.json"
+      "index": "assets/audio/waves_index.json"
     },
     {
       "kind": "golden-sun-delta7-still-series",
-      "index": "assets/graphics/Pre-rendered Backgrounds/index.json",
+      "index": "assets/graphics/backgrounds_index.json",
       "width": 256,
       "height": 120,
       "palette_entries": 128,
@@ -7887,7 +7887,7 @@
             {
               "address": "0x085040e4",
               "size": "0x1184",
-              "source": "assets/graphics/map/resource_152/charblock2.objects.json"
+              "source": "assets/graphics/map_resource_152_charblock2.objects.json"
             },
             {
               "address": "0x08505268",
@@ -7909,7 +7909,7 @@
             {
               "address": "0x08508950",
               "size": "0x11ec",
-              "source": "assets/graphics/map/resource_158/charblock1.objects.json"
+              "source": "assets/graphics/map_resource_158_charblock1.objects.json"
             },
             {
               "address": "0x08509b3c",
@@ -8089,7 +8089,7 @@
             {
               "address": "0x08530110",
               "size": "0x2b54",
-              "source": "assets/graphics/map/resource_184/charblock1.objects.json"
+              "source": "assets/graphics/map_resource_184_charblock1.objects.json"
             },
             {
               "address": "0x08532c64",
@@ -8140,7 +8140,7 @@
             {
               "address": "0x085427c4",
               "size": "0x112c",
-              "source": "assets/graphics/map/resource_190/charblock1.objects.json"
+              "source": "assets/graphics/map_resource_190_charblock1.objects.json"
             },
             {
               "address": "0x085438f0",
@@ -8216,7 +8216,7 @@
             {
               "address": "0x085581e0",
               "size": "0x2c18",
-              "source": "assets/graphics/map/resource_1a2/charblock1.objects.json"
+              "source": "assets/graphics/map_resource_1a2_charblock1.objects.json"
             },
             {
               "address": "0x0855adf8",
@@ -11324,19 +11324,19 @@
     },
     {
       "kind": "golden-sun-sentou-resource-series",
-      "index": "assets/graphics/sentou/index.json"
+      "index": "assets/graphics/sentou_index.json"
     },
     {
       "kind": "golden-sun-tokushu-map-series",
-      "index": "assets/maps/tokushu/index.json"
+      "index": "assets/maps/tokushu_index.json"
     },
     {
       "kind": "golden-sun-chiiki-map-series",
-      "index": "assets/maps/chiiki/index.json"
+      "index": "assets/maps/chiiki_index.json"
     },
     {
       "kind": "golden-sun-final-battle-overlay-series",
-      "source": "assets/code/resource_3ce/layout.json"
+      "source": "assets/code/resource_3ce_layout.json"
     },
     {
       "kind": "golden-sun-encounter-data-series",

@@ -134,7 +134,7 @@ as generic repository and publication precedent.
 - `tools/` contains the independent Bun-based analysis, extraction, encoding,
   matching, linking, and verification pipeline.
 - The approved compiler bundle lives in the sibling `alchemy-gcc` repository
-  checkout; its required contents are specified in [ALCHEMY_GCC.md](ALCHEMY_GCC.md).
+  checkout; its required contents are specified in [CONVENTIONS.md](CONVENTIONS.md#approved-compiler-bundle).
 
 ## Recovered systems and assets
 

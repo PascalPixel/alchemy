@@ -118,7 +118,7 @@ must be tested on more than one function before being generalized.
   and with `pret/pokeruby` compiling its m4a unit with `old_agbcc`.
 - **Governance:** adopting `old_agbcc` as a second approved compiler
   for the identified stock-library functions is Pascal's call; the
-  provenance section of [ALCHEMY_GCC.md](ALCHEMY_GCC.md) holds the
+  provenance section of [CONVENTIONS.md](CONVENTIONS.md#approved-compiler-bundle) holds the
   pending decision. Until adopted, these functions stay reconstruction
   assembly.
 - **Recorded:** 2026-07-22.

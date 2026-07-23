@@ -101,7 +101,7 @@ Nintendo or Camelot, and is non-commercial.
   remaining work, build commands, and the definition of completion.
 - [AGENTS.md](AGENTS.md) — evidence, clean-room, verification, and contribution
   rules followed by coding agents.
-- [ALCHEMY_GCC.md](ALCHEMY_GCC.md) — the private historical compiler bundle and
+- [CONVENTIONS.md](CONVENTIONS.md#approved-compiler-bundle) — the private historical compiler bundle and
   native Apple Silicon build environment.
 - [CONVENTIONS.md](CONVENTIONS.md) — which assembly remains, why it remains, and which
   regions are still C-decompilation work.

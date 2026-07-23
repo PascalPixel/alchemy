@@ -1,4 +1,4 @@
-// Tool role: both; imported by tools/archive_asset.ts, tools/battle_effect_data.ts, tools/build_assets.ts (+27 more); invoked by CONVENTIONS.md, package.json.
+// Tool role: both; imported by tools/archive_asset.ts, tools/battle_effect_data.ts, tools/build_assets.ts (+26 more); invoked by CONVENTIONS.md, package.json.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { crc32, deflateSync, inflateSync } from "./zlib.ts";

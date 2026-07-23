@@ -7,7 +7,6 @@
  * 出力ディレクトリへ置き、素材ディレクトリは読み取り専用として扱う。
  */
 import {
-  existsSync,
   mkdirSync,
   readFileSync,
   writeFileSync,
@@ -22,6 +21,7 @@ import {
 
 import {
   cell_indices,
+  has_map_prefix,
   parse_metatiles,
   scene_dimensions,
   tile_window_order,
@@ -329,7 +329,7 @@ export function build_usage_index(
 export function load_geometry(linkage: Linkage): VariantGeometry {
   const container = normalize_id(linkage.container);
   const map_dir = join(ROOT, `assets/maps/resource_${container}`);
-  const metatiles = parse_metatiles(join(map_dir, "metatiles.tilemap"));
+  const metatiles = parse_metatiles(`${map_dir}_metatiles.tilemap`);
   const cells = cell_indices(map_dir, metatiles.length);
   const [width, height] = scene_dimensions(map_dir);
   return {
@@ -357,7 +357,7 @@ export function index_linkages(linkages: Linkage[]): BgTileUsageIndex {
   for (const linkage of linkages) {
     const container = normalize_id(linkage.container);
     const map_dir = join(ROOT, `assets/maps/resource_${container}`);
-    if (!existsSync(map_dir)) {
+    if (!has_map_prefix(map_dir)) {
       unavailable.push({ map_index: Number(linkage.map_index), container });
       continue;
     }

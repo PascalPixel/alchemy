@@ -80,8 +80,8 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // These functions construct a three-word DMA descriptor whose historical
 // Thumb lowering uses one writeback STMIA and restores the descriptor base.
 const GROUPED_DMA_STORE_SOURCES = new Set([
-  "080049e8", "08004a28", "08004a5c", "080958a8", "0809bb34",
-, "08004a44"]);
+  "080049e8", "08004a28", "08004a44", "08004a5c", "080958a8", "0809bb34",
+]);
 // These overlay-local object constructors share one exact compiler fingerprint:
 // immediately before a call, the independent r0 register copy precedes the r1
 // immediate. Their common filename is not unique, so routing must use the
@@ -231,20 +231,56 @@ export function externalSymbolAssembly(name: string): string {
   return `.global ${name}\n${symbol.thumb ? ".thumb_func\n" : ""}.set ${name}, 0x${symbol.address.toString(16).padStart(8, "0")}\n`;
 }
 
-const EXPECTED: Record<CompilerTarget, Record<string, string>> = {
-  gs1: {
-    xgcc: "87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed",
-    cpp: "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
-    tradcpp: "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
-    cc1: "dc670142e6a2daeaaf64a67fa50b391af79cb7b167305dfa559576a818a90db3",
+// The approved compiler bundle is host-specific: xgcc/cc1/cpp/tradcpp are
+// native executables, not portable across host platform+arch, so each
+// supported host keeps its own pinned digest set. darwin-arm64 is Pascal's
+// native Apple Silicon build environment (CONVENTIONS.md); linux-x64 is a
+// from-source build of the same alchemy-gcc commit via its documented
+// Ubuntu/WSL host path (alchemy-gcc/README.md `build.sh`/`stage.sh`).
+// Codegen (the bytes xgcc/cc1 emit for a *target* arm7tdmi/Thumb program) is
+// host-independent; a linux-x64 bundle is admitted only after the full
+// existing source-only build reproduces gs1-en.gba byte-identically with it,
+// exactly as any other verified assembler/toolchain substitution requires.
+type HostKey = "darwin-arm64" | "linux-x64";
+
+function hostKey(): HostKey | null {
+  if (process.platform === "darwin" && process.arch === "arm64") return "darwin-arm64";
+  if (process.platform === "linux" && process.arch === "x64") return "linux-x64";
+  return null;
+}
+
+const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> = {
+  "darwin-arm64": {
+    gs1: {
+      xgcc: "87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed",
+      cpp: "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
+      tradcpp: "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
+      cc1: "dc670142e6a2daeaaf64a67fa50b391af79cb7b167305dfa559576a818a90db3",
+    },
+    gs2: {
+      xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",
+      cpp0: "b4ac7f5ff7fd74f4eca40385832fd0360d13cb5d4f0b6c8b3ead4a67d2f3d5b0",
+      tradcpp0: "7698319dfea3647dace68ffb5c3dbc0fd459f3a859699acb47c669d3eb8956a3",
+      cc1: "91b2a67275a100e8b6695d85ef2d82d1fd144853cbcb361ddf1d8be31858230f",
+    },
   },
-  gs2: {
-    xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",
-    cpp0: "b4ac7f5ff7fd74f4eca40385832fd0360d13cb5d4f0b6c8b3ead4a67d2f3d5b0",
-    tradcpp0: "7698319dfea3647dace68ffb5c3dbc0fd459f3a859699acb47c669d3eb8956a3",
-    cc1: "91b2a67275a100e8b6695d85ef2d82d1fd144853cbcb361ddf1d8be31858230f",
+  "linux-x64": {
+    gs1: {
+      xgcc: "2ed03493228a7873f020b16a63b89b3aadf4835be2d1a3a217cabca0fa244444",
+      cpp: "06096beb427848574f610626bb53408b1a76f69b178ee2d7f0a05f6c2f6d3778",
+      tradcpp: "f9b951486d4e1769e06b892a59980c91a45435559505d73039130b63d1156803",
+      cc1: "3a84296151ab3c7a4ae84a7527e9bb5066bfffbd4e6bbed0129d106ad51bab13",
+    },
+    gs2: {
+      xgcc: "d0b10d67bc7f9965d586eba766b77e6ca54cc791b5eb297b55a6b9b6d6d0ef3d",
+      cpp0: "9d93c7762f60d13474764d2ca9e721b235ed4935ba7b69012aba054cace60d0d",
+      tradcpp0: "010da8763b9ebf39cb52aab0412ca350e038ccf4c3aa5647440c2abc91dcad6c",
+      cc1: "1b1c039eda51c0c2ee67d076f33e3284dd369789378cdf34671b66ba76cd6c75",
+    },
   },
 };
+
+const LINUX_AGBCC_EXPECTED = "0c2d5ec04129f7b9d1ecf738f096167af152661bc2506f8fdb2749305fa3eb37";
 
 const validated = new Set<CompilerTarget>();
 let agbccValidated = false;
@@ -256,11 +292,12 @@ function outputText(value: Uint8Array): string {
 
 export function validateBundle(target: CompilerTarget = "gs1"): void {
   if (validated.has(target)) return;
-  if (process.platform !== "darwin" || process.arch !== "arm64") {
-    throw new Error("alchemy-gcc requires native arm64 macOS");
+  const host = hostKey();
+  if (host === null) {
+    throw new Error("alchemy-gcc requires native arm64 macOS or x64 Linux");
   }
   const bundle = bundleForTarget(target);
-  for (const [name, expected] of Object.entries(EXPECTED[target])) {
+  for (const [name, expected] of Object.entries(EXPECTED[host][target])) {
     const path = join(bundle, name);
     let mode = 0;
     try {
@@ -291,8 +328,9 @@ export function validateBundle(target: CompilerTarget = "gs1"): void {
 
 export function validateAgbccBundle(): void {
   if (agbccValidated) return;
-  if (process.platform !== "darwin" || process.arch !== "arm64") {
-    throw new Error("alchemy-gcc requires native arm64 macOS");
+  const host = hostKey();
+  if (host === null) {
+    throw new Error("alchemy-gcc requires native arm64 macOS or x64 Linux");
   }
   let mode = 0;
   try {
@@ -304,7 +342,8 @@ export function validateAgbccBundle(): void {
     throw new Error("alchemy-gcc agbcc bundle is missing executable old_agbcc");
   }
   const actual = new Bun.CryptoHasher("sha256").update(readFileSync(AGBCC_DRIVER)).digest("hex");
-  if (actual !== AGBCC_EXPECTED) {
+  const expectedAgbcc = host === "darwin-arm64" ? AGBCC_EXPECTED : LINUX_AGBCC_EXPECTED;
+  if (actual !== expectedAgbcc) {
     throw new Error("alchemy-gcc agbcc/old_agbcc has an unapproved digest");
   }
   const smoke = Bun.spawnSync(
@@ -439,7 +478,7 @@ function selfTest(): void {
   }
   const groupedDma = [...GROUPED_DMA_STORE_SOURCES].sort();
   if (JSON.stringify(groupedDma) !== JSON.stringify([
-    "080049e8", "08004a28", "08004a5c", "080958a8", "0809bb34",
+    "080049e8", "08004a28", "08004a44", "08004a5c", "080958a8", "0809bb34",
   ])) {
     throw new Error("grouped DMA source allowlist self-test failed");
   }
@@ -484,7 +523,7 @@ function main(): void {
   }
   if (argument === "agbcc") {
     validateAgbccBundle();
-    console.log(`alchemy-gcc=agbcc ok host=arm64 files=1 bytes=${statSync(AGBCC_DRIVER).size}`);
+    console.log(`alchemy-gcc=agbcc ok host=${hostKey()} files=1 bytes=${statSync(AGBCC_DRIVER).size}`);
     return;
   }
   if (argument !== "gs1" && argument !== "gs2") {
@@ -493,11 +532,12 @@ function main(): void {
   const target: CompilerTarget = argument;
   validateBundle(target);
   const bundle = bundleForTarget(target);
-  const size = Object.keys(EXPECTED[target])
+  const host = hostKey() as HostKey;
+  const size = Object.keys(EXPECTED[host][target])
     .map((name) => statSync(join(bundle, name)).size)
     .reduce((sum, value) => sum + value, 0);
   const label = target === "gs1" ? "alchemy-gcc=ok" : "alchemy-gcc=gs2 ok";
-  console.log(`${label} host=arm64 files=${Object.keys(EXPECTED[target]).length} bytes=${size}`);
+  console.log(`${label} host=${host} files=${Object.keys(EXPECTED[host][target]).length} bytes=${size}`);
 }
 
 if (import.meta.main) main();

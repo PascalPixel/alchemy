@@ -5,6 +5,7 @@ import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, renameSync, realpathSync, rmSync, symlinkSync,
   writeFileSync,
 } from "node:fs";
+import { tmpdir } from "node:os";
 import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { build_sequence, type SequenceSource } from "./music_sequence.ts";
 
@@ -393,7 +394,7 @@ export function self_test(): void {
   }
   const [, report] = build_sequence(YOBI_SOURCE);
   if (report.bytes !== 18 || report.events !== 11 || report.tracks !== 0) throw new Error("reserve sound stream self-test failed");
-  const temporary = mkdtempSync("/private/tmp/music-residual-self-test-");
+  const temporary = mkdtempSync(join(tmpdir(), "music-residual-self-test-"));
   try {
     const reject = (action: () => void): void => {
       let failed = false;

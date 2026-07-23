@@ -517,11 +517,17 @@ function child(indexPath: string, name: unknown): string {
   return path;
 }
 
-function checkedPackageFiles(indexPath: string): void {
+function checkedPackageFiles(indexPath: string, catalogPath: string): void {
   const root = dirname(indexPath);
   const prefix = basename(indexPath).replace(/index\.json$/, "");
   const expected = [prefix + DISPLAY_SOURCE, prefix + "index.json"].sort();
-  const names = readdirSync(root).filter((name) => expected.includes(name)).sort();
+  const catalogName = basename(catalogPath);
+  // assets/data/ is a flat, shared directory: filtering by prefix alone would
+  // also catch this package's own catalog sibling (early_runtime_data.json),
+  // which is a real, expected neighbor rather than a stray package file.
+  const names = readdirSync(root)
+    .filter((name) => name.startsWith(prefix) && name !== catalogName)
+    .sort();
   if (names.length !== expected.length || names.some((name, index) => name !== expected[index])) {
     throw new Error("early-runtime package contains unexpected files");
   }
@@ -540,7 +546,7 @@ export function build_early_runtime_data(indexPath: string, catalogPath = DEFAUL
   const catalog = loadCatalog(catalogPath);
   const { early, residual } = canonicalLayout(catalog);
   const source = sourceIndex(indexPath, catalog);
-  checkedPackageFiles(indexPath);
+  checkedPackageFiles(indexPath, catalogPath);
   const earlySource = object(source.early_runtime_tables, "early-runtime tables");
   exactKeys(earlySource, [
     "address", "end", "display_tiles", "shared_lookup_storage", "interpolation_coefficients", "surface_lookup",

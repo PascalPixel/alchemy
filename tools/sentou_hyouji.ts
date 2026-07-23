@@ -4,6 +4,7 @@ import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync,
 } from "node:fs";
+import { tmpdir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
 import { indexed_png } from "./import_asset.ts";
 import { png, type Rgb } from "./skip_sprite_archive.ts";
@@ -531,7 +532,7 @@ export function verify_sentou_hyouji(rom: Buffer, indexPath: string): void {
 }
 
 export function selfTest(): void {
-  const temporary = mkdtempSync("/private/tmp/sentou-hyouji-self-test-");
+  const temporary = mkdtempSync(join(tmpdir(), "sentou-hyouji-self-test-"));
   try {
     const raw = Buffer.alloc(16 * 4 * 32);
     for (let index = 0; index < raw.length; index++) raw[index] = index * 37 + 11;

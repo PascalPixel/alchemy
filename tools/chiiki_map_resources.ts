@@ -5,6 +5,7 @@ import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, renameSync, realpathSync, rmSync, symlinkSync,
   writeFileSync,
 } from "node:fs";
+import { tmpdir } from "node:os";
 import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { byte_png } from "./export_asset.ts";
 import { indexed_png } from "./import_asset.ts";
@@ -624,7 +625,7 @@ export function self_test(): void {
     try { test(); } catch { rejected = true; }
     if (!rejected) throw new Error("regional-map strictness self-test failed");
   }
-  const temporary = mkdtempSync("/private/tmp/chiiki-map-self-test-");
+  const temporary = mkdtempSync(join(tmpdir(), "chiiki-map-self-test-"));
   try {
     const reject = (action: () => void): void => {
       let rejected = false;

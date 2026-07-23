@@ -95,7 +95,8 @@ const DEFAULT_ABI_SOURCES = new Set([
 const AGBCC_SOURCES = new Set([
   "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
   "080fa424", "080fa458", "080fa490", "080fa514", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
-  "080fa9e0", "080fab3c", "080fb2cc", "080fb334", "080fb3a8", "080fb430", "080fb4a4", "080fb670",
+  "080fa9e0", "080fab3c", "080facf8", "080fb2cc", "080fb334", "080fb3a8", "080fb430", "080fb4a4",
+  "080fb670",
   "080fb6a4",
 ]);
 // This command-table lookup is byte-identical only when the independent
@@ -366,7 +367,8 @@ function selfTest(): void {
   const expected = [
     "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
     "080fa424", "080fa458", "080fa490", "080fa514", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
-    "080fa9e0", "080fab3c", "080fb2cc", "080fb334", "080fb3a8", "080fb430", "080fb4a4", "080fb670",
+    "080fa9e0", "080fab3c", "080facf8", "080fb2cc", "080fb334", "080fb3a8", "080fb430", "080fb4a4",
+    "080fb670",
     "080fb6a4",
   ];
   if (JSON.stringify([...AGBCC_SOURCES].sort()) !== JSON.stringify(expected)) {

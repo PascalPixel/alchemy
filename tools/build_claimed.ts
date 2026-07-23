@@ -4,7 +4,7 @@ import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
 import {
   cflagsForTargetSource,
-  compilerCommandForTarget,
+  compilerCommandForTargetSource,
   externalSymbol,
   externalSymbolAssembly,
   type CompilerTarget,
@@ -94,8 +94,9 @@ async function compileSource(
   const name = stem(source);
   const assembly = join(objectDir, `${name}.s`);
   const object = join(objectDir, `${name}.o`);
-  await run(compilerCommandForTarget(
+  await run(compilerCommandForTargetSource(
     compiler,
+    source,
     ...cflagsForTargetSource(compiler, source),
     "-S", "-o", assembly, source,
   ));

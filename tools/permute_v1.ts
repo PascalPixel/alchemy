@@ -9,7 +9,12 @@ import { basename, dirname, join } from "node:path";
 import { M2C_PREAMBLE } from "./match_m2c.ts";
 import { candidates as seedCandidates, replaceableAssembly, retainedAssemblyStems } from "./permute_m2c.ts";
 import { verify } from "./verify.ts";
-import { directCompilerCommand, directPreprocessorCommand, externalSymbol, externalSymbolAssembly } from "./alchemy_gcc.ts";
+import {
+  directCompilerCommandForSource,
+  directPreprocessorCommand,
+  externalSymbol,
+  externalSymbolAssembly,
+} from "./alchemy_gcc.ts";
 import { CONSTRAINT_OPERATORS } from "./decomp_constraints.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
@@ -101,7 +106,9 @@ class Scorer {
     const elf = `${prefix}.elf`, bin = `${prefix}.bin`;
     writeFileSync(cFile, source);
     if ((await run(directPreprocessorCommand(cFile, iFile))).code !== 0) return null;
-    if ((await run(directCompilerCommand(iFile, sFile, `${this.stem}.c`))).code !== 0) return null;
+    if ((await run(directCompilerCommandForSource(
+      cFile, iFile, sFile, `${this.stem}.c`,
+    ))).code !== 0) return null;
     if ((await run(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", oFile, sFile])).code !== 0) return null;
     const address = `0x${this.stem}`;
     const link = () => run([

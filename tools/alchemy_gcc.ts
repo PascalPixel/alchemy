@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Tool role: both; imported by tools/build_claimed.ts, tools/decomp_module.ts, tools/decompile_batch.ts (+6 more); invoked by ALCHEMY_GCC.md, LAWS.md, PLAYBOOK.md.
+// Tool role: both; imported by tools/build_claimed.ts, tools/decomp_module.ts, tools/decompile_batch.ts (+6 more); invoked by ALCHEMY_GCC.md, LAWS.md, PLAYBOOK.md (+1 more).
 import { readFileSync, statSync } from "node:fs";
 import { basename, dirname, extname, join } from "node:path";
 
@@ -12,11 +12,16 @@ export const M2C = join(BUNDLE, "m2c-venv/bin/m2c");
 export type CompilerTarget = "gs1" | "gs2";
 export const GS2_BUNDLE = join(BUNDLE, "gs2");
 export const GS2_DRIVER = join(GS2_BUNDLE, "xgcc");
+export const AGBCC_BUNDLE = join(BUNDLE, "agbcc");
+export const AGBCC_DRIVER = join(AGBCC_BUNDLE, "old_agbcc");
 export const CFLAGS = [
   "-O2", "-mthumb", "-mthumb-interwork", "-mcpu=arm7tdmi",
   "-fno-builtin", "-nostdinc", "-ffreestanding", "-fcall-used-r4",
 ] as const;
 export const GS2_CFLAGS = [...CFLAGS, "-ffixed-r7"] as const;
+export const AGBCC_CFLAGS = [
+  "-mthumb-interwork", "-O2", "-fno-builtin", "-ffreestanding",
+] as const;
 
 export function bundleForTarget(target: CompilerTarget): string {
   return target === "gs1" ? BUNDLE : GS2_BUNDLE;
@@ -73,6 +78,9 @@ const NO_STRENGTH_REDUCE_SOURCES = new Set(["080200cc"]);
 // in the reference.  Sibling-call optimization merges the final cases and
 // rotates the call arguments even though no source tail call is present.
 const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
+// These functions construct a three-word DMA descriptor whose historical
+// Thumb lowering uses one writeback STMIA and restores the descriptor base.
+const GROUPED_DMA_STORE_SOURCES = new Set(["080958a8", "0809bb34"]);
 // 既定ABI(標準のr4被呼出保存)で構築された収蔵ライブラリ翻訳単位。
 // 証拠: r4を保存する序文は -fcall-used-r4 の下では出ない
 // (割込保護記録08006a00、バイト複写08006b84、比較08006c24、
@@ -80,7 +88,15 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // 同一cc1・既定フラグ。
 const DEFAULT_ABI_SOURCES = new Set([
   "08006a00", "08006b84", "08006ba8", "08006c24", "08006dec", "08007098",
-  "080fa9e0", "080fadf0", "080fb2cc",
+  "080fadf0", "080fb2cc",
+]);
+// The stock m4a object linked into GS1 was built with the public old_agbcc
+// compiler rather than Camelot's gcc-2.96 fork. Keep adoption source-scoped:
+// every listed unit must have an independent exact-byte proof.
+const AGBCC_SOURCES = new Set([
+  "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
+  "080fa458", "080fa490", "080fa8d4", "080fa928", "080fa9a4", "080fa9e0",
+  "080fab3c", "080fb6a4",
 ]);
 
 function sourceStem(source: string): string {
@@ -103,11 +119,17 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
+    ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
   ];
 }
 
 export function cflagsForTargetSource(target: CompilerTarget, source: string): readonly string[] {
+  if (target === "gs1" && AGBCC_SOURCES.has(sourceStem(source))) return AGBCC_CFLAGS;
   return target === "gs1" ? cflagsForSource(source) : [...GS2_CFLAGS];
+}
+
+export function usesAgbccCompiler(target: CompilerTarget, source: string): boolean {
+  return target === "gs1" && AGBCC_SOURCES.has(sourceStem(source));
 }
 
 const ADDRESS_SYMBOL = /^(Func|Data|Value)_([0-9a-f]{8})$/;
@@ -154,10 +176,10 @@ export function externalSymbolAssembly(name: string): string {
 
 const EXPECTED: Record<CompilerTarget, Record<string, string>> = {
   gs1: {
-    xgcc: "8087fb1911b00aafe8ba9dc1530ca84a98774206f24d95b3ac8a8f01bf8a6eb6",
-    cpp: "28621e18b2a6b663e1ea6e47750ca0133483f4287bc271265cc7e2fcfa69a2eb",
-    tradcpp: "88dae1204f5e928c7de003fd25263e91a18802f8ffde48b6f076e2ee1ea3e59a",
-    cc1: "07671de3a21d8c169ce09e355780cd77c39078f926a73db8ea9cf26850ed0846",
+    xgcc: "87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed",
+    cpp: "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
+    tradcpp: "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
+    cc1: "4555405981e014b73d3db14023324948afe7533ee38effccb8d62745bd11977b",
   },
   gs2: {
     xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",
@@ -168,6 +190,8 @@ const EXPECTED: Record<CompilerTarget, Record<string, string>> = {
 };
 
 const validated = new Set<CompilerTarget>();
+let agbccValidated = false;
+const AGBCC_EXPECTED = "1b4d3375083b7963c7a3f4675eca5465d8779928b331a7d9ffc669ddb0a03146";
 
 function outputText(value: Uint8Array): string {
   return Buffer.from(value).toString("utf8");
@@ -208,6 +232,35 @@ export function validateBundle(target: CompilerTarget = "gs1"): void {
   validated.add(target);
 }
 
+export function validateAgbccBundle(): void {
+  if (agbccValidated) return;
+  if (process.platform !== "darwin" || process.arch !== "arm64") {
+    throw new Error("alchemy-gcc requires native arm64 macOS");
+  }
+  let mode = 0;
+  try {
+    mode = statSync(AGBCC_DRIVER).mode;
+  } catch {
+    throw new Error("alchemy-gcc agbcc bundle is missing executable old_agbcc");
+  }
+  if ((mode & 0o111) === 0) {
+    throw new Error("alchemy-gcc agbcc bundle is missing executable old_agbcc");
+  }
+  const actual = new Bun.CryptoHasher("sha256").update(readFileSync(AGBCC_DRIVER)).digest("hex");
+  if (actual !== AGBCC_EXPECTED) {
+    throw new Error("alchemy-gcc agbcc/old_agbcc has an unapproved digest");
+  }
+  const smoke = Bun.spawnSync(
+    [AGBCC_DRIVER, "/dev/null", "-mthumb-interwork", "-O2", "-o", "/dev/null"],
+    { cwd: ROOT, stdout: "pipe", stderr: "pipe" },
+  );
+  if (smoke.exitCode !== 0) {
+    const detail = (outputText(smoke.stderr) || outputText(smoke.stdout)).trim();
+    throw new Error(`alchemy-gcc agbcc smoke compile failed: ${detail}`);
+  }
+  agbccValidated = true;
+}
+
 export function compilerCommand(...arguments_: Array<string | number>): string[] {
   return compilerCommandForTarget("gs1", ...arguments_);
 }
@@ -221,9 +274,24 @@ export function compilerCommandForTarget(
   return [driverForTarget(target), `-B${bundle}/`, ...arguments_.map(String)];
 }
 
+export function compilerCommandForTargetSource(
+  target: CompilerTarget,
+  source: string,
+  ...arguments_: Array<string | number>
+): string[] {
+  if (!usesAgbccCompiler(target, source)) {
+    return compilerCommandForTarget(target, ...arguments_);
+  }
+  validateAgbccBundle();
+  return [
+    AGBCC_DRIVER,
+    ...arguments_.filter((argument) => argument !== "-S").map(String),
+  ];
+}
+
 // Hot-search pipeline: invoke the approved preprocessor and cc1 directly, saving
 // one driver process per candidate. These arguments are the exact subprocesses
-// emitted by xgcc for CFLAGS; ordinary builds continue to use compilerCommand.
+// emitted by xgcc for CFLAGS; ordinary builds use the source-aware command API.
 export function directPreprocessorCommand(input: string, output: string): string[] {
   validateBundle();
   return [
@@ -256,8 +324,71 @@ export function directCompilerCommand(input: string, output: string, dumpbase: s
   ];
 }
 
+export function directCompilerCommandForSource(
+  source: string,
+  input: string,
+  output: string,
+  dumpbase: string,
+): string[] {
+  if (!usesAgbccCompiler("gs1", source)) {
+    return directCompilerCommand(input, output, dumpbase);
+  }
+  validateAgbccBundle();
+  return [
+    AGBCC_DRIVER, input, "-dumpbase", dumpbase,
+    ...AGBCC_CFLAGS, "-o", output,
+  ];
+}
+
+function selfTest(): void {
+  const expected = [
+    "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
+    "080fa458", "080fa490", "080fa8d4", "080fa928", "080fa9a4", "080fa9e0",
+    "080fab3c", "080fb6a4",
+  ];
+  if (JSON.stringify([...AGBCC_SOURCES].sort()) !== JSON.stringify(expected)) {
+    throw new Error("old_agbcc source allowlist self-test failed");
+  }
+  for (const stem of expected) {
+    const source = `/tmp/${stem}.c`;
+    if (!usesAgbccCompiler("gs1", source) || usesAgbccCompiler("gs2", source)) {
+      throw new Error(`old_agbcc target routing self-test failed for ${stem}`);
+    }
+    if (JSON.stringify(cflagsForTargetSource("gs1", source)) !== JSON.stringify(AGBCC_CFLAGS)) {
+      throw new Error(`old_agbcc flags self-test failed for ${stem}`);
+    }
+  }
+  if (usesAgbccCompiler("gs1", "/tmp/080000c0.c") ||
+      JSON.stringify(cflagsForTargetSource("gs1", "/tmp/080000c0.c")) === JSON.stringify(AGBCC_CFLAGS)) {
+    throw new Error("old_agbcc unrelated-source routing self-test failed");
+  }
+  const groupedDma = [...GROUPED_DMA_STORE_SOURCES].sort();
+  if (JSON.stringify(groupedDma) !== JSON.stringify(["080958a8", "0809bb34"])) {
+    throw new Error("grouped DMA source allowlist self-test failed");
+  }
+  for (const stem of groupedDma) {
+    if (!cflagsForTargetSource("gs1", `/tmp/${stem}.c`).includes("-mgrouped-dma-store")) {
+      throw new Error(`grouped DMA flags self-test failed for ${stem}`);
+    }
+  }
+  if (cflagsForTargetSource("gs1", "/tmp/080000c0.c").includes("-mgrouped-dma-store") ||
+      cflagsForTargetSource("gs2", "/tmp/080958a8.c").includes("-mgrouped-dma-store")) {
+    throw new Error("grouped DMA unrelated-source routing self-test failed");
+  }
+  console.log(`self-test=ok agbcc_sources=${expected.length} grouped_dma_sources=${groupedDma.length}`);
+}
+
 function main(): void {
   const argument = Bun.argv[2] ?? "gs1";
+  if (argument === "--self-test") {
+    selfTest();
+    return;
+  }
+  if (argument === "agbcc") {
+    validateAgbccBundle();
+    console.log(`alchemy-gcc=agbcc ok host=arm64 files=1 bytes=${statSync(AGBCC_DRIVER).size}`);
+    return;
+  }
   if (argument !== "gs1" && argument !== "gs2") {
     throw new Error(`unsupported compiler target: ${argument}`);
   }

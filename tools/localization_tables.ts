@@ -2,6 +2,7 @@
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
+import { canonicalJson } from "./canonical_json.ts";
 
 export const ROM_BASE = 0x08000000;
 
@@ -295,7 +296,7 @@ function main(args: string[]): void {
     if (!romPath || !directory) throw new Error("usage: localization_tables.ts export ROM --directory DIR");
     const sources = export_localization_tables(readFileSync(romPath));
     mkdirSync(directory, { recursive: true });
-    sources.forEach((source) => writeFileSync(join(directory, sourceName(source)), `${JSON.stringify(source, null, 2)}\n`));
+    sources.forEach((source) => writeFileSync(join(directory, sourceName(source)), `${canonicalJson(source)}\n`));
     console.log(`identical=true regions=${sources.length} bytes=${sources.reduce((sum, source) => sum + Number(source.size), 0)}`);
     return;
   }

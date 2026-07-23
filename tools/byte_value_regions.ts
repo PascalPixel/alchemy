@@ -2,12 +2,13 @@
 // Tool role: library; imported by tools/build_assets.ts.
 import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
+import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 
 const BASE = 0x08000000;
 type Json = Record<string, unknown>;
 export interface ByteValueRegion { address: number; data: Buffer; }
 
-function pretty(value: unknown): string { return `${JSON.stringify(value, null, 2)}\n`; }
+function pretty(value: unknown): string { return `${canonicalJson(value)}\n`; }
 function hex(value: number): string { return `0x${value.toString(16).padStart(8, "0")}`; }
 function fail(message: string): never { throw new Error(message); }
 function object(value: unknown, name: string): Json {
@@ -25,7 +26,7 @@ function parseAddress(value: unknown, name: string): number {
 
 export function buildByteValueRegions(path: string): ByteValueRegion[] {
   const text = readFileSync(path, "utf8"), value = object(JSON.parse(text), "byte-value source");
-  if (text !== pretty(value) || value.format !== 1 || value.kind !== "golden-sun-byte-value-regions" || !Array.isArray(value.regions)) {
+  if (!isCanonicalJsonText(text, value) || value.format !== 1 || value.kind !== "golden-sun-byte-value-regions" || !Array.isArray(value.regions)) {
     fail("byte-value source identity differs");
   }
   let previous = BASE - 1;

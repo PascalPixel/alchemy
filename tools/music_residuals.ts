@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, renameSync, realpathSync, rmSync, symlinkSync,
   writeFileSync,
@@ -182,7 +183,7 @@ function child(indexPath: string, name: string): string {
 function jsonDocument(path: string, label: string): unknown {
   const text = readFileSync(path, "utf8");
   const value = JSON.parse(text);
-  if (text !== `${JSON.stringify(value, null, 2)}\n`) throw new Error(`${label} is not canonical JSON`);
+  if (!isCanonicalJsonText(text, value)) throw new Error(`${label} is not canonical JSON`);
   return value;
 }
 
@@ -339,7 +340,7 @@ function writeMusicResiduals(rom: Buffer, directory: string): ResidualIndex {
   mkdirSync(directory, { recursive: true });
   const yobiPath = resolve(directory, "sound_138_yobi.json");
   const indexPath = resolve(directory, "index.json");
-  writeFileSync(yobiPath, `${JSON.stringify(YOBI_SOURCE, null, 2)}\n`);
+  writeFileSync(yobiPath, `${canonicalJson(YOBI_SOURCE)}\n`);
   const index: ResidualIndex = {
     format: 1,
     kind: "golden-sun-music-residuals",
@@ -358,7 +359,7 @@ function writeMusicResiduals(rom: Buffer, directory: string): ResidualIndex {
       fill: 0,
     },
   };
-  writeFileSync(indexPath, `${JSON.stringify(index, null, 2)}\n`);
+  writeFileSync(indexPath, `${canonicalJson(index)}\n`);
   verifyRegions(rom, build_music_residuals(indexPath));
   return index;
 }

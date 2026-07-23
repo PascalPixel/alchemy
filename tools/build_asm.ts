@@ -2,6 +2,7 @@
 // Tool role: entrypoint; invoked by ASSEMBLY.md, STATUS.md, package.json (+3 more).
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
+import { canonicalJson } from "./canonical_json.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -386,13 +387,13 @@ async function main(): Promise<void> {
     }
     validateClassificationCounts(classification, counts);
   }
-  writeFileSync(join(output, "manifest.json"), JSON.stringify({
+  writeFileSync(join(output, "manifest.json"), canonicalJson({
     format: 1,
     rom_base: ROM_BASE,
     verification: args.sourceOnly ? "source_only" : "rom",
     classification: relative(ROOT, classificationPath),
     regions,
-  }, null, 2) + "\n");
+  }) + "\n");
   const bytes = regions.reduce((sum, region) => sum + Number(region.size), 0);
   console.log(`regions=${regions.length} bytes=${bytes}`);
   console.log([...counts.entries()].sort(([left], [right]) => left.localeCompare(right))

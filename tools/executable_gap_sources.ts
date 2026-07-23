@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   existsSync,
   mkdirSync,
@@ -190,7 +191,7 @@ function hexadecimal(value: number): string {
 }
 
 function pretty(value: unknown): string {
-  return `${JSON.stringify(value, null, 2)}\n`;
+  return `${canonicalJson(value)}\n`;
 }
 
 function exactKeys(value: unknown, keys: string[], name: string): asserts value is Json {
@@ -203,7 +204,7 @@ function exactKeys(value: unknown, keys: string[], name: string): asserts value 
 
 function document(path: string): Json {
   const text = readFileSync(path, "utf8"), value = JSON.parse(text);
-  if (text !== pretty(value)) throw new Error(`${path}: source is not canonical JSON`);
+  if (!isCanonicalJsonText(text, value)) throw new Error(`${path}: source is not canonical JSON`);
   return value;
 }
 
@@ -880,7 +881,7 @@ export function exportExecutableGapSources(plan: ExecutableGapPlan, rom: Buffer,
 
 export function buildExecutableGapData(indexPath: string): Array<{ address: number; data: Buffer }> {
   const text = readFileSync(indexPath, "utf8"), value = JSON.parse(text) as Json;
-  if (text !== pretty(value)) throw new Error("executable gap package is not canonical JSON");
+  if (!isCanonicalJsonText(text, value)) throw new Error("executable gap package is not canonical JSON");
   exactKeys(value, ["format", "kind", "rom_base", "limit", "planned_gaps", "planned_gap_bytes", "gaps"], "executable gap package");
   if (value.format !== 1 || value.kind !== "golden-sun-executable-gap-source-package" || !Array.isArray(value.gaps)) {
     throw new Error("executable gap package identity differs");

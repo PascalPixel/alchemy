@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, renameSync, rmSync,
   symlinkSync, writeFileSync,
@@ -91,7 +92,7 @@ function hex(value: number): string {
 }
 
 function pretty(value: unknown): string {
-  return `${JSON.stringify(value, null, 2)}\n`;
+  return `${canonicalJson(value)}\n`;
 }
 
 function exactKeys(value: unknown, keys: readonly string[], label: string): asserts value is JsonObject {
@@ -125,7 +126,7 @@ function address(value: unknown, label: string, minimum = ROM_BASE, maximum = 0x
 
 function canonicalDocument(path: string, label: string): unknown {
   const text = readFileSync(path, "utf8"), value = JSON.parse(text);
-  if (text !== pretty(value)) throw new Error(`${label} is not canonical JSON`);
+  if (!isCanonicalJsonText(text, value)) throw new Error(`${label} is not canonical JSON`);
   return value;
 }
 

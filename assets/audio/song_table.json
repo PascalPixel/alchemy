@@ -1,9 +1,6 @@
 {
   "format": 1,
-  "fields": [
-    "header",
-    "player"
-  ],
+  "fields": ["header", "player"],
   "auxiliary": "copy-player",
   "symbols": {
     "sound_000": "0x081604ac",
@@ -273,1253 +270,317 @@
     "sound_311": "0x08184680"
   },
   "entries": [
-    [
-      "sound_000",
-      1
-    ],
-    [
-      "sound_001",
-      1
-    ],
-    [
-      "sound_002",
-      1
-    ],
-    [
-      "sound_003",
-      1
-    ],
-    [
-      "sound_004",
-      1
-    ],
-    [
-      "sound_005",
-      1
-    ],
-    [
-      "sound_006",
-      1
-    ],
-    [
-      "sound_007",
-      1
-    ],
-    [
-      "sound_008",
-      1
-    ],
-    [
-      "sound_009",
-      1
-    ],
-    [
-      "sound_010",
-      1
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_019",
-      1
-    ],
-    [
-      "sound_020",
-      1
-    ],
-    [
-      "sound_021",
-      1
-    ],
-    [
-      "sound_022",
-      1
-    ],
-    [
-      "sound_023",
-      1
-    ],
-    [
-      "sound_024",
-      1
-    ],
-    [
-      "sound_025",
-      1
-    ],
-    [
-      "sound_026",
-      1
-    ],
-    [
-      "sound_027",
-      1
-    ],
-    [
-      "sound_028",
-      1
-    ],
-    [
-      "sound_029",
-      1
-    ],
-    [
-      "sound_030",
-      1
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_040",
-      1
-    ],
-    [
-      "sound_041",
-      1
-    ],
-    [
-      "sound_042",
-      1
-    ],
-    [
-      "sound_043",
-      1
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_050",
-      1
-    ],
-    [
-      "sound_051",
-      1
-    ],
-    [
-      "sound_052",
-      1
-    ],
-    [
-      "sound_053",
-      1
-    ],
-    [
-      "sound_054",
-      1
-    ],
-    [
-      "sound_055",
-      1
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_058",
-      1
-    ],
-    [
-      "sound_059",
-      1
-    ],
-    [
-      "sound_060",
-      1
-    ],
-    [
-      "sound_061",
-      1
-    ],
-    [
-      "sound_062",
-      1
-    ],
-    [
-      "sound_063",
-      1
-    ],
-    [
-      "sound_064",
-      1
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_067",
-      1
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_070",
-      1
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_072",
-      1
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_074",
-      1
-    ],
-    [
-      "sound_075",
-      1
-    ],
-    [
-      "sound_076",
-      1
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_080",
-      0
-    ],
-    [
-      "sound_081",
-      0
-    ],
-    [
-      "sound_082",
-      0
-    ],
-    [
-      "sound_083",
-      0
-    ],
-    [
-      "sound_084",
-      0
-    ],
-    [
-      "sound_085",
-      0
-    ],
-    [
-      "sound_086",
-      0
-    ],
-    [
-      "sound_087",
-      0
-    ],
-    [
-      "sound_088",
-      0
-    ],
-    [
-      "sound_089",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_091",
-      0
-    ],
-    [
-      "sound_092",
-      0
-    ],
-    [
-      "sound_093",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_095",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_100",
-      7
-    ],
-    [
-      "sound_101",
-      2
-    ],
-    [
-      "sound_102",
-      2
-    ],
-    [
-      "sound_103",
-      7
-    ],
-    [
-      "sound_104",
-      3
-    ],
-    [
-      "sound_105",
-      2
-    ],
-    [
-      "sound_106",
-      7
-    ],
-    [
-      "sound_107",
-      3
-    ],
-    [
-      "sound_108",
-      2
-    ],
-    [
-      "sound_109",
-      2
-    ],
-    [
-      "sound_110",
-      2
-    ],
-    [
-      "sound_111",
-      4
-    ],
-    [
-      "sound_112",
-      2
-    ],
-    [
-      "sound_113",
-      2
-    ],
-    [
-      "sound_114",
-      2
-    ],
-    [
-      "sound_115",
-      5
-    ],
-    [
-      "sound_116",
-      2
-    ],
-    [
-      "sound_117",
-      2
-    ],
-    [
-      "sound_118",
-      3
-    ],
-    [
-      "sound_119",
-      3
-    ],
-    [
-      "sound_120",
-      3
-    ],
-    [
-      "sound_121",
-      3
-    ],
-    [
-      "sound_122",
-      3
-    ],
-    [
-      "sound_123",
-      5
-    ],
-    [
-      "sound_124",
-      3
-    ],
-    [
-      "sound_125",
-      3
-    ],
-    [
-      "sound_126",
-      2
-    ],
-    [
-      "sound_127",
-      3
-    ],
-    [
-      "sound_128",
-      5
-    ],
-    [
-      "sound_129",
-      5
-    ],
-    [
-      "sound_130",
-      7
-    ],
-    [
-      "sound_131",
-      7
-    ],
-    [
-      "sound_132",
-      3
-    ],
-    [
-      "sound_133",
-      3
-    ],
-    [
-      "sound_134",
-      3
-    ],
-    [
-      "sound_135",
-      3
-    ],
-    [
-      "sound_136",
-      3
-    ],
-    [
-      "sound_137",
-      3
-    ],
-    [
-      "sound_138",
-      3
-    ],
-    [
-      "sound_139",
-      7
-    ],
-    [
-      "sound_140",
-      3
-    ],
-    [
-      "sound_141",
-      3
-    ],
-    [
-      "sound_142",
-      3
-    ],
-    [
-      "sound_143",
-      3
-    ],
-    [
-      "sound_144",
-      3
-    ],
-    [
-      "sound_145",
-      3
-    ],
-    [
-      "sound_146",
-      7
-    ],
-    [
-      "sound_147",
-      7
-    ],
-    [
-      "sound_148",
-      7
-    ],
-    [
-      "sound_149",
-      7
-    ],
-    [
-      "sound_150",
-      7
-    ],
-    [
-      "sound_151",
-      3
-    ],
-    [
-      "sound_152",
-      7
-    ],
-    [
-      "sound_153",
-      7
-    ],
-    [
-      "sound_154",
-      3
-    ],
-    [
-      "sound_155",
-      7
-    ],
-    [
-      "sound_156",
-      6
-    ],
-    [
-      "sound_157",
-      6
-    ],
-    [
-      "sound_158",
-      3
-    ],
-    [
-      "sound_159",
-      3
-    ],
-    [
-      "sound_160",
-      3
-    ],
-    [
-      "sound_161",
-      3
-    ],
-    [
-      "sound_162",
-      3
-    ],
-    [
-      "sound_163",
-      3
-    ],
-    [
-      "sound_164",
-      3
-    ],
-    [
-      "sound_165",
-      3
-    ],
-    [
-      "sound_166",
-      3
-    ],
-    [
-      "sound_167",
-      7
-    ],
-    [
-      "sound_168",
-      3
-    ],
-    [
-      "sound_169",
-      3
-    ],
-    [
-      "sound_170",
-      3
-    ],
-    [
-      "sound_171",
-      7
-    ],
-    [
-      "sound_172",
-      7
-    ],
-    [
-      "sound_173",
-      2
-    ],
-    [
-      "sound_174",
-      2
-    ],
-    [
-      "sound_175",
-      2
-    ],
-    [
-      "sound_176",
-      3
-    ],
-    [
-      "sound_177",
-      3
-    ],
-    [
-      "sound_178",
-      3
-    ],
-    [
-      "sound_179",
-      3
-    ],
-    [
-      "sound_180",
-      3
-    ],
-    [
-      "sound_181",
-      3
-    ],
-    [
-      "sound_182",
-      2
-    ],
-    [
-      "sound_183",
-      3
-    ],
-    [
-      "sound_184",
-      3
-    ],
-    [
-      "sound_185",
-      3
-    ],
-    [
-      "sound_186",
-      3
-    ],
-    [
-      "sound_187",
-      3
-    ],
-    [
-      "sound_188",
-      3
-    ],
-    [
-      "sound_189",
-      3
-    ],
-    [
-      "sound_190",
-      3
-    ],
-    [
-      "sound_191",
-      3
-    ],
-    [
-      "sound_192",
-      3
-    ],
-    [
-      "sound_193",
-      3
-    ],
-    [
-      "sound_194",
-      3
-    ],
-    [
-      "sound_195",
-      2
-    ],
-    [
-      "sound_196",
-      3
-    ],
-    [
-      "sound_197",
-      3
-    ],
-    [
-      "sound_198",
-      3
-    ],
-    [
-      "sound_199",
-      3
-    ],
-    [
-      "sound_200",
-      7
-    ],
-    [
-      "sound_201",
-      2
-    ],
-    [
-      "sound_202",
-      3
-    ],
-    [
-      "sound_203",
-      2
-    ],
-    [
-      "sound_204",
-      2
-    ],
-    [
-      "sound_205",
-      3
-    ],
-    [
-      "sound_206",
-      3
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_208",
-      3
-    ],
-    [
-      "sound_209",
-      3
-    ],
-    [
-      "sound_210",
-      3
-    ],
-    [
-      "sound_211",
-      3
-    ],
-    [
-      "sound_212",
-      3
-    ],
-    [
-      "sound_213",
-      3
-    ],
-    [
-      "sound_214",
-      2
-    ],
-    [
-      "sound_215",
-      3
-    ],
-    [
-      "sound_216",
-      3
-    ],
-    [
-      "sound_217",
-      3
-    ],
-    [
-      "sound_218",
-      3
-    ],
-    [
-      "sound_219",
-      3
-    ],
-    [
-      "sound_220",
-      3
-    ],
-    [
-      "sound_221",
-      3
-    ],
-    [
-      "sound_222",
-      3
-    ],
-    [
-      "sound_223",
-      3
-    ],
-    [
-      "sound_224",
-      2
-    ],
-    [
-      "sound_225",
-      3
-    ],
-    [
-      "sound_226",
-      3
-    ],
-    [
-      "sound_227",
-      7
-    ],
-    [
-      "sound_228",
-      3
-    ],
-    [
-      "sound_229",
-      3
-    ],
-    [
-      "sound_230",
-      3
-    ],
-    [
-      "sound_231",
-      3
-    ],
-    [
-      "sound_232",
-      3
-    ],
-    [
-      "sound_233",
-      3
-    ],
-    [
-      "sound_234",
-      3
-    ],
-    [
-      "sound_235",
-      3
-    ],
-    [
-      "sound_236",
-      5
-    ],
-    [
-      "sound_237",
-      5
-    ],
-    [
-      "sound_238",
-      3
-    ],
-    [
-      "sound_239",
-      3
-    ],
-    [
-      "sound_240",
-      3
-    ],
-    [
-      "sound_241",
-      3
-    ],
-    [
-      "sound_242",
-      3
-    ],
-    [
-      "sound_243",
-      3
-    ],
-    [
-      "sound_244",
-      3
-    ],
-    [
-      "sound_245",
-      3
-    ],
-    [
-      "sound_246",
-      7
-    ],
-    [
-      "sound_247",
-      3
-    ],
-    [
-      "sound_248",
-      3
-    ],
-    [
-      "sound_249",
-      3
-    ],
-    [
-      "sound_250",
-      5
-    ],
-    [
-      "sound_251",
-      5
-    ],
-    [
-      "sound_252",
-      5
-    ],
-    [
-      "sound_253",
-      3
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_256",
-      4
-    ],
-    [
-      "sound_257",
-      4
-    ],
-    [
-      "sound_258",
-      4
-    ],
-    [
-      "sound_259",
-      4
-    ],
-    [
-      "sound_260",
-      4
-    ],
-    [
-      "sound_261",
-      4
-    ],
-    [
-      "sound_262",
-      4
-    ],
-    [
-      "sound_263",
-      4
-    ],
-    [
-      "sound_264",
-      4
-    ],
-    [
-      "sound_265",
-      4
-    ],
-    [
-      "sound_266",
-      4
-    ],
-    [
-      "sound_267",
-      4
-    ],
-    [
-      "sound_268",
-      4
-    ],
-    [
-      "sound_269",
-      4
-    ],
-    [
-      "sound_270",
-      4
-    ],
-    [
-      "sound_271",
-      4
-    ],
-    [
-      "sound_272",
-      4
-    ],
-    [
-      "sound_273",
-      4
-    ],
-    [
-      "sound_274",
-      4
-    ],
-    [
-      "sound_275",
-      4
-    ],
-    [
-      "sound_276",
-      4
-    ],
-    [
-      "sound_277",
-      4
-    ],
-    [
-      "sound_278",
-      4
-    ],
-    [
-      "sound_279",
-      4
-    ],
-    [
-      "sound_280",
-      4
-    ],
-    [
-      "sound_281",
-      4
-    ],
-    [
-      "sound_282",
-      4
-    ],
-    [
-      "sound_283",
-      4
-    ],
-    [
-      "sound_284",
-      4
-    ],
-    [
-      "sound_285",
-      4
-    ],
-    [
-      "sound_286",
-      4
-    ],
-    [
-      "sound_287",
-      4
-    ],
-    [
-      "sound_288",
-      3
-    ],
-    [
-      "sound_289",
-      2
-    ],
-    [
-      "sound_290",
-      3
-    ],
-    [
-      "sound_291",
-      3
-    ],
-    [
-      "sound_292",
-      2
-    ],
-    [
-      "sound_293",
-      2
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_298",
-      5
-    ],
-    [
-      "sound_empty",
-      0
-    ],
-    [
-      "sound_300",
-      3
-    ],
-    [
-      "sound_301",
-      7
-    ],
-    [
-      "sound_302",
-      7
-    ],
-    [
-      "sound_303",
-      2
-    ],
-    [
-      "sound_304",
-      6
-    ],
-    [
-      "sound_305",
-      2
-    ],
-    [
-      "sound_306",
-      3
-    ],
-    [
-      "sound_307",
-      3
-    ],
-    [
-      "sound_308",
-      3
-    ],
-    [
-      "sound_309",
-      2
-    ],
-    [
-      "sound_310",
-      2
-    ],
-    [
-      "sound_311",
-      3
-    ]
+    ["sound_000", 1],
+    ["sound_001", 1],
+    ["sound_002", 1],
+    ["sound_003", 1],
+    ["sound_004", 1],
+    ["sound_005", 1],
+    ["sound_006", 1],
+    ["sound_007", 1],
+    ["sound_008", 1],
+    ["sound_009", 1],
+    ["sound_010", 1],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_019", 1],
+    ["sound_020", 1],
+    ["sound_021", 1],
+    ["sound_022", 1],
+    ["sound_023", 1],
+    ["sound_024", 1],
+    ["sound_025", 1],
+    ["sound_026", 1],
+    ["sound_027", 1],
+    ["sound_028", 1],
+    ["sound_029", 1],
+    ["sound_030", 1],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_040", 1],
+    ["sound_041", 1],
+    ["sound_042", 1],
+    ["sound_043", 1],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_050", 1],
+    ["sound_051", 1],
+    ["sound_052", 1],
+    ["sound_053", 1],
+    ["sound_054", 1],
+    ["sound_055", 1],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_058", 1],
+    ["sound_059", 1],
+    ["sound_060", 1],
+    ["sound_061", 1],
+    ["sound_062", 1],
+    ["sound_063", 1],
+    ["sound_064", 1],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_067", 1],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_070", 1],
+    ["sound_empty", 0],
+    ["sound_072", 1],
+    ["sound_empty", 0],
+    ["sound_074", 1],
+    ["sound_075", 1],
+    ["sound_076", 1],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_080", 0],
+    ["sound_081", 0],
+    ["sound_082", 0],
+    ["sound_083", 0],
+    ["sound_084", 0],
+    ["sound_085", 0],
+    ["sound_086", 0],
+    ["sound_087", 0],
+    ["sound_088", 0],
+    ["sound_089", 0],
+    ["sound_empty", 0],
+    ["sound_091", 0],
+    ["sound_092", 0],
+    ["sound_093", 0],
+    ["sound_empty", 0],
+    ["sound_095", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_100", 7],
+    ["sound_101", 2],
+    ["sound_102", 2],
+    ["sound_103", 7],
+    ["sound_104", 3],
+    ["sound_105", 2],
+    ["sound_106", 7],
+    ["sound_107", 3],
+    ["sound_108", 2],
+    ["sound_109", 2],
+    ["sound_110", 2],
+    ["sound_111", 4],
+    ["sound_112", 2],
+    ["sound_113", 2],
+    ["sound_114", 2],
+    ["sound_115", 5],
+    ["sound_116", 2],
+    ["sound_117", 2],
+    ["sound_118", 3],
+    ["sound_119", 3],
+    ["sound_120", 3],
+    ["sound_121", 3],
+    ["sound_122", 3],
+    ["sound_123", 5],
+    ["sound_124", 3],
+    ["sound_125", 3],
+    ["sound_126", 2],
+    ["sound_127", 3],
+    ["sound_128", 5],
+    ["sound_129", 5],
+    ["sound_130", 7],
+    ["sound_131", 7],
+    ["sound_132", 3],
+    ["sound_133", 3],
+    ["sound_134", 3],
+    ["sound_135", 3],
+    ["sound_136", 3],
+    ["sound_137", 3],
+    ["sound_138", 3],
+    ["sound_139", 7],
+    ["sound_140", 3],
+    ["sound_141", 3],
+    ["sound_142", 3],
+    ["sound_143", 3],
+    ["sound_144", 3],
+    ["sound_145", 3],
+    ["sound_146", 7],
+    ["sound_147", 7],
+    ["sound_148", 7],
+    ["sound_149", 7],
+    ["sound_150", 7],
+    ["sound_151", 3],
+    ["sound_152", 7],
+    ["sound_153", 7],
+    ["sound_154", 3],
+    ["sound_155", 7],
+    ["sound_156", 6],
+    ["sound_157", 6],
+    ["sound_158", 3],
+    ["sound_159", 3],
+    ["sound_160", 3],
+    ["sound_161", 3],
+    ["sound_162", 3],
+    ["sound_163", 3],
+    ["sound_164", 3],
+    ["sound_165", 3],
+    ["sound_166", 3],
+    ["sound_167", 7],
+    ["sound_168", 3],
+    ["sound_169", 3],
+    ["sound_170", 3],
+    ["sound_171", 7],
+    ["sound_172", 7],
+    ["sound_173", 2],
+    ["sound_174", 2],
+    ["sound_175", 2],
+    ["sound_176", 3],
+    ["sound_177", 3],
+    ["sound_178", 3],
+    ["sound_179", 3],
+    ["sound_180", 3],
+    ["sound_181", 3],
+    ["sound_182", 2],
+    ["sound_183", 3],
+    ["sound_184", 3],
+    ["sound_185", 3],
+    ["sound_186", 3],
+    ["sound_187", 3],
+    ["sound_188", 3],
+    ["sound_189", 3],
+    ["sound_190", 3],
+    ["sound_191", 3],
+    ["sound_192", 3],
+    ["sound_193", 3],
+    ["sound_194", 3],
+    ["sound_195", 2],
+    ["sound_196", 3],
+    ["sound_197", 3],
+    ["sound_198", 3],
+    ["sound_199", 3],
+    ["sound_200", 7],
+    ["sound_201", 2],
+    ["sound_202", 3],
+    ["sound_203", 2],
+    ["sound_204", 2],
+    ["sound_205", 3],
+    ["sound_206", 3],
+    ["sound_empty", 0],
+    ["sound_208", 3],
+    ["sound_209", 3],
+    ["sound_210", 3],
+    ["sound_211", 3],
+    ["sound_212", 3],
+    ["sound_213", 3],
+    ["sound_214", 2],
+    ["sound_215", 3],
+    ["sound_216", 3],
+    ["sound_217", 3],
+    ["sound_218", 3],
+    ["sound_219", 3],
+    ["sound_220", 3],
+    ["sound_221", 3],
+    ["sound_222", 3],
+    ["sound_223", 3],
+    ["sound_224", 2],
+    ["sound_225", 3],
+    ["sound_226", 3],
+    ["sound_227", 7],
+    ["sound_228", 3],
+    ["sound_229", 3],
+    ["sound_230", 3],
+    ["sound_231", 3],
+    ["sound_232", 3],
+    ["sound_233", 3],
+    ["sound_234", 3],
+    ["sound_235", 3],
+    ["sound_236", 5],
+    ["sound_237", 5],
+    ["sound_238", 3],
+    ["sound_239", 3],
+    ["sound_240", 3],
+    ["sound_241", 3],
+    ["sound_242", 3],
+    ["sound_243", 3],
+    ["sound_244", 3],
+    ["sound_245", 3],
+    ["sound_246", 7],
+    ["sound_247", 3],
+    ["sound_248", 3],
+    ["sound_249", 3],
+    ["sound_250", 5],
+    ["sound_251", 5],
+    ["sound_252", 5],
+    ["sound_253", 3],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_256", 4],
+    ["sound_257", 4],
+    ["sound_258", 4],
+    ["sound_259", 4],
+    ["sound_260", 4],
+    ["sound_261", 4],
+    ["sound_262", 4],
+    ["sound_263", 4],
+    ["sound_264", 4],
+    ["sound_265", 4],
+    ["sound_266", 4],
+    ["sound_267", 4],
+    ["sound_268", 4],
+    ["sound_269", 4],
+    ["sound_270", 4],
+    ["sound_271", 4],
+    ["sound_272", 4],
+    ["sound_273", 4],
+    ["sound_274", 4],
+    ["sound_275", 4],
+    ["sound_276", 4],
+    ["sound_277", 4],
+    ["sound_278", 4],
+    ["sound_279", 4],
+    ["sound_280", 4],
+    ["sound_281", 4],
+    ["sound_282", 4],
+    ["sound_283", 4],
+    ["sound_284", 4],
+    ["sound_285", 4],
+    ["sound_286", 4],
+    ["sound_287", 4],
+    ["sound_288", 3],
+    ["sound_289", 2],
+    ["sound_290", 3],
+    ["sound_291", 3],
+    ["sound_292", 2],
+    ["sound_293", 2],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_empty", 0],
+    ["sound_298", 5],
+    ["sound_empty", 0],
+    ["sound_300", 3],
+    ["sound_301", 7],
+    ["sound_302", 7],
+    ["sound_303", 2],
+    ["sound_304", 6],
+    ["sound_305", 2],
+    ["sound_306", 3],
+    ["sound_307", 3],
+    ["sound_308", 3],
+    ["sound_309", 2],
+    ["sound_310", 2],
+    ["sound_311", 3]
   ]
 }

@@ -2,6 +2,7 @@
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { canonicalJson } from "./canonical_json.ts";
 
 import { tile_png } from "./export_asset.ts";
 import { gba_graphics } from "./import_asset.ts";
@@ -1046,7 +1047,7 @@ function main(args: string[]): void {
       throw new Error("usage: battle_effect_data.ts export ROM --root ASSETS --output SOURCE");
     const source = export_battle_effect_data(readFileSync(romPath), root);
     mkdirSync(dirname(output), { recursive: true });
-    writeFileSync(output, `${JSON.stringify(source, null, 2)}\n`);
+    writeFileSync(output, `${canonicalJson(source)}\n`);
     console.log(`identical=true bytes=${BATTLE_DATA_END - BATTLE_DATA_ADDRESS} records=104 tables=${RULE_LAYOUT.length + TAIL_TABLE_LAYOUT.length}`);
     return;
   }

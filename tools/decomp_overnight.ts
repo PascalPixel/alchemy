@@ -5,6 +5,7 @@
 // probes adjacent modules, and then runs guided annealing.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { canonicalJson } from "./canonical_json.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const OUT = join(ROOT, "out", "decomp");
@@ -50,7 +51,7 @@ async function run(command: string[], tolerate = false): Promise<{ code: number;
 
 function save(checkpoint: Checkpoint, stage: string, wave = checkpoint.completed_wave): void {
   checkpoint.stage = stage; checkpoint.completed_wave = wave; checkpoint.updated_at = new Date().toISOString();
-  writeFileSync(CHECKPOINT, JSON.stringify(checkpoint, null, 2) + "\n");
+  writeFileSync(CHECKPOINT, canonicalJson(checkpoint) + "\n");
 }
 
 function targets(): string[] {

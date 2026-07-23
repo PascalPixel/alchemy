@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/scan_data_v2.ts, tools/scan_decomp.ts; invoked by package.json.
 import type { ComparisonReport, MatchSpan } from "./compare_roms.ts";
+import { canonicalJson } from "./canonical_json.ts";
 
 interface BuiltRegion {
   address: number | string;
@@ -303,7 +304,7 @@ async function main(args: string[]): Promise<void> {
     args.includes("--exact"),
     args.includes("--kind") ? option(args, "--kind") : undefined,
   );
-  await Bun.write(output, JSON.stringify(result, null, 2) + "\n");
+  await Bun.write(output, canonicalJson(result) + "\n");
   console.log(`regions=${result.matched_region_count}/${result.region_count} ` +
     `full=${result.fully_covered_count} covered_bytes=${result.covered_bytes} mode=${result.mode}`);
 }

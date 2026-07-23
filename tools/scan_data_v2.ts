@@ -5,6 +5,7 @@ import type { DirectResourceCall } from "./scan_resource_calls.ts";
 import { compareRegions } from "./compare_regions.ts";
 import { splitManifestAtPointers } from "./scan_decomp.ts";
 import { diagnose_still, encode_delta7, STILL_PIXELS } from "./indexed_still.ts";
+import { canonicalJson } from "./canonical_json.ts";
 
 interface Region {
   address: number | string;
@@ -314,7 +315,7 @@ async function main(args: string[]): Promise<void> {
     categories,
     items,
   };
-  await Bun.write(output, JSON.stringify(result, null, 2) + "\n");
+  await Bun.write(output, canonicalJson(result) + "\n");
   console.log(`regions=${items.length} ` + Object.entries(categories)
     .map(([name, value]) => `${name}=${value.regions}/${value.bytes}`).join(" "));
 }

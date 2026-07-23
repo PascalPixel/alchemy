@@ -4,6 +4,7 @@ import { basename, join, resolve } from "node:path";
 import { Discovery } from "./discover.ts";
 import { emitDiscovery } from "./emit_function.ts";
 import { M2C } from "./alchemy_gcc.ts";
+import { canonicalJson } from "./canonical_json.ts";
 
 const ROOT = resolve(import.meta.dir, "..");
 
@@ -87,7 +88,7 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
     } catch {}
     return { entry: address, size, success };
   });
-  writeFileSync(join(args.output, "report.json"), `${JSON.stringify(results, null, 2)}\n`);
+  writeFileSync(join(args.output, "report.json"), `${canonicalJson(results)}\n`);
   const success = results.filter((item) => item.success).length;
   console.log(`candidates=${results.length} success=${success} failures=${results.length - success}`);
 }

@@ -7,6 +7,7 @@ import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { Discovery, sx } from "./discover.ts";
 import { assembleOverlay, overlayCAddresses, OVERLAY_BASE } from "./overlay_disasm.ts";
+import { canonicalJson } from "./canonical_json.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 
@@ -303,7 +304,7 @@ function main(): void {
     functions,
   };
   mkdirSync(dirname(options.output), { recursive: true });
-  writeFileSync(options.output, JSON.stringify(report, null, 2) + "\n");
+  writeFileSync(options.output, canonicalJson(report) + "\n");
   console.log(`overlays=${report.totals.overlays} converted_functions=${convertedFunctions} unconverted_discoveries=${functions.length} ordinary_unconverted_discoveries=${ordinary.length} tiny_unconverted_discoveries=${tiny.length} contained_unconverted_discoveries=${contained.length} returning_unconverted_discoveries=${returning.length} ordinary_prologue_return_discoveries=${ordinaryPrologueReturn.length}`);
   console.log(`decoded_bytes=${decodedBytes} instruction_bytes=${instructionBytes} converted_instruction_bytes=${convertedInstructionBytes} converted_span_bytes=${convertedSpanBytes} converted_internal_entries=${convertedInternalEntries} undiscovered_converted_functions=${undiscoveredConvertedFunctions} unresolved=${unresolved} jump_tables=${jumpTables}`);
   console.log(`duplicate_families=${report.totals.duplicate_families} duplicate_functions=${report.totals.duplicate_functions}`);

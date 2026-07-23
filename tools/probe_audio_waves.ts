@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: entrypoint; invoked by package.json.
+import { canonicalJson } from "./canonical_json.ts";
 import {
   buildWaveRecord,
   probeWaveRecord,
@@ -137,7 +138,7 @@ export async function writeWaveFragment(directory: string, start: number, end: n
     end: hexadecimal(end),
     waves: serializable(entries),
   };
-  await Bun.write(`${directory}/index.json`, JSON.stringify(fragment, null, 2) + "\n");
+  await Bun.write(`${directory}/index.json`, canonicalJson(fragment) + "\n");
 }
 
 async function selfTest(): Promise<void> {

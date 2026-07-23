@@ -1,6 +1,7 @@
 // Tool role: library; imported by tools/build_assets.ts, tools/compose_scene.ts.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
+import { canonicalJson } from "./canonical_json.ts";
 
 export const ROM_BASE = 0x08000000;
 export const TABLE_ADDRESS = 0x08013784;
@@ -31,7 +32,7 @@ export function export_table(rom: Uint8Array, source: string): number {
   }
   const document: LoadDocument = { format: 1, resource_base: `0x${RESOURCE_BASE.toString(16)}`, records: rows };
   mkdirSync(dirname(source), { recursive: true });
-  writeFileSync(source, `${JSON.stringify(document, null, 2)}\n`);
+  writeFileSync(source, `${canonicalJson(document)}\n`);
   const rebuilt = build_table(source);
   if (!rebuilt.equals(Buffer.from(rom.subarray(start, start + RECORDS * 12))))
     throw new Error("map graphics load table does not round-trip");

@@ -139,9 +139,7 @@
     },
     {
       "id": "07c",
-      "aliases": [
-        "7e"
-      ],
+      "aliases": ["7e"],
       "address": "0x08240f18",
       "size": "0x00001bbc",
       "directory": "0x08242a4c",
@@ -149,9 +147,7 @@
     },
     {
       "id": "07d",
-      "aliases": [
-        "7f"
-      ],
+      "aliases": ["7f"],
       "address": "0x08242ad4",
       "size": "0x000024ec",
       "directory": "0x08244f38",

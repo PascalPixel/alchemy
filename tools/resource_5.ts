@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { canonicalJson } from "./canonical_json.ts";
 
 const ROM_BASE = 0x08000000;
 const ADDRESS = 0x0807a828;
@@ -429,7 +430,7 @@ async function main(args: string[]): Promise<void> {
     const rebuilt = build_resource_5(source);
     const original = rom.subarray(ADDRESS - ROM_BASE, END - ROM_BASE);
     if (!rebuilt.equals(original)) throw new Error("exported resource 5 does not round-trip");
-    await Bun.write(target, `${JSON.stringify(source, null, 2)}\n`);
+    await Bun.write(target, `${canonicalJson(source)}\n`);
     console.log(`identical=true bytes=${rebuilt.length} items=324 abilities=519 combatants=165 classes=203 djinn=80`);
     return;
   }

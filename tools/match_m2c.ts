@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/decomp_diagnose.ts, tools/decomp_module.ts, tools/decomp_queue.ts (+7 more); invoked by PLAYBOOK.md.
+import { canonicalJson } from "./canonical_json.ts";
 import {
   existsSync,
   mkdirSync,
@@ -279,7 +280,7 @@ async function main(): Promise<void> {
   const reportPath = target.id === DEFAULT_TARGET
     ? join(ROOT, "work/matches/m2c.json")
     : join(ROOT, "work/matches", `${target.id}-m2c.json`);
-  writeFileSync(reportPath, JSON.stringify(results, null, 2) + "\n");
+  writeFileSync(reportPath, canonicalJson(results) + "\n");
   const matches = results.filter((item) => item.matched === true).length;
   console.log(`candidates=${results.length} matches=${matches} failures=${results.length - matches}`);
 }

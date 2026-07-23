@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { canonicalJson } from "./canonical_json.ts";
 import {
   mkdirSync, readFileSync, realpathSync, writeFileSync,
 } from "node:fs";
@@ -239,7 +240,7 @@ export function export_tokushu_map_series(romPath: string, directory: string): I
   }
   const index: IndexDocument = { format: 1, kind: "golden-sun-tokushu-map-series", resources };
   const indexPath = join(directory, "index.json");
-  writeFileSync(indexPath, `${JSON.stringify(index, null, 2)}\n`);
+  writeFileSync(indexPath, `${canonicalJson(index)}\n`);
   const built = build_tokushu_map_series(indexPath);
   built.forEach((item, position) => {
     const spec = TOKUSHU_MAP_RESOURCES[position];

@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { isCanonicalJsonText } from "./canonical_json.ts";
 import { lstatSync, renameSync, statSync, unlinkSync } from "fs";
 
 export const RUNTIME_SUPPORT_ADDRESS = 0x0800795c;
@@ -498,7 +499,7 @@ function canonical_json(value: unknown, depth = 0, path: string[] = []): string 
 export function parse_runtime_support_source(text: string): unknown {
   const value = new StrictJsonParser(text).parse();
   runtime_document(value);
-  if (text !== `${canonical_json(value)}\n`) throw new Error("runtime-support source is not canonical JSON text");
+  if (!isCanonicalJsonText(text, value)) throw new Error("runtime-support source is not canonical JSON text");
   return value;
 }
 

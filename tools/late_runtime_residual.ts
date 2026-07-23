@@ -3,6 +3,7 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "fs";
 import { dirname, join, resolve } from "path";
 import { readLateRuntimeCatalog, ROM_BASE, type LateRuntimeComponent } from "./late_runtime_data.ts";
+import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const DEFAULT_CATALOG = join(ROOT, "assets/data/late_runtime/catalog.json");
@@ -37,7 +38,7 @@ export interface LateRuntimeResidualBuild {
   sourceBytes: number;
 }
 
-function pretty(value: unknown): string { return `${JSON.stringify(value, null, 2)}\n`; }
+function pretty(value: unknown): string { return `${canonicalJson(value)}\n`; }
 function hex(value: number): string { return `0x${value.toString(16).padStart(8, "0")}`; }
 
 function object(value: unknown, label: string): Json {
@@ -80,7 +81,7 @@ function componentSource(component: LateRuntimeComponent, image: Uint8Array): Co
 
 function parseSource(indexPath: string): Source {
   const text = readFileSync(indexPath, "utf8"), value = object(JSON.parse(text), "late residual source");
-  if (text !== pretty(value)) throw new Error("late residual source is not canonical JSON");
+  if (!isCanonicalJsonText(text, value)) throw new Error("late residual source is not canonical JSON");
   exactKeys(value, ["format", "kind", "source_bytes", "regions"], "late residual source");
   if (value.format !== 1 || value.kind !== "golden-sun-late-runtime-residual" || !Array.isArray(value.regions)) {
     throw new Error("late residual source identity differs");

@@ -216,7 +216,7 @@ export function compose(map_dir: string, linkage: Linkage): [SceneImage, number]
   const palette_path = palettes[linkage.palette.toLowerCase()];
   const palette = load_palette(palette_path);
   const metatiles = parse_metatiles(join(map_dir, "metatiles.tilemap"));
-  const cells = cell_indices(join(map_dir, "grid"), metatiles.length);
+  const cells = cell_indices(map_dir, metatiles.length);
   const [width, height, cells_wide, cells_high] = scene_dimensions(map_dir);
   const pixels = Buffer.alloc(width * height * 3);
   let missing_tiles = 0;

@@ -279,7 +279,7 @@ export function build_bank(plan_path_value: string): BankResult {
 /** 再構築済み地図から画面上の8画素単位タイル表を返す。 */
 export function map_entries(map_dir: string): number[][] {
   const metatiles = parse_metatiles(join(map_dir, "metatiles.tilemap"));
-  const cells = cell_indices(join(map_dir, "grid"), metatiles.length);
+  const cells = cell_indices(map_dir, metatiles.length);
   const [width, height] = scene_dimensions(map_dir);
   const rows: number[][] = [];
   for (let tile_y = 0; tile_y < Math.ceil(height / TILE); tile_y += 1) {

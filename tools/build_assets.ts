@@ -427,7 +427,7 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           components: [{
             kind: "zero-skip-sprite-archive",
             size: resource.decoded_size,
-            source: `${directory}/images`,
+            source: `${directory}`,
             plan: `${directory}/archive.json`,
             palette: series.palette,
           }],
@@ -551,13 +551,13 @@ function expandSeries(manifest: Json, entries: Json[]): void {
     } else if (series.kind === "golden-sun-map-grid-series") {
       for (const grid of series.grids) {
         const name = String(grid.id).toLowerCase();
-        const directory = `assets/maps/resource_${name}/grid`;
+        const directory = `assets/maps/resource_${name}`;
         entries.push({
           address: grid.address,
           size: grid.size,
           kind: "golden-sun-kind1-grid",
           source: directory,
-          plan: `${directory}/grid.kind1.json`,
+          plan: `${directory}/grid_grid.kind1.json`,
         });
       }
     } else if (series.kind === "golden-sun-map-component-series") {
@@ -782,7 +782,7 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
       if (component.kind === "zero-skip-sprite-archive") {
         const archivePlan = JSON.parse(readFileSync(sourcePath(component.plan), "utf8"));
         for (let index = 0; index < number(archivePlan.images); index++) {
-          sources.push(join(String(component.source), `frame_${String(index).padStart(2, "0")}.png`));
+          sources.push(join(String(component.source), `images_frame_${String(index).padStart(2, "0")}.png`));
         }
         sources.push(String(component.plan), String(component.palette));
       } else {
@@ -865,8 +865,8 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     const plan = JSON.parse(readFileSync(sourcePath(String(entry.plan)), "utf8"));
     const built = build_grid(plan, directory);
     const sources = [String(entry.plan), ...[
-      "value_low.png", "value_high.png", "attribute_a.png",
-      "attribute_b.png", "sentinels.png",
+      "grid_value_low.png", "grid_value_high.png", "grid_attribute_a.png",
+      "grid_attribute_b.png", "grid_sentinels.png",
     ].map((name) => join(String(entry.source), name))];
     return [built, sources, {
       decoded_size: number(plan.decoded_size), tokens: plan.tokens.length, planes: 4,
@@ -1381,7 +1381,7 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     if (plan.format !== 1 || plan.codec !== kind) throw new Error("unsupported F0 archive plan");
     const built = build_f0_archive(plan, directory);
     const imageSources = Array.from({ length: number(plan.images) }, (_, index) =>
-      join(String(entry.source), `image_${String(index).padStart(2, "0")}.png`));
+      join(String(entry.source), `images_image_${String(index).padStart(2, "0")}.png`));
     return [built, [String(entry.plan), ...imageSources], {
       entries: plan.entries.length, images: number(plan.images),
     }];

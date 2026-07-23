@@ -908,7 +908,7 @@
       "address": "0x084366f8",
       "size": "0x592c",
       "kind": "golden-sun-mtf4-archive",
-      "source": "assets/graphics/resource_f0/images",
+      "source": "assets/graphics/resource_f0",
       "plan": "assets/graphics/resource_f0/archive.json"
     },
     {
@@ -927,7 +927,7 @@
         {
           "kind": "zero-skip-sprite-archive",
           "size": "0x35ac",
-          "source": "assets/graphics/resource_f2/images",
+          "source": "assets/graphics/resource_f2",
           "plan": "assets/graphics/resource_f2/archive.json",
           "palette": "assets/graphics/0800777c.gbapal.png"
         }
@@ -942,7 +942,7 @@
         {
           "kind": "zero-skip-sprite-archive",
           "size": "0x2844",
-          "source": "assets/graphics/resource_f3/images",
+          "source": "assets/graphics/resource_f3",
           "plan": "assets/graphics/resource_f3/archive.json",
           "palette": "assets/graphics/0800777c.gbapal.png"
         }

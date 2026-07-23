@@ -416,9 +416,10 @@
     "inline_assembly_and_register_pins_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 1,
-   "expected_bytes": 48,
+   "expected_files": 2,
+   "expected_bytes": 80,
    "files": [
+    "080f9ac0",
     "080f9b10"
    ]
   },

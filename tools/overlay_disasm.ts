@@ -1,7 +1,12 @@
 // Tool role: library; imported by tools/build_assets.ts, tools/compiler_template_index.ts, tools/executable_gap_sources.ts (+4 more).
 import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, join } from "node:path";
-import { cflagsForSource, compilerCommand, externalSymbol, externalSymbolAssembly } from "./alchemy_gcc.ts";
+import {
+  cflagsForTargetSource,
+  compilerCommandForTargetSource,
+  externalSymbol,
+  externalSymbolAssembly,
+} from "./alchemy_gcc.ts";
 import { Discovery } from "./discover.ts";
 
 export const ROM_BASE = 0x08000000;
@@ -104,7 +109,9 @@ function compileOverlayC(source: string, work: string): { address: number; data:
   const symbolsObject = join(work, `${stem}.symbols.o`);
   const elf = join(work, `${stem}.elf`);
   const binary = join(work, `${stem}.bin`);
-  checked(compilerCommand(...cflagsForSource(source), "-S", "-o", assembly, source), work);
+  checked(compilerCommandForTargetSource(
+    "gs1", source, ...cflagsForTargetSource("gs1", source), "-S", "-o", assembly, source,
+  ), work);
   checked(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", object, assembly], work);
   const undefinedSymbols = checked(["arm-none-eabi-nm", "-u", object], work)
     .split(/\r?\n/)

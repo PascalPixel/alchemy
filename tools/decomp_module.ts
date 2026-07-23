@@ -6,7 +6,12 @@
 // and exact symbol addresses.
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
-import { cflagsForSource, compilerCommand, externalSymbol, externalSymbolAssembly } from "./alchemy_gcc.ts";
+import {
+  cflagsForTargetSource,
+  compilerCommandForTargetSource,
+  externalSymbol,
+  externalSymbolAssembly,
+} from "./alchemy_gcc.ts";
 import { M2C_PREAMBLE } from "./match_m2c.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
@@ -76,7 +81,9 @@ async function main(): Promise<void> {
   const symbolsSource = `${prefix}.symbols.s`, symbolsObject = `${prefix}.symbols.o`;
   const elf = `${prefix}.elf`, binary = `${prefix}.bin`;
   writeFileSync(cFile, combined);
-  await run(compilerCommand(...cflagsForSource(cFile), "-S", "-o", assembly, cFile));
+  await run(compilerCommandForTargetSource(
+    "gs1", cFile, ...cflagsForTargetSource("gs1", cFile), "-S", "-o", assembly, cFile,
+  ));
   await run(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", object, assembly]);
   const undefinedNames = (await run(["arm-none-eabi-nm", "-u", object])).split(/\r?\n/).filter(Boolean)
     .map((line) => line.trim().split(/\s+/).at(-1)!);

@@ -13,8 +13,8 @@ import {
 import { tmpdir } from "node:os";
 import { basename, dirname, join } from "node:path";
 import {
-  cflagsForSource,
-  compilerCommand,
+  cflagsForTargetSource,
+  compilerCommandForTargetSource,
   externalSymbol,
   externalSymbolAssembly,
 } from "./alchemy_gcc.ts";
@@ -86,7 +86,9 @@ function linkedBytes(stem: string, source: string, scratch: string, kind: "asm" 
   const prefix = join(scratch, `${stem}.${kind}probe`);
   const listing = `${prefix}.s`, object = `${prefix}.o`;
   if (kind === "c") {
-    const compiled = run(compilerCommand(...cflagsForSource(source), "-S", "-o", listing, source));
+    const compiled = run(compilerCommandForTargetSource(
+      "gs1", source, ...cflagsForTargetSource("gs1", source), "-S", "-o", listing, source,
+    ));
     if (compiled.code !== 0) throw new Error(`compiler failed: ${commandError(compiled)}`);
   } else {
     copyFileSync(source, listing);

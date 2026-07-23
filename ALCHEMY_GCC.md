@@ -5,32 +5,37 @@ The approved compiler bundle lives in the sibling repository checkout
 compiler source, build scripts, and the ignored runtime bundle stay out of
 this reconstruction tree entirely.
 
-The bundle directory has one boundary and two approved game compilers:
+The bundle directory has one boundary and three approved compiler lanes:
 
 ```text
 ../alchemy-gcc/dist/
 ├── xgcc, cc1, cpp, tradcpp       # GS1: GCC 2.96 snapshot
 ├── gs2/
 │   └── xgcc, cc1, cpp0, tradcpp0 # GS2: Camelot GCC 3.0 backend
+├── agbcc/
+│   └── old_agbcc                  # source-scoped stock m4a compiler
 └── m2c-venv/          optional decompilation helper
 ```
 
 The four top-level executables are the GS1 compiler. The four executables under
-`gs2/` are the reconstructed GS2 backend. Run `./stage.sh gcc296` and
-`./stage.sh gs2` in the sibling compiler repository after building those
+`gs2/` are the reconstructed GS2 backend. `agbcc/old_agbcc` is a separately
+validated compiler used only by the explicit source-address allowlist in
+`tools/alchemy_gcc.ts`. Run `./stage.sh gcc296`, `./stage.sh gs2`, and
+`./stage.sh agbcc` in the sibling compiler repository after building those
 targets; `./stage.sh --check <target>` verifies that an ignored runtime stage
-still matches its local build. All eight programs are native arm64 Mach-O
+still matches its local build. All nine programs are native arm64 Mach-O
 executables and depend only on macOS `libSystem`; compiler source trees,
 intermediate objects, nested Git repositories, duplicate drivers, and target
 runtime archives do not belong in the bundle. Native `arm-none-eabi` binutils
 remain a host dependency supplied through `PATH`, because they are shared
-generic assembler/linker tools rather than part of the approved compiler's
-code generation.
+generic assembler/linker tools rather than part of the approved compiler's code
+generation.
 
-`bun tools/alchemy_gcc.ts gs1` and `bun tools/alchemy_gcc.ts gs2` check the host
-architecture, target-specific executable set, and approved SHA-256 digests
-before compiler use. Every build and matching tool constructs its compiler
-invocation through that module; no second compiler path is permitted.
+`bun tools/alchemy_gcc.ts gs1`, `bun tools/alchemy_gcc.ts gs2`, and
+`bun tools/alchemy_gcc.ts agbcc` check the host architecture, target-specific
+executable set, and approved SHA-256 digests before compiler use. Every build
+and matching tool constructs its source-aware compiler invocation through that
+module; no unvalidated compiler path is permitted.
 
 The bundle stays outside this repository. Public commits contain only this specification,
 the validator, reconstructed source, and generic tooling—not compiler binaries
@@ -59,7 +64,17 @@ external hint concerns only which public tool to run; every piece of game
 knowledge in this tree remains derived from the approved ROM set.
 
 The stock m4a ("Sappy") audio library that period licensees linked verbatim
-is known to require pret's `old_agbcc` rather than gcc-2.96. Any adoption of
-a second approved compiler for those translation units is a governance
-decision recorded here when its evidence lands, following the per-unit
-compiler precedent of `pret/pokeruby`.
+requires pret's `old_agbcc` rather than gcc-2.96. The source-address allowlist
+currently covers `080fa1fc`, `080fa2a0`, `080fa324`, `080fa350`, `080fa39c`,
+`080fa3f0`, `080fa458`, `080fa490`, `080fa8d4`, `080fa928`, `080fa9a4`,
+`080fa9e0`, `080fab3c`, and `080fb6a4`; each was independently assembled and
+linked to an exact target interval before adoption. No generic directory or
+subsystem switch selects this compiler, following the per-unit compiler
+precedent of `pret/pokeruby`.
+
+The GS1 compiler also exposes a default-off `-mgrouped-dma-store` compatibility
+mode for the historical three-word Thumb DMA descriptor sequence. It lowers
+three explicit scalar words to `stmia` plus a base restore without inline
+assembly or register pins. Only the independently verified `080958a8` and
+`0809bb34` sources enable it; ordinary GS1 sources retain the default code
+generation path.

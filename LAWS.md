@@ -217,6 +217,37 @@ against the approved bundle; full sourced notes in
   drafting prompts is the community's highest-value context signal
   (validates tool-investment priority 5).
 
+### Hardware-load width and widening (agent lane, 2026-07-23)
+
+- **Claim:** on u16 hardware reads, `volatile` on the pointer forces the
+  reference's `ldrh` where the default compiler arbitrarily selects `ldrsh`;
+  independently, loading the value into a `u32` local (rather than relying
+  on u16 int promotion) avoids a spurious r8 mask spill and pointer
+  strength-reduction. Both are zero-flag source shapes.
+- **Current evidence:** 080aac84 candidate improved 158→101 mismatches with
+  the two shapes combined; a diagnostic flag pair
+  (`-fno-expensive-optimizations -fno-strength-reduce`) reaches the same
+  floor, confirming the mechanism. Not yet backed by an installed match.
+- **Next test:** apply to other palette/VRAM u16 loops in the queue; promote
+  on the first exact install carrying the shape.
+- **Recorded:** 2026-07-23 (work/agents/080aac84/NOTES.md).
+
+### Grouped-DMA double-kick gap (2026-07-23)
+
+- **Claim:** back-to-back DMA kicks through one register block defeat the
+  evidenced `-mgrouped-dma-store` mode: the first non-volatile, fully
+  overwritten, unread 12-byte group is deleted as a dead store before the
+  peephole runs; `volatile` preserves it but suppresses the mode entirely.
+  No C shape yields both `stmia` groups.
+- **Current evidence:** 080a22f4 (48-byte leaf, two kicks): kick #2
+  reproduced byte-exact under the mode; best full-function floor 37
+  mismatches (work/agents/080a22f4/NOTES.md).
+- **Next test:** extend the mode in alchemy-gcc so the DMA block survives
+  dead-store elimination (hardware memory class or earlier peephole), then
+  allowlist 080a22f4; else classify the double-kick member as
+  retained-structural per the family's pre-flag inline-asm hypothesis.
+- **Recorded:** 2026-07-23.
+
 ### Pre-epilogue literal pool
 
 - **Claim:** 31 remaining C-debt regions share a structural signature the

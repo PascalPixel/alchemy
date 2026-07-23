@@ -28,6 +28,7 @@ const OPTIMIZE_O1_SOURCES = new Set(["08021e28"]);
 const UNSCHEDULED_SOURCES = new Set([
   "08006b84",
   "08004198", "08004358", "0800439c",
+  "08029274",
   "080fb714", "080fb728", "080fb73c", "080fb750", "080fb75c",
   "080fb768", "080fb77c",
 ]);
@@ -45,10 +46,11 @@ const NO_GCSE_SOURCES = new Set(["080a45cc"]);
 const NO_EXPENSIVE_SOURCES = new Set(["08092878"]);
 // 既定ABI(標準のr4被呼出保存)で構築された収蔵ライブラリ翻訳単位。
 // 証拠: r4を保存する序文は -fcall-used-r4 の下では出ない
-// (バイト複写08006b84、フラッシュ書込列08006dec、LAWS.md「第四層」)。
+// (割込保護記録08006a00、バイト複写08006b84、比較08006c24、
+// フラッシュ書込列08006dec、LAWS.md「第四層」)。
 // 同一cc1・既定フラグ。
 const DEFAULT_ABI_SOURCES = new Set([
-  "08006b84", "08006dec",
+  "08006a00", "08006b84", "08006c24", "08006dec",
 ]);
 
 function sourceStem(source: string): string {

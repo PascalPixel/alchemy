@@ -358,51 +358,8 @@ Overlay_02000000:
 	.4byte 0x47204c00
 	.2byte 0x80d5
 	.2byte 0x0200
-	push	{r5, lr}
-	adds	r5, r0, #0
-	ldr	r1, [r5, #104]
-	cmp	r1, #0
-	beq.n	.L_0200007a
-	adds	r0, #90
-	ldrb	r2, [r0, #0]
-	movs	r3, #254
-	ands	r3, r2
-	strb	r3, [r0, #0]
-	ldr	r0, [r1, #16]
-	ldr	r3, [r5, #16]
-	ldr	r1, [r1, #8]
-	subs	r0, r0, r3
-	ldr	r3, [r5, #8]
-	subs	r1, r1, r3
-	bl	sub_020011b6
-	ldrh	r3, [r5, #6]
-	lsls	r0, r0, #16
-	lsrs	r0, r0, #16
-	subs	r0, r0, r3
-	lsls	r0, r0, #16
-	asrs	r0, r0, #16
-	cmp	r0, #0
-	beq.n	.L_0200007a
-	movs	r2, #128
-	lsls	r2, r2, #5
-	cmp	r0, r2
-	ble.n	.L_0200006e
-	adds	r0, r2, #0
-.L_0200006e:
-	ldr	r2, [pc, #20]
-	cmp	r0, r2
-	bge.n	.L_02000076
-	adds	r0, r2, #0
-.L_02000076:
-	adds	r3, r3, r0
-	strh	r3, [r5, #6]
-.L_0200007a:
-	movs	r0, #1
-	pop	{r5}
-	pop	{r1}
-	bx	r1
-	.2byte 0x0000
-	.4byte 0xf842f001
+AlchemyC_02000030:
+	.space 0x58
 	.4byte 0x31641c01
 	.4byte 0x5eca2300
 	.4byte 0x02126883

@@ -373,17 +373,8 @@ Overlay_02000000:
 	.4byte 0x02009948
 	.2byte 0x2000
 	.2byte 0x4770
-	push	{r5, r6, lr}
-	ldr	r5, [pc, #20]
-	ldrh	r6, [r5, #0]
-	strh	r5, [r5, #0]
-	bl	sub_0200179a
-	bl	sub_02001796
-	strh	r6, [r5, #0]
-	pop	{r5, r6}
-	pop	{r1}
-	bx	r1
-	.4byte 0x04000208
+AlchemyC_0200003c:
+	.space 0x1c
 	.4byte 0x47704800
 	.2byte 0x99f0
 	.2byte 0x0200

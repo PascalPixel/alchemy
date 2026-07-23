@@ -34,6 +34,10 @@ const UNSCHEDULED_SOURCES = new Set([
 // base.  Following jumps during CSE rematerializes one arm's base in r3;
 // disabling that pass preserves the reference's r6 lifetime and coalescing.
 const NO_CSE_FOLLOW_SOURCES = new Set(["0800f9f4"]);
+// This bounded-angle convergence loop only retains the reference allocation
+// when GCC does not perform its expensive-expression rewrite.  The rewrite
+// rotates r0-r2 and folds each signed clamp into a shorter non-reference form.
+const NO_EXPENSIVE_SOURCES = new Set(["08092878"]);
 // 既定ABI(標準のr4被呼出保存)で構築された収蔵ライブラリ翻訳単位。
 // 証拠: r4を保存する序文は -fcall-used-r4 の下では出ない
 // (バイト複写08006b84、フラッシュ書込列08006dec、LAWS.md「第四層」)。
@@ -57,6 +61,7 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(OPTIMIZE_O1_SOURCES.has(stem) ? ["-O1"] : []),
     ...(UNSCHEDULED_SOURCES.has(stem) ? ["-fno-schedule-insns", "-fno-schedule-insns2"] : []),
     ...(NO_CSE_FOLLOW_SOURCES.has(stem) ? ["-fno-cse-follow-jumps"] : []),
+    ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
   ];
 }
 

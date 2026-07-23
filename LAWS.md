@@ -50,7 +50,7 @@ must be tested on more than one function before being generalized.
   returns through `bx lr` is evidence for reclassification, a different
   toolchain, or deliberate assembly rather than ordinary approved-compiler C.
 - **Evidence:** the independently reproduced compiler experiment and classified
-  regions documented in [ASSEMBLY.md](ASSEMBLY.md#approved-compiler-prologue-evidence).
+  regions documented in [CONVENTIONS.md](CONVENTIONS.md#approved-compiler-prologue-evidence).
 - **Confirmed:** 2026-07-19.
 
 ### Volatile stores fence load hoisting

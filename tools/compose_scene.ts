@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Tool role: both; imported by tools/bg_tile_usage.ts, tools/tile_objects.ts; invoked by ASSETS.md.
+// Tool role: both; imported by tools/bg_tile_usage.ts, tools/tile_objects.ts; invoked by CONVENTIONS.md.
 /**
  * 地図コンテナの正規タイル素材を、確認用の一枚絵として合成する。
  *

@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Tool role: both; imported by tools/build_assets.ts, tools/compose_scene.ts; invoked by ASSETS.md, assets/README.md.
+// Tool role: both; imported by tools/build_assets.ts, tools/compose_scene.ts; invoked by CONVENTIONS.md, assets/README.md.
 import { canonicalJson } from "./canonical_json.ts";
 /**
  * 地図上で合成した物体画像から4bppタイルバンクを正確に構築する。

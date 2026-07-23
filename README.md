@@ -103,11 +103,11 @@ Nintendo or Camelot, and is non-commercial.
   rules followed by coding agents.
 - [ALCHEMY_GCC.md](ALCHEMY_GCC.md) — the private historical compiler bundle and
   native Apple Silicon build environment.
-- [ASSEMBLY.md](ASSEMBLY.md) — which assembly remains, why it remains, and which
+- [CONVENTIONS.md](CONVENTIONS.md) — which assembly remains, why it remains, and which
   regions are still C-decompilation work.
-- [ASSETS.md](ASSETS.md) — how graphics, maps, text, audio, archives, and other
+- [CONVENTIONS.md](CONVENTIONS.md) — how graphics, maps, text, audio, archives, and other
   game data become canonical source assets.
-- [NAMING.md](NAMING.md) — the period-authentic Japanese naming and comment
+- [CONVENTIONS.md](CONVENTIONS.md) — the period-authentic Japanese naming and comment
   conventions used by the reconstruction.
 - [PUBLICATION.md](PUBLICATION.md) — the source-only publication boundary and
   the material that must never enter the public repository.

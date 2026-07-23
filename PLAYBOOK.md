@@ -296,7 +296,7 @@ Seed entries with in-repo provenance today:
   unconverted `080fb670`; treat the register floor there as a separate open
   gate.
 - **Prologue `lr` rule**: the approved compiler saves `lr` in any Thumb
-  function containing a branch, even a leaf ([ASSEMBLY.md](ASSEMBLY.md)). An
+  function containing a branch, even a leaf ([CONVENTIONS.md](CONVENTIONS.md)). An
   internal branch without an `lr` save is reclassification evidence, not
   C debt.
 - **Register-reservation flags are module declarations**, accepted only with

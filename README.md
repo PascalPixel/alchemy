@@ -60,8 +60,9 @@ previews: every asset is meant to encode back into its exact place in the game.
 The canonical English Golden Sun ROM layout is fully represented by
 reconstructed source and builds byte-identically without a ROM fallback. That
 does not make the whole project complete. A large body of
-byte-verified assembly will still have to become matching C, the other eleven
-approved editions remain future build targets, and round-tripping asset
+byte-verified assembly will still have to become matching C, GS2 English is
+only a one-function native bootstrap, the remaining ten approved editions
+remain future build targets, and round-tripping asset
 containers still need a semantic quality audit. Exact encoding is necessary,
 but a mechanically wrapped or fragmented source image is still provisional
 work.
@@ -76,6 +77,7 @@ You can run every source-only structural check without a ROM:
 ```sh
 bun run test
 bun tools/build_full.ts --source-only
+bun tools/build_full.ts --target gs2-en --source-only
 ```
 
 The current private verification build requires your own legally obtained
@@ -83,6 +85,11 @@ English Golden Sun ROM and the matching compiler described in the technical
 documents. Later targets will require the corresponding legally obtained ROM
 only for local verification. ROMs, playable builds, private comparison reports,
 toolchains, and generated build products are never tracked here.
+
+The `gs2-en` target selects the native reconstructed GS2 compiler backend,
+isolated `games/gs2/` sources, and a 16 MiB layout. It currently verifies one
+small C function byte-for-byte and reports the rest as unowned; it is a working
+decompilation target, not a full-ROM reconstruction claim.
 
 Alchemy is guided by Pascal Pixel, is not affiliated with or endorsed by
 Nintendo or Camelot, and is non-commercial.

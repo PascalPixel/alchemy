@@ -2,12 +2,19 @@
 // Tool role: entrypoint; invoked by AGENTS.md, PLAYBOOK.md, README.md (+5 more).
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, extname, isAbsolute, join, resolve } from "node:path";
+import {
+  DEFAULT_TARGET,
+  decompTarget,
+  parseDecompTarget,
+  type DecompTargetId,
+} from "./decomp_targets.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
 const ROM_SIZE = 0x00800000;
 
 interface Options {
+  target: DecompTargetId;
   rom: string;
   sourceOnly: boolean;
   output: string;
@@ -121,7 +128,8 @@ function hasAssemblySources(directory: string): boolean {
 
 function usage(): void {
   console.log(
-    "usage: build_full.ts [-h] [-o OUTPUT] [--claimed-output CLAIMED_OUTPUT] " +
+    "usage: build_full.ts [-h] [--target gs1-en|gs2-en] [-o OUTPUT] " +
+    "[--claimed-output CLAIMED_OUTPUT] " +
     "[--asm-output ASM_OUTPUT] [--asset-manifest ASSET_MANIFEST] " +
     "[--asset-output ASSET_OUTPUT] [--jobs JOBS] [--source-only] [rom] | --self-test",
   );
@@ -392,14 +400,28 @@ export function selfTest(): void {
 }
 
 function parseArgs(argv: string[]): Options {
+  let targetId: DecompTargetId = DEFAULT_TARGET;
+  for (let index = 0; index < argv.length; index++) {
+    const argument = argv[index];
+    if (argument === "--target") {
+      const value = argv[++index];
+      if (value === undefined) throw new Error("--target requires a value");
+      targetId = parseDecompTarget(value);
+    } else if (argument.startsWith("--target=")) {
+      targetId = parseDecompTarget(argument.slice(9));
+    }
+  }
+  const target = decompTarget(targetId);
+  const fullOutput = join(target.outputDir, "full");
   const options: Options = {
-    rom: "roms/gs1-en.gba",
+    target: targetId,
+    rom: target.rom,
     sourceOnly: false,
-    output: "out/full/rebuilt.gba",
-    claimedOutput: "out/full/claimed",
-    asmOutput: "out/full/asm",
-    assetManifest: "assets/manifest.json",
-    assetOutput: "out/full/assets",
+    output: join(fullOutput, "rebuilt.gba"),
+    claimedOutput: join(fullOutput, "claimed"),
+    asmOutput: join(fullOutput, "asm"),
+    assetManifest: target.assetManifest,
+    assetOutput: join(fullOutput, "assets"),
     jobs: Math.min(16, navigator.hardwareConcurrency || 1),
   };
   const keys: Record<string, keyof Options> = {
@@ -422,6 +444,11 @@ function parseArgs(argv: string[]): Options {
       options.sourceOnly = true;
       continue;
     }
+    if (argument === "--target") {
+      index++;
+      continue;
+    }
+    if (argument.startsWith("--target=")) continue;
     const equal = argument.indexOf("=");
     const option = equal >= 0 ? argument.slice(0, equal) : argument;
     if (option in keys) {
@@ -458,11 +485,20 @@ async function main(): Promise<void> {
     return;
   }
   const args = parseArgs(Bun.argv.slice(2));
+  const target = decompTarget(args.target);
   const romPath = resolve(process.cwd(), args.rom);
   const rom = args.sourceOnly ? null : readFileSync(romPath);
-  const romSize = rom?.length ?? ROM_SIZE;
+  if (rom !== null && rom.length !== target.romSize) {
+    throw new Error(`${target.id} ROM must contain exactly ${target.romSize} bytes`);
+  }
+  const romSize = target.romSize;
   const claimed = rooted(args.claimedOutput);
-  const claimedCommand = [process.execPath, "tools/build_claimed.ts"];
+  const claimedCommand = [
+    process.execPath,
+    "tools/build_claimed.ts",
+    "--target",
+    target.id,
+  ];
   if (args.sourceOnly) claimedCommand.push("--source-only");
   else claimedCommand.push(romPath);
   claimedCommand.push("--jobs", String(args.jobs), "--output", claimed);
@@ -489,7 +525,7 @@ async function main(): Promise<void> {
 
   const asmRegions: AssemblyRegion[] = [];
   let asmAccounting = assemblySourceAccounting([]);
-  const asmDirectory = join(ROOT, "asm");
+  const asmDirectory = rooted(target.asmDir);
   if (existsSync(asmDirectory) && hasAssemblySources(asmDirectory)) {
     const asmOutput = rooted(args.asmOutput);
     const asmCommand = [process.execPath, "tools/build_asm.ts"];
@@ -605,6 +641,8 @@ async function main(): Promise<void> {
   }, null, 2) + "\n");
   const report = {
     format: 1,
+    target: target.id,
+    compiler: target.compiler,
     rom_base: ROM_BASE,
     rom_size: romSize,
     code_regions: manifest.regions.length,

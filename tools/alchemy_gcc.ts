@@ -9,10 +9,26 @@ export const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 export const BUNDLE = join(ROOT, "..", "alchemy-gcc", "dist");
 export const DRIVER = join(BUNDLE, "xgcc");
 export const M2C = join(BUNDLE, "m2c-venv/bin/m2c");
+export type CompilerTarget = "gs1" | "gs2";
+export const GS2_BUNDLE = join(BUNDLE, "gs2");
+export const GS2_DRIVER = join(GS2_BUNDLE, "xgcc");
 export const CFLAGS = [
   "-O2", "-mthumb", "-mthumb-interwork", "-mcpu=arm7tdmi",
   "-fno-builtin", "-nostdinc", "-ffreestanding", "-fcall-used-r4",
 ] as const;
+export const GS2_CFLAGS = [...CFLAGS, "-ffixed-r7"] as const;
+
+export function bundleForTarget(target: CompilerTarget): string {
+  return target === "gs1" ? BUNDLE : GS2_BUNDLE;
+}
+
+export function driverForTarget(target: CompilerTarget): string {
+  return target === "gs1" ? DRIVER : GS2_DRIVER;
+}
+
+export function cflagsForTarget(target: CompilerTarget): readonly string[] {
+  return target === "gs1" ? CFLAGS : GS2_CFLAGS;
+}
 
 // These tiny command-stream handlers never use r3 in the reference code.  GCC
 // reproduces their allocation exactly when the translation unit reserves r3,
@@ -90,6 +106,10 @@ export function cflagsForSource(source: string): readonly string[] {
   ];
 }
 
+export function cflagsForTargetSource(target: CompilerTarget, source: string): readonly string[] {
+  return target === "gs1" ? cflagsForSource(source) : [...GS2_CFLAGS];
+}
+
 const ADDRESS_SYMBOL = /^(Func|Data|Value)_([0-9a-f]{8})$/;
 const CALL_VIA_SYMBOL = /^_call_via_r(1[0-3]|[0-9])$/;
 const CALL_VIA_ALIAS = /^_call_via_(sl|fp|ip|sp)$/;
@@ -132,56 +152,73 @@ export function externalSymbolAssembly(name: string): string {
   return `.global ${name}\n${symbol.thumb ? ".thumb_func\n" : ""}.set ${name}, 0x${symbol.address.toString(16).padStart(8, "0")}\n`;
 }
 
-const EXPECTED: Record<string, string> = {
-  xgcc: "8087fb1911b00aafe8ba9dc1530ca84a98774206f24d95b3ac8a8f01bf8a6eb6",
-  cpp: "28621e18b2a6b663e1ea6e47750ca0133483f4287bc271265cc7e2fcfa69a2eb",
-  tradcpp: "88dae1204f5e928c7de003fd25263e91a18802f8ffde48b6f076e2ee1ea3e59a",
-  cc1: "07671de3a21d8c169ce09e355780cd77c39078f926a73db8ea9cf26850ed0846",
+const EXPECTED: Record<CompilerTarget, Record<string, string>> = {
+  gs1: {
+    xgcc: "8087fb1911b00aafe8ba9dc1530ca84a98774206f24d95b3ac8a8f01bf8a6eb6",
+    cpp: "28621e18b2a6b663e1ea6e47750ca0133483f4287bc271265cc7e2fcfa69a2eb",
+    tradcpp: "88dae1204f5e928c7de003fd25263e91a18802f8ffde48b6f076e2ee1ea3e59a",
+    cc1: "07671de3a21d8c169ce09e355780cd77c39078f926a73db8ea9cf26850ed0846",
+  },
+  gs2: {
+    xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",
+    cpp0: "b4ac7f5ff7fd74f4eca40385832fd0360d13cb5d4f0b6c8b3ead4a67d2f3d5b0",
+    tradcpp0: "7698319dfea3647dace68ffb5c3dbc0fd459f3a859699acb47c669d3eb8956a3",
+    cc1: "91b2a67275a100e8b6695d85ef2d82d1fd144853cbcb361ddf1d8be31858230f",
+  },
 };
 
-let validated = false;
+const validated = new Set<CompilerTarget>();
 
 function outputText(value: Uint8Array): string {
   return Buffer.from(value).toString("utf8");
 }
 
-export function validateBundle(): void {
-  if (validated) return;
+export function validateBundle(target: CompilerTarget = "gs1"): void {
+  if (validated.has(target)) return;
   if (process.platform !== "darwin" || process.arch !== "arm64") {
     throw new Error("alchemy-gcc requires native arm64 macOS");
   }
-  for (const [name, expected] of Object.entries(EXPECTED)) {
-    const path = join(BUNDLE, name);
+  const bundle = bundleForTarget(target);
+  for (const [name, expected] of Object.entries(EXPECTED[target])) {
+    const path = join(bundle, name);
     let mode = 0;
     try {
       mode = statSync(path).mode;
     } catch {
-      throw new Error(`alchemy-gcc is missing executable ${name}`);
+      throw new Error(`alchemy-gcc ${target} bundle is missing executable ${name}`);
     }
     if ((mode & 0o111) === 0) {
-      throw new Error(`alchemy-gcc is missing executable ${name}`);
+      throw new Error(`alchemy-gcc ${target} bundle is missing executable ${name}`);
     }
     const actual = new Bun.CryptoHasher("sha256").update(readFileSync(path)).digest("hex");
     if (actual !== expected) {
-      throw new Error(`alchemy-gcc/${name} has an unapproved digest`);
+      throw new Error(`alchemy-gcc ${target}/${name} has an unapproved digest`);
     }
   }
   // 起動確認。並列処理の前に移設済み補助実行体を一つずつ起動する。
   // 初回起動を同時に行うとmacOSの検証処理が競合する。
   const smoke = Bun.spawnSync(
-    [DRIVER, `-B${BUNDLE}/`, "-S", "-x", "c", "-o", "/dev/null", "/dev/null"],
+    [driverForTarget(target), `-B${bundle}/`, "-S", "-x", "c", "-o", "/dev/null", "/dev/null"],
     { cwd: ROOT, stdout: "pipe", stderr: "pipe" },
   );
   if (smoke.exitCode !== 0) {
     const detail = (outputText(smoke.stderr) || outputText(smoke.stdout)).trim();
-    throw new Error(`alchemy-gcc smoke compile failed: ${detail}`);
+    throw new Error(`alchemy-gcc ${target} smoke compile failed: ${detail}`);
   }
-  validated = true;
+  validated.add(target);
 }
 
 export function compilerCommand(...arguments_: Array<string | number>): string[] {
-  validateBundle();
-  return [DRIVER, `-B${BUNDLE}/`, ...arguments_.map(String)];
+  return compilerCommandForTarget("gs1", ...arguments_);
+}
+
+export function compilerCommandForTarget(
+  target: CompilerTarget,
+  ...arguments_: Array<string | number>
+): string[] {
+  validateBundle(target);
+  const bundle = bundleForTarget(target);
+  return [driverForTarget(target), `-B${bundle}/`, ...arguments_.map(String)];
 }
 
 // Hot-search pipeline: invoke the approved preprocessor and cc1 directly, saving
@@ -220,11 +257,18 @@ export function directCompilerCommand(input: string, output: string, dumpbase: s
 }
 
 function main(): void {
-  validateBundle();
-  const size = Object.keys(EXPECTED)
-    .map((name) => statSync(join(BUNDLE, name)).size)
+  const argument = Bun.argv[2] ?? "gs1";
+  if (argument !== "gs1" && argument !== "gs2") {
+    throw new Error(`unsupported compiler target: ${argument}`);
+  }
+  const target: CompilerTarget = argument;
+  validateBundle(target);
+  const bundle = bundleForTarget(target);
+  const size = Object.keys(EXPECTED[target])
+    .map((name) => statSync(join(bundle, name)).size)
     .reduce((sum, value) => sum + value, 0);
-  console.log(`alchemy-gcc=ok host=arm64 files=${Object.keys(EXPECTED).length} bytes=${size}`);
+  const label = target === "gs1" ? "alchemy-gcc=ok" : "alchemy-gcc=gs2 ok";
+  console.log(`${label} host=arm64 files=${Object.keys(EXPECTED[target]).length} bytes=${size}`);
 }
 
 if (import.meta.main) main();

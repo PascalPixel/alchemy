@@ -208,7 +208,7 @@ function componentEnd(offsets: readonly number[], slot: number, size: number): n
 }
 
 function componentSources(directory: string, slot: number): string[] {
-  const components = join(directory, "components");
+  const components = directory;
   if (slot === 0) return [join(components, "metatiles.tilemap"), join(components, "metatiles.lz.json")];
   if (slot === 1) return [join(components, "descriptors.json"), join(components, "descriptors.lz.json")];
   if (slot === 2) return [
@@ -479,7 +479,7 @@ function buildComponent(directory: string, slot: number, expectedSize: number): 
 
 function buildResource(entry: ResourceEntry, spec: ResourceSpec, root: string): BuiltChiikiMap {
   const directory = confined(root, entry.directory);
-  const headerSource = join(directory, "components/header.json");
+  const headerSource = join(directory, "header.json");
   const headerPath = realpathSync(headerSource);
   if (headerPath !== resolve(headerSource)) throw new Error("regional-map header is not at its canonical path");
   validateHeader(headerPath);
@@ -561,7 +561,7 @@ function writeChiikiMapSeries(rom: Buffer, directory: string): IndexDocument {
     if (container.length !== spec.size) throw new Error(`resource ${idText(spec.id)} is outside the ROM`);
     const name = `resource_${idText(spec.id)}`;
     const resourceDirectory = join(directory, name);
-    const components = join(resourceDirectory, "components");
+    const components = resourceDirectory;
     mkdirSync(components, { recursive: true });
     const offsets = export_header(container, join(components, "header.json"));
     componentOffsets(container.subarray(0, HEADER_SIZE), spec.size);

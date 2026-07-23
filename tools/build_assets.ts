@@ -563,7 +563,7 @@ function expandSeries(manifest: Json, entries: Json[]): void {
     } else if (series.kind === "golden-sun-map-component-series") {
       for (const family of series.families) {
         const name = String(family.id).toLowerCase();
-        const directory = `assets/maps/resource_${name}/components`;
+        const directory = `assets/maps/resource_${name}`;
         const header = family.header;
         const container = number(header.address);
         const offsetsCheck: Record<number, number> = {};

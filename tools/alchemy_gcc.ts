@@ -81,7 +81,17 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // Thumb lowering uses one writeback STMIA and restores the descriptor base.
 const GROUPED_DMA_STORE_SOURCES = new Set([
   "080049e8", "08004a28", "08004a5c", "080958a8", "0809bb34",
-, "08004a44"]);
+, "08004a44", "08004838", "08004858", "08004a94"]);
+
+// Nine sound-request entry wrappers: the entry pool load precedes the
+// parameter copies only under the evidenced entry-literal-first mode with
+// the second scheduling pass off (work/hand/compiler-cohort-integration.md).
+const ENTRY_LITERAL_FIRST_SOURCES = new Set([
+  "0800383c", "0800387c", "080038bc", "080038fc", "0800393c",
+  "0800397c", "080039bc", "080039fc", "08003a3c",
+]);
+const HIGH_REGISTER_MOVE_FIRST_SOURCES = new Set(["0808b8e8"]);
+const EARLY_FRAME_ALLOCATION_SOURCES = new Set(["0809802c"]);
 // These overlay-local object constructors share one exact compiler fingerprint:
 // immediately before a call, the independent r0 register copy precedes the r1
 // immediate. Their common filename is not unique, so routing must use the
@@ -158,6 +168,10 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
+    ...(ENTRY_LITERAL_FIRST_SOURCES.has(stem)
+      ? ["-fno-schedule-insns2", "-mthumb-entry-literal-first"] : []),
+    ...(HIGH_REGISTER_MOVE_FIRST_SOURCES.has(stem) ? ["-mhigh-register-move-first"] : []),
+    ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
     ...(CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
@@ -381,6 +395,10 @@ export function directCompilerCommand(
     ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
+    ...(ENTRY_LITERAL_FIRST_SOURCES.has(stem)
+      ? ["-fno-schedule-insns2", "-mthumb-entry-literal-first"] : []),
+    ...(HIGH_REGISTER_MOVE_FIRST_SOURCES.has(stem) ? ["-mhigh-register-move-first"] : []),
+    ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mcall-arg0-move-first"]

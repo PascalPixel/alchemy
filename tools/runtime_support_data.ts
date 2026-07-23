@@ -2,6 +2,7 @@
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
 import { isCanonicalJsonText } from "./canonical_json.ts";
 import { lstatSync, renameSync, statSync, unlinkSync } from "fs";
+import { tmpdir } from "node:os";
 
 export const RUNTIME_SUPPORT_ADDRESS = 0x0800795c;
 export const RUNTIME_SUPPORT_END = 0x08009000;
@@ -466,17 +467,14 @@ function canonical_keys(path: string[]): string[] | undefined {
   return undefined;
 }
 
-function compact_array(path: string[]): boolean {
-  const joined = path.join(".");
-  return /^timing_sets\.[a-z0-9_]+\.slots\.[0-9]+$/.test(joined) ||
-    /^flash_devices\.[a-z0-9_]+\.wait_control$/.test(joined);
+function isPrimitiveJson(value: unknown): boolean {
+  return value === null || typeof value === "number" || typeof value === "string" || typeof value === "boolean";
 }
 
 function canonical_json(value: unknown, depth = 0, path: string[] = []): string {
   if (Array.isArray(value)) {
     if (value.length === 0) return "[]";
-    if (compact_array(path)) {
-      if (value.some((item) => typeof item === "object")) throw new Error("compact runtime-support array contains a compound value");
+    if (value.every(isPrimitiveJson)) {
       return `[${value.map((item, index) => canonical_json(item, depth, [...path, String(index)])).join(", ")}]`;
     }
     const indentation = " ".repeat(depth + 2);
@@ -587,9 +585,9 @@ export async function self_test(): Promise<void> {
   try { await refuse_source_alias(sourcePath, sourcePath); } catch { aliasRejected = true; }
   if (!aliasRejected) throw new Error("runtime-support physical-alias self-test failed");
   let directoryRejected = false;
-  try { await refuse_source_alias(sourcePath, "/private/tmp"); } catch { directoryRejected = true; }
+  try { await refuse_source_alias(sourcePath, tmpdir()); } catch { directoryRejected = true; }
   if (!directoryRejected) throw new Error("runtime-support output-type self-test failed");
-  const outputPath = `/private/tmp/runtime-support-${process.pid}-${crypto.randomUUID()}.bin`;
+  const outputPath = `${tmpdir()}/runtime-support-${process.pid}-${crypto.randomUUID()}.bin`;
   try {
     const expected = built.regions.get(NUMBER_ADDRESS)!;
     await atomic_write(outputPath, expected);

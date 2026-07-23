@@ -61,9 +61,14 @@ function read_json(path: string): any {
   return JSON.parse(readFileSync(path, "utf8"));
 }
 
+/** 地図接頭辞のヘッダが存在するか調べる。 */
+export function has_map_prefix(map_dir: string): boolean {
+  return existsSync(`${map_dir}_header.json`);
+}
+
 /** ヘッダに記録された画面寸法と必要セル数を返す。 */
 export function scene_dimensions(map_dir: string): SceneDimensions {
-  const document = read_json(join(map_dir, "header.json"));
+  const document = read_json(`${map_dir}_header.json`);
   const parameters = document.parameters ?? [];
   if (parameters.length !== 12) {
     throw new Error("map header requires twelve parameter bytes");
@@ -80,7 +85,7 @@ export function scene_dimensions(map_dir: string): SceneDimensions {
 
 /** ヘッダ指定から二個の表示窓へ割り当てる文字ブロック順を返す。 */
 export function tile_window_order(map_dir: string): WindowOrder {
-  const document = read_json(join(map_dir, "header.json"));
+  const document = read_json(`${map_dir}_header.json`);
   const parameters = document.parameters ?? [];
   if (parameters.length !== 12) {
     throw new Error("map header requires twelve parameter bytes");
@@ -187,8 +192,8 @@ export function parse_metatiles(path: string): number[][] {
 
 /** 128×128グリッドから下位12bitのメタタイル番号を復元する。 */
 export function cell_indices(grid_dir: string, metatile_count: number): number[][] {
-  const [, , low] = indexed_png(readFileSync(join(grid_dir, "value_low.png")));
-  const [, , high] = indexed_png(readFileSync(join(grid_dir, "value_high.png")));
+  const [, , low] = indexed_png(readFileSync(`${grid_dir}_grid_value_low.png`));
+  const [, , high] = indexed_png(readFileSync(`${grid_dir}_grid_value_high.png`));
   const cells: number[][] = [];
   for (let y = 0; y < GRID; y += 1) {
     const row: number[] = [];
@@ -215,7 +220,7 @@ export function compose(map_dir: string, linkage: Linkage): [SceneImage, number]
   }
   const palette_path = palettes[linkage.palette.toLowerCase()];
   const palette = load_palette(palette_path);
-  const metatiles = parse_metatiles(join(map_dir, "metatiles.tilemap"));
+  const metatiles = parse_metatiles(`${map_dir}_metatiles.tilemap`);
   const cells = cell_indices(map_dir, metatiles.length);
   const [width, height, cells_wide, cells_high] = scene_dimensions(map_dir);
   const pixels = Buffer.alloc(width * height * 3);
@@ -328,9 +333,9 @@ export function renderable_records(): Linkage[] {
     for (const row of rows) {
       const linkage = row as Linkage;
       const map_dir = join(ROOT, `assets/maps/resource_${cid}`);
-      const order = existsSync(map_dir) ? tile_window_order(map_dir) : [];
+      const order = has_map_prefix(map_dir) ? tile_window_order(map_dir) : [];
       if (
-        existsSync(map_dir) &&
+        has_map_prefix(map_dir) &&
         palettes[linkage.palette.toLowerCase()] !== undefined &&
         order.every((number) => banks[linkage[`vram_charblock${number}` as keyof Linkage]!.toString().toLowerCase()] !== undefined)
       ) {

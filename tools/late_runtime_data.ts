@@ -802,7 +802,7 @@ function zeroSources(catalog: LateRuntimeCatalog): Map<string, LateRuntimeSource
 
 export function selfTest(): void {
   const temporary = mkdtempSync(join(tmpdir(), "alchemy-late-runtime-"));
-  const catalogPath = resolve("assets/data/late_runtime/catalog.json");
+  const catalogPath = resolve("assets/data/late_runtime_catalog.json");
   let rejected = 0;
   const reject = (action: () => void): void => { try { action(); } catch { rejected++; } };
   try {

@@ -15,7 +15,7 @@ import {
   unlinkSync,
   writeFileSync,
 } from "node:fs";
-import { dirname, isAbsolute, join, relative, resolve } from "node:path";
+import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
 
 import { resourceGraphicsDir } from "./asset_paths.ts";
 import { tile_png } from "./export_asset.ts";
@@ -85,7 +85,14 @@ export function number(value: string | number): number {
 
 export function child(plan_path: string, name: string): string {
   const parent = resolve(dirname(plan_path));
-  const path = resolve(parent, name);
+  // Flat layout: siblings share the plan's resource prefix (text before the
+  // final component name, e.g. map_resource_152_charblock2.objects.json ->
+  // map_resource_152_).
+  const base = basename(plan_path);
+  const marker = base.lastIndexOf("_");
+  const prefix = marker >= 0 ? base.slice(0, marker + 1) : "";
+  const flat = resolve(parent, prefix + name.replace(/\//g, "_"));
+  const path = existsSync(flat) ? flat : resolve(parent, name);
   const local = relative(parent, path);
   if (!local || local === ".." || local.startsWith(`..${process.platform === "win32" ? "\\" : "/"}`) || isAbsolute(local)) {
     throw new Error("object-bank source must stay beside its plan");

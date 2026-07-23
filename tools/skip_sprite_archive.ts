@@ -106,7 +106,7 @@ export function build_archive(plan: SpritePlan, directory: string, palettePath: 
     throw new Error("sprite stream order is not a permutation");
   const palette = read_palette(palettePath, Number(plan.palette_offset), Number(plan.palette_entries));
   const images = Array.from({ length: count }, (_, index) =>
-    read_image(join(directory, `images_frame_${index.toString().padStart(2, "0")}.png`), width, height, palette));
+    read_image(`${directory}_images_frame_${index.toString().padStart(2, "0")}.png`, width, height, palette));
   const streams = images.map(encode_stream);
   const headerSize = (count + 1) * 4;
   const offsets = Array<number>(count);
@@ -170,7 +170,7 @@ export function export_archive(
   const paletteOffset = 16, paletteEntries = 224;
   const palette = read_palette(palettePath, paletteOffset, paletteEntries);
   mkdirSync(directory, { recursive: true });
-  images.forEach((image, index) => writeFileSync(join(directory, `images_frame_${index.toString().padStart(2, "0")}.png`), png(image, width, height, palette)));
+  images.forEach((image, index) => writeFileSync(`${directory}_images_frame_${index.toString().padStart(2, "0")}.png`, png(image, width, height, palette)));
   const plan: SpritePlan = {
     format: 1, codec: "zero-skip-sprite-archive", width, height, images: images.length,
     palette_offset: paletteOffset, palette_entries: paletteEntries, stream_order: order,

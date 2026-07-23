@@ -122,7 +122,7 @@ derives the 13,972-byte section fill rather than storing it. The complete
 comparison was essential to avoid misclassifying its compressed stream as
 executable code.
 
-`data/resource_5/database.json` reconstructs the consumer-indexed gameplay
+`data/resource_5_database.json` reconstructs the consumer-indexed gameplay
 tables shared byte-for-byte by all six Golden Sun localizations: eight level
 experience curves, inventory counters and party order, 324 item records, 519
 abilities, 165 combatant templates, hero growth, summons, 203 classes,
@@ -162,7 +162,7 @@ frame-arranged 4bpp atlases. The atlas geometry preserves the runtime frame
 boundaries instead of presenting the banks as arbitrary tile sheets. Together
 the sources rebuild all 12,582 bytes at `0x080c2a0a..0x080c5b30` exactly.
 
-`code/resource_3ce/` reconstructs the battle descriptor's final compressed
+`code/resource_3ce_` reconstructs the battle descriptor's final compressed
 Thumb overlay as relocatable assembly and a payload-free general-LZ token plan.
 The 1,945-byte stream expands to 5,772 bytes at `0x02000000`; the builder also
 derives the final 11,076-byte zero-filled ROM tail. Three unconsumed alignment
@@ -177,14 +177,14 @@ inside `0x080c5c10..0x080c9000`; the intervening eight bytes remain fallback
 because no consumer proves their meaning.
 
 Resource 2 preserves its twelve-digit numeric stamp as text plus an explicit
-four-byte trailer. `graphics/resource_13/font.4bpp.png` is the complete 256-
+four-byte trailer. `graphics/resource_13_font.4bpp.png` is the complete 256-
 glyph 8x8 UI font in character-code order. Resource 14 preserves 1,120
 BGR555-compatible words in a neutral 16-column RGBA visualization without
 claiming unproven palette rows. Resource 18 is the coherent 240x160 8bpp
 Nintendo screen selected by `Func_080f2b70`; its indexed PNG carries the exact
 224-color palette and a payload-free tag-1 compression plan.
 
-`graphics/resource_15/` through `graphics/resource_17/` reconstruct the title
+`graphics/resource_15_` through `graphics/resource_17_` reconstruct the title
 sequence's native graphics packages. Resource 15 separates the OBJ light,
 sun, and rainbow pieces according to their runtime tile starts. Resource 16 is
 the coherent 240x160 8bpp title raster. Resource 17 is a vertically streamed
@@ -193,7 +193,7 @@ the coherent 240x160 8bpp title raster. Resource 17 is a vertically streamed
 plans restore the compressed streams. Resources 16 and 17 include structural
 zero alignment; resource 15's final unproven nonzero byte remains fallback.
 
-`graphics/resource_19/` is one compressed graphics package. Its tracked
+`graphics/resource_19_` is one compressed graphics package. Its tracked
 sources are a BGR555 palette PNG, two 8bpp tile PNGs, a 32×32 text tilemap,
 and a payload-free custom-LZ token plan. The plan records literal positions
 and copy decisions; literal bytes come from the PNG/text components during
@@ -202,7 +202,7 @@ A generated, non-source preview may render the four proven dynamic states after
 applying the real palette, 32x32 tilemap, tile flips, and the runtime
 `0x340`-byte dynamic upload. Such previews remain ignored build products.
 
-`graphics/resource_01c/` reconstructs resource 1C as a 16-color glyph bank:
+`graphics/resource_01c_` reconstructs resource 1C as a 16-color glyph bank:
 one 16-entry BGR555 palette followed by thirty-six 8×8 4bpp glyphs, stored as
 one canonical 9×4 indexed PNG. A payload-free general-LZ token plan restores
 the complete 692-byte stream at `0x0833ac08..0x0833aebc` exactly. `kana` is a
@@ -261,7 +261,7 @@ as text. D7 contains two banks of 512 four-byte terrain-property records. The
 PNG row wrapping is presentational only; the manifest preserves linear order.
 All four compression plans contain token choices but no literal payload bytes.
 
-`graphics/resource_f1/` contains 49 independently compressed 32x32 8-bit
+`graphics/resource_f1_` contains 49 independently compressed 32x32 8-bit
 indexed graphics blocks in one 7x7 PNG atlas. Multiple consumers decode one
 selected `0x400`-byte block; one path remaps its byte indices through palette
 RAM and uploads the result to VRAM. The archive uses a 16-bit offset table and
@@ -284,14 +284,14 @@ moves by no more than eight in either component, and the remaining entries are
 visually noisy 4bpp interpretation. The pair names remain numeric because the
 runtime selector and coordinate system are not yet proven.
 
-`graphics/resource_e7/` reconstructs one compressed UI-graphics package as
+`graphics/resource_e7_` reconstructs one compressed UI-graphics package as
 five 16-color BGR555 palette banks and 256 4bpp tiles. Pixel-edge continuity
 fixes the native tile order at four tiles wide: every consecutive group of
 sixteen tiles is one coherent 32x32 frame, yielding sixteen frames and five
 color variants. Non-source previews generated from those tracked sources remain
 ignored build products.
 
-`graphics/resource_f0/images_` contains 57 unique, palette-correct 32x32 4bpp
+`graphics/resource_f0_images_` contains 57 unique, palette-correct 32x32 4bpp
 images. The ROM's 80-entry 16-bit offset table contains 23 null slots and one
 offset for each image, represented by `archive.json`. Each package contains a
 16-color palette followed by a terminating LSB-first run/move-to-front pixel
@@ -299,7 +299,7 @@ stream and zero alignment. The recovered encoder is canonical and rebuilds the
 entire `0x592c`-byte archive exactly. `preview.atlas.png` is a generated
 non-source contact sheet of the same PNGs.
 
-`graphics/resource_f2/` through `graphics/resource_127/` contain 54
+`graphics/resource_f2_` through `graphics/resource_127_` contain 54
 palette-correct indexed sprite archives. The runtime ARM decoder proves byte
 values `1..0xdf` are pixel indices, `0xe0..0xff` skip 1..32 transparent
 pixels, and zero terminates a frame. All 32x32 and 64x64 streams land exactly
@@ -316,9 +316,9 @@ use semantic operations and 1,997 symbolic labels, preserving pointer aliases
 without embedding pointer bytes. The catalog and first three character banks
 form one exact 139,260-byte runtime unit.
 
-`graphics/characters/chr_0818/`, `graphics/characters/chr_081a/`, `graphics/characters/chr_081e/`,
-`graphics/characters/chr_081f/`, `graphics/characters/chr_zenhan/`, `graphics/characters/chr/`,
-`graphics/characters/chr_0828/`, `graphics/characters/chr_082b/`, and `graphics/characters/chr_0830/`
+`graphics/characters/chr_0818_`, `graphics/characters/chr_081a_`, `graphics/characters/chr_081e_`,
+`graphics/characters/chr_081f_`, `graphics/characters/chr_zenhan/`, `graphics/characters/chr/`,
+`graphics/characters/chr_0828_`, `graphics/characters/chr_082b_`, and `graphics/characters/chr_0830_`
 reconstruct 3, 22, 10, 17, 18, 35, 36, 105, and 64 descriptor-linked static
 character banks as per-frame palette-correct `koma` (コマ) PNGs, one
 `koma_NNN.png` (zero-padded to three digits) per unique frame beside each
@@ -354,7 +354,7 @@ are explicit arena alignment.
 and bank names remain because no historical character names have been
 recovered.
 
-`graphics/map/resource_128/` through `graphics/map/resource_369/` contain the 121 map
+`graphics/map/resource_128_` through `graphics/map/resource_369_` contain the 121 map
 families whose container is directly followed by a 224-color BG palette
 stream and zero to four 0x4000-byte kind-2 tile banks. These directories are
 canonical storage groups, not a claim that every adjacent bank is used by that
@@ -385,11 +385,11 @@ authoritative source for every referenced slot: the builder uses the tilemap's
 10-bit index, palette bank, and H/V flags to reverse display flips and restore
 the canonical 4bpp bank. The header selects which extracted charblock occupies
 each 0x200-tile display window; this selection is resolved before an object is
-assigned to a bank. `resource_152/objects/ougonmon.png` (黄金門) and
-`resource_190/objects/iwamuro.png` (岩室) are period-style semantic sources;
+assigned to a bank. `resource_152_objects/ougonmon.png` (黄金門) and
+`resource_190_objects/iwamuro.png` (岩室) are period-style semantic sources;
 their remaining unclaimed slots stay in neutral fallback atlases.
 
-`maps/resource_128/grid_` through `maps/resource_369/grid_` reconstruct all
+`maps/resource_128_grid_` through `maps/resource_369_grid_` reconstruct all
 174 traced containers' tagged kind-1 map components as 128x128 spatial record
 grids; 53 containers have no palette or tile-bank resources of their own and
 share a neighbouring family's graphics.
@@ -399,7 +399,7 @@ pre-transform values were sentinels, avoiding the transform's otherwise
 ambiguous inverse. The kind-1 token trace plus these five source planes rebuild
 every compressed component and its alignment bytes exactly.
 
-`maps/resource_128/components/` through `maps/resource_369/components/`
+`maps/resource_128_components/` through `maps/resource_369_components/`
 reconstruct each container's 0x3c-byte header and components 0, 1, 3, 4,
 and 5. `header.json` holds twelve opaque parameter bytes, three opaque
 four-u16 records whose second, third, and fourth words are 0x1010, 0x0000,

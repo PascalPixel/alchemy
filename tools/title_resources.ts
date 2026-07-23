@@ -204,7 +204,8 @@ function sourceGraphics(component: TitleComponent): [Buffer, Buffer] {
 export function build_title_resource(planPath: string): Buffer {
   const plan = JSON.parse(readFileSync(planPath, "utf8")) as TitlePlan;
   if (plan.format !== 1 || plan.codec !== "golden-sun-title-lz") throw new Error("unsupported title-resource plan");
-  const components = plan.components.map((component) => ({ ...component, source: join(dirname(planPath), component.source) }));
+  const flatBase = planPath.replace(/container\.json$/, "");
+  const components = plan.components.map((component) => ({ ...component, source: `${flatBase}${String(component.source).replace(/\//g, "_")}` }));
   validateComponents(components, plan.decoded_size);
   const decoded = Buffer.alloc(plan.decoded_size);
   const graphics = components.map((component) => sourceGraphics(component));

@@ -132,8 +132,9 @@ function document(path: string): Json {
 
 function child(indexPath: string, name: string): string {
   if (!GRAPHICS.some((item) => item.source === name)) throw new Error("battle-screen graphic name differs");
-  const root = realpathSync(dirname(indexPath)), path = realpathSync(resolve(root, name));
-  if (relative(root, path) !== name) throw new Error("battle-screen graphic escaped its directory");
+  const prefix = basename(indexPath).replace(/index\.json$/, "");
+  const root = realpathSync(dirname(indexPath)), path = realpathSync(resolve(root, prefix + name));
+  if (relative(root, path) !== prefix + name) throw new Error("battle-screen graphic escaped its directory");
   return path;
 }
 

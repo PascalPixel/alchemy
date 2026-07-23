@@ -139,7 +139,7 @@ export function selfTest(): void {
 if (import.meta.main) {
   if (Bun.argv.includes("--self-test")) selfTest();
   else {
-    const source = Bun.argv[2] ?? "assets/data/byte_henkan/hyou.json";
+    const source = Bun.argv[2] ?? "assets/data/byte_henkan_hyou.json";
     console.log(`bytes=${build_byte_henkan_tables(source).length}`);
   }
 }

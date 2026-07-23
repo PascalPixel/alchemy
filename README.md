@@ -43,9 +43,9 @@ game.
 - Browse [character animation art](assets/graphics/characters/chr), including party
   members, NPCs, monsters, and field sprites.
 - Explore [map sources](assets/maps) and recovered world objects such as the
-  [golden doorway](assets/graphics/map/resource_152/objects/ougonmon.png),
-  [giant tree stump](assets/graphics/map/resource_158/objects/kirikabu.png), and
-  [rock formations](assets/graphics/map/resource_184/objects/iwa.png).
+  [golden doorway](assets/graphics/map/resource_152_objects/ougonmon.png),
+  [giant tree stump](assets/graphics/map/resource_158_objects/kirikabu.png), and
+  [rock formations](assets/graphics/map/resource_184_objects/iwa.png).
 - See reconstructed [battle-effect graphics](assets/graphics/battle/effects)
   and [battle-menu art](assets/data/sentou_menu).
 - Browse the [music sequences](assets/audio/midi),

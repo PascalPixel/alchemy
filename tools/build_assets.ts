@@ -2,7 +2,7 @@
 // Tool role: entrypoint; invoked by STATUS.md, assets/README.md, package.json (+2 more).
 import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
+import { basename, dirname, isAbsolute, join, relative, resolve, normalize } from "node:path";
 import { encode_general, encode_general_prefill, encode_palette } from "./extract_resource.ts";
 import { characterBankPath, resourceGraphicsDir } from "./asset_paths.ts";
 import { gba_graphics, gba_palette_rgba, indexed_png, rgba_png } from "./import_asset.ts";
@@ -91,6 +91,29 @@ import { buildLateRuntimeResidual } from "./late_runtime_residual.ts";
 import { buildResourceByteCanvases } from "./resource_byte_canvases.ts";
 import { buildByteValueRegions } from "./byte_value_regions.ts";
 import { buildExecutableGapData } from "./executable_gap_sources.ts";
+
+
+// Flat layout: collapse a legacy nested assets-relative name to family_file.
+function flatAssetName(name: string): string {
+  const parts = name.split("/");
+  if (parts.length <= 2) return name;
+  return parts[0] + "/" + parts.slice(1).join("_");
+}
+
+// Flat layout: map a legacy nested asset path to its underscore-joined file.
+function flatAssetPath(path: string): string {
+  let candidate = path;
+  while (!existsSync(candidate)) {
+    const slash = candidate.lastIndexOf("/");
+    const previous = candidate.lastIndexOf("/", slash - 1);
+    if (slash <= 0 || previous < 0) return path;
+    candidate = candidate.slice(0, slash) + "_" + candidate.slice(slash + 1);
+    const rejoin = candidate;
+    if (rejoin === path) return path;
+  }
+  return candidate;
+}
+
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -241,7 +264,7 @@ function closurePackageSelfTest(): void {
     }, []);
   } catch { rejected = true; }
   if (!rejected) throw new Error("missing required closure package was accepted");
-  const pcmIndex = "assets/audio/waves/index.json";
+  const pcmIndex = "assets/audio/waves_index.json";
   const pcm = canonicalJsonSource(pcmIndex, "PCM self-test index");
   if (!Array.isArray(pcm.waves) || pcm.waves.length === 0) throw new Error("PCM self-test index differs");
   const expectedRanges = pcm.waves.map((wave: Json) => ({ address: wave.address, size: wave.size }));
@@ -423,12 +446,12 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           address: resource.address,
           size: resource.size,
           kind: "golden-sun-general-lz",
-          plan: `${directory}/stream.lz.json`,
+          plan: `${directory}_stream.lz.json`,
           components: [{
             kind: "zero-skip-sprite-archive",
             size: resource.decoded_size,
             source: `${directory}`,
-            plan: `${directory}/archive.json`,
+            plan: `${directory}_archive.json`,
             palette: series.palette,
           }],
         });
@@ -444,9 +467,9 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           address: palette.address,
           size: palette.size,
           kind: "golden-sun-general-lz",
-          plan: `${directory}/palette.lz.json`,
+          plan: `${directory}_palette.lz.json`,
           components: [{
-            kind: "gba-palette", size: "0x1c0", source: `${directory}/palette.224.png`,
+            kind: "gba-palette", size: "0x1c0", source: `${directory}_palette.224.png`,
           }],
         });
         family.charblocks.forEach((resource: Json, index: number) => {
@@ -456,12 +479,12 @@ function expandSeries(manifest: Json, entries: Json[]): void {
             address: resource.address,
             size: resource.size,
             kind: "golden-sun-kind2-lz",
-            plan: `${directory}/charblock${bank}.kind2.json`,
+            plan: `${directory}_charblock${bank}.kind2.json`,
             layout: charblockLayout,
             components: [{
               kind: objectSource ? "gba-4bpp-object-bank" : "gba-4bpp-tiles",
               size: "0x4000",
-              source: objectSource ?? `${directory}/charblock${bank}.4bpp.png`,
+              source: objectSource ?? `${directory}_charblock${bank}.4bpp.png`,
             }],
           });
         });
@@ -471,11 +494,11 @@ function expandSeries(manifest: Json, entries: Json[]): void {
             address: animation.address,
             size: animation.size,
             kind: "golden-sun-kind2-lz",
-            plan: `${directory}/animation_source.kind2.json`,
+            plan: `${directory}_animation_source.kind2.json`,
             layout: animationLayout,
             components: [{
               kind: "gba-4bpp-tiles", size: "0x4000",
-              source: `${directory}/animation_source.4bpp.png`,
+              source: `${directory}_animation_source.4bpp.png`,
             }],
           });
         }
@@ -488,9 +511,9 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           address: palette.address,
           size: palette.size,
           kind: "golden-sun-general-lz",
-          plan: `${directory}/palette.lz.json`,
+          plan: `${directory}_palette.lz.json`,
           components: [{
-            kind: "gba-palette", size: "0x1c0", source: `${directory}/palette.224.png`,
+            kind: "gba-palette", size: "0x1c0", source: `${directory}_palette.224.png`,
           }],
         });
       }
@@ -500,7 +523,7 @@ function expandSeries(manifest: Json, entries: Json[]): void {
         const directory = resourceGraphicsDir(name);
         entries.push({
           address: resource.address, size: resource.size,
-          kind: "gba-palette-rgba", source: `${directory}/color_table.rgba.png`,
+          kind: "gba-palette-rgba", source: `${directory}_color_table.rgba.png`,
         });
       }
     } else if (series.kind === "golden-sun-standalone-tile-series") {
@@ -511,9 +534,9 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           address: resource.address,
           size: resource.size,
           kind: "golden-sun-kind2-lz",
-          plan: `${directory}/tiles.kind2.json`,
+          plan: `${directory}_tiles.kind2.json`,
           components: [{
-            kind: "gba-4bpp-tiles", size: "0x4000", source: `${directory}/tiles.4bpp.png`,
+            kind: "gba-4bpp-tiles", size: "0x4000", source: `${directory}_tiles.4bpp.png`,
           }],
         });
       }
@@ -525,9 +548,9 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           address: resource.address,
           size: resource.size,
           kind: "golden-sun-general-lz",
-          plan: `${directory}/stream.lz.json`,
+          plan: `${directory}_stream.lz.json`,
           components: [{
-            kind: "raw-lz-bytes", size: resource.decoded_size, source: `${directory}/content.png`,
+            kind: "raw-lz-bytes", size: resource.decoded_size, source: `${directory}_content.png`,
           }],
         });
       }
@@ -539,11 +562,11 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           address: resource.address,
           size: resource.size,
           kind: "golden-sun-general-lz",
-          plan: `${directory}/stream.lz.json`,
+          plan: `${directory}_stream.lz.json`,
           components: [{
             kind: "golden-sun-thumb-overlay",
             size: resource.decoded_size,
-            source: `${directory}/overlay.s`,
+            source: `${directory}_overlay.s`,
             base: series.base,
           }],
         });
@@ -557,7 +580,7 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           size: grid.size,
           kind: "golden-sun-kind1-grid",
           source: directory,
-          plan: `${directory}/grid_grid.kind1.json`,
+          plan: `${directory}_grid_grid.kind1.json`,
         });
       }
     } else if (series.kind === "golden-sun-map-component-series") {
@@ -575,15 +598,15 @@ function expandSeries(manifest: Json, entries: Json[]): void {
           address: header.address,
           size: header.size,
           kind: "golden-sun-map-container-header",
-          source: `${directory}/header.json`,
+          source: `${directory}_header.json`,
           offsets_check: offsetsCheck,
         });
         const sources: Record<number, [string, string, string | null]> = {
-          0: ["golden-sun-map-metatiles", `${directory}/metatiles.tilemap`, `${directory}/metatiles.lz.json`],
-          1: ["golden-sun-map-descriptors", `${directory}/descriptors.json`, `${directory}/descriptors.lz.json`],
-          3: ["golden-sun-map-animation-queues", `${directory}/animation_queues.json`, `${directory}/animation_queues.lz.json`],
-          4: ["golden-sun-map-blend-animation", `${directory}/blend_animation.json`, `${directory}/blend_animation.lz.json`],
-          5: ["golden-sun-map-sparse-cells", `${directory}/sparse_cells.json`, null],
+          0: ["golden-sun-map-metatiles", `${directory}_metatiles.tilemap`, `${directory}_metatiles.lz.json`],
+          1: ["golden-sun-map-descriptors", `${directory}_descriptors.json`, `${directory}_descriptors.lz.json`],
+          3: ["golden-sun-map-animation-queues", `${directory}_animation_queues.json`, `${directory}_animation_queues.lz.json`],
+          4: ["golden-sun-map-blend-animation", `${directory}_blend_animation.json`, `${directory}_blend_animation.lz.json`],
+          5: ["golden-sun-map-sparse-cells", `${directory}_sparse_cells.json`, null],
         };
         for (const component of family.components) {
           const slot = number(component.slot);
@@ -691,13 +714,15 @@ function expandSeries(manifest: Json, entries: Json[]): void {
         throw new Error("unsupported sound-sequence series");
       }
       const directory = dirname(String(series.index));
+      // Resolve refs against the pre-flatten package directory, then flatten.
+      const legacyDir = join(directory, basename(String(series.index)).replace(/_?index\.json$/, ""));
       for (const sequence of index.sequences) {
         entries.push({
           address: sequence.address,
           size: sequence.size,
           kind: "golden-sun-sound-sequence",
-          source: join(directory, String(sequence.midi)),
-          sidecar: sequence.sidecar === undefined ? undefined : join(directory, String(sequence.sidecar)),
+          source: flatAssetPath(normalize(join(legacyDir, String(sequence.midi)))),
+          sidecar: sequence.sidecar === undefined ? undefined : flatAssetPath(normalize(join(legacyDir, String(sequence.sidecar)))),
         });
       }
     } else if (series.kind === "golden-sun-pcm-wave-series") {
@@ -707,11 +732,12 @@ function expandSeries(manifest: Json, entries: Json[]): void {
         throw new Error("unsupported PCM-wave series");
       }
       const directory = dirname(String(series.index));
+      const wavePrefix = basename(String(series.index)).replace(/index\.json$/, "");
       for (const wave of index.waves) {
         entries.push({
           ...wave,
           kind: "golden-sun-pcm-wave",
-          source: join(directory, String(wave.source)),
+          source: join(directory, wavePrefix + String(wave.source)),
           index: String(series.index),
         });
       }
@@ -738,7 +764,7 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     const address = number(entry.address);
     const region = built.regions.get(address);
     if (region === undefined) throw new Error("early-runtime asset address is not a produced region");
-    return [region, [sourceName, join(dirname(sourceName), "display.4bpp.png")], {
+    return [region, [sourceName, `${sourceName.replace(/index\.json$/, "")}display.4bpp.png`], {
       source_bytes: built.source_bytes,
       region_address: `0x${address.toString(16).padStart(8, "0")}`,
     }];
@@ -754,7 +780,7 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     const sourceName = String(entry.source), resource = String(entry.resource_id).toLowerCase();
     const built = buildResourceByteCanvases(sourcePath(sourceName)).find((item) => item.id === resource);
     if (built === undefined) throw new Error(`resource byte canvas ${resource} is absent`);
-    return [built.data, [sourceName, join(dirname(sourceName), built.source)], { resource_id: `0x${resource}`, representation: "provisional-neutral-byte-canvas" }];
+    return [built.data, [sourceName, `${sourceName.replace(/index\.json$/, "")}${built.source}`], { resource_id: `0x${resource}`, representation: "provisional-neutral-byte-canvas" }];
   }
   if (kind === "golden-sun-byte-value-regions") {
     const sourceName = String(entry.source), address = number(entry.address);
@@ -782,7 +808,7 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
       if (component.kind === "zero-skip-sprite-archive") {
         const archivePlan = JSON.parse(readFileSync(sourcePath(component.plan), "utf8"));
         for (let index = 0; index < number(archivePlan.images); index++) {
-          sources.push(join(String(component.source), `images_frame_${String(index).padStart(2, "0")}.png`));
+          sources.push(`${String(component.source)}_images_frame_${String(index).padStart(2, "0")}.png`);
         }
         sources.push(String(component.plan), String(component.palette));
       } else {
@@ -867,7 +893,7 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     const sources = [String(entry.plan), ...[
       "grid_value_low.png", "grid_value_high.png", "grid_attribute_a.png",
       "grid_attribute_b.png", "grid_sentinels.png",
-    ].map((name) => join(String(entry.source), name))];
+    ].map((name) => `${String(entry.source)}_${name}`)];
     return [built, sources, {
       decoded_size: number(plan.decoded_size), tokens: plan.tokens.length, planes: 4,
     }];
@@ -966,13 +992,14 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
       const planSource = relative(ROOT, characterBankPath(resolve(ROOT, directory), String(item.plan)));
       sources.push(planSource);
       const plan = JSON.parse(readFileSync(sourcePath(planSource), "utf8"));
+      const planPrefix = planSource.replace(/bank\.json$/, "");
       if (Array.isArray(plan.atlases)) {
-        for (const atlas of plan.atlases) sources.push(join(dirname(planSource), String(atlas.source)));
+        for (const atlas of plan.atlases) sources.push(`${planPrefix}${String(atlas.source)}`);
       } else if (plan.atlas_columns !== undefined) {
         sources.push(join(directory, String(item.source)));
       } else {
         for (let frame = 0; frame < plan.frames.length; frame++) {
-          sources.push(join(dirname(planSource), static_sprite_frame_name(frame)));
+          sources.push(`${planPrefix}${static_sprite_frame_name(frame)}`);
         }
       }
     }
@@ -1038,10 +1065,10 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
       throw new Error("localization-font extent differs from manifest");
     }
     const nested = [
-      ...document.direct_tiles.map((item: Json) => `assets/${String(item.source)}`),
-      ...document.mtf_banks.map((item: Json) => `assets/${String(item.source)}`),
-      `assets/${String(document.packed_images.source)}`,
-      `assets/${String(document.font.source)}`,
+      ...document.direct_tiles.map((item: Json) => `assets/${flatAssetName(String(item.source))}`),
+      ...document.mtf_banks.map((item: Json) => `assets/${flatAssetName(String(item.source))}`),
+      `assets/${flatAssetName(String(document.packed_images.source))}`,
+      `assets/${flatAssetName(String(document.font.source))}`,
     ];
     nested.forEach(sourcePath);
     const built = build_localization_font(document, join(ROOT, "assets"));
@@ -1068,9 +1095,9 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
         number(document.end) - number(document.address) !== number(entry.size))
       throw new Error("battle-effect extent differs from manifest");
     const nested = [
-      ...document.direct_graphics.map((item: Json) => `assets/${String(item.source)}`),
-      `assets/${String(document.halfword_graphic.source)}`,
-      ...document.palette_graphics.map((item: Json) => `assets/${String(item.source)}`),
+      ...document.direct_graphics.map((item: Json) => `assets/${flatAssetName(String(item.source))}`),
+      `assets/${flatAssetName(String(document.halfword_graphic.source))}`,
+      ...document.palette_graphics.map((item: Json) => `assets/${flatAssetName(String(item.source))}`),
     ];
     nested.forEach(sourcePath);
     const built = build_battle_effect_data(document, join(ROOT, "assets"));
@@ -1103,13 +1130,14 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     if (number(document.address) !== number(entry.address) || number(document.size) !== number(entry.size))
       throw new Error("battle-display extent differs from manifest");
     const directory = dirname(sourceName);
+    const hyoujiPrefix = sourceName.replace(/index\.json$/, "");
     const nested = [
       sourceName,
-      join(directory, String(document.sources.kihon)),
-      join(directory, String(document.sources.koma.source)),
-      join(directory, String(document.sources.haichi)),
-      join(directory, String(document.sources.hosei)),
-      join(directory, String(document.sources.gauge.source)),
+      `${hyoujiPrefix}${String(document.sources.kihon)}`,
+      `${hyoujiPrefix}${String(document.sources.koma.source)}`,
+      `${hyoujiPrefix}${String(document.sources.haichi)}`,
+      `${hyoujiPrefix}${String(document.sources.hosei)}`,
+      `${hyoujiPrefix}${String(document.sources.gauge.source)}`,
     ];
     nested.forEach(sourcePath);
     const built = build_sentou_hyouji(source);
@@ -1331,10 +1359,10 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
   if (kind === "golden-sun-simple-resource") {
     const id = number(entry.resource_id);
     const sourceLists: Record<number, string[]> = {
-      2: ["assets/data/resource_2/build_stamp.txt", "assets/data/resource_2/layout.json"],
-      0x13: ["assets/graphics/resource_13/font.4bpp.png"],
-      0x14: ["assets/graphics/resource_14/words.rgba.png"],
-      0x18: ["assets/graphics/resource_18/screen.8bpp.png", "assets/graphics/resource_18/screen.lz.json"],
+      2: ["assets/data/resource_2_build_stamp.txt", "assets/data/resource_2_layout.json"],
+      0x13: ["assets/graphics/resource_13_font.4bpp.png"],
+      0x14: ["assets/graphics/resource_14_words.rgba.png"],
+      0x18: ["assets/graphics/resource_18_screen.8bpp.png", "assets/graphics/resource_18_screen.lz.json"],
     };
     const sources = sourceLists[id];
     if (sources === undefined) throw new Error("unsupported simple resource");
@@ -1349,8 +1377,9 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
       throw new Error("title-resource address differs from manifest");
     }
     const directory = dirname(String(entry.source));
+    const titlePrefix = String(entry.source).replace(/container\.json$/, "");
     const sources = [String(entry.source), ...document.components.map((component: Json) => {
-      const relativeSource = join(directory, String(component.source));
+      const relativeSource = `${titlePrefix}${String(component.source).replace(/\//g, "_")}`;
       sourcePath(relativeSource);
       return relativeSource;
     })];
@@ -1381,7 +1410,7 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     if (plan.format !== 1 || plan.codec !== kind) throw new Error("unsupported F0 archive plan");
     const built = build_f0_archive(plan, directory);
     const imageSources = Array.from({ length: number(plan.images) }, (_, index) =>
-      join(String(entry.source), `images_image_${String(index).padStart(2, "0")}.png`));
+      `${String(entry.source)}_images_image_${String(index).padStart(2, "0")}.png`);
     return [built, [String(entry.plan), ...imageSources], {
       entries: plan.entries.length, images: number(plan.images),
     }];

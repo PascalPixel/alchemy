@@ -1,0 +1,189 @@
+{
+  "format": 1,
+  "codec": "golden-sun-static-sprite-series",
+  "address": "0x081a7020",
+  "size": "0x0003a1ec",
+  "descriptor_table": "0x08185024",
+  "descriptor_count": 512,
+  "palette_offset": 16,
+  "palette_entries": 224,
+  "prefix_zeros": 0,
+  "packages": [
+    {
+      "id": "003",
+      "aliases": [],
+      "address": "0x081a7020",
+      "size": "0x000056b4",
+      "directory": "0x081ac59c",
+      "plan": "chr_003_bank.json"
+    },
+    {
+      "id": "005",
+      "aliases": [],
+      "address": "0x081ac6d4",
+      "size": "0x00003e68",
+      "directory": "0x081b0448",
+      "plan": "chr_005_bank.json"
+    },
+    {
+      "id": "006",
+      "aliases": [],
+      "address": "0x081b053c",
+      "size": "0x000022b0",
+      "directory": "0x081b2754",
+      "plan": "chr_006_bank.json"
+    },
+    {
+      "id": "012",
+      "aliases": [],
+      "address": "0x081b27ec",
+      "size": "0x0000506c",
+      "directory": "0x081b76c4",
+      "plan": "chr_012_bank.json"
+    },
+    {
+      "id": "013",
+      "aliases": [],
+      "address": "0x081b7858",
+      "size": "0x00002f24",
+      "directory": "0x081ba688",
+      "plan": "chr_013_bank.json"
+    },
+    {
+      "id": "010",
+      "aliases": [],
+      "address": "0x081ba77c",
+      "size": "0x000016d8",
+      "directory": "0x081bbdcc",
+      "plan": "chr_010_bank.json"
+    },
+    {
+      "id": "01e",
+      "aliases": [],
+      "address": "0x081bbe54",
+      "size": "0x00002260",
+      "directory": "0x081be028",
+      "plan": "chr_01e_bank.json"
+    },
+    {
+      "id": "020",
+      "aliases": [],
+      "address": "0x081be0b4",
+      "size": "0x00003180",
+      "directory": "0x081c1184",
+      "plan": "chr_020_bank.json"
+    },
+    {
+      "id": "021",
+      "aliases": [],
+      "address": "0x081c1234",
+      "size": "0x0000311c",
+      "directory": "0x081c42b0",
+      "plan": "chr_021_bank.json"
+    },
+    {
+      "id": "022",
+      "aliases": [],
+      "address": "0x081c4350",
+      "size": "0x00001f84",
+      "directory": "0x081c6258",
+      "plan": "chr_022_bank.json"
+    },
+    {
+      "id": "01f",
+      "aliases": [],
+      "address": "0x081c62d4",
+      "size": "0x00003070",
+      "directory": "0x081c928c",
+      "plan": "chr_01f_bank.json"
+    },
+    {
+      "id": "023",
+      "aliases": [],
+      "address": "0x081c9344",
+      "size": "0x000022c4",
+      "directory": "0x081cb578",
+      "plan": "earth-golem/bank.json"
+    },
+    {
+      "id": "024",
+      "aliases": [],
+      "address": "0x081cb608",
+      "size": "0x0000020c",
+      "directory": "0x081cb804",
+      "plan": "chr_024_bank.json"
+    },
+    {
+      "id": "025",
+      "aliases": [],
+      "address": "0x081cb814",
+      "size": "0x00001d8c",
+      "directory": "0x081cd518",
+      "plan": "chr_025_bank.json"
+    },
+    {
+      "id": "026",
+      "aliases": [],
+      "address": "0x081cd5a0",
+      "size": "0x000024e4",
+      "directory": "0x081cf9fc",
+      "plan": "chr_026_bank.json"
+    },
+    {
+      "id": "027",
+      "aliases": [],
+      "address": "0x081cfa84",
+      "size": "0x00003540",
+      "directory": "0x081d2f1c",
+      "plan": "chr_027_bank.json"
+    },
+    {
+      "id": "028",
+      "aliases": [],
+      "address": "0x081d2fc4",
+      "size": "0x00001f20",
+      "directory": "0x081d4e5c",
+      "plan": "chr_028_bank.json"
+    },
+    {
+      "id": "029",
+      "aliases": [],
+      "address": "0x081d4ee4",
+      "size": "0x000028a0",
+      "directory": "0x081d76ec",
+      "plan": "chr_029_bank.json"
+    },
+    {
+      "id": "02a",
+      "aliases": [],
+      "address": "0x081d7784",
+      "size": "0x000025f0",
+      "directory": "0x081d9cec",
+      "plan": "chr_02a_bank.json"
+    },
+    {
+      "id": "02b",
+      "aliases": [],
+      "address": "0x081d9d74",
+      "size": "0x000028b4",
+      "directory": "0x081dc598",
+      "plan": "chr_02b_bank.json"
+    },
+    {
+      "id": "02c",
+      "aliases": [],
+      "address": "0x081dc628",
+      "size": "0x00002538",
+      "directory": "0x081dead4",
+      "plan": "chr_02c_bank.json"
+    },
+    {
+      "id": "02d",
+      "aliases": [],
+      "address": "0x081deb60",
+      "size": "0x000026ac",
+      "directory": "0x081e1184",
+      "plan": "chr_02d_bank.json"
+    }
+  ]
+}

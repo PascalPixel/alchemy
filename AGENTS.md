@@ -23,6 +23,40 @@ here; re-verify with a full `bun tools/build_full.ts` before adopting any other
 assembler version, since GAS canonicalization differences do change encodings
 for some instructions.
 
+## Linux x64 host
+
+`tools/alchemy_gcc.ts` also admits a native `linux-x64` host alongside
+`darwin-arm64`, each with its own pinned bundle digests
+(`gcc-2.96`/`gs2`/`agbcc` built from the same `alchemy-gcc` commit via its
+documented `./build.sh all` Ubuntu/WSL path). Codegen is host-independent —
+`xgcc`/`cc1` are native executables per host, but the Thumb/ARM bytes they
+emit for a *target* arm7tdmi program do not depend on the host that ran
+them — so a from-source Linux bundle was admitted only after
+`bun tools/build_claimed.ts roms/gs1-en.gba` (1,146/1,146 linked, 0
+failures) and `bun tools/build_asm.ts roms/gs1-en.gba` (2,027 regions, 0
+mismatches) reproduced every existing claimed region byte-identically
+against the approved ROM using the Linux build; `binutils-arm-none-eabi`
+2.42 (Ubuntu 24.04) and `m2c` (`matt-kempster/m2c`, `-t gba`) complete the
+Linux decompilation toolchain. `apt install binutils-arm-none-eabi` supplies
+native ARM binutils; no Rosetta-equivalent penalty applies.
+
+Known gap: `Bun.deflateSync`/`node:zlib` on this host do not reproduce the
+exact deflate byte stream baked into already-committed canonical PNG assets
+(`bun tools/build_assets.ts` fails an `exactBytes`/canonical-PNG check on
+the first level-9-compressed asset it re-encodes). The *decoded* pixel
+content round-trips exactly — inflating both streams yields identical
+bytes — only the compressor's internal match/Huffman choices differ, which
+is expected: deflate has no single canonical encoding for a given input,
+and no zlib build available here reproduces whatever specific
+encoder/version produced the tracked corpus. This does not affect ROM byte
+closure (`build_claimed.ts`/`build_asm.ts` pass with zero touch on PNG
+bytes) and is orthogonal to code decompilation; it blocks only
+`build_assets.ts`/full-corpus `build_full.ts` on this host. Do not
+"fix" it by re-encoding tracked assets to match this host's zlib — that
+would just move the mismatch to the next host that runs a different zlib
+build. Treat it as an open host-portability gap, not a content bug, until
+the original encoder/zlib build is identified and vendored.
+
 # Publication boundary
 
 

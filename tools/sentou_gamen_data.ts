@@ -4,6 +4,7 @@ import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, renameSync, rmSync, writeFileSync,
 } from "node:fs";
+import { tmpdir } from "node:os";
 import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { indexed_png } from "./import_asset.ts";
 import { png, type Rgb } from "./skip_sprite_archive.ts";
@@ -432,7 +433,7 @@ export function verify_sentou_gamen_data(rom: Buffer, indexPath: string): void {
 }
 
 export function self_test(): void {
-  const temporary = mkdtempSync("/private/tmp/sentou-gamen-self-test-");
+  const temporary = mkdtempSync(join(tmpdir(), "sentou-gamen-self-test-"));
   try {
     const dimensions = [[48, 64], [16, 8], [32, 16], [16, 16], [8, 8]];
     let cursor = SENTOU_GAMEN_ADDRESS;

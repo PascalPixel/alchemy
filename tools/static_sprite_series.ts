@@ -729,7 +729,7 @@ export function selfTest(): void {
     testFrames.forEach((frame, index) => {
       writeFileSync(join(frameTemp, static_sprite_frame_name(index)), png(frame, 8, 8, testPalette));
     });
-    const frameReplay = readFrameImages(frameTemp, 8, 8, testFrames.length, testPalette);
+    const frameReplay = readFrameImages(`${frameTemp}/`, 8, 8, testFrames.length, testPalette);
     if (!frameReplay.every((frame, index) => frame.equals(testFrames[index]))) {
       throw new Error("static-sprite per-frame layout self-test failed");
     }

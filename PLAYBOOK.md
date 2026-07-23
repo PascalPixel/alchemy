@@ -224,6 +224,17 @@ bun tools/compiler_template_index.ts --jobs 16 --top 20
 bun tools/overlay_template_match.ts
 ```
 
+The inventory's `unconverted_discoveries` count is deliberately not a
+function-debt denominator: conservative control-flow discovery retains
+veneers, shared helper-table slots, overlapping literal entries, and other
+structural leads. `ordinary_unconverted_functions` is the high-confidence
+bounded search queue, but it can still contain shared-tail or internal-label
+entries and is not exhaustive of functions with unresolved control flow or
+jump tables. Report converted functions separately until every remaining
+discovery has an explicit C/structural/data classification; never add either
+automatic queue count to the converted count and call the result function
+coverage.
+
 An instruction-shape template hit is a lead, not a conversion. Relocated bytes,
 literal ownership, call targets, data symbols, and the entire claimed extent
 must still match exactly.

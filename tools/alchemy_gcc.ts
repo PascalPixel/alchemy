@@ -46,7 +46,7 @@ const FIXED_R3_SOURCES = new Set([
 // This default-ABI palette family reserves lr while keeping long-lived loop
 // constants in r8/r9; allowing lr as a general register changes the prologue
 // and allocation before source shaping can affect either.
-const FIXED_LR_SOURCES = new Set(["080fb2cc"]);
+const FIXED_LR_SOURCES = new Set<string>();
 // This hardware setup helper matches the reference's compact load/store order
 // at -O1; -O2 only swaps two independent setup instructions.
 const OPTIMIZE_O1_SOURCES = new Set(["08021e28"]);
@@ -54,7 +54,6 @@ const UNSCHEDULED_SOURCES = new Set([
   "08006b84",
   "08004198", "08004358", "0800439c",
   "08029274",
-  "080fb2cc",
   "080fb714", "080fb728", "080fb73c", "080fb750", "080fb75c",
   "080fb768", "080fb77c",
 ]);
@@ -88,15 +87,24 @@ const GROUPED_DMA_STORE_SOURCES = new Set(["080958a8", "0809bb34"]);
 // 同一cc1・既定フラグ。
 const DEFAULT_ABI_SOURCES = new Set([
   "08006a00", "08006b84", "08006ba8", "08006c24", "08006dec", "08007098",
-  "080fadf0", "080fb2cc",
+  "080fadf0",
 ]);
 // The stock m4a object linked into GS1 was built with the public old_agbcc
 // compiler rather than Camelot's gcc-2.96 fork. Keep adoption source-scoped:
 // every listed unit must have an independent exact-byte proof.
 const AGBCC_SOURCES = new Set([
   "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
-  "080fa458", "080fa490", "080fa8d4", "080fa928", "080fa9a4", "080fa9e0",
-  "080fab3c", "080fb6a4",
+  "080fa424", "080fa458", "080fa490", "080fa514", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
+  "080fa9e0", "080fab3c", "080fb2cc", "080fb334", "080fb3a8", "080fb430", "080fb4a4", "080fb670",
+  "080fb6a4",
+]);
+// This command-table lookup is byte-identical only when the independent
+// literal load precedes its adjacent index shift, matching the stock object.
+const AGBCC_LITERAL_BEFORE_SHIFT_SOURCES = new Set(["080fb670"]);
+const AGBCC_OPTIMIZE_O1_SOURCES = new Set(["080fa514"]);
+const AGBCC_COMMUTATIVE_COPY_CONSTANT_SOURCES = new Set(["080fa514"]);
+const AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES = new Set([
+  "080fb2cc", "080fb334", "080fb3a8",
 ]);
 
 function sourceStem(source: string): string {
@@ -124,7 +132,21 @@ export function cflagsForSource(source: string): readonly string[] {
 }
 
 export function cflagsForTargetSource(target: CompilerTarget, source: string): readonly string[] {
-  if (target === "gs1" && AGBCC_SOURCES.has(sourceStem(source))) return AGBCC_CFLAGS;
+  if (target === "gs1" && AGBCC_SOURCES.has(sourceStem(source))) {
+    return [
+      ...AGBCC_CFLAGS,
+      ...(AGBCC_OPTIMIZE_O1_SOURCES.has(sourceStem(source)) ? ["-O1"] : []),
+      ...(AGBCC_LITERAL_BEFORE_SHIFT_SOURCES.has(sourceStem(source))
+        ? ["-mliteral-before-shift"]
+        : []),
+      ...(AGBCC_COMMUTATIVE_COPY_CONSTANT_SOURCES.has(sourceStem(source))
+        ? ["-mcommutative-copy-constant"]
+        : []),
+      ...(AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES.has(sourceStem(source))
+        ? ["-mprologue-next-high-reg"]
+        : []),
+    ];
+  }
   return target === "gs1" ? cflagsForSource(source) : [...GS2_CFLAGS];
 }
 
@@ -191,7 +213,7 @@ const EXPECTED: Record<CompilerTarget, Record<string, string>> = {
 
 const validated = new Set<CompilerTarget>();
 let agbccValidated = false;
-const AGBCC_EXPECTED = "1b4d3375083b7963c7a3f4675eca5465d8779928b331a7d9ffc669ddb0a03146";
+const AGBCC_EXPECTED = "1bb2b349c3090f2969e2039824d2b377ffe5b12327a6a65f0bf1d5c4a484272a";
 
 function outputText(value: Uint8Array): string {
   return Buffer.from(value).toString("utf8");
@@ -336,15 +358,16 @@ export function directCompilerCommandForSource(
   validateAgbccBundle();
   return [
     AGBCC_DRIVER, input, "-dumpbase", dumpbase,
-    ...AGBCC_CFLAGS, "-o", output,
+    ...cflagsForTargetSource("gs1", source), "-o", output,
   ];
 }
 
 function selfTest(): void {
   const expected = [
     "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
-    "080fa458", "080fa490", "080fa8d4", "080fa928", "080fa9a4", "080fa9e0",
-    "080fab3c", "080fb6a4",
+    "080fa424", "080fa458", "080fa490", "080fa514", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
+    "080fa9e0", "080fab3c", "080fb2cc", "080fb334", "080fb3a8", "080fb430", "080fb4a4", "080fb670",
+    "080fb6a4",
   ];
   if (JSON.stringify([...AGBCC_SOURCES].sort()) !== JSON.stringify(expected)) {
     throw new Error("old_agbcc source allowlist self-test failed");
@@ -354,7 +377,15 @@ function selfTest(): void {
     if (!usesAgbccCompiler("gs1", source) || usesAgbccCompiler("gs2", source)) {
       throw new Error(`old_agbcc target routing self-test failed for ${stem}`);
     }
-    if (JSON.stringify(cflagsForTargetSource("gs1", source)) !== JSON.stringify(AGBCC_CFLAGS)) {
+    const expectedFlags = [
+      ...AGBCC_CFLAGS,
+      ...(stem === "080fa514" ? ["-O1", "-mcommutative-copy-constant"] : []),
+      ...(stem === "080fb670" ? ["-mliteral-before-shift"] : []),
+      ...(["080fb2cc", "080fb334", "080fb3a8"].includes(stem)
+        ? ["-mprologue-next-high-reg"]
+        : []),
+    ];
+    if (JSON.stringify(cflagsForTargetSource("gs1", source)) !== JSON.stringify(expectedFlags)) {
       throw new Error(`old_agbcc flags self-test failed for ${stem}`);
     }
   }

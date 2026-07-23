@@ -66,11 +66,31 @@ knowledge in this tree remains derived from the approved ROM set.
 The stock m4a ("Sappy") audio library that period licensees linked verbatim
 requires pret's `old_agbcc` rather than gcc-2.96. The source-address allowlist
 currently covers `080fa1fc`, `080fa2a0`, `080fa324`, `080fa350`, `080fa39c`,
-`080fa3f0`, `080fa458`, `080fa490`, `080fa8d4`, `080fa928`, `080fa9a4`,
-`080fa9e0`, `080fab3c`, and `080fb6a4`; each was independently assembled and
-linked to an exact target interval before adoption. No generic directory or
-subsystem switch selects this compiler, following the per-unit compiler
-precedent of `pret/pokeruby`.
+`080fa3f0`, `080fa424`, `080fa458`, `080fa490`, `080fa514`, `080fa83c`,
+`080fa8d4`, `080fa928`, `080fa9a4`, `080fa9e0`, `080fab3c`, `080fb2cc`,
+`080fb334`, `080fb3a8`, `080fb430`, `080fb4a4`, `080fb670`, and `080fb6a4`;
+each was independently
+assembled and linked to an exact target interval before adoption. No generic
+directory or subsystem switch selects this compiler, following the per-unit
+compiler precedent of `pret/pokeruby`.
+
+`080fb670` additionally uses old_agbcc's default-off
+`-mliteral-before-shift` compatibility mode. It only moves an independent
+constant-pool load ahead of an adjacent left shift after proving the two
+destinations do not overlap; the other routed units retain stock ordering.
+
+`080fa514` uses `-O1` plus old_agbcc's default-off
+`-mcommutative-copy-constant` mode. The backend swaps a destructive
+commutative copy/AND pair only when the AND's other register was loaded with a
+constant by the immediately preceding instruction and all three registers are
+distinct.
+
+`080fb2cc`, `080fb334`, and `080fb3a8` use old_agbcc's default-off
+`-mprologue-next-high-reg` mode. After register allocation, it finds the
+highest live callee-saved high register and marks its successor live only
+during prologue generation. This retains the stock object's otherwise-unused
+adjacent high-register save without changing the function body, and the
+epilogue sees the same save mask when restoring registers.
 
 The GS1 compiler also exposes a default-off `-mgrouped-dma-store` compatibility
 mode for the historical three-word Thumb DMA descriptor sequence. It lowers

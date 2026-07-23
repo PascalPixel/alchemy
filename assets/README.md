@@ -291,7 +291,7 @@ sixteen tiles is one coherent 32x32 frame, yielding sixteen frames and five
 color variants. Non-source previews generated from those tracked sources remain
 ignored build products.
 
-`graphics/resource_f0/images/` contains 57 unique, palette-correct 32x32 4bpp
+`graphics/resource_f0/images_` contains 57 unique, palette-correct 32x32 4bpp
 images. The ROM's 80-entry 16-bit offset table contains 23 null slots and one
 offset for each image, represented by `archive.json`. Each package contains a
 16-color palette followed by a terminating LSB-first run/move-to-front pixel
@@ -389,7 +389,7 @@ assigned to a bank. `resource_152/objects/ougonmon.png` (黄金門) and
 `resource_190/objects/iwamuro.png` (岩室) are period-style semantic sources;
 their remaining unclaimed slots stay in neutral fallback atlases.
 
-`maps/resource_128/grid/` through `maps/resource_369/grid/` reconstruct all
+`maps/resource_128/grid_` through `maps/resource_369/grid_` reconstruct all
 174 traced containers' tagged kind-1 map components as 128x128 spatial record
 grids; 53 containers have no palette or tile-bank resources of their own and
 share a neighbouring family's graphics.

@@ -330,7 +330,7 @@ export function load_geometry(linkage: Linkage): VariantGeometry {
   const container = normalize_id(linkage.container);
   const map_dir = join(ROOT, `assets/maps/resource_${container}`);
   const metatiles = parse_metatiles(join(map_dir, "metatiles.tilemap"));
-  const cells = cell_indices(join(map_dir, "grid"), metatiles.length);
+  const cells = cell_indices(map_dir, metatiles.length);
   const [width, height] = scene_dimensions(map_dir);
   return {
     linkage,

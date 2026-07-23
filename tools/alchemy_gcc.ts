@@ -22,6 +22,10 @@ const FIXED_R3_SOURCES = new Set([
   "080fb6ec", "080fb700", "080fb714", "080fb728", "080fb73c",
   "080fb750", "080fb75c", "080fb768", "080fb77c",
 ]);
+// This default-ABI palette family reserves lr while keeping long-lived loop
+// constants in r8/r9; allowing lr as a general register changes the prologue
+// and allocation before source shaping can affect either.
+const FIXED_LR_SOURCES = new Set(["080fb2cc"]);
 // This hardware setup helper matches the reference's compact load/store order
 // at -O1; -O2 only swaps two independent setup instructions.
 const OPTIMIZE_O1_SOURCES = new Set(["08021e28"]);
@@ -29,6 +33,7 @@ const UNSCHEDULED_SOURCES = new Set([
   "08006b84",
   "08004198", "08004358", "0800439c",
   "08029274",
+  "080fb2cc",
   "080fb714", "080fb728", "080fb73c", "080fb750", "080fb75c",
   "080fb768", "080fb77c",
 ]);
@@ -50,7 +55,7 @@ const NO_EXPENSIVE_SOURCES = new Set(["08092878"]);
 // フラッシュ書込列08006dec、LAWS.md「第四層」)。
 // 同一cc1・既定フラグ。
 const DEFAULT_ABI_SOURCES = new Set([
-  "08006a00", "08006b84", "08006c24", "08006dec",
+  "08006a00", "08006b84", "08006c24", "08006dec", "080fadf0", "080fb2cc",
 ]);
 
 function sourceStem(source: string): string {
@@ -65,6 +70,7 @@ export function cflagsForSource(source: string): readonly string[] {
   return [
     ...base,
     ...(FIXED_R3_SOURCES.has(stem) ? ["-ffixed-r3"] : []),
+    ...(FIXED_LR_SOURCES.has(stem) ? ["-ffixed-r14"] : []),
     ...(OPTIMIZE_O1_SOURCES.has(stem) ? ["-O1"] : []),
     ...(UNSCHEDULED_SOURCES.has(stem) ? ["-fno-schedule-insns", "-fno-schedule-insns2"] : []),
     ...(NO_CSE_FOLLOW_SOURCES.has(stem) ? ["-fno-cse-follow-jumps"] : []),
@@ -119,7 +125,7 @@ const EXPECTED: Record<string, string> = {
   xgcc: "8087fb1911b00aafe8ba9dc1530ca84a98774206f24d95b3ac8a8f01bf8a6eb6",
   cpp: "28621e18b2a6b663e1ea6e47750ca0133483f4287bc271265cc7e2fcfa69a2eb",
   tradcpp: "88dae1204f5e928c7de003fd25263e91a18802f8ffde48b6f076e2ee1ea3e59a",
-  cc1: "68768737a5ce8387941022df9e1345ae86b362ae13991071b4ae19949a00b0eb",
+  cc1: "8bded78ec14221dc38a8a3142da2b22a15f0633eeeaaa04ac4de6a0522f612a5",
 };
 
 let validated = false;
@@ -190,9 +196,12 @@ export function directCompilerCommand(input: string, output: string, dumpbase: s
     "-fno-builtin", "-ffreestanding",
     ...(DEFAULT_ABI_SOURCES.has(stem) ? [] : ["-fcall-used-r4"]),
     ...(FIXED_R3_SOURCES.has(stem) ? ["-ffixed-r3"] : []),
+    ...(FIXED_LR_SOURCES.has(stem) ? ["-ffixed-r14"] : []),
     ...(OPTIMIZE_O1_SOURCES.has(stem) ? ["-O1"] : []),
     ...(UNSCHEDULED_SOURCES.has(stem) ? ["-fno-schedule-insns", "-fno-schedule-insns2"] : []),
     ...(NO_CSE_FOLLOW_SOURCES.has(stem) ? ["-fno-cse-follow-jumps"] : []),
+    ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),
+    ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
     "-o", output,
   ];
 }

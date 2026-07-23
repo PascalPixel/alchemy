@@ -2,7 +2,19 @@
 // Tool role: entrypoint; invoked by STATUS.md, package.json, tools/build_full.ts (+1 more).
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
-import { cflagsForSource, compilerCommand, externalSymbol, externalSymbolAssembly } from "./alchemy_gcc.ts";
+import {
+  cflagsForTargetSource,
+  compilerCommandForTarget,
+  externalSymbol,
+  externalSymbolAssembly,
+  type CompilerTarget,
+} from "./alchemy_gcc.ts";
+import {
+  DEFAULT_TARGET,
+  decompTarget,
+  parseDecompTarget,
+  type DecompTargetId,
+} from "./decomp_targets.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -19,6 +31,7 @@ interface Compiled {
 }
 
 interface Options {
+  target: DecompTargetId;
   rom: string;
   jobs: number;
   output: string;
@@ -73,11 +86,19 @@ async function run(command: string[]): Promise<RunResult> {
   return { stdout, stderr };
 }
 
-async function compileSource(source: string, objectDir: string): Promise<Compiled> {
+async function compileSource(
+  source: string,
+  objectDir: string,
+  compiler: CompilerTarget,
+): Promise<Compiled> {
   const name = stem(source);
   const assembly = join(objectDir, `${name}.s`);
   const object = join(objectDir, `${name}.o`);
-  await run(compilerCommand(...cflagsForSource(source), "-S", "-o", assembly, source));
+  await run(compilerCommandForTarget(
+    compiler,
+    ...cflagsForTargetSource(compiler, source),
+    "-S", "-o", assembly, source,
+  ));
   await run([
     "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
     "-o", object, assembly,
@@ -114,14 +135,30 @@ async function mapLimit<T, U>(items: T[], limit: number, action: (item: T) => Pr
 }
 
 function usage(): void {
-  console.log("usage: build_claimed.ts [-h] [--source-only] [--jobs JOBS] [--output OUTPUT] [rom]");
+  console.log(
+    "usage: build_claimed.ts [-h] [--target gs1-en|gs2-en] [--source-only] " +
+    "[--jobs JOBS] [--output OUTPUT] [rom]",
+  );
 }
 
 function parseArgs(argv: string[]): Options {
+  let targetId: DecompTargetId = DEFAULT_TARGET;
+  for (let index = 0; index < argv.length; index++) {
+    const argument = argv[index];
+    if (argument === "--target") {
+      const value = argv[++index];
+      if (value === undefined) throw new Error("--target requires a value");
+      targetId = parseDecompTarget(value);
+    } else if (argument.startsWith("--target=")) {
+      targetId = parseDecompTarget(argument.slice(9));
+    }
+  }
+  const target = decompTarget(targetId);
   const options: Options = {
-    rom: "roms/gs1-en.gba",
+    target: targetId,
+    rom: target.rom,
     jobs: Math.min(16, navigator.hardwareConcurrency || 1),
-    output: "out/claimed",
+    output: join(target.outputDir, "claimed"),
     sourceOnly: false,
   };
   let positional = false;
@@ -132,6 +169,10 @@ function parseArgs(argv: string[]): Options {
       process.exit(0);
     } else if (argument === "--source-only") {
       options.sourceOnly = true;
+    } else if (argument === "--target") {
+      index++;
+    } else if (argument.startsWith("--target=")) {
+      continue;
     } else if (argument === "--jobs" || argument === "--output") {
       const value = argv[++index];
       if (value === undefined) throw new Error(`${argument} requires a value`);
@@ -155,14 +196,19 @@ function parseArgs(argv: string[]): Options {
 
 async function main(): Promise<void> {
   const args = parseArgs(Bun.argv.slice(2));
+  const target = decompTarget(args.target);
   const rom = args.sourceOnly ? null : readFileSync(resolve(process.cwd(), args.rom));
-  const sources = readdirSync(join(ROOT, "src"), { withFileTypes: true })
+  if (rom !== null && rom.length !== target.romSize) {
+    throw new Error(`${target.id} ROM must contain exactly ${target.romSize} bytes`);
+  }
+  const sourceDirectory = rooted(target.sourceDir);
+  const sources = readdirSync(sourceDirectory, { withFileTypes: true })
     .filter((entry) => entry.isFile() && entry.name.endsWith(".c"))
-    .map((entry) => join(ROOT, "src", entry.name)).sort();
+    .map((entry) => join(sourceDirectory, entry.name)).sort();
   if (sources.length === 0) throw new Error("no reconstructed sources");
   const addresses = sources.map((source) => Number.parseInt(stem(source), 16));
   if (new Set(addresses).size !== addresses.length) throw new Error("duplicate source address");
-  const limit = rom === null ? ROM_BASE + 0x00800000 : ROM_BASE + rom.length;
+  const limit = ROM_BASE + target.romSize;
   if (addresses.some((address) => address < ROM_BASE || address >= limit)) {
     throw new Error("source address outside ROM");
   }
@@ -170,7 +216,11 @@ async function main(): Promise<void> {
   const output = rooted(args.output);
   const objectDir = join(output, "obj");
   mkdirSync(objectDir, { recursive: true });
-  const compiled = await mapLimit(sources, args.jobs, (source) => compileSource(source, objectDir));
+  const compiled = await mapLimit(
+    sources,
+    args.jobs,
+    (source) => compileSource(source, objectDir, target.compiler),
+  );
   const objects = compiled.map((item) => item.object);
   const definitions = compiled.flatMap((item) => item.definedNames);
   const defined = new Set(definitions);
@@ -253,8 +303,10 @@ async function main(): Promise<void> {
   }
   writeFileSync(join(output, "manifest.json"), JSON.stringify({
     format: 1,
+    target: target.id,
+    compiler: target.compiler,
     rom_base: ROM_BASE,
-    rom_size: rom?.length ?? 0x00800000,
+    rom_size: target.romSize,
     verification: args.sourceOnly ? "source_only" : "rom",
     image_base: imageBase,
     image_size: image.length,

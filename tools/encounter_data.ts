@@ -2,6 +2,7 @@
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { canonicalJson } from "./canonical_json.ts";
 
 const ROM_BASE = 0x08000000;
 export const BRIGHTNESS_CURVE_ADDRESS = 0x080c5c10;
@@ -47,7 +48,7 @@ function exactKeys(value: Json, keys: string[], name: string): void {
 }
 
 function pretty(value: unknown): string {
-  return `${JSON.stringify(value, null, 2)}\n`;
+  return `${canonicalJson(value)}\n`;
 }
 
 function hexadecimal(value: number): string {

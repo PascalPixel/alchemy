@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { isCanonicalJsonText } from "./canonical_json.ts";
 import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, renameSync, realpathSync, rmSync, symlinkSync,
   writeFileSync,
@@ -128,7 +129,7 @@ function validateTokens(tokens: unknown): asserts tokens is GeneralToken[] {
 function jsonDocument(path: string, label: string): unknown {
   const text = readFileSync(path, "utf8");
   const value = JSON.parse(text);
-  if (text !== `${JSON.stringify(value)}\n`) throw new Error(`${label} is not canonical JSON`);
+  if (!isCanonicalJsonText(text, value)) throw new Error(`${label} is not canonical JSON`);
   return value;
 }
 

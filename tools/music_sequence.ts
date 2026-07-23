@@ -1,4 +1,5 @@
 // Tool role: both; imported by tools/extract_audio.ts, tools/midi_roundtrip.ts, tools/midi_sequence.ts (+1 more); invoked by package.json, tools/midi_roundtrip.ts.
+import { canonicalJson } from "./canonical_json.ts";
 export type ControlName =
   "priority" | "tempo" | "key_shift" | "voice" | "volume" | "pan" |
   "pitch_bend" | "pitch_bend_range" | "lfo_speed" | "lfo_delay" |
@@ -736,7 +737,7 @@ async function main(args: string[]): Promise<void> {
     option(args, "--name"),
   );
   const output = option(args, "-o");
-  await Bun.write(output, JSON.stringify(source, null, 2) + "\n");
+  await Bun.write(output, canonicalJson(source) + "\n");
   const [built, report] = build_sequence(source);
   console.log(`base=0x${report.base.toString(16)} end=0x${report.end.toString(16)} streams=${report.streams} tracks=${report.tracks} events=${report.events} bytes=${built.length}`);
 }

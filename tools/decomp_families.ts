@@ -5,6 +5,7 @@
 // remain below ignored out/.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
+import { canonicalJson } from "./canonical_json.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const DEFAULT_MANIFEST = join(ROOT, "out/full/asm/manifest.json");
@@ -204,7 +205,7 @@ if (options.selfTest) selfTest();
 else {
   const value = report();
   mkdirSync(dirname(options.output), { recursive: true });
-  writeFileSync(options.output, JSON.stringify(value, null, 2) + "\n");
+  writeFileSync(options.output, canonicalJson(value) + "\n");
   console.log(`regions=${value.totals.regions} bytes=${value.totals.bytes} reuse=${value.totals.reuse} family=${value.totals.family} research=${value.totals.research}`);
   for (const family of value.families.slice(0, options.top) as Array<{ id: string; members: string[]; count: number; bytes: number; lane: string; expected_conversions_per_cpu_hour: number }>) {
     console.log(`${family.id}\tlane=${family.lane}\tcount=${family.count}\tbytes=${family.bytes}\tyield=${family.expected_conversions_per_cpu_hour.toFixed(1)}\t${family.members.join(",")}`);

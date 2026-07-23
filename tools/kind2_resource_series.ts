@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   existsSync,
   mkdirSync,
@@ -160,8 +161,7 @@ function parseHex(value: unknown, width: number, label: string): number {
 function canonicalJson(path: string, pretty: boolean, label: string): unknown {
   const text = readFileSync(path, "utf8");
   const value: unknown = JSON.parse(text);
-  const canonical = `${JSON.stringify(value, null, pretty ? 2 : 0)}\n`;
-  if (text !== canonical) throw new Error(`${label} is not canonical JSON`);
+    if (!isCanonicalJsonText(text, value)) throw new Error(`${label} is not canonical JSON`);
   return value;
 }
 
@@ -629,7 +629,7 @@ function writeKind2Series(rom: Buffer, catalog: CatalogDocument, directory: stri
     resources: catalog.resources.map((entry) => exportOne(rom, directory, entry)),
   };
   const indexFile = join(directory, "index.json");
-  writeFileSync(indexFile, `${JSON.stringify(index, null, 2)}\n`);
+  writeFileSync(indexFile, `${canonicalJson(index)}\n`);
   const built = build_kind2_series(indexFile);
   if (built.length !== catalog.resources.length) throw new Error("kind-2 series export is incomplete");
   return indexFile;
@@ -753,7 +753,7 @@ export function self_test(): void {
         },
       ],
     };
-    writeFileSync(catalogFile, `${JSON.stringify(catalog, null, 2)}\n`);
+    writeFileSync(catalogFile, `${canonicalJson(catalog)}\n`);
     export_kind2_series(romFile, catalogFile, output);
     const built = build_kind2_series(join(output, "index.json"));
     if (built.length !== 2 || !built[0].data.equals(Buffer.concat([firstPrefix, firstStream])) ||

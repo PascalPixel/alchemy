@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync,
 } from "node:fs";
@@ -48,7 +49,7 @@ function document(path: string): Json {
   const source = JSON.parse(text);
   if (typeof source !== "object" || source === null || Array.isArray(source) || source.format !== 1)
     throw new Error(`${path}: unsupported source format`);
-  if (text !== pretty(source)) throw new Error(`${path}: source is not canonical JSON`);
+  if (!isCanonicalJsonText(text, source)) throw new Error(`${path}: source is not canonical JSON`);
   return source;
 }
 
@@ -57,7 +58,7 @@ function hexadecimal(value: number): string {
 }
 
 function pretty(value: unknown): string {
-  return `${JSON.stringify(value, null, 2)}\n`;
+  return `${canonicalJson(value)}\n`;
 }
 
 function extent(source: Json, address: number, size: number, name: string): void {

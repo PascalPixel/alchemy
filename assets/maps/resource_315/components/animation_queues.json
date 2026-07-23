@@ -1,21 +1,12 @@
 {
   "format": 1,
-  "terminators": [
-    "0xfe00",
-    "0xffff"
-  ],
+  "terminators": ["0xfe00", "0xffff"],
   "queues": [
     {
       "header": "0xfd00",
       "commands": [
-        [
-          1802,
-          10
-        ],
-        [
-          1514,
-          10
-        ]
+        [1802, 10],
+        [1514, 10]
       ]
     }
   ]

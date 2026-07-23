@@ -16,10 +16,7 @@
           "name": "Func_08015430"
         }
       ],
-      "consumers": [
-        "Func_08018038",
-        "Func_080196c4"
-      ]
+      "consumers": ["Func_08018038", "Func_080196c4"]
     },
     {
       "address": "0x08015570",
@@ -31,9 +28,7 @@
           "name": "Func_08015570"
         }
       ],
-      "consumers": [
-        "Func_08019bac"
-      ]
+      "consumers": ["Func_08019bac"]
     },
     {
       "address": "0x080155d0",
@@ -45,9 +40,7 @@
           "name": "Func_080155d0"
         }
       ],
-      "consumers": [
-        "Func_08018cac"
-      ]
+      "consumers": ["Func_08018cac"]
     },
     {
       "address": "0x080158e8",
@@ -59,9 +52,7 @@
           "name": "Func_080158e8"
         }
       ],
-      "consumers": [
-        "Func_0801edec"
-      ]
+      "consumers": ["Func_0801edec"]
     },
     {
       "address": "0x08015afc",
@@ -73,10 +64,7 @@
           "name": "Func_08015afc"
         }
       ],
-      "consumers": [
-        "Func_0801a5a4",
-        "Func_08021be0"
-      ]
+      "consumers": ["Func_0801a5a4", "Func_08021be0"]
     },
     {
       "address": "0x08015d74",
@@ -88,9 +76,7 @@
           "name": "Func_08015d74"
         }
       ],
-      "consumers": [
-        "Func_0801a5a4"
-      ]
+      "consumers": ["Func_0801a5a4"]
     },
     {
       "address": "0x08015e10",
@@ -102,9 +88,7 @@
           "name": "Func_08015e10"
         }
       ],
-      "consumers": [
-        "Func_0801a5a4"
-      ]
+      "consumers": ["Func_0801a5a4"]
     }
   ]
 }

@@ -16,11 +16,7 @@
     "group": 70,
     "variant": 1,
     "effect_id": 0,
-    "consumers": [
-      "Func_0808a8e4",
-      "Func_0808ab48",
-      "Func_0808ab74"
-    ]
+    "consumers": ["Func_0808a8e4", "Func_0808ab48", "Func_0808ab74"]
   },
   "padding": {
     "address": "0x087fd4b9",

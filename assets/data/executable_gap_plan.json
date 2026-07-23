@@ -8,19 +8,14 @@
       "address": "0x080003c0",
       "size": 844,
       "classification": "mixed",
-      "consumers": [
-        "asm/080037d4.s:08000404",
-        "asm/08003650.s:Func_080006fc"
-      ],
+      "consumers": ["asm/080037d4.s:08000404", "asm/08003650.s:Func_080006fc"],
       "sections": [
         {
           "address": "0x080003c0",
           "size": 68,
           "kind": "arm",
           "source": "080003c0.s",
-          "symbols": [
-            "Entry_080003c0"
-          ],
+          "symbols": ["Entry_080003c0"],
           "maximum_undefined_words": 0
         },
         {
@@ -36,9 +31,7 @@
           "size": 16,
           "kind": "thumb",
           "source": "080006fc.s",
-          "symbols": [
-            "Func_080006fc"
-          ],
+          "symbols": ["Func_080006fc"],
           "maximum_undefined_words": 0
         }
       ]
@@ -47,19 +40,14 @@
       "address": "0x080069a4",
       "size": 92,
       "classification": "executable",
-      "consumers": [
-        "asm/080056cc.s:Func_080069c8"
-      ],
+      "consumers": ["asm/080056cc.s:Func_080069c8"],
       "sections": [
         {
           "address": "0x080069a4",
           "size": 92,
           "kind": "thumb",
           "source": "080069a4.s",
-          "symbols": [
-            "Func_080069a4",
-            "Func_080069c8"
-          ],
+          "symbols": ["Func_080069a4", "Func_080069c8"],
           "maximum_undefined_words": 0
         }
       ]
@@ -68,18 +56,14 @@
       "address": "0x08006f48",
       "size": 36,
       "classification": "executable",
-      "consumers": [
-        "asm/08006e24.s:Func_08006f49"
-      ],
+      "consumers": ["asm/08006e24.s:Func_08006f49"],
       "sections": [
         {
           "address": "0x08006f48",
           "size": 36,
           "kind": "thumb",
           "source": "08006f48.s",
-          "symbols": [
-            "Func_08006f48"
-          ],
+          "symbols": ["Func_08006f48"],
           "maximum_undefined_words": 0
         }
       ]
@@ -88,10 +72,7 @@
       "address": "0x0800731c",
       "size": 1120,
       "classification": "mixed",
-      "consumers": [
-        "asm/0800300c.s:dma-08007320-56",
-        "asm/080044d0.s:08007676"
-      ],
+      "consumers": ["asm/0800300c.s:dma-08007320-56", "asm/080044d0.s:08007676"],
       "sections": [
         {
           "address": "0x0800731c",
@@ -131,186 +112,126 @@
       "address": "0x08009010",
       "size": 16,
       "classification": "veneer-slots",
-      "consumers": [
-        "assets/code:overlay-call-table"
-      ],
+      "consumers": ["assets/code:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x08009028",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": [
-        "assets/code:overlay-call-table"
-      ],
+      "consumers": ["assets/code:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x08009040",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": [
-        "assets/code:overlay-call-table"
-      ],
+      "consumers": ["assets/code:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x08009058",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": [
-        "assets/code:overlay-call-table"
-      ],
+      "consumers": ["assets/code:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x08009068",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": [
-        "assets/code:overlay-call-table"
-      ],
+      "consumers": ["assets/code:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x08009090",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": [
-        "assets/code:overlay-call-table"
-      ],
+      "consumers": ["assets/code:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x080090c0",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": [
-        "assets/code:overlay-call-table"
-      ],
+      "consumers": ["assets/code:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x080090d8",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": [
-        "assets/code:overlay-call-table"
-      ],
+      "consumers": ["assets/code:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x080090e8",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": [
-        "assets/code:overlay-call-table"
-      ],
+      "consumers": ["assets/code:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x08009120",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": [
-        "assets/code:overlay-call-table"
-      ],
+      "consumers": ["assets/code:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x08009160",
       "size": 72,
       "classification": "veneer-slots",
-      "consumers": [
-        "assets/code:overlay-call-table"
-      ],
-      "veneer_addresses": [
-        "0x08009170",
-        "0x08009178",
-        "0x08009180",
-        "0x08009188",
-        "0x08009190",
-        "0x08009198",
-        "0x080091a0"
-      ]
+      "consumers": ["assets/code:overlay-call-table"],
+      "veneer_addresses": ["0x08009170", "0x08009178", "0x08009180", "0x08009188", "0x08009190", "0x08009198", "0x080091a0"]
     },
     {
       "address": "0x080091b8",
       "size": 32,
       "classification": "veneer-slots",
-      "consumers": [
-        "assets/code:overlay-call-table"
-      ],
-      "veneer_addresses": [
-        "0x080091b8",
-        "0x080091c0",
-        "0x080091c8",
-        "0x080091d0"
-      ]
+      "consumers": ["assets/code:overlay-call-table"],
+      "veneer_addresses": ["0x080091b8", "0x080091c0", "0x080091c8", "0x080091d0"]
     },
     {
       "address": "0x080091e8",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": [
-        "assets/code:overlay-call-table"
-      ],
-      "veneer_addresses": [
-        "0x080091e8"
-      ]
+      "consumers": ["assets/code:overlay-call-table"],
+      "veneer_addresses": ["0x080091e8"]
     },
     {
       "address": "0x080091f8",
       "size": 40,
       "classification": "veneer-slots",
-      "consumers": [
-        "assets/code:overlay-call-table"
-      ],
-      "veneer_addresses": [
-        "0x080091f8",
-        "0x08009208",
-        "0x08009210"
-      ]
+      "consumers": ["assets/code:overlay-call-table"],
+      "veneer_addresses": ["0x080091f8", "0x08009208", "0x08009210"]
     },
     {
       "address": "0x08009258",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": [
-        "assets/code:overlay-call-table"
-      ],
-      "veneer_addresses": [
-        "0x08009258"
-      ]
+      "consumers": ["assets/code:overlay-call-table"],
+      "veneer_addresses": ["0x08009258"]
     },
     {
       "address": "0x08009278",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": [
-        "assets/code:overlay-call-table"
-      ],
-      "veneer_addresses": [
-        "0x08009278"
-      ]
+      "consumers": ["assets/code:overlay-call-table"],
+      "veneer_addresses": ["0x08009278"]
     },
     {
       "address": "0x0800f1bc",
       "size": 62,
       "classification": "executable",
-      "consumers": [
-        "asm/0800ee14.s:indirect-call-continuation",
-        "asm/0800f1fa.s:fallthrough"
-      ],
+      "consumers": ["asm/0800ee14.s:indirect-call-continuation", "asm/0800f1fa.s:fallthrough"],
       "sections": [
         {
           "address": "0x0800f1bc",
           "size": 62,
           "kind": "thumb",
           "source": "0800f1bc.s",
-          "symbols": [
-            "Fragment_0800f1bc"
-          ],
+          "symbols": ["Fragment_0800f1bc"],
           "maximum_undefined_words": 0
         }
       ]
@@ -319,18 +240,14 @@
       "address": "0x0800fd5c",
       "size": 320,
       "classification": "executable",
-      "consumers": [
-        "asm/0800fb38.s:Func_0800fd5c"
-      ],
+      "consumers": ["asm/0800fb38.s:Func_0800fd5c"],
       "sections": [
         {
           "address": "0x0800fd5c",
           "size": 320,
           "kind": "thumb",
           "source": "0800fd5c.s",
-          "symbols": [
-            "Func_0800fd5c"
-          ],
+          "symbols": ["Func_0800fd5c"],
           "maximum_undefined_words": 0
         }
       ]
@@ -339,19 +256,14 @@
       "address": "0x080108c4",
       "size": 32,
       "classification": "executable",
-      "consumers": [
-        "asm/08010788.s:tail",
-        "asm/080108e4.s:next-entry"
-      ],
+      "consumers": ["asm/08010788.s:tail", "asm/080108e4.s:next-entry"],
       "sections": [
         {
           "address": "0x080108c4",
           "size": 32,
           "kind": "thumb",
           "source": "080108c4.s",
-          "symbols": [
-            "Fragment_080108c4"
-          ],
+          "symbols": ["Fragment_080108c4"],
           "maximum_undefined_words": 0
         }
       ]
@@ -360,18 +272,14 @@
       "address": "0x08011568",
       "size": 40,
       "classification": "executable",
-      "consumers": [
-        "asm/08011590.s:08011569"
-      ],
+      "consumers": ["asm/08011590.s:08011569"],
       "sections": [
         {
           "address": "0x08011568",
           "size": 40,
           "kind": "thumb",
           "source": "08011568.s",
-          "symbols": [
-            "Func_08011568"
-          ],
+          "symbols": ["Func_08011568"],
           "maximum_undefined_words": 0
         }
       ]
@@ -380,19 +288,14 @@
       "address": "0x080118a8",
       "size": 48,
       "classification": "executable",
-      "consumers": [
-        "asm/0801179c.s:tail",
-        "asm/080118d8.s:next-entry"
-      ],
+      "consumers": ["asm/0801179c.s:tail", "asm/080118d8.s:next-entry"],
       "sections": [
         {
           "address": "0x080118a8",
           "size": 48,
           "kind": "thumb",
           "source": "080118a8.s",
-          "symbols": [
-            "Fragment_080118a8"
-          ],
+          "symbols": ["Fragment_080118a8"],
           "maximum_undefined_words": 0
         }
       ]
@@ -401,18 +304,14 @@
       "address": "0x080b5138",
       "size": 560,
       "classification": "executable",
-      "consumers": [
-        "dedicated-veneer-island-residual"
-      ],
+      "consumers": ["dedicated-veneer-island-residual"],
       "sections": [
         {
           "address": "0x080b5138",
           "size": 560,
           "kind": "thumb",
           "source": "080b5138.s",
-          "symbols": [
-            "Func_080b5138"
-          ],
+          "symbols": ["Func_080b5138"],
           "maximum_undefined_words": 0
         }
       ]

@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   existsSync,
   lstatSync,
@@ -188,8 +189,7 @@ function canonicalHex(value: unknown, expected: number, width: number, label: st
 function jsonDocument(path: string, pretty: boolean, label: string): unknown {
   const text = readFileSync(path, "utf8");
   const value: unknown = JSON.parse(text);
-  const canonical = `${JSON.stringify(value, null, pretty ? 2 : 0)}\n`;
-  if (text !== canonical) throw new Error(`${label} is not canonical JSON`);
+    if (!isCanonicalJsonText(text, value)) throw new Error(`${label} is not canonical JSON`);
   return value;
 }
 
@@ -572,7 +572,7 @@ function exportMotion(original: Buffer, root: string, spec: Spec): void {
     deltas: pairs.slice(0, shape.deltas),
     boundary_deltas: pairs.slice(shape.deltas),
   };
-  writeFileSync(join(root, spec.source), `${JSON.stringify(plan, null, 2)}\n`);
+  writeFileSync(join(root, spec.source), `${canonicalJson(plan)}\n`);
   if (!buildMotion(join(root, spec.source), spec).equals(original)) throw new Error(`${idText(spec.id)} export does not round-trip`);
 }
 
@@ -598,7 +598,7 @@ function writePackage(rom: Buffer, directory: string): void {
   exportStream(checkedBoundary(rom, D1), directory);
   exportMotion(checkedBoundary(rom, D2), directory, D2);
   exportMotion(checkedBoundary(rom, D3), directory, D3);
-  writeFileSync(join(directory, "index.json"), `${JSON.stringify(expectedIndex(), null, 2)}\n`);
+  writeFileSync(join(directory, "index.json"), `${canonicalJson(expectedIndex())}\n`);
 }
 
 function verifyBuilt(rom: Buffer, indexPath: string): { claimedBytes: number; boundaryBytes: number } {
@@ -739,7 +739,7 @@ export function selfTest(): void {
     writeFileSync(join(wrong, "note.txt"), "x");
     const canonical = join(temporary, "canonical");
     mkdirSync(canonical);
-    writeFileSync(join(canonical, "index.json"), `${JSON.stringify(expectedIndex(), null, 2)}\n`);
+    writeFileSync(join(canonical, "index.json"), `${canonicalJson(expectedIndex())}\n`);
     const linkedRom = join(canonical, "game.gba");
     symlinkSync(rom, linkedRom);
     if (!rejects(() => validateExportDestination(rom, temporary)) ||

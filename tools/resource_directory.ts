@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { canonicalJson } from "./canonical_json.ts";
 
 export const ROM_BASE = 0x08000000;
 export const DIRECTORY_ADDRESS = 0x08320000;
@@ -203,7 +204,7 @@ async function main(args: string[]): Promise<void> {
       integer(option(args, "--address", hex(DIRECTORY_ADDRESS)), "resource directory address"),
       integer(option(args, "--slots", String(DIRECTORY_SLOTS)), "resource directory slot count"),
     );
-    await Bun.write(output, `${JSON.stringify(result, null, 2)}\n`);
+    await Bun.write(output, `${canonicalJson(result)}\n`);
     console.log(`slots=${result.slot_count} bytes=${result.slot_count * 4}`);
     return;
   }

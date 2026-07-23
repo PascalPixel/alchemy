@@ -8,18 +8,14 @@
       "address": "0x080b5138",
       "size": 560,
       "classification": "executable",
-      "consumers": [
-        "dedicated-veneer-island-residual"
-      ],
+      "consumers": ["dedicated-veneer-island-residual"],
       "sections": [
         {
           "address": "0x080b5138",
           "size": 560,
           "kind": "thumb",
           "source": "080b5138.s",
-          "symbols": [
-            "Func_080b5138"
-          ],
+          "symbols": ["Func_080b5138"],
           "maximum_undefined_words": 0
         }
       ]

@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts, tools/executable_gap_sources.ts, tools/relocated_arm_helpers.ts; invoked by package.json.
+import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   existsSync,
   mkdirSync,
@@ -111,7 +112,7 @@ function hexadecimal(value: number, width = 8): string {
 }
 
 function pretty(value: unknown): string {
-  return `${JSON.stringify(value, null, 2)}\n`;
+  return `${canonicalJson(value)}\n`;
 }
 
 function exactKeys(value: unknown, keys: string[], name: string): asserts value is Json {
@@ -123,7 +124,7 @@ function exactKeys(value: unknown, keys: string[], name: string): asserts value 
 
 function document(path: string): Json {
   const text = readFileSync(path, "utf8"), value = JSON.parse(text);
-  if (text !== pretty(value)) throw new Error(`${path}: source is not canonical JSON`);
+  if (!isCanonicalJsonText(text, value)) throw new Error(`${path}: source is not canonical JSON`);
   return value;
 }
 

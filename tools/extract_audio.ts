@@ -2,6 +2,7 @@
 // Tool role: entrypoint; invoked by assets/audio/README.md.
 import { build_sequence, extract_sequence } from "./music_sequence.ts";
 import { wavFromSignedPcm } from "./audio_wave.ts";
+import { canonicalJson } from "./canonical_json.ts";
 
 interface SequenceIndexEntry {
   name: string;
@@ -153,7 +154,7 @@ async function main(args: string[]): Promise<void> {
       });
     }
     const index = { format: 1, engine: "smsh-pcm-wave-series", waves };
-    await Bun.write(`${output}/index.json`, JSON.stringify(index, null, 2) + "\n");
+    await Bun.write(`${output}/index.json`, canonicalJson(index) + "\n");
     console.log(`waves=${waves.length} bytes=${waves.reduce((sum, wave) => sum + Number(wave.size), 0)}`);
     return;
   }
@@ -169,7 +170,7 @@ async function main(args: string[]): Promise<void> {
     sequences,
     failures,
   };
-  await Bun.write(`${output}/index.json`, JSON.stringify(index, null, 2) + "\n");
+  await Bun.write(`${output}/index.json`, canonicalJson(index) + "\n");
   const bytes = sequences.reduce((total, sequence) => total + Number(sequence.size), 0);
   console.log(`sequences=${sequences.length} bytes=${bytes} failures=${failures.length}`);
 }

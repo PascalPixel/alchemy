@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { canonicalJson } from "./canonical_json.ts";
 import {
   mkdirSync,
   readFileSync,
@@ -337,8 +338,8 @@ export function export_resource_3ce(rom: Uint8Array, directory: string): Resourc
   };
   mkdirSync(directory, { recursive: true });
   const layoutPath = join(directory, "layout.json");
-  writeFileSync(layoutPath, `${JSON.stringify(layout, null, 2)}\n`);
-  writeFileSync(join(directory, "stream.lz.json"), `${JSON.stringify(plan, null, 2)}\n`);
+  writeFileSync(layoutPath, `${canonicalJson(layout)}\n`);
+  writeFileSync(join(directory, "stream.lz.json"), `${canonicalJson(plan)}\n`);
   writeFileSync(join(directory, "overlay.s"), overlaySource(decoded));
   verify_resource_3ce(image, layoutPath);
   return layout;

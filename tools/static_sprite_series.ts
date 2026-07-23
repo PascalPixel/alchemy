@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: both; imported by tools/build_assets.ts, tools/character_catalog.ts, tools/split_sprite_bank.ts; invoked by package.json.
+import { canonicalJson } from "./canonical_json.ts";
 import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync,
   realpathSync, rmSync, rmdirSync, symlinkSync, unlinkSync, writeFileSync,
@@ -569,7 +570,7 @@ export function export_static_sprite_series(
     packages: packageEntries,
   };
   const indexPath = join(directory, "index.json");
-  writeFileSync(indexPath, JSON.stringify(index, null, 2) + "\n");
+  writeFileSync(indexPath, canonicalJson(index) + "\n");
   const [rebuilt] = build_static_sprite_series(indexPath, palettePath);
   if (!rebuilt.equals(arena)) throw new Error("static-sprite series round trip differs");
   prune_static_sprite_packages(directory, packageEntries.map((item) => `chr_${item.id}`));
@@ -629,7 +630,7 @@ export function repack_static_sprite_atlases(
     delete entry.item.source;
     prune_files(entry.directory, "koma*.png", paths);
   }
-  writeFileSync(indexPath, JSON.stringify(index, null, 2) + "\n");
+  writeFileSync(indexPath, canonicalJson(index) + "\n");
   const [after] = build_static_sprite_series(indexPath, palettePath);
   if (!after.equals(before)) throw new Error("repacked sprite atlases do not round trip");
   return {
@@ -685,7 +686,7 @@ export function split_static_sprite_banks(indexPath: string, palettePath: string
       skipped.push(`${item.id}: ${(error as Error).message}`);
     }
   }
-  writeFileSync(indexPath, JSON.stringify(index, null, 2) + "\n");
+  writeFileSync(indexPath, canonicalJson(index) + "\n");
   const [after] = build_static_sprite_series(indexPath, palettePath);
   if (!after.equals(before)) throw new Error("split sprite banks do not round trip");
   for (const entry of converted) prune_files(entry.directory, "koma*.png", entry.written);

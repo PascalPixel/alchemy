@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: library; imported by tools/overlay_match.ts, tools/search_queue_variants.ts.
+import { canonicalJson } from "./canonical_json.ts";
 import {
   copyFileSync,
   existsSync,
@@ -558,7 +559,7 @@ async function main(): Promise<void> {
     report.push({ entry: address, tested: (grouped.get(address) ?? []).length, best });
   }
   mkdirSync(options.output, { recursive: true });
-  writeFileSync(join(options.output, "report.json"), JSON.stringify(report, null, 2) + "\n");
+  writeFileSync(join(options.output, "report.json"), canonicalJson(report) + "\n");
   console.log(`targets=${addresses.length} variants=${tasks.length} exact=${exact}`);
   for (const item of report) {
     if (item.best.length === 0) continue;

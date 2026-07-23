@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Tool role: entrypoint; invoked by STATUS.md, package.json.
+import { canonicalJson } from "./canonical_json.ts";
 
 export const ROM_BASE = 0x08000000;
 export const ROM_SIZE = 0x00800000;
@@ -537,7 +538,7 @@ async function main(argv: string[]): Promise<void> {
     assets: await readJson(options.assetManifest, "asset manifest"),
     directory: await readJson(options.resourceDirectory, "resource directory"),
   });
-  if (options.json) console.log(JSON.stringify(report, null, 2));
+  if (options.json) console.log(canonicalJson(report));
   else printReport(report);
 }
 

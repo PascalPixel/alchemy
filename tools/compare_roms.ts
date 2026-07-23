@@ -1,4 +1,5 @@
 // Tool role: both; imported by tools/compare_regions.ts, tools/scan_data_v2.ts, tools/scan_decomp.ts; invoked by package.json, tools/check_publication.ts.
+import { canonicalJson } from "./canonical_json.ts";
 export interface MatchSpan {
   reference_address: string;
   candidate_address: string;
@@ -693,7 +694,7 @@ async function main(args: string[]): Promise<void> {
     args.includes("--thumb-relocations"),
     { reference: referenceRanges, candidate: candidateRanges },
   );
-  await Bun.write(output, JSON.stringify(report, null, 2) + "\n");
+  await Bun.write(output, canonicalJson(report) + "\n");
   console.log(`same_offset=${report.same_offset.matching_bytes}/${report.same_offset.compared_bytes} ` +
     `same_runs=${report.same_offset.run_count} relocated_spans=${report.relocated.span_count} ` +
     `relocated_bytes=${report.relocated.matched_bytes} ` +

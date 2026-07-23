@@ -6,6 +6,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { verifyCandidate } from "./match_m2c.ts";
 import { assembleOverlay, OVERLAY_BASE } from "./overlay_disasm.ts";
+import { canonicalJson } from "./canonical_json.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const DEFINITION = /\b(Func_[0-9a-f]{8})\s*\([^;{}]*\)\s*\{/i;
@@ -119,7 +120,7 @@ async function main(): Promise<void> {
   }
   const matches = results.filter((result) => result.matched === true).length;
   mkdirSync(options.output, { recursive: true });
-  writeFileSync(join(options.output, "report.json"), JSON.stringify({ format: 1, targets: templateReport.exact_hits.length, matches, results }, null, 2) + "\n");
+  writeFileSync(join(options.output, "report.json"), canonicalJson({ format: 1, targets: templateReport.exact_hits.length, matches, results }) + "\n");
   console.log(`targets=${templateReport.exact_hits.length} matches=${matches} report=${join(options.output, "report.json")}`);
 }
 

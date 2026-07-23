@@ -1,4 +1,5 @@
 // Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
+import { canonicalJson } from "./canonical_json.ts";
 export type SoundTableEntry = [header: string, player: number];
 
 export interface SoundTableSource {
@@ -159,7 +160,7 @@ async function main(args: string[]): Promise<void> {
     integer(option(args, "--count"), "--count"),
   );
   const output = option(args, "-o");
-  await Bun.write(output, JSON.stringify(source, null, 2) + "\n");
+  await Bun.write(output, canonicalJson(source) + "\n");
   const [built, report] = build_sound_table(source);
   console.log(`entries=${report.entries} unique_headers=${report.unique_headers} bytes=${built.length}`);
 }

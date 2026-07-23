@@ -58,7 +58,7 @@ function main(): void {
   writeFileSync(join(ROOT, "work/structs.json"), JSON.stringify({ format: 1, bases: summary }, null, 1));
 
   // m2c文脈への反映: 充分な観測(3件以上、4フィールド以上)の基底だけを
-  // 構造体化し、名前は番地由来の機械名に留める(NAMING.mdの命名保留規則)。
+  // 構造体化し、名前は番地由来の機械名に留める(CONVENTIONS.mdの命名保留規則)。
   let header = "";
   let emitted = 0;
   for (const [base, fields] of Object.entries(summary)) {

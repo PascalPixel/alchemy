@@ -1,4 +1,4 @@
-// Tool role: both; imported by tools/build_assets.ts, tools/midi_roundtrip.ts; invoked by ASSETS.md, assets/audio/README.md, package.json.
+// Tool role: both; imported by tools/build_assets.ts, tools/midi_roundtrip.ts; invoked by CONVENTIONS.md, assets/audio/README.md, package.json.
 // midi_sequence.ts — MIDI + 逸脱サイドカー コーデック
 //
 // 目的: エンジン固有 sequence-JSON の冗長な列挙を、追跡対象の標準 MIDI

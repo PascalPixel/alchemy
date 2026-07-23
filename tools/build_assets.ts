@@ -714,15 +714,18 @@ function expandSeries(manifest: Json, entries: Json[]): void {
         throw new Error("unsupported sound-sequence series");
       }
       const directory = dirname(String(series.index));
-      // Resolve refs against the pre-flatten package directory, then flatten.
-      const legacyDir = join(directory, basename(String(series.index)).replace(/_?index\.json$/, ""));
       for (const sequence of index.sequences) {
+        // Tuple schema: [song_id, class, address, size]. File names derive
+        // from the id and class; the index stores only placement data.
+        const [songId, songClass, address, size] = sequence as [number, string, string, string];
+        const stem = `sound_${String(songId).padStart(3, "0")}`;
+        const base = `${songClass}_${String(songId).padStart(3, "0")}. ${stem}`;
         entries.push({
-          address: sequence.address,
-          size: sequence.size,
+          address,
+          size,
           kind: "golden-sun-sound-sequence",
-          source: flatAssetPath(normalize(join(legacyDir, String(sequence.midi)))),
-          sidecar: sequence.sidecar === undefined ? undefined : flatAssetPath(normalize(join(legacyDir, String(sequence.sidecar)))),
+          source: join(directory, `${base}.mid`),
+          sidecar: existsSync(join(directory, `${base}.json`)) ? join(directory, `${base}.json`) : undefined,
         });
       }
     } else if (series.kind === "golden-sun-pcm-wave-series") {

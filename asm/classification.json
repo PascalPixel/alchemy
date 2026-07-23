@@ -230,10 +230,11 @@
     "approved_compiler_call_prologue_mismatch",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 19,
-   "expected_bytes": 796,
+   "expected_files": 20,
+   "expected_bytes": 932,
    "files": [
     "080979a4",
+    "0809b86c",
     "080b845c",
     "080b84c0",
     "080e3994",
@@ -288,6 +289,25 @@
    "expected_bytes": 120,
    "files": [
     "0808b320"
+   ]
+  },
+  {
+   "kind": "custom_iwram_frame_entry_module",
+   "origin": "program_or_library_runtime",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "conditional_prologue_after_guard",
+    "manual_high_register_and_stack_frame_contract",
+    "tail_branch_to_iwram_without_link",
+    "iwram_target_restores_caller_frame",
+    "approved_compiler_cannot_express_contract",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 132,
+   "files": [
+    "080f95f0"
    ]
   },
   {

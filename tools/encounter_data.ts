@@ -106,17 +106,17 @@ export function build_encounter_tables(path: string): Buffer {
   const formations = Buffer.alloc(FORMATION_COUNT * 16);
   source.formations.forEach((formation: Json | null, index: number) => {
     if (formation === null) return;
-    if (typeof formation !== "object" || !Array.isArray(formation.slots) || formation.slots.length > 5) {
+    // Tuple schema: [layout, [member_id, minimum, maximum] x slots].
+    if (!Array.isArray(formation) || formation.length < 1 || formation.length > 6) {
       throw new Error(`formation ${index} has invalid slots`);
     }
-    exactKeys(formation, ["layout", "slots"], `formation ${index}`);
     const offset = index * 16;
-    formations[offset] = integer(formation.layout, 0, 0xff, `formation ${index} layout`);
-    formation.slots.forEach((slot: Json, slotIndex: number) => {
-      exactKeys(slot, ["member_id", "minimum", "maximum"], `formation ${index} slot ${slotIndex}`);
-      const member = integer(slot.member_id, 1, 0xff, `formation ${index} member`);
-      const minimum = integer(slot.minimum, 0, 0xff, `formation ${index} minimum`);
-      const maximum = integer(slot.maximum, minimum, 0xff, `formation ${index} maximum`);
+    formations[offset] = integer(formation[0], 0, 0xff, `formation ${index} layout`);
+    (formation.slice(1) as Json[]).forEach((slot: Json, slotIndex: number) => {
+      const [memberRaw, minimumRaw, maximumRaw] = slot as [number, number, number];
+      const member = integer(memberRaw, 1, 0xff, `formation ${index} member`);
+      const minimum = integer(minimumRaw, 0, 0xff, `formation ${index} minimum`);
+      const maximum = integer(maximumRaw, minimum, 0xff, `formation ${index} maximum`);
       formations[offset + 1 + slotIndex] = member;
       formations[offset + 6 + slotIndex] = minimum;
       formations[offset + 11 + slotIndex] = maximum;
@@ -133,12 +133,13 @@ export function build_encounter_tables(path: string): Buffer {
   }
   const metadata = Buffer.alloc(METADATA_COUNT * 8);
   source.metadata.forEach((entry: Json, index: number) => {
-    exactKeys(entry, ["value", "flags_0", "flags_1", "attribute_4"], `metadata ${index}`);
+    // Tuple schema: [value, flags_0, flags_1, attribute_4].
+    const [valueRaw, flags0Raw, flags1Raw, attribute4Raw] = entry as [number, unknown, unknown, number];
     const offset = index * 8;
-    metadata.writeUInt16LE(integer(entry.value, 0, 0xffff, `metadata ${index} value`), offset);
-    metadata[offset + 2] = flagByte(entry.flags_0, `metadata ${index} flags 0`);
-    metadata[offset + 3] = flagByte(entry.flags_1, `metadata ${index} flags 1`);
-    metadata[offset + 4] = integer(entry.attribute_4, 0, 0xff, `metadata ${index} attribute 4`);
+    metadata.writeUInt16LE(integer(valueRaw, 0, 0xffff, `metadata ${index} value`), offset);
+    metadata[offset + 2] = flagByte(flags0Raw, `metadata ${index} flags 0`);
+    metadata[offset + 3] = flagByte(flags1Raw, `metadata ${index} flags 1`);
+    metadata[offset + 4] = integer(attribute4Raw, 0, 0xff, `metadata ${index} attribute 4`);
   });
   const output = Buffer.concat([formations, preload, metadata]);
   if (output.length !== ENCOUNTER_TABLE_SIZE) throw new Error("encounter table size differs");

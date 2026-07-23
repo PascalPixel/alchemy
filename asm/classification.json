@@ -230,10 +230,11 @@
     "approved_compiler_call_prologue_mismatch",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 20,
-   "expected_bytes": 932,
+   "expected_files": 21,
+   "expected_bytes": 1088,
    "files": [
     "080979a4",
+    "0809a7f4",
     "0809b86c",
     "080b845c",
     "080b84c0",

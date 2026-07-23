@@ -63,7 +63,7 @@ function read_json(path: string): any {
 
 /** ヘッダに記録された画面寸法と必要セル数を返す。 */
 export function scene_dimensions(map_dir: string): SceneDimensions {
-  const document = read_json(join(map_dir, "components/header.json"));
+  const document = read_json(join(map_dir, "header.json"));
   const parameters = document.parameters ?? [];
   if (parameters.length !== 12) {
     throw new Error("map header requires twelve parameter bytes");
@@ -80,7 +80,7 @@ export function scene_dimensions(map_dir: string): SceneDimensions {
 
 /** ヘッダ指定から二個の表示窓へ割り当てる文字ブロック順を返す。 */
 export function tile_window_order(map_dir: string): WindowOrder {
-  const document = read_json(join(map_dir, "components/header.json"));
+  const document = read_json(join(map_dir, "header.json"));
   const parameters = document.parameters ?? [];
   if (parameters.length !== 12) {
     throw new Error("map header requires twelve parameter bytes");
@@ -215,7 +215,7 @@ export function compose(map_dir: string, linkage: Linkage): [SceneImage, number]
   }
   const palette_path = palettes[linkage.palette.toLowerCase()];
   const palette = load_palette(palette_path);
-  const metatiles = parse_metatiles(join(map_dir, "components/metatiles.tilemap"));
+  const metatiles = parse_metatiles(join(map_dir, "metatiles.tilemap"));
   const cells = cell_indices(join(map_dir, "grid"), metatiles.length);
   const [width, height, cells_wide, cells_high] = scene_dimensions(map_dir);
   const pixels = Buffer.alloc(width * height * 3);

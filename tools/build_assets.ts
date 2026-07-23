@@ -418,7 +418,7 @@ function expandSeries(manifest: Json, entries: Json[]): void {
   const gridAddresses: Record<string, number> = {};
   for (const series of manifest.series ?? []) {
     if (series.kind !== "golden-sun-map-grid-series") continue;
-    for (const grid of series.grids) gridAddresses[String(grid.id).toLowerCase()] = number(grid.address);
+    for (const [gridId, gridAddr] of series.grids as Array<[string, string, string]>) gridAddresses[String(gridId).toLowerCase()] = number(gridAddr);
   }
   for (const series of manifest.series ?? []) {
     if (series.kind === "golden-sun-delta7-still-series") {
@@ -558,29 +558,33 @@ function expandSeries(manifest: Json, entries: Json[]): void {
         });
       }
     } else if (series.kind === "golden-sun-thumb-overlay-series") {
-      for (const resource of series.resources) {
-        const name = String(resource.id).toLowerCase();
+      for (const resource of series.resources as Array<[string, string, string, string]>) {
+        // Tuple schema: [id, address, size, decoded_size].
+        const [resId, resAddr, resSize, resDecoded] = resource;
+        const name = String(resId).toLowerCase();
         const directory = `assets/code/resource_${name}`;
         entries.push({
-          address: resource.address,
-          size: resource.size,
+          address: resAddr,
+          size: resSize,
           kind: "golden-sun-general-lz",
           plan: `${directory}_stream.lz.json`,
           components: [{
             kind: "golden-sun-thumb-overlay",
-            size: resource.decoded_size,
+            size: resDecoded,
             source: `${directory}_overlay.s`,
             base: series.base,
           }],
         });
       }
     } else if (series.kind === "golden-sun-map-grid-series") {
-      for (const grid of series.grids) {
-        const name = String(grid.id).toLowerCase();
+      for (const grid of series.grids as Array<[string, string, string]>) {
+        // Tuple schema: [id, address, size].
+        const [gridId, gridAddr, gridSize] = grid;
+        const name = String(gridId).toLowerCase();
         const directory = `assets/maps/resource_${name}`;
         entries.push({
-          address: grid.address,
-          size: grid.size,
+          address: gridAddr,
+          size: gridSize,
           kind: "golden-sun-kind1-grid",
           source: directory,
           plan: `${directory}_grid_grid.kind1.json`,

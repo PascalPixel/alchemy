@@ -8,7 +8,19 @@ import {
   writeFileSync,
 } from "node:fs";
 import { basename, dirname, extname, join } from "node:path";
-import { cflagsForSource, compilerCommand, externalSymbol, externalSymbolAssembly } from "./alchemy_gcc.ts";
+import {
+  cflagsForTargetSource,
+  compilerCommandForTarget,
+  externalSymbol,
+  externalSymbolAssembly,
+  type CompilerTarget,
+} from "./alchemy_gcc.ts";
+import {
+  DEFAULT_TARGET,
+  decompTarget,
+  parseDecompTarget,
+  type DecompTargetId,
+} from "./decomp_targets.ts";
 
 export const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 export const ROM_BASE = 0x08000000;
@@ -29,6 +41,7 @@ typedef int bool;
 const REJECT = ["M2C_ERROR", "M2C_BITFIELD", "M2C_MEMSET", "M2C_MEMCPY"];
 
 interface Options {
+  target: DecompTargetId;
   rom: string;
   drafts: string;
   jobs: number;
@@ -73,6 +86,7 @@ export async function verifyCandidate(
   outputDirectory: string,
   extraCompilerFlags: readonly string[] = [],
   imageBase = ROM_BASE,
+  compiler: CompilerTarget = "gs1",
 ): Promise<Verification> {
   const stem = sourceStem(source);
   const address = parseHex(stem);
@@ -83,8 +97,9 @@ export async function verifyCandidate(
   const symbolsObject = join(outputDirectory, `${stem}.symbols.o`);
   const elf = join(outputDirectory, `${stem}.elf`);
   const binary = join(outputDirectory, `${stem}.bin`);
-  await run(compilerCommand(
-    ...cflagsForSource(source),
+  await run(compilerCommandForTarget(
+    compiler,
+    ...cflagsForTargetSource(compiler, source),
     ...extraCompilerFlags,
     "-S", "-o", assembly, source,
   ));
@@ -133,12 +148,13 @@ async function parallelMap<T, R>(items: T[], jobs: number, operation: (item: T) 
 }
 
 function usage(): void {
-  console.log("usage: match_m2c.ts [-h] [--jobs JOBS] rom drafts");
+  console.log("usage: match_m2c.ts [-h] [--target gs1-en|gs2-en] [--jobs JOBS] rom drafts");
 }
 
 function parseArguments(arguments_: string[]): Options {
   const positional: string[] = [];
   let jobs = Math.min(16, navigator.hardwareConcurrency || 1);
+  let target: DecompTargetId = DEFAULT_TARGET;
   for (let index = 0; index < arguments_.length; index++) {
     const argument = arguments_[index];
     if (argument === "-h" || argument === "--help") {
@@ -152,21 +168,35 @@ function parseArguments(arguments_: string[]): Options {
       if (!Number.isInteger(jobs) || jobs < 1) throw new Error(`invalid int value: ${value}`);
       continue;
     }
+    if (argument === "--target" || argument.startsWith("--target=")) {
+      const value = argument.includes("=") ? argument.slice(argument.indexOf("=") + 1) : arguments_[++index];
+      if (value === undefined) throw new Error("argument --target: expected one argument");
+      target = parseDecompTarget(value);
+      continue;
+    }
     if (argument.startsWith("-")) throw new Error(`unrecognized argument: ${argument}`);
     positional.push(argument);
   }
   if (positional.length !== 2) throw new Error("the following arguments are required: rom, drafts");
-  return { rom: positional[0], drafts: positional[1], jobs };
+  return { target, rom: positional[0], drafts: positional[1], jobs };
 }
 
 async function main(): Promise<void> {
   const options = parseArguments(Bun.argv.slice(2));
+  const target = decompTarget(options.target);
   const rom = readFileSync(options.rom);
-  const candidateDirectory = join(ROOT, "work/matches/m2c");
-  const outputDirectory = join(ROOT, "out/m2c");
+  if (rom.length !== target.romSize) {
+    throw new Error(`${target.id} ROM must contain exactly ${target.romSize} bytes`);
+  }
+  const candidateDirectory = target.id === DEFAULT_TARGET
+    ? join(ROOT, "work/matches/m2c")
+    : join(ROOT, "work/matches", target.id, "m2c");
+  const outputDirectory = target.id === DEFAULT_TARGET
+    ? join(ROOT, "out/m2c")
+    : join(ROOT, target.outputDir, "m2c");
   mkdirSync(candidateDirectory, { recursive: true });
   mkdirSync(outputDirectory, { recursive: true });
-  const tracked = new Set(readdirSync(join(ROOT, "src")).filter((name) => name.endsWith(".c")));
+  const tracked = new Set(readdirSync(join(ROOT, target.sourceDir)).filter((name) => name.endsWith(".c")));
   const draftReport = join(options.drafts, "report.json");
   const spans = new Map<number, number>();
   if (existsSync(draftReport)) {
@@ -206,7 +236,14 @@ async function main(): Promise<void> {
       writeFileSync(candidate, M2C_PREAMBLE + body);
       let verification: Verification;
       try {
-        verification = await verifyCandidate(candidate, rom, functionOutput);
+        verification = await verifyCandidate(
+          candidate,
+          rom,
+          functionOutput,
+          [],
+          ROM_BASE,
+          target.compiler,
+        );
       } catch {
         continue;
       }
@@ -238,7 +275,10 @@ async function main(): Promise<void> {
       unknown_type: best.replacement,
     };
   });
-  writeFileSync(join(ROOT, "work/matches/m2c.json"), JSON.stringify(results, null, 2) + "\n");
+  const reportPath = target.id === DEFAULT_TARGET
+    ? join(ROOT, "work/matches/m2c.json")
+    : join(ROOT, "work/matches", `${target.id}-m2c.json`);
+  writeFileSync(reportPath, JSON.stringify(results, null, 2) + "\n");
   const matches = results.filter((item) => item.matched === true).length;
   console.log(`candidates=${results.length} matches=${matches} failures=${results.length - matches}`);
 }

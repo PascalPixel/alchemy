@@ -2,7 +2,14 @@
 // Tool role: library; imported by tools/permute_m2c.ts, tools/permute_v1.ts.
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, join } from "node:path";
-import { cflagsForSource, compilerCommand, externalSymbol, externalSymbolAssembly } from "./alchemy_gcc.ts";
+import {
+  cflagsForTargetSource,
+  compilerCommandForTarget,
+  externalSymbol,
+  externalSymbolAssembly,
+  type CompilerTarget,
+} from "./alchemy_gcc.ts";
+import { DEFAULT_TARGET, decompTarget, parseDecompTarget } from "./decomp_targets.ts";
 
 export const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 export const ROM_BASE = 0x08000000;
@@ -34,18 +41,21 @@ export function verify(
   rom: Uint8Array,
   outputDir: string,
   details: true,
+  compiler?: CompilerTarget,
 ): [Buffer, Buffer, number];
 export function verify(
   source: string,
   rom: Uint8Array,
   outputDir: string,
   details?: false,
+  compiler?: CompilerTarget,
 ): [boolean, number];
 export function verify(
   source: string,
   rom: Uint8Array,
   outputDir: string,
   details = false,
+  compiler: CompilerTarget = "gs1",
 ): [Buffer, Buffer, number] | [boolean, number] {
   const name = stem(source);
   const address = Number.parseInt(name, 16);
@@ -56,7 +66,11 @@ export function verify(
   const symbolsObject = join(outputDir, `${name}.symbols.o`);
   const elf = join(outputDir, `${name}.elf`);
   const binary = join(outputDir, `${name}.bin`);
-  run(compilerCommand(...cflagsForSource(source), "-S", "-o", assembly, source));
+  run(compilerCommandForTarget(
+    compiler,
+    ...cflagsForTargetSource(compiler, source),
+    "-S", "-o", assembly, source,
+  ));
   run([
     "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
     "-o", object, assembly,
@@ -88,21 +102,39 @@ export function verify(
 }
 
 function main(): void {
-  if (Bun.argv.slice(2).some((argument) => argument === "-h" || argument === "--help")) {
-    console.log("usage: verify.ts [-h]");
+  const arguments_ = Bun.argv.slice(2);
+  if (arguments_.some((argument) => argument === "-h" || argument === "--help")) {
+    console.log("usage: verify.ts [-h] [--target gs1-en|gs2-en]");
     return;
   }
-  if (Bun.argv.length > 2) throw new Error(`unrecognized argument: ${Bun.argv[2]}`);
-  const rom = readFileSync(join(ROOT, "roms", "gs1-en.gba"));
-  const outputDir = join(ROOT, "out/verify");
+  let targetId = DEFAULT_TARGET;
+  for (let index = 0; index < arguments_.length; index++) {
+    const argument = arguments_[index];
+    if (argument === "--target") {
+      const value = arguments_[++index];
+      if (value === undefined) throw new Error("--target requires a value");
+      targetId = parseDecompTarget(value);
+    } else if (argument.startsWith("--target=")) {
+      targetId = parseDecompTarget(argument.slice(9));
+    } else {
+      throw new Error(`unrecognized argument: ${argument}`);
+    }
+  }
+  const target = decompTarget(targetId);
+  const rom = readFileSync(join(ROOT, target.rom));
+  if (rom.length !== target.romSize) {
+    throw new Error(`${target.id} ROM must contain exactly ${target.romSize} bytes`);
+  }
+  const outputDir = join(ROOT, target.outputDir, "verify");
   mkdirSync(outputDir, { recursive: true });
-  const sources = readdirSync(join(ROOT, "src"), { withFileTypes: true })
+  const sourceDirectory = join(ROOT, target.sourceDir);
+  const sources = readdirSync(sourceDirectory, { withFileTypes: true })
     .filter((entry) => entry.isFile() && entry.name.endsWith(".c"))
-    .map((entry) => join(ROOT, "src", entry.name)).sort();
+    .map((entry) => join(sourceDirectory, entry.name)).sort();
   const failures: string[] = [];
   let total = 0;
   for (const source of sources) {
-    const [matched, size] = verify(source, rom, outputDir);
+    const [matched, size] = verify(source, rom, outputDir, false, target.compiler);
     total += size;
     if (!matched) failures.push(basename(source));
   }

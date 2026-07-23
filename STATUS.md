@@ -19,7 +19,7 @@ The source-only ownership build currently accounts for:
 | Compiled C | 1,109 | 62,782 |
 | Reconstruction assembly | 2,064 | 485,654 |
 | Canonical assets | 2,428 | 7,840,172 |
-| **Source-owned total** | **5,599** | **8,388,608** |
+| **Source-owned total** | **5,601** | **8,388,608** |
 | **Unowned remainder** | **0 gaps** | **0** |
 | **Canonical target size** |  | **8,388,608** |
 
@@ -68,7 +68,7 @@ below describe only the current canonical Golden Sun English target.
 | Code decompilation | 62,782 / 525,088 identified executable bytes (11.96%) | Active executable work represented as exact C |
 | Asset semantic maturity | Audit pending | Round-trip success has not yet been classified as coherent or provisional |
 | Repository organization | Audit pending | Flatness, naming, source formats, and generated-file boundaries need a formal audit |
-| Build-target coverage | 1 active / 12 approved | GS1 English is canonical now; the other editions remain comparison evidence and future targets |
+| Build-target coverage | 2 active / 12 approved | GS1 English is canonical; GS2 English has a native one-function bootstrap; ten editions remain future targets |
 | **Project completion** | **Audit pending** | No arbitrary weighted score is published |
 
 `build_full.ts` records these gates in `project_completion`. Until a tracked
@@ -94,11 +94,12 @@ names completely uncovered resource IDs automatically.
 
 The approved evidence boundary consists only of
 `gs1-{en,ja,de,es,fr,it}.gba` and `gs2-{en,ja,de,es,fr,it}.gba`.
-`gs1-en.gba` is the immediate canonical byte-identical build target. The other
-eleven ROMs can provide local differential evidence for distinguishing shared
-engine code and data from localization, graphics, and story content, and each
-is an eventual independent build target of this same repository. They never
-become tracked files or fallback build inputs.
+`gs1-en.gba` is the immediate canonical byte-identical build target.
+`gs2-en.gba` is now an active partial target with native compiler wiring; the
+other ten ROMs remain comparison evidence and future targets. All eleven
+noncanonical ROMs can provide local differential evidence for distinguishing
+shared engine code and data from localization, graphics, and story content.
+They never become tracked files or fallback build inputs.
 
 All game knowledge is derived anew with generic tools. Cross-ROM equality can
 support a layout or shared-engine conclusion, but cannot establish original
@@ -110,6 +111,9 @@ as generic repository and publication precedent.
 - `src/` contains only byte-verified, asm-free C. A replacement enters this
   directory only when the approved compiler reproduces the tracked bytes at the
   exact fixed address.
+- `games/gs2/` is the isolated GS2 English target root. Its first native
+  compiler-verified C region is tracked under `games/gs2/src/`; assembly and
+  asset roots will enter only as target-specific canonical sources are proved.
 - `asm/` contains byte-verified reconstruction assembly. Ordinary compiler
   output remains C debt; fixed dispatch stubs, thunks, BIOS wrappers, linker
   veneers, and positively identified hand-scheduled modules remain assembly.
@@ -161,6 +165,10 @@ bun tools/build_assets.ts --source-only
 
 # Rebuild the combined source-ownership map without producing a GBA image
 bun tools/build_full.ts --source-only
+
+# Exercise the native GS2 compiler and its currently partial source target
+bun tools/build_full.ts --target gs2-en --source-only
+bun tools/build_full.ts --target gs2-en
 ```
 
 `build_claimed.ts` checks compilation, external symbols, placement, extent, and
@@ -176,6 +184,12 @@ only the remaining unowned skeleton from the user's private English ROM. The
 immediate byte-closure milestone retires that fallback entirely. Generated
 linker files, objects, ELFs, ROM images, reports, and work directories stay
 ignored.
+
+The GS2 English bootstrap selects the reconstructed GCC 3.0 Camelot backend,
+adds the required fixed-r7 ABI flag, and byte-verifies `Func_080132cc` at its
+fixed address. Its current report is 4 source-owned bytes and 16,777,212
+unowned bytes. It therefore demonstrates an end-to-end native decompilation
+path without claiming GS2 byte closure.
 
 ## Publication boundary
 

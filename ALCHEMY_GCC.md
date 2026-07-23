@@ -5,29 +5,32 @@ The approved compiler bundle lives in the sibling repository checkout
 compiler source, build scripts, and the ignored runtime bundle stay out of
 this reconstruction tree entirely.
 
-The bundle directory has one boundary and three roles:
+The bundle directory has one boundary and two approved game compilers:
 
 ```text
 ../alchemy-gcc/dist/
-├── xgcc
-├── cc1
-├── cpp
-├── tradcpp
+├── xgcc, cc1, cpp, tradcpp       # GS1: GCC 2.96 snapshot
+├── gs2/
+│   └── xgcc, cc1, cpp0, tradcpp0 # GS2: Camelot GCC 3.0 backend
 └── m2c-venv/          optional decompilation helper
 ```
 
-The four top-level executables are the complete compiler required by the
-byte-verified C build. They are native arm64 Mach-O programs and depend only on
-macOS `libSystem`; compiler source trees, intermediate objects, nested Git
-repositories, duplicate drivers, and target runtime archives do not belong in
-the bundle. Native `arm-none-eabi` binutils remain a host dependency supplied
-through `PATH`, because they are shared generic assembler/linker tools rather
-than part of the approved compiler's code generation.
+The four top-level executables are the GS1 compiler. The four executables under
+`gs2/` are the reconstructed GS2 backend. Run `./stage.sh gcc296` and
+`./stage.sh gs2` in the sibling compiler repository after building those
+targets; `./stage.sh --check <target>` verifies that an ignored runtime stage
+still matches its local build. All eight programs are native arm64 Mach-O
+executables and depend only on macOS `libSystem`; compiler source trees,
+intermediate objects, nested Git repositories, duplicate drivers, and target
+runtime archives do not belong in the bundle. Native `arm-none-eabi` binutils
+remain a host dependency supplied through `PATH`, because they are shared
+generic assembler/linker tools rather than part of the approved compiler's
+code generation.
 
-`bun tools/alchemy_gcc.ts` checks the host architecture, executable set,
-and approved SHA-256 digests before compiler use. Every build and matching tool
-constructs its compiler invocation through that module; no second compiler
-path is permitted.
+`bun tools/alchemy_gcc.ts gs1` and `bun tools/alchemy_gcc.ts gs2` check the host
+architecture, target-specific executable set, and approved SHA-256 digests
+before compiler use. Every build and matching tool constructs its compiler
+invocation through that module; no second compiler path is permitted.
 
 The bundle stays outside this repository. Public commits contain only this specification,
 the validator, reconstructed source, and generic tooling—not compiler binaries
@@ -38,8 +41,9 @@ or third-party checkouts.
 The bundle's executables are built from
 [PascalPixel/alchemy-gcc](https://github.com/PascalPixel/alchemy-gcc), a fork
 of [Coaltergeist/camelot-gcc](https://github.com/Coaltergeist/camelot-gcc):
-vendored FSF GCC source (the gcc-2.96 development snapshot of 2000-07-31,
-ARM/elf) with host-portability patches, all documented in that repository.
+vendored FSF GCC source (the gcc-2.96 development snapshot of 2000-07-31 for
+GS1 and GCC 3.0 with the reconstructed Camelot backend for GS2) with
+host-portability patches, all documented in that repository.
 One vendored patch affects code generation: `config/arm/elf.h` emits
 `.align N, 0` so modern assemblers pad with zeros the way period binutils
 did. The compiler contains no game-derived material; it is generic public

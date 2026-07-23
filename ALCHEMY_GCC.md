@@ -67,9 +67,9 @@ The stock m4a ("Sappy") audio library that period licensees linked verbatim
 requires pret's `old_agbcc` rather than gcc-2.96. The source-address allowlist
 currently covers `080fa1fc`, `080fa2a0`, `080fa324`, `080fa350`, `080fa39c`,
 `080fa3f0`, `080fa424`, `080fa458`, `080fa490`, `080fa514`, `080fa83c`,
-`080fa8d4`, `080fa928`, `080fa9a4`, `080fa9e0`, `080fab3c`, `080fb2cc`,
-`080fb334`, `080fb3a8`, `080fb430`, `080fb4a4`, `080fb670`, and `080fb6a4`;
-each was independently
+`080fa8d4`, `080fa928`, `080fa9a4`, `080fa9e0`, `080fab3c`, `080facf8`,
+`080fb2cc`, `080fb334`, `080fb3a8`, `080fb430`, `080fb4a4`, `080fb670`,
+and `080fb6a4`; each was independently
 assembled and linked to an exact target interval before adoption. No generic
 directory or subsystem switch selects this compiler, following the per-unit
 compiler precedent of `pret/pokeruby`.

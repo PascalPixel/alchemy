@@ -53,6 +53,10 @@ const NO_EXPENSIVE_SOURCES = new Set(["08092878"]);
 // reference translation unit. Strength reduction rewrites it to a descending
 // counter and changes both the allocation and loop tail.
 const NO_STRENGTH_REDUCE_SOURCES = new Set(["080200cc"]);
+// This effect-dispatch wrapper's explicit entry and exit blocks are preserved
+// in the reference.  Sibling-call optimization merges the final cases and
+// rotates the call arguments even though no source tail call is present.
+const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // 既定ABI(標準のr4被呼出保存)で構築された収蔵ライブラリ翻訳単位。
 // 証拠: r4を保存する序文は -fcall-used-r4 の下では出ない
 // (割込保護記録08006a00、バイト複写08006b84、比較08006c24、
@@ -82,6 +86,7 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
+    ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
   ];
 }
 
@@ -131,7 +136,7 @@ const EXPECTED: Record<string, string> = {
   xgcc: "8087fb1911b00aafe8ba9dc1530ca84a98774206f24d95b3ac8a8f01bf8a6eb6",
   cpp: "28621e18b2a6b663e1ea6e47750ca0133483f4287bc271265cc7e2fcfa69a2eb",
   tradcpp: "88dae1204f5e928c7de003fd25263e91a18802f8ffde48b6f076e2ee1ea3e59a",
-  cc1: "8bded78ec14221dc38a8a3142da2b22a15f0633eeeaaa04ac4de6a0522f612a5",
+  cc1: "8abb3507acbc28af3ebfba511556725988061a53371ba95d6c31cac74784c9d6",
 };
 
 let validated = false;
@@ -209,6 +214,7 @@ export function directCompilerCommand(input: string, output: string, dumpbase: s
     ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
+    ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     "-o", output,
   ];
 }

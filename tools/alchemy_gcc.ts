@@ -55,7 +55,8 @@ const NO_EXPENSIVE_SOURCES = new Set(["08092878"]);
 // フラッシュ書込列08006dec、LAWS.md「第四層」)。
 // 同一cc1・既定フラグ。
 const DEFAULT_ABI_SOURCES = new Set([
-  "08006a00", "08006b84", "08006c24", "08006dec", "080fadf0", "080fb2cc",
+  "08006a00", "08006b84", "08006ba8", "08006c24", "08006dec", "080fa9e0",
+  "080fadf0", "080fb2cc",
 ]);
 
 function sourceStem(source: string): string {

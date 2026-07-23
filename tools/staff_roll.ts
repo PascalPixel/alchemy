@@ -11,7 +11,7 @@ import {
   rmSync,
   writeFileSync,
 } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import { basename, dirname, join, relative, resolve } from "node:path";
 import { indexed_png } from "./import_asset.ts";
 import { png, type Rgb } from "./skip_sprite_archive.ts";
 
@@ -79,8 +79,9 @@ function document(path: string): Json {
 
 function sourcePath(indexPath: string, name: string): string {
   if (name !== FONT_SOURCE) throw new Error("staff-roll font source differs");
-  const root = realpathSync(dirname(indexPath)), path = realpathSync(resolve(root, name));
-  if (relative(root, path) !== name) throw new Error("staff-roll font escaped its directory");
+  const prefix = basename(indexPath).replace(/index\.json$/, "");
+  const root = realpathSync(dirname(indexPath)), path = realpathSync(resolve(root, prefix + name));
+  if (relative(root, path) !== prefix + name) throw new Error("staff-roll font escaped its directory");
   return path;
 }
 
@@ -386,7 +387,7 @@ function parseArguments(args: string[]): Command {
 
 function selfTest(): void {
   const root = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
-  const source = join(root, "assets/text/staff_roll/index.json");
+  const source = join(root, "assets/text/staff_roll_index.json");
   const [built] = build_staff_roll(source);
   if (built.length !== STAFF_ROLL_SIZE) throw new Error("staff-roll self-test size differs");
   const temporary = mkdtempSync(join(TMPDIR, "alchemy-staff-roll-"));

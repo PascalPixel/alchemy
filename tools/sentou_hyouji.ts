@@ -4,7 +4,7 @@ import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync,
 } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import { indexed_png } from "./import_asset.ts";
 import { png, type Rgb } from "./skip_sprite_archive.ts";
 
@@ -355,12 +355,13 @@ export function build_sentou_hyouji(indexPath: string): Buffer {
       index.sources.gauge.width !== 8 || index.sources.gauge.height !== 8)
     throw new Error("gauge layout differs");
   const directory = dirname(indexPath);
+  const prefix = basename(indexPath).replace(/index\.json$/, "");
   const output = Buffer.concat([
-    buildKihon(join(directory, index.sources.kihon)),
-    readAtlas(join(directory, index.sources.koma.source), 16, 2, 2, 8),
-    buildHaichi(join(directory, index.sources.haichi)),
-    buildHosei(join(directory, index.sources.hosei)),
-    readAtlas(join(directory, index.sources.gauge.source), 8, 1, 1, 8),
+    buildKihon(join(directory, prefix + index.sources.kihon)),
+    readAtlas(join(directory, prefix + index.sources.koma.source), 16, 2, 2, 8),
+    buildHaichi(join(directory, prefix + index.sources.haichi)),
+    buildHosei(join(directory, prefix + index.sources.hosei)),
+    readAtlas(join(directory, prefix + index.sources.gauge.source), 8, 1, 1, 8),
   ]);
   if (output.length !== SENTOU_HYOUJI_SIZE) throw new Error("battle display output size differs");
   return output;

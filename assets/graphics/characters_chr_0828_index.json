@@ -1,0 +1,305 @@
+{
+  "format": 1,
+  "codec": "golden-sun-static-sprite-series",
+  "address": "0x0828cfd8",
+  "size": "0x00028088",
+  "descriptor_table": "0x08185024",
+  "descriptor_count": 512,
+  "palette_offset": 16,
+  "palette_entries": 224,
+  "prefix_zeros": 0,
+  "packages": [
+    {
+      "id": "0a7",
+      "aliases": [],
+      "address": "0x0828cfd8",
+      "size": "0x000027b4",
+      "directory": "0x0828f6ec",
+      "plan": "chr_0a7_bank.json"
+    },
+    {
+      "id": "0a8",
+      "aliases": [],
+      "address": "0x0828f78c",
+      "size": "0x00001adc",
+      "directory": "0x082911e0",
+      "plan": "chr_0a8_bank.json"
+    },
+    {
+      "id": "0a9",
+      "aliases": [],
+      "address": "0x08291268",
+      "size": "0x00001c98",
+      "directory": "0x08292e78",
+      "plan": "chr_0a9_bank.json"
+    },
+    {
+      "id": "0aa",
+      "aliases": [],
+      "address": "0x08292f00",
+      "size": "0x00002320",
+      "directory": "0x08295198",
+      "plan": "chr_0aa_bank.json"
+    },
+    {
+      "id": "0ab",
+      "aliases": [],
+      "address": "0x08295220",
+      "size": "0x00003538",
+      "directory": "0x082986b0",
+      "plan": "chr_0ab_bank.json"
+    },
+    {
+      "id": "05d",
+      "aliases": [],
+      "address": "0x08298758",
+      "size": "0x00001824",
+      "directory": "0x08299f00",
+      "plan": "chr_05d_bank.json"
+    },
+    {
+      "id": "05a",
+      "aliases": [],
+      "address": "0x08299f7c",
+      "size": "0x00001780",
+      "directory": "0x0829b68c",
+      "plan": "chr_05a_bank.json"
+    },
+    {
+      "id": "05c",
+      "aliases": [],
+      "address": "0x0829b6fc",
+      "size": "0x00001c58",
+      "directory": "0x0829d2d8",
+      "plan": "chr_05c_bank.json"
+    },
+    {
+      "id": "05b",
+      "aliases": [],
+      "address": "0x0829d354",
+      "size": "0x00001b68",
+      "directory": "0x0829ee4c",
+      "plan": "chr_05b_bank.json"
+    },
+    {
+      "id": "0be",
+      "aliases": [],
+      "address": "0x0829eebc",
+      "size": "0x00001c74",
+      "directory": "0x082a0ae4",
+      "plan": "chr_0be_bank.json"
+    },
+    {
+      "id": "0bf",
+      "aliases": [],
+      "address": "0x082a0b30",
+      "size": "0x00000e80",
+      "directory": "0x082a1988",
+      "plan": "chr_0bf_bank.json"
+    },
+    {
+      "id": "0c0",
+      "aliases": [],
+      "address": "0x082a19b0",
+      "size": "0x00000d00",
+      "directory": "0x082a2698",
+      "plan": "chr_0c0_bank.json"
+    },
+    {
+      "id": "0c1",
+      "aliases": [],
+      "address": "0x082a26b0",
+      "size": "0x00000978",
+      "directory": "0x082a3000",
+      "plan": "chr_0c1_bank.json"
+    },
+    {
+      "id": "0c2",
+      "aliases": [],
+      "address": "0x082a3028",
+      "size": "0x00001804",
+      "directory": "0x082a481c",
+      "plan": "chr_0c2_bank.json"
+    },
+    {
+      "id": "0c3",
+      "aliases": [],
+      "address": "0x082a482c",
+      "size": "0x00001064",
+      "directory": "0x082a5870",
+      "plan": "chr_0c3_bank.json"
+    },
+    {
+      "id": "0c4",
+      "aliases": [],
+      "address": "0x082a5890",
+      "size": "0x0000044c",
+      "directory": "0x082a5cb4",
+      "plan": "chr_0c4_bank.json"
+    },
+    {
+      "id": "0c5",
+      "aliases": [],
+      "address": "0x082a5cdc",
+      "size": "0x00000ae8",
+      "directory": "0x082a679c",
+      "plan": "chr_0c5_bank.json"
+    },
+    {
+      "id": "0c6",
+      "aliases": [],
+      "address": "0x082a67c4",
+      "size": "0x00000e10",
+      "directory": "0x082a75ac",
+      "plan": "chr_0c6_bank.json"
+    },
+    {
+      "id": "0c7",
+      "mode": 0,
+      "aliases": [],
+      "address": "0x082a75d4",
+      "size": "0x00002230",
+      "directory": "0x082a97e0",
+      "plan": "chr_0c7_bank.json"
+    },
+    {
+      "id": "0bd",
+      "aliases": [],
+      "address": "0x082a9804",
+      "size": "0x00000d3c",
+      "directory": "0x082aa518",
+      "plan": "chr_0bd_bank.json"
+    },
+    {
+      "id": "0bb",
+      "aliases": [],
+      "address": "0x082aa540",
+      "size": "0x00001468",
+      "directory": "0x082ab988",
+      "plan": "chr_0bb_bank.json"
+    },
+    {
+      "id": "0c9",
+      "aliases": [],
+      "address": "0x082ab9a8",
+      "size": "0x00000508",
+      "directory": "0x082abea4",
+      "plan": "killer-ape/bank.json"
+    },
+    {
+      "id": "0ca",
+      "aliases": [],
+      "address": "0x082abeb0",
+      "size": "0x0000045c",
+      "directory": "0x082ac304",
+      "plan": "chr_0ca_bank.json"
+    },
+    {
+      "id": "0cb",
+      "aliases": [],
+      "address": "0x082ac30c",
+      "size": "0x00000348",
+      "directory": "0x082ac64c",
+      "plan": "chr_0cb_bank.json"
+    },
+    {
+      "id": "0c8",
+      "aliases": [],
+      "address": "0x082ac654",
+      "size": "0x00002940",
+      "directory": "0x082aef30",
+      "plan": "chr_0c8_bank.json"
+    },
+    {
+      "id": "0cc",
+      "aliases": [],
+      "address": "0x082aef94",
+      "size": "0x000001c8",
+      "directory": "0x082af154",
+      "plan": "chr_0cc_bank.json"
+    },
+    {
+      "id": "0ce",
+      "aliases": [],
+      "address": "0x082af15c",
+      "size": "0x00000078",
+      "directory": "0x082af1cc",
+      "plan": "chr_0ce_bank.json"
+    },
+    {
+      "id": "0cf",
+      "aliases": [],
+      "address": "0x082af1d4",
+      "size": "0x00001de4",
+      "directory": "0x082b0f7c",
+      "plan": "chr_0cf_bank.json"
+    },
+    {
+      "id": "0cd",
+      "aliases": [],
+      "address": "0x082b0fb8",
+      "size": "0x00002ec4",
+      "directory": "0x082b3e40",
+      "plan": "chr_0cd_bank.json"
+    },
+    {
+      "id": "0d0",
+      "aliases": [],
+      "address": "0x082b3e7c",
+      "size": "0x00000108",
+      "directory": "0x082b3f68",
+      "plan": "chr_0d0_bank.json"
+    },
+    {
+      "id": "0d1",
+      "aliases": [],
+      "address": "0x082b3f84",
+      "size": "0x000000f4",
+      "directory": "0x082b4060",
+      "plan": "chr_0d1_bank.json"
+    },
+    {
+      "id": "0d2",
+      "mode": 1,
+      "aliases": [],
+      "address": "0x082b4078",
+      "size": "0x000003c8",
+      "directory": "0x082b4430",
+      "plan": "chr_0d2_bank.json"
+    },
+    {
+      "id": "01c",
+      "mode": 0,
+      "aliases": [],
+      "address": "0x082b4440",
+      "size": "0x000005d8",
+      "directory": "0x082b49e8",
+      "plan": "chr_01c_bank.json"
+    },
+    {
+      "id": "017",
+      "aliases": [],
+      "address": "0x082b4a18",
+      "size": "0x00000174",
+      "directory": "0x082b4b84",
+      "plan": "chr_017_bank.json"
+    },
+    {
+      "id": "01b",
+      "aliases": [],
+      "address": "0x082b4b8c",
+      "size": "0x00000230",
+      "directory": "0x082b4db4",
+      "plan": "bandit/bank.json"
+    },
+    {
+      "id": "018",
+      "mode": 1,
+      "aliases": [],
+      "address": "0x082b4dbc",
+      "size": "0x000002a4",
+      "directory": "0x082b502c",
+      "plan": "chr_018_bank.json"
+    }
+  ]
+}

@@ -153,12 +153,12 @@ function validateExportDestination(romPath: string, directory: string): void {
   catch { throw new Error("refusing to replace a directory that is not a canonical regional-map package"); }
 }
 
-function confined(root: string, name: string): string {
+function confined(root: string, name: string, prefix = ""): string {
   if (!/^resource_[0-9a-f]{3}$/.test(name)) throw new Error("regional-map directory name is not canonical");
   const canonicalRoot = realpathSync(root);
-  const path = realpathSync(resolve(root, name));
+  const path = resolve(canonicalRoot, prefix + name);
   const position = relative(canonicalRoot, path);
-  if (position !== name) throw new Error("regional-map source is not its canonical directory");
+  if (position !== prefix + name) throw new Error("map source is not its canonical path");
   return path;
 }
 
@@ -209,21 +209,23 @@ function componentEnd(offsets: readonly number[], slot: number, size: number): n
 
 function componentSources(directory: string, slot: number): string[] {
   const components = directory;
-  if (slot === 0) return [join(components, "metatiles.tilemap"), join(components, "metatiles.lz.json")];
-  if (slot === 1) return [join(components, "descriptors.json"), join(components, "descriptors.lz.json")];
+  if (slot === 0) return [`${components}_metatiles.tilemap`, `${components}_metatiles.lz.json`];
+  if (slot === 1) return [`${components}_descriptors.json`, `${components}_descriptors.lz.json`];
   if (slot === 2) return [
-    join(directory, "grid_grid.kind1.json"),
+    `${directory}_grid_grid.kind1.json`,
     ...["value_low.png", "value_high.png", "attribute_a.png", "attribute_b.png", "sentinels.png"]
-      .map((name) => join(directory, `grid_${name}`)),
+      .map((name) => `${directory}_grid_${name}`),
   ];
-  if (slot === 3) return [join(components, "animation_queues.json"), join(components, "animation_queues.lz.json")];
-  if (slot === 4) return [join(components, "blend_animation.json"), join(components, "blend_animation.lz.json")];
-  if (slot === 5) return [join(components, "sparse_cells.json")];
+  if (slot === 3) return [`${components}_animation_queues.json`, `${components}_animation_queues.lz.json`];
+  if (slot === 4) return [`${components}_blend_animation.json`, `${components}_blend_animation.lz.json`];
+  if (slot === 5) return [`${components}_sparse_cells.json`];
   throw new Error("unsupported regional-map component slot");
 }
 
 function checkedSources(directory: string, slot: number): string[] {
-  const root = realpathSync(directory);
+  // Flat layout: directory is a resource path prefix, not a directory. Confine
+  // each source to the prefix's parent directory instead of realpathing it.
+  const root = realpathSync(dirname(directory));
   return componentSources(directory, slot).map((source) => {
     const canonical = realpathSync(source);
     const position = relative(root, canonical);
@@ -375,7 +377,7 @@ function validateComponent(directory: string, slot: number, expectedSize: number
     }
     validateLookahead(plan.lookahead, "regional-map grid lookahead");
     validatePaletteTokens(plan.tokens, "regional-map grid tokens");
-    for (const path of sources.slice(1)) validateGridPng(path, basename(path) === "grid_sentinels.png");
+    for (const path of sources.slice(1)) validateGridPng(path, basename(path).endsWith("_grid_sentinels.png"));
     return;
   }
   if (slot === 3) {
@@ -477,9 +479,9 @@ function buildComponent(directory: string, slot: number, expectedSize: number): 
   return build_sparse(sources[0]);
 }
 
-function buildResource(entry: ResourceEntry, spec: ResourceSpec, root: string): BuiltChiikiMap {
-  const directory = confined(root, entry.directory);
-  const headerSource = join(directory, "header.json");
+function buildResource(entry: ResourceEntry, spec: ResourceSpec, root: string, seriesPrefix = ""): BuiltChiikiMap {
+  const directory = confined(root, entry.directory, seriesPrefix);
+  const headerSource = `${directory}_header.json`;
   const headerPath = realpathSync(headerSource);
   if (headerPath !== resolve(headerSource)) throw new Error("regional-map header is not at its canonical path");
   validateHeader(headerPath);
@@ -503,7 +505,8 @@ function buildResource(entry: ResourceEntry, spec: ResourceSpec, root: string): 
 export function build_chiiki_map_series(indexPath: string): BuiltChiikiMap[] {
   const [index, specs] = parseIndex(indexPath);
   const root = dirname(realpathSync(indexPath));
-  return index.resources.map((entry, position) => buildResource(entry, specs[position], root));
+  const seriesPrefix = basename(indexPath).replace(/index\.json$/, "");
+  return index.resources.map((entry, position) => buildResource(entry, specs[position], root, seriesPrefix));
 }
 
 function exportComponent(container: Buffer, directory: string, offsets: readonly number[], slot: number): void {
@@ -563,7 +566,7 @@ function writeChiikiMapSeries(rom: Buffer, directory: string): IndexDocument {
     const resourceDirectory = join(directory, name);
     const components = resourceDirectory;
     mkdirSync(components, { recursive: true });
-    const offsets = export_header(container, join(components, "header.json"));
+    const offsets = export_header(container, `${components}_header.json`);
     componentOffsets(container.subarray(0, HEADER_SIZE), spec.size);
     for (let slot = 0; slot < offsets.length; slot++) {
       if (offsets[slot]) exportComponent(container, resourceDirectory, offsets, slot);
@@ -571,7 +574,7 @@ function writeChiikiMapSeries(rom: Buffer, directory: string): IndexDocument {
     resources.push({ id: idText(spec.id), address: hex(spec.address), size: hex(spec.size, 1), directory: name });
   }
   const index: IndexDocument = { format: 1, kind: "golden-sun-chiiki-map-series", resources };
-  const indexPath = join(directory, "index.json");
+  const indexPath = `${directory}_index.json`;
   writeFileSync(indexPath, `${canonicalJson(index)}\n`);
   const built = build_chiiki_map_series(indexPath);
   built.forEach((item, position) => {

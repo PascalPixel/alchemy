@@ -5,7 +5,7 @@
   "standard": {
     "logo": {
       "codec": "gba-bios-huffman-logo",
-      "source": "assets/graphics/system/nintendo_logo.1bpp.png",
+      "source": "assets/graphics/system_nintendo_logo.1bpp.png",
       "width": 104,
       "height": 16,
       "bpp": 1

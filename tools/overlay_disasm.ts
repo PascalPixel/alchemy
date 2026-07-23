@@ -70,17 +70,18 @@ function sourceText(source: string | URL): string {
 
 export function overlayCSources(source: string | URL): string[] {
   if (source instanceof URL || source.includes("\n") || !existsSync(source)) return [];
-  const directory = join(dirname(source), "c");
-  if (!existsSync(directory)) return [];
+  // Flat layout: overlay C replacements are prefix_c_<address>.c siblings.
+  const directory = dirname(source);
+  const prefix = `${basename(source).replace(/overlay\.s$/, "")}c_`;
   return readdirSync(directory)
-    .filter((name) => name.endsWith(".c"))
+    .filter((name) => name.startsWith(prefix) && name.endsWith(".c"))
     .sort()
     .map((name) => join(directory, name));
 }
 
 export function overlayCAddresses(source: string | URL): Set<number> {
   return new Set(overlayCSources(source).map((path) => {
-    const stem = basename(path, extname(path));
+    const stem = basename(path, extname(path)).slice(-8);
     if (!/^[0-9a-f]{8}$/i.test(stem)) throw new Error(`overlay C filename is not an address: ${path}`);
     return Number.parseInt(stem, 16);
   }));
@@ -96,7 +97,7 @@ function checked(command: string[], cwd: string): string {
 }
 
 function compileOverlayC(source: string, work: string): { address: number; data: Buffer } {
-  const stem = basename(source, extname(source));
+  const stem = basename(source, extname(source)).slice(-8);
   if (!/^[0-9a-f]{8}$/i.test(stem)) throw new Error(`overlay C filename is not an address: ${source}`);
   const address = Number.parseInt(stem, 16);
   const symbol = `Func_${stem.toLowerCase()}`;

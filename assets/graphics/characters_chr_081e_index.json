@@ -1,0 +1,95 @@
+{
+  "format": 1,
+  "codec": "golden-sun-static-sprite-series",
+  "address": "0x081e120c",
+  "size": "0x00014ebc",
+  "descriptor_table": "0x08185024",
+  "descriptor_count": 512,
+  "palette_offset": 16,
+  "palette_entries": 224,
+  "prefix_zeros": 0,
+  "suffix_zeros": 4,
+  "packages": [
+    {
+      "id": "02e",
+      "aliases": [],
+      "address": "0x081e120c",
+      "size": "0x000024b4",
+      "directory": "0x081e3638",
+      "plan": "chr_02e_bank.json"
+    },
+    {
+      "id": "02f",
+      "aliases": [],
+      "address": "0x081e36c0",
+      "size": "0x00001f0c",
+      "directory": "0x081e5544",
+      "plan": "chr_02f_bank.json"
+    },
+    {
+      "id": "030",
+      "aliases": [],
+      "address": "0x081e55cc",
+      "size": "0x00001c64",
+      "directory": "0x081e71a4",
+      "plan": "chr_030_bank.json"
+    },
+    {
+      "id": "031",
+      "aliases": [],
+      "address": "0x081e7230",
+      "size": "0x00002650",
+      "directory": "0x081e97f8",
+      "plan": "thunder-lizard/bank.json"
+    },
+    {
+      "id": "032",
+      "aliases": [],
+      "address": "0x081e9880",
+      "size": "0x000024a4",
+      "directory": "0x081ebc8c",
+      "plan": "chr_032_bank.json"
+    },
+    {
+      "id": "033",
+      "aliases": [],
+      "address": "0x081ebd24",
+      "size": "0x000027e0",
+      "directory": "0x081ee474",
+      "plan": "chr_033_bank.json"
+    },
+    {
+      "id": "034",
+      "aliases": [],
+      "address": "0x081ee504",
+      "size": "0x00002364",
+      "directory": "0x081f07d8",
+      "plan": "chr_034_bank.json"
+    },
+    {
+      "id": "035",
+      "aliases": [],
+      "address": "0x081f0868",
+      "size": "0x00002384",
+      "directory": "0x081f2b60",
+      "plan": "chr_035_bank.json"
+    },
+    {
+      "id": "036",
+      "aliases": [],
+      "address": "0x081f2bec",
+      "size": "0x00001d7c",
+      "directory": "0x081f48e0",
+      "plan": "chr_036_bank.json"
+    },
+    {
+      "id": "037",
+      "mode": 0,
+      "aliases": ["47"],
+      "address": "0x081f4968",
+      "size": "0x0000175c",
+      "directory": "0x081f6098",
+      "plan": "chr_037_bank.json"
+    }
+  ]
+}

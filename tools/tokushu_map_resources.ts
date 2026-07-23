@@ -4,7 +4,7 @@ import { canonicalJson } from "./canonical_json.ts";
 import {
   mkdirSync, readFileSync, realpathSync, writeFileSync,
 } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import { basename, dirname, join, relative, resolve } from "node:path";
 import { build_grid, export_grid } from "./kind1_map_grid.ts";
 import {
   build_blend_animation,
@@ -87,10 +87,10 @@ function same(left: string, right: string): boolean {
   catch { return resolve(left) === resolve(right); }
 }
 
-function confined(root: string, name: string): string {
+function confined(root: string, name: string, prefix = ""): string {
   if (!/^resource_[0-9a-f]{3}$/.test(name)) throw new Error("special-map directory name is not canonical");
   const canonicalRoot = realpathSync(root);
-  const path = realpathSync(resolve(root, name));
+  const path = resolve(canonicalRoot, prefix + name);
   const position = relative(canonicalRoot, path);
   if (position === ".." || position.startsWith("../") || position.startsWith("..\\")) {
     throw new Error("special-map source escaped its index directory");
@@ -149,16 +149,16 @@ function componentEnd(offsets: readonly number[], slot: number, size: number): n
 
 function componentSources(directory: string, slot: number): string[] {
   const components = directory;
-  if (slot === 0) return [join(components, "metatiles.tilemap"), join(components, "metatiles.lz.json")];
-  if (slot === 1) return [join(components, "descriptors.json"), join(components, "descriptors.lz.json")];
+  if (slot === 0) return [`${components}_metatiles.tilemap`, `${components}_metatiles.lz.json`];
+  if (slot === 1) return [`${components}_descriptors.json`, `${components}_descriptors.lz.json`];
   if (slot === 2) return [
-    join(directory, "grid_grid.kind1.json"),
+    `${directory}_grid_grid.kind1.json`,
     ...["value_low.png", "value_high.png", "attribute_a.png", "attribute_b.png", "sentinels.png"]
-      .map((name) => join(directory, `grid_${name}`)),
+      .map((name) => `${directory}_grid_${name}`),
   ];
-  if (slot === 3) return [join(components, "animation_queues.json"), join(components, "animation_queues.lz.json")];
-  if (slot === 4) return [join(components, "blend_animation.json"), join(components, "blend_animation.lz.json")];
-  if (slot === 5) return [join(components, "sparse_cells.json")];
+  if (slot === 3) return [`${components}_animation_queues.json`, `${components}_animation_queues.lz.json`];
+  if (slot === 4) return [`${components}_blend_animation.json`, `${components}_blend_animation.lz.json`];
+  if (slot === 5) return [`${components}_sparse_cells.json`];
   throw new Error("unsupported special-map component slot");
 }
 
@@ -172,9 +172,9 @@ function buildComponent(directory: string, slot: number): Buffer {
   return build_sparse(sources[0]);
 }
 
-function buildResource(entry: ResourceEntry, spec: ResourceSpec, root: string): BuiltTokushuMap {
-  const directory = confined(root, entry.directory);
-  const headerPath = join(directory, "header.json");
+function buildResource(entry: ResourceEntry, spec: ResourceSpec, root: string, seriesPrefix = ""): BuiltTokushuMap {
+  const directory = confined(root, entry.directory, seriesPrefix);
+  const headerPath = `${directory}_header.json`;
   const header = build_header(headerPath);
   const offsets = componentOffsets(header, spec.size);
   const parts = [header];
@@ -195,7 +195,8 @@ function buildResource(entry: ResourceEntry, spec: ResourceSpec, root: string): 
 export function build_tokushu_map_series(indexPath: string): BuiltTokushuMap[] {
   const [index, specs] = parseIndex(indexPath);
   const root = dirname(realpathSync(indexPath));
-  return index.resources.map((entry, position) => buildResource(entry, specs[position], root));
+  const seriesPrefix = basename(indexPath).replace(/index\.json$/, "");
+  return index.resources.map((entry, position) => buildResource(entry, specs[position], root, seriesPrefix));
 }
 
 function exportComponent(container: Buffer, directory: string, offsets: readonly number[], slot: number): void {
@@ -231,7 +232,7 @@ export function export_tokushu_map_series(romPath: string, directory: string): I
     const resourceDirectory = join(directory, name);
     const components = resourceDirectory;
     mkdirSync(components, { recursive: true });
-    const offsets = export_header(container, join(components, "header.json"));
+    const offsets = export_header(container, `${components}_header.json`);
     componentOffsets(container.subarray(0, HEADER_SIZE), spec.size);
     for (let slot = 0; slot < offsets.length; slot++) {
       if (offsets[slot]) exportComponent(container, resourceDirectory, offsets, slot);
@@ -239,7 +240,7 @@ export function export_tokushu_map_series(romPath: string, directory: string): I
     resources.push({ id: idText(spec.id), address: hex(spec.address), size: hex(spec.size, 1), directory: name });
   }
   const index: IndexDocument = { format: 1, kind: "golden-sun-tokushu-map-series", resources };
-  const indexPath = join(directory, "index.json");
+  const indexPath = `${directory}_index.json`;
   writeFileSync(indexPath, `${canonicalJson(index)}\n`);
   const built = build_tokushu_map_series(indexPath);
   built.forEach((item, position) => {

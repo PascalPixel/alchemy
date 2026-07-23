@@ -13,7 +13,7 @@ export const STILL_PALETTE_ENTRIES = 128;
 export const STILL_PALETTE_BYTES = STILL_PALETTE_ENTRIES * 2;
 export const RESOURCE_TABLE = 0x08320000;
 const ROM_BASE = 0x08000000;
-const DEFAULT_INDEX = resolve(import.meta.dir, "../assets/graphics/Pre-rendered Backgrounds/index.json");
+const DEFAULT_INDEX = resolve(import.meta.dir, "../assets/graphics/backgrounds_index.json");
 
 export interface StillIndexEntry {
   id: string;

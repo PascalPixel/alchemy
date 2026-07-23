@@ -96,8 +96,8 @@ export function read_plane(path: string): Buffer {
 export function build_grid(plan: Kind1Plan, directory: string): Buffer {
   if (plan.format !== 1 || plan.codec !== "golden-sun-kind1-grid")
     throw new Error("unsupported kind-1 grid plan");
-  const planes = FILES.map((name) => read_plane(join(directory, `grid_${name}`)));
-  const [, , mask] = indexed_png(readFileSync(join(directory, "grid_sentinels.png")));
+  const planes = FILES.map((name) => read_plane(`${directory}_grid_${name}`));
+  const [, , mask] = indexed_png(readFileSync(`${directory}_grid_sentinels.png`));
   const decoded = inverse(planes, mask);
   const encoded = Buffer.concat([Buffer.from([1]), encode_palette(decoded, plan.tokens)]);
   return Buffer.concat([encoded, Buffer.from(plan.lookahead ?? "", "hex")]);
@@ -108,8 +108,8 @@ export function export_grid(data: Uint8Array, directory: string): [number, numbe
   const [decoded, , tokens] = decode_palette_trace(data, 1, data.length, 0x10000);
   const [planes, mask] = transform(decoded);
   mkdirSync(directory, { recursive: true });
-  FILES.forEach((name, index) => writeFileSync(join(directory, `grid_${name}`), byte_png(planes[index], 128)[0]));
-  writeFileSync(join(directory, "grid_sentinels.png"), mask_png(mask));
+  FILES.forEach((name, index) => writeFileSync(`${directory}_grid_${name}`, byte_png(planes[index], 128)[0]));
+  writeFileSync(`${directory}_grid_sentinels.png`, mask_png(mask));
   const encoded = Buffer.concat([Buffer.from([1]), encode_palette(decoded, tokens)]);
   if (!Buffer.from(data.subarray(0, encoded.length)).equals(encoded))
     throw new Error("kind-1 token replay differs");
@@ -117,7 +117,7 @@ export function export_grid(data: Uint8Array, directory: string): [number, numbe
     format: 1, codec: "golden-sun-kind1-grid", decoded_size: decoded.length,
     encoded_size: data.length, tokens, lookahead: Buffer.from(data.subarray(encoded.length)).toString("hex"),
   };
-  writeFileSync(join(directory, "grid_grid.kind1.json"), `${JSON.stringify(plan)}\n`);
+  writeFileSync(`${directory}_grid_grid.kind1.json`, `${JSON.stringify(plan)}\n`);
   if (!build_grid(plan, directory).equals(Buffer.from(data)))
     throw new Error("exported kind-1 grid does not round-trip");
   return [tokens.length, mask.reduce((sum, value) => sum + value, 0)];

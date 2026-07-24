@@ -381,6 +381,16 @@ a real `0x4770` veneer rather than padding) and `080c0228` (region 124, symbol
 never a verdict — run `tools/decomp_diagnose.ts` on every hit before it goes
 anywhere near `integrate_matches.ts`.
 
+A sweep that lands on four mismatches is usually one line of source away, not
+one flag away. Four mismatches in this Thumb encoding is two 16-bit
+instructions swapped, and the swap almost always mirrors the order of two
+adjacent assignments in the C. `080b2720` sat at 4 under `-fno-gcse` through
+seventeen modes, four unused switches, and eight flag combinations; the
+reference initialised the loop's destination pointer before its source pointer
+and the candidate did the reverse. Exchanging those two statements — nothing
+else — made it exact at 68 bytes. Read the transposed pair, find the statements
+that produced them, and try that order before spending a sweep.
+
 Batch agents are forbidden from editing `tools/alchemy_gcc.ts`, so a region
 needing one of these modes can only ever come back from a batch as an
 unexplained near-miss. Triage every batch near-miss for these tells before

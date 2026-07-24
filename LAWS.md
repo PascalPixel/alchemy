@@ -458,6 +458,32 @@ against the approved bundle; full sourced notes in
   grouped-DMA installs, since it widens a transform they already depend on.
 - **Recorded:** 2026-07-24.
 
+### Four Camelot Thumb switches are reachable but unevidenced (2026-07-24)
+
+- **Claim:** `arm.h` in the approved 2.96 tree defines four `-m` switches that
+  no registry entry uses and no match has ever needed:
+  `-mno-sched-prolog`, `-mentry-low-register-order`,
+  `-mpreserve-single-bit-test`, and `-mthumb-and-sets-cc`. They are reachable
+  from `extraCompilerFlags` today, so they belong in every sweep, but nothing
+  yet establishes that any Golden Sun object was built with one.
+- **Current evidence:** swept against the three best-placed near-misses —
+  `0808fecc` (4), `080b2720` (4), `08006dec` (6) — alone and on top of each
+  stem's known-best mode. `-mpreserve-single-bit-test` and
+  `-mthumb-and-sets-cc` changed nothing at all on any of the three;
+  `-mentry-low-register-order` made all three strictly worse (15, 20, 11);
+  `-mno-sched-prolog` made two worse and left `08006dec` unchanged.
+- **What that pins down:** `-mno-sched-prolog` is the informative one. On
+  `0808fecc` it holds `sub sp, #4` at the top of the prologue while the
+  reference schedules it down past three argument setup insns — so the
+  reference's prologue *is* scheduled, and the switch is not a Camelot default.
+  It also leaves `0808fecc`'s epilogue transposition untouched, which rules the
+  scheduler out as the cause of that residual and points at the order in which
+  the function-end expander emits the return-value copy and the stack restore.
+- **Why record a negative:** all four are cheap to try and expensive to
+  rediscover. Without this entry the next agent finds them in `arm.h`, assumes
+  an unexplored lever, and spends a budget re-measuring the same three stems.
+- **Recorded:** 2026-07-24.
+
 ### Pre-epilogue literal pool
 
 - **Claim:** 31 remaining C-debt regions share a structural signature the

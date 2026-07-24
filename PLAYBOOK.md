@@ -426,6 +426,22 @@ the same either way, so the two forms are interchangeable semantically and not
 at all in bytes. When the reference derives a constant from another live one,
 name the earlier constant and write the arithmetic — do not fold it yourself.
 
+A narrow load feeding a test has three spellings and they are not
+interchangeable either. `*(u16 *)p & mask` expands as `zero_extend:SI (mem:HI)`,
+which CSE will equate with any other `zero_extend` of the same address — on
+`08079cbc` that merged the condition's `ldrh` with the call argument's and shrank
+the region by two bytes. A `(u16)` cast keeps both loads but leaves the AND as
+`(and:SI (subreg:SI (reg:HI ...)) ...)`, and the SImode-destination against
+HImode-source mismatch stops reload tying the destination to the load, so it ties
+to the other operand instead and the two registers come out exchanged. A named
+`u16 v = *(u16 *)p;` is the form that does both: the load stays a plain HImode
+set that CSE will not equate with a `zero_extend`, so both `ldrh`s survive, while
+the integer promotion in `v & mask` emits its own `zero_extend` and leaves the
+AND between two plain SImode pseudos, which reload ties to the load. Combine
+folds the extension back into the `ldrh`, so the temporary costs nothing. When a
+size change and a register swap look like alternatives you must choose between,
+this temporary is usually the third option that avoids both.
+
 Batch agents are forbidden from editing `tools/alchemy_gcc.ts`, so a region
 needing one of these modes can only ever come back from a batch as an
 unexplained near-miss. Triage every batch near-miss for these tells before

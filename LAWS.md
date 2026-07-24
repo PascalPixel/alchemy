@@ -540,6 +540,42 @@ against the approved bundle; full sourced notes in
   ordered the entry block differently.
 - **Recorded:** 2026-07-24.
 
+### Local-allocator priority is a function of the instruction stream, not of the source (2026-07-24)
+
+- **Claim:** when two quantities are swapped between registers and nothing else
+  differs, the deciding quantity is `QTY_CMP_PRI` in `local-alloc.c`,
+  `floor_log2(n_refs) * n_refs * size / (death - birth)`. A source edit can only
+  move that ratio by changing a reference count or a live length, and both are
+  usually pinned by call clobbers and by the position of the region's calls. When
+  they are pinned, the swap is unreachable from C.
+- **Evidence, `080a3e88`** (102-byte region, parked at 8 mismatches): the whole
+  instruction stream agrees; only `arg0` and `arg1` exchange `r6` and `r8`.
+  Measured from `-dl`/`-dg` dumps, `ptr` scores 3 refs / 14 insns = 2142, `arg1`
+  2 / 17 = 1176, `arg0` 2 / 23 = 869, so the allocator hands out `r5`, `r6`, `r8`
+  in that order. Matching needs `arg0` to sort strictly between `ptr` and `arg1`,
+  which requires exactly three references to `arg0`; two is forced (one set, one
+  use) and four would steal `r5` from `ptr`. Both parameter copies must precede
+  the first `bl` because `r0`/`r1` are clobbered there, so both are born at the
+  top, and `arg0` dies five insns after `arg1` — its live length is longer
+  unconditionally. Twelve source shapes left every ref count unchanged; naive
+  temporaries are removed by copy propagation before flow, and one that survived
+  would be tied by `combine_regs` and make it worse.
+- **Evidence, `08006dec`** (56-byte region, parked at 17 mismatches): the flash
+  unlock sequence stores `0xAA`, `0x55`, `0xA0`. The reference keeps every stored
+  value in `r2` and the second unlock address in `r3`; the candidate does the
+  reverse. Each value quantity is two references over two insns (ratio 1) and the
+  address quantity is two references over four (ratio 0.5), so the first value
+  quantity is allocated first and takes `r3` under `REG_ALLOC_ORDER`. Ten source
+  shapes were tried — named pointers for either or both addresses, one shared
+  value variable, three separate value variables, `u8` versus `s32` value types,
+  decimal versus hexadecimal literals — and none moved the ratio. Every registry
+  mode and seventeen further stock `-f` switches were swept; none improved it.
+- **Consequence:** a pure two-register exchange with an otherwise identical
+  instruction stream is a park, not a puzzle. Measure the two ratios first; if no
+  reachable edit separates them, stop. The lever, if one is ever wanted, is a
+  compiler mode over `local-alloc.c`'s ordering, not a source rewrite.
+- **Recorded:** 2026-07-24.
+
 ### Pre-epilogue literal pool
 
 - **Claim:** 31 remaining C-debt regions share a structural signature the

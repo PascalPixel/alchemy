@@ -80,8 +80,20 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // These functions construct a three-word DMA descriptor whose historical
 // Thumb lowering uses one writeback STMIA and restores the descriptor base.
 const GROUPED_DMA_STORE_SOURCES = new Set([
-  "080049e8", "08004a28", "08004a44", "08004a5c", "080958a8", "0809bb34",
+  "08004838", "08004858", "080049e8", "08004a28", "08004a44",
+  "08004a5c", "08004a94", "080958a8", "0809bb34",
 ]);
+
+// Nine sound-request entry wrappers: the entry pool load precedes the
+// parameter copies only under the evidenced entry-literal-first mode with
+// the second scheduling pass off (work/hand/compiler-cohort-integration.md).
+const ENTRY_LITERAL_FIRST_SOURCES = new Set([
+  "0800383c", "0800387c", "080038bc", "080038fc", "0800393c",
+  "0800397c", "080039bc", "080039fc", "08003a3c",
+]);
+const HIGH_REGISTER_MOVE_FIRST_SOURCES = new Set(["0808b8e8"]);
+const EARLY_FRAME_ALLOCATION_SOURCES = new Set(["0809802c"]);
+const SINGLE_BIT_TEST_ENTRY_ORDER_SOURCES = new Set(["080f9ef8"]);
 // These overlay-local object constructors share one exact compiler fingerprint:
 // immediately before a call, the independent r0 register copy precedes the r1
 // immediate. Their common filename is not unique, so routing must use the
@@ -114,12 +126,13 @@ const CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES = new Set([
 // 同一cc1・既定フラグ。
 const DEFAULT_ABI_SOURCES = new Set([
   "08006a00", "08006b84", "08006ba8", "08006c24", "08006dec", "08007098",
-  "080fadf0",
+  "080f9ef8", "080fadf0",
 ]);
 // The stock m4a object linked into GS1 was built with the public old_agbcc
 // compiler rather than Camelot's gcc-2.96 fork. Keep adoption source-scoped:
 // every listed unit must have an independent exact-byte proof.
 const AGBCC_SOURCES = new Set([
+  "080f9a50",
   "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
   "080fa424", "080fa458", "080fa490", "080fa514", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
   "080fa9e0", "080fab3c", "080facf8", "080fb2cc", "080fb334", "080fb3a8", "080fb430", "080fb4a4",
@@ -130,6 +143,7 @@ const AGBCC_SOURCES = new Set([
 // literal load precedes its adjacent index shift, matching the stock object.
 const AGBCC_LITERAL_BEFORE_SHIFT_SOURCES = new Set(["080fb670"]);
 const AGBCC_OPTIMIZE_O1_SOURCES = new Set(["080fa514"]);
+const AGBCC_COMPARE_ONLY_AND_TST_SOURCES = new Set(["080f9a50"]);
 const AGBCC_COMMUTATIVE_COPY_CONSTANT_SOURCES = new Set(["080fa514"]);
 const AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES = new Set([
   "080fb2cc", "080fb334", "080fb3a8",
@@ -158,6 +172,12 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
+    ...(ENTRY_LITERAL_FIRST_SOURCES.has(stem)
+      ? ["-fno-schedule-insns2", "-mthumb-entry-literal-first"] : []),
+    ...(HIGH_REGISTER_MOVE_FIRST_SOURCES.has(stem) ? ["-mhigh-register-move-first"] : []),
+    ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
+    ...(SINGLE_BIT_TEST_ENTRY_ORDER_SOURCES.has(stem)
+      ? ["-mpreserve-single-bit-test", "-mentry-low-register-order", "-mthumb-and-sets-cc"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
     ...(CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
@@ -179,6 +199,9 @@ export function cflagsForTargetSource(target: CompilerTarget, source: string): r
         : []),
       ...(AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES.has(sourceStem(source))
         ? ["-mprologue-next-high-reg"]
+        : []),
+      ...(AGBCC_COMPARE_ONLY_AND_TST_SOURCES.has(sourceStem(source))
+        ? ["-mcompare-only-and-tst"]
         : []),
     ];
   }
@@ -420,6 +443,12 @@ export function directCompilerCommand(
     ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
+    ...(ENTRY_LITERAL_FIRST_SOURCES.has(stem)
+      ? ["-fno-schedule-insns2", "-mthumb-entry-literal-first"] : []),
+    ...(HIGH_REGISTER_MOVE_FIRST_SOURCES.has(stem) ? ["-mhigh-register-move-first"] : []),
+    ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
+    ...(SINGLE_BIT_TEST_ENTRY_ORDER_SOURCES.has(stem)
+      ? ["-mpreserve-single-bit-test", "-mentry-low-register-order", "-mthumb-and-sets-cc"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mcall-arg0-move-first"]
@@ -446,7 +475,8 @@ export function directCompilerCommandForSource(
 
 function selfTest(): void {
   const expected = [
-    "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
+    "080f9a50",
+  "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
     "080fa424", "080fa458", "080fa490", "080fa514", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
     "080fa9e0", "080fab3c", "080facf8", "080fb2cc", "080fb334", "080fb3a8", "080fb430", "080fb4a4",
     "080fb670",
@@ -467,6 +497,7 @@ function selfTest(): void {
       ...(["080fb2cc", "080fb334", "080fb3a8"].includes(stem)
         ? ["-mprologue-next-high-reg"]
         : []),
+      ...(stem === "080f9a50" ? ["-mcompare-only-and-tst"] : []),
     ];
     if (JSON.stringify(cflagsForTargetSource("gs1", source)) !== JSON.stringify(expectedFlags)) {
       throw new Error(`old_agbcc flags self-test failed for ${stem}`);
@@ -478,7 +509,7 @@ function selfTest(): void {
   }
   const groupedDma = [...GROUPED_DMA_STORE_SOURCES].sort();
   if (JSON.stringify(groupedDma) !== JSON.stringify([
-    "080049e8", "08004a28", "08004a44", "08004a5c", "080958a8", "0809bb34",
+    "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c", "08004a94", "080958a8", "0809bb34",
   ])) {
     throw new Error("grouped DMA source allowlist self-test failed");
   }

@@ -172,6 +172,22 @@ must be tested on more than one function before being generalized.
   its live range across the whole body and costs r5, `push {r4,r5,lr}` and 19
   instructions: for this pattern the assignment must sit between the store and
   the call.
+- **The reroute probe is bounded, and the bound is measured (2026-07-24).**
+  Because `08006dec` fell to a reroute, every stubborn `register_only` plateau
+  in the queue that no agent owned was rerouted through `old_agbcc` unchanged.
+  All five got *worse*, none better: `08077394` 48→52 bytes (and 64/68 short),
+  `080f9ef8` 46→44 but 24 instructions wrong, `080a3354` 50→110,
+  `080fb2a4` 37→40 (32/40 short), `08004760` 26→42. Two of the five do not even
+  reach the region size under `old_agbcc`, which is the strongest possible
+  signal: the fork's minipool placement is load-bearing for them. So
+  `register_only` on its own is *not* a wrong-compiler tell — the tell is
+  `register_only` **plus** membership in a TU already known to be vintage. The
+  `old_agbcc` stratum stays confined to the m4a bank and the `08006xxx`
+  default-ABI library TU; do not spend another probe on a fork region merely
+  because its plateau is register-shaped. Note especially that `080f9ef8` and
+  `080fb2a4` bracket `080fadf0` in address space and still reroute badly, so
+  address adjacency to a vintage unit is not evidence of shared provenance
+  either.
 
 ### Scheduler trace instrumentation (native)
 

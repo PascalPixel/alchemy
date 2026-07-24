@@ -163,6 +163,40 @@ must be tested on more than one function before being generalized.
   delaying the position read also removes an unnecessary r7 live range.
 - **Confirmed:** 2026-07-22.
 
+### Let the compiler derive its own induction variable
+
+- **Fingerprint:** the reference walks an array with an auto-incrementing
+  pointer (`ldmia rN!, {r0}`) driven by a *countdown* register compared against
+  zero (`subs r6, #1; cmp r6, #0; bge`), even though the loop visits entries
+  0..n-1 in ascending order. Hand-writing that shape in C — an explicit
+  `entry = state->objects` pointer plus an explicit `remaining = n - 1`
+  countdown — reproduces the loop body byte-for-byte but misorders the
+  preheader.
+- **Producing idiom:** write the loop the way a person would have written it,
+  `for (index = 0; index < n; index++)` over `state->objects[index]`, and let
+  `-fstrength-reduce` invent both the pointer and the countdown. The derived
+  induction variables are created *after* the other preheader values, so they
+  are emitted last, which is exactly where the reference puts them.
+- **Why it is worth a law:** for [src/080a9d84.c](src/080a9d84.c) the
+  hand-written countdown form was already correct in every instruction of the
+  loop body and off only in the six-instruction preheader. A 579-variant
+  exhaustive sweep over every legal declaration permutation and every
+  literal-versus-named-local choice of the three loop-invariant constants
+  bottomed out at 10 byte mismatches and could not close it; neither could any
+  of seven candidate compiler-mode flags (`-mhigh-register-move-first`,
+  `-mearly-frame-allocation`, `-fno-schedule-insns2`, `-fno-gcse`,
+  `-fno-strength-reduce`, `-fno-expensive-optimizations`,
+  `-fno-cse-follow-jumps`). Switching to the canonical forward `for` loop went
+  to zero on the first try. When a candidate is close and the residue is
+  preheader ordering, suspect a hand-derived induction variable before
+  suspecting a compiler flag.
+- **Caution about siblings:** the structural sibling that produced this
+  candidate, [src/080a9cbc.c](src/080a9cbc.c), *is* installed in the
+  hand-written countdown form. A sibling's shape being byte-exact for its own
+  region does not make that shape canonical; two different sources can converge
+  on the same code when the preheader has fewer values to order.
+- **Confirmed:** 2026-07-24.
+
 ## Hypotheses
 
 Hypotheses are useful search leads, not accepted compiler laws. Promote one only

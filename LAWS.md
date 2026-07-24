@@ -392,20 +392,60 @@ against the approved bundle; full sourced notes in
   same block. The reference keeps base load, control load, `stmia` and `subs`
   as one uninterrupted run, which is what a single output template emitting its
   own pool references would give.
-- **Current evidence:** `080c08a8` (56 bytes) reproduces the reference prologue
-  and the whole descriptor block exactly, and pins at **18** mismatches under
-  `-fno-schedule-insns2`, **26** with scheduling left on — every residual
-  difference is the position of those two pool loads and `add sp` relative to
-  the zeroing store. Its twin `080284dc` matched byte-exact under the same mode
-  because a trailing `bl` sits after its descriptor block and acts as a
-  scheduling barrier, so there is nothing for the loads to hoist past.
+- **Current evidence:** two independent regions, both at the correct size with
+  the correct instruction multiset, differing from the reference *only* in where
+  those pool loads sit.
+  - `080c08a8` (56 bytes) pins at **18** mismatches under `-fno-schedule-insns2`
+    and **26** with scheduling on; the residual is the two loads and `add sp`
+    floating above the zeroing store.
+  - `0800d304` (60 bytes) pins at **12** under the mode alone — six instructions
+    transposed, no more. The reference runs `lsrs`/`lsls` *first* and the two
+    pool loads after; ours hoists both loads to the top of the block.
+- **What the pair pins down:** `0800d304` gets *worse* with
+  `-fno-schedule-insns2` (12 → 14), because disabling sched2 also loses the
+  `adds r1` / `orrs r2` order the reference does have. So the reference is
+  normally scheduled — it is specifically the descriptor's own pool loads that
+  will not move. That is the signature of a group emitted as one template, not
+  of scheduling being off.
+- **Why the twin matched:** `080284dc` is byte-exact under the same mode because
+  a `bl` sits after its descriptor block and fences it, so there is nothing for
+  the loads to hoist past. The match is an accident of surrounding code, not a
+  better-shaped source — worth remembering before reading any single grouped-DMA
+  match as proof the mode is complete.
 - **Also observed (negative):** the residual is not source-position. Sinking the
   competing load (`object = *(u32 **)0x03001f00`) to just before its use makes
   it *worse* (33 scheduled / 42 unscheduled), and dropping the temp entirely
   scores the same — the scheduler, not the source order, decides.
 - **Next test:** make the descriptor group a single output template in
-  alchemy-gcc so sched2 cannot split it, then re-measure `080c08a8`; a
-  toolchain change, so it belongs in the alchemy-gcc lane rather than a batch.
+  alchemy-gcc so sched2 cannot split it, then re-measure `080c08a8` and
+  `0800d304` together; a toolchain change, so it belongs in the alchemy-gcc lane
+  rather than a batch.
+- **Recorded:** 2026-07-24.
+
+### The four-word-record transform is over-fitted to its first witness (2026-07-24)
+
+- **Claim:** `thumb_group_four_word_records` — the half of
+  `-mgrouped-dma-store` that emits `stmia rN!, {r1,r2,r3,r4}` for 12-word
+  block initialisation — is written against the one region it was derived from.
+  It requires the base to be **r3** and to be **dead at the twelfth store**.
+  Neither holds for a stack-allocated block or for any function that consumes a
+  call's return value (`regs_ever_live[0]` disables it there), so the transform
+  cannot fire for whole families that visibly use the idiom in the ROM.
+- **Current evidence:** three batch-8 regions independently hit the same wall,
+  each after the drafting agent had confirmed semantics and reached a
+  byte-correct head and pool: `080049ac` (51, global base, blocked by the
+  return-value guard), `08004cb4` (56, stack base), `08004cf0` (54, stack base
+  staying live for three diagonal stores). A fourth, `080bd7a4` (52), is
+  blocked by the volatile half of the same mode: the peephole fires only on
+  non-volatile MEMs, but without `volatile` CSE folds its three identical
+  descriptor writes into one, so no C shape yields all three `stmia` groups.
+- **Why this is worth stating separately:** these four are not near-misses to be
+  ground down with more source variants — the agents had already run their
+  budgets out against a transform that provably cannot fire. Four regions'
+  worth of effort was spent discovering one toolchain limitation four times.
+- **Next test:** in the alchemy-gcc lane, relax the base-register and liveness
+  guards and re-measure all four; any such change must re-verify the existing
+  grouped-DMA installs, since it widens a transform they already depend on.
 - **Recorded:** 2026-07-24.
 
 ### Pre-epilogue literal pool

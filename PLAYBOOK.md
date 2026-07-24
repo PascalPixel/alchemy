@@ -320,10 +320,29 @@ both cost a whole batch agent's budget when missed:
   helper" is a text heuristic, not a verdict on the match. Try the named-local
   expansion; if it does not hold, install by hand.
 
+A third tell says **stop**, not "try a different mode". Routing a stem is free;
+widening a compiler transform is not, and no source shape substitutes for it:
+
+- Twelve consecutive word stores lowered as three `stmia rN!, {r1,r2,r3,r4}`,
+  where the block is **on the stack**, or the base **stays live** past the last
+  store, or the function **consumes a call's return value**. The
+  `thumb_group_four_word_records` transform cannot fire in any of those cases —
+  see the over-fitted-transform law in [LAWS.md](LAWS.md). Report it as blocked
+  on the toolchain and stop; four batch-8 agents each spent a full budget
+  proving this independently.
+
 A batch that ends with unexplained near-misses is worth re-triaging against
 this whole section before the next batch is planned: of batch 7's near-misses,
 every one turned out to be a routing or boundary tell rather than a
-source-shape gap.
+source-shape gap, and of batch 8's, five of seven were the grouped-DMA family
+in one form or another.
+
+Verify a routing claim before acting on it — an agent reporting "matches with
+`-mgrouped-dma-store`" is reporting a measurement it could not install, and the
+measurements are not always right. Of batch 8's two such claims, `080284dc`
+held exactly (0 mismatches at 64 bytes, installed) and `080037d4` inverted
+under test (26 → 32 with the flag). One `verifyCandidate` call with
+`extraCompilerFlags` settles it without touching the registry.
 
 Batch agents are forbidden from editing `tools/alchemy_gcc.ts`, so a region
 needing one of these modes can only ever come back from a batch as an

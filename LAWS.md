@@ -197,6 +197,36 @@ must be tested on more than one function before being generalized.
   on the same code when the preheader has fewer values to order.
 - **Confirmed:** 2026-07-24.
 
+### Name the index when the reference keeps a register-offset load
+
+- **Fingerprint:** the reference computes an array index into a register of its
+  own and then loads with a register-offset address (`adds r3, r3, r2;
+  ldrsb r6, [r6, r3]`), keeping the array base in the base register. The
+  obvious C — the index expression written inline inside the subscript or the
+  cast — instead folds the base into the address and reassociates, emitting an
+  extra add of the base plus a zero index register. On
+  [src/080a6a00.c](src/080a6a00.c) that cost four bytes and 108 mismatches.
+- **Producing idiom:** assign the index expression to its own local first, then
+  subscript with that local:
+
+  ```c
+  slot = entries[offset] + 0x260;
+  value = ((s8 *)base)[slot];
+  ```
+
+  Spelling the same thing as `((s8 *)base)[entries[offset] + 0x260]` does not
+  work, and neither does parenthesizing the addition inside a pointer cast —
+  the compiler reassociates through both.
+- **Scope:** this is the reason an m2c-style `static __inline__` load helper can
+  match when its manual expansion does not. The helper's parameters force the
+  index to exist as a value; the local reproduces that without the helper,
+  which `src/` does not allow. When a verified candidate carries such a helper,
+  reach for a named local before assuming the helper itself was load-bearing.
+- **Relation to temp count:** consistent with the [src/08077cb8.c](src/08077cb8.c)
+  finding that the *number* of distinct temporaries matters and their names do
+  not. Here too the lever is whether a value gets a temporary at all.
+- **Confirmed:** 2026-07-24.
+
 ## Hypotheses
 
 Hypotheses are useful search leads, not accepted compiler laws. Promote one only
@@ -250,6 +280,31 @@ against the approved bundle; full sourced notes in
   with stack offsets excluded by default. Matched-example retrieval into
   drafting prompts is the community's highest-value context signal
   (validates tool-investment priority 5).
+
+### In-place pointer advance and preheader statement order (2026-07-24)
+
+- **Claim:** two separate shapes, both surfaced by `080a9d3c`. (a) When the
+  reference advances a pointer in place (`adds r5, #200`), the source must
+  advance *the same variable it later loads from* — deriving a second pointer
+  from a first costs a `adds rD, rS, #0` copy that no flag removes. (b)
+  Instructions in a loop preheader are emitted in **source statement order**,
+  so hoisting `for` initializers out of the loop header and ordering them
+  deliberately is a real lever, not cosmetic.
+- **Current evidence:** on `080a9d3c` (72 bytes, `-fno-strength-reduce`),
+  rewriting the walk as a hand-written `*slot++` over an in-place-advanced
+  pointer took the candidate 59 → 10 mismatches; hoisting the `for`
+  initializers out of the header and permuting their order took it 10 → 7.
+  At 7 the size is correct and the instruction sequence is identical to the
+  reference — the only residue is that `index` and the walking pointer hold
+  each other's call-saved registers. Not backed by an installed match.
+- **Also observed (negative):** declaration order, loop form (`for` / `while` /
+  `do`-`while`), and bound spelling (`index <= 4` vs `index < 5`) are all
+  canonicalized away and never moved a byte.
+- **Next test:** the residual swap survived 48-, 36-, 10- and 12-variant
+  source sweeps plus two full 15-flag allowlist sweeps, so the remaining lever
+  is likely allocator-internal rather than source-level. Promote on the first
+  exact install carrying either shape.
+- **Recorded:** 2026-07-24.
 
 ### Hardware-load width and widening (agent lane, 2026-07-23)
 

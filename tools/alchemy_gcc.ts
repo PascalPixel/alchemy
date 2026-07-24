@@ -65,7 +65,10 @@ const NO_CSE_FOLLOW_SOURCES = new Set(["0800f9f4"]);
 // This unrolled six-item display setup shares one resource-ID base and one
 // signed sentinel.  Global CSE expands them back into independent constants;
 // disabling it preserves the reference's r7/r8 lifetimes.
-const NO_GCSE_SOURCES = new Set(["080a45cc"]);
+// 080b2720 is the same tell in a copy loop: the row base is addressed once for
+// the emptiness test and again for the loop preheader, and global CSE keeps the
+// shared address alive across the branch instead of recomputing it inside.
+const NO_GCSE_SOURCES = new Set(["080a45cc", "080b2720"]);
 // This bounded-angle convergence loop only retains the reference allocation
 // when GCC does not perform its expensive-expression rewrite.  The rewrite
 // rotates r0-r2 and folds each signed clamp into a shorter non-reference form.
@@ -83,13 +86,16 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // This is a routing table, not a build manifest: cflagsForTargetSource feeds
 // tools/decomp_diagnose.ts as well as the build, so a stem stays listed once
 // the mode is evidenced even while its region is still assembly. 080170c4,
-// 0800d304 and 080c08a8 are three such -- all pinned near-misses whose residual
-// is scheduler-internal, and delisting them would make diagnose lie to the next
-// agent that picks them up.
+// 0800d304, 080c08a8 and 0808fecc are four such -- all pinned near-misses whose
+// residual is scheduler-internal, and delisting them would make diagnose lie to
+// the next agent that picks them up. 0808fecc's residual is the smallest of the
+// four: the mode takes it from 26 mismatches to 4, and what remains is the
+// return-value copy and the stack restore in the opposite order.
 const GROUPED_DMA_STORE_SOURCES = new Set([
   "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
   "08004a5c", "08004a94", "0800bc48", "0800d304", "080170c4", "0801d980",
   "080251d4", "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
+  "0808fecc",
 ]);
 
 // Nine sound-request entry wrappers: the entry pool load precedes the
@@ -513,7 +519,8 @@ function selfTest(): void {
   const groupedDma = [...GROUPED_DMA_STORE_SOURCES].sort();
   if (JSON.stringify(groupedDma) !== JSON.stringify([
     "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c", "08004a94", "0800bc48",
-    "0800d304", "080170c4", "0801d980", "080251d4", "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
+    "0800d304", "080170c4", "0801d980", "080251d4", "080284dc", "0808fecc", "080958a8", "0809bb34", "080c0184",
+    "080c08a8",
   ])) {
     throw new Error("grouped DMA source allowlist self-test failed");
   }

@@ -369,6 +369,39 @@ against the approved bundle; full sourced notes in
   re-probe declaration-order/scheduling-flag variants on any function
   matching this shape (pool-load address with no nearby dependent use,
   immediately preceding an IME save) without new compiler-side evidence.
+- **Third confirmed instance (2026-07-24):** `080042c8` (a 20-entry,
+  8-byte-stride array scan at 0x03001A20 under the same IME guard, setting
+  a flag bit on every entry matching arg0 or all entries if arg0==0,
+  tracking the last matching index) hits the same gate: floors at 20/64
+  mismatched bytes with the same `-1` init / entry-pointer load / IME
+  save head-order gap, independent of the 5 variants tried. Same shape as
+  `080043e0` (entry-pointer pool load with no dependent use before an IME
+  save); reinforces treating this as a general compiler-head-scheduling
+  limit rather than per-function bad luck.
+
+### Thumb interworking call is never inlined
+
+- **Claim:** GCC 2.96's Thumb backend has exactly one `call_indirect`
+  pattern and it unconditionally emits `bl __call_via_rN` /
+  `__interwork_call_via_rN` — confirmed directly in the vendored
+  `gcc-2.96/gcc/config/arm/arm.md` (`TARGET_THUMB` branch of
+  `call_indirect`/`call_value_indirect` is hardcoded to that template) and
+  reproduced empirically across independent probe compiles: no C shape
+  changes it. A function whose reference bytes instead call a fixed
+  IWRAM/interworking-safe function pointer inline (`mov ip, pc; bx rN`
+  with no `bl`, no `_call_via_` veneer) cannot be produced by any C source
+  this compiler accepts.
+- **Witness:** `08097a10` reconstructs semantics exactly (clamp/negate
+  arg1, call `Func_080072f0`, mask the result, then call a function
+  pointer stored at the fixed address 0x03000118) and reaches 68/68 bytes
+  with the call site as the only remaining diff: reference emits
+  `movs r0, r0 / mov ip, pc / bx r4` where every candidate emits
+  `bl __call_via_r4`. This is the same inline-interworking-call idiom the
+  overlay/manifest tooling already classifies as `nonstandard_thumb_call_module`
+  for retained structural assembly — treat any function whose only gap is
+  this exact call-site shape as a candidate for that classification rather
+  than continued C-shape search.
+- **Recorded:** 2026-07-24.
 
 ### Byte-store QImode constant reuse
 

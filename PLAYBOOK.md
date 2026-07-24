@@ -369,6 +369,18 @@ first flag that helps understates the routing. And a sweep that moves nothing
 is itself a result: it converts "unexplained near-miss" into "confirmed
 source-shape gap", which is what the next agent needs to know.
 
+One trap makes a sweep lie in the other direction. `verifyCandidate` compares
+against the **linked symbol** size, while `tools/decomp_diagnose.ts` compares
+against the **region** size in `out/full/asm/manifest.json`. Where a region
+carries more than its function — a trailing `bx lr` veneer, a shared tail, a
+second entry point — a sweep reports a confident `EXACT` for something that
+would still fail integration. Sweeping batch 7 and 8 produced four `EXACT`
+hits and two were this: `08093054` (region 102, symbol 100, the residue being
+a real `0x4770` veneer rather than padding) and `080c0228` (region 124, symbol
+112). Both are region-boundary work, not decompilation. A sweep is a shortlist,
+never a verdict — run `tools/decomp_diagnose.ts` on every hit before it goes
+anywhere near `integrate_matches.ts`.
+
 Batch agents are forbidden from editing `tools/alchemy_gcc.ts`, so a region
 needing one of these modes can only ever come back from a batch as an
 unexplained near-miss. Triage every batch near-miss for these tells before

@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Tool role: both; imported by tools/decomp_queue.ts; invoked by tools/alchemy_gcc.ts.
+// Tool role: both; imported by tools/decomp_queue.ts; invoked by PLAYBOOK.md, tools/alchemy_gcc.ts.
 // Exact-C candidate diagnostics. Candidate and reference bytes remain in ignored
 // scratch space; the durable report contains only aggregate mismatch classes.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";

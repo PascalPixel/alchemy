@@ -168,11 +168,16 @@ function convertedPlaceholders(source: string): Map<number, number> {
 
 function main(): void {
   const options = optionsOf(Bun.argv.slice(2));
+  // Flat layout, matching the asset builder and the overlay disassembler: the
+  // overlay is assets/code/<name>_overlay.s, not <name>/overlay.s. The old
+  // nested spelling matched nothing and reported overlays=0 without erroring.
+  const suffix = "_overlay.s";
   const overlays = readdirSync(options.assets)
-    .filter((name) => name.startsWith("resource_"))
+    .filter((name) => name.startsWith("resource_") && name.endsWith(suffix))
     .sort()
-    .map((name) => ({ name, source: join(options.assets, name, "overlay.s") }))
+    .map((name) => ({ name: name.slice(0, -suffix.length), source: join(options.assets, name) }))
     .filter((item) => Bun.file(item.source).size > 0);
+  if (overlays.length === 0) throw new Error(`no overlay sources under ${options.assets}`);
   const functions: FunctionRow[] = [];
   let decodedBytes = 0, instructionBytes = 0, unresolved = 0, jumpTables = 0;
   let convertedFunctions = 0, convertedInstructionBytes = 0, convertedSpanBytes = 0;

@@ -141,7 +141,8 @@ async function main(): Promise<void> {
   const overlayRows = new Map<string, Map<number, string>>();
   for (const overlay of new Set(overlayFunctions.map((fn) => fn.overlay))) {
     const binary = join(work, `${overlay}.bin`);
-    writeFileSync(binary, assembleOverlay(join(ROOT, "assets/code", overlay, "overlay.s"), OVERLAY_BASE));
+    // Flat layout: assets/code/<name>_overlay.s, per the asset builder.
+    writeFileSync(binary, assembleOverlay(join(ROOT, "assets/code", `${overlay}_overlay.s`), OVERLAY_BASE));
     const decoded = await run([
       "arm-none-eabi-objdump", "-D", "-b", "binary", "-marmv4t", "-Mforce-thumb",
       `--adjust-vma=0x${OVERLAY_BASE.toString(16)}`, binary,

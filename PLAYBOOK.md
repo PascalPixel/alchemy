@@ -309,6 +309,15 @@ right, so check them before spending variant budget.
 | A constant materialized fresh where the compiler instead reuses a live register holding a wider value with the same low bytes | `NO_GCSE_SOURCES`. |
 | Address inside an already-allowlisted neighbour's range | Same unit as the neighbour; inherit its mode. Adjacency is the cheapest evidence available — check it first. |
 
+An `AGBCC_SOURCES` candidate must be written **without any preprocessor
+directive**. That path runs `old_agbcc` — a bare cc1, not a driver — directly on
+the `.c` file, so `#define`, `#include` and the usual `M2C_FIELD`/`NULL`
+preamble are never expanded. The failure is loud but misleading: the compile
+dies with `syntax error before 'u32'` on the first line that uses a macro, which
+reads like a typing problem in the candidate. Every installed agbcc source
+contains zero `#` lines; write field accesses out as casts, and keep the
+`typedef`s, which are ordinary C and do work.
+
 Two more triage tells are not about compiler mode but are just as cheap, and
 both cost a whole batch agent's budget when missed:
 

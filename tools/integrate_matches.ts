@@ -86,8 +86,12 @@ function linkedBytes(stem: string, source: string, scratch: string, kind: "asm" 
   const prefix = join(scratch, `${stem}.${kind}probe`);
   const listing = `${prefix}.s`, object = `${prefix}.o`;
   if (kind === "c") {
+    /* Candidates arrive as src_<stem>.c, but the per-source compiler-mode
+       allowlists in alchemy_gcc.ts key off the bare stem, so route the flags
+       through the name the file will carry once installed. */
+    const routed = join(dirname(source), `${stem}.c`);
     const compiled = run(compilerCommandForTargetSource(
-      "gs1", source, ...cflagsForTargetSource("gs1", source), "-S", "-o", listing, source,
+      "gs1", routed, ...cflagsForTargetSource("gs1", routed), "-S", "-o", listing, source,
     ));
     if (compiled.code !== 0) throw new Error(`compiler failed: ${commandError(compiled)}`);
   } else {

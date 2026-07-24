@@ -250,6 +250,31 @@ An instruction-shape template hit is a lead, not a conversion. Relocated bytes,
 literal ownership, call targets, data symbols, and the entire claimed extent
 must still match exactly.
 
+## Choosing the next batch
+
+Size order is a poor queue. `tools/rank_siblings.ts` orders the remaining
+`compiler_output` debt by how close its opcode skeleton is to an already
+byte-verified `src/*.c`, which is a much better predictor of a cheap match:
+
+```sh
+bun tools/rank_siblings.ts roms/gs1-en.gba --limit 40
+```
+
+Each region and each installed source is disassembled and normalized to opcode
+tokens with registers collapsed to `R` and immediates to `K`, then matched by
+Levenshtein distance. The report names, per candidate, its nearest installed
+sibling and the token edit distance. Hand a matching agent that sibling
+explicitly: its declaration order, temp count, loop form and struct-versus-cast
+style usually transfer with only offsets, widths, callee names and constants
+changing.
+
+Two cautions. A low distance means the *opcode* skeleton matches; the
+semantics frequently belong to an unrelated subsystem, which is expected and
+harmless. And a sibling being byte-exact for its own region does not make its
+shape canonical — see the induction-variable law in `LAWS.md`, where copying an
+installed sibling's hand-written countdown loop stalled at 10 byte mismatches
+that no declaration permutation and no compiler mode could close.
+
 ## Diagnosis and routing
 
 Use `tools/decomp_queue.ts` and the compiler diff to choose the next action.

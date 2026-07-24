@@ -1,4 +1,4 @@
-// Tool role: library; imported by tools/audio_engine_data.ts, tools/audit_residuals.ts, tools/battle_effect_data.ts (+61 more).
+// Tool role: library; imported by tools/audio_engine_data.ts, tools/audit_residuals.ts, tools/battle_effect_data.ts (+62 more).
 // Compact canonical form: objects one key per line, arrays of primitives
 // inline on one line. This replaces JSON.stringify(value, null, 2) as the
 // writer default: the old form spent one line per array element, which put

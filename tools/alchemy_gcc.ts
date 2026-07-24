@@ -93,7 +93,6 @@ const ENTRY_LITERAL_FIRST_SOURCES = new Set([
 ]);
 const HIGH_REGISTER_MOVE_FIRST_SOURCES = new Set(["0808b8e8"]);
 const EARLY_FRAME_ALLOCATION_SOURCES = new Set(["0809802c"]);
-const SINGLE_BIT_TEST_ENTRY_ORDER_SOURCES = new Set(["080f9ef8"]);
 // These overlay-local object constructors share one exact compiler fingerprint:
 // immediately before a call, the independent r0 register copy precedes the r1
 // immediate. Their common filename is not unique, so routing must use the
@@ -126,7 +125,7 @@ const CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES = new Set([
 // 同一cc1・既定フラグ。
 const DEFAULT_ABI_SOURCES = new Set([
   "08006a00", "08006b84", "08006ba8", "08006c24", "08006dec", "08007098",
-  "080f9ef8", "080fadf0",
+  "080fadf0",
 ]);
 // The stock m4a object linked into GS1 was built with the public old_agbcc
 // compiler rather than Camelot's gcc-2.96 fork. Keep adoption source-scoped:
@@ -176,8 +175,6 @@ export function cflagsForSource(source: string): readonly string[] {
       ? ["-fno-schedule-insns2", "-mthumb-entry-literal-first"] : []),
     ...(HIGH_REGISTER_MOVE_FIRST_SOURCES.has(stem) ? ["-mhigh-register-move-first"] : []),
     ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
-    ...(SINGLE_BIT_TEST_ENTRY_ORDER_SOURCES.has(stem)
-      ? ["-mpreserve-single-bit-test", "-mentry-low-register-order", "-mthumb-and-sets-cc"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
     ...(CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
@@ -447,8 +444,6 @@ export function directCompilerCommand(
       ? ["-fno-schedule-insns2", "-mthumb-entry-literal-first"] : []),
     ...(HIGH_REGISTER_MOVE_FIRST_SOURCES.has(stem) ? ["-mhigh-register-move-first"] : []),
     ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
-    ...(SINGLE_BIT_TEST_ENTRY_ORDER_SOURCES.has(stem)
-      ? ["-mpreserve-single-bit-test", "-mentry-low-register-order", "-mthumb-and-sets-cc"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mcall-arg0-move-first"]

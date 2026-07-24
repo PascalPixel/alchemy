@@ -52,6 +52,7 @@ const FIXED_LR_SOURCES = new Set<string>();
 const OPTIMIZE_O1_SOURCES = new Set(["080049e8", "08021e28"]);
 const UNSCHEDULED_SOURCES = new Set([
   "08006b84",
+  "08002f10",
   "08004198", "0800430c", "08004358", "0800439c",
   "08029274",
   "080fb714", "080fb728", "080fb73c", "080fb750", "080fb75c",
@@ -86,9 +87,9 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // is scheduler-internal, and delisting them would make diagnose lie to the next
 // agent that picks them up.
 const GROUPED_DMA_STORE_SOURCES = new Set([
-  "08004838", "08004858", "080049e8", "08004a28", "08004a44",
-  "08004a5c", "08004a94", "0800d304", "080170c4", "0801d980", "080251d4",
-  "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
+  "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
+  "08004a5c", "08004a94", "0800bc48", "0800d304", "080170c4", "0801d980",
+  "080251d4", "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
 ]);
 
 // Nine sound-request entry wrappers: the entry pool load precedes the
@@ -511,8 +512,8 @@ function selfTest(): void {
   }
   const groupedDma = [...GROUPED_DMA_STORE_SOURCES].sort();
   if (JSON.stringify(groupedDma) !== JSON.stringify([
-    "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c", "08004a94", "0800d304", "080170c4",
-    "0801d980", "080251d4", "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
+    "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c", "08004a94", "0800bc48",
+    "0800d304", "080170c4", "0801d980", "080251d4", "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
   ])) {
     throw new Error("grouped DMA source allowlist self-test failed");
   }

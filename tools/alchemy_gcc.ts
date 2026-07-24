@@ -77,6 +77,17 @@ const NO_EXPENSIVE_SOURCES = new Set(["08092878"]);
 // reference translation unit. Strength reduction rewrites it to a descending
 // counter and changes both the allocation and loop tail.
 const NO_STRENGTH_REDUCE_SOURCES = new Set(["080200cc"]);
+// This palette-row scan ANDs a loaded halfword against a hoisted 0xF800 mask.
+// The AND is a two-address *thumb_andsi3_insn, so regmove's forward pass may
+// overwrite either input; it rejects the mask operand at reg_is_remote_constant_p
+// (CSE's REG_EQUAL note sits in the entry block, unreachable through LOG_LINKS)
+// and instead retargets the loaded value, giving `ands r2,r3` where the
+// reference has `ands r3,r2`. In the reference translation unit no regmove fix
+// happens at all, because local-alloc's update_equiv_regs later sinks the
+// constant next to its use and ties the two pseudos. regmove runs before
+// local-alloc, so nothing the C source can say is present early enough to break
+// the forward scan.
+const NO_REGMOVE_SOURCES = new Set(["080a3d9c"]);
 // This effect-dispatch wrapper's explicit entry and exit blocks are preserved
 // in the reference.  Sibling-call optimization merges the final cases and
 // rotates the call arguments even though no source tail call is present.
@@ -208,6 +219,7 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
+    ...(NO_REGMOVE_SOURCES.has(stem) ? ["-fno-regmove"] : []),
     ...(ENTRY_LITERAL_FIRST_SOURCES.has(stem)
       ? ["-fno-schedule-insns2", "-mthumb-entry-literal-first"] : []),
     ...(HIGH_REGISTER_MOVE_FIRST_SOURCES.has(stem) ? ["-mhigh-register-move-first"] : []),
@@ -477,6 +489,7 @@ export function directCompilerCommand(
     ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
+    ...(NO_REGMOVE_SOURCES.has(stem) ? ["-fno-regmove"] : []),
     ...(ENTRY_LITERAL_FIRST_SOURCES.has(stem)
       ? ["-fno-schedule-insns2", "-mthumb-entry-literal-first"] : []),
     ...(HIGH_REGISTER_MOVE_FIRST_SOURCES.has(stem) ? ["-mhigh-register-move-first"] : []),

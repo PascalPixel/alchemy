@@ -81,14 +81,14 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // Thumb lowering uses one writeback STMIA and restores the descriptor base.
 // This is a routing table, not a build manifest: cflagsForTargetSource feeds
 // tools/decomp_diagnose.ts as well as the build, so a stem stays listed once
-// the mode is evidenced even while its region is still assembly. 080170c4 and
-// 080c08a8 are two such -- both are pinned near-misses whose residual is
-// scheduler-internal, and delisting them would make diagnose lie to the next
+// the mode is evidenced even while its region is still assembly. 080170c4,
+// 0800d304 and 080c08a8 are three such -- all pinned near-misses whose residual
+// is scheduler-internal, and delisting them would make diagnose lie to the next
 // agent that picks them up.
 const GROUPED_DMA_STORE_SOURCES = new Set([
   "08004838", "08004858", "080049e8", "08004a28", "08004a44",
-  "08004a5c", "08004a94", "080170c4", "0801d980", "080251d4", "080284dc",
-  "080958a8", "0809bb34", "080c0184", "080c08a8",
+  "08004a5c", "08004a94", "0800d304", "080170c4", "0801d980", "080251d4",
+  "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
 ]);
 
 // Nine sound-request entry wrappers: the entry pool load precedes the
@@ -511,8 +511,8 @@ function selfTest(): void {
   }
   const groupedDma = [...GROUPED_DMA_STORE_SOURCES].sort();
   if (JSON.stringify(groupedDma) !== JSON.stringify([
-    "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c", "08004a94", "080170c4", "0801d980",
-    "080251d4", "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
+    "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c", "08004a94", "0800d304", "080170c4",
+    "0801d980", "080251d4", "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
   ])) {
     throw new Error("grouped DMA source allowlist self-test failed");
   }

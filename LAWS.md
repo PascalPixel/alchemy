@@ -401,12 +401,22 @@ against the approved bundle; full sourced notes in
   - `0800d304` (60 bytes) pins at **12** under the mode alone — six instructions
     transposed, no more. The reference runs `lsrs`/`lsls` *first* and the two
     pool loads after; ours hoists both loads to the top of the block.
-- **What the pair pins down:** `0800d304` gets *worse* with
+- **What the set pins down:** `0800d304` gets *worse* with
   `-fno-schedule-insns2` (12 → 14), because disabling sched2 also loses the
   `adds r1` / `orrs r2` order the reference does have. So the reference is
   normally scheduled — it is specifically the descriptor's own pool loads that
   will not move. That is the signature of a group emitted as one template, not
   of scheduling being off.
+- **Corollary, and the reason two of these installed:** when the descriptor
+  block is the *only* thing in the function with anything to schedule, killing
+  sched2 outright is indistinguishable from pinning the group, so the region
+  matches exactly. [src/08002f10.c](src/08002f10.c) is that case — 4 mismatches
+  under the mode alone, **0** at 44 bytes with `UNSCHEDULED_SOURCES` added, and
+  its whole residual was the control-word pool load sitting one slot early.
+  [src/0800bc48.c](src/0800bc48.c) needed no second mode at all: **0** at 40
+  bytes on the routing alone. So the gap only bites where the function has
+  other schedulable work — which is exactly why it went unnoticed until three
+  larger regions hit it at once.
 - **Why the twin matched:** `080284dc` is byte-exact under the same mode because
   a `bl` sits after its descriptor block and fences it, so there is nothing for
   the loads to hoist past. The match is an accident of surrounding code, not a

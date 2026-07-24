@@ -548,6 +548,15 @@ against the approved bundle; full sourced notes in
   move that ratio by changing a reference count or a live span, and both are
   usually pinned by call clobbers and by the position of the region's calls. When
   they are pinned, the swap is unreachable from C.
+- **Correction (2026-07-24, later): `size` is in WORDS, not bytes.** It is set
+  from `PSEUDO_REGNO_SIZE` (regs.h:92, `alloc_qty` call at local-alloc.c:1861),
+  which is `(GET_MODE_SIZE + UNITS_PER_WORD - 1) / UNITS_PER_WORD`. On this target
+  that is **1 for every scalar mode** — QImode, HImode and SImode all score the
+  same, and only DImode is 2. So the factor drops out of every comparison you will
+  actually make, and a byte quantity competes with a word quantity on equal terms.
+  Reading it as bytes inflates every pointer or `int` quantity fourfold against
+  every `u8` one and predicts the wrong register; that is exactly how `08006dec`
+  came to be recorded as inseparable.
 - **Correction (2026-07-24, later):** the denominator is NOT the `.lreg` header's
   "across L insns". `qty[q].birth` and `qty[q].death` are set by
   `reg_is_born (reg, 2 * insn_number)` and
@@ -601,7 +610,30 @@ against the approved bundle; full sourced notes in
   byte mismatches to 11 with the size and the whole literal pool exact and
   `semantic` at zero. The residual is a genuine three-way rotation (values
   `r3`↔`r2`, address B `r2`↔`r3`) over thirteen further source shapes and all
-  eight fork switches, and it is now a live near-miss, not a park.
+  eight fork switches.
+- **Where `08006dec` actually stops, measured with the corrected model.** It
+  prints `;; 0 regs to allocate:`, so every divisor is the doubled in-block span.
+  With `size` correctly 1 word for both, each store value scores
+  `floor_log2(2) * 2 * 1 / 2 = 1.0` and the second unlock address scores
+  `1 * 2 * 1 / 4 = 0.5`, so the values are allocated first and take `r3` while the
+  address takes `r2`. That is precisely what the candidate emits — the model now
+  predicts our own output exactly, which is what makes the negative trustworthy.
+  The reference is the other way round, so it needs the address to outrank the
+  values, and it cannot: GCC expands a store's *address* before its *value*, so a
+  freshly materialised store value always has the minimum possible span (born,
+  then dead at the store, `D = 2`) while the address always has an insn between
+  its birth and the store (`D ≥ 4`). Merging all the values into one pseudo does
+  not rescue it either — the best reachable is `floor_log2(6) * 6 / 12 = 1.0`
+  against the address's `0.5`, and dropping a 6-reference quantity below `0.5`
+  would need a span longer than the entire basic block. Under
+  `REG_ALLOC_ORDER`'s `{3, 2, 1, 0}` the reference head is therefore unreachable
+  from C: it requires the allocator to hand out `r2` before `r3`, and neither the
+  default order nor `-mentry-low-register-order`'s `{0, 1, 3, 2}` does that (`r0`
+  and `r1` are taken by the incoming argument copies, which have hard-register
+  suggestions and are allocated first, so both orders reduce to `{3, 2}` here).
+- **Lane item:** `08006dec` closes if `arm_order_regs_for_local_alloc_block`
+  gains a `{2, 3, 1, 0}` low order. It is the only known witness, so it should
+  wait for a second one before the fork grows a switch for it.
 - **Consequence:** a pure two-register exchange with an otherwise identical
   instruction stream is a park, not a puzzle *once the two ratios are measured and
   found inseparable* — and "measured" means measured on a candidate you have first

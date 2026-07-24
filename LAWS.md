@@ -673,7 +673,16 @@ against the approved bundle; full sourced notes in
   rewrites the following `b += 16` to `b = t + 16` and the copy dies. Note that
   `*thumb_movsi_insn` prints a lo→lo move as `add %0, %1, #0`, so the copy and an
   `addsi3` with constant 0 share the encoding `0x1c1a` and are indistinguishable
-  in the disassembly.
+  in the disassembly. The tie copy and its consumer are one inseparable pair, and
+  the only knob is which side of a neighbouring independent insn that pair sits
+  on: eight statement orderings gave either `[c-add][copy][b-add]` or
+  `[copy][b-add][c-add]`, never the reference's `[copy][c-add][b-add]`.
+- **The escape does not work either:** a source-level copy *can* be kept alive by
+  redefining `t` between `b = t;` and `b += 16;`, which stops `canon_reg`
+  rewriting the increment. But a surviving real `movsi` is then hoisted above the
+  `lsls` that starts the expression, costing more than it saves (6 mismatches
+  against 4). Neither `-fno-schedule-insns` nor `-fno-schedule-insns2` moves it,
+  so the hoist is an expansion-order effect, not a scheduling one.
 - **Diagnostic that settled it — proving a reference is *not* scheduled:** compile
   with `-dR -fsched-verbose=5` and read `<file>.c.23.sched2`. It prints the whole
   haifa dependency graph with a `prio` column per insn, the ready list at each

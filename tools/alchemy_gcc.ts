@@ -100,7 +100,7 @@ const GROUPED_DMA_STORE_SOURCES = new Set([
   "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
   "08004a5c", "08004a94", "0800bc48", "0800d304", "080170c4", "0801d980",
   "080251d4", "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
-  "0808fecc", "08004760", "08005a78",
+  "0808fecc", "08004760", "08005a78", "080037d4",
 ]);
 
 // Nine sound-request entry wrappers: the entry pool load precedes the
@@ -154,7 +154,19 @@ const DEFAULT_ABI_SOURCES = new Set([
 // The stock m4a object linked into GS1 was built with the public old_agbcc
 // compiler rather than Camelot's gcc-2.96 fork. Keep adoption source-scoped:
 // every listed unit must have an independent exact-byte proof.
+// `08006c24` is the first non-m4a unit with that proof: it is byte-exact (66/66)
+// under old_agbcc and impossible under the fork on three independently measured
+// counts — REG_ALLOC_ORDER hands the block-local temps r3/r2 and leaves the
+// long-lived pointers r1/r0/r4 where the reference wants r2/r3/r4; the
+// loop-invariant 0xFFFF copy takes HI_REGS from *thumb_movsi_insn alternative
+// 8's `*lh` constraint and lands in ip rather than r5; and arm_reorg dumps the
+// minipool at the trailing post-epilogue barrier instead of the barrier after
+// the unconditional branch, costing the two bytes of .align 2 padding. Its
+// already-matched DEFAULT_ABI_SOURCES sibling 08006b84 also compiles exact
+// under old_agbcc, so the whole default-ABI TU is likely old_agbcc; the rest
+// stay on the fork until each has its own exact-byte proof.
 const AGBCC_SOURCES = new Set([
+  "08006c24", "08006dec",
   "080f9a50",
   "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
   "080fa424", "080fa458", "080fa490", "080fa514", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
@@ -494,6 +506,7 @@ export function directCompilerCommandForSource(
 
 function selfTest(): void {
   const expected = [
+    "08006c24", "08006dec",
     "080f9a50",
   "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
     "080fa424", "080fa458", "080fa490", "080fa514", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
@@ -528,9 +541,9 @@ function selfTest(): void {
   }
   const groupedDma = [...GROUPED_DMA_STORE_SOURCES].sort();
   if (JSON.stringify(groupedDma) !== JSON.stringify([
-    "08002f10", "08004760", "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c", "08004a94",
-    "08005a78", "0800bc48", "0800d304", "080170c4", "0801d980", "080251d4", "080284dc", "0808fecc", "080958a8",
-    "0809bb34", "080c0184", "080c08a8",
+    "080037d4", "08002f10", "08004760", "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c",
+    "08004a94", "08005a78", "0800bc48", "0800d304", "080170c4", "0801d980", "080251d4", "080284dc", "0808fecc",
+    "080958a8", "0809bb34", "080c0184", "080c08a8",
   ])) {
     throw new Error("grouped DMA source allowlist self-test failed");
   }

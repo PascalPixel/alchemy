@@ -90,6 +90,24 @@ bun tools/decomp_families.ts --top 10
 bun tools/overlay_inventory.ts --top 10
 ```
 
+`out/decomp/candidates/<stem>.c` is a **derived** file, not a store. Every
+`decomp_queue.ts` run rewrites it from `out/permute1/state/<stem>.json`'s
+`best.body`, so a candidate improved by hand and merely copied into that
+directory is silently reverted by the next refresh — with no error, and the
+queue then reports the *old* byte count as if the work had never happened. Two
+improved near-misses were lost this way before the mechanism was noticed. To
+keep a hand-written body, promote it into the search state:
+
+```sh
+bun tools/promote_candidate.ts /path/to/<stem>.c        # or --stem=08xxxxxx
+```
+
+It scores the candidate with the same weighted halfword metric `permute_v1.ts`
+uses, refuses a regression unless given `--force`, and writes both the state and
+the derived candidate. Use `--force` only for a body you have proven correct
+whose score is worse for a known structural reason — a missing compiler-emitted
+frame inflates the edit distance while the C is right (see the `080bd850` law).
+
 Report at least:
 
 - converted C region count and exact-C executable bytes;

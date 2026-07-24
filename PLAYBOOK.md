@@ -446,11 +446,20 @@ When two quantities come out exchanged, stop guessing at source shapes and read
 the allocator's own numbers. Compiling the candidate with `-dl` writes a `.lreg`
 dump whose header lists `Register N used R times across L insns` for every
 pseudo, and `-dg` writes a `.greg` dump whose `;; N regs to allocate:` line is
-those pseudos in the order the allocator will serve them. `R` and `L` are exactly
-the `n_refs` and `live_length` that go into `floor_log2(R) * R * size / L`, with
-loop-depth weighting already applied, so the competing ratios can be computed in
-one line instead of inferred from the disassembly. Then ask which of the four
-inputs is not pinned. Reference counts almost always are — they are the emitted
+those pseudos in the order the allocator will serve them. `R` is the `n_refs`
+that goes into `floor_log2(R) * R * size / D`, with loop-depth weighting already
+applied. `D` depends on which pass decides the quantity, and the `.greg` dump
+tells you which: `;; N regs to allocate:` lists exactly the pseudos local-alloc
+did *not* assign, already in the global pass's priority order. A pseudo on that
+line is the global pass's (`allocno_compare`), and `D` is the header's `L`,
+`reg_live_length` — the printed order is the answer, no arithmetic needed. A
+pseudo absent from that line was taken by the local pass (`QTY_CMP_PRI`), and `D`
+is `death - birth` in local-alloc's doubled per-block index space, i.e. twice the
+insn-index span *inside the one basic block*. Read that span off the `.lreg` RTL;
+substituting `L` there predicts the outcome backwards. The
+allocator hands `r3` out first under `REG_ALLOC_ORDER`, so for two pseudos that
+die into the same two-operand insn, the one born *last* wins `r3` and the result
+shares the loser's register. Then ask which of the four inputs is not pinned. Reference counts almost always are — they are the emitted
 instructions. Births and deaths often are not: on `08077348` the competing ratios
 were `0.583` for a strength-reduced pointer and `0.556` for the loop bound, and
 moving a single `total = 0;` statement above the call that defines the bound

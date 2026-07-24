@@ -545,9 +545,30 @@ against the approved bundle; full sourced notes in
 - **Claim:** when two quantities are swapped between registers and nothing else
   differs, the deciding quantity is `QTY_CMP_PRI` in `local-alloc.c`,
   `floor_log2(n_refs) * n_refs * size / (death - birth)`. A source edit can only
-  move that ratio by changing a reference count or a live length, and both are
+  move that ratio by changing a reference count or a live span, and both are
   usually pinned by call clobbers and by the position of the region's calls. When
   they are pinned, the swap is unreachable from C.
+- **Correction (2026-07-24, later):** the denominator is NOT the `.lreg` header's
+  "across L insns". `qty[q].birth` and `qty[q].death` are set by
+  `reg_is_born (reg, 2 * insn_number)` and
+  `qty->death = 2 * this_insn_number + output_p` (local-alloc.c:1687, 1926), where
+  `insn_number` is reset per basic block in `block_alloc`. So the divisor is
+  **2 × (death insn index − birth insn index) within the one basic block**, while
+  the header's `L` is `reg_live_length`, a whole-function count. The two agree
+  only for a single-block region. `global.c`'s `allocno_compare` genuinely does
+  use `live_length`, which is why the header value is right for the global pass
+  and wrong for the local one. Using `L` for a local-alloc question predicts the
+  outcome backwards — see the `0801fd34` law below, where it did.
+- **Which pass owns a pseudo, read straight off the dumps:** `dump_conflicts`
+  (global.c:1869-1875) builds the `;; N regs to allocate:` line by skipping every
+  allocno with `reg_renumber >= 0`, i.e. every pseudo **local-alloc already
+  assigned**. So a pseudo that *appears* on that line was left to `global_alloc`
+  and its divisor is the header's `L`, with the line itself already printed in
+  priority order — no arithmetic needed. A pseudo that does *not* appear was taken
+  by `local-alloc`, and its divisor is the doubled per-block span above, which you
+  must read off the `.lreg` RTL. This is the discriminator; apply it before
+  computing anything. The `080a3e88` and `08006dec` measurements below were taken
+  from the `regs to allocate` line and are therefore unaffected by the correction.
 - **Evidence, `080a3e88`** (102-byte region, parked at 8 mismatches): the whole
   instruction stream agrees; only `arg0` and `arg1` exchange `r6` and `r8`.
   Measured from `-dl`/`-dg` dumps, `ptr` scores 3 refs / 14 insns = 2142, `arg1`
@@ -582,14 +603,20 @@ against the approved bundle; full sourced notes in
 - **Claim:** the exchange described in the previous law is winnable whenever a
   statement can be moved without changing the emitted instructions but with the
   effect of moving a birth or a death by one insn. `global.c`'s `allocno_compare`
-  uses the same `floor_log2(n_refs) * n_refs * size / live_length` ratio as
-  `QTY_CMP_PRI`, and the ratios of two competing quantities are often within a
-  few percent, so a one-insn change to `live_length` decides the register.
+  uses `floor_log2(n_refs) * n_refs * size / live_length`, the same shape as
+  `QTY_CMP_PRI` but over the whole-function `live_length`, and the ratios of two
+  competing quantities are often within a few percent, so a one-insn change to
+  `live_length` decides the register.
 - **Diagnostic:** compile with `-dl` and read the `.lreg` dump. It prints
   `Register N used R times across L insns` for every pseudo, plus
-  `;; N regs to allocate:` in priority order in the `.greg` dump. Those are the
-  exact `n_refs` and `live_length` the allocator uses — no need to count insns by
-  hand or to reason about loop-depth weighting, which is already folded into `R`.
+  `;; N regs to allocate:` in priority order in the `.greg` dump. `R` is the
+  `n_refs` both passes use, with loop-depth weighting already folded in (×2 per
+  real reference inside one loop). `L` is `reg_live_length` and is the divisor
+  for the **global** pass only; for a **local-alloc** question take the divisor
+  from the RTL insn indices inside the block, per the correction in the law above.
+  When a quantity never leaves one basic block the local pass is the one that
+  decides it, and the `.greg` `regs to allocate` line then reports only what the
+  local pass left over.
 - **Evidence, `08077348`** (76-byte region, now matched): the accumulator, the
   countdown and one of {`count`, strength-reduced pointer} take `r6`, `r5`, `r7`,
   and the loser is caller-saved into the one stack slot around the inner call.
@@ -613,6 +640,51 @@ against the approved bundle; full sourced notes in
   ratios, and ask which of the four inputs is not pinned. Reference counts usually
   are; a birth or a death often is not, and any statement that GCC will sink or
   hoist back into place is free to move.
+- **Recorded:** 2026-07-24.
+
+### Birth order decides a two-operand add, and reload pins its tie copy (2026-07-24)
+
+- **Claim:** for a Thumb two-operand instruction whose operands are two pseudos
+  that die into it, the one **born last** takes `r3`. Its birth is later, its
+  death is the same insn, so `death - birth` is smaller and `QTY_CMP_PRI` is
+  larger; `REG_ALLOC_ORDER` for `LO_REGS` is `{3, 2, 1, 0, 4, 5, 6, 7}`, so the
+  highest-priority quantity is handed `r3` first. The result then shares the
+  loser's register. This is a property of statement order in the source, and it
+  is the reason a "just compute that value earlier" edit flips two registers.
+- **Evidence, `0801fd34`** (72-byte region, parked at 4 mismatches): the loop head
+  computes `*src + i * 8`. Written as one expression, `*src` stays a lazy MEM and
+  `force_reg` emits its `ldr` *after* the shift — wrong order, right registers
+  (load `8/2 = 4.0` beats shift `8/4 = 2.0`, so the load takes `r3` as the
+  reference has). Written with the load as its own statement (seven spellings
+  tried: a named base, a named accumulator, and five orderings around them) the
+  `ldr` comes first as the reference has it but the registers exchange, because
+  the shift is now born last (`8/2 = 4.0` against the accumulator's `30/8 = 3.75`)
+  and steals `r3`. Winning both at once needs the earlier-born pseudo to have the
+  shorter span, which is a contradiction. Folding the whole `* 0x300` chain into
+  the accumulator to raise its `n_refs` was tried and refuted: the accumulator
+  becomes the call argument and lands in `r0`, moving every register in the chain.
+- **Second half, reload's tie copy:** the same region's tail wants
+  `adds r1, #22` to sit *between* `adds r2, r3, #0` and `adds r2, #16`. It cannot.
+  `*thumb_addsi3` (arm.md:496) has constraints `"=l,l,l,..."` / `"%0,0,l,..."` /
+  `"I,J,lL,..."`; `b = t + 16` with `b != t` cannot take alternative 2 because 16
+  is not constraint `L`, so it takes alternative 0, which ties operand 1 to
+  operand 0, and reload emits the reg-reg copy **immediately before the add** —
+  never one insn earlier. A source-level `b = t;` does not help: CSE's `canon_reg`
+  rewrites the following `b += 16` to `b = t + 16` and the copy dies. Note that
+  `*thumb_movsi_insn` prints a lo→lo move as `add %0, %1, #0`, so the copy and an
+  `addsi3` with constant 0 share the encoding `0x1c1a` and are indistinguishable
+  in the disassembly.
+- **Diagnostic that settled it — proving a reference is *not* scheduled:** compile
+  with `-dR -fsched-verbose=5` and read `<file>.c.23.sched2`. It prints the whole
+  haifa dependency graph with a `prio` column per insn, the ready list at each
+  cycle, and the resulting order. `rank_for_schedule` compares `INSN_PRIORITY`
+  first and `INSN_LUID` only on ties, so any reference that emits a lower-priority
+  insn before a ready higher-priority one cannot have come from this scheduler.
+  `0801fd34`'s reference does that twice — prio 5 before prio 6, and a prio-2 insn
+  ready at cycle 0 placed dead last — which proves the tail is unscheduled and
+  makes `-fno-schedule-insns2` the correct lane. Use this before spending any
+  effort on a "the scheduler moved it" theory; it answers the question in one
+  compile instead of a sweep.
 - **Recorded:** 2026-07-24.
 
 ### Pre-epilogue literal pool
@@ -834,6 +906,42 @@ against the approved bundle; full sourced notes in
   `failures=` count, never just the instruction diff. The three compiler
   modes above are recorded here so the routing can be restored verbatim if
   the veneer-placement model is ever solved.
+- **Independently re-derived (2026-07-24):** a fresh agent given only the region
+  and no access to this entry reached the same conclusion from the other end. It
+  found the starting candidate wrongly called `Func_080f9ee8` *directly*, and that
+  writing the reference's **indirect** call —
+  `M2C_FIELD(Data_03007ff0, void(**)(s32), 0x2C)(arg)` — supplies all six bytes
+  the candidate was missing (`ldr r3,[pc,#28]` / `ldr r3,[r3,#0]` /
+  `ldr r3,[r3,#44]`, the `0x03007ff0` pool word, and a 2-byte pad), reaching 68/68
+  bytes with three mismatching bytes on the single `bl` line. It also measured the
+  allocation and found `;; 4 regs to allocate: 34 35 33 43` is *already* the
+  reference order with no exchange to fix, and that an A/B of `-fcall-used-r4`
+  against `-fcall-saved-r4` leaves every pseudo number, `n_refs` and
+  `live_length` bit-identical while moving the dispositions onto the reference's
+  `push {r4,r5,r6,lr}`. Two witnesses, opposite directions, same verdict: leave
+  `asm/080f9ef8.s` as assembly.
+
+### A hoisted shared constant needs the widest mode first (2026-07-24)
+
+- **Claim:** `loop.c`'s `combine_movables` will only merge a later constant-set
+  into an earlier one when
+  `GET_MODE_BITSIZE (m->set_dest) >= GET_MODE_BITSIZE (m1->set_dest)`. So a
+  QImode zero appearing *before* an SImode zero blocks the merge and the SImode
+  zero is not hoisted to the preheader; reverse the order and it is. `-dL` reports
+  the rejected candidate as "life 1, savings 1, not desirable".
+- **Consequence for source shape:** when a region needs one shared zero
+  materialised once in the preheader, give it a single `s32` local and use it for
+  every width, rather than letting a narrow store create its own zero first.
+  Introducing `s32 zero = 0;` and storing it through both the byte and the word
+  path was the edit that fixed this on `080f9ef8`'s body.
+- **Adjacent, same region:** splitting an `and` into its own statement while
+  reusing the *loaded* temporary as its destination ties the AND's destination to
+  the load in reload and yields the reference's `ldrb r0` / `movs r3, #7` pairing;
+  a fresh temporary for the AND breaks the tie. Also ruled out there, and worth
+  not retrying: `while` versus `do/while` on a provably-entered loop is
+  byte-identical, and `7 & field` versus `field & 7` is canonicalised by 2.96
+  before it reaches RTL.
+- **Recorded:** 2026-07-24.
 
 ### GCC 2.96 nested-function static-chain register
 

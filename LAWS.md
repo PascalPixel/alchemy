@@ -172,6 +172,28 @@ must be tested on more than one function before being generalized.
   its live range across the whole body and costs r5, `push {r4,r5,lr}` and 19
   instructions: for this pattern the assignment must sit between the store and
   the call.
+- **`080fadf0` is the fourth family member proven, and it carries three
+  reusable `old_agbcc` levers (2026-07-24).** The m4a panning/envelope routine
+  (104B) matched on the third variant with no sub-switch. (i) **Zero-extension
+  shape is chosen by the local's declared type, not by the casts.** The
+  reference does `ldrb; lsls #24; lsrs #24` and later reuses the shifted value
+  with `lsrs #25`. Declaring the loaded byte as a `u8` local is wrong — combine
+  folds load+zero_extend into a bare `ldrb` and the halving collapses to
+  `lsrs #1`. The redundant shift pair appears only when the value lives in an
+  SImode pseudo truncated at each use: `u32 r = chan->rightVolume;` with
+  `(u8) r` at every use. CSE then shares the `<<24` value between the compare
+  operand and the `>>25` halving. (ii) **Post-reload cross-jumping does not
+  merge duplicated tails**, because register allocation differs between the
+  copies and cross-jumping declines. Writing the natural nested if/else with
+  the tail duplicated in all four arms cost 97 of 104 bytes; explicit `goto`s
+  that reproduce the reference's shared-block order got the CFG exactly. When
+  the reference has one shared tail block reached by `b` from several arms, the
+  C must have one shared label, not N copies. (iii) **`old_agbcc` evaluates the
+  right operand of `+` and `*` first here**, so `a + b` emits `ldrb` of `b`
+  then of `a`. On this region that operand order alone was the entire final
+  6-byte residual. Also worth keeping: a store through a struct pointer may
+  alias, so the following field reads reload from memory for free — no
+  `volatile` and no barrier needed to reproduce a reference reload.
 - **The reroute probe is bounded, and the bound is measured (2026-07-24).**
   Because `08006dec` fell to a reroute, every stubborn `register_only` plateau
   in the queue that no agent owned was rerouted through `old_agbcc` unchanged.

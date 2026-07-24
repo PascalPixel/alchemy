@@ -77,7 +77,8 @@ async function main(): Promise<void> {
     const fn = functions.get(hit.id);
     if (fn === undefined) continue;
     if (!overlays.has(fn.overlay)) {
-      overlays.set(fn.overlay, assembleOverlay(join(ROOT, "assets/code", fn.overlay, "overlay.s"), OVERLAY_BASE));
+      // Flat layout: assets/code/<name>_overlay.s, per the asset builder.
+      overlays.set(fn.overlay, assembleOverlay(join(ROOT, "assets/code", `${fn.overlay}_overlay.s`), OVERLAY_BASE));
     }
     const stem = fn.entry.toString(16).padStart(8, "0");
     const draft = join(options.drafts, fn.overlay, fn.offset.toString(16).padStart(4, "0"), `${stem}.c`);

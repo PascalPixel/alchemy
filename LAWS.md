@@ -431,6 +431,19 @@ against the approved bundle; full sourced notes in
   this exact call-site shape as a candidate for that classification rather
   than continued C-shape search.
 - **Recorded:** 2026-07-24.
+- **Related, distinct shape — shared single-instruction `bx r3` veneer
+  (2026-07-24):** `0800070c` hits a third variant of this same "compiler
+  cannot emit this control transfer" class: no IME guard, and the tail
+  does `bl Func_0800070a` where `Func_0800070a` is itself a bare
+  `.thumb_func`-labeled `bx r3` sitting mid-stream inside
+  `asm/executable_gaps/080006fc.s` — an indirect tail-call through a
+  *locally shared* one-instruction veneer, not the fixed `__call_via_rN`
+  helpers `call_indirect` always targets and not the `mov ip, pc; bx rN`
+  inline form either. 87/... mismatched bytes; ordinary body reproduces
+  fine up to this tail. Treat any function whose only gap is a `bl` to a
+  bare mid-stream `bx rN` label the same way as the other two call-site
+  shapes: a structural-classification candidate, not a further C-shape
+  search target.
 
 ### Byte-store QImode constant reuse
 

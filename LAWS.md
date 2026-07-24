@@ -582,17 +582,28 @@ against the approved bundle; full sourced notes in
   measurement once recorded below for it used the wrong divisor; see the
   retraction in its own paragraph.
 - **Evidence, `080a3e88`** (102-byte region, parked at 8 mismatches): the whole
-  instruction stream agrees; only `arg0` and `arg1` exchange `r6` and `r8`.
-  Measured from `-dl`/`-dg` dumps, `ptr` scores 3 refs / 14 insns = 2142, `arg1`
-  2 / 17 = 1176, `arg0` 2 / 23 = 869, so the allocator hands out `r5`, `r6`, `r8`
-  in that order. Matching needs `arg0` to sort strictly between `ptr` and `arg1`,
-  which requires exactly three references to `arg0`; two is forced (one set, one
-  use) and four would steal `r5` from `ptr`. Both parameter copies must precede
-  the first `bl` because `r0`/`r1` are clobbered there, so both are born at the
-  top, and `arg0` dies five insns after `arg1` — its live length is longer
-  unconditionally. Twelve source shapes left every ref count unchanged; naive
-  temporaries are removed by copy propagation before flow, and one that survived
-  would be tied by `combine_regs` and make it worse.
+  instruction stream agrees; only `arg0` and `arg1` exchange `r6` and `r8`. The
+  park stands, but its arithmetic was re-derived on 2026-07-24 after the divisor
+  and `size` corrections above, because the original numbers used the header's
+  `L`. The `.greg` line is `;; 1 regs to allocate: 34`, so `arg0`, `arg1` and
+  `ptr` are all local-alloc's and all take the doubled in-block span. Reading the
+  births and deaths off the `.lreg` RTL by in-block index: `ptr` is born at 8 and
+  dies at 21 (3 refs, `3/26 = 1154`), `arg1` born 3 dies 19 (`2/32 = 625`),
+  `arg0` born 2 dies 24 (`2/44 = 455`). Same order as before — the correction
+  halved every ratio uniformly and changed no outcome — so the allocator still
+  serves `ptr`, `arg1`, `arg0`.
+- **Why it cannot be separated, stated tightly.** The exchange needs
+  `P(arg0) > P(arg1)`, i.e. `2/(2*(24 - b0)) > 2/(2*(19 - b1))`, i.e.
+  `b0 - b1 > 5`. Both deaths are pinned by which call consumes which argument.
+  Both births are argument copies out of `r0`/`r1`, which must precede the first
+  `bl` at index 6 because it clobbers them, so both indices are confined to the
+  window `[2, 5]` and `b0 - b1` cannot exceed 3. There is no assignment of birth
+  positions in that window that separates them, so the exchange is unreachable
+  from C — not merely unreached by the twelve source shapes tried. (Those still
+  matter as corroboration: naive temporaries are removed by copy propagation
+  before flow, and one that survived would be tied by `combine_regs` and make it
+  worse.) This is the form a park proof should take — a pinned interval and an
+  inequality that does not fit inside it, not a list of shapes that failed.
 - **Retracted, `08006dec`** (56-byte region; was recorded here as a second
   inseparable exchange, at 17 mismatches). It was neither. Re-measured
   2026-07-24: the region prints `;; 0 regs to allocate:`, so its recorded ratios

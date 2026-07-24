@@ -6,7 +6,7 @@ import {
   realpathSync, rmSync, rmdirSync, symlinkSync, unlinkSync, writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, isAbsolute, join, relative, resolve } from "node:path";
+import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { prune_files } from "./generated_files.ts";
 import { characterBankPath } from "./asset_paths.ts";
 import { indexed_png, type Rgb } from "./import_asset.ts";
@@ -724,7 +724,11 @@ export function selfTest(): void {
   if (!replayFrames.every((frame, index) => frame.equals(testFrames[index]))) {
     throw new Error("static-sprite atlas layout self-test failed");
   }
-  const frameTemp = mkdtempSync(join(tmpdir(), "alchemy-static-frames-"));
+  // readFrameImages treats its directory argument as a filename prefix
+  // (concatenated directly, matching the real static-sprite convention of
+  // flat-named files like battle_characters_chr_000_koma_000.png), so the
+  // temp directory needs an explicit trailing separator to behave as one.
+  const frameTemp = mkdtempSync(join(tmpdir(), "alchemy-static-frames-")) + sep;
   try {
     testFrames.forEach((frame, index) => {
       writeFileSync(join(frameTemp, static_sprite_frame_name(index)), png(frame, 8, 8, testPalette));

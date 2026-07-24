@@ -383,6 +383,31 @@ against the approved bundle; full sourced notes in
   retained-structural per the family's pre-flag inline-asm hypothesis.
 - **Recorded:** 2026-07-23.
 
+### Grouped-DMA descriptor group is not atomic to the scheduler (2026-07-24)
+
+- **Claim:** `-mgrouped-dma-store` produces the right `stmia rN!, {…}; subs rN,
+  #12` pair, but leaves the two pool loads that feed it (`ldr` of the register
+  base and of the control word) as ordinary insns. The second scheduling pass
+  is then free to hoist them — and the `add sp` — above unrelated work in the
+  same block. The reference keeps base load, control load, `stmia` and `subs`
+  as one uninterrupted run, which is what a single output template emitting its
+  own pool references would give.
+- **Current evidence:** `080c08a8` (56 bytes) reproduces the reference prologue
+  and the whole descriptor block exactly, and pins at **18** mismatches under
+  `-fno-schedule-insns2`, **26** with scheduling left on — every residual
+  difference is the position of those two pool loads and `add sp` relative to
+  the zeroing store. Its twin `080284dc` matched byte-exact under the same mode
+  because a trailing `bl` sits after its descriptor block and acts as a
+  scheduling barrier, so there is nothing for the loads to hoist past.
+- **Also observed (negative):** the residual is not source-position. Sinking the
+  competing load (`object = *(u32 **)0x03001f00`) to just before its use makes
+  it *worse* (33 scheduled / 42 unscheduled), and dropping the temp entirely
+  scores the same — the scheduler, not the source order, decides.
+- **Next test:** make the descriptor group a single output template in
+  alchemy-gcc so sched2 cannot split it, then re-measure `080c08a8`; a
+  toolchain change, so it belongs in the alchemy-gcc lane rather than a batch.
+- **Recorded:** 2026-07-24.
+
 ### Pre-epilogue literal pool
 
 - **Claim:** 31 remaining C-debt regions share a structural signature the

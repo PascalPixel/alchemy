@@ -18,13 +18,18 @@ const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const SCRATCH = join(ROOT, "out", "sibrank");
 const ROM_BASE = 0x08000000;
 
+/* Absolute cap, and a proportional one so that a 12-instruction leaf is not
+   declared a sibling of anything at distance 15. The proportional cap does the
+   real work; the absolute one only stops long regions from pairing off with
+   siblings too distant to adapt. Raised from 10 to 15 after batches 5-7 showed
+   distance-11..15 siblings still transferring their C shape usefully -- at 10
+   the candidate pool was 18 regions, at 15 it is ~98. */
+const DISTANCE_CAP = 15;
 /* A region whose opcode skeleton is this much longer or shorter than the
    candidate cannot come in under the distance cap, so it is skipped before the
-   quadratic comparison runs at all. */
-const LENGTH_SLACK = 8;
-/* Absolute cap, and a proportional one so that a 12-instruction leaf is not
-   declared a sibling of anything at distance 10. */
-const DISTANCE_CAP = 10;
+   quadratic comparison runs at all. Every length difference costs at least one
+   edit, so this must not be tighter than the cap or real siblings are dropped. */
+const LENGTH_SLACK = DISTANCE_CAP;
 const DISTANCE_FRACTION = 0.34;
 /* Below this many instructions every region looks like every other region. */
 const MINIMUM_OPCODES = 4;

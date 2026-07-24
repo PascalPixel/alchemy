@@ -445,6 +445,27 @@ against the approved bundle; full sourced notes in
   shapes: a structural-classification candidate, not a further C-shape
   search target.
 
+### GCC 2.96 nested-function static-chain register
+
+- **Claim:** `080e73a0` reads r9 as a live-in value with no in-function
+  write, wrapped in a callee-save push/pop dance — exactly GCC 2.96's
+  nested-function static-chain convention (confirmed in vendored
+  `gcc-2.96/gcc/config/arm/arm.h`: `STATIC_CHAIN_REGNUM` is r9 for Thumb,
+  r8 for ARM). Compiling the function as a GNU C nested function inside a
+  synthetic enclosing function structurally reproduces the exact
+  push-r9/store-to-stack/dereference-chain-minus-offset shape, confirming
+  the mechanism — but doing this for real requires reconstructing an
+  *unknown* enclosing function, which is exactly the disallowed
+  static/helper-function shape (LAWS.md publication rules), and the
+  compiler additionally emits the nested function as a non-`.global`
+  `Func_080e73a0.0` local symbol the harness cannot match by name. A plain
+  register pin (`register void *g asm("r9")`) does not reproduce the
+  save/restore dance either (68 vs 98 bytes) — no legal flat-file C shape
+  produces this pattern. Route any function whose live-in-r9-with-no-write
+  signature matches this to structural classification, not further search,
+  unless the true enclosing function is independently recovered.
+- **Recorded:** 2026-07-24.
+
 ### Byte-store QImode constant reuse
 
 - **Claim:** `0800651c` disables IME, zeros five word/halfword globals and

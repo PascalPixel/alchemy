@@ -426,10 +426,84 @@ against the approved bundle; full sourced notes in
   competing load (`object = *(u32 **)0x03001f00`) to just before its use makes
   it *worse* (33 scheduled / 42 unscheduled), and dropping the temp entirely
   scores the same — the scheduler, not the source order, decides.
+- **Fifth witness, and it names the pass that does the damage.** `08005a78`
+  (72 bytes, the flash-read DMA kick) sits at **15** mismatches unrouted, **17**
+  on `-mgrouped-dma-store` alone and **11** with `-fno-schedule-insns2` as well;
+  at 11 every remaining pair is a transposition — `register_only` 0,
+  `semantic` 0, `instruction_reorder` 6. Its `.23.sched2` dump shows the
+  scheduler *picking the reference order* in the preheader (ready lists at
+  t=43/44/46 choose `movs r2,#128`, then `ldr r1,=0x040000D4`, then `lsls`), and
+  `thumb_order_grouped_dma_store`'s third loop — the one headed "Keep a
+  small-immediate construction contiguous", arm.c ~6520-6543 — then rewriting
+  `[set REG const][set REG2 const][set REG (ashift REG n)]` into
+  `[move][shift][load]` and destroying it. So the fixup that installs the group
+  is itself the obstacle, and no RTL order survives it: any order that would
+  print the reference's gets rewritten, and only `ldr`-first matches its
+  pattern. That is a sharper statement than "the scheduler decides" and it is
+  the same loop the next alchemy-gcc change has to touch.
+- **Two of its three residual transpositions are separately pinned.** The
+  `adds r0, r5, #0` / `adds r0, #80` pair is a reload copy, which reload inserts
+  immediately before the add, so RTL order can place the descriptor's base
+  literal before or after the pair but never inside it — interleaving needs
+  post-reload scheduling, and with sched2 on the block's priorities put
+  `ldr r2,=0x840003FC` (priority 4) ahead of `adds r0,#80` (priority 3) while
+  the reference emits it last. And the entry `adds r6, r1, #0` argument copy is
+  emitted by `assign_parms` ahead of all body insns, so with sched2 off the
+  entry literal can never precede it. `-mthumb-entry-literal-first` exists for
+  exactly that shape but rejects this one on both guards (it needs the literal's
+  destination in r4-r7, ours is r3; it needs a `CONSTANT_POOL` MEM source, ours
+  is still `CONST_INT` at `arm_reorg`).
+- **Also observed (shape, not scheduling).** Two of `08005a78`'s original 41
+  mismatches were nothing to do with the family. Writing the descriptor through
+  three independent absolute addresses costs a second pool word (0x040000D8) and
+  an extra load; one struct pointer gives one base and one pool word, which is
+  the 4-byte size fix. And the completion spin must read through a `volatile`
+  pointer or GCC folds it into an infinite loop with no memory access at all.
 - **Next test:** make the descriptor group a single output template in
-  alchemy-gcc so sched2 cannot split it, then re-measure `080c08a8` and
-  `0800d304` together; a toolchain change, so it belongs in the alchemy-gcc lane
-  rather than a batch.
+  alchemy-gcc so sched2 cannot split it, then re-measure `080c08a8`,
+  `0800d304` and `08005a78` together; a toolchain change, so it belongs in the
+  alchemy-gcc lane rather than a batch.
+- **Recorded:** 2026-07-24.
+
+### An old_agbcc region can be pinned by one callee-saved choice (2026-07-24)
+
+- **Claim:** `080fb2a4` (40 bytes, the m4a tempo control) belongs to the
+  `AGBCC_SOURCES` family on every structural test, and still cannot be admitted,
+  because the reference gives a *short-lived* quantity a callee-saved register
+  while a call-clobbered one is provably free. Membership needs an exact-byte
+  proof; this one stops one allocation short of it.
+- **Why the family is certain.** Under `old_agbcc` the candidate reproduces all
+  thirteen body instructions in the reference's exact order — same opcodes, same
+  operand roles, same literal pool. Under the routed Camelot fork it is
+  structurally impossible on three independent counts, none of which any C
+  reaches: the fork sign-extends the incoming `u16` parameter (`lsls; asrs`)
+  whether it is spelled `u16`, `s16` or `unsigned short`, where reference and
+  `old_agbcc` both emit `lsls; lsrs`; it never emits the `adds r2, r0, #0`
+  argument copy; and it re-loads `ldrh r3, [r0, #30]` instead of forwarding the
+  just-stored field. The `gs2` bundle is byte-identical to the fork on all
+  three. The region also sits between `080facf8` and `080fb2cc`, both already
+  listed.
+- **What is left.** Reference: `lsrs r1, r1, #16` (tempo stays in its argument
+  register), `ldr r3, [r2, #52]` (ident), `ldrh r4, [r2, #28]` (the multiplier).
+  Ours: tempo to `r3`, ident to `r1`, and the multiplier reusing `r1` after the
+  compare kills it — four bytes shorter, because reusing a low register means no
+  `push {r4, lr}` / `pop {r4}; pop {r0}; bx r0`. The reference's `r3` is dead at
+  its `ldrh` and it still reached past it for `r4`.
+- **What was ruled out.** Ten source shapes under `old_agbcc` — named tempo
+  temporary, both multiply operand orders, named `u32` multiplier, both operands
+  named, a real struct typing, if-wrapped body versus early return, `s32`
+  parameter narrowed inside, named ident local, `register` on the parameter, and
+  a named `s32` product — every one produced byte-identical output at 32 bytes.
+  So did `-O1`, `-O3`, `-fno-cse-follow-jumps`, `-fno-gcse`,
+  `-fno-expensive-optimizations`, `-fcaller-saves`, `-fno-defer-pop`, and each
+  of the four `old_agbcc` mode switches. `-ffixed-r3` reaches the right size and
+  frame and leaves a clean 7 bytes, but it is a false lead and must not be
+  installed: the reference *uses* `r3`, for the ident it compares.
+- **Where it goes.** Not a source-shape park and not a C problem — an allocation
+  order in a binary we did not build. Leave `080fb2a4` in assembly and out of
+  `AGBCC_SOURCES` until the alchemy-gcc lane can explain why the reference
+  preferred `r4` over a free `r3`; the candidate is saved so the measurement
+  does not have to be repeated.
 - **Recorded:** 2026-07-24.
 
 ### The four-word-record transform is over-fitted to its first witness (2026-07-24)

@@ -90,12 +90,17 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // residual is scheduler-internal, and delisting them would make diagnose lie to
 // the next agent that picks them up. 0808fecc's residual is the smallest of the
 // four: the mode takes it from 26 mismatches to 4, and what remains is the
-// return-value copy and the stack restore in the opposite order.
+// return-value copy and the stack restore in the opposite order. 08005a78 is a
+// fifth: 15 mismatches unrouted, 17 on the mode alone and 11 with sched2 also
+// off, and at 11 every remaining pair is a transposition -- no wrong register
+// and nothing semantic. It is listed on the mode only; -fno-schedule-insns2 is
+// deliberately withheld, because the .23.sched2 dump shows the scheduler picks
+// the reference order and thumb_order_grouped_dma_store then rewrites it.
 const GROUPED_DMA_STORE_SOURCES = new Set([
   "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
   "08004a5c", "08004a94", "0800bc48", "0800d304", "080170c4", "0801d980",
   "080251d4", "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
-  "0808fecc", "08004760",
+  "0808fecc", "08004760", "08005a78",
 ]);
 
 // Nine sound-request entry wrappers: the entry pool load precedes the
@@ -524,8 +529,8 @@ function selfTest(): void {
   const groupedDma = [...GROUPED_DMA_STORE_SOURCES].sort();
   if (JSON.stringify(groupedDma) !== JSON.stringify([
     "08002f10", "08004760", "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c", "08004a94",
-    "0800bc48", "0800d304", "080170c4", "0801d980", "080251d4", "080284dc", "0808fecc", "080958a8", "0809bb34",
-    "080c0184", "080c08a8",
+    "08005a78", "0800bc48", "0800d304", "080170c4", "0801d980", "080251d4", "080284dc", "0808fecc", "080958a8",
+    "0809bb34", "080c0184", "080c08a8",
   ])) {
     throw new Error("grouped DMA source allowlist self-test failed");
   }

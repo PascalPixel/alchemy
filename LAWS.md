@@ -567,8 +567,11 @@ against the approved bundle; full sourced notes in
   priority order — no arithmetic needed. A pseudo that does *not* appear was taken
   by `local-alloc`, and its divisor is the doubled per-block span above, which you
   must read off the `.lreg` RTL. This is the discriminator; apply it before
-  computing anything. The `080a3e88` and `08006dec` measurements below were taken
-  from the `regs to allocate` line and are therefore unaffected by the correction.
+  computing anything. Note that `;; 0 regs to allocate:` is a *complete* answer,
+  not an empty one: it means local-alloc assigned everything and the global model
+  does not apply anywhere in the function. `08006dec` prints exactly that, so the
+  measurement once recorded below for it used the wrong divisor; see the
+  retraction in its own paragraph.
 - **Evidence, `080a3e88`** (102-byte region, parked at 8 mismatches): the whole
   instruction stream agrees; only `arg0` and `arg1` exchange `r6` and `r8`.
   Measured from `-dl`/`-dg` dumps, `ptr` scores 3 refs / 14 insns = 2142, `arg1`
@@ -581,21 +584,35 @@ against the approved bundle; full sourced notes in
   unconditionally. Twelve source shapes left every ref count unchanged; naive
   temporaries are removed by copy propagation before flow, and one that survived
   would be tied by `combine_regs` and make it worse.
-- **Evidence, `08006dec`** (56-byte region, parked at 17 mismatches): the flash
-  unlock sequence stores `0xAA`, `0x55`, `0xA0`. The reference keeps every stored
-  value in `r2` and the second unlock address in `r3`; the candidate does the
-  reverse. Each value quantity is two references over two insns (ratio 1) and the
-  address quantity is two references over four (ratio 0.5), so the first value
-  quantity is allocated first and takes `r3` under `REG_ALLOC_ORDER`. Ten source
-  shapes were tried — named pointers for either or both addresses, one shared
-  value variable, three separate value variables, `u8` versus `s32` value types,
-  decimal versus hexadecimal literals — and none moved the ratio. Every registry
-  mode and seventeen further stock `-f` switches were swept; none improved it.
+- **Retracted, `08006dec`** (56-byte region; was recorded here as a second
+  inseparable exchange, at 17 mismatches). It was neither. Re-measured
+  2026-07-24: the region prints `;; 0 regs to allocate:`, so its recorded ratios
+  ("1 vs 0.5") used the global divisor on a wholly local-allocated function and
+  meant nothing — and worse, the candidate they were measured on was not
+  semantically the reference. Two real defects hid under the register story.
+  First, m2c had typed the flash addresses `s8`, which makes `0xAA` the negative
+  constant `-86` and materialises it as `movs r4, #0x56; negs r4, r4` instead of
+  `movs rN, #170`. Second, m2c had rendered the third unlock write as a dead
+  local assignment, so the store was simply absent. Retyping to `u8` and writing
+  all three stores exposed the next layer: two writes to `0x0E005555` with no
+  intervening read are a dead store, and this compiler's DSE deletes the first,
+  leaving the region two bytes short. Qualifying the command writes `volatile`
+  is what a flash-command sequence needs anyway, and it took the region from 17
+  byte mismatches to 11 with the size and the whole literal pool exact and
+  `semantic` at zero. The residual is a genuine three-way rotation (values
+  `r3`↔`r2`, address B `r2`↔`r3`) over thirteen further source shapes and all
+  eight fork switches, and it is now a live near-miss, not a park.
 - **Consequence:** a pure two-register exchange with an otherwise identical
   instruction stream is a park, not a puzzle *once the two ratios are measured and
-  found inseparable*. Measure first. Both regions above were parked because every
-  reachable edit left both ratios untouched — not because the ratio is beyond
-  reach in principle. See the next law for the case where it is not.
+  found inseparable* — and "measured" means measured on a candidate you have first
+  confirmed is semantically the reference, with the divisor the `.greg`
+  discriminator selects. `080a3e88` was parked that way and stands. `08006dec` was
+  parked on numbers computed with the wrong divisor from a candidate that was
+  missing a store, and the register exchange it described was downstream of that
+  missing store, not the fault. A register-only diagnosis is the *easiest* verdict
+  to reach wrongly, because a semantic defect upstream re-colours everything after
+  it and still reports as `register_only`. Check the size, the literal pool and
+  the constants' *materialisation* before you believe the registers.
 - **Recorded:** 2026-07-24.
 
 ### A statement's position sets a live length, and one insn of live length can flip the allocator (2026-07-24)
@@ -950,6 +967,86 @@ against the approved bundle; full sourced notes in
   not retrying: `while` versus `do/while` on a provably-entered loop is
   byte-identical, and `7 & field` versus `field & 7` is canonicalised by 2.96
   before it reaches RTL.
+- **Recorded:** 2026-07-24.
+
+### regmove's backward pass undoes its forward pass, and a remote constant stops it (2026-07-24)
+
+- **Claim:** when a commutative, tied insn (`%` and `0` on the same pattern, e.g.
+  `*thumb_andsi3_insn`) has one operand copied from an incoming hard register and
+  the other from a constant, regmove ties it *twice*, in opposite directions.
+  Pass 0 runs forward and `fixup_match_1` reports "Fixed operand 1"; pass 1 runs
+  backward through the same helper and reports "Fixed operand 2", undoing it. The
+  guard at regmove.c:1194 only skips when
+  `replacement_quality (comm) >= replacement_quality (src)`, and a pseudo copied
+  from a hard argument register has quality 1 against a constant's 3 — so the
+  backward pass always wins and the AND ends up tied to the constant.
+- **Remedy:** make the constant *remote*. Assign it to a variable in an earlier
+  basic block than the insn that uses it. `reg_is_remote_constant_p`
+  (regmove.c:1646) then returns 1 and `fixup_match_1` bails out of the backward
+  pass, leaving the forward pass's tie standing. The forward pass is unaffected
+  because there `src` is the argument pseudo, whose defining insn carries no
+  `REG_EQUAL` note.
+- **The hoist is free.** `update_equiv_regs` runs in local-alloc, after regmove,
+  and sinks the constant's `movs` back down to its single use. On `08092b08` the
+  `s32 three = 3;` was written above the call and the emitted `movs r3, #3` came
+  out exactly where the reference has it, at `08092b2a`. This is the same "any
+  statement the compiler will sink is a free knob" principle as the live-length
+  law, applied to a pass ordering rather than a ratio.
+- **Effect measured:** `08092b08` went 21 → 10 mismatches on this edit alone, and
+  it was the edit that put the two global allocnos in the reference's registers —
+  raising the argument's reference count from 2 to 4 by making the AND write back
+  into its own pseudo, which moves its priority from `2*2/14 = 0.143` to
+  `2*4/16 = 0.5` against the object pointer's `2*5/22 = 0.455`. The allocator was
+  never the thing to edit; regmove was.
+- **Adjacent, same region — a narrow mask wants an `s32` *variable*, not a
+  literal.** Writing `-0xD & p[9]` lets the front end's `shorten` narrow the mask
+  to `unsigned char` (one `movs #243`, wrong size). Naming an `s32` byte temp is
+  also wrong: `PROMOTE_MODE` makes it an SImode pseudo, the AND becomes
+  SImode-to-SImode, regmove ties it and the reference's mask copy disappears. An
+  `s32 mask = -0xD;` variable with inline byte loads is the shape that works —
+  `shorten` cannot fire on an `int` variable, `convert_to_integer` still
+  distributes the QI truncation over `&`/`|` so the constant materialises as
+  `movs #13; negs`, and both AND operands stay `(subreg:SI (reg:QI ...))`, which
+  regmove skips because `GET_CODE (src) != REG`.
+- **Recorded:** 2026-07-24.
+
+### A dead instruction the compiler always deletes is unreachable from C (2026-07-24)
+
+- **Claim:** a reference region can contain an instruction whose result is
+  provably dead, and no C source compiles to it, because the pass that would
+  delete it runs unconditionally. This is a distinct negative class from a
+  register exchange or an ordering park: there is no ratio to separate and no
+  statement to move. The instruction is not reachable, full stop.
+- **Evidence, `08077394`** (68-byte region, closed as a measured negative at 10
+  instruction mismatches with `register_only` 0, `instruction_reorder` 0 and
+  `semantic` 0 — i.e. the whole body is right). The reference opens
+  `push {lr}` / `mov r3, lr` at `08077396`. Every path then overwrites `r3`
+  before reading it, so the copy is dead on arrival. The only backend path that
+  emits a bare `mov rN, lr` with `lr` as the *source* and no matching earlier
+  `mov lr, rX` is `arm_return_addr` (arm.c ~10277), reachable from C only via
+  `__builtin_return_address(0)` — and because the value is dead, flow deletes it
+  again before it can be emitted. There is no C that survives its own optimiser
+  here.
+- **Corpus check, which is what makes it a law and not a guess:** across the whole
+  game, `push {lr}` immediately followed by `mov rN, lr` occurs in exactly one
+  place — this one. All 87 other `mov rN, lr` sites pair with an earlier
+  `mov lr, rX`, i.e. they are the second half of a high-register save, not a
+  return-address read. A shape that appears once in 2,058 regions and has no
+  compilable spelling is not a shape you have failed to find; it is one the
+  compiler did not produce.
+- **Diagnostic:** when a residual instruction has no consumer, stop looking for a
+  source shape and check whether any pass deletes it. If the value is dead and the
+  deleting pass is unconditional, the region's ceiling is that instruction. Record
+  the ceiling and take the improvement that gets you there — the `08077394`
+  candidate still moved the region from 72 bytes / 48 mismatches to the exact 68
+  with a clean body, which is worth keeping even though it can never reach zero.
+- **Adjacent findings, same region, worth not re-deriving:** the signature is
+  `u8 *Func_08077394(s32)` — read off the already-matched caller `src/08077348.c`,
+  not guessed — with `extern u8 Data_02000500[];` and `extern u8 *Data_03001f28;`.
+  A single merge variable for the two returned pointers is needed to break a
+  `*thumb_mulsi3` reload tie.
+- **Possible lane work:** a fork switch suppressing DCE of the `arm_return_addr`
+  set would close this region. It is the only known use, so it is low priority.
 - **Recorded:** 2026-07-24.
 
 ### GCC 2.96 nested-function static-chain register

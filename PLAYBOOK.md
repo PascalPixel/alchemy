@@ -448,7 +448,10 @@ dump whose header lists `Register N used R times across L insns` for every
 pseudo, and `-dg` writes a `.greg` dump whose `;; N regs to allocate:` line is
 those pseudos in the order the allocator will serve them. `R` is the `n_refs`
 that goes into `floor_log2(R) * R * size / D`, with loop-depth weighting already
-applied. `D` depends on which pass decides the quantity, and the `.greg` dump
+applied. `size` is in words (`PSEUDO_REGNO_SIZE`), which on this target is 1 for
+every scalar mode, so a byte quantity and a pointer quantity compete on equal
+terms and the factor can be dropped; reading it as bytes is what turned
+`08006dec` into a false park. `D` depends on which pass decides the quantity, and the `.greg` dump
 tells you which: `;; N regs to allocate:` lists exactly the pseudos local-alloc
 did *not* assign, already in the global pass's priority order. A pseudo on that
 line is the global pass's (`allocno_compare`), and `D` is the header's `L`,

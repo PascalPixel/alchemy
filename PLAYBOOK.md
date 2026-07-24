@@ -416,6 +416,16 @@ offset of an earlier pool load, and six from the pool contents sliding by four.
 Any near-miss whose diff shows an `ldr rN, [pc, ...]` opposite a `movs` is this
 tell, and the byte count it produces is much larger than the defect.
 
+The same SImode-versus-narrow-mode split explains the opposite tell, a `subs`
+where the candidate emits a `movs`. `08096c80` reaches the mask `0xF3` as
+`subs r3, #17` from the `4` already live in `r3`. Written as any literal —
+`0xF3`, `-0xD`, `~0xC` — combine narrows the AND to QImode and materialises the
+mask directly. Written as `v - 17` against a named `s32 v = 4`, CSE keeps the
+subtraction in SImode and emits the reference's instruction; the low byte is
+the same either way, so the two forms are interchangeable semantically and not
+at all in bytes. When the reference derives a constant from another live one,
+name the earlier constant and write the arithmetic — do not fold it yourself.
+
 Batch agents are forbidden from editing `tools/alchemy_gcc.ts`, so a region
 needing one of these modes can only ever come back from a batch as an
 unexplained near-miss. Triage every batch near-miss for these tells before

@@ -80,8 +80,9 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // These functions construct a three-word DMA descriptor whose historical
 // Thumb lowering uses one writeback STMIA and restores the descriptor base.
 const GROUPED_DMA_STORE_SOURCES = new Set([
-  "080049e8", "08004a28", "08004a5c", "080958a8", "0809bb34",
-, "08004a44", "08004838", "08004858", "08004a94"]);
+  "08004838", "08004858", "080049e8", "08004a28", "08004a44",
+  "08004a5c", "08004a94", "080958a8", "0809bb34",
+]);
 
 // Nine sound-request entry wrappers: the entry pool load precedes the
 // parameter copies only under the evidenced entry-literal-first mode with

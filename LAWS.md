@@ -122,6 +122,56 @@ must be tested on more than one function before being generalized.
   pending decision. Until adopted, these functions stay reconstruction
   assembly.
 - **Recorded:** 2026-07-22.
+- **The stratum is wider than the audio bank (2026-07-24).** `08006c24` — a
+  byte-compare helper in the `DEFAULT_ABI_SOURCES` library TU, nowhere near
+  `rom_f9000` — is byte-exact 66/66 under `old_agbcc` with no extra sub-switch,
+  and is the first non-m4a unit to earn `AGBCC_SOURCES` membership. Its
+  already-matched sibling `08006b84` also compiles exact under `old_agbcc` from
+  its committed `src/08006b84.c`; it matches under *both* compilers, which is
+  why the family was never questioned. `08006c24` is the first member that
+  discriminates, and the discrimination is threefold and measured, not inferred:
+  (i) `REG_ALLOC_ORDER` `{3,2,1,0,12,14,...}` gives the fork's block-local temps
+  r3/r2 and leaves r1/r0/r4 for the long-lived pointers, whereas `old_agbcc`
+  allocates ascending so its locals take r0/r1 and its globals take r2/r3 —
+  which is exactly the reference (counter r2, right pointer r3, left pointer
+  r4), predicting all five global and all seven local assignments; (ii) the
+  loop-invariant `0xFFFF` copy is given `HI_REGS` by `*thumb_movsi_insn`
+  alternative 8's `*lh` constraint — the `*` suppresses `l` for regclass — so it
+  lands in `ip` with `push {r4,lr}` where the reference has r5 with
+  `push {r4,r5,lr}`, and no ordinary-C spelling removes the copy because the
+  reference emits one too (`adds r5,r0,#0`); (iii) `arm_reorg` dumps the minipool
+  at the *last* barrier in range and gcc-2.96's flow2 leaves a trailing barrier
+  after the epilogue, which for any function this short is always within
+  `fix->address + 1020`, so the fork emits the pool post-epilogue with no
+  padding while the reference dumps at the barrier after the unconditional `b`
+  and pays two bytes of `.align 2`. **Suspect, not yet proven:** the whole
+  default-ABI family (`08006a00`, `08006b84`, `08006ba8`, `08006c24`,
+  `08006dec`, `08007098`, `080fadf0`) is `old_agbcc`, and the
+  `-fno-schedule-insns*` entry for `08006b84` in `UNSCHEDULED_SOURCES` is a
+  fork-side workaround for that. Each member still needs its own exact-byte
+  proof before it joins `AGBCC_SOURCES` — that rule does not relax.
+- **`08006dec` immediately confirmed it (2026-07-24).** The flash-write region
+  had survived seventeen fork compiler modes, an `s8`/`u8` typing fix and a
+  dropped store, and still sat at 11 mismatched bytes with `register_only`
+  dominant. Rerouted to `old_agbcc` unchanged it fell to 5 and the class flipped
+  to `instruction_reorder`; one source edit then made it byte-exact 56/56. Two
+  lessons: a stubborn `register_only` plateau inside a suspected-vintage TU is
+  worth one reroute probe before any further source search, and the byte count
+  understates how close a wrong-compiler candidate is — the C was already right.
+- **`old_agbcc` has no post-reload scheduler to argue with.** It rejects
+  `-fno-schedule-insns` and `-fno-schedule-insns2` outright, so emitted order is
+  RTL order and every transposition is an expansion-order question, not a
+  `rank_for_schedule` one. On `08006dec` the reference emits the argument's pool
+  address *before* the reloaded `*source` byte, which is what forces the address
+  into r3; the fork-era candidate emitted the byte first, leaving r0 dead and
+  free so the address landed in r0. Giving the address its own named local
+  assigned in its own statement after the aliasing store —
+  `s32 *status; ... status = (s32 *)0x02004C00; ... f(..., *source, *status)` —
+  puts that pseudo's birth ahead of the reload and closes all three
+  instructions. Initialising the same local at its declaration instead widens
+  its live range across the whole body and costs r5, `push {r4,r5,lr}` and 19
+  instructions: for this pattern the assignment must sit between the store and
+  the call.
 
 ### Scheduler trace instrumentation (native)
 
@@ -1204,6 +1254,35 @@ against the approved bundle; full sourced notes in
   produces this pattern. Route any function whose live-in-r9-with-no-write
   signature matches this to structural classification, not further search,
   unless the true enclosing function is independently recovered.
+- **Further instances (2026-07-24):** `080bd850` and `08015fb8`, a family of
+  two — both call `Func_080072f0`, and they are the only two ROM functions
+  with this shape besides `080e73a0`. On `080bd850` the 52-byte body is
+  byte-for-byte identical to the reference including all three pool words
+  (`0x03001B10`, `0x06010000`, `0x03000164`); the entire 20-byte residual is
+  the static-chain frame, and it is four separate sequences, not one:
+  the high-register "desperation" save `mov ip,r3 / mov r3,r9 / push {r3} /
+  mov r3,ip`, the slot allocation `sub sp,#4`, the spill `mov r3,r9 /
+  str r3,[sp,#0]`, and the teardown `add sp,#4 / pop {r3} / mov r9,r3`.
+  `current_function_needs_context` in `function.c` is what emits all of it —
+  `expand_function_start` allocates the slot and does
+  `emit_move_insn (last_ptr, static_chain_incoming_rtx)`. Compiled as a GNU C
+  nested function inside a synthetic enclosing function the region reaches
+  70/72 exact (the two differing bytes are a reload-scratch pick, r2 vs r3),
+  which settles the mechanism beyond doubt while remaining an illegal
+  deliverable for the same two reasons as `080e73a0`.
+- **Judge the body, not the byte count.** `decomp_diagnose` scores the saved
+  `080bd850` candidate at 68 mismatches / 52 bytes while the earlier, worse
+  candidate scored 62 / 68 — the old one only scored lower because its junk
+  `volatile` stores padded the output nearer the 72-byte region. On any region
+  in this family the missing static-chain frame guarantees a large residual
+  that says nothing about the C, so compare instruction-by-instruction from
+  the top of the body instead.
+- **Two real body fixes came out of it anyway**, both reusable: the
+  `struct MapBase { u16 unused; u16 offset; };` +
+  `((struct MapBase *)0x03001B10)[object[0x1C]].offset` form, copied from
+  matched sibling `src/0800be70.c`, makes the access a COMPONENT_REF that does
+  not fold the `+2` into the pool word; and dropping `volatile` from the two
+  byte loads fixes both their order and an extra `muls` copy.
 - **Recorded:** 2026-07-24.
 
 ### Byte-store QImode constant reuse

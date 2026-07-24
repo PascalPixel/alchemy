@@ -442,6 +442,24 @@ folds the extension back into the `ldrh`, so the temporary costs nothing. When a
 size change and a register swap look like alternatives you must choose between,
 this temporary is usually the third option that avoids both.
 
+When two quantities come out exchanged, stop guessing at source shapes and read
+the allocator's own numbers. Compiling the candidate with `-dl` writes a `.lreg`
+dump whose header lists `Register N used R times across L insns` for every
+pseudo, and `-dg` writes a `.greg` dump whose `;; N regs to allocate:` line is
+those pseudos in the order the allocator will serve them. `R` and `L` are exactly
+the `n_refs` and `live_length` that go into `floor_log2(R) * R * size / L`, with
+loop-depth weighting already applied, so the competing ratios can be computed in
+one line instead of inferred from the disassembly. Then ask which of the four
+inputs is not pinned. Reference counts almost always are — they are the emitted
+instructions. Births and deaths often are not: on `08077348` the competing ratios
+were `0.583` for a strength-reduced pointer and `0.556` for the loop bound, and
+moving a single `total = 0;` statement above the call that defines the bound
+shortened its live range from 18 insns to 17, took it to `0.588`, and closed the
+region. The emitted code was identical either way because GCC sinks the zero-init
+back below the call, so the edit is free. Any statement the compiler will hoist
+or sink back into place is a free knob on a live length; look for one before
+parking an exchange as compiler-internal.
+
 Batch agents are forbidden from editing `tools/alchemy_gcc.ts`, so a region
 needing one of these modes can only ever come back from a batch as an
 unexplained near-miss. Triage every batch near-miss for these tells before

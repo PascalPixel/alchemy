@@ -571,9 +571,48 @@ against the approved bundle; full sourced notes in
   decimal versus hexadecimal literals — and none moved the ratio. Every registry
   mode and seventeen further stock `-f` switches were swept; none improved it.
 - **Consequence:** a pure two-register exchange with an otherwise identical
-  instruction stream is a park, not a puzzle. Measure the two ratios first; if no
-  reachable edit separates them, stop. The lever, if one is ever wanted, is a
-  compiler mode over `local-alloc.c`'s ordering, not a source rewrite.
+  instruction stream is a park, not a puzzle *once the two ratios are measured and
+  found inseparable*. Measure first. Both regions above were parked because every
+  reachable edit left both ratios untouched — not because the ratio is beyond
+  reach in principle. See the next law for the case where it is not.
+- **Recorded:** 2026-07-24.
+
+### A statement's position sets a live length, and one insn of live length can flip the allocator (2026-07-24)
+
+- **Claim:** the exchange described in the previous law is winnable whenever a
+  statement can be moved without changing the emitted instructions but with the
+  effect of moving a birth or a death by one insn. `global.c`'s `allocno_compare`
+  uses the same `floor_log2(n_refs) * n_refs * size / live_length` ratio as
+  `QTY_CMP_PRI`, and the ratios of two competing quantities are often within a
+  few percent, so a one-insn change to `live_length` decides the register.
+- **Diagnostic:** compile with `-dl` and read the `.lreg` dump. It prints
+  `Register N used R times across L insns` for every pseudo, plus
+  `;; N regs to allocate:` in priority order in the `.greg` dump. Those are the
+  exact `n_refs` and `live_length` the allocator uses — no need to count insns by
+  hand or to reason about loop-depth weighting, which is already folded into `R`.
+- **Evidence, `08077348`** (76-byte region, now matched): the accumulator, the
+  countdown and one of {`count`, strength-reduced pointer} take `r6`, `r5`, `r7`,
+  and the loser is caller-saved into the one stack slot around the inner call.
+  Measured: countdown `2*7/11 = 1.273`, accumulator `3*9/38 = 0.711`, pointer
+  `2*7/24 = 0.583`, `count` `2*5/18 = 0.556`, so the pointer took `r7` and `count`
+  was spilled — the reference is the other way round. Every ref count is pinned:
+  `count` is set once and used four times (two compares, the loop-count init, the
+  final call argument) and the pointer's three references are the giv init plus a
+  load and an increment inside the loop. What was *not* pinned was `count`'s
+  birth. Writing `total = 0;` **before** `count = Func_080795fc();` instead of
+  after moves the zero-init out of `count`'s live range, giving `2*5/17 = 0.588`,
+  which clears the pointer's `0.583`. The emitted code is unchanged — GCC sinks
+  the `movs r6, #0` back below the call either way — but the allocation flips and
+  the region goes from 17 mismatching bytes to exact.
+- **Corollary:** the residual byte count badly overstates this defect. The wrong
+  register propagates: because the loser is caller-saved, its save must precede
+  the call, so the post-reload scheduler also reorders the loop tail. `08077348`
+  showed 28 bytes across three apparently separate defects (register exchange,
+  scheduling transposition, a missing post-call copy) that were one decision.
+- **Consequence:** before parking a register exchange, dump `-dl`, compute both
+  ratios, and ask which of the four inputs is not pinned. Reference counts usually
+  are; a birth or a death often is not, and any statement that GCC will sink or
+  hoist back into place is free to move.
 - **Recorded:** 2026-07-24.
 
 ### Pre-epilogue literal pool

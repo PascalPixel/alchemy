@@ -474,6 +474,16 @@ against the approved bundle; full sourced notes in
   member, the destination is a DMA-register block — reading as one
   project-wide DMA-kick macro using a store-multiple for compact atomic
   write ordering.
+- **Double-kick exclusivity (2026-07-23):** the two grouped-store
+  requirements are mutually exclusive in C for back-to-back kicks through
+  one register block: three-wide register staging requires non-volatile
+  stores (a value load cannot hoist above a preceding volatile store), and
+  non-volatile makes the fully-overwritten first kick a deleted dead store.
+  Verified both directions on 080a22f4 with a relaxed-matcher diagnostic
+  build (volatile shape emits six strict-order single stores; non-volatile
+  shape emits kick #2 only). The member is therefore positively classified
+  deliberate_dma_kick_macro (retained structural, confidence strong) in
+  asm/classification.json — the family's inline-asm-macro reading, applied.
 - **Recorded:** 2026-07-22.
 
 ### Complement-form wide masks

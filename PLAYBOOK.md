@@ -309,6 +309,22 @@ right, so check them before spending variant budget.
 | A constant materialized fresh where the compiler instead reuses a live register holding a wider value with the same low bytes | `NO_GCSE_SOURCES`. |
 | Address inside an already-allowlisted neighbour's range | Same unit as the neighbour; inherit its mode. Adjacency is the cheapest evidence available — check it first. |
 
+Two more triage tells are not about compiler mode but are just as cheap, and
+both cost a whole batch agent's budget when missed:
+
+- `instruction_mismatches` 0 with `actual_size` two bytes under
+  `expected_size` is a region boundary, not a source shape — see the
+  two-byte-shortfall law in [LAWS.md](LAWS.md). Split the padding out rather
+  than spending variants.
+- `tools/integrate_matches.ts` rejecting a candidate for "carries an m2c
+  helper" is a text heuristic, not a verdict on the match. Try the named-local
+  expansion; if it does not hold, install by hand.
+
+A batch that ends with unexplained near-misses is worth re-triaging against
+this whole section before the next batch is planned: of batch 7's near-misses,
+every one turned out to be a routing or boundary tell rather than a
+source-shape gap.
+
 Batch agents are forbidden from editing `tools/alchemy_gcc.ts`, so a region
 needing one of these modes can only ever come back from a batch as an
 unexplained near-miss. Triage every batch near-miss for these tells before

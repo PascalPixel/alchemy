@@ -1450,6 +1450,24 @@
    "files": [
     "0809b7e4"
    ]
+  },
+  {
+   "kind": "deliberate_dma_kick_macro",
+   "origin": "program_assembly",
+   "retention": "keep_asm",
+   "confidence": "strong",
+   "evidence": [
+    "grouped_store_requires_three_wide_register_staging",
+    "volatile_program_order_forbids_staging",
+    "nonvolatile_first_kick_dead_store_eliminated",
+    "three_backend_stmia_negative",
+    "family_argument_evacuation_fixed_register_signature"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 48,
+   "files": [
+    "080a22f4"
+   ]
   }
  ]
 }

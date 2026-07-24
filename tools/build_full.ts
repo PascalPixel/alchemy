@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Tool role: entrypoint; invoked by AGENTS.md, PLAYBOOK.md, README.md (+5 more).
+// Tool role: entrypoint; invoked by AGENTS.md, PLAYBOOK.md, README.md (+6 more).
 import { canonicalJson } from "./canonical_json.ts";
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, extname, isAbsolute, join, resolve } from "node:path";

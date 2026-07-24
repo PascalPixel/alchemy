@@ -378,6 +378,19 @@ against the approved bundle; full sourced notes in
   `080043e0` (entry-pointer pool load with no dependent use before an IME
   save); reinforces treating this as a general compiler-head-scheduling
   limit rather than per-function bad luck.
+- **Fourth and fifth confirmed instances (2026-07-24):** `08006408`
+  (slot-allocate: checks a busy flag, then IME-guards a struct write and
+  claims a global slot) and `08004278` (the same 20-entry/8-byte-stride
+  0x03001A20 scan as `080042c8`/`080043e0`, this time clearing a matched
+  entry) both float at the same head-order gap (52/... and 74/...
+  mismatches respectively) with the identical signature: a pool-address
+  load with no dependent use until deep inside the guarded body, sitting
+  ahead of the IME save. Five independent functions now confirm this is a
+  general property of this head shape. Do not spend further per-function
+  search budget rediscovering it; if the endgame-ordering pass reaches
+  this cohort, treat the shape itself (IME critical section whose first
+  loaded pool address has no near dependent use) as the classification
+  criterion rather than re-deriving it function by function.
 
 ### Thumb interworking call is never inlined
 

@@ -354,6 +354,41 @@ against the approved bundle; full sourced notes in
   dependent chain on the queue base that the current reconstruction
   lacks, rather than a bare address materialization.
 - **Recorded:** 2026-07-22.
+- **Extends to an unrelated function, same root cause (2026-07-24):**
+  `080043e0` (a 20-entry struct scan under the same IME-guard idiom, no
+  family relation to the nine-member queue-push group) hits the identical
+  head-order gap: the reference interleaves the entry-address load, the
+  `-1` result init, and the IME save/disable in an order this compiler
+  never reproduces, at exactly 20/64 mismatched bytes regardless of
+  declaration order (flat, nested-block, swapped, no-intermediate-pointer
+  — all four variants floor identically). `entry` has no dependent use
+  near its load here either (first use is deep in the loop body, behind
+  the volatile IME store), matching the queue-push family's structural
+  signature. This confirms the gate is a general property of this head
+  shape, not an artifact of one family's exact fingerprint — do not
+  re-probe declaration-order/scheduling-flag variants on any function
+  matching this shape (pool-load address with no nearby dependent use,
+  immediately preceding an IME save) without new compiler-side evidence.
+
+### Byte-store QImode constant reuse
+
+- **Claim:** `0800651c` disables IME, zeros five word/halfword globals and
+  two individual struct-field *bytes* through the same SImode zero
+  register the word stores use, then restores IME. The reference reuses
+  one zero register (r2) across every store including the two byte
+  (QImode) stores; this compiler always allocates a fresh literal load for
+  a byte store even when an SImode zero is already live in a register.
+- **Disproved so far (2026-07-24):** five variants (plain casts, explicit
+  `u8 *` field pointer local, reordered declarations, explicit named `zero`
+  local, `u32` saved-IME value with inline casts) all reproduce the IME
+  save/disable/restore idiom and the correct pointer/zeroing values, but
+  none induce reuse of the SImode zero register for the QImode stores;
+  best floor is 55 mismatched bytes (semantic/extra_instruction: a spilled
+  6th live value or a detour around a bigger literal pool). Not yet tried:
+  writing the two fields through the same pointer type as the words
+  (`*(s32/u16 *)` casts on the struct-plus-offset address rather than a
+  `u8 *` byte index), which might change how gcc classifies the store mode.
+- **Recorded:** 2026-07-24.
 
 ### Store-multiple transfer idiom
 

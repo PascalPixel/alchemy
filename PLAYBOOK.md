@@ -344,6 +344,31 @@ held exactly (0 mismatches at 64 bytes, installed) and `080037d4` inverted
 under test (26 → 32 with the flag). One `verifyCandidate` call with
 `extraCompilerFlags` settles it without touching the registry.
 
+### Sweep every mode before parking a near-miss
+
+`verifyCandidate(source, rom, outputDirectory, extraCompilerFlags)` in
+[tools/match_m2c.ts](tools/match_m2c.ts) takes flags directly, so the whole
+mode registry can be swept for one candidate **without editing
+`tools/alchemy_gcc.ts`** — which also makes it safe to run while a batch
+workflow is compiling. Every entry in the registry is reachable as a flag list;
+build the table from `cflagsForSource` and try all of them.
+
+This is cheap and it is not hypothetical. Sweeping the four candidates parked
+out of batch 7 as unexplained near-misses turned two of them into exact
+installs on the spot:
+
+| Stem | Parked at | Swept to | Mode it actually needed |
+|---|---:|---:|---|
+| `0800bc48` | 22 | **0** (40B) | `GROUPED_DMA_STORE_SOURCES` |
+| `08002f10` | 17 | **0** (44B) | grouped-DMA **plus** `UNSCHEDULED_SOURCES` |
+| `080c0eb8` | 35 | 35 | none — genuinely source-shape |
+| `080fb2a4` | 30 | 30 | none — genuinely source-shape |
+
+Two lessons. A near-miss can need **two** modes at once, so stopping at the
+first flag that helps understates the routing. And a sweep that moves nothing
+is itself a result: it converts "unexplained near-miss" into "confirmed
+source-shape gap", which is what the next agent needs to know.
+
 Batch agents are forbidden from editing `tools/alchemy_gcc.ts`, so a region
 needing one of these modes can only ever come back from a batch as an
 unexplained near-miss. Triage every batch near-miss for these tells before

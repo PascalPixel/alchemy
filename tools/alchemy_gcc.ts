@@ -53,7 +53,7 @@ const OPTIMIZE_O1_SOURCES = new Set(["080049e8", "08021e28"]);
 const UNSCHEDULED_SOURCES = new Set([
   "08006b84",
   "08002f10",
-  "08004198", "0800430c", "08004358", "0800439c",
+  "08004198", "0800430c", "08004358", "0800439c", "080043e0",
   "08029274",
   "080fb714", "080fb728", "080fb73c", "080fb750", "080fb75c",
   "080fb768", "080fb77c",
@@ -99,7 +99,7 @@ const ENTRY_LITERAL_FIRST_SOURCES = new Set([
   "0800383c", "0800387c", "080038bc", "080038fc", "0800393c",
   "0800397c", "080039bc", "080039fc", "08003a3c",
 ]);
-const HIGH_REGISTER_MOVE_FIRST_SOURCES = new Set(["0808b8e8"]);
+const HIGH_REGISTER_MOVE_FIRST_SOURCES = new Set(["0808b8e8", "080b6e30"]);
 const EARLY_FRAME_ALLOCATION_SOURCES = new Set(["0809802c"]);
 // These overlay-local object constructors share one exact compiler fingerprint:
 // immediately before a call, the independent r0 register copy precedes the r1

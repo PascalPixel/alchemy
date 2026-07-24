@@ -342,6 +342,22 @@ against the approved bundle; full sourced notes in
   or permutation budget on the nine members; the remaining explanation
   is a Camelot SDK snapshot whose thumb expand shares the ARM backend's
   address-materialization order.
+- **Unit-gating negative (2026-07-23):** the era thumb backend's
+  `thumb_010110a.md`/`thumb_020422.md` (pret/agbcc) declare zero
+  `define_function_unit` entries, unlike our 2.96 `arm.md`, which gives
+  Thumb loads/stores 2-cycle latencies and ARM7 write-buffer modeling. To
+  test whether that structural difference alone explains the head order,
+  a diagnostic build (alchemy-gcc branch `diagnostic-tables`, commit
+  `6b82dbf`) gated `write_buf`/`write_blockage`/`core` off for Thumb on
+  our 2.96 `arm.md`, leaving everything else unchanged. Result: negative,
+  and worse than doing nothing — `0800383c` floors at 21 mismatched bytes
+  under the gated build versus the 12-mismatch floor already recorded
+  above; sched2 still reorders the head under uniform latencies. Neutering
+  the current backend's tables is not equivalent to the era thumb
+  backend's actual (and structurally different) RTL expand: the gap is not
+  a tunable-parameter difference on 2.96, reinforcing the vintage-blocked
+  conclusion rather than opening a new lever. `diagnostic-tables` carries
+  no adoptable result and was not merged.
 - **Witness scan (2026-07-22, late):** eleven installed matches begin
   push, pool load, arg copy (e.g. [src/08019908.c](src/08019908.c),
   [src/08006384.c](src/08006384.c)). In every witness the pool load
@@ -487,6 +503,16 @@ against the approved bundle; full sourced notes in
   member, the destination is a DMA-register block — reading as one
   project-wide DMA-kick macro using a store-multiple for compact atomic
   write ordering.
+- **Double-kick exclusivity (2026-07-23):** the two grouped-store
+  requirements are mutually exclusive in C for back-to-back kicks through
+  one register block: three-wide register staging requires non-volatile
+  stores (a value load cannot hoist above a preceding volatile store), and
+  non-volatile makes the fully-overwritten first kick a deleted dead store.
+  Verified both directions on 080a22f4 with a relaxed-matcher diagnostic
+  build (volatile shape emits six strict-order single stores; non-volatile
+  shape emits kick #2 only). The member is therefore positively classified
+  deliberate_dma_kick_macro (retained structural, confidence strong) in
+  asm/classification.json — the family's inline-asm-macro reading, applied.
 - **Recorded:** 2026-07-22.
 
 ### Complement-form wide masks

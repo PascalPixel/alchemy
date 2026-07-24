@@ -444,6 +444,29 @@ against the approved bundle; full sourced notes in
   bare mid-stream `bx rN` label the same way as the other two call-site
   shapes: a structural-classification candidate, not a further C-shape
   search target.
+- **Second witness, and a retracted claim (2026-07-24):** `080f9ef8` is the
+  same shape one level subtler, and it had been *claimed* as C in
+  `ce93ad4d`. Its C reproduces all 34 instructions of the region exactly
+  — prologue, the single-bit `tst`, the whole list walk, the literal pool —
+  under `-mpreserve-single-bit-test -mentry-low-register-order
+  -mthumb-and-sets-cc` on the default ABI. The one surviving difference is
+  the call site: the compiler emits `bl _call_via_r3`, which
+  `alchemy_gcc.ts` resolves to the fixed runtime thunk bundle at
+  `0x080072f0`, while the reference branches to `0x080f9ee8` — the
+  `pop {r3} / bx r3` tail of `asm/080f9c90.s`, the function immediately
+  preceding it. The original translation unit satisfied its `_call_via_r3`
+  from a `bx r3` already present in a sibling function's epilogue; a
+  per-function link cannot express that, and no C shape reaches it (the
+  pointer has to be live in r3 across a `bl` to a named symbol, which needs
+  a disallowed register pin). Retracted the claim, restored
+  `asm/080f9ef8.s`, and dropped the now-sourceless
+  `SINGLE_BIT_TEST_ENTRY_ORDER_SOURCES` routing. The lesson for the
+  reviewer: a candidate can be instruction-for-instruction perfect and
+  still not be a match, because `bl` target resolution is a link-model
+  property, not a codegen one — always read `build_claimed.ts`'s
+  `failures=` count, never just the instruction diff. The three compiler
+  modes above are recorded here so the routing can be restored verbatim if
+  the veneer-placement model is ever solved.
 
 ### GCC 2.96 nested-function static-chain register
 

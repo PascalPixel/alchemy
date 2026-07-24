@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Tool role: entrypoint; invoked by PLAYBOOK.md, tools/decomp_overnight.ts.
+// Tool role: entrypoint; invoked by PLAYBOOK.md, tools/decomp_overnight.ts, tools/promote_candidate.ts.
 // Build a resumable, expected-value queue for exact-C search. All candidate C,
 // compiled artifacts, and diagnostics stay below ignored out/.
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";

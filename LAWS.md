@@ -194,6 +194,27 @@ must be tested on more than one function before being generalized.
   6-byte residual. Also worth keeping: a store through a struct pointer may
   alias, so the following field reads reload from memory for free — no
   `volatile` and no barrier needed to reproduce a reference reload.
+- **`regmove` runs before `local-alloc`, so some two-address operand choices
+  are unreachable from C (2026-07-24).** `080a3d9c` closed to two bytes and
+  stopped: `ands r2,r3` where the reference has `ands r3,r2`. The AND is a
+  two-address `*thumb_andsi3_insn` whose operand 1 carries `%0`, so
+  `regmove_optimize`'s forward pass may overwrite either input. It rejects the
+  mask operand inside `fixup_match_1` at `reg_is_remote_constant_p` — CSE
+  attaches `REG_EQUAL` to the constant load unconditionally, but that set lives
+  in the entry block and is not reachable through `LOG_LINKS` — and retargets
+  the loaded value instead. The reference needs no regmove fix at all, because
+  local-alloc's `update_equiv_regs` later sinks the constant next to its use and
+  ties the two pseudos. **The pass order is the whole point:** at regmove time
+  the constant-materialisation pair is not in the stream yet (local-alloc
+  inserts it), so there is nothing between the AND and its consumer for any
+  source shape to interpose. Every documented exit from `fixup_match_1` was
+  checked and measured against 48 variants; the ones that do flip the operand
+  all cost more elsewhere, and the family has a hard floor of three mismatches.
+  `-fno-regmove` on the identical source is byte-exact, so this earned a
+  `NO_REGMOVE_SOURCES` registry entry. **The reusable test:** when a residual is
+  a two-address instruction overwriting the wrong one of two inputs, read
+  `.15.regmove` for `Fixed operand N of insn M` before spending variants — if
+  regmove made the choice, the C cannot unmake it.
 - **The reroute probe is bounded, and the bound is measured (2026-07-24).**
   Because `08006dec` fell to a reroute, every stubborn `register_only` plateau
   in the queue that no agent owned was rerouted through `old_agbcc` unchanged.

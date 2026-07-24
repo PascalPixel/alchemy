@@ -95,7 +95,7 @@ const GROUPED_DMA_STORE_SOURCES = new Set([
   "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
   "08004a5c", "08004a94", "0800bc48", "0800d304", "080170c4", "0801d980",
   "080251d4", "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
-  "0808fecc",
+  "0808fecc", "08004760",
 ]);
 
 // Nine sound-request entry wrappers: the entry pool load precedes the
@@ -106,7 +106,12 @@ const ENTRY_LITERAL_FIRST_SOURCES = new Set([
   "0800397c", "080039bc", "080039fc", "08003a3c",
 ]);
 const HIGH_REGISTER_MOVE_FIRST_SOURCES = new Set(["0808b8e8", "080b6e30"]);
-const EARLY_FRAME_ALLOCATION_SOURCES = new Set(["0809802c"]);
+// 08004760 is a still-assembly near-miss routed for the same reason as the
+// grouped-DMA entries below: without this mode its `sub sp, #4` sinks under the
+// first literal load, and with it the whole prologue and the entire tail agree.
+// What is left is one register copy in the middle, so the mode is evidenced
+// even though the region has not been converted yet.
+const EARLY_FRAME_ALLOCATION_SOURCES = new Set(["0809802c", "08004760"]);
 // These overlay-local object constructors share one exact compiler fingerprint:
 // immediately before a call, the independent r0 register copy precedes the r1
 // immediate. Their common filename is not unique, so routing must use the
@@ -518,9 +523,9 @@ function selfTest(): void {
   }
   const groupedDma = [...GROUPED_DMA_STORE_SOURCES].sort();
   if (JSON.stringify(groupedDma) !== JSON.stringify([
-    "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c", "08004a94", "0800bc48",
-    "0800d304", "080170c4", "0801d980", "080251d4", "080284dc", "0808fecc", "080958a8", "0809bb34", "080c0184",
-    "080c08a8",
+    "08002f10", "08004760", "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c", "08004a94",
+    "0800bc48", "0800d304", "080170c4", "0801d980", "080251d4", "080284dc", "0808fecc", "080958a8", "0809bb34",
+    "080c0184", "080c08a8",
   ])) {
     throw new Error("grouped DMA source allowlist self-test failed");
   }

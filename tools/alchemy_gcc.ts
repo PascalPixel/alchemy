@@ -52,7 +52,7 @@ const FIXED_LR_SOURCES = new Set<string>();
 const OPTIMIZE_O1_SOURCES = new Set(["080049e8", "08021e28"]);
 const UNSCHEDULED_SOURCES = new Set([
   "08006b84",
-  "08004198", "08004358", "0800439c",
+  "08004198", "0800430c", "08004358", "0800439c",
   "08029274",
   "080fb714", "080fb728", "080fb73c", "080fb750", "080fb75c",
   "080fb768", "080fb77c",
@@ -81,7 +81,8 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // Thumb lowering uses one writeback STMIA and restores the descriptor base.
 const GROUPED_DMA_STORE_SOURCES = new Set([
   "08004838", "08004858", "080049e8", "08004a28", "08004a44",
-  "08004a5c", "08004a94", "0801d980", "080251d4", "080958a8", "0809bb34",
+  "08004a5c", "08004a94", "080170c4", "0801d980", "080251d4", "080958a8",
+  "0809bb34", "080c0184",
 ]);
 
 // Nine sound-request entry wrappers: the entry pool load precedes the

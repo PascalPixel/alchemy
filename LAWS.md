@@ -484,6 +484,62 @@ against the approved bundle; full sourced notes in
   an unexplored lever, and spends a budget re-measuring the same three stems.
 - **Recorded:** 2026-07-24.
 
+### The post-call return-value copy cannot be sunk from C (2026-07-24)
+
+- **Claim:** when the only residual is that the reference emits the
+  `adds rN, r0, #0` copy of a call's return value *after* the following stores
+  and the candidate emits it immediately after the `bl`, no ordinary C shape
+  fixes it. The decision is made inside sched2 by a priority comparison whose
+  inputs are not expressible in source.
+- **Evidence:** `08095fcc`, 124 bytes, 6 mismatches, one instruction. A
+  `-fsched-verbose=5` trace of basic block 0 gives the copy and the competing
+  `subs r1, #1` equal priority 29 and the `strh` priority 28. The copy wins the
+  tie on dependent count (5 against 3), which `rank_for_schedule` weighs ahead
+  of `INSN_LUID`, so even reversing the statements in the source cannot flip it.
+  The `strh`'s priority is *capped* at 28 by an r3 anti-dependence on the
+  address load that begins the local-struct copy chain, so it can never rise
+  above the copy's. Turning sched2 off is worse (12+); sched1 is a no-op here.
+- **Search already spent:** 171 variants. All 40 legal orderings of the five
+  post-call statements — best three tie at 6. Moving the call after the
+  decrement costs 131. Separate temporaries for the call result, for both call
+  arguments, and for the two struct loads; every declaration permutation; eight
+  counter forms; commutative reorderings; struct-pointer and array retypings.
+  Declaration order had literally no effect.
+- **Why it matters beyond this region:** this is the same residual class the
+  registry already records for `0808fecc` — "the return-value copy and the
+  stack restore in the opposite order" — and the preceding law shows
+  `-mno-sched-prolog` leaves that one untouched. Two independent witnesses now
+  point at one missing mode in the family of `-mcall-arg0-move-first` and
+  `-mhigh-register-move-first`: a return-value copy that stays put. That is
+  alchemy-gcc lane work, not source work, and both stems should be re-measured
+  the day such a switch exists.
+- **Recorded:** 2026-07-24.
+
+### An entry-block pool load never chooses r4 (2026-07-24)
+
+- **Claim:** when the reference's first instruction loads a literal pool word
+  into `r4` and the candidate uses `r3`, the difference is not reachable from C.
+  `REG_ALLOC_ORDER` in the approved tree's `arm.h` lists `{3, 2, 1, 0, 12, 14,
+  4, 5, 6, 7, ...}`, so a block-local quantity in the entry block first-fits to
+  `r3` unconditionally; `r4` requires `r0`–`r3` to be simultaneously busy at
+  that point, which in the entry block means live incoming parameters.
+- **Evidence:** `08096c80`, 92 bytes, now 2 mismatches. `r4` was reproduced
+  only by giving the function four parameters live across the load — which
+  changes the size. Ruled out at `r3`: every declaration permutation; four
+  typings of the base pointer; extra named temporaries for the address and for
+  the inner load; `M2C_FIELD` and array-subscript forms; an `extern` symbol
+  instead of the integer literal; `volatile` and `const` qualification; a split
+  address literal; `register` on either or both pointers. All six fork `-m`
+  switches were checked for information: none yields `r4`, and
+  `-mentry-low-register-order` yields `r0`, consistent with it permuting block
+  0's low order to `{0, 1, 3, 2}`.
+- **Corroboration:** across the whole ROM only 21 functions load a pool literal
+  into `r4`, all large and high-pressure, and none of the 1,222 matched sources
+  in `src/` does. The reference's choice here is anomalous for the fork's
+  allocation order, which is itself the evidence that the original compiler
+  ordered the entry block differently.
+- **Recorded:** 2026-07-24.
+
 ### Pre-epilogue literal pool
 
 - **Claim:** 31 remaining C-debt regions share a structural signature the

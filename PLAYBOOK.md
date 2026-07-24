@@ -294,6 +294,27 @@ per-function matching knobs. Accept a flag only with independently reproduced
 module-level or ABI evidence, and document that evidence beside its build-rule
 implementation.
 
+### Routing tells
+
+Some gaps are not source-shape gaps at all: the region's translation unit was
+built in a mode the region's stem is not yet routed to. These read directly off
+the reference disassembly, and each is ABI- or module-level evidence in its own
+right, so check them before spending variant budget.
+
+| Reference fingerprint | Likely routing |
+|---|---|
+| Pushes a callee-save low register in a function with **no calls at all** | The unit was not built with `-fcall-used-r4`: `DEFAULT_ABI_SOURCES`, or `AGBCC_SOURCES` if the address also falls in an agbcc range. |
+| `stmia rN!, {…}` writing consecutive words, usually followed by `subs rN, #12` | `GROUPED_DMA_STORE_SOURCES`. Applies to plain struct-block initialization, not only writes to `0x040000d4`. |
+| Redundant register copies plus strict source-statement order, with no scheduling | `OPTIMIZE_O1_SOURCES` or `UNSCHEDULED_SOURCES`. |
+| A constant materialized fresh where the compiler instead reuses a live register holding a wider value with the same low bytes | `NO_GCSE_SOURCES`. |
+| Address inside an already-allowlisted neighbour's range | Same unit as the neighbour; inherit its mode. Adjacency is the cheapest evidence available — check it first. |
+
+Batch agents are forbidden from editing `tools/alchemy_gcc.ts`, so a region
+needing one of these modes can only ever come back from a batch as an
+unexplained near-miss. Triage every batch near-miss for these tells before
+concluding the gap is source-shape, and re-probe the allowlists from the
+integrating session rather than from the batch.
+
 ## Law ledger
 
 Confirmed compiler behavior is a compounding asset; sessions must not relearn

@@ -93,7 +93,8 @@ async function main(): Promise<void> {
     .slice(0, options.limit);
   const overlays = new Map<string, { data: Buffer; discovery: ReturnType<typeof discoverOverlay> }>();
   for (const overlay of new Set(selected.map((fn) => fn.overlay))) {
-    const source = join(ROOT, "assets/code", overlay, "overlay.s");
+    // Flat layout: assets/code/<name>_overlay.s, per the asset builder.
+    const source = join(ROOT, "assets/code", `${overlay}_overlay.s`);
     const data = assembleOverlay(source, OVERLAY_BASE);
     overlays.set(overlay, { data, discovery: discoverOverlay(data) });
   }

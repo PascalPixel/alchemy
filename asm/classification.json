@@ -29,8 +29,8 @@
    "evidence": [
     "two_byte_zero_alignment"
    ],
-   "expected_files": 329,
-   "expected_bytes": 658
+   "expected_files": 330,
+   "expected_bytes": 660
   }
  ],
  "groups": [

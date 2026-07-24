@@ -39,16 +39,16 @@ assets, with no copied gap or private-ROM fallback. That milestone is achieved:
 8,388,608 bytes, or 100.00%. Exact reconstruction assembly counts toward byte
 closure even when it remains C-decompilation work.
 
-Within the reconstruction assembly, 457,620 bytes remain active
-C-decompilation, boundary-splitting, or function-merging work. The other 24,712
+Within the reconstruction assembly, 452,204 bytes remain active
+C-decompilation, boundary-splitting, or function-merging work. The other 24,762
 bytes are presently retained structural assembly: linker veneers, runtime
 thunks, fixed hardware entry points, shared-literal modules, and proven
 compiler-unproducible kernels.
 
-The stricter build-report `byte_reconstruction` milestone is 7,930,988 of
-8,388,608 bytes, or 94.54%. It counts exact C, deterministic asset round trips,
+The stricter build-report `byte_reconstruction` milestone is 7,936,404 of
+8,388,608 bytes, or 94.61%. It counts exact C, deterministic asset round trips,
 and positively retained structural assembly, while treating ordinary
-reconstruction assembly as unfinished C work. The remaining 457,620 bytes are
+reconstruction assembly as unfinished C work. The remaining 452,204 bytes are
 the assembly debt. It is useful for
 tracking source quality, but it is not the immediate no-fallback byte-closure
 milestone and it is not a forecast of time remaining.

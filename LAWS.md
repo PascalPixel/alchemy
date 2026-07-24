@@ -227,6 +227,52 @@ must be tested on more than one function before being generalized.
   not. Here too the lever is whether a value gets a temporary at all.
 - **Confirmed:** 2026-07-24.
 
+### A two-byte shortfall is a region boundary, not a source shape
+
+- **Fingerprint:** the candidate disassembles identically to the reference —
+  `instruction_mismatches` is 0 and `dominant` is `exact` — but `actual_size`
+  is two bytes under `expected_size`, and those two bytes are the whole of
+  `byte_mismatches`. The reconstruction assembly ends with a lone
+  `movs r0, r0` after the final `bx`, which is the encoding of a zero
+  halfword.
+- **Why no source can close it:** that halfword is the linker aligning the
+  *next* Thumb function to four bytes. A translation unit holding a single
+  function has nothing following it to align against, so the compiler never
+  emits it, and `verifyCandidate` slices the candidate at the linked symbol
+  size, which stops at `bx`. No attribute, dummy symbol, or trailing
+  declaration moves it.
+- **Producing action:** this is a region split, not a decompilation. Drop the
+  trailing `movs r0, r0` from `asm/<stem>.s`, add the padding address to
+  `asm/alignment.json`, and raise `alignment_padding` in
+  `asm/classification.json` by one file and two bytes. Then the C installs
+  normally.
+- **Evidence:** [src/0809a3c4.c](src/0809a3c4.c), 134 bytes, whose region was
+  136. `65c2100a` had already made the same split at `0x080a9a56` for
+  [src/080a99b0.c](src/080a99b0.c), from the other direction — padding
+  *between* two functions of one region rather than at its end.
+- **Scope:** applies only when the trailing bytes are zero. A region ending in
+  a stray `bx lr` (`0x4770`) — `asm/08093054.s` is one — is a different
+  structural category and is not alignment padding.
+- **Confirmed:** 2026-07-24.
+
+### Inline helpers can be load-bearing, and the integrator's guard is a heuristic
+
+- **Fingerprint:** `tools/integrate_matches.ts` rejects any candidate matching
+  `/inline_fn|^(static|inline)\b/m` as "carries an m2c helper". That guard
+  exists to keep raw m2c output out of `src/`, but it is a text test, not a
+  judgement about whether the helper is doing work.
+- **Evidence:** [src/08011164.c](src/08011164.c) keeps a `static __inline__`
+  two-halfword copy helper and matches exactly at 80 bytes. Expanding the
+  helper by hand into the loop body — the remedy the register-offset law
+  recommends trying first — gives 76 bytes and 48 mismatches. Its adjacent
+  sibling [src/080110e0.c](src/080110e0.c) carries the identical helper and
+  was installed the same way; nine `src/` files use the idiom.
+- **Producing action:** try the named-local expansion first, because when it
+  works the result is cleaner and installs automatically. When it does not,
+  install by hand and say in the commit message why the helper is
+  load-bearing. Do not treat the rejection as a verdict on the match.
+- **Confirmed:** 2026-07-24.
+
 ## Hypotheses
 
 Hypotheses are useful search leads, not accepted compiler laws. Promote one only

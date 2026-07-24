@@ -23,6 +23,27 @@ here; re-verify with a full `bun tools/build_full.ts` before adopting any other
 assembler version, since GAS canonicalization differences do change encodings
 for some instructions.
 
+**Pinned Bun version: 1.3.14** (`engines.bun` in `package.json`). This is
+load-bearing, not advisory: `tools/zlib.ts` compresses every tracked PNG's
+IDAT chunk, and DEFLATE has no single canonical encoding for a given
+input — a different compressor build can produce different, equally valid,
+equally decompressible bytes for the same pixel data. `tools/zlib.ts`
+therefore uses `node:zlib` (Bun's Node-compatibility shim, backed by classic
+zlib) rather than `Bun.deflateSync`/`Bun.inflateSync`/`Bun.hash`, which are
+backed by libdeflate — a different, from-scratch compressor whose output
+was confirmed build-configuration-dependent (an independent build of the
+exact pinned libdeflate commit did not reproduce Bun's own output on the
+same host). Classic zlib is deterministic for a given input, level, and
+strategy regardless of CPU architecture, which is why it is the standard
+choice for reproducible builds generally; verified directly, not assumed:
+a fresh Bun 1.3.14 running as genuine linux/amd64 in Docker
+(`--platform linux/amd64`, `oven/bun:1.3.14`) reproduces all 8,108 tracked
+PNGs' IDAT bytes exactly against this host's macOS/arm64 output
+(`checked=8108 mismatches=0`, 2026-07-24). Re-run that check before bumping
+the pinned Bun version, since a future Bun could change its bundled
+`node:zlib` backend the same way it already diverged from classic zlib for
+its native `Bun.*` compression APIs.
+
 # Publication boundary
 
 

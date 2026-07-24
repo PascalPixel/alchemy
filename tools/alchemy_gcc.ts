@@ -81,7 +81,7 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // Thumb lowering uses one writeback STMIA and restores the descriptor base.
 const GROUPED_DMA_STORE_SOURCES = new Set([
   "08004838", "08004858", "080049e8", "08004a28", "08004a44",
-  "08004a5c", "08004a94", "0801d980", "080958a8", "0809bb34",
+  "08004a5c", "08004a94", "0801d980", "080251d4", "080958a8", "0809bb34",
 ]);
 
 // Nine sound-request entry wrappers: the entry pool load precedes the

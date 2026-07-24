@@ -391,6 +391,31 @@ and the candidate did the reverse. Exchanging those two statements — nothing
 else — made it exact at 68 bytes. Read the transposed pair, find the statements
 that produced them, and try that order before spending a sweep.
 
+When the residual is that the reference recomputes a constant *inside* a loop
+while the candidate hoists it above the loop, the lever is the loop keyword,
+not a flag. `for (;;)`/`while (1)` give the RTL loop optimizer a preheader
+block and it sinks loop-invariant constants into it; a backward `goto` to a
+label does not produce one, so the constant stays in the body. `08029504`
+compares three call results against `-1`, which Thumb cannot encode as an
+immediate and so must live in a register. Written as `for (;;)` with `continue`
+the two-instruction `movs`/`negs` pair for `-1` sat in a preheader ahead of the
+first call; written as `goto retry` it sits after the call where the reference
+has it, and the region went from 12 mismatches to exact at 80 bytes. Explicit
+self-tail-recursion (`return Func_08029504();`) is byte-identical to the `goto`
+form here, because GCC 2.96 eliminates it into the same jump before the loop
+pass runs — prefer the `goto`, which does not misstate the return value.
+
+A constant that appears as a bare literal in a narrow lvalue can cost a literal
+pool word. This Thumb backend has no HImode immediate-move alternative, so
+`*(u16 *)p = 136;` lowers to a pool load rather than `movs r3, #136`. Assigning
+the constant to an `s32` local first and storing that local keeps the
+materialisation in SImode, where the immediate alternative exists. On
+`080287a8` this one change removed the pool word and, with it, all ten
+mismatching bytes — two for the move itself, two for the shifted pc-relative
+offset of an earlier pool load, and six from the pool contents sliding by four.
+Any near-miss whose diff shows an `ldr rN, [pc, ...]` opposite a `movs` is this
+tell, and the byte count it produces is much larger than the defect.
+
 Batch agents are forbidden from editing `tools/alchemy_gcc.ts`, so a region
 needing one of these modes can only ever come back from a batch as an
 unexplained near-miss. Triage every batch near-miss for these tells before

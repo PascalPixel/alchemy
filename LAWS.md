@@ -642,9 +642,28 @@ against the approved bundle; full sourced notes in
   default order nor `-mentry-low-register-order`'s `{0, 1, 3, 2}` does that (`r0`
   and `r1` are taken by the incoming argument copies, which have hard-register
   suggestions and are allocated first, so both orders reduce to `{3, 2}` here).
-- **Lane item:** `08006dec` closes if `arm_order_regs_for_local_alloc_block`
-  gains a `{2, 3, 1, 0}` low order. It is the only known witness, so it should
-  wait for a second one before the fork grows a switch for it.
+- **The proof does not depend on our candidate.** Read it off the reference's own
+  bytes: at `08006df4` it loads the address, at `08006df6` it materialises the
+  value, at `08006df8` it stores. So in the reference's *own* instruction stream
+  the value is born one insn after the address and both die at the same store —
+  the value's span is strictly shorter and its reference count equal, so under
+  any priority function monotonic in `n_refs` and decreasing in span, the value
+  outranks the address. Yet the reference gives the address `r3` and the value
+  `r2`. Whatever order that allocator used, it served `r2` before `r3`. No source
+  shape can change which register a compiler hands out first, so this is a
+  compiler-side difference, established without appeal to anything we compiled.
+- **Lane item, and a second witness for the family.** `08006dec` closes if
+  `arm_order_regs_for_local_alloc_block` gains a `{2, 3, 1, 0}` low order — the
+  fork's default with `3` and `2` transposed. It is not the only region whose
+  entry block wants a register the fork's order cannot hand out: `08096c80`
+  (below) needs an entry-block pool load in `r4` where `{3, 2, 1, 0}` gives `r3`,
+  and its own law already reads that as evidence the original compiler ordered
+  the entry block differently. Be careful not to over-merge them — `{2, 3, 1, 0}`
+  would give `08096c80` `r2`, so one permutation does not serve both, and neither
+  region alone pins the order. What the two together do establish is that the
+  entry-block low order is a real axis of difference between this fork and the
+  original, and that it is worth a third witness before anyone designs the
+  switch.
 - **Consequence:** a pure two-register exchange with an otherwise identical
   instruction stream is a park, not a puzzle *once the two ratios are measured and
   found inseparable* — and "measured" means measured on a candidate you have first

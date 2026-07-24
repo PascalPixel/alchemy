@@ -40,22 +40,31 @@ against the approved ROM using the Linux build; `binutils-arm-none-eabi`
 Linux decompilation toolchain. `apt install binutils-arm-none-eabi` supplies
 native ARM binutils; no Rosetta-equivalent penalty applies.
 
-Known gap: `Bun.deflateSync`/`node:zlib` on this host do not reproduce the
-exact deflate byte stream baked into already-committed canonical PNG assets
-(`bun tools/build_assets.ts` fails an `exactBytes`/canonical-PNG check on
-the first level-9-compressed asset it re-encodes). The *decoded* pixel
-content round-trips exactly — inflating both streams yields identical
-bytes — only the compressor's internal match/Huffman choices differ, which
-is expected: deflate has no single canonical encoding for a given input,
-and no zlib build available here reproduces whatever specific
-encoder/version produced the tracked corpus. This does not affect ROM byte
-closure (`build_claimed.ts`/`build_asm.ts` pass with zero touch on PNG
-bytes) and is orthogonal to code decompilation; it blocks only
-`build_assets.ts`/full-corpus `build_full.ts` on this host. Do not
-"fix" it by re-encoding tracked assets to match this host's zlib — that
-would just move the mismatch to the next host that runs a different zlib
-build. Treat it as an open host-portability gap, not a content bug, until
-the original encoder/zlib build is identified and vendored.
+The `build_assets.ts`/PNG-encoding gap this host originally hit (Bun's
+native `Bun.deflateSync`, backed by libdeflate, didn't reproduce the tracked
+corpus) is resolved by the pinned-Bun/`node:zlib` fix below; re-verified
+green on this Linux host after adopting it.
+
+**Pinned Bun version: 1.3.14** (`engines.bun` in `package.json`). This is
+load-bearing, not advisory: `tools/zlib.ts` compresses every tracked PNG's
+IDAT chunk, and DEFLATE has no single canonical encoding for a given
+input — a different compressor build can produce different, equally valid,
+equally decompressible bytes for the same pixel data. `tools/zlib.ts`
+therefore uses `node:zlib` (Bun's Node-compatibility shim, backed by classic
+zlib) rather than `Bun.deflateSync`/`Bun.inflateSync`/`Bun.hash`, which are
+backed by libdeflate — a different, from-scratch compressor whose output
+was confirmed build-configuration-dependent (an independent build of the
+exact pinned libdeflate commit did not reproduce Bun's own output on the
+same host). Classic zlib is deterministic for a given input, level, and
+strategy regardless of CPU architecture, which is why it is the standard
+choice for reproducible builds generally; verified directly, not assumed:
+a fresh Bun 1.3.14 running as genuine linux/amd64 in Docker
+(`--platform linux/amd64`, `oven/bun:1.3.14`) reproduces all 8,108 tracked
+PNGs' IDAT bytes exactly against this host's macOS/arm64 output
+(`checked=8108 mismatches=0`, 2026-07-24). Re-run that check before bumping
+the pinned Bun version, since a future Bun could change its bundled
+`node:zlib` backend the same way it already diverged from classic zlib for
+its native `Bun.*` compression APIs.
 
 # Publication boundary
 

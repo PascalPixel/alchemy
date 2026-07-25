@@ -1965,3 +1965,40 @@ replacement must state what changed and define an acceptance test.
   want one `sched2` decision each way, after `resource_3a0_c_02000048.c`.
 - **Best candidate kept at** `/tmp/best/resource_3ca_004c.c` (not adopted).
 - **Recorded:** 2026-07-25.
+
+### The overlay `0x0030` distance family walks its arguments with `*p++` (2026-07-25)
+
+- **Claim:** the twelve-member `0x0030` family — `373`, `389`, `391`, `392`,
+  `393`, `39f`, `3b2`, `3b4`, `3bf`, `3c4`, `3c5`, and `3b5:0040` — reads its two
+  coordinate triples through *post-incrementing pointers*, not indexed fields.
+  The reference emits `ldmia r0!, {r5}` / `ldmia r1!, {r3}`, which is what gcc
+  generates for `*p++`; the m2c candidates spelled it `M2C_FIELD(arg0, s32 *, 0)`
+  and got `ldr r3, [r1, #0]`. Rewriting the three component differences as
+  ```c
+  temp_r5 = (*arg0++ - *arg1++) >> 0x10;
+  temp_r4 = (*arg0++ - *arg1++) >> 0x10;
+  temp_r3 = (*arg0  - *arg1 ) >> 0x10;
+  ```
+  with `s32 *` parameters makes the whole nine-instruction load-and-subtract
+  prologue byte-exact in all twelve.
+- **Second lever, the squared terms.** The reference computes `d0*d0` first, so
+  it needs its own temporary; the candidates left it inline in the call
+  argument and got it emitted last. Hoisting it to `temp_r0` ahead of `temp_r2`
+  and `temp_r1` makes all three `adds rN,rM,#0 / muls rN,rM` pairs exact.
+- **Effect:** 33-34 mismatched bytes down to 19-20, uniformly, at the correct
+  60/60 size. 168 bytes across the family. Not closed.
+- **This corrects the recorded cause.** The family was parked as blocked on the
+  `*thumb_mulsi3` earlyclobber item in the fork lane. It is not: with the two
+  levers above, all three multiply pairs match byte-for-byte, and the
+  earlyclobber never enters. That fork item should be re-justified on a
+  different witness or dropped.
+- **The residual, identical in all twelve, is three things.** (1) The reference
+  issues `subs r3,r3,r2` in the cycle straight after the `ldr r3,[r0,#0]` that
+  feeds it, which the fork's two-cycle load latency forbids, so the fork delays
+  it past two `asrs`. (2) The reference copies `adds r3,r1,#0` before its last
+  `adds r0,r0,r3`, where the fork adds `r1` directly — the fork is two bytes
+  shorter and pads. (3) The reference's interworking epilogue pops into `r1`,
+  the fork into `r0`. `-fno-schedule-insns2` makes (1) worse (30 bytes), and
+  `-fno-regmove` does not touch (2).
+- **Candidates kept at** `work/near/overlay_0030_family/` (not adopted).
+- **Recorded:** 2026-07-25.

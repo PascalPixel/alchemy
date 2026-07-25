@@ -1712,44 +1712,8 @@ Overlay_02000000:
 	bx	r0
 	.2byte 0x4770
 	.2byte 0x0000
-	push	{lr}
-	ldr	r3, [pc, #48]
-	movs	r1, #224
-	lsls	r1, r1, #1
-	adds	r3, r3, r1
-	movs	r1, #0
-	ldrsh	r2, [r3, r1]
-	ldr	r3, [pc, #40]
-	cmp	r2, r3
-	bne.n	.L_02000a08
-	ldr	r0, [pc, #36]
-	b.n	.L_02000a1e
-.L_02000a08:
-	ldr	r3, [pc, #36]
-	cmp	r2, r3
-	bne.n	.L_02000a12
-	ldr	r0, [pc, #36]
-	b.n	.L_02000a1e
-.L_02000a12:
-	ldr	r3, [pc, #36]
-	cmp	r2, r3
-	bne.n	.L_02000a1c
-	ldr	r0, [pc, #32]
-	b.n	.L_02000a1e
-.L_02000a1c:
-	ldr	r0, [pc, #32]
-.L_02000a1e:
-	pop	{r1}
-	bx	r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000075
-	.4byte 0x0200a898
-	.4byte 0x00000076
-	.4byte 0x0200a8e0
-	.4byte 0x00000078
-	.4byte 0x0200a928
-	.4byte 0x0200a868
+AlchemyC_020009f0:
+	.space 0x54
 	.4byte 0x47702000
 	.4byte 0x47704800
 	.2byte 0xa970
@@ -2240,45 +2204,8 @@ Overlay_02000000:
 	pop	{r0}
 	bx	r0
 	.2byte 0x0000
-	push	{lr}
-	ldr	r3, [pc, #48]
-	movs	r1, #224
-	lsls	r1, r1, #1
-	adds	r3, r3, r1
-	movs	r1, #0
-	ldrsh	r2, [r3, r1]
-	ldr	r3, [pc, #40]
-	cmp	r2, r3
-	bne.n	.L_02000ef8
-	ldr	r0, [pc, #36]
-	b.n	.L_02000f0e
-.L_02000ef8:
-	ldr	r3, [pc, #36]
-	cmp	r2, r3
-	bne.n	.L_02000f02
-	ldr	r0, [pc, #36]
-	b.n	.L_02000f0e
-.L_02000f02:
-	ldr	r3, [pc, #36]
-	cmp	r2, r3
-	bne.n	.L_02000f0c
-	ldr	r0, [pc, #32]
-	b.n	.L_02000f0e
-.L_02000f0c:
-	ldr	r0, [pc, #32]
-.L_02000f0e:
-	pop	{r1}
-	bx	r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000075
-	.4byte 0x0200abb4
-	.4byte 0x00000076
-	.4byte 0x0200acb0
-	.4byte 0x00000078
-	.4byte 0x0200adac
-	.2byte 0xaba8
-	.2byte 0x0200
+AlchemyC_02000ee0:
+	.space 0x54
 	push	{lr}
 	bl	sub_02003500
 	pop	{r0}

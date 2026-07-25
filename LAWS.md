@@ -1894,6 +1894,60 @@ replacement must state what changed and define an acceptance test.
 | `close_byte_gaps.ts` | retired 2026-07-22 | The English byte-closure plan completed in `6104a64e`; current ownership and identity are enforced by `build_full.ts` and the canonical component builders. |
 | `veneer_island.ts` | retired 2026-07-22 | The byte-closure-era veneer islands are now canonical assembly claims classified and verified by `build_asm.ts`. |
 
+### Constants stored after a call are assigned after the call (2026-07-25)
+
+- **Claim:** when a function calls, then stores a small constant, the reference
+  materialises that constant with `movs` *after* the call and keeps the minimal
+  push mask. Two candidate defects collapse into this one source rule:
+  writing the store as a literal (`*(u16 *) 0x05000000 = 0`) pools the value
+  through the HImode path above, and hoisting the constant into a local
+  declared *before* the call (`s32 zero = 0; f(); *p = zero;`) makes it live
+  across the call, forcing a callee-saved register and widening `push {lr}` to
+  `push {r5, lr}`. Declaring the local but assigning it after the call —
+  `s32 zero; f(); zero = 0; *(u16 *) ADDR = zero;` — gives both the `movs`
+  materialisation and the narrow prologue.
+- **Evidence, `resource_3ca:004c`.** The law-conformant draft (declared
+  `extern s16 *Data_03001ebc;` plus the `[182]` array-index form) with the
+  literal store is 13 mismatched bytes over 40 emitted against 36 expected —
+  the delta being the unwanted pool word the HImode entry predicts. Hoisting
+  the zero before the call fixes the pool word but costs `push {r5, lr}` and
+  scores 17. Assigning after the call gives **size 36/36 and 4 mismatched
+  bytes**, with every load, store, register and pool word exact.
+- **Residual, and what it is not.** The remaining 4 bytes are one
+  transposition: the reference emits the value (`movs r2, #0`) before the
+  address (`movs r3, #160 / lsls r3, r3, #19`), the fork emits the address
+  first. It is *not* scheduling — `-fno-schedule-insns`,
+  `-fno-schedule-insns2`, `-O1`, `-mthumb-load-latency-one`,
+  `-mthumb-immediate-latency` and `-fno-sched-depend-count` all leave it at 4,
+  so the order is fixed at RTL expansion. Five source spellings (pointer local
+  assigned after the value, `s16`/`u16`/`s32` value types, `volatile` store,
+  declared destination array) are all also 4. Closing it needs the expander,
+  not another source variant.
+
+### The 0x0030 duplicate family is one copy from exact (2026-07-25)
+
+- **Scope.** Twelve overlay entries share fingerprint `1fwqz6zhzfrzo`
+  (`resource_373/389/391/392/393/39f/3b2/3b4/3bf/3c4/3c5:0030` and
+  `resource_3b5:0040`, 672 bytes). One source shape converts all twelve.
+- **Shape.** A squared-distance helper over two `s32 *` walked with `*p++`:
+  `dx = *a++ - *b++; dy = *a++ - *b++; dz = *a - *b;` then three `>>= 16`
+  shifts, then the products. Naming matters and is not free: naming the first
+  and third products while leaving the middle one inline
+  (`xx = dx*dx; zz = dz*dz; f(xx + dy*dy + zz, zz, dy*dy, 0x030001D8)`)
+  reproduces the reference's `dx², dy², dz²` emission order. Naming all three,
+  or none, or the first two, each rotates the allocator and scores worse
+  (28, 26, 28 against 14).
+- **`-mthumb-load-latency-one` is load-bearing here.** The same source is 18
+  mismatched bytes without it and 14 with it; it is the fork flag added for the
+  dependent-load delay, and this family is a second witness for it.
+- **Residual.** 14 bytes, size exact at 60/60, everything through the third
+  multiply exact. The reference copies the last addend before adding it
+  (`adds r3, r1, #0 / adds r0, r0, r3`) where the fork adds in place
+  (`adds r0, r0, r1`); the 2-byte shift cascades into the pool offset, the
+  branch offset and the pop register. Four tail spellings (named sum,
+  explicit copy temp, `+=` accumulation, CSE-split addend) are all 14, so the
+  copy is allocator-internal, not shape-reachable.
+
 ### The reference pools HImode immediate stores (2026-07-25)
 
 - **Claim:** a store of an integer constant through a `short`/`u16` lvalue

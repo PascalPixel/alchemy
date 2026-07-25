@@ -2023,11 +2023,17 @@ replacement must state what changed and define an acceptance test.
   32/48 and 43 mismatched bytes; `extern s16 Data_02000240[]` with `[224]`
   gives 40/48 and 34, and reproduces the whole address computation exactly.
   The base 0x02000240 recovered this way is a symbol the tree already declares.
-- **Evidence, `resource_3b0:0030`** (76/76, 61 mismatched, not yet rewritten).
-  The reference holds 0x02009938 in `r4` and 0x02009930 in `r5` across the
-  body — hence its `push {r5, lr}` — and walks a third pointer with
-  `ldmia r3!, {r1}`. The candidate reloads both constants from the pool at
-  every field access.
+- **Evidence, `resource_3b0:0030`** (76 bytes). The reference holds 0x02009938
+  in `r4` and 0x02009930 in `r5` across the body — hence its `push {r5, lr}` —
+  and walks a third pointer with `ldmia r3!, {r1}`. The candidate reloaded both
+  constants from the pool at every field access. Declaring both and writing the
+  walk as `*temp_r3++` takes it from 61 mismatched bytes to 23, with the entire
+  middle of the function exact. The residual is at the two chained
+  dereferences of `**(s32 ***) 0x03001E70`: the reference issues them
+  back-to-back into the same register, the fork's two-cycle load ready-delay
+  fills the gap with an unrelated pool load. `-mtune=arm8`, `-mtune=arm9tdmi`
+  and `-mtune=strongarm` all make it worse (36), so the `arm7tdmi` timing is
+  not the thing that is wrong.
 - **Residual on `3b8:0030`,** both unexplained: the reference compares against
   `0x8B` loaded from the pool rather than `cmp rN,#139`, though 139 satisfies
   Thumb's `I`; and it keeps a plain if/else with a `b` over the join where the

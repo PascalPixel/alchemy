@@ -25,9 +25,11 @@ The source-only ownership build currently accounts for:
 
 Compressed EWRAM overlay code is tracked separately because its compiled form
 sits inside the canonical compressed assets above and is intentionally outside
-the main-ROM `[N of M]` counter. Across 96 overlay packages, 167 exact,
-asm-free C sources now replace 12,686 decoded span bytes (6,960 discovered
-instruction bytes). The remaining automatic inventory is not assigned a
+the main-ROM `[N of M]` counter. Across 96 overlay packages, 224 exact,
+asm-free C sources now replace 17,102 decoded span bytes (6,960 discovered
+instruction bytes). The repeated-shape frontier is essentially closed: a
+byte-signature sweep now finds 59 unclaimed decodable prologues in 57
+distinct shapes, so what remains is singleton work rather than cohorts. The remaining automatic inventory is not assigned a
 function-completion percentage: conservative discovery still mixes callable
 shared tails, internal labels, veneers, overlaps, and data. Until CFG/root
 recovery classifies those entries, overlay progress is reported as verified C

@@ -581,7 +581,7 @@ source-address allowlist covers `080f9a50`, `080fa1fc`, `080fa2a0`,
 
 The same compiler also built the cartridge-backup library around `08006b84`,
 which is a separate stock object from a different vendor and shares none of
-m4a's code. Its routed units are `08006ba8`, `08006c24`, `08006dec`, and
+m4a's code. Its routed units are `08006a00`, `08006ba8`, `08006c24`, `08006dec`, and
 `08007098`; the rest of that translation unit stays on the fork until each
 address carries its own proof.
 
@@ -601,11 +601,12 @@ commutative copy/AND pair only when the AND's other register was loaded with a
 constant by the immediately preceding instruction and all three registers are
 distinct.
 
-`08006ba8` and `08007098` also use `-O1`, each for a reason local to the
-function and recorded beside the allowlist in `tools/alchemy_gcc.ts`. Both
-are exact at that level and inexact at `-O2` from any source shape measured,
-and their already-matched sibling `08006dec` is byte-identical at both, so
-the level is a per-address route rather than a property of the object.
+`08006a00`, `08006ba8`, and `08007098` also use `-O1`, each for a different
+reason local to the function and recorded beside the allowlist in
+`tools/alchemy_gcc.ts`. All three are exact at that level and inexact at
+`-O2` from any source shape measured, and their already-matched sibling
+`08006dec` is byte-identical at both, so the level is a per-address route
+rather than a property of the object.
 
 `080fb2cc`, `080fb334`, and `080fb3a8` use old_agbcc's default-off
 `-mprologue-next-high-reg` mode. After register allocation, it finds the

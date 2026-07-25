@@ -124,6 +124,11 @@ async function main(): Promise<void> {
         ? ["void", "s32", "u32", "void *", "s16", "u16", "s8", "u8"]
         : [null];
       let best = Number.MAX_SAFE_INTEGER;
+      // A draft that never compiles and a draft that compiles badly are
+      // different problems, and the report has to tell them apart: a run whose
+      // every candidate throws used to look identical to one that simply found
+      // no exact byte match. Keep the first failure so the histogram is usable.
+      let failure: string | null = null;
       for (const replacement of replacements) {
         const body = replacement === null ? draft : draft.replaceAll("M2C_UNK", replacement);
         for (const [label, source] of variants(M2C_PREAMBLE + body, options.variants)) {
@@ -146,7 +151,9 @@ async function main(): Promise<void> {
               console.log(`exact ${fn.id} bytes=${verification.size} label=${label}`);
               break;
             }
-          } catch {}
+          } catch (error) {
+            failure ??= (error as Error).message.split("\n").slice(0, 3).join(" ").slice(0, 300);
+          }
         }
         if (results[index]?.matched === true) break;
       }
@@ -154,6 +161,7 @@ async function main(): Promise<void> {
         id: fn.id,
         matched: false,
         mismatched_bytes: best === Number.MAX_SAFE_INTEGER ? null : best,
+        ...(best === Number.MAX_SAFE_INTEGER && failure !== null ? { error: `build: ${failure}` } : {}),
       };
     }
   }

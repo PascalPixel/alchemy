@@ -177,7 +177,7 @@ const DEFAULT_ABI_SOURCES = new Set([
 // under old_agbcc, so the whole default-ABI TU is likely old_agbcc; the rest
 // stay on the fork until each has its own exact-byte proof.
 const AGBCC_SOURCES = new Set([
-  "08006c24", "08006dec",
+  "08006ba8", "08006c24", "08006dec",
   "080f9a50",
   "080fadf0",
   "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
@@ -189,7 +189,12 @@ const AGBCC_SOURCES = new Set([
 // This command-table lookup is byte-identical only when the independent
 // literal load precedes its adjacent index shift, matching the stock object.
 const AGBCC_LITERAL_BEFORE_SHIFT_SOURCES = new Set(["080fb670"]);
-const AGBCC_OPTIMIZE_O1_SOURCES = new Set(["080fa514"]);
+// The flash reader copies its own callee's body onto the stack, so its loop
+// test is duplicated above the loop at -O2 by jump.c:duplicate_loop_exit_test.
+// The reference has no such guard: at optimize<2 that transform bails out
+// while BLOCK notes are still present, and the value it would keep live is
+// what pushes a fifth long-lived pseudo into r8 and changes the push list.
+const AGBCC_OPTIMIZE_O1_SOURCES = new Set(["08006ba8", "080fa514"]);
 const AGBCC_COMPARE_ONLY_AND_TST_SOURCES = new Set(["080f9a50"]);
 const AGBCC_COMMUTATIVE_COPY_CONSTANT_SOURCES = new Set(["080fa514"]);
 const AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES = new Set([
@@ -258,7 +263,12 @@ export function usesAgbccCompiler(target: CompilerTarget, source: string): boole
   return target === "gs1" && AGBCC_SOURCES.has(sourceStem(source));
 }
 
-const ADDRESS_SYMBOL = /^(Func|Data|Value)_([0-9a-f]{8})$/;
+// The optional trailing letter names a *second* external symbol whose value is
+// the same address. The stock objects sometimes referenced one address through
+// several symbols, and arm.c's minipool keeps one entry per distinct SYMBOL_REF,
+// so a reconstruction that spells them all the same way collapses the duplicate
+// pool words (and, with them, the blocks that load them).
+const ADDRESS_SYMBOL = /^(Func|Data|Value)_([0-9a-f]{8})(?:_[a-z])?$/;
 const CALL_VIA_SYMBOL = /^_call_via_r(1[0-3]|[0-9])$/;
 const CALL_VIA_ALIAS = /^_call_via_(sl|fp|ip|sp)$/;
 const CALL_VIA_BASE = 0x080072e4;
@@ -294,10 +304,18 @@ export function externalSymbol(name: string): ExternalSymbol | null {
   return null;
 }
 
+// `.thumb_func` only marks a symbol defined by a label; on a `.set` alias the
+// branch type is lost, so a data reference to the stub linked to the plain even
+// address. The ARM ELF ABI puts bit 0 of an ABS32 relocation against a Thumb
+// function, which is what the stock ROM's own pool words carry (the flash
+// reader at 08006ba8 loads 0x08006b85 and clears the tag at run time).
+// `.thumb_set` is the alias form that keeps the branch type, so both the
+// branch offset and the tagged data word come out right.
 export function externalSymbolAssembly(name: string): string {
   const symbol = externalSymbol(name);
   if (symbol === null) throw new Error(`unsupported external symbol: ${name}`);
-  return `.global ${name}\n${symbol.thumb ? ".thumb_func\n" : ""}.set ${name}, 0x${symbol.address.toString(16).padStart(8, "0")}\n`;
+  const directive = symbol.thumb ? ".thumb_set" : ".set";
+  return `.global ${name}\n${directive} ${name}, 0x${symbol.address.toString(16).padStart(8, "0")}\n`;
 }
 
 // The approved compiler bundle is host-specific: xgcc/cc1/cpp/tradcpp are
@@ -520,7 +538,7 @@ export function directCompilerCommandForSource(
 
 function selfTest(): void {
   const expected = [
-    "08006c24", "08006dec",
+    "08006ba8", "08006c24", "08006dec",
     "080f9a50",
   "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
     "080fa424", "080fa458", "080fa490", "080fa514", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
@@ -538,6 +556,7 @@ function selfTest(): void {
     }
     const expectedFlags = [
       ...AGBCC_CFLAGS,
+      ...(stem === "08006ba8" ? ["-O1"] : []),
       ...(stem === "080fa514" ? ["-O1", "-mcommutative-copy-constant"] : []),
       ...(stem === "080fb670" ? ["-mliteral-before-shift"] : []),
       ...(["080fb2cc", "080fb334", "080fb3a8"].includes(stem)

@@ -1135,75 +1135,8 @@ Overlay_02000000:
 	.4byte 0x47204c00
 	.2byte 0x8941
 	.2byte 0x0200
-	push	{r5, lr}
-	adds	r5, r0, #0
-	adds	r5, #100
-	movs	r2, #0
-	ldrsh	r3, [r5, r2]
-	cmp	r3, #2
-	beq.n	.L_0200006e
-	cmp	r3, #2
-	bgt.n	.L_02000048
-	cmp	r3, #0
-	beq.n	.L_02000082
-	b.n	.L_02000098
-.L_02000048:
-	cmp	r3, #4
-	beq.n	.L_02000060
-	cmp	r3, #6
-	bne.n	.L_02000098
-	ldr	r3, [r0, #24]
-	ldr	r2, [pc, #84]
-	adds	r3, r3, r2
-	str	r3, [r0, #24]
-	movs	r2, #128
-	ldr	r3, [r0, #28]
-	lsls	r2, r2, #6
-	b.n	.L_0200007c
-.L_02000060:
-	ldr	r3, [r0, #24]
-	movs	r2, #128
-	lsls	r2, r2, #6
-	adds	r3, r3, r2
-	str	r3, [r0, #24]
-	ldr	r2, [pc, #64]
-	b.n	.L_0200007a
-.L_0200006e:
-	ldr	r3, [r0, #24]
-	movs	r2, #128
-	lsls	r2, r2, #5
-	adds	r3, r3, r2
-	str	r3, [r0, #24]
-	ldr	r2, [pc, #52]
-.L_0200007a:
-	ldr	r3, [r0, #28]
-.L_0200007c:
-	adds	r3, r3, r2
-	str	r3, [r0, #28]
-	b.n	.L_02000098
-.L_02000082:
-	movs	r3, #128
-	lsls	r3, r3, #9
-	str	r3, [r0, #24]
-	str	r3, [r0, #28]
-	bl	sub_020042f8
-	movs	r1, #90
-	bl	sub_020042e6
-	adds	r0, #60
-	strh	r0, [r5, #0]
-.L_02000098:
-	ldrh	r3, [r5, #0]
-	subs	r3, #1
-	strh	r3, [r5, #0]
-	movs	r0, #1
-	pop	{r5}
-	pop	{r1}
-	bx	r1
-	.2byte 0x0000
-	.4byte 0xffffc000
-	.4byte 0xf856f001
-	.2byte 0xf800
-	.2byte 0xffff
+AlchemyC_02000030:
+	.space 0x84
 	.2byte 0xb500
 	movs	r1, #1
 	bl	sub_0200435e

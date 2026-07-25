@@ -236,9 +236,20 @@ Overlay code has independent load addresses and boundary concerns. Do not feed
 it blindly through the ordinary fixed-image pipeline.
 
 Overlay conversions also sit outside the `[N of M]` commit counter, which
-counts main-ROM C-target regions (`tools/check_commit_progress.ts`). Track
-overlay progress separately, or widen the denominator in the same commit that
-first counts overlay work; never let the primary metric drift silently.
+counts main-ROM C-target regions (`tools/check_commit_progress.ts`). The
+settled choice is to track overlay progress **separately** rather than widen
+the denominator: `M` is derived from the main-ROM region table, whereas the
+overlay denominator would have to come from control-flow discovery, which the
+paragraph below explains is not a trustworthy denominator. Folding an unstable
+count into `M` would corrupt the one metric that is currently exact.
+
+The practical consequence: an overlay-only commit carries the `[N of M]`
+suffix **unchanged**, because the checker requires the suffix on every commit
+and only forbids `N` from regressing. A flat counter on such a commit means
+"no main-ROM region closed", not "no progress". State the overlay numbers in
+the commit body instead, quoting `tools/overlay_inventory.ts`'s
+`converted_functions` and `converted_instruction_bytes`, so the overlay lane
+has its own visible, monotonic record.
 
 ```sh
 # Inventory executable entries, boundaries, and structural families.
@@ -251,7 +262,19 @@ bun tools/overlay_match.ts --limit 100 --max-bytes 512 \
 # Compare overlay instruction shapes with the verified exact-C corpus.
 bun tools/compiler_template_index.ts --jobs 16 --top 20
 bun tools/overlay_template_match.ts
+
+# Adopt one exact overlay reconstruction (dry run, then install).
+bun tools/overlay_adopt.ts resource_3c7:0030 --source out/decomp/.../02000030.c
+bun tools/overlay_adopt.ts resource_3c7:0030 --source ... --apply
 ```
+
+`overlay_adopt.ts` is the only supported way to install an overlay conversion.
+It locates the region with the assembler's own listing, swaps the instructions
+for the `AlchemyC_<address>: / .space` placeholder the asset builder reads,
+installs the C as the overlay's `_c_<address>.c` sibling, and refuses to write
+anything unless the rebuilt overlay is byte-identical to the overlay as it
+stands. Editing the placeholder by hand invites a silent width error, because
+Thumb encodings are 2 or 4 bytes and the `.space` size must be exact.
 
 The inventory's `unconverted_discoveries` count is deliberately not a
 function-debt denominator: conservative control-flow discovery retains

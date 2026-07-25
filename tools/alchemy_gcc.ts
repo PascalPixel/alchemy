@@ -137,7 +137,25 @@ const EARLY_FRAME_ALLOCATION_SOURCES = new Set(["0809802c", "08004760"]);
 // immediately before a call, the independent r0 register copy precedes the r1
 // immediate. Their common filename is not unique, so routing must use the
 // canonical resource path rather than the 020000a0 stem.
+//
+// The 02000048 block is a second constructor in the same nine objects, and it
+// is the sharper evidence of the two: those nine are one duplicate-fingerprint
+// family, byte-identical apart from their four `bl` encodings, and each one is
+// exact with the mode and off by exactly the same four bytes without it --
+// `movs r1, #14` / `adds r0, r5, #0` transposed immediately before the second
+// call. Its two other calls are unaffected in both modes, so the mode moves
+// that one pair and nothing else. Every 02000048 entry shares an object with
+// the 020000a0 entry directly above it.
 const CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3a0_c_02000048.c",
+  "assets/code/resource_3a1_c_02000048.c",
+  "assets/code/resource_3a5_c_02000048.c",
+  "assets/code/resource_3a6_c_02000048.c",
+  "assets/code/resource_3ab_c_02000048.c",
+  "assets/code/resource_3b3_c_02000048.c",
+  "assets/code/resource_3be_c_02000048.c",
+  "assets/code/resource_3c0_c_02000048.c",
+  "assets/code/resource_3c9_c_02000048.c",
   "assets/code/resource_380_c_020000a0.c",
   "assets/code/resource_382_c_020000a0.c",
   "assets/code/resource_385_c_020000a0.c",
@@ -614,7 +632,7 @@ function selfTest(): void {
     throw new Error("grouped DMA O1 routing self-test failed");
   }
   const callArg0MoveFirstOverlays = [...CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES].sort();
-  if (callArg0MoveFirstOverlays.length !== 19) {
+  if (callArg0MoveFirstOverlays.length !== 28) {
     throw new Error("overlay call-argument source allowlist self-test failed");
   }
   for (const path of callArg0MoveFirstOverlays) {

@@ -773,54 +773,8 @@ Overlay_02000000:
 	bx	r1
 	.2byte 0x01d8
 	.2byte 0x0300
-	push	{r5, r6, r7, lr}
-	ldr	r3, [pc, #76]
-	adds	r4, r0, #0
-	ldr	r2, [r3, #0]
-	ldr	r3, [r4, #0]
-	adds	r1, r2, #0
-	ldr	r6, [pc, #68]
-	movs	r5, #8
-	asrs	r7, r3, #20
-	adds	r1, #52
-.L_02000080:
-	ldmia	r1!, {r0}
-	ldr	r3, [r0, #8]
-	asrs	r3, r3, #20
-	cmp	r7, r3
-	bne.n	.L_020000ae
-	ldr	r3, [r4, #4]
-	cmp	r3, #0
-	bge.n	.L_02000092
-	adds	r3, r3, r6
-.L_02000092:
-	asrs	r2, r3, #16
-	ldr	r3, [r0, #12]
-	cmp	r3, #0
-	bge.n	.L_0200009c
-	adds	r3, r3, r6
-.L_0200009c:
-	asrs	r3, r3, #16
-	cmp	r2, r3
-	bne.n	.L_020000ae
-	ldr	r2, [r4, #8]
-	ldr	r3, [r0, #16]
-	asrs	r2, r2, #20
-	asrs	r3, r3, #20
-	cmp	r2, r3
-	beq.n	.L_020000b6
-.L_020000ae:
-	adds	r5, #1
-	cmp	r5, #65
-	bls.n	.L_02000080
-	movs	r0, #0
-.L_020000b6:
-	pop	{r5, r6, r7}
-	pop	{r1}
-	bx	r1
-	.4byte 0x03001ebc
-	.2byte 0xffff
-	.2byte 0x0000
+AlchemyC_0200006c:
+	.space 0x58
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -1004,61 +958,8 @@ Overlay_02000000:
 	.4byte 0xffff0000
 	.2byte 0x3333
 	.2byte 0x0000
-	push	{r5, r6, lr}
-	adds	r4, r3, #0
-	ldr	r3, [sp, #12]
-	mov	ip, r3
-	ldr	r3, [pc, #80]
-	adds	r6, r1, #0
-	adds	r1, r2, #0
-	ldr	r2, [r3, #0]
-	ldr	r5, [sp, #16]
-	cmp	r2, #0
-	beq.n	.L_02000298
-	cmp	r0, #2
-	bhi.n	.L_0200026e
-	lsls	r3, r0, #1
-	adds	r3, r3, r0
-	movs	r0, #152
-	lsls	r0, r0, #1
-	lsls	r3, r3, #4
-	adds	r3, r3, r0
-	ldr	r0, [r2, r3]
-	b.n	.L_02000270
-.L_0200026e:
-	ldr	r0, [pc, #52]
-.L_02000270:
-	lsls	r3, r1, #7
-	adds	r3, r6, r3
-	lsls	r3, r3, #2
-	movs	r1, #0
-	adds	r0, r0, r3
-	cmp	r1, ip
-	bcs.n	.L_02000298
-.L_0200027e:
-	lsls	r3, r1, #9
-	movs	r2, #0
-	adds	r3, r0, r3
-	cmp	r2, r4
-	bcs.n	.L_02000292
-.L_02000288:
-	adds	r2, #1
-	strb	r5, [r3, #2]
-	adds	r3, #4
-	cmp	r2, r4
-	bcc.n	.L_02000288
-.L_02000292:
-	adds	r1, #1
-	cmp	r1, ip
-	bcc.n	.L_0200027e
-.L_02000298:
-	movs	r0, #0
-	pop	{r5, r6}
-	pop	{r1}
-	bx	r1
-	.4byte 0x03001e70
-	.2byte 0x0000
-	.2byte 0x0201
+AlchemyC_02000244:
+	.space 0x64
 	push	{r5, r6, r7, lr}
 	adds	r5, r0, #0
 	ldrh	r3, [r5, #6]

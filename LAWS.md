@@ -2077,3 +2077,33 @@ replacement must state what changed and define an acceptance test.
   `-ARM_FLAG_*` negative entries in `TARGET_SWITCHES` cannot express. A further
   `-m` mode needs `target_flags` widened first.
 - **Recorded:** 2026-07-25.
+
+### The overlay frontier is 57 functions, not 573 (2026-07-25)
+
+- **Measurement.** `out/decomp/overlays.json` lists 573 unconverted overlay
+  entries totalling 216,458 bytes, which overstates the remaining work by an
+  order of magnitude. Classifying them by the inventory's own fields (disjoint,
+  in this order):
+  ```
+  structural_veneer            43
+  data_walk                   237
+  unresolved > 0               95
+  jump_tables > 0               0
+  code_bytes < 8              107
+  span - code > 64             13
+  code_bytes 8..40             25
+  code_bytes 41..96            53   (plus 21 above 96)
+  ```
+  Only 78 entries are functions of a shape the pipeline will even attempt, and
+  `overlay_match.ts --all --max-bytes 96` selects 57 of them.
+- **Those 57 are the near-miss set already known.** Sweeping them produces 39
+  compiled candidates whose mismatch counts reproduce `/tmp/near.list` exactly,
+  and 18 build failures. There is no untried pool of easy overlay wins: every
+  overlay function that can be compiled at all has been compiled, and what
+  remains is the residual analysis in the entries above.
+- **Where the hidden work actually is.** The 237 `data_walk` and 107 sub-8-byte
+  entries are data or stubs misfiled as functions — closing them is an
+  inventory-classification job, not a decompilation one. The 95 with
+  `unresolved > 0` are real functions gated on resolving their call targets,
+  and are the largest genuinely-convertible block still untouched.
+- **Recorded:** 2026-07-25.

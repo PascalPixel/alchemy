@@ -136,7 +136,9 @@ function main(): void {
   // first one's `.space`. The assembler tolerates the duplicate and the ROM
   // still rebuilds byte-identically, so the full build does not catch it; only
   // the inventory's placeholder walk does, one run later. Refuse up front.
-  for (const line of lines.slice(first - 1, last)) {
+  // The label itself emits no bytes, so it has no listing offset and sits just
+  // before the region's first encoded line; look a little further back.
+  for (const line of lines.slice(Math.max(0, first - 4), last)) {
     if (line.startsWith("AlchemyC_")) throw new Error(`${options.id} is already adopted as C`);
   }
 

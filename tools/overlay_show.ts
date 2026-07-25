@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Tool role: entrypoint; invoked by PLAYBOOK.md.
+// Tool role: entrypoint; invoked by PLAYBOOK.md, tools/candidate_show.ts.
 // Print one overlay function's reconstruction disassembly together with the
 // pool words its pc-relative loads resolve to, which is the pair of facts a
 // semantics-first draft needs and which otherwise takes two tools and a manual

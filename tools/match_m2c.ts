@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Tool role: both; imported by tools/decomp_diagnose.ts, tools/decomp_module.ts, tools/decomp_queue.ts (+9 more); invoked by PLAYBOOK.md.
+// Tool role: both; imported by tools/candidate_show.ts, tools/decomp_diagnose.ts, tools/decomp_module.ts (+10 more); invoked by PLAYBOOK.md.
 import { canonicalJson } from "./canonical_json.ts";
 import {
   existsSync,

@@ -464,18 +464,33 @@ branch a pool skip and the function an ordinary one.
 
 GCC dumps a pending pool at a barrier and otherwise defers it to the end of the
 function, inserting a jump around the table when it dumps early. A function this
-short gives it no reason to dump early, so closing this gate means a targeted
-flag in alchemy-gcc that forces the dump at the first barrier after the entry
-block, in the same manner as `-mthumb-entry-literal-first`. Until that flag
-exists these functions are unreachable, and they are gated on compiler work, not
-on drafting effort.
+short gives it no reason to dump early, so the gate is closed by
+`-mthumb-early-literal-pool` in alchemy-gcc, which searches from the last real
+fix up to, but not into, the natural barrier and lets the existing barrier cost
+pick the split. Route an overlay to it through
+`EARLY_LITERAL_POOL_OVERLAY_SOURCES`.
+
+The flag only restores the layout. Two source-level facts closed the last six
+bytes of the pair that motivated it, and both are worth trying on any function
+this flag is applied to. Instruction scheduling must stay **on**: it is what
+groups the two pool loads ahead of the counter's `movs`, and turning it off to
+control source order breaks that grouping. And the loop counter must be declared
+ahead of the pointer, which is what gives the counter `r2` and leaves the
+pointer `r3`; declaring the pointer first swaps the two and costs six bytes that
+no optimisation flag recovers (`-fno-regmove`, `-fno-strength-reduce`,
+`-fno-cse-follow-jumps`, `-fno-expensive-optimizations`, `-fno-gcse`,
+`-fno-force-mem` and `-fno-thread-jumps` were each measured at no effect).
 
 - **Confirmed:** 2026-07-25. Two members, `resource_39b:0e3c` and
   `resource_39c:0dfc`, both 34 bytes and sharing one shape. The draft reaches
   the reference's exact instruction sequence and register allocation; the
   residual 29 mismatched bytes are entirely the shift from pool placement.
   Reordering the source to put the value ahead of the pointer changed the pool
-  word order without moving the pool, leaving the count unchanged at 29.
+  word order without moving the pool, leaving the count unchanged at 29. Closed
+  the same day: the flag took the pair to 11 mismatched bytes, scheduling and
+  declaration order took it to 0, and both members were adopted. Eighteen of the
+  thirty-three functions then remaining carried this layout, so it gates a
+  majority of the remaining overlay work rather than these two alone.
 
 ## Hypotheses
 

@@ -1452,51 +1452,114 @@ against the approved bundle; full sourced notes in
   passes, and the existing `sched2` laws stand for it unchanged.
 - **Recorded:** 2026-07-25.
 
-### A call's argument-register setters break scheduler ties by ABI order (2026-07-25)
+### Pre-call argument setters diverge on two independent `sched2` defects (2026-07-25)
 
-- **Claim:** when a two-insn Thumb constant (`movs rN,#imm` / `lsls rN,rN,#k`)
-  and an independent cheap argument move are both ready in the same cycle
-  before a call, the fork's `sched2` always picks the setter of the
-  *higher-numbered* argument register. The order is an artifact of
-  `CALL_INSN_FUNCTION_USAGE`, which the ABI fixes, so **no C source shape
-  changes it.** If the reference interleaves the *lower*-numbered register's
-  move between the two halves of a *higher*-numbered register's constant, that
-  region is not closable from C on this compiler.
-- **What this replaces.** An earlier working hypothesis held that the
-  `movs`/`lsls` pair is a single RTL insn and therefore unsplittable. That is
-  false and should not be repeated: reload splits the pair well before `sched2`
-  (visible as two insns in `.18.greg`), and the scheduler interleaves across it
-  freely in the common case. The blocker is the tie-break, not the split.
-- **Evidence, `resource_3c7:0030`** (18 bytes, 4 mismatched, unresolved). The
-  reference is `movs r1,#129 / movs r0,#14 / lsls r1,r1,#1`; the fork emits
-  `movs r1,#129 / lsls r1,r1,#1 / movs r0,#14`. The `.23.sched2` dump shows the
-  tie explicitly — `Ready list (t = 1): 11 31`, both ready, and it takes `31`
-  (the `lsls` into r1) over `11` (`movs r0,#14`). The call's `LOG_LINKS` print
-  as `(insn_list 31 (insn_list 11 (nil)))`: r1's setter first, r0's second.
-- **The control that proves it is the register and not the shape.** Swap the
-  arguments — `f(0x102, 0xE)`, so the split lands in r0 and the cheap move in
-  r1 — and the same compiler *does* interleave: `mov r0,#129 / mov r1,#14 /
-  lsl r0,r0,#1`, with `Ready list (t = 1): 29 13` taking `13`. Identical insn
-  structure, identical LUID order, opposite outcome; the only difference is
-  which argument register each insn writes, and in both runs the r1 setter won.
+- **Claim:** the fork's `sched2` mis-orders the run of cheap argument setters in
+  front of a call for two separate reasons, and each one has its own witness.
+  **(A) The `movs`→`lsls` edge costs one cycle, and in the reference it costs
+  two.** A two-insn Thumb constant therefore issues back-to-back here, where the
+  reference fills the gap with an independent setter. **(B) Among insns that are
+  otherwise tied, `rank_for_schedule` prefers the one with more forward
+  dependents, and the reference behaves as if that rule is absent** and falls
+  straight through to the `INSN_LUID` tie-break, i.e. original order. Neither is
+  reachable from C: both are decided after reload, on an insn stream the source
+  no longer controls.
+- **Why (B) looks like an ABI rule, and why that phrasing was wrong.** The extra
+  forward dependent is always contributed by the block's return insn, which
+  depends on the *last writer* of each hard register. For a pre-call setter of
+  r1 or r2 that last writer is the setter itself; for a setter of r0 it is the
+  call, because the call redefines r0. So the r0 setter is systematically one
+  dependent short and systematically loses. The observable — "the higher-numbered
+  argument register's setter wins" — is a consequence of that, not a rule in its
+  own right, and it is only sampled on pairs where the low register is r0. An
+  r1-versus-r2 tie is unmeasured and would fall through to `INSN_LUID`.
+- **What this replaces.** Two superseded mechanisms, neither of which should be
+  repeated. First, that the `movs`/`lsls` pair is a single unsplittable RTL insn:
+  false — reload splits it well before `sched2` (two insns in `.18.greg`). Second,
+  that the tie is an artifact of `CALL_INSN_FUNCTION_USAGE` / `LOG_LINKS` order:
+  also false — `rank_for_schedule` never reads either, and `-fsched-verbose=5`
+  names the deciding rule outright.
+- **Evidence for (A), `resource_3c7:0030`** (18 bytes, 4 mismatched, unresolved).
+  Reference `movs r1,#129 / movs r0,#14 / lsls r1,r1,#1`; fork `movs r1,#129 /
+  lsls r1,r1,#1 / movs r0,#14`. The `.23.sched2` dump:
+  ```
+  ;;	Ready list (t =  0):    11  30      -> schedules 30 (movs r1,#129)
+  ;;	Ready list (t =  1):    11  31      -> schedules 31 (lsls r1,r1,#1)
+  ;;	Ready list (t =  2):    11
+  ```
+  The shift is ready one cycle after its producer, so it never yields the slot.
+  Under a two-cycle edge insn 31 is not in the list at `t = 1` at all, only `11`
+  is, and the emitted order becomes the reference's — with no appeal to (B).
+- **Evidence for both, `resource_3cd:004c`** (36 bytes, 10 mismatched,
+  unresolved). Two divergences in one function, one per defect.
+  ```
+  2000056:  lsls  r1,r1,#1   | 2000056:  movs  r0,#13     <- (A)
+  2000058:  movs  r2,#0      | 2000058:  lsls  r1,r1,#1
+  200005a:  movs  r0,#13     | 200005a:  movs  r2,#0
+  2000060:  movs  r1,#0      | 2000060:  movs  r0,#13     <- (B)
+  2000062:  movs  r0,#13     | 2000062:  movs  r1,#0
+  ```
+  The second pair is the clean (B) case: `movs r0,#13` and `movs r1,#0` are
+  independent, equal priority, and adjacent pre-`sched2` in the reference's
+  order, so only the depend-count rule can transpose them. `-fsched-verbose=5`
+  prints the counts in its forward-dependence table and then acts on them:
+  ```
+  ;;      insn  code    bb   dep  prio  cost   blockage units
+  ;;       25   173     0     1    65     1    1 - 32   core	: 28
+  ;;       27   173     0     2    65     1    1 - 32   core	: 41 28
+  ;;	Ready list (t = 70):    25  27      -> schedules 27, then 25
+  ```
+  Insn 41 is the return; insn 25 sets r0, whose last writer is call 28, so 25
+  carries one dependent and 27 carries two. Equal priority (65 = 65), so
+  `haifa-sched.c:4097-4110` decides, and `haifa-sched.c:4115`'s `INSN_LUID`
+  tie-break — which would have preserved the reference's order — is never
+  reached.
+- **The two defects are independently necessary.** In `3cd:004c`'s first group
+  the ready list at `t = 35` is `17 21 37`; dropping (B) alone still schedules
+  `37` (the shift), because `INSN_LUID (37) < INSN_LUID (21)`. Only a two-cycle
+  edge removes `37` from that list, and only then does dropping (B) pick `17`
+  over `21` and reproduce `36 17 37 21` exactly. Conversely `3c7:0030` needs
+  only (A) and `3cd:004c`'s second group needs only (B). The pair of changes
+  predicts all three divergences byte-for-byte; either alone predicts one.
+- **The control that isolates (B) from insn shape.** Swap the arguments —
+  `f(0x102, 0xE)`, so the split lands in r0 and the cheap move in r1 — and the
+  same compiler *does* interleave: `mov r0,#129 / mov r1,#14 / lsl r0,r0,#1`,
+  with `Ready list (t = 1): 29 13` taking `13`. Identical insn structure,
+  identical LUID order, opposite outcome. That is (B) reversing sign exactly as
+  the last-writer account predicts: the shift now targets r0 and loses the
+  return's dependence, the cheap move now targets r1 and gains it.
 - **Levers measured and rejected on `3c7:0030`:** `-fno-schedule-insns`,
   `-fno-schedule-insns2`, `-fno-regmove`, `-fno-defer-pop`, `-fno-force-mem`,
   `-fno-cse-follow-jumps`, `-O1`, `-Os`, and `-mcall-arg0-move-first` are all
   exact no-ops on the emitted order. Eight source shapes — the constant as a
   local, the cheap arg as a local, both as locals, a comma expression, an
   unprototyped callee, a narrowed `u16` parameter, a `static` initialiser, and
-  `0x81 << 1` written out — all stay at 4 mismatched bytes.
-- **Why the tie is unbreakable from C:** the winner would have to be decided by
-  priority instead, and priority is the critical-path length to the block end.
-  Both candidates are exactly one hop from the call, so they always tie, and
-  the reference's `movs r0,#14` cannot be given a longer path without adding
-  instructions the reference does not have.
-- **Corollary for the fork lane.** This is a one-line tie-break question in
-  `rank_for_schedule`, not a missing pass, which makes it a much cheaper fork
-  change than the "split constants earlier" item it replaces.
+  `0x81 << 1` written out — all stay at 4 mismatched bytes. Ten equivalent
+  shapes were tried in a later pass and also all stayed at 4.
+- **Why neither is reachable from C.** For (A), priority is the critical-path
+  length to the block end; both candidates are one hop from the call, so they
+  always tie, and the reference's `movs r0,#14` cannot be given a longer path
+  without adding instructions the reference does not have. For (B), the extra
+  dependent comes from the return insn's view of the last writer of a hard
+  register, which is fixed by the calling convention once the argument list is
+  fixed — and the argument list is what the reference's own call sites dictate.
+- **Where the cost comes from.** `arm.md:254` gives the `core` unit a ready-delay
+  of 1 for `core_cycles = single`, and `arm_adjust_cost` (`arm.c:2439`) adds
+  nothing for a register-to-register data dependence — it only zeroes anti and
+  output edges, forces 1 for edges into a call, and special-cases load-after-store.
+  So there is no ALU result latency in the fork's model at all.
+- **Corollary for the fork lane — two named, separable changes,** and the top
+  item in that lane. (A) is a cost-model change: give the Thumb `movs`-immediate
+  to dependent-ALU edge a cost of 2, narrowly, in `arm_adjust_cost`. (B) is a
+  one-line gate on `haifa-sched.c:4097-4110`. Both must be validated by a full
+  `build_rom.ts` before adoption: 1,239 functions already match under the current
+  model, and either change is global to the fork lane.
 - **Scope:** measured on the `xgcc` fork at `-O2`. `old_agbcc` has no scheduler
-  and cannot produce the interleave at all, in either direction.
-- **Recorded:** 2026-07-25.
+  and cannot produce the interleave at all, in either direction. (A) is witnessed
+  only on `movs`-immediate to `lsls`; the general "all ALU results cost 2" form is
+  unmeasured. (B) is witnessed only on r0-versus-rN pairs.
+- **Recorded:** 2026-07-25; mechanism corrected and second witness added the same
+  day.
 
 ### Identical large constants in an argument list are a basic-block question (2026-07-25)
 

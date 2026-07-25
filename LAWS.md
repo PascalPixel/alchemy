@@ -1894,6 +1894,53 @@ replacement must state what changed and define an acceptance test.
 | `close_byte_gaps.ts` | retired 2026-07-22 | The English byte-closure plan completed in `6104a64e`; current ownership and identity are enforced by `build_full.ts` and the canonical component builders. |
 | `veneer_island.ts` | retired 2026-07-22 | The byte-closure-era veneer islands are now canonical assembly claims classified and verified by `build_asm.ts`. |
 
+### Overlay pool words are symbols, not integer literals (2026-07-25)
+
+- **Claim.** In overlay C, every constant that the reference keeps in its
+  literal pool must be spelled as a declared symbol, not as an integer
+  literal. Spelling it as a literal changes two things at once: a small
+  comparison operand becomes a `cmp rN, #imm` instead of a pooled
+  `ldr rN, pool / cmp rM, rN`, and two literal return values let GCC collapse
+  an if/else into load-one-then-conditionally-replace, losing the reference's
+  `bne / ldr / b / ldr` shape. Declaring them —
+  `extern u8 Value_00000067;` for the compared value and
+  `extern u8 Data_02009c04[];` for each returned address — restores both.
+- **Evidence.** `resource_3aa:0030` is 30 mismatched bytes with the m2c draft
+  and 27 with the literal-spelled law-conformant draft; with all three pool
+  words as symbols it is **exact**. The same template then matched 21 further
+  instances byte-for-byte on the first compile.
+- **Corollary, the shape scan.** Whole cohorts fall to one template. A byte
+  signature over the reference (`push {lr}`, `Data_02000240[224]` index,
+  pooled compare, two-way return) finds 22 instances across the overlays;
+  extracting each one's three pool words and filling the template converted
+  all of them.
+
+### Overlay discovery misses externally-called functions (2026-07-25)
+
+- **Measurement.** Of those 22 selector instances, `overlay_inventory.ts` had
+  inventoried only 5. The other 17 are not contained in a larger discovery and
+  are not misclassified — they are simply absent. Discovery seeds from the
+  first prologue, from overlay-internal tagged pointers, from the control-flow
+  walk, and from prologues immediately after a return; a function whose only
+  callers live in the main image or in an external pointer table satisfies
+  none of those.
+- **Attempted fix, and why it was reverted.** Seeding every unclaimed
+  word-aligned `push {..., lr}` does find all 17, but the walk cascades from
+  those seeds and raw discoveries go from 565 to 19,596 (14,030 of them data
+  walks). A post-walk quality gate on the seeds themselves does not contain it,
+  because the inflation comes from functions discovered transitively. Do not
+  re-attempt without a containment strategy for the cascade.
+- **What shipped instead.** `overlay_adopt.ts --span BYTES` adopts an entry the
+  inventory does not list. The inventory was never the safety gate: the region
+  boundary check, the straddling-label check and the rehearse-and-compare
+  against the current overlay bytes all read the assembly. Their strength is
+  visible in `resource_38f:0284`, which the label check refuses because code
+  outside the region branches into it.
+- **Consequence for the frontier count.** The "78 decompilable entries"
+  measurement is a floor, not a ceiling: it counts what discovery found. At
+  least 17 convertible functions sat outside it, and the shape scan is the way
+  to find more.
+
 ### Constants stored after a call are assigned after the call (2026-07-25)
 
 - **Claim:** when a function calls, then stores a small constant, the reference

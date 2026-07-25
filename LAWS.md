@@ -1894,6 +1894,26 @@ replacement must state what changed and define an acceptance test.
 | `close_byte_gaps.ts` | retired 2026-07-22 | The English byte-closure plan completed in `6104a64e`; current ownership and identity are enforced by `build_full.ts` and the canonical component builders. |
 | `veneer_island.ts` | retired 2026-07-22 | The byte-closure-era veneer islands are now canonical assembly claims classified and verified by `build_asm.ts`. |
 
+### Signed less-than against a literal canonicalises (2026-07-25)
+
+- **Fingerprint:** the reference has `cmp rN, #K` / `blt`, the candidate has
+  `cmp rN, #K-1` / `ble`, everything else identical, and the branch targets
+  agree. Two instructions, four bytes, cascading into every offset after them.
+- **Mechanism:** GCC rewrites a signed `x < K` into `x <= K-1` before branch
+  emission. The rewrite is not reachable from the source: `x < K`,
+  `x >= K` with the arms swapped, `K <= x`, `!(x < K)` and `x > K-1` all
+  produce the `K-1`/`ble` form, and the value's type (`s16` vs `s32`) does not
+  change it.
+- **Scope:** blocks `resource_3a9:00e4` at 2 mismatched bytes and
+  `resource_37f:00ec` at 16 (its four-way range chain multiplies the cascade).
+  Both are otherwise exact, with every pool word, register and branch target
+  matching.
+- **Consequence:** the reference build did not perform this rewrite, so either
+  its bound was not a foldable literal at that point or its comparison reached
+  the back end differently. Closing these needs the compiler, not another
+  source spelling.
+- **Recorded:** 2026-07-25.
+
 ### Overlay singleton idioms (2026-07-25)
 
 Recurring source-shape rules found while converting the overlay

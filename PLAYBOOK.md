@@ -251,6 +251,42 @@ the commit body instead, quoting `tools/overlay_inventory.ts`'s
 `converted_functions` and `converted_instruction_bytes`, so the overlay lane
 has its own visible, monotonic record.
 
+### Shape cohorts first, singletons last
+
+Measured over the 2026-07-25 overlay session, which recovered 154 functions:
+
+| Method | Functions | Notes |
+|---|---:|---|
+| Shape cohort: one template, expanded | 131 | ~9 templates derived by hand |
+| Hand-drafted singletons | 19 | one analysis each |
+| Agent drafting lane | 4 | 12 targets, ~2M tokens |
+| Permuter and variant sweeps | 0 | thousands of candidates, no exact overlay match |
+
+Derive one template and expand it. A cohort member costs a compile; a singleton
+costs an analysis. Run the sweeps only to *rank* near-misses, never expecting a
+match from them.
+
+```sh
+# 1. Find the cohorts. Groups unclaimed, uninventoried functions by masked
+#    opcode shape -- these are the ones discovery never seeded, where the
+#    remaining cohorts live.
+bun tools/overlay_shapes.ts --top 10
+
+# 2. Hand-derive C for one member of the largest cohort, using the overlay
+#    laws in LAWS.md (pool words are symbols; initialisers follow source
+#    order; a byte threshold is tested on the shifted value; loop counters
+#    are unsigned). Verify it alone first.
+
+# 3. Expand it. Each member is renamed to its own entry symbol, byte-verified,
+#    and adopted only on an exact match; constants that differ simply miss.
+bun tools/overlay_cohort.ts --cohort 0 --template work/<name>.c
+bun tools/overlay_cohort.ts --cohort 0 --template work/<name>.c --apply
+```
+
+When a cohort member misses by a handful of bytes, read its diff before
+touching the template: the per-instance constants usually differ, and the fix
+belongs in a per-member generator rather than in the shared shape.
+
 ```sh
 # Inventory executable entries, boundaries, and structural families.
 bun tools/overlay_inventory.ts --top 10

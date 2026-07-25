@@ -1893,3 +1893,75 @@ replacement must state what changed and define an acceptance test.
 | `build_context.ts` | retired 2026-07-22 | Plain declaration collector; strict subset of the scoring, struct-folding `m2c_context.ts` context builder that replaced it in the wave pipeline. |
 | `close_byte_gaps.ts` | retired 2026-07-22 | The English byte-closure plan completed in `6104a64e`; current ownership and identity are enforced by `build_full.ts` and the canonical component builders. |
 | `veneer_island.ts` | retired 2026-07-22 | The byte-closure-era veneer islands are now canonical assembly claims classified and verified by `build_asm.ts`. |
+
+### The reference pools HImode immediate stores (2026-07-25)
+
+- **Claim:** a store of an integer constant through a `short`/`u16` lvalue
+  materialises the value with a literal-pool `ldrh`, not a `mov`, even when the
+  value fits the Thumb `I` constraint (0-255). `*(u16 *) p = 0xff` is
+  `ldrh r3, .LN / strh r3, [r0]`. This is a property of the reference, not a
+  fork defect, and it is load-bearing: 25 of the 1,239 byte-exact functions
+  depend on it.
+- **Mechanism.** `*thumb_movhi_insn` (`arm.md:4360`) spells its load alternative
+  `"mn"`. The `n` makes a `CONST_INT` match alternative 1 as well as the `"I"`
+  alternative at index 5, and because alternative 1 comes first, reload
+  satisfies it with `force_const_mem`. The movhi expander has already turned
+  `*(short *) p = K` into `(set (reg:HI) (const_int K))` + `(set (mem:HI) (reg:HI))`
+  by then, so the constant is an HImode register load and the pool wins.
+- **Why it looks like a bug, and the measurement that says it isn't.**
+  `*thumb_movqi_insn` spells the same alternative `"m"`, and
+  `*thumb_movsi_insn` puts its `"I"` alternative *ahead* of the load. So QImode
+  and SImode both emit `mov` and only HImode pools — exactly the shape of a
+  transposition typo. Dropping the `n` does make HImode behave like the other
+  two, and large HImode constants still reach the pool through `"m"`. It also
+  regresses `build_claimed.ts` from `failures=0` to `failures=25`. Witness:
+  `080b6a60`, whose `*output = 0xff` the reference pools. **Do not "fix" this.**
+- **Corollary for candidate C.** A near-miss whose only defect is an unwanted
+  pool word at an `strh` is telling you the *candidate* is wrong, not the
+  compiler: the reference stored something that was not an HImode constant at
+  expand time. `resource_3ca:004c` is the open example — 13 mismatched bytes,
+  40 emitted against 36 expected, the whole delta being one extra pool word,
+  where the reference has `movs r2,#0 / movs r3,#160 / lsls r3,r3,#19 /
+  strh r2,[r3]`. Its value reached `strh` from an SImode register. Four source
+  shapes that do not dodge it: `volatile` on the destination, hoisting the load
+  into a local, spelling the destination `u16 *`, and hoisting the destination
+  pointer into a local (that one is worse, 22).
+- **Scope:** measured on the `xgcc` fork at `-O2`. QImode and SImode immediate
+  stores are unaffected and use `mov`.
+- **Recorded:** 2026-07-25.
+
+### `resource_3ca:004c` narrows to one priority-ordered pair (2026-07-25)
+
+- **State:** 4 mismatched bytes, 36/36 size, from 13 and 40/36. Not closed.
+- **What fixed the size.** The candidate stored an HImode constant, which the
+  fork pools (see the law above), costing an extra literal word. Giving the
+  value an SImode home — `s32 z = 0; *(s16 *) 0x05000000 = z;` — makes the store
+  `(set (mem:HI) (subreg:HI (reg:SI)))` and the pool word disappears. The
+  declaration must sit **after** the call: declared before it, `z`'s live range
+  crosses the call, the allocator takes call-saved `r5`, and the function grows
+  a `push {r5}` / `pop {r5}` the reference does not have.
+- **The residual is a priority decision, not a tie.** `.23.sched2` at the one
+  divergent site:
+  ```
+  ;;       29   173     0     4    34     1    1 - 32   core	: 56 55 35
+  ;;       51   173     0     3    35     1    1 - 32   core	: 55 52
+  ;;	Ready list (t = 41):    29  51      -> schedules 51, reference wants 29
+  ```
+  Insn 29 is `mov r2,#0` feeding the `strh` directly; 51 is `mov r3,#160`
+  feeding `lsl r3,r3,#19` and then the same `strh`. That extra hop makes
+  prio 35 against 34, so `rank_for_schedule` returns on priority and never
+  reaches any tie-break. **No tie-break flag can close this**, which is why
+  `-fno-sched-depend-count` and `-mcall-arg0-move-first` are both no-ops here.
+- **Why `-mthumb-immediate-latency` does not close it either.** It lifts both
+  priorities, 34 → 35 and 35 → 36, because insn 51 is an immediate move too.
+  The gap is preserved. Closing it would need the *store's data operand* edge
+  to cost more than the ALU edge — immediate→store 3 against immediate→ALU 2 —
+  which is unwitnessed and does not follow from defect (A).
+- **The two sites disagree about `sched2`, in one function.** With `sched2` on,
+  the prologue is exact (`ldr r3,.L / movs r2,#182 / ldr r3,[r3]` — the
+  load-latency interleave) and the tail is transposed. With
+  `-fno-schedule-insns2` the tail is exact and the prologue transposes instead.
+  Both settings sit at 4 mismatched bytes. This is the second function known to
+  want one `sched2` decision each way, after `resource_3a0_c_02000048.c`.
+- **Best candidate kept at** `/tmp/best/resource_3ca_004c.c` (not adopted).
+- **Recorded:** 2026-07-25.

@@ -36,7 +36,11 @@ export function disassemble(
     sourceData.copy(masked, address - start, source, source + instruction.size);
   }
   writeFileSync(binary, masked.subarray(0, end - start));
-  const command = ["arm-none-eabi-objdump", "-D", "-b", "binary", "-marm", "-Mforce-thumb", `--adjust-vma=0x${hex(start)}`, binary];
+  // -z is required, not cosmetic. Without it objdump abbreviates any run of
+  // four or more zero bytes to a single `...` line, so the instructions inside
+  // the run get no row at all and the caller's lookup finds nothing. Runs of
+  // `movs r0, r0` are ordinary in padded Thumb code, so this is not rare.
+  const command = ["arm-none-eabi-objdump", "-D", "-b", "binary", "-marm", "-Mforce-thumb", "-z", `--adjust-vma=0x${hex(start)}`, binary];
   const process = Bun.spawnSync(command, { stdout: "pipe", stderr: "pipe" });
   if (process.exitCode !== 0) throw new Error(process.stderr.toString().trim());
   const result = new Map<number, string>();
@@ -73,7 +77,13 @@ export function emitDiscovery(rom: Uint8Array, discovery: Discovery, address: nu
   const lines = [".syntax unified", ".thumb", `glabel Func_${hex(address)}`];
   for (const item of instructions) {
     if (labels.has(item)) lines.push(`.L_${hex(item)}:`);
-    let instruction = decoded.get(item)!.split(";", 1)[0].trim();
+    const row = decoded.get(item);
+    // objdump is a stream disassembler and does not know our boundaries. If it
+    // consumed this address as the tail of a wider instruction, the walk that
+    // produced these boundaries disagrees with the disassembler about what is
+    // code, and emitting the remainder would silently misalign the listing.
+    if (row === undefined) throw new Error(`objdump emitted no instruction at ${hex(item)}`);
+    let instruction = row.split(";", 1)[0].trim();
     const kind = discovery.instructions.get(item)!.kind;
     if (kind === "call" && calls.has(item)) instruction = `${instruction.split(/\s+/, 1)[0]} Func_${hex(calls.get(item)!)}`;
     else if (kind === "branch" || kind === "conditional") {

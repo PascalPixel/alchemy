@@ -2101,9 +2101,13 @@ replacement must state what changed and define an acceptance test.
   and 18 build failures. There is no untried pool of easy overlay wins: every
   overlay function that can be compiled at all has been compiled, and what
   remains is the residual analysis in the entries above.
-- **Where the hidden work actually is.** The 237 `data_walk` and 107 sub-8-byte
-  entries are data or stubs misfiled as functions — closing them is an
-  inventory-classification job, not a decompilation one. The 95 with
-  `unresolved > 0` are real functions gated on resolving their call targets,
-  and are the largest genuinely-convertible block still untouched.
+- **There is no untouched convertible block behind the filters.** Every one of
+  the 95 `unresolved > 0` entries also has `code_bytes < 8`; the ordering of the
+  classification above just counts them under `unresolved` first. So the 95, the
+  107 sub-8-byte entries, the 237 `data_walk` and the 43 veneers are all the
+  same kind of thing — data, padding, or two-byte fragments misfiled as
+  functions, 482 entries in total. Closing them is an inventory-classification
+  job, not a decompilation one, and it will not add a single compiled function.
+  The whole decompilable overlay remainder is the 78, and the 57 the sweep
+  selects are the only ones with candidates today.
 - **Recorded:** 2026-07-25.

@@ -497,6 +497,40 @@ no optimisation flag recovers (`-fno-regmove`, `-fno-strength-reduce`,
   it was built for is converted, but it unblocks a handful of functions, not a
   majority. Decide this by pool-word address, never by branch shape.
 
+### A symbol's address load is placed by reload, not by expansion order
+
+Several overlay tails load the stored value through a pointer and only then
+materialise the destination's address, where the reconstruction materialises the
+destination first. The two differ by about five bytes and by which of `r2` and
+`r3` holds what, with the instruction count identical.
+
+Source shape does not reach it. Nine forms were measured on `resource_397:026c`
+-- ternary, ternary through a pointer, explicit pointer select, a value local in
+both declaration orders, two separate stores in both polarities, and a widened
+compare. Pointer select is the best at five mismatched bytes and the two-store
+form at six reproduces the reference's cross-jumped branches exactly, and still
+hoists the address load. Roughly fifteen flags were measured at no effect,
+including every scheduler lever and both fork-specific scheduling flags.
+
+Expansion order does not reach it either, and this is the useful part. Turning
+off post-reload scheduling leaves the tail destination-first, which rules out
+the scheduler. A `-fstore-value-first` flag was then built, extending
+`expand_assignment`'s existing rhs-before-lhs path (the one gcc already uses for
+calls) to a scalar load through a pointer; it was confirmed present in the built
+`cc1` and changed no byte, alone or with scheduling off. The reason is that on
+Thumb a MEM whose address is a `symbol_ref` has no address load at expansion
+time at all: the load is created when reload legitimises the address. Ordering
+anything earlier cannot move an instruction that does not exist yet. That flag
+was reverted rather than left in the fork as a no-op.
+
+So this gate lives in ARM address legitimisation during reload, which is a much
+deeper change than the pool-placement flag, and it should be sized as such
+before anyone starts. Do not spend another sweep on source forms or on
+scheduling flags; both are exhausted and recorded here.
+
+- **Confirmed:** 2026-07-25. `resource_397:026c`, a VCOUNT-gated scroll write,
+  held at five mismatched bytes throughout.
+
 ## Hypotheses
 
 Hypotheses are useful search leads, not accepted compiler laws. Promote one only

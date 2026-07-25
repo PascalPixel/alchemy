@@ -2041,3 +2041,39 @@ replacement must state what changed and define an acceptance test.
   8 bytes shorter. `-fno-cse-follow-jumps`, `-fno-thread-jumps`, `-fno-gcse`
   and `-O1` are all no-ops on both.
 - **Recorded:** 2026-07-25.
+
+### The reference issues a dependent load in the next cycle (2026-07-25)
+
+- **Claim:** the fork gives a load's result a ready-delay of 2, so a dependent
+  insn cannot issue until two cycles later and `sched2` fills the hole with
+  something unrelated. The reference issues the dependent insn in the very next
+  cycle. Chained pointer dereferences are the clean witness: the reference emits
+  `ldr r3,[pc,#60] / ldr r3,[r3] / ldr r3,[r3]` three in a row.
+- **Mechanism.** `arm.md:263`, `(and (eq_attr "ldsched" "!yes") (eq_attr "type"
+  "load,store1")) 2 2`. `arm7tdmi` is not in the `FL_LDSCHED` group so
+  `arm_ld_sched` is 0 and this is the applicable line; the `ldsched yes` line at
+  260 also gives ready-delay 2, so no tuning selects delay 1. `.23.sched2`
+  confirms it directly: `insn 14: queued for 2 cycles`.
+- **Implemented as `-mthumb-load-latency-one`** (`ARM_FLAG_THUMB_LOAD_LATENCY_ONE`,
+  bit 30): in `arm_adjust_cost`, a true data dependence whose producer is a
+  `(set (reg) (mem))` returns `cost - 1` when `cost > 1`. Default off, and
+  `build_claimed.ts` is unchanged with it off.
+- **It reproduces the reference's schedule and closes nothing.** On
+  `resource_3b0:0030` the head becomes exact — the three chained loads go
+  back-to-back and the unrelated `ldr r4,[pc,#56]` lands in the reference's
+  slot — which no other lever achieves. But the chain then occupies `r1` where
+  the reference uses `r3`, and that register cascade costs more than the
+  schedule gains: 23 mismatched bytes without the mode, 29 with. It is a no-op
+  on the whole `0x0030` family (19-20 either way), takes `3c8:00f6` from 22 to
+  21, and makes `3ca:004c` worse (4 to 8). No allocation lever aligns the
+  registers: `-mentry-low-register-order` gives 37, and
+  `-mhigh-register-move-first`, `-mearly-frame-allocation` and
+  `-mthumb-entry-literal-first` are all no-ops at 29.
+- **So the defect is real and is not the whole story.** Whatever the reference
+  does, it also allocates the dereference chain to a single register across all
+  three loads. Until that half is understood the mode should stay unrouted.
+- **Note on flag space:** bit 30 was the last freely usable bit of
+  `target_flags`; bits 0-29 are taken and 31 is the sign bit, which the
+  `-ARM_FLAG_*` negative entries in `TARGET_SWITCHES` cannot express. A further
+  `-m` mode needs `target_flags` widened first.
+- **Recorded:** 2026-07-25.

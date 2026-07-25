@@ -185,6 +185,17 @@ const CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES = new Set([
 // the reference places between the two halves of the constant. See LAWS.md
 // "Pre-call argument setters diverge on two independent `sched2` defects",
 // defect (A).
+// `fold` rewrites a signed `x < C` into `x <= C-1` (and `x >= C` into
+// `x > C-1`) whenever C is positive, so the emitted comparison is `cmp #C-1`
+// with `ble` where these objects' reference is `cmp #C` with `blt`. The
+// rewrite happens at tree level, before any source shaping can reach it:
+// `x < C`, `x >= C` with the arms swapped, `C <= x`, `!(x < C)` and `x > C-1`
+// all fold to the same form, and the operand type does not matter.
+// -fno-canonicalize-comparison suppresses it (fold-const.c, gated in the
+// alchemy-gcc fork).
+const NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3a9_c_020000e4.c",
+]);
 const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3c7_c_02000030.c",
   "assets/code/resource_3cd_c_0200004c.c",
@@ -300,6 +311,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mthumb-immediate-latency"]
       : []),
+    ...(NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fno-canonicalize-comparison"]
+      : []),
     ...(NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-sched-depend-count"]
       : []),
@@ -411,7 +425,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
       xgcc: "87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed",
       cpp: "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
       tradcpp: "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
-      cc1: "64292d6a2241598e9a95c803babca1665016d577e3e2d4a31c18871553b751b0",
+      cc1: "7c0365d7254c09446a44d92cd2582a2389456e038510149fb55bf864968d7552",
     },
     gs2: {
       xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",

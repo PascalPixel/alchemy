@@ -1908,10 +1908,15 @@ replacement must state what changed and define an acceptance test.
   `resource_37f:00ec` at 16 (its four-way range chain multiplies the cascade).
   Both are otherwise exact, with every pool word, register and branch target
   matching.
-- **Consequence:** the reference build did not perform this rewrite, so either
-  its bound was not a foldable literal at that point or its comparison reached
-  the back end differently. Closing these needs the compiler, not another
-  source spelling.
+- **Located and closed (2026-07-25).** The rewrite is `fold`'s "Change
+  X >= CST to X > (CST - 1)" in `fold-const.c`, not a back-end choice, which
+  is why every source spelling folds to the same form; `combine.c`'s
+  `simplify_comparison` carries a second copy. Both are now gated behind
+  `-fno-canonicalize-comparison` in the alchemy-gcc fork, on by default and
+  inert until a source is routed through it. `resource_3a9:00e4` matches
+  exactly under it and is installed; `resource_37f:00ec` goes from 19 to 14
+  mismatched bytes, its residual now a basic-block ordering question rather
+  than a comparison one.
 - **Recorded:** 2026-07-25.
 
 ### Overlay singleton idioms (2026-07-25)

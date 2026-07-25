@@ -488,9 +488,14 @@ no optimisation flag recovers (`-fno-regmove`, `-fno-strength-reduce`,
   Reordering the source to put the value ahead of the pointer changed the pool
   word order without moving the pool, leaving the count unchanged at 29. Closed
   the same day: the flag took the pair to 11 mismatched bytes, scheduling and
-  declaration order took it to 0, and both members were adopted. Eighteen of the
-  thirty-three functions then remaining carried this layout, so it gates a
-  majority of the remaining overlay work rather than these two alone.
+  declaration order took it to 0, and both members were adopted. A first count put eighteen of the
+  thirty-three functions then remaining on this layout, but that scan treated
+  any short forward branch as a pool skip and so counted every `if`/`else` join
+  as well. Counting properly, by asking whether a referenced pool word sits
+  before the function's own `bx`, gives **two** of the thirty-one now remaining:
+  `resource_3c0:0ce4` and `resource_3a4:39c8`. The flag is correct and the pair
+  it was built for is converted, but it unblocks a handful of functions, not a
+  majority. Decide this by pool-word address, never by branch shape.
 
 ## Hypotheses
 

@@ -1347,56 +1347,8 @@ AlchemyC_02000244:
 	bl	sub_02001ee2
 	pop	{r0}
 	bx	r0
-	push	{lr}
-	adds	r3, r0, #0
-	adds	r3, #102
-	movs	r2, #0
-	ldrsh	r3, [r3, r2]
-	cmp	r3, #1
-	beq.n	.L_02000a34
-	cmp	r3, #1
-	bgt.n	.L_02000a18
-	cmp	r3, #0
-	beq.n	.L_02000a1e
-	b.n	.L_02000a54
-.L_02000a18:
-	cmp	r3, #2
-	beq.n	.L_02000a40
-	b.n	.L_02000a54
-.L_02000a1e:
-	ldr	r3, [r0, #8]
-	ldr	r2, [r0, #48]
-	adds	r3, r3, r2
-	str	r3, [r0, #8]
-	str	r3, [r0, #56]
-	ldr	r2, [r0, #52]
-	ldr	r3, [r0, #12]
-	adds	r3, r3, r2
-	str	r3, [r0, #12]
-	str	r3, [r0, #60]
-	b.n	.L_02000a54
-.L_02000a34:
-	ldr	r3, [r0, #8]
-	ldr	r2, [r0, #48]
-	adds	r3, r3, r2
-	str	r3, [r0, #8]
-	str	r3, [r0, #56]
-	b.n	.L_02000a4a
-.L_02000a40:
-	ldr	r3, [r0, #12]
-	ldr	r2, [r0, #48]
-	adds	r3, r3, r2
-	str	r3, [r0, #12]
-	str	r3, [r0, #60]
-.L_02000a4a:
-	ldr	r2, [r0, #52]
-	ldr	r3, [r0, #16]
-	adds	r3, r3, r2
-	str	r3, [r0, #16]
-	str	r3, [r0, #64]
-.L_02000a54:
-	pop	{r0}
-	bx	r0
+AlchemyC_02000a00:
+	.space 0x58
 	push	{lr}
 	movs	r1, #15
 	bl	sub_02001f1e

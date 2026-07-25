@@ -2386,88 +2386,15 @@ Overlay_02000000:
 	pop	{r5, r6}
 	pop	{r0}
 	bx	r0
-	push	{lr}
-	ldr	r3, [pc, #48]
-	movs	r1, #224
-	lsls	r1, r1, #1
-	adds	r3, r3, r1
-	movs	r1, #0
-	ldrsh	r2, [r3, r1]
-	ldr	r3, [pc, #40]
-	cmp	r2, r3
-	bne.n	.L_02000ef8
-	ldr	r0, [pc, #36]
-	b.n	.L_02000f0e
-.L_02000ef8:
-	ldr	r3, [pc, #36]
-	cmp	r2, r3
-	bne.n	.L_02000f02
-	ldr	r0, [pc, #36]
-	b.n	.L_02000f0e
-.L_02000f02:
-	ldr	r3, [pc, #36]
-	cmp	r2, r3
-	bne.n	.L_02000f0c
-	ldr	r0, [pc, #32]
-	b.n	.L_02000f0e
-.L_02000f0c:
-	ldr	r0, [pc, #32]
-.L_02000f0e:
-	pop	{r1}
-	bx	r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000044
-	.4byte 0x0200b0f4
-	.4byte 0x00000045
-	.4byte 0x0200b1e4
-	.4byte 0x00000046
-	.4byte 0x0200b334
-	.4byte 0x0200b4b4
+AlchemyC_02000ee0:
+	.space 0x54
 	.4byte 0x47702000
 	.2byte 0x4800
 	.2byte 0x4770
 	push	{r2, r3, r4, r5, r7, lr}
 	lsls	r0, r0, #8
-	push	{lr}
-	ldr	r3, [pc, #48]
-	movs	r1, #224
-	lsls	r1, r1, #1
-	adds	r3, r3, r1
-	movs	r1, #0
-	ldrsh	r2, [r3, r1]
-	ldr	r3, [pc, #40]
-	cmp	r2, r3
-	bne.n	.L_02000f58
-	ldr	r0, [pc, #36]
-	b.n	.L_02000f6e
-.L_02000f58:
-	ldr	r3, [pc, #36]
-	cmp	r2, r3
-	bne.n	.L_02000f62
-	ldr	r0, [pc, #36]
-	b.n	.L_02000f6e
-.L_02000f62:
-	ldr	r3, [pc, #36]
-	cmp	r2, r3
-	bne.n	.L_02000f6c
-	ldr	r0, [pc, #32]
-	b.n	.L_02000f6e
-.L_02000f6c:
-	ldr	r0, [pc, #32]
-.L_02000f6e:
-	pop	{r1}
-	bx	r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000044
-	.4byte 0x0200b6a0
-	.4byte 0x00000045
-	.4byte 0x0200b790
-	.4byte 0x00000046
-	.4byte 0x0200b8b0
-	.2byte 0xba30
-	.2byte 0x0200
+AlchemyC_02000f40:
+	.space 0x54
 	push	{r5, lr}
 	sub	sp, #32
 	bl	sub_02003d3e
@@ -4751,45 +4678,8 @@ Overlay_02000000:
 	.4byte 0x0000022b
 	.2byte 0x0046
 	.2byte 0x0000
-	push	{lr}
-	ldr	r3, [pc, #48]
-	movs	r1, #224
-	lsls	r1, r1, #1
-	adds	r3, r3, r1
-	movs	r1, #0
-	ldrsh	r2, [r3, r1]
-	ldr	r3, [pc, #40]
-	cmp	r2, r3
-	bne.n	.L_020024c4
-	ldr	r0, [pc, #36]
-	b.n	.L_020024da
-.L_020024c4:
-	ldr	r3, [pc, #36]
-	cmp	r2, r3
-	bne.n	.L_020024ce
-	ldr	r0, [pc, #36]
-	b.n	.L_020024da
-.L_020024ce:
-	ldr	r3, [pc, #36]
-	cmp	r2, r3
-	bne.n	.L_020024d8
-	ldr	r0, [pc, #32]
-	b.n	.L_020024da
-.L_020024d8:
-	ldr	r0, [pc, #32]
-.L_020024da:
-	pop	{r1}
-	bx	r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000044
-	.4byte 0x0200ba48
-	.4byte 0x00000045
-	.4byte 0x0200bb20
-	.4byte 0x00000046
-	.4byte 0x0200bc1c
-	.2byte 0xbd54
-	.2byte 0x0200
+AlchemyC_020024ac:
+	.space 0x54
 	push	{r5, lr}
 	ldr	r3, [pc, #852]
 	movs	r2, #224

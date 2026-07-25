@@ -17,8 +17,12 @@ import { assembleOverlay, OVERLAY_BASE } from "./overlay_disasm.ts";
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const CODE = join(ROOT, "assets/code");
 // Listing rows are "<line> <offset> <bytes> <source>"; continuation rows of a
-// wide directive repeat the line number and omit the offset.
-const LISTING_ROW = /^\s*(\d+)\s+([0-9a-f]{4,})\s+[0-9a-f]/;
+// wide directive repeat the line number and omit the offset. GNU as prints the
+// offset in lowercase but the byte column in uppercase, so the byte column has
+// to be matched case-insensitively: a lowercase-only class silently drops every
+// row whose first byte is >= 0xa0, which shortens the region by those rows and
+// makes a byte-exact candidate fail the rebuild by the dropped byte count.
+const LISTING_ROW = /^\s*(\d+)\s+([0-9a-f]{4,})\s+[0-9A-Fa-f]/;
 const LOCAL_LABEL = /^\s*(\.L_[0-9a-f]+):/;
 
 interface Options {

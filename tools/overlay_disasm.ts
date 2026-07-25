@@ -1,4 +1,4 @@
-// Tool role: library; imported by tools/build_assets.ts, tools/compiler_template_index.ts, tools/executable_gap_sources.ts (+5 more).
+// Tool role: library; imported by tools/build_assets.ts, tools/compiler_template_index.ts, tools/executable_gap_sources.ts (+8 more).
 import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, join } from "node:path";
 import {

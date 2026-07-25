@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Tool role: both; imported by tools/overlay_match.ts; invoked by PLAYBOOK.md.
+// Tool role: both; imported by tools/overlay_match.ts, tools/overlay_shapes.ts; invoked by PLAYBOOK.md.
 // Discover ordinary Thumb functions inside Alchemy's canonical overlay sources
 // and group relocation-normalized duplicates. Generated reports remain ignored
 // below out/ and contain no copied executable bytes.

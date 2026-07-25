@@ -177,7 +177,7 @@ const DEFAULT_ABI_SOURCES = new Set([
 // under old_agbcc, so the whole default-ABI TU is likely old_agbcc; the rest
 // stay on the fork until each has its own exact-byte proof.
 const AGBCC_SOURCES = new Set([
-  "08006ba8", "08006c24", "08006dec",
+  "08006ba8", "08006c24", "08006dec", "08007098",
   "080f9a50",
   "080fadf0",
   "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
@@ -194,7 +194,11 @@ const AGBCC_LITERAL_BEFORE_SHIFT_SOURCES = new Set(["080fb670"]);
 // The reference has no such guard: at optimize<2 that transform bails out
 // while BLOCK notes are still present, and the value it would keep live is
 // what pushes a fifth long-lived pseudo into r8 and changes the push list.
-const AGBCC_OPTIMIZE_O1_SOURCES = new Set(["08006ba8", "080fa514"]);
+// The sector erase at 08007098 wants the same level for an unrelated reason:
+// its head shift is a two-address ashlsi3 whose reference input reload
+// ("adds r4, r0, #0") only survives because local-alloc declines to tie the
+// shift's input and output pseudos, which it does tie at -O2.
+const AGBCC_OPTIMIZE_O1_SOURCES = new Set(["08006ba8", "08007098", "080fa514"]);
 const AGBCC_COMPARE_ONLY_AND_TST_SOURCES = new Set(["080f9a50"]);
 const AGBCC_COMMUTATIVE_COPY_CONSTANT_SOURCES = new Set(["080fa514"]);
 const AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES = new Set([
@@ -538,7 +542,7 @@ export function directCompilerCommandForSource(
 
 function selfTest(): void {
   const expected = [
-    "08006ba8", "08006c24", "08006dec",
+    "08006ba8", "08006c24", "08006dec", "08007098",
     "080f9a50",
   "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
     "080fa424", "080fa458", "080fa490", "080fa514", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
@@ -556,7 +560,7 @@ function selfTest(): void {
     }
     const expectedFlags = [
       ...AGBCC_CFLAGS,
-      ...(stem === "08006ba8" ? ["-O1"] : []),
+      ...(["08006ba8", "08007098"].includes(stem) ? ["-O1"] : []),
       ...(stem === "080fa514" ? ["-O1", "-mcommutative-copy-constant"] : []),
       ...(stem === "080fb670" ? ["-mliteral-before-shift"] : []),
       ...(["080fb2cc", "080fb334", "080fb3a8"].includes(stem)

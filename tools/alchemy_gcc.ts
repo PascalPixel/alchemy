@@ -105,8 +105,13 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // fifth: 15 mismatches unrouted, 17 on the mode alone and 11 with sched2 also
 // off, and at 11 every remaining pair is a transposition -- no wrong register
 // and nothing semantic. It is listed on the mode only; -fno-schedule-insns2 is
-// deliberately withheld, because the .23.sched2 dump shows the scheduler picks
-// the reference order and thumb_order_grouped_dma_store then rewrites it.
+// deliberately withheld, and the reason is narrower than it first looked. With
+// sched2 off the residual falls to 10 bytes over five pairs, but those pairs are
+// mutually contradictory, which is itself the proof sched2 was on. The pass does
+// rewrite a correct schedule for the trailing descriptor trio -- that part holds
+// -- but it is not what blocks the block-2 head: there rank_for_schedule simply
+// prefers a higher-priority insn, and no source shape reorders the ready list.
+// Closing 08005a78 needs a compiler change, not another routing flag.
 const GROUPED_DMA_STORE_SOURCES = new Set([
   "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
   "08004a5c", "08004a94", "0800bc48", "0800d304", "080170c4", "0801d980",
@@ -177,7 +182,7 @@ const DEFAULT_ABI_SOURCES = new Set([
 // under old_agbcc, so the whole default-ABI TU is likely old_agbcc; the rest
 // stay on the fork until each has its own exact-byte proof.
 const AGBCC_SOURCES = new Set([
-  "08006ba8", "08006c24", "08006dec", "08007098",
+  "08006a00", "08006ba8", "08006c24", "08006dec", "08007098",
   "080f9a50",
   "080fadf0",
   "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
@@ -198,7 +203,16 @@ const AGBCC_LITERAL_BEFORE_SHIFT_SOURCES = new Set(["080fb670"]);
 // its head shift is a two-address ashlsi3 whose reference input reload
 // ("adds r4, r0, #0") only survives because local-alloc declines to tie the
 // shift's input and output pseudos, which it does tie at -O2.
-const AGBCC_OPTIMIZE_O1_SOURCES = new Set(["08006ba8", "08007098", "080fa514"]);
+// 08006a00 is a third distinct reason, and here -O1 is standing in for
+// -fno-regmove (flag_regmove is set unconditionally at optimize>=2, and
+// regmove.c returns early when it is clear). The front end narrows the
+// interrupt-enable read-modify-write to a HImode BIT_IOR, so the ior's first
+// operand is a subreg; regmove's forward pass skips non-REG sources, takes the
+// commutative alternative instead, and renames the ior's destination into the
+// shift result, transposing r0 and r1 across four instructions. No source shape
+// avoids it, because the narrowing that creates the subreg is what the C
+// semantics require.
+const AGBCC_OPTIMIZE_O1_SOURCES = new Set(["08006a00", "08006ba8", "08007098", "080fa514"]);
 const AGBCC_COMPARE_ONLY_AND_TST_SOURCES = new Set(["080f9a50"]);
 const AGBCC_COMMUTATIVE_COPY_CONSTANT_SOURCES = new Set(["080fa514"]);
 const AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES = new Set([
@@ -542,7 +556,7 @@ export function directCompilerCommandForSource(
 
 function selfTest(): void {
   const expected = [
-    "08006ba8", "08006c24", "08006dec", "08007098",
+    "08006a00", "08006ba8", "08006c24", "08006dec", "08007098",
     "080f9a50",
   "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
     "080fa424", "080fa458", "080fa490", "080fa514", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
@@ -560,7 +574,7 @@ function selfTest(): void {
     }
     const expectedFlags = [
       ...AGBCC_CFLAGS,
-      ...(["08006ba8", "08007098"].includes(stem) ? ["-O1"] : []),
+      ...(["08006a00", "08006ba8", "08007098"].includes(stem) ? ["-O1"] : []),
       ...(stem === "080fa514" ? ["-O1", "-mcommutative-copy-constant"] : []),
       ...(stem === "080fb670" ? ["-mliteral-before-shift"] : []),
       ...(["080fb2cc", "080fb334", "080fb3a8"].includes(stem)

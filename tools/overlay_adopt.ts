@@ -136,10 +136,11 @@ function main(): void {
   // first one's `.space`. The assembler tolerates the duplicate and the ROM
   // still rebuilds byte-identically, so the full build does not catch it; only
   // the inventory's placeholder walk does, one run later. Refuse up front.
-  // The label itself emits no bytes, so it has no listing offset and sits just
-  // before the region's first encoded line; look a little further back.
-  for (const line of lines.slice(Math.max(0, first - 4), last)) {
-    if (line.startsWith("AlchemyC_")) throw new Error(`${options.id} is already adopted as C`);
+  // Test for this stem's own placeholder anywhere in the file. Scanning a
+  // window before the region instead would also catch the *preceding* region's
+  // placeholder, which is a legitimate neighbour, not a double adoption.
+  if (lines.some((line) => line === `AlchemyC_${stem}:`)) {
+    throw new Error(`${options.id} is already adopted as C`);
   }
 
   // A local label inside the region that something outside still branches to

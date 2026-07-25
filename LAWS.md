@@ -2002,3 +2002,36 @@ replacement must state what changed and define an acceptance test.
   `-fno-regmove` does not touch (2).
 - **Candidates kept at** `work/near/overlay_0030_family/` (not adopted).
 - **Recorded:** 2026-07-25.
+
+### Fixed RAM addresses are declared globals, not `(void *)` literals (2026-07-25)
+
+- **Claim:** where a function touches a fixed RAM address more than once, or
+  touches two fields of the same object, the reference keeps the base in a
+  register for the whole body. An m2c candidate that spells the address as
+  `M2C_FIELD((void *) 0x02009930, s32 *, 0)` re-materialises the constant at
+  every use — a fresh `ldr rN, [pc, #k]` each time, and a fresh pool word.
+  Declaring the object instead, `extern s32 Data_02009930[];`, gives the
+  reference's shape. The repository already uses this convention
+  (`extern s16 Data_02000240[];` and friends).
+- **Corollary, the array-index form.** A base that is indexed rather than
+  offset also changes the address arithmetic. `Data_02000240[224]` on an
+  `s16 []` emits `ldr r3,pool / movs r1,#224 / lsls r1,r1,#1 / adds r3,r3,r1`,
+  where the literal-address spelling emits a single pool word holding the
+  already-summed address. The reference uses the former, so the base symbol and
+  the index are both recoverable from the emitted arithmetic.
+- **Evidence, `resource_3b8:0030`** (48 bytes). The literal spelling gives
+  32/48 and 43 mismatched bytes; `extern s16 Data_02000240[]` with `[224]`
+  gives 40/48 and 34, and reproduces the whole address computation exactly.
+  The base 0x02000240 recovered this way is a symbol the tree already declares.
+- **Evidence, `resource_3b0:0030`** (76/76, 61 mismatched, not yet rewritten).
+  The reference holds 0x02009938 in `r4` and 0x02009930 in `r5` across the
+  body — hence its `push {r5, lr}` — and walks a third pointer with
+  `ldmia r3!, {r1}`. The candidate reloads both constants from the pool at
+  every field access.
+- **Residual on `3b8:0030`,** both unexplained: the reference compares against
+  `0x8B` loaded from the pool rather than `cmp rN,#139`, though 139 satisfies
+  Thumb's `I`; and it keeps a plain if/else with a `b` over the join where the
+  fork loads the default before the compare and reloads on one arm, which is
+  8 bytes shorter. `-fno-cse-follow-jumps`, `-fno-thread-jumps`, `-fno-gcse`
+  and `-O1` are all no-ops on both.
+- **Recorded:** 2026-07-25.

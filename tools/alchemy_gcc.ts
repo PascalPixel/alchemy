@@ -51,7 +51,7 @@ const FIXED_LR_SOURCES = new Set<string>();
 // -O2 only swaps independent descriptor setup instructions.
 const OPTIMIZE_O1_SOURCES = new Set(["080049e8", "08021e28"]);
 const UNSCHEDULED_SOURCES = new Set([
-  "08006b84",
+    "08006b84",
   "08002f10",
   "08004198", "0800430c", "08004358", "0800439c", "080043e0",
   "08029274",
@@ -72,7 +72,8 @@ const NO_GCSE_SOURCES = new Set(["080a45cc", "080b2720"]);
 // This bounded-angle convergence loop only retains the reference allocation
 // when GCC does not perform its expensive-expression rewrite.  The rewrite
 // rotates r0-r2 and folds each signed clamp into a shorter non-reference form.
-const NO_EXPENSIVE_SOURCES = new Set(["08092878"]);
+const NO_EXPENSIVE_SOURCES = new Set([
+  "08092878"]);
 // This four-step signed index loop is emitted as an ascending loop in the
 // reference translation unit. Strength reduction rewrites it to a descending
 // counter and changes both the allocation and loop tail.
@@ -193,6 +194,10 @@ const CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES = new Set([
 // all fold to the same form, and the operand type does not matter.
 // -fno-canonicalize-comparison suppresses it (fold-const.c, gated in the
 // alchemy-gcc fork).
+// Overlay streams whose constant pool sits between the entry block and the loop
+// that reads it, rather than after the return (LAWS.md, "A mid-function literal
+// pool is a compiler layout choice, not a source shape").
+const EARLY_LITERAL_POOL_OVERLAY_SOURCES = new Set(["02000e3c", "02000dfc"]);
 const NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3a9_c_020000e4.c",
 ]);
@@ -279,6 +284,16 @@ function sourceStem(source: string): string {
   return basename(source, extname(source));
 }
 
+// An overlay candidate is verified from a work directory as <address>.c and
+// installed as assets/code/<overlay>_c_<address>.c. Keying on the address makes
+// the two spellings route to the same flags, so a candidate that verified exact
+// still compiles the same way once adopted.
+function overlayStem(source: string): string {
+  const stem = sourceStem(source);
+  if (/^[0-9a-f]{8}$/.test(stem)) return stem;
+  return /_c_([0-9a-f]{8})$/.exec(stem)?.[1] ?? stem;
+}
+
 function sourceKey(source: string): string {
   return relative(ROOT, resolve(ROOT, source)).split(sep).join("/");
 }
@@ -316,6 +331,9 @@ export function cflagsForSource(source: string): readonly string[] {
       : []),
     ...(NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-sched-depend-count"]
+      : []),
+    ...(EARLY_LITERAL_POOL_OVERLAY_SOURCES.has(overlayStem(source))
+      ? ["-mthumb-early-literal-pool"]
       : []),
   ];
 }
@@ -425,7 +443,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
       xgcc: "87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed",
       cpp: "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
       tradcpp: "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
-      cc1: "7c0365d7254c09446a44d92cd2582a2389456e038510149fb55bf864968d7552",
+      cc1: "cc0f30e3b3b1477c2561a3754cccc3936602c3a2c26772dd84ce1bb69c2a0e2e",
     },
     gs2: {
       xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",

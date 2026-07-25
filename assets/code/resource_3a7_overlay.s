@@ -170,39 +170,8 @@ AlchemyC_0200008c:
 	.space 0x54
 AlchemyC_020000e0:
 	.space 0x54
-	push	{r5, lr}
-	ldr	r3, [pc, #52]
-	ldr	r3, [r3, #0]
-	adds	r2, r3, #0
-	adds	r5, r0, #0
-	movs	r4, #8
-	adds	r2, #52
-.L_02000142:
-	ldmia	r2!, {r0}
-	ldr	r3, [r0, #8]
-	asrs	r3, r3, #20
-	cmp	r5, r3
-	bne.n	.L_0200015e
-	ldr	r3, [r0, #16]
-	asrs	r3, r3, #20
-	cmp	r1, r3
-	bne.n	.L_0200015e
-	adds	r3, r0, #0
-	adds	r3, #89
-	ldrb	r3, [r3, #0]
-	cmp	r3, #0
-	bne.n	.L_02000166
-.L_0200015e:
-	adds	r4, #1
-	cmp	r4, #65
-	bls.n	.L_02000142
-	movs	r0, #0
-.L_02000166:
-	pop	{r5}
-	pop	{r1}
-	bx	r1
-	.2byte 0x1ebc
-	.2byte 0x0300
+AlchemyC_02000134:
+	.space 0x3c
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9

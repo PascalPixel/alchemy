@@ -1366,6 +1366,87 @@ against the approved bundle; full sourced notes in
   passes, and the existing `sched2` laws stand for it unchanged.
 - **Recorded:** 2026-07-25.
 
+### A call's argument-register setters break scheduler ties by ABI order (2026-07-25)
+
+- **Claim:** when a two-insn Thumb constant (`movs rN,#imm` / `lsls rN,rN,#k`)
+  and an independent cheap argument move are both ready in the same cycle
+  before a call, the fork's `sched2` always picks the setter of the
+  *higher-numbered* argument register. The order is an artifact of
+  `CALL_INSN_FUNCTION_USAGE`, which the ABI fixes, so **no C source shape
+  changes it.** If the reference interleaves the *lower*-numbered register's
+  move between the two halves of a *higher*-numbered register's constant, that
+  region is not closable from C on this compiler.
+- **What this replaces.** An earlier working hypothesis held that the
+  `movs`/`lsls` pair is a single RTL insn and therefore unsplittable. That is
+  false and should not be repeated: reload splits the pair well before `sched2`
+  (visible as two insns in `.18.greg`), and the scheduler interleaves across it
+  freely in the common case. The blocker is the tie-break, not the split.
+- **Evidence, `resource_3c7:0030`** (18 bytes, 4 mismatched, unresolved). The
+  reference is `movs r1,#129 / movs r0,#14 / lsls r1,r1,#1`; the fork emits
+  `movs r1,#129 / lsls r1,r1,#1 / movs r0,#14`. The `.23.sched2` dump shows the
+  tie explicitly — `Ready list (t = 1): 11 31`, both ready, and it takes `31`
+  (the `lsls` into r1) over `11` (`movs r0,#14`). The call's `LOG_LINKS` print
+  as `(insn_list 31 (insn_list 11 (nil)))`: r1's setter first, r0's second.
+- **The control that proves it is the register and not the shape.** Swap the
+  arguments — `f(0x102, 0xE)`, so the split lands in r0 and the cheap move in
+  r1 — and the same compiler *does* interleave: `mov r0,#129 / mov r1,#14 /
+  lsl r0,r0,#1`, with `Ready list (t = 1): 29 13` taking `13`. Identical insn
+  structure, identical LUID order, opposite outcome; the only difference is
+  which argument register each insn writes, and in both runs the r1 setter won.
+- **Levers measured and rejected on `3c7:0030`:** `-fno-schedule-insns`,
+  `-fno-schedule-insns2`, `-fno-regmove`, `-fno-defer-pop`, `-fno-force-mem`,
+  `-fno-cse-follow-jumps`, `-O1`, `-Os`, and `-mcall-arg0-move-first` are all
+  exact no-ops on the emitted order. Eight source shapes — the constant as a
+  local, the cheap arg as a local, both as locals, a comma expression, an
+  unprototyped callee, a narrowed `u16` parameter, a `static` initialiser, and
+  `0x81 << 1` written out — all stay at 4 mismatched bytes.
+- **Why the tie is unbreakable from C:** the winner would have to be decided by
+  priority instead, and priority is the critical-path length to the block end.
+  Both candidates are exactly one hop from the call, so they always tie, and
+  the reference's `movs r0,#14` cannot be given a longer path without adding
+  instructions the reference does not have.
+- **Corollary for the fork lane.** This is a one-line tie-break question in
+  `rank_for_schedule`, not a missing pass, which makes it a much cheaper fork
+  change than the "split constants earlier" item it replaces.
+- **Scope:** measured on the `xgcc` fork at `-O2`. `old_agbcc` has no scheduler
+  and cannot produce the interleave at all, in either direction.
+- **Recorded:** 2026-07-25.
+
+### Identical large constants in an argument list are a basic-block question (2026-07-25)
+
+- **Claim:** N identical constants ≥ 256 in one call's argument list collapse to
+  one materialisation plus N-1 register copies when the source spells them as
+  literals at the call, and stay as N independent `movs`/`lsls` pairs when the
+  source assigns them to locals in an *earlier* basic block. Local CSE only
+  unifies within a block, so the block boundary is the whole lever.
+- **Mechanism:** `precompute_register_parameters` in `calls.c` forces any
+  argument with `rtx_cost (value, SET) > 2` into a pseudo under
+  `SMALL_REGISTER_CLASSES && *reg_parm_seen`. `arm_rtx_costs` returns 0 only for
+  `(unsigned) INTVAL < 256`, and a `thumb_shiftable_const` costs
+  `COSTS_N_INSNS (2) == 6`. So *every* argument constant ≥ 256 becomes a pseudo,
+  and if several identical ones are precomputed in the same block, local CSE
+  unifies them. This is unconditional in `calls.c`: no flag reaches it.
+- **Evidence, `resource_37d:0054`, `37e:0054`, `37c:0054`** (76 bytes each, all
+  exact). The residual was the argument block for
+  `Func_0200012a(0x10000, 0x10000, 0x10000)`: five insns emitted (one
+  materialisation plus two `adds rN,rM,#0`) against the reference's six (three
+  `movs #128` and three `lsls #9`, interleaved). The two-byte body delta became
+  a four-byte span delta through the `.align 2` before the literal pool.
+  Hoisting the three values to C89 locals at the top of the function, with the
+  call inside a later `if`, put the assignments in a different block from the
+  call and closed all three functions with no flag route. On `37c` the same
+  change also resolved a second residual, a `str`/`lsls` transposition at
+  `02000064`, because the extra live pseudos shift the allocator's numbering.
+- **Corpus check:** 39 sites in the reference overlay corpus show the split
+  form and none show the CSE'd form. The only chained-copy sites are `f(v,v,v)`
+  with a *variable*, which the default route already reproduces — so when a
+  reference shows N independent split pairs, the source had named values, and
+  when it shows copies, the source passed one value N times.
+- **Consequence for reviewers:** locals that look gratuitous next to a call are
+  load-bearing. `assets/code/resource_37{c,d,e}_c_02000054.c` carry a comment
+  saying so; do not fold them back into the argument list.
+- **Recorded:** 2026-07-25.
+
 ### GCC 2.96 nested-function static-chain register
 
 - **Claim:** `080e73a0` reads r9 as a live-in value with no in-function

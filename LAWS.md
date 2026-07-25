@@ -1894,6 +1894,36 @@ replacement must state what changed and define an acceptance test.
 | `close_byte_gaps.ts` | retired 2026-07-22 | The English byte-closure plan completed in `6104a64e`; current ownership and identity are enforced by `build_full.ts` and the canonical component builders. |
 | `veneer_island.ts` | retired 2026-07-22 | The byte-closure-era veneer islands are now canonical assembly claims classified and verified by `build_asm.ts`. |
 
+### Overlay singleton idioms (2026-07-25)
+
+Recurring source-shape rules found while converting the overlay
+singletons. Each is an installed byte-exact match.
+
+- **A byte threshold is tested on the shifted value, not a truncated copy.**
+  The reference reads a byte, adds one, stores it back, then compares
+  `value << 24` against `threshold << 24`. That is what GCC emits for
+  `(u8) n > 80` when `n` is an `int`; declaring `n` as `u8` instead inserts a
+  `lsls/lsrs` truncation pair the reference does not have. Keep the counter an
+  `int` and cast at the comparison. Evidence:
+  `assets/code/resource_3b1_c_020000d8.c`.
+- **A large addend that only reaches a halfword store must be a symbol.**
+  `*(u16 *) p = v + 0xFA10F601` narrows to `+ 0xF601` because only the low half
+  survives the `strh`; the reference keeps the full pool word, so the addend is
+  a link-time constant (`(s32) &Value_fa10f601`) that GCC cannot fold.
+  Recorded against `resource_3c9:0400`, which reaches 2 mismatched bytes this
+  way and is otherwise blocked on register choice.
+- **Selector variants beyond the plain chain.** The `Data_02000240[224]`
+  preamble also feeds or-conditions (`v == A || v == B`), negated guards
+  (`if (v != A) { ... }` around the chain), and range checks
+  (`v <= HI && v >= LO`). All three convert with the same symbol spelling.
+  Evidence: `resource_3bf_c_02000a34.c`, `resource_3b2_c_02000d48.c`.
+- **Label-refused regions.** Five verified byte-exact overlay candidates
+  cannot be spliced because code outside their region branches into it:
+  `resource_38f:0284`, `resource_3b4:0a50`, `resource_3b3:14c4`,
+  `resource_39a:0f30`, `resource_3a6:0d80`. The C is correct; adopting them
+  needs the branch-in resolved first, so they stay assembly rather than being
+  forced.
+
 ### Overlay pool words are symbols, not integer literals (2026-07-25)
 
 - **Claim.** In overlay C, every constant that the reference keeps in its

@@ -572,15 +572,23 @@ external hint concerns only which public tool to run; every piece of game
 knowledge in this tree remains derived from the approved ROM set.
 
 The stock m4a ("Sappy") audio library that period licensees linked verbatim
-requires pret's `old_agbcc` rather than gcc-2.96. The source-address allowlist
-currently covers `080fa1fc`, `080fa2a0`, `080fa324`, `080fa350`, `080fa39c`,
-`080fa3f0`, `080fa424`, `080fa458`, `080fa490`, `080fa514`, `080fa83c`,
-`080fa8d4`, `080fa928`, `080fa9a4`, `080fa9e0`, `080fab3c`, `080facf8`,
-`080fb2cc`, `080fb334`, `080fb3a8`, `080fb430`, `080fb4a4`, `080fb670`,
-and `080fb6a4`; each was independently
-assembled and linked to an exact target interval before adoption. No generic
-directory or subsystem switch selects this compiler, following the per-unit
-compiler precedent of `pret/pokeruby`.
+requires pret's `old_agbcc` rather than gcc-2.96. Its part of the
+source-address allowlist covers `080f9a50`, `080fa1fc`, `080fa2a0`,
+`080fa324`, `080fa350`, `080fa39c`, `080fa3f0`, `080fa424`, `080fa458`,
+`080fa490`, `080fa514`, `080fa83c`, `080fa8d4`, `080fa928`, `080fa9a4`,
+`080fa9e0`, `080fab3c`, `080facf8`, `080fadf0`, `080fb2cc`, `080fb334`,
+`080fb3a8`, `080fb430`, `080fb4a4`, `080fb670`, and `080fb6a4`.
+
+The same compiler also built the cartridge-backup library around `08006b84`,
+which is a separate stock object from a different vendor and shares none of
+m4a's code. Its routed units are `08006ba8`, `08006c24`, `08006dec`, and
+`08007098`; the rest of that translation unit stays on the fork until each
+address carries its own proof.
+
+Every listed address, in both groups, was independently assembled and linked
+to an exact target interval before adoption. No generic directory or
+subsystem switch selects this compiler, following the per-unit compiler
+precedent of `pret/pokeruby`.
 
 `080fb670` additionally uses old_agbcc's default-off
 `-mliteral-before-shift` compatibility mode. It only moves an independent
@@ -592,6 +600,12 @@ destinations do not overlap; the other routed units retain stock ordering.
 commutative copy/AND pair only when the AND's other register was loaded with a
 constant by the immediately preceding instruction and all three registers are
 distinct.
+
+`08006ba8` and `08007098` also use `-O1`, each for a reason local to the
+function and recorded beside the allowlist in `tools/alchemy_gcc.ts`. Both
+are exact at that level and inexact at `-O2` from any source shape measured,
+and their already-matched sibling `08006dec` is byte-identical at both, so
+the level is a per-address route rather than a property of the object.
 
 `080fb2cc`, `080fb334`, and `080fb3a8` use old_agbcc's default-off
 `-mprologue-next-high-reg` mode. After register allocation, it finds the

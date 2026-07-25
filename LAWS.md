@@ -446,6 +446,37 @@ must be tested on more than one function before being generalized.
   exit, and 0 once the waits became guarded `do`-`while`s.
 - **Confirmed:** 2026-07-25.
 
+### A mid-function literal pool is a compiler layout choice, not a source shape
+
+Some overlay functions place their literal pool between the entry block and the
+loop that uses it, with an unconditional branch over the pool, where the
+reconstruction places the same two words after the return and needs no branch.
+The two layouts are otherwise instruction-for-instruction identical, so no
+rewrite of the C changes the outcome: source order controls which word lands
+first in the pool, but nothing in C controls where the pool is dumped.
+
+Rule out the shared-region reading before spending on this. A branch over a pool
+looks exactly like a branch into a region shared with another function, and the
+two call for opposite responses. Decide it by scanning the overlay for branches
+that target the loop head: `resource_39b:0e50` and `resource_39c:0e10` are
+reached only from their own entry block and their own back-edge, which makes the
+branch a pool skip and the function an ordinary one.
+
+GCC dumps a pending pool at a barrier and otherwise defers it to the end of the
+function, inserting a jump around the table when it dumps early. A function this
+short gives it no reason to dump early, so closing this gate means a targeted
+flag in alchemy-gcc that forces the dump at the first barrier after the entry
+block, in the same manner as `-mthumb-entry-literal-first`. Until that flag
+exists these functions are unreachable, and they are gated on compiler work, not
+on drafting effort.
+
+- **Confirmed:** 2026-07-25. Two members, `resource_39b:0e3c` and
+  `resource_39c:0dfc`, both 34 bytes and sharing one shape. The draft reaches
+  the reference's exact instruction sequence and register allocation; the
+  residual 29 mismatched bytes are entirely the shift from pool placement.
+  Reordering the source to put the value ahead of the pointer changed the pool
+  word order without moving the pool, leaving the count unchanged at 29.
+
 ## Hypotheses
 
 Hypotheses are useful search leads, not accepted compiler laws. Promote one only

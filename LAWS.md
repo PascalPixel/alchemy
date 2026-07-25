@@ -1262,9 +1262,11 @@ against the approved bundle; full sourced notes in
   delete it runs unconditionally. This is a distinct negative class from a
   register exchange or an ordering park: there is no ratio to separate and no
   statement to move. The instruction is not reachable, full stop.
-- **Evidence, `08077394`** (68-byte region, closed as a measured negative at 10
-  instruction mismatches with `register_only` 0, `instruction_reorder` 0 and
-  `semantic` 0 — i.e. the whole body is right). The reference opens
+- **Evidence, `08077394`** (68-byte region, closed as a measured negative at
+  *one* instruction — a second pass reached 68/68 bytes with all 27 emitted
+  instructions and all three pool words byte-identical, so the entire 53-byte
+  residual is the two-byte slide left by the one missing instruction). The
+  reference opens
   `push {lr}` / `mov r3, lr` at `08077396`. Every path then overwrites `r3`
   before reading it, so the copy is dead on arrival. The only backend path that
   emits a bare `mov rN, lr` with `lr` as the *source* and no matching earlier
@@ -1285,6 +1287,11 @@ against the approved bundle; full sourced notes in
   the ceiling and take the improvement that gets you there — the `08077394`
   candidate still moved the region from 72 bytes / 48 mismatches to the exact 68
   with a clean body, which is worth keeping even though it can never reach zero.
+- **`byte_mismatches` is the wrong ranking key at this stage of a region.** The
+  earlier 72-byte candidate scored 48 and the correct 68-byte one scores 53, yet
+  the 48 was measured on an oversized build with the argument in the wrong
+  register and 19 instruction mismatches. Compare `actual_size` against the
+  region first, then instruction mismatches; only then bytes.
 - **Adjacent findings, same region, worth not re-deriving:** the signature is
   `u8 *Func_08077394(s32)` — read off the already-matched caller `src/08077348.c`,
   not guessed — with `extern u8 Data_02000500[];` and `extern u8 *Data_03001f28;`.
@@ -1293,6 +1300,40 @@ against the approved bundle; full sourced notes in
 - **Possible lane work:** a fork switch suppressing DCE of the `arm_return_addr`
   set would close this region. It is the only known use, so it is low priority.
 - **Recorded:** 2026-07-24.
+
+### A pool word holding a Thumb function carries the interworking tag (2026-07-25)
+
+- **Claim:** when the stock object stores a Thumb function's address as data, the
+  linked word has bit 0 set. That is the ARM ELF rule for an `R_ARM_ABS32`
+  relocation against a Thumb function symbol, and it applies to the game's own
+  pool words, not just to hand-written interworking code.
+- **Evidence, `08006ba8`** (the flash reader, 124 bytes). Its pool holds
+  `0x08006b85` and `0x08006ba9` — the tagged addresses of `Func_08006b84` and of
+  the region itself — and the body immediately clears the tag with
+  `movs r0, #1` / `eors r3, r0` so the copy loop can read halfwords. The
+  self-referencing word `0x08006ba9` came out right all along, because that
+  symbol is a real label in the compiled object; only the *external* one was
+  wrong.
+- **Harness defect this exposed:** `externalSymbolAssembly` emitted
+  `.thumb_func` followed by `.set NAME, 0x…`. GAS only records a branch type for
+  a symbol defined by a label, so on a `.set` alias the Thumb marking is silently
+  dropped and every data reference links to the plain even address. Branches were
+  unaffected, which is why 1,236 regions matched with the bug present. `.thumb_set`
+  is the alias form that keeps the branch type: the branch offset stays correct
+  *and* the data word gets its tag. Fixed in `tools/alchemy_gcc.ts`.
+- **Fallout, and the rule it produced:** the fix broke exactly one installed
+  region, `0801a32c`, which had spelled a pointer *table* at `0x08031864` as
+  `Func_08031864`. That spelling had been byte-neutral only because the stub was
+  losing the tag. Do not reach for `Func_` to name an address just because it
+  makes a pool word come out right — after this fix, `Func_` asserts Thumb code
+  and costs a byte if the target is data.
+- **Second-order finding:** `0801a32c` needs *four* distinct external symbols all
+  valued `0x08031864`, because arm.c's minipool keeps one entry per distinct
+  `SYMBOL_REF` and the reference has four identical pool words. Spelling them
+  identically lets cross-jumping merge the switch arms and collapses the region
+  from 64 bytes to 24. `ADDRESS_SYMBOL` therefore accepts an optional trailing
+  letter (`Data_08031864_b`) for a second symbol at an already-named address.
+- **Recorded:** 2026-07-25.
 
 ### GCC 2.96 nested-function static-chain register
 

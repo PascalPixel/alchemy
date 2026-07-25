@@ -12,27 +12,52 @@
 // needs in order to converge instead of oscillate.
 //
 // Prints decoded instructions, never a raw ROM span.
-import { mkdirSync, readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+//
+// A candidate may define more than one function: some c_candidate regions hold
+// a short leaf after the first function's constant pool, and the build accepts
+// those because tools/integrate_matches.ts measures the region across every
+// compiled Func_ symbol. verifyCandidate stops at the entry symbol, so the
+// side-by-side view spans the whole assembly region instead -- otherwise the
+// trailing function is invisible here while it still decides the gate.
+import { existsSync, mkdirSync, readFileSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
 import { verifyCandidate, ROM_BASE } from "./match_m2c.ts";
+import { linkedFunctionExtent } from "./integrate_matches.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 
-interface Options { source: string; rom: string; work: string }
+// build_asm.ts already fixed each region's extent; the entry symbol's own size
+// is only the head of it when a trailing function shares the region.
+export function regionSize(stem: string): number | null {
+  const path = [join(ROOT, "out/full/asm/manifest.json"), join(ROOT, "out/asm/manifest.json")].find(existsSync);
+  if (path === undefined) return null;
+  const document = JSON.parse(readFileSync(path, "utf8")) as { regions?: Array<{ source: string; size: number }> };
+  for (const region of document.regions ?? []) {
+    if (basename(region.source, ".s") === stem) return region.size;
+  }
+  return null;
+}
+
+interface Options { source: string; rom: string; work: string; flags: string[] }
 
 function optionsOf(argv: string[]): Options {
   const options: Options = {
     source: "",
     rom: join(ROOT, "roms/gs1-en.gba"),
     work: join(ROOT, "work/candidate-show"),
+    flags: [],
   };
   const rest: string[] = [];
   for (let index = 0; index < argv.length; index++) {
     const argument = argv[index];
     if (argument === "--rom") options.rom = argv[++index];
     else if (argument === "--work") options.work = argv[++index];
+    // A candidate mode has to be visible before it is worth routing: the
+    // allowlists in alchemy_gcc.ts are shared, so probing one here keeps a
+    // trial flag out of every other region's build.
+    else if (argument === "--flags") options.flags = argv[++index].split(",").filter(Boolean);
     else if (argument === "-h" || argument === "--help") {
-      console.log("usage: candidate_show.ts <candidate.c> [--rom FILE]");
+      console.log("usage: candidate_show.ts <candidate.c> [--rom FILE] [--work DIR] [--flags -fa,-fb]");
       process.exit(0);
     } else rest.push(argument);
   }
@@ -96,19 +121,31 @@ async function main(): Promise<void> {
   const options = optionsOf(argv);
   const rom = readFileSync(options.rom);
   mkdirSync(options.work, { recursive: true });
-  const verification = await verifyCandidate(options.source, rom, options.work, [], ROM_BASE);
+  const verification = await verifyCandidate(options.source, rom, options.work, options.flags, ROM_BASE);
+
+  const stem = basename(options.source, ".c");
+  const address = Number.parseInt(stem, 16);
+  const linked = readFileSync(join(options.work, `${stem}.bin`));
+  const symbols = Bun.spawnSync(["arm-none-eabi-nm", "-S", "--defined-only", join(options.work, `${stem}.elf`)],
+    { stdout: "pipe", stderr: "pipe" });
+  const extent = symbols.exitCode === 0
+    ? linkedFunctionExtent(symbols.stdout.toString(), `Func_${stem}`, address, linked.length)
+    : verification.actual.length;
+  const expectedSize = regionSize(stem) ?? verification.expected.length;
+  const actual = linked.subarray(0, extent);
+  const expected = Buffer.from(rom).subarray(address - ROM_BASE, address - ROM_BASE + expectedSize);
 
   const mine = join(options.work, "candidate.bin");
   const theirs = join(options.work, "reference.bin");
-  await Bun.write(mine, verification.actual);
-  await Bun.write(theirs, verification.expected);
+  await Bun.write(mine, actual);
+  await Bun.write(theirs, expected);
 
   const left = disassemble(mine, 0);
   const right = disassemble(theirs, 0);
-  const differing = differingOffsets(verification.actual, verification.expected);
+  const differing = differingOffsets(actual, expected);
   const offsets = [...new Set([...left.keys(), ...right.keys()])].sort((a, b) => a - b);
 
-  console.log(`candidate=${verification.actual.length} reference=${verification.expected.length} differing_halfwords=${differing.size}`);
+  console.log(`candidate=${actual.length} reference=${expected.length} differing_halfwords=${differing.size}`);
   console.log("      offset  candidate                      reference");
   for (const offset of offsets) {
     const mark = differing.has(offset) ? "!" : " ";

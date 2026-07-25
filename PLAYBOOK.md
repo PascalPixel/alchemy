@@ -272,12 +272,15 @@ match from them.
 #    remaining cohorts live.
 bun tools/overlay_shapes.ts --top 10
 
-# 2. Hand-derive C for one member of the largest cohort, using the overlay
-#    laws in LAWS.md (pool words are symbols; initialisers follow source
-#    order; a byte threshold is tested on the shifted value; loop counters
-#    are unsigned). Verify it alone first.
+# 2. Read one member: disassembly plus the pool words its pc-relative loads
+#    resolve to, which is what a semantics-first draft needs.
+bun tools/overlay_show.ts resource_39f 0ee0
 
-# 3. Expand it. Each member is renamed to its own entry symbol, byte-verified,
+# 3. Hand-derive its C using the overlay laws in LAWS.md (pool words are
+#    symbols; initialisers follow source order; a byte threshold is tested on
+#    the shifted value; loop counters are unsigned). Verify it alone first.
+
+# 4. Expand it. Each member is renamed to its own entry symbol, byte-verified,
 #    and adopted only on an exact match; constants that differ simply miss.
 bun tools/overlay_cohort.ts --cohort 0 --template work/<name>.c
 bun tools/overlay_cohort.ts --cohort 0 --template work/<name>.c --apply

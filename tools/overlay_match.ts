@@ -7,6 +7,7 @@ import { dirname, join } from "node:path";
 import { M2C } from "./alchemy_gcc.ts";
 import { emitDiscovery } from "./emit_function.ts";
 import { M2C_PREAMBLE, verifyCandidate } from "./match_m2c.ts";
+import { repairM2cDraft } from "./m2c_repair.ts";
 import { assembleOverlay, OVERLAY_BASE } from "./overlay_disasm.ts";
 import { discoverOverlay } from "./overlay_inventory.ts";
 import { variants } from "./search_variants.ts";
@@ -75,7 +76,7 @@ async function m2c(assembly: string): Promise<string | null> {
     { cwd: ROOT, stdout: "pipe", stderr: "pipe" },
   );
   const [stdout, code] = await Promise.all([new Response(child.stdout).text(), child.exited]);
-  return code === 0 ? stdout : null;
+  return code === 0 ? repairM2cDraft(stdout) : null;
 }
 
 async function main(): Promise<void> {

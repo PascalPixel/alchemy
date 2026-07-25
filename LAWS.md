@@ -382,6 +382,70 @@ must be tested on more than one function before being generalized.
   load-bearing. Do not treat the rejection as a verdict on the match.
 - **Confirmed:** 2026-07-24.
 
+### Loop syntax picks one of three `expand_end_loop` outcomes
+
+- **Fingerprint:** a candidate whose arithmetic is already right has its loop
+  bodies emitted in the wrong order, or ends a loop with `bne <outer head>` +
+  `b <body>` where the reference has `beq <body>` + `b <outer head>`. Register
+  allocation is not involved; the instructions are the right ones in the wrong
+  places, and the mismatch count is large out of proportion to how wrong the
+  source looks.
+- **Mechanism.** `expand_end_loop` (`gcc-2.96/gcc/stmt.c:2256`) runs two
+  transforms in sequence, and which one fires is decided by how the loop is
+  written:
+  - Its *first* transform looks for a conditional jump feeding an
+    unconditional jump to the loop's `end_label`, retargets the conditional
+    straight at `start_label`, and sets `needs_end_jump = 0` (`stmt.c:2325-2329`).
+  - Its *second* transform — "roll the exit test to the end", `stmt.c:2338` —
+    is gated on `needs_end_jump` still being 1 (`stmt.c:2367`) and moves the
+    top test to the bottom, reordering the body around it. Its scan accepts a
+    jump only when the destination is the loop's own `end_label` or
+    `alt_end_label` (`stmt.c:2479-2484`).
+
+  Three consequences follow, and all three are source-visible choices:
+  - **`break` rolls the loop; `goto` past it does not.** `break` compiles to
+    exactly the `end_label` jump the roll scans for. A `goto` to a label placed
+    *after* the loop is a different label, the scan finds nothing, and the body
+    keeps program order. The loop's own spelling is irrelevant — `for(;;)`,
+    `while (1)`, `do {} while (1)` and a bare backward `goto` all emit the same
+    bytes.
+  - **A bottom-tested `do`-`while` removes the trailing `b <newstart>`
+    entirely,** because the first transform clears `needs_end_jump`. This is
+    not cosmetic: with a top-tested loop the emitted tail is
+    `bne Lend; b newstart; BARRIER; Lend:`, and whether that becomes the
+    reference's inverted `beq newstart` depends on what follows `Lend`. When
+    real code follows, `jump.c:434`'s "conditional jump jumping over an
+    unconditional jump" inverts it and the bytes match. When another loop's
+    back-edge follows, `follow_jumps` (`jump.c:348`, which runs earlier in the
+    same per-insn iteration) first threads `bne Lend` to that back-edge, and
+    the inversion can no longer apply. The same source shape therefore matches
+    in one loop and misses by three bytes in its identical twin, purely
+    because of what sits after it.
+  - **Once `needs_end_jump` is 0, a loop's entry guard has to be written in the
+    source.** `duplicate_loop_exit_test` needs a `NOTE_INSN_LOOP_BEG` whose
+    next non-note insn is an unconditional jump (`jump.c:318-325`); suppressing
+    the roll means the loop no longer starts with one, so the compiler will not
+    synthesize the guard and an unguarded `do`-`while` is simply a different
+    function.
+- **Producing idiom:** when a loop's body is emitted in the wrong order, change
+  how the loop is *left* before touching what is in it — `goto` past the loop
+  instead of `break`. When a loop's bottom is the wrong branch, make it
+  bottom-tested (`do { ...; if (++i > N) break; } while (cond);`) and write the
+  entry guard explicitly.
+- **Scope:** the mechanism is read from the fork's own source and applies to
+  every loop it compiles, but the producing idiom is confirmed on one witness.
+  Do not assume `goto` is always the right exit; it is the right exit when the
+  reference did not roll.
+- **Evidence:** exact installed match
+  [assets/code/resource_36f_c_02000054.c](assets/code/resource_36f_c_02000054.c),
+  364 bytes, the largest overlay region converted so far. Its three loops
+  exercise all three consequences: the outer dispatch loop needs the `goto`
+  exit, both waits need the bottom test, and both need written guards at
+  `0x02000132` and `0x0200008a`. The measured ladder was 263 mismatches with
+  top-tested waits and a `break` exit, 75 with `break` alone, 3 with the `goto`
+  exit, and 0 once the waits became guarded `do`-`while`s.
+- **Confirmed:** 2026-07-25.
+
 ## Hypotheses
 
 Hypotheses are useful search leads, not accepted compiler laws. Promote one only
@@ -1445,6 +1509,54 @@ against the approved bundle; full sourced notes in
 - **Consequence for reviewers:** locals that look gratuitous next to a call are
   load-bearing. `assets/code/resource_37{c,d,e}_c_02000054.c` carry a comment
   saying so; do not fold them back into the argument list.
+- **Recorded:** 2026-07-25.
+
+### The grouped-DMA flag is one switch driving two opposed transforms (2026-07-25)
+
+- **Claim:** `TARGET_GROUPED_DMA_STORE` cannot be used to obtain the head of a
+  region without also accepting a rewrite of its tail, because two unrelated
+  transforms read the same flag and there is no way to enable one alone.
+- **Mechanism:** `arm_pre_reload` early-returns unless the flag is set
+  (`gcc-2.96/gcc/config/arm/arm.c:6557`), so its `gen_thumb_store_multiple3`
+  — the only producer of the `stmia`-triple plus `subs r3, #12` shape — needs
+  it. `arm_reorg` calls `thumb_order_grouped_dma_store` under the identical
+  test (`arm.c:6869`), and that function's third loop (`arm.c:6503-6543`)
+  matches `move (reg <- CONST_INT); load (other reg <- CONST_INT);
+  shift (ASHIFT of the move's dest)` and executes `reorder_insns (shift,
+  shift, move)`, turning `move; load; shift` into `move; shift; load`. The
+  flag is a single bit (`arm.h:404`), so a region needing the first transform
+  gets the second whether or not its tail can survive it.
+- **Consequence for reviewers:** when the flag fixes a region's head and breaks
+  its tail, that is not a source-shape problem and no rewriting of the C will
+  reconcile it. Record it and move on, or split the flag in the fork — gating
+  the third loop separately is the tracked fork change this motivates.
+- **Evidence:** `08004760`. Its head requires the flag; its four-byte tail is
+  `movs r2, #128; ldr r3, [pc, #28]; lsls r2, r2, #3`, which is exactly the
+  triple the third loop rewrites. Both halves were read in the fork's source
+  rather than inferred from the mismatch.
+- **Why this is not yet a confirmed law:** it explains a region that is still
+  open. It predicts a failure, and the prediction has one witness; a second
+  region showing the same head/tail split would promote it.
+- **Recorded:** 2026-07-25.
+
+### A signed byte load may keep its expander form only through an unsigned temp (2026-07-25)
+
+- **Claim:** reading a byte into an unsigned temporary and casting afterwards
+  (`u32 cell = *row++; v = (s8) cell;`) preserves the three-instruction
+  `extendqisi2` expander form — `ldrb`, `lsls`, `asrs`, with a destination
+  register distinct from the load's — where the direct `v = *(s8 *) row++;`
+  lets `combine` fold the pair into `sign_extend:SI (mem:QI)` and emit a
+  single `ldrsb`.
+- **Consequence for reviewers:** a reference showing `ldrb`/`lsls`/`asrs` on a
+  byte that is plainly signed is not evidence of a missing optimization or a
+  different compiler; it is evidence about where the cast sits relative to the
+  load in the source.
+- **Evidence:** `resource_3bc:004c`, where the change moved the region from 103
+  mismatched bytes to 36 — the largest single step measured on it.
+- **Why this is not yet a law:** the function is not closed. 29 bytes of
+  residual remain, so the shape is not proven by an exact match, and the
+  measured improvement could be partly incidental. Retest it on a second
+  signed-byte region before relying on it.
 - **Recorded:** 2026-07-25.
 
 ### GCC 2.96 nested-function static-chain register

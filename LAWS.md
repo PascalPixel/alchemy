@@ -1594,7 +1594,26 @@ against the approved bundle; full sourced notes in
 - **Consequence for reviewers:** locals that look gratuitous next to a call are
   load-bearing. `assets/code/resource_37{c,d,e}_c_02000054.c` carry a comment
   saying so; do not fold them back into the argument list.
-- **Recorded:** 2026-07-25.
+- **When the lever is unavailable — `resource_37a:2614`, parked** (744 code /
+  784 span bytes, best 604 mismatched). The lever above needs an *earlier* basic
+  block to hoist into, and this function very nearly does not have one: the
+  project's own walk finds 231 linear insns, 69 calls, **one** conditional
+  (`0x0200287c`) and **one** unconditional branch (`0x020028ee`) in the whole
+  744 bytes. The entry block therefore runs 617 of 744 bytes and holds nearly
+  every call site, so for almost all of its argument constants there is no
+  earlier block in which to name them. Before reaching for this law on a long
+  function, count its branches; a near-branchless region cannot use it.
+- **A mechanism that was proposed for `37a:2614` and does not hold.** An agent
+  lane reported the function as a single straight-line block whose argument
+  constants are over-CSE'd by `cse1`, on the theory that `update_equiv_regs`'
+  `REG_BASIC_BLOCK (regno) < 0` gate can never fire. Two direct counts refute
+  the shape of that account and it should not be repeated. It is not one block
+  (two branches, above). And the residual runs the *other* way: within the code
+  region the reference emits **7** split `movs #imm` / `lsls #k` pairs and one
+  `adds rN,rM,#0` copy, while the best candidate (`/tmp/ov37a2614/candD.c`,
+  four separate `u8 *` locals) emits **15** split pairs and no copies. Our
+  output over-splits where the reference shares; the CSE deficit is on our side.
+- **Recorded:** 2026-07-25; `37a:2614` park and the refuted mechanism 2026-07-25.
 
 ### The grouped-DMA flag is one switch driving two opposed transforms (2026-07-25)
 

@@ -1917,12 +1917,21 @@ singletons. Each is an installed byte-exact match.
   (`if (v != A) { ... }` around the chain), and range checks
   (`v <= HI && v >= LO`). All three convert with the same symbol spelling.
   Evidence: `resource_3bf_c_02000a34.c`, `resource_3b2_c_02000d48.c`.
-- **Label-refused regions.** Five verified byte-exact overlay candidates
-  cannot be spliced because code outside their region branches into it:
+- **Label-refused regions are shared epilogues, and the refusal is right.**
+  Six verified byte-exact overlay candidates cannot be spliced:
   `resource_38f:0284`, `resource_3b4:0a50`, `resource_3b3:14c4`,
-  `resource_39a:0f30`, `resource_3a6:0d80`. The C is correct; adopting them
-  needs the branch-in resolved first, so they stay assembly rather than being
-  forced.
+  `resource_39a:0f30`, `resource_3a6:0d80`, `resource_3c8:2f8c`. The
+  mechanism, confirmed from ROM bytes rather than inferred: a larger enclosing
+  function reaches these regions with a real Thumb `bl` (e.g. `f000 f82b` at
+  `0x02002f6a` targeting `0x02002fc4`), lands on a `ldr r0, pool` /
+  `b` pair, and exits through the shared `pop {r1}` / `bx r1`. The `bl`'s own
+  link register is discarded: the pop retrieves the *enclosing* function's
+  saved `lr`, so the fragment both sets a return value and returns from its
+  caller's caller. That is a deliberate size optimisation, which means the
+  region is not a standalone function and its epilogue is not the candidate's
+  to own. Splicing it would delete a live branch target. These belong to the
+  multi-region-function classification, not to the conversion queue; the C is
+  correct and parked, and closing them is boundary work.
 
 ### Overlay pool words are symbols, not integer literals (2026-07-25)
 

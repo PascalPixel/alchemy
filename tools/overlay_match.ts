@@ -36,6 +36,8 @@ interface FunctionRow {
   unresolved: number;
   jump_tables: number;
   fingerprint: string;
+  structural_veneer: boolean;
+  data_walk: boolean;
 }
 
 function optionsOf(argv: string[]): Options {
@@ -87,7 +89,13 @@ async function main(): Promise<void> {
   };
   const duplicate = new Set(inventory.families.filter((family) => family.count > 1).map((family) => family.fingerprint));
   const selected = inventory.functions
-    .filter((fn) => (options.all || duplicate.has(fn.fingerprint)) && fn.unresolved === 0 && fn.jump_tables === 0 &&
+    // The inventory's two "not compiler output" classes are excluded here too,
+    // not just from its own reported totals: a veneer is linker output and a
+    // data walk is not code at all, so neither has C to recover and both only
+    // burn draft-and-build time. Data walks in particular used to dominate the
+    // failure histogram by crashing the emitter.
+    .filter((fn) => !fn.structural_veneer && !fn.data_walk &&
+      (options.all || duplicate.has(fn.fingerprint)) && fn.unresolved === 0 && fn.jump_tables === 0 &&
       fn.code_bytes >= 8 && fn.code_bytes <= options.maxBytes && fn.span_bytes - fn.code_bytes <= 64 &&
       (options.targets === null || options.targets.has(fn.id)))
     .sort((left, right) => left.code_bytes - right.code_bytes || left.id.localeCompare(right.id))

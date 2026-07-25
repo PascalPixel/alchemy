@@ -31,6 +31,7 @@ interface FunctionRow {
   seed_sources: string[];
   contained_by: string[];
   structural_veneer: boolean;
+  data_walk: boolean;
 }
 
 function optionsOf(argv: string[]): Options {
@@ -136,6 +137,25 @@ function structuralVeneer(discovery: Discovery, entry: number): boolean {
   if ((load & 0xf8ff) !== 0x4800) return false;
   if ((branch & 0xff87) !== 0x4700) return false;
   return ((load >>> 8) & 7) === ((branch >>> 3) & 0xf);
+}
+
+// ARMv4T reserves 0xe800-0xffff entirely for the two halves of the 4-byte
+// BL/BLX pair, so no standalone 2-byte Thumb instruction can encode a halfword
+// in that range. A walk that decodes one as a 2-byte instruction is therefore
+// not reading code: the seed landed in a data table, or mid-BL, and everything
+// after it is a misalignment. Discovery seeds aggressively on tagged words
+// whose first halfword merely looks like `movs rN,#imm`, which matches a great
+// deal of ordinary data, so these walks are common and can run for thousands of
+// bytes. They have no C source to recover and are excluded from the queue.
+//
+// This is an encoding fact rather than a heuristic, and it measures that way:
+// across the 2,477 functions the main-ROM discovery finds -- 1,167 of which
+// already have byte-exact C -- it flags none.
+function dataWalk(discovery: Discovery, addresses: number[]): boolean {
+  for (const address of addresses) {
+    if (discovery.instructions.get(address)?.size === 2 && discovery.u16(address) >= 0xe800) return true;
+  }
+  return false;
 }
 
 function fingerprint(discovery: Discovery, addresses: number[]): string {
@@ -263,6 +283,7 @@ function main(): void {
         seed_sources: [...fn.sources].sort(),
         contained_by: [],
         structural_veneer: structuralVeneer(discovery, entry),
+        data_walk: dataWalk(discovery, addresses),
       });
     }
     undiscoveredConvertedFunctions += [...converted].filter((address) => !discoveredConverted.has(address)).length;
@@ -283,8 +304,9 @@ function main(): void {
       .sort();
   }
   const veneers = functions.filter((fn) => fn.structural_veneer);
+  const dataWalks = functions.filter((fn) => fn.data_walk);
   const ordinary = functions.filter((fn) => fn.unresolved === 0 && fn.jump_tables === 0 &&
-    fn.code_bytes >= 8 && fn.span_bytes - fn.code_bytes <= 64 && !fn.structural_veneer);
+    fn.code_bytes >= 8 && fn.span_bytes - fn.code_bytes <= 64 && !fn.structural_veneer && !fn.data_walk);
   const tiny = functions.filter((fn) => fn.code_bytes <= 6);
   const contained = functions.filter((fn) => fn.contained_by.length > 0);
   const returning = functions.filter((fn) => fn.returns > 0);
@@ -315,6 +337,7 @@ function main(): void {
       returning_unconverted_discoveries: returning.length,
       ordinary_prologue_return_discoveries: ordinaryPrologueReturn.length,
       structural_veneer_discoveries: veneers.length,
+      data_walk_discoveries: dataWalks.length,
       converted_internal_entries: convertedInternalEntries,
       undiscovered_converted_functions: undiscoveredConvertedFunctions,
       functions: functions.length,
@@ -333,7 +356,7 @@ function main(): void {
   };
   mkdirSync(dirname(options.output), { recursive: true });
   writeFileSync(options.output, canonicalJson(report) + "\n");
-  console.log(`overlays=${report.totals.overlays} converted_functions=${convertedFunctions} unconverted_discoveries=${functions.length} ordinary_unconverted_discoveries=${ordinary.length} tiny_unconverted_discoveries=${tiny.length} contained_unconverted_discoveries=${contained.length} returning_unconverted_discoveries=${returning.length} ordinary_prologue_return_discoveries=${ordinaryPrologueReturn.length} structural_veneer_discoveries=${veneers.length}`);
+  console.log(`overlays=${report.totals.overlays} converted_functions=${convertedFunctions} unconverted_discoveries=${functions.length} ordinary_unconverted_discoveries=${ordinary.length} tiny_unconverted_discoveries=${tiny.length} contained_unconverted_discoveries=${contained.length} returning_unconverted_discoveries=${returning.length} ordinary_prologue_return_discoveries=${ordinaryPrologueReturn.length} structural_veneer_discoveries=${veneers.length} data_walk_discoveries=${dataWalks.length}`);
   console.log(`decoded_bytes=${decodedBytes} instruction_bytes=${instructionBytes} converted_instruction_bytes=${convertedInstructionBytes} converted_span_bytes=${convertedSpanBytes} converted_internal_entries=${convertedInternalEntries} undiscovered_converted_functions=${undiscoveredConvertedFunctions} unresolved=${unresolved} jump_tables=${jumpTables}`);
   console.log(`duplicate_families=${report.totals.duplicate_families} duplicate_functions=${report.totals.duplicate_functions}`);
   for (const family of families.filter((item) => item.count > 1).slice(0, options.top)) {

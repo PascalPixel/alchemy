@@ -282,22 +282,8 @@ Overlay_02000000:
 	.4byte 0x47704800
 	.2byte 0x8e94
 	.2byte 0x0200
-	push	{lr}
-	ldr	r3, [pc, #24]
-	movs	r2, #225
-	lsls	r2, r2, #1
-	adds	r3, r3, r2
-	movs	r2, #0
-	ldrsh	r3, [r3, r2]
-	cmp	r3, #15
-	bne.n	.L_0200006a
-	bl	.L_020000dc
-.L_0200006a:
-	movs	r0, #0
-	pop	{r1}
-	bx	r1
-	.2byte 0x0240
-	.2byte 0x0200
+AlchemyC_02000054:
+	.space 0x20
 	push	{r5, lr}
 	bl	sub_02000b70
 	movs	r0, #14

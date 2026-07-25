@@ -53,7 +53,7 @@ const OPTIMIZE_O1_SOURCES = new Set(["080049e8", "08021e28"]);
 const UNSCHEDULED_SOURCES = new Set([
     "08006b84",
   "08002f10",
-  "08004198", "0800430c", "08004358", "0800439c", "080043e0",
+  "08004198", "080042c8", "0800430c", "08004358", "0800439c", "080043e0",
   "08029274",
   "080fb714", "080fb728", "080fb73c", "080fb750", "080fb75c",
   "080fb768", "080fb77c",
@@ -112,12 +112,19 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // rewrite a correct schedule for the trailing descriptor trio -- that part holds
 // -- but it is not what blocks the block-2 head: there rank_for_schedule simply
 // prefers a higher-priority insn, and no source shape reorders the ready list.
-// Closing 08005a78 needs a compiler change, not another routing flag.
+// Closing 08005a78 needs a compiler change, not another routing flag. 080b5ad4
+// is a sixth, and the clearest statement of the same limit: with the mode its
+// descriptor store groups and its whole tail agrees, and what is left is one
+// `adds r2, r4, #0`. Its control word is also the following call's third
+// argument, so the pseudo has two uses and thumb_store_multiple3's hard-coded
+// (reg:SI 2) makes arm_pre_reload insert a copy the reference does not have --
+// value0 has a special case in that pass and value2 has none
+// (work/hand/080b5ad4/NOTES.md).
 const GROUPED_DMA_STORE_SOURCES = new Set([
   "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
   "08004a5c", "08004a94", "0800bc48", "0800d304", "080170c4", "0801d980",
   "080251d4", "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
-  "0808fecc", "08004760", "08005a78", "080037d4",
+  "0808fecc", "08004760", "08005a78", "080037d4", "080b5ad4",
 ]);
 
 // Nine sound-request entry wrappers: the entry pool load precedes the
@@ -677,7 +684,7 @@ function selfTest(): void {
   if (JSON.stringify(groupedDma) !== JSON.stringify([
     "08002f10", "080037d4", "08004760", "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c",
     "08004a94", "08005a78", "0800bc48", "0800d304", "080170c4", "0801d980", "080251d4", "080284dc", "0808fecc",
-    "080958a8", "0809bb34", "080c0184", "080c08a8",
+    "080958a8", "0809bb34", "080b5ad4", "080c0184", "080c08a8",
   ])) {
     throw new Error("grouped DMA source allowlist self-test failed");
   }

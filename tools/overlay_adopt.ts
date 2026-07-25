@@ -26,6 +26,7 @@ const LISTING_ROW = /^\s*(\d+)\s+([0-9a-f]{4,})\s+[0-9A-Fa-f]/;
 const LOCAL_LABEL = /^\s*(\.L_[0-9a-f]+):/;
 
 interface Options {
+  span?: number;
   id: string;
   source: string;
   apply: boolean;
@@ -45,8 +46,12 @@ function optionsOf(argv: string[]): Options {
     const argument = argv[index];
     if (argument === "--source" || argument === "-s") options.source = argv[++index];
     else if (argument === "--apply") options.apply = true;
+    else if (argument === "--span") {
+      options.span = Number(argv[++index]);
+      if (!Number.isInteger(options.span) || options.span <= 0) throw new Error("--span must be a positive byte count");
+    }
     else if (argument === "-h" || argument === "--help") {
-      console.log("usage: overlay_adopt.ts <overlay:offsetHex> --source FILE [--apply]");
+      console.log("usage: overlay_adopt.ts <overlay:offsetHex> --source FILE [--span BYTES] [--apply]");
       process.exit(0);
     } else if (options.id === "") options.id = argument;
     else throw new Error(`unrecognized argument: ${argument}`);
@@ -101,8 +106,24 @@ function regionLines(offsets: Map<number, number>, offset: number, span: number)
 function main(): void {
   const options = optionsOf(Bun.argv.slice(2));
   const inventory = JSON.parse(readFileSync(join(ROOT, "out/decomp/overlays.json"), "utf8")) as { functions: FunctionRow[] };
-  const fn = inventory.functions.find((row) => row.id === options.id);
-  if (fn === undefined) throw new Error(`no such overlay function: ${options.id}`);
+  const found = inventory.functions.find((row) => row.id === options.id);
+  // Discovery seeds from control flow inside the stream, so a function whose
+  // only callers live in the main image or in an external pointer table is
+  // never inventoried. `--span` adopts such a function from its id alone. It
+  // weakens nothing: the region boundary, straddling-label and rehearse-and-
+  // compare checks below are what actually gate the splice, and they read the
+  // assembly, not the inventory.
+  let fn: FunctionRow;
+  if (found !== undefined) {
+    fn = found;
+  } else if (options.span !== undefined) {
+    const [overlay, offsetText] = options.id.split(":");
+    const offset = Number.parseInt(offsetText, 16);
+    if (!Number.isInteger(offset)) throw new Error(`unparseable overlay id: ${options.id}`);
+    fn = { id: options.id, overlay, entry: OVERLAY_BASE + offset, offset, span_bytes: options.span } as FunctionRow;
+  } else {
+    throw new Error(`no such overlay function: ${options.id} (pass --span BYTES to adopt an undiscovered entry)`);
+  }
   const stem = hex8(fn.entry);
   if (fn.entry - OVERLAY_BASE !== fn.offset) throw new Error("inventory entry and offset disagree");
 

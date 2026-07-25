@@ -5997,7 +5997,6 @@ Overlay_02000000:
 	pop	{r0}
 	bx	r0
 AlchemyC_02002f64:
-AlchemyC_02002f64:
 	.space 0x2c
 	.4byte 0x00004770
 	.4byte 0x23094a01

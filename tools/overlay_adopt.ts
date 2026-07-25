@@ -132,6 +132,14 @@ function main(): void {
   const lines = readFileSync(assembly, "utf8").split("\n");
   const [first, last] = regionLines(listingOffsets(assembly), fn.offset, fn.span_bytes);
 
+  // Adopting a region twice appends a second `AlchemyC_` label in front of the
+  // first one's `.space`. The assembler tolerates the duplicate and the ROM
+  // still rebuilds byte-identically, so the full build does not catch it; only
+  // the inventory's placeholder walk does, one run later. Refuse up front.
+  for (const line of lines.slice(first - 1, last)) {
+    if (line.startsWith("AlchemyC_")) throw new Error(`${options.id} is already adopted as C`);
+  }
+
   // A local label inside the region that something outside still branches to
   // would silently lose its definition when the body becomes `.space`.
   const outside = [...lines.slice(0, first - 1), ...lines.slice(last)].join("\n");

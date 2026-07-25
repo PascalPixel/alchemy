@@ -809,20 +809,8 @@ AlchemyC_02000098:
 	.space 0x1a
 .L_020000b2:
 	.space 0x2e
-	.4byte 0x6c426883
-	.4byte 0x6083189b
-	.4byte 0x68c36c82
-	.4byte 0x60c3189b
-	.4byte 0x69036cc2
-	.4byte 0x6103189b
-	.4byte 0x69836b02
-	.4byte 0x6183189b
-	.4byte 0x69c36b42
-	.4byte 0x61c3189b
-	.4byte 0x30646d01
-	.4byte 0x88028bcb
-	.4byte 0x83cb189b
-	.2byte 0x4770
+AlchemyC_020000e0:
+	.space 0x36
 	.2byte 0x0000
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

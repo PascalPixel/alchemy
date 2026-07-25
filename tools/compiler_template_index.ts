@@ -11,7 +11,7 @@ import { canonicalJson } from "./canonical_json.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 
-interface Options { inventory: string; objects: string; output: string; jobs: number; top: number }
+interface Options { inventory: string; objects: string; output: string; jobs: number; top: number; duplicatesOnly: boolean }
 interface FunctionRow {
   id: string;
   overlay: string;
@@ -30,6 +30,7 @@ function optionsOf(argv: string[]): Options {
     output: join(ROOT, "out/decomp/compiler-templates.json"),
     jobs: Math.min(16, navigator.hardwareConcurrency || 1),
     top: 30,
+    duplicatesOnly: false,
   };
   for (let index = 0; index < argv.length; index++) {
     const argument = argv[index];
@@ -38,6 +39,7 @@ function optionsOf(argv: string[]): Options {
     else if (argument === "--output" || argument === "-o") options.output = argv[++index];
     else if (argument === "--jobs") options.jobs = Number(argv[++index]);
     else if (argument === "--top") options.top = Number(argv[++index]);
+    else if (argument === "--duplicates-only") options.duplicatesOnly = true;
     else if (argument === "-h" || argument === "--help") {
       console.log("usage: compiler_template_index.ts [--inventory FILE] [--objects DIR] [--jobs N] [--top N] [-o FILE]");
       process.exit(0);
@@ -112,8 +114,23 @@ async function main(): Promise<void> {
     functions: FunctionRow[];
     families: Array<{ fingerprint: string; count: number }>;
   };
+  // Overlays reuse main-ROM code, so the exact-C corpus is a template library
+  // for them: resource_3c8:00e0 is byte-identical to the already-converted
+  // src/0809a44c.c and converted by retargeting that source alone. Restricting
+  // the scan to duplicate overlay families missed that entirely, because the
+  // twin lives in the main image rather than in another overlay. Consider every
+  // unconverted ordinary function instead; --duplicates-only restores the old,
+  // narrower selection.
   const duplicate = new Set(inventory.families.filter((family) => family.count > 1).map((family) => family.fingerprint));
-  const overlayFunctions = inventory.functions.filter((fn) => duplicate.has(fn.fingerprint));
+  const converted = new Set(
+    readdirSync(join(ROOT, "assets/code"))
+      .map((name) => /_c_([0-9a-f]{8})\.c$/.exec(name)?.[1])
+      .filter((stem): stem is string => stem !== undefined)
+      .map((stem) => Number.parseInt(stem, 16)),
+  );
+  const overlayFunctions = inventory.functions.filter((fn) => options.duplicatesOnly
+    ? duplicate.has(fn.fingerprint)
+    : (!fn.structural_veneer && !fn.data_walk && fn.code_bytes >= 8 && !converted.has(fn.entry)));
 
   const objectNames = readdirSync(options.objects).filter((name) => /^08[01][0-9a-f]{5}\.o$/.test(name)).sort();
   const templates = await parallelMap(objectNames, options.jobs, async (name): Promise<Template> => {

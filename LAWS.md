@@ -1919,6 +1919,29 @@ replacement must state what changed and define an acceptance test.
   than a comparison one.
 - **Recorded:** 2026-07-25.
 
+### Commutative register operand order is not source-reachable (2026-07-25)
+
+- **Fingerprint:** the candidate is exact except for `adds rd, rA, rB` where the
+  reference has `adds rd, rB, rA`, or `ldrb rd, [rA, rB]` against
+  `ldrb rd, [rB, rA]`. Two bytes per site, and the branch offsets after it
+  usually still agree, so the mismatch count stays tiny.
+- **Not reachable from C.** Writing `base + offset` and `offset + base`, naming
+  the offset in a local first, and casting either side to the pointer type all
+  produce the same operand order. `expand_binop`'s commutative swap
+  (`optabs.c:651`) explicitly does *not* fire for register-plus-register with a
+  fresh target -- it swaps only for `CONST_INT` or when the target already
+  equals `op1` -- so the order is fixed before it, at tree level.
+- **Three witnesses, all otherwise exact:** `resource_394:0b3c` (2 mismatched
+  bytes), `resource_394:0be4` (4), `resource_371:0350` (4, the same rule
+  applied to `ands`). Each is semantically correct with every pool word,
+  register and branch target matching.
+- **Why it is not gated.** Unlike the comparison canonicalisation, which had a
+  single site rewriting one comparison code, this one governs operand order for
+  every commutative operation in the tree. A flag would change far more code
+  than the three functions it would close, and the reference's order is not
+  obviously derivable from a rule we could state. Left open deliberately.
+- **Recorded:** 2026-07-25.
+
 ### Overlay singleton idioms (2026-07-25)
 
 Recurring source-shape rules found while converting the overlay

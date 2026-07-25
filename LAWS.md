@@ -1335,6 +1335,37 @@ against the approved bundle; full sourced notes in
   letter (`Data_08031864_b`) for a second symbol at an already-named address.
 - **Recorded:** 2026-07-25.
 
+### old_agbcc has no instruction scheduler at all (2026-07-25)
+
+- **Claim:** in a region routed to `old_agbcc`, no transposition is ever a
+  scheduling question. The compiler rejects `-fno-schedule-insns` and
+  `-fno-schedule-insns2` outright, and `-da` produces no `.sched` dump files,
+  so emitted order is RTL order. Every out-of-order pair is an expansion-order,
+  `regmove`, `combine`, or `reload` question instead.
+- **Why it matters:** most of this ledger's ordering laws were measured on the
+  Camelot fork, where `sched2` is the usual culprit and `rank_for_schedule`
+  priority is the usual blocker. Carrying that model into an `old_agbcc` region
+  sends an agent hunting a pass that is not in the binary. Establish which
+  compiler the region is on *before* reasoning about order.
+- **Evidence, `08006a00`** (120 bytes, exact). Its four transposed instructions
+  at `-O2` are a `regmove` rename, not a schedule: the front end narrows the
+  interrupt-enable read-modify-write to a HImode `BIT_IOR`, so the ior's first
+  operand is a `subreg`. `regmove_optimize`'s forward pass skips non-`REG`
+  sources, follows the `%` commutativity marker to the other operand, and
+  renames the ior's destination into the shift-result pseudo. `-O1` and
+  `-fno-regmove` give byte-identical output, because `flag_regmove` is set
+  unconditionally at `optimize >= 2`.
+- **Corollary, and the reason `-O1` keeps recurring on this compiler:** three of
+  the four `-O1` routes in `AGBCC_OPTIMIZE_O1_SOURCES` exist for three unrelated
+  passes — `duplicate_loop_exit_test` (`08006ba8`), a `local-alloc` tie that
+  removes a reload input reload (`08007098`), and `regmove` (`08006a00`).
+  `-O1` is not a compatibility mode for this object; it is a coarse way to spell
+  "one specific `-O2` pass did not run", and the sibling `08006dec` is
+  byte-identical at both levels, which is what proves the level is per-address.
+- **Scope:** confirmed for `old_agbcc` only. The fork does have both scheduling
+  passes, and the existing `sched2` laws stand for it unchanged.
+- **Recorded:** 2026-07-25.
+
 ### GCC 2.96 nested-function static-chain register
 
 - **Claim:** `080e73a0` reads r9 as a live-in value with no in-function

@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Tool role: entrypoint; invoked by PLAYBOOK.md.
+// Tool role: entrypoint; invoked by PLAYBOOK.md, tools/overlay_cohort.ts.
 // Adopt a byte-exact overlay C reconstruction: install it as the overlay's
 // `_c_<address>.c` sibling and swap the reconstruction assembly for the
 // `AlchemyC_<address>: / .space` placeholder the asset builder expects.

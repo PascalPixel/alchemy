@@ -2878,22 +2878,8 @@ AlchemyC_020000f8:
 	.4byte 0x0200b328
 	.2byte 0x1ee0
 	.2byte 0x0300
-	push	{lr}
-	ldr	r3, [pc, #20]
-	ldr	r3, [r3, #0]
-	cmp	r3, #0
-	beq.n	.L_02001742
-	ldr	r3, [pc, #16]
-	ldr	r2, [r3, #0]
-	movs	r3, #0
-	str	r3, [r2, #24]
-.L_02001742:
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0x0200b328
-	.2byte 0x1ee0
-	.2byte 0x0300
+AlchemyC_02001730:
+	.space 0x20
 	push	{lr}
 	ldr	r3, [pc, #68]
 	movs	r1, #224

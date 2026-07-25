@@ -396,20 +396,8 @@ Overlay_02000000:
 	pop	{r1}
 	bx	r1
 	.2byte 0x0000
-	push	{lr}
-	movs	r2, #128
-	ldr	r3, [r0, #24]
-	lsls	r2, r2, #9
-	cmp	r3, r2
-	bge.n	.L_020000ba
-	adds	r3, #160
-	str	r3, [r0, #24]
-	ldr	r3, [r0, #28]
-	adds	r3, #160
-	str	r3, [r0, #28]
-.L_020000ba:
-	pop	{r0}
-	bx	r0
+AlchemyC_020000a4:
+	.space 0x1a
 	.2byte 0x0000
 	push	{r5, r6, lr}
 	adds	r5, r0, #0

@@ -364,6 +364,20 @@ that no declaration permutation and no compiler mode could close.
 
 Use `tools/decomp_queue.ts` and the compiler diff to choose the next action.
 
+Read the diff before editing a draft. `tools/promote_candidate.ts` reports one
+score, which tells you a change was worse but never which statement caused it;
+drafting against that alone oscillates. `tools/candidate_show.ts <candidate.c>`
+compiles the candidate and prints it beside the reference, aligned by offset
+with every differing halfword marked, which is what turns a score into an edit:
+
+```sh
+bun tools/candidate_show.ts out/decomp/candidates/08004760.c
+```
+
+It reads pool words as resolved targets, so it also shows when the reference
+loads one pool word twice rather than keeping a value live -- the tell that two
+uses are separate constants in the source rather than one shared variable.
+
 | Symptom | First response |
 |---|---|
 | Semantic or type mismatch | Recover parameter, return, pointee, width, and signedness constraints; regenerate the draft. |

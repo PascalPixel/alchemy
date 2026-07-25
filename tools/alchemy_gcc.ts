@@ -122,7 +122,7 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // (work/hand/080b5ad4/NOTES.md).
 const GROUPED_DMA_STORE_SOURCES = new Set([
   "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
-  "08004a5c", "08004a94", "0800bc48", "0800d304", "080170c4", "0801d980",
+  "08004a5c", "08004a94", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "0801d980",
   "080251d4", "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
   "0808fecc", "08004760", "08005a78", "080037d4", "080b5ad4",
 ]);
@@ -683,7 +683,8 @@ function selfTest(): void {
   const groupedDma = [...GROUPED_DMA_STORE_SOURCES].sort();
   if (JSON.stringify(groupedDma) !== JSON.stringify([
     "08002f10", "080037d4", "08004760", "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c",
-    "08004a94", "08005a78", "0800bc48", "0800d304", "080170c4", "0801d980", "080251d4", "080284dc", "0808fecc",
+    "08004a94", "08005a78", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "0801d980", "080251d4", "080284dc",
+    "0808fecc",
     "080958a8", "0809bb34", "080b5ad4", "080c0184", "080c08a8",
   ])) {
     throw new Error("grouped DMA source allowlist self-test failed");

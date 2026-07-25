@@ -9,7 +9,7 @@
 // region's instructions are located with the assembler's own listing rather
 // than by counting directive widths: Thumb encodings are 2 or 4 bytes and a
 // hand-rolled width table would be wrong exactly where it matters.
-import { copyFileSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, dirname, join } from "node:path";
 import { assembleOverlay, OVERLAY_BASE } from "./overlay_disasm.ts";
@@ -163,8 +163,14 @@ function main(): void {
   // dry run under /tmp would reject a correct flag-routed match. Both files are
   // restored unless the rebuild is byte-identical and --apply was given.
   const installed = join(CODE, `${fn.overlay}_c_${stem}.c`);
+  // Only remove the installed C file if this run created it. A rehearsal over
+  // a region that already has one (a dry run, or a repeat) must leave the
+  // existing source alone -- deleting it orphans the placeholder and the next
+  // inventory run fails on the mismatch.
+  const preexisting = existsSync(installed) ? readFileSync(installed) : null;
   const revert = (): void => {
-    rmSync(installed, { force: true });
+    if (preexisting === null) rmSync(installed, { force: true });
+    else writeFileSync(installed, preexisting);
     writeFileSync(assembly, lines.join("\n"));
   };
   let rebuilt: Buffer;

@@ -922,7 +922,29 @@ against the approved bundle; full sourced notes in
   to reach wrongly, because a semantic defect upstream re-colours everything after
   it and still reports as `register_only`. Check the size, the literal pool and
   the constants' *materialisation* before you believe the registers.
-- **Recorded:** 2026-07-24.
+- **Second witness, and a hard unreachability it exposes (`080a8578`,
+  2026-07-25, parked at 17 bytes / 13 instructions, size and pool both exact).**
+  Two pseudos sit 0.9% apart in the ratio -- `arg1` at `floor_log2(7)*7/37` =
+  0.37837 against a pointer-plus-offset at `floor_log2(3)*3/8` = 0.37500 --
+  and the flip needs one extra zero-byte RTL insn to lift the first
+  denominator from 37 to 38. The numerator and both of the second quantity's
+  inputs are pinned by emitted instructions, so only that one denominator can
+  move. The reason it cannot: the only C-reachable way to keep the constant
+  `0xBE6` in its own insn is to give it a second use, and a second use makes it
+  live across the region's call, which forces it into a callee-saved register
+  and costs more bytes than the flip saves. The two requirements are mutually
+  exclusive, which is a sharper statement than "the ratio is pinned" -- here
+  the ratio is movable and the move is still unreachable.
+- **The reusable half: in Thumb, a `(set r0 <pseudo>)` after a call can never be
+  combined away.** `combinable_i3pat` returns 0 when the destination is a hard
+  register satisfying `FUNCTION_VALUE_REGNO_P`, the source is not a `CALL`, and
+  `SMALL_REGISTER_CLASSES` holds (combine.c:1387-1396) -- and
+  `SMALL_REGISTER_CLASSES` is `TARGET_THUMB` (arm.h:1128), so it holds for
+  every region in this project. Any return-value copy therefore survives to
+  allocation and its live range always counts. Before proposing that a source
+  edit will delete such an insn to shorten a span, check this first; it is a
+  standing no.
+- **Recorded:** 2026-07-24; second witness and the combine finding 2026-07-25.
 
 ### A statement's position sets a live length, and one insn of live length can flip the allocator (2026-07-24)
 

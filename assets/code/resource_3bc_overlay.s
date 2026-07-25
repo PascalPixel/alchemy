@@ -7681,28 +7681,8 @@ Overlay_02000000:
 	pop	{r5, r6, r7}
 	pop	{r0}
 	bx	r0
-	push	{r5, lr}
-	adds	r0, #8
-	movs	r3, #0
-	ldr	r5, [pc, #32]
-	strb	r3, [r0, #0]
-	movs	r2, #7
-	subs	r0, #1
-	movs	r4, #15
-.L_02003ca4:
-	adds	r3, r1, #0
-	ands	r3, r4
-	ldrb	r3, [r5, r3]
-	subs	r2, #1
-	strb	r3, [r0, #0]
-	lsrs	r1, r1, #4
-	subs	r0, #1
-	cmp	r2, #0
-	bge.n	.L_02003ca4
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	.4byte 0x0200ce3c
+AlchemyC_02003c94:
+	.space 0x2c
 	.4byte 0x00004770
 	.4byte 0x23094a01
 	.4byte 0x47708013

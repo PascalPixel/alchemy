@@ -299,7 +299,7 @@ function sourceKey(source: string): string {
 }
 
 export function cflagsForSource(source: string): readonly string[] {
-  const stem = sourceStem(source);
+  const stem = overlayStem(source);
   const base = DEFAULT_ABI_SOURCES.has(stem)
     ? CFLAGS.filter((flag) => flag !== "-fcall-used-r4")
     : [...CFLAGS];

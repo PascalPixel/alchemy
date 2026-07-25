@@ -1914,6 +1914,16 @@ replacement must state what changed and define an acceptance test.
   pooled compare, two-way return) finds 22 instances across the overlays;
   extracting each one's three pool words and filling the template converted
   all of them.
+- **The selector generalises to N ways.** The same preamble feeds a chain of
+  `ldr r3,pool / cmp r2,r3 / bne +1 / ldr r0,pool / b end` blocks with a final
+  unguarded `ldr r0,pool`, one to eleven deep. Scanning for the chain and
+  filling one template produced **58 more functions, all byte-exact on the
+  first compile** (54 adopted; four refused by the straddling-label check
+  because code outside branches into their region). Read the value once into
+  an `s16` local when the chain is longer than one comparison; a single
+  comparison reads the array directly. Overlay C functions went 92 to 167 in
+  one pass, so the shape scan, not the near-miss queue, is where overlay
+  conversions come from.
 
 ### Overlay discovery misses externally-called functions (2026-07-25)
 

@@ -30,6 +30,7 @@ interface FunctionRow {
   fingerprint: string;
   seed_sources: string[];
   contained_by: string[];
+  structural_veneer: boolean;
 }
 
 function optionsOf(argv: string[]): Options {
@@ -116,6 +117,25 @@ function targetClass(discovery: Discovery, value: number): string {
   if (bank === 0x02 || bank === 0x03) return "ram";
   if (bank === 0x04) return "io";
   return `constant:${value <= 0xffff ? value.toString(16) : "wide"}`;
+}
+
+// A long-branch veneer is a literal word followed by `ldr rN,[pc,#0]` / `bx rN`,
+// laid out so each veneer's pointer sits in front of the next veneer's code.
+// Discovery seeds on the tagged pointer, so the entry it reports is the word,
+// not the branch, and the "function" it walks is the following veneer plus
+// whatever trails it. These are linker output, not compiler output: there is no
+// C source to recover, so they are excluded from the conversion queue.
+function structuralVeneer(discovery: Discovery, entry: number): boolean {
+  if (!discovery.inside(entry, 8)) return false;
+  const pointer = discovery.u32(entry);
+  if ((pointer & 1) === 0) return false;
+  const bank = pointer >>> 24;
+  if (bank !== 0x08 && bank !== 0x09) return false;
+  const load = discovery.u16(entry + 4);
+  const branch = discovery.u16(entry + 6);
+  if ((load & 0xf8ff) !== 0x4800) return false;
+  if ((branch & 0xff87) !== 0x4700) return false;
+  return ((load >>> 8) & 7) === ((branch >>> 3) & 0xf);
 }
 
 function fingerprint(discovery: Discovery, addresses: number[]): string {
@@ -242,6 +262,7 @@ function main(): void {
         fingerprint: fingerprint(discovery, addresses),
         seed_sources: [...fn.sources].sort(),
         contained_by: [],
+        structural_veneer: structuralVeneer(discovery, entry),
       });
     }
     undiscoveredConvertedFunctions += [...converted].filter((address) => !discoveredConverted.has(address)).length;
@@ -261,8 +282,9 @@ function main(): void {
       .filter((id) => id !== fn.id)
       .sort();
   }
+  const veneers = functions.filter((fn) => fn.structural_veneer);
   const ordinary = functions.filter((fn) => fn.unresolved === 0 && fn.jump_tables === 0 &&
-    fn.code_bytes >= 8 && fn.span_bytes - fn.code_bytes <= 64);
+    fn.code_bytes >= 8 && fn.span_bytes - fn.code_bytes <= 64 && !fn.structural_veneer);
   const tiny = functions.filter((fn) => fn.code_bytes <= 6);
   const contained = functions.filter((fn) => fn.contained_by.length > 0);
   const returning = functions.filter((fn) => fn.returns > 0);
@@ -292,6 +314,7 @@ function main(): void {
       contained_unconverted_discoveries: contained.length,
       returning_unconverted_discoveries: returning.length,
       ordinary_prologue_return_discoveries: ordinaryPrologueReturn.length,
+      structural_veneer_discoveries: veneers.length,
       converted_internal_entries: convertedInternalEntries,
       undiscovered_converted_functions: undiscoveredConvertedFunctions,
       functions: functions.length,
@@ -310,7 +333,7 @@ function main(): void {
   };
   mkdirSync(dirname(options.output), { recursive: true });
   writeFileSync(options.output, canonicalJson(report) + "\n");
-  console.log(`overlays=${report.totals.overlays} converted_functions=${convertedFunctions} unconverted_discoveries=${functions.length} ordinary_unconverted_discoveries=${ordinary.length} tiny_unconverted_discoveries=${tiny.length} contained_unconverted_discoveries=${contained.length} returning_unconverted_discoveries=${returning.length} ordinary_prologue_return_discoveries=${ordinaryPrologueReturn.length}`);
+  console.log(`overlays=${report.totals.overlays} converted_functions=${convertedFunctions} unconverted_discoveries=${functions.length} ordinary_unconverted_discoveries=${ordinary.length} tiny_unconverted_discoveries=${tiny.length} contained_unconverted_discoveries=${contained.length} returning_unconverted_discoveries=${returning.length} ordinary_prologue_return_discoveries=${ordinaryPrologueReturn.length} structural_veneer_discoveries=${veneers.length}`);
   console.log(`decoded_bytes=${decodedBytes} instruction_bytes=${instructionBytes} converted_instruction_bytes=${convertedInstructionBytes} converted_span_bytes=${convertedSpanBytes} converted_internal_entries=${convertedInternalEntries} undiscovered_converted_functions=${undiscoveredConvertedFunctions} unresolved=${unresolved} jump_tables=${jumpTables}`);
   console.log(`duplicate_families=${report.totals.duplicate_families} duplicate_functions=${report.totals.duplicate_functions}`);
   for (const family of families.filter((item) => item.count > 1).slice(0, options.top)) {

@@ -44,6 +44,14 @@ export function recoverEntry(data: Buffer, offset: number, window = 512): Recove
     if ((half & BX_MASK) !== BX) continue;
     let entry = at + 2;
     while (entry + 2 <= data.length && PADDING.has(data.readUInt16LE(entry))) entry += 2;
+    // 戻りの直後が必ず次の入口とは限らない: 直前の関数のプール語が挟まる。
+    // 語境界のプロローグが手前に見つかればそれを採る。見つからなければ詰め物の
+    // 直後をそのまま採る -- 葉関数はプロローグを持たないので、これが正しい。
+    if ((data.readUInt16LE(entry) & PROLOGUE_MASK) !== PROLOGUE) {
+      for (let scan = (entry + 3) & ~3; scan < offset; scan += 4) {
+        if ((data.readUInt16LE(scan) & PROLOGUE_MASK) === PROLOGUE) { entry = scan; break; }
+      }
+    }
     if (entry > offset) return null;
     return {
       entry,
@@ -55,14 +63,17 @@ export function recoverEntry(data: Buffer, offset: number, window = 512): Recove
 }
 
 function selfTest(): void {
-  // ... bx r1 / padding / push {lr} / body ...
-  const halves = [0x2000, 0x4708, 0x0000, 0xb500, 0x2001, 0x4770];
+  // 前の関数の戻り / 詰め物 / 入口 / 復号できる本体 / 戻り。
+  const halves = [
+    0x2000, 0x4708, 0x0000,
+    0xb500, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x4770,
+  ];
   const data = Buffer.alloc(halves.length * 2);
   halves.forEach((half, index) => data.writeUInt16LE(half, index * 2));
-  // 本体の途中(0x08)から呼んでも、詰め物を越えて 0x06 を返すこと。
-  const found = recoverEntry(data, 8);
+  // 本体の途中(0x0a)から呼んでも、詰め物を越えて 0x06 を返すこと。
+  const found = recoverEntry(data, 10);
   if (found === null || found.entry !== 6) throw new Error("overlay entry self-test: wrong entry");
-  if (found.movedBy !== 2 || !found.startsWithPrologue) throw new Error("overlay entry self-test: wrong metadata");
+  if (found.movedBy !== 4 || !found.startsWithPrologue) throw new Error("overlay entry self-test: wrong metadata");
   // 戻りが手前に無ければ何も主張しない。
   if (recoverEntry(Buffer.alloc(8), 6) !== null) throw new Error("overlay entry self-test: must not invent an entry");
   console.log("overlay entry self-test passed");

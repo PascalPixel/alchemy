@@ -93,6 +93,30 @@ export function repairVoidDereferences(draft: string): string {
   );
 }
 
+// m2c writes its diagnostics to stdout, interleaved with the translation
+// itself, and callers capture that stream as the draft.  A line such as
+// `Warning: missing "bx $lr" in last block of Func_02003a92 (initial).' then
+// lands in the C file and the compiler stops at `parse error before ":"',
+// which reads as a broken candidate rather than as the tool note it is.  Drop
+// those lines so the draft is C, and so the real defect -- a body m2c could
+// not reconstruct -- shows up as a byte mismatch that can be measured.
+export function repairDiagnosticLines(draft: string): string {
+  return draft.replace(/^(?:Warning|Error|Note):[^\n]*\n?/gm, "");
+}
+
+// m2c emits a call through a literal address as `(u8 (*)(s32))0x020089F5(x)',
+// where the cast binds to the call's result instead of to the callee.  The
+// compiler rejects it with `called object is not a function'.  Parenthesise
+// the callee so the cast applies to the address.
+export function repairCalleeCasts(draft: string): string {
+  return draft.replace(
+    /\((\s*[A-Za-z_][\w ]*\(\s*\*\s*\)\s*\([^()]*\)\s*)\)\s*(0x[0-9A-Fa-f]+)\s*\(/g,
+    (_whole, cast: string, address: string) => `((${cast})${address})(`,
+  );
+}
+
 export function repairM2cDraft(draft: string): string {
-  return repairArityConflicts(repairVoidDereferences(draft));
+  return repairArityConflicts(
+    repairCalleeCasts(repairVoidDereferences(repairDiagnosticLines(draft))),
+  );
 }

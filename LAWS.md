@@ -1460,10 +1460,39 @@ against the approved bundle; full sourced notes in
   two.** A two-insn Thumb constant therefore issues back-to-back here, where the
   reference fills the gap with an independent setter. **(B) Among insns that are
   otherwise tied, `rank_for_schedule` prefers the one with more forward
-  dependents, and the reference behaves as if that rule is absent** and falls
-  straight through to the `INSN_LUID` tie-break, i.e. original order. Neither is
-  reachable from C: both are decided after reload, on an insn stream the source
-  no longer controls.
+  dependents, and at *some* sites the reference behaves as if that rule is
+  absent** and falls straight through to the `INSN_LUID` tie-break, i.e. original
+  order. Neither is reachable from C: both are decided after reload, on an insn
+  stream the source no longer controls. **(A) is a global law; (B) is not — see
+  the measurement below.**
+- **(B) is a per-site lever, not a global law — measured.** An earlier version of
+  this entry claimed the reference behaves as if the depend-count rule is absent,
+  full stop. That is false. With the rule gated off globally, `build_claimed.ts`
+  reports `linked=1239 failures=260`: the rule is *present* in the reference for
+  the large majority of code. Worse, it is not even source-scoped. Inside the
+  single function `resource_3a0_c_02000048.c` the reference needs the rule ON at
+  block 0's prologue shuffle (`Ready list (t = 4): 23 19 21`, reference takes
+  `21`, which only the depend count reaches) and OFF at block 1's pre-call pair
+  (`Ready list (t = 51): 73 75`, reference takes `73`, which only `INSN_LUID`
+  reaches). So `-fno-sched-depend-count` is a narrow per-source escape hatch for
+  functions whose every tie wants original order, not a model correction.
+- **Hypothesis "count only *true* dependents" is refuted.** The natural repair —
+  that the reference counts `REG_DEP_TRUE` edges and the fork over-counts by
+  including anti and output edges — does not survive the RTL. At the block 0 site
+  above, insn 21's two extra dependents are insns 26 and 28, and 26's dependence
+  list reads `(insn_list 24 (insn_list:REG_DEP_OUTPUT 6 (insn_list:REG_DEP_ANTI 21
+  (nil))))` — both extras are non-true. Dropping non-true edges makes 19/21/23 tie
+  and `INSN_LUID` picks 19, which breaks the site the full count gets right.
+- **`-mcall-arg0-move-first` is not subsumed by `-fno-sched-depend-count`.** The
+  pre-existing peephole at `arm.c:6736` patches exactly (B)'s symptom for 21
+  overlay sources, and on `resource_3a0_c_02000048.c` the two levers are not
+  interchangeable: the scheduler flag fixes the call site the peephole fixes and
+  simultaneously breaks the prologue shuffle the peephole leaves alone. Keep both.
+  Conversely the peephole does not cover `3cd:004c`, whose r0 setter is an
+  immediate (`movs r0,#13`) rather than a register move, which is all the peephole
+  matches: with `-mthumb-immediate-latency -mcall-arg0-move-first` that function
+  stays at 8 mismatched bytes, and with `-mthumb-immediate-latency
+  -fno-sched-depend-count` it reaches 0.
 - **Why (B) looks like an ABI rule, and why that phrasing was wrong.** The extra
   forward dependent is always contributed by the block's return insn, which
   depends on the *last writer* of each hard register. For a pre-call setter of
@@ -1548,17 +1577,27 @@ against the approved bundle; full sourced notes in
   nothing for a register-to-register data dependence — it only zeroes anti and
   output edges, forces 1 for edges into a call, and special-cases load-after-store.
   So there is no ALU result latency in the fork's model at all.
-- **Corollary for the fork lane — two named, separable changes,** and the top
-  item in that lane. (A) is a cost-model change: give the Thumb `movs`-immediate
-  to dependent-ALU edge a cost of 2, narrowly, in `arm_adjust_cost`. (B) is a
-  one-line gate on `haifa-sched.c:4097-4110`. Both must be validated by a full
-  `build_rom.ts` before adoption: 1,239 functions already match under the current
-  model, and either change is global to the fork lane.
+- **Both are implemented in the fork and both are default-off.** (A) is
+  `-mthumb-immediate-latency` (`ARM_FLAG_THUMB_IMMEDIATE_LATENCY`, bit 24): in
+  `arm_adjust_cost`, a true data dependence whose producer is a `(set (reg)
+  (const_int))` returns `cost + 1`. It is only observable into a non-call insn,
+  since edges into a call already return 1 earlier in that function. (B) is
+  `-fno-sched-depend-count`, a gate on `haifa-sched.c:4097-4110`. With both off,
+  `build_claimed.ts` gives `linked=1239 failures=0` — adding them changed nothing
+  that already matched.
+- **What they close.** `resource_3c7:0030` goes 4 → 0 mismatched bytes on
+  `-mthumb-immediate-latency` alone (and `-fno-sched-depend-count` alone is a
+  no-op there, as predicted). `resource_3cd:004c` goes 10 → 8 on (A) alone and
+  8 → 0 with (A) and (B) together.
 - **Scope:** measured on the `xgcc` fork at `-O2`. `old_agbcc` has no scheduler
   and cannot produce the interleave at all, in either direction. (A) is witnessed
   only on `movs`-immediate to `lsls`; the general "all ALU results cost 2" form is
-  unmeasured. (B) is witnessed only on r0-versus-rN pairs.
+  unmeasured, and the implemented flag is deliberately narrower than that — it
+  fires only when the producer's source is a literal constant. (B) is witnessed
+  only on r0-versus-rN pairs, and only *some* of those: see the per-site
+  measurement above.
 - **Recorded:** 2026-07-25; mechanism corrected and second witness added the same
+  day; (B)'s global form refuted and both flags implemented and measured the same
   day.
 
 ### Identical large constants in an argument list are a basic-block question (2026-07-25)

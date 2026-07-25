@@ -176,6 +176,33 @@ const CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3c0_c_020000a0.c",
   "assets/code/resource_3c9_c_020000a0.c",
 ]);
+// The fork's scheduler cost model gives a Thumb immediate move's result a
+// ready-delay of 1, so a two-insn constant (`movs rN,#imm` / `lsls rN,rN,#k`)
+// always issues back to back. These objects behave as if that result arrives a
+// cycle later, which lets an independent argument setter fill the gap. Evidence
+// is per-source and byte-exact: `resource_3c7:0030` is 4 mismatched bytes
+// without the mode and 18/18 exact with it, moving only the `movs r0,#14` that
+// the reference places between the two halves of the constant. See LAWS.md
+// "Pre-call argument setters diverge on two independent `sched2` defects",
+// defect (A).
+const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3c7_c_02000030.c",
+  "assets/code/resource_3cd_c_0200004c.c",
+]);
+// `rank_for_schedule` breaks a tie towards the insn with more forward
+// dependents; these objects fall through to the `INSN_LUID` (original order)
+// tie-break instead. This is deliberately a narrow per-source list, NOT a model
+// correction: gated off globally it breaks 260 of the 1239 functions that
+// otherwise match, and one known function wants the rule on at one site and off
+// at another. Only list a unit with an independent exact-byte proof.
+// `resource_3cd:004c` is 8 mismatched bytes with `-mthumb-immediate-latency`
+// alone and 36/36 exact with both; the mode moves only the two `movs r0,#13`
+// argument setters the reference places ahead of their r1/r2 companions, which
+// `-mcall-arg0-move-first` cannot reach because the r0 setter here is an
+// immediate rather than a register move. LAWS.md, defect (B).
+const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3cd_c_0200004c.c",
+]);
 // 既定ABI(標準のr4被呼出保存)で構築された収蔵ライブラリ翻訳単位。
 // 証拠: r4を保存する序文は -fcall-used-r4 の下では出ない
 // (割込保護記録08006a00、バイト複写08006b84、比較08006c24、
@@ -269,6 +296,12 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
     ...(CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mcall-arg0-move-first"]
+      : []),
+    ...(THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-mthumb-immediate-latency"]
+      : []),
+    ...(NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fno-sched-depend-count"]
       : []),
   ];
 }
@@ -392,7 +425,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
       xgcc: "2ed03493228a7873f020b16a63b89b3aadf4835be2d1a3a217cabca0fa244444",
       cpp: "06096beb427848574f610626bb53408b1a76f69b178ee2d7f0a05f6c2f6d3778",
       tradcpp: "f9b951486d4e1769e06b892a59980c91a45435559505d73039130b63d1156803",
-      cc1: "3a84296151ab3c7a4ae84a7527e9bb5066bfffbd4e6bbed0129d106ad51bab13",
+      cc1: "93a6d03be4d96b45581578cf8e25cf215e9c81167ea5815feea626467da331fb",
     },
     gs2: {
       xgcc: "d0b10d67bc7f9965d586eba766b77e6ca54cc791b5eb297b55a6b9b6d6d0ef3d",

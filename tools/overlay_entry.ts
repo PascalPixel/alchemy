@@ -39,6 +39,19 @@ interface Recovered { entry: number; movedBy: number; startsWithPrologue: boolea
 // 与えられた位置から後方へ最も近い戻りを探し、その直後を真の入口とみなす。
 // 戻りと入口の間の詰め物は読み飛ばす。見つからなければ null。
 export function recoverEntry(data: Buffer, offset: number, window = 512): Recovered | null {
+  // 種子そのものが本体の外、直前の関数のプール語に落ちていることがある。
+  // ARMv4Tにcbz/cbnzは無いので、その符号化(0xb100-0xbb7f のうち 0xb500 系を
+  // 除く)はコードではありえない。その場合は後方ではなく前方の入口を探す。
+  const seed = offset + 2 <= data.length ? data.readUInt16LE(offset) : 0;
+  const impossibleOnArmv4t = (seed & 0xf500) === 0xb100 && (seed & 0xff00) !== 0xb500;
+  if (impossibleOnArmv4t) {
+    for (let scan = (offset + 3) & ~3; scan < Math.min(data.length, offset + window); scan += 4) {
+      if ((data.readUInt16LE(scan) & PROLOGUE_MASK) === PROLOGUE) {
+        return { entry: scan, movedBy: offset - scan, startsWithPrologue: true };
+      }
+    }
+    return null;
+  }
   for (let at = offset - 2; at >= Math.max(0, offset - window); at -= 2) {
     const half = data.readUInt16LE(at);
     if ((half & BX_MASK) !== BX) continue;

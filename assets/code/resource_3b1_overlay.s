@@ -2043,28 +2043,8 @@ AlchemyC_02000058:
 	pop	{r5, r6}
 	pop	{r1}
 	bx	r1
-	push	{lr}
-	ldr	r3, [pc, #28]
-	movs	r1, #224
-	lsls	r1, r1, #1
-	adds	r3, r3, r1
-	movs	r1, #0
-	ldrsh	r2, [r3, r1]
-	ldr	r3, [pc, #20]
-	cmp	r2, r3
-	bne.n	.L_02000358
-	ldr	r0, [pc, #16]
-	b.n	.L_0200035a
-.L_02000358:
-	ldr	r0, [pc, #16]
-.L_0200035a:
-	pop	{r1}
-	bx	r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0000006f
-	.4byte 0x0200e984
-	.4byte 0x0200e96c
+AlchemyC_02000340:
+	.space 0x30
 	.4byte 0x47702000
 	.4byte 0x47704800
 	.2byte 0xeb94

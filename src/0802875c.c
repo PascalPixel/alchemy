@@ -4,7 +4,7 @@ extern u8 Data_000000f1[];
 
 u32 Func_08004938(s32 size);
 s32 Func_08002f40(s32 index);
-void Func_080053e8(void *, void *);
+u32 Func_080053e8(const void *, void *);
 void Func_08003fa4(s32, s32, void *);
 void Func_08002df0(void *);
 

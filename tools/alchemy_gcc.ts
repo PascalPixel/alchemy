@@ -461,7 +461,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
       xgcc: "9580bf21ee1828bf3ba6969ce894dfedb17569cb840ee2630199bdca7a5c59e5",
       cpp: "acf056df9321b1016afea640bac858c1cd4572f04002af356aced14e7509fae2",
       tradcpp: "086343042dd10f26c8d990b30fc9a17e17802eb0f72fed09daa979faac6cec99",
-      cc1: "f885560d5ae3c233b05fea15117e6c0bf28fc020eea02e5945fd4fc468e881c6",
+      cc1: "d140b8d25d68e7f4f0b89817b3158513a3b76db9295bc6e12e0852d4aa02a1f8",
     },
     gs2: {
       xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",

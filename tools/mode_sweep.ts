@@ -31,8 +31,16 @@ export const FORK_MODES = [
   "-mthumb-early-literal-pool", "-mthumb-immediate-latency", "-mthumb-load-latency-one",
 ] as const;
 
+// -fno-schedule-insns is deliberately absent. The pre-reload scheduler does
+// nothing in this fork: compiling 40 converted sources, including the largest,
+// with -fschedule-insns and with -fno-schedule-insns gives byte-identical
+// assembly every time (work/sched_probe.ts). Sweeping it wastes a compile per
+// target and, worse, puts a line in the results that reads like evidence when a
+// residual happens to be unchanged by it. Only -fno-schedule-insns2 can reorder
+// anything, which is why every routed member of UNSCHEDULED_SOURCES is really
+// carried by that flag alone.
 export const STOCK_SWITCHES = [
-  "-fno-schedule-insns", "-fno-schedule-insns2", "-fno-gcse", "-fno-cse-follow-jumps",
+  "-fno-schedule-insns2", "-fno-gcse", "-fno-cse-follow-jumps",
   "-fno-expensive-optimizations", "-fno-peephole", "-fno-strength-reduce", "-fno-regmove",
 ] as const;
 

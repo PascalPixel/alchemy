@@ -50,6 +50,12 @@ const FIXED_LR_SOURCES = new Set<string>();
 // These compact hardware helpers match the reference load/store order at -O1;
 // -O2 only swaps independent descriptor setup instructions.
 const OPTIMIZE_O1_SOURCES = new Set(["080049e8", "08021e28"]);
+// Only the second flag does anything. The pre-reload scheduler is inert in this
+// fork: 40 converted sources, including the largest, compile byte-identically
+// with -fschedule-insns and with -fno-schedule-insns (measured 2026-07-26,
+// work/sched_probe.ts). Every member below is carried by -fno-schedule-insns2
+// alone; the first flag is kept only because removing it would rewrite the
+// routed command line for sixteen already-verified regions.
 const UNSCHEDULED_SOURCES = new Set([
     "08006b84",
   "08002f10",

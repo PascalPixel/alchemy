@@ -1,9 +1,11 @@
 # Path to completion (measured 2026-07-26)
 
-`[1,250 of 2,015]`. 765 `c_candidate` regions remain. **Y dropped from 2,058 on
-2026-07-26 when the 43 `mov ip, pc` regions were moved into the existing
-`nonstandard_thumb_call_module` class — see below; the count of *converted*
-regions did not change.** This file exists because
+`[1,250 of 2,001]`. 751 `c_candidate` regions remain. **Y dropped from 2,058 to 2,001 on
+2026-07-26 in two steps: 43 `mov ip, pc` regions into the existing
+`nonstandard_thumb_call_module` class, and 14 regions that read a callee-saved
+register they never write into `hidden_register_context_module`. Both classes
+predate the change and both list this exact construct in their evidence. The
+count of *converted* regions did not move.** This file exists because
 "808 remain" is a count, not a plan, and because two family sizes published
 earlier today were both wrong from lazy fingerprints. Everything below is
 measured by `tools/remaining_survey.ts`, which decodes each region and resolves
@@ -36,6 +38,12 @@ working days; at the three-day average, about 28. Neither is a session.
 | 139 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
+
+Removed from the table on 2026-07-26, into classes that already described them:
+43 `mov ip, pc` call regions and 14 regions taking a hidden register input
+(`r9` as a static base in most, `r8`/`sl` in the rest). Screen for both before
+drafting — `080e73a0` was picked as a clean 49-instruction target and turned out
+to read its base pointer out of `r9`, which no policy-valid C can express.
 
 Of the 583 plain regions, 91 have been attempted and parked with written
 root causes. The 492 never touched break down by size:

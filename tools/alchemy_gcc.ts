@@ -79,7 +79,9 @@ const NO_CSE_FOLLOW_SOURCES = new Set(["0800f9f4"]);
 // In 080ba918 the rerun folds the terminating NULL record into a fresh zero
 // return. Keeping the record pseudo lets it coalesce with the call result in r0,
 // preserving the reference's defined NULL return without a redundant move.
-const NO_RERUN_CSE_AFTER_LOOP_SOURCES = new Set(["08006088", "080ba918"]);
+// In 0808c30c it propagates the persistent amount through the fallback copy,
+// rotating the loop allocation and changing the final in-place negate.
+const NO_RERUN_CSE_AFTER_LOOP_SOURCES = new Set(["08006088", "0808c30c", "080ba918"]);
 // This unrolled six-item display setup shares one resource-ID base and one
 // signed sentinel.  Global CSE expands them back into independent constants;
 // disabling it preserves the reference's r7/r8 lifetimes.
@@ -825,6 +827,11 @@ function selfTest(): void {
       unrelatedFlags.includes("-fno-regmove") ||
       cflagsForTargetSource("gs2", "/tmp/08006088.c").includes("-fno-rerun-cse-after-loop")) {
     throw new Error("08006088 copy-lifetime routing self-test failed");
+  }
+  if (!cflagsForTargetSource("gs1", "/tmp/0808c30c.c").includes("-fno-rerun-cse-after-loop") ||
+      cflagsForTargetSource("gs1", "/tmp/0808c310.c").includes("-fno-rerun-cse-after-loop") ||
+      cflagsForTargetSource("gs2", "/tmp/0808c30c.c").includes("-fno-rerun-cse-after-loop")) {
+    throw new Error("0808c30c CSE-rerun routing self-test failed");
   }
   if (!cflagsForTargetSource("gs1", "/tmp/0801ed40.c").includes("-fno-gcse") ||
       !cflagsForTargetSource("gs1", "/tmp/08098c08.c").includes("-fno-gcse") ||

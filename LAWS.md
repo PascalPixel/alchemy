@@ -2656,3 +2656,34 @@ that consumes it. Resolve the operand before quoting a number.
 Related and reusable regardless: an ordinary C bitfield reproduces the
 `ldrh / ands / orrs / strh` insert shape correctly. Only nine converted sources
 use one, against 95 `c_candidate` regions carrying the insert fingerprint.
+
+
+## Addendum (2026-07-26): narrow types are almost always the wrong reading
+
+Confirmed independently three times today, and it is the cheapest large win
+available when a draft is close but too long.
+
+**A narrow parameter or local costs an extension the references do not have.**
+
+| written as | emitted |
+| --- | --- |
+| `u16 x` parameter, only ever stored with `strh` | `lsls #16 / asrs #16` at entry |
+| `s32 x` parameter | `adds rN, r0, #0` |
+| `u16 v = *(u16 *)p;` then used | `ldrsh` plus `lsls #16 / lsrs #16` |
+| `s32 v = *(u16 *)p;` then used | `ldrh`, which already zero-extends |
+| `u16` local passed to a 32-bit parameter | `lsl #16 / lsr #16` pair |
+| `u32` local with an explicit `& 0xffff` | `and` against a pooled 0xffff, shared across uses |
+
+Evidence: `080936a0` (`arg1` is `s32` though only ever `strh`-stored, worth 4
+bytes), `080ae9f0` (`s32 value` from a `u16 *` load, worth 8 bytes and 32
+halfwords), and the direct probe behind the masking addendum above.
+
+**So: default every parameter and local to `s32`/`u32` and narrow only at the
+point of use.** The store width comes from the pointer cast or the struct member,
+not from the variable's type. A narrow variable is only right when the reference
+actually shows the truncation.
+
+**Related: mutate the parameter rather than introducing a local.** `arg2 -= 3`
+emits the two-operand in-place `subs r2, #3`; `adjusted = arg2 - 3` emits the
+three-operand `subs r2, r1, #3` and adds a live value that perturbs the whole
+allocation. Verified on `080ae9f0`, worth 4 halfwords and the correct prologue.

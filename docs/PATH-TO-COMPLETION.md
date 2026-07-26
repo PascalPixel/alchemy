@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-26)
 
-`[1,291 of 1,999]`. 708 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,292 of 1,999]`. 707 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -24,11 +24,11 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-23 | 1,162 | +158 |
 | 2026-07-24 | 1,236 | +74 |
 | 2026-07-25 | 1,242 | +6 |
-| 2026-07-26 | 1,291 | +49 |
+| 2026-07-26 | 1,292 | +50 |
 
 **The rate is still roughly a factor of three below the 2026-07-23 peak.** That is
 not a slowdown in effort: the broad easy tier is running out, and compiler
-lineage now matters as much as drafting. At the last two days' rate 708 regions
+lineage now matters as much as drafting. At the last two days' rate 707 regions
 is roughly 26 working days; at the three-day average, about 16. The estimates
 move materially with one cohort and neither is a session.
 
@@ -37,7 +37,7 @@ move materially with one cohort and neither is a session.
 | count | class | what it needs |
 | --- | --- | --- |
 | 529 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
-| 136 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
+| 135 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
 
@@ -233,24 +233,44 @@ other three each close one. The rescue band is no longer a pile of unexplained
 near-matches, but it is also not automatic: each rule followed a hand-reordered,
 relinked proof that the proposed instruction order was exact.
 
-## What the follow-on rescue changed
+## What the follow-on rescues changed
 
-Two more ranked plain regions now convert exactly:
+Three more ranked regions now convert exactly:
 
 | region | bytes | exact route |
 | --- | ---: | --- |
 | `0801e7c0` | 150 | default compiler route; typed text-position and counter source |
 | `0808c30c` | 152 | existing `-fno-rerun-cse-after-loop` pass control |
+| `080053e8` | 84 | four existing DMA scheduling/grouping modes, in their uniquely minimal combination |
 
-That adds 302 exact-C bytes, raises the claimed build to `[1,291 of 1,999]`,
-and brings exact-C ownership to 80,382 bytes. The measured remainder is 708
-regions: 529 plain, 136 DMA, 36 mask, and 7 twelve-store regions. The pass
-control is source-routed for GS1 only and self-tested against its neighboring
-stem and the GS2 route.
+That adds 386 exact-C bytes, raises the claimed build to `[1,292 of 1,999]`,
+and brings exact-C ownership to 80,466 bytes. The measured remainder is 707
+regions: 529 plain, 135 DMA, 36 mask, and 7 twelve-store regions. Every
+nondefault mode is source-routed for GS1 only and self-tested against its
+neighboring stem and the GS2 route.
+
+## What the next ranked cohort ruled out
+
+Five other clean drafts were preserved at reproducible floors rather than
+counted as conversions:
+
+| region | best measured shape | remaining blocker |
+| --- | --- | --- |
+| `080044d0` | 212/212 bytes, 1 differing halfword | allocation chooses `r0` instead of `r1` for one comparison; register pinning or an empty compiler barrier is exact, but neither is accepted as maintainable C |
+| `080cdb24` | 154/154 bytes, 2 differing halfwords | `mov lr,r3` and `movs r6,#0` are transposed; the existing high-register mode deliberately covers only `r8`–`r11` |
+| `080a2144` | 108/108 bytes, 17 differing halfwords | CSE keeps one DMA source literal live in `r4`; splitting it creates a second pool entry |
+| `080f60a0` | 164/168 bytes | reload deletes a repeated `r0 = r4` call-argument move after the grouped DMA store |
+| `08099838` | 236/232 bytes, 62 differing halfwords | loop allocation/scheduling and one rematerialized callback constant |
+
+These are bounded results for the current clean sources and supported compiler
+modes, not claims that the functions are impossible. The diagnostic exact forms
+for `080044d0` are specifically excluded from the numerator: byte identity alone
+does not justify hard-register constraints or empty inline assembly when the
+project is using `pokeemerald`-style maintainable C as its reconstruction ideal.
 
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 529 of 708 have nothing exotic in
+1. **The bulk is volume, not blockers.** 529 of 707 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.

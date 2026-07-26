@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-26)
 
-`[1,289 of 1,999]`. 710 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,291 of 1,999]`. 708 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -24,19 +24,19 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-23 | 1,162 | +158 |
 | 2026-07-24 | 1,236 | +74 |
 | 2026-07-25 | 1,242 | +6 |
-| 2026-07-26 | 1,289 | +47 |
+| 2026-07-26 | 1,291 | +49 |
 
 **The rate is still roughly a factor of three below the 2026-07-23 peak.** That is
 not a slowdown in effort: the broad easy tier is running out, and compiler
-lineage now matters as much as drafting. At the last two days' rate 710 regions
-is roughly 27 working days; at the three-day average, about 17. The estimates
+lineage now matters as much as drafting. At the last two days' rate 708 regions
+is roughly 26 working days; at the three-day average, about 16. The estimates
 move materially with one cohort and neither is a session.
 
 ## What is actually left
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 531 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 529 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
 | 136 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
@@ -47,7 +47,7 @@ Removed from the table on 2026-07-26, into classes that already described them:
 drafting — `080e73a0` was picked as a clean 49-instruction target and turned out
 to read its base pointer out of `r9`, which no policy-valid C can express.
 
-Of the 531 plain regions, 216 have prior target-specific hand, agent, manual,
+Of the 529 plain regions, 214 have prior target-specific hand, agent, manual,
 or substantive permuter work. The other 315 are genuinely untouched. This
 split was reconstructed against `fa930c71`: bulk m2c output, match rescoring,
 and initialized-but-empty permuter states do not count as attempts; target C,
@@ -56,11 +56,11 @@ notes, or a nonempty search state created before that commit do.
 | instructions | total | attempted | untouched | untouched instructions |
 | --- | ---: | ---: | ---: | ---: |
 | ≤ 40 | 21 | 21 | 0 | 0 |
-| 41–80 | 100 | 100 | 0 | 0 |
+| 41–80 | 98 | 98 | 0 | 0 |
 | 81–160 | 213 | 84 | 129 | 14,551 |
 | 161–320 | 109 | 11 | 98 | 22,009 |
 | 321+ | 88 | 0 | 88 | 56,039 |
-| **total** | **531** | **216** | **315** | **92,599** |
+| **total** | **529** | **214** | **315** | **92,599** |
 
 The previous 101/442 split, 51 untouched regions in the 41–80 band, and
 105,312 untouched-instruction total came from checking an incomplete set of
@@ -223,8 +223,8 @@ The first six ranked medium-small rescues all now convert exactly:
 
 That adds 796 exact-C bytes, raises the claimed build from 1,283 to 1,289, and
 brings exact-C ownership to 80,080 bytes. Independently, the two structural
-reclassifications above reduce the denominator from 2,001 to 1,999. The live
-headline is therefore `[1,289 of 1,999]`, with 710 candidates left.
+reclassifications above reduce the denominator from 2,001 to 1,999. That cohort
+therefore closed at `[1,289 of 1,999]`, with 710 candidates left.
 
 All four new backend fingerprints are default-off, source-routed, guarded by
 exact hard-register and dependency conditions, and covered by opt-in, opt-out,
@@ -233,9 +233,24 @@ other three each close one. The rescue band is no longer a pile of unexplained
 near-matches, but it is also not automatic: each rule followed a hand-reordered,
 relinked proof that the proposed instruction order was exact.
 
+## What the follow-on rescue changed
+
+Two more ranked plain regions now convert exactly:
+
+| region | bytes | exact route |
+| --- | ---: | --- |
+| `0801e7c0` | 150 | default compiler route; typed text-position and counter source |
+| `0808c30c` | 152 | existing `-fno-rerun-cse-after-loop` pass control |
+
+That adds 302 exact-C bytes, raises the claimed build to `[1,291 of 1,999]`,
+and brings exact-C ownership to 80,382 bytes. The measured remainder is 708
+regions: 529 plain, 136 DMA, 36 mask, and 7 twelve-store regions. The pass
+control is source-routed for GS1 only and self-tested against its neighboring
+stem and the GS2 route.
+
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 531 of 710 have nothing exotic in
+1. **The bulk is volume, not blockers.** 529 of 708 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.

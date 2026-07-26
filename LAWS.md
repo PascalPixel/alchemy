@@ -2625,11 +2625,33 @@ never have. Note the masked form also loads small pool constants with `ldrh`,
 and puts the pool mid-function with a branch around it — both fall out of the
 `u32` form and neither is reachable with `u16`.
 
-Of the 81 regions, **74 mask once and should be reachable this way today**.
-Only **7** mask twice back-to-back (`(x & 0xffff) & 0x1ff`), which needs a
-combine our GCC performs and the reference declines; on those the folded form
-comes out *shorter* than the reference (58-70B against 74B on 080b0a20). Do not
-generalise from those seven — they are the exception, not the family.
+### The family is 40, not 81 — and how the count went wrong twice
+
+The figures published earlier today (81, then 74) were both inflated by a lazy
+fingerprint: "file contains a pooled `0x0000ffff`" AND "file contains an
+`ands`", with no check that they were the same register. Resolving pc-relative
+loads against the pool and tracking register liveness gives the real numbers:
+
+| | count |
+| --- | --- |
+| regions with a pooled `0x0000ffff` | 105 |
+| …where a live `0xffff` is genuinely an AND source | **40** |
+| …pooled for something else entirely | 65 |
+
+Most of that 65 is a completely different idiom: `if (x < 0) x += 0xffff;
+x >>= 16` — the rounding constant for a signed divide by 65536, as in
+`08094154`. It has nothing to do with masking.
+
+Of the real 40: **32 mask once** and should be reachable with `u32` locals,
+**8 mask twice** (`(x & 0xffff) & 0x1ff`) and need the combine our GCC performs
+and the reference declines. Both regions small enough to have been drafted so
+far — `080b0a20` at 29 insns and `080a1a40` at 49 — are in the *twice* group,
+so the reachable 32 start at 121 instructions.
+
+**The lesson is about the measurement, not the masks.** A fingerprint that
+matches on two independent features of a whole file will over-count badly; the
+family shrank by half once the pool word was actually resolved to the register
+that consumes it. Resolve the operand before quoting a number.
 
 Related and reusable regardless: an ordinary C bitfield reproduces the
 `ldrh / ands / orrs / strh` insert shape correctly. Only nine converted sources

@@ -2998,3 +2998,29 @@ setup wanting to issue *later*, the mirror of `thumb_order_entry_literal`. No
 option was written for it, because the reference's stopping point does not follow
 an obvious rule: on `0800430c` the constant sinks exactly two positions and stops
 before a `cmp` it could equally have passed. That wants tracing, not guessing.
+
+## Addendum (2026-07-26): when the reference derives a constant, write the arithmetic
+
+`08096c80` clears bits with `subs r3, #17`, deriving the mask from a `4` it has
+live for two nearby stores (`4 - 17 = -13 = ~12`). Ours materialised
+`movs r3, #243`. An earlier session tried `&= ~12`, `&= -13`, an `s32` widen and
+an arithmetic form, and recorded that the derivation was "cse's related-constant
+decision and not reachable from the source".
+
+It is reachable. Write the mask **in terms of the live variable**:
+
+```c
+u8 flag = 4;
+object[85] = flag;
+object[35] = flag;
+child[9] &= ~(flag + 8);      /* derives; `~12' and `flag - 17' do not */
+```
+
+Same value, but the dependency is explicit, so GCC derives rather than
+materialising. Note the exact form matters: `flag - 17` scores the same as `~12`.
+Only keeping the `~` outside reaches it.
+
+This is the general lever for the related-constants family, and it is the mirror
+of the `Value_<addr>` trick: when the reference *loads* two related constants
+separately, break the relationship with distinct symbols; when it *derives* one
+from another, name the source value and write the arithmetic.

@@ -2913,3 +2913,35 @@ direct call to `_call_via_r6`, which sets no target at all; the region only
 worked because GCC happened to leave the buffer in r6. Written honestly as
 `((CopiedCode)buffer)(first, second)` it scores identically and actually means
 what it does. A byte score cannot tell you a call has no target: read the veneer.
+
+## Addendum (2026-07-26): the VLA family is a different residual, measured
+
+After `08019bac` converted, the same six-flag set was applied to the VLA-plus-DMA
+family it sits next to. It helps a little and converts none of them:
+
+| region | `-mgrouped-dma-store` alone | with the full set |
+| --- | --- | --- |
+| `08005340` | 19 | 15 |
+| `08005534` | 18 | 15 |
+| `080052f4` | 16 | 15 |
+| `0800543c` | 21 | 21 |
+| `080b90ac` | 24 | 25 |
+
+All size-exact. Their residual is **not** the one today's options address. It is
+the placement of the stack-pointer update against the descriptor store:
+
+    candidate   stmia r4!, {r0,r1,r2} / subs r4,#12 / mov sp, r1
+    reference   mov sp, r1 / ldr r0 / orrs r2, r4 / stmia r3!, {r0,r1,r2}
+
+The reference commits the VLA allocation *before* programming the descriptor;
+ours sinks it past the transfer. That also swaps which of r3/r4 holds the DMA
+base and which the control constant. `-mearly-frame-allocation` does not reach
+it, and neither does reordering the block's declarations — unlike `0800d304`,
+where reordering was decisive. Splitting `control = 0x84000000 | words` into a
+compound assignment makes these *worse* (68B against 76B), the opposite of its
+effect elsewhere.
+
+So: the two DMA families look alike and are not. The wrapper family
+(allocate / transfer / call / free) is closed. The VLA family needs the
+stack-pointer update hoisted above the descriptor store, and that is the next
+well-specified compiler task on this board.

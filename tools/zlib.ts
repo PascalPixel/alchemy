@@ -6,7 +6,7 @@
 // dependent output: it reproduced neither its own upstream source build nor
 // itself across hosts. Every DEFLATE-compressed byte this repo tracks (PNG
 // IDAT chunks) must be reproducible from any host running the pinned Bun
-// version (see CONVENTIONS.md); classic zlib is deterministic for a given
+// version; classic zlib is deterministic for a given
 // input, level, and strategy regardless of CPU architecture, which is why it
 // is the standard choice for reproducible builds generally.
 import { crc32 as nodeCrc32, deflateSync as nodeDeflateSync, inflateSync as nodeInflateSync } from "node:zlib";

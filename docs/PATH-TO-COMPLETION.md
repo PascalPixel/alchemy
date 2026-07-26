@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-26)
 
-`[1,257 of 2,001]`. 744 `c_candidate` regions remain. **Y dropped from 2,058 to 2,001 on
+`[1,261 of 2,001]`. 740 `c_candidate` regions remain. **Y dropped from 2,058 to 2,001 on
 2026-07-26 in two steps: 43 `mov ip, pc` regions into the existing
 `nonstandard_thumb_call_module` class, and 14 regions that read a callee-saved
 register they never write into `hidden_register_context_module`. Both classes
@@ -23,18 +23,18 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-23 | 1,162 | +158 |
 | 2026-07-24 | 1,236 | +74 |
 | 2026-07-25 | 1,242 | +6 |
-| 2026-07-26 | 1,257 | +15 |
+| 2026-07-26 | 1,261 | +19 |
 
 **The rate fell by roughly a factor of ten in three days.** That is not a slowdown in
 effort, it is the easy tier running out: every region whose natural C happened
-to match has been taken. At the last two days' rate 744 regions is roughly 71
-working days; at the three-day average, about 24. Neither is a session.
+to match has been taken. At the last two days' rate 740 regions is roughly 59
+working days; at the three-day average, about 22. Neither is a session.
 
 ## What is actually left
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 565 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 561 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
 | 136 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
@@ -45,13 +45,13 @@ Removed from the table on 2026-07-26, into classes that already described them:
 drafting — `080e73a0` was picked as a clean 49-instruction target and turned out
 to read its base pointer out of `r9`, which no policy-valid C can express.
 
-Of the 565 plain regions, 91 have been attempted and parked with written
-root causes. The 474 never touched break down by size:
+Of the 561 plain regions, 96 have been attempted and parked with written
+root causes. The 465 never touched break down by size:
 
 | instructions | regions |
 | --- | --- |
 | ≤ 40 | 5 |
-| 41–80 | 83 |
+| 41–80 | 74 |
 | 81–160 | 193 |
 | 161–320 | 105 |
 | 321+ | 88 |
@@ -90,7 +90,7 @@ drafting speed is wrong.
 
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 565 of 744 have nothing exotic in
+1. **The bulk is volume, not blockers.** 561 of 740 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.
@@ -130,7 +130,7 @@ drafting speed is wrong.
      as debt and eliminated. Since the stated goal is pokeemerald as the desired
      *outcome*, and that outcome is 100% matching C with no assembly fallbacks,
      introducing a non-matching tier would move away from the goal, not toward
-     it. **Byte-exactness stays.** Roughly 71 working days at the current
+     it. **Byte-exactness stays.** Roughly 59 working days at the current
      two-day rate is the honest cost.
 
 ## Recommended order
@@ -139,7 +139,7 @@ Screen every target first: `grep 'mov\s*ip, pc'`, and check for a callee-saved
 register read but never written. Both classes are now reclassified out of Y, but
 the screen still costs less than a wasted draft.
 
-1. Work the 83 plain regions in the 41–80 band. They are the last tier where a
+1. Work the 74 plain regions in the 41–80 band. They are the last tier where a
    single sitting plausibly produces a conversion.
 2. Apply the `u32`-locals law to the 25 single-mask regions. Eleven more use the
    mask two to four times and need the corresponding combine; the two small

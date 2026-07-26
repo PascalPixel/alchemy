@@ -23,3 +23,16 @@ English, Japanese, German, Spanish, French, and Italian. The immediate target
 is 100% byte closure for the English Golden Sun release. The repository is
 still in active decompilation and does not yet provide a standalone playable
 game.
+
+## Clean-room boundary
+
+The evidence and publication rules are part of the repository in
+[PROVENANCE.md](PROVENANCE.md). A fresh clone should activate the tracked
+publication hooks once with:
+
+```sh
+git config core.hooksPath .hooks
+```
+
+Current measured decompilation status and the remaining-work breakdown are in
+[docs/PATH-TO-COMPLETION.md](docs/PATH-TO-COMPLETION.md).

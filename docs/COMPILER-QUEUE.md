@@ -1,5 +1,10 @@
 # alchemy-gcc prototype results (2026-07-26)
 
+> Historical prototype log. The kept changes described here were subsequently
+> committed, staged into the pinned compiler bundles, regression-tested, and
+> pushed in `alchemy-gcc`. Statements below about uncommitted patches or an
+> untouched `dist/` describe the time of measurement, not the current state.
+
 Prototyped in `../alchemy-gcc/build-296/`, which is a separate tree from the
 digest-pinned `dist/`. **`dist/` was never touched**, so every alchemy build in
 this repo still uses the approved bundle. Before changing anything I verified

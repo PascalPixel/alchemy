@@ -90,7 +90,17 @@ const NO_STRENGTH_REDUCE_SOURCES = new Set(["080200cc", "080a9d3c"]);
 // arm_reorg pulls the two halves of a split constant back together when the
 // scheduler put an independent insn between them. These references want the
 // insn left where it is; see alchemy-gcc 1ec1044 and work/hand/080a1090.
-const NO_CONTIGUOUS_IMMEDIATE_SOURCES = new Set(["080a1090"]);
+const NO_CONTIGUOUS_IMMEDIATE_SOURCES = new Set(["080a1090", "08005a78"]);
+// The grouped transfer restores its base register, so the DMA status poll that
+// follows reuses it instead of loading the pool word again the way the
+// reference does. Splitting the live range is the only way to spell two
+// materialisations of one constant; see alchemy-gcc ff7c566.
+const SPLIT_GROUP_BASE_SOURCES = new Set(["08005a78"]);
+// thumb_order_grouped_dma_store only normalises descriptor setup order when the
+// three setup insns are adjacent. When the source word needs arithmetic the
+// interleaved insns hide them, and the control load stays hoisted -- which also
+// permutes the constant pool. See alchemy-gcc ff7c566.
+const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78"]);
 // The descriptor's base pool load wins a priority-68 ready-list tie on forward
 // dependent count alone; these references break it by original order instead.
 const NO_SCHED_DEPEND_COUNT_SOURCES = new Set(["08002fb0", "08003e10"]);
@@ -342,6 +352,8 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
     ...(NO_CONTIGUOUS_IMMEDIATE_SOURCES.has(stem) ? ["-fno-thumb-contiguous-immediate"] : []),
     ...(NO_SCHED_DEPEND_COUNT_SOURCES.has(stem) ? ["-fno-sched-depend-count"] : []),
+    ...(SPLIT_GROUP_BASE_SOURCES.has(stem) ? ["-fthumb-split-group-base"] : []),
+    ...(GROUP_CONTROL_LAST_SOURCES.has(stem) ? ["-fthumb-group-control-last"] : []),
     ...(MOVE_BEFORE_ALU_SOURCES.has(stem) ? ["-fthumb-move-before-alu"] : []),
     ...(NO_REGMOVE_SOURCES.has(stem) ? ["-fno-regmove"] : []),
     ...(ENTRY_LITERAL_FIRST_SOURCES.has(stem)
@@ -473,7 +485,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
       xgcc: "9580bf21ee1828bf3ba6969ce894dfedb17569cb840ee2630199bdca7a5c59e5",
       cpp: "acf056df9321b1016afea640bac858c1cd4572f04002af356aced14e7509fae2",
       tradcpp: "086343042dd10f26c8d990b30fc9a17e17802eb0f72fed09daa979faac6cec99",
-      cc1: "f322b184a0ea15aa31408ff12c7193e9795448e4a17c82fef68797383671069f",
+      cc1: "b6ef6b9a3c45f6d0f8911ef6edbe011bca7ef649e3c0ecc398e2993b59288ae8",
     },
     gs2: {
       xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",

@@ -60,3 +60,33 @@ Three things are worth more than continuing:
    groups are ~11 regions between them with diagnosed, specific blockers.
 
 Only after those does grinding 81-160 instruction regions by hand make sense.
+
+## The near-miss pile does not share one cause (2026-07-26)
+
+After the two reordering hooks landed, the closest parked regions were
+re-scored against the current compiler and their residuals compared, looking for
+another batch of the kind that converted 08002fb0 and 08003e10:
+
+| region | out by | residual |
+| --- | --- | --- |
+| `08093054` | 2 B | `assign_parms` emits the two parameter saves in the opposite order |
+| `0800430c` | 6 B | a const-1 materialisation pinned ahead of the `ands` that needs it |
+| `08019bac` | 6 B | a second high-register save must travel past a load *and* its consumer |
+| `08096c80` | 4 B | cse derives `0xF3` from a live `4`; we materialise it |
+| `0800307c` | 10 B | pool load against a halfword load |
+| `080b0744` | 10 B | frame allocation against two register saves |
+| `08006408` | 14 B | constant materialisation ordering |
+| `080f7f30` | 14 B | pool load against its own dereference |
+| `08022768` | 18 B | two high-register moves transposed, three times over |
+
+**These are nine different mechanisms, not one.** The batch that justified
+`-fthumb-move-before-alu` — three regions, one residual, one hook — was the
+exception, and it has been spent. Nothing in the current pile supports another
+hook on the same evidence standard, and the rejected constant-before-low-move
+extension is what over-fitting looks like when the argument is good and the
+measurement is not.
+
+So the next compiler change should come from a *new* group found the same way:
+convert fresh regions until several park on the same shape, then trace that.
+Picking the smallest current residual and chasing it is how the fork acquires
+modes that serve one function each.

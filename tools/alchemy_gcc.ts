@@ -90,12 +90,15 @@ const NO_STRENGTH_REDUCE_SOURCES = new Set(["080200cc", "080a9d3c"]);
 // arm_reorg pulls the two halves of a split constant back together when the
 // scheduler put an independent insn between them. These references want the
 // insn left where it is; see alchemy-gcc 1ec1044 and work/hand/080a1090.
-const NO_CONTIGUOUS_IMMEDIATE_SOURCES = new Set(["080a1090", "08005a78", "0800d304"]);
+const NO_CONTIGUOUS_IMMEDIATE_SOURCES = new Set(["080a1090", "08005a78", "0800d304", "08019bac"]);
 // The grouped transfer restores its base register, so the DMA status poll that
 // follows reuses it instead of loading the pool word again the way the
 // reference does. Splitting the live range is the only way to spell two
 // materialisations of one constant; see alchemy-gcc ff7c566.
 const SPLIT_GROUP_BASE_SOURCES = new Set(["08005a78"]);
+// The reference emits every parameter save before the body; ours leaves the
+// second one after the pool load that follows it. See alchemy-gcc.
+const HOIST_PARAMETER_SAVE_SOURCES = new Set(["08019bac"]);
 // thumb_order_grouped_dma_store only normalises descriptor setup order when the
 // three setup insns are adjacent. When the source word needs arithmetic the
 // interleaved insns hide them, and the control load stays hoisted -- which also
@@ -103,9 +106,9 @@ const SPLIT_GROUP_BASE_SOURCES = new Set(["08005a78"]);
 const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78"]);
 // The descriptor's base pool load wins a priority-68 ready-list tie on forward
 // dependent count alone; these references break it by original order instead.
-const NO_SCHED_DEPEND_COUNT_SOURCES = new Set(["08002fb0", "08003e10", "0800d304"]);
+const NO_SCHED_DEPEND_COUNT_SOURCES = new Set(["08002fb0", "08003e10", "0800d304", "08019bac"]);
 // The reference issues the destination copy ahead of the control word's `orrs`.
-const MOVE_BEFORE_ALU_SOURCES = new Set(["08002fb0", "08003e10", "0800d304"]);
+const MOVE_BEFORE_ALU_SOURCES = new Set(["08002fb0", "08003e10", "0800d304", "08019bac"]);
 // This palette-row scan ANDs a loaded halfword against a hoisted 0xF800 mask.
 // The AND is a two-address *thumb_andsi3_insn, so regmove's forward pass may
 // overwrite either input; it rejects the mask operand at reg_is_remote_constant_p
@@ -150,7 +153,8 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // (work/hand/080b5ad4/NOTES.md).
 const GROUPED_DMA_STORE_SOURCES = new Set([
   "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
-  "08004a5c", "08004a94", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "0801d980",
+  "08004a5c", "08004a94", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "08019bac",
+  "0801d980",
   "080251d4", "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
   "0808fecc", "08004760", "08005a78", "080037d4", "080b5ad4", "0800300c", "080f377c",
   "08002fb0", "08003e10",
@@ -164,7 +168,7 @@ const ENTRY_LITERAL_FIRST_SOURCES = new Set([
   "0800383c", "0800387c", "080038bc", "080038fc", "0800393c",
   "0800397c", "080039bc", "080039fc", "08003a3c",
 ]);
-const HIGH_REGISTER_MOVE_FIRST_SOURCES = new Set(["0808b8e8", "080b6e30", "08002fb0", "08003e10"]);
+const HIGH_REGISTER_MOVE_FIRST_SOURCES = new Set(["0808b8e8", "080b6e30", "08002fb0", "08003e10", "08019bac"]);
 // 08004760 is a still-assembly near-miss routed for the same reason as the
 // grouped-DMA entries below: without this mode its `sub sp, #4` sinks under the
 // first literal load, and with it the whole prologue and the entire tail agree.
@@ -353,6 +357,7 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_CONTIGUOUS_IMMEDIATE_SOURCES.has(stem) ? ["-fno-thumb-contiguous-immediate"] : []),
     ...(NO_SCHED_DEPEND_COUNT_SOURCES.has(stem) ? ["-fno-sched-depend-count"] : []),
     ...(SPLIT_GROUP_BASE_SOURCES.has(stem) ? ["-fthumb-split-group-base"] : []),
+    ...(HOIST_PARAMETER_SAVE_SOURCES.has(stem) ? ["-fthumb-hoist-parameter-save"] : []),
     ...(GROUP_CONTROL_LAST_SOURCES.has(stem) ? ["-fthumb-group-control-last"] : []),
     ...(MOVE_BEFORE_ALU_SOURCES.has(stem) ? ["-fthumb-move-before-alu"] : []),
     ...(NO_REGMOVE_SOURCES.has(stem) ? ["-fno-regmove"] : []),
@@ -485,7 +490,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
       xgcc: "9580bf21ee1828bf3ba6969ce894dfedb17569cb840ee2630199bdca7a5c59e5",
       cpp: "acf056df9321b1016afea640bac858c1cd4572f04002af356aced14e7509fae2",
       tradcpp: "086343042dd10f26c8d990b30fc9a17e17802eb0f72fed09daa979faac6cec99",
-      cc1: "b6ef6b9a3c45f6d0f8911ef6edbe011bca7ef649e3c0ecc398e2993b59288ae8",
+      cc1: "c388b7ad7cb26ec69f9ae1417d4fc3b973af8cff9f3e04382da3630c38423325",
     },
     gs2: {
       xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",
@@ -723,7 +728,7 @@ function selfTest(): void {
     "08002f10", "08002fb0", "0800300c", "080037d4", "08003e10", "08004760",
     "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c",
     "08004a94", "08005a78", "0800bc48", "0800bdd4", "0800c0f4", "0800d304",
-    "080170c4", "0801d980", "080251d4", "080284dc", "0808fecc", "080958a8",
+    "080170c4", "08019bac", "0801d980", "080251d4", "080284dc", "0808fecc", "080958a8",
     "0809bb34", "080a1090", "080b5ad4", "080c0184", "080c08a8", "080f377c",
   ])) {
     throw new Error("grouped DMA source allowlist self-test failed");

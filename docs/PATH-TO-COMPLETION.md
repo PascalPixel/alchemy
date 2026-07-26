@@ -59,6 +59,35 @@ root causes. The 492 never touched break down by size:
 **109,906 instructions of fresh plain code.** That is the real remaining
 workload, and it is drafting, not compiler archaeology.
 
+## What five drafts on 2026-07-26 actually showed
+
+Five regions were drafted after the easy tier ran out. **None converted**, and
+every one landed the same way: **size exact, semantics right, parked on a
+handful of instructions of register allocation or expression lowering.**
+
+| region | insns | residual | what blocks it |
+| --- | --- | --- | --- |
+| `08006088` | 42 | 11 hw of 96 | a register copy and a bit-extract lowering that cancel each other |
+| `080ae9f0` | 41 | 13 hw of 92 | which parameter the allocator leaves in place |
+| `080936a0` | 43 | 30 hw of 112 | a rematerialised zero, one transposition |
+| `080a1f74` | 40 | 26 hw of 96 | how `(s8)x == -1` is lowered |
+| `0800651c` | 20 | 33 hw of 64 | a critical-section store our compiler will not emit |
+
+In each case the C was written and understood in minutes. The semantics were
+never the hard part. **The 41–80 band was called "the last tier where a single
+sitting plausibly produces a conversion" earlier in this document, and today's
+evidence says even that was optimistic** — the tier is entered easily and
+finished rarely.
+
+What did convert (`08005a78`) needed two new compiler options, and was only
+attempted because its residual could be hand-verified by reordering the
+generated assembly and relinking.
+
+So the honest cost model is not "109,906 instructions of drafting". It is
+"drafting is cheap, and the last three to fifteen instructions of each region
+are a compiler investigation". Any estimate that prices the remainder at
+drafting speed is wrong.
+
 ## What changes the rate
 
 1. **The bulk is volume, not blockers.** 583 of 808 have nothing exotic in

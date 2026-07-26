@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define NULL ((void *)0)
-
 extern void Func_08004278(s32);
 extern s32 Func_08015360(s32, s32);
 extern u8 Data_02000240[];

@@ -1,8 +1,5 @@
 #include "types.h"
 
-typedef int bool;
-#define NULL ((void *)0)
-
 s32 Func_080979a4(s32, s32, s32);
 
 void Func_08097948(s32 arg0, s32 *arg1, s32 *arg2, s32 *arg3) {

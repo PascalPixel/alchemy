@@ -1,6 +1,5 @@
 #include "types.h"
 
-typedef int bool;
 void Func_08019000(s32, s32, s32, s32, s32);
 volatile int Func_080218dc(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {

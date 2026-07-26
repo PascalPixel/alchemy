@@ -12,10 +12,52 @@
       "sections": [
         {
           "address": "0x080b5138",
-          "size": 560,
-          "kind": "thumb",
+          "size": 204,
+          "kind": "arm",
           "source": "080b5138.s",
-          "instruction_bytes": 560,
+          "instruction_bytes": 204,
+          "literal_words": 0,
+          "undefined_words": 0
+        },
+        {
+          "address": "0x080b5204",
+          "size": 8,
+          "kind": "u32-values",
+          "name": "relocated_arm_literals_080b5204",
+          "value_type": "u32le",
+          "values": ["0x60606060", "0x080b5238"]
+        },
+        {
+          "address": "0x080b520c",
+          "size": 12,
+          "kind": "arm",
+          "source": "080b520c.s",
+          "instruction_bytes": 12,
+          "literal_words": 0,
+          "undefined_words": 0
+        },
+        {
+          "address": "0x080b5218",
+          "size": 32,
+          "kind": "u32-values",
+          "name": "relocated_arm_workspace_080b5218",
+          "value_type": "u32le",
+          "values": ["0x00000000", "0x00000000", "0x00000000", "0x00000000", "0x00000000", "0x00000000", "0x00000000", "0x00000000"]
+        },
+        {
+          "address": "0x080b5238",
+          "size": 32,
+          "kind": "u32-values",
+          "name": "relocated_arm_jump_table_080b5238",
+          "value_type": "u32le",
+          "values": ["0x080b5258", "0x080b5274", "0x080b5314", "0x080b52c4", "0x080b5258", "0x080b529c", "0x080b5344", "0x080b52ec"]
+        },
+        {
+          "address": "0x080b5258",
+          "size": 272,
+          "kind": "arm",
+          "source": "080b5258.s",
+          "instruction_bytes": 272,
           "literal_words": 0,
           "undefined_words": 0
         }

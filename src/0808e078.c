@@ -3,7 +3,7 @@
 s32 Func_080030f8(s32);
 s32 Func_08009080(s32, s32);
 s32 Func_0808ef70(s32, s32);
-s32 Func_08092054(s32);
+s32 Func_08092054(u32);
 s32 Func_080f9010(s32);
 
 s32 Func_0808e078(s32 arg0, s32 arg1, s32 arg2) {

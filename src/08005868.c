@@ -3,7 +3,7 @@
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 Func_080072f0(s32, s32, s32, s32);
-s32 Func_08006c68(s32, s32);
+s32 Func_08006c68(u16, s32);
 
 struct Unk { u8 pad[64]; s32 field; };
 u32 Func_08005868(u16 arg0) {

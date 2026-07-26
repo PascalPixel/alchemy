@@ -6,12 +6,13 @@ s32 Func_080b6b40(s32 arg0, u16 *arg1);
 void Func_080b8064(s32);
 void Func_080151c8(s32);
 
-s32 Func_080b8824(void)
+s32 Func_080b8824(s16 *unused)
 {
     s16 values[14];
     s32 count;
     s32 index;
 
+    (void)unused;
     if (((u32)(Func_08004458() << 4) >> 16) != 0) {
         count = Func_080b6b40(1, values);
         index = 0;

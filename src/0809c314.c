@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_08092054();
+s32 Func_08092054(u32);
 s32 Func_0808ba1c(u32 arg0);
 
 extern s32 Data_02000240[];

@@ -308,10 +308,47 @@
       "sections": [
         {
           "address": "0x080b5138",
-          "size": 560,
-          "kind": "thumb",
+          "size": 204,
+          "kind": "arm",
           "source": "080b5138.s",
           "symbols": ["Func_080b5138"],
+          "maximum_undefined_words": 0
+        },
+        {
+          "address": "0x080b5204",
+          "size": 8,
+          "kind": "u32-values",
+          "name": "relocated_arm_literals_080b5204",
+          "count": 2
+        },
+        {
+          "address": "0x080b520c",
+          "size": 12,
+          "kind": "arm",
+          "source": "080b520c.s",
+          "symbols": ["Func_080b520c"],
+          "maximum_undefined_words": 0
+        },
+        {
+          "address": "0x080b5218",
+          "size": 32,
+          "kind": "u32-values",
+          "name": "relocated_arm_workspace_080b5218",
+          "count": 8
+        },
+        {
+          "address": "0x080b5238",
+          "size": 32,
+          "kind": "u32-values",
+          "name": "relocated_arm_jump_table_080b5238",
+          "count": 8
+        },
+        {
+          "address": "0x080b5258",
+          "size": 272,
+          "kind": "arm",
+          "source": "080b5258.s",
+          "symbols": ["Func_080b5258", "Func_080b5274", "Func_080b529c", "Func_080b52c4", "Func_080b52ec", "Func_080b5314", "Func_080b5344"],
           "maximum_undefined_words": 0
         }
       ]

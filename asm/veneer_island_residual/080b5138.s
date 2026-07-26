@@ -1,287 +1,61 @@
 .syntax unified
 .text
-	.thumb
-	.set sub_080b4c80, 0x080b4c80
+	.set sub_080b520c, 0x080b520c
+	.arm
 	.global Func_080b5138
-	.thumb_func
 Func_080b5138:
-	ldr	r7, [pc, #896]
-	.inst.n 0xe92d
-	.inst.n 0x20c4
-	b sub_080b4c80
-	.inst.n 0x30f0
-	.inst.n 0xe28f
-	.inst.n 0x2002
-	.inst.n 0xe043
-	.inst.n 0x40c8
-	.inst.n 0xe28f
-	.inst.n 0x5008
-	.inst.n 0xe3a0
-	.inst.n 0x6004
-	.inst.n 0xe493
-	.inst.n 0x6002
-	.inst.n 0xe086
-	.inst.n 0x6004
-	.inst.n 0xe484
-	.inst.n 0x5001
-	.inst.n 0xe255
-	.inst.n 0xfffa
-	.inst.n 0x1aff
-	.inst.n 0xb007
-	.inst.n 0xe3a0
-	.inst.n 0x30b2
-	.inst.n 0xe0d0
-	.inst.n 0x2000
-	.inst.n 0xe3a0
-	.inst.n 0x5000
-	.inst.n 0xe3a0
-	.inst.n 0x900f
-	.inst.n 0xe3a0
-	.inst.n 0xa084
-	.inst.n 0xe59f
-	.inst.n 0x8008
-	.inst.n 0xe3a0
-	.inst.n 0x7020
-	.inst.n 0xe3a0
-	.inst.n 0x0020
-	.inst.n 0xeb00
-	.inst.n 0x6ca5
-	.inst.n 0xe1a0
-	.inst.n 0x001e
-	.inst.n 0xeb00
-	.inst.n 0x68a5
-	.inst.n 0xe186
-	.inst.n 0x001c
-	.inst.n 0xeb00
-	.inst.n 0x64a5
-	.inst.n 0xe186
-	.inst.n 0x001a
-	.inst.n 0xeb00
-	.inst.n 0x60a5
-	.inst.n 0xe186
-	.inst.n 0x600a
-	.inst.n 0xe086
-	.inst.n 0x6004
-	.inst.n 0xe481
-	.inst.n 0x0016
-	.inst.n 0xeb00
-	.inst.n 0x6ca5
-	.inst.n 0xe1a0
-	.inst.n 0x0014
-	.inst.n 0xeb00
-	.inst.n 0x68a5
-	.inst.n 0xe186
-	.inst.n 0x0012
-	.inst.n 0xeb00
-	.inst.n 0x64a5
-	.inst.n 0xe186
-	.inst.n 0x0010
-	.inst.n 0xeb00
-	.inst.n 0x60a5
-	.inst.n 0xe186
-	.inst.n 0x600a
-	.inst.n 0xe086
-	.inst.n 0x603c
-	.inst.n 0xe481
-	.inst.n 0x7001
-	.inst.n 0xe257
-	.inst.n 0xffe9
-	.inst.n 0x1aff
-	.inst.n 0x1b02
-	.inst.n 0xe241
-	.inst.n 0x1008
-	.inst.n 0xe281
-	.inst.n 0x8001
-	.inst.n 0xe258
-	.inst.n 0xffe4
-	.inst.n 0x1aff
-	.inst.n 0x1040
-	.inst.n 0xe241
-	.inst.n 0x1b02
-	.inst.n 0xe281
-	.inst.n 0x9001
-	.inst.n 0xe259
-	.inst.n 0xffdf
-	.inst.n 0x1aff
-	.inst.n 0x4fe0
-	.inst.n 0xe8bd
-	.inst.n 0xff1e
-	.inst.n 0xe12f
-	.inst.n 0x6060
-	.inst.n 0x6060
-	.inst.n 0x5238
-	.inst.n 0x080b
-	.inst.n 0xc007
-	.inst.n 0xe203
-	.inst.n 0xf10c
-	.inst.n 0xe79f
-	.inst.n 0x0000
-	.inst.n 0xe1a0
-	.inst.n 0x0000
-	.inst.n 0x0000
-	.inst.n 0x0000
-	.inst.n 0x0000
-	.inst.n 0x0000
-	.inst.n 0x0000
-	.inst.n 0x0000
-	.inst.n 0x0000
-	.inst.n 0x0000
-	.inst.n 0x0000
-	.inst.n 0x0000
-	.inst.n 0x0000
-	.inst.n 0x0000
-	.inst.n 0x0000
-	.inst.n 0x0000
-	.inst.n 0x0000
-	.inst.n 0x5258
-	.inst.n 0x080b
-	.inst.n 0x5274
-	.inst.n 0x080b
-	.inst.n 0x5314
-	.inst.n 0x080b
-	.inst.n 0x52c4
-	.inst.n 0x080b
-	.inst.n 0x5258
-	.inst.n 0x080b
-	.inst.n 0x529c
-	.inst.n 0x080b
-	.inst.n 0x5344
-	.inst.n 0x080b
-	.inst.n 0x52ec
-	.inst.n 0x080b
-	.inst.n 0x3123
-	.inst.n 0xe1a0
-	.inst.n 0x2002
-	.inst.n 0xe252
-	.inst.n 0xf00e
-	.inst.n 0x51a0
-	.inst.n 0xc0b2
-	.inst.n 0xe0d0
-	.inst.n 0x2010
-	.inst.n 0xe282
-	.inst.n 0x321c
-	.inst.n 0xe183
-	.inst.n 0xf00e
-	.inst.n 0xe1a0
-	.inst.n 0xc008
-	.inst.n 0xe203
-	.inst.n 0x3223
-	.inst.n 0xe1b0
-	.inst.n 0xc008
-	.inst.n 0xe28c
-	.inst.n 0x5b0c
-	.inst.n 0xe085
-	.inst.n 0x2004
-	.inst.n 0xe252
-	.inst.n 0xf00e
-	.inst.n 0x51a0
-	.inst.n 0xc0b2
-	.inst.n 0xe0d0
-	.inst.n 0x2010
-	.inst.n 0xe282
-	.inst.n 0x321c
-	.inst.n 0xe183
-	.inst.n 0xf00e
-	.inst.n 0xe1a0
-	.inst.n 0xc008
-	.inst.n 0xe203
-	.inst.n 0x3223
-	.inst.n 0xe1b0
-	.inst.n 0xc008
-	.inst.n 0xe28c
-	.inst.n 0x5b0c
-	.inst.n 0xe045
-	.inst.n 0x2004
-	.inst.n 0xe252
-	.inst.n 0xf00e
-	.inst.n 0x51a0
-	.inst.n 0xc0b2
-	.inst.n 0xe0d0
-	.inst.n 0x2010
-	.inst.n 0xe282
-	.inst.n 0x321c
-	.inst.n 0xe183
-	.inst.n 0xf00e
-	.inst.n 0xe1a0
-	.inst.n 0xc1a3
-	.inst.n 0xe00b
-	.inst.n 0x3323
-	.inst.n 0xe1a0
-	.inst.n 0xc003
-	.inst.n 0xe28c
-	.inst.n 0x5c8c
-	.inst.n 0xe085
-	.inst.n 0x2006
-	.inst.n 0xe252
-	.inst.n 0xf00e
-	.inst.n 0x51a0
-	.inst.n 0xc0b2
-	.inst.n 0xe0d0
-	.inst.n 0x2010
-	.inst.n 0xe282
-	.inst.n 0x321c
-	.inst.n 0xe183
-	.inst.n 0xf00e
-	.inst.n 0xe1a0
-	.inst.n 0xc1a3
-	.inst.n 0xe00b
-	.inst.n 0x3323
-	.inst.n 0xe1a0
-	.inst.n 0xc003
-	.inst.n 0xe28c
-	.inst.n 0x5c8c
-	.inst.n 0xe045
-	.inst.n 0x2006
-	.inst.n 0xe252
-	.inst.n 0xf00e
-	.inst.n 0x51a0
-	.inst.n 0xc0b2
-	.inst.n 0xe0d0
-	.inst.n 0x2010
-	.inst.n 0xe282
-	.inst.n 0x321c
-	.inst.n 0xe183
-	.inst.n 0xf00e
-	.inst.n 0xe1a0
-	.inst.n 0xc00f
-	.inst.n 0xe3a0
-	.inst.n 0xc223
-	.inst.n 0xe01c
-	.inst.n 0xc00b
-	.inst.n 0xe28c
-	.inst.n 0xc000
-	.inst.n 0x226c
-	.inst.n 0x5c8c
-	.inst.n 0xe085
-	.inst.n 0x3423
-	.inst.n 0xe1a0
-	.inst.n 0x2008
-	.inst.n 0xe252
-	.inst.n 0xf00e
-	.inst.n 0x51a0
-	.inst.n 0xc0b2
-	.inst.n 0xe0d0
-	.inst.n 0x2010
-	.inst.n 0xe282
-	.inst.n 0x321c
-	.inst.n 0xe183
-	.inst.n 0xf00e
-	.inst.n 0xe1a0
-	.inst.n 0x5563
-	.inst.n 0xe1a0
-	.inst.n 0x54fe
-	.inst.n 0xe205
-	.inst.n 0x3523
-	.inst.n 0xe1a0
-	.inst.n 0x200a
-	.inst.n 0xe252
-	.inst.n 0xf00e
-	.inst.n 0x51a0
-	.inst.n 0xc0b2
-	.inst.n 0xe0d0
-	.inst.n 0x2010
-	.inst.n 0xe282
-	.inst.n 0x321c
-	.inst.n 0xe183
-	.inst.n 0xf00e
-	.inst.n 0xe1a0
+	push	{r5, r6, r7, r8, r9, sl, fp, lr}
+	ldr	r2, [pc, #196]
+	add	r3, pc, #240
+	sub	r2, r3, r2
+	add	r4, pc, #200
+	mov	r5, #8
+.L_080b5150:
+	ldr	r6, [r3], #4
+	add	r6, r6, r2
+	str	r6, [r4], #4
+	subs	r5, r5, #1
+	bne .L_080b5150
+	mov	fp, #7
+	ldrh	r3, [r0], #2
+	mov	r2, #0
+	mov	r5, #0
+	mov	r9, #15
+	ldr	sl, [pc, #132]
+.L_080b517c:
+	mov	r8, #8
+.L_080b5180:
+	mov	r7, #32
+.L_080b5184:
+	bl sub_080b520c
+	lsr	r6, r5, #25
+	bl sub_080b520c
+	orr	r6, r6, r5, lsr #17
+	bl sub_080b520c
+	orr	r6, r6, r5, lsr #9
+	bl sub_080b520c
+	orr	r6, r6, r5, lsr #1
+	add	r6, r6, sl
+	str	r6, [r1], #4
+	bl sub_080b520c
+	lsr	r6, r5, #25
+	bl sub_080b520c
+	orr	r6, r6, r5, lsr #17
+	bl sub_080b520c
+	orr	r6, r6, r5, lsr #9
+	bl sub_080b520c
+	orr	r6, r6, r5, lsr #1
+	add	r6, r6, sl
+	str	r6, [r1], #60
+	subs	r7, r7, #1
+	bne .L_080b5184
+	sub	r1, r1, #2048
+	add	r1, r1, #8
+	subs	r8, r8, #1
+	bne .L_080b5180
+	sub	r1, r1, #64
+	add	r1, r1, #2048
+	subs	r9, r9, #1
+	bne .L_080b517c
+	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
+	bx	lr

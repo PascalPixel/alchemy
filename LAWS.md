@@ -2827,3 +2827,32 @@ steer it.
 call that veneer directly with the target in the matching argument position.**
 The `rN` is a fact about the reference's allocation, and the direct call is how
 you reproduce it.
+
+## Addendum (2026-07-26): a score that does not move is not proof of no effect
+
+`alchemy-gcc b726765` adds `-fthumb-group-value2-in-place`, clearing the
+long-recorded residual on `080b5ad4` and the other grouped-DMA regions whose
+third descriptor word also feeds a following call. `thumb_store_multiple3`
+hard-codes r0/r1/r2, so `arm_pre_reload` copies the value into r2; when that
+value has a second use as a call argument the allocator homes it elsewhere and
+the copy survives. `value0` already had a special case for this shape; `value2`
+had none. That region's descriptor and constant pool are now byte-exact — 28
+differing halfwords over 68 bytes down to 11 over 64.
+
+**The first version of the transform was wrong in a way the score could not
+show.** Retargeting `value2`'s definition to r2 without moving its *other* use
+left that use reading a pseudo with no definition; the allocator handed it a
+stale r4 and the call took garbage as its third argument. The differing-halfword
+count did not change at all, because the wrong register shifted no offsets. Only
+diffing the generated assembly revealed it.
+
+So a compiler change that leaves the score unchanged has not necessarily done
+nothing — it may have done something wrong. **Diff the assembly, both when a
+change appears to do nothing and when it appears to work.** That is the third
+time in one session that a score alone pointed somewhere wrong: it also produced
+a fabricated "GCC folds the extract" mechanism, and an inflated family count
+twice over.
+
+Note the fork is ahead of the staged `dist/` bundle by this option. Nothing is
+routed against it yet, and it is default-off, so the build is unaffected;
+restage before routing any source to it.

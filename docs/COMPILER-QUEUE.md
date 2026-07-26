@@ -164,3 +164,33 @@ and 080a47b4 has the same shape (`movs r1,#0` against `adds r5,r0,#0`, plus two
 transposed `lsls`). That is the next compiler experiment, and it is a real
 tuning loop rather than a one-line guard — worth doing with the harness, not by
 inspection.
+
+## Hooks landed, and one that was measured and rejected (2026-07-26)
+
+Two reordering hooks earned their place, each on three regions sharing one
+residual:
+
+- `thumb_order_high_register_move` widened to treat a **minipool load** as a
+  constant materialisation, not just a `CONST_INT`. A wide or relocatable
+  constant reaches its register as a load, and the hook had been ignoring
+  exactly the shape it was written for.
+- `-fthumb-move-before-alu`, new: put an independent low-register copy ahead of
+  an adjacent two-address ALU insn. Both operands of the ALU insn must be
+  registers, the copy must be low-to-low, and independence is checked in both
+  directions so neither a value nor the flags can change hands.
+
+Together with `-fno-sched-depend-count` and a source reorder these converted
+`08002fb0` and `08003e10`.
+
+**Rejected: extending `-fthumb-move-before-alu` to also overtake a constant
+materialisation.** It looks like the missing cell of an obvious matrix — the
+high-register hook does *constant before high move*, the new hook does *ALU
+before low move*, so *constant before low move* should complete it. Measured
+across the six closest parked regions it is a net loss: `08019bac` 6 to 10
+bytes, `080b0744` 10 to 18, others unchanged or marginal. Reverted.
+
+The general rule this session kept confirming: a hook needs several regions
+sharing a residual *and* a measurement across the parked set before it lands.
+Symmetry is not evidence. Seven modes proposed by inspection this session were
+wrong; the three that worked came from `-da` dumps and gating passes one at a
+time.

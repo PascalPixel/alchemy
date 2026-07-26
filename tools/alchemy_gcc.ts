@@ -108,9 +108,9 @@ const NO_CONTIGUOUS_IMMEDIATE_SOURCES = new Set(["080a1090", "08005a78", "0800d3
 // reference does. Splitting the live range is the only way to spell two
 // materialisations of one constant; see alchemy-gcc ff7c566.
 const SPLIT_GROUP_BASE_SOURCES = new Set(["08005a78"]);
-// The reference emits every parameter save before the body; ours leaves the
-// second one after the pool load that follows it. See alchemy-gcc.
-const HOIST_PARAMETER_SAVE_SOURCES = new Set(["08019bac"]);
+// These references emit every parameter save before the body; ours otherwise
+// leaves one after the pool load that follows it. See alchemy-gcc.
+const HOIST_PARAMETER_SAVE_SOURCES = new Set(["080053e8", "08019bac"]);
 // The reference saves the second parameter before the first; ours always follows
 // parameter order. Two halfwords, and the whole difference in 08093054.
 const ENTRY_SAVES_DESCENDING_SOURCES = new Set(["08093054"]);
@@ -124,10 +124,10 @@ const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78"]);
 // 08021d88 likewise needs original-order tie breaking for its frame adjustment
 // and two split constants; its source order then reproduces the ROM exactly.
 const NO_SCHED_DEPEND_COUNT_SOURCES = new Set([
-  "08002fb0", "08003e10", "0800d304", "08019bac", "08021d88",
+  "08002fb0", "08003e10", "080053e8", "0800d304", "08019bac", "08021d88",
 ]);
 // The reference issues the destination copy ahead of the control word's `orrs`.
-const MOVE_BEFORE_ALU_SOURCES = new Set(["08002fb0", "08003e10", "0800d304", "08019bac"]);
+const MOVE_BEFORE_ALU_SOURCES = new Set(["08002fb0", "08003e10", "080053e8", "0800d304", "08019bac"]);
 // This palette-row scan ANDs a loaded halfword against a hoisted 0xF800 mask.
 // The AND is a two-address *thumb_andsi3_insn, so regmove's forward pass may
 // overwrite either input; it rejects the mask operand at reg_is_remote_constant_p
@@ -172,7 +172,7 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // (work/hand/080b5ad4/NOTES.md).
 const GROUPED_DMA_STORE_SOURCES = new Set([
   "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
-  "08004a5c", "08004a94", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "08019bac",
+  "08004a5c", "08004a94", "080053e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "08019bac",
   "0801d980",
   "080251d4", "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
   "0808fecc", "08004760", "08005a78", "080037d4", "080b5ad4", "0800300c", "080f377c",
@@ -722,6 +722,7 @@ export function directCompilerCommand(
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
     ...(NO_CONTIGUOUS_IMMEDIATE_SOURCES.has(stem) ? ["-fno-thumb-contiguous-immediate"] : []),
     ...(NO_SCHED_DEPEND_COUNT_SOURCES.has(stem) ? ["-fno-sched-depend-count"] : []),
+    ...(HOIST_PARAMETER_SAVE_SOURCES.has(stem) ? ["-fthumb-hoist-parameter-save"] : []),
     ...(MOVE_BEFORE_ALU_SOURCES.has(stem) ? ["-fthumb-move-before-alu"] : []),
     ...(NO_REGMOVE_SOURCES.has(stem) ? ["-fno-regmove"] : []),
     ...(ENTRY_LITERAL_FIRST_SOURCES.has(stem)
@@ -741,6 +742,7 @@ export function directCompilerCommand(
       : []),
     ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
+    ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
     ...(CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mcall-arg0-move-first"]
       : []),
@@ -804,7 +806,7 @@ function selfTest(): void {
   if (JSON.stringify(groupedDma) !== JSON.stringify([
     "08002f10", "08002fb0", "0800300c", "080037d4", "08003e10", "08004760",
     "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c",
-    "08004a94", "08005a78", "0800bc48", "0800bdd4", "0800c0f4", "0800d304",
+    "08004a94", "080053e8", "08005a78", "0800bc48", "0800bdd4", "0800c0f4", "0800d304",
     "080170c4", "08019bac", "0801d980", "080251d4", "080284dc", "0808fecc", "080958a8",
     "0809bb34", "080a1090", "080b5ad4", "080c0184", "080c08a8", "080f377c",
   ])) {
@@ -818,6 +820,26 @@ function selfTest(): void {
   if (cflagsForTargetSource("gs1", "/tmp/080000c0.c").includes("-mgrouped-dma-store") ||
       cflagsForTargetSource("gs2", "/tmp/080958a8.c").includes("-mgrouped-dma-store")) {
     throw new Error("grouped DMA unrelated-source routing self-test failed");
+  }
+  const copiedDecompressorFlags = [
+    "-mgrouped-dma-store",
+    "-fthumb-move-before-alu",
+    "-fno-sched-depend-count",
+    "-fthumb-hoist-parameter-save",
+  ];
+  const copiedDecompressor = cflagsForTargetSource("gs1", "/tmp/080053e8.c");
+  const copiedDecompressorDirect = directCompilerCommand(
+    "/tmp/080053e8.i", "/tmp/080053e8.s", "080053e8.c", "/tmp/080053e8.c",
+  );
+  const copiedDecompressorNeighbor = cflagsForTargetSource("gs1", "/tmp/080053ec.c");
+  const copiedDecompressorGs2 = cflagsForTargetSource("gs2", "/tmp/080053e8.c");
+  for (const flag of copiedDecompressorFlags) {
+    if (!copiedDecompressor.includes(flag) ||
+        !copiedDecompressorDirect.includes(flag) ||
+        copiedDecompressorNeighbor.includes(flag) ||
+        copiedDecompressorGs2.includes(flag)) {
+      throw new Error(`080053e8 copied-decompressor routing self-test failed for ${flag}`);
+    }
   }
   const copyLifetimeFlags = cflagsForTargetSource("gs1", "/tmp/08006088.c");
   const unrelatedFlags = cflagsForTargetSource("gs1", "/tmp/0800608c.c");

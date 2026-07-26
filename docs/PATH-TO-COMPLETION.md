@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-26)
 
-`[1,273 of 2,001]`. 728 `c_candidate` regions remain. **Y dropped from 2,058 to 2,001 on
+`[1,279 of 2,001]`. 722 `c_candidate` regions remain. **Y dropped from 2,058 to 2,001 on
 2026-07-26 in two steps: 43 `mov ip, pc` regions into the existing
 `nonstandard_thumb_call_module` class, and 14 regions that read a callee-saved
 register they never write into `hidden_register_context_module`. Both classes
@@ -23,19 +23,19 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-23 | 1,162 | +158 |
 | 2026-07-24 | 1,236 | +74 |
 | 2026-07-25 | 1,242 | +6 |
-| 2026-07-26 | 1,273 | +31 |
+| 2026-07-26 | 1,279 | +37 |
 
-**The rate is still roughly a factor of five below the 2026-07-23 peak.** That is
+**The rate is still roughly a factor of four below the 2026-07-23 peak.** That is
 not a slowdown in effort: the broad easy tier is running out, and compiler
-lineage now matters as much as drafting. At the last two days' rate 728 regions
-is roughly 39 working days; at the three-day average, about 20. The estimates
+lineage now matters as much as drafting. At the last two days' rate 722 regions
+is roughly 34 working days; at the three-day average, about 19. The estimates
 move materially with one cohort and neither is a session.
 
 ## What is actually left
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 549 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 543 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
 | 136 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
@@ -46,18 +46,18 @@ Removed from the table on 2026-07-26, into classes that already described them:
 drafting — `080e73a0` was picked as a clean 49-instruction target and turned out
 to read its base pointer out of `r9`, which no policy-valid C can express.
 
-Of the 549 plain regions, 95 have been attempted and parked with written
-root causes. The 454 never touched break down by size:
+Of the 543 plain regions, 101 have been attempted and parked with written
+root causes. The 442 never touched break down by size:
 
 | instructions | regions |
 | --- | --- |
 | ≤ 40 | 5 |
-| 41–80 | 63 |
+| 41–80 | 51 |
 | 81–160 | 193 |
 | 161–320 | 105 |
 | 321+ | 88 |
 
-**106,225 instructions of fresh plain code.** That is the real remaining
+**105,312 instructions of fresh plain code.** That is the real remaining
 workload, and it is drafting, not compiler archaeology.
 
 ## What five drafts on 2026-07-26 actually showed
@@ -140,9 +140,41 @@ a delivery forecast. Family selection, existing compiler fingerprints, and
 small source-level live-range changes are producing a temporarily high hit
 rate in the remaining medium-small band.
 
+## What the rolling twelve-target cohort changed
+
+The next twelve targets were all genuinely fresh members of the
+41–80-instruction band. Six converted exactly:
+
+| region | insns | exact route |
+| --- | ---: | --- |
+| `08007220` | 76 | the established flash-family `old_agbcc -O1` fingerprint |
+| `080174f8` | 75 | ordinary C; shared work-pointer control flow |
+| `0801cf48` | 76 | ordinary C; split index and adjustment live ranges |
+| `0808d8f0` | 80 | ordinary C; typed event dispatch |
+| `080b2f4c` | 78 | ordinary C; typed three-state effect update |
+| `080b874c` | 76 | ordinary C; switch/default tail reconstruction |
+
+Those six add 1,112 exact-C bytes. The other six are semantics-complete and
+remain assembly, with their best candidates and blockers recorded under
+`work/hand/<region>/NOTES.md`:
+
+| region | best | residual |
+| --- | --- | --- |
+| `0800eaf8` | 160/168 bytes, 70 halfwords | global-base materialization and coupled allocation |
+| `08078e28` | 164/164 bytes, 35 halfwords | CSE shortens the masked-value lifetime |
+| `080a5614` | 180/180 bytes, 2 halfwords | one adjacent initialization transposition |
+| `080a602c` | 176/168 bytes, 67 halfwords | allocation rotation plus a mid-function pool |
+| `080a7380` | 192/192 bytes, 25 halfwords | low-register coloring and second scheduling |
+| `080a77a4` | 168/170 bytes, 41 halfwords | required mid-function pool; the early-pool mode ICEs |
+
+The accounting is therefore six exact conversions and six newly attempted
+parks, not twelve conversions. Together they remove 913 instructions from the
+fresh queue: 461 by conversion and 452 by bounded diagnosis. The 41–80 fresh
+band falls from 63 to 51, while exact claims rise from 1,273 to 1,279.
+
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 549 of 728 have nothing exotic in
+1. **The bulk is volume, not blockers.** 543 of 722 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.
@@ -185,7 +217,7 @@ rate in the remaining medium-small band.
      as debt and eliminated. Since the stated goal is pokeemerald as the desired
      *outcome*, and that outcome is 100% matching C with no assembly fallbacks,
      introducing a non-matching tier would move away from the goal, not toward
-     it. **Byte-exactness stays.** Roughly 39 working days at the current
+     it. **Byte-exactness stays.** Roughly 34 working days at the current
      two-day rate is the honest cost.
 
 ## Recommended order
@@ -194,7 +226,7 @@ Screen every target first: `grep 'mov\s*ip, pc'`, and check for a callee-saved
 register read but never written. Both classes are now reclassified out of Y, but
 the screen still costs less than a wasted draft.
 
-1. Work the 63 plain regions in the 41–80 band. They are the last tier where a
+1. Work the 51 plain regions in the 41–80 band. They are the last tier where a
    single sitting plausibly produces a conversion.
 2. Apply the `u32`-locals law to the 25 single-mask regions. Eleven more use the
    mask two to four times and need the corresponding combine; the two small

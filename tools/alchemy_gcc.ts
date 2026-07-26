@@ -288,11 +288,11 @@ const DEFAULT_ABI_SOURCES = new Set([
 // minipool at the trailing post-epilogue barrier instead of the barrier after
 // the unconditional branch, costing the two bytes of .align 2 padding. Its
 // already-matched DEFAULT_ABI_SOURCES sibling 08006b84 also compiles exact
-// under old_agbcc. 08006c68, 08006f84, and 0800711c now independently extend
-// that proof through the same flash cohort (116/116, 164/164, and 140/140
-// bytes); the rest stay on the fork until each has its own exact-byte proof.
+// under old_agbcc. 08006c68, 08006f84, 0800711c, and 08007220 now independently
+// extend that proof through the same flash cohort (116/116, 164/164, 140/140,
+// and 196/196 bytes); the rest stay on the fork until exact-byte proof.
 const AGBCC_SOURCES = new Set([
-  "08006a00", "08006ba8", "08006c24", "08006c68", "08006dec", "08006f84", "08007098", "0800711c", "080071a8",
+  "08006a00", "08006ba8", "08006c24", "08006c68", "08006dec", "08006f84", "08007098", "0800711c", "080071a8", "08007220",
   "080f9a50",
   "080fadf0",
   "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
@@ -322,10 +322,11 @@ const AGBCC_LITERAL_BEFORE_SHIFT_SOURCES = new Set(["080fb670"]);
 // shift result, transposing r0 and r1 across four instructions. No source shape
 // avoids it, because the narrowing that creates the subreg is what the C
 // semantics require. 08006c68 repeats the copied-body loop fingerprint above;
-// 08006f84's flash-byte loop and 0800711c's retry CFG likewise reproduce their
-// reference layouts only at -O1.
+// 08006f84's flash-byte loop, 0800711c's retry CFG, and 08007220's nested
+// program-sector retry loop likewise reproduce their reference layouts only
+// at -O1.
 const AGBCC_OPTIMIZE_O1_SOURCES = new Set([
-  "08006a00", "08006ba8", "08006c68", "08006f84", "08007098", "0800711c", "080071a8", "080fa514",
+  "08006a00", "08006ba8", "08006c68", "08006f84", "08007098", "0800711c", "080071a8", "08007220", "080fa514",
 ]);
 const AGBCC_COMPARE_ONLY_AND_TST_SOURCES = new Set(["080f9a50"]);
 const AGBCC_COMMUTATIVE_COPY_CONSTANT_SOURCES = new Set(["080fa514"]);
@@ -702,7 +703,7 @@ export function directCompilerCommandForSource(
 
 function selfTest(): void {
   const expected = [
-    "08006a00", "08006ba8", "08006c24", "08006c68", "08006dec", "08006f84", "08007098", "0800711c", "080071a8",
+    "08006a00", "08006ba8", "08006c24", "08006c68", "08006dec", "08006f84", "08007098", "0800711c", "080071a8", "08007220",
     "080f9a50",
     "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
     "080fa424", "080fa458", "080fa490", "080fa514", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
@@ -720,7 +721,7 @@ function selfTest(): void {
     }
     const expectedFlags = [
       ...AGBCC_CFLAGS,
-      ...(["08006a00", "08006ba8", "08006c68", "08006f84", "08007098", "0800711c", "080071a8"].includes(stem) ? ["-O1"] : []),
+      ...(["08006a00", "08006ba8", "08006c68", "08006f84", "08007098", "0800711c", "080071a8", "08007220"].includes(stem) ? ["-O1"] : []),
       ...(stem === "080fa514" ? ["-O1", "-mcommutative-copy-constant"] : []),
       ...(stem === "080fb670" ? ["-mliteral-before-shift"] : []),
       ...(["080fb2cc", "080fb334", "080fb3a8"].includes(stem)

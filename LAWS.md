@@ -2710,3 +2710,34 @@ score.** A region that got 4 bytes shorter was written up as "GCC folds the
 extract into the comparison". It does not, and never did — the shortfall was a
 missing register copy elsewhere. The count moved for an unrelated reason and the
 explanation was invented to fit it.
+
+
+## Addendum (2026-07-26): two compiler options built, measured, and reverted
+
+Both were inert, both for the same reason, and the reason is worth more than
+either option: **the behaviour was not in the layer the flag targeted.** Record
+them so nobody spends the time again.
+
+- **`-fthumb-zero-extend-mask`** — emit `and` against a pooled 0xffff from
+  `zero_extendhisi2` instead of the `lsl #16 / lsr #16` pair. No effect: a
+  promoted `u16` *parameter* never reaches that expander. The masked form turned
+  out to be reachable from C all along by widening the type (see the masking
+  addendum), so no compiler change was needed at all.
+
+- **`-fno-tie-copied-quantities`** — stop `local-alloc`'s `combine_regs` tying a
+  dying copy's source and destination into one quantity, so the move survives.
+  Targeted at `08006088`, where the reference accumulates in r2 and copies to r0
+  partway through. No effect, and the RTL dumps say why: **there are zero
+  pseudo-to-pseudo copies in `.00.rtl`**, before any pass runs. `result = packed`
+  never becomes a copy insn — the expander treats the two names as one value —
+  so there was never a tie for `combine_regs` to make.
+
+**The check that would have caught both in a minute: dump the RTL and confirm the
+construct you intend to change actually exists at that stage.** `-da` and a grep
+of `.00.rtl` costs nothing next to building a compiler.
+
+This is the same discipline that made the two *landed* options work. For
+`08005a78` the payoff was verified by reordering the generated assembly and
+relinking before any code was written; for `08006088` that same check proved a
+single edit gives an exact link, but proving *what* to change is not the same as
+proving *where* it lives.

@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 struct State_0808bc9c {
     unsigned char padding[0x16c];

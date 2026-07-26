@@ -1,4 +1,5 @@
-typedef signed int s32;
+#include "types.h"
+
 typedef void (*Callback)(s32 *);
 
 void Func_080048b0(s32, s32);

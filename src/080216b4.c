@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned int u32;
+#include "types.h"
 
 struct Object_080216b4 {
     struct Object_080216b4 *child;

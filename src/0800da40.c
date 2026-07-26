@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 void Func_0800d14c(void *, s32, s32, s32);
 

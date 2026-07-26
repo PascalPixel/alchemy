@@ -1,7 +1,4 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
+#include "types.h"
 
 struct State_0809b804;
 typedef void (*Callback_0809b804)(struct State_0809b804 *);

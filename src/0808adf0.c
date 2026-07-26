@@ -1,6 +1,4 @@
-typedef signed char s8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 typedef struct Entry {
     s16 first;

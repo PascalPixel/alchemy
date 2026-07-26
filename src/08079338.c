@@ -1,6 +1,5 @@
-typedef signed int s32;
-typedef unsigned int u32;
-typedef unsigned char u8;
+#include "types.h"
+
 s32 Func_08079338(s32 arg0) {
     s32 mask;
     u8 *base;

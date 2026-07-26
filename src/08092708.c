@@ -1,6 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
-typedef unsigned char u8;
+#include "types.h"
 
 #define FIELD_S32(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 #define OBJECT_X(object) FIELD_S32(object, 0x08)

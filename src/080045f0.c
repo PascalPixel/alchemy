@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 void Func_080045f0(u32 value) {
     u8 *buffer = (u8 *)0x03001F70;

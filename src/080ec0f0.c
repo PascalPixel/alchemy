@@ -1,4 +1,4 @@
-typedef unsigned short u16;
+#include "types.h"
 
 void Func_080ec0f0(void)
 {

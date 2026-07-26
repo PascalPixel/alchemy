@@ -1,5 +1,4 @@
-typedef signed char s8;
-typedef signed int s32;
+#include "types.h"
 
 extern s8 Data_08037403[];
 extern s8 Data_080373f7[];

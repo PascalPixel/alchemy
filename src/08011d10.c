@@ -1,5 +1,4 @@
-typedef signed char s8;
-typedef signed int s32;
+#include "types.h"
 
 s32 Func_08011d10(s8 *values, s32 unused, s32 factor) {
     s32 base;

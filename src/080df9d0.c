@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 void Func_080df9d0(u8 *source, u8 *destination, s32 stride) {
     s32 row = 0;

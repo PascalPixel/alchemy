@@ -1,6 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 struct Entry_08003f3c {
     u16 value;

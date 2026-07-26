@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
+#include "types.h"
 
 struct State_080173ac {
     u8 filler0[0xea8];

@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
+#include "types.h"
 
 void Func_0801b9a8(void *state, u16 index);
 void Func_0801b9ec(void *state, u16 index);

@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 extern s32 Data_03001cc4;
 extern s32 Data_03001d2c;

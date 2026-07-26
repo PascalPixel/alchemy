@@ -1,6 +1,4 @@
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 struct SubQueueItem_08011b00 {
     u32 unk00;

@@ -2741,3 +2741,34 @@ This is the same discipline that made the two *landed* options work. For
 relinking before any code was written; for `08006088` that same check proved a
 single edit gives an exact link, but proving *what* to change is not the same as
 proving *where* it lives.
+
+## Addendum (2026-07-26): mask at the load, not in the arithmetic
+
+`0800bfa4` converted on this alone, going from 15 halfwords out to byte exact:
+
+```c
+a = origin[0];                              /* 15 halfwords out */
+x = thing->field8 - (a & 0xffff0000);
+```
+```c
+a = origin[0] & 0xffff0000;                 /* byte exact */
+x = thing->field8 - a;
+```
+
+Identical semantics. The first keeps the raw load and the masked value alive as
+two values, so the subtraction needs a third register and the function grows a
+callee-saved register it never needed — `push {r5, r6, lr}` against the
+reference's `push {r5, lr}`. The second lets the mask overwrite the loaded value
+in place, and the subtraction then reuses that register, which is what the
+reference does.
+
+Same family as the compound-assignment law above: **where a value's
+transformations are split across statements decides which register each result
+lands in.** But it reads backwards from the store case — here you want *more* in
+one statement, not less. Put the mask on the load so the loaded register is
+consumed rather than preserved.
+
+Confirmed on the way in and worth reusing: reading both words of a pair into
+locals *before* using either (`a = origin[0]; b = origin[1];` then the two
+subtractions) reproduces the reference's up-front load pair. Folding each load
+into its own subtraction interleaves them and costs 4 halfwords on its own.

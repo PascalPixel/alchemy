@@ -1,4 +1,3 @@
-// Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
 import { canonicalJson } from "./canonical_json.ts";
 export type SoundTableEntry = [header: string, player: number];
 

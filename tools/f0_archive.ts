@@ -1,4 +1,3 @@
-// Tool role: library; imported by tools/build_assets.ts, tools/localization_font.ts.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { deflateSync } from "./zlib.ts";

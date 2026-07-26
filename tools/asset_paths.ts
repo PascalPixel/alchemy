@@ -1,4 +1,3 @@
-// Tool role: library; imported by tools/build_assets.ts, tools/compose_scene.ts, tools/static_sprite_series.ts (+1 more).
 import { existsSync, readdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 

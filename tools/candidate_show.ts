@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: entrypoint; invoked by PLAYBOOK.md.
 // Compile one main-image candidate and print its disassembly beside the
 // reference's, aligned by offset, marking every halfword that differs.
 //

@@ -1,4 +1,3 @@
-// Tool role: library; imported by tools/build_assets.ts.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { byte_png, rgba_image } from "./export_asset.ts";

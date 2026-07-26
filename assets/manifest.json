@@ -84,6 +84,24 @@
       "source": "asm/executable_gaps/index.json"
     },
     {
+      "address": "0x080b5204",
+      "size": "0x08",
+      "kind": "golden-sun-executable-gap-data",
+      "source": "asm/veneer_island_residual/index.json"
+    },
+    {
+      "address": "0x080b5218",
+      "size": "0x20",
+      "kind": "golden-sun-executable-gap-data",
+      "source": "asm/veneer_island_residual/index.json"
+    },
+    {
+      "address": "0x080b5238",
+      "size": "0x20",
+      "kind": "golden-sun-executable-gap-data",
+      "source": "asm/veneer_island_residual/index.json"
+    },
+    {
       "address": "0x083cd090",
       "size": "0x488",
       "kind": "golden-sun-resource-byte-canvas",

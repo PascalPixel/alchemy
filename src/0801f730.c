@@ -4,7 +4,7 @@
 
 s32 Func_080056cc();
 s32 Func_08005c68();
-void Func_08005cf8();
+volatile unsigned int Func_08005cf8(void);
 
 s32 Func_0801f730(s32 arg0) {
     s32 t;

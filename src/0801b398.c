@@ -4,7 +4,7 @@ extern u8 *Data_03001e98;
 extern u32 Data_03001c94;
 extern volatile u32 Data_03001b04;
 
-void Func_0801b9ec(void *state, u32 index);
+void Func_0801b9ec(struct State_0801b9ec *state, u32 index);
 void Func_080030f8(u32 value);
 void Func_0801b664(void *state);
 void Func_0801b810(void *state);

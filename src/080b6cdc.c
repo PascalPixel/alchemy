@@ -1,6 +1,6 @@
 #include "types.h"
 
-extern s32 Func_080c23c0(s32);
+extern s32 Func_080c23c0(s32 index);
 
 struct Layout {
     u8 pad[4];

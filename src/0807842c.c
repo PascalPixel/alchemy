@@ -11,7 +11,7 @@ struct Entry_0807842c {
 };
 
 struct State_0807842c *Func_08077394(s32);
-struct Entry_0807842c *Func_08078414(s32);
+s32 Func_08078414(s32 arg0);
 
 s32 Func_0807842c(s32 owner, s32 index)
 {

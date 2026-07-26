@@ -7,8 +7,8 @@ struct State_0807a350 {
 };
 
 struct State_0807a350 *Func_08077394(s32);
-u32 Func_0807a2bc(s32, s32, s32);
-void Func_08079ae8(s32);
+u32 Func_0807a2bc(s32 owner, s32 index, s32 bit);
+void Func_08079ae8(s32 arg0);
 
 u32 Func_0807a350(s32 owner, s32 index, s32 bit)
 {

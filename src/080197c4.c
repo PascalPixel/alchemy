@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_08016418(void *, s32);
+void Func_08016418(struct Work *work, s32 release);
 void Func_080030f8(u32);
 
 extern u8 *Data_03001e8c;

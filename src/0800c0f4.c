@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_0800bdd4(void *);
+void Func_0800bdd4(u8 *object);
 
 void Func_0800c0f4(u8 *object)
 {

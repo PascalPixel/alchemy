@@ -2,7 +2,7 @@
 
 extern u8 *Data_03001ea0;
 void Func_080b0020(void *);
-void Func_080217a4(void *);
+void Func_080217a4(struct Object *object);
 
 void Func_0801d94c(void)
 {

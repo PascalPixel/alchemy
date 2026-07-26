@@ -1,7 +1,7 @@
 #include "types.h"
 
 void Func_08016478(void *);
-void Func_0801e74c(s32, void *, s32, s32);
+void Func_0801e74c(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 extern u8 Data_03001f38;
 extern u8 Value_00000c71;
 extern u8 Value_00000c73;

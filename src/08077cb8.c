@@ -1,6 +1,6 @@
 #include "types.h"
 
-extern s32 Func_08002f40(s32);
+extern s32 Func_08002f40(s32 index);
 extern volatile u8 Data_03001f54;
 extern u8 Data_00000002[];
 

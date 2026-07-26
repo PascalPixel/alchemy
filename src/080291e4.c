@@ -2,12 +2,12 @@
 
 s32 Func_080162d4(s32, s32, s32, s32, s32);
 void Func_080292c4(s32, s32);
-void Func_0801c0dc(void *, s32 *);
+void Func_0801c0dc(struct Object_0801c0dc *object, s32 *slot);
 void Func_080030f8(s32);
 s32 Func_0802938c(s32, s32 *, s32 *);
-void Func_0801c154(void *, s32, s32);
+void Func_0801c154(struct Obj *obj, s32 arg1, s32 arg2);
 void Func_0801c17c(s32);
-void Func_08016418(s32, s32);
+void Func_08016418(struct Work *work, s32 release);
 
 s32 Func_080291e4(void)
 {

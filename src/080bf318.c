@@ -7,7 +7,7 @@ struct State_080bf318 {
 };
 
 extern struct State_080bf318 *Func_08077008(void);
-extern s32 Func_080bf208(s32, s32, s32);
+extern s32 Func_080bf208(s32 arg0, s32 arg1, s32 arg2);
 
 s32 Func_080bf318(s32 arg0)
 {

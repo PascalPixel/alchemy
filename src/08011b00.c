@@ -14,7 +14,7 @@ struct Queue_08011b00 {
     u16 count;
 };
 
-void *Func_080048f4(s32, s32);
+void *Func_080048f4(s32 arg0, s32 arg1);
 
 void Func_08011b00(void) {
     struct Queue_08011b00 *base;

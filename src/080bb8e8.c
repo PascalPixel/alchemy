@@ -5,8 +5,8 @@
 s32 Func_080090d0(s32);
 void *Func_08077008();
 s32 Func_08077130(void *, s32);
-void *Func_080b7dd0(s32);
-s32 Func_080b7e60(s32);
+void *Func_080b7dd0(s32 arg0);
+s32 Func_080b7e60(s32 arg0);
 s32 Func_080bac6c(s32);
 
 s32 Func_080bb8e8(s32 arg0) {

@@ -1,8 +1,8 @@
 #include "types.h"
 
 s32 Func_08004080(void);
-void Func_08019ee4(s32, s32, s32 *, s32 *, s32);
-s32 Func_0801eadc(s32, s32, s32, s32, s32);
+void Func_08019ee4(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
+s32 Func_0801eadc(s32 arg0, s32 arg1, struct Input *arg2, s32 arg3, s32 arg4);
 
 s32 Func_0801ebd8(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     s32 count;

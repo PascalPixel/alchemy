@@ -5,7 +5,7 @@ struct State_0807a5bc {
     u8 values[4];
 };
 
-s32 Func_080796c4(u16 *);
+s32 Func_080796c4(s16 *output);
 struct State_0807a5bc *Func_08077394(s32);
 
 s32 Func_0807a5bc(s32 index)

@@ -19,7 +19,7 @@ struct EntrySlot {
 
 extern u8 *Data_03001e8c;
 
-void Func_0801671c(void);
+char Func_0801671c(void);
 
 void Func_08016758(void)
 {

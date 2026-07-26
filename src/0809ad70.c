@@ -2,7 +2,7 @@
 
 extern s8 Data_0809f160[];
 
-s32 Func_08004458(void);
+u32 Func_08004458(void);
 void Func_08009240(s32, s8);
 
 void Func_0809ad70(s32 arg0) {

@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_080fb334(s32, s32, s16);
+void Func_080fb334(u8 *state, u32 maskArg, u32 valueArg);
 void Func_080f94e0(s16 arg0)
 {
   int new_var;

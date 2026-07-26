@@ -1,7 +1,7 @@
 #include "types.h"
 
 extern u8 Data_03001b10[];
-void Func_08003f04(s32);
+s32 Func_08003f04(s32 arg0);
 
 s32 Func_08003f78(u32 arg0)
 {

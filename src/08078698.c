@@ -5,7 +5,7 @@ struct Global_08078698 {
     s32 owner;
 };
 
-s32 Func_08078664(s32, s32);
+s32 Func_08078664(s32 owner, s32 value);
 s32 Func_080796c4(s16 *);
 extern struct Global_08078698 Data_02000240;
 

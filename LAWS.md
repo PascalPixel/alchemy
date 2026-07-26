@@ -2772,3 +2772,43 @@ Confirmed on the way in and worth reusing: reading both words of a pair into
 locals *before* using either (`a = origin[0]; b = origin[1];` then the two
 subtractions) reproduces the reference's up-front load pair. Folding each load
 into its own subtraction interleaves them and costs 4 halfwords on its own.
+
+
+## Addendum (2026-07-26): `Func_080072xx` is usually not a function
+
+The compiler runtime's indirect-call veneer table sits at **0x080072e4**, one
+four-byte entry per register:
+
+| address | is |
+| --- | --- |
+| 0x080072e4 + 4N | `_call_via_rN` — literally `bx rN` |
+| 0x080072f0 | `_call_via_r3` |
+| 0x080072f8 | `_call_via_r5` |
+| 0x08007300 | `_call_via_r7` |
+
+Verified by disassembling the ROM, not assumed. So `bl Func_080072f8` is **an
+indirect call through r5**, not a call to a function at that address, and a
+prologue `ldr r5, <pool>` that looks dead is the target being loaded.
+
+**200 `c_candidate` regions call a veneer, across 669 call sites.** Read one as
+an ordinary function and the whole region will be mis-modelled — `080c00d8`
+looked like three calls to three helpers and is actually three calls to one
+IWRAM routine.
+
+Write it as what it is:
+
+```c
+typedef void (*Routine)(void *destination, s32 size, s32 value);
+Routine run = (Routine)0x03000168;
+run(cursor, 256, -1);          /* emits bl _call_via_rN by itself */
+```
+
+The compiler picks the veneer from whichever register the pointer lands in, so
+the `rN` in the reference tells you which register the original allocated — it
+is evidence, not something to force.
+
+**Shape debt, not urgent but real:** 28 converted sources spell these as direct
+calls, e.g. `Func_080072f0(a, b, c, 0x03000164)`. That is byte-exact and the
+machine behaviour is right — the fourth argument lands in r3 and the veneer
+branches to it — but it reads as a four-argument call when it is a
+three-argument indirect call. pokeemerald would have a function pointer here.

@@ -2511,3 +2511,42 @@ tail-jumps to RAM through `ldr r3, [pc]` / `bx r3`.
   no change). `-da` plus gating passes one at a time found the real cause in
   twenty minutes. The `.18.greg` and `.23.sched2` dumps show what each stage
   actually did; sched2 is frequently innocent.
+
+## Addendum (2026-07-26): the DMA descriptor plus completion poll
+
+Eight `c_candidate` regions program a DMA descriptor and then poll DMA3CNT until
+the transfer finishes — `08005a78`, `080058ac`, `08005b64`, `08094730`,
+`08005920`, `08077d38`, `0808e9c0`, `080030f8`. `08005a78` is the first of them
+converted, and it needed three things the earlier laws did not cover.
+
+- **The grouped store's "three locals first" rule is stricter than it reads.**
+  `store1` must be the *immediately* next insn after `store0`; only one gap is
+  tolerated, between `store1` and `store2`, and only a constant setup. So
+  `dma[1] = (u32)buffer;` fails — the address computation lands between the
+  stores. Assign every descriptor word to a named local *before* the three
+  stores, including the destination, or nothing groups.
+
+- **One pool word loaded twice is not a source shape.** The reference loads
+  `0x040000d4` once for the transfer's base and again for the poll. Both are the
+  same integer constant in the same basic block, cse merges them, and 2.96 has
+  no `-fno-cse`; `-fno-gcse` only reaches the cross-block case. Two
+  materialisations of one constant require two pseudos and only the compiler can
+  make them: `-fthumb-split-group-base`.
+
+- **Descriptor setup order permutes the constant pool.** When the source word
+  needs arithmetic (`record + 80`), the interleaved `add` hides the three setup
+  insns from `thumb_order_grouped_dma_store` and the control load stays hoisted.
+  That misorders the pool as well as the insns, so it was worth 9 halfwords, not
+  4. `-fthumb-group-control-last` sinks it.
+
+Two further notes from the same region:
+
+- **Declaration order of the descriptor locals does nothing.** All five
+  permutations of `source`/`dma`/`control` score identically; GCC canonicalises
+  it. Do not spend variants on it.
+
+- **Hand-reorder the generated assembly before writing a compiler hook.** Take
+  the `.s`, move the insns into the reference's order, reassemble and relink. If
+  that is not exact, the hook was never going to be enough. On `08005a78` it
+  came back EXACT, which is what justified two new options; the fork's own
+  history is full of modes proposed by inspection that made regions worse.

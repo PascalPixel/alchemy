@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /* Preserve independent live ranges while producing constants zero and three. */
 #define LIVE_CONSTANT(seed, offset) (((u32)(seed) | ~(u32)(seed)) + (offset))

@@ -1,11 +1,5 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
-typedef signed long long s64;
-typedef unsigned long long u64;
+#include "types.h"
+
 #define M2C_FIELD(p, t, o) (*(t)((char *)(p) + (o)))
 
 s32 Func_08011d60(void *arg0, s32 arg1, s32 arg2) {

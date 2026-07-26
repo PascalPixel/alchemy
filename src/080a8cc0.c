@@ -1,11 +1,5 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
-typedef signed long long s64;
-typedef unsigned long long u64;
+#include "types.h"
+
 typedef int bool;
 void Func_08015280(s32, s32, s32, s32, s32);
 void Func_080a8cc0(s32 arg0, s32 arg1, s32 arg2, s32 arg3)

@@ -1,4 +1,4 @@
-typedef unsigned int u32;
+#include "types.h"
 
 void Func_080251d4(u32 source, u32 destination)
 {

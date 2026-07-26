@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 s32 Func_0800bacc(u8 *arg0, s32 arg1)
 {

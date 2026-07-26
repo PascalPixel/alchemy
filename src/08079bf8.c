@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 s32 Func_08079b24(s32 selector, s32 mode);
 

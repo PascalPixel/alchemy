@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 static __inline__ void CopyEntry(u8 *map, u8 *destination) {
     u32 palette = *(u16 *)map;

@@ -1,9 +1,4 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 void Func_0809088c(s16 *arg0, s16 *arg1, s16 *arg2, s32 arg3) {
     s32 index;

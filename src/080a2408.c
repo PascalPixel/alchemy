@@ -1,4 +1,4 @@
-typedef unsigned char u8;
+#include "types.h"
 
 extern u8 * volatile Data_03001e8c;
 

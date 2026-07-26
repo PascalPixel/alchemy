@@ -1,4 +1,4 @@
-typedef unsigned char u8;
+#include "types.h"
 
 typedef void (*Callback)(void *);
 

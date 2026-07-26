@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned short u16;
+#include "types.h"
 
 extern u16 Data_03001b10[];
 s32 Func_08003fa4(s32, u16, s32);

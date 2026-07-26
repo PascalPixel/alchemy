@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 void Func_080a22f4(void);
 void Func_080a2144(s32);

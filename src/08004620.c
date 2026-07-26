@@ -1,9 +1,5 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
+
 typedef int bool;
 extern s32 Func_080022f4(u32, s32);
 extern u8 Data_08007970[];

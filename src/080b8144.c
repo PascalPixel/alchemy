@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned int u32;
+#include "types.h"
 
 struct Target_080b8144 {
     u8 filler0[0x30];

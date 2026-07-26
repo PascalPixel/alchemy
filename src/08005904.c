@@ -1,4 +1,4 @@
-typedef unsigned short u16;
+#include "types.h"
 
 typedef u16 (*Callback)(u16);
 extern Callback Data_02004c14;

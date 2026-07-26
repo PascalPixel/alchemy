@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef unsigned short u16;
+#include "types.h"
 
 struct Entry {
     s16 first;

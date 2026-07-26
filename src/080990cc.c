@@ -1,7 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned char u8;
-typedef unsigned short u16;
+#include "types.h"
 
 struct Triple080990cc {
     s32 x;

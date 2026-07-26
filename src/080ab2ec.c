@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_080ab21c(s32, s32, s32, s32, s32);
+void Func_080ab21c(s32 x, s32 y, s32 width, s32 height, u32 palette);
 void Func_080ab2ec(void *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5)
 {
   int new_var;

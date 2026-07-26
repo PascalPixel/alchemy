@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_080dbb98();
+void Func_080dbb98(void);
 
 void Func_080d655c(s32 arg0) {
     s32 var_r6;

@@ -1,7 +1,7 @@
 #include "types.h"
 
 extern s32 Func_08004080(void);
-extern void Func_0802875c(s32, s32);
+extern void Func_0802875c(s32 arg0, s32 index);
 
 void Func_080287a8(s32 arg0)
 {

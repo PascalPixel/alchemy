@@ -1,7 +1,7 @@
 #include "types.h"
 
 s32 Func_080162d4(s32, s32, s32, s32, s32);
-s32 Func_0801e940(s32, s32, s32, s32);
+void Func_0801e940(u8 *s, s32 arg1, u32 arg2, u32 arg3);
 s32 Func_08021c34(void)
 {
   s32 temp_r0;

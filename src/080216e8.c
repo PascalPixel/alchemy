@@ -1,7 +1,7 @@
 #include "types.h"
 
-void *Func_080048f4(s32, s32);
-u16 *Func_08002f40(void *);
+void *Func_080048f4(s32 arg0, s32 arg1);
+s32 Func_08002f40(s32 index);
 void Func_080053e8(void *, void *);
 void Func_08009288(void *, s32);
 void Func_08003fa4(s32, s32, void *);

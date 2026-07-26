@@ -11,9 +11,9 @@ struct Node_0801b148 {
 extern u8 *Data_03001e98;
 
 void Func_0801a97c(void);
-void Func_08016418(void *value, u32 mode);
+void Func_08016418(struct Work *work, s32 release);
 void Func_080030f8(u32 value);
-void Func_08003f3c(u16 handle);
+s32 Func_08003f3c(u32 index);
 void Func_0801c21c(void);
 void Func_08002dd8(u32 value);
 

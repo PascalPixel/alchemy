@@ -23,7 +23,7 @@ struct State_080a51d0 {
 extern struct State_080a51d0 *Data_03001f2c;
 extern u8 Value_00000182;
 extern void Func_08015298(s32, s32, s32, s32);
-extern void Func_080a17c4(struct Object_080a51d0 *);
+extern void Func_080a17c4(void *arg0);
 extern s32 Func_08077008(s32);
 extern void Func_08015090(s32, void *, s32, s32);
 extern void Func_08015080(s32, void *, s32, s32);

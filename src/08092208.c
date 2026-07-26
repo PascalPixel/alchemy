@@ -3,12 +3,12 @@
 #define FIELD_S16(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
 #define FIELD_S32(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-u8 *Func_0808ba1c(s32);
+s32 Func_0808ba1c(u32 arg0);
 void Func_08009140(void *);
 void Func_08009080(void *, s32);
 void Func_08009150(void *, s32, s32, s32);
 void Func_08009158(void *);
-void Func_08092b08(s32, s32);
+void Func_08092b08(s32 arg0, s32 arg1);
 
 void Func_08092208(s32 arg0, s32 arg1, s32 arg2) {
     u8 *object;

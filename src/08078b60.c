@@ -1,7 +1,7 @@
 #include "types.h"
 
-s32 Func_080796c4(u16 *);
-s32 Func_08078af8(s32, s32);
+s32 Func_080796c4(s16 *output);
+s32 Func_08078af8(s32 arg0, s32 value);
 
 s32 Func_08078b60(s32 value)
 {

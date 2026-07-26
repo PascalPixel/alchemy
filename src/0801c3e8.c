@@ -1,7 +1,7 @@
 #include "types.h"
 
 s32 Func_08004278(s32);
-s32 Func_08016418(s32, s32);
+void Func_08016418(struct Work *work, s32 release);
 void Func_0801c3e8(void)
 {
   void *new_var2;

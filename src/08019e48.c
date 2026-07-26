@@ -1,7 +1,7 @@
 #include "types.h"
 
 extern s32 Func_08019d2c();
-extern void Func_08016418(u8 *work, s32 release);
+extern void Func_08016418(struct Work *work, s32 release);
 
 void Func_08019e48(void)
 {

@@ -1,8 +1,8 @@
 #include "types.h"
 
 s32 Func_08002dd8(s32);
-s32 Func_080040d0(s32, s32);
-s32 Func_080048f4(s32, s32);
+s32 Func_080040d0(s32 index, s32 value);
+void *Func_080048f4(s32 arg0, s32 arg1);
 s32 Func_080153d0(s32, s32, s32 *, s32 *, s32);
 
 s32 Func_080ae908(s32 arg0, s32 arg1) {

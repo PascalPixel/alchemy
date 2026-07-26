@@ -2,8 +2,8 @@
 
 s32 Func_08096810(void);
 s32 Func_08096960(void);
-s32 Func_08096ab0(void);
-s32 Func_08096af0(void);
+void Func_08096ab0(void);
+void Func_08096af0(void);
 
 void Func_080967e4(s32 arg0) {
     if (arg0 == 0) {

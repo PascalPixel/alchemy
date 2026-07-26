@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_080048b0(s32, s32);
+s32 Func_080048b0(s32 arg0, s32 arg1);
 void Func_08002dd8(s32);
 void Func_080e823c(s32 *);
 void Func_080d2d98(s32 *);
@@ -8,11 +8,11 @@ void Func_080eb754(s32 *);
 void Func_080dc968(s32 *);
 void Func_080d6970(s32 *);
 void Func_080ec100(s32 *);
-void Func_080d2458(s32 *);
+void Func_080d2458(s32 arg0);
 void Func_080d1714(s32 *);
 void Func_080ea0d8(s32 *);
 void Func_080d765c(s32 *);
-void Func_080e7320(s32 *);
+void Func_080e7320(s32 arg0);
 void Func_080e15e8(s32 *);
 
 void Func_080d6578(s32 *arg0) {

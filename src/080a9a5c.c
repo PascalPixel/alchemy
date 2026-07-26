@@ -9,7 +9,7 @@ extern void Func_080a345c(void);
 extern void Func_08015080(void *, s32, s32, s32);
 extern s32 Func_080a9aec(s32, void *);
 extern void Func_080030f8(s32);
-extern void Func_080a3e28(void *, s32);
+extern void Func_080a3e28(u16 *arg0, s32 arg1);
 extern s32 Func_080a9c18(void *);
 
 void Func_080a9a5c(s32 arg0, s32 arg1, s32 arg2)

@@ -3,8 +3,8 @@
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Func_08004080();
-s32 Func_0801eadc(s32, s32, s32, s32, s32);
-s32 Func_08021b30(s32, s32);
+s32 Func_0801eadc(s32 arg0, s32 arg1, struct Input *arg2, s32 arg3, s32 arg4);
+s32 Func_08021b30(s32 arg0, s32 arg1);
 
 s32 Func_08022a38(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     s32 temp_r0;

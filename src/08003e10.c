@@ -1,6 +1,6 @@
 #include "types.h"
 
-void *Func_08004938(u32);
+u32 Func_08004938(s32 arg0);
 void Func_080072fc(s32);
 void Func_08002df0(void *);
 

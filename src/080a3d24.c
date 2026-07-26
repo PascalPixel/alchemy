@@ -11,7 +11,7 @@ struct State_080a3d24 {
 };
 
 extern struct State_080a3d24 *Data_03001f2c;
-void Func_080a17c4(struct Object_080a3d24 *);
+void Func_080a17c4(void *arg0);
 
 void Func_080a3d24(u16 *arg0)
 {

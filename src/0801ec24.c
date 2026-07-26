@@ -1,8 +1,8 @@
 #include "types.h"
 
 s32 Func_08004080();
-s32 Func_0801a32c(s32, s32, s32);
-s32 Func_0801eadc(s32, s32, s32, s32, s32);
+s32 Func_0801a32c(u32 value, s32 unused, void *destination);
+s32 Func_0801eadc(s32 arg0, s32 arg1, struct Input *arg2, s32 arg3, s32 arg4);
 
 s32 Func_0801ec24(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     s32 temp_r0;

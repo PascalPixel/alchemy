@@ -11,7 +11,7 @@ typedef struct {
     s32 f604;
 } T;
 
-extern T *Func_080048b0(s32, s32);
+extern s32 Func_080048b0(s32 arg0, s32 arg1);
 extern s32 Func_0801a5a4(T *, s32);
 extern s32 Func_08004080(void);
 extern s32 Func_08003fa4(s32, s32, u8 *);

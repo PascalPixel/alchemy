@@ -12,7 +12,7 @@ struct State_080a9cbc {
 };
 
 extern struct State_080a9cbc *Data_03001f2c;
-void Func_080a17c4(struct Object_080a9cbc *);
+void Func_080a17c4(void *arg0);
 
 void Func_080a9cbc(void)
 {

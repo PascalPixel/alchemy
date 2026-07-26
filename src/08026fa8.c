@@ -2,8 +2,8 @@
 
 void Func_080030f8(s32);
 s32 Func_080162d4(s32, s32, s32, s32, s32);
-void Func_08016418(s32, s32);
-void Func_08016738(void);
+void Func_08016418(struct Work *work, s32 release);
+volatile unsigned char Func_08016738(void);
 void Func_08017aa4(s16 *, s32, s32, s32);
 s32 Func_0801965c(s32, s16 *, s32);
 

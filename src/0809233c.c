@@ -2,7 +2,7 @@
 
 u8 *Func_0808ba1c(u32);
 void Func_08092064(s32, s32, s32);
-u8 *Func_08092054(s32);
+s32 Func_08092054(u32);
 void Func_080923e4(u32, s32, s32);
 void Func_08009080(void *, s32);
 void Func_0809228c(s32, s32, s32);
@@ -19,7 +19,7 @@ void Func_0809233c(u32 arg0, s32 arg1, s32 arg2, s32 arg3)
         u8 *other;
 
         Func_08092064(arg0, 0x9999, 0x4CCC);
-        other = Func_08092054(Data_02000240[125]);
+        other = (u8 *)Func_08092054(Data_02000240[125]);
         if (other != 0)
             Func_080923e4(arg0, *(s32 *)(other + 8),
                           *(s32 *)(other + 16));

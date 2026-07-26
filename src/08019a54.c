@@ -5,7 +5,7 @@
 void Func_08016418(struct Work *work, s32 release);
 void Func_080030f8(u32);
 
-void Func_08019a54(s32 arg0) {
+void Func_08019a54(void) {
     s32 var_r6;
     void **var_r5;
     void *temp_r0;

@@ -60,8 +60,7 @@ const OPTIMIZE_O1_SOURCES = new Set(["080049e8", "08021e28"]);
 // alone; the first flag is kept only because removing it would rewrite the
 // routed command line for sixteen already-verified regions.
 const UNSCHEDULED_SOURCES = new Set([
-    "08006b84",
-  "08002f10",
+  "08002f10", "0800307c", "08006b84",
   "08004198", "080042c8", "0800430c", "08004358", "0800439c", "080043e0",
   "08029274",
   "080fb714", "080fb728", "080fb73c", "080fb750", "080fb75c",
@@ -71,18 +70,29 @@ const UNSCHEDULED_SOURCES = new Set([
 // base.  Following jumps during CSE rematerializes one arm's base in r3;
 // disabling that pass preserves the reference's r6 lifetime and coalescing.
 const NO_CSE_FOLLOW_SOURCES = new Set(["0800f9f4"]);
+// In 08006088 the post-loop CSE rerun rewrites the field9 arm's OR to read the
+// return accumulator instead of the equal packed-value pseudo. That makes the
+// latter die at its copy, so local allocation ties both quantities and removes
+// the reference's `mov r0,r2`. Without the rerun the OR keeps packed live past
+// the copy; disabling regmove as well preserves r3 for that arm's adjacent
+// 0x1000 materialisation. The pair is independently exact at 96/96 bytes.
+// In 080ba918 the rerun folds the terminating NULL record into a fresh zero
+// return. Keeping the record pseudo lets it coalesce with the call result in r0,
+// preserving the reference's defined NULL return without a redundant move.
+const NO_RERUN_CSE_AFTER_LOOP_SOURCES = new Set(["08006088", "080ba918"]);
 // This unrolled six-item display setup shares one resource-ID base and one
 // signed sentinel.  Global CSE expands them back into independent constants;
 // disabling it preserves the reference's r7/r8 lifetimes.
 // 080b2720 is the same tell in a copy loop: the row base is addressed once for
 // the emptiness test and again for the loop preheader, and global CSE keeps the
 // shared address alive across the branch instead of recomputing it inside.
-const NO_GCSE_SOURCES = new Set(["0801ed40", "080a45cc", "080b2720"]);
+// 08098c08 similarly needs its stack-vector base split from the later child
+// pointer; GCSE coalesces the base into r7 and forces the loop counter into r8.
+const NO_GCSE_SOURCES = new Set(["0801ed40", "08098c08", "080a45cc", "080b2720"]);
 // This bounded-angle convergence loop only retains the reference allocation
 // when GCC does not perform its expensive-expression rewrite.  The rewrite
 // rotates r0-r2 and folds each signed clamp into a shorter non-reference form.
-const NO_EXPENSIVE_SOURCES = new Set([
-  "08092878"]);
+const NO_EXPENSIVE_SOURCES = new Set(["08092878"]);
 // This four-step signed index loop is emitted as an ascending loop in the
 // reference translation unit. Strength reduction rewrites it to a descending
 // counter and changes both the allocation and loop tail.
@@ -126,7 +136,7 @@ const MOVE_BEFORE_ALU_SOURCES = new Set(["08002fb0", "08003e10", "0800d304", "08
 // constant next to its use and ties the two pseudos. regmove runs before
 // local-alloc, so nothing the C source can say is present early enough to break
 // the forward scan.
-const NO_REGMOVE_SOURCES = new Set(["080a3d9c"]);
+const NO_REGMOVE_SOURCES = new Set(["08006088", "080a3d9c", "080ba918"]);
 // This effect-dispatch wrapper's explicit entry and exit blocks are preserved
 // in the reference.  Sibling-call optimization merges the final cases and
 // rotates the call arguments even though no source tail call is present.
@@ -176,6 +186,31 @@ const ENTRY_LITERAL_FIRST_SOURCES = new Set([
   "0800397c", "080039bc", "080039fc", "08003a3c",
 ]);
 const HIGH_REGISTER_MOVE_FIRST_SOURCES = new Set(["0808b8e8", "080b6e30", "08002fb0", "08003e10", "08019bac"]);
+// This joined MMIO control write is exact except for one post-reload lifetime:
+// the fork leaves the OR result in r2, loads the destination into r3, hoists an
+// independent r6 literal, then stores. The reference keeps the result in the
+// dead r3 input, reuses dead r2 for the destination, and stores before that r6
+// load. The compiler mode requires this exact death-note-proven volatile-HI
+// window; keep it source-scoped.
+const ORR_DEAD_INPUT_REUSE_SOURCES = new Set(["08003adc"]);
+// This no-argument initializer's reference fills the first global literal
+// load's latency with the frame allocation and dependent load, then fills the
+// table-index shift's latency with two stack initializers.  The compiler mode
+// requires the exact hard-register, constant, stack-offset, and death-note
+// fingerprint; keep it source-scoped.
+const ENTRY_FRAME_CLUSTER_SOURCES = new Set(["0801c34c"]);
+// This interrupt-mask helper already has the reference's source order once the
+// second scheduler is disabled, except for one independent default-handler
+// literal load.  The strict post-reload mode recognizes the exact r1/r2/r3
+// constant-pool/shift/store window and uses the reference's latency slot.
+const LITERAL_BEFORE_INDEX_SHIFT_SOURCES = new Set(["0800307c"]);
+// These initializers materialize a low-register constant, preserve it in a
+// saved high register, and independently initialize a saved-low counter.
+// Their references fill the dependency slot with that counter initialization;
+// 080ba918 also places two independent parameter saves in the bounded run.
+// The broad immediate-latency mode perturbs unrelated call arguments, so route
+// only the strict arm_reorg fingerprint.
+const LOW_CONSTANT_BEFORE_HIGH_MOVE_SOURCES = new Set(["080a5614", "080ba918"]);
 // 08004760 is a still-assembly near-miss routed for the same reason as the
 // grouped-DMA entries below: without this mode its `sub sp, #4` sinks under the
 // first literal load, and with it the whole prologue and the entire tail agree.
@@ -364,6 +399,7 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(OPTIMIZE_O1_SOURCES.has(stem) ? ["-O1"] : []),
     ...(UNSCHEDULED_SOURCES.has(stem) ? ["-fno-schedule-insns", "-fno-schedule-insns2"] : []),
     ...(NO_CSE_FOLLOW_SOURCES.has(stem) ? ["-fno-cse-follow-jumps"] : []),
+    ...(NO_RERUN_CSE_AFTER_LOOP_SOURCES.has(stem) ? ["-fno-rerun-cse-after-loop"] : []),
     ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
@@ -378,6 +414,18 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(ENTRY_LITERAL_FIRST_SOURCES.has(stem)
       ? ["-fno-schedule-insns2", "-mthumb-entry-literal-first"] : []),
     ...(HIGH_REGISTER_MOVE_FIRST_SOURCES.has(stem) ? ["-mhigh-register-move-first"] : []),
+    ...(ORR_DEAD_INPUT_REUSE_SOURCES.has(stem)
+      ? ["-fthumb-orr-dead-input-reuse"]
+      : []),
+    ...(ENTRY_FRAME_CLUSTER_SOURCES.has(stem)
+      ? ["-fthumb-entry-frame-cluster"]
+      : []),
+    ...(LITERAL_BEFORE_INDEX_SHIFT_SOURCES.has(stem)
+      ? ["-fthumb-literal-before-index-shift"]
+      : []),
+    ...(LOW_CONSTANT_BEFORE_HIGH_MOVE_SOURCES.has(stem)
+      ? ["-fthumb-low-constant-before-high-move"]
+      : []),
     ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
@@ -501,10 +549,10 @@ function hostKey(): HostKey | null {
 const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> = {
   "darwin-arm64": {
     gs1: {
-      xgcc: "9580bf21ee1828bf3ba6969ce894dfedb17569cb840ee2630199bdca7a5c59e5",
-      cpp: "acf056df9321b1016afea640bac858c1cd4572f04002af356aced14e7509fae2",
-      tradcpp: "086343042dd10f26c8d990b30fc9a17e17802eb0f72fed09daa979faac6cec99",
-      cc1: "04fd122590413736744c54897e5f40d83604ac83f3a5ecd441c7e2aa6b85aa2a",
+      xgcc: "87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed",
+      cpp: "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
+      tradcpp: "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
+      cc1: "fbe8b6601d805d10d23a181ace8ad226cdac4fbb4e97a79f4215dbcd1ff2c898",
     },
     gs2: {
       xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",
@@ -515,10 +563,10 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
   },
   "linux-x64": {
     gs1: {
-      xgcc: "2ed03493228a7873f020b16a63b89b3aadf4835be2d1a3a217cabca0fa244444",
-      cpp: "06096beb427848574f610626bb53408b1a76f69b178ee2d7f0a05f6c2f6d3778",
-      tradcpp: "f9b951486d4e1769e06b892a59980c91a45435559505d73039130b63d1156803",
-      cc1: "0e5339f7286d409d4851a729b4c4352130aa24c21c27db214fddedc41c0716a8",
+      xgcc: "463711fdcb8f3a25a03e1fe25028433277eded2feaffc7b16030c18affa846ba",
+      cpp: "41f88593916b66e5a1bfce638f268a1ba0caddd7329d76df39dac9985a8ab485",
+      tradcpp: "cdece2086f3e75ea38cc0c6c6e03b9d71ed53cb95b72222e93652dde1f37329a",
+      cc1: "7bcd2dfa7f8ceb9b840cb389ea60dc8a9635daeb750b4df6a697d3153acf15a3",
     },
     gs2: {
       xgcc: "d0b10d67bc7f9965d586eba766b77e6ca54cc791b5eb297b55a6b9b6d6d0ef3d",
@@ -529,7 +577,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
   },
 };
 
-const LINUX_AGBCC_EXPECTED = "0c2d5ec04129f7b9d1ecf738f096167af152661bc2506f8fdb2749305fa3eb37";
+const LINUX_AGBCC_EXPECTED = "6705f9822f2f618cbd31cbc5429a167b6ea1c24df95ca1a8226a0878e46f957a";
 
 const validated = new Set<CompilerTarget>();
 let agbccValidated = false;
@@ -666,6 +714,7 @@ export function directCompilerCommand(
     ...(OPTIMIZE_O1_SOURCES.has(stem) ? ["-O1"] : []),
     ...(UNSCHEDULED_SOURCES.has(stem) ? ["-fno-schedule-insns", "-fno-schedule-insns2"] : []),
     ...(NO_CSE_FOLLOW_SOURCES.has(stem) ? ["-fno-cse-follow-jumps"] : []),
+    ...(NO_RERUN_CSE_AFTER_LOOP_SOURCES.has(stem) ? ["-fno-rerun-cse-after-loop"] : []),
     ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
@@ -676,6 +725,18 @@ export function directCompilerCommand(
     ...(ENTRY_LITERAL_FIRST_SOURCES.has(stem)
       ? ["-fno-schedule-insns2", "-mthumb-entry-literal-first"] : []),
     ...(HIGH_REGISTER_MOVE_FIRST_SOURCES.has(stem) ? ["-mhigh-register-move-first"] : []),
+    ...(ORR_DEAD_INPUT_REUSE_SOURCES.has(stem)
+      ? ["-fthumb-orr-dead-input-reuse"]
+      : []),
+    ...(ENTRY_FRAME_CLUSTER_SOURCES.has(stem)
+      ? ["-fthumb-entry-frame-cluster"]
+      : []),
+    ...(LITERAL_BEFORE_INDEX_SHIFT_SOURCES.has(stem)
+      ? ["-fthumb-literal-before-index-shift"]
+      : []),
+    ...(LOW_CONSTANT_BEFORE_HIGH_MOVE_SOURCES.has(stem)
+      ? ["-fthumb-low-constant-before-high-move"]
+      : []),
     ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
@@ -755,6 +816,59 @@ function selfTest(): void {
   if (cflagsForTargetSource("gs1", "/tmp/080000c0.c").includes("-mgrouped-dma-store") ||
       cflagsForTargetSource("gs2", "/tmp/080958a8.c").includes("-mgrouped-dma-store")) {
     throw new Error("grouped DMA unrelated-source routing self-test failed");
+  }
+  const copyLifetimeFlags = cflagsForTargetSource("gs1", "/tmp/08006088.c");
+  const unrelatedFlags = cflagsForTargetSource("gs1", "/tmp/0800608c.c");
+  if (!copyLifetimeFlags.includes("-fno-rerun-cse-after-loop") ||
+      !copyLifetimeFlags.includes("-fno-regmove") ||
+      unrelatedFlags.includes("-fno-rerun-cse-after-loop") ||
+      unrelatedFlags.includes("-fno-regmove") ||
+      cflagsForTargetSource("gs2", "/tmp/08006088.c").includes("-fno-rerun-cse-after-loop")) {
+    throw new Error("08006088 copy-lifetime routing self-test failed");
+  }
+  if (!cflagsForTargetSource("gs1", "/tmp/0801ed40.c").includes("-fno-gcse") ||
+      !cflagsForTargetSource("gs1", "/tmp/08098c08.c").includes("-fno-gcse") ||
+      cflagsForTargetSource("gs1", "/tmp/0801ed44.c").includes("-fno-gcse") ||
+      cflagsForTargetSource("gs1", "/tmp/08098c0c.c").includes("-fno-gcse") ||
+      cflagsForTargetSource("gs2", "/tmp/0801ed40.c").includes("-fno-gcse") ||
+      cflagsForTargetSource("gs2", "/tmp/08098c08.c").includes("-fno-gcse")) {
+    throw new Error("no-GCSE routing self-test failed");
+  }
+  if (!cflagsForTargetSource("gs1", "/tmp/08021d88.c").includes("-fno-sched-depend-count") ||
+      cflagsForTargetSource("gs1", "/tmp/08021d8c.c").includes("-fno-sched-depend-count") ||
+      cflagsForTargetSource("gs2", "/tmp/08021d88.c").includes("-fno-sched-depend-count")) {
+    throw new Error("08021d88 scheduler routing self-test failed");
+  }
+  const lowConstantBeforeHighMove = "-fthumb-low-constant-before-high-move";
+  if (!cflagsForTargetSource("gs1", "/tmp/080a5614.c").includes(lowConstantBeforeHighMove) ||
+      !cflagsForTargetSource("gs1", "/tmp/080ba918.c").includes(lowConstantBeforeHighMove) ||
+      !cflagsForTargetSource("gs1", "/tmp/080ba918.c").includes("-fno-rerun-cse-after-loop") ||
+      cflagsForTargetSource("gs1", "/tmp/080ba918.c").includes("-fno-expensive-optimizations") ||
+      !cflagsForTargetSource("gs1", "/tmp/080ba918.c").includes("-fno-regmove") ||
+      cflagsForTargetSource("gs1", "/tmp/080a6a98.c").includes(lowConstantBeforeHighMove) ||
+      cflagsForTargetSource("gs2", "/tmp/080a5614.c").includes(lowConstantBeforeHighMove) ||
+      cflagsForTargetSource("gs2", "/tmp/080ba918.c").includes(lowConstantBeforeHighMove)) {
+    throw new Error("low-constant-before-high-move routing self-test failed");
+  }
+  const orrDeadInputReuse = "-fthumb-orr-dead-input-reuse";
+  if (!cflagsForTargetSource("gs1", "/tmp/08003adc.c").includes(orrDeadInputReuse) ||
+      cflagsForTargetSource("gs1", "/tmp/08003ae0.c").includes(orrDeadInputReuse) ||
+      cflagsForTargetSource("gs2", "/tmp/08003adc.c").includes(orrDeadInputReuse)) {
+    throw new Error("ORR dead-input reuse routing self-test failed");
+  }
+  const entryFrameCluster = "-fthumb-entry-frame-cluster";
+  if (!cflagsForTargetSource("gs1", "/tmp/0801c34c.c").includes(entryFrameCluster) ||
+      cflagsForTargetSource("gs1", "/tmp/0801c350.c").includes(entryFrameCluster) ||
+      cflagsForTargetSource("gs2", "/tmp/0801c34c.c").includes(entryFrameCluster)) {
+    throw new Error("entry-frame-cluster routing self-test failed");
+  }
+  const literalBeforeIndexShift = "-fthumb-literal-before-index-shift";
+  const interruptMaskFlags = cflagsForTargetSource("gs1", "/tmp/0800307c.c");
+  if (!interruptMaskFlags.includes("-fno-schedule-insns2") ||
+      !interruptMaskFlags.includes(literalBeforeIndexShift) ||
+      cflagsForTargetSource("gs1", "/tmp/08003080.c").includes(literalBeforeIndexShift) ||
+      cflagsForTargetSource("gs2", "/tmp/0800307c.c").includes(literalBeforeIndexShift)) {
+    throw new Error("literal-before-index-shift routing self-test failed");
   }
   if (!cflagsForTargetSource("gs1", "/tmp/080049e8.c").includes("-O1") ||
       cflagsForTargetSource("gs1", "/tmp/08004a28.c").includes("-O1") ||

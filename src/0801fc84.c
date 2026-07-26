@@ -8,14 +8,14 @@ extern u8 Value_00000018;
 s32 Func_080056cc(void);
 void Func_08005c68(void);
 volatile u32 Func_08005cf8(void);
-u32 Func_08005ac0();
+u32 Func_08005ac0(s32);
 void Func_0801776c(s32, s32);
 s32 Func_08020244(s16, s32);
 s32 Func_08017658(s32, s32, s32, s32);
 s32 Func_08017364(void);
 s32 Func_080030f8(s32);
 s32 Func_08028df4(s32, s32, s32, s32);
-void Func_08019a54();
+void Func_08019a54(void);
 
 s32 Func_0801fc84(void)
 {

@@ -8,7 +8,7 @@
 #define OBJECT_VERTICAL_STEP(object) FIELD_S32(object, 0x28)
 #define OBJECT_MIRRORED_Y(object) FIELD_S32(object, 0x3C)
 
-s32 Func_08092054(void);
+s32 Func_08092054(u32);
 void Func_080f9010(s32);
 void Func_08009080(void *, s32);
 void Func_080030f8(u32);
@@ -24,7 +24,7 @@ void Func_08092708(s32 sequence_arg, s32 mode_or_frame, s32 optional_action) {
     void *object;
     u8 *object_flags;
 
-    object = Func_08092054();
+    object = (void *)Func_08092054(sequence_arg);
     base_z = OBJECT_Z(object);
     if (object != 0) {
         Func_080f9010(0x121);

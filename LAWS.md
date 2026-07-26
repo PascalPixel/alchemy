@@ -2963,3 +2963,38 @@ lose the time.
 The check that separates the two cases costs one minute: make the *minimal*
 edit, not the full one. If the minimal edit does not move the count, the residual
 is a schedule, not a rule.
+
+## Addendum (2026-07-26): sweep every parked candidate when a flag set lands
+
+After the six-flag set converted `08019bac`, it was applied to **all 134 parked
+candidates at once** rather than to the family it came from. That is a cheap
+sweep — a few minutes — and it reranks the whole board:
+
+| region | halfwords under the set |
+| --- | --- |
+| `08093054` | 2 → **converted** |
+| `0800430c` | 3 |
+| `08096c80` | 3 |
+| `0800307c` | 5 |
+| `08006408` | 7 |
+| `080f7f30` | 7 |
+| `08021be0` | 8 |
+
+`08093054` closed with `-fthumb-entry-saves-descending`: ours always saves
+parameters in order, r0's home then r1's, and some references do the opposite.
+Two adjacent independent copies, and an earlier session had recorded 74 mode
+combinations all stuck at the same 2.
+
+**Two cautions from the sweep itself.** `timeout` is not a macOS command — a loop
+using it fails silently and reports nothing, which looked exactly like "no
+candidate is close". And `candidate_show` applies each source's *routed* flags on
+top of `--flags`, while `work/fresh_check.ts` applies only what you pass; on
+`0800430c` that is the difference between 3 halfwords and 14. Compare like with
+like before concluding anything about a region.
+
+`0800430c` is at 3 and hand-verified: sinking `movs r0, #1` past two independent
+insns relinks EXACT. `0800307c` and `08006408` show the same shape — a constant
+setup wanting to issue *later*, the mirror of `thumb_order_entry_literal`. No
+option was written for it, because the reference's stopping point does not follow
+an obvious rule: on `0800430c` the constant sinks exactly two positions and stops
+before a `cmp` it could equally have passed. That wants tracing, not guessing.

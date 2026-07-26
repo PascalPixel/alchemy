@@ -2585,3 +2585,25 @@ Recorded so nobody re-derives them. Full traces in `work/hand/<stem>/NOTES.md`.
   `regs_ever_live[0]` clear and this function returns a value in r0. It
   commandeers hard registers after reload, so that guard is not safe to relax on
   inspection — it wants a real liveness test at the insn.
+
+## Addendum (2026-07-26): the largest untouched family is a masking difference
+
+Measured while working `080b0a20`. **81 `c_candidate` regions zero-extend a
+16-bit value by anding against a pooled `0x0000ffff`, and no converted source
+reproduces it.** GCC 2.96 emits `lsl #16 / lsr #16` instead, and folds a u16
+conversion mask together with a following bitfield mask where the reference
+keeps them as two separate `ands`. A further 33 regions do use the shift pair,
+so the two forms are a real distinction in the references, not noise.
+
+The folded forms come out *shorter* than the reference (62B and 70B against
+74B on 080b0a20), which is the signature of the reference compiler declining a
+combine rather than of a wrong source shape.
+
+This is the biggest single lead on the board and it has not been attempted. It
+wants one region driven to an exact link behind a default-off combine
+restriction, with the payoff measured across the family — not another mode
+proposed from inspection.
+
+Related and reusable regardless: an ordinary C bitfield reproduces the
+`ldrh / ands / orrs / strh` insert shape correctly. Only nine converted sources
+use one, against 95 `c_candidate` regions carrying the insert fingerprint.

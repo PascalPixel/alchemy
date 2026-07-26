@@ -2795,20 +2795,35 @@ an ordinary function and the whole region will be mis-modelled — `080c00d8`
 looked like three calls to three helpers and is actually three calls to one
 IWRAM routine.
 
-Write it as what it is:
+### How to spell it — and this is the opposite of what it first looks like
+
+**Call the veneer directly, with the target as a trailing argument.** That is
+what the 28 converted sources already do, and it is not shape debt as first
+recorded here — it is the only spelling that controls the register:
 
 ```c
-typedef void (*Routine)(void *destination, s32 size, s32 value);
-Routine run = (Routine)0x03000168;
-run(cursor, 256, -1);          /* emits bl _call_via_rN by itself */
+void Func_080072f0(void *a, u32 b, u32 c, void *target);   /* _call_via_r3 */
+Func_080072f0(&Value_0600028c, 20, control, &Value_03000164);
 ```
 
-The compiler picks the veneer from whichever register the pointer lands in, so
-the `rN` in the reference tells you which register the original allocated — it
-is evidence, not something to force.
+The ABI forces the fourth argument into r3, `_call_via_r3` is the veneer at
+0x080072f0, and the two agree by construction. Measured on `080b5ad4`: this form
+emits `bl _call_via_r3` and `push {lr}`, both matching the reference.
 
-**Shape debt, not urgent but real:** 28 converted sources spell these as direct
-calls, e.g. `Func_080072f0(a, b, c, 0x03000164)`. That is byte-exact and the
-machine behaviour is right — the fourth argument lands in r3 and the veneer
-branches to it — but it reads as a four-argument call when it is a
-three-argument indirect call. pokeemerald would have a function pointer here.
+The honest-looking function-pointer spelling does **not** work for matching:
+
+```c
+Routine run = (Routine)&Value_03000164;   /* pointer lands wherever */
+run(&Value_0600028c, 20, control);        /* -> bl _call_via_r5, push {r5, lr} */
+```
+
+It is semantically clearer and the machine behaviour is identical, but nothing
+ties the pointer to a chosen register, so GCC picks one and emits that veneer.
+On `080b5ad4` it chose r5 and cost a callee-saved register; on `080c00d8` it
+chose r7. Pinning a register in C is disallowed here, so there is no way to
+steer it.
+
+**So: read the veneer address to learn which register the original used, then
+call that veneer directly with the target in the matching argument position.**
+The `rN` is a fact about the reference's allocation, and the direct call is how
+you reproduce it.

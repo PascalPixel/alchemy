@@ -2687,3 +2687,26 @@ actually shows the truncation.
 emits the two-operand in-place `subs r2, #3`; `adjusted = arg2 - 3` emits the
 three-operand `subs r2, r1, #3` and adds a live value that perturbs the whole
 allocation. Verified on `080ae9f0`, worth 4 halfwords and the correct prologue.
+
+
+## Addendum (2026-07-26): spell a bitfield extract the way the reference does
+
+The two natural C spellings of "take bits n..m" produce different, equally
+correct instruction sequences, and GCC does **not** convert between them:
+
+    (x << 26) >> 30      ->  lsl r3, r3, #26 / lsr r3, r3, #30        (2 insns)
+    (x >> 4) & 3         ->  lsr r3, r3, #4 / mov r2, #3 / and r3, r2 (3 insns)
+
+Both survive into a comparison unfolded — probed directly, `if (((x<<26)>>30) > 1)`
+emits the shift pair then `cmp`/`bls`, exactly as the references do. **65
+`c_candidate` regions contain an lsl/lsr extract pair across 95 sites**, so
+reaching for `>> k & mask` out of habit costs an instruction each time.
+
+Read the reference and match its form. The shift pair means the source shifted
+left then right; the shift-and-mask means it shifted right then masked.
+
+**And the meta-lesson, which cost time today: look at the disassembly, not the
+score.** A region that got 4 bytes shorter was written up as "GCC folds the
+extract into the comparison". It does not, and never did — the shortfall was a
+missing register copy elsewhere. The count moved for an unrelated reason and the
+explanation was invented to fit it.

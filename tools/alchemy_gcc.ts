@@ -99,6 +99,9 @@ const SPLIT_GROUP_BASE_SOURCES = new Set(["08005a78"]);
 // The reference emits every parameter save before the body; ours leaves the
 // second one after the pool load that follows it. See alchemy-gcc.
 const HOIST_PARAMETER_SAVE_SOURCES = new Set(["08019bac"]);
+// The reference saves the second parameter before the first; ours always follows
+// parameter order. Two halfwords, and the whole difference in 08093054.
+const ENTRY_SAVES_DESCENDING_SOURCES = new Set(["08093054"]);
 // thumb_order_grouped_dma_store only normalises descriptor setup order when the
 // three setup insns are adjacent. When the source word needs arithmetic the
 // interleaved insns hide them, and the control load stays hoisted -- which also
@@ -358,6 +361,7 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_SCHED_DEPEND_COUNT_SOURCES.has(stem) ? ["-fno-sched-depend-count"] : []),
     ...(SPLIT_GROUP_BASE_SOURCES.has(stem) ? ["-fthumb-split-group-base"] : []),
     ...(HOIST_PARAMETER_SAVE_SOURCES.has(stem) ? ["-fthumb-hoist-parameter-save"] : []),
+    ...(ENTRY_SAVES_DESCENDING_SOURCES.has(stem) ? ["-fthumb-entry-saves-descending"] : []),
     ...(GROUP_CONTROL_LAST_SOURCES.has(stem) ? ["-fthumb-group-control-last"] : []),
     ...(MOVE_BEFORE_ALU_SOURCES.has(stem) ? ["-fthumb-move-before-alu"] : []),
     ...(NO_REGMOVE_SOURCES.has(stem) ? ["-fno-regmove"] : []),
@@ -490,7 +494,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
       xgcc: "9580bf21ee1828bf3ba6969ce894dfedb17569cb840ee2630199bdca7a5c59e5",
       cpp: "acf056df9321b1016afea640bac858c1cd4572f04002af356aced14e7509fae2",
       tradcpp: "086343042dd10f26c8d990b30fc9a17e17802eb0f72fed09daa979faac6cec99",
-      cc1: "c388b7ad7cb26ec69f9ae1417d4fc3b973af8cff9f3e04382da3630c38423325",
+      cc1: "04fd122590413736744c54897e5f40d83604ac83f3a5ecd441c7e2aa6b85aa2a",
     },
     gs2: {
       xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",

@@ -1,6 +1,5 @@
 #include "types.h"
 
-typedef int bool;
 void Func_0800c3ec(void *arg0, unsigned int arg1)
 {
   int new_var;

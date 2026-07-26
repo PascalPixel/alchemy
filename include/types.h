@@ -15,4 +15,10 @@ typedef unsigned int u32;
 typedef signed long long s64;
 typedef unsigned long long u64;
 
+/* m2c spells a truth value this way and the drafts kept it; every source that
+   uses it agreed on the same definition. */
+typedef int bool;
+
+#define NULL ((void *)0)
+
 #endif

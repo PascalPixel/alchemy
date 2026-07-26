@@ -1,6 +1,5 @@
 #include "types.h"
 
-typedef int bool;
 void Func_0808bc44(void)
 {
   short new_var;

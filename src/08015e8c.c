@@ -1,6 +1,5 @@
 #include "types.h"
 
-typedef int bool;
 volatile short Func_08015e8c(void)
 {
   void **temp_r0;

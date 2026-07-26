@@ -1,7 +1,5 @@
 #include "types.h"
 
-typedef int bool;
-
 void Func_080198dc(void)
 {
     s32 i;

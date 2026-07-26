@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define NULL ((void *)0)
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 void *Func_0808ba1c(u32);

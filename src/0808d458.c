@@ -1,6 +1,5 @@
 #include "types.h"
 
-typedef int bool;
 u32 Func_0808d458(s32 arg0, s32 arg1)
 {
   s32 temp_r3;

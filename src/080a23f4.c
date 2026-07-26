@@ -1,8 +1,5 @@
 #include "types.h"
 
-typedef int bool;
-#define NULL ((void *)0)
-
 struct Fields_080a23f4 {
     u8 filler[8];
     u16 field8;

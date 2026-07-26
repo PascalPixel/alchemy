@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define NULL ((void *)0)
-
 struct Entity {
     u8 pad0[15];
     u8 marker;

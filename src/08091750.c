@@ -9,7 +9,7 @@ extern struct Fields_08091750 Data_02000240;
 
 void Func_08004278(s32);
 void Func_080772f0(void);
-void Func_0809335c(s32, s32);
+void Func_0809335c(s32 arg0, s32 arg1);
 
 void Func_08091750(void) {
     Func_08004278(0x080915ed);

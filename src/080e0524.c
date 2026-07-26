@@ -1,6 +1,6 @@
 #include "types.h"
 
-void *Func_08002f40(void *);
+s32 Func_08002f40(s32 index);
 void Func_08005340(void *, void *);
 
 void Func_080e0524(void *arg0, void *arg1, s32 arg2, s32 arg3) {

@@ -10,7 +10,7 @@ struct Item_0807882c {
     u8 type;
 };
 
-struct Item_0807882c *Func_08078414(s32);
+s32 Func_08078414(s32 arg0);
 
 void *Func_0807882c(struct Container_0807882c *arg0, s32 arg1)
 {

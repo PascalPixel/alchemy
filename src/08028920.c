@@ -4,8 +4,8 @@ extern s8 Data_08037403[];
 extern s8 Data_080373f7[];
 
 s32 Func_08077290(s32);
-void Func_080284dc(void);
-void Func_080287a8(s32);
+void *Func_080284dc(void);
+void Func_080287a8(s32 arg0);
 void Func_08028808(s32, s32, s32);
 s32 Func_08028574(s32);
 void Func_0802851c(void);

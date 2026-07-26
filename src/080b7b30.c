@@ -1,9 +1,9 @@
 #include "types.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-void *Func_080b7dd0(s32);
+void *Func_080b7dd0(s32 arg0);
 void Func_08009038(void *);
-void *Func_080b7f70(void *, s32);
+void *Func_080b7f70(struct Fields_080b7f70 *arg0, s32 arg1);
 void Func_080b7b30(s32 arg0) {
     void *temp_r0; void *obj; s32 i; void *r; s8 *p;
     temp_r0 = Func_080b7dd0(arg0);

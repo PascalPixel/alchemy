@@ -7,10 +7,10 @@ s32 Func_08077028(s32, s32);
 s32 Func_08077228(s32, u8);
 s32 Func_08077230(s32);
 s32 Func_08077298(s16);
-s32 Func_080b0574(s32);
-s32 Func_080b10cc();
+void Func_080b0574(s32 arg0);
+void Func_080b10cc(void);
 s32 Func_080b1868(s32, s32);
-s32 Func_080b196c(s32, s32);
+s32 Func_080b196c(s32 arg0, s32 arg1);
 s32 Func_080f9010(s32);
 
 void Func_080b17e4(s32 arg0, s32 arg1, s32 arg2) {

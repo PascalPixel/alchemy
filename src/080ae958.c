@@ -4,7 +4,7 @@
 
 s32 Func_08004080();
 s32 Func_080150c8(s32, s32, s32, s32, s32);
-s32 Func_080ae908(s32, s32);
+s32 Func_080ae908(s32 arg0, s32 arg1);
 
 s32 Func_080ae958(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     s32 temp_r0;

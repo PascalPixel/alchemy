@@ -1,6 +1,6 @@
 #include "types.h"
 
-u8 *Func_080048f4(s32, s32);
+void *Func_080048f4(s32 arg0, s32 arg1);
 
 struct Fields_08095214 {
     u8 filler[0x1F80];

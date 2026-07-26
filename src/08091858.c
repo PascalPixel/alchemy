@@ -6,7 +6,7 @@ struct State_08091858 {
 };
 
 extern struct State_08091858 Data_02000240;
-s32 Func_08091814(u16);
+s32 Func_08091814(u32 arg0);
 
 void Func_08091858(void)
 {

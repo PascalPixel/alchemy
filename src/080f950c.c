@@ -1,6 +1,6 @@
 #include "types.h"
 
-u32 Func_080fb2cc(s32, s32, u16);
+void Func_080fb2cc(struct Work *arg0, u32 mask, u32 value);
 void Func_080f950c(s16 arg0)
 {
   s16 temp_r5;

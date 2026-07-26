@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_0809b804(s32);
+void Func_0809b804(struct State_0809b804 *state);
 
 void Func_08096f8c(void) {
     s32 var_r5;

@@ -3,7 +3,7 @@
 extern u8 *Data_03001f2c;
 void *Func_08077008(s32);
 void Func_080a345c(void);
-void Func_080a68a8(void *);
+void Func_080a68a8(u16 *arg0);
 
 void Func_080a9374(s32 unused, s32 value)
 {

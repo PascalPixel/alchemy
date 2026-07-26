@@ -19,7 +19,7 @@ struct Work {
     u16 field22;
 };
 
-void Func_08016478(struct Work *work);
+void Func_08016478(void *arg0);
 void Func_08016178(u16 field0c, u16 field0e, u16 field08, u16 field0a);
 
 void Func_08016418(struct Work *work, s32 release) {

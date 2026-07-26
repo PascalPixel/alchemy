@@ -8,7 +8,7 @@ void Func_08009080(void *, s32);
 void Func_08009140();
 void Func_08009150(void *, s32, s32, s32);
 void Func_08009158(void *);
-void *Func_0808ba1c(s32);
+s32 Func_0808ba1c(u32 arg0);
 
 void Func_080921c4(s32 arg0, s32 arg1, s32 arg2) {
     void *temp_r0;

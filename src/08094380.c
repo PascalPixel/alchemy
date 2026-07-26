@@ -25,7 +25,7 @@ typedef struct {
     Context08094380 *context;
 } Object08094380;
 
-Object08094380 *Func_0808ba1c(s32);
+s32 Func_0808ba1c(u32 arg0);
 Effect08094380 *Func_08009048(Context08094380 *, s32);
 void Func_08009080(Object08094380 *, s32);
 void Func_080030f8(s32);

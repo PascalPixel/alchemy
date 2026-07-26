@@ -8,7 +8,7 @@ struct Fields_0808b64c {
 extern struct Fields_0808b64c *Data_03001ebc;
 
 void Func_080090d0(void *);
-void *Func_0808ba1c(s32);
+s32 Func_0808ba1c(u32 arg0);
 
 void Func_0808b64c(s32 arg0) {
     struct Fields_0808b64c *state = Data_03001ebc;

@@ -3,7 +3,7 @@ typedef unsigned char u8;
 typedef signed int s32;
 typedef unsigned int u32;
 
-void Func_080fa68c(void *);
+void Func_080fa68c(u32 arg0);
 
 struct Object {
     u32 field_00;

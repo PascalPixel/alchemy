@@ -17,9 +17,9 @@ struct Work_08091eb0 {
 extern struct State_08091eb0 *Data_03001ebc;
 extern struct Work_08091eb0 Data_02000240;
 extern u8 Value_00000021;
-s32 Func_0808b05c(s32, s32);
-s32 Func_0808ba1c(void *);
-void Func_0808adf0(s32);
+u16 Func_0808b05c(s32 arg0, s32 arg1);
+s32 Func_0808ba1c(u32 arg0);
+s32 Func_0808adf0(void *arg0);
 void Func_0808b320(s32, s32);
 
 void Func_08091eb0(s32 arg0, s32 arg1)

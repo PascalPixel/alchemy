@@ -22,7 +22,7 @@ struct Object_0808f0d8 {
 };
 
 extern struct State_0808f0d8 Data_02000240;
-struct Entity_0808f0d8 *Func_0808ba1c(s32);
+s32 Func_0808ba1c(u32 arg0);
 void Func_08009150(struct Object_0808f0d8 *, s32, s32, s32);
 void Func_080030f8(s32);
 void Func_08009080(struct Entity_0808f0d8 *, s32);

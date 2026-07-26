@@ -4,10 +4,10 @@
 
 extern u8 Data_000000d5[];
 void Func_080030f8(u32);
-s32 Func_08002f40(s32);
+s32 Func_08002f40(s32 index);
 void Func_08005340(s32, s32);
 void Func_080113e4(void);
-void Func_0800439c(s32);
+s32 Func_0800439c(u32 value);
 
 struct S {
     u8 pad[0x100];

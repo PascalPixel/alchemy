@@ -8,12 +8,12 @@
 #define OBJECT_VERTICAL_STEP(object) FIELD_S32(object, 0x28)
 #define OBJECT_MIRRORED_Y(object) FIELD_S32(object, 0x3C)
 
-void *Func_08092054(void);
+s32 Func_08092054(void);
 void Func_080f9010(s32);
 void Func_08009080(void *, s32);
 void Func_080030f8(u32);
 void Func_08009150(void *, s32, s32, s32);
-void Func_08092adc(s32, s32, s32);
+void Func_08092adc(s32 arg0, s32 arg1, s32 arg2);
 void Func_08092624(void *, s32);
 void Func_08009158(void *);
 void Func_0809202c(void);

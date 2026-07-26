@@ -1,6 +1,6 @@
 #include "types.h"
 
-extern u32 Func_0800d6d8(void *object, u32 value);
+extern s32 Func_0800d6d8(void *object, u32 key);
 
 u32 Func_0800d780(u8 *object) {
     s32 index = *(s16 *)(object + 4);

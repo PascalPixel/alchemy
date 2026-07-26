@@ -7,7 +7,7 @@ struct Wrapper080b8228 {
     s32 z;
 };
 
-struct Wrapper080b8228 *Func_080b7dd0(s32);
+void *Func_080b7dd0(s32 arg0);
 u8 *Func_08077008(s32);
 void Func_08009140(void *);
 void Func_08009150(void *, s32, s32, s32);

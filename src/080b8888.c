@@ -3,7 +3,7 @@
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void *Func_08077008(s32);
-s32 Func_080b8808(s32);
+s32 Func_080b8808(u32 arg0);
 void Func_08015118(void);
 void Func_08015120(s32, s32);
 void Func_080151c8(s32);

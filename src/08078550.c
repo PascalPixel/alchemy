@@ -1,7 +1,7 @@
 #include "types.h"
 
 s32 Func_080796c4(s16 *);
-s32 Func_080784d8(s32);
+s32 Func_080784d8(s32 owner);
 
 s32 Func_08078550(void)
 {

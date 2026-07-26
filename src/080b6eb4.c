@@ -2,7 +2,7 @@
 
 u8 *Func_08077008(s32);
 s32 Func_08077228(s32, s32);
-s32 Func_080b6e7c(s32);
+u32 Func_080b6e7c(s32 arg0);
 extern u16 Data_080c2a1c[];
 extern u16 Data_080c2a2a[];
 extern u16 Data_080c2a38[];

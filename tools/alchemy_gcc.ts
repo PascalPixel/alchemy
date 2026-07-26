@@ -82,7 +82,7 @@ const NO_EXPENSIVE_SOURCES = new Set([
 // This four-step signed index loop is emitted as an ascending loop in the
 // reference translation unit. Strength reduction rewrites it to a descending
 // counter and changes both the allocation and loop tail.
-const NO_STRENGTH_REDUCE_SOURCES = new Set(["080200cc"]);
+const NO_STRENGTH_REDUCE_SOURCES = new Set(["080200cc", "080a9d3c"]);
 // This palette-row scan ANDs a loaded halfword against a hoisted 0xF800 mask.
 // The AND is a two-address *thumb_andsi3_insn, so regmove's forward pass may
 // overwrite either input; it rejects the mask operand at reg_is_remote_constant_p

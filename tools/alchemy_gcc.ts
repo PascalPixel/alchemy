@@ -90,7 +90,7 @@ const NO_STRENGTH_REDUCE_SOURCES = new Set(["080200cc", "080a9d3c"]);
 // arm_reorg pulls the two halves of a split constant back together when the
 // scheduler put an independent insn between them. These references want the
 // insn left where it is; see alchemy-gcc 1ec1044 and work/hand/080a1090.
-const NO_CONTIGUOUS_IMMEDIATE_SOURCES = new Set(["080a1090", "08005a78"]);
+const NO_CONTIGUOUS_IMMEDIATE_SOURCES = new Set(["080a1090", "08005a78", "0800d304"]);
 // The grouped transfer restores its base register, so the DMA status poll that
 // follows reuses it instead of loading the pool word again the way the
 // reference does. Splitting the live range is the only way to spell two
@@ -103,9 +103,9 @@ const SPLIT_GROUP_BASE_SOURCES = new Set(["08005a78"]);
 const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78"]);
 // The descriptor's base pool load wins a priority-68 ready-list tie on forward
 // dependent count alone; these references break it by original order instead.
-const NO_SCHED_DEPEND_COUNT_SOURCES = new Set(["08002fb0", "08003e10"]);
+const NO_SCHED_DEPEND_COUNT_SOURCES = new Set(["08002fb0", "08003e10", "0800d304"]);
 // The reference issues the destination copy ahead of the control word's `orrs`.
-const MOVE_BEFORE_ALU_SOURCES = new Set(["08002fb0", "08003e10"]);
+const MOVE_BEFORE_ALU_SOURCES = new Set(["08002fb0", "08003e10", "0800d304"]);
 // This palette-row scan ANDs a loaded halfword against a hoisted 0xF800 mask.
 // The AND is a two-address *thumb_andsi3_insn, so regmove's forward pass may
 // overwrite either input; it rejects the mask operand at reg_is_remote_constant_p

@@ -1,7 +1,5 @@
 #include "types.h"
 
-typedef int bool;
-#define NULL ((void *)0)
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 struct Unk { u8 unk_00[0x16]; u16 unk_16 : 9; u16 unk_16b : 7; };

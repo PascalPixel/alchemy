@@ -1,6 +1,5 @@
 #include "types.h"
 
-typedef int bool;
 volatile unsigned int Func_080030f8(s32);
 void Func_08006488(void)
 {

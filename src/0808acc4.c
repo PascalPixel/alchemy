@@ -1,7 +1,5 @@
 #include "types.h"
 
-typedef int bool;
-#define NULL ((void *)0)
 struct Party {
     u8 pad[0x1f0];
     s16 member;

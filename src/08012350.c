@@ -1,6 +1,5 @@
 #include "types.h"
 
-typedef int bool;
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 void Func_080030f8(s32);

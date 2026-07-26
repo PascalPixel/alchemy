@@ -1,7 +1,5 @@
 #include "types.h"
 
-typedef int bool;
-#define NULL ((void *)0)
 s32 Func_08011e50(u8 *arg0, u32 arg1) {
     s32 value;
     if (arg1 <= 7)

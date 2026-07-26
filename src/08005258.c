@@ -1,8 +1,5 @@
 #include "types.h"
 
-typedef int bool;
-#define NULL ((void *)0)
-
 void Func_08005258(u32 arg0, u32 arg1, u32 arg2) {
     u32 *store = (u32 *)0x03001ce0;
     store[0] = arg0;

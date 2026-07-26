@@ -1,6 +1,5 @@
 #include "types.h"
 
-typedef int bool;
 unsigned long long Func_080fb2a4(s32, u16);
 void Func_080f94c8(u16 arg0)
 {

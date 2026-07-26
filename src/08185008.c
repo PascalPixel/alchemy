@@ -1,8 +1,5 @@
 #include "types.h"
 
-typedef int bool;
-#define NULL ((void *)0)
-
 extern u8 Data_08185024[];
 
 u8 *Func_08185008(u32 arg0) {

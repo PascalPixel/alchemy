@@ -1,8 +1,5 @@
 #include "types.h"
 
-typedef int bool;
-#define NULL ((void *)0)
-
 void *Func_080b7dd0(s32 arg0) {
     u8 *base = *(u8 **)0x03001E74;
     u8 *result_base = base + 0x74;

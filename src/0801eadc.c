@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define NULL ((void *)0)
-
 void *Func_08015e8c(void);
 void Func_08003f3c(u32);
 s32 Func_08016584(void *, void *);

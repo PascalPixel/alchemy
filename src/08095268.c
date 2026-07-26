@@ -1,8 +1,5 @@
 #include "types.h"
 
-typedef int bool;
-#define NULL ((void *)0)
-
 u8 *Func_080048f4(s32, s32);
 
 struct Fields_08095268 {

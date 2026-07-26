@@ -1,8 +1,5 @@
 #include "types.h"
 
-typedef int bool;
-#define NULL ((void *)0)
-
 typedef struct {
     u8 padding_00[6];
     s16 field_06;

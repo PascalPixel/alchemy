@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-26)
 
-`[1,263 of 2,001]`. 738 `c_candidate` regions remain. **Y dropped from 2,058 to 2,001 on
+`[1,267 of 2,001]`. 734 `c_candidate` regions remain. **Y dropped from 2,058 to 2,001 on
 2026-07-26 in two steps: 43 `mov ip, pc` regions into the existing
 `nonstandard_thumb_call_module` class, and 14 regions that read a callee-saved
 register they never write into `hidden_register_context_module`. Both classes
@@ -23,18 +23,19 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-23 | 1,162 | +158 |
 | 2026-07-24 | 1,236 | +74 |
 | 2026-07-25 | 1,242 | +6 |
-| 2026-07-26 | 1,263 | +21 |
+| 2026-07-26 | 1,267 | +25 |
 
-**The rate fell by roughly a factor of ten in three days.** That is not a slowdown in
-effort, it is the easy tier running out: every region whose natural C happened
-to match has been taken. At the last two days' rate 738 regions is roughly 55
-working days; at the three-day average, about 22. Neither is a session.
+**The rate is still roughly a factor of six below the 2026-07-23 peak.** That is
+not a slowdown in effort: the broad easy tier is running out, and compiler
+lineage now matters as much as drafting. At the last two days' rate 734 regions
+is roughly 47 working days; at the three-day average, about 21. The estimates
+move materially with one cohort and neither is a session.
 
 ## What is actually left
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 559 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 555 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
 | 136 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
@@ -45,18 +46,18 @@ Removed from the table on 2026-07-26, into classes that already described them:
 drafting — `080e73a0` was picked as a clean 49-instruction target and turned out
 to read its base pointer out of `r9`, which no policy-valid C can express.
 
-Of the 559 plain regions, 96 have been attempted and parked with written
-root causes. The 463 never touched break down by size:
+Of the 555 plain regions, 96 have been attempted and parked with written
+root causes. The 459 never touched break down by size:
 
 | instructions | regions |
 | --- | --- |
 | ≤ 40 | 5 |
-| 41–80 | 72 |
+| 41–80 | 68 |
 | 81–160 | 193 |
 | 161–320 | 105 |
 | 321+ | 88 |
 
-**106,766 instructions of fresh plain code.** That is the real remaining
+**106,544 instructions of fresh plain code.** That is the real remaining
 workload, and it is drafting, not compiler archaeology.
 
 ## What five drafts on 2026-07-26 actually showed
@@ -79,30 +80,56 @@ sitting plausibly produces a conversion" earlier in this document, and today's
 evidence says even that was optimistic** — the tier is entered easily and
 finished rarely.
 
-What did convert (`08005a78`) needed two new compiler options, and was only
+What did convert in that pass (`08005a78`) needed two new compiler options, and was only
 attempted because its residual could be hand-verified by reordering the
 generated assembly and relinking.
 
-So the honest cost model is not "106,766 instructions of drafting". It is
-"drafting is cheap, and the last three to fifteen instructions of each region
-are a compiler investigation". Any estimate that prices the remainder at
-drafting speed is wrong.
+So that pass's cost model was not "drafting alone". It was "drafting is cheap,
+and the last three to fifteen instructions of each region are a compiler
+investigation". Any estimate that prices the remainder at drafting speed is
+wrong.
+
+## What the next cohort changed
+
+The next bounded cohort produced **four exact conversions without adding a new
+compiler transform**:
+
+| region | prior state | exact route |
+| --- | --- | --- |
+| `08006c68` | fresh, 47 insns | adjacent flash-family `old_agbcc -O1` fingerprint |
+| `0800711c` | fresh, 56 insns | the same flash-family fingerprint |
+| `0801ed40` | fresh, 59 insns | natural table-selection C with the existing `-fno-gcse` route |
+| `08021d88` | parked at four halfwords | source ordering plus existing `-fno-sched-depend-count` |
+
+The fourth fresh draft, `080788c4` at 60 instructions, is semantically complete
+and size-exact but remains parked at 23 halfwords: one signed-versus-unsigned
+halfword load shape and one zero-literal allocation. Thus the fresh yield in
+this cohort was three of four, not zero of five.
+
+This does not establish exponential acceleration. It does show that the first
+five-draft sample was too pessimistic: selecting a coherent translation-unit
+family and testing already-evidenced compiler routes can remove the final
+residual in batches. That is now the preferred fast path before proposing
+another backend option.
 
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 559 of 738 have nothing exotic in
+1. **The bulk is volume, not blockers.** 555 of 734 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.
 
-2. **Compiler work has a poor and falling return.** This session landed two
-   options and they converted one region. Four more regions were traced to
-   single-instruction compiler disagreements — a comparison lowering, a
-   critical-section store, a mask fold, a transform-ordering conflict — each of
-   which would be its own investigation for one to eight regions. The fork's own
-   history records seven modes proposed by inspection that made regions worse.
-   The only discipline that has worked is: reorder the generated assembly by
-   hand, relink, and confirm exactness *before* writing anything.
+2. **New compiler transforms have a poor and falling return; existing compiler
+   fingerprints do not.** The first pass landed two options for one conversion.
+   The next pass changed no compiler code and converted four regions by routing
+   them through three already-evidenced modes. Four other regions remain traced
+   to single-instruction compiler disagreements — a comparison lowering, a
+   critical-section store, a mask fold, and a transform-ordering conflict —
+   each of which would still be its own investigation for one to eight regions.
+   The fork's history records seven modes proposed by inspection that made
+   regions worse. The discipline is: test family/compiler fingerprints first;
+   for a new transform, reorder the generated assembly by hand, relink, and
+   confirm exactness *before* writing anything.
 
 3. **Two decisions are worth more than a week of grinding**, and they are not
    mine to make:
@@ -130,7 +157,7 @@ drafting speed is wrong.
      as debt and eliminated. Since the stated goal is pokeemerald as the desired
      *outcome*, and that outcome is 100% matching C with no assembly fallbacks,
      introducing a non-matching tier would move away from the goal, not toward
-     it. **Byte-exactness stays.** Roughly 55 working days at the current
+     it. **Byte-exactness stays.** Roughly 47 working days at the current
      two-day rate is the honest cost.
 
 ## Recommended order
@@ -139,7 +166,7 @@ Screen every target first: `grep 'mov\s*ip, pc'`, and check for a callee-saved
 register read but never written. Both classes are now reclassified out of Y, but
 the screen still costs less than a wasted draft.
 
-1. Work the 72 plain regions in the 41–80 band. They are the last tier where a
+1. Work the 68 plain regions in the 41–80 band. They are the last tier where a
    single sitting plausibly produces a conversion.
 2. Apply the `u32`-locals law to the 25 single-mask regions. Eleven more use the
    mask two to four times and need the corresponding combine; the two small

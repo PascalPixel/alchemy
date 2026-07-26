@@ -287,7 +287,7 @@ const DEFAULT_ABI_SOURCES = new Set([
 // under old_agbcc, so the whole default-ABI TU is likely old_agbcc; the rest
 // stay on the fork until each has its own exact-byte proof.
 const AGBCC_SOURCES = new Set([
-  "08006a00", "08006ba8", "08006c24", "08006dec", "08007098",
+  "08006a00", "08006ba8", "08006c24", "08006dec", "08007098", "080071a8",
   "080f9a50",
   "080fadf0",
   "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
@@ -317,7 +317,7 @@ const AGBCC_LITERAL_BEFORE_SHIFT_SOURCES = new Set(["080fb670"]);
 // shift result, transposing r0 and r1 across four instructions. No source shape
 // avoids it, because the narrowing that creates the subreg is what the C
 // semantics require.
-const AGBCC_OPTIMIZE_O1_SOURCES = new Set(["08006a00", "08006ba8", "08007098", "080fa514"]);
+const AGBCC_OPTIMIZE_O1_SOURCES = new Set(["08006a00", "08006ba8", "08007098", "080071a8", "080fa514"]);
 const AGBCC_COMPARE_ONLY_AND_TST_SOURCES = new Set(["080f9a50"]);
 const AGBCC_COMMUTATIVE_COPY_CONSTANT_SOURCES = new Set(["080fa514"]);
 const AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES = new Set([
@@ -473,7 +473,7 @@ export function externalSymbolAssembly(name: string): string {
 // The approved compiler bundle is host-specific: xgcc/cc1/cpp/tradcpp are
 // native executables, not portable across host platform+arch, so each
 // supported host keeps its own pinned digest set. darwin-arm64 is Pascal's
-// native Apple Silicon build environment (CONVENTIONS.md); linux-x64 is a
+// native Apple Silicon build environment; linux-x64 is a
 // from-source build of the same alchemy-gcc commit via its documented
 // Ubuntu/WSL host path (alchemy-gcc/README.md `build.sh`/`stage.sh`).
 // Codegen (the bytes xgcc/cc1 emit for a *target* arm7tdmi/Thumb program) is
@@ -693,9 +693,9 @@ export function directCompilerCommandForSource(
 
 function selfTest(): void {
   const expected = [
-    "08006a00", "08006ba8", "08006c24", "08006dec", "08007098",
+    "08006a00", "08006ba8", "08006c24", "08006dec", "08007098", "080071a8",
     "080f9a50",
-  "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
+    "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
     "080fa424", "080fa458", "080fa490", "080fa514", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
     "080fa9e0", "080fab3c", "080facf8", "080fadf0", "080fb2cc", "080fb334", "080fb3a8", "080fb430", "080fb4a4",
     "080fb670",
@@ -711,7 +711,7 @@ function selfTest(): void {
     }
     const expectedFlags = [
       ...AGBCC_CFLAGS,
-      ...(["08006a00", "08006ba8", "08007098"].includes(stem) ? ["-O1"] : []),
+      ...(["08006a00", "08006ba8", "08007098", "080071a8"].includes(stem) ? ["-O1"] : []),
       ...(stem === "080fa514" ? ["-O1", "-mcommutative-copy-constant"] : []),
       ...(stem === "080fb670" ? ["-mliteral-before-shift"] : []),
       ...(["080fb2cc", "080fb334", "080fb3a8"].includes(stem)

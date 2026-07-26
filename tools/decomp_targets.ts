@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: both; imported by tools/build_claimed.ts, tools/build_full.ts, tools/match_m2c.ts (+1 more); invoked by package.json.
 
 export type DecompTargetId = "gs1-en" | "gs2-en";
 export type DecompCompilerTarget = "gs1" | "gs2";

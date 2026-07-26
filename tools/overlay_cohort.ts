@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: entrypoint; invoked by PLAYBOOK.md, tools/overlay_shapes.ts.
 // Expand one hand-derived C template across every member of an overlay shape
 // cohort: rename its entry symbol per member, byte-verify, and adopt the exact
 // ones through tools/overlay_adopt.ts.

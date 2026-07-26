@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: both; imported by tools/build_claimed.ts, tools/decomp_module.ts, tools/decompile_batch.ts (+6 more); invoked by AGENTS.md, CONVENTIONS.md, LAWS.md (+2 more).
 import { readFileSync, statSync } from "node:fs";
 import { basename, dirname, extname, join, relative, resolve, sep } from "node:path";
 

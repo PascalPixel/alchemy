@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: entrypoint; invoked by STATUS.md, package.json.
 import { canonicalJson } from "./canonical_json.ts";
 
 export const ROM_BASE = 0x08000000;

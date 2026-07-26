@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
 import { canonicalJson } from "./canonical_json.ts";
 
 const ROM_BASE = 0x08000000;

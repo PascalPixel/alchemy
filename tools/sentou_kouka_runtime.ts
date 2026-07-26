@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: both; imported by tools/build_assets.ts, tools/executable_gap_sources.ts, tools/relocated_arm_helpers.ts; invoked by package.json.
 import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import {
   existsSync,

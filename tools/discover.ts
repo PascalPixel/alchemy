@@ -1,4 +1,3 @@
-// Tool role: library; imported by tools/decompile_batch.ts, tools/emit_function.ts, tools/executable_gap_sources.ts (+2 more).
 import { readFileSync, writeFileSync } from "node:fs";
 import { canonicalJson } from "./canonical_json.ts";
 

@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: library; imported by tools/build_assets.ts.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { basename, dirname, join } from "path";
 import { byte_png } from "./export_asset.ts";

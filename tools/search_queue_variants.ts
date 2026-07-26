@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: entrypoint; invoked by PLAYBOOK.md.
 // Apply the deterministic declaration/type variant library to queue-ranked
 // C-debt candidates and retain only byte-identical matches below ignored out/.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";

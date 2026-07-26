@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: entrypoint; invoked by PLAYBOOK.md.
 // Adapt exact instruction-shape hits from Alchemy's verified C corpus to
 // overlay-local symbols, then require fully linked byte equality.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";

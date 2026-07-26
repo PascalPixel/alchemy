@@ -1,4 +1,3 @@
-// Tool role: library; imported by tools/overlay_match.ts.
 // Repair the two m2c output patterns that make an otherwise usable draft fail
 // to compile under the GCC 2.96 fork. Both come from m2c committing to a guess
 // it later contradicts, and both have a mechanical repair that loses no

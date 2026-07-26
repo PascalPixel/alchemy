@@ -1,4 +1,3 @@
-// Tool role: both; imported by tools/compose_scene.ts, tools/export_asset.ts, tools/f0_archive.ts (+5 more); invoked by AGENTS.md.
 //
 // Cross-platform note: this deliberately uses node:zlib (classic zlib, the
 // portable RFC 1950/1951 reference implementation Node.js links against)

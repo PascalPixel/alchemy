@@ -1,4 +1,3 @@
-// Tool role: library; imported by tools/build_assets.ts, tools/compose_scene.ts.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { canonicalJson } from "./canonical_json.ts";

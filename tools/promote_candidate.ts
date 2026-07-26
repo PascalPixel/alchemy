@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: entrypoint; invoked by PLAYBOOK.md.
 // Promote a hand-written candidate into out/permute1/state/<stem>.json.
 //
 // tools/decomp_queue.ts regenerates out/decomp/candidates/<stem>.c from that

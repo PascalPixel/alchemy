@@ -1,4 +1,3 @@
-// Tool role: both; imported by tools/static_sprite_series.ts; invoked by package.json.
 import {
   decode_general_trace,
   decode_palette_trace,

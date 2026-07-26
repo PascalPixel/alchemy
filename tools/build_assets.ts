@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: entrypoint; invoked by STATUS.md, assets/README.md, package.json (+2 more).
 import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, isAbsolute, join, relative, resolve, normalize } from "node:path";

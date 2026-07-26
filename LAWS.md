@@ -2610,12 +2610,26 @@ Do not reach for the compiler here. `zero_extendhisi2` is *not* the path a
 promoted `u16` parameter takes — a flag added there has no effect whatsoever
 (built and measured, then reverted).
 
-What remains genuinely compiler-side is narrower: when the masked value is
-consumed by something narrower still, GCC folds the two masks
-(`(x & 0xffff) & 0x1ff` becomes `x & 0x1ff`) where the reference keeps both.
-On 080b0a20 the folded form is *shorter* than the reference, 62B and 70B
-against 74B. That affects only the subset of the 81 whose mask feeds a
-narrowing consumer; the rest should be reachable from C.
+**The same law covers locals, and it is what produces the mid-function pool.**
+Probed:
+
+    u32 value = base + 8;   t->a = value;   t->bits = value;   /* 9-bit field */
+        add / strh raw / ldrh <pool 0x1ff> / and / ldrh field / and / orr / strh
+        then `b' over a mid-function pool                <- the reference shape
+    u16 value = base + 8;   same two stores
+        add / lsl #16 / lsr #16 / ...                    <- cannot match
+
+So: **store the raw wide value to the u16 field, then let the bitfield insert
+mask it.** Declaring the intermediate `u16` forces a truncation the references
+never have. Note the masked form also loads small pool constants with `ldrh`,
+and puts the pool mid-function with a branch around it — both fall out of the
+`u32` form and neither is reachable with `u16`.
+
+Of the 81 regions, **74 mask once and should be reachable this way today**.
+Only **7** mask twice back-to-back (`(x & 0xffff) & 0x1ff`), which needs a
+combine our GCC performs and the reference declines; on those the folded form
+comes out *shorter* than the reference (58-70B against 74B on 080b0a20). Do not
+generalise from those seven — they are the exception, not the family.
 
 Related and reusable regardless: an ordinary C bitfield reproduces the
 `ldrh / ands / orrs / strh` insert shape correctly. Only nine converted sources

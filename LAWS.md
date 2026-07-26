@@ -3054,3 +3054,41 @@ The correct spelling was already sitting in `work/hand/0800430c/0800430c.c`,
 written by an earlier session. **Before concluding that no source shape exists,
 grep the existing candidates for the construct.** Two failed guesses is not a
 search.
+
+## Addendum (2026-07-26): recover the caller-visible signature before tuning allocation
+
+`08096c80` was parked at three differing halfwords after its mask arithmetic was
+already exact. The draft declared both the function and its first callee with no
+arguments:
+
+```c
+u8 *Func_080090c8();
+u8 *Func_08096c80(void)
+{
+    return Func_080090c8();
+}
+```
+
+That was not a harmless prototype omission. Multiple existing callers pass four
+arguments to `Func_08096c80`, and the reference forwards the untouched `r0-r3`
+set into `Func_080090c8`. Writing the interface honestly:
+
+```c
+u8 *Func_080090c8(s32, s32, s32, s32);
+u8 *Func_08096c80(s32 kind, s32 x, s32 y, s32 z)
+{
+    return Func_080090c8(kind, x, y, z);
+}
+```
+
+keeps all four argument registers live to the call. That naturally moves the
+nearby pool value into r4 and converts the complete 92-byte region with no
+compiler option.
+
+**Caller arity is therefore allocation evidence, not cleanup to postpone.**
+Before permuting locals in a near candidate, grep its callers and check which
+incoming registers the reference reads or forwards before overwriting them. An
+empty parameter list in old C suppresses type checking and can still produce
+plausible code, but it also shortens live ranges that decide every later
+register. Recover the signature first; tune the source only after it agrees with
+the observed ABI.

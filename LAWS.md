@@ -2550,3 +2550,38 @@ Two further notes from the same region:
   that is not exact, the hook was never going to be enough. On `08005a78` it
   came back EXACT, which is what justified two new options; the fork's own
   history is full of modes proposed by inspection that made regions worse.
+
+## Addendum (2026-07-26): three small regions traced to compiler differences
+
+Recorded so nobody re-derives them. Full traces in `work/hand/<stem>/NOTES.md`.
+
+- **`080a1f74`** is size exact at 96B with the switch dispatch, pool order and
+  rotated loop all matching. What is left is that GCC 2.96 lowers `(s8)x == -1`
+  by sign-extending (`lsls #24 / asrs #24`) and comparing against -1, where the
+  reference compares both sides shifted (`lsls #24` on each, against
+  `0xFF << 24`) and never materialises the extension. Holding -1 in a register
+  across the loop then pushes the index into `ip`. Only four `c_candidate`
+  regions share the pattern. Two source facts from it *are* reusable: the four
+  nearby ROM pointers must be `extern Data_<addr>` symbols or GCC derives them
+  from one another, and the `u8`-compared-to-`0xff` reading is wrong (it is
+  84B, shorter than the reference).
+
+- **`0800651c`** disables interrupts with `strh r0, [r0]` — storing the IME
+  pointer's own low halfword, 0x0208, whose bit 0 is clear. Our compiler will
+  not produce that: `*ime = 0x0208` pools the constant separately (64B → 82B)
+  and `*ime = 0` uses a zero register. Source-level findings that did help: a
+  `u16` local round-trips through `lsls/asrs` where `u32` does not, and the
+  cleared globals must be `extern Data_` symbols or GCC derives 0x02002008 from
+  0x02002080 with `subs r3, #120`.
+
+- **`080049ac`** has exactly the twelve consecutive word stores that
+  `thumb_group_four_word_records` wants, and it is the cleanest instance of that
+  shape left. Two things block it. The four-word transform only runs inside
+  `thumb_order_grouped_dma_store`, so it needs `-mgrouped-dma-store`; but that
+  also enables the three-word grouper in `arm_pre_reload`, which runs first and
+  consumes stores 0-2, so by `arm_reorg` there is no run of twelve left. **The
+  two transforms conflict, and the three-word one should decline a run that
+  continues to twelve.** Even fixed, the four-word transform requires
+  `regs_ever_live[0]` clear and this function returns a value in r0. It
+  commandeers hard registers after reload, so that guard is not safe to relax on
+  inspection — it wants a real liveness test at the insn.

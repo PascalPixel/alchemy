@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: entrypoint; invoked by PLAYBOOK.md, package.json.
 // Rank remaining assembly C-debt regions by structural similarity to the
 // already byte-verified src/*.c corpus, so the next hand-matching batch starts
 // from "an installed sibling can probably be adapted" rather than from size

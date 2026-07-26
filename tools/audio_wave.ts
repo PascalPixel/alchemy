@@ -1,4 +1,3 @@
-// Tool role: both; imported by tools/build_assets.ts, tools/build_soundfont.ts, tools/extract_audio.ts; invoked by package.json, tools/build_soundfont.ts.
 export interface WaveRecordSource {
   frequency: string | number;
   loop_start: number | null;

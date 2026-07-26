@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: both; imported by tools/build_assets.ts; invoked by package.json.
 import { isCanonicalJsonText } from "./canonical_json.ts";
 import { lstatSync, renameSync, statSync, unlinkSync } from "fs";
 import { tmpdir } from "node:os";

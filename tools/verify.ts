@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: library; imported by tools/permute_m2c.ts, tools/permute_v1.ts.
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, join } from "node:path";
 import {

@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: entrypoint; invoked by PLAYBOOK.md, package.json.
 
 const ZERO_OID = /^0+$/;
 const BLOCKED_EXTENSIONS = new Set([

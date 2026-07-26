@@ -130,7 +130,7 @@ const GROUPED_DMA_STORE_SOURCES = new Set([
   "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
   "08004a5c", "08004a94", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "0801d980",
   "080251d4", "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
-  "0808fecc", "08004760", "08005a78", "080037d4", "080b5ad4",
+  "0808fecc", "08004760", "08005a78", "080037d4", "080b5ad4", "0800300c", "080f377c",
 ]);
 
 // Nine sound-request entry wrappers: the entry pool load precedes the
@@ -453,10 +453,10 @@ function hostKey(): HostKey | null {
 const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> = {
   "darwin-arm64": {
     gs1: {
-      xgcc: "87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed",
-      cpp: "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
-      tradcpp: "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
-      cc1: "ad7b0fb35d196a433a6894e8b5d87e7bd84090e7098e83b3c027d97a2fcb4160",
+      xgcc: "9580bf21ee1828bf3ba6969ce894dfedb17569cb840ee2630199bdca7a5c59e5",
+      cpp: "acf056df9321b1016afea640bac858c1cd4572f04002af356aced14e7509fae2",
+      tradcpp: "086343042dd10f26c8d990b30fc9a17e17802eb0f72fed09daa979faac6cec99",
+      cc1: "f7c0ca79be72fbfd9c082899f383c12a5389a32a65e44335bdcb31f4e08fd1a8",
     },
     gs2: {
       xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",
@@ -688,10 +688,9 @@ function selfTest(): void {
   }
   const groupedDma = [...GROUPED_DMA_STORE_SOURCES].sort();
   if (JSON.stringify(groupedDma) !== JSON.stringify([
-    "08002f10", "080037d4", "08004760", "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c",
-    "08004a94", "08005a78", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "0801d980", "080251d4", "080284dc",
-    "0808fecc",
-    "080958a8", "0809bb34", "080b5ad4", "080c0184", "080c08a8",
+    "08002f10", "0800300c", "080037d4", "08004760", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
+    "08004a5c", "08004a94", "08005a78", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "0801d980",
+    "080251d4", "080284dc", "0808fecc", "080958a8", "0809bb34", "080b5ad4", "080c0184", "080c08a8", "080f377c",
   ])) {
     throw new Error("grouped DMA source allowlist self-test failed");
   }

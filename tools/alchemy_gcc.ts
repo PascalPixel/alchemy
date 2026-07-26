@@ -87,6 +87,11 @@ const NO_STRENGTH_REDUCE_SOURCES = new Set(["080200cc", "080a9d3c"]);
 // scheduler put an independent insn between them. These references want the
 // insn left where it is; see alchemy-gcc 1ec1044 and work/hand/080a1090.
 const NO_CONTIGUOUS_IMMEDIATE_SOURCES = new Set(["080a1090"]);
+// The descriptor's base pool load wins a priority-68 ready-list tie on forward
+// dependent count alone; these references break it by original order instead.
+const NO_SCHED_DEPEND_COUNT_SOURCES = new Set(["08002fb0", "08003e10"]);
+// The reference issues the destination copy ahead of the control word's `orrs`.
+const MOVE_BEFORE_ALU_SOURCES = new Set(["08002fb0", "08003e10"]);
 // This palette-row scan ANDs a loaded halfword against a hoisted 0xF800 mask.
 // The AND is a two-address *thumb_andsi3_insn, so regmove's forward pass may
 // overwrite either input; it rejects the mask operand at reg_is_remote_constant_p
@@ -134,6 +139,7 @@ const GROUPED_DMA_STORE_SOURCES = new Set([
   "08004a5c", "08004a94", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "0801d980",
   "080251d4", "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
   "0808fecc", "08004760", "08005a78", "080037d4", "080b5ad4", "0800300c", "080f377c",
+  "08002fb0", "08003e10",
   "080a1090",
 ]);
 
@@ -144,7 +150,7 @@ const ENTRY_LITERAL_FIRST_SOURCES = new Set([
   "0800383c", "0800387c", "080038bc", "080038fc", "0800393c",
   "0800397c", "080039bc", "080039fc", "08003a3c",
 ]);
-const HIGH_REGISTER_MOVE_FIRST_SOURCES = new Set(["0808b8e8", "080b6e30"]);
+const HIGH_REGISTER_MOVE_FIRST_SOURCES = new Set(["0808b8e8", "080b6e30", "08002fb0", "08003e10"]);
 // 08004760 is a still-assembly near-miss routed for the same reason as the
 // grouped-DMA entries below: without this mode its `sub sp, #4` sinks under the
 // first literal load, and with it the whole prologue and the entire tail agree.
@@ -331,6 +337,8 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
     ...(NO_CONTIGUOUS_IMMEDIATE_SOURCES.has(stem) ? ["-fno-thumb-contiguous-immediate"] : []),
+    ...(NO_SCHED_DEPEND_COUNT_SOURCES.has(stem) ? ["-fno-sched-depend-count"] : []),
+    ...(MOVE_BEFORE_ALU_SOURCES.has(stem) ? ["-fthumb-move-before-alu"] : []),
     ...(NO_REGMOVE_SOURCES.has(stem) ? ["-fno-regmove"] : []),
     ...(ENTRY_LITERAL_FIRST_SOURCES.has(stem)
       ? ["-fno-schedule-insns2", "-mthumb-entry-literal-first"] : []),
@@ -461,7 +469,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
       xgcc: "9580bf21ee1828bf3ba6969ce894dfedb17569cb840ee2630199bdca7a5c59e5",
       cpp: "acf056df9321b1016afea640bac858c1cd4572f04002af356aced14e7509fae2",
       tradcpp: "086343042dd10f26c8d990b30fc9a17e17802eb0f72fed09daa979faac6cec99",
-      cc1: "d140b8d25d68e7f4f0b89817b3158513a3b76db9295bc6e12e0852d4aa02a1f8",
+      cc1: "f322b184a0ea15aa31408ff12c7193e9795448e4a17c82fef68797383671069f",
     },
     gs2: {
       xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",
@@ -627,6 +635,8 @@ export function directCompilerCommand(
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
     ...(NO_CONTIGUOUS_IMMEDIATE_SOURCES.has(stem) ? ["-fno-thumb-contiguous-immediate"] : []),
+    ...(NO_SCHED_DEPEND_COUNT_SOURCES.has(stem) ? ["-fno-sched-depend-count"] : []),
+    ...(MOVE_BEFORE_ALU_SOURCES.has(stem) ? ["-fthumb-move-before-alu"] : []),
     ...(NO_REGMOVE_SOURCES.has(stem) ? ["-fno-regmove"] : []),
     ...(ENTRY_LITERAL_FIRST_SOURCES.has(stem)
       ? ["-fno-schedule-insns2", "-mthumb-entry-literal-first"] : []),
@@ -694,10 +704,11 @@ function selfTest(): void {
   }
   const groupedDma = [...GROUPED_DMA_STORE_SOURCES].sort();
   if (JSON.stringify(groupedDma) !== JSON.stringify([
-    "08002f10", "0800300c", "080037d4", "08004760", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
-    "08004a5c", "08004a94", "08005a78", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "0801d980",
-    "080251d4", "080284dc", "0808fecc", "080958a8", "0809bb34", "080a1090", "080b5ad4", "080c0184",
-    "080c08a8", "080f377c",
+    "08002f10", "08002fb0", "0800300c", "080037d4", "08003e10", "08004760",
+    "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c",
+    "08004a94", "08005a78", "0800bc48", "0800bdd4", "0800c0f4", "0800d304",
+    "080170c4", "0801d980", "080251d4", "080284dc", "0808fecc", "080958a8",
+    "0809bb34", "080a1090", "080b5ad4", "080c0184", "080c08a8", "080f377c",
   ])) {
     throw new Error("grouped DMA source allowlist self-test failed");
   }

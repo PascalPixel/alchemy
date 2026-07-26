@@ -5,8 +5,8 @@
 u8 Func_080a68ec(void *, void *, s32);
 s32 Func_08077008(s32);
 void Func_08015270(s32 *);
-void Func_080a1bdc(s32, s32, s32);
-void Func_080a68a8(void *);
+void Func_080a1bdc(s32 arg0, s32 arg1, s32 arg2);
+void Func_080a68a8(u16 *arg0);
 void Func_08015080(s32, s32 *, s32, s32);
 
 void Func_080a6384(s32 arg0) {

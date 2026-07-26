@@ -11,7 +11,7 @@ struct Object_08091c44 {
     u8 active;
 };
 
-struct Object_08091c44 *Func_0808ba1c(s32);
+s32 Func_0808ba1c(u32 arg0);
 void Func_080030f8(s32);
 
 void Func_08091c44(s32 arg0, s32 value)

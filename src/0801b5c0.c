@@ -1,7 +1,7 @@
 #include "types.h"
 
-void Func_0801b9a8(void *state, u16 index);
-void Func_0801b9ec(void *state, u16 index);
+void Func_0801b9a8(struct State_0801b9a8 *state, u32 index);
+void Func_0801b9ec(struct State_0801b9ec *state, u32 index);
 void Func_0801ba68(void *state, u32 mode);
 void Func_0801b010(u16 type, u32 value);
 void Func_080030f8(u32 value);

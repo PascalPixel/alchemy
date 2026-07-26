@@ -4,7 +4,7 @@ typedef unsigned int u32;
 
 extern u8 Data_00000008[];
 extern u8 Data_080fc624[];
-void Func_080fab3c(void *);
+void Func_080fab3c(u8 *entry);
 
 void Func_080fa458(void)
 {

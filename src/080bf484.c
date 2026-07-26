@@ -1,7 +1,7 @@
 #include "types.h"
 
 u8 *Func_08077008(void);
-s32 Func_080bf208(s32, u8, s32);
+s32 Func_080bf208(s32 arg0, s32 arg1, s32 arg2);
 
 s32 Func_080bf484(s32 arg0) {
     u8 *value = Func_08077008() + 0x13C;

@@ -4,10 +4,10 @@
 
 s32 Func_08002dd8(s32);
 s32 Func_08004278(s32);
-s32 Func_0808e0b0(s32, s32);
+void Func_0808e0b0(struct Outer0808e0b0 *outer, s32 value);
 s32 Func_08092054(u16);
-s32 Func_0809748c();
-s32 Func_08097adc();
+void Func_0809748c(void);
+void Func_08097adc(void);
 
 void Func_08097608(void) {
     void *temp_r5;

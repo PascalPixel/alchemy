@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_0808b05c(u16, u16);
+u16 Func_0808b05c(s32 arg0, s32 arg1);
 unsigned char Func_0808b074(s32 arg0)
 {
   s32 temp_r0;

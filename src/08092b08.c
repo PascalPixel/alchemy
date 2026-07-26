@@ -1,6 +1,6 @@
 #include "types.h"
 
-u32 Func_0808ba1c(s32);
+s32 Func_0808ba1c(u32 arg0);
 
 void Func_08092b08(s32 arg0, s32 arg1)
 {

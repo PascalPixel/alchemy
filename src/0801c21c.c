@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_08003f3c(long);
+s32 Func_08003f3c(u32 index);
 void Func_0801c21c(void)
 {
   unsigned int new_var;

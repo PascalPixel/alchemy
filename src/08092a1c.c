@@ -12,7 +12,7 @@ struct Object_08092a1c {
     struct Object_08092a1c *field_68;
 };
 
-struct Object_08092a1c *Func_0808ba1c(u32);
+s32 Func_0808ba1c(u32 arg0);
 void Func_08009098(struct Object_08092a1c *, s32);
 
 void Func_08092a1c(u32 arg0, s32 arg1, s32 arg2) {

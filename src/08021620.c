@@ -9,8 +9,8 @@ struct Entity {
 };
 
 s32 Func_08004080(void);
-void Func_080215e0(s32, s32);
-void *Func_0801eadc(s32, u32, void *, s32, s32);
+void Func_080215e0(s32 arg0, s32 arg1);
+s32 Func_0801eadc(s32 arg0, s32 arg1, struct Input *arg2, s32 arg3, s32 arg4);
 
 void *Func_08021620(s32 arg0, void *arg1, s32 arg2, s32 arg3)
 {

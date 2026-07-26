@@ -8,9 +8,9 @@ typedef struct {
 } Object0f;
 
 void *Func_080150d8(s32, s32, s32, s32, s32, s32);
-void Func_080a33d4(void *, s32);
+void Func_080a33d4(struct State080a33d4 *state, s32 arg1);
 void Func_080a8604(s32, s32, s32);
-void Func_080a9cf8(s32);
+s32 Func_080a9cf8(s32 arg0);
 
 void Func_080a8088(s32 arg0) {
     s32 var_r0;

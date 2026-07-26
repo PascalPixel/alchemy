@@ -7,7 +7,7 @@ struct State_0807961c {
 
 extern struct State_0807961c Data_02000240;
 s32 Func_080795fc(void);
-void Func_08079358(s32);
+s32 Func_08079358(s32 arg0);
 
 s32 Func_0807961c(s32 value) {
     s32 count = Func_080795fc();

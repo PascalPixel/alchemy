@@ -1,10 +1,10 @@
 #include "types.h"
 
 extern void *Func_08096c80(s32, s32, s32, s32);
-extern void Func_08096bec(void *, s32, s32);
+extern void Func_08096bec(struct Object_08096bec *object, s32 arg1, s32 arg2);
 extern void Func_08009080(void *, s32);
 extern void Func_08009098(void *, void *);
-extern s32 Func_08004458(void);
+extern u32 Func_08004458(void);
 extern void Func_080f9010(s32);
 
 void *Func_08098070(void *arg0)

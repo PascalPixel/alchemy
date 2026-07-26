@@ -8,9 +8,9 @@ struct Object_0809280c {
     s32 x;
 };
 
-struct Object_0809280c *Func_0808ba1c(s32);
+s32 Func_0808ba1c(u32 arg0);
 s32 Func_080044d0(s32, s32);
-void Func_0809163c(s32);
+void Func_0809163c(s32 arg0);
 
 void Func_0809280c(s32 arg0, s32 arg1, s32 arg2)
 {

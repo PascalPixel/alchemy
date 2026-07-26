@@ -9,7 +9,7 @@ struct State_080208e4 {
 
 s32 Func_080056cc(void);
 void Func_08005c68(void);
-void Func_08005cf8(void);
+volatile unsigned int Func_08005cf8(void);
 void Func_0801776c(s32, s32);
 s32 Func_08020244(s16, s32);
 s32 Func_08005a78(s32, void *);

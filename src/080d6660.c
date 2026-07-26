@@ -2,7 +2,7 @@
 
 typedef void (*Callback)(s32 *);
 
-void Func_080048b0(s32, s32);
+s32 Func_080048b0(s32 arg0, s32 arg1);
 void Func_08002dd8(s32);
 extern Callback Data_080ee2b4[];
 

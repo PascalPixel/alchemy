@@ -2,11 +2,11 @@
 
 s16 Func_080030f8(s32);
 s16 Func_0800430c();
-s16 Func_080043e0();
-void *Func_080048f4(s32, s32);
-s16 Func_08091660();
+s32 Func_080043e0(void);
+void *Func_080048f4(s32 arg0, s32 arg1);
+void Func_08091660(void);
 void Func_080936a0(s32, s32);
-s16 Func_0809c314();
+void Func_0809c314(void);
 
 void Func_0809c3a4(void)
 {

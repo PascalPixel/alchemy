@@ -6,7 +6,7 @@ struct Entry_08003f3c {
 };
 
 extern struct Entry_08003f3c Data_03001b10[];
-void Func_08003f04(u32);
+s32 Func_08003f04(s32 arg0);
 
 s32 Func_08003f3c(u32 index)
 {

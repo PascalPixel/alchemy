@@ -8,7 +8,7 @@ struct State08093304 {
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-s32 Func_08092ba8(s32);
+s32 Func_08092ba8(s32 key);
 s32 Func_080915ac(void);
 extern u8 Data_02000240[];
 extern u8 Data_0809fc28[];

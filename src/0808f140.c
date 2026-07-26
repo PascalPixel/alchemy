@@ -2,11 +2,11 @@
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-void *Func_0808ba1c(u32);
+s32 Func_0808ba1c(u32 arg0);
 void Func_080091e0(void *, s32);
 void Func_08009098(void *, s32);
 void Func_080030f8(u32);
-void Func_0808f0d8(void *);
+void Func_0808f0d8(struct Object_0808f0d8 *object);
 void Func_08009080(void *, s32);
 
 struct GlobalState {

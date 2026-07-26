@@ -4,7 +4,7 @@
 
 s32 Func_080022ec(s32, s32);
 s32 Func_080022fc(s32, s32);
-s32 Func_080a17c4(void *);
+void Func_080a17c4(void *arg0);
 
 void Func_080a9bd8(void *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     s32 var_r5;

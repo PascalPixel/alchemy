@@ -1,7 +1,7 @@
 #include "types.h"
 
 extern u8 *Func_08077394(s32);
-extern u8 *Func_08078414(s32);
+extern s32 Func_08078414(s32 arg0);
 
 s32 Func_08078af8(s32 arg0, s32 value)
 {

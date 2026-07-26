@@ -11,7 +11,7 @@ extern Entry Data_0809d7a8[];
 
 s32 Func_08009268(void *, s32 *);
 s32 Func_080770c0(s32);
-void Func_0808b2b0(s32);
+void Func_0808b2b0(s32 arg0);
 
 s32 Func_0808adf0(void *arg0)
 {

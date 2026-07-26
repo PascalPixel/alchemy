@@ -2,7 +2,7 @@
 
 extern u8 Data_02010000[];
 
-extern void Func_08003f3c(u16 arg0);
+extern s32 Func_08003f3c(u32 index);
 extern void Func_08015018(u32 arg0, u32 arg1);
 
 void Func_0809bcd4(void) {

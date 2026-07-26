@@ -1,7 +1,7 @@
 #include "types.h"
 
 s32 Func_080030f8(s32);
-s32 Func_0800be70(s32, u32);
+void Func_0800be70(u8 *object, u32 position);
 
 void Func_0800befc(s32 arg0) {
     u32 var_r6;

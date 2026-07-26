@@ -3,7 +3,7 @@
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void *Func_08077394();
-u32 Func_08079008(s32, s32);
+u32 Func_08079008(s32 owner, s32 level);
 s32 Func_0807905c(s32, s32);
 
 s32 Func_080792c4(s32 arg0, s32 arg1) {

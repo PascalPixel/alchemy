@@ -1,7 +1,7 @@
 #include "types.h"
 
 void Func_0807a3a8(void);
-void *Func_08077330(u32);
+s32 Func_08077330(s32 arg0);
 
 u32 *Func_0807a458(u32 kind, u32 first, u32 second)
 {

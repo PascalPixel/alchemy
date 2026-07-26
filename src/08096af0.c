@@ -4,7 +4,7 @@
 
 s32 Func_080984c0();
 s32 Func_08099738();
-s32 Func_0809b648();
+void Func_0809b648(void);
 
 void Func_08096af0(void) {
     u32 temp_r3;

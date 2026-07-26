@@ -16,8 +16,8 @@ typedef struct {
 void Func_08006864(s32, s32, s32);
 void Func_080fa55c(s32);
 void Func_080fa6a0(s32);
-void Func_080fa83c(s32);
-void Func_080fa9e0(void *, s32, u8);
+void Func_080fa83c(u32 value);
+void Func_080fa9e0(struct Object *object, struct Entry *entries_arg, u32 count_arg);
 extern u8 Data_080f9675;
 extern u32 Value_00000008;
 extern u8 Data_02004350;

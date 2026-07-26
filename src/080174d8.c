@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_08016418(s32, s32);
+void Func_08016418(struct Work *work, s32 release);
 
 void Func_080174d8(void) {
     s32 *temp_r5;

@@ -2,7 +2,7 @@
 
 s32 Func_0808a540(u16);
 void Func_08015140(void);
-s32 Func_080b2884(s32);
+s32 Func_080b2884(s32 value);
 void Func_08015038(s32, s32, s32, s32);
 s32 Func_08015048(void);
 void Func_080030f8(u32);

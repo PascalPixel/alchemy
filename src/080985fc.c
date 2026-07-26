@@ -7,7 +7,7 @@ struct Triple {
 extern u8 *Data_03001f30;
 void Func_08098698(void);
 void Func_080f9010(s32);
-s32 Func_08004458(void);
+u32 Func_08004458(void);
 void Func_0800447c(s32, s32, struct Triple *);
 void *Func_08096c80(s32, s32, s32, s32);
 void Func_08009098(void *, const void *);

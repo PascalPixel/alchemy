@@ -2,7 +2,7 @@
 
 void Func_08015090(s32, s32, s32, s32);
 void Func_08015098(s32, s32, s32, s32);
-void Func_080a14f0(s32, s32, s32, s32);
+void Func_080a14f0(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 s32 Func_080150b8(s32);
 
 void Func_080a153c(void *arg0, s32 arg1) {

@@ -5,7 +5,7 @@ void Func_080a1ac0(s32, s32);
 s32 Func_08077008(s32);
 s8 Func_080a3ddc(s32, void *, s32);
 s32 Func_080a35f8(void *, void *);
-void Func_080a17c4(s32);
+void Func_080a17c4(void *arg0);
 void Func_080030f8(s32);
 
 extern void *Data_03001f2c;

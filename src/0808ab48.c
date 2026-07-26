@@ -9,7 +9,7 @@ extern struct Work Data_02000240;
 extern u8 Data_0809f1a8[];
 extern u8 Data_02008000[];
 
-void Func_08002fb0(s32 value, void *destination);
+void Func_08002fb0(s32 first, s32 second);
 
 void Func_0808ab48(void)
 {

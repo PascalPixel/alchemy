@@ -10,7 +10,7 @@ struct Item_08078870 {
     u8 type;
 };
 
-struct Item_08078870 *Func_08078414(s32);
+s32 Func_08078414(s32 arg0);
 
 s32 Func_08078870(struct State_08078870 *state, s32 type)
 {

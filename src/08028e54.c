@@ -2,11 +2,11 @@
 
 extern u8 Data_00000024[];
 
-s32 Func_080284dc(void);
-s32 Func_080287a8(s32);
-s32 Func_080288a8(s32, s32, s32, u8 *);
+void *Func_080284dc(void);
+void Func_080287a8(s32 arg0);
+void Func_080288a8(s32 a0, s32 a1, s32 a2, s32 a3);
 s32 Func_08028574(s32);
-s32 Func_0802851c(void);
+void Func_0802851c(void);
 
 s32 Func_08028e54(s32 arg0, s32 arg1, s32 arg2)
 {

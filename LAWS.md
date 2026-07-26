@@ -2586,23 +2586,36 @@ Recorded so nobody re-derives them. Full traces in `work/hand/<stem>/NOTES.md`.
   commandeers hard registers after reload, so that guard is not safe to relax on
   inspection — it wants a real liveness test at the insn.
 
-## Addendum (2026-07-26): the largest untouched family is a masking difference
+## Addendum (2026-07-26): masking versus shifting is mostly a TYPE choice
 
-Measured while working `080b0a20`. **81 `c_candidate` regions zero-extend a
-16-bit value by anding against a pooled `0x0000ffff`, and no converted source
-reproduces it.** GCC 2.96 emits `lsl #16 / lsr #16` instead, and folds a u16
-conversion mask together with a following bitfield mask where the reference
-keeps them as two separate `ands`. A further 33 regions do use the shift pair,
-so the two forms are a real distinction in the references, not noise.
+**81 `c_candidate` regions zero-extend a 16-bit value by anding against a
+pooled `0x0000ffff`; 33 others use the `lsl #16 / lsr #16` pair.** No converted
+source reproduces the masked form. That looked like a compiler difference. It
+is mostly not — it is a choice of parameter and variable type, and it is
+available today:
 
-The folded forms come out *shorter* than the reference (62B and 70B against
-74B on 080b0a20), which is the signature of the reference compiler declining a
-combine rather than of a wrong source shape.
+    u32 explicit_mask (u32 x)   { return x & 0xffff; }
+        ldr r0, <pool 65535> / and r0, r0, r3        <- the masked form
 
-This is the biggest single lead on the board and it has not been attempted. It
-wants one region driven to an exact link behind a default-off combine
-restriction, with the payoff measured across the family — not another mode
-proposed from inspection.
+    u32 from_u16_param (u16 x)  { return x; }
+        lsl r0, r0, #16 / lsr r0, r0, #16            <- the shift pair
+
+With two masked values GCC loads `0xffff` once and shares it, exactly as the
+references do. **So a region showing `ands` against a pooled 0xffff wants wide
+(`u32`/`s32`) parameters and locals with explicit `& 0xffff`, not `u16` typed
+ones.** A `u16` parameter forces the shift pair and can never match. This is
+the single most reusable finding of the session and it is source-level.
+
+Do not reach for the compiler here. `zero_extendhisi2` is *not* the path a
+promoted `u16` parameter takes — a flag added there has no effect whatsoever
+(built and measured, then reverted).
+
+What remains genuinely compiler-side is narrower: when the masked value is
+consumed by something narrower still, GCC folds the two masks
+(`(x & 0xffff) & 0x1ff` becomes `x & 0x1ff`) where the reference keeps both.
+On 080b0a20 the folded form is *shorter* than the reference, 62B and 70B
+against 74B. That affects only the subset of the 81 whose mask feeds a
+narrowing consumer; the rest should be reachable from C.
 
 Related and reusable regardless: an ordinary C bitfield reproduces the
 `ldrh / ands / orrs / strh` insert shape correctly. Only nine converted sources

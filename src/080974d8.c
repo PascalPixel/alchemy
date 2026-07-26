@@ -1,7 +1,4 @@
-typedef signed short s16;
-typedef unsigned char u8;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 struct Output {
     s32 x;

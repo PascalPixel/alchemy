@@ -1,4 +1,4 @@
-typedef unsigned int u32;
+#include "types.h"
 
 extern volatile u32 Data_03001c94;
 void Func_080030f8(u32);

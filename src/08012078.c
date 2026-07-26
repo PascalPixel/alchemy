@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 struct Cell_08012078 {
     u8 filler0[2];

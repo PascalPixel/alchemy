@@ -1,6 +1,4 @@
-typedef signed char s8;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 s32 Func_08011ddc(s8 *values, s32 start, s32 end) {
     s32 first;

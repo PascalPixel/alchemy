@@ -1,5 +1,4 @@
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 extern u32 Data_02010000[];
 

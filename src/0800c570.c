@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned int u32;
+#include "types.h"
 
 struct Value_0800c570 {
     u8 padding[29];

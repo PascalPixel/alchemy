@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 struct Fields_080a4e90 {
     u8 filler[0x10c];

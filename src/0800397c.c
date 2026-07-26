@@ -1,7 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 struct QueueEntry { void *second; void *first; u32 control; };
 extern u16 Data_02002090;

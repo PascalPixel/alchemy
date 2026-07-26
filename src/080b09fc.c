@@ -1,7 +1,4 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 struct Source_080b09fc {
     u8 filler0[6];

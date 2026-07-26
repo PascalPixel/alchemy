@@ -1,6 +1,6 @@
-# Path to completion (measured 2026-07-26)
+# Path to completion (measured 2026-07-27)
 
-`[1,292 of 1,999]`. 707 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,295 of 1,999]`. 704 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -25,18 +25,19 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-24 | 1,236 | +74 |
 | 2026-07-25 | 1,242 | +6 |
 | 2026-07-26 | 1,292 | +50 |
+| 2026-07-27 | 1,295 | +3 (partial day) |
 
 **The rate is still roughly a factor of three below the 2026-07-23 peak.** That is
 not a slowdown in effort: the broad easy tier is running out, and compiler
-lineage now matters as much as drafting. At the last two days' rate 707 regions
-is roughly 26 working days; at the three-day average, about 16. The estimates
-move materially with one cohort and neither is a session.
+lineage now matters as much as drafting. At the last two completed days' rate,
+704 regions is roughly 26 working days; at the three-day average, about 16. The
+estimates move materially with one cohort and neither is a session.
 
 ## What is actually left
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 529 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 526 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
 | 135 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
@@ -47,7 +48,8 @@ Removed from the table on 2026-07-26, into classes that already described them:
 drafting — `080e73a0` was picked as a clean 49-instruction target and turned out
 to read its base pointer out of `r9`, which no policy-valid C can express.
 
-Of the 529 plain regions, 214 have prior target-specific hand, agent, manual,
+At the `[1,292 of 1,999]` provenance-audit snapshot, 214 of 529 plain regions
+had prior target-specific hand, agent, manual,
 or substantive permuter work. The other 315 are genuinely untouched. This
 split was reconstructed against `fa930c71`: bulk m2c output, match rescoring,
 and initialized-but-empty permuter states do not count as attempts; target C,
@@ -268,9 +270,37 @@ for `080044d0` are specifically excluded from the numerator: byte identity alone
 does not justify hard-register constraints or empty inline assembly when the
 project is using `pokeemerald`-style maintainable C as its reconstruction ideal.
 
+## What the 2026-07-27 ranked cohort changed
+
+Three more regions now compile exactly with the ordinary routed GS1 flags:
+
+| region | bytes | exact route |
+| --- | ---: | --- |
+| `080a76d0` | 212 | typed four-step menu state machine and defined unsigned cancellation test |
+| `080984c0` | 232 | typed context/state/scene fields and source-ordered global derivation |
+| `0801c7fc` | 164 | typed object-resource scan with a bounded 32-entry inner loop |
+
+The other three assigned regions were stopped at reproducible compiler floors
+and are not counted as conversions:
+
+| region | best measured shape | remaining blocker |
+| --- | --- | --- |
+| `08092f84` | 188/188 bytes, 7 differing halfwords | one global `r6`/`r7` allocation swap; GCC gives the equally referenced saved key priority over the slightly longer-lived masked index |
+| `080b0840` | 84/84 bytes, 15 differing halfwords | reload frees `r0` with the entry parameter save, then uses it for folded offsets; the ROM uses `r2` and delays the save |
+| `080949a8` | 288/288 bytes, 25 differing halfwords | keeping the DMA base live across a call preserves the prefix but forces it into `r5`; creating it later gets `r3` and rotates the rest of the allocation |
+
+Each floor survived the relevant full mode/pair sweep and a bounded
+source-order or declaration-shape search. None uses a hard-register local or
+inline assembly.
+
+That adds 608 exact-C bytes, raises the claimed build to `[1,295 of 1,999]`,
+and brings exact-C ownership to 81,074 bytes. The source-only full build owns
+all 8,388,608 bytes with zero fallback or unowned bytes. The measured remainder
+is 704 regions: 526 plain, 135 DMA, 36 mask, and 7 twelve-store regions.
+
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 529 of 707 have nothing exotic in
+1. **The bulk is volume, not blockers.** 526 of 704 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.

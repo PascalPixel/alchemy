@@ -88,24 +88,33 @@ workload, and it is drafting, not compiler archaeology.
      `compiler_output` bucket. Moving them applies the project's own criteria
      rather than relaxing them. Y is now 2,015.
 
-   - **Whether byte-exactness remains the bar for the last 39%.** Every region
-     touched today was understood semantically within minutes and then cost
-     hours on one or two instructions. pokeemerald itself shipped with
-     `NONMATCHING` fallbacks for exactly this. A tier that is semantically
-     faithful and compiles, without being byte-identical, would move the 583
-     at something close to the early rate. That is a change in what the project
-     claims, which is why it is a decision and not an optimisation.
+   - ~~**Whether byte-exactness remains the bar.**~~ **Settled 2026-07-26, and
+     the earlier entry here was wrong on its facts.** It claimed pokeemerald
+     "shipped with `NONMATCHING` fallbacks". Checked against the repo: **zero**
+     `NONMATCHING` in `src/` or `include/`, **zero** `.s` files under `asm/`,
+     310 C sources and 239 headers. The only two `NAKED` functions left are
+     `MultiBootWaitCycles`, a cycle-counted delay that reads its own `pc` to
+     tell ROM from EWRAM, and a librfu dummy callback — code that is inherently
+     assembly, not code that resisted matching.
+
+     `NONMATCHING` existed as scaffolding *during* pret's effort and was treated
+     as debt and eliminated. Since the stated goal is pokeemerald as the desired
+     *outcome*, and that outcome is 100% matching C with no assembly fallbacks,
+     introducing a non-matching tier would move away from the goal, not toward
+     it. **Byte-exactness stays.** The ~115 working days is the honest cost.
 
 ## Recommended order
 
-1. Decide the byte-exactness bar, which still changes what "complete" means
-   before more effort is spent against the current definition.
-2. Work the 86 plain regions in the 41–80 band. They are the last tier where a
+Screen every target first: `grep 'mov\s*ip, pc'`, and check for a callee-saved
+register read but never written. Both classes are now reclassified out of Y, but
+the screen still costs less than a wasted draft.
+
+1. Work the 86 plain regions in the 41–80 band. They are the last tier where a
    single sitting plausibly produces a conversion.
-3. Apply the `u32`-locals law to the 32 single-mask regions. Untested on a real
+2. Apply the `u32`-locals law to the 32 single-mask regions. Untested on a real
    region — the two small enough to have been drafted are both in the
    eight-region *twice*-masked group, so the reachable set starts at 121
    instructions.
-4. Only then the compiler families. The transform-ordering conflict behind the
+3. Only then the compiler families. The transform-ordering conflict behind the
    twelve-store group is the best-specified of them and is written up in
    `LAWS.md`.

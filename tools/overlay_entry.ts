@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: entrypoint; invoked by PLAYBOOK.md.
 // Recover the true entry of an overlay function that discovery seeded partway
 // into its body, by walking back to the previous function's return.
 //

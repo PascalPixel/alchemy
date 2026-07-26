@@ -1,4 +1,3 @@
-// Tool role: both; imported by tools/build_assets.ts, tools/chiiki_map_resources.ts, tools/tokushu_map_resources.ts; invoked by package.json.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { deflateSync } from "./zlib.ts";

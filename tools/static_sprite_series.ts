@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: both; imported by tools/build_assets.ts, tools/character_catalog.ts, tools/split_sprite_bank.ts; invoked by package.json.
 import { canonicalJson } from "./canonical_json.ts";
 import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync,

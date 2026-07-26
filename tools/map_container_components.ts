@@ -1,4 +1,3 @@
-// Tool role: library; imported by tools/build_assets.ts, tools/chiiki_map_resources.ts, tools/tokushu_map_resources.ts.
 import { canonicalJson } from "./canonical_json.ts";
 import { readFileSync, writeFileSync } from "node:fs";
 import {

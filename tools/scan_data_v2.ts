@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: entrypoint; invoked by package.json.
 import type { ComparisonReport } from "./compare_roms.ts";
 import type { DirectResourceCall } from "./scan_resource_calls.ts";
 import { compareRegions } from "./compare_regions.ts";

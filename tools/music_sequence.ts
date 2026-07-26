@@ -1,4 +1,3 @@
-// Tool role: both; imported by tools/extract_audio.ts, tools/midi_roundtrip.ts, tools/midi_sequence.ts (+1 more); invoked by package.json, tools/midi_roundtrip.ts.
 import { canonicalJson } from "./canonical_json.ts";
 export type ControlName =
   "priority" | "tempo" | "key_shift" | "voice" | "volume" | "pan" |

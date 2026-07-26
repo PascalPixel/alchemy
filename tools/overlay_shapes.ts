@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: entrypoint; invoked by PLAYBOOK.md.
 // Group the overlay functions that are neither converted nor inventoried by
 // their normalized instruction shape, so one hand-derived template can be
 // expanded across a whole cohort by tools/overlay_cohort.ts.

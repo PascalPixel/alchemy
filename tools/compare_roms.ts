@@ -1,4 +1,3 @@
-// Tool role: both; imported by tools/compare_regions.ts, tools/scan_data_v2.ts, tools/scan_decomp.ts; invoked by package.json, tools/check_publication.ts.
 import { canonicalJson } from "./canonical_json.ts";
 export interface MatchSpan {
   reference_address: string;

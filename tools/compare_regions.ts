@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: both; imported by tools/scan_data_v2.ts, tools/scan_decomp.ts; invoked by package.json.
 import type { ComparisonReport, MatchSpan } from "./compare_roms.ts";
 import { canonicalJson } from "./canonical_json.ts";
 

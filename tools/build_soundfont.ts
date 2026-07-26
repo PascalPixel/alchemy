@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// Tool role: entrypoint; invoked by assets/audio/README.md.
 // build_soundfont.ts — 回収済み音声データから SoundFont (SF2 v2.01) を決定論的に生成する。
 //
 // ── 目的 ────────────────────────────────────────────────────────────────

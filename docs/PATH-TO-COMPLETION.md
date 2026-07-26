@@ -1,12 +1,12 @@
 # Path to completion (measured 2026-07-26)
 
-`[1,250 of 2,001]`. 751 `c_candidate` regions remain. **Y dropped from 2,058 to 2,001 on
+`[1,257 of 2,001]`. 744 `c_candidate` regions remain. **Y dropped from 2,058 to 2,001 on
 2026-07-26 in two steps: 43 `mov ip, pc` regions into the existing
 `nonstandard_thumb_call_module` class, and 14 regions that read a callee-saved
 register they never write into `hidden_register_context_module`. Both classes
 predate the change and both list this exact construct in their evidence. The
-count of *converted* regions did not move.** This file exists because
-"808 remain" is a count, not a plan, and because two family sizes published
+count of *converted* regions did not move.** This file exists because a
+remaining-region headline is a count, not a plan, and because two family sizes published
 earlier today were both wrong from lazy fingerprints. Everything below is
 measured by `tools/remaining_survey.ts`, which decodes each region and resolves
 pc-relative loads against the constant pool before classifying anything.
@@ -23,19 +23,19 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-23 | 1,162 | +158 |
 | 2026-07-24 | 1,236 | +74 |
 | 2026-07-25 | 1,242 | +6 |
-| 2026-07-26 | 1,250 | +8 |
+| 2026-07-26 | 1,257 | +15 |
 
-**The rate fell by a factor of twenty in three days.** That is not a slowdown in
+**The rate fell by roughly a factor of ten in three days.** That is not a slowdown in
 effort, it is the easy tier running out: every region whose natural C happened
-to match has been taken. At the last two days' rate 808 regions is roughly 115
-working days; at the three-day average, about 28. Neither is a session.
+to match has been taken. At the last two days' rate 744 regions is roughly 71
+working days; at the three-day average, about 24. Neither is a session.
 
 ## What is actually left
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 583 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
-| 139 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
+| 565 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 136 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
 
@@ -45,18 +45,18 @@ Removed from the table on 2026-07-26, into classes that already described them:
 drafting — `080e73a0` was picked as a clean 49-instruction target and turned out
 to read its base pointer out of `r9`, which no policy-valid C can express.
 
-Of the 583 plain regions, 91 have been attempted and parked with written
-root causes. The 492 never touched break down by size:
+Of the 565 plain regions, 91 have been attempted and parked with written
+root causes. The 474 never touched break down by size:
 
 | instructions | regions |
 | --- | --- |
-| ≤ 40 | 6 |
-| 41–80 | 86 |
-| 81–160 | 200 |
-| 161–320 | 110 |
-| 321+ | 90 |
+| ≤ 40 | 5 |
+| 41–80 | 83 |
+| 81–160 | 193 |
+| 161–320 | 105 |
+| 321+ | 88 |
 
-**109,906 instructions of fresh plain code.** That is the real remaining
+**106,766 instructions of fresh plain code.** That is the real remaining
 workload, and it is drafting, not compiler archaeology.
 
 ## What five drafts on 2026-07-26 actually showed
@@ -83,14 +83,14 @@ What did convert (`08005a78`) needed two new compiler options, and was only
 attempted because its residual could be hand-verified by reordering the
 generated assembly and relinking.
 
-So the honest cost model is not "109,906 instructions of drafting". It is
+So the honest cost model is not "106,766 instructions of drafting". It is
 "drafting is cheap, and the last three to fifteen instructions of each region
 are a compiler investigation". Any estimate that prices the remainder at
 drafting speed is wrong.
 
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 583 of 808 have nothing exotic in
+1. **The bulk is volume, not blockers.** 565 of 744 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.
@@ -130,7 +130,8 @@ drafting speed is wrong.
      as debt and eliminated. Since the stated goal is pokeemerald as the desired
      *outcome*, and that outcome is 100% matching C with no assembly fallbacks,
      introducing a non-matching tier would move away from the goal, not toward
-     it. **Byte-exactness stays.** The ~115 working days is the honest cost.
+     it. **Byte-exactness stays.** Roughly 71 working days at the current
+     two-day rate is the honest cost.
 
 ## Recommended order
 
@@ -138,12 +139,12 @@ Screen every target first: `grep 'mov\s*ip, pc'`, and check for a callee-saved
 register read but never written. Both classes are now reclassified out of Y, but
 the screen still costs less than a wasted draft.
 
-1. Work the 86 plain regions in the 41–80 band. They are the last tier where a
+1. Work the 83 plain regions in the 41–80 band. They are the last tier where a
    single sitting plausibly produces a conversion.
-2. Apply the `u32`-locals law to the 32 single-mask regions. Untested on a real
-   region — the two small enough to have been drafted are both in the
-   eight-region *twice*-masked group, so the reachable set starts at 121
-   instructions.
+2. Apply the `u32`-locals law to the 25 single-mask regions. Eleven more use the
+   mask two to four times and need the corresponding combine; the two small
+   enough to have been drafted are both in that repeated-mask group, so the
+   reachable set starts at 121 instructions.
 3. Only then the compiler families. The transform-ordering conflict behind the
    twelve-store group is the best-specified of them and is written up in
    `LAWS.md`.

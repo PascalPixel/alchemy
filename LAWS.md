@@ -2856,3 +2856,32 @@ twice over.
 Note the fork is ahead of the staged `dist/` bundle by this option. Nothing is
 routed against it yet, and it is default-off, so the build is unaffected;
 restage before routing any source to it.
+
+## Addendum (2026-07-26): a size constant can need the `Value_` treatment too
+
+The related-constants law is written up for *addresses* that GCC derives from one
+another. It applies just as much to a plain integer that the reference loads from
+the pool. On `0800d304` the allocation size `0x4e8`:
+
+```c
+s32 size = 0x4e8;                        /* movs #157 / lsls #3, no pool word */
+s32 size = (s32)&Value_000004e8;         /* ldr r5, <pool>, as the reference */
+```
+
+Written as a literal, GCC materialises it and the region comes out **four bytes
+short** because the pool word disappears. As a linked symbol it is a pool load.
+Worth 22 halfwords there, from 28 to 6, and it is the first thing to check when a
+region is a few bytes *under* the reference.
+
+Also from that region, and it contradicts `080ae9f0`: **declaration order inside
+a descriptor block is sometimes load-bearing.** On `080ae9f0` all five
+permutations of the descriptor locals scored identically. On `0800d304`,
+declaring `words` and `control` *before* the three descriptor words is required —
+it matches the reference's shift-then-load order and no flag recovers it
+afterwards. So do not conclude from one region that ordering is inert; check it
+when a block's instructions are right but their order is not.
+
+And a limit on the veneer law above: **the direct-call spelling only pins r0-r3.**
+`0800d304` calls `_call_via_r6`, and no argument position reaches r6, so the
+function-pointer form is the only option there. It happens to work — GCC puts the
+buffer in r6 by itself, because it is the value that must survive the DMA.

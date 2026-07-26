@@ -2942,6 +2942,24 @@ compound assignment makes these *worse* (68B against 76B), the opposite of its
 effect elsewhere.
 
 So: the two DMA families look alike and are not. The wrapper family
-(allocate / transfer / call / free) is closed. The VLA family needs the
-stack-pointer update hoisted above the descriptor store, and that is the next
-well-specified compiler task on this board.
+(allocate / transfer / call / free) is closed.
+
+**And the VLA family is NOT a well-specified compiler task, though it looked
+like one.** Hand-verified both ways on `080052f4`:
+
+- Reordering the whole block to the reference's schedule — about fifteen insns,
+  including reassigning which of r3/r4 holds the DMA base and which the control
+  constant — relinks **EXACT**. So the semantics are right and the C is done.
+- Hoisting *only* `mov sp, r1` above the descriptor store, changing nothing
+  else, leaves it at **15 differing halfwords — exactly where it started.**
+
+The stack-pointer placement is therefore a symptom, not the cause. There is no
+single behaviour to hook here; the reference simply scheduled the block
+differently throughout. That is a far worse prospect than the single-insn
+rotations that converted `08005a78`, `0800d304` and `08019bac`, and anyone
+picking this up on the strength of "the sp update is in the wrong place" will
+lose the time.
+
+The check that separates the two cases costs one minute: make the *minimal*
+edit, not the full one. If the minimal edit does not move the count, the residual
+is a schedule, not a rule.

@@ -2885,3 +2885,31 @@ And a limit on the veneer law above: **the direct-call spelling only pins r0-r3.
 `0800d304` calls `_call_via_r6`, and no argument position reaches r6, so the
 function-pointer form is the only option there. It happens to work — GCC puts the
 buffer in r6 by itself, because it is the value that must survive the DMA.
+
+## Addendum (2026-07-26): the parameter-save hoist, and a call spelled honestly
+
+`08019bac` converts. It had been parked for a session at 3 halfwords with its
+residual written up as needing "a third hook … one shape for one region", and
+deliberately left alone. Two things closed it.
+
+**The flag combination found on `0800d304` transfers.** `-mgrouped-dma-store
+-fthumb-move-before-alu -fno-thumb-contiguous-immediate -fno-sched-depend-count
+-mhigh-register-move-first` took it from 10 halfwords to 3 with no new work. When
+a region is close, try the full set another member of its family needed before
+concluding anything.
+
+**`-fthumb-hoist-parameter-save`** (alchemy-gcc) closes the last 3.
+`thumb_order_high_register_move` only swaps a save with an immediately preceding
+constant setup; here `mov sl, r1` had to travel past a pool load *and* the copy
+consuming it. The new option walks such a save back over insns touching neither
+of its registers, stopping at another parameter save — which keeps the saves in
+parameter order — and at anything reading or writing either register, which is
+also what keeps the prologue's `mov rN, sl` between the save and the caller's
+value.
+
+**Its source was also semantically wrong and nobody had noticed**, because the
+bytes were close. It called `Func_080072fc(first, second)` — a two-argument
+direct call to `_call_via_r6`, which sets no target at all; the region only
+worked because GCC happened to leave the buffer in r6. Written honestly as
+`((CopiedCode)buffer)(first, second)` it scores identically and actually means
+what it does. A byte score cannot tell you a call has no target: read the veneer.

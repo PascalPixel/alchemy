@@ -4,7 +4,9 @@ This ledger records compiler behavior that Alchemy has reproduced from its
 approved evidence and exact, installed C matches. It prevents later sessions
 from rediscovering the same source-shape constraints.
 
-The clean-room and publication rules in [AGENTS.md](AGENTS.md) apply here.
+The clean-room evidence boundary in [PROVENANCE.md](PROVENANCE.md) and the
+source-only publication gate in
+[tools/check_publication.ts](tools/check_publication.ts) apply here.
 Externally suggested compiler behavior remains a hypothesis until reproduced
 locally. A confirmed law must name its in-repository evidence, scope, and
 confirmation date. An exact match proves the cited source shape; broader claims
@@ -50,7 +52,8 @@ must be tested on more than one function before being generalized.
   returns through `bx lr` is evidence for reclassification, a different
   toolchain, or deliberate assembly rather than ordinary approved-compiler C.
 - **Evidence:** the independently reproduced compiler experiment and classified
-  regions documented in [CONVENTIONS.md](CONVENTIONS.md#approved-compiler-prologue-evidence).
+  regions recorded in the tracked classification ledger and its generated
+  manifest.
 - **Confirmed:** 2026-07-19.
 
 ### Volatile stores fence load hoisting
@@ -116,11 +119,10 @@ must be tested on more than one function before being generalized.
   installed match. Consistent with the sibling repository's finding
   that the `rom_f9000` audio bank links the prebuilt stock m4a library,
   and with `pret/pokeruby` compiling its m4a unit with `old_agbcc`.
-- **Governance:** adopting `old_agbcc` as a second approved compiler
-  for the identified stock-library functions is Pascal's call; the
-  provenance section of [CONVENTIONS.md](CONVENTIONS.md#approved-compiler-bundle) holds the
-  pending decision. Until adopted, these functions stay reconstruction
-  assembly.
+- **Governance:** `old_agbcc` is admitted only for the source-scoped regions
+  whose compiler provenance and pinned bundle digests are recorded in
+  [tools/alchemy_gcc.ts](tools/alchemy_gcc.ts). Other functions stay
+  reconstruction assembly until they have their own exact-byte evidence.
 - **Recorded:** 2026-07-22.
 - **The stratum is wider than the audio bank (2026-07-24).** `08006c24` — a
   byte-compare helper in the `DEFAULT_ABI_SOURCES` library TU, nowhere near

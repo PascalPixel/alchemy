@@ -3024,3 +3024,33 @@ This is the general lever for the related-constants family, and it is the mirror
 of the `Value_<addr>` trick: when the reference *loads* two related constants
 separately, break the relationship with distinct symbols; when it *derives* one
 from another, name the source value and write the arithmetic.
+
+## Addendum (2026-07-26): the IME-disable idiom, and check the tree before concluding
+
+Disabling interrupts around a critical section, the references store the IME
+register's **own address** into it:
+
+    ldr  r0, [pc, #40]    @ 0x04000208
+    ldrh r4, [r0, #0]     @ save
+    strh r0, [r0, #0]     @ disable: writes 0x0208, bit 0 clear
+
+Only bit 0 of IME is meaningful, so any even value disables. Write it literally:
+
+```c
+volatile u16 *interrupt_master = (volatile u16 *)0x04000208;
+u32 saved = *interrupt_master;
+*interrupt_master = (u16)(u32)interrupt_master;   /* not `= 0' */
+...
+*interrupt_master = saved;
+```
+
+`= 0` uses a zero register and `= 0x0208` pools the constant separately; neither
+matches.
+
+**And the process point, which cost more than the idiom is worth.** Earlier today
+I tested those two spellings on `0800651c`, failed, and wrote up "a cse/combine
+difference in the reference compiler, not a source shape — not worth a mode".
+The correct spelling was already sitting in `work/hand/0800430c/0800430c.c`,
+written by an earlier session. **Before concluding that no source shape exists,
+grep the existing candidates for the construct.** Two failed guesses is not a
+search.

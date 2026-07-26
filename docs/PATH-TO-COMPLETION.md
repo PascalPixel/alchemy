@@ -1,6 +1,9 @@
 # Path to completion (measured 2026-07-26)
 
-`[1,250 of 2,058]`. 808 `c_candidate` regions remain. This file exists because
+`[1,250 of 2,015]`. 765 `c_candidate` regions remain. **Y dropped from 2,058 on
+2026-07-26 when the 43 `mov ip, pc` regions were moved into the existing
+`nonstandard_thumb_call_module` class — see below; the count of *converted*
+regions did not change.** This file exists because
 "808 remain" is a count, not a plan, and because two family sizes published
 earlier today were both wrong from lazy fingerprints. Everything below is
 measured by `tools/remaining_survey.ts`, which decodes each region and resolves
@@ -31,7 +34,6 @@ working days; at the three-day average, about 28. Neither is a session.
 | --- | --- | --- |
 | 583 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
 | 139 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
-| 43 | not emittable: `mov ip, pc` | **a decision** (see below) |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
 
@@ -68,12 +70,15 @@ workload, and it is drafting, not compiler archaeology.
 3. **Two decisions are worth more than a week of grinding**, and they are not
    mine to make:
 
-   - **The 43 `mov ip, pc` regions.** No approved compiler can emit a return
-     address in `ip`. They are counted in Y, so the denominator currently
-     includes work that cannot be done as specified. Either they get a retention
-     class of their own — Y drops to 2,015 and the target becomes reachable — or
-     someone commits to a compiler mode for them. Leaving them in Y means the
-     project can never read as complete. `0800070c` is a likely 44th.
+   - ~~**The 43 `mov ip, pc` regions.**~~ **Settled 2026-07-26.** They were
+     never a policy question: `nonstandard_thumb_call_module` already existed,
+     with `manual_return_address_preserved_in_ip` among its stated evidence and
+     21 files listed. All 43 carry exactly that construct — `mov ip, pc`
+     followed by an indirect branch, the interworking call that keeps the return
+     address in `ip` where both approved compilers emit `bl _call_via_rN`.
+     Nobody had added them to the group's file list, so they sat in the default
+     `compiler_output` bucket. Moving them applies the project's own criteria
+     rather than relaxing them. Y is now 2,015.
 
    - **Whether byte-exactness remains the bar for the last 39%.** Every region
      touched today was understood semantically within minutes and then cost
@@ -85,8 +90,8 @@ workload, and it is drafting, not compiler archaeology.
 
 ## Recommended order
 
-1. Get a decision on the 43, and on the byte-exactness bar. Both change what
-   "complete" means before more effort is spent against the current definition.
+1. Decide the byte-exactness bar, which still changes what "complete" means
+   before more effort is spent against the current definition.
 2. Work the 86 plain regions in the 41–80 band. They are the last tier where a
    single sitting plausibly produces a conversion.
 3. Apply the `u32`-locals law to the 32 single-mask regions. Untested on a real

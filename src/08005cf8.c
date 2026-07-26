@@ -1,7 +1,9 @@
 #include "types.h"
 
-volatile unsigned long long Func_08002dd8(s32);
-void Func_0800307c(s32, s32, s32);
+typedef void (*InterruptHandler)(void);
+
+u32 Func_08002dd8(s32);
+void Func_0800307c(s32, s32, InterruptHandler);
 volatile unsigned int Func_08005cf8(void)
 {
   int new_var3;
@@ -12,6 +14,6 @@ volatile unsigned int Func_08005cf8(void)
   new_var3 = 0;
   new_var5 = (new_var4 = (new_var2 = 0x33));
   new_var = 0;
-  Func_0800307c(5, new_var, new_var3);
- do { Func_08002dd8(new_var5); } while (0);
+  Func_0800307c(5, new_var, (InterruptHandler)new_var3);
+ return Func_08002dd8(new_var5);
 }

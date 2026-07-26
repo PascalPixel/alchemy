@@ -1,6 +1,8 @@
 #include "types.h"
 
-void Func_0800307c(s32, s32, s32);
+typedef void (*InterruptHandler)(void);
+
+void Func_0800307c(s32, s32, InterruptHandler);
 void Func_08006358(void)
 {
   s16 *new_var;
@@ -13,10 +15,9 @@ void Func_08006358(void)
     }
     while (0);
     *new_var = 0;
-    Func_0800307c(7, 0, new_var2 = 0);
+    Func_0800307c(7, 0, (InterruptHandler)(new_var2 = 0));
   }
   while (0);
   new_var2 = 6;
   Func_0800307c(new_var2, 0, 0);
 }
-

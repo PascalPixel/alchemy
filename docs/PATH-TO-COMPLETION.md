@@ -1,11 +1,12 @@
 # Path to completion (measured 2026-07-26)
 
-`[1,279 of 2,001]`. 722 `c_candidate` regions remain. **Y dropped from 2,058 to 2,001 on
-2026-07-26 in two steps: 43 `mov ip, pc` regions into the existing
-`nonstandard_thumb_call_module` class, and 14 regions that read a callee-saved
-register they never write into `hidden_register_context_module`. Both classes
-predate the change and both list this exact construct in their evidence. The
-count of *converted* regions did not move.** This file exists because a
+`[1,289 of 1,999]`. 710 `c_candidate` regions remain. **Y dropped from 2,058 to
+1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
+moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
+read a callee-saved register they never write moved into
+`hidden_register_context_module`, and two false ordinary-C candidates moved
+into existing structural classes. The count of *converted* regions did not move in
+any of those reclassifications.** This file exists because a
 remaining-region headline is a count, not a plan, and because two family sizes published
 earlier today were both wrong from lazy fingerprints. Everything below is
 measured by `tools/remaining_survey.ts`, which decodes each region and resolves
@@ -23,19 +24,19 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-23 | 1,162 | +158 |
 | 2026-07-24 | 1,236 | +74 |
 | 2026-07-25 | 1,242 | +6 |
-| 2026-07-26 | 1,279 | +37 |
+| 2026-07-26 | 1,289 | +47 |
 
-**The rate is still roughly a factor of four below the 2026-07-23 peak.** That is
+**The rate is still roughly a factor of three below the 2026-07-23 peak.** That is
 not a slowdown in effort: the broad easy tier is running out, and compiler
-lineage now matters as much as drafting. At the last two days' rate 722 regions
-is roughly 34 working days; at the three-day average, about 19. The estimates
+lineage now matters as much as drafting. At the last two days' rate 710 regions
+is roughly 27 working days; at the three-day average, about 17. The estimates
 move materially with one cohort and neither is a session.
 
 ## What is actually left
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 543 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 531 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
 | 136 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
@@ -46,19 +47,33 @@ Removed from the table on 2026-07-26, into classes that already described them:
 drafting — `080e73a0` was picked as a clean 49-instruction target and turned out
 to read its base pointer out of `r9`, which no policy-valid C can express.
 
-Of the 543 plain regions, 101 have been attempted and parked with written
-root causes. The 442 never touched break down by size:
+Of the 531 plain regions, 216 have prior target-specific hand, agent, manual,
+or substantive permuter work. The other 315 are genuinely untouched. This
+split was reconstructed against `fa930c71`: bulk m2c output, match rescoring,
+and initialized-but-empty permuter states do not count as attempts; target C,
+notes, or a nonempty search state created before that commit do.
 
-| instructions | regions |
-| --- | --- |
-| ≤ 40 | 5 |
-| 41–80 | 51 |
-| 81–160 | 193 |
-| 161–320 | 105 |
-| 321+ | 88 |
+| instructions | total | attempted | untouched | untouched instructions |
+| --- | ---: | ---: | ---: | ---: |
+| ≤ 40 | 21 | 21 | 0 | 0 |
+| 41–80 | 100 | 100 | 0 | 0 |
+| 81–160 | 213 | 84 | 129 | 14,551 |
+| 161–320 | 109 | 11 | 98 | 22,009 |
+| 321+ | 88 | 0 | 88 | 56,039 |
+| **total** | **531** | **216** | **315** | **92,599** |
 
-**105,312 instructions of fresh plain code.** That is the real remaining
-workload, and it is drafting, not compiler archaeology.
+The previous 101/442 split, 51 untouched regions in the 41–80 band, and
+105,312 untouched-instruction total came from checking an incomplete set of
+artifact paths. They were not provenance-authoritative. The corrected table
+also changes the immediate strategy: the remaining 41–80 tier is now entirely
+rescue work, while almost all untouched volume starts above 80 instructions.
+The two nominal untouched entries below 41 instructions were not ordinary
+drafts. `0800070c` ends in a custom-context tail transfer to odd-tagged IWRAM
+and is now in `custom_iwram_frame_entry_module`. `080b5138` is a relocated ARM
+module, not two Thumb instructions; its 560-byte span is now split into 488
+bytes of ARM code and 72 bytes of typed literals, workspace, and jump-table
+data under `relocated_arm_runtime_module`. Those two corrections explain the
+final denominator change from 2,001 to 1,999.
 
 ## What five drafts on 2026-07-26 actually showed
 
@@ -78,7 +93,8 @@ In each case the C was written and understood in minutes. The semantics were
 never the hard part. **The 41–80 band was called "the last tier where a single
 sitting plausibly produces a conversion" earlier in this document, and today's
 evidence says even that was optimistic** — the tier is entered easily and
-finished rarely.
+finished rarely. `08006088` was later rescued with measured compiler pass
+controls; the table records the state of this first pass, not the live queue.
 
 What did convert in that pass (`08005a78`) needed two new compiler options, and was only
 attempted because its residual could be hand-verified by reordering the
@@ -169,30 +185,71 @@ remain assembly, with their best candidates and blockers recorded under
 
 The accounting is therefore six exact conversions and six newly attempted
 parks, not twelve conversions. Together they remove 913 instructions from the
-fresh queue: 461 by conversion and 452 by bounded diagnosis. The 41–80 fresh
-band falls from 63 to 51, while exact claims rise from 1,273 to 1,279.
+cohort's then-current worklist: 461 by conversion and 452 by bounded diagnosis,
+while exact claims rise from 1,273 to 1,279. The later repository-wide
+provenance audit showed that subtracting those twelve from a 63-region
+"fresh queue" did not describe the whole band; the corrected live inventory is
+in the table above.
+
+## What the provenance-audit cohort changed
+
+The audit found only four genuinely untouched plain regions in the
+41–80-instruction band at `fa930c71`. All four now convert exactly:
+
+| region | insns | bytes | exact route |
+| --- | ---: | ---: | --- |
+| `080b3398` | 71 | 172 | ordinary C; typed object restore and runtime state |
+| `080b2e30` | 73 | 168 | ordinary C; separated item, halfword, and loop cursors |
+| `08077c10` | 75 | 168 | ordinary C; advance the record before testing its saved kind |
+| `08098c08` | 79 | 196 | source-scoped existing `-fno-gcse` fingerprint |
+
+That adds 704 exact-C bytes and raises the claimed build to
+`[1,283 of 2,001]`, with 79,284 claimed bytes and zero claimed-link failures.
+It also exhausts genuinely untouched plain work in the band and established
+the ranked rescue queue for the following cohort.
+
+## What the rescue cohort changed
+
+The first six ranked medium-small rescues all now convert exactly:
+
+| region | bytes | exact route |
+| --- | ---: | --- |
+| `080a5614` | 180 | strict low-constant-before-high-move compiler fingerprint |
+| `08006088` | 96 | existing CSE-rerun and regmove pass controls |
+| `080ba918` | 94 | defined terminating-NULL return, the shared low-constant fingerprint, and pass controls |
+| `08003adc` | 146 | strict dead-OR-input reuse compiler fingerprint |
+| `0801c34c` | 156 | strict entry frame/global/table scheduling fingerprint |
+| `0800307c` | 124 | disabled second scheduling plus strict literal-before-index-shift fingerprint |
+
+That adds 796 exact-C bytes, raises the claimed build from 1,283 to 1,289, and
+brings exact-C ownership to 80,080 bytes. Independently, the two structural
+reclassifications above reduce the denominator from 2,001 to 1,999. The live
+headline is therefore `[1,289 of 1,999]`, with 710 candidates left.
+
+All four new backend fingerprints are default-off, source-routed, guarded by
+exact hard-register and dependency conditions, and covered by opt-in, opt-out,
+and unrelated-source fixtures. One low-constant mode closes two regions; the
+other three each close one. The rescue band is no longer a pile of unexplained
+near-matches, but it is also not automatic: each rule followed a hand-reordered,
+relinked proof that the proposed instruction order was exact.
 
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 543 of 722 have nothing exotic in
+1. **The bulk is volume, not blockers.** 531 of 710 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.
 
-2. **New compiler transforms have a poor and falling return; existing compiler
-   fingerprints do not.** The first pass landed two options for one conversion.
-   The next pass changed no compiler code and converted four regions by routing
-   them through three already-evidenced modes. Four other regions remain traced
-   to single-instruction compiler disagreements — a comparison lowering, a
-   critical-section store, a mask fold, and a transform-ordering conflict —
-   each of which would still be its own investigation for one to eight regions.
-   The fork's history records seven modes proposed by inspection that made
-   regions worse. The discipline is: test family/compiler fingerprints first;
-   for a new transform, reorder the generated assembly by hand, relink, and
-   confirm exactness *before* writing anything.
+2. **New compiler transforms are expensive, but a proven shared fingerprint can
+   pay twice.** This rescue pass added four narrow post-reload modes and closed
+   five regions with them; existing pass controls closed the sixth. The fork's
+   history still records seven modes proposed by inspection that made regions
+   worse. The discipline remains: test family/compiler fingerprints first; for
+   a new transform, reorder the generated assembly by hand, relink, and confirm
+   exactness *before* writing anything.
 
-3. **Two decisions are worth more than a week of grinding**, and they are not
-   mine to make:
+3. **Two classification and policy decisions were worth more than a week of
+   grinding**, and both are now settled:
 
    - ~~**The 43 `mov ip, pc` regions.**~~ **Settled 2026-07-26.** They were
      never a policy question: `nonstandard_thumb_call_module` already existed,
@@ -202,7 +259,7 @@ band falls from 63 to 51, while exact claims rise from 1,273 to 1,279.
      address in `ip` where both approved compilers emit `bl _call_via_rN`.
      Nobody had added them to the group's file list, so they sat in the default
      `compiler_output` bucket. Moving them applies the project's own criteria
-     rather than relaxing them. Y is now 2,015.
+     rather than relaxing them. At that step, Y became 2,015.
 
    - ~~**Whether byte-exactness remains the bar.**~~ **Settled 2026-07-26, and
      the earlier entry here was wrong on its facts.** It claimed pokeemerald
@@ -217,7 +274,7 @@ band falls from 63 to 51, while exact claims rise from 1,273 to 1,279.
      as debt and eliminated. Since the stated goal is pokeemerald as the desired
      *outcome*, and that outcome is 100% matching C with no assembly fallbacks,
      introducing a non-matching tier would move away from the goal, not toward
-     it. **Byte-exactness stays.** Roughly 34 working days at the current
+     it. **Byte-exactness stays.** Roughly 27 working days at the current
      two-day rate is the honest cost.
 
 ## Recommended order
@@ -226,8 +283,9 @@ Screen every target first: `grep 'mov\s*ip, pc'`, and check for a callee-saved
 register read but never written. Both classes are now reclassified out of Y, but
 the screen still costs less than a wasted draft.
 
-1. Work the 51 plain regions in the 41–80 band. They are the last tier where a
-   single sitting plausibly produces a conversion.
+1. Continue the 41–80 rescue queue, ranked by measured residual and a
+   hand-reorder proof. All 100 remaining plain regions in the band have prior
+   work; no genuinely untouched plain region remains there.
 2. Apply the `u32`-locals law to the 25 single-mask regions. Eleven more use the
    mask two to four times and need the corresponding combine; the two small
    enough to have been drafted are both in that repeated-mask group, so the

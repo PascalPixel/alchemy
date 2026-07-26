@@ -1,6 +1,5 @@
-typedef signed char s8;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
+
 s32 Func_080022ec(s32 arg0, s32 arg1);
 s32 Func_08011d94(s8 *arg0, s32 arg1, s32 arg2) {
     s32 temp_r6, temp_r5, temp_r3, result;

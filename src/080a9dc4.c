@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 struct Entry_080a9dc4 {
     u8 padding[14];

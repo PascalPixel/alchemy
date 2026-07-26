@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 s32 Func_080f38ac(s32 arg0)
 {

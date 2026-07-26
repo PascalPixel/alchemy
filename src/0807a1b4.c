@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 struct State_0807a1b4 {
     u8 padding[248];

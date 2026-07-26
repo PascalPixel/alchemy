@@ -1,6 +1,5 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
+
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void Func_08002dd8(s32);

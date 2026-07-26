@@ -1,9 +1,5 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
+
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 void Func_080e3908(void *arg0, s32 arg1, s32 arg2) {

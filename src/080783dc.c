@@ -1,6 +1,5 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
+
 struct State { u8 padding[0x36]; s16 max; s16 pad2; s16 pos; };
 struct State *Func_08077394(s32);
 void Func_0807822c(s32);

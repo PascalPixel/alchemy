@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 extern volatile s32 Data_03001e40;
 s32 Func_08002304(s32, s32) __attribute__((const));

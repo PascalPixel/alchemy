@@ -1,5 +1,4 @@
-typedef signed char s8;
-typedef signed int s32;
+#include "types.h"
 
 void Func_0801eddc(void *arg0, s32 arg1)
 {

@@ -1,6 +1,4 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
+#include "types.h"
 
 struct Fields_0808b248 {
     u8 filler[0x1d6];

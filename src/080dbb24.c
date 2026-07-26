@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 typedef struct {
     u8 unknown00[9];

@@ -1,6 +1,4 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 struct Child_08099128 {
     u8 padding[35];

@@ -1,8 +1,5 @@
 #include "types.h"
 
-typedef int bool;
-#define NULL ((void *)0)
-
 extern u8 *Data_03001ebc;
 
 void Func_0808b9f8(void) {

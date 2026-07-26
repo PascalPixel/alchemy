@@ -1,6 +1,5 @@
 #include "types.h"
 
-typedef int bool;
 void Func_08091240(unsigned int arg0)
 {
   s16 *temp_r3;

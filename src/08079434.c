@@ -1,6 +1,5 @@
 #include "types.h"
 
-typedef int bool;
 void Func_08079434(s32 arg0, s32 arg1) {
     s32 f = 0xF;
     s32 sh = 4 & arg0;

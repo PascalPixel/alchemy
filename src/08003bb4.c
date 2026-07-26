@@ -1,7 +1,5 @@
 #include "types.h"
 
-typedef int bool;
-#define NULL ((void *)0)
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 extern s8 Data_03001cd4;

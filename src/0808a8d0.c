@@ -1,6 +1,5 @@
 #include "types.h"
 
-typedef int bool;
 s8 Func_0808a8d0(s32 arg0)
 {
   u8 *new_var;

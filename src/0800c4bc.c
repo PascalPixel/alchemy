@@ -1,6 +1,5 @@
 #include "types.h"
 
-typedef int bool;
 s32 Func_0800c2d8(void *, s32);
 void Func_0800c4bc(void *arg0, s32 arg1)
 {

@@ -6,10 +6,13 @@ struct Triple080990cc {
     s32 z;
 };
 
+struct Particle_08099160;
+
 void Func_0800447c(s32, s32, struct Triple080990cc *);
 
-void Func_080990cc(u8 *arg)
+void Func_080990cc(struct Particle_08099160 *particle)
 {
+    u8 *arg = (u8 *)particle;
     struct Triple080990cc local;
     s16 value;
     s32 raw;

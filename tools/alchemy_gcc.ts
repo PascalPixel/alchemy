@@ -90,7 +90,16 @@ const NO_RERUN_CSE_AFTER_LOOP_SOURCES = new Set(["08006088", "0808c30c", "080ba9
 // shared address alive across the branch instead of recomputing it inside.
 // 08098c08 similarly needs its stack-vector base split from the later child
 // pointer; GCSE coalesces the base into r7 and forces the loop counter into r8.
-const NO_GCSE_SOURCES = new Set(["0801ed40", "08098c08", "080a45cc", "080b2720"]);
+// 080981b0 has two consecutive random calls whose difference feeds a particle
+// field. GCSE extends the first result through the second call and rotates the
+// particle-loop allocation; disabling it retains the reference call/result
+// lifetimes.
+// 080b3284 keeps one message-base value across its forced, limit, and success
+// branches. GCSE rematerializes the branch-specific IDs and prevents the
+// reference tail merge.
+const NO_GCSE_SOURCES = new Set([
+  "0801ed40", "080981b0", "08098c08", "080a45cc", "080b2720", "080b3284",
+]);
 // This bounded-angle convergence loop only retains the reference allocation
 // when GCC does not perform its expensive-expression rewrite.  The rewrite
 // rotates r0-r2 and folds each signed clamp into a shorter non-reference form.
@@ -110,7 +119,7 @@ const NO_CONTIGUOUS_IMMEDIATE_SOURCES = new Set(["080a1090", "08005a78", "0800d3
 const SPLIT_GROUP_BASE_SOURCES = new Set(["08005a78"]);
 // These references emit every parameter save before the body; ours otherwise
 // leaves one after the pool load that follows it. See alchemy-gcc.
-const HOIST_PARAMETER_SAVE_SOURCES = new Set(["080053e8", "08019bac"]);
+const HOIST_PARAMETER_SAVE_SOURCES = new Set(["08005394", "080053e8", "08019bac"]);
 // The reference saves the second parameter before the first; ours always follows
 // parameter order. Two halfwords, and the whole difference in 08093054.
 const ENTRY_SAVES_DESCENDING_SOURCES = new Set(["08093054"]);
@@ -124,10 +133,12 @@ const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78"]);
 // 08021d88 likewise needs original-order tie breaking for its frame adjustment
 // and two split constants; its source order then reproduces the ROM exactly.
 const NO_SCHED_DEPEND_COUNT_SOURCES = new Set([
-  "08002fb0", "08003e10", "080053e8", "0800d304", "08019bac", "08021d88",
+  "08002fb0", "08003e10", "08005394", "080053e8", "0800d304", "08019bac", "08021d88",
 ]);
-// The reference issues the destination copy ahead of the control word's `orrs`.
-const MOVE_BEFORE_ALU_SOURCES = new Set(["08002fb0", "08003e10", "080053e8", "0800d304", "08019bac"]);
+// The reference issues the destination copy ahead of the following ALU work.
+const MOVE_BEFORE_ALU_SOURCES = new Set([
+  "08002fb0", "08003e10", "08005394", "080053e8", "0800d304", "08019bac",
+]);
 // This palette-row scan ANDs a loaded halfword against a hoisted 0xF800 mask.
 // The AND is a two-address *thumb_andsi3_insn, so regmove's forward pass may
 // overwrite either input; it rejects the mask operand at reg_is_remote_constant_p
@@ -172,7 +183,7 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // (work/hand/080b5ad4/NOTES.md).
 const GROUPED_DMA_STORE_SOURCES = new Set([
   "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
-  "08004a5c", "08004a94", "080053e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "08019bac",
+  "08004a5c", "08004a94", "08005394", "080053e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "08019bac",
   "0801d980",
   "080251d4", "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
   "0808fecc", "08004760", "08005a78", "080037d4", "080b5ad4", "0800300c", "080f377c",
@@ -806,7 +817,7 @@ function selfTest(): void {
   if (JSON.stringify(groupedDma) !== JSON.stringify([
     "08002f10", "08002fb0", "0800300c", "080037d4", "08003e10", "08004760",
     "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c",
-    "08004a94", "080053e8", "08005a78", "0800bc48", "0800bdd4", "0800c0f4", "0800d304",
+    "08004a94", "08005394", "080053e8", "08005a78", "0800bc48", "0800bdd4", "0800c0f4", "0800d304",
     "080170c4", "08019bac", "0801d980", "080251d4", "080284dc", "0808fecc", "080958a8",
     "0809bb34", "080a1090", "080b5ad4", "080c0184", "080c08a8", "080f377c",
   ])) {
@@ -827,18 +838,25 @@ function selfTest(): void {
     "-fno-sched-depend-count",
     "-fthumb-hoist-parameter-save",
   ];
-  const copiedDecompressor = cflagsForTargetSource("gs1", "/tmp/080053e8.c");
-  const copiedDecompressorDirect = directCompilerCommand(
-    "/tmp/080053e8.i", "/tmp/080053e8.s", "080053e8.c", "/tmp/080053e8.c",
-  );
-  const copiedDecompressorNeighbor = cflagsForTargetSource("gs1", "/tmp/080053ec.c");
-  const copiedDecompressorGs2 = cflagsForTargetSource("gs2", "/tmp/080053e8.c");
-  for (const flag of copiedDecompressorFlags) {
-    if (!copiedDecompressor.includes(flag) ||
-        !copiedDecompressorDirect.includes(flag) ||
-        copiedDecompressorNeighbor.includes(flag) ||
-        copiedDecompressorGs2.includes(flag)) {
-      throw new Error(`080053e8 copied-decompressor routing self-test failed for ${flag}`);
+  for (const stem of ["08005394", "080053e8"]) {
+    const copiedDecompressor = cflagsForTargetSource("gs1", `/tmp/${stem}.c`);
+    const copiedDecompressorDirect = directCompilerCommand(
+      `/tmp/${stem}.i`, `/tmp/${stem}.s`, `${stem}.c`, `/tmp/${stem}.c`,
+    );
+    const copiedDecompressorGs2 = cflagsForTargetSource("gs2", `/tmp/${stem}.c`);
+    for (const flag of copiedDecompressorFlags) {
+      if (!copiedDecompressor.includes(flag) ||
+          !copiedDecompressorDirect.includes(flag) ||
+          copiedDecompressorGs2.includes(flag)) {
+        throw new Error(`${stem} copied-decompressor routing self-test failed for ${flag}`);
+      }
+    }
+  }
+  for (const source of ["/tmp/08005398.c", "/tmp/080053ec.c"]) {
+    for (const flag of copiedDecompressorFlags) {
+      if (cflagsForTargetSource("gs1", source).includes(flag)) {
+        throw new Error(`${source} copied-decompressor neighbor routing self-test failed for ${flag}`);
+      }
     }
   }
   const copyLifetimeFlags = cflagsForTargetSource("gs1", "/tmp/08006088.c");
@@ -856,11 +874,17 @@ function selfTest(): void {
     throw new Error("0808c30c CSE-rerun routing self-test failed");
   }
   if (!cflagsForTargetSource("gs1", "/tmp/0801ed40.c").includes("-fno-gcse") ||
+      !cflagsForTargetSource("gs1", "/tmp/080981b0.c").includes("-fno-gcse") ||
       !cflagsForTargetSource("gs1", "/tmp/08098c08.c").includes("-fno-gcse") ||
+      !cflagsForTargetSource("gs1", "/tmp/080b3284.c").includes("-fno-gcse") ||
       cflagsForTargetSource("gs1", "/tmp/0801ed44.c").includes("-fno-gcse") ||
+      cflagsForTargetSource("gs1", "/tmp/080981b4.c").includes("-fno-gcse") ||
       cflagsForTargetSource("gs1", "/tmp/08098c0c.c").includes("-fno-gcse") ||
+      cflagsForTargetSource("gs1", "/tmp/080b3288.c").includes("-fno-gcse") ||
       cflagsForTargetSource("gs2", "/tmp/0801ed40.c").includes("-fno-gcse") ||
-      cflagsForTargetSource("gs2", "/tmp/08098c08.c").includes("-fno-gcse")) {
+      cflagsForTargetSource("gs2", "/tmp/080981b0.c").includes("-fno-gcse") ||
+      cflagsForTargetSource("gs2", "/tmp/08098c08.c").includes("-fno-gcse") ||
+      cflagsForTargetSource("gs2", "/tmp/080b3284.c").includes("-fno-gcse")) {
     throw new Error("no-GCSE routing self-test failed");
   }
   if (!cflagsForTargetSource("gs1", "/tmp/08021d88.c").includes("-fno-sched-depend-count") ||

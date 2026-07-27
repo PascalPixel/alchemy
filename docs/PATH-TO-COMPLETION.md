@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-27)
 
-`[1,304 of 1,999]`. 695 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,309 of 1,999]`. 690 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -25,20 +25,20 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-24 | 1,236 | +74 |
 | 2026-07-25 | 1,242 | +6 |
 | 2026-07-26 | 1,292 | +50 |
-| 2026-07-27 | 1,304 | +12 (partial day) |
+| 2026-07-27 | 1,309 | +17 (partial day) |
 
 **The rate is still roughly a factor of three below the 2026-07-23 peak.** That is
 not a slowdown in effort: the broad easy tier is running out, and compiler
 lineage now matters as much as drafting. At the last two completed days' rate,
-695 regions is roughly 26 working days; at the three-day average, about 16. The
+690 regions is roughly 25 working days; at the three-day average, about 16. The
 estimates move materially with one cohort and neither is a session.
 
 ## What is actually left
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 518 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
-| 134 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
+| 514 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 133 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
 
@@ -335,9 +335,54 @@ All three floors use natural typed C and survived the relevant routed mode sweep
 none uses hard-register locals, volatile matching devices, compiler
 barriers, or inline assembly.
 
+## What the five-region exact batch changed
+
+Five more regions now compile byte-for-byte exactly:
+
+| region | bytes | exact route |
+| --- | ---: | --- |
+| `08005340` | 84 | the four existing copied-decompressor scheduling and grouped-DMA modes |
+| `080a3e88` | 102 | default compiler; typed runtime, entry array, and count fields |
+| `080ad508` | 172 | default compiler; typed four-object teardown and reconstruction |
+| `080b8fd4` | 216 | default compiler; typed state, secondary state, transfer block, and IWRAM calls |
+| `080a9aec` | 168 | strict GS1-only three-word Thumb minipool ordering fingerprint |
+
+That adds 742 exact-C bytes, raises the claimed build to
+`[1,309 of 1,999]`, and brings exact-C ownership to 84,068 bytes. The measured
+remainder is 690 regions: 514 plain, 133 DMA, 36 mask, and 7 twelve-store
+regions. `080a3d6c`, which `080a3e88` calls, also now has its recovered argument
+and return-pointer ABI instead of an unprototyped m2c declaration; its existing
+48-byte claim remains exact.
+
+The `080a9aec` source already reproduced every instruction, register, branch,
+and pool position with the stock compiler. Its entire six-halfword residual
+was the rotation of three literal-pool words. The new compiler option is
+default-off, requires exactly three live four-byte Thumb pool nodes, checks
+their recorded reach constraints, and is routed only to GS1 `080a9aec`.
+Compiler tests cover default behavior, explicit opt-out, the exact opt-in
+order, and an unchanged two-word control pool.
+
+Seven more clean reconstructions were stopped at reproducible floors rather
+than counted:
+
+| region | best measured shape | remaining blocker |
+| --- | --- | --- |
+| `0800c004` | 194/194 bytes, 10 differing halfwords | the grouped DMA setup still schedules its independent descriptor inputs in a different order |
+| `080c0eb8` | 36/36 bytes, 18 differing halfwords | DSE removes the transient `+4` zero store before the twelve-store recognizer can form the reference group |
+| `080b7548` | 148/148 bytes, 19 differing halfwords | induction-variable allocation plus an unexplained return scratch value |
+| `080f4028` | 140/140 bytes, 14 differing halfwords | first local CSE merges two independently constructed `0x00fa0000` values across indirect calls |
+| `0801fd34` | 80/80 bytes, 4 differing halfwords | two independent instruction transpositions remain after disabling second scheduling |
+| `0808d394` | 148/148 bytes, 47 differing halfwords | register allocation and scheduling after the four sentinel-list semantics were recovered |
+| `0801c188` | 148/148 bytes, 13 differing halfwords | one independent transfer-base/index/table scheduling window; a closer volatile form was rejected as a codegen device |
+
+Each floor uses maintainable C and excludes hard-register locals, inline
+assembly, barriers, and volatile matching tricks. The searches included the
+relevant complete existing mode/pair sweeps; no non-exact compiler route was
+added.
+
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 518 of 695 have nothing exotic in
+1. **The bulk is volume, not blockers.** 514 of 690 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.
@@ -386,8 +431,8 @@ register read but never written. Both classes are now reclassified out of Y, but
 the screen still costs less than a wasted draft.
 
 1. Continue the 41–80 rescue queue, ranked by measured residual and a
-   hand-reorder proof. All 100 remaining plain regions in the band have prior
-   work; no genuinely untouched plain region remains there.
+   hand-reorder proof. All remaining plain regions in the band have prior work;
+   no genuinely untouched plain region remains there.
 2. Apply the `u32`-locals law to the 25 single-mask regions. Eleven more use the
    mask two to four times and need the corresponding combine; the two small
    enough to have been drafted are both in that repeated-mask group, so the

@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-27)
 
-`[1,328 of 1,999]`. 671 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,345 of 1,999]`. 654 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -31,21 +31,21 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-24 | 1,236 | +74 |
 | 2026-07-25 | 1,242 | +6 |
 | 2026-07-26 | 1,292 | +50 |
-| 2026-07-27 | 1,328 | +36 (partial day) |
+| 2026-07-27 | 1,345 | +53 (partial day) |
 
 **The recent three-day average is still roughly a factor of four below the
 2026-07-23 peak.** That is not a slowdown in effort: the broad easy tier is
 running out, and compiler lineage now matters as much as drafting. At the last
-two completed days' rate, 671 regions is roughly 24 working days; at the
-three-day average, about 16. The estimates move materially with one cohort and
+two completed days' rate, 654 regions is roughly 23 working days; at the
+three-day average, about 18. The estimates move materially with one cohort and
 neither is a session.
 
 ## What is actually left
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 497 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
-| 131 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
+| 481 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 130 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
 
@@ -525,9 +525,54 @@ argument shift prevents the recovered quotient and callback from taking their
 reference saved registers. Its tail and literal pool are already exact, and a
 74-mode sweep found no supported route that improves the floor.
 
+## What the seventeen-region exact batch changed
+
+Seventeen more regions now compile byte-for-byte exactly:
+
+| region | bytes | exact route |
+| --- | ---: | --- |
+| `08003d28` | 196 | default compiler; typed affine-matrix allocation and fixed-address signed division |
+| `08012204` | 168 | default compiler; typed two-layer collision-map sampling |
+| `0801b4ec` | 212 | default compiler; typed menu-selection and scroll-state update |
+| `0801d014` | 220 | existing grouped-DMA fingerprint; typed settings and five-value initialization |
+| `080209d0` | 144 | default compiler; typed window tile copy into VRAM and its mirror |
+| `0808bde0` | 224 | default compiler; typed bounded-region selection and fixed-point tests |
+| `08096048` | 248 | default compiler; typed three-state effect initialization and update |
+| `08097f80` | 172 | default compiler; source-ordered four-state effect update |
+| `08099678` | 192 | default compiler; typed object, map-layer, and collision-tile lookup |
+| `080a56c8` | 188 | default compiler; typed paged menu renderer plus its four-byte helper |
+| `080a9e48` | 200 | default compiler; typed object-effect application plus its four-byte helper |
+| `080ad35c` | 176 | default compiler; typed four-object fixed-point motion setup |
+| `080b82c4` | 208 | default compiler; typed two-object interpolation and motion setup |
+| `080b8b48` | 212 | default compiler; typed caller state and object-pair orchestration |
+| `080d6888` | 216 | default compiler; typed group/object update traversal |
+| `080f7e60` | 208 | default compiler; typed circular-slot input and cleanup loops |
+| `080fa55c` | 280 | independently proven stock `old_agbcc -O2` CGB-audio initializer fingerprint |
+
+That adds 3,464 exact-C bytes, raises the claimed build to
+`[1,345 of 1,999]`, and brings exact-C ownership to 90,664 bytes. The measured
+remainder is 654 regions: 481 plain, 130 DMA, 36 mask, and 7 twelve-store
+regions. The source-only full build still owns all 8,388,608 bytes with zero
+fallback or unowned bytes; ordinary assembly debt is now 400,836 bytes.
+
+Two earlier compiler floors, `08097f80` and `080ad35c`, closed through better
+maintainable source shapes rather than register pinning, fake volatility, or
+inline assembly. `08003d28` was independently rebuilt through the approved
+compiler, assembler, linker, and objcopy and matched all 196 bytes; its audit
+also checks the complete region boundary, twelve callers plus dispatch, the
+eight-byte request/matrix layouts, and defined shift arithmetic.
+
+The batch also tightened interfaces that cross region boundaries:
+`080122ac` now passes the recovered position pointer to `08012204`;
+`080a32b8` uses the actual three-word ABI of `080a9e48`; `080b8b48` and
+`080b82c4` agree on their four scalar arguments; and `080fa2a0` passes the
+typed CGB-channel pointer to `080fa55c`. The claimed-build symbol gate caught
+and rejected an initially misnamed trailing helper before integration; its
+verified address is `080a5780`.
+
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 497 of 671 have nothing exotic in
+1. **The bulk is volume, not blockers.** 481 of 654 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.

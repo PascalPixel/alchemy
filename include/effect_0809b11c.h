@@ -14,7 +14,9 @@ struct Effect_0809b11c {
     s32 unknown1c;
     s32 speed_x;
     s32 speed_z;
-    u8 padding28[0x18];
+    u8 padding28[0x0a];
+    u16 unknown32;
+    u8 padding34[0x0c];
     s8 state;
     s8 unknown41;
     s8 initial_state;

@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-27)
 
-`[1,295 of 1,999]`. 704 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,304 of 1,999]`. 695 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -25,20 +25,20 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-24 | 1,236 | +74 |
 | 2026-07-25 | 1,242 | +6 |
 | 2026-07-26 | 1,292 | +50 |
-| 2026-07-27 | 1,295 | +3 (partial day) |
+| 2026-07-27 | 1,304 | +12 (partial day) |
 
 **The rate is still roughly a factor of three below the 2026-07-23 peak.** That is
 not a slowdown in effort: the broad easy tier is running out, and compiler
 lineage now matters as much as drafting. At the last two completed days' rate,
-704 regions is roughly 26 working days; at the three-day average, about 16. The
+695 regions is roughly 26 working days; at the three-day average, about 16. The
 estimates move materially with one cohort and neither is a session.
 
 ## What is actually left
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 526 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
-| 135 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
+| 518 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 134 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
 
@@ -298,9 +298,46 @@ and brings exact-C ownership to 81,074 bytes. The source-only full build owns
 all 8,388,608 bytes with zero fallback or unowned bytes. The measured remainder
 is 704 regions: 526 plain, 135 DMA, 36 mask, and 7 twelve-store regions.
 
+## What the next nine-region cohort changed
+
+Nine more regions now compile byte-for-byte exactly:
+
+| region | bytes | exact route |
+| --- | ---: | --- |
+| `08005394` | 84 | the four existing copied-decompressor scheduling and grouped-DMA modes |
+| `08099738` | 216 | default compiler; typed controller, state, object, and global fields |
+| `08028f98` | 252 | default compiler; typed menu defaults and explicit result exits |
+| `080981b0` | 228 | existing `-fno-gcse` route; preserved random-result lifetimes |
+| `08026e80` | 296 | default compiler; typed countdown and link-signature state |
+| `080b3284` | 276 | existing `-fno-gcse` route; shared message-base lifetime |
+| `0801fba8` | 220 | default compiler; shared lower and upper storage-bank pointers |
+| `080b7994` | 280 | default compiler; typed effect-cycle state |
+| `08099160` | 400 | default compiler; typed 16-particle orbit and finish sequence |
+
+That adds 2,252 exact-C bytes, raises the claimed build to
+`[1,304 of 1,999]`, and brings exact-C ownership to 83,326 bytes. The measured
+remainder is 695 regions: 518 plain, 134 DMA, 36 mask, and 7 twelve-store
+regions. Eight of the nine use either the default compiler or one existing
+pass-control route. `08005394` extends the exact `080053e8` copied-decompressor
+family to one more source; all 16 subsets of its four already-supported modes
+were measured, and only the complete combination matches. Its route has
+GS1-target, neighboring-stem, direct-command, and GS2 opt-out tests.
+
+Three further typed drafts were retained as measured floors rather than counted:
+
+| region | best measured shape | remaining blocker |
+| --- | --- | --- |
+| `08095680` | 248/248 bytes, 70 differing halfwords | the reference keeps the global `0x236` offset live and subtracts 66 to reach the selected-object slot; GCC rematerializes `0x1f4`, adding an instruction and shifting the remaining allocation |
+| `08016f2c` | 208/216 bytes, 60 differing halfwords | GCC merges two reference dirty-flag address/store paths into a shared tail; that merge is the complete eight-byte size delta, with the remaining reported differences dominated by shifted branches and literals |
+| `08096810` | 336/336 bytes, 9 differing halfwords | the complete residual is one global `r6`/`r7` allocation swap between the mode and selected-object state; control flow, calls, stores, pool, and size all agree |
+
+All three floors use natural typed C and survived the relevant routed mode sweeps;
+none uses hard-register locals, volatile matching devices, compiler
+barriers, or inline assembly.
+
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 526 of 704 have nothing exotic in
+1. **The bulk is volume, not blockers.** 518 of 695 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.

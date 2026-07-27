@@ -1,4 +1,5 @@
 #include "types.h"
+#include "map.h"
 
 struct Object_08099678 {
     u8 padding00[8];
@@ -14,16 +15,6 @@ struct Runtime_08099678 {
     s16 field_17e;
     u8 padding180[0x1e];
     s16 mode;
-};
-
-struct MapLayer_08099678 {
-    u8 *tiles;
-    u8 padding04[0x2c];
-};
-
-struct MapState_08099678 {
-    u8 padding000[0x130];
-    struct MapLayer_08099678 layers[3];
 };
 
 struct Global_08099678 {
@@ -49,7 +40,7 @@ void Func_08099678(void)
     runtime = Data_03001ebc;
     object = Func_0808ba1c(Data_02000240.object_id);
     /* The map-state pointer slot is 19 words before the runtime pointer slot. */
-    tile = (u8 *)*(struct MapState_08099678 **)(runtime_slot_address - 76);
+    tile = (u8 *)*(struct MapState **)(runtime_slot_address - 76);
 
     if (runtime->mode == 3) {
         u32 tile_x;
@@ -69,8 +60,8 @@ void Func_08099678(void)
             ((tile_x + (tile_y << 5)) << 2));
     } else {
         if (object->map_layer <= 2) {
-            tile = ((struct MapState_08099678 *)tile)
-                ->layers[object->map_layer].tiles;
+            tile = (u8 *)((struct MapState *)tile)
+                ->layers[object->map_layer].cells;
         } else
             tile = (u8 *)0x02010000;
 

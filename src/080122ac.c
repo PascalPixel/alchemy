@@ -1,10 +1,11 @@
 #include "types.h"
+#include "map.h"
 
-struct Position_080122c8;
+struct WorldPosition;
 
-s32 Func_08012204(struct Position_080122c8 *);
+s32 Func_08012204(struct WorldPosition *);
 
-s32 Func_080122ac(s32 arg0, struct Position_080122c8 *position) {
+s32 Func_080122ac(s32 arg0, struct WorldPosition *position) {
     if ((u32)(Func_08012204(position) - 5) <= 7U) {
         return 0;
     }

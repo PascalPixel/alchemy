@@ -1,14 +1,5 @@
 #include "types.h"
-
-struct State_080ad508 {
-    u8 padding_000[0x224];
-    void *objects[4];
-    s16 positions_x[4];
-    s16 positions_y[4];
-    s32 phases[4];
-};
-
-extern struct State_080ad508 *Data_03001f2c;
+#include "four_object_motion.h"
 extern s32 Data_080af304[];
 
 void Func_08009038(void *);
@@ -19,7 +10,7 @@ s32 Func_080041d8(void (*)(void), s32);
 
 void Func_080ad508(void)
 {
-    struct State_080ad508 *state = Data_03001f2c;
+    struct FourObjectMotionState *state = Data_03001f2c;
     s32 index;
 
     for (index = 0; index < 4; index++) {

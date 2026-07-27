@@ -1,11 +1,9 @@
-#include "types.h"
+#include "effect_0809b11c.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
-void Func_0809ba5c(void *arg0, s32 arg1, s32 arg2) {
-    M2C_FIELD(arg0, s32 *, 0xC) = 0x80000000;
-    M2C_FIELD(arg0, s32 *, 0x10) = 0x80000000;
-    M2C_FIELD(arg0, s32 *, 4) = arg1;
-    M2C_FIELD(arg0, s32 *, 8) = arg2;
-    M2C_FIELD(arg0, s32 *, 0x1C) = 0;
+void Func_0809ba5c(struct EffectSlot *effect, s32 x, s32 z) {
+    effect->target_x = EFFECT_NO_TARGET;
+    effect->target_z = EFFECT_NO_TARGET;
+    effect->x = x;
+    effect->z = z;
+    effect->speed = 0;
 }

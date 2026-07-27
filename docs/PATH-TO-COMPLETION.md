@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-27)
 
-`[1,309 of 1,999]`. 690 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,315 of 1,999]`. 684 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -25,19 +25,19 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-24 | 1,236 | +74 |
 | 2026-07-25 | 1,242 | +6 |
 | 2026-07-26 | 1,292 | +50 |
-| 2026-07-27 | 1,309 | +17 (partial day) |
+| 2026-07-27 | 1,315 | +23 (partial day) |
 
 **The rate is still roughly a factor of three below the 2026-07-23 peak.** That is
 not a slowdown in effort: the broad easy tier is running out, and compiler
 lineage now matters as much as drafting. At the last two completed days' rate,
-690 regions is roughly 25 working days; at the three-day average, about 16. The
+684 regions is roughly 25 working days; at the three-day average, about 16. The
 estimates move materially with one cohort and neither is a session.
 
 ## What is actually left
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 514 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 508 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
 | 133 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
@@ -380,9 +380,54 @@ assembly, barriers, and volatile matching tricks. The searches included the
 relevant complete existing mode/pair sweeps; no non-exact compiler route was
 added.
 
+## What the six-region family cohort changed
+
+Six more regions now compile byte-for-byte exactly:
+
+| region | bytes | exact route |
+| --- | ---: | --- |
+| `080aac84` | 140 | default compiler; exact palette-transform sibling exposed the original loop and live-range shape |
+| `080ad274` | 164 | default compiler; typed four-object teardown/rebuild sibling |
+| `080ad5b4` | 64 | default compiler; typed object-position update with defined scalar exit values |
+| `080babdc` | 144 | existing source-scoped `-mthumb-immediate-latency` scheduling fingerprint |
+| `080b90ac` | 76 | default compiler; natural counted actor-list loop shared with an exact sibling |
+| `080a47b4` | 76 | default compiler; typed state/table access with a source-visible repeated value use |
+
+That adds 664 exact-C bytes, raises the claimed build to
+`[1,315 of 1,999]`, and brings exact-C ownership to 84,732 bytes. The measured
+remainder is 684 regions: 508 plain, 133 DMA, 36 mask, and 7 twelve-store
+regions. No denominator class moved.
+
+`080aac84` and `080ad274` are direct structural siblings of already exact
+sources, but their behavior was independently recovered from their own ROM
+regions. `080babdc` is a new main-ROM witness for an existing default-off
+compiler mode: without it, the natural 144-byte source differs only by one
+independent two-instruction ordering pair; with it, all 144 bytes match. Its
+GS1 source route is covered through the ordinary flags and direct compiler
+paths, with neighboring-stem and GS2 opt-out tests.
+
+Eight further investigations produced cleaner measured floors rather than
+claims:
+
+| region | best measured shape | remaining blocker |
+| --- | --- | --- |
+| `08090824` | 104/104 bytes, 3 differing halfwords | the reference initializes the zeroed DMA source before loading the DMA base; the best two existing modes leave only that sched2 window |
+| `0800430c` | 76/76 bytes, 3 differing instruction slots | one loop block wants copy/AND before a constant, while enabling second scheduling damages the otherwise exact entry, exit, and pool |
+| `080bd7a4` | 52/56 bytes, 28 differing halfwords | volatile grouping preserves all three repeated DMA descriptors, but CSE hoists the shared zero/control constants instead of rematerializing each group |
+| `080b1dec` | 140/148 bytes, 51 differing halfwords | the loop offset loses the allocator contest and forces an eight-byte frame; narrowing it restores the reference register family but adds mandatory truncation |
+| `080c1ebc` | 148/148 bytes, 30 differing halfwords | an exact fallthrough form relied on undefined non-void return behavior and was rejected; fully defined returns change allocation |
+| `08004c1c` | 84/80 bytes, 31 differing halfwords | early DSE removes four overwritten identity lanes before the post-RA twelve-store recognizer can see the reference group |
+| `0800fec8` | 140/140 bytes, 2 differing halfwords (2 bytes) | reload uses a temporary for one shift pair instead of coalescing it in place; every other instruction and pool byte agrees |
+| `080200cc` | 132/132 bytes, 19 differing halfwords | two existing entry-order modes recover the target lifetimes, but sixteen entry scheduling slots and one r9 copy register still differ |
+
+The `080bd7a4` compiler experiment was isolated from the live compiler fork.
+Its repeated, mixed, and gapped volatile-store tests pass, but no compiler
+change is admitted here because the experiment did not produce an exact
+region.
+
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 514 of 690 have nothing exotic in
+1. **The bulk is volume, not blockers.** 508 of 684 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.

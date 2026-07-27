@@ -22,11 +22,9 @@ extern u32 Data_03001e40;
 void Func_080974d8(struct Output *);
 u32 Func_08004458(void);
 void Func_0800447c(s32, s32, struct Output *);
-u32 Func_0809ba34(struct Effect_0809b11c *);
-void Func_0809bb34(void *);
 void Func_080f9010(s32);
 
-void Func_0809b11c(struct Effect_0809b11c *effect)
+void Func_0809b11c(struct EffectSlot *effect)
 {
     struct Output position;
     struct PositionSource_0809b11c *source;
@@ -42,12 +40,12 @@ void Func_0809b11c(struct Effect_0809b11c *effect)
         position.z = source->position.z;
         Func_080974d8(&position);
 
-        effect->initial_x = position.x;
-        effect->initial_z = (s32)((u32)position.z + 0x80000);
-        effect->saved_z = effect->initial_z;
-        effect->saved_x = effect->initial_x;
-        position.z = effect->saved_z;
-        position.x = effect->saved_x;
+        effect->x = position.x;
+        effect->z = (s32)((u32)position.z + 0x80000);
+        effect->origin_z = effect->z;
+        effect->origin_x = effect->x;
+        position.z = effect->origin_z;
+        position.x = effect->origin_x;
 
         first_random = Func_08004458();
         Func_0800447c(
@@ -57,11 +55,11 @@ void Func_0809b11c(struct Effect_0809b11c *effect)
                 + 0xc000,
             &position);
 
-        effect->result_x = position.x;
-        effect->result_z = position.z;
-        effect->speed_z = 0x50000;
-        effect->speed_x = 0x50000;
-        effect->initial_state = state;
+        effect->target_x = position.x;
+        effect->target_z = position.z;
+        effect->acceleration = 0x50000;
+        effect->max_speed = 0x50000;
+        effect->flag42 = state;
         effect->state++;
 
         if ((Data_03001e40 & 2) != 0)

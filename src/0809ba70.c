@@ -1,7 +1,7 @@
-#include "types.h"
+#include "effect_0809b11c.h"
 
-s32 Func_08009020(s32);
+void Func_08009020(void *, s32);
 
-void Func_0809ba70(s32 *arg0) {
-    Func_08009020(*arg0);
+void Func_0809ba70(struct EffectSlot *effect, s32 mode) {
+    Func_08009020(effect->object, mode);
 }

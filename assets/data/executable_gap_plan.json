@@ -421,11 +421,6 @@
       "evidence": "src/08093570.c -> asm/080935d4.s"
     },
     {
-      "address": "0x080944ec",
-      "size": 88,
-      "evidence": "asm/08094428.s -> asm/08094544.s"
-    },
-    {
       "address": "0x08095348",
       "size": 52,
       "evidence": "asm/08095290.s -> asm/0809537c.s"

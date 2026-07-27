@@ -1,15 +1,10 @@
 #include "types.h"
+#include "map.h"
 
-struct Position_080122c8 {
-    s32 x;
-    s32 pad4;
-    s32 y;
-};
-
-s32 Func_08012204(struct Position_080122c8 *);
+s32 Func_08012204(struct WorldPosition *);
 extern u8 Data_0801353c[];
 
-u8 Func_080122c8(struct Position_080122c8 *position, s32 *kind)
+u8 Func_080122c8(struct WorldPosition *position, s32 *kind)
 {
     s32 selector = Func_08012204(position);
     s32 x = position->x;

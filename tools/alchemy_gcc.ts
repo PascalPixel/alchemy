@@ -302,6 +302,12 @@ const EARLY_LITERAL_POOL_OVERLAY_SOURCES = new Set(["02000e3c", "02000dfc"]);
 const NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3a9_c_020000e4.c",
 ]);
+// This main-ROM routine has one independent entry-window ordering residual:
+// after `movs r3,#1`, the reference materializes the stack selection pointer
+// before moving the loop count into r8. The existing latency mode moves exactly
+// that pair and makes the natural typed source 144/144 bytes exact. Keep the
+// broadly disruptive scheduler model change source-scoped.
+const THUMB_IMMEDIATE_LATENCY_SOURCES = new Set(["080babdc"]);
 const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3c7_c_02000030.c",
   "assets/code/resource_3cd_c_0200004c.c",
@@ -448,6 +454,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
+    ...(THUMB_IMMEDIATE_LATENCY_SOURCES.has(stem)
+      ? ["-mthumb-immediate-latency"]
+      : []),
     ...(CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mcall-arg0-move-first"]
       : []),
@@ -761,6 +770,9 @@ export function directCompilerCommand(
     ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
+    ...(THUMB_IMMEDIATE_LATENCY_SOURCES.has(stem)
+      ? ["-mthumb-immediate-latency"]
+      : []),
     ...(CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mcall-arg0-move-first"]
       : []),
@@ -879,6 +891,22 @@ function selfTest(): void {
       ).includes(minipoolTailFirst) ||
       cflagsForTargetSource("gs2", minipoolSource).includes(minipoolTailFirst)) {
     throw new Error("080a9aec minipool routing self-test failed");
+  }
+  const thumbImmediateLatency = "-mthumb-immediate-latency";
+  const thumbImmediateSource = "/tmp/080babdc.c";
+  const thumbImmediateDirect = directCompilerCommand(
+    "/tmp/080babdc.i", "/tmp/080babdc.s", "080babdc.c", thumbImmediateSource,
+  );
+  if (JSON.stringify([...THUMB_IMMEDIATE_LATENCY_SOURCES].sort()) !==
+        JSON.stringify(["080babdc"]) ||
+      !cflagsForTargetSource("gs1", thumbImmediateSource).includes(thumbImmediateLatency) ||
+      !thumbImmediateDirect.includes(thumbImmediateLatency) ||
+      cflagsForTargetSource("gs1", "/tmp/080babe0.c").includes(thumbImmediateLatency) ||
+      directCompilerCommand(
+        "/tmp/080babe0.i", "/tmp/080babe0.s", "080babe0.c", "/tmp/080babe0.c",
+      ).includes(thumbImmediateLatency) ||
+      cflagsForTargetSource("gs2", thumbImmediateSource).includes(thumbImmediateLatency)) {
+    throw new Error("080babdc immediate-latency routing self-test failed");
   }
   const copyLifetimeFlags = cflagsForTargetSource("gs1", "/tmp/08006088.c");
   const unrelatedFlags = cflagsForTargetSource("gs1", "/tmp/0800608c.c");

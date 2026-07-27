@@ -1675,7 +1675,10 @@ against the approved bundle; full sourced notes in
 - **What they close.** `resource_3c7:0030` goes 4 → 0 mismatched bytes on
   `-mthumb-immediate-latency` alone (and `-fno-sched-depend-count` alone is a
   no-op there, as predicted). `resource_3cd:004c` goes 10 → 8 on (A) alone and
-  8 → 0 with (A) and (B) together.
+  8 → 0 with (A) and (B) together. Main-ROM `080babdc` is a third independent
+  witness for (A): its natural 144-byte C differs only by the order of
+  `mov r8,r3` and `mov r6,sp`, and the latency mode moves that pair for a
+  4 → 0-byte result.
 - **Scope:** measured on the `xgcc` fork at `-O2`. `old_agbcc` has no scheduler
   and cannot produce the interleave at all, in either direction. (A) is witnessed
   only on `movs`-immediate to `lsls`; the general "all ALU results cost 2" form is
@@ -1685,7 +1688,7 @@ against the approved bundle; full sourced notes in
   measurement above.
 - **Recorded:** 2026-07-25; mechanism corrected and second witness added the same
   day; (B)'s global form refuted and both flags implemented and measured the same
-  day.
+  day; main-ROM witness added 2026-07-27.
 
 ### Identical large constants in an argument list are a basic-block question (2026-07-25)
 

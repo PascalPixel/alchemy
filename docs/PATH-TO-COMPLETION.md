@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-27)
 
-`[1,324 of 2,000]`. 676 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,328 of 1,999]`. 671 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -9,7 +9,10 @@ into existing structural classes. Y then rose to 2,000 on 2026-07-27 when
 `080944ec` was corrected in the opposite direction: its predecessor returns
 before its own alignment and pool, while two odd-address callback references
 prove `080944ec` is an independent ordinary function. The count of *converted*
-regions did not move in any of those reclassifications.** This file exists because a
+regions did not move in any of those reclassifications. Y then returned to
+1,999 when `080c0be4` was found to consume an incoming `r4` value that ordinary
+C cannot name; its standard-ABI sibling consumes the corresponding fourth
+argument from `r3`.** This file exists because a
 remaining-region headline is a count, not a plan, and because two family sizes published
 earlier today were both wrong from lazy fingerprints. Everything below is
 measured by `tools/remaining_survey.ts`, which decodes each region and resolves
@@ -28,12 +31,12 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-24 | 1,236 | +74 |
 | 2026-07-25 | 1,242 | +6 |
 | 2026-07-26 | 1,292 | +50 |
-| 2026-07-27 | 1,324 | +32 (partial day) |
+| 2026-07-27 | 1,328 | +36 (partial day) |
 
 **The recent three-day average is still roughly a factor of four below the
 2026-07-23 peak.** That is not a slowdown in effort: the broad easy tier is
 running out, and compiler lineage now matters as much as drafting. At the last
-two completed days' rate, 676 regions is roughly 24 working days; at the
+two completed days' rate, 671 regions is roughly 24 working days; at the
 three-day average, about 16. The estimates move materially with one cohort and
 neither is a session.
 
@@ -41,7 +44,7 @@ neither is a session.
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 502 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 497 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
 | 131 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
@@ -477,9 +480,54 @@ These floors reinforce the current queue change: fresh medium regions are still
 producing exact default-compiler wins, while the short queue consists almost
 entirely of known compiler-residual rescues.
 
+## What the four-region typed batch changed
+
+Four more regions now compile byte-for-byte exactly:
+
+| region | bytes | exact route |
+| --- | ---: | --- |
+| `0800b7c0` | 168 | default compiler; typed four-object metadata refresh |
+| `08017004` | 192 | default compiler; fixed-point window interpolation through the RAM scale callback |
+| `0809b11c` | 236 | default compiler; typed three-state effect update |
+| `080fa6a0` | 248 | independently proven stock `old_agbcc -O2` audio-initializer fingerprint |
+
+That adds 844 exact-C bytes, raises the claimed build to
+`[1,328 of 1,999]`, and brings exact-C ownership to 87,200 bytes. The measured
+remainder is 671 regions: 497 plain, 131 DMA, 36 mask, and 7 twelve-store
+regions. Ordinary assembly debt is 404,300 bytes.
+
+The denominator fell by one independently of those conversions. `080c0be4`
+reads incoming `r4` before defining it, while the same-sized sibling
+`080c0cec` receives its fourth argument conventionally in `r3`. The
+`-fcall-used-r4` project ABI permits clobbering `r4`; it does not turn `r4`
+into a fifth argument register. `080c0be4` therefore moved to the existing
+`hidden_register_context_module` structural class rather than being credited
+as C.
+
+`080fa6a0` is the first delivered initializer in the already-proven stock
+audio-library compiler cohort. Its `0xfb0`-byte state layout is independently
+accounted for as a `0x50`-byte header, twelve `0x40`-byte channel records, and
+two `0x630`-byte PCM buffers. The source uses generic, locally evidenced
+callback slots; no names or types were imported from another game project.
+Because the repository invokes `old_agbcc` directly, this source is
+preprocessor-free and carries its own fixed-width typedefs.
+
+One further 228-byte reconstruction, `08002e00`, is semantics-complete and
+exact-size but remains assembly. Its best bounded result is 17 differing
+halfwords with grouped DMA, early frame allocation, and one-cycle Thumb load
+latency; four coupled post-reload scheduling windows remain after 696 targeted
+existing-mode/source-shape probes.
+
+`080c0cec` is likewise semantics-complete and exact-size at 264 bytes, but its
+best default-route form remains 40 differing halfwords. The residual is one
+connected entry allocation cascade: preserving the reference's in-place fourth
+argument shift prevents the recovered quotient and callback from taking their
+reference saved registers. Its tail and literal pool are already exact, and a
+74-mode sweep found no supported route that improves the floor.
+
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 502 of 676 have nothing exotic in
+1. **The bulk is volume, not blockers.** 497 of 671 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.

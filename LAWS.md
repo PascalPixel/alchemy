@@ -3175,3 +3175,63 @@ When a gap-shaped region has both a clean predecessor return/pool boundary and
 an odd-address callback reference, classify the callback entry independently.
 Adjacency alone must not hide ordinary decompilation debt or shrink the ledger
 denominator.
+
+## Addendum (2026-07-27): a call-clobbered register is not an argument register
+
+`080c0be4` reads `r4` before any instruction defines it and uses that value as
+the first input to `Func_080022ec`. Its same-sized sibling `080c0cec` receives
+the corresponding fourth argument conventionally in `r3`. This is not an
+effect of the project-wide `-fcall-used-r4` option: that option lets generated
+code clobber `r4`, but it does not change the ordinary Thumb parameter
+locations from `r0`–`r3` plus the stack.
+
+No direct branch or tagged pointer to `080c0be4` was found, while `080c0cec`
+has both direct callers and a tagged veneer. A computed caller cannot be ruled
+out, but it would only confirm the hidden context contract; ordinary C still
+cannot name the incoming `r4` value. `080c0be4` therefore belongs in
+`hidden_register_context_module`, not in the C denominator.
+
+Screening only for a callee-saved register that is never written is too weak.
+The decisive test is whether it is read before the function gives it a value.
+Compiler ABI flags must then be interpreted separately as allocation/clobber
+rules and argument-passing rules.
+
+## Addendum (2026-07-27): preserve conservative record aliasing when the ROM does
+
+The natural typed-structure reconstruction of `08017004` is semantics-complete
+and exact-size, but differs at 15 halfwords because the compiler moves local
+result stores ahead of later window-record loads. Naming the same naturally
+aligned halfword fields through one `FIELD(base, type, offset)` record view
+keeps their common byte-address provenance visible and restores the reference
+schedule without volatility, barriers, register pins, or undefined accesses.
+
+This is not a license to replace every recovered structure with raw offsets.
+Use the typed form first. If it is exact-size and the entire residual is
+load/store motion across calls, compare the reference's alias model: an
+original generic record or union view may have been deliberately conservative.
+Named accessors can retain readable field semantics while expressing that
+evidence honestly.
+
+## Addendum (2026-07-27): stock-compiler routes must be verified through the real pipeline
+
+`080fa6a0` is byte-exact only under the already-approved stock `old_agbcc -O2`
+audio-library route; the Camelot fork remains 228 bytes away and no supported
+single mode closes it. The independently recovered state is exactly `0xfb0`
+bytes: a `0x50`-byte header, twelve `0x40`-byte channel records, and two
+`0x630`-byte PCM buffers.
+
+The repository invokes `old_agbcc` directly for this cohort rather than
+running the normal preprocessor first. A scratch source containing
+`#include`/`#define` directives was exact only after manual preprocessing and
+failed through `candidate_show`. The integrated translation unit therefore
+uses local fixed-width typedefs and expanded MMIO expressions, and its exact
+proof is through the same source route used by the claimed build.
+
+The callback slots also need an honest placeholder representation. Local GS
+call sites prove that two slots eventually hold one-argument and three-word
+callbacks, while initialization writes the same no-argument placeholder to
+all four slots. Small unions with a `placeholder` member record that state
+without incompatible function-pointer casts or borrowed external labels.
+When a compiler cohort bypasses a build stage, always promote the source only
+after re-running the repository's real route; a manually preprocessed scratch
+proof is not yet an integration proof.

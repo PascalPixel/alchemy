@@ -119,7 +119,12 @@ const NO_CONTIGUOUS_IMMEDIATE_SOURCES = new Set(["080a1090", "08005a78", "0800d3
 const SPLIT_GROUP_BASE_SOURCES = new Set(["08005a78"]);
 // These references emit every parameter save before the body; ours otherwise
 // leaves one after the pool load that follows it. See alchemy-gcc.
-const HOIST_PARAMETER_SAVE_SOURCES = new Set(["08005394", "080053e8", "08019bac"]);
+const HOIST_PARAMETER_SAVE_SOURCES = new Set(["08005340", "08005394", "080053e8", "08019bac"]);
+// This effect-slot dispatcher already matches every instruction, register,
+// branch, and pool position. The reference rotates the tail of its strict
+// three-word Thumb minipool to the front; keep that layout fingerprint scoped
+// to this source and GS1.
+const MINIPOOL_TAIL_FIRST_SOURCES = new Set(["080a9aec"]);
 // The reference saves the second parameter before the first; ours always follows
 // parameter order. Two halfwords, and the whole difference in 08093054.
 const ENTRY_SAVES_DESCENDING_SOURCES = new Set(["08093054"]);
@@ -133,11 +138,11 @@ const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78"]);
 // 08021d88 likewise needs original-order tie breaking for its frame adjustment
 // and two split constants; its source order then reproduces the ROM exactly.
 const NO_SCHED_DEPEND_COUNT_SOURCES = new Set([
-  "08002fb0", "08003e10", "08005394", "080053e8", "0800d304", "08019bac", "08021d88",
+  "08002fb0", "08003e10", "08005340", "08005394", "080053e8", "0800d304", "08019bac", "08021d88",
 ]);
 // The reference issues the destination copy ahead of the following ALU work.
 const MOVE_BEFORE_ALU_SOURCES = new Set([
-  "08002fb0", "08003e10", "08005394", "080053e8", "0800d304", "08019bac",
+  "08002fb0", "08003e10", "08005340", "08005394", "080053e8", "0800d304", "08019bac",
 ]);
 // This palette-row scan ANDs a loaded halfword against a hoisted 0xF800 mask.
 // The AND is a two-address *thumb_andsi3_insn, so regmove's forward pass may
@@ -183,7 +188,7 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // (work/hand/080b5ad4/NOTES.md).
 const GROUPED_DMA_STORE_SOURCES = new Set([
   "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
-  "08004a5c", "08004a94", "08005394", "080053e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "08019bac",
+  "08004a5c", "08004a94", "08005340", "08005394", "080053e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "08019bac",
   "0801d980",
   "080251d4", "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
   "0808fecc", "08004760", "08005a78", "080037d4", "080b5ad4", "0800300c", "080f377c",
@@ -420,6 +425,7 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_SCHED_DEPEND_COUNT_SOURCES.has(stem) ? ["-fno-sched-depend-count"] : []),
     ...(SPLIT_GROUP_BASE_SOURCES.has(stem) ? ["-fthumb-split-group-base"] : []),
     ...(HOIST_PARAMETER_SAVE_SOURCES.has(stem) ? ["-fthumb-hoist-parameter-save"] : []),
+    ...(MINIPOOL_TAIL_FIRST_SOURCES.has(stem) ? ["-fthumb-minipool-tail-first"] : []),
     ...(ENTRY_SAVES_DESCENDING_SOURCES.has(stem) ? ["-fthumb-entry-saves-descending"] : []),
     ...(GROUP_CONTROL_LAST_SOURCES.has(stem) ? ["-fthumb-group-control-last"] : []),
     ...(MOVE_BEFORE_ALU_SOURCES.has(stem) ? ["-fthumb-move-before-alu"] : []),
@@ -565,7 +571,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
       xgcc: "87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed",
       cpp: "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
       tradcpp: "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
-      cc1: "fbe8b6601d805d10d23a181ace8ad226cdac4fbb4e97a79f4215dbcd1ff2c898",
+      cc1: "3debcbac8db6835440295c75f143ba26e6199220f866f927b972e5ec65673dc4",
     },
     gs2: {
       xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",
@@ -734,6 +740,7 @@ export function directCompilerCommand(
     ...(NO_CONTIGUOUS_IMMEDIATE_SOURCES.has(stem) ? ["-fno-thumb-contiguous-immediate"] : []),
     ...(NO_SCHED_DEPEND_COUNT_SOURCES.has(stem) ? ["-fno-sched-depend-count"] : []),
     ...(HOIST_PARAMETER_SAVE_SOURCES.has(stem) ? ["-fthumb-hoist-parameter-save"] : []),
+    ...(MINIPOOL_TAIL_FIRST_SOURCES.has(stem) ? ["-fthumb-minipool-tail-first"] : []),
     ...(MOVE_BEFORE_ALU_SOURCES.has(stem) ? ["-fthumb-move-before-alu"] : []),
     ...(NO_REGMOVE_SOURCES.has(stem) ? ["-fno-regmove"] : []),
     ...(ENTRY_LITERAL_FIRST_SOURCES.has(stem)
@@ -817,7 +824,7 @@ function selfTest(): void {
   if (JSON.stringify(groupedDma) !== JSON.stringify([
     "08002f10", "08002fb0", "0800300c", "080037d4", "08003e10", "08004760",
     "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c",
-    "08004a94", "08005394", "080053e8", "08005a78", "0800bc48", "0800bdd4", "0800c0f4", "0800d304",
+    "08004a94", "08005340", "08005394", "080053e8", "08005a78", "0800bc48", "0800bdd4", "0800c0f4", "0800d304",
     "080170c4", "08019bac", "0801d980", "080251d4", "080284dc", "0808fecc", "080958a8",
     "0809bb34", "080a1090", "080b5ad4", "080c0184", "080c08a8", "080f377c",
   ])) {
@@ -838,7 +845,7 @@ function selfTest(): void {
     "-fno-sched-depend-count",
     "-fthumb-hoist-parameter-save",
   ];
-  for (const stem of ["08005394", "080053e8"]) {
+  for (const stem of ["08005340", "08005394", "080053e8"]) {
     const copiedDecompressor = cflagsForTargetSource("gs1", `/tmp/${stem}.c`);
     const copiedDecompressorDirect = directCompilerCommand(
       `/tmp/${stem}.i`, `/tmp/${stem}.s`, `${stem}.c`, `/tmp/${stem}.c`,
@@ -852,12 +859,26 @@ function selfTest(): void {
       }
     }
   }
-  for (const source of ["/tmp/08005398.c", "/tmp/080053ec.c"]) {
+  for (const source of ["/tmp/08005344.c", "/tmp/08005398.c", "/tmp/080053ec.c"]) {
     for (const flag of copiedDecompressorFlags) {
       if (cflagsForTargetSource("gs1", source).includes(flag)) {
         throw new Error(`${source} copied-decompressor neighbor routing self-test failed for ${flag}`);
       }
     }
+  }
+  const minipoolTailFirst = "-fthumb-minipool-tail-first";
+  const minipoolSource = "/tmp/080a9aec.c";
+  const minipoolDirect = directCompilerCommand(
+    "/tmp/080a9aec.i", "/tmp/080a9aec.s", "080a9aec.c", minipoolSource,
+  );
+  if (!cflagsForTargetSource("gs1", minipoolSource).includes(minipoolTailFirst) ||
+      !minipoolDirect.includes(minipoolTailFirst) ||
+      cflagsForTargetSource("gs1", "/tmp/080a9af0.c").includes(minipoolTailFirst) ||
+      directCompilerCommand(
+        "/tmp/080a9af0.i", "/tmp/080a9af0.s", "080a9af0.c", "/tmp/080a9af0.c",
+      ).includes(minipoolTailFirst) ||
+      cflagsForTargetSource("gs2", minipoolSource).includes(minipoolTailFirst)) {
+    throw new Error("080a9aec minipool routing self-test failed");
   }
   const copyLifetimeFlags = cflagsForTargetSource("gs1", "/tmp/08006088.c");
   const unrelatedFlags = cflagsForTargetSource("gs1", "/tmp/0800608c.c");

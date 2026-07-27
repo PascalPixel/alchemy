@@ -17,7 +17,7 @@ struct State_080a32b8 {
 };
 
 extern struct State_080a32b8 *Data_03001f2c;
-extern s32 Func_080a9e48(u16, u8, u8);
+extern s32 Func_080a9e48(s32, s32, s32);
 extern s32 Func_080f9010(s32);
 extern s32 Func_08015278(s32);
 extern s32 Func_080a1d08(s32, s32, s32);

@@ -14,9 +14,10 @@ typedef struct {
 } Entry;
 
 struct SoundState_080fa6a0;
+struct CgbChannel_080fa55c;
 
 void Func_08006864(s32, s32, s32);
-void Func_080fa55c(s32);
+void Func_080fa55c(struct CgbChannel_080fa55c *);
 void Func_080fa6a0(struct SoundState_080fa6a0 *);
 void Func_080fa83c(u32 value);
 void Func_080fa9e0(struct Object *object, struct Entry *entries_arg, u32 count_arg);
@@ -30,7 +31,7 @@ void Func_080fa2a0(void)
 
     Func_08006864((s32)&Data_080f9675 & ~1, 0x03007000, 0x04000100);
     Func_080fa6a0((struct SoundState_080fa6a0 *)0x02003050);
-    Func_080fa55c(0x02004090);
+    Func_080fa55c((struct CgbChannel_080fa55c *)0x02004090);
     Func_080fa83c(0x0097F800);
 
     count = (u32)&Value_00000008;

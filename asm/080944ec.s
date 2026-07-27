@@ -1,9 +1,9 @@
 .syntax unified
 .text
 	.thumb
-	.global Fragment_080944ec
+	.global Func_080944ec
 	.thumb_func
-Fragment_080944ec:
+Func_080944ec:
 	ldr	r3, [pc, #60]
 	movs	r2, #240
 	ldr	r0, [r3, #0]

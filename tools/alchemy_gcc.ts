@@ -97,8 +97,12 @@ const NO_RERUN_CSE_AFTER_LOOP_SOURCES = new Set(["08006088", "0808c30c", "080ba9
 // 080b3284 keeps one message-base value across its forced, limit, and success
 // branches. GCSE rematerializes the branch-specific IDs and prevents the
 // reference tail merge.
+// 080d40ec builds a 64-entry BGR555 palette on the stack. GCSE rotates the
+// phase offsets and loop temporaries; disabling it preserves the reference's
+// natural long-lived allocation and exact relocated copy call.
 const NO_GCSE_SOURCES = new Set([
   "0801ed40", "080981b0", "08098c08", "080a45cc", "080b2720", "080b3284",
+  "080d40ec",
 ]);
 // This bounded-angle convergence loop only retains the reference allocation
 // when GCC does not perform its expensive-expression rewrite.  The rewrite
@@ -137,8 +141,10 @@ const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78"]);
 // dependent count alone; these references break it by original order instead.
 // 08021d88 likewise needs original-order tie breaking for its frame adjustment
 // and two split constants; its source order then reproduces the ROM exactly.
+// 08094730 has the same scheduler tell immediately before its grouped DMA
+// descriptor; original-order tie breaking closes its last transposition.
 const NO_SCHED_DEPEND_COUNT_SOURCES = new Set([
-  "08002fb0", "08003e10", "08005340", "08005394", "080053e8", "0800d304", "08019bac", "08021d88",
+  "08002fb0", "08003e10", "08005340", "08005394", "080053e8", "0800d304", "08019bac", "08021d88", "08094730",
 ]);
 // The reference issues the destination copy ahead of the following ALU work.
 const MOVE_BEFORE_ALU_SOURCES = new Set([
@@ -190,7 +196,7 @@ const GROUPED_DMA_STORE_SOURCES = new Set([
   "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
   "08004a5c", "08004a94", "08005340", "08005394", "080053e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "08019bac",
   "0801d980",
-  "080251d4", "080284dc", "080958a8", "0809bb34", "080c0184", "080c08a8",
+  "080251d4", "080284dc", "08094730", "08095160", "08095290", "080958a8", "0809bb34", "080c0184", "080c08a8",
   "0808fecc", "08004760", "08005a78", "080037d4", "080b5ad4", "0800300c", "080f377c",
   "08002fb0", "08003e10",
   "080a1090",
@@ -229,6 +235,12 @@ const LITERAL_BEFORE_INDEX_SHIFT_SOURCES = new Set(["0800307c"]);
 // The broad immediate-latency mode perturbs unrelated call arguments, so route
 // only the strict arm_reorg fingerprint.
 const LOW_CONSTANT_BEFORE_HIGH_MOVE_SOURCES = new Set(["080a5614", "080ba918"]);
+// This parameterized effect initializer naturally reaches the reference's
+// complete allocation and instruction stream before sched2 transposes one
+// saved-zero copy with the stack word it also initializes. The compiler mode
+// requires the exact stack-pointer/zero/store/high-copy fingerprint and moves
+// the low-register death note to the restored last use.
+const HIGH_MOVE_BEFORE_STACK_STORE_SOURCES = new Set(["08095290"]);
 // 08004760 is a still-assembly near-miss routed for the same reason as the
 // grouped-DMA entries below: without this mode its `sub sp, #4` sinks under the
 // first literal load, and with it the whole prologue and the entire tail agree.
@@ -451,6 +463,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(LOW_CONSTANT_BEFORE_HIGH_MOVE_SOURCES.has(stem)
       ? ["-fthumb-low-constant-before-high-move"]
       : []),
+    ...(HIGH_MOVE_BEFORE_STACK_STORE_SOURCES.has(stem)
+      ? ["-fthumb-high-move-before-stack-store"]
+      : []),
     ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
@@ -580,7 +595,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
       xgcc: "87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed",
       cpp: "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
       tradcpp: "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
-      cc1: "3debcbac8db6835440295c75f143ba26e6199220f866f927b972e5ec65673dc4",
+      cc1: "85aa8d6f576af11c9875958a6ee912e3cc23e769411029d62be07a0b6467efdc",
     },
     gs2: {
       xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",
@@ -767,6 +782,9 @@ export function directCompilerCommand(
     ...(LOW_CONSTANT_BEFORE_HIGH_MOVE_SOURCES.has(stem)
       ? ["-fthumb-low-constant-before-high-move"]
       : []),
+    ...(HIGH_MOVE_BEFORE_STACK_STORE_SOURCES.has(stem)
+      ? ["-fthumb-high-move-before-stack-store"]
+      : []),
     ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
@@ -837,7 +855,7 @@ function selfTest(): void {
     "08002f10", "08002fb0", "0800300c", "080037d4", "08003e10", "08004760",
     "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c",
     "08004a94", "08005340", "08005394", "080053e8", "08005a78", "0800bc48", "0800bdd4", "0800c0f4", "0800d304",
-    "080170c4", "08019bac", "0801d980", "080251d4", "080284dc", "0808fecc", "080958a8",
+    "080170c4", "08019bac", "0801d980", "080251d4", "080284dc", "0808fecc", "08094730", "08095160", "08095290", "080958a8",
     "0809bb34", "080a1090", "080b5ad4", "080c0184", "080c08a8", "080f377c",
   ])) {
     throw new Error("grouped DMA source allowlist self-test failed");
@@ -850,6 +868,61 @@ function selfTest(): void {
   if (cflagsForTargetSource("gs1", "/tmp/080000c0.c").includes("-mgrouped-dma-store") ||
       cflagsForTargetSource("gs2", "/tmp/080958a8.c").includes("-mgrouped-dma-store")) {
     throw new Error("grouped DMA unrelated-source routing self-test failed");
+  }
+  for (const stem of ["08095160", "08095290"]) {
+    const flags = cflagsForTargetSource("gs1", `/tmp/${stem}.c`);
+    const direct = directCompilerCommand(
+      `/tmp/${stem}.i`, `/tmp/${stem}.s`, `${stem}.c`, `/tmp/${stem}.c`,
+    );
+    const neighbor = `${(Number.parseInt(stem, 16) + 4).toString(16).padStart(8, "0")}`;
+    const neighborDirect = directCompilerCommand(
+      `/tmp/${neighbor}.i`, `/tmp/${neighbor}.s`, `${neighbor}.c`, `/tmp/${neighbor}.c`,
+    );
+    const gs2 = cflagsForTargetSource("gs2", `/tmp/${stem}.c`);
+    if (!flags.includes("-mgrouped-dma-store") ||
+        !direct.includes("-mgrouped-dma-store") ||
+        neighborDirect.includes("-mgrouped-dma-store") ||
+        gs2.includes("-mgrouped-dma-store")) {
+      throw new Error(`${stem} effect-initializer DMA routing self-test failed`);
+    }
+  }
+  const polledDmaFlags = cflagsForTargetSource("gs1", "/tmp/08094730.c");
+  const polledDmaDirect = directCompilerCommand(
+    "/tmp/08094730.i", "/tmp/08094730.s", "08094730.c", "/tmp/08094730.c",
+  );
+  const polledDmaNeighborDirect = directCompilerCommand(
+    "/tmp/08094734.i", "/tmp/08094734.s", "08094734.c", "/tmp/08094734.c",
+  );
+  for (const flag of ["-mgrouped-dma-store", "-fno-sched-depend-count"]) {
+    if (!polledDmaFlags.includes(flag) ||
+        !polledDmaDirect.includes(flag) ||
+        cflagsForTargetSource("gs1", "/tmp/08094734.c").includes(flag) ||
+        polledDmaNeighborDirect.includes(flag) ||
+        cflagsForTargetSource("gs2", "/tmp/08094730.c").includes(flag)) {
+      throw new Error(`08094730 polled-DMA routing self-test failed for ${flag}`);
+    }
+  }
+  const stackZeroFlag = "-fthumb-high-move-before-stack-store";
+  const stackZeroFlags = cflagsForTargetSource("gs1", "/tmp/08095290.c");
+  const stackZeroDirect = directCompilerCommand(
+    "/tmp/08095290.i", "/tmp/08095290.s", "08095290.c", "/tmp/08095290.c",
+  );
+  const stackZeroSiblingDirect = directCompilerCommand(
+    "/tmp/08095160.i", "/tmp/08095160.s", "08095160.c", "/tmp/08095160.c",
+  );
+  const stackZeroNeighborDirect = directCompilerCommand(
+    "/tmp/08095294.i", "/tmp/08095294.s", "08095294.c", "/tmp/08095294.c",
+  );
+  if (JSON.stringify([...HIGH_MOVE_BEFORE_STACK_STORE_SOURCES].sort()) !==
+        JSON.stringify(["08095290"]) ||
+      !stackZeroFlags.includes(stackZeroFlag) ||
+      !stackZeroDirect.includes(stackZeroFlag) ||
+      cflagsForTargetSource("gs1", "/tmp/08095160.c").includes(stackZeroFlag) ||
+      stackZeroSiblingDirect.includes(stackZeroFlag) ||
+      cflagsForTargetSource("gs1", "/tmp/08095294.c").includes(stackZeroFlag) ||
+      stackZeroNeighborDirect.includes(stackZeroFlag) ||
+      cflagsForTargetSource("gs2", "/tmp/08095290.c").includes(stackZeroFlag)) {
+    throw new Error("08095290 stack-zero ordering routing self-test failed");
   }
   const copiedDecompressorFlags = [
     "-mgrouped-dma-store",
@@ -926,14 +999,23 @@ function selfTest(): void {
       !cflagsForTargetSource("gs1", "/tmp/080981b0.c").includes("-fno-gcse") ||
       !cflagsForTargetSource("gs1", "/tmp/08098c08.c").includes("-fno-gcse") ||
       !cflagsForTargetSource("gs1", "/tmp/080b3284.c").includes("-fno-gcse") ||
+      !cflagsForTargetSource("gs1", "/tmp/080d40ec.c").includes("-fno-gcse") ||
+      !directCompilerCommand(
+        "/tmp/080d40ec.i", "/tmp/080d40ec.s", "080d40ec.c", "/tmp/080d40ec.c",
+      ).includes("-fno-gcse") ||
+      directCompilerCommand(
+        "/tmp/080d40f0.i", "/tmp/080d40f0.s", "080d40f0.c", "/tmp/080d40f0.c",
+      ).includes("-fno-gcse") ||
       cflagsForTargetSource("gs1", "/tmp/0801ed44.c").includes("-fno-gcse") ||
       cflagsForTargetSource("gs1", "/tmp/080981b4.c").includes("-fno-gcse") ||
       cflagsForTargetSource("gs1", "/tmp/08098c0c.c").includes("-fno-gcse") ||
       cflagsForTargetSource("gs1", "/tmp/080b3288.c").includes("-fno-gcse") ||
+      cflagsForTargetSource("gs1", "/tmp/080d40f0.c").includes("-fno-gcse") ||
       cflagsForTargetSource("gs2", "/tmp/0801ed40.c").includes("-fno-gcse") ||
       cflagsForTargetSource("gs2", "/tmp/080981b0.c").includes("-fno-gcse") ||
       cflagsForTargetSource("gs2", "/tmp/08098c08.c").includes("-fno-gcse") ||
-      cflagsForTargetSource("gs2", "/tmp/080b3284.c").includes("-fno-gcse")) {
+      cflagsForTargetSource("gs2", "/tmp/080b3284.c").includes("-fno-gcse") ||
+      cflagsForTargetSource("gs2", "/tmp/080d40ec.c").includes("-fno-gcse")) {
     throw new Error("no-GCSE routing self-test failed");
   }
   if (!cflagsForTargetSource("gs1", "/tmp/08021d88.c").includes("-fno-sched-depend-count") ||

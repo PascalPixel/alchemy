@@ -1,12 +1,15 @@
 # Path to completion (measured 2026-07-27)
 
-`[1,315 of 1,999]`. 684 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,324 of 2,000]`. 676 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
 `hidden_register_context_module`, and two false ordinary-C candidates moved
-into existing structural classes. The count of *converted* regions did not move in
-any of those reclassifications.** This file exists because a
+into existing structural classes. Y then rose to 2,000 on 2026-07-27 when
+`080944ec` was corrected in the opposite direction: its predecessor returns
+before its own alignment and pool, while two odd-address callback references
+prove `080944ec` is an independent ordinary function. The count of *converted*
+regions did not move in any of those reclassifications.** This file exists because a
 remaining-region headline is a count, not a plan, and because two family sizes published
 earlier today were both wrong from lazy fingerprints. Everything below is
 measured by `tools/remaining_survey.ts`, which decodes each region and resolves
@@ -25,20 +28,21 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-24 | 1,236 | +74 |
 | 2026-07-25 | 1,242 | +6 |
 | 2026-07-26 | 1,292 | +50 |
-| 2026-07-27 | 1,315 | +23 (partial day) |
+| 2026-07-27 | 1,324 | +32 (partial day) |
 
-**The rate is still roughly a factor of three below the 2026-07-23 peak.** That is
-not a slowdown in effort: the broad easy tier is running out, and compiler
-lineage now matters as much as drafting. At the last two completed days' rate,
-684 regions is roughly 25 working days; at the three-day average, about 16. The
-estimates move materially with one cohort and neither is a session.
+**The recent three-day average is still roughly a factor of four below the
+2026-07-23 peak.** That is not a slowdown in effort: the broad easy tier is
+running out, and compiler lineage now matters as much as drafting. At the last
+two completed days' rate, 676 regions is roughly 24 working days; at the
+three-day average, about 16. The estimates move materially with one cohort and
+neither is a session.
 
 ## What is actually left
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 508 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
-| 133 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
+| 502 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 131 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
 
@@ -425,9 +429,57 @@ Its repeated, mixed, and gapped volatile-store tests pass, but no compiler
 change is admitted here because the experiment did not produce an exact
 region.
 
+## What the nine-region 172–184-byte cohort changed
+
+Nine more regions now compile byte-for-byte exactly:
+
+| region | bytes | exact route |
+| --- | ---: | --- |
+| `08016670` | 172 | default compiler; typed slot selection and state initialization |
+| `08017dd4` | 180 | default compiler; signed decimal formatting and width trimming |
+| `0807a498` | 182 | default compiler; typed ownership transfer and bitset updates |
+| `08094730` | 180 | existing grouped-DMA and no-depend-count fingerprints |
+| `08095160` | 180 | existing grouped-DMA fingerprint |
+| `08095290` | 184 | grouped DMA plus the new strict high-move-before-stack-store fingerprint |
+| `080a21b0` | 184 | default compiler; page-count and label rendering |
+| `080bf5a8` | 178 | default compiler; timed placement cleanup |
+| `080d40ec` | 184 | existing `-fno-gcse`; typed relocated word-copy call |
+
+That adds 1,624 exact-C bytes, raises the claimed build to
+`[1,324 of 2,000]`, and brings exact-C ownership to 86,356 bytes. The measured
+remainder is 676 regions: 502 plain, 131 DMA, 36 mask, and 7 twelve-store
+regions. The denominator rose by one because callback references and a clean
+predecessor return/pool boundary prove that `080944ec` is an independent
+88-byte function, not an executable-gap continuation.
+
+Six of the nine use either the default compiler or one ordinary pass control.
+`08094730` and `08095160` transfer already-proven grouped-DMA behavior.
+`08095290` supplied one new narrow compiler witness: sched2 had swapped a
+stack-zero store with the saved-high-register copy of the same zero. The new
+default-off mode recognizes the complete four-instruction, hard-register,
+stack-address, independence, and death-note fingerprint; it is routed only to
+that GS1 source and has neighboring-source, direct-compiler, and GS2 exclusion
+tests. The compiler fork's fixture also proves stock behavior and a non-stack
+control are unchanged.
+
+Five further reconstructions reached measured floors rather than claims:
+
+| region | best measured shape | remaining blocker |
+| --- | --- | --- |
+| `080ad35c` | 176/176 bytes, 25 differing halfwords | allocation and scheduling after the typed reconstruction |
+| `08097f80` | 172/172 bytes, 2 differing halfwords | one independent instruction reorder |
+| `08020198` | 168/172 bytes, 22 differing halfwords | allocation and lowering leave a four-byte size deficit |
+| `0801a4fc` | 166/166 bytes, 2 differing halfwords (4 bytes) | adjacent DMA-source move and control-load order after grouped DMA plus value2-in-place |
+| `0809ba90` | 164/164 bytes, 11 differing halfwords | two allocation/order windows after grouped DMA plus control-last; semantics, control flow, and literals agree |
+| `080944ec` | 88/88 bytes, 18 differing halfwords | the recovered callback is exact-size under grouped DMA plus `-fno-schedule-insns2`; DMA-base allocation rotates r3/r4 and one independent entry pair remains transposed |
+
+These floors reinforce the current queue change: fresh medium regions are still
+producing exact default-compiler wins, while the short queue consists almost
+entirely of known compiler-residual rescues.
+
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 508 of 684 have nothing exotic in
+1. **The bulk is volume, not blockers.** 502 of 676 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.
@@ -475,9 +527,10 @@ Screen every target first: `grep 'mov\s*ip, pc'`, and check for a callee-saved
 register read but never written. Both classes are now reclassified out of Y, but
 the screen still costs less than a wasted draft.
 
-1. Continue the 41–80 rescue queue, ranked by measured residual and a
-   hand-reorder proof. All remaining plain regions in the band have prior work;
-   no genuinely untouched plain region remains there.
+1. Continue the fresh 81–160 and 161–320 instruction queues, ranked by
+   structural siblings and family fingerprints. All remaining plain regions
+   below 81 instructions have prior work, so that tier is now rescue work
+   rather than the primary conversion queue.
 2. Apply the `u32`-locals law to the 25 single-mask regions. Eleven more use the
    mask two to four times and need the corresponding combine; the two small
    enough to have been drafted are both in that repeated-mask group, so the

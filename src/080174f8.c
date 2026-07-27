@@ -3,6 +3,7 @@
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 struct Work;
+struct Slot;
 
 struct Globals_080174f8 {
     void *state;
@@ -15,7 +16,7 @@ extern volatile struct Globals_080174f8 Data_03001e8c;
 s32 Func_08018038(s32, s32);
 struct Work *Func_080162d4(s32, s32, s32, s32, s32);
 void Func_08017248(s32, s32, s32, s32, s32);
-s32 Func_08016670(struct Work *, s32, s32);
+struct Slot *Func_08016670(struct Work *, s32, s32);
 void Func_08016418(struct Work *, s32);
 
 void Func_080174f8(s32 argument)
@@ -55,7 +56,7 @@ use_existing:
         work = existing;
 have_work:
         if (work != NULL) {
-            result = Func_08016670(work, index, FIELD(control, s32, 8));
+            result = (s32)Func_08016670(work, index, FIELD(control, s32, 8));
             FIELD(control, s32, 4) = result;
             FIELD(control, s32, 8) = 0;
             if (result == 0) {

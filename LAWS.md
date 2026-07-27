@@ -3097,3 +3097,81 @@ empty parameter list in old C suppresses type checking and can still produce
 plausible code, but it also shortens live ranges that decide every later
 register. Recover the signature first; tune the source only after it agrees with
 the observed ABI.
+
+## Addendum (2026-07-27): preserve a shared zero before its stack store
+
+`08095290` exposed one more strict post-reload scheduling fingerprint. Its
+natural source uses the same zero both to initialize a stack word for a DMA
+source and to initialize state kept in a saved high register. With the existing
+grouped-DMA route enabled and the new mode disabled, the compiler emits:
+
+```asm
+mov  r0, sp
+movs r3, #0
+str  r3, [r0]
+mov  r9, r3
+```
+
+while the reference preserves the zero in r9 before storing it:
+
+```asm
+mov  r0, sp
+movs r3, #0
+mov  r9, r3
+str  r3, [r0]
+```
+
+`-fthumb-high-move-before-stack-store` restores that order. It is not a general
+scheduler preference: the transform requires the complete four-insn
+fingerprint, SI-mode hard registers, a literal zero, a non-volatile stack
+address, a low source register, a saved high destination, independence, and the
+source register's death note on the high move. The death note moves to the
+store, its actual final use. The mode is default-off, is routed only to GS1
+`08095290`, and has explicit opt-out, exact-order, non-stack control,
+neighboring-source, direct-compiler, and GS2 exclusion coverage.
+
+The source law is simpler: when one logical zero initializes both persistent
+state and a stack-backed DMA source, keep it as one ordinary scalar value.
+Do not split it, add volatility, or force registers to manufacture the
+reference order. First prove the four-instruction reorder relinks exactly; only
+then admit the narrow compiler fingerprint.
+
+## Addendum (2026-07-27): an indirect kernel's return register is ABI evidence
+
+`080d40ec` calls the relocated word-copy kernel at `0x03001388`. Declaring its
+function pointer as returning `void` leaves the generated region the right size
+but transposes the final control load and destination setup. The relocated ARM
+kernel advances r0 while copying and returns through `bx lr` without replacing
+it, so its observable return value is the end destination pointer. Declaring
+the call honestly as:
+
+```c
+typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
+```
+
+restores the exact tail under the otherwise sufficient `-fno-gcse` route.
+Return types on indirect relocated code are therefore not cosmetic allocation
+hints. Disassemble the target and record what it actually leaves in r0 before
+tuning a caller; a `void` guess can shorten a live range even when the caller
+does not consume the value.
+
+## Addendum (2026-07-27): callback pointers outrank apparent gap continuity
+
+`080944ec` was initially packaged as an executable continuation after
+`08094428`. The boundary evidence says otherwise. `08094428` returns at
+`0x080944e0`; its alignment and literal pool occupy the remaining bytes through
+`0x080944eb`, so execution cannot fall through into `0x080944ec`. Separately,
+the odd Thumb pointer `0x080944ed` appears at `0x080947e0` when `08094730`
+registers the callback and again at `0x0809480c` when `080947e4` unregisters
+it. Those are independent entry references to an 88-byte function ending at
+`0x08094544`.
+
+The callback does use r4 without preserving it, but that is not structural
+evidence: the GS1 compiler contract globally includes `-fcall-used-r4`, and an
+ordinary C reconstruction produces the same ABI behavior. The region therefore
+belongs in `compiler_output`, not `executable_gap_continuation`.
+
+When a gap-shaped region has both a clean predecessor return/pool boundary and
+an odd-address callback reference, classify the callback entry independently.
+Adjacency alone must not hide ordinary decompilation debt or shrink the ledger
+denominator.

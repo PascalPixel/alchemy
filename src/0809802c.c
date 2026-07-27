@@ -8,7 +8,8 @@ void Func_08098184(void *);
 void Func_08009080(void *, s32);
 void Func_080030f8(s32);
 void Func_0809748c(void);
-void Func_080981b0(void *);
+struct Effect_080981b0;
+void Func_080981b0(struct Effect_080981b0 *);
 
 void Func_0809802c(void)
 {

@@ -2,7 +2,7 @@
 
 u32 Func_080022f4(s32, s32);
 s32 Func_08002304(s32, s32);
-u8 *Func_08017dd4(void *, s32, s32);
+u8 *Func_08017dd4(u8 *, s32, s32);
 
 void *Func_0801f680(s32 value, u8 *output)
 {

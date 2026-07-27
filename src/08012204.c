@@ -1,12 +1,7 @@
 #include "types.h"
+#include "map.h"
 
-struct Position_080122c8 {
-    s32 x;
-    s32 pad4;
-    s32 y;
-};
-
-s32 Func_08012204(struct Position_080122c8 *position)
+s32 Func_08012204(struct WorldPosition *position)
 {
     s32 x_step = position->x >> 17;
     s32 y = position->y;

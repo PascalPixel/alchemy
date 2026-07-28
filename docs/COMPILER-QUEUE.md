@@ -1,5 +1,42 @@
 # alchemy-gcc prototype results (2026-07-26)
 
+## Stock-option matrix completion (2026-07-28)
+
+The explorer now includes four previously omitted stock configurations:
+`-fno-rerun-loop-opt`, `-fno-caller-saves`, `-fno-force-mem`, and `-Os`.
+They are derived from the optimization switches exposed by the checked-in
+public GCC sources; in particular, `gcc-2.96/gcc/toplev.c` enables rerunning
+the loop optimizer, caller saves, and force-mem at `-O2`.
+
+An exhaustive common matrix of 1,211 compatible pairs was run across all 22
+current semantic candidates. It found no shared exact configuration and no
+irreducible configuration that improves multiple candidates without regressing
+another. The useful single-mode effects were:
+
+| configuration | improved candidates | halfwords removed | regressed candidates |
+| --- | ---: | ---: | ---: |
+| `-fno-rerun-loop-opt` | 1 | 40 | 0 |
+| `-fno-caller-saves` | 2 | 9 | 3 |
+| `-Os` | 2 | 36 | 11 |
+| `-fno-force-mem` | 1 | 3 | 3 |
+
+The first mode moves `0807a0f4` from 68 to 28 differing halfwords, but does not
+make it exact. The second improves both `080113e4` and `080114a0`, so it remains
+a useful source-scoped compiler hypothesis even though it is not a safe global
+default.
+
+Full 1,366-region exact-C corpus runs confirm that none is globally safe:
+`-fno-rerun-loop-opt` preserves 1,337 regions, `-fno-caller-saves` 1,331,
+`-Os` 1,068, and `-fno-force-mem` 1,178. These are explorer options, not global
+build flags.
+
+`mode_cohort.ts` now refuses a truncated pair count. Previously, each member
+ranked its own top 256 pairs, so a cohort could compare different configuration
+sets and silently suppress a shared result. It also reports every single
+mode's gains and regressions, plus irreducible multi-region improvements, rather
+than requiring a mode to be non-regressing across the entire cohort before it
+is visible.
+
 > Historical prototype log. The kept changes described here were subsequently
 > committed, staged into the pinned compiler bundles, regression-tested, and
 > pushed in `alchemy-gcc`. Statements below about uncommitted patches or an

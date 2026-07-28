@@ -1,17 +1,18 @@
-#include "types.h"
+#include "script_operands.h"
 
-void Func_0800e280(u8 *arg0, s32 operation, s32 value)
+void Func_0800e280(struct ScriptOperands *state, s32 operation, s32 value)
 {
     s32 result;
 
     if (operation == 0) {
-        *(u16 *)(arg0 + 6) = value;
+        state->unsigned_halfword = value;
     } else if (operation == 1) {
-        *(u16 *)(arg0 + 6) += value;
+        state->unsigned_halfword =
+            (u16)((u32)state->unsigned_halfword + (u32)value);
     } else {
         result = 0;
-        if (*(u16 *)(arg0 + 6) == (u16)value)
+        if (state->unsigned_halfword == (u16)value)
             result = 1;
-        arg0[87] = result;
+        state->comparison_result = result;
     }
 }

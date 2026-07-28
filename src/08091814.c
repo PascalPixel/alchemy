@@ -1,23 +1,18 @@
 #include "types.h"
 
-s32 Func_08077090(s32, s32);
-s32 Func_080770c0(s32);
-s32 Func_08091814(u32 arg0)
+s32 Func_08077090(s32 group, s32 entry);
+s32 Func_080770c0(s32 group);
+
+s32 Func_08091814(u32 packed_id)
 {
-  int new_var2;
-  int new_var3;
-  s32 temp_r5;
-  int new_var;
- new_var2 = -1; temp_r5 = (arg0 >> 0xA) & 0xF; new_var3 = 0x3FF & arg0; if (temp_r5 > 7) {
-    return new_var2;
-  }
-  if (Func_080770c0(temp_r5) == 0)
-  {
-    return -2;
-  }
-  if (Func_08077090(temp_r5, new_var3) == 0)
-  {
-    return new_var = -3;
-  }
-  return 0;
+    s32 group = (packed_id >> 10) & 0xf;
+    s32 entry = packed_id & 0x3ff;
+
+    if (group > 7)
+        return -1;
+    if (Func_080770c0(group) == 0)
+        return -2;
+    if (Func_08077090(group, entry) == 0)
+        return -3;
+    return 0;
 }

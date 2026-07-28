@@ -1,9 +1,8 @@
-#include "types.h"
-
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+#include "event_runtime.h"
 
 s32 Func_080030f8(s32);
 
-void Func_08091e20(void) {
-    Func_080030f8(M2C_FIELD(*(void **)0x03001EBC, s32 *, 0x1C8));
+void Func_08091e20(void)
+{
+    Func_080030f8(Data_03001ebc->value_1c8);
 }

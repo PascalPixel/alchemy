@@ -1,3 +1,4 @@
+#include "object_lookup.h"
 #include "types.h"
 #include "map.h"
 
@@ -24,8 +25,6 @@ struct Global_08099678 {
 
 extern struct Global_08099678 Data_02000240;
 extern struct Runtime_08099678 *Data_03001ebc;
-
-struct Object_08099678 *Func_0808ba1c(u32);
 
 void Func_08099678(void)
 {

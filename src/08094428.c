@@ -1,9 +1,9 @@
+#include "object_lookup.h"
 #include "types.h"
 
 s32 Func_080770c0(s32);
 void Func_080770d0(s32);
 void Func_08094380(s32 arg0);
-s32 Func_0808ba1c(u32 arg0);
 void Func_080933f8(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void Func_080030f8(s32);
 void Func_080f9010(s32);

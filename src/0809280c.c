@@ -1,3 +1,4 @@
+#include "object_lookup.h"
 #include "types.h"
 
 struct Object_0809280c {
@@ -8,7 +9,6 @@ struct Object_0809280c {
     s32 x;
 };
 
-s32 Func_0808ba1c(u32 arg0);
 s32 Func_080044d0(s32, s32);
 void Func_0809163c(s32 arg0);
 

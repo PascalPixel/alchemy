@@ -1,10 +1,7 @@
-#include "types.h"
+#include "script_interpreter.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-s32 Func_0800d6d8(void *object, u32 key);
-
-s32 Func_0800d760(void *arg0) {
-    M2C_FIELD(arg0, s16 *, 4) = Func_0800d6d8(arg0, M2C_FIELD(((M2C_FIELD(arg0, s16 *, 4) * 4) + M2C_FIELD(arg0, s32 *, 0)), s32 *, 4));
+s32 Func_0800d760(struct ScriptInterpreter *interpreter) {
+    interpreter->cursor =
+        Func_0800d6d8(interpreter, interpreter->script[interpreter->cursor + 1]);
     return 1;
 }

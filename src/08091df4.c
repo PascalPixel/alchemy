@@ -1,17 +1,11 @@
-#include "types.h"
+#include "event_runtime.h"
 
-u32 Func_080901c0(s32, s32);
+u32 Func_080901c0(s32 first, s32 second);
+
 void Func_08091df4(void)
 {
-  void *temp_r5;
-  u8 *new_var;
-  int new_var3;
-  u8 *new_var2;
-  temp_r5 = *((void **) 0x03001EBC);
-  Func_080901c0(*((s32 *) (((u8 *) temp_r5) + 0x1C0)), *((s32 *) (((u8 *) temp_r5) + 0x1C8)));
-  new_var2 = ((u8 *) temp_r5) + 0x1C6;
-  new_var = new_var2;
-  new_var3 = 0;
-  *((s16 *) new_var) = new_var3;
-}
+    struct EventRuntime *runtime = Data_03001ebc;
 
+    Func_080901c0(runtime->value_1c0, runtime->value_1c8);
+    runtime->status_1c6 = 0;
+}

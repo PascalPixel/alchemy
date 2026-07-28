@@ -1,7 +1,7 @@
+#include "object_lookup.h"
 #include "types.h"
 
 s32 Func_08009140();
-void *Func_0808ba1c();
 void Func_080920a0(void)
 {
   void *temp_r0;
@@ -14,4 +14,3 @@ void Func_080920a0(void)
     Func_08009140();
   }
 }
-

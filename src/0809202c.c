@@ -1,10 +1,17 @@
 #include "types.h"
 
-s32 Func_080f9010(s32);
+struct BattleEventState {
+    u8 padding[0xcc8];
+    s16 queued_sound;
+};
 
-void Func_0809202c(void) {
-    s16 value = *(s16 *)(*(u8 **)0x03001EBC + 0xCC8);
-    if (value != -1) {
-        Func_080f9010(value);
-    }
+extern struct BattleEventState *Data_03001ebc;
+void Func_080f9010(s32);
+
+void Func_0809202c(void)
+{
+    s16 sound_id = Data_03001ebc->queued_sound;
+
+    if (sound_id != -1)
+        Func_080f9010(sound_id);
 }

@@ -1,6 +1,5 @@
+#include "object_lookup.h"
 #include "types.h"
-
-s32 Func_0808ba1c(u32 arg0);
 
 void Func_08092b08(s32 arg0, s32 arg1)
 {

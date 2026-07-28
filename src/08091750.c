@@ -1,17 +1,13 @@
-#include "types.h"
+#include "event_runtime.h"
 
-struct Fields_08091750 {
-    u8 filler[0x1f4];
-    s32 value;
-};
+extern struct EventValueWork Data_02000240;
 
-extern struct Fields_08091750 Data_02000240;
-
-void Func_08004278(s32);
+void Func_08004278(u32);
 void Func_080772f0(void);
-void Func_0809335c(s32 arg0, s32 arg1);
+void Func_0809335c(s32 value, s32 enabled);
 
-void Func_08091750(void) {
+void Func_08091750(void)
+{
     Func_08004278(0x080915ed);
     Func_0809335c(Data_02000240.value, 1);
     Func_080772f0();

@@ -1,10 +1,11 @@
-#include "types.h"
+#include "object_runtime.h"
 
-s32 Func_08009148();
-s32 Func_0808ba1c();
+void Func_08009148(struct ObjectRuntime *);
 
-void Func_080920e8(void) {
-    if (Func_0808ba1c() != 0) {
-        Func_08009148();
-    }
+void Func_080920e8(u32 object_id)
+{
+    struct ObjectRuntime *object = Func_0808ba1c(object_id);
+
+    if (object != NULL)
+        Func_08009148(object);
 }

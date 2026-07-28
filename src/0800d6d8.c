@@ -1,9 +1,9 @@
-#include "types.h"
+#include "script_interpreter.h"
 
-s32 Func_0800d6d8(void *object, u32 key) {
+s32 Func_0800d6d8(struct ScriptInterpreter *interpreter, u32 key) {
     u32 *entries;
     s32 index;
-    u16 *field = (u16 *)((u8 *)object + 0x5E);
+    s16 *field = &interpreter->lookup_result;
     s32 zero = 0;
 
     *field = zero;
@@ -12,7 +12,7 @@ s32 Func_0800d6d8(void *object, u32 key) {
     }
 
     key &= 0xBFFFFFFF;
-    entries = *(u32 **)object;
+    entries = (u32 *)interpreter->script;
     index = 0;
     do {
         if (*entries++ == key) {

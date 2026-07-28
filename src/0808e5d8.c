@@ -1,4 +1,5 @@
 #include "effect_runtime.h"
+#include "object_lookup.h"
 
 struct GlobalData {
     u8 filler[0x1F4];
@@ -8,7 +9,6 @@ struct GlobalData {
 extern struct GlobalData Data_02000240;
 
 u8 *Func_08077080(s32);
-s32 Func_0808ba1c(u32);
 s32 Func_0808e4b4(s32, u16, void *);
 void Func_08096fb0(s32, s32);
 void Func_080970f8(s32, s32);

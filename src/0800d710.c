@@ -1,30 +1,26 @@
-#include "types.h"
+#include "script_interpreter.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
-s32 Func_0800d6d8(void *object, u32 key);
-
-s32 Func_0800d710(void *arg0) {
-    s32 *ptr;
+s32 Func_0800d710(struct ScriptInterpreter *interpreter) {
+    const s32 *ptr;
     s32 temp_r4;
     s32 temp_r1;
     u8 *p;
     s32 temp_r2;
 
-    ptr = (s32 *)(M2C_FIELD(arg0, s32, 0) + (M2C_FIELD(arg0, s16, 4) << 2) + 4);
+    ptr = &interpreter->script[interpreter->cursor + 1];
     temp_r4 = *ptr++;
     temp_r1 = *ptr;
     if (temp_r4 == 0xFFFF) {
-        M2C_FIELD(arg0, s16, 4) = Func_0800d6d8(arg0, temp_r1);
+        interpreter->cursor = Func_0800d6d8(interpreter, temp_r1);
     } else {
-        p = (u8 *) arg0 + 0x5D;
+        p = &interpreter->repeat_count;
         temp_r2 = *p + 1;
         *p = temp_r2;
         if ((s32) (u8) temp_r2 < (s32) (s16) temp_r4) {
-            M2C_FIELD(arg0, s16, 4) = Func_0800d6d8(arg0, temp_r1);
+            interpreter->cursor = Func_0800d6d8(interpreter, temp_r1);
         } else {
             *p = 0;
-            M2C_FIELD(arg0, s16, 4) = M2C_FIELD(arg0, s16, 4) + 3;
+            interpreter->cursor = interpreter->cursor + 3;
         }
     }
     return 1;

@@ -1,6 +1,6 @@
+#include "object_lookup.h"
 #include "types.h"
 
-void *Func_0808ba1c(void);
 void Func_08009240(void *, s32);
 void Func_08009088(void *, s32);
 void Func_0809ad71(void);

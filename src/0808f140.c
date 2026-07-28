@@ -1,8 +1,8 @@
+#include "object_lookup.h"
 #include "types.h"
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-s32 Func_0808ba1c(u32 arg0);
 void Func_080091e0(void *, s32);
 void Func_08009098(void *, s32);
 void Func_080030f8(u32);

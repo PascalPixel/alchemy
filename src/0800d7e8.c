@@ -1,11 +1,10 @@
-#include "types.h"
+#include "script_interpreter.h"
 
-s32 Func_0800d7e8(void *arg0)
+s32 Func_0800d7e8(struct ScriptInterpreter *interpreter)
 {
-  int new_var;
-  *((s32 *) (((u8 *) arg0) + 0)) = 0x08013240;
-  *((s16 *) (((u8 *) arg0) + 4)) = (new_var = 0);
-  new_var = new_var;
-  return new_var;
-}
+    s32 result;
 
+    interpreter->script = (const s32 *)0x08013240;
+    interpreter->cursor = (result = 0);
+    return result;
+}

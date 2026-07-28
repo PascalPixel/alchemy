@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-28)
 
-`[1,347 of 1,999]`. 652 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,349 of 1,999]`. 650 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -32,12 +32,12 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-25 | 1,242 | +6 |
 | 2026-07-26 | 1,292 | +50 |
 | 2026-07-27 | 1,345 | +53 (partial day) |
-| 2026-07-28 | 1,347 | +2 (decompilation resumed after humanization) |
+| 2026-07-28 | 1,349 | +4 (decompilation resumed after humanization) |
 
 **The recent three-day average is still roughly a factor of four below the
 2026-07-23 peak.** That is not a slowdown in effort: the broad easy tier is
 running out, and compiler lineage now matters as much as drafting. At the last
-two completed days' rate, 652 regions is roughly 23 working days; at the
+two completed days' rate, 650 regions is roughly 23 working days; at the
 three-day average, about 18. The estimates move materially with one cohort and
 neither is a session.
 
@@ -45,7 +45,7 @@ neither is a session.
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 479 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 477 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
 | 130 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
@@ -591,9 +591,32 @@ This raises the claimed build to `[1,347 of 1,999]`, exact-C ownership to
 91,040 bytes, and lowers ordinary assembly debt to 652 regions / 400,460 bytes.
 The full ROM remains byte-identical with zero fallback or unowned bytes.
 
+## The second fresh 81–160 pass
+
+Two more plain regions converted with the default compiler:
+
+| region | instructions | bytes | exact route |
+| --- | ---: | ---: | --- |
+| `0801fe2c` | 108 | 232 | typed descriptor-driven object placement and callback scheduling |
+| `080b1e80` | 86 | 204 | typed battle runtime, effect flags, and selection orchestration |
+
+`0801fe2c` recovered the four-slot object, coordinate, and fixed-point scale
+layout. `080b1e80` recovered the runtime object pointer, saved coordinates,
+mode byte, and effect flag contract. Neither needs a compiler mode, volatile
+fiction, register pin, or inline assembly.
+
+Three other screened regions were not promoted: `080286a0` remains an
+exact-size three-halfword scheduling wall; `080b1f4c` is semantics-complete but
+GCC collapses its five message-selection branches; and `0808b090` did not
+preserve the reference's long-lived register and table-walk shape. Their drafts
+were kept out of `src`.
+
+The current claimed build is `[1,349 of 1,999]` and 91,476 exact-C bytes.
+Ordinary assembly debt is 650 regions / 400,024 bytes.
+
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 479 of 652 have nothing exotic in
+1. **The bulk is volume, not blockers.** 477 of 650 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.

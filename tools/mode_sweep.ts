@@ -10,19 +10,24 @@ import {
   existsSync,
   mkdirSync,
   readFileSync,
-  statSync,
   writeFileSync,
 } from "node:fs";
 import { createHash } from "node:crypto";
-import { basename, dirname, join } from "node:path";
+import { basename, dirname, join, relative, resolve, sep } from "node:path";
 import { canonicalJson } from "./canonical_json.ts";
-import { ROM_BASE, verifyCandidate } from "./match_m2c.ts";
+import {
+  ROM_BASE,
+  verifyCandidate,
+  type CandidateCompilerFamily,
+} from "./match_m2c.ts";
 import { linkedFunctionExtent } from "./integrate_matches.ts";
 import { regionSize } from "./candidate_show.ts";
-import { DRIVER } from "./alchemy_gcc.ts";
+import {
+  compilerBundleSignature,
+} from "./alchemy_gcc.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
-const FORMAT = 2;
+const FORMAT = 3;
 
 export const FORK_MODES = [
   "-mgrouped-dma-store", "-mpreserve-single-bit-test", "-mentry-low-register-order",
@@ -34,11 +39,26 @@ export const FORK_MODES = [
 export const STOCK_SWITCHES = [
   "-fno-schedule-insns2", "-fno-gcse", "-fno-cse-follow-jumps",
   "-fno-expensive-optimizations", "-fno-peephole", "-fno-strength-reduce", "-fno-regmove",
+  "-fno-rerun-cse-after-loop", "-fno-sched-depend-count",
+  "-fno-optimize-sibling-calls", "-fno-canonicalize-comparison",
 ] as const;
 
-type Family = "optimization" | "abi" | "scheduler" | "cse" | "register-allocation" | "backend";
-interface Mode { id: string; family: Family; flags: string[]; exclusive?: boolean }
-interface Config { ids: string[]; flags: string[] }
+type Family = "compiler" | "optimization" | "abi" | "scheduler" | "cse" | "register-allocation" | "backend";
+interface Mode {
+  id: string;
+  family: Family;
+  addFlags?: string[];
+  removeFlags?: string[];
+  compilerFamily?: CandidateCompilerFamily;
+  exclusive?: boolean;
+  evidence: "historical" | "proven-routing";
+}
+interface Config {
+  ids: string[];
+  flags: string[];
+  remove_flags: string[];
+  compiler_family: CandidateCompilerFamily;
+}
 interface Evidence {
   differing_halfwords: number;
   size_delta: number;
@@ -73,21 +93,28 @@ interface Options {
 // grouped by the historical compiler decision they model.  We intentionally do
 // not enumerate arbitrary -f flags or hard-register pins.
 export const MODES: readonly Mode[] = [
-  { id: "opt-o1", family: "optimization", flags: ["-O1"], exclusive: true },
-  { id: "opt-o2", family: "optimization", flags: ["-O2"], exclusive: true },
-  { id: "opt-o3", family: "optimization", flags: ["-O3"], exclusive: true },
-  { id: "abi-standard-r4", family: "abi", flags: ["-fcall-saved-r4"], exclusive: true },
-  { id: "sched-postreload-off", family: "scheduler", flags: ["-fno-schedule-insns2"] },
-  { id: "cse-gcse-off", family: "cse", flags: ["-fno-gcse"] },
-  { id: "cse-follow-off", family: "cse", flags: ["-fno-cse-follow-jumps"] },
-  { id: "cse-expensive-off", family: "cse", flags: ["-fno-expensive-optimizations"] },
-  { id: "reg-peephole-off", family: "register-allocation", flags: ["-fno-peephole"] },
-  { id: "reg-strength-reduce-off", family: "register-allocation", flags: ["-fno-strength-reduce"] },
-  { id: "reg-regmove-off", family: "register-allocation", flags: ["-fno-regmove"] },
+  { id: "compiler-gcc296", family: "compiler", compilerFamily: "gcc296", exclusive: true, evidence: "historical" },
+  { id: "compiler-old-agbcc", family: "compiler", compilerFamily: "old-agbcc", exclusive: true, evidence: "proven-routing" },
+  { id: "opt-o1", family: "optimization", addFlags: ["-O1"], exclusive: true, evidence: "proven-routing" },
+  { id: "opt-o2", family: "optimization", addFlags: ["-O2"], exclusive: true, evidence: "historical" },
+  { id: "opt-o3", family: "optimization", addFlags: ["-O3"], exclusive: true, evidence: "historical" },
+  { id: "abi-standard-r4", family: "abi", removeFlags: ["-fcall-used-r4"], exclusive: true, evidence: "proven-routing" },
+  { id: "sched-postreload-off", family: "scheduler", addFlags: ["-fno-schedule-insns2"], evidence: "proven-routing" },
+  { id: "sched-depend-count-off", family: "scheduler", addFlags: ["-fno-sched-depend-count"], evidence: "proven-routing" },
+  { id: "cse-gcse-off", family: "cse", addFlags: ["-fno-gcse"], evidence: "proven-routing" },
+  { id: "cse-follow-off", family: "cse", addFlags: ["-fno-cse-follow-jumps"], evidence: "proven-routing" },
+  { id: "cse-rerun-loop-off", family: "cse", addFlags: ["-fno-rerun-cse-after-loop"], evidence: "proven-routing" },
+  { id: "cse-expensive-off", family: "cse", addFlags: ["-fno-expensive-optimizations"], evidence: "proven-routing" },
+  { id: "reg-peephole-off", family: "register-allocation", addFlags: ["-fno-peephole"], evidence: "historical" },
+  { id: "reg-strength-reduce-off", family: "register-allocation", addFlags: ["-fno-strength-reduce"], evidence: "proven-routing" },
+  { id: "reg-regmove-off", family: "register-allocation", addFlags: ["-fno-regmove"], evidence: "proven-routing" },
+  { id: "sibling-calls-off", family: "backend", addFlags: ["-fno-optimize-sibling-calls"], evidence: "proven-routing" },
+  { id: "comparison-canonicalization-off", family: "backend", addFlags: ["-fno-canonicalize-comparison"], evidence: "proven-routing" },
   ...FORK_MODES.map((flag) => ({
     id: flag.slice(2),
     family: "backend" as const,
-    flags: [flag],
+    addFlags: [flag],
+    evidence: "proven-routing" as const,
   })),
 ];
 
@@ -115,23 +142,29 @@ function compatible(modes: readonly Mode[]): boolean {
   for (const mode of modes) {
     if (mode.exclusive && exclusive.has(mode.family)) return false;
     if (mode.exclusive) exclusive.add(mode.family);
-    for (const flag of mode.flags) {
+    for (const flag of [...(mode.addFlags ?? []), ...(mode.removeFlags ?? [])]) {
       if (flags.has(flag)) return false;
       flags.add(flag);
     }
   }
+  const compiler = modes.find((mode) => mode.compilerFamily !== undefined)?.compilerFamily ?? "routed";
+  if (compiler === "old-agbcc" && modes.some((mode) =>
+    mode.family === "scheduler" || mode.family === "backend")) return false;
   return true;
 }
 
 function configOf(modes: readonly Mode[]): Config {
   return {
     ids: modes.map((mode) => mode.id).sort(),
-    flags: modes.flatMap((mode) => mode.flags),
+    flags: modes.flatMap((mode) => mode.addFlags ?? []),
+    remove_flags: modes.flatMap((mode) => mode.removeFlags ?? []),
+    compiler_family: modes.find((mode) => mode.compilerFamily !== undefined)?.compilerFamily ?? "routed",
   };
 }
 
 export function singleConfigs(): Config[] {
-  return [{ ids: [], flags: [] }, ...MODES.map((mode) => configOf([mode]))];
+  return [{ ids: [], flags: [], remove_flags: [], compiler_family: "routed" },
+    ...MODES.map((mode) => configOf([mode]))];
 }
 
 export function pairConfigs(limit = Number.POSITIVE_INFINITY): Config[] {
@@ -144,6 +177,22 @@ export function pairConfigs(limit = Number.POSITIVE_INFINITY): Config[] {
   }
   configs.sort((a, b) => a.ids.join("+").localeCompare(b.ids.join("+")));
   return configs.slice(0, limit);
+}
+
+export function rankedPairConfigs(singleResults: readonly Score[], limit: number): Config[] {
+  const ranks = new Map(singleResults.map((row, index) => [row.config.ids[0] ?? "", {
+    exact: row.evidence?.exact ?? false,
+    floor: row.evidence?.differing_halfwords ?? Number.POSITIVE_INFINITY,
+    index,
+  }]));
+  return pairConfigs().sort((left, right) => {
+    const quality = (config: Config) => config.ids.reduce((sum, id) => {
+      const rank = ranks.get(id);
+      return sum + (rank?.exact ? -1_000_000 : 0) + (rank?.floor ?? 1_000_000);
+    }, 0);
+    return quality(left) - quality(right) ||
+      left.ids.join("+").localeCompare(right.ids.join("+"));
+  }).slice(0, limit);
 }
 
 export function tripleConfigs(seedIds: readonly string[], limit: number): Config[] {
@@ -170,6 +219,16 @@ export function combinations(pairs: boolean): string[][] {
     ...singleConfigs().map((config) => config.flags),
     ...(pairs ? pairConfigs().map((config) => config.flags) : []),
   ];
+}
+
+export function modeSweepOutputDirectory(source: string): string {
+  const absolute = resolve(source);
+  const identity = hash(relative(ROOT, absolute).split(sep).join("/"), readFileSync(absolute)).slice(0, 16);
+  return join(ROOT, "out", "modesweep", `${basename(source, ".c")}-${identity}`);
+}
+
+function compilerSignature(): string {
+  return hash(readFileSync(join(ROOT, "tools/alchemy_gcc.ts")), compilerBundleSignature());
 }
 
 function disassembly(binary: string): string[] {
@@ -258,7 +317,9 @@ function optionsOf(argv: string[]): Options {
 
 function selfTest(): void {
   const singles = singleConfigs();
-  if (singles[0].flags.length !== 0) throw new Error("default configuration must be first");
+  if (singles[0].flags.length !== 0 || singles[0].compiler_family !== "routed") {
+    throw new Error("default configuration must be first");
+  }
   if (new Set(singles.map((item) => item.ids.join("+"))).size !== singles.length) {
     throw new Error("single configuration planning is not unique");
   }
@@ -295,7 +356,7 @@ function selfTest(): void {
     throw new Error("cache keys are not deterministic/content-sensitive");
   }
   const cached: Score = {
-    config: { ids: ["opt-o1"], flags: ["-O1"] },
+    config: { ids: ["opt-o1"], flags: ["-O1"], remove_flags: [], compiler_family: "routed" },
     cache_key: key1,
     cached: false,
     compiled: false,
@@ -321,21 +382,17 @@ async function main(): Promise<void> {
   if (wanted === null) throw new Error(`no assembly region is recorded for ${stem}`);
   const rom = readFileSync(options.rom);
   const reference = rom.subarray(address - ROM_BASE, address - ROM_BASE + wanted);
-  const output = join(ROOT, "out", "modesweep", stem);
+  const output = modeSweepOutputDirectory(options.source);
   const cacheDirectory = join(output, "cache");
   mkdirSync(cacheDirectory, { recursive: true });
   const referenceBinary = join(output, "reference.bin");
   writeFileSync(referenceBinary, reference);
   const referenceAsm = disassembly(referenceBinary);
   const sourceBytes = readFileSync(options.source);
-  const driverStat = statSync(DRIVER);
-  const compilerSignature = hash(
-    readFileSync(join(ROOT, "tools/alchemy_gcc.ts")),
-    `${driverStat.size}:${driverStat.mtimeMs}`,
-  );
+  const compilerDigest = compilerSignature();
 
   async function score(config: Config): Promise<Score> {
-    const cacheKey = hash(String(FORMAT), sourceBytes, reference, compilerSignature, canonicalJson(config.flags));
+    const cacheKey = hash(String(FORMAT), sourceBytes, reference, compilerDigest, canonicalJson(config));
     const cachePath = join(cacheDirectory, `${cacheKey}.json`);
     if (existsSync(cachePath)) {
       const cached = acceptedCache(JSON.parse(readFileSync(cachePath, "utf8")), cacheKey);
@@ -345,7 +402,10 @@ async function main(): Promise<void> {
     mkdirSync(work, { recursive: true });
     let result: Score;
     try {
-      await verifyCandidate(options.source, rom, work, config.flags, ROM_BASE);
+      await verifyCandidate(options.source, rom, work, config.flags, ROM_BASE, "gs1", {
+        family: config.compiler_family,
+        removeFlags: config.remove_flags,
+      });
       const linked = readFileSync(join(work, `${stem}.bin`));
       const symbols = Bun.spawnSync(
         ["arm-none-eabi-nm", "-S", "--defined-only", join(work, `${stem}.elf`)],
@@ -392,7 +452,7 @@ async function main(): Promise<void> {
 
   const singleResults = await phase(singleConfigs());
   const allPairs = pairConfigs();
-  const pairPlan = options.pairs ? allPairs.slice(0, options.maxPairs) : [];
+  const pairPlan = options.pairs ? rankedPairConfigs(singleResults, options.maxPairs) : [];
   const pairResults = await phase(pairPlan);
   const bestSingleFloor = Math.min(...singleResults.flatMap((row) =>
     row.evidence === undefined ? [] : [row.evidence.differing_halfwords]));
@@ -422,9 +482,9 @@ async function main(): Promise<void> {
     source: options.source,
     source_sha256: hash(sourceBytes),
     reference_sha256: hash(reference),
-    compiler_signature: compilerSignature,
+    compiler_signature: compilerDigest,
     policy: {
-      family: "approved-alchemy-gcc-2.96-thumb",
+      families: ["routed", "gcc296", "old-agbcc"],
       phases: ["routed-default", "single", ...(options.pairs ? ["compatible-pair"] : []),
         ...(options.triples ? ["evidence-supported-triple"] : [])],
       triple_threshold_halfwords: [2, 5],
@@ -452,7 +512,7 @@ async function main(): Promise<void> {
     stem,
     source_sha256: report.source_sha256,
     reference_sha256: report.reference_sha256,
-    compiler_signature: compilerSignature,
+    compiler_signature: compilerDigest,
     searched: report.policy.phases,
     bounded_search_complete: report.planning.bounded_search_complete,
     exact: best?.evidence?.exact ?? false,
@@ -481,7 +541,12 @@ async function main(): Promise<void> {
       evidence.literal_placement_proxy ? "literal" : "",
       evidence.control_flow_proxy ? "cfg" : "",
     ].filter(Boolean).join(",");
-    console.log(`${String(evidence.differing_halfwords).padStart(4)}hw size=${String(row.size).padStart(4)} ${row.config.flags.join(" ") || "(routed default)"}${tags ? ` [${tags}]` : ""}`);
+    const mutation = [
+      row.config.compiler_family,
+      ...row.config.flags,
+      ...row.config.remove_flags.map((flag) => `remove:${flag}`),
+    ].join(" ");
+    console.log(`${String(evidence.differing_halfwords).padStart(4)}hw size=${String(row.size).padStart(4)} ${mutation}${tags ? ` [${tags}]` : ""}`);
   }
   console.log(`report=${join(output, "report.json")} floor=${join(output, "floor.json")}`);
 }

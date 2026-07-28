@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-28)
 
-`[1,366 of 2,000]`. 634 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,367 of 2,000]`. 633 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -34,12 +34,12 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-25 | 1,242 | +6 |
 | 2026-07-26 | 1,292 | +50 |
 | 2026-07-27 | 1,345 | +53 (partial day) |
-| 2026-07-28 | 1,366 | +21 (decompilation resumed after humanization) |
+| 2026-07-28 | 1,367 | +22 (decompilation resumed after humanization) |
 
 **The recent three-day average is still roughly a factor of four below the
 2026-07-23 peak.** That is not a slowdown in effort: the broad easy tier is
 running out, and compiler lineage now matters as much as drafting. At the last
-two completed days' rate, 650 regions is roughly 23 working days; at the
+two completed days' rate, 633 regions is roughly 23 working days; at the
 three-day average, about 18. The estimates move materially with one cohort and
 neither is a session.
 
@@ -47,7 +47,7 @@ neither is a session.
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 465 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 460 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
 | 130 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
@@ -856,6 +856,23 @@ conversion count rises by two while the ordinary denominator rises by one.
 
 The current claimed build is `[1,366 of 2,000]` and 94,982 exact-C bytes.
 Ordinary assembly debt is 634 regions / 396,598 bytes.
+
+## The seventeenth fresh pass
+
+`0801ffd8` converted as 176 bytes of default-compiler C. It is a sibling of the
+existing `0801fe2c` placement routine: it creates four table-selected objects,
+records them in the shared placement state, derives their X/Y coordinates from
+the supplied origin, and schedules the follow-up callback.
+
+The reconstruction was exact on its first complete source shape apart from one
+real flag-mask error. Correcting `~0x0d` to the ROM's `~0x0c` produced
+176/176 bytes and zero differing halfwords; the integration gate then accepted
+the region without a compiler mode. A separate fresh `080bad7c` reconstruction
+was semantics-complete and exact-sized but remained a broad register-allocation
+floor, so it was not promoted.
+
+The current claimed build is `[1,367 of 2,000]` and 95,158 exact-C bytes.
+Ordinary assembly debt is 633 regions / 396,422 bytes.
 
 ## Bounded compiler-configuration explorer
 

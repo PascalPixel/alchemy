@@ -12151,15 +12151,9 @@
         },
         {
           "start": 33564952,
-          "end": 33565024,
+          "end": 33565036,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33565024,
-          "end": 33565036,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
           "start": 33565040,

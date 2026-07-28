@@ -1,15 +1,17 @@
-#include "types.h"
+#include "audio_engine.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-u8 *Func_080fb714(s32 arg0, void *arg1) {
+/* 戻り値は未使用だが、更新後位置を返す形でレジスタ順が一致する。 */
+u8 *Func_080fb714(
+    struct MusicPlayerState *unused,
+    struct MusicTrackState *track)
+{
     u32 cursor;
 
-    cursor = (u32)M2C_FIELD(arg1, u8 **, 0x40);
+    cursor = (u32)track->command;
     cursor = *(u8 *)cursor;
-    M2C_FIELD(arg1, u8 *, 0x2D) = cursor;
-    cursor = (u32)M2C_FIELD(arg1, u8 **, 0x40);
+    track->byte_2d = cursor;
+    cursor = (u32)track->command;
     cursor++;
-    M2C_FIELD(arg1, u8 **, 0x40) = (u8 *)cursor;
+    track->command = (u8 *)cursor;
     return (u8 *)cursor;
 }

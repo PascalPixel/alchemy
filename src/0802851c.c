@@ -6,17 +6,24 @@ void Func_08016418(struct Work *work, s32 release);
 s32 Func_08003f3c(u32 index);
 void Func_08002dd8(s32);
 void Func_080030f8(u32);
+
 void Func_0802851c(void) {
-    s32 temp_r0; s32 var_r6; u16 *var_r5; void *temp_r5;
-    temp_r5 = *(void **)0x03001F38;
+    struct Work *childWork;
+    s32 i;
+    u16 *entry;
+    void *work;
+
+    work = *(void **)0x03001F38;
     Func_08004278((void *)0x08028195);
-    temp_r0 = M2C_FIELD(temp_r5, s32, 0x78);
-    if (temp_r0 != 0) { Func_08016418(temp_r0, 2); }
-    var_r6 = 0;
-    while (var_r6 < (s32) M2C_FIELD(temp_r5, s16, 0x8E)) {
-        var_r5 = (u16 *)((u8 *)temp_r5 + 0x12) + var_r6 * 10;
-        Func_08003f3c(*var_r5);
-        var_r6 += 1;
+    childWork = M2C_FIELD(work, struct Work *, 0x78);
+    if (childWork != 0) {
+        Func_08016418(childWork, 2);
+    }
+    i = 0;
+    while (i < (s32)M2C_FIELD(work, s16, 0x8E)) {
+        entry = (u16 *)((u8 *)work + 0x12) + i * 10;
+        Func_08003f3c(*entry);
+        i += 1;
     }
     Func_08002dd8(0x3A);
     Func_080030f8(1U);

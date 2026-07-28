@@ -1,10 +1,9 @@
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-s32 *Func_080197b4(s32 *arg0) {
-    if (*arg0 != 0) {
-        *arg0 = 0;
+s32 *Func_080197b4(s32 *value)
+{
+    if (*value != 0) {
+        *value = 0;
     }
-    return arg0;
+    return value;
 }

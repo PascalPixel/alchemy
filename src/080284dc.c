@@ -17,6 +17,7 @@ void *Func_080284dc(void)
     struct DmaTransfer *dma;
     s32 line;
 
+    /* 作業領域を0で初期化する。 */
     destination = Func_080048f4(58, 0x98);
     source = &zero;
     *source = 0;

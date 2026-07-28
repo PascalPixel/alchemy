@@ -9,7 +9,7 @@ struct State08093304 {
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 s32 Func_08092ba8(s32 key);
-s32 Func_080915ac(void);
+s32 Func_080915ac(u32 id);
 extern u8 Data_02000240[];
 extern u8 Data_0809fc28[];
 extern struct State08093304 *Data_03001e8c;
@@ -24,8 +24,7 @@ void Func_08093304(s32 arg0)
         FIELD(state, s16, 0x12F4) = (value = 0);
         FIELD(state, s16, 0x12F6) = value;
     } else {
-        Func_08092ba8(arg0);
-        result = Func_080915ac();
+        result = Func_080915ac(Func_08092ba8(arg0));
         value = Data_0809fc28[Data_02000240[0x20C]];
         FIELD(state, s16, 0x12F4) = result;
         FIELD(state, s16, 0x12F6) = value;

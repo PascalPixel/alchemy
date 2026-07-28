@@ -1,33 +1,34 @@
-#include "types.h"
+#include "curve.h"
 
-s32 Func_08011ddc(s8 *values, s32 start, s32 end) {
+s32 Func_08011ddc(const s8 *samples, s32 start, s32 end)
+{
     s32 first;
     s32 second;
     s32 third;
     s32 difference;
     s32 delta;
 
-    first = *values++ << 19;
-    second = values[0] << 19;
-    third = values[1];
+    first = *samples++ << CURVE_VALUE_SHIFT;
+    second = samples[0] << CURVE_VALUE_SHIFT;
+    third = samples[1];
     difference = end - start;
-    start = difference + 15;
-    third <<= 19;
+    start = difference + CURVE_FULL_STEPS - 1;
+    third <<= CURVE_VALUE_SHIFT;
 
-    if (start == 15)
+    if (start == CURVE_FULL_STEPS - 1)
         return second;
 
-    if ((u32)start <= 14) {
+    if ((u32)start < CURVE_FULL_STEPS - 1) {
         delta = second - first;
         difference = delta * start;
         if (difference < 0)
-            difference += 15;
+            difference += CURVE_FULL_STEPS - 1;
         difference >>= 4;
         return first + difference;
     } else {
         difference *= third - second;
         if (difference < 0)
-            difference += 15;
+            difference += CURVE_FULL_STEPS - 1;
         difference >>= 4;
         return second + difference;
     }

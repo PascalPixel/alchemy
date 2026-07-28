@@ -6,19 +6,19 @@ extern void *Func_08077008(s32);
 extern s32 Func_080c2454(s32 index);
 extern s32 Func_080c23c0(s32 index);
 
-u32 Func_080b8530(s32 arg0) {
-    u32 var_r3;
-    u8 b;
+u32 Func_080b8530(s32 object_id) {
+    u32 palette_value;
+    u8 character_id;
 
-    b = M2C_FIELD(Func_08077008(arg0), u8 *, 0x128);
-    var_r3 = (u32) (Func_080c2454((s32) b) << 0x18) >> 8;
-    if (var_r3 == 0) {
-        b = M2C_FIELD(Func_08077008(arg0), u8 *, 0x128);
-        if (Func_080c23c0((s32) b) != 0) {
-            var_r3 = 0x180000;
+    character_id = M2C_FIELD(Func_08077008(object_id), u8 *, 0x128);
+    palette_value = (u32) (Func_080c2454((s32) character_id) << 0x18) >> 8;
+    if (palette_value == 0) {
+        character_id = M2C_FIELD(Func_08077008(object_id), u8 *, 0x128);
+        if (Func_080c23c0((s32) character_id) != 0) {
+            palette_value = 0x180000;
         } else {
-            var_r3 = 0x300000;
+            palette_value = 0x300000;
         }
     }
-    return var_r3;
+    return palette_value;
 }

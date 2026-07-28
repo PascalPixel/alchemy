@@ -1,8 +1,8 @@
 #include "types.h"
 
-s32 Func_080f95c8(s32 arg0) {
-    if ((arg0 == 0x46) || (arg0 == 0x4B) || (arg0 == 0x43)) {
+s32 Func_080f95c8(s32 command)
+{
+    if (command == 0x46 || command == 0x4b || command == 0x43)
         return 3;
-    }
     return 2;
 }

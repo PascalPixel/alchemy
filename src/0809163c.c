@@ -1,11 +1,10 @@
-#include "types.h"
+#include "battle_effect_runtime.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+void Func_080030f8(void);
 
-s32 Func_080030f8();
-
-void Func_0809163c(s32 arg0) {
-    if ((M2C_FIELD(*(void **)0x03001EBC, s32 *, 0x1CC) == 0) && (arg0 != 0)) {
+void Func_0809163c(s32 enabled)
+{
+    if (Data_03001ebc->unknown_1cc == 0 && enabled != 0) {
         Func_080030f8();
     }
 }

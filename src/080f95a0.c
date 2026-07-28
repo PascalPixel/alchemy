@@ -2,13 +2,14 @@
 
 s32 Func_080030f8(s32);
 
-void Func_080f95a0(void) {
-    s32 count = 0;
+void Func_080f95a0(void)
+{
+    s32 wait_count = 0;
+
     do {
-        if (*(u8 *)0x02003000 == 0) {
+        if (*(u8 *)0x02003000 == 0)
             break;
-        }
         Func_080030f8(1);
-        count++;
-    } while (count <= 299);
+        wait_count++;
+    } while (wait_count <= 299);
 }

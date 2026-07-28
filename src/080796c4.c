@@ -1,12 +1,5 @@
 #include "types.h"
-
-struct State_080796c4 {
-    u8 padding[0x1f8];
-    u8 active[8];
-};
-
-extern struct State_080796c4 Data_02000240;
-s32 Func_080795fc(void);
+#include "party_state.h"
 
 s32 Func_080796c4(s16 *output)
 {
@@ -19,7 +12,7 @@ s32 Func_080796c4(s16 *output)
         index = 0;
         if (count != 0) {
             do {
-                *output++ = Data_02000240.active[index];
+                *output++ = Data_02000240.active_owners[index];
                 index++;
             } while (index != count);
         }

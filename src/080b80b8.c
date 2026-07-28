@@ -8,29 +8,29 @@ s32 Func_080022ec(s32, s32);
 void Func_08009150(void *, s32, s32, s32);
 void Func_08009080(s32, s32);
 
-void Func_080b80b8(void **arg0, void **arg1, s32 arg2) {
-    s32 temp_r0;
-    s32 temp_r2;
-    s32 temp_r8;
-    s32 temp_r6_2;
-    s32 temp_diff;
-    void *temp_r5;
-    void *temp_r6;
+void Func_080b80b8(void **start_slot, void **end_slot, s32 progress) {
+    s32 z_step;
+    s32 start_x;
+    s32 x;
+    s32 start_z;
+    s32 end_z;
+    void *start;
+    void *end;
 
-    temp_r5 = *arg0;
-    temp_r6 = *arg1;
-    temp_r2 = M2C_FIELD(temp_r5, s32, 8);
-    temp_r8 = temp_r2 + Func_080022ec(arg2 * (M2C_FIELD(temp_r6, s32, 8) - temp_r2), 0x64);
-    temp_diff = M2C_FIELD(temp_r6, s32, 0x10);
-    temp_r6_2 = M2C_FIELD(temp_r5, s32, 0x10);
-    temp_r0 = Func_080022ec(arg2 * (temp_diff - temp_r6_2), 0x64);
+    start = *start_slot;
+    end = *end_slot;
+    start_x = M2C_FIELD(start, s32, 8);
+    x = start_x + Func_080022ec(progress * (M2C_FIELD(end, s32, 8) - start_x), 0x64);
+    end_z = M2C_FIELD(end, s32, 0x10);
+    start_z = M2C_FIELD(start, s32, 0x10);
+    z_step = Func_080022ec(progress * (end_z - start_z), 0x64);
     *(s16 *)0x04000050 = 0;
-    M2C_FIELD(temp_r5, s32, 0x34) = 0x20000;
-    M2C_FIELD(temp_r5, s32, 0x30) = 0x80000;
-    M2C_FIELD(temp_r5, s32, 0x28) = 0x40000;
-    M2C_FIELD(temp_r5, s32, 0x48) = 0xAB85;
-    M2C_FIELD(temp_r5, s32, 0x44) = 0;
-    M2C_FIELD(temp_r5, s8, 0x5A) = 1;
-    Func_08009150(temp_r5, temp_r8, 0, temp_r6_2 + temp_r0);
-    Func_08009080((s32) temp_r5, 2);
+    M2C_FIELD(start, s32, 0x34) = 0x20000;
+    M2C_FIELD(start, s32, 0x30) = 0x80000;
+    M2C_FIELD(start, s32, 0x28) = 0x40000;
+    M2C_FIELD(start, s32, 0x48) = 0xAB85;
+    M2C_FIELD(start, s32, 0x44) = 0;
+    M2C_FIELD(start, s8, 0x5A) = 1;
+    Func_08009150(start, x, 0, start_z + z_step);
+    Func_08009080((s32) start, 2);
 }

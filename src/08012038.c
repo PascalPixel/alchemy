@@ -1,19 +1,20 @@
 #include "types.h"
 #include "map.h"
 
-u8 Func_08012038(s32 arg0, s32 arg1, s32 arg2) {
-    struct MapState *temp_r0;
-    s32 var_r2;
-    s32 idx;
+u8 Func_08012038(s32 layer, s32 x, s32 y)
+{
+    struct MapState *state;
+    s32 cell_address;
+    s32 layer_offset;
 
-    temp_r0 = *(struct MapState **)0x03001E70;
-    arg1 >>= 0x14;
-    arg2 >>= 0x14;
-    var_r2 = 0x02010000;
-    if (temp_r0 != 0) {
-        idx = ((arg0 & 3) * 0x30) + 0x130;
-        var_r2 = *(s32 *)((u8 *)temp_r0 + idx);
+    state = *(struct MapState **)0x03001E70;
+    x >>= 20;
+    y >>= 20;
+    cell_address = 0x02010000;
+    if (state != 0) {
+        layer_offset = ((layer & 3) * sizeof(struct MapLayer)) + 0x130;
+        cell_address = *(s32 *)((u8 *)state + layer_offset);
     }
-    var_r2 += (arg1 + (arg2 << 7)) * 4;
-    return *(u8 *)(var_r2 + 2);
+    cell_address += (x + (y << 7)) * sizeof(struct MapCell);
+    return ((struct MapCell *)cell_address)->collision_code;
 }

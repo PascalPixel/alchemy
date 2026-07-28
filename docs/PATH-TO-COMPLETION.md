@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-28)
 
-`[1,351 of 1,999]`. 648 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,353 of 1,999]`. 646 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -32,7 +32,7 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-25 | 1,242 | +6 |
 | 2026-07-26 | 1,292 | +50 |
 | 2026-07-27 | 1,345 | +53 (partial day) |
-| 2026-07-28 | 1,351 | +6 (decompilation resumed after humanization) |
+| 2026-07-28 | 1,353 | +8 (decompilation resumed after humanization) |
 
 **The recent three-day average is still roughly a factor of four below the
 2026-07-23 peak.** That is not a slowdown in effort: the broad easy tier is
@@ -45,7 +45,7 @@ neither is a session.
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 475 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 473 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
 | 130 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
@@ -648,9 +648,31 @@ screened siblings, so broadening a compiler rule would be harmful.
 The current claimed build is `[1,351 of 1,999]` and 91,884 exact-C bytes.
 Ordinary assembly debt is 648 regions / 399,616 bytes.
 
+## The fifth fresh 81–160 pass
+
+Two default-compiler regions converted:
+
+| region | bytes | recovered responsibility |
+| --- | ---: | --- |
+| `0801ec6c` | 212 | choose a side and object ID, construct an object, then record its ID and generated value |
+| `080955b0` | 208 | resolve a menu selection, dispatch its page handler, clear the slot, and finalize the UI |
+
+The last four halfwords in `0801ec6c` exposed real reconstruction errors rather
+than compiler noise: the fifth and sixth arguments to `Func_0801a4fc` were
+reversed, and the state arrays at `0x12ec` and `0x12f0` had opposite roles.
+Correcting both produced exact code and a more accurate ABI.
+
+`0808f1c0` was parked at an exact-size two-halfword scheduling floor after its
+packed child bitfields were recovered. Its remaining difference is only the
+order of an independent byte load and immediate argument setup; existing modes
+and maintainable source reorderings do not close it.
+
+The current claimed build is `[1,353 of 1,999]` and 92,304 exact-C bytes.
+Ordinary assembly debt is 646 regions / 399,196 bytes.
+
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 475 of 648 have nothing exotic in
+1. **The bulk is volume, not blockers.** 473 of 646 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.

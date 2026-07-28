@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-28)
 
-`[1,363 of 1,999]`. 636 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,364 of 1,999]`. 635 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -32,7 +32,7 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-25 | 1,242 | +6 |
 | 2026-07-26 | 1,292 | +50 |
 | 2026-07-27 | 1,345 | +53 (partial day) |
-| 2026-07-28 | 1,363 | +18 (decompilation resumed after humanization) |
+| 2026-07-28 | 1,364 | +19 (decompilation resumed after humanization) |
 
 **The recent three-day average is still roughly a factor of four below the
 2026-07-23 peak.** That is not a slowdown in effort: the broad easy tier is
@@ -810,6 +810,22 @@ search, so their assembly remains authoritative.
 The current claimed build is `[1,363 of 1,999]` and 94,522 exact-C bytes.
 Ordinary assembly debt is 636 regions / 396,978 bytes.
 
+## The fifteenth fresh 81–160 pass
+
+`080fac44` converted as 180 bytes of typed C through the already-approved
+historical `old_agbcc` m4a compiler family. It updates the track's derived
+left/right volume and pitch fields from its modulation, pan, bend, tuning, and
+shift state, then clears the handled dirty flags. The semantics were recovered
+from this ROM region and the local finished pret project was used only to
+corroborate the public m4a layout and compiler-family identification.
+
+The compiler allowlist now has 39 independently exact witnesses. `080fac44`
+needs no new backend mode or per-function flag: it extends the existing stock
+m4a translation-unit family.
+
+The current claimed build is `[1,364 of 1,999]` and 94,702 exact-C bytes.
+Ordinary assembly debt is 635 regions / 396,798 bytes.
+
 ## Bounded compiler-configuration explorer
 
 `tools/mode_sweep.ts` now treats compiler search as evidence collection rather
@@ -838,6 +854,12 @@ equal priority. GCC's ready-list tie break selects the save first; the ROM
 selects the shift first. Reversing that tie break globally would damage five
 measured inverse-order functions, so this is recorded as a compiler floor
 rather than routed through a one-function backend flag.
+
+`tools/mode_cohort.ts` now applies the same cached phased explorer to a group of
+semantically verified candidates and reports only configurations that make
+more than one member exact. Its first bounded cohort contained six strong
+near-matches; it found zero shared exact configurations, so compiler work
+stopped immediately and effort returned to fresh decompilation.
 
 ## What changes the rate
 

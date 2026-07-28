@@ -1,36 +1,35 @@
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
-void *Func_080048f4(s32 arg0, s32 arg1) {
+void *Func_080048f4(s32 kind, s32 size)
+{
     u32 *base;
-    s32 idx;
-    u32 temp_r1;
-    u32 temp_r2;
-    u32 temp_r0;
-    u32 temp_r1_2;
-    u32 var_r0;
+    s32 offset;
+    u32 aligned_size;
+    u32 next;
+    u32 address;
+    u32 next_address;
+    u32 result;
 
     base = (u32 *)0x03001E50;
-    idx = arg0 * 4;
-    var_r0 = M2C_FIELD(base, u32, idx);
-    if (var_r0 == 0) {
-        temp_r0 = base[0];
-        temp_r1 = ((u32) (arg1 + 3) >> 2) * 4;
-        temp_r2 = temp_r0 + temp_r1;
-        if (temp_r2 >= (u32)(129 << 18)) {
-            temp_r0 = base[1];
-            temp_r1_2 = temp_r0 + temp_r1;
-            if (temp_r1_2 > 0x030077FFU) {
+    offset = kind * 4;
+    result = *(u32 *)((u8 *)base + offset);
+    if (result == 0) {
+        address = base[0];
+        aligned_size = (((u32)size + 3) >> 2) * 4;
+        next = address + aligned_size;
+        if (next >= (u32)(129 << 18)) {
+            address = base[1];
+            next_address = address + aligned_size;
+            if (next_address > 0x030077FFU) {
                 return NULL;
             }
-            base[1] = temp_r1_2;
-            M2C_FIELD(base, u32, idx) = temp_r0;
-            return (void *) temp_r0;
+            base[1] = next_address;
+            *(u32 *)((u8 *)base + offset) = address;
+            return (void *)address;
         }
-        base[0] = temp_r2;
-        M2C_FIELD(base, u32, idx) = temp_r0;
-        return (void *) temp_r0;
+        base[0] = next;
+        *(u32 *)((u8 *)base + offset) = address;
+        return (void *)address;
     }
-    return (void *) var_r0;
+    return (void *)result;
 }

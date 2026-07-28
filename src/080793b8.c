@@ -2,10 +2,11 @@
 
 extern u8 Data_02000040[];
 
-u8 Func_080793b8(s32 arg0) {
-    s32 temp_r3;
+u8 Func_080793b8(s32 no)
+{
+    u32 index;
 
-    temp_r3 = arg0 << 20;
-    arg0 = (u32)temp_r3 >> 23;
-    return Data_02000040[arg0];
+    index = (u32)no << 20;
+    no = (u32)index >> 23;
+    return Data_02000040[no];
 }

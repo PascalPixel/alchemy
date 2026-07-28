@@ -13,7 +13,10 @@ extern struct State Data_02000240;
 
 void Func_08077050(s32, s32);
 void Func_080b0278(s32, s32);
+s32 Func_08077028(s32, s32);
+void *Func_08077008(s32);
 
+/* 固定値を設定し、3つの項目フラグを1にする。 */
 s32 Func_080b0444(void)
 {
     Data_02000240.value10 = 0x30d40;

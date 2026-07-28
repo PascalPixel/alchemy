@@ -1,6 +1,6 @@
 #include "types.h"
 
-struct State {
+struct LinkState {
     u8 field0;
     u8 field1;
     u8 field2;
@@ -16,8 +16,8 @@ void Func_080060e8(s32 arg0);
 
 s32 Func_08006088(s32 arg0, s32 arg1)
 {
-    u32 control = *(u32 *)0x04000128;
-    struct State *state = (struct State *)0x02002240;
+    u32 control = *(volatile u32 *)0x04000128;
+    struct LinkState *state = (struct LinkState *)0x02002240;
     s32 packed;
     s32 result;
 

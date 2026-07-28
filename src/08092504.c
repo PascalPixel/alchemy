@@ -1,17 +1,17 @@
-#include "types.h"
+#include "object_runtime.h"
 
-extern s32 Func_0808ba1c(u32 arg0);
-extern void Func_080030f8(s32 arg0);
+void Func_080030f8(s32);
 
-void Func_08092504(s32 arg0) {
-    s32 base;
+void Func_08092504(u32 object_id)
+{
+    struct ObjectRuntime *object;
     u8 *ptr;
     volatile s32 saved;
     s32 i;
 
-    base = Func_0808ba1c(arg0);
-    if (base != 0 && *(u8 *)(base + 84) == 1) {
-        ptr = *(u8 **)(base + 80);
+    object = Func_0808ba1c(object_id);
+    if (object != NULL && object->animation_kind == 1) {
+        ptr = object->animation;
         saved = ptr[36];
         for (i = 0; i <= 89; i++) {
             Func_080030f8(1);

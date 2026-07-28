@@ -1,3 +1,4 @@
+#include "object_lookup.h"
 #include "types.h"
 
 struct GlobalState_0809b588 {
@@ -7,7 +8,6 @@ struct GlobalState_0809b588 {
 
 extern struct GlobalState_0809b588 Data_02000240;
 extern u32 Data_03001e40;
-s32 Func_0808ba1c(u32 arg0);
 s32 Func_08002304(u32, s32);
 
 void Func_0809b588(void) {

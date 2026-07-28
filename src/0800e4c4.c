@@ -1,21 +1,19 @@
-#include "types.h"
+#include "script_operands.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+void Func_0800e4c4(struct ScriptOperands *state, s32 operation, s32 value) {
+    s8 result;
 
-void Func_0800e4c4(void *arg0, s32 arg1, s32 arg2) {
-    s8 var_r1;
-
-    if (arg1 == 0) {
-        M2C_FIELD(arg0, s32 *, 0x3C) = arg2;
+    if (operation == 0) {
+        state->word_3c = value;
         return;
     }
-    if (arg1 == 1) {
-        M2C_FIELD(arg0, s32 *, 0x3C) = (s32) (M2C_FIELD(arg0, s32 *, 0x3C) + arg2);
+    if (operation == 1) {
+        state->word_3c += value;
         return;
     }
-    var_r1 = 0;
-    if (M2C_FIELD(arg0, s32 *, 0x3C) == arg2) {
-        var_r1 = 1;
+    result = 0;
+    if (state->word_3c == value) {
+        result = 1;
     }
-    M2C_FIELD(arg0, s8 *, 0x57) = var_r1;
+    state->comparison_result = result;
 }

@@ -1,8 +1,8 @@
+#include "metadata_lookup.h"
 #include "types.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-u8 *Func_08185000(s32 arg0);
 
 s32 Func_08012af8(s32 arg0, s32 arg1) {
     s32 v = arg0;
@@ -20,7 +20,7 @@ s32 Func_08012af8(s32 arg0, s32 arg1) {
                 continue;
             }
         }
-        if (*Func_08185000(v)) {
+        if (*(u8 *)Func_08185000(v)) {
             return v;
         }
     }

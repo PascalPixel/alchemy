@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_080022ec(s32, s32);
+s32 Func_080022ec(s32 value, s32 divisor);
 
 extern volatile u16 Data_03001cf8;
 extern volatile u16 Data_03001cf8_a;

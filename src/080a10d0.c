@@ -1,23 +1,22 @@
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+void Func_08015270(s32 handle);
+s32 Func_08015010(s32 first, s32 second, s32 third, s32 fourth, s32 flags);
 
-void Func_08015270(s32);
-s32 Func_08015010(s32, s32, s32, s32, s32);
-
-s32 Func_080a10d0(s32 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5) {
-    s32 temp_r0;
+s32 Func_080a10d0(s32 *handle, s32 first, s32 second, s32 third, s32 fourth, s32 flags)
+{
+    s32 current;
     s32 masked;
 
-    temp_r0 = *arg0;
-    if (temp_r0 != 0) {
-        if (0x100 & arg5) {
+    current = *handle;
+    if (current != 0) {
+        if (0x100 & flags) {
             return 0;
         }
-        Func_08015270(temp_r0);
+        Func_08015270(current);
         return 0;
     }
-    masked = arg5 & 0xff;
-    *arg0 = Func_08015010(arg1, arg2, arg3, arg4, masked);
+    masked = flags & 0xff;
+    *handle = Func_08015010(first, second, third, fourth, masked);
     return 1;
 }

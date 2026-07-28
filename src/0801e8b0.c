@@ -1,10 +1,5 @@
+#include "text_render_runtime.h"
 #include "types.h"
-
-struct Work_0801e8b0 {
-    u8 pad_00[12];
-    u16 x;
-    u16 y;
-};
 
 extern u8 *Data_03001e8c;
 
@@ -14,7 +9,7 @@ s32 Func_0801de5c(s16 *, s32, s32, s32);
 
 void Func_0801e8b0(
     u8 *text,
-    struct Work_0801e8b0 *work,
+    struct TextRenderWork *work,
     s32 offset_x,
     s32 offset_y)
 {
@@ -39,6 +34,7 @@ void Func_0801e8b0(
     }
     *output = 0;
 
+    /* 座標を8ドット単位のセル番号へ変換する。 */
     cell = ((work->y + ((u32)offset_y >> 3) + 1) << 5)
         + (work->x + ((u32)offset_x >> 3)) + 1;
     if (cell < 0x280) {

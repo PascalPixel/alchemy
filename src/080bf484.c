@@ -1,17 +1,14 @@
-#include "types.h"
+#include "counter_runtime.h"
 
-u8 *Func_08077008(void);
-s32 Func_080bf208(s32 arg0, s32 arg1, s32 arg2);
-
-s32 Func_080bf484(s32 arg0) {
-    u8 *value = Func_08077008() + 0x13C;
-    if (*value != 0) {
-        (*value)--;
-        if (*value == 0) {
+s32 Func_080bf484(s32 value)
+{
+    struct CounterRuntime *state = Func_08077008();
+    if (state->counter_13c != 0) {
+        state->counter_13c--;
+        if (state->counter_13c == 0)
             return 1;
-        }
-        if (Func_080bf208(arg0, *value, 50) != 0) {
-            *value = 0;
+        if (Func_080bf208(value, state->counter_13c, 50) != 0) {
+            state->counter_13c = 0;
             return 1;
         }
     }

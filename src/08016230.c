@@ -17,6 +17,7 @@ void Func_08016230(void *arg0) {
     s32 call_r3;
     void *temp_sl;
 
+    /* 描画属性に従い転送方法を切り替える。 */
     temp_sl = *(void **)0x03001E8C;
     temp_r3 = M2C_FIELD(arg0, u16 *, 0xA);
     temp_r2 = M2C_FIELD(arg0, u16 *, 0x16);

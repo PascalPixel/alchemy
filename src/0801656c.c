@@ -6,6 +6,7 @@ void Func_0801656c(s32 *arg0) {
     s32 *var_r2;
     s32 *var_r3;
 
+    /* 末尾要素をキャッシュする。 */
     var_r3 = M2C_FIELD(arg0, s32 **, 0);
     var_r2 = arg0;
     if (var_r3 != NULL) {

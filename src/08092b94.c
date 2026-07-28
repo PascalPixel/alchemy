@@ -1,7 +1,11 @@
-#include "types.h"
+#include "event_runtime.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+struct EventRuntime1d8 {
+    u8 unknown_000[0x1d8];
+    s16 value;
+};
 
-void Func_08092b94(s16 arg0) {
-    M2C_FIELD(*(void **)0x03001EBC, s16 *, 0x1D8) = arg0;
+void Func_08092b94(s16 value)
+{
+    ((struct EventRuntime1d8 *)Data_03001ebc)->value = value;
 }

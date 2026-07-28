@@ -1,3 +1,4 @@
+#include "metadata_lookup.h"
 #include "types.h"
 
 struct EventInfo {
@@ -6,8 +7,6 @@ struct EventInfo {
     u8 pad1[10];
     u8 **table;
 };
-
-extern struct EventInfo *Func_08185000(s32);
 
 s32 Func_0800be20(s32 arg0, u32 arg1, s32 arg2)
 {
@@ -26,6 +25,7 @@ s32 Func_0800be20(s32 arg0, u32 arg1, s32 arg2)
         op = ptr[0];
         val = ptr[1];
         ptr += 2;
+        /* 終端命令は長さへ含めない。 */
         if (op == 254 || op == 241 || op == 253 || op == 239) {
             break;
         }

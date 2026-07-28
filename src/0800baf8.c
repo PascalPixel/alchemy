@@ -4,6 +4,7 @@ void Func_0800baf8(u8 *arg0, s32 arg1)
 {
     u8 initial = arg0[0x27];
     if (initial != 0) {
+        /* 登録順を保ったまま有効な項目へ値を配る。 */
         void **cursor = (void **)(arg0 + 0x28);
         s32 count = initial;
         do {

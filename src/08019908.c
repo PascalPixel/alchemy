@@ -8,21 +8,21 @@ struct State_08019908 {
 
 extern struct State_08019908 *Data_03001e8c;
 
-/* Keep the constant loop bound live so the original compiler retains its register allocation. */
+/* 上限値は式のまま保持し、探索中の評価順を変えない。 */
 #define SLOT_COUNT(seed) (((seed) | ~(seed)) + 9)
 
 void Func_08019908(u32 value, u32 flag)
 {
     struct State_08019908 *state = Data_03001e8c;
-    u32 index = 0;
+    u32 no = 0;
     u32 limit = SLOT_COUNT(value);
 
     do {
-        if (state->flags[index] == 0) {
-            state->values[index] = value;
-            state->flags[index] = flag;
+        if (state->flags[no] == 0) {
+            state->values[no] = value;
+            state->flags[no] = flag;
             break;
         }
-        index++;
-    } while (index != limit);
+        no++;
+    } while (no != limit);
 }

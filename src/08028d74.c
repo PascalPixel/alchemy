@@ -7,7 +7,7 @@ void Func_080287a8(s32 arg0);
 s32 Func_08028808(s32, s32, s32);
 
 s32 Func_08028d74(s32 arg0) {
-    s32 temp_r5;
+    s32 result;
 
     Func_080284dc();
     Func_080287a8(0x11);
@@ -15,7 +15,7 @@ s32 Func_08028d74(s32 arg0) {
     Func_080287a8(0x13);
     Func_080287a8(0x14);
     Func_08028808(0x11, 7, 0);
-    temp_r5 = Func_08028574(arg0);
+    result = Func_08028574(arg0);
     Func_0802851c();
-    return temp_r5;
+    return result;
 }

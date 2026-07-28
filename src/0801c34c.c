@@ -28,6 +28,7 @@ void Func_0801c34c(void)
     x = (30 - third) >> 1;
     y = (10 - fourth) >> 1;
     object = Func_080162d4(x, y, third, fourth, 2);
+    /* 生成した番号を+0x230へ保存してから次の処理を呼ぶ。 */
     *(s32 *)(base + 0x230) = object;
     Func_0801e74c(resource, object, 0, 0);
     field = (u16 *)(base + 0x234);

@@ -24,6 +24,7 @@ void Func_0801c0dc(struct Object_0801c0dc *object, s32 *slot)
     const void *data = (const void *)0x080342f8;
     s32 value = Func_08004080();
 
+    /* ビットフィールドは生成時の設定順を保持する。 */
     *slot = value;
     object->field_80 = Func_08003fa4(value, 0x80, data);
     object->field_52 = 0;

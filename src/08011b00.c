@@ -1,12 +1,12 @@
 #include "types.h"
 
 struct SubQueueItem_08011b00 {
-    u32 unk00;
-    u16 unk04;
-    u16 unk06;
-    u16 unk08;
-    u16 unk0A;
-    u16 unk0C[16];
+    u32 unknown_00;
+    u16 unknown_04;
+    u16 unknown_06;
+    u16 unknown_08;
+    u16 unknown_0a;
+    u16 unknown_0c[16];
 };
 
 struct Queue_08011b00 {
@@ -16,24 +16,25 @@ struct Queue_08011b00 {
 
 void *Func_080048f4(s32 arg0, s32 arg1);
 
-void Func_08011b00(void) {
-    struct Queue_08011b00 *base;
-    struct SubQueueItem_08011b00 *ptr;
+void Func_08011b00(void)
+{
+    struct Queue_08011b00 *queue;
+    struct SubQueueItem_08011b00 *entry;
     u16 i;
     u16 j;
 
-    base = (struct Queue_08011b00 *) Func_080048f4(28, sizeof(struct Queue_08011b00));
-    ptr = base->slots;
+    queue = (struct Queue_08011b00 *)Func_080048f4(28, sizeof(struct Queue_08011b00));
+    entry = queue->slots;
     for (i = 0; i != 4; i++) {
-        ptr->unk00 = 0;
-        ptr->unk04 = 0;
-        ptr->unk06 = 0;
-        ptr->unk08 = 0;
-        ptr->unk0A = 0;
+        entry->unknown_00 = 0;
+        entry->unknown_04 = 0;
+        entry->unknown_06 = 0;
+        entry->unknown_08 = 0;
+        entry->unknown_0a = 0;
         for (j = 0; j != 16; j++) {
-            ptr->unk0C[j] = 0;
+            entry->unknown_0c[j] = 0;
         }
-        ptr++;
+        entry++;
     }
-    base->count = 0;
+    queue->count = 0;
 }

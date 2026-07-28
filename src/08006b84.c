@@ -1,18 +1,18 @@
 #include "types.h"
 
-void Func_08006b84(u32 source, u8 *destination, s32 size)
+void Func_08006b84(u32 src, u8 *dst, s32 size)
 {
-    const u8 *cursor = (const u8 *)source;
-    u8 *out = destination;
-    s32 index = size - 1;
+    const u8 *srcPos = (const u8 *)src;
+    u8 *dstPos = dst;
+    s32 count = size - 1;
 
     if (size != 0) {
         do {
-            source = *cursor;
-            *out = source;
-            cursor++;
-            out++;
-            index--;
-        } while (index != -1);
+            src = *srcPos;
+            *dstPos = src;
+            srcPos++;
+            dstPos++;
+            count--;
+        } while (count != -1);
     }
 }

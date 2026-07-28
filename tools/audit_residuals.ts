@@ -498,8 +498,7 @@ function printReport(report: ResidualAudit): void {
   console.log(
     `source_only=True source_regions=${report.source_regions} source_bytes=${report.source_bytes} ` +
     `unowned_bytes=${report.unowned_bytes} gaps=${report.gaps} ` +
-    `project_completion=${report.project_completion_status} ` +
-    `byte_reconstruction=${report.byte_reconstruction_percent.toFixed(2)}%`,
+    `source_owned=${report.unowned_bytes === 0 ? "yes" : "no"}`,
   );
   for (const item of report.bands) {
     console.log(

@@ -1,6 +1,10 @@
 # Path to completion (measured 2026-07-28)
 
-`[1,368 of 2,000]`. 632 `c_candidate` regions remain. **Y dropped from 2,058 to
+**Full-C Byte Share: 114,526 / 1,338,242 executable bytes (8.56%).**
+
+The main-image diagnostic ledger contains 1,369 exact-C regions and 631
+`c_candidate` regions. These region counts are useful scheduling diagnostics,
+not project progress. **Its denominator dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -34,7 +38,7 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-25 | 1,242 | +6 |
 | 2026-07-26 | 1,292 | +50 |
 | 2026-07-27 | 1,345 | +53 (partial day) |
-| 2026-07-28 | 1,368 | +23 (decompilation resumed after humanization) |
+| 2026-07-28 | 1,369 | +24 (decompilation resumed after humanization) |
 
 **The recent three-day average is still roughly a factor of four below the
 2026-07-23 peak.** That is not a slowdown in effort: the broad easy tier is
@@ -897,6 +901,32 @@ floors, so none was manually permuted or promoted approximately.
 
 The current claimed build is `[1,368 of 2,000]` and 95,358 exact-C bytes.
 Ordinary assembly debt is 632 regions / 396,222 bytes.
+
+## The nineteenth fresh pass
+
+`080ba584` converted as 296 bytes of default-compiler C. It resolves a primary
+battle object, derives and stores its facing angle, builds the shared 84-byte
+battle work record, starts motion toward a secondary object, and selects either
+the scripted presentation sequence or the ordinary battle update path.
+
+The exact source uses the layouts already evidenced by the installed
+`080b8b48`, `080b9d34`, and motion-object family. Three source details preserve
+the original allocation without a compiler mode: the second coordinate is
+materialized before the first, the raw/adjusted/final facing values remain
+separate, and the low-ID classification is an explicit `if`/`else`. The result
+is 296/296 bytes, zero differing halfwords, and an integration-gate acceptance.
+
+The same untouched cohort reconstructed `080d0468` and `080dc1ec`
+semantically, but both hit broad register-coloring cascades across nested
+loops. They remain ignored scratch rather than approximate C claims.
+
+The current main claimed build contains 95,654 compiler-linked bytes, of which
+95,542 qualify as canonical Full-C after excluding two legacy inline-assembly
+fakematches. The overlays contribute another 18,984 Full-C bytes. Ordinary
+assembly debt is 631 regions / 395,926 bytes; both are diagnostics.
+
+The canonical headline, including audited main and overlay executable spans,
+is **114,526 / 1,338,242 executable bytes (8.56%)**.
 
 ## Bounded compiler-configuration explorer
 

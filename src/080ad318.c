@@ -1,18 +1,12 @@
 #include "types.h"
-
-struct State_080ad318 {
-    u8 padding[0x224];
-    void *objects[4];
-};
-
-extern struct State_080ad318 *Data_03001f2c;
+#include "four_object_motion.h"
 
 void Func_08009038(void *);
 void Func_08004278(s32);
 
 void Func_080ad318(void)
 {
-    struct State_080ad318 *state = Data_03001f2c;
+    struct FourObjectMotionState *state = Data_03001f2c;
     s32 index = 0;
 
     do {

@@ -1,16 +1,8 @@
 #include "types.h"
+#include "four_object_motion.h"
 
 #define NEGATIVE_POSITION_MASK ((s32)0xffff8000)
 #define POSITIONS_Y_OFFSET 0x23c
-
-struct State_080ad5b4 {
-    u8 padding_000[0x224];
-    void *objects[4];
-    s16 positions_x[4];
-    s16 positions_y[4];
-};
-
-extern struct State_080ad5b4 *Data_03001f2c;
 
 /*
  * The binary preserves r0 at return: the null-object path leaves the index,
@@ -20,7 +12,7 @@ extern struct State_080ad5b4 *Data_03001f2c;
  */
 s32 Func_080ad5b4(s32 index, s32 position_x, s32 position_y, s32 negative)
 {
-    struct State_080ad5b4 *state = Data_03001f2c;
+    struct FourObjectMotionState *state = Data_03001f2c;
 
     if (state->objects[index] != 0) {
         state->positions_x[index] = position_x;

@@ -13,18 +13,19 @@ extern struct Config_080071a8 Data_08007c10;
 
 s32 Func_080072f0(s32, u8 *, u32, s32);
 
-u16 Func_080071a8(u32 index, u8 *source)
+u16 Func_080071a8(u32 slot, const u8 *source)
 {
-    u8 *input;
-    u8 *destination;
+    const u8 *input;
+    volatile u8 *destination;
     s32 *finish;
     u32 saved_ime;
     u32 last;
     s32 remaining;
 
     input = source;
-    index = (u16)index;
-    destination = (u8 *)(0x0e000000 + (index << Data_08007c10.shift));
+    slot = (u16)slot;
+    destination = (volatile u8 *)(
+        0x0e000000 + (slot << Data_08007c10.shift));
     saved_ime = *(volatile u16 *)0x04000208;
     *(volatile u16 *)0x04000208 = 0;
     *(volatile u8 *)0x0e005555 = 0xaa;
@@ -46,7 +47,7 @@ u16 Func_080071a8(u32 index, u8 *source)
     last = *input;
     return Func_080072f0(
         1,
-        destination,
+        (u8 *)destination,
         last,
         *finish);
 }

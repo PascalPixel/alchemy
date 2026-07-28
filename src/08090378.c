@@ -2,19 +2,19 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-void Func_08090378(s32 arg0, s32 arg1, s32 arg2) {
-    void *temp_r4;
+void Func_08090378(s32 clear_0800, s32 clear_0400, s32 clear_0200) {
+    void *state;
 
-    temp_r4 = *(void **)0x03001E70;
-    if (temp_r4 != NULL) {
-        if (arg2 != 0) {
-            M2C_FIELD(temp_r4, u16 *, 0x14) = (u16) (0xFDFF & M2C_FIELD(temp_r4, u16 *, 0x14));
+    state = *(void **)0x03001E70;
+    if (state != NULL) {
+        if (clear_0200 != 0) {
+            M2C_FIELD(state, u16 *, 0x14) &= 0xFDFF;
         }
-        if (arg1 != 0) {
-            M2C_FIELD(temp_r4, u16 *, 0x14) = (u16) (0xFBFF & M2C_FIELD(temp_r4, u16 *, 0x14));
+        if (clear_0400 != 0) {
+            M2C_FIELD(state, u16 *, 0x14) &= 0xFBFF;
         }
-        if (arg0 != 0) {
-            M2C_FIELD(temp_r4, u16 *, 0x14) = (u16) (0xF7FF & M2C_FIELD(temp_r4, u16 *, 0x14));
+        if (clear_0800 != 0) {
+            M2C_FIELD(state, u16 *, 0x14) &= 0xF7FF;
         }
     }
 }

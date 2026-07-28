@@ -12,7 +12,7 @@ s32 Func_0801de5c(u16 *, s32, s32, s32);
 
 void Func_08017c1c(
     u16 *buffer,
-    struct Work_08017c1c *work,
+    const struct Work_08017c1c *work,
     s32 offset_x,
     s32 offset_y)
 {

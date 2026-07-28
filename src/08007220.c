@@ -15,7 +15,7 @@ extern struct FlashInfo08007220 Data_08007c10;
 extern u16 Data_02004c0c;
 
 void Func_08006ac0(void *);
-u16 Func_080071a8(u32, u8 *);
+u16 Func_080071a8(u32, const u8 *);
 
 u16 Func_08007220(u16 sector, u8 *source)
 {

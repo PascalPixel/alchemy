@@ -1,11 +1,11 @@
 #include "object_lookup.h"
 #include "types.h"
+#include "object_effect.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void Func_08009128(void);
 void *Func_080048f4(s32 arg0, s32 arg1);
-void Func_080090e0(void *, void *);
 void Func_080030f8(s32);
 
 void Func_0809335c(s32 arg0, s32 arg1) {

@@ -62,14 +62,3 @@ Func_08091f14:
 	movs	r0, r0
 	.4byte 0x03001ebc
 	.4byte 0x02000240
-	ldr	r3, [pc, #16]
-	movs	r4, #231
-	lsls	r4, r4, #1
-	adds	r2, r3, r4
-	strh	r0, [r2, #0]
-	movs	r2, #232
-	lsls	r2, r2, #1
-	adds	r3, r3, r2
-	strh	r1, [r3, #0]
-	bx	lr
-	.4byte 0x02000240

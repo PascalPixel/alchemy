@@ -2,10 +2,9 @@
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, join } from "node:path";
 import {
-  cflagsForTargetSource,
-  compilerCommandForTargetSource,
   externalSymbol,
   externalSymbolAssembly,
+  sourceToAssemblyPlan,
   type CompilerTarget,
 } from "./alchemy_gcc.ts";
 import { DEFAULT_TARGET, decompTarget, parseDecompTarget } from "./decomp_targets.ts";
@@ -65,12 +64,14 @@ export function verify(
   const symbolsObject = join(outputDir, `${name}.symbols.o`);
   const elf = join(outputDir, `${name}.elf`);
   const binary = join(outputDir, `${name}.bin`);
-  run(compilerCommandForTargetSource(
-    compiler,
-    source,
-    ...cflagsForTargetSource(compiler, source),
-    "-S", "-o", assembly, source,
-  ));
+  const plan = sourceToAssemblyPlan({
+    target: compiler,
+    routingSource: source,
+    input: source,
+    output: assembly,
+    preprocessedOutput: join(outputDir, `${name}.i`),
+  });
+  for (const step of plan.steps) run([...step.command]);
   run([
     "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
     "-o", object, assembly,

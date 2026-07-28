@@ -141,10 +141,12 @@ const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78"]);
 // dependent count alone; these references break it by original order instead.
 // 08021d88 likewise needs original-order tie breaking for its frame adjustment
 // and two split constants; its source order then reproduces the ROM exactly.
+// 080903bc needs the same tie break for one callback-literal load versus the
+// preceding state-byte store; its other 101 halfwords already agree.
 // 08094730 has the same scheduler tell immediately before its grouped DMA
 // descriptor; original-order tie breaking closes its last transposition.
 const NO_SCHED_DEPEND_COUNT_SOURCES = new Set([
-  "08002fb0", "08003e10", "08005340", "08005394", "080053e8", "0800d304", "08019bac", "08021d88", "08094730",
+  "08002fb0", "08003e10", "08005340", "08005394", "080053e8", "0800d304", "08019bac", "08021d88", "080903bc", "08094730",
 ]);
 // The reference issues the destination copy ahead of the following ALU work.
 const MOVE_BEFORE_ALU_SOURCES = new Set([

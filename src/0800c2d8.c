@@ -1,23 +1,12 @@
-#include "types.h"
+#include "object_dispatch.h"
 
-typedef struct {
-    s32 value;
-    s16 halfword;
-    u8 padding06[81];
-    u8 byte87;
-    u8 padding88[3];
-    u8 byte91;
-    u8 padding92;
-    u8 byte93;
-} Object;
-
-void Func_0800c2d8(Object *object, s32 value)
+void Func_0800c2d8(struct DispatchObject *object, u32 value)
 {
     if (object != 0) {
-        object->halfword = 0;
-        object->value = value;
-        object->byte91 = 0;
-        object->byte93 = 0;
-        object->byte87 = 0;
+        object->value_04 = 0;
+        object->value_00 = value;
+        object->value_5b = 0;
+        object->value_5d = 0;
+        object->value_57 = 0;
     }
 }

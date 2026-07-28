@@ -1,6 +1,6 @@
-extern void Func_0800c2d8(void *, void *);
+#include "object_dispatch.h"
 
-void Func_0800c48c(void *arg0)
+void Func_0800c48c(struct DispatchObject *object)
 {
-    Func_0800c2d8(arg0, (void *)0x080135c0);
+    Func_0800c2d8(object, 0x080135c0);
 }

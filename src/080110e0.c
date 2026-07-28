@@ -1,6 +1,7 @@
 #include "types.h"
 
-static __inline__ void CopyEntry(u8 *map, u8 *destination) {
+static __inline__ void CopyEntry(u8 *map, u8 *destination)
+{
     u32 palette = *(u16 *)map;
     volatile u16 *colors = (volatile u16 *)0x02010000;
     colors += palette * 2;
@@ -8,7 +9,8 @@ static __inline__ void CopyEntry(u8 *map, u8 *destination) {
     *(u16 *)(destination + 64) = *colors;
 }
 
-void Func_080110e0(u32 value) {
+void Func_080110e0(u32 value)
+{
     u8 *map;
     u8 *destination;
     u32 counter;

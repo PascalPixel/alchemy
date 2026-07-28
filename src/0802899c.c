@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
 void Func_0801c2d0(void);
 void *Func_080284dc(void);
 void Func_080287a8(s32 arg0);

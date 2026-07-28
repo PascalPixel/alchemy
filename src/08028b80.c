@@ -12,6 +12,7 @@ void Func_08028b80(void)
     s16 *shown = (s16 *)(state + 150);
     s16 *current = (s16 *)(state + 140);
 
+    /* 値が変わった時だけ表示を更新する。 */
     if (*shown != *current) {
         *shown = (u16)*current;
         Func_08016478(*(void **)(state + 124));

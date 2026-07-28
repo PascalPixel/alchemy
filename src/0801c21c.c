@@ -3,14 +3,11 @@
 s32 Func_08003f3c(u32 index);
 void Func_0801c21c(void)
 {
-  unsigned int new_var;
-  void *temp_r5;
-  new_var = 0x30C;
-  temp_r5 = (*((s32 *) 0x03001E98)) + new_var;
-  if ((*((u16 *) (((u8 *) temp_r5) + 0xA))) != 0)
-  {
-    Func_08003f3c(*((u16 *) (((u8 *) temp_r5) + 0xC)));
-    *((u16 *) (((u8 *) temp_r5) + 0xA)) = (new_var = 0U);
-  }
-}
+    u32 offset = 0x30c;
+    u8 *work = *(u8 **)0x03001e98 + offset;
 
+    if (*(u16 *)(work + 0x0a) != 0) {
+        Func_08003f3c(*(u16 *)(work + 0x0c));
+        *(u16 *)(work + 0x0a) = offset = 0;
+    }
+}

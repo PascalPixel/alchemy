@@ -1,8 +1,8 @@
-#include "types.h"
+#include "object_dispatch.h"
 
 void Func_0800bdd4(u8 *object);
 
-void Func_0800c0f4(u8 *object)
+void Func_0800c0f4(struct DispatchObject *object)
 {
     u32 zero;
     u32 *source;
@@ -14,13 +14,13 @@ void Func_0800c0f4(u8 *object)
     s32 remaining;
 
     if (object != 0) {
-        kind = *(u8 *)(object + 84) & 15;
+        kind = object->kind & 15;
         switch (kind) {
         case 1:
-            Func_0800bdd4(*(void **)(object + 80));
+            Func_0800bdd4(object->target.child);
             break;
         case 2:
-            slot = *(void ***)(object + 80);
+            slot = object->target.children;
             remaining = 3;
             do {
                 child = *slot++;

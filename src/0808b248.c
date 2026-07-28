@@ -8,5 +8,6 @@ struct Fields_0808b248 {
 extern struct Fields_0808b248 Data_02000240;
 
 s16 Func_0808b248(void) {
+    /* 作業領域0x1d6の半語を返す。 */
     return Data_02000240.value;
 }

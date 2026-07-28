@@ -2,9 +2,9 @@
 
 u8 *Func_08077008(s32);
 
-s32 Func_080b27b0(s32 index, s32 kind)
+s32 Func_080b27b0(s32 entry_no, s32 kind)
 {
-    u8 *entry = Func_08077008(index);
+    u8 *entry = Func_08077008(entry_no);
     s32 result = 0;
 
     if ((kind == 0 && *(s16 *)(entry + 56) <= 0)

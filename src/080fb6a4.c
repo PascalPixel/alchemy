@@ -1,11 +1,13 @@
 typedef unsigned char u8;
 typedef unsigned int u32;
 
-struct State_080fb6a4 {
-    u8 padding_00[40];
-    u32 value;
-    u8 padding_2c[20];
-    u8 *source;
+struct MusicPlayerState;
+
+struct MusicTrackState {
+    u8 unknown_00[0x28];
+    u32 word_28;
+    u8 unknown_2c[0x14];
+    u8 *command;
 };
 
 union Value_080fb6a4 {
@@ -18,15 +20,17 @@ union Value_080fb6a4 {
     } bits;
 };
 
-void Func_080fb6a4(void *unused, struct State_080fb6a4 *state)
+void Func_080fb6a4(
+    struct MusicPlayerState *unused,
+    struct MusicTrackState *track)
 {
     union Value_080fb6a4 value;
-    u8 *source = state->source;
+    u8 *source = track->command;
 
     value.bits.byte0 = source[0];
     value.bits.byte1 = source[1];
     value.bits.byte2 = source[2];
     value.bits.byte3 = source[3];
-    state->value = value.word;
-    state->source = source + 4;
+    track->word_28 = value.word;
+    track->command = source + 4;
 }

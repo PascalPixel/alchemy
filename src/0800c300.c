@@ -1,21 +1,20 @@
-#include "types.h"
-
-#define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+#include "object_dispatch.h"
 
 void Func_0800ba30(void *, s32);
 
-void Func_0800c300(void *object, s32 argument) {
+void Func_0800c300(struct DispatchObject *object, s32 argument)
+{
     void **items;
     s32 count;
     void *item;
 
     if (object != 0) {
-        switch (FIELD(object, u8 *, 0x54) & 0xF) {
+        switch (object->kind & 0xf) {
         case 1:
-            Func_0800ba30(FIELD(object, void **, 0x50), argument);
+            Func_0800ba30(object->target.child, argument);
             break;
         case 2:
-            items = FIELD(object, void ***, 0x50);
+            items = object->target.children;
             count = 3;
             do {
                 item = *items++;

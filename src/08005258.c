@@ -1,8 +1,10 @@
 #include "types.h"
 
-void Func_08005258(u32 arg0, u32 arg1, u32 arg2) {
-    u32 *store = (u32 *)0x03001ce0;
-    store[0] = arg0;
-    store[1] = arg1;
-    store[2] = arg2;
+void Func_08005258(u32 value0, u32 value1, u32 value2)
+{
+    u32 *work = (u32 *)0x03001ce0;
+
+    work[0] = value0;
+    work[1] = value1;
+    work[2] = value2;
 }

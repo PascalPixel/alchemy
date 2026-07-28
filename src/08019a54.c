@@ -5,22 +5,24 @@
 void Func_08016418(struct Work *work, s32 release);
 void Func_080030f8(u32);
 
-void Func_08019a54(void) {
-    s32 var_r6;
-    void **var_r5;
-    void *temp_r0;
+void Func_08019a54(void)
+{
+    s32 no;
+    void **slot;
+    void *work;
 
-    var_r5 = (void **)(*(s32 *)0x03001E8C + 0x620);
-    var_r6 = 0;
+    slot = (void **)(*(s32 *)0x03001e8c + 0x620);
+    no = 0;
     do {
-        temp_r0 = *var_r5;
-        if ((temp_r0 != NULL) && (M2C_FIELD(temp_r0, s32, 0x18) == 0) &&
-            (M2C_FIELD(temp_r0, u16, 0x16) != 0) &&
-            (M2C_FIELD(temp_r0, u16, 0x14) != 0)) {
-            Func_08016418((s32) temp_r0, (s32) (u16) (2 & M2C_FIELD(temp_r0, u16, 0x16)));
+        work = *slot;
+        if (work != NULL && M2C_FIELD(work, s32, 0x18) == 0
+            && M2C_FIELD(work, u16, 0x16) != 0
+            && M2C_FIELD(work, u16, 0x14) != 0) {
+            Func_08016418((s32)work,
+                (s32)(u16)(2 & M2C_FIELD(work, u16, 0x16)));
         }
-        var_r6 += 1;
-        var_r5 = (void **)((u8 *)var_r5 + 40);
-    } while (var_r6 != 3);
-    Func_080030f8(10U);
+        no++;
+        slot = (void **)((u8 *)slot + 40);
+    } while (no != 3);
+    Func_080030f8(10);
 }

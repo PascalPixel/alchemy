@@ -701,6 +701,26 @@ export function validateAgbccBundle(): void {
   agbccValidated = true;
 }
 
+export function compilerBundleSignature(): string {
+  const paths = [
+    join(BUNDLE, "xgcc"), join(BUNDLE, "cpp"), join(BUNDLE, "tradcpp"), join(BUNDLE, "cc1"),
+    join(GS2_BUNDLE, "xgcc"), join(GS2_BUNDLE, "cpp0"), join(GS2_BUNDLE, "tradcpp0"),
+    join(GS2_BUNDLE, "cc1"), AGBCC_DRIVER,
+  ];
+  const digest = new Bun.CryptoHasher("sha256");
+  for (const path of paths) {
+    digest.update(path);
+    digest.update("\0");
+    try {
+      digest.update(readFileSync(path));
+    } catch {
+      digest.update("missing");
+    }
+    digest.update("\0");
+  }
+  return digest.digest("hex");
+}
+
 export function compilerCommand(...arguments_: Array<string | number>): string[] {
   return compilerCommandForTarget("gs1", ...arguments_);
 }
@@ -739,7 +759,8 @@ export function directPreprocessorCommand(input: string, output: string): string
     "-D__GNUC__=2", "-D__GNUC_MINOR__=96", "-D__GNUC_PATCHLEVEL__=0",
     "-Acpu(arm)", "-Amachine(arm)", "-D__CHAR_UNSIGNED__", "-D__OPTIMIZE__",
     "-D__ARM_ARCH_4T__", "-D__APCS_32__", "-D__ARMEL__", "-D__THUMBEL__",
-    "-Darm_elf", "-D__ELF__", "-Dthumb", "-D__thumb__", input, output,
+    "-Darm_elf", "-D__ELF__", "-Dthumb", "-D__thumb__",
+    `-I${join(ROOT, "include")}`, input, output,
   ];
 }
 
@@ -749,55 +770,12 @@ export function directCompilerCommand(
   dumpbase: string,
   source = dumpbase,
 ): string[] {
-  const stem = sourceStem(source);
   validateBundle();
+  const flags = cflagsForSource(source).filter((flag) =>
+    flag !== "-nostdinc" && !flag.startsWith("-I"));
   return [
     join(BUNDLE, "cc1"), input, "-quiet", "-dumpbase", dumpbase,
-    "-mthumb", "-mthumb-interwork", "-mcpu=arm7tdmi", "-O2",
-    "-fno-builtin", "-ffreestanding",
-    ...(DEFAULT_ABI_SOURCES.has(stem) ? [] : ["-fcall-used-r4"]),
-    ...(FIXED_R3_SOURCES.has(stem) ? ["-ffixed-r3"] : []),
-    ...(FIXED_LR_SOURCES.has(stem) ? ["-ffixed-r14"] : []),
-    ...(OPTIMIZE_O1_SOURCES.has(stem) ? ["-O1"] : []),
-    ...(UNSCHEDULED_SOURCES.has(stem) ? ["-fno-schedule-insns", "-fno-schedule-insns2"] : []),
-    ...(NO_CSE_FOLLOW_SOURCES.has(stem) ? ["-fno-cse-follow-jumps"] : []),
-    ...(NO_RERUN_CSE_AFTER_LOOP_SOURCES.has(stem) ? ["-fno-rerun-cse-after-loop"] : []),
-    ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),
-    ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
-    ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
-    ...(NO_CONTIGUOUS_IMMEDIATE_SOURCES.has(stem) ? ["-fno-thumb-contiguous-immediate"] : []),
-    ...(NO_SCHED_DEPEND_COUNT_SOURCES.has(stem) ? ["-fno-sched-depend-count"] : []),
-    ...(HOIST_PARAMETER_SAVE_SOURCES.has(stem) ? ["-fthumb-hoist-parameter-save"] : []),
-    ...(MINIPOOL_TAIL_FIRST_SOURCES.has(stem) ? ["-fthumb-minipool-tail-first"] : []),
-    ...(MOVE_BEFORE_ALU_SOURCES.has(stem) ? ["-fthumb-move-before-alu"] : []),
-    ...(NO_REGMOVE_SOURCES.has(stem) ? ["-fno-regmove"] : []),
-    ...(ENTRY_LITERAL_FIRST_SOURCES.has(stem)
-      ? ["-fno-schedule-insns2", "-mthumb-entry-literal-first"] : []),
-    ...(HIGH_REGISTER_MOVE_FIRST_SOURCES.has(stem) ? ["-mhigh-register-move-first"] : []),
-    ...(ORR_DEAD_INPUT_REUSE_SOURCES.has(stem)
-      ? ["-fthumb-orr-dead-input-reuse"]
-      : []),
-    ...(ENTRY_FRAME_CLUSTER_SOURCES.has(stem)
-      ? ["-fthumb-entry-frame-cluster"]
-      : []),
-    ...(LITERAL_BEFORE_INDEX_SHIFT_SOURCES.has(stem)
-      ? ["-fthumb-literal-before-index-shift"]
-      : []),
-    ...(LOW_CONSTANT_BEFORE_HIGH_MOVE_SOURCES.has(stem)
-      ? ["-fthumb-low-constant-before-high-move"]
-      : []),
-    ...(HIGH_MOVE_BEFORE_STACK_STORE_SOURCES.has(stem)
-      ? ["-fthumb-high-move-before-stack-store"]
-      : []),
-    ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
-    ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
-    ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
-    ...(THUMB_IMMEDIATE_LATENCY_SOURCES.has(stem)
-      ? ["-mthumb-immediate-latency"]
-      : []),
-    ...(CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
-      ? ["-mcall-arg0-move-first"]
-      : []),
+    ...flags,
     "-o", output,
   ];
 }

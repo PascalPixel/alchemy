@@ -9,10 +9,16 @@ import {
 } from "node:fs";
 import { basename, dirname, extname, join } from "node:path";
 import {
+  AGBCC_CFLAGS,
+  AGBCC_DRIVER,
+  cflagsForTarget,
   cflagsForTargetSource,
+  compilerCommandForTarget,
   compilerCommandForTargetSource,
+  directPreprocessorCommand,
   externalSymbol,
   externalSymbolAssembly,
+  validateAgbccBundle,
   type CompilerTarget,
 } from "./alchemy_gcc.ts";
 import {
@@ -53,6 +59,13 @@ export interface Verification {
   size: number;
 }
 
+export type CandidateCompilerFamily = "routed" | "gcc296" | "old-agbcc";
+export interface CandidateCompilerConfiguration {
+  family?: CandidateCompilerFamily;
+  addFlags?: readonly string[];
+  removeFlags?: readonly string[];
+}
+
 type JsonRecord = Record<string, unknown>;
 
 class CalledProcessError extends Error {}
@@ -87,6 +100,7 @@ export async function verifyCandidate(
   extraCompilerFlags: readonly string[] = [],
   imageBase = ROM_BASE,
   compiler: CompilerTarget = "gs1",
+  configuration: CandidateCompilerConfiguration = {},
 ): Promise<Verification> {
   const stem = sourceStem(source);
   const address = parseHex(stem);
@@ -97,13 +111,30 @@ export async function verifyCandidate(
   const symbolsObject = join(outputDirectory, `${stem}.symbols.o`);
   const elf = join(outputDirectory, `${stem}.elf`);
   const binary = join(outputDirectory, `${stem}.bin`);
-  await run(compilerCommandForTargetSource(
-    compiler,
-    source,
-    ...cflagsForTargetSource(compiler, source),
+  const family = configuration.family ?? "routed";
+  const baseFlags = family === "routed"
+    ? cflagsForTargetSource(compiler, source)
+    : family === "gcc296"
+      ? cflagsForTarget(compiler)
+      : AGBCC_CFLAGS;
+  const removed = new Set(configuration.removeFlags ?? []);
+  const flags = [
+    ...baseFlags.filter((flag) => !removed.has(flag)),
     ...extraCompilerFlags,
-    "-S", "-o", assembly, source,
-  ));
+    ...(configuration.addFlags ?? []),
+  ];
+  if (family === "old-agbcc") {
+    if (compiler !== "gs1") throw new ValueError("old-agbcc is only approved for gs1");
+    validateAgbccBundle();
+    const preprocessed = join(outputDirectory, `${stem}.i`);
+    await run(directPreprocessorCommand(source, preprocessed));
+    await run([AGBCC_DRIVER, preprocessed, ...flags, "-o", assembly]);
+  } else {
+    const command = family === "routed"
+      ? compilerCommandForTargetSource(compiler, source, ...flags, "-S", "-o", assembly, source)
+      : compilerCommandForTarget(compiler, ...flags, "-S", "-o", assembly, source);
+    await run(command);
+  }
   await run([
     "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
     "-o", object, assembly,

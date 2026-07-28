@@ -10,7 +10,7 @@ struct Transition_080b874c {
 extern struct Transition_080b874c *Data_03001f00;
 
 u8 *Func_08077008(s32);
-s32 Func_080b8f08(u8 *);
+s32 Func_080b8f08(const u8 *);
 void Func_08015118(void);
 void Func_080151c8(s32);
 s32 Func_080b8824(s16 *);

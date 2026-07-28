@@ -1,10 +1,10 @@
 #include "types.h"
+#include "runtime_interfaces.h"
 
 extern volatile s16 Data_0200200c;
 
 s32 Func_080056cc(void);
 s32 Func_08005c68(void);
-volatile unsigned int Func_08005cf8(void);
 
 s32 Func_0801f77c(void)
 {

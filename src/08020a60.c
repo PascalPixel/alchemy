@@ -1,10 +1,24 @@
 #include "types.h"
 
-void Func_08020a60(u8 *object, s32 x, s32 y, s32 width, s32 height, u32 field) {
+struct Window_08020a60 {
+    u8 padding[12];
+    u16 x;
+    u16 y;
+};
+
+typedef char Window_08020a60_size[
+    sizeof(struct Window_08020a60) == 0x10 ? 1 : -1
+];
+typedef char Window_08020a60_x_offset[
+    (u32)&(((struct Window_08020a60 *)0)->x) == 0x0c ? 1 : -1
+];
+
+void Func_08020a60(const struct Window_08020a60 *object,
+    s32 x, s32 y, s32 width, s32 height, u32 field) {
     u8 *base = *(u8 **)0x03001E8C;
 
-    x += *(u16 *)(object + 12) + 1;
-    y += *(u16 *)(object + 14) + 1;
+    x += object->x + 1;
+    y += object->y + 1;
     field <<= 12;
     if (x < 0) {
         width += x;

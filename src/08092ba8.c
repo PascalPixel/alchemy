@@ -1,27 +1,45 @@
 #include "types.h"
 
-struct Inner {
+struct ValueSource_08092ba8 {
     u8 unknown_000[40];
-    s16 *value;
+    const s16 *value;
 };
 
-struct Object {
+struct Object_08092ba8 {
     u8 unknown_000[80];
-    struct Inner *inner;
+    struct ValueSource_08092ba8 *inner;
     u8 active;
 };
 
-struct State {
+struct State_08092ba8 {
     u8 unknown_000[20];
-    struct Object *objects[4096];
+    struct Object_08092ba8 *objects[4096];
 };
 
-extern struct State *Data_03001ebc;
+#define OBJECT_08092BA8_OFFSET(type, field) \
+    ((u32)&(((type *)0)->field))
+typedef char ValueSource_08092ba8_value_offset[
+    OBJECT_08092BA8_OFFSET(struct ValueSource_08092ba8, value) == 0x28
+        ? 1 : -1
+];
+typedef char Object_08092ba8_inner_offset[
+    OBJECT_08092BA8_OFFSET(struct Object_08092ba8, inner) == 0x50 ? 1 : -1
+];
+typedef char Object_08092ba8_active_offset[
+    OBJECT_08092BA8_OFFSET(struct Object_08092ba8, active) == 0x54 ? 1 : -1
+];
+typedef char State_08092ba8_objects_offset[
+    OBJECT_08092BA8_OFFSET(struct State_08092ba8, objects) == 0x14 ? 1 : -1
+];
+#undef OBJECT_08092BA8_OFFSET
+
+extern struct State_08092ba8 *Data_03001ebc;
 
 s32 Func_08092ba8(s32 key)
 {
     s32 result = -1;
-    struct Object *object = Data_03001ebc->objects[key & 0x0fff];
+    struct Object_08092ba8 *object =
+        Data_03001ebc->objects[(u32)key & 0x0fff];
 
     if (object != 0 && object->active == 1) {
         result = *object->inner->value;

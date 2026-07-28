@@ -3,13 +3,20 @@
 s32 Func_080030f8(s32);
 s32 Func_080b5078(s32, s16, s32, s32);
 s32 Func_080d4604(void *, s32);
-void Func_080eceac(void *arg0)
+
+struct Object080eceac {
+  u8 padding_00[8];
+  s32 field_08;
+  u8 padding_0c[0xc];
+  s32 field_18;
+  u8 padding_1c[8];
+  s16 field_24;
+};
+
+void Func_080eceac(struct Object080eceac *object)
 {
-  u8 *new_var2;
-  void **new_var;
-  Func_080b5078(*((s32 *) (((u8 *) arg0) + 8)), *((s16 *) (((u8 *) arg0) + 0x24)), 0x18, 0x73333);
- do { Func_080030f8(0xC); } while (0); new_var2 = (u8 *) arg0;
-  *((s32 *) (new_var2 + 0x18)) = 3;
-  new_var = &arg0;
-  Func_080d4604(*new_var, 2);
+  Func_080b5078(object->field_08, object->field_24, 0x18, 0x73333);
+ do { Func_080030f8(0xC); } while (0);
+  object->field_18 = 3;
+  Func_080d4604(object, 2);
 }

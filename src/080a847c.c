@@ -8,7 +8,7 @@ struct State_080a847c {
 extern struct State_080a847c *volatile Data_03001f2c;
 extern u8 Data_080af2fc[];
 
-void Func_080a2268(u8 *, s32, s32, s32, s32, u32);
+void Func_080a2268(const u8 *, s32, s32, s32, s32, u32);
 
 void Func_080a847c(s32 arg0, s32 selected, u8 *entries, s32 arg3)
 {

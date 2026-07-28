@@ -13,7 +13,7 @@ struct State_080a3d24 {
 extern struct State_080a3d24 *Data_03001f2c;
 void Func_080a17c4(void *arg0);
 
-void Func_080a3d24(u16 *arg0)
+void Func_080a3d24(const u16 *arg0)
 {
     struct State_080a3d24 *state = Data_03001f2c;
     s32 i;

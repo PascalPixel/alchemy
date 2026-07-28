@@ -1,9 +1,9 @@
 #include "types.h"
 
-void Func_080a9d84(u8 *);
+void Func_080a9d84(void);
 void Func_080a17c4(void *);
 
-void Func_080a9d3c(u8 *flags)
+void Func_080a9d3c(const u8 *flags)
 {
     u8 *base;
     void **slot;
@@ -13,7 +13,7 @@ void Func_080a9d3c(u8 *flags)
     u16 kind;
 
     base = *(u8 **)0x03001f2c;
-    Func_080a9d84(flags);
+    Func_080a9d84();
     index = 0;
     slot = (void **)(base + 200);
     value = 88;

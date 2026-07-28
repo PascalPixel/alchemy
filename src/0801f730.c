@@ -1,10 +1,10 @@
 #include "types.h"
+#include "runtime_interfaces.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 Func_080056cc();
 s32 Func_08005c68();
-volatile unsigned int Func_08005cf8(void);
 
 s32 Func_0801f730(s32 arg0) {
     s32 t;

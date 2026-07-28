@@ -10,7 +10,7 @@ extern struct State_080a65e4 Data_02000240;
 s32 Func_080a65e4(s32 arg0, s32 arg1, s32 arg2)
 {
     s32 masked = arg1 & 0x3fff;
-    s32 value = (arg0 << 10) | masked;
+    s32 value = (s32)(((u32)arg0 << 10) | (u32)masked);
 
     if (arg2 == 0) {
         Data_02000240.values[0] = value;

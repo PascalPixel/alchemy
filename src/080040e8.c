@@ -25,7 +25,7 @@ void Func_080040e8(void)
         remaining = 19;
         do {
             entry->value = zero;
-            entry->flags |= 0xffff;
+            entry->flags = 0xffff;
             entry->extra = zero;
             entry++;
             remaining--;

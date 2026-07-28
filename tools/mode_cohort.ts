@@ -108,16 +108,24 @@ async function main(): Promise<void> {
     return;
   }
   let jobs = Math.max(1, Math.min(8, (navigator.hardwareConcurrency || 8) - 2));
+  let maxPairs = 256;
+  let maxTriples = 64;
   const sources: string[] = [];
   for (let index = 0; index < argv.length; index++) {
     const argument = argv[index];
     if (argument === "--jobs") jobs = Number(argv[++index]);
+    else if (argument === "--max-pairs") maxPairs = Number(argv[++index]);
+    else if (argument === "--max-triples") maxTriples = Number(argv[++index]);
     else if (argument === "-h" || argument === "--help") {
-      console.log("usage: mode_cohort.ts [--jobs N] CANDIDATE.c [CANDIDATE.c ...]");
+      console.log("usage: mode_cohort.ts [--jobs N] [--max-pairs N] [--max-triples N] CANDIDATE.c [CANDIDATE.c ...]");
       return;
     } else sources.push(resolve(argument));
   }
-  if (!Number.isInteger(jobs) || jobs < 1) throw new Error("jobs must be positive");
+  if (!Number.isInteger(jobs) || jobs < 1 ||
+      !Number.isInteger(maxPairs) || maxPairs < 1 ||
+      !Number.isInteger(maxTriples) || maxTriples < 1) {
+    throw new Error("jobs and search bounds must be positive integers");
+  }
   if (sources.length < 2) throw new Error("a cohort requires at least two candidates");
 
   const reports = new Array<ExplorerReport>(sources.length);
@@ -130,6 +138,7 @@ async function main(): Promise<void> {
       const child = Bun.spawn([
         "bun", join(ROOT, "tools/mode_sweep.ts"), source,
         "--pairs", "--triples", "--jobs", "1", "--top", "1",
+        "--max-pairs", String(maxPairs), "--max-triples", String(maxTriples),
       ], { cwd: ROOT, stdout: "pipe", stderr: "pipe" });
       const [code, stdout, stderr] = await Promise.all([
         child.exited,

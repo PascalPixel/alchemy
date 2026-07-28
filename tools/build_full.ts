@@ -139,24 +139,6 @@ function hexadecimal(value: number): string {
   return value.toString(16).padStart(8, "0");
 }
 
-function groupedDecimal(value: number): string {
-  const digits = String(value);
-  const first = digits.length % 3 || 3;
-  const groups = [digits.slice(0, first)];
-  for (let index = first; index < digits.length; index += 3) {
-    groups.push(digits.slice(index, index + 3));
-  }
-  return groups.join(",");
-}
-
-export function formatProgress(sourceBytes: number, romSize: number): string {
-  if (!Number.isSafeInteger(sourceBytes) || !Number.isSafeInteger(romSize) ||
-      sourceBytes < 0 || romSize <= 0 || sourceBytes > romSize) {
-    throw new Error("invalid progress byte count");
-  }
-  return `[${groupedDecimal(sourceBytes)} of ${groupedDecimal(romSize)} bytes]`;
-}
-
 export function unownedRegions(mask: Uint8Array, base = ROM_BASE): UnownedRegion[] {
   if (!Number.isSafeInteger(base) || base < 0 || base + mask.length > 0x100000000) {
     throw new Error("invalid coverage base");
@@ -384,17 +366,6 @@ export function selfTest(): void {
     throw new Error("unknown assembly retention was accepted");
   } catch (error) {
     if ((error as Error).message === "unknown assembly retention was accepted") throw error;
-  }
-  if (formatProgress(1234567, 8388608) !== "[1,234,567 of 8,388,608 bytes]") {
-    throw new Error("progress formatting self-test failed");
-  }
-  for (const [sourceBytes, romSize] of [[-1, 1], [2, 1], [0, 0], [1.5, 2]]) {
-    try {
-      formatProgress(sourceBytes, romSize);
-      throw new Error("invalid progress was accepted");
-    } catch (error) {
-      if ((error as Error).message === "invalid progress was accepted") throw error;
-    }
   }
   console.log("self-test=ok");
 }
@@ -683,11 +654,10 @@ async function main(): Promise<void> {
     `asm=${report.asm_regions} assets=${report.asset_regions} source_bytes=${report.source_bytes} ` +
     `unowned_bytes=${report.unowned_bytes} asm_c_debt_bytes=${report.asm_c_debt_bytes} ` +
     `asm_retained_structural_bytes=${report.asm_retained_structural_bytes} ` +
-    `project_completion=${report.project_completion.status} ` +
-    `byte_reconstruction=${report.byte_reconstruction_percent.toFixed(2)}%` +
+    `source_owned=${report.unowned_bytes === 0 ? "yes" : "no"} ` +
+    `byte_identical=${args.sourceOnly ? "not-applicable" : "yes"}` +
     (args.sourceOnly ? "" : ` rom_fallback_bytes=${report.rom_fallback_bytes}`),
   );
-  console.log(formatProgress(report.source_bytes, report.rom_size));
 }
 
 if (import.meta.main) await main();

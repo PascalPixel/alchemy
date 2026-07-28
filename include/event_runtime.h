@@ -4,9 +4,8 @@
 #include "types.h"
 
 /*
- * Data_02000240 is a shared work area.  The engine overlays several unrelated
- * views on it, so keep each view separate instead of pretending that the
- * storage has one all-encompassing layout.
+ * Data_02000240共有ワーク。
+ * 用途ごとに配置が重なるため、各ビューを別の型として扱う。
  */
 struct EventValueWork {
     u8 unknown_000[0x1f4];

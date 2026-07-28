@@ -44,10 +44,12 @@ export const FORK_MODES = [
 ] as const;
 
 export const STOCK_SWITCHES = [
-  "-fno-schedule-insns2", "-fno-gcse", "-fno-cse-follow-jumps",
+  "-fno-defer-pop", "-fno-thread-jumps", "-fno-omit-frame-pointer",
+  "-fno-schedule-insns2", "-fno-gcse", "-fno-cse-follow-jumps", "-fno-cse-skip-blocks",
   "-fno-expensive-optimizations", "-fno-peephole", "-fno-strength-reduce", "-fno-regmove",
   "-fno-rerun-cse-after-loop", "-fno-rerun-loop-opt", "-fno-caller-saves",
-  "-fno-force-mem", "-fno-sched-depend-count",
+  "-fno-force-mem", "-fno-peephole2", "-fno-inline-functions",
+  "-fno-delete-null-pointer-checks", "-fno-sched-depend-count",
   "-fno-optimize-sibling-calls", "-fno-canonicalize-comparison",
 ] as const;
 
@@ -58,6 +60,7 @@ interface Mode {
   addFlags?: string[];
   removeFlags?: string[];
   compilerFamily?: CandidateCompilerFamily;
+  supportedCompilerFamilies?: readonly CandidateCompilerFamily[];
   exclusive?: boolean;
   evidence: "historical" | "proven-routing";
 }
@@ -113,11 +116,15 @@ export const MODES: readonly Mode[] = [
   { id: "abi-standard-r4", family: "abi", removeFlags: ["-fcall-used-r4"], exclusive: true, evidence: "proven-routing" },
   { id: "abi-fixed-r3", family: "abi", addFlags: ["-ffixed-r3"], exclusive: true, evidence: "proven-routing" },
   { id: "abi-fixed-lr", family: "abi", addFlags: ["-ffixed-r14"], exclusive: true, evidence: "historical" },
+  { id: "call-defer-pop-off", family: "backend", addFlags: ["-fno-defer-pop"], evidence: "historical" },
+  { id: "cfg-thread-jumps-off", family: "cse", addFlags: ["-fno-thread-jumps"], evidence: "historical" },
+  { id: "frame-pointer-kept", family: "backend", addFlags: ["-fno-omit-frame-pointer"], evidence: "historical" },
   { id: "sched-prereload-off", family: "scheduler", addFlags: ["-fno-schedule-insns"], evidence: "proven-routing" },
   { id: "sched-postreload-off", family: "scheduler", addFlags: ["-fno-schedule-insns2"], evidence: "proven-routing" },
   { id: "sched-depend-count-off", family: "scheduler", addFlags: ["-fno-sched-depend-count"], evidence: "proven-routing" },
   { id: "cse-gcse-off", family: "cse", addFlags: ["-fno-gcse"], evidence: "proven-routing" },
   { id: "cse-follow-off", family: "cse", addFlags: ["-fno-cse-follow-jumps"], evidence: "proven-routing" },
+  { id: "cse-skip-blocks-off", family: "cse", addFlags: ["-fno-cse-skip-blocks"], evidence: "historical" },
   { id: "cse-rerun-loop-off", family: "cse", addFlags: ["-fno-rerun-cse-after-loop"], evidence: "proven-routing" },
   { id: "loop-rerun-off", family: "cse", addFlags: ["-fno-rerun-loop-opt"], evidence: "historical" },
   { id: "cse-expensive-off", family: "cse", addFlags: ["-fno-expensive-optimizations"], evidence: "proven-routing" },
@@ -126,7 +133,28 @@ export const MODES: readonly Mode[] = [
   { id: "reg-regmove-off", family: "register-allocation", addFlags: ["-fno-regmove"], evidence: "proven-routing" },
   { id: "reg-caller-saves-off", family: "register-allocation", addFlags: ["-fno-caller-saves"], evidence: "historical" },
   { id: "reg-force-mem-off", family: "register-allocation", addFlags: ["-fno-force-mem"], evidence: "historical" },
-  { id: "sibling-calls-off", family: "backend", addFlags: ["-fno-optimize-sibling-calls"], evidence: "proven-routing" },
+  {
+    id: "reg-peephole2-off",
+    family: "register-allocation",
+    addFlags: ["-fno-peephole2"],
+    supportedCompilerFamilies: ["routed", "gcc296"],
+    evidence: "historical",
+  },
+  { id: "inline-functions-off", family: "backend", addFlags: ["-fno-inline-functions"], evidence: "historical" },
+  {
+    id: "delete-null-checks-off",
+    family: "backend",
+    addFlags: ["-fno-delete-null-pointer-checks"],
+    supportedCompilerFamilies: ["routed", "gcc296"],
+    evidence: "historical",
+  },
+  {
+    id: "sibling-calls-off",
+    family: "backend",
+    addFlags: ["-fno-optimize-sibling-calls"],
+    supportedCompilerFamilies: ["routed", "gcc296"],
+    evidence: "proven-routing",
+  },
   { id: "comparison-canonicalization-off", family: "backend", addFlags: ["-fno-canonicalize-comparison"], evidence: "proven-routing" },
   ...FORK_MODES.map((flag) => ({
     id: flag.slice(2),
@@ -181,6 +209,9 @@ function compatible(modes: readonly Mode[]): boolean {
     mode.compilerFamily === undefined ? [] : [mode.compilerFamily]));
   if (selectedCompilers.size > 1) return false;
   const compiler = [...selectedCompilers][0] ?? "routed";
+  if (modes.some((mode) =>
+    mode.supportedCompilerFamilies !== undefined &&
+    !mode.supportedCompilerFamilies.includes(compiler))) return false;
   if (compiler === "old-agbcc" && modes.some((mode) =>
     mode.family === "scheduler" ||
     mode.family === "backend" && mode.compilerFamily !== "old-agbcc")) return false;

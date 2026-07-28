@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-28)
 
-`[1,355 of 1,999]`. 644 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,356 of 1,999]`. 643 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -32,7 +32,7 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-25 | 1,242 | +6 |
 | 2026-07-26 | 1,292 | +50 |
 | 2026-07-27 | 1,345 | +53 (partial day) |
-| 2026-07-28 | 1,355 | +10 (decompilation resumed after humanization) |
+| 2026-07-28 | 1,356 | +11 (decompilation resumed after humanization) |
 
 **The recent three-day average is still roughly a factor of four below the
 2026-07-23 peak.** That is not a slowdown in effort: the broad easy tier is
@@ -45,7 +45,7 @@ neither is a session.
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 471 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 470 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
 | 130 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
@@ -701,9 +701,23 @@ mismatches, so neither was promoted.
 The current claimed build is `[1,355 of 1,999]` and 92,732 exact-C bytes.
 Ordinary assembly debt is 644 regions / 398,768 bytes.
 
+## The eighth fresh 81–160 pass
+
+`080b153c` converted as 216 bytes of default-compiler C. It resolves an actor's
+held-item quantity, derives and caps an effect chance, selects battle action 12,
+positions the UI, and dispatches the resulting item action. Typed actor-slot,
+effect, battle, and global-state layouts reproduce the ROM without compiler
+flags or assembly.
+
+`08094da0` and `080f0538` were semantically reconstructed but remained broad
+allocation, DMA, and scheduling mismatches, so their assembly remains.
+
+The current claimed build is `[1,356 of 1,999]` and 92,948 exact-C bytes.
+Ordinary assembly debt is 643 regions / 398,552 bytes.
+
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 471 of 644 have nothing exotic in
+1. **The bulk is volume, not blockers.** 470 of 643 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.

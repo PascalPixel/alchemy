@@ -1,7 +1,8 @@
-#include "types.h"
+#include "curve.h"
 
-extern u8 Data_080133fc[];
-
-s32 Func_08011f28(s8 *arg0, u32 arg1, u32 arg2) {
-    return arg0[Data_080133fc[((arg2 << 4) - arg1) + 15]] << 19;
+s32 Func_08011f28(const s8 *samples, u32 position, u32 row)
+{
+    return samples[
+        Data_080133fc[((row << 4) - position) + CURVE_FULL_STEPS - 1]]
+        << CURVE_VALUE_SHIFT;
 }

@@ -1,10 +1,11 @@
-#include "types.h"
+#include "curve.h"
 
-s32 Func_08011e50(u8 *arg0, u32 arg1) {
+s32 Func_08011e50(const s8 *samples, u32 position)
+{
     s32 value;
-    if (arg1 <= 7)
-        value = (s8)arg0[0];
+    if (position < CURVE_HALF_STEPS)
+        value = samples[0];
     else
-        value = (s8)arg0[1];
-    return value << 19;
+        value = samples[1];
+    return value << CURVE_VALUE_SHIFT;
 }

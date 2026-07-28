@@ -1,5 +1,9 @@
 # Humanization throughput queue — 2026-07-28
 
+The “Next 20” below were consumed by the subsequent 100-file run. Its verified
+result, parked list, and next 100 candidates are recorded in
+`docs/HUMANIZATION-BATCH-100-2026-07-28.md`.
+
 The first 20-file edit passed the claimed-code build but failed the complete
 source-ownership audit at alignment byte `0x080a3eee`. A non-destructive split
 against clean `HEAD` isolated the result into two ten-file halves.

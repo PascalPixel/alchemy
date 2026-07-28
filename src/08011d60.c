@@ -1,15 +1,26 @@
-#include "types.h"
+#include "curve.h"
 
-#define M2C_FIELD(p, t, o) (*(t)((char *)(p) + (o)))
+s32 Func_08011d60(const s8 *samples, s32 start, s32 end)
+{
+    s32 first;
+    s32 second;
+    s32 maximum;
+    s32 difference;
+    u32 position = start;
 
-s32 Func_08011d60(void *arg0, s32 arg1, s32 arg2) {
-    s32 temp_r4, var_r0, var_r2, d; u32 temp_r1 = arg1;
-    temp_r4 = M2C_FIELD(arg0, s8 *, 0) << 0x13;
-    var_r0 = M2C_FIELD(arg0, s8 *, 1) << 0x13;
-    var_r2 = temp_r4;
-    if (var_r0 > temp_r4) { var_r2 = var_r0; }
-    d = arg2 - temp_r1; temp_r1 = d + 0xF;
-    if (temp_r1 == 0xF) { return var_r2; }
-    if (temp_r1 <= 0xEU) { var_r0 = temp_r4; }
-    return var_r0;
+    first = samples[0] << CURVE_VALUE_SHIFT;
+    second = samples[1] << CURVE_VALUE_SHIFT;
+    maximum = first;
+    if (second > first) {
+        maximum = second;
+    }
+    difference = end - position;
+    position = difference + CURVE_FULL_STEPS - 1;
+    if (position == CURVE_FULL_STEPS - 1) {
+        return maximum;
+    }
+    if (position < CURVE_FULL_STEPS - 1) {
+        second = first;
+    }
+    return second;
 }

@@ -1,8 +1,8 @@
 #include "types.h"
 
-s32 Func_080912a8(s32 arg0)
+s32 Func_080912a8(s32 value)
 {
-    if (arg0 > 31744)
-        arg0 = 31744;
-    return arg0;
+    if (value > 31744)
+        value = 31744;
+    return value;
 }

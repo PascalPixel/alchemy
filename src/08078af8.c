@@ -1,7 +1,7 @@
 #include "types.h"
+#include "item.h"
 
 extern u8 *Func_08077394(s32);
-extern s32 Func_08078414(s32 arg0);
 
 s32 Func_08078af8(s32 arg0, s32 value)
 {
@@ -13,7 +13,7 @@ s32 Func_08078af8(s32 arg0, s32 value)
 
     do {
         if ((*(u16 *)((u8 *)offset + (s32)base) & 0x1FF) == target) {
-            u8 *data = Func_08078414(target);
+            u8 *data = (u8 *)Func_08078414(target);
 
             if (data[3] & 0x10) {
                 count = (*(u16 *)((u8 *)offset + (s32)base) >> 11) + 1;

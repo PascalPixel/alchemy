@@ -193,7 +193,7 @@ export function sharedNonRegressingImprovements(
     left.ids.join("+").localeCompare(right.ids.join("+")));
 }
 
-export function multiRegionImprovements(
+export function irreducibleConfigurationImprovements(
   reports: readonly ExplorerReport[],
 ): MultiRegionImprovement[] {
   const baselines = new Map<string, number>();
@@ -264,7 +264,7 @@ export function multiRegionImprovements(
         unchanged.push(report.stem);
       }
     }
-    if (!incomplete && improved.length > 1) {
+    if (!incomplete && improved.length > 0) {
       found.push({
         ...config,
         improved_stems: improved.sort(),
@@ -281,6 +281,13 @@ export function multiRegionImprovements(
     right.total_halfwords_removed - left.total_halfwords_removed ||
     left.regressed_stems.length - right.regressed_stems.length ||
     left.ids.join("+").localeCompare(right.ids.join("+")));
+}
+
+export function multiRegionImprovements(
+  reports: readonly ExplorerReport[],
+): MultiRegionImprovement[] {
+  return irreducibleConfigurationImprovements(reports)
+    .filter((row) => row.improved_stems.length > 1);
 }
 
 export function singleModeEffects(
@@ -375,6 +382,8 @@ function selfTest(): void {
           evidence: { exact: false, differing_halfwords: 2 } },
         { config: { ids: ["right"], flags: ["-fright"], remove_flags: [], compiler_family: "routed" }, compiled: true,
           evidence: { exact: false, differing_halfwords: 2 } },
+        { config: { ids: ["left"], flags: ["-fleft"], remove_flags: [], compiler_family: "routed" }, compiled: true,
+          evidence: { exact: false, differing_halfwords: 3 } },
         { config: { ids: ["left", "right"], flags: ["-fleft", "-fright"], remove_flags: [], compiler_family: "routed" }, compiled: true,
           evidence: { exact: false, differing_halfwords: 2 } },
         { config: { ids: [], flags: [], remove_flags: [], compiler_family: "routed" }, compiled: true,
@@ -403,6 +412,11 @@ function selfTest(): void {
     row.improved_stems.join(",") === "08000000,08000010") ||
       multi.some((row) => row.ids.join(",") === "left,right")) {
     throw new Error("mode cohort self-test: multi-region improvement aggregation differs");
+  }
+  const irreducible = irreducibleConfigurationImprovements(reports);
+  if (!irreducible.some((row) => row.ids.join(",") === "left") ||
+      irreducible.some((row) => row.ids.join(",") === "left,right")) {
+    throw new Error("mode cohort self-test: irreducible configuration aggregation differs");
   }
   const singles = singleModeEffects(reports);
   if (!singles.some((row) =>
@@ -455,7 +469,7 @@ async function main(): Promise<void> {
       const source = sources[index];
       const child = Bun.spawn([
         "bun", join(ROOT, "tools/mode_sweep.ts"), source,
-        "--pairs", "--triples", "--jobs", "1", "--top", "1",
+        "--pairs", "--triples", "--family-factorial", "--jobs", "1", "--top", "1",
         "--max-pairs", String(maxPairs), "--max-triples", String(maxTriples),
       ], { cwd: ROOT, stdout: "pipe", stderr: "pipe" });
       const [code, stdout, stderr] = await Promise.all([
@@ -476,6 +490,7 @@ async function main(): Promise<void> {
 
   const shared = sharedExactConfigurations(reports);
   const improvements = sharedNonRegressingImprovements(reports);
+  const irreducible = irreducibleConfigurationImprovements(reports);
   const multiRegion = multiRegionImprovements(reports);
   const singleEffects = singleModeEffects(reports);
   const digest = createHash("sha256")
@@ -491,7 +506,7 @@ async function main(): Promise<void> {
   const output = join(ROOT, "out/modesweep/cohort", digest);
   mkdirSync(output, { recursive: true });
   const summary = {
-    format: 3,
+    format: 4,
     members: reports.map((report) => ({
       source: report.source,
       source_sha256: report.source_sha256,
@@ -502,6 +517,8 @@ async function main(): Promise<void> {
     stems: reports.map((report) => report.stem),
     shared_exact_configurations: shared,
     shared_nonregressing_improvements: improvements,
+    irreducible_configuration_improvements:
+      irreducible.filter((row) => row.ids.length > 1),
     multi_region_improvements: multiRegion,
     single_mode_effects: singleEffects,
     common_pair_configurations: exhaustivePairCount,

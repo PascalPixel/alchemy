@@ -520,6 +520,30 @@ export function usesAgbccCompiler(target: CompilerTarget, source: string): boole
   return target === "gs1" && AGBCC_SOURCES.has(sourceStem(source));
 }
 
+// Return every non-baseline flag that live GS1 routing can select. Compiler
+// exploration uses this as an executable coverage contract: adding a routed
+// mode without adding a corresponding explorer mode must fail its self-test.
+export function evidencedRoutingFlags(): string[] {
+  const baseline = new Set([...CFLAGS, ...GS2_CFLAGS, ...AGBCC_CFLAGS]);
+  const found = new Set<string>();
+  const inspect = (source: string): void => {
+    for (const flag of cflagsForTargetSource("gs1", source)) {
+      if (!baseline.has(flag)) found.add(flag);
+    }
+  };
+  for (let address = 0x08000000; address < 0x08100000; address += 4) {
+    inspect(`/tmp/${address.toString(16).padStart(8, "0")}.c`);
+  }
+  for (const source of [
+    ...CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES,
+    ...THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES,
+    ...NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES,
+    ...NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES,
+  ]) inspect(join(ROOT, source));
+  for (const stem of EARLY_LITERAL_POOL_OVERLAY_SOURCES) inspect(`/tmp/${stem}.c`);
+  return [...found].sort();
+}
+
 // The optional trailing letter names a *second* external symbol whose value is
 // the same address. The stock objects sometimes referenced one address through
 // several symbols, and arm.c's minipool keeps one entry per distinct SYMBOL_REF,

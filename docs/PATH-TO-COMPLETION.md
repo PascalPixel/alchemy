@@ -815,11 +815,12 @@ Ordinary assembly debt is 636 regions / 396,978 bytes.
 ## The fifteenth fresh 81–160 pass
 
 `080fac44` converted as 180 bytes of typed C through the already-approved
-historical `old_agbcc` m4a compiler family. It updates the track's derived
-left/right volume and pitch fields from its modulation, pan, bend, tuning, and
-shift state, then clears the handled dirty flags. The semantics were recovered
-from this ROM region and the local finished pret project was used only to
-corroborate the public m4a layout and compiler-family identification.
+historical `old_agbcc` m4a compiler family. Its implementation was adapted from
+the approved pret/pokeemerald `src/m4a.c:TrkVolPitSet` at commit
+`83df84e40623b79281f2397faa611cbf044170bd`, then checked against this ROM
+region and exact compiler output. It updates the track's derived left/right
+volume and pitch fields from its modulation, pan, bend, tuning, and shift
+state, then clears the handled dirty flags.
 
 The compiler allowlist now has 39 independently exact witnesses. `080fac44`
 needs no new backend mode or per-function flag: it extends the existing stock
@@ -831,7 +832,11 @@ Ordinary assembly debt is 635 regions / 396,798 bytes.
 ## The sixteenth fresh pass
 
 Two more stock-m4a regions converted through the already-approved historical
-`old_agbcc` translation-unit family:
+`old_agbcc` translation-unit family. Their implementations were adapted from
+the approved pret/pokeemerald `src/m4a.c` functions `FadeOutBody` and
+`CgbOscOff`, respectively, at commit
+`83df84e40623b79281f2397faa611cbf044170bd`, then checked against the GS1 ROM
+regions and exact compiler output:
 
 | region | bytes | recovered behavior |
 | --- | ---: | --- |

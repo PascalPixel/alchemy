@@ -102,6 +102,8 @@ interface Options {
 export const MODES: readonly Mode[] = [
   { id: "compiler-gcc296", family: "compiler", compilerFamily: "gcc296", exclusive: true, evidence: "historical" },
   { id: "compiler-old-agbcc", family: "compiler", compilerFamily: "old-agbcc", exclusive: true, evidence: "proven-routing" },
+  { id: "compiler-pret-early-thumb", family: "compiler", compilerFamily: "pret-early-thumb", exclusive: true, evidence: "historical" },
+  { id: "compiler-gcc2951", family: "compiler", compilerFamily: "gcc2951", exclusive: true, evidence: "historical" },
   { id: "opt-o1", family: "optimization", addFlags: ["-O1"], exclusive: true, evidence: "proven-routing" },
   { id: "opt-o2", family: "optimization", addFlags: ["-O2"], exclusive: true, evidence: "historical" },
   { id: "opt-o3", family: "optimization", addFlags: ["-O3"], exclusive: true, evidence: "historical" },
@@ -519,7 +521,7 @@ async function main(): Promise<void> {
     reference_sha256: hash(reference),
     compiler_signature: compilerDigest,
     policy: {
-      families: ["routed", "gcc296", "old-agbcc"],
+      families: ["routed", "gcc296", "old-agbcc", "pret-early-thumb", "gcc2951"],
       phases: ["routed-default", "single", ...(options.pairs ? ["compatible-pair"] : []),
         ...(options.triples ? ["evidence-supported-triple"] : [])],
       triple_threshold_halfwords: [2, 5],

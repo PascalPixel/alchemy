@@ -1,3 +1,6 @@
+// Approved reference provenance: adapted from pret/pokeemerald
+// src/m4a.c:FadeOutBody at commit 83df84e40623b79281f2397faa611cbf044170bd.
+// Names and layout were checked against this ROM region and exact compiler output.
 typedef signed short s16;
 typedef unsigned char u8;
 typedef unsigned short u16;

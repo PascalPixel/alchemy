@@ -1470,57 +1470,10 @@ AlchemyC_02000690:
 	.4byte 0x0000cccc
 	.2byte 0x1e40
 	.2byte 0x0300
-	push	{r5, r6, lr}
-	ldr	r3, [pc, #116]
-	movs	r0, #0
-	ldr	r6, [r3, #0]
-	bl	sub_0200560a
-	adds	r5, r0, #0
-	bl	sub_020055f8
-	movs	r0, #228
-	bl	sub_02005766
-	ldr	r3, [pc, #96]
-	str	r3, [r5, #108]
-	ldr	r3, [pc, #96]
-	movs	r0, #0
-	str	r3, [r5, #48]
-	movs	r1, #2
-	bl	sub_02005676
-	movs	r2, #6
-	negs	r2, r2
-	movs	r1, #0
-	movs	r0, #0
-	bl	sub_0200566a
-	movs	r0, #0
-	bl	sub_02005678
+AlchemyC_02000754:
+	.space 0x3a
 .L_0200078e:
-	movs	r1, #15
-	movs	r0, #0
-	bl	sub_020056c8
-	movs	r0, #0
-	bl	sub_02005646
-	movs	r1, #0
-	bl	sub_020055e4
-	movs	r3, #0
-	str	r3, [r5, #108]
-	movs	r0, #30
-	bl	sub_02005636
-	bl	sub_0200577a
-	bl	sub_02005786
-	movs	r3, #182
-	lsls	r3, r3, #1
-	adds	r6, r6, r3
-	movs	r3, #0
-	ldrsh	r0, [r6, r3]
-	bl	sub_02005764
-	bl	sub_02005660
-	pop	{r5, r6}
-	pop	{r0}
-	bx	r0
-	.4byte 0x03001ebc
-	.4byte 0x020086a1
-	.2byte 0x3333
-	.2byte 0x0000
+	.space 0x4a
 	push	{r5, r6, r7, lr}
 	movs	r0, #0
 	bl	sub_0200568a
@@ -1601,21 +1554,10 @@ AlchemyC_02000690:
 	.4byte 0x00006666
 	.2byte 0x3333
 	.2byte 0x0000
-	push	{lr}
-	movs	r0, #0
-	bl	sub_02005752
-	ldr	r3, [pc, #8]
-	ldr	r3, [r3, #0]
-	str	r0, [r3, #24]
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0x03001ee0
-	.4byte 0x681a4b02
-	.4byte 0x61932300
-	.4byte 0x00004770
-	.2byte 0x1ee0
-	.2byte 0x0300
+AlchemyC_020008a0:
+	.space 0x18
+AlchemyC_020008b8:
+	.space 0x10
 	push	{r5, lr}
 	adds	r5, r0, #0
 	movs	r0, #0
@@ -1652,34 +1594,8 @@ AlchemyC_02000690:
 	pop	{r1}
 	bx	r1
 	.2byte 0x0000
-	push	{r5, r6, lr}
-	adds	r5, r1, #0
-	bl	sub_020057c2
-	adds	r6, r0, #0
-	adds	r0, r5, #0
-	bl	sub_020057ca
-	ldr	r2, [r6, #16]
-	ldr	r3, [r0, #16]
-	cmp	r2, r3
-	bgt.n	.L_02000946
-	ldr	r3, [r0, #8]
-	ldr	r2, [r6, #8]
-	str	r3, [r6, #8]
-	str	r2, [r0, #8]
-	ldr	r3, [r0, #12]
-	ldr	r2, [r6, #12]
-	str	r3, [r6, #12]
-	str	r2, [r0, #12]
-	ldr	r3, [r0, #16]
-	ldr	r2, [r6, #16]
-	str	r3, [r6, #16]
-	str	r2, [r0, #16]
-	movs	r0, #1
-	bl	sub_020056e8
-.L_02000946:
-	pop	{r5, r6}
-	pop	{r0}
-	bx	r0
+AlchemyC_02000910:
+	.space 0x3c
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
 	movs	r5, #60

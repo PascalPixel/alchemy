@@ -24,6 +24,7 @@ import { linkedFunctionExtent } from "./integrate_matches.ts";
 import { regionSize } from "./candidate_show.ts";
 import {
   compilerBundleSignature,
+  evidencedRoutingFlags,
 } from "./alchemy_gcc.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
@@ -105,6 +106,9 @@ export const MODES: readonly Mode[] = [
   { id: "opt-o2", family: "optimization", addFlags: ["-O2"], exclusive: true, evidence: "historical" },
   { id: "opt-o3", family: "optimization", addFlags: ["-O3"], exclusive: true, evidence: "historical" },
   { id: "abi-standard-r4", family: "abi", removeFlags: ["-fcall-used-r4"], exclusive: true, evidence: "proven-routing" },
+  { id: "abi-fixed-r3", family: "abi", addFlags: ["-ffixed-r3"], exclusive: true, evidence: "proven-routing" },
+  { id: "abi-fixed-lr", family: "abi", addFlags: ["-ffixed-r14"], exclusive: true, evidence: "historical" },
+  { id: "sched-prereload-off", family: "scheduler", addFlags: ["-fno-schedule-insns"], evidence: "proven-routing" },
   { id: "sched-postreload-off", family: "scheduler", addFlags: ["-fno-schedule-insns2"], evidence: "proven-routing" },
   { id: "sched-depend-count-off", family: "scheduler", addFlags: ["-fno-sched-depend-count"], evidence: "proven-routing" },
   { id: "cse-gcse-off", family: "cse", addFlags: ["-fno-gcse"], evidence: "proven-routing" },
@@ -348,6 +352,11 @@ function selfTest(): void {
   }
   if (new Set(singles.map((item) => item.ids.join("+"))).size !== singles.length) {
     throw new Error("single configuration planning is not unique");
+  }
+  const exploredFlags = new Set(MODES.flatMap((mode) => mode.addFlags ?? []));
+  const missingRouted = evidencedRoutingFlags().filter((flag) => !exploredFlags.has(flag));
+  if (missingRouted.length > 0) {
+    throw new Error(`routed compiler modes missing from explorer: ${missingRouted.join(", ")}`);
   }
   const pairs = pairConfigs();
   if (pairs.some((config) => config.ids.includes("opt-o1") && config.ids.includes("opt-o2"))) {

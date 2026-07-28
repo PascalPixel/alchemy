@@ -4,18 +4,18 @@ struct QueueEntry { void *second; void *first; u32 control; };
 extern u16 Data_02002090;
 extern u16 Data_04000208;
 
-void Func_0800387c(void *first, void *second)
+void Func_0800387c(u32 first, u32 second)
 {
     register u16 *count = &Data_02002090;
-    u32 first_value = (u32)first;
-    u32 second_value = (u32)second;
+    u32 first_value = first;
+    u32 second_value = second;
     u32 saved_ime;
     u32 index;
 
-    second = &Data_04000208;
+    second = (u32)&Data_04000208;
     saved_ime = *(volatile u16 *)second;
 
-    *(volatile u16 *)second = (u16)(u32)second;
+    *(volatile u16 *)second = (u16)second;
     index = *count;
     {
         if ((s32)index <= 31) {

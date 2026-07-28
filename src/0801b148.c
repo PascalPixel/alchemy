@@ -8,6 +8,8 @@ struct Node_0801b148 {
     u16 handle;
 };
 
+struct Work;
+
 extern u8 *Data_03001e98;
 
 void Func_0801a97c(void);
@@ -23,7 +25,7 @@ void Func_0801b148(void)
     struct Node_0801b148 *node;
 
     Func_0801a97c();
-    Func_08016418(*(void **)(state + 0x350), 2);
+    Func_08016418(*(struct Work **)(state + 0x350), 2);
     Func_080030f8(1);
     node = *(struct Node_0801b148 **)(state + 0x348);
     while (node != 0) {

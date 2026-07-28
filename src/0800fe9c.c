@@ -6,22 +6,20 @@ s32 Func_08010000();
 s32 Func_08010230(s32, s32);
 
 void Func_0800fe9c(void) {
-    s32 var_r0;
-    s32 var_r1;
-    s32 var_r2;
-    void *temp_r3;
+    s32 first;
+    s32 third;
+    s32 second;
+    s32 *coordinates;
 
-    temp_r3 = **(void ***)0x03001E70;
-    var_r0 = 0;
-    var_r2 = 0;
-    var_r1 = 0;
-    if (temp_r3 != NULL) {
-        var_r0 = M2C_FIELD(temp_r3, s32 *, 0);
-        temp_r3 += 4;
-        var_r2 = M2C_FIELD(temp_r3, s32 *, 0);
-        temp_r3 += 4;
-        var_r1 = M2C_FIELD(temp_r3, s32 *, 0);
+    coordinates = **(s32 ***)0x03001E70;
+    first = 0;
+    second = 0;
+    third = 0;
+    if (coordinates != NULL) {
+        first = *coordinates++;
+        second = *coordinates++;
+        third = *coordinates;
     }
-    Func_08010230(var_r0, var_r1 - var_r2);
+    Func_08010230(first, (s32)((u32)third - (u32)second));
     Func_08010000();
 }

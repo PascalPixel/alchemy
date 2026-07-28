@@ -1,16 +1,14 @@
-#include "types.h"
-
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+#include "runtime_1e74.h"
 
 void Func_080bdfec(void) {
-    void *temp_r2;
+    struct Runtime1e74 *runtime;
 
-    temp_r2 = *(void **)0x03001E74;
-    M2C_FIELD(temp_r2, s32 *, 0x800) = 0;
-    M2C_FIELD(temp_r2, s32 *, 0x7FC) = 0;
-    M2C_FIELD(temp_r2, s32 *, 0x804) = 0;
-    M2C_FIELD(temp_r2, s32 *, 0x808) = 0;
-    M2C_FIELD(temp_r2, s32 *, 0x7F8) = 0;
-    M2C_FIELD(temp_r2, s32 *, 0x820) = 0x86;
-    M2C_FIELD(temp_r2, s32 *, 0x824) = 0;
+    runtime = Runtime1e74_Get();
+    runtime->phase = 0;
+    runtime->value_7fc = 0;
+    runtime->value_804 = 0;
+    runtime->value_808 = 0;
+    runtime->value_7f8 = 0;
+    runtime->parameter = 0x86;
+    runtime->value_824 = 0;
 }

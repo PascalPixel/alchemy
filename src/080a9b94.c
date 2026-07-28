@@ -1,19 +1,21 @@
+#include "a9_motion.h"
 #include "types.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-void Func_080a9b94(s32 arg0, s32 arg1, s32 arg2) {
-    s32 var_r5;
-    void *temp_r0;
-    void **var_r6;
+void Func_080a9b94(s32 origin_x, s32 origin_y, s32 phase) {
+    s32 index;
+    struct Object080a9bd8 *object;
+    struct Object080a9bd8 **objects;
 
-    var_r5 = 0;
-    var_r6 = *(s32 *)0x03001F2C + 0x48;
+    index = 0;
+    objects =
+        (struct Object080a9bd8 **)(*(s32 *)0x03001F2C + 0x48);
     do {
-        temp_r0 = *var_r6++;
-        if (temp_r0 != NULL) {
-            Func_080a9bd8(temp_r0, var_r5, arg0, arg1, arg2);
+        object = *objects++;
+        if (object != NULL) {
+            Func_080a9bd8(object, index, origin_x, origin_y, phase);
         }
-        var_r5 += 1;
-    } while (var_r5 <= 0x1F);
+        index += 1;
+    } while (index <= 0x1F);
 }

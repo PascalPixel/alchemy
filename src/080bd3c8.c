@@ -1,15 +1,18 @@
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+struct Entry_080bd3c8 {
+    u8 unknown_00[9];
+    u8 status;
+};
 
 void *Func_08077080();
 
-u32 Func_080bd3c8(s32 arg0) {
-    u8 temp_r3;
+u32 Func_080bd3c8(s32 value) {
+    u8 status;
 
-    if (arg0 == 0x7E) {
+    if (value == 0x7E) {
         return 1U;
     }
-    temp_r3 = M2C_FIELD(Func_08077080(), u8 *, 9);
-    return (u32) ((0 - temp_r3) | temp_r3) >> 0x1F;
+    status = ((struct Entry_080bd3c8 *)Func_08077080())->status;
+    return (u32) ((0 - status) | status) >> 0x1F;
 }

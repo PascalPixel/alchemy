@@ -99,14 +99,31 @@ export function compilerConfigurationOf(value: unknown): CandidateCompilerConfig
     throw new Error("compiler config must be a JSON object");
   }
   const document = value as Record<string, unknown>;
-  const allowed = new Set(["family", "addFlags", "removeFlags"]);
+  if (document.config !== undefined) return compilerConfigurationOf(document.config);
+  const allowed = new Set([
+    "ids", "family", "addFlags", "removeFlags",
+    "compiler_family", "flags", "remove_flags",
+  ]);
   const unexpected = Object.keys(document).filter((key) => !allowed.has(key));
   if (unexpected.length > 0) {
     throw new Error(`unknown compiler config field${unexpected.length === 1 ? "" : "s"}: ${unexpected.join(", ")}`);
   }
-  const family = document.family === undefined ? "routed" : compilerFamilyOf(document.family);
-  const addFlags = document.addFlags === undefined ? [] : flagsOf(document.addFlags);
-  const removeFlags = document.removeFlags === undefined ? [] : flagsOf(document.removeFlags);
+  if (document.family !== undefined && document.compiler_family !== undefined &&
+      document.family !== document.compiler_family) {
+    throw new Error("compiler config contains conflicting family fields");
+  }
+  if (document.addFlags !== undefined && document.flags !== undefined) {
+    throw new Error("compiler config contains conflicting added-flag fields");
+  }
+  if (document.removeFlags !== undefined && document.remove_flags !== undefined) {
+    throw new Error("compiler config contains conflicting removed-flag fields");
+  }
+  const familyValue = document.family ?? document.compiler_family;
+  const family = familyValue === undefined ? "routed" : compilerFamilyOf(familyValue);
+  const addValue = document.addFlags ?? document.flags;
+  const removeValue = document.removeFlags ?? document.remove_flags;
+  const addFlags = addValue === undefined ? [] : flagsOf(addValue);
+  const removeFlags = removeValue === undefined ? [] : flagsOf(removeValue);
   const overlap = addFlags.filter((flag) => removeFlags.includes(flag));
   if (overlap.length > 0) throw new Error(`compiler config both adds and removes: ${overlap.join(", ")}`);
   return { family, addFlags, removeFlags };
@@ -286,11 +303,20 @@ function selfTest(): void {
       config.removeFlags?.join(",") !== "-fcall-used-r4") {
     throw new Error("structured compiler configuration self-test failed");
   }
+  const sweepConfig = compilerConfigurationOf({
+    ids: ["compiler-old-agbcc"],
+    compiler_family: "old-agbcc",
+    flags: ["-O1"],
+    remove_flags: [],
+  });
+  if (sweepConfig.family !== "old-agbcc" || sweepConfig.addFlags?.join(",") !== "-O1") {
+    throw new Error("mode-sweep compiler configuration compatibility failed");
+  }
   for (const invalid of [
     { family: "unknown" },
     { addFlags: "-O2" },
     { addFlags: ["-O2"], removeFlags: ["-O2"] },
-    { flags: ["-O2"] },
+    { family: "gcc296", compiler_family: "old-agbcc" },
   ]) {
     let rejected = false;
     try {

@@ -8,6 +8,7 @@
     "build:assets": "bun tools/build_assets.ts",
     "build:full": "bun tools/build_full.ts",
     "build:rom": "bun tools/build_rom.ts",
+    "verify": "bun run test && bun run build:claimed && bun tools/build_full.ts --source-only && bun run build:full",
     "test:compiler-explorer": "bun tools/mode_sweep.ts --self-test",
     "test:compiler-cohort": "bun tools/mode_cohort.ts --self-test",
     "test:compiler-corpus": "bun tools/compiler_corpus_regression.ts --self-test",

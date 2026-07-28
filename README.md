@@ -36,3 +36,16 @@ git config core.hooksPath .hooks
 
 Current measured decompilation status and the remaining-work breakdown are in
 [docs/PATH-TO-COMPLETION.md](docs/PATH-TO-COMPLETION.md).
+
+## Verification
+
+With the approved local toolchains and target inputs in place, the canonical
+verification entry point is:
+
+```sh
+bun run verify
+```
+
+It runs the complete self-test suite, compiles every exact-C claim, proves that
+the source-only image owns all ROM bytes, and verifies that the normal full
+build is byte-identical with zero ROM fallback.

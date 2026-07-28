@@ -1,10 +1,9 @@
-#include "types.h"
+#include "effect_step.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+void Func_080b50b0(s32, struct EffectPosition *);
 
-s32 Func_080b50b0();
-
-void Func_080e396c(s32 arg0, void *arg1) {
-    Func_080b50b0();
-    M2C_FIELD(arg1, s32 *, 4) = (s32) (M2C_FIELD(arg1, s32 *, 4) - 0x10);
+void Func_080e396c(s32 arg0, struct EffectPosition *position)
+{
+    Func_080b50b0(arg0, position);
+    position->y = (s32)((u32)position->y - 0x10);
 }

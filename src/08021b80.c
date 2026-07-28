@@ -3,13 +3,14 @@
 s32 Func_0801a4fc(u32, s32, s32 *, s32 *, s32, s32);
 s32 Func_080770c0(s32);
 
-s32 Func_08021b80(u32 arg0, s32 arg1) {
+s32 Func_08021b80(u32 kind, s32 value)
+{
     s32 sp8;
     s32 spC;
     u32 var_r5;
 
-    var_r5 = arg0;
-    spC = arg1;
+    var_r5 = kind;
+    spC = value;
     if (var_r5 > 7U) {
         var_r5 = 0;
     }

@@ -1,10 +1,11 @@
+#include "far_runtime.h"
 #include "types.h"
 
 void Func_08015080(s32, s32, s32, s32);
 void Func_080150b0(s32, s32, s32, s32, s32);
-void Func_08015270(s32);
 extern u8 Value_00000182;
 
+/* 引数の組合せに応じて固定番号の処理を選ぶ。 */
 void Func_080b110c(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     s32 effect;

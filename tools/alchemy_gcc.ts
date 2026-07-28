@@ -327,6 +327,7 @@ const NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES = new Set([
 // broadly disruptive scheduler model change source-scoped.
 const THUMB_IMMEDIATE_LATENCY_SOURCES = new Set(["080babdc"]);
 const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_37a_c_02002924.c",
   "assets/code/resource_3c7_c_02000030.c",
   "assets/code/resource_3cd_c_0200004c.c",
 ]);

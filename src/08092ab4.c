@@ -1,10 +1,10 @@
+#include "object_lookup.h"
 #include "types.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 Func_08009080(void *, s32);
 s32 Func_08009140();
-void *Func_0808ba1c();
 
 void Func_08092ab4(void) {
     void *temp_r0;

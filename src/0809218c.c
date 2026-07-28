@@ -1,18 +1,17 @@
-#include "types.h"
+#include "object_runtime.h"
 
-s32 Func_0808ba1c(u32 arg0);
-void Func_08009140(void *);
-void Func_08009080(void *, s32);
-void Func_08009150(void *, s32, s32, s32);
+void Func_08009140(struct ObjectRuntime *);
+void Func_08009080(struct ObjectRuntime *, s32);
+void Func_08009150(struct ObjectRuntime *, s32, s32, s32);
 
-void Func_0809218c(s32 index, s32 first, s32 second)
+void Func_0809218c(u32 object_id, s32 x, s32 z)
 {
-    u8 *object = Func_0808ba1c(index);
+    struct ObjectRuntime *object = Func_0808ba1c(object_id);
 
-    if (object != 0) {
-        object[91] = 0;
+    if (object != NULL) {
+        object->movement_state = 0;
         Func_08009140(object);
         Func_08009080(object, 2);
-        Func_08009150(object, first << 16, *(s32 *)(object + 12), second << 16);
+        Func_08009150(object, x << 16, object->y, z << 16);
     }
 }

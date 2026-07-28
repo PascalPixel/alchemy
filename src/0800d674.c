@@ -1,17 +1,15 @@
-#include "types.h"
-
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+#include "script_interpreter.h"
 
 s32 Func_0800ca98(void *);
 
-s32 Func_0800d674(void *arg0) {
-    if ((u32) M2C_FIELD(arg0, u8 *, 0x60) > 0x3BU) {
-        M2C_FIELD(arg0, u8 *, 0x60) = 0U;
+s32 Func_0800d674(struct ScriptInterpreter *interpreter) {
+    if ((u32)interpreter->delay > 0x3B) {
+        interpreter->delay = 0;
         goto block_3;
     }
-    if (Func_0800ca98(arg0) != 0) {
+    if (Func_0800ca98(interpreter) != 0) {
 block_3:
-        M2C_FIELD(arg0, u16 *, 4) = (u16) (M2C_FIELD(arg0, u16 *, 4) + 1);
+        interpreter->cursor = (u16)interpreter->cursor + 1;
         return 1;
     }
     return 0;

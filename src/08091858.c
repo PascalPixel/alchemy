@@ -1,12 +1,7 @@
-#include "types.h"
+#include "event_runtime.h"
 
-struct State_08091858 {
-    u8 padding[0x220];
-    u16 values[2];
-};
-
-extern struct State_08091858 Data_02000240;
-s32 Func_08091814(u32 arg0);
+extern struct EventValidationWork Data_02000240;
+s32 Func_08091814(u32 packed_id);
 
 void Func_08091858(void)
 {

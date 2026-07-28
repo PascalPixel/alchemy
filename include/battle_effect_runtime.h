@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_BATTLE_EFFECT_RUNTIME_H
 #define ALCHEMY_BATTLE_EFFECT_RUNTIME_H
 
+#include "object_lookup.h"
 #include "types.h"
 
 struct BattleAnimationState {
@@ -70,7 +71,5 @@ struct BattleEffectEntry {
 extern struct BattleRuntime *Data_03001ebc;
 extern struct BattleEffectBuffers *Data_03001ed0;
 extern struct BattleWork Data_02000240;
-
-struct BattleRenderObject *Func_0808ba1c();
 
 #endif

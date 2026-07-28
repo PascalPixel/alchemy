@@ -1,15 +1,14 @@
-#include "types.h"
+#include "object_runtime.h"
 
-s32 Func_08009080(s32, s32);
-s32 Func_08009158();
-s32 Func_0808ba1c();
+void Func_08009080(struct ObjectRuntime *, s32);
+void Func_08009158(struct ObjectRuntime *);
 
-void Func_080923c4(void) {
-    s32 temp_r0;
+void Func_080923c4(u32 object_id)
+{
+    struct ObjectRuntime *object = Func_0808ba1c(object_id);
 
-    temp_r0 = Func_0808ba1c();
-    if (temp_r0 != 0) {
-        Func_08009158();
-        Func_08009080(temp_r0, 1);
+    if (object != NULL) {
+        Func_08009158(object);
+        Func_08009080(object, 1);
     }
 }

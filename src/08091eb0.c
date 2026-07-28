@@ -1,24 +1,9 @@
-#include "types.h"
+#include "event_runtime.h"
+#include "object_lookup.h"
 
-struct State_08091eb0 {
-    u8 padding0[380];
-    u16 first;
-    u8 padding1[32];
-    s16 mode;
-};
-
-struct Work_08091eb0 {
-    u8 padding0[470];
-    u16 special;
-    u8 padding1[28];
-    void *object;
-};
-
-extern struct State_08091eb0 *Data_03001ebc;
-extern struct Work_08091eb0 Data_02000240;
+extern struct EventPairWork1d6 Data_02000240;
 extern u8 Value_00000021;
 u16 Func_0808b05c(s32 arg0, s32 arg1);
-s32 Func_0808ba1c(u32 arg0);
 s32 Func_0808adf0(void *arg0);
 void Func_0808b320(s32, s32);
 
@@ -26,12 +11,12 @@ void Func_08091eb0(s32 arg0, s32 arg1)
 {
     register s32 first = arg0;
     register s32 second = arg1;
-    register struct State_08091eb0 *state = Data_03001ebc;
+    register struct EventRuntime *runtime = Data_03001ebc;
 
-    state->first = Func_0808b05c(first, second);
+    runtime->value_17c = Func_0808b05c(first, second);
     if (first == 98 && second == 0)
         Data_02000240.special = (u16)(s32)&Value_00000021;
-    if (state->mode == 3)
-        Func_0808adf0(Func_0808ba1c(Data_02000240.object) + 8);
+    if (runtime->mode_19e == 3)
+        Func_0808adf0((u8 *)Func_0808ba1c(Data_02000240.object_id) + 8);
     Func_0808b320(first, second);
 }

@@ -1,16 +1,16 @@
-#include "types.h"
+#include "script_operands.h"
 
-void Func_0800e798(u8 *arg0, s32 operation, s32 value)
+void Func_0800e798(struct ScriptOperands *state, s32 operation, s32 value)
 {
     s32 result;
     if (operation == 0) {
-        arg0[91] = value;
+        state->byte_5b = value;
     } else if (operation == 1) {
-        arg0[91] += value;
+        state->byte_5b = (u8)((u32)state->byte_5b + (u32)value);
     } else {
         result = 0;
-        if (arg0[91] == (u8)value)
+        if (state->byte_5b == (u8)value)
             result = 1;
-        arg0[87] = result;
+        state->comparison_result = result;
     }
 }

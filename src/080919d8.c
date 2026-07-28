@@ -8,7 +8,7 @@ extern s32 Func_080772d8(u8, s32);
 extern void Func_08015120(s32, s32);
 extern void Func_08015040(void *, s32);
 
-s32 Func_080919d8(s32 arg0)
+s32 Func_080919d8(s32 event_id)
 {
     s32 count;
     s32 value;
@@ -17,14 +17,14 @@ s32 Func_080919d8(s32 arg0)
     s32 total = offset;
     u8 *entry;
 
-    count = Func_08077148(arg0);
+    count = Func_08077148(event_id);
     if (total < count) {
         offset = 252;
         offset <<= 1;
         entry = Data_02000240 + offset;
         remaining = count;
         do {
-            value = Func_080772d8(*entry, arg0);
+            value = Func_080772d8(*entry, event_id);
             remaining--;
             entry++;
             total += value;
@@ -32,9 +32,9 @@ s32 Func_080919d8(s32 arg0)
     }
 
     if (total >= count * 30) {
-        Func_08015120(arg0, 2);
+        Func_08015120(event_id, 2);
         Func_08015040(&Value_0000097d, 1);
-        Func_08015120(arg0, 2);
+        Func_08015120(event_id, 2);
         Func_08015040(&Value_0000097d + 1, 1);
         return -1;
     }

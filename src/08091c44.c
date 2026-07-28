@@ -1,3 +1,4 @@
+#include "object_lookup.h"
 #include "types.h"
 
 struct Child_08091c44 {
@@ -11,12 +12,11 @@ struct Object_08091c44 {
     u8 active;
 };
 
-s32 Func_0808ba1c(u32 arg0);
 void Func_080030f8(s32);
 
-void Func_08091c44(s32 arg0, s32 value)
+void Func_08091c44(s32 object_id, s32 value)
 {
-    struct Object_08091c44 *object = Func_0808ba1c(arg0);
+    struct Object_08091c44 *object = Func_0808ba1c(object_id);
 
     if (object != 0 && object->active == 1) {
         s32 index = 0;

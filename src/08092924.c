@@ -1,12 +1,16 @@
 #include "types.h"
 
 extern u8 *Data_03001ebc;
-s32 Func_0808ba1c(u32 arg0);
+/*
+ * Keep the legacy scalar ABI view in this codegen-sensitive translation unit.
+ * The returned word is still treated as an object address below.
+ */
+s32 Func_0808ba1c(u32 object_id);
 void Func_080090d0(void *);
 
 void Func_08092924(s32 index)
 {
-    void *object = Func_0808ba1c(index);
+    void *object = (void *)Func_0808ba1c(index);
     u8 *base = Data_03001ebc;
     s32 offset;
 

@@ -62,7 +62,12 @@ The hook checks the exact fraction against
 `metrics/gs1-en-progress.json` from the Git index, not the unstaged working
 tree. Changes to executable source or inventory require that regenerated
 report to be staged. After the one legacy-to-Full-C transition, denominator
-changes and numerator regressions are rejected.
+changes are rejected by default and numerator regressions are always rejected.
+If a boundary audit proves that executable bytes were previously excluded or
+non-executable bytes included, the correction must stage the regenerated
+executable inventory and use an explicit
+`metrics: correct executable denominator` commit subject. Ordinary
+decompilation commits cannot change the denominator.
 
 Historical commits are not rewritten. `tools/full_c_history.ts` measures every
 first-parent tree against the fixed audited denominator and writes

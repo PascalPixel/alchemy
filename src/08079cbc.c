@@ -1,6 +1,5 @@
 #include "types.h"
-
-extern s32 Func_08078414(s32 arg0);
+#include "item.h"
 
 s32 Func_08079cbc(s32 arg0)
 {
@@ -19,7 +18,8 @@ s32 Func_08079cbc(s32 arg0)
     while (--index >= 0) {
         v = *(u16 *)((u8 *)offset + arg0);
         if (v & mask) {
-            data = Func_08078414(*(u16 *)((u8 *)offset + arg0)) + 24;
+            data = (u8 *)Func_08078414(
+                *(u16 *)((u8 *)offset + arg0)) + 24;
             j = 4;
             while (--j >= 0) {
                 if (data[0] == 23) { sum += (s8)data[1]; }

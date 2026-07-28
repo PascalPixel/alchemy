@@ -1,12 +1,12 @@
-#include "types.h"
+#include "battle_effect_runtime.h"
 
 s32 Func_08090a5c(s32, s32, s32, s32);
 
-void Func_08091220(s32 arg0, s32 arg1) {
-    s32 temp_r1;
+void Func_08091220(s32 value, s32 mode)
+{
+    struct BattleEffectBuffers *buffers = Data_03001ed0;
 
-    temp_r1 = *(s32 *)0x03001ED0;
-    if (temp_r1 != 0) {
-        Func_08090a5c(arg0, temp_r1, temp_r1 + 0x380, arg1);
+    if (buffers != NULL) {
+        Func_08090a5c(value, (s32)buffers, (s32)buffers->buffer_380, mode);
     }
 }

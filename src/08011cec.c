@@ -1,15 +1,14 @@
-#include "types.h"
+#include "curve.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+s32 Func_08011cec(const s8 *samples, s32 position)
+{
+    s32 start;
+    s32 delta;
 
-s32 Func_08011cec(void *arg0, s32 arg1) {
-    s32 temp_r2;
-    s32 var_r0;
-
-    temp_r2 = M2C_FIELD(arg0, s8 *, 0) << 0x13;
-    var_r0 = ((M2C_FIELD(arg0, s8 *, 1) << 0x13) - temp_r2) * arg1;
-    if (var_r0 < 0) {
-        var_r0 += 0xF;
+    start = samples[0] << CURVE_VALUE_SHIFT;
+    delta = ((samples[1] << CURVE_VALUE_SHIFT) - start) * position;
+    if (delta < 0) {
+        delta += CURVE_FULL_STEPS - 1;
     }
-    return temp_r2 + (var_r0 >> 4);
+    return start + (delta >> 4);
 }

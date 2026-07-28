@@ -2,13 +2,13 @@
 
 extern u8 Data_02003040[];
 
-void Func_080f9570(u32 value)
+void Func_080f9570(u32 command)
 {
-    u32 alternate = value & 0x80;
+    u32 toggle = command & 0x80;
 
-    value &= 0x7f;
-    if (alternate != 0)
-        Data_02003040[0] ^= value;
+    command &= 0x7f;
+    if (toggle != 0)
+        Data_02003040[0] ^= command;
     else
-        Data_02003040[0] = value;
+        Data_02003040[0] = command;
 }

@@ -1,7 +1,7 @@
 #include "types.h"
+#include "item.h"
 
 extern u8 *Func_08077394(s32);
-extern s32 Func_08078414(s32 arg0);
 
 s32 Func_080787dc(s32 arg0, s32 arg1)
 {
@@ -12,7 +12,8 @@ s32 Func_080787dc(s32 arg0, s32 arg1)
 
     for (index = 0, offset = 216; index <= 14; index++) {
         if (*(u16 *)((u8 *)offset + (s32)base) & 0x200) {
-            data = Func_08078414(*(u16 *)((u8 *)offset + (s32)base));
+            data = (u8 *)Func_08078414(
+                *(u16 *)((u8 *)offset + (s32)base));
             if (data[2] == arg1) break;
         }
         offset += 2;

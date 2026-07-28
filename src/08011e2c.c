@@ -1,12 +1,11 @@
-#include "types.h"
+#include "curve.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+s32 Func_08011e2c(const s8 *samples, s32 position, s32 row)
+{
+    s32 start;
 
-extern u8 Data_080132fc[];
-
-s32 Func_08011e2c(void *arg0, s32 arg1, s32 arg2) {
-    s32 temp_r0;
-
-    temp_r0 = M2C_FIELD(arg0, s8, 0) << 0x13;
-    return temp_r0 + (((M2C_FIELD(arg0, s8, 1) << 0x13) - temp_r0) * Data_080132fc[arg1 + (arg2 * 0x10)]);
+    start = samples[0] << CURVE_VALUE_SHIFT;
+    return start
+        + (((samples[1] << CURVE_VALUE_SHIFT) - start)
+           * Data_080132fc[position + (row * CURVE_FULL_STEPS)]);
 }

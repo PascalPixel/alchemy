@@ -1,12 +1,6 @@
 #include "types.h"
-
-struct State_0807a5bc {
-    u8 padding[280];
-    u8 values[4];
-};
-
-s32 Func_080796c4(s16 *output);
-struct State_0807a5bc *Func_08077394(s32);
+#include "owner_state.h"
+#include "party_state.h"
 
 s32 Func_0807a5bc(s32 index)
 {
@@ -19,7 +13,7 @@ s32 Func_0807a5bc(s32 index)
         s32 remaining = count;
 
         do {
-            struct State_0807a5bc *state = Func_08077394(*owner++);
+            struct OwnerValueState *state = Func_08077394(*owner++);
 
             if (index == -1) {
                 result += state->values[0];

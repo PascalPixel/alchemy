@@ -1,26 +1,16 @@
 #include "types.h"
+#include "item.h"
+#include "owner_state.h"
 
-struct Container_0807882c {
-    u8 padding[216];
-    u16 arr[15];
-};
-
-struct Item_0807882c {
-    u8 padding[2];
-    u8 type;
-};
-
-s32 Func_08078414(s32 arg0);
-
-void *Func_0807882c(struct Container_0807882c *arg0, s32 arg1)
+void *Func_0807882c(struct OwnerInventoryState *owner, s32 type)
 {
     s32 i;
-    struct Item_0807882c *item;
+    struct ItemDefinition *item;
 
     for (i = 0; i <= 14; i++) {
-        if (arg0->arr[i] & 0x200) {
-            item = Func_08078414(arg0->arr[i]);
-            if (item->type == arg1) {
+        if (owner->inventory[i] & 0x200) {
+            item = Func_08078414(owner->inventory[i]);
+            if (item->type == type) {
                 return item;
             }
         }

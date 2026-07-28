@@ -1,4 +1,4 @@
-#include "types.h"
+#include "effect_runtime.h"
 
 s32 Func_080030f8(s32);
 s32 Func_08009080(s32, s32);
@@ -6,17 +6,17 @@ s32 Func_0808ef70(s32, s32);
 s32 Func_08092054(u32);
 s32 Func_080f9010(s32);
 
-s32 Func_0808e078(s32 arg0, s32 arg1, s32 arg2) {
-    s32 temp_r0;
-    s32 var_r0;
+s32 Func_0808e078(s32 effect, s32 target, s32 mode) {
+    s32 object;
+    s32 result;
 
-    temp_r0 = Func_08092054(arg1);
-    var_r0 = 0;
-    if (temp_r0 != 0) {
+    object = Func_08092054(target);
+    result = 0;
+    if (object != 0) {
         Func_080f9010(0x7C);
-        Func_08009080(temp_r0, 4);
+        Func_08009080(object, 4);
         Func_080030f8(0xC);
-        var_r0 = Func_0808ef70(arg0, arg2);
+        result = Func_0808ef70(effect, mode);
     }
-    return var_r0;
+    return result;
 }

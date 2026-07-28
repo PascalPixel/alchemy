@@ -1,4 +1,4 @@
-#include "types.h"
+#include "effect_runtime.h"
 
 struct GlobalData {
     u8 filler[0x1F4];
@@ -17,7 +17,7 @@ void Func_08096af0(void);
 void Func_08097174(void);
 void Func_08097194(void);
 
-s32 Func_0808e5d8(s32 value)
+s32 Func_0808e5d8(s32 packedEffect)
 {
     s32 output;
     s32 index;
@@ -26,8 +26,8 @@ s32 Func_0808e5d8(s32 value)
     void *first;
     void *second;
 
-    index = value & 0x3FF;
-    mode = ((u32)value >> 10) & 0xF;
+    index = packedEffect & 0x3FF;
+    mode = ((u32)packedEffect >> 10) & 0xF;
     object = Func_08077080(index)[0xC];
     Func_0808ba1c(Data_02000240.selected_object);
     first = (void *)Func_0808e4b4(0x30000005, object, &output);

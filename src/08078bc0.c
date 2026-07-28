@@ -1,16 +1,5 @@
 #include "types.h"
-
-struct Entry_08078bc0 {
-    u16 value;
-    u16 padding;
-};
-
-struct State_08078bc0 {
-    u8 padding[88];
-    struct Entry_08078bc0 entries[32];
-};
-
-struct State_08078bc0 *Func_08077394(s32);
+#include "owner_state.h"
 
 s32 Func_08078bc0(s32 owner, s32 value)
 {

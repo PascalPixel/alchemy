@@ -11,12 +11,12 @@ void Func_08092b94(s32);
 void Func_08092f84(s32, s32);
 
 s32 Func_08096b28(void *arg0, s32 arg1, s32 arg2) {
-    s32 temp_r3;
+    s32 resource;
 
     if (arg0 != NULL) {
-        temp_r3 = M2C_FIELD(arg0, s32 *, 8);
-        if (temp_r3 != 0) {
-            if (temp_r3 < 0x10000) {
+        resource = M2C_FIELD(arg0, s32 *, 8);
+        if (resource != 0) {
+            if (resource < 0x10000) {
                 Func_080916b0();
                 Func_08092b94(M2C_FIELD(arg0, s32 *, 8));
                 Func_08092f84(arg2, 0);

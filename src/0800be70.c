@@ -26,6 +26,7 @@ void Func_0800be70(u8 *object, u32 position)
         index_mask = 0x3F;
         offset_mask = 0x3E;
 
+        /* 1行ごとに32セル進める。 */
         for (; row < (u32)count; row++, destination += 32, position++) {
             if ((u32)(position - 0x40) <= 0x3F) {
                 u8 entry;

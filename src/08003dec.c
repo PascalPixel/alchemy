@@ -2,20 +2,21 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-void Func_08003dec(s32 *arg0, s32 arg1) {
-    s32 *temp_r2;
-    s32 temp_r3;
-    s32 var_r1;
+void Func_08003dec(s32 *entry, s32 slot)
+{
+    s32 *previous;
+    s32 offset;
+    s32 index;
 
-    var_r1 = arg1;
-    if (var_r1 > 0xFF) {
-        var_r1 = 0xFF;
+    index = slot;
+    if (index > 0xFF) {
+        index = 0xFF;
     }
-    if (var_r1 < 0) {
-        var_r1 = 0;
+    if (index < 0) {
+        index = 0;
     }
-    temp_r3 = var_r1 * 4;
-    temp_r2 = M2C_FIELD(temp_r3, s32 **, 0x03001400);
-    M2C_FIELD(temp_r3, s32 **, 0x03001400) = arg0;
-    *arg0 = temp_r2;
+    offset = index * 4;
+    previous = M2C_FIELD(offset, s32 **, 0x03001400);
+    M2C_FIELD(offset, s32 **, 0x03001400) = entry;
+    *entry = previous;
 }

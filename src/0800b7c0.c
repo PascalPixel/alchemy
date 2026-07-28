@@ -1,3 +1,4 @@
+#include "metadata_lookup.h"
 #include "types.h"
 
 struct Object_0800b7c0 {
@@ -42,7 +43,6 @@ struct State_0800b7c0 {
     struct Object_0800b7c0 *objects[4];
 };
 
-extern struct Metadata_0800b7c0 *Func_08185000(s32);
 extern s32 Func_0800b798(s32);
 
 s32 Func_0800b7c0(struct State_0800b7c0 *state)

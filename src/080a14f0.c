@@ -1,10 +1,11 @@
 #include "types.h"
 
-s32 Func_080022ec(s32, s32);
-void Func_080150a8(s32, s32, s32, s32, s32);
+s32 Func_080022ec(s32 value, s32 divisor);
+void Func_080150a8(s32 value, s32 digits, s32 layer, s32 x, s32 y);
 
-void Func_080a14f0(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
-    s32 value = arg0;
+void Func_080a14f0(s32 number, s32 layer, s32 x, s32 y)
+{
+    s32 value = number;
     s32 digits = 1;
 
     while (digits <= 15) {
@@ -16,6 +17,6 @@ void Func_080a14f0(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     }
 
     digits++;
-    arg2 -= digits << 3;
-    Func_080150a8(arg0, digits, arg1, arg2, arg3);
+    x -= digits << 3;
+    Func_080150a8(number, digits, layer, x, y);
 }

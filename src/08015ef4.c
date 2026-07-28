@@ -10,6 +10,7 @@ void Func_08015ef4(void)
     u8 *next;
 
     base = Data_03001e8c;
+    /* 0x1cバイト単位の空きリストを初期化する。 */
     item = base + 0x698;
     *(u8 **)(base + 0xd98) = item;
     count = 0x3e;

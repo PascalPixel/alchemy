@@ -14,6 +14,7 @@ void Func_08096bec(struct Object_08096bec *object, s32 arg1, s32 arg2)
 {
     s32 values[3];
 
+    /* 座標3成分を一括変換して書き戻す。 */
     if (object != 0) {
         values[0] = object->x;
         values[1] = object->y;

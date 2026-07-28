@@ -1,7 +1,7 @@
+#include "metadata_lookup.h"
 #include "types.h"
 
 extern u8 *Data_03001e60;
-void *Func_08185000(s32);
 void Func_0800b868(void *);
 
 void Func_08012de8(s32 arg0, s32 arg1)

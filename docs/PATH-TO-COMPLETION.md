@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-28)
 
-`[1,361 of 1,999]`. 638 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,362 of 1,999]`. 637 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -32,7 +32,7 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-25 | 1,242 | +6 |
 | 2026-07-26 | 1,292 | +50 |
 | 2026-07-27 | 1,345 | +53 (partial day) |
-| 2026-07-28 | 1,361 | +16 (decompilation resumed after humanization) |
+| 2026-07-28 | 1,362 | +17 (decompilation resumed after humanization) |
 
 **The recent three-day average is still roughly a factor of four below the
 2026-07-23 peak.** That is not a slowdown in effort: the broad easy tier is
@@ -775,6 +775,23 @@ therefore remains authoritative.
 
 The current claimed build is `[1,361 of 1,999]` and 94,126 exact-C bytes.
 Ordinary assembly debt is 638 regions / 397,374 bytes.
+
+## The thirteenth fresh 81–160 pass
+
+`0801b424` converted as 200 bytes of default-compiler C. It waits for the menu
+state to settle, dispatches left/right input, reports the selected result, and
+loops until one of the accepted completion conditions occurs. Keeping the
+memory-mapped input word volatile preserves the two source reads across the
+ordered `if` / `else if` without a compiler-specific route.
+
+`080286a0` was recovered through an exact instruction prefix ending at offset
+`0x74`; its closest maintainable draft is 184/188 bytes. GCC coalesces the
+absolute-distance temporary that the reference keeps in a distinct register.
+The useful draft is retained under the ignored candidate workspace, while its
+assembly remains authoritative.
+
+The current claimed build is `[1,362 of 1,999]` and 94,326 exact-C bytes.
+Ordinary assembly debt is 637 regions / 397,174 bytes.
 
 ## What changes the rate
 

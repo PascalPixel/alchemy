@@ -16,7 +16,8 @@ extern struct MenuDefaults Data_02000240;
 extern volatile u32 Data_03001ae8;
 
 struct Work *Func_080162d4(s32 kind, s32 x, s32 y, s32 width, s32 layer);
-void Func_08028ef0(struct Work *work, s16 primary, s16 *secondary);
+void Func_08028ef0(
+    struct Work *work, s16 primary, const s16 *secondary);
 void Func_0801c0dc(struct TextObject *object, s32 *resource);
 void Func_080030f8(s32 frames);
 s16 Func_08029094(

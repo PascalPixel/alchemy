@@ -1,14 +1,5 @@
+#include "menu_result.h"
 #include "types.h"
-
-struct Result {
-    s32 value0;
-    s32 unused4;
-    s32 value8;
-    s32 valueC;
-    s32 value10;
-    s32 value14;
-    s32 value18;
-};
 
 extern u8 *Data_03001f2c;
 s32 Func_080a3d6c(s32);
@@ -26,7 +17,7 @@ static __inline__ s8 LoadSignedByte(s32 base, s32 offset)
     return *(s8 *)(base + offset);
 }
 
-s32 Func_080a5578(struct Result *result, s32 index)
+s32 Func_080a5578(struct MenuResult *result, s32 index)
 {
     s32 encoded;
     s32 base = *(s32 *)0x03001F2C;

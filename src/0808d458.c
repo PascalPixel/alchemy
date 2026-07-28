@@ -1,22 +1,21 @@
 #include "types.h"
 
-u32 Func_0808d458(s32 arg0, s32 arg1)
+u32 Func_0808d458(s32 descriptor, s32 value)
 {
-  s32 temp_r3;
-  int new_var;
-  u32 var_r0;
-  if ((0xF & arg0) != 3)
+  u32 masked_difference;
+  s32 descriptor_kind;
+  u32 result;
+  if ((0xF & descriptor) != 3)
   {
     return 0U;
   }
-  new_var = 0x1FF & arg0;
-  var_r0 = 0;
-  if (new_var != 3)
+  descriptor_kind = 0x1FF & descriptor;
+  result = 0;
+  if (descriptor_kind != 3)
   {
-    temp_r3 = (0xFFF00000 & arg1) ^ 0x500000;
-    var_r0 = (u32) (temp_r3 | (0 - temp_r3));
-    var_r0 = var_r0 >> 0x1F;
+    masked_difference = ((u32)value & 0xFFF00000) ^ 0x500000;
+    result = masked_difference | (0U - masked_difference);
+    result = result >> 0x1F;
   }
-  return var_r0;
+  return result;
 }
-

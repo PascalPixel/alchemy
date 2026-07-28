@@ -9,24 +9,38 @@ import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 import { canonicalJson } from "./canonical_json.ts";
+import { modeSweepOutputDirectory } from "./mode_sweep.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 
 interface ExplorerResult {
-  config: { ids: string[]; flags: string[] };
+  config: {
+    ids: string[];
+    flags: string[];
+    remove_flags: string[];
+    compiler_family: string;
+  };
   compiled: boolean;
   evidence?: { exact: boolean; differing_halfwords: number };
 }
 
 interface ExplorerReport {
+  format: number;
   stem: string;
   source: string;
+  source_sha256: string;
+  reference_sha256: string;
+  compiler_signature: string;
+  policy: unknown;
+  planning: { bounded_search_complete: boolean };
   results: ExplorerResult[];
 }
 
 interface SharedConfiguration {
   ids: string[];
   flags: string[];
+  remove_flags: string[];
+  compiler_family: string;
   exact_stems: string[];
 }
 
@@ -41,6 +55,8 @@ export function sharedExactConfigurations(
       const row = grouped.get(key) ?? {
         ids: result.config.ids,
         flags: result.config.flags,
+        remove_flags: result.config.remove_flags,
+        compiler_family: result.config.compiler_family,
         exact_stems: [],
       };
       if (!row.exact_stems.includes(report.stem)) row.exact_stems.push(report.stem);
@@ -61,9 +77,9 @@ function selfTest(): void {
       stem: "08000000",
       source: "a.c",
       results: [
-        { config: { ids: ["no-gcse"], flags: ["-fno-gcse"] }, compiled: true,
+        { config: { ids: ["no-gcse"], flags: ["-fno-gcse"], remove_flags: [], compiler_family: "routed" }, compiled: true,
           evidence: { exact: true, differing_halfwords: 0 } },
-        { config: { ids: [], flags: [] }, compiled: true,
+        { config: { ids: [], flags: [], remove_flags: [], compiler_family: "routed" }, compiled: true,
           evidence: { exact: false, differing_halfwords: 2 } },
       ],
     },
@@ -71,7 +87,7 @@ function selfTest(): void {
       stem: "08000010",
       source: "b.c",
       results: [
-        { config: { ids: ["no-gcse"], flags: ["-fno-gcse"] }, compiled: true,
+        { config: { ids: ["no-gcse"], flags: ["-fno-gcse"], remove_flags: [], compiler_family: "routed" }, compiled: true,
           evidence: { exact: true, differing_halfwords: 0 } },
       ],
     },
@@ -125,7 +141,7 @@ async function main(): Promise<void> {
       }
       const stem = basename(source, ".c");
       reports[index] = JSON.parse(
-        readFileSync(join(ROOT, "out/modesweep", stem, "report.json"), "utf8"),
+        readFileSync(join(modeSweepOutputDirectory(source), "report.json"), "utf8"),
       ) as ExplorerReport;
     }
   }
@@ -133,13 +149,26 @@ async function main(): Promise<void> {
 
   const shared = sharedExactConfigurations(reports);
   const digest = createHash("sha256")
-    .update(sources.slice().sort().join("\n"))
+    .update(canonicalJson(reports.map((report) => ({
+      source: report.source,
+      source_sha256: report.source_sha256,
+      reference_sha256: report.reference_sha256,
+      compiler_signature: report.compiler_signature,
+      policy: report.policy,
+      planning: report.planning,
+    })).sort((left, right) => left.source.localeCompare(right.source))))
     .digest("hex").slice(0, 16);
   const output = join(ROOT, "out/modesweep/cohort", digest);
   mkdirSync(output, { recursive: true });
   const summary = {
     format: 1,
-    sources,
+    members: reports.map((report) => ({
+      source: report.source,
+      source_sha256: report.source_sha256,
+      reference_sha256: report.reference_sha256,
+      compiler_signature: report.compiler_signature,
+      bounded_search_complete: report.planning.bounded_search_complete,
+    })),
     stems: reports.map((report) => report.stem),
     shared_exact_configurations: shared,
     auto_promote: false,

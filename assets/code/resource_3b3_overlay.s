@@ -2698,53 +2698,10 @@ AlchemyC_02001440:
 	.4byte 0x47704800
 	.2byte 0xb014
 	.2byte 0x0200
-	push	{lr}
-	ldr	r3, [pc, #56]
-	movs	r1, #224
-	lsls	r1, r1, #1
-	adds	r3, r3, r1
-	movs	r1, #0
-	ldrsh	r2, [r3, r1]
-	ldr	r3, [pc, #48]
+AlchemyC_020014c4:
+	.space 0x10
 .L_020014d4:
-	cmp	r2, r3
-	bne.n	.L_020014dc
-	ldr	r0, [pc, #44]
-	b.n	.L_020014fc
-.L_020014dc:
-	ldr	r3, [pc, #44]
-	cmp	r2, r3
-	bne.n	.L_020014e6
-	ldr	r0, [pc, #44]
-	b.n	.L_020014fc
-.L_020014e6:
-	ldr	r3, [pc, #44]
-	cmp	r2, r3
-	bne.n	.L_020014f0
-	ldr	r0, [pc, #40]
-	b.n	.L_020014fc
-.L_020014f0:
-	ldr	r3, [pc, #40]
-	cmp	r2, r3
-	bne.n	.L_020014fa
-	ldr	r0, [pc, #40]
-	b.n	.L_020014fc
-.L_020014fa:
-	ldr	r0, [pc, #40]
-.L_020014fc:
-	pop	{r1}
-	bx	r1
-	.4byte 0x02000240
-	.4byte 0x00000073
-	.4byte 0x0200b06c
-	.4byte 0x00000074
-	.4byte 0x0200b0e4
-	.4byte 0x00000077
-	.4byte 0x0200b174
-	.4byte 0x0000007a
-	.4byte 0x0200b2dc
-	.2byte 0xb264
-	.2byte 0x0200
+	.space 0x54
 	push	{lr}
 	bl	sub_02004038
 	bl	.L_02002798

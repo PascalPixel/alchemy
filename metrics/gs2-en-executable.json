@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "metric": "full-c-byte-share",
+  "target": "gs2-en",
+  "derivation": "full-c-progress-v1",
+  "audit": "incomplete",
+  "total_union_bytes": 4,
+  "main": {
+    "id": "main",
+    "executable_bytes": 4,
+    "audit": "incomplete",
+    "intervals": [
+      {
+        "start": 134296268,
+        "end": 134296272,
+        "kind": "thumb",
+        "evidence": "games/gs2/src/080132cc.c:byte-identical-claimed-C"
+      }
+    ],
+    "evidence": ["assembly classification unavailable", "out/gs2-en/full/claimed/manifest.json", "byte-identical full build and tracked assembly classification"]
+  },
+  "overlays": [],
+  "caveats": ["GS2-English is a compiler/bootstrap target and does not yet have a complete executable classification."]
+}

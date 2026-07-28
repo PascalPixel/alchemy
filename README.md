@@ -37,6 +37,24 @@ git config core.hooksPath .hooks
 Current measured decompilation status and the remaining-work breakdown are in
 [docs/PATH-TO-COMPLETION.md](docs/PATH-TO-COMPLETION.md).
 
+## Full-C Byte Share
+
+Alchemy has one headline progress metric: exact executable bytes generated
+from byte-matching, canonical C divided by all audited executable bytes in the
+main image and decoded overlays.
+
+```sh
+bun run progress
+```
+
+The exact fraction is stored in
+[`metrics/gs1-en-progress.json`](metrics/gs1-en-progress.json). Function
+counts, source ownership, asset round trips, and assembly-region counts are
+diagnostics rather than overall decompilation progress. Historical first-parent
+measurements are published non-destructively in
+[`docs/full-c-history.json`](docs/full-c-history.json); existing commit IDs have
+not been rewritten.
+
 ## Verification
 
 With the approved local toolchains and target inputs in place, the canonical
@@ -48,4 +66,5 @@ bun run verify
 
 It runs the complete self-test suite, compiles every exact-C claim, proves that
 the source-only image owns all ROM bytes, and verifies that the normal full
-build is byte-identical with zero ROM fallback.
+build is byte-identical with zero ROM fallback. Only after those checks pass
+does it independently regenerate and validate Full-C Byte Share.

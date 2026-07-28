@@ -1,6 +1,6 @@
-# Path to completion (measured 2026-07-27)
+# Path to completion (measured 2026-07-28)
 
-`[1,345 of 1,999]`. 654 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,347 of 1,999]`. 652 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -32,11 +32,12 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-25 | 1,242 | +6 |
 | 2026-07-26 | 1,292 | +50 |
 | 2026-07-27 | 1,345 | +53 (partial day) |
+| 2026-07-28 | 1,347 | +2 (decompilation resumed after humanization) |
 
 **The recent three-day average is still roughly a factor of four below the
 2026-07-23 peak.** That is not a slowdown in effort: the broad easy tier is
 running out, and compiler lineage now matters as much as drafting. At the last
-two completed days' rate, 654 regions is roughly 23 working days; at the
+two completed days' rate, 652 regions is roughly 23 working days; at the
 three-day average, about 18. The estimates move materially with one cohort and
 neither is a session.
 
@@ -44,7 +45,7 @@ neither is a session.
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 481 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 479 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
 | 130 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
@@ -570,9 +571,29 @@ typed CGB-channel pointer to `080fa55c`. The claimed-build symbol gate caught
 and rejected an initially misnamed trailing helper before integration; its
 verified address is `080a5780`.
 
+## The first post-humanization family
+
+The first fresh 81–160-instruction pass converted the two-member font-transfer
+family:
+
+| region | instructions | bytes | exact route |
+| --- | ---: | ---: | --- |
+| `08019fcc` | 81 | 188 | default compiler; unsigned glyph bound and slot initialized before allocation |
+| `0801a404` | 81 | 188 | default compiler; sibling table and bound function, slot initialized after allocation |
+
+Both use the same recovered 0x608-byte transfer layout and the same allocation,
+optional base-glyph upload, indexed glyph upload, source allocation/reuse, and
+final transfer sequence. The placement of the `slot = 0` assignment is the
+real compiler-shape distinction: moving it across `Func_080048b0` reproduces
+the two original saved-register allocations without a compiler flag.
+
+This raises the claimed build to `[1,347 of 1,999]`, exact-C ownership to
+91,040 bytes, and lowers ordinary assembly debt to 652 regions / 400,460 bytes.
+The full ROM remains byte-identical with zero fallback or unowned bytes.
+
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 481 of 654 have nothing exotic in
+1. **The bulk is volume, not blockers.** 479 of 652 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.

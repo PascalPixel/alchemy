@@ -46,6 +46,45 @@ proper family/single-switch subset. This closes the previous blind spot where
 such configurations were considered only when a candidate-specific pair had
 already reached an exact-sized 2–5-halfword floor.
 
+## Stock O-level catalog closed (2026-07-28)
+
+The remaining code-generation pass switches enabled automatically by the
+checked-in GCC sources are now represented:
+
+- common families: `-fno-defer-pop`, `-fno-thread-jumps`,
+  `-fno-omit-frame-pointer`, `-fno-cse-skip-blocks`, and
+  `-fno-inline-functions`;
+- GCC 2.96 only: `-fno-peephole2` and
+  `-fno-delete-null-pointer-checks`.
+
+The family restrictions follow the option tables in the public source trees;
+GCC 2.95.1 and `pret-early-thumb` reject the two GCC 2.96-only switches.
+`-fno-strict-aliasing` is intentionally not an explorer mode: although `-O2`
+enables strict aliasing, changing it changes the language aliasing contract
+rather than isolating a code-generation pass.
+
+The finalized 22-candidate run tested the same 1,572 compatible pairs and 372
+historical-family factorial configurations for every member. It produced zero
+new exact results, zero globally non-regressing shared improvements, and zero
+irreducible historical-family factorial improvements. Of the newly added
+singles, only keeping the frame pointer improved anything (one candidate by six
+halfwords), while regressing 20 of 22 candidates by 950 halfwords in aggregate.
+The other new passes were inert or regressive.
+
+Full exact-C corpus checks reinforce that result. `-fno-defer-pop` and
+`-fno-inline-functions` are inert at the routed `-O2` baseline (1,366/1,366
+preserved); `-fno-thread-jumps` preserves 1,363, `-fno-cse-skip-blocks` 1,321,
+and `-fno-peephole2` 1,318. Keeping frame pointers changes all 1,366 exact
+regions. The GCC 2.96-only switches are deliberately unavailable to explicitly
+selected older families; a forced routed-corpus diagnostic also confirms that
+they cannot be applied to sources whose normal route is `old-agbcc`.
+
+This satisfies the compiler stopping rule: the coherent historical families,
+their source-derived O-level pass toggles, all common pairs, and the structured
+alternative-family factorial have been exhausted without a shared exact
+configuration. Further broad compiler-option work is frozen unless a fresh
+decompilation residual supplies new cross-region evidence.
+
 > Historical prototype log. The kept changes described here were subsequently
 > committed, staged into the pinned compiler bundles, regression-tested, and
 > pushed in `alchemy-gcc`. Statements below about uncommitted patches or an

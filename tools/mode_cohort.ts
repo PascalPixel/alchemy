@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
 // Run the bounded compiler explorer across a semantically verified cohort and
-// report only configurations that are exact for more than one member.
+// report configurations that are exact for more than one member or contribute
+// an irreducible improvement to multiple members without worsening any member
+// in which they compile.
 //
 // This deliberately delegates compilation, caching, phased pair/triple policy,
 // and floor classification to mode_sweep.ts. It is an aggregation layer, not
@@ -44,6 +46,22 @@ interface SharedConfiguration {
   exact_stems: string[];
 }
 
+interface SharedImprovement {
+  ids: string[];
+  flags: string[];
+  remove_flags: string[];
+  compiler_family: string;
+  improved_stems: string[];
+  unchanged_stems: string[];
+  score_changes: {
+    stem: string;
+    baseline_halfwords: number;
+    result_halfwords: number;
+    removed_halfwords: number;
+  }[];
+  total_halfwords_removed: number;
+}
+
 export function sharedExactConfigurations(
   reports: readonly ExplorerReport[],
 ): SharedConfiguration[] {
@@ -71,6 +89,93 @@ export function sharedExactConfigurations(
       left.ids.join("+").localeCompare(right.ids.join("+")));
 }
 
+export function sharedNonRegressingImprovements(
+  reports: readonly ExplorerReport[],
+): SharedImprovement[] {
+  const baselines = new Map<string, number>();
+  const configs = new Map<string, {
+    config: ExplorerResult["config"];
+    scores: Map<string, number>;
+  }>();
+  for (const report of reports) {
+    for (const result of report.results) {
+      if (!result.compiled || result.evidence === undefined) continue;
+      if (result.config.ids.length === 0 &&
+          result.config.compiler_family === "routed" &&
+          result.config.flags.length === 0 &&
+          result.config.remove_flags.length === 0) {
+        baselines.set(report.stem, result.evidence.differing_halfwords);
+      }
+      const key = canonicalJson(result.config);
+      const row = configs.get(key) ?? { config: result.config, scores: new Map() };
+      row.scores.set(report.stem, result.evidence.differing_halfwords);
+      configs.set(key, row);
+    }
+  }
+  if (baselines.size !== reports.length) {
+    throw new Error("mode cohort: every report must contain a compiled routed baseline");
+  }
+
+  const found: SharedImprovement[] = [];
+  for (const { config, scores } of configs.values()) {
+    const improved: string[] = [];
+    const unchanged: string[] = [];
+    const scoreChanges: SharedImprovement["score_changes"] = [];
+    let removed = 0;
+    let worsened = false;
+    for (const report of reports) {
+      const baseline = baselines.get(report.stem)!;
+      const score = scores.get(report.stem);
+      // A configuration that fails to compile one cohort member is not shared.
+      if (score === undefined || score > baseline) {
+        worsened = true;
+        break;
+      }
+      if (score < baseline) {
+        // Do not credit an additive superset with unrelated improvements from
+        // its members. A stem counts only when this configuration beats every
+        // compiled proper subset from the same compiler family.
+        const properSubsetScores = [...configs.values()]
+          .filter((candidate) =>
+            candidate.config.compiler_family === config.compiler_family &&
+            candidate.config.ids.length < config.ids.length &&
+            candidate.config.ids.every((id) => config.ids.includes(id)))
+          .map((candidate) => candidate.scores.get(report.stem))
+          .filter((candidateScore): candidateScore is number => candidateScore !== undefined);
+        const bestProperSubset = Math.min(baseline, ...properSubsetScores);
+        if (score < bestProperSubset) {
+          improved.push(report.stem);
+          const removedHere = baseline - score;
+          removed += removedHere;
+          scoreChanges.push({
+            stem: report.stem,
+            baseline_halfwords: baseline,
+            result_halfwords: score,
+            removed_halfwords: removedHere,
+          });
+        } else {
+          unchanged.push(report.stem);
+        }
+      } else {
+        unchanged.push(report.stem);
+      }
+    }
+    if (!worsened && improved.length > 1) {
+      found.push({
+        ...config,
+        improved_stems: improved.sort(),
+        unchanged_stems: unchanged.sort(),
+        score_changes: scoreChanges.sort((left, right) => left.stem.localeCompare(right.stem)),
+        total_halfwords_removed: removed,
+      });
+    }
+  }
+  return found.sort((left, right) =>
+    right.improved_stems.length - left.improved_stems.length ||
+    right.total_halfwords_removed - left.total_halfwords_removed ||
+    left.ids.join("+").localeCompare(right.ids.join("+")));
+}
+
 function selfTest(): void {
   const reports: ExplorerReport[] = [
     {
@@ -79,6 +184,12 @@ function selfTest(): void {
       results: [
         { config: { ids: ["no-gcse"], flags: ["-fno-gcse"], remove_flags: [], compiler_family: "routed" }, compiled: true,
           evidence: { exact: true, differing_halfwords: 0 } },
+        { config: { ids: ["shared"], flags: ["-fshared"], remove_flags: [], compiler_family: "routed" }, compiled: true,
+          evidence: { exact: false, differing_halfwords: 1 } },
+        { config: { ids: ["left"], flags: ["-fleft"], remove_flags: [], compiler_family: "routed" }, compiled: true,
+          evidence: { exact: false, differing_halfwords: 1 } },
+        { config: { ids: ["left", "right"], flags: ["-fleft", "-fright"], remove_flags: [], compiler_family: "routed" }, compiled: true,
+          evidence: { exact: false, differing_halfwords: 1 } },
         { config: { ids: [], flags: [], remove_flags: [], compiler_family: "routed" }, compiled: true,
           evidence: { exact: false, differing_halfwords: 2 } },
       ],
@@ -89,6 +200,14 @@ function selfTest(): void {
       results: [
         { config: { ids: ["no-gcse"], flags: ["-fno-gcse"], remove_flags: [], compiler_family: "routed" }, compiled: true,
           evidence: { exact: true, differing_halfwords: 0 } },
+        { config: { ids: ["shared"], flags: ["-fshared"], remove_flags: [], compiler_family: "routed" }, compiled: true,
+          evidence: { exact: false, differing_halfwords: 2 } },
+        { config: { ids: ["right"], flags: ["-fright"], remove_flags: [], compiler_family: "routed" }, compiled: true,
+          evidence: { exact: false, differing_halfwords: 2 } },
+        { config: { ids: ["left", "right"], flags: ["-fleft", "-fright"], remove_flags: [], compiler_family: "routed" }, compiled: true,
+          evidence: { exact: false, differing_halfwords: 2 } },
+        { config: { ids: [], flags: [], remove_flags: [], compiler_family: "routed" }, compiled: true,
+          evidence: { exact: false, differing_halfwords: 3 } },
       ],
     },
   ];
@@ -97,6 +216,15 @@ function selfTest(): void {
       shared[0].exact_stems.join(",") !== "08000000,08000010" ||
       shared[0].flags.join(" ") !== "-fno-gcse") {
     throw new Error("mode cohort self-test: shared exact aggregation differs");
+  }
+  const improvements = sharedNonRegressingImprovements(reports);
+  const sharedImprovement = improvements.find((row) => row.ids.join(",") === "shared");
+  if (improvements.length !== 2 ||
+      sharedImprovement === undefined ||
+      sharedImprovement.improved_stems.join(",") !== "08000000,08000010" ||
+      sharedImprovement.total_halfwords_removed !== 2 ||
+      improvements.some((row) => row.ids.join(",") === "left,right")) {
+    throw new Error("mode cohort self-test: shared improvement aggregation differs");
   }
   console.log("mode cohort self-test passed");
 }
@@ -157,6 +285,7 @@ async function main(): Promise<void> {
   await Promise.all(Array.from({ length: Math.min(jobs, sources.length) }, worker));
 
   const shared = sharedExactConfigurations(reports);
+  const improvements = sharedNonRegressingImprovements(reports);
   const digest = createHash("sha256")
     .update(canonicalJson(reports.map((report) => ({
       source: report.source,
@@ -170,7 +299,7 @@ async function main(): Promise<void> {
   const output = join(ROOT, "out/modesweep/cohort", digest);
   mkdirSync(output, { recursive: true });
   const summary = {
-    format: 1,
+    format: 2,
     members: reports.map((report) => ({
       source: report.source,
       source_sha256: report.source_sha256,
@@ -180,13 +309,21 @@ async function main(): Promise<void> {
     })),
     stems: reports.map((report) => report.stem),
     shared_exact_configurations: shared,
+    shared_nonregressing_improvements: improvements,
     auto_promote: false,
   };
   const reportPath = join(output, "report.json");
   writeFileSync(reportPath, canonicalJson(summary) + "\n");
-  console.log(`cohort=${reports.length} shared_exact=${shared.length}`);
+  console.log(`cohort=${reports.length} shared_exact=${shared.length} shared_improvements=${improvements.length}`);
   for (const row of shared) {
     console.log(`${row.exact_stems.length}  ${row.flags.join(" ") || "(routed default)"}  ${row.exact_stems.join(",")}`);
+  }
+  for (const row of improvements) {
+    console.log(
+      `improves=${row.improved_stems.length} removed=${row.total_halfwords_removed}hw  ` +
+      `${row.flags.join(" ") || row.ids.join("+") || "(routed default)"}  ` +
+      `${row.improved_stems.join(",")}`,
+    );
   }
   console.log(`report=${reportPath}`);
 }

@@ -1,6 +1,6 @@
-#include "types.h"
+#include "curve.h"
 
-s32 Func_08011ce0(u8 *arg0)
+s32 Func_08011ce0(const s8 *samples)
 {
-    return (s8)*arg0 << 19;
+    return samples[0] << CURVE_VALUE_SHIFT;
 }

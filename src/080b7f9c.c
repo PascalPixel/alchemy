@@ -29,7 +29,7 @@ void Func_080072f0(struct Local_080b7f9c *, struct State_080b7f9c *);
 
 void Func_080b7f9c(void) {
     struct State_080b7f9c *state = Data_03001e80;
-    struct Local_080b7f9c local;
+    struct Local_080b7f9c transfer;
 
     state->field36 = 192 << 6;
     state->field34 = 254 << 8;
@@ -45,8 +45,8 @@ void Func_080b7f9c(void) {
     Func_08004c1c(state->field36);
     Func_08004bd4(state->field34);
 
-    local.first = 0;
-    local.second = 0;
-    local.third = state->field20;
-    ((void (*)(struct Local_080b7f9c *, struct State_080b7f9c *))0x03000250)(&local, state);
+    transfer.first = 0;
+    transfer.second = 0;
+    transfer.third = state->field20;
+    ((void (*)(struct Local_080b7f9c *, struct State_080b7f9c *))0x03000250)(&transfer, state);
 }

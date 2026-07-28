@@ -1,4 +1,4 @@
-#include "types.h"
+#include "effect_runtime.h"
 
 #define M2C_FIELD(base, type, offset) \
     (*(type)((u8 *)(base) + (offset)))
@@ -6,14 +6,14 @@
 s32 Func_0808ec14();
 
 void Func_0808ed78(void) {
-    s32 temp_r0;
-    void *temp_r0_2;
+    s32 slot;
+    void *object;
 
-    temp_r0 = Func_0808ec14();
-    if (temp_r0 != -1) {
-        { s32 _mb = *(s32 *)0x03001EBC; s32 _mo = temp_r0 * 8; temp_r0_2 = *(void **)((s32)_mb + (s32)_mo + (s32)0x11C); }
-        if (temp_r0_2 != NULL) {
-            M2C_FIELD(temp_r0_2, s8 *, 0x54) = 0;
+    slot = Func_0808ec14();
+    if (slot != -1) {
+        { s32 base = *(s32 *)0x03001EBC; s32 offset = slot * 8; object = *(void **)((s32)base + (s32)offset + (s32)0x11C); }
+        if (object != NULL) {
+            M2C_FIELD(object, s8 *, 0x54) = 0;
         }
     }
 }

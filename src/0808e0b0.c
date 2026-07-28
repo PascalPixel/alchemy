@@ -1,4 +1,4 @@
-#include "types.h"
+#include "effect_runtime.h"
 
 struct Item0808e0b0 {
     u8 padding0[5];
@@ -24,7 +24,7 @@ struct Outer0808e0b0 {
 extern u32 Data_03001e40;
 extern u8 Data_0809e6b8[];
 
-void Func_0808e0b0(struct Outer0808e0b0 *outer, s32 value)
+void Func_0808e0b0(struct Outer0808e0b0 *outer, s32 palette)
 {
     struct Inner0808e0b0 *inner;
     struct Item0808e0b0 **item;
@@ -35,8 +35,8 @@ void Func_0808e0b0(struct Outer0808e0b0 *outer, s32 value)
 
     if ((outer->mode & 15) == 1) {
         inner = outer->inner;
-        replacement = value - 1;
-        if (value == 0)
+        replacement = palette - 1;
+        if (palette == 0)
             replacement = Data_0809e6b8[(Data_03001e40 >> 1) & 7];
 
         rawCount = inner->count;

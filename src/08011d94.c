@@ -1,19 +1,29 @@
-#include "types.h"
+#include "curve.h"
 
-s32 Func_080022ec(s32 arg0, s32 arg1);
-s32 Func_08011d94(s8 *arg0, s32 arg1, s32 arg2) {
-    s32 temp_r6, temp_r5, temp_r3, result;
-    temp_r6 = *arg0++ << 0x13;
-    temp_r5 = *arg0 << 0x13;
-    temp_r3 = arg0[1] << 0x13;
-    arg1 = arg1 + arg2;
-    if ((u32)arg1 == 0xF) {
-        result = temp_r5;
-    } else if ((u32)arg1 <= 0xEU) {
-        result = temp_r6 + Func_080022ec((temp_r5 - temp_r6) * arg1, 0xF);
+s32 Func_080022ec(s32 dividend, s32 divisor);
+
+s32 Func_08011d94(const s8 *samples, s32 start, s32 end)
+{
+    s32 first;
+    s32 middle;
+    s32 last;
+    s32 result;
+
+    first = *samples++ << CURVE_VALUE_SHIFT;
+    middle = *samples << CURVE_VALUE_SHIFT;
+    last = samples[1] << CURVE_VALUE_SHIFT;
+    start = start + end;
+    if ((u32)start == CURVE_FULL_STEPS - 1) {
+        result = middle;
+    } else if ((u32)start < CURVE_FULL_STEPS - 1) {
+        result = first + Func_080022ec(
+            (middle - first) * start,
+            CURVE_FULL_STEPS - 1);
     } else {
-        arg1 = arg1 - 0xF;
-        result = temp_r5 + Func_080022ec((temp_r3 - temp_r5) * arg1, 0xF);
+        start = start - (CURVE_FULL_STEPS - 1);
+        result = middle + Func_080022ec(
+            (last - middle) * start,
+            CURVE_FULL_STEPS - 1);
     }
     return result;
 }

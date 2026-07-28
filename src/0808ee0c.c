@@ -1,4 +1,4 @@
-#include "types.h"
+#include "effect_runtime.h"
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -17,8 +17,8 @@ extern char Value_001ffffe;
 
 void Func_0808ee0c(void)
 {
-    register s32 saved_x;
-    register s32 saved_y;
+    register s32 relativeX;
+    register s32 relativeY;
     register s32 x_offset;
     register s32 y_offset;
     register s32 x_delta;
@@ -45,16 +45,16 @@ void Func_0808ee0c(void)
 loop:
         x_offset = entry[6] << 20;
         x_delta = object_x - x_offset;
-        saved_x = x_delta + negative_center;
+        relativeX = x_delta + negative_center;
         y_offset = entry[7] << 20;
         y_delta = object_y - y_offset;
-        saved_y = y_delta + negative_center;
+        relativeY = y_delta + negative_center;
         if ((u32)(x_delta + 0x7FFFF) <= maximum &&
             (u32)(y_delta + 0x7FFFF) <= maximum) {
             FIELD(object, s32, 8) = x_offset + center;
             FIELD(object, s32, 0x10) = y_offset + center;
             Func_0800447c(0x140000,
-                          (u16)Func_080044d0(saved_y, saved_x),
+                          (u16)Func_080044d0(relativeY, relativeX),
                           object + 8);
             FIELD(object, s32, 0x38) = 0x80000000;
             FIELD(object, s32, 0x3C) = 0x80000000;

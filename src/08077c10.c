@@ -1,4 +1,5 @@
 #include "types.h"
+#include "item.h"
 
 struct Owner_08077c10 {
     u8 padding[216];
@@ -10,7 +11,6 @@ extern u8 Data_02000240[];
 void Func_08079374(s32);
 s32 Func_080795fc(void);
 struct Owner_08077c10 *Func_08077394(s32);
-s32 Func_08078414(s32);
 s32 Func_08079358(s32);
 
 void Func_08077c10(void)

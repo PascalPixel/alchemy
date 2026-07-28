@@ -1,38 +1,38 @@
-#include "types.h"
+#include "effect_runtime.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Func_080091a8(s32, s32, s32);
 s32 Func_0808ec14();
 
-void Func_0808edac(s32 arg0, s32 arg1, s32 arg2) {
-    s32 temp_r0;
-    s32 temp_r0_3;
-    s32 var_r6;
-    s32 var_r7;
-    void *temp_r0_2;
-    void *temp_r3;
-    void *temp_r5;
+void Func_0808edac(s32 unused, s32 x, s32 y) {
+    s32 slot;
+    s32 angle;
+    s32 objectX;
+    s32 objectY;
+    void *slotData;
+    void *slotBase;
+    void *object;
 
-    var_r7 = arg2;
-    var_r6 = arg1;
-    temp_r0 = Func_0808ec14();
-    if (temp_r0 != -1) {
-        temp_r3 = *(s32 *)0x03001EBC + (temp_r0 * 8);
-        temp_r0_2 = temp_r3 + 0x11C;
-        temp_r5 = M2C_FIELD(temp_r3, void **, 0x11C);
-        if (temp_r5 != NULL) {
-            if (var_r6 == -1) {
-                var_r6 = (M2C_FIELD(temp_r0_2, u8 *, 6) << 0x14) + 0x80000;
+    objectY = y;
+    objectX = x;
+    slot = Func_0808ec14();
+    if (slot != -1) {
+        slotBase = *(s32 *)0x03001EBC + (slot * 8);
+        slotData = slotBase + 0x11C;
+        object = M2C_FIELD(slotBase, void **, 0x11C);
+        if (object != NULL) {
+            if (objectX == -1) {
+                objectX = (M2C_FIELD(slotData, u8 *, 6) << 0x14) + 0x80000;
             }
-            if (var_r7 == -1) {
-                var_r7 = (M2C_FIELD(temp_r0_2, u8 *, 7) << 0x14) + 0x80000;
+            if (objectY == -1) {
+                objectY = (M2C_FIELD(slotData, u8 *, 7) << 0x14) + 0x80000;
             }
-            M2C_FIELD(temp_r5, s32 *, 8) = var_r6;
-            M2C_FIELD(temp_r5, s32 *, 0x10) = var_r7;
-            temp_r0_3 = Func_080091a8(0, var_r6, var_r7);
-            M2C_FIELD(temp_r5, s32 *, 0x14) = temp_r0_3;
-            M2C_FIELD(temp_r5, s32 *, 0xC) = temp_r0_3;
+            M2C_FIELD(object, s32 *, 8) = objectX;
+            M2C_FIELD(object, s32 *, 0x10) = objectY;
+            angle = Func_080091a8(0, objectX, objectY);
+            M2C_FIELD(object, s32 *, 0x14) = angle;
+            M2C_FIELD(object, s32 *, 0xC) = angle;
         }
     }
 }

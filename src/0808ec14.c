@@ -1,28 +1,26 @@
-#include "types.h"
+#include "effect_runtime.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+s32 Func_0808ec14(s32 object) {
+    s32 index;
+    s32 found;
+    struct EffectRuntimeSlot *slot;
 
-s32 Func_0808ec14(s32 arg0) {
-    s32 var_r1;
-    s32 var_r4;
-    void *var_r2;
-
-    var_r2 = *(s32 *)0x03001EBC + 0x11C;
-    var_r4 = -1;
-    var_r1 = 0;
-    if (M2C_FIELD(var_r2, u8 *, 4) == arg0) {
-        var_r4 = 0;
+    slot = EFFECT_RUNTIME->slots;
+    found = -1;
+    index = 0;
+    if (slot->active == object) {
+        found = 0;
     } else {
 loop_2:
-        var_r1 += 1;
-        var_r2 += 8;
-        if (var_r1 <= 9) {
-            if (M2C_FIELD(var_r2, u8 *, 4) == arg0) {
-                var_r4 = var_r1;
+        index += 1;
+        slot++;
+        if (index <= 9) {
+            if (slot->active == object) {
+                found = index;
             } else {
                 goto loop_2;
             }
         }
     }
-    return var_r4;
+    return found;
 }

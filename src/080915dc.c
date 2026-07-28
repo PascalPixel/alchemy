@@ -1,11 +1,9 @@
-#include "types.h"
+#include "battle_effect_runtime.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+struct BattleEffectEntry *Func_08091560(u32 id);
+s32 Func_08091584(void);
 
-void *Func_08091560();
-s32 Func_08091584();
-
-u8 Func_080915dc(void) {
-    Func_08091584();
-    return M2C_FIELD(Func_08091560(), u8 *, 3);
+u8 Func_080915dc(void)
+{
+    return Func_08091560(Func_08091584())->flags;
 }

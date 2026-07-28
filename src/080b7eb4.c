@@ -19,12 +19,12 @@ struct Output_080b7eb4 {
 
 extern struct State_080b7eb4 * volatile Data_03001e74;
 
-s32 Func_080b7eb4(s32 index, struct Output_080b7eb4 *output)
+s32 Func_080b7eb4(s32 entry_index, struct Output_080b7eb4 *output)
 {
     struct State_080b7eb4 *state = Data_03001e74;
 
-    output->first = state->entries[index].first;
+    output->first = state->entries[entry_index].first;
     output->middle = 0;
-    output->second = state->entries[index].second;
+    output->second = state->entries[entry_index].second;
     return 0;
 }

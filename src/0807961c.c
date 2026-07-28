@@ -1,12 +1,5 @@
 #include "types.h"
-
-struct State_0807961c {
-    u8 padding[0x1F8];
-    u8 active[8];
-};
-
-extern struct State_0807961c Data_02000240;
-s32 Func_080795fc(void);
+#include "party_state.h"
 s32 Func_08079358(s32 arg0);
 
 s32 Func_0807961c(s32 value) {
@@ -16,11 +9,11 @@ s32 Func_0807961c(s32 value) {
     Func_08079358(value);
     index = 0;
     while (index < count) {
-        if (Data_02000240.active[index] == value) {
+        if (Data_02000240.active_owners[index] == value) {
             return count;
         }
         index++;
     }
-    Data_02000240.active[index] = value;
+    Data_02000240.active_owners[index] = value;
     return count + 1;
 }

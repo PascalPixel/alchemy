@@ -1,15 +1,15 @@
 #include "types.h"
+#include "motion_object.h"
 
 s32 Func_080b6e30();
-void *Func_080b7dd0(s32);
-s32 Func_080b7e60(s32 arg0)
+struct BattleObjectSlot *Func_080b7dd0(s32);
+s32 Func_080b7e60(s32 object_id)
 {
-  int new_var2;
-  u8 *new_var;
+  int active;
+  u8 *slot_state;
   Func_080b6e30();
-  new_var = ((u8 *) Func_080b7dd0(arg0)) + 0x28;
-  new_var2 = 1;
-  *((s16 *) new_var) = new_var2;
+  slot_state = ((u8 *) Func_080b7dd0(object_id)) + 0x28;
+  active = 1;
+  *((s16 *) slot_state) = active;
   return 0;
 }
-

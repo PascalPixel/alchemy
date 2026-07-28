@@ -8,14 +8,14 @@ void Func_08015118(void);
 void Func_08015120(s32, s32);
 void Func_080151c8(s32);
 
-s32 Func_080b8888(s16 *argument) {
-    s32 id;
+s32 Func_080b8888(s16 *script) {
+    s32 object_id;
     s32 result;
     void *object;
 
-    id = *argument;
-    object = Func_08077008(id);
-    if (Func_080b8808(id) < 0) {
+    object_id = *script;
+    object = Func_08077008(object_id);
+    if (Func_080b8808(object_id) < 0) {
         return -1;
     }
     result = 0;
@@ -23,7 +23,7 @@ s32 Func_080b8888(s16 *argument) {
         return result;
     }
     Func_08015118();
-    Func_08015120(id, 1);
+    Func_08015120(object_id, 1);
     Func_080151c8(0x816);
     return 0;
 }

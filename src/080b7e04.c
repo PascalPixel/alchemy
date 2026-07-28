@@ -5,15 +5,15 @@ struct Fields_080b7e04 {
     s32 field10;
 };
 
-void Func_080b7e04(void *arg0) {
-    s32 i;
+void Func_080b7e04(void *owner) {
+    s32 remaining;
     s32 zero;
     struct Fields_080b7e04 **items;
 
-    if (arg0 != NULL) {
+    if (owner != NULL) {
         zero = 0;
-        items = (struct Fields_080b7e04 **)((u8 *)arg0 + 0x28);
-        for (i = 3; i >= 0; i--) {
+        items = (struct Fields_080b7e04 **)((u8 *)owner + 0x28);
+        for (remaining = 3; remaining >= 0; remaining--) {
             struct Fields_080b7e04 *item = *items++;
             if (item != NULL) {
                 item->field10 = zero;

@@ -1,17 +1,11 @@
 #include "types.h"
-
-struct State_08078664 {
-    u8 padding[216];
-    u16 entries[15];
-};
-
-struct State_08078664 *Func_08077394(s32);
+#include "owner_state.h"
 
 s32 Func_08078664(s32 owner, s32 value)
 {
-    struct State_08078664 *state = Func_08077394(owner);
+    struct OwnerInventoryState *state = Func_08077394(owner);
     s32 index = 0;
-    u16 *entry = state->entries;
+    u16 *entry = state->inventory;
 
     do {
         if (((*entry++) & 0x1ff) == value) {

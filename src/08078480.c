@@ -1,14 +1,13 @@
 #include "types.h"
+#include "item.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
-s32 Func_08078414(s32 arg0);
 
 s32 Func_08078480(s32 arg0) {
     s32 var_r2;
     u8 *temp;
 
-    temp = (u8 *) Func_08078414(arg0);
+    temp = (u8 *)Func_08078414(arg0);
     var_r2 = 0;
     if (temp[2] == 1) {
         var_r2 = 1;

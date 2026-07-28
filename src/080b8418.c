@@ -8,15 +8,15 @@ s32 Func_08009070(void *, s32);
 void **Func_080b7dd0();
 
 void Func_080b8418(void) {
-    void *temp_r0;
-    void *temp_r0_2;
+    void *object;
+    void *effect;
 
-    temp_r0 = *Func_080b7dd0();
-    if ((temp_r0 != NULL) && ((0xF & M2C_FIELD(temp_r0, u8 *, 0x54)) == 1)) {
-        temp_r0_2 = Func_08009048(M2C_FIELD(temp_r0, s32 *, 0x50), 0x11B);
-        if (temp_r0_2 != NULL) {
-            Func_08009070(temp_r0_2, 1);
-            M2C_FIELD(temp_r0_2, s8 *, 6) = 3;
+    object = *Func_080b7dd0();
+    if ((object != NULL) && ((0xF & M2C_FIELD(object, u8 *, 0x54)) == 1)) {
+        effect = Func_08009048(M2C_FIELD(object, s32 *, 0x50), 0x11B);
+        if (effect != NULL) {
+            Func_08009070(effect, 1);
+            M2C_FIELD(effect, s8 *, 6) = 3;
         }
         Func_080030f8(0xA);
     }

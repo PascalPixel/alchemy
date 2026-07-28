@@ -14,19 +14,19 @@ s32 Func_08078698(s32 value)
     s16 owners[10];
     s32 count;
     s32 index;
-    s16 *owner;
-    s16 v;
+    s16 *owner_cursor;
+    s16 candidate_owner;
 
     if (Func_08078664(Data_02000240.owner, value) != -1)
         return Data_02000240.owner;
     count = Func_080796c4(owners);
-    owner = owners;
+    owner_cursor = owners;
     index = 0;
     if (index < count) {
         do {
-            v = *owner++;
-            if (Func_08078664(v, value) != -1)
-                return v;
+            candidate_owner = *owner_cursor++;
+            if (Func_08078664(candidate_owner, value) != -1)
+                return candidate_owner;
             index++;
         } while (index < count);
     }

@@ -1,10 +1,7 @@
 #include "types.h"
 
 extern u8 *Data_03001ebc;
-/*
- * Keep the legacy scalar ABI view in this codegen-sensitive translation unit.
- * The returned word is still treated as an object address below.
- */
+/* 生成順維持のため戻り値を整数で受け、直後にオブジェクト番地として扱う。 */
 s32 Func_0808ba1c(u32 object_id);
 void Func_080090d0(void *);
 

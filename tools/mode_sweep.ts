@@ -1,29 +1,29 @@
 #!/usr/bin/env bun
-// Sweep one candidate across the fork's evidenced -m modes and the stock pass
-// switches, singly and optionally in pairs, scoring each against the whole
-// assembly region.
+// Explore historically plausible compiler configurations for one C candidate.
 //
-// Why this exists: tools/search_compiler_modes.ts probes stock GCC flags in
-// bulk across the ranked queue, but the alchemy-gcc fork carries eleven -m
-// compatibility modes and nothing enumerated them for a single target. Deciding
-// whether a residual is source-shaped or compiler-shaped meant hand-running the
-// driver once per flag, which is slow enough that agents skipped it and called
-// plateaus early. One sweep answers the question the routing table asks: is
-// there an evidenced mode that closes this region, and if not, does any mode
-// move it at all?
-//
-// Scores span every compiled Func_ symbol, matching the gate in
-// tools/integrate_matches.ts, so a region holding a trailing leaf is measured
-// whole. Candidate binaries stay under ignored out/.
-import { mkdirSync, readFileSync } from "node:fs";
+// This is deliberately a diagnostic tool, not a promotion tool.  It searches
+// the routed compiler first, then one change at a time, compatible pairs only
+// when requested, and triples only when an exact-sized pair is already within
+// five halfwords.  Results and failures are content-addressed below ignored
+// out/, so an irreducible compiler floor is durable rather than rediscovered.
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
+import { createHash } from "node:crypto";
 import { basename, dirname, join } from "node:path";
+import { canonicalJson } from "./canonical_json.ts";
 import { ROM_BASE, verifyCandidate } from "./match_m2c.ts";
 import { linkedFunctionExtent } from "./integrate_matches.ts";
 import { regionSize } from "./candidate_show.ts";
+import { DRIVER } from "./alchemy_gcc.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
+const FORMAT = 2;
 
-// The fork's compatibility modes, as declared in gcc-2.96/gcc/config/arm/arm.h.
 export const FORK_MODES = [
   "-mgrouped-dma-store", "-mpreserve-single-bit-test", "-mentry-low-register-order",
   "-mthumb-and-sets-cc", "-mcall-arg0-move-first", "-mearly-frame-allocation",
@@ -31,31 +31,194 @@ export const FORK_MODES = [
   "-mthumb-early-literal-pool", "-mthumb-immediate-latency", "-mthumb-load-latency-one",
 ] as const;
 
-// -fno-schedule-insns is deliberately absent. The pre-reload scheduler does
-// nothing in this fork: compiling 40 converted sources, including the largest,
-// with -fschedule-insns and with -fno-schedule-insns gives byte-identical
-// assembly every time (work/sched_probe.ts). Sweeping it wastes a compile per
-// target and, worse, puts a line in the results that reads like evidence when a
-// residual happens to be unchanged by it. Only -fno-schedule-insns2 can reorder
-// anything, which is why every routed member of UNSCHEDULED_SOURCES is really
-// carried by that flag alone.
 export const STOCK_SWITCHES = [
   "-fno-schedule-insns2", "-fno-gcse", "-fno-cse-follow-jumps",
   "-fno-expensive-optimizations", "-fno-peephole", "-fno-strength-reduce", "-fno-regmove",
 ] as const;
 
-interface Options { source: string; rom: string; pairs: boolean; jobs: number; top: number }
+type Family = "optimization" | "abi" | "scheduler" | "cse" | "register-allocation" | "backend";
+interface Mode { id: string; family: Family; flags: string[]; exclusive?: boolean }
+interface Config { ids: string[]; flags: string[] }
+interface Evidence {
+  differing_halfwords: number;
+  size_delta: number;
+  exact: boolean;
+  exact_size: boolean;
+  instruction_order_proxy: boolean;
+  register_allocation_proxy: number;
+  literal_placement_proxy: boolean;
+  control_flow_proxy: boolean;
+}
+interface Score {
+  config: Config;
+  cache_key: string;
+  cached: boolean;
+  compiled: boolean;
+  size?: number;
+  error?: string;
+  evidence?: Evidence;
+}
+interface Options {
+  source: string;
+  rom: string;
+  pairs: boolean;
+  triples: boolean;
+  jobs: number;
+  top: number;
+  maxPairs: number;
+  maxTriples: number;
+}
 
-export function combinations(pairs: boolean): string[][] {
-  const singles: string[][] = [[], ...FORK_MODES.map((flag) => [flag]), ...STOCK_SWITCHES.map((flag) => [flag])];
-  if (!pairs) return singles;
-  const both: string[][] = [];
-  for (const left of FORK_MODES) {
-    for (const right of [...FORK_MODES, ...STOCK_SWITCHES]) {
-      if (left < right) both.push([left, right]);
+// The routed default is the approved GCC 2.96/Thumb family.  Alternatives are
+// grouped by the historical compiler decision they model.  We intentionally do
+// not enumerate arbitrary -f flags or hard-register pins.
+export const MODES: readonly Mode[] = [
+  { id: "opt-o1", family: "optimization", flags: ["-O1"], exclusive: true },
+  { id: "opt-o2", family: "optimization", flags: ["-O2"], exclusive: true },
+  { id: "opt-o3", family: "optimization", flags: ["-O3"], exclusive: true },
+  { id: "abi-standard-r4", family: "abi", flags: ["-fcall-saved-r4"], exclusive: true },
+  { id: "sched-postreload-off", family: "scheduler", flags: ["-fno-schedule-insns2"] },
+  { id: "cse-gcse-off", family: "cse", flags: ["-fno-gcse"] },
+  { id: "cse-follow-off", family: "cse", flags: ["-fno-cse-follow-jumps"] },
+  { id: "cse-expensive-off", family: "cse", flags: ["-fno-expensive-optimizations"] },
+  { id: "reg-peephole-off", family: "register-allocation", flags: ["-fno-peephole"] },
+  { id: "reg-strength-reduce-off", family: "register-allocation", flags: ["-fno-strength-reduce"] },
+  { id: "reg-regmove-off", family: "register-allocation", flags: ["-fno-regmove"] },
+  ...FORK_MODES.map((flag) => ({
+    id: flag.slice(2),
+    family: "backend" as const,
+    flags: [flag],
+  })),
+];
+
+function hash(...parts: Array<string | Uint8Array>): string {
+  const digest = createHash("sha256");
+  for (const part of parts) {
+    digest.update(part);
+    digest.update("\0");
+  }
+  return digest.digest("hex");
+}
+
+function acceptedCache(document: unknown, cacheKey: string): Score | null {
+  if (document === null || typeof document !== "object") return null;
+  const score = document as Partial<Score>;
+  return score.cache_key === cacheKey && typeof score.compiled === "boolean" &&
+    score.config !== undefined && Array.isArray(score.config.ids) && Array.isArray(score.config.flags)
+    ? score as Score
+    : null;
+}
+
+function compatible(modes: readonly Mode[]): boolean {
+  const exclusive = new Set<string>();
+  const flags = new Set<string>();
+  for (const mode of modes) {
+    if (mode.exclusive && exclusive.has(mode.family)) return false;
+    if (mode.exclusive) exclusive.add(mode.family);
+    for (const flag of mode.flags) {
+      if (flags.has(flag)) return false;
+      flags.add(flag);
     }
   }
-  return [...singles, ...both];
+  return true;
+}
+
+function configOf(modes: readonly Mode[]): Config {
+  return {
+    ids: modes.map((mode) => mode.id).sort(),
+    flags: modes.flatMap((mode) => mode.flags),
+  };
+}
+
+export function singleConfigs(): Config[] {
+  return [{ ids: [], flags: [] }, ...MODES.map((mode) => configOf([mode]))];
+}
+
+export function pairConfigs(limit = Number.POSITIVE_INFINITY): Config[] {
+  const configs: Config[] = [];
+  for (let left = 0; left < MODES.length; left++) {
+    for (let right = left + 1; right < MODES.length; right++) {
+      const modes = [MODES[left], MODES[right]];
+      if (compatible(modes)) configs.push(configOf(modes));
+    }
+  }
+  configs.sort((a, b) => a.ids.join("+").localeCompare(b.ids.join("+")));
+  return configs.slice(0, limit);
+}
+
+export function tripleConfigs(seedIds: readonly string[], limit: number): Config[] {
+  const seed = new Set(seedIds);
+  const configs: Config[] = [];
+  for (let a = 0; a < MODES.length; a++) {
+    for (let b = a + 1; b < MODES.length; b++) {
+      for (let c = b + 1; c < MODES.length; c++) {
+        const modes = [MODES[a], MODES[b], MODES[c]];
+        // A triple needs evidence: at least two of its constituents occurred in
+        // a strong pair/single result.  This prevents cubic blind permutation.
+        if (modes.filter((mode) => seed.has(mode.id)).length < 2 || !compatible(modes)) continue;
+        configs.push(configOf(modes));
+      }
+    }
+  }
+  configs.sort((a, b) => a.ids.join("+").localeCompare(b.ids.join("+")));
+  return configs.slice(0, limit);
+}
+
+// Retained for callers of the old helper.  Search execution itself is phased.
+export function combinations(pairs: boolean): string[][] {
+  return [
+    ...singleConfigs().map((config) => config.flags),
+    ...(pairs ? pairConfigs().map((config) => config.flags) : []),
+  ];
+}
+
+function disassembly(binary: string): string[] {
+  const dumped = Bun.spawnSync([
+    "arm-none-eabi-objdump", "-D", "-b", "binary", "-m", "arm", "-M", "force-thumb", binary,
+  ], { stdout: "pipe", stderr: "pipe" });
+  if (dumped.exitCode !== 0) return [];
+  return dumped.stdout.toString().split("\n").flatMap((line) => {
+    const match = /^\s+[0-9a-f]+:\t[0-9a-f ]+\t(.*)$/.exec(line);
+    return match === null ? [] : [match[1].trim()];
+  });
+}
+
+function mnemonic(instruction: string): string {
+  return instruction.split(/\s+/)[0] ?? "";
+}
+
+function normalizedRegisters(instruction: string): string {
+  return instruction.replace(/\b(?:r(?:1[0-5]|[0-9])|sp|lr|pc)\b/gi, "REG");
+}
+
+function classify(actual: Buffer, reference: Buffer, actualAsm: string[], referenceAsm: string[]): Evidence {
+  let differing = Math.abs(Math.ceil(actual.length / 2) - Math.ceil(reference.length / 2));
+  const shared = Math.min(actual.length, reference.length) & ~1;
+  for (let offset = 0; offset < shared; offset += 2) {
+    if (actual.readUInt16LE(offset) !== reference.readUInt16LE(offset)) differing++;
+  }
+  const actualMnemonics = actualAsm.map(mnemonic);
+  const referenceMnemonics = referenceAsm.map(mnemonic);
+  const histogram = (items: string[]) => [...items].sort().join("\n");
+  const branch = (items: string[]) => items.filter((item) => /^(?:b|bl|bx)/.test(item));
+  const literals = (items: string[]) => items.filter((item) => /^ldr/.test(item) && /\bpc\b/.test(item));
+  let registerProxy = 0;
+  for (let index = 0; index < Math.min(actualAsm.length, referenceAsm.length); index++) {
+    if (actualAsm[index] !== referenceAsm[index] &&
+        normalizedRegisters(actualAsm[index]) === normalizedRegisters(referenceAsm[index])) registerProxy++;
+  }
+  return {
+    differing_halfwords: differing,
+    size_delta: actual.length - reference.length,
+    exact: actual.equals(reference),
+    exact_size: actual.length === reference.length,
+    instruction_order_proxy:
+      histogram(actualMnemonics) === histogram(referenceMnemonics) &&
+      actualMnemonics.join("\n") !== referenceMnemonics.join("\n"),
+    register_allocation_proxy: registerProxy,
+    literal_placement_proxy: literals(actualAsm).join("\n") !== literals(referenceAsm).join("\n"),
+    control_flow_proxy: branch(actualAsm).join("\n") !== branch(referenceAsm).join("\n"),
+  };
 }
 
 function optionsOf(argv: string[]): Options {
@@ -63,37 +226,84 @@ function optionsOf(argv: string[]): Options {
     source: "",
     rom: join(ROOT, "roms/gs1-en.gba"),
     pairs: false,
+    triples: false,
     jobs: Math.max(1, Math.min(10, (navigator.hardwareConcurrency || 8) - 2)),
     top: 16,
+    maxPairs: 256,
+    maxTriples: 64,
   };
   const rest: string[] = [];
   for (let index = 0; index < argv.length; index++) {
     const argument = argv[index];
     if (argument === "--rom") options.rom = argv[++index];
     else if (argument === "--pairs") options.pairs = true;
+    else if (argument === "--triples") options.triples = options.pairs = true;
     else if (argument === "--jobs") options.jobs = Number(argv[++index]);
     else if (argument === "--top") options.top = Number(argv[++index]);
+    else if (argument === "--max-pairs") options.maxPairs = Number(argv[++index]);
+    else if (argument === "--max-triples") options.maxTriples = Number(argv[++index]);
     else if (argument === "-h" || argument === "--help") {
-      console.log("usage: mode_sweep.ts <candidate.c> [--pairs] [--jobs N] [--top N] [--rom FILE]");
+      console.log("usage: mode_sweep.ts <candidate.c> [--pairs] [--triples] [--jobs N] [--top N] [--max-pairs N] [--max-triples N] [--rom FILE]");
       process.exit(0);
     } else rest.push(argument);
   }
-  if (rest.length !== 1) throw new Error("usage: mode_sweep.ts <candidate.c> [--pairs]");
-  if (!Number.isInteger(options.jobs) || options.jobs < 1) throw new Error("jobs must be a positive integer");
+  if (rest.length !== 1) throw new Error("usage: mode_sweep.ts <candidate.c> [--pairs] [--triples]");
+  for (const [name, value] of [["jobs", options.jobs], ["top", options.top],
+    ["max-pairs", options.maxPairs], ["max-triples", options.maxTriples]] as const) {
+    if (!Number.isInteger(value) || value < 1) throw new Error(`${name} must be a positive integer`);
+  }
   options.source = rest[0];
   return options;
 }
 
 function selfTest(): void {
-  const singles = combinations(false);
-  if (singles[0].length !== 0) throw new Error("mode sweep self-test: the routed default must be scored first");
-  if (singles.length !== 1 + FORK_MODES.length + STOCK_SWITCHES.length) {
-    throw new Error("mode sweep self-test: single-flag combination count differs");
+  const singles = singleConfigs();
+  if (singles[0].flags.length !== 0) throw new Error("default configuration must be first");
+  if (new Set(singles.map((item) => item.ids.join("+"))).size !== singles.length) {
+    throw new Error("single configuration planning is not unique");
   }
-  const paired = combinations(true);
-  if (paired.length <= singles.length) throw new Error("mode sweep self-test: --pairs must add combinations");
-  if (paired.some((flags) => flags.length === 2 && flags[0] >= flags[1])) {
-    throw new Error("mode sweep self-test: pairs must be ordered and distinct");
+  const pairs = pairConfigs();
+  if (pairs.some((config) => config.ids.includes("opt-o1") && config.ids.includes("opt-o2"))) {
+    throw new Error("incompatible optimization levels were paired");
+  }
+  if (canonicalJson(pairConfigs(17)) !== canonicalJson(pairConfigs(17))) {
+    throw new Error("pair planning is nondeterministic");
+  }
+  const triples = tripleConfigs(["sched-postreload-off", "cse-gcse-off"], 8);
+  if (triples.length === 0 || triples.some((config) =>
+    config.ids.filter((id) => ["sched-postreload-off", "cse-gcse-off"].includes(id)).length < 2)) {
+    throw new Error("triple planning escaped its evidence seed");
+  }
+  const reference = Buffer.from([0x01, 0x20, 0x02, 0x21]);
+  const exact = classify(reference, reference, ["movs r0, #1"], ["movs r0, #1"]);
+  if (!exact.exact || exact.differing_halfwords !== 0) throw new Error("exact classification differs");
+  const registers = classify(
+    Buffer.from([0x01, 0x20]), Buffer.from([0x01, 0x21]),
+    ["movs r0, #1"], ["movs r1, #1"],
+  );
+  if (registers.register_allocation_proxy !== 1 || registers.differing_halfwords !== 1) {
+    throw new Error("register classification differs");
+  }
+  const controlFlow = classify(
+    Buffer.from([0x00, 0xe0]), Buffer.from([0x01, 0xe0]),
+    ["b.n 0x4"], ["b.n 0x6"],
+  );
+  if (!controlFlow.control_flow_proxy) throw new Error("control-flow classification differs");
+  const key1 = hash("source", "reference", canonicalJson(["-O1"]));
+  const key2 = hash("source", "reference", canonicalJson(["-O1"]));
+  if (key1 !== key2 || key1 === hash("changed", "reference", canonicalJson(["-O1"]))) {
+    throw new Error("cache keys are not deterministic/content-sensitive");
+  }
+  const cached: Score = {
+    config: { ids: ["opt-o1"], flags: ["-O1"] },
+    cache_key: key1,
+    cached: false,
+    compiled: false,
+  };
+  if (acceptedCache(JSON.parse(JSON.stringify(cached)), key1) === null ||
+      acceptedCache(cached, `${key1}stale`) !== null ||
+      acceptedCache({ cache_key: key1 }, key1) !== null) {
+    throw new Error("cache acceptance does not reject stale/malformed entries");
   }
   console.log("mode sweep self-test passed");
 }
@@ -111,42 +321,169 @@ async function main(): Promise<void> {
   if (wanted === null) throw new Error(`no assembly region is recorded for ${stem}`);
   const rom = readFileSync(options.rom);
   const reference = rom.subarray(address - ROM_BASE, address - ROM_BASE + wanted);
+  const output = join(ROOT, "out", "modesweep", stem);
+  const cacheDirectory = join(output, "cache");
+  mkdirSync(cacheDirectory, { recursive: true });
+  const referenceBinary = join(output, "reference.bin");
+  writeFileSync(referenceBinary, reference);
+  const referenceAsm = disassembly(referenceBinary);
+  const sourceBytes = readFileSync(options.source);
+  const driverStat = statSync(DRIVER);
+  const compilerSignature = hash(
+    readFileSync(join(ROOT, "tools/alchemy_gcc.ts")),
+    `${driverStat.size}:${driverStat.mtimeMs}`,
+  );
 
-  async function score(flags: string[]): Promise<{ bytes: number; size: number } | null> {
-    const work = join(ROOT, "out", "modesweep", stem, flags.join("_").replaceAll("-", "") || "routed");
+  async function score(config: Config): Promise<Score> {
+    const cacheKey = hash(String(FORMAT), sourceBytes, reference, compilerSignature, canonicalJson(config.flags));
+    const cachePath = join(cacheDirectory, `${cacheKey}.json`);
+    if (existsSync(cachePath)) {
+      const cached = acceptedCache(JSON.parse(readFileSync(cachePath, "utf8")), cacheKey);
+      if (cached !== null) return { ...cached, cached: true };
+    }
+    const work = join(output, "scratch", cacheKey);
     mkdirSync(work, { recursive: true });
+    let result: Score;
     try {
-      await verifyCandidate(options.source, rom, work, flags, ROM_BASE);
+      await verifyCandidate(options.source, rom, work, config.flags, ROM_BASE);
       const linked = readFileSync(join(work, `${stem}.bin`));
-      const symbols = Bun.spawnSync(["arm-none-eabi-nm", "-S", "--defined-only", join(work, `${stem}.elf`)], { stdout: "pipe" });
+      const symbols = Bun.spawnSync(
+        ["arm-none-eabi-nm", "-S", "--defined-only", join(work, `${stem}.elf`)],
+        { stdout: "pipe", stderr: "pipe" },
+      );
       const extent = linkedFunctionExtent(symbols.stdout.toString(), `Func_${stem}`, address, linked.length);
       const actual = linked.subarray(0, extent);
-      let bytes = Math.abs(actual.length - reference.length);
-      for (let index = 0; index < Math.min(actual.length, reference.length); index++) {
-        if (actual[index] !== reference[index]) bytes++;
-      }
-      return { bytes, size: actual.length };
-    } catch {
-      return null;
+      const actualBinary = join(work, "actual.bin");
+      writeFileSync(actualBinary, actual);
+      result = {
+        config,
+        cache_key: cacheKey,
+        cached: false,
+        compiled: true,
+        size: actual.length,
+        evidence: classify(actual, reference, disassembly(actualBinary), referenceAsm),
+      };
+    } catch (error) {
+      result = {
+        config,
+        cache_key: cacheKey,
+        cached: false,
+        compiled: false,
+        error: error instanceof Error ? error.message.slice(0, 500) : String(error).slice(0, 500),
+      };
     }
+    writeFileSync(cachePath, canonicalJson(result) + "\n");
+    return result;
   }
 
-  const combos = combinations(options.pairs);
-  const results: Array<{ flags: string[]; bytes: number; size: number }> = [];
-  let cursor = 0;
-  async function worker(): Promise<void> {
-    while (cursor < combos.length) {
-      const flags = combos[cursor++];
-      const result = await score(flags);
-      if (result !== null) results.push({ flags, ...result });
+  async function phase(configs: Config[]): Promise<Score[]> {
+    const results = new Array<Score>(configs.length);
+    let cursor = 0;
+    async function worker(): Promise<void> {
+      while (true) {
+        const index = cursor++;
+        if (index >= configs.length) return;
+        results[index] = await score(configs[index]);
+      }
     }
+    await Promise.all(Array.from({ length: Math.min(options.jobs, configs.length) }, worker));
+    return results;
   }
-  await Promise.all(Array.from({ length: Math.min(options.jobs, combos.length) }, worker));
-  results.sort((left, right) => left.bytes - right.bytes || left.flags.length - right.flags.length);
-  console.log(`region=${wanted}B combos=${combos.length} scored=${results.length}`);
-  for (const row of results.slice(0, options.top)) {
-    console.log(`${String(row.bytes).padStart(4)}  size=${String(row.size).padStart(4)}  ${row.flags.join(" ") || "(routed default)"}`);
+
+  const singleResults = await phase(singleConfigs());
+  const allPairs = pairConfigs();
+  const pairPlan = options.pairs ? allPairs.slice(0, options.maxPairs) : [];
+  const pairResults = await phase(pairPlan);
+  const bestSingleFloor = Math.min(...singleResults.flatMap((row) =>
+    row.evidence === undefined ? [] : [row.evidence.differing_halfwords]));
+  // A near-match alone justifies pairs, not cubic search.  A triple is only
+  // evidenced when a compatible pair actually improves on every single-mode
+  // result and leaves a small exact-sized floor.
+  const strong = pairResults.filter((row) =>
+    row.evidence?.exact_size &&
+    row.evidence.differing_halfwords >= 2 &&
+    row.evidence.differing_halfwords <= 5 &&
+    row.evidence.differing_halfwords < bestSingleFloor);
+  const seedIds = [...new Set(strong.flatMap((row) => row.config.ids))];
+  const allTriples = tripleConfigs(seedIds, Number.POSITIVE_INFINITY);
+  const triplePlan = options.triples ? allTriples.slice(0, options.maxTriples) : [];
+  const tripleResults = triplePlan.length > 0 ? await phase(triplePlan) : [];
+  const results = [...singleResults, ...pairResults, ...tripleResults];
+  const ranked = results.filter((row) => row.evidence !== undefined).sort((left, right) =>
+    Number(right.evidence!.exact) - Number(left.evidence!.exact) ||
+    left.evidence!.differing_halfwords - right.evidence!.differing_halfwords ||
+    Math.abs(left.evidence!.size_delta) - Math.abs(right.evidence!.size_delta) ||
+    left.config.flags.length - right.config.flags.length ||
+    left.config.ids.join("+").localeCompare(right.config.ids.join("+")));
+  const best = ranked[0] ?? null;
+  const report = {
+    format: FORMAT,
+    stem,
+    source: options.source,
+    source_sha256: hash(sourceBytes),
+    reference_sha256: hash(reference),
+    compiler_signature: compilerSignature,
+    policy: {
+      family: "approved-alchemy-gcc-2.96-thumb",
+      phases: ["routed-default", "single", ...(options.pairs ? ["compatible-pair"] : []),
+        ...(options.triples ? ["evidence-supported-triple"] : [])],
+      triple_threshold_halfwords: [2, 5],
+      auto_promote: false,
+    },
+    attempted: results.length,
+    compiled: results.filter((row) => row.compiled).length,
+    cache_hits: results.filter((row) => row.cached).length,
+    planning: {
+      pairs_planned: pairPlan.length,
+      pairs_available: allPairs.length,
+      triples_planned: triplePlan.length,
+      triples_available: allTriples.length,
+      bounded_search_complete:
+        options.pairs && pairPlan.length === allPairs.length &&
+        (allTriples.length === 0 ||
+          options.triples && triplePlan.length === allTriples.length),
+    },
+    strong_seed_ids: seedIds,
+    results,
+  };
+  writeFileSync(join(output, "report.json"), canonicalJson(report) + "\n");
+  const floor = {
+    format: FORMAT,
+    stem,
+    source_sha256: report.source_sha256,
+    reference_sha256: report.reference_sha256,
+    compiler_signature: compilerSignature,
+    searched: report.policy.phases,
+    bounded_search_complete: report.planning.bounded_search_complete,
+    exact: best?.evidence?.exact ?? false,
+    irreducible_floor_halfwords: report.planning.bounded_search_complete
+      ? best?.evidence?.differing_halfwords ?? null
+      : null,
+    best_observed_halfwords: best?.evidence?.differing_halfwords ?? null,
+    best_config: best?.config ?? null,
+    classification: best?.evidence ?? null,
+    // A 2–5 halfword exhausted floor should move to RTL/scheduler tracing.
+    escalation: report.planning.bounded_search_complete &&
+      best?.evidence?.exact_size && best.evidence.differing_halfwords >= 2 &&
+      best.evidence.differing_halfwords <= 5 && options.triples
+      ? "compiler-rtl-scheduler-trace"
+      : null,
+  };
+  writeFileSync(join(output, "floor.json"), canonicalJson(floor) + "\n");
+
+  console.log(`region=${wanted}B attempted=${results.length} compiled=${report.compiled} cache_hits=${report.cache_hits}`);
+  for (const row of ranked.slice(0, options.top)) {
+    const evidence = row.evidence!;
+    const tags = [
+      evidence.exact ? "EXACT" : "",
+      evidence.instruction_order_proxy ? "order" : "",
+      evidence.register_allocation_proxy ? `register=${evidence.register_allocation_proxy}` : "",
+      evidence.literal_placement_proxy ? "literal" : "",
+      evidence.control_flow_proxy ? "cfg" : "",
+    ].filter(Boolean).join(",");
+    console.log(`${String(evidence.differing_halfwords).padStart(4)}hw size=${String(row.size).padStart(4)} ${row.config.flags.join(" ") || "(routed default)"}${tags ? ` [${tags}]` : ""}`);
   }
+  console.log(`report=${join(output, "report.json")} floor=${join(output, "floor.json")}`);
 }
 
 if (import.meta.main) await main();

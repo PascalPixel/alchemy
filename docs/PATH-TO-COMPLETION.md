@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-28)
 
-`[1,349 of 1,999]`. 650 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,350 of 1,999]`. 649 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -32,7 +32,7 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-25 | 1,242 | +6 |
 | 2026-07-26 | 1,292 | +50 |
 | 2026-07-27 | 1,345 | +53 (partial day) |
-| 2026-07-28 | 1,349 | +4 (decompilation resumed after humanization) |
+| 2026-07-28 | 1,350 | +5 (decompilation resumed after humanization) |
 
 **The recent three-day average is still roughly a factor of four below the
 2026-07-23 peak.** That is not a slowdown in effort: the broad easy tier is
@@ -45,7 +45,7 @@ neither is a session.
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 477 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 476 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
 | 130 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
@@ -614,9 +614,25 @@ were kept out of `src`.
 The current claimed build is `[1,349 of 1,999]` and 91,476 exact-C bytes.
 Ordinary assembly debt is 650 regions / 400,024 bytes.
 
+## The third fresh 81–160 pass
+
+`08097b70` converted as 204 bytes of default-compiler C. Its recovered source
+tracks a target with a clamped angular turn, randomizes a spawn position, then
+creates and configures an effect object. The exact result uses typed source,
+position, and object layouts without compiler flags, register pins, or inline
+assembly.
+
+`080a6a98` was screened but not promoted. Its semantic reconstruction reached
+the exact 204-byte extent with 12 differing halfwords, confined to register
+allocation around a halfword-table lookup and loop-constant initialization.
+The draft remains outside `src` as a bounded compiler-shape lead.
+
+The current claimed build is `[1,350 of 1,999]` and 91,680 exact-C bytes.
+Ordinary assembly debt is 649 regions / 399,820 bytes.
+
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 477 of 650 have nothing exotic in
+1. **The bulk is volume, not blockers.** 476 of 649 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.

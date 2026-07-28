@@ -24,7 +24,7 @@ extern u8 Data_00000075[];
 
 void Func_080030f8(s32);
 void Func_08015080(s32, void *, s32, s32);
-void Func_080a2268(u8 *, s32, s32, s32, s32, u32);
+void Func_080a2268(const u8 *, s32, s32, s32, s32, u32);
 
 s32 Func_080a5614(s32 unused0, s32 unused1, struct Selection_080a5614 *selection)
 {

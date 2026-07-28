@@ -12,7 +12,7 @@ extern struct State_080935b0 * volatile Data_03001e70;
 
 void Func_080935b0(s32 first, s32 second, s32 third, s32 fourth)
 {
-    struct State_080935b0 *state = Data_03001e70;
+    volatile struct State_080935b0 *state = Data_03001e70;
 
     state->first = first;
     state->second = second;

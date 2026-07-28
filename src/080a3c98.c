@@ -1,7 +1,7 @@
 #include "types.h"
 
 extern u8 *Data_03001f2c;
-void Func_08009020(s32, s32);
+void Func_08009020(void *, s32);
 s32 Func_08004278(s32);
 
 void Func_080a3c98(void) {
@@ -13,7 +13,7 @@ void Func_080a3c98(void) {
         i = 0;
         do {
             s32 objectOffset = i * 4 + 276;
-            s32 object = *(s32 *)(state + objectOffset);
+            void *object = *(void **)(state + objectOffset);
             Func_08009020(object, 1);
             i++;
         } while (i < state[0x219]);

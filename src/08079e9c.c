@@ -1,12 +1,12 @@
 #include "types.h"
+#include "runtime_interfaces.h"
 
-s32 Func_080773d8(s32 arg0);
 s32 Func_08079ad8(s32 arg0);
 
-s32 Func_08079e9c(u8 *state, s32 target)
+s32 Func_08079e9c(const u8 *state, s32 target)
 {
     u8 *entries;
-    u8 *field;
+    const u8 *field;
     s32 index;
     s32 offset = 0x129;
     s32 value;
@@ -15,7 +15,7 @@ s32 Func_08079e9c(u8 *state, s32 target)
     if (*field == 0) {
         offset--;
         field = state + offset;
-        entries = Func_080773d8(*field) + 0x48;
+        entries = (u8 *)Func_080773d8(*field) + 0x48;
         index = 0;
 first_loop:
         if (*entries != target) {

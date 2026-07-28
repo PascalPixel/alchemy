@@ -6,9 +6,9 @@ extern u16 Value_fffffe00;
 
 void Func_080b9acc(void)
 {
-    u8 *slot = (u8 *)0x03001e80;
-    u8 *entity = *(u8 **)slot;
-    u8 *state = *(u8 **)(slot + 128);
+    void **slot = (void **)0x03001e80;
+    u8 *entity = slot[0];
+    u8 *state = slot[32];
     volatile u32 *keys = (volatile u32 *)0x03001ae8;
 
     if ((*keys & 512) != 0) {

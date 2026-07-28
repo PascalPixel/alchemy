@@ -1,4 +1,5 @@
 #include "types.h"
+#include "layout_guard.h"
 
 struct Object_080a9d84 {
     u8 padding[6];
@@ -12,6 +13,12 @@ struct State_080a9d84 {
     u8 padding[200];
     struct Object_080a9d84 *objects[32];
 };
+
+LAYOUT_OFFSET_GUARD(
+    Object_080a9d84_flag_offset, struct Object_080a9d84, flag, 15);
+LAYOUT_OFFSET_GUARD(
+    State_080a9d84_objects_offset, struct State_080a9d84, objects, 200);
+LAYOUT_SIZE_GUARD(State_080a9d84_size, struct State_080a9d84, 328);
 
 extern struct State_080a9d84 *Data_03001f2c;
 void Func_080a17c4(void *arg0);

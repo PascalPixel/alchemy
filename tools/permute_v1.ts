@@ -11,6 +11,7 @@ import { verify } from "./verify.ts";
 import {
   directCompilerCommandForSource,
   directPreprocessorCommand,
+  compilerBundleSignature,
   externalSymbol,
   externalSymbolAssembly,
 } from "./alchemy_gcc.ts";
@@ -19,6 +20,27 @@ import { CONSTRAINT_OPERATORS } from "./decomp_constraints.ts";
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const STATE_DIR = join(ROOT, "out/permute1/state");
 const RECIPES = join(ROOT, "out/permute1/recipes.json");
+
+function contentSignature(paths: readonly string[]): string {
+  const digest = new Bun.CryptoHasher("sha256");
+  digest.update(compilerBundleSignature());
+  for (const path of paths) {
+    digest.update(path);
+    digest.update("\0");
+    digest.update(readFileSync(path));
+    digest.update("\0");
+  }
+  return digest.digest("hex");
+}
+
+// Scores and annealing populations are only meaningful for the exact compiler,
+// routing, verifier, operators, and scoring implementation that produced them.
+const PERMUTER_SIGNATURE = contentSignature([
+  join(ROOT, "tools/alchemy_gcc.ts"),
+  join(ROOT, "tools/permute_v1.ts"),
+  join(ROOT, "tools/verify.ts"),
+  join(ROOT, "tools/decomp_constraints.ts"),
+]);
 
 interface Options {
   rom: string;
@@ -140,9 +162,9 @@ export class Scorer {
   // 重み付き半語編集距離。同系オペコードのレジスタ差は軽く、
   // 系統違いは重く、長さずれは最も重く数える。
   async score(source: string): Promise<number> {
-    // v2 includes the true assembly extent. The earlier cache scored only the
-    // candidate-sized ROM prefix and is unsafe for length-mismatched candidates.
-    const key = `v2:${this.stem}:${this.expected.length}:${Bun.hash(source).toString(36)}`;
+    const expectedHash = new Bun.CryptoHasher("sha256").update(this.expected).digest("hex");
+    const sourceHash = new Bun.CryptoHasher("sha256").update(source).digest("hex");
+    const key = `v3:${PERMUTER_SIGNATURE}:${this.stem}:${expectedHash}:${sourceHash}`;
     const cached = Scorer.cache.get(key);
     if (cached !== undefined) return cached;
     const actual = await this.bytes(source);
@@ -491,6 +513,7 @@ const OPERATORS: Array<[string, Operator]> = [
 // ---- 状態と予算 -------------------------------------------------------
 
 interface TargetState {
+  signature: string;
   best: { body: string; score: number } | null;
   population: Array<{ body: string; score: number }>;
   operators: Record<string, { tried: number; accepted: number }>;
@@ -499,11 +522,19 @@ interface TargetState {
 
 function loadState(stem: string): TargetState {
   const path = join(STATE_DIR, `${stem}.json`);
-  if (existsSync(path)) return JSON.parse(readFileSync(path, "utf8")) as TargetState;
-  return { best: null, population: [], operators: {}, rounds: [] };
+  if (existsSync(path)) {
+    const state = JSON.parse(readFileSync(path, "utf8")) as Partial<TargetState>;
+    if (state.signature === PERMUTER_SIGNATURE &&
+        state.best !== undefined && state.population !== undefined &&
+        state.operators !== undefined && state.rounds !== undefined) {
+      return state as TargetState;
+    }
+  }
+  return { signature: PERMUTER_SIGNATURE, best: null, population: [], operators: {}, rounds: [] };
 }
 
 function saveState(stem: string, state: TargetState): void {
+  state.signature = PERMUTER_SIGNATURE;
   mkdirSync(STATE_DIR, { recursive: true });
   writeFileSync(join(STATE_DIR, `${stem}.json`), JSON.stringify(state));
 }
@@ -598,10 +629,15 @@ async function main(): Promise<void> {
   for (const name of readdirSync(cacheDir).filter((entry) => entry.endsWith(".log"))) {
     for (const line of readFileSync(join(cacheDir, name), "utf8").split("\n")) {
       const space = line.indexOf(" ");
-      if (space > 0 && line.startsWith("v2:")) Scorer.cache.set(line.slice(0, space), Number(line.slice(space + 1)));
+      if (space > 0 && line.startsWith(`v3:${PERMUTER_SIGNATURE}:`)) {
+        Scorer.cache.set(line.slice(0, space), Number(line.slice(space + 1)));
+      }
     }
   }
-  Scorer.cacheFile = join(cacheDir, `shard${options.shard ? options.shard[0] : 0}.log`);
+  Scorer.cacheFile = join(
+    cacheDir,
+    `${PERMUTER_SIGNATURE.slice(0, 16)}-shard${options.shard ? options.shard[0] : 0}.log`,
+  );
   console.log(`cache=${Scorer.cache.size}`);
   const recipes = loadRecipes();
   const asmSizes = new Map<string, number>();

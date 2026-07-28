@@ -14,10 +14,15 @@ import { basename, dirname, isAbsolute, join } from "node:path";
 import { canonicalJson } from "./canonical_json.ts";
 import { compilerBundleSignature } from "./alchemy_gcc.ts";
 import { linkedFunctionExtent } from "./integrate_matches.ts";
-import { ROM_BASE, verifyCandidate } from "./match_m2c.ts";
+import {
+  ROM_BASE,
+  verifyCandidate,
+  type CandidateCompilerConfiguration,
+  type CandidateCompilerFamily,
+} from "./match_m2c.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
-const FORMAT = 1;
+const FORMAT = 2;
 
 interface Region {
   source: string;
@@ -33,7 +38,8 @@ export interface Member {
 
 interface Options {
   flags: string[];
-  config: string | null;
+  configPath: string | null;
+  compilerConfig: CandidateCompilerConfiguration;
   rom: string;
   manifest: string;
   cache: string;
@@ -78,15 +84,39 @@ function hexadecimalStem(value: string): string {
 
 export function flagsOf(value: unknown): string[] {
   if (!Array.isArray(value) || !value.every((item) => typeof item === "string" && item.length > 0)) {
-    throw new Error("compiler config must contain a non-empty string array named flags");
+    throw new Error("compiler flags must be an array of non-empty strings");
   }
   return [...new Set(value)];
+}
+
+function compilerFamilyOf(value: unknown): CandidateCompilerFamily {
+  if (value === "routed" || value === "gcc296" || value === "old-agbcc") return value;
+  throw new Error("compiler config family must be routed, gcc296, or old-agbcc");
+}
+
+export function compilerConfigurationOf(value: unknown): CandidateCompilerConfiguration {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("compiler config must be a JSON object");
+  }
+  const document = value as Record<string, unknown>;
+  const allowed = new Set(["family", "addFlags", "removeFlags"]);
+  const unexpected = Object.keys(document).filter((key) => !allowed.has(key));
+  if (unexpected.length > 0) {
+    throw new Error(`unknown compiler config field${unexpected.length === 1 ? "" : "s"}: ${unexpected.join(", ")}`);
+  }
+  const family = document.family === undefined ? "routed" : compilerFamilyOf(document.family);
+  const addFlags = document.addFlags === undefined ? [] : flagsOf(document.addFlags);
+  const removeFlags = document.removeFlags === undefined ? [] : flagsOf(document.removeFlags);
+  const overlap = addFlags.filter((flag) => removeFlags.includes(flag));
+  if (overlap.length > 0) throw new Error(`compiler config both adds and removes: ${overlap.join(", ")}`);
+  return { family, addFlags, removeFlags };
 }
 
 function parseOptions(argv: string[]): Options {
   const options: Options = {
     flags: [],
-    config: null,
+    configPath: null,
+    compilerConfig: { family: "routed", addFlags: [], removeFlags: [] },
     rom: join(ROOT, "roms/gs1-en.gba"),
     manifest: join(ROOT, "out/full/claimed/manifest.json"),
     cache: join(ROOT, "out/compiler-corpus-regression"),
@@ -107,7 +137,7 @@ function parseOptions(argv: string[]): Options {
       return value;
     };
     if (argument === "--flags") options.flags.push(...take().split(",").filter(Boolean));
-    else if (argument === "--config") options.config = take();
+    else if (argument === "--config") options.configPath = take();
     else if (argument === "--rom") options.rom = take();
     else if (argument === "--manifest") options.manifest = take();
     else if (argument === "--cache") options.cache = take();
@@ -122,8 +152,11 @@ function parseOptions(argv: string[]): Options {
     } else if (argument === "--report") options.report = take();
     else if (argument === "-h" || argument === "--help") {
       console.log([
-        "usage: compiler_corpus_regression.ts --flags FLAG[,FLAG...] [options]",
-        "  --config FILE       JSON object containing {\"flags\":[...]}",
+        "usage: compiler_corpus_regression.ts (--flags FLAG[,FLAG...] | --config FILE) [options]",
+        "  --config FILE       CandidateCompilerConfiguration JSON:",
+        "                      {\"family\":\"routed|gcc296|old-agbcc\",",
+        "                       \"addFlags\":[...],\"removeFlags\":[...]}",
+        "  --flags FLAGS       compatibility shorthand for additional flags",
         "  --sample N          deterministic sample size; 0 selects all (default 64)",
         "  --seed TEXT         deterministic sampling seed",
         "  --family PREFIX     restrict source stems to an address prefix",
@@ -136,12 +169,19 @@ function parseOptions(argv: string[]): Options {
       process.exit(0);
     } else throw new Error(`unknown argument: ${argument}`);
   }
-  if (options.config !== null) {
-    const config = JSON.parse(readFileSync(options.config, "utf8")) as { flags?: unknown };
-    options.flags.push(...flagsOf(config.flags));
+  if (options.configPath !== null) {
+    options.compilerConfig = compilerConfigurationOf(
+      JSON.parse(readFileSync(options.configPath, "utf8")),
+    );
   }
   options.flags = [...new Set(options.flags)];
-  if (options.flags.length === 0) throw new Error("at least one proposed compiler flag is required");
+  if (options.configPath === null &&
+      options.flags.length === 0 &&
+      options.compilerConfig.family === "routed" &&
+      options.compilerConfig.addFlags?.length === 0 &&
+      options.compilerConfig.removeFlags?.length === 0) {
+    throw new Error("provide --flags or a compiler configuration that changes the routed baseline");
+  }
   if (!Number.isInteger(options.sample) || options.sample < 0) throw new Error("--sample must be >= 0");
   if (!Number.isInteger(options.jobs) || options.jobs < 1 || options.jobs > 32) {
     throw new Error("--jobs must be between 1 and 32");
@@ -236,6 +276,30 @@ function selfTest(): void {
   if (flagsOf(["-O2", "-O2", "-fno-gcse"]).join(",") !== "-O2,-fno-gcse") {
     throw new Error("flag normalization self-test failed");
   }
+  const config = compilerConfigurationOf({
+    family: "old-agbcc",
+    addFlags: ["-O2", "-O2"],
+    removeFlags: ["-fcall-used-r4"],
+  });
+  if (config.family !== "old-agbcc" ||
+      config.addFlags?.join(",") !== "-O2" ||
+      config.removeFlags?.join(",") !== "-fcall-used-r4") {
+    throw new Error("structured compiler configuration self-test failed");
+  }
+  for (const invalid of [
+    { family: "unknown" },
+    { addFlags: "-O2" },
+    { addFlags: ["-O2"], removeFlags: ["-O2"] },
+    { flags: ["-O2"] },
+  ]) {
+    let rejected = false;
+    try {
+      compilerConfigurationOf(invalid);
+    } catch {
+      rejected = true;
+    }
+    if (!rejected) throw new Error("invalid compiler configuration was accepted");
+  }
   const example: Result = {
     stem: "08000000", source: "src/08000000.c", cache_key: "key",
     cached: false, compiled: true, exact: true, expected_size: 4,
@@ -256,8 +320,9 @@ async function main(): Promise<void> {
 
   const rom = readFileSync(options.rom);
   const compilerSignature = hash(
-    readFileSync(join(ROOT, "tools/alchemy_gcc.ts")),
     compilerBundleSignature(),
+    ...["alchemy_gcc.ts", "match_m2c.ts", "integrate_matches.ts", "compiler_corpus_regression.ts"]
+      .map((name) => readFileSync(join(ROOT, "tools", name))),
   );
   mkdirSync(options.cache, { recursive: true });
 
@@ -265,7 +330,7 @@ async function main(): Promise<void> {
     const expected = rom.subarray(member.address - ROM_BASE, member.address - ROM_BASE + member.size);
     const key = hash(
       String(FORMAT), readFileSync(member.source), expected, compilerSignature,
-      canonicalJson(options.flags),
+      canonicalJson({ flags: options.flags, compiler_config: options.compilerConfig }),
     );
     const cachePath = join(options.cache, "cache", `${key}.json`);
     if (existsSync(cachePath)) {
@@ -277,7 +342,9 @@ async function main(): Promise<void> {
     mkdirSync(scratch, { recursive: true });
     let result: Result;
     try {
-      await verifyCandidate(member.source, rom, scratch, options.flags, ROM_BASE);
+      await verifyCandidate(
+        member.source, rom, scratch, options.flags, ROM_BASE, "gs1", options.compilerConfig,
+      );
       const linked = readFileSync(join(scratch, `${member.stem}.bin`));
       const symbols = Bun.spawnSync(
         ["arm-none-eabi-nm", "-S", "--defined-only", join(scratch, `${member.stem}.elf`)],
@@ -321,6 +388,7 @@ async function main(): Promise<void> {
   const report = {
     format: FORMAT,
     flags: options.flags,
+    compiler_config: options.compilerConfig,
     filters: {
       sample: options.sample,
       seed: options.seed,
@@ -338,7 +406,12 @@ async function main(): Promise<void> {
   };
   if (options.report !== null) atomicJson(options.report, report);
 
-  console.log(`flags=${options.flags.join(",")} available=${available.length} selected=${selected.length} cached=${report.cached}`);
+  console.log(
+    `family=${options.compilerConfig.family} flags=${[
+      ...(options.compilerConfig.addFlags ?? []), ...options.flags,
+    ].join(",")} remove=${(options.compilerConfig.removeFlags ?? []).join(",")}` +
+    ` available=${available.length} selected=${selected.length} cached=${report.cached}`,
+  );
   console.log(`exact=${report.exact} regressions=${report.regressions}`);
   for (const result of regressions) {
     if (!result.compiled) console.log(`REGRESSION ${result.stem} compile_error=${result.error}`);

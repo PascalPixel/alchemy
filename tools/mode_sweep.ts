@@ -34,6 +34,12 @@ export const FORK_MODES = [
   "-mthumb-and-sets-cc", "-mcall-arg0-move-first", "-mearly-frame-allocation",
   "-mhigh-register-move-first", "-mthumb-entry-literal-first",
   "-mthumb-early-literal-pool", "-mthumb-immediate-latency", "-mthumb-load-latency-one",
+  "-fno-thumb-contiguous-immediate", "-fthumb-split-group-base",
+  "-fthumb-hoist-parameter-save", "-fthumb-minipool-tail-first",
+  "-fthumb-entry-saves-descending", "-fthumb-group-control-last",
+  "-fthumb-move-before-alu", "-fthumb-orr-dead-input-reuse",
+  "-fthumb-entry-frame-cluster", "-fthumb-literal-before-index-shift",
+  "-fthumb-low-constant-before-high-move", "-fthumb-high-move-before-stack-store",
 ] as const;
 
 export const STOCK_SWITCHES = [
@@ -116,6 +122,18 @@ export const MODES: readonly Mode[] = [
     addFlags: [flag],
     evidence: "proven-routing" as const,
   })),
+  ...[
+    "-mliteral-before-shift",
+    "-mcommutative-copy-constant",
+    "-mprologue-next-high-reg",
+    "-mcompare-only-and-tst",
+  ].map((flag) => ({
+    id: `agbcc-${flag.slice(2)}`,
+    family: "backend" as const,
+    addFlags: [flag],
+    compilerFamily: "old-agbcc" as const,
+    evidence: "proven-routing" as const,
+  })),
 ];
 
 function hash(...parts: Array<string | Uint8Array>): string {
@@ -147,9 +165,13 @@ function compatible(modes: readonly Mode[]): boolean {
       flags.add(flag);
     }
   }
-  const compiler = modes.find((mode) => mode.compilerFamily !== undefined)?.compilerFamily ?? "routed";
+  const selectedCompilers = new Set(modes.flatMap((mode) =>
+    mode.compilerFamily === undefined ? [] : [mode.compilerFamily]));
+  if (selectedCompilers.size > 1) return false;
+  const compiler = [...selectedCompilers][0] ?? "routed";
   if (compiler === "old-agbcc" && modes.some((mode) =>
-    mode.family === "scheduler" || mode.family === "backend")) return false;
+    mode.family === "scheduler" ||
+    mode.family === "backend" && mode.compilerFamily !== "old-agbcc")) return false;
   return true;
 }
 
@@ -228,7 +250,11 @@ export function modeSweepOutputDirectory(source: string): string {
 }
 
 function compilerSignature(): string {
-  return hash(readFileSync(join(ROOT, "tools/alchemy_gcc.ts")), compilerBundleSignature());
+  return hash(
+    compilerBundleSignature(),
+    ...["alchemy_gcc.ts", "match_m2c.ts", "integrate_matches.ts", "candidate_show.ts", "mode_sweep.ts"]
+      .map((name) => readFileSync(join(ROOT, "tools", name))),
+  );
 }
 
 function disassembly(binary: string): string[] {

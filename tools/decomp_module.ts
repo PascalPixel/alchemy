@@ -10,6 +10,7 @@ import {
   compilerCommandForTargetSource,
   externalSymbol,
   externalSymbolAssembly,
+  usesAgbccCompiler,
 } from "./alchemy_gcc.ts";
 import { M2C_PREAMBLE } from "./match_m2c.ts";
 
@@ -73,6 +74,19 @@ async function main(): Promise<void> {
     bodies.push(source.slice(definition.index));
   });
   const combined = [...headerLines].join("\n") + "\n\n" + bodies.join("\n");
+  const routedSources = stems.map((stem) => join(drafts, `${stem}.c`));
+  const routing = routedSources.map((source) => ({
+    compiler: usesAgbccCompiler("gs1", source) ? "old-agbcc" : "gcc296",
+    flags: [...cflagsForTargetSource("gs1", source)],
+  }));
+  const firstRouting = JSON.stringify(routing[0]);
+  const incompatible = routing.findIndex((entry) => JSON.stringify(entry) !== firstRouting);
+  if (incompatible >= 0) {
+    throw new Error(
+      `module compiler routing differs: ${stems[0]}=${firstRouting} ` +
+      `${stems[incompatible]}=${JSON.stringify(routing[incompatible])}`,
+    );
+  }
   const scratch = join(ROOT, "out/decomp/modules", stems.join("-"));
   mkdirSync(scratch, { recursive: true });
   const prefix = join(scratch, stems[0]);
@@ -81,7 +95,7 @@ async function main(): Promise<void> {
   const elf = `${prefix}.elf`, binary = `${prefix}.bin`;
   writeFileSync(cFile, combined);
   await run(compilerCommandForTargetSource(
-    "gs1", cFile, ...cflagsForTargetSource("gs1", cFile), "-S", "-o", assembly, cFile,
+    "gs1", routedSources[0], ...routing[0].flags, "-S", "-o", assembly, cFile,
   ));
   await run(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", object, assembly]);
   const undefinedNames = (await run(["arm-none-eabi-nm", "-u", object])).split(/\r?\n/).filter(Boolean)

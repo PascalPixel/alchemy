@@ -1,38 +1,59 @@
 #!/usr/bin/env bun
-// Batch-probe ordinary source-level compiler modes against the ranked C-debt
-// queue. Private binaries and diagnostics remain below ignored out/.
+// Batch front-end for the authoritative compiler configuration explorer.
+//
+// Candidate compilation, family selection, flag replacement, cache identity,
+// compatibility rules, and scoring all live in mode_sweep.ts.  This file only
+// selects queue members, invokes that engine, and aggregates exact results.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { ROM_BASE, verifyCandidate } from "./match_m2c.ts";
+import { dirname, join, resolve } from "node:path";
 import { canonicalJson } from "./canonical_json.ts";
+import { modeSweepOutputDirectory } from "./mode_sweep.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const OUT = join(ROOT, "out/decomp/compiler-modes");
 
-interface Options { limit: number; jobs: number; queue: string; rom: string }
-interface QueueItem { stem: string; candidate: string; diagnosis: { expected_size: number } }
-interface Mode { name: string; flags: string[] }
-
-const MODES: Mode[] = [
-  { name: "o1", flags: ["-O1"] },
-  { name: "unschedule-1", flags: ["-O2", "-fno-schedule-insns"] },
-  { name: "unschedule-2", flags: ["-O2", "-fno-schedule-insns2"] },
-  { name: "unscheduled", flags: ["-O2", "-fno-schedule-insns", "-fno-schedule-insns2"] },
-  { name: "no-gcse", flags: ["-O2", "-fno-gcse"] },
-  { name: "no-cse-follow", flags: ["-O2", "-fno-cse-follow-jumps"] },
-  { name: "no-expensive", flags: ["-O2", "-fno-expensive-optimizations"] },
-  { name: "fixed-r3", flags: ["-O2", "-ffixed-r3"] },
-  { name: "no-inline", flags: ["-O2", "-fno-inline"] },
-  { name: "no-peephole", flags: ["-O2", "-fno-peephole"] },
-  { name: "no-strength-reduce", flags: ["-O2", "-fno-strength-reduce"] },
-];
+interface Options {
+  limit: number;
+  jobs: number;
+  queue: string;
+  rom: string;
+  pairs: boolean;
+  triples: boolean;
+  maxPairs: number;
+  maxTriples: number;
+}
+interface QueueItem { stem: string; candidate: string }
+interface SweepResult {
+  config: {
+    ids: string[];
+    flags: string[];
+    remove_flags: string[];
+    compiler_family: string;
+  };
+  compiled: boolean;
+  evidence?: { exact: boolean };
+}
+interface SweepReport {
+  format: number;
+  stem: string;
+  source: string;
+  source_sha256: string;
+  reference_sha256: string;
+  compiler_signature: string;
+  planning: { bounded_search_complete: boolean };
+  results: SweepResult[];
+}
 
 function optionsOf(arguments_: string[]): Options {
   const options: Options = {
     limit: 250,
-    jobs: Math.min(12, navigator.hardwareConcurrency || 1),
+    jobs: Math.min(8, navigator.hardwareConcurrency || 1),
     queue: join(ROOT, "out/decomp/queue.json"),
     rom: join(ROOT, "roms", "gs1-en.gba"),
+    pairs: false,
+    triples: false,
+    maxPairs: 256,
+    maxTriples: 64,
   };
   for (let index = 0; index < arguments_.length; index++) {
     const argument = arguments_[index];
@@ -40,55 +61,109 @@ function optionsOf(arguments_: string[]): Options {
     else if (argument === "--jobs") options.jobs = Number(arguments_[++index]);
     else if (argument === "--queue") options.queue = arguments_[++index];
     else if (argument === "--rom") options.rom = arguments_[++index];
+    else if (argument === "--pairs") options.pairs = true;
+    else if (argument === "--triples") options.triples = options.pairs = true;
+    else if (argument === "--max-pairs") options.maxPairs = Number(arguments_[++index]);
+    else if (argument === "--max-triples") options.maxTriples = Number(arguments_[++index]);
     else if (argument === "-h" || argument === "--help") {
-      console.log("usage: search_compiler_modes.ts [--limit N] [--jobs N] [--queue FILE] [--rom FILE]");
+      console.log([
+        "usage: search_compiler_modes.ts [options]",
+        "  --limit N --jobs N --queue FILE --rom FILE",
+        "  --pairs [--max-pairs N]",
+        "  --triples [--max-triples N]",
+      ].join("\n"));
       process.exit(0);
     } else throw new Error(`unrecognized argument: ${argument}`);
   }
-  if (!Number.isInteger(options.limit) || options.limit < 1 ||
-      !Number.isInteger(options.jobs) || options.jobs < 1) throw new Error("limit and jobs must be positive integers");
+  for (const [name, value] of [
+    ["limit", options.limit], ["jobs", options.jobs],
+    ["max-pairs", options.maxPairs], ["max-triples", options.maxTriples],
+  ] as const) {
+    if (!Number.isInteger(value) || value < 1) throw new Error(`${name} must be a positive integer`);
+  }
   return options;
 }
 
+function selfTest(): void {
+  const parsed = optionsOf(["--limit", "7", "--pairs", "--max-pairs", "11"]);
+  if (parsed.limit !== 7 || !parsed.pairs || parsed.triples || parsed.maxPairs !== 11) {
+    throw new Error("compiler mode batch option parsing differs");
+  }
+  const triple = optionsOf(["--triples"]);
+  if (!triple.pairs || !triple.triples) throw new Error("triples must imply pairs");
+  console.log("compiler mode batch self-test passed");
+}
+
 async function main(): Promise<void> {
+  if (Bun.argv.includes("--self-test")) return selfTest();
   const options = optionsOf(Bun.argv.slice(2));
   const queue = JSON.parse(readFileSync(options.queue, "utf8")) as { items: QueueItem[] };
-  const items = queue.items.filter((item) => existsSync(join(ROOT, item.candidate))).slice(0, options.limit);
-  const rom = readFileSync(options.rom);
-  mkdirSync(OUT, { recursive: true });
-  const tasks = items.flatMap((item) => MODES.map((mode) => ({ item, mode })));
-  const matches: Array<{ stem: string; mode: string; flags: string[]; source: string }> = [];
+  const items = queue.items
+    .map((item) => ({ ...item, source: resolve(ROOT, item.candidate) }))
+    .filter((item) => existsSync(item.source))
+    .slice(0, options.limit);
+  if (items.length === 0) throw new Error("no queued candidates have source files");
+
+  const reports = new Array<SweepReport>(items.length);
   let cursor = 0;
-  let attempted = 0;
-  let compiled = 0;
   async function worker(): Promise<void> {
     while (true) {
       const index = cursor++;
-      if (index >= tasks.length) return;
-      const { item, mode } = tasks[index];
-      const source = join(ROOT, item.candidate);
-      const scratch = join(OUT, "scratch", item.stem, mode.name);
-      mkdirSync(scratch, { recursive: true });
-      attempted++;
-      try {
-        const verification = await verifyCandidate(source, rom, scratch, mode.flags);
-        compiled++;
-        const expected = rom.subarray(
-          Number.parseInt(item.stem, 16) - ROM_BASE,
-          Number.parseInt(item.stem, 16) - ROM_BASE + item.diagnosis.expected_size,
-        );
-        if (verification.size === expected.length && verification.actual.equals(expected)) {
-          const match = { stem: item.stem, mode: mode.name, flags: mode.flags, source: item.candidate };
-          matches.push(match);
-          console.log(`exact ${item.stem} mode=${mode.name}`);
-        }
-      } catch {}
+      if (index >= items.length) return;
+      const item = items[index];
+      const command = [
+        "bun", join(ROOT, "tools/mode_sweep.ts"), item.source,
+        "--rom", options.rom, "--jobs", "1", "--top", "1",
+        "--max-pairs", String(options.maxPairs),
+        "--max-triples", String(options.maxTriples),
+        ...(options.pairs ? ["--pairs"] : []),
+        ...(options.triples ? ["--triples"] : []),
+      ];
+      const child = Bun.spawn(command, { cwd: ROOT, stdout: "pipe", stderr: "pipe" });
+      const [code, stdout, stderr] = await Promise.all([
+        child.exited,
+        new Response(child.stdout).text(),
+        new Response(child.stderr).text(),
+      ]);
+      if (code !== 0) throw new Error(`${item.stem}: ${(stderr || stdout).trim().slice(0, 600)}`);
+      reports[index] = JSON.parse(
+        readFileSync(join(modeSweepOutputDirectory(item.source), "report.json"), "utf8"),
+      ) as SweepReport;
     }
   }
-  await Promise.all(Array.from({ length: Math.min(options.jobs, tasks.length) }, worker));
-  const report = { format: 1, attempted, compiled, modes: MODES, matches };
-  writeFileSync(join(OUT, "report.json"), canonicalJson(report) + "\n");
-  console.log(`attempted=${attempted} compiled=${compiled} matches=${matches.length} report=${join(OUT, "report.json")}`);
+  await Promise.all(Array.from({ length: Math.min(options.jobs, items.length) }, worker));
+
+  const matches = reports.flatMap((report) => report.results
+    .filter((result) => result.compiled && result.evidence?.exact)
+    .map((result) => ({
+      stem: report.stem,
+      source: report.source,
+      config: result.config,
+    })));
+  const summary = {
+    format: 2,
+    engine: "tools/mode_sweep.ts",
+    search: {
+      pairs: options.pairs,
+      triples: options.triples,
+      max_pairs: options.maxPairs,
+      max_triples: options.maxTriples,
+    },
+    members: reports.map((report) => ({
+      stem: report.stem,
+      source: report.source,
+      source_sha256: report.source_sha256,
+      reference_sha256: report.reference_sha256,
+      compiler_signature: report.compiler_signature,
+      bounded_search_complete: report.planning.bounded_search_complete,
+    })),
+    matches,
+    auto_promote: false,
+  };
+  mkdirSync(OUT, { recursive: true });
+  const reportPath = join(OUT, "report.json");
+  writeFileSync(reportPath, canonicalJson(summary) + "\n");
+  console.log(`candidates=${reports.length} exact_configurations=${matches.length} report=${reportPath}`);
 }
 
 if (import.meta.main) await main();

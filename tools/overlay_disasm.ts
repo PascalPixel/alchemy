@@ -1,10 +1,9 @@
 import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, join } from "node:path";
 import {
-  cflagsForTargetSource,
-  compilerCommandForTargetSource,
   externalSymbol,
   externalSymbolAssembly,
+  sourceToAssemblyPlan,
 } from "./alchemy_gcc.ts";
 import { Discovery } from "./discover.ts";
 
@@ -109,9 +108,14 @@ function compileOverlayC(source: string, work: string): { address: number; data:
   const symbolsObject = join(work, `${stem}.symbols.o`);
   const elf = join(work, `${stem}.elf`);
   const binary = join(work, `${stem}.bin`);
-  checked(compilerCommandForTargetSource(
-    "gs1", source, ...cflagsForTargetSource("gs1", source), "-S", "-o", assembly, source,
-  ), work);
+  const plan = sourceToAssemblyPlan({
+    target: "gs1",
+    routingSource: source,
+    input: source,
+    output: assembly,
+    preprocessedOutput: join(work, `${stem}.i`),
+  });
+  for (const step of plan.steps) checked([...step.command], work);
   checked(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", object, assembly], work);
   const undefinedSymbols = checked(["arm-none-eabi-nm", "-u", object], work)
     .split(/\r?\n/)

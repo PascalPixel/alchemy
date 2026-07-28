@@ -46,7 +46,8 @@ export const FORK_MODES = [
 export const STOCK_SWITCHES = [
   "-fno-schedule-insns2", "-fno-gcse", "-fno-cse-follow-jumps",
   "-fno-expensive-optimizations", "-fno-peephole", "-fno-strength-reduce", "-fno-regmove",
-  "-fno-rerun-cse-after-loop", "-fno-sched-depend-count",
+  "-fno-rerun-cse-after-loop", "-fno-rerun-loop-opt", "-fno-caller-saves",
+  "-fno-force-mem", "-fno-sched-depend-count",
   "-fno-optimize-sibling-calls", "-fno-canonicalize-comparison",
 ] as const;
 
@@ -107,6 +108,7 @@ export const MODES: readonly Mode[] = [
   { id: "opt-o1", family: "optimization", addFlags: ["-O1"], exclusive: true, evidence: "proven-routing" },
   { id: "opt-o2", family: "optimization", addFlags: ["-O2"], exclusive: true, evidence: "historical" },
   { id: "opt-o3", family: "optimization", addFlags: ["-O3"], exclusive: true, evidence: "historical" },
+  { id: "opt-os", family: "optimization", addFlags: ["-Os"], exclusive: true, evidence: "historical" },
   { id: "abi-standard-r4", family: "abi", removeFlags: ["-fcall-used-r4"], exclusive: true, evidence: "proven-routing" },
   { id: "abi-fixed-r3", family: "abi", addFlags: ["-ffixed-r3"], exclusive: true, evidence: "proven-routing" },
   { id: "abi-fixed-lr", family: "abi", addFlags: ["-ffixed-r14"], exclusive: true, evidence: "historical" },
@@ -116,10 +118,13 @@ export const MODES: readonly Mode[] = [
   { id: "cse-gcse-off", family: "cse", addFlags: ["-fno-gcse"], evidence: "proven-routing" },
   { id: "cse-follow-off", family: "cse", addFlags: ["-fno-cse-follow-jumps"], evidence: "proven-routing" },
   { id: "cse-rerun-loop-off", family: "cse", addFlags: ["-fno-rerun-cse-after-loop"], evidence: "proven-routing" },
+  { id: "loop-rerun-off", family: "cse", addFlags: ["-fno-rerun-loop-opt"], evidence: "historical" },
   { id: "cse-expensive-off", family: "cse", addFlags: ["-fno-expensive-optimizations"], evidence: "proven-routing" },
   { id: "reg-peephole-off", family: "register-allocation", addFlags: ["-fno-peephole"], evidence: "historical" },
   { id: "reg-strength-reduce-off", family: "register-allocation", addFlags: ["-fno-strength-reduce"], evidence: "proven-routing" },
   { id: "reg-regmove-off", family: "register-allocation", addFlags: ["-fno-regmove"], evidence: "proven-routing" },
+  { id: "reg-caller-saves-off", family: "register-allocation", addFlags: ["-fno-caller-saves"], evidence: "historical" },
+  { id: "reg-force-mem-off", family: "register-allocation", addFlags: ["-fno-force-mem"], evidence: "historical" },
   { id: "sibling-calls-off", family: "backend", addFlags: ["-fno-optimize-sibling-calls"], evidence: "proven-routing" },
   { id: "comparison-canonicalization-off", family: "backend", addFlags: ["-fno-canonicalize-comparison"], evidence: "proven-routing" },
   ...FORK_MODES.map((flag) => ({

@@ -1,3 +1,4 @@
+#include "far_runtime.h"
 #include "types.h"
 
 struct Selection_080a5614 {
@@ -21,7 +22,6 @@ struct State_080a5614 {
 extern struct State_080a5614 *Data_03001f2c;
 extern u8 Data_00000075[];
 
-void Func_08015270(void *);
 void Func_080030f8(s32);
 void Func_08015080(s32, void *, s32, s32);
 void Func_080a2268(u8 *, s32, s32, s32, s32, u32);

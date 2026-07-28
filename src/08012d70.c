@@ -1,44 +1,49 @@
 #include "metadata_lookup.h"
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+struct Entry_08012d70 {
+    s16 no;
+    s16 x;
+    u8 value_04;
+    u8 unknown_05[7];
+    s32 *table_0c;
+    s32 value_10;
+    s8 value_14;
+    s8 value_15;
+    u8 value_16;
+    s8 value_17;
+};
 
+void Func_08012d70(s32 slot, s32 value)
+{
+    s32 index;
+    s32 count;
+    s32 offset;
+    u8 *metadata;
+    struct Entry_08012d70 *entry;
+    u8 *work;
 
-void Func_08012d70(s32 arg0, s32 arg1) {
-    s32 sp0;
-    s32 sp4;
-    s32 var_r1;
-    s32 var_r4;
-    s32 var_r7;
-    s32 var_r8;
-    void *temp_r0;
-    void *temp_r5;
-    void *var_r6;
-
-    var_r1 = arg1;
-    var_r6 = *(void **)0x03001E60;
-    var_r7 = 0;
-    var_r8 = ((3 & arg0) * 4) + 0x28;
-    var_r4 = 0;
+    work = *(u8 **)0x03001E60;
+    count = 0;
+    offset = ((3 & slot) * 4) + 0x28;
+    index = 0;
     do {
-        temp_r5 = *(void **)((u8 *)var_r6 + var_r8);
-        if (M2C_FIELD(temp_r5, s32, 0xC) != 0) {
-            sp4 = var_r1;
-            sp0 = var_r4;
-            temp_r0 = Func_08185000((s32) M2C_FIELD(temp_r5, s16, 0));
-            if (var_r1 < (s32) M2C_FIELD(temp_r0, u8, 5)) {
-                M2C_FIELD(temp_r5, u8, 4) = (u8) M2C_FIELD(temp_r0, u8, 4);
-                M2C_FIELD(temp_r5, s32, 0x10) = *(s32 *)((var_r1 * 4) + M2C_FIELD(temp_r5, s32, 0xC));
-                M2C_FIELD(temp_r5, s16, 2) = (s16) (var_r7 * 0x10);
-                M2C_FIELD(temp_r5, s8, 0x15) = 0x10;
-                M2C_FIELD(temp_r5, s8, 0x14) = (s8) var_r4;
-                M2C_FIELD(temp_r5, s8, 0x17) = (s8) var_r4;
-                M2C_FIELD(temp_r5, u8, 0x16) = 0xFF;
+        entry = *(struct Entry_08012d70 **)(work + offset);
+        if (entry->table_0c != 0) {
+            metadata = Func_08185000(entry->no);
+            if (value < metadata[5]) {
+                entry->value_04 = metadata[4];
+                entry->value_10 = entry->table_0c[value];
+                entry->x = count * 0x10;
+                entry->value_15 = 0x10;
+                entry->value_14 = index;
+                entry->value_17 = index;
+                entry->value_16 = 0xFF;
             }
-            M2C_FIELD(var_r6, u8, 0x23) = (u8) M2C_FIELD(temp_r0, u8, 7);
-            M2C_FIELD(var_r6, s16, 0x1E) = (s16) var_r4;
+            work[0x23] = metadata[7];
+            *(s16 *)(work + 0x1e) = index;
         }
-        var_r7 += 1;
-        var_r6 = (u8 *)var_r6 + 0x38;
-    } while (var_r7 <= 9);
+        count += 1;
+        work += 0x38;
+    } while (count <= 9);
 }

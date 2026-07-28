@@ -1,6 +1,7 @@
 #include "types.h"
 
-void Func_080045f0(u32 value) {
+void Func_080045f0(u32 value)
+{
     u8 *buffer = (u8 *)0x03001F70;
     const u8 *digits = (const u8 *)0x0800795C;
     s32 index = 7;

@@ -12,10 +12,10 @@ s32 Func_08012204(struct WorldPosition *position)
     u8 packed_pixels;
     u32 result;
 
-    /* One 64-byte map row covers 64 collision tiles. */
+    /* 1行64バイトで衝突判定タイル64個を表す。 */
     cell = (((u32)(y_step / 8) & 63) << 6) +
         ((u32)(x_step / 8) & 63);
-    /* Each 4-by-4 4bpp collision tile occupies eight bytes. */
+    /* 4×4ドット・4bppの衝突判定タイルは8バイト。 */
     pixel_offset = (((u32)(y_step / 2) & 3) << 1) +
         ((u32)(x_step / 4) & 1);
 
@@ -30,7 +30,7 @@ s32 Func_08012204(struct WorldPosition *position)
             return result;
     }
 
-    /* An empty foreground sample falls through to the background map. */
+    /* 前面が空なら背面マップを調べる。 */
     tile = *(u8 *)(0x06004000 + cell);
     packed_pixels = *(u8 *)(0x0202c000 + ((u32)tile << 3) + pixel_offset);
     if (packed_pixels != 0) {

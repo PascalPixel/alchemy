@@ -1,18 +1,24 @@
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+struct Work_08012330 {
+    s32 unknown_00;
+    s32 value_04;
+    s32 value_08;
+    s32 value_0c;
+};
 
-void Func_08012330(s32 arg0, s32 arg1, s32 arg2) {
-    void *temp_r3;
+void Func_08012330(s32 value0, s32 value1, s32 value2)
+{
+    struct Work_08012330 *work;
 
-    temp_r3 = *(void **)0x03001E70;
-    if (arg0 >= 0) {
-        M2C_FIELD(temp_r3, s32 *, 4) = arg0;
+    work = *(struct Work_08012330 **)0x03001E70;
+    if (value0 >= 0) {
+        work->value_04 = value0;
     }
-    if (arg1 >= 0) {
-        M2C_FIELD(temp_r3, s32 *, 8) = arg1;
+    if (value1 >= 0) {
+        work->value_08 = value1;
     }
-    if (arg2 >= 0) {
-        M2C_FIELD(temp_r3, s32 *, 0xC) = arg2;
+    if (value2 >= 0) {
+        work->value_0c = value2;
     }
 }

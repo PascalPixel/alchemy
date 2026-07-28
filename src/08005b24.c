@@ -2,7 +2,8 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-u32 Func_08005b24(s32 arg0) {
+u32 Func_08005b24(s32 record_id)
+{
     u16 *var_r1;
     u16 temp_r3_2;
     u32 var_r0;
@@ -18,7 +19,7 @@ u32 Func_08005b24(s32 arg0) {
     var_r1 = temp_r3 + 0x20;
     var_r2 = temp_r3;
     do {
-        if ((M2C_FIELD(var_r2, u8 *, 0) != 0) && (arg0 == M2C_FIELD(var_r2, u8 *, 0x10))) {
+        if ((M2C_FIELD(var_r2, u8 *, 0) != 0) && (record_id == M2C_FIELD(var_r2, u8 *, 0x10))) {
             temp_r3_2 = *var_r1;
             if (var_r0 < (u32) temp_r3_2) {
                 var_r0 = (u32) temp_r3_2;

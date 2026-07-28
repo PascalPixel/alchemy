@@ -13,6 +13,10 @@ export const GS2_BUNDLE = join(BUNDLE, "gs2");
 export const GS2_DRIVER = join(GS2_BUNDLE, "xgcc");
 export const AGBCC_BUNDLE = join(BUNDLE, "agbcc");
 export const AGBCC_DRIVER = join(AGBCC_BUNDLE, "old_agbcc");
+export const PRET_EARLY_THUMB_BUNDLE = join(BUNDLE, "pret-early-thumb");
+export const PRET_EARLY_THUMB_DRIVER = join(PRET_EARLY_THUMB_BUNDLE, "cc1");
+export const GCC2951_BUNDLE = join(BUNDLE, "gcc2951");
+export const GCC2951_DRIVER = join(GCC2951_BUNDLE, "cc1");
 // -nostdinc keeps the host's headers out; -Iinclude puts this repository's own
 // back in. Before it, the eight fixed-width typedefs were restated in 1,224 of
 // the 1,249 sources, 7,751 lines of the same eight declarations.
@@ -652,7 +656,10 @@ const LINUX_AGBCC_EXPECTED = "6705f9822f2f618cbd31cbc5429a167b6ea1c24df95ca1a822
 
 const validated = new Set<CompilerTarget>();
 let agbccValidated = false;
+const experimentalValidated = new Set<string>();
 const AGBCC_EXPECTED = "4f7664872d10a737184fb2e0502c407c9d74505f0cff7313ba4e9083736c2207";
+const PRET_EARLY_THUMB_EXPECTED = "8a1e0e9e18801efb595a3e0d571137db5ba8f97e413c323e99f18b0521a31636";
+const GCC2951_EXPECTED = "cb41bba7e0e600721d906c46349119efb4c6fd35c711d7e0f244cb783de383a6";
 
 function outputText(value: Uint8Array): string {
   return Buffer.from(value).toString("utf8");
@@ -725,11 +732,42 @@ export function validateAgbccBundle(): void {
   agbccValidated = true;
 }
 
+function validateExperimentalCompiler(name: string, driver: string, expected: string): void {
+  if (experimentalValidated.has(name)) return;
+  const host = hostKey();
+  if (host !== "darwin-arm64") {
+    throw new Error(`alchemy-gcc experimental ${name} is currently approved only for arm64 macOS`);
+  }
+  let mode = 0;
+  try {
+    mode = statSync(driver).mode;
+  } catch {
+    throw new Error(`alchemy-gcc experimental ${name} is missing executable cc1`);
+  }
+  if ((mode & 0o111) === 0) {
+    throw new Error(`alchemy-gcc experimental ${name} is missing executable cc1`);
+  }
+  const actual = new Bun.CryptoHasher("sha256").update(readFileSync(driver)).digest("hex");
+  if (actual !== expected) {
+    throw new Error(`alchemy-gcc experimental ${name}/cc1 has an unapproved digest`);
+  }
+  const smoke = Bun.spawnSync(
+    [driver, "/dev/null", "-quiet", "-O2", "-o", "/dev/null"],
+    { cwd: ROOT, stdout: "pipe", stderr: "pipe" },
+  );
+  if (smoke.exitCode !== 0) {
+    const detail = (outputText(smoke.stderr) || outputText(smoke.stdout)).trim();
+    throw new Error(`alchemy-gcc experimental ${name} smoke compile failed: ${detail}`);
+  }
+  experimentalValidated.add(name);
+}
+
 export function compilerBundleSignature(): string {
   const paths = [
     join(BUNDLE, "xgcc"), join(BUNDLE, "cpp"), join(BUNDLE, "tradcpp"), join(BUNDLE, "cc1"),
     join(GS2_BUNDLE, "xgcc"), join(GS2_BUNDLE, "cpp0"), join(GS2_BUNDLE, "tradcpp0"),
     join(GS2_BUNDLE, "cc1"), AGBCC_DRIVER,
+    PRET_EARLY_THUMB_DRIVER, GCC2951_DRIVER,
   ];
   const digest = new Bun.CryptoHasher("sha256");
   for (const path of paths) {
@@ -779,7 +817,12 @@ export function compilerCommandForTargetSource(
 // actually compiled. Keeping those names separate is essential for candidate
 // and corpus work, where a temporary source must compile exactly as the
 // eventual installed source would.
-export type CompilerFamily = "routed" | "gcc296" | "old-agbcc";
+export type CompilerFamily =
+  | "routed"
+  | "gcc296"
+  | "old-agbcc"
+  | "pret-early-thumb"
+  | "gcc2951";
 
 export interface CompilerFlagMutations {
   addFlags?: readonly string[];
@@ -842,13 +885,13 @@ export function sourceToAssemblyPlan(
   const family = requestedFamily === "routed"
     ? (usesAgbccCompiler(options.target, options.routingSource) ? "old-agbcc" : "gcc296")
     : requestedFamily;
-  if (family === "old-agbcc" && options.target !== "gs1") {
-    throw new Error("old-agbcc is only approved for gs1");
+  if (family !== "gcc296" && options.target !== "gs1") {
+    throw new Error(`${family} is only approved for gs1`);
   }
 
   const canonical = requestedFamily === "routed"
     ? cflagsForTargetSource(options.target, options.routingSource)
-    : family === "old-agbcc"
+    : family !== "gcc296"
       ? AGBCC_CFLAGS
       : cflagsForTarget(options.target);
   const flags = mutatedCompilerFlags(canonical, options.flags);
@@ -856,17 +899,31 @@ export function sourceToAssemblyPlan(
   let compilerInput = options.input;
   const steps: CompilerCommandStep[] = [];
 
-  if (family === "old-agbcc") {
-    validateAgbccBundle();
+  if (family !== "gcc296") {
+    const driver = family === "old-agbcc"
+      ? AGBCC_DRIVER
+      : family === "pret-early-thumb"
+        ? PRET_EARLY_THUMB_DRIVER
+        : GCC2951_DRIVER;
+    if (family === "old-agbcc") validateAgbccBundle();
+    else if (family === "pret-early-thumb") {
+      validateExperimentalCompiler(family, driver, PRET_EARLY_THUMB_EXPECTED);
+    } else {
+      validateExperimentalCompiler(family, driver, GCC2951_EXPECTED);
+    }
     compilerInput = options.preprocessedOutput ?? inferredPreprocessedOutput(options.output);
     steps.push({
       kind: "preprocess",
-      command: directPreprocessorCommand(options.input, compilerInput),
+      command: directPreprocessorCommand(
+        options.input,
+        compilerInput,
+        family === "gcc2951" ? 95 : 9,
+      ),
     });
     steps.push({
       kind: "compile",
       command: [
-        AGBCC_DRIVER, compilerInput, "-dumpbase", dumpbase,
+        driver, compilerInput, "-dumpbase", dumpbase,
         ...flags, "-o", options.output,
       ],
     });
@@ -896,11 +953,15 @@ export function sourceToAssemblyPlan(
 // Hot-search pipeline: invoke the approved preprocessor and cc1 directly, saving
 // one driver process per candidate. These arguments are the exact subprocesses
 // emitted by xgcc for CFLAGS; ordinary builds use the source-aware command API.
-export function directPreprocessorCommand(input: string, output: string): string[] {
+export function directPreprocessorCommand(
+  input: string,
+  output: string,
+  gccMinor = 96,
+): string[] {
   validateBundle();
   return [
     join(BUNDLE, "cpp"), "-lang-c", "-nostdinc",
-    "-D__GNUC__=2", "-D__GNUC_MINOR__=96", "-D__GNUC_PATCHLEVEL__=0",
+    "-D__GNUC__=2", `-D__GNUC_MINOR__=${gccMinor}`, "-D__GNUC_PATCHLEVEL__=0",
     "-Acpu(arm)", "-Amachine(arm)", "-D__CHAR_UNSIGNED__", "-D__OPTIMIZE__",
     "-D__ARM_ARCH_4T__", "-D__APCS_32__", "-D__ARMEL__", "-D__THUMBEL__",
     "-Darm_elf", "-D__ELF__", "-Dthumb", "-D__thumb__",
@@ -1260,6 +1321,33 @@ function selfTest(): void {
     throw new Error("source-to-assembly forced old_agbcc self-test failed");
   }
 
+  for (const [family, driver, minor] of [
+    ["pret-early-thumb", PRET_EARLY_THUMB_DRIVER, "9"],
+    ["gcc2951", GCC2951_DRIVER, "95"],
+  ] as const) {
+    const planned = sourceToAssemblyPlan({
+      target: "gs1",
+      routingSource: "/installed/not-routed.c",
+      input: `/work/${family}.c`,
+      output: `/work/${family}.s`,
+      family,
+    });
+    const preprocess = planned.steps[0]?.command ?? [];
+    const compile = planned.steps[1]?.command ?? [];
+    if (planned.requestedFamily !== family ||
+        planned.family !== family ||
+        planned.steps.length !== 2 ||
+        planned.steps[0].kind !== "preprocess" ||
+        planned.steps[1].kind !== "compile" ||
+        planned.compilerInput !== `/work/${family}.i` ||
+        !preprocess.includes(`-D__GNUC_MINOR__=${minor}`) ||
+        compile[0] !== driver ||
+        compile[1] !== `/work/${family}.i` ||
+        compile.at(-1) !== `/work/${family}.s`) {
+      throw new Error(`source-to-assembly ${family} family self-test failed`);
+    }
+  }
+
   let rejectedConflict = false;
   try {
     sourceToAssemblyPlan({
@@ -1291,6 +1379,23 @@ function selfTest(): void {
   if (!rejectedGs2Agbcc) {
     throw new Error("source-to-assembly GS2 old_agbcc rejection self-test failed");
   }
+  for (const family of ["pret-early-thumb", "gcc2951"] as const) {
+    let rejected = false;
+    try {
+      sourceToAssemblyPlan({
+        target: "gs2",
+        routingSource: "/installed/080000c0.c",
+        input: "/work/candidate.c",
+        output: "/work/candidate.s",
+        family,
+      });
+    } catch (error) {
+      rejected = String(error).includes("only approved for gs1");
+    }
+    if (!rejected) {
+      throw new Error(`source-to-assembly GS2 ${family} rejection self-test failed`);
+    }
+  }
   console.log(`self-test=ok agbcc_sources=${expected.length} grouped_dma_sources=${groupedDma.length} overlay_call_arg_sources=${callArg0MoveFirstOverlays.length}`);
 }
 
@@ -1303,6 +1408,16 @@ function main(): void {
   if (argument === "agbcc") {
     validateAgbccBundle();
     console.log(`alchemy-gcc=agbcc ok host=${hostKey()} files=1 bytes=${statSync(AGBCC_DRIVER).size}`);
+    return;
+  }
+  if (argument === "pret-early-thumb") {
+    validateExperimentalCompiler(argument, PRET_EARLY_THUMB_DRIVER, PRET_EARLY_THUMB_EXPECTED);
+    console.log(`alchemy-gcc=${argument} ok host=${hostKey()} files=1 bytes=${statSync(PRET_EARLY_THUMB_DRIVER).size}`);
+    return;
+  }
+  if (argument === "gcc2951") {
+    validateExperimentalCompiler(argument, GCC2951_DRIVER, GCC2951_EXPECTED);
+    console.log(`alchemy-gcc=${argument} ok host=${hostKey()} files=1 bytes=${statSync(GCC2951_DRIVER).size}`);
     return;
   }
   if (argument !== "gs1" && argument !== "gs2") {

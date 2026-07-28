@@ -22,7 +22,7 @@ import {
 } from "./match_m2c.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
-const FORMAT = 2;
+const FORMAT = 3;
 
 interface Region {
   source: string;
@@ -90,8 +90,11 @@ export function flagsOf(value: unknown): string[] {
 }
 
 function compilerFamilyOf(value: unknown): CandidateCompilerFamily {
-  if (value === "routed" || value === "gcc296" || value === "old-agbcc") return value;
-  throw new Error("compiler config family must be routed, gcc296, or old-agbcc");
+  if (
+    value === "routed" || value === "gcc296" || value === "old-agbcc" ||
+    value === "pret-early-thumb" || value === "gcc2951"
+  ) return value;
+  throw new Error("compiler config family must be routed, gcc296, old-agbcc, pret-early-thumb, or gcc2951");
 }
 
 export function compilerConfigurationOf(value: unknown): CandidateCompilerConfiguration {
@@ -171,7 +174,7 @@ function parseOptions(argv: string[]): Options {
       console.log([
         "usage: compiler_corpus_regression.ts (--flags FLAG[,FLAG...] | --config FILE) [options]",
         "  --config FILE       CandidateCompilerConfiguration JSON:",
-        "                      {\"family\":\"routed|gcc296|old-agbcc\",",
+        "                      {\"family\":\"routed|gcc296|old-agbcc|pret-early-thumb|gcc2951\",",
         "                       \"addFlags\":[...],\"removeFlags\":[...]}",
         "  --flags FLAGS       compatibility shorthand for additional flags",
         "  --sample N          deterministic sample size; 0 selects all (default 64)",
@@ -368,7 +371,7 @@ async function main(): Promise<void> {
     mkdirSync(scratch, { recursive: true });
     let result: Result;
     try {
-      await verifyCandidate(
+      const verification = await verifyCandidate(
         member.source, rom, scratch, options.flags, ROM_BASE, "gs1", options.compilerConfig,
       );
       const linked = readFileSync(join(scratch, `${member.stem}.bin`));
@@ -377,9 +380,11 @@ async function main(): Promise<void> {
         { stdout: "pipe", stderr: "pipe" },
       );
       if (symbols.exitCode !== 0) throw new Error(symbols.stderr.toString().trim() || "nm failed");
-      const extent = linkedFunctionExtent(
-        symbols.stdout.toString(), `Func_${member.stem}`, member.address, linked.length,
-      );
+      const extent = options.compilerConfig.family === "gcc2951"
+        ? verification.actual.length
+        : linkedFunctionExtent(
+          symbols.stdout.toString(), `Func_${member.stem}`, member.address, linked.length,
+        );
       const actual = linked.subarray(0, extent);
       const difference = byteDifference(actual, expected);
       result = {

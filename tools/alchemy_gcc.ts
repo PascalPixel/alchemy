@@ -347,7 +347,7 @@ const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
 // 同一cc1・既定フラグ。
 const DEFAULT_ABI_SOURCES = new Set([
   "08006a00", "08006b84", "08006ba8", "08006c24", "08006dec", "08007098",
-  "080fadf0",
+  "080fada0", "080fadf0",
 ]);
 // The stock m4a object linked into GS1 was built with the public old_agbcc
 // compiler rather than Camelot's gcc-2.96 fork. Keep adoption source-scoped:
@@ -369,10 +369,10 @@ const DEFAULT_ABI_SOURCES = new Set([
 const AGBCC_SOURCES = new Set([
   "08006a00", "08006ba8", "08006c24", "08006c68", "08006dec", "08006f84", "08007098", "0800711c", "080071a8", "08007220",
   "080f9a50",
-  "080fadf0",
+  "080fada0", "080fadf0",
   "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
   "080fa424", "080fa458", "080fa490", "080fa514", "080fa55c", "080fa6a0", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
-  "080fa9e0", "080fab3c", "080fac44", "080facf8", "080fb2cc", "080fb334", "080fb3a8", "080fb430", "080fb4a4",
+  "080fa9e0", "080fab3c", "080fab7c", "080fac44", "080facf8", "080fb2cc", "080fb334", "080fb3a8", "080fb430", "080fb4a4",
   "080fb670",
   "080fb6a4",
 ]);
@@ -824,7 +824,7 @@ function selfTest(): void {
     "080f9a50",
     "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
     "080fa424", "080fa458", "080fa490", "080fa514", "080fa55c", "080fa6a0", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
-    "080fa9e0", "080fab3c", "080fac44", "080facf8", "080fadf0", "080fb2cc", "080fb334", "080fb3a8", "080fb430", "080fb4a4",
+    "080fa9e0", "080fab3c", "080fab7c", "080fac44", "080facf8", "080fada0", "080fadf0", "080fb2cc", "080fb334", "080fb3a8", "080fb430", "080fb4a4",
     "080fb670",
     "080fb6a4",
   ];

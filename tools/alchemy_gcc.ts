@@ -639,10 +639,10 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
   },
   "linux-x64": {
     gs1: {
-      xgcc: "463711fdcb8f3a25a03e1fe25028433277eded2feaffc7b16030c18affa846ba",
-      cpp: "41f88593916b66e5a1bfce638f268a1ba0caddd7329d76df39dac9985a8ab485",
-      tradcpp: "cdece2086f3e75ea38cc0c6c6e03b9d71ed53cb95b72222e93652dde1f37329a",
-      cc1: "7bcd2dfa7f8ceb9b840cb389ea60dc8a9635daeb750b4df6a697d3153acf15a3",
+      xgcc: "845b828e15efedfeacc1956ac2694101e2b520824643d5b9f7608f9c389aee03",
+      cpp: "60d0b6637deb0f98cbf952a89694b02a0557fc87ca968121759be139372e90cc",
+      tradcpp: "87f89bebf41cd12ac7706604dd24624061b2276f95cc1e9998c22de1accfee2a",
+      cc1: "e322a2242bca5c7a98703ff74cb84aa1abd58859cbe7f5b306cedbccdc0d9ee7",
     },
     gs2: {
       xgcc: "d0b10d67bc7f9965d586eba766b77e6ca54cc791b5eb297b55a6b9b6d6d0ef3d",
@@ -653,14 +653,20 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
   },
 };
 
-const LINUX_AGBCC_EXPECTED = "6705f9822f2f618cbd31cbc5429a167b6ea1c24df95ca1a8226a0878e46f957a";
+const LINUX_AGBCC_EXPECTED = "30a2a042c4be2acdd215ffc26c7d27498098ac38607ec8af43cc6598dcecdf55";
 
 const validated = new Set<CompilerTarget>();
 let agbccValidated = false;
 const experimentalValidated = new Set<string>();
 const AGBCC_EXPECTED = "4f7664872d10a737184fb2e0502c407c9d74505f0cff7313ba4e9083736c2207";
-const PRET_EARLY_THUMB_EXPECTED = "8a1e0e9e18801efb595a3e0d571137db5ba8f97e413c323e99f18b0521a31636";
-const GCC2951_EXPECTED = "cb41bba7e0e600721d906c46349119efb4c6fd35c711d7e0f244cb783de383a6";
+const PRET_EARLY_THUMB_EXPECTED: Record<HostKey, string> = {
+  "darwin-arm64": "8a1e0e9e18801efb595a3e0d571137db5ba8f97e413c323e99f18b0521a31636",
+  "linux-x64": "c988f677e3ebd7252a6ad1ad2fef301f85b05be0612ee3192b37ec47d22f8082",
+};
+const GCC2951_EXPECTED: Record<HostKey, string> = {
+  "darwin-arm64": "cb41bba7e0e600721d906c46349119efb4c6fd35c711d7e0f244cb783de383a6",
+  "linux-x64": "c8f80fffa2aa0aa2809d93ad86d11ea0e8ebf08e9bba6cc5b8d391aef05c3fe4",
+};
 
 function outputText(value: Uint8Array): string {
   return Buffer.from(value).toString("utf8");
@@ -733,11 +739,11 @@ export function validateAgbccBundle(): void {
   agbccValidated = true;
 }
 
-function validateExperimentalCompiler(name: string, driver: string, expected: string): void {
+function validateExperimentalCompiler(name: string, driver: string, expected: Record<HostKey, string>): void {
   if (experimentalValidated.has(name)) return;
   const host = hostKey();
-  if (host !== "darwin-arm64") {
-    throw new Error(`alchemy-gcc experimental ${name} is currently approved only for arm64 macOS`);
+  if (host === null) {
+    throw new Error(`alchemy-gcc experimental ${name} requires native arm64 macOS or x64 Linux`);
   }
   let mode = 0;
   try {
@@ -749,7 +755,7 @@ function validateExperimentalCompiler(name: string, driver: string, expected: st
     throw new Error(`alchemy-gcc experimental ${name} is missing executable cc1`);
   }
   const actual = new Bun.CryptoHasher("sha256").update(readFileSync(driver)).digest("hex");
-  if (actual !== expected) {
+  if (actual !== expected[host]) {
     throw new Error(`alchemy-gcc experimental ${name}/cc1 has an unapproved digest`);
   }
   const smoke = Bun.spawnSync(

@@ -18,6 +18,7 @@ const LEGACY_REGION = /\[[0-9]{1,3}(?:,[0-9]{3})* of [0-9]{1,3}(?:,[0-9]{3})*\]$
 const LEGACY_C_BYTES_AND_REGION =
   /\[[0-9]{1,3}(?:,[0-9]{3})* C bytes\]\s+\[[0-9]{1,3}(?:,[0-9]{3})* of [0-9]{1,3}(?:,[0-9]{3})*\]$/;
 const LEGACY_ROM_BYTES = /\[[0-9,]+ of 8,388,608 bytes\]$/;
+const DENOMINATOR_CORRECTION = /^metrics: correct executable denominator\b/;
 
 function legacySubject(subject: string): boolean {
   return LEGACY_C_BYTES_AND_REGION.test(subject) ||
@@ -71,9 +72,12 @@ export function checkCommitProgress(
   const previous = parseSubject(previousSubject);
   if (previous) {
     if (parsed.executableBytes !== previous.executableBytes) {
-      throw new Error(
-        `executable denominator changed from ${previous.executableBytes} to ${parsed.executableBytes}`,
-      );
+      if (!DENOMINATOR_CORRECTION.test(subject)) {
+        throw new Error(
+          `executable denominator changed from ${previous.executableBytes} to ${parsed.executableBytes}; ` +
+          "use an explicit metrics: correct executable denominator commit",
+        );
+      }
     }
     if (parsed.fullCBytes < previous.fullCBytes) {
       throw new Error(
@@ -169,6 +173,11 @@ function selfTest(): void {
     rejected = true;
   }
   if (!rejected) throw new Error("staged/report mismatch was accepted");
+  checkCommitProgress(
+    "metrics: correct executable denominator after boundary audit [C 123,456/1,234,568 bytes]",
+    { ...report, executable_bytes: 1234568, remaining_bytes: 1111112 },
+    "prior [C 123,456/1,234,567 bytes]",
+  );
   console.log("self-test=ok suffix=full-c-byte-share");
 }
 
@@ -189,6 +198,11 @@ async function main(argv: string[]): Promise<void> {
   }
   const report = stagedReport(target);
   const previous = git(["log", "-1", "--format=%s"]).trim() || undefined;
+  const previousMetric = previous === undefined ? null : parseSubject(previous);
+  if (previousMetric !== null && report.executable_bytes !== previousMetric.executableBytes &&
+      !paths.includes(`metrics/${target}-executable.json`)) {
+    throw new Error(`denominator correction requires staged metrics/${target}-executable.json`);
+  }
   checkCommitProgress(await Bun.file(path).text(), report, previous);
 }
 

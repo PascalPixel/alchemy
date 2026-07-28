@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-28)
 
-`[1,362 of 1,999]`. 637 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,363 of 1,999]`. 636 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -32,7 +32,7 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-25 | 1,242 | +6 |
 | 2026-07-26 | 1,292 | +50 |
 | 2026-07-27 | 1,345 | +53 (partial day) |
-| 2026-07-28 | 1,362 | +17 (decompilation resumed after humanization) |
+| 2026-07-28 | 1,363 | +18 (decompilation resumed after humanization) |
 
 **The recent three-day average is still roughly a factor of four below the
 2026-07-23 peak.** That is not a slowdown in effort: the broad easy tier is
@@ -793,6 +793,23 @@ assembly remains authoritative.
 The current claimed build is `[1,362 of 1,999]` and 94,326 exact-C bytes.
 Ordinary assembly debt is 637 regions / 397,174 bytes.
 
+## The fourteenth fresh 81–160 pass
+
+`0801bcd4` converted as 196 bytes of default-compiler C. It recovers the
+menu-mode dispatcher through the same nearby callback family while preserving
+the reference's physical switch-arm order. It needs no compiler mode or
+assembly.
+
+Three other complete semantic reconstructions remain measured floors:
+`08016178` is exact-sized and improves from 74 to 23 differing halfwords under
+`-fno-gcse`; `080113e4` remains exact-sized at 63 halfwords; and `08022768`
+remains exact-sized at 66 halfwords after its best bounded mode. Those are
+broad allocation/control-flow residuals rather than evidence for triple-mode
+search, so their assembly remains authoritative.
+
+The current claimed build is `[1,363 of 1,999]` and 94,522 exact-C bytes.
+Ordinary assembly debt is 636 regions / 396,978 bytes.
+
 ## Bounded compiler-configuration explorer
 
 `tools/mode_sweep.ts` now treats compiler search as evidence collection rather
@@ -814,6 +831,13 @@ The first full single/pair validation used the existing exact-sized
 compiled; none improved its three-halfword instruction-order residual. A
 second identical run reused all 251 cached results, and the completed floor
 correctly escalates to compiler RTL/scheduler tracing.
+
+The exact-sized `08097540` floor was then traced through post-reload scheduling.
+After loading `166`, its shift and the independent first-argument save have
+equal priority. GCC's ready-list tie break selects the save first; the ROM
+selects the shift first. Reversing that tie break globally would damage five
+measured inverse-order functions, so this is recorded as a compiler floor
+rather than routed through a one-function backend flag.
 
 ## What changes the rate
 

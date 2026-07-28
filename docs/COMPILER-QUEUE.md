@@ -37,6 +37,15 @@ mode's gains and regressions, plus irreducible multi-region improvements, rather
 than requiring a mode to be non-regressing across the entire cohort before it
 is visible.
 
+The historical-family search also has a deterministic factorial phase now.
+It tests all 227 compatible combinations of `old-agbcc`, `pret-early-thumb`, or
+GCC 2.95.1 with two stock pass switches on every cohort member. The first full
+run compiled that same matrix for all 22 candidates. It found no exact result
+and no three-mode configuration that improved even one candidate beyond every
+proper family/single-switch subset. This closes the previous blind spot where
+such configurations were considered only when a candidate-specific pair had
+already reached an exact-sized 2–5-halfword floor.
+
 > Historical prototype log. The kept changes described here were subsequently
 > committed, staged into the pinned compiler bundles, regression-tested, and
 > pushed in `alchemy-gcc`. Statements below about uncommitted patches or an

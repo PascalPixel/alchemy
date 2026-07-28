@@ -28,7 +28,7 @@ import {
 } from "./alchemy_gcc.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
-const FORMAT = 3;
+const FORMAT = 4;
 
 export const FORK_MODES = [
   "-mgrouped-dma-store", "-mpreserve-single-bit-test", "-mentry-low-register-order",
@@ -91,6 +91,7 @@ interface Options {
   rom: string;
   pairs: boolean;
   triples: boolean;
+  familyFactorial: boolean;
   jobs: number;
   top: number;
   maxPairs: number;
@@ -246,6 +247,30 @@ export function tripleConfigs(seedIds: readonly string[], limit: number): Config
   return configs.slice(0, limit);
 }
 
+// Compare each alternative historical compiler with every compatible pair of
+// stock optimization-pass switches. These configurations are deterministic
+// and do not depend on a candidate-specific near-match ranking.
+export function historicalFamilyFactorialConfigs(): Config[] {
+  const compilerModes = MODES.filter((mode) =>
+    mode.family === "compiler" &&
+    mode.compilerFamily !== undefined &&
+    mode.compilerFamily !== "gcc296");
+  const stockModes = MODES.filter((mode) =>
+    mode.addFlags?.length === 1 &&
+    STOCK_SWITCHES.includes(mode.addFlags[0] as typeof STOCK_SWITCHES[number]));
+  const configs: Config[] = [];
+  for (const compiler of compilerModes) {
+    for (let left = 0; left < stockModes.length; left++) {
+      for (let right = left + 1; right < stockModes.length; right++) {
+        const modes = [compiler, stockModes[left], stockModes[right]];
+        if (compatible(modes)) configs.push(configOf(modes));
+      }
+    }
+  }
+  return configs.sort((left, right) =>
+    left.ids.join("+").localeCompare(right.ids.join("+")));
+}
+
 // Retained for callers of the old helper.  Search execution itself is phased.
 export function combinations(pairs: boolean): string[][] {
   return [
@@ -323,6 +348,7 @@ function optionsOf(argv: string[]): Options {
     rom: join(ROOT, "roms/gs1-en.gba"),
     pairs: false,
     triples: false,
+    familyFactorial: false,
     jobs: Math.max(1, Math.min(10, (navigator.hardwareConcurrency || 8) - 2)),
     top: 16,
     maxPairs: 256,
@@ -334,12 +360,13 @@ function optionsOf(argv: string[]): Options {
     if (argument === "--rom") options.rom = argv[++index];
     else if (argument === "--pairs") options.pairs = true;
     else if (argument === "--triples") options.triples = options.pairs = true;
+    else if (argument === "--family-factorial") options.familyFactorial = true;
     else if (argument === "--jobs") options.jobs = Number(argv[++index]);
     else if (argument === "--top") options.top = Number(argv[++index]);
     else if (argument === "--max-pairs") options.maxPairs = Number(argv[++index]);
     else if (argument === "--max-triples") options.maxTriples = Number(argv[++index]);
     else if (argument === "-h" || argument === "--help") {
-      console.log("usage: mode_sweep.ts <candidate.c> [--pairs] [--triples] [--jobs N] [--top N] [--max-pairs N] [--max-triples N] [--rom FILE]");
+      console.log("usage: mode_sweep.ts <candidate.c> [--pairs] [--triples] [--family-factorial] [--jobs N] [--top N] [--max-pairs N] [--max-triples N] [--rom FILE]");
       process.exit(0);
     } else rest.push(argument);
   }
@@ -376,6 +403,18 @@ function selfTest(): void {
   if (triples.length === 0 || triples.some((config) =>
     config.ids.filter((id) => ["sched-postreload-off", "cse-gcse-off"].includes(id)).length < 2)) {
     throw new Error("triple planning escaped its evidence seed");
+  }
+  const factorial = historicalFamilyFactorialConfigs();
+  if (factorial.length === 0 ||
+      factorial.some((config) =>
+        config.ids.length !== 3 ||
+        config.compiler_family === "routed" ||
+        config.compiler_family === "gcc296") ||
+      !factorial.some((config) =>
+        config.compiler_family === "gcc2951" &&
+        config.ids.includes("cse-gcse-off") &&
+        config.ids.includes("reg-regmove-off"))) {
+    throw new Error("historical family factorial planning differs");
   }
   const reference = Buffer.from([0x01, 0x20, 0x02, 0x21]);
   const exact = classify(reference, reference, ["movs r0, #1"], ["movs r0, #1"]);
@@ -510,7 +549,14 @@ async function main(): Promise<void> {
   const allTriples = tripleConfigs(seedIds, Number.POSITIVE_INFINITY);
   const triplePlan = options.triples ? allTriples.slice(0, options.maxTriples) : [];
   const tripleResults = triplePlan.length > 0 ? await phase(triplePlan) : [];
-  const results = [...singleResults, ...pairResults, ...tripleResults];
+  const allFamilyFactorial = historicalFamilyFactorialConfigs();
+  const familyFactorialPlan = options.familyFactorial ? allFamilyFactorial : [];
+  const familyFactorialResults = familyFactorialPlan.length > 0
+    ? await phase(familyFactorialPlan)
+    : [];
+  const results = [
+    ...singleResults, ...pairResults, ...tripleResults, ...familyFactorialResults,
+  ];
   const ranked = results.filter((row) => row.evidence !== undefined).sort((left, right) =>
     Number(right.evidence!.exact) - Number(left.evidence!.exact) ||
     left.evidence!.differing_halfwords - right.evidence!.differing_halfwords ||
@@ -528,7 +574,8 @@ async function main(): Promise<void> {
     policy: {
       families: ["routed", "gcc296", "old-agbcc", "pret-early-thumb", "gcc2951"],
       phases: ["routed-default", "single", ...(options.pairs ? ["compatible-pair"] : []),
-        ...(options.triples ? ["evidence-supported-triple"] : [])],
+        ...(options.triples ? ["evidence-supported-triple"] : []),
+        ...(options.familyFactorial ? ["historical-family-stock-factorial"] : [])],
       triple_threshold_halfwords: [2, 5],
       auto_promote: false,
     },
@@ -540,8 +587,12 @@ async function main(): Promise<void> {
       pairs_available: allPairs.length,
       triples_planned: triplePlan.length,
       triples_available: allTriples.length,
+      family_factorial_planned: familyFactorialPlan.length,
+      family_factorial_available: allFamilyFactorial.length,
       bounded_search_complete:
         options.pairs && pairPlan.length === allPairs.length &&
+        (!options.familyFactorial ||
+          familyFactorialPlan.length === allFamilyFactorial.length) &&
         (allTriples.length === 0 ||
           options.triples && triplePlan.length === allTriples.length),
     },

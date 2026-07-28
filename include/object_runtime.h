@@ -5,9 +5,8 @@
 #include "types.h"
 
 /*
- * Runtime object used by the event/action helpers around Func_0808ba1c.
- * Coordinates and movement values are 16.16 fixed-point unless noted.
- * Unnamed storage remains opaque until a stable role is established.
+ * イベント・動作処理用オブジェクト。
+ * 座標と移動量は特記がなければ16.16固定小数。
  */
 struct ObjectRuntime {
     u8 unknown_00[0x08];

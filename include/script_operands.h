@@ -3,10 +3,7 @@
 
 #include "types.h"
 
-/*
- * Mixed-width operands owned by the script interpreter.  The byte at 0x57 is
- * also the destination for comparisons performed by the field operations.
- */
+/* スクリプト演算ワーク。+0x57は比較結果の格納先。 */
 struct ScriptOperands {
     u32 script_address;      /* 0x00 */
     s16 signed_halfword;     /* 0x04 */

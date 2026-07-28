@@ -10,7 +10,7 @@ void Func_08028808(s32, s32, s32);
 s32 Func_08028574(s32);
 void Func_0802851c(void);
 
-static __inline__ s32 ReadTableValue(s8 *table, s32 index)
+static __inline__ s32 TblGet(s8 *table, s32 index)
 {
     return table[index];
 }
@@ -30,7 +30,7 @@ s32 Func_08028920(s32 input)
     triple = group * 3;
     table = Data_08037403;
     offset = triple << 1;
-    input = ReadTableValue(table, input + offset) - 1;
+    input = TblGet(table, input + offset) - 1;
     if (input < 0) {
         input = 0;
     }

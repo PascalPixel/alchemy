@@ -1,11 +1,11 @@
 #include "types.h"
 
-struct Table {
+struct EventTable {
     s16 header[32];
     s16 entries[1][33];
 };
 
-extern struct Table Data_080b41ac;
+extern struct EventTable Data_080b41ac;
 
 s32 Func_080b2764(s32 index)
 {

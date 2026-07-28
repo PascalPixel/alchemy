@@ -48,12 +48,21 @@ union AudioCommandSlot {
     PlayerCommand player;
 };
 
-/* One music-player track is 0x50 bytes. */
+/* 楽曲トラックは0x50バイト。+0x40は次のコマンド位置。 */
 struct MusicTrackState {
     u8 status;                    /* 0x00 */
-    u8 unknown01[0x1f];          /* 0x01 */
+    u8 unknown01[0x1d];          /* 0x01 */
+    u8 byte_1e;
+    u8 unknown1f;
     void *channel_head;           /* 0x20 */
-    u8 unknown24[0x1c];          /* 0x24 */
+    u8 byte_24;
+    u8 unknown25[3];
+    u32 word_28;
+    u8 byte_2c;
+    u8 byte_2d;
+    u8 byte_2e;
+    u8 byte_2f;
+    u8 unknown30[0x10];
     const u8 *command;            /* 0x40 */
     u8 unknown44[0x0c];          /* 0x44 */
 };

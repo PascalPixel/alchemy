@@ -1,13 +1,13 @@
 #include "types.h"
 
-typedef void (*Callback)(void *);
+typedef void (*WorkFunc)(void *);
 
 void Func_08004fe4(void *, void *, void *);
 
-void Func_080051e8(void *arg0, void *arg1)
+void Func_080051e8(void *src, void *dst)
 {
-    u8 data[48];
+    u8 work[48];
 
-    Func_08004fe4(arg0, arg1, data);
-    ((Callback)0x030002c0)(data);
+    Func_08004fe4(src, dst, work);
+    ((WorkFunc)0x030002c0)(work);
 }

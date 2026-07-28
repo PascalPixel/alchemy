@@ -1,29 +1,24 @@
 #include "types.h"
 
-volatile unsigned int Func_080030f8(s32);
+s32 Func_080030f8(s32);
+
 void Func_08006488(void)
 {
-  int new_var2;
-  unsigned int new_var;
-  u32 var_r5;
-  int new_var3;
-  var_r5 = 0;
-  if ((*((s32 *) 0x020023AC)) != 0)
-  {
-    new_var2 = 0x020023AC;
-    loop_2:
-    Func_080030f8(1);
+    s32 work;
+    u32 count;
+    s32 idle;
 
-    var_r5 += 1;
-    new_var = new_var2;
-    new_var3 = 0;
-    if (var_r5 <= 0x927BFU)
-    {
-      if ((*((s32 *) new_var)) != new_var3)
-      {
-        goto loop_2;
-      }
+    count = 0;
+    if (*(volatile s32 *)0x020023AC != 0) {
+        work = 0x020023AC;
+loop:
+        Func_080030f8(1);
+        count += 1;
+        idle = 0;
+        if (count <= 0x927BFU) {
+            if (*(volatile s32 *)work != idle) {
+                goto loop;
+            }
+        }
     }
-  }
 }
-

@@ -1,29 +1,27 @@
-#include "types.h"
+#include "object_dispatch.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+void Func_0800baf8(void *child, s32 value);
 
-void Func_0800c344(void *arg0, s32 arg1) {
-    s32 temp_r2;
-    s32 var_r6;
-    u8 *temp_r0;
-    u8 **var_r5;
+void Func_0800c344(struct DispatchObject *object, s32 value)
+{
+    s32 count;
+    void *child;
+    void **children;
 
-    if (arg0 != NULL) {
-        temp_r2 = 0xF & M2C_FIELD(arg0, u8 *, 0x54);
-        switch (temp_r2) {
+    if (object != 0) {
+        switch (object->kind & 0xf) {
         case 1:
-            Func_0800baf8(M2C_FIELD(arg0, u8 **, 0x50), arg1);
+            Func_0800baf8(object->target.child, value);
             return;
         case 2:
-            var_r5 = (u8 **) M2C_FIELD(arg0, u8 **, 0x50);
-            var_r6 = 3;
+            children = object->target.children;
+            count = 3;
             do {
-                temp_r0 = *var_r5++;
-                if (temp_r0 != NULL) {
-                    Func_0800baf8(temp_r0, arg1);
-                }
-                var_r6 -= 1;
-            } while (var_r6 >= 0);
+                child = *children++;
+                if (child != 0)
+                    Func_0800baf8(child, value);
+                count--;
+            } while (count >= 0);
             break;
         }
     }

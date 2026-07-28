@@ -591,19 +591,8 @@ AlchemyC_02000054:
 	.4byte 0x0200a0dc
 	.4byte 0x0200a0d0
 	.4byte 0x04000018
-	.4byte 0x4a0a4b09
-	.4byte 0xc202cb02
-	.4byte 0xc202cb02
-	.4byte 0x6013681b
-	.4byte 0x88534a06
-	.4byte 0x805333b0
-	.4byte 0x33b088d3
-	.4byte 0x895380d3
-	.4byte 0x815333b0
-	.4byte 0x00004770
-	.4byte 0x03001ad4
-	.2byte 0xa0d0
-	.2byte 0x0200
+AlchemyC_020003c0:
+	.space 0x30
 	push	{r5, r6, lr}
 	sub	sp, #12
 	bl	sub_02001492

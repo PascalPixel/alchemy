@@ -20,7 +20,12 @@
 // trailing function is invisible here while it still decides the gate.
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
-import { verifyCandidate, ROM_BASE } from "./match_m2c.ts";
+import {
+  verifyCandidate,
+  ROM_BASE,
+  type CandidateCompilerConfiguration,
+  type CandidateCompilerFamily,
+} from "./match_m2c.ts";
 import { linkedFunctionExtent } from "./integrate_matches.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
@@ -37,7 +42,13 @@ export function regionSize(stem: string): number | null {
   return null;
 }
 
-interface Options { source: string; rom: string; work: string; flags: string[] }
+interface Options {
+  source: string;
+  rom: string;
+  work: string;
+  flags: string[];
+  configuration: CandidateCompilerConfiguration;
+}
 
 function optionsOf(argv: string[]): Options {
   const options: Options = {
@@ -45,6 +56,7 @@ function optionsOf(argv: string[]): Options {
     rom: join(ROOT, "roms/gs1-en.gba"),
     work: join(ROOT, "work/candidate-show"),
     flags: [],
+    configuration: { family: "routed", removeFlags: [] },
   };
   const rest: string[] = [];
   for (let index = 0; index < argv.length; index++) {
@@ -55,8 +67,17 @@ function optionsOf(argv: string[]): Options {
     // allowlists in alchemy_gcc.ts are shared, so probing one here keeps a
     // trial flag out of every other region's build.
     else if (argument === "--flags") options.flags = argv[++index].split(",").filter(Boolean);
+    else if (argument === "--remove-flags") {
+      options.configuration.removeFlags = argv[++index].split(",").filter(Boolean);
+    } else if (argument === "--family") {
+      const family = argv[++index] as CandidateCompilerFamily;
+      if (!["routed", "gcc296", "old-agbcc"].includes(family)) {
+        throw new Error("--family must be routed, gcc296, or old-agbcc");
+      }
+      options.configuration.family = family;
+    }
     else if (argument === "-h" || argument === "--help") {
-      console.log("usage: candidate_show.ts <candidate.c> [--rom FILE] [--work DIR] [--flags -fa,-fb]");
+      console.log("usage: candidate_show.ts <candidate.c> [--rom FILE] [--work DIR] [--family routed|gcc296|old-agbcc] [--flags -fa,-fb] [--remove-flags -fa,-fb]");
       process.exit(0);
     } else rest.push(argument);
   }
@@ -120,7 +141,9 @@ async function main(): Promise<void> {
   const options = optionsOf(argv);
   const rom = readFileSync(options.rom);
   mkdirSync(options.work, { recursive: true });
-  const verification = await verifyCandidate(options.source, rom, options.work, options.flags, ROM_BASE);
+  const verification = await verifyCandidate(
+    options.source, rom, options.work, options.flags, ROM_BASE, "gs1", options.configuration,
+  );
 
   const stem = basename(options.source, ".c");
   const address = Number.parseInt(stem, 16);

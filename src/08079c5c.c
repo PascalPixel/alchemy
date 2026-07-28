@@ -1,17 +1,17 @@
 #include "types.h"
 
 s32 Func_08079b24(s32, s32);
-s32 Func_08079c5c(s32 arg0, s32 arg1, s32 arg2)
+s32 Func_08079c5c(s32 value, s32 no, s32 multiplier)
 {
-  s32 var_r0;
-  unsigned int new_var;
-  new_var = Func_08079b24((arg1 * 2) - 0xC8, 0) * arg0;
-  new_var = arg2 * new_var;
-  var_r0 = new_var;
-  if (var_r0 < 0)
-  {
-    var_r0 += 0xFFFF;
-  }
-  return var_r0 >> 0x10;
-}
+    s32 result;
+    u32 product;
 
+    product = (u32)Func_08079b24(
+        (s32)((u32)no * 2 - 0xC8), 0) * (u32)value;
+    product = (u32)multiplier * product;
+    result = (s32)product;
+    if (result < 0) {
+        result = (s32)((u32)result + 0xFFFF);
+    }
+    return result >> 0x10;
+}

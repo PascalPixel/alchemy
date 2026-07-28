@@ -1,17 +1,24 @@
+#include "owner_state.h"
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+struct Owner_08079ae8 {
+    u8 unknown_000[0x24];
+    u8 data_024[0xd4];
+    u8 values_f8[0x30];
+    u8 value_128;
+    s8 value_129;
+};
 
-void *Func_08077394();
 s32 Func_08078bf0(s32);
 s32 Func_080798e0(s32, void *);
-s8 Func_080799b0(u8, s32);
+s8 Func_080799b0(u8, const u8 *);
 
-void Func_08079ae8(s32 arg0) {
-    void *temp_r0;
+void Func_08079ae8(s32 owner_no)
+{
+    struct Owner_08079ae8 *owner;
 
-    temp_r0 = Func_08077394();
-    M2C_FIELD(temp_r0, s8 *, 0x129) = Func_080799b0(M2C_FIELD(temp_r0, u8 *, 0x128), temp_r0 + 0xF8);
-    Func_08078bf0(arg0);
-    Func_080798e0(arg0, temp_r0 + 0x24);
+    owner = Func_08077394(owner_no);
+    owner->value_129 = Func_080799b0(owner->value_128, owner->values_f8);
+    Func_08078bf0(owner_no);
+    Func_080798e0(owner_no, owner->data_024);
 }

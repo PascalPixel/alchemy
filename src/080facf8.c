@@ -6,11 +6,11 @@ extern u8 Data_080fb92c[];
 extern s16 Data_080fb9b0[];
 extern u8 Data_080fb9c8[];
 
-s32 Func_080facf8(s32 arg0, s32 arg1, s32 arg2)
+s32 Func_080facf8(s32 kind_arg, s32 position_arg, s32 fraction_arg)
 {
-    u8 kind = arg0;
-    u8 position = arg1;
-    u8 fraction = arg2;
+    u8 kind = kind_arg;
+    u8 position = position_arg;
+    u8 fraction = fraction_arg;
 
     if (kind == 4) {
         if (position <= 20) {

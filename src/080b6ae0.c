@@ -5,33 +5,32 @@
 extern s32 Func_080770c0(s32);
 extern void *Func_08077008(s32);
 
-s32 Func_080b6ae0(s16 *arg0) {
-    s16 *var_r6;
-    s32 temp_r7;
-    s32 var_r0;
-    s32 var_r5;
-    s32 var_r7;
-    s32 var_r8;
+s32 Func_080b6ae0(s16 *entries) {
+    s16 *output;
+    s32 result;
+    s32 id;
+    s32 limit;
+    s32 count;
 
-    var_r6 = arg0;
-    var_r8 = 0;
-    var_r7 = 6;
-    var_r0 = 0;
-    if (var_r6 != NULL) {
+    output = entries;
+    count = 0;
+    limit = 6;
+    result = 0;
+    if (output != NULL) {
         if (Func_080770c0(0x16C) != 0) {
-            var_r7 = 3;
+            limit = 3;
         }
-        var_r5 = 0x80;
-        var_r7 += 0x80;
-        for (; var_r5 < var_r7; var_r5 += 1) {
-            if (M2C_FIELD(Func_08077008(var_r5), u8 *, 0x12A) != 0) {
-                *var_r6 = (s16) var_r5;
-                var_r8 += 1;
-                var_r6 += 1;
+        id = 0x80;
+        limit += 0x80;
+        for (; id < limit; id += 1) {
+            if (M2C_FIELD(Func_08077008(id), u8 *, 0x12A) != 0) {
+                *output = (s16) id;
+                count += 1;
+                output += 1;
             }
         }
-        *var_r6 = 0xFF;
-        var_r0 = var_r8;
+        *output = 0xFF;
+        result = count;
     }
-    return var_r0;
+    return result;
 }

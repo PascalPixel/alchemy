@@ -10,20 +10,20 @@ void Func_080f9010(s32);
 void Func_0809748c(void);
 
 void Func_080985a8(void) {
-    s32 temp_r5;
-    u8 *ptr23;
-    u8 val;
+    u8 *object;
+    u8 *flags;
+    u8 value;
 
-    temp_r5 = M2C_FIELD(*(void **)0x03001F30, s32 *, 0x14);
-    if (temp_r5 != 0) {
+    object = M2C_FIELD(*(void **)0x03001F30, u8 **, 0x14);
+    if (object != 0) {
         Func_08098698();
-        Func_08009080(temp_r5, 2);
-        M2C_FIELD(temp_r5, s8 *, 0x59) = 0;
-        Func_080091e0((void *) temp_r5, 0);
-        ptr23 = (u8 *) (temp_r5 + 0x23);
-        val = 2;
-        val |= *ptr23;
-        *ptr23 = val;
+        Func_08009080((s32)object, 2);
+        object[0x59] = 0;
+        Func_080091e0(object, 0);
+        flags = object + 0x23;
+        value = 2;
+        value |= *flags;
+        *flags = value;
         Func_080030f8(0xAU);
         Func_080f9010(0x7E);
         Func_080030f8(0x28U);

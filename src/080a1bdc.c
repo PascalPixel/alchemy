@@ -1,27 +1,24 @@
-#include "types.h"
+#include "m7_interfaces.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-void Func_080a1c2c(s32 *, s32, s32, s32, s32);
-
-void Func_080a1bdc(s32 arg0, s32 arg1, s32 arg2) {
+void Func_080a1bdc(s32 origin_x, s32 origin_y, s32 phase) {
     s32 _v1d16;
     s32 _v1t36;
     s32 _v1d75;
-    s32 *var_r7;
-    s32 *var_r5;
-    s32 temp_r3;
-    s32 var_r6;
+    struct Object080a1c **scan;
+    struct Object080a1c **slot;
+    struct Object080a1c *object;
+    s32 index;
 
-    var_r6 = 0;
-    _v1t36 = (*(s32 *)0x03001F2C); var_r5 = _v1t36 + 0x48;
-    var_r7 = var_r5;
+    index = 0;
+    _v1t36 = (*(s32 *)0x03001F2C);
+    slot = (struct Object080a1c **)(_v1t36 + 0x48);
+    scan = slot;
     do {
-        temp_r3 = *var_r7++;
-        if (temp_r3 != 0) {
-            Func_080a1c2c(var_r5, var_r6, arg0, arg1, arg2);
+        object = *scan++;
+        if (object != NULL) {
+            Func_080a1c2c(slot, index, origin_x, origin_y, phase);
         }
-        _v1d75 = 0; var_r6 += 1;
-        _v1d16 = 0; (s32) var_r5 += 4;
-    } while (var_r6 <= 0x1F);
+        _v1d75 = 0; index += 1;
+        _v1d16 = 0; slot++;
+    } while (index <= 0x1F);
 }

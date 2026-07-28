@@ -10,24 +10,24 @@ void Func_080030f8(s32);
 
 extern void *Data_03001f2c;
 
-s32 Func_080a355c(s32 arg0)
+s32 Func_080a355c(s32 slot)
 {
     register void *base = Data_03001f2c;
-    register s32 offset = arg0 + 28;
+    register s32 offset = slot + 28;
     s32 result = 0;
-    register s32 value;
-    u8 *byteField;
+    register s32 selection;
+    u8 *selectionState;
 
-    value = *(s8 *)(base + offset);
+    selection = *(s8 *)(base + offset);
     Func_08015278(*(s32 *)(base + 44));
-    byteField = base + 2;
-    byteField[offset] = *(u8 *)(base + 0x219);
-    if (value == -1) {
+    selectionState = base + 2;
+    selectionState[offset] = *(u8 *)(base + 0x219);
+    if (selection == -1) {
         *(u8 *)(base + offset) = result;
         offset = 0;
     } else {
-        offset = value * 2;
-        Func_080a1ac0(value * 24 - 10, 16);
+        offset = selection * 2;
+        Func_080a1ac0(selection * 24 - 10, 16);
     }
 
     {
@@ -39,8 +39,8 @@ s32 Func_080a355c(s32 arg0)
         Func_080a3ddc(result, (void *)offset, 0);
     result = Func_080a35f8(base + 0x208, (void *)offset);
     {
-        s32 argOffset = arg0 * 4 + 20;
-        Func_080a17c4(*(s32 *)(base + argOffset));
+        s32 objectOffset = slot * 4 + 20;
+        Func_080a17c4(*(s32 *)(base + objectOffset));
     }
     Func_080030f8(1);
     return result;

@@ -167,6 +167,37 @@ struct PlayerBootstrapRecord {
     u16 config;                        /* 0x0a */
 };
 
+#define AUDIO_ENGINE_OFFSET(type, field) \
+    ((u32)&(((type *)0)->field))
+
+typedef char MusicTrackState_size[
+    sizeof(struct MusicTrackState) == 0x50 ? 1 : -1
+];
+typedef char MusicTrackState_command_offset[
+    AUDIO_ENGINE_OFFSET(struct MusicTrackState, command) == 0x40 ? 1 : -1
+];
+typedef char MusicPlayerState_size[
+    sizeof(struct MusicPlayerState) == 0x40 ? 1 : -1
+];
+typedef char MusicPlayerState_tracks_offset[
+    AUDIO_ENGINE_OFFSET(struct MusicPlayerState, tracks) == 0x2c ? 1 : -1
+];
+typedef char MusicPlayerState_ident_offset[
+    AUDIO_ENGINE_OFFSET(struct MusicPlayerState, ident) == 0x34 ? 1 : -1
+];
+typedef char CgbChannel_size[
+    sizeof(struct CgbChannel) == 0x40 ? 1 : -1
+];
+typedef char AudioEngineState_size[
+    sizeof(struct AudioEngineState) == 0xfb0 ? 1 : -1
+];
+typedef char AudioEngineState_direct_channels_offset[
+    AUDIO_ENGINE_OFFSET(struct AudioEngineState, direct_channels) == 0x50
+        ? 1 : -1
+];
+
+#undef AUDIO_ENGINE_OFFSET
+
 void Func_080fa2a0(void);
 void Func_080fa55c(struct CgbChannel *channels);
 void Func_080fa6a0(struct AudioEngineState *audio_state);

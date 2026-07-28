@@ -6,21 +6,21 @@ u8 *Func_08077080(s32);
 s32 Func_0808a488(u8);
 
 s32 Func_080a5fe0(void) {
-    u8 *r5;
-    s32 temp_r3;
-    s32 var_r0;
+    u8 *entry;
+    s32 difference;
+    s32 result;
 
-    r5 = Func_08077080((s32) (0x3FFF & *(u16 *)(*(u8 **)0x03001F2C + 0x178)));
-    if (Func_0808a488(r5[0xC]) != 0) {
+    entry = Func_08077080((s32) (0x3FFF & *(u16 *)(*(u8 **)0x03001F2C + 0x178)));
+    if (Func_0808a488(entry[0xC]) != 0) {
         return 0;
     }
-    var_r0 = 2;
-    if (r5[8] != 0xFF) {
-        u8 b = r5[0];
-        temp_r3 = b ^ 2;
-        var_r0 = (0 - temp_r3) | temp_r3;
-        var_r0 = (s32) ((u32) var_r0 >> 0x1F);
-        var_r0 = 1 - var_r0;
+    result = 2;
+    if (entry[8] != 0xFF) {
+        u8 kind = entry[0];
+        difference = kind ^ 2;
+        result = (0 - difference) | difference;
+        result = (s32) ((u32) result >> 0x1F);
+        result = 1 - result;
     }
-    return var_r0;
+    return result;
 }

@@ -1,17 +1,24 @@
+#include "owner_state.h"
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+struct Owner_080792c4 {
+    u8 unknown_000[0x0f];
+    u8 level;
+    u8 unknown_010[0x114];
+    u32 value_124;
+};
 
-void *Func_08077394();
 u32 Func_08079008(s32 owner, s32 level);
 s32 Func_0807905c(s32, s32);
 
-s32 Func_080792c4(s32 arg0, s32 arg1) {
-    void *temp_r0;
+s32 Func_080792c4(s32 owner_no, s32 value)
+{
+    struct Owner_080792c4 *owner;
 
-    temp_r0 = Func_08077394();
-    if (((u32) M2C_FIELD(temp_r0, u32 *, 0x124) >= Func_08079008(arg0, M2C_FIELD(temp_r0, u8 *, 0xF) + 1)) && (Func_0807905c(arg0, arg1) != 0)) {
-        return arg1;
+    owner = Func_08077394(owner_no);
+    if ((owner->value_124 >= Func_08079008(owner_no, owner->level + 1)) &&
+        (Func_0807905c(owner_no, value) != 0)) {
+        return value;
     }
     return 0;
 }

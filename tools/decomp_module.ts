@@ -7,9 +7,9 @@ import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node
 import { basename, dirname, join } from "node:path";
 import {
   cflagsForTargetSource,
-  compilerCommandForTargetSource,
   externalSymbol,
   externalSymbolAssembly,
+  sourceToAssemblyPlan,
   usesAgbccCompiler,
 } from "./alchemy_gcc.ts";
 import { M2C_PREAMBLE } from "./match_m2c.ts";
@@ -94,9 +94,14 @@ async function main(): Promise<void> {
   const symbolsSource = `${prefix}.symbols.s`, symbolsObject = `${prefix}.symbols.o`;
   const elf = `${prefix}.elf`, binary = `${prefix}.bin`;
   writeFileSync(cFile, combined);
-  await run(compilerCommandForTargetSource(
-    "gs1", routedSources[0], ...routing[0].flags, "-S", "-o", assembly, cFile,
-  ));
+  const compilePlan = sourceToAssemblyPlan({
+    target: "gs1",
+    routingSource: routedSources[0],
+    input: cFile,
+    output: assembly,
+    preprocessedOutput: `${prefix}.i`,
+  });
+  for (const step of compilePlan.steps) await run([...step.command]);
   await run(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", object, assembly]);
   const undefinedNames = (await run(["arm-none-eabi-nm", "-u", object])).split(/\r?\n/).filter(Boolean)
     .map((line) => line.trim().split(/\s+/).at(-1)!);

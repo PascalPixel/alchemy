@@ -3,10 +3,9 @@ import { canonicalJson } from "./canonical_json.ts";
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
 import {
-  cflagsForTargetSource,
-  compilerCommandForTargetSource,
   externalSymbol,
   externalSymbolAssembly,
+  sourceToAssemblyPlan,
   type CompilerTarget,
 } from "./alchemy_gcc.ts";
 import {
@@ -94,12 +93,14 @@ async function compileSource(
   const name = stem(source);
   const assembly = join(objectDir, `${name}.s`);
   const object = join(objectDir, `${name}.o`);
-  await run(compilerCommandForTargetSource(
-    compiler,
-    source,
-    ...cflagsForTargetSource(compiler, source),
-    "-S", "-o", assembly, source,
-  ));
+  const plan = sourceToAssemblyPlan({
+    target: compiler,
+    routingSource: source,
+    input: source,
+    output: assembly,
+    preprocessedOutput: join(objectDir, `${name}.i`),
+  });
+  for (const step of plan.steps) await run([...step.command]);
   await run([
     "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
     "-o", object, assembly,

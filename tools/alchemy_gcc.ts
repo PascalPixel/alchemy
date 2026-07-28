@@ -749,6 +749,126 @@ export function compilerCommandForTargetSource(
   ];
 }
 
+// A compilation plan is the canonical boundary between compiler policy and
+// process execution. `routingSource` identifies the translation unit whose
+// evidenced compiler family/flags must be used; `input` is the file that is
+// actually compiled. Keeping those names separate is essential for candidate
+// and corpus work, where a temporary source must compile exactly as the
+// eventual installed source would.
+export type CompilerFamily = "routed" | "gcc296" | "old-agbcc";
+
+export interface CompilerFlagMutations {
+  addFlags?: readonly string[];
+  removeFlags?: readonly string[];
+}
+
+export interface SourceToAssemblyPlanOptions {
+  target: CompilerTarget;
+  routingSource: string;
+  input: string;
+  output: string;
+  family?: CompilerFamily;
+  flags?: CompilerFlagMutations;
+  // old_agbcc consumes preprocessed input. Supplying this makes intermediate
+  // ownership explicit; otherwise it is placed beside the assembly output.
+  preprocessedOutput?: string;
+  dumpbase?: string;
+}
+
+export interface CompilerCommandStep {
+  kind: "preprocess" | "compile";
+  command: readonly string[];
+}
+
+export interface SourceToAssemblyPlan {
+  target: CompilerTarget;
+  requestedFamily: CompilerFamily;
+  family: Exclude<CompilerFamily, "routed">;
+  routingSource: string;
+  input: string;
+  output: string;
+  compilerInput: string;
+  flags: readonly string[];
+  steps: readonly CompilerCommandStep[];
+}
+
+function mutatedCompilerFlags(
+  canonical: readonly string[],
+  mutations: CompilerFlagMutations = {},
+): string[] {
+  const added = [...(mutations.addFlags ?? [])];
+  const removed = new Set(mutations.removeFlags ?? []);
+  for (const flag of added) {
+    if (removed.has(flag)) {
+      throw new Error(`compiler flag cannot be both added and removed: ${flag}`);
+    }
+  }
+  return [...canonical.filter((flag) => !removed.has(flag)), ...added];
+}
+
+function inferredPreprocessedOutput(output: string): string {
+  const extension = extname(output);
+  return extension === "" ? `${output}.i` : `${output.slice(0, -extension.length)}.i`;
+}
+
+export function sourceToAssemblyPlan(
+  options: SourceToAssemblyPlanOptions,
+): SourceToAssemblyPlan {
+  const requestedFamily = options.family ?? "routed";
+  const family = requestedFamily === "routed"
+    ? (usesAgbccCompiler(options.target, options.routingSource) ? "old-agbcc" : "gcc296")
+    : requestedFamily;
+  if (family === "old-agbcc" && options.target !== "gs1") {
+    throw new Error("old-agbcc is only approved for gs1");
+  }
+
+  const canonical = requestedFamily === "routed"
+    ? cflagsForTargetSource(options.target, options.routingSource)
+    : family === "old-agbcc"
+      ? AGBCC_CFLAGS
+      : cflagsForTarget(options.target);
+  const flags = mutatedCompilerFlags(canonical, options.flags);
+  const dumpbase = options.dumpbase ?? basename(options.routingSource);
+  let compilerInput = options.input;
+  const steps: CompilerCommandStep[] = [];
+
+  if (family === "old-agbcc") {
+    validateAgbccBundle();
+    compilerInput = options.preprocessedOutput ?? inferredPreprocessedOutput(options.output);
+    steps.push({
+      kind: "preprocess",
+      command: directPreprocessorCommand(options.input, compilerInput),
+    });
+    steps.push({
+      kind: "compile",
+      command: [
+        AGBCC_DRIVER, compilerInput, "-dumpbase", dumpbase,
+        ...flags, "-o", options.output,
+      ],
+    });
+  } else {
+    steps.push({
+      kind: "compile",
+      command: compilerCommandForTarget(
+        options.target,
+        ...flags, "-S", "-o", options.output, options.input,
+      ),
+    });
+  }
+
+  return {
+    target: options.target,
+    requestedFamily,
+    family,
+    routingSource: options.routingSource,
+    input: options.input,
+    output: options.output,
+    compilerInput,
+    flags,
+    steps,
+  };
+}
+
 // Hot-search pipeline: invoke the approved preprocessor and cc1 directly, saving
 // one driver process per candidate. These arguments are the exact subprocesses
 // emitted by xgcc for CFLAGS; ordinary builds use the source-aware command API.
@@ -1056,6 +1176,96 @@ function selfTest(): void {
       cflagsForTargetSource("gs1", join(ROOT, "assets/code/resource_381/c/020000a0.c"))
         .includes("-mcall-arg0-move-first")) {
     throw new Error("overlay call-argument unrelated-source routing self-test failed");
+  }
+
+  const plannedGcc = sourceToAssemblyPlan({
+    target: "gs1",
+    routingSource: "/installed/08006088.c",
+    input: "/work/candidate.c",
+    output: "/work/candidate.s",
+    flags: {
+      removeFlags: ["-fcall-used-r4"],
+      addFlags: ["-ffixed-r5"],
+    },
+  });
+  if (plannedGcc.requestedFamily !== "routed" ||
+      plannedGcc.family !== "gcc296" ||
+      plannedGcc.steps.length !== 1 ||
+      plannedGcc.steps[0].kind !== "compile" ||
+      plannedGcc.compilerInput !== "/work/candidate.c" ||
+      plannedGcc.steps[0].command.at(-1) !== "/work/candidate.c" ||
+      !plannedGcc.flags.includes("-fno-rerun-cse-after-loop") ||
+      !plannedGcc.flags.includes("-fno-regmove") ||
+      !plannedGcc.flags.includes("-ffixed-r5") ||
+      plannedGcc.flags.includes("-fcall-used-r4")) {
+    throw new Error("source-to-assembly GCC routing/mutation self-test failed");
+  }
+
+  const plannedAgbcc = sourceToAssemblyPlan({
+    target: "gs1",
+    routingSource: "/installed/080fa514.c",
+    input: "/work/candidate.c",
+    output: "/work/candidate.s",
+    preprocessedOutput: "/work/candidate.preprocessed.i",
+  });
+  if (plannedAgbcc.requestedFamily !== "routed" ||
+      plannedAgbcc.family !== "old-agbcc" ||
+      plannedAgbcc.compilerInput !== "/work/candidate.preprocessed.i" ||
+      plannedAgbcc.steps.length !== 2 ||
+      plannedAgbcc.steps[0].kind !== "preprocess" ||
+      plannedAgbcc.steps[1].kind !== "compile" ||
+      plannedAgbcc.steps[0].command.at(-2) !== "/work/candidate.c" ||
+      plannedAgbcc.steps[0].command.at(-1) !== "/work/candidate.preprocessed.i" ||
+      plannedAgbcc.steps[1].command[1] !== "/work/candidate.preprocessed.i" ||
+      plannedAgbcc.steps[1].command.at(-1) !== "/work/candidate.s" ||
+      !plannedAgbcc.flags.includes("-O1") ||
+      !plannedAgbcc.flags.includes("-mcommutative-copy-constant")) {
+    throw new Error("source-to-assembly old_agbcc routing/preprocessing self-test failed");
+  }
+
+  const forcedAgbcc = sourceToAssemblyPlan({
+    target: "gs1",
+    routingSource: "/installed/not-routed.c",
+    input: "/work/forced.c",
+    output: "/work/forced.s",
+    family: "old-agbcc",
+  });
+  if (forcedAgbcc.family !== "old-agbcc" ||
+      forcedAgbcc.flags.includes("-mcommutative-copy-constant") ||
+      forcedAgbcc.compilerInput !== "/work/forced.i") {
+    throw new Error("source-to-assembly forced old_agbcc self-test failed");
+  }
+
+  let rejectedConflict = false;
+  try {
+    sourceToAssemblyPlan({
+      target: "gs1",
+      routingSource: "/installed/080000c0.c",
+      input: "/work/candidate.c",
+      output: "/work/candidate.s",
+      flags: { addFlags: ["-O1"], removeFlags: ["-O1"] },
+    });
+  } catch (error) {
+    rejectedConflict = String(error).includes("both added and removed");
+  }
+  if (!rejectedConflict) {
+    throw new Error("source-to-assembly conflicting mutation self-test failed");
+  }
+
+  let rejectedGs2Agbcc = false;
+  try {
+    sourceToAssemblyPlan({
+      target: "gs2",
+      routingSource: "/installed/080000c0.c",
+      input: "/work/candidate.c",
+      output: "/work/candidate.s",
+      family: "old-agbcc",
+    });
+  } catch (error) {
+    rejectedGs2Agbcc = String(error).includes("only approved for gs1");
+  }
+  if (!rejectedGs2Agbcc) {
+    throw new Error("source-to-assembly GS2 old_agbcc rejection self-test failed");
   }
   console.log(`self-test=ok agbcc_sources=${expected.length} grouped_dma_sources=${groupedDma.length} overlay_call_arg_sources=${callArg0MoveFirstOverlays.length}`);
 }

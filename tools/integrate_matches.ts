@@ -12,10 +12,9 @@ import {
 import { tmpdir } from "node:os";
 import { basename, dirname, join } from "node:path";
 import {
-  cflagsForTargetSource,
-  compilerCommandForTargetSource,
   externalSymbol,
   externalSymbolAssembly,
+  sourceToAssemblyPlan,
 } from "./alchemy_gcc.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
@@ -89,10 +88,17 @@ function linkedBytes(stem: string, source: string, scratch: string, kind: "asm" 
        allowlists in alchemy_gcc.ts key off the bare stem, so route the flags
        through the name the file will carry once installed. */
     const routed = join(dirname(source), `${stem}.c`);
-    const compiled = run(compilerCommandForTargetSource(
-      "gs1", routed, ...cflagsForTargetSource("gs1", routed), "-S", "-o", listing, source,
-    ));
-    if (compiled.code !== 0) throw new Error(`compiler failed: ${commandError(compiled)}`);
+    const plan = sourceToAssemblyPlan({
+      target: "gs1",
+      routingSource: routed,
+      input: source,
+      output: listing,
+      preprocessedOutput: `${prefix}.i`,
+    });
+    for (const step of plan.steps) {
+      const compiled = run([...step.command]);
+      if (compiled.code !== 0) throw new Error(`${step.kind} failed: ${commandError(compiled)}`);
+    }
   } else {
     copyFileSync(source, listing);
   }

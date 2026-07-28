@@ -1,23 +1,20 @@
-#include "types.h"
+#include "script_operands.h"
 
-void Func_0800e810(void *arg0, s32 arg1, int arg2)
+void Func_0800e810(struct ScriptOperands *work, s32 operation, s32 value)
 {
-  s8 var_r1;
-  if (arg1 == 0)
-  {
-    *((u16 *) (((u8 *) arg0) + 0x5E)) = arg2;
-    return;
-  }
-  if (arg1 == 1)
-  {
-    *((u16 *) (((u8 *) arg0) + 0x5E)) = (u16) ((*((u16 *) (((u8 *) arg0) + 0x5E))) + arg2);
-    return;
-  }
-  var_r1 = 0;
-  if (((s16) (*((u16 *) (((u8 *) arg0) + 0x5E)))) == ((s16) arg2))
-  {
-    var_r1 = 1;
-  }
-  *((s8 *) (((u8 *) arg0) + 0x57)) = var_r1;
-}
+    s8 result;
 
+    if (operation == 0) {
+        work->halfword_5e = value;
+        return;
+    }
+    if (operation == 1) {
+        work->halfword_5e = work->halfword_5e + value;
+        return;
+    }
+    result = 0;
+    if ((s16)work->halfword_5e == (s16)value) {
+        result = 1;
+    }
+    work->comparison_result = result;
+}

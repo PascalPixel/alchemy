@@ -15,6 +15,7 @@ void Func_08096b88(void *owner)
     s32 value;
 
     state = *(u8 *)((u8 *)owner + 84);
+    /* 有効な所有物へ共有値を6で割った余りを配る。 */
     if (state == 1) {
         target = *(void **)((u8 *)owner + 80);
         if (target != 0 && (*(u8 *)((u8 *)target + 29) & state) == 0) {

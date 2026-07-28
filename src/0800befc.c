@@ -3,16 +3,17 @@
 s32 Func_080030f8(s32);
 void Func_0800be70(u8 *object, u32 position);
 
-void Func_0800befc(s32 arg0) {
-    u32 var_r6;
+void Func_0800befc(u8 *object)
+{
+    u32 pos;
 
-    var_r6 = 0;
+    pos = 0;
     do {
-        Func_0800be70(arg0, var_r6);
-        Func_0800be70(arg0, var_r6 + 1);
-        Func_0800be70(arg0, var_r6 + 2);
-        Func_0800be70(arg0, var_r6 + 3);
-        var_r6 += 4;
+        Func_0800be70(object, pos);
+        Func_0800be70(object, pos + 1);
+        Func_0800be70(object, pos + 2);
+        Func_0800be70(object, pos + 3);
+        pos += 4;
         Func_080030f8(1);
-    } while (var_r6 <= 0x7FU);
+    } while (pos <= 0x7f);
 }

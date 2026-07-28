@@ -5,13 +5,13 @@
 s32 Func_080090d0();
 
 void Func_08095bd8(void *arg0) {
-    s32 temp_r2;
+    s32 position;
 
-    temp_r2 = M2C_FIELD(arg0, s32 *, 0x18) + 0xFFFFFE40;
+    position = M2C_FIELD(arg0, s32 *, 0x18) + 0xFFFFFE40;
     M2C_FIELD(arg0, s32 *, 0x1C) = (s32) (M2C_FIELD(arg0, s32 *, 0x1C) + 0xFFFFFE40);
     M2C_FIELD(arg0, u16 *, 6) = (u16) (M2C_FIELD(arg0, u16 *, 6) + 0x2000);
-    M2C_FIELD(arg0, s32 *, 0x18) = temp_r2;
-    if (temp_r2 < 0x3000) {
+    M2C_FIELD(arg0, s32 *, 0x18) = position;
+    if (position < 0x3000) {
         Func_080090d0();
     }
 }

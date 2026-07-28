@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-/* スクリプト演算ワーク。+0x57は比較結果の格納先。 */
+/* スクリプト演算ワーク。混在幅の値はROM上の配置どおりに保持する。 */
 struct ScriptOperands {
     u32 script_address;      /* 0x00 */
     s16 signed_halfword;     /* 0x04 */
@@ -36,6 +36,41 @@ struct ScriptOperands {
     u8 byte_59;
     u8 byte_5a;
     u8 byte_5b;
+    u8 byte_5c;
+    u8 byte_5d;
+    u16 halfword_5e;
+    u8 byte_60;
+    u8 byte_61;
+    u8 byte_62;
+    u8 byte_63;
+    s16 signed_halfword_64;
+    s16 signed_halfword_66;
+    u32 word_68;
+    u32 word_6c;
 };
+
+#define SCRIPT_OPERANDS_OFFSET(field) \
+    ((u32)&(((struct ScriptOperands *)0)->field))
+
+typedef char ScriptOperands_comparison_result_offset[
+    SCRIPT_OPERANDS_OFFSET(comparison_result) == 0x57 ? 1 : -1
+];
+typedef char ScriptOperands_halfword_5e_offset[
+    SCRIPT_OPERANDS_OFFSET(halfword_5e) == 0x5e ? 1 : -1
+];
+typedef char ScriptOperands_signed_halfword_64_offset[
+    SCRIPT_OPERANDS_OFFSET(signed_halfword_64) == 0x64 ? 1 : -1
+];
+typedef char ScriptOperands_word_68_offset[
+    SCRIPT_OPERANDS_OFFSET(word_68) == 0x68 ? 1 : -1
+];
+typedef char ScriptOperands_word_6c_offset[
+    SCRIPT_OPERANDS_OFFSET(word_6c) == 0x6c ? 1 : -1
+];
+typedef char ScriptOperands_size[
+    sizeof(struct ScriptOperands) == 0x70 ? 1 : -1
+];
+
+#undef SCRIPT_OPERANDS_OFFSET
 
 #endif

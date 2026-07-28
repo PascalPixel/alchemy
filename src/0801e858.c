@@ -1,27 +1,26 @@
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
 s32 Func_08002df0(s16 *);
 s16 *Func_08004970(s32 arg0);
 s32 Func_08017aa4(s16 *, s32, s32, s32);
 
-void Func_0801e858(u8 *arg0, s32 arg1, s32 arg2, s32 arg3) {
-    s16 *temp_r0;
-    s16 *var_r2;
-    u8 *var_r5;
+void Func_0801e858(u8 *text, s32 arg1, s32 arg2, s32 arg3)
+{
+    s16 *buffer;
+    s16 *output;
+    u8 *input;
 
-    var_r5 = arg0;
-    temp_r0 = Func_08004970(0x200);
-    var_r2 = temp_r0;
-    if (*var_r5 != 0) {
+    input = text;
+    buffer = Func_08004970(0x200);
+    output = buffer;
+    if (*input != 0) {
         do {
-            *var_r2 = (s16) *var_r5;
-            var_r5 += 1;
-            var_r2 += 1;
-        } while (*var_r5 != 0);
+            *output = (s16)*input;
+            input++;
+            output++;
+        } while (*input != 0);
     }
-    *var_r2 = 0;
-    Func_08017aa4(temp_r0, arg1, arg2, arg3);
-    Func_08002df0(temp_r0);
+    *output = 0;
+    Func_08017aa4(buffer, arg1, arg2, arg3);
+    Func_08002df0(buffer);
 }

@@ -1,8 +1,7 @@
+#include "text_render_runtime.h"
 #include "types.h"
 
-void Func_0801e9d4(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
-
-void Func_08020150(s32 arg0, s32 arg1)
+void Func_08020150(struct TextRenderWork *arg0, s32 arg1)
 {
     s32 offset;
     s32 remaining;

@@ -7,7 +7,8 @@ s32 Func_0800bacc(u8 *arg0, s32 arg1)
     s32 count;
 
     if (initial != 0) {
-        arg1 <<= 4;
+        /* 有効な登録項目だけへ下位16bitを4bit左へずらして設定する。 */
+        arg1 = (s32)((u32)arg1 << 4);
         cursor = (void **)(arg0 + 0x28);
         count = initial;
         do {

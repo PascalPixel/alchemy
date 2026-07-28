@@ -2,19 +2,26 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 Func_0800b798(s32 arg0) {
-    u32 var_r1;
-    void *var_r2;
+struct LookupEntry {
+    s32 key;
+    s32 value;
+};
 
-    var_r2 = *(s32 *)0x03001E68 + 0x1C;
-    var_r1 = 0;
+s32 Func_0800b798(s32 key)
+{
+    u32 no;
+    struct LookupEntry *entry;
+
+    entry = (struct LookupEntry *)(*(u32 *)0x03001e68 + 0x1c);
+    no = 0;
 loop_1:
-    if (M2C_FIELD(var_r2, s32 *, 0) == arg0) {
-        return M2C_FIELD(var_r2, s32 *, 4);
+    if (entry->key == key) {
+        return entry->value;
     }
-    var_r1 += 1;
-    var_r2 += 8;
-    if (var_r1 > 7U) {
+    no++;
+    entry++;
+    /* 表は8要素で終わる。 */
+    if (no > 7) {
         return 0;
     }
     goto loop_1;

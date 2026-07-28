@@ -7,10 +7,10 @@ void Func_08099738(void);
 void Func_0809b648(void);
 
 void Func_08096af0(void) {
-    u32 temp_r3;
+    u32 type;
 
-    temp_r3 = (s16) M2C_FIELD(*(void **)0x03001F30, s16 *, 0x1E);
-    switch (temp_r3) {
+    type = (s16) M2C_FIELD(*(void **)0x03001F30, s16 *, 0x1E);
+    switch (type) {
     case 8:
         Func_080984c0();
         return;

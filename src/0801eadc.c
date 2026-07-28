@@ -1,3 +1,4 @@
+#include "render_input.h"
 #include "types.h"
 
 void *Func_08015e8c(void);
@@ -7,12 +8,6 @@ s32 Func_08016584(void *, void *);
 struct TableEntry {
     u16 unused;
     u16 value;
-};
-
-struct Input {
-    u8 pad[12];
-    u16 x;
-    u16 y;
 };
 
 struct Output {
@@ -29,7 +24,12 @@ struct Output {
     u32 table;
 };
 
-s32 Func_0801eadc(s32 arg0, s32 arg1, struct Input *arg2, s32 arg3, s32 arg4)
+void *Func_0801eadc(
+    s32 arg0,
+    s32 arg1,
+    struct RenderInput *arg2,
+    s32 arg3,
+    s32 arg4)
 {
     s32 x;
     struct Output *output;
@@ -44,6 +44,7 @@ s32 Func_0801eadc(s32 arg0, s32 arg1, struct Input *arg2, s32 arg3, s32 arg4)
     y = arg4 + (arg2->y * 8) + 8;
     x &= 0x1ff;
     y &= 0xff;
+    /* Xをbit16～24、Yをbit0～7へ置き、arg1のフラグを重ねる。 */
     output->packed = (x << 16) | y | arg1;
     output->table = ((struct TableEntry *)0x03001b10)[arg0].value >> 5;
     output->sentinel = 0xff;
@@ -54,5 +55,5 @@ s32 Func_0801eadc(s32 arg0, s32 arg1, struct Input *arg2, s32 arg3, s32 arg4)
     output->one4 = 1;
     output->one5 = 1;
     Func_08016584(arg2, output);
-    return (s32)output;
+    return output;
 }

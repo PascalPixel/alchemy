@@ -6,5 +6,7 @@ void Func_0801e858(u8 *arg0, s32 arg1, s32 arg2, s32 arg3);
 void Func_0801e9a0(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 {
     u8 data[16];
+
+    /* 16バイト一時領域を介して次の処理へ渡す。 */
     Func_0801e858(Func_08017dd4(data, arg0, arg1), arg2, arg3, arg4);
 }

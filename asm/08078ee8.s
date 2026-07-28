@@ -142,4 +142,3 @@ Func_08078ee8:
 	pop	{r5, r6, r7}
 	pop	{r0}
 	bx	r0
-	bx	lr

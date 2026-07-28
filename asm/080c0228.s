@@ -63,8 +63,3 @@ Func_080c0228:
 	.4byte 0x03001ef8
 	.4byte 0x0000f081
 	.4byte 0x06006000
-	ldr	r3, [pc, #4]
-	movs	r2, #0
-	strh	r2, [r3, #0]
-	bx	lr
-	.4byte 0x04000012

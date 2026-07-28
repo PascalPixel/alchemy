@@ -153,4 +153,3 @@ Func_080f2d54:
 	.4byte 0x06004100
 	.4byte 0x840000d0
 	.4byte 0x03001c94
-	bx	lr

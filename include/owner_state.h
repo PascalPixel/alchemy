@@ -42,5 +42,6 @@ struct OwnerValueState {
 };
 
 void *Func_08077394(s32 owner);
+void *Func_0807882c(struct OwnerInventoryState *owner, s32 type);
 
 #endif

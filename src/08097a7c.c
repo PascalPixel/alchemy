@@ -5,31 +5,31 @@
 void Func_080041d8(s32, s32);
 
 void Func_08097a7c(void) {
-    volatile s16 *temp_r3;
+    volatile s16 *palette;
 
     M2C_FIELD(*(void **)0x03001E8C, s8, 0xEA4) = 1;
-    temp_r3 = (s16 *)0x050001E2;
-    *temp_r3 = 0x739C;
-    temp_r3 += 2;
-    *temp_r3 = 0x739C;
-    temp_r3 += 1;
-    *temp_r3 = 0x739C;
-    temp_r3 += 1;
-    *temp_r3 = 0x739C;
-    temp_r3 += 1;
-    *temp_r3 = 0x739C;
-    temp_r3 += 1;
-    *temp_r3 = 0x739C;
-    temp_r3 += 1;
-    *temp_r3 = 0x739C;
-    temp_r3 += 1;
-    *temp_r3 = 0x739C;
-    temp_r3 += 1;
-    *temp_r3 = 0x739C;
-    temp_r3 += 1;
-    *temp_r3 = 0x739C;
-    temp_r3 += 1;
-    *temp_r3 = 0x739C;
+    palette = (s16 *)0x050001E2;
+    *palette = 0x739C;
+    palette += 2;
+    *palette = 0x739C;
+    palette += 1;
+    *palette = 0x739C;
+    palette += 1;
+    *palette = 0x739C;
+    palette += 1;
+    *palette = 0x739C;
+    palette += 1;
+    *palette = 0x739C;
+    palette += 1;
+    *palette = 0x739C;
+    palette += 1;
+    *palette = 0x739C;
+    palette += 1;
+    *palette = 0x739C;
+    palette += 1;
+    *palette = 0x739C;
+    palette += 1;
+    *palette = 0x739C;
     {
         s32 n = 0x480;
         Func_080041d8(0x08097869, n);

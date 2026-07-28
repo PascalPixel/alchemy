@@ -1,7 +1,10 @@
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+struct Runtime_080bb928 {
+    u8 padding_000[0x16c];
+    s32 flags;
+};
 
-void Func_080bb928(void *arg0) {
-    M2C_FIELD(arg0, s32 *, 0x16C) = (s32) (M2C_FIELD(arg0, s32 *, 0x16C) | 1);
+void Func_080bb928(struct Runtime_080bb928 *runtime) {
+    runtime->flags |= 1;
 }

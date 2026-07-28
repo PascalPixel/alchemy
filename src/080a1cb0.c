@@ -1,29 +1,27 @@
-#include "types.h"
+#include "m7_interfaces.h"
 
-void Func_080a1c6c(s32 *, s32, s32, s32, s32);
-
-void Func_080a1cb0(s32 arg0) {
-    s32 *var_r5;
-    s32 *var_r7;
-    s32 temp_r3;
-    s32 var_r6;
-    s32 var_r8;
+void Func_080a1cb0(s32 layout) {
+    struct Object080a1c **slot;
+    struct Object080a1c **scan;
+    struct Object080a1c *object;
+    s32 index;
+    s32 origin_y;
     s32 base;
 
     base = *(s32 *)0x03001F2C;
-    var_r8 = 0x38;
-    if (arg0 != 1) {
-        var_r8 = 0x28;
+    origin_y = 0x38;
+    if (layout != 1) {
+        origin_y = 0x28;
     }
-    var_r5 = (s32 *)(base + 0x48);
-    var_r6 = 0;
-    var_r7 = var_r5;
+    slot = (struct Object080a1c **)(base + 0x48);
+    index = 0;
+    scan = slot;
     do {
-        temp_r3 = *var_r7++;
-        if (temp_r3 != 0) {
-            Func_080a1c6c(var_r5, var_r6, 0x74, var_r8, 5);
+        object = *scan++;
+        if (object != NULL) {
+            Func_080a1c6c(slot, index, 0x74, origin_y, 5);
         }
-        var_r6++;
-        var_r5++;
-    } while (var_r6 <= 0xE);
+        index++;
+        slot++;
+    } while (index <= 0xE);
 }

@@ -9,7 +9,7 @@ void Func_08019854(void *);
 void Func_08016868(void)
 {
     u8 *channel = *(u8 **)0x03001e8c + 0x620;
-    s32 index = 0;
+    s32 channel_no = 0;
     s32 one = 1;
 
     do {
@@ -54,7 +54,7 @@ void Func_08016868(void)
                 }
             }
         }
-        index++;
+        channel_no++;
         channel += 0x28;
-    } while (index != 3);
+    } while (channel_no != 3);
 }

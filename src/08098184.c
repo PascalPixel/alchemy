@@ -4,19 +4,19 @@
 
 s32 Func_08009158();
 
-void Func_08098184(void *arg0) {
-    s32 temp_r3;
-    s32 var_r2;
+void Func_08098184(void *object) {
+    s32 next;
+    s32 scale;
 
-    if (arg0 != NULL) {
-        var_r2 = M2C_FIELD(arg0, s32 *, 0x18);
-        if (var_r2 <= 0xFFFF) {
+    if (object != NULL) {
+        scale = M2C_FIELD(object, s32 *, 0x18);
+        if (scale <= 0xFFFF) {
             do {
-                temp_r3 = var_r2 + 0x1000;
-                var_r2 = temp_r3;
-            } while (temp_r3 <= 0xFFFF);
-            M2C_FIELD(arg0, s32 *, 0x18) = temp_r3;
-            M2C_FIELD(arg0, s32 *, 0x1C) = temp_r3;
+                next = scale + 0x1000;
+                scale = next;
+            } while (next <= 0xFFFF);
+            M2C_FIELD(object, s32 *, 0x18) = next;
+            M2C_FIELD(object, s32 *, 0x1C) = next;
         }
         Func_08009158();
     }

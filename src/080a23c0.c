@@ -1,14 +1,15 @@
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+struct SharedWork080a23c0 {
+    u8 padding_00[0x10];
+    s32 resource;
+};
 
 extern s32 Func_080150a8(s32, s32, s32, s32, s32);
 extern void Func_08015080(s32, s32, s32, s32);
-extern u8 Data_02000240[];
+extern struct SharedWork080a23c0 Data_02000240;
 
-void Func_080a23c0(s32 arg0) {
-    u8 *base;
-    base = Data_02000240;
-    Func_080150a8(M2C_FIELD(base, s32 *, 0x10), 7, arg0, 8, 0);
-    Func_08015080(0xB0B, arg0, 0x40, 0);
+void Func_080a23c0(s32 value) {
+    Func_080150a8(Data_02000240.resource, 7, value, 8, 0);
+    Func_08015080(0xB0B, value, 0x40, 0);
 }

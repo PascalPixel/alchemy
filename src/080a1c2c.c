@@ -1,30 +1,27 @@
-#include "types.h"
+#include "m7_interfaces.h"
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
-
-typedef struct {
-    u8 padding_00[6];
-    s16 field_06;
-    s16 field_08;
-} Object;
 
 s32 Func_080022ec(s32, s32);
 s32 Func_080022fc(s32, s32);
 
-void Func_080a1c2c(Object **arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
-    Object *temp_r5;
-    s32 temp_r0;
-    s32 temp_arg4;
-    s32 var_r6;
+void Func_080a1c2c(struct Object080a1c **slot, s32 index,
+    s32 origin_x, s32 origin_y,
+    s32 phase) {
+    struct Object080a1c *object;
+    s32 wave;
+    s32 stable_phase;
+    s32 wrapped_index;
 
-    var_r6 = arg1;
-    if (var_r6 > 0x1F) {
-        var_r6 = 0;
+    wrapped_index = index;
+    if (wrapped_index > 0x1F) {
+        wrapped_index = 0;
     }
-    temp_arg4 = *(volatile s32 *)&arg4;
-    temp_r5 = *(Object * volatile *)arg0;
-    temp_r0 = Func_080022ec(var_r6, temp_arg4);
-    temp_r5->field_08 = (s16)((temp_r0 * 0x10) + arg3);
-    temp_r5->field_06 = (s16)((Func_080022fc(var_r6, arg4) * 0x10) + arg2);
-    Func_080a17c4(temp_r5);
+    stable_phase = *(volatile s32 *)&phase;
+    object = *(struct Object080a1c * volatile *)slot;
+    wave = Func_080022ec(wrapped_index, stable_phase);
+    object->y = (s16)((wave * 0x10) + origin_y);
+    object->x =
+        (s16)((Func_080022fc(wrapped_index, phase) * 0x10) + origin_x);
+    Func_080a17c4(object);
 }

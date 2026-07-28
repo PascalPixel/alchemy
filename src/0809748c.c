@@ -6,16 +6,16 @@ void Func_08091200(s32 arg0, s32 arg1);
 void Func_08091254(s32 value);
 
 void Func_0809748c(void) {
-    s32 temp_r6;
-    void *temp_r5;
+    s32 value;
+    u8 *state;
 
-    temp_r5 = *(void **)0x03001EBC;
-    temp_r6 = temp_r5 + 0x236;
-    Func_08091200(temp_r6, 2);
-    if (M2C_FIELD(temp_r5, s16 *, 0xCB8) != 0) {
+    state = *(u8 **)0x03001EBC;
+    value = (s32)(state + 0x236);
+    Func_08091200(value, 2);
+    if (M2C_FIELD(state, s16 *, 0xCB8) != 0) {
         Func_08091200(0x10001, 1);
     } else {
-        Func_08091200(temp_r6, 1);
+        Func_08091200(value, 1);
     }
     Func_08091254(8);
 }

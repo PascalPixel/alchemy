@@ -5,7 +5,7 @@
 s32 Func_08002dd8(s32);
 s32 Func_08004278(s32);
 void Func_0808e0b0(struct Outer0808e0b0 *outer, s32 value);
-s32 Func_08092054(u32);
+struct Outer0808e0b0 *Func_08092054(u32);
 void Func_0809748c(void);
 void Func_08097adc(void);
 

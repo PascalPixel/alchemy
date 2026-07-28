@@ -1,13 +1,16 @@
+#include "object_commands.h"
 #include "object_dispatch.h"
 
 void Func_0800ba30(void *, s32);
 
-void Func_0800c300(struct DispatchObject *object, s32 argument)
+void Func_0800c300(void *raw_object, s32 argument)
 {
+    struct DispatchObject *object;
     void **items;
     s32 count;
     void *item;
 
+    object = raw_object;
     if (object != 0) {
         switch (object->kind & 0xf) {
         case 1:

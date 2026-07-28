@@ -3,23 +3,23 @@
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Func_08017364(void) {
-    s32 var_r0;
-    s32 var_r1;
-    void **var_r2;
-    void *temp_r3;
+    s32 result;
+    s32 channel_no;
+    void **channel;
+    void *entry;
 
-    var_r2 = *(s32 *)0x03001E8C + 0x620;
-    var_r1 = 0;
+    channel = *(s32 *)0x03001E8C + 0x620;
+    channel_no = 0;
 loop_1:
-    temp_r3 = *var_r2;
-    if ((temp_r3 == NULL) || (var_r0 = 0, (M2C_FIELD(temp_r3, u16 *, 0x14) != 0))) {
-        var_r1 += 1;
-        var_r2 += 0xA;
-        if (var_r1 == 3) {
-            var_r0 = 1;
+    entry = *channel;
+    if ((entry == NULL) || (result = 0, (M2C_FIELD(entry, u16 *, 0x14) != 0))) {
+        channel_no += 1;
+        channel += 0xA;
+        if (channel_no == 3) {
+            result = 1;
         } else {
             goto loop_1;
         }
     }
-    return var_r0;
+    return result;
 }

@@ -1,16 +1,16 @@
-#include "types.h"
+#include "script_operands.h"
 
-typedef void (*Callback)(void *, s32, s32);
-extern Callback Data_080136e0[];
+typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
+extern OperandFunc Data_080136e0[];
 
-s32 Func_0800ea18(u8 *arg0)
+s32 Func_0800ea18(struct ScriptOperands *work)
 {
-    s16 index = *(s16 *)(arg0 + 4);
-    u8 *entry = (u8 *)(*(s32 *)arg0 + index * 4 + 4);
-    Callback callback = Data_080136e0[*(s32 *)entry];
+    s16 index = (s16)work->cursor;
+    u8 *entry = (u8 *)(work->script_address + index * 4 + 4);
+    OperandFunc callback = Data_080136e0[*(s32 *)entry];
 
     if (callback != 0)
-        callback(arg0, 2, *(s32 *)(entry + 4));
-    *(u16 *)(arg0 + 4) = *(u16 *)(arg0 + 4) + 3;
+        callback(work, 2, *(s32 *)(entry + 4));
+    work->cursor += 3;
     return 1;
 }

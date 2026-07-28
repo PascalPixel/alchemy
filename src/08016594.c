@@ -5,15 +5,25 @@
 void Func_08015ec0(u32 arg0);
 s32 Func_08003f3c(u32 index);
 
-void Func_08016594(void *arg0) {
-    Func_08015ec0((u32) arg0);
-    if (M2C_FIELD(arg0, u8, 4) != 0) {
-        Func_08003f3c(M2C_FIELD(arg0, u8, 0xE));
-        if (M2C_FIELD(arg0, u8, 4) == 2) {
+struct Entry_08016594 {
+    u8 unknown_00[4];
+    u8 kind;
+    s8 active;
+    u8 unknown_06[8];
+    u8 index;
+    u8 unknown_0f[0x0a];
+    u8 palette;
+};
+
+void Func_08016594(struct Entry_08016594 *entry) {
+    Func_08015ec0((u32)entry);
+    if (entry->kind != 0) {
+        Func_08003f3c(entry->index);
+        if (entry->kind == 2) {
             u8 *dst = (u8 *) (*(s32 *)0x03001E8C);
-            s32 idx = ((u32) M2C_FIELD(arg0, u8, 0x19) >> 4) * 2 + 0x12D0;
+            s32 idx = ((u32)entry->palette >> 4) * 2 + 0x12D0;
             *(u16 *)(dst + idx) = 0x3E7;
         }
     }
-    M2C_FIELD(arg0, s8, 5) = 0;
+    entry->active = 0;
 }

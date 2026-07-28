@@ -1171,9 +1171,3 @@ Func_080eb754:
 	.4byte 0x00007784
 	.4byte 0x00007824
 	.4byte 0x080cd261
-	ldr	r2, [pc, #8]
-	ldr	r3, [pc, #4]
-	strh	r3, [r2, #0]
-	bx	lr
-	.4byte 0x00000100
-	.4byte 0x04000020

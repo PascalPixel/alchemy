@@ -1,6 +1,5 @@
+#include "object_commands.h"
 #include "script_interpreter.h"
-
-s32 Func_0800d14c(struct ScriptInterpreter *, s32, s32, s32);
 
 s32 Func_0800da18(struct ScriptInterpreter *interpreter)
 {

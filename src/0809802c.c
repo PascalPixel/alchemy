@@ -13,15 +13,15 @@ void Func_080981b0(struct Effect_080981b0 *);
 
 void Func_0809802c(void)
 {
-    register s32 value;
+    register void *source;
     register void *state;
     void *object;
     volatile s32 scratch[3];
 
     state = *(volatile void **)0x03001F30;
-    value = M2C_FIELD(state, volatile s32 *, 0x10);
+    source = *(void * volatile *)((u8 *)state + 0x10);
     Func_08097384();
-    object = Func_08098070(value);
+    object = Func_08098070(source);
     Func_08098184(object);
     if (object != (void *)0) {
         Func_08009080(object, 4);

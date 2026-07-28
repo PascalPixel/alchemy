@@ -14,7 +14,7 @@ void Func_08009098(void *, const void *);
 u32 Func_08004458(void);
 void Func_08096bec(struct Object_08096bec *, s32, s32);
 
-s32 Func_08098c08(void *argument)
+s32 Func_08098c08(void *source)
 {
     struct Vector_08098c08 position;
     void *first_object;
@@ -24,9 +24,9 @@ s32 Func_08098c08(void *argument)
     register struct Vector_08098c08 *position_pointer;
 
     Func_080f9010(0x86);
-    position.x = *(s32 *)((u8 *)argument + 8);
-    position.y = *(s32 *)((u8 *)argument + 12);
-    position.z = *(s32 *)((u8 *)argument + 16);
+    position.x = *(s32 *)((u8 *)source + 8);
+    position.y = *(s32 *)((u8 *)source + 12);
+    position.z = *(s32 *)((u8 *)source + 16);
     first_object = Func_08096c80(
         0x11B,
         position.x,

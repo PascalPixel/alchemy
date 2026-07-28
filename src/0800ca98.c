@@ -1,23 +1,22 @@
-#include "types.h"
+#include "object_runtime.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+s32 Func_0800ca98(struct ObjectRuntime *object)
+{
+    s32 first;
+    s32 second;
 
-s32 Func_0800ca98(void *arg0) {
-    s32 var_r2;
-    s32 var_r3;
-
-    if (M2C_FIELD(arg0, u8 *, 0x55) == 0) {
-        var_r3 = M2C_FIELD(arg0, s32 *, 0x38);
-        if (var_r3 == 0x80000000) {
-            var_r2 = M2C_FIELD(arg0, s32 *, 0x3C);
+    if (object->flags == 0) {
+        second = object->target_x;
+        if (second == 0x80000000) {
+            first = object->target_y;
             goto block_4;
         }
         goto block_6;
     }
-    var_r2 = M2C_FIELD(arg0, s32 *, 0x38);
-    var_r3 = 0x80000000;
+    first = object->target_x;
+    second = 0x80000000;
 block_4:
-    if ((var_r2 != var_r3) || (M2C_FIELD(arg0, s32 *, 0x40) != var_r2)) {
+    if ((first != second) || (object->target_z != first)) {
 block_6:
         return 0;
     }

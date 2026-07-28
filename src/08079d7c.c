@@ -1,13 +1,12 @@
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+s32 Func_08079d7c(s32 no)
+{
+    s32 result;
+    u32 index;
 
-s32 Func_08079d7c(s32 arg0) {
-    s32 var_r0;
-    u32 temp_r0;
-
-    temp_r0 = arg0 - 8;
-    switch (temp_r0) {
+    index = no - 8;
+    switch (index) {
     case 4:
     case 5:
         return 0x46;
@@ -37,10 +36,10 @@ s32 Func_08079d7c(s32 arg0) {
     case 27:
         return 0x32;
     case 48:
-        var_r0 = 0x3C;
+        result = 0x3C;
         goto block_18;
     case 49:
-        var_r0 = 0x5A;
+        result = 0x5A;
         goto block_18;
     case 0:
     case 1:
@@ -48,9 +47,9 @@ s32 Func_08079d7c(s32 arg0) {
     case 24:
         return 0x3C;
     default:
-        var_r0 = 0x64;
+        result = 0x64;
         break;
     }
 block_18:
-    return 0 - var_r0;
+    return 0 - result;
 }

@@ -1,6 +1,28 @@
-typedef signed char s8; typedef unsigned char u8; typedef signed short s16; typedef unsigned short u16; typedef signed int s32; typedef unsigned int u32;
-#define M2C_FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-s32 Func_0801219c(void *arg0){ s32 x,y,rx,ry; void *tbl; u8 *base;
- x=M2C_FIELD(arg0,s32,0)/65536; y=(M2C_FIELD(arg0,s32,8)-M2C_FIELD(arg0,s32,4))/65536;
- tbl=*(void**)0x03001E70; if(tbl==0)return 0; base=M2C_FIELD(tbl,u8*,0x190);
- rx=x/16; ry=y/16; base+=(rx+(ry<<7))<<2; return (base[2]!=0xFF)-1; }
+#include "map.h"
+#include "types.h"
+
+struct MapWork_0801219c {
+    u8 unknown_000[0x190];
+    u8 *cells;
+};
+
+s32 Func_0801219c(struct WorldPosition *position)
+{
+    s32 x;
+    s32 y;
+    s32 tile_x;
+    s32 tile_y;
+    struct MapWork_0801219c *work;
+    u8 *cell;
+
+    x = position->x / 65536;
+    y = (position->y - *(s32 *)((u8 *)position + 4)) / 65536;
+    work = *(struct MapWork_0801219c **)0x03001E70;
+    if (work == NULL)
+        return 0;
+    cell = work->cells;
+    tile_x = x / 16;
+    tile_y = y / 16;
+    cell += (tile_x + tile_y * 128) * 4;
+    return (cell[2] != 0xFF) - 1;
+}

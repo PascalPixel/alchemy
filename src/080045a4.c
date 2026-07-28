@@ -1,21 +1,22 @@
 #include "types.h"
 
-s32 Func_080045a4(s32 arg0) {
-    s32 temp_r2;
-    s32 var_r0;
-    s32 var_r4;
-    s32 var_r5;
+s32 Func_080045a4(s32 value)
+{
+    s32 trial;
+    s32 remainder;
+    s32 bit;
+    s32 result;
 
-    var_r0 = arg0;
-    var_r5 = 0;
-    var_r4 = 0xF;
+    remainder = value;
+    result = 0;
+    bit = 0xF;
     do {
-        temp_r2 = (var_r5 << (var_r4 + 1)) + (1 << (var_r4 * 2));
-        if (temp_r2 <= var_r0) {
-            var_r5 |= 1 << var_r4;
-            var_r0 -= temp_r2;
+        trial = (result << (bit + 1)) + (1 << (bit * 2));
+        if (trial <= remainder) {
+            result |= 1 << bit;
+            remainder -= trial;
         }
-        var_r4 -= 1;
-    } while (var_r4 >= 0);
-    return var_r5;
+        bit -= 1;
+    } while (bit >= 0);
+    return result;
 }

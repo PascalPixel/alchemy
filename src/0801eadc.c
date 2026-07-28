@@ -10,21 +10,7 @@ struct TableEntry {
     u16 value;
 };
 
-struct Output {
-    s32 zero;
-    s8 one4;
-    s8 one5;
-    s16 x;
-    s16 y;
-    u8 padA[4];
-    s8 index;
-    u8 sentinel;
-    u8 pad10[4];
-    s32 packed;
-    u32 table;
-};
-
-void *Func_0801eadc(
+struct RenderOutput *Func_0801eadc(
     s32 arg0,
     s32 arg1,
     struct RenderInput *arg2,
@@ -32,7 +18,7 @@ void *Func_0801eadc(
     s32 arg4)
 {
     s32 x;
-    struct Output *output;
+    struct RenderOutput *output;
     s32 y;
 
     output = Func_08015e8c();
@@ -46,7 +32,8 @@ void *Func_0801eadc(
     y &= 0xff;
     /* Xをbit16～24、Yをbit0～7へ置き、arg1のフラグを重ねる。 */
     output->packed = (x << 16) | y | arg1;
-    output->table = ((struct TableEntry *)0x03001b10)[arg0].value >> 5;
+    output->table.value =
+        ((struct TableEntry *)0x03001b10)[arg0].value >> 5;
     output->sentinel = 0xff;
     output->zero = 0;
     output->x = x;

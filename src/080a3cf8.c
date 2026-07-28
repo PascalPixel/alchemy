@@ -1,9 +1,9 @@
+#include "far_runtime.h"
 #include "types.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Func_08015080(s32, s32, s32, s32);
-s32 Func_08015270(s32);
 
 void Func_080a3cf8(s32 arg0, s32 arg1) {
     void *temp_r5;

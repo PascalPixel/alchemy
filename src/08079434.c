@@ -1,10 +1,13 @@
 #include "types.h"
 
-void Func_08079434(s32 arg0, s32 arg1) {
-    s32 f = 0xF;
-    s32 sh = 4 & arg0;
-    s32 mask = f << sh;
+void Func_08079434(s32 no, s32 value)
+{
+    s32 field_mask = 0xF;
+    s32 shift = 4 & no;
+    s32 mask = field_mask << shift;
     u8 *base = (u8 *) 0x02000040;
-    arg0 = (u32) (arg0 << 0x14) >> 0x17;
-    base[arg0] = (u8) ((base[arg0] & ~mask) | ((arg1 & f) << sh));
+
+    no = ((u32)no << 0x14) >> 0x17;
+    base[no] = (u8)((base[no] & ~mask) |
+                    ((value & field_mask) << shift));
 }

@@ -1,7 +1,5 @@
-#include "types.h"
+#include "effect_step.h"
 
-s32 Func_080e2974(s32, s32);
-
-void Func_080e2940(s32 arg0) {
-    Func_080e2974(arg0, 2);
+void Func_080e2940(struct EffectStep *step) {
+    Func_080e2974(step, 2);
 }

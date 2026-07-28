@@ -2,9 +2,11 @@
 
 extern u16 Data_080b413c[];
 
+/* 4行分の非0バイトを指定配置へ順にコピーする。 */
 void Func_080b06ec(s32 arg0, s32 arg1, u32 arg2) {
-    u8 *source = (u8 *)(0x080B3D40 + (arg0 << 5));
-    u8 *destination = (u8 *)(arg1 + Data_080b413c[arg2] + 2);
+    u8 *source = (u8 *)(0x080b3d40 + ((u32)arg0 << 5));
+    u8 *destination =
+        (u8 *)((u32)arg1 + Data_080b413c[arg2] + 2);
     s32 count = 3;
 
     do {

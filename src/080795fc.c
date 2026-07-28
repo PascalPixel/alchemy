@@ -2,17 +2,18 @@
 
 s32 Func_08079338(s32 arg0);
 
-s32 Func_080795fc(void) {
-    s32 var_r5;
-    s32 var_r6;
+s32 Func_080795fc(void)
+{
+    s32 flag;
+    s32 count;
 
-    var_r6 = 0;
-    var_r5 = 0;
+    count = 0;
+    flag = 0;
     do {
-        if (Func_08079338(var_r5) != 0) {
-            var_r6 += 1;
+        if (Func_08079338(flag) != 0) {
+            count += 1;
         }
-        var_r5 += 1;
-    } while (var_r5 <= 7);
-    return var_r6;
+        flag += 1;
+    } while (flag <= 7);
+    return count;
 }

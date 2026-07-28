@@ -5,13 +5,14 @@ s32 Func_080040d0(s32 index, s32 value);
 void *Func_080048f4(s32 arg0, s32 arg1);
 s32 Func_0801a088(s32, s32);
 
-s32 Func_08021af0(s32 arg0, s32 arg1) {
-    s32 temp_r5;
-    s32 temp_r5_2;
+s32 Func_08021af0(s32 resource, s32 index)
+{
+    s32 result;
+    u8 *work;
 
-    temp_r5_2 = Func_080048f4(0x11, 0x608);
-    Func_0801a088(arg0, 0x1A);
-    temp_r5 = Func_080040d0(arg1, temp_r5_2 + 0x400);
+    work = Func_080048f4(0x11, 0x608);
+    Func_0801a088(resource, 0x1a);
+    result = Func_080040d0(index, (s32)(work + 0x400));
     Func_08002dd8(0x11);
-    return temp_r5;
+    return result;
 }

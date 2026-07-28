@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-28)
 
-`[1,360 of 1,999]`. 639 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,361 of 1,999]`. 638 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -32,7 +32,7 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-25 | 1,242 | +6 |
 | 2026-07-26 | 1,292 | +50 |
 | 2026-07-27 | 1,345 | +53 (partial day) |
-| 2026-07-28 | 1,360 | +15 (decompilation resumed after humanization) |
+| 2026-07-28 | 1,361 | +16 (decompilation resumed after humanization) |
 
 **The recent three-day average is still roughly a factor of four below the
 2026-07-23 peak.** That is not a slowdown in effort: the broad easy tier is
@@ -45,7 +45,7 @@ neither is a session.
 
 | count | class | what it needs |
 | --- | --- | --- |
-| 466 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
+| 465 | **plain** — no identified construct blocker | drafting time, and the usual allocation residuals |
 | 130 | DMA descriptor, no poll | the grouped-store laws already in `LAWS.md` |
 | 36 | `0xffff` used as an AND mask | `u32` locals; 8 of them also need a combine we perform |
 | 7 | twelve-store record group | two compiler blockers, one of them unsafe to fix by inspection |
@@ -761,9 +761,24 @@ matrix-store, hidden-ABI, and scheduler-only families.
 The current claimed build is `[1,360 of 1,999]` and 93,846 exact-C bytes.
 Ordinary assembly debt is 639 regions / 397,654 bytes.
 
+## The twelfth fresh 81–160 pass
+
+`080931ec` converted as 280 bytes of default-compiler C. It creates two effect
+handles, waits for the shared transition gates, releases both effect IDs, and
+then waits for each handle to finish. Preserving the original nested argument
+evaluation and treating the secondary setup calls as side effects recovered
+the ROM without compiler flags or assembly.
+
+`08092f84` reached exact size with a seven-halfword `r6`/`r7` allocation
+rotation, and `08093874` remained a broad allocator mismatch. Their assembly
+therefore remains authoritative.
+
+The current claimed build is `[1,361 of 1,999]` and 94,126 exact-C bytes.
+Ordinary assembly debt is 638 regions / 397,374 bytes.
+
 ## What changes the rate
 
-1. **The bulk is volume, not blockers.** 466 of 639 have nothing exotic in
+1. **The bulk is volume, not blockers.** 465 of 638 have nothing exotic in
    them. They are not converting because each one is a hand-written function
    that has to match byte-for-byte, and the median is now 81–160 instructions
    rather than the 20–40 that carried the early rate.

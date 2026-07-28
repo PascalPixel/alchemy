@@ -52,7 +52,12 @@ export interface Verification {
   size: number;
 }
 
-export type CandidateCompilerFamily = "routed" | "gcc296" | "old-agbcc";
+export type CandidateCompilerFamily =
+  | "routed"
+  | "gcc296"
+  | "old-agbcc"
+  | "pret-early-thumb"
+  | "gcc2951";
 export interface CandidateCompilerConfiguration {
   family?: CandidateCompilerFamily;
   addFlags?: readonly string[];
@@ -141,7 +146,12 @@ export async function verifyCandidate(
   const symbols = await run(["arm-none-eabi-nm", "-S", elf]);
   const row = symbols.split(/\r?\n/).find((line) => line.endsWith(` ${symbol}`));
   if (row === undefined) throw new StopIteration(`missing linked symbol: ${symbol}`);
-  const size = parseHex(row.trim().split(/\s+/)[1]);
+  const fields = row.trim().split(/\s+/);
+  // Thumb/COFF assembly from stock GCC 2.95.1 has no ELF `.size` directive,
+  // so nm reports `address T symbol` instead of `address size T symbol`.
+  // Candidate translation units contain one text region; in that case the
+  // linked binary's complete .text extent is the function extent.
+  const size = fields.length >= 4 ? parseHex(fields[1]) : readFileSync(binary).length;
   const actual = readFileSync(binary).subarray(0, size);
   const expected = Buffer.from(rom).subarray(address - imageBase, address - imageBase + size);
   return { actual, expected, size };

@@ -1,14 +1,13 @@
 #include "types.h"
+#include "motion_object.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
-void *Func_080b7dd0(s32);
+struct BattleObjectSlot *Func_080b7dd0(s32);
 void Func_080b83b0(void *, s32);
 
 void Func_080b83b4(s32 arg0, s32 arg1) {
-    void *temp_r0;
-    void *obj1;
-    void *obj2;
+    struct BattleObjectSlot *second_slot;
+    struct MotionObject *obj1;
+    struct MotionObject *obj2;
     s32 a1;
     s32 a2;
     s32 b1;
@@ -19,25 +18,25 @@ void Func_080b83b4(s32 arg0, s32 arg1) {
         s32 z;
     } pos;
 
-    obj1 = M2C_FIELD(Func_080b7dd0(arg0), void *, 0);
-    temp_r0 = Func_080b7dd0(arg1);
-    obj2 = M2C_FIELD(temp_r0, void *, 0);
+    obj1 = Func_080b7dd0(arg0)->object;
+    second_slot = Func_080b7dd0(arg1);
+    obj2 = second_slot->object;
 
-    a1 = M2C_FIELD(obj1, s32, 56);
+    a1 = obj1->target_x;
     if (a1 == (s32)0x80000000) {
-        a1 = M2C_FIELD(obj1, s32, 8);
+        a1 = obj1->x;
     }
-    b1 = M2C_FIELD(obj1, s32, 64);
+    b1 = obj1->target_z;
     if (b1 == (s32)0x80000000) {
-        b1 = M2C_FIELD(obj1, s32, 16);
+        b1 = obj1->z;
     }
-    a2 = M2C_FIELD(obj2, s32, 56);
+    a2 = obj2->target_x;
     if (a2 == (s32)0x80000000) {
-        a2 = M2C_FIELD(obj2, s32, 8);
+        a2 = obj2->x;
     }
-    b2 = M2C_FIELD(obj2, s32, 64);
+    b2 = obj2->target_z;
     if (b2 == (s32)0x80000000) {
-        b2 = M2C_FIELD(obj2, s32, 16);
+        b2 = obj2->z;
     }
 
     pos.x = (a1 + a2) / 2;

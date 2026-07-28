@@ -1,29 +1,29 @@
-#include "types.h"
-
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+#include "script_object_entry.h"
 
 s32 Func_0800eba0(s32 *a, s32 arg1, s32 *b, s32 arg3);
 
-s32 Func_0800d924(void *arg0, s32 arg1) {
-    s32 sp0;
-    s32 var_r4;
-    u8 *var_r6;
-    void *var_r5;
+s32 Func_0800d924(struct ScriptObjectEntry *object, s32 *values)
+{
+    s32 index_copy;
+    s32 index;
+    u8 *flags;
+    struct ScriptObjectEntry *entry;
 
-    var_r5 = *(void **)0x03001E64;
-    var_r4 = 0;
-    var_r6 = var_r5 + 0x59;
+    entry = *(struct ScriptObjectEntry **)0x03001E64;
+    index = 0;
+    flags = &entry->flags_59;
 loop_1:
-    if ((M2C_FIELD(var_r5, s32 *, 0) != 0) && (1 & *var_r6) && (var_r5 != arg0)) {
-        sp0 = var_r4;
-        if (Func_0800eba0(var_r5 + 8, M2C_FIELD(var_r5, u16 *, 0x20) - 2, arg1, M2C_FIELD(arg0, u16 *, 0x20) - 2) >= 0) {
+    if (entry->data != NULL && (1 & *flags) && entry != object) {
+        index_copy = index;
+        if (Func_0800eba0(entry->values_08, entry->value_20 - 2,
+                          values, object->value_20 - 2) >= 0) {
             return -1;
         }
     }
-    var_r4 += 1;
-    var_r6 += 0x70;
-    var_r5 += 0x70;
-    if (var_r4 > 0x3F) {
+    index += 1;
+    flags += 0x70;
+    entry++;
+    if (index > 0x3F) {
         return 0;
     }
     goto loop_1;

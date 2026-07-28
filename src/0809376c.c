@@ -1,9 +1,9 @@
+#include "metadata_lookup.h"
 #include "types.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s16 *Func_0808d394(s16);
-void *Func_08185000(s16);
 
 s32 Func_0809376c(void *arg0) {
     void *temp_r6;

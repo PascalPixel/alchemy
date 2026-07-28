@@ -7,6 +7,7 @@ void Func_080164ac(void *arg0) {
     void *node;
 
     next = NULL;
+    /* 単方向リストを先頭から解放する。 */
     if (arg0 != NULL) {
         node = *(void **)arg0;
         *(void **)((u8 *)arg0 + 4) = arg0;

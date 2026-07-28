@@ -5,21 +5,21 @@
 s32 Func_08003f3c(u32 index);
 
 void *Func_08096c48(void *arg0, void *arg1) {
-    void *var_r0;
-    void *var_r5;
+    void *result;
+    void *object;
 
-    var_r5 = arg0;
-    var_r0 = NULL;
-    if (var_r5 != NULL) {
+    object = arg0;
+    result = NULL;
+    if (object != NULL) {
         if (arg1 == NULL) {
-            M2C_FIELD(var_r5, u8 *, 0x1D) = (u8) (M2C_FIELD(var_r5, u8 *, 0x1D) | 1);
+            M2C_FIELD(object, u8 *, 0x1D) = (u8) (M2C_FIELD(object, u8 *, 0x1D) | 1);
         } else {
-            Func_08003f3c(M2C_FIELD(var_r5, u8 *, 0x1C));
-            M2C_FIELD(var_r5, u8 *, 0x1C) = (u8) M2C_FIELD(arg1, u8 *, 0x1C);
-            M2C_FIELD(var_r5, u8 *, 0x1D) = (u8) (M2C_FIELD(var_r5, u8 *, 0x1D) | 1);
-            var_r5 = arg1;
+            Func_08003f3c(M2C_FIELD(object, u8 *, 0x1C));
+            M2C_FIELD(object, u8 *, 0x1C) = (u8) M2C_FIELD(arg1, u8 *, 0x1C);
+            M2C_FIELD(object, u8 *, 0x1D) = (u8) (M2C_FIELD(object, u8 *, 0x1D) | 1);
+            object = arg1;
         }
-        var_r0 = var_r5;
+        result = object;
     }
-    return var_r0;
+    return result;
 }

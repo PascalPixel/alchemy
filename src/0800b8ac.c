@@ -1,3 +1,4 @@
+#include "metadata_lookup.h"
 #include "types.h"
 
 struct State_0800b8ac {
@@ -23,7 +24,6 @@ struct Metadata_0800b8ac {
 };
 
 extern s32 Func_0800bbc0(s32);
-extern struct Metadata_0800b8ac *Func_08185000(s32);
 
 s32 Func_0800b8ac(struct State_0800b8ac *state, s32 arg1)
 {

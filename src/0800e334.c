@@ -1,24 +1,22 @@
-#include "types.h"
+#include "script_operands.h"
 
-void Func_0800e334(void *arg0, s32 arg1, int arg2)
+void Func_0800e334(struct ScriptOperands *state, s32 operation, s32 value)
 {
-  s8 var_r1;
-  void *new_var;
-  if (arg1 == 0)
+  s8 result;
+  if (operation == 0)
   {
-    *((u16 *) (((u8 *) arg0) + 0x20)) = arg2;
+    state->halfword_20 = value;
     return;
   }
-  if (arg1 == 1)
+  if (operation == 1)
   {
-    *((u16 *) (((u8 *) arg0) + 0x20)) = (u16) ((*((u16 *) (((u8 *) (new_var = arg0)) + 0x20))) + arg2);
+    state->halfword_20 = (u16)((u32)state->halfword_20 + (u32)value);
     return;
   }
-  var_r1 = 0;
-  if ((*((u16 *) (((u8 *) arg0) + 0x20))) == ((s16) arg2))
+  result = 0;
+  if (state->halfword_20 == (s16)value)
   {
-    var_r1 = 1;
+    result = 1;
   }
-  *((s8 *) (((u8 *) arg0) + 0x57)) = var_r1;
+  state->comparison_result = result;
 }
-

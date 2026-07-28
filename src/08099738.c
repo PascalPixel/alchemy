@@ -1,3 +1,4 @@
+#include "object_lookup.h"
 #include "types.h"
 
 struct Controller_08099738 {
@@ -29,7 +30,6 @@ struct Global_08099738 {
 
 extern struct Global_08099738 Data_02000240;
 
-struct Object_08099738 *Func_0808ba1c(u32);
 void Func_080f9010(s32);
 s32 Func_08004278(void (*callback)(void));
 void Func_08009080(struct Object_08099738 *, s32);

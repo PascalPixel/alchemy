@@ -1,20 +1,17 @@
-#include "types.h"
+#include "object_runtime.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+void Func_08009098(struct ObjectRuntime *, const void *);
 
-s32 Func_08009098(s32, s32);
-s32 Func_0808ba1c();
+void Func_0809259c(u32 object_id, s32 variant)
+{
+    struct ObjectRuntime *object;
 
-void Func_0809259c(s32 arg0, s32 arg1) {
-    s32 temp_r0;
-    s32 var_r5;
-
-    var_r5 = arg1;
-    temp_r0 = Func_0808ba1c();
-    if ((temp_r0 != 0) && (var_r5 > 0)) {
-        if (var_r5 > 3) {
-            var_r5 = 3;
+    object = Func_0808ba1c(object_id);
+    if (object != NULL && variant > 0) {
+        if (variant > 3) {
+            variant = 3;
         }
-        Func_08009098(temp_r0, ((3 - var_r5) << 7) + 0x0809EBFC);
+        Func_08009098(object,
+            (const void *)(((3 - variant) << 7) + 0x0809EBFC));
     }
 }

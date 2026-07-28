@@ -1,17 +1,14 @@
-#include "types.h"
+#include "script_interpreter.h"
 
-typedef s32 (*Callback)(void *);
-
-s32 Func_0800d6a4(u8 *arg0)
+s32 Func_0800d6a4(struct ScriptInterpreter *interpreter)
 {
-    s32 offset = 4;
-    s16 initial = *(s16 *)(arg0 + offset);
-    s32 table = *(s32 *)arg0;
-    Callback callback = *(Callback *)(table + initial * 4 + 4);
+    s16 initial = interpreter->cursor;
+    ScriptCommand callback =
+        (ScriptCommand)interpreter->script[initial + 1];
 
-    if (callback(arg0) != 0)
+    if (callback(interpreter) != 0)
         return 0;
-    if (*(s16 *)(arg0 + 4) == initial)
-        *(s16 *)(arg0 + 4) = *(u16 *)(arg0 + 4) + 2;
+    if (interpreter->cursor == initial)
+        interpreter->cursor = (u16)interpreter->cursor + 2;
     return 1;
 }

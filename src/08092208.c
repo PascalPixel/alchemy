@@ -1,24 +1,21 @@
-#include "types.h"
+#include "object_runtime.h"
 
-#define FIELD_S16(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
-#define FIELD_S32(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
+void Func_08009140(struct ObjectRuntime *);
+void Func_08009080(struct ObjectRuntime *, s32);
+void Func_08009150(struct ObjectRuntime *, s32, s32, s32);
+void Func_08009158(struct ObjectRuntime *);
+void Func_08092b08(u32 object_id, s32 action);
 
-s32 Func_0808ba1c(u32 arg0);
-void Func_08009140(void *);
-void Func_08009080(void *, s32);
-void Func_08009150(void *, s32, s32, s32);
-void Func_08009158(void *);
-void Func_08092b08(s32 arg0, s32 arg1);
-
-void Func_08092208(s32 arg0, s32 arg1, s32 arg2) {
-    u8 *object;
+void Func_08092208(u32 object_id, s32 action, s32 z_offset)
+{
+    struct ObjectRuntime *object;
     s16 angle;
     s32 adjusted;
     s16 remainder;
 
-    object = Func_0808ba1c(arg0);
-    if (object != 0) {
-        angle = FIELD_S16(object, 0x0A);
+    object = Func_0808ba1c(object_id);
+    if (object != NULL) {
+        angle = *(s16 *)((u8 *)object + 0x0a);
         adjusted = angle;
         if (angle < 0) {
             adjusted += 15;
@@ -26,16 +23,15 @@ void Func_08092208(s32 arg0, s32 arg1, s32 arg2) {
         adjusted >>= 4;
         adjusted *= 16;
         remainder = angle - adjusted;
-        object[0x5B] = 0;
+        object->movement_state = 0;
         Func_08009140(object);
         Func_08009080(object, 2);
         Func_08009150(object,
-            FIELD_S32(object, 0x08) + ((8 - remainder) << 16),
-            FIELD_S32(object, 0x0C), FIELD_S32(object, 0x10));
+            object->x + ((8 - remainder) << 16),
+            object->y, object->z);
         Func_08009158(object);
-        Func_08092b08(arg0, arg1);
-        Func_08009150(object, FIELD_S32(object, 0x08),
-            FIELD_S32(object, 0x0C),
-            FIELD_S32(object, 0x10) + (arg2 << 16));
+        Func_08092b08(object_id, action);
+        Func_08009150(object, object->x, object->y,
+            object->z + (z_offset << 16));
     }
 }

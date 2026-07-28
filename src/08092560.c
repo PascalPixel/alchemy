@@ -1,29 +1,27 @@
-#include "types.h"
-
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+#include "object_runtime.h"
 
 void Func_0809163c(s32 arg0);
-s32 Func_0808ba1c(u32 arg0);
 void Func_080f9010(s32 arg0);
 
-void Func_08092560(u32 arg0, s32 arg1, s32 arg2) {
-    s32 temp_r0;
-    u8 *ptr;
+void Func_08092560(u32 object_id, s32 speed, s32 event_id)
+{
+    struct ObjectRuntime *object;
+    u8 *flags;
     s32 val;
     s32 shifted;
 
-    temp_r0 = Func_0808ba1c(arg0);
-    if (temp_r0 != 0) {
-        ptr = (u8 *) (temp_r0 + 85);
-        val = *ptr | 2;
-        shifted = arg1 << 0x10;
-        *ptr = (u8) val;
-        M2C_FIELD(temp_r0, s32 *, 0x28) = shifted;
-        if (arg1 > 5) {
+    object = Func_0808ba1c(object_id);
+    if (object != NULL) {
+        flags = &object->flags;
+        val = *flags | 2;
+        shifted = speed << 16;
+        *flags = val;
+        object->velocity_y = shifted;
+        if (speed > 5) {
             Func_080f9010(0x99);
         } else {
             Func_080f9010(0x98);
         }
-        Func_0809163c(arg2);
+        Func_0809163c(event_id);
     }
 }

@@ -1,39 +1,41 @@
-#include "types.h"
+#include "object_runtime.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+void Func_08009140(struct ObjectRuntime *);
+s32 Func_080091a8(u8, s32, s32);
 
-void Func_080923e4(u32 arg0, s32 arg1, s32 arg2) {
-    s32 temp_r0;
-    s32 temp_r0_2;
-    s32 var_r1;
-    s32 var_r2;
-    s32 sel;
+void Func_080923e4(u32 object_id, s32 x, s32 z)
+{
+    struct ObjectRuntime *object;
+    s32 terrain_height;
+    s32 tile_x;
+    s32 tile_z;
+    s32 terrain_id;
 
-    temp_r0 = Func_0808ba1c(arg0);
-    if (temp_r0 != 0) {
-        Func_08009140((void *) temp_r0);
-        M2C_FIELD(temp_r0, s32 *, 0x24) = 0;
-        M2C_FIELD(temp_r0, s32 *, 0x28) = 0;
-        M2C_FIELD(temp_r0, s32 *, 0x2C) = 0;
-        M2C_FIELD(temp_r0, s32 *, 0x3C) = 0x80000000;
-        M2C_FIELD(temp_r0, s32 *, 0x38) = 0x80000000;
-        M2C_FIELD(temp_r0, s32 *, 8) = arg1;
-        M2C_FIELD(temp_r0, s32 *, 0x10) = arg2;
-        if (1 & M2C_FIELD(temp_r0, u8 *, 0x55)) {
-            sel = M2C_FIELD(temp_r0, u8 *, 0x22);
-            var_r1 = arg1;
-            if (var_r1 < 0) {
-                var_r1 += 0xFFFF;
+    object = Func_0808ba1c(object_id);
+    if (object != NULL) {
+        Func_08009140(object);
+        object->velocity_x = 0;
+        object->velocity_y = 0;
+        object->velocity_z = 0;
+        object->target_y = 0x80000000;
+        object->target_x = 0x80000000;
+        object->x = x;
+        object->z = z;
+        if (1 & object->flags) {
+            terrain_id = object->terrain_id;
+            tile_x = x;
+            if (tile_x < 0) {
+                tile_x += 0xFFFF;
             }
-            var_r1 = var_r1 >> 0x10;
-            var_r2 = arg2;
-            if (var_r2 < 0) {
-                var_r2 += 0xFFFF;
+            tile_x = tile_x >> 0x10;
+            tile_z = z;
+            if (tile_z < 0) {
+                tile_z += 0xFFFF;
             }
-            var_r2 = var_r2 >> 0x10;
-            temp_r0_2 = Func_080091a8(sel, var_r1, var_r2) << 0x10;
-            M2C_FIELD(temp_r0, s32 *, 0xC) = (s32) ((M2C_FIELD(temp_r0, s32 *, 0xC) - M2C_FIELD(temp_r0, s32 *, 0x14)) + temp_r0_2);
-            M2C_FIELD(temp_r0, s32 *, 0x14) = temp_r0_2;
+            tile_z = tile_z >> 0x10;
+            terrain_height = Func_080091a8(terrain_id, tile_x, tile_z) << 0x10;
+            object->y = (object->y - object->terrain_height) + terrain_height;
+            object->terrain_height = terrain_height;
         }
     }
 }

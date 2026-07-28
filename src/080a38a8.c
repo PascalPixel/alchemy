@@ -1,16 +1,19 @@
 #include "far_runtime.h"
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+struct State080a38a8 {
+    u8 padding_00[0x20];
+    s32 *handle;
+};
 
 void Func_080a9a5c(s32 arg0, s32 arg1, s32 arg2);
 void Func_080a9cbc(void);
 
-void Func_080a38a8(s32 arg0) {
-    void *temp_r5;
+void Func_080a38a8(s32 mode) {
+    struct State080a38a8 *state;
 
-    temp_r5 = *(void **)0x03001F2C;
+    state = *(struct State080a38a8 **)0x03001F2C;
     Func_080a9cbc();
-    Func_08015270(M2C_FIELD(temp_r5, s32 *, 0x20));
-    Func_080a9a5c(M2C_FIELD(temp_r5, s32 *, 0x20), arg0, 0);
+    Func_08015270(state->handle);
+    Func_080a9a5c(state->handle, mode, 0);
 }

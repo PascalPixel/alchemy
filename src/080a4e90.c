@@ -1,13 +1,12 @@
 #include "types.h"
+#include "m7_interfaces.h"
 
 struct Fields_080a4e90 {
     u8 filler[0x10c];
-    void *object;
+    struct Bounds080a23f4 *object;
 };
 
 extern struct Fields_080a4e90 *Data_03001f2c;
-
-void Func_080a23f4(struct Fields_080a23f4 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 
 void Func_080a4e90(void) {
     Func_080a23f4(Data_03001f2c->object, 13, 0, 17, 6);

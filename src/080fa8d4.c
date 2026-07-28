@@ -2,7 +2,7 @@ typedef unsigned char u8;
 typedef signed int s32;
 typedef unsigned int u32;
 
-typedef void (*Callback)(u8);
+typedef void (*DisableFunction)(u8);
 
 extern u8 *Data_03007ff0;
 
@@ -31,7 +31,7 @@ void Func_080fa8d4(void)
         index = 1;
         do {
             u8 id = (u8)index;
-            Callback callback = *(Callback *)(state + 44);
+            DisableFunction callback = *(DisableFunction *)(state + 44);
 
             callback(id);
             *entry = 0;

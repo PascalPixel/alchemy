@@ -5,12 +5,12 @@ void *Func_08096c80(s32, s32, s32, s32);
 void Func_08009080(void *, s32);
 void Func_080030f8(s32);
 
-void *Func_08098a84(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+void *Func_08098a84(s32 x, s32 y, s32 z, s32 angle) {
     u8 *obj;
     s32 v;
 
     Func_080f9010(138);
-    obj = Func_08096c80(215, arg0, arg1, arg2);
+    obj = Func_08096c80(215, x, y, z);
     if (obj != NULL) {
         *(s32 *)(obj + 0x18) = *(s32 *)(obj + 0x1C) = 0x4000;
         *(s32 *)(obj + 0x34) = *(s32 *)(obj + 0x30) = 0x30000;
@@ -27,7 +27,7 @@ void *Func_08098a84(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
                 v = *(s32 *)(obj + 0x18);
             } while (v <= 0xFFFF);
         }
-        *(u16 *)(obj + 6) = (u16) arg3;
+        *(u16 *)(obj + 6) = (u16)angle;
     }
     return obj;
 }

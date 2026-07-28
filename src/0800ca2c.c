@@ -1,14 +1,11 @@
-#include "types.h"
+#include "script_interpreter.h"
 
-s32 Func_0800ca2c(void *arg0)
+s32 Func_0800ca2c(struct ScriptInterpreter *interpreter)
 {
-  u8 *new_var2;
-  s32 new_var;
-  ;
-  new_var2 = (u8 *) arg0;
-  *((s32 *) (((u8 *) arg0) + 0)) = (s32) (((*((s32 *) (((u8 *) arg0) + 0))) + ((*((s16 *) (((u8 *) arg0) + 4))) * 4)) + 4);
-  new_var = 0;
-  *((s16 *) (new_var2 + 4)) = new_var;
-  return 1;
-}
+    s32 zero;
 
+    interpreter->script = interpreter->script + interpreter->cursor + 1;
+    zero = 0;
+    interpreter->cursor = zero;
+    return 1;
+}

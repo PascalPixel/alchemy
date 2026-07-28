@@ -5,20 +5,20 @@ typedef signed int s32;
 typedef unsigned int u32;
 typedef unsigned short u16;
 
-void Func_080fb334(u8 *state, u32 maskArg, u32 valueArg)
+void Func_080fb334(u8 *player, u32 mask_arg, u32 value_arg)
 {
-    u16 mask = maskArg;
-    u16 value = valueArg;
-    u32 current = *(u32 *)(state + 52);
+    u16 mask = mask_arg;
+    u16 value = value_arg;
+    u32 current = *(u32 *)(player + 52);
 
     if (current == 0x68736d53) {
         s32 count;
         u8 *entry;
         u32 bit;
 
-        *(u32 *)(state + 52) = current + 1;
-        count = state[8];
-        entry = *(u8 **)(state + 44);
+        *(u32 *)(player + 52) = current + 1;
+        count = player[8];
+        entry = *(u8 **)(player + 44);
         bit = 1;
         if (count > 0) {
             do {
@@ -32,6 +32,6 @@ void Func_080fb334(u8 *state, u32 maskArg, u32 valueArg)
                 bit <<= 1;
             } while (count > 0);
         }
-        *(u32 *)(state + 52) = 0x68736d53;
+        *(u32 *)(player + 52) = 0x68736d53;
     }
 }

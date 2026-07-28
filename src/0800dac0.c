@@ -1,6 +1,5 @@
+#include "object_commands.h"
 #include "types.h"
-
-void Func_0800d14c(void *, s32, s32, s32);
 
 s32 Func_0800dac0(u8 *arg0)
 {

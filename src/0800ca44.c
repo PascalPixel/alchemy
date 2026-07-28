@@ -1,9 +1,8 @@
-#include "types.h"
+#include "script_operands.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-s32 Func_0800ca44(void *arg0) {
-    M2C_FIELD(arg0, s8 *, 0x54) = 0;
-    M2C_FIELD(arg0, u16 *, 4) = (u16) (M2C_FIELD(arg0, u16 *, 4) + 1);
+s32 Func_0800ca44(struct ScriptOperands *work)
+{
+    work->byte_54 = 0;
+    work->cursor++;
     return 1;
 }

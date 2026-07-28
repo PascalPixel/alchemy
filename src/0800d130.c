@@ -1,15 +1,14 @@
-#include "types.h"
+#include "object_runtime.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
-void Func_0800d130(void *arg0, s32 arg1, s32 arg2, s32 arg3) {
-    M2C_FIELD(arg0, s32 *, 0x10) = arg3;
-    M2C_FIELD(arg0, s32 *, 0x38) = 0x80000000;
-    M2C_FIELD(arg0, s32 *, 0x3C) = 0x80000000;
-    M2C_FIELD(arg0, s32 *, 0x40) = 0x80000000;
-    M2C_FIELD(arg0, s32 *, 8) = arg1;
-    M2C_FIELD(arg0, s32 *, 0xC) = arg2;
-    M2C_FIELD(arg0, s32 *, 0x24) = 0;
-    M2C_FIELD(arg0, s32 *, 0x28) = 0;
-    M2C_FIELD(arg0, s32 *, 0x2C) = 0;
+void Func_0800d130(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
+{
+    object->z = z;
+    object->target_x = 0x80000000;
+    object->target_y = 0x80000000;
+    object->target_z = 0x80000000;
+    object->x = x;
+    object->y = y;
+    object->velocity_x = 0;
+    object->velocity_y = 0;
+    object->velocity_z = 0;
 }

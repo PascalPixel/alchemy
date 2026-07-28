@@ -6,7 +6,7 @@
 /* スクリプト演算ワーク。混在幅の値はROM上の配置どおりに保持する。 */
 struct ScriptOperands {
     u32 script_address;      /* 0x00 */
-    s16 signed_halfword;     /* 0x04 */
+    u16 cursor;              /* 0x04; cast to s16 for signed interpretation */
     u16 unsigned_halfword;   /* 0x06 */
     u32 word_08;
     u32 word_0c;

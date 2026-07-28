@@ -1,42 +1,54 @@
+#include "owner_state.h"
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
-s32 Func_08077394(s32);
 s32 Func_080022ec(s32, s32);
 
-void Func_0807822c(s32 arg0) {
-    s32 temp_r0_2;
-    s32 temp_r0_3;
-    s32 var_r3;
-    s32 var_r3_2;
-    void *temp_r0;
+struct Owner_0807822c {
+    u8 unknown_00[0x14];
+    s16 value_14;
+    s16 value_16;
+    u8 unknown_18[0x1c];
+    s16 divisor_34;
+    s16 divisor_36;
+    s16 value_38;
+    s16 value_3a;
+};
 
-    temp_r0 = (void *) Func_08077394(arg0);
-    temp_r0_2 = Func_080022ec(M2C_FIELD(temp_r0, s16, 0x38) << 0xE, (s32) M2C_FIELD(temp_r0, s16, 0x34));
-    var_r3 = 0x4000;
-    if (temp_r0_2 <= 0x4000) {
-        var_r3 = 0;
-        if (temp_r0_2 >= 0) {
-            var_r3 = temp_r0_2;
+void Func_0807822c(s32 owner_no)
+{
+    s32 first;
+    s32 second;
+    s32 first_value;
+    s32 second_value;
+    struct Owner_0807822c *owner;
+
+    owner = Func_08077394(owner_no);
+    first = Func_080022ec(
+        (s32)((u32)(s32)owner->value_38 << 14), owner->divisor_34);
+    first_value = 0x4000;
+    if (first <= 0x4000) {
+        first_value = 0;
+        if (first >= 0) {
+            first_value = first;
         }
     }
-    M2C_FIELD(temp_r0, s16, 0x14) = (s16) var_r3;
-    if (((var_r3 << 0x10) == 0) && (M2C_FIELD(temp_r0, s16, 0x38) != 0)) {
-        var_r3 = 1;
-        M2C_FIELD(temp_r0, s16, 0x14) = (s16) var_r3;
+    owner->value_14 = first_value;
+    if ((((u32)first_value << 16) == 0) && (owner->value_38 != 0)) {
+        first_value = 1;
+        owner->value_14 = first_value;
     }
-    temp_r0_3 = Func_080022ec(M2C_FIELD(temp_r0, s16, 0x3A) << 0xE, (s32) M2C_FIELD(temp_r0, s16, 0x36));
-    var_r3_2 = 0x4000;
-    if (temp_r0_3 <= 0x4000) {
-        var_r3_2 = 0;
-        if (temp_r0_3 >= 0) {
-            var_r3_2 = temp_r0_3;
+    second = Func_080022ec(
+        (s32)((u32)(s32)owner->value_3a << 14), owner->divisor_36);
+    second_value = 0x4000;
+    if (second <= 0x4000) {
+        second_value = 0;
+        if (second >= 0) {
+            second_value = second;
         }
     }
-    M2C_FIELD(temp_r0, s16, 0x16) = (s16) var_r3_2;
-    if (((var_r3_2 << 0x10) == 0) && (M2C_FIELD(temp_r0, s16, 0x3A) != 0)) {
-        var_r3_2 = 1;
-        M2C_FIELD(temp_r0, s16, 0x16) = (s16) var_r3_2;
+    owner->value_16 = second_value;
+    if ((((u32)second_value << 16) == 0) && (owner->value_3a != 0)) {
+        second_value = 1;
+        owner->value_16 = second_value;
     }
 }

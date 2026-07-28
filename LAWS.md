@@ -2149,6 +2149,19 @@ singletons. Each is an installed byte-exact match.
   from ordinary overlay assembly into maintainable C without moving any entry
   address.
 
+### Load a selected halfword through a wide unsigned carrier (2026-07-28)
+
+- **Claim.** When a branch selects a `u16 *` and the selected halfword is then
+  written to a hardware register, load it into a `u32` local before naming the
+  destination. This keeps the source semantics explicit and makes the vintage
+  compiler emit `ldrh selected`, then load the destination address, then
+  `strh`.
+- **Evidence.** `resource_397:026c` was five differing bytes when written as
+  `Data_0400001c = *source`: the compiler loaded the destination first and used
+  the opposite registers. A separate `u16` local selected `ldrsh` and was
+  eleven bytes away. A `u32 value = *source` reconstructs all 52 bytes exactly
+  and passes whole-overlay adoption.
+
 ### Constants stored after a call are assigned after the call (2026-07-25)
 
 - **Claim:** when a function calls, then stores a small constant, the reference

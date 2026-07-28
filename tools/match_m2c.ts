@@ -9,16 +9,9 @@ import {
 } from "node:fs";
 import { basename, dirname, extname, join } from "node:path";
 import {
-  AGBCC_CFLAGS,
-  AGBCC_DRIVER,
-  cflagsForTarget,
-  cflagsForTargetSource,
-  compilerCommandForTarget,
-  compilerCommandForTargetSource,
-  directPreprocessorCommand,
   externalSymbol,
   externalSymbolAssembly,
-  validateAgbccBundle,
+  sourceToAssemblyPlan,
   type CompilerTarget,
 } from "./alchemy_gcc.ts";
 import {
@@ -111,30 +104,19 @@ export async function verifyCandidate(
   const symbolsObject = join(outputDirectory, `${stem}.symbols.o`);
   const elf = join(outputDirectory, `${stem}.elf`);
   const binary = join(outputDirectory, `${stem}.bin`);
-  const family = configuration.family ?? "routed";
-  const baseFlags = family === "routed"
-    ? cflagsForTargetSource(compiler, source)
-    : family === "gcc296"
-      ? cflagsForTarget(compiler)
-      : AGBCC_CFLAGS;
-  const removed = new Set(configuration.removeFlags ?? []);
-  const flags = [
-    ...baseFlags.filter((flag) => !removed.has(flag)),
-    ...extraCompilerFlags,
-    ...(configuration.addFlags ?? []),
-  ];
-  if (family === "old-agbcc") {
-    if (compiler !== "gs1") throw new ValueError("old-agbcc is only approved for gs1");
-    validateAgbccBundle();
-    const preprocessed = join(outputDirectory, `${stem}.i`);
-    await run(directPreprocessorCommand(source, preprocessed));
-    await run([AGBCC_DRIVER, preprocessed, ...flags, "-o", assembly]);
-  } else {
-    const command = family === "routed"
-      ? compilerCommandForTargetSource(compiler, source, ...flags, "-S", "-o", assembly, source)
-      : compilerCommandForTarget(compiler, ...flags, "-S", "-o", assembly, source);
-    await run(command);
-  }
+  const plan = sourceToAssemblyPlan({
+    target: compiler,
+    routingSource: source,
+    input: source,
+    output: assembly,
+    family: configuration.family,
+    flags: {
+      addFlags: [...extraCompilerFlags, ...(configuration.addFlags ?? [])],
+      removeFlags: configuration.removeFlags,
+    },
+    preprocessedOutput: join(outputDirectory, `${stem}.i`),
+  });
+  for (const step of plan.steps) await run([...step.command]);
   await run([
     "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
     "-o", object, assembly,

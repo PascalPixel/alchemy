@@ -1,21 +1,32 @@
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+struct State080a8034 {
+    u8 padding_00[0x20];
+    s32 field_20;
+    s32 field_24;
+    s32 field_28;
+    s32 field_2c;
+    u8 padding_30[0xe0];
+    s8 field_110;
+    s8 field_111;
+    s8 field_112;
+    s8 field_113;
+};
 
 s32 Func_080a1814(void *);
 s32 Func_080a1870(s32, s32, s32, s32, s32);
 
 void Func_080a8034(void) {
-    void *temp_r6;
+    struct State080a8034 *state;
 
-    temp_r6 = *(void **)0x03001F2C;
-    Func_080a1870(Func_080a1814(temp_r6), 2, 2, 8, 0);
-    M2C_FIELD(temp_r6, s32 *, 0x28) = 0;
-    M2C_FIELD(temp_r6, s32 *, 0x24) = 0;
-    M2C_FIELD(temp_r6, s32 *, 0x2C) = 0;
-    M2C_FIELD(temp_r6, s32 *, 0x20) = 0;
-    M2C_FIELD(temp_r6, s8 *, 0x110) = 0;
-    M2C_FIELD(temp_r6, s8 *, 0x111) = 0;
-    M2C_FIELD(temp_r6, s8 *, 0x112) = 8;
-    M2C_FIELD(temp_r6, s8 *, 0x113) = 2;
+    state = *(struct State080a8034 **)0x03001F2C;
+    Func_080a1870(Func_080a1814(state), 2, 2, 8, 0);
+    state->field_28 = 0;
+    state->field_24 = 0;
+    state->field_2c = 0;
+    state->field_20 = 0;
+    state->field_110 = 0;
+    state->field_111 = 0;
+    state->field_112 = 8;
+    state->field_113 = 2;
 }

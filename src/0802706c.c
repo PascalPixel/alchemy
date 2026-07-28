@@ -4,7 +4,7 @@
 
 s32 Func_080772b8(void *);
 
-s32 Func_0802706c(void *arg0) {
+s32 Func_0802706c(const u8 *object) {
     s32 sign_byte;
     s32 kind;
     s32 temp_r2;
@@ -12,14 +12,14 @@ s32 Func_0802706c(void *arg0) {
     u8 temp_r3;
 
     var_r5 = 0;
-    temp_r2 = *(u8 *)((u8 *)(arg0) + 1) & 0xF;
+    temp_r2 = object[1] & 0xF;
     if (temp_r2 == 1) {
         var_r5 = 1;
     }
     if (temp_r2 == 0xB) {
         var_r5 = 2;
     }
-    sign_byte = (*(s8 *)((u8 *)(arg0) + 3)); kind = (s32)(sign_byte);
+    sign_byte = ((const s8 *)object)[3]; kind = (s32)(sign_byte);
     temp_r3 = kind;
     if (temp_r3 == 3) {
         var_r5 = 3;
@@ -30,7 +30,7 @@ s32 Func_0802706c(void *arg0) {
     if (temp_r3 == 0x40) {
         var_r5 = 6;
     }
-    if (Func_080772b8(*(u8 *)((u8 *)(arg0) + 3)) != 0) {
+    if (Func_080772b8(object[3]) != 0) {
         var_r5 = 5;
     }
     return var_r5;

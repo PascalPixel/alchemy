@@ -1,3 +1,4 @@
+#include "a8_state.h"
 #include "types.h"
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
@@ -8,33 +9,31 @@ typedef struct {
 } Object0f;
 
 void *Func_080150d8(s32, s32, s32, s32, s32, s32);
-void Func_080a33d4(struct State080a33d4 *state, s32 arg1);
 void Func_080a8604(s32, s32, s32);
 s32 Func_080a9cf8(s32 arg0);
 
 void Func_080a8088(s32 arg0) {
-    s32 var_r0;
-    s32 var_r5;
-    void *temp_r0;
-    void *temp_r6;
+    s32 created;
+    s32 handle;
+    void *object;
+    struct State080a8088 *state;
 
-    temp_r6 = *(void **)0x03001F2C;
-    var_r0 = 0;
-    var_r5 = *(s32 *)((u8 *)temp_r6 + 0x24);
-    if (var_r5 == 0) {
-        var_r0 = Func_080a10d0(temp_r6 + 0x24, 0, 5, 0x1E, 0xF, 2);
-        var_r5 = *(s32 *)((u8 *)temp_r6 + 0x24);
+    state = *(struct State080a8088 **)0x03001F2C;
+    created = 0;
+    handle = state->handle;
+    if (handle == 0) {
+        created = Func_080a10d0(&state->handle, 0, 5, 0x1E, 0xF, 2);
+        handle = state->handle;
     }
-    if (var_r0 != 0) {
-        temp_r0 = Func_080150d8(arg0, 0, 0, var_r5, 0, 0);
-        M2C_FIELD(temp_r6, void **, 0x17C) = temp_r0;
-        if ((((Object0f *)temp_r0)->field_0f = 0xF0,
-             *(u16 *)((u8 *)temp_r6 + 0x220)) == 3) {
-            Func_080a33d4(temp_r6, var_r5);
+    if (created != 0) {
+        object = Func_080150d8(arg0, 0, 0, handle, 0, 0);
+        state->object = object;
+        if ((((Object0f *)object)->field_0f = 0xF0, state->mode) == 3) {
+            Func_080a33d4(state, handle);
         }
-        Func_080a9cf8(var_r5);
-        Func_080a8604(var_r5, arg0, 0x100);
+        Func_080a9cf8(handle);
+        Func_080a8604(handle, arg0, 0x100);
         return;
     }
-    Func_080a8604(var_r5, arg0, 0);
+    Func_080a8604(handle, arg0, 0);
 }

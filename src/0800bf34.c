@@ -5,33 +5,33 @@
 void Func_0800be70(u8 *object, u32 position);
 void Func_080030f8(u32);
 
-void Func_0800bf34(s32 *arg0, s32 arg1) {
-    s32 *sp0;
-    s32 *var_r5;
-    s32 var_r6;
-    u32 var_r7;
-    u32 var_r9;
-    u32 var_sl;
-    u32 var_r8;
+void Func_0800bf34(u8 **objects, s32 count) {
+    u8 **first;
+    u8 **cursor;
+    s32 remaining;
+    u32 position;
+    u32 second;
+    u32 third;
+    u32 fourth;
 
-    sp0 = arg0;
-    var_r7 = 0;
+    first = objects;
+    position = 0;
     do {
-        if (arg1 > 0) {
-            var_r9 = var_r7 + 1;
-            var_sl = var_r7 + 2;
-            var_r5 = sp0;
-            var_r8 = var_r7 + 3;
-            var_r6 = arg1;
+        if (count > 0) {
+            second = position + 1;
+            third = position + 2;
+            cursor = first;
+            fourth = position + 3;
+            remaining = count;
             do {
-                Func_0800be70(*var_r5, var_r7);
-                Func_0800be70(*var_r5, var_r9);
-                Func_0800be70(*var_r5, var_sl);
-                var_r6 -= 1;
-                Func_0800be70(*var_r5++, var_r8);
-            } while (var_r6 != 0);
+                Func_0800be70(*cursor, position);
+                Func_0800be70(*cursor, second);
+                Func_0800be70(*cursor, third);
+                remaining -= 1;
+                Func_0800be70(*cursor++, fourth);
+            } while (remaining != 0);
         }
         Func_080030f8(1U);
-        var_r7 += 4;
-    } while (var_r7 <= 0x7FU);
+        position += 4;
+    } while (position <= 0x7FU);
 }

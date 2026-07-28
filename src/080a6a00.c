@@ -1,20 +1,11 @@
+#include "menu_result.h"
 #include "types.h"
-
-struct Result {
-    s32 value0;
-    s32 unused4;
-    s32 value8;
-    s32 valueC;
-    s32 value10;
-    s32 value14;
-    s32 value18;
-};
 
 s32 Func_08077008(s32);
 s32 Func_080022ec(s32, s32);
 s32 Func_080022fc(s32, s32);
 
-s32 Func_080a6a00(struct Result *result, s32 index)
+s32 Func_080a6a00(struct MenuResult *result, s32 index)
 {
     s32 encoded;
     u8 *base = *(u8 **)0x03001F2C;

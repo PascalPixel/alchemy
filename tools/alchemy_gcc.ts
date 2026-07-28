@@ -645,10 +645,10 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
       cc1: "e322a2242bca5c7a98703ff74cb84aa1abd58859cbe7f5b306cedbccdc0d9ee7",
     },
     gs2: {
-      xgcc: "d0b10d67bc7f9965d586eba766b77e6ca54cc791b5eb297b55a6b9b6d6d0ef3d",
-      cpp0: "9d93c7762f60d13474764d2ca9e721b235ed4935ba7b69012aba054cace60d0d",
-      tradcpp0: "010da8763b9ebf39cb52aab0412ca350e038ccf4c3aa5647440c2abc91dcad6c",
-      cc1: "1b1c039eda51c0c2ee67d076f33e3284dd369789378cdf34671b66ba76cd6c75",
+      xgcc: "7b1a6a96fc4bd5e9de4d83fb2a4ba2ca2a82397cdcd102c4a4d76ef91dc17f58",
+      cpp0: "89791031fa8d4dd686355efb0efdb7c019a4080b770f187b15671dc3c1e71ecc",
+      tradcpp0: "a1013c94647eefbe0caad3c2e244b66c1acf2961197bdc31012e4259616c3198",
+      cc1: "3e5f1cbcae107b0f6c038a8b91880e377a3612a965014165002b4c530feab56b",
     },
   },
 };

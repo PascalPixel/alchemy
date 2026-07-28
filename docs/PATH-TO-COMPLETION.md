@@ -793,6 +793,28 @@ assembly remains authoritative.
 The current claimed build is `[1,362 of 1,999]` and 94,326 exact-C bytes.
 Ordinary assembly debt is 637 regions / 397,174 bytes.
 
+## Bounded compiler-configuration explorer
+
+`tools/mode_sweep.ts` now treats compiler search as evidence collection rather
+than source promotion. It runs the routed GCC 2.96/Thumb configuration and
+historically meaningful single changes first, then compatible pairs on request.
+Triples are considered only when a pair improves every single-mode result and
+leaves an exact-sized two-to-five-halfword floor.
+
+Successful and failed compilations are content-addressed under ignored
+`out/modesweep/`, and each run writes a classified report plus a floor record.
+The classifier separates exact identity, size, instruction-order, register,
+literal-placement, and control-flow evidence. A truncated run records only its
+best observed score; it cannot claim an irreducible floor. An exhausted
+two-to-five-halfword search points to RTL/scheduler tracing and never promotes
+the numerically closest result automatically.
+
+The first full single/pair validation used the existing exact-sized
+`0800430c` floor. All 251 routed, single, and compatible-pair configurations
+compiled; none improved its three-halfword instruction-order residual. A
+second identical run reused all 251 cached results, and the completed floor
+correctly escalates to compiler RTL/scheduler tracing.
+
 ## What changes the rate
 
 1. **The bulk is volume, not blockers.** 465 of 638 have nothing exotic in

@@ -1109,49 +1109,8 @@ Overlay_02000000:
 	.4byte 0x47204c00
 	.2byte 0x8299
 	.2byte 0x0200
-	push	{r5, r6, r7, lr}
-	ldr	r3, [pc, #76]
-	movs	r2, #142
-	ldr	r6, [r3, #0]
-	ldr	r3, [pc, #72]
-	lsls	r2, r2, #2
-	adds	r7, r3, r2
-	movs	r3, #214
-	lsls	r3, r3, #1
-	adds	r5, r6, r3
-	ldr	r3, [r5, #0]
-	lsls	r0, r3, #3
-	adds	r0, r0, r3
-	movs	r1, #10
-	bl	sub_020041c2
-	ldr	r3, [r7, #0]
-	cmp	r3, r0
-	blt.n	.L_0200007a
-	bl	sub_020041f4
-	movs	r2, #128
-	lsls	r2, r2, #8
-	cmp	r0, r2
-	bcs.n	.L_02000076
-	ldr	r0, [pc, #36]
-	movs	r1, #3
-	bl	sub_02004484
-	movs	r3, #212
-	lsls	r3, r3, #1
-	adds	r2, r6, r3
-	movs	r3, #0
-	str	r3, [r2, #0]
-	b.n	.L_0200007a
-.L_02000076:
-	ldr	r3, [r5, #0]
-	str	r3, [r7, #0]
-.L_0200007a:
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
-	.4byte 0x03001ebc
-	.4byte 0x02000240
-	.2byte 0x0808
-	.2byte 0x0000
+AlchemyC_02000030:
+	.space 0x5c
 	push	{r5, r6, lr}
 	ldr	r3, [pc, #56]
 	ldr	r5, [pc, #56]

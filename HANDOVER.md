@@ -1,6 +1,6 @@
 # Alchemy handover
 
-Updated: 2026-07-28
+Updated: 2026-07-28 (remote overlay session 2)
 
 This is the single authoritative session handover. Do not add dated handoff
 files; update this file in place.
@@ -9,133 +9,98 @@ files; update this file in place.
 
 Reach **152,000 exact-C bytes**, prioritizing overlay code.
 
-The game is not fully decompiled. Exact means fully linked machine-code byte
-equality, not semantic similarity or equal object size.
+Exact means fully linked machine-code byte equality, not semantic similarity
+or equal object size.
 
 ## Repository state
 
-- Branch: `main`
-- Push target: `origin/main`
-- Live Full-C metric after the pending overlay batch:
-  **115,724 / 1,338,306 executable bytes**
-- Main exact C: **95,652 bytes**
-- Overlay exact C: **20,072 bytes**
-- Remaining gap to the objective: **36,276 bytes**
+- Branch: `main` (session work lands on `claude/continue-decompilation-3drfw0`
+  and is merged by the owner)
+- The live Full-C metric is printed by `bun tools/full_c_progress.ts --subject`
+  and recorded in each commit subject; regenerate the inventory/report before
+  reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- No background jobs or subagents should be assumed to be running after this
-  wind-down.
 
-The denominator rose twice during this session because boundary audits proved
-that previously excluded overlay bytes were executable. The guarded correction
-protocol is documented in `docs/FULL-C-BYTE-SHARE.md`: a denominator change
-requires the regenerated executable inventory and an explicit
-`metrics: correct executable denominator` commit subject.
+## Toolchain on this host (linux-x64)
 
-## Session results
+All compiler bundles were rebuilt from the pinned alchemy-gcc commit
+`64d757f` at `/home/user/alchemy-gcc` and re-admitted: gcc296 (gs1),
+old_agbcc, gs2, and both experimental comparison compilers
+(pret-early-thumb, gcc2951 — previously macOS-only, now per-host digests).
+Admission evidence: the composed source-only image reproduces gs1-en.gba
+byte-identically (SHA-1 5c4695205413df7db52b9a184815a07783999971) and
+`bun run verify` is green end to end. `roms/gs1-en.gba` can be recomposed
+from the source-only build products when absent; binutils-arm-none-eabi,
+gperf, and bun 1.3.14 are required host packages.
 
-Exact overlay C added during this session:
+## Session results (this session)
 
-| Overlay owner | Exact bytes | Notes |
-| --- | ---: | --- |
-| `resource_3a8:0040` | 108 | randomized signed timer/state routine |
-| `resource_37a:2924` | 72 | exact with source-scoped `thumb-immediate-latency` |
-| `resource_394:03c0` | 48 | preset copy; exposed a 48-byte denominator omission |
-| `resource_394:0b8c` | 88 | sentinel-terminated tile-run lookup |
-| `resource_3a8:390c` | 100 | effect/render-state update |
-| `resource_3a8:3970` | 100 | adjacent effect update |
-| `resource_3a8:39d4` | 102 | adjacent effect update; separate alignment retained |
-| `resource_3c8:0594` | 22 | object callback |
-| `resource_3c8:05ac` | 56 | state-dependent callback dispatch |
-| `resource_3c8:0690` | 14 | callback wrapper |
-| `resource_3c8:0754` | 132 | effect allocation/setup with one preserved alias |
-| `resource_3c8:08a0` | 24 | store created object |
-| `resource_3c8:08b8` | 16 | clear stored object; exposed a 16-byte denominator omission |
-| `resource_3c8:0910` | 60 | conditional position swap |
-| `resource_3bc:0274` | 132 | object/scene initializer |
-| `resource_3bc:057c` | 14 | wrapper |
+resource_3bc linear walk: exact adoptions 058c (68), 05d0 (2), 05d4 (10),
+05e0 (120), 0658 (76), 06a4 (110), 0714 (88), 0a20 (34), 0a44 (64),
+0a84 (80), 0ad4 (92), 0b30 (112), 0ba0 (2), 0d70 (18), 0d84 (24),
+0d9c (8), 137c (68), 2710 (72), 2758 (308), 2a50 (66). resource_3c8:
+094c (30). Parallel agents (both interrupted by a container restart;
+their work below survived on disk and is committed) adopted the
+small-queue members resource_371:0030, 372:0030, 383:0048, 394:0be4,
+399:0030, 3a8:00ac, 3ac:004c, 3ce:007c, walked resource_383 through
+02c0/02e8/0310/0354/0378/0400/0454/04bc/04f4, and walked resource_3c8
+through 0b08/0b98/0c5c/0cc8/0e7c/0e80/0e88/0f1c.
 
-Total exact overlay gain listed above: **1,088 bytes**.
+Reusable shapes proved this session (all backed by exact installs):
+- paired stack-argument locals assigned in consecutive statements, second
+  pair x-first (resource_3bc_c_020005e0.c);
+- named base-pointer copy to keep Data_02000240 base + runtime `250<<1`
+  offset (`s16 *table = Data_02000240; *(s32 *)&table[250]`);
+- `while (*p != a && *p != b)` guards duplicate their exit test only when
+  the guard reads a direct constant dereference and the loop body reads a
+  pointer local assigned inside the guard (resource_3bc_c_02000a84.c);
+- masked coordinate as `z = obj->z & 0xFFF00000;` then `z + K` in the call
+  (resource_3bc_c_02000ad4.c, 02000b30.c);
+- signed `/ 65536` for the `(neg ? +0xffff : ) >> 16` shape, plus a copy
+  variable for one abs and in-place negation for the other
+  (resource_3bc_c_02002758.c);
+- HImode constant stores pool as `ldrh .L` unless the value goes through an
+  int-typed local; a pointer-local assigned before the value forces the
+  reference's address-then-value order (resource_3bc_c_02002710.c);
+- one C variable reused for two sequential object fetches produces the
+  entry `mov r5, r0` copy (work/claude notes for 13c0).
 
-Important commits already made:
+## Blockers discovered (documented under work/claude/notes/)
 
-- `a66309c6` — exact `resource_3a8:0040`
-- `16891eab` — exact `resource_37a:2924`
-- `0e2d3fdb` — exact `resource_394:03c0` and guarded denominator correction
-- `64b83468` — exact `resource_394:0b8c`
-- `caad8f39` — six adjacent exact overlay functions
-
-The final pending batch contains `resource_3c8:0754`, `08a0`, `08b8`, `0910`
-and `resource_3bc:0274`, `057c`, plus the regenerated metric inventories.
-
-## What worked
-
-The old overlay inventory is strongly call-seed biased. It misses genuine
-prologue owners and sometimes promotes internal branch targets that inherit
-registers or stack frames. The productive workflow was:
-
-1. Walk an overlay linearly by genuine prologue and sole-return boundaries.
-2. Separate C code, compiler-owned literal pools, structural alignment, veneer
-   banks, and data before drafting.
-3. Reconstruct maintainable semantic C.
-4. Verify at the fixed overlay base.
-5. Promote immediately on zero differences.
-6. For a near-match, freeze the source and run the existing automated
-   1,633-configuration single/compatible-pair sweep once.
-7. If the sweep has no exact result, park it and continue to fresh code.
-
-This found productive local runs in `resource_3a8`, `resource_3c8`, and
-`resource_3bc`.
+1. **resource_3bc runtime base is 0x02008000.** Jump-table words in the
+   0da4 switch (0x0200_9234...) and callback constants (0x02008659 =
+   offset 0x658|1) prove it. compileOverlayC links at OVERLAY_BASE
+   0x02000000, so any function embedding compiler-generated absolute
+   label addresses (switch tables) cannot verify until per-overlay link
+   bases exist. Blocks 0da4 (~1.5 KB) and likely other giants.
+2. **resource_3bc tail vintage question.** Five functions (0ba4, 0c5c,
+   288c, 29ac, 2a94/2b50) show reference codegen our gs1 cc1 cannot emit
+   from any measured source shape: cse never folds const+1/+2 into fresh
+   pool words there, register-argument split constants rematerialize per
+   call, and the three-way selection keeps cmp/bne+in-arm loads where our
+   jump optimization threads them 4 bytes shorter. The gs2 (gcc 3.0)
+   bundle derives `add #1` for the same spelling but is worse elsewhere.
+   Everything before ~0x2758 in the same overlay matches gs1 exactly.
+   Compiler-lane question; do not respin source variants (measured lists
+   in the notes).
+3. **Allocation-priority rotations** (076c at 164 hw with exact tail,
+   13c0 at 36 hw): the short-lived shared constant outranks steps/state
+   in our global allocator; reference ranks it below both and pays a
+   caller-save pair. Same QTY_CMP_PRI family as LAWS.md.
 
 ## Best restart points
 
-Continue linearly from:
-
-- `resource_3c8` after exact owner `0x02000910`.
-- `resource_3bc` at genuine owner `0x0200058c`.
-
-The active agents were interrupted during those scans for this wind-down; do
-not assume their next candidates were completed.
-
-Useful ignored semantic drafts and verifiers are under `work/`. Highest-value
-parked near-matches include:
-
-- `work/resource_3a8-3864/`: 168/168 bytes, two differing bytes; all 1,633
-  configurations exhausted.
-- `work/resource_3a8-0504/`: honest 138-byte C symbol plus separate two-byte
-  alignment; scheduling mismatch, sweep exhausted.
-- `work/resource_37a_2924/`: historical pre-promotion sweep evidence.
-- `work/resource_3c8_05e4/`: 172/172 bytes, seven differing halfwords; sweep
-  exhausted.
-- `work/resource_3bc-0404/`: 160/160 bytes, five differing bytes; sweep
-  exhausted.
-- `work/resource_394_a90/`: 172/172 bytes, 19 differing halfwords; sweep
-  exhausted.
-- `work/resource_373-0030/`: twelve-member, 672-byte duplicate family; no exact
-  result across 1,633 configurations.
-
-Do not manually source-permute these documented near-matches. Confirm their
-floor at most once if tooling changes, then use automated configuration testing
-or move to fresh owners.
-
-Large semantic drafts worth retaining, but not immediate exact targets:
-
-- `work/resource_381/semantic.c`: 3,548-byte scene initializer span.
-- `work/resource_3a8-0590/`: honest 4,092-byte owner; needs automated
-  literal-label emission before useful compilation.
-- `work/resource_394_03f0/`: honest 1,008-byte owner.
-
-## Boundary facts
-
-- `resource_381:2fba` is an internal hidden-context continuation of the owner
-  at `2eb0`, not a standalone C ABI function.
-- `resource_394:01cc`, `resource_3bb:3be4`, and several other inventory entries
-  are internal continuations, not honest functions.
-- `resource_394` ordinary code ends at the veneer bank beginning `0x0ff4`;
-  the remainder is veneers and data.
-- `resource_37a` ordinary code ends at the veneer bank beginning `0x296c`.
-- Preserve structural `.2byte 0` alignment outside C symbols when object-symbol
-  evidence proves it is not compiler-owned code.
+- resource_3c8: continue the walker's linear scan (check git log for its
+  last adoption).
+- resource_370:0054 is a 256-byte multi-descriptor grouped-DMA function
+  (three stmia descriptor groups, mid-function pool) — compiler-lane.
+- resource_379:00dc is one 2,524-byte function; large but single.
+- resource_381 holds ~18 KB of discovered unconverted functions plus the
+  3,548-byte semantic draft from the previous session (work/ was not
+  preserved in this container; treat as fresh).
+- The twelve-member 60-byte family (resource_373:0030 etc.) remains
+  parked; no exact result across 1,633 configurations previously.
 
 ## Required checks
 
@@ -153,9 +118,5 @@ Commit subjects must end in the live suffix printed by:
 bun tools/full_c_progress.ts --subject
 ```
 
-Clean-room rules remain authoritative in `PROVENANCE.md`. Do not use leaked
-SDK material or provenance-problematic third-party decompilation content.
-`pret` projects may be used only as demonstrably derived generic structural
-reference under the existing project policy.
-
-Use at most three active agents total, including the main agent.
+Clean-room rules remain authoritative in `PROVENANCE.md`. Use at most
+three active agents total, including the main agent.

@@ -39,6 +39,11 @@ interface FunctionRow {
   span_bytes: number;
 }
 
+interface InternalAlias {
+  label: string;
+  offset: number;
+}
+
 function optionsOf(argv: string[]): Options {
   const options: Options = { id: "", source: "", apply: false };
   for (let index = 0; index < argv.length; index++) {
@@ -102,7 +107,74 @@ function regionLines(offsets: Map<number, number>, offset: number, span: number)
   return [first, last];
 }
 
+// Preserve labels inside a C-owned span when assembly outside the span still
+// branches to them.  These are genuine secondary entry points: the exact C
+// bytes remain callable at the same address, while the alias keeps the
+// surrounding assembly linkable.
+export function internalAliases(
+  lines: string[],
+  first: number,
+  last: number,
+  regionOffset: number,
+  span: number,
+): InternalAlias[] {
+  const outside = [...lines.slice(0, first - 1), ...lines.slice(last)]
+    .map((line) => line.replace(/@.*$/, "").replace(/\/\/.*$/, ""))
+    .join("\n");
+  const aliases: InternalAlias[] = [];
+  for (let index = first - 1; index < last; index++) {
+    const found = LOCAL_LABEL.exec(lines[index]);
+    if (found === null) continue;
+    const escaped = found[1].replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    if (!new RegExp(`(^|[^A-Za-z0-9_.])${escaped}([^A-Za-z0-9_.]|$)`, "m").test(outside)) continue;
+    const offset = Number.parseInt(found[1].slice(3), 16) - OVERLAY_BASE - regionOffset;
+    if (!Number.isInteger(offset) || offset < 0 || offset >= span) {
+      throw new Error(`referenced label ${found[1]} lies outside its encoded region`);
+    }
+    aliases.push({ label: found[1], offset });
+  }
+  return aliases.sort((left, right) => left.offset - right.offset);
+}
+
+export function placeholderLines(stem: string, span: number, aliases: InternalAlias[]): string[] {
+  const result = [`AlchemyC_${stem}:`];
+  let cursor = 0;
+  for (const { label, offset } of aliases) {
+    if (offset > cursor) result.push(`\t.space 0x${(offset - cursor).toString(16)}`);
+    result.push(`${label}:`);
+    cursor = offset;
+  }
+  if (span > cursor) result.push(`\t.space 0x${(span - cursor).toString(16)}`);
+  return result;
+}
+
+function selfTest(): void {
+  const lines = [
+    "\tb .L_02000006",
+    "\tmovs r0, #0 @ .L_02000008 is comment-only",
+    "Func_02000004:",
+    "\tmovs r0, #0",
+    ".L_02000006:",
+    "\tbx lr",
+    ".L_02000008:",
+    "\t.2byte 0",
+  ];
+  const aliases = internalAliases(lines, 3, 6, 4, 4);
+  if (aliases.length !== 1 || aliases[0].label !== ".L_02000006" || aliases[0].offset !== 2) {
+    throw new Error("internal-entry alias self-test failed");
+  }
+  const placeholder = placeholderLines("02000004", 4, aliases).join("\n");
+  if (placeholder !== "AlchemyC_02000004:\n\t.space 0x2\n.L_02000006:\n\t.space 0x2") {
+    throw new Error("segmented placeholder self-test failed");
+  }
+  console.log("self-test=ok");
+}
+
 function main(): void {
+  if (Bun.argv.length === 3 && Bun.argv[2] === "--self-test") {
+    selfTest();
+    return;
+  }
   const options = optionsOf(Bun.argv.slice(2));
   const inventory = JSON.parse(readFileSync(join(ROOT, "out/decomp/overlays.json"), "utf8")) as { functions: FunctionRow[] };
   const found = inventory.functions.find((row) => row.id === options.id);
@@ -142,18 +214,11 @@ function main(): void {
     throw new Error(`${options.id} is already adopted as C`);
   }
 
-  // A local label inside the region that something outside still branches to
-  // would silently lose its definition when the body becomes `.space`.
-  const outside = [...lines.slice(0, first - 1), ...lines.slice(last)].join("\n");
-  for (const line of lines.slice(first - 1, last)) {
-    const label = LOCAL_LABEL.exec(line);
-    if (label !== null && outside.includes(label[1])) throw new Error(`label ${label[1]} is referenced from outside the region`);
-  }
+  const aliases = internalAliases(lines, first, last, fn.offset, fn.span_bytes);
 
   const replaced = [
     ...lines.slice(0, first - 1),
-    `AlchemyC_${stem}:`,
-    `\t.space 0x${fn.span_bytes.toString(16)}`,
+    ...placeholderLines(stem, fn.span_bytes, aliases),
     ...lines.slice(last),
   ].join("\n");
 
@@ -195,10 +260,10 @@ function main(): void {
   }
   if (!options.apply) {
     revert();
-    console.log(`adopt=ready ${options.id} span=${fn.span_bytes} lines=${first}-${last} source=${basename(options.source)} (pass --apply to install)`);
+    console.log(`adopt=ready ${options.id} span=${fn.span_bytes} aliases=${aliases.length} lines=${first}-${last} source=${basename(options.source)} (pass --apply to install)`);
     return;
   }
-  console.log(`adopt=applied ${options.id} span=${fn.span_bytes} c=assets/code/${fn.overlay}_c_${stem}.c`);
+  console.log(`adopt=applied ${options.id} span=${fn.span_bytes} aliases=${aliases.length} c=assets/code/${fn.overlay}_c_${stem}.c`);
 }
 
 if (import.meta.main) main();

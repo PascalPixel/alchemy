@@ -1032,31 +1032,10 @@ AlchemyC_020001ac:
 	bl	sub_02002e3a
 	pop	{r0}
 	bx	r0
-	push	{lr}
-	ldr	r3, [pc, #28]
-	movs	r1, #224
-	lsls	r1, r1, #1
-	adds	r3, r3, r1
-	movs	r1, #0
-	ldrsh	r2, [r3, r1]
-	ldr	r3, [pc, #20]
-	cmp	r2, r3
-	bne.n	.L_0200029c
-	ldr	r0, [pc, #16]
-	b.n	.L_0200029e
-.L_0200029c:
-	ldr	r0, [pc, #16]
+AlchemyC_02000284:
+	.space 0x1a
 .L_0200029e:
-	pop	{r1}
-	bx	r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.2byte 0x0027
-	.2byte 0x0000
-	push	{r4, r7, lr}
-	lsls	r0, r0, #8
-	.2byte 0xb3b0
-	lsls	r0, r0, #8
+	.space 0x16
 	push	{r5, lr}
 	adds	r5, r0, #0
 	movs	r0, #0

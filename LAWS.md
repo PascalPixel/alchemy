@@ -2128,6 +2128,27 @@ singletons. Each is an installed byte-exact match.
   least 17 convertible functions sat outside it, and the shape scan is the way
   to find more.
 
+### Overlay C may retain externally-called internal entries (2026-07-28)
+
+- **Claim.** Replacing an exact overlay routine with C does not require deleting
+  secondary entry labels inside its byte span. Split the assembly placeholder
+  at each externally referenced `.L_<address>` and retain the label between
+  the two `.space` segments. The compiled C still owns every byte in the span,
+  while callers continue to branch to the original address.
+- **Safety gate.** Only labels referenced as complete symbol tokens outside the
+  adopted region are retained. Their address-derived offsets must lie inside
+  the region, and `overlay_adopt.ts` still rebuilds and compares the complete
+  overlay before accepting any change. Alias preservation therefore weakens
+  neither the region-boundary check nor byte identity.
+- **Evidence.** The four selector routines previously parked by the
+  straddling-label check now rehearse and rebuild exactly:
+  `resource_39a:0f30` (156 bytes, two entries),
+  `resource_3b4:0a50` (84 bytes, two entries),
+  `resource_3b3:14c4` (100 bytes, one entry), and
+  `resource_38f:0284` (48 bytes, one entry). This moves 388 executable bytes
+  from ordinary overlay assembly into maintainable C without moving any entry
+  address.
+
 ### Constants stored after a call are assigned after the call (2026-07-25)
 
 - **Claim:** when a function calls, then stores a small constant, the reference

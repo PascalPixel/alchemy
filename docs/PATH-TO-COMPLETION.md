@@ -1,6 +1,6 @@
 # Path to completion (measured 2026-07-28)
 
-`[1,364 of 1,999]`. 635 `c_candidate` regions remain. **Y dropped from 2,058 to
+`[1,366 of 2,000]`. 634 `c_candidate` regions remain. **Y dropped from 2,058 to
 1,999 on 2026-07-26 through classification cleanup: 43 `mov ip, pc` regions
 moved into the existing `nonstandard_thumb_call_module` class, 14 regions that
 read a callee-saved register they never write moved into
@@ -12,7 +12,9 @@ prove `080944ec` is an independent ordinary function. The count of *converted*
 regions did not move in any of those reclassifications. Y then returned to
 1,999 when `080c0be4` was found to consume an incoming `r4` value that ordinary
 C cannot name; its standard-ABI sibling consumes the corresponding fourth
-argument from `r3`.** This file exists because a
+argument from `r3`. Y rose to 2,000 again on 2026-07-28 when `080fada0`
+compiled exactly with public `old_agbcc`, disproving its earlier
+`nonstandard_thumb_branch_module` classification.** This file exists because a
 remaining-region headline is a count, not a plan, and because two family sizes published
 earlier today were both wrong from lazy fingerprints. Everything below is
 measured by `tools/remaining_survey.ts`, which decodes each region and resolves
@@ -32,7 +34,7 @@ High-water conversion count by day, from commit subjects:
 | 2026-07-25 | 1,242 | +6 |
 | 2026-07-26 | 1,292 | +50 |
 | 2026-07-27 | 1,345 | +53 (partial day) |
-| 2026-07-28 | 1,364 | +19 (decompilation resumed after humanization) |
+| 2026-07-28 | 1,366 | +21 (decompilation resumed after humanization) |
 
 **The recent three-day average is still roughly a factor of four below the
 2026-07-23 peak.** That is not a slowdown in effort: the broad easy tier is
@@ -825,6 +827,30 @@ m4a translation-unit family.
 
 The current claimed build is `[1,364 of 1,999]` and 94,702 exact-C bytes.
 Ordinary assembly debt is 635 regions / 396,798 bytes.
+
+## The sixteenth fresh pass
+
+Two more stock-m4a regions converted through the already-approved historical
+`old_agbcc` translation-unit family:
+
+| region | bytes | recovered behavior |
+| --- | ---: | --- |
+| `080fab7c` | 200 | fade interval/countdown, track stop, completion status, and per-track volume scaling |
+| `080fada0` | 80 | channel-select switch that disables the corresponding GBA sound control registers |
+
+Both are maintainable typed C, compile without assembly or a new backend mode,
+and independently match every byte. The old-agbcc allowlist now has 41 exact
+witnesses; these two reduce one-off routing by extending an existing coherent
+library family.
+
+`080fada0` also corrects the denominator upward by one. It had been classified
+as `nonstandard_thumb_branch_module` because the Camelot fork did not reproduce
+its bare `bx lr` leaf. Its exact public `old_agbcc` reconstruction proves that
+the prologue/return is ordinary compiler output, not structural assembly. The
+conversion count rises by two while the ordinary denominator rises by one.
+
+The current claimed build is `[1,366 of 2,000]` and 94,982 exact-C bytes.
+Ordinary assembly debt is 634 regions / 396,598 bytes.
 
 ## Bounded compiler-configuration explorer
 

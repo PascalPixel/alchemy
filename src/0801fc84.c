@@ -1,4 +1,5 @@
 #include "types.h"
+#include "runtime_interfaces.h"
 
 extern u8 Value_0000000a;
 extern u8 Value_0000000d;
@@ -7,7 +8,6 @@ extern u8 Value_00000018;
 
 s32 Func_080056cc(void);
 void Func_08005c68(void);
-volatile u32 Func_08005cf8(void);
 u32 Func_08005ac0(s32);
 void Func_0801776c(s32, s32);
 s32 Func_08020244(s16, s32);

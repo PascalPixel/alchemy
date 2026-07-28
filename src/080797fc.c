@@ -1,4 +1,5 @@
 #include "types.h"
+#include "runtime_interfaces.h"
 
 struct Table_080797fc {
     u8 padding[4];
@@ -11,18 +12,17 @@ struct Record_080797fc {
     u8 values[148];
 };
 
-s32 Func_080773d8(s32);
 struct Record_080797fc *Func_08078ed8(s32);
 extern struct Table_080797fc Data_08088e38[];
 
-s32 Func_080797fc(s32 record, u8 *source, s32 *output) {
+s32 Func_080797fc(s32 record, const u8 *source, s32 output[4]) {
     s32 i;
     s32 *cursor;
 
     if (record > 7) {
         u32 index;
 
-        index = *(u8 *)(Func_080773d8(record) + 52);
+        index = Func_080773d8(record)[52];
         if (index > 43)
             index = 0;
 

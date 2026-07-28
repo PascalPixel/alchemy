@@ -4,21 +4,8 @@ s32 Func_080162d4(s32, s32, s32, s32, s32);
 void Func_0801e940(u8 *s, s32 arg1, u32 arg2, u32 arg3);
 s32 Func_08021c34(void)
 {
-  s32 temp_r0;
-  s32 *new_var;
-  if (temp_r0)
-  {
-    temp_r0 = Func_080162d4(0, 0, 6, 4, 6);
-    Func_0801e940(0x08037300, temp_r0, 0, 0);
-    new_var = &temp_r0;
-    return *new_var;
-  }
-  else
-  {
-    temp_r0 = Func_080162d4(0, 0, 6, 4, 6);
-    Func_0801e940(0x08037300, temp_r0, 0, 0);
-    new_var = &temp_r0;
-    return *new_var;
-  }
-}
+    s32 handle = Func_080162d4(0, 0, 6, 4, 6);
 
+    Func_0801e940((u8 *)0x08037300, handle, 0, 0);
+    return handle;
+}

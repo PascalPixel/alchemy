@@ -1,8 +1,8 @@
 #include "types.h"
+#include "runtime_interfaces.h"
 
-s32 Func_08018850(s32, s32, s32, s32);
 
-s32 Func_08020b14(u8 *str) {
+s32 Func_08020b14(const u8 *str) {
     u8 *base;
     u16 *dst;
     s32 count;
@@ -23,6 +23,6 @@ s32 Func_08020b14(u8 *str) {
     }
     offset = 0xEB0 + count * 2;
     *(u16 *)(base + offset) = 0;
-    Func_08018850(0, (s32)&count_out, (s32)&width_out, 0);
+    Func_08018850(0, &count_out, &width_out, 0);
     return count_out;
 }

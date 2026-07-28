@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_080f7460();
+s32 Func_080f7460(void);
 s32 Func_080f9010(s32);
 s32 Func_080f6008(void)
 {
@@ -17,4 +17,3 @@ s32 Func_080f6008(void)
   Func_080f7460();
   return 0;
 }
-

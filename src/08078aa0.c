@@ -1,6 +1,6 @@
 #include "types.h"
 
-extern u8 Data_02000380[];
+extern u8 Data_02000380[128];
 
 s32 Func_08078aa0(s32 index, s32 delta)
 {

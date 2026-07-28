@@ -1,3 +1,4 @@
+#include "b5_context.h"
 #include "types.h"
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -9,7 +10,6 @@
 #define OBJECT_VALUE(object) FIELD(object, u8, 0x05)
 #define OBJECT_REFRESH(object) FIELD(object, u8, 0x16)
 
-void *Func_080b5098(s32);
 void *Func_080b50d8(void *, s32);
 s32 Func_080b5100(s32);
 void Func_08009020(void *, s32);
@@ -22,7 +22,7 @@ void Func_080d6888(
     s32 state_slot,
     s32 state_value)
 {
-    void *set;
+    struct B5Context *set;
     void *group;
     u8 *state;
     s32 group_index;

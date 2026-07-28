@@ -1,17 +1,17 @@
+#include "b5_context.h"
 #include "types.h"
 #include "motion_object.h"
 
-struct MotionObject **Func_080b5098(s32);
 s32 Func_080022ec(s32, s32);
 void Func_08009140(struct MotionObject *);
 void Func_08009150(struct MotionObject *, s32, s32, s32);
 void Func_08009080(struct MotionObject *, s32);
 
 void Func_080df90c(s32 first, s32 second, s32 divisor) {
-    struct MotionObject **first_context = Func_080b5098(first);
-    struct MotionObject **second_context = Func_080b5098(second);
-    struct MotionObject *object = *first_context;
-    struct MotionObject *target = *second_context;
+    struct B5Context *first_context = Func_080b5098(first);
+    struct B5Context *second_context = Func_080b5098(second);
+    struct MotionObject *object = first_context->object;
+    struct MotionObject *target = second_context->object;
     s32 scale = 80;
     s32 differenceX = target->x - object->x;
     s32 startX = object->x;

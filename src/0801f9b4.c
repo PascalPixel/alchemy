@@ -1,8 +1,8 @@
 #include "types.h"
+#include "runtime_interfaces.h"
 
 s32 Func_080056cc(void);
 s32 Func_08005920(s32, void *);
-volatile unsigned int Func_08005cf8(void);
 void Func_0801776c(s32, s32);
 void Func_0801f818(void);
 extern char Data_02000000;

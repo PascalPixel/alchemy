@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **153,730 executable bytes across 373 compiling sources**:
-  141,722 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **291,698 / 1,338,732 executable bytes** are now expressed as C, with
-  1,047,034 remaining.
+- Semantic-C lane: **155,494 executable bytes across 374 compiling sources**:
+  143,486 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **293,462 / 1,338,732 executable bytes** are now expressed as C, with
+  1,045,270 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -197,6 +197,12 @@ not claim original machine-code equality. Exact sources remain under
   command cursor. Both geometry paths restore the raw decompilation's missing
   seven-argument rectangle-helper ABI, and the target assembly preserves all
   18 named external call sites.
+- The next 1,764-byte owner, `080d4604`, reconstructs a complete battle-effect
+  scene: mode-specific origin and palette setup, staged particle groups,
+  gravity updates, character effects, presentation, and resource cleanup.
+  Its stack-backed coordinate output and all six-argument sprite transfers
+  were restored explicitly, while the target assembly preserves all 41 named
+  external call sites.
 
 ## Toolchain on this host (linux-x64)
 

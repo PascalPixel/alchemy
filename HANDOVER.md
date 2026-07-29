@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **132,458 executable bytes across 361 compiling sources**:
-  120,218 main bytes and 12,240 overlay bytes. Combined with exact C,
-  **269,446 / 1,338,618 executable bytes** are now expressed as C, with
-  1,069,172 remaining.
+- Semantic-C lane: **133,794 executable bytes across 362 compiling sources**:
+  121,554 main bytes and 12,240 overlay bytes. Combined with exact C,
+  **270,782 / 1,338,618 executable bytes** are now expressed as C, with
+  1,067,836 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -97,6 +97,11 @@ not claim original machine-code equality. Exact sources remain under
   the complete status-window and sprite constructor. Both retain every
   branch-specific message/UI call site and match their reference external-call
   multisets.
+- The following 1,336-byte owner, `080a9f10`, reconstructs item/effect
+  application for one combatant or the whole party: HP/PP restoration,
+  revival, status clearing, permanent stat gains, result codes, and party
+  recalculation. It corrects raw decompiler switch labels for effect IDs
+  `0x104` through `0x109` and preserves all five mutation call sites.
 
 ## Toolchain on this host (linux-x64)
 

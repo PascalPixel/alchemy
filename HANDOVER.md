@@ -66,6 +66,27 @@ Reusable shapes proved this session (all backed by exact installs):
 - one C variable reused for two sequential object fetches produces the
   entry `mov r5, r0` copy (work/claude notes for 13c0).
 
+## Later rounds (same session)
+
+Three further agent rounds adopted ~80 more functions: resource_3ac and
+resource_3ce walked to their veneer banks, resource_383 covered
+0x052c-0x1e80, resource_399 through 0x0abc, resource_37a through 0x1510,
+resource_3bd 0xa54-0xde8, resource_3c8 through 0x1f5e, plus the routed
+adoptions below. New overlay flag routes (each entry has an exact-byte
+proof recorded in its work/claude/notes file):
+NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES (399 family + 3ce:0244),
+THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES (399:05dc/0a3c/0abc, 37a:1380),
+NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES (37a:0054/0108/0150/01ec,
+399:0abc), NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES (383:082c).
+
+Key new lever: hoisting a single int-typed named local into the entry
+block (`g = 0x986;` before the first branch) makes gcse rematerialize
+the pool constant at each later-block use, defeating the cross-call
+CSE-share blocker EXCEPT when a use sits in the entry block itself or
+the constant is spelled as a &Value_ symbol. Walk frontiers: 37a 0x1510,
+394 0xc2c, 3bd 0xde8 (gaps 0x0c4-0x244, 0x2a8-0xa00 unexplored), 3c8
+0x1d48/0x1f60 giants, 383 0x1e80, 399 0x0b70, 3ca 0x0430.
+
 ## Blockers discovered (documented under work/claude/notes/)
 
 1. **resource_3bc runtime base is 0x02008000.** Jump-table words in the

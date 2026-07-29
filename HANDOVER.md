@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **188,442 executable bytes across 431 compiling sources**:
-  176,434 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **332,564 / 1,338,908 executable bytes** are now expressed as C, with
-  1,006,344 remaining.
+- Semantic-C lane: **188,886 executable bytes across 432 compiling sources**:
+  176,878 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **333,008 / 1,338,908 executable bytes** are now expressed as C, with
+  1,005,900 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -503,6 +503,14 @@ not claim original machine-code equality. Exact sources remain under
   the correct projection pair, forms each four-word position request, and
   preserves the reference's four layout-specific render sites plus its two
   grid-coordinate helper calls.
+- The next 444-byte owner, `080b2328`, reconstructs combat-effect purchase
+  validation, error reporting, temporary entry removal, the full confirmation
+  animation, cost deduction, menu refresh, and optional follow-up application.
+  Its target assembly preserves all 44 branch-specific call sites. Two larger
+  scene candidates screened immediately beforehand remain parked: `080e6638`
+  loads a renderer callback into live `r4`, and `080dc454` loads its blitter
+  context into live `r5`; neither hidden input is expressible by an ordinary
+  C call, so no misleading semantic source was admitted.
 
 ## Toolchain on this host (linux-x64)
 

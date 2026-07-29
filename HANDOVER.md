@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **207,952 executable bytes across 457 compiling sources**:
-  195,160 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **355,566 / 1,339,230 executable bytes** are now expressed as C, with
-  983,664 remaining.
+- Semantic-C lane: **208,564 executable bytes across 458 compiling sources**:
+  195,772 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **356,178 / 1,339,230 executable bytes** are now expressed as C, with
+  983,052 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -132,6 +132,11 @@ not claim original machine-code equality. Exact sources remain under
   action input, 84-byte work area, child matrix, and reused 14-entry actor list
   replace the raw overlapping stack scalars, and all 31 call sites are
   preserved.
+- The 612-byte `080ba978` owner reconstructs camera orientation and a complete
+  battle action: angle interpolation and flag overrides, transition selection,
+  participant child snapshots, message or action dispatch, and actor cleanup.
+  Its action input and 84-byte battle-work area replace the raw byte-sized
+  stack fiction, and all 25 call sites are preserved.
 - Three larger candidates are deliberately parked rather than admitted with
   fake ordinary calls. `080d1714` is a 3,384-byte, 400-frame cinematic whose
   raw output splits an internal loop entry and hides ten runtime callback
@@ -152,6 +157,11 @@ not claim original machine-code equality. Exact sources remain under
   six-argument renderer target retained in live `r4`; `080ce4e8` has three
   polymorphic live-`r5` calls using two signatures. Their particle/cinematic
   behavior is audited, but their raw ordinary veneer calls are not admissible.
+  `080d0ee0` is actually a 1,136-byte owner spanning its head, a mid-function
+  literal pool, and the live `080d12a8` continuation, with an `r4` renderer.
+  `080ddde0` similarly owns 1,304 bytes through `080de2f8`, including the live
+  `080de0d4` continuation and four hidden renderer calls. Neither split head is
+  independently admissible.
   Their boundaries, behavior, and callback debt have been audited for a later
   typed-function-pointer/backend pass.
 - The latest main-ROM cohort adds 20,372 reviewed bytes. The largest repaired

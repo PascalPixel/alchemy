@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **182,702 executable bytes across 416 compiling sources**:
-  170,694 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **326,824 / 1,338,908 executable bytes** are now expressed as C, with
-  1,012,084 remaining.
+- Semantic-C lane: **183,130 executable bytes across 417 compiling sources**:
+  171,122 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **327,252 / 1,338,908 executable bytes** are now expressed as C, with
+  1,011,656 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -424,6 +424,12 @@ not claim original machine-code equality. Exact sources remain under
   the complete five-record window at the first position before redrawing the
   selection. The shared typed record layout replaces raw pointer arithmetic,
   and target assembly preserves all ten external call sites.
+- The paired 428-byte owner, `0801b664`, reconstructs the forward selection
+  transition. It wraps short pages, inserts newly exposed trailing records,
+  or animates the long-page list home before repopulating and spacing all five
+  records. Together with `0801b810`, both directions now share the recovered
+  40-byte list-record layout; target assembly preserves all ten external call
+  sites.
 
 ## Toolchain on this host (linux-x64)
 

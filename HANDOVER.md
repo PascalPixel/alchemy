@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **133,794 executable bytes across 362 compiling sources**:
-  121,554 main bytes and 12,240 overlay bytes. Combined with exact C,
-  **270,782 / 1,338,618 executable bytes** are now expressed as C, with
-  1,067,836 remaining.
+- Semantic-C lane: **135,714 executable bytes across 363 compiling sources**:
+  123,474 main bytes and 12,240 overlay bytes. Combined with exact C,
+  **272,702 / 1,338,618 executable bytes** are now expressed as C, with
+  1,065,916 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -102,6 +102,12 @@ not claim original machine-code equality. Exact sources remain under
   revival, status clearing, permanent stat gains, result codes, and party
   recalculation. It corrects raw decompiler switch labels for effect IDs
   `0x104` through `0x109` and preserves all five mutation call sites.
+- The next 1,920-byte owner, `080f7f78`, reconstructs the sliding-window
+  compressor: modulo-1024 dictionary matching, lazy-match selection,
+  short/long back-reference encoding, flag-byte packing, buffer flushes, and
+  terminator emission. Four duplicated wraparound searches in the raw output
+  are expressed by one reviewed match-search helper while preserving the
+  reference's two refill and two flush call sites.
 
 ## Toolchain on this host (linux-x64)
 

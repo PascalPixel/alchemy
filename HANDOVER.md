@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **209,664 executable bytes across 460 compiling sources**:
-  196,872 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **357,278 / 1,339,230 executable bytes** are now expressed as C, with
-  981,952 remaining.
+- Semantic-C lane: **210,188 executable bytes across 461 compiling sources**:
+  197,396 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **357,802 / 1,339,230 executable bytes** are now expressed as C, with
+  981,428 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -147,6 +147,11 @@ not claim original machine-code equality. Exact sources remain under
   trailing emission, delayed activation, and teardown. Its clone pointer array,
   actor/component layouts, vectors, and 72-byte effect records are explicit,
   and all 42 call sites are preserved.
+- The 524-byte `080a8d34` owner reconstructs the five-entry inventory-row
+  renderer: selected name and status, per-entry metadata, numbered glyphs,
+  selected/unselected palettes, and tile-region highlights. Its true
+  three-argument ABI and every six-argument drawing call are preserved, along
+  with all 17 static call sites.
 - Three larger candidates are deliberately parked rather than admitted with
   fake ordinary calls. `080d1714` is a 3,384-byte, 400-frame cinematic whose
   raw output splits an internal loop entry and hides ten runtime callback
@@ -171,7 +176,9 @@ not claim original machine-code equality. Exact sources remain under
   literal pool, and the live `080d12a8` continuation, with an `r4` renderer.
   `080ddde0` similarly owns 1,304 bytes through `080de2f8`, including the live
   `080de0d4` continuation and four hidden renderer calls. Neither split head is
-  independently admissible.
+  independently admissible. `080d5c48` is well bounded but both of its
+  six-argument drawing calls require the target in live `r7`, so its raw
+  ordinary `08007300` calls remain inadmissible.
   Their boundaries, behavior, and callback debt have been audited for a later
   typed-function-pointer/backend pass.
 - The latest main-ROM cohort adds 20,372 reviewed bytes. The largest repaired

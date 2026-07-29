@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **135,714 executable bytes across 363 compiling sources**:
-  123,474 main bytes and 12,240 overlay bytes. Combined with exact C,
-  **272,702 / 1,338,618 executable bytes** are now expressed as C, with
-  1,065,916 remaining.
+- Semantic-C lane: **137,090 executable bytes across 364 compiling sources**:
+  124,850 main bytes and 12,240 overlay bytes. Combined with exact C,
+  **274,078 / 1,338,618 executable bytes** are now expressed as C, with
+  1,064,540 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -108,6 +108,12 @@ not claim original machine-code equality. Exact sources remain under
   terminator emission. Four duplicated wraparound searches in the raw output
   are expressed by one reviewed match-search helper while preserving the
   reference's two refill and two flush call sites.
+- The following 1,376-byte owner, `0801a98c`, reconstructs the linked-list
+  entity and cursor renderer, including position easing, animation phases,
+  visibility flags, priorities, selection tracking, and four render groups.
+  The previously ambiguous `080b50b0` veneer was verified to take an entity ID
+  and a two-word position output, removing the raw decompiler's missing ABI
+  context before admission.
 
 ## Toolchain on this host (linux-x64)
 

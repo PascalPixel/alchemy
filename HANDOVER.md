@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **185,206 executable bytes across 422 compiling sources**:
-  173,198 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **329,328 / 1,338,908 executable bytes** are now expressed as C, with
-  1,009,580 remaining.
+- Semantic-C lane: **185,638 executable bytes across 423 compiling sources**:
+  173,630 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **329,760 / 1,338,908 executable bytes** are now expressed as C, with
+  1,009,148 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -461,6 +461,12 @@ not claim original machine-code equality. Exact sources remain under
   object render bits, saved position, stage flags, timers, and sounds follow
   the reference's shared update paths; target assembly preserves all thirteen
   external call sites.
+- The following 432-byte owner, `08098698`, reconstructs the 24-projectile
+  scene emitter. It chooses a direction-dependent launch point, creates each
+  projectile, copies the base sprite's render attributes, installs its update
+  behavior, and assigns a randomized three-axis velocity before pacing the
+  next emission. Explicit position and velocity vectors replace raw frame
+  aliases, and target assembly preserves all fifteen external call sites.
 
 ## Toolchain on this host (linux-x64)
 

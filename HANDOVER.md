@@ -1,13 +1,14 @@
 # Alchemy handover
 
-Updated: 2026-07-28 (remote overlay session 2)
+Updated: 2026-07-29 (remote overlay session 3)
 
 This is the single authoritative session handover. Do not add dated handoff
 files; update this file in place.
 
 ## Current objective
 
-Reach **152,000 exact-C bytes**, prioritizing overlay code.
+Continue the decompilation, prioritizing overlay code. The prior
+**152,000 exact-C byte** target is within ~4 KB as of session 3.
 
 Exact means fully linked machine-code byte equality, not semantic similarity
 or equal object size.
@@ -148,6 +149,61 @@ early-literal-pool variant that re-creates duplicate pool entries.
   preserved in this container; treat as fresh).
 - The twelve-member 60-byte family (resource_373:0030 etc.) remains
   parked; no exact result across 1,633 configurations previously.
+
+## Session 3 (this session)
+
+Live metric at last push: **[C 148,066/1,339,340 bytes]** on
+`claude/continue-decompilation-3drfw0`. Every commit below passed the full
+required-check cycle (byte-identical ROM-mode build).
+
+Overlays walked to a frontier this session, with the next unwalked offset:
+
+| overlay | state | next offset |
+| --- | --- | --- |
+| resource_3b1 | fully triaged 0x0030-0x10a6 | none (code ends) |
+| resource_3bf | walked | 0x1150 |
+| resource_380 | park-dominated midsection | ~0x4852 (blobs before) |
+| resource_3b8 | walked | 0x0af8 |
+| resource_3a4 | walked | 0x0d2c (blob to veneer ~0x3bbc) |
+| resource_39e | walked | 0x0bd4 |
+| resource_3af | lane cut by usage limit | 0x10a0 |
+| resource_39c, 3ba, 39d | lanes in flight | check git log |
+
+New flag routes added to `tools/alchemy_gcc.ts`, each with its own
+exact-byte proof recorded in the matching `work/claude/notes` file:
+
+- `NO_STRICT_ALIASING_OVERLAY_SOURCES` (new set): resource_3c9 0104/215c/
+  21ac/3600, resource_380:0104, resource_39e:0104. With strict aliasing our
+  scheduler treats a `(u16 *)` view store as independent of the struct-field
+  re-read and sinks the load below the store pair; the reference keeps the
+  original order.
+- resource_3b8:049c needs `-mthumb-immediate-latency` **and**
+  `-fno-rerun-cse-after-loop` together; neither alone reaches zero.
+- resource_3a4 status-window family (09ec, 0a94, 0b3c, 0bd8) under
+  `-fno-rerun-cse-after-loop` alone: default flags CSE-hoist a thrice-used
+  pool constant into r5.
+
+New reusable levers proved this session:
+
+- bitfield setter spelling `S.f1 = v` cracks movs/negs mask sequences;
+- shared-index `((s16 *)p)[i]` defeats the pool-load hoist;
+- in-place s16 clamp `t <<= 16; t >>= 16;`, while the s16-narrowing mask
+  spelling instead forces an early mid-function pool dump;
+- `f(a, v = K, 0)` keeps K in a callee-saved register where plain spellings
+  constant-propagate;
+- plain-integer index `Data_02000240[0x22b] = 3` defeats the strb reg-reg
+  fold that every pointer-sum spelling produced.
+
+New park class (now the single most common blocker in overlay call sheets):
+**duplicated-constant argument families.** The reference materializes an
+expensive constant (0x10000, 0x20000, 0x30000, -1, 0x33333) separately at
+each call site while our -O2 pipeline CSEs it into a callee-saved register,
+cascading into a different prologue. No available flag reverses it. It
+dominates resource_380 0x390/0x6f4/0x0a98, resource_39e 0x388/0x518/0x71c,
+resource_3b8 0x674, and resource_3a4 0x6dc/0x7e8/0x8d4/0xc9c.
+
+Host note: this container has **4 cores**, so at most two walker lanes plus
+the main agent are useful; more lanes thrash the compile step.
 
 ## Required checks
 

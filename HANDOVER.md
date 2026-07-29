@@ -1,6 +1,6 @@
 # Alchemy handover
 
-Updated: 2026-07-28 (remote overlay session 2)
+Updated: 2026-07-29 (semantic-C speed lane)
 
 This is the single authoritative session handover. Do not add dated handoff
 files; update this file in place.
@@ -23,9 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **52,358 executable bytes across 261 compiling sources**.
-  Combined with exact C, **189,346 / 1,338,618 executable bytes** are now
-  expressed as C, with 1,149,272 remaining.
+- Semantic-C lane: **72,730 executable bytes across 274 compiling sources**:
+  60,490 main bytes and 12,240 overlay bytes. Combined with exact C,
+  **209,718 / 1,338,618 executable bytes** are now expressed as C, with
+  1,128,900 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior-agent, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -35,6 +36,12 @@ not claim original machine-code equality. Exact sources remain under
   `resource_3c8:1d48`. `resource_379:00dc` was rejected as a fake standalone
   owner because it is a shared entry using `resource_379:0074`'s
   saved-register frame; the exclusion is documented under `semantic/`.
+- The latest main-ROM cohort adds 20,372 reviewed bytes. The largest repaired
+  complete owners are `080bbb0c` (6,332 bytes), `080ea0d8` (5,756 bytes), and
+  `080ab5e4` (4,888 bytes); ten smaller raw m2c owners passed the same admission
+  gates without repair. Rejected mechanical copies were removed from
+  `semantic/`, while their originals remain in `work/m2c-fresh-20260722/` as
+  the next repair queue.
 
 ## Toolchain on this host (linux-x64)
 

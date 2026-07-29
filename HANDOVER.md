@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **196,496 executable bytes across 442 compiling sources**:
-  183,704 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **344,110 / 1,339,230 executable bytes** are now expressed as C, with
-  995,120 remaining.
+- Semantic-C lane: **197,236 executable bytes across 443 compiling sources**:
+  184,444 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **344,850 / 1,339,230 executable bytes** are now expressed as C, with
+  994,380 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -53,6 +53,11 @@ not claim original machine-code equality. Exact sources remain under
   object replacement, both exit paths, and teardown. Its nested input/redraw
   loops, object-slot cleanup, and all 49 reference call sites are preserved
   without hidden-register or decompiler constructs.
+- The 740-byte `080c2724` owner reconstructs battle-reward distribution:
+  repeated multi-level experience gains, newly learned abilities, six stat
+  gain reports, currency, and priority-ordered rare items with a full-inventory
+  fallback. Its stack arrays and level-up result are typed explicitly, and all
+  55 reference call sites remain distinct.
 - Three larger candidates are deliberately parked rather than admitted with
   fake ordinary calls. `080d1714` is a 3,384-byte, 400-frame cinematic whose
   raw output splits an internal loop entry and hides ten runtime callback

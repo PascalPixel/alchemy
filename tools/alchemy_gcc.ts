@@ -355,6 +355,7 @@ const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
 const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
   "assets/code/resource_37a_c_02001790.c",
   "assets/code/resource_399_c_0200021c.c",
+  "assets/code/resource_3ca_c_020010d4.c",
   "assets/code/resource_399_c_02000254.c",
   "assets/code/resource_399_c_020005dc.c",
   "assets/code/resource_399_c_02000608.c",
@@ -373,6 +374,13 @@ const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
 // four-way dispatch. Path-following cse (and its skip-blocks variant) folds
 // them into the shared head, rotating the callee-saved allocation; with both
 // followed-path cse passes off the source is byte-exact.
+// resource_3ca:10d4 is the canonical single-descriptor DMA zero-fill: the
+// grouped-store mode forms its stmia and the original-order tie-break places
+// the descriptor inputs; both modes carry existing evidence and the pairing
+// is byte-exact for this source alone.
+const GROUPED_DMA_STORE_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3ca_c_020010d4.c",
+]);
 const NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES = new Set([
   "assets/code/resource_383_c_0200082c.c",
 ]);
@@ -538,6 +546,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-cse-follow-jumps", "-fno-cse-skip-blocks"]
       : []),
+    ...(GROUPED_DMA_STORE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-mgrouped-dma-store"]
+      : []),
     ...(EARLY_LITERAL_POOL_OVERLAY_SOURCES.has(overlayStem(source))
       ? ["-mthumb-early-literal-pool"]
       : []),
@@ -591,6 +602,7 @@ export function evidencedRoutingFlags(): string[] {
     ...NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES,
     ...NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES,
     ...NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES,
+    ...GROUPED_DMA_STORE_OVERLAY_SOURCES,
   ]) inspect(join(ROOT, source));
   for (const stem of EARLY_LITERAL_POOL_OVERLAY_SOURCES) inspect(`/tmp/${stem}.c`);
   return [...found].sort();

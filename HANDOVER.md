@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **201,428 executable bytes across 449 compiling sources**:
-  188,636 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **349,042 / 1,339,230 executable bytes** are now expressed as C, with
-  990,188 remaining.
+- Semantic-C lane: **202,048 executable bytes across 450 compiling sources**:
+  189,256 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **349,662 / 1,339,230 executable bytes** are now expressed as C, with
+  989,568 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -88,6 +88,11 @@ not claim original machine-code equality. Exact sources remain under
   failures, successful application, resource deduction, refresh, and cleanup.
   Its signed candidate table/count/category accesses are explicit, and all 40
   reference call sites are preserved.
+- The 620-byte `080ba6ac` owner reconstructs battle-action execution followed
+  by used-item reconciliation: work/child snapshots, the palette/action branch,
+  actor cleanup, queued-slot removal and shifting, item breakage, and item
+  transformation. It reuses the established battle-work layout and preserves
+  all 26 reference call sites.
 - Three larger candidates are deliberately parked rather than admitted with
   fake ordinary calls. `080d1714` is a 3,384-byte, 400-frame cinematic whose
   raw output splits an internal loop entry and hides ten runtime callback
@@ -96,6 +101,8 @@ not claim original machine-code equality. Exact sources remain under
   in `ip` and `r4`; `080ce85c` alternates two renderer targets through `r4`;
   `080dc6bc` and `080d59b0` similarly select particle renderers through `r4`;
   and `080ceff8` combines three `r6` copy callbacks with two `r4` renderers.
+  `080ccc38` and `080d9fc8` also require live `r4` renderer targets, while
+  `080c1798` has two demonstrated live-`r2` residue dependencies across calls.
   Their boundaries, behavior, and callback debt have been audited for a later
   typed-function-pointer/backend pass.
 - The latest main-ROM cohort adds 20,372 reviewed bytes. The largest repaired

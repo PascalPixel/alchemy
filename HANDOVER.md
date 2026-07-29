@@ -23,11 +23,17 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C pilot: three honest outer owners totaling **9,692 executable
-  bytes** compile independently without changing the exact ROM build:
-  `resource_381:0054` (3,548), `resource_381:1410` (5,136), and
-  `resource_394:03f0` (1,008). `resource_379:00dc` was rejected as a fake
-  standalone owner because it is a shared entry using `resource_379:0074`'s
+- Semantic-C lane: **52,358 executable bytes across 261 compiling sources**.
+  Combined with exact C, **189,346 / 1,338,618 executable bytes** are now
+  expressed as C, with 1,149,272 remaining.
+- The lane includes every still-live source from the curated near-match,
+  hand-reviewed, prior-agent, and manual candidate queues. Admission rejects
+  exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
+  unresolved decompiler constructs, and target-compiler failures.
+- Honest outer-owner additions include `resource_381:0054/1410`,
+  `resource_394:03f0/0c2c/0e64..0fb4`, `resource_3bd:0474/0608`, and
+  `resource_3c8:1d48`. `resource_379:00dc` was rejected as a fake standalone
+  owner because it is a shared entry using `resource_379:0074`'s
   saved-register frame; the exclusion is documented under `semantic/`.
 
 ## Toolchain on this host (linux-x64)

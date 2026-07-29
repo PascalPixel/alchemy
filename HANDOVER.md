@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **183,442 executable bytes across 418 compiling sources**:
-  171,434 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **327,564 / 1,338,908 executable bytes** are now expressed as C, with
-  1,011,344 remaining.
+- Semantic-C lane: **183,882 executable bytes across 419 compiling sources**:
+  171,874 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **328,004 / 1,338,908 executable bytes** are now expressed as C, with
+  1,010,904 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -436,6 +436,12 @@ not claim original machine-code equality. Exact sources remain under
   entry-specific or type-specific message. The previously unresolved fifth
   allocation argument is recovered as the reference's type value `6`, and
   target assembly preserves all nine external call sites.
+- The following 440-byte owner, `080901c0`, reconstructs the five-profile
+  field-transition dispatcher. It separates the encoded profile and variant,
+  initializes the shared transition state, chooses the appropriate frame
+  callbacks, and records duration and blend parameters for the asynchronous
+  profiles. Typed callback prototypes replace the raw unknown declarations,
+  and target assembly preserves all seventeen external call sites.
 
 ## Toolchain on this host (linux-x64)
 

@@ -270,6 +270,29 @@ Note the stages are independent once each has its own output tree, so they can
 run concurrently (94 s vs 161 s cold for the two full builds); only the
 ROM-mode build should write the default `out/full` tree.
 
+## Compiler lane: the two-insn immediate blocker is solved on paper
+
+The largest single class of unconverted overlay functions has been traced to one
+guard in `cse_insn`'s destination-recording loop, and a gated flag prototype
+exists. Full write-up, prototype diff, and collateral list are in
+`docs/compiler-evidence/`. Headline numbers: with the flag absent the patched
+compiler is byte-identical to the installed bundles on all 1,335 gcc296-routed
+sources; with it on, 109 of those change, so it must be a routed per-source mode.
+Three functions become byte-exact immediately (392 bytes), five more drop to
+2-13 halfwords, and roughly 9,000 bytes of population sit behind the behaviour.
+
+**Not landed, and it cannot be landed from the alchemy repository alone.** The
+fork change has to be committed to `alchemy-gcc` and its pinned commit updated
+before the digests in `tools/alchemy_gcc.ts` may be re-pinned, and
+`PROVENANCE.md` only admits a re-pin after the source-only build reproduces
+gs1-en.gba byte-identically. Treat that as a deliberate decision, not a chore.
+
+A smaller follow-up lane falls out of it: once the flag removes the sharing, the
+entire residual on the near-exact members is a scheduling transposition (the
+reference puts a neighbouring one-instruction immediate between a rematerialized
+constant's `movs` and its `lsls`). `-mthumb-immediate-latency` halves it on one
+member; the rest of that sweep is recorded in the write-up.
+
 ## Required checks
 
 Before every exact-C commit:

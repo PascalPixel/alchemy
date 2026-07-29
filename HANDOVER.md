@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **212,172 executable bytes across 465 compiling sources**:
-  199,380 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **359,786 / 1,339,230 executable bytes** are now expressed as C, with
-  979,444 remaining.
+- Semantic-C lane: **213,028 executable bytes across 467 compiling sources**:
+  200,236 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **360,642 / 1,339,230 executable bytes** are now expressed as C, with
+  978,588 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -170,6 +170,16 @@ not claim original machine-code equality. Exact sources remain under
   feedback, successful transfer and resource deduction, cancellation, and
   item-state restoration. Its signed actor and amount fields are explicit, and
   all 26 static call sites are preserved.
+- The 428-byte `080b5534` owner reconstructs a non-returning controller/debug
+  display: actor-name setup, panel selection, independent controller-driven
+  value changes, bounded resource selection, and repeated redraw. Its decoded
+  halfword buffer and volatile display/input state are explicit, and all 16
+  static call sites are preserved.
+- The 428-byte `080b7738` owner reconstructs battlefield effect
+  synchronization and opposing-side display priorities. Its 14-ID buffer,
+  actor/slot/effect/component layouts, signed orientation test, and four-entry
+  component traversal are explicit, and all eight static call sites are
+  preserved.
 - Three larger candidates are deliberately parked rather than admitted with
   fake ordinary calls. `080d1714` is a 3,384-byte, 400-frame cinematic whose
   raw output splits an internal loop entry and hides ten runtime callback

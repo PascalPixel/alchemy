@@ -328,6 +328,7 @@ const NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES = new Set([
 const THUMB_IMMEDIATE_LATENCY_SOURCES = new Set(["080babdc"]);
 const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
   "assets/code/resource_37a_c_02001380.c",
+  "assets/code/resource_37a_c_02001790.c",
   "assets/code/resource_37a_c_02002924.c",
   "assets/code/resource_399_c_020005dc.c",
   "assets/code/resource_399_c_02000a3c.c",
@@ -352,6 +353,7 @@ const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
 // (or, for 399:05dc and 0a3c, together with the routed immediate-latency
 // mode). Each entry has its own exact-byte proof.
 const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_37a_c_02001790.c",
   "assets/code/resource_399_c_0200021c.c",
   "assets/code/resource_399_c_02000254.c",
   "assets/code/resource_399_c_020005dc.c",
@@ -379,6 +381,7 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   "assets/code/resource_37a_c_02000108.c",
   "assets/code/resource_37a_c_02000150.c",
   "assets/code/resource_37a_c_020001ec.c",
+  "assets/code/resource_37a_c_02001a58.c",
   "assets/code/resource_399_c_02000abc.c",
 ]);
 // 既定ABI(標準のr4被呼出保存)で構築された収蔵ライブラリ翻訳単位。

@@ -28,7 +28,7 @@ not claim original machine-code equality. Exact sources remain under
   **209,718 / 1,338,618 executable bytes** are now expressed as C, with
   1,128,900 remaining.
 - The lane includes every still-live source from the curated near-match,
-  hand-reviewed, prior-agent, and manual candidate queues. Admission rejects
+  hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
   unresolved decompiler constructs, and target-compiler failures.
 - Honest outer-owner additions include `resource_381:0054/1410`,
@@ -61,7 +61,7 @@ resource_3bc linear walk: exact adoptions 058c (68), 05d0 (2), 05d4 (10),
 05e0 (120), 0658 (76), 06a4 (110), 0714 (88), 0a20 (34), 0a44 (64),
 0a84 (80), 0ad4 (92), 0b30 (112), 0ba0 (2), 0d70 (18), 0d84 (24),
 0d9c (8), 137c (68), 2710 (72), 2758 (308), 2a50 (66). resource_3c8:
-094c (30). Parallel agents (both interrupted by a container restart;
+094c (30). Parallel work lanes (both interrupted by a container restart;
 their work below survived on disk and is committed) adopted the
 small-queue members resource_371:0030, 372:0030, 383:0048, 394:0be4,
 399:0030, 3a8:00ac, 3ac:004c, 3ce:007c, walked resource_383 through
@@ -89,7 +89,7 @@ Reusable shapes proved this session (all backed by exact installs):
 
 ## Later rounds (same session)
 
-Three further agent rounds adopted ~80 more functions: resource_3ac and
+Three further parallel rounds adopted ~80 more functions: resource_3ac and
 resource_3ce walked to their veneer banks, resource_383 covered
 0x052c-0x1e80, resource_399 through 0x0abc, resource_37a through 0x1510,
 resource_3bd 0xa54-0xde8, resource_3c8 through 0x1f5e, plus the routed

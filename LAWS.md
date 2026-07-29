@@ -219,7 +219,8 @@ must be tested on more than one function before being generalized.
   regmove made the choice, the C cannot unmake it.
 - **The reroute probe is bounded, and the bound is measured (2026-07-24).**
   Because `08006dec` fell to a reroute, every stubborn `register_only` plateau
-  in the queue that no agent owned was rerouted through `old_agbcc` unchanged.
+  in the queue without an active owner was rerouted through `old_agbcc`
+  unchanged.
   All five got *worse*, none better: `08077394` 48→52 bytes (and 64/68 short),
   `080f9ef8` 46→44 but 24 instructions wrong, `080a3354` 50→110,
   `080fb2a4` 37→40 (32/40 short), `08004760` 26→42. Two of the five do not even
@@ -612,7 +613,7 @@ against the approved bundle; full sourced notes in
   exact install carrying either shape.
 - **Recorded:** 2026-07-24.
 
-### Hardware-load width and widening (agent lane, 2026-07-23)
+### Hardware-load width and widening (parallel lane, 2026-07-23)
 
 - **Claim:** on u16 hardware reads, `volatile` on the pointer forces the
   reference's `ldrh` where the default compiler arbitrarily selects `ldrsh`;
@@ -776,7 +777,7 @@ against the approved bundle; full sourced notes in
   call's return value (`regs_ever_live[0]` disables it there), so the transform
   cannot fire for whole families that visibly use the idiom in the ROM.
 - **Current evidence:** three batch-8 regions independently hit the same wall,
-  each after the drafting agent had confirmed semantics and reached a
+  each after semantics had been confirmed and the draft had reached a
   byte-correct head and pool: `080049ac` (51, global base, blocked by the
   return-value guard), `08004cb4` (56, stack base), `08004cf0` (54, stack base
   staying live for three diagonal stores). A fourth, `080bd7a4` (52), is
@@ -784,8 +785,8 @@ against the approved bundle; full sourced notes in
   non-volatile MEMs, but without `volatile` CSE folds its three identical
   descriptor writes into one, so no C shape yields all three `stmia` groups.
 - **Why this is worth stating separately:** these four are not near-misses to be
-  ground down with more source variants — the agents had already run their
-  budgets out against a transform that provably cannot fire. Four regions'
+  ground down with more source variants — prior attempts had already exhausted
+  their budgets against a transform that provably cannot fire. Four regions'
   worth of effort was spent discovering one toolchain limitation four times.
 - **Next test:** in the alchemy-gcc lane, relax the base-register and liveness
   guards and re-measure all four; any such change must re-verify the existing
@@ -814,7 +815,7 @@ against the approved bundle; full sourced notes in
   scheduler out as the cause of that residual and points at the order in which
   the function-end expander emits the return-value copy and the stack restore.
 - **Why record a negative:** all four are cheap to try and expensive to
-  rediscover. Without this entry the next agent finds them in `arm.h`, assumes
+  rediscover. Without this entry the next investigation finds them in `arm.h`, assumes
   an unexplored lever, and spends a budget re-measuring the same three stems.
 - **Recorded:** 2026-07-24.
 
@@ -1350,8 +1351,9 @@ against the approved bundle; full sourced notes in
   `failures=` count, never just the instruction diff. The three compiler
   modes above are recorded here so the routing can be restored verbatim if
   the veneer-placement model is ever solved.
-- **Independently re-derived (2026-07-24):** a fresh agent given only the region
-  and no access to this entry reached the same conclusion from the other end. It
+- **Independently re-derived (2026-07-24):** a fresh investigation given only
+  the region and no access to this entry reached the same conclusion from the
+  other end. It
   found the starting candidate wrongly called `Func_080f9ee8` *directly*, and that
   writing the reference's **indirect** call —
   `M2C_FIELD(Data_03007ff0, void(**)(s32), 0x2C)(arg)` — supplies all six bytes
@@ -1518,7 +1520,7 @@ against the approved bundle; full sourced notes in
 - **Why it matters:** most of this ledger's ordering laws were measured on the
   Camelot fork, where `sched2` is the usual culprit and `rank_for_schedule`
   priority is the usual blocker. Carrying that model into an `old_agbcc` region
-  sends an agent hunting a pass that is not in the binary. Establish which
+  sends the investigation hunting a pass that is not in the binary. Establish which
   compiler the region is on *before* reasoning about order.
 - **Evidence, `08006a00`** (120 bytes, exact). Its four transposed instructions
   at `-O2` are a `regmove` rename, not a schedule: the front end narrows the
@@ -1732,7 +1734,7 @@ against the approved bundle; full sourced notes in
   every call site, so for almost all of its argument constants there is no
   earlier block in which to name them. Before reaching for this law on a long
   function, count its branches; a near-branchless region cannot use it.
-- **A mechanism that was proposed for `37a:2614` and does not hold.** An agent
+- **A mechanism that was proposed for `37a:2614` and does not hold.** A prior
   lane reported the function as a single straight-line block whose argument
   constants are over-CSE'd by `cse1`, on the theory that `update_equiv_regs`'
   `REG_BASIC_BLOCK (regno) < 0` gate can never fire. Two direct counts refute
@@ -1940,7 +1942,7 @@ against the approved bundle; full sourced notes in
 
 ### Shared-term cancellation across subtraction
 
-- **Claim (agent lane, 2026-07-22):** at -O2 the approved compiler
+- **Claim (parallel lane, 2026-07-22):** at -O2 the approved compiler
   cancels a shared additive term across a subtraction —
   `(y1 + base) - (y0 + base)` folds to `y1 - y0` — where the reference
   build keeps both additions. `volatile s32` on the intermediates blocks

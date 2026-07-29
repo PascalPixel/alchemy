@@ -121,8 +121,8 @@ group.
   31 under stock. It does not move 080054e4 or 08005534 at all (74 and 36 under
   both).
 
-**The "up to 11 regions" payoff I relayed from the lane agent is not
-supported.** The agent's diagnosis of the guard was exactly right and is now
+**The previously relayed "up to 11 regions" payoff is not supported.** The
+diagnosis of the guard was exactly right and is now
 confirmed by measurement, but removing it is necessary, not sufficient: the
 second defect on these families — the reference spills its arguments to r5/r6/ip
 and reuses the computed stack pointer as the descriptor destination, where we

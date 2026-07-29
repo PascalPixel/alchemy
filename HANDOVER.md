@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **182,294 executable bytes across 415 compiling sources**:
-  170,286 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **326,416 / 1,338,908 executable bytes** are now expressed as C, with
-  1,012,492 remaining.
+- Semantic-C lane: **182,702 executable bytes across 416 compiling sources**:
+  170,694 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **326,824 / 1,338,908 executable bytes** are now expressed as C, with
+  1,012,084 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -418,6 +418,12 @@ not claim original machine-code equality. Exact sources remain under
   retires and releases the record leaving the opposite edge, and repairs both
   neighboring links. A typed 40-byte record replaces raw offset accesses, and
   target assembly preserves all eight branch-local external call sites.
+- The following 408-byte owner, `0801b810`, reconstructs the selection
+  page-back transition. It updates the cursor within short pages, inserts a
+  leading record while moving through longer pages, or slides and repopulates
+  the complete five-record window at the first position before redrawing the
+  selection. The shared typed record layout replaces raw pointer arithmetic,
+  and target assembly preserves all ten external call sites.
 
 ## Toolchain on this host (linux-x64)
 

@@ -234,6 +234,42 @@ drafting. This is a compiler-lane item, not a source-shape problem.
 Host note: this container has **4 cores**, so at most two walker lanes plus
 the main agent are useful; more lanes thrash the compile step.
 
+## Build caching (added session 3)
+
+The three build stages are content-cached, so a round that adopts one function
+no longer recompiles all 1,376 C units, reassembles all 1,807 regions, and
+re-encodes all 2,431 assets. Measured on this 4-core host:
+
+| stage | cold | warm |
+| --- | --- | --- |
+| build_claimed | 15 s | 0 s |
+| build_asm | 29 s | 0 s |
+| build_assets | 37 s | 0 s |
+| build_full (whole image) | 84 s | 1 s |
+
+- `build_claimed` keys each object on sha256 of the source bytes plus a stamp
+  of the exact command plan and the compiler binaries it names
+  (`out/cache/claimed-objects`). Sound because no generated source under
+  `assets/code` carries a `#include`, so a unit's input closure is one file.
+  A changed source, a changed flag route, or a changed compiler all produce a
+  new key. `objectCacheKey` has a self-test in the `bun run test` chain.
+- `build_asm` keys each region on sha256 of the assembly bytes plus the link
+  address (`out/cache/asm-regions`). Sound for the same reason: no
+  `.include`/`.incbin` anywhere in the assembly sources.
+- `build_assets` skips the whole stage against a stamp over every asset source,
+  every encoder in `tools/`, the manifest, and the build mode
+  (`<output>/stage-stamp.txt`). Deliberately conservative — any change to any
+  input rebuilds everything.
+
+The byte guarantee does not rest on the caches: `build_full` still re-reads
+every region and compares it to the reference ROM, then compares the composed
+image as a whole, so a stale entry cannot produce a wrong image. Delete
+`out/cache` to force a cold rebuild.
+
+Note the stages are independent once each has its own output tree, so they can
+run concurrently (94 s vs 161 s cold for the two full builds); only the
+ROM-mode build should write the default `out/full` tree.
+
 ## Required checks
 
 Before every exact-C commit:

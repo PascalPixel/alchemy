@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **142,894 executable bytes across 368 compiling sources**:
-  130,758 main bytes and 12,136 overlay bytes. Combined with exact C,
-  **280,688 / 1,338,620 executable bytes** are now expressed as C, with
-  1,057,932 remaining.
+- Semantic-C lane: **144,018 executable bytes across 369 compiling sources**:
+  131,882 main bytes and 12,136 overlay bytes. Combined with exact C,
+  **281,812 / 1,338,620 executable bytes** are now expressed as C, with
+  1,056,808 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -147,6 +147,11 @@ not claim original machine-code equality. Exact sources remain under
   selection, character triggers, frame presentation, and cleanup. Its target
   assembly preserves the reference's full external-call multiset, including
   seven distinct random-number sites and both rendering/update paths.
+- The next 1,124-byte owner, `080db264`, reconstructs the complete polar-burst
+  effect: 1,024-particle initialization, four rotating emission waves, three
+  branch-specific sprite renderers, gravity and bounce updates, timed character
+  triggers, and cleanup. Its target assembly preserves all 38 named reference
+  call sites, including nine RNG sites and three sine/cosine pairs.
 
 ## Toolchain on this host (linux-x64)
 

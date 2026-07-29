@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **183,882 executable bytes across 419 compiling sources**:
-  171,874 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **328,004 / 1,338,908 executable bytes** are now expressed as C, with
-  1,010,904 remaining.
+- Semantic-C lane: **184,274 executable bytes across 420 compiling sources**:
+  172,266 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **328,396 / 1,338,908 executable bytes** are now expressed as C, with
+  1,010,512 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -442,6 +442,12 @@ not claim original machine-code equality. Exact sources remain under
   callbacks, and records duration and blend parameters for the asynchronous
   profiles. Typed callback prototypes replace the raw unknown declarations,
   and target assembly preserves all seventeen external call sites.
+- The next 392-byte owner, `0801ccc0`, reconstructs the configurable
+  seven-color UI palette ramp. It derives three channels from the engine's
+  curve table, applies and clamps the brightness adjustment, and feeds the
+  resulting triplet through each of the seven fixed color transforms directly
+  into palette RAM. An explicit three-halfword stack array replaces the raw
+  frame alias, and target assembly preserves all eleven external call sites.
 
 ## Toolchain on this host (linux-x64)
 

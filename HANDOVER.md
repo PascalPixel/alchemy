@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **137,090 executable bytes across 364 compiling sources**:
-  124,850 main bytes and 12,240 overlay bytes. Combined with exact C,
-  **274,078 / 1,338,618 executable bytes** are now expressed as C, with
-  1,064,540 remaining.
+- Semantic-C lane: **138,354 executable bytes across 365 compiling sources**:
+  126,114 main bytes and 12,240 overlay bytes. Combined with exact C,
+  **275,342 / 1,338,618 executable bytes** are now expressed as C, with
+  1,063,276 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -114,6 +114,12 @@ not claim original machine-code equality. Exact sources remain under
   The previously ambiguous `080b50b0` veneer was verified to take an entity ID
   and a two-word position output, removing the raw decompiler's missing ABI
   context before admission.
+- The next 1,264-byte owner, `08099da4`, reconstructs a complete field
+  interaction/cutscene: companion-object setup, vertical entrance, tile
+  probing and collision retries, synchronized positioning, particle burst,
+  camera handoff, timed animation, and cleanup. Its local particle pointer
+  array replaces the raw stack alias while all 72 named external call sites
+  remain intact.
 
 ## Toolchain on this host (linux-x64)
 

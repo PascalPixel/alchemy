@@ -317,6 +317,9 @@ const CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES = new Set([
 // that reads it, rather than after the return (LAWS.md, "A mid-function literal
 // pool is a compiler layout choice, not a source shape").
 const EARLY_LITERAL_POOL_OVERLAY_SOURCES = new Set(["02000e3c", "02000dfc"]);
+const EARLY_LITERAL_POOL_OVERLAY_PATHS = new Set([
+  "assets/code/resource_394_c_02000ee0.c",
+]);
 const NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3a9_c_020000e4.c",
 ]);
@@ -550,7 +553,8 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(GROUPED_DMA_STORE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mgrouped-dma-store"]
       : []),
-    ...(EARLY_LITERAL_POOL_OVERLAY_SOURCES.has(overlayStem(source))
+    ...(EARLY_LITERAL_POOL_OVERLAY_SOURCES.has(overlayStem(source)) ||
+      EARLY_LITERAL_POOL_OVERLAY_PATHS.has(sourceKey(source))
       ? ["-mthumb-early-literal-pool"]
       : []),
   ];

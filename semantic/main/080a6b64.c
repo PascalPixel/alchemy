@@ -12,7 +12,9 @@ struct Page_080a6b64 {
 
 struct MenuState_080a6b64 {
     u8 padding000[0x1C8];
-    u16 item_ids[41];
+    u16 item_ids[40];
+    u8 field218;
+    u8 padding219;
     u8 owner_id;
     u8 padding21b[5];
     u16 flags;

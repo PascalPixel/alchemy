@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **216,950 executable bytes across 476 compiling sources**:
-  204,158 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **364,564 / 1,339,230 executable bytes** are now expressed as C, with
-  974,666 remaining.
+- Semantic-C lane: **217,870 executable bytes across 478 compiling sources**:
+  205,078 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **365,484 / 1,339,230 executable bytes** are now expressed as C, with
+  973,746 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -225,6 +225,16 @@ not claim original machine-code equality. Exact sources remain under
   navigation, wrapped selection, glyph/detail redraw, and ordered window
   cleanup. Its signed halfword records and six-argument glyph helper are
   explicit, and all 11 static call sites are preserved.
+- The 444-byte `0802106c` owner reconstructs a three-option modal menu:
+  localized labels, tile and cursor setup, palette/DMA initialization,
+  selection animation, wrapped navigation, confirmation, cancellation, and
+  cleanup. Its window geometry and six-argument animation calls are explicit,
+  and all 20 static call sites are preserved.
+- The 476-byte `080a7d68` owner reconstructs a party-member preview selector:
+  wrapped actor navigation, preview-variant cycling, marker geometry, inline
+  preview-work rendering, confirmation/cancellation, and result writeback.
+  Its signed selection/count and local-only preview variant are explicit, and
+  all 20 static call sites are preserved.
 - Three larger candidates are deliberately parked rather than admitted with
   fake ordinary calls. `080d1714` is a 3,384-byte, 400-frame cinematic whose
   raw output splits an internal loop entry and hides ten runtime callback

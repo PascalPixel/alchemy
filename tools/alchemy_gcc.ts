@@ -400,6 +400,7 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   "assets/code/resource_37a_c_02000150.c",
   "assets/code/resource_37a_c_020001ec.c",
   "assets/code/resource_37a_c_02001a58.c",
+  "assets/code/resource_373_c_02000ba8.c",
   "assets/code/resource_399_c_02000abc.c",
 ]);
 // 既定ABI(標準のr4被呼出保存)で構築された収蔵ライブラリ翻訳単位。

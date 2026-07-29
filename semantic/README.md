@@ -13,6 +13,9 @@ Overlay files use the existing address convention:
 semantic/overlays/resource_NNN_c_0200AAAA.c
 ```
 
+Main-image files use `semantic/main/080AAAAA.c`. Both layouts preserve the
+existing `Func_ADDRESS` entry symbol.
+
 Each file must define `Func_0200aaaa`, compile as freestanding ARM7TDMI C, and
 contain no inline assembly. Validate the complete semantic lane with:
 

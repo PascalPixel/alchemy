@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **204,316 executable bytes across 453 compiling sources**:
-  191,524 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **351,930 / 1,339,230 executable bytes** are now expressed as C, with
-  987,300 remaining.
+- Semantic-C lane: **205,186 executable bytes across 454 compiling sources**:
+  192,394 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **352,800 / 1,339,230 executable bytes** are now expressed as C, with
+  986,430 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -109,6 +109,12 @@ not claim original machine-code equality. Exact sources remain under
   of an existing object, event handoff, and cleanup. Its scene, object, vector,
   trail, and effect-node layouts are guarded, and all 43 call sites are
   preserved.
+- The 870-byte `080a8114` owner reconstructs the two-pane character selector:
+  availability rebuilding, wrapped navigation, content and alternate panes,
+  cursor placement, confirmation and cancellation, shoulder-button character
+  rotation, and teardown. Its character table, availability buffer, signed
+  indices, and window handles are explicit, and all 46 call sites are
+  preserved.
 - Three larger candidates are deliberately parked rather than admitted with
   fake ordinary calls. `080d1714` is a 3,384-byte, 400-frame cinematic whose
   raw output splits an internal loop entry and hides ten runtime callback
@@ -122,7 +128,10 @@ not claim original machine-code equality. Exact sources remain under
   `080d82b0` is behaviorally recovered but its particle blit is a genuine
   six-argument callback routed through live `r4`; it remains parked until that
   callback can be represented without pretending the call-via veneer is an
-  ordinary function.
+  ordinary function. `080109e8` likewise needs four calls routed through live
+  `r2`/`r3`/`r4`, and `080e0564` needs two live-`r4` drawing callbacks plus a
+  live-`r7` callback; both are behaviorally audited but remain outside the
+  ordinary-ABI speed lane.
   Their boundaries, behavior, and callback debt have been audited for a later
   typed-function-pointer/backend pass.
 - The latest main-ROM cohort adds 20,372 reviewed bytes. The largest repaired

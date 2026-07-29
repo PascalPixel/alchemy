@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **202,660 executable bytes across 451 compiling sources**:
-  189,868 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **350,274 / 1,339,230 executable bytes** are now expressed as C, with
-  988,956 remaining.
+- Semantic-C lane: **203,484 executable bytes across 452 compiling sources**:
+  190,692 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **351,098 / 1,339,230 executable bytes** are now expressed as C, with
+  988,132 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -98,6 +98,11 @@ not claim original machine-code equality. Exact sources remain under
   selection screens with palette preservation, map flag setup, and the next
   resource request. Its hardware accesses have explicit widths and all 34
   reference call sites are preserved.
+- The 824-byte `080a38d0` owner reconstructs the interactive action-selection
+  window: wrapped navigation, cursor and detail redraws, comparison and subject
+  modes, confirmation rejection, cancellation, and final state writeback. Its
+  action table and menu fields have explicit widths, its return preserves the
+  reference signed-byte convention, and all 34 call sites are preserved.
 - Three larger candidates are deliberately parked rather than admitted with
   fake ordinary calls. `080d1714` is a 3,384-byte, 400-frame cinematic whose
   raw output splits an internal loop entry and hides ten runtime callback
@@ -108,6 +113,10 @@ not claim original machine-code equality. Exact sources remain under
   and `080ceff8` combines three `r6` copy callbacks with two `r4` renderers.
   `080ccc38` and `080d9fc8` also require live `r4` renderer targets, while
   `080c1798` has two demonstrated live-`r2` residue dependencies across calls.
+  `080d82b0` is behaviorally recovered but its particle blit is a genuine
+  six-argument callback routed through live `r4`; it remains parked until that
+  callback can be represented without pretending the call-via veneer is an
+  ordinary function.
   Their boundaries, behavior, and callback debt have been audited for a later
   typed-function-pointer/backend pass.
 - The latest main-ROM cohort adds 20,372 reviewed bytes. The largest repaired

@@ -316,7 +316,13 @@ const CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES = new Set([
 // Overlay streams whose constant pool sits between the entry block and the loop
 // that reads it, rather than after the return (LAWS.md, "A mid-function literal
 // pool is a compiler layout choice, not a source shape").
-const EARLY_LITERAL_POOL_OVERLAY_SOURCES = new Set(["02000e3c", "02000dfc", "02000ee0"]);
+const EARLY_LITERAL_POOL_OVERLAY_SOURCES = new Set(["02000e3c", "02000dfc"]);
+// Path-scoped members: the 02000ee0 stem collides with default-flag
+// adoptions in resource_39f and resource_3b4, so resource_3bd's member is
+// routed by full path instead.
+const EARLY_LITERAL_POOL_OVERLAY_PATHS = new Set([
+  "assets/code/resource_3bd_c_02000ee0.c",
+]);
 const NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3a9_c_020000e4.c",
 ]);
@@ -381,6 +387,9 @@ const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
 // is byte-exact for this source alone.
 const GROUPED_DMA_STORE_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3ca_c_020010d4.c",
+  "assets/code/resource_394_c_02000f34.c",
+  "assets/code/resource_394_c_02000f54.c",
+  "assets/code/resource_394_c_02000fb4.c",
 ]);
 const NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES = new Set([
   "assets/code/resource_383_c_0200082c.c",
@@ -550,7 +559,8 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(GROUPED_DMA_STORE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mgrouped-dma-store"]
       : []),
-    ...(EARLY_LITERAL_POOL_OVERLAY_SOURCES.has(overlayStem(source))
+    ...(EARLY_LITERAL_POOL_OVERLAY_SOURCES.has(overlayStem(source)) ||
+        EARLY_LITERAL_POOL_OVERLAY_PATHS.has(sourceKey(source))
       ? ["-mthumb-early-literal-pool"]
       : []),
   ];
@@ -604,6 +614,7 @@ export function evidencedRoutingFlags(): string[] {
     ...NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES,
     ...NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES,
     ...GROUPED_DMA_STORE_OVERLAY_SOURCES,
+    ...EARLY_LITERAL_POOL_OVERLAY_PATHS,
   ]) inspect(join(ROOT, source));
   for (const stem of EARLY_LITERAL_POOL_OVERLAY_SOURCES) inspect(`/tmp/${stem}.c`);
   return [...found].sort();

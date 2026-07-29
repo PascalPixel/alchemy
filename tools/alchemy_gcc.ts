@@ -330,6 +330,7 @@ const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
   "assets/code/resource_37a_c_02001380.c",
   "assets/code/resource_37a_c_02001790.c",
   "assets/code/resource_37a_c_02002924.c",
+  "assets/code/resource_372_c_020016cc.c",
   "assets/code/resource_399_c_020005dc.c",
   "assets/code/resource_399_c_02000a3c.c",
   "assets/code/resource_399_c_02000abc.c",

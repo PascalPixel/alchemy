@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **194,244 executable bytes across 439 compiling sources**:
-  182,236 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **339,754 / 1,339,126 executable bytes** are now expressed as C, with
-  999,372 remaining.
+- Semantic-C lane: **195,028 executable bytes across 440 compiling sources**:
+  182,236 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **342,642 / 1,339,230 executable bytes** are now expressed as C, with
+  996,588 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -36,6 +36,12 @@ not claim original machine-code equality. Exact sources remain under
   `resource_3c8:1d48`. `resource_379:00dc` was rejected as a fake standalone
   owner because it is a shared entry using `resource_379:0074`'s
   saved-register frame; the exclusion is documented under `semantic/`.
+- The 784-byte `resource_37a:2614` owner reconstructs the complete opening
+  scene initializer: display and runtime setup, camera/effect tracks, object
+  visibility, coordinate handoff, palette reset, and final shared-state
+  installation. Its 69 calls across 61 resident service targets match the
+  reference multiset exactly, including three mode-dependent services whose
+  argument counts legitimately vary between calls.
 - The latest main-ROM cohort adds 20,372 reviewed bytes. The largest repaired
   complete owners are `080bbb0c` (6,332 bytes), `080ea0d8` (5,756 bytes), and
   `080ab5e4` (4,888 bytes); ten smaller raw m2c owners passed the same admission

@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **213,028 executable bytes across 467 compiling sources**:
-  200,236 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **360,642 / 1,339,230 executable bytes** are now expressed as C, with
-  978,588 remaining.
+- Semantic-C lane: **213,904 executable bytes across 469 compiling sources**:
+  201,112 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **361,518 / 1,339,230 executable bytes** are now expressed as C, with
+  977,712 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -180,6 +180,16 @@ not claim original machine-code equality. Exact sources remain under
   actor/slot/effect/component layouts, signed orientation test, and four-entry
   component traversal are explicit, and all eight static call sites are
   preserved.
+- The 464-byte `080b1614` owner reconstructs a modal bounded quantity picker:
+  resource allocation, window/sprite setup, tile-buffer redraw, wrapped
+  navigation, total-value display, confirmation, cancellation, and cleanup.
+  Its DMA writes and sprite attribute are explicit, and all 23 static call
+  sites are preserved.
+- The 412-byte `080b8c1c` owner reconstructs one-member battle-work setup:
+  transition orientation, side population, child-attribute snapshots, four
+  preparation phases, execution, and participant release. Its 84-byte work
+  layout and signed/unsigned side tests are explicit, and all 19 static call
+  sites are preserved.
 - Three larger candidates are deliberately parked rather than admitted with
   fake ordinary calls. `080d1714` is a 3,384-byte, 400-frame cinematic whose
   raw output splits an internal loop entry and hides ten runtime callback

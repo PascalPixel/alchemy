@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **218,814 executable bytes across 480 compiling sources**:
-  206,022 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **366,428 / 1,339,230 executable bytes** are now expressed as C, with
-  972,802 remaining.
+- Semantic-C lane: **219,374 executable bytes across 482 compiling sources**:
+  206,582 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **366,988 / 1,339,230 executable bytes** are now expressed as C, with
+  972,242 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -245,6 +245,16 @@ not claim original machine-code equality. Exact sources remain under
   initialization, one- or three-stage timing, and input interruption. Its
   volatile MMIO widths and the palette initializer's true zero-argument ABI
   are explicit, and all 20 static call sites are preserved.
+- The 356-byte `080f2d54` owner reconstructs a decompressed animated display:
+  palette/tilemap/static-tile DMA, scroll-state initialization, fade setup,
+  frame-counter-selected dynamic tiles, input polling, and timeout. Its
+  resource offsets and volatile DMA widths are explicit, and all 11 static call
+  sites are preserved.
+- The 204-byte `080b1470` owner reconstructs a three-by-five inventory
+  renderer: selected-item quantity/message handling, first-zero slot
+  termination, bounded icon placement, and returned-object styling. Its
+  15-slot actor inventory and full item-ID ABI are explicit, and all seven
+  static call sites are preserved.
 - Three larger candidates are deliberately parked rather than admitted with
   fake ordinary calls. `080d1714` is a 3,384-byte, 400-frame cinematic whose
   raw output splits an internal loop entry and hides ten runtime callback

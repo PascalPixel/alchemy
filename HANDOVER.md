@@ -7,20 +7,28 @@ files; update this file in place.
 
 ## Current objective
 
-Reach **152,000 exact-C bytes**, prioritizing overlay code.
+Eliminate ordinary assembly through a semantic-C speed lane, while preserving
+the existing byte-exact build and its stricter metric.
 
-Exact means fully linked machine-code byte equality, not semantic similarity
-or equal object size.
+Semantic-C sources live under `semantic/` and compile with
+`bun run build:semantic`. They express reviewed behavior and target ABI but do
+not claim original machine-code equality. Exact sources remain under
+`assets/code/` and continue to require fully linked byte equality.
 
 ## Repository state
 
-- Branch: `main` (session work lands on `claude/continue-decompilation-3drfw0`
-  and is merged by the owner)
+- Branch: `speed`
 - The live Full-C metric is printed by `bun tools/full_c_progress.ts --subject`
   and recorded in each commit subject; regenerate the inventory/report before
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
+- Semantic-C pilot: three honest outer owners totaling **9,692 executable
+  bytes** compile independently without changing the exact ROM build:
+  `resource_381:0054` (3,548), `resource_381:1410` (5,136), and
+  `resource_394:03f0` (1,008). `resource_379:00dc` was rejected as a fake
+  standalone owner because it is a shared entry using `resource_379:0074`'s
+  saved-register frame; the exclusion is documented under `semantic/`.
 
 ## Toolchain on this host (linux-x64)
 
@@ -165,5 +173,4 @@ Commit subjects must end in the live suffix printed by:
 bun tools/full_c_progress.ts --subject
 ```
 
-Clean-room rules remain authoritative in `PROVENANCE.md`. Use at most
-three active agents total, including the main agent.
+Clean-room rules remain authoritative in `PROVENANCE.md`.

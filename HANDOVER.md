@@ -23,16 +23,16 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **150,646 executable bytes across 374 compiling sources**:
-  138,510 main bytes and 12,136 overlay bytes. Combined with exact C,
-  **288,440 / 1,338,620 executable bytes** are now expressed as C, with
-  1,050,180 remaining.
+- Semantic-C lane: **150,518 executable bytes across 371 compiling sources**:
+  138,510 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **288,486 / 1,338,732 executable bytes** are now expressed as C, with
+  1,050,246 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
   unresolved decompiler constructs, and target-compiler failures.
 - Honest outer-owner additions include `resource_381:0054/1410`,
-  `resource_394:03f0/0c2c/0e64..0fb4`, `resource_3bd:0474/0608`, and
+  `resource_394:03f0/0c2c/0e64..0fb4`, `resource_3bd:0474/0608/0ee0`, and
   `resource_3c8:1d48`. `resource_379:00dc` was rejected as a fake standalone
   owner because it is a shared entry using `resource_379:0074`'s
   saved-register frame; the exclusion is documented under `semantic/`.
@@ -180,6 +180,11 @@ not claim original machine-code equality. Exact sources remain under
   buffer before toggling the active display buffer. Two apparent helper calls
   in the raw decompilation were repaired as internal early-return entries, and
   the resulting target assembly preserves all 16 named external call sites.
+- The latest remote exact-C integration adds `resource_394:0f34/0f54/0fb4`
+  and `resource_3bd:0ee0`, completing the former overlay's walk to its veneer
+  bank. The three superseded semantic `resource_394` copies were removed.
+  Both overlays' colliding `02000ee0` compiler routes remain independently
+  path-scoped, and the combined build remains byte-identical.
 
 ## Toolchain on this host (linux-x64)
 

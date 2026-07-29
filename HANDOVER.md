@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **215,682 executable bytes across 473 compiling sources**:
-  202,890 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **363,296 / 1,339,230 executable bytes** are now expressed as C, with
-  975,934 remaining.
+- Semantic-C lane: **216,546 executable bytes across 475 compiling sources**:
+  203,754 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **364,160 / 1,339,230 executable bytes** are now expressed as C, with
+  975,070 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -210,6 +210,16 @@ not claim original machine-code equality. Exact sources remain under
   positioning, acceptance, cancellation, cleanup, and event-relative result
   mapping. Its signed result, row objects, and persistent selection are
   explicit, and all 19 static call sites are preserved.
+- The 452-byte `08091a58` owner reconstructs item-selection and transfer
+  bookkeeping: current-owner reporting, retry/cancel confirmation, selected
+  actor/slot mutation, post-transfer reporting, and state restoration. Its
+  output locals and item/state fields are explicit, and all 32 static call
+  sites are preserved.
+- The 412-byte `080b1f4c` owner reconstructs validated inventory-stack
+  consumption and credit: special single-item mode, context-sensitive prompts,
+  confirmation, repeated removal, total credit, menu refresh, and completion
+  feedback. Its true ordinary three-argument ABI is proven by both callers,
+  and all 18 static call sites are preserved.
 - Three larger candidates are deliberately parked rather than admitted with
   fake ordinary calls. `080d1714` is a 3,384-byte, 400-frame cinematic whose
   raw output splits an internal loop entry and hides ten runtime callback

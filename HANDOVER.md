@@ -83,9 +83,23 @@ Key new lever: hoisting a single int-typed named local into the entry
 block (`g = 0x986;` before the first branch) makes gcse rematerialize
 the pool constant at each later-block use, defeating the cross-call
 CSE-share blocker EXCEPT when a use sits in the entry block itself or
-the constant is spelled as a &Value_ symbol. Walk frontiers: 37a 0x1510,
-394 0xc2c, 3bd 0xde8 (gaps 0x0c4-0x244, 0x2a8-0xa00 unexplored), 3c8
-0x1d48/0x1f60 giants, 383 0x1e80, 399 0x0b70, 3ca 0x0430.
+the constant is spelled as a &Value_ symbol. After round 5: resource_383
+is COMPLETE to its veneer bank (0x4c6c); 37a's 0x1510-0x296c stretch is
+fully classified (adoptable members taken, rest parked); 3bd's 0x0c4
+gap is hand-written assembly (not C) and 0x2a8-0x474 is covered.
+Remaining frontiers: 399 0x18c4+, 3ca 0xda4+, 394 0xc2c (hi-reg giant),
+3bd 0x474/0x608/0x8c0, 3c8 0x1d48/0x1f60 giants, 3b0 0x180+, 371/372
+after 0x0030, plus resource_381 (~18 KB untouched) and the giant
+single functions (379:00dc, 3bc:0da4).
+
+Round-5 escalations for the compiler lane: a register-allocation
+parity disease (identical instruction streams, scratch/callee register
+identities swapped) accounts for most near-misses (383:4754/47bc/47fc,
+399:1704/174c and earlier 3bd:034c); and the inline
+`ldr r3,=0x03000118; mov ip,pc; bx r3` IWRAM call idiom has no C
+spelling (blocks 399:15b4, 3ca:0194). A mid-function pool-dump gap
+blocks 37a:1510 (640 B, instruction-exact otherwise) — needs an
+early-literal-pool variant that re-creates duplicate pool entries.
 
 ## Blockers discovered (documented under work/claude/notes/)
 

@@ -87,6 +87,13 @@ the constant is spelled as a &Value_ symbol. After round 5: resource_383
 is COMPLETE to its veneer bank (0x4c6c); 37a's 0x1510-0x296c stretch is
 fully classified (adoptable members taken, rest parked); 3bd's 0x0c4
 gap is hand-written assembly (not C) and 0x2a8-0x474 is covered.
+After round 7, resource_399 and resource_3ca are COMPLETE to their
+veneer banks (0x2168 and 0x1314); resource_371/372 are covered through
+0x590/0x400, resource_3b0 through 0x4b0. New GROUPED_DMA_STORE_OVERLAY_
+SOURCES route (3ca:10d4). Cross-overlay scheduler fingerprint worth a
+compiler-lane look: a store-before-independent-load pair order that
+would unlock seven parked functions at <=3 halfwords each (3b0:0030,
+3b0:0468, 371:02f0, 372:0278/0398/03cc/0400 — see their notes).
 After round 6, resource_381 is also COMPLETE to its veneer bank
 (0x33d4): every prologue adopted, parked with a best draft, or parked
 with a category note (the 3.5 KB root initializer at 0054, the 5.1 KB

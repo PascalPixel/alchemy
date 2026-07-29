@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **184,750 executable bytes across 421 compiling sources**:
-  172,742 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **328,872 / 1,338,908 executable bytes** are now expressed as C, with
-  1,010,036 remaining.
+- Semantic-C lane: **185,206 executable bytes across 422 compiling sources**:
+  173,198 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **329,328 / 1,338,908 executable bytes** are now expressed as C, with
+  1,009,580 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -454,6 +454,13 @@ not claim original machine-code equality. Exact sources remain under
   blend register. Its sixteen-byte priority save and register-restore record
   replace raw stack aliases, and all touched scene, runtime, interrupt, and
   display state is restored; target assembly preserves all sixteen calls.
+- The next 456-byte owner, `08095c08`, reconstructs the six-stage
+  orbiting-object effect: randomized launch, forward travel, target capture,
+  controller-derived return launch, backward travel, and teardown. Explicit
+  three-word launch and return vectors replace raw stack aliases, while the
+  object render bits, saved position, stage flags, timers, and sounds follow
+  the reference's shared update paths; target assembly preserves all thirteen
+  external call sites.
 
 ## Toolchain on this host (linux-x64)
 

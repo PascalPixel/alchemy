@@ -395,6 +395,19 @@ const GROUPED_DMA_STORE_OVERLAY_SOURCES = new Set([
 const NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES = new Set([
   "assets/code/resource_383_c_0200082c.c",
 ]);
+// resource_3c9 field/`(u16*)` mixed-access family: with strict aliasing, our
+// scheduler treats the u16-view store as independent of the struct-field
+// re-read and sinks the load below the store pair; the reference keeps the
+// original order. Four functions in the overlay are byte-exact with alias
+// analysis conservative (-fno-strict-aliasing) and mismatch without it
+// (notes/resource_3c9-{0104,215c,3600}.md); each entry carries its own
+// exact-byte proof.
+const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3c9_c_02000104.c",
+  "assets/code/resource_3c9_c_0200215c.c",
+  "assets/code/resource_3c9_c_020021ac.c",
+  "assets/code/resource_3c9_c_02003600.c",
+]);
 const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   "assets/code/resource_37a_c_02000054.c",
   "assets/code/resource_37a_c_02000108.c",
@@ -558,6 +571,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-cse-follow-jumps", "-fno-cse-skip-blocks"]
       : []),
+    ...(NO_STRICT_ALIASING_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fno-strict-aliasing"]
+      : []),
     ...(GROUPED_DMA_STORE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mgrouped-dma-store"]
       : []),
@@ -615,6 +631,7 @@ export function evidencedRoutingFlags(): string[] {
     ...NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES,
     ...NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES,
     ...NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES,
+    ...NO_STRICT_ALIASING_OVERLAY_SOURCES,
     ...GROUPED_DMA_STORE_OVERLAY_SOURCES,
     ...EARLY_LITERAL_POOL_OVERLAY_PATHS,
   ]) inspect(join(ROOT, source));

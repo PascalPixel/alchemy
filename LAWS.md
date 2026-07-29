@@ -613,7 +613,7 @@ against the approved bundle; full sourced notes in
   exact install carrying either shape.
 - **Recorded:** 2026-07-24.
 
-### Hardware-load width and widening (parallel lane, 2026-07-23)
+### Hardware-load width and widening (2026-07-23)
 
 - **Claim:** on u16 hardware reads, `volatile` on the pointer forces the
   reference's `ldrh` where the default compiler arbitrarily selects `ldrsh`;
@@ -626,7 +626,7 @@ against the approved bundle; full sourced notes in
   floor, confirming the mechanism. Not yet backed by an installed match.
 - **Next test:** apply to other palette/VRAM u16 loops in the queue; promote
   on the first exact install carrying the shape.
-- **Recorded:** 2026-07-23 (work/agents/080aac84/NOTES.md).
+- **Recorded:** 2026-07-23.
 
 ### Grouped-DMA double-kick gap (2026-07-23)
 
@@ -637,7 +637,7 @@ against the approved bundle; full sourced notes in
   No C shape yields both `stmia` groups.
 - **Current evidence:** 080a22f4 (48-byte leaf, two kicks): kick #2
   reproduced byte-exact under the mode; best full-function floor 37
-  mismatches (work/agents/080a22f4/NOTES.md).
+  mismatches.
 - **Next test:** extend the mode in alchemy-gcc so the DMA block survives
   dead-store elimination (hardware memory class or earlier peephole), then
   allowlist 080a22f4; else classify the double-kick member as
@@ -1942,7 +1942,7 @@ against the approved bundle; full sourced notes in
 
 ### Shared-term cancellation across subtraction
 
-- **Claim (parallel lane, 2026-07-22):** at -O2 the approved compiler
+- **Claim (2026-07-22):** at -O2 the approved compiler
   cancels a shared additive term across a subtraction —
   `(y1 + base) - (y0 + base)` folds to `y1 - y0` — where the reference
   build keeps both additions. `volatile s32` on the intermediates blocks
@@ -1952,7 +1952,7 @@ against the approved bundle; full sourced notes in
   reproduces the reference prologue's r8-spill exactly, while naming
   them promotes a spurious value to r10.
 - **Current evidence:** `080164d4` best candidate (128 mismatched, size
-  +4) and twelve falsified variants under `work/agents/080164d4/`.
+  +4) and twelve falsified variants.
 - **Next test:** an anti-cancellation shape without volatile stack
   slots — e.g. reading one term through a call boundary or a
   known-clobbering construct; check the tilemap-clip cohort siblings.

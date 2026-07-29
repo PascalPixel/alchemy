@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **218,330 executable bytes across 479 compiling sources**:
-  205,538 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **365,944 / 1,339,230 executable bytes** are now expressed as C, with
-  973,286 remaining.
+- Semantic-C lane: **218,814 executable bytes across 480 compiling sources**:
+  206,022 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **366,428 / 1,339,230 executable bytes** are now expressed as C, with
+  972,802 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -240,6 +240,11 @@ not claim original machine-code equality. Exact sources remain under
   state dispatch, shared refresh behavior, fallback window handling, and
   teardown. Its true two-argument ABI and nested resource/state layouts are
   explicit, and all 26 static call sites are preserved.
+- The 484-byte `080f2b70` owner reconstructs a timed display transition:
+  palette/background and DMA setup, a 20-by-32 sequential tilemap, affine-state
+  initialization, one- or three-stage timing, and input interruption. Its
+  volatile MMIO widths and the palette initializer's true zero-argument ABI
+  are explicit, and all 20 static call sites are preserved.
 - Three larger candidates are deliberately parked rather than admitted with
   fake ordinary calls. `080d1714` is a 3,384-byte, 400-frame cinematic whose
   raw output splits an internal loop entry and hides ten runtime callback

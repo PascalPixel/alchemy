@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **124,166 executable bytes across 352 compiling sources**:
-  111,926 main bytes and 12,240 overlay bytes. Combined with exact C,
-  **261,154 / 1,338,618 executable bytes** are now expressed as C, with
-  1,077,464 remaining.
+- Semantic-C lane: **126,294 executable bytes across 356 compiling sources**:
+  114,054 main bytes and 12,240 overlay bytes. Combined with exact C,
+  **263,282 / 1,338,618 executable bytes** are now expressed as C, with
+  1,075,336 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -76,6 +76,11 @@ not claim original machine-code equality. Exact sources remain under
   terrain-height, menu-grid, preset-value, and map-rule behavior. All ten
   owners compile and assemble independently and match their reference
   external-call multisets.
+- The following 2,128-byte cohort adds four main-ROM owners: two related
+  combat-effect selection menus, the text-layout and inter-word-spacing
+  calculator, and the 32-cell resource debug viewer. Their shared menu
+  navigation was expressed with explicit state layouts while preserving all
+  reference call sites, including branch-specific sound and dialog paths.
 
 ## Toolchain on this host (linux-x64)
 

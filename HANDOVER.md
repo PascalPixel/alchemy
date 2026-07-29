@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **189,942 executable bytes across 434 compiling sources**:
-  177,934 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **335,452 / 1,339,126 executable bytes** are now expressed as C, with
-  1,003,674 remaining.
+- Semantic-C lane: **191,040 executable bytes across 435 compiling sources**:
+  179,032 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **336,550 / 1,339,126 executable bytes** are now expressed as C, with
+  1,002,576 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -523,6 +523,13 @@ not claim original machine-code equality. Exact sources remain under
   ten-entry runtime output table. Its complete range includes a 32-byte
   literal pool that earlier screening omitted; the target source preserves
   all fourteen named call sites and uses only ordinary ABIs.
+- The following 1,098-byte owner, `080fae58`, reconstructs the complete
+  four-channel programmable-sound update: channel startup and shutdown,
+  attack/decay/sustain/release and pseudo-echo state transitions, wave RAM
+  uploads, pitch compensation, pan, volume, and hardware triggering. The
+  implementation was independently checked against both the ROM owner and
+  pret's public `CgbSound` reconstruction; its target assembly preserves the
+  two volume-helper sites and the single oscillator-off site.
 
 ## Toolchain on this host (linux-x64)
 

@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **72,730 executable bytes across 274 compiling sources**:
-  60,490 main bytes and 12,240 overlay bytes. Combined with exact C,
-  **209,718 / 1,338,618 executable bytes** are now expressed as C, with
-  1,128,900 remaining.
+- Semantic-C lane: **87,454 executable bytes across 290 compiling sources**:
+  75,214 main bytes and 12,240 overlay bytes. Combined with exact C,
+  **224,442 / 1,338,618 executable bytes** are now expressed as C, with
+  1,114,176 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -42,6 +42,12 @@ not claim original machine-code equality. Exact sources remain under
   gates without repair. Rejected mechanical copies were removed from
   `semantic/`, while their originals remain in `work/m2c-fresh-20260722/` as
   the next repair queue.
+- The following speed cohort adds another 14,724 reviewed main-ROM bytes across
+  16 owners. Each owner compiles and assembles independently, has no unresolved
+  decompiler constructs or inline assembly, and preserves the reference's
+  external-call multiset. The repaired sources correct raw m2c pointer scaling,
+  access widths, stack aliases, and internal-entry control flow before
+  admission.
 
 ## Toolchain on this host (linux-x64)
 

@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **195,028 executable bytes across 440 compiling sources**:
-  182,236 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **342,642 / 1,339,230 executable bytes** are now expressed as C, with
-  996,588 remaining.
+- Semantic-C lane: **195,776 executable bytes across 441 compiling sources**:
+  182,984 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **343,390 / 1,339,230 executable bytes** are now expressed as C, with
+  995,840 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -42,6 +42,19 @@ not claim original machine-code equality. Exact sources remain under
   installation. Its 69 calls across 61 resident service targets match the
   reference multiset exactly, including three mode-dependent services whose
   argument counts legitimately vary between calls.
+- The 748-byte `0808e680` owner reconstructs packed action resolution:
+  message/error paths, actor-resource costs, three resource selections,
+  presentation setup, conditional effect sequences, and the special action
+  handoff. All 49 ordinary call sites match the reference multiset, and its
+  packed input, signed sentinel, and resource-record fields have explicit
+  types.
+- Three larger candidates are deliberately parked rather than admitted with
+  fake ordinary calls. `080d1714` is a 3,384-byte, 400-frame cinematic whose
+  raw output splits an internal loop entry and hides ten runtime callback
+  targets in `r4`/`r5`/`r7`; `0800aa0c` similarly has polymorphic callback
+  thunks plus mangled stack sort arrays; `080ed104` needs renderer targets live
+  in `ip` and `r4`. Their boundaries, behavior, and callback debt have been
+  audited for a later typed-function-pointer/backend pass.
 - The latest main-ROM cohort adds 20,372 reviewed bytes. The largest repaired
   complete owners are `080bbb0c` (6,332 bytes), `080ea0d8` (5,756 bytes), and
   `080ab5e4` (4,888 bytes); ten smaller raw m2c owners passed the same admission

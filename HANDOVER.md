@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **184,274 executable bytes across 420 compiling sources**:
-  172,266 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **328,396 / 1,338,908 executable bytes** are now expressed as C, with
-  1,010,512 remaining.
+- Semantic-C lane: **184,750 executable bytes across 421 compiling sources**:
+  172,742 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **328,872 / 1,338,908 executable bytes** are now expressed as C, with
+  1,010,036 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -448,6 +448,12 @@ not claim original machine-code equality. Exact sources remain under
   resulting triplet through each of the seven fixed color transforms directly
   into palette RAM. An explicit three-halfword stack array replaces the raw
   frame alias, and target assembly preserves all eleven external call sites.
+- The following 476-byte owner, `0809c138`, reconstructs a scene interlude
+  with temporary object-priority forcing, palette and background DMA, callback
+  setup and teardown, optional event triggering, and queued restoration of the
+  blend register. Its sixteen-byte priority save and register-restore record
+  replace raw stack aliases, and all touched scene, runtime, interrupt, and
+  display state is restored; target assembly preserves all sixteen calls.
 
 ## Toolchain on this host (linux-x64)
 

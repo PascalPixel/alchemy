@@ -316,7 +316,7 @@ const CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES = new Set([
 // Overlay streams whose constant pool sits between the entry block and the loop
 // that reads it, rather than after the return (LAWS.md, "A mid-function literal
 // pool is a compiler layout choice, not a source shape").
-const EARLY_LITERAL_POOL_OVERLAY_SOURCES = new Set(["02000e3c", "02000dfc"]);
+const EARLY_LITERAL_POOL_OVERLAY_SOURCES = new Set(["02000e3c", "02000dfc", "02000ee0"]);
 const NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3a9_c_020000e4.c",
 ]);

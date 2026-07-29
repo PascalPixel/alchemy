@@ -267,6 +267,13 @@ const EARLY_FRAME_ALLOCATION_SOURCES = new Set(["0809802c", "08004760"]);
 // that one pair and nothing else. Every 02000048 entry shares an object with
 // the 020000a0 entry directly above it.
 const CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES = new Set([
+  // resource_3bf:1cf0 places the arg0 register move ahead of its immediate
+  // companions at `Func_0200742a(arg0, 257, 60)`; byte-exact (112/112) under
+  // the mode, 2 halfwords without it. Scoped argument locals and a
+  // prototype-less callee were tried and rejected, and the mode does not fix
+  // its sibling 1c4c, so this stays a per-function route
+  // (notes/resource_3bf-1cf0.md).
+  "assets/code/resource_3bf_c_02001cf0.c",
   "assets/code/resource_3a0_c_02000048.c",
   "assets/code/resource_3a1_c_02000048.c",
   "assets/code/resource_3a5_c_02000048.c",
@@ -1364,7 +1371,7 @@ function selfTest(): void {
     throw new Error("grouped DMA O1 routing self-test failed");
   }
   const callArg0MoveFirstOverlays = [...CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES].sort();
-  if (callArg0MoveFirstOverlays.length !== 28) {
+  if (callArg0MoveFirstOverlays.length !== 29) {
     throw new Error("overlay call-argument source allowlist self-test failed");
   }
   for (const path of callArg0MoveFirstOverlays) {

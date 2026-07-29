@@ -25,8 +25,8 @@ not claim original machine-code equality. Exact sources remain under
 - The source-only build owns all 8 MiB with zero unowned bytes.
 - Semantic-C lane: **173,082 executable bytes across 391 compiling sources**:
   161,074 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **311,050 / 1,338,732 executable bytes** are now expressed as C, with
-  1,027,682 remaining.
+  **314,154 / 1,338,820 executable bytes** are now expressed as C, with
+  1,024,666 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -185,6 +185,12 @@ not claim original machine-code equality. Exact sources remain under
   bank. The three superseded semantic `resource_394` copies were removed.
   Both overlays' colliding `02000ee0` compiler routes remain independently
   path-scoped, and the combined build remains byte-identical.
+- The next remote exact-C integration adds 44 functions and 3,104 exact bytes
+  across `resource_373` and `resource_3c9`, including their larger nested-loop,
+  switch, initializer, and warp-sequence owners. It also exposes 88 previously
+  omitted executable alignment bytes in the denominator. The regenerated
+  inventory is complete at 1,338,820 executable bytes, and both aggregate
+  builds remain green.
 - The next 1,620-byte owner, `08018038`, reconstructs the localized text and
   control-code parser. It expands names, numbers, punctuation, formatting,
   and conditional separators into the engine's wrapped 512-entry command

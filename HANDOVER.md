@@ -183,6 +183,11 @@ exact-byte proof recorded in the matching `work/claude/notes` file:
   `-fno-rerun-cse-after-loop` alone: default flags CSE-hoist a thrice-used
   pool constant into r5.
 
+Later additions: `-fno-rerun-cse-after-loop` also carries resource_3ba:0540
+(752 bytes, the largest single routed adoption so far) — the rerun shares the
+`0x301` argument between the entry-block call and the else-branch call, where
+the reference keeps both sites independent.
+
 New reusable levers proved this session:
 
 - bitfield setter spelling `S.f1 = v` cracks movs/negs mask sequences;
@@ -192,15 +197,39 @@ New reusable levers proved this session:
 - `f(a, v = K, 0)` keeps K in a callee-saved register where plain spellings
   constant-propagate;
 - plain-integer index `Data_02000240[0x22b] = 3` defeats the strb reg-reg
-  fold that every pointer-sum spelling produced.
+  fold that every pointer-sum spelling produced;
+- a **union-typed slot** (`union Slot { s32 w; u16 h[2]; void *p; }`) blocks
+  the alias-based load hoist that a same-type cast does not. When
+  `-fno-strict-aliasing` is the tell, try this first: it converts a flag
+  route into a plain default-flags adoption (proved at resource_39d:0104);
+- a `u8 f:2` bitfield struct produces the `movs #13 / negs` mask form where
+  plain mask spellings CSE the constant;
+- **prototype-less** callee declarations (`void Func_02003b12();`) where one
+  veneer target is called at different arities from different sites;
+- per-site scoped locals with compound in-place updates
+  (`{ s32 x = A; x <<= 20; x += K; }`) for repeated coordinate triples.
 
 New park class (now the single most common blocker in overlay call sheets):
 **duplicated-constant argument families.** The reference materializes an
 expensive constant (0x10000, 0x20000, 0x30000, -1, 0x33333) separately at
 each call site while our -O2 pipeline CSEs it into a callee-saved register,
-cascading into a different prologue. No available flag reverses it. It
-dominates resource_380 0x390/0x6f4/0x0a98, resource_39e 0x388/0x518/0x71c,
-resource_3b8 0x674, and resource_3a4 0x6dc/0x7e8/0x8d4/0xc9c.
+cascading into a different prologue. It dominates resource_380
+0x390/0x6f4/0x0a98, resource_39e 0x388/0x518/0x71c, resource_3b8 0x674,
+resource_3a4 0x6dc/0x7e8/0x8d4/0xc9c, and resource_3ba
+0x840/0x974/0xdb8/0x1214/0x13e4.
+
+The mechanism is now **proved by synthetic** (`work/claude/t_syn.c`, results
+in `notes/resource_3ba-13e4.md`): this cc1 unconditionally CSEs any repeated
+**two-instruction immediate** across call sites — independent of literal
+spelling (`0x10000`, `65536`, `128 << 9`, `-1`, `0xFFFFFFFFU`), argument
+signedness, prototype vs. prototype-less declaration, or an intervening
+call — and it survives every one of `-fno-expensive-optimizations`,
+`-fno-thumb-contiguous-immediate`, `-fno-strength-reduce`, `-fno-regmove`,
+`-fno-rerun-cse-after-loop`, `-fno-gcse`, `-fno-cse-follow-jumps`,
+`-fno-cse-skip-blocks`. Single-instruction immediates are unaffected.
+**Triage rule:** before drafting any call sheet, scan the reference for the
+same two-insn constant built at two or more sites; if present, park without
+drafting. This is a compiler-lane item, not a source-shape problem.
 
 Host note: this container has **4 cores**, so at most two walker lanes plus
 the main agent are useful; more lanes thrash the compile step.

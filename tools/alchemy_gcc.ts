@@ -430,6 +430,11 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3a4_c_02000a94.c",
   "assets/code/resource_3a4_c_02000b3c.c",
   "assets/code/resource_3a4_c_02000bd8.c",
+  // resource_3ba:0540 shares its 0x301 argument between the entry-block call
+  // and the else-branch call once cse reruns; the reference keeps both sites
+  // independent. Byte-exact (752/752) under the flag alone
+  // (notes/resource_3ba-0540.md).
+  "assets/code/resource_3ba_c_02000540.c",
 ]);
 // 既定ABI(標準のr4被呼出保存)で構築された収蔵ライブラリ翻訳単位。
 // 証拠: r4を保存する序文は -fcall-used-r4 の下では出ない

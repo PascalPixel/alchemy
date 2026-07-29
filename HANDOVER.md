@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **188,886 executable bytes across 432 compiling sources**:
-  176,878 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **333,008 / 1,338,908 executable bytes** are now expressed as C, with
-  1,005,900 remaining.
+- Semantic-C lane: **189,346 executable bytes across 433 compiling sources**:
+  177,338 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **333,468 / 1,338,908 executable bytes** are now expressed as C, with
+  1,005,440 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -511,6 +511,12 @@ not claim original machine-code equality. Exact sources remain under
   loads a renderer callback into live `r4`, and `080dc454` loads its blitter
   context into live `r5`; neither hidden input is expressible by an ordinary
   C call, so no misleading semantic source was admitted.
+- The following 460-byte owner, `08095dd0`, reconstructs a scripted
+  slot-specific scene: three staged cues, normalized origin capture, creation
+  of 24 randomized particles, two state transitions, and restoration of the
+  scene objects. Its independently audited ABI restores the raw decompiler's
+  missing slot arguments, particle mode, and three-word position workspace;
+  target assembly preserves all 37 static call sites.
 
 ## Toolchain on this host (linux-x64)
 

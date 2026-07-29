@@ -63,7 +63,7 @@ drafting — `080e73a0` was picked as a clean 49-instruction target and turned o
 to read its base pointer out of `r9`, which no policy-valid C can express.
 
 At the `[1,292 of 1,999]` provenance-audit snapshot, 214 of 529 plain regions
-had prior target-specific hand, agent, manual,
+had prior target-specific hand, automated, manual,
 or substantive permuter work. The other 315 are genuinely untouched. This
 split was reconstructed against `fa930c71`: bulk m2c output, match rescoring,
 and initialized-but-empty permuter states do not count as attempts; target C,

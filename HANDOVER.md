@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **129,054 executable bytes across 358 compiling sources**:
-  116,814 main bytes and 12,240 overlay bytes. Combined with exact C,
-  **266,042 / 1,338,618 executable bytes** are now expressed as C, with
-  1,072,576 remaining.
+- Semantic-C lane: **130,450 executable bytes across 359 compiling sources**:
+  118,210 main bytes and 12,240 overlay bytes. Combined with exact C,
+  **267,438 / 1,338,618 executable bytes** are now expressed as C, with
+  1,071,180 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -88,6 +88,10 @@ not claim original machine-code equality. Exact sources remain under
   multisets; the editor also restores its grid navigation, animated list
   cursor, add/delete/commit behavior, and palette DMA without decompiler
   constructs.
+- The following 1,396-byte addition reconstructs the complete `080cfef4`
+  scene loop: staged background blits, scanline-wave generation, palette
+  transitions, object activation, and cleanup. Its eight branch-specific
+  blit sites and full external-call multiset match the reference owner.
 
 ## Toolchain on this host (linux-x64)
 

@@ -342,6 +342,9 @@ const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
   "assets/code/resource_399_c_02000abc.c",
   "assets/code/resource_3c7_c_02000030.c",
   "assets/code/resource_3cd_c_0200004c.c",
+  // resource_3b8:049c is byte-exact only with immediate-latency AND the
+  // rerun-cse-after-loop rerun disabled together (notes/resource_3b8-049c.md).
+  "assets/code/resource_3b8_c_0200049c.c",
 ]);
 // `rank_for_schedule` breaks a tie towards the insn with more forward
 // dependents; these objects fall through to the `INSN_LUID` (original order)
@@ -418,6 +421,7 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   "assets/code/resource_37a_c_02001a58.c",
   "assets/code/resource_373_c_02000ba8.c",
   "assets/code/resource_399_c_02000abc.c",
+  "assets/code/resource_3b8_c_0200049c.c",
 ]);
 // 既定ABI(標準のr4被呼出保存)で構築された収蔵ライブラリ翻訳単位。
 // 証拠: r4を保存する序文は -fcall-used-r4 の下では出ない

@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **165,506 executable bytes across 380 compiling sources**:
-  153,498 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **303,474 / 1,338,732 executable bytes** are now expressed as C, with
-  1,035,258 remaining.
+- Semantic-C lane: **166,658 executable bytes across 381 compiling sources**:
+  154,650 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **304,626 / 1,338,732 executable bytes** are now expressed as C, with
+  1,034,106 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -234,6 +234,11 @@ not claim original machine-code equality. Exact sources remain under
   orbiting particles, a secondary burst, output coordinates, and display-state
   restoration. Five stack-backed three-word vectors are explicit C objects,
   and target assembly preserves the complete named external-call multiset.
+- The following 1,152-byte owner, `080191cc`, reconstructs the eight-list
+  map-object sprite updater: per-mode positioning, animation curves, random
+  offsets, linked-object traversal, and sprite submission. Its shared
+  eight-byte transform workspace and three previously hidden helper arguments
+  are explicit, while target assembly preserves all 17 named external calls.
 
 ## Toolchain on this host (linux-x64)
 

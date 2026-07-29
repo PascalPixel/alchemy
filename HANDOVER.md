@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **206,998 executable bytes across 456 compiling sources**:
-  194,206 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **354,612 / 1,339,230 executable bytes** are now expressed as C, with
-  984,618 remaining.
+- Semantic-C lane: **207,952 executable bytes across 457 compiling sources**:
+  195,160 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **355,566 / 1,339,230 executable bytes** are now expressed as C, with
+  983,664 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -125,7 +125,13 @@ not claim original machine-code equality. Exact sources remain under
   feature and compact roster sources, display-mode normalization and restore,
   per-entry primary and comparison values, scaled indicators, and the optional
   four-digit footer. Its six-ID local bound and signed record fields replace
-  the raw fictional stack object, and all 30 call sites are preserved.
+  the raw fictional stack object, and all 31 call sites are preserved.
+- The 954-byte `080b9ec0` owner reconstructs a battle-side transition:
+  participant staging, opposing-side movement, fade-out, message or filtered
+  action dispatch, battle-work child snapshots, restoration, and fade-in. Its
+  action input, 84-byte work area, child matrix, and reused 14-entry actor list
+  replace the raw overlapping stack scalars, and all 31 call sites are
+  preserved.
 - Three larger candidates are deliberately parked rather than admitted with
   fake ordinary calls. `080d1714` is a 3,384-byte, 400-frame cinematic whose
   raw output splits an internal loop entry and hides ten runtime callback

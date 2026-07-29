@@ -84,6 +84,8 @@ export function buildSemantic(directory = SEMANTIC): {
   sources: number;
   sourceBytes: number;
   semanticBytes: number;
+  mainSemanticBytes: number;
+  overlaySemanticBytes: number;
   expressedBytes: number;
   executableBytes: number;
 } {
@@ -112,6 +114,8 @@ export function buildSemantic(directory = SEMANTIC): {
   try {
     let sourceBytes = 0;
     let semanticBytes = 0;
+    let mainSemanticBytes = 0;
+    let overlaySemanticBytes = 0;
     const admitted: Array<{ overlay: string; address: number; span: number; source: string }> = [];
     for (const [index, source] of sources.entries()) {
       const identity = validateSource(source);
@@ -148,6 +152,8 @@ export function buildSemantic(directory = SEMANTIC): {
         throw new Error(`${relative(ROOT, manualPath)} contains an invalid reviewed boundary`);
       }
       semanticBytes += spanBytes;
+      if (identity.kind === "main") mainSemanticBytes += spanBytes;
+      else overlaySemanticBytes += spanBytes;
       for (const prior of admitted) {
         if (prior.overlay !== overlay) continue;
         if (address < prior.address + prior.span && prior.address < address + spanBytes) {
@@ -175,6 +181,8 @@ export function buildSemantic(directory = SEMANTIC): {
       sources: sources.length,
       sourceBytes,
       semanticBytes,
+      mainSemanticBytes,
+      overlaySemanticBytes,
       expressedBytes: exact.full_c_bytes + semanticBytes,
       executableBytes: exact.executable_bytes,
     };
@@ -196,6 +204,7 @@ if (import.meta.main) {
     const report = buildSemantic();
     console.log(
       `semantic_sources=${report.sources} semantic_bytes=${report.semanticBytes} ` +
+      `main_semantic=${report.mainSemanticBytes} overlay_semantic=${report.overlaySemanticBytes} ` +
       `c_expressed=${report.expressedBytes}/${report.executableBytes} ` +
       `remaining=${report.executableBytes - report.expressedBytes} ` +
       `source_bytes=${report.sourceBytes} compile=ok`,

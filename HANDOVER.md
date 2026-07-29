@@ -87,10 +87,15 @@ the constant is spelled as a &Value_ symbol. After round 5: resource_383
 is COMPLETE to its veneer bank (0x4c6c); 37a's 0x1510-0x296c stretch is
 fully classified (adoptable members taken, rest parked); 3bd's 0x0c4
 gap is hand-written assembly (not C) and 0x2a8-0x474 is covered.
-Remaining frontiers: 399 0x18c4+, 3ca 0xda4+, 394 0xc2c (hi-reg giant),
-3bd 0x474/0x608/0x8c0, 3c8 0x1d48/0x1f60 giants, 3b0 0x180+, 371/372
-after 0x0030, plus resource_381 (~18 KB untouched) and the giant
-single functions (379:00dc, 3bc:0da4).
+After round 6, resource_381 is also COMPLETE to its veneer bank
+(0x33d4): every prologue adopted, parked with a best draft, or parked
+with a category note (the 3.5 KB root initializer at 0054, the 5.1 KB
+1410 sheet, 301c, 2eb0, and the ip-call functions are the category
+parks). Remaining frontiers: 399 0x18c4+ (a lane was cut mid-work by a
+usage limit while attacking the 399 walk with u16-local HImode pool
+shapes), 3ca 0xda4+, 394 0xc2c (hi-reg giant), 3bd 0x474/0x608/0x8c0,
+3c8 0x1d48/0x1f60 giants, 3b0 0x180+, 371/372 after 0x0030, and the
+giant single functions (379:00dc, 3bc:0da4).
 
 Round-5 escalations for the compiler lane: a register-allocation
 parity disease (identical instruction streams, scratch/callee register

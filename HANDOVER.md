@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **179,514 executable bytes across 407 compiling sources**:
-  167,506 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **322,862 / 1,338,892 executable bytes** are now expressed as C, with
-  1,016,030 remaining.
+- Semantic-C lane: **179,762 executable bytes across 408 compiling sources**:
+  167,754 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **323,110 / 1,338,892 executable bytes** are now expressed as C, with
+  1,015,782 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -370,6 +370,11 @@ not claim original machine-code equality. Exact sources remain under
   mode-specific palette selection and transfer, counter initialization, and
   registration of both frame callbacks. Target assembly preserves all seven
   named external calls.
+- The following 248-byte owner, `08097194`, reconstructs battle-presentation
+  teardown: clearing 24 effect slots, bounded waiting for two transient object
+  callbacks, callback removal, saved-position restoration, event publication,
+  queued-sound playback, and workspace release. The shared effect-slot layout
+  is reused, and target assembly preserves all six external calls.
 
 ## Toolchain on this host (linux-x64)
 

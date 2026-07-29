@@ -5,7 +5,7 @@ typedef unsigned short u16;
 typedef signed int s32;
 typedef unsigned int u32;
 
-s32 Func_08010424(u16, u16, s32, s32, s32, s32);
+void Func_08010424(u16, u16, u32, u32, u32, u32);
 void Func_080030f8(u32);
 
 void Func_08010560(u8 *entry, s32 arg1, s32 arg2) {

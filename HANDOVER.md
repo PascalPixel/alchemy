@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **187,138 executable bytes across 427 compiling sources**:
-  175,130 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **331,260 / 1,338,908 executable bytes** are now expressed as C, with
-  1,007,648 remaining.
+- Semantic-C lane: **188,074 executable bytes across 430 compiling sources**:
+  176,066 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **332,196 / 1,338,908 executable bytes** are now expressed as C, with
+  1,006,712 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -490,6 +490,13 @@ not claim original machine-code equality. Exact sources remain under
   cleanup. It now forms a complete semantic pair with the already-exact
   `08096574` position-easing callback; an explicit three-word vector replaces
   the raw frame alias, and target assembly preserves all thirteen calls.
+- The next 936-byte family, `08010424`, `080105d4`, and `08010788`,
+  reconstructs three related tile-map rectangle transfers. Each copies or
+  merges the source tile index into its destination, tests the tile against
+  three fixed-point object rectangles, and publishes covered tile graphics on
+  the object's corresponding display layer. Their shared six-argument ABI,
+  three-anchor layout, 128-entry row stride, and zero-call control flow are
+  explicit; all three compile and assemble independently.
 
 ## Toolchain on this host (linux-x64)
 

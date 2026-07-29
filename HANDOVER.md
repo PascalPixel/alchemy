@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **211,200 executable bytes across 463 compiling sources**:
-  198,408 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **358,814 / 1,339,230 executable bytes** are now expressed as C, with
-  980,416 remaining.
+- Semantic-C lane: **212,172 executable bytes across 465 compiling sources**:
+  199,380 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **359,786 / 1,339,230 executable bytes** are now expressed as C, with
+  979,444 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -161,6 +161,15 @@ not claim original machine-code equality. Exact sources remain under
   renderer and its four-row category marker. Its true three-argument ABI,
   selected-item metadata, and six-argument drawing calls are explicit, and all
   15 static call sites are preserved.
+- The 488-byte `080b3444` owner reconstructs a cyclic value-selection screen:
+  window and focus-object setup, wrapped navigation, validation, mapped-value
+  selection with retry, cancellation, and teardown. Its two-output ABI and
+  signed option table are explicit, and all 23 static call sites are preserved.
+- The 484-byte `080b24e4` owner reconstructs a fixed-item recipient
+  transaction: affordability gating, wrapped actor selection, rejection
+  feedback, successful transfer and resource deduction, cancellation, and
+  item-state restoration. Its signed actor and amount fields are explicit, and
+  all 26 static call sites are preserved.
 - Three larger candidates are deliberately parked rather than admitted with
   fake ordinary calls. `080d1714` is a 3,384-byte, 400-frame cinematic whose
   raw output splits an internal loop entry and hides ten runtime callback

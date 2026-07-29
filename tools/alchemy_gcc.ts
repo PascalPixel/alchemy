@@ -402,6 +402,9 @@ const NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES = new Set([
 // (notes/resource_3c9-{0104,215c,3600}.md); each entry carries its own
 // exact-byte proof.
 const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_380_c_02000104.c",
+  "assets/code/resource_39c_c_02000104.c",
+  "assets/code/resource_39c_c_020003a8.c",
   "assets/code/resource_3c9_c_02000104.c",
   "assets/code/resource_3c9_c_0200215c.c",
   "assets/code/resource_3c9_c_020021ac.c",

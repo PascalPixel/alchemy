@@ -81,7 +81,7 @@ resource_3bc linear walk: exact adoptions 058c (68), 05d0 (2), 05d4 (10),
 05e0 (120), 0658 (76), 06a4 (110), 0714 (88), 0a20 (34), 0a44 (64),
 0a84 (80), 0ad4 (92), 0b30 (112), 0ba0 (2), 0d70 (18), 0d84 (24),
 0d9c (8), 137c (68), 2710 (72), 2758 (308), 2a50 (66). resource_3c8:
-094c (30). Parallel work lanes (both interrupted by a container restart;
+094c (30). Two work streams (both interrupted by a container restart;
 their work below survived on disk and is committed) adopted the
 small-queue members resource_371:0030, 372:0030, 383:0048, 394:0be4,
 399:0030, 3a8:00ac, 3ac:004c, 3ce:007c, walked resource_383 through
@@ -109,7 +109,7 @@ Reusable shapes proved this session (all backed by exact installs):
 
 ## Later rounds (same session)
 
-Three further parallel rounds adopted ~80 more functions: resource_3ac and
+Three further rounds adopted ~80 more functions: resource_3ac and
 resource_3ce walked to their veneer banks, resource_383 covered
 0x052c-0x1e80, resource_399 through 0x0abc, resource_37a through 0x1510,
 resource_3bd 0xa54-0xde8, resource_3c8 through 0x1f5e, plus the routed
@@ -139,9 +139,8 @@ After round 6, resource_381 is also COMPLETE to its veneer bank
 (0x33d4): every prologue adopted, parked with a best draft, or parked
 with a category note (the 3.5 KB root initializer at 0054, the 5.1 KB
 1410 sheet, 301c, 2eb0, and the ip-call functions are the category
-parks). Remaining frontiers: 399 0x18c4+ (a lane was cut mid-work by a
-usage limit while attacking the 399 walk with u16-local HImode pool
-shapes), 3ca 0xda4+, 394 0xc2c (hi-reg giant), 3bd 0x474/0x608/0x8c0,
+parks). Remaining frontiers: 399 0x18c4+ (u16-local HImode pool shapes),
+3ca 0xda4+, 394 0xc2c (hi-reg giant), 3bd 0x474/0x608/0x8c0,
 3c8 0x1d48/0x1f60 giants, 3b0 0x180+, 371/372 after 0x0030, and the
 giant single functions (379:00dc, 3bc:0da4).
 

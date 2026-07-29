@@ -1753,51 +1753,12 @@ Overlay_02000000:
 	.2byte 0x0200
 AlchemyC_02000030:
 	.space 0x30
-	.4byte 0x47704800
-	.4byte 0x0200ca7c
-	.4byte 0x47704800
-	.2byte 0xca8c
-	.2byte 0x0200
-	push	{lr}
-	ldr	r3, [pc, #56]
-	movs	r1, #224
-	lsls	r1, r1, #1
-	adds	r3, r3, r1
-	movs	r1, #0
-	ldrsh	r2, [r3, r1]
-	ldr	r3, [pc, #48]
-	cmp	r2, r3
-	bne.n	.L_02000088
-	ldr	r0, [pc, #44]
-	b.n	.L_020000a8
-.L_02000088:
-	movs	r0, #149
-	lsls	r0, r0, #4
-	bl	sub_0200442e
-	cmp	r0, #0
-	beq.n	.L_02000098
-	ldr	r0, [pc, #32]
-	b.n	.L_020000a8
-.L_02000098:
-	ldr	r0, [pc, #32]
-	bl	sub_0200443c
-	cmp	r0, #0
-	beq.n	.L_020000a6
-	ldr	r0, [pc, #28]
-	b.n	.L_020000a8
-.L_020000a6:
-	ldr	r0, [pc, #28]
-.L_020000a8:
-	pop	{r1}
-	bx	r1
-	.4byte 0x02000240
-	.4byte 0x0000008b
-	.4byte 0x0200cb3c
-	.4byte 0x0200ce6c
-	.4byte 0x00000962
-	.4byte 0x0200cd64
-	.2byte 0xcb84
-	.2byte 0x0200
+AlchemyC_02000060:
+	.space 0x8
+AlchemyC_02000068:
+	.space 0x8
+AlchemyC_02000070:
+	.space 0x58
 	push	{r5, r6, lr}
 	ldr	r5, [pc, #56]
 	adds	r6, r0, #0
@@ -2193,58 +2154,8 @@ AlchemyC_02000030:
 	.4byte 0x0200c570
 	.2byte 0x2009
 	.2byte 0x0000
-	push	{r5, lr}
-	adds	r5, r1, #0
-	bl	sub_02004882
-	ldr	r0, [pc, #116]
-	bl	sub_02004940
-	adds	r0, r5, #0
-	movs	r1, #0
-	bl	sub_02004958
-	ldr	r0, [pc, #108]
-	bl	sub_02004856
-	cmp	r0, #0
-	bne.n	.L_02000512
-	ldr	r0, [pc, #96]
-	bl	sub_02004868
-	bl	sub_020049d4
-	movs	r0, #50
-	bl	sub_020048a2
-	movs	r1, #128
-	adds	r0, r5, #0
-	lsls	r1, r1, #1
-	movs	r2, #70
-	bl	sub_0200498e
-	movs	r2, #40
-	adds	r0, r5, #0
-	movs	r1, #0
-	bl	sub_02004968
-	movs	r1, #0
-	adds	r0, r5, #0
-	bl	sub_02004990
-	movs	r0, #30
-	bl	sub_020048c6
-	movs	r1, #4
-	adds	r0, r5, #0
-	bl	sub_0200495e
-	movs	r0, #20
-	bl	sub_020048d4
-	adds	r0, r5, #0
-	movs	r1, #0
-	bl	sub_020049ac
-	movs	r1, #128
-	adds	r0, r5, #0
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl	sub_020049c0
-.L_02000512:
-	bl	sub_020048fc
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	.4byte 0x00002052
-	.2byte 0x0968
-	.2byte 0x0000
+AlchemyC_0200049c:
+	.space 0x88
 	push	{r5, r6, lr}
 	ldr	r5, [pc, #56]
 	adds	r6, r0, #0

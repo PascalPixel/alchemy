@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **130,450 executable bytes across 359 compiling sources**:
-  118,210 main bytes and 12,240 overlay bytes. Combined with exact C,
-  **267,438 / 1,338,618 executable bytes** are now expressed as C, with
-  1,071,180 remaining.
+- Semantic-C lane: **132,458 executable bytes across 361 compiling sources**:
+  120,218 main bytes and 12,240 overlay bytes. Combined with exact C,
+  **269,446 / 1,338,618 executable bytes** are now expressed as C, with
+  1,069,172 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -92,6 +92,11 @@ not claim original machine-code equality. Exact sources remain under
   scene loop: staged background blits, scanline-wave generation, palette
   transitions, object activation, and cleanup. Its eight branch-specific
   blit sites and full external-call multiset match the reference owner.
+- The next 2,008-byte cohort adds `080bfba4`, which repairs party-entry
+  grouping and emits four categories of stat/link results, and `0801d108`,
+  the complete status-window and sprite constructor. Both retain every
+  branch-specific message/UI call site and match their reference external-call
+  multisets.
 
 ## Toolchain on this host (linux-x64)
 

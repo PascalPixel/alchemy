@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **224,160 executable bytes across 498 compiling sources**:
-  211,368 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **371,774 / 1,339,230 executable bytes** are now expressed as C, with
-  967,456 remaining.
+- Semantic-C lane: **224,536 executable bytes across 499 compiling sources**:
+  211,744 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **372,150 / 1,339,230 executable bytes** are now expressed as C, with
+  967,080 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -333,6 +333,16 @@ not claim original machine-code equality. Exact sources remain under
   flag-only completion, handle cleanup, and display-state restoration. Its
   three-argument ABI and active/fallback handle fields are explicit, and all 13
   static call sites are preserved.
+- The 376-byte `080b8574` owner reconstructs randomized battle-entry
+  preparation: party/enemy collection, metadata-derived weights and priorities,
+  and the original bounded backward sort. Its 16-byte output records and
+  14-entry ID buffer are explicit, and all eight static call sites are
+  preserved.
+- Next strictly gated admission: `080a1fd4` (368 bytes), a five-argument
+  orientation-aware page/cursor controller. `08095778` is deliberately parked:
+  it passes a modulo result where the current exact `080955b0` source consumes
+  a base pointer, so one side of that call-family interpretation is stale and
+  admission would encode a false ABI.
 - Three larger candidates are deliberately parked rather than admitted with
   fake ordinary calls. `080d1714` is a 3,384-byte, 400-frame cinematic whose
   raw output splits an internal loop entry and hides ten runtime callback

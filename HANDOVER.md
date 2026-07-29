@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **200,764 executable bytes across 448 compiling sources**:
-  187,972 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **348,378 / 1,339,230 executable bytes** are now expressed as C, with
-  990,852 remaining.
+- Semantic-C lane: **201,428 executable bytes across 449 compiling sources**:
+  188,636 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **349,042 / 1,339,230 executable bytes** are now expressed as C, with
+  990,188 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -83,14 +83,20 @@ not claim original machine-code equality. Exact sources remain under
   alternate validation, cancellation, and result writeback. Its input is
   correctly typed as a single halfword table, and all 29 reference call sites
   are preserved.
+- The 664-byte `080b2b10` owner reconstructs the candidate purchase/application
+  menu: initial filtering, wrapped navigation, validation, price and capacity
+  failures, successful application, resource deduction, refresh, and cleanup.
+  Its signed candidate table/count/category accesses are explicit, and all 40
+  reference call sites are preserved.
 - Three larger candidates are deliberately parked rather than admitted with
   fake ordinary calls. `080d1714` is a 3,384-byte, 400-frame cinematic whose
   raw output splits an internal loop entry and hides ten runtime callback
   targets in `r4`/`r5`/`r7`; `0800aa0c` similarly has polymorphic callback
   thunks plus mangled stack sort arrays; `080ed104` needs renderer targets live
   in `ip` and `r4`; `080ce85c` alternates two renderer targets through `r4`;
-  and `080dc6bc` similarly selects two particle renderers through `r4`. Their
-  boundaries, behavior, and callback debt have been audited for a later
+  `080dc6bc` and `080d59b0` similarly select particle renderers through `r4`;
+  and `080ceff8` combines three `r6` copy callbacks with two `r4` renderers.
+  Their boundaries, behavior, and callback debt have been audited for a later
   typed-function-pointer/backend pass.
 - The latest main-ROM cohort adds 20,372 reviewed bytes. The largest repaired
   complete owners are `080bbb0c` (6,332 bytes), `080ea0d8` (5,756 bytes), and

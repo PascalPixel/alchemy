@@ -2475,18 +2475,8 @@ AlchemyC_02000d90:
 	.2byte 0x0200
 AlchemyC_02000eac:
 	.space 0x34
-	.4byte 0x31641c01
-	.4byte 0x4a07880b
-	.4byte 0x149b041b
-	.4byte 0x40134c06
-	.4byte 0x58e3009b
-	.4byte 0x61c36183
-	.4byte 0x220f880b
-	.4byte 0x40133301
-	.4byte 0xe003800b
-	.4byte 0x00000003
-	.4byte 0x0200c468
-	.2byte 0x4770
+AlchemyC_02000ee0:
+	.space 0x2e
 	.2byte 0x0000
 AlchemyC_02000f10:
 	.space 0x5a

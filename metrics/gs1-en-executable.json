@@ -4,7 +4,7 @@
   "target": "gs1-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1338620,
+  "total_union_bytes": 1338732,
   "main": {
     "id": "main",
     "executable_bytes": 548364,
@@ -19671,8 +19671,8 @@
     {
       "id": "resource_394",
       "decoded_bytes": 4792,
-      "executable_bytes": 4256,
-      "excluded_bytes": 536,
+      "executable_bytes": 4320,
+      "excluded_bytes": 472,
       "audit": "complete",
       "intervals": [
         {
@@ -19893,12 +19893,6 @@
         },
         {
           "start": 33558296,
-          "end": 33558324,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33558388,
           "end": 33558436,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -19911,15 +19905,9 @@
         },
         {
           "start": 33558452,
-          "end": 33558496,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33558496,
           "end": 33558516,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+          "kind": "thumb",
+          "evidence": "resource_394_overlay.s:1810:verified-C-placeholder"
         },
         {
           "start": 33558528,
@@ -43925,8 +43913,8 @@
     {
       "id": "resource_3bd",
       "decoded_bytes": 18692,
-      "executable_bytes": 16280,
-      "excluded_bytes": 2412,
+      "executable_bytes": 16328,
+      "excluded_bytes": 2364,
       "audit": "complete",
       "intervals": [
         {
@@ -44135,15 +44123,21 @@
         },
         {
           "start": 33558188,
-          "end": 33558240,
+          "end": 33558286,
           "kind": "thumb",
-          "evidence": "resource_3bd_overlay.s:2477:verified-C-placeholder"
+          "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33558286,
+          "end": 33558288,
+          "kind": "executable_alignment",
+          "evidence": "resource_3bd_overlay.s:two-byte-zero-between-executable-spans"
         },
         {
           "start": 33558288,
           "end": 33558378,
           "kind": "thumb",
-          "evidence": "resource_3bd_overlay.s:2492:verified-C-placeholder"
+          "evidence": "resource_3bd_overlay.s:2482:verified-C-placeholder"
         },
         {
           "start": 33558378,
@@ -44335,7 +44329,7 @@
           "start": 33568020,
           "end": 33568024,
           "kind": "literal_pool",
-          "evidence": "resource_3bd_overlay.s:6132:pc-relative-literal"
+          "evidence": "resource_3bd_overlay.s:6122:pc-relative-literal"
         },
         {
           "start": 33568024,
@@ -44407,7 +44401,7 @@
           "start": 33569324,
           "end": 33569328,
           "kind": "literal_pool",
-          "evidence": "resource_3bd_overlay.s:6671:pc-relative-literal"
+          "evidence": "resource_3bd_overlay.s:6661:pc-relative-literal"
         },
         {
           "start": 33569328,
@@ -44419,7 +44413,7 @@
           "start": 33569488,
           "end": 33569492,
           "kind": "literal_pool",
-          "evidence": "resource_3bd_overlay.s:6734:pc-relative-literal"
+          "evidence": "resource_3bd_overlay.s:6724:pc-relative-literal"
         },
         {
           "start": 33569492,
@@ -44509,7 +44503,7 @@
           "start": 33572738,
           "end": 33572740,
           "kind": "thumb",
-          "evidence": "resource_3bd_overlay.s:7681:canonical-instruction"
+          "evidence": "resource_3bd_overlay.s:7671:canonical-instruction"
         },
         {
           "start": 33572742,
@@ -44539,7 +44533,7 @@
           "start": 33572858,
           "end": 33572860,
           "kind": "thumb",
-          "evidence": "resource_3bd_overlay.s:7743:canonical-instruction"
+          "evidence": "resource_3bd_overlay.s:7733:canonical-instruction"
         },
         {
           "start": 33572872,
@@ -44653,7 +44647,7 @@
           "start": 33573110,
           "end": 33573112,
           "kind": "thumb",
-          "evidence": "resource_3bd_overlay.s:7872:canonical-instruction"
+          "evidence": "resource_3bd_overlay.s:7862:canonical-instruction"
         }
       ],
       "evidence": ["assets/code/resource_3bd_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]

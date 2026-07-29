@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **140,714 executable bytes across 367 compiling sources**:
-  128,474 main bytes and 12,240 overlay bytes. Combined with exact C,
-  **277,702 / 1,338,618 executable bytes** are now expressed as C, with
-  1,060,916 remaining.
+- Semantic-C lane: **140,610 executable bytes across 366 compiling sources**:
+  128,474 main bytes and 12,136 overlay bytes. Combined with exact C,
+  **278,404 / 1,338,620 executable bytes** are now expressed as C, with
+  1,060,216 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -130,6 +130,12 @@ not claim original machine-code equality. Exact sources remain under
   creation, blend animation, and cleanup. Its shared frame-yield control flow
   preserves all 38 reference call sites, and its independently compiled target
   assembly matches the reference's named-call multiset.
+- Remote exact-C integration adds 806 overlay bytes across seven owners:
+  `resource_394:0e64`, `resource_3bc:13c0`, `resource_3bd:0eac/0f10/0f6c/0f94`,
+  and `resource_3c8:1a50`. The former semantic `resource_394:0e64` copy was
+  removed because the same owner is now byte-exact. The staged early-pool mode
+  for `resource_394:0ee0` is path-scoped so it cannot perturb unrelated
+  overlays that share the same load address.
 
 ## Toolchain on this host (linux-x64)
 

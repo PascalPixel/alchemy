@@ -41,6 +41,62 @@ function stem(path: string): string {
   return basename(path, extname(path));
 }
 
+// Content-addressed object cache.
+//
+// Every claimed C translation unit is self-contained: none of the generated
+// sources under assets/code carries a `#include`, so a unit's entire input
+// closure is its own bytes plus the exact command plan (which names the
+// compiler binaries and every routed flag). Hashing those two things is
+// therefore a complete description of the compilation, and a hit can reuse the
+// object without weakening any guarantee: a changed source, a changed flag
+// route, or a changed compiler all produce a different key and recompile.
+// Objects are keyed, not paths, so an adoption recompiles exactly the unit it
+// touched and reuses the other ~1,375.
+const OBJECT_CACHE = join(ROOT, "out/cache/claimed-objects");
+
+interface CachedSymbols {
+  definedNames: string[];
+  undefinedNames: string[];
+}
+
+export function objectCacheKey(sourceBytes: Uint8Array, planDescription: string): string {
+  const digest = new Bun.CryptoHasher("sha256");
+  digest.update(planDescription);
+  digest.update("\0");
+  digest.update(sourceBytes);
+  return digest.digest("hex");
+}
+
+function toolchainStamp(commands: readonly (readonly string[])[]): string {
+  const parts: string[] = [];
+  for (const command of commands) {
+    parts.push(command.join(""));
+    const binary = command[0];
+    if (isAbsolute(binary)) {
+      try {
+        const digest = new Bun.CryptoHasher("sha256");
+        digest.update(readFileSync(binary));
+        parts.push(digest.digest("hex"));
+      } catch {
+        parts.push("unreadable");
+      }
+    }
+  }
+  return parts.join("");
+}
+
+const toolchainStampCache = new Map<string, string>();
+
+function cachedToolchainStamp(commands: readonly (readonly string[])[]): string {
+  const identity = commands.map((command) => command.join("")).join("");
+  let stamp = toolchainStampCache.get(identity);
+  if (stamp === undefined) {
+    stamp = toolchainStamp(commands);
+    toolchainStampCache.set(identity, stamp);
+  }
+  return stamp;
+}
+
 export function moduleEnd(
   names: string[],
   symbols: Map<string, [number, number]>,
@@ -63,6 +119,18 @@ export function selfTest(): void {
   ]);
   if (moduleEnd([...symbols.keys()], symbols) !== 0x0801c0da) {
     throw new Error("multi-function C module range self-test failed");
+  }
+  const source = new TextEncoder().encode("void Func_08000000(void) {}\n");
+  const changed = new TextEncoder().encode("void Func_08000000(void) { }\n");
+  const base = objectCacheKey(source, "plan-a");
+  if (base !== objectCacheKey(source, "plan-a")) {
+    throw new Error("object cache key is not deterministic");
+  }
+  if (base === objectCacheKey(changed, "plan-a")) {
+    throw new Error("object cache key ignores source bytes");
+  }
+  if (base === objectCacheKey(source, "plan-b")) {
+    throw new Error("object cache key ignores the command plan");
   }
   console.log("self-test=ok");
 }
@@ -100,6 +168,30 @@ async function compileSource(
     output: assembly,
     preprocessedOutput: join(objectDir, `${name}.i`),
   });
+  const sourceBytes = readFileSync(source);
+  const key = objectCacheKey(
+    sourceBytes,
+    cachedToolchainStamp(plan.steps.map((step) => step.command)),
+  );
+  const cachedObject = join(OBJECT_CACHE, `${key}.o`);
+  const cachedAssembly = join(OBJECT_CACHE, `${key}.s`);
+  const cachedMeta = join(OBJECT_CACHE, `${key}.json`);
+  let symbols: CachedSymbols | null = null;
+  try {
+    const meta = JSON.parse(readFileSync(cachedMeta, "utf8")) as CachedSymbols;
+    writeFileSync(object, readFileSync(cachedObject));
+    writeFileSync(assembly, readFileSync(cachedAssembly));
+    symbols = meta;
+  } catch {
+    symbols = null;
+  }
+  if (symbols !== null) {
+    return {
+      object,
+      definedNames: symbols.definedNames,
+      undefinedNames: symbols.undefinedNames,
+    };
+  }
   for (const step of plan.steps) await run([...step.command]);
   await run([
     "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
@@ -119,6 +211,13 @@ async function compileSource(
       throw new Error(`${basename(source)}: unsupported external ${external}`);
     }
   }
+  mkdirSync(OBJECT_CACHE, { recursive: true });
+  writeFileSync(cachedObject, readFileSync(object));
+  writeFileSync(cachedAssembly, readFileSync(assembly));
+  writeFileSync(
+    cachedMeta,
+    canonicalJson({ definedNames: defined, undefinedNames } satisfies CachedSymbols),
+  );
   return { object, definedNames: defined, undefinedNames };
 }
 

@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **180,930 executable bytes across 412 compiling sources**:
-  168,922 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **324,278 / 1,338,892 executable bytes** are now expressed as C, with
-  1,014,614 remaining.
+- Semantic-C lane: **181,244 executable bytes across 413 compiling sources**:
+  169,236 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **325,366 / 1,338,908 executable bytes** are now expressed as C, with
+  1,013,542 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -395,6 +395,16 @@ not claim original machine-code equality. Exact sources remain under
   targeting, one-eighth easing, stage transitions, teardown, and final vector
   projection. Teardown deliberately reloads the DMA-cleared effect fields
   before projection, and target assembly preserves all four external calls.
+- Remote exact-C round 16 completes the `resource_3bf` linear walk through
+  `0x1150`, adding eighteen overlay functions and 774 exact-C bytes. The
+  corrected executable inventory exposes another 16 bytes in the denominator;
+  both aggregate builds remain green after integration.
+- The next 314-byte semantic owner, `080a1e38`, reconstructs category-driven
+  ordering of a packed fifteen-identifier list. It builds the requested
+  category sequence, repeatedly selects the greatest matching nine-bit value,
+  honors the criterion's required-attribute bit, and publishes the reordered
+  active prefix. Its explicit stack arrays replace raw frame aliases, and
+  target assembly preserves both named external calls.
 
 ## Toolchain on this host (linux-x64)
 

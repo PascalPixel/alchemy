@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **185,638 executable bytes across 423 compiling sources**:
-  173,630 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **329,760 / 1,338,908 executable bytes** are now expressed as C, with
-  1,009,148 remaining.
+- Semantic-C lane: **186,050 executable bytes across 424 compiling sources**:
+  174,042 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **330,172 / 1,338,908 executable bytes** are now expressed as C, with
+  1,008,736 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -467,6 +467,12 @@ not claim original machine-code equality. Exact sources remain under
   behavior, and assigns a randomized three-axis velocity before pacing the
   next emission. Explicit position and velocity vectors replace raw frame
   aliases, and target assembly preserves all fifteen external call sites.
+- The next 412-byte owner, `0801f818`, reconstructs the compact game-state
+  snapshot at `0x02000000`: current-character data, world state, party values,
+  sentinel-terminated identifiers, settings, event counts, and a checksum over
+  the associated 968-word payload. Correct byte and word strides replace the
+  raw decompiler's scaled pointers, and target assembly preserves all ten
+  external call sites.
 
 ## Toolchain on this host (linux-x64)
 

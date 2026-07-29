@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **191,040 executable bytes across 435 compiling sources**:
-  179,032 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **336,550 / 1,339,126 executable bytes** are now expressed as C, with
-  1,002,576 remaining.
+- Semantic-C lane: **192,068 executable bytes across 436 compiling sources**:
+  180,060 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **337,578 / 1,339,126 executable bytes** are now expressed as C, with
+  1,001,548 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -530,6 +530,12 @@ not claim original machine-code equality. Exact sources remain under
   implementation was independently checked against both the ROM owner and
   pret's public `CgbSound` reconstruction; its target assembly preserves the
   two volume-helper sites and the single oscillator-off site.
+- The next 1,028-byte owner, `0801de5c`, reconstructs the encoded-glyph and
+  tile uploader: all 27 control-token cases, transparent eight-row rendering,
+  in-place 8bpp-to-4bpp packing, circular tile allocation, paired tilemap
+  updates, and explicit VRAM row stores. Its first relocated transfer now
+  names the scratch allocation that the reference retained incidentally in
+  live `r2`; all six external call sites remain distinct in target assembly.
 
 ## Toolchain on this host (linux-x64)
 

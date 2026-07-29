@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "manual_regions": [
+    {
+      "overlay": "resource_381",
+      "entry": "0x02001410",
+      "span_bytes": 5136,
+      "evidence": "full Thumb prologue and one outer return/literal-pool boundary at 0x02002820; diagnostic seeds inside the span are call-target continuations"
+    },
+    {
+      "overlay": "resource_394",
+      "entry": "0x020003f0",
+      "span_bytes": 1008,
+      "evidence": "push/sub-sp owner through its outer return at 0x020007dc; diagnostic inventory seeds inside this span are hidden-context entries"
+    }
+  ]
+}

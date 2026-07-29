@@ -407,6 +407,7 @@ const NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES = new Set([
 const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
   "assets/code/resource_380_c_02000104.c",
   "assets/code/resource_39c_c_02000104.c",
+  "assets/code/resource_39e_c_02000104.c",
   "assets/code/resource_39c_c_020003a8.c",
   "assets/code/resource_3c9_c_02000104.c",
   "assets/code/resource_3c9_c_0200215c.c",
@@ -422,6 +423,13 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   "assets/code/resource_373_c_02000ba8.c",
   "assets/code/resource_399_c_02000abc.c",
   "assets/code/resource_3b8_c_0200049c.c",
+  // resource_3a4 status-window family: default flags CSE-hoist a thrice-used
+  // pool constant into r5; the reference keeps first-pass lifetimes. Each
+  // entry byte-exact under the flag alone (notes/resource_3a4-*.md).
+  "assets/code/resource_3a4_c_020009ec.c",
+  "assets/code/resource_3a4_c_02000a94.c",
+  "assets/code/resource_3a4_c_02000b3c.c",
+  "assets/code/resource_3a4_c_02000bd8.c",
 ]);
 // 既定ABI(標準のr4被呼出保存)で構築された収蔵ライブラリ翻訳単位。
 // 証拠: r4を保存する序文は -fcall-used-r4 の下では出ない

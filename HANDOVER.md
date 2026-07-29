@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **178,806 executable bytes across 404 compiling sources**:
-  166,798 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **320,406 / 1,338,892 executable bytes** are now expressed as C, with
-  1,018,486 remaining.
+- Semantic-C lane: **179,034 executable bytes across 405 compiling sources**:
+  167,026 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **320,634 / 1,338,892 executable bytes** are now expressed as C, with
+  1,018,258 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -350,6 +350,11 @@ not claim original machine-code equality. Exact sources remain under
   of the leading offset table, optional five-table character remapping, and
   dimension return. The remap bound is recovered from the decompressor's
   return register, and target assembly preserves all three external calls.
+- The following 228-byte owner, `080faa58`, reconstructs music-player song
+  replacement: magic-lock validation, idle/priority admission, player reset,
+  active-track population, unused-track clearing, and song-flag application.
+  Typed song and 0x50-byte track layouts replace raw offsets, and target
+  assembly preserves both reset call sites plus the flag call.
 
 ## Toolchain on this host (linux-x64)
 

@@ -8936,9 +8936,8 @@ AlchemyC_02005520:
 	add	sp, #76
 	pop	{r4, r5, r6, pc}
 	.2byte 0x0000
-	.4byte 0x47704800
-	.2byte 0xdf90
-	.2byte 0x0200
+AlchemyC_02005ab8:
+	.space 0x8
 	push	{lr}
 	ldr	r3, [r0, #0]
 	movs	r2, #0

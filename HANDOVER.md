@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **178,346 executable bytes across 402 compiling sources**:
-  166,338 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **319,946 / 1,338,892 executable bytes** are now expressed as C, with
-  1,018,946 remaining.
+- Semantic-C lane: **178,582 executable bytes across 403 compiling sources**:
+  166,574 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **320,182 / 1,338,892 executable bytes** are now expressed as C, with
+  1,018,710 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -340,6 +340,11 @@ not claim original machine-code equality. Exact sources remain under
   forty-sample curve, scene-state reset, blend reset, and creation of the two
   text resources. Correct record and halfword strides replace the raw
   pointer-scaling artifacts, and all five named external calls are preserved.
+- The following 236-byte owner, `08011bf4`, reconstructs the cyclic animated
+  transfer engine: active-record traversal, countdown handling, phase-based
+  rotation into a sixteen-halfword buffer, DMA publication, and interval
+  reload. Its 0x2c-byte record and stack buffer replace raw aliases, and both
+  the reference and target assembly have an empty external-call multiset.
 
 ## Toolchain on this host (linux-x64)
 

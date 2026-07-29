@@ -327,7 +327,11 @@ const NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES = new Set([
 // broadly disruptive scheduler model change source-scoped.
 const THUMB_IMMEDIATE_LATENCY_SOURCES = new Set(["080babdc"]);
 const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_37a_c_02001380.c",
   "assets/code/resource_37a_c_02002924.c",
+  "assets/code/resource_399_c_020005dc.c",
+  "assets/code/resource_399_c_02000a3c.c",
+  "assets/code/resource_399_c_02000abc.c",
   "assets/code/resource_3c7_c_02000030.c",
   "assets/code/resource_3cd_c_0200004c.c",
 ]);
@@ -342,8 +346,40 @@ const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
 // argument setters the reference places ahead of their r1/r2 companions, which
 // `-mcall-arg0-move-first` cannot reach because the r0 setter here is an
 // immediate rather than a register move. LAWS.md, defect (B).
+// The resource_399 argument-setup family and resource_3ce:0244 share the
+// 3cd:004c shape: one movs argument pair per call site transposed by the
+// dependent-count tie-break, exact under the original-order tie-break alone
+// (or, for 399:05dc and 0a3c, together with the routed immediate-latency
+// mode). Each entry has its own exact-byte proof.
 const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_399_c_0200021c.c",
+  "assets/code/resource_399_c_02000254.c",
+  "assets/code/resource_399_c_020005dc.c",
+  "assets/code/resource_399_c_02000608.c",
+  "assets/code/resource_399_c_02000668.c",
+  "assets/code/resource_399_c_02000688.c",
+  "assets/code/resource_399_c_02000a3c.c",
   "assets/code/resource_3cd_c_0200004c.c",
+  "assets/code/resource_3ce_c_02000244.c",
+]);
+// In resource_37a:0054 the cse rerun after the copy loop folds the shared
+// window base back into per-site constants; in resource_399:0abc it rewrites
+// the loop-carried accumulator's equivalence the same way. Both references
+// keep the first-pass lifetimes, and both sources are byte-exact with the
+// rerun disabled (0abc together with the routed immediate-latency mode).
+// resource_383:082c keeps three branch-local resource IDs alive through a
+// four-way dispatch. Path-following cse (and its skip-blocks variant) folds
+// them into the shared head, rotating the callee-saved allocation; with both
+// followed-path cse passes off the source is byte-exact.
+const NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_383_c_0200082c.c",
+]);
+const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_37a_c_02000054.c",
+  "assets/code/resource_37a_c_02000108.c",
+  "assets/code/resource_37a_c_02000150.c",
+  "assets/code/resource_37a_c_020001ec.c",
+  "assets/code/resource_399_c_02000abc.c",
 ]);
 // 既定ABI(標準のr4被呼出保存)で構築された収蔵ライブラリ翻訳単位。
 // 証拠: r4を保存する序文は -fcall-used-r4 の下では出ない
@@ -493,6 +529,12 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-sched-depend-count"]
       : []),
+    ...(NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fno-rerun-cse-after-loop"]
+      : []),
+    ...(NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fno-cse-follow-jumps", "-fno-cse-skip-blocks"]
+      : []),
     ...(EARLY_LITERAL_POOL_OVERLAY_SOURCES.has(overlayStem(source))
       ? ["-mthumb-early-literal-pool"]
       : []),
@@ -544,6 +586,8 @@ export function evidencedRoutingFlags(): string[] {
     ...THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES,
     ...NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES,
     ...NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES,
+    ...NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES,
+    ...NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES,
   ]) inspect(join(ROOT, source));
   for (const stem of EARLY_LITERAL_POOL_OVERLAY_SOURCES) inspect(`/tmp/${stem}.c`);
   return [...found].sort();

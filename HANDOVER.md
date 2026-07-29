@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **145,114 executable bytes across 370 compiling sources**:
-  132,978 main bytes and 12,136 overlay bytes. Combined with exact C,
-  **282,908 / 1,338,620 executable bytes** are now expressed as C, with
-  1,055,712 remaining.
+- Semantic-C lane: **146,206 executable bytes across 371 compiling sources**:
+  134,070 main bytes and 12,136 overlay bytes. Combined with exact C,
+  **284,000 / 1,338,620 executable bytes** are now expressed as C, with
+  1,054,620 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -158,6 +158,12 @@ not claim original machine-code equality. Exact sources remain under
   character triggers, presentation, and cleanup. Its target assembly preserves
   the complete reference call multiset, including both strip renderers and the
   independent particle renderer.
+- The next 1,092-byte owner, `080db6e0`, reconstructs a dual-layer projected
+  particle scene: optional grayscale palette setup, two initialized particle
+  banks, camera synchronization, depth-scaled rendering, animated emitters,
+  mode-specific character triggers, presentation, and cleanup. Its target
+  assembly preserves the full reference call multiset, including both
+  projection/draw/update paths and all six RNG sites.
 
 ## Toolchain on this host (linux-x64)
 

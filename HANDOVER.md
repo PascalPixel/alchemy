@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **219,650 executable bytes across 483 compiling sources**:
-  206,858 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **367,264 / 1,339,230 executable bytes** are now expressed as C, with
-  971,966 remaining.
+- Semantic-C lane: **220,184 executable bytes across 485 compiling sources**:
+  207,392 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **367,798 / 1,339,230 executable bytes** are now expressed as C, with
+  971,432 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -259,6 +259,16 @@ not claim original machine-code equality. Exact sources remain under
   countdown-triggered targeting, signed halfword advancement, original-delta
   overshoot clamping, and parameter updates. Its signed current/target values
   and unsigned step widths are explicit, and all four static call sites are
+  preserved.
+- The 322-byte `080056cc` owner reconstructs hardware/save identification:
+  DMA-cleared workspace setup, eight readiness probes, 16 metadata samples,
+  signature/category validation, and strongest-key duplicate selection. Its
+  0x1100-byte workspace and volatile DMA controls are explicit, and all six
+  static call sites are preserved.
+- The 212-byte `080b386c` owner reconstructs an inventory-value detail panel:
+  encoded-slot extraction, two restricted-status messages, total-value
+  calculation, and three-part value display. Its full owner/index ABI and
+  encoded halfword inventory are explicit, and all nine static call sites are
   preserved.
 - Three larger candidates are deliberately parked rather than admitted with
   fake ordinary calls. `080d1714` is a 3,384-byte, 400-frame cinematic whose

@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **172,284 executable bytes across 390 compiling sources**:
-  160,276 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **310,252 / 1,338,732 executable bytes** are now expressed as C, with
-  1,028,480 remaining.
+- Semantic-C lane: **173,082 executable bytes across 391 compiling sources**:
+  161,074 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **311,050 / 1,338,732 executable bytes** are now expressed as C, with
+  1,027,682 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -270,6 +270,11 @@ not claim original machine-code equality. Exact sources remain under
   twenty-byte record stride, category tests, icon selection, and window
   placement correct raw pointer-scaling errors; target assembly preserves all
   15 named calls.
+- The following 798-byte owner, `080a5cc0`, reconstructs the complete
+  item/effect selection state machine: list setup, category-dependent prompts,
+  target selection, confirmation, application, failure handling, and return
+  values. Its state-field pointer ABI is explicit, and target assembly
+  preserves all 33 named external calls.
 
 ## Toolchain on this host (linux-x64)
 

@@ -8,10 +8,70 @@
       "evidence": "full Thumb prologue and one outer return/literal-pool boundary at 0x02002820; diagnostic seeds inside the span are call-target continuations"
     },
     {
+      "overlay": "resource_3bd",
+      "entry": "0x02000474",
+      "span_bytes": 404,
+      "evidence": "high-register prologue through common bx return at 0x020005f8, alignment and literal pool through 0x02000608; next independent owner begins at 0x02000608"
+    },
+    {
+      "overlay": "resource_3bd",
+      "entry": "0x02000608",
+      "span_bytes": 696,
+      "evidence": "register-spill/high-register prologue through outer bx return at 0x020008a0 and alignment/literal pool before next owner 0x020008c0; apparent 0x020007de and 0x02000902 entries are hidden-context services"
+    },
+    {
+      "overlay": "resource_3c8",
+      "entry": "0x02001d48",
+      "span_bytes": 480,
+      "evidence": "high-register prologue through outer bx return at 0x02001f10 and five-word literal pool/alignment before next owner 0x02001f28; apparent 0x02001e96 call is a resident-service collision"
+    },
+    {
       "overlay": "resource_394",
       "entry": "0x020003f0",
       "span_bytes": 1008,
       "evidence": "push/sub-sp owner through its outer return at 0x020007dc; diagnostic inventory seeds inside this span are hidden-context entries"
+    },
+    {
+      "overlay": "resource_394",
+      "entry": "0x02000c2c",
+      "span_bytes": 568,
+      "evidence": "high-register prologue and 20-byte frame through common return at 0x02000e2c plus its literal pool ending before 0x02000e64; seed 0x02000c8a is hidden-context"
+    },
+    {
+      "overlay": "resource_394",
+      "entry": "0x02000e64",
+      "span_bytes": 104,
+      "evidence": "independent prologue through bx return at 0x02000ec2 and literals before next owner 0x02000ecc"
+    },
+    {
+      "overlay": "resource_394",
+      "entry": "0x02000ecc",
+      "span_bytes": 104,
+      "evidence": "independent prologue through bx return at 0x02000f32, including embedded mask literal"
+    },
+    {
+      "overlay": "resource_394",
+      "entry": "0x02000f34",
+      "span_bytes": 32,
+      "evidence": "leaf owner through bx lr at 0x02000f42 and literals before next owner 0x02000f54"
+    },
+    {
+      "overlay": "resource_394",
+      "entry": "0x02000f54",
+      "span_bytes": 32,
+      "evidence": "leaf owner through bx lr at 0x02000f62 and literals before next owner 0x02000f74"
+    },
+    {
+      "overlay": "resource_394",
+      "entry": "0x02000f74",
+      "span_bytes": 64,
+      "evidence": "independent owner through bx return at 0x02000fa2 and literals before next owner 0x02000fb4"
+    },
+    {
+      "overlay": "resource_394",
+      "entry": "0x02000fb4",
+      "span_bytes": 64,
+      "evidence": "independent owner through bx return at 0x02000fde and literals ending before veneer bank 0x02000ff4"
     }
   ]
 }

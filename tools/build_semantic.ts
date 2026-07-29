@@ -15,7 +15,8 @@ import { sourceToAssemblyPlan } from "./alchemy_gcc.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const SEMANTIC = join(ROOT, "semantic");
-const SOURCE_NAME = /^resource_[0-9a-f]+_c_([0-9a-f]{8})\.c$/i;
+const OVERLAY_SOURCE_NAME = /^resource_[0-9a-f]+_c_([0-9a-f]{8})\.c$/i;
+const MAIN_SOURCE_NAME = /^(08[0-9a-f]{6})\.c$/i;
 
 interface OverlayFunction {
   id: string;
@@ -50,26 +51,41 @@ function checked(command: readonly string[], cwd: string): void {
   }
 }
 
-function validateSource(source: string): void {
+function validateSource(source: string): {
+  kind: "main" | "overlay";
+  address: number;
+  owner: string;
+  symbol: string;
+} {
   const name = basename(source);
-  const match = SOURCE_NAME.exec(name);
-  if (match === null) {
-    throw new Error(`semantic overlay source must end in an address: ${relative(ROOT, source)}`);
+  const overlayMatch = OVERLAY_SOURCE_NAME.exec(name);
+  const mainMatch = MAIN_SOURCE_NAME.exec(name);
+  if (overlayMatch === null && mainMatch === null) {
+    throw new Error(`semantic C source must use its eight-digit address: ${relative(ROOT, source)}`);
   }
+  const kind = overlayMatch === null ? "main" : "overlay";
+  const addressText = (overlayMatch ?? mainMatch)![1].toLowerCase();
+  const owner = kind === "overlay" ? name.slice(0, name.indexOf("_c_")) : "main";
+  const symbol = `Func_${addressText}`;
   const text = readFileSync(source, "utf8");
-  const symbol = `Func_${match[1].toLowerCase()}`;
   if (!new RegExp(`\\b${symbol}\\s*\\([^;{}]*\\)\\s*\\{`).test(text)) {
     throw new Error(`${relative(ROOT, source)} does not define ${symbol}`);
   }
   if (/(^|[^A-Za-z0-9_])(__asm__|asm)\s*[(\u007b]/m.test(text)) {
     throw new Error(`${relative(ROOT, source)} contains inline assembly`);
   }
+  if (/\b(M2C_ERROR|M2C_UNK|GLOBAL_ASM)\b/.test(text)) {
+    throw new Error(`${relative(ROOT, source)} contains an unresolved decompiler construct`);
+  }
+  return { kind, address: Number.parseInt(addressText, 16), owner, symbol };
 }
 
 export function buildSemantic(directory = SEMANTIC): {
   sources: number;
   sourceBytes: number;
   semanticBytes: number;
+  expressedBytes: number;
+  executableBytes: number;
 } {
   const sources = sourcesBelow(directory);
   const inventoryPath = join(ROOT, "out", "decomp", "overlays.json");
@@ -79,6 +95,12 @@ export function buildSemantic(directory = SEMANTIC): {
   const inventory = sources.length === 0
     ? []
     : (JSON.parse(readFileSync(inventoryPath, "utf8")) as { functions: OverlayFunction[] }).functions;
+  const mainManifestPath = join(ROOT, "out", "full", "asm", "manifest.json");
+  const mainRegions = sources.length === 0
+    ? []
+    : (JSON.parse(readFileSync(mainManifestPath, "utf8")) as {
+      regions: Array<{ address: number; size: number; retention: string }>;
+    }).regions;
   const manualPath = join(SEMANTIC, "regions.json");
   const manual = existsSync(manualPath)
     ? (JSON.parse(readFileSync(manualPath, "utf8")) as {
@@ -90,18 +112,33 @@ export function buildSemantic(directory = SEMANTIC): {
   try {
     let sourceBytes = 0;
     let semanticBytes = 0;
+    const admitted: Array<{ overlay: string; address: number; span: number; source: string }> = [];
     for (const [index, source] of sources.entries()) {
-      validateSource(source);
+      const identity = validateSource(source);
       sourceBytes += readFileSync(source).byteLength;
       const name = basename(source);
-      const address = Number.parseInt(SOURCE_NAME.exec(name)![1], 16);
-      SOURCE_NAME.lastIndex = 0;
-      const overlay = name.slice(0, name.indexOf("_c_"));
-      const inventoried = inventory.find((item) => item.overlay === overlay && item.entry === address);
-      const reviewed = manual.find((item) =>
-        item.overlay === overlay && Number.parseInt(item.entry, 16) === address
-      );
-      const spanBytes = inventoried?.span_bytes ?? reviewed?.span_bytes;
+      const address = identity.address;
+      const overlay = identity.owner;
+      const exactSource = identity.kind === "overlay"
+        ? join(ROOT, "assets", "code", name)
+        : join(ROOT, "src", name);
+      if (existsSync(exactSource)) {
+        throw new Error(`${relative(ROOT, source)} duplicates exact source ${relative(ROOT, exactSource)}`);
+      }
+      const inventoried = identity.kind === "overlay"
+        ? inventory.find((item) => item.overlay === overlay && item.entry === address)
+        : undefined;
+      const reviewed = identity.kind === "overlay"
+        ? manual.find((item) =>
+          item.overlay === overlay && Number.parseInt(item.entry, 16) === address
+        )
+        : undefined;
+      const mainRegion = identity.kind === "main"
+        ? mainRegions.find((item) => item.address === address && [
+          "c_candidate", "split_first", "merge_with_continuations", "merge_with_owner",
+        ].includes(item.retention))
+        : undefined;
+      const spanBytes = inventoried?.span_bytes ?? reviewed?.span_bytes ?? mainRegion?.size;
       if (spanBytes === undefined) {
         throw new Error(`${relative(ROOT, source)} has no ordinary overlay inventory owner`);
       }
@@ -111,6 +148,15 @@ export function buildSemantic(directory = SEMANTIC): {
         throw new Error(`${relative(ROOT, manualPath)} contains an invalid reviewed boundary`);
       }
       semanticBytes += spanBytes;
+      for (const prior of admitted) {
+        if (prior.overlay !== overlay) continue;
+        if (address < prior.address + prior.span && prior.address < address + spanBytes) {
+          throw new Error(
+            `${relative(ROOT, source)} overlaps ${relative(ROOT, prior.source)} in ${overlay}`,
+          );
+        }
+      }
+      admitted.push({ overlay, address, span: spanBytes, source });
       const stem = `${index.toString().padStart(4, "0")}-${basename(source, ".c")}`;
       const plan = sourceToAssemblyPlan({
         target: "gs1",
@@ -121,16 +167,26 @@ export function buildSemantic(directory = SEMANTIC): {
       });
       for (const step of plan.steps) checked(step.command, work);
     }
-    return { sources: sources.length, sourceBytes, semanticBytes };
+    const exact = JSON.parse(readFileSync(
+      join(ROOT, "metrics", "gs1-en-progress.json"),
+      "utf8",
+    )) as { full_c_bytes: number; executable_bytes: number };
+    return {
+      sources: sources.length,
+      sourceBytes,
+      semanticBytes,
+      expressedBytes: exact.full_c_bytes + semanticBytes,
+      executableBytes: exact.executable_bytes,
+    };
   } finally {
     rmSync(work, { recursive: true, force: true });
   }
 }
 
 function selfTest(): void {
-  if (!SOURCE_NAME.test("resource_379_c_020000dc.c")) throw new Error("valid source name rejected");
-  SOURCE_NAME.lastIndex = 0;
-  if (SOURCE_NAME.test("resource_379.c")) throw new Error("addressless source name accepted");
+  if (!OVERLAY_SOURCE_NAME.test("resource_379_c_020000dc.c")) throw new Error("valid overlay name rejected");
+  if (!MAIN_SOURCE_NAME.test("0809a294.c")) throw new Error("valid main name rejected");
+  if (OVERLAY_SOURCE_NAME.test("resource_379.c")) throw new Error("addressless source name accepted");
   console.log("self-test=ok");
 }
 
@@ -140,6 +196,8 @@ if (import.meta.main) {
     const report = buildSemantic();
     console.log(
       `semantic_sources=${report.sources} semantic_bytes=${report.semanticBytes} ` +
+      `c_expressed=${report.expressedBytes}/${report.executableBytes} ` +
+      `remaining=${report.executableBytes - report.expressedBytes} ` +
       `source_bytes=${report.sourceBytes} compile=ok`,
     );
   }

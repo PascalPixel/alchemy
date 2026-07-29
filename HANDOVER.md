@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **175,930 executable bytes across 395 compiling sources**:
-  163,922 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **317,002 / 1,338,820 executable bytes** are now expressed as C, with
-  1,021,818 remaining.
+- Semantic-C lane: **176,646 executable bytes across 396 compiling sources**:
+  164,638 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **317,718 / 1,338,820 executable bytes** are now expressed as C, with
+  1,021,102 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -301,6 +301,11 @@ not claim original machine-code equality. Exact sources remain under
   setup, direct and scripted item behavior, special-event handling, flags, and
   cleanup. Its item-record and helper-return pointers are explicit, and target
   assembly preserves all 38 named external calls.
+- The next 716-byte owner, `0808d0c8`, reconstructs the interactive palette
+  editor: palette bank, color-index, and RGB-component navigation; five-bit
+  channel adjustment; grid refresh; flash preview; and exit cleanup. Its
+  palette walk uses the reference's true halfword stride, and target assembly
+  preserves all six named external calls.
 
 ## Toolchain on this host (linux-x64)
 

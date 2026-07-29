@@ -25,8 +25,8 @@ not claim original machine-code equality. Exact sources remain under
 - The source-only build owns all 8 MiB with zero unowned bytes.
 - Semantic-C lane: **179,274 executable bytes across 406 compiling sources**:
   167,266 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **320,874 / 1,338,892 executable bytes** are now expressed as C, with
-  1,018,018 remaining.
+  **322,622 / 1,338,892 executable bytes** are now expressed as C, with
+  1,016,270 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -361,6 +361,10 @@ not claim original machine-code equality. Exact sources remain under
   assembly preserves all three external calls. `0801a7f4` was rejected as a
   nonordinary hidden-context gap, and `08016018` was skipped because its three
   calls require an unexpressed `r9` input; neither was admitted.
+- Remote exact-C round 15 adds eight overlay functions across `resource_3b1`
+  and `resource_3bf`, increasing exact C by 1,748 bytes without changing the
+  executable denominator. The source-only and full byte-identical builds both
+  pass after integration.
 
 ## Toolchain on this host (linux-x64)
 

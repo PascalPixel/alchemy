@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **214,316 executable bytes across 470 compiling sources**:
-  201,524 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **361,930 / 1,339,230 executable bytes** are now expressed as C, with
-  977,300 remaining.
+- Semantic-C lane: **215,242 executable bytes across 472 compiling sources**:
+  202,450 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **362,856 / 1,339,230 executable bytes** are now expressed as C, with
+  976,374 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -194,6 +194,16 @@ not claim original machine-code equality. Exact sources remain under
   event-dependent geometry and labels, row separators, font-tile upload,
   rendering-object setup, and signed table-driven row objects. Its window and
   runtime pointer fields are explicit, and all 15 static call sites are
+  preserved.
+- The 482-byte `080a7850` owner reconstructs a modal four-by-seven reference
+  grid: unlocked-entry discovery, window geometry, localized labels and
+  markers, completion/input waiting, and object/geometry restoration. Its
+  four-row state arrays and volatile input flag are explicit, and all 16 static
+  call sites are preserved.
+- The 444-byte `080b1a14` owner reconstructs a modal actor-list dispatcher:
+  three-window setup, wrapped actor navigation, validation, variant-specific
+  dispatch, menu restoration, cancellation, and ordered teardown. Its signed
+  actor/count/variant fields are explicit, and all 24 static call sites are
   preserved.
 - Three larger candidates are deliberately parked rather than admitted with
   fake ordinary calls. `080d1714` is a 3,384-byte, 400-frame cinematic whose

@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **180,662 executable bytes across 411 compiling sources**:
-  168,654 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **324,010 / 1,338,892 executable bytes** are now expressed as C, with
-  1,014,882 remaining.
+- Semantic-C lane: **180,930 executable bytes across 412 compiling sources**:
+  168,922 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **324,278 / 1,338,892 executable bytes** are now expressed as C, with
+  1,014,614 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -390,6 +390,11 @@ not claim original machine-code equality. Exact sources remain under
   row reset and column advance, glyph emission, two non-advancing glyphs, and
   dirty-state publication. Correct halfword strides replace raw pointer
   scaling, and target assembly preserves its sole external call.
+- The following 268-byte owner, `08095938`, reconstructs the five-stage
+  orbiting effect: angular buildup and decay, transformed reference-object
+  targeting, one-eighth easing, stage transitions, teardown, and final vector
+  projection. Teardown deliberately reloads the DMA-cleared effect fields
+  before projection, and target assembly preserves all four external calls.
 
 ## Toolchain on this host (linux-x64)
 

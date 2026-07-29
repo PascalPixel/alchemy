@@ -23,10 +23,10 @@ not claim original machine-code equality. Exact sources remain under
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **178,582 executable bytes across 403 compiling sources**:
-  166,574 main bytes and 12,008 overlay bytes. Combined with exact C,
-  **320,182 / 1,338,892 executable bytes** are now expressed as C, with
-  1,018,710 remaining.
+- Semantic-C lane: **178,806 executable bytes across 404 compiling sources**:
+  166,798 main bytes and 12,008 overlay bytes. Combined with exact C,
+  **320,406 / 1,338,892 executable bytes** are now expressed as C, with
+  1,018,486 remaining.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
@@ -345,6 +345,11 @@ not claim original machine-code equality. Exact sources remain under
   rotation into a sixteen-halfword buffer, DMA publication, and interval
   reload. Its 0x2c-byte record and stack buffer replace raw aliases, and both
   the reference and target assembly have an empty external-call multiset.
+- The next 224-byte owner, `0800b6b8`, reconstructs indexed map-asset loading:
+  layer-cache publication, source lookup, decompression, in-place relocation
+  of the leading offset table, optional five-table character remapping, and
+  dimension return. The remap bound is recovered from the decompressor's
+  return register, and target assembly preserves all three external calls.
 
 ## Toolchain on this host (linux-x64)
 

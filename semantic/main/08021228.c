@@ -6,7 +6,7 @@ u32 Func_08019d2c(s16);
 void Func_0801a4fc(u32, s32, s32 *, s32 *, s32, s32);
 void Func_08019908(u32, u32);
 s32 Func_08019ba0(s32);
-void Func_080165d8(s32, s32, s32, s32, s32);
+void *Func_080165d8(s32, s32, s32, s32, const u16 *, s32);
 void Func_080f9010(s32);
 void Func_08003dec(s32 *, s32);
 void Func_080030f8(u32);
@@ -39,7 +39,7 @@ void Func_08021228(u32 resource, s32 character, s32 base)
     Func_08019908(resource, 1);
     Func_08019908(character * 20 + base + 0x12c, 4);
     Func_080165d8(
-        object, Func_08019ba0(character + 0x980), 0x24, 2, 0);
+        object, Func_08019ba0(character + 0x980), 0x24, 2, 0, 0);
     Func_080f9010(0x51);
 
     do {

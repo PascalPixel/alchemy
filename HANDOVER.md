@@ -49,10 +49,10 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **229,878 executable bytes across 514 compiling sources**:
-  217,086 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **403,100 / 1,339,540 executable bytes** are now expressed as C, with
-  936,440 remaining. Seven semantic main sources were removed during the
+- Semantic-C lane: **232,650 executable bytes across 523 compiling sources**:
+  219,858 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **405,872 / 1,339,540 executable bytes** are now expressed as C, with
+  933,668 remaining. Seven semantic main sources were removed during the
   2026-07-30 `main` cascade because byte-exact versions now supersede them.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
@@ -95,6 +95,18 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   `Func_080072f8/fc` prototypes were misleading names for call-via-r5/r6
   thunks, not ordinary functions. This identification gives the hidden-context
   backlog a mechanical representation strategy instead of fake prototypes.
+- The fourth queue-driven pass adds nine complete main owners and 2,772 bytes:
+  object construction (`0800c150`), window lifecycle setup (`08019aa0`),
+  effect/object setup (`0808f1c0`), a scene-stage dispatcher (`08096960`),
+  two-object effect setup (`08098848`), an effect callback state machine
+  (`0809aa98`), three-stat comparison display (`080a15f0`), interactive sprite
+  cursor/display (`080bb65c`), and a battle-command dispatcher (`080bb938`).
+  `08016018` was rejected into the hidden-register lane: its three calls to
+  `08015fb8` pass caller stack state through `r9`, which that callee consumes
+  as a fifth argument. Auditing the new window owner also exposed and corrected
+  the shared `080165d8` ABI: it returns its selected slot pointer and accepts
+  two stack arguments, so all semantic callers now consistently express its
+  six-argument interface.
 - Honest outer-owner additions include `resource_381:0054/1410`,
   `resource_394:03f0/0c2c/0e64..0fb4`, `resource_3bd:0474/0608/0ee0`, and
   `resource_3c8:1d48`. `resource_379:00dc` was rejected as a fake standalone

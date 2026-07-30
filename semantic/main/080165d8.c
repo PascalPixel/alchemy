@@ -23,8 +23,8 @@ struct Slot {
 
 extern u8 *Data_03001e8c;
 
-void Func_080165d8(void *entry, s32 field12, s32 x, s32 y,
-                   const u16 *values, s32 field24) {
+struct Slot *Func_080165d8(void *entry, s32 field12, s32 x, s32 y,
+                           const u16 *values, s32 field24) {
     struct Slot *slot;
     struct Slot *selected;
     u16 *destination;
@@ -76,4 +76,5 @@ void Func_080165d8(void *entry, s32 field12, s32 x, s32 y,
         }
         selected->field10 = 0;
     }
+    return selected;
 }

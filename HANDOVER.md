@@ -113,15 +113,19 @@ sources live under `semantic/` and do not claim byte equality. Use
 `semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
 of the ordinary review queue.
 
-**Twenty overlays are now converted in full**, none skipping anything:
-`resource_3b8` (15,028 bytes), `resource_372` (10,202), `resource_371` (9,650),
-`resource_39f` (9,278), `resource_39a` (7,096), `resource_3b4` (6,226),
-`resource_373` (13,192), `resource_3bf` (10,144), `resource_375` (6,536),
-`resource_374` (7,468), `resource_3a8` (7,564), `resource_391` (7,068),
-`resource_3c5` (6,382), `resource_37b` (6,032), `resource_3bb` (5,680),
-`resource_3aa` (6,376), `resource_38f` (9,212), `resource_383` (7,792) and
-`resource_3c4` (24 of 25 rows, one 2,636-byte dispatcher pre-measured)
+**21 overlays have zero unconverted rows in the strict queue**, holding
+179,346 strict bytes between them. Regenerate this list rather than editing it —
+it has drifted twice from being maintained by hand:
+`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,484), `resource_372` (10,202), `resource_38f` (9,848), `resource_371` (9,650), `resource_39f` (9,278), `resource_3c5` (9,208), `resource_374` (9,148), `resource_3a8` (8,912), `resource_383` (8,652), `resource_391` (7,648), `resource_39a` (7,096), `resource_375` (6,568), `resource_3aa` (6,552), `resource_3b4` (6,462), `resource_3b7` (6,062), `resource_37b` (6,032), `resource_3bb` (5,896), `resource_3cb` (5,540), `resource_3a4` (36).
 
+**"Converted in full" means zero unconverted STRICT-QUEUE rows, not that every
+executable byte of the overlay is C.** Measured across those overlays: their
+assembled images total 231,694 bytes, of which semantic sources cover 116,466 and
+exact sources 4,398 — **110,830 bytes lie outside any strict row**. That
+remainder is veneer and import bands, jump tables, literal pools and inter-owner
+data, which are not semantic-C candidates. Any claim that credits a whole
+overlay's executable extent to the semantic lane will overstate it by roughly
+that proportion.
 
 **Pre-measured and waiting for a fresh agent: `resource_3c8:3068`**, a 26-way
 `mov pc, r3` dispatcher. Its boundary is settled — prologue at 0x02003068 saving
@@ -559,10 +563,18 @@ standalone no-op leaf. Before treating a `call_via` classification as an indirec
 call, check whether the caller actually loads r3/r4. If it loads nothing, it is a
 no-op leaf, not a thunk.
 
-**A pool load before a `bl` is only a `call_via` if it names IWRAM.** The
-thunk-bank shape is `ldr r3,[pc] ; bl` — but where the loaded word is in-image
-data (`0x0200dxxx`) rather than the IWRAM band (`0x030001xx`), r3 is an ordinary
-fourth argument. The band is the discriminator, not the shape.
+**A pool load before a `bl` is only a `call_via` if it names IWRAM — and the
+band is wider than `0x030001xx`.** `0x03001388` is one, so the discriminator is
+"IWRAM, and the bank entry is `bx rN`", not a narrow address range. Where the
+loaded word is in-image data (`0x0200dxxx`) instead, r3 is an ordinary fourth
+argument.
+
+**That pool word is the code address itself, not a pointer cell.** The shape is
+`ldr rN,[pc]` then `bx rN`, so `*(Helper *)0x03000164` is wrong and
+`(Helper)0x03000164` is right. One lane wrote the dereference and corrected it.
+
+**An overlay can have its OWN `call_via` bank** (`resource_3cb` at 0x020018f0+,
+`bx rN / nop` pairs) separate from the main image's at `0x080072e4`.
 
 **Resolve site -> target with `--json`, never by pairing the tool's summary
 against call shapes.** The summary is a *histogram*, not a mapping. One lane
@@ -571,6 +583,13 @@ inferred the mapping from argument shapes and got it exactly backwards —
 four-argument action, the opposite of what the shapes suggest in isolation. A
 two-import owner has a 50% chance of reading plausibly backwards. What settled it
 was a third owner using `Func_0808a080(0)` as an accessor independently.
+
+**A shared call site reached with DIFFERENT arguments still must not be
+duplicated in C.** `resource_3cb:12e0` has one site reached with r0=0 from one
+arm and r0=4 from another; `:0b94` has one site fed four cue ids and another fed
+by five paths. Writing the natural per-arm calls injects phantom calls into the
+multiset — restructure to a shared `emit:` join instead. A site count alone will
+not catch this; the multiset will.
 
 **Two call-site shapes break a naive multiset, both by inflating it.** State the
 proof as per-target counts and account for these before trusting a mismatch:
@@ -2183,8 +2202,16 @@ estimated. At 1,002 semantic sources, 384 overlay owners are unlisted: the map
 can size 8,458 overlay bytes, while its main-image figure of 382,970 agrees
 exactly. Converting overlays does not move the picture; only listing them does.
 
-**Declaring a whole overlay is far cheaper than listing its owners, and Venus
-is already making that claim in prose.** `semantic/regions.json` now also takes
+**Do not declare whole overlays — measurement rejected it.** Venus tested the
+idea on 2026-07-31: 110,830 bytes of the overlays it had converted in full lie
+outside any strict inventory row (veneer and import bands, tables, literal
+pools), so crediting an overlay's whole audited extent overstates the semantic
+lane by roughly 27,000 bytes. Strict per-owner rows in `manual_regions` are the
+correct route and `semantic_regions_sync.ts` generates them. The `full_overlays`
+array below still exists in `coverage_map.ts` and is inert with no entries; it is
+kept only so this correction has something to point at.
+
+**The rejected shape, for reference:** `semantic/regions.json` now also takes
 a `full_overlays` array:
 
 ```json

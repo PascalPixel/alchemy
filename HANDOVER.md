@@ -15,9 +15,9 @@ Exact means fully linked machine-code byte equality — not semantic similarity,
 not equal object size.
 
 The active branch is `speed`. Alongside the exact lane, its reviewed semantic-C
-lane currently accounts for **332,406 executable bytes across 614 compiling
-sources**: 319,614 main-image bytes and 12,792 overlay bytes. Combined with exact
-C, **508,980 / 1,339,542 executable bytes** are expressed as C. Build that lane
+lane currently accounts for **334,430 executable bytes across 616 compiling
+sources**: 321,638 main-image bytes and 12,792 overlay bytes. Combined with exact
+C, **511,004 / 1,339,542 executable bytes** are expressed as C. Build that lane
 with `bun run build:semantic`; its sources live under `semantic/` and do not
 claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
 and multi-region traps out of the ordinary review queue.
@@ -54,6 +54,13 @@ bytes while preserving the exact lane and full verification.
    complete executable owner in `semantic/main-regions.json`, excluding literal
    pools and data gaps. `08026080` is the current witness: its advertised
    2,138-byte head is one 3,442-byte owner across three executable ranges.
+   Pre-size `split_first` and `merge_with_continuations` candidates transitively
+   before assigning them: `080e47b8` was ranked as a 768-byte dispatcher, but
+   its live 184-byte frame crosses 16 manifest rows to the sole epilogue at
+   `080e660a`. Its full span is 7,762 bytes including embedded pools/alignment,
+   with 231 static calls—over 10 times the advertised size. Queue-row bytes
+   therefore cannot be used to budget or compare these owners. Pool-map the
+   mixed `split_first` rows before admitting their executable subranges.
 5. **Verify and bank coherent cohorts.** Run `bun run build:semantic` while
    agents work, then one full `bun run verify` for the settled cohort. Update the
    authoritative metrics above, commit by semantic byte gain, and push before
@@ -62,6 +69,15 @@ bytes while preserving the exact lane and full verification.
 Parking rule: park only a specific, evidenced ABI or structural blocker. “m2c
 is ugly,” “the owner is large,” and “the first agent ran out of implementation
 time” are reassignment signals, not blockers.
+
+**Measured six-agent trial.** Two consecutive three-agent waves admitted five
+complete owners for **6,432 executable bytes**. Wave 1 admitted 3/3 owners and
+4,408 bytes. Wave 2 admitted `080a112c` (964 bytes) and the complete split owner
+`080d0ee0` (1,060 bytes); its third assignment became the `080e47b8` scope audit
+above rather than a dishonest head-only conversion. Thus the method delivered
+5/6 admissions while the sixth task found and explained a queue-wide sizing
+defect. Fix transitive sizing/pool mapping before assigning another continuation
+owner; ordinary single-row owners can continue immediately.
 
 ---
 
@@ -480,10 +496,15 @@ executable denominator must begin `metrics: correct executable denominator`.
 target's own disassembly and this repo. **No `asm()`, no inline assembly, no
 register pinning, no barriers, and no `volatile` as a matching device.**
 
-**Concurrency.** This host has 4 cores. Two walker lanes plus the main agent is
-the useful maximum; more thrash the compile step. Walkers must never share an
-overlay — that is the only mutable artifact — and should be told not to run git,
-the build scripts, `full_c_progress.ts` or `overlay_inventory.ts`.
+**Exact-lane concurrency.** The older two-walker limit below applies only to
+walkers that repeatedly compile and mutate overlay artifacts. It is not a host
+CPU limit and does not govern independent semantic-C rewrites. For exact
+walkers, two lanes plus the main agent remains the useful maximum because more
+lanes contend on compilation and mutable overlay state. Exact walkers must
+never share an overlay and should be told not to run git, the build scripts,
+`full_c_progress.ts` or `overlay_inventory.ts`. For semantic-C work, use all
+three available subagent slots as specified in §0 and let the main agent own
+integration and verification.
 
 **Agent economics.** Permuting is an audit pass, not an engine: one exact hit in
 65,543 candidates, though it cost ten minutes and cracked a function a careful

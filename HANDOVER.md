@@ -340,6 +340,18 @@ functions the return type fixed the `movs`/`movs` swaps and
 `-mthumb-immediate-latency` then fixed the `movs`/`lsls` ones, neither reaching
 zero alone.
 
+**The two CSE modes are often needed together and neither works alone.** On one
+function `-fno-cse-two-insn-immediate` by itself *regressed* the floor while the
+pair reached 4; on another the pool mode alone left an extra callee-save. A note
+recording that only one CSE mode was tried is unmeasured, not negative.
+
+**Guard-clause shape decides where early-exit blocks land.** Flat
+`if (bad) return;` guards put those blocks inline; the reference wants them at the
+tail. Rewriting as *nested* ifs with the main body innermost was worth 8 bytes on
+one function and 143 halfwords on another (it stopped a `movs r0,#0` being
+hoisted). Related: `Base + K` folds into the pool, so a function-top base local is
+what restores the reference's `movs`/`lsls`/`adds` offset rematerialisation.
+
 **"Not drafted (scan rule)" is the largest remaining seam of stale parks.** Ten
 rows in one overlay were triaged on sight as duplicated two-instruction immediates
 or duplicated pool loads and never drafted — but that triage predates the two

@@ -74,3 +74,34 @@ first-parent tree against the fixed audited denominator and writes
 [`full-c-history.json`](full-c-history.json) and
 [`full-c-history.csv`](full-c-history.csv). It derives ownership from each
 commit tree rather than trusting incompatible legacy subject suffixes.
+
+## Coverage map
+
+`tools/coverage_map.ts` publishes the same measurement as a picture:
+[`assets/readme/gs1-en-coverage.svg`](../assets/readme/gs1-en-coverage.svg),
+a SpaceMonger-style treemap of the cartridge and of the audited executable
+denominator, with the tile data in
+[`metrics/gs1-en-coverage-map.json`](../metrics/gs1-en-coverage-map.json).
+
+It derives ownership the way the history ledger does—from tracked trees rather
+than from a build—so it runs without a ROM or toolchain:
+
+* main-image exact C: `src/<address>.c` against audited region boundaries,
+  excluding register-pinned, inline-assembly and fakematch sources;
+* overlay exact C: `AlchemyC_` placeholder spans in `assets/code/*_overlay.s`;
+* semantic C: `semantic/` sources sized by `semantic/main-regions.json`,
+  `semantic/regions.json`, or their single audited region, clipped to the
+  executable union and with exact C subtracted, because exact always wins;
+* ROM layout: the audited executable union, the compressed overlay streams in
+  `assets/manifest.json`, and the complement of both as asset data.
+
+The exact-C numbers it derives must equal `metrics/gs1-en-progress.json`
+exactly; a disagreement is an error rather than a redrawn picture. The
+semantic lane is not part of Full-C Byte Share and is drawn as a separate
+colour, never folded into the headline fraction.
+
+Because the semantic lane lives on `venus` and the exact lane advances on
+`mercury`, the map records which tree each lane came from. `bun run
+coverage:check` only fails on lanes the current branch owns; a lane read from
+another branch's ref is refreshed by running `bun run coverage`, not by
+failing this branch's verification.

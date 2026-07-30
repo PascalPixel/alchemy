@@ -24,6 +24,32 @@ is 100% byte closure for the English Golden Sun release. The repository is
 still in active decompilation and does not yet provide a standalone playable
 game.
 
+## Coverage map
+
+<p align="center">
+  <img src="assets/readme/gs1-en-coverage.svg" width="100%" alt="Treemap of the English Golden Sun ROM: the left panel divides all 8,388,608 cartridge bytes into main-image code, compressed code overlays and asset data; the right panel divides the 1,339,540 audited executable bytes into the main image and 96 decoded overlays. Tiles are shaded green for byte-exact C, yellow for reviewed semantic C and red for regions still held as assembly.">
+</p>
+
+Every byte of the English cartridge, drawn in the style of SpaceMonger. The
+left panel is the ROM as it ships; the right panel is the audited executable
+denominator behind Full-C Byte Share. Green is byte-exact C from the Mercury
+lighthouse, yellow is reviewed semantic C from the Venus lighthouse, red is
+code still held as reconstruction assembly, and blue is non-code data that the
+build already reproduces from tracked asset sources.
+
+The picture is derived from tracked evidence alone—no ROM, no toolchain, no
+build output—so either lighthouse can refresh it in about a second:
+
+```sh
+bun run coverage
+```
+
+Both branches regenerate it as they advance, so the map on this page is the
+current state of both lanes. The measured tile data lives in
+[`metrics/gs1-en-coverage-map.json`](metrics/gs1-en-coverage-map.json), and its
+exact-C totals are reconciled against `metrics/gs1-en-progress.json` before the
+map is written.
+
 ## Clean-room boundary
 
 The evidence and publication rules are part of the repository in

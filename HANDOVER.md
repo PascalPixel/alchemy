@@ -551,10 +551,32 @@ Two successor rules were built, measured and **rejected**; do not rebuild them
 to 96 debt rows (38,456 bytes); widening it to all five debt retentions is one
 line.
 
-**Tooling.** `resource_39c:10c0` verifies at 0 halfwords but `overlay_adopt`
-rejects it with 55 differing bytes. Its literal pool sits *inside* its span rather
-than after the body, so the splice may displace a neighbour's pool words. Check
-the routing-set trap in §7 first — that produced an identical symptom.
+**Tooling.** ~~`resource_39c:10c0` verifies at 0 halfwords but `overlay_adopt`
+rejects it.~~ **RESOLVED 2026-07-30: it was the §7 routing-set trap**, exactly as
+that section warned. `assets/code/resource_39c_c_020010c0.c` is in no routing set,
+so the adopt rehearsal (which copies the draft to that path and routes flags by
+path) compiled at baseline while `overlay_verify` took
+`-fno-cse-two-insn-immediate` from argv. Not a splice bug; its pool is a normal
+post-body pool. Adding the path to `NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES`
+closes it (`notes/resource_39c-10c0.md`). **General rule: whenever verify and
+adopt disagree, the difference is flags, and the first check is whether the
+*installed* asset path is routed.**
+
+**Span audit (2026-07-30): mis-spanning is NOT systemic.** The "an advertised row
+may be a fragment of a larger owner" hypothesis was tested against six stubborn
+parks (`39c:10c0`, `373:2a54`, `379:0074`, `3b2:0030`, `381:29a4`, `3af:3a0c`) —
+**all six spans are correct**, and none of the parks is a span problem. Across all
+1,337 strict rows, 1,334 end at exactly one return: the walker follows
+unconditional branches, so a direct continuation is absorbed into the row and the
+fragment failure mode is structurally rare here. **The bulk detector is
+`returns == 0`** — the only three such rows are `resource_3bd:0024` (a veneer
+misread), `resource_3ca:0f80` (body complete, trailing pool cut 12 bytes short;
+true span 340 not 328) and `resource_399:15b4` (**a genuine fragment**: the
+advertised end 0x1690 lands inside a mid-function pool that a `b` jumps over, and
+the epilogue is at 0x16a4; true span **248**, not 220). A secondary check —
+whether a row's end lands on a non-prologue row — flags 74 rows but is almost all
+veneer banks, so it is not worth tooling. Adding a `returns == 0` warning to the
+inventory writer would cover the real signal in one line.
 
 ---
 

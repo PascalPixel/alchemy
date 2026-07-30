@@ -109,23 +109,13 @@ AlchemyC_020000e8:
 AlchemyC_020000f8:
 	.space 0xe
 	.2byte 0x0000
-	push	{lr}
-	movs	r1, #5
-	negs	r1, r1
-	movs	r0, #0
-	bl	.L_0200016e
-	pop	{r0}
-	bx	r0
+AlchemyC_02000108:
+	.space 0x10
 AlchemyC_02000118:
 	.space 0xe
 	.2byte 0x0000
-	push	{lr}
-	movs	r1, #6
-	negs	r1, r1
-	movs	r0, #0
-	bl	sub_0200018e
-	pop	{r0}
-	bx	r0
+AlchemyC_02000128:
+	.space 0x10
 	push	{r5, lr}
 	ldr	r3, [pc, #28]
 .L_0200013c:

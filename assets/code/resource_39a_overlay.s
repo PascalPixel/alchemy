@@ -3218,13 +3218,8 @@ AlchemyC_02001730:
 	bl	sub_0200358a
 	pop	{r0}
 	bx	r0
-	push	{lr}
-	movs	r0, #32
-	negs	r0, r0
-	movs	r1, #0
-	bl	sub_0200359a
-	pop	{r0}
-	bx	r0
+AlchemyC_02001ac0:
+	.space 0x10
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	adds	r6, r1, #0
@@ -3354,12 +3349,8 @@ AlchemyC_02001730:
 	.4byte 0x61c3189b
 	.2byte 0x4770
 	.2byte 0x0000
-	push	{lr}
-	movs	r1, #15
-	bl	sub_02003f9e
-	movs	r0, #0
-	pop	{r1}
-	bx	r1
+AlchemyC_02001c08:
+	.space 0xe
 	.2byte 0x0000
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

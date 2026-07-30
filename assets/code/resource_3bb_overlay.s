@@ -769,11 +769,8 @@ AlchemyC_02000050:
 	.2byte 0x0000
 AlchemyC_0200005c:
 	.space 0x54
-	push	{lr}
-	bl	.L_02003c44
-	bl	.L_02000114
-	pop	{r0}
-	bx	r0
+AlchemyC_020000b0:
+	.space 0xe
 	.2byte 0x0000
 	push	{r5, r6, lr}
 	sub	sp, #8

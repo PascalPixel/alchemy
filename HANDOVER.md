@@ -898,6 +898,14 @@ compute-bound, so run **five or six** and re-measure `/proc/loadavg` before
 assuming a ceiling. If probe latency starts climbing well above ~150 ms, that is
 the real signal to stop adding lanes.
 
+**Runtime subagent slots are a separate ceiling from cores.** Some runtimes cap
+concurrent subagents independently of the hardware — the Codex runtime exposes
+three, so a six-agent experiment there runs as two immediately consecutive waves
+of three, and Venus Lighthouse cohorts are sized in threes for that reason. On a
+runtime exposing five or six slots the measurements above support testing the
+larger walker count rather than inheriting the historical two-lane ceiling.
+Whichever binds first — slots or cores — is the real limit; check both.
+
 **Where five lanes actually saturates a 4-core host.** Measured with five lanes
 running: load average **3.60**, and a warm `build_claimed` that costs ~0 s idle
 took **17.6 s** — longer than the entire warm bank cycle on a quiet machine. That

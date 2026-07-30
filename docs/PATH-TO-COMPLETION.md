@@ -1009,6 +1009,30 @@ stopped immediately and effort returned to fresh decompilation.
 
 ## Recommended order
 
+**2026-07-30 semantic-speed correction.** The recommendations below describe
+the byte-exact lane and remain valid for exact adoption, but they are no longer
+the fastest route to the `speed` branch's reviewed semantic-C objective.
+Measured consecutive cohorts established a higher-throughput lane:
+
+1. Run fresh agents on complete owners in waves of three, with exact assembly as
+   authority and m2c only as a hint. Reassign when an agent returns analysis
+   without implementation; do not turn agent-runtime exhaustion into a
+   technical blocker.
+2. Drain established callback and construct families before unknown thunks.
+   Typed renderer, transfer, fill, scale, square-root, and initializer ABIs
+   amortize across unrelated owners.
+3. Then run assembly-led direct-call owners. A three-owner, no-thunk trial
+   converted all 5,876 bytes, showing the method is broader than renderer
+   families.
+4. Treat split manifest regions as possible single functions. Follow live frame
+   state through continuations and account complete executable ranges in
+   `semantic/main-regions.json`; never count a head-only C file.
+5. Bank each coherent cohort after `bun run verify`. The semantic lane does not
+   weaken the exact lane: exact builds must remain byte-identical and
+   source-only ownership must remain complete.
+
+The exact-lane order follows:
+
 Screen every target first: `grep 'mov\s*ip, pc'`, and check for a callee-saved
 register read but never written. Both classes are now reclassified out of Y, but
 the screen still costs less than a wasted draft.

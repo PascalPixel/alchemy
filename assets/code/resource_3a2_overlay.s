@@ -1998,31 +1998,8 @@ AlchemyC_02000fcc:
 	add	sp, #8
 	pop	{r0}
 	bx	r0
-	push	{r5, lr}
-	adds	r5, r0, #0
-	movs	r0, #0
-	bl	sub_02002570
-	ldr	r3, [r5, #12]
-	ldr	r2, [r0, #12]
-	cmp	r2, r3
-	ble.n	.L_0200107e
-	adds	r1, r5, #0
-	adds	r1, #35
-	ldrb	r2, [r1, #0]
-	movs	r3, #2
-	orrs	r3, r2
-	b.n	.L_02001088
-.L_0200107e:
-	adds	r1, r5, #0
-	adds	r1, #35
-	ldrb	r2, [r1, #0]
-	movs	r3, #253
-	ands	r3, r2
-.L_02001088:
-	strb	r3, [r1, #0]
-	pop	{r5}
-	pop	{r1}
-	bx	r1
+AlchemyC_02001060:
+	.space 0x30
 AlchemyC_02001090:
 	.space 0x26
 	.2byte 0x0000

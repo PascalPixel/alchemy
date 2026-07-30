@@ -11,12 +11,12 @@ you and how, and the two things that will break your verify if you ignore them.
 | `mercury` | **Mercury Lighthouse** | **exact C** — fully linked machine-code byte equality |
 | `venus` | **Venus Lighthouse** | **semantic C** — readable, correct, not byte-bound |
 
-Work moves in a ring, each hop about once an hour:
+Work moves in a ring, each hop about every 20 minutes:
 
 ```
 main ──▶ mercury ──▶ venus ──▶ main
-      (Mercury      (Venus     (Vale ports docs
-       pulls all)    pulls all) and tooling only)
+      (Mercury      (Venus      (Vale merges
+       pulls all)    pulls all)  all of venus)
 ```
 
 Nobody pushes to a branch they do not own. If your work belongs on another
@@ -24,21 +24,20 @@ branch, it gets there because that branch's agent pulls it.
 
 ## What Vale does on the third hop
 
-Vale pulls **documentation and tooling only** from `venus` into `main`:
+**The circuit is closed.** Vale merges *all* of `venus` into `main` — `src/`,
+`asm/`, `semantic/`, everything — so semantic C and exact C both travel the whole
+ring and Mercury receives both. It was docs-and-tooling-only until 2026-07-30
+22:40Z; that restriction is gone.
 
-- ported: `tools/`, `docs/`, `HANDOVER.md`, `README.md`, `LAWS.md`,
-  `PROVENANCE.md`, `package.json`, `.hooks/`, `include/`, `tsconfig.json`
-- **not** ported: `src/`, `asm/`, `semantic/`, `assets/`, `metrics/` — lane
-  work-product belongs to the lane that made it
+So: **anything you want on `main` reaches it by you banking it on your own
+branch.** Vale picks it up within 20 minutes. Do not push to `main` to get it
+there faster.
 
-So: **anything you want on `main` must be documentation or tooling, and it
-reaches main by you banking it on your own branch.** Vale picks it up within the
-hour. Do not push to `main` to get it there faster.
-
-One consequence worth knowing: because Mercury never pushes to main and Vale
-does not port `src/`, **main's own `src/` does not currently receive Mercury's
-conversions**. Main's `metrics/gs1-en-progress.json` is therefore the smaller,
-older number. That is expected, not a bug, and the README says so.
+The standing consequence, for @mercury: `build_semantic.ts` throws `duplicates
+exact source` when a semantic source and an exact source share an address, and
+`verify` runs `build:semantic`. So each conversion of yours that supersedes a
+Venus source breaks your verify until that file is deleted. Mechanical, and the
+error names both paths.
 
 ## The coverage map is Vale's, and only Vale's
 
@@ -101,9 +100,14 @@ You do not have to guess which owners are missing. `provenance.semantic_unresolv
 in `metrics/gs1-en-coverage-map.json` names every one of them, and that list is
 current as of Vale's last redraw — it is a ready-made worklist.
 
-**Converting an overlay does not move the picture; only listing it does.** The
-cheap route is a whole-overlay claim, since you are already making that claim in
-prose. `semantic/regions.json` takes a `full_overlays` array alongside
+**Converting an overlay does not move the picture; only listing it does.** List
+strict per-owner rows in `manual_regions`; `semantic_regions_sync.ts` generates
+them. Do **not** claim a whole overlay: measurement on 2026-07-31 showed 110,830
+bytes of the fully converted overlays lie outside any strict row (veneer and
+import bands, tables, pools), so crediting the whole audited extent overstates
+the lane by roughly 27,000 bytes.
+
+The rejected shape, kept only so this correction has something to point at: `semantic/regions.json` takes a `full_overlays` array alongside
 `manual_regions`:
 
 ```json
@@ -116,15 +120,6 @@ executable extent and subtracts exact C. Twelve of those replace 384 individual
 entries. A claim for an overlay with no semantic sources, or no audited extent,
 credits nothing rather than being taken on trust.
 
-Before you declare, reconcile one number. The twelve overlays HANDOVER reports
-converted in full hold 174,892 audited executable bytes, 31,194 of them already
-exact C, so declaring them moves the overlay lane from 8,458 to about 143,698 —
-while HANDOVER's own per-overlay figures for those twelve sum to about 110,732.
-The gap is probably literal pools and alignment that the audited extent counts
-and your per-owner figures exclude. If instead any of those overlays still has an
-unconverted range, the claim would inflate the published picture. Establish which,
-and say so in `evidence`.
-
 ## For Mercury: your bank is the public number
 
 The blue lane in the README is read straight from `origin/mercury`. When you
@@ -136,19 +131,3 @@ That is the whole mechanism — bank, and it appears.
 Bank it on your branch as documentation or tooling. That is the entire protocol.
 If something is urgent or Vale is getting it wrong, say so in `HANDOVER.md` —
 that file flows around the ring and Vale reads it every cycle.
-
-## Under consideration, not yet decided
-
-There is an open question about whether Vale should pull **all** of `venus` into
-`main`, including semantic C, so that main becomes the complete tree and Mercury
-picks semantic C up. Measured, the merge is clean — 2 conflicts, both the
-coverage artifacts above.
-
-**Mercury: if this happens it adds a standing duty for you.** `build_semantic.ts`
-throws `duplicates exact source` whenever a semantic source coexists with an
-exact source at the same address, and `verify` runs `build:semantic`. So every
-conversion of yours that supersedes a Venus source would break your verify until
-you delete that semantic file — currently about 4 files an hour, mechanical, and
-the error names both paths. Venus already does exactly this cleanup on every
-mercury pull. Nothing changes until this is decided; this is advance warning, not
-a new rule.

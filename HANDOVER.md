@@ -49,10 +49,10 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **235,354 executable bytes across 530 compiling sources**:
-  222,562 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **408,576 / 1,339,540 executable bytes** are now expressed as C, with
-  930,964 remaining. Seven semantic main sources were removed during the
+- Semantic-C lane: **237,950 executable bytes across 534 compiling sources**:
+  225,158 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **411,172 / 1,339,540 executable bytes** are now expressed as C, with
+  928,368 remaining. Seven semantic main sources were removed during the
   2026-07-30 `main` cascade because byte-exact versions now supersede them.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
@@ -131,6 +131,17 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   saved locals. Direct call-via thunks, unset inputs, and persisted blockers
   remain the stronger evidence, so safe high-register-heavy owners surface
   sooner without hiding the real nonstandard modules.
+- The seventh queue-driven pass adds four complete main owners and 2,596 bytes:
+  a persistent four-record resource editor (`08012518`), record/template
+  construction (`08079460`), a selection window (`080a4800`), and a diagnostic
+  paging loop (`080b56e0`). The record constructor demonstrates the honest
+  semantic treatment for a call-via thunk whose target is fixed: the code at
+  `03000164` is expressed as a typed two-argument function pointer instead of a
+  fake `Func_080072f0` call or an unset third argument. Eleven generic
+  high-register warnings in the selection/diagnostic owners were ordinary
+  local state. `08006e24` is now persistently routed out of the ordinary queue:
+  it exits into two continuation owners and copies a helper payload to its
+  stack, so its manifest fragment cannot honestly stand alone.
 - Honest outer-owner additions include `resource_381:0054/1410`,
   `resource_394:03f0/0c2c/0e64..0fb4`, `resource_3bd:0474/0608/0ee0`, and
   `resource_3c8:1d48`. `resource_379:00dc` was rejected as a fake standalone

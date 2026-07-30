@@ -1,6 +1,10 @@
 {
   "format": 1,
   "owners": {
+    "08006e24": {
+      "lane": "multi_region_function",
+      "reason": "The owner has direct exits into 08006f30/08006f32 and copies the 08006f48..08006f6c helper payload onto its stack before executing it through the continuation path. Reconstruct and classify the whole serial/runtime module rather than admitting this manifest fragment alone."
+    },
     "08095778": {
       "lane": "cross_file_abi",
       "reason": "The modulo result passed here conflicts with the live pointer-base interpretation in the current exact 080955b0 source. Reconstruct the call family jointly before admission."

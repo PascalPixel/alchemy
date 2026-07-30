@@ -41,6 +41,10 @@ export const FORK_MODES = [
   "-fthumb-move-before-alu", "-fthumb-orr-dead-input-reuse",
   "-fthumb-entry-frame-cluster", "-fthumb-literal-before-index-shift",
   "-fthumb-low-constant-before-high-move", "-fthumb-high-move-before-stack-store",
+  // The fork has carried this one since the grouped-descriptor work but neither
+  // the explorer nor the router ever named it, so it was invisible to every
+  // sweep. It is what closes 080b5ad4.
+  "-fthumb-group-value2-in-place",
 ] as const;
 
 export const STOCK_SWITCHES = [

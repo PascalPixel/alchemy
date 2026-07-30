@@ -136,19 +136,8 @@ AlchemyC_02000030:
 	.2byte 0x0200
 AlchemyC_02000080:
 	.space 0x18
-	push	{r5, lr}
-	adds	r5, r0, #0
-	bl	sub_020006da
-	adds	r0, r5, #0
-	movs	r1, #1
-	bl	sub_0200071a
-	adds	r0, r5, #0
-	movs	r1, #0
-	bl	sub_02000752
-	bl	sub_020006f6
-	pop	{r5}
-	pop	{r0}
-	bx	r0
+AlchemyC_02000098:
+	.space 0x22
 	.2byte 0x0000
 AlchemyC_020000bc:
 	.space 0x20

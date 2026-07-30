@@ -127,19 +127,8 @@ AlchemyC_02000070:
 	.4byte 0x47704800
 	.2byte 0x8a58
 	.2byte 0x0200
-	push	{r5, r6, lr}
-	adds	r5, r0, #0
-	adds	r6, r1, #0
-	bl	sub_020008f8
-	ldrb	r1, [r0, #15]
-	adds	r0, r5, #0
-	adds	r1, r1, r6
-	bl	sub_02000932
-	adds	r0, r5, #0
-	bl	sub_02000910
-	pop	{r5, r6}
-	pop	{r0}
-	bx	r0
+AlchemyC_020000a0:
+	.space 0x20
 	push	{r5, r6, r7, lr}
 	sub	sp, #32
 	adds	r7, r0, #0

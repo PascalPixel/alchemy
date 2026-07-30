@@ -6312,27 +6312,10 @@ AlchemyC_020045a8:
 	pop	{r0}
 	bx	r0
 	.2byte 0x0000
-	push	{lr}
-	bl	sub_02008cfc
-	ldr	r0, [pc, #16]
-	movs	r1, #1
-	bl	sub_02008cdc
-	bl	sub_02008d10
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.2byte 0x0ee4
-	.2byte 0x0000
-	push	{lr}
-	bl	sub_02008d18
-	ldr	r0, [pc, #16]
-	movs	r1, #1
-	bl	sub_02008cf8
-	bl	sub_02008d2c
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0x00001120
+AlchemyC_020045fc:
+	.space 0x1c
+AlchemyC_02004618:
+	.space 0x1c
 	.4byte 0x47204c00
 	.4byte 0x030003e0
 	.4byte 0x47204c00

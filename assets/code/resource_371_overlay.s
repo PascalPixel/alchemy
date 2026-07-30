@@ -7377,27 +7377,8 @@ AlchemyC_020006dc:
 	bx	r0
 	.2byte 0x1e40
 	.2byte 0x0300
-	push	{r5, lr}
-	adds	r5, r0, #0
-	ldr	r0, [pc, #32]
-	ldr	r3, [r0, #0]
-	movs	r2, #1
-	ands	r3, r2
-	cmp	r3, #0
-	beq.n	.L_02003faa
-	ldr	r0, [r0, #0]
-	movs	r1, #6
-	lsrs	r0, r0, #1
-	bl	sub_0200811c
-	adds	r1, r0, #0
-	adds	r0, r5, #0
-	bl	sub_02008204
-.L_02003faa:
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	.2byte 0x1e40
-	.2byte 0x0300
+AlchemyC_02003f88:
+	.space 0x2c
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	adds	r2, r5, #0

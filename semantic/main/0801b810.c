@@ -1,0 +1,133 @@
+#include "types.h"
+
+#define NULL ((void *)0)
+#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+
+struct SlidingNode_0801b810 {
+    struct SlidingNode_0801b810 *previous;
+    struct SlidingNode_0801b810 *next;
+    u16 field_08;
+    u16 field_0a;
+    u16 resource;
+    u16 field_0e;
+    s16 x;
+    s16 y;
+    s16 motion_mode;
+    u16 field_16;
+    s16 target_x;
+    s16 target_y;
+    u8 field_1c[6];
+    s16 motion;
+    s16 step;
+    s16 scale;
+};
+
+void Func_0801b9a8(void *, u16);
+void Func_0801b9ec(void *, u16);
+void Func_0801ba68(void *, u32);
+void Func_0801bd98(
+    u16, u16, struct SlidingNode_0801b810 *, s32);
+void Func_0801b010(u16, u32);
+void Func_080030f8(s32);
+
+/*
+ * Move the selection window one step backward and rebuild its five-entry
+ * animated list when the current page has been exhausted.
+ */
+void Func_0801b810(void *state)
+{
+    struct SlidingNode_0801b810 *node;
+    u16 page_size;
+    u16 selection;
+    u16 position;
+
+    position = M2C_FIELD(state, u16 *, 0x39E);
+    Func_0801b9a8(state, position);
+    M2C_FIELD(state, u16 *, 0x3A2) = 0x21;
+    Func_080030f8(1);
+
+    page_size = M2C_FIELD(state, u16 *, 0x394);
+    if (page_size <= 5) {
+        if (position != 0) {
+            position--;
+        } else {
+            position = page_size - 1;
+        }
+        M2C_FIELD(state, u16 *, 0x39E) = position;
+    } else {
+        selection = M2C_FIELD(state, u16 *, 0x39C);
+        if ((selection | position) != 0) {
+            if (position == 1 && selection != 0) {
+                M2C_FIELD(state, u16 *, 8) = 8;
+                selection--;
+                M2C_FIELD(state, u16 *, 0x39C) = selection;
+                Func_0801ba68(state, 0);
+                if (selection == 0) {
+                    M2C_FIELD(state, u16 *, 0xA) = 0;
+                }
+                M2C_FIELD(state, u16 *, 0x3E) = 1;
+            } else {
+                M2C_FIELD(state, u16 *, 0x39E) = position - 1;
+            }
+        } else {
+            struct SlidingNode_0801b810 *head =
+                M2C_FIELD(state, struct SlidingNode_0801b810 **, 0x348);
+            s32 offset = 0x40;
+
+            M2C_FIELD(state, u16 *, 0x3E) = 0;
+            node = head;
+            if (node->next != NULL) {
+                do {
+                    node->target_x = node->x + offset;
+                    node->motion_mode = 0xC;
+                    node = node->next;
+                    offset -= 0x10;
+                } while (node->next != NULL);
+            }
+
+            do {
+                Func_080030f8(1);
+            } while (head->x != head->target_x);
+
+            selection = 0;
+            if (page_size != 5) {
+                do {
+                    selection++;
+                } while (selection != page_size - 5);
+            }
+            M2C_FIELD(state, u16 *, 0x39C) = selection;
+            M2C_FIELD(state, u16 *, 0x39E) = 4;
+
+            node = head;
+            if (node != NULL) {
+                u16 *resource =
+                    (u16 *)((u8 *)state + 0x354 + selection * 2);
+                do {
+                    Func_0801bd98(
+                        resource[0], resource[16], node, 1);
+                    node = node->next;
+                    resource++;
+                } while (node != NULL);
+            }
+
+            node = head;
+            position = M2C_FIELD(state, u16 *, 0x396);
+            if (node->next != NULL) {
+                do {
+                    node->target_x = position;
+                    node->motion_mode = -0xC;
+                    node = node->next;
+                    position += 0x10;
+                } while (node->next != NULL);
+            }
+            M2C_FIELD(state, u16 *, 0xA) = 1;
+        }
+    }
+
+    M2C_FIELD(state, u16 *, 0x3A2) = 1;
+    Func_0801b9ec(state, M2C_FIELD(state, u16 *, 0x39E));
+    Func_080030f8(1);
+    node = M2C_FIELD(state, struct SlidingNode_0801b810 **, 0x348);
+    Func_0801b010(node->field_0a, 0);
+    Func_080030f8(1);
+}

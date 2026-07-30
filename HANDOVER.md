@@ -49,10 +49,10 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **246,806 executable bytes across 546 compiling sources**:
-  234,014 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **422,500 / 1,339,542 executable bytes** are now expressed as C, with
-  917,042 remaining. Seven semantic main sources were removed during the
+- Semantic-C lane: **249,450 executable bytes across 549 compiling sources**:
+  236,658 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **425,144 / 1,339,542 executable bytes** are now expressed as C, with
+  914,398 remaining. Seven semantic main sources were removed during the
   2026-07-30 `main` cascade because byte-exact versions now supersede them.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
@@ -175,6 +175,13 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   the fixed `03001388` transfer callback and the runtime renderer pair stored at
   `03001eec+1c/+20`. Auditing related owners as a family is now materially
   faster than treating every thunk as a fresh ABI mystery.
+- The eleventh queue-driven pass adds three complete main owners and 2,644
+  bytes: two 1,024-slot particle systems (`080d82b0`, `080d85d0`) and a grouped
+  burst/marker animation (`080e2538`). Their six call-via sites again use the
+  typed fixed transfer and six-argument renderer families. At this point these
+  signatures should be treated as established module APIs; future owners need
+  only prove where the target pointer comes from and whether their ordinary
+  arguments match.
 - Honest outer-owner additions include `resource_381:0054/1410`,
   `resource_394:03f0/0c2c/0e64..0fb4`, `resource_3bd:0474/0608/0ee0`, and
   `resource_3c8:1d48`. `resource_379:00dc` was rejected as a fake standalone

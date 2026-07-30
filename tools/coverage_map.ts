@@ -356,6 +356,7 @@ export function semanticSpans(
   tree: SourceTree,
   boundaries: readonly number[],
   executable: readonly Span[],
+  overlayExecutable: ReadonlyMap<string, Span[]> = new Map(),
 ): SemanticLane {
   const limit = executable.at(-1)?.end ?? ROM_BASE;
   const main = new Map<number, Span[]>();
@@ -394,12 +395,30 @@ export function semanticSpans(
       reviewed.set(`${region.overlay}@${Number.parseInt(region.entry, 16)}`, region.span_bytes);
     }
   }
+  // A whole-overlay claim sizes every owner in one reviewed assertion: if each
+  // executable byte of an overlay belongs to some semantic source, the owners
+  // need no individual spans and the overlay's audited executable extent is the
+  // lane. That is one evidence-bearing entry instead of one per owner, which is
+  // what an overlay converted in full actually warrants. Exact C is subtracted
+  // downstream, so a partially exact overlay stays honest.
+  const fullOverlays = new Map<string, string>();
+  if (reviewedDocument !== undefined) {
+    for (const claim of JSON.parse(reviewedDocument).full_overlays ?? []) {
+      fullOverlays.set(claim.overlay, claim.evidence ?? "");
+    }
+  }
+  const claimedSources = new Set<string>();
+
   for (const name of tree.list("semantic/overlays")) {
     const match = SEMANTIC_OVERLAY_SOURCE.exec(name);
     if (!match) continue;
     sources++;
     const overlay = match[1];
     const address = Number.parseInt(match[2], 16);
+    if (fullOverlays.has(overlay)) {
+      claimedSources.add(overlay);
+      continue;
+    }
     const span = reviewed.get(`${overlay}@${address}`);
     if (span === undefined) {
       // The decoded-region inventory that sizes ordinary overlay owners is a
@@ -408,6 +427,15 @@ export function semanticSpans(
       continue;
     }
     overlays.set(overlay, [...(overlays.get(overlay) ?? []), { start: address, end: address + span }]);
+  }
+
+  // A claim is only honoured for an overlay that actually carries semantic
+  // sources and has an audited executable extent; an empty claim credits
+  // nothing rather than crediting the whole overlay on an unbacked assertion.
+  for (const overlay of fullOverlays.keys()) {
+    const extent = overlayExecutable.get(overlay) ?? [];
+    if (!claimedSources.has(overlay) || extent.length === 0) continue;
+    overlays.set(overlay, normalize([...(overlays.get(overlay) ?? []), ...extent]));
   }
   for (const [overlay, spans] of overlays) overlays.set(overlay, normalize(spans));
   return { main, overlays, sources, unresolved };
@@ -644,7 +672,7 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
 
   const boundaries = mainBoundaries(options.exact);
   const semanticLane = options.semantic
-    ? semanticSpans(options.semantic, boundaries, mainExecutable)
+    ? semanticSpans(options.semantic, boundaries, mainExecutable, overlayExecutable)
     : { main: new Map(), overlays: new Map(), sources: 0, unresolved: [] as string[] };
 
   // Exact always wins over semantic: the semantic lane only shows the ground
@@ -1358,6 +1386,52 @@ export function selfTest(): void {
 
   if (assetBucket("golden-sun-pcm-wave-series").id !== "audio") throw new Error("audio bucket failed");
   if (assetBucket("brand-new-package").id !== "other") throw new Error("unknown bucket failed");
+
+  // Whole-overlay semantic claims.
+  const laneTree = (regions: unknown, overlaySources: string[]): SourceTree => ({
+    id: "test",
+    list: (directory) => (directory === "semantic/overlays" ? overlaySources : []),
+    read: (path) => (path === "semantic/regions.json" ? JSON.stringify(regions) : undefined),
+  });
+  const extent = new Map<string, Span[]>([["resource_375", [{ start: 0x02000000, end: 0x02000100 }]]]);
+  const claimed = semanticSpans(
+    laneTree({ full_overlays: [{ overlay: "resource_375", evidence: "converted in full" }] },
+      ["resource_375_c_02000030.c"]),
+    [], [], extent,
+  );
+  if (spanBytes(claimed.overlays.get("resource_375") ?? []) !== 256) {
+    throw new Error("a whole-overlay claim did not take the overlay's executable extent");
+  }
+  if (claimed.unresolved.length !== 0 || claimed.sources !== 1) {
+    throw new Error("a claimed overlay's owners were still reported unresolved");
+  }
+  const unbacked = semanticSpans(
+    laneTree({ full_overlays: [{ overlay: "resource_375", evidence: "no sources" }] }, []),
+    [], [], extent,
+  );
+  if ((unbacked.overlays.get("resource_375") ?? []).length !== 0) {
+    throw new Error("a whole-overlay claim with no semantic source credited bytes");
+  }
+  const noExtent = semanticSpans(
+    laneTree({ full_overlays: [{ overlay: "resource_999", evidence: "not audited" }] },
+      ["resource_999_c_02000030.c"]),
+    [], [], extent,
+  );
+  if ((noExtent.overlays.get("resource_999") ?? []).length !== 0) {
+    throw new Error("a whole-overlay claim without an audited extent credited bytes");
+  }
+  const unlisted = semanticSpans(laneTree({}, ["resource_375_c_02000030.c"]), [], [], extent);
+  if (unlisted.unresolved.length !== 1) {
+    throw new Error("an unlisted overlay owner is no longer reported");
+  }
+  const perOwner = semanticSpans(
+    laneTree({ manual_regions: [{ overlay: "resource_375", entry: "0x02000030", span_bytes: 64 }] },
+      ["resource_375_c_02000030.c"]),
+    [], [], extent,
+  );
+  if (spanBytes(perOwner.overlays.get("resource_375") ?? []) !== 64) {
+    throw new Error("per-owner manual_regions sizing regressed");
+  }
 
   // A ref tree must list subdirectories, not only files. mainBoundaries walks
   // `asm/` recursively; if a directory reports no children the walk stops at

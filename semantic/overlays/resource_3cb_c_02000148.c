@@ -85,7 +85,10 @@ s32 Func_080770c0();
 s32 Func_0200008c();
 s32 *Func_0808a080();
 
-/* The relocated IWRAM helper reached through this overlay's `bx r7` thunk. */
+/* The relocated IWRAM helper reached through this overlay's `bx r7` thunk.
+ * The pool word IS the code address — `ldr r7, [pc, ...]` loads 0x03000164
+ * itself and `bx r7` branches to it — so this is a cast, not a load through a
+ * pointer cell. */
 typedef void (*RelocatedHelper_02000148)();
 
 s32 Func_02000148(void)
@@ -108,7 +111,7 @@ s32 Func_02000148(void)
             *step = *step + 1;
             if ((s32)*step > 25) {
                 RelocatedHelper_02000148 clear =
-                    *(RelocatedHelper_02000148 *)0x03000164;
+                    (RelocatedHelper_02000148)0x03000164;
                 unsigned char *record = (unsigned char *)0x02002024;
                 s32 remaining = 3;
 

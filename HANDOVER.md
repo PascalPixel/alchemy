@@ -37,25 +37,25 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
 
 ## Repository state
 
-- Branch: `main` (session work lands on `claude/continue-decompilation-3drfw0`
-  and is merged by the owner)
+- Branch: `main`
 - The live Full-C metric is printed by `bun tools/full_c_progress.ts --subject`
   and recorded in each commit subject; regenerate the inventory/report before
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
 
-## Toolchain on this host (linux-x64)
+## Toolchain status
 
-All compiler bundles were rebuilt from the pinned alchemy-gcc commit
-`64d757f` at `/home/user/alchemy-gcc` and re-admitted: gcc296 (gs1),
-old_agbcc, gs2, and both experimental comparison compilers
-(pret-early-thumb, gcc2951 — previously macOS-only, now per-host digests).
-Admission evidence: the composed source-only image reproduces gs1-en.gba
-byte-identically (SHA-1 5c4695205413df7db52b9a184815a07783999971) and
-`bun run verify` is green end to end. `roms/gs1-en.gba` can be recomposed
-from the source-only build products when absent; binutils-arm-none-eabi,
-gperf, and bun 1.3.14 are required host packages.
+The GS1 compiler source dependency is alchemy-gcc `main` at `ce5f377`, which
+contains the source-scoped compiler modes routed by this branch. Its gcc296
+target was rebuilt and staged on macOS arm64 on 2026-07-30; the admitted `cc1`
+SHA-256 is `df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4`.
+The composed source-only image reproduces gs1-en.gba byte-identically (SHA-1
+`5c4695205413df7db52b9a184815a07783999971`) and `bun run verify` is green end
+to end. Compiler bundles remain pinned by host-specific digests.
+`roms/gs1-en.gba` can be recomposed from the source-only build products when
+absent; binutils-arm-none-eabi, gperf, and bun 1.3.14 are required host
+packages.
 
 ## Session results (this session)
 

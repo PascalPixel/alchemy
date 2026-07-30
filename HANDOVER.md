@@ -270,6 +270,53 @@ Note the stages are independent once each has its own output tree, so they can
 run concurrently (94 s vs 161 s cold for the two full builds); only the
 ROM-mode build should write the default `out/full` tree.
 
+## Large call-sheet functions: the locals idiom, and how to measure progress
+
+For a big constant-argument call sheet the reference source idiom is **one
+function-top-declared `s32` local per non-trivial constant argument**. Proof by
+an adopted sibling: `assets/code/resource_372_c_02002180.c` verifies exact under
+default flags, carries about 100 such locals, and reproduces the
+`movs r1,#192 / movs r0,#10 / lsls r1,r1,#16` interleave that plain literals
+never produce. On resource_379:0074 the ladder was all-literals 47 wrong groups
+of 288 → locals at all 117 constant sites → 8 of 288.
+
+**Halfword counts are a bad progress metric for large functions.** Every `bl`
+displacement is target-absolute, so any positional drift makes every subsequent
+`bl` halfword differ: the 8-of-288 draft still reports 1,235 differing halfwords.
+Drive the search on normalized instruction-group equality (split the stream at
+each `bl`) and keep the halfword count only as a final gate.
+
+resource_379:0074 remains parked 8 groups and 40 bytes short, with drafts at
+`work/claude/notes/resource_379-0074-{best,alt}.c`. Its blocker is register
+allocation, not codegen: gcc hands all seven callee-saved registers to the
+earliest constant locals, forcing `push {r5,r6,r7,lr}` plus high-register saves.
+In resource_372 an early `if (...) return;` splits the entry block at instruction
+4, so every constant pseudo crosses a block boundary, global-alloc declines and
+reload rematerializes; resource_379:0074 has no early branch and its declarations
+and first uses share one ~600-insn block. Dropping the earliest locals, block
+scoping, and assignment-at-use were all tried and are all worse (see the note for
+the full ladder). Worth considering that the absence of an early branch may mean
+our semantic reconstruction is missing an early guard the original had.
+
+### Corrections to earlier advice in this file
+
+- **`(s32)&Value_0000XXXX` is not universal — it is inverted for pool words.**
+  It *forces* a pool load. Constants that want `movs #K; lsls #n` need plain
+  literals or locals. Use the symbol spelling only when the reference actually
+  pool-loads the value.
+- **Multi-arity callees do not need K&R declarations.** The repo mechanism is the
+  `_b`/`_c` alias suffix, admitted by `ADDRESS_SYMBOL` in `tools/alchemy_gcc.ts`
+  and used by the adopted resource_372 sibling.
+- **The "following call group arity" rule for argument order is false.**
+  resource_379:0074 at 0x41a is a direct counterexample. Argument order falls out
+  of the locals idiom plus the callee's declared return type (below), which is
+  the mechanism that is actually proven by 15 exact adoptions. The arity rule was
+  an artifact of one overlay's uniform call shapes; do not rely on it.
+- A large overlay's apparent "hundreds of distinct engine callees" can be a
+  mechanical artifact: in resource_379 all 286 `bl`s carry one `H1` and only 41
+  distinct `H2` values, mapping onto the 41 veneers at 0xab8-0xbf8. The
+  `sub_0200XXXX` names there carry no semantics.
+
 ## The biggest lever found so far: a callee's return type sets argument order
 
 The most common park class in every overlay — "per-site contradictory movs pair

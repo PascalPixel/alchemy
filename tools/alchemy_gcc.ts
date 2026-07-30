@@ -353,6 +353,7 @@ const THUMB_IMMEDIATE_LATENCY_SOURCES = new Set(["080babdc"]);
 const SCHED_HIGH_DEST_FIRST_SOURCES = new Set(["08098954", "0809a294", "08097540"]);
 const SCHED_LOW_DEST_FIRST_SOURCES = new Set(["08097540"]);
 const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_383_c_02000428.c",
   "assets/code/resource_37a_c_02001380.c",
   "assets/code/resource_37a_c_02001790.c",
   "assets/code/resource_37a_c_02002924.c",

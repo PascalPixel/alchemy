@@ -412,23 +412,8 @@ AlchemyC_020002d8:
 	.4byte 0x00000303
 	.2byte 0x0302
 	.2byte 0x0000
-	push	{lr}
-	sub	sp, #8
-	movs	r3, #8
-	movs	r2, #13
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r1, #0
-	movs	r2, #1
-	movs	r3, #1
-	movs	r0, #31
-	bl	sub_02000d6a
-	ldr	r0, [pc, #8]
-	bl	sub_02000d90
-	add	sp, #8
-	pop	{r0}
-	bx	r0
-	.4byte 0x00000305
+AlchemyC_02000424:
+	.space 0x28
 	.4byte 0x681a4b02
 	.4byte 0x75d32301
 	.4byte 0x00004770

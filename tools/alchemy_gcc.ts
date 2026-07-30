@@ -354,6 +354,12 @@ const SCHED_HIGH_DEST_FIRST_SOURCES = new Set(["08098954", "0809a294", "08097540
 const SCHED_LOW_DEST_FIRST_SOURCES = new Set(["08097540"]);
 const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
   "assets/code/resource_383_c_02000428.c",
+  // Paired with the callee-return-type lever: the return type fixed these
+  // functions' movs/movs swaps and the latency mode their movs/lsls ones —
+  // neither reaches zero alone.
+  "assets/code/resource_3b1_c_02000670.c",
+  "assets/code/resource_372_c_0200173c.c",
+  "assets/code/resource_3bf_c_02004794.c",
   "assets/code/resource_37a_c_02001380.c",
   "assets/code/resource_37a_c_02001790.c",
   "assets/code/resource_37a_c_02002924.c",
@@ -417,6 +423,8 @@ const GROUPED_DMA_STORE_OVERLAY_SOURCES = new Set([
 ]);
 const NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES = new Set([
   "assets/code/resource_383_c_0200082c.c",
+  "assets/code/resource_3b1_c_02000b84.c",
+  "assets/code/resource_3b1_c_02000cc8.c",
 ]);
 // resource_3c9 field/`(u16*)` mixed-access family: with strict aliasing, our
 // scheduler treats the u16-view store as independent of the struct-field

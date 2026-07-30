@@ -37,10 +37,13 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **414,462
-executable bytes across 721 compiling sources**: 386,840 main-image bytes and
-27,622 overlay bytes. Combined with exact C, **609,412 / 1,339,558 executable
-bytes** are expressed as C. Build that lane
+Alongside the exact lane, reviewed semantic C currently accounts for **423,256
+executable bytes across 727 compiling sources**: 386,840 main-image bytes and
+36,416 overlay bytes. Combined with exact C, **618,206 / 1,339,558 executable
+bytes** are expressed as C.
+
+**`resource_3b8` is the first overlay converted in full** — 15,028 / 15,028
+strict bytes across all seven owners, nothing skipped. Build that lane
 with `bun run build:semantic`; its sources live under `semantic/` and do not
 claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
 and multi-region traps out of the ordinary review queue.
@@ -229,8 +232,70 @@ Corrected in this session: `080a7478` and `0808d9a4` (comments and declarations)
 Sweeping the other 102 files is open, mechanical work — the fix is a declaration
 and a comment, never a control-flow change.
 
-**OPEN QUESTION — an overlay `bl` target is not a location, and two lanes explain
-that differently.** Both were investigating the same puzzle that
+**Overlay link bases: Reading A is now confirmed, Reading B's anomaly is not.**
+Two overlays are independently proven to be linked at **0x02008000**, each by
+three separate witnesses: `resource_3bf` (jump-table base `0x0200c64c` against an
+embedded table at offset `0x464c`, entries 0x8000 past their case bodies) and
+`resource_3c4` (a `mov pc,r3` table base `0x02008e58` whose entries are file
+offsets, an installed handler pool word `0x02008fe9` = `Func_02000fe8`+Thumb, and
+`0x02008ec9` = `Func_02000ec8`+Thumb). **So on those overlays any pool word in
+`0x0200_8xxx..0200_bxxx` is an in-image address at `offset = value - 0x8000`,
+and `Data_0200bxxx`-style symbols are in-image data, not RAM globals.**
+
+`resource_3b8` shows a third shape: every `bl` computes an address in an *import
+band* above the last code row, whose first 704 bytes are an 8-byte-per-entry
+veneer table (`ldr r4,[pc,#0]` / `bx r4` / `.word <main-image address>`). There
+the right move is not to resolve the target at all — name the import by the
+address its call site computes, which is what the byte-exact
+`assets/code/resource_3b8_c_*.c` already do.
+
+**Still unexplained:** `resource_373`'s two byte-identical bodies whose `bl`
+encodes targets 0x55e0 apart, and its calls that appear to land inside their own
+function. A 0x8000 base does not account for a 0x55e0 spread. The suggested test,
+not yet run: re-derive that overlay's `bl` displacements against a 0x02008000
+base, since an error in the *disassembler's* assumed VMA would shift exactly this
+class of short intra-image branch while leaving long service calls looking
+plausible. Until then, treat an encoded overlay address as an identity for an
+import rather than a place to disassemble.
+
+**Two `Func_` names can be the same import, and one name can take different
+argument counts** at different call sites in the same owner. Old-style
+declarations (`void Func_02004612();`) are therefore mandatory in overlay
+sources, not stylistic — all seven `resource_3b8` files need them.
+
+**The interworking epilogue tells you the return type, mechanically.**
+- `pop {r0} ; bx r0` — r0 holds the popped *return address*, so nothing is
+  returned: the owner is **`void`**.
+- `pop {rN} ; bx rN` with N != 0 — r0 survives and **is** the result.
+This removed the usual guesswork on 26 of 35 owners in one overlay. It is the
+cheapest signature decision available; check it before reasoning about a trailing
+call's r0.
+
+**A `bl` to an in-image address that is not a function start is a hidden-context
+caller — skip it.** 24 owners in `resource_3c4` were skipped on this rule, each
+verified individually: the target lands mid-instruction, or in a frame-unbalanced
+epilogue tail, or in code that needs a register the caller never sets (e.g.
+`02001318 -> 020013fa` lands inside another function's `bl`; `02001f5c ->
+02002028` enters a `add sp,#8 / pop` tail while the caller holds only
+`push {lr}`). The bytes are not in doubt — `assets/code/resource_3c4_overlay.s`
+spells them literally — the *meaning* is. Two shapes that DO check out and are
+ordinary calls: a balanced shared tail declared but not defined, and an alignment
+`nop` immediately before a real prologue (calling it is calling the function two
+bytes later).
+
+**Semi-automated transcription is safe for large call carpets, with one guard.**
+For a 7,468-byte owner with 869 calls, a throwaway simulator tracking r0-r3
+immediates and pool loads between `bl`s — arity = highest register written in the
+window — reduced the work to ~30 hand-written regions. The guard: **clear only
+the destination register of an unmodelled instruction, never the whole window.**
+Clearing everything drops arguments carried across a `b.n` that hops a literal
+pool; clearing nothing leaks a counter-bump constant into the next call as a
+phantom argument. Both bugs were hit before it was right. Cross-check the
+distinct-target count against the inventory's `calls` field — that caught the one
+dropped call, and it is a cheap completeness proof in general.
+
+**SUPERSEDED, kept for the reasoning — an overlay `bl` target is not a location,
+and two lanes first explained that differently.** Both were investigating the same puzzle that
 `semantic/overlays/resource_394_c_020003f0.c` records as "resident service
 addresses that fall numerically inside the overlay's own range". Neither
 explanation is settled; do not write either into a file as fact.

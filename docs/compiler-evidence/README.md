@@ -54,8 +54,57 @@ parked behind this one behaviour is roughly 9,000 bytes, including large sheets
 in resource_3af and named members in resource_3ba and resource_3bf whose drafts
 were never written because the blocker made them pointless.
 
-**Deliberately out of scope.** The literal-pool sub-class is a different
-behaviour and this predicate excludes it: a pool load is one instruction, so
-sharing it is not a size change, and at least one reference function is recorded
-sharing a pool word itself. Functions mixing both classes can get marginally
-worse, which is another reason this is per-source and not a model correction.
+**Out of scope for this flag, and covered by its sibling below.** The
+literal-pool sub-class is a different behaviour and this predicate excludes it.
+Two claims made here originally were wrong and are corrected in the
+`cse-pool-immediate` entry: sharing a pool load *is* a size change (it forces a
+callee-saved register and a prologue change, 12-36 bytes), and the general
+exclusion was mistaken. What survives is narrower: a function whose reference
+mixes reloading with related-value sharing of pool words is unreachable by any
+whole-function gate.
+
+**Correction to the payoff figure.** The ~9,000-byte population quoted above is
+the two-instruction class as originally surveyed, before the pool class was
+separated out and before several members were converted by source respellings
+instead. Treat it as a historical estimate, not a current backlog.
+
+## cse-pool-immediate
+
+The pool-word sibling, and a materially different defect. For a
+two-instruction constant the cost model is correct and only the reference's
+preference differs; for a pool constant `arm_rtx_costs` prices at
+`COSTS_N_INSNS(3)` what `*thumb_movsi_insn` emits as a single
+`ldr rN,[pc,#K]` — wrong by 3x — so the sharing is taken even more eagerly, with
+no exceptions from cost. The mechanism is the same `cse_insn`
+destination-recording loop; `-da` dumps show the rewrite appearing in pass 3
+(`cse`), with `gcse` and `loop` inheriting it unchanged, so neither constant
+propagation nor invariant hoisting is responsible.
+
+`cse-pool-immediate.diff` turns `TWO_INSN_CONSTANT_P` into `CSE_CONSTANT_CLASS`,
+returning 1 for the two-instruction class, 2 for the pool class, and 0 for a
+one-word constant that `COST` already prefers over a register. The classes are
+disjoint, each flag reads only its own, and both feed the same three decisions —
+so this extends one predicate rather than adding a competing rule.
+
+The destination-recording guard cannot be split: keeping the recording while
+suppressing only the cost comparison, and passing `NULL_PTR` as `classp` so the
+quantities are not merged, were both built and measured and have no effect.
+
+**Measured.** Inert with the flag absent on 0 of 2,202 gcc296-routed sources;
+110 of 2,202 change with it on, so per-source routing only — one currently exact
+function regresses from 2 to 119 halfwords under it. Two functions became
+byte-exact immediately (resource_39c:14cc at 156 bytes, resource_3bf:175c at 96)
+and are adopted. Five more sit at 1-3 halfwords (resource_3bf:4bfc,
+resource_394:08b0, resource_3b8:0264, resource_394:07e0, resource_3a4:0c9c —
+1,060 bytes) with residuals that are either the known argument-order tie-break
+class or draft data bugs, and resource_3af:1db0 (480 bytes) goes from 231 to 7.
+The flag also makes emitted size exactly equal the reference span on every member
+of the class, taking it off the critical path for a further band whose remaining
+residuals are other blockers.
+
+**Two negative results worth keeping.** resource_373:2cb0, the function that
+motivated the investigation, is *not* unlocked and cannot be: its reference
+reloads several pool words but keeps one in a register to derive a related value
+by an add, and related-value reuse needs exactly the recording the flag
+suppresses. resource_3af:0bb8 was misattributed to this class in its note — its
+residual is one surplus pool word, a pool-emission issue, not CSE.

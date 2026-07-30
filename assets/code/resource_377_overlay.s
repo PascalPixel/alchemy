@@ -484,23 +484,8 @@ AlchemyC_02000030:
 	.4byte 0x02009fd0
 	.2byte 0x2000
 	.2byte 0x4770
-	push	{lr}
-	ldr	r0, [pc, #20]
-	bl	sub_02001986
-	cmp	r0, #0
-	beq.n	.L_020000a4
-	ldr	r0, [pc, #12]
-	b.n	.L_020000a6
-.L_020000a4:
-	ldr	r0, [pc, #12]
-.L_020000a6:
-	pop	{r1}
-	bx	r1
-	.2byte 0x0000
-	.4byte 0x00000834
-	.4byte 0x0200a1dc
-	.2byte 0xa198
-	.2byte 0x0200
+AlchemyC_02000094:
+	.space 0x24
 	push	{r5, lr}
 	ldr	r3, [pc, #64]
 	movs	r2, #225
@@ -1951,38 +1936,10 @@ AlchemyC_020003e4:
 	.4byte 0x00001c13
 	.2byte 0x0301
 	.2byte 0x0000
-	push	{lr}
-	bl	sub_02002848
-	ldr	r0, [pc, #28]
-	bl	sub_02002906
-	movs	r1, #0
-	movs	r0, #13
-	bl	sub_0200291e
-	ldr	r0, [pc, #16]
-	bl	sub_02002844
-	bl	sub_02002868
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0x00001c1b
-	.2byte 0x081c
-	.2byte 0x0000
-	push	{lr}
-	bl	sub_02002874
-	ldr	r0, [pc, #28]
-	bl	sub_02002932
-	movs	r1, #0
-	movs	r0, #16
-	bl	sub_0200294a
-	ldr	r0, [pc, #16]
-	bl	sub_02002870
-	bl	sub_02002894
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0x00001c1a
-	.2byte 0x081c
-	.2byte 0x0000
+AlchemyC_02000f38:
+	.space 0x2c
+AlchemyC_02000f64:
+	.space 0x2c
 	push	{r5, lr}
 	bl	sub_020028a0
 	movs	r0, #0
@@ -2620,27 +2577,8 @@ AlchemyC_020003e4:
 	bx	r0
 	.2byte 0x1e40
 	.2byte 0x0300
-	push	{r5, lr}
-	adds	r5, r0, #0
-	ldr	r0, [pc, #32]
-	ldr	r3, [r0, #0]
-	movs	r2, #1
-	ands	r3, r2
-	cmp	r3, #0
-	beq.n	.L_020015de
-	ldr	r0, [r0, #0]
-	movs	r1, #6
-	lsrs	r0, r0, #1
-	bl	sub_02002de0
-	adds	r1, r0, #0
-	adds	r0, r5, #0
-	bl	sub_02002ea8
-.L_020015de:
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	.2byte 0x1e40
-	.2byte 0x0300
+AlchemyC_020015bc:
+	.space 0x2c
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	adds	r2, r5, #0
@@ -2872,20 +2810,8 @@ AlchemyC_020017c4:
 	.space 0x10
 AlchemyC_020017d4:
 	.space 0x10
-	push	{lr}
-	movs	r0, #148
-	movs	r1, #1
-	bl	sub_02003268
-	movs	r1, #17
-	movs	r0, #8
-	bl	sub_02003278
-	bl	sub_02003294
-	movs	r0, #1
-	bl	sub_02003272
-	bl	sub_0200328e
-	bl	sub_0200329a
-	pop	{r0}
-	bx	r0
+AlchemyC_020017e4:
+	.space 0x28
 	.4byte 0x47204c00
 	.4byte 0x030003e0
 	.4byte 0x47204c00

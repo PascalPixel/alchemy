@@ -87,7 +87,7 @@ interface OwnedSpan {
   owner: string;
 }
 
-function canonicalCSource(source: string): boolean {
+export function canonicalCSource(source: string): boolean {
   return ![
     /\bregister\b[^;\n]*\basm\s*\(/,
     /\b__asm__\b|\basm\s+volatile\b/,

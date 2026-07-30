@@ -382,18 +382,8 @@ AlchemyC_0200011c:
 	.4byte 0x000018bd
 	.2byte 0x1ebc
 	.2byte 0x0300
-	push	{lr}
-	bl	sub_0200105c
-	ldr	r0, [pc, #20]
-	bl	sub_020010ea
-	movs	r1, #0
-	movs	r0, #9
-	bl	sub_02001112
-	bl	sub_02001076
-	pop	{r0}
-	bx	r0
-	.2byte 0x1918
-	.2byte 0x0000
+AlchemyC_020001b0:
+	.space 0x20
 	push	{r5, r6, lr}
 	bl	sub_0200107c
 	ldr	r0, [pc, #176]
@@ -473,66 +463,16 @@ AlchemyC_0200011c:
 	.4byte 0x000018c7
 	.2byte 0x08ff
 	.2byte 0x0000
-	push	{lr}
-	bl	sub_02001144
-	ldr	r0, [pc, #20]
-	bl	sub_020011d2
-	movs	r1, #0
-	movs	r0, #17
-	bl	sub_020011fa
-	bl	sub_0200115e
-	pop	{r0}
-	bx	r0
-	.2byte 0x1924
-	.2byte 0x0000
-	push	{lr}
-	bl	sub_02001164
-	ldr	r0, [pc, #20]
-	bl	sub_020011f2
-	movs	r1, #0
-	movs	r0, #9
-	bl	sub_0200121a
-	bl	sub_0200117e
-	pop	{r0}
-	bx	r0
-	.2byte 0x1932
-	.2byte 0x0000
-	push	{lr}
-	bl	sub_02001184
-	ldr	r0, [pc, #20]
-	bl	sub_02001212
-	movs	r1, #0
-	movs	r0, #10
-	bl	sub_0200123a
-	bl	sub_0200119e
-	pop	{r0}
-	bx	r0
-	.2byte 0x18d9
-	.2byte 0x0000
-	push	{lr}
-	bl	sub_020011a4
-	ldr	r0, [pc, #20]
-	bl	sub_02001232
-	movs	r1, #0
-	movs	r0, #14
-	bl	sub_0200125a
-	bl	sub_020011be
-	pop	{r0}
-	bx	r0
-	.2byte 0x18e1
-	.2byte 0x0000
-	push	{lr}
-	bl	sub_020011c4
-	ldr	r0, [pc, #20]
-	bl	sub_02001252
-	movs	r1, #0
-	movs	r0, #21
-	bl	sub_0200127a
-	bl	sub_020011de
-	pop	{r0}
-	bx	r0
-	.2byte 0x194a
-	.2byte 0x0000
+AlchemyC_02000298:
+	.space 0x20
+AlchemyC_020002b8:
+	.space 0x20
+AlchemyC_020002d8:
+	.space 0x20
+AlchemyC_020002f8:
+	.space 0x20
+AlchemyC_02000318:
+	.space 0x20
 	push	{lr}
 	movs	r0, #0
 	bl	sub_02001206
@@ -1096,25 +1036,8 @@ AlchemyC_0200011c:
 	.4byte 0x00013333
 	.2byte 0xe666
 	.2byte 0x0000
-	push	{lr}
-	movs	r0, #19
-	bl	sub_0200171a
-	ldr	r3, [r0, #8]
-	asrs	r3, r3, #20
-	cmp	r3, #22
-	bne.n	.L_02000864
-	ldr	r0, [pc, #16]
-	bl	sub_020016f0
-	b.n	.L_0200086a
-.L_02000864:
-	ldr	r0, [pc, #8]
-	bl	sub_02001700
-.L_0200086a:
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.2byte 0x0906
-	.2byte 0x0000
+AlchemyC_0200084c:
+	.space 0x28
 	push	{lr}
 	ldr	r0, [pc, #108]
 	bl	sub_02001702

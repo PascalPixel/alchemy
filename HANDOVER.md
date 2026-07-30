@@ -14,10 +14,16 @@ rather than real limits.
 Exact means fully linked machine-code byte equality — not semantic similarity,
 not equal object size.
 
-The active branch is `speed`. Alongside the exact lane, its reviewed semantic-C
-lane currently accounts for **365,686 executable bytes across 628 compiling
-sources**: 352,894 main-image bytes and 12,792 overlay bytes. Combined with exact
-C, **560,076 / 1,339,558 executable bytes** are expressed as C. Build that lane
+The active branch is `venus`. This is the handoff point for the **Venus run**:
+use the faster local machine for three-owner semantic-C cohorts and compute-heavy
+exact-C work until local hardware no longer produces a material throughput
+advantage, then bank and push a clean cohort before moving execution back to the
+cloud container.
+
+Alongside the exact lane, reviewed semantic C currently accounts for **369,358
+executable bytes across 631 compiling sources**: 356,566 main-image bytes and
+12,792 overlay bytes. Combined with exact C, **563,748 / 1,339,558 executable
+bytes** are expressed as C. Build that lane
 with `bun run build:semantic`; its sources live under `semantic/` and do not
 claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
 and multi-region traps out of the ordinary review queue.
@@ -110,9 +116,16 @@ dispatcher edges, and shared mutually-exclusive tails. High call count is now
 measured as review cost, not an admission blocker; the three-agent whole-owner
 method remains effective on the largest bounded remainder.
 
+The final pre-Venus cohort admitted **3/3 bounded owners and 3,672 bytes**:
+`080030f8` (1,076), `080b0aac` (1,272), and `080bf678` (1,324). Its audits
+resolved five apparent unset values, reset/SVC thunk semantics, nine
+high-register lifetimes, and 193 assembly `BL` sites. One downstream caveat
+remains independently blocked: `080c1798` intentionally observes incoming
+`r2` residue and is not made ordinary by the `080030f8` conversion.
+
 **Remote-work intake.** Periodically fetch
 `origin/claude/continue-decompilation-3drfw0` after banking a clean semantic
-cohort. Review its delta against the current `speed` ancestry, integrate only
+cohort. Review its delta against the current `venus` ancestry, integrate only
 verified nonduplicate work, run the same full verification, then update this
 handover. Never merge or pull that branch into a dirty cohort, and never let a
 remote metric snapshot overwrite newer authoritative counts.

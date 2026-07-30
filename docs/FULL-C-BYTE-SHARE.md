@@ -96,12 +96,29 @@ than from a build—so it runs without a ROM or toolchain:
   `assets/manifest.json`, and the complement of both as asset data.
 
 The exact-C numbers it derives must equal `metrics/gs1-en-progress.json`
-exactly; a disagreement is an error rather than a redrawn picture. The
-semantic lane is not part of Full-C Byte Share and is drawn as a separate
-colour, never folded into the headline fraction.
+exactly; a disagreement is an error rather than a redrawn picture. That report
+is read from whichever tree the exact lane was drawn from, so the check holds
+when the lane comes from a ref rather than the working tree. The semantic lane
+is not part of Full-C Byte Share and is drawn as a separate colour, never
+folded into the headline fraction.
 
 Because the semantic lane lives on `venus` and the exact lane advances on
-`mercury`, the map records which tree each lane came from. `bun run
-coverage:check` only fails on lanes the current branch owns; a lane read from
-another branch's ref is refreshed by running `bun run coverage`, not by
-failing this branch's verification.
+`mercury`, the map records which tree each lane came from, in
+`provenance.exact_lane` and `provenance.semantic_lane`. Both `--write` and
+`--check` re-resolve from that record, so a branch keeps drawing the picture the
+way it was drawn last time without needing its own `coverage` script;
+`--exact-ref` and `--semantic-ref` override it, and `worktree` restores the
+local tree. Each lighthouse records `exact_lane: worktree` and draws its own
+lane from its working tree, which is what lets it bank uncommitted work. `main`
+records `origin/mercury` and `origin/venus`, because Mercury never pushes back
+to main and a picture drawn from main's own tree would freeze while the project
+moved on.
+
+A recorded ref that is not available locally is an error, not a fall back to
+the working tree: falling back would quietly republish a smaller lane as though
+it were the current state. Likewise a redraw that cannot see the semantic lane
+refuses rather than publishing that half as zero.
+
+The map is regenerated on `main` and nowhere else, so `bun run coverage:check`
+is not part of `bun run verify`: a picture lagging a lighthouse's newest commit
+is refreshed on `main`, never by failing that lighthouse's verification.

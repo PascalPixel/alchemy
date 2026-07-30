@@ -15,9 +15,9 @@ Exact means fully linked machine-code byte equality — not semantic similarity,
 not equal object size.
 
 The active branch is `speed`. Alongside the exact lane, its reviewed semantic-C
-lane currently accounts for **343,474 executable bytes across 619 compiling
-sources**: 330,682 main-image bytes and 12,792 overlay bytes. Combined with exact
-C, **520,048 / 1,339,542 executable bytes** are expressed as C. Build that lane
+lane currently accounts for **352,434 executable bytes across 622 compiling
+sources**: 339,642 main-image bytes and 12,792 overlay bytes. Combined with exact
+C, **529,008 / 1,339,542 executable bytes** are expressed as C. Build that lane
 with `bun run build:semantic`; its sources live under `semantic/` and do not
 claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
 and multi-region traps out of the ordinary review queue.
@@ -86,6 +86,14 @@ internal control edges represented as C flow rather than fake callees. This
 confirms that large call counts are not themselves a reason to park a bounded
 owner. `tools/semantic_queue.ts` now keeps transitive-unsized rows visible but
 adds a scope-audit penalty so they cannot masquerade as the cheapest work.
+
+A second large bounded cohort admitted **3/3 renderer-family owners and 8,960
+bytes**: `080d1714` (3,384), `080d6970` (3,308), and `080d91dc` (2,268).
+Together they account for 272 assembly `BL` sites. Exact dataflow review
+resolved their apparent unset inputs, stack-carried publisher dimensions,
+runtime handles, and internal frame-loop edges. The renderer family therefore
+remains a proven high-yield lane; drain bounded members before returning to
+unknown-thunk candidates.
 
 ---
 

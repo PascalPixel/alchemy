@@ -49,10 +49,10 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **249,450 executable bytes across 549 compiling sources**:
-  236,658 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **425,144 / 1,339,542 executable bytes** are now expressed as C, with
-  914,398 remaining. Seven semantic main sources were removed during the
+- Semantic-C lane: **252,128 executable bytes across 552 compiling sources**:
+  239,336 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **427,822 / 1,339,542 executable bytes** are now expressed as C, with
+  911,720 remaining. Seven semantic main sources were removed during the
   2026-07-30 `main` cascade because byte-exact versions now supersede them.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
@@ -182,6 +182,15 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   signatures should be treated as established module APIs; future owners need
   only prove where the target pointer comes from and whether their ordinary
   arguments match.
+- The twelfth queue-driven pass adds three complete main owners and 2,678
+  bytes: a split 1,262-byte curtain/particle function (`080d4ce8`), a phased
+  sprite renderer (`080d9fc8`), and a strip/radial animation (`080ed104`).
+  `main-regions.json` can now describe executable subranges contained inside a
+  manifest row, so `080d4ce8` excludes three embedded literal pools (130 bytes)
+  while claiming its real code across three ranges. `080c1798` was rejected
+  for a different nonstandard family: it consumes live `r2` residue from
+  `0800387c` and `080030f8`, with runtime-dependent values, so those
+  producer/consumer pairs need explicit machine-state result contracts.
 - Honest outer-owner additions include `resource_381:0054/1410`,
   `resource_394:03f0/0c2c/0e64..0fb4`, `resource_3bd:0474/0608/0ee0`, and
   `resource_3c8:1d48`. `resource_379:00dc` was rejected as a fake standalone

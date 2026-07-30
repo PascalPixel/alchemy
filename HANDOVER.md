@@ -128,15 +128,22 @@ still open (§8).
 Alongside the exact lane, reviewed semantic C currently accounts for **581,276
 executable bytes across 1,047 compiling sources**: 382,970 main-image bytes and
 198,306 overlay bytes. Combined with exact C, **791,994 / 1,339,576 executable
-Alongside the exact lane, reviewed semantic C currently accounts for **601,842
-executable bytes across 1,095 compiling sources**: 385,850 main-image bytes and
-215,992 overlay bytes. Combined with exact C, **813,032 / 1,339,576 executable
+<<<<<<< HEAD
+Alongside the exact lane, reviewed semantic C currently accounts for **603,076
+executable bytes across 1,108 compiling sources**: 385,850 main-image bytes and
+217,226 overlay bytes. Combined with exact C, **814,702 / 1,339,578 executable
 bytes** are expressed as C.
+=======
+bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
+sources live under `semantic/` and do not claim byte equality. Use
+`semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
+of the ordinary review queue.
+>>>>>>> origin/mercury
 
-**21 overlays have zero unconverted rows in the strict queue**, holding
-179,346 strict bytes between them. Regenerate this list rather than editing it —
+**22 overlays have zero unconverted rows in the strict queue**, holding
+192,146 strict bytes between them. Regenerate this list rather than editing it —
 it has drifted twice from being maintained by hand:
-`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,484), `resource_372` (10,202), `resource_38f` (9,848), `resource_371` (9,650), `resource_39f` (9,278), `resource_3c5` (9,208), `resource_374` (9,148), `resource_3a8` (8,912), `resource_383` (8,652), `resource_391` (7,648), `resource_39a` (7,096), `resource_375` (6,568), `resource_3aa` (6,552), `resource_3b4` (6,462), `resource_3b7` (6,062), `resource_37b` (6,032), `resource_3bb` (5,896), `resource_3cb` (5,540), `resource_3a4` (36).
+`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,484), `resource_3c8` (12,800), `resource_372` (10,202), `resource_38f` (9,848), `resource_371` (9,650), `resource_39f` (9,278), `resource_3c5` (9,208), `resource_374` (9,148), `resource_3a8` (8,912), `resource_383` (8,652), `resource_391` (7,648), `resource_39a` (7,096), `resource_375` (6,568), `resource_3aa` (6,552), `resource_3b4` (6,462), `resource_3b7` (6,062), `resource_37b` (6,032), `resource_3bb` (5,896), `resource_3cb` (5,540), `resource_3a4` (36).
 
 **"Converted in full" means zero unconverted STRICT-QUEUE rows, not that every
 executable byte of the overlay is C.** Measured across those overlays: their
@@ -146,31 +153,6 @@ remainder is veneer and import bands, jump tables, literal pools and inter-owner
 data, which are not semantic-C candidates. Any claim that credits a whole
 overlay's executable extent to the semantic lane will overstate it by roughly
 that proportion.
-
-Alongside the exact lane, reviewed semantic C currently accounts for **523,620
-executable bytes across 950 compiling sources**: 382,970 main-image bytes and
-140,650 overlay bytes. Combined with exact C, **734,014 / 1,339,574 executable
-bytes** are expressed as C.
-
-**Twelve overlays are now converted in full**, none skipping anything:
-`resource_3b8` (15,028 bytes), `resource_372` (10,202), `resource_371` (9,650),
-`resource_39f` (9,278), `resource_39a` (7,096), `resource_3b4` (6,226) and
-`resource_373` (13,192), `resource_3bf` (10,144), `resource_38f` (9,212), `resource_383` (7,792) and
-`resource_373` (13,192), `resource_3bf` (10,144), `resource_375` (6,536), `resource_3aa` (6,376), `resource_38f` (9,212), `resource_383` (7,792) and
-`resource_3c4` (24 of 25 rows, one 2,636-byte
-dispatcher pre-measured)
-Alongside the exact lane, reviewed semantic C currently accounts for **475,156
-executable bytes across 921 compiling sources**: 382,970 main-image bytes and
-92,186 overlay bytes. Combined with exact C, **678,920 / 1,339,572 executable
-bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
-sources live under `semantic/` and do not claim byte equality. Use
-`semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
-of the ordinary review queue.
-
-**Seven overlays are now converted in full**, none skipping anything:
-`resource_3b8` (15,028 bytes), `resource_372` (10,202), `resource_371` (9,650),
-`resource_39f` (9,278), `resource_39a` (7,096), `resource_3b4` (6,226) and
-`resource_3c4` (24 of 25 rows, one 2,636-byte dispatcher pre-measured)
 
 **Pre-measured and waiting for a fresh agent: `resource_3c8:3068`**, a 26-way
 `mov pc, r3` dispatcher. Its boundary is settled — prologue at 0x02003068 saving
@@ -2303,8 +2285,16 @@ estimated. At 1,002 semantic sources, 384 overlay owners are unlisted: the map
 can size 8,458 overlay bytes, while its main-image figure of 382,970 agrees
 exactly. Converting overlays does not move the picture; only listing them does.
 
-**Declaring a whole overlay is far cheaper than listing its owners, and Venus
-is already making that claim in prose.** `semantic/regions.json` now also takes
+**Do not declare whole overlays — measurement rejected it.** Venus tested the
+idea on 2026-07-31: 110,830 bytes of the overlays it had converted in full lie
+outside any strict inventory row (veneer and import bands, tables, literal
+pools), so crediting an overlay's whole audited extent overstates the semantic
+lane by roughly 27,000 bytes. Strict per-owner rows in `manual_regions` are the
+correct route and `semantic_regions_sync.ts` generates them. The `full_overlays`
+array below still exists in `coverage_map.ts` and is inert with no entries; it is
+kept only so this correction has something to point at.
+
+**The rejected shape, for reference:** `semantic/regions.json` now also takes
 a `full_overlays` array:
 
 ```json

@@ -594,6 +594,9 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // four constants are the same 0xc000; :140c's four differ and it does not.
   "assets/code/resource_3aa_c_0200140c.c",
   "assets/code/resource_3aa_c_02001450.c",
+  // resource_3aa:0184 is the same tell across sixteen call sites: the setters
+  // for r0/r1/r2 tie and the reference orders them by ascending destination.
+  "assets/code/resource_3aa_c_02000184.c",
   "assets/code/resource_3c8_c_02001780.c",
   "assets/code/resource_3c8_c_02001150.c",
   "assets/code/resource_372_c_02000f38.c",

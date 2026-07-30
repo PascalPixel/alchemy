@@ -198,7 +198,7 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   effect (`080ecef4`). Their transfer/fill and eleven renderer thunks use the
   established typed callback families. The historical
   ordinary queue has fallen from 129 owners / 144,860 bytes before these
-  passes to 98 owners / 123,854 bytes.
+  passes to 95 owners / 121,430 bytes.
 - Honest outer-owner additions include `resource_381:0054/1410`,
   `resource_394:03f0/0c2c/0e64..0fb4`, `resource_3bd:0474/0608/0ee0`, and
   `resource_3c8:1d48`. `resource_379:00dc` was rejected as a fake standalone

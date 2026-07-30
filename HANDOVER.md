@@ -570,6 +570,22 @@ function needing a specific 5-of-10 partition of identical-looking call sites th
 no hand sweep would have located. One lane closed 8 functions / 1,628 bytes from
 41 candidates this way.
 
+**Run `tools/finish_draft.sh <draft.c>` before reasoning about any residual.** It
+composes the entire enumerable search in one command and takes **about 2 seconds**
+warm at 16-way concurrency: 51 flag settings (both CSE modes alone and paired per
+this section's protocol, the scheduler modes, the fork modes from `FORK_MODES`),
+then the return-type sweep at baseline and at the winning flag set, then the
+statement-order sweep, then it prints the best result, the exact `--flags` string
+to reproduce it, and the surviving residual. It writes only to its `--out`
+directory and never builds, commits or touches `src/`.
+
+Validated on known cases: it recovers `08090824`'s `-mgrouped-dma-store` win
+(9 → 6) and reproduces `080c1fa8`'s floor of 2 with the correct residual. It also
+propagates the statement-order probe-count warning, so a null that never exercised
+the lever says so instead of reading as a park. The point is division of labour: by
+the time you look at a function by hand, everything enumerable is already done, so
+the only question left is which §4/§5 lever the residual implies.
+
 **The statement-order lever is tooled too, and its probe count is part of its
 result.** `tools/statement_order_sweep_main.ts <draft.c> [--flags …]` permutes
 maximal runs of *independent* top-level statements to a fixpoint — the §4 rule

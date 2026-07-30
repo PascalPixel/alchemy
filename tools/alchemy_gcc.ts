@@ -437,6 +437,12 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3a4_c_02000a94.c",
   "assets/code/resource_3a4_c_02000b3c.c",
   "assets/code/resource_3a4_c_02000bd8.c",
+  // resource_39c:1c9c and 1d3c both load the pool constant 0x256 at two sites,
+  // one of them in the entry block, so the entry-hoisted-local lever cannot
+  // reach them and a &Value_ spelling is CSEd exactly like the const_int. Both
+  // are byte-exact under the flag alone.
+  "assets/code/resource_39c_c_02001c9c.c",
+  "assets/code/resource_39c_c_02001d3c.c",
   // resource_3ba:0540 shares its 0x301 argument between the entry-block call
   // and the else-branch call once cse reruns; the reference keeps both sites
   // independent. Byte-exact (752/752) under the flag alone

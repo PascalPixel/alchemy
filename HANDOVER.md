@@ -992,6 +992,34 @@ executable denominator must begin `metrics: correct executable denominator`.
 target's own disassembly and this repo. **No `asm()`, no inline assembly, no
 register pinning, no barriers, and no `volatile` as a matching device.**
 
+**How to decide the `volatile` question mechanically, instead of arguing intent.**
+Three drafting lanes hit it on 2026-07-30 and it resolved three different ways, so
+the rule is worth stating: **delete the `volatile`, re-probe, then classify.**
+
+| after deleting it | what it means | verdict |
+| --- | --- | --- |
+| count unchanged | it was never load-bearing | drop it, adopt (`080060e8`) |
+| count worsens, address is memory-mapped or externally mutated, and the reference genuinely repeats the access | semantics the target requires | keep it, adopt (`08006cdc`, `0800eaf8`) |
+| count worsens, object is an ordinary local | a matching device | **reject the draft** (`080b386c`) |
+
+The worked cases: `080060e8` marked a timer register `volatile` and reached 0
+without it, so it was noise. `08006cdc` writes a Flash command sequence to
+`0x0E005555`/`0x0E002AAA`, where repeated stores to one address *are* the
+protocol, and plain C would let the compiler fold them away and break the
+hardware. `0800eaf8` re-reads one IWRAM global across a chain of `else if` tests
+and comes out 8 bytes short without `volatile`, which is exactly §4's documented
+tell. `080b386c` declared `volatile u16 slots[15]` — an ordinary stack array with
+nothing external touching it, worth 49 halfwords purely by suppressing store
+elimination. That last one is the prohibited case and its draft was rejected
+despite measuring 0.
+
+**A lane's `confirmed` is not sufficient to adopt.** One verify lane passed
+`080060e8` on the reasoning that its `volatile` was legitimate MMIO; the
+coordinator's independent screen caught it and the delete-and-re-probe test showed
+it was not even needed. Re-screen and re-measure everything at the coordinator
+before installing it. Two policy escapes were caught this way in one session, the
+other being the register-pinned `080044d0` drafts.
+
 **Concurrency — do not inherit the old two-lane rule.** That limit was measured
 when a verification probe cost 1.8 s and a bank cycle 190 s, so compute really was
 the binding constraint. The content caches (§3) cut those to 0.12 s and 15 s, and

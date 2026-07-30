@@ -328,6 +328,90 @@
           "size": 30
         }
       ]
+    },
+    {
+      "entry": "0x08016018",
+      "evidence": "One module: Func_08015fb8 has exactly one caller in the tree (this owner, three sites), so the r9 hand-off is module-internal and is spelled as a third parameter. Its bl Func_080072f0 is a call-via-r3 to the relocated IWRAM helper at 0x03000164. Previously blocked as hidden_register_module; that was a joint-scoping blocker.",
+      "executable_ranges": [
+        {
+          "address": "0x08015fb8",
+          "size": 72
+        },
+        {
+          "address": "0x08016018",
+          "size": 172
+        }
+      ]
+    },
+    {
+      "entry": "0x08095778",
+      "evidence": "Func_080022ec/080022fc are div/mod; page and entry recombine to the integer flag id event-252, corroborated by this owner's own record match. Previously blocked as cross_file_abi against src/080955b0.c, whose void* parameter is semantically mistyped but byte-exact.",
+      "executable_ranges": [
+        {
+          "address": "0x08095778",
+          "size": 244
+        }
+      ]
+    },
+    {
+      "entry": "0x080b9724",
+      "evidence": "One module: r9 = sp+20 is one past this owner's 20-byte local block and the callees' negative offsets from it are header/size/records/result/count, spelled as a struct pointer. Both callees have only this caller. Previously blocked as shared_stack_context_module.",
+      "executable_ranges": [
+        {
+          "address": "0x080b9554",
+          "size": 172
+        },
+        {
+          "address": "0x080b9604",
+          "size": 280
+        },
+        {
+          "address": "0x080b9724",
+          "size": 344
+        },
+        {
+          "address": "0x080b9890",
+          "size": 36
+        }
+      ]
+    },
+    {
+      "entry": "0x080f9f6c",
+      "evidence": "Func_080f9f3c is a 48-byte leaf with no push/pop taking r4/r5 from its caller, spelled as two explicit pointers. The Func_080fa678 call-via-r1 concern is that callee's internals; from here it is an ordinary one-argument call. Previously blocked as hidden_register_module.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9f3c",
+          "size": 48
+        },
+        {
+          "address": "0x080f9f6c",
+          "size": 504
+        }
+      ]
+    },
+    {
+      "entry": "0x080d5c48",
+      "evidence": "Both sub_08007300 sites are call-via-r7 through the pointer at 0x03001f08, loaded once and reused, with the established six-argument renderer ABI. A 32-byte interior pool and a 20-byte trailing pool are excluded. Previously blocked as hidden_register_module.",
+      "executable_ranges": [
+        {
+          "address": "0x080d5c48",
+          "size": 80
+        },
+        {
+          "address": "0x080d5cb8",
+          "size": 392
+        }
+      ]
+    },
+    {
+      "entry": "0x080c1798",
+      "evidence": "Blocker premise disproved on both halves: Func_080c1470 clobbers r2 before any read, so it takes one argument; and the 0x03000164 helper is reached with r2 unset at all three sites in the image, so it reads as (destination, length) rather than as intentional callee residue. Previously blocked as implicit_callee_return_state_module.",
+      "executable_ranges": [
+        {
+          "address": "0x080c1798",
+          "size": 536
+        }
+      ]
     }
   ]
 }

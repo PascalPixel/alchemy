@@ -43,27 +43,39 @@
     },
     "080c1798": {
       "lane": "implicit_callee_return_state_module",
-      "reason": "Two live r2 values are intentional callee residue: 0800387c leaves either 0x20000 or the full-queue count for 080c1470, and 080030f8 leaves either 0 or 0x03001804 for 080c16d0. Convert those producer/consumer pairs with explicit machine-state result contracts before admitting this owner."
+      "reason": "Two live r2 values are intentional callee residue: 0800387c leaves either 0x20000 or the full-queue count for 080c1470, and 080030f8 leaves either 0 or 0x03001804 for 080c16d0. Convert those producer/consumer pairs with explicit machine-state result contracts before admitting this owner.",
+      "resolved": true,
+      "resolution": "Converted as a whole module and registered in semantic/main-regions.json. Re-probed 2026-07-31 with the call_via thunk bank documented; for 080c1798 and 08095778 the blocker premise was disproved outright."
     },
     "08095778": {
       "lane": "cross_file_abi",
-      "reason": "The modulo result passed here conflicts with the live pointer-base interpretation in the current exact 080955b0 source. Reconstruct the call family jointly before admission."
+      "reason": "The modulo result passed here conflicts with the live pointer-base interpretation in the current exact 080955b0 source. Reconstruct the call family jointly before admission.",
+      "resolved": true,
+      "resolution": "Converted as a whole module and registered in semantic/main-regions.json. Re-probed 2026-07-31 with the call_via thunk bank documented; for 080c1798 and 08095778 the blocker premise was disproved outright."
     },
     "08016018": {
       "lane": "hidden_register_module",
-      "reason": "All three Func_08015fb8 calls pass caller_sp+4 through r9; the callee reads r9 and forwards it as the fifth argument to a relocated helper. Convert the 08015fb8 module jointly or add an honest r9-context calling convention."
+      "reason": "All three Func_08015fb8 calls pass caller_sp+4 through r9; the callee reads r9 and forwards it as the fifth argument to a relocated helper. Convert the 08015fb8 module jointly or add an honest r9-context calling convention.",
+      "resolved": true,
+      "resolution": "Converted as a whole module and registered in semantic/main-regions.json. Re-probed 2026-07-31 with the call_via thunk bank documented; for 080c1798 and 08095778 the blocker premise was disproved outright."
     },
     "080d5c48": {
       "lane": "hidden_register_module",
-      "reason": "Both apparent Func_08007300 draw calls are actually call-via-r7 thunks whose runtime renderer target is loaded into r7 from 0x03001f08. Its registered callback and teardown also depend on call-via-r3; convert the renderer module with typed dynamic calls."
+      "reason": "Both apparent Func_08007300 draw calls are actually call-via-r7 thunks whose runtime renderer target is loaded into r7 from 0x03001f08. Its registered callback and teardown also depend on call-via-r3; convert the renderer module with typed dynamic calls.",
+      "resolved": true,
+      "resolution": "Converted as a whole module and registered in semantic/main-regions.json. Re-probed 2026-07-31 with the call_via thunk bank documented; for 080c1798 and 08095778 the blocker premise was disproved outright."
     },
     "080b9724": {
       "lane": "shared_stack_context_module",
-      "reason": "Func_080b9724 points r9 at caller_sp+20 before six calls to 080b9554/080b9604. Both callees consume fields at negative offsets from that shared stack cursor, and 080b9604 temporarily repoints r9 again; convert the three-function transfer module jointly."
+      "reason": "Func_080b9724 points r9 at caller_sp+20 before six calls to 080b9554/080b9604. Both callees consume fields at negative offsets from that shared stack cursor, and 080b9604 temporarily repoints r9 again; convert the three-function transfer module jointly.",
+      "resolved": true,
+      "resolution": "Converted as a whole module and registered in semantic/main-regions.json. Re-probed 2026-07-31 with the call_via thunk bank documented; for 080c1798 and 08095778 the blocker premise was disproved outright."
     },
     "080f9f6c": {
       "lane": "hidden_register_module",
-      "reason": "Func_080f9f3c consumes caller-held r4/r5 state, and the Func_080fa678 dependency reaches the call-via-r1 thunk. Convert the voice module jointly with explicit function-pointer and helper context."
+      "reason": "Func_080f9f3c consumes caller-held r4/r5 state, and the Func_080fa678 dependency reaches the call-via-r1 thunk. Convert the voice module jointly with explicit function-pointer and helper context.",
+      "resolved": true,
+      "resolution": "Converted as a whole module and registered in semantic/main-regions.json. Re-probed 2026-07-31 with the call_via thunk bank documented; for 080c1798 and 08095778 the blocker premise was disproved outright."
     }
   }
 }

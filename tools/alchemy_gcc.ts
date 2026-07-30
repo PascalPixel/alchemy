@@ -457,6 +457,10 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // Paired with -fsched-low-dest-first below: removing the constant sharing
   // exposes a scheduling transposition that the tie-break then fixes.
   "assets/code/resource_373_c_020031b4.c",
+  "assets/code/resource_39e_c_0200071c.c",
+  "assets/code/resource_3af_c_02001f90.c",
+  "assets/code/resource_380_c_02000390.c",
+  "assets/code/resource_373_c_020032b0.c",
   "assets/code/resource_3bf_c_02004704.c",
   "assets/code/resource_3bf_c_020049a0.c",
   "assets/code/resource_3bf_c_0200169c.c",
@@ -489,6 +493,10 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // argument setters tie before a `bl` and the low-destination rule picks
   // `mov r0,sl` over `lsls r1,r1,#1` (notes/resource_381-0e30.md).
   "assets/code/resource_381_c_02000e30.c",
+  "assets/code/resource_39e_c_0200071c.c",
+  "assets/code/resource_3af_c_02001f90.c",
+  "assets/code/resource_380_c_02000390.c",
+  "assets/code/resource_373_c_020032b0.c",
   "assets/code/resource_3bf_c_02004704.c",
   "assets/code/resource_3bf_c_020049a0.c",
   "assets/code/resource_3bf_c_0200269c.c",
@@ -567,6 +575,7 @@ const NO_GCSE_INSERT_LOAD_OVERLAY_SOURCES = new Set([
 // store-versus-store to the existing rules. Including loads in the predicate
 // raises collateral from 308 to 498 sources with no further gain.
 const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_373_c_020032b0.c",
   "assets/code/resource_3bd_c_02000a54.c",
 ]);
 // The pool-word sibling of the mode above, and a different kind of defect: for a
@@ -582,6 +591,8 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
 // flag). docs/compiler-evidence/cse-pool-immediate.diff.
 const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
   "assets/code/resource_37b_c_02001b44.c",
+  "assets/code/resource_3af_c_02001f90.c",
+  "assets/code/resource_380_c_02000390.c",
   "assets/code/resource_3bf_c_020049a0.c",
   "assets/code/resource_3bf_c_02002308.c",
   "assets/code/resource_3bf_c_0200238c.c",

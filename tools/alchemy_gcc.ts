@@ -571,6 +571,11 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3af_c_020012f0.c",
   "assets/code/resource_3af_c_02002b7c.c",
   "assets/code/resource_3ba_c_02000974.c",
+  // Four call sites share one 0xc000, built as `movs #192` + `lsls #8`. CSE
+  // parks it in a callee-saved register and the tell is the prologue: the
+  // reference pushes {r5, lr} and we push {r5, r6, lr}. The sibling at 0x140c
+  // has four *different* constants and needs only the scheduler tie-break.
+  "assets/code/resource_3aa_c_02001450.c",
 ]);
 // Every edge into a CALL_INSN costs 1, so a call's argument setters tie in
 // `rank_for_schedule` on priority, insn class and forward-dependent count alike,
@@ -582,6 +587,13 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  // resource_3aa:140c and :1450 are the sibling pair in HANDOVER 0: four
+  // three-argument setter calls, then a guarded wait. Void callees put r0 and
+  // r2 in the wrong order at every site and the low-destination tie-break puts
+  // them back. :1450 needs -fno-cse-two-insn-immediate as well, because its
+  // four constants are the same 0xc000; :140c's four differ and it does not.
+  "assets/code/resource_3aa_c_0200140c.c",
+  "assets/code/resource_3aa_c_02001450.c",
   "assets/code/resource_3c8_c_02001780.c",
   "assets/code/resource_3c8_c_02001150.c",
   "assets/code/resource_372_c_02000f38.c",

@@ -57,6 +57,40 @@ const FIXED_LR_SOURCES = new Set<string>();
 // These compact hardware helpers match the reference load/store order at -O1;
 // -O2 only swaps independent descriptor setup instructions.
 const OPTIMIZE_O1_SOURCES = new Set(["080049e8", "08021e28"]);
+// One overlay predicate family returns through a single `pop {pc}` where every
+// other reconstructed function returns `pop {rN}` + `bx rN`. That is the
+// interworking epilogue, not a scheduling or allocation difference: the whole
+// body is otherwise instruction-identical, and dropping `-mthumb-interwork`
+// reproduces the reference exactly. With the flag on, the two-instruction return
+// overruns the 16-byte span and `overlay_adopt` rejects the placement rather
+// than reporting a byte diff, which is why the shape reads as a tooling error.
+//
+// Scope is measured, not assumed: `pop {pc}` occurs 18 times in all unconverted
+// overlay assembly against 2,195 `bx` returns, and those 18 are exactly this
+// family — nine members in resource_3a7 and nine in resource_3bf, three
+// `*p <= 1` / `*p == 4` / `*p == 2` triples each. So this routes a closed set,
+// not an open seam; do not widen it without re-running that count.
+//
+// Only fifteen are listed. `overlayStem` deliberately keys routing on the bare
+// address so a draft and its installed copy compile the same way — which makes
+// every routing set **overlay-blind**. Three of this family's addresses are
+// already occupied by unrelated, already-exact functions in other overlays
+// (02001554 by resource_373, 02001740 by resource_3b2, 02005ae0 by
+// resource_373), and listing them here silently recompiles those without
+// interworking. That does not fail as a byte diff: it surfaces two layers away
+// as `palette token plan does not reconstruct input` from build_assets on an
+// overlay this change never mentions. Before adding an overlay address to any
+// routing set, run `ls assets/code/*_c_<addr>.c` and confirm the only hit is the
+// overlay you mean. The three excluded members stay unconverted for now; routing
+// them needs an overlay-aware key, not a wider set.
+const NO_INTERWORK_SOURCES = new Set([
+  "0200142c", "0200143c", "0200144c",
+  "02001544", "02001564",
+  "02001750", "02001760",
+  "02005ac0", "02005ad0",
+  "02005bd8", "02005be8", "02005bf8",
+  "02005dd4", "02005de4", "02005df4",
+]);
 // Only the second flag does anything. The pre-reload scheduler is inert in this
 // fork: 40 converted sources, including the largest, compile byte-identically
 // with -fschedule-insns and with -fno-schedule-insns (measured 2026-07-26,
@@ -64,7 +98,7 @@ const OPTIMIZE_O1_SOURCES = new Set(["080049e8", "08021e28"]);
 // alone; the first flag is kept only because removing it would rewrite the
 // routed command line for sixteen already-verified regions.
 const UNSCHEDULED_SOURCES = new Set([
-  "08002f10", "0800307c", "08006b84",
+  "08002f10", "0800307c", "08006b84", "080060e8",
   "08004198", "080042c8", "0800430c", "08004358", "0800439c", "080043e0",
   "08029274",
   "080fb714", "080fb728", "080fb73c", "080fb750", "080fb75c",
@@ -85,7 +119,25 @@ const NO_CSE_FOLLOW_SOURCES = new Set(["0800f9f4"]);
 // preserving the reference's defined NULL return without a redundant move.
 // In 0808c30c it propagates the persistent amount through the fallback copy,
 // rotating the loop allocation and changing the final in-place negate.
-const NO_RERUN_CSE_AFTER_LOOP_SOURCES = new Set(["08006088", "0808c30c", "080ba918"]);
+// A grouped descriptor transfer's third word is usually a constant-pool load into
+// a pseudo, which thumb_store_multiple3 then has to copy because it hard-codes
+// (reg:SI 2). The mode retargets the definition when it is a constant and nothing
+// between it and the group touches r2, so the copy disappears -- the counterpart
+// value0 already had. 080b5ad4 writes a three-word DMA descriptor and then passes
+// the same control word as the call's third argument, which is the shape the fork
+// comment calls "the last divergence in the descriptor-then-call regions".
+// Off by default and routed per source like every other mode.
+const GROUP_VALUE2_IN_PLACE_SOURCES = new Set(["080b5ad4"]);
+
+const NO_RERUN_CSE_AFTER_LOOP_SOURCES = new Set([
+  "08006088", "0808c30c", "080ba918", "080044d0",
+]);
+// 080044d0 keeps a division quotient under two names so the range comparison
+// reads the copy rather than the call's return register, as the reference does.
+// The rerun of CSE after loop optimisation collapses that copy pair back into
+// one value and restores the return register at the comparison, which is the
+// function's last differing halfword; the source-side round trip alone does not
+// survive it.
 // This unrolled six-item display setup shares one resource-ID base and one
 // signed sentinel.  Global CSE expands them back into independent constants;
 // disabling it preserves the reference's r7/r8 lifetimes.
@@ -144,7 +196,9 @@ const ENTRY_SAVES_DESCENDING_SOURCES = new Set(["08093054"]);
 // three setup insns are adjacent. When the source word needs arithmetic the
 // interleaved insns hide them, and the control load stays hoisted -- which also
 // permutes the constant pool. See alchemy-gcc ff7c566.
-const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78"]);
+// 08005c68 writes a three-word descriptor whose control word the reference
+// stores last; without this the grouper emits it in source order.
+const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78", "08005c68"]);
 // The descriptor's base pool load wins a priority-68 ready-list tie on forward
 // dependent count alone; these references break it by original order instead.
 // 08021d88 likewise needs original-order tie breaking for its frame adjustment
@@ -202,8 +256,15 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // (reg:SI 2) makes arm_pre_reload insert a copy the reference does not have --
 // value0 has a special case in that pass and value2 has none
 // (work/hand/080b5ad4/NOTES.md).
+//   RESOLVED 2026-07-30: that compiler change was already written. The fork
+// carries `flag_thumb_group_value2_in_place`, which retargets a constant value2
+// definition straight into r2 so the copy disappears -- exactly the missing
+// value0 counterpart this comment describes. It had never been added to any
+// routing set here nor to FORK_MODES in tools/mode_sweep.ts, so no sweep could
+// ever reach it. 080b5ad4 now compiles byte-exact with it (64 bytes) once its
+// tail is spelled as a returned call. See GROUP_VALUE2_IN_PLACE_SOURCES below.
 const GROUPED_DMA_STORE_SOURCES = new Set([
-  "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
+  "08005c68", "080060e8", "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
   "08004a5c", "08004a94", "08005340", "08005394", "080053e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "08019bac",
   "0801d014", "0801d980",
   "080251d4", "080284dc", "08094730", "08095160", "08095290", "080958a8", "08097540", "0809bb34", "080c0184", "080c08a8",
@@ -391,6 +452,8 @@ const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
 // (or, for 399:05dc and 0a3c, together with the routed immediate-latency
 // mode). Each entry has its own exact-byte proof.
 const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3c8_c_0200096c.c",
+  "assets/code/resource_3c5_c_02000cf0.c",
   "assets/code/resource_3b2_c_02000da4.c",
   "assets/code/resource_37a_c_02001790.c",
   "assets/code/resource_399_c_0200021c.c",
@@ -450,6 +513,7 @@ const NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES = new Set([
 // deliberately excluded, since a pool load is one instruction and sharing it is
 // not a size change.
 const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_372_c_02000f38.c",
   "assets/code/resource_3bf_c_02000bec.c",
   "assets/code/resource_3af_c_02001a98.c",
   "assets/code/resource_3af_c_02004218.c",
@@ -459,6 +523,8 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // Paired with -fsched-low-dest-first below: removing the constant sharing
   // exposes a scheduling transposition that the tie-break then fixes.
   "assets/code/resource_373_c_020031b4.c",
+  "assets/code/resource_3c5_c_02001158.c",
+  "assets/code/resource_3c5_c_02000eac.c",
   "assets/code/resource_3a8_c_0200158c.c",
   "assets/code/resource_3a8_c_020015b4.c",
   "assets/code/resource_374_c_02000780.c",
@@ -495,10 +561,15 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3c8_c_02001780.c",
+  "assets/code/resource_3c8_c_02001150.c",
+  "assets/code/resource_372_c_02000f38.c",
   // Needs the tie-break alone, without the paired constant-sharing mode: two
   // argument setters tie before a `bl` and the low-destination rule picks
   // `mov r0,sl` over `lsls r1,r1,#1` (notes/resource_381-0e30.md).
   "assets/code/resource_381_c_02000e30.c",
+  "assets/code/resource_3c5_c_02001030.c",
+  "assets/code/resource_38f_c_020002b4.c",
   "assets/code/resource_3a8_c_02001ed8.c",
   "assets/code/resource_3a8_c_02000504.c",
   "assets/code/resource_3a8_c_02000464.c",
@@ -570,7 +641,13 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
 // forces the conflict when neither MEM is RTX_UNCHANGING_P, adding the edge as
 // REG_DEP_ANTI so it orders without adding cost — a true dependence lengthens
 // the store's path to the block end and regresses resource_381:2e0c.
+// Keyed by repository path, so a main-image `src/` source routes here too — the
+// name predates the first main-image member. `08078144` stores a halfword and
+// then reloads a word at a different constant offset off one base; the fork
+// proves them independent and hoists the load, where the reference keeps source
+// order.
 const NO_SCHED_ALIAS_OVERLAY_SOURCES = new Set([
+  "src/08078144.c",
   "assets/code/resource_3af_c_02002b7c.c",
   "assets/code/resource_3b0_c_02000030.c",
   "assets/code/resource_381_c_02002e0c.c",
@@ -582,7 +659,12 @@ const NO_SCHED_ALIAS_OVERLAY_SOURCES = new Set([
 // a pair because PRE only deletes an occurrence that an insertion made
 // available. Constant-pool loads keep their bits and are still eliminated. This
 // is the narrowest of the four gates: 9 of 1,335 sources change.
+// Keyed by repository path, so a main-image `src/` source routes here too; the
+// name predates the first main-image member. 0807a550 is that member: gcse's
+// partial-redundancy pass inserts a load the reference does not have, and the
+// remaining seven halfwords vanish with the insert suppressed.
 const NO_GCSE_INSERT_LOAD_OVERLAY_SOURCES = new Set([
+  "src/0807a550.c",
   "assets/code/resource_37a_c_02000d9c.c",
 ]);
 // A store has no value for a later insn to consume, so it reaches the block end
@@ -607,7 +689,10 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
 // (measured on resource_373:2cb0 — do not re-attack it with a whole-function
 // flag). docs/compiler-evidence/cse-pool-immediate.diff.
 const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_372_c_02000f38.c",
   "assets/code/resource_37b_c_02001b44.c",
+  "assets/code/resource_3c5_c_020024d0.c",
+  "assets/code/resource_3c5_c_02002548.c",
   "assets/code/resource_3a8_c_02001ed8.c",
   "assets/code/resource_374_c_02000634.c",
   "assets/code/resource_3af_c_02001f90.c",
@@ -697,7 +782,8 @@ const DEFAULT_ABI_SOURCES = new Set([
 // independent exact stock-compiler proof; the rest stay on the fork until
 // exact-byte proof.
 const AGBCC_SOURCES = new Set([
-  "08006a00", "08006ba8", "08006c24", "08006c68", "08006d50", "08006dec", "08006e24", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
+  "08006a00", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
+  "08006e24", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
   "080f9a50",
   "080fada0", "080fadf0",
   "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
@@ -731,7 +817,8 @@ const AGBCC_LITERAL_BEFORE_SHIFT_SOURCES = new Set(["080fb670"]);
 // program-sector retry loop likewise reproduce their reference layouts only
 // at -O1.
 const AGBCC_OPTIMIZE_O1_SOURCES = new Set([
-  "08006a00", "08006ba8", "08006c68", "08006d50", "08006e24", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220", "080fa514",
+  "08006a00", "08006ba8", "08006c68", "08006cdc", "08006d50", "08006e24", "08006f84",
+  "08007028", "08007098", "0800711c", "080071a8", "08007220", "080fa514",
 ]);
 const AGBCC_COMPARE_ONLY_AND_TST_SOURCES = new Set(["080f9a50"]);
 const AGBCC_COMMUTATIVE_COPY_CONSTANT_SOURCES = new Set(["080fa514"]);
@@ -759,9 +846,12 @@ function sourceKey(source: string): string {
 
 export function cflagsForSource(source: string): readonly string[] {
   const stem = overlayStem(source);
-  const base = DEFAULT_ABI_SOURCES.has(stem)
+  const abiBase = DEFAULT_ABI_SOURCES.has(stem)
     ? CFLAGS.filter((flag) => flag !== "-fcall-used-r4")
     : [...CFLAGS];
+  const base = NO_INTERWORK_SOURCES.has(stem)
+    ? abiBase.filter((flag) => flag !== "-mthumb-interwork")
+    : abiBase;
   return [
     ...base,
     ...(FIXED_R3_SOURCES.has(stem) ? ["-ffixed-r3"] : []),
@@ -805,6 +895,7 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
+    ...(GROUP_VALUE2_IN_PLACE_SOURCES.has(stem) ? ["-fthumb-group-value2-in-place"] : []),
     ...(THUMB_IMMEDIATE_LATENCY_SOURCES.has(stem)
       ? ["-mthumb-immediate-latency"]
       : []),
@@ -991,50 +1082,94 @@ function hostKey(): HostKey | null {
   return null;
 }
 
-const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> = {
+// 各ファイルは承認済みダイジェストの集合を持つ。一つの host+target につき
+// 複数の束が並ぶのは、同一の alchemy-gcc ソースを別のホスト環境で再構築すると
+// 実行体のバイト列は変わるがコード生成は変わらないため。gcc は接頭辞パスなどを
+// 実行体に埋め込むので、これは想定内の差分である。
+//
+// A listed digest is not a guess: every entry here has independently passed the
+// admission test PROVENANCE.md requires of any toolchain substitution — the
+// full source-only build owns all 8,388,608 bytes with zero ROM fallback, and
+// `bun run build:full` reproduces gs1-en.gba (SHA-1
+// 5c4695205413df7db52b9a184815a07783999971) byte-identically under it. Adding a
+// digest without running `bun run verify` on that bundle defeats the check;
+// re-pin only from a green verify.
+const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly string[]>>> = {
   "darwin-arm64": {
     gs1: {
-      xgcc: "87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed",
-      cpp: "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
-      tradcpp: "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
-      cc1: "df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4",
+      xgcc: ["87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed"],
+      cpp: ["f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575"],
+      tradcpp: ["822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b"],
+      cc1: ["df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4"],
     },
     gs2: {
-      xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",
-      cpp0: "b4ac7f5ff7fd74f4eca40385832fd0360d13cb5d4f0b6c8b3ead4a67d2f3d5b0",
-      tradcpp0: "7698319dfea3647dace68ffb5c3dbc0fd459f3a859699acb47c669d3eb8956a3",
-      cc1: "91b2a67275a100e8b6695d85ef2d82d1fd144853cbcb361ddf1d8be31858230f",
+      xgcc: ["128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2"],
+      cpp0: ["b4ac7f5ff7fd74f4eca40385832fd0360d13cb5d4f0b6c8b3ead4a67d2f3d5b0"],
+      tradcpp0: ["7698319dfea3647dace68ffb5c3dbc0fd459f3a859699acb47c669d3eb8956a3"],
+      cc1: ["91b2a67275a100e8b6695d85ef2d82d1fd144853cbcb361ddf1d8be31858230f"],
     },
   },
   "linux-x64": {
     gs1: {
-      xgcc: "845b828e15efedfeacc1956ac2694101e2b520824643d5b9f7608f9c389aee03",
-      cpp: "60d0b6637deb0f98cbf952a89694b02a0557fc87ca968121759be139372e90cc",
-      tradcpp: "87f89bebf41cd12ac7706604dd24624061b2276f95cc1e9998c22de1accfee2a",
-      cc1: "c1cc6d2864567297451662d36fba7abbce7a916d138f7115832a265de6868a06",
+      xgcc: [
+        "845b828e15efedfeacc1956ac2694101e2b520824643d5b9f7608f9c389aee03",
+        "2ed03493228a7873f020b16a63b89b3aadf4835be2d1a3a217cabca0fa244444",
+      ],
+      cpp: [
+        "60d0b6637deb0f98cbf952a89694b02a0557fc87ca968121759be139372e90cc",
+        "06096beb427848574f610626bb53408b1a76f69b178ee2d7f0a05f6c2f6d3778",
+      ],
+      tradcpp: [
+        "87f89bebf41cd12ac7706604dd24624061b2276f95cc1e9998c22de1accfee2a",
+        "f9b951486d4e1769e06b892a59980c91a45435559505d73039130b63d1156803",
+      ],
+      cc1: [
+        "c1cc6d2864567297451662d36fba7abbce7a916d138f7115832a265de6868a06",
+        "640964de34d6202f6dc5943b0c22b0afd1a8f4f1307ba6d3cf30af4110f5f5e2",
+      ],
     },
     gs2: {
-      xgcc: "7b1a6a96fc4bd5e9de4d83fb2a4ba2ca2a82397cdcd102c4a4d76ef91dc17f58",
-      cpp0: "89791031fa8d4dd686355efb0efdb7c019a4080b770f187b15671dc3c1e71ecc",
-      tradcpp0: "a1013c94647eefbe0caad3c2e244b66c1acf2961197bdc31012e4259616c3198",
-      cc1: "3e5f1cbcae107b0f6c038a8b91880e377a3612a965014165002b4c530feab56b",
+      xgcc: [
+        "7b1a6a96fc4bd5e9de4d83fb2a4ba2ca2a82397cdcd102c4a4d76ef91dc17f58",
+        "d0b10d67bc7f9965d586eba766b77e6ca54cc791b5eb297b55a6b9b6d6d0ef3d",
+      ],
+      cpp0: [
+        "89791031fa8d4dd686355efb0efdb7c019a4080b770f187b15671dc3c1e71ecc",
+        "9d93c7762f60d13474764d2ca9e721b235ed4935ba7b69012aba054cace60d0d",
+      ],
+      tradcpp0: [
+        "a1013c94647eefbe0caad3c2e244b66c1acf2961197bdc31012e4259616c3198",
+        "010da8763b9ebf39cb52aab0412ca350e038ccf4c3aa5647440c2abc91dcad6c",
+      ],
+      cc1: [
+        "3e5f1cbcae107b0f6c038a8b91880e377a3612a965014165002b4c530feab56b",
+        "1b1c039eda51c0c2ee67d076f33e3284dd369789378cdf34671b66ba76cd6c75",
+      ],
     },
   },
 };
 
-const LINUX_AGBCC_EXPECTED = "30a2a042c4be2acdd215ffc26c7d27498098ac38607ec8af43cc6598dcecdf55";
+const LINUX_AGBCC_EXPECTED: readonly string[] = [
+  "30a2a042c4be2acdd215ffc26c7d27498098ac38607ec8af43cc6598dcecdf55",
+  "0c2d5ec04129f7b9d1ecf738f096167af152661bc2506f8fdb2749305fa3eb37",
+];
 
 const validated = new Set<CompilerTarget>();
 let agbccValidated = false;
 const experimentalValidated = new Set<string>();
-const AGBCC_EXPECTED = "4f7664872d10a737184fb2e0502c407c9d74505f0cff7313ba4e9083736c2207";
-const PRET_EARLY_THUMB_EXPECTED: Record<HostKey, string> = {
-  "darwin-arm64": "8a1e0e9e18801efb595a3e0d571137db5ba8f97e413c323e99f18b0521a31636",
-  "linux-x64": "c988f677e3ebd7252a6ad1ad2fef301f85b05be0612ee3192b37ec47d22f8082",
+const AGBCC_EXPECTED: readonly string[] = [
+  "4f7664872d10a737184fb2e0502c407c9d74505f0cff7313ba4e9083736c2207",
+];
+const PRET_EARLY_THUMB_EXPECTED: Record<HostKey, readonly string[]> = {
+  "darwin-arm64": ["8a1e0e9e18801efb595a3e0d571137db5ba8f97e413c323e99f18b0521a31636"],
+  "linux-x64": ["c988f677e3ebd7252a6ad1ad2fef301f85b05be0612ee3192b37ec47d22f8082"],
 };
-const GCC2951_EXPECTED: Record<HostKey, string> = {
-  "darwin-arm64": "cb41bba7e0e600721d906c46349119efb4c6fd35c711d7e0f244cb783de383a6",
-  "linux-x64": "c8f80fffa2aa0aa2809d93ad86d11ea0e8ebf08e9bba6cc5b8d391aef05c3fe4",
+const GCC2951_EXPECTED: Record<HostKey, readonly string[]> = {
+  "darwin-arm64": ["cb41bba7e0e600721d906c46349119efb4c6fd35c711d7e0f244cb783de383a6"],
+  "linux-x64": [
+    "c8f80fffa2aa0aa2809d93ad86d11ea0e8ebf08e9bba6cc5b8d391aef05c3fe4",
+    "edbee4fec1a1b59d0fd77273559aebbaf2c92b344bbeeb3539a10b689e71716d",
+  ],
 };
 
 function outputText(value: Uint8Array): string {
@@ -1060,7 +1195,7 @@ export function validateBundle(target: CompilerTarget = "gs1"): void {
       throw new Error(`alchemy-gcc ${target} bundle is missing executable ${name}`);
     }
     const actual = new Bun.CryptoHasher("sha256").update(readFileSync(path)).digest("hex");
-    if (actual !== expected) {
+    if (!expected.includes(actual)) {
       throw new Error(`alchemy-gcc ${target}/${name} has an unapproved digest`);
     }
   }
@@ -1094,7 +1229,7 @@ export function validateAgbccBundle(): void {
   }
   const actual = new Bun.CryptoHasher("sha256").update(readFileSync(AGBCC_DRIVER)).digest("hex");
   const expectedAgbcc = host === "darwin-arm64" ? AGBCC_EXPECTED : LINUX_AGBCC_EXPECTED;
-  if (actual !== expectedAgbcc) {
+  if (!expectedAgbcc.includes(actual)) {
     throw new Error("alchemy-gcc agbcc/old_agbcc has an unapproved digest");
   }
   const smoke = Bun.spawnSync(
@@ -1108,7 +1243,11 @@ export function validateAgbccBundle(): void {
   agbccValidated = true;
 }
 
-function validateExperimentalCompiler(name: string, driver: string, expected: Record<HostKey, string>): void {
+function validateExperimentalCompiler(
+  name: string,
+  driver: string,
+  expected: Record<HostKey, readonly string[]>,
+): void {
   if (experimentalValidated.has(name)) return;
   const host = hostKey();
   if (host === null) {
@@ -1124,7 +1263,7 @@ function validateExperimentalCompiler(name: string, driver: string, expected: Re
     throw new Error(`alchemy-gcc experimental ${name} is missing executable cc1`);
   }
   const actual = new Bun.CryptoHasher("sha256").update(readFileSync(driver)).digest("hex");
-  if (actual !== expected[host]) {
+  if (!expected[host].includes(actual)) {
     throw new Error(`alchemy-gcc experimental ${name}/cc1 has an unapproved digest`);
   }
   const smoke = Bun.spawnSync(
@@ -1379,7 +1518,8 @@ export function directCompilerCommandForSource(
 
 function selfTest(): void {
   const expected = [
-    "08006a00", "08006ba8", "08006c24", "08006c68", "08006d50", "08006dec", "08006e24", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
+    "08006a00", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
+    "08006e24", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
     "080f9a50",
     "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
     "080fa424", "080fa458", "080fa490", "080fa514", "080fa55c", "080fa6a0", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
@@ -1397,7 +1537,9 @@ function selfTest(): void {
     }
     const expectedFlags = [
       ...AGBCC_CFLAGS,
-      ...(["08006a00", "08006ba8", "08006c68", "08006d50", "08006e24", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220"].includes(stem) ? ["-O1"] : []),
+      ...(["08006a00", "08006ba8", "08006c68", "08006cdc", "08006d50", "08006e24",
+           "08006f84", "08007028", "08007098", "0800711c", "080071a8",
+           "08007220"].includes(stem) ? ["-O1"] : []),
       ...(stem === "080fa514" ? ["-O1", "-mcommutative-copy-constant"] : []),
       ...(stem === "080fb670" ? ["-mliteral-before-shift"] : []),
       ...(["080fb2cc", "080fb334", "080fb3a8"].includes(stem)
@@ -1417,7 +1559,7 @@ function selfTest(): void {
   if (JSON.stringify(groupedDma) !== JSON.stringify([
     "08002f10", "08002fb0", "0800300c", "080037d4", "08003e10", "08004760",
     "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c",
-    "08004a94", "08005340", "08005394", "080053e8", "08005a78", "0800bc48", "0800bdd4", "0800c0f4", "0800d304",
+    "08004a94", "08005340", "08005394", "080053e8", "08005a78", "08005c68", "080060e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304",
     "080170c4", "08019bac", "0801d014", "0801d980", "080251d4", "080284dc", "0808fecc", "08094730", "08095160", "08095290", "080958a8", "08097540",
     "0809bb34", "080a1090", "080b5ad4", "080c0184", "080c08a8", "080f377c",
   ])) {

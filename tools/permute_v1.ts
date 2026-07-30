@@ -778,9 +778,16 @@ async function main(): Promise<void> {
     // 参照長は最初に確定させる: 素の下書きを一度リンクして期待長を得る。
     let expected: Buffer | null = null;
     let scorer: Scorer | null = null;
-    let best: { body: string; score: number } | null = null;
+    let best: { body: string; score: number; preamble: string } | null = null;
+    // 自前で型を用意している下書きに前文を足すと typedef が二重定義になる。
+    // m2c 出力は `typedef` 直書きだが、手書きは `#include "types.h"` で始まる
+    // ため、この判定を typedef だけに限ると手書き下書きが全滅する。
+    const selfContained = (text: string): boolean =>
+      text.startsWith("typedef") || text.startsWith("#include");
     for (const base of new Set(bases)) {
-      const probeSource = base.startsWith("typedef") ? base : M2C_PREAMBLE + base;
+      // 前文は下書きごとに決まるので、採用した本体と同じ組で持ち回す。
+      const basePreamble = selfContained(base) ? "" : M2C_PREAMBLE;
+      const probeSource = basePreamble + base;
       if (expected === null) {
         const probePath = join(scratch, `${stem}.c`);
         writeFileSync(probePath, probeSource);
@@ -795,13 +802,14 @@ async function main(): Promise<void> {
         }
       }
       const value = await scorer!.score(probeSource);
-      const body = probeSource.replace(M2C_PREAMBLE, "");
-      if (best === null || value < best.score) best = { body, score: value };
+      const body = probeSource.slice(basePreamble.length);
+      if (best === null || value < best.score) best = { body, score: value, preamble: basePreamble };
     }
     if (best === null || scorer === null || best.score > 400) {
       console.log(`unusable ${stem} score=${best?.score ?? "none"} scorer=${scorer !== null}`);
       return;
     }
+    const preamble = best.preamble;
 
     // 成功手順の再演を最初に試す。
     let done = false;
@@ -814,8 +822,8 @@ async function main(): Promise<void> {
         const next = operator(body, random);
         if (next !== null) body = next;
       }
-      const value = await scorer.score(M2C_PREAMBLE + body);
-      if (value === 0 && install(stem, M2C_PREAMBLE + body, rom, scratch)) {
+      const value = await scorer.score(preamble + body);
+      if (value === 0 && install(stem, preamble + body, rom, scratch)) {
         console.log(`matched ${stem} (recipe)`);
         matchedCount++; done = true; break;
       }
@@ -832,12 +840,12 @@ async function main(): Promise<void> {
         restarts: options.restarts,
         state,
         best,
-        score: (body) => scorer!.score(M2C_PREAMBLE + body),
+        score: (body) => scorer!.score(preamble + body),
         registerFraction: diagnosis.register_fraction,
         semanticFraction: diagnosis.semantic_fraction,
         suggestions,
         onMatch: (body, accepted) => {
-          if (install(stem, M2C_PREAMBLE + body, rom, scratch)) {
+          if (install(stem, preamble + body, rom, scratch)) {
             console.log(`matched ${stem} (start=${startingBest})`);
             appendRecipe([...accepted]);
             matchedCount++;

@@ -14,11 +14,15 @@ rather than real limits.
 Exact means fully linked machine-code byte equality — not semantic similarity,
 not equal object size.
 
-The active branch is `venus`. This is the handoff point for the **Venus run**:
-use the faster local machine for three-owner semantic-C cohorts and compute-heavy
-exact-C work until local hardware no longer produces a material throughput
-advantage, then bank and push a clean cohort before moving execution back to the
-cloud container.
+The active branch is `venus`. The two workstreams have stable names:
+
+- **Mercury Lighthouse** is the byte-exact C decompilation process.
+- **Venus Lighthouse** is the reviewed semantic-C run on the `venus` branch.
+
+This is the Venus Lighthouse handoff point. Use the faster local machine for
+three-owner semantic-C cohorts and compute-heavy Mercury Lighthouse work until
+local hardware no longer produces a material throughput advantage, then bank
+and push a clean cohort before moving execution back to the cloud container.
 
 Alongside the exact lane, reviewed semantic C currently accounts for **369,358
 executable bytes across 631 compiling sources**: 356,566 main-image bytes and
@@ -30,7 +34,7 @@ and multi-region traps out of the ordinary review queue.
 
 ---
 
-## 0. Semantic-C speed policy
+## 0. Venus Lighthouse speed policy
 
 The 2026-07-30 speed run established a repeatable method, not a one-family
 outlier. Consecutive three-owner cohorts converted tens of thousands of reviewed

@@ -411,6 +411,25 @@ const NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES = new Set([
 // analysis conservative (-fno-strict-aliasing) and mismatch without it
 // (notes/resource_3c9-{0104,215c,3600}.md); each entry carries its own
 // exact-byte proof.
+// The reference objects rematerialize a two-instruction Thumb immediate
+// (`movs rN,#K` then `lsls rN,rN,#n`, or `movs`/`negs` for a negatable value)
+// independently at every call site. `cse_insn` records the register just loaded
+// with such a constant in the constant's own equivalence class, so `insert_regs`
+// merges the quantities of every register holding it, `canon_reg` rewrites the
+// later loads, and the value ends up shared in a callee-saved register that also
+// changes the prologue. `arm_rtx_costs` prices the constant at
+// COSTS_N_INSNS(2), which is why one-instruction immediates never share.
+// -fno-cse-two-insn-immediate suppresses only that sharing (mechanism, RTL
+// evidence, prototype, and the 109-source collateral measurement are in
+// docs/compiler-evidence/). It must stay per-source: enabled globally it changes
+// 109 of the 1,335 gcc296-routed sources. Literal-pool constants are
+// deliberately excluded, since a pool load is one instruction and sharing it is
+// not a size change.
+const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3bf_c_02000bec.c",
+  "assets/code/resource_3af_c_02001a98.c",
+  "assets/code/resource_3af_c_02004218.c",
+]);
 const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
   "assets/code/resource_380_c_02000104.c",
   "assets/code/resource_39c_c_02000104.c",
@@ -606,6 +625,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_STRICT_ALIASING_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-strict-aliasing"]
       : []),
+    ...(NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fno-cse-two-insn-immediate"]
+      : []),
     ...(GROUPED_DMA_STORE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mgrouped-dma-store"]
       : []),
@@ -664,6 +686,7 @@ export function evidencedRoutingFlags(): string[] {
     ...NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES,
     ...NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES,
     ...NO_STRICT_ALIASING_OVERLAY_SOURCES,
+    ...NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES,
     ...GROUPED_DMA_STORE_OVERLAY_SOURCES,
     ...EARLY_LITERAL_POOL_OVERLAY_PATHS,
   ]) inspect(join(ROOT, source));
@@ -764,7 +787,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
       xgcc: "845b828e15efedfeacc1956ac2694101e2b520824643d5b9f7608f9c389aee03",
       cpp: "60d0b6637deb0f98cbf952a89694b02a0557fc87ca968121759be139372e90cc",
       tradcpp: "87f89bebf41cd12ac7706604dd24624061b2276f95cc1e9998c22de1accfee2a",
-      cc1: "e322a2242bca5c7a98703ff74cb84aa1abd58859cbe7f5b306cedbccdc0d9ee7",
+      cc1: "281a3f692c239c1827005eaf49237e22801b33332a6596526fff146b62d505f4",
     },
     gs2: {
       xgcc: "7b1a6a96fc4bd5e9de4d83fb2a4ba2ca2a82397cdcd102c4a4d76ef91dc17f58",

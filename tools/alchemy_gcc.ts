@@ -469,6 +469,15 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // argument setters tie before a `bl` and the low-destination rule picks
   // `mov r0,sl` over `lsls r1,r1,#1` (notes/resource_381-0e30.md).
   "assets/code/resource_381_c_02000e30.c",
+  // resource_37b members: routed per function, NOT overlay-wide — this mode
+  // regresses that overlay's three large word-store sheets (02001c14, 02001d14,
+  // 02001e10), which are exact at default flags.
+  "assets/code/resource_37b_c_020015d4.c",
+  "assets/code/resource_37b_c_020015fc.c",
+  "assets/code/resource_37b_c_0200101c.c",
+  "assets/code/resource_37b_c_0200166c.c",
+  "assets/code/resource_37b_c_020016a4.c",
+  "assets/code/resource_37b_c_0200195c.c",
   "assets/code/resource_3a4_c_02000c9c.c",
   "assets/code/resource_394_c_020008b0.c",
   "assets/code/resource_3b8_c_02000264.c",
@@ -521,6 +530,8 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
 // (measured on resource_373:2cb0 — do not re-attack it with a whole-function
 // flag). docs/compiler-evidence/cse-pool-immediate.diff.
 const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_37b_c_02001b44.c",
+  "assets/code/resource_37b_c_0200195c.c",
   "assets/code/resource_3a4_c_02000c9c.c",
   "assets/code/resource_394_c_020008b0.c",
   "assets/code/resource_3b8_c_02000264.c",

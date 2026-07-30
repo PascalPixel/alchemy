@@ -563,6 +563,35 @@ after loses the effect, and this fixed a register-identity floor that survived a
 seven modes); and a second pointer the reference keeps in a different register
 needs its own named local.
 
+**Absolute addresses want `Data_<8hex>` symbols, not integer literals — otherwise
+gcc derives one from another.** Writing several nearby RAM addresses as casts
+(`*(s32 *)0x02002080 = 0; *(u16 *)0x02002008 = 0;`) lets CSE keep one in a
+register and reach the next with `subs r3, #120`, where the reference pool-loads
+each separately. `externalSymbol` resolves any `Data_<address>` / `Func_<address>`
+/ `Value_<address>` name (`tools/alchemy_gcc.ts`), so `extern s32 Data_02002080;`
+gives a SYMBOL_REF gcc cannot fold arithmetically and each address gets its own
+pool word. This closed the whole derived-address class on `0800651c` in one edit.
+
+**Stack arguments want function-top locals *only* when nothing precedes them.**
+§4's hoisting lever puts the two stacked words of a six-argument call in distinct
+registers, which is what the reference does — but if a *call* comes first in the
+function, function-top locals stay live across it and land in r5/r6, buying a
+`push` the reference does not have. Declare them in a block after that call
+instead: `resource_3bb:02c0` went from a span overrun to exact on that change
+alone, and `resource_3bc:024c` from 19 differing bytes to exact.
+
+**A repeated shifted constant across call sites needs
+`-fno-cse-two-insn-immediate`, and the tell is a prologue.** On
+`resource_38d:1984` the same `0xC000` feeds two of three call sites; CSE hoists it
+into r5 and the function grows `push {r5, lr}` / `pop {r5}`, while the reference
+rematerialises `movs r1,#192 / lsls r1,#8` at each site. No source spelling
+reaches it — one local per site does not stop CSE — but the routed mode does.
+Pair it with `-fsched-low-dest-first` for the r0-setter position. Its sibling
+`:1958` has no repeat and needs only the scheduler mode. **Route the CSE mode by
+*path*** (`NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES`), which is overlay-specific
+and so immune to §7's address-collision trap; `SCHED_LOW_DEST_FIRST_SOURCES` is
+keyed by bare address and is not.
+
 **Re-check every `&Value_` in an old park note against the factorisation table
 above.** Four functions in one overlay were parked at floor 2 as "no flag reaches
 it" when the actual blocker was a wrong `&Value_` spelling — the scheduler was
@@ -1130,6 +1159,35 @@ they carry more value than their byte counts suggest. Both were identified but
 never re-probed: `resource_3c8:1d48` (floor 3 halfwords) and `resource_379:0074`
 (8 of 288 instruction groups differing — measure this one by group equality, not
 halfwords, per §2).
+
+**The 0x08006xxx IME-guarded DMA trio — parked on a gcc pool quirk, 220 bytes.**
+`0800651c` (64), `080063bc` (76) and `08006408` (80) are one family: disable IME
+by storing the register's own address (`strh r0,[r0]` — bit 0 of 0x0208 is clear),
+clear or set a few words, restore IME. The reference has **no prologue at all** —
+it uses r0-r4 only, r4 being call-used under `-fcall-used-r4`.
+
+Two things were fixed and are worth keeping: the derived-address class closed with
+`Data_` symbols (§4), and typing the saved IME value `s32` rather than `u16`
+removed a spurious `lsls #16 / asrs #16` sign-extension pair. What remains is one
+gcc quirk with no source lever found: for the two `u8` stores it emits a pool
+`.word 0` and reloads it with **`ldrh r1, .L3`** instead of reusing the register
+that already holds 0, and that extra live value spills `saved` to r5 and buys the
+`push`/`pop` the reference does not have. Retyping the shared zero `u8`/`u16`/`s32`
+and naming it per site all measure identically.
+
+**`tools/mode_sweep.ts` swept 69 modes over `0800651c` and none reaches it** —
+floor 33 halfwords at 72 bytes against a 64-byte reference, under `old-agbcc`
+(`out/modesweep/0800651c-*/`). The residual classes it reports are
+`register=1,literal,cfg`. This is a source-shape problem; do not re-run the sweep.
+Note the family is *not* agbcc despite sitting inside the agbcc module — the
+reference clobbers r4 without saving, which `AGBCC_CFLAGS` (no `-fcall-used-r4`)
+cannot produce.
+
+**`resource_371:0350` — floor 4/44.** Two `ands` chains where the reference opens
+on the mask (`adds r3,r1,#0 / ands r3,r2`) and we open on the value. §4's mask-first
+recipe does not reach it: `(mask & value)` is canonicalised back by gcc, and
+splitting the chain into statements makes it worse (21). Same for the trailing
+`eor`. It needs an allocation lever, not an operand-order one.
 
 **The 60-byte squared-distance family — floor 20/60 bytes, two named residuals,
 780 bytes behind it.** One fingerprint (`1fwqz6zhzfrzo`), 13 strict unconverted

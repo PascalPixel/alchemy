@@ -537,8 +537,20 @@
     },
     {
       "overlay": "resource_37b",
+      "entry": "0x02000150",
+      "span_bytes": 1220,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_37b",
       "entry": "0x02000c8c",
       "span_bytes": 548,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_37b",
+      "entry": "0x0200105c",
+      "span_bytes": 1116,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
     },
     {
@@ -551,6 +563,18 @@
       "overlay": "resource_37b",
       "entry": "0x02001624",
       "span_bytes": 72,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_37b",
+      "entry": "0x020016dc",
+      "span_bytes": 640,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_37b",
+      "entry": "0x02001ff4",
+      "span_bytes": 592,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
     },
     {
@@ -755,6 +779,12 @@
       "overlay": "resource_391",
       "entry": "0x02000c68",
       "span_bytes": 212,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_391",
+      "entry": "0x02000d3c",
+      "span_bytes": 6700,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
     },
     {
@@ -1713,8 +1743,44 @@
     },
     {
       "overlay": "resource_3b7",
+      "entry": "0x02000880",
+      "span_bytes": 120,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3b7",
+      "entry": "0x020008f8",
+      "span_bytes": 256,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3b7",
+      "entry": "0x020009f8",
+      "span_bytes": 208,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3b7",
       "entry": "0x02000d70",
       "span_bytes": 96,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3b7",
+      "entry": "0x02000dd0",
+      "span_bytes": 116,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3b7",
+      "entry": "0x020016a8",
+      "span_bytes": 148,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3b7",
+      "entry": "0x0200173c",
+      "span_bytes": 280,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
     },
     {
@@ -2349,6 +2415,12 @@
     },
     {
       "overlay": "resource_3c5",
+      "entry": "0x02001238",
+      "span_bytes": 2264,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3c5",
       "entry": "0x02002660",
       "span_bytes": 72,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
@@ -2357,6 +2429,12 @@
       "overlay": "resource_3c5",
       "entry": "0x020026fc",
       "span_bytes": 58,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3c5",
+      "entry": "0x020028a0",
+      "span_bytes": 1240,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
     },
     {
@@ -2487,6 +2565,18 @@
     },
     {
       "overlay": "resource_3cb",
+      "entry": "0x0200008c",
+      "span_bytes": 156,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3cb",
+      "entry": "0x020002d8",
+      "span_bytes": 104,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3cb",
       "entry": "0x02000340",
       "span_bytes": 88,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
@@ -2499,8 +2589,44 @@
     },
     {
       "overlay": "resource_3cb",
+      "entry": "0x020007b0",
+      "span_bytes": 176,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3cb",
+      "entry": "0x02000e10",
+      "span_bytes": 264,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3cb",
       "entry": "0x02000f30",
       "span_bytes": 88,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3cb",
+      "entry": "0x02000f8c",
+      "span_bytes": 196,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3cb",
+      "entry": "0x0200106c",
+      "span_bytes": 124,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3cb",
+      "entry": "0x020010e8",
+      "span_bytes": 112,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3cb",
+      "entry": "0x02001158",
+      "span_bytes": 92,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
     },
     {

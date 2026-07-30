@@ -105,15 +105,15 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **557,244
-executable bytes across 1,006 compiling sources**: 382,970 main-image bytes and
-174,274 overlay bytes. Combined with exact C, **767,638 / 1,339,574 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **576,124
+executable bytes across 1,043 compiling sources**: 382,970 main-image bytes and
+193,154 overlay bytes. Combined with exact C, **786,842 / 1,339,576 executable
 bytes** are expressed as C.
 
-**Seventeen overlays are now converted in full**, none skipping anything:
+**Eighteen overlays are now converted in full**, none skipping anything:
 `resource_3b8` (15,028 bytes), `resource_372` (10,202), `resource_371` (9,650),
 `resource_39f` (9,278), `resource_39a` (7,096), `resource_3b4` (6,226) and
-`resource_373` (13,192), `resource_3bf` (10,144), `resource_375` (6,536), `resource_374` (7,468), `resource_3a8` (7,564), `resource_3bb` (5,680), `resource_3aa` (6,376), `resource_38f` (9,212), `resource_383` (7,792) and
+`resource_373` (13,192), `resource_3bf` (10,144), `resource_375` (6,536), `resource_374` (7,468), `resource_3a8` (7,564), `resource_391` (7,068), `resource_3bb` (5,680), `resource_3aa` (6,376), `resource_38f` (9,212), `resource_383` (7,792) and
 Alongside the exact lane, reviewed semantic C currently accounts for **523,620
 executable bytes across 950 compiling sources**: 382,970 main-image bytes and
 140,650 overlay bytes. Combined with exact C, **734,014 / 1,339,574 executable
@@ -496,6 +496,12 @@ shows the real import is `Func_0808a080`. Diffing an exact sibling against
 offsets against material that already reproduces the ROM, rather than inferring
 them. This is how one lane fixed its actor-record layouts instead of guessing.
 
+**An "empty else that only increments something" is a skip-beat counter, and it
+proves branch symmetry.** In `resource_391:0d3c` an eight-instruction sequence
+bumps a `u16` at `workspace + 472` and appears on the *absent* side of nearly
+every scene-variant test — 10 sites. Recognising it turns ten puzzling unrelated
+conditionals into one flag with two equal-length scene variants.
+
 **A gate flag's setter is often in a DIFFERENT owner.** `resource_375:0170`
 tests flag 0x0801 on entry and never sets it; the setter is `:0964`, and `:150c`
 reads the same flag to pick a scene variant. Its siblings `:0be0` and `:12a0` do
@@ -646,6 +652,13 @@ All three guards are needed together.**
    ten times across three owners.
 3. *Never model a pool word as an instruction, even a harmless-looking one* — see
    below.
+
+**Derive the pool map from a CONTROL-FLOW WALK. That method is immune to both
+traps below; nothing else is.** Walk the owner from its prologue following
+branches, and whatever is never reached as an instruction is pool. On
+`resource_391:0d3c` this gave 6,382 code + 318 pool = 6,700 bytes exactly, across
+8 pools, on a 672-call owner. Both failure modes below are artefacts of guessing
+the pool map from a listing instead.
 
 **The inverse trap: `overlay_show.ts`'s "pool words referenced" list is NOT
 authoritative.** Two of its entries in `resource_3a8:0590` are the *low halfword

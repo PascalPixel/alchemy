@@ -49,10 +49,10 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **232,650 executable bytes across 523 compiling sources**:
-  219,858 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **405,872 / 1,339,540 executable bytes** are now expressed as C, with
-  933,668 remaining. Seven semantic main sources were removed during the
+- Semantic-C lane: **233,946 executable bytes across 526 compiling sources**:
+  221,154 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **407,168 / 1,339,540 executable bytes** are now expressed as C, with
+  932,372 remaining. Seven semantic main sources were removed during the
   2026-07-30 `main` cascade because byte-exact versions now supersede them.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
@@ -107,6 +107,15 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   the shared `080165d8` ABI: it returns its selected slot pointer and accepts
   two stack arguments, so all semantic callers now consistently express its
   six-argument interface.
+- The fifth queue-driven pass adds three complete main owners and 1,296 bytes:
+  a two-phase scene/effect sequence (`0809a8c4`), a sixteen-particle arrival
+  sequence (`0809abb4`), and two-row window/resource setup (`080a6614`).
+  Their high registers are locally initialized loop, scene, or output-slot
+  state; fixed Thumb literals were resolved as typed callbacks. `080d5c48` was
+  rejected because its apparent `08007300` draw calls are call-via-r7 thunks
+  whose renderer target is loaded dynamically from `03001f08`; its callback
+  and teardown additionally depend on call-via-r3, so it belongs in a typed
+  dynamic-call module rather than an ordinary standalone conversion.
 - Honest outer-owner additions include `resource_381:0054/1410`,
   `resource_394:03f0/0c2c/0e64..0fb4`, `resource_3bd:0474/0608/0ee0`, and
   `resource_3c8:1d48`. `resource_379:00dc` was rejected as a fake standalone

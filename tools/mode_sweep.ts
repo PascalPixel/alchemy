@@ -130,6 +130,7 @@ export const MODES: readonly Mode[] = [
   { id: "cse-two-insn-immediate-off", family: "cse", addFlags: ["-fno-cse-two-insn-immediate"], evidence: "proven-routing" },
   { id: "gcse-insert-load-off", family: "cse", addFlags: ["-fno-gcse-insert-load"], evidence: "proven-routing" },
   { id: "sched-low-dest-first", family: "schedule", addFlags: ["-fsched-low-dest-first"], evidence: "proven-routing" },
+  { id: "sched-high-dest-first", family: "schedule", addFlags: ["-fsched-high-dest-first"], evidence: "proven-routing" },
   { id: "sched-alias-off", family: "schedule", addFlags: ["-fno-sched-alias"], evidence: "proven-routing" },
   { id: "sched-store-first", family: "schedule", addFlags: ["-fsched-store-first"], evidence: "proven-routing" },
   { id: "loop-rerun-off", family: "cse", addFlags: ["-fno-rerun-loop-opt"], evidence: "historical" },

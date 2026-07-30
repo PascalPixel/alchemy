@@ -10,10 +10,11 @@ Members: `resource_373:00c4`, `389:00c4`, `392:00c4`, `393:00c4`, `39f:00c4`,
 
 ## State on 2026-07-30
 
-The draft below is **structurally correct and not yet byte-exact**: 173 emitted
-instructions against the reference's 172, and the divergences are register
-assignment and scheduling in the first quarter, not shape. Do not re-derive the
-semantics from assembly — start here.
+The draft below is **structurally correct and not yet byte-exact**: 172 emitted
+instructions, matching the reference exactly, with **62 instruction groups still
+differing** — register assignment and scheduling in the first quarter, not shape.
+Do not re-derive the semantics from assembly, and do not re-measure by halfwords;
+start here.
 
 Read the residual by **instruction-group equality, not halfwords** (§2): at 384
 bytes every `bl` displacement is target-absolute, so one positional drift makes
@@ -36,11 +37,20 @@ at +10 and +18.
 
 ### Known divergences to attack first
 
-1. The reference loads `self->f06` **before** stashing `self` in r8; we stash
-   first and then reload through r2. Costs the r2 copy and shifts everything.
+1. ~~The reference loads `self->f06` before stashing `self` in r8.~~ **Closed.**
+   Declaring the kind index immediately after `self`, ahead of `table` and
+   `mask`, drops the reload through r2 and took the residual from 164 groups to
+   **62**. Declaration order is what fixes this class — not a flag.
 2. The reference loads its two pool words apart (`0x0200E190` at position 12,
    `0xFFFF0000` at 14, with `lsl r5` between); gcc emits both together.
-3. `sl` is reused: it holds `0xFFFF0000` for the first three probe builds, then
+3. **Do not swap the `table`/`mask` declaration order to chase the high
+   registers.** The reference holds the mask in `sl` and the table in `r9`; we
+   hold them the other way round, which looks like a one-line fix. It is not —
+   declaring `mask` first sends the residual from 62 groups to **165**, because
+   the table pointer then materialises before `self` is stashed and every
+   subsequent lifetime shifts. Leave `table` declared first and attack the
+   register identity some other way.
+4. `sl` is reused: it holds `0xFFFF0000` for the first three probe builds, then
    is reloaded with the byte at +98 and carried as the zero written into `f24`
    and `f2c` of both actors. The draft models that with a `blocked` local, which
    is why those stores read `= blocked` rather than `= 0` — keep that.
@@ -91,9 +101,9 @@ void Func_020000c4(void)
 {
     s32 probe[3];
     struct Actor *self = Func_020060b8(0);
+    s32 index = (*(u16 *)((u8 *)self + 6) >> 12) * 4;
     s32 *table = (s32 *)0x0200E190;
     s32 mask = 0xFFFF0000;
-    s32 index = (*(u16 *)((u8 *)self + 6) >> 12) * 4;
     struct Actor *target;
     u8 *hit;
     s32 blocked;

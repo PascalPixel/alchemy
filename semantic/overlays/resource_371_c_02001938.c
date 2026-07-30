@@ -11,8 +11,9 @@ typedef signed int s32;
  * alignment plus the literal pool (0x1f080000, 0x9999, 0x4ccc, 0x0200d158,
  * 0x927).
  *
- * One of three byte-identical bodies — this one and 0x02001888 and 0x020019e8 — that
- * differ only in the single immediate at +0x8a (104 here).  Their `bl`
+ * One of three byte-identical bodies — this one and 0x02001888 and
+ * 0x020019e8 — that differ only in the single immediate at +0x8a
+ * (104 here).  Their `bl`
  * halfwords are bit-identical, so their printed targets differ by exactly the
  * 0xb0 spacing of the owners themselves: the seventeen imports below are the
  * same seventeen callees in all three files under three different sets of

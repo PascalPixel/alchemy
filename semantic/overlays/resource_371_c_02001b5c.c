@@ -27,8 +27,9 @@ typedef signed int s32;
  * Call-target convention: each `bl` is named by the address its call site
  * computes; that address is a per-call-site label for a
  * load-time-relocated import, not a place to disassemble and not a global
- * identity (see the note in resource_371_c_0200008c.c).  Old-style declarations, because the interfaces are unknown and
- * one import can be reached with different argument counts.
+ * identity (see the note in resource_371_c_0200008c.c).  Old-style
+ * declarations, because the interfaces are unknown and one import can be
+ * reached with different argument counts.
  */
 
 u8 *Func_02005e5e();

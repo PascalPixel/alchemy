@@ -42,9 +42,10 @@ executable bytes across 906 compiling sources**: 386,840 main-image bytes and
 79,880 overlay bytes. Combined with exact C, **661,670 / 1,339,558 executable
 bytes** are expressed as C.
 
-**Four overlays are now converted in full**, none skipping anything:
+**Five overlays are now converted in full**, none skipping anything:
 `resource_3b8` (15,028 bytes, 7 owners), `resource_372` (10,202 bytes, 16 rows),
-`resource_371` (9,650 bytes, 30 rows) and `resource_39a` (7,096 bytes, 64 rows).
+`resource_371` (9,650 bytes, 30 rows), `resource_39a` (7,096 bytes, 64 rows) and
+`resource_39f` (9,278 bytes, 39 rows).
 `resource_3c8` is 31 of 32, its one remainder pre-measured (below).
 
 **Pre-measured and waiting for a fresh agent: `resource_3c8:3068`**, a 26-way
@@ -259,25 +260,40 @@ the right move is not to resolve the target at all — name the import by the
 address its call site computes, which is what the byte-exact
 `assets/code/resource_3b8_c_*.c` already do.
 
-**RESOLVED — and both earlier readings were right about different things.
-Pool words and `bl` targets live in DIFFERENT address spaces.**
+**SOLVED — an overlay `bl` stores the target's image offset minus 2.**
 
-- A **pool word** obeys the link base: on a 0x02008000 overlay it is an in-image
-  address at `offset = value - 0x8000`.
-- A **`bl` target** is an *import identity*, not an address in any space, and
-  must never be resolved or disassembled.
+    true_target_offset = stored_displacement + 2
 
-`resource_39a` proves the second half rather than inferring it. Its image is
-0x3328 bytes and its code ends at 0x2258, yet its `bl` targets run continuously
-from 0x2260 to **0x5124** — thousands of bytes past the end of the image, which
-no link base can fix. The decisive witness: `0x02000da4` and `0x02000dd8` encode
-`bl` to `0x02000f36` / `0x02000f68`, both strictly inside `0x02000f30`, which
-`assets/code/resource_39a_c_02000f30.c` **already reproduces byte-exactly** as a
-self-contained table lookup with no entry at +6 or +0x38. A byte-exact-proven
-function's interior cannot be a call target.
+Not a pc-relative displacement. Every disassembler, `tools/overlay_show.ts`
+included, adds the branch's own pc, which is why its call annotations are wrong
+for **every** overlay and wrong in a way that looks plausible. All three of the
+long-standing symptoms are this one bug: targets past the end of the image,
+targets landing inside the caller's own body, and two sites with *bit-identical*
+encodings printing different callees (`resource_39f:1078` has two branches that
+both print `bl 0x02003ec2` and are different functions).
 
-That also explains `resource_373`'s 0x55e0 spread — identities, not locations —
-so nothing there is anomalous after all.
+Use **`bun tools/overlay_call_targets.ts <overlay> [ownerHex]`**, which applies
+the rule and classifies each target as an import veneer (resolving the veneer's
+trailing word to the real `Func_08xxxxxx`), a real prologue, or the overlay's own
+`call_via` slot. Measured on `resource_39f`: 1,265 call sites collapse to **73
+distinct targets** — 1,047 veneer, 116 prologue, 1 `call_via`. The same collapse
+holds on 371/372/373/38f/3b8/3bf/3c4/3c8, where 700-1,900 sites reduce to 70-133
+distinct displacements.
+
+Independent confirmations beyond the arithmetic: `resource_39f:00c4`'s three
+lookups — the exact case this file previously listed as unexplained, decoding to
+join points *inside itself* — all resolve to `0x0200006c`, whose byte-exact
+source returns "the occupying slot or 0", which is precisely how each result is
+used. And `resource_373`'s 0x55e0 spread is simply two call sites of one callee.
+
+The tool reports ~8% of sites as `unknown`; those are overwhelmingly pool words
+that decode as a BL pair (see the trap below), not unresolved calls. Treat a
+large `unknown` count as a signal that a span includes its literal pool.
+
+Everything the earlier "import identity" framing got right still holds — two
+`Func_` names can be one callee, arities vary per site — but the identity is now
+computable rather than opaque, and the veneer's trailing word gives the import's
+real main-image address.
 
 **Six overlays are now confirmed at the 0x02008000 base** — `resource_3bf`,
 `resource_3c4`, `resource_372`, `resource_39a`, `resource_371` (five witnesses)

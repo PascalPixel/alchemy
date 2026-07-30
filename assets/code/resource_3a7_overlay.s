@@ -414,23 +414,8 @@ AlchemyC_020002e0:
 	pop	{r0}
 	bx	r0
 	.2byte 0x0000
-	push	{lr}
-	ldr	r0, [pc, #36]
-	bl	.L_020014e6
-	cmp	r0, #0
-	bne.n	.L_02000404
-	bl	.L_02000722
-	cmp	r0, #0
-	beq.n	.L_02000404
-	ldr	r0, [pc, #16]
-	bl	.L_02001500
-	movs	r0, #80
-	bl	.L_0200154e
-	bl	sub_0200079a
-.L_02000404:
-	pop	{r0}
-	bx	r0
-	.4byte 0x000009a9
+AlchemyC_020003e0:
+	.space 0x2c
 	.2byte 0x4770
 	.2byte 0x0000
 	push	{r5, lr}

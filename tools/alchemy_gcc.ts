@@ -426,7 +426,10 @@ const SCHED_HIGH_DEST_FIRST_SOURCES = new Set(["08098954", "0809a294", "08097540
 // overlay owns 020011bc. Its sibling `02000178` has the same residual and is
 // *not* routable: resource_3ba already owns that address, and §7's routing key
 // is the bare address.
-const SCHED_LOW_DEST_FIRST_SOURCES = new Set(["08097540", "020011bc", "02001958", "02001984", "02000260", "020011d8", "0200028c"]);
+// Keyed by stem, so every member here is also a claim that no other overlay has
+// a converted row at the same offset. 02001984 was moved out to the path-keyed
+// set below when resource_3b4 gained a row at that offset that the flag breaks.
+const SCHED_LOW_DEST_FIRST_SOURCES = new Set(["08097540", "020011bc", "02001958", "02000260", "020011d8", "0200028c"]);
 const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
   "assets/code/resource_383_c_02000428.c",
   // Paired with the callee-return-type lever: the return type fixed these
@@ -597,6 +600,10 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // resource_3aa:0184 is the same tell across sixteen call sites: the setters
   // for r0/r1/r2 tie and the reference orders them by ascending destination.
   "assets/code/resource_3aa_c_02000184.c",
+  // Moved here from the stem-keyed set: resource_3b4 now has a row at 02001984
+  // whose six-argument call wants the reference's own order, and the stem key
+  // would have applied resource_38d's flag to it.
+  "assets/code/resource_38d_c_02001984.c",
   "assets/code/resource_3c8_c_02001780.c",
   "assets/code/resource_3c8_c_02001150.c",
   "assets/code/resource_372_c_02000f38.c",
@@ -798,6 +805,10 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3a7_c_020003e0.c",
   // resource_3cd:00c0 needs this alongside -fno-gcse; see NO_GCSE_OVERLAY_SOURCES.
   "assets/code/resource_3cd_c_020000c0.c",
+  // resource_3b4:1070 loads its 0x9c4 request id at the guard call and again
+  // at the commit call; the rerun keeps it in r5 across both and costs the
+  // prologue a register the reference does not push.
+  "assets/code/resource_3b4_c_02001070.c",
 ]);
 // -fno-gcse routed by path rather than by stem, for overlay rows whose address
 // is also an offset in another overlay that is already converted.

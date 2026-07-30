@@ -49,10 +49,10 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **227,790 executable bytes across 507 compiling sources**:
-  214,998 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **401,012 / 1,339,540 executable bytes** are now expressed as C, with
-  938,528 remaining. Seven semantic main sources were removed during the
+- Semantic-C lane: **229,878 executable bytes across 514 compiling sources**:
+  217,086 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **403,100 / 1,339,540 executable bytes** are now expressed as C, with
+  936,440 remaining. Seven semantic main sources were removed during the
   2026-07-30 `main` cascade because byte-exact versions now supersede them.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
@@ -61,9 +61,12 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
 - `bun run semantic:queue` now collapses the live historical main-image drafts
   by ordinary owner and ranks them by measured review cost. It penalizes unset
   registers, branches into continuation owners, nontrivial boundary shapes,
-  unknown types, and high-register setup immediately before calls. This keeps
+  unknown types, high-register setup immediately before calls, and every
+  `_call_via_rN` thunk in the `080072e4..08007318` runtime bank. This keeps
   short bounded review on ordinary-ABI candidates and exposes hidden-context
-  traps before cleanup begins. The first queue-driven pass admitted six owners
+  traps before cleanup begins. Proven blockers are recorded in
+  `semantic/ordinary-blockers.json`, assigned to the joint ABI/module lane, and
+  kept out of the top of the ordinary queue. The first queue-driven pass admitted six owners
   and 1,726 bytes: palette interpolation (`080f61e8`), palette setup/fading
   (`080c0774`), serial-state initialization (`08005d10`), object placement
   (`08017658`), map/camera position selection (`0808cf78`), and graphics
@@ -80,6 +83,18 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   sorter, and sound dispatcher. The queue also correctly demoted `08006e24`
   for branching into a continuation owner and flags high-register call setup
   separately from ordinary stack-passed fifth and later arguments.
+- The third queue-driven pass adds seven complete main owners and 2,088 bytes:
+  scene slideshow/fades (`080f03f0`), the sound diagnostic controller
+  (`080f92fc`), randomized battle-decision construction (`080b9324`), portrait
+  dialog setup (`08021228`), battle-resource initialization (`080b010c`),
+  battle-decision orchestration (`080b9934`), and the interactive sprite
+  display (`080bb7c0`). `080f9f6c` was rejected from the ordinary lane because
+  its helper consumes caller-held `r4/r5` state and a dependency reaches the
+  call-via-r1 thunk. The graphics setup `080aad10` was corrected to express its
+  fixed IWRAM copy/fill targets as typed function pointers; the former
+  `Func_080072f8/fc` prototypes were misleading names for call-via-r5/r6
+  thunks, not ordinary functions. This identification gives the hidden-context
+  backlog a mechanical representation strategy instead of fake prototypes.
 - Honest outer-owner additions include `resource_381:0054/1410`,
   `resource_394:03f0/0c2c/0e64..0fb4`, `resource_3bd:0474/0608/0ee0`, and
   `resource_3c8:1d48`. `resource_379:00dc` was rejected as a fake standalone

@@ -432,6 +432,59 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // Parked before the mode existed, byte-exact under it with its existing draft
   // and no further source work.
   "assets/code/resource_3c8_c_020009c8.c",
+  // Paired with -fsched-low-dest-first below: removing the constant sharing
+  // exposes a scheduling transposition that the tie-break then fixes.
+  "assets/code/resource_3af_c_02001b58.c",
+  "assets/code/resource_3af_c_020019c0.c",
+  "assets/code/resource_3af_c_020012f0.c",
+  "assets/code/resource_3af_c_02002b7c.c",
+  "assets/code/resource_3ba_c_02000974.c",
+]);
+// Every edge into a CALL_INSN costs 1, so a call's argument setters tie in
+// `rank_for_schedule` on priority, insn class and forward-dependent count alike,
+// and the fork falls through to the `INSN_LUID` tie-break. It then emits a
+// two-instruction immediate's `lsls` where the reference emits an independent
+// `movs` for a lower argument register. The mode adds a final tie-break
+// preferring the lower-numbered destination register, restricted to insns that
+// have a CALL_INSN among their forward dependents. Do NOT combine with
+// -mthumb-immediate-latency, which subsumes and then breaks these
+// (docs/compiler-evidence/sched-and-pre-modes.diff).
+const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3af_c_02001b58.c",
+  "assets/code/resource_3af_c_020019c0.c",
+  "assets/code/resource_3af_c_020012f0.c",
+  "assets/code/resource_3af_c_02002b7c.c",
+  "assets/code/resource_3ba_c_02000974.c",
+]);
+// The fork proves a store and a later load at two different constant offsets off
+// one base independent, leaves no edge between them, and lets the load's longer
+// dependence chain outrank the store; the reference keeps source order. The mode
+// forces the conflict when neither MEM is RTX_UNCHANGING_P, adding the edge as
+// REG_DEP_ANTI so it orders without adding cost — a true dependence lengthens
+// the store's path to the block end and regresses resource_381:2e0c.
+const NO_SCHED_ALIAS_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3af_c_02002b7c.c",
+  "assets/code/resource_3b0_c_02000030.c",
+  "assets/code/resource_381_c_02002e0c.c",
+  "assets/code/resource_381_c_02002e5c.c",
+]);
+// gcse's partial-redundancy elimination inserts a load the reference does not
+// have. The mode drops the insert and delete bits of any expression that reads
+// non-RTX_UNCHANGING_P memory and would need an insertion, clearing both maps as
+// a pair because PRE only deletes an occurrence that an insertion made
+// available. Constant-pool loads keep their bits and are still eliminated. This
+// is the narrowest of the four gates: 9 of 1,335 sources change.
+const NO_GCSE_INSERT_LOAD_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_37a_c_02000d9c.c",
+]);
+// A store has no value for a later insn to consume, so it reaches the block end
+// over a zero-cost ordering edge and takes the block's minimum priority, sinking
+// behind every arithmetic insn that still has a chain. The mode saturates a
+// store's effective priority so stores rank alike and above non-stores, leaving
+// store-versus-store to the existing rules. Including loads in the predicate
+// raises collateral from 308 to 498 sources with no further gain.
+const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3bd_c_02000a54.c",
 ]);
 const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
   "assets/code/resource_380_c_02000104.c",
@@ -631,6 +684,18 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-cse-two-insn-immediate"]
       : []),
+    ...(SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fsched-low-dest-first"]
+      : []),
+    ...(NO_SCHED_ALIAS_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fno-sched-alias"]
+      : []),
+    ...(NO_GCSE_INSERT_LOAD_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fno-gcse-insert-load"]
+      : []),
+    ...(SCHED_STORE_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fsched-store-first"]
+      : []),
     ...(GROUPED_DMA_STORE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mgrouped-dma-store"]
       : []),
@@ -690,6 +755,10 @@ export function evidencedRoutingFlags(): string[] {
     ...NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES,
     ...NO_STRICT_ALIASING_OVERLAY_SOURCES,
     ...NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES,
+    ...SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES,
+    ...NO_SCHED_ALIAS_OVERLAY_SOURCES,
+    ...NO_GCSE_INSERT_LOAD_OVERLAY_SOURCES,
+    ...SCHED_STORE_FIRST_OVERLAY_SOURCES,
     ...GROUPED_DMA_STORE_OVERLAY_SOURCES,
     ...EARLY_LITERAL_POOL_OVERLAY_PATHS,
   ]) inspect(join(ROOT, source));
@@ -790,7 +859,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
       xgcc: "845b828e15efedfeacc1956ac2694101e2b520824643d5b9f7608f9c389aee03",
       cpp: "60d0b6637deb0f98cbf952a89694b02a0557fc87ca968121759be139372e90cc",
       tradcpp: "87f89bebf41cd12ac7706604dd24624061b2276f95cc1e9998c22de1accfee2a",
-      cc1: "281a3f692c239c1827005eaf49237e22801b33332a6596526fff146b62d505f4",
+      cc1: "1c4f50c1d63551468e1caeff9e346860bff9663f334fc47b1c28eea825ac440a",
     },
     gs2: {
       xgcc: "7b1a6a96fc4bd5e9de4d83fb2a4ba2ca2a82397cdcd102c4a4d76ef91dc17f58",

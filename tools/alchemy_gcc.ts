@@ -579,7 +579,13 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
 // forces the conflict when neither MEM is RTX_UNCHANGING_P, adding the edge as
 // REG_DEP_ANTI so it orders without adding cost — a true dependence lengthens
 // the store's path to the block end and regresses resource_381:2e0c.
+// Keyed by repository path, so a main-image `src/` source routes here too — the
+// name predates the first main-image member. `08078144` stores a halfword and
+// then reloads a word at a different constant offset off one base; the fork
+// proves them independent and hoists the load, where the reference keeps source
+// order.
 const NO_SCHED_ALIAS_OVERLAY_SOURCES = new Set([
+  "src/08078144.c",
   "assets/code/resource_3af_c_02002b7c.c",
   "assets/code/resource_3b0_c_02000030.c",
   "assets/code/resource_381_c_02002e0c.c",

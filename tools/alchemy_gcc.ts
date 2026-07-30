@@ -498,6 +498,7 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // argument setters tie before a `bl` and the low-destination rule picks
   // `mov r0,sl` over `lsls r1,r1,#1` (notes/resource_381-0e30.md).
   "assets/code/resource_381_c_02000e30.c",
+  "assets/code/resource_38f_c_020002b4.c",
   "assets/code/resource_3a8_c_02001ed8.c",
   "assets/code/resource_3a8_c_02000504.c",
   "assets/code/resource_3a8_c_02000464.c",

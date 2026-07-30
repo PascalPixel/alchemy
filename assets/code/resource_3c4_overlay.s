@@ -2069,25 +2069,8 @@ AlchemyC_02000cc0:
 	bx	r1
 	.2byte 0x0000
 	.2byte 0xfff0
-	.2byte 0xb500
-	movs	r0, #0
-	sub	sp, #12
-	bl	sub_02003edc
-	ldr	r3, [r0, #8]
-	mov	r2, sp
-	str	r3, [r2, #0]
-	ldr	r3, [r0, #12]
-	str	r3, [r2, #4]
-	movs	r1, #128
-	ldr	r3, [r0, #16]
-	lsls	r1, r1, #14
-	adds	r3, r3, r1
-	str	r3, [r2, #8]
-	adds	r0, r2, #0
-	bl	sub_02001aba
-	add	sp, #12
-	pop	{r0}
-	bx	r0
+AlchemyC_02000dc8:
+	.space 0x2a
 	.2byte 0x0000
 	push	{lr}
 	movs	r0, #0
@@ -2709,25 +2692,8 @@ AlchemyC_020012b0:
 	.2byte 0x0000
 AlchemyC_020013a4:
 	.space 0x10
-	push	{lr}
-	movs	r0, #0
-	sub	sp, #12
-	bl	sub_020044c8
-	movs	r1, #128
-	ldr	r3, [r0, #8]
-	lsls	r1, r1, #14
-	mov	r2, sp
-	adds	r3, r3, r1
-	str	r3, [r2, #0]
-	ldr	r3, [r0, #12]
-	str	r3, [r2, #4]
-	ldr	r3, [r0, #16]
-	adds	r0, r2, #0
-	str	r3, [r2, #8]
-	bl	.L_020020a6
-	add	sp, #12
-	pop	{r0}
-	bx	r0
+AlchemyC_020013b4:
+	.space 0x2a
 	.2byte 0x0000
 	push	{r5, lr}
 	sub	sp, #8

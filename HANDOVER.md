@@ -900,7 +900,7 @@ tooling bug: `overlay_verify` takes flags from the command line and says 0, whil
   (`mov r6,sp` before `adds r0,r3,#0`; we emit the reverse). Distinct from the
   r0-r3 case `-fsched-low-dest-first` covers, because the earlier insn writes a
   high register from `sp`. Hand levers took this function 5 → 2 (see
-  `work/reprobe-2026-07-30/NOTES.md`); the residual survived all 40 flag settings,
+  `docs/REPROBE-2026-07-30.md`); the residual survived all 40 flag settings,
   every pairing with `-fno-sched-depend-count`, four statement placements, a
   declaration-initialiser spelling and a return-type sweep. Draft ready at
   `work/reprobe-2026-07-30/reordered/080c1fa8.c`, 84 bytes, baseline flags.
@@ -1117,7 +1117,7 @@ purely mechanical. Do that first.
   adopted). A 1-in-964 yield is not a backlog. The overlay-side seam this
   paragraph describes was real; **the main-image drafted population has no
   equivalent, so do not budget a session for it.** Full measurement in
-  `work/reprobe-2026-07-30/NOTES.md`.
+  `docs/REPROBE-2026-07-30.md`.
 
   The tempting inference was that because *no* note under `work/` mentions
   `-fsched-low-dest-first` or either CSE mode — the corpus wholly predates them —
@@ -1198,3 +1198,18 @@ Do not leave findings only in `work/claude/notes/`; the notes decay into stale
 evidence exactly the way §6 describes, and this session recovered five separate
 categories of it. If a note's blocker was later closed by a mode or a lever, edit
 the note rather than leaving the contradiction for whoever reads it next.
+
+**`work/` is in `.gitignore` — findings left there do not survive the session.**
+This is stronger than the paragraph above and was learned the hard way on
+2026-07-30: a full session of notes and 238 improved drafts sat under
+`work/reprobe-2026-07-30/` and were invisible to `git`, so a bank cycle reported
+"nothing staged; tree matches HEAD" while the tree looked full of new work. Every
+per-function note this project has ever written is in the same position, which is
+the mechanical reason the notes corpus decays.
+
+So: **anything you want the next session to have goes in `HANDOVER.md` or
+`docs/`.** That session's record is `docs/REPROBE-2026-07-30.md`, with per-stem
+floors and their winning flags in `docs/reprobe-2026-07-30-floors.tsv` and
+`docs/reprobe-2026-07-30-mode-matrix.tsv`. Drafts stay untracked by convention;
+regenerate a floor with `tools/finish_draft.sh` rather than trusting a number
+copied from a note.

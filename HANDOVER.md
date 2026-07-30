@@ -129,9 +129,9 @@ Alongside the exact lane, reviewed semantic C currently accounts for **581,276
 executable bytes across 1,047 compiling sources**: 382,970 main-image bytes and
 198,306 overlay bytes. Combined with exact C, **791,994 / 1,339,576 executable
 <<<<<<< HEAD
-Alongside the exact lane, reviewed semantic C currently accounts for **603,076
-executable bytes across 1,108 compiling sources**: 385,850 main-image bytes and
-217,226 overlay bytes. Combined with exact C, **814,702 / 1,339,578 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **619,622
+executable bytes across 1,157 compiling sources**: 385,850 main-image bytes and
+233,772 overlay bytes. Combined with exact C, **831,248 / 1,339,578 executable
 bytes** are expressed as C.
 =======
 bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
@@ -717,6 +717,23 @@ ordinary `push {r5,lr}` prologue and takes two arguments, but sits between
 eight-byte veneer entries, so skimming the band calls it a veneer.
 `overlay_call_targets.ts` classifies it correctly as `prologue` — trust the tool
 over the neighbourhood.
+
+**The displacement/value trap has a second, ADDITIVE form.** The documented
+shape is `subs r3,#192` after a store. The other is `adds r2,#68` / `subs r2,#192`
+applied *after* `adds r3,r3,r2`, where the offset that matters is the
+*pre*-arithmetic value: reading `resource_37f:092c` as `workspace+516` instead of
+`workspace+448` is the natural mistake, and neither owner carrying it has
+anything else to catch it.
+
+**An odd in-image pool word passed to `Func_080000d0` is a two-way witness for
+free.** It proves the 0x02008000 link base *and* names the installed task. Then
+grep the overlay for the counter that task touches — in `resource_37f`, `:092c`
+clears the exact word `:1ac8` decrements, cross-validating both files at no cost.
+
+**A sibling family can name its own consumer.** Six 72-byte siblings all tail-call
+`Func_020017c0(0)` while the dispatcher calls it with `1`, and that callee's
+twelve flag ids are exactly the cue ids the family emits — which gave a 748-byte
+owner's argument semantics before anyone disassembled it.
 
 **Two arithmetic traps that an argument-window simulator gets silently wrong.**
 (1) One register can be both a stored *value* and the next store's

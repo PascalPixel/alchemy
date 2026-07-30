@@ -45,12 +45,79 @@ function optionsOf(argv: string[]): Options {
     else if (argument === "--output" || argument === "-o") options.output = argv[++index];
     else if (argument === "--top") options.top = Number(argv[++index]);
     else if (argument === "-h" || argument === "--help") {
-      console.log("usage: overlay_inventory.ts [--assets DIR] [-o OUTPUT] [--top N]");
+      console.log("usage: overlay_inventory.ts [--assets DIR] [-o OUTPUT] [--top N] [--self-test]");
       process.exit(0);
     } else throw new Error(`unrecognized argument: ${argument}`);
   }
   if (!Number.isInteger(options.top) || options.top < 1) throw new Error("--top must be a positive integer");
   return options;
+}
+
+// How far the adjacency scan may step over the gap between one function's
+// return and the next function's prologue.
+//
+// Filler keeps the budget the scan has always had: four halfwords. Only two are
+// ever needed (one `.align` in front of a pool, one behind it), so this is
+// already slack.
+//
+// Pools are capped by word count rather than by bytes because that is the unit
+// the evidence arrives in. The longest run of consecutive recorded pool words
+// across the 96 overlays is 40 (resource_373:39e8), so 64 clears every real
+// layout while still bounding the scan, so a pathological run of recorded slots
+// cannot walk the whole overlay.
+const FILLER_HALFWORD_BUDGET = 4;
+const POOL_WORD_BUDGET = 64;
+
+// Find the next function entry after a verified function's return.
+//
+// GCC-Thumb puts a function's literal pool immediately after its return, so the
+// bytes between one function's last instruction and the next function's
+// prologue are pool words and alignment filler, not code. The scan used to give
+// up at the first halfword that was neither `0x0000` nor `0x46c0`, which is the
+// first pool word at essentially every real function boundary -- so it recovered
+// only the handful of functions that happen to have no constants at all.
+//
+// Discovery already records the target of every `ldr rN,[pc,#k]` it decodes in
+// `literal_slots`, so the pool can be stepped over from evidence instead of by
+// guessing which words look like data. Each advance this scan makes is licensed
+// by exactly one fact, and it stops at the first halfword that none of them
+// explain:
+//
+//   * `literal_slots` says this word is read as a constant by some pc-relative
+//     load, so it is data -- skip the whole word;
+//   * `0x0000` and `0x46c0` (`mov r8,r8`) are the assembler's own filler;
+//   * a 2-byte gap sitting directly in front of a recorded pool word is the
+//     `.align` that pool needed to reach its 4-byte boundary.
+//
+// Checking `literal_slots` before the prologue test matters for precision as
+// well as reach: a pool word whose low halfword happens to look like `0xb5xx`
+// is data, and testing the slot first refuses to seed it. The same reasoning
+// rejects a candidate that some already-walked function decoded as an
+// instruction -- reaching one means the scan has run into a body, not a
+// boundary.
+function nextEntryAfterReturn(discovery: Discovery, last: number): number | null {
+  let candidate = last + discovery.instructions.get(last)!.size;
+  let fillers = 0;
+  let pools = 0;
+  while (discovery.inside(candidate, 2)) {
+    if (discovery.literal_slots.has(candidate)) {
+      if (++pools > POOL_WORD_BUDGET) return null;
+      candidate += 4;
+      continue;
+    }
+    const half = discovery.u16(candidate);
+    if ((half & 0xff00) === 0xb500) {
+      return discovery.instructions.has(candidate) ? null : candidate;
+    }
+    const alignsPool = (candidate & 3) === 2 && discovery.literal_slots.has(candidate + 2);
+    if (half === 0 || half === 0x46c0 || alignsPool) {
+      if (++fillers > FILLER_HALFWORD_BUDGET) return null;
+      candidate += 2;
+      continue;
+    }
+    return null;
+  }
+  return null;
 }
 
 export function discoverOverlay(data: Buffer): Discovery {
@@ -84,14 +151,9 @@ export function discoverOverlay(data: Buffer): Discovery {
         if (addresses.length === 0) continue;
         const last = addresses.at(-1)!;
         if (discovery.instructions.get(last)?.kind !== "return") continue;
-        let candidate = last + discovery.instructions.get(last)!.size;
-        for (let skipped = 0; skipped <= 8 && discovery.inside(candidate, 2); skipped += 2, candidate += 2) {
-          const half = discovery.u16(candidate);
-          if ((half & 0xff00) === 0xb500) {
-            added = discovery.add_seed(candidate, "thumb", `after-return:${last.toString(16)}`) || added;
-            break;
-          }
-          if (![0, 0x46c0].includes(half)) break;
+        const candidate = nextEntryAfterReturn(discovery, last);
+        if (candidate !== null) {
+          added = discovery.add_seed(candidate, "thumb", `after-return:${last.toString(16)}`) || added;
         }
       }
       if (!added) break;
@@ -107,6 +169,89 @@ export function discoverOverlay(data: Buffer): Discovery {
     for (const site of discovery.jump_table_sites.keys()) fn.unresolved.delete(site);
   }
   return discovery;
+}
+
+// Synthetic overlay images for the self-test: `h` writes a halfword of code and
+// `w` a 32-bit word of data, so each case reads as the layout it is testing.
+// Every image is 0x40 bytes, and the trailing zeros double as a check that a
+// scan running off the end of the code never invents a trailing function.
+function syntheticOverlay(items: Array<[offset: number, width: "h" | "w", value: number]>): Buffer {
+  const data = Buffer.alloc(0x40);
+  for (const [offset, width, value] of items) {
+    if (width === "h") data.writeUInt16LE(value, offset);
+    else data.writeUInt32LE(value, offset);
+  }
+  return data;
+}
+
+// Cover the pool-skip in the adjacency scan. Each image opens with `push {lr}`
+// at offset 0 so the first-prologue seeder has its one root, and every later
+// function must be reached by the scan rather than by any other seeder -- which
+// the `after-return:` source assertion checks explicitly.
+function selfTest(): void {
+  const base = OVERLAY_BASE;
+  const check = (label: string, ok: boolean): void => {
+    if (!ok) throw new Error(`overlay inventory self-test: ${label}`);
+  };
+  const fromScan = (discovery: Discovery, entry: number): boolean => {
+    const fn = discovery.functions.get(entry);
+    return fn !== undefined && [...fn.sources].some((source) => source.startsWith("after-return:"));
+  };
+
+  // A return followed by the function's own two pool words, then a real
+  // prologue. Both words are recorded in `literal_slots` by the `ldr rN,[pc,#4]`
+  // loads at 0x02 and 0x04, so the scan steps over them and reaches 0x10. The
+  // old scan stopped dead at 0x08 on the first pool word's low halfword.
+  const pooled = discoverOverlay(syntheticOverlay([
+    [0x00, "h", 0xb500], [0x02, "h", 0x4801], [0x04, "h", 0x4901], [0x06, "h", 0xbd00],
+    [0x08, "w", 0x0a0b0c0d], [0x0c, "w", 0x12345678],
+    [0x10, "h", 0xb510], [0x12, "h", 0x2000], [0x14, "h", 0xbd10],
+  ]));
+  check("pool words must be stepped over", fromScan(pooled, base + 0x10));
+  check("pool words are not function entries", !pooled.functions.has(base + 0x08) && !pooled.functions.has(base + 0x0c));
+
+  // Genuine data after the return, with no pool word recorded anywhere. The
+  // scan must stop at the first unexplained halfword (0xbeef) and must not
+  // reach the `0xb500` halfword sitting inside the data word at 0x08.
+  const opaque = discoverOverlay(syntheticOverlay([
+    [0x00, "h", 0xb500], [0x02, "h", 0xbd00],
+    [0x04, "w", 0xdeadbeef], [0x08, "w", 0x0002b500],
+  ]));
+  check("unexplained data must stop the scan", !opaque.functions.has(base + 0x08));
+  check("data must not yield extra functions", opaque.functions.size === 1);
+
+  // One recorded pool word followed by an *unrecorded* word, then a real-looking
+  // prologue. The scan advances only over evidence, so the unrecorded word at
+  // 0x0c stops it: reaching 0x10 would mean guessing how long the pool is.
+  const unrecorded = discoverOverlay(syntheticOverlay([
+    [0x00, "h", 0xb500], [0x02, "h", 0x4801], [0x04, "h", 0xbd00], [0x06, "h", 0x0000],
+    [0x08, "w", 0x0a0b0c0d], [0x0c, "w", 0x11223344],
+    [0x10, "h", 0xb510], [0x12, "h", 0xbd10],
+  ]));
+  check("unrecorded words must stop the scan", !unrecorded.functions.has(base + 0x10));
+
+  // The filler cases the scan has always handled must survive the rewrite: a
+  // `0x0000` alignment halfword in front of the pool, and two `0x46c0`
+  // (`mov r8,r8`) padding halfwords behind it.
+  const padded = discoverOverlay(syntheticOverlay([
+    [0x00, "h", 0xb500], [0x02, "h", 0x4801], [0x04, "h", 0xbd00], [0x06, "h", 0x0000],
+    [0x08, "w", 0x0a0b0c0d], [0x0c, "h", 0x46c0], [0x0e, "h", 0x46c0],
+    [0x10, "h", 0xb510], [0x12, "h", 0xbd10],
+  ]));
+  check("alignment and nop padding must be stepped over", fromScan(padded, base + 0x10));
+
+  // A pool word whose own low halfword looks like `push {r4,lr}`. Testing
+  // `literal_slots` before the prologue shape refuses it as data and carries on
+  // to the real function behind it; the old scan seeded the pool word itself.
+  const disguised = discoverOverlay(syntheticOverlay([
+    [0x00, "h", 0xb500], [0x02, "h", 0x4801], [0x04, "h", 0xbd00], [0x06, "h", 0x0000],
+    [0x08, "w", 0x0001b510],
+    [0x0c, "h", 0xb510], [0x0e, "h", 0xbd10],
+  ]));
+  check("a prologue-shaped pool word is data", !disguised.functions.has(base + 0x08));
+  check("the function behind a disguised pool word is found", fromScan(disguised, base + 0x0c));
+
+  console.log("overlay inventory self-test passed");
 }
 
 function targetClass(discovery: Discovery, value: number): string {
@@ -206,7 +351,12 @@ function convertedPlaceholders(source: string): Map<number, number> {
 }
 
 function main(): void {
-  const options = optionsOf(Bun.argv.slice(2));
+  const argv = Bun.argv.slice(2);
+  if (argv.includes("--self-test")) {
+    selfTest();
+    return;
+  }
+  const options = optionsOf(argv);
   // Flat layout, matching the asset builder and the overlay disassembler: the
   // overlay is assets/code/<name>_overlay.s, not <name>/overlay.s. The old
   // nested spelling matched nothing and reported overlays=0 without erroring.

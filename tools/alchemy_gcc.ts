@@ -115,7 +115,11 @@ const NO_EXPENSIVE_SOURCES = new Set(["08092878"]);
 // This four-step signed index loop is emitted as an ascending loop in the
 // reference translation unit. Strength reduction rewrites it to a descending
 // counter and changes both the allocation and loop tail.
-const NO_STRENGTH_REDUCE_SOURCES = new Set(["080200cc", "080a9d3c"]);
+// 080200cc was listed here speculatively while it was still unconverted assembly:
+// with the flag its reconstruction is 128 bytes and 62 mismatched halfwords, and
+// without it 132/132 exact. Removing the stem is what converted it. Routing keys
+// per stem, so 080a9d3c (adopted, unaffected) keeps the flag.
+const NO_STRENGTH_REDUCE_SOURCES = new Set(["080a9d3c"]);
 // arm_reorg pulls the two halves of a split constant back together when the
 // scheduler put an independent insn between them. These references want the
 // insn left where it is; see alchemy-gcc 1ec1044 and work/hand/080a1090.
@@ -267,6 +271,13 @@ const EARLY_FRAME_ALLOCATION_SOURCES = new Set(["0809802c", "08004760"]);
 // that one pair and nothing else. Every 02000048 entry shares an object with
 // the 020000a0 entry directly above it.
 const CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES = new Set([
+  // resource_3bf:1cf0 places the arg0 register move ahead of its immediate
+  // companions at `Func_0200742a(arg0, 257, 60)`; byte-exact (112/112) under
+  // the mode, 2 halfwords without it. Scoped argument locals and a
+  // prototype-less callee were tried and rejected, and the mode does not fix
+  // its sibling 1c4c, so this stays a per-function route
+  // (notes/resource_3bf-1cf0.md).
+  "assets/code/resource_3bf_c_02001cf0.c",
   "assets/code/resource_3a0_c_02000048.c",
   "assets/code/resource_3a1_c_02000048.c",
   "assets/code/resource_3a5_c_02000048.c",
@@ -333,7 +344,17 @@ const NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES = new Set([
 // that pair and makes the natural typed source 144/144 bytes exact. Keep the
 // broadly disruptive scheduler model change source-scoped.
 const THUMB_IMMEDIATE_LATENCY_SOURCES = new Set(["080babdc"]);
+// Main-image members of the ascending-destination-register tie-break. The
+// high-register form covers ties with no call in them: a loop preheader's run of
+// loop-setup copies (08098954 and its identical sibling 0809a294), and a
+// parameter save at function entry whose position assign_parms fixes (08097540,
+// which needs both directions and keeps its existing grouped-DMA route).
+// Do NOT add the low-register form to 08098954/0809a294 — it regresses them.
+// See docs/compiler-evidence/sched-high-dest-first.diff.
+const SCHED_HIGH_DEST_FIRST_SOURCES = new Set(["08098954", "0809a294", "08097540"]);
+const SCHED_LOW_DEST_FIRST_SOURCES = new Set(["08097540"]);
 const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_383_c_02000428.c",
   "assets/code/resource_37a_c_02001380.c",
   "assets/code/resource_37a_c_02001790.c",
   "assets/code/resource_37a_c_02002924.c",
@@ -405,6 +426,121 @@ const NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES = new Set([
 // analysis conservative (-fno-strict-aliasing) and mismatch without it
 // (notes/resource_3c9-{0104,215c,3600}.md); each entry carries its own
 // exact-byte proof.
+// The reference objects rematerialize a two-instruction Thumb immediate
+// (`movs rN,#K` then `lsls rN,rN,#n`, or `movs`/`negs` for a negatable value)
+// independently at every call site. `cse_insn` records the register just loaded
+// with such a constant in the constant's own equivalence class, so `insert_regs`
+// merges the quantities of every register holding it, `canon_reg` rewrites the
+// later loads, and the value ends up shared in a callee-saved register that also
+// changes the prologue. `arm_rtx_costs` prices the constant at
+// COSTS_N_INSNS(2), which is why one-instruction immediates never share.
+// -fno-cse-two-insn-immediate suppresses only that sharing (mechanism, RTL
+// evidence, prototype, and the 109-source collateral measurement are in
+// docs/compiler-evidence/). It must stay per-source: enabled globally it changes
+// 109 of the 1,335 gcc296-routed sources. Literal-pool constants are
+// deliberately excluded, since a pool load is one instruction and sharing it is
+// not a size change.
+const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3bf_c_02000bec.c",
+  "assets/code/resource_3af_c_02001a98.c",
+  "assets/code/resource_3af_c_02004218.c",
+  // Parked before the mode existed, byte-exact under it with its existing draft
+  // and no further source work.
+  "assets/code/resource_3c8_c_020009c8.c",
+  // Paired with -fsched-low-dest-first below: removing the constant sharing
+  // exposes a scheduling transposition that the tie-break then fixes.
+  "assets/code/resource_373_c_020031b4.c",
+  "assets/code/resource_3a4_c_02000c9c.c",
+  "assets/code/resource_3af_c_02001b58.c",
+  "assets/code/resource_3af_c_020019c0.c",
+  "assets/code/resource_3af_c_020012f0.c",
+  "assets/code/resource_3af_c_02002b7c.c",
+  "assets/code/resource_3ba_c_02000974.c",
+]);
+// Every edge into a CALL_INSN costs 1, so a call's argument setters tie in
+// `rank_for_schedule` on priority, insn class and forward-dependent count alike,
+// and the fork falls through to the `INSN_LUID` tie-break. It then emits a
+// two-instruction immediate's `lsls` where the reference emits an independent
+// `movs` for a lower argument register. The mode adds a final tie-break
+// preferring the lower-numbered destination register, restricted to insns that
+// have a CALL_INSN among their forward dependents. Do NOT combine with
+// -mthumb-immediate-latency, which subsumes and then breaks these
+// (docs/compiler-evidence/sched-and-pre-modes.diff).
+const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  // Needs the tie-break alone, without the paired constant-sharing mode: two
+  // argument setters tie before a `bl` and the low-destination rule picks
+  // `mov r0,sl` over `lsls r1,r1,#1` (notes/resource_381-0e30.md).
+  "assets/code/resource_381_c_02000e30.c",
+  // resource_37b members: routed per function, NOT overlay-wide — this mode
+  // regresses that overlay's three large word-store sheets (02001c14, 02001d14,
+  // 02001e10), which are exact at default flags.
+  "assets/code/resource_37b_c_020015d4.c",
+  "assets/code/resource_37b_c_020015fc.c",
+  "assets/code/resource_37b_c_0200101c.c",
+  "assets/code/resource_37b_c_0200166c.c",
+  "assets/code/resource_37b_c_020016a4.c",
+  "assets/code/resource_37b_c_0200195c.c",
+  "assets/code/resource_3a4_c_02000c9c.c",
+  "assets/code/resource_394_c_020008b0.c",
+  "assets/code/resource_3b8_c_02000264.c",
+  "assets/code/resource_373_c_020031b4.c",
+  "assets/code/resource_3af_c_02001b58.c",
+  "assets/code/resource_3af_c_020019c0.c",
+  "assets/code/resource_3af_c_020012f0.c",
+  "assets/code/resource_3af_c_02002b7c.c",
+  "assets/code/resource_3ba_c_02000974.c",
+]);
+// The fork proves a store and a later load at two different constant offsets off
+// one base independent, leaves no edge between them, and lets the load's longer
+// dependence chain outrank the store; the reference keeps source order. The mode
+// forces the conflict when neither MEM is RTX_UNCHANGING_P, adding the edge as
+// REG_DEP_ANTI so it orders without adding cost — a true dependence lengthens
+// the store's path to the block end and regresses resource_381:2e0c.
+const NO_SCHED_ALIAS_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3af_c_02002b7c.c",
+  "assets/code/resource_3b0_c_02000030.c",
+  "assets/code/resource_381_c_02002e0c.c",
+  "assets/code/resource_381_c_02002e5c.c",
+]);
+// gcse's partial-redundancy elimination inserts a load the reference does not
+// have. The mode drops the insert and delete bits of any expression that reads
+// non-RTX_UNCHANGING_P memory and would need an insertion, clearing both maps as
+// a pair because PRE only deletes an occurrence that an insertion made
+// available. Constant-pool loads keep their bits and are still eliminated. This
+// is the narrowest of the four gates: 9 of 1,335 sources change.
+const NO_GCSE_INSERT_LOAD_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_37a_c_02000d9c.c",
+]);
+// A store has no value for a later insn to consume, so it reaches the block end
+// over a zero-cost ordering edge and takes the block's minimum priority, sinking
+// behind every arithmetic insn that still has a chain. The mode saturates a
+// store's effective priority so stores rank alike and above non-stores, leaving
+// store-versus-store to the existing rules. Including loads in the predicate
+// raises collateral from 308 to 498 sources with no further gain.
+const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3bd_c_02000a54.c",
+]);
+// The pool-word sibling of the mode above, and a different kind of defect: for a
+// two-instruction constant the cost model is right and only the reference's
+// preference differs, but `arm_rtx_costs` prices a literal-pool constant at
+// COSTS_N_INSNS(3) when `*thumb_movsi_insn` emits a single `ldr rN,[pc,#K]` —
+// wrong by 3x — so every repeated pool word is shared in a callee-saved register
+// and the prologue changes with it. The reference reloads the pool word per site.
+// A function whose reference BOTH reloads some pool words and keeps another in a
+// register to derive a related value by an add cannot be matched by this gate,
+// because related-value reuse needs exactly the recording the flag suppresses
+// (measured on resource_373:2cb0 — do not re-attack it with a whole-function
+// flag). docs/compiler-evidence/cse-pool-immediate.diff.
+const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_37b_c_02001b44.c",
+  "assets/code/resource_37b_c_0200195c.c",
+  "assets/code/resource_3a4_c_02000c9c.c",
+  "assets/code/resource_394_c_020008b0.c",
+  "assets/code/resource_3b8_c_02000264.c",
+  "assets/code/resource_3bf_c_02004bfc.c",
+  "assets/code/resource_39c_c_020014cc.c",
+  "assets/code/resource_3bf_c_0200175c.c",
+]);
 const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
   "assets/code/resource_380_c_02000104.c",
   "assets/code/resource_39c_c_02000104.c",
@@ -422,6 +558,11 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   "assets/code/resource_37a_c_020001ec.c",
   "assets/code/resource_37a_c_02001a58.c",
   "assets/code/resource_373_c_02000ba8.c",
+  // Third and fourth members of this overlay's rerun-cse family: the rerun caches
+  // twice- and thrice-used pool constants in callee-saved registers where the
+  // reference rematerializes them per use.
+  "assets/code/resource_373_c_02005950.c",
+  "assets/code/resource_373_c_02005a40.c",
   "assets/code/resource_399_c_02000abc.c",
   "assets/code/resource_3b8_c_0200049c.c",
   // resource_3a4 status-window family: default flags CSE-hoist a thrice-used
@@ -431,6 +572,17 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3a4_c_02000a94.c",
   "assets/code/resource_3a4_c_02000b3c.c",
   "assets/code/resource_3a4_c_02000bd8.c",
+  // resource_39c:1c9c and 1d3c both load the pool constant 0x256 at two sites,
+  // one of them in the entry block, so the entry-hoisted-local lever cannot
+  // reach them and a &Value_ spelling is CSEd exactly like the const_int. Both
+  // are byte-exact under the flag alone.
+  "assets/code/resource_39c_c_02001c9c.c",
+  "assets/code/resource_39c_c_02001d3c.c",
+  // resource_3ba:0540 shares its 0x301 argument between the entry-block call
+  // and the else-branch call once cse reruns; the reference keeps both sites
+  // independent. Byte-exact (752/752) under the flag alone
+  // (notes/resource_3ba-0540.md).
+  "assets/code/resource_3ba_c_02000540.c",
 ]);
 // 既定ABI(標準のr4被呼出保存)で構築された収蔵ライブラリ翻訳単位。
 // 証拠: r4を保存する序文は -fcall-used-r4 の下では出ない
@@ -535,6 +687,8 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
+    ...(SCHED_HIGH_DEST_FIRST_SOURCES.has(stem) ? ["-fsched-high-dest-first"] : []),
+    ...(SCHED_LOW_DEST_FIRST_SOURCES.has(stem) ? ["-fsched-low-dest-first"] : []),
     ...(NO_CONTIGUOUS_IMMEDIATE_SOURCES.has(stem) ? ["-fno-thumb-contiguous-immediate"] : []),
     ...(NO_SCHED_DEPEND_COUNT_SOURCES.has(stem) ? ["-fno-sched-depend-count"] : []),
     ...(SPLIT_GROUP_BASE_SOURCES.has(stem) ? ["-fthumb-split-group-base"] : []),
@@ -588,6 +742,24 @@ export function cflagsForSource(source: string): readonly string[] {
       : []),
     ...(NO_STRICT_ALIASING_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-strict-aliasing"]
+      : []),
+    ...(NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fno-cse-two-insn-immediate"]
+      : []),
+    ...(NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fno-cse-pool-immediate"]
+      : []),
+    ...(SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fsched-low-dest-first"]
+      : []),
+    ...(NO_SCHED_ALIAS_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fno-sched-alias"]
+      : []),
+    ...(NO_GCSE_INSERT_LOAD_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fno-gcse-insert-load"]
+      : []),
+    ...(SCHED_STORE_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fsched-store-first"]
       : []),
     ...(GROUPED_DMA_STORE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mgrouped-dma-store"]
@@ -647,6 +819,12 @@ export function evidencedRoutingFlags(): string[] {
     ...NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES,
     ...NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES,
     ...NO_STRICT_ALIASING_OVERLAY_SOURCES,
+    ...NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES,
+    ...NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES,
+    ...SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES,
+    ...NO_SCHED_ALIAS_OVERLAY_SOURCES,
+    ...NO_GCSE_INSERT_LOAD_OVERLAY_SOURCES,
+    ...SCHED_STORE_FIRST_OVERLAY_SOURCES,
     ...GROUPED_DMA_STORE_OVERLAY_SOURCES,
     ...EARLY_LITERAL_POOL_OVERLAY_PATHS,
   ]) inspect(join(ROOT, source));
@@ -733,7 +911,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
       xgcc: "87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed",
       cpp: "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
       tradcpp: "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
-      cc1: "85aa8d6f576af11c9875958a6ee912e3cc23e769411029d62be07a0b6467efdc",
+      cc1: "df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4",
     },
     gs2: {
       xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",
@@ -747,7 +925,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
       xgcc: "845b828e15efedfeacc1956ac2694101e2b520824643d5b9f7608f9c389aee03",
       cpp: "60d0b6637deb0f98cbf952a89694b02a0557fc87ca968121759be139372e90cc",
       tradcpp: "87f89bebf41cd12ac7706604dd24624061b2276f95cc1e9998c22de1accfee2a",
-      cc1: "e322a2242bca5c7a98703ff74cb84aa1abd58859cbe7f5b306cedbccdc0d9ee7",
+      cc1: "c1cc6d2864567297451662d36fba7abbce7a916d138f7115832a265de6868a06",
     },
     gs2: {
       xgcc: "7b1a6a96fc4bd5e9de4d83fb2a4ba2ca2a82397cdcd102c4a4d76ef91dc17f58",
@@ -1360,7 +1538,7 @@ function selfTest(): void {
     throw new Error("grouped DMA O1 routing self-test failed");
   }
   const callArg0MoveFirstOverlays = [...CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES].sort();
-  if (callArg0MoveFirstOverlays.length !== 28) {
+  if (callArg0MoveFirstOverlays.length !== 29) {
     throw new Error("overlay call-argument source allowlist self-test failed");
   }
   for (const path of callArg0MoveFirstOverlays) {

@@ -1,0 +1,64 @@
+typedef signed char s8;
+typedef unsigned char u8;
+typedef signed short s16;
+typedef unsigned short u16;
+typedef signed int s32;
+typedef unsigned int u32;
+#define NULL ((void *)0)
+
+extern s32 Data_0200a980[];
+extern void Func_02003de6(void);
+
+void Func_02001d14(void) {
+    s32 *p = Data_0200a980;
+    p[0] = 4;
+    p[1] = 55;
+    p[2] = 36;
+    p[3] = 40;
+    p[4] = 4;
+    p[5] = 3;
+    p[6] = 4;
+    p[7] = 30;
+    p[8] = 36;
+    p[9] = 10;
+    p[10] = 2;
+    p[11] = 1;
+    p[12] = 4;
+    p[13] = 28;
+    p[14] = 36;
+    p[15] = 10;
+    p[16] = 2;
+    p[17] = 1;
+    p[18] = 4;
+    p[19] = 30;
+    p[20] = 18;
+    p[21] = 10;
+    p[22] = 2;
+    p[23] = 1;
+    p[24] = 0x80c;
+    p[25] = 0x4000;
+    p[26] = 654;
+    p[27] = 132;
+    p[28] = 12;
+    p[29] = 55;
+    p[30] = 36;
+    p[31] = 40;
+    p[32] = 4;
+    p[33] = 3;
+    p[34] = 4;
+    p[35] = 30;
+    p[36] = 36;
+    p[37] = 10;
+    p[38] = 2;
+    p[39] = 1;
+    p[40] = 4;
+    p[41] = 28;
+    p[42] = 18;
+    p[43] = 10;
+    p[44] = 2;
+    p[45] = 1;
+    p[46] = 11;
+    p[47] = 664;
+    p[48] = 152;
+    Func_02003de6();
+}

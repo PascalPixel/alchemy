@@ -202,6 +202,20 @@ function validateClassificationCounts(
   }
 }
 
+// Content-addressed region cache. No assembly source under assets/code uses
+// `.include` or `.incbin`, so a region's whole input closure is its own bytes
+// plus the link address; a changed source or a changed address produces a
+// different key and reassembles. Adopting one function reassembles exactly the
+// overlay it touched and reuses the other ~1,806 regions.
+const REGION_CACHE = join(ROOT, "out/cache/asm-regions");
+
+export function regionCacheKey(sourceBytes: Uint8Array, linkedAddress: number): string {
+  const digest = new Bun.CryptoHasher("sha256");
+  digest.update(`asm-v1:${linkedAddress.toString(16)}\0`);
+  digest.update(sourceBytes);
+  return digest.digest("hex");
+}
+
 async function buildRegion(source: string, outputDir: string, runAddress?: number): Promise<BuiltRegion> {
   const name = stem(source);
   const address = Number.parseInt(name, 16);
@@ -209,6 +223,13 @@ async function buildRegion(source: string, outputDir: string, runAddress?: numbe
   const object = join(outputDir, `${name}.o`);
   const elf = join(outputDir, `${name}.elf`);
   const binary = join(outputDir, `${name}.bin`);
+  const sourceBytes = readFileSync(source);
+  const cached = join(REGION_CACHE, `${regionCacheKey(sourceBytes, linkedAddress)}.bin`);
+  if (existsSync(cached)) {
+    const data = readFileSync(cached);
+    writeFileSync(binary, data);
+    return { address, runAddress: linkedAddress, data };
+  }
   await run([
     "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
     "-o", object, source,
@@ -240,7 +261,10 @@ async function buildRegion(source: string, outputDir: string, runAddress?: numbe
     "-o", elf, ...objects,
   ]);
   await run(["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", elf, binary]);
-  return { address, runAddress: linkedAddress, data: readFileSync(binary) };
+  const data = readFileSync(binary);
+  mkdirSync(REGION_CACHE, { recursive: true });
+  writeFileSync(cached, data);
+  return { address, runAddress: linkedAddress, data };
 }
 
 function usage(): void {

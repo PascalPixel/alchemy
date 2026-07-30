@@ -635,6 +635,14 @@ against the approved bundle; full sourced notes in
   overwritten, unread 12-byte group is deleted as a dead store before the
   peephole runs; `volatile` preserves it but suppresses the mode entirely.
   No C shape yields both `stmia` groups.
+- **Correction (2026-07-30):** the second half of that claim is wrong, and the
+  real blocker is narrower. Measured on 080f377c (three kicks) and 0800300c (two
+  kicks) with a `volatile` descriptor plus `-mgrouped-dma-store`: **every group
+  but the last one forms** — 2 `stmia`s of 3 and 1 of 2 respectively. So the
+  peephole does fire on volatile MEMs. What defeats the final group is that its
+  three values never land in three consecutive ascending registers. Attack that
+  register-assignment problem, not the peephole's volatile handling
+  (work/claude/notes/main-grouped-dma-multi-kick.md).
 - **Current evidence:** 080a22f4 (48-byte leaf, two kicks): kick #2
   reproduced byte-exact under the mode; best full-function floor 37
   mismatches.

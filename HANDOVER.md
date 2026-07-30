@@ -77,15 +77,15 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **523,620
-executable bytes across 950 compiling sources**: 382,970 main-image bytes and
-140,650 overlay bytes. Combined with exact C, **734,014 / 1,339,574 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **548,096
+executable bytes across 1,002 compiling sources**: 382,970 main-image bytes and
+165,126 overlay bytes. Combined with exact C, **758,490 / 1,339,574 executable
 bytes** are expressed as C.
 
-**Twelve overlays are now converted in full**, none skipping anything:
+**Fourteen overlays are now converted in full**, none skipping anything:
 `resource_3b8` (15,028 bytes), `resource_372` (10,202), `resource_371` (9,650),
 `resource_39f` (9,278), `resource_39a` (7,096), `resource_3b4` (6,226) and
-`resource_373` (13,192), `resource_3bf` (10,144), `resource_38f` (9,212), `resource_383` (7,792) and
+`resource_373` (13,192), `resource_3bf` (10,144), `resource_375` (6,536), `resource_3aa` (6,376), `resource_38f` (9,212), `resource_383` (7,792) and
 `resource_3c4` (24 of 25 rows, one 2,636-byte
 dispatcher pre-measured)
 Alongside the exact lane, reviewed semantic C currently accounts for **475,156
@@ -379,6 +379,14 @@ normally — `resource_39a` converted all 64 on that basis. Establish which regi
 your overlay is in *before* skipping anything; the cheapest test is whether the
 target range extends past the image end.
 
+**Adjacent equal-size rows are worth eyeballing before drafting either.**
+`resource_375:19a4` and `:19e8` are 68-byte bodies identical but for one id
+(0x087d/0x087e) and one argument (0/1), and `overlay_call_targets.ts` reports the
+same four callees over five sites for both. The second file then costs a minute
+and comes with a correctness proof. `overlay_twins.ts` finds these across
+overlays; within one overlay, sorting rows by span and scanning for equal sizes
+is faster than running anything.
+
 **The cheapest witness that a `bl` target is a per-call-site label: find two
 near-identical owners.** `resource_371:008c` and `:00d4` are byte-identical over
 all 72 bytes except **two** values (an immediate 42 vs 24, a pool word 0x809 vs
@@ -435,6 +443,13 @@ shows the real import is `Func_0808a080`. Diffing an exact sibling against
 `overlay_call_targets.ts` therefore confirms each import's arity and field
 offsets against material that already reproduces the ROM, rather than inferring
 them. This is how one lane fixed its actor-record layouts instead of guessing.
+
+**A gate flag's setter is often in a DIFFERENT owner.** `resource_375:0170`
+tests flag 0x0801 on entry and never sets it; the setter is `:0964`, and `:150c`
+reads the same flag to pick a scene variant. Its siblings `:0be0` and `:12a0` do
+set their own gates, so the asymmetry reads as a transcription error until the
+writer is found. Same shape as the shared-globals rule below — before concluding
+a one-shot scene is broken, grep the overlay for the flag's writer.
 
 **Two owners that share globals should be read together.** Neither
 `resource_38f:08ec` (which sets three globals, installs a task and spins on one
@@ -537,6 +552,19 @@ will invent imports.
 toolchain rejects `void Func_X(); if (Func_X() != 0)` with "void value not
 ignored as it ought to be". Declare any import used in a condition as `s32` or a
 pointer — arity may be left open, the return type may not.
+
+**Literal pools inside an owner have bitten three lanes in three different ways.
+All three guards are needed together.**
+
+1. *Skip the pool's bytes* — do not decode them as instructions.
+2. *But carry register state ACROSS it.* An overlay routinely branches over its
+   pool mid-call-setup: `resource_3aa:0770` sets r1=856 and r2=440, `b.n`s over a
+   10-word pool, then sets r0=8 and calls — one `Func_0808a0d0(8, 856, 440)`, not
+   two fragments. A simulator that resets or restarts at a pool boundary drops
+   those arguments silently. Same shape at `:10e8`, and `resource_373` does it
+   ten times across three owners.
+3. *Never model a pool word as an instruction, even a harmless-looking one* — see
+   below.
 
 **Exclude literal-pool ranges from an argument-window simulator OUTRIGHT — the
 "clear only the destination register" guard is NOT sufficient.** A pool word can

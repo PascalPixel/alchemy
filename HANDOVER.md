@@ -573,6 +573,16 @@ ordinary functions in one overlay were reported `unknown`. It now recognises the
 `unknown` to 3. Whatever remains is overwhelmingly pool words that decode as a BL
 pair — check the target's first halfword before concluding anything.
 
+**...and it works BACKWARD too.** `resource_370:03cc` has one long `bl` forward
+to its own `movs r0,#0` exit and one *backward* to its own main-loop head. Same
+test either way: nothing pushed, `lr` dead because the return address is already
+on the stack.
+
+**A veneer pointing into IWRAM is not always `call_via`.** `resource_370`'s
+veneers at file offsets 0x1314/0x131c resolve to `Func_03000380`/`Func_030003ac`
+— the relocated divide and modulo helpers — reached as ordinary two-argument
+calls through the normal veneer table, with no r3/r4 load at all.
+
 **A `bl` can be a long unconditional branch to the owner's own exit.**
 `resource_3c4:259c` has five that resolve to its own epilogue, past `b.n` range.
 They are not calls; `lr` is clobbered harmlessly because the epilogue pops the
@@ -672,6 +682,16 @@ negate it. Convert the hub first and each member costs minutes while the family
 cross-checks itself. **`overlay_twins.ts` does NOT find these** — the bodies
 differ too much — so sort rows by span and eyeball adjacent sizes.
 
+**`Data_02000240[224]` is a cross-overlay idiom with a fixed shape** — the
+signed halfword at byte offset 448, branched on. Four byte-exact siblings
+(`39a:0050`, `3b2:0d48`, `3b7:0044`) plus `370:0384` share it, so reading one
+settles the layout for any new overlay that loads `0x02000240`.
+
+**Small pooled constants in byte-exact overlay sources are spelled
+`(s32)&Value_000000NN`.** That is a pooling device for the exact lane, not
+meaning. A semantic file should write the integer and say so, or a reader will
+hunt for a symbol that does not exist.
+
 **`>> 20` on a 16.16 coordinate is the tile-grid idiom**, not an odd shift:
 `>> 16` to integers then `>> 4` for the 16-pixel grid. Read as a single shift,
 every column and row constant looks arbitrary.
@@ -679,6 +699,13 @@ every column and row constant looks arbitrary.
 **Equal span AND equal `calls` is a stronger twin filter than span alone** — it
 found a bit-identical 64-byte pair differing in three pool words that
 `overlay_twins.ts` reported as `groups=0`.
+
+**A TOTAL-count match can hide a permutation — this is why the proof must be
+per-target.** On `resource_370:03cc` the naive total was **137 = 137 with five
+targets mutually mis-assigned**: `Func_08015070`/`08015280`/`08015088` mis-paired,
+and divide swapped with modulo (`Func_03000380`/`030003ac`). The total was
+identical before and after the fix. A count proves nothing; only the per-target
+comparison caught it.
 
 **Shapes that DEFLATE the multiset — the mirror of the inflation list below,
 and the reason to compare per-target rather than eyeball a total.** Both fired in

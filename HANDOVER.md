@@ -105,15 +105,15 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **576,124
-executable bytes across 1,043 compiling sources**: 382,970 main-image bytes and
-193,154 overlay bytes. Combined with exact C, **786,842 / 1,339,576 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **581,276
+executable bytes across 1,047 compiling sources**: 382,970 main-image bytes and
+198,306 overlay bytes. Combined with exact C, **791,994 / 1,339,576 executable
 bytes** are expressed as C.
 
-**Eighteen overlays are now converted in full**, none skipping anything:
+**Twenty overlays are now converted in full**, none skipping anything:
 `resource_3b8` (15,028 bytes), `resource_372` (10,202), `resource_371` (9,650),
 `resource_39f` (9,278), `resource_39a` (7,096), `resource_3b4` (6,226) and
-`resource_373` (13,192), `resource_3bf` (10,144), `resource_375` (6,536), `resource_374` (7,468), `resource_3a8` (7,564), `resource_391` (7,068), `resource_3bb` (5,680), `resource_3aa` (6,376), `resource_38f` (9,212), `resource_383` (7,792) and
+`resource_373` (13,192), `resource_3bf` (10,144), `resource_375` (6,536), `resource_374` (7,468), `resource_3a8` (7,564), `resource_391` (7,068), `resource_3c5` (6,382), `resource_37b` (6,032), `resource_3bb` (5,680), `resource_3aa` (6,376), `resource_38f` (9,212), `resource_383` (7,792) and
 Alongside the exact lane, reviewed semantic C currently accounts for **523,620
 executable bytes across 950 compiling sources**: 382,970 main-image bytes and
 140,650 overlay bytes. Combined with exact C, **734,014 / 1,339,574 executable
@@ -579,6 +579,22 @@ thunk-bank shape is `ldr r3,[pc] ; bl` — but where the loaded word is in-image
 data (`0x0200dxxx`) rather than the IWRAM band (`0x030001xx`), r3 is an ordinary
 fourth argument. The band is the discriminator, not the shape.
 
+**Resolve site -> target with `--json`, never by pairing the tool's summary
+against call shapes.** The summary is a *histogram*, not a mapping. One lane
+inferred the mapping from argument shapes and got it exactly backwards —
+`Func_0808a080` is the scene-record accessor and `Func_08009278` the
+four-argument action, the opposite of what the shapes suggest in isolation. A
+two-import owner has a 50% chance of reading plausibly backwards. What settled it
+was a third owner using `Func_0808a080(0)` as an accessor independently.
+
+**Two call-site shapes break a naive multiset, both by inflating it.** State the
+proof as per-target counts and account for these before trusting a mismatch:
+- A `bl` reached from two control paths is one site but would be two C call
+  expressions; spell it once and `goto` the shared target
+  (`resource_3c5:28a0` at 0x02002af6, entered from both the head and a jump-table
+  case that branches into the middle of the body).
+- A long `bl` to the owner's own epilogue is not a call at all.
+
 **Completeness proof, best form: compare MULTISETS.** Extract the multiset of
 `bl` targets from `assets/code/<overlay>_overlay.s` and compare it to the
 multiset of `Func_…(` occurrences in the finished C. On a 2,716-byte owner that
@@ -631,6 +647,22 @@ will invent imports.
 toolchain rejects `void Func_X(); if (Func_X() != 0)` with "void value not
 ignored as it ought to be". Declare any import used in a condition as `s32` or a
 pointer — arity may be left open, the return type may not.
+
+**The `movs r3,#N / ldrsh rX,[r0,r3]` offset register survives into the next
+`bl` and reads as a phantom last argument.** A simulator reports
+`Func_0808a0b8(slot, x, z, 18)` where 18 is merely the load offset for the +18
+halfword. Hit six times in two owners of one overlay — it recurs per-owner, not
+per-overlay, so expect it in every cutscene row.
+
+**A pool can be hopped by a bare unconditional `b.n` with no conditional
+structure around it** (`resource_3c5:1b10` at 0x02001f0a). A control-flow pool
+walk must follow lone forward `b.n`s, not just branch diamonds.
+
+**A real function can hide inside the import band.** `resource_37b:23a4` has an
+ordinary `push {r5,lr}` prologue and takes two arguments, but sits between
+eight-byte veneer entries, so skimming the band calls it a veneer.
+`overlay_call_targets.ts` classifies it correctly as `prologue` — trust the tool
+over the neighbourhood.
 
 **Two arithmetic traps that an argument-window simulator gets silently wrong.**
 (1) One register can be both a stored *value* and the next store's

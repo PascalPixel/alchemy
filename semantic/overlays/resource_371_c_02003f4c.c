@@ -13,8 +13,9 @@ typedef unsigned int u32;
  * of the IWRAM word being zero — i.e. every sixteenth tick.
  *
  * Call-target convention: each `bl` is named by the address its call site
- * computes; that address is an import identity in this load-relocated
- * overlay.  Old-style declarations, because the interfaces are unknown.
+ * computes; that address is a per-call-site label for a
+ * load-time-relocated import, not a place to disassemble and not a global
+ * identity (see the note in resource_371_c_0200008c.c).  Old-style declarations, because the interfaces are unknown.
  */
 
 extern u32 Data_03001e40;

@@ -18,6 +18,8 @@ not equal object size.
 
 The project runs as two parallel efforts, named after the Golden Sun lighthouses.
 Know which one you are before you change anything.
+[docs/BRANCH-PROTOCOL.md](docs/BRANCH-PROTOCOL.md) is the short version of who
+owns what and what reaches you how — read it first if you are new to a branch.
 
 | | **Mercury Lighthouse** | **Venus Lighthouse** |
 | --- | --- | --- |

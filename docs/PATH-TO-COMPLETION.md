@@ -1027,6 +1027,12 @@ Measured consecutive cohorts established a higher-throughput lane:
 4. Treat split manifest regions as possible single functions. Follow live frame
    state through continuations and account complete executable ranges in
    `semantic/main-regions.json`; never count a head-only C file.
+   Resolve and size the transitive continuation graph before assigning a
+   `split_first` or `merge_with_continuations` target. `080e47b8` demonstrates
+   why: its 768-byte queue row is only a dispatcher for a 16-row owner whose
+   live 184-byte frame reaches the sole epilogue at `080e660a`. The complete
+   span is 7,762 bytes including embedded data and contains 231 static calls,
+   more than ten times the work implied by the queue.
 5. Bank each coherent cohort after `bun run verify`. The semantic lane does not
    weaken the exact lane: exact builds must remain byte-identical and
    source-only ownership must remain complete.

@@ -25,8 +25,9 @@ bun run build:semantic
 
 Admission means:
 
-1. the function boundary and control flow were reconstructed from clean project
-   evidence;
+1. the complete executable owner and its control flow were reconstructed from
+   clean project evidence; a manifest row or decompiler seed is not sufficient
+   when live frame or register state continues into another range;
 2. the C compiles for the target ABI;
 3. calls, memory accesses, signedness, and observable side effects were
    reviewed against the disassembly;
@@ -39,3 +40,17 @@ source. Those remain separate later stages.
 diagnostic inventory misses a genuine outer owner and seeds hidden-context
 entries inside it, record the reviewed prologue-to-return span and its evidence
 in `semantic/regions.json`; never rename an internal seed into a fake function.
+
+For throughput, assign one complete owner to each fresh agent and require an
+accounting of every assembly call. Use m2c output as a drafting hint, not as
+authority: missing stack arguments, fake thunk arguments, unset call-clobbered
+values, and conflated high-register lifetimes must be recovered from assembly
+dataflow and typed call-site evidence. Work in independent three-owner cohorts,
+run `bun run build:semantic` during drafting, and run one `bun run verify`
+before banking the settled cohort.
+
+Before assigning a candidate labelled `split_first` or
+`merge_with_continuations`, resolve its transitive continuation graph and size
+the complete owner. The queue row may describe only a dispatcher or first
+fragment, so using its byte count as the work budget can turn a nominally small
+task into an unplanned multi-kilobyte rewrite.

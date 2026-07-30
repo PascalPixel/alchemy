@@ -1999,10 +1999,35 @@ only from a `manual_regions` entry in `semantic/regions.json`. It deliberately
 refuses the decoded-region inventory, which is build output and therefore
 outside what a tracked-evidence-only tool may read, so an owner missing from
 that file is reported in `provenance.semantic_unresolved` rather than
-estimated. At 921 semantic sources, 303 overlay owners are unlisted: the map
-can size 8,458 of the 92,186 overlay bytes this file claims, while its
-main-image figure of 382,970 agrees exactly. Every overlay owner Venus adds to
-`semantic/regions.json` moves that gap, and nothing else will.
+estimated. At 1,002 semantic sources, 384 overlay owners are unlisted: the map
+can size 8,458 overlay bytes, while its main-image figure of 382,970 agrees
+exactly. Converting overlays does not move the picture; only listing them does.
+
+**Declaring a whole overlay is far cheaper than listing its owners, and Venus
+is already making that claim in prose.** `semantic/regions.json` now also takes
+a `full_overlays` array:
+
+```json
+{ "overlay": "resource_375",
+  "evidence": "every executable range is owned by a semantic source; …" }
+```
+
+One reviewed assertion sizes every owner in that overlay: the map takes the
+overlay's audited executable extent as the lane and subtracts exact C, so a
+partly exact overlay stays honest. A claim is ignored unless the overlay
+actually carries semantic sources and has an audited extent, so an unbacked
+assertion credits nothing. Owners in a claimed overlay stop being reported
+unresolved. That is roughly twelve entries against the 384 individual ones.
+
+**Reconcile before you claim.** The twelve overlays this file reports converted
+in full hold 174,892 audited executable bytes, of which 31,194 are already exact
+C — so declaring them would move the overlay lane from 8,458 to about 143,698.
+This file's own per-overlay figures for those twelve sum to roughly 110,732. The
+~33,000-byte difference is most likely literal pools and alignment that the
+audited extent counts and the per-owner figures exclude, in which case the larger
+number is right and the claim is sound. Confirm which it is before declaring: if
+any of those overlays still has an unconverted range, the claim inflates the
+published picture by whatever that range holds. Put the answer in `evidence`.
 
 `PROVENANCE.md` is authoritative on clean-room rules: semantics only from the
 target's own disassembly and this repo. **No `asm()`, no inline assembly, no

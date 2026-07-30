@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "owners": {
+    "08095778": {
+      "lane": "cross_file_abi",
+      "reason": "The modulo result passed here conflicts with the live pointer-base interpretation in the current exact 080955b0 source. Reconstruct the call family jointly before admission."
+    },
+    "080f9f6c": {
+      "lane": "hidden_register_module",
+      "reason": "Func_080f9f3c consumes caller-held r4/r5 state, and the Func_080fa678 dependency reaches the call-via-r1 thunk. Convert the voice module jointly with explicit function-pointer and helper context."
+    }
+  }
+}

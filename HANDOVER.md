@@ -18,6 +18,15 @@ not equal object size.
 
 The project runs as two parallel efforts, named after the Golden Sun lighthouses.
 Know which one you are before you change anything.
+[docs/BRANCH-PROTOCOL.md](docs/BRANCH-PROTOCOL.md) is the short version of who
+owns what and what reaches you how — read it first if you are new to a branch.
+
+**Read `docs/BRANCH-PROTOCOL.md` once before your next push.** It is the tracked
+statement of who owns what: the ring is `main -> mercury -> venus -> main`, each
+hop about hourly, and nobody pushes to a branch they do not own. For Mercury that
+means pull `main`, push only `origin/mercury`, and never touch the coverage map
+or `README.md` — anything you want on `main` gets there by banking it here and
+letting Vale port it within the hour.
 
 | | **Mercury Lighthouse** | **Venus Lighthouse** |
 | --- | --- | --- |
@@ -64,9 +73,10 @@ Consequences worth knowing before you act:
   lanes publish, so editing it downstream either conflicts with Vale or reports a
   figure that the branch cannot substantiate. Publish numbers by banking them —
   the map follows.
-- **Venus pulls `mercury` about once an hour.** More often wastes a merge on a
-  handful of commits; much less and the superseded-semantic deletions pile up
-  into a large, hard-to-check merge. Each pull: merge, take Mercury's `src/` and
+- **Venus pulls `mercury` every 20 minutes.** Raised from hourly on
+  2026-07-30: an hourly merge had grown to 37-45 Mercury commits and 22+
+  superseded-semantic deletions, which is more than is comfortable to check by
+  eye. At 20 minutes it is a handful of commits and a handful of deletions. Each pull: merge, take Mercury's `src/` and
   routing on conflict, delete every semantic source that now has an exact
   counterpart (`build_semantic` hard-errors if you miss one), re-verify, bank.
 
@@ -90,6 +100,15 @@ bytes** are expressed as C.
 `resource_3b8` (15,028 bytes), `resource_372` (10,202), `resource_371` (9,650),
 `resource_39f` (9,278), `resource_39a` (7,096), `resource_3b4` (6,226) and
 `resource_373` (13,192), `resource_3bf` (10,144), `resource_375` (6,536), `resource_374` (7,468), `resource_3a8` (7,564), `resource_3bb` (5,680), `resource_3aa` (6,376), `resource_38f` (9,212), `resource_383` (7,792) and
+Alongside the exact lane, reviewed semantic C currently accounts for **523,620
+executable bytes across 950 compiling sources**: 382,970 main-image bytes and
+140,650 overlay bytes. Combined with exact C, **734,014 / 1,339,574 executable
+bytes** are expressed as C.
+
+**Twelve overlays are now converted in full**, none skipping anything:
+`resource_3b8` (15,028 bytes), `resource_372` (10,202), `resource_371` (9,650),
+`resource_39f` (9,278), `resource_39a` (7,096), `resource_3b4` (6,226) and
+`resource_373` (13,192), `resource_3bf` (10,144), `resource_38f` (9,212), `resource_383` (7,792) and
 `resource_3c4` (24 of 25 rows, one 2,636-byte
 dispatcher pre-measured)
 Alongside the exact lane, reviewed semantic C currently accounts for **475,156
@@ -971,6 +990,31 @@ the next band up (48-128 bytes) is where the remaining mechanical work is.
 Best overlays by the §1 small-row criterion, recounted after that pass:
 `resource_3b4` (45 rows under 400 bytes), `resource_3c4` (37), `resource_3a7`
 (31), `resource_39a` (28), `resource_39f` (26), `resource_371` (25).
+
+**`tools/overlay_twins.ts` (arrived from main, 2026-07-30) is the highest-leverage
+thing in the overlay lane right now, and nothing has been claimed from it yet.**
+It masks `bl` displacements and pool words and digests the instruction skeleton,
+so it finds owners that are the same routine across overlays and differ only in
+what the linker and the pool make different. **32 twin groups, and not one has a
+converted member.** Solving a single member of each transposes to the rest for
+**16,846 bytes** of pure substitution work — no assembly reading, just retargeting
+the callees and constants out of the twin's own disassembly, which is the play
+that converted `resource_384:01d0`.
+
+**The 384x11 group has a structurally correct draft already** —
+`docs/TWIN-384-DRAFT.md` carries it with the semantics written out and the three
+known divergences named. It emits 173 instructions against the reference's 172;
+what is left is register assignment and scheduling in the first quarter. Measure
+it by instruction-group equality, not halfwords: at 384 bytes the `bl`
+displacements make a raw byte count meaningless (it reads 333/384 while the shape
+is right). Start there rather than re-deriving from assembly.
+
+Ranked by what the *second and later* members are worth: 384×11 (3,840 free),
+404×8 (2,828), 472×5 (1,888), 164×10 (1,476), 216×6 (1,080), 964×2 (964). Two
+carry known blockers — the 60×14 group is §8's squared-distance family at floor 20,
+and `resource_391:02a8` in the 164×10 group is §8's `ldrsh`-cursor park — so start
+with 384×11 or 216×6, which nothing has attacked. This is a far better use of a
+session than walking fresh rows one at a time.
 
 **Then stop reading them by hand — `tools/overlay_wrapper_draft.ts` derives
 them.** The whole tail of setup wrappers, forwarders and dispatch stubs has a
@@ -2052,23 +2096,41 @@ Commit subjects must end in the suffix from
 `bun tools/full_c_progress.ts --subject`, and a subject that changes the
 executable denominator must begin `metrics: correct executable denominator`.
 
-**Refresh the coverage map whenever your lane advances.** `bun run coverage`
-rewrites `metrics/gs1-en-coverage-map.json` and the README treemap
-`assets/readme/gs1-en-coverage.svg`. It reads tracked evidence only — no ROM,
-no toolchain, no build output — so it costs about a second. Run it after the
-metrics report is written and before staging; in `tools/bank_cycle.sh` that is
-one line directly after the `--write-report` call:
+**The coverage map is Vale's, and only Vale's.** `assets/readme/gs1-en-coverage.svg`
+and `metrics/gs1-en-coverage-map.json` are regenerated on `main` and nowhere
+else. Do not run `bun run coverage` from `mercury` or `venus`, and do not hand-edit
+either file: you would either collide with Vale or publish a figure your branch
+cannot substantiate. Publish numbers by banking them — the map follows within the
+hour. It is deliberately not part of `bun run verify`, so a map that lags your
+newest commit is never your problem and never blocks a bank.
 
-```sh
-bun run coverage > /dev/null 2>&1
-```
+Vale redraws it from the two lighthouse refs rather than from any working tree.
+Mercury pulls from main and never pushes back, so main's `src/` never receives
+Mercury's conversions; drawn from its own worktree main's picture would sit frozen
+at whatever exact C that branch happens to carry while the project moved on —
+173,222 bytes against Mercury's 210,306 when this was found. `--exact-ref` and
+`--semantic-ref` select the trees and the map records the choice, so main's
+provenance reads `exact_lane: origin/mercury`, `semantic_lane: origin/venus`, and
+both `--write` and `--check` re-resolve from that record. The reconciliation
+against `metrics/<target>-progress.json` reads that report from whichever tree the
+lane came from, so it stays honest across refs.
 
-`bun run verify` ends with `bun run coverage:check`, which fails when the
-tracked map is behind the lane this branch owns. Mercury owns the exact lane in
-the picture and Venus owns the semantic lane; each branch reads the other lane
-from the newest ref it can see and records which one in the map, so a lane it
-does not own never fails its verification. A merge conflict on the map or the
-SVG is resolved by taking either side and re-running `bun run coverage`.
+Two safety properties worth knowing, because both surface as a refused write
+rather than a wrong picture: a recorded ref that is not available locally is an
+error rather than a quiet fall back to the working tree, and a redraw that cannot
+see the semantic lane refuses rather than publishing Venus's half as zero. Either
+way the previous picture stands.
+
+**The picture currently understates the overlay semantic lane, and closing that
+is Venus's to do.** `tools/coverage_map.ts` sizes an overlay semantic owner
+only from a `manual_regions` entry in `semantic/regions.json`. It deliberately
+refuses the decoded-region inventory, which is build output and therefore
+outside what a tracked-evidence-only tool may read, so an owner missing from
+that file is reported in `provenance.semantic_unresolved` rather than
+estimated. At 921 semantic sources, 303 overlay owners are unlisted: the map
+can size 8,458 of the 92,186 overlay bytes this file claims, while its
+main-image figure of 382,970 agrees exactly. Every overlay owner Venus adds to
+`semantic/regions.json` moves that gap, and nothing else will.
 
 `PROVENANCE.md` is authoritative on clean-room rules: semantics only from the
 target's own disassembly and this repo. **No `asm()`, no inline assembly, no

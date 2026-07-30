@@ -270,6 +270,58 @@ Note the stages are independent once each has its own output tree, so they can
 run concurrently (94 s vs 161 s cold for the two full builds); only the
 ROM-mode build should write the default `out/full` tree.
 
+## The biggest lever found so far: a callee's return type sets argument order
+
+The most common park class in every overlay — "per-site contradictory movs pair
+order", two halfwords, no flag reaching it — turned out to be **source-reachable
+with the pinned compiler and default flags**. 15 functions, 3,020 bytes, adopted
+in one round.
+
+Mechanism, proved with `-fsched-verbose=7` dependence tables: argument setters
+leave RTL expansion in ascending register order in every case, and `sched2`
+permutes them. `rank_for_schedule` (`haifa-sched.c:4117-4129`) prefers the insn
+with more forward dependents. For a **value-returning** call, `sched_analyze_1`
+frees `reg_last_sets[r0]` and replaces it with the call
+(`haifa-sched.c:3763-3769`), so the pre-call `movs r0` loses its later
+dependents and `movs r1` wins outright → r1 first. For a **void** call, only
+`reg_pending_clobbers[r0]` is set, which appends and leaves `reg_last_sets[r0]`
+naming the `movs r0`, so it keeps collecting dependents, the ranks tie, and the
+tie-break falls to `INSN_LUID` → original order → r0 first.
+
+So the knob is whether the call redefines r0 at that site, i.e. the callee's type
+**in scope at that site**:
+
+- flip one `extern` return type between `void` and `s32` (12 of the 15 fixes);
+- where one symbol genuinely needs both orders in one function, cast at the site:
+  `((void (*)())Func_020023a8)(0, 50)` — still a direct `bl`, no pool word, no
+  extra instruction (2 of the 15).
+
+**`(void)Func(...)` does not work** — the `CALL_EXPR`'s own type is unchanged.
+That is why years of probes missed this.
+
+A corpus scan of 13,714 reference argument-setter runs found no correlation with
+argument values or count, and the whole 3-argument permutation histogram falls out
+of two inputs: whether the call redefines r0, and the arity of the *following*
+call group in the same block (a register whose next writer is further away picks
+up an extra `REG_DEP_ANTI` per intervening call). The second input is the
+resource_379 walker's empirical rule, confirmed as the void-callee case of the
+same mechanism.
+
+Two caveats. The per-site function-pointer cast is ordinary C and involves no
+`asm`, no register pinning and no `volatile`, but it is unusual enough that the
+two functions using it (resource_3ce:10a8, resource_3af:3710) are worth a human
+look. And a gated scheduler mode for the same defect was prototyped
+(`-fno-sched-dead-call-value`, 47/2,145 collateral, inert by default) and
+**deliberately not landed**: it fixed exactly one function that a source cast
+already fixes, and would have cost a fork commit plus a re-pin plus the full
+PROVENANCE ROM gate. The diff is at /tmp/argorder/h/ if it is ever wanted.
+
+Also settled: inside the scheduler there is no per-site property left to key on
+except the call's own RTL form, because `schedule_insns` purges death notes
+(`haifa-sched.c:7071`) before dependency analysis. No scheduler predicate can
+distinguish two sites of one symbol — which is why the fix has to be in the
+source, and closes that search.
+
 ## Read this before planning: the per-overlay "remaining bytes" figure lies
 
 `out/decomp/overlays.json` lists nested discoveries that are `contained_by` one

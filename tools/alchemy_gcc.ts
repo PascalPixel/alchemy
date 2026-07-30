@@ -209,6 +209,11 @@ const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78", "08005c68"]);
 // descriptor; original-order tie breaking closes its last transposition.
 const NO_SCHED_DEPEND_COUNT_SOURCES = new Set([
   "08002fb0", "08003e10", "08005340", "08005394", "080053e8", "0800d304", "08019bac", "08021d88", "080903bc", "08094730",
+  // First overlay member. §4's pool-load hoist, but the flag that reaches it is
+  // this one, not -fsched-low-dest-first: the reference issues the argument
+  // group's `ldr r0,[pc]` ahead of its `movs r1,#1`, and both -fsched-*-dest-first
+  // leave the pair in our order. No other overlay owns 02001050.
+  "02001050",
 ]);
 // The reference issues the destination copy ahead of the following ALU work.
 const MOVE_BEFORE_ALU_SOURCES = new Set([

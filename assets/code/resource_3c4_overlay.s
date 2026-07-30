@@ -4375,21 +4375,10 @@ AlchemyC_02001fc4:
 	pop	{r0}
 	bx	r0
 	.2byte 0x0000
-	push	{lr}
-	bl	sub_02005428
-	movs	r0, #0
-	movs	r1, #1
-	bl	sub_02005480
+AlchemyC_02002330:
+	.space 0xe
 .L_0200233e:
-	ldr	r0, [pc, #16]
-	movs	r1, #1
-	bl	sub_02005410
-	bl	sub_02005444
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.2byte 0x268b
-	.2byte 0x0000
+	.space 0x16
 AlchemyC_02002354:
 	.space 0x1c
 AlchemyC_02002370:

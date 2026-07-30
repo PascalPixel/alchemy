@@ -622,7 +622,12 @@ const NO_SCHED_ALIAS_OVERLAY_SOURCES = new Set([
 // a pair because PRE only deletes an occurrence that an insertion made
 // available. Constant-pool loads keep their bits and are still eliminated. This
 // is the narrowest of the four gates: 9 of 1,335 sources change.
+// Keyed by repository path, so a main-image `src/` source routes here too; the
+// name predates the first main-image member. 0807a550 is that member: gcse's
+// partial-redundancy pass inserts a load the reference does not have, and the
+// remaining seven halfwords vanish with the insert suppressed.
 const NO_GCSE_INSERT_LOAD_OVERLAY_SOURCES = new Set([
+  "src/0807a550.c",
   "assets/code/resource_37a_c_02000d9c.c",
 ]);
 // A store has no value for a later insn to consume, so it reaches the block end

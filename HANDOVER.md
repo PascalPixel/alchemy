@@ -777,6 +777,23 @@ Best overlays by the §1 small-row criterion, recounted after that pass:
 `resource_3b4` (45 rows under 400 bytes), `resource_3c4` (37), `resource_3a7`
 (31), `resource_39a` (28), `resource_39f` (26), `resource_371` (25).
 
+**`tools/overlay_twins.ts` (arrived from main, 2026-07-30) is the highest-leverage
+thing in the overlay lane right now, and nothing has been claimed from it yet.**
+It masks `bl` displacements and pool words and digests the instruction skeleton,
+so it finds owners that are the same routine across overlays and differ only in
+what the linker and the pool make different. **32 twin groups, and not one has a
+converted member.** Solving a single member of each transposes to the rest for
+**16,846 bytes** of pure substitution work — no assembly reading, just retargeting
+the callees and constants out of the twin's own disassembly, which is the play
+that converted `resource_384:01d0`.
+
+Ranked by what the *second and later* members are worth: 384×11 (3,840 free),
+404×8 (2,828), 472×5 (1,888), 164×10 (1,476), 216×6 (1,080), 964×2 (964). Two
+carry known blockers — the 60×14 group is §8's squared-distance family at floor 20,
+and `resource_391:02a8` in the 164×10 group is §8's `ldrsh`-cursor park — so start
+with 384×11 or 216×6, which nothing has attacked. This is a far better use of a
+session than walking fresh rows one at a time.
+
 **Then stop reading them by hand — `tools/overlay_wrapper_draft.ts` derives
 them.** The whole tail of setup wrappers, forwarders and dispatch stubs has a
 body made only of constant materialisation and direct `bl`s, and for that shape

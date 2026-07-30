@@ -218,6 +218,116 @@
           "size": 898
         }
       ]
+    },
+    {
+      "entry": "0x080d765c",
+      "evidence": "One function with its only prologue at 0x080d765c (332-byte frame, never restored until the end) and its sole epilogue at 0x080d829a, reached through plain b edges across nine manifest rows. Ten of its 91 bl sites are call_via thunk-bank indirect calls whose via-register is loaded from frame slots filled once from *(0x03001f08) and *(0x03001f0c); the rest are ordinary calls and no internal edge is emitted as bl. Excluded pools (290 bytes): 0x080d76d0 (32), 0x080d778c (40), 0x080d7862 (26, interior), 0x080d7bd2 (54), 0x080d7e5c (68, a whole row), 0x080d821a (62) and 0x080d82a8 (8); all 78 pc-relative ldr sites resolve into exactly these pools and no branch targets any of them. Previously recorded as a multi_region_function blocker; resolved by whole-module admission.",
+      "executable_ranges": [
+        {
+          "address": "0x080d765c",
+          "size": 116
+        },
+        {
+          "address": "0x080d76f0",
+          "size": 156
+        },
+        {
+          "address": "0x080d77b4",
+          "size": 174
+        },
+        {
+          "address": "0x080d787c",
+          "size": 854
+        },
+        {
+          "address": "0x080d7c08",
+          "size": 596
+        },
+        {
+          "address": "0x080d7ea0",
+          "size": 890
+        },
+        {
+          "address": "0x080d8258",
+          "size": 80
+        }
+      ]
+    },
+    {
+      "entry": "0x080e15e8",
+      "evidence": "One function with its only prologue at 0x080e15e8 and its sole epilogue in the 0x080e21e8 range; every inter-row edge is a plain Thumb b.n and none of the 130 bl sites encodes internal control flow. Eighteen bl sites are call_via thunk-bank indirect calls through live registers (renderer entries from 0x03001f08/0x03001f0c, or relocated IWRAM helpers at 0x0300013c, 0x03001388, 0x03000168). Two further calls use the inline mov ip,pc; bx r7 idiom into the relocated ARM helper at 0x03000118 and return inline into the same range. Excluded as data (316 bytes): interior pools 0x080e1660 (28), 0x080e1704 (32), 0x080e179c (40), 0x080e1830 (24 plus 2 alignment) and 0x080e1a98 (52), plus the whole rows 0x080e1daa (78) and 0x080e21ae (58), each confirmed by resolving sibling pc-relative ldr targets. Previously recorded as a multi_region_function blocker; resolved by whole-module admission. The 592-byte span from 0x080e1848 is listed as two ranges because it crosses the manifest row boundary at 0x080e1a48; the code is contiguous.",
+      "executable_ranges": [
+        {
+          "address": "0x080e15e8",
+          "size": 120
+        },
+        {
+          "address": "0x080e167c",
+          "size": 134
+        },
+        {
+          "address": "0x080e1724",
+          "size": 120
+        },
+        {
+          "address": "0x080e17c4",
+          "size": 106
+        },
+        {
+          "address": "0x080e1848",
+          "size": 512
+        },
+        {
+          "address": "0x080e1a48",
+          "size": 80
+        },
+        {
+          "address": "0x080e1acc",
+          "size": 734
+        },
+        {
+          "address": "0x080e1df8",
+          "size": 950
+        },
+        {
+          "address": "0x080e21e8",
+          "size": 786
+        }
+      ]
+    },
+    {
+      "entry": "0x0800ebec",
+      "evidence": "One function across four manifest rows. The two mov ip,pc; bx r4 sequences at 0x0800f1ba and 0x0800f1c6 are ordinary indirect calls to the IWRAM-relocated ARM multiply at 0x03000118: mov ip,pc sets the return to the instruction after bx, and both landing sites continue the same live frame. The 62-byte executable-gap row at 0x0800f1bc is the continuation of one statement, not a control-flow anomaly. LAWS.md already records this idiom as a codegen-only difference from bl __call_via_r4. Excluded pools and alignment (90 bytes): 0x0800edf0 (36), 0x0800f186 (30), 0x0800f2ae (18), 0x0800f2d4 (4) and 2 bytes of trailing alignment. Previously recorded as a relocated_kernel_continuation blocker; resolved.",
+      "executable_ranges": [
+        {
+          "address": "0x0800ebec",
+          "size": 516
+        },
+        {
+          "address": "0x0800ee14",
+          "size": 882
+        },
+        {
+          "address": "0x0800f1a4",
+          "size": 24
+        },
+        {
+          "address": "0x0800f1bc",
+          "size": 62
+        },
+        {
+          "address": "0x0800f1fa",
+          "size": 180
+        },
+        {
+          "address": "0x0800f2c0",
+          "size": 20
+        },
+        {
+          "address": "0x0800f2d8",
+          "size": 30
+        }
+      ]
     }
   ]
 }

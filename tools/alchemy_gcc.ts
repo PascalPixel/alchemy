@@ -395,9 +395,10 @@ const CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES = new Set([
 // pool is a compiler layout choice, not a source shape").
 const EARLY_LITERAL_POOL_OVERLAY_SOURCES = new Set(["02000e3c", "02000dfc"]);
 // Path-scoped members: the 02000ee0 stem collides with default-flag
-// adoptions in resource_39f and resource_3b4, so resource_3bd's member is
-// routed by full path instead.
+// adoptions in other overlays, so the resource_394 and resource_3bd members
+// are routed by full path instead.
 const EARLY_LITERAL_POOL_OVERLAY_PATHS = new Set([
+  "assets/code/resource_394_c_02000ee0.c",
   "assets/code/resource_3bd_c_02000ee0.c",
 ]);
 const NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES = new Set([
@@ -802,7 +803,8 @@ const DEFAULT_ABI_SOURCES = new Set([
 // independent exact stock-compiler proof; the rest stay on the fork until
 // exact-byte proof.
 const AGBCC_SOURCES = new Set([
-  "08006a00", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec", "08006e24", "08007028", "08006f84", "08007098", "0800711c", "080071a8", "08007220",
+  "08006a00", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
+  "08006e24", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
   "080f9a50",
   "080fada0", "080fadf0",
   "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
@@ -836,7 +838,8 @@ const AGBCC_LITERAL_BEFORE_SHIFT_SOURCES = new Set(["080fb670"]);
 // program-sector retry loop likewise reproduce their reference layouts only
 // at -O1.
 const AGBCC_OPTIMIZE_O1_SOURCES = new Set([
-  "08006a00", "08006ba8", "08006c68", "08006cdc", "08006d50", "08006e24", "08007028", "08006f84", "08007098", "0800711c", "080071a8", "08007220", "080fa514",
+  "08006a00", "08006ba8", "08006c68", "08006cdc", "08006d50", "08006e24", "08006f84",
+  "08007028", "08007098", "0800711c", "080071a8", "08007220", "080fa514",
 ]);
 const AGBCC_COMPARE_ONLY_AND_TST_SOURCES = new Set(["080f9a50"]);
 const AGBCC_COMMUTATIVE_COPY_CONSTANT_SOURCES = new Set(["080fa514"]);
@@ -960,7 +963,7 @@ export function cflagsForSource(source: string): readonly string[] {
       ? ["-mgrouped-dma-store"]
       : []),
     ...(EARLY_LITERAL_POOL_OVERLAY_SOURCES.has(overlayStem(source)) ||
-        EARLY_LITERAL_POOL_OVERLAY_PATHS.has(sourceKey(source))
+      EARLY_LITERAL_POOL_OVERLAY_PATHS.has(sourceKey(source))
       ? ["-mthumb-early-literal-pool"]
       : []),
   ];
@@ -1536,7 +1539,8 @@ export function directCompilerCommandForSource(
 
 function selfTest(): void {
   const expected = [
-    "08006a00", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec", "08006e24", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
+    "08006a00", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
+    "08006e24", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
     "080f9a50",
     "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
     "080fa424", "080fa458", "080fa490", "080fa514", "080fa55c", "080fa6a0", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
@@ -1554,7 +1558,9 @@ function selfTest(): void {
     }
     const expectedFlags = [
       ...AGBCC_CFLAGS,
-      ...(["08006a00", "08006ba8", "08006c68", "08006cdc", "08006d50", "08006e24", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220"].includes(stem) ? ["-O1"] : []),
+      ...(["08006a00", "08006ba8", "08006c68", "08006cdc", "08006d50", "08006e24",
+           "08006f84", "08007028", "08007098", "0800711c", "080071a8",
+           "08007220"].includes(stem) ? ["-O1"] : []),
       ...(stem === "080fa514" ? ["-O1", "-mcommutative-copy-constant"] : []),
       ...(stem === "080fb670" ? ["-mliteral-before-shift"] : []),
       ...(["080fb2cc", "080fb334", "080fb3a8"].includes(stem)

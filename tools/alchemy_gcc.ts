@@ -1042,50 +1042,94 @@ function hostKey(): HostKey | null {
   return null;
 }
 
-const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> = {
+// 各ファイルは承認済みダイジェストの集合を持つ。一つの host+target につき
+// 複数の束が並ぶのは、同一の alchemy-gcc ソースを別のホスト環境で再構築すると
+// 実行体のバイト列は変わるがコード生成は変わらないため。gcc は接頭辞パスなどを
+// 実行体に埋め込むので、これは想定内の差分である。
+//
+// A listed digest is not a guess: every entry here has independently passed the
+// admission test PROVENANCE.md requires of any toolchain substitution — the
+// full source-only build owns all 8,388,608 bytes with zero ROM fallback, and
+// `bun run build:full` reproduces gs1-en.gba (SHA-1
+// 5c4695205413df7db52b9a184815a07783999971) byte-identically under it. Adding a
+// digest without running `bun run verify` on that bundle defeats the check;
+// re-pin only from a green verify.
+const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly string[]>>> = {
   "darwin-arm64": {
     gs1: {
-      xgcc: "87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed",
-      cpp: "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
-      tradcpp: "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
-      cc1: "df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4",
+      xgcc: ["87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed"],
+      cpp: ["f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575"],
+      tradcpp: ["822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b"],
+      cc1: ["df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4"],
     },
     gs2: {
-      xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",
-      cpp0: "b4ac7f5ff7fd74f4eca40385832fd0360d13cb5d4f0b6c8b3ead4a67d2f3d5b0",
-      tradcpp0: "7698319dfea3647dace68ffb5c3dbc0fd459f3a859699acb47c669d3eb8956a3",
-      cc1: "91b2a67275a100e8b6695d85ef2d82d1fd144853cbcb361ddf1d8be31858230f",
+      xgcc: ["128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2"],
+      cpp0: ["b4ac7f5ff7fd74f4eca40385832fd0360d13cb5d4f0b6c8b3ead4a67d2f3d5b0"],
+      tradcpp0: ["7698319dfea3647dace68ffb5c3dbc0fd459f3a859699acb47c669d3eb8956a3"],
+      cc1: ["91b2a67275a100e8b6695d85ef2d82d1fd144853cbcb361ddf1d8be31858230f"],
     },
   },
   "linux-x64": {
     gs1: {
-      xgcc: "845b828e15efedfeacc1956ac2694101e2b520824643d5b9f7608f9c389aee03",
-      cpp: "60d0b6637deb0f98cbf952a89694b02a0557fc87ca968121759be139372e90cc",
-      tradcpp: "87f89bebf41cd12ac7706604dd24624061b2276f95cc1e9998c22de1accfee2a",
-      cc1: "c1cc6d2864567297451662d36fba7abbce7a916d138f7115832a265de6868a06",
+      xgcc: [
+        "845b828e15efedfeacc1956ac2694101e2b520824643d5b9f7608f9c389aee03",
+        "2ed03493228a7873f020b16a63b89b3aadf4835be2d1a3a217cabca0fa244444",
+      ],
+      cpp: [
+        "60d0b6637deb0f98cbf952a89694b02a0557fc87ca968121759be139372e90cc",
+        "06096beb427848574f610626bb53408b1a76f69b178ee2d7f0a05f6c2f6d3778",
+      ],
+      tradcpp: [
+        "87f89bebf41cd12ac7706604dd24624061b2276f95cc1e9998c22de1accfee2a",
+        "f9b951486d4e1769e06b892a59980c91a45435559505d73039130b63d1156803",
+      ],
+      cc1: [
+        "c1cc6d2864567297451662d36fba7abbce7a916d138f7115832a265de6868a06",
+        "640964de34d6202f6dc5943b0c22b0afd1a8f4f1307ba6d3cf30af4110f5f5e2",
+      ],
     },
     gs2: {
-      xgcc: "7b1a6a96fc4bd5e9de4d83fb2a4ba2ca2a82397cdcd102c4a4d76ef91dc17f58",
-      cpp0: "89791031fa8d4dd686355efb0efdb7c019a4080b770f187b15671dc3c1e71ecc",
-      tradcpp0: "a1013c94647eefbe0caad3c2e244b66c1acf2961197bdc31012e4259616c3198",
-      cc1: "3e5f1cbcae107b0f6c038a8b91880e377a3612a965014165002b4c530feab56b",
+      xgcc: [
+        "7b1a6a96fc4bd5e9de4d83fb2a4ba2ca2a82397cdcd102c4a4d76ef91dc17f58",
+        "d0b10d67bc7f9965d586eba766b77e6ca54cc791b5eb297b55a6b9b6d6d0ef3d",
+      ],
+      cpp0: [
+        "89791031fa8d4dd686355efb0efdb7c019a4080b770f187b15671dc3c1e71ecc",
+        "9d93c7762f60d13474764d2ca9e721b235ed4935ba7b69012aba054cace60d0d",
+      ],
+      tradcpp0: [
+        "a1013c94647eefbe0caad3c2e244b66c1acf2961197bdc31012e4259616c3198",
+        "010da8763b9ebf39cb52aab0412ca350e038ccf4c3aa5647440c2abc91dcad6c",
+      ],
+      cc1: [
+        "3e5f1cbcae107b0f6c038a8b91880e377a3612a965014165002b4c530feab56b",
+        "1b1c039eda51c0c2ee67d076f33e3284dd369789378cdf34671b66ba76cd6c75",
+      ],
     },
   },
 };
 
-const LINUX_AGBCC_EXPECTED = "30a2a042c4be2acdd215ffc26c7d27498098ac38607ec8af43cc6598dcecdf55";
+const LINUX_AGBCC_EXPECTED: readonly string[] = [
+  "30a2a042c4be2acdd215ffc26c7d27498098ac38607ec8af43cc6598dcecdf55",
+  "0c2d5ec04129f7b9d1ecf738f096167af152661bc2506f8fdb2749305fa3eb37",
+];
 
 const validated = new Set<CompilerTarget>();
 let agbccValidated = false;
 const experimentalValidated = new Set<string>();
-const AGBCC_EXPECTED = "4f7664872d10a737184fb2e0502c407c9d74505f0cff7313ba4e9083736c2207";
-const PRET_EARLY_THUMB_EXPECTED: Record<HostKey, string> = {
-  "darwin-arm64": "8a1e0e9e18801efb595a3e0d571137db5ba8f97e413c323e99f18b0521a31636",
-  "linux-x64": "c988f677e3ebd7252a6ad1ad2fef301f85b05be0612ee3192b37ec47d22f8082",
+const AGBCC_EXPECTED: readonly string[] = [
+  "4f7664872d10a737184fb2e0502c407c9d74505f0cff7313ba4e9083736c2207",
+];
+const PRET_EARLY_THUMB_EXPECTED: Record<HostKey, readonly string[]> = {
+  "darwin-arm64": ["8a1e0e9e18801efb595a3e0d571137db5ba8f97e413c323e99f18b0521a31636"],
+  "linux-x64": ["c988f677e3ebd7252a6ad1ad2fef301f85b05be0612ee3192b37ec47d22f8082"],
 };
-const GCC2951_EXPECTED: Record<HostKey, string> = {
-  "darwin-arm64": "cb41bba7e0e600721d906c46349119efb4c6fd35c711d7e0f244cb783de383a6",
-  "linux-x64": "c8f80fffa2aa0aa2809d93ad86d11ea0e8ebf08e9bba6cc5b8d391aef05c3fe4",
+const GCC2951_EXPECTED: Record<HostKey, readonly string[]> = {
+  "darwin-arm64": ["cb41bba7e0e600721d906c46349119efb4c6fd35c711d7e0f244cb783de383a6"],
+  "linux-x64": [
+    "c8f80fffa2aa0aa2809d93ad86d11ea0e8ebf08e9bba6cc5b8d391aef05c3fe4",
+    "edbee4fec1a1b59d0fd77273559aebbaf2c92b344bbeeb3539a10b689e71716d",
+  ],
 };
 
 function outputText(value: Uint8Array): string {
@@ -1111,7 +1155,7 @@ export function validateBundle(target: CompilerTarget = "gs1"): void {
       throw new Error(`alchemy-gcc ${target} bundle is missing executable ${name}`);
     }
     const actual = new Bun.CryptoHasher("sha256").update(readFileSync(path)).digest("hex");
-    if (actual !== expected) {
+    if (!expected.includes(actual)) {
       throw new Error(`alchemy-gcc ${target}/${name} has an unapproved digest`);
     }
   }
@@ -1145,7 +1189,7 @@ export function validateAgbccBundle(): void {
   }
   const actual = new Bun.CryptoHasher("sha256").update(readFileSync(AGBCC_DRIVER)).digest("hex");
   const expectedAgbcc = host === "darwin-arm64" ? AGBCC_EXPECTED : LINUX_AGBCC_EXPECTED;
-  if (actual !== expectedAgbcc) {
+  if (!expectedAgbcc.includes(actual)) {
     throw new Error("alchemy-gcc agbcc/old_agbcc has an unapproved digest");
   }
   const smoke = Bun.spawnSync(
@@ -1159,7 +1203,11 @@ export function validateAgbccBundle(): void {
   agbccValidated = true;
 }
 
-function validateExperimentalCompiler(name: string, driver: string, expected: Record<HostKey, string>): void {
+function validateExperimentalCompiler(
+  name: string,
+  driver: string,
+  expected: Record<HostKey, readonly string[]>,
+): void {
   if (experimentalValidated.has(name)) return;
   const host = hostKey();
   if (host === null) {
@@ -1175,7 +1223,7 @@ function validateExperimentalCompiler(name: string, driver: string, expected: Re
     throw new Error(`alchemy-gcc experimental ${name} is missing executable cc1`);
   }
   const actual = new Bun.CryptoHasher("sha256").update(readFileSync(driver)).digest("hex");
-  if (actual !== expected[host]) {
+  if (!expected[host].includes(actual)) {
     throw new Error(`alchemy-gcc experimental ${name}/cc1 has an unapproved digest`);
   }
   const smoke = Bun.spawnSync(

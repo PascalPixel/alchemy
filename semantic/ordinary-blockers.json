@@ -7,7 +7,9 @@
     },
     "0800ebec": {
       "lane": "relocated_kernel_continuation",
-      "reason": "The true 1,804-byte function spans four regions and twice enters the relocated kernel at 0x03000118 with `mov ip,pc; bx r4`, returning inline into a 62-byte executable-gap continuation while its parent frame and registers remain live. It requires a whole-module representation for that nonstandard return contract."
+      "reason": "The true 1,804-byte function spans four regions and twice enters the relocated kernel at 0x03000118 with `mov ip,pc; bx r4`, returning inline into a 62-byte executable-gap continuation while its parent frame and registers remain live. It requires a whole-module representation for that nonstandard return contract.",
+      "resolved": true,
+      "resolution": "Admitted whole (1,714 bytes across seven ranges). The mov ip,pc; bx r4 return contract is an ordinary indirect call; the note conflated a byte-exactness fact recorded in LAWS.md with a semantic one."
     },
     "080dd9c0": {
       "lane": "multi_region_function",
@@ -21,11 +23,15 @@
     },
     "080e15e8": {
       "lane": "multi_region_function",
-      "reason": "The 316-byte FunctionHead_080e15e8 allocates a 336-byte frame and branches directly into sub_080e1724, which contains the body and eventual epilogue. It requires noncontiguous/main-module accounting rather than standalone admission of the head."
+      "reason": "The 316-byte FunctionHead_080e15e8 allocates a 336-byte frame and branches directly into sub_080e1724, which contains the body and eventual epilogue. It requires noncontiguous/main-module accounting rather than standalone admission of the head.",
+      "resolved": true,
+      "resolution": "Admitted as one whole-owner semantic module across eight ranges (3,542 bytes). Sizing blocker, not structural."
     },
     "080d765c": {
       "lane": "multi_region_function",
-      "reason": "The 148-byte head allocates a 332-byte frame, branches through 080d76f0 into 080d77b4, and carries that live frame across further split/gap regions before the real epilogue. Reconstruct and register the entire effect module rather than this head."
+      "reason": "The 148-byte head allocates a 332-byte frame, branches through 080d76f0 into 080d77b4, and carries that live frame across further split/gap regions before the real epilogue. Reconstruct and register the entire effect module rather than this head.",
+      "resolved": true,
+      "resolution": "Admitted as one whole-owner semantic module across seven ranges (2,866 bytes); ranges registered in semantic/main-regions.json. Sizing blocker, not structural."
     },
     "080ec100": {
       "lane": "multi_region_function",

@@ -51,8 +51,8 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
 - The source-only build owns all 8 MiB with zero unowned bytes.
 - Semantic-C lane: **237,950 executable bytes across 534 compiling sources**:
   225,158 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **411,172 / 1,339,540 executable bytes** are now expressed as C, with
-  928,368 remaining. Seven semantic main sources were removed during the
+  **413,644 / 1,339,542 executable bytes** are now expressed as C, with
+  925,898 remaining. Seven semantic main sources were removed during the
   2026-07-30 `main` cascade because byte-exact versions now supersede them.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects

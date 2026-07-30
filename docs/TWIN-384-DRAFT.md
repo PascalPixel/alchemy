@@ -83,9 +83,13 @@ the mass actually was.
    Measured and ruled out for moving that assignment: swapping the `table`/`mask`
    declaration order (164, far worse), and typing the table as a plain `s32`
    base instead of `s32 *` (22, unchanged). The constant spelling is irrelevant
-   too. Whatever picks r9 over sl here is not declaration order, operand type, or
-   the literal's form — look at live-range length or at giving one of them a use
-   that outlives the other.
+   too, and so is giving the mask an earlier first use than the table (a
+   `masked = mask; masked &= entry;` split ahead of the entry load: 22,
+   unchanged). Whatever picks r9 over sl here is not declaration order, operand
+   type, the literal form, or source first-use order. The emitted order is the
+   real clue: the reference assigns sl before r9 (positions 16 then 19) while we
+   assign r9 before sl, so the allocator is ranking the two pseudos differently
+   — attack that, not the source text.
 4. **Do not swap the `table`/`mask` declaration order to chase the high
    registers.** The reference holds the mask in `sl` and the table in `r9`; we
    hold them the other way round, which looks like a one-line fix. It is not —

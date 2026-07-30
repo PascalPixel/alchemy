@@ -1,0 +1,100 @@
+{
+  "format": 1,
+  "kind": "golden-sun-rom-coverage-map",
+  "target": "gs1-en",
+  "derivation": "tracked-evidence-v1",
+  "rom_bytes": 8388608,
+  "executable_bytes": 1339574,
+  "lanes": {
+    "exact_c": {
+      "bytes": 210394,
+      "percent_of_executable": 15.71
+    },
+    "semantic_c": {
+      "bytes": 391428,
+      "percent_of_executable": 29.22
+    },
+    "assembly": {
+      "bytes": 737752,
+      "percent_of_executable": 55.07
+    },
+    "asset_data": {
+      "bytes": 7300700,
+      "percent_of_executable": 0
+    }
+  },
+  "main": {
+    "executable_bytes": 548364,
+    "exact_c_bytes": 101344,
+    "semantic_c_bytes": 382970
+  },
+  "overlays": {
+    "executable_bytes": 791210,
+    "exact_c_bytes": 109050,
+    "semantic_c_bytes": 8458
+  },
+  "provenance": {
+    "exact_lane": "worktree",
+    "semantic_lane": "origin/venus",
+    "semantic_sources": 715,
+    "semantic_superseded_bytes": 3872,
+    "semantic_unresolved": ["semantic/overlays/resource_373_c_02000030.c", "semantic/overlays/resource_373_c_020000c4.c", "semantic/overlays/resource_373_c_020002a8.c", "semantic/overlays/resource_373_c_0200034c.c", "semantic/overlays/resource_373_c_02000cd0.c", "semantic/overlays/resource_373_c_020010d8.c", "semantic/overlays/resource_373_c_020011d8.c", "semantic/overlays/resource_373_c_020012bc.c", "semantic/overlays/resource_373_c_02003380.c", "semantic/overlays/resource_373_c_0200345c.c", "semantic/overlays/resource_373_c_02005610.c", "semantic/overlays/resource_373_c_0200564c.c", "semantic/overlays/resource_373_c_020057fc.c", "semantic/overlays/resource_373_c_02005b48.c", "semantic/overlays/resource_373_c_02005d68.c", "semantic/overlays/resource_37a_c_02002614.c", "semantic/overlays/resource_381_c_02000054.c", "semantic/overlays/resource_3b8_c_02000108.c", "semantic/overlays/resource_3b8_c_02000674.c", "semantic/overlays/resource_3b8_c_02000af8.c", "semantic/overlays/resource_3b8_c_02000ff8.c", "semantic/overlays/resource_3b8_c_020017e8.c", "semantic/overlays/resource_3b8_c_020040b4.c", "semantic/overlays/resource_3bf_c_02000030.c", "semantic/overlays/resource_3bf_c_02000c78.c", "semantic/overlays/resource_3bf_c_02000ce0.c", "semantic/overlays/resource_3bf_c_02000d54.c", "semantic/overlays/resource_3bf_c_02000dcc.c", "semantic/overlays/resource_3bf_c_02000e80.c", "semantic/overlays/resource_3bf_c_02000f30.c", "semantic/overlays/resource_3bf_c_0200138c.c", "semantic/overlays/resource_3bf_c_02001528.c", "semantic/overlays/resource_3bf_c_020017bc.c", "semantic/overlays/resource_3bf_c_02001c4c.c", "semantic/overlays/resource_3bf_c_0200252c.c", "semantic/overlays/resource_3bf_c_02004638.c", "semantic/overlays/resource_3bf_c_02005a40.c", "semantic/overlays/resource_3bf_c_02005a78.c", "semantic/overlays/resource_3bf_c_02005ac0.c", "semantic/overlays/resource_3bf_c_02005ad0.c", "semantic/overlays/resource_3bf_c_02005ae0.c", "semantic/overlays/resource_3bf_c_02005af0.c", "semantic/overlays/resource_3bf_c_02005b6c.c", "semantic/overlays/resource_3bf_c_02005bd8.c", "semantic/overlays/resource_3bf_c_02005be8.c", "semantic/overlays/resource_3bf_c_02005bf8.c", "semantic/overlays/resource_3bf_c_02005c08.c", "semantic/overlays/resource_3bf_c_02005dd4.c", "semantic/overlays/resource_3bf_c_02005de4.c", "semantic/overlays/resource_3bf_c_02005df4.c", "semantic/overlays/resource_3bf_c_02005e04.c", "semantic/overlays/resource_3c4_c_02000030.c", "semantic/overlays/resource_3c4_c_02000cc0.c", "semantic/overlays/resource_3c4_c_02000ec8.c", "semantic/overlays/resource_3c4_c_02000f10.c", "semantic/overlays/resource_3c4_c_02000fe8.c", "semantic/overlays/resource_3c4_c_02001038.c", "semantic/overlays/resource_3c4_c_02001068.c", "semantic/overlays/resource_3c4_c_020012e0.c", "semantic/overlays/resource_3c4_c_020013a4.c", "semantic/overlays/resource_3c4_c_02001500.c", "semantic/overlays/resource_3c4_c_02001530.c", "semantic/overlays/resource_3c4_c_0200170c.c", "semantic/overlays/resource_3c4_c_02001910.c", "semantic/overlays/resource_3c4_c_02001924.c", "semantic/overlays/resource_3c4_c_02001938.c", "semantic/overlays/resource_3c4_c_02001970.c", "semantic/overlays/resource_3c4_c_020019bc.c", "semantic/overlays/resource_3c4_c_020019cc.c", "semantic/overlays/resource_3c4_c_020019e4.c", "semantic/overlays/resource_3c4_c_02001a98.c", "semantic/overlays/resource_3c4_c_02001fdc.c", "semantic/overlays/resource_3c4_c_02002040.c", "semantic/overlays/resource_3c4_c_02002330.c", "semantic/overlays/resource_3c4_c_02002354.c"]
+  },
+  "rom_areas": [
+    {
+      "id": "rom-main-code",
+      "label": "Main image code",
+      "bytes": 548364,
+      "lanes": {
+        "exact_c": 101344,
+        "semantic_c": 382970,
+        "assembly": 64050
+      },
+      "tiles": 9
+    },
+    {
+      "id": "rom-overlay-streams",
+      "label": "Compressed code overlays",
+      "bytes": 539544,
+      "lanes": {
+        "exact_c": 73849,
+        "semantic_c": 5372,
+        "assembly": 460323
+      },
+      "tiles": 11
+    },
+    {
+      "id": "rom-data",
+      "label": "Assets & data",
+      "bytes": 7300700,
+      "lanes": {
+        "asset_data": 7300700
+      },
+      "tiles": 7
+    }
+  ],
+  "executable_areas": [
+    {
+      "id": "main",
+      "label": "Main image",
+      "bytes": 548364,
+      "lanes": {
+        "exact_c": 101344,
+        "semantic_c": 382970,
+        "assembly": 64050
+      },
+      "tiles": 54
+    },
+    {
+      "id": "overlays",
+      "label": "Decoded code overlays",
+      "bytes": 791210,
+      "lanes": {
+        "exact_c": 109050,
+        "semantic_c": 8458,
+        "assembly": 673702
+      },
+      "tiles": 96
+    }
+  ]
+}

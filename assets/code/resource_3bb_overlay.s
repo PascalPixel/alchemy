@@ -1716,19 +1716,8 @@ AlchemyC_02000700:
 	.4byte 0x0200c834
 	.2byte 0x8715
 	.2byte 0x0200
-	push	{lr}
-	ldr	r1, [pc, #20]
-	ldr	r0, [pc, #20]
-	bl	sub_02004700
-	movs	r0, #130
-	lsls	r0, r0, #1
-	bl	sub_02004858
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0x00000c85
-	.2byte 0x8715
-	.2byte 0x0200
+AlchemyC_02000950:
+	.space 0x20
 	push	{r5, lr}
 	movs	r0, #10
 	bl	sub_02004716

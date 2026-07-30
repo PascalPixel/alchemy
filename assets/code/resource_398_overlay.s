@@ -177,35 +177,11 @@ AlchemyC_020000a0:
 	.space 0x54
 AlchemyC_020000f4:
 	.space 0x54
-	push	{lr}
-	sub	sp, #8
-	movs	r3, #21
-	movs	r2, #14
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r0, #1
-	movs	r1, #0
-	movs	r2, #1
-	movs	r3, #1
-	bl	sub_02000a8e
-	add	sp, #8
-	pop	{r0}
-	bx	r0
+AlchemyC_02000148:
+	.space 0x1e
 	.2byte 0x0000
-	push	{lr}
-	sub	sp, #8
-	movs	r3, #21
-	movs	r2, #14
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r0, #0
-	movs	r1, #0
-	movs	r2, #1
-	movs	r3, #1
-	bl	sub_02000aae
-	add	sp, #8
-	pop	{r0}
-	bx	r0
+AlchemyC_02000168:
+	.space 0x1e
 	.2byte 0x0000
 	push	{lr}
 	sub	sp, #8

@@ -95,7 +95,10 @@ export function analyzeCandidate(
     unsetRegisters * 200 +
     internalExits * 250 +
     unknownTypes * 8 +
-    highRegisterCallSetups * 100 +
+    // Proximity alone is weak evidence: seven warnings in the fifth/sixth
+    // passes were ordinary saved locals. Keep it visible and mildly costly,
+    // while direct thunks, unset inputs, and proven blockers dominate.
+    highRegisterCallSetups * 40 +
     runtimeThunkCalls * 250 +
     boundaryPenalty +
     Math.ceil(sourceLines / 10);

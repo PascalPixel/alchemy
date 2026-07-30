@@ -54,7 +54,9 @@ extern const u8 Data_0809e680[];
 extern u8 *Data_03001ebc;
 
 void Func_080030f8(s32 frames);
-void Func_080072f0(s32, s32, s32, s32);
+/* `call via r3` entry of the 080072e4 thunk bank: branches to the address in
+ * r3 with r0-r2 as that target's arguments. */
+void Func_080072f0(s32, s32, s32, s32 target);
 void Func_08009080(void *object, s32 mode);
 void Func_080090d0(void *object);
 void Func_08015040(s32 message, s32 mode);

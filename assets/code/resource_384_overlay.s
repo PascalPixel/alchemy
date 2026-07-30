@@ -185,13 +185,8 @@ AlchemyC_0200006c:
 	bx	r0
 	.2byte 0x138d
 	.2byte 0x0000
-	push	{lr}
-	movs	r0, #123
-	bl	sub_0200049e
-	movs	r0, #1
-	bl	sub_0200049c
-	pop	{r0}
-	bx	r0
+AlchemyC_020001d0:
+	.space 0x12
 	.2byte 0x0000
 	push	{r5, lr}
 	ldr	r3, [pc, #108]

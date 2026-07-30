@@ -790,22 +790,8 @@ AlchemyC_020006e4:
 	pop	{r5, r6, r7}
 	pop	{r0}
 	bx	r0
-	push	{r5, r6, r7, lr}
-	movs	r6, #16
-	movs	r7, #1
-	movs	r5, #5
-.L_0200073c:
-	adds	r0, r6, #0
-	bl	sub_02001870
-	subs	r5, #1
-	adds	r0, #35
-	strb	r7, [r0, #0]
-	adds	r6, #1
-	cmp	r5, #0
-	bge.n	.L_0200073c
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
+AlchemyC_02000734:
+	.space 0x20
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

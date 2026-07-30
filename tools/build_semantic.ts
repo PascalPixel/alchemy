@@ -32,6 +32,100 @@ interface ManualRegion {
   evidence: string;
 }
 
+interface MainManifestRegion {
+  address: number;
+  size: number;
+  retention: string;
+}
+
+interface MainExecutableRange {
+  address: string;
+  size: number;
+}
+
+interface MainSemanticOwner {
+  entry: string;
+  evidence: string;
+  executable_ranges: MainExecutableRange[];
+}
+
+interface ValidatedMainSemanticOwner {
+  entry: number;
+  evidence: string;
+  executableRanges: Array<{ address: number; size: number }>;
+}
+
+function parseAddress(value: string, field: string): number {
+  if (!/^0x[0-9a-f]+$/i.test(value)) {
+    throw new Error(`${field} must be a hexadecimal address`);
+  }
+  const address = Number.parseInt(value, 16);
+  if (!Number.isSafeInteger(address)) throw new Error(`${field} is not a safe integer`);
+  return address;
+}
+
+export function validateMainSemanticOwners(
+  owners: MainSemanticOwner[],
+  manifestRegions: MainManifestRegion[],
+  source = "semantic/main-regions.json",
+): ValidatedMainSemanticOwner[] {
+  const validated: ValidatedMainSemanticOwner[] = [];
+  const entries = new Set<number>();
+  for (const [ownerIndex, owner] of owners.entries()) {
+    const ownerField = `${source} owner ${ownerIndex}`;
+    const entry = parseAddress(owner.entry, `${ownerField} entry`);
+    if (entries.has(entry)) throw new Error(`${source} repeats entry ${owner.entry}`);
+    entries.add(entry);
+    if (typeof owner.evidence !== "string" || owner.evidence.trim() === "") {
+      throw new Error(`${ownerField} has empty evidence`);
+    }
+    if (!Array.isArray(owner.executable_ranges) || owner.executable_ranges.length === 0) {
+      throw new Error(`${ownerField} has no executable ranges`);
+    }
+    const executableRanges = owner.executable_ranges.map((range, rangeIndex) => {
+      const rangeField = `${ownerField} range ${rangeIndex}`;
+      const address = parseAddress(range.address, `${rangeField} address`);
+      if (!Number.isSafeInteger(range.size) || range.size <= 0) {
+        throw new Error(`${rangeField} size must be a positive safe integer`);
+      }
+      if (!Number.isSafeInteger(address + range.size)) {
+        throw new Error(`${rangeField} end is not a safe integer`);
+      }
+      const manifestRegion = manifestRegions.find((item) =>
+        item.address === address && item.size === range.size
+      );
+      if (manifestRegion === undefined) {
+        throw new Error(
+          `${rangeField} does not correspond to a main manifest row`,
+        );
+      }
+      return { address, size: range.size };
+    }).sort((left, right) => left.address - right.address);
+    if (!executableRanges.some((range) => range.address === entry)) {
+      throw new Error(`${ownerField} does not include its entry manifest row`);
+    }
+    for (let index = 1; index < executableRanges.length; index++) {
+      const prior = executableRanges[index - 1];
+      const current = executableRanges[index];
+      if (current.address < prior.address + prior.size) {
+        throw new Error(`${ownerField} has overlapping executable ranges`);
+      }
+    }
+    for (const priorOwner of validated) {
+      for (const range of executableRanges) {
+        for (const priorRange of priorOwner.executableRanges) {
+          if (range.address < priorRange.address + priorRange.size &&
+              priorRange.address < range.address + range.size) {
+            throw new Error(`${ownerField} overlaps another tracked main owner`);
+          }
+        }
+      }
+    }
+    validated.push({ entry, evidence: owner.evidence, executableRanges });
+  }
+  return validated;
+}
+
 function sourcesBelow(directory: string): string[] {
   if (!existsSync(directory)) return [];
   const result: string[] = [];
@@ -98,11 +192,26 @@ export function buildSemantic(directory = SEMANTIC): {
     ? []
     : (JSON.parse(readFileSync(inventoryPath, "utf8")) as { functions: OverlayFunction[] }).functions;
   const mainManifestPath = join(ROOT, "out", "full", "asm", "manifest.json");
-  const mainRegions = sources.length === 0
-    ? []
-    : (JSON.parse(readFileSync(mainManifestPath, "utf8")) as {
-      regions: Array<{ address: number; size: number; retention: string }>;
-    }).regions;
+  const mainManifestRegions = existsSync(mainManifestPath)
+    ? (JSON.parse(readFileSync(mainManifestPath, "utf8")) as {
+      regions: MainManifestRegion[];
+    }).regions
+    : [];
+  const mainOwnerPath = join(SEMANTIC, "main-regions.json");
+  const mainOwnerDocument = existsSync(mainOwnerPath)
+    ? (JSON.parse(readFileSync(mainOwnerPath, "utf8")) as {
+      format: number;
+      main_owners: MainSemanticOwner[];
+    })
+    : { format: 1, main_owners: [] };
+  if (mainOwnerDocument.format !== 1 || !Array.isArray(mainOwnerDocument.main_owners)) {
+    throw new Error(`${relative(ROOT, mainOwnerPath)} has an unsupported schema`);
+  }
+  const mainOwners = validateMainSemanticOwners(
+    mainOwnerDocument.main_owners,
+    mainManifestRegions,
+    relative(ROOT, mainOwnerPath),
+  );
   const manualPath = join(SEMANTIC, "regions.json");
   const manual = existsSync(manualPath)
     ? (JSON.parse(readFileSync(manualPath, "utf8")) as {
@@ -116,7 +225,11 @@ export function buildSemantic(directory = SEMANTIC): {
     let semanticBytes = 0;
     let mainSemanticBytes = 0;
     let overlaySemanticBytes = 0;
-    const admitted: Array<{ overlay: string; address: number; span: number; source: string }> = [];
+    const admitted: Array<{
+      overlay: string;
+      ranges: Array<{ address: number; size: number }>;
+      source: string;
+    }> = [];
     for (const [index, source] of sources.entries()) {
       const identity = validateSource(source);
       sourceBytes += readFileSync(source).byteLength;
@@ -138,31 +251,47 @@ export function buildSemantic(directory = SEMANTIC): {
         )
         : undefined;
       const mainRegion = identity.kind === "main"
-        ? mainRegions.find((item) => item.address === address && [
+        ? mainManifestRegions.find((item) => item.address === address && [
           "c_candidate", "split_first", "merge_with_continuations", "merge_with_owner",
         ].includes(item.retention))
         : undefined;
-      const spanBytes = inventoried?.span_bytes ?? reviewed?.span_bytes ?? mainRegion?.size;
-      if (spanBytes === undefined) {
-        throw new Error(`${relative(ROOT, source)} has no ordinary overlay inventory owner`);
+      const trackedMainOwner = identity.kind === "main"
+        ? mainOwners.find((item) => item.entry === address)
+        : undefined;
+      const ranges = trackedMainOwner?.executableRanges ??
+        (inventoried !== undefined
+          ? [{ address, size: inventoried.span_bytes }]
+          : reviewed !== undefined
+            ? [{ address, size: reviewed.span_bytes }]
+            : mainRegion !== undefined
+              ? [{ address, size: mainRegion.size }]
+              : undefined);
+      if (ranges === undefined) {
+        throw new Error(`${relative(ROOT, source)} has no admitted semantic owner`);
       }
       if (reviewed !== undefined &&
           (!Number.isSafeInteger(reviewed.span_bytes) || reviewed.span_bytes <= 0 ||
            reviewed.evidence.trim() === "")) {
         throw new Error(`${relative(ROOT, manualPath)} contains an invalid reviewed boundary`);
       }
+      const spanBytes = ranges.reduce((sum, range) => sum + range.size, 0);
       semanticBytes += spanBytes;
       if (identity.kind === "main") mainSemanticBytes += spanBytes;
       else overlaySemanticBytes += spanBytes;
       for (const prior of admitted) {
         if (prior.overlay !== overlay) continue;
-        if (address < prior.address + prior.span && prior.address < address + spanBytes) {
-          throw new Error(
-            `${relative(ROOT, source)} overlaps ${relative(ROOT, prior.source)} in ${overlay}`,
-          );
+        for (const range of ranges) {
+          for (const priorRange of prior.ranges) {
+            if (range.address < priorRange.address + priorRange.size &&
+                priorRange.address < range.address + range.size) {
+              throw new Error(
+                `${relative(ROOT, source)} overlaps ${relative(ROOT, prior.source)} in ${overlay}`,
+              );
+            }
+          }
         }
       }
-      admitted.push({ overlay, address, span: spanBytes, source });
+      admitted.push({ overlay, ranges, source });
       const stem = `${index.toString().padStart(4, "0")}-${basename(source, ".c")}`;
       const plan = sourceToAssemblyPlan({
         target: "gs1",
@@ -195,6 +324,48 @@ function selfTest(): void {
   if (!OVERLAY_SOURCE_NAME.test("resource_379_c_020000dc.c")) throw new Error("valid overlay name rejected");
   if (!MAIN_SOURCE_NAME.test("0809a294.c")) throw new Error("valid main name rejected");
   if (OVERLAY_SOURCE_NAME.test("resource_379.c")) throw new Error("addressless source name accepted");
+  const manifest = [
+    { address: 0x08001000, size: 12, retention: "split_first" },
+    { address: 0x08001008, size: 4, retention: "merge_with_function_owner" },
+    { address: 0x08001020, size: 8, retention: "merge_with_function_owner" },
+  ];
+  const valid = validateMainSemanticOwners([{
+    entry: "0x08001000",
+    evidence: "test owner",
+    executable_ranges: [
+      { address: "0x08001000", size: 12 },
+      { address: "0x08001020", size: 8 },
+    ],
+  }], manifest, "self-test");
+  if (valid[0].executableRanges.reduce((sum, range) => sum + range.size, 0) !== 20) {
+    throw new Error("noncontiguous owner byte sum rejected");
+  }
+  const rejects = (owner: MainSemanticOwner, message: string): void => {
+    try {
+      validateMainSemanticOwners([owner], manifest, "self-test");
+    } catch {
+      return;
+    }
+    throw new Error(message);
+  };
+  rejects({
+    entry: "0x08001000",
+    evidence: "bad size",
+    executable_ranges: [{ address: "0x08001000", size: 0 }],
+  }, "non-positive main range accepted");
+  rejects({
+    entry: "0x08001000",
+    evidence: "missing row",
+    executable_ranges: [{ address: "0x08001000", size: 11 }],
+  }, "non-manifest main range accepted");
+  rejects({
+    entry: "0x08001000",
+    evidence: "overlap",
+    executable_ranges: [
+      { address: "0x08001000", size: 12 },
+      { address: "0x08001008", size: 4 },
+    ],
+  }, "overlapping main ranges accepted");
   console.log("self-test=ok");
 }
 

@@ -145,6 +145,68 @@ pick() {  # reads matrix, echoes "diff size flags" of the best row
       if (better && (best=="" || $1 < bestd)) { bestd=$1; best=$0 } }
     END { if (best != "") print best }' "$WORK/matrix.tsv"
 }
+# ---- phase 1b: pair the modes that are known to interact -------------------
+# Expanding only the best-scoring singles was tried first and is WRONG, for the
+# reason §6 already documents about the CSE pair: the combination that wins is
+# often built from modes that are individually neutral or worse. Measured on
+# 08091174, where `-mgrouped-dma-store,-fno-cse-pool-immediate` reaches 3 while
+# neither flag is in the top six alone; and on 0800300c, where
+# `-fno-cse-pool-immediate,-fno-schedule-insns2,-fthumb-group-control-last`
+# reaches 2 the same way. So pair exhaustively over a curated pool of modes that
+# are known to interact, rather than ranking first. ~90 pairs is a few seconds.
+if [ "$QUICK" = 0 ] && [ -s "$WORK/matrix.tsv" ]; then
+  # macOS ships bash 3.2, which has no `mapfile`; it fails silently and leaves an
+  # empty array, so build the pool portably.
+  TOP=()
+  while IFS= read -r flag; do
+    [ -n "$flag" ] && TOP+=("$flag")
+  done <<'POOL'
+-fno-cse-two-insn-immediate
+-fno-cse-pool-immediate
+-fno-schedule-insns2
+-fsched-low-dest-first
+-fsched-high-dest-first
+-fsched-store-first
+-fno-sched-depend-count
+-fno-sched-alias
+-mgrouped-dma-store
+-fthumb-group-control-last
+-fthumb-group-value2-in-place
+-fthumb-split-group-base
+-mthumb-immediate-latency
+-fno-gcse-insert-load
+-fno-regmove
+-fno-rerun-cse-after-loop
+POOL
+  COMBOS="$WORK/combos.txt"
+  : > "$COMBOS"
+  count=${#TOP[@]}
+  for ((i = 0; i < count; i++)); do
+    for ((j = i + 1; j < count; j++)); do
+      echo "${TOP[i]},${TOP[j]}" >> "$COMBOS"
+    done
+  done
+  # Descriptor-family triples: these regions repeatedly need a grouper plus a CSE
+  # mode plus an ordering mode together.
+  for a in -mgrouped-dma-store -fthumb-group-control-last -fthumb-group-value2-in-place; do
+    for b in -fno-cse-pool-immediate -fno-cse-two-insn-immediate; do
+      for c in -fno-schedule-insns2 -fsched-store-first -fno-sched-depend-count; do
+        echo "$a,$b,$c" >> "$COMBOS"
+      done
+    done
+  done
+  # §7: never combine -fsched-low-dest-first with -mthumb-immediate-latency, the
+  # latter subsumes and then breaks the same targets.
+  grep -v -e '-fsched-low-dest-first.*-mthumb-immediate-latency' \
+          -e '-mthumb-immediate-latency.*-fsched-low-dest-first' "$COMBOS" \
+    | sort -u > "$COMBOS.clean"
+  mv "$COMBOS.clean" "$COMBOS"
+  if [ -s "$COMBOS" ]; then
+    xargs -P "$JOBS" -n 1 "$RUN" < "$COMBOS" >> "$WORK/matrix.tsv" 2>/dev/null
+    echo "combos  tried=$(wc -l < "$COMBOS" | tr -d ' ') from the interacting-mode pool"
+  fi
+fi
+
 ROW="$(pick "$BEST" "$BESTSIZE" "$REFSIZE")"
 if [ -n "$ROW" ]; then
   BEST=$(cut -f1 <<< "$ROW")

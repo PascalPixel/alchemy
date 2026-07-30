@@ -2,6 +2,24 @@
   "format": 1,
   "main_owners": [
     {
+      "entry": "0x08026080",
+      "evidence": "One function with its only prologue at 0x08026080 and its only epilogue at 0x08026e72. Direct branches carry the live 324-byte stack frame and r8-r11 state from the head through 0x0802691c into 0x08026b44. The 66-byte gap at 0x080268da, the 2-byte alignment at 0x08026b06, and the 60-byte literal pool at 0x08026b08 are excluded.",
+      "executable_ranges": [
+        {
+          "address": "0x08026080",
+          "size": 2138
+        },
+        {
+          "address": "0x0802691c",
+          "size": 490
+        },
+        {
+          "address": "0x08026b44",
+          "size": 814
+        }
+      ]
+    },
+    {
       "entry": "0x080ddde0",
       "evidence": "One function with a complete prologue at 0x080ddde0 and live stack/high-register state carried by direct branches into 0x080de0d4; the intervening 72-byte 0x080de08c region is a literal pool and is excluded.",
       "executable_ranges": [

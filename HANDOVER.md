@@ -270,6 +270,32 @@ Note the stages are independent once each has its own output tree, so they can
 run concurrently (94 s vs 161 s cold for the two full builds); only the
 ROM-mode build should write the default `out/full` tree.
 
+## Read this before planning: the per-overlay "remaining bytes" figure lies
+
+`out/decomp/overlays.json` lists nested discoveries that are `contained_by` one
+another, so naively summing a row set re-counts the same region many times over.
+Measured inflation against the largest genuine function in each overlay:
+resource_381 17.6x (96 of its 115 rows are contained), resource_379 9.1x,
+resource_37a 5.8x, resource_3a1 4.8x — while resource_373, 3a8, 396, 39f, 3b5
+and 3c4 are honest at about 1.0x. A walker burned a whole lane on resource_379
+expecting ~22,000 bytes and found 2,628: 65 of its 66 rows were nested walks
+starting at successive addresses *inside the veneer bank*, all ending at the same
+place. **Always filter to rows with an empty `contained_by`.**
+
+Filtered that way, the identified unconverted function queue is **227 functions
+totalling 16,256 bytes**, of which resource_381 holds 7,960 and resource_379
+2,422 — so roughly half the queue is one overlay and the whole queue is small.
+
+That is the strategic fact for anyone asked to "finish the decompilation": the
+Full-C denominator (1,339,536) deliberately includes linker veneers, structural
+assembly, literal-bearing regions and executable alignment, which will never be
+C, so 100% is not the target. The tracked measure of real remaining work is
+`asm_c_debt_bytes`, printed by every full build and currently **395,816**. The
+gap between that and the 16,256-byte identified queue is the honest bottleneck:
+most C-debt assembly has not yet been *discovered* as functions. Converting the
+known queue is close to exhausted; scaling further needs discovery work, not more
+walker lanes over the same inventory.
+
 ## Permuting: keep it as an audit pass, not an engine
 
 `tools/permute_overlay.ts` drives the annealing search in `tools/permute_v1.ts`

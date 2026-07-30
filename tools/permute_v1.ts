@@ -213,7 +213,7 @@ export function weightedDiff(actual: Buffer, expected: Buffer): number {
 
 // ---- 文モデルと変形 ---------------------------------------------------
 
-interface Statement { indent: string; text: string; depth: number; line: number }
+export interface Statement { indent: string; text: string; depth: number; line: number }
 
 export function parseStatements(body: string): { rows: string[]; statements: Statement[] } {
   const rows = body.split("\n");
@@ -248,7 +248,7 @@ function writes(text: string): Set<string> {
   return result;
 }
 
-function conflicts(a: Statement, b: Statement): boolean {
+export function conflicts(a: Statement, b: Statement): boolean {
   if (a.text.includes("(") && b.text.includes("(") &&
       /\bFunc_/.test(a.text) && /\bFunc_/.test(b.text)) return true;
   if (/M2C_FIELD|\*\(/.test(a.text) && /M2C_FIELD|\*\(/.test(b.text) &&
@@ -549,8 +549,11 @@ function budget(state: TargetState, base: number): number {
   return base;
 }
 
-export function pickOperator(state: TargetState, random: () => number, registerFraction = 0, semanticFraction = 0, suggestions = new Set<string>()): [string, Operator] {
-  const weights = OPERATORS.map(([name]) => {
+export function pickOperator(
+  state: TargetState, random: () => number, registerFraction = 0, semanticFraction = 0,
+  suggestions = new Set<string>(), operators: ReadonlyArray<[string, Operator]> = OPERATORS,
+): [string, Operator] {
+  const weights = operators.map(([name]) => {
     const record = state.operators[name] ?? { tried: 0, accepted: 0 };
     let guidance = 1;
     if (registerFraction >= 0.5 && /^(argshift|pointerstep|postincrement|splitload|declshuffle|swap|hoist|inline|volatilize)$/.test(name)) guidance = 3;
@@ -560,11 +563,11 @@ export function pickOperator(state: TargetState, random: () => number, registerF
   });
   const total = weights.reduce((sum, value) => sum + value, 0);
   let roll = random() * total;
-  for (let index = 0; index < OPERATORS.length; index++) {
+  for (let index = 0; index < operators.length; index++) {
     roll -= weights[index];
-    if (roll <= 0) return OPERATORS[index];
+    if (roll <= 0) return operators[index];
   }
-  return OPERATORS[OPERATORS.length - 1];
+  return operators[operators.length - 1];
 }
 
 // ---- 焼きなまし本体 ---------------------------------------------------
@@ -582,6 +585,8 @@ export interface AnnealRequest {
   registerFraction?: number;
   semanticFraction?: number;
   suggestions?: Set<string>;
+  // 作用素表の差し替え。既定は主ROMと同じ全表。
+  operators?: ReadonlyArray<[string, Operator]>;
   // 0点に達したときの後処理。falseを返せば探索を続ける。
   onMatch?: (body: string, accepted: readonly string[]) => boolean | Promise<boolean>;
   patience?: number;
@@ -613,7 +618,7 @@ export async function anneal(request: AnnealRequest): Promise<AnnealOutcome> {
       if (sinceImprovement >= patience) break;
       const [operatorName, operator] = pickOperator(
         state, random, request.registerFraction ?? 0, request.semanticFraction ?? 0,
-        request.suggestions ?? new Set<string>(),
+        request.suggestions ?? new Set<string>(), request.operators ?? OPERATORS,
       );
       const next = operator(current.body, random);
       const record = (state.operators[operatorName] ??= { tried: 0, accepted: 0 });

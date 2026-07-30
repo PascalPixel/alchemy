@@ -1992,52 +1992,8 @@ AlchemyC_02000478:
 	bx	r1
 	.2byte 0x01d8
 	.2byte 0x0300
-	push	{r5, r6, r7, lr}
-	mov	r7, sl
-	mov	r6, r8
-	push	{r6, r7}
-	ldr	r3, [pc, #76]
-	movs	r2, #0
-	movs	r0, #0
-	ldr	r5, [r3, #0]
-	mov	r8, r2
-	bl	sub_0200621c
-	movs	r7, #160
-	lsls	r7, r7, #2
-	mov	sl, r0
-	movs	r6, #8
-	adds	r5, #52
-.L_020004dc:
-	ldmia	r5!, {r1}
-	cmp	r1, #0
-	beq.n	.L_02000500
-	ldr	r3, [r1, #80]
-	ldr	r3, [r3, #40]
-	movs	r2, #0
-	ldrsh	r3, [r3, r2]
-	cmp	r3, #242
-	bne.n	.L_02000500
-	mov	r0, sl
-	adds	r1, #8
-	adds	r0, #8
-	bl	.L_02000976
-	cmp	r0, r7
-	bge.n	.L_02000500
-	adds	r7, r0, #0
-	mov	r8, r6
-.L_02000500:
-	adds	r6, #1
-	cmp	r6, #65
-	bls.n	.L_020004dc
-	mov	r0, r8
-	pop	{r3, r5}
-	mov	r8, r3
-	mov	sl, r5
-	pop	{r5, r6, r7}
-	pop	{r1}
-	bx	r1
-	.2byte 0x1ebc
-	.2byte 0x0300
+AlchemyC_020004bc:
+	.space 0x5c
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

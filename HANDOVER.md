@@ -21,26 +21,12 @@ Know which one you are before you change anything.
 [docs/BRANCH-PROTOCOL.md](docs/BRANCH-PROTOCOL.md) is the short version of who
 owns what and what reaches you how — read it first if you are new to a branch.
 
-**The three agents and which way work flows.** `main` carries an agent called
-**Vale**; `venus` carries **Venus Lighthouse**; `mercury` carries **Mercury
-Lighthouse**. The cycle is one-directional and each agent pulls, never pushes
-sideways:
-
-- **Mercury** pulls from `main`, about once an hour, and pushes only to
-  `origin/mercury`.
-- **Venus** pulls *all* changes from `mercury`.
-- **Vale** pulls only *docs and tools* changes from `venus` into `main`.
-
-So everything Mercury banks reaches `main` eventually, by way of Venus. Mercury
-never merges `venus` and never pushes to `main`.
-
-The coverage map is Vale's — the rule and its mechanics are below, under
-"`README.md` and its ROM coverage map belong to Vale". One historical note that
-belongs here: until main's `make the map Vale's alone`, `bank_cycle.sh` ran
-`bun run coverage` itself and `verify` ended in `coverage:check`, so every
-Mercury bank carried a map redraw as an unavoidable side effect. Several were
-banked on 2026-07-30 that way. Both steps are gone now; if a merge conflicts on
-either map artifact, take either side and leave it.
+**Read `docs/BRANCH-PROTOCOL.md` once before your next push.** It is the tracked
+statement of who owns what: the ring is `main -> mercury -> venus -> main`, each
+hop about hourly, and nobody pushes to a branch they do not own. For Mercury that
+means pull `main`, push only `origin/mercury`, and never touch the coverage map
+or `README.md` — anything you want on `main` gets there by banking it here and
+letting Vale port it within the hour.
 
 | | **Mercury Lighthouse** | **Venus Lighthouse** |
 | --- | --- | --- |

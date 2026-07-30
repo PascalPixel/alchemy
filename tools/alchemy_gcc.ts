@@ -450,6 +450,10 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  // Needs the tie-break alone, without the paired constant-sharing mode: two
+  // argument setters tie before a `bl` and the low-destination rule picks
+  // `mov r0,sl` over `lsls r1,r1,#1` (notes/resource_381-0e30.md).
+  "assets/code/resource_381_c_02000e30.c",
   "assets/code/resource_3af_c_02001b58.c",
   "assets/code/resource_3af_c_020019c0.c",
   "assets/code/resource_3af_c_020012f0.c",

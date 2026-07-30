@@ -3223,17 +3223,8 @@ AlchemyC_02000030:
 	.4byte 0x03001ebc
 	.2byte 0x087e
 	.2byte 0x0000
-	push	{lr}
-	bl	sub_020034b4
-	ldr	r0, [pc, #20]
-	bl	sub_02003562
-	movs	r1, #0
-	movs	r0, #16
-	bl	sub_0200358a
-	bl	sub_020034ce
-	pop	{r0}
-	bx	r0
-	.4byte 0x00001c96
+AlchemyC_02001a2c:
+	.space 0x20
 	.4byte 0x47204c00
 	.4byte 0x08000101
 	.4byte 0x47204c00

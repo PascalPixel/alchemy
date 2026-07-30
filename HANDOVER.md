@@ -571,12 +571,24 @@ no hand sweep would have located. One lane closed 8 functions / 1,628 bytes from
 41 candidates this way.
 
 **Run `tools/finish_draft.sh <draft.c>` before reasoning about any residual.** It
-composes the entire enumerable search in one command and takes **about 2 seconds**
-warm at 16-way concurrency: 51 flag settings (both CSE modes alone and paired per
+composes the entire enumerable search in one command and takes a few seconds at
+16-way concurrency: ~50 single flag settings (both CSE modes alone and paired per
 this section's protocol, the scheduler modes, the fork modes from `FORK_MODES`),
-then the return-type sweep at baseline and at the winning flag set, then the
-statement-order sweep, then it prints the best result, the exact `--flags` string
-to reproduce it, and the surviving residual. It writes only to its `--out`
+then **137 pairs and descriptor-family triples over a curated interacting-mode
+pool**, then **the other approved compiler families** (`old-agbcc`, `gcc2951`,
+`pret-early-thumb`, each with and without `-O1`), then the return-type sweep at
+baseline and at the winning flag set, then the statement-order sweep. It prints
+the best result, the exact options to reproduce it, and the surviving residual.
+
+Two of its stages exist because single-flag probing provably misses things.
+Pairing is required because the winning combination is often built from modes that
+are individually neutral or worse (`08091174` reaches 3 on
+`-mgrouped-dma-store,-fno-cse-pool-immediate` with neither in its top six alone).
+Family probing is required because 2 of the 20 conversions banked on 2026-07-30
+needed `--family old-agbcc`, which no `--flags` value can express: on `08006878`
+the whole gcc 2.96 lane floors at 72 while `old-agbcc -O1` is **0**. A family win
+is reported as `BEST IS A FAMILY`, and adopting it means routing the stem through
+`AGBCC_SOURCES` rather than a flag set. It writes only to its `--out`
 directory and never builds, commits or touches `src/`.
 
 Validated on known cases: it recovers `08090824`'s `-mgrouped-dma-store` win

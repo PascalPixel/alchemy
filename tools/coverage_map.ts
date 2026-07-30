@@ -52,7 +52,7 @@ const LANE_STYLE: Record<Lane, { fill: string; ink: string; label: string }> = {
   exact_c: { fill: "#0072f5", ink: "#eaf2ff", label: "byte-exact C" },
   semantic_c: { fill: "#50e3c2", ink: "#04241d", label: "semantic C" },
   assembly: { fill: "#333333", ink: "#a1a1a1", label: "assembly" },
-  asset_data: { fill: "#1f1f1f", ink: "#7d7d7d", label: "assets & data" },
+  asset_data: { fill: "#ff0080", ink: "#2b0016", label: "assets & data" },
 };
 const LANE_ORDER: Lane[] = ["exact_c", "semantic_c", "assembly", "asset_data"];
 

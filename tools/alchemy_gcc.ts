@@ -85,6 +85,16 @@ const NO_CSE_FOLLOW_SOURCES = new Set(["0800f9f4"]);
 // preserving the reference's defined NULL return without a redundant move.
 // In 0808c30c it propagates the persistent amount through the fallback copy,
 // rotating the loop allocation and changing the final in-place negate.
+// A grouped descriptor transfer's third word is usually a constant-pool load into
+// a pseudo, which thumb_store_multiple3 then has to copy because it hard-codes
+// (reg:SI 2). The mode retargets the definition when it is a constant and nothing
+// between it and the group touches r2, so the copy disappears -- the counterpart
+// value0 already had. 080b5ad4 writes a three-word DMA descriptor and then passes
+// the same control word as the call's third argument, which is the shape the fork
+// comment calls "the last divergence in the descriptor-then-call regions".
+// Off by default and routed per source like every other mode.
+const GROUP_VALUE2_IN_PLACE_SOURCES = new Set(["080b5ad4"]);
+
 const NO_RERUN_CSE_AFTER_LOOP_SOURCES = new Set([
   "08006088", "0808c30c", "080ba918", "080044d0",
 ]);
@@ -210,6 +220,13 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // (reg:SI 2) makes arm_pre_reload insert a copy the reference does not have --
 // value0 has a special case in that pass and value2 has none
 // (work/hand/080b5ad4/NOTES.md).
+//   RESOLVED 2026-07-30: that compiler change was already written. The fork
+// carries `flag_thumb_group_value2_in_place`, which retargets a constant value2
+// definition straight into r2 so the copy disappears -- exactly the missing
+// value0 counterpart this comment describes. It had never been added to any
+// routing set here nor to FORK_MODES in tools/mode_sweep.ts, so no sweep could
+// ever reach it. 080b5ad4 now compiles byte-exact with it (64 bytes) once its
+// tail is spelled as a returned call. See GROUP_VALUE2_IN_PLACE_SOURCES below.
 const GROUPED_DMA_STORE_SOURCES = new Set([
   "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
   "08004a5c", "08004a94", "08005340", "08005394", "080053e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "08019bac",
@@ -831,6 +848,7 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
+    ...(GROUP_VALUE2_IN_PLACE_SOURCES.has(stem) ? ["-fthumb-group-value2-in-place"] : []),
     ...(THUMB_IMMEDIATE_LATENCY_SOURCES.has(stem)
       ? ["-mthumb-immediate-latency"]
       : []),

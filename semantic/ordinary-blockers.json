@@ -5,6 +5,14 @@
       "lane": "multi_region_function",
       "reason": "The owner has direct exits into 08006f30/08006f32 and copies the 08006f48..08006f6c helper payload onto its stack before executing it through the continuation path. Reconstruct and classify the whole serial/runtime module rather than admitting this manifest fragment alone."
     },
+    "0800ebec": {
+      "lane": "relocated_kernel_continuation",
+      "reason": "The true 1,804-byte function spans four regions and twice enters the relocated kernel at 0x03000118 with `mov ip,pc; bx r4`, returning inline into a 62-byte executable-gap continuation while its parent frame and registers remain live. It requires a whole-module representation for that nonstandard return contract."
+    },
+    "080dd9c0": {
+      "lane": "multi_region_function",
+      "reason": "This 124-byte manifest owner is only FunctionHead_080dd9c0: both paths branch into sub_080dda3c, which contains the body and shared literal/control state. Admit the head and continuation as one semantic module, not as a standalone 124-byte function."
+    },
     "08095778": {
       "lane": "cross_file_abi",
       "reason": "The modulo result passed here conflicts with the live pointer-base interpretation in the current exact 080955b0 source. Reconstruct the call family jointly before admission."

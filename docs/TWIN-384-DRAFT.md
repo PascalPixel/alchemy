@@ -79,6 +79,13 @@ the mass actually was.
    swap propagating through the probe builds, and 143-146 are a late store
    ordering. The reference holds the mask in `sl` and the table in `r9`; we hold
    them the other way. Fix that and most of the residual goes at once.
+
+   Measured and ruled out for moving that assignment: swapping the `table`/`mask`
+   declaration order (164, far worse), and typing the table as a plain `s32`
+   base instead of `s32 *` (22, unchanged). The constant spelling is irrelevant
+   too. Whatever picks r9 over sl here is not declaration order, operand type, or
+   the literal's form — look at live-range length or at giving one of them a use
+   that outlives the other.
 4. **Do not swap the `table`/`mask` declaration order to chase the high
    registers.** The reference holds the mask in `sl` and the table in `r9`; we
    hold them the other way round, which looks like a one-line fix. It is not —

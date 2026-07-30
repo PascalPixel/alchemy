@@ -1127,6 +1127,57 @@ Those sessions were **reasoning-bound per lane but core-bound in aggregate**; mo
 cores changes only the second term, so read this as "how to spend cores", not
 "how to work". Everything in §1-§9 still applies unchanged.
 
+**Bringing up a bare cloud container (2026-07-30, measured end to end: ~35 min).**
+A fresh clone cannot run anything in the exact lane: `bun run verify`,
+`candidate_show.ts` and `overlay_verify` all read `roms/gs1-en.gba`, and every
+compile routes through `../alchemy-gcc/dist`, which is *built*, not committed.
+Four separate things have to be right, and three of them fail in ways that look
+like a repository bug rather than a missing prerequisite.
+
+1. **The ROM is yours to supply.** `roms/` and `*.gba` are gitignored and must
+   stay that way. Drop the approved image at `roms/gs1-en.gba` and check it
+   against tracked `rom.sha1` (`5c46952054…`) before trusting a single measurement.
+   Then `git config core.hooksPath .hooks` exactly as `PROVENANCE.md` says.
+2. **`arm-none-eabi-as`/`objcopy` are host binutils, not part of the bundle.**
+   `build_asm.ts` shells out to them by bare name. `apt-get install -y
+   --no-install-recommends binutils-arm-none-eabi` — a few seconds.
+3. **Build the compilers from the sibling repo.** Clone `PascalPixel/alchemy-gcc`
+   next to this checkout so `../alchemy-gcc/dist` resolves, then
+   `./build.sh <target> && ./stage.sh <target>`. gcc296 takes ~3 min on 4 cores;
+   agbcc, gcc3 and gs2 a few more each. **`stage.sh` has no token for
+   `pretearlythumb` or `gcc2951`** even though `build.sh` does — copy those two
+   `cc1` binaries to `dist/pret-early-thumb/cc1` and `dist/gcc2951/cc1` by hand.
+   Both are needed: `alchemy_gcc.ts --self-test` builds a plan for each, so
+   `bun run verify` fails without them.
+4. **Re-stamp the vendored generated files after cloning.** `alchemy-gcc` ships
+   pre-generated `c-parse.c`/`c-gperf.h`/`configure` "timestamp-pinned newer than
+   their inputs" — but **git does not preserve mtimes**, so a fresh clone lands
+   them all in the same checkout second and make regenerates them. gcc-2.95.1
+   then dies in modern bison on a 1999 grammar (`$$ for the midrule at $4 of
+   'structsp' has no declared type`). `touch` the generated files in each
+   vendored tree before building. Symptom to recognise: any build failure that
+   names bison, gperf or autoconf is this, not a broken tree.
+
+**Match the pinned Bun.** `package.json` pins `bun@1.3.14`; the container shipped
+1.3.11 and `gba_header.ts --self-test` failed with "GBA logo source must be the
+canonical 104x16 monochrome PNG". That check re-encodes the tracked PNG and
+demands byte equality, and its IDAT comes from `deflateSync(rows, {level: 9})` —
+i.e. it is pinned to Bun's bundled zlib. It is a Bun-version tell, not a corrupt
+asset; `git status` on the PNG is clean throughout. Install the pinned version
+before concluding anything about the assets.
+
+**A locally built bundle will not match the pinned digests, and that is expected.**
+gcc embeds prefix paths, so a from-source build at a different path differs
+byte-for-byte while its *codegen* is identical — `build_claimed` came back
+`linked=1406 failures=0` on the first try. The one target that reproduced the
+pinned digest exactly was `pret-early-thumb`. So do not read a digest mismatch as
+a broken build, and do not read a matching digest as the only admissible outcome.
+`EXPECTED` now holds a **list** of approved digests per file rather than one, so a
+second host can be admitted without evicting the first. The bar for adding to
+that list is unchanged and is the whole point: run `bun run verify` and get
+`byte_identical=yes rom_fallback_bytes=0` with that bundle first. This container's
+bundle was admitted that way on 2026-07-30.
+
 **What the ceiling actually is.** Measured on the 4-core cloud host: one lane
 idles at ~120 ms per probe; two lanes, load 1.18, 137 ms; five lanes, load 3.60,
 and a warm `build_claimed` that costs ~0 s idle stretched to 17.6 s. Memory never

@@ -37,9 +37,9 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **460,510
-executable bytes across 899 compiling sources**: 386,840 main-image bytes and
-73,670 overlay bytes. Combined with exact C, **655,460 / 1,339,558 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **462,426
+executable bytes across 902 compiling sources**: 386,840 main-image bytes and
+75,586 overlay bytes. Combined with exact C, **657,376 / 1,339,558 executable
 bytes** are expressed as C.
 
 **Three overlays are now converted in full**, none skipping anything:

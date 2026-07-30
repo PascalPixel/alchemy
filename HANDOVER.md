@@ -37,13 +37,26 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **369,358
-executable bytes across 631 compiling sources**: 356,566 main-image bytes and
-12,792 overlay bytes. Combined with exact C, **563,748 / 1,339,558 executable
-bytes** are expressed as C. Build that lane
-with `bun run build:semantic`; its sources live under `semantic/` and do not
-claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
-and multi-region traps out of the ordinary review queue.
+Alongside the exact lane, reviewed semantic C currently accounts for **475,156
+executable bytes across 921 compiling sources**: 382,970 main-image bytes and
+92,186 overlay bytes. Combined with exact C, **678,920 / 1,339,572 executable
+bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
+sources live under `semantic/` and do not claim byte equality. Use
+`semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
+of the ordinary review queue.
+
+**Seven overlays are now converted in full**, none skipping anything:
+`resource_3b8` (15,028 bytes), `resource_372` (10,202), `resource_371` (9,650),
+`resource_39f` (9,278), `resource_39a` (7,096), `resource_3b4` (6,226) and
+`resource_3c4` (24 of 25 rows, one 2,636-byte dispatcher pre-measured)
+
+**Pre-measured and waiting for a fresh agent: `resource_3c8:3068`**, a 26-way
+`mov pc, r3` dispatcher. Its boundary is settled — prologue at 0x02003068 saving
+`r5,r6,r7,lr` plus `fp/sl/r9/r8` with a 12-byte frame, matching unwind at
+0x02003fa8-0x02003fb8 with `r0 = 0` before it, so it returns `s32`. That is
+**3,922 bytes as one owner across 18 inventory rows with ~260 static calls**; the
+18 sub-rows are `call:` seeds (import identities), not real entries, and the only
+true internal structure is the jump table.
 
 Both lanes are drawn together in the README coverage map
 (`assets/readme/gs1-en-coverage.svg`, regenerated with `bun run coverage`):
@@ -94,6 +107,538 @@ bytes while preserving the exact lane and full verification.
    agents work, then one full `bun run verify` for the settled cohort. Update the
    authoritative metrics above, commit by semantic byte gain, and push before
    starting the next wave.
+
+**Pre-sizing is now tooled: `bun tools/semantic_owner_scope.ts`.** Rule 4 above
+requires transitive sizing and a pool map before any continuation row is
+assigned; this produces both. It groups continuation rows into whole owners
+(a prologue saving lr opens one, an epilogue closes it) and marks rows whose
+reconstruction is nothing but `.inst.n` halfwords as DATA — embedded pools and
+alignment, excluded from the owner's executable ranges. `--json` for machine
+use, an 8-hex stem for one owner's row breakdown, `--self-test` in the test
+chain.
+
+It reproduces two independent hand audits exactly, which is the reason to trust
+it: `080e47b8` advertised 768 bytes, measured **7,762 executable bytes across 16
+rows with 232 calls** (audit: 7,762 / 16 rows / 231 calls), and `0800ebec`
+measured **1,804 bytes across 4 rows** (blocker note: "the true 1,804-byte
+function spans four regions"). Treat the row grouping as evidence, not proof —
+it is a boundary *estimate* to size and assign work, and the admitting agent
+still owns the boundary.
+
+**Executable bytes are an UPPER BOUND, and the tool works at ROW granularity.**
+Two distinct overcounts follow, both measured. First, an *interior* pool — one
+that sits inside a row rather than occupying its own row — is invisible to the
+tool entirely: four of `080ec100`'s six code rows contain one, so its true
+executable size is 3,126 against a reported 3,358. Second, a whole-row pool A literal pool that
+lives in a regular `asm/*.s` row disassembles as perfectly plausible
+`lsrs`/`movs` pairs, so it decodes to mnemonics and is counted as code. The tool
+now flags such rows `POOL?` and reports `suspected_pool=` per owner (272 bytes
+across the open set), but flagging is conservative on purpose — resolving a row
+for certain means assembling it at its real base and checking that sibling
+`ldr rN,[pc,#imm]` loads land in it. The admitting agent for `080be378` did that
+and found 156 of its 3,696 "executable" bytes are pool, giving a true 3,540; the
+`080ec100` agent likewise reclassified a whole 46-byte row the tool had kept as
+code. Use the tool's number to rank and assign; let the admitting agent settle
+the ranges. Expect the settled figure to come in a few percent under.
+
+**Three detection rules it took to get there**, each of which silently corrupted
+the numbers before it was fixed:
+1. *Group over every manifest row, not just the open ones.* An owner's epilogue
+   often sits in a neighbouring row of a different retention, so grouping only
+   open rows reported five ordinary owners as needing a boundary audit.
+2. *Recognise the interworking return.* This target returns three ways —
+   `pop {..,pc}`, `bx lr`, and `pop {rN} ; bx rN` for owners that save high
+   registers. Missing the third left 13 owners "unclosed". A bare `bx rN` with
+   no preceding `pop` is a jump-table dispatch and must NOT close an owner.
+3. *Drop groups with zero executable bytes.* Stranded literal pools and
+   alignment are labelled executable gaps in the manifest and inflate the
+   remainder while being unconvertible by construction.
+
+**Measured state of the main image.** The remaining continuation rows are not 80
+separate jobs and not 31,088 bytes: they collapse into **22 owners / 37,128
+executable bytes** (upper bound; at least 272 of those are suspected pool), with
+240 bytes of confirmed pool excluded. Of the two groups reported unclosed,
+`080bf1e8` is not an owner at all — it is the last literal pool of `080be378`,
+settled by that owner's admitting agent. Largest first: `080e47b8`
+(7,762 / 232 calls), `080f4168` (4,596 / 108), `080e15e8` (3,858 / 130),
+`080be378` (3,696 / 125), `08026080` (3,584 / 69), `080ec100` (3,358 / 87),
+`080d765c` (3,156 / 91), `0800ebec` (1,804 / 46), `080d4ce8` (1,392 / 40).
+**The `multi_region_function` blocker class is stale.** Five owners carry it, and
+its wording is a *request for whole-module accounting* — "admit the head and
+continuation as one semantic module" — not a statement that the work is
+impossible. That accounting now exists, and the first re-probe confirmed it:
+`080dd9c0`, blocked as "only FunctionHead_080dd9c0", was admitted as one
+940-byte module across its three rows with all 23 calls placed, and `080ec100`,
+blocked as "only the front of a much larger effect function", was admitted as
+one 3,126-byte module across nine ranges with all 87 calls placed. Its agent put
+the distinction well: the blocker was accurate as written but was a *sizing*
+blocker, not a structural one. **All five `multi_region_function` blockers are now resolved**: `080dd9c0` (940
+bytes), `080ec100` (3,126), `080d765c` (2,866), `080e15e8` (3,542) and
+`080ddde0` were every one of them a *sizing* blocker, admitted whole once the row
+map existed. The class is empty — 10,474 bytes recovered from notes that read as
+permanent. The `relocated_kernel_continuation` class also fell, and its post-mortem is the
+most useful of the set. `0800ebec` was blocked for a "nonstandard return
+contract": inline `mov ip,pc; bx r4` into the relocated kernel, returning into a
+62-byte gap row with the frame live. It is an ordinary indirect call —
+`mov ip,pc` sets the return to the instruction after the `bx`, both landing sites
+continue the same frame, and `LAWS.md` **already recorded this idiom as a
+codegen-only difference** from `bl __call_via_r4`. The note had promoted a
+byte-exactness fact into a semantic blocker. Admitted whole at 1,714 bytes.
+
+That is the pattern worth carrying: **a blocker written while wearing Mercury's
+hat is not automatically a Venus blocker.** Byte-exactness obstacles and semantic
+obstacles are different sets, and the overlap is smaller than the notes imply.
+
+What remains in `ordinary-blockers.json` are `hidden_register_module`,
+`cross_file_abi`, `implicit_callee_return_state_module` and
+`shared_stack_context_module`. Those have NOT been shown stale — judge each on
+its own evidence rather than assuming the streak continues.
+
+**Wave result, five multi-row owners: 5/5 admitted, 20,428 advertised bytes and
+19,464 registered after the agents settled the pools.** `080e47b8` (7,382 across
+10 ranges, 231 calls), `080f4168` (4,476 / 5 ranges, 108), `080ec100` (3,126 /
+9 ranges, 87), `080be378` (3,540 / 4 ranges, 125), `080dd9c0` (940 / 3 ranges,
+23). Every one of them came in *under* the tool's estimate once interior pools
+were resolved, by 1-7%. None parked. This is the same stale-evidence pattern that
+§6 documents on the exact side.
+
+**`Func_080072e4`..`Func_08007318` are NOT functions — they are a `call_via rN`
+thunk bank.** This is the single most consequential modelling fact in the
+semantic tree: 104 of 637 sources reference the bank across 472 call sites, and
+the sources disagree with each other about what it means. `asm/080072e4.s` is a
+14-entry table, 4 bytes per entry (`bx \register` + `mov r8,r8`), in register
+order r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,sl,fp,ip,sp:
+
+| symbol | is | symbol | is |
+| --- | --- | --- | --- |
+| `Func_080072e4` | call via r0 | `Func_080072fc` | call via r6 |
+| `Func_080072e8` | call via r1 | `Func_08007300` | call via r7 |
+| `Func_080072ec` | call via r2 | `Func_08007304` | call via r8 |
+| `Func_080072f0` | **call via r3** | `Func_08007308` | call via r9 |
+| `Func_080072f4` | **call via r4** | `Func_0800730c` | call via sl |
+| `Func_080072f8` | call via r5 | `Func_08007310` | call via fp |
+
+So `bl Func_080072f0` is an **indirect call whose target is r3**, with r0-r2 as
+the target's arguments — it is not a four-argument routine. The bank exists
+because these targets are ARM-mode helpers relocated into IWRAM, so a Thumb
+caller needs `bx` interworking to reach them; the ROM copies are catalogued in
+`assets/data/saihouchi_arm.json` (7 helpers at `0x08015430`+, 2,652 bytes), which
+also lists each helper's known consumers.
+
+**The good spelling is already in the tree.** `semantic/main/080d0ee0.c` declares
+`void Func_080072f0(void *, const void *, u32, Transfer_080d0ee0)` — the last
+parameter typed as a function pointer, which is faithful. Copy that. The
+spellings to fix on sight, in rough order of how misleading they are:
+`void Func_080072f0()` (prototype-less, 4 files), `void Func_080072f0(s32, s32,
+s32, s32)` (11 files — hides the callee entirely), and any comment calling the
+fourth argument dead, opaque scratch, or an address constant. An IWRAM literal
+such as `0x03000164` in that position is **the relocated helper being called**,
+not scratch.
+
+**Three independent agents rediscovered this in one wave**, which is the measure
+of how much time the convention costs when it is not written down: one found the
+`call_via` table in `asm/080072e4.s`, one traced `Func_080072f0`'s r3 to the
+relocated IWRAM square root at `0x030001d8`, and one found that `Func_080072f4`
+sites vary their r4 target between `renderers[0]`, `renderers[1]`,
+`renderers[i&1]` and `*(void**)0x03001f0c`. That last one is the case where the
+common 6-argument spelling is not merely imprecise but wrong: it silently drops
+the varying target, so two different callees collapse into one name.
+
+Corrected in this session: `080a7478` and `0808d9a4` (comments and declarations).
+Sweeping the other 102 files is open, mechanical work — the fix is a declaration
+and a comment, never a control-flow change.
+
+**Overlay link bases: Reading A is now confirmed, Reading B's anomaly is not.**
+Two overlays are independently proven to be linked at **0x02008000**, each by
+three separate witnesses: `resource_3bf` (jump-table base `0x0200c64c` against an
+embedded table at offset `0x464c`, entries 0x8000 past their case bodies) and
+`resource_3c4` (a `mov pc,r3` table base `0x02008e58` whose entries are file
+offsets, an installed handler pool word `0x02008fe9` = `Func_02000fe8`+Thumb, and
+`0x02008ec9` = `Func_02000ec8`+Thumb). **So on those overlays any pool word in
+`0x0200_8xxx..0200_bxxx` is an in-image address at `offset = value - 0x8000`,
+and `Data_0200bxxx`-style symbols are in-image data, not RAM globals.**
+
+`resource_3b8` shows a third shape: every `bl` computes an address in an *import
+band* above the last code row, whose first 704 bytes are an 8-byte-per-entry
+veneer table (`ldr r4,[pc,#0]` / `bx r4` / `.word <main-image address>`). There
+the right move is not to resolve the target at all — name the import by the
+address its call site computes, which is what the byte-exact
+`assets/code/resource_3b8_c_*.c` already do.
+
+**SOLVED — an overlay `bl` stores the target's image offset minus 2.**
+
+    true_target_offset = stored_displacement + 2
+
+Not a pc-relative displacement. Every disassembler, `tools/overlay_show.ts`
+included, adds the branch's own pc, which is why its call annotations are wrong
+for **every** overlay and wrong in a way that looks plausible. All three of the
+long-standing symptoms are this one bug: targets past the end of the image,
+targets landing inside the caller's own body, and two sites with *bit-identical*
+encodings printing different callees (`resource_39f:1078` has two branches that
+both print `bl 0x02003ec2` and are different functions).
+
+Use **`bun tools/overlay_call_targets.ts <overlay> [ownerHex]`**, which applies
+the rule and classifies each target as an import veneer (resolving the veneer's
+trailing word to the real `Func_08xxxxxx`), a real prologue, or the overlay's own
+`call_via` slot. Measured on `resource_39f`: 1,265 call sites collapse to **73
+distinct targets** — 1,047 veneer, 116 prologue, 1 `call_via`. The same collapse
+holds on 371/372/373/38f/3b8/3bf/3c4/3c8, where 700-1,900 sites reduce to 70-133
+distinct displacements.
+
+Independent confirmations beyond the arithmetic: `resource_39f:00c4`'s three
+lookups — the exact case this file previously listed as unexplained, decoding to
+join points *inside itself* — all resolve to `0x0200006c`, whose byte-exact
+source returns "the occupying slot or 0", which is precisely how each result is
+used. And `resource_373`'s 0x55e0 spread is simply two call sites of one callee.
+
+The tool reports ~8% of sites as `unknown`; those are overwhelmingly pool words
+that decode as a BL pair (see the trap below), not unresolved calls. Treat a
+large `unknown` count as a signal that a span includes its literal pool.
+
+Everything the earlier "import identity" framing got right still holds — two
+`Func_` names can be one callee, arities vary per site — but the identity is now
+computable rather than opaque, and the veneer's trailing word gives the import's
+real main-image address.
+
+**Six overlays are now confirmed at the 0x02008000 base** — `resource_3bf`,
+`resource_3c4`, `resource_372`, `resource_39a`, `resource_371` (five witnesses)
+and `resource_3c8` (six, three of them drawn from byte-exact `assets/code`
+sources, so the base is proven against banked material). Assume the base until
+shown otherwise, but confirm it before relying on any pool word.
+Cheapest witnesses, in order: a jump-table base pool word against the table's
+physical file offset; an installed per-frame callback pool word that equals a
+known function start + the Thumb bit; and any `Data_0200bxxx` symbol that lands
+inside the image at `value - 0x8000`.
+
+`resource_372` adds the sharpest disproof of the location reading: its *data*
+pool words `0x0200c934`/`0x0200c984` resolve under that proven base to file
+offsets `0x4934`/`0x4984` — inside the very band its `bl` instructions appear to
+target. A `bl` cannot land inside a proven data block. Sharper still, its
+`020031ac` contains `bl .L_02003390`, whose "target" is that owner's own `b.n`
+over its first literal pool.
+
+**Consequence for the skip rule below:** "a `bl` into an in-image address is a
+hidden-context caller" fires only where the target is genuinely reached as code.
+On an overlay whose `bl`s are identities, such rows are ordinary and convert
+normally — `resource_39a` converted all 64 on that basis. Establish which regime
+your overlay is in *before* skipping anything; the cheapest test is whether the
+target range extends past the image end.
+
+**The cheapest witness that a `bl` target is a per-call-site label: find two
+near-identical owners.** `resource_371:008c` and `:00d4` are byte-identical over
+all 72 bytes except **two** values (an immediate 42 vs 24, a pool word 0x809 vs
+0x80a). Their `bl` halfwords are bit-identical, yet the printed targets differ by
+exactly 0x48 — the spacing between the two owners. So `Func_0200421c`/
+`Func_02004264` and `Func_020044d2`/`Func_0200451a` are provably the *same two
+callees* under four names. The same relation holds for the triplet `:1888`/
+`:1938`/`:19e8` (targets 0xb0 apart) and the pair `:155c`/`:1680` (0x124 apart).
+A two-value diff between sibling owners is the cheapest proof available, and it
+is the positive half of the identity finding above — worth looking for early in
+any new overlay.
+
+**Two `Func_` names can be the same import, and one name can take different
+argument counts** at different call sites in the same owner. Old-style
+declarations (`void Func_02004612();`) are therefore mandatory in overlay
+sources, not stylistic — all seven `resource_3b8` files need them.
+
+**The interworking epilogue tells you the return type, mechanically.**
+- `pop {r0} ; bx r0` — r0 holds the popped *return address*, so nothing is
+  returned: the owner is **`void`**.
+- `pop {rN} ; bx rN` with N != 0 — r0 survives and **is** the result.
+This removed the usual guesswork on 26 of 35 owners in one overlay. It is the
+cheapest signature decision available; check it before reasoning about a trailing
+call's r0.
+
+**A `bl` to an in-image address that is not a function start is a hidden-context
+caller — skip it.** 24 owners in `resource_3c4` were skipped on this rule, each
+verified individually: the target lands mid-instruction, or in a frame-unbalanced
+epilogue tail, or in code that needs a register the caller never sets (e.g.
+`02001318 -> 020013fa` lands inside another function's `bl`; `02001f5c ->
+02002028` enters a `add sp,#8 / pop` tail while the caller holds only
+`push {lr}`). The bytes are not in doubt — `assets/code/resource_3c4_overlay.s`
+spells them literally — the *meaning* is. Two shapes that DO check out and are
+ordinary calls: a balanced shared tail declared but not defined, and an alignment
+`nop` immediately before a real prologue (calling it is calling the function two
+bytes later).
+
+**Overlays share whole routines verbatim — check before drafting anything.**
+`bun tools/overlay_twins.ts --unconverted` groups owners by an instruction
+skeleton that masks the two things which legitimately differ between copies:
+both halfwords of every BL pair (each overlay's veneer table is at a different
+offset) and pointer-shaped literal-pool words (the same data table lives at a
+different in-image address). Currently **15,458 bytes sit in groups where at
+least one member is already converted** — transposable by substituting
+constants rather than read from assembly.
+
+The pool masking was necessary, not cosmetic: the hand-found
+`resource_3c4`/`resource_39f` twins differ by 21 halfwords out of 192, of which
+20 are BL and **exactly one** is a pool word. Masking BL alone found 3,122
+bytes; masking pool words too found 15,458.
+
+**`unknown` from `overlay_call_targets.ts` is not evidence of a hidden-context
+caller.** Its prologue set came from the inventory, which is incomplete, so seven
+ordinary functions in one overlay were reported `unknown`. It now recognises the
+`push` opening (0xb4xx/0xb5xx) directly, which took `resource_39f` from 101
+`unknown` to 3. Whatever remains is overwhelmingly pool words that decode as a BL
+pair — check the target's first halfword before concluding anything.
+
+**A `bl` can be a long unconditional branch to the owner's own exit.**
+`resource_3c4:259c` has five that resolve to its own epilogue, past `b.n` range.
+They are not calls; `lr` is clobbered harmlessly because the epilogue pops the
+return address off the stack. This inflates site counts and explains a class of
+resolved targets that are neither veneer nor callee.
+
+**Completeness proof, best form: compare MULTISETS.** Extract the multiset of
+`bl` targets from `assets/code/<overlay>_overlay.s` and compare it to the
+multiset of `Func_…(` occurrences in the finished C. On a 2,716-byte owner that
+was 245 = 245. This catches dropped *and* phantom calls, which a count alone
+cannot.
+
+The inventory's `calls` field is the weaker check because it counts **distinct
+targets, not call sites**: `0x02000920` has 20 sites but `calls=18`. The gap is
+exactly the number of imports reached with two different argument counts — on
+that 2,716-byte owner, 245 sites − 228 distinct = 17 such imports, which the
+multiset comparison confirms rather than leaves as a discrepancy to chase.
+
+**And `calls` can UNDERCOUNT outright** where a jump table sits inside the
+executable span and disassembles as plausible code: `resource_371:037c` reports
+1 call against 4 real ones, and `:06ec` reports 18 against 49. Never treat the
+field as an upper bound.
+
+**The overlay image is writable EWRAM, not ROM, and is used as save state.**
+`resource_3c8:4bd8` advances byte cursors stored at `Data_0200f72c`/
+`Data_0200f78c` — file offsets 0x772c/0x778c under the 0x8000 base — with
+`str r3, [r0, r4]`. Dialogue progress lives in the overlay's own data. Do not
+model overlay data as `const`.
+
+**Halfword coordinate views: the s16 at +0x0a and +0x12 are the integer parts of
+the 16.16 words at +0x08 and +0x10.** The byte-exact `resource_3c8:14f4` already
+models the same record twice for this reason (an s32 pair and an s16 pair).
+Recognising it avoids declaring an illegal overlapping struct; the
+[x, x+7] x [z, z+7] rectangle guards in that overlay are all tile tests on those
+halfwords.
+
+**r4 is used as call-clobbered scratch without being saved** in several owners
+(`resource_371:011c`, `:01c4`, `:0598`, `:2768` under `push {lr}` or
+`push {r5,r6,lr}`; also twice in `resource_372`). Nothing observable depends on
+it and the bytes are not in doubt — but it reads as a decoding error, so note it
+in the file rather than "fixing" it.
+
+**`contained_by` seeds inside an owner are artefacts of the same thing.** Rows
+like `0200153e`, `020028d8`, `02002abc` are plain `movs`/`lsls` instructions in
+the middle of an argument block, with the owner's prologue already executed.
+Reconstruct the owner whole from prologue to epilogue; they need no separate
+treatment and are already excluded by the strict filter.
+
+**A pool word can decode as a `bl`.** `0x02002014`'s clamp constant is the pooled
+word `0xf848f003`, which disassembles as `bl 0x2005124`;
+`assets/code/resource_39a_overlay.s` spells it as two raw `.2byte`s for exactly
+that reason. Any whole-image scan for call targets must exclude pool ranges or it
+will invent imports.
+
+**Old-style declarations still need the right return type.** The semantic
+toolchain rejects `void Func_X(); if (Func_X() != 0)` with "void value not
+ignored as it ought to be". Declare any import used in a condition as `s32` or a
+pointer — arity may be left open, the return type may not.
+
+**Semi-automated transcription is safe for large call carpets, with one guard.**
+For a 7,468-byte owner with 869 calls, a throwaway simulator tracking r0-r3
+immediates and pool loads between `bl`s — arity = highest register written in the
+window — reduced the work to ~30 hand-written regions. The guard: **clear only
+the destination register of an unmodelled instruction, never the whole window.**
+Clearing everything drops arguments carried across a `b.n` that hops a literal
+pool; clearing nothing leaks a counter-bump constant into the next call as a
+phantom argument. Both bugs were hit before it was right. Cross-check the
+distinct-target count against the inventory's `calls` field — that caught the one
+dropped call, and it is a cheap completeness proof in general.
+
+**SUPERSEDED, kept for the reasoning — an overlay `bl` target is not a location,
+and two lanes first explained that differently.** Both were investigating the same puzzle that
+`semantic/overlays/resource_394_c_020003f0.c` records as "resident service
+addresses that fall numerically inside the overlay's own range". Neither
+explanation is settled; do not write either into a file as fact.
+
+*Reading A — shifted link base.* `resource_3bf` behaves as if linked at
+**0x02008000**, every absolute pool constant sitting exactly 0x8000 above the
+printed offset. Evidence: the dispatcher at `02004638` loads its jump-table base
+as `0x0200c64c` while the table is physically embedded at offset `0x464c`, and
+each of its eight entries points 0x8000 past the case body it selects — a single
+consistent shift.
+
+*Reading B — load-time fixups, address as identity.* In `resource_373`,
+`Func_020000c4` encodes three `bl` targets that land *inside itself* at plain
+join points of its own control flow, which no call can mean; and `02000030` and
+`02005610` are byte-identical bodies whose `bl` encodes `0x020061c0` and
+`0x0200b7a0` — the same relative displacement yielding two absolute targets for
+provably the same callee. Those two differ by 0x55e0, **not** 0x8000, so a
+uniform base shift does not explain `resource_373`.
+
+The readings may both be right for different overlays, or B may subsume A. What
+is safe to act on today: the encoded address is a **stable identity for an
+import**, not a place to disassemble. Converting by encoded address remains
+correct — it is what 394/3bd/3c8 already do — but call it an identity in comments,
+and measure your own overlay's base before assuming either. `overlay_show.ts`
+resolves `bl` by raw displacement, so its call annotations inherit exactly this
+ambiguity.
+
+Convention: keep the printed-offset spelling for symbol names and the raw pool
+value for data addresses (both trees already do this, and it is self-consistent),
+and note the shift in the file rather than renumbering anything.
+
+**Overlays have their own `call_via` veneers, recognisable only by their setup.**
+The main-image thunk bank is identifiable because the bank itself contains
+`bx rN`; an overlay veneer is not. The signature is instead: a pool word in
+`0x030001xx` loaded into r3/r4 immediately before a `bl`, with the callee's
+result returned unchanged. `0x030001d8` is the relocated IWRAM square root, the
+same helper the main-image `Func_080072f0` reaches.
+
+**Packed direction words are a family, not a one-off.** `0x0200e190` in
+`resource_373` is a 16-entry table indexed by `heading >> 12`, X step in the high
+half and Z step in the low half, promoted to 16.16 by `& 0xffff0000` and `<< 16`
+rather than by multiply. Three owners in that overlay use it and the
+`resource_3bd` conversion recorded the same idiom — recognise it rather than
+re-deriving it.
+
+**Inventory field names.** `out/decomp/overlays.json` functions carry `entry` and
+`offset`, **not** `address`. A snippet using `x.address.toString(16)` throws and
+prints nothing, which reads as "no work in this overlay" rather than as an error.
+This cost two lanes time before it was caught.
+
+**Read two or three neighbouring exact sources before starting an overlay.**
+`assets/code/` already holds byte-exact C for many overlay functions, and its
+field offsets and workspace pointers are proven. One lane independently
+rederived `Data_02000240[294]` and a `workspace + 386` store that the adjacent
+exact file already contained, and found `0x03001e70 + 76` to be exactly
+`0x03001ebc`, the workspace pointer the rest of the overlay loads directly.
+Cheapest possible way to fix an overlay's struct layout.
+
+**Pulling from Mercury mid-lane: expect to delete semantic sources.**
+`build_semantic` hard-errors when a semantic source duplicates an exact one
+(`semantic/main/<stem>.c` against `src/<stem>.c`, or the same basename in
+`semantic/overlays/` against `assets/code/`). That is the two-lighthouse rule
+enforced mechanically, and it means a Mercury merge *lowers* the semantic byte
+count while raising the combined one — 22 main-image and 12 overlay sources went
+this way in one merge. Not a regression; do not try to keep them.
+
+Sequence that works: stash in-flight lane work, merge, resolve, delete the
+superseded sources, regenerate metrics, commit, restore the stash, then sweep for
+duplicates **again** because running lanes will have written more. Tell every
+live lane to check `assets/code/<basename>.c` before writing each new file.
+
+Two merge traps, both hit:
+- **Union the routing sets in `tools/alchemy_gcc.ts`, never take a side.** Each
+  lighthouse adds stems the other lacks. But a scripted union will also happily
+  rewrite a stem list *inside* the self-test's expected-flags array, replacing an
+  `-O1` conditional with bare stems. The ROM still built byte-identically; only
+  `bun run test` caught it. Always run the test chain after a scripted merge.
+- **The merge moves the executable denominator**, so the commit subject needs the
+  `metrics: correct executable denominator` prefix (§9).
+
+**Registering a main-image owner: two rules that cost a build each.**
+1. Every range must be **fully contained in one manifest row**. Agents report
+   the code contiguously, which is correct as description but invalid as
+   registration: `080e15e8`'s 592-byte span crosses the row boundary at
+   `0x080e1a48` and has to be listed as 512 + 80. Split at the boundary; the
+   code is still contiguous.
+2. Bytes count only once registered. An admitted `.c` file on its own moves the
+   metric by the row's *advertised* size — `080ec100` credited 144 of its 3,126
+   bytes until its nine ranges were entered.
+
+**The Flash family (`old_agbcc -O1`) has a four-lever recipe.** `08007028`
+(112/112) took five probes; `08006d50` (156/156) and `08006e24` (292/292) then
+each matched on the **first** probe with the same four levers unchanged. That is
+what makes this a family recipe rather than a per-function grind — 560 bytes for
+seven probes total. Applied in this order:
+
+1. **Never let a pointer live across a call.** Declaring `u8 *info = (u8 *)...`
+   at function top hoists it into a callee-saved register; the reference
+   materializes it after the call in a call-clobbered one. Worth 5 halfwords.
+2. **Split the read-modify-write so the mask opens the chain**:
+   `w = MMIO; w &= 0xFFFC; w |= field; MMIO = w;` matches, while
+   `MMIO = (MMIO & 0xFFFC) | field;` loads the field's base too early. Worth 5.
+   (Same family as the mask-first RMW rule in §4, on the *other* compiler.)
+3. **Keep `base + offset` as base-plus-field, in a nested block placed AFTER the
+   masking statement.** A bare `*(u16 *)((u8 *)0x08007C10 + 36)` folds into one
+   pool word `0x08007c34` at offset 0; the reference keeps `0x08007c10` pooled
+   and uses `[r1, #36]`. Declaring the pointer at the enclosing block's top
+   re-hoists it — the nested scope *after* the mask is what makes it work. This
+   is the fiddliest of the four and cost three probes on its own.
+4. **Name a pointer local to order it against an adjacent built constant.**
+   `s32 *status = (s32 *)0x02004C00; f(..., *status);` emits the address `ldr`
+   before the `movs/lsls` pair that builds `0x0E000000`; folding the load into
+   the call argument reverses them. Worth 3.
+
+Two family facts worth reusing: the info block is reached **indirectly** in the
+sector routines (`info = *(u8 **)0x02004C08`, wait-state at `info[16]`, sector
+shift at `info[8]`) but **directly** in the chip routines (`0x08007C10`); and
+writing both wait-state masks as the same `0xFFFC` literal is what makes
+old_agbcc park it in a high register across the call, producing the high-register
+save with no source-level coaxing.
+
+**A "direct exit" may be inside the region.** `08006e24` was blocked for "direct
+exits into `08006f30`/`08006f32`" and a stack-copied payload. Both claims are
+labelling artifacts: `0x08006e24 + 292 = 0x08006f48`, so both addresses lie
+*within* the region — they are the two entry points of the function's own
+epilogue, promoted to function symbols by the disassembler because they are
+branch targets. And the copied payload is never executed here; the Thumb-tagged
+pointer to the copy is passed as an argument and executed in the callee, which C
+expresses as `(u16 *)((u32)Func_08006f48 ^ 1)` with the length as the difference
+of two tagged symbol addresses. **Before believing an "exit", check whether the
+target is inside `entry + size`.** It is one subtraction.
+
+What survives is narrower and worth keeping: `Func_08006f48` is genuine
+relocatable flash-read code that must run from RAM, and whether *it* is
+expressible without inline assembly is untested. That is the real hard case in
+this family, and admitting `08006e24` does not prejudge it.
+
+**Adding an `old_agbcc` stem touches FOUR places**, and the self-test guards two
+of them separately:
+1. `AGBCC_SOURCES`;
+2. `AGBCC_OPTIMIZE_O1_SOURCES`, when the unit is `-O1`;
+3. the hard-coded `expected` array in `selfTest()` — miss it and `bun run test`
+   fails with "old_agbcc source allowlist self-test failed";
+4. the **second** hard-coded `-O1` stem list inside `selfTest()`'s
+   `expectedFlags` — miss it and the message is "old_agbcc flags self-test
+   failed for <stem>".
+
+Both guards are deliberate; update the lists rather than working around them.
+Check the self-test's exit status rather than skimming its tail: it prints a
+`Bun v...` banner on failure that reads like ordinary output, and the fourth
+list is easy to miss because the third one is what fails first.
+
+**Where the remaining semantic work actually is: overlays, not the main image.**
+Measured after this session's waves, and it reframes the lane:
+
+| | executable bytes | state |
+| --- | --- | --- |
+| main image (whole manifest) | 451,338 | 378,986 already semantic |
+| main-image continuation owners still open | 16,700 | 17 owners, mostly small |
+| **overlay strict rows** | **337,052** | **12,790 semantic — 4%** |
+
+So the main image is close to done and the overlays are barely started: 1,198
+strict rows across ~40 overlays, led by resource_373 (18,044), resource_3b8
+(15,028), resource_3bf (13,484), resource_3c8 (12,800), resource_372 (10,202),
+resource_38f (9,848), resource_3c4 (9,828), resource_371 (9,650). Completing the
+semantic lane is now overwhelmingly an overlay job, and anyone budgeting from the
+main-image queue will misjudge it by an order of magnitude.
+
+Overlay semantic sources need **no registry entry**: `build_semantic` sizes
+`semantic/overlays/resource_NNN_c_0200AAAA.c` straight from `out/decomp/overlays.json`,
+unlike main-image owners which must be registered in `semantic/main-regions.json`
+before their bytes count. That makes overlay conversion cheaper per byte to
+integrate as well as to write.
+
+Mercury works the same overlays for byte-exactness. That is not a conflict — the
+branches are separate and exact overrides semantic on merge — but prefer
+overlays Mercury is not currently walking, and expect some semantic files to be
+replaced later by exact ones.
+
+**Queue trap on a fresh clone.** `bun run semantic:queue` reports `queued=0` on
+any clone that has not run m2c, because it only surfaces regions that already
+have a draft under `work/candidates`, `work/m2c-ctx` or `work/` — all gitignored.
+That is an empty *draft corpus*, not an empty queue. Rank from
+`out/full/asm/manifest.json` (bounded work) and `semantic_owner_scope.ts`
+(continuation work) instead; rule 3 prefers rewriting from assembly anyway.
 
 Parking rule: park only a specific, evidenced ABI or structural blocker. “m2c
 is ugly,” “the owner is large,” and “the first agent ran out of implementation
@@ -201,6 +746,30 @@ data produce short junk walks. They are all labelled and excluded by the strict
 filter, but any consumer summing raw rows will over-report badly. Filtering to an
 empty `contained_by` matters more than it used to.
 
+**The cross-overlay adopted-C bridge: measured, and it does not work wholesale.**
+424 strict unconverted rows (107,926 bytes) sit at an address where *another*
+overlay already has adopted C, which looks like free reuse. Feeding each adopted
+source to its address-mate is **1,157 probes and yields exactly zero exact
+matches**; 898 of them do not even reach a byte comparison because the two
+functions have different spans. Same address in two overlays is not evidence of
+the same function — do not budget a session for this sweep, it has been run.
+
+What *does* work is the narrow case the sweep surfaces: rank the survivors by
+`differing_bytes / span` and read the small ones. A true sibling shows up as a
+handful of differing bytes that are all `bl` displacements, because the same
+function in another overlay calls different addresses. Substituting the callee
+addresses out of the target's own disassembly then lands it first try — that is
+how `resource_384:01d0` converted (5/18 differing → exact by renaming two
+`extern` declarations). Three survivors were worth reading; `resource_3c2:0240`
+(106/2,068) and `resource_381:0054` (313/3,548) are still open and are the two
+largest unexploited leads in this class.
+
+**The 10-to-32-byte tier is the highest hit rate in the overlay queue.** 129
+strict rows, 2,558 bytes, mostly two-call dispatch stubs and one-compare
+predicates that read directly off the disassembly with no drafting loop at all.
+Nineteen were converted here in a single pass. Clear this tier before opening a
+1 KB row.
+
 **Re-probing old park notes.** The return-type lever (§4) arrived late, so any
 note whose residual is a two-halfword argument-setter swap is stale evidence
 rather than a blocker. One sweep closed 8 functions / 1,628 bytes from 41
@@ -219,6 +788,26 @@ Do not read the Full-C denominator as the target: it deliberately includes linke
 veneers, structural assembly and executable alignment that will never be C. The
 tracked measure of real remaining work is `asm_c_debt_bytes`, printed by every
 full build.
+
+**The main-image frontier is drafting, and here is the number (2026-07-30).**
+616 `c_candidate` regions remain. Every one of them already has *some* draft, but
+only **303 have a draft that both compiles and passes the `PROVENANCE.md`
+screen**. The other **344 regions — 289,574 bytes — need C written**, because
+their only drafts are raw m2c output that fails to compile on m2c's own artifacts
+(`subroutine_arg0` undeclared and similar). That is why the exhaustive flag
+matrices came back at 1-in-964: there is very little left to sweep, and a lot left
+to draft. Budget accordingly.
+
+**"Undrafted" is not "unconvertible", and neither is it a target list.** 104
+regions have no draft anywhere, 40,924 bytes, and **not one is a `c_candidate`** —
+they are all retained structural classes. `080a8904` is the trap: 14 bytes that
+read as a trivially draftable countdown loop, classified `deliberate_busy_wait`.
+Always filter by `retention == "c_candidate"` out of the asm manifest; ranking by
+size alone will hand you retained regions.
+
+Seed every fresh draft with `bun tools/reference_shape.ts --stem <stem>`, which
+reads the return type off the region's own epilogue (§4's rule) instead of leaving
+the drafter to discover it through a byte diff.
 
 **The inventory over-reports.** Rows nest, so summing a row set re-counts the same
 region many times: resource_381 inflates 17.6x, resource_379 9.1x, resource_37a
@@ -242,6 +831,26 @@ pool, exclude a trailing `.2byte 0`.
 no straddling label — independent of your C. It also settles a call's argument
 count: on one function a 4-argument spelling measured 17/60 against a 1-argument
 spelling's 54/60.
+
+**"Free" means free of *commitment*, not free of *writes*. A dry run mutates the
+tree.** Without `--apply`, `overlay_adopt` still copies the draft to
+`assets/code/<overlay>_c_<address>.c` — it has to, because §7's routing keys on
+the installed path — and it rewrites the overlay `.s` and restores it. Two
+consequences, both learned the expensive way on 2026-07-30:
+
+- **Never run two probes against the same overlay concurrently.** This is §10's
+  "two lanes must never share an overlay" rule, and it binds *probes*, not just
+  adoptions. A 3-way parallel sweep left 13 overlay `.s` files with 661 deleted
+  assembly lines and 25 stray installed `.c` files. Nothing warned; `git status`
+  was the only tell. Partition a sweep by overlay, or run it serially.
+- **A probe run leaves installed C behind even when it fails.** Check
+  `git status` after any sweep and clean the residue before banking, or
+  `bank_cycle.sh`'s `git add -A` will commit drafts you never adopted.
+
+When cleaning up, resist `rm assets/code/<overlay>_c_0200*.c` — that glob matches
+the overlay's whole adopted corpus, not your session's residue. It deleted 89
+tracked files in one command here. Use `git status --porcelain` to get the
+untracked list and delete exactly that.
 
 **Overlays**
 
@@ -556,6 +1165,48 @@ function needing a specific 5-of-10 partition of identical-looking call sites th
 no hand sweep would have located. One lane closed 8 functions / 1,628 bytes from
 41 candidates this way.
 
+**Run `tools/finish_draft.sh <draft.c>` before reasoning about any residual.** It
+composes the entire enumerable search in one command and takes a few seconds at
+16-way concurrency: ~50 single flag settings (both CSE modes alone and paired per
+this section's protocol, the scheduler modes, the fork modes from `FORK_MODES`),
+then **137 pairs and descriptor-family triples over a curated interacting-mode
+pool**, then **the other approved compiler families** (`old-agbcc`, `gcc2951`,
+`pret-early-thumb`, each with and without `-O1`), then the return-type sweep at
+baseline and at the winning flag set, then the statement-order sweep. It prints
+the best result, the exact options to reproduce it, and the surviving residual.
+
+Two of its stages exist because single-flag probing provably misses things.
+Pairing is required because the winning combination is often built from modes that
+are individually neutral or worse (`08091174` reaches 3 on
+`-mgrouped-dma-store,-fno-cse-pool-immediate` with neither in its top six alone).
+Family probing is required because 2 of the 20 conversions banked on 2026-07-30
+needed `--family old-agbcc`, which no `--flags` value can express: on `08006878`
+the whole gcc 2.96 lane floors at 72 while `old-agbcc -O1` is **0**. A family win
+is reported as `BEST IS A FAMILY`, and adopting it means routing the stem through
+`AGBCC_SOURCES` rather than a flag set. It writes only to its `--out`
+directory and never builds, commits or touches `src/`.
+
+Validated on known cases: it recovers `08090824`'s `-mgrouped-dma-store` win
+(9 → 6) and reproduces `080c1fa8`'s floor of 2 with the correct residual. It also
+propagates the statement-order probe-count warning, so a null that never exercised
+the lever says so instead of reading as a park. The point is division of labour: by
+the time you look at a function by hand, everything enumerable is already done, so
+the only question left is which §4/§5 lever the residual implies.
+
+**The statement-order lever is tooled too, and its probe count is part of its
+result.** `tools/statement_order_sweep_main.ts <draft.c> [--flags …]` permutes
+maximal runs of *independent* top-level statements to a fixpoint — the §4 rule
+that a parameter's store position sets its live length and therefore its allocno
+priority. It was swept over 53 size-exact main-image targets for 10,982 probes:
+no zeros, five drafts improved (`080c1fa8` to 5 halfwords, `080a6a98` to 11).
+The binding limit is the independence test, not the search: two statements that
+both touch memory or call anything are held in order, because source alone cannot
+prove they do not alias, and on pointer-heavy drafts that leaves nothing to
+permute (`08077394` produced 1 probe, `080ae99c` 3). Where a run *is* independent
+the sweep is exhaustive — `08011fd8` took all 721 orderings and proved a real
+floor. **So read the probe count before recording a park:** 1-3 probes means the
+lever was never actually exercised, not that it failed.
+
 **The levers compose, and the sweep is worth re-running after each flag.** The
 working order is `-fno-cse-two-insn-immediate` → sweep → `-fsched-low-dest-first`
 → **sweep again**: the second sweep closed the last 3 halfwords on one function,
@@ -638,6 +1289,22 @@ only reproducible as `(s32)&Value_000008c8 - (s32)&Value_0000007e`.
 `((s16 *)&v)[1]` materialises a second frame base, while
 `s16 *h = (s16 *)&v; h[1]` is exact. Thumb `LDRSH` has only the register-offset
 form, so `movs r3,#10 / ldrsh r2,[r6,r3]` is **not** a `volatile` tell.
+
+**When two live names hold one call result, a copy *round trip* decides which one
+a compare reads — and it needs `-fno-rerun-cse-after-loop` to survive.** A
+quotient copied `ratio = value;` leaves both names tracing to the call's return
+register, so the following compare reads r0 where the reference reads the copy in
+r1. Writing the round trip `ratio = value; value = ratio;` makes `value` the copy
+instead and the compare takes `ratio`. The second assignment is dead, and it is
+load-bearing — the same family as §4's "seemingly dead `= 0` initialiser". Both
+halves are required: the round trip alone leaves the halfword, because the rerun
+of CSE after loop optimisation collapses the pair and restores the return
+register, and the flag alone has nothing to preserve. This closed `080044d0`
+(212 bytes) from a floor of 1 that eleven other source spellings and the whole
+§7 mode matrix could not move. **Tell:** a single differing halfword on a
+size-exact draft where our operand register is the callee's return register and
+the reference's is a copy that both sides already emit. Do not read that as §6's
+"register-identity-only swap" park class without trying this first.
 
 **The allocno-priority lever applies to constant locals, not just parameters.**
 Swapping *declaration* order is neutral; declaring `s32 o;` uninitialised and
@@ -761,6 +1428,35 @@ Seven admitted modes, all default-off and routed per source in
 | `-fsched-store-first` | a store sinking behind arithmetic | 308 |
 | `-fno-sched-depend-count` | a store/load swap `-fsched-store-first` does not reach | — |
 | `-fno-gcse-insert-load` | a PRE-inserted load the reference lacks | 9 |
+| `-fthumb-group-value2-in-place` | the copy forced by `thumb_store_multiple3`'s hard-coded `(reg:SI 2)` when a grouped descriptor's third word is a constant | 1 routed |
+
+**A finished fork mode can sit unrouted and therefore unsweepable — check the
+binary, not just this table.** `-fthumb-group-value2-in-place` was implemented in
+`alchemy-gcc` during the grouped-descriptor work, is documented in the fork's own
+`flags.h`, and exists in the **pinned** `cc1` — but it was in no routing set here
+*and* absent from `FORK_MODES` in `tools/mode_sweep.ts`, so neither the router nor
+the explorer could ever name it. It was found by extracting option strings out of
+the `cc1` binary and diffing them against `tools/`. Sweeping it over 300 clean
+drafts moved exactly one function, and moved it a long way: `080b5ad4` went from
+28 halfwords at the wrong size to **0 at 64 bytes**, once its tail was also
+spelled as a returned call. No re-pin was needed because the binary already
+carried it; admission was the routed set plus the `FORK_MODES` entry.
+
+Worth knowing why it was invisible: the routing comment above
+`GROUPED_DMA_STORE_SOURCES` had described `080b5ad4`'s blocker precisely — "value0
+has a special case in that pass and value2 has none" — and the fork had since
+written that special case. The note was correct when made and stale when read,
+which is §6's pattern applied to the compiler lane rather than to a park note.
+**When a routing comment names a missing compiler capability, check whether the
+fork has since grown it.** Extract the option strings from `cc1` and diff:
+
+```sh
+strings toolchain/alchemy-gcc/cc1 | grep -oE '^(thumb-[a-z0-9-]+|grouped-dma-store)$' | sort -u
+```
+
+Everything else that scan turned up is already either routed or in `FORK_MODES`;
+`-fthumb-group-value2-in-place` was the only dark one, so this seam is now closed,
+but re-run the diff after any fork change.
 
 **`-fsched-low-dest-first` reaches three residuals, not just the one in the table**:
 the r0-r3 `movs` ordinal tie-break; a **pool-load hoist**, an `ldr r2` scheduled
@@ -785,6 +1481,41 @@ source-only build reproduces gs1-en.gba at SHA-1
 extending an existing predicate with a disjoint participation set over adding a
 competing rule; both scheduler modes and both CSE modes are built that way.
 
+**Overlay routing sets are overlay-blind, and the failure lands two layers away.**
+`overlayStem` reduces both `work/…/0200142c.c` and
+`assets/code/resource_3a7_c_0200142c.c` to the bare address `0200142c`, so a draft
+and its installed copy compile identically — deliberate and correct. The
+consequence is not: **the same address in a *different* overlay gets the flag
+too.** Adding nine `resource_3a7` addresses to a new set silently recompiled three
+unrelated already-exact functions (`resource_373:1554`, `resource_3b2:1740`,
+`resource_373:5ae0`) without interworking.
+
+What makes this expensive is the symptom. It is not a byte diff and not an adopt
+rejection: `bun run verify` fails inside `build_assets` with **`palette token plan
+does not reconstruct input`**, naming `resource_373` — an overlay the change never
+mentions — and only after a `tools/` edit invalidates the asset stamp and forces
+a cold asset rebuild, which can be several commits later than the edit. If you see
+that error, suspect a routing set before you suspect an asset encoder, and diff
+`tools/alchemy_gcc.ts` first. `build_assets.ts` does not name the failing entry;
+wrap its `buildEntry(entry)` call in a try/catch that logs `entry` to get it in
+one run, then revert the wrap.
+
+**Before putting an overlay address in any routing set, run
+`ls assets/code/*_c_<addr>.c` and confirm the only hit is the overlay you mean.**
+
+**A tenth mode: no thumb interworking.** One closed overlay family returns through
+a single `pop {pc}` where every other reconstructed function returns
+`pop {rN}` + `bx rN`. Dropping `-mthumb-interwork` reproduces it exactly; with the
+flag on, the two-instruction return overruns the span and `overlay_adopt` rejects
+the *placement* (`overlay C placeholder is not zero at …`) rather than reporting a
+byte diff — so the shape reads as a tooling bug, not a flag problem. Scope is
+measured and small: `pop {pc}` occurs **18 times in all unconverted overlay
+assembly against 2,195 `bx` returns**, and those 18 are exactly this family, nine
+in `resource_3a7` and nine in `resource_3bf`. Fifteen are routed and converted
+(240 bytes); the other three are the collision casualties above and need an
+overlay-aware routing key, not a wider set. This is a stock gcc flag, so it needed
+no fork change and no re-pin.
+
 **Routing sets are easy to edit into the wrong one.** Two functions that verified
 exact were rejected by the adopter because a scripted edit put their paths in the
 neighbouring set — the surrounding lines matched in both. The symptom mimics a
@@ -806,6 +1537,28 @@ tooling bug: `overlay_verify` takes flags from the command line and says 0, whil
   question at `haifa-sched.c:4068-4090`, not a dependent-count one.
 - **`0808fecc`** (main image, floor 2): the last-scheduled-insn class rule fires
   before the ordinal tie-break, so a separate mode is needed.
+- **`0801a4fc`** (main image, floor 2, 166 bytes): **value0's copy versus value2's
+  retargeted definition** in the grouped-descriptor pass. With
+  `-mgrouped-dma-store,-fthumb-group-value2-in-place` everything matches except
+  the order of two insns before the `stmia`: we emit `ldr r2,[pc]` then
+  `adds r0,r5,#0`, the reference emits the copy first. In `arm.c` the pass emits
+  `SET r0, value0` *before* `store2` while `-fthumb-group-value2-in-place`
+  retargets value2's constant definition **in place**, so their relative order is
+  decided by where the constant was defined in the RTL stream, which no source
+  spelling moved (four placements of the control word tried, plus the full flag
+  matrix with pairing). This is the natural next fork change: emit the value0 copy
+  ahead of the retargeted value2 definition. It needs the §7 admission ritual
+  (rebuild, re-pin, prove the source-only build still reproduces the SHA-1), so it
+  is a deliberate compiler-lane task, not a probe. Draft is at floor 2 and ready.
+- **`080c1fa8`** (main image, floor 2): a **`mov rN,sp` versus argument-setter**
+  ordinal tie-break — the reference materialises the stack base one slot earlier
+  (`mov r6,sp` before `adds r0,r3,#0`; we emit the reverse). Distinct from the
+  r0-r3 case `-fsched-low-dest-first` covers, because the earlier insn writes a
+  high register from `sp`. Hand levers took this function 5 → 2 (see
+  `docs/REPROBE-2026-07-30.md`); the residual survived all 40 flag settings,
+  every pairing with `-fno-sched-depend-count`, four statement placements, a
+  declaration-initialiser spelling and a return-type sweep. Draft ready at
+  `work/reprobe-2026-07-30/reordered/080c1fa8.c`, 84 bytes, baseline flags.
 - **resource_391:02a8** (floor 7/164): the reference reuses the register holding
   an `ldrsh` offset for a table cursor; not a sched1 decision.
 - **Pool-word emission**: `resource_3af:0bb8` has one surplus pool word (60 vs 56
@@ -874,6 +1627,73 @@ never re-probed: `resource_3c8:1d48` (floor 3 halfwords) and `resource_379:0074`
 (8 of 288 instruction groups differing — measure this one by group equality, not
 halfwords, per §2).
 
+**The 60-byte squared-distance family — floor 20/60 bytes, two named residuals,
+780 bytes behind it.** One fingerprint (`1fwqz6zhzfrzo`), 13 strict unconverted
+members, every one 60 bytes: `resource_373:0030`, `389:0030`, `391:0030`,
+`392:0030`, `393:0030`, `39f:0030`, `3b2:0030`, `3b4:0030`, `3b5:0040`,
+`3bf:0030`, `3c4:0030`, `3c5:0030`, `3c8:02f0`. It is the cheapest large payoff
+in the overlay queue — one correct draft closes all 13.
+
+The shape is a 3D squared distance on 16.16 fixed point, and **the call takes four
+arguments, not one**. That was the whole discovery: the reference's `ldr r3,[pc]`
+of `0x030001d8` immediately before the `bl` is the *fourth* argument, and the
+`dz*dz`/`dy*dy` left in r1/r2 are arguments 2 and 3, not dead intermediates.
+Spelling it one-argument floors at 46 differing bytes; two-argument at 23;
+four-argument at **20**. The constant is a plain literal, not `&Value_` — it has
+no `k<<n` factorisation, so it pools by itself (§4's third row).
+
+**The 20-byte floor is stable, so do not re-search the spelling space.** Ten
+source shapes were measured: inline-shift deltas (20), deltas-then-shift (24),
+shift-inside-the-multiply (26), named `x2`/`y2`/`z2` temporaries (24), a split
+`sum` accumulated with `+=` (20), an extra copy temporary for the third addend
+(20), declaration-order permutations (24), and a six-locals-first form (51). Five
+distinct spellings land on exactly 20 and none goes below. Best draft:
+
+```c
+typedef signed int s32;
+extern s32 Func_020061c0(s32 sum, s32 c, s32 b, s32 context);
+s32 Func_02000030(s32 *a, s32 *b) {
+    s32 dx = (*a++ - *b++) >> 16;
+    s32 dy = (*a++ - *b++) >> 16;
+    s32 dz = (*a - *b) >> 16;
+    return Func_020061c0(dx * dx + dy * dy + dz * dz, dz * dz, dy * dy, 0x030001d8);
+}
+```
+
+Instructions 1-9 and 13-20 match the reference exactly. Exactly two residuals
+remain, and they are worth attacking as one:
+
+1. The reference emits `subs r3,r3,r2` (the `dz` delta) **before** all three
+   `asrs`; we emit it between the second and third. Writing the three deltas as
+   plain statements and shifting them afterwards *does* produce that order, but
+   scrambles register allocation from instruction 4 onward (24 bytes, worse).
+2. The reference spends an extra `mov r3,r1` scratch copy before the final
+   `adds r0,r0,r3`, then immediately reloads r3 with the pooled constant. We fold
+   it to `adds r0,r0,r1`. This is the one instruction of the size difference
+   (26 emitted against 27).
+
+**All nine routed modes were swept against the four-argument draft and none beats
+baseline** — `-fsched-low-dest-first` is actively worse (15 mismatched
+instructions against 10), `-fno-sched-depend-count` worse (12), the rest are
+neutral. So this is a source-shape problem, not a routing problem; do not spend
+another sweep on it. The untried levers are §4's return-type lever on
+`Func_020061c0` (it is currently spelled `s32`-returning) and a struct/array
+spelling of the coordinate triple.
+
+Note for whoever picks this up: `work/claude/overlay_verify.ts` still does not
+exist on `mercury`, and `mode_sweep.ts` is main-image only — it resolves a stem to
+a ROM address, so it cannot take an overlay target. The working overlay loop is a
+**dry-run `overlay_adopt.ts`** (no `--apply`), which prints
+`differing_bytes=N size=A/B` in about a second:
+
+```sh
+bun tools/overlay_adopt.ts resource_373:0030 --source draft.c --span 60
+```
+
+Equal sizes confirm the span; drive `differing_bytes` to 0. Because that path
+takes flags from routing rather than argv, sweep modes by compiling with `xgcc`
+directly and diffing the assembly against `overlay_show.ts` output.
+
 ---
 
 ## 9. Required checks
@@ -911,6 +1731,34 @@ SVG is resolved by taking either side and re-running `bun run coverage`.
 `PROVENANCE.md` is authoritative on clean-room rules: semantics only from the
 target's own disassembly and this repo. **No `asm()`, no inline assembly, no
 register pinning, no barriers, and no `volatile` as a matching device.**
+
+**How to decide the `volatile` question mechanically, instead of arguing intent.**
+Three drafting lanes hit it on 2026-07-30 and it resolved three different ways, so
+the rule is worth stating: **delete the `volatile`, re-probe, then classify.**
+
+| after deleting it | what it means | verdict |
+| --- | --- | --- |
+| count unchanged | it was never load-bearing | drop it, adopt (`080060e8`) |
+| count worsens, address is memory-mapped or externally mutated, and the reference genuinely repeats the access | semantics the target requires | keep it, adopt (`08006cdc`, `0800eaf8`) |
+| count worsens, object is an ordinary local | a matching device | **reject the draft** (`080b386c`) |
+
+The worked cases: `080060e8` marked a timer register `volatile` and reached 0
+without it, so it was noise. `08006cdc` writes a Flash command sequence to
+`0x0E005555`/`0x0E002AAA`, where repeated stores to one address *are* the
+protocol, and plain C would let the compiler fold them away and break the
+hardware. `0800eaf8` re-reads one IWRAM global across a chain of `else if` tests
+and comes out 8 bytes short without `volatile`, which is exactly §4's documented
+tell. `080b386c` declared `volatile u16 slots[15]` — an ordinary stack array with
+nothing external touching it, worth 49 halfwords purely by suppressing store
+elimination. That last one is the prohibited case and its draft was rejected
+despite measuring 0.
+
+**A lane's `confirmed` is not sufficient to adopt.** One verify lane passed
+`080060e8` on the reasoning that its `volatile` was legitimate MMIO; the
+coordinator's independent screen caught it and the delete-and-re-probe test showed
+it was not even needed. Re-screen and re-measure everything at the coordinator
+before installing it. Two policy escapes were caught this way in one session, the
+other being the register-pinned `080044d0` drafts.
 
 **Concurrency — do not inherit the old two-lane rule.** That limit was measured
 when a verification probe cost 1.8 s and a bank cycle 190 s, so compute really was
@@ -951,6 +1799,39 @@ models are not useful for drafting here — the ≤32-byte "easy" population is 
 veneer thunks, word-table interiors and mid-function fragments, and the genuine
 small leaves are already taken as each walk passes them.
 
+**Do not spend an agent on enumerable search — that is the expensive mistake, and
+it is independent of model tier.** Measured 2026-07-30 on an 18-core host: `xargs`
+over `candidate_show` sustains **114 ms per probe at 18-way concurrency**, so a
+flag matrix of 38,480 probes finishes in about four minutes and produced 2 of that
+day's 8 conversions on its own. An agent exploring 20 source spellings takes about
+six minutes. That is roughly four orders of magnitude less search per minute.
+Split the work by whether it can be enumerated:
+
+- **Enumerable** — flag sets and their pairings, callee return types, independent
+  statement orderings, constant spellings: script it. `tools/mode_sweep.ts`,
+  `tools/return_type_sweep_main.sh`, `tools/statement_order_sweep_main.ts`.
+- **Not enumerable** — deciding which lever a residual implies, decoding assembly
+  into semantics, noticing that an epilogue contradicts a draft's signature: that
+  is what an agent is for, and it wants a strong model.
+
+**Cheap-model breadth was measured and did not substitute for lever selection.**
+Four haiku lanes were each given a size-exact near-miss with its residual quoted,
+the lever sections named, and the sweeps pointed out. Result: **0 of 4 improved**
+across 66 spellings, ~6-8 minutes and ~90k tokens per lane, with honest reports
+(one correctly spotted that the statement-order sweep had only produced 3 probes
+on its target, so that lever had never been exercised there). Caveat, stated
+plainly: those four were the residual-hard remainder — two had already resisted a
+full-effort attempt — so this is not a controlled comparison and should not be
+read as a model benchmark. What it does show is that quoting the fingerprint and
+listing the levers is not enough; choosing the lever is the costly step.
+
+**Workflow orchestration is not the overhead people assume.** Verify stages fired
+the moment each solve returned and nothing queued at 12 lanes. But note the cap:
+concurrent agents per workflow are `min(16, cores - 2)`, so on an 18-core host a
+32-agent workflow runs 16 and queues the rest. For very wide cheap breadth,
+separate `Agent` calls avoid that ceiling; for pipelined solve-then-verify work
+the workflow is the right shape.
+
 ---
 
 ## 10. Mercury Lighthouse — running the exact-C effort on a high-compute host
@@ -961,6 +1842,57 @@ Those sessions were **reasoning-bound per lane but core-bound in aggregate**; mo
 cores changes only the second term, so read this as "how to spend cores", not
 "how to work". Everything in §1-§9 still applies unchanged.
 
+**Bringing up a bare cloud container (2026-07-30, measured end to end: ~35 min).**
+A fresh clone cannot run anything in the exact lane: `bun run verify`,
+`candidate_show.ts` and `overlay_verify` all read `roms/gs1-en.gba`, and every
+compile routes through `../alchemy-gcc/dist`, which is *built*, not committed.
+Four separate things have to be right, and three of them fail in ways that look
+like a repository bug rather than a missing prerequisite.
+
+1. **The ROM is yours to supply.** `roms/` and `*.gba` are gitignored and must
+   stay that way. Drop the approved image at `roms/gs1-en.gba` and check it
+   against tracked `rom.sha1` (`5c46952054…`) before trusting a single measurement.
+   Then `git config core.hooksPath .hooks` exactly as `PROVENANCE.md` says.
+2. **`arm-none-eabi-as`/`objcopy` are host binutils, not part of the bundle.**
+   `build_asm.ts` shells out to them by bare name. `apt-get install -y
+   --no-install-recommends binutils-arm-none-eabi` — a few seconds.
+3. **Build the compilers from the sibling repo.** Clone `PascalPixel/alchemy-gcc`
+   next to this checkout so `../alchemy-gcc/dist` resolves, then
+   `./build.sh <target> && ./stage.sh <target>`. gcc296 takes ~3 min on 4 cores;
+   agbcc, gcc3 and gs2 a few more each. **`stage.sh` has no token for
+   `pretearlythumb` or `gcc2951`** even though `build.sh` does — copy those two
+   `cc1` binaries to `dist/pret-early-thumb/cc1` and `dist/gcc2951/cc1` by hand.
+   Both are needed: `alchemy_gcc.ts --self-test` builds a plan for each, so
+   `bun run verify` fails without them.
+4. **Re-stamp the vendored generated files after cloning.** `alchemy-gcc` ships
+   pre-generated `c-parse.c`/`c-gperf.h`/`configure` "timestamp-pinned newer than
+   their inputs" — but **git does not preserve mtimes**, so a fresh clone lands
+   them all in the same checkout second and make regenerates them. gcc-2.95.1
+   then dies in modern bison on a 1999 grammar (`$$ for the midrule at $4 of
+   'structsp' has no declared type`). `touch` the generated files in each
+   vendored tree before building. Symptom to recognise: any build failure that
+   names bison, gperf or autoconf is this, not a broken tree.
+
+**Match the pinned Bun.** `package.json` pins `bun@1.3.14`; the container shipped
+1.3.11 and `gba_header.ts --self-test` failed with "GBA logo source must be the
+canonical 104x16 monochrome PNG". That check re-encodes the tracked PNG and
+demands byte equality, and its IDAT comes from `deflateSync(rows, {level: 9})` —
+i.e. it is pinned to Bun's bundled zlib. It is a Bun-version tell, not a corrupt
+asset; `git status` on the PNG is clean throughout. Install the pinned version
+before concluding anything about the assets.
+
+**A locally built bundle will not match the pinned digests, and that is expected.**
+gcc embeds prefix paths, so a from-source build at a different path differs
+byte-for-byte while its *codegen* is identical — `build_claimed` came back
+`linked=1406 failures=0` on the first try. The one target that reproduced the
+pinned digest exactly was `pret-early-thumb`. So do not read a digest mismatch as
+a broken build, and do not read a matching digest as the only admissible outcome.
+`EXPECTED` now holds a **list** of approved digests per file rather than one, so a
+second host can be admitted without evicting the first. The bar for adding to
+that list is unchanged and is the whole point: run `bun run verify` and get
+`byte_identical=yes rom_fallback_bytes=0` with that bundle first. This container's
+bundle was admitted that way on 2026-07-30.
+
 **What the ceiling actually is.** Measured on the 4-core cloud host: one lane
 idles at ~120 ms per probe; two lanes, load 1.18, 137 ms; five lanes, load 3.60,
 and a warm `build_claimed` that costs ~0 s idle stretched to 17.6 s. Memory never
@@ -969,6 +1901,15 @@ core**, and the falsifiable stopping signal is **probe latency climbing past
 ~150 ms** — measure it, do not guess it. On a 16-core machine expect 16-20 lanes
 to be sane; the scaling is close to linear because lanes share nothing but the
 repo.
+
+**Give every drafting lane its own output directory.** Lanes told to write
+`work/<shared>/<stem>.c` destroyed each other's files between tranches on
+2026-07-30: five confirmed byte-exact drafts vanished, four were recovered only
+because the *verify* lanes had copied them into their own scratch, and two regions
+that had been solved had to be re-drafted from scratch. Use
+`work/<run>/lanes/<stem>/<stem>.c`, and adopt confirmed results promptly instead
+of batching them across tranches. Bytes measured exact and then lost are the most
+expensive outcome available.
 
 **What must stay serial, at any core count.** These are correctness constraints,
 not performance ones:
@@ -995,12 +1936,85 @@ dedicated **re-probe sweep across every existing note in `work/claude/notes/`** 
 almost certainly higher yield per core-hour than walking new overlays, and it is
 purely mechanical. Do that first.
 
+  *Measured on the main image, 2026-07-30, and it does **not** hold there.* An
+  18-core run took that advice to exhaustion on `mercury`: 1,035 drafted-but-
+  unadopted stems, deduplicated to 3,188 drafts, of which 964 both compile and
+  pass the policy screen. Sweeping all 964 against 20 flag settings — each routed
+  mode alone, both CSE modes paired, and the §5 compositions — is **19,280 probes
+  in 122 s** and yielded **exactly one exact match** (`08078144`, 228 bytes,
+  adopted). A 1-in-964 yield is not a backlog. The overlay-side seam this
+  paragraph describes was real; **the main-image drafted population has no
+  equivalent, so do not budget a session for it.** Full measurement in
+  `docs/REPROBE-2026-07-30.md`.
+
+  The tempting inference was that because *no* note under `work/` mentions
+  `-fsched-low-dest-first` or either CSE mode — the corpus wholly predates them —
+  those modes must be holding back a batch of main-image functions. That is the
+  §6 stale-evidence shape, it was the right thing to test, and it is **false**:
+  across 964 drafts they produced no additional exact match. They still move
+  individual halfword counts, so keep probing them per function; do not expect a
+  cohort.
+
+**Screen drafts against `PROVENANCE.md` before believing a zero.** The same run
+found two drafts scoring 0 halfwords at 212/212 in `work/hand/080044d0/exact*/`
+that are **inadmissible**: they get there with `register s32 ratio asm("r1")`.
+Ranking a draft population by score alone puts register-pinned and barrier drafts
+at the top of the list, where they read as free adoptions. Grep for `asm(`,
+`register … asm`, `volatile` and `__attribute` first. `080044d0`'s best clean
+variant is 1 halfword at exact size, which makes it the best ratio in the project
+(212 bytes behind one register identity) — and the pinned drafts conveniently
+prove which assignment to aim a legitimate allocation lever at.
+
+**The return-type lever had never been run on the main image at all.**
+`tools/return_type_sweep.sh` scores through `work/claude/overlay_verify.ts`,
+which does not exist on `mercury` and only accepts `<overlay:offset>` targets, so
+every main-image park predates the lever entirely — §5's "treat a sweep null
+before 2026-07-30 as unmeasured" understates it here, because there was never a
+null to record. `tools/return_type_sweep_main.sh` ports it to
+`candidate_show.ts`, never overwrites the input draft, and prefers a size-exact
+result at equal halfword count. 494 sweeps in 29 s improved 67 drafts (`080c0be4`
+105 → 84, `080aad10` 112 → 95) and closed none; improved drafts are saved in
+`work/reprobe-2026-07-30/drafts/`. Run it on any newly drafted main-image
+function before parking it.
+
+**Host concurrency: trust probe latency, not load average.** On an 18-core M5 Max
+with 18 concurrent probes, load average reached **25.6** while per-probe latency
+stayed at **~114 ms against a 116 ms idle baseline**. §10's stopping signal
+(latency past ~150 ms) never triggered. The 4-core "roughly one lane per core"
+rule understates a large machine; load average above core count is not by itself
+the ceiling.
+
 **Where to resume walking**, with the next offset each lane had already decoded:
 `resource_3c8:07d8` (200), `resource_39f:1520` (176), `resource_38f:0304` (196),
 `resource_372:1348` (336 — a direct structural sibling of the adopted `0f38` and
 the drafted `1154`; copying `work/claude/resource_372-1154.c` and substituting
 constants should land it quickly). `resource_3b2` (74 rows) and `resource_374`
 (47 rows) are the best unassigned overlays by the small-row criterion.
+
+**Measured 2026-07-30: an 18-core host did not beat the 4-core one on bytes.**
+Daily exact-byte gains on the 4-core cloud host, from `docs/full-c-history.csv`:
+1,426 / 12,720 / 5,148 / 7,400 / 2,484 / 6,328 / 21,792 / 7,174 / 14,634 / 6,468 /
+10,282 / 5,134. Median about 6,800. A full session on the 18-core machine
+produced **2,554 bytes**, below their typical day. Confounders, stated so the
+comparison is not oversold: those days include overlay conversions, which come in
+larger and easier rows, while that session was main-image only; a large share of
+it went into tooling and measurement rather than conversion; and it was hours, not
+a day.
+
+The conclusion is not "the big machine is bad", it is that §9 was right and the
+implication is sharper than it looks: **compute makes enumerable search free, and
+enumerable search is nearly exhausted.** In that session 38,480 flag probes ran in
+about four minutes and yielded 2 conversions, while agent drafting lanes yielded
+7. Cores now buy you `tools/finish_draft.sh` finishing in ~2 s instead of an hour
+of hand-probing — real, permanent, and *not* where the remaining bytes are.
+
+So the thing to scale is **concurrent drafting lanes on unconverted regions**, not
+probes and not lanes grinding near-miss residuals. Measured hit rates on the same
+day: fresh drafting converted **7 of ~18 lanes**; re-probing existing drafts
+converted **2 of 1,259 draft-probes**; four cheap-model lanes on residual-hard
+near-misses converted **0 of 4**. The binding limits are agent concurrency and
+model quality on assembly-to-semantics, so pick the host for how many strong
+drafting lanes it can run, not for its core count.
 
 **When extra compute stops paying — hand the branch back.** More cores buy
 throughput on *parallelisable* work, and this project has two kinds. Fan-out work
@@ -1037,3 +2051,18 @@ Do not leave findings only in `work/claude/notes/`; the notes decay into stale
 evidence exactly the way §6 describes, and this session recovered five separate
 categories of it. If a note's blocker was later closed by a mode or a lever, edit
 the note rather than leaving the contradiction for whoever reads it next.
+
+**`work/` is in `.gitignore` — findings left there do not survive the session.**
+This is stronger than the paragraph above and was learned the hard way on
+2026-07-30: a full session of notes and 238 improved drafts sat under
+`work/reprobe-2026-07-30/` and were invisible to `git`, so a bank cycle reported
+"nothing staged; tree matches HEAD" while the tree looked full of new work. Every
+per-function note this project has ever written is in the same position, which is
+the mechanical reason the notes corpus decays.
+
+So: **anything you want the next session to have goes in `HANDOVER.md` or
+`docs/`.** That session's record is `docs/REPROBE-2026-07-30.md`, with per-stem
+floors and their winning flags in `docs/reprobe-2026-07-30-floors.tsv` and
+`docs/reprobe-2026-07-30-mode-matrix.tsv`. Drafts stay untracked by convention;
+regenerate a floor with `tools/finish_draft.sh` rather than trusting a number
+copied from a note.

@@ -391,6 +391,7 @@ const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
 // (or, for 399:05dc and 0a3c, together with the routed immediate-latency
 // mode). Each entry has its own exact-byte proof.
 const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3b2_c_02000da4.c",
   "assets/code/resource_37a_c_02001790.c",
   "assets/code/resource_399_c_0200021c.c",
   "assets/code/resource_3ca_c_020010d4.c",
@@ -458,6 +459,25 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // Paired with -fsched-low-dest-first below: removing the constant sharing
   // exposes a scheduling transposition that the tie-break then fixes.
   "assets/code/resource_373_c_020031b4.c",
+  "assets/code/resource_3a8_c_0200158c.c",
+  "assets/code/resource_3a8_c_020015b4.c",
+  "assets/code/resource_374_c_02000780.c",
+  "assets/code/resource_39c_c_020010c0.c",
+  "assets/code/resource_39e_c_0200071c.c",
+  "assets/code/resource_3af_c_02001f90.c",
+  "assets/code/resource_380_c_02000390.c",
+  "assets/code/resource_373_c_020032b0.c",
+  "assets/code/resource_3bf_c_02004704.c",
+  "assets/code/resource_3bf_c_020049a0.c",
+  "assets/code/resource_3bf_c_0200169c.c",
+  "assets/code/resource_3bf_c_0200269c.c",
+  "assets/code/resource_3bf_c_02002718.c",
+  "assets/code/resource_3bf_c_020025f8.c",
+  "assets/code/resource_3bf_c_020021c4.c",
+  "assets/code/resource_3b0_c_020004b0.c",
+  "assets/code/resource_39e_c_02000414.c",
+  "assets/code/resource_372_c_02003c48.c",
+  "assets/code/resource_3b8_c_02003e40.c",
   "assets/code/resource_3a4_c_02000c9c.c",
   "assets/code/resource_3af_c_02001b58.c",
   "assets/code/resource_3af_c_020019c0.c",
@@ -479,6 +499,42 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // argument setters tie before a `bl` and the low-destination rule picks
   // `mov r0,sl` over `lsls r1,r1,#1` (notes/resource_381-0e30.md).
   "assets/code/resource_381_c_02000e30.c",
+  "assets/code/resource_3a8_c_02001ed8.c",
+  "assets/code/resource_3a8_c_02000504.c",
+  "assets/code/resource_3a8_c_02000464.c",
+  "assets/code/resource_374_c_02000750.c",
+  "assets/code/resource_374_c_020007ec.c",
+  "assets/code/resource_374_c_0200081c.c",
+  "assets/code/resource_374_c_0200084c.c",
+  "assets/code/resource_374_c_0200087c.c",
+  "assets/code/resource_374_c_020008ac.c",
+  "assets/code/resource_374_c_02000780.c",
+  "assets/code/resource_3b2_c_02001494.c",
+  "assets/code/resource_39e_c_0200071c.c",
+  "assets/code/resource_3af_c_02001f90.c",
+  "assets/code/resource_380_c_02000390.c",
+  "assets/code/resource_373_c_020032b0.c",
+  "assets/code/resource_3bf_c_02004704.c",
+  "assets/code/resource_3bf_c_020049a0.c",
+  "assets/code/resource_3bf_c_0200269c.c",
+  "assets/code/resource_3bf_c_02002718.c",
+  "assets/code/resource_3bf_c_020025f8.c",
+  "assets/code/resource_3bf_c_020021c4.c",
+  "assets/code/resource_3b0_c_02000468.c",
+  "assets/code/resource_399_c_020019bc.c",
+  "assets/code/resource_39c_c_02000ffc.c",
+  "assets/code/resource_39c_c_02002e6c.c",
+  "assets/code/resource_39e_c_02000658.c",
+  "assets/code/resource_3af_c_02000c28.c",
+  "assets/code/resource_372_c_02001600.c",
+  "assets/code/resource_3b0_c_020004b0.c",
+  "assets/code/resource_372_c_02000398.c",
+  "assets/code/resource_372_c_020003cc.c",
+  "assets/code/resource_372_c_02000400.c",
+  "assets/code/resource_3b8_c_020003b0.c",
+  "assets/code/resource_3b8_c_02003d40.c",
+  "assets/code/resource_3b8_c_02003df8.c",
+  "assets/code/resource_3b8_c_02003e40.c",
   // resource_373: this overlay's real fingerprint is the low-dest tie-break,
   // not the rerun-cse mode (measured neutral on ~15 functions here).
   "assets/code/resource_373_c_02000dc0.c",
@@ -536,6 +592,7 @@ const NO_GCSE_INSERT_LOAD_OVERLAY_SOURCES = new Set([
 // store-versus-store to the existing rules. Including loads in the predicate
 // raises collateral from 308 to 498 sources with no further gain.
 const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_373_c_020032b0.c",
   "assets/code/resource_3bd_c_02000a54.c",
 ]);
 // The pool-word sibling of the mode above, and a different kind of defect: for a
@@ -551,6 +608,15 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
 // flag). docs/compiler-evidence/cse-pool-immediate.diff.
 const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
   "assets/code/resource_37b_c_02001b44.c",
+  "assets/code/resource_3a8_c_02001ed8.c",
+  "assets/code/resource_374_c_02000634.c",
+  "assets/code/resource_3af_c_02001f90.c",
+  "assets/code/resource_380_c_02000390.c",
+  "assets/code/resource_3bf_c_020049a0.c",
+  "assets/code/resource_3bf_c_02002308.c",
+  "assets/code/resource_3bf_c_0200238c.c",
+  "assets/code/resource_372_c_02001600.c",
+  "assets/code/resource_3b8_c_02003f84.c",
   "assets/code/resource_37b_c_0200195c.c",
   "assets/code/resource_37b_c_02002244.c",
   "assets/code/resource_37b_c_020022f4.c",

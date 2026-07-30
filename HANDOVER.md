@@ -369,6 +369,58 @@ except the call's own RTL form, because `schedule_insns` purges death notes
 distinguish two sites of one symbol — which is why the fix has to be in the
 source, and closes that search.
 
+## The largest available work is the MAIN IMAGE, not overlays
+
+Correcting a mistake this file made: `asm_c_debt_bytes` (395,816) and the overlay
+inventory's ~16 KB queue describe **disjoint worlds**, and the apparent
+380,000-byte hole between them was a category error, not a discovery deficit. All
+1,807 assembly regions live under `asm/` at run-address banks 0x08 and 0x03;
+`discoverOverlay()` reads only `assets/code/*_overlay.s`, so overlays contribute
+exactly **0 bytes** to the debt figure. The debt reconciles against the build's
+per-kind census with no residual, and `395,816 + 56,784 keep = 452,600 = asm_bytes`.
+
+The useful corollary: **the main-image debt is already enumerated at function
+granularity and nobody is working it.** 727 regions, one function body per file,
+every boundary proven by ROM byte-equality rather than inferred — 671 contain
+exactly one `.thumb_func`, **zero** contain a second `push {…, lr}` prologue, and
+632 rows (357,388 bytes) carry a `Func_` global at the region start.
+`unowned_bytes=0`, so nothing is unwalked. Only 95 rows / 38,428 bytes need a
+structural split or merge first. Every one of the 575 notes under
+`work/claude/notes/` is an overlay note, and `work/hand/` no longer exists.
+
+The queue is `docs/DISCOVERY-QUEUE.md`. Top 20 regions are 67,976 bytes; top 100
+are 185,288; 548 rows (284,856 bytes, 72%) have no diagnosed construct blocker.
+Roughly **368,000 of the 395,816 bytes should become C**; only 62 bytes are
+measurably never-C, because the classifier already moved structural material into
+the keep classes. The one unmeasured quantity is the code/data ratio inside the
+27,352 bytes of `mixed_region`.
+
+Main-image workflow (different from overlays): the reference is `asm/<addr>.s`,
+the output is `src/<addr>.c` defining `Func_<addr>`, `build_claimed` picks up
+`src/*.c` automatically, and **adoption deletes the assembly region** — 1,146 asm
+regions remain against 1,376 C sources. `tools/build_claimed.ts`'s `compileSource`
+is the authoritative compile pipeline, and `permute_v1.ts`'s exported `Scorer` is
+a ready-made per-function main-ROM scorer.
+
+### Overlay discovery has a real bug worth fixing
+
+`discoverOverlay()` in `tools/overlay_inventory.ts` gives up scanning after a
+return at the first halfword that is neither `0x0000` nor `0x46c0`:
+`if (![0, 0x46c0].includes(half)) break;`. A GCC-Thumb function's return is
+followed by its own literal pool, so this breaks at essentially every real
+boundary. Measured on a read-only copy against the 835 overlay functions that
+already have exact C: stock rediscovers 119 (14.3%) and yields a 20-row/6,110-byte
+strict queue; skipping literal-pool words (which `Discovery.literal_slots` in
+`tools/discover.ts` already records) rediscovers 327 (39.2%) and yields
+**460 rows / 108,446 bytes**. This is not a prologue-shape problem — 743 of 835
+(89%) converted functions already start with `0xb5xx`; nothing reaches them.
+Caveat: walked functions rise 685 → 4,449, so the `contained_by`/`data_walk`
+filters must carry the precision.
+
+Also one line: `tools/remaining_survey.ts` filters `retention === "c_candidate"`
+and so is blind to 96 debt rows (38,456 bytes). Widening it to all five debt
+retentions makes it agree with `asm_c_debt_bytes`.
+
 ## Read this before planning: the per-overlay "remaining bytes" figure lies
 
 `out/decomp/overlays.json` lists nested discoveries that are `contained_by` one

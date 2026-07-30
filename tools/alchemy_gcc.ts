@@ -553,6 +553,8 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   "assets/code/resource_38d_c_02001984.c",
   // Same shape: 0x80000 feeds both of this call's shifted arguments.
   "assets/code/resource_3b4_c_020011d8.c",
+  // Same -1 pair shape as the entry two lines below; see the tie-break set.
+  "assets/code/resource_3a2_c_020008a8.c",
   // Both negated arguments are -1, so CSE builds one and copies it.
   "assets/code/resource_3b5_c_0200028c.c",
   "assets/code/resource_372_c_02000f38.c",
@@ -625,6 +627,12 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // resource_3bf:0c78 sets r0, r1 and r2 for one call and the reference orders
   // them by ascending destination; without the tie-break r0 lands last.
   "assets/code/resource_3bf_c_02000c78.c",
+  // resource_3a2:0870 and :08a8 each set r0/r1/r2 for a three-argument call and
+  // the reference orders them by ascending destination. :08a8 also needs the
+  // constant-sharing mode: both of its negated arguments are -1, so CSE builds
+  // one and copies it where the reference negates each in place.
+  "assets/code/resource_3a2_c_02000870.c",
+  "assets/code/resource_3a2_c_020008a8.c",
   "assets/code/resource_3c8_c_02001780.c",
   "assets/code/resource_3c8_c_02001150.c",
   "assets/code/resource_372_c_02000f38.c",

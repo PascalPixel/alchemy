@@ -43,9 +43,12 @@ BEST=$(bun work/claude/overlay_verify.ts "$TARGET" "$CURRENT" "$SPAN" "$@" \
   | grep -oE 'differing_halfwords=[0-9]+' | grep -oE '[0-9]+$')
 echo "start differing_halfwords=$BEST"
 
-try_flip() {   # $1 = callee, $2 = from-type, $3 = to-type
+try_flip() {   # $1 = callee, $2 = to-type
   cp "$CURRENT" "$CANDIDATE"
-  sed -i "s/^extern $2 ${1}(/extern $3 ${1}(/; s/^$2 ${1}(/$3 ${1}(/" "$CANDIDATE"
+  # Match ANY declared return type, not just void/s32: a callee declared u32,
+  # u16, s16 or pointer-returning is otherwise invisible to the sweep, which
+  # then reports a false null on exactly the function the lever would close.
+  sed -i -E "s/^(extern +)?[A-Za-z_][A-Za-z0-9_]* +\**${1}\(/\1$2 ${1}(/" "$CANDIDATE"
   cmp -s "$CANDIDATE" "$CURRENT" && return 1
   local result
   result=$(bun work/claude/overlay_verify.ts "$TARGET" "$CANDIDATE" "$SPAN" "$@" \
@@ -66,13 +69,11 @@ try_flip() {   # $1 = callee, $2 = from-type, $3 = to-type
 improved=1
 while [ "$improved" = 1 ]; do
   improved=0
-  for callee in $(grep -oE '^(extern )?void Func_[0-9a-f]+' "$CURRENT" \
+  # Every declared callee, whatever its current return type, tried both ways.
+  for callee in $(grep -oE '^(extern +)?[A-Za-z_][A-Za-z0-9_]* +\**Func_[0-9a-f]+\(' "$CURRENT" \
                   | grep -oE 'Func_[0-9a-f]+' | sort -u); do
-    try_flip "$callee" void s32 "$@" && improved=1
-  done
-  for callee in $(grep -oE '^(extern )?s32 Func_[0-9a-f]+' "$CURRENT" \
-                  | grep -oE 'Func_[0-9a-f]+' | sort -u); do
-    try_flip "$callee" s32 void "$@" && improved=1
+    try_flip "$callee" s32 "$@" && improved=1
+    try_flip "$callee" void "$@" && improved=1
   done
 done
 

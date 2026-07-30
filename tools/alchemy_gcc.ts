@@ -64,7 +64,7 @@ const OPTIMIZE_O1_SOURCES = new Set(["080049e8", "08021e28"]);
 // alone; the first flag is kept only because removing it would rewrite the
 // routed command line for sixteen already-verified regions.
 const UNSCHEDULED_SOURCES = new Set([
-  "08002f10", "0800307c", "08006b84",
+  "08002f10", "0800307c", "08006b84", "080060e8",
   "08004198", "080042c8", "0800430c", "08004358", "0800439c", "080043e0",
   "08029274",
   "080fb714", "080fb728", "080fb73c", "080fb750", "080fb75c",
@@ -162,7 +162,9 @@ const ENTRY_SAVES_DESCENDING_SOURCES = new Set(["08093054"]);
 // three setup insns are adjacent. When the source word needs arithmetic the
 // interleaved insns hide them, and the control load stays hoisted -- which also
 // permutes the constant pool. See alchemy-gcc ff7c566.
-const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78"]);
+// 08005c68 writes a three-word descriptor whose control word the reference
+// stores last; without this the grouper emits it in source order.
+const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78", "08005c68"]);
 // The descriptor's base pool load wins a priority-68 ready-list tie on forward
 // dependent count alone; these references break it by original order instead.
 // 08021d88 likewise needs original-order tie breaking for its frame adjustment
@@ -228,7 +230,7 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // ever reach it. 080b5ad4 now compiles byte-exact with it (64 bytes) once its
 // tail is spelled as a returned call. See GROUP_VALUE2_IN_PLACE_SOURCES below.
 const GROUPED_DMA_STORE_SOURCES = new Set([
-  "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
+  "08005c68", "080060e8", "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
   "08004a5c", "08004a94", "08005340", "08005394", "080053e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "08019bac",
   "0801d014", "0801d980",
   "080251d4", "080284dc", "08094730", "08095160", "08095290", "080958a8", "08097540", "0809bb34", "080c0184", "080c08a8",
@@ -1466,7 +1468,7 @@ function selfTest(): void {
   if (JSON.stringify(groupedDma) !== JSON.stringify([
     "08002f10", "08002fb0", "0800300c", "080037d4", "08003e10", "08004760",
     "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c",
-    "08004a94", "08005340", "08005394", "080053e8", "08005a78", "0800bc48", "0800bdd4", "0800c0f4", "0800d304",
+    "08004a94", "08005340", "08005394", "080053e8", "08005a78", "08005c68", "080060e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304",
     "080170c4", "08019bac", "0801d014", "0801d980", "080251d4", "080284dc", "0808fecc", "08094730", "08095160", "08095290", "080958a8", "08097540",
     "0809bb34", "080a1090", "080b5ad4", "080c0184", "080c08a8", "080f377c",
   ])) {

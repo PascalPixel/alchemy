@@ -128,6 +128,7 @@ export const MODES: readonly Mode[] = [
   { id: "cse-rerun-loop-off", family: "cse", addFlags: ["-fno-rerun-cse-after-loop"], evidence: "proven-routing" },
   { id: "alias-strict-off", family: "cse", addFlags: ["-fno-strict-aliasing"], evidence: "proven-routing" },
   { id: "cse-two-insn-immediate-off", family: "cse", addFlags: ["-fno-cse-two-insn-immediate"], evidence: "proven-routing" },
+  { id: "cse-pool-immediate-off", family: "cse", addFlags: ["-fno-cse-pool-immediate"], evidence: "proven-routing" },
   { id: "gcse-insert-load-off", family: "cse", addFlags: ["-fno-gcse-insert-load"], evidence: "proven-routing" },
   { id: "sched-low-dest-first", family: "schedule", addFlags: ["-fsched-low-dest-first"], evidence: "proven-routing" },
   { id: "sched-high-dest-first", family: "schedule", addFlags: ["-fsched-high-dest-first"], evidence: "proven-routing" },

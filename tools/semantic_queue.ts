@@ -36,6 +36,7 @@ interface Candidate {
   unknownTypes: number;
   highRegisterCallSetups: number;
   runtimeThunkCalls: number;
+  establishedThunkFamily?: string;
   boundaryShape: string;
   blockedLane?: string;
   blockedReason?: string;
@@ -76,6 +77,17 @@ export function analyzeCandidate(
     assembly,
     /^\s*bl\s+Func_08007(?:2e4|2e8|2ec|2f0|2f4|2f8|2fc|300|304|308|30c|310|314|318)\b/gim,
   );
+  // These setup routines publish the renderer callbacks subsequently reached
+  // through the runtime thunk bank. Reconstructing that family has now cleared
+  // consecutive cohorts without a hidden-input failure, so treating every one
+  // of its thunks as an unknown 250-point ABI hazard buries the highest-yield
+  // work. Keep a small per-site review cost; retain the full penalty when no
+  // established publisher is visible in the complete owner.
+  const establishedThunkFamily =
+    /\bbl\s+(?:Func_080cef64|Func_080ed408)\b/i.test(assembly)
+      ? "renderer"
+      : undefined;
+  const thunkPenalty = establishedThunkFamily === undefined ? 250 : 40;
   const sourceLines = draft.split("\n").length;
   const assemblyLines = assembly.split("\n");
   let highRegisterCallSetups = 0;
@@ -99,7 +111,7 @@ export function analyzeCandidate(
     // passes were ordinary saved locals. Keep it visible and mildly costly,
     // while direct thunks, unset inputs, and proven blockers dominate.
     highRegisterCallSetups * 40 +
-    runtimeThunkCalls * 250 +
+    runtimeThunkCalls * thunkPenalty +
     boundaryPenalty +
     Math.ceil(sourceLines / 10);
   return {
@@ -112,6 +124,7 @@ export function analyzeCandidate(
     unknownTypes,
     highRegisterCallSetups,
     runtimeThunkCalls,
+    establishedThunkFamily,
     boundaryShape: region.retention,
     draft: relative(ROOT, draftPath),
     score,
@@ -202,6 +215,7 @@ if (import.meta.main) {
           `unset=${item.unsetRegisters} exits=${item.internalExits} ` +
           `higharg=${item.highRegisterCallSetups} ` +
           `thunks=${item.runtimeThunkCalls} ` +
+          `${item.establishedThunkFamily === undefined ? "" : `family=${item.establishedThunkFamily} `}` +
           `unk=${item.unknownTypes.toString().padStart(2)} ` +
           `shape=${item.boundaryShape} ` +
           `${item.blockedLane === undefined ? "" : `blocked=${item.blockedLane} `}` +

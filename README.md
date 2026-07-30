@@ -26,14 +26,14 @@ game.
 
 ## Coverage map
 
-![Treemap of the English Golden Sun ROM: the left card divides all 8,388,608 cartridge bytes into main-image code, compressed code overlays and asset data; the right card divides the 1,339,540 audited executable bytes into the main image and 96 decoded overlays. Tiles are shaded blue for byte-exact C, teal for reviewed semantic C and grey for regions still held as assembly.](assets/readme/gs1-en-coverage.svg)
+![Treemap of the English Golden Sun ROM: the left card divides all 8,388,608 cartridge bytes into main-image code, compressed code overlays and asset data; the right card divides the 1,339,540 audited executable bytes into the main image and 96 decoded overlays. Tiles are shaded blue for byte-exact C, teal for reviewed semantic C, grey for regions still held as assembly and pink for non-code asset data.](assets/readme/gs1-en-coverage.svg)
 
 Every byte of the English cartridge. The left card is the ROM as it ships; the
 right card is the audited executable denominator behind Full-C Byte Share. Blue
 is byte-exact C from the Mercury lighthouse, teal is reviewed semantic C from
 the Venus lighthouse, grey is code still held as reconstruction assembly, and
-the near-black blocks are non-code data that the build already reproduces from
-tracked asset sources.
+pink is non-code data that the build already reproduces from tracked asset
+sources.
 
 The picture is derived from tracked evidence alone—no ROM, no toolchain, no
 build output—so either lighthouse can refresh it in about a second:

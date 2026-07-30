@@ -219,6 +219,48 @@ predicates that read directly off the disassembly with no drafting loop at all.
 Nineteen were converted here in a single pass. Clear this tier before opening a
 1 KB row.
 
+**Then stop reading them by hand — `tools/overlay_wrapper_draft.ts` derives
+them.** The whole tail of setup wrappers, forwarders and dispatch stubs has a
+body made only of constant materialisation and direct `bl`s, and for that shape
+the C is a mechanical function of the disassembly. The tool decodes the row,
+models `movs`/`lsls`/`negs`/`ldr`-from-pool into argument values, and emits the
+source; `overlay_adopt` stays the oracle.
+
+```sh
+bun tools/overlay_inventory.ts                        # refresh first
+bun tools/overlay_wrapper_draft.ts --max-span 64 --out work/wrappers
+```
+
+**Measured 2026-07-30: 96 rows recognised, 53 byte-exact on the first probe, no
+second probe on any of them.** That was 2,848 bytes for one pass. It skips
+anything it cannot model rather than guessing, so a `unmodelled=N` count is the
+honest remainder, not a failure. Rerun it after every inventory refresh — walking
+an overlay reveals new rows, and the marginal cost is one probe each.
+
+Three things it encodes are worth knowing even when drafting by hand, because
+each was a wrong first guess that the oracle caught:
+
+- **Argument-setter order names the callee's return type**, exactly as §4 says.
+  A reference that sets `r1` before `r0` came from an `s32`-returning callee even
+  when the result is discarded; `r0` first came from a `void` one. This decides
+  more of these rows than anything else.
+- **A pooled constant that also factorises as `k << n`, `k <= 255`, needs
+  `(s32)&Value_xxxxxxxx`.** A plain literal builds it with `movs`/`lsls` instead
+  and the row misses. `0x1420` (`0xa1<<5`) and `0x13c0` (`0x4f<<6`) were the two
+  failures in an otherwise clean batch of 23; every constant that succeeded with
+  a bare literal was one that does not factorise. This is §4's table, and the
+  factorisation test is the only thing that separates the two cases.
+- **`pop {rN}` with N != 0 means the function returns a value.** `pop {r0}` means
+  it does not. The epilogue is a more reliable return-type oracle here than the
+  body.
+
+**Six-argument calls want function-top locals for the stacked arguments.** The
+reference materialises both stack words into *different* registers and then
+stores both; we reuse one register and interleave, which is 5 bytes off. Writing
+the two stacked arguments as function-top `s32` locals reproduces the reference
+exactly — §4's hoisting lever, and no scheduler flag reaches it (all nine were
+swept on `resource_398:0148`).
+
 **Re-probing old park notes.** The return-type lever (§4) arrived late, so any
 note whose residual is a two-halfword argument-setter swap is stale evidence
 rather than a blocker. One sweep closed 8 functions / 1,628 bytes from 41

@@ -2,11 +2,11 @@
 # usage: cmpov.sh <overlay> <offsetHex> <span> <draft.c>
 cd /home/user/alchemy
 /home/user/alchemy-gcc/dist/xgcc -B/home/user/alchemy-gcc/dist/ -O2 -mthumb -mthumb-interwork \
-  -mcpu=arm7tdmi -fno-builtin -nostdinc -ffreestanding -fcall-used-r4 -Iinclude -S "$4" -o /tmp/m.s 2>/dev/null
+  -mcpu=arm7tdmi -fno-builtin -nostdinc -ffreestanding -fcall-used-r4 -Iinclude ${EXTRA_CFLAGS:-} -S "$4" -o /tmp/m.s 2>/dev/null
 grep -E "^	[a-z]" /tmp/m.s | sed 's/\t/ /g;s/^ *//' > /tmp/mine.txt
 bun tools/overlay_show.ts "$1" "$2" -n "$3" 2>/dev/null | sed 's/^ *[0-9a-f]*:\t[0-9a-f ]*\t//' \
   | grep -v "^--- pool\|^  0x" | sed 's/\t/ /g;s/  *@.*//' > /tmp/refall.txt
-python3 - "$5" <<'PY'
+python3 - "${5:-8}" <<'PY'
 import re,sys
 r=[l.strip() for l in open('/tmp/refall.txt') if l.strip()]
 m=[l.strip() for l in open('/tmp/mine.txt') if l.strip()]

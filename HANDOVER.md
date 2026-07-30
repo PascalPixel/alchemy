@@ -49,10 +49,10 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **233,946 executable bytes across 526 compiling sources**:
-  221,154 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **407,168 / 1,339,540 executable bytes** are now expressed as C, with
-  932,372 remaining. Seven semantic main sources were removed during the
+- Semantic-C lane: **235,354 executable bytes across 530 compiling sources**:
+  222,562 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **408,576 / 1,339,540 executable bytes** are now expressed as C, with
+  930,964 remaining. Seven semantic main sources were removed during the
   2026-07-30 `main` cascade because byte-exact versions now supersede them.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
@@ -116,6 +116,21 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   whose renderer target is loaded dynamically from `03001f08`; its callback
   and teardown additionally depend on call-via-r3, so it belongs in a typed
   dynamic-call module rather than an ordinary standalone conversion.
+- The sixth queue-driven pass adds four complete main owners and 1,408 bytes:
+  resource-selection/load control (`080207c4`), a scene particle sequence
+  (`08095a44`), preview-effect orchestration (`080b3050`), and randomized
+  record selection (`080c1afc`). Seven high-register warnings across the latter
+  two owners were verified as locally initialized arguments, loop state, and
+  output pointers; typed scheduler/effect callbacks and guarded structure
+  offsets make those conversions explicit. `080b9724` was rejected because it
+  points `r9` into its own stack frame before calling `080b9554`/`080b9604`;
+  both callees consume negative offsets from that shared cursor and must be
+  reconstructed with their caller as one transfer module.
+  Those audits also recalibrated the queue: generic high-register proximity now
+  costs 40 points rather than 100, because seven recent warnings were ordinary
+  saved locals. Direct call-via thunks, unset inputs, and persisted blockers
+  remain the stronger evidence, so safe high-register-heavy owners surface
+  sooner without hiding the real nonstandard modules.
 - Honest outer-owner additions include `resource_381:0054/1410`,
   `resource_394:03f0/0c2c/0e64..0fb4`, `resource_3bd:0474/0608/0ee0`, and
   `resource_3c8:1d48`. `resource_379:00dc` was rejected as a fake standalone

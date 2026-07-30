@@ -450,6 +450,7 @@ const NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES = new Set([
 // deliberately excluded, since a pool load is one instruction and sharing it is
 // not a size change.
 const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_372_c_02000f38.c",
   "assets/code/resource_3bf_c_02000bec.c",
   "assets/code/resource_3af_c_02001a98.c",
   "assets/code/resource_3af_c_02004218.c",
@@ -497,6 +498,7 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_372_c_02000f38.c",
   // Needs the tie-break alone, without the paired constant-sharing mode: two
   // argument setters tie before a `bl` and the low-destination rule picks
   // `mov r0,sl` over `lsls r1,r1,#1` (notes/resource_381-0e30.md).
@@ -611,6 +613,7 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
 // (measured on resource_373:2cb0 — do not re-attack it with a whole-function
 // flag). docs/compiler-evidence/cse-pool-immediate.diff.
 const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_372_c_02000f38.c",
   "assets/code/resource_37b_c_02001b44.c",
   "assets/code/resource_3c5_c_020024d0.c",
   "assets/code/resource_3c5_c_02002548.c",

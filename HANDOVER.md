@@ -1905,6 +1905,20 @@ without a single line of documentation or tooling changing, so the map on
 `main` is redrawn there whenever that ref moves, independently of either
 lighthouse's own banking.
 
+**Neither lane is drawn from main's own tree.** Mercury pulls from main and
+never pushes back, so main's `src/` never receives Mercury's conversions; drawn
+from its own worktree main's picture would sit frozen at the exact C this
+branch happens to carry while the project moved on — 173,222 bytes against
+Mercury's 210,306 when this was found. `--exact-ref` fixes that, and the map
+records the choice: main's provenance reads `exact_lane: origin/mercury`,
+`semantic_lane: origin/venus`, and both `--write` and `--check` re-resolve from
+that record, so no branch needs its own `coverage` script. Mercury and Venus
+record `exact_lane: worktree` and keep drawing their own, unchanged. An
+unavailable recorded ref is an error, never a quiet fall back to the worktree,
+because falling back would republish a smaller exact lane as though it were
+progress. The reconciliation against `metrics/<target>-progress.json` reads that
+report from whichever tree the lane came from, so it stays honest across refs.
+
 **The picture currently understates the overlay semantic lane, and closing that
 is Venus's to do.** `tools/coverage_map.ts` sizes an overlay semantic owner
 only from a `manual_regions` entry in `semantic/regions.json`. It deliberately

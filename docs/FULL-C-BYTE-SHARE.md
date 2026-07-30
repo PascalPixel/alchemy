@@ -116,6 +116,9 @@ moved on.
 
 A recorded ref that is not available locally is an error, not a fall back to
 the working tree: falling back would quietly republish a smaller lane as though
-it were the current state. `bun run coverage:check` only fails on lanes the
-current branch owns; a lane read from another branch's ref is refreshed by
-running `bun run coverage`, not by failing this branch's verification.
+it were the current state. Likewise a redraw that cannot see the semantic lane
+refuses rather than publishing that half as zero.
+
+The map is regenerated on `main` and nowhere else, so `bun run coverage:check`
+is not part of `bun run verify`: a picture lagging a lighthouse's newest commit
+is refreshed on `main`, never by failing that lighthouse's verification.

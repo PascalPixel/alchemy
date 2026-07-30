@@ -26,6 +26,44 @@ Know which one you are before you change anything.
 | this file | authoritative | background; the levers do not bind you |
 | direction of flow | exports byte-exact sources to Venus | pulls Mercury's exact C in to override its own semantic C where one exists |
 
+### How work circulates
+
+Three agents, each owning one branch, each pulling from exactly one place. The
+flow is a **cycle**, and no agent pushes to a branch it does not own:
+
+| agent | owns | pulls from | takes |
+| --- | --- | --- | --- |
+| **Vale** | `main` | `venus` | **docs and tools only** |
+| **Mercury Lighthouse** | `mercury` | `main` | everything |
+| **Venus Lighthouse** | `venus` | `mercury` | everything |
+
+Consequences worth knowing before you act:
+
+- **Semantic C never reaches `main` or `mercury`.** Vale takes only docs and
+  tools from `venus`, so `semantic/` stays on `venus` by design. Do not try to
+  push it anywhere else.
+- **Tooling and HANDOVER edits DO circulate to every branch**, the long way
+  round: `venus` → `main` (Vale) → `mercury` (Mercury Lighthouse). That is why a
+  measured lever or a corrected tool is worth writing down properly — it is the
+  only thing that crosses lane boundaries, and it reaches the other lighthouse
+  without anyone coordinating.
+- **Exact C reaches `venus` directly** from `mercury`, which is the override
+  path: when Mercury makes a region byte-exact, the next Venus pull deletes the
+  semantic version. `build_semantic` hard-errors on a duplicate, so this is
+  enforced rather than remembered.
+- **Never push to a branch you do not own.** If Venus work belongs on `main`,
+  it gets there because Vale pulls it, not because Venus pushes it.
+- **`README.md` and its ROM coverage map belong to Vale. Never edit them from
+  `venus` or `mercury`.** The map is regenerated on `main` from the metrics both
+  lanes publish, so editing it downstream either conflicts with Vale or reports a
+  figure that the branch cannot substantiate. Publish numbers by banking them —
+  the map follows.
+- **Venus pulls `mercury` about once an hour.** More often wastes a merge on a
+  handful of commits; much less and the superseded-semantic deletions pile up
+  into a large, hard-to-check merge. Each pull: merge, take Mercury's `src/` and
+  routing on conflict, delete every semantic source that now has an exact
+  counterpart (`build_semantic` hard-errors if you miss one), re-verify, bank.
+
 Mercury is the slower, stricter run: a function is done only when the linked
 bytes match. Venus is the faster, wider run: it covers ground semantically and
 adopts Mercury's exact sources whenever Mercury produces one for a region Venus
@@ -37,6 +75,17 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
+Alongside the exact lane, reviewed semantic C currently accounts for **523,620
+executable bytes across 950 compiling sources**: 382,970 main-image bytes and
+140,650 overlay bytes. Combined with exact C, **734,014 / 1,339,574 executable
+bytes** are expressed as C.
+
+**Twelve overlays are now converted in full**, none skipping anything:
+`resource_3b8` (15,028 bytes), `resource_372` (10,202), `resource_371` (9,650),
+`resource_39f` (9,278), `resource_39a` (7,096), `resource_3b4` (6,226) and
+`resource_373` (13,192), `resource_3bf` (10,144), `resource_38f` (9,212), `resource_383` (7,792) and
+`resource_3c4` (24 of 25 rows, one 2,636-byte
+dispatcher pre-measured)
 Alongside the exact lane, reviewed semantic C currently accounts for **475,156
 executable bytes across 921 compiling sources**: 382,970 main-image bytes and
 92,186 overlay bytes. Combined with exact C, **678,920 / 1,339,572 executable
@@ -56,6 +105,10 @@ of the ordinary review queue.
 0x02003fa8-0x02003fb8 with `r0 = 0` before it, so it returns `s32`. That is
 **3,922 bytes as one owner across 18 inventory rows with ~260 static calls**; the
 18 sub-rows are `call:` seeds (import identities), not real entries, and the only
+true internal structure is the jump table. Build that lane
+with `bun run build:semantic`; its sources live under `semantic/` and do not
+claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
+and multi-region traps out of the ordinary review queue.
 true internal structure is the jump table.
 
 Both lanes are drawn together in the README coverage map
@@ -361,6 +414,32 @@ ordinary calls: a balanced shared tail declared but not defined, and an alignmen
 `nop` immediately before a real prologue (calling it is calling the function two
 bytes later).
 
+**Drafting loop: compile YOUR file alone, not the whole lane.** `bun run
+build:semantic` is a shared gate — one agent's broken file blocks validation for
+every concurrent lane, and did so for about an hour in one round. Compile a
+single source through `sourceToAssemblyPlan` from `tools/alchemy_gcc.ts` while
+drafting, and run the full `build:semantic` only to confirm before moving on.
+
+**Cheapest link-base witness: a pool word that is a known function start plus the
+Thumb bit.** `0x0200a609` = `Func_02002608 + 1`, `0x0200a7ad` =
+`Func_020027ac + 1`, `0x02008801` = `Func_02000800 + 1`. These are per-frame task
+pointers passed to `Func_080000d0`/`Func_080000d8`, not data. It works on any
+overlay that installs a task and needs no jump table.
+
+**Cross-check imports against a byte-exact sibling — it is free and it is
+banked.** An `assets/code` source in the same overlay was written with the
+*printed* (wrong) `bl` names, e.g. `Func_02002d10`; resolving its own call sites
+shows the real import is `Func_0808a080`. Diffing an exact sibling against
+`overlay_call_targets.ts` therefore confirms each import's arity and field
+offsets against material that already reproduces the ROM, rather than inferring
+them. This is how one lane fixed its actor-record layouts instead of guessing.
+
+**Two owners that share globals should be read together.** Neither
+`resource_38f:08ec` (which sets three globals, installs a task and spins on one
+of them) nor `:27ac` (the emitter, the only writer that clears it) is
+interpretable alone; together the globals are unambiguous. When a spin-wait reads
+a global nothing in the owner writes, find the writer before drafting.
+
 **Overlays share whole routines verbatim — check before drafting anything.**
 `bun tools/overlay_twins.ts --unconverted` groups owners by an instruction
 skeleton that masks the two things which legitimately differ between copies:
@@ -387,6 +466,22 @@ pair — check the target's first halfword before concluding anything.
 They are not calls; `lr` is clobbered harmlessly because the epilogue pops the
 return address off the stack. This inflates site counts and explains a class of
 resolved targets that are neither veneer nor callee.
+
+**The inventory's `calls=` field predates the corrected `bl` decoding and is
+systematically LOW.** Measured on one overlay: 0 against 17 real calls, 58/61,
+62/64, 70/75, 87/91, 143/151, 163/169. It is not a completeness proof in either
+direction — use `overlay_call_targets.ts`'s own `sites=` count, or better, the
+multiset comparison below.
+
+**Thumb bit tells a jump table from a handler table.** `mov pc,rN` does not
+interwork, so jump-table entries carry **no** Thumb bit; an installed-handler
+pool word does (`0x0200c8c9` = `Func_020048c8` + 1). Cheapest way to classify a
+table of in-image addresses at a glance.
+
+**A pool load before a `bl` is only a `call_via` if it names IWRAM.** The
+thunk-bank shape is `ldr r3,[pc] ; bl` — but where the loaded word is in-image
+data (`0x0200dxxx`) rather than the IWRAM band (`0x030001xx`), r3 is an ordinary
+fourth argument. The band is the discriminator, not the shape.
 
 **Completeness proof, best form: compare MULTISETS.** Extract the multiset of
 `bl` targets from `assets/code/<overlay>_overlay.s` and compare it to the
@@ -440,6 +535,20 @@ will invent imports.
 toolchain rejects `void Func_X(); if (Func_X() != 0)` with "void value not
 ignored as it ought to be". Declare any import used in a condition as `s32` or a
 pointer — arity may be left open, the return type may not.
+
+**Exclude literal-pool ranges from an argument-window simulator OUTRIGHT — the
+"clear only the destination register" guard is NOT sufficient.** A pool word can
+decode as a plausible *write* to a live variable: in `resource_3bf:3054` the word
+at `0x02003384` decodes as `lsls r5, r0, #4`, which overwrote the live text-line
+cursor and produced two wrong line ids that looked entirely plausible. Clearing
+the destination register faithfully models an instruction that is not there. Use
+the pool map, not a heuristic.
+
+**A `ldr r0,[pc,#0] / bx lr / .word K` pair is a constant loader, not a call.**
+`overlay_call_targets.ts` reports it as `unknown`. There is no `push`, so `bx lr`
+returns past the `bl`: the site's entire effect is `r0 = K`. Distinct from the
+8-byte `ldr r4,[pc,#0] / bx r4 / .word T` import veneer the tool does classify —
+do not model it as a call.
 
 **Semi-automated transcription is safe for large call carpets, with one guard.**
 For a 7,468-byte owner with 869 calls, a throwaway simulator tracking r0-r3
@@ -764,11 +873,60 @@ how `resource_384:01d0` converted (5/18 differing → exact by renaming two
 (106/2,068) and `resource_381:0054` (313/3,548) are still open and are the two
 largest unexploited leads in this class.
 
-**The 10-to-32-byte tier is the highest hit rate in the overlay queue.** 129
-strict rows, 2,558 bytes, mostly two-call dispatch stubs and one-compare
-predicates that read directly off the disassembly with no drafting loop at all.
-Nineteen were converted here in a single pass. Clear this tier before opening a
-1 KB row.
+**The small-row tier is the highest hit rate in the overlay queue, and it is now
+drained.** It opened at 129 strict rows / 2,558 bytes under 32 bytes — two-call
+dispatch stubs and one-compare predicates that read straight off the disassembly
+with no drafting loop. **As of 2026-07-30 only 6 rows / 130 bytes remain under 32
+bytes**, and three of those are the routing-collision casualties in §7. Current
+strict queue: **897 rows / 323,406 bytes**, of which 68 rows / 2,786 bytes are
+under 48 bytes and 396 rows / 30,256 bytes are under 128. The cheap tier is gone;
+the next band up (48-128 bytes) is where the remaining mechanical work is.
+
+Best overlays by the §1 small-row criterion, recounted after that pass:
+`resource_3b4` (45 rows under 400 bytes), `resource_3c4` (37), `resource_3a7`
+(31), `resource_39a` (28), `resource_39f` (26), `resource_371` (25).
+
+**Then stop reading them by hand — `tools/overlay_wrapper_draft.ts` derives
+them.** The whole tail of setup wrappers, forwarders and dispatch stubs has a
+body made only of constant materialisation and direct `bl`s, and for that shape
+the C is a mechanical function of the disassembly. The tool decodes the row,
+models `movs`/`lsls`/`negs`/`ldr`-from-pool into argument values, and emits the
+source; `overlay_adopt` stays the oracle.
+
+```sh
+bun tools/overlay_inventory.ts                        # refresh first
+bun tools/overlay_wrapper_draft.ts --max-span 64 --out work/wrappers
+```
+
+**Measured 2026-07-30: 96 rows recognised, 53 byte-exact on the first probe, no
+second probe on any of them.** That was 2,848 bytes for one pass. It skips
+anything it cannot model rather than guessing, so a `unmodelled=N` count is the
+honest remainder, not a failure. Rerun it after every inventory refresh — walking
+an overlay reveals new rows, and the marginal cost is one probe each.
+
+Three things it encodes are worth knowing even when drafting by hand, because
+each was a wrong first guess that the oracle caught:
+
+- **Argument-setter order names the callee's return type**, exactly as §4 says.
+  A reference that sets `r1` before `r0` came from an `s32`-returning callee even
+  when the result is discarded; `r0` first came from a `void` one. This decides
+  more of these rows than anything else.
+- **A pooled constant that also factorises as `k << n`, `k <= 255`, needs
+  `(s32)&Value_xxxxxxxx`.** A plain literal builds it with `movs`/`lsls` instead
+  and the row misses. `0x1420` (`0xa1<<5`) and `0x13c0` (`0x4f<<6`) were the two
+  failures in an otherwise clean batch of 23; every constant that succeeded with
+  a bare literal was one that does not factorise. This is §4's table, and the
+  factorisation test is the only thing that separates the two cases.
+- **`pop {rN}` with N != 0 means the function returns a value.** `pop {r0}` means
+  it does not. The epilogue is a more reliable return-type oracle here than the
+  body.
+
+**Six-argument calls want function-top locals for the stacked arguments.** The
+reference materialises both stack words into *different* registers and then
+stores both; we reuse one register and interleave, which is 5 bytes off. Writing
+the two stacked arguments as function-top `s32` locals reproduces the reference
+exactly — §4's hoisting lever, and no scheduler flag reaches it (all nine were
+swept on `resource_398:0148`).
 
 **Re-probing old park notes.** The return-type lever (§4) arrived late, so any
 note whose residual is a two-halfword argument-setter swap is stale evidence
@@ -1058,6 +1216,58 @@ pool-address pseudos to overlap and so take distinct hard registers (declaring i
 after loses the effect, and this fixed a register-identity floor that survived all
 seven modes); and a second pointer the reference keeps in a different register
 needs its own named local.
+
+  *It applies to a `Data_` global just as much as to a hardware register, and
+  there the size is not short.* `resource_371:3f88` and `resource_377:15bc` both
+  read `Data_03001e40` twice — once to test bit 0, once to shift — and the
+  reference keeps the address in a register and issues **two** `ldr`s where we CSE
+  to one. Sizes match exactly, so the short-size tell never fires; the diff just
+  looks like register scramble (29 differing bytes on both). Declaring the extern
+  `volatile s32` closed both outright, first probe. **Whenever the reference loads
+  the same address twice with no store between, try `volatile` before reading the
+  diff as an allocation problem** — a plain global is the easy case to miss
+  because nothing about the size says so.
+
+**Absolute addresses want `Data_<8hex>` symbols, not integer literals — otherwise
+gcc derives one from another.** Writing several nearby RAM addresses as casts
+(`*(s32 *)0x02002080 = 0; *(u16 *)0x02002008 = 0;`) lets CSE keep one in a
+register and reach the next with `subs r3, #120`, where the reference pool-loads
+each separately. `externalSymbol` resolves any `Data_<address>` / `Func_<address>`
+/ `Value_<address>` name (`tools/alchemy_gcc.ts`), so `extern s32 Data_02002080;`
+gives a SYMBOL_REF gcc cannot fold arithmetically and each address gets its own
+pool word. This closed the whole derived-address class on `0800651c` in one edit.
+
+**Stack arguments want function-top locals *only* when nothing precedes them.**
+§4's hoisting lever puts the two stacked words of a six-argument call in distinct
+registers, which is what the reference does — but if a *call* comes first in the
+function, function-top locals stay live across it and land in r5/r6, buying a
+`push` the reference does not have. Declare them in a block after that call
+instead: `resource_3bb:02c0` went from a span overrun to exact on that change
+alone, and `resource_3bc:024c` from 19 differing bytes to exact.
+
+**The standard fix for a renderer/setup call sheet is `void` callees plus
+`-fsched-low-dest-first`, in that order.** This landed five times on 2026-07-30
+(`38d:1958`, `38d:1984`, `3b5:0260`, `3b4:11d8`, `3bb:02c0`) and the diagnosis is
+always the same two-step. First, an `r0` setter sitting *after* the r1/r2/r3
+group means the callee is `void`-returning, not `s32` — flip the declaration and
+the residual usually halves. Then, if `movs r0` still sits after the `lsls` of a
+shifted argument rather than between the `movs` and its shift, that is the
+scheduler tie-break and the flag closes it. Neither step alone is enough on a
+sheet that needs both: `3b5:0260` went 12 → 6 → 0 across the two. Try the
+declaration before reaching for any flag — it costs one probe and needs no
+routing entry.
+
+**A repeated shifted constant across call sites needs
+`-fno-cse-two-insn-immediate`, and the tell is a prologue.** On
+`resource_38d:1984` the same `0xC000` feeds two of three call sites; CSE hoists it
+into r5 and the function grows `push {r5, lr}` / `pop {r5}`, while the reference
+rematerialises `movs r1,#192 / lsls r1,#8` at each site. No source spelling
+reaches it — one local per site does not stop CSE — but the routed mode does.
+Pair it with `-fsched-low-dest-first` for the r0-setter position. Its sibling
+`:1958` has no repeat and needs only the scheduler mode. **Route the CSE mode by
+*path*** (`NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES`), which is overlay-specific
+and so immune to §7's address-collision trap; `SCHED_LOW_DEST_FIRST_SOURCES` is
+keyed by bare address and is not.
 
 **Re-check every `&Value_` in an old park note against the factorisation table
 above.** Four functions in one overlay were parked at floor 2 as "no flag reaches
@@ -1627,6 +1837,52 @@ never re-probed: `resource_3c8:1d48` (floor 3 halfwords) and `resource_379:0074`
 (8 of 288 instruction groups differing — measure this one by group equality, not
 halfwords, per §2).
 
+**The 0x08006xxx IME-guarded DMA trio — parked on a gcc pool quirk, 220 bytes.**
+`0800651c` (64), `080063bc` (76) and `08006408` (80) are one family: disable IME
+by storing the register's own address (`strh r0,[r0]` — bit 0 of 0x0208 is clear),
+clear or set a few words, restore IME. The reference has **no prologue at all** —
+it uses r0-r4 only, r4 being call-used under `-fcall-used-r4`.
+
+Two things were fixed and are worth keeping: the derived-address class closed with
+`Data_` symbols (§4), and typing the saved IME value `s32` rather than `u16`
+removed a spurious `lsls #16 / asrs #16` sign-extension pair. What remains is one
+gcc quirk with no source lever found: for the two `u8` stores it emits a pool
+`.word 0` and reloads it with **`ldrh r1, .L3`** instead of reusing the register
+that already holds 0, and that extra live value spills `saved` to r5 and buys the
+`push`/`pop` the reference does not have. Retyping the shared zero `u8`/`u16`/`s32`
+and naming it per site all measure identically.
+
+*The pooled-zero quirk is not confined to that trio, and it interacts with the
+dead-store rule.* `resource_3ca:004c` ends with a single `*(u16 *)0x05000000 = 0`
+where the reference emits `movs r2,#0`. Without `volatile` gcc **deletes** the
+store as dead — the whole tail vanishes — and with `volatile` it emits the same
+`ldrh r3, .L3` off a pooled `.word 0`. So the two available spellings are "wrong
+bytes" and "no bytes"; there is no third. Treat a lone volatile store of zero as
+carrying this blocker until someone finds the lever.
+
+**`resource_3bb:02e8` — base-plus-offset folded into one pool word.** The
+reference keeps `0x02000240` in the pool and builds the `0x1F4` byte offset
+separately (`movs r2,#250 / lsls r2,#1 / adds r3,r3,r2`) before loading. Every
+spelling tried folds them: `(u8 *)0x02000240 + 0x1F4`, `((s32 *)0x02000240)[125]`,
+and a `Data_02000240` symbol all emit a single relocated constant, because gcc can
+add a constant to either an integer or a SYMBOL_REF at compile time. Floor 23/28.
+The offset has to reach the add as something gcc cannot fold, and none of the
+obvious spellings does that.
+
+**`tools/mode_sweep.ts` swept 69 modes over `0800651c` and none reaches it** —
+floor 33 halfwords at 72 bytes against a 64-byte reference, under `old-agbcc`
+(`out/modesweep/0800651c-*/`). The residual classes it reports are
+`register=1,literal,cfg`. This is a source-shape problem; do not re-run the sweep.
+Note the family is *not* agbcc despite sitting inside the agbcc module — the
+reference clobbers r4 without saving, which `AGBCC_CFLAGS` (no `-fcall-used-r4`)
+cannot produce.
+
+**`resource_371:0350` — floor 4/44.** Two `ands` chains where the reference opens
+on the mask (`adds r3,r1,#0 / ands r3,r2`) and we open on the value. §4's mask-first
+recipe does not reach it: `(mask & value)` is canonicalised back by gcc, and
+splitting the chain into statements makes it worse (21). Same for the trailing
+`eor`. It needs an allocation lever, not an operand-order one.
+
 **The 60-byte squared-distance family — floor 20/60 bytes, two named residuals,
 780 bytes behind it.** One fingerprint (`1fwqz6zhzfrzo`), 13 strict unconverted
 members, every one 60 bytes: `resource_373:0030`, `389:0030`, `391:0030`,
@@ -1710,50 +1966,30 @@ Commit subjects must end in the suffix from
 `bun tools/full_c_progress.ts --subject`, and a subject that changes the
 executable denominator must begin `metrics: correct executable denominator`.
 
-**Refresh the coverage map whenever your lane advances.** `bun run coverage`
-rewrites `metrics/gs1-en-coverage-map.json` and the README treemap
-`assets/readme/gs1-en-coverage.svg`. It reads tracked evidence only — no ROM,
-no toolchain, no build output — so it costs about a second. Run it after the
-metrics report is written and before staging; in `tools/bank_cycle.sh` that is
-two lines directly after the `--write-report` call:
+**The coverage map is Vale's, and only Vale's.** `assets/readme/gs1-en-coverage.svg`
+and `metrics/gs1-en-coverage-map.json` are regenerated on `main` and nowhere
+else. Do not run `bun run coverage` from `mercury` or `venus`, and do not hand-edit
+either file: you would either collide with Vale or publish a figure your branch
+cannot substantiate. Publish numbers by banking them — the map follows within the
+hour. It is deliberately not part of `bun run verify`, so a map that lags your
+newest commit is never your problem and never blocks a bank.
 
-```sh
-git fetch origin venus > /dev/null 2>&1
-bun run coverage > /dev/null 2>&1
-```
+Vale redraws it from the two lighthouse refs rather than from any working tree.
+Mercury pulls from main and never pushes back, so main's `src/` never receives
+Mercury's conversions; drawn from its own worktree main's picture would sit frozen
+at whatever exact C that branch happens to carry while the project moved on —
+173,222 bytes against Mercury's 210,306 when this was found. `--exact-ref` and
+`--semantic-ref` select the trees and the map records the choice, so main's
+provenance reads `exact_lane: origin/mercury`, `semantic_lane: origin/venus`, and
+both `--write` and `--check` re-resolve from that record. The reconciliation
+against `metrics/<target>-progress.json` reads that report from whichever tree the
+lane came from, so it stays honest across refs.
 
-The fetch is not optional decoration. The semantic lane is read from a `venus`
-ref, and Mercury has no other reason to hold one; without it the redraw has no
-lane to draw and would publish Venus's half of the picture as zero. `--write`
-now **refuses** in that situation rather than erasing it, naming the fetch in
-the error, so a failed fetch leaves the previous picture standing. Pass
-`--semantic-ref none` if you ever genuinely mean to publish without the lane.
-
-`bun run verify` ends with `bun run coverage:check`, which fails when the
-tracked map is behind the lane this branch owns. Mercury owns the exact lane in
-the picture and Venus owns the semantic lane; each branch reads the other lane
-from the newest ref it can see and records which one in the map, so a lane it
-does not own never fails its verification. A merge conflict on the map or the
-SVG is resolved by taking either side and re-running `bun run coverage`.
-
-`main` owns the published picture itself. Venus's semantic lane can advance
-without a single line of documentation or tooling changing, so the map on
-`main` is redrawn there whenever that ref moves, independently of either
-lighthouse's own banking.
-
-**Neither lane is drawn from main's own tree.** Mercury pulls from main and
-never pushes back, so main's `src/` never receives Mercury's conversions; drawn
-from its own worktree main's picture would sit frozen at the exact C this
-branch happens to carry while the project moved on — 173,222 bytes against
-Mercury's 210,306 when this was found. `--exact-ref` fixes that, and the map
-records the choice: main's provenance reads `exact_lane: origin/mercury`,
-`semantic_lane: origin/venus`, and both `--write` and `--check` re-resolve from
-that record, so no branch needs its own `coverage` script. Mercury and Venus
-record `exact_lane: worktree` and keep drawing their own, unchanged. An
-unavailable recorded ref is an error, never a quiet fall back to the worktree,
-because falling back would republish a smaller exact lane as though it were
-progress. The reconciliation against `metrics/<target>-progress.json` reads that
-report from whichever tree the lane came from, so it stays honest across refs.
+Two safety properties worth knowing, because both surface as a refused write
+rather than a wrong picture: a recorded ref that is not available locally is an
+error rather than a quiet fall back to the working tree, and a redraw that cannot
+see the semantic lane refuses rather than publishing Venus's half as zero. Either
+way the previous picture stands.
 
 **The picture currently understates the overlay semantic lane, and closing that
 is Venus's to do.** `tools/coverage_map.ts` sizes an overlay semantic owner
@@ -1896,20 +2132,27 @@ like a repository bug rather than a missing prerequisite.
    --no-install-recommends binutils-arm-none-eabi` — a few seconds.
 3. **Build the compilers from the sibling repo.** Clone `PascalPixel/alchemy-gcc`
    next to this checkout so `../alchemy-gcc/dist` resolves, then
-   `./build.sh <target> && ./stage.sh <target>`. gcc296 takes ~3 min on 4 cores;
-   agbcc, gcc3 and gs2 a few more each. **`stage.sh` has no token for
-   `pretearlythumb` or `gcc2951`** even though `build.sh` does — copy those two
-   `cc1` binaries to `dist/pret-early-thumb/cc1` and `dist/gcc2951/cc1` by hand.
-   Both are needed: `alchemy_gcc.ts --self-test` builds a plan for each, so
-   `bun run verify` fails without them.
-4. **Re-stamp the vendored generated files after cloning.** `alchemy-gcc` ships
-   pre-generated `c-parse.c`/`c-gperf.h`/`configure` "timestamp-pinned newer than
-   their inputs" — but **git does not preserve mtimes**, so a fresh clone lands
-   them all in the same checkout second and make regenerates them. gcc-2.95.1
-   then dies in modern bison on a 1999 grammar (`$$ for the midrule at $4 of
-   'structsp' has no declared type`). `touch` the generated files in each
-   vendored tree before building. Symptom to recognise: any build failure that
-   names bison, gperf or autoconf is this, not a broken tree.
+   `./build.sh all` and `./stage.sh all`. gcc296 takes ~3 min on 4 cores; agbcc,
+   gcc3 and gs2 a few more each. All five bundles are needed —
+   `alchemy_gcc.ts --self-test` builds a plan for `pret-early-thumb` and
+   `gcc2951` too, so `bun run verify` fails if either is missing.
+
+   *Two defects here cost a session on 2026-07-30 and are now fixed upstream at
+   `alchemy-gcc` `2581e3e`; if you are on an older checkout of that repo you will
+   still meet them.* `stage.sh` had no token for `pretearlythumb` or `gcc2951`
+   even though `build.sh` built both, so those two bundles could only be staged
+   by copying `cc1` into `dist/pret-early-thumb/` and `dist/gcc2951/` by hand.
+   And `build.sh` re-stamped its pre-generated `c-parse.c`/`c-gperf.h`/`configure`
+   only inside `build_gcc_tree`, so gcc-2.95.1 — which has its own recipe — went
+   without: **git does not preserve mtimes**, a fresh clone lands every vendored
+   file in the same second, make decides the shipped parser is stale, and a
+   modern bison rejects the 1999 grammar (`$$ for the midrule at $4 of
+   'structsp' has no declared type`). The same gap let autoconf 2.71 silently
+   rewrite the shipped autoconf 2.13 `configure`, which is a tracked file — check
+   `git -C ../alchemy-gcc status` after any build that reached for autoconf.
+   `build_2951` also omitted `--build`, so its 1999 `config.sub` choked on the
+   x86_64 triple `config.guess` reports. **Any alchemy-gcc build failure naming
+   bison, gperf or autoconf is this class, not a broken tree.**
 
 **Match the pinned Bun.** `package.json` pins `bun@1.3.14`; the container shipped
 1.3.11 and `gba_header.ts --self-test` failed with "GBA logo source must be the
@@ -2025,9 +2268,49 @@ the ceiling.
 **Where to resume walking**, with the next offset each lane had already decoded:
 `resource_3c8:07d8` (200), `resource_39f:1520` (176), `resource_38f:0304` (196),
 `resource_372:1348` (336 — a direct structural sibling of the adopted `0f38` and
-the drafted `1154`; copying `work/claude/resource_372-1154.c` and substituting
-constants should land it quickly). `resource_3b2` (74 rows) and `resource_374`
-(47 rows) are the best unassigned overlays by the small-row criterion.
+the drafted `1154`; that draft lived under `work/`, so it is gone, but the `0f38`
+source is tracked and substituting constants into it should land this quickly).
+The overlay ranking in that sentence is stale — §1 carries the recount.
+
+*Superseded for the small tier as of 2026-07-30.* That tier was drained in a
+single session: **119 functions, +7,022 exact bytes, 201,278 → 208,300**, on the
+4-core cloud container, which is the project's own median day. The method is §1's
+— refresh the inventory, run `tools/overlay_wrapper_draft.ts`, probe with a
+dry-run `overlay_adopt`, hand-write only what the tool refuses. Roughly half the
+functions never needed a second probe. **Start there, not at the offsets above**;
+those are 200-336 byte rows and the band under 128 bytes is both larger and
+cheaper.
+
+Two conversions in that session needed a routed flag rather than a source
+respelling, which is the honest ratio for this tier: `02001050` wanted
+`-fno-sched-depend-count` for §4's pool-load hoist, and `020011bc` wanted
+`-fsched-low-dest-first` for §7's `movs`/`negs` order swap. Everything else was
+source shape.
+
+**Measured 2026-07-30: an 18-core host did not beat the 4-core one on bytes.**
+Daily exact-byte gains on the 4-core cloud host, from `docs/full-c-history.csv`:
+1,426 / 12,720 / 5,148 / 7,400 / 2,484 / 6,328 / 21,792 / 7,174 / 14,634 / 6,468 /
+10,282 / 5,134. Median about 6,800. A full session on the 18-core machine
+produced **2,554 bytes**, below their typical day. Confounders, stated so the
+comparison is not oversold: those days include overlay conversions, which come in
+larger and easier rows, while that session was main-image only; a large share of
+it went into tooling and measurement rather than conversion; and it was hours, not
+a day.
+
+The conclusion is not "the big machine is bad", it is that §9 was right and the
+implication is sharper than it looks: **compute makes enumerable search free, and
+enumerable search is nearly exhausted.** In that session 38,480 flag probes ran in
+about four minutes and yielded 2 conversions, while agent drafting lanes yielded
+7. Cores now buy you `tools/finish_draft.sh` finishing in ~2 s instead of an hour
+of hand-probing — real, permanent, and *not* where the remaining bytes are.
+
+So the thing to scale is **concurrent drafting lanes on unconverted regions**, not
+probes and not lanes grinding near-miss residuals. Measured hit rates on the same
+day: fresh drafting converted **7 of ~18 lanes**; re-probing existing drafts
+converted **2 of 1,259 draft-probes**; four cheap-model lanes on residual-hard
+near-misses converted **0 of 4**. The binding limits are agent concurrency and
+model quality on assembly-to-semantics, so pick the host for how many strong
+drafting lanes it can run, not for its core count.
 
 **Measured 2026-07-30: an 18-core host did not beat the 4-core one on bytes.**
 Daily exact-byte gains on the 4-core cloud host, from `docs/full-c-history.csv`:

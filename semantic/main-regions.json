@@ -64,6 +64,160 @@
           "size": 420
         }
       ]
+    },
+    {
+      "entry": "0x080dd9c0",
+      "evidence": "One function with its only prologue at 0x080dd9c0 and its only epilogue at 0x080ddd82 (pop {r0}; bx r0). Six inter-row branches carry the live 52-byte frame and r8-r11 across the rows. The literal pools at 0x080dda18 (36 bytes), 0x080ddb0c (40 bytes) and 0x080dddb8 (40 bytes) are excluded. Previously recorded as a multi_region_function blocker; resolved by whole-module admission.",
+      "executable_ranges": [
+        {
+          "address": "0x080dd9c0",
+          "size": 88
+        },
+        {
+          "address": "0x080dda3c",
+          "size": 208
+        },
+        {
+          "address": "0x080ddb34",
+          "size": 644
+        }
+      ]
+    },
+    {
+      "entry": "0x080be378",
+      "evidence": "One function with its only prologue at 0x080be378 and its only epilogue at 0x080bf1d4/0x080bf1d6. Direct branches and ten out-of-range bl edges carry the live frame across the rows. The literal pools at 0x080bea9c (108 bytes), 0x080bef58 (48 bytes) and 0x080bf1e8 (32 bytes) are excluded; true executable size is 3,540 bytes.",
+      "executable_ranges": [
+        {
+          "address": "0x080be378",
+          "size": 1012
+        },
+        {
+          "address": "0x080be76c",
+          "size": 816
+        },
+        {
+          "address": "0x080beb08",
+          "size": 1104
+        },
+        {
+          "address": "0x080bef88",
+          "size": 608
+        }
+      ]
+    },
+    {
+      "entry": "0x080ec100",
+      "evidence": "One function with its only prologue at 0x080ec100 (116-byte frame) and its only epilogue at 0x080ece3e. Eleven inter-row branches reuse the live frame plus r10 (frame counter) and r11 (work-RAM base). Interior literal pools at 0x080ec170 (32), 0x080ec1d4 (20), 0x080ec23c (40), 0x080ec2e2 (22 incl. alignment), 0x080ec44c (40), 0x080ec6f4 (52), 0x080ecaba (46) and 0x080ecbb8 (32) are excluded, as is the trailing pool at 0x080ece52 (42). Previously recorded as a multi_region_function blocker; resolved by whole-module admission.",
+      "executable_ranges": [
+        {
+          "address": "0x080ec100",
+          "size": 112
+        },
+        {
+          "address": "0x080ec190",
+          "size": 68
+        },
+        {
+          "address": "0x080ec1e8",
+          "size": 84
+        },
+        {
+          "address": "0x080ec264",
+          "size": 126
+        },
+        {
+          "address": "0x080ec2f8",
+          "size": 340
+        },
+        {
+          "address": "0x080ec474",
+          "size": 640
+        },
+        {
+          "address": "0x080ec728",
+          "size": 914
+        },
+        {
+          "address": "0x080ecae8",
+          "size": 208
+        },
+        {
+          "address": "0x080ecbd8",
+          "size": 634
+        }
+      ]
+    },
+    {
+      "entry": "0x080f4168",
+      "evidence": "One function with its only prologue at 0x080f4168 and its epilogue tail at 0x080f535e, spanning 0x080f4168..0x080f53cd. Three of its 108 bl sites are internal control edges (0x080f535e twice, 0x080f44b8 once) and two are _call_via_r3 thunk calls. The whole-row literal pools at 0x080f474a (114 bytes), 0x080f4ab2 (62) and 0x080f4eca (58) are excluded: every word in them is the destination of a pc-relative ldr from a neighbouring row and nothing branches into them. Interior pools at 0x080f42ac (108), 0x080f4360 (8), 0x080f5148 (32) and 0x080f52f0 (20) sit inside the listed ranges.",
+      "executable_ranges": [
+        {
+          "address": "0x080f4168",
+          "size": 432
+        },
+        {
+          "address": "0x080f4318",
+          "size": 1074
+        },
+        {
+          "address": "0x080f47bc",
+          "size": 758
+        },
+        {
+          "address": "0x080f4af0",
+          "size": 986
+        },
+        {
+          "address": "0x080f4f04",
+          "size": 1226
+        }
+      ]
+    },
+    {
+      "entry": "0x080e47b8",
+      "evidence": "One function with its only prologue at 0x080e47b8 and its sole epilogue at 0x080e660a, spanning 16 manifest rows. Of its 231 bl sites, 14 are long branches the build emitted as bl because a Thumb b displacement cannot span 7 KiB, and 53 are interworking veneers through the 0x080072e4 call_via bank. Excluded (380 bytes): the literal pools at 0x080e4ddc (48), 0x080e5790 (36), 0x080e5acc (48), 0x080e5dee (58) and 0x080e6252 (54), plus the 34-entry jump table at 0x080e53f4 (136). A further 776 bytes of pool and alignment sit inside the listed ranges, so pure instruction bytes are 6,606.",
+      "executable_ranges": [
+        {
+          "address": "0x080e47b8",
+          "size": 768
+        },
+        {
+          "address": "0x080e4ab8",
+          "size": 148
+        },
+        {
+          "address": "0x080e4b4c",
+          "size": 656
+        },
+        {
+          "address": "0x080e4e0c",
+          "size": 1512
+        },
+        {
+          "address": "0x080e547c",
+          "size": 136
+        },
+        {
+          "address": "0x080e5504",
+          "size": 652
+        },
+        {
+          "address": "0x080e57b4",
+          "size": 792
+        },
+        {
+          "address": "0x080e5afc",
+          "size": 754
+        },
+        {
+          "address": "0x080e5e28",
+          "size": 1066
+        },
+        {
+          "address": "0x080e6288",
+          "size": 898
+        }
+      ]
     }
   ]
 }

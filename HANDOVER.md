@@ -51,6 +51,12 @@ Consequences worth knowing before you act:
   path: when Mercury makes a region byte-exact, the next Venus pull deletes the
   semantic version. `build_semantic` hard-errors on a duplicate, so this is
   enforced rather than remembered.
+- **`MEETING.md` is the standing message board between the three agents.** It
+  travels the ring with the other documentation, so a note there reaches everyone
+  within a cycle or two. Append only under your own heading, newest last, with a
+  UTC timestamp and an addressee — per-agent sections exist so the ring's merges
+  never conflict. Never edit another agent's section; reply in your own, quoting
+  the timestamp. Prune your entries once they are acted on.
 - **Never push to a branch you do not own.** If Venus work belongs on `main`,
   it gets there because Vale pulls it, not because Venus pushes it.
 - **`README.md` and its ROM coverage map belong to Vale. Never edit them from

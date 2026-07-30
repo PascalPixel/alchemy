@@ -153,18 +153,8 @@ AlchemyC_02000170:
 	.space 0x20
 AlchemyC_02000190:
 	.space 0x20
-	push	{lr}
-	bl	sub_02000424
-	ldr	r0, [pc, #20]
-	bl	sub_0200046a
-	movs	r0, #10
-	movs	r1, #0
-	bl	sub_0200047a
-	bl	sub_0200043e
-	pop	{r0}
-	bx	r0
-	.2byte 0x138d
-	.2byte 0x0000
+AlchemyC_020001b0:
+	.space 0x20
 AlchemyC_020001d0:
 	.space 0x12
 	.2byte 0x0000

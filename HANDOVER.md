@@ -14,6 +14,29 @@ rather than real limits.
 Exact means fully linked machine-code byte equality — not semantic similarity,
 not equal object size.
 
+## The two lighthouses
+
+The project runs as two parallel efforts, named after the Golden Sun lighthouses.
+Know which one you are before you change anything.
+
+| | **Mercury Lighthouse** | **Venus Lighthouse** |
+| --- | --- | --- |
+| branch | `mercury` | `venus` |
+| goal | **exact C** — fully linked machine-code byte equality | **semantic C** — readable, correct, not byte-bound |
+| this file | authoritative | background; the levers do not bind you |
+| direction of flow | exports byte-exact sources to Venus | pulls Mercury's exact C in to override its own semantic C where one exists |
+
+Mercury is the slower, stricter run: a function is done only when the linked
+bytes match. Venus is the faster, wider run: it covers ground semantically and
+adopts Mercury's exact sources whenever Mercury produces one for a region Venus
+has already covered. **Exact always wins over semantic** — that is the whole
+reason the flow is one-directional.
+
+Practical consequence for Mercury: when Venus reports one of its regions is close
+to exact, that region is worth re-probing here, because an exact result would
+replace Venus's semantic version outright. Two such candidates were noted and are
+still open (§8).
+
 ---
 
 ## 1. Where to work
@@ -715,6 +738,13 @@ whether a row's end lands on a non-prologue row — flags 74 rows but is almost 
 veneer banks, so it is not worth tooling. Adding a `returns == 0` warning to the
 inventory writer would cover the real signal in one line.
 
+**Venus Lighthouse candidates worth re-probing here.** Venus covers these
+semantically today; an exact result from Mercury would override its version, so
+they carry more value than their byte counts suggest. Both were identified but
+never re-probed: `resource_3c8:1d48` (floor 3 halfwords) and `resource_379:0074`
+(8 of 288 instruction groups differing — measure this one by group equality, not
+halfwords, per §2).
+
 ---
 
 ## 9. Required checks
@@ -768,12 +798,13 @@ small leaves are already taken as each walk passes them.
 
 ---
 
-## 10. The Mercury run — scaling on a fast local host
+## 10. Mercury Lighthouse — running the exact-C effort on a high-compute host
 
-This section exists because the project is being moved off a small cloud
-container onto a fast local machine. The cloud sessions were **reasoning-bound
-per lane but core-bound in aggregate**; a bigger host changes only the second
-term, so read this as "how to spend cores", not "how to work".
+This section is written for an agent taking `mercury` over with substantially
+more compute than the 4-core cloud container the measurements below come from.
+Those sessions were **reasoning-bound per lane but core-bound in aggregate**; more
+cores changes only the second term, so read this as "how to spend cores", not
+"how to work". Everything in §1-§9 still applies unchanged.
 
 **What the ceiling actually is.** Measured on the 4-core cloud host: one lane
 idles at ~120 ms per probe; two lanes, load 1.18, 137 ms; five lanes, load 3.60,
@@ -816,8 +847,38 @@ the drafted `1154`; copying `work/claude/resource_372-1154.c` and substituting
 constants should land it quickly). `resource_3b2` (74 rows) and `resource_374`
 (47 rows) are the best unassigned overlays by the small-row criterion.
 
-**Handing the branch back.** The branch is `claude/continue-decompilation-3drfw0`
-and every cycle is banked and pushed, so it is always resumable from origin. To
-hand back: push, and make sure this file's §1 ranking and §8 open problems reflect
-whatever the run learned. Nothing else is needed — there is no session state
-outside the repo.
+**When extra compute stops paying — hand the branch back.** More cores buy
+throughput on *parallelisable* work, and this project has two kinds. Fan-out work
+scales: walking fresh overlays, the stale-note re-probe sweep, mode sweeps,
+`return_type_sweep.sh`, `permute_overlay.ts` runs. Serial work does not: the
+compiler problems in §8, a park that needs a new lever rather than another probe,
+and any question about whether a mode is admissible at all. Those are one-agent,
+one-thread problems where twenty lanes produce twenty copies of the same floor.
+
+The signal to hand back is therefore **not** a byte count — it is when the
+*remaining* work is mostly of the second kind. Concretely, hand `mercury` back
+when any of these hold:
+
+- The re-probe sweep over `work/claude/notes/` is exhausted and the newly closed
+  functions have dried up.
+- Lanes are returning parks rather than adoptions — say, under a third of started
+  functions closing — because that means the frontier has moved from "apply a
+  known lever" to "find a new one".
+- The queue that remains is dominated by large rows (over ~1 KB) and the §8
+  compiler problems, which are transcription and analysis work, not throughput.
+- Probe latency stays flat as lanes are added, but conversion rate does not rise —
+  the machine has headroom and the *method* is the constraint.
+
+**How to hand back.** Push `mercury`; every cycle is banked and pushed, so it is
+always resumable from origin, and there is no session state outside the repo.
+Before handing back, make sure this file reflects what the run learned: §1's
+overlay ranking, §4 any new levers, §6 any park class proved or disproved, §7 any
+routed mode, §8 the open compiler problems. Levers and disproved park classes are
+the most valuable thing a high-compute run produces — a closed function is worth
+its bytes, but a lever is worth every function of its shape. Record them even when
+the run that found them had cores to spare.
+
+Do not leave findings only in `work/claude/notes/`; the notes decay into stale
+evidence exactly the way §6 describes, and this session recovered five separate
+categories of it. If a note's blocker was later closed by a mode or a lever, edit
+the note rather than leaving the contradiction for whoever reads it next.

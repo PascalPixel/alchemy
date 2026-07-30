@@ -49,6 +49,44 @@ banked several unnecessary map redraws on 2026-07-30 before this was understood.
 | this file | authoritative | background; the levers do not bind you |
 | direction of flow | exports byte-exact sources to Venus | pulls Mercury's exact C in to override its own semantic C where one exists |
 
+### How work circulates
+
+Three agents, each owning one branch, each pulling from exactly one place. The
+flow is a **cycle**, and no agent pushes to a branch it does not own:
+
+| agent | owns | pulls from | takes |
+| --- | --- | --- | --- |
+| **Vale** | `main` | `venus` | **docs and tools only** |
+| **Mercury Lighthouse** | `mercury` | `main` | everything |
+| **Venus Lighthouse** | `venus` | `mercury` | everything |
+
+Consequences worth knowing before you act:
+
+- **Semantic C never reaches `main` or `mercury`.** Vale takes only docs and
+  tools from `venus`, so `semantic/` stays on `venus` by design. Do not try to
+  push it anywhere else.
+- **Tooling and HANDOVER edits DO circulate to every branch**, the long way
+  round: `venus` → `main` (Vale) → `mercury` (Mercury Lighthouse). That is why a
+  measured lever or a corrected tool is worth writing down properly — it is the
+  only thing that crosses lane boundaries, and it reaches the other lighthouse
+  without anyone coordinating.
+- **Exact C reaches `venus` directly** from `mercury`, which is the override
+  path: when Mercury makes a region byte-exact, the next Venus pull deletes the
+  semantic version. `build_semantic` hard-errors on a duplicate, so this is
+  enforced rather than remembered.
+- **Never push to a branch you do not own.** If Venus work belongs on `main`,
+  it gets there because Vale pulls it, not because Venus pushes it.
+- **`README.md` and its ROM coverage map belong to Vale. Never edit them from
+  `venus` or `mercury`.** The map is regenerated on `main` from the metrics both
+  lanes publish, so editing it downstream either conflicts with Vale or reports a
+  figure that the branch cannot substantiate. Publish numbers by banking them —
+  the map follows.
+- **Venus pulls `mercury` about once an hour.** More often wastes a merge on a
+  handful of commits; much less and the superseded-semantic deletions pile up
+  into a large, hard-to-check merge. Each pull: merge, take Mercury's `src/` and
+  routing on conflict, delete every semantic source that now has an exact
+  counterpart (`build_semantic` hard-errors if you miss one), re-verify, bank.
+
 Mercury is the slower, stricter run: a function is done only when the linked
 bytes match. Venus is the faster, wider run: it covers ground semantically and
 adopts Mercury's exact sources whenever Mercury produces one for a region Venus
@@ -60,6 +98,17 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
+Alongside the exact lane, reviewed semantic C currently accounts for **523,620
+executable bytes across 950 compiling sources**: 382,970 main-image bytes and
+140,650 overlay bytes. Combined with exact C, **734,014 / 1,339,574 executable
+bytes** are expressed as C.
+
+**Twelve overlays are now converted in full**, none skipping anything:
+`resource_3b8` (15,028 bytes), `resource_372` (10,202), `resource_371` (9,650),
+`resource_39f` (9,278), `resource_39a` (7,096), `resource_3b4` (6,226) and
+`resource_373` (13,192), `resource_3bf` (10,144), `resource_38f` (9,212), `resource_383` (7,792) and
+`resource_3c4` (24 of 25 rows, one 2,636-byte
+dispatcher pre-measured)
 Alongside the exact lane, reviewed semantic C currently accounts for **475,156
 executable bytes across 921 compiling sources**: 382,970 main-image bytes and
 92,186 overlay bytes. Combined with exact C, **678,920 / 1,339,572 executable
@@ -79,6 +128,10 @@ of the ordinary review queue.
 0x02003fa8-0x02003fb8 with `r0 = 0` before it, so it returns `s32`. That is
 **3,922 bytes as one owner across 18 inventory rows with ~260 static calls**; the
 18 sub-rows are `call:` seeds (import identities), not real entries, and the only
+true internal structure is the jump table. Build that lane
+with `bun run build:semantic`; its sources live under `semantic/` and do not
+claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
+and multi-region traps out of the ordinary review queue.
 true internal structure is the jump table.
 
 Both lanes are drawn together in the README coverage map
@@ -384,6 +437,32 @@ ordinary calls: a balanced shared tail declared but not defined, and an alignmen
 `nop` immediately before a real prologue (calling it is calling the function two
 bytes later).
 
+**Drafting loop: compile YOUR file alone, not the whole lane.** `bun run
+build:semantic` is a shared gate — one agent's broken file blocks validation for
+every concurrent lane, and did so for about an hour in one round. Compile a
+single source through `sourceToAssemblyPlan` from `tools/alchemy_gcc.ts` while
+drafting, and run the full `build:semantic` only to confirm before moving on.
+
+**Cheapest link-base witness: a pool word that is a known function start plus the
+Thumb bit.** `0x0200a609` = `Func_02002608 + 1`, `0x0200a7ad` =
+`Func_020027ac + 1`, `0x02008801` = `Func_02000800 + 1`. These are per-frame task
+pointers passed to `Func_080000d0`/`Func_080000d8`, not data. It works on any
+overlay that installs a task and needs no jump table.
+
+**Cross-check imports against a byte-exact sibling — it is free and it is
+banked.** An `assets/code` source in the same overlay was written with the
+*printed* (wrong) `bl` names, e.g. `Func_02002d10`; resolving its own call sites
+shows the real import is `Func_0808a080`. Diffing an exact sibling against
+`overlay_call_targets.ts` therefore confirms each import's arity and field
+offsets against material that already reproduces the ROM, rather than inferring
+them. This is how one lane fixed its actor-record layouts instead of guessing.
+
+**Two owners that share globals should be read together.** Neither
+`resource_38f:08ec` (which sets three globals, installs a task and spins on one
+of them) nor `:27ac` (the emitter, the only writer that clears it) is
+interpretable alone; together the globals are unambiguous. When a spin-wait reads
+a global nothing in the owner writes, find the writer before drafting.
+
 **Overlays share whole routines verbatim — check before drafting anything.**
 `bun tools/overlay_twins.ts --unconverted` groups owners by an instruction
 skeleton that masks the two things which legitimately differ between copies:
@@ -410,6 +489,22 @@ pair — check the target's first halfword before concluding anything.
 They are not calls; `lr` is clobbered harmlessly because the epilogue pops the
 return address off the stack. This inflates site counts and explains a class of
 resolved targets that are neither veneer nor callee.
+
+**The inventory's `calls=` field predates the corrected `bl` decoding and is
+systematically LOW.** Measured on one overlay: 0 against 17 real calls, 58/61,
+62/64, 70/75, 87/91, 143/151, 163/169. It is not a completeness proof in either
+direction — use `overlay_call_targets.ts`'s own `sites=` count, or better, the
+multiset comparison below.
+
+**Thumb bit tells a jump table from a handler table.** `mov pc,rN` does not
+interwork, so jump-table entries carry **no** Thumb bit; an installed-handler
+pool word does (`0x0200c8c9` = `Func_020048c8` + 1). Cheapest way to classify a
+table of in-image addresses at a glance.
+
+**A pool load before a `bl` is only a `call_via` if it names IWRAM.** The
+thunk-bank shape is `ldr r3,[pc] ; bl` — but where the loaded word is in-image
+data (`0x0200dxxx`) rather than the IWRAM band (`0x030001xx`), r3 is an ordinary
+fourth argument. The band is the discriminator, not the shape.
 
 **Completeness proof, best form: compare MULTISETS.** Extract the multiset of
 `bl` targets from `assets/code/<overlay>_overlay.s` and compare it to the
@@ -463,6 +558,20 @@ will invent imports.
 toolchain rejects `void Func_X(); if (Func_X() != 0)` with "void value not
 ignored as it ought to be". Declare any import used in a condition as `s32` or a
 pointer — arity may be left open, the return type may not.
+
+**Exclude literal-pool ranges from an argument-window simulator OUTRIGHT — the
+"clear only the destination register" guard is NOT sufficient.** A pool word can
+decode as a plausible *write* to a live variable: in `resource_3bf:3054` the word
+at `0x02003384` decodes as `lsls r5, r0, #4`, which overwrote the live text-line
+cursor and produced two wrong line ids that looked entirely plausible. Clearing
+the destination register faithfully models an instruction that is not there. Use
+the pool map, not a heuristic.
+
+**A `ldr r0,[pc,#0] / bx lr / .word K` pair is a constant loader, not a call.**
+`overlay_call_targets.ts` reports it as `unknown`. There is no `push`, so `bx lr`
+returns past the `bl`: the site's entire effect is `r0 = K`. Distinct from the
+8-byte `ldr r4,[pc,#0] / bx r4 / .word T` import veneer the tool does classify —
+do not model it as a call.
 
 **Semi-automated transcription is safe for large call carpets, with one guard.**
 For a 7,468-byte owner with 869 calls, a throwaway simulator tracking r0-r3
@@ -1897,50 +2006,30 @@ Commit subjects must end in the suffix from
 `bun tools/full_c_progress.ts --subject`, and a subject that changes the
 executable denominator must begin `metrics: correct executable denominator`.
 
-**Refresh the coverage map whenever your lane advances.** `bun run coverage`
-rewrites `metrics/gs1-en-coverage-map.json` and the README treemap
-`assets/readme/gs1-en-coverage.svg`. It reads tracked evidence only — no ROM,
-no toolchain, no build output — so it costs about a second. Run it after the
-metrics report is written and before staging; in `tools/bank_cycle.sh` that is
-two lines directly after the `--write-report` call:
+**The coverage map is Vale's, and only Vale's.** `assets/readme/gs1-en-coverage.svg`
+and `metrics/gs1-en-coverage-map.json` are regenerated on `main` and nowhere
+else. Do not run `bun run coverage` from `mercury` or `venus`, and do not hand-edit
+either file: you would either collide with Vale or publish a figure your branch
+cannot substantiate. Publish numbers by banking them — the map follows within the
+hour. It is deliberately not part of `bun run verify`, so a map that lags your
+newest commit is never your problem and never blocks a bank.
 
-```sh
-git fetch origin venus > /dev/null 2>&1
-bun run coverage > /dev/null 2>&1
-```
+Vale redraws it from the two lighthouse refs rather than from any working tree.
+Mercury pulls from main and never pushes back, so main's `src/` never receives
+Mercury's conversions; drawn from its own worktree main's picture would sit frozen
+at whatever exact C that branch happens to carry while the project moved on —
+173,222 bytes against Mercury's 210,306 when this was found. `--exact-ref` and
+`--semantic-ref` select the trees and the map records the choice, so main's
+provenance reads `exact_lane: origin/mercury`, `semantic_lane: origin/venus`, and
+both `--write` and `--check` re-resolve from that record. The reconciliation
+against `metrics/<target>-progress.json` reads that report from whichever tree the
+lane came from, so it stays honest across refs.
 
-The fetch is not optional decoration. The semantic lane is read from a `venus`
-ref, and Mercury has no other reason to hold one; without it the redraw has no
-lane to draw and would publish Venus's half of the picture as zero. `--write`
-now **refuses** in that situation rather than erasing it, naming the fetch in
-the error, so a failed fetch leaves the previous picture standing. Pass
-`--semantic-ref none` if you ever genuinely mean to publish without the lane.
-
-`bun run verify` ends with `bun run coverage:check`, which fails when the
-tracked map is behind the lane this branch owns. Mercury owns the exact lane in
-the picture and Venus owns the semantic lane; each branch reads the other lane
-from the newest ref it can see and records which one in the map, so a lane it
-does not own never fails its verification. A merge conflict on the map or the
-SVG is resolved by taking either side and re-running `bun run coverage`.
-
-`main` owns the published picture itself. Venus's semantic lane can advance
-without a single line of documentation or tooling changing, so the map on
-`main` is redrawn there whenever that ref moves, independently of either
-lighthouse's own banking.
-
-**Neither lane is drawn from main's own tree.** Mercury pulls from main and
-never pushes back, so main's `src/` never receives Mercury's conversions; drawn
-from its own worktree main's picture would sit frozen at the exact C this
-branch happens to carry while the project moved on — 173,222 bytes against
-Mercury's 210,306 when this was found. `--exact-ref` fixes that, and the map
-records the choice: main's provenance reads `exact_lane: origin/mercury`,
-`semantic_lane: origin/venus`, and both `--write` and `--check` re-resolve from
-that record, so no branch needs its own `coverage` script. Mercury and Venus
-record `exact_lane: worktree` and keep drawing their own, unchanged. An
-unavailable recorded ref is an error, never a quiet fall back to the worktree,
-because falling back would republish a smaller exact lane as though it were
-progress. The reconciliation against `metrics/<target>-progress.json` reads that
-report from whichever tree the lane came from, so it stays honest across refs.
+Two safety properties worth knowing, because both surface as a refused write
+rather than a wrong picture: a recorded ref that is not available locally is an
+error rather than a quiet fall back to the working tree, and a redraw that cannot
+see the semantic lane refuses rather than publishing Venus's half as zero. Either
+way the previous picture stands.
 
 **The picture currently understates the overlay semantic lane, and closing that
 is Venus's to do.** `tools/coverage_map.ts` sizes an overlay semantic owner

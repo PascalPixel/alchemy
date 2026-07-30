@@ -45,7 +45,12 @@ s32 Func_08077158(void *state);
 void Func_080a8034(s32 a, s32 b, s32 c, s32 d);
 void Func_080072f8(void *destination, const void *source, s32 size);
 void Func_080a2144(s32 index);
-void Func_080072f0(void *destination, s32 size, u32 pattern, u32 scratch);
+/* Func_080072f0 is the `call via r3` entry of the 080072e4 thunk bank: it
+ * branches to the address in r3 with r0-r2 as that target's arguments. The
+ * target here is an ARM-mode helper relocated into IWRAM. */
+typedef void (*FillHelper_080A7478)(void *destination, s32 size, u32 pattern);
+void Func_080072f0(void *destination, s32 size, u32 pattern,
+                   FillHelper_080A7478 helper);
 void Func_080153e0(s32 enable);
 s32 Func_08015010(s32 kind, s32 x, s32 y, s32 width, s32 layer);
 s32 Func_08077290(s32 slot);
@@ -125,7 +130,8 @@ s32 Func_080a7478(void)
     Func_080a2144(14);
     ApplyPaletteOverrides_080a7478();
     Func_080072f8(tile_save, (const void *)0x06004000, 128 << 6);
-    Func_080072f0((void *)0x06004000, 128 << 6, 0x33333333, 0x03000168);
+    Func_080072f0((void *)0x06004000, 128 << 6, 0x33333333,
+                  (FillHelper_080A7478)0x03000168);
 
     Func_080153e0(1);
     *(s32 *)(workspace + WS_WINDOW_080A7478) =
@@ -198,9 +204,8 @@ s32 Func_080a7478(void)
  * - Two `ldr r5, =0x03001388` loads (080a74f8, 080a763e) are dead: r5 is never
  *   read before being reloaded at 080a7662.  They are omitted here.  They are
  *   most likely scheduling residue from a shared source idiom.
- * - Func_080072f0's fourth argument (0x03000168, an IWRAM address) is carried
- *   in r3 but its role in the fill helper is unverified; it is passed through
- *   as an opaque `scratch` value.
+ * - Func_080072f0's fourth argument (0x03000168) is the relocated ARM helper
+ *   that the thunk branches to, not scratch: 080072f0 is `call via r3`.
  * - Func_080072f8's argument order is taken as (destination, source, size)
  *   from the symmetric snapshot/restore pair; the helper's own body is not in
  *   this tree.

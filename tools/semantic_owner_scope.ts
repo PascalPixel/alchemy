@@ -51,6 +51,15 @@ export interface RowFacts {
   hasEpilogue: boolean;
   /** Reconstruction is raw halfwords only: a pool or alignment, never C. */
   isData: boolean;
+  /**
+   * Looks like a literal pool even though it decoded to mnemonics. Halfwords of
+   * a pool disassemble as perfectly plausible `lsrs`/`movs` pairs, so `isData`
+   * alone undercounts pools badly in rows that came from a regular `asm/*.s`
+   * rather than an executable-gap reconstruction: two such rows in `080be378`
+   * (108 and 48 bytes) were counted as code until an admitting agent resolved
+   * their PC-relative provenance by hand.
+   */
+  suspectedPool: boolean;
   calls: number;
 }
 
@@ -104,6 +113,13 @@ export function rowFactsFromAssembly(
     hasPrologue: /^\s*push\s*\{[^}]*\blr\b/m.test(body),
     hasEpilogue: hasEpilogue(body),
     isData: mnemonics.length === 0,
+    // No call, no branch, no stack traffic anywhere in the row: nothing that
+    // could make it a reachable piece of a function. Conservative on purpose —
+    // it flags for review rather than excluding from the count.
+    suspectedPool:
+      mnemonics.length > 0 &&
+      !/^\s*(bl|b|b[a-z]{2}|bx|push|pop)\b/m.test(body) &&
+      !/^\s*(ldr|str)\w*\s/m.test(body),
     calls: [...body.matchAll(/^\s*bl\s+\S+/gm)].length,
   };
 }
@@ -118,6 +134,8 @@ export interface Owner {
   advertisedBytes: number;
   calls: number;
   closed: boolean;
+  /** Bytes counted as executable that look like literal pools. */
+  suspectedPoolBytes: number;
 }
 
 /** Group consecutive rows into owners: prologue opens, epilogue closes. */
@@ -138,6 +156,9 @@ export function groupOwners(rows: RowFacts[]): Owner[] {
       advertisedBytes: current[0].size,
       calls: current.reduce((sum, row) => sum + row.calls, 0),
       closed,
+      suspectedPoolBytes: current
+        .filter((row) => !row.isData && row.suspectedPool)
+        .reduce((sum, row) => sum + row.size, 0),
     });
     current = [];
   };
@@ -229,6 +250,18 @@ function selfTest(): void {
     { address: 0x08000010, size: 4, kind: "k", retention: "merge_with_owner" },
   );
   if (!pool.isData || pool.hasPrologue) throw new Error("pool row misread");
+  // A pool inside a regular asm row decodes to plausible mnemonics.
+  const decodedPool = rowFactsFromAssembly(
+    "\t.thumb\n.L_0800:\n\tlsrs r0, r0, #1\n\tmovs r0, #0\n",
+    { address: 0x08000030, size: 4, kind: "k", retention: "merge_with_owner" },
+  );
+  if (decodedPool.isData) throw new Error("decoded pool must not be isData");
+  if (!decodedPool.suspectedPool) throw new Error("decoded pool must be suspected");
+  const realCode = rowFactsFromAssembly(
+    "\t.thumb\n.L_0800:\n\tldr r0, [r1, #0]\n\tbl sub_08001234\n",
+    { address: 0x08000040, size: 8, kind: "k", retention: "split_first" },
+  );
+  if (realCode.suspectedPool) throw new Error("real code must not be suspected");
   // A prologue row plus a trailing pool plus the epilogue row is ONE owner.
   const owners = groupOwners([
     { ...code, address: 0x08000000, stem: "08000000", hasEpilogue: false },
@@ -257,12 +290,15 @@ function main(): void {
     const flag = owner.closed ? "" : "  UNCLOSED(no epilogue found)";
     console.log(
       `owner ${owner.entry}  advertised=${owner.advertisedBytes}  executable=${owner.executableBytes}` +
-        `  excluded_pool=${owner.excludedBytes}  rows=${owner.rows.length}  calls=${owner.calls}${flag}`,
+        `  excluded_pool=${owner.excludedBytes}  rows=${owner.rows.length}  calls=${owner.calls}` +
+        (owner.suspectedPoolBytes > 0 ? `  suspected_pool=${owner.suspectedPoolBytes}` : "") +
+        flag,
     );
     if (wanted) {
       for (const row of owner.rows) {
         console.log(
-          `    ${row.stem}  ${String(row.size).padStart(5)}  ${row.isData ? "DATA " : "code "}` +
+          `    ${row.stem}  ${String(row.size).padStart(5)}  ` +
+            `${row.isData ? "DATA " : row.suspectedPool ? "POOL?" : "code "}` +
             `${row.retention}${row.hasPrologue ? " prologue" : ""}${row.hasEpilogue ? " epilogue" : ""}`,
         );
       }

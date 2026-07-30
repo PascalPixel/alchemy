@@ -2,10 +2,10 @@
   "format": 1,
   "metric": "full-c-byte-share",
   "target": "gs1-en",
-  "denominator_commit": "5f0ba300ac3649836fd964212c81c1f5f27936c3",
+  "denominator_commit": "f956e595b1ac1267c77e6d84469c7f4e308331ec",
   "executable_bytes": 1339576,
   "history_scope": "first-parent",
-  "generated_from": "17e859dc99039e67f73d49e0b5f59b70283624fb",
+  "generated_from": "73f343b7ad6157564460ff1ea9dedd9a5797cc4f",
   "entries": [
     {
       "commit": "c0a101abc862998cc36a0ce13f6f893b614a16b8",
@@ -2612,6 +2612,22 @@
       "main_full_c_bytes": 101344,
       "overlay_full_c_bytes": 109654,
       "canonical_suffix": "[C 210,998/1,339,576 bytes]",
+      "derivation_status": "measured",
+      "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
+    },
+    {
+      "commit": "f956e595b1ac1267c77e6d84469c7f4e308331ec",
+      "first_parent_position": 164,
+      "author_time": "2026-07-30T23:13:19+00:00",
+      "committer_time": "2026-07-30T23:13:19+00:00",
+      "original_subject": "convert three resource_3aa rows from Venus's reconstructions [C 211,190/1,339,576 bytes]",
+      "full_c_bytes": 211190,
+      "executable_bytes": 1339576,
+      "remaining_bytes": 1128386,
+      "percent": 15.77,
+      "main_full_c_bytes": 101344,
+      "overlay_full_c_bytes": 109846,
+      "canonical_suffix": "[C 211,190/1,339,576 bytes]",
       "derivation_status": "measured",
       "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
     }

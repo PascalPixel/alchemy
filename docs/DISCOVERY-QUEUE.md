@@ -145,8 +145,13 @@ retentions is a one-line change and makes the survey agree with
 
 All 727 rows, ranked by size. `boundary=function` means a `Func_` entry with a
 ROM-proven span — draftable as-is. `boundary=region` means section 2d applies
-first. Blocker classes are `tools/remaining_survey.ts`'s, extended to every
-debt retention.
+first. A region row is an accounting fragment, not permission to admit a
+head-only semantic function: follow direct branches carrying a live frame and
+high registers, then register the complete owner in
+`semantic/main-regions.json`, excluding pools and data gaps. `08026080`
+demonstrates the rule: its 2,138-byte ranked row is one 3,442-byte function
+across the `08026080`, `0802691c`, and `08026b44` executable ranges. Blocker
+classes are `tools/remaining_survey.ts`'s, extended to every debt retention.
 
 <!--TOP40-->
 | # | address | size | insns | kind | boundary | blocker |

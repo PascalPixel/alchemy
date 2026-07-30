@@ -1,6 +1,17 @@
-# Path to completion (measured 2026-07-28)
+# Path to completion
 
-**Full-C Byte Share: 114,526 / 1,338,242 executable bytes (8.56%).**
+Current verified exact **Full-C Byte Share: 194,390 / 1,339,558 executable
+bytes (14.51%)**. The reviewed semantic lane contains another 369,358 bytes, so
+combined C expression is **563,748 / 1,339,558 bytes**.
+
+The byte-exact process is **Mercury Lighthouse**. The reviewed semantic-C run is
+**Venus Lighthouse** and lives on the `venus` branch.
+
+The detailed exact-lane measurements below were taken on 2026-07-28 and are
+retained as historical evidence for the compiler and queue decisions they
+describe. They are not current counts or the active scheduling order. Use
+`HANDOVER.md` for the live semantic queue, measured speed policy, remote intake,
+and current overlay ranking; regenerate exact status with `bun run progress`.
 
 The main-image diagnostic ledger contains 1,369 exact-C regions and 631
 `c_candidate` regions. These region counts are useful scheduling diagnostics,
@@ -63,7 +74,7 @@ drafting — `080e73a0` was picked as a clean 49-instruction target and turned o
 to read its base pointer out of `r9`, which no policy-valid C can express.
 
 At the `[1,292 of 1,999]` provenance-audit snapshot, 214 of 529 plain regions
-had prior target-specific hand, agent, manual,
+had prior target-specific hand, automated, manual,
 or substantive permuter work. The other 315 are genuinely untouched. This
 split was reconstructed against `fa930c71`: bulk m2c output, match rescoring,
 and initialized-but-empty permuter states do not count as attempts; target C,
@@ -1008,6 +1019,36 @@ stopped immediately and effort returned to fresh decompilation.
      two-day rate is the honest cost.
 
 ## Recommended order
+
+**2026-07-30 semantic-speed correction.** The recommendations below describe
+the byte-exact lane and remain valid for exact adoption, but they are no longer
+the fastest route to the `speed` branch's reviewed semantic-C objective.
+Measured consecutive cohorts established a higher-throughput lane:
+
+1. Run fresh agents on complete owners in waves of three, with exact assembly as
+   authority and m2c only as a hint. Reassign when an agent returns analysis
+   without implementation; do not turn agent-runtime exhaustion into a
+   technical blocker.
+2. Drain established callback and construct families before unknown thunks.
+   Typed renderer, transfer, fill, scale, square-root, and initializer ABIs
+   amortize across unrelated owners.
+3. Then run assembly-led direct-call owners. A three-owner, no-thunk trial
+   converted all 5,876 bytes, showing the method is broader than renderer
+   families.
+4. Treat split manifest regions as possible single functions. Follow live frame
+   state through continuations and account complete executable ranges in
+   `semantic/main-regions.json`; never count a head-only C file.
+   Resolve and size the transitive continuation graph before assigning a
+   `split_first` or `merge_with_continuations` target. `080e47b8` demonstrates
+   why: its 768-byte queue row is only a dispatcher for a 16-row owner whose
+   live 184-byte frame reaches the sole epilogue at `080e660a`. The complete
+   span is 7,762 bytes including embedded data and contains 231 static calls,
+   more than ten times the work implied by the queue.
+5. Bank each coherent cohort after `bun run verify`. The semantic lane does not
+   weaken the exact lane: exact builds must remain byte-identical and
+   source-only ownership must remain complete.
+
+The exact-lane order follows:
 
 Screen every target first: `grep 'mov\s*ip, pc'`, and check for a callee-saved
 register read but never written. Both classes are now reclassified out of Y, but

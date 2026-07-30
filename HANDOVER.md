@@ -37,23 +37,146 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
+Alongside the exact lane, reviewed semantic C currently accounts for **369,358
+executable bytes across 631 compiling sources**: 356,566 main-image bytes and
+12,792 overlay bytes. Combined with exact C, **563,748 / 1,339,558 executable
+bytes** are expressed as C. Build that lane
+with `bun run build:semantic`; its sources live under `semantic/` and do not
+claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
+and multi-region traps out of the ordinary review queue.
+
+---
+
+## 0. Venus Lighthouse speed policy
+
+The 2026-07-30 speed run established a repeatable method, not a one-family
+outlier. Consecutive three-owner cohorts converted tens of thousands of reviewed
+bytes while preserving the exact lane and full verification.
+
+1. **Use fresh agents for whole-owner rewrites.** Give each agent one complete
+   owner, its measured byte span, call count, warned registers/thunks, and the
+   requirement to account for every assembly call. Treat m2c as a hint only.
+   Fresh agents completed large 57–74-call owners where long-lived agents began
+   returning analysis without implementation. This runtime has three subagent
+   slots, so a six-agent experiment runs as two immediately consecutive waves
+   of three.
+2. **Batch by established ABI or construct family first.** Owners that visibly
+   publish callbacks through `Func_080cef64` or `Func_080ed408` share the proven
+   six-argument renderer ABI. Fixed transfer, fill, scale, square-root, and
+   owner-initializer callbacks are likewise reusable evidence. The semantic
+   queue discounts only visibly established renderer families; unknown thunks
+   retain the full penalty.
+3. **Rewrite from assembly when m2c loses dataflow.** Missing stack-carried
+   renderer dimensions, fake thunk arguments, unset call-clobbered registers,
+   and conflated high-register lifetimes repeatedly proved to be decompiler
+   defects rather than target blockers. Recover them from predecessor blocks,
+   literal maps, and callback targets. Do not hand-clean a lossy draft for a
+   whole session.
+4. **A manifest row is not always a function.** Follow live stack and
+   high-register state through direct continuation branches. Register the
+   complete executable owner in `semantic/main-regions.json`, excluding literal
+   pools and data gaps. `08026080` is the current witness: its advertised
+   2,138-byte head is one 3,442-byte owner across three executable ranges.
+   Pre-size `split_first` and `merge_with_continuations` candidates transitively
+   before assigning them: `080e47b8` was ranked as a 768-byte dispatcher, but
+   its live 184-byte frame crosses 16 manifest rows to the sole epilogue at
+   `080e660a`. Its full span is 7,762 bytes including embedded pools/alignment,
+   with 231 static calls—over 10 times the advertised size. Queue-row bytes
+   therefore cannot be used to budget or compare these owners. Pool-map the
+   mixed `split_first` rows before admitting their executable subranges.
+5. **Verify and bank coherent cohorts.** Run `bun run build:semantic` while
+   agents work, then one full `bun run verify` for the settled cohort. Update the
+   authoritative metrics above, commit by semantic byte gain, and push before
+   starting the next wave.
+
+Parking rule: park only a specific, evidenced ABI or structural blocker. “m2c
+is ugly,” “the owner is large,” and “the first agent ran out of implementation
+time” are reassignment signals, not blockers.
+
+**Measured six-agent trial.** Two consecutive three-agent waves admitted five
+complete owners for **6,432 executable bytes**. Wave 1 admitted 3/3 owners and
+4,408 bytes. Wave 2 admitted `080a112c` (964 bytes) and the complete split owner
+`080d0ee0` (1,060 bytes); its third assignment became the `080e47b8` scope audit
+above rather than a dishonest head-only conversion. Thus the method delivered
+5/6 admissions while the sixth task found and explained a queue-wide sizing
+defect. Fix transitive sizing/pool mapping before assigning another continuation
+owner; ordinary single-row owners can continue immediately.
+
+The next bounded-owner cohort then admitted **3/3 owners and 9,044 bytes**:
+`08023178` (3,320), `08023e70` (2,756), and renderer-family `080ca60c`
+(2,968). Their audits accounted for 270 assembly `BL` sites, including four
+internal control edges represented as C flow rather than fake callees. This
+confirms that large call counts are not themselves a reason to park a bounded
+owner. `tools/semantic_queue.ts` now keeps transitive-unsized rows visible but
+adds a scope-audit penalty so they cannot masquerade as the cheapest work.
+
+A second large bounded cohort admitted **3/3 renderer-family owners and 8,960
+bytes**: `080d1714` (3,384), `080d6970` (3,308), and `080d91dc` (2,268).
+Together they account for 272 assembly `BL` sites. Exact dataflow review
+resolved their apparent unset inputs, stack-carried publisher dimensions,
+runtime handles, and internal frame-loop edges. The renderer family therefore
+remains a proven high-yield lane; drain bounded members before returning to
+unknown-thunk candidates.
+
+The following unrelated-system cohort admitted **3/3 bounded owners and 6,008
+bytes**: `0800aa0c` (1,640), `080acab8` (1,980), and `080f7460` (2,388).
+Their 168 assembly `BL` sites include runtime allocator, transfer, renderer, and
+uploader callbacks recovered from live register and workspace dataflow. This
+confirms that the whole-owner method remains productive after the established
+renderer family is exhausted.
+
+The largest remaining bounded-owner cohort admitted **3/3 owners and 7,244
+bytes**: `0808c4f8` (2,428), `080a2680` (3,128), and `080b63c8` (1,688).
+Their assembly contains 433 `BL` sites. The audits resolved false unset values,
+high-register lifetimes, stack-carried outputs, zero-fill transfers, internal
+dispatcher edges, and shared mutually-exclusive tails. High call count is now
+measured as review cost, not an admission blocker; the three-agent whole-owner
+method remains effective on the largest bounded remainder.
+
+The final pre-Venus cohort admitted **3/3 bounded owners and 3,672 bytes**:
+`080030f8` (1,076), `080b0aac` (1,272), and `080bf678` (1,324). Its audits
+resolved five apparent unset values, reset/SVC thunk semantics, nine
+high-register lifetimes, and 193 assembly `BL` sites. One downstream caveat
+remains independently blocked: `080c1798` intentionally observes incoming
+`r2` residue and is not made ordinary by the `080030f8` conversion.
+
+**Remote-work intake.** Periodically fetch
+`origin/mercury` after banking a clean semantic
+cohort. Review its delta against the current `venus` ancestry, integrate only
+verified nonduplicate work, run the same full verification, then update this
+handover. Never merge or pull that branch into a dirty cohort, and never let a
+remote metric snapshot overwrite newer authoritative counts.
+
+Latest intake: remote tip `7f7b99b3` was merged after the 6,008-byte semantic
+cohort. It added **17,816 exact-C bytes**, taking exact Full-C Byte Share to
+**194,390 / 1,339,558 (14.51%)**. The combined tree passed `bun run verify`.
+
 ---
 
 ## 1. Where to work
 
 In descending order of measured value.
 
-**Overlay strict queues.** Two discovery fixes took this queue from 20 rows /
-6,110 bytes to **1,334 rows / 311,324 bytes**, and rediscovery of known-exact
-functions from 14% to 67%. Recent lanes converted 2,056, 1,628, 880, 860 and 644
-bytes out of it. Rank overlays by *strict* bytes.
+**Overlay strict queues.** Two discovery fixes originally took this queue from
+20 rows / 6,110 bytes to 1,334 rows / 311,324 bytes, and rediscovery of
+known-exact functions from 14% to 67%. Subsequent exact-C waves have materially
+drained that snapshot; **do not reuse its old "untouched" labels.**
 
-Measured ranking after the second fix: resource_373 17,140 (21 rows),
-resource_3b8 15,684 (15), resource_3bf 13,880 (46), resource_372 10,442 (37),
-resource_38f 9,674 (22), resource_3b2 9,622 (74), resource_3c5 8,928 (32),
-resource_374 8,730 (47), resource_3c8 8,696 (32), resource_3a8 8,670 (31),
-resource_39f 8,306 (39), resource_383 7,864 (18). Of these, **resource_3b8,
-372, 38f, 3b2, 374, 3c8 and 3a8 are effectively untouched territory.**
+Freshest inventory (taken on the Venus side after an exact-C intake): **1,081
+strict rows / 205,918 bytes**. Leaders by non-contained strict span were
+resource_3c8 8,878 (31 rows), resource_383 8,052 (16), resource_39f 7,638 (38),
+resource_3c5 7,374 (16), resource_39a 7,096 (64), resource_3c4 7,024 (58),
+resource_3b4 6,242 (65), resource_3b2 5,902 (23), resource_3b8 5,468 (5),
+resource_3c6 5,250 (12), resource_3ae 5,212 (21), resource_3bf 5,132 (34).
+Mercury has since worked 3c8, 39f, 38f, 372 and 3c5, so regenerate with
+`bun tools/overlay_inventory.ts` rather than trusting any ranking in this file —
+and never carry a ranking forward across a branch intake.
+
+**Rank by small-row count, not by total strict bytes.** `resource_3b8` is the
+witness: 5,468 bytes in only **5 rows**, the smallest 348 bytes and the largest
+7,468. A lane spent a full session there and adopted nothing. Overlays with many
+small rows convert; overlays with a few huge rows park. Count rows under ~400
+bytes and rank on that.
 
 The two fixes were:
 1. *Pool skipping* — the scan stopped after a return at the first halfword that

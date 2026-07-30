@@ -917,6 +917,14 @@ converted member.** Solving a single member of each transposes to the rest for
 the callees and constants out of the twin's own disassembly, which is the play
 that converted `resource_384:01d0`.
 
+**The 384x11 group has a structurally correct draft already** —
+`docs/TWIN-384-DRAFT.md` carries it with the semantics written out and the three
+known divergences named. It emits 173 instructions against the reference's 172;
+what is left is register assignment and scheduling in the first quarter. Measure
+it by instruction-group equality, not halfwords: at 384 bytes the `bl`
+displacements make a raw byte count meaningless (it reads 333/384 while the shape
+is right). Start there rather than re-deriving from assembly.
+
 Ranked by what the *second and later* members are worth: 384×11 (3,840 free),
 404×8 (2,828), 472×5 (1,888), 164×10 (1,476), 216×6 (1,080), 964×2 (964). Two
 carry known blockers — the 60×14 group is §8's squared-distance family at floor 20,

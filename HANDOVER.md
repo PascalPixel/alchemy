@@ -195,6 +195,30 @@ data produce short junk walks. They are all labelled and excluded by the strict
 filter, but any consumer summing raw rows will over-report badly. Filtering to an
 empty `contained_by` matters more than it used to.
 
+**The cross-overlay adopted-C bridge: measured, and it does not work wholesale.**
+424 strict unconverted rows (107,926 bytes) sit at an address where *another*
+overlay already has adopted C, which looks like free reuse. Feeding each adopted
+source to its address-mate is **1,157 probes and yields exactly zero exact
+matches**; 898 of them do not even reach a byte comparison because the two
+functions have different spans. Same address in two overlays is not evidence of
+the same function — do not budget a session for this sweep, it has been run.
+
+What *does* work is the narrow case the sweep surfaces: rank the survivors by
+`differing_bytes / span` and read the small ones. A true sibling shows up as a
+handful of differing bytes that are all `bl` displacements, because the same
+function in another overlay calls different addresses. Substituting the callee
+addresses out of the target's own disassembly then lands it first try — that is
+how `resource_384:01d0` converted (5/18 differing → exact by renaming two
+`extern` declarations). Three survivors were worth reading; `resource_3c2:0240`
+(106/2,068) and `resource_381:0054` (313/3,548) are still open and are the two
+largest unexploited leads in this class.
+
+**The 10-to-32-byte tier is the highest hit rate in the overlay queue.** 129
+strict rows, 2,558 bytes, mostly two-call dispatch stubs and one-compare
+predicates that read directly off the disassembly with no drafting loop at all.
+Nineteen were converted here in a single pass. Clear this tier before opening a
+1 KB row.
+
 **Re-probing old park notes.** The return-type lever (§4) arrived late, so any
 note whose residual is a two-halfword argument-setter swap is stale evidence
 rather than a blocker. One sweep closed 8 functions / 1,628 bytes from 41
@@ -256,6 +280,26 @@ pool, exclude a trailing `.2byte 0`.
 no straddling label — independent of your C. It also settles a call's argument
 count: on one function a 4-argument spelling measured 17/60 against a 1-argument
 spelling's 54/60.
+
+**"Free" means free of *commitment*, not free of *writes*. A dry run mutates the
+tree.** Without `--apply`, `overlay_adopt` still copies the draft to
+`assets/code/<overlay>_c_<address>.c` — it has to, because §7's routing keys on
+the installed path — and it rewrites the overlay `.s` and restores it. Two
+consequences, both learned the expensive way on 2026-07-30:
+
+- **Never run two probes against the same overlay concurrently.** This is §10's
+  "two lanes must never share an overlay" rule, and it binds *probes*, not just
+  adoptions. A 3-way parallel sweep left 13 overlay `.s` files with 661 deleted
+  assembly lines and 25 stray installed `.c` files. Nothing warned; `git status`
+  was the only tell. Partition a sweep by overlay, or run it serially.
+- **A probe run leaves installed C behind even when it fails.** Check
+  `git status` after any sweep and clean the residue before banking, or
+  `bank_cycle.sh`'s `git add -A` will commit drafts you never adopted.
+
+When cleaning up, resist `rm assets/code/<overlay>_c_0200*.c` — that glob matches
+the overlay's whole adopted corpus, not your session's residue. It deleted 89
+tracked files in one command here. Use `git status --porcelain` to get the
+untracked list and delete exactly that.
 
 **Overlays**
 
@@ -885,6 +929,41 @@ source-only build reproduces gs1-en.gba at SHA-1
 `tools/mode_sweep.ts` — a coverage contract fails the test chain otherwise. Prefer
 extending an existing predicate with a disjoint participation set over adding a
 competing rule; both scheduler modes and both CSE modes are built that way.
+
+**Overlay routing sets are overlay-blind, and the failure lands two layers away.**
+`overlayStem` reduces both `work/…/0200142c.c` and
+`assets/code/resource_3a7_c_0200142c.c` to the bare address `0200142c`, so a draft
+and its installed copy compile identically — deliberate and correct. The
+consequence is not: **the same address in a *different* overlay gets the flag
+too.** Adding nine `resource_3a7` addresses to a new set silently recompiled three
+unrelated already-exact functions (`resource_373:1554`, `resource_3b2:1740`,
+`resource_373:5ae0`) without interworking.
+
+What makes this expensive is the symptom. It is not a byte diff and not an adopt
+rejection: `bun run verify` fails inside `build_assets` with **`palette token plan
+does not reconstruct input`**, naming `resource_373` — an overlay the change never
+mentions — and only after a `tools/` edit invalidates the asset stamp and forces
+a cold asset rebuild, which can be several commits later than the edit. If you see
+that error, suspect a routing set before you suspect an asset encoder, and diff
+`tools/alchemy_gcc.ts` first. `build_assets.ts` does not name the failing entry;
+wrap its `buildEntry(entry)` call in a try/catch that logs `entry` to get it in
+one run, then revert the wrap.
+
+**Before putting an overlay address in any routing set, run
+`ls assets/code/*_c_<addr>.c` and confirm the only hit is the overlay you mean.**
+
+**A tenth mode: no thumb interworking.** One closed overlay family returns through
+a single `pop {pc}` where every other reconstructed function returns
+`pop {rN}` + `bx rN`. Dropping `-mthumb-interwork` reproduces it exactly; with the
+flag on, the two-instruction return overruns the span and `overlay_adopt` rejects
+the *placement* (`overlay C placeholder is not zero at …`) rather than reporting a
+byte diff — so the shape reads as a tooling bug, not a flag problem. Scope is
+measured and small: `pop {pc}` occurs **18 times in all unconverted overlay
+assembly against 2,195 `bx` returns**, and those 18 are exactly this family, nine
+in `resource_3a7` and nine in `resource_3bf`. Fifteen are routed and converted
+(240 bytes); the other three are the collision casualties above and need an
+overlay-aware routing key, not a wider set. This is a stock gcc flag, so it needed
+no fork change and no re-pin.
 
 **Routing sets are easy to edit into the wrong one.** Two functions that verified
 exact were rejected by the adopter because a scripted edit put their paths in the

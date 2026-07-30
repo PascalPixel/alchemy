@@ -429,6 +429,9 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3bf_c_02000bec.c",
   "assets/code/resource_3af_c_02001a98.c",
   "assets/code/resource_3af_c_02004218.c",
+  // Parked before the mode existed, byte-exact under it with its existing draft
+  // and no further source work.
+  "assets/code/resource_3c8_c_020009c8.c",
 ]);
 const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
   "assets/code/resource_380_c_02000104.c",

@@ -2,10 +2,10 @@
   "format": 1,
   "metric": "full-c-byte-share",
   "target": "gs1-en",
-  "denominator_commit": "024371a941d01de8a46d69e5787f3db93d56c3bf",
+  "denominator_commit": "5f0ba300ac3649836fd964212c81c1f5f27936c3",
   "executable_bytes": 1339576,
   "history_scope": "first-parent",
-  "generated_from": "51ccb72cb2fce553d386df15c41260ddda746272",
+  "generated_from": "17e859dc99039e67f73d49e0b5f59b70283624fb",
   "entries": [
     {
       "commit": "c0a101abc862998cc36a0ce13f6f893b614a16b8",
@@ -2580,6 +2580,38 @@
       "main_full_c_bytes": 101344,
       "overlay_full_c_bytes": 109374,
       "canonical_suffix": "[C 210,718/1,339,576 bytes]",
+      "derivation_status": "measured",
+      "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
+    },
+    {
+      "commit": "6fc224c7f25ff5bba75575b6d7edf08b55d757e9",
+      "first_parent_position": 162,
+      "author_time": "2026-07-30T22:45:09+00:00",
+      "committer_time": "2026-07-30T22:45:09+00:00",
+      "original_subject": "convert three overlay rows and route -fno-gcse by path [C 210,854/1,339,576 bytes]",
+      "full_c_bytes": 210854,
+      "executable_bytes": 1339576,
+      "remaining_bytes": 1128722,
+      "percent": 15.74,
+      "main_full_c_bytes": 101344,
+      "overlay_full_c_bytes": 109510,
+      "canonical_suffix": "[C 210,854/1,339,576 bytes]",
+      "derivation_status": "measured",
+      "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
+    },
+    {
+      "commit": "5f0ba300ac3649836fd964212c81c1f5f27936c3",
+      "first_parent_position": 163,
+      "author_time": "2026-07-30T23:06:56+00:00",
+      "committer_time": "2026-07-30T23:06:56+00:00",
+      "original_subject": "convert three more overlay rows and close the semantic supersession duty [C 210,998/1,339,576 bytes]",
+      "full_c_bytes": 210998,
+      "executable_bytes": 1339576,
+      "remaining_bytes": 1128578,
+      "percent": 15.75,
+      "main_full_c_bytes": 101344,
+      "overlay_full_c_bytes": 109654,
+      "canonical_suffix": "[C 210,998/1,339,576 bytes]",
       "derivation_status": "measured",
       "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
     }

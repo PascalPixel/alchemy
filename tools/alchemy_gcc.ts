@@ -57,6 +57,40 @@ const FIXED_LR_SOURCES = new Set<string>();
 // These compact hardware helpers match the reference load/store order at -O1;
 // -O2 only swaps independent descriptor setup instructions.
 const OPTIMIZE_O1_SOURCES = new Set(["080049e8", "08021e28"]);
+// One overlay predicate family returns through a single `pop {pc}` where every
+// other reconstructed function returns `pop {rN}` + `bx rN`. That is the
+// interworking epilogue, not a scheduling or allocation difference: the whole
+// body is otherwise instruction-identical, and dropping `-mthumb-interwork`
+// reproduces the reference exactly. With the flag on, the two-instruction return
+// overruns the 16-byte span and `overlay_adopt` rejects the placement rather
+// than reporting a byte diff, which is why the shape reads as a tooling error.
+//
+// Scope is measured, not assumed: `pop {pc}` occurs 18 times in all unconverted
+// overlay assembly against 2,195 `bx` returns, and those 18 are exactly this
+// family — nine members in resource_3a7 and nine in resource_3bf, three
+// `*p <= 1` / `*p == 4` / `*p == 2` triples each. So this routes a closed set,
+// not an open seam; do not widen it without re-running that count.
+//
+// Only fifteen are listed. `overlayStem` deliberately keys routing on the bare
+// address so a draft and its installed copy compile the same way — which makes
+// every routing set **overlay-blind**. Three of this family's addresses are
+// already occupied by unrelated, already-exact functions in other overlays
+// (02001554 by resource_373, 02001740 by resource_3b2, 02005ae0 by
+// resource_373), and listing them here silently recompiles those without
+// interworking. That does not fail as a byte diff: it surfaces two layers away
+// as `palette token plan does not reconstruct input` from build_assets on an
+// overlay this change never mentions. Before adding an overlay address to any
+// routing set, run `ls assets/code/*_c_<addr>.c` and confirm the only hit is the
+// overlay you mean. The three excluded members stay unconverted for now; routing
+// them needs an overlay-aware key, not a wider set.
+const NO_INTERWORK_SOURCES = new Set([
+  "0200142c", "0200143c", "0200144c",
+  "02001544", "02001564",
+  "02001750", "02001760",
+  "02005ac0", "02005ad0",
+  "02005bd8", "02005be8", "02005bf8",
+  "02005dd4", "02005de4", "02005df4",
+]);
 // Only the second flag does anything. The pre-reload scheduler is inert in this
 // fork: 40 converted sources, including the largest, compile byte-identically
 // with -fschedule-insns and with -fno-schedule-insns (measured 2026-07-26,
@@ -809,9 +843,12 @@ function sourceKey(source: string): string {
 
 export function cflagsForSource(source: string): readonly string[] {
   const stem = overlayStem(source);
-  const base = DEFAULT_ABI_SOURCES.has(stem)
+  const abiBase = DEFAULT_ABI_SOURCES.has(stem)
     ? CFLAGS.filter((flag) => flag !== "-fcall-used-r4")
     : [...CFLAGS];
+  const base = NO_INTERWORK_SOURCES.has(stem)
+    ? abiBase.filter((flag) => flag !== "-mthumb-interwork")
+    : abiBase;
   return [
     ...base,
     ...(FIXED_R3_SOURCES.has(stem) ? ["-ffixed-r3"] : []),

@@ -785,6 +785,35 @@ Seven admitted modes, all default-off and routed per source in
 | `-fsched-store-first` | a store sinking behind arithmetic | 308 |
 | `-fno-sched-depend-count` | a store/load swap `-fsched-store-first` does not reach | — |
 | `-fno-gcse-insert-load` | a PRE-inserted load the reference lacks | 9 |
+| `-fthumb-group-value2-in-place` | the copy forced by `thumb_store_multiple3`'s hard-coded `(reg:SI 2)` when a grouped descriptor's third word is a constant | 1 routed |
+
+**A finished fork mode can sit unrouted and therefore unsweepable — check the
+binary, not just this table.** `-fthumb-group-value2-in-place` was implemented in
+`alchemy-gcc` during the grouped-descriptor work, is documented in the fork's own
+`flags.h`, and exists in the **pinned** `cc1` — but it was in no routing set here
+*and* absent from `FORK_MODES` in `tools/mode_sweep.ts`, so neither the router nor
+the explorer could ever name it. It was found by extracting option strings out of
+the `cc1` binary and diffing them against `tools/`. Sweeping it over 300 clean
+drafts moved exactly one function, and moved it a long way: `080b5ad4` went from
+28 halfwords at the wrong size to **0 at 64 bytes**, once its tail was also
+spelled as a returned call. No re-pin was needed because the binary already
+carried it; admission was the routed set plus the `FORK_MODES` entry.
+
+Worth knowing why it was invisible: the routing comment above
+`GROUPED_DMA_STORE_SOURCES` had described `080b5ad4`'s blocker precisely — "value0
+has a special case in that pass and value2 has none" — and the fork had since
+written that special case. The note was correct when made and stale when read,
+which is §6's pattern applied to the compiler lane rather than to a park note.
+**When a routing comment names a missing compiler capability, check whether the
+fork has since grown it.** Extract the option strings from `cc1` and diff:
+
+```sh
+strings toolchain/alchemy-gcc/cc1 | grep -oE '^(thumb-[a-z0-9-]+|grouped-dma-store)$' | sort -u
+```
+
+Everything else that scan turned up is already either routed or in `FORK_MODES`;
+`-fthumb-group-value2-in-place` was the only dark one, so this seam is now closed,
+but re-run the diff after any fork change.
 
 **`-fsched-low-dest-first` reaches three residuals, not just the one in the table**:
 the r0-r3 `movs` ordinal tie-break; a **pool-load hoist**, an `ldr r2` scheduled

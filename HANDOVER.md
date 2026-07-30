@@ -369,6 +369,38 @@ except the call's own RTL form, because `schedule_insns` purges death notes
 distinguish two sites of one symbol — which is why the fix has to be in the
 source, and closes that search.
 
+## Reading a function's shape off its epilogue and its masks
+
+- **The epilogue states the return type.** `pop {r5} / pop {r0} / bx r0` means the
+  function returns `void` (r0 is dead); `pop {r1} / bx r1` means r0 is live. Decide
+  this before drafting rather than by trial.
+- **`negs rN,#K` is the mask `~(K-1)`, not `~K`.** And to keep a byte-field
+  read-modify-write's mask 32-bit, split it into two statements:
+  `s32 t = q->f09 & ~0x0c; q->f09 = t | 4;` gives `movs r3,#13 / negs r3,r3 / ands`,
+  where the single-expression form narrows to `movs r3,#243`.
+- **A destructive shift needs its own compound-assignment statement**:
+  `value <<= 16;` then `buf[2] = f10 + value;` yields `lsls` then `adds`, while an
+  inline `+ (value << 16)` allocates a fresh temp.
+- **`switch` on an unsigned global dispatches with `bhi`, not `bgt`** — declare the
+  switch variable `u32` even when every case label is a small positive.
+- **A seemingly dead `= 0` initializer can be load-bearing**: `struct Sprite *p = 0;`
+  on a pointer that later receives a call result hoists `movs r5,#0` to the function
+  top and reuses it for an unrelated `Global = 0;` store deep inside a switch arm
+  (84 → 49 diffs on one function). A plain `s32 zero = 0;` does not substitute.
+- **Early-return placement changes the tail**: `if (x != 0) return 0;` inlines
+  `movs r0,#0 / b end`, whereas wrapping the body as
+  `if (x == 0) { …; return 1; } return 0;` branches straight to the shared tail.
+- **`extern u8 Base[]` plus a non-folding offset**: gcc folds `Base + 500` into the
+  pool however it is cast, so where the reference does
+  `ldr r3,[pc]=base / movs r2,#250 / lsls r2,#1 / adds r3,r3,r2`, use a
+  function-top `s32 off = 500;` local.
+- **The size oracle can settle an argument count.** On resource_391:0030 a 4-argument
+  spelling measured 17/60 against a 1-argument spelling's 54/60, which is how the
+  call's true arity was established without guessing.
+- **Some `bl` targets resolve to addresses inside literal pools.** Those are
+  out-of-overlay callees with link-patched displacements; naming them
+  `Func_020xxxxx` reproduces the bytes exactly. Do not treat them as data.
+
 ## Big word-store init sheets are the cheapest bytes in the project
 
 Do not be deterred by heavy `r8`-`fp` traffic and `adds r3,#4` chains in an

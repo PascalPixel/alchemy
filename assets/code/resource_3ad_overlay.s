@@ -808,13 +808,8 @@ AlchemyC_02000044:
 	bx	r0
 	.2byte 0x0202
 	.2byte 0x0000
-	push	{lr}
-	ldr	r0, [pc, #8]
-	bl	sub_02001d12
-	pop	{r0}
-	bx	r0
-	.2byte 0x0203
-	.2byte 0x0000
+AlchemyC_02000200:
+	.space 0x10
 	push	{r5, r6, lr}
 	mov	r6, sl
 	mov	r5, r9

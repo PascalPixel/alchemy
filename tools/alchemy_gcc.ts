@@ -533,6 +533,8 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
 const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
   "assets/code/resource_37b_c_02001b44.c",
   "assets/code/resource_37b_c_0200195c.c",
+  "assets/code/resource_37b_c_02002244.c",
+  "assets/code/resource_37b_c_020022f4.c",
   "assets/code/resource_3a4_c_02000c9c.c",
   "assets/code/resource_394_c_020008b0.c",
   "assets/code/resource_3b8_c_02000264.c",

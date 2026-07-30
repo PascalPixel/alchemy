@@ -7,16 +7,16 @@
   "executable_bytes": 1339576,
   "lanes": {
     "exact_c": {
-      "bytes": 210998,
-      "percent_of_executable": 15.75
+      "bytes": 211362,
+      "percent_of_executable": 15.78
     },
     "semantic_c": {
-      "bytes": 584980,
-      "percent_of_executable": 43.67
+      "bytes": 593254,
+      "percent_of_executable": 44.29
     },
     "assembly": {
-      "bytes": 543598,
-      "percent_of_executable": 40.58
+      "bytes": 534960,
+      "percent_of_executable": 39.94
     },
     "asset_data": {
       "bytes": 7300700,
@@ -26,19 +26,19 @@
   "main": {
     "executable_bytes": 548364,
     "exact_c_bytes": 101344,
-    "semantic_c_bytes": 382970
+    "semantic_c_bytes": 383866
   },
   "overlays": {
     "executable_bytes": 791212,
-    "exact_c_bytes": 109654,
-    "semantic_c_bytes": 202010
+    "exact_c_bytes": 110018,
+    "semantic_c_bytes": 209388
   },
   "provenance": {
     "exact_lane": "origin/mercury",
     "semantic_lane": "origin/venus",
     "semantic_sources": 1092,
-    "semantic_superseded_bytes": 3600,
-    "semantic_unresolved": ["semantic/overlays/resource_377_c_020000b8.c", "semantic/overlays/resource_377_c_02000160.c", "semantic/overlays/resource_377_c_020001e0.c", "semantic/overlays/resource_377_c_02000284.c", "semantic/overlays/resource_377_c_02000e34.c", "semantic/overlays/resource_377_c_0200133c.c", "semantic/overlays/resource_377_c_020013e4.c", "semantic/overlays/resource_377_c_0200168c.c", "semantic/overlays/resource_37a_c_020009f4.c", "semantic/overlays/resource_37a_c_02001264.c", "semantic/overlays/resource_37a_c_02001510.c", "semantic/overlays/resource_37a_c_02001ca8.c", "semantic/overlays/resource_395_c_02000088.c", "semantic/overlays/resource_395_c_02000158.c", "semantic/overlays/resource_395_c_02000284.c", "semantic/overlays/resource_395_c_02001070.c", "semantic/overlays/resource_395_c_02001218.c", "semantic/overlays/resource_395_c_020012b4.c", "semantic/overlays/resource_395_c_0200152c.c", "semantic/overlays/resource_3a2_c_020000e8.c", "semantic/overlays/resource_3a2_c_02000180.c", "semantic/overlays/resource_3a2_c_020008e0.c", "semantic/overlays/resource_3a2_c_02000924.c", "semantic/overlays/resource_3a2_c_02000ac0.c", "semantic/overlays/resource_3a2_c_02000b2c.c", "semantic/overlays/resource_3a2_c_02000ff0.c", "semantic/overlays/resource_3a2_c_02001028.c", "semantic/overlays/resource_3a2_c_020010b8.c", "semantic/overlays/resource_3a2_c_02001144.c", "semantic/overlays/resource_3ae_c_020002dc.c", "semantic/overlays/resource_3ae_c_02000b68.c"]
+    "semantic_superseded_bytes": 6606,
+    "semantic_unresolved": []
   },
   "rom_areas": [
     {
@@ -47,8 +47,8 @@
       "bytes": 548364,
       "lanes": {
         "exact_c": 101344,
-        "semantic_c": 382970,
-        "assembly": 64050
+        "semantic_c": 383866,
+        "assembly": 63154
       },
       "tiles": 9
     },
@@ -57,9 +57,9 @@
       "label": "Compressed code overlays",
       "bytes": 539544,
       "lanes": {
-        "exact_c": 74368,
-        "semantic_c": 132769,
-        "assembly": 332407
+        "exact_c": 74558,
+        "semantic_c": 137617,
+        "assembly": 327369
       },
       "tiles": 11
     },
@@ -80,8 +80,8 @@
       "bytes": 548364,
       "lanes": {
         "exact_c": 101344,
-        "semantic_c": 382970,
-        "assembly": 64050
+        "semantic_c": 383866,
+        "assembly": 63154
       },
       "tiles": 54
     },
@@ -90,9 +90,9 @@
       "label": "Decoded code overlays",
       "bytes": 791212,
       "lanes": {
-        "exact_c": 109654,
-        "semantic_c": 202010,
-        "assembly": 479548
+        "exact_c": 110018,
+        "semantic_c": 209388,
+        "assembly": 471806
       },
       "tiles": 96
     }

@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, join } from "node:path";
 import {
   externalSymbol,
@@ -19,6 +19,41 @@ type BodyRow = [address: number, kind: "label" | "code" | "data", line: string];
 
 function hex(value: number, width = 8): string {
   return value.toString(16).padStart(width, "0");
+}
+
+// Content-addressed cache for already-adopted overlay C spans.
+//
+// assembleOverlay splices every adopted function's compiled bytes back into the
+// overlay image, so without a cache each call recompiles every prior adoption in
+// that overlay — the cost of one verification grows with the progress already
+// made. Keying on the source bytes plus the command plan (which names the
+// compiler binaries and every routed flag) makes a hit exact: a changed source,
+// a changed flag route, or a changed compiler yields a different key.
+const OVERLAY_C_CACHE = join(dirname(dirname(Bun.fileURLToPath(import.meta.url))), "out/cache/overlay-c");
+const planStampCache = new Map<string, string>();
+
+function planStamp(commands: readonly (readonly string[])[], work: string): string {
+  const identity = commands
+    .map((command) => command.map((part) => (part.startsWith(work) ? "<work>" : part)).join("|"))
+    .join("");
+  let stamp = planStampCache.get(identity);
+  if (stamp === undefined) {
+    const digest = new Bun.CryptoHasher("sha256");
+    digest.update(identity);
+    for (const command of commands) {
+      const binary = command[0];
+      if (binary.startsWith("/")) {
+        try {
+          digest.update(readFileSync(binary));
+        } catch {
+          digest.update("unreadable");
+        }
+      }
+    }
+    stamp = digest.digest("hex");
+    planStampCache.set(identity, stamp);
+  }
+  return stamp;
 }
 
 function objdumpRows(data: Uint8Array, base: number): Map<number, Row> {
@@ -115,6 +150,13 @@ function compileOverlayC(source: string, work: string): { address: number; data:
     output: assembly,
     preprocessedOutput: join(work, `${stem}.i`),
   });
+  const keyDigest = new Bun.CryptoHasher("sha256");
+  keyDigest.update(`overlay-c-v1:${hex(address)}\0`);
+  keyDigest.update(planStamp(plan.steps.map((step) => step.command), work));
+  keyDigest.update("\0");
+  keyDigest.update(readFileSync(source));
+  const cached = join(OVERLAY_C_CACHE, `${keyDigest.digest("hex")}.bin`);
+  if (existsSync(cached)) return { address, data: readFileSync(cached) };
   for (const step of plan.steps) checked([...step.command], work);
   checked(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", object, assembly], work);
   const undefinedSymbols = checked(["arm-none-eabi-nm", "-u", object], work)
@@ -133,7 +175,14 @@ function compileOverlayC(source: string, work: string): { address: number; data:
     .find((line) => line.endsWith(` ${symbol}`));
   if (row === undefined) throw new Error(`missing linked overlay C symbol: ${symbol}`);
   const size = Number.parseInt(row.trim().split(/\s+/)[1], 16);
-  return { address, data: readFileSync(binary).subarray(0, size) };
+  const data = readFileSync(binary).subarray(0, size);
+  try {
+    mkdirSync(OVERLAY_C_CACHE, { recursive: true });
+    writeFileSync(cached, data);
+  } catch {
+    // A cache write failure must never fail a verification.
+  }
+  return { address, data };
 }
 
 export function assembleOverlay(source: string | URL, base = OVERLAY_BASE): Buffer {

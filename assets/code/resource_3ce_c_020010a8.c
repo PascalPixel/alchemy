@@ -1,0 +1,56 @@
+typedef signed int s32;
+
+extern s32 Func_02002306();
+extern s32 Func_02002304();
+extern s32 Func_0200230a();
+extern s32 Func_02002310();
+extern s32 Func_02002340();
+extern s32 Func_02002348();
+extern s32 Func_02002350();
+extern s32 Func_02002358();
+extern s32 Func_02002360();
+extern s32 Func_02002368();
+extern s32 Func_02002370();
+extern s32 Func_02002378();
+extern s32 Func_02002380();
+extern s32 Func_02002388();
+extern s32 Func_02002390();
+extern s32 Func_02002398();
+extern s32 Func_020023a0();
+extern s32 Func_020023a8();
+extern void Func_020023b0(s32, s32);
+extern void Func_020023b8(s32, s32);
+extern s32 Func_020023c0();
+extern s32 Func_02002376();
+extern s32 Func_0200237c();
+extern s32 Func_02002382();
+
+s32 Func_020010a8(void) {
+    Func_02002306(5);
+    Func_02002304(1);
+    Func_0200230a(3);
+    Func_02002310(2);
+    Func_02002340(5, 1);
+    Func_02002348(5, 1);
+    Func_02002350(5, 1);
+    Func_02002358(6, 1);
+    Func_02002360(6, 1);
+    Func_02002368(7, 1);
+    Func_02002370(106, 1);
+    Func_02002378(108, 1);
+    Func_02002380(109, 1);
+    Func_02002388(113, 1);
+    Func_02002390(123, 1);
+    Func_02002398(130, 1);
+    Func_020023a0(140, 1);
+    Func_020023a8(151, 1);
+    ((void (*)())Func_020023a8)(0, 50);
+    Func_020023b0(1, 30);
+    Func_020023b8(3, 30);
+    Func_020023c0(2, 30);
+    Func_02002376(0);
+    Func_0200237c(1);
+    Func_02002382(3);
+    Func_02002388(2);
+    return 0;
+}

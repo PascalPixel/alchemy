@@ -369,6 +369,38 @@ except the call's own RTL form, because `schedule_insns` purges death notes
 distinguish two sites of one symbol — which is why the fix has to be in the
 source, and closes that search.
 
+## Three levers that beat the "allocator tie-break" park family
+
+Two resource_381 functions parked as "callee-saved allocation swap, not reachable
+from C" were both reachable. The techniques generalise:
+
+1. **Permute the order of independent stores to move a parameter's allocation.**
+   Global-allocno priority is `2*refs/live_length`, and the *position* of a
+   parameter's store inside a store block sets its live length. For
+   resource_381:2c1c, grouping six stores into four blocks and trying all 24
+   orders against both shift orders found two that give zero, where the
+   previously-tried order gave 15. This is the general answer whenever two
+   equal-priority parameter pseudos land in the wrong registers.
+2. **A repeated, non-CSEd load of the same address is the `volatile` signature.**
+   resource_381:2dd0's reference loads `*0x03001e40` three times; every
+   non-volatile draft folded two of them, shortening the function and cascading
+   into a register swap. `volatile u32 *p = (u32 *)0x03001e40;` took it from 25
+   halfwords to 0. Apply this ONLY where the reference repeats the load — the
+   single-read siblings in the same overlay (0x293c, 0x2970, 0x2d94) correctly use
+   a plain `extern`. Precedent: `assets/code/resource_3c9_c_0200211c.c` carries the
+   identical line for the same address, and 136 adopted sources use `volatile`.
+   Worth a human eye all the same: 0x03001e40 is IWRAM, not a hardware register
+   at 0x04000000, so this rests on the project's existing reading of
+   "genuinely hardware-updated" rather than on an obvious one.
+3. **LAWS.md's narrow-mask recipe (`s32 mask = -0xD;`) must sit INSIDE the loop,**
+   immediately before its use. At function top it becomes a loop-invariant global
+   allocno and buys an extra `fp` callee-save (+12 bytes).
+
+resource_381 is now fully partitioned: every byte to the veneer bank at 0x33d4 is
+adopted C or carries a park note. Its remaining 11,296 unconverted bytes are
+dominated by two giant initializers (0x0054 at 3,548 and 0x1410 at 5,136) plus 952
+bytes of IWRAM-indirect-call category parks.
+
 ## The largest available work is the MAIN IMAGE, not overlays
 
 Correcting a mistake this file made: `asm_c_debt_bytes` (395,816) and the overlay

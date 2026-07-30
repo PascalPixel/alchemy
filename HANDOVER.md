@@ -1163,6 +1163,31 @@ the drafted `1154`; copying `work/claude/resource_372-1154.c` and substituting
 constants should land it quickly). `resource_3b2` (74 rows) and `resource_374`
 (47 rows) are the best unassigned overlays by the small-row criterion.
 
+**Measured 2026-07-30: an 18-core host did not beat the 4-core one on bytes.**
+Daily exact-byte gains on the 4-core cloud host, from `docs/full-c-history.csv`:
+1,426 / 12,720 / 5,148 / 7,400 / 2,484 / 6,328 / 21,792 / 7,174 / 14,634 / 6,468 /
+10,282 / 5,134. Median about 6,800. A full session on the 18-core machine
+produced **2,554 bytes**, below their typical day. Confounders, stated so the
+comparison is not oversold: those days include overlay conversions, which come in
+larger and easier rows, while that session was main-image only; a large share of
+it went into tooling and measurement rather than conversion; and it was hours, not
+a day.
+
+The conclusion is not "the big machine is bad", it is that §9 was right and the
+implication is sharper than it looks: **compute makes enumerable search free, and
+enumerable search is nearly exhausted.** In that session 38,480 flag probes ran in
+about four minutes and yielded 2 conversions, while agent drafting lanes yielded
+7. Cores now buy you `tools/finish_draft.sh` finishing in ~2 s instead of an hour
+of hand-probing — real, permanent, and *not* where the remaining bytes are.
+
+So the thing to scale is **concurrent drafting lanes on unconverted regions**, not
+probes and not lanes grinding near-miss residuals. Measured hit rates on the same
+day: fresh drafting converted **7 of ~18 lanes**; re-probing existing drafts
+converted **2 of 1,259 draft-probes**; four cheap-model lanes on residual-hard
+near-misses converted **0 of 4**. The binding limits are agent concurrency and
+model quality on assembly-to-semantics, so pick the host for how many strong
+drafting lanes it can run, not for its core count.
+
 **When extra compute stops paying — hand the branch back.** More cores buy
 throughput on *parallelisable* work, and this project has two kinds. Fan-out work
 scales: walking fresh overlays, the stale-note re-probe sweep, mode sweeps,

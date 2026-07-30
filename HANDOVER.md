@@ -19,6 +19,29 @@ not equal object size.
 The project runs as two parallel efforts, named after the Golden Sun lighthouses.
 Know which one you are before you change anything.
 
+**The three agents and which way work flows.** `main` carries an agent called
+**Vale**; `venus` carries **Venus Lighthouse**; `mercury` carries **Mercury
+Lighthouse**. The cycle is one-directional and each agent pulls, never pushes
+sideways:
+
+- **Mercury** pulls from `main`, about once an hour, and pushes only to
+  `origin/mercury`.
+- **Venus** pulls *all* changes from `mercury`.
+- **Vale** pulls only *docs and tools* changes from `venus` into `main`.
+
+So everything Mercury banks reaches `main` eventually, by way of Venus. Mercury
+never merges `venus` and never pushes to `main`.
+
+**Mercury does not regenerate the coverage map.** `metrics/gs1-en-coverage-map.json`
+and `assets/readme/gs1-en-coverage.svg` are Vale's, and Vale draws them from both
+lighthouse refs so the semantic lane is never erased. Running `bun run coverage`
+here and banking the result publishes a map with a stale Venus lane and forces
+Vale to redo it — main's `refuse to publish the coverage map with an erased
+semantic lane` commit exists because of exactly that. If a merge from `main`
+conflicts on either file, take `--ours` (or `--theirs`, it does not matter) to
+close the merge and **do not** re-run `bun run coverage` afterwards. Mercury
+banked several unnecessary map redraws on 2026-07-30 before this was understood.
+
 | | **Mercury Lighthouse** | **Venus Lighthouse** |
 | --- | --- | --- |
 | branch | `mercury` | `venus` |

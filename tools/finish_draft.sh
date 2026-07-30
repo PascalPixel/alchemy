@@ -207,6 +207,44 @@ POOL
   fi
 fi
 
+# ---- phase 1c: the other approved compiler families ------------------------
+# Two of the 20 conversions banked on 2026-07-30 needed `--family old-agbcc`
+# rather than the routed gcc 2.96: 08006cdc (0 with old-agbcc -O1 against 56
+# routed) and 08006878. Region families cluster, so a stem whose neighbours are
+# already in AGBCC_SOURCES is a strong candidate. Probing four family settings
+# costs four probes, and missing one costs the whole function.
+if [ "$QUICK" = 0 ]; then
+  FAMOUT="$WORK/families.tsv"
+  : > "$FAMOUT"
+  for fam in old-agbcc gcc2951 pret-early-thumb; do
+    for extra in "" "-O1"; do
+      slot="$WORK/fam-$fam${extra}"
+      mkdir -p "$slot"
+      cp "$BESTSRC" "$slot/$STEM.c"
+      if [ -z "$extra" ]; then
+        line=$(bun tools/candidate_show.ts "$slot/$STEM.c" --family "$fam" --work "$slot/w" 2>/dev/null | head -1)
+      else
+        line=$(bun tools/candidate_show.ts "$slot/$STEM.c" --family "$fam" --flags "$extra" --work "$slot/w" 2>/dev/null | head -1)
+      fi
+      rm -rf "$slot"
+      if [[ "$line" =~ candidate=([0-9]+)\ reference=([0-9]+)\ differing_halfwords=([0-9]+) ]]; then
+        printf '%s\t%s/%s\t--family %s%s\n' \
+          "${BASH_REMATCH[3]}" "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}" "$fam" \
+          "${extra:+ --flags $extra}" >> "$FAMOUT"
+      fi
+    done
+  done
+  if [ -s "$FAMOUT" ]; then
+    FAMBEST=$(sort -n "$FAMOUT" | head -1)
+    FAMDIFF=$(cut -f1 <<< "$FAMBEST")
+    FAMSIZE=$(cut -f2 <<< "$FAMBEST")
+    if [ "$FAMDIFF" -lt "$BEST" ]; then
+      echo "family  diff=$FAMDIFF size=$FAMSIZE  via $(cut -f3 <<< "$FAMBEST")  (NOT a --flags value; pass these options directly)"
+    fi
+    sort -n "$FAMOUT" | head -3 > "$OUT/family-probes.tsv"
+  fi
+fi
+
 ROW="$(pick "$BEST" "$BESTSIZE" "$REFSIZE")"
 if [ -n "$ROW" ]; then
   BEST=$(cut -f1 <<< "$ROW")
@@ -264,7 +302,18 @@ fi
 echo "stmtord probes=${PROBES:-0}$( [ "${PROBES:-0}" -le 3 ] && echo '  (too few independent statements -- lever NOT exercised)' )"
 
 echo "---"
-echo "best    diff=$BEST size=$BESTSIZE/$REFSIZE flags=${BESTFLAGS:-BASE}"
+# A different compiler family is not expressible as a --flags value, so it is
+# reported separately -- but it must not be buried under a worse gcc-2.96 number.
+if [ -s "$OUT/family-probes.tsv" ]; then
+  FAMTOP=$(head -1 "$OUT/family-probes.tsv")
+  FAMD=$(cut -f1 <<< "$FAMTOP")
+  if [ "$FAMD" -lt "$BEST" ]; then
+    echo "BEST IS A FAMILY, not a flag set: diff=$FAMD size=$(cut -f2 <<< "$FAMTOP") via $(cut -f3 <<< "$FAMTOP")"
+    echo "  reproduce: bun tools/candidate_show.ts <draft>/$STEM.c $(cut -f3 <<< "$FAMTOP") --work <dir>"
+    echo "  to adopt, route the stem through AGBCC_SOURCES (and AGBCC_OPTIMIZE_O1_SOURCES for -O1)"
+  fi
+fi
+echo "best    diff=$BEST size=$BESTSIZE/$REFSIZE flags=${BESTFLAGS:-BASE}  (gcc 2.96 routed lane)"
 echo "source  $BESTSRC"
 echo "${BESTFLAGS:-BASE}" > "$OUT/flags.txt"
 echo "residual (candidate | reference):"

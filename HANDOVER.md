@@ -369,6 +369,32 @@ except the call's own RTL form, because `schedule_insns` purges death notes
 distinguish two sites of one symbol — which is why the fix has to be in the
 source, and closes that search.
 
+## The `_b` alias suffix changes argument-setup order, not just hygiene
+
+A shared prototype-less declaration (`extern void Func_0200620a();`) used at two
+arities appears to suppress arg0-first ordering at *every* site that uses it.
+Splitting it into `Func_0200620a(s32)` plus `extern void Func_0200620a_b(s32, s32,
+s32)` moved `ldr r0` ahead of `movs r1`/`movs r2` and closed a three-halfword
+group that no flag touched. So prefer the alias suffix over K&R even when arity
+alone would not force it.
+
+Related caution: **the return-type lever is not universal.** On some callees `s32`
+and `void` produce byte-identical output — it appears to need the call in a
+position where the scheduler has a live r0 dependency. A null result there is
+evidence to look elsewhere, not a mis-set type.
+
+## Routing sets are easy to edit into the wrong one
+
+Two functions that verified byte-exact were rejected by `overlay_adopt` because a
+scripted edit inserted their paths into `NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES`
+instead of `SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES` — the surrounding lines matched
+in both sets. The symptom is exactly the same as a genuine tooling discrepancy:
+`overlay_verify` reports 0 differing halfwords (it takes flags from the command
+line) while `overlay_adopt` reports differing bytes (it takes them from routing).
+**When those two disagree, check which set the path actually landed in before
+suspecting the tools.** `grep -n "<stem>" tools/alchemy_gcc.ts` against the set
+boundaries from `grep -n "OVERLAY_SOURCES = new Set"` settles it in one step.
+
 ## Three levers that beat the "allocator tie-break" park family
 
 Two resource_381 functions parked as "callee-saved allocation swap, not reachable

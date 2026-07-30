@@ -470,6 +470,8 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // `mov r0,sl` over `lsls r1,r1,#1` (notes/resource_381-0e30.md).
   "assets/code/resource_381_c_02000e30.c",
   "assets/code/resource_3a4_c_02000c9c.c",
+  "assets/code/resource_394_c_020008b0.c",
+  "assets/code/resource_3b8_c_02000264.c",
   "assets/code/resource_373_c_020031b4.c",
   "assets/code/resource_3af_c_02001b58.c",
   "assets/code/resource_3af_c_020019c0.c",
@@ -520,6 +522,9 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
 // flag). docs/compiler-evidence/cse-pool-immediate.diff.
 const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3a4_c_02000c9c.c",
+  "assets/code/resource_394_c_020008b0.c",
+  "assets/code/resource_3b8_c_02000264.c",
+  "assets/code/resource_3bf_c_02004bfc.c",
   "assets/code/resource_39c_c_020014cc.c",
   "assets/code/resource_3bf_c_0200175c.c",
 ]);

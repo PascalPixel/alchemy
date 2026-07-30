@@ -457,6 +457,8 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // Paired with -fsched-low-dest-first below: removing the constant sharing
   // exposes a scheduling transposition that the tie-break then fixes.
   "assets/code/resource_373_c_020031b4.c",
+  "assets/code/resource_3b0_c_020004b0.c",
+  "assets/code/resource_39e_c_02000414.c",
   "assets/code/resource_372_c_02003c48.c",
   "assets/code/resource_3b8_c_02003e40.c",
   "assets/code/resource_3a4_c_02000c9c.c",
@@ -480,6 +482,14 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // argument setters tie before a `bl` and the low-destination rule picks
   // `mov r0,sl` over `lsls r1,r1,#1` (notes/resource_381-0e30.md).
   "assets/code/resource_381_c_02000e30.c",
+  "assets/code/resource_3b0_c_02000468.c",
+  "assets/code/resource_399_c_020019bc.c",
+  "assets/code/resource_39c_c_02000ffc.c",
+  "assets/code/resource_39c_c_02002e6c.c",
+  "assets/code/resource_39e_c_02000658.c",
+  "assets/code/resource_3af_c_02000c28.c",
+  "assets/code/resource_372_c_02001600.c",
+  "assets/code/resource_3b0_c_020004b0.c",
   "assets/code/resource_372_c_02000398.c",
   "assets/code/resource_372_c_020003cc.c",
   "assets/code/resource_372_c_02000400.c",
@@ -559,6 +569,7 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
 // flag). docs/compiler-evidence/cse-pool-immediate.diff.
 const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
   "assets/code/resource_37b_c_02001b44.c",
+  "assets/code/resource_372_c_02001600.c",
   "assets/code/resource_3b8_c_02003f84.c",
   "assets/code/resource_37b_c_0200195c.c",
   "assets/code/resource_37b_c_02002244.c",

@@ -2,10 +2,10 @@
   "format": 1,
   "metric": "full-c-byte-share",
   "target": "gs1-en",
-  "denominator_commit": "5112ae66fea9be6310dced6ecee9beb581d85cf3",
+  "denominator_commit": "ea3bbb6cf613fb33bb3dbad6eef89c365f702a93",
   "executable_bytes": 1339578,
   "history_scope": "first-parent",
-  "generated_from": "6355e87268b469e0675a382f7d8c767fb9ca8ca0",
+  "generated_from": "3d9a8d008ceb1fc94a673e882854bcbeacabef90",
   "entries": [
     {
       "commit": "c0a101abc862998cc36a0ce13f6f893b614a16b8",
@@ -2664,18 +2664,18 @@
       "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
     },
     {
-      "commit": "5112ae66fea9be6310dced6ecee9beb581d85cf3",
+      "commit": "ea3bbb6cf613fb33bb3dbad6eef89c365f702a93",
       "first_parent_position": 167,
-      "author_time": "2026-07-30T23:30:42+00:00",
-      "committer_time": "2026-07-30T23:30:42+00:00",
-      "original_subject": "metrics: correct executable denominator to 1,339,578 after merging main [C 211,626/1,339,578 bytes]",
-      "full_c_bytes": 211362,
+      "author_time": "2026-07-30T23:35:54+00:00",
+      "committer_time": "2026-07-30T23:35:54+00:00",
+      "original_subject": "metrics: correct executable denominator and convert five resource_3c4 rows [C 211,626/1,339,578 bytes]",
+      "full_c_bytes": 211626,
       "executable_bytes": 1339578,
-      "remaining_bytes": 1128216,
-      "percent": 15.78,
+      "remaining_bytes": 1127952,
+      "percent": 15.8,
       "main_full_c_bytes": 101344,
-      "overlay_full_c_bytes": 110018,
-      "canonical_suffix": "[C 211,362/1,339,578 bytes]",
+      "overlay_full_c_bytes": 110282,
+      "canonical_suffix": "[C 211,626/1,339,578 bytes]",
       "derivation_status": "measured",
       "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
     }

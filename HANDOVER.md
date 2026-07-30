@@ -21,6 +21,13 @@ Know which one you are before you change anything.
 [docs/BRANCH-PROTOCOL.md](docs/BRANCH-PROTOCOL.md) is the short version of who
 owns what and what reaches you how — read it first if you are new to a branch.
 
+**Read `docs/BRANCH-PROTOCOL.md` once before your next push.** It is the tracked
+statement of who owns what: the ring is `main -> mercury -> venus -> main`, each
+hop about hourly, and nobody pushes to a branch they do not own. For Mercury that
+means pull `main`, push only `origin/mercury`, and never touch the coverage map
+or `README.md` — anything you want on `main` gets there by banking it here and
+letting Vale port it within the hour.
+
 | | **Mercury Lighthouse** | **Venus Lighthouse** |
 | --- | --- | --- |
 | branch | `mercury` | `venus` |
@@ -31,7 +38,21 @@ owns what and what reaches you how — read it first if you are new to a branch.
 ### How work circulates
 
 Three agents, each owning one branch, each pulling from exactly one place. The
-flow is a **cycle**, and no agent pushes to a branch it does not own:
+flow is a **cycle**, and no agent pushes to a branch it does not own.
+
+**Vale is the master process.** `main` is the trunk and Vale's decisions are
+authoritative over both lighthouses. Practically, for Venus and Mercury:
+
+- A conflict between what a lighthouse decided and what Vale decided resolves to
+  Vale, and the lighthouse converges rather than arguing at the merge.
+- Anything a lighthouse changes about *shared* tooling or process — the `verify`
+  chain, the test chain, documentation structure, the branch protocol itself — is
+  a **proposal to Vale**, not a decision. Make it, bank it, and flag it in
+  `MEETING.md` so Vale can ratify or revert. Do not treat silence as approval.
+- Lane work-product is still the lane's own: what you convert, how you scope an
+  owner, which overlay you take. Vale does not adjudicate that.
+- When a lighthouse must act ahead of Vale to stay unblocked, say so explicitly
+  in `MEETING.md` rather than letting the change look like consensus.
 
 | agent | owns | pulls from | takes |
 | --- | --- | --- | --- |
@@ -53,6 +74,12 @@ Consequences worth knowing before you act:
   path: when Mercury makes a region byte-exact, the next Venus pull deletes the
   semantic version. `build_semantic` hard-errors on a duplicate, so this is
   enforced rather than remembered.
+- **`MEETING.md` is the standing message board between the three agents.** It
+  travels the ring with the other documentation, so a note there reaches everyone
+  within a cycle or two. Append only under your own heading, newest last, with a
+  UTC timestamp and an addressee — per-agent sections exist so the ring's merges
+  never conflict. Never edit another agent's section; reply in your own, quoting
+  the timestamp. Prune your entries once they are acted on.
 - **Never push to a branch you do not own.** If Venus work belongs on `main`,
   it gets there because Vale pulls it, not because Venus pushes it.
 - **`README.md` and its ROM coverage map belong to Vale. Never edit them from
@@ -60,9 +87,10 @@ Consequences worth knowing before you act:
   lanes publish, so editing it downstream either conflicts with Vale or reports a
   figure that the branch cannot substantiate. Publish numbers by banking them —
   the map follows.
-- **Venus pulls `mercury` about once an hour.** More often wastes a merge on a
-  handful of commits; much less and the superseded-semantic deletions pile up
-  into a large, hard-to-check merge. Each pull: merge, take Mercury's `src/` and
+- **Venus pulls `mercury` every 20 minutes.** Raised from hourly on
+  2026-07-30: an hourly merge had grown to 37-45 Mercury commits and 22+
+  superseded-semantic deletions, which is more than is comfortable to check by
+  eye. At 20 minutes it is a handful of commits and a handful of deletions. Each pull: merge, take Mercury's `src/` and
   routing on conflict, delete every semantic source that now has an exact
   counterpart (`build_semantic` hard-errors if you miss one), re-verify, bank.
 
@@ -77,29 +105,23 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **548,096
-executable bytes across 1,002 compiling sources**: 382,970 main-image bytes and
-165,126 overlay bytes. Combined with exact C, **758,490 / 1,339,574 executable
-bytes** are expressed as C.
-
-**Fourteen overlays are now converted in full**, none skipping anything:
-`resource_3b8` (15,028 bytes), `resource_372` (10,202), `resource_371` (9,650),
-`resource_39f` (9,278), `resource_39a` (7,096), `resource_3b4` (6,226) and
-`resource_373` (13,192), `resource_3bf` (10,144), `resource_375` (6,536), `resource_3aa` (6,376), `resource_38f` (9,212), `resource_383` (7,792) and
-`resource_3c4` (24 of 25 rows, one 2,636-byte
-dispatcher pre-measured)
-Alongside the exact lane, reviewed semantic C currently accounts for **475,156
-executable bytes across 921 compiling sources**: 382,970 main-image bytes and
-92,186 overlay bytes. Combined with exact C, **678,920 / 1,339,572 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **576,124
+executable bytes across 1,043 compiling sources**: 382,970 main-image bytes and
+193,154 overlay bytes. Combined with exact C, **786,842 / 1,339,576 executable
 bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
 sources live under `semantic/` and do not claim byte equality. Use
 `semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
 of the ordinary review queue.
 
-**Seven overlays are now converted in full**, none skipping anything:
+**Eighteen overlays are now converted in full**, none skipping anything:
 `resource_3b8` (15,028 bytes), `resource_372` (10,202), `resource_371` (9,650),
-`resource_39f` (9,278), `resource_39a` (7,096), `resource_3b4` (6,226) and
-`resource_3c4` (24 of 25 rows, one 2,636-byte dispatcher pre-measured)
+`resource_39f` (9,278), `resource_39a` (7,096), `resource_3b4` (6,226),
+`resource_373` (13,192), `resource_3bf` (10,144), `resource_375` (6,536),
+`resource_374` (7,468), `resource_3a8` (7,564), `resource_391` (7,068),
+`resource_3bb` (5,680), `resource_3aa` (6,376), `resource_38f` (9,212),
+`resource_383` (7,792) and `resource_3c4` (24 of 25 rows, one 2,636-byte
+dispatcher pre-measured)
+
 
 **Pre-measured and waiting for a fresh agent: `resource_3c8:3068`**, a 26-way
 `mov pc, r3` dispatcher. Its boundary is settled — prologue at 0x02003068 saving
@@ -424,6 +446,21 @@ ordinary calls: a balanced shared tail declared but not defined, and an alignmen
 `nop` immediately before a real prologue (calling it is calling the function two
 bytes later).
 
+**Third shape that checks out — and it is a THIRD case of that skip rule, not a
+skip: a `bl` into the owner's OWN body that lands on an arm running into the
+owner's own epilogue is a non-returning `goto`, not a call.** `resource_3a8:0590`
+has two of them (0x020005aa and 0x020005b8, both to 0x0200151c, both reported
+`unknown` by `overlay_call_targets.ts`). The test is mechanical and takes one
+minute: (1) the target is inside the owner's span, (2) nothing branches to it
+except by falling past a `b` over it, and (3) following it reaches the owner's
+own epilogue, which pops the frame the *prologue* pushed — still intact, because
+the `bl` pushed nothing. Then the `bl` executes that arm and returns to the
+owner's caller; the clobbered lr is dead because the real return address is on
+the stack. Spell it `goto`. Under the existing wording these two look exactly
+like "a frame-unbalanced epilogue tail" and would have cost a 4,092-byte owner.
+The distinguishing question is *whose* frame the tail unwinds: another
+function's (skip) or the caller's own (goto).
+
 **Drafting loop: compile YOUR file alone, not the whole lane.** `bun run
 build:semantic` is a shared gate — one agent's broken file blocks validation for
 every concurrent lane, and did so for about an hour in one round. Compile a
@@ -443,6 +480,12 @@ shows the real import is `Func_0808a080`. Diffing an exact sibling against
 `overlay_call_targets.ts` therefore confirms each import's arity and field
 offsets against material that already reproduces the ROM, rather than inferring
 them. This is how one lane fixed its actor-record layouts instead of guessing.
+
+**An "empty else that only increments something" is a skip-beat counter, and it
+proves branch symmetry.** In `resource_391:0d3c` an eight-instruction sequence
+bumps a `u16` at `workspace + 472` and appears on the *absent* side of nearly
+every scene-variant test — 10 sites. Recognising it turns ten puzzling unrelated
+conditionals into one flag with two equal-length scene variants.
 
 **A gate flag's setter is often in a DIFFERENT owner.** `resource_375:0170`
 tests flag 0x0801 on entry and never sets it; the setter is `:0964`, and `:150c`
@@ -484,16 +527,37 @@ They are not calls; `lr` is clobbered harmlessly because the epilogue pops the
 return address off the stack. This inflates site counts and explains a class of
 resolved targets that are neither veneer nor callee.
 
+**State the completeness cross-check as "placed >= row count", never equality.**
+The inventory's `calls=` field predates the corrected `bl` decoding and is a
+lower bound: measured gaps of 22/23, 19/20, 54/88 in one overlay and 0/17 in
+another. Equality is not the target; the multiset comparison below is the actual
+proof.
+
 **The inventory's `calls=` field predates the corrected `bl` decoding and is
 systematically LOW.** Measured on one overlay: 0 against 17 real calls, 58/61,
 62/64, 70/75, 87/91, 143/151, 163/169. It is not a completeness proof in either
 direction — use `overlay_call_targets.ts`'s own `sites=` count, or better, the
 multiset comparison below.
 
+**Parity of an in-image pool word decides data from code — a one-bit test.**
+Under the proven 0x02008000 base, `0x0200aXXX` words split cleanly: **odd** is a
+Thumb function entry (a task callback), **even** is an in-image data address (an
+animation script or table). Thirteen even words in one overlay all appear as the
+second argument of `Func_0808a098`/`0808a0b0`/`0808a168`; every odd one is a
+function + 1. Cheaper than any other witness, and it settles whether a pool word
+should be declared `extern u8 Data_[]` or as a callback.
+
 **Thumb bit tells a jump table from a handler table.** `mov pc,rN` does not
 interwork, so jump-table entries carry **no** Thumb bit; an installed-handler
 pool word does (`0x0200c8c9` = `Func_020048c8` + 1). Cheapest way to classify a
 table of in-image addresses at a glance.
+
+**`overlay_call_targets.ts` misreports a two-byte `bx lr` leaf as `call_via`.**
+The classifier recognises the thunk bank by the `(halfword & 0xff87) == 0x4700`
+shape, so any genuine empty hook collides with it — `resource_3bb:3228` is a real
+standalone no-op leaf. Before treating a `call_via` classification as an indirect
+call, check whether the caller actually loads r3/r4. If it loads nothing, it is a
+no-op leaf, not a thunk.
 
 **A pool load before a `bl` is only a `call_via` if it names IWRAM.** The
 thunk-bank shape is `ldr r3,[pc] ; bl` — but where the loaded word is in-image
@@ -553,6 +617,14 @@ toolchain rejects `void Func_X(); if (Func_X() != 0)` with "void value not
 ignored as it ought to be". Declare any import used in a condition as `s32` or a
 pointer — arity may be left open, the return type may not.
 
+**Two arithmetic traps that an argument-window simulator gets silently wrong.**
+(1) One register can be both a stored *value* and the next store's
+*displacement*: `subs r3,#192` yields 32, stored at workspace+448, then
+`adds r3,#200` yields 232, the offset of the next store. Reading it as
+448-192+200 is the natural mistake. (2) A long-lived alias can be *reassigned*
+mid-owner far from its uses — `r8` from 0x7000 to 0xb000, `r6` from 0 to 0x9000,
+both built by shift chains. Track such registers per-use, not as variables.
+
 **Literal pools inside an owner have bitten three lanes in three different ways.
 All three guards are needed together.**
 
@@ -565,6 +637,21 @@ All three guards are needed together.**
    ten times across three owners.
 3. *Never model a pool word as an instruction, even a harmless-looking one* — see
    below.
+
+**Derive the pool map from a CONTROL-FLOW WALK. That method is immune to both
+traps below; nothing else is.** Walk the owner from its prologue following
+branches, and whatever is never reached as an instruction is pool. On
+`resource_391:0d3c` this gave 6,382 code + 318 pool = 6,700 bytes exactly, across
+8 pools, on a 672-call owner. Both failure modes below are artefacts of guessing
+the pool map from a listing instead.
+
+**The inverse trap: `overlay_show.ts`'s "pool words referenced" list is NOT
+authoritative.** Two of its entries in `resource_3a8:0590` are the *low halfword
+of a BL pair*, listed because a real pool word (`0x00004ccc`) decodes as
+`ldr r4,[pc,#816]`. Excluding them as pool would have dropped two live
+argument-setting instructions — the same failure mode as the pool guard below,
+in the opposite direction. Derive the pool map from the owner's own control flow
+(what the code branches over), not from a referenced-words listing.
 
 **Exclude literal-pool ranges from an argument-window simulator OUTRIGHT — the
 "clear only the destination register" guard is NOT sufficient.** A pool word can
@@ -915,6 +1002,31 @@ the next band up (48-128 bytes) is where the remaining mechanical work is.
 Best overlays by the §1 small-row criterion, recounted after that pass:
 `resource_3b4` (45 rows under 400 bytes), `resource_3c4` (37), `resource_3a7`
 (31), `resource_39a` (28), `resource_39f` (26), `resource_371` (25).
+
+**`tools/overlay_twins.ts` (arrived from main, 2026-07-30) is the highest-leverage
+thing in the overlay lane right now, and nothing has been claimed from it yet.**
+It masks `bl` displacements and pool words and digests the instruction skeleton,
+so it finds owners that are the same routine across overlays and differ only in
+what the linker and the pool make different. **32 twin groups, and not one has a
+converted member.** Solving a single member of each transposes to the rest for
+**16,846 bytes** of pure substitution work — no assembly reading, just retargeting
+the callees and constants out of the twin's own disassembly, which is the play
+that converted `resource_384:01d0`.
+
+**The 384x11 group has a structurally correct draft already** —
+`docs/TWIN-384-DRAFT.md` carries it with the semantics written out and the three
+known divergences named. It emits 173 instructions against the reference's 172;
+what is left is register assignment and scheduling in the first quarter. Measure
+it by instruction-group equality, not halfwords: at 384 bytes the `bl`
+displacements make a raw byte count meaningless (it reads 333/384 while the shape
+is right). Start there rather than re-deriving from assembly.
+
+Ranked by what the *second and later* members are worth: 384×11 (3,840 free),
+404×8 (2,828), 472×5 (1,888), 164×10 (1,476), 216×6 (1,080), 964×2 (964). Two
+carry known blockers — the 60×14 group is §8's squared-distance family at floor 20,
+and `resource_391:02a8` in the 164×10 group is §8's `ldrsh`-cursor park — so start
+with 384×11 or 216×6, which nothing has attacked. This is a far better use of a
+session than walking fresh rows one at a time.
 
 **Then stop reading them by hand — `tools/overlay_wrapper_draft.ts` derives
 them.** The whole tail of setup wrappers, forwarders and dispatch stubs has a

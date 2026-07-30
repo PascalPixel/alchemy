@@ -15,9 +15,9 @@ Exact means fully linked machine-code byte equality — not semantic similarity,
 not equal object size.
 
 The active branch is `speed`. Alongside the exact lane, its reviewed semantic-C
-lane currently accounts for **334,430 executable bytes across 616 compiling
-sources**: 321,638 main-image bytes and 12,792 overlay bytes. Combined with exact
-C, **511,004 / 1,339,542 executable bytes** are expressed as C. Build that lane
+lane currently accounts for **343,474 executable bytes across 619 compiling
+sources**: 330,682 main-image bytes and 12,792 overlay bytes. Combined with exact
+C, **520,048 / 1,339,542 executable bytes** are expressed as C. Build that lane
 with `bun run build:semantic`; its sources live under `semantic/` and do not
 claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
 and multi-region traps out of the ordinary review queue.
@@ -78,6 +78,14 @@ above rather than a dishonest head-only conversion. Thus the method delivered
 5/6 admissions while the sixth task found and explained a queue-wide sizing
 defect. Fix transitive sizing/pool mapping before assigning another continuation
 owner; ordinary single-row owners can continue immediately.
+
+The next bounded-owner cohort then admitted **3/3 owners and 9,044 bytes**:
+`08023178` (3,320), `08023e70` (2,756), and renderer-family `080ca60c`
+(2,968). Their audits accounted for 270 assembly `BL` sites, including four
+internal control edges represented as C flow rather than fake callees. This
+confirms that large call counts are not themselves a reason to park a bounded
+owner. `tools/semantic_queue.ts` now keeps transitive-unsized rows visible but
+adds a scope-audit penalty so they cannot masquerade as the cheapest work.
 
 ---
 

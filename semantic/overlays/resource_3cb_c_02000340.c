@@ -47,12 +47,14 @@ typedef signed int s32;
  * loads directly (0x03001e70 + 76), so r5 is the workspace base.
  *
  * Behaviour: reset one workspace field and issue the fixed teardown sequence —
- * a table install through Func_02000128(4), three Func_080770d0 mode words
+ * a table install through Func_02000128(4), three Func_080770d0 flag clears
  * (512, 0x203, 0x205), a Func_0808a018 barrier, cue 0x2927 through
  * Func_0808a170, Func_0808a178(8, 0), and finally Func_0808a020 whose result
  * is returned.
  *
- * Uncertainties: the meanings of the three Func_080770d0 words and of the
+ * Func_080770d0 is the overlay's flag-clear entry (Func_080770c0 tests and
+ * Func_080770c8 sets; the polarity is forced by Func_020002d8's one-shot
+ * timer).  Uncertainties: the meanings of the three flag words and of the
  * workspace halfword at +386 are not established; 386 is built as 193 << 1 and
  * the store is a halfword, so the field is 16-bit.  Func_0808a018 and
  * Func_0808a020 are reached with no argument register set by this owner.

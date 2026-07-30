@@ -1362,20 +1362,27 @@ like a repository bug rather than a missing prerequisite.
    --no-install-recommends binutils-arm-none-eabi` — a few seconds.
 3. **Build the compilers from the sibling repo.** Clone `PascalPixel/alchemy-gcc`
    next to this checkout so `../alchemy-gcc/dist` resolves, then
-   `./build.sh <target> && ./stage.sh <target>`. gcc296 takes ~3 min on 4 cores;
-   agbcc, gcc3 and gs2 a few more each. **`stage.sh` has no token for
-   `pretearlythumb` or `gcc2951`** even though `build.sh` does — copy those two
-   `cc1` binaries to `dist/pret-early-thumb/cc1` and `dist/gcc2951/cc1` by hand.
-   Both are needed: `alchemy_gcc.ts --self-test` builds a plan for each, so
-   `bun run verify` fails without them.
-4. **Re-stamp the vendored generated files after cloning.** `alchemy-gcc` ships
-   pre-generated `c-parse.c`/`c-gperf.h`/`configure` "timestamp-pinned newer than
-   their inputs" — but **git does not preserve mtimes**, so a fresh clone lands
-   them all in the same checkout second and make regenerates them. gcc-2.95.1
-   then dies in modern bison on a 1999 grammar (`$$ for the midrule at $4 of
-   'structsp' has no declared type`). `touch` the generated files in each
-   vendored tree before building. Symptom to recognise: any build failure that
-   names bison, gperf or autoconf is this, not a broken tree.
+   `./build.sh all` and `./stage.sh all`. gcc296 takes ~3 min on 4 cores; agbcc,
+   gcc3 and gs2 a few more each. All five bundles are needed —
+   `alchemy_gcc.ts --self-test` builds a plan for `pret-early-thumb` and
+   `gcc2951` too, so `bun run verify` fails if either is missing.
+
+   *Two defects here cost a session on 2026-07-30 and are now fixed upstream at
+   `alchemy-gcc` `2581e3e`; if you are on an older checkout of that repo you will
+   still meet them.* `stage.sh` had no token for `pretearlythumb` or `gcc2951`
+   even though `build.sh` built both, so those two bundles could only be staged
+   by copying `cc1` into `dist/pret-early-thumb/` and `dist/gcc2951/` by hand.
+   And `build.sh` re-stamped its pre-generated `c-parse.c`/`c-gperf.h`/`configure`
+   only inside `build_gcc_tree`, so gcc-2.95.1 — which has its own recipe — went
+   without: **git does not preserve mtimes**, a fresh clone lands every vendored
+   file in the same second, make decides the shipped parser is stale, and a
+   modern bison rejects the 1999 grammar (`$$ for the midrule at $4 of
+   'structsp' has no declared type`). The same gap let autoconf 2.71 silently
+   rewrite the shipped autoconf 2.13 `configure`, which is a tracked file — check
+   `git -C ../alchemy-gcc status` after any build that reached for autoconf.
+   `build_2951` also omitted `--build`, so its 1999 `config.sub` choked on the
+   x86_64 triple `config.guess` reports. **Any alchemy-gcc build failure naming
+   bison, gperf or autoconf is this class, not a broken tree.**
 
 **Match the pinned Bun.** `package.json` pins `bun@1.3.14`; the container shipped
 1.3.11 and `gba_header.ts --self-test` failed with "GBA logo source must be the

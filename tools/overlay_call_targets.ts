@@ -100,6 +100,14 @@ export function classify(
   prologues: Set<number>,
 ): { kind: CallSite["kind"]; imported?: number } {
   if (prologues.has(target)) return { kind: "prologue" };
+  // The inventory's prologue set is not complete — genuine callees it never
+  // flagged were being reported as `unknown`, which reads as "suspicious" when
+  // the target is an ordinary function. Recognise the prologue shape directly:
+  // `push {..., lr}` is 0xb5xx, a bare `push {regs}` is 0xb4xx.
+  if (target + 1 < image.length) {
+    const opening = image[target] | (image[target + 1] << 8);
+    if ((opening & 0xfe00) === 0xb400) return { kind: "prologue" };
+  }
   if (target + 8 <= image.length) {
     const first = image[target] | (image[target + 1] << 8);
     const second = image[target + 2] | (image[target + 3] << 8);
@@ -160,6 +168,10 @@ function selfTest(): void {
     throw new Error("veneer classification is wrong");
   if (classify(image, 0, new Set([0])).kind !== "prologue")
     throw new Error("a known prologue must win over the veneer shape");
+  // A `push {r4, lr}` opening is a prologue even when the inventory missed it.
+  const unlisted = new Uint8Array([0x10, 0xb5, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
+  if (classify(unlisted, 0, new Set()).kind !== "prologue")
+    throw new Error("an unlisted push prologue must be recognised");
   console.log("self-test=ok");
 }
 

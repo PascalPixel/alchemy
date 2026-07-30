@@ -4,8 +4,8 @@
 #
 #   tools/bank_cycle.sh "<commit subject body>" [branch]
 #
-# This runs exactly the same checks as `bun run verify`, with three deviations
-# that preserve them while cutting wall clock from ~190s to ~15s:
+# This runs exactly the same checks as `bun run verify`, with two deviations that
+# preserve them while cutting wall clock from ~190s to ~15s:
 #
 #   1. The three builds run CONCURRENTLY. `verify` chains them sequentially, but
 #      they are independent once each has its own output tree (build_claimed is
@@ -16,10 +16,10 @@
 #      commit. It is the LAST step of `verify`, so a walker adopting during the
 #      build invalidates an otherwise-green run; adjacent to the commit the race
 #      window is seconds instead of minutes.
-#   3. `verify` ends by checking the coverage map is current (coverage:check);
-#      here the map is simply rewritten (`bun run coverage`) before staging, so
-#      the banked commit carries a fresh picture instead of failing on a stale
-#      one. It reads tracked evidence only, so it costs about a second.
+#
+# It does NOT touch the README coverage map. That belongs to Vale on `main`, is
+# regenerated there from this branch's banked metrics, and is not part of
+# `verify` — so a map lagging your newest commit never blocks a bank.
 #
 # It also picks the "metrics: correct executable denominator" subject prefix
 # automatically, which check_commit_progress.ts requires whenever the executable
@@ -70,7 +70,6 @@ for attempt in $(seq 1 6); do
 
   bun tools/full_c_progress.ts --write-inventory > /dev/null 2>&1
   bun tools/full_c_progress.ts --write-report > /dev/null 2>&1
-  bun run coverage > /dev/null 2>&1
   if ! bun run progress:check >> "$LOG" 2>&1; then
     echo "attempt $attempt: a walker adopted mid-build, retrying"
     continue

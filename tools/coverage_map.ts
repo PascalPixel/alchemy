@@ -203,15 +203,23 @@ export function refTree(ref: string): SourceTree | undefined {
   const listing = git(["ls-tree", "-r", "--name-only", ref]);
   if (!listing.ok) return undefined;
   const paths = listing.text.split("\n").filter(Boolean);
-  const directories = new Map<string, string[]>();
+  // Every path segment is registered against its parent, so a directory lists
+  // its subdirectories as well as its files. `readdirSync` behaves that way and
+  // callers that walk a tree (mainBoundaries over `asm/`) depend on it: listing
+  // files only would silently stop the walk at the first level and drop the
+  // boundary addresses that size every main-image region.
+  const entries = new Map<string, Set<string>>();
   for (const path of paths) {
-    const directory = path.includes("/") ? path.slice(0, path.lastIndexOf("/")) : "";
-    if (!directories.has(directory)) directories.set(directory, []);
-    directories.get(directory)!.push(basename(path));
+    const segments = path.split("/");
+    for (let index = 0; index < segments.length; index++) {
+      const parent = segments.slice(0, index).join("/");
+      if (!entries.has(parent)) entries.set(parent, new Set());
+      entries.get(parent)!.add(segments[index]);
+    }
   }
   return {
     id: ref,
-    list: (directory) => [...(directories.get(directory.replace(/\/$/, "")) ?? [])].sort(),
+    list: (directory) => [...(entries.get(directory.replace(/\/$/, "")) ?? [])].sort(),
     read(path) {
       const blob = git(["show", `${ref}:${path}`]);
       return blob.ok ? blob.text : undefined;
@@ -1217,8 +1225,59 @@ export function resolveSemanticTree(exact: SourceTree, requested?: string): Sour
   return undefined;
 }
 
+/**
+ * The exact lane belongs to Mercury. A tree that advances the lane itself
+ * describes itself, so Mercury and Venus keep drawing from their own worktree
+ * and are unaffected by this. `main` is the exception: Mercury pulls from main
+ * and never pushes back, so main's own `src/` never receives those conversions
+ * and its picture would freeze at whatever exact C main happens to carry while
+ * the project moved on. Main therefore records `origin/mercury` as its exact
+ * lane in the map's provenance and keeps drawing from there — the same way the
+ * semantic lane is read from venus. An explicit `--exact-ref` wins; pass
+ * `worktree` to force this tree's own exact C.
+ *
+ * An unavailable recorded ref is an error, never a quiet fall back to the
+ * worktree: falling back would silently republish a smaller exact lane.
+ */
+export function resolveExactTree(requested?: string, recorded?: string): SourceTree {
+  const wanted = requested ?? (recorded && recorded !== "worktree" ? recorded : undefined);
+  if (wanted === undefined || wanted === "worktree") return workTree();
+  const tree = refTree(wanted);
+  if (!tree) {
+    throw new Error(
+      `exact lane ref ${wanted} is not available here; run: ` +
+      `git fetch origin ${wanted.replace(/^origin\//, "")} ` +
+      `(or --exact-ref worktree to draw this tree's own exact C)`,
+    );
+  }
+  return tree;
+}
+
+/**
+ * A tree that cannot see the semantic lane must not publish it as zero. The
+ * lane lives on venus, but Mercury redraws this map from its bank cycle and
+ * has no reason to hold a venus ref; without this guard the first such bank
+ * silently erases Venus's half of the published picture. Returns the refusal
+ * message, or undefined when writing is safe: the lane resolved, it was
+ * dropped on purpose with `--semantic-ref none`, or the tracked map has no
+ * semantic lane to lose.
+ */
+export function semanticEraseRefusal(
+  resolved: boolean,
+  requested: string | undefined,
+  tracked: CoverageMap | undefined,
+): string | undefined {
+  if (resolved || requested === "none") return undefined;
+  const bytes = tracked?.lanes.semantic_c.bytes ?? 0;
+  if (bytes <= 0) return undefined;
+  return `refusing to erase the semantic lane: the tracked map records ${bytes} ` +
+    `semantic bytes from ${tracked?.provenance.semantic_lane}, which is not available ` +
+    `here; run: git fetch origin venus (or --semantic-ref none to publish without it)`;
+}
+
 interface Options {
   target: DecompTargetId;
+  exact?: string;
   semantic?: string;
   write: boolean;
   check: boolean;
@@ -1230,14 +1289,15 @@ function optionsOf(argv: string[]): Options {
   for (let index = 0; index < argv.length; index++) {
     const argument = argv[index];
     if (argument === "--target") options.target = parseDecompTarget(argv[++index]);
+    else if (argument === "--exact-ref") options.exact = argv[++index];
     else if (argument === "--semantic-ref") options.semantic = argv[++index];
     else if (argument === "--write") options.write = true;
     else if (argument === "--check") options.check = true;
     else if (argument === "--self-test") options.selfTest = true;
     else if (argument === "-h" || argument === "--help") {
       console.log(
-        "usage: coverage_map.ts [--target gs1-en|gs2-en] [--semantic-ref <ref>|worktree|none] " +
-        "[--write|--check|--self-test]",
+        "usage: coverage_map.ts [--target gs1-en|gs2-en] [--exact-ref <ref>|worktree] " +
+        "[--semantic-ref <ref>|worktree|none] [--write|--check|--self-test]",
       );
       process.exit(0);
     } else throw new Error(`unrecognized argument: ${argument}`);
@@ -1298,6 +1358,56 @@ export function selfTest(): void {
 
   if (assetBucket("golden-sun-pcm-wave-series").id !== "audio") throw new Error("audio bucket failed");
   if (assetBucket("brand-new-package").id !== "other") throw new Error("unknown bucket failed");
+
+  // A ref tree must list subdirectories, not only files. mainBoundaries walks
+  // `asm/` recursively; if a directory reports no children the walk stops at
+  // the first level, boundaries go missing and every main-image region is
+  // measured too long. Asserted against HEAD rather than the worktree so the
+  // check holds mid-bank, when the worktree carries uncommitted sources.
+  const headTree = refTree("HEAD");
+  if (headTree === undefined) throw new Error("HEAD did not resolve to a tree");
+  if (!headTree.list("asm").some((name) => !name.includes("."))) {
+    throw new Error("ref tree listed no asm/ subdirectories; a tree walk would stop at the first level");
+  }
+
+  if (resolveExactTree(undefined, undefined).id !== "worktree") {
+    throw new Error("the exact lane did not default to the worktree");
+  }
+  if (resolveExactTree(undefined, "worktree").id !== "worktree") {
+    throw new Error("a recorded worktree exact lane was not honoured");
+  }
+  if (resolveExactTree("worktree", "origin/mercury").id !== "worktree") {
+    throw new Error("an explicit --exact-ref worktree did not override the recorded ref");
+  }
+  expectReject(
+    () => resolveExactTree(undefined, "origin/no-such-lighthouse"),
+    "an unavailable recorded exact ref",
+  );
+  expectReject(
+    () => resolveExactTree("origin/no-such-lighthouse", undefined),
+    "an unavailable requested exact ref",
+  );
+
+  const withLane = {
+    lanes: { semantic_c: { bytes: 391428 } },
+    provenance: { semantic_lane: "origin/venus" },
+  } as CoverageMap;
+  if (semanticEraseRefusal(false, undefined, withLane) === undefined) {
+    throw new Error("an unresolved semantic lane was allowed to erase a tracked one");
+  }
+  if (semanticEraseRefusal(true, undefined, withLane) !== undefined) {
+    throw new Error("a resolved semantic lane was refused");
+  }
+  if (semanticEraseRefusal(false, "none", withLane) !== undefined) {
+    throw new Error("an explicit --semantic-ref none was refused");
+  }
+  if (semanticEraseRefusal(false, undefined, undefined) !== undefined) {
+    throw new Error("a first write with no tracked map was refused");
+  }
+  if (semanticEraseRefusal(false, undefined,
+      { lanes: { semantic_c: { bytes: 0 } }, provenance: { semantic_lane: "none" } } as CoverageMap) !== undefined) {
+    throw new Error("a tracked map with no semantic lane was refused");
+  }
 
   const tiles: Tile[] = [
     { label: "a", bytes: 60, lanes: { exact_c: 30, assembly: 30 } },
@@ -1373,7 +1483,13 @@ export function selfTest(): void {
 async function main(argv: string[]): Promise<void> {
   const options = optionsOf(argv);
   if (options.selfTest) return selfTest();
-  const exact = workTree();
+  // The tracked map records where each lane was drawn from, so a redraw keeps
+  // drawing it the same way unless told otherwise. Mercury and Venus record
+  // "worktree" and are unaffected; main records origin/mercury.
+  const trackedDocumentOnDisk = existsSync(mapPath(options.target))
+    ? (JSON.parse(readFileSync(mapPath(options.target), "utf8")) as CoverageMap)
+    : undefined;
+  const exact = resolveExactTree(options.exact, trackedDocumentOnDisk?.provenance.exact_lane);
   const semantic = resolveSemanticTree(exact, options.semantic);
   const map = buildCoverageMap({ target: options.target, exact, semantic });
   const svg = renderSvg(map);
@@ -1411,6 +1527,8 @@ async function main(argv: string[]): Promise<void> {
   }
 
   if (options.write) {
+    const refusal = semanticEraseRefusal(semantic !== undefined, options.semantic, trackedDocumentOnDisk);
+    if (refusal) throw new Error(refusal);
     writeFileSync(mapPath(options.target), json);
     writeFileSync(svgPath(options.target), svg);
     console.log(

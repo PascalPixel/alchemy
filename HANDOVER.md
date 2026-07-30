@@ -356,6 +356,11 @@ tens or hundreds. A size-exact residual is a draft or allocation problem that th
 non-flag levers finish; it is not a compiler problem. Judge progress by size
 first.
 
+**Sign the range-check operand the way the reference's pool word reads.**
+`(u16)(h - 0x3001)` emits the `0xffffcfff` pool word while `(u16)(h + 0xcfff)`
+emits `0x0000cfff`. The difference appears *inside the literal pool*, which is
+easy to misread as a span error.
+
 **Cross-jump parameterisation.** Where the reference merges two identical blocks
 that differ only in one constant — pre-loading `movs r1,#K` before branching into
 a shared tail — gcc will not find that merge from two spelled-out blocks. Write it
@@ -509,6 +514,7 @@ Seven admitted modes, all default-off and routed per source in
 | `-fsched-high-dest-first` | the same on r4-r12, ties with no call in them | 125 |
 | `-fno-sched-alias` | a store/load pair proved independent and reordered | 82 |
 | `-fsched-store-first` | a store sinking behind arithmetic | 308 |
+| `-fno-sched-depend-count` | a store/load swap `-fsched-store-first` does not reach | — |
 | `-fno-gcse-insert-load` | a PRE-inserted load the reference lacks | 9 |
 
 **`-fsched-low-dest-first` reaches three residuals, not just the one in the table**:

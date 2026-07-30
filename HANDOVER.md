@@ -37,14 +37,14 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **452,246
-executable bytes across 887 compiling sources**: 386,840 main-image bytes and
-65,406 overlay bytes. Combined with exact C, **647,196 / 1,339,558 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **460,510
+executable bytes across 899 compiling sources**: 386,840 main-image bytes and
+73,670 overlay bytes. Combined with exact C, **655,460 / 1,339,558 executable
 bytes** are expressed as C.
 
-**Two overlays are now converted in full**: `resource_3b8` (15,028 / 15,028
-strict bytes, seven owners) and `resource_39a` (7,096 bytes, all 64 rows).
-Neither skipped anything. Build that lane
+**Three overlays are now converted in full**, none skipping anything:
+`resource_3b8` (15,028 bytes, 7 owners), `resource_372` (10,202 bytes, 16 rows)
+and `resource_39a` (7,096 bytes, 64 rows). Build that lane
 with `bun run build:semantic`; its sources live under `semantic/` and do not
 claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
 and multi-region traps out of the ordinary review queue.
@@ -270,6 +270,20 @@ function's interior cannot be a call target.
 That also explains `resource_373`'s 0x55e0 spread — identities, not locations —
 so nothing there is anomalous after all.
 
+**Three overlays are now confirmed at the 0x02008000 base** (`resource_3bf`,
+`resource_3c4`, `resource_372`) and a fourth (`resource_39a`) by four witnesses.
+Cheapest witnesses, in order: a jump-table base pool word against the table's
+physical file offset; an installed per-frame callback pool word that equals a
+known function start + the Thumb bit; and any `Data_0200bxxx` symbol that lands
+inside the image at `value - 0x8000`.
+
+`resource_372` adds the sharpest disproof of the location reading: its *data*
+pool words `0x0200c934`/`0x0200c984` resolve under that proven base to file
+offsets `0x4934`/`0x4984` — inside the very band its `bl` instructions appear to
+target. A `bl` cannot land inside a proven data block. Sharper still, its
+`020031ac` contains `bl .L_02003390`, whose "target" is that owner's own `b.n`
+over its first literal pool.
+
 **Consequence for the skip rule below:** "a `bl` into an in-image address is a
 hidden-context caller" fires only where the target is genuinely reached as code.
 On an overlay whose `bl`s are identities, such rows are ordinary and convert
@@ -302,11 +316,23 @@ ordinary calls: a balanced shared tail declared but not defined, and an alignmen
 `nop` immediately before a real prologue (calling it is calling the function two
 bytes later).
 
-**The inventory's `calls` field counts DISTINCT targets, not call sites.**
-`0x02000920` has 20 sites but `calls=18`; `0x020012cc` has 47 sites and
-`calls=47`. Counting distinct targets matched the field exactly on every
-multi-call row checked. Use it as a completeness proof that way — counting sites
-and then chasing the "missing" difference is a phantom hunt.
+**Completeness proof, best form: compare MULTISETS.** Extract the multiset of
+`bl` targets from `assets/code/<overlay>_overlay.s` and compare it to the
+multiset of `Func_…(` occurrences in the finished C. On a 2,716-byte owner that
+was 245 = 245. This catches dropped *and* phantom calls, which a count alone
+cannot.
+
+The inventory's `calls` field is the weaker check because it counts **distinct
+targets, not call sites**: `0x02000920` has 20 sites but `calls=18`. The gap is
+exactly the number of imports reached with two different argument counts — on
+that 2,716-byte owner, 245 sites − 228 distinct = 17 such imports, which the
+multiset comparison confirms rather than leaves as a discrepancy to chase.
+
+**`contained_by` seeds inside an owner are artefacts of the same thing.** Rows
+like `0200153e`, `020028d8`, `02002abc` are plain `movs`/`lsls` instructions in
+the middle of an argument block, with the owner's prologue already executed.
+Reconstruct the owner whole from prologue to epilogue; they need no separate
+treatment and are already excluded by the strict filter.
 
 **A pool word can decode as a `bl`.** `0x02002014`'s clamp constant is the pooled
 word `0xf848f003`, which disassembles as `bl 0x2005124`;

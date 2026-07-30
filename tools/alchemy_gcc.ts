@@ -930,7 +930,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
       xgcc: "87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed",
       cpp: "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
       tradcpp: "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
-      cc1: "85aa8d6f576af11c9875958a6ee912e3cc23e769411029d62be07a0b6467efdc",
+      cc1: "df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4",
     },
     gs2: {
       xgcc: "128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2",

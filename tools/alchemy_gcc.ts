@@ -343,6 +343,15 @@ const NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES = new Set([
 // that pair and makes the natural typed source 144/144 bytes exact. Keep the
 // broadly disruptive scheduler model change source-scoped.
 const THUMB_IMMEDIATE_LATENCY_SOURCES = new Set(["080babdc"]);
+// Main-image members of the ascending-destination-register tie-break. The
+// high-register form covers ties with no call in them: a loop preheader's run of
+// loop-setup copies (08098954 and its identical sibling 0809a294), and a
+// parameter save at function entry whose position assign_parms fixes (08097540,
+// which needs both directions and keeps its existing grouped-DMA route).
+// Do NOT add the low-register form to 08098954/0809a294 — it regresses them.
+// See docs/compiler-evidence/sched-high-dest-first.diff.
+const SCHED_HIGH_DEST_FIRST_SOURCES = new Set(["08098954", "0809a294", "08097540"]);
+const SCHED_LOW_DEST_FIRST_SOURCES = new Set(["08097540"]);
 const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
   "assets/code/resource_37a_c_02001380.c",
   "assets/code/resource_37a_c_02001790.c",
@@ -635,6 +644,8 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),
+    ...(SCHED_HIGH_DEST_FIRST_SOURCES.has(stem) ? ["-fsched-high-dest-first"] : []),
+    ...(SCHED_LOW_DEST_FIRST_SOURCES.has(stem) ? ["-fsched-low-dest-first"] : []),
     ...(NO_CONTIGUOUS_IMMEDIATE_SOURCES.has(stem) ? ["-fno-thumb-contiguous-immediate"] : []),
     ...(NO_SCHED_DEPEND_COUNT_SOURCES.has(stem) ? ["-fno-sched-depend-count"] : []),
     ...(SPLIT_GROUP_BASE_SOURCES.has(stem) ? ["-fthumb-split-group-base"] : []),
@@ -867,7 +878,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
       xgcc: "845b828e15efedfeacc1956ac2694101e2b520824643d5b9f7608f9c389aee03",
       cpp: "60d0b6637deb0f98cbf952a89694b02a0557fc87ca968121759be139372e90cc",
       tradcpp: "87f89bebf41cd12ac7706604dd24624061b2276f95cc1e9998c22de1accfee2a",
-      cc1: "1c4f50c1d63551468e1caeff9e346860bff9663f334fc47b1c28eea825ac440a",
+      cc1: "ae16afc9eef665ab9d381ba2206f1c7c7e72c46cffa88b8b26df6169700dd22c",
     },
     gs2: {
       xgcc: "7b1a6a96fc4bd5e9de4d83fb2a4ba2ca2a82397cdcd102c4a4d76ef91dc17f58",

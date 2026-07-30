@@ -141,18 +141,8 @@ AlchemyC_020000e4:
 	bx	r0
 	.2byte 0x1add
 	.2byte 0x0000
-	push	{lr}
-	bl	sub_02000580
-	ldr	r0, [pc, #20]
-	bl	sub_020005ce
-	movs	r1, #0
-	movs	r0, #16
-	bl	sub_020005e6
-	bl	sub_0200059a
-	pop	{r0}
-	bx	r0
-	.2byte 0x1ae3
-	.2byte 0x0000
+AlchemyC_0200016c:
+	.space 0x20
 	push	{lr}
 	movs	r0, #0
 	bl	sub_020005ba

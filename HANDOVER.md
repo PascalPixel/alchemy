@@ -37,9 +37,9 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **391,776
-executable bytes across 641 compiling sources**: 378,986 main-image bytes and
-12,790 overlay bytes. Combined with exact C, **586,166 / 1,339,558 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **405,898
+executable bytes across 688 compiling sources**: 387,108 main-image bytes and
+18,790 overlay bytes. Combined with exact C, **600,288 / 1,339,558 executable
 bytes** are expressed as C. Build that lane
 with `bun run build:semantic`; its sources live under `semantic/` and do not
 claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
@@ -153,8 +153,27 @@ impossible. That accounting now exists, and the first re-probe confirmed it:
 blocked as "only the front of a much larger effect function", was admitted as
 one 3,126-byte module across nine ranges with all 87 calls placed. Its agent put
 the distinction well: the blocker was accurate as written but was a *sizing*
-blocker, not a structural one. Re-probe the rest (`080e15e8`, `080d765c`,
-`080ddde0`) with their row maps before treating any of them as blocked.
+blocker, not a structural one. **All five `multi_region_function` blockers are now resolved**: `080dd9c0` (940
+bytes), `080ec100` (3,126), `080d765c` (2,866), `080e15e8` (3,542) and
+`080ddde0` were every one of them a *sizing* blocker, admitted whole once the row
+map existed. The class is empty — 10,474 bytes recovered from notes that read as
+permanent. The `relocated_kernel_continuation` class also fell, and its post-mortem is the
+most useful of the set. `0800ebec` was blocked for a "nonstandard return
+contract": inline `mov ip,pc; bx r4` into the relocated kernel, returning into a
+62-byte gap row with the frame live. It is an ordinary indirect call —
+`mov ip,pc` sets the return to the instruction after the `bx`, both landing sites
+continue the same frame, and `LAWS.md` **already recorded this idiom as a
+codegen-only difference** from `bl __call_via_r4`. The note had promoted a
+byte-exactness fact into a semantic blocker. Admitted whole at 1,714 bytes.
+
+That is the pattern worth carrying: **a blocker written while wearing Mercury's
+hat is not automatically a Venus blocker.** Byte-exactness obstacles and semantic
+obstacles are different sets, and the overlap is smaller than the notes imply.
+
+What remains in `ordinary-blockers.json` are `hidden_register_module`,
+`cross_file_abi`, `implicit_callee_return_state_module` and
+`shared_stack_context_module`. Those have NOT been shown stale — judge each on
+its own evidence rather than assuming the streak continues.
 
 **Wave result, five multi-row owners: 5/5 admitted, 20,428 advertised bytes and
 19,464 registered after the agents settled the pools.** `080e47b8` (7,382 across
@@ -209,6 +228,103 @@ the varying target, so two different callees collapse into one name.
 Corrected in this session: `080a7478` and `0808d9a4` (comments and declarations).
 Sweeping the other 102 files is open, mechanical work — the fix is a declaration
 and a comment, never a control-flow change.
+
+**OPEN QUESTION — an overlay `bl` target is not a location, and two lanes explain
+that differently.** Both were investigating the same puzzle that
+`semantic/overlays/resource_394_c_020003f0.c` records as "resident service
+addresses that fall numerically inside the overlay's own range". Neither
+explanation is settled; do not write either into a file as fact.
+
+*Reading A — shifted link base.* `resource_3bf` behaves as if linked at
+**0x02008000**, every absolute pool constant sitting exactly 0x8000 above the
+printed offset. Evidence: the dispatcher at `02004638` loads its jump-table base
+as `0x0200c64c` while the table is physically embedded at offset `0x464c`, and
+each of its eight entries points 0x8000 past the case body it selects — a single
+consistent shift.
+
+*Reading B — load-time fixups, address as identity.* In `resource_373`,
+`Func_020000c4` encodes three `bl` targets that land *inside itself* at plain
+join points of its own control flow, which no call can mean; and `02000030` and
+`02005610` are byte-identical bodies whose `bl` encodes `0x020061c0` and
+`0x0200b7a0` — the same relative displacement yielding two absolute targets for
+provably the same callee. Those two differ by 0x55e0, **not** 0x8000, so a
+uniform base shift does not explain `resource_373`.
+
+The readings may both be right for different overlays, or B may subsume A. What
+is safe to act on today: the encoded address is a **stable identity for an
+import**, not a place to disassemble. Converting by encoded address remains
+correct — it is what 394/3bd/3c8 already do — but call it an identity in comments,
+and measure your own overlay's base before assuming either. `overlay_show.ts`
+resolves `bl` by raw displacement, so its call annotations inherit exactly this
+ambiguity.
+
+Convention: keep the printed-offset spelling for symbol names and the raw pool
+value for data addresses (both trees already do this, and it is self-consistent),
+and note the shift in the file rather than renumbering anything.
+
+**Overlays have their own `call_via` veneers, recognisable only by their setup.**
+The main-image thunk bank is identifiable because the bank itself contains
+`bx rN`; an overlay veneer is not. The signature is instead: a pool word in
+`0x030001xx` loaded into r3/r4 immediately before a `bl`, with the callee's
+result returned unchanged. `0x030001d8` is the relocated IWRAM square root, the
+same helper the main-image `Func_080072f0` reaches.
+
+**Packed direction words are a family, not a one-off.** `0x0200e190` in
+`resource_373` is a 16-entry table indexed by `heading >> 12`, X step in the high
+half and Z step in the low half, promoted to 16.16 by `& 0xffff0000` and `<< 16`
+rather than by multiply. Three owners in that overlay use it and the
+`resource_3bd` conversion recorded the same idiom — recognise it rather than
+re-deriving it.
+
+**Inventory field names.** `out/decomp/overlays.json` functions carry `entry` and
+`offset`, **not** `address`. A snippet using `x.address.toString(16)` throws and
+prints nothing, which reads as "no work in this overlay" rather than as an error.
+This cost two lanes time before it was caught.
+
+**Read two or three neighbouring exact sources before starting an overlay.**
+`assets/code/` already holds byte-exact C for many overlay functions, and its
+field offsets and workspace pointers are proven. One lane independently
+rederived `Data_02000240[294]` and a `workspace + 386` store that the adjacent
+exact file already contained, and found `0x03001e70 + 76` to be exactly
+`0x03001ebc`, the workspace pointer the rest of the overlay loads directly.
+Cheapest possible way to fix an overlay's struct layout.
+
+**Registering a main-image owner: two rules that cost a build each.**
+1. Every range must be **fully contained in one manifest row**. Agents report
+   the code contiguously, which is correct as description but invalid as
+   registration: `080e15e8`'s 592-byte span crosses the row boundary at
+   `0x080e1a48` and has to be listed as 512 + 80. Split at the boundary; the
+   code is still contiguous.
+2. Bytes count only once registered. An admitted `.c` file on its own moves the
+   metric by the row's *advertised* size — `080ec100` credited 144 of its 3,126
+   bytes until its nine ranges were entered.
+
+**Where the remaining semantic work actually is: overlays, not the main image.**
+Measured after this session's waves, and it reframes the lane:
+
+| | executable bytes | state |
+| --- | --- | --- |
+| main image (whole manifest) | 451,338 | 378,986 already semantic |
+| main-image continuation owners still open | 16,700 | 17 owners, mostly small |
+| **overlay strict rows** | **337,052** | **12,790 semantic — 4%** |
+
+So the main image is close to done and the overlays are barely started: 1,198
+strict rows across ~40 overlays, led by resource_373 (18,044), resource_3b8
+(15,028), resource_3bf (13,484), resource_3c8 (12,800), resource_372 (10,202),
+resource_38f (9,848), resource_3c4 (9,828), resource_371 (9,650). Completing the
+semantic lane is now overwhelmingly an overlay job, and anyone budgeting from the
+main-image queue will misjudge it by an order of magnitude.
+
+Overlay semantic sources need **no registry entry**: `build_semantic` sizes
+`semantic/overlays/resource_NNN_c_0200AAAA.c` straight from `out/decomp/overlays.json`,
+unlike main-image owners which must be registered in `semantic/main-regions.json`
+before their bytes count. That makes overlay conversion cheaper per byte to
+integrate as well as to write.
+
+Mercury works the same overlays for byte-exactness. That is not a conflict — the
+branches are separate and exact overrides semantic on merge — but prefer
+overlays Mercury is not currently walking, and expect some semantic files to be
+replaced later by exact ones.
 
 **Queue trap on a fresh clone.** `bun run semantic:queue` reports `queued=0` on
 any clone that has not run m2c, because it only surfaces regions that already

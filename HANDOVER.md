@@ -32,15 +32,13 @@ sideways:
 So everything Mercury banks reaches `main` eventually, by way of Venus. Mercury
 never merges `venus` and never pushes to `main`.
 
-**Mercury does not regenerate the coverage map.** `metrics/gs1-en-coverage-map.json`
-and `assets/readme/gs1-en-coverage.svg` are Vale's, and Vale draws them from both
-lighthouse refs so the semantic lane is never erased. Running `bun run coverage`
-here and banking the result publishes a map with a stale Venus lane and forces
-Vale to redo it — main's `refuse to publish the coverage map with an erased
-semantic lane` commit exists because of exactly that. If a merge from `main`
-conflicts on either file, take `--ours` (or `--theirs`, it does not matter) to
-close the merge and **do not** re-run `bun run coverage` afterwards. Mercury
-banked several unnecessary map redraws on 2026-07-30 before this was understood.
+The coverage map is Vale's — the rule and its mechanics are below, under
+"`README.md` and its ROM coverage map belong to Vale". One historical note that
+belongs here: until main's `make the map Vale's alone`, `bank_cycle.sh` ran
+`bun run coverage` itself and `verify` ended in `coverage:check`, so every
+Mercury bank carried a map redraw as an unavoidable side effect. Several were
+banked on 2026-07-30 that way. Both steps are gone now; if a merge conflicts on
+either map artifact, take either side and leave it.
 
 | | **Mercury Lighthouse** | **Venus Lighthouse** |
 | --- | --- | --- |

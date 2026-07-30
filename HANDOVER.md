@@ -591,6 +591,18 @@ function, function-top locals stay live across it and land in r5/r6, buying a
 instead: `resource_3bb:02c0` went from a span overrun to exact on that change
 alone, and `resource_3bc:024c` from 19 differing bytes to exact.
 
+**The standard fix for a renderer/setup call sheet is `void` callees plus
+`-fsched-low-dest-first`, in that order.** This landed five times on 2026-07-30
+(`38d:1958`, `38d:1984`, `3b5:0260`, `3b4:11d8`, `3bb:02c0`) and the diagnosis is
+always the same two-step. First, an `r0` setter sitting *after* the r1/r2/r3
+group means the callee is `void`-returning, not `s32` — flip the declaration and
+the residual usually halves. Then, if `movs r0` still sits after the `lsls` of a
+shifted argument rather than between the `movs` and its shift, that is the
+scheduler tie-break and the flag closes it. Neither step alone is enough on a
+sheet that needs both: `3b5:0260` went 12 → 6 → 0 across the two. Try the
+declaration before reaching for any flag — it costs one probe and needs no
+routing entry.
+
 **A repeated shifted constant across call sites needs
 `-fno-cse-two-insn-immediate`, and the tell is a prologue.** On
 `resource_38d:1984` the same `0xC000` feeds two of three call sites; CSE hoists it

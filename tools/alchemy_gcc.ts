@@ -390,6 +390,7 @@ const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
 // (or, for 399:05dc and 0a3c, together with the routed immediate-latency
 // mode). Each entry has its own exact-byte proof.
 const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3c8_c_0200096c.c",
   "assets/code/resource_3c5_c_02000cf0.c",
   "assets/code/resource_3b2_c_02000da4.c",
   "assets/code/resource_37a_c_02001790.c",
@@ -498,6 +499,8 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3c8_c_02001780.c",
+  "assets/code/resource_3c8_c_02001150.c",
   "assets/code/resource_372_c_02000f38.c",
   // Needs the tie-break alone, without the paired constant-sharing mode: two
   // argument setters tie before a `bl` and the low-destination rule picks

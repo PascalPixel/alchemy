@@ -19,7 +19,10 @@
 #   3. `verify` ends by checking the coverage map is current (coverage:check);
 #      here the map is simply rewritten (`bun run coverage`) before staging, so
 #      the banked commit carries a fresh picture instead of failing on a stale
-#      one. It reads tracked evidence only, so it costs about a second.
+#      one. It reads tracked evidence only, so it costs about a second. The
+#      venus ref is fetched first because the map draws its semantic lane from
+#      there; the redraw refuses rather than publishing that lane as zero, so a
+#      failed fetch leaves the previous picture standing instead of erasing it.
 #
 # It also picks the "metrics: correct executable denominator" subject prefix
 # automatically, which check_commit_progress.ts requires whenever the executable
@@ -70,6 +73,7 @@ for attempt in $(seq 1 6); do
 
   bun tools/full_c_progress.ts --write-inventory > /dev/null 2>&1
   bun tools/full_c_progress.ts --write-report > /dev/null 2>&1
+  git fetch origin venus > /dev/null 2>&1
   bun run coverage > /dev/null 2>&1
   if ! bun run progress:check >> "$LOG" 2>&1; then
     echo "attempt $attempt: a walker adopted mid-build, retrying"

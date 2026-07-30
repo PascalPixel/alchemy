@@ -1715,11 +1715,19 @@ rewrites `metrics/gs1-en-coverage-map.json` and the README treemap
 `assets/readme/gs1-en-coverage.svg`. It reads tracked evidence only — no ROM,
 no toolchain, no build output — so it costs about a second. Run it after the
 metrics report is written and before staging; in `tools/bank_cycle.sh` that is
-one line directly after the `--write-report` call:
+two lines directly after the `--write-report` call:
 
 ```sh
+git fetch origin venus > /dev/null 2>&1
 bun run coverage > /dev/null 2>&1
 ```
+
+The fetch is not optional decoration. The semantic lane is read from a `venus`
+ref, and Mercury has no other reason to hold one; without it the redraw has no
+lane to draw and would publish Venus's half of the picture as zero. `--write`
+now **refuses** in that situation rather than erasing it, naming the fetch in
+the error, so a failed fetch leaves the previous picture standing. Pass
+`--semantic-ref none` if you ever genuinely mean to publish without the lane.
 
 `bun run verify` ends with `bun run coverage:check`, which fails when the
 tracked map is behind the lane this branch owns. Mercury owns the exact lane in
@@ -1727,6 +1735,22 @@ the picture and Venus owns the semantic lane; each branch reads the other lane
 from the newest ref it can see and records which one in the map, so a lane it
 does not own never fails its verification. A merge conflict on the map or the
 SVG is resolved by taking either side and re-running `bun run coverage`.
+
+`main` owns the published picture itself. Venus's semantic lane can advance
+without a single line of documentation or tooling changing, so the map on
+`main` is redrawn there whenever that ref moves, independently of either
+lighthouse's own banking.
+
+**The picture currently understates the overlay semantic lane, and closing that
+is Venus's to do.** `tools/coverage_map.ts` sizes an overlay semantic owner
+only from a `manual_regions` entry in `semantic/regions.json`. It deliberately
+refuses the decoded-region inventory, which is build output and therefore
+outside what a tracked-evidence-only tool may read, so an owner missing from
+that file is reported in `provenance.semantic_unresolved` rather than
+estimated. At 921 semantic sources, 303 overlay owners are unlisted: the map
+can size 8,458 of the 92,186 overlay bytes this file claims, while its
+main-image figure of 382,970 agrees exactly. Every overlay owner Venus adds to
+`semantic/regions.json` moves that gap, and nothing else will.
 
 `PROVENANCE.md` is authoritative on clean-room rules: semantics only from the
 target's own disassembly and this repo. **No `asm()`, no inline assembly, no

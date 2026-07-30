@@ -1,8 +1,8 @@
 # Path to completion
 
 Current verified exact **Full-C Byte Share: 194,390 / 1,339,558 executable
-bytes (14.51%)**. The reviewed semantic lane contains another 365,686 bytes, so
-combined C expression is **560,076 / 1,339,558 bytes**.
+bytes (14.51%)**. The reviewed semantic lane contains another 369,358 bytes, so
+combined C expression is **563,748 / 1,339,558 bytes**.
 
 The detailed exact-lane measurements below were taken on 2026-07-28 and are
 retained as historical evidence for the compiler and queue decisions they

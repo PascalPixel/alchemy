@@ -49,10 +49,10 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **225,000 executable bytes across 498 compiling sources**:
-  212,208 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **398,222 / 1,339,540 executable bytes** are now expressed as C, with
-  941,318 remaining. Seven semantic main sources were removed during the
+- Semantic-C lane: **227,790 executable bytes across 507 compiling sources**:
+  214,998 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **401,012 / 1,339,540 executable bytes** are now expressed as C, with
+  938,528 remaining. Seven semantic main sources were removed during the
   2026-07-30 `main` cascade because byte-exact versions now supersede them.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
@@ -70,6 +70,16 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   transfer dispatch (`080cd260`). Their call sites, access widths, signed
   comparisons, stack arguments, and observable hardware writes were checked
   against their complete reference owners before admission.
+- The second queue-driven pass admitted nine more complete main owners and
+  2,790 bytes: the IRQ/frame handler (`08003650`), diagnostic tile viewer
+  (`0800679c`), object-placement sequence (`0801776c`), map-object constructor
+  (`0808ef70`), five-argument page/cursor controller (`080a1fd4`), graphics
+  setup (`080aad10`), stable action sorter (`080b9470`), scene transition
+  (`080cdbc0`), and packed sound dispatcher (`080f9080`). Parallel strict
+  audits confirmed ordinary ABIs and complete boundaries on the controller,
+  sorter, and sound dispatcher. The queue also correctly demoted `08006e24`
+  for branching into a continuation owner and flags high-register call setup
+  separately from ordinary stack-passed fifth and later arguments.
 - Honest outer-owner additions include `resource_381:0054/1410`,
   `resource_394:03f0/0c2c/0e64..0fb4`, `resource_3bd:0474/0608/0ee0`, and
   `resource_3c8:1d48`. `resource_379:00dc` was rejected as a fake standalone

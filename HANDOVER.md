@@ -75,15 +75,15 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **548,096
-executable bytes across 1,002 compiling sources**: 382,970 main-image bytes and
-165,126 overlay bytes. Combined with exact C, **758,490 / 1,339,574 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **557,244
+executable bytes across 1,006 compiling sources**: 382,970 main-image bytes and
+174,274 overlay bytes. Combined with exact C, **767,638 / 1,339,574 executable
 bytes** are expressed as C.
 
-**Fourteen overlays are now converted in full**, none skipping anything:
+**Seventeen overlays are now converted in full**, none skipping anything:
 `resource_3b8` (15,028 bytes), `resource_372` (10,202), `resource_371` (9,650),
 `resource_39f` (9,278), `resource_39a` (7,096), `resource_3b4` (6,226) and
-`resource_373` (13,192), `resource_3bf` (10,144), `resource_375` (6,536), `resource_3aa` (6,376), `resource_38f` (9,212), `resource_383` (7,792) and
+`resource_373` (13,192), `resource_3bf` (10,144), `resource_375` (6,536), `resource_374` (7,468), `resource_3a8` (7,564), `resource_3bb` (5,680), `resource_3aa` (6,376), `resource_38f` (9,212), `resource_383` (7,792) and
 `resource_3c4` (24 of 25 rows, one 2,636-byte
 dispatcher pre-measured)
 Alongside the exact lane, reviewed semantic C currently accounts for **475,156
@@ -422,6 +422,21 @@ ordinary calls: a balanced shared tail declared but not defined, and an alignmen
 `nop` immediately before a real prologue (calling it is calling the function two
 bytes later).
 
+**Third shape that checks out — and it is a THIRD case of that skip rule, not a
+skip: a `bl` into the owner's OWN body that lands on an arm running into the
+owner's own epilogue is a non-returning `goto`, not a call.** `resource_3a8:0590`
+has two of them (0x020005aa and 0x020005b8, both to 0x0200151c, both reported
+`unknown` by `overlay_call_targets.ts`). The test is mechanical and takes one
+minute: (1) the target is inside the owner's span, (2) nothing branches to it
+except by falling past a `b` over it, and (3) following it reaches the owner's
+own epilogue, which pops the frame the *prologue* pushed — still intact, because
+the `bl` pushed nothing. Then the `bl` executes that arm and returns to the
+owner's caller; the clobbered lr is dead because the real return address is on
+the stack. Spell it `goto`. Under the existing wording these two look exactly
+like "a frame-unbalanced epilogue tail" and would have cost a 4,092-byte owner.
+The distinguishing question is *whose* frame the tail unwinds: another
+function's (skip) or the caller's own (goto).
+
 **Drafting loop: compile YOUR file alone, not the whole lane.** `bun run
 build:semantic` is a shared gate — one agent's broken file blocks validation for
 every concurrent lane, and did so for about an hour in one round. Compile a
@@ -482,16 +497,37 @@ They are not calls; `lr` is clobbered harmlessly because the epilogue pops the
 return address off the stack. This inflates site counts and explains a class of
 resolved targets that are neither veneer nor callee.
 
+**State the completeness cross-check as "placed >= row count", never equality.**
+The inventory's `calls=` field predates the corrected `bl` decoding and is a
+lower bound: measured gaps of 22/23, 19/20, 54/88 in one overlay and 0/17 in
+another. Equality is not the target; the multiset comparison below is the actual
+proof.
+
 **The inventory's `calls=` field predates the corrected `bl` decoding and is
 systematically LOW.** Measured on one overlay: 0 against 17 real calls, 58/61,
 62/64, 70/75, 87/91, 143/151, 163/169. It is not a completeness proof in either
 direction — use `overlay_call_targets.ts`'s own `sites=` count, or better, the
 multiset comparison below.
 
+**Parity of an in-image pool word decides data from code — a one-bit test.**
+Under the proven 0x02008000 base, `0x0200aXXX` words split cleanly: **odd** is a
+Thumb function entry (a task callback), **even** is an in-image data address (an
+animation script or table). Thirteen even words in one overlay all appear as the
+second argument of `Func_0808a098`/`0808a0b0`/`0808a168`; every odd one is a
+function + 1. Cheaper than any other witness, and it settles whether a pool word
+should be declared `extern u8 Data_[]` or as a callback.
+
 **Thumb bit tells a jump table from a handler table.** `mov pc,rN` does not
 interwork, so jump-table entries carry **no** Thumb bit; an installed-handler
 pool word does (`0x0200c8c9` = `Func_020048c8` + 1). Cheapest way to classify a
 table of in-image addresses at a glance.
+
+**`overlay_call_targets.ts` misreports a two-byte `bx lr` leaf as `call_via`.**
+The classifier recognises the thunk bank by the `(halfword & 0xff87) == 0x4700`
+shape, so any genuine empty hook collides with it — `resource_3bb:3228` is a real
+standalone no-op leaf. Before treating a `call_via` classification as an indirect
+call, check whether the caller actually loads r3/r4. If it loads nothing, it is a
+no-op leaf, not a thunk.
 
 **A pool load before a `bl` is only a `call_via` if it names IWRAM.** The
 thunk-bank shape is `ldr r3,[pc] ; bl` — but where the loaded word is in-image
@@ -551,6 +587,14 @@ toolchain rejects `void Func_X(); if (Func_X() != 0)` with "void value not
 ignored as it ought to be". Declare any import used in a condition as `s32` or a
 pointer — arity may be left open, the return type may not.
 
+**Two arithmetic traps that an argument-window simulator gets silently wrong.**
+(1) One register can be both a stored *value* and the next store's
+*displacement*: `subs r3,#192` yields 32, stored at workspace+448, then
+`adds r3,#200` yields 232, the offset of the next store. Reading it as
+448-192+200 is the natural mistake. (2) A long-lived alias can be *reassigned*
+mid-owner far from its uses — `r8` from 0x7000 to 0xb000, `r6` from 0 to 0x9000,
+both built by shift chains. Track such registers per-use, not as variables.
+
 **Literal pools inside an owner have bitten three lanes in three different ways.
 All three guards are needed together.**
 
@@ -563,6 +607,14 @@ All three guards are needed together.**
    ten times across three owners.
 3. *Never model a pool word as an instruction, even a harmless-looking one* — see
    below.
+
+**The inverse trap: `overlay_show.ts`'s "pool words referenced" list is NOT
+authoritative.** Two of its entries in `resource_3a8:0590` are the *low halfword
+of a BL pair*, listed because a real pool word (`0x00004ccc`) decodes as
+`ldr r4,[pc,#816]`. Excluding them as pool would have dropped two live
+argument-setting instructions — the same failure mode as the pool guard below,
+in the opposite direction. Derive the pool map from the owner's own control flow
+(what the code branches over), not from a referenced-words listing.
 
 **Exclude literal-pool ranges from an argument-window simulator OUTRIGHT — the
 "clear only the destination register" guard is NOT sufficient.** A pool word can

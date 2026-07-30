@@ -178,6 +178,22 @@ factorises inverts the reference on the third row — a mistake made three times
 When a constant repeats across sites, plain literals also beat `&Value_`: the
 symbol form is one rtx that CSE always merges.
 
+**A masked read-modify-write must start its chain with the mask.**
+`s32 v = ~12; v &= p->f09; v |= 4; p->f09 = v;` is exact, while the more natural
+`s32 v = p->f09 & ~12;` gives the identical instruction stream with two registers
+swapped. Splitting the RMW into two statements is necessary but not sufficient —
+*which operand opens the chain* decides the register identities.
+
+**Pad structs explicitly so fields land at their real offsets.** A naive
+`u8 pad[0x48]; s32 f48; void *f50;` puts the pointer at 0x4c and silently shifts
+every subsequent offset; the resulting diff looks like a scheduling problem.
+
+**`&Value_` also applies to loop invariants, not only call arguments.** A pooled
+constant used inside a loop is rematerialised per iteration from a plain literal;
+declaring `extern u8 Value_fffff800; s32 d = (s32)&Value_fffff800;` in the block
+*enclosing the loop* hoists it into a callee-saved register as the reference does.
+Function-top placement instead costs 4 bytes.
+
 **Statement order matters.** Moving an independent assignment above a call has
 produced exact matches where nothing else did — a permuter's single win in 65,543
 candidates was one statement swap. Always try both orders of two independent
@@ -270,7 +286,10 @@ non-trivial constant argument** (exemplar `assets/code/resource_372_c_02002180.c
 ## 5. Sweep levers mechanically
 
 `tools/return_type_sweep.sh <draft.c> <overlay:offset> <span> [flags...]` greedily
-flips each `void` callee to `s32`, keeps improvements, and repeats to a fixpoint.
+flips callee return types **in both directions** — `void`→`s32` and `s32`→`void` —
+keeps improvements, and repeats to a fixpoint. Both directions matter: the
+`s32`→`void` half closed two functions the other half could not touch, and for a
+while only one direction was tooled, so half the search space was invisible.
 At ~0.12s per probe a 60-callee function converges in seconds. It found a 404-byte
 function needing a specific 5-of-10 partition of identical-looking call sites that
 no hand sweep would have located. One lane closed 8 functions / 1,628 bytes from

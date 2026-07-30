@@ -11,7 +11,9 @@
     },
     "080dd9c0": {
       "lane": "multi_region_function",
-      "reason": "This 124-byte manifest owner is only FunctionHead_080dd9c0: both paths branch into sub_080dda3c, which contains the body and shared literal/control state. Admit the head and continuation as one semantic module, not as a standalone 124-byte function."
+      "reason": "This 124-byte manifest owner is only FunctionHead_080dd9c0: both paths branch into sub_080dda3c, which contains the body and shared literal/control state. Admit the head and continuation as one semantic module, not as a standalone 124-byte function.",
+      "resolved": true,
+      "resolution": "Admitted as one whole-owner semantic module; ranges registered in semantic/main-regions.json. The blocker was a sizing blocker, not a structural one, and tools/semantic_owner_scope.ts now supplies the row map it required."
     },
     "080ddde0": {
       "lane": "multi_region_function",
@@ -27,7 +29,9 @@
     },
     "080ec100": {
       "lane": "multi_region_function",
-      "reason": "The 144-byte head allocates a 116-byte frame and branches through 080ec190 and 080ec264 into later split regions while preserving live stack/high registers. It is only the front of a much larger effect function and cannot stand alone."
+      "reason": "The 144-byte head allocates a 116-byte frame and branches through 080ec190 and 080ec264 into later split regions while preserving live stack/high registers. It is only the front of a much larger effect function and cannot stand alone.",
+      "resolved": true,
+      "resolution": "Admitted as one whole-owner semantic module; ranges registered in semantic/main-regions.json. The blocker was a sizing blocker, not a structural one, and tools/semantic_owner_scope.ts now supplies the row map it required."
     },
     "080c1798": {
       "lane": "implicit_callee_return_state_module",

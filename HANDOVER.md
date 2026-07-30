@@ -37,9 +37,9 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **372,312
-executable bytes across 636 compiling sources**: 359,522 main-image bytes and
-12,790 overlay bytes. Combined with exact C, **566,702 / 1,339,558 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **391,776
+executable bytes across 641 compiling sources**: 378,986 main-image bytes and
+12,790 overlay bytes. Combined with exact C, **586,166 / 1,339,558 executable
 bytes** are expressed as C. Build that lane
 with `bun run build:semantic`; its sources live under `semantic/` and do not
 claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
@@ -106,6 +106,22 @@ function spans four regions"). Treat the row grouping as evidence, not proof —
 it is a boundary *estimate* to size and assign work, and the admitting agent
 still owns the boundary.
 
+**Executable bytes are an UPPER BOUND, and the tool works at ROW granularity.**
+Two distinct overcounts follow, both measured. First, an *interior* pool — one
+that sits inside a row rather than occupying its own row — is invisible to the
+tool entirely: four of `080ec100`'s six code rows contain one, so its true
+executable size is 3,126 against a reported 3,358. Second, a whole-row pool A literal pool that
+lives in a regular `asm/*.s` row disassembles as perfectly plausible
+`lsrs`/`movs` pairs, so it decodes to mnemonics and is counted as code. The tool
+now flags such rows `POOL?` and reports `suspected_pool=` per owner (272 bytes
+across the open set), but flagging is conservative on purpose — resolving a row
+for certain means assembling it at its real base and checking that sibling
+`ldr rN,[pc,#imm]` loads land in it. The admitting agent for `080be378` did that
+and found 156 of its 3,696 "executable" bytes are pool, giving a true 3,540; the
+`080ec100` agent likewise reclassified a whole 46-byte row the tool had kept as
+code. Use the tool's number to rank and assign; let the admitting agent settle
+the ranges. Expect the settled figure to come in a few percent under.
+
 **Three detection rules it took to get there**, each of which silently corrupted
 the numbers before it was fixed:
 1. *Group over every manifest row, not just the open ones.* An owner's epilogue
@@ -121,14 +137,78 @@ the numbers before it was fixed:
 
 **Measured state of the main image.** The remaining continuation rows are not 80
 separate jobs and not 31,088 bytes: they collapse into **22 owners / 37,128
-executable bytes**, with 240 bytes of embedded pool excluded and only 2 groups
-still unclosed (`080bf1e8`, `080dddb8`, both tiny). Largest first: `080e47b8`
+executable bytes** (upper bound; at least 272 of those are suspected pool), with
+240 bytes of confirmed pool excluded. Of the two groups reported unclosed,
+`080bf1e8` is not an owner at all — it is the last literal pool of `080be378`,
+settled by that owner's admitting agent. Largest first: `080e47b8`
 (7,762 / 232 calls), `080f4168` (4,596 / 108), `080e15e8` (3,858 / 130),
 `080be378` (3,696 / 125), `08026080` (3,584 / 69), `080ec100` (3,358 / 87),
 `080d765c` (3,156 / 91), `0800ebec` (1,804 / 46), `080d4ce8` (1,392 / 40).
-Several already carry blocker notes in `semantic/ordinary-blockers.json` — read
-those before assigning, since the blocker is usually the *reason* the owner
-spans rows.
+**The `multi_region_function` blocker class is stale.** Five owners carry it, and
+its wording is a *request for whole-module accounting* — "admit the head and
+continuation as one semantic module" — not a statement that the work is
+impossible. That accounting now exists, and the first re-probe confirmed it:
+`080dd9c0`, blocked as "only FunctionHead_080dd9c0", was admitted as one
+940-byte module across its three rows with all 23 calls placed, and `080ec100`,
+blocked as "only the front of a much larger effect function", was admitted as
+one 3,126-byte module across nine ranges with all 87 calls placed. Its agent put
+the distinction well: the blocker was accurate as written but was a *sizing*
+blocker, not a structural one. Re-probe the rest (`080e15e8`, `080d765c`,
+`080ddde0`) with their row maps before treating any of them as blocked.
+
+**Wave result, five multi-row owners: 5/5 admitted, 20,428 advertised bytes and
+19,464 registered after the agents settled the pools.** `080e47b8` (7,382 across
+10 ranges, 231 calls), `080f4168` (4,476 / 5 ranges, 108), `080ec100` (3,126 /
+9 ranges, 87), `080be378` (3,540 / 4 ranges, 125), `080dd9c0` (940 / 3 ranges,
+23). Every one of them came in *under* the tool's estimate once interior pools
+were resolved, by 1-7%. None parked. This is the same stale-evidence pattern that
+§6 documents on the exact side.
+
+**`Func_080072e4`..`Func_08007318` are NOT functions — they are a `call_via rN`
+thunk bank.** This is the single most consequential modelling fact in the
+semantic tree: 104 of 637 sources reference the bank across 472 call sites, and
+the sources disagree with each other about what it means. `asm/080072e4.s` is a
+14-entry table, 4 bytes per entry (`bx \register` + `mov r8,r8`), in register
+order r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,sl,fp,ip,sp:
+
+| symbol | is | symbol | is |
+| --- | --- | --- | --- |
+| `Func_080072e4` | call via r0 | `Func_080072fc` | call via r6 |
+| `Func_080072e8` | call via r1 | `Func_08007300` | call via r7 |
+| `Func_080072ec` | call via r2 | `Func_08007304` | call via r8 |
+| `Func_080072f0` | **call via r3** | `Func_08007308` | call via r9 |
+| `Func_080072f4` | **call via r4** | `Func_0800730c` | call via sl |
+| `Func_080072f8` | call via r5 | `Func_08007310` | call via fp |
+
+So `bl Func_080072f0` is an **indirect call whose target is r3**, with r0-r2 as
+the target's arguments — it is not a four-argument routine. The bank exists
+because these targets are ARM-mode helpers relocated into IWRAM, so a Thumb
+caller needs `bx` interworking to reach them; the ROM copies are catalogued in
+`assets/data/saihouchi_arm.json` (7 helpers at `0x08015430`+, 2,652 bytes), which
+also lists each helper's known consumers.
+
+**The good spelling is already in the tree.** `semantic/main/080d0ee0.c` declares
+`void Func_080072f0(void *, const void *, u32, Transfer_080d0ee0)` — the last
+parameter typed as a function pointer, which is faithful. Copy that. The
+spellings to fix on sight, in rough order of how misleading they are:
+`void Func_080072f0()` (prototype-less, 4 files), `void Func_080072f0(s32, s32,
+s32, s32)` (11 files — hides the callee entirely), and any comment calling the
+fourth argument dead, opaque scratch, or an address constant. An IWRAM literal
+such as `0x03000164` in that position is **the relocated helper being called**,
+not scratch.
+
+**Three independent agents rediscovered this in one wave**, which is the measure
+of how much time the convention costs when it is not written down: one found the
+`call_via` table in `asm/080072e4.s`, one traced `Func_080072f0`'s r3 to the
+relocated IWRAM square root at `0x030001d8`, and one found that `Func_080072f4`
+sites vary their r4 target between `renderers[0]`, `renderers[1]`,
+`renderers[i&1]` and `*(void**)0x03001f0c`. That last one is the case where the
+common 6-argument spelling is not merely imprecise but wrong: it silently drops
+the varying target, so two different callees collapse into one name.
+
+Corrected in this session: `080a7478` and `0808d9a4` (comments and declarations).
+Sweeping the other 102 files is open, mechanical work — the fix is a declaration
+and a comment, never a control-flow change.
 
 **Queue trap on a fresh clone.** `bun run semantic:queue` reports `queued=0` on
 any clone that has not run m2c, because it only surfaces regions that already

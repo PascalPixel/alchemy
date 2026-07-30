@@ -37,15 +37,18 @@ typedef signed int s32;
  *
  * Behaviour: this is the per-frame poll for one of the overlay's flag-gated
  * scenes.  It does nothing while flag 0x203 is set.  Otherwise it advances the
- * in-image idle counter, wrapping it to zero and setting flag 512 when it
+ * in-image idle counter, wrapping it to zero and clearing flag 512 when it
  * reaches 300 frames.  While flag 512 is clear it then runs the scene body
  * once: a Func_0808a018 barrier, cue 0x292e, Func_0808a178(8, 0), a
- * Func_080000c0(5) wait, clearing flag 512 via Func_080770c8, and a closing
- * Func_0808a020.
+ * Func_080000c0(5) wait, re-setting flag 512 via Func_080770c8, and a closing
+ * Func_0808a020.  So the scene fires once every 300 frames.
  *
- * Uncertainties: the flag words 0x203 and 512 and the polarity of
- * Func_080770c0/Func_080770c8/Func_080770d0 (read/clear/set) are inferred from
- * how the three are used together across this overlay, not proven here.  The
+ * The flag trio is Func_080770c0 = test, Func_080770c8 = set,
+ * Func_080770d0 = clear.  That assignment is forced here: if Func_080770d0
+ * set flag 512 the body below could never run, whereas clear/set gives the
+ * one-shot-per-300-frames reading.  Func_020010e8's toggle and
+ * Func_02000340's three-flag teardown are consistent with it.  The meanings of
+ * the flag words 0x203 and 512 themselves are not established.  The
  * store of r0 at 0x020002f4 reuses the register the first Func_080770c0 left
  * as zero on this path, which is why the reset is written as a literal 0.
  * The result is whatever r0 holds at the shared exit: the nonzero flag reading

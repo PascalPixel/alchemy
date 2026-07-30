@@ -129,9 +129,9 @@ Alongside the exact lane, reviewed semantic C currently accounts for **581,276
 executable bytes across 1,047 compiling sources**: 382,970 main-image bytes and
 198,306 overlay bytes. Combined with exact C, **791,994 / 1,339,576 executable
 <<<<<<< HEAD
-Alongside the exact lane, reviewed semantic C currently accounts for **622,358
-executable bytes across 1,159 compiling sources**: 385,850 main-image bytes and
-236,508 overlay bytes. Combined with exact C, **833,984 / 1,339,578 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **624,710
+executable bytes across 1,160 compiling sources**: 385,850 main-image bytes and
+238,860 overlay bytes. Combined with exact C, **836,336 / 1,339,578 executable
 bytes** are expressed as C.
 =======
 bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
@@ -140,10 +140,10 @@ sources live under `semantic/` and do not claim byte equality. Use
 of the ordinary review queue.
 >>>>>>> origin/mercury
 
-**26 overlays have zero unconverted rows in the strict queue**, holding
-213,170 strict bytes between them. Regenerate this list rather than editing it —
+**27 overlays have zero unconverted rows in the strict queue**, holding
+217,888 strict bytes between them. Regenerate this list rather than editing it —
 it has drifted twice from being maintained by hand:
-`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,484), `resource_3c8` (12,800), `resource_372` (10,202), `resource_38f` (9,848), `resource_371` (9,650), `resource_39f` (9,278), `resource_3c5` (9,208), `resource_374` (9,148), `resource_3a8` (8,912), `resource_383` (8,652), `resource_391` (7,648), `resource_39a` (7,096), `resource_375` (6,568), `resource_3aa` (6,552), `resource_3b4` (6,462), `resource_3b2` (6,134), `resource_3b7` (6,062), `resource_37b` (6,032), `resource_3bb` (5,896), `resource_3cb` (5,540), `resource_3c6` (5,250), `resource_38d` (5,212), `resource_37f` (4,428), `resource_3a4` (36).
+`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,484), `resource_3c8` (12,800), `resource_372` (10,202), `resource_38f` (9,848), `resource_371` (9,650), `resource_39f` (9,278), `resource_3c5` (9,208), `resource_374` (9,148), `resource_3a8` (8,912), `resource_383` (8,652), `resource_391` (7,648), `resource_39a` (7,096), `resource_375` (6,568), `resource_3aa` (6,552), `resource_3b4` (6,462), `resource_3b2` (6,134), `resource_3b7` (6,062), `resource_37b` (6,032), `resource_3bb` (5,896), `resource_3cb` (5,540), `resource_3c6` (5,250), `resource_38d` (5,212), `resource_370` (4,718), `resource_37f` (4,428), `resource_3a4` (36).
 
 **"Converted in full" means zero unconverted STRICT-QUEUE rows, not that every
 executable byte of the overlay is C.** Measured across those overlays: their
@@ -624,6 +624,12 @@ argument.
 **An overlay can have its OWN `call_via` bank** (`resource_3cb` at 0x020018f0+,
 `bx rN / nop` pairs) separate from the main image's at `0x080072e4`.
 
+**Annotate the listing instead of hand-pairing:**
+`bun tools/overlay_show.ts <ov> <off> -n <n> | bun tools/overlay_call_targets.ts
+<ov> --annotate` rewrites each `bl` with its real callee. Three lanes wrote this
+by hand before it was promoted into the tool; it removes the error class below
+entirely.
+
 **Resolve site -> target with `--json`, never by pairing the tool's summary
 against call shapes.** The summary is a *histogram*, not a mapping. One lane
 inferred the mapping from argument shapes and got it exactly backwards —
@@ -645,6 +651,34 @@ owner in the project.** `resource_3c8:3068` (3,922 bytes, 248 sites) came out at
 **four** different scenes' jump tables enter directly; writing it inline four
 times inflated the count, and one `goto` fixed it. Its 24 `unknown` sites all
 resolved to the owner's own `movs r0,#0` return — long `bl`s, not calls.
+
+**The shared-call-site trap fires in at least FOUR shapes, and decision trees
+hit it constantly.** Writing one C call per arm injected 4-8 phantom calls in
+five separate owners of one overlay. The shapes:
+- one `bl` reached from several arms (use a `goto` into the shared arm);
+- an arm that *falls through* into the next arm's call site (a plain
+  fall-through, not a second call);
+- several jump-table arms funnelling into one `bl` that differ only in a register
+  the arm left set (a `switch` with grouped cases);
+- a shared site reached with different arguments (hoist them into locals).
+The per-target multiset is what catches all four.
+
+**A "transition family" is the highest-value pattern in a map overlay.** Ten of
+`resource_3b2`'s seventeen owners are one family around a single hub: read the
+actor's tile cell, switch on column or row, check companions against a band, call
+the hub, wait two frames, repaint two collision rectangles. X-axis members pass
+the id as `dx`, Z-axis members as `dz` with the rectangle transposed, return legs
+negate it. Convert the hub first and each member costs minutes while the family
+cross-checks itself. **`overlay_twins.ts` does NOT find these** — the bodies
+differ too much — so sort rows by span and eyeball adjacent sizes.
+
+**`>> 20` on a 16.16 coordinate is the tile-grid idiom**, not an odd shift:
+`>> 16` to integers then `>> 4` for the 16-pixel grid. Read as a single shift,
+every column and row constant looks arbitrary.
+
+**Equal span AND equal `calls` is a stronger twin filter than span alone** — it
+found a bit-identical 64-byte pair differing in three pool words that
+`overlay_twins.ts` reported as `groups=0`.
 
 **Shapes that DEFLATE the multiset — the mirror of the inflation list below,
 and the reason to compare per-target rather than eyeball a total.** Both fired in

@@ -17,7 +17,7 @@ s32 Func_080162d4(
     u16 width,
     u16 height,
     s32 flags);
-s32 Func_080165d8(
+void *Func_080165d8(
     s32 created,
     s32 object,
     s32 arg2,

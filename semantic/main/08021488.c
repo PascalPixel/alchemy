@@ -1,5 +1,6 @@
 typedef signed char s8;
 typedef signed short s16;
+typedef unsigned short u16;
 typedef signed int s32;
 typedef unsigned int u32;
 
@@ -10,7 +11,7 @@ struct Effect {
 };
 
 void Func_08016418(s32, s32);
-void Func_080165d8(s32, s32, s32, s32, s32);
+void *Func_080165d8(s32, s32, s32, s32, const u16 *, s32);
 u32 Func_08019d2c(void);
 void Func_0801e41c(s32, s32, s32, s32);
 void Func_08003dec(struct Effect *, s32);
@@ -50,7 +51,8 @@ void Func_08021488(u32 arg0, u32 arg1)
             *(s16 *)((s8 *)state + 0x12f6) = zero;
             Func_08019908(arg0, 1);
             Func_08019908(saved, 1);
-            Func_080165d8(object, Func_08019ba0(29), 68, 2, 0);
+            Func_080165d8(
+                object, Func_08019ba0(29), 68, 2, 0, zero);
             Func_080f9010(81);
             do {
                 Func_08003dec(firstp, 250);

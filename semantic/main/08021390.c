@@ -23,7 +23,7 @@ s32 Func_08019d2c(s32);
 void Func_0801a4fc(s32, s32, s32 *, s32 *, s32, s32);
 void Func_08019908(u32, u32);
 s32 Func_08019ba0(s32);
-void Func_080165d8(s32, s32, s32, s32, s32);
+void *Func_080165d8(s32, s32, s32, s32, const u16 *, s32);
 void Func_080f9010(s32);
 void Func_08003dec(u32 *, s32);
 void Func_080030f8(s32);
@@ -53,7 +53,8 @@ void Func_08021390(u32 arg0)
         *(u16 *)(state + 0x12F4) = zero;
         *(u16 *)(state + 0x12F6) = zero;
         Func_08019908(arg0, 1);
-        Func_080165d8(handle, Func_08019ba0(0x1B), 36, 2, zero);
+        Func_080165d8(
+            handle, Func_08019ba0(0x1B), 36, 2, 0, zero);
         Func_080f9010(81);
         do {
             Func_08003dec(desc, 250);

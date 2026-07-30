@@ -15,12 +15,53 @@ Exact means fully linked machine-code byte equality — not semantic similarity,
 not equal object size.
 
 The active branch is `speed`. Alongside the exact lane, its reviewed semantic-C
-lane currently accounts for **321,312 executable bytes across 608 compiling
-sources**: 308,520 main-image bytes and 12,792 overlay bytes. Combined with exact
-C, **497,886 / 1,339,542 executable bytes** are expressed as C. Build that lane
+lane currently accounts for **327,998 executable bytes across 611 compiling
+sources**: 315,206 main-image bytes and 12,792 overlay bytes. Combined with exact
+C, **504,572 / 1,339,542 executable bytes** are expressed as C. Build that lane
 with `bun run build:semantic`; its sources live under `semantic/` and do not
 claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
 and multi-region traps out of the ordinary review queue.
+
+---
+
+## 0. Semantic-C speed policy
+
+The 2026-07-30 speed run established a repeatable method, not a one-family
+outlier. Consecutive three-owner cohorts converted tens of thousands of reviewed
+bytes while preserving the exact lane and full verification.
+
+1. **Use fresh agents for whole-owner rewrites.** Give each agent one complete
+   owner, its measured byte span, call count, warned registers/thunks, and the
+   requirement to account for every assembly call. Treat m2c as a hint only.
+   Fresh agents completed large 57–74-call owners where long-lived agents began
+   returning analysis without implementation. This runtime has three subagent
+   slots, so a six-agent experiment runs as two immediately consecutive waves
+   of three.
+2. **Batch by established ABI or construct family first.** Owners that visibly
+   publish callbacks through `Func_080cef64` or `Func_080ed408` share the proven
+   six-argument renderer ABI. Fixed transfer, fill, scale, square-root, and
+   owner-initializer callbacks are likewise reusable evidence. The semantic
+   queue discounts only visibly established renderer families; unknown thunks
+   retain the full penalty.
+3. **Rewrite from assembly when m2c loses dataflow.** Missing stack-carried
+   renderer dimensions, fake thunk arguments, unset call-clobbered registers,
+   and conflated high-register lifetimes repeatedly proved to be decompiler
+   defects rather than target blockers. Recover them from predecessor blocks,
+   literal maps, and callback targets. Do not hand-clean a lossy draft for a
+   whole session.
+4. **A manifest row is not always a function.** Follow live stack and
+   high-register state through direct continuation branches. Register the
+   complete executable owner in `semantic/main-regions.json`, excluding literal
+   pools and data gaps. `08026080` is the current witness: its advertised
+   2,138-byte head is one 3,442-byte owner across three executable ranges.
+5. **Verify and bank coherent cohorts.** Run `bun run build:semantic` while
+   agents work, then one full `bun run verify` for the settled cohort. Update the
+   authoritative metrics above, commit by semantic byte gain, and push before
+   starting the next wave.
+
+Parking rule: park only a specific, evidenced ABI or structural blocker. “m2c
+is ugly,” “the owner is large,” and “the first agent ran out of implementation
+time” are reassignment signals, not blockers.
 
 ---
 

@@ -35,7 +35,10 @@ interface Candidate {
   internalExits: number;
   unknownTypes: number;
   highRegisterCallSetups: number;
+  runtimeThunkCalls: number;
   boundaryShape: string;
+  blockedLane?: string;
+  blockedReason?: string;
   draft: string;
   score: number;
 }
@@ -69,6 +72,10 @@ export function analyzeCandidate(
     /^\s*b(?:\.[a-z]+)?\s+Func_08[0-9a-f]{6}\b/gim,
   );
   const unknownTypes = occurrences(draft, /\bM2C_UNK\b/g);
+  const runtimeThunkCalls = occurrences(
+    assembly,
+    /^\s*bl\s+Func_08007(?:2e4|2e8|2ec|2f0|2f4|2f8|2fc|300|304|308|30c|310|314|318)\b/gim,
+  );
   const sourceLines = draft.split("\n").length;
   const assemblyLines = assembly.split("\n");
   let highRegisterCallSetups = 0;
@@ -89,6 +96,7 @@ export function analyzeCandidate(
     internalExits * 250 +
     unknownTypes * 8 +
     highRegisterCallSetups * 100 +
+    runtimeThunkCalls * 250 +
     boundaryPenalty +
     Math.ceil(sourceLines / 10);
   return {
@@ -100,6 +108,7 @@ export function analyzeCandidate(
     internalExits,
     unknownTypes,
     highRegisterCallSetups,
+    runtimeThunkCalls,
     boundaryShape: region.retention,
     draft: relative(ROOT, draftPath),
     score,
@@ -114,6 +123,12 @@ export function semanticQueue(): Candidate[] {
     ...sourceStems(join(ROOT, "src")),
     ...sourceStems(join(ROOT, "semantic", "main")),
   ]);
+  const blockersPath = join(ROOT, "semantic", "ordinary-blockers.json");
+  const blockers = existsSync(blockersPath)
+    ? (JSON.parse(readFileSync(blockersPath, "utf8")) as {
+      owners: Record<string, { lane: string; reason: string }>;
+    }).owners
+    : {};
   const candidates: Candidate[] = [];
 
   for (const region of manifest.regions) {
@@ -126,8 +141,16 @@ export function semanticQueue(): Candidate[] {
       join(ROOT, "work", `${stem}.c`),
     ];
     const draft = paths.find((path) => existsSync(path));
-    if (draft !== undefined)
-      candidates.push(analyzeCandidate(region, draft));
+    if (draft !== undefined) {
+      const candidate = analyzeCandidate(region, draft);
+      const blocker = blockers[stem];
+      if (blocker !== undefined) {
+        candidate.score += 10_000;
+        candidate.blockedLane = blocker.lane;
+        candidate.blockedReason = blocker.reason;
+      }
+      candidates.push(candidate);
+    }
   }
   return candidates.sort(
     (left, right) =>
@@ -175,8 +198,10 @@ if (import.meta.main) {
           `calls=${item.calls.toString().padStart(3)} ` +
           `unset=${item.unsetRegisters} exits=${item.internalExits} ` +
           `higharg=${item.highRegisterCallSetups} ` +
+          `thunks=${item.runtimeThunkCalls} ` +
           `unk=${item.unknownTypes.toString().padStart(2)} ` +
           `shape=${item.boundaryShape} ` +
+          `${item.blockedLane === undefined ? "" : `blocked=${item.blockedLane} `}` +
           `${item.draft}`,
         );
       }

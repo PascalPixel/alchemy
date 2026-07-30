@@ -3538,11 +3538,8 @@ AlchemyC_020015e4:
 	bx	r0
 	.2byte 0xffff
 	.2byte 0x000f
-	push	{lr}
-	bl	.L_02001d24
-	bl	sub_0200388c
-	pop	{r0}
-	bx	r0
+AlchemyC_02001c5c:
+	.space 0xe
 	.2byte 0x0000
 	push	{r5, lr}
 	sub	sp, #8

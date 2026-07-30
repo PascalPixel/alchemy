@@ -275,13 +275,8 @@ AlchemyC_020000dc:
 	.4byte 0x47704800
 	.2byte 0x942c
 	.2byte 0x0200
-	push	{lr}
-	movs	r0, #9
-	movs	r1, #3
-	movs	r2, #0
-	bl	sub_020012c6
-	pop	{r0}
-	bx	r0
+AlchemyC_0200010c:
+	.space 0x10
 AlchemyC_0200011c:
 	.space 0x54
 	push	{lr}

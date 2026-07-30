@@ -2912,28 +2912,16 @@ AlchemyC_0200031c:
 	.4byte 0x02009639
 	.2byte 0x95e9
 	.2byte 0x0200
-	push	{lr}
-	movs	r0, #140
-	movs	r1, #0
-	bl	sub_0200322c
-	pop	{r0}
-	bx	r0
+AlchemyC_020017a8:
+	.space 0xe
 	.2byte 0x0000
 AlchemyC_020017b8:
 	.space 0xa
 	.2byte 0x0000
-	push	{lr}
-	movs	r0, #8
-	bl	sub_020030f6
-	bl	sub_02002d4e
-	pop	{r0}
-	bx	r0
-	push	{lr}
-	movs	r0, #17
-	bl	sub_02003106
-	bl	sub_02002d9a
-	pop	{r0}
-	bx	r0
+AlchemyC_020017c4:
+	.space 0x10
+AlchemyC_020017d4:
+	.space 0x10
 	push	{lr}
 	movs	r0, #148
 	movs	r1, #1

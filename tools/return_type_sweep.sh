@@ -57,7 +57,7 @@ try_flip() {   # $1 = callee, $2 = to-type
   if [ "$result" -lt "$BEST" ]; then
     BEST=$result
     cp "$CANDIDATE" "$CURRENT"
-    echo "  ${1}: $2 -> $3   differing_halfwords=$BEST"
+    echo "  ${1} -> $2   differing_halfwords=$BEST"
     return 0
   fi
   return 1

@@ -475,11 +475,17 @@ Seven admitted modes, all default-off and routed per source in
 | --- | --- | --- |
 | `-fno-cse-two-insn-immediate` | sharing a repeated two-instruction immediate | 109/1,335 |
 | `-fno-cse-pool-immediate` | sharing a repeated literal-pool constant | 110/2,202 |
-| `-fsched-low-dest-first` | ordinal tie-break on r0-r3 argument setters | 139 |
+| `-fsched-low-dest-first` | ordinal tie-break on r0-r3 argument setters, **and a pool-load hoist** | 139 |
 | `-fsched-high-dest-first` | the same on r4-r12, ties with no call in them | 125 |
 | `-fno-sched-alias` | a store/load pair proved independent and reordered | 82 |
 | `-fsched-store-first` | a store sinking behind arithmetic | 308 |
 | `-fno-gcse-insert-load` | a PRE-inserted load the reference lacks | 9 |
+
+**`-fsched-low-dest-first` also fixes a pool-load hoist**, not only the r0-r3
+`movs` ordinal tie-break: an `ldr r2` scheduled ahead of the `movs r0`/`movs r1`
+of an argument group. Neither the `&Value_` spelling nor function-top or
+block-scoped locals touch that, so a six-function family would otherwise have been
+triaged as a SYMBOL_REF-placement park. Try the flag before believing that park.
 
 **Cautions.** Never combine `-fsched-low-dest-first` with
 `-mthumb-immediate-latency` — the latter subsumes and then breaks the same

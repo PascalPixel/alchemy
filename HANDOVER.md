@@ -26,6 +26,34 @@ Know which one you are before you change anything.
 | this file | authoritative | background; the levers do not bind you |
 | direction of flow | exports byte-exact sources to Venus | pulls Mercury's exact C in to override its own semantic C where one exists |
 
+### How work circulates
+
+Three agents, each owning one branch, each pulling from exactly one place. The
+flow is a **cycle**, and no agent pushes to a branch it does not own:
+
+| agent | owns | pulls from | takes |
+| --- | --- | --- | --- |
+| **Vale** | `main` | `venus` | **docs and tools only** |
+| **Mercury Lighthouse** | `mercury` | `main` | everything |
+| **Venus Lighthouse** | `venus` | `mercury` | everything |
+
+Consequences worth knowing before you act:
+
+- **Semantic C never reaches `main` or `mercury`.** Vale takes only docs and
+  tools from `venus`, so `semantic/` stays on `venus` by design. Do not try to
+  push it anywhere else.
+- **Tooling and HANDOVER edits DO circulate to every branch**, the long way
+  round: `venus` → `main` (Vale) → `mercury` (Mercury Lighthouse). That is why a
+  measured lever or a corrected tool is worth writing down properly — it is the
+  only thing that crosses lane boundaries, and it reaches the other lighthouse
+  without anyone coordinating.
+- **Exact C reaches `venus` directly** from `mercury`, which is the override
+  path: when Mercury makes a region byte-exact, the next Venus pull deletes the
+  semantic version. `build_semantic` hard-errors on a duplicate, so this is
+  enforced rather than remembered.
+- **Never push to a branch you do not own.** If Venus work belongs on `main`,
+  it gets there because Vale pulls it, not because Venus pushes it.
+
 Mercury is the slower, stricter run: a function is done only when the linked
 bytes match. Venus is the faster, wider run: it covers ground semantically and
 adopts Mercury's exact sources whenever Mercury produces one for a region Venus
@@ -37,15 +65,17 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **475,156
-executable bytes across 921 compiling sources**: 382,970 main-image bytes and
-92,186 overlay bytes. Combined with exact C, **678,920 / 1,339,572 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **520,374
+executable bytes across 997 compiling sources**: 382,970 main-image bytes and
+137,404 overlay bytes. Combined with exact C, **724,138 / 1,339,572 executable
 bytes** are expressed as C.
 
-**Seven overlays are now converted in full**, none skipping anything:
+**Eleven overlays are now converted in full**, none skipping anything:
 `resource_3b8` (15,028 bytes), `resource_372` (10,202), `resource_371` (9,650),
 `resource_39f` (9,278), `resource_39a` (7,096), `resource_3b4` (6,226) and
-`resource_3c4` (24 of 25 rows, one 2,636-byte dispatcher pre-measured)
+`resource_373` (13,192), `resource_38f` (9,212), `resource_383` (7,792) and
+`resource_3c4` (24 of 25 rows, one 2,636-byte
+dispatcher pre-measured)
 
 **Pre-measured and waiting for a fresh agent: `resource_3c8:3068`**, a 26-way
 `mov pc, r3` dispatcher. Its boundary is settled — prologue at 0x02003068 saving
@@ -355,6 +385,32 @@ ordinary calls: a balanced shared tail declared but not defined, and an alignmen
 `nop` immediately before a real prologue (calling it is calling the function two
 bytes later).
 
+**Drafting loop: compile YOUR file alone, not the whole lane.** `bun run
+build:semantic` is a shared gate — one agent's broken file blocks validation for
+every concurrent lane, and did so for about an hour in one round. Compile a
+single source through `sourceToAssemblyPlan` from `tools/alchemy_gcc.ts` while
+drafting, and run the full `build:semantic` only to confirm before moving on.
+
+**Cheapest link-base witness: a pool word that is a known function start plus the
+Thumb bit.** `0x0200a609` = `Func_02002608 + 1`, `0x0200a7ad` =
+`Func_020027ac + 1`, `0x02008801` = `Func_02000800 + 1`. These are per-frame task
+pointers passed to `Func_080000d0`/`Func_080000d8`, not data. It works on any
+overlay that installs a task and needs no jump table.
+
+**Cross-check imports against a byte-exact sibling — it is free and it is
+banked.** An `assets/code` source in the same overlay was written with the
+*printed* (wrong) `bl` names, e.g. `Func_02002d10`; resolving its own call sites
+shows the real import is `Func_0808a080`. Diffing an exact sibling against
+`overlay_call_targets.ts` therefore confirms each import's arity and field
+offsets against material that already reproduces the ROM, rather than inferring
+them. This is how one lane fixed its actor-record layouts instead of guessing.
+
+**Two owners that share globals should be read together.** Neither
+`resource_38f:08ec` (which sets three globals, installs a task and spins on one
+of them) nor `:27ac` (the emitter, the only writer that clears it) is
+interpretable alone; together the globals are unambiguous. When a spin-wait reads
+a global nothing in the owner writes, find the writer before drafting.
+
 **Overlays share whole routines verbatim — check before drafting anything.**
 `bun tools/overlay_twins.ts --unconverted` groups owners by an instruction
 skeleton that masks the two things which legitimately differ between copies:
@@ -381,6 +437,22 @@ pair — check the target's first halfword before concluding anything.
 They are not calls; `lr` is clobbered harmlessly because the epilogue pops the
 return address off the stack. This inflates site counts and explains a class of
 resolved targets that are neither veneer nor callee.
+
+**The inventory's `calls=` field predates the corrected `bl` decoding and is
+systematically LOW.** Measured on one overlay: 0 against 17 real calls, 58/61,
+62/64, 70/75, 87/91, 143/151, 163/169. It is not a completeness proof in either
+direction — use `overlay_call_targets.ts`'s own `sites=` count, or better, the
+multiset comparison below.
+
+**Thumb bit tells a jump table from a handler table.** `mov pc,rN` does not
+interwork, so jump-table entries carry **no** Thumb bit; an installed-handler
+pool word does (`0x0200c8c9` = `Func_020048c8` + 1). Cheapest way to classify a
+table of in-image addresses at a glance.
+
+**A pool load before a `bl` is only a `call_via` if it names IWRAM.** The
+thunk-bank shape is `ldr r3,[pc] ; bl` — but where the loaded word is in-image
+data (`0x0200dxxx`) rather than the IWRAM band (`0x030001xx`), r3 is an ordinary
+fourth argument. The band is the discriminator, not the shape.
 
 **Completeness proof, best form: compare MULTISETS.** Extract the multiset of
 `bl` targets from `assets/code/<overlay>_overlay.s` and compare it to the

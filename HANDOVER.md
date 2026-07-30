@@ -20,12 +20,34 @@ not equal object size.
 
 In descending order of measured value.
 
-**Overlay strict queues.** Overlay discovery used to stop scanning at the first
-literal pool, so most functions were unreachable; fixing that took the queue from
-20 rows / 6,110 bytes to **457 rows / 108,032 bytes**. Recent lanes there
-converted 2,056, 1,628, 860 and 644 bytes. Rank overlays by *strict* bytes, not
-by the `genuine` figure. Measured ranking: resource_373 (largest remaining), 391,
-39f. resource_383 and resource_37b are worked out to their park lists.
+**Overlay strict queues.** Two discovery fixes took this queue from 20 rows /
+6,110 bytes to **1,334 rows / 311,324 bytes**, and rediscovery of known-exact
+functions from 14% to 67%. Recent lanes converted 2,056, 1,628, 880, 860 and 644
+bytes out of it. Rank overlays by *strict* bytes.
+
+Measured ranking after the second fix: resource_373 17,140 (21 rows),
+resource_3b8 15,684 (15), resource_3bf 13,880 (46), resource_372 10,442 (37),
+resource_38f 9,674 (22), resource_3b2 9,622 (74), resource_3c5 8,928 (32),
+resource_374 8,730 (47), resource_3c8 8,696 (32), resource_3a8 8,670 (31),
+resource_39f 8,306 (39), resource_383 7,864 (18). Of these, **resource_3b8,
+372, 38f, 3b2, 374, 3c8 and 3a8 are effectively untouched territory.**
+
+The two fixes were:
+1. *Pool skipping* — the scan stopped after a return at the first halfword that
+   was not `0x0000`/`0x46c0`, i.e. at every real literal pool.
+2. *Entry-shape recognition* — a leaf opening with `bx lr` (`0x4770`),
+   `movs rN,#imm` (`0x20xx-0x27xx`) or `ldr rN,[pc,#k]` (`0x48xx-0x4fxx`) was
+   refused as an entry, so each such leaf broke the chain and darkened everything
+   behind it. Individually worth +154, +37 and +21 rediscovered functions;
+   `push {regs}` (`0xb4xx`) contributed 0 and was deliberately left out. These
+   shapes are only ever a **relay** — the queue filter still demands
+   `starts_with_prologue`, so a widened shape can never itself become a row.
+
+**Raw row counts are now far noisier**: `unconverted_discoveries` grew 3,835 →
+12,945 and `data_walk_discoveries` 2,768 → 10,031, because relay seeds landing on
+data produce short junk walks. They are all labelled and excluded by the strict
+filter, but any consumer summing raw rows will over-report badly. Filtering to an
+empty `contained_by` matters more than it used to.
 
 **Re-probing old park notes.** The return-type lever (§4) arrived late, so any
 note whose residual is a two-halfword argument-setter swap is stale evidence
@@ -398,13 +420,25 @@ tooling bug: `overlay_verify` takes flags from the command line and says 0, whil
   `-fsched-high-dest-first` and adopted; the note describing it as unreachable is
   obsolete.
 
-**Discovery, unfinished.** The pool-skip fix did not move recall for functions
-whose highest-address instruction is not a return (tail-call and shared-epilogue
-shapes): **419 of the 511 still-missed converted functions start with a standard
-prologue**, so relaxing that gate is a win of comparable size to the fix already
-made. `tools/remaining_survey.ts` also filters `retention === "c_candidate"` and
-so is blind to 96 debt rows (38,456 bytes); widening it to all five debt
-retentions is one line.
+**Discovery: 308 of 934 known-exact functions are still not rediscovered.** The
+predecessor census that found the entry-shape gate is the way to find the next
+one: of the previously-missed set, 374 had no decoded instruction within 512
+bytes — whole dark runs — while the rest were chain breaks. Re-run that census
+against the current 308 before inventing a heuristic.
+
+Two successor rules were built, measured and **rejected**; do not rebuild them
+(the reasoning is recorded above `nextEntryAfterReturn`):
+- *Tail-call chaining* (`b` to a target outside the body) seeds **0** across 96
+  overlays. `walk_thumb` follows unconditional branches, so a tail call's callee
+  is already absorbed into the caller and the caller's last instruction is the
+  callee's return — the existing return chain covers it.
+- *Chaining after an unresolved indirect* (`bx rN`) seeds 3,574 with **zero**
+  precision: none of them landed on a known entry. What follows an unresolved
+  indirect is the dispatch data it reads.
+
+`tools/remaining_survey.ts` filters `retention === "c_candidate"` and so is blind
+to 96 debt rows (38,456 bytes); widening it to all five debt retentions is one
+line.
 
 **Tooling.** `resource_39c:10c0` verifies at 0 halfwords but `overlay_adopt`
 rejects it with 55 differing bytes. Its literal pool sits *inside* its span rather

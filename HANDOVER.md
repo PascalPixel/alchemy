@@ -356,6 +356,25 @@ tens or hundreds. A size-exact residual is a draft or allocation problem that th
 non-flag levers finish; it is not a compiler problem. Judge progress by size
 first.
 
+**Cross-jump parameterisation.** Where the reference merges two identical blocks
+that differ only in one constant — pre-loading `movs r1,#K` before branching into
+a shared tail — gcc will not find that merge from two spelled-out blocks. Write it
+explicitly: `lim = 194; goto common;` / `lim = 241; goto common;` then
+`common: if (y > (lim << 16))`. That took one function from 236 bytes to exactly
+224, and it is the size-fixing lever on that shape.
+
+**A `u16` call result needs a `u16` local, not a `(u16)` cast of an `s32` local.**
+The cast form folds the `lsls #16 / lsrs #16` zero-extend away and comes out
+4 bytes short.
+
+**Two masked byte read-modify-writes need two separate mask locals.** Reusing one
+cost a function its register identities *and* sank the second `strb` past four
+stores — the same family as one local holding two call results, extended to masks.
+
+**Flat `y > A && y <= B` on two constants** is converted by gcc into the unsigned
+`adds`/`cmp`/`bhi` range-check idiom. Nesting the ifs is required to keep two
+separate signed compares.
+
 **Decrementing a halfword in place pools `0xffff`.** `*(u16 *)h = *(u16 *)h - 1;`
 emits a pooled `0xffff` and an `adds`, where
 `{ s32 t = *(u16 *)h; t -= 1; *(u16 *)h = t; }` gives the reference's

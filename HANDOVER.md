@@ -183,6 +183,15 @@ grinding. A prototype-less shared declaration blocks it entirely.
 and this changes argument-setup order, not just hygiene. A shared prototype-less
 declaration suppresses arg0-first ordering at *every* site that uses it.
 
+**The alias rule extends to arity zero, and that case is invisible to the return-
+type sweep.** A repeated `bl` to one address where the second site sets *no*
+arguments is a void-no-arg alias, not a re-passed constant — the reference is
+reusing a live `r0` left by the preceding compare. On `resource_39f:0cd0`,
+spelling it `Func_02003a98(0)` cost 2 bytes and 62 halfwords, and neither naming
+the result nor passing it back recovered anything; `extern void
+Func_02003a98_b(void);` took the function from 156/154 to exactly 0. Tell: the
+draft is 2 bytes long and one call site has an argument the reference never sets.
+
 **Constant spelling.** Two inputs decide it; using one alone will mislead you.
 What the reference does is the target; the factorisation tells you what gcc does
 by default and therefore whether you must intervene. A constant that is `k << n`
@@ -206,15 +215,78 @@ symbol form is one rtx that CSE always merges.
 swapped. Splitting the RMW into two statements is necessary but not sufficient —
 *which operand opens the chain* decides the register identities.
 
+**The mask-first RMW rule covers OR too — and does *not* generalise past stores.**
+`{ s32 w = 1; w |= *p; *p = w; }` gives the reference's `ldrb r2 / movs r3,#1 /
+orrs`, while `*p |= 1;` swaps the two registers; that was the last 2 halfwords on
+`resource_3c8:1150`, previously filed as "no source lever found". The limit: where
+the masked value feeds an *add* rather than being stored back, inline is correct
+and splitting is worse (`resource_39f:02a8`, 12 → 19). The lever is about the
+store, not the mask.
+
+**Arm order decides branch sense, and it is worth ~15 halfwords.**
+`if (x <= K) {A} else {B}` emits `cmp / bgt .else / A`, laying A out first; the
+natural `if (x > K) {B} else {A}` lays B first and inverts the condition. Match
+the reference's *layout* order, not the reading order you would choose.
+
 **Pad structs explicitly so fields land at their real offsets.** A naive
 `u8 pad[0x48]; s32 f48; void *f50;` puts the pointer at 0x4c and silently shifts
 every subsequent offset; the resulting diff looks like a scheduling problem.
+
+**Function-top locals for word constants can subsume routed flags — try them
+before routing a flag.** The shifted-constant rule above is the narrow case; the
+general lever is to hoist *every* non-trivial word call argument into its own
+function-top `s32` local, including constants that pool rather than factorise.
+Measured on `resource_38f:2608`: 44 halfwords → 15 under
+`-fno-cse-two-insn-immediate` → 9 adding `-fsched-low-dest-first` → 2 after a
+struct retype → **0 at baseline with all flags removed**, once `0x620000`,
+`0x690000` and the pool-only `0x010d0000` each became a function-top local. Two
+rules attach: block-scoping the same constants at the call site stayed at 2 (the
+function-top/block-scope split is real and load-bearing), and a constant used at
+several sites wants **one local per site** — a single shared local re-creates the
+`push {r7}` hoist. This is the cheapest thing to try on a function you are about
+to route, and it leaves the tree flag-free.
+
+  *But it inverts on call sheets with repeated shifted constants.* A second lane
+  measured the opposite sign on `resource_39f:1818` (132 halfwords → 104 worse)
+  and `:2004` (148 → 116 worse): there, plain literals composed with
+  `-fno-cse-two-insn-immediate` is right and hoisting is actively harmful. The
+  two results agree on the mechanism — hoisting wins when each site gets its own
+  local, and loses when one constant is shared across many call sites, which is
+  precisely the call-sheet shape. **Probe both directions; do not assume the
+  sign.** It costs two probes at 0.12 s each.
+
+**Give a sub-object reached through a pointer field its own struct type.** With
+`u8 *q = p->f50`, gcc cannot prove `q[0x26]` independent of `p->f23` and keeps
+program order, where the reference hoists the `ldrb` above the `strb`. Retyping
+`q` as `struct Sub *` closed 7 of 9 halfwords in a single edit. Same family as the
+`union Slot` alias lever, but the fix *adds* type distinction rather than blocking
+a hoist. Tell: a store/load pair in program order that the reference has swapped,
+with both objects reached through a `u8 *` field.
 
 **`&Value_` also applies to loop invariants, not only call arguments.** A pooled
 constant used inside a loop is rematerialised per iteration from a plain literal;
 declaring `extern u8 Value_fffff800; s32 d = (s32)&Value_fffff800;` in the block
 *enclosing the loop* hoists it into a callee-saved register as the reference does.
 Function-top placement instead costs 4 bytes.
+
+**Narrowing decides literal-pool *placement*, not just load width.** A pool-split
+residual is a source-shape problem, not a CSE problem — neither CSE mode moves a
+pool. On `resource_3b8:0108`, `s16 t = (u16field + K) & ~0x3fff;` emits the
+reference's `ldr` **and** its mid-function pool with a `b` jumping over it, while
+hoisting the same arithmetic through an `s32` local emits an identical `ldr` but
+floats the whole pool to the function end, losing 8 bytes and the duplicate pool
+word. Attack pool placement by re-narrowing the expression.
+
+**`(s16)x == K` is spelled `((s32)x << 16) == (K << 16)`.** A direct comparison
+on an `s16` local compiles to a plain `cmp` and comes out 4 bytes short of the
+reference's `lsls #16 / movs #0x80 / lsls #23 / cmp`.
+
+**To pin a constant into a callee-saved register, reuse a live local rather than
+declaring a fresh one.** Assigning the constant to the local whose value the
+preceding compare just consumed went 117 → 32 halfwords; an equivalent fresh
+`s32 m = 0x4000;` is rematerialised at the call site. This is the mirror image of
+the "one local holding two call results misallocates" rule — for *call results*
+sharing a local hurts, for *constants* sharing is what matches.
 
 **Size short by 2-4 bytes, and the reference re-reads one address, means
 `volatile`.** The mechanical tell is the *short size*, not the shape of the diff:
@@ -471,8 +543,9 @@ two levers land.
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**
-- The same **two-instruction immediate** built at two or more call sites (unless
-  routed, §7).
+- ~~The same **two-instruction immediate** built at two or more call sites.~~
+  **This class is now disproved — see below.** It is listed here only because
+  hundreds of old notes still cite it.
 - **DMA descriptor `stmia` groups** from struct members. `-mgrouped-dma-store`
   does *not* group struct-member stores. Correcting `LAWS.md`: with a `volatile`
   descriptor plus the flag, every group *but the last* forms — the peephole does
@@ -488,7 +561,27 @@ two levers land.
 - **Per-site contradictory argument orders** where a prototype-less shared
   declaration is required — the per-site cast is the only escape.
 
+**Residual fingerprints that are *not* what they look like:**
+- **Pool halfwords transposed within each word** (`ours=0000 ref=034b` alternating
+  with `ours=034b ref=0000`) is a **mis-read constant**, not a span or emission
+  problem: the draft had `0x34b0000` where the pool word is `0x0000034b`. Read
+  constants off `overlay_show`'s pool listing, never off the `lsls` context.
+- **A diff inside the literal pool** can be the *sign* of a range-check operand:
+  `(u16)(h - 0x3001)` pools `0xffffcfff`, `(u16)(h + 0xcfff)` pools `0x0000cfff`.
+  Easily misread as a span error.
+
 **Disproved — do not trust these in old notes:**
+- **"Repeated same-bb two-instruction immediate; cse1/cse2 merge it; needs an
+  unrouted const-remat mode."** The paired CSE modes *are* that mode, and the
+  notes predate them. The tell is that the pair only works together — either
+  alone is worse than baseline. Measured: `resource_372:0f38` 84 halfwords
+  baseline → 172 with `-fno-cse-two-insn-immediate` alone (and 4 bytes long) →
+  152 with `-fno-cse-pool-immediate` alone (4 bytes short) → **54 paired**, and
+  the function then closed. `:1154` 140 → 199 / 170 → **36 paired**. Every note
+  reading "PARKED ON SIGHT (same-bb repeated 2-insn const)" is stale evidence and
+  should be re-probed with both modes on. This is the single largest known pool
+  of recoverable parks — treat it the way the return-type lever's backlog was
+  treated in §5.
 - "Stack-argument allocation blocker" — a source shape (§4), and it had parked
   five large sheets.
 - "Not producible from C / needs linker work" on resource_379 — refuted with the
@@ -652,6 +745,14 @@ compute-bound, so run **five or six** and re-measure `/proc/loadavg` before
 assuming a ceiling. If probe latency starts climbing well above ~150 ms, that is
 the real signal to stop adding lanes.
 
+**Where five lanes actually saturates a 4-core host.** Measured with five lanes
+running: load average **3.60**, and a warm `build_claimed` that costs ~0 s idle
+took **17.6 s** — longer than the entire warm bank cycle on a quiet machine. That
+is the ceiling arriving, not a fluke, and a sixth lane there buys nothing but
+contention. Memory is never the constraint (943 MB of 16 GB at five lanes). So
+the rule is not "five lanes"; it is **roughly one lane per core, verified against
+loadavg and probe latency**. On a bigger host, scale up — see §10.
+
 The binding constraints are instead: walkers must never share an overlay (the
 overlay `.s` file is the only mutable artifact), and only the main agent may run
 git, the build scripts, `full_c_progress.ts` or `overlay_inventory.ts`. The bank
@@ -664,3 +765,59 @@ near-miss before believing the park; do not expect it to close a backlog. Cheap
 models are not useful for drafting here — the ≤32-byte "easy" population is 90%
 veneer thunks, word-table interiors and mid-function fragments, and the genuine
 small leaves are already taken as each walk passes them.
+
+---
+
+## 10. The Mercury run — scaling on a fast local host
+
+This section exists because the project is being moved off a small cloud
+container onto a fast local machine. The cloud sessions were **reasoning-bound
+per lane but core-bound in aggregate**; a bigger host changes only the second
+term, so read this as "how to spend cores", not "how to work".
+
+**What the ceiling actually is.** Measured on the 4-core cloud host: one lane
+idles at ~120 ms per probe; two lanes, load 1.18, 137 ms; five lanes, load 3.60,
+and a warm `build_claimed` that costs ~0 s idle stretched to 17.6 s. Memory never
+bound (943 MB of 16 GB at five lanes). So the working rule is **about one lane per
+core**, and the falsifiable stopping signal is **probe latency climbing past
+~150 ms** — measure it, do not guess it. On a 16-core machine expect 16-20 lanes
+to be sane; the scaling is close to linear because lanes share nothing but the
+repo.
+
+**What must stay serial, at any core count.** These are correctness constraints,
+not performance ones:
+- Two lanes must **never share an overlay**. The overlay `.s` file is the only
+  mutable artifact, and adoption rewrites it. Assign whole overlays — the
+  "whole owner, not manifest row" rule.
+- Only the coordinator runs git, the build scripts, `full_c_progress.ts` or
+  `overlay_inventory.ts`. `tools/bank_cycle.sh` already tolerates lanes adopting
+  mid-build (it retries), so lanes never need pausing to bank.
+
+**Assign overlays by small-row count, not by total strict bytes.** This was
+measured the hard way: `resource_3b8` ranks second by strict bytes (15,684) but
+its queue is 7 rows whose smallest is 348 bytes and whose largest is 7,468 — a
+lane spent a full session there and adopted nothing. Overlays with many small
+rows convert; overlays with a few huge rows park. Rank candidates by rows under
+~400 bytes.
+
+**The largest recoverable backlog is stale park notes, not new territory.** Two
+independent classes were disproved this session (§6): the "repeated same-bb
+two-instruction immediate" class, which the paired CSE modes close, and several
+notes predating `-fsched-low-dest-first` and `-fno-sched-depend-count`. One lane
+re-probed six old notes in ~4 minutes and closed three. With many cores, a
+dedicated **re-probe sweep across every existing note in `work/claude/notes/`** is
+almost certainly higher yield per core-hour than walking new overlays, and it is
+purely mechanical. Do that first.
+
+**Where to resume walking**, with the next offset each lane had already decoded:
+`resource_3c8:07d8` (200), `resource_39f:1520` (176), `resource_38f:0304` (196),
+`resource_372:1348` (336 — a direct structural sibling of the adopted `0f38` and
+the drafted `1154`; copying `work/claude/resource_372-1154.c` and substituting
+constants should land it quickly). `resource_3b2` (74 rows) and `resource_374`
+(47 rows) are the best unassigned overlays by the small-row criterion.
+
+**Handing the branch back.** The branch is `claude/continue-decompilation-3drfw0`
+and every cycle is banked and pushed, so it is always resumable from origin. To
+hand back: push, and make sure this file's §1 ranking and §8 open problems reflect
+whatever the run learned. Nothing else is needed — there is no session state
+outside the repo.

@@ -997,6 +997,68 @@ never re-probed: `resource_3c8:1d48` (floor 3 halfwords) and `resource_379:0074`
 (8 of 288 instruction groups differing — measure this one by group equality, not
 halfwords, per §2).
 
+**The 60-byte squared-distance family — floor 20/60 bytes, two named residuals,
+780 bytes behind it.** One fingerprint (`1fwqz6zhzfrzo`), 13 strict unconverted
+members, every one 60 bytes: `resource_373:0030`, `389:0030`, `391:0030`,
+`392:0030`, `393:0030`, `39f:0030`, `3b2:0030`, `3b4:0030`, `3b5:0040`,
+`3bf:0030`, `3c4:0030`, `3c5:0030`, `3c8:02f0`. It is the cheapest large payoff
+in the overlay queue — one correct draft closes all 13.
+
+The shape is a 3D squared distance on 16.16 fixed point, and **the call takes four
+arguments, not one**. That was the whole discovery: the reference's `ldr r3,[pc]`
+of `0x030001d8` immediately before the `bl` is the *fourth* argument, and the
+`dz*dz`/`dy*dy` left in r1/r2 are arguments 2 and 3, not dead intermediates.
+Spelling it one-argument floors at 46 differing bytes; two-argument at 23;
+four-argument at **20**. The constant is a plain literal, not `&Value_` — it has
+no `k<<n` factorisation, so it pools by itself (§4's third row).
+
+Best draft (`differing_bytes=20`, size exact; `e.c`/`j.c`/`l.c` all reach it):
+
+```c
+typedef signed int s32;
+extern s32 Func_020061c0(s32 sum, s32 c, s32 b, s32 context);
+s32 Func_02000030(s32 *a, s32 *b) {
+    s32 dx = (*a++ - *b++) >> 16;
+    s32 dy = (*a++ - *b++) >> 16;
+    s32 dz = (*a - *b) >> 16;
+    return Func_020061c0(dx * dx + dy * dy + dz * dz, dz * dz, dy * dy, 0x030001d8);
+}
+```
+
+Instructions 1-9 and 13-20 match the reference exactly. Exactly two residuals
+remain, and they are worth attacking as one:
+
+1. The reference emits `subs r3,r3,r2` (the `dz` delta) **before** all three
+   `asrs`; we emit it between the second and third. Writing the three deltas as
+   plain statements and shifting them afterwards *does* produce that order, but
+   scrambles register allocation from instruction 4 onward (24 bytes, worse).
+2. The reference spends an extra `mov r3,r1` scratch copy before the final
+   `adds r0,r0,r3`, then immediately reloads r3 with the pooled constant. We fold
+   it to `adds r0,r0,r1`. This is the one instruction of the size difference
+   (26 emitted against 27).
+
+**All nine routed modes were swept against the four-argument draft and none beats
+baseline** — `-fsched-low-dest-first` is actively worse (15 mismatched
+instructions against 10), `-fno-sched-depend-count` worse (12), the rest are
+neutral. So this is a source-shape problem, not a routing problem; do not spend
+another sweep on it. The untried levers are §4's return-type lever on
+`Func_020061c0` (it is currently spelled `s32`-returning) and a struct/array
+spelling of the coordinate triple.
+
+Note for whoever picks this up: `work/claude/overlay_verify.ts` still does not
+exist on `mercury`, and `mode_sweep.ts` is main-image only — it resolves a stem to
+a ROM address, so it cannot take an overlay target. The working overlay loop is a
+**dry-run `overlay_adopt.ts`** (no `--apply`), which prints
+`differing_bytes=N size=A/B` in about a second:
+
+```sh
+bun tools/overlay_adopt.ts resource_373:0030 --source draft.c --span 60
+```
+
+Equal sizes confirm the span; drive `differing_bytes` to 0. Because that path
+takes flags from routing rather than argv, sweep modes by compiling with `xgcc`
+directly and diffing the assembly against `overlay_show.ts` output.
+
 ---
 
 ## 9. Required checks

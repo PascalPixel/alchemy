@@ -37,14 +37,23 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **462,426
-executable bytes across 902 compiling sources**: 386,840 main-image bytes and
-75,586 overlay bytes. Combined with exact C, **657,376 / 1,339,558 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **466,720
+executable bytes across 906 compiling sources**: 386,840 main-image bytes and
+79,880 overlay bytes. Combined with exact C, **661,670 / 1,339,558 executable
 bytes** are expressed as C.
 
-**Three overlays are now converted in full**, none skipping anything:
-`resource_3b8` (15,028 bytes, 7 owners), `resource_372` (10,202 bytes, 16 rows)
-and `resource_39a` (7,096 bytes, 64 rows). Build that lane
+**Four overlays are now converted in full**, none skipping anything:
+`resource_3b8` (15,028 bytes, 7 owners), `resource_372` (10,202 bytes, 16 rows),
+`resource_371` (9,650 bytes, 30 rows) and `resource_39a` (7,096 bytes, 64 rows).
+`resource_3c8` is 31 of 32, its one remainder pre-measured (below).
+
+**Pre-measured and waiting for a fresh agent: `resource_3c8:3068`**, a 26-way
+`mov pc, r3` dispatcher. Its boundary is settled — prologue at 0x02003068 saving
+`r5,r6,r7,lr` plus `fp/sl/r9/r8` with a 12-byte frame, matching unwind at
+0x02003fa8-0x02003fb8 with `r0 = 0` before it, so it returns `s32`. That is
+**3,922 bytes as one owner across 18 inventory rows with ~260 static calls**; the
+18 sub-rows are `call:` seeds (import identities), not real entries, and the only
+true internal structure is the jump table. Build that lane
 with `bun run build:semantic`; its sources live under `semantic/` and do not
 claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
 and multi-region traps out of the ordinary review queue.
@@ -270,8 +279,11 @@ function's interior cannot be a call target.
 That also explains `resource_373`'s 0x55e0 spread — identities, not locations —
 so nothing there is anomalous after all.
 
-**Three overlays are now confirmed at the 0x02008000 base** (`resource_3bf`,
-`resource_3c4`, `resource_372`) and a fourth (`resource_39a`) by four witnesses.
+**Six overlays are now confirmed at the 0x02008000 base** — `resource_3bf`,
+`resource_3c4`, `resource_372`, `resource_39a`, `resource_371` (five witnesses)
+and `resource_3c8` (six, three of them drawn from byte-exact `assets/code`
+sources, so the base is proven against banked material). Assume the base until
+shown otherwise, but confirm it before relying on any pool word.
 Cheapest witnesses, in order: a jump-table base pool word against the table's
 physical file offset; an installed per-frame callback pool word that equals a
 known function start + the Thumb bit; and any `Data_0200bxxx` symbol that lands
@@ -290,6 +302,18 @@ On an overlay whose `bl`s are identities, such rows are ordinary and convert
 normally — `resource_39a` converted all 64 on that basis. Establish which regime
 your overlay is in *before* skipping anything; the cheapest test is whether the
 target range extends past the image end.
+
+**The cheapest witness that a `bl` target is a per-call-site label: find two
+near-identical owners.** `resource_371:008c` and `:00d4` are byte-identical over
+all 72 bytes except **two** values (an immediate 42 vs 24, a pool word 0x809 vs
+0x80a). Their `bl` halfwords are bit-identical, yet the printed targets differ by
+exactly 0x48 — the spacing between the two owners. So `Func_0200421c`/
+`Func_02004264` and `Func_020044d2`/`Func_0200451a` are provably the *same two
+callees* under four names. The same relation holds for the triplet `:1888`/
+`:1938`/`:19e8` (targets 0xb0 apart) and the pair `:155c`/`:1680` (0x124 apart).
+A two-value diff between sibling owners is the cheapest proof available, and it
+is the positive half of the identity finding above — worth looking for early in
+any new overlay.
 
 **Two `Func_` names can be the same import, and one name can take different
 argument counts** at different call sites in the same owner. Old-style
@@ -327,6 +351,30 @@ targets, not call sites**: `0x02000920` has 20 sites but `calls=18`. The gap is
 exactly the number of imports reached with two different argument counts — on
 that 2,716-byte owner, 245 sites − 228 distinct = 17 such imports, which the
 multiset comparison confirms rather than leaves as a discrepancy to chase.
+
+**And `calls` can UNDERCOUNT outright** where a jump table sits inside the
+executable span and disassembles as plausible code: `resource_371:037c` reports
+1 call against 4 real ones, and `:06ec` reports 18 against 49. Never treat the
+field as an upper bound.
+
+**The overlay image is writable EWRAM, not ROM, and is used as save state.**
+`resource_3c8:4bd8` advances byte cursors stored at `Data_0200f72c`/
+`Data_0200f78c` — file offsets 0x772c/0x778c under the 0x8000 base — with
+`str r3, [r0, r4]`. Dialogue progress lives in the overlay's own data. Do not
+model overlay data as `const`.
+
+**Halfword coordinate views: the s16 at +0x0a and +0x12 are the integer parts of
+the 16.16 words at +0x08 and +0x10.** The byte-exact `resource_3c8:14f4` already
+models the same record twice for this reason (an s32 pair and an s16 pair).
+Recognising it avoids declaring an illegal overlapping struct; the
+[x, x+7] x [z, z+7] rectangle guards in that overlay are all tile tests on those
+halfwords.
+
+**r4 is used as call-clobbered scratch without being saved** in several owners
+(`resource_371:011c`, `:01c4`, `:0598`, `:2768` under `push {lr}` or
+`push {r5,r6,lr}`; also twice in `resource_372`). Nothing observable depends on
+it and the bytes are not in doubt — but it reads as a decoding error, so note it
+in the file rather than "fixing" it.
 
 **`contained_by` seeds inside an owner are artefacts of the same thing.** Rows
 like `0200153e`, `020028d8`, `02002abc` are plain `movs`/`lsls` instructions in

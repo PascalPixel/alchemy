@@ -26,7 +26,7 @@ game.
 
 ## Coverage map
 
-![Treemap of the English Golden Sun ROM: the left card divides all 8,388,608 cartridge bytes into main-image code, compressed code overlays and asset data; the right card divides the 1,339,540 audited executable bytes into the main image and 96 decoded overlays. Tiles are shaded blue for byte-exact C, teal for reviewed semantic C, grey for regions still held as assembly and pink for non-code asset data.](assets/readme/gs1-en-coverage.svg)
+![Treemap of the English Golden Sun ROM: the left card divides all 8,388,608 cartridge bytes into main-image code, compressed code overlays and asset data; the right card divides the 1,339,574 audited executable bytes into the main image and 96 decoded overlays. Tiles are shaded blue for byte-exact C, teal for reviewed semantic C, grey for regions still held as assembly and pink for non-code asset data.](assets/readme/gs1-en-coverage.svg)
 
 Every byte of the English cartridge. The left card is the ROM as it ships; the
 right card is the audited executable denominator behind Full-C Byte Share. Blue
@@ -42,12 +42,17 @@ build output—so either lighthouse can refresh it in about a second:
 bun run coverage
 ```
 
-Mercury refreshes the exact lane and Venus the semantic lane as they bank work,
-and each branch draws the other lane from the newest ref it can see. The
-measured totals live in
-[`metrics/gs1-en-coverage-map.json`](metrics/gs1-en-coverage-map.json); the
-exact-C numbers behind the picture are reconciled against
-`metrics/gs1-en-progress.json` before it is written, and the semantic lane is
+Neither lane lives here. The exact lane is read from the Mercury branch and the
+semantic lane from Venus, and the map records which tree each came from, so the
+picture on `main` shows the two lighthouses as they actually stand rather than
+whatever this branch happens to carry. Each lighthouse draws its own lane from
+its working tree and the other from the newest ref it can see.
+
+The measured totals live in
+[`metrics/gs1-en-coverage-map.json`](metrics/gs1-en-coverage-map.json). The
+exact-C numbers behind the picture are reconciled against the
+`metrics/gs1-en-progress.json` of the same tree the lane was drawn from, and a
+disagreement is an error rather than a redrawn picture. The semantic lane is
 drawn beside the headline metric rather than folded into it.
 
 ## Clean-room boundary
@@ -74,7 +79,11 @@ bun run progress
 ```
 
 The exact fraction is stored in
-[`metrics/gs1-en-progress.json`](metrics/gs1-en-progress.json). Function
+[`metrics/gs1-en-progress.json`](metrics/gs1-en-progress.json), which measures
+the tree it sits in. On this branch that is not the leading edge: exact C
+advances on the Mercury branch and reaches `main` only when those conversions
+are merged, so the coverage map above—drawn from Mercury's ref—is the current
+figure, and this file is the smaller number until then. Function
 counts, source ownership, asset round trips, and assembly-region counts are
 diagnostics rather than overall decompilation progress. Historical first-parent
 measurements are published non-destructively in

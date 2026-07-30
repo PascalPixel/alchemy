@@ -14,6 +14,24 @@
           "size": 548
         }
       ]
+    },
+    {
+      "entry": "0x080d4ce8",
+      "evidence": "One function with a complete prologue at 0x080d4ce8 and live stack/high-register state carried by direct branches through 0x080d5094. Embedded literal pools at 0x080d4d50-0x080d4d70, 0x080d5052-0x080d5094, and 0x080d5238-0x080d5258 are excluded.",
+      "executable_ranges": [
+        {
+          "address": "0x080d4ce8",
+          "size": 104
+        },
+        {
+          "address": "0x080d4d70",
+          "size": 738
+        },
+        {
+          "address": "0x080d5094",
+          "size": 420
+        }
+      ]
     }
   ]
 }

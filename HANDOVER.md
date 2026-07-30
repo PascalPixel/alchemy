@@ -744,6 +744,25 @@ reference puts a neighbouring one-instruction immediate between a rematerialized
 constant's `movs` and its `lsls`). `-mthumb-immediate-latency` halves it on one
 member; the rest of that sweep is recorded in the write-up.
 
+## Two new levers (2026-07-30 overlay tail lane)
+
+- **The resource_37b stack-argument blocker is a source shape, not a compiler mode.**
+  For a 6-argument call with two distinct constant stack arguments, open a scope at
+  the call site and comma-declare the pair there:
+  `{ s32 k5 = 4, k6 = 3; Func(a,b,c,d,k5,k6); }`. That yields the reference's
+  `movs rA,#k5 / movs rB,#k6 / str / str`; function-top locals (the form the old
+  note tried) keep the serialised `movs r3 / str / movs r3 / str`. Took
+  resource_37b 0x02002244 and 0x020022f4 from 3 to 0. The five large sheets parked
+  behind `notes/resource_37b-stackargs.md` should be re-attacked.
+- **A narrow bitfield beats hand-written mask/or read-modify-write.** Where the
+  reference does `ldrh / and ~0x1ff / and 0x1ff / orr / strh` with both masks
+  hoisted into high registers, the exact form is a `u16 f:9;` bitfield plus a plain
+  `p->f = v;` — int-typed mask locals inside the loop get the same instructions but
+  the wrong operand/register identities (23 halfwords), the bitfield gets 0. Also
+  from the same function: a loop-invariant addend is better spelled *at the use*
+  (`p->f04 = sy + 8;`) than hoisted (`sy += 8;` before the loop) when the reference
+  interleaves it with the loop-counter initialisation.
+
 ## Required checks
 
 Before every exact-C commit:

@@ -369,6 +369,34 @@ except the call's own RTL form, because `schedule_insns` purges death notes
 distinguish two sites of one symbol — which is why the fix has to be in the
 source, and closes that search.
 
+## Big word-store init sheets are the cheapest bytes in the project
+
+Do not be deterred by heavy `r8`-`fp` traffic and `adds r3,#4` chains in an
+initializer sheet: four resource_37b functions of 232-256 bytes each (49 word
+stores) each came out **exact on the first try** from flat `s32 *p = Data_...;`
+then `p[i] = literal;` assignments — 992 of that lane's 1,500 bytes. Look for
+this shape first in any unwalked overlay.
+
+Related lever: **split a shared addend out of sibling scaled expressions.**
+`Func(a0, a1*16+8, a2*16+8)` emits `movs r3,#8` twice; hoisting to
+`t1 = a1*16; t2 = a2*16;` then `Func(a0, t1+8, t2+8)` puts the two `lsls`
+back-to-back and shares one `movs r3,#8`.
+
+**Route flags per function, not per overlay.** In resource_37b
+`-fno-cse-pool-immediate` is free on all 21 default-flag adoptions, but
+`-fsched-low-dest-first` *regresses* its three large word-store sheets
+(02001c14, 02001d14, 02001e10). Both modes are keyed by source path precisely so
+this is expressible; a lane that routed by overlay would have broken working
+conversions.
+
+Still open there: a **stack-argument allocation blocker** (note
+`work/claude/notes/resource_37b-stackargs.md`) gating every remaining large sheet
+in that overlay — for a 6-argument call with two distinct constant stack
+arguments the reference emits `movs rA,#k5 / movs rB,#k6 / str rA,[sp,#0] /
+str rB,[sp,#4]` while we serialise through one scratch register. It is register
+allocation, not scheduling; no flag or source form has been found, and it is a
+good candidate for the next compiler lane.
+
 ## The `_b` alias suffix changes argument-setup order, not just hygiene
 
 A shared prototype-less declaration (`extern void Func_0200620a();`) used at two

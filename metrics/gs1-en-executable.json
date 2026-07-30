@@ -2474,7 +2474,7 @@
         "start": 134718800,
         "end": 134718894,
         "kind": "thumb",
-        "evidence": "asm/0807a550.s:compiler_output"
+        "evidence": "src/0807a550.c:byte-identical-claimed-C"
       },
       {
         "start": 134718894,

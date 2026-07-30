@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "main_owners": [
+    {
+      "entry": "0x080ddde0",
+      "evidence": "One function with a complete prologue at 0x080ddde0 and live stack/high-register state carried by direct branches into 0x080de0d4; the intervening 72-byte 0x080de08c region is a literal pool and is excluded.",
+      "executable_ranges": [
+        {
+          "address": "0x080ddde0",
+          "size": 684
+        },
+        {
+          "address": "0x080de0d4",
+          "size": 548
+        }
+      ]
+    }
+  ]
+}

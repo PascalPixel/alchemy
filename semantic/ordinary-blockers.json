@@ -13,6 +13,14 @@
       "lane": "multi_region_function",
       "reason": "This 124-byte manifest owner is only FunctionHead_080dd9c0: both paths branch into sub_080dda3c, which contains the body and shared literal/control state. Admit the head and continuation as one semantic module, not as a standalone 124-byte function."
     },
+    "080ddde0": {
+      "lane": "multi_region_function",
+      "reason": "One function spans a 684-byte first fragment, a 72-byte embedded literal pool currently mislabeled executable, and a 548-byte continuation sharing the live frame and sole epilogue. Merge the executable rows and classify the pool before semantic admission can account for the full 1,232-byte behavior."
+    },
+    "080e15e8": {
+      "lane": "multi_region_function",
+      "reason": "The 316-byte FunctionHead_080e15e8 allocates a 336-byte frame and branches directly into sub_080e1724, which contains the body and eventual epilogue. It requires noncontiguous/main-module accounting rather than standalone admission of the head."
+    },
     "08095778": {
       "lane": "cross_file_abi",
       "reason": "The modulo result passed here conflicts with the live pointer-base interpretation in the current exact 080955b0 source. Reconstruct the call family jointly before admission."

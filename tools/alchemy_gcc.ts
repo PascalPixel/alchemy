@@ -505,6 +505,21 @@ const NO_GCSE_INSERT_LOAD_OVERLAY_SOURCES = new Set([
 const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3bd_c_02000a54.c",
 ]);
+// The pool-word sibling of the mode above, and a different kind of defect: for a
+// two-instruction constant the cost model is right and only the reference's
+// preference differs, but `arm_rtx_costs` prices a literal-pool constant at
+// COSTS_N_INSNS(3) when `*thumb_movsi_insn` emits a single `ldr rN,[pc,#K]` —
+// wrong by 3x — so every repeated pool word is shared in a callee-saved register
+// and the prologue changes with it. The reference reloads the pool word per site.
+// A function whose reference BOTH reloads some pool words and keeps another in a
+// register to derive a related value by an add cannot be matched by this gate,
+// because related-value reuse needs exactly the recording the flag suppresses
+// (measured on resource_373:2cb0 — do not re-attack it with a whole-function
+// flag). docs/compiler-evidence/cse-pool-immediate.diff.
+const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_39c_c_020014cc.c",
+  "assets/code/resource_3bf_c_0200175c.c",
+]);
 const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
   "assets/code/resource_380_c_02000104.c",
   "assets/code/resource_39c_c_02000104.c",
@@ -710,6 +725,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-cse-two-insn-immediate"]
       : []),
+    ...(NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fno-cse-pool-immediate"]
+      : []),
     ...(SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fsched-low-dest-first"]
       : []),
@@ -781,6 +799,7 @@ export function evidencedRoutingFlags(): string[] {
     ...NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES,
     ...NO_STRICT_ALIASING_OVERLAY_SOURCES,
     ...NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES,
+    ...NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES,
     ...SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES,
     ...NO_SCHED_ALIAS_OVERLAY_SOURCES,
     ...NO_GCSE_INSERT_LOAD_OVERLAY_SOURCES,
@@ -885,7 +904,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, string>>> 
       xgcc: "845b828e15efedfeacc1956ac2694101e2b520824643d5b9f7608f9c389aee03",
       cpp: "60d0b6637deb0f98cbf952a89694b02a0557fc87ca968121759be139372e90cc",
       tradcpp: "87f89bebf41cd12ac7706604dd24624061b2276f95cc1e9998c22de1accfee2a",
-      cc1: "ae16afc9eef665ab9d381ba2206f1c7c7e72c46cffa88b8b26df6169700dd22c",
+      cc1: "c1cc6d2864567297451662d36fba7abbce7a916d138f7115832a265de6868a06",
     },
     gs2: {
       xgcc: "7b1a6a96fc4bd5e9de4d83fb2a4ba2ca2a82397cdcd102c4a4d76ef91dc17f58",

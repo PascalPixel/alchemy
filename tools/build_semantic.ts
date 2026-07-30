@@ -92,17 +92,20 @@ export function validateMainSemanticOwners(
         throw new Error(`${rangeField} end is not a safe integer`);
       }
       const manifestRegion = manifestRegions.find((item) =>
-        item.address === address && item.size === range.size
+        item.address <= address &&
+        address + range.size <= item.address + item.size
       );
       if (manifestRegion === undefined) {
         throw new Error(
-          `${rangeField} does not correspond to a main manifest row`,
+          `${rangeField} is not fully contained in a main manifest row`,
         );
       }
       return { address, size: range.size };
     }).sort((left, right) => left.address - right.address);
-    if (!executableRanges.some((range) => range.address === entry)) {
-      throw new Error(`${ownerField} does not include its entry manifest row`);
+    if (!executableRanges.some((range) =>
+      range.address <= entry && entry < range.address + range.size
+    )) {
+      throw new Error(`${ownerField} executable ranges do not include its entry`);
     }
     for (let index = 1; index < executableRanges.length; index++) {
       const prior = executableRanges[index - 1];
@@ -340,6 +343,17 @@ function selfTest(): void {
   if (valid[0].executableRanges.reduce((sum, range) => sum + range.size, 0) !== 20) {
     throw new Error("noncontiguous owner byte sum rejected");
   }
+  const contained = validateMainSemanticOwners([{
+    entry: "0x08001000",
+    evidence: "contained split",
+    executable_ranges: [
+      { address: "0x08001000", size: 4 },
+      { address: "0x08001008", size: 4 },
+    ],
+  }], manifest, "self-test");
+  if (contained[0].executableRanges.reduce((sum, range) => sum + range.size, 0) !== 8) {
+    throw new Error("contained main-row split rejected");
+  }
   const rejects = (owner: MainSemanticOwner, message: string): void => {
     try {
       validateMainSemanticOwners([owner], manifest, "self-test");
@@ -356,8 +370,13 @@ function selfTest(): void {
   rejects({
     entry: "0x08001000",
     evidence: "missing row",
-    executable_ranges: [{ address: "0x08001000", size: 11 }],
-  }, "non-manifest main range accepted");
+    executable_ranges: [{ address: "0x08000ffc", size: 8 }],
+  }, "main range crossing a manifest-row boundary accepted");
+  rejects({
+    entry: "0x08001030",
+    evidence: "outside rows",
+    executable_ranges: [{ address: "0x08001030", size: 4 }],
+  }, "main range outside manifest rows accepted");
   rejects({
     entry: "0x08001000",
     evidence: "overlap",

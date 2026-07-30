@@ -21,6 +21,10 @@
       "lane": "multi_region_function",
       "reason": "The 316-byte FunctionHead_080e15e8 allocates a 336-byte frame and branches directly into sub_080e1724, which contains the body and eventual epilogue. It requires noncontiguous/main-module accounting rather than standalone admission of the head."
     },
+    "080c1798": {
+      "lane": "implicit_callee_return_state_module",
+      "reason": "Two live r2 values are intentional callee residue: 0800387c leaves either 0x20000 or the full-queue count for 080c1470, and 080030f8 leaves either 0 or 0x03001804 for 080c16d0. Convert those producer/consumer pairs with explicit machine-state result contracts before admitting this owner."
+    },
     "08095778": {
       "lane": "cross_file_abi",
       "reason": "The modulo result passed here conflicts with the live pointer-base interpretation in the current exact 080955b0 source. Reconstruct the call family jointly before admission."

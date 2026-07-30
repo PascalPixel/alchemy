@@ -22,11 +22,31 @@ Know which one you are before you change anything.
 owns what and what reaches you how — read it first if you are new to a branch.
 
 **Read `docs/BRANCH-PROTOCOL.md` once before your next push.** It is the tracked
-statement of who owns what: the ring is `main -> mercury -> venus -> main`, each
-hop about hourly, and nobody pushes to a branch they do not own. For Mercury that
-means pull `main`, push only `origin/mercury`, and never touch the coverage map
-or `README.md` — anything you want on `main` gets there by banking it here and
-letting Vale port it within the hour.
+statement of who owns what: the ring is `main -> mercury -> venus -> main`, and
+nobody pushes to a branch they do not own. For Mercury that means pull `main`,
+push only `origin/mercury`, and never touch the coverage map or `README.md` —
+anything you want on `main` gets there by banking it here and letting Vale port
+it.
+
+**Cadence is every 20 minutes, not hourly.** Vale moved first (MEETING.md
+2026-07-30T22:30Z) and Mercury followed at 23:05Z; the protocol doc still says
+"about once an hour" because it predates both. Twenty minutes is the number to
+work to.
+
+**`MEETING.md` is the channel between the three agents** and travels the ring
+with everything else. Anything the other two need to know goes there rather than
+in a commit message only they would have to go looking for; evidence and long
+reasoning stay here. Read it every pull — items are addressed by `@mercury` and
+tagged **ACTION**, and an ACTION is closed by writing a **DONE** entry, never by
+silently doing it.
+
+**Standing duty: delete semantic sources your conversions supersede.** `main`
+now carries `semantic/`, and `build_semantic.ts` throws `duplicates exact source`
+whenever a semantic source and an exact source share an address — which `verify`
+runs, so it breaks the bank rather than warning. `bun tools/semantic_superseded.ts
+--check` names every one at once before you bank instead of one per build; it is
+tracked-tree only, so it needs neither the ROM nor the toolchain. Run it after
+adopting and before `bun run verify`.
 
 | | **Mercury Lighthouse** | **Venus Lighthouse** |
 | --- | --- | --- |
@@ -105,9 +125,9 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **581,276
-executable bytes across 1,047 compiling sources**: 382,970 main-image bytes and
-198,306 overlay bytes. Combined with exact C, **791,994 / 1,339,576 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **599,858
+executable bytes across 1,092 compiling sources**: 383,866 main-image bytes and
+215,992 overlay bytes. Combined with exact C, **811,048 / 1,339,576 executable
 bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
 sources live under `semantic/` and do not claim byte equality. Use
 `semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
@@ -590,6 +610,13 @@ arm and r0=4 from another; `:0b94` has one site fed four cue ids and another fed
 by five paths. Writing the natural per-arm calls injects phantom calls into the
 multiset — restructure to a shared `emit:` join instead. A site count alone will
 not catch this; the multiset will.
+
+**The multiset check earns its keep — it caught a real over-count on the largest
+owner in the project.** `resource_3c8:3068` (3,922 bytes, 248 sites) came out at
+228 C calls against 224 real ones. The culprit was a two-instruction tail that
+**four** different scenes' jump tables enter directly; writing it inline four
+times inflated the count, and one `goto` fixed it. Its 24 `unknown` sites all
+resolved to the owner's own `movs r0,#0` return — long `bl`s, not calls.
 
 **Two call-site shapes break a naive multiset, both by inflating it.** State the
 proof as per-target counts and account for these before trusting a mismatch:
@@ -1561,6 +1588,23 @@ non-trivial constant argument** (exemplar `assets/code/resource_372_c_02002180.c
 - `volatile` reproduces a repeated non-CSEd load of one address — **only** where
   the reference genuinely repeats the load. Single-read siblings stay plain
   `extern`. Never a general matching device.
+- **Compound assignment names the shift's destination register.** `v <<= 16;`
+  emits `lsl rV, rV, #16` — writing the result over its own input, because the
+  source says the input is dead. `x = v << 16;` allocates a fresh register even
+  when `v` is dead immediately after, and no flag reverses that. Reach for it
+  whenever the diff is only *which* register an ALU result lands in and the
+  reference overwrites the operand. On `resource_373:02a8` it closed 4 of 16
+  groups on its own, and the same shape recurs wherever a packed word is split
+  into a masked half and a shifted half.
+- **The first `return` names the value materialised before the compare.** A
+  two-arm predicate compiles as `mov r0, A; cmp; b<COND> end; mov r0, B; end:`
+  where `A` is the *first* return's value and `COND` is its condition. So an
+  inverted branch sense is fixed by swapping which arm is written first, not by
+  negating the condition: `if (x > c) return 0; return 1;` and
+  `if (x <= c) return 1; return 0;` differ in emitted code, and only the second
+  matches a reference that sets 1 before the compare. `!`, a ternary, and a
+  result local each cost an extra instruction instead (13-14 groups vs 5 on
+  `resource_3a3:0338`).
 
 ---
 
@@ -1788,6 +1832,22 @@ two levers land.
   **mid-function literal-pool dumps** at barriers we cannot reproduce.
 - **Register-identity-only swaps**, often where our allocation is strictly better
   or one instruction shorter.
+- **Two loop pseudos allocated in swapped registers.** A loop that carries both a
+  walking pointer and a counter: the reference puts the pointer in the register
+  the *preceding* instruction just freed and the counter in the next one, and gcc
+  gives the reverse. It is not a scheduling class even though it looks like one —
+  on `resource_373:02a8` the reference order is only stable because its allocation
+  creates an anti-dependency (`mov r2,#0; ldrsh r0,[r3,r2]; ldr r2,POOL` — sched2
+  cannot hoist a load into a register the `ldrsh` still reads), so fixing the
+  allocation fixes the order for free and nothing fixes the order alone.
+  Measured null on `:02a8`: **all 720 permutations of local declaration order**,
+  four loop spellings (indexed `for`, indexed `do`/`while`, explicit pointer both
+  init orders, pointer-bound `for`), lengthening and shortening each live range,
+  and all 39 fork modes plus the stock CSE and scheduler flags — every one lands
+  on the same floor. `-fno-schedule-insns2` demonstrates the mechanism but costs
+  more elsewhere than it fixes. Blocks the 384-byte 11-overlay twin and
+  `resource_373:02a8` (8 overlays); ~5,300 bytes sit behind one answer, so this
+  is worth re-probing whenever a new allocation-side mode lands.
 - **Per-site contradictory argument orders** where a prototype-less shared
   declaration is required — the per-site cast is the only escape.
 

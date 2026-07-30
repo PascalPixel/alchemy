@@ -520,6 +520,11 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   "assets/code/resource_37a_c_020001ec.c",
   "assets/code/resource_37a_c_02001a58.c",
   "assets/code/resource_373_c_02000ba8.c",
+  // Third and fourth members of this overlay's rerun-cse family: the rerun caches
+  // twice- and thrice-used pool constants in callee-saved registers where the
+  // reference rematerializes them per use.
+  "assets/code/resource_373_c_02005950.c",
+  "assets/code/resource_373_c_02005a40.c",
   "assets/code/resource_399_c_02000abc.c",
   "assets/code/resource_3b8_c_0200049c.c",
   // resource_3a4 status-window family: default flags CSE-hoist a thrice-used

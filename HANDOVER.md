@@ -216,6 +216,21 @@ declaring `extern u8 Value_fffff800; s32 d = (s32)&Value_fffff800;` in the block
 *enclosing the loop* hoists it into a callee-saved register as the reference does.
 Function-top placement instead costs 4 bytes.
 
+**Size short by 2-4 bytes, and the reference re-reads one address, means
+`volatile`.** The mechanical tell is the *short size*, not the shape of the diff:
+we fold repeated loads the reference keeps. This closed two functions outright
+from 18 and 25 halfwords. Two placement rules follow from it: a block-scoped
+`volatile` pointer local declared **before** the sibling arithmetic forces two
+pool-address pseudos to overlap and so take distinct hard registers (declaring it
+after loses the effect, and this fixed a register-identity floor that survived all
+seven modes); and a second pointer the reference keeps in a different register
+needs its own named local.
+
+**Re-check every `&Value_` in an old park note against the factorisation table
+above.** Four functions in one overlay were parked at floor 2 as "no flag reaches
+it" when the actual blocker was a wrong `&Value_` spelling — the scheduler was
+never involved.
+
 **Statement order matters.** Moving an independent assignment above a call has
 produced exact matches where nothing else did — a permuter's single win in 65,543
 candidates was one statement swap. Always try both orders of two independent

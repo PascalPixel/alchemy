@@ -270,7 +270,59 @@ Note the stages are independent once each has its own output tree, so they can
 run concurrently (94 s vs 161 s cold for the two full builds); only the
 ROM-mode build should write the default `out/full` tree.
 
-## Compiler lane: the two-insn immediate blocker is solved on paper
+## Permuting: keep it as an audit pass, not an engine
+
+`tools/permute_overlay.ts` drives the annealing search in `tools/permute_v1.ts`
+against overlay targets (that file gained exports — `anneal`, `OPERATORS` and
+friends — so nothing is duplicated; its main-ROM behaviour is unchanged). It
+reaches about 70 candidates/s at `--jobs 2`, builds each overlay reference once,
+mirrors `compileOverlayC`'s command sequence exactly so a zero here is a zero in
+`overlay_verify`, filters out any mutation introducing `volatile`/`asm`/
+`register` to stay clean-room, and `--reduce` delta-debugs a hit back to minimal
+source before adoption.
+
+Measured verdict from 65,543 candidates over 15 targets: **one exact hit**
+(resource_3c9:04bc, 92 bytes) and not one other floor moved by a single
+halfword. The hit is instructive out of proportion to the score — the whole fix
+was moving `limit = 640;` above a call, and the note had swept the *call's*
+position but never the threshold assignment. So treat "no source lever found" in
+a note as unproven: hand sweeps only explore levers the author imagined, and
+this residual class turns on which of two independent statements the scheduler
+sees first. Run the permuter once over any newly parked near-miss (minutes) before
+believing the park. It also caught a stale note: resource_3c8:1a50 is adopted and
+exact, not parked.
+
+What it will not do is close the backlog, and that is now quantitative rather
+than a hunch: two operators purpose-built for the "reference keeps source order"
+fingerprint were accepted 0-4 times per target and never beat the floor. Those
+residuals are `sched2` ready-list tie-breaks, not statement-order effects.
+
+## Compiler lane: the two-insn immediate mode is LANDED
+
+`-fno-cse-two-insn-immediate` is now in the pinned fork (branch
+`claude/cse-two-insn-immediate` in alchemy-gcc), admitted here, and routed for
+resource_3bf:0bec, resource_3af:1a98 and resource_3af:4218. The admission
+followed `PROVENANCE.md`: the source-only build with the rebuilt `cc1`
+reproduces gs1-en.gba at SHA-1
+`5c4695205413df7db52b9a184815a07783999971` byte-identically, and only then was
+the digest re-pinned. Note the coverage contract also requires a matching
+explorer mode in `tools/mode_sweep.ts` — the commit is rejected without it.
+
+Three fingerprints remain, each unlocking several functions at once, and each
+worth a dedicated lane (all three have targets and floors listed in the notes):
+
+1. **Immediate-build transposition** (~1,050 bytes) — exposed by the new mode:
+   the reference schedules a neighbouring one-instruction immediate *between* a
+   rematerialized constant's `movs` and its `lsls`. Nine flags already swept and
+   inert; needs a new mode.
+2. **Per-site argument-emission order** — the most common park class overall.
+   Our order is fixed per callee by its declared return type (`s32` gives
+   `movs r1` first, `void` gives r0 first), but the reference wants *both*
+   orders from one symbol at different sites, so no source spelling reaches it.
+3. **gcse PRE load insertion** — resource_37a:0d9c sits at a single halfword;
+   the cheapest possible confirmation that a gate works.
+
+## Superseded: the two-insn immediate blocker as first written up
 
 The largest single class of unconverted overlay functions has been traced to one
 guard in `cse_insn`'s destination-recording loop, and a gated flag prototype

@@ -425,7 +425,7 @@ const SCHED_HIGH_DEST_FIRST_SOURCES = new Set(["08098954", "0809a294", "08097540
 // overlay owns 020011bc. Its sibling `02000178` has the same residual and is
 // *not* routable: resource_3ba already owns that address, and §7's routing key
 // is the bare address.
-const SCHED_LOW_DEST_FIRST_SOURCES = new Set(["08097540", "020011bc", "02001958", "02001984"]);
+const SCHED_LOW_DEST_FIRST_SOURCES = new Set(["08097540", "020011bc", "02001958", "02001984", "02000260", "020011d8"]);
 const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
   "assets/code/resource_383_c_02000428.c",
   // Paired with the callee-return-type lever: the return type fixed these
@@ -529,6 +529,8 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // into a callee-saved register and buys a prologue the reference does not
   // have. Paired with -fsched-low-dest-first, which orders the r0 setter.
   "assets/code/resource_38d_c_02001984.c",
+  // Same shape: 0x80000 feeds both of this call's shifted arguments.
+  "assets/code/resource_3b4_c_020011d8.c",
   "assets/code/resource_372_c_02000f38.c",
   "assets/code/resource_3bf_c_02000bec.c",
   "assets/code/resource_3af_c_02001a98.c",

@@ -213,11 +213,18 @@ how `resource_384:01d0` converted (5/18 differing → exact by renaming two
 (106/2,068) and `resource_381:0054` (313/3,548) are still open and are the two
 largest unexploited leads in this class.
 
-**The 10-to-32-byte tier is the highest hit rate in the overlay queue.** 129
-strict rows, 2,558 bytes, mostly two-call dispatch stubs and one-compare
-predicates that read directly off the disassembly with no drafting loop at all.
-Nineteen were converted here in a single pass. Clear this tier before opening a
-1 KB row.
+**The small-row tier is the highest hit rate in the overlay queue, and it is now
+drained.** It opened at 129 strict rows / 2,558 bytes under 32 bytes — two-call
+dispatch stubs and one-compare predicates that read straight off the disassembly
+with no drafting loop. **As of 2026-07-30 only 6 rows / 130 bytes remain under 32
+bytes**, and three of those are the routing-collision casualties in §7. Current
+strict queue: **897 rows / 323,406 bytes**, of which 68 rows / 2,786 bytes are
+under 48 bytes and 396 rows / 30,256 bytes are under 128. The cheap tier is gone;
+the next band up (48-128 bytes) is where the remaining mechanical work is.
+
+Best overlays by the §1 small-row criterion, recounted after that pass:
+`resource_3b4` (45 rows under 400 bytes), `resource_3c4` (37), `resource_3a7`
+(31), `resource_39a` (28), `resource_39f` (26), `resource_371` (25).
 
 **Then stop reading them by hand — `tools/overlay_wrapper_draft.ts` derives
 them.** The whole tail of setup wrappers, forwarders and dispatch stubs has a
@@ -1460,9 +1467,24 @@ the ceiling.
 **Where to resume walking**, with the next offset each lane had already decoded:
 `resource_3c8:07d8` (200), `resource_39f:1520` (176), `resource_38f:0304` (196),
 `resource_372:1348` (336 — a direct structural sibling of the adopted `0f38` and
-the drafted `1154`; copying `work/claude/resource_372-1154.c` and substituting
-constants should land it quickly). `resource_3b2` (74 rows) and `resource_374`
-(47 rows) are the best unassigned overlays by the small-row criterion.
+the drafted `1154`; that draft lived under `work/`, so it is gone, but the `0f38`
+source is tracked and substituting constants into it should land this quickly).
+The overlay ranking in that sentence is stale — §1 carries the recount.
+
+*Superseded for the small tier as of 2026-07-30.* That tier was drained in a
+single session: **119 functions, +7,022 exact bytes, 201,278 → 208,300**, on the
+4-core cloud container, which is the project's own median day. The method is §1's
+— refresh the inventory, run `tools/overlay_wrapper_draft.ts`, probe with a
+dry-run `overlay_adopt`, hand-write only what the tool refuses. Roughly half the
+functions never needed a second probe. **Start there, not at the offsets above**;
+those are 200-336 byte rows and the band under 128 bytes is both larger and
+cheaper.
+
+Two conversions in that session needed a routed flag rather than a source
+respelling, which is the honest ratio for this tier: `02001050` wanted
+`-fno-sched-depend-count` for §4's pool-load hoist, and `020011bc` wanted
+`-fsched-low-dest-first` for §7's `movs`/`negs` order swap. Everything else was
+source shape.
 
 **Measured 2026-07-30: an 18-core host did not beat the 4-core one on bytes.**
 Daily exact-byte gains on the 4-core cloud host, from `docs/full-c-history.csv`:

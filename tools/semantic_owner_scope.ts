@@ -113,13 +113,14 @@ export function rowFactsFromAssembly(
     hasPrologue: /^\s*push\s*\{[^}]*\blr\b/m.test(body),
     hasEpilogue: hasEpilogue(body),
     isData: mnemonics.length === 0,
-    // No call, no branch, no stack traffic anywhere in the row: nothing that
-    // could make it a reachable piece of a function. Conservative on purpose —
-    // it flags for review rather than excluding from the count.
+    // No call, no branch, no stack traffic: nothing that could make the row a
+    // reachable piece of a function. Memory ops are deliberately NOT part of
+    // the test — pool words decode to `ldr`-shaped instructions often enough
+    // that excluding them missed a whole 68-byte pool row in `080d765c`.
+    // Conservative by design: it flags for review, never excludes silently.
     suspectedPool:
       mnemonics.length > 0 &&
-      !/^\s*(bl|b|b[a-z]{2}|bx|push|pop)\b/m.test(body) &&
-      !/^\s*(ldr|str)\w*\s/m.test(body),
+      !/^\s*(bl|b|b[a-z]{2}|bx|blx|push|pop)\b/m.test(body),
     calls: [...body.matchAll(/^\s*bl\s+\S+/gm)].length,
   };
 }
@@ -262,6 +263,12 @@ function selfTest(): void {
     { address: 0x08000040, size: 8, kind: "k", retention: "split_first" },
   );
   if (realCode.suspectedPool) throw new Error("real code must not be suspected");
+  // A pool whose words decode to memory ops must still be suspected.
+  const ldrPool = rowFactsFromAssembly(
+    "\t.thumb\n.L_0800:\n\tldr r0, [r4, #4]\n\tmovs r0, r0\n",
+    { address: 0x08000050, size: 4, kind: "k", retention: "merge_with_owner" },
+  );
+  if (!ldrPool.suspectedPool) throw new Error("ldr-shaped pool must be suspected");
   // A prologue row plus a trailing pool plus the epilogue row is ONE owner.
   const owners = groupOwners([
     { ...code, address: 0x08000000, stem: "08000000", hasEpilogue: false },

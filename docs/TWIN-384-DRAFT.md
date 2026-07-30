@@ -11,7 +11,7 @@ Members: `resource_373:00c4`, `389:00c4`, `392:00c4`, `393:00c4`, `39f:00c4`,
 ## State on 2026-07-30
 
 The draft below is **structurally correct and not yet byte-exact**: 172 emitted
-instructions, matching the reference exactly, with **62 instruction groups still
+instructions, matching the reference exactly, with **22 instruction groups still
 differing** — register assignment and scheduling in the first quarter, not shape.
 Do not re-derive the semantics from assembly, and do not re-measure by halfwords;
 start here.
@@ -35,23 +35,38 @@ publish the probe through `Func_020060f2`/`Func_02006102`, and reset `self`'s
 `f38`/`f40` to `0x80000000` and its `f08`/`f10` from the sign-extended halfwords
 at +10 and +18.
 
+### Measure it with `tools/overlay_group_diff.sh`
+
+```sh
+tools/overlay_group_diff.sh resource_373 00c4 384 <draft.c> 20
+```
+
+It compiles the draft, normalises both instruction streams and reports how many
+groups differ. **Normalise properly or you will chase ghosts.** objdump renders
+Thumb `mov rd,rn` as `adds rd,rn,#0`, prints `[r7, #0]` where gcc prints `[r7]`,
+and gcc prints the three-operand `and r2,r2,r3` for the two-operand `ands r2,r3`.
+A naive line compare called all of those differences and reported **62** on a
+draft whose real residual is **22** — nearly three times over, and it hid where
+the mass actually was.
+
 ### Known divergences to attack first
 
 1. ~~The reference loads `self->f06` before stashing `self` in r8.~~ **Closed.**
    Declaring the kind index immediately after `self`, ahead of `table` and
    `mask`, drops the reload through r2 and took the residual from 164 groups to
-   **62**. Declaration order is what fixes this class — not a flag.
+   **22**. Declaration order is what fixes this class — not a flag.
 2. **Open, and the obvious attacks are measured dead ends.** The reference
    interleaves its two pool loads around the index shift — `ldr r0,<table>`,
    `lsls r5,r3,#2`, `ldr r2,<mask>`, `ldr r1,[r0,r5]` — where gcc emits both
    loads adjacent and then the shift. Ruled out so far:
    - **No compiler mode reaches it.** `-fthumb-literal-before-index-shift` (named
      for exactly this shape), `-fthumb-low-constant-before-high-move` and
-     `-fsched-high-dest-first` all measure 62, unchanged;
-     `-fsched-low-dest-first` and `-fno-sched-depend-count` are worse at 64.
+     `-fsched-high-dest-first` all leave it unchanged; `-fsched-low-dest-first`
+     and `-fno-sched-depend-count` are worse. Nor does the constant's spelling:
+     `~0xFFFF`, `0xFFFF0000u` and `-65536` all measure identically.
    - **Do not rewrite the lookup as `table[kind]` with an unscaled index.** It
-     reads like the natural spelling and it destroys the shape: 62 groups to
-     **171**, and the emitted function drops to 167 instructions because gcc
+     reads like the natural spelling and it destroys the shape: 22 groups to
+     **164**, and the emitted function drops to 167 instructions because gcc
      keeps the kind in a low register and stops using `sl` at all, changing the
      prologue. Keep the pre-scaled `index` local and the
      `*(s32 *)((u8 *)table + index)` form.
@@ -59,14 +74,19 @@ at +10 and +18.
    What is left to try is delaying the mask's materialisation without moving its
    declaration — it is live in `sl` across all three probe builds, so it cannot
    simply be block-scoped.
-3. **Do not swap the `table`/`mask` declaration order to chase the high
+3. **All that is really left is one register swap.** Of the 22 groups, positions
+   13-19 are the pool-load interleave plus the swap, 39/41/90/92 are the same
+   swap propagating through the probe builds, and 143-146 are a late store
+   ordering. The reference holds the mask in `sl` and the table in `r9`; we hold
+   them the other way. Fix that and most of the residual goes at once.
+4. **Do not swap the `table`/`mask` declaration order to chase the high
    registers.** The reference holds the mask in `sl` and the table in `r9`; we
    hold them the other way round, which looks like a one-line fix. It is not —
    declaring `mask` first sends the residual from 62 groups to **165**, because
    the table pointer then materialises before `self` is stashed and every
    subsequent lifetime shifts. Leave `table` declared first and attack the
    register identity some other way.
-4. `sl` is reused: it holds `0xFFFF0000` for the first three probe builds, then
+5. `sl` is reused: it holds `0xFFFF0000` for the first three probe builds, then
    is reloaded with the byte at +98 and carried as the zero written into `f24`
    and `f2c` of both actors. The draft models that with a `blocked` local, which
    is why those stores read `= blocked` rather than `= 0` — keep that.

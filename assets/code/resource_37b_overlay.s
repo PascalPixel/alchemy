@@ -609,87 +609,8 @@ Overlay_02000000:
 	.2byte 0x0200
 AlchemyC_02000054:
 	.space 0x44
-	push	{r5, r6, r7, lr}
-	sub	sp, #8
-	movs	r3, #2
-	movs	r2, #1
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r0, #0
-	movs	r1, #28
-	movs	r2, #17
-	movs	r3, #8
-	bl	sub_020024b2
-	movs	r0, #200
-	bl	sub_02002618
-	movs	r5, #0
-	movs	r7, #2
-	movs	r6, #1
-.L_020000bc:
-	movs	r1, #61
-	movs	r2, #17
-	movs	r3, #40
-	movs	r0, #10
-	str	r7, [sp, #0]
-	str	r6, [sp, #4]
-	bl	sub_020024ce
-	movs	r0, #4
-	bl	sub_0200251c
-	movs	r0, #8
-	movs	r1, #61
-	movs	r2, #17
-	movs	r3, #40
-	str	r7, [sp, #0]
-	str	r6, [sp, #4]
-	adds	r5, #1
-	bl	sub_020024e6
-	movs	r0, #4
-	bl	sub_02002534
-	cmp	r5, #22
-	bne.n	.L_020000bc
-	movs	r5, #4
-	movs	r6, #3
-	movs	r0, #0
-	movs	r1, #59
-	movs	r2, #15
-	movs	r3, #38
-	str	r5, [sp, #0]
-	str	r6, [sp, #4]
-	bl	sub_02002504
-	movs	r0, #4
-	movs	r1, #59
-	movs	r2, #17
-	movs	r3, #38
-	str	r5, [sp, #0]
-	str	r6, [sp, #4]
-	bl	sub_02002514
-	movs	r3, #2
-	str	r3, [sp, #0]
-	str	r3, [sp, #4]
-	movs	r0, #8
-	movs	r1, #60
-	movs	r2, #17
-	movs	r3, #39
-	bl	sub_02002526
-	movs	r3, #17
-	movs	r2, #8
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r1, #0
-	movs	r2, #2
-	movs	r3, #1
-	movs	r0, #0
-	bl	sub_02002542
-	ldr	r0, [pc, #16]
-	bl	sub_02002578
-	bl	.L_0200181c
-	add	sp, #8
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.2byte 0x0207
-	.2byte 0x0000
+AlchemyC_02000098:
+	.space 0xb8
 	push	{r5, r6, r7, lr}
 	bl	sub_020025a8
 	ldr	r7, [pc, #1020]

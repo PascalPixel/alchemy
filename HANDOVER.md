@@ -1131,6 +1131,14 @@ size** — identical sibling pairs (one draft, two regions), construct families
 non-baseline routing so the flag is not their unknown. The 2 KB-plus tier parks at
 a higher rate than the 40-120 byte rows and costs an order of magnitude more time.
 
+**`asm_c_debt_bytes` is an EXACT-lane metric and semantic work never moves it.**
+Only exact adoption deletes an `asm/` region; semantic conversion leaves it in
+place by design. Measured: 599 main-image `c_candidate` regions totalling 351,668
+bytes still have their assembly present, and 593 of them already have a
+`semantic/main/` source. Reading that figure as the semantic lane's backlog
+overstates it by more than an order of magnitude — Venus's real remainder is the
+strict overlay queue plus the main-image continuation owners.
+
 Do not read the Full-C denominator as the target: it deliberately includes linker
 veneers, structural assembly and executable alignment that will never be C. The
 tracked measure of real remaining work is `asm_c_debt_bytes`, printed by every

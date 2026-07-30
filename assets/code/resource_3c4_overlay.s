@@ -3253,23 +3253,8 @@ AlchemyC_020019bc:
 AlchemyC_020019cc:
 	.space 0x16
 	.2byte 0x0000
-	push	{lr}
-	ldr	r1, [pc, #28]
-	movs	r0, #8
-	bl	sub_02004b08
-	ldr	r0, [pc, #24]
-	bl	sub_02004ace
-	movs	r0, #9
-	bl	sub_02004b04
-	ldr	r3, [pc, #16]
-	str	r3, [r0, #108]
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0x0200b3b8
-	.4byte 0x00000203
-	.2byte 0x8fe9
-	.2byte 0x0200
+AlchemyC_020019e4:
+	.space 0x2c
 	push	{r5, lr}
 	sub	sp, #8
 	bl	sub_02004b0a

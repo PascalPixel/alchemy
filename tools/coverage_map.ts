@@ -1217,6 +1217,28 @@ export function resolveSemanticTree(exact: SourceTree, requested?: string): Sour
   return undefined;
 }
 
+/**
+ * A tree that cannot see the semantic lane must not publish it as zero. The
+ * lane lives on venus, but Mercury redraws this map from its bank cycle and
+ * has no reason to hold a venus ref; without this guard the first such bank
+ * silently erases Venus's half of the published picture. Returns the refusal
+ * message, or undefined when writing is safe: the lane resolved, it was
+ * dropped on purpose with `--semantic-ref none`, or the tracked map has no
+ * semantic lane to lose.
+ */
+export function semanticEraseRefusal(
+  resolved: boolean,
+  requested: string | undefined,
+  tracked: CoverageMap | undefined,
+): string | undefined {
+  if (resolved || requested === "none") return undefined;
+  const bytes = tracked?.lanes.semantic_c.bytes ?? 0;
+  if (bytes <= 0) return undefined;
+  return `refusing to erase the semantic lane: the tracked map records ${bytes} ` +
+    `semantic bytes from ${tracked?.provenance.semantic_lane}, which is not available ` +
+    `here; run: git fetch origin venus (or --semantic-ref none to publish without it)`;
+}
+
 interface Options {
   target: DecompTargetId;
   semantic?: string;
@@ -1298,6 +1320,27 @@ export function selfTest(): void {
 
   if (assetBucket("golden-sun-pcm-wave-series").id !== "audio") throw new Error("audio bucket failed");
   if (assetBucket("brand-new-package").id !== "other") throw new Error("unknown bucket failed");
+
+  const withLane = {
+    lanes: { semantic_c: { bytes: 391428 } },
+    provenance: { semantic_lane: "origin/venus" },
+  } as CoverageMap;
+  if (semanticEraseRefusal(false, undefined, withLane) === undefined) {
+    throw new Error("an unresolved semantic lane was allowed to erase a tracked one");
+  }
+  if (semanticEraseRefusal(true, undefined, withLane) !== undefined) {
+    throw new Error("a resolved semantic lane was refused");
+  }
+  if (semanticEraseRefusal(false, "none", withLane) !== undefined) {
+    throw new Error("an explicit --semantic-ref none was refused");
+  }
+  if (semanticEraseRefusal(false, undefined, undefined) !== undefined) {
+    throw new Error("a first write with no tracked map was refused");
+  }
+  if (semanticEraseRefusal(false, undefined,
+      { lanes: { semantic_c: { bytes: 0 } }, provenance: { semantic_lane: "none" } } as CoverageMap) !== undefined) {
+    throw new Error("a tracked map with no semantic lane was refused");
+  }
 
   const tiles: Tile[] = [
     { label: "a", bytes: 60, lanes: { exact_c: 30, assembly: 30 } },
@@ -1411,6 +1454,14 @@ async function main(argv: string[]): Promise<void> {
   }
 
   if (options.write) {
+    const refusal = semanticEraseRefusal(
+      semantic !== undefined,
+      options.semantic,
+      existsSync(mapPath(options.target))
+        ? (JSON.parse(readFileSync(mapPath(options.target), "utf8")) as CoverageMap)
+        : undefined,
+    );
+    if (refusal) throw new Error(refusal);
     writeFileSync(mapPath(options.target), json);
     writeFileSync(svgPath(options.target), svg);
     console.log(

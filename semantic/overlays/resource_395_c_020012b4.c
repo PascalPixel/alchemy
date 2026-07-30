@@ -9,11 +9,19 @@ typedef signed int s32;
  * return address lands in r0, so nothing is returned and the owner is `void`.
  * The single pool word (0x02009dd4) sits at 0x020012f0, after the epilogue.
  *
- * Link base: resource_395's pool words follow the proven 0x02008000 overlay
- * link base, so 0x02009dd4 is IN-IMAGE data at file offset 0x1dd4 — past the
- * import band's veneer table (which runs 0x1900-0x1ab7) and inside the
- * overlay's own data.  The overlay image is writable EWRAM, so this is an
- * ordinary mutable counter, not ROM.  It is not modelled `const`.
+ * Link base: resource_395 is linked at 0x02008000, proven here by eleven pool
+ * words that are this overlay's own prologues plus the Thumb bit (0x02008089 =
+ * Func_02000088 + 1, 0x02008159, 0x02008249, 0x02008285, 0x020082c1,
+ * 0x02009071, 0x020091e9, 0x02009219, 0x020092b5 = this owner + 1, 0x0200952d,
+ * 0x020095a1) — all installed per-frame callbacks.  So this owner is itself
+ * installed as a task.
+ *
+ * Under that base 0x02009dd4 is offset 0x1dd4, which is 0x18 bytes PAST the
+ * end of the overlay image (0x1dbc).  It is therefore not image data: it is
+ * working RAM the loader leaves immediately after the loaded overlay.  Five
+ * such words are used across the overlay (0x02009dc0, 0x02009dcc, 0x02009dd0,
+ * 0x02009dd4, 0x02009de0, plus 0x0200a4e0 further out); they are uninitialised
+ * scratch, so nothing here may assume a starting value.
  *
  * Behaviour: a frame counter that cycles 0..29 and fires two cues on the way.
  * The counter is re-read at 0x020012dc after the callees run, so a callee that

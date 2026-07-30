@@ -369,6 +369,33 @@ except the call's own RTL form, because `schedule_insns` purges death notes
 distinguish two sites of one symbol — which is why the fix has to be in the
 source, and closes that search.
 
+## Old park notes are stale evidence — re-probe them
+
+The return-type lever was discovered late, so **every park note whose residue is a
+two-halfword argument-setter swap predates it and may be wrong.** Confirmed:
+resource_383:03bc was parked as "site-specific scheduling, no flag reaches it";
+flipping one callee from `void` to `s32` took it 2 → 0. That single note cost 68
+bytes of delay. Sweep the notes for two-halfword `movs`-pair residues before
+attempting anything new.
+
+Caveat from the same lane, so this is not a blanket win: on resource_383:091c the
+lever makes things *worse* (2 → 3), and on 19e4 it does nothing. Those two, plus
+19a4, are the immediate-build transposition fingerprint instead. So re-probe
+cheaply and move on rather than grinding.
+
+## Factorise a constant before choosing its spelling
+
+The pool-versus-two-instruction decision is arithmetic, checkable before you
+write anything. If a constant is `k << n` with `k <= 255` it is a two-instruction
+build and needs the `(s32)&Value_0000XXXX` spelling to force a pool word instead
+(`0x1280 = 0x94 << 5`). If it has no such factorisation it pools naturally from a
+plain literal (`0x1282`, `0x128d`, `0x1370`, `0x137b`, `0x1384`). This is the
+concrete test behind the "only for constants the reference pool-loads" rule.
+
+Also: `value >= 0xa001 && value <= 0xdfff` reproduces the
+`adds r5,#-0xa001 / cmp #0x3ffe / bhi` range-check idiom exactly — a whole family
+of dispatchers across resource_383 and resource_3a1 share it.
+
 ## Reading a function's shape off its epilogue and its masks
 
 - **The epilogue states the return type.** `pop {r5} / pop {r0} / bx r0` means the

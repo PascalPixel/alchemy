@@ -21,6 +21,14 @@
       "lane": "multi_region_function",
       "reason": "The 316-byte FunctionHead_080e15e8 allocates a 336-byte frame and branches directly into sub_080e1724, which contains the body and eventual epilogue. It requires noncontiguous/main-module accounting rather than standalone admission of the head."
     },
+    "080d765c": {
+      "lane": "multi_region_function",
+      "reason": "The 148-byte head allocates a 332-byte frame, branches through 080d76f0 into 080d77b4, and carries that live frame across further split/gap regions before the real epilogue. Reconstruct and register the entire effect module rather than this head."
+    },
+    "080ec100": {
+      "lane": "multi_region_function",
+      "reason": "The 144-byte head allocates a 116-byte frame and branches through 080ec190 and 080ec264 into later split regions while preserving live stack/high registers. It is only the front of a much larger effect function and cannot stand alone."
+    },
     "080c1798": {
       "lane": "implicit_callee_return_state_module",
       "reason": "Two live r2 values are intentional callee residue: 0800387c leaves either 0x20000 or the full-queue count for 080c1470, and 080030f8 leaves either 0 or 0x03001804 for 080c16d0. Convert those producer/consumer pairs with explicit machine-state result contracts before admitting this owner."

@@ -340,10 +340,26 @@ functions the return type fixed the `movs`/`movs` swaps and
 `-mthumb-immediate-latency` then fixed the `movs`/`lsls` ones, neither reaching
 zero alone.
 
-**The two CSE modes are often needed together and neither works alone.** On one
-function `-fno-cse-two-insn-immediate` by itself *regressed* the floor while the
-pair reached 4; on another the pool mode alone left an extra callee-save. A note
-recording that only one CSE mode was tried is unmeasured, not negative.
+**Probe both CSE modes together AND each alone — the full protocol, never a
+shortcut.** Measured over 20 re-probed parks, roughly three quarters were
+mis-measured. Four were *both-modes-only* wins where each mode alone is neutral or
+actively worse: one went 400 → 419 and 411 with each single mode → **18** paired.
+A single-mode probe there would have been honestly recorded as a regression and
+wrongly inherited as a negative. But the reverse also occurs — on one function the
+pool mode alone is harmful while the two-insn mode helps — so the pair is not a
+substitute for testing each. A note recording only one CSE mode is unmeasured.
+
+**Size-exactness, not the halfword count, is the signal that the CSE seam is
+cleared.** On five of these functions the paired modes brought the emitted size to
+exactly the reference span while the differing-halfword count was still in the
+tens or hundreds. A size-exact residual is a draft or allocation problem that the
+non-flag levers finish; it is not a compiler problem. Judge progress by size
+first.
+
+**The allocno-priority lever applies to constant locals, not just parameters.**
+Swapping *declaration* order is neutral; declaring `s32 o;` uninitialised and
+assigning `o = 1;` **between its first two uses** changes the live length and
+flips the register allocation. That closed a 10-halfword r5/r6 identity swap.
 
 **Guard-clause shape decides where early-exit blocks land.** Flat
 `if (bad) return;` guards put those blocks inline; the reference wants them at the

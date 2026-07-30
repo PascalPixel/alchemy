@@ -478,6 +478,16 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // argument setters tie before a `bl` and the low-destination rule picks
   // `mov r0,sl` over `lsls r1,r1,#1` (notes/resource_381-0e30.md).
   "assets/code/resource_381_c_02000e30.c",
+  // resource_373: this overlay's real fingerprint is the low-dest tie-break,
+  // not the rerun-cse mode (measured neutral on ~15 functions here).
+  "assets/code/resource_373_c_02000dc0.c",
+  "assets/code/resource_373_c_02000e54.c",
+  "assets/code/resource_373_c_02000e84.c",
+  "assets/code/resource_373_c_02000f5c.c",
+  "assets/code/resource_373_c_02000f8c.c",
+  "assets/code/resource_373_c_02000fbc.c",
+  "assets/code/resource_373_c_02000fec.c",
+  "assets/code/resource_373_c_02001490.c",
   // resource_37b members: routed per function, NOT overlay-wide — this mode
   // regresses that overlay's three large word-store sheets (02001c14, 02001d14,
   // 02001e10), which are exact at default flags.

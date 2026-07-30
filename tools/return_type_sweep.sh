@@ -43,22 +43,36 @@ BEST=$(bun work/claude/overlay_verify.ts "$TARGET" "$CURRENT" "$SPAN" "$@" \
   | grep -oE 'differing_halfwords=[0-9]+' | grep -oE '[0-9]+$')
 echo "start differing_halfwords=$BEST"
 
+try_flip() {   # $1 = callee, $2 = from-type, $3 = to-type
+  cp "$CURRENT" "$CANDIDATE"
+  sed -i "s/^extern $2 ${1}(/extern $3 ${1}(/; s/^$2 ${1}(/$3 ${1}(/" "$CANDIDATE"
+  cmp -s "$CANDIDATE" "$CURRENT" && return 1
+  local result
+  result=$(bun work/claude/overlay_verify.ts "$TARGET" "$CANDIDATE" "$SPAN" "$@" \
+    | grep -oE 'differing_halfwords=[0-9]+' | grep -oE '[0-9]+$')
+  [ -z "$result" ] && return 1
+  if [ "$result" -lt "$BEST" ]; then
+    BEST=$result
+    cp "$CANDIDATE" "$CURRENT"
+    echo "  ${1}: $2 -> $3   differing_halfwords=$BEST"
+    return 0
+  fi
+  return 1
+}
+
+# Both directions matter and each covers half the search space: flipping a
+# declared-s32 callee to void closed two functions that the void->s32 direction
+# alone could not touch.
 improved=1
 while [ "$improved" = 1 ]; do
   improved=0
   for callee in $(grep -oE '^(extern )?void Func_[0-9a-f]+' "$CURRENT" \
                   | grep -oE 'Func_[0-9a-f]+' | sort -u); do
-    cp "$CURRENT" "$CANDIDATE"
-    sed -i "s/^extern void ${callee}(/extern s32 ${callee}(/; s/^void ${callee}(/s32 ${callee}(/" "$CANDIDATE"
-    result=$(bun work/claude/overlay_verify.ts "$TARGET" "$CANDIDATE" "$SPAN" "$@" \
-      | grep -oE 'differing_halfwords=[0-9]+' | grep -oE '[0-9]+$')
-    [ -z "$result" ] && continue
-    if [ "$result" -lt "$BEST" ]; then
-      BEST=$result
-      cp "$CANDIDATE" "$CURRENT"
-      improved=1
-      echo "  ${callee} -> s32   differing_halfwords=$BEST"
-    fi
+    try_flip "$callee" void s32 "$@" && improved=1
+  done
+  for callee in $(grep -oE '^(extern )?s32 Func_[0-9a-f]+' "$CURRENT" \
+                  | grep -oE 'Func_[0-9a-f]+' | sort -u); do
+    try_flip "$callee" s32 void "$@" && improved=1
   done
 done
 

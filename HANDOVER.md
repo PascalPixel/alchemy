@@ -391,6 +391,33 @@ except the call's own RTL form, because `schedule_insns` purges death notes
 distinguish two sites of one symbol — which is why the fix has to be in the
 source, and closes that search.
 
+## Sweep the return-type lever mechanically, do not hand-probe it
+
+A greedy fixpoint sweeper beats hand-probing badly and is cheap to write: one pass
+flips each `void` callee declaration to `s32` in turn and keeps any improvement;
+a second wraps individual call sites in `((s32 (*)())F)(...)` / `((void (*)())F)(...)`
+casts. At ~0.12 s per probe a 60-callee function converges in seconds. That found
+`resource_3bf:4794`, which needed a specific 5-of-10 partition of identical-looking
+`f(25,0)` call sites — no hand sweep would have located it. One such sweep closed
+9 functions / 1,628 bytes out of 41 candidates in a single lane.
+
+**Measured scope of the lever.** It moves *only* a transposition of two `movs`
+argument setters (`movs r0,#K` against `movs r1,#K'`). All 23 nulls in that sweep
+had `movs r0` transposed against something else — an `lsls` (the second half of a
+two-instruction immediate), a pool `ldr`, an `adds`, or a `str` — which is the
+separate immediate-build-transposition fingerprint that no return-type spelling
+touches.
+
+**The two levers compose**, which is the more useful half: on `resource_3bf:4794`
+and `resource_372:173c` the return type fixed the `movs`/`movs` swaps and
+`-mthumb-immediate-latency` then fixed the `movs`/`lsls` ones, and neither reached
+zero alone. Retry that pairing on anything parked under the latency flag by itself.
+
+Confirmed limitation: a prototype-less shared declaration blocks the lever
+entirely (`resource_3b1:0728` — neither `s32`, nor `void`, nor the `_b` split
+changed a byte). Where one symbol needs both orders, the per-site cast works and
+the `_b` split does not.
+
 ## Old park notes are stale evidence — re-probe them
 
 The return-type lever was discovered late, so **every park note whose residue is a

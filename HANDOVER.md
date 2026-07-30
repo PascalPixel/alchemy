@@ -128,9 +128,9 @@ still open (§8).
 Alongside the exact lane, reviewed semantic C currently accounts for **581,276
 executable bytes across 1,047 compiling sources**: 382,970 main-image bytes and
 198,306 overlay bytes. Combined with exact C, **791,994 / 1,339,576 executable
-Alongside the exact lane, reviewed semantic C currently accounts for **548,096
-executable bytes across 1,002 compiling sources**: 382,970 main-image bytes and
-165,126 overlay bytes. Combined with exact C, **758,490 / 1,339,574 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **599,858
+executable bytes across 1,092 compiling sources**: 383,866 main-image bytes and
+215,992 overlay bytes. Combined with exact C, **811,048 / 1,339,576 executable
 bytes** are expressed as C.
 
 **21 overlays have zero unconverted rows in the strict queue**, holding
@@ -635,6 +635,13 @@ arm and r0=4 from another; `:0b94` has one site fed four cue ids and another fed
 by five paths. Writing the natural per-arm calls injects phantom calls into the
 multiset — restructure to a shared `emit:` join instead. A site count alone will
 not catch this; the multiset will.
+
+**The multiset check earns its keep — it caught a real over-count on the largest
+owner in the project.** `resource_3c8:3068` (3,922 bytes, 248 sites) came out at
+228 C calls against 224 real ones. The culprit was a two-instruction tail that
+**four** different scenes' jump tables enter directly; writing it inline four
+times inflated the count, and one `goto` fixed it. Its 24 `unknown` sites all
+resolved to the owner's own `movs r0,#0` return — long `bl`s, not calls.
 
 **Two call-site shapes break a naive multiset, both by inflating it.** State the
 proof as per-target counts and account for these before trusting a mismatch:

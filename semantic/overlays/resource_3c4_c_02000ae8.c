@@ -1,0 +1,160 @@
+typedef signed short s16;
+typedef signed int s32;
+typedef unsigned short u16;
+typedef unsigned int u32;
+typedef unsigned char u8;
+
+/*
+ * resource_3c4 owner at 0x02000ae8, 472 bytes: code 0x02000ae8-0x02000cb3 and
+ * the three pool words 0x0200b36c, 0x02008ab1 and 0xffff0000 at
+ * 0x02000cb4-0x02000cbf.
+ *
+ * The overlay's effect spawner: it creates an effect record at (x, y, z), gives
+ * it the constant velocity (vx, vy, vz) that the per-frame handler at
+ * 0x02000ab0 integrates, and then applies whichever of the optional fields
+ * `flags` selects from `options`.
+ *
+ * SHARED ROUTINE.  Halfword-identical to resource_39f's 0x02000ae8 over all 236
+ * halfwords except ten `bl` displacements (different veneer-table offset) and
+ * the one pool word naming this overlay's own descriptor table.
+ * `tools/overlay_call_targets.ts` reports the same resolved profile for both:
+ * 10 sites, 6 distinct imports - Func_03000380 x3, Func_08009080 x2,
+ * Func_08009098 x2, Func_080090c8, Func_0808a080, Func_0808a160.
+ *
+ * Link base 0x02008000, with two witnesses here.  The installed handler pool
+ * word 0x02008ab1 is 0x02000ab0 plus the Thumb bit, and file offset 0x2ab0 in
+ * *this* overlay is byte-identical to resource_39f's leaf integrator, which
+ * adds the +68/+72/+76 velocity into the +8/+12/+16 position.  Data_0200b36c
+ * (file offset 0x336c) is a table whose first three words - 0x0200b2a8,
+ * 0x0200b2e0 and 0x0200b318 - are the in-image descriptors at offsets 0x32a8,
+ * 0x32e0 and 0x3318.  Note that this overlay's descriptor table holds
+ * different values from resource_39f's; only the code is shared, so the
+ * contents are read through the symbol and never spelled as constants.
+ *
+ * Func_03000380 is an ARM-mode helper relocated into IWRAM, reached through a
+ * veneer - the same family as the 0x030001d8 square root.  It is called with a
+ * distance and the descriptor's word at +12, and its result becomes a per-frame
+ * step, so it is the division helper.
+ *
+ * The epilogue is `add sp, #8 / pop {r3, r5, r6, r7} / ... / pop {r0} / bx r0`,
+ * so the owner is void.
+ */
+
+extern u32 Data_0200b36c[];   /* first three words are descriptor pointers */
+
+/* Returns the party record; only its presentation block at +80 is read. */
+u8 *Func_0808a080();
+
+/* Creates the effect record and returns it, or 0 on failure. */
+u8 *Func_080090c8();
+
+void Func_08009080();
+void Func_08009098();
+void Func_0808a160();
+
+/* Relocated IWRAM helper: turns a distance and a descriptor duration into a
+ * per-frame step. */
+s32 Func_03000380();
+
+void Func_02000ae8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
+                   u32 flags, const u8 *options)
+{
+    u8 *party;
+    u8 *effect;
+    u8 *block;
+    u16 *tag;
+    s32 kind;
+
+    party = Func_0808a080(0);
+
+    /* 128 << 13.  With that bit set and an options block present the effect's
+     * kind comes from the options rather than from the default 222. */
+    if ((flags & 0x100000) != 0 && options != 0) kind = *(s16 *)(options + 24);
+    else kind = 222;
+
+    effect = Func_080090c8(kind, x, y, z);
+    if (effect == 0) return;
+
+    block = *(u8 **)(effect + 80);
+
+    Func_08009080(effect, (flags + 1) & 15);
+    Func_08009098(effect, Data_0200b36c[flags & 15]);
+
+    effect[85] = 0;
+    block[38] = 0;
+
+    /* 0x02008ab1 is Func_02000ab0 with the Thumb bit: the per-frame
+     * integrator. */
+    *(u32 *)(effect + 108) = 0x02008ab1;
+
+    *(s32 *)(effect + 68) = vx;
+    *(s32 *)(effect + 72) = vy;
+    *(s32 *)(effect + 76) = vz;
+
+    /* Bits 2 and 3 of the effect's mode byte are copied from the party's. */
+    block[9] = (u8)((block[9] & 0xf3) | ((*(u8 **)(party + 80))[9] & 0x0c));
+
+    *(s32 *)(effect + 48) = 0;
+    *(s32 *)(effect + 52) = 0;
+
+    tag = (u16 *)(effect + 100);
+    *tag = 0;
+
+    /* Everything below is optional detail: the whole block is skipped unless
+     * some high flag bit is set and an options record was supplied. */
+    if ((flags & 0xffff0000) == 0 || options == 0) return;
+
+    if ((flags & 0x10000) != 0) {                   /* 128 << 9 */
+        Func_0808a160(effect, *(s32 *)(options + 4));
+    }
+
+    if ((flags & 0x20000) != 0) {                   /* 128 << 10 */
+        effect[35] = (u8)(effect[35] & 0xfe);
+        block[9] = (u8)((block[9] & 0xf3) | ((options[0] & 3) << 2));
+    }
+
+    if ((flags & 0x80000) != 0) {                   /* 128 << 12 */
+        *(s32 *)(effect + 24) = *(s32 *)(options + 8);
+        *(s32 *)(effect + 28) = *(s32 *)(options + 12);
+    }
+
+    if ((flags & 0x40000) != 0) {                   /* 128 << 11 */
+        const s32 *descriptor = (const s32 *)Data_0200b36c[flags & 15];
+
+        /* The 0x80000 test is the same register the previous block left live:
+         * with a destination supplied the step is measured from it, otherwise
+         * the target is biased by -1.0 in 16.16. */
+        if ((flags & 0x80000) != 0) {
+            *(s32 *)(effect + 48) =
+                Func_03000380(*(s32 *)(options + 16) - *(s32 *)(effect + 24),
+                              descriptor[3]);
+            *(s32 *)(effect + 52) =
+                Func_03000380(*(s32 *)(options + 20) - *(s32 *)(effect + 28),
+                              descriptor[3]);
+        } else {
+            *(s32 *)(effect + 48) =
+                Func_03000380(*(s32 *)(options + 16) + (s32)0xffff0000,
+                              descriptor[3]);
+            *(s32 *)(effect + 52) =
+                Func_03000380(*(s32 *)(options + 20) + (s32)0xffff0000,
+                              descriptor[3]);
+        }
+    }
+
+    if ((flags & 0x200000) != 0) {                  /* 128 << 14 */
+        Func_08009080(effect, 1);
+        Func_08009098(effect, *(s32 *)(options + 28));
+    }
+
+    if ((flags & 0x400000) != 0) {                  /* 128 << 15 */
+        *(u16 *)(block + 30) = *(u16 *)(options + 32);
+    }
+
+    if ((flags & 0x800000) != 0) {                  /* 128 << 16 */
+        *tag = *(u16 *)(options + 34);
+    }
+
+    if ((flags & 0x1000000) != 0) {                 /* 128 << 17 */
+        *(u32 *)(effect + 108) = *(u32 *)(options + 36);
+    }
+}

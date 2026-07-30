@@ -1,17 +1,39 @@
 # Alchemy handover
 
-Updated: 2026-07-29 (remote overlay session 3)
+Updated: 2026-07-30 (remote session 3)
 
 This is the single authoritative session handover. Do not add dated handoff
 files; update this file in place.
 
 ## Current objective
 
-Continue the decompilation, prioritizing overlay code. The prior
-**152,000 exact-C byte** target is within ~4 KB as of session 3.
+Continue the decompilation. Exact means fully linked machine-code byte equality,
+not semantic similarity or equal object size.
 
-Exact means fully linked machine-code byte equality, not semantic similarity
-or equal object size.
+**Read this file top to bottom before starting.** It is long because it is the
+whole playbook, and several sections correct advice given earlier in the same
+file — the corrections are what save time, so do not skim to the section that
+looks relevant.
+
+Where to work, in descending order of measured value:
+
+1. **Overlay strict queues opened by the discovery fix.** The scan used to stop
+   at the first literal pool, so most functions were unreachable; fixing it took
+   the queue from 20 rows / 6,110 bytes to 457 rows / 108,032. Recent lanes there
+   converted 2,056, 860 and 644 bytes. Rank overlays by *strict* bytes, not by the
+   `genuine` figure. Ranking as measured: resource_373 (largest), 391, 383, 37b,
+   39f — 383 and 37b are now exhausted to their park lists.
+2. **Re-probing old park notes.** The return-type lever arrived late, so notes
+   with a two-halfword argument-setter residual are stale evidence, not blockers.
+   One such note cost 68 bytes of delay.
+3. **The main image** (`docs/DISCOVERY-QUEUE.md`, 727 regions / ~395 KB). Its
+   boundaries are ROM-proven, but that was never the constraint — compiler
+   fidelity is, exactly as on the overlay side. Work it by leverage (identical
+   sibling pairs, construct families, pre-routed stems), never by size.
+
+Do not read the Full-C denominator as the target: it deliberately includes linker
+veneers, structural assembly and alignment that will never be C. The tracked
+measure of real remaining work is `asm_c_debt_bytes`, printed by every full build.
 
 ## Repository state
 
@@ -385,12 +407,29 @@ cheaply and move on rather than grinding.
 
 ## Factorise a constant before choosing its spelling
 
-The pool-versus-two-instruction decision is arithmetic, checkable before you
-write anything. If a constant is `k << n` with `k <= 255` it is a two-instruction
-build and needs the `(s32)&Value_0000XXXX` spelling to force a pool word instead
-(`0x1280 = 0x94 << 5`). If it has no such factorisation it pools naturally from a
-plain literal (`0x1282`, `0x128d`, `0x1370`, `0x137b`, `0x1384`). This is the
-concrete test behind the "only for constants the reference pool-loads" rule.
+Two inputs decide this, and using only one of them will mislead you. **What the
+reference does is the target; the factorisation tells you what gcc will do by
+default, and therefore whether you must intervene at all.**
+
+Factorisation: a constant that is `k << n` with `k <= 255` (e.g.
+`0x1280 = 0x94 << 5`) is buildable in two instructions, so gcc emits
+`movs #k / lsls #n` from a plain literal. A constant with no such factorisation
+(`0x1282`, `0x128d`, `0x1370`, `0x137b`, `0x1384`) cannot be built that way, so it
+pools from a plain literal automatically.
+
+Combine the two:
+
+| reference does | constant factorises `k<<n` | spelling |
+| --- | --- | --- |
+| pool-loads it | yes | `(s32)&Value_0000XXXX` — force the pool word |
+| pool-loads it | no | plain literal — it pools by itself |
+| builds `movs`/`lsls` | yes | plain literal — you already get it |
+| builds `movs`/`lsls` | no | not reachable; the value cannot be built that way |
+
+So `&Value_` is needed in exactly one cell: a factorisable constant the reference
+nevertheless pool-loads. Never apply it because a constant merely factorises —
+that inverts the reference on the third row, and is the mistake this file made
+three separate times.
 
 Also: `value >= 0xa001 && value <= 0xdfff` reproduces the
 `adds r5,#-0xa001 / cmp #0x3ffe / bhi` range-check idiom exactly — a whole family

@@ -49,10 +49,10 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **240,386 executable bytes across 538 compiling sources**:
-  227,594 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **416,080 / 1,339,542 executable bytes** are now expressed as C, with
-  923,462 remaining. Seven semantic main sources were removed during the
+- Semantic-C lane: **244,638 executable bytes across 543 compiling sources**:
+  231,846 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **420,332 / 1,339,542 executable bytes** are now expressed as C, with
+  919,210 remaining. Seven semantic main sources were removed during the
   2026-07-30 `main` cascade because byte-exact versions now supersede them.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
@@ -154,6 +154,20 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   not admitted: their generated pointer arithmetic and prototypes are
   structurally corrupt enough that mechanical normalization is slower than a
   clean typed rewrite from assembly.
+- The ninth queue-driven pass adds five complete main owners and 4,252 bytes:
+  fixed-target particle rendering (`0800c880`), a sixteen-state battle action
+  controller (`080aa768`), two-path graphics/tilemap setup (`080c02a4`), a
+  transformed runtime renderer (`080dc454`), and radial palette/affine
+  animation (`080e6638`). All five suspicious call-via sites were resolved as
+  typed fixed transfer/math targets or typed runtime renderer pointers; none
+  remains disguised as a fake `Func_080072xx` call.
+  `build_semantic.ts` now also accepts versioned, evidence-backed
+  noncontiguous main owners from `semantic/main-regions.json`. Every executable
+  range must exactly match a manifest row, all ranges participate in overlap
+  checks, and only executable ranges count toward the metric. `080ddde0` is the
+  first registered owner: 684-byte head plus 548-byte continuation, explicitly
+  excluding its 72-byte literal pool. This removes the accounting blocker for
+  split functions without inflating semantic progress.
 - Honest outer-owner additions include `resource_381:0054/1410`,
   `resource_394:03f0/0c2c/0e64..0fb4`, `resource_3bd:0474/0608/0ee0`, and
   `resource_3c8:1d48`. `resource_379:00dc` was rejected as a fake standalone

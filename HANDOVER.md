@@ -340,6 +340,14 @@ functions the return type fixed the `movs`/`movs` swaps and
 `-mthumb-immediate-latency` then fixed the `movs`/`lsls` ones, neither reaching
 zero alone.
 
+**A sweep null was untrustworthy until 2026-07-30.** The script originally matched
+only the literal spellings `void` and `s32`, so a callee declared `u32`, `u16`,
+`s16` or pointer-returning was invisible to it and the sweep returned a *false
+null* on exactly the function the lever would have closed. One function sat parked
+at floor 2 for that reason; changing a `u32` return to `void` reaches 0 at
+baseline flags. The script now matches any declared return type — but treat any
+sweep null recorded in a note **before that date** as unmeasured.
+
 **"movs/lsls interleave" is not a real park class.** A function parked at floor 2
 after trying `-mthumb-immediate-latency`, `-fno-sched-depend-count`,
 `-mgrouped-dma-store` and the CSE modes went straight to 0 under

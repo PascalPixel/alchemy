@@ -422,6 +422,44 @@ structural split or merge first. Every one of the 575 notes under
 
 The queue is `docs/DISCOVERY-QUEUE.md`. Top 20 regions are 67,976 bytes; top 100
 are 185,288; 548 rows (284,856 bytes, 72%) have no diagnosed construct blocker.
+
+**But do not read "proven boundaries" as "easy", and do not work it by size.**
+A first lane converted 322 bytes (three regions of one colour-scale family) and
+established that boundary certainty was never the binding constraint — compiler
+fidelity is, exactly as on the overlay side. Seven of ten drafted regions reached
+a stable floor within 4-8 probes and then moved for no source permutation and none
+of the 43 evidenced flags. Ranking by size is actively wrong: the 2,048-byte tier
+will park on allocation and scheduling residuals at a higher rate than the
+40-120 byte rows did, and each costs an order of magnitude more time to floor.
+
+Work it by **leverage** instead, in this order:
+- *identical sibling pairs* — one draft covers two regions. Exactly one pair is
+  left: `08098954` / `0809a294`, 304 bytes each, differing only in which callee
+  they `bl`. Re-run the sibling hash (normalise `Func_[0-9a-f]{8}`) after any
+  adoption wave.
+- *construct families* — one insight amortised over several regions, which is
+  where all 322 of the converted bytes came from.
+- *pre-routed stems* — ten debt regions already carry non-baseline routing, so the
+  flag is not their unknown: `0808fecc`(48), `080170c4`(52), `080c08a8`(56),
+  `08004760`(60), `080b5ad4`(64), `0800430c`(76), `080f377c`(112), `0800300c`(112),
+  `080200cc`(132), `08097540`(200). The last four are untried.
+- A better target selector than raw size: debt-only, no `bl`, no `stmia`, one
+  `.thumb_func`, ≤300 bytes — 32 rows of 307.
+
+Main-image verify loop: `bun tools/candidate_show.ts <path>/<8-hex-stem>.c` prints
+`candidate=N reference=M differing_halfwords=K` plus a side-by-side disassembly
+marking every differing halfword; byte-exact is `N == M` and `K == 0`, about 0.16 s
+per probe. Routing keys on the **stem only**, so a draft in `work/claude/main/`
+gets the same flags it will get from `src/`. Adopt with
+`cp work/claude/main/<stem>.c src/<stem>.c && rm asm/<stem>.s`, then
+`bun run build:claimed`.
+
+Refuted route candidate, recorded so it is not retried on the same reasoning:
+`080049ac` and `080c0eb8` look like the twelve-store block in `src/08004a94.c`
+that is routed with `-mgrouped-dma-store`, but routing them makes both worse
+(21→24 and 25→26 halfwords). That block's stores are all of one zero pseudo;
+here the flag forms a different `stmia` than the reference wants. Measure before
+routing by analogy.
 Roughly **368,000 of the 395,816 bytes should become C**; only 62 bytes are
 measurably never-C, because the classifier already moved structural material into
 the keep classes. The one unmeasured quantity is the code/data ratio inside the

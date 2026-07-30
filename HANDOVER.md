@@ -356,6 +356,17 @@ tens or hundreds. A size-exact residual is a draft or allocation problem that th
 non-flag levers finish; it is not a compiler problem. Judge progress by size
 first.
 
+**Decrementing a halfword in place pools `0xffff`.** `*(u16 *)h = *(u16 *)h - 1;`
+emits a pooled `0xffff` and an `adds`, where
+`{ s32 t = *(u16 *)h; t -= 1; *(u16 *)h = t; }` gives the reference's
+`ldrh / subs #1 / strh`. Worth 6 bytes and the whole tail alignment on one
+function.
+
+**A struct cursor is actively harmful where an index is right.** Spelling
+`struct Ent *e = &Table[k];` and then `e->field` took one function from exact size
+and 2 halfwords to 156/160 and 56. Index every field as `Table[k].field` unless
+the reference clearly holds a cursor.
+
 **One local holding two independent call results misallocates.** A function sat
 at 21 halfwords — a pure r5/r6/r7 identity swap — solely because one `s32` held
 the results of two unrelated calls. Giving the second call its own named local
@@ -481,9 +492,11 @@ Seven admitted modes, all default-off and routed per source in
 | `-fsched-store-first` | a store sinking behind arithmetic | 308 |
 | `-fno-gcse-insert-load` | a PRE-inserted load the reference lacks | 9 |
 
-**`-fsched-low-dest-first` also fixes a pool-load hoist**, not only the r0-r3
-`movs` ordinal tie-break: an `ldr r2` scheduled ahead of the `movs r0`/`movs r1`
-of an argument group. Neither the `&Value_` spelling nor function-top or
+**`-fsched-low-dest-first` reaches three residuals, not just the one in the table**:
+the r0-r3 `movs` ordinal tie-break; a **pool-load hoist**, an `ldr r2` scheduled
+ahead of the `movs r0`/`movs r1` of an argument group; and a
+**`movs rN,#K / negs rN,rN` versus `movs r1,#imm` order swap** that appeared
+identically on two functions where three source spellings each reached nothing. Neither the `&Value_` spelling nor function-top or
 block-scoped locals touch that, so a six-function family would otherwise have been
 triaged as a SYMBOL_REF-placement park. Try the flag before believing that park.
 

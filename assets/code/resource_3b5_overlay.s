@@ -506,26 +506,8 @@ AlchemyC_02000260:
 	.space 0xa
 .L_0200026a:
 	.space 0x22
-	push	{lr}
-	sub	sp, #8
-	movs	r3, #3
-	movs	r2, #26
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r3, #1
-	movs	r0, #2
-	movs	r1, #25
-	movs	r2, #1
-	bl	sub_02000fbe
-	movs	r1, #1
-	movs	r2, #1
-	movs	r0, #102
-	negs	r1, r1
-	negs	r2, r2
-	bl	sub_02001104
-	add	sp, #8
-	pop	{r0}
-	bx	r0
+AlchemyC_0200028c:
+	.space 0x2c
 AlchemyC_020002b8:
 	.space 0x1c
 AlchemyC_020002d4:

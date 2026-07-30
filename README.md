@@ -26,16 +26,14 @@ game.
 
 ## Coverage map
 
-<p align="center">
-  <img src="assets/readme/gs1-en-coverage.svg" width="100%" alt="Treemap of the English Golden Sun ROM: the left panel divides all 8,388,608 cartridge bytes into main-image code, compressed code overlays and asset data; the right panel divides the 1,339,540 audited executable bytes into the main image and 96 decoded overlays. Tiles are shaded green for byte-exact C, yellow for reviewed semantic C and red for regions still held as assembly.">
-</p>
+![Treemap of the English Golden Sun ROM: the left card divides all 8,388,608 cartridge bytes into main-image code, compressed code overlays and asset data; the right card divides the 1,339,540 audited executable bytes into the main image and 96 decoded overlays. Tiles are shaded blue for byte-exact C, teal for reviewed semantic C and grey for regions still held as assembly.](assets/readme/gs1-en-coverage.svg)
 
-Every byte of the English cartridge, drawn in the style of SpaceMonger. The
-left panel is the ROM as it ships; the right panel is the audited executable
-denominator behind Full-C Byte Share. Green is byte-exact C from the Mercury
-lighthouse, yellow is reviewed semantic C from the Venus lighthouse, red is
-code still held as reconstruction assembly, and blue is non-code data that the
-build already reproduces from tracked asset sources.
+Every byte of the English cartridge. The left card is the ROM as it ships; the
+right card is the audited executable denominator behind Full-C Byte Share. Blue
+is byte-exact C from the Mercury lighthouse, teal is reviewed semantic C from
+the Venus lighthouse, grey is code still held as reconstruction assembly, and
+the near-black blocks are non-code data that the build already reproduces from
+tracked asset sources.
 
 The picture is derived from tracked evidence alone—no ROM, no toolchain, no
 build output—so either lighthouse can refresh it in about a second:

@@ -79,7 +79,7 @@ commit tree rather than trusting incompatible legacy subject suffixes.
 
 `tools/coverage_map.ts` publishes the same measurement as a picture:
 [`assets/readme/gs1-en-coverage.svg`](../assets/readme/gs1-en-coverage.svg),
-a SpaceMonger-style treemap of the cartridge and of the audited executable
+a treemap of the cartridge and of the audited executable
 denominator, with the tile data in
 [`metrics/gs1-en-coverage-map.json`](../metrics/gs1-en-coverage-map.json).
 

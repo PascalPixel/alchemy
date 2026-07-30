@@ -47,7 +47,7 @@ and multi-region traps out of the ordinary review queue.
 
 Both lanes are drawn together in the README coverage map
 (`assets/readme/gs1-en-coverage.svg`, regenerated with `bun run coverage`):
-green is Mercury's exact C, yellow is Venus's semantic C, red is the ground
+blue is Mercury's exact C, teal is Venus's semantic C, grey is the ground
 neither lane has taken yet. It is the fastest way to see where each lane
 actually stands before picking work — see §9.
 

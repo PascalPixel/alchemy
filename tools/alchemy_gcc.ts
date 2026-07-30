@@ -775,6 +775,28 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   // independent. Byte-exact (752/752) under the flag alone
   // (notes/resource_3ba-0540.md).
   "assets/code/resource_3ba_c_02000540.c",
+  // resource_3a7:03e0 is the same twice-used pool constant tell: the guard call
+  // and the body call both take 0x9a9, and the rerun parks it in r5 across the
+  // two conditional branches instead of reloading it. Byte-exact under the flag
+  // alone. It has to be routed by path, not by stem: resource_3a4_c_020003e0.c
+  // is already exact and shares the stem.
+  "assets/code/resource_3a7_c_020003e0.c",
+  // resource_3cd:00c0 needs this alongside -fno-gcse; see NO_GCSE_OVERLAY_SOURCES.
+  "assets/code/resource_3cd_c_020000c0.c",
+]);
+// -fno-gcse routed by path rather than by stem, for overlay rows whose address
+// is also an offset in another overlay that is already converted.
+const NO_GCSE_OVERLAY_SOURCES = new Set([
+  // resource_3cd:00c0 fills a 16-halfword stack list through a call and then
+  // walks it. Both the call argument and the walk's induction base are the
+  // frame address, and the reference materialises `mov rX, sp` twice -- once
+  // for the argument, once in the loop preheader. The pair of passes merges
+  // them into one callee-saved copy, which costs an extra `mov` and is the
+  // row's only divergence; it needs -fno-rerun-cse-after-loop alongside, as
+  // either flag alone leaves the merge in place. The result is insensitive to
+  // how the buffer is spelled -- plain array, struct wrapper, or byte buffer
+  // cast to u16 all land.
+  "assets/code/resource_3cd_c_020000c0.c",
 ]);
 // 既定ABI(標準のr4被呼出保存)で構築された収蔵ライブラリ翻訳単位。
 // 証拠: r4を保存する序文は -fcall-used-r4 の下では出ない
@@ -935,6 +957,7 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-rerun-cse-after-loop"]
       : []),
+    ...(NO_GCSE_OVERLAY_SOURCES.has(sourceKey(source)) ? ["-fno-gcse"] : []),
     ...(NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-cse-follow-jumps", "-fno-cse-skip-blocks"]
       : []),
@@ -1015,6 +1038,7 @@ export function evidencedRoutingFlags(): string[] {
     ...NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES,
     ...NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES,
     ...NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES,
+    ...NO_GCSE_OVERLAY_SOURCES,
     ...NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES,
     ...NO_STRICT_ALIASING_OVERLAY_SOURCES,
     ...NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES,

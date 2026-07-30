@@ -458,6 +458,7 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // Paired with -fsched-low-dest-first below: removing the constant sharing
   // exposes a scheduling transposition that the tie-break then fixes.
   "assets/code/resource_373_c_020031b4.c",
+  "assets/code/resource_39c_c_020010c0.c",
   "assets/code/resource_39e_c_0200071c.c",
   "assets/code/resource_3af_c_02001f90.c",
   "assets/code/resource_380_c_02000390.c",

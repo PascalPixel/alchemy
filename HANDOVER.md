@@ -480,6 +480,28 @@ exact file already contained, and found `0x03001e70 + 76` to be exactly
 `0x03001ebc`, the workspace pointer the rest of the overlay loads directly.
 Cheapest possible way to fix an overlay's struct layout.
 
+**Pulling from Mercury mid-lane: expect to delete semantic sources.**
+`build_semantic` hard-errors when a semantic source duplicates an exact one
+(`semantic/main/<stem>.c` against `src/<stem>.c`, or the same basename in
+`semantic/overlays/` against `assets/code/`). That is the two-lighthouse rule
+enforced mechanically, and it means a Mercury merge *lowers* the semantic byte
+count while raising the combined one — 22 main-image and 12 overlay sources went
+this way in one merge. Not a regression; do not try to keep them.
+
+Sequence that works: stash in-flight lane work, merge, resolve, delete the
+superseded sources, regenerate metrics, commit, restore the stash, then sweep for
+duplicates **again** because running lanes will have written more. Tell every
+live lane to check `assets/code/<basename>.c` before writing each new file.
+
+Two merge traps, both hit:
+- **Union the routing sets in `tools/alchemy_gcc.ts`, never take a side.** Each
+  lighthouse adds stems the other lacks. But a scripted union will also happily
+  rewrite a stem list *inside* the self-test's expected-flags array, replacing an
+  `-O1` conditional with bare stems. The ROM still built byte-identically; only
+  `bun run test` caught it. Always run the test chain after a scripted merge.
+- **The merge moves the executable denominator**, so the commit subject needs the
+  `metrics: correct executable denominator` prefix (§9).
+
 **Registering a main-image owner: two rules that cost a build each.**
 1. Every range must be **fully contained in one manifest row**. Agents report
    the code contiguously, which is correct as description but invalid as

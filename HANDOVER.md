@@ -340,6 +340,24 @@ functions the return type fixed the `movs`/`movs` swaps and
 `-mthumb-immediate-latency` then fixed the `movs`/`lsls` ones, neither reaching
 zero alone.
 
+**"Not drafted (scan rule)" is the largest remaining seam of stale parks.** Ten
+rows in one overlay were triaged on sight as duplicated two-instruction immediates
+or duplicated pool loads and never drafted — but that triage predates the two
+routed modes that suppress exactly those. Six of the seven then drafted went to 0.
+Any note whose reason is a park *class* rather than a measured floor should be
+re-read the same way: the class may now be routable.
+
+**A SYMBOL_REF spelling pins *where* a pool load is emitted, not only whether one
+is.** §4's factorisation table correctly puts a non-factorising constant on the
+"plain literal, it pools by itself" row — but gcc then hoists that `ldr` above
+intervening calls. Block-scoping the local does *not* fix it; the
+`extern u8 Value_0000240d; s32 t = (s32)&Value_0000240d;` spelling does. That was
+the last 11 halfwords on one function.
+
+Minor but mechanical: storing a small constant through an `s16 *` pools it as a
+halfword literal (`ldrh r3,.L7`), so the `s16 *q; s32 v; v = 94; *q = v;` idiom is
+required rather than stylistic.
+
 **A sweep null was untrustworthy until 2026-07-30.** The script originally matched
 only the literal spellings `void` and `s32`, so a callee declared `u32`, `u16`,
 `s16` or pointer-returning was invisible to it and the sweep returned a *false
@@ -438,11 +456,13 @@ tooling bug: `overlay_verify` takes flags from the command line and says 0, whil
 ## 8. Open problems
 
 **Compiler lane, well specified:**
-- **Immediate-build transposition.** The reference schedules an independent
-  `movs r0,#K` *between* a two-instruction immediate's `movs` and its `lsls`. This
-  is the residual class behind most remaining 2-5 halfword parks, and it is an
-  `insn_cost`/`tmp_class` question at `haifa-sched.c:4068-4090`, not a
-  dependent-count one. Attack it as a Thumb latency-model defect.
+- **Immediate-build transposition** — but try the composition first. The
+  reference schedules an independent `movs r0,#K` *between* a two-instruction
+  immediate's `movs` and its `lsls`. **`-fsched-low-dest-first` applied after
+  `-fno-cse-two-insn-immediate` closes many of these**: three functions sitting at
+  8-17 halfwords with exactly this residual went to 0. Only what survives that
+  pairing is a genuine compiler problem, and it is an `insn_cost`/`tmp_class`
+  question at `haifa-sched.c:4068-4090`, not a dependent-count one.
 - **`0808fecc`** (main image, floor 2): the last-scheduled-insn class rule fires
   before the ordinal tie-break, so a separate mode is needed.
 - **resource_391:02a8** (floor 7/164): the reference reuses the register holding

@@ -115,7 +115,11 @@ const NO_EXPENSIVE_SOURCES = new Set(["08092878"]);
 // This four-step signed index loop is emitted as an ascending loop in the
 // reference translation unit. Strength reduction rewrites it to a descending
 // counter and changes both the allocation and loop tail.
-const NO_STRENGTH_REDUCE_SOURCES = new Set(["080200cc", "080a9d3c"]);
+// 080200cc was listed here speculatively while it was still unconverted assembly:
+// with the flag its reconstruction is 128 bytes and 62 mismatched halfwords, and
+// without it 132/132 exact. Removing the stem is what converted it. Routing keys
+// per stem, so 080a9d3c (adopted, unaffected) keeps the flag.
+const NO_STRENGTH_REDUCE_SOURCES = new Set(["080a9d3c"]);
 // arm_reorg pulls the two halves of a split constant back together when the
 // scheduler put an independent insn between them. These references want the
 // insn left where it is; see alchemy-gcc 1ec1044 and work/hand/080a1090.

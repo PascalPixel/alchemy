@@ -37,13 +37,14 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **423,754
-executable bytes across 731 compiling sources**: 386,840 main-image bytes and
-36,914 overlay bytes. Combined with exact C, **618,704 / 1,339,558 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **449,594
+executable bytes across 880 compiling sources**: 386,840 main-image bytes and
+62,754 overlay bytes. Combined with exact C, **644,544 / 1,339,558 executable
 bytes** are expressed as C.
 
-**`resource_3b8` is the first overlay converted in full** — 15,028 / 15,028
-strict bytes across all seven owners, nothing skipped. Build that lane
+**Two overlays are now converted in full**: `resource_3b8` (15,028 / 15,028
+strict bytes, seven owners) and `resource_39a` (7,096 bytes, all 64 rows).
+Neither skipped anything. Build that lane
 with `bun run build:semantic`; its sources live under `semantic/` and do not
 claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
 and multi-region traps out of the ordinary review queue.
@@ -249,14 +250,32 @@ the right move is not to resolve the target at all — name the import by the
 address its call site computes, which is what the byte-exact
 `assets/code/resource_3b8_c_*.c` already do.
 
-**Still unexplained:** `resource_373`'s two byte-identical bodies whose `bl`
-encodes targets 0x55e0 apart, and its calls that appear to land inside their own
-function. A 0x8000 base does not account for a 0x55e0 spread. The suggested test,
-not yet run: re-derive that overlay's `bl` displacements against a 0x02008000
-base, since an error in the *disassembler's* assumed VMA would shift exactly this
-class of short intra-image branch while leaving long service calls looking
-plausible. Until then, treat an encoded overlay address as an identity for an
-import rather than a place to disassemble.
+**RESOLVED — and both earlier readings were right about different things.
+Pool words and `bl` targets live in DIFFERENT address spaces.**
+
+- A **pool word** obeys the link base: on a 0x02008000 overlay it is an in-image
+  address at `offset = value - 0x8000`.
+- A **`bl` target** is an *import identity*, not an address in any space, and
+  must never be resolved or disassembled.
+
+`resource_39a` proves the second half rather than inferring it. Its image is
+0x3328 bytes and its code ends at 0x2258, yet its `bl` targets run continuously
+from 0x2260 to **0x5124** — thousands of bytes past the end of the image, which
+no link base can fix. The decisive witness: `0x02000da4` and `0x02000dd8` encode
+`bl` to `0x02000f36` / `0x02000f68`, both strictly inside `0x02000f30`, which
+`assets/code/resource_39a_c_02000f30.c` **already reproduces byte-exactly** as a
+self-contained table lookup with no entry at +6 or +0x38. A byte-exact-proven
+function's interior cannot be a call target.
+
+That also explains `resource_373`'s 0x55e0 spread — identities, not locations —
+so nothing there is anomalous after all.
+
+**Consequence for the skip rule below:** "a `bl` into an in-image address is a
+hidden-context caller" fires only where the target is genuinely reached as code.
+On an overlay whose `bl`s are identities, such rows are ordinary and convert
+normally — `resource_39a` converted all 64 on that basis. Establish which regime
+your overlay is in *before* skipping anything; the cheapest test is whether the
+target range extends past the image end.
 
 **Two `Func_` names can be the same import, and one name can take different
 argument counts** at different call sites in the same owner. Old-style
@@ -282,6 +301,23 @@ spells them literally — the *meaning* is. Two shapes that DO check out and are
 ordinary calls: a balanced shared tail declared but not defined, and an alignment
 `nop` immediately before a real prologue (calling it is calling the function two
 bytes later).
+
+**The inventory's `calls` field counts DISTINCT targets, not call sites.**
+`0x02000920` has 20 sites but `calls=18`; `0x020012cc` has 47 sites and
+`calls=47`. Counting distinct targets matched the field exactly on every
+multi-call row checked. Use it as a completeness proof that way — counting sites
+and then chasing the "missing" difference is a phantom hunt.
+
+**A pool word can decode as a `bl`.** `0x02002014`'s clamp constant is the pooled
+word `0xf848f003`, which disassembles as `bl 0x2005124`;
+`assets/code/resource_39a_overlay.s` spells it as two raw `.2byte`s for exactly
+that reason. Any whole-image scan for call targets must exclude pool ranges or it
+will invent imports.
+
+**Old-style declarations still need the right return type.** The semantic
+toolchain rejects `void Func_X(); if (Func_X() != 0)` with "void value not
+ignored as it ought to be". Declare any import used in a condition as `s32` or a
+pointer — arity may be left open, the return type may not.
 
 **Semi-automated transcription is safe for large call carpets, with one guard.**
 For a 7,468-byte owner with 869 calls, a throwaway simulator tracking r0-r3

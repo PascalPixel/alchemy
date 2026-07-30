@@ -15,8 +15,9 @@ typedef unsigned int u32;
  * 0x02003f4c and 0x02003f10 use the same word with masks 1, 2 and 0xf.
  *
  * Call-target convention: each `bl` is named by the address its call site
- * computes; that address is an import identity in this load-relocated
- * overlay, not a place to disassemble.  Old-style declarations are used
+ * computes; that address is a per-call-site label for a
+ * load-time-relocated import, not a place to disassemble and not a global
+ * identity (see the note in resource_371_c_0200008c.c).  Old-style declarations are used
  * because the import interfaces are unknown.
  */
 

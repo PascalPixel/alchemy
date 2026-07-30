@@ -1,0 +1,69 @@
+{
+  "format": 1,
+  "owners": {
+    "08006e24": {
+      "lane": "multi_region_function",
+      "reason": "The owner has direct exits into 08006f30/08006f32 and copies the 08006f48..08006f6c helper payload onto its stack before executing it through the continuation path. Reconstruct and classify the whole serial/runtime module rather than admitting this manifest fragment alone.",
+      "resolved": true,
+      "resolution": "Disproved and superseded by a byte-exact admission (292/292 under old_agbcc -O1, src/08006e24.c). The alleged exits into 08006f30/08006f32 lie INSIDE this region (0x08006e24+292 = 0x08006f48): they are the two entry points of the function own epilogue, promoted to function symbols by the disassembler because they are branch targets. The stack-copied payload is never executed here; the Thumb-tagged pointer to the copy is passed as an argument to Func_08006f6c and executed in the callee. Whether Func_08006f48 itself is expressible without inline assembly remains untested and is the real hard case in this family."
+    },
+    "0800ebec": {
+      "lane": "relocated_kernel_continuation",
+      "reason": "The true 1,804-byte function spans four regions and twice enters the relocated kernel at 0x03000118 with `mov ip,pc; bx r4`, returning inline into a 62-byte executable-gap continuation while its parent frame and registers remain live. It requires a whole-module representation for that nonstandard return contract.",
+      "resolved": true,
+      "resolution": "Admitted whole (1,714 bytes across seven ranges). The mov ip,pc; bx r4 return contract is an ordinary indirect call; the note conflated a byte-exactness fact recorded in LAWS.md with a semantic one."
+    },
+    "080dd9c0": {
+      "lane": "multi_region_function",
+      "reason": "This 124-byte manifest owner is only FunctionHead_080dd9c0: both paths branch into sub_080dda3c, which contains the body and shared literal/control state. Admit the head and continuation as one semantic module, not as a standalone 124-byte function.",
+      "resolved": true,
+      "resolution": "Admitted as one whole-owner semantic module; ranges registered in semantic/main-regions.json. The blocker was a sizing blocker, not a structural one, and tools/semantic_owner_scope.ts now supplies the row map it required."
+    },
+    "080ddde0": {
+      "lane": "multi_region_function",
+      "reason": "One function spans a 684-byte first fragment, a 72-byte embedded literal pool currently mislabeled executable, and a 548-byte continuation sharing the live frame and sole epilogue. Merge the executable rows and classify the pool before semantic admission can account for the full 1,232-byte behavior."
+    },
+    "080e15e8": {
+      "lane": "multi_region_function",
+      "reason": "The 316-byte FunctionHead_080e15e8 allocates a 336-byte frame and branches directly into sub_080e1724, which contains the body and eventual epilogue. It requires noncontiguous/main-module accounting rather than standalone admission of the head.",
+      "resolved": true,
+      "resolution": "Admitted as one whole-owner semantic module across eight ranges (3,542 bytes). Sizing blocker, not structural."
+    },
+    "080d765c": {
+      "lane": "multi_region_function",
+      "reason": "The 148-byte head allocates a 332-byte frame, branches through 080d76f0 into 080d77b4, and carries that live frame across further split/gap regions before the real epilogue. Reconstruct and register the entire effect module rather than this head.",
+      "resolved": true,
+      "resolution": "Admitted as one whole-owner semantic module across seven ranges (2,866 bytes); ranges registered in semantic/main-regions.json. Sizing blocker, not structural."
+    },
+    "080ec100": {
+      "lane": "multi_region_function",
+      "reason": "The 144-byte head allocates a 116-byte frame and branches through 080ec190 and 080ec264 into later split regions while preserving live stack/high registers. It is only the front of a much larger effect function and cannot stand alone.",
+      "resolved": true,
+      "resolution": "Admitted as one whole-owner semantic module; ranges registered in semantic/main-regions.json. The blocker was a sizing blocker, not a structural one, and tools/semantic_owner_scope.ts now supplies the row map it required."
+    },
+    "080c1798": {
+      "lane": "implicit_callee_return_state_module",
+      "reason": "Two live r2 values are intentional callee residue: 0800387c leaves either 0x20000 or the full-queue count for 080c1470, and 080030f8 leaves either 0 or 0x03001804 for 080c16d0. Convert those producer/consumer pairs with explicit machine-state result contracts before admitting this owner."
+    },
+    "08095778": {
+      "lane": "cross_file_abi",
+      "reason": "The modulo result passed here conflicts with the live pointer-base interpretation in the current exact 080955b0 source. Reconstruct the call family jointly before admission."
+    },
+    "08016018": {
+      "lane": "hidden_register_module",
+      "reason": "All three Func_08015fb8 calls pass caller_sp+4 through r9; the callee reads r9 and forwards it as the fifth argument to a relocated helper. Convert the 08015fb8 module jointly or add an honest r9-context calling convention."
+    },
+    "080d5c48": {
+      "lane": "hidden_register_module",
+      "reason": "Both apparent Func_08007300 draw calls are actually call-via-r7 thunks whose runtime renderer target is loaded into r7 from 0x03001f08. Its registered callback and teardown also depend on call-via-r3; convert the renderer module with typed dynamic calls."
+    },
+    "080b9724": {
+      "lane": "shared_stack_context_module",
+      "reason": "Func_080b9724 points r9 at caller_sp+20 before six calls to 080b9554/080b9604. Both callees consume fields at negative offsets from that shared stack cursor, and 080b9604 temporarily repoints r9 again; convert the three-function transfer module jointly."
+    },
+    "080f9f6c": {
+      "lane": "hidden_register_module",
+      "reason": "Func_080f9f3c consumes caller-held r4/r5 state, and the Func_080fa678 dependency reaches the call-via-r1 thunk. Convert the voice module jointly with explicit function-pointer and helper context."
+    }
+  }
+}

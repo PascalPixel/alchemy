@@ -571,5 +571,5 @@
 <rect x="1129.7" y="550.3" width="19.8" height="16.5" fill="#50e3c2"/>
 <rect x="1129.7" y="547.9" width="19.8" height="2.4" fill="#333333"/>
 <text x="32" y="640" font-size="9.5" fill="#8f8f8f">Tiles are main-image address bands and one per overlay; compressed overlay tiles are sized by ROM bytes and shaded by the decoded share each lane owns.</text>
-<text x="1168" y="640" font-size="9.5" fill="#8f8f8f" text-anchor="end">exact C: worktree · semantic C: origin/venus</text>
+<text x="1168" y="640" font-size="9.5" fill="#8f8f8f" text-anchor="end">exact C: origin/mercury · semantic C: origin/venus</text>
 </svg>

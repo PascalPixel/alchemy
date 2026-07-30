@@ -1,0 +1,310 @@
+typedef signed int s32;
+typedef unsigned int u32;
+typedef unsigned char u8;
+
+/*
+ * Resource 3c8 at 0x02002b14: the eight-tile variant of the "take your marks"
+ * step - the same construct as semantic/overlays/resource_3c8_c_02001f60.c,
+ * run over actor slots 15..18 against the eight-entry position table
+ * `Data_0200d164` instead of slots 9..11 against the four-entry
+ * `Data_0200d128`.
+ *
+ * The owner is complete: `push {r5, r6, r7, lr}` plus the high-register saves
+ * `mov r7, fp ; mov r6, sl ; mov r5, r9 ; push {r5, r6, r7}` and
+ * `mov r7, r8 ; push {r7}` at 0x02002b14, a 16-byte frame, and the matching
+ * unwind at 0x02002ea8..0x02002eb8, followed by an alignment halfword and a
+ * literal pool at 0x02002eba-0x02002ee3.  No live frame or register state
+ * escapes the row; the next prologue is at 0x02002ee4.
+ *
+ * `pop {r0} ; bx r0` means r0 holds the popped return address, so the owner
+ * returns nothing.  The early exit at 0x02002d98 skips the loop's own tail
+ * call at 0x02007d42 and lands on the same unwind.
+ *
+ * `Data_0200d164` is the eight-entry `(x >> 20, z >> 20)` table this lane's
+ * 0x02004bd8 reads for every scene other than 0xb9; entries are word pairs,
+ * so the match index is scaled by 8.  A match additionally requires the
+ * actor's `y` to be non-negative.  Index 8 is the "no tile" sentinel and is
+ * also written back over a real index when a second actor is found on the
+ * same tile.
+ *
+ * Differences from 0x02001f60 beyond the table and the slot range: the two
+ * "nudge the actor behind" scans compare `(actor->z >> 20) - 1` against the
+ * neighbour's, and they do not stop at the first match; and the final gate
+ * ANDs four `flags23` bytes (slots 15..18) rather than three.
+ *
+ * The eight bytes at [sp,#0]/[sp,#4] carry arguments five and six of this
+ * package's six-argument placement ABI, the order fixed by the byte-exact
+ * sibling 0x020010cc.  [sp,#8] holds the leader record fetched once at the
+ * top; [sp,#12] holds an optional handle produced only when the leader is not
+ * past the target tile, and released unconditionally afterwards.
+ *
+ * Field offsets are this package's actor record: 0x08/0x0c/0x10 the 16.16
+ * x/y/z triple, 0x22 `flags22`, 0x23 `flags23`, 0x44/0x48 the
+ * `state44`/`state48` pair (0 and 0x1999), 0x50 the sprite, 0x55 `mode55`,
+ * 0x59 `state59`.  `(sprite->flags9 << 28) >> 30` extracts bits 2-3 as an
+ * unsigned 2-bit field - the same bits the spawner at 0x02000118 writes from
+ * `params->unk00 & 3`.  Constants: 128<<9 = 0x10000, 128<<6 = 0x2000,
+ * 216<<16 = 0x00d80000, 158<<18 = 0x02780000, 194<<2 = 776, 190<<2 = 760;
+ * 0xfffc0000, 0xfff00000, 0x1999, 0x6666 and 0xccc are pooled.
+ *
+ * IMPORT IDENTITY INSIDE THE OWN BODY.  0x02002cfa, reached from 0x02002c60,
+ * disassembles to the middle of this very routine.  As everywhere in this
+ * package an overlay `bl`'s encoded address is a stable identity for the
+ * import it reaches after load-time fixup, not a place to disassemble; see
+ * the note in resource_3c8_c_020002f0.c and the proof in
+ * semantic/overlays/resource_3c8_c_02002f30.c.
+ *
+ * Forty-seven `bl` sites reach 45 distinct targets - 0x02007b54 is called
+ * once with one argument and once with six, and 0x02007ce8 twice with
+ * different constants - matching the inventory's call count.  The full list:
+ * 0x020079d8, 0x020079c6, 0x0200797a, 0x0200798e, 0x02007a10, 0x020079be,
+ * 0x020079da, 0x02007ab8, 0x02002cfa, 0x02007bd0, 0x02007b20, 0x02007c00,
+ * 0x02007b54, 0x02007af2, 0x02007b14, 0x02003632, 0x02007ce8, 0x02007c68,
+ * 0x02007c8c, 0x02007bda, 0x02007bec, 0x02007cce, 0x02007c1c, 0x02007b72,
+ * 0x02007c02, 0x02007c32, 0x02007c4a, 0x02007c52, 0x02007c5a, 0x02007c62,
+ * 0x02007d60, 0x02007d80, 0x02007d7c, 0x02003a58, 0x02007c90, 0x02007d88,
+ * 0x02007da2, 0x02007c20, 0x02007c08, 0x02003a94, 0x02007c7a, 0x02007cae,
+ * 0x02007cfe, 0x02007c2e, 0x02007d42.
+ */
+
+struct Sprite_02002b14 {
+    u8 unknown_00[9];
+    u8 flags9;                  /* 0x09 */
+};
+
+struct Actor_02002b14 {
+    u8 unknown_00[8];
+    s32 x;                      /* 0x08 */
+    s32 y;                      /* 0x0c */
+    s32 z;                      /* 0x10 */
+    u8 unknown_14[0x0e];
+    u8 flags22;                 /* 0x22 */
+    u8 flags23;                 /* 0x23 */
+    u8 unknown_24[0x20];
+    s32 state44;                /* 0x44 */
+    s32 state48;                /* 0x48 */
+    u8 unknown_4c[4];
+    struct Sprite_02002b14 *sprite;  /* 0x50 */
+    u8 unknown_54[1];
+    u8 mode55;                  /* 0x55 */
+    u8 unknown_56[3];
+    u8 state59;                 /* 0x59 */
+};
+
+struct Progress_02002b14 {
+    s32 running;                /* 0x00 */
+    u8 unknown_04[95];
+    u8 finished;                /* 0x63 = 99 */
+};
+
+/* Eight `(x >> 20, z >> 20)` pairs. */
+extern s32 Data_0200d164[];
+
+extern u8 Data_0200d77c[];
+extern u8 Data_0200d7c8[];
+extern u8 Data_0200dac8[];
+extern u8 Data_0200dd3c[];
+
+/* Used for their return values. */
+struct Actor_02002b14 *Func_020079d8();
+struct Actor_02002b14 *Func_02007a10();
+struct Actor_02002b14 *Func_02007ab8();
+struct Actor_02002b14 *Func_02007b20();
+struct Actor_02002b14 *Func_02007b54();
+struct Actor_02002b14 *Func_02007bda();
+struct Actor_02002b14 *Func_02007bec();
+struct Actor_02002b14 *Func_02007c1c();
+struct Actor_02002b14 *Func_02007c4a();
+struct Actor_02002b14 *Func_02007c52();
+struct Actor_02002b14 *Func_02007c5a();
+struct Actor_02002b14 *Func_02007c62();
+struct Progress_02002b14 *Func_02003a58();
+struct Progress_02002b14 *Func_02003a94();
+s32 Func_02002cfa();
+s32 Func_02007c02();
+
+/* Old-style declarations: the imports' real interfaces are not known here. */
+void Func_020079c6();
+void Func_0200797a();
+void Func_0200798e();
+void Func_020079be();
+void Func_020079da();
+void Func_02007bd0();
+void Func_02007c00();
+void Func_02007af2();
+void Func_02007b14();
+void Func_02003632();
+void Func_02007ce8();
+void Func_02007c68();
+void Func_02007c8c();
+void Func_02007cce();
+void Func_02007b72();
+void Func_02007c32();
+void Func_02007d60();
+void Func_02007d80();
+void Func_02007d7c();
+void Func_02007c90();
+void Func_02007d88();
+void Func_02007da2();
+void Func_02007c20();
+void Func_02007c08();
+void Func_02007c7a();
+void Func_02007cae();
+void Func_02007cfe();
+void Func_02007c2e();
+void Func_02007d42();
+
+void Func_02002b14(void)
+{
+    struct Actor_02002b14 *leader;
+    struct Actor_02002b14 *actor;
+    struct Actor_02002b14 *neighbour;
+    struct Progress_02002b14 *progressA;
+    struct Progress_02002b14 *progressB;
+    s32 handle;
+    s32 shade;
+    s32 match;
+    s32 other;
+    s32 slot;
+
+    handle = 0;
+    leader = Func_020079d8(0, 0);
+
+    /* No argument register is written here; r0 still holds the pointer just
+     * returned above, and that dataflow is preserved as written. */
+    Func_020079c6(leader);
+
+    Func_0200797a(69, 48, 4, 2, 5, 48);
+    Func_0200798e(73, 37, 9, 13, 9, 37);
+
+    for (slot = 15; slot <= 18; slot++) {
+        actor = Func_02007a10(slot);
+
+        if (actor->flags23 == 2) {
+            Func_020079da(73, 48, 1, 1, actor->x >> 20, actor->z >> 20);
+        } else {
+            Func_020079be(72, 48, 1, 1, actor->x >> 20, actor->z >> 20);
+        }
+
+        match = 8;
+        if ((actor->x >> 20) == Data_0200d164[0]
+            && (actor->z >> 20) == Data_0200d164[1]
+            && actor->y >= 0) {
+            match = 0;
+        } else {
+            for (other = 1; other <= 7; other++) {
+                if ((actor->x >> 20) == Data_0200d164[other * 2]
+                    && (actor->z >> 20) == Data_0200d164[other * 2 + 1]
+                    && actor->y >= 0) {
+                    match = other;
+                    break;
+                }
+            }
+        }
+        if (match == 8) {
+            continue;
+        }
+
+        for (other = 15; other <= 18; other++) {
+            neighbour = Func_02007ab8(other);
+            if (other != slot
+                && (actor->x >> 20) == (neighbour->x >> 20)
+                && (actor->z >> 20) == (neighbour->z >> 20)) {
+                match = 8;
+                break;
+            }
+        }
+        if (match == 8) {
+            continue;
+        }
+
+        shade = (leader->sprite->flags9 << 28) >> 30;
+
+        if ((u32)(leader->z >> 20) <= (u32)Data_0200d164[match * 2 + 1]) {
+            handle = Func_02002cfa(actor->x, actor->y,
+                                   actor->z + 0xfffc0000, 20);
+            Func_02007bd0(0, 3);
+        }
+
+        for (other = 15; other <= 18; other++) {
+            neighbour = Func_02007b20(other);
+            if (other != slot
+                && (actor->x >> 20) == (neighbour->x >> 20)
+                && ((actor->z >> 20) - 1) == (neighbour->z >> 20)) {
+                Func_02007c00(other, 3);
+            }
+        }
+
+        /* Only r1 is written at the second site; r0 still carries the record
+         * the first call returned. */
+        Func_02007af2(Func_02007b54(slot), 0);
+
+        actor->flags22 = 0;
+        actor->mode55 = 3;
+        actor->state48 = 0x1999;
+        actor->state44 = 0;
+        Func_02007b14(6, 44, 1, 1,
+                      Data_0200d164[match * 2], Data_0200d164[match * 2 + 1]);
+        Func_02003632(actor);
+        Func_02007ce8(188);
+        actor->state59 = 0;
+        actor->mode55 = 0;
+        actor->y = 0xfff00000;
+        Func_02007c68(slot, 3);
+        actor->flags23 = 2;
+        Func_02007b54(73, 48, 1, 1,
+                      Data_0200d164[match * 2], Data_0200d164[match * 2 + 1]);
+        Func_02007c8c(0, shade);
+        Func_02007bda(0)->flags23 |= 1;
+
+        for (other = 15; other <= 18; other++) {
+            neighbour = Func_02007bec(other);
+            if (other != slot
+                && (actor->x >> 20) == (neighbour->x >> 20)
+                && ((actor->z >> 20) - 1) == (neighbour->z >> 20)) {
+                Func_02007cce(other, 1);
+                Func_02007c1c(other)->flags23 |= 1;
+            }
+        }
+
+        Func_02007b72(handle);
+
+        if (Func_02007c02(776) != 0) {
+            Func_02007c32();
+            return;
+        }
+
+        if ((Func_02007c4a(15)->flags23
+             & Func_02007c52(16)->flags23
+             & Func_02007c5a(17)->flags23
+             & Func_02007c62(18)->flags23
+             & 2) == 0) {
+            continue;
+        }
+
+        Func_02007d60(0x10000, 0x2000);
+        Func_02007d80(14, 1);
+        Func_02007d7c();
+
+        progressA = Func_02003a58(136, 776, Data_0200d77c);
+        Func_02007c90(30);
+        Func_02007d88(0x6666, 0xccc);
+        Func_02007da2(0x00d80000, -1, 0x02780000, 1);
+        Func_02007c20(progressA);
+        Func_02007c08(progressA, Data_0200d7c8);
+        progressB = Func_02003a94(216, 760, Data_0200dac8);
+
+        while (progressA->running != 0 || progressB->running != 0) {
+            if (progressA->finished != 0 || progressB->finished != 0) {
+                Func_02007ce8(30);
+                Func_02007c7a(Data_0200dd3c, 77, 35);
+                Func_02007cae(13, 35, 1, 1, 13, 36);
+                Func_02007cfe(776);
+                break;
+            }
+            Func_02007c2e(1);
+        }
+    }
+
+    Func_02007d42();
+}

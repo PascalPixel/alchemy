@@ -563,6 +563,17 @@ after loses the effect, and this fixed a register-identity floor that survived a
 seven modes); and a second pointer the reference keeps in a different register
 needs its own named local.
 
+  *It applies to a `Data_` global just as much as to a hardware register, and
+  there the size is not short.* `resource_371:3f88` and `resource_377:15bc` both
+  read `Data_03001e40` twice — once to test bit 0, once to shift — and the
+  reference keeps the address in a register and issues **two** `ldr`s where we CSE
+  to one. Sizes match exactly, so the short-size tell never fires; the diff just
+  looks like register scramble (29 differing bytes on both). Declaring the extern
+  `volatile s32` closed both outright, first probe. **Whenever the reference loads
+  the same address twice with no store between, try `volatile` before reading the
+  diff as an allocation problem** — a plain global is the easy case to miss
+  because nothing about the size says so.
+
 **Absolute addresses want `Data_<8hex>` symbols, not integer literals — otherwise
 gcc derives one from another.** Writing several nearby RAM addresses as casts
 (`*(s32 *)0x02002080 = 0; *(u16 *)0x02002008 = 0;`) lets CSE keep one in a

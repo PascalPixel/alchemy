@@ -209,6 +209,11 @@ const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78", "08005c68"]);
 // descriptor; original-order tie breaking closes its last transposition.
 const NO_SCHED_DEPEND_COUNT_SOURCES = new Set([
   "08002fb0", "08003e10", "08005340", "08005394", "080053e8", "0800d304", "08019bac", "08021d88", "080903bc", "08094730",
+  // First overlay member. §4's pool-load hoist, but the flag that reaches it is
+  // this one, not -fsched-low-dest-first: the reference issues the argument
+  // group's `ldr r0,[pc]` ahead of its `movs r1,#1`, and both -fsched-*-dest-first
+  // leave the pair in our order. No other overlay owns 02001050.
+  "02001050",
 ]);
 // The reference issues the destination copy ahead of the following ALU work.
 const MOVE_BEFORE_ALU_SOURCES = new Set([
@@ -413,7 +418,15 @@ const THUMB_IMMEDIATE_LATENCY_SOURCES = new Set(["080babdc"]);
 // Do NOT add the low-register form to 08098954/0809a294 — it regresses them.
 // See docs/compiler-evidence/sched-high-dest-first.diff.
 const SCHED_HIGH_DEST_FIRST_SOURCES = new Set(["08098954", "0809a294", "08097540"]);
-const SCHED_LOW_DEST_FIRST_SOURCES = new Set(["08097540"]);
+// 02_ is the first overlay member, and it is §7's third residual rather than the
+// r0-r3 ordinal tie-break: the reference defers a `negs r2,r2` behind the whole
+// argument group where we keep it adjacent to the `movs r2,#16` that feeds it.
+// -fsched-high-dest-first and -fno-sched-depend-count both move the pair but
+// land it one slot early, so this is the only flag that reaches it. No other
+// overlay owns 020011bc. Its sibling `02000178` has the same residual and is
+// *not* routable: resource_3ba already owns that address, and §7's routing key
+// is the bare address.
+const SCHED_LOW_DEST_FIRST_SOURCES = new Set(["08097540", "020011bc", "02001958", "02001984", "02000260", "020011d8", "0200028c"]);
 const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
   "assets/code/resource_383_c_02000428.c",
   // Paired with the callee-return-type lever: the return type fixed these
@@ -513,6 +526,14 @@ const NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES = new Set([
 // deliberately excluded, since a pool load is one instruction and sharing it is
 // not a size change.
 const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // 0xC000 appears at two of this call sheet's three sites, so CSE hoists it
+  // into a callee-saved register and buys a prologue the reference does not
+  // have. Paired with -fsched-low-dest-first, which orders the r0 setter.
+  "assets/code/resource_38d_c_02001984.c",
+  // Same shape: 0x80000 feeds both of this call's shifted arguments.
+  "assets/code/resource_3b4_c_020011d8.c",
+  // Both negated arguments are -1, so CSE builds one and copies it.
+  "assets/code/resource_3b5_c_0200028c.c",
   "assets/code/resource_372_c_02000f38.c",
   "assets/code/resource_3bf_c_02000bec.c",
   "assets/code/resource_3af_c_02001a98.c",

@@ -85,7 +85,15 @@ const NO_CSE_FOLLOW_SOURCES = new Set(["0800f9f4"]);
 // preserving the reference's defined NULL return without a redundant move.
 // In 0808c30c it propagates the persistent amount through the fallback copy,
 // rotating the loop allocation and changing the final in-place negate.
-const NO_RERUN_CSE_AFTER_LOOP_SOURCES = new Set(["08006088", "0808c30c", "080ba918"]);
+const NO_RERUN_CSE_AFTER_LOOP_SOURCES = new Set([
+  "08006088", "0808c30c", "080ba918", "080044d0",
+]);
+// 080044d0 keeps a division quotient under two names so the range comparison
+// reads the copy rather than the call's return register, as the reference does.
+// The rerun of CSE after loop optimisation collapses that copy pair back into
+// one value and restores the return register at the comparison, which is the
+// function's last differing halfword; the source-side round trip alone does not
+// survive it.
 // This unrolled six-item display setup shares one resource-ID base and one
 // signed sentinel.  Global CSE expands them back into independent constants;
 // disabling it preserves the reference's r7/r8 lifetimes.

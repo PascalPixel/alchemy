@@ -37,9 +37,9 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **369,358
-executable bytes across 631 compiling sources**: 356,566 main-image bytes and
-12,792 overlay bytes. Combined with exact C, **563,748 / 1,339,558 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **372,312
+executable bytes across 636 compiling sources**: 359,522 main-image bytes and
+12,790 overlay bytes. Combined with exact C, **566,702 / 1,339,558 executable
 bytes** are expressed as C. Build that lane
 with `bun run build:semantic`; its sources live under `semantic/` and do not
 claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
@@ -88,6 +88,54 @@ bytes while preserving the exact lane and full verification.
    agents work, then one full `bun run verify` for the settled cohort. Update the
    authoritative metrics above, commit by semantic byte gain, and push before
    starting the next wave.
+
+**Pre-sizing is now tooled: `bun tools/semantic_owner_scope.ts`.** Rule 4 above
+requires transitive sizing and a pool map before any continuation row is
+assigned; this produces both. It groups continuation rows into whole owners
+(a prologue saving lr opens one, an epilogue closes it) and marks rows whose
+reconstruction is nothing but `.inst.n` halfwords as DATA — embedded pools and
+alignment, excluded from the owner's executable ranges. `--json` for machine
+use, an 8-hex stem for one owner's row breakdown, `--self-test` in the test
+chain.
+
+It reproduces two independent hand audits exactly, which is the reason to trust
+it: `080e47b8` advertised 768 bytes, measured **7,762 executable bytes across 16
+rows with 232 calls** (audit: 7,762 / 16 rows / 231 calls), and `0800ebec`
+measured **1,804 bytes across 4 rows** (blocker note: "the true 1,804-byte
+function spans four regions"). Treat the row grouping as evidence, not proof —
+it is a boundary *estimate* to size and assign work, and the admitting agent
+still owns the boundary.
+
+**Three detection rules it took to get there**, each of which silently corrupted
+the numbers before it was fixed:
+1. *Group over every manifest row, not just the open ones.* An owner's epilogue
+   often sits in a neighbouring row of a different retention, so grouping only
+   open rows reported five ordinary owners as needing a boundary audit.
+2. *Recognise the interworking return.* This target returns three ways —
+   `pop {..,pc}`, `bx lr`, and `pop {rN} ; bx rN` for owners that save high
+   registers. Missing the third left 13 owners "unclosed". A bare `bx rN` with
+   no preceding `pop` is a jump-table dispatch and must NOT close an owner.
+3. *Drop groups with zero executable bytes.* Stranded literal pools and
+   alignment are labelled executable gaps in the manifest and inflate the
+   remainder while being unconvertible by construction.
+
+**Measured state of the main image.** The remaining continuation rows are not 80
+separate jobs and not 31,088 bytes: they collapse into **22 owners / 37,128
+executable bytes**, with 240 bytes of embedded pool excluded and only 2 groups
+still unclosed (`080bf1e8`, `080dddb8`, both tiny). Largest first: `080e47b8`
+(7,762 / 232 calls), `080f4168` (4,596 / 108), `080e15e8` (3,858 / 130),
+`080be378` (3,696 / 125), `08026080` (3,584 / 69), `080ec100` (3,358 / 87),
+`080d765c` (3,156 / 91), `0800ebec` (1,804 / 46), `080d4ce8` (1,392 / 40).
+Several already carry blocker notes in `semantic/ordinary-blockers.json` — read
+those before assigning, since the blocker is usually the *reason* the owner
+spans rows.
+
+**Queue trap on a fresh clone.** `bun run semantic:queue` reports `queued=0` on
+any clone that has not run m2c, because it only surfaces regions that already
+have a draft under `work/candidates`, `work/m2c-ctx` or `work/` — all gitignored.
+That is an empty *draft corpus*, not an empty queue. Rank from
+`out/full/asm/manifest.json` (bounded work) and `semantic_owner_scope.ts`
+(continuation work) instead; rule 3 prefers rewriting from assembly anyway.
 
 Parking rule: park only a specific, evidenced ABI or structural blocker. “m2c
 is ugly,” “the owner is large,” and “the first agent ran out of implementation

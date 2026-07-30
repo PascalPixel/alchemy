@@ -49,10 +49,10 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **237,950 executable bytes across 534 compiling sources**:
-  225,158 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **413,644 / 1,339,542 executable bytes** are now expressed as C, with
-  925,898 remaining. Seven semantic main sources were removed during the
+- Semantic-C lane: **240,386 executable bytes across 538 compiling sources**:
+  227,594 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **416,080 / 1,339,542 executable bytes** are now expressed as C, with
+  923,462 remaining. Seven semantic main sources were removed during the
   2026-07-30 `main` cascade because byte-exact versions now supersede them.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
@@ -142,6 +142,18 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   local state. `08006e24` is now persistently routed out of the ordinary queue:
   it exits into two continuation owners and copies a helper payload to its
   stack, so its manifest fragment cannot honestly stand alone.
+- The eighth queue-driven pass adds four complete main owners and 2,436 bytes:
+  chained scene-object setup (`0809537c`), encounter adjustment
+  (`080c1c54`), encounter construction/order selection (`080c1ffc`), and a
+  sixteen-slot renderer animation (`080dd77c`). Two call-via sites now have
+  honest typed representations: fixed snapshot/owner initializers at
+  `03001388`/`03000164`, and a runtime-selected six-argument renderer from the
+  pointer pair at `03001eec+1c/+20`. Auditing the adjustment owner also exposed
+  and corrected a hidden second argument in its new encounter-construction
+  caller. Large drafts `080a6ccc` and `08021e6c` passed the ABI gate but were
+  not admitted: their generated pointer arithmetic and prototypes are
+  structurally corrupt enough that mechanical normalization is slower than a
+  clean typed rewrite from assembly.
 - Honest outer-owner additions include `resource_381:0054/1410`,
   `resource_394:03f0/0c2c/0e64..0fb4`, `resource_3bd:0474/0608/0ee0`, and
   `resource_3c8:1d48`. `resource_379:00dc` was rejected as a fake standalone

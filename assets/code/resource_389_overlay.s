@@ -2056,10 +2056,8 @@ AlchemyC_02000a00:
 	pop	{r0}
 	bx	r0
 	.2byte 0x0000
-	push	{lr}
-	bl	sub_020025a8
-	pop	{r0}
-	bx	r0
+AlchemyC_020010b4:
+	.space 0xa
 	.2byte 0x0000
 	.4byte 0x47704800
 	.2byte 0x9814

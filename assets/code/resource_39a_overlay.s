@@ -1955,10 +1955,8 @@ AlchemyC_02000f30:
 	pop	{r0}
 	bx	r0
 	.2byte 0x0000
-	push	{lr}
-	bl	sub_02003090
-	pop	{r0}
-	bx	r0
+AlchemyC_02000ff8:
+	.space 0xa
 	.2byte 0x0000
 	push	{r5, r6, r7, lr}
 	mov	r7, r8

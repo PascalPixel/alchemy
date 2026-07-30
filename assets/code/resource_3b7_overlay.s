@@ -478,11 +478,8 @@ AlchemyC_02000044:
 	.2byte 0x0000
 	.2byte 0x0e35
 	.2byte 0x0000
-	push	{lr}
-	movs	r0, #0
-	bl	.L_02000a9a
-	pop	{r0}
-	bx	r0
+AlchemyC_0200019c:
+	.space 0xc
 AlchemyC_020001a8:
 	.space 0x30
 	push	{r5, r6, r7, lr}

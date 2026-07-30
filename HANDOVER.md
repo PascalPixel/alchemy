@@ -38,7 +38,21 @@ letting Vale port it within the hour.
 ### How work circulates
 
 Three agents, each owning one branch, each pulling from exactly one place. The
-flow is a **cycle**, and no agent pushes to a branch it does not own:
+flow is a **cycle**, and no agent pushes to a branch it does not own.
+
+**Vale is the master process.** `main` is the trunk and Vale's decisions are
+authoritative over both lighthouses. Practically, for Venus and Mercury:
+
+- A conflict between what a lighthouse decided and what Vale decided resolves to
+  Vale, and the lighthouse converges rather than arguing at the merge.
+- Anything a lighthouse changes about *shared* tooling or process — the `verify`
+  chain, the test chain, documentation structure, the branch protocol itself — is
+  a **proposal to Vale**, not a decision. Make it, bank it, and flag it in
+  `MEETING.md` so Vale can ratify or revert. Do not treat silence as approval.
+- Lane work-product is still the lane's own: what you convert, how you scope an
+  owner, which overlay you take. Vale does not adjudicate that.
+- When a lighthouse must act ahead of Vale to stay unblocked, say so explicitly
+  in `MEETING.md` rather than letting the change look like consensus.
 
 | agent | owns | pulls from | takes |
 | --- | --- | --- | --- |

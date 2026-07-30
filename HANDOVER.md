@@ -214,6 +214,26 @@ veneers, structural assembly and executable alignment that will never be C. The
 tracked measure of real remaining work is `asm_c_debt_bytes`, printed by every
 full build.
 
+**The main-image frontier is drafting, and here is the number (2026-07-30).**
+616 `c_candidate` regions remain. Every one of them already has *some* draft, but
+only **303 have a draft that both compiles and passes the `PROVENANCE.md`
+screen**. The other **344 regions — 289,574 bytes — need C written**, because
+their only drafts are raw m2c output that fails to compile on m2c's own artifacts
+(`subroutine_arg0` undeclared and similar). That is why the exhaustive flag
+matrices came back at 1-in-964: there is very little left to sweep, and a lot left
+to draft. Budget accordingly.
+
+**"Undrafted" is not "unconvertible", and neither is it a target list.** 104
+regions have no draft anywhere, 40,924 bytes, and **not one is a `c_candidate`** —
+they are all retained structural classes. `080a8904` is the trap: 14 bytes that
+read as a trivially draftable countdown loop, classified `deliberate_busy_wait`.
+Always filter by `retention == "c_candidate"` out of the asm manifest; ranking by
+size alone will hand you retained regions.
+
+Seed every fresh draft with `bun tools/reference_shape.ts --stem <stem>`, which
+reads the return type off the region's own epilogue (§4's rule) instead of leaving
+the drafter to discover it through a byte diff.
+
 **The inventory over-reports.** Rows nest, so summing a row set re-counts the same
 region many times: resource_381 inflates 17.6x, resource_379 9.1x, resource_37a
 5.8x. Always filter to rows with an empty `contained_by`. A lane once burned a
@@ -994,6 +1014,39 @@ near-miss before believing the park; do not expect it to close a backlog. Cheap
 models are not useful for drafting here — the ≤32-byte "easy" population is 90%
 veneer thunks, word-table interiors and mid-function fragments, and the genuine
 small leaves are already taken as each walk passes them.
+
+**Do not spend an agent on enumerable search — that is the expensive mistake, and
+it is independent of model tier.** Measured 2026-07-30 on an 18-core host: `xargs`
+over `candidate_show` sustains **114 ms per probe at 18-way concurrency**, so a
+flag matrix of 38,480 probes finishes in about four minutes and produced 2 of that
+day's 8 conversions on its own. An agent exploring 20 source spellings takes about
+six minutes. That is roughly four orders of magnitude less search per minute.
+Split the work by whether it can be enumerated:
+
+- **Enumerable** — flag sets and their pairings, callee return types, independent
+  statement orderings, constant spellings: script it. `tools/mode_sweep.ts`,
+  `tools/return_type_sweep_main.sh`, `tools/statement_order_sweep_main.ts`.
+- **Not enumerable** — deciding which lever a residual implies, decoding assembly
+  into semantics, noticing that an epilogue contradicts a draft's signature: that
+  is what an agent is for, and it wants a strong model.
+
+**Cheap-model breadth was measured and did not substitute for lever selection.**
+Four haiku lanes were each given a size-exact near-miss with its residual quoted,
+the lever sections named, and the sweeps pointed out. Result: **0 of 4 improved**
+across 66 spellings, ~6-8 minutes and ~90k tokens per lane, with honest reports
+(one correctly spotted that the statement-order sweep had only produced 3 probes
+on its target, so that lever had never been exercised there). Caveat, stated
+plainly: those four were the residual-hard remainder — two had already resisted a
+full-effort attempt — so this is not a controlled comparison and should not be
+read as a model benchmark. What it does show is that quoting the fingerprint and
+listing the levers is not enough; choosing the lever is the costly step.
+
+**Workflow orchestration is not the overhead people assume.** Verify stages fired
+the moment each solve returned and nothing queued at 12 lanes. But note the cap:
+concurrent agents per workflow are `min(16, cores - 2)`, so on an 18-core host a
+32-agent workflow runs 16 and queues the rest. For very wide cheap breadth,
+separate `Agent` calls avoid that ceiling; for pipelined solve-then-verify work
+the workflow is the right shape.
 
 ---
 

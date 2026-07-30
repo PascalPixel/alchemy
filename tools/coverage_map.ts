@@ -1238,11 +1238,22 @@ function svgPath(target: DecompTargetId): string {
  * sources describes itself; otherwise the tracked Venus ref is used when it is
  * available locally, and the lane is reported as absent when it is not.
  */
-export function resolveSemanticTree(exact: SourceTree, requested?: string): SourceTree | undefined {
+export function resolveSemanticTree(
+  exact: SourceTree,
+  requested?: string,
+  recorded?: string,
+): SourceTree | undefined {
   if (requested === "none") return undefined;
-  if (requested) {
-    const tree = requested === "worktree" ? workTree() : refTree(requested);
-    if (!tree) throw new Error(`cannot resolve semantic lane ref ${requested}`);
+  // The recorded lane wins over the describes-itself heuristic below. Once the
+  // ring carries semantic C to every branch, "this tree has semantic sources"
+  // stops identifying the lane owner: the exact tree has them too, and the
+  // heuristic would silently draw Venus's lane from whichever tree it was handed
+  // — reporting a smaller, older semantic figure as though it were current.
+  const wanted = requested ??
+    (recorded && !["worktree", "absent", "none"].includes(recorded) ? recorded : undefined);
+  if (wanted) {
+    const tree = wanted === "worktree" ? workTree() : refTree(wanted);
+    if (!tree) throw new Error(`cannot resolve semantic lane ref ${wanted}`);
     return tree;
   }
   if (exact.list("semantic/main").some((name) => MAIN_SOURCE.test(name))) return exact;
@@ -1433,6 +1444,28 @@ export function selfTest(): void {
     throw new Error("per-owner manual_regions sizing regressed");
   }
 
+  // A recorded semantic lane must beat the describes-itself heuristic: once every
+  // branch carries semantic C, having semantic sources no longer identifies the
+  // lane owner, and the heuristic would draw Venus's lane from the exact tree.
+  const semanticBearing: SourceTree = {
+    id: "exact-with-semantic",
+    list: (directory) => (directory === "semantic/main" ? ["08000000.c"] : []),
+    read: () => undefined,
+  };
+  expectReject(
+    () => resolveSemanticTree(semanticBearing, undefined, "origin/no-such-lane"),
+    "an unresolvable recorded semantic lane",
+  );
+  if (resolveSemanticTree(semanticBearing, undefined, undefined).id !== "exact-with-semantic") {
+    throw new Error("the describes-itself heuristic stopped applying with no recorded lane");
+  }
+  if (resolveSemanticTree(semanticBearing, undefined, "worktree").id !== "exact-with-semantic") {
+    throw new Error("a recorded worktree lane did not fall through to the heuristic");
+  }
+  if (resolveSemanticTree(semanticBearing, "none", "origin/venus") !== undefined) {
+    throw new Error("an explicit --semantic-ref none was overridden by the record");
+  }
+
   // A ref tree must list subdirectories, not only files. mainBoundaries walks
   // `asm/` recursively; if a directory reports no children the walk stops at
   // the first level, boundaries go missing and every main-image region is
@@ -1564,7 +1597,11 @@ async function main(argv: string[]): Promise<void> {
     ? (JSON.parse(readFileSync(mapPath(options.target), "utf8")) as CoverageMap)
     : undefined;
   const exact = resolveExactTree(options.exact, trackedDocumentOnDisk?.provenance.exact_lane);
-  const semantic = resolveSemanticTree(exact, options.semantic);
+  const semantic = resolveSemanticTree(
+    exact,
+    options.semantic,
+    trackedDocumentOnDisk?.provenance.semantic_lane,
+  );
   const map = buildCoverageMap({ target: options.target, exact, semantic });
   const svg = renderSvg(map);
   const json = canonicalJson(trackedDocument(map));

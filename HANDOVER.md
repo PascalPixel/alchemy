@@ -895,6 +895,19 @@ tooling bug: `overlay_verify` takes flags from the command line and says 0, whil
   question at `haifa-sched.c:4068-4090`, not a dependent-count one.
 - **`0808fecc`** (main image, floor 2): the last-scheduled-insn class rule fires
   before the ordinal tie-break, so a separate mode is needed.
+- **`0801a4fc`** (main image, floor 2, 166 bytes): **value0's copy versus value2's
+  retargeted definition** in the grouped-descriptor pass. With
+  `-mgrouped-dma-store,-fthumb-group-value2-in-place` everything matches except
+  the order of two insns before the `stmia`: we emit `ldr r2,[pc]` then
+  `adds r0,r5,#0`, the reference emits the copy first. In `arm.c` the pass emits
+  `SET r0, value0` *before* `store2` while `-fthumb-group-value2-in-place`
+  retargets value2's constant definition **in place**, so their relative order is
+  decided by where the constant was defined in the RTL stream, which no source
+  spelling moved (four placements of the control word tried, plus the full flag
+  matrix with pairing). This is the natural next fork change: emit the value0 copy
+  ahead of the retargeted value2 definition. It needs the §7 admission ritual
+  (rebuild, re-pin, prove the source-only build still reproduces the SHA-1), so it
+  is a deliberate compiler-lane task, not a probe. Draft is at floor 2 and ready.
 - **`080c1fa8`** (main image, floor 2): a **`mov rN,sp` versus argument-setter**
   ordinal tie-break — the reference materialises the stack base one slot earlier
   (`mov r6,sp` before `adds r0,r3,#0`; we emit the reverse). Distinct from the
@@ -1110,6 +1123,15 @@ core**, and the falsifiable stopping signal is **probe latency climbing past
 ~150 ms** — measure it, do not guess it. On a 16-core machine expect 16-20 lanes
 to be sane; the scaling is close to linear because lanes share nothing but the
 repo.
+
+**Give every drafting lane its own output directory.** Lanes told to write
+`work/<shared>/<stem>.c` destroyed each other's files between tranches on
+2026-07-30: five confirmed byte-exact drafts vanished, four were recovered only
+because the *verify* lanes had copied them into their own scratch, and two regions
+that had been solved had to be re-drafted from scratch. Use
+`work/<run>/lanes/<stem>/<stem>.c`, and adopt confirmed results promptly instead
+of batching them across tranches. Bytes measured exact and then lost are the most
+expensive outcome available.
 
 **What must stay serial, at any core count.** These are correctness constraints,
 not performance ones:

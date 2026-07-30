@@ -11,7 +11,8 @@
  * targets, matching the inventory count exactly and accounting for every
  * `bl`.  Each pair places one item at a 16.16 (X, Z) pair with the constant
  * second and fourth arguments -1 and 1, then issues the same follow-up with
- * the argument 4.  The recurring Z value `217 << 19` = 0x06c80000 is built with
+ * the argument 4.  The recurring Z value `217 << 19` = 0x06c80000 is
+ * built with
  * `movs`/`lsls` rather than pooled, which is why it appears inline below.
  *
  * This owner and 0x0200155c are the same body: they differ in

@@ -3,7 +3,9 @@
   "owners": {
     "08006e24": {
       "lane": "multi_region_function",
-      "reason": "The owner has direct exits into 08006f30/08006f32 and copies the 08006f48..08006f6c helper payload onto its stack before executing it through the continuation path. Reconstruct and classify the whole serial/runtime module rather than admitting this manifest fragment alone."
+      "reason": "The owner has direct exits into 08006f30/08006f32 and copies the 08006f48..08006f6c helper payload onto its stack before executing it through the continuation path. Reconstruct and classify the whole serial/runtime module rather than admitting this manifest fragment alone.",
+      "resolved": true,
+      "resolution": "Disproved and superseded by a byte-exact admission (292/292 under old_agbcc -O1, src/08006e24.c). The alleged exits into 08006f30/08006f32 lie INSIDE this region (0x08006e24+292 = 0x08006f48): they are the two entry points of the function own epilogue, promoted to function symbols by the disassembler because they are branch targets. The stack-copied payload is never executed here; the Thumb-tagged pointer to the copy is passed as an argument to Func_08006f6c and executed in the callee. Whether Func_08006f48 itself is expressible without inline assembly remains untested and is the real hard case in this family."
     },
     "0800ebec": {
       "lane": "relocated_kernel_continuation",

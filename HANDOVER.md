@@ -15,9 +15,9 @@ Exact means fully linked machine-code byte equality — not semantic similarity,
 not equal object size.
 
 The active branch is `speed`. Alongside the exact lane, its reviewed semantic-C
-lane currently accounts for **358,442 executable bytes across 625 compiling
-sources**: 345,650 main-image bytes and 12,792 overlay bytes. Combined with exact
-C, **552,832 / 1,339,558 executable bytes** are expressed as C. Build that lane
+lane currently accounts for **365,686 executable bytes across 628 compiling
+sources**: 352,894 main-image bytes and 12,792 overlay bytes. Combined with exact
+C, **560,076 / 1,339,558 executable bytes** are expressed as C. Build that lane
 with `bun run build:semantic`; its sources live under `semantic/` and do not
 claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
 and multi-region traps out of the ordinary review queue.
@@ -101,6 +101,14 @@ Their 168 assembly `BL` sites include runtime allocator, transfer, renderer, and
 uploader callbacks recovered from live register and workspace dataflow. This
 confirms that the whole-owner method remains productive after the established
 renderer family is exhausted.
+
+The largest remaining bounded-owner cohort admitted **3/3 owners and 7,244
+bytes**: `0808c4f8` (2,428), `080a2680` (3,128), and `080b63c8` (1,688).
+Their assembly contains 433 `BL` sites. The audits resolved false unset values,
+high-register lifetimes, stack-carried outputs, zero-fill transfers, internal
+dispatcher edges, and shared mutually-exclusive tails. High call count is now
+measured as review cost, not an admission blocker; the three-agent whole-owner
+method remains effective on the largest bounded remainder.
 
 **Remote-work intake.** Periodically fetch
 `origin/claude/continue-decompilation-3drfw0` after banking a clean semantic

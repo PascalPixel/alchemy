@@ -1,6 +1,14 @@
-# Path to completion (measured 2026-07-28)
+# Path to completion
 
-**Full-C Byte Share: 114,526 / 1,338,242 executable bytes (8.56%).**
+Current verified exact **Full-C Byte Share: 194,390 / 1,339,558 executable
+bytes (14.51%)**. The reviewed semantic lane contains another 365,686 bytes, so
+combined C expression is **560,076 / 1,339,558 bytes**.
+
+The detailed exact-lane measurements below were taken on 2026-07-28 and are
+retained as historical evidence for the compiler and queue decisions they
+describe. They are not current counts or the active scheduling order. Use
+`HANDOVER.md` for the live semantic queue, measured speed policy, remote intake,
+and current overlay ranking; regenerate exact status with `bun run progress`.
 
 The main-image diagnostic ledger contains 1,369 exact-C regions and 631
 `c_candidate` regions. These region counts are useful scheduling diagnostics,

@@ -550,6 +550,20 @@ function needing a specific 5-of-10 partition of identical-looking call sites th
 no hand sweep would have located. One lane closed 8 functions / 1,628 bytes from
 41 candidates this way.
 
+**The statement-order lever is tooled too, and its probe count is part of its
+result.** `tools/statement_order_sweep_main.ts <draft.c> [--flags …]` permutes
+maximal runs of *independent* top-level statements to a fixpoint — the §4 rule
+that a parameter's store position sets its live length and therefore its allocno
+priority. It was swept over 53 size-exact main-image targets for 10,982 probes:
+no zeros, five drafts improved (`080c1fa8` to 5 halfwords, `080a6a98` to 11).
+The binding limit is the independence test, not the search: two statements that
+both touch memory or call anything are held in order, because source alone cannot
+prove they do not alias, and on pointer-heavy drafts that leaves nothing to
+permute (`08077394` produced 1 probe, `080ae99c` 3). Where a run *is* independent
+the sweep is exhaustive — `08011fd8` took all 721 orderings and proved a real
+floor. **So read the probe count before recording a park:** 1-3 probes means the
+lever was never actually exercised, not that it failed.
+
 **The levers compose, and the sweep is worth re-running after each flag.** The
 working order is `-fno-cse-two-insn-immediate` → sweep → `-fsched-low-dest-first`
 → **sweep again**: the second sweep closed the last 3 halfwords on one function,
@@ -816,6 +830,15 @@ tooling bug: `overlay_verify` takes flags from the command line and says 0, whil
   question at `haifa-sched.c:4068-4090`, not a dependent-count one.
 - **`0808fecc`** (main image, floor 2): the last-scheduled-insn class rule fires
   before the ordinal tie-break, so a separate mode is needed.
+- **`080c1fa8`** (main image, floor 2): a **`mov rN,sp` versus argument-setter**
+  ordinal tie-break — the reference materialises the stack base one slot earlier
+  (`mov r6,sp` before `adds r0,r3,#0`; we emit the reverse). Distinct from the
+  r0-r3 case `-fsched-low-dest-first` covers, because the earlier insn writes a
+  high register from `sp`. Hand levers took this function 5 → 2 (see
+  `work/reprobe-2026-07-30/NOTES.md`); the residual survived all 40 flag settings,
+  every pairing with `-fno-sched-depend-count`, four statement placements, a
+  declaration-initialiser spelling and a return-type sweep. Draft ready at
+  `work/reprobe-2026-07-30/reordered/080c1fa8.c`, 84 bytes, baseline flags.
 - **resource_391:02a8** (floor 7/164): the reference reuses the register holding
   an `ldrsh` offset for a table cursor; not a sched1 decision.
 - **Pool-word emission**: `resource_3af:0bb8` has one surplus pool word (60 vs 56

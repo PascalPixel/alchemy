@@ -971,6 +971,54 @@ dedicated **re-probe sweep across every existing note in `work/claude/notes/`** 
 almost certainly higher yield per core-hour than walking new overlays, and it is
 purely mechanical. Do that first.
 
+  *Measured on the main image, 2026-07-30, and it does **not** hold there.* An
+  18-core run took that advice to exhaustion on `mercury`: 1,035 drafted-but-
+  unadopted stems, deduplicated to 3,188 drafts, of which 964 both compile and
+  pass the policy screen. Sweeping all 964 against 20 flag settings — each routed
+  mode alone, both CSE modes paired, and the §5 compositions — is **19,280 probes
+  in 122 s** and yielded **exactly one exact match** (`08078144`, 228 bytes,
+  adopted). A 1-in-964 yield is not a backlog. The overlay-side seam this
+  paragraph describes was real; **the main-image drafted population has no
+  equivalent, so do not budget a session for it.** Full measurement in
+  `work/reprobe-2026-07-30/NOTES.md`.
+
+  The tempting inference was that because *no* note under `work/` mentions
+  `-fsched-low-dest-first` or either CSE mode — the corpus wholly predates them —
+  those modes must be holding back a batch of main-image functions. That is the
+  §6 stale-evidence shape, it was the right thing to test, and it is **false**:
+  across 964 drafts they produced no additional exact match. They still move
+  individual halfword counts, so keep probing them per function; do not expect a
+  cohort.
+
+**Screen drafts against `PROVENANCE.md` before believing a zero.** The same run
+found two drafts scoring 0 halfwords at 212/212 in `work/hand/080044d0/exact*/`
+that are **inadmissible**: they get there with `register s32 ratio asm("r1")`.
+Ranking a draft population by score alone puts register-pinned and barrier drafts
+at the top of the list, where they read as free adoptions. Grep for `asm(`,
+`register … asm`, `volatile` and `__attribute` first. `080044d0`'s best clean
+variant is 1 halfword at exact size, which makes it the best ratio in the project
+(212 bytes behind one register identity) — and the pinned drafts conveniently
+prove which assignment to aim a legitimate allocation lever at.
+
+**The return-type lever had never been run on the main image at all.**
+`tools/return_type_sweep.sh` scores through `work/claude/overlay_verify.ts`,
+which does not exist on `mercury` and only accepts `<overlay:offset>` targets, so
+every main-image park predates the lever entirely — §5's "treat a sweep null
+before 2026-07-30 as unmeasured" understates it here, because there was never a
+null to record. `tools/return_type_sweep_main.sh` ports it to
+`candidate_show.ts`, never overwrites the input draft, and prefers a size-exact
+result at equal halfword count. 494 sweeps in 29 s improved 67 drafts (`080c0be4`
+105 → 84, `080aad10` 112 → 95) and closed none; improved drafts are saved in
+`work/reprobe-2026-07-30/drafts/`. Run it on any newly drafted main-image
+function before parking it.
+
+**Host concurrency: trust probe latency, not load average.** On an 18-core M5 Max
+with 18 concurrent probes, load average reached **25.6** while per-probe latency
+stayed at **~114 ms against a 116 ms idle baseline**. §10's stopping signal
+(latency past ~150 ms) never triggered. The 4-core "roughly one lane per core"
+rule understates a large machine; load average above core count is not by itself
+the ceiling.
+
 **Where to resume walking**, with the next offset each lane had already decoded:
 `resource_3c8:07d8` (200), `resource_39f:1520` (176), `resource_38f:0304` (196),
 `resource_372:1348` (336 — a direct structural sibling of the adopted `0f38` and

@@ -317,10 +317,26 @@ function needing a specific 5-of-10 partition of identical-looking call sites th
 no hand sweep would have located. One lane closed 8 functions / 1,628 bytes from
 41 candidates this way.
 
-**The two levers compose**: on two functions the return type fixed the
-`movs`/`movs` swaps and `-mthumb-immediate-latency` then fixed the `movs`/`lsls`
-ones, and neither reached zero alone. Retry that pairing on anything parked under
-the latency flag by itself.
+**The levers compose, and the sweep is worth re-running after each flag.** The
+working order is `-fno-cse-two-insn-immediate` → sweep → `-fsched-low-dest-first`
+→ **sweep again**: the second sweep closed the last 3 halfwords on one function,
+because adding a scheduler flag changes *which* return types help. On two other
+functions the return type fixed the `movs`/`movs` swaps and
+`-mthumb-immediate-latency` then fixed the `movs`/`lsls` ones, neither reaching
+zero alone.
+
+**"movs/lsls interleave" is not a real park class.** A function parked at floor 2
+after trying `-mthumb-immediate-latency`, `-fno-sched-depend-count`,
+`-mgrouped-dma-store` and the CSE modes went straight to 0 under
+`-fsched-low-dest-first`, which had simply never been tried — it post-dates those
+notes. Re-probe every note whose residual is a `movs`/`lsls` interleave. This is
+the same stale-evidence pattern as the return-type lever, one flag later.
+
+**Size smaller than the reference by 4-8 bytes, with a `push {r6,r7}`/`mov r8`
+prologue you do not want, means `-fno-cse-two-insn-immediate` first.** Shifted
+constants such as `0x5000`/`0x3000` reused across call sites get hoisted into
+callee-saved registers; on one function that flag was the gate that let the other
+two levers land.
 
 ---
 

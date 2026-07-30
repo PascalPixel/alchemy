@@ -37,16 +37,15 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **466,720
-executable bytes across 906 compiling sources**: 386,840 main-image bytes and
-79,880 overlay bytes. Combined with exact C, **661,670 / 1,339,558 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **475,156
+executable bytes across 921 compiling sources**: 382,970 main-image bytes and
+92,186 overlay bytes. Combined with exact C, **678,920 / 1,339,572 executable
 bytes** are expressed as C.
 
-**Five overlays are now converted in full**, none skipping anything:
-`resource_3b8` (15,028 bytes, 7 owners), `resource_372` (10,202 bytes, 16 rows),
-`resource_371` (9,650 bytes, 30 rows), `resource_39a` (7,096 bytes, 64 rows) and
-`resource_39f` (9,278 bytes, 39 rows).
-`resource_3c8` is 31 of 32, its one remainder pre-measured (below).
+**Seven overlays are now converted in full**, none skipping anything:
+`resource_3b8` (15,028 bytes), `resource_372` (10,202), `resource_371` (9,650),
+`resource_39f` (9,278), `resource_39a` (7,096), `resource_3b4` (6,226) and
+`resource_3c4` (24 of 25 rows, one 2,636-byte dispatcher pre-measured)
 
 **Pre-measured and waiting for a fresh agent: `resource_3c8:3068`**, a 26-way
 `mov pc, r3` dispatcher. Its boundary is settled — prologue at 0x02003068 saving
@@ -355,6 +354,33 @@ spells them literally — the *meaning* is. Two shapes that DO check out and are
 ordinary calls: a balanced shared tail declared but not defined, and an alignment
 `nop` immediately before a real prologue (calling it is calling the function two
 bytes later).
+
+**Overlays share whole routines verbatim — check before drafting anything.**
+`bun tools/overlay_twins.ts --unconverted` groups owners by an instruction
+skeleton that masks the two things which legitimately differ between copies:
+both halfwords of every BL pair (each overlay's veneer table is at a different
+offset) and pointer-shaped literal-pool words (the same data table lives at a
+different in-image address). Currently **15,458 bytes sit in groups where at
+least one member is already converted** — transposable by substituting
+constants rather than read from assembly.
+
+The pool masking was necessary, not cosmetic: the hand-found
+`resource_3c4`/`resource_39f` twins differ by 21 halfwords out of 192, of which
+20 are BL and **exactly one** is a pool word. Masking BL alone found 3,122
+bytes; masking pool words too found 15,458.
+
+**`unknown` from `overlay_call_targets.ts` is not evidence of a hidden-context
+caller.** Its prologue set came from the inventory, which is incomplete, so seven
+ordinary functions in one overlay were reported `unknown`. It now recognises the
+`push` opening (0xb4xx/0xb5xx) directly, which took `resource_39f` from 101
+`unknown` to 3. Whatever remains is overwhelmingly pool words that decode as a BL
+pair — check the target's first halfword before concluding anything.
+
+**A `bl` can be a long unconditional branch to the owner's own exit.**
+`resource_3c4:259c` has five that resolve to its own epilogue, past `b.n` range.
+They are not calls; `lr` is clobbered harmlessly because the epilogue pops the
+return address off the stack. This inflates site counts and explains a class of
+resolved targets that are neither veneer nor callee.
 
 **Completeness proof, best form: compare MULTISETS.** Extract the multiset of
 `bl` targets from `assets/code/<overlay>_overlay.s` and compare it to the

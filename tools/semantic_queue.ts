@@ -38,6 +38,7 @@ interface Candidate {
   runtimeThunkCalls: number;
   establishedThunkFamily?: string;
   boundaryShape: string;
+  scopeAuditRequired: boolean;
   blockedLane?: string;
   blockedReason?: string;
   draft: string;
@@ -97,7 +98,12 @@ export function analyzeCandidate(
     if (/\bmov\s+(?:r8|r9|sl|fp)\s*,/.test(setup))
       highRegisterCallSetups++;
   }
-  const boundaryPenalty = region.retention === "c_candidate" ? 0 : 500;
+  // A continuation-shaped manifest row is not a sized owner. The 080e47b8
+  // audit expanded a nominal 768-byte row into a 16-row, 7,762-byte span with
+  // embedded pools. Keep unresolved rows visible, but never rank them among
+  // ordinary bounded jobs until their transitive graph and pool map exist.
+  const scopeAuditRequired = region.retention !== "c_candidate";
+  const boundaryPenalty = scopeAuditRequired ? 5_000 : 0;
 
   // Calls and unresolved register values dominate review time. Source length
   // breaks ties between otherwise similar owners; byte size is deliberately
@@ -126,6 +132,7 @@ export function analyzeCandidate(
     runtimeThunkCalls,
     establishedThunkFamily,
     boundaryShape: region.retention,
+    scopeAuditRequired,
     draft: relative(ROOT, draftPath),
     score,
   };
@@ -218,6 +225,7 @@ if (import.meta.main) {
           `${item.establishedThunkFamily === undefined ? "" : `family=${item.establishedThunkFamily} `}` +
           `unk=${item.unknownTypes.toString().padStart(2)} ` +
           `shape=${item.boundaryShape} ` +
+          `${item.scopeAuditRequired ? "scope=transitive-unsized " : ""}` +
           `${item.blockedLane === undefined ? "" : `blocked=${item.blockedLane} `}` +
           `${item.draft}`,
         );

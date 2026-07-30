@@ -417,7 +417,15 @@ const THUMB_IMMEDIATE_LATENCY_SOURCES = new Set(["080babdc"]);
 // Do NOT add the low-register form to 08098954/0809a294 — it regresses them.
 // See docs/compiler-evidence/sched-high-dest-first.diff.
 const SCHED_HIGH_DEST_FIRST_SOURCES = new Set(["08098954", "0809a294", "08097540"]);
-const SCHED_LOW_DEST_FIRST_SOURCES = new Set(["08097540"]);
+// 02_ is the first overlay member, and it is §7's third residual rather than the
+// r0-r3 ordinal tie-break: the reference defers a `negs r2,r2` behind the whole
+// argument group where we keep it adjacent to the `movs r2,#16` that feeds it.
+// -fsched-high-dest-first and -fno-sched-depend-count both move the pair but
+// land it one slot early, so this is the only flag that reaches it. No other
+// overlay owns 020011bc. Its sibling `02000178` has the same residual and is
+// *not* routable: resource_3ba already owns that address, and §7's routing key
+// is the bare address.
+const SCHED_LOW_DEST_FIRST_SOURCES = new Set(["08097540", "020011bc"]);
 const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
   "assets/code/resource_383_c_02000428.c",
   // Paired with the callee-return-type lever: the return type fixed these

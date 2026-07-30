@@ -68,6 +68,31 @@ function optionsOf(argv: string[]): Options {
 const FILLER_HALFWORD_BUDGET = 4;
 const POOL_WORD_BUDGET = 64;
 
+// Every shape that may end the scan, i.e. every halfword the scan is willing to
+// call the *entry* of the next function.
+//
+// `0xb5xx` (`push {..., lr}`) alone was the gate, and it is what a non-leaf gcc
+// function opens with -- but a leaf opens with whatever its first statement
+// needs, and stopping the chain there left everything behind such a function
+// dark. Three more shapes are admitted, and they are not guesses: they are the
+// same shapes `Discovery.discover_global_pointer_tables` already trusts as
+// "plausible" when it decides a tagged word points at a function, plus the
+// pc-relative load a constant-returning leaf opens with.
+//
+//   * `0xb5xx`  push {..., lr}       -- an ordinary prologue;
+//   * `0x4770`  bx lr               -- a stub that returns immediately;
+//   * `0x20xx-0x27xx`  movs rN,#imm -- a leaf whose first statement is a constant;
+//   * `0x48xx-0x4fxx`  ldr rN,[pc]  -- a leaf that opens on its own pool word.
+//
+// The three additions can only ever act as *relays*: the conversion queue still
+// filters on `starts_with_prologue`, so a widened entry never becomes a queue
+// row itself. What it does is let the chain step past a leaf and reach the
+// ordinary functions laid out behind it, which is where the recall was lost.
+function isEntryShape(half: number): boolean {
+  return (half & 0xff00) === 0xb500 || half === 0x4770 ||
+    (half & 0xf800) === 0x2000 || (half & 0xf800) === 0x4800;
+}
+
 // Find the next function entry after a verified function's return.
 //
 // GCC-Thumb puts a function's literal pool immediately after its return, so the
@@ -89,12 +114,28 @@ const POOL_WORD_BUDGET = 64;
 //   * a 2-byte gap sitting directly in front of a recorded pool word is the
 //     `.align` that pool needed to reach its 4-byte boundary.
 //
-// Checking `literal_slots` before the prologue test matters for precision as
+// Checking `literal_slots` before the entry-shape test matters for precision as
 // well as reach: a pool word whose low halfword happens to look like `0xb5xx`
-// is data, and testing the slot first refuses to seed it. The same reasoning
-// rejects a candidate that some already-walked function decoded as an
-// instruction -- reaching one means the scan has run into a body, not a
-// boundary.
+// -- or, now, like `movs r4,#33` -- is data, and testing the slot first refuses
+// to seed it. The same reasoning rejects a candidate that some already-walked
+// function decoded as an instruction -- reaching one means the scan has run into
+// a body, not a boundary.
+//
+// Chaining is deliberately still done only from a function's *return*, and not
+// from a tail branch or an unresolved indirect branch. That extension was built
+// and measured, and both halves of it failed:
+//
+//   * an unconditional `b` never ends a walked function in practice. The walk
+//     follows the branch, so a tail call's callee is absorbed into the caller
+//     and the caller's highest-address instruction is the callee's return --
+//     already a return. Admitting `branch` seeded 0 functions across the 96
+//     overlays;
+//   * an unresolved `indirect` (`bx rN`, `add pc,rN`) does end a function, but
+//     what follows it is nearly always the jump table or dispatch data it reads.
+//     Admitting it seeded 3,574 functions, of which 3,571 decoded three
+//     instructions or fewer, only 2 opened with a prologue, and -- against 926
+//     converted functions whose entries are known exactly -- *none* landed on a
+//     real entry, where the return chain hits 539.
 function nextEntryAfterReturn(discovery: Discovery, last: number): number | null {
   let candidate = last + discovery.instructions.get(last)!.size;
   let fillers = 0;
@@ -106,7 +147,7 @@ function nextEntryAfterReturn(discovery: Discovery, last: number): number | null
       continue;
     }
     const half = discovery.u16(candidate);
-    if ((half & 0xff00) === 0xb500) {
+    if (isEntryShape(half)) {
       return discovery.instructions.has(candidate) ? null : candidate;
     }
     const alignsPool = (candidate & 3) === 2 && discovery.literal_slots.has(candidate + 2);
@@ -144,7 +185,7 @@ export function discoverOverlay(data: Buffer): Discovery {
     const pending = [...discovery.functions.keys()].filter((entry) => !walked.has(entry)).sort((a, b) => a - b);
     if (pending.length === 0) {
       // Recover adjacent, uncalled functions only when a verified function
-      // ends in a return and the next aligned halfword is a nearby prologue.
+      // ends in a return and the pool rule reaches a plausible function entry.
       let added = false;
       for (const fn of discovery.functions.values()) {
         const addresses = [...fn.instructions].sort((a, b) => a - b);
@@ -250,6 +291,53 @@ function selfTest(): void {
   ]));
   check("a prologue-shaped pool word is data", !disguised.functions.has(base + 0x08));
   check("the function behind a disguised pool word is found", fromScan(disguised, base + 0x0c));
+
+  // Each widened entry shape, behind the pool word that used to hide it. The
+  // leaf at 0x0c opens with `bx lr` / `movs r0,#1` / `ldr r0,[pc,#0]` instead of
+  // a prologue, and the scan that only accepted `0xb5xx` stopped at it and left
+  // the *ordinary* function at 0x14 behind it dark. Both must now be reached,
+  // and the second only via the first.
+  const prefix: Array<[number, "h" | "w", number]> = [
+    [0x00, "h", 0xb500], [0x02, "h", 0x4801], [0x04, "h", 0xbd00], [0x06, "h", 0x0000],
+    [0x08, "w", 0x0a0b0c0d],
+  ];
+  const tail: Array<[number, "h" | "w", number]> = [[0x14, "h", 0xb510], [0x16, "h", 0xbd10]];
+  const leaves: Array<[string, Array<[number, "h" | "w", number]>]> = [
+    // `bx lr` is itself the leaf's return; 0x10-0x13 stay zero filler.
+    ["bx lr", [[0x0c, "h", 0x4770]]],
+    ["movs", [[0x0c, "h", 0x2001], [0x0e, "h", 0x4770]]],
+    // The leaf's own `ldr r0,[pc,#0]` records 0x10 as a pool word, so the chain
+    // out of the leaf steps over it exactly as it does after a prologue.
+    ["pc-relative load", [[0x0c, "h", 0x4800], [0x0e, "h", 0x4770], [0x10, "w", 0x0a0b0c0d]]],
+  ];
+  for (const [label, leaf] of leaves) {
+    const widened = discoverOverlay(syntheticOverlay([...prefix, ...leaf, ...tail]));
+    check(`a leaf opening with ${label} is an entry`, fromScan(widened, base + 0x0c));
+    check(`the function behind a ${label} leaf is found`, fromScan(widened, base + 0x14));
+  }
+
+  // The same precision guard as the prologue-shaped pool word, for a widened
+  // shape: `literal_slots` is tested first, so a pool word whose low halfword
+  // reads as `movs r4,#33` stays data. This is the one shape that produced a
+  // mid-function seed when the widening was measured against the converted
+  // spans, so it is pinned here.
+  const disguisedLeaf = discoverOverlay(syntheticOverlay([
+    [0x00, "h", 0xb500], [0x02, "h", 0x4801], [0x04, "h", 0xbd00], [0x06, "h", 0x0000],
+    [0x08, "w", 0x00002421],
+    [0x0c, "h", 0xb510], [0x0e, "h", 0xbd10],
+  ]));
+  check("a movs-shaped pool word is data", !disguisedLeaf.functions.has(base + 0x08));
+  check("the function behind a movs-shaped pool word is found", fromScan(disguisedLeaf, base + 0x0c));
+
+  // Chaining stays anchored on returns. A function ending in an unresolved
+  // `bx r3` is followed by the dispatch data it reads, not by a function, and
+  // seeding there measured as pure noise -- so nothing may be seeded past it
+  // even though the halfword behind it is a perfectly good prologue.
+  const indirect = discoverOverlay(syntheticOverlay([
+    [0x00, "h", 0xb500], [0x02, "h", 0x4718],
+    [0x04, "h", 0xb510], [0x06, "h", 0xbd10],
+  ]));
+  check("an unresolved indirect branch seeds no successor", !indirect.functions.has(base + 0x04));
 
   console.log("overlay inventory self-test passed");
 }

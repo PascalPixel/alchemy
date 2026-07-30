@@ -457,6 +457,7 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // Paired with -fsched-low-dest-first below: removing the constant sharing
   // exposes a scheduling transposition that the tie-break then fixes.
   "assets/code/resource_373_c_020031b4.c",
+  "assets/code/resource_3b8_c_02003e40.c",
   "assets/code/resource_3a4_c_02000c9c.c",
   "assets/code/resource_3af_c_02001b58.c",
   "assets/code/resource_3af_c_020019c0.c",
@@ -478,6 +479,10 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // argument setters tie before a `bl` and the low-destination rule picks
   // `mov r0,sl` over `lsls r1,r1,#1` (notes/resource_381-0e30.md).
   "assets/code/resource_381_c_02000e30.c",
+  "assets/code/resource_3b8_c_020003b0.c",
+  "assets/code/resource_3b8_c_02003d40.c",
+  "assets/code/resource_3b8_c_02003df8.c",
+  "assets/code/resource_3b8_c_02003e40.c",
   // resource_373: this overlay's real fingerprint is the low-dest tie-break,
   // not the rerun-cse mode (measured neutral on ~15 functions here).
   "assets/code/resource_373_c_02000dc0.c",
@@ -550,6 +555,7 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
 // flag). docs/compiler-evidence/cse-pool-immediate.diff.
 const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
   "assets/code/resource_37b_c_02001b44.c",
+  "assets/code/resource_3b8_c_02003f84.c",
   "assets/code/resource_37b_c_0200195c.c",
   "assets/code/resource_37b_c_02002244.c",
   "assets/code/resource_37b_c_020022f4.c",

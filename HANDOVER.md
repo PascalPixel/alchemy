@@ -633,6 +633,22 @@ only reproducible as `(s32)&Value_000008c8 - (s32)&Value_0000007e`.
 `s16 *h = (s16 *)&v; h[1]` is exact. Thumb `LDRSH` has only the register-offset
 form, so `movs r3,#10 / ldrsh r2,[r6,r3]` is **not** a `volatile` tell.
 
+**When two live names hold one call result, a copy *round trip* decides which one
+a compare reads — and it needs `-fno-rerun-cse-after-loop` to survive.** A
+quotient copied `ratio = value;` leaves both names tracing to the call's return
+register, so the following compare reads r0 where the reference reads the copy in
+r1. Writing the round trip `ratio = value; value = ratio;` makes `value` the copy
+instead and the compare takes `ratio`. The second assignment is dead, and it is
+load-bearing — the same family as §4's "seemingly dead `= 0` initialiser". Both
+halves are required: the round trip alone leaves the halfword, because the rerun
+of CSE after loop optimisation collapses the pair and restores the return
+register, and the flag alone has nothing to preserve. This closed `080044d0`
+(212 bytes) from a floor of 1 that eleven other source spellings and the whole
+§7 mode matrix could not move. **Tell:** a single differing halfword on a
+size-exact draft where our operand register is the callee's return register and
+the reference's is a copy that both sides already emit. Do not read that as §6's
+"register-identity-only swap" park class without trying this first.
+
 **The allocno-priority lever applies to constant locals, not just parameters.**
 Swapping *declaration* order is neutral; declaring `s32 o;` uninitialised and
 assigning `o = 1;` **between its first two uses** changes the live length and

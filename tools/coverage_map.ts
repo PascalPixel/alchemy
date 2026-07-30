@@ -66,7 +66,6 @@ export interface Tile {
   label: string;
   bytes: number;
   lanes: Partial<Record<Lane, number>>;
-  note?: string;
 }
 
 export interface Area {
@@ -582,7 +581,7 @@ export function groupTiles(tiles: readonly Tile[], target: number): Tile[] {
   let last = "";
   for (const tile of tiles) {
     if (!current) {
-      current = { label: tile.label, bytes: 0, lanes: {}, note: tile.note };
+      current = { label: tile.label, bytes: 0, lanes: {} };
       first = tile.label;
     }
     current.bytes += tile.bytes;
@@ -733,7 +732,6 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
         semantic_c: semanticPart,
         assembly: stream.romBytes - exactPart - semanticPart,
       },
-      note: "shaded by decoded coverage",
     });
   }
   romAreas.push(area("rom-overlay-streams", "Compressed code overlays", groupTiles(streamTiles, 49152)));
@@ -900,7 +898,6 @@ const BORDER = "#262626";
 const HAIRLINE = "#1f1f1f";
 const TEXT = "#ededed";
 const MUTED = "#8f8f8f";
-const FAINT = "#666666";
 const SANS = "'Geist Sans', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
 const MONO = "'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace";
 
@@ -1017,21 +1014,18 @@ function card(
 ): void {
   lines.push(
     rect(frame, CARD, { stroke: BORDER, radius: 8 }),
-    label(frame.x + 16, frame.y + 24, title.toUpperCase(), {
+    label(frame.x + 16, frame.y + 25, title.toUpperCase(), {
       size: 10,
       fill: MUTED,
-      weight: 500,
       tracking: 0.9,
     }),
-    label(frame.x + frame.width - 16, frame.y + 24, meta, { size: 10, fill: FAINT, anchor: "end" }),
-    `<line x1="${frame.x + 1}" y1="${frame.y + 38}" x2="${frame.x + frame.width - 1}" ` +
-    `y2="${frame.y + 38}" stroke="${HAIRLINE}" stroke-width="1"/>`,
+    label(frame.x + frame.width - 16, frame.y + 25, meta, { size: 10, fill: MUTED, anchor: "end" }),
   );
   const body: Rect = {
-    x: frame.x + 13,
-    y: frame.y + 51,
-    width: frame.width - 26,
-    height: frame.height - 64,
+    x: frame.x + 12,
+    y: frame.y + 40,
+    width: frame.width - 24,
+    height: frame.height - 52,
   };
   const placedAreas = squarify(
     [...areas].sort((left, right) => right.bytes - left.bytes || left.id.localeCompare(right.id)),
@@ -1039,41 +1033,37 @@ function card(
     body,
   );
   for (const { item, rect: areaRect } of placedAreas) {
+    // Groups are separated by their gutter and their own label rather than by
+    // a frame; one fewer box per group, same reading.
     const inset: Rect = {
-      x: areaRect.x + 3,
-      y: areaRect.y + 3,
-      width: areaRect.width - 6,
-      height: areaRect.height - 6,
+      x: areaRect.x + 6,
+      y: areaRect.y + 6,
+      width: areaRect.width - 12,
+      height: areaRect.height - 12,
     };
-    lines.push(rect(inset, SURFACE, { stroke: HAIRLINE, radius: 6 }));
     const size = `${commas(item.bytes)} B`;
-    const sizeFits = inset.width >= 200;
+    const sizeFits = inset.width >= 190;
     const heading = fitText(
       item.label.toUpperCase(),
-      inset.width - (sizeFits ? size.length * 5.2 + 26 : 20),
+      inset.width - (sizeFits ? size.length * 5.2 + 16 : 4),
       9.5,
     );
     if (heading) {
-      lines.push(label(inset.x + 10, inset.y + 17, heading, {
-        size: 9.5,
-        fill: MUTED,
-        weight: 500,
-        tracking: 0.8,
-      }));
+      lines.push(label(inset.x, inset.y + 8, heading, { size: 9.5, fill: MUTED, tracking: 0.8 }));
     }
     if (sizeFits) {
-      lines.push(label(inset.x + inset.width - 10, inset.y + 17, size, {
+      lines.push(label(inset.x + inset.width, inset.y + 8, size, {
         size: 9.5,
-        fill: FAINT,
+        fill: MUTED,
         anchor: "end",
         mono: true,
       }));
     }
     const tiles: Rect = {
-      x: inset.x + 6,
-      y: inset.y + 26,
-      width: inset.width - 12,
-      height: inset.height - 32,
+      x: inset.x,
+      y: inset.y + 16,
+      width: inset.width,
+      height: inset.height - 16,
     };
     for (const placed of squarify(item.tiles, (tile) => tile.bytes, tiles)) {
       tileRects(placed.item, placed.rect, lines);
@@ -1082,7 +1072,7 @@ function card(
 }
 
 /** A stacked, rounded lane bar across the whole executable denominator. */
-function laneBar(map: CoverageMap, frame: Rect, lines: string[]): string[] {
+function laneBar(map: CoverageMap, frame: Rect, lines: string[]): void {
   const clip = "lane-bar-clip";
   lines.push(
     `<defs><clipPath id="${clip}"><rect x="${frame.x}" y="${frame.y}" width="${frame.width}" ` +
@@ -1097,17 +1087,19 @@ function laneBar(map: CoverageMap, frame: Rect, lines: string[]): string[] {
     cursor += laneWidth;
   }
   lines.push("</g>");
-  return lines;
 }
 
 export function renderSvg(map: CoverageMap): string {
   const width = 1200;
-  const height = 700;
+  // Tall enough that the ROM card stays portrait: its two code areas are an
+  // eighth of the cartridge, and only a portrait card gives them a readable
+  // band instead of a sliver.
+  const height = 660;
+  const margin = 32;
   const lines: string[] = [];
   const exact = map.lanes.exact_c;
   const semantic = map.lanes.semantic_c;
   const combined = exact.bytes + semantic.bytes;
-  const combinedPercent = roundHalfUpPercent(combined, map.executable_bytes);
 
   lines.push(
     // Intrinsic width and height as well as the viewBox: an <img> that is only
@@ -1115,119 +1107,81 @@ export function renderSvg(map: CoverageMap): string {
     // letterboxes the drawing.
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" ` +
     `width="${width}" height="${height}" font-family="${SANS}" role="img" ` +
-    `aria-label="Coverage treemap of the English Golden Sun ROM: ${combinedPercent}% of the ` +
+    `aria-label="Coverage treemap of the English Golden Sun ROM: ` +
+    `${roundHalfUpPercent(combined, map.executable_bytes)}% of the ` +
     `${commas(map.executable_bytes)} audited executable bytes are expressed as C">`,
     rect({ x: 0, y: 0, width, height }, SURFACE),
-    label(32, 44, "Alchemy — Golden Sun", { size: 17, weight: 600, tracking: -0.3 }),
-    label(32, 63, `${map.target} · ${commas(map.rom_bytes)} ROM bytes · ` +
-      `${commas(map.executable_bytes)} audited executable bytes`, { size: 11, fill: MUTED }),
-    label(width - 32, 44, `${combinedPercent}%`, { size: 26, anchor: "end", weight: 600, tracking: -0.6 }),
-    label(width - 32, 63, "EXPRESSED AS C", { size: 9.5, fill: MUTED, anchor: "end", tracking: 0.9 }),
+    label(margin, 46, "Alchemy — Golden Sun", { size: 15, weight: 600, tracking: -0.2 }),
+    label(margin, 64, `${map.target} · ${megabytes(map.rom_bytes)} cartridge`, {
+      size: 10,
+      fill: MUTED,
+    }),
+    label(width - margin, 46, `${roundHalfUpPercent(combined, map.executable_bytes)}%`, {
+      size: 26,
+      anchor: "end",
+      weight: 600,
+      tracking: -0.6,
+    }),
+    // Naming the hero number as a sum keeps it from reading as the headline
+    // metric, which is the byte-exact lane alone.
+    label(width - margin, 64, "EXACT + SEMANTIC C", {
+      size: 9.5,
+      fill: MUTED,
+      anchor: "end",
+      tracking: 0.9,
+    }),
   );
 
-  // Metric row: the headline lane first, then the lane it does not include.
-  const metrics: Array<{ lane?: Lane; value: string; caption: string }> = [
-    {
-      lane: "exact_c",
-      value: `${exact.percent_of_executable}%`,
-      caption: `BYTE-EXACT C · ${commas(exact.bytes)} B`,
-    },
-    {
-      lane: "semantic_c",
-      value: `${semantic.percent_of_executable}%`,
-      caption: `SEMANTIC C · ${commas(semantic.bytes)} B`,
-    },
-    {
-      lane: "assembly",
-      value: `${map.lanes.assembly.percent_of_executable}%`,
-      caption: `ASSEMBLY · ${commas(map.lanes.assembly.bytes)} B`,
-    },
-    {
-      lane: "asset_data",
-      value: megabytes(map.lanes.asset_data.bytes),
-      caption: `ASSETS & DATA · ${commas(map.lanes.asset_data.bytes)} B`,
-    },
+  // The metric row doubles as the legend: one dot, one lane, one number.
+  const metrics: Array<{ lane: Lane; value: string; note?: string }> = [
+    { lane: "exact_c", value: `${exact.percent_of_executable}%`, note: "FULL-C BYTE SHARE" },
+    { lane: "semantic_c", value: `${semantic.percent_of_executable}%` },
+    { lane: "assembly", value: `${map.lanes.assembly.percent_of_executable}%` },
+    { lane: "asset_data", value: megabytes(map.lanes.asset_data.bytes), note: "NOT CODE" },
   ];
-  const columnWidth = (width - 64) / metrics.length;
+  const columnWidth = (width - margin * 2) / metrics.length;
   metrics.forEach((metric, index) => {
-    const x = 32 + index * columnWidth;
-    if (index > 0) {
-      lines.push(
-        `<line x1="${round(x - 20)}" y1="92" x2="${round(x - 20)}" y2="136" ` +
-        `stroke="${HAIRLINE}" stroke-width="1"/>`,
-      );
-    }
-    if (metric.lane) {
-      lines.push(rect({ x, y: 96, width: 8, height: 8 }, LANE_STYLE[metric.lane].fill, { radius: 2 }));
-    }
+    const x = margin + index * columnWidth;
+    const name = LANE_STYLE[metric.lane].label.toUpperCase() +
+      (metric.note ? ` · ${metric.note}` : "");
     lines.push(
-      label(x + (metric.lane ? 14 : 0), 104, metric.caption, {
-        size: 9.5,
-        fill: MUTED,
-        tracking: 0.8,
-      }),
-      label(x, 132, metric.value, { size: 22, weight: 600, tracking: -0.5 }),
+      rect({ x, y: 96, width: 8, height: 8 }, LANE_STYLE[metric.lane].fill, { radius: 2 }),
+      label(x + 14, 104, name, { size: 9.5, fill: MUTED, tracking: 0.8 }),
+      label(x, 128, metric.value, { size: 21, weight: 600, tracking: -0.4 }),
     );
   });
 
-  laneBar(map, { x: 32, y: 152, width: width - 64, height: 8 }, lines);
-  lines.push(
-    label(32, 178, `exact ${exact.percent_of_executable}% + semantic ` +
-      `${semantic.percent_of_executable}% of ${commas(map.executable_bytes)} executable bytes`, {
-      size: 10,
-      fill: FAINT,
-    }),
-    label(width - 32, 178, "Full-C Byte Share is the byte-exact lane alone", {
-      size: 10,
-      fill: FAINT,
-      anchor: "end",
-    }),
-  );
+  laneBar(map, { x: margin, y: 146, width: width - margin * 2, height: 6 }, lines);
 
-  const cardTop = 196;
-  const cardHeight = height - cardTop - 74;
-  // The ROM card is deliberately taller than it is wide: the two code areas are
-  // an eighth of the cartridge, and in a portrait card the squarified layout
-  // gives them a full-width band instead of an unreadable sliver.
+  const cardTop = 176;
+  const cardHeight = height - cardTop - 44;
   card(
     "ROM image",
     `${megabytes(map.rom_bytes)} on the cartridge`,
     map.rom_areas,
-    { x: 32, y: cardTop, width: 372, height: cardHeight },
+    { x: margin, y: cardTop, width: 372, height: cardHeight },
     lines,
   );
   card(
     "Audited executable universe",
     `${commas(map.executable_bytes)} bytes of code`,
     map.executable_areas,
-    { x: 420, y: cardTop, width: width - 452, height: cardHeight },
+    { x: margin + 388, y: cardTop, width: width - margin * 2 - 388, height: cardHeight },
     lines,
   );
 
-  // Legend and footnote, laid out on the same baseline grid as the header.
-  const legendY = height - 62;
-  let cursor = 32;
-  for (const lane of LANE_ORDER) {
-    const style = LANE_STYLE[lane];
-    lines.push(
-      rect({ x: cursor, y: legendY - 8, width: 8, height: 8 }, style.fill, { radius: 2 }),
-      label(cursor + 14, legendY, style.label, { size: 10.5, fill: MUTED }),
-    );
-    cursor += 26 + style.label.length * 5.9;
-  }
   lines.push(
-    label(width - 32, legendY, `exact C: ${map.provenance.exact_lane} · semantic C: ` +
-      `${map.provenance.semantic_lane}`, { size: 10, fill: FAINT, anchor: "end" }),
-    label(32, height - 38, "Left: every byte of the cartridge, already rebuilt from tracked sources " +
-      "and coloured by how it is expressed. Right: the audited executable denominator.", {
-      size: 10,
-      fill: FAINT,
+    label(margin, height - 20, "Tiles are main-image address bands and one per overlay; compressed " +
+      "overlay tiles are sized by ROM bytes and shaded by the decoded share each lane owns.", {
+      size: 9.5,
+      fill: MUTED,
     }),
-    label(32, height - 24, "Main-image tiles are address bands; overlay tiles are one resource each. " +
-      "Compressed overlay tiles are sized by ROM bytes and shaded by the decoded share each lane owns.", {
-      size: 10,
-      fill: FAINT,
-    }),
+    label(width - margin, height - 20,
+      `exact C: ${map.provenance.exact_lane} · semantic C: ${map.provenance.semantic_lane}`, {
+        size: 9.5,
+        fill: MUTED,
+        anchor: "end",
+      }),
     "</svg>",
   );
   return lines.join("\n") + "\n";
@@ -1401,7 +1355,12 @@ export function selfTest(): void {
   const svg = renderSvg(map);
   if (!svg.startsWith("<svg ") || !svg.trimEnd().endsWith("</svg>")) throw new Error("SVG shape failed");
   if (svg.includes("undefined") || svg.includes("NaN")) throw new Error("SVG contains unresolved values");
-  if (!svg.includes("byte-exact C") || !svg.includes("semantic C")) throw new Error("SVG legend failed");
+  for (const lane of LANE_ORDER) {
+    if (!svg.toUpperCase().includes(escapeText(LANE_STYLE[lane].label).toUpperCase())) {
+      throw new Error(`SVG does not name the ${lane} lane`);
+    }
+    if (!svg.includes(LANE_STYLE[lane].fill)) throw new Error(`SVG does not draw the ${lane} lane`);
+  }
   const openTags = (svg.match(/<rect /g) ?? []).length;
   if (openTags < 4) throw new Error("SVG drew no tiles");
 

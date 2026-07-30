@@ -27607,24 +27607,6 @@
         },
         {
           "start": 33554540,
-          "end": 33554986,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33554986,
-          "end": 33554988,
-          "kind": "executable_alignment",
-          "evidence": "resource_3aa_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33554988,
-          "end": 33554992,
-          "kind": "literal_pool",
-          "evidence": "resource_3aa_overlay.s:613:pc-relative-literal"
-        },
-        {
-          "start": 33554992,
           "end": 33555268,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"

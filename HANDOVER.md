@@ -125,18 +125,18 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **599,858
-executable bytes across 1,092 compiling sources**: 383,866 main-image bytes and
-215,992 overlay bytes. Combined with exact C, **811,048 / 1,339,576 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **622,358
+executable bytes across 1,159 compiling sources**: 385,850 main-image bytes and
+236,508 overlay bytes. Combined with exact C, **833,984 / 1,339,578 executable
 bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
 sources live under `semantic/` and do not claim byte equality. Use
 `semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
 of the ordinary review queue.
 
-**21 overlays have zero unconverted rows in the strict queue**, holding
-179,346 strict bytes between them. Regenerate this list rather than editing it —
+**26 overlays have zero unconverted rows in the strict queue**, holding
+213,170 strict bytes between them. Regenerate this list rather than editing it —
 it has drifted twice from being maintained by hand:
-`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,484), `resource_372` (10,202), `resource_38f` (9,848), `resource_371` (9,650), `resource_39f` (9,278), `resource_3c5` (9,208), `resource_374` (9,148), `resource_3a8` (8,912), `resource_383` (8,652), `resource_391` (7,648), `resource_39a` (7,096), `resource_375` (6,568), `resource_3aa` (6,552), `resource_3b4` (6,462), `resource_3b7` (6,062), `resource_37b` (6,032), `resource_3bb` (5,896), `resource_3cb` (5,540), `resource_3a4` (36).
+`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,484), `resource_3c8` (12,800), `resource_372` (10,202), `resource_38f` (9,848), `resource_371` (9,650), `resource_39f` (9,278), `resource_3c5` (9,208), `resource_374` (9,148), `resource_3a8` (8,912), `resource_383` (8,652), `resource_391` (7,648), `resource_39a` (7,096), `resource_375` (6,568), `resource_3aa` (6,552), `resource_3b4` (6,462), `resource_3b2` (6,134), `resource_3b7` (6,062), `resource_37b` (6,032), `resource_3bb` (5,896), `resource_3cb` (5,540), `resource_3c6` (5,250), `resource_38d` (5,212), `resource_37f` (4,428), `resource_3a4` (36).
 
 **"Converted in full" means zero unconverted STRICT-QUEUE rows, not that every
 executable byte of the overlay is C.** Measured across those overlays: their
@@ -273,7 +273,23 @@ impossible. That accounting now exists, and the first re-probe confirmed it:
 blocked as "only the front of a much larger effect function", was admitted as
 one 3,126-byte module across nine ranges with all 87 calls placed. Its agent put
 the distinction well: the blocker was accurate as written but was a *sizing*
-blocker, not a structural one. **All five `multi_region_function` blockers are now resolved**: `080dd9c0` (940
+blocker, not a structural one. **Every blocker class in `semantic/ordinary-blockers.json` has now been
+re-probed, and one entry of thirteen remains unresolved.** Beyond the five
+`multi_region_function` owners below, the 2026-07-31 sweep converted all six
+remaining blocked main-image owners — `hidden_register_module` (three of them),
+`cross_file_abi`, `shared_stack_context_module` and
+`implicit_callee_return_state_module`. Two were disproved on the facts rather
+than re-scoped: `080c1798`'s "intentional callee residue" is an r2 that no call
+site in the image sets, and `08095778`'s ABI conflict dissolves once the exact
+source's `void *` parameter is read as the integer flag id it actually carries.
+
+**Write the date and tool state into every new blocker.** None of those notes was
+careless — each was right against the evidence available when written, and what
+changed underneath them was the tooling (the `call_via` bank, the `bl` target
+rule, whole-module scoping). A blocker that does not say what it was written
+against cannot tell the next reader whether it is worth retesting.
+
+**All five `multi_region_function` blockers are now resolved**: `080dd9c0` (940
 bytes), `080ec100` (3,126), `080d765c` (2,866), `080e15e8` (3,542) and
 `080ddde0` were every one of them a *sizing* blocker, admitted whole once the row
 map existed. The class is empty — 10,474 bytes recovered from notes that read as
@@ -505,6 +521,11 @@ shows the real import is `Func_0808a080`. Diffing an exact sibling against
 offsets against material that already reproduces the ROM, rather than inferring
 them. This is how one lane fixed its actor-record layouts instead of guessing.
 
+**The skip-beat counter is a general idiom, not a one-overlay quirk** — it
+recurs verbatim in `resource_3c6` (`movs r3,#236 / lsls #1` off `0x03001ebc`,
+three times), where the two variant arms are *behaviourally identical*, differing
+only in where the bump sits relative to the last call.
+
 **An "empty else that only increments something" is a skip-beat counter, and it
 proves branch symmetry.** In `resource_391:0d3c` an eight-instruction sequence
 bumps a `u16` at `workspace + 472` and appears on the *absent* side of nearly
@@ -618,6 +639,16 @@ owner in the project.** `resource_3c8:3068` (3,922 bytes, 248 sites) came out at
 times inflated the count, and one `goto` fixed it. Its 24 `unknown` sites all
 resolved to the owner's own `movs r0,#0` return — long `bl`s, not calls.
 
+**Shapes that DEFLATE the multiset — the mirror of the inflation list below,
+and the reason to compare per-target rather than eyeball a total.** Both fired in
+one overlay:
+- A `movs r3,#N / strb` **value** register surviving into the next `bl`, read as a
+  phantom trailing argument. This is distinct from the documented `ldrsh`-offset
+  variant, which also fired three times in the same overlay.
+- A condition written twice, when a generated straight-line body is spliced with
+  a hand-written `if`.
+A net count can hide one of each. Per-target comparison cannot.
+
 **Two call-site shapes break a naive multiset, both by inflating it.** State the
 proof as per-target counts and account for these before trusting a mismatch:
 - A `bl` reached from two control paths is one site but would be two C call
@@ -694,6 +725,29 @@ ordinary `push {r5,lr}` prologue and takes two arguments, but sits between
 eight-byte veneer entries, so skimming the band calls it a veneer.
 `overlay_call_targets.ts` classifies it correctly as `prologue` — trust the tool
 over the neighbourhood.
+
+**The displacement/value trap has a second, ADDITIVE form.** The documented
+shape is `subs r3,#192` after a store. The other is `adds r2,#68` / `subs r2,#192`
+applied *after* `adds r3,r3,r2`, where the offset that matters is the
+*pre*-arithmetic value: reading `resource_37f:092c` as `workspace+516` instead of
+`workspace+448` is the natural mistake, and neither owner carrying it has
+anything else to catch it.
+
+**Cheapest link-base witness of all: an in-image handler table.** One 24-byte
+read of the table at `resource_3c6`'s file offset 0x1ee4 gives two Thumb-bit
+witnesses at once (`0x020087c5` = `Func_020007c4 + 1`, `0x020091bd` =
+`Func_020011bc + 1`). No jump table, no control-flow analysis — find the table,
+read two entries, done.
+
+**An odd in-image pool word passed to `Func_080000d0` is a two-way witness for
+free.** It proves the 0x02008000 link base *and* names the installed task. Then
+grep the overlay for the counter that task touches — in `resource_37f`, `:092c`
+clears the exact word `:1ac8` decrements, cross-validating both files at no cost.
+
+**A sibling family can name its own consumer.** Six 72-byte siblings all tail-call
+`Func_020017c0(0)` while the dispatcher calls it with `1`, and that callee's
+twelve flag ids are exactly the cue ids the family emits — which gave a 748-byte
+owner's argument semantics before anyone disassembled it.
 
 **Two arithmetic traps that an argument-window simulator gets silently wrong.**
 (1) One register can be both a stored *value* and the next store's

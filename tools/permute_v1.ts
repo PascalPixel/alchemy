@@ -89,7 +89,7 @@ function parseArguments(argv: string[]): Options {
   return options;
 }
 
-function makeRandom(seed: number): () => number {
+export function makeRandom(seed: number): () => number {
   let state = seed >>> 0 || 1;
   return () => {
     state ^= state << 13; state >>>= 0;
@@ -213,7 +213,7 @@ export function weightedDiff(actual: Buffer, expected: Buffer): number {
 
 // ---- 文モデルと変形 ---------------------------------------------------
 
-interface Statement { indent: string; text: string; depth: number; line: number }
+export interface Statement { indent: string; text: string; depth: number; line: number }
 
 export function parseStatements(body: string): { rows: string[]; statements: Statement[] } {
   const rows = body.split("\n");
@@ -248,7 +248,7 @@ function writes(text: string): Set<string> {
   return result;
 }
 
-function conflicts(a: Statement, b: Statement): boolean {
+export function conflicts(a: Statement, b: Statement): boolean {
   if (a.text.includes("(") && b.text.includes("(") &&
       /\bFunc_/.test(a.text) && /\bFunc_/.test(b.text)) return true;
   if (/M2C_FIELD|\*\(/.test(a.text) && /M2C_FIELD|\*\(/.test(b.text) &&
@@ -264,7 +264,7 @@ function conflicts(a: Statement, b: Statement): boolean {
   return false;
 }
 
-type Operator = (body: string, random: () => number) => string | null;
+export type Operator = (body: string, random: () => number) => string | null;
 
 function swapStatements(body: string, random: () => number): string | null {
   const { rows, statements } = parseStatements(body);
@@ -492,7 +492,7 @@ function unCse(body: string, random: () => number): string | null {
   return result === body ? null : result;
 }
 
-const OPERATORS: Array<[string, Operator]> = [
+export const OPERATORS: Array<[string, Operator]> = [
   ["uncse", unCse],
   ["borrow", borrowIdiom],
   ["swap", swapStatements],
@@ -512,10 +512,12 @@ const OPERATORS: Array<[string, Operator]> = [
 
 // ---- 状態と予算 -------------------------------------------------------
 
-interface TargetState {
+export interface Individual { body: string; score: number }
+
+export interface TargetState {
   signature: string;
-  best: { body: string; score: number } | null;
-  population: Array<{ body: string; score: number }>;
+  best: Individual | null;
+  population: Individual[];
   operators: Record<string, { tried: number; accepted: number }>;
   rounds: Array<{ seed: number; before: number; after: number }>;
 }
@@ -547,8 +549,11 @@ function budget(state: TargetState, base: number): number {
   return base;
 }
 
-function pickOperator(state: TargetState, random: () => number, registerFraction = 0, semanticFraction = 0, suggestions = new Set<string>()): [string, Operator] {
-  const weights = OPERATORS.map(([name]) => {
+export function pickOperator(
+  state: TargetState, random: () => number, registerFraction = 0, semanticFraction = 0,
+  suggestions = new Set<string>(), operators: ReadonlyArray<[string, Operator]> = OPERATORS,
+): [string, Operator] {
+  const weights = operators.map(([name]) => {
     const record = state.operators[name] ?? { tried: 0, accepted: 0 };
     let guidance = 1;
     if (registerFraction >= 0.5 && /^(argshift|pointerstep|postincrement|splitload|declshuffle|swap|hoist|inline|volatilize)$/.test(name)) guidance = 3;
@@ -558,11 +563,91 @@ function pickOperator(state: TargetState, random: () => number, registerFraction
   });
   const total = weights.reduce((sum, value) => sum + value, 0);
   let roll = random() * total;
-  for (let index = 0; index < OPERATORS.length; index++) {
+  for (let index = 0; index < operators.length; index++) {
     roll -= weights[index];
-    if (roll <= 0) return OPERATORS[index];
+    if (roll <= 0) return operators[index];
   }
-  return OPERATORS[OPERATORS.length - 1];
+  return operators[operators.length - 1];
+}
+
+// ---- 焼きなまし本体 ---------------------------------------------------
+// 主ROMと重ね合わせ像で共有する。採点だけを外から差し替える。
+
+export interface AnnealRequest {
+  // 対象ごとの乱数鍵。同じ鍵と種で同じ探索路になる。
+  key: number;
+  seed: number;
+  steps: number;
+  restarts: number;
+  state: TargetState;
+  best: Individual;
+  score: (body: string) => Promise<number>;
+  registerFraction?: number;
+  semanticFraction?: number;
+  suggestions?: Set<string>;
+  // 作用素表の差し替え。既定は主ROMと同じ全表。
+  operators?: ReadonlyArray<[string, Operator]>;
+  // 0点に達したときの後処理。falseを返せば探索を続ける。
+  onMatch?: (body: string, accepted: readonly string[]) => boolean | Promise<boolean>;
+  patience?: number;
+}
+
+export interface AnnealOutcome {
+  best: Individual;
+  done: boolean;
+  accepted: string[];
+  evaluated: number;
+}
+
+export async function anneal(request: AnnealRequest): Promise<AnnealOutcome> {
+  const state = request.state;
+  const patience = request.patience ?? 400;
+  let best = request.best;
+  let done = false;
+  let evaluated = 0;
+  const acceptedNames: string[] = [];
+  for (let restart = 0; restart < request.restarts && !done; restart++) {
+    const random = makeRandom(request.key ^ ((restart + request.seed * 131) * 0x9e3779b9));
+    const start = state.population.length > 0 && restart % 2 === 1
+      ? state.population[Math.floor(random() * state.population.length)]
+      : best;
+    let current = { ...start };
+    let temperature = Math.max(2, current.score / 4);
+    let sinceImprovement = 0;
+    for (let step = 0; step < request.steps; step++) {
+      if (sinceImprovement >= patience) break;
+      const [operatorName, operator] = pickOperator(
+        state, random, request.registerFraction ?? 0, request.semanticFraction ?? 0,
+        request.suggestions ?? new Set<string>(), request.operators ?? OPERATORS,
+      );
+      const next = operator(current.body, random);
+      const record = (state.operators[operatorName] ??= { tried: 0, accepted: 0 });
+      record.tried++;
+      if (next === null || next === current.body) continue;
+      const value = await request.score(next);
+      evaluated++;
+      sinceImprovement++;
+      const delta = value - current.score;
+      if (delta <= 0 || random() < Math.exp(-delta / temperature)) {
+        if (delta < 0) { record.accepted++; acceptedNames.push(operatorName); sinceImprovement = 0; }
+        current = { body: next, score: value };
+        if (value < best.score) best = { ...current };
+      }
+      temperature = Math.max(0.5, temperature * 0.995);
+      if (value === 0) {
+        done = request.onMatch === undefined ? true : await request.onMatch(next, acceptedNames);
+        if (done) break;
+      }
+    }
+    // 個体群には差分位置が異なる上位を残す。
+    if (!done) {
+      state.population = [...state.population, { ...current }]
+        .sort((left, right) => left.score - right.score)
+        .filter((entry, index, list) => index === 0 || entry.body !== list[index - 1].body)
+        .slice(0, 3);
+    }
+  }
+  return { best, done, accepted: acceptedNames, evaluated };
 }
 
 interface Recipe { operators: string[] }
@@ -738,48 +823,30 @@ async function main(): Promise<void> {
     }
 
     const stepsBudget = budget(state, options.steps);
-    const acceptedNames: string[] = [];
-    for (let restart = 0; restart < options.restarts && !done; restart++) {
-      const random = makeRandom(Number.parseInt(stem, 16) ^ ((restart + options.seed * 131) * 0x9e3779b9));
-      const start = state.population.length > 0 && restart % 2 === 1
-        ? state.population[Math.floor(random() * state.population.length)]
-        : best;
-      let current = { ...start };
-      let temperature = Math.max(2, current.score / 4);
-      let sinceImprovement = 0;
-      for (let step = 0; step < stepsBudget; step++) {
-        if (sinceImprovement >= 400) break;
-        const [operatorName, operator] = pickOperator(state, random, diagnosis.register_fraction, diagnosis.semantic_fraction, suggestions);
-        const next = operator(current.body, random);
-        const record = (state.operators[operatorName] ??= { tried: 0, accepted: 0 });
-        record.tried++;
-        if (next === null || next === current.body) continue;
-        const value = await scorer.score(M2C_PREAMBLE + next);
-        sinceImprovement++;
-        const delta = value - current.score;
-        if (delta <= 0 || random() < Math.exp(-delta / temperature)) {
-          if (delta < 0) { record.accepted++; acceptedNames.push(operatorName); sinceImprovement = 0; }
-          current = { body: next, score: value };
-          if (value < best.score) best = { ...current };
-        }
-        temperature = Math.max(0.5, temperature * 0.995);
-        if (value === 0) {
-          if (install(stem, M2C_PREAMBLE + next, rom, scratch)) {
-            console.log(`matched ${stem} (start=${state.best?.score ?? "fresh"})`);
-            appendRecipe(acceptedNames);
+    if (!done) {
+      const startingBest = state.best?.score ?? "fresh";
+      const outcome = await anneal({
+        key: Number.parseInt(stem, 16),
+        seed: options.seed,
+        steps: stepsBudget,
+        restarts: options.restarts,
+        state,
+        best,
+        score: (body) => scorer!.score(M2C_PREAMBLE + body),
+        registerFraction: diagnosis.register_fraction,
+        semanticFraction: diagnosis.semantic_fraction,
+        suggestions,
+        onMatch: (body, accepted) => {
+          if (install(stem, M2C_PREAMBLE + body, rom, scratch)) {
+            console.log(`matched ${stem} (start=${startingBest})`);
+            appendRecipe([...accepted]);
             matchedCount++;
           }
-          done = true;
-          break;
-        }
-      }
-      // 個体群には差分位置が異なる上位を残す。
-      if (!done) {
-        state.population = [...state.population, { ...current }]
-          .sort((left, right) => left.score - right.score)
-          .filter((entry, index, list) => index === 0 || entry.body !== list[index - 1].body)
-          .slice(0, 3);
-      }
+          return true;
+        },
+      });
+      best = outcome.best;
+      done = outcome.done;
     }
     if (!done) {
       const before = state.best?.score ?? Number.MAX_SAFE_INTEGER;

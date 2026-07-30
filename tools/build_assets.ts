@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 import { canonicalJson, isCanonicalJsonText } from "./canonical_json.ts";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { basename, dirname, isAbsolute, join, relative, resolve, normalize } from "node:path";
 import { encode_general, encode_general_prefill, encode_palette } from "./extract_resource.ts";
 import { characterBankPath, resourceGraphicsDir } from "./asset_paths.ts";
@@ -1466,6 +1466,45 @@ function parseArgs(argv: string[]): Options {
   return options;
 }
 
+// Incremental stamp for the whole asset stage.
+//
+// Adopting a function never touches an asset source, so re-encoding all 2,431
+// regions every build is pure waste. The stamp covers every asset source, every
+// encoder in tools/, the manifest, and the build mode; any change to any of
+// them rebuilds everything, so the stamp is conservative rather than clever.
+// Byte safety does not rest on it: build_full re-reads each region's .bin and
+// compares it to the reference ROM, and compares the composed image as a whole,
+// so a stale skip cannot produce a wrong image — it can only defer the proof
+// that the sources still re-encode, which is exactly what the stamp tracks.
+function stageStamp(manifestPath: string, sourceOnly: boolean): string {
+  const digest = new Bun.CryptoHasher("sha256");
+  digest.update(`assets-v1:${sourceOnly ? "source-only" : "rom"}\0`);
+  digest.update(readFileSync(manifestPath));
+  const walk = (directory: string, skip?: string): string[] => {
+    const found: string[] = [];
+    const stack = [directory];
+    while (stack.length !== 0) {
+      const current = stack.pop()!;
+      for (const entry of readdirSync(current, { withFileTypes: true })) {
+        const path = join(current, entry.name);
+        if (skip !== undefined && path === skip) continue;
+        if (entry.isDirectory()) stack.push(path);
+        else if (entry.isFile()) found.push(path);
+      }
+    }
+    return found.sort();
+  };
+  const inputs = [
+    ...walk(join(ROOT, "assets"), join(ROOT, "assets/code")),
+    ...walk(join(ROOT, "tools")),
+  ];
+  for (const path of inputs) {
+    const info = statSync(path);
+    digest.update(`${relative(ROOT, path)}:${info.size}:${info.mtimeMs}\n`);
+  }
+  return digest.digest("hex");
+}
+
 function main(): void {
   if (Bun.argv.length === 3 && Bun.argv[2] === "--self-test") {
     closurePackageSelfTest();
@@ -1479,6 +1518,21 @@ function main(): void {
   if (manifest.format !== 1) throw new Error("unsupported asset manifest format");
   const output = isAbsolute(args.output) ? args.output : resolve(ROOT, args.output);
   mkdirSync(output, { recursive: true });
+  const stampPath = join(output, "stage-stamp.txt");
+  const stamp = stageStamp(manifestPath, args.sourceOnly);
+  const builtManifest = join(output, "manifest.json");
+  if (existsSync(stampPath) && existsSync(builtManifest) &&
+      readFileSync(stampPath, "utf8").trim() === stamp) {
+    const previous = JSON.parse(readFileSync(builtManifest, "utf8"));
+    const present = (previous.regions as Json[]).every((region) =>
+      existsSync(String(region.output)));
+    if (present) {
+      console.log(
+        `assets=${(previous.regions as Json[]).length} bytes=${previous.bytes ?? 0} reused=stamp`,
+      );
+      return;
+    }
+  }
   const entries: Json[] = [...(manifest.regions ?? [])];
   expandClosurePackages(manifest, entries);
   expandSeries(manifest, entries);
@@ -1543,6 +1597,7 @@ function main(): void {
     asset_bytes: assetBytes,
     regions,
   }) + "\n");
+  writeFileSync(stampPath, `${stamp}\n`);
   console.log(`assets=${regions.length} bytes=${assetBytes}`);
 }
 

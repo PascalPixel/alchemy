@@ -390,6 +390,7 @@ const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
 // (or, for 399:05dc and 0a3c, together with the routed immediate-latency
 // mode). Each entry has its own exact-byte proof.
 const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3b2_c_02000da4.c",
   "assets/code/resource_37a_c_02001790.c",
   "assets/code/resource_399_c_0200021c.c",
   "assets/code/resource_3ca_c_020010d4.c",
@@ -493,6 +494,7 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // argument setters tie before a `bl` and the low-destination rule picks
   // `mov r0,sl` over `lsls r1,r1,#1` (notes/resource_381-0e30.md).
   "assets/code/resource_381_c_02000e30.c",
+  "assets/code/resource_3b2_c_02001494.c",
   "assets/code/resource_39e_c_0200071c.c",
   "assets/code/resource_3af_c_02001f90.c",
   "assets/code/resource_380_c_02000390.c",

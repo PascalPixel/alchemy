@@ -45,6 +45,12 @@ with `bun run build:semantic`; its sources live under `semantic/` and do not
 claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
 and multi-region traps out of the ordinary review queue.
 
+Both lanes are drawn together in the README coverage map
+(`assets/readme/gs1-en-coverage.svg`, regenerated with `bun run coverage`):
+blue is Mercury's exact C, teal is Venus's semantic C, grey is the ground
+neither lane has taken yet. It is the fastest way to see where each lane
+actually stands before picking work — see §9.
+
 ---
 
 ## 0. Venus Lighthouse speed policy
@@ -1207,6 +1213,24 @@ bun run verify
 Commit subjects must end in the suffix from
 `bun tools/full_c_progress.ts --subject`, and a subject that changes the
 executable denominator must begin `metrics: correct executable denominator`.
+
+**Refresh the coverage map whenever your lane advances.** `bun run coverage`
+rewrites `metrics/gs1-en-coverage-map.json` and the README treemap
+`assets/readme/gs1-en-coverage.svg`. It reads tracked evidence only — no ROM,
+no toolchain, no build output — so it costs about a second. Run it after the
+metrics report is written and before staging; in `tools/bank_cycle.sh` that is
+one line directly after the `--write-report` call:
+
+```sh
+bun run coverage > /dev/null 2>&1
+```
+
+`bun run verify` ends with `bun run coverage:check`, which fails when the
+tracked map is behind the lane this branch owns. Mercury owns the exact lane in
+the picture and Venus owns the semantic lane; each branch reads the other lane
+from the newest ref it can see and records which one in the map, so a lane it
+does not own never fails its verification. A merge conflict on the map or the
+SVG is resolved by taking either side and re-running `bun run coverage`.
 
 `PROVENANCE.md` is authoritative on clean-room rules: semantics only from the
 target's own disassembly and this repo. **No `asm()`, no inline assembly, no

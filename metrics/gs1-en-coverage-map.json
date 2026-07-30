@@ -1,0 +1,100 @@
+{
+  "format": 1,
+  "kind": "golden-sun-rom-coverage-map",
+  "target": "gs1-en",
+  "derivation": "tracked-evidence-v1",
+  "rom_bytes": 8388608,
+  "executable_bytes": 1339540,
+  "lanes": {
+    "exact_c": {
+      "bytes": 173222,
+      "percent_of_executable": 12.93
+    },
+    "semantic_c": {
+      "bytes": 387444,
+      "percent_of_executable": 28.92
+    },
+    "assembly": {
+      "bytes": 778874,
+      "percent_of_executable": 58.14
+    },
+    "asset_data": {
+      "bytes": 7300700,
+      "percent_of_executable": 0
+    }
+  },
+  "main": {
+    "executable_bytes": 548364,
+    "exact_c_bytes": 96914,
+    "semantic_c_bytes": 378986
+  },
+  "overlays": {
+    "executable_bytes": 791176,
+    "exact_c_bytes": 76308,
+    "semantic_c_bytes": 8458
+  },
+  "provenance": {
+    "exact_lane": "worktree",
+    "semantic_lane": "origin/venus",
+    "semantic_sources": 641,
+    "semantic_superseded_bytes": 2,
+    "semantic_unresolved": ["semantic/overlays/resource_37a_c_02002614.c", "semantic/overlays/resource_381_c_02000054.c"]
+  },
+  "rom_areas": [
+    {
+      "id": "rom-main-code",
+      "label": "Main image code",
+      "bytes": 548364,
+      "lanes": {
+        "exact_c": 96914,
+        "semantic_c": 378986,
+        "assembly": 72464
+      },
+      "tiles": 9
+    },
+    {
+      "id": "rom-overlay-streams",
+      "label": "Compressed code overlays",
+      "bytes": 539544,
+      "lanes": {
+        "exact_c": 51415,
+        "semantic_c": 5372,
+        "assembly": 482757
+      },
+      "tiles": 11
+    },
+    {
+      "id": "rom-data",
+      "label": "Assets & data",
+      "bytes": 7300700,
+      "lanes": {
+        "asset_data": 7300700
+      },
+      "tiles": 7
+    }
+  ],
+  "executable_areas": [
+    {
+      "id": "main",
+      "label": "Main image",
+      "bytes": 548364,
+      "lanes": {
+        "exact_c": 96914,
+        "semantic_c": 378986,
+        "assembly": 72464
+      },
+      "tiles": 54
+    },
+    {
+      "id": "overlays",
+      "label": "Decoded code overlays",
+      "bytes": 791176,
+      "lanes": {
+        "exact_c": 76308,
+        "semantic_c": 8458,
+        "assembly": 706410
+      },
+      "tiles": 96
+    }
+  ]
+}

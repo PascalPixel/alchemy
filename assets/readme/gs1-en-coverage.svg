@@ -19,8 +19,8 @@
 <defs><clipPath id="lane-bar-clip"><rect x="32" y="146" width="1136" height="6" rx="3"/></clipPath></defs>
 <g clip-path="url(#lane-bar-clip)">
 <rect x="32" y="146" width="1136" height="6" fill="#1f1f1f"/>
-<rect x="32" y="146" width="178.4" height="6" fill="#0072f5"/>
-<rect x="210.4" y="146" width="331.9" height="6" fill="#50e3c2"/>
+<rect x="32" y="146" width="178.5" height="6" fill="#0072f5"/>
+<rect x="210.5" y="146" width="331.9" height="6" fill="#50e3c2"/>
 <rect x="542.4" y="146" width="625.6" height="6" fill="#333333"/>
 </g>
 <rect x="32" y="176" width="372" height="440" fill="#0a0a0a" stroke="#262626" stroke-width="1" rx="8"/>
@@ -332,8 +332,8 @@
 <rect x="710.7" y="531.4" width="14.4" height="35.5" fill="#333333"/>
 <rect x="710.7" y="595.8" width="14.4" height="1.7" fill="#0072f5"/>
 <rect x="710.7" y="569.1" width="14.4" height="26.7" fill="#333333"/>
-<rect x="726.1" y="499.4" width="45.6" height="3.5" fill="#0072f5"/>
-<rect x="726.1" y="463.2" width="45.6" height="36.2" fill="#333333"/>
+<rect x="726.1" y="499.2" width="45.6" height="3.6" fill="#0072f5"/>
+<rect x="726.1" y="463.2" width="45.6" height="36" fill="#333333"/>
 <text x="748.9" y="486.2" font-size="9" fill="#a1a1a1" text-anchor="middle" font-family="'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" opacity="0.9">3c4</text>
 <rect x="772.7" y="495.8" width="54.1" height="7" fill="#0072f5"/>
 <rect x="772.7" y="463.2" width="54.1" height="32.6" fill="#333333"/>

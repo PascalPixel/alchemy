@@ -3764,22 +3764,14 @@ AlchemyC_02001d64:
 AlchemyC_02001e54:
 	.space 0xa
 	.2byte 0x0000
-	push	{lr}
-	bl	sub_02003c04
-	bl	.L_02001f2c
-	bl	sub_02003cc0
-	pop	{r0}
-	bx	r0
+AlchemyC_02001e60:
+	.space 0x12
 	.2byte 0x0000
 AlchemyC_02001e74:
 	.space 0xa
 	.2byte 0x0000
-	push	{lr}
-	bl	sub_02003c24
-	bl	.L_02001f4c
-	bl	sub_02003d00
-	pop	{r0}
-	bx	r0
+AlchemyC_02001e80:
+	.space 0x12
 	.2byte 0x0000
 	push	{r5, lr}
 	movs	r0, #14

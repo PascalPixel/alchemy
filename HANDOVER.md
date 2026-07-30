@@ -356,6 +356,30 @@ tens or hundreds. A size-exact residual is a draft or allocation problem that th
 non-flag levers finish; it is not a compiler problem. Judge progress by size
 first.
 
+**One local holding two independent call results misallocates.** A function sat
+at 21 halfwords — a pure r5/r6/r7 identity swap — solely because one `s32` held
+the results of two unrelated calls. Giving the second call its own named local
+took it to 0; declaration-order permutations did nothing. Same family: **do not
+decrement in place when the pre-decrement value is needed again later.**
+`x -= 1; f(x); g(x)` sat at 11 where `s32 m = x - 1; f(m); g(x - 1)` reached 0.
+In-place mutation lengthens the allocno's live range and flips the priority tie.
+
+**For shifted constant arguments, function-top locals beat the tie-break flag —
+and block-scoped locals fail.** Hoisting two `0x…00000` arguments into
+function-top `s32` locals reached 0 at baseline where `-fsched-low-dest-first`
+was needed otherwise, and closed four functions without routing. Note this is the
+**opposite** of the stack-argument rule, where the scope must open at the call
+site: register arguments want function-top, stack arguments want block-scoped.
+
+**A `ldr K1 / ldr K2 / subs` pair is a runtime difference of two `&Value_`
+symbols.** Plain literals constant-fold, so the reference's two pool words are
+only reproducible as `(s32)&Value_000008c8 - (s32)&Value_0000007e`.
+
+**`ldrsh` off a stack descriptor needs a named `s16 *` alias local**:
+`((s16 *)&v)[1]` materialises a second frame base, while
+`s16 *h = (s16 *)&v; h[1]` is exact. Thumb `LDRSH` has only the register-offset
+form, so `movs r3,#10 / ldrsh r2,[r6,r3]` is **not** a `volatile` tell.
+
 **The allocno-priority lever applies to constant locals, not just parameters.**
 Swapping *declaration* order is neutral; declaring `s32 o;` uninitialised and
 assigning `o = 1;` **between its first two uses** changes the live length and

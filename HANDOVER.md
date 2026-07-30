@@ -1012,7 +1012,12 @@ Spelling it one-argument floors at 46 differing bytes; two-argument at 23;
 four-argument at **20**. The constant is a plain literal, not `&Value_` — it has
 no `k<<n` factorisation, so it pools by itself (§4's third row).
 
-Best draft (`differing_bytes=20`, size exact; `e.c`/`j.c`/`l.c` all reach it):
+**The 20-byte floor is stable, so do not re-search the spelling space.** Ten
+source shapes were measured: inline-shift deltas (20), deltas-then-shift (24),
+shift-inside-the-multiply (26), named `x2`/`y2`/`z2` temporaries (24), a split
+`sum` accumulated with `+=` (20), an extra copy temporary for the third addend
+(20), declaration-order permutations (24), and a six-locals-first form (51). Five
+distinct spellings land on exactly 20 and none goes below. Best draft:
 
 ```c
 typedef signed int s32;

@@ -44,11 +44,13 @@ build output—so either lighthouse can refresh it in about a second:
 bun run coverage
 ```
 
-Both branches regenerate it as they advance, so the map on this page is the
-current state of both lanes. The measured tile data lives in
-[`metrics/gs1-en-coverage-map.json`](metrics/gs1-en-coverage-map.json), and its
-exact-C totals are reconciled against `metrics/gs1-en-progress.json` before the
-map is written.
+Mercury refreshes the exact lane and Venus the semantic lane as they bank work,
+and each branch draws the other lane from the newest ref it can see. The
+measured totals live in
+[`metrics/gs1-en-coverage-map.json`](metrics/gs1-en-coverage-map.json); the
+exact-C numbers behind the picture are reconciled against
+`metrics/gs1-en-progress.json` before it is written, and the semantic lane is
+drawn beside the headline metric rather than folded into it.
 
 ## Clean-room boundary
 

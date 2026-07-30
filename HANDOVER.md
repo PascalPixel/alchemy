@@ -53,6 +53,16 @@ Consequences worth knowing before you act:
   enforced rather than remembered.
 - **Never push to a branch you do not own.** If Venus work belongs on `main`,
   it gets there because Vale pulls it, not because Venus pushes it.
+- **`README.md` and its ROM coverage map belong to Vale. Never edit them from
+  `venus` or `mercury`.** The map is regenerated on `main` from the metrics both
+  lanes publish, so editing it downstream either conflicts with Vale or reports a
+  figure that the branch cannot substantiate. Publish numbers by banking them —
+  the map follows.
+- **Venus pulls `mercury` about once an hour.** More often wastes a merge on a
+  handful of commits; much less and the superseded-semantic deletions pile up
+  into a large, hard-to-check merge. Each pull: merge, take Mercury's `src/` and
+  routing on conflict, delete every semantic source that now has an exact
+  counterpart (`build_semantic` hard-errors if you miss one), re-verify, bank.
 
 Mercury is the slower, stricter run: a function is done only when the linked
 bytes match. Venus is the faster, wider run: it covers ground semantically and

@@ -15,9 +15,9 @@ Exact means fully linked machine-code byte equality — not semantic similarity,
 not equal object size.
 
 The active branch is `speed`. Alongside the exact lane, its reviewed semantic-C
-lane currently accounts for **352,434 executable bytes across 622 compiling
-sources**: 339,642 main-image bytes and 12,792 overlay bytes. Combined with exact
-C, **529,008 / 1,339,542 executable bytes** are expressed as C. Build that lane
+lane currently accounts for **358,442 executable bytes across 625 compiling
+sources**: 345,650 main-image bytes and 12,792 overlay bytes. Combined with exact
+C, **535,016 / 1,339,542 executable bytes** are expressed as C. Build that lane
 with `bun run build:semantic`; its sources live under `semantic/` and do not
 claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
 and multi-region traps out of the ordinary review queue.
@@ -94,6 +94,20 @@ resolved their apparent unset inputs, stack-carried publisher dimensions,
 runtime handles, and internal frame-loop edges. The renderer family therefore
 remains a proven high-yield lane; drain bounded members before returning to
 unknown-thunk candidates.
+
+The following unrelated-system cohort admitted **3/3 bounded owners and 6,008
+bytes**: `0800aa0c` (1,640), `080acab8` (1,980), and `080f7460` (2,388).
+Their 168 assembly `BL` sites include runtime allocator, transfer, renderer, and
+uploader callbacks recovered from live register and workspace dataflow. This
+confirms that the whole-owner method remains productive after the established
+renderer family is exhausted.
+
+**Remote-work intake.** Periodically fetch
+`origin/claude/continue-decompilation-3drfw0` after banking a clean semantic
+cohort. Review its delta against the current `speed` ancestry, integrate only
+verified nonduplicate work, run the same full verification, then update this
+handover. Never merge or pull that branch into a dirty cohort, and never let a
+remote metric snapshot overwrite newer authoritative counts.
 
 ---
 

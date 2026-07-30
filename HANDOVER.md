@@ -17,7 +17,7 @@ not equal object size.
 The active branch is `speed`. Alongside the exact lane, its reviewed semantic-C
 lane currently accounts for **358,442 executable bytes across 625 compiling
 sources**: 345,650 main-image bytes and 12,792 overlay bytes. Combined with exact
-C, **535,016 / 1,339,542 executable bytes** are expressed as C. Build that lane
+C, **552,832 / 1,339,558 executable bytes** are expressed as C. Build that lane
 with `bun run build:semantic`; its sources live under `semantic/` and do not
 claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
 and multi-region traps out of the ordinary review queue.
@@ -109,18 +109,46 @@ verified nonduplicate work, run the same full verification, then update this
 handover. Never merge or pull that branch into a dirty cohort, and never let a
 remote metric snapshot overwrite newer authoritative counts.
 
+Latest intake: remote tip `7f7b99b3` was merged after the 6,008-byte semantic
+cohort. It added **17,816 exact-C bytes**, taking exact Full-C Byte Share to
+**194,390 / 1,339,558 (14.51%)**. The combined tree passed `bun run verify`.
+
 ---
 
 ## 1. Where to work
 
 In descending order of measured value.
 
-**Overlay strict queues.** Overlay discovery used to stop scanning at the first
-literal pool, so most functions were unreachable; fixing that took the queue from
-20 rows / 6,110 bytes to **457 rows / 108,032 bytes**. Recent lanes there
-converted 2,056, 1,628, 860 and 644 bytes. Rank overlays by *strict* bytes, not
-by the `genuine` figure. Measured ranking: resource_373 (largest remaining), 391,
-39f. resource_383 and resource_37b are worked out to their park lists.
+**Overlay strict queues.** Two discovery fixes originally took this queue from
+20 rows / 6,110 bytes to 1,334 rows / 311,324 bytes, and rediscovery of
+known-exact functions from 14% to 67%. Subsequent exact-C waves have materially
+drained that snapshot; do not reuse its old “untouched” labels.
+
+Fresh inventory after remote tip `7f7b99b3`: **1,081 strict rows / 205,918
+bytes**. Current leaders by non-contained strict span are resource_3c8 8,878
+(31 rows), resource_383 8,052 (16), resource_39f 7,638 (38), resource_3c5
+7,374 (16), resource_39a 7,096 (64), resource_3c4 7,024 (58), resource_3b4
+6,242 (65), resource_3b2 5,902 (23), resource_3b8 5,468 (5), resource_3c6
+5,250 (12), resource_3ae 5,212 (21), and resource_3bf 5,132 (34). Regenerate
+with `bun tools/overlay_inventory.ts`; never carry this ranking forward after
+another remote intake.
+
+The two fixes were:
+1. *Pool skipping* — the scan stopped after a return at the first halfword that
+   was not `0x0000`/`0x46c0`, i.e. at every real literal pool.
+2. *Entry-shape recognition* — a leaf opening with `bx lr` (`0x4770`),
+   `movs rN,#imm` (`0x20xx-0x27xx`) or `ldr rN,[pc,#k]` (`0x48xx-0x4fxx`) was
+   refused as an entry, so each such leaf broke the chain and darkened everything
+   behind it. Individually worth +154, +37 and +21 rediscovered functions;
+   `push {regs}` (`0xb4xx`) contributed 0 and was deliberately left out. These
+   shapes are only ever a **relay** — the queue filter still demands
+   `starts_with_prologue`, so a widened shape can never itself become a row.
+
+**Raw row counts are now far noisier**: `unconverted_discoveries` grew 3,835 →
+12,945 and `data_walk_discoveries` 2,768 → 10,031, because relay seeds landing on
+data produce short junk walks. They are all labelled and excluded by the strict
+filter, but any consumer summing raw rows will over-report badly. Filtering to an
+empty `contained_by` matters more than it used to.
 
 **Re-probing old park notes.** The return-type lever (§4) arrived late, so any
 note whose residual is a two-halfword argument-setter swap is stale evidence
@@ -289,6 +317,21 @@ declaring `extern u8 Value_fffff800; s32 d = (s32)&Value_fffff800;` in the block
 *enclosing the loop* hoists it into a callee-saved register as the reference does.
 Function-top placement instead costs 4 bytes.
 
+**Size short by 2-4 bytes, and the reference re-reads one address, means
+`volatile`.** The mechanical tell is the *short size*, not the shape of the diff:
+we fold repeated loads the reference keeps. This closed two functions outright
+from 18 and 25 halfwords. Two placement rules follow from it: a block-scoped
+`volatile` pointer local declared **before** the sibling arithmetic forces two
+pool-address pseudos to overlap and so take distinct hard registers (declaring it
+after loses the effect, and this fixed a register-identity floor that survived all
+seven modes); and a second pointer the reference keeps in a different register
+needs its own named local.
+
+**Re-check every `&Value_` in an old park note against the factorisation table
+above.** Four functions in one overlay were parked at floor 2 as "no flag reaches
+it" when the actual blocker was a wrong `&Value_` spelling — the scheduler was
+never involved.
+
 **Statement order matters.** Moving an independent assignment above a call has
 produced exact matches where nothing else did — a permuter's single win in 65,543
 candidates was one statement swap. Always try both orders of two independent
@@ -390,10 +433,115 @@ function needing a specific 5-of-10 partition of identical-looking call sites th
 no hand sweep would have located. One lane closed 8 functions / 1,628 bytes from
 41 candidates this way.
 
-**The two levers compose**: on two functions the return type fixed the
-`movs`/`movs` swaps and `-mthumb-immediate-latency` then fixed the `movs`/`lsls`
-ones, and neither reached zero alone. Retry that pairing on anything parked under
-the latency flag by itself.
+**The levers compose, and the sweep is worth re-running after each flag.** The
+working order is `-fno-cse-two-insn-immediate` → sweep → `-fsched-low-dest-first`
+→ **sweep again**: the second sweep closed the last 3 halfwords on one function,
+because adding a scheduler flag changes *which* return types help. On two other
+functions the return type fixed the `movs`/`movs` swaps and
+`-mthumb-immediate-latency` then fixed the `movs`/`lsls` ones, neither reaching
+zero alone.
+
+**Probe both CSE modes together AND each alone — the full protocol, never a
+shortcut.** Measured over 20 re-probed parks, roughly three quarters were
+mis-measured. Four were *both-modes-only* wins where each mode alone is neutral or
+actively worse: one went 400 → 419 and 411 with each single mode → **18** paired.
+A single-mode probe there would have been honestly recorded as a regression and
+wrongly inherited as a negative. But the reverse also occurs — on one function the
+pool mode alone is harmful while the two-insn mode helps — so the pair is not a
+substitute for testing each. A note recording only one CSE mode is unmeasured.
+
+**Size-exactness, not the halfword count, is the signal that the CSE seam is
+cleared.** On five of these functions the paired modes brought the emitted size to
+exactly the reference span while the differing-halfword count was still in the
+tens or hundreds. A size-exact residual is a draft or allocation problem that the
+non-flag levers finish; it is not a compiler problem. Judge progress by size
+first.
+
+**Decrementing a halfword in place pools `0xffff`.** `*(u16 *)h = *(u16 *)h - 1;`
+emits a pooled `0xffff` and an `adds`, where
+`{ s32 t = *(u16 *)h; t -= 1; *(u16 *)h = t; }` gives the reference's
+`ldrh / subs #1 / strh`. Worth 6 bytes and the whole tail alignment on one
+function.
+
+**A struct cursor is actively harmful where an index is right.** Spelling
+`struct Ent *e = &Table[k];` and then `e->field` took one function from exact size
+and 2 halfwords to 156/160 and 56. Index every field as `Table[k].field` unless
+the reference clearly holds a cursor.
+
+**One local holding two independent call results misallocates.** A function sat
+at 21 halfwords — a pure r5/r6/r7 identity swap — solely because one `s32` held
+the results of two unrelated calls. Giving the second call its own named local
+took it to 0; declaration-order permutations did nothing. Same family: **do not
+decrement in place when the pre-decrement value is needed again later.**
+`x -= 1; f(x); g(x)` sat at 11 where `s32 m = x - 1; f(m); g(x - 1)` reached 0.
+In-place mutation lengthens the allocno's live range and flips the priority tie.
+
+**For shifted constant arguments, function-top locals beat the tie-break flag —
+and block-scoped locals fail.** Hoisting two `0x…00000` arguments into
+function-top `s32` locals reached 0 at baseline where `-fsched-low-dest-first`
+was needed otherwise, and closed four functions without routing. Note this is the
+**opposite** of the stack-argument rule, where the scope must open at the call
+site: register arguments want function-top, stack arguments want block-scoped.
+
+**A `ldr K1 / ldr K2 / subs` pair is a runtime difference of two `&Value_`
+symbols.** Plain literals constant-fold, so the reference's two pool words are
+only reproducible as `(s32)&Value_000008c8 - (s32)&Value_0000007e`.
+
+**`ldrsh` off a stack descriptor needs a named `s16 *` alias local**:
+`((s16 *)&v)[1]` materialises a second frame base, while
+`s16 *h = (s16 *)&v; h[1]` is exact. Thumb `LDRSH` has only the register-offset
+form, so `movs r3,#10 / ldrsh r2,[r6,r3]` is **not** a `volatile` tell.
+
+**The allocno-priority lever applies to constant locals, not just parameters.**
+Swapping *declaration* order is neutral; declaring `s32 o;` uninitialised and
+assigning `o = 1;` **between its first two uses** changes the live length and
+flips the register allocation. That closed a 10-halfword r5/r6 identity swap.
+
+**Guard-clause shape decides where early-exit blocks land.** Flat
+`if (bad) return;` guards put those blocks inline; the reference wants them at the
+tail. Rewriting as *nested* ifs with the main body innermost was worth 8 bytes on
+one function and 143 halfwords on another (it stopped a `movs r0,#0` being
+hoisted). Related: `Base + K` folds into the pool, so a function-top base local is
+what restores the reference's `movs`/`lsls`/`adds` offset rematerialisation.
+
+**"Not drafted (scan rule)" is the largest remaining seam of stale parks.** Ten
+rows in one overlay were triaged on sight as duplicated two-instruction immediates
+or duplicated pool loads and never drafted — but that triage predates the two
+routed modes that suppress exactly those. Six of the seven then drafted went to 0.
+Any note whose reason is a park *class* rather than a measured floor should be
+re-read the same way: the class may now be routable.
+
+**A SYMBOL_REF spelling pins *where* a pool load is emitted, not only whether one
+is.** §4's factorisation table correctly puts a non-factorising constant on the
+"plain literal, it pools by itself" row — but gcc then hoists that `ldr` above
+intervening calls. Block-scoping the local does *not* fix it; the
+`extern u8 Value_0000240d; s32 t = (s32)&Value_0000240d;` spelling does. That was
+the last 11 halfwords on one function.
+
+Minor but mechanical: storing a small constant through an `s16 *` pools it as a
+halfword literal (`ldrh r3,.L7`), so the `s16 *q; s32 v; v = 94; *q = v;` idiom is
+required rather than stylistic.
+
+**A sweep null was untrustworthy until 2026-07-30.** The script originally matched
+only the literal spellings `void` and `s32`, so a callee declared `u32`, `u16`,
+`s16` or pointer-returning was invisible to it and the sweep returned a *false
+null* on exactly the function the lever would have closed. One function sat parked
+at floor 2 for that reason; changing a `u32` return to `void` reaches 0 at
+baseline flags. The script now matches any declared return type — but treat any
+sweep null recorded in a note **before that date** as unmeasured.
+
+**"movs/lsls interleave" is not a real park class.** A function parked at floor 2
+after trying `-mthumb-immediate-latency`, `-fno-sched-depend-count`,
+`-mgrouped-dma-store` and the CSE modes went straight to 0 under
+`-fsched-low-dest-first`, which had simply never been tried — it post-dates those
+notes. Re-probe every note whose residual is a `movs`/`lsls` interleave. This is
+the same stale-evidence pattern as the return-type lever, one flag later.
+
+**Size smaller than the reference by 4-8 bytes, with a `push {r6,r7}`/`mov r8`
+prologue you do not want, means `-fno-cse-two-insn-immediate` first.** Shifted
+constants such as `0x5000`/`0x3000` reused across call sites get hoisted into
+callee-saved registers; on one function that flag was the gate that let the other
+two levers land.
 
 ---
 
@@ -439,11 +587,19 @@ Seven admitted modes, all default-off and routed per source in
 | --- | --- | --- |
 | `-fno-cse-two-insn-immediate` | sharing a repeated two-instruction immediate | 109/1,335 |
 | `-fno-cse-pool-immediate` | sharing a repeated literal-pool constant | 110/2,202 |
-| `-fsched-low-dest-first` | ordinal tie-break on r0-r3 argument setters | 139 |
+| `-fsched-low-dest-first` | ordinal tie-break on r0-r3 argument setters, **and a pool-load hoist** | 139 |
 | `-fsched-high-dest-first` | the same on r4-r12, ties with no call in them | 125 |
 | `-fno-sched-alias` | a store/load pair proved independent and reordered | 82 |
 | `-fsched-store-first` | a store sinking behind arithmetic | 308 |
 | `-fno-gcse-insert-load` | a PRE-inserted load the reference lacks | 9 |
+
+**`-fsched-low-dest-first` reaches three residuals, not just the one in the table**:
+the r0-r3 `movs` ordinal tie-break; a **pool-load hoist**, an `ldr r2` scheduled
+ahead of the `movs r0`/`movs r1` of an argument group; and a
+**`movs rN,#K / negs rN,rN` versus `movs r1,#imm` order swap** that appeared
+identically on two functions where three source spellings each reached nothing. Neither the `&Value_` spelling nor function-top or
+block-scoped locals touch that, so a six-function family would otherwise have been
+triaged as a SYMBOL_REF-placement park. Try the flag before believing that park.
 
 **Cautions.** Never combine `-fsched-low-dest-first` with
 `-mthumb-immediate-latency` — the latter subsumes and then breaks the same
@@ -472,11 +628,13 @@ tooling bug: `overlay_verify` takes flags from the command line and says 0, whil
 ## 8. Open problems
 
 **Compiler lane, well specified:**
-- **Immediate-build transposition.** The reference schedules an independent
-  `movs r0,#K` *between* a two-instruction immediate's `movs` and its `lsls`. This
-  is the residual class behind most remaining 2-5 halfword parks, and it is an
-  `insn_cost`/`tmp_class` question at `haifa-sched.c:4068-4090`, not a
-  dependent-count one. Attack it as a Thumb latency-model defect.
+- **Immediate-build transposition** — but try the composition first. The
+  reference schedules an independent `movs r0,#K` *between* a two-instruction
+  immediate's `movs` and its `lsls`. **`-fsched-low-dest-first` applied after
+  `-fno-cse-two-insn-immediate` closes many of these**: three functions sitting at
+  8-17 halfwords with exactly this residual went to 0. Only what survives that
+  pairing is a genuine compiler problem, and it is an `insn_cost`/`tmp_class`
+  question at `haifa-sched.c:4068-4090`, not a dependent-count one.
 - **`0808fecc`** (main image, floor 2): the last-scheduled-insn class rule fires
   before the ordinal tie-break, so a separate mode is needed.
 - **resource_391:02a8** (floor 7/164): the reference reuses the register holding
@@ -493,18 +651,52 @@ tooling bug: `overlay_verify` takes flags from the command line and says 0, whil
   `-fsched-high-dest-first` and adopted; the note describing it as unreachable is
   obsolete.
 
-**Discovery, unfinished.** The pool-skip fix did not move recall for functions
-whose highest-address instruction is not a return (tail-call and shared-epilogue
-shapes): **419 of the 511 still-missed converted functions start with a standard
-prologue**, so relaxing that gate is a win of comparable size to the fix already
-made. `tools/remaining_survey.ts` also filters `retention === "c_candidate"` and
-so is blind to 96 debt rows (38,456 bytes); widening it to all five debt
-retentions is one line.
+**Discovery: 308 of 934 known-exact functions are still not rediscovered.** The
+predecessor census that found the entry-shape gate is the way to find the next
+one: of the previously-missed set, 374 had no decoded instruction within 512
+bytes — whole dark runs — while the rest were chain breaks. Re-run that census
+against the current 308 before inventing a heuristic.
 
-**Tooling.** `resource_39c:10c0` verifies at 0 halfwords but `overlay_adopt`
-rejects it with 55 differing bytes. Its literal pool sits *inside* its span rather
-than after the body, so the splice may displace a neighbour's pool words. Check
-the routing-set trap in §7 first — that produced an identical symptom.
+Two successor rules were built, measured and **rejected**; do not rebuild them
+(the reasoning is recorded above `nextEntryAfterReturn`):
+- *Tail-call chaining* (`b` to a target outside the body) seeds **0** across 96
+  overlays. `walk_thumb` follows unconditional branches, so a tail call's callee
+  is already absorbed into the caller and the caller's last instruction is the
+  callee's return — the existing return chain covers it.
+- *Chaining after an unresolved indirect* (`bx rN`) seeds 3,574 with **zero**
+  precision: none of them landed on a known entry. What follows an unresolved
+  indirect is the dispatch data it reads.
+
+`tools/remaining_survey.ts` filters `retention === "c_candidate"` and so is blind
+to 96 debt rows (38,456 bytes); widening it to all five debt retentions is one
+line.
+
+**Tooling.** ~~`resource_39c:10c0` verifies at 0 halfwords but `overlay_adopt`
+rejects it.~~ **RESOLVED 2026-07-30: it was the §7 routing-set trap**, exactly as
+that section warned. `assets/code/resource_39c_c_020010c0.c` is in no routing set,
+so the adopt rehearsal (which copies the draft to that path and routes flags by
+path) compiled at baseline while `overlay_verify` took
+`-fno-cse-two-insn-immediate` from argv. Not a splice bug; its pool is a normal
+post-body pool. Adding the path to `NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES`
+closes it (`notes/resource_39c-10c0.md`). **General rule: whenever verify and
+adopt disagree, the difference is flags, and the first check is whether the
+*installed* asset path is routed.**
+
+**Span audit (2026-07-30): mis-spanning is NOT systemic.** The "an advertised row
+may be a fragment of a larger owner" hypothesis was tested against six stubborn
+parks (`39c:10c0`, `373:2a54`, `379:0074`, `3b2:0030`, `381:29a4`, `3af:3a0c`) —
+**all six spans are correct**, and none of the parks is a span problem. Across all
+1,337 strict rows, 1,334 end at exactly one return: the walker follows
+unconditional branches, so a direct continuation is absorbed into the row and the
+fragment failure mode is structurally rare here. **The bulk detector is
+`returns == 0`** — the only three such rows are `resource_3bd:0024` (a veneer
+misread), `resource_3ca:0f80` (body complete, trailing pool cut 12 bytes short;
+true span 340 not 328) and `resource_399:15b4` (**a genuine fragment**: the
+advertised end 0x1690 lands inside a mid-function pool that a `b` jumps over, and
+the epilogue is at 0x16a4; true span **248**, not 220). A secondary check —
+whether a row's end lands on a non-prologue row — flags 74 rows but is almost all
+veneer banks, so it is not worth tooling. Adding a `returns == 0` warning to the
+inventory writer would cover the real signal in one line.
 
 ---
 
@@ -526,15 +718,24 @@ executable denominator must begin `metrics: correct executable denominator`.
 target's own disassembly and this repo. **No `asm()`, no inline assembly, no
 register pinning, no barriers, and no `volatile` as a matching device.**
 
-**Exact-lane concurrency.** The older two-walker limit below applies only to
-walkers that repeatedly compile and mutate overlay artifacts. It is not a host
-CPU limit and does not govern independent semantic-C rewrites. For exact
-walkers, two lanes plus the main agent remains the useful maximum because more
-lanes contend on compilation and mutable overlay state. Exact walkers must
-never share an overlay and should be told not to run git, the build scripts,
-`full_c_progress.ts` or `overlay_inventory.ts`. For semantic-C work, use all
-three available subagent slots as specified in §0 and let the main agent own
-integration and verification.
+**Concurrency — do not inherit the old two-lane rule.** That limit was measured
+when a verification probe cost 1.8 s and a bank cycle 190 s, so compute really was
+the binding constraint. The content caches (§3) cut those to 0.12 s and 15 s, and
+the limit was never re-derived. Measured afterwards on the same 4-core host with
+two lanes running: **load average 1.18, and a probe costs 137 ms under load versus
+120 ms idle** — roughly 70% of the machine idle. Lanes are reasoning-bound, not
+compute-bound, so run **five or six** and re-measure `/proc/loadavg` before
+assuming a ceiling. If probe latency starts climbing well above ~150 ms, that is
+the real signal to stop adding lanes.
+
+The binding constraints are instead: walkers must never share an overlay (the
+overlay `.s` file is the only mutable artifact), and only the main agent may run
+git, the build scripts, `full_c_progress.ts` or `overlay_inventory.ts`. The bank
+cycle tolerates lanes adopting mid-build, so there is no need to pause them.
+The current Codex runtime exposes three subagent slots, so use all three for
+semantic-C cohorts and let the main agent own integration. On runtimes exposing
+five or six slots, the measurements above support testing that larger exact
+walker count rather than imposing the historical two-lane ceiling.
 
 **Agent economics.** Permuting is an audit pass, not an engine: one exact hit in
 65,543 candidates, though it cost ten minutes and cracked a function a careful

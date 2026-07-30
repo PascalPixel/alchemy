@@ -547,6 +547,23 @@ function main(): void {
   const tiny = functions.filter((fn) => fn.code_bytes <= 6);
   const contained = functions.filter((fn) => fn.contained_by.length > 0);
   const returning = functions.filter((fn) => fn.returns > 0);
+  // A walked row that contains no return is the one reliable signal of a
+  // mis-derived span: the walk either stopped inside a mid-function pool that a
+  // branch jumps over, or cut the trailing pool short. A span audit over 1,337
+  // strict rows found exactly three such rows and two were genuinely mis-spanned
+  // (resource_399:15b4 advertised 220 against a true 248; resource_3ca:0f80
+  // advertised 328 against 340), while every other row ended at exactly one
+  // return. Row ends landing on a non-prologue address flag 74 rows and are
+  // almost all veneer banks, so they are not worth reporting.
+  // Requires `starts_with_prologue` for the same reason the strict queue does:
+  // without it the relay seeds that land on data (2-4 byte walks) drown the
+  // signal, 503 rows against the 3 that matter.
+  const spanSuspects = functions.filter((fn) =>
+    fn.returns === 0 && fn.starts_with_prologue && !fn.structural_veneer &&
+    !fn.data_walk && fn.contained_by.length === 0);
+  for (const fn of spanSuspects) {
+    console.warn(`warning: ${fn.id} walked ${fn.code_bytes} bytes with no return — verify its span`);
+  }
   const ordinaryPrologueReturn = ordinary.filter((fn) =>
     fn.contained_by.length === 0 && fn.starts_with_prologue && fn.returns > 0);
   const groups = new Map<string, FunctionRow[]>();

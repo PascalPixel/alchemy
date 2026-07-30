@@ -128,9 +128,9 @@ still open (§8).
 Alongside the exact lane, reviewed semantic C currently accounts for **581,276
 executable bytes across 1,047 compiling sources**: 382,970 main-image bytes and
 198,306 overlay bytes. Combined with exact C, **791,994 / 1,339,576 executable
-Alongside the exact lane, reviewed semantic C currently accounts for **599,858
-executable bytes across 1,092 compiling sources**: 383,866 main-image bytes and
-215,992 overlay bytes. Combined with exact C, **811,048 / 1,339,576 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **601,842
+executable bytes across 1,095 compiling sources**: 385,850 main-image bytes and
+215,992 overlay bytes. Combined with exact C, **813,032 / 1,339,576 executable
 bytes** are expressed as C.
 
 **21 overlays have zero unconverted rows in the strict queue**, holding
@@ -298,7 +298,23 @@ impossible. That accounting now exists, and the first re-probe confirmed it:
 blocked as "only the front of a much larger effect function", was admitted as
 one 3,126-byte module across nine ranges with all 87 calls placed. Its agent put
 the distinction well: the blocker was accurate as written but was a *sizing*
-blocker, not a structural one. **All five `multi_region_function` blockers are now resolved**: `080dd9c0` (940
+blocker, not a structural one. **Every blocker class in `semantic/ordinary-blockers.json` has now been
+re-probed, and one entry of thirteen remains unresolved.** Beyond the five
+`multi_region_function` owners below, the 2026-07-31 sweep converted all six
+remaining blocked main-image owners — `hidden_register_module` (three of them),
+`cross_file_abi`, `shared_stack_context_module` and
+`implicit_callee_return_state_module`. Two were disproved on the facts rather
+than re-scoped: `080c1798`'s "intentional callee residue" is an r2 that no call
+site in the image sets, and `08095778`'s ABI conflict dissolves once the exact
+source's `void *` parameter is read as the integer flag id it actually carries.
+
+**Write the date and tool state into every new blocker.** None of those notes was
+careless — each was right against the evidence available when written, and what
+changed underneath them was the tooling (the `call_via` bank, the `bl` target
+rule, whole-module scoping). A blocker that does not say what it was written
+against cannot tell the next reader whether it is worth retesting.
+
+**All five `multi_region_function` blockers are now resolved**: `080dd9c0` (940
 bytes), `080ec100` (3,126), `080d765c` (2,866), `080e15e8` (3,542) and
 `080ddde0` were every one of them a *sizing* blocker, admitted whole once the row
 map existed. The class is empty — 10,474 bytes recovered from notes that read as

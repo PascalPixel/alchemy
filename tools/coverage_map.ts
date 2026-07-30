@@ -1017,8 +1017,11 @@ export function renderSvg(map: CoverageMap): string {
     `<rect x="6" y="6" width="${width - 12}" height="26" fill="#2b3a49"/>`,
     `<text x="16" y="24" font-size="13" font-weight="bold" fill="#f4f6f8">` +
     `Alchemy — Golden Sun (${map.target}) — ${commas(map.rom_bytes)} bytes</text>`,
+    // The headline metric is the exact lane alone; the combined figure is
+    // spelled out as a sum so it can never be read as that metric.
     `<text x="${width - 16}" y="24" font-size="11" text-anchor="end" fill="#bcc7d2">` +
-    `C-expressed ${commas(combined)} / ${commas(map.executable_bytes)} executable bytes (${combinedPercent}%)</text>`,
+    `exact ${exact.percent_of_executable}% + semantic ${semantic.percent_of_executable}% = ` +
+    `${commas(combined)} / ${commas(map.executable_bytes)} executable bytes (${combinedPercent}%)</text>`,
   );
 
   // Toolbar-style lane legend with the measured share of each lane.

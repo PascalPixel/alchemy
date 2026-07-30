@@ -41,8 +41,24 @@ at +10 and +18.
    Declaring the kind index immediately after `self`, ahead of `table` and
    `mask`, drops the reload through r2 and took the residual from 164 groups to
    **62**. Declaration order is what fixes this class — not a flag.
-2. The reference loads its two pool words apart (`0x0200E190` at position 12,
-   `0xFFFF0000` at 14, with `lsl r5` between); gcc emits both together.
+2. **Open, and the obvious attacks are measured dead ends.** The reference
+   interleaves its two pool loads around the index shift — `ldr r0,<table>`,
+   `lsls r5,r3,#2`, `ldr r2,<mask>`, `ldr r1,[r0,r5]` — where gcc emits both
+   loads adjacent and then the shift. Ruled out so far:
+   - **No compiler mode reaches it.** `-fthumb-literal-before-index-shift` (named
+     for exactly this shape), `-fthumb-low-constant-before-high-move` and
+     `-fsched-high-dest-first` all measure 62, unchanged;
+     `-fsched-low-dest-first` and `-fno-sched-depend-count` are worse at 64.
+   - **Do not rewrite the lookup as `table[kind]` with an unscaled index.** It
+     reads like the natural spelling and it destroys the shape: 62 groups to
+     **171**, and the emitted function drops to 167 instructions because gcc
+     keeps the kind in a low register and stops using `sl` at all, changing the
+     prologue. Keep the pre-scaled `index` local and the
+     `*(s32 *)((u8 *)table + index)` form.
+
+   What is left to try is delaying the mask's materialisation without moving its
+   declaration — it is live in `sl` across all three probe builds, so it cannot
+   simply be block-scoped.
 3. **Do not swap the `table`/`mask` declaration order to chase the high
    registers.** The reference holds the mask in `sl` and the table in `r9`; we
    hold them the other way round, which looks like a one-line fix. It is not —

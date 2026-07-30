@@ -108,12 +108,25 @@ still open (§8).
 Alongside the exact lane, reviewed semantic C currently accounts for **581,276
 executable bytes across 1,047 compiling sources**: 382,970 main-image bytes and
 198,306 overlay bytes. Combined with exact C, **791,994 / 1,339,576 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **548,096
+executable bytes across 1,002 compiling sources**: 382,970 main-image bytes and
+165,126 overlay bytes. Combined with exact C, **758,490 / 1,339,574 executable
 bytes** are expressed as C.
 
-**Twenty overlays are now converted in full**, none skipping anything:
-`resource_3b8` (15,028 bytes), `resource_372` (10,202), `resource_371` (9,650),
-`resource_39f` (9,278), `resource_39a` (7,096), `resource_3b4` (6,226) and
-`resource_373` (13,192), `resource_3bf` (10,144), `resource_375` (6,536), `resource_374` (7,468), `resource_3a8` (7,564), `resource_391` (7,068), `resource_3c5` (6,382), `resource_37b` (6,032), `resource_3bb` (5,680), `resource_3aa` (6,376), `resource_38f` (9,212), `resource_383` (7,792) and
+**21 overlays have zero unconverted rows in the strict queue**, holding
+179,346 strict bytes between them. Regenerate this list rather than editing it —
+it has drifted twice from being maintained by hand:
+`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,484), `resource_372` (10,202), `resource_38f` (9,848), `resource_371` (9,650), `resource_39f` (9,278), `resource_3c5` (9,208), `resource_374` (9,148), `resource_3a8` (8,912), `resource_383` (8,652), `resource_391` (7,648), `resource_39a` (7,096), `resource_375` (6,568), `resource_3aa` (6,552), `resource_3b4` (6,462), `resource_3b7` (6,062), `resource_37b` (6,032), `resource_3bb` (5,896), `resource_3cb` (5,540), `resource_3a4` (36).
+
+**"Converted in full" means zero unconverted STRICT-QUEUE rows, not that every
+executable byte of the overlay is C.** Measured across those overlays: their
+assembled images total 231,694 bytes, of which semantic sources cover 116,466 and
+exact sources 4,398 — **110,830 bytes lie outside any strict row**. That
+remainder is veneer and import bands, jump tables, literal pools and inter-owner
+data, which are not semantic-C candidates. Any claim that credits a whole
+overlay's executable extent to the semantic lane will overstate it by roughly
+that proportion.
+
 Alongside the exact lane, reviewed semantic C currently accounts for **523,620
 executable bytes across 950 compiling sources**: 382,970 main-image bytes and
 140,650 overlay bytes. Combined with exact C, **734,014 / 1,339,574 executable
@@ -123,6 +136,7 @@ bytes** are expressed as C.
 `resource_3b8` (15,028 bytes), `resource_372` (10,202), `resource_371` (9,650),
 `resource_39f` (9,278), `resource_39a` (7,096), `resource_3b4` (6,226) and
 `resource_373` (13,192), `resource_3bf` (10,144), `resource_38f` (9,212), `resource_383` (7,792) and
+`resource_373` (13,192), `resource_3bf` (10,144), `resource_375` (6,536), `resource_3aa` (6,376), `resource_38f` (9,212), `resource_383` (7,792) and
 `resource_3c4` (24 of 25 rows, one 2,636-byte
 dispatcher pre-measured)
 Alongside the exact lane, reviewed semantic C currently accounts for **475,156
@@ -574,10 +588,18 @@ standalone no-op leaf. Before treating a `call_via` classification as an indirec
 call, check whether the caller actually loads r3/r4. If it loads nothing, it is a
 no-op leaf, not a thunk.
 
-**A pool load before a `bl` is only a `call_via` if it names IWRAM.** The
-thunk-bank shape is `ldr r3,[pc] ; bl` — but where the loaded word is in-image
-data (`0x0200dxxx`) rather than the IWRAM band (`0x030001xx`), r3 is an ordinary
-fourth argument. The band is the discriminator, not the shape.
+**A pool load before a `bl` is only a `call_via` if it names IWRAM — and the
+band is wider than `0x030001xx`.** `0x03001388` is one, so the discriminator is
+"IWRAM, and the bank entry is `bx rN`", not a narrow address range. Where the
+loaded word is in-image data (`0x0200dxxx`) instead, r3 is an ordinary fourth
+argument.
+
+**That pool word is the code address itself, not a pointer cell.** The shape is
+`ldr rN,[pc]` then `bx rN`, so `*(Helper *)0x03000164` is wrong and
+`(Helper)0x03000164` is right. One lane wrote the dereference and corrected it.
+
+**An overlay can have its OWN `call_via` bank** (`resource_3cb` at 0x020018f0+,
+`bx rN / nop` pairs) separate from the main image's at `0x080072e4`.
 
 **Resolve site -> target with `--json`, never by pairing the tool's summary
 against call shapes.** The summary is a *histogram*, not a mapping. One lane
@@ -586,6 +608,13 @@ inferred the mapping from argument shapes and got it exactly backwards —
 four-argument action, the opposite of what the shapes suggest in isolation. A
 two-import owner has a 50% chance of reading plausibly backwards. What settled it
 was a third owner using `Func_0808a080(0)` as an accessor independently.
+
+**A shared call site reached with DIFFERENT arguments still must not be
+duplicated in C.** `resource_3cb:12e0` has one site reached with r0=0 from one
+arm and r0=4 from another; `:0b94` has one site fed four cue ids and another fed
+by five paths. Writing the natural per-arm calls injects phantom calls into the
+multiset — restructure to a shared `emit:` join instead. A site count alone will
+not catch this; the multiset will.
 
 **Two call-site shapes break a naive multiset, both by inflating it.** State the
 proof as per-target counts and account for these before trusting a mismatch:
@@ -2194,10 +2223,35 @@ only from a `manual_regions` entry in `semantic/regions.json`. It deliberately
 refuses the decoded-region inventory, which is build output and therefore
 outside what a tracked-evidence-only tool may read, so an owner missing from
 that file is reported in `provenance.semantic_unresolved` rather than
-estimated. At 921 semantic sources, 303 overlay owners are unlisted: the map
-can size 8,458 of the 92,186 overlay bytes this file claims, while its
-main-image figure of 382,970 agrees exactly. Every overlay owner Venus adds to
-`semantic/regions.json` moves that gap, and nothing else will.
+estimated. At 1,002 semantic sources, 384 overlay owners are unlisted: the map
+can size 8,458 overlay bytes, while its main-image figure of 382,970 agrees
+exactly. Converting overlays does not move the picture; only listing them does.
+
+**Declaring a whole overlay is far cheaper than listing its owners, and Venus
+is already making that claim in prose.** `semantic/regions.json` now also takes
+a `full_overlays` array:
+
+```json
+{ "overlay": "resource_375",
+  "evidence": "every executable range is owned by a semantic source; …" }
+```
+
+One reviewed assertion sizes every owner in that overlay: the map takes the
+overlay's audited executable extent as the lane and subtracts exact C, so a
+partly exact overlay stays honest. A claim is ignored unless the overlay
+actually carries semantic sources and has an audited extent, so an unbacked
+assertion credits nothing. Owners in a claimed overlay stop being reported
+unresolved. That is roughly twelve entries against the 384 individual ones.
+
+**Reconcile before you claim.** The twelve overlays this file reports converted
+in full hold 174,892 audited executable bytes, of which 31,194 are already exact
+C — so declaring them would move the overlay lane from 8,458 to about 143,698.
+This file's own per-overlay figures for those twelve sum to roughly 110,732. The
+~33,000-byte difference is most likely literal pools and alignment that the
+audited extent counts and the per-owner figures exclude, in which case the larger
+number is right and the claim is sound. Confirm which it is before declaring: if
+any of those overlays still has an unconverted range, the claim inflates the
+published picture by whatever that range holds. Put the answer in `evidence`.
 
 `PROVENANCE.md` is authoritative on clean-room rules: semantics only from the
 target's own disassembly and this repo. **No `asm()`, no inline assembly, no

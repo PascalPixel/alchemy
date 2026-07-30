@@ -127,6 +127,7 @@ export const MODES: readonly Mode[] = [
   { id: "cse-skip-blocks-off", family: "cse", addFlags: ["-fno-cse-skip-blocks"], evidence: "historical" },
   { id: "cse-rerun-loop-off", family: "cse", addFlags: ["-fno-rerun-cse-after-loop"], evidence: "proven-routing" },
   { id: "alias-strict-off", family: "cse", addFlags: ["-fno-strict-aliasing"], evidence: "proven-routing" },
+  { id: "cse-two-insn-immediate-off", family: "cse", addFlags: ["-fno-cse-two-insn-immediate"], evidence: "proven-routing" },
   { id: "loop-rerun-off", family: "cse", addFlags: ["-fno-rerun-loop-opt"], evidence: "historical" },
   { id: "cse-expensive-off", family: "cse", addFlags: ["-fno-expensive-optimizations"], evidence: "proven-routing" },
   { id: "reg-peephole-off", family: "register-allocation", addFlags: ["-fno-peephole"], evidence: "historical" },

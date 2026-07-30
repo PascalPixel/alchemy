@@ -1186,6 +1186,23 @@ that already holds 0, and that extra live value spills `saved` to r5 and buys th
 `push`/`pop` the reference does not have. Retyping the shared zero `u8`/`u16`/`s32`
 and naming it per site all measure identically.
 
+*The pooled-zero quirk is not confined to that trio, and it interacts with the
+dead-store rule.* `resource_3ca:004c` ends with a single `*(u16 *)0x05000000 = 0`
+where the reference emits `movs r2,#0`. Without `volatile` gcc **deletes** the
+store as dead — the whole tail vanishes — and with `volatile` it emits the same
+`ldrh r3, .L3` off a pooled `.word 0`. So the two available spellings are "wrong
+bytes" and "no bytes"; there is no third. Treat a lone volatile store of zero as
+carrying this blocker until someone finds the lever.
+
+**`resource_3bb:02e8` — base-plus-offset folded into one pool word.** The
+reference keeps `0x02000240` in the pool and builds the `0x1F4` byte offset
+separately (`movs r2,#250 / lsls r2,#1 / adds r3,r3,r2`) before loading. Every
+spelling tried folds them: `(u8 *)0x02000240 + 0x1F4`, `((s32 *)0x02000240)[125]`,
+and a `Data_02000240` symbol all emit a single relocated constant, because gcc can
+add a constant to either an integer or a SYMBOL_REF at compile time. Floor 23/28.
+The offset has to reach the add as something gcc cannot fold, and none of the
+obvious spellings does that.
+
 **`tools/mode_sweep.ts` swept 69 modes over `0800651c` and none reaches it** —
 floor 33 halfwords at 72 bytes against a 64-byte reference, under `old-agbcc`
 (`out/modesweep/0800651c-*/`). The residual classes it reports are

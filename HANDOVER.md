@@ -49,15 +49,27 @@ measure of real remaining work is `asm_c_debt_bytes`, printed by every full buil
   reading it.
 - The GS1-English full build is byte-identical with zero ROM fallback.
 - The source-only build owns all 8 MiB with zero unowned bytes.
-- Semantic-C lane: **223,274 executable bytes across 492 compiling sources**:
-  210,482 main bytes and 12,792 overlay bytes. Combined with exact C,
-  **396,496 / 1,339,540 executable bytes** are now expressed as C, with
-  943,044 remaining. Seven semantic main sources were removed during the
+- Semantic-C lane: **225,000 executable bytes across 498 compiling sources**:
+  212,208 main bytes and 12,792 overlay bytes. Combined with exact C,
+  **398,222 / 1,339,540 executable bytes** are now expressed as C, with
+  941,318 remaining. Seven semantic main sources were removed during the
   2026-07-30 `main` cascade because byte-exact versions now supersede them.
 - The lane includes every still-live source from the curated near-match,
   hand-reviewed, prior, and manual candidate queues. Admission rejects
   exact duplicates, dead/nonordinary owners, overlaps, inline assembly,
   unresolved decompiler constructs, and target-compiler failures.
+- `bun run semantic:queue` now collapses the live historical main-image drafts
+  by ordinary owner and ranks them by measured review cost. It penalizes unset
+  registers, branches into continuation owners, nontrivial boundary shapes,
+  unknown types, and high-register setup immediately before calls. This keeps
+  short bounded review on ordinary-ABI candidates and exposes hidden-context
+  traps before cleanup begins. The first queue-driven pass admitted six owners
+  and 1,726 bytes: palette interpolation (`080f61e8`), palette setup/fading
+  (`080c0774`), serial-state initialization (`08005d10`), object placement
+  (`08017658`), map/camera position selection (`0808cf78`), and graphics
+  transfer dispatch (`080cd260`). Their call sites, access widths, signed
+  comparisons, stack arguments, and observable hardware writes were checked
+  against their complete reference owners before admission.
 - Honest outer-owner additions include `resource_381:0054/1410`,
   `resource_394:03f0/0c2c/0e64..0fb4`, `resource_3bd:0474/0608/0ee0`, and
   `resource_3c8:1d48`. `resource_379:00dc` was rejected as a fake standalone

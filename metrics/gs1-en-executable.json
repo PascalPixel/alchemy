@@ -18835,15 +18835,9 @@
         },
         {
           "start": 33555492,
-          "end": 33555528,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33555528,
           "end": 33555532,
-          "kind": "literal_pool",
-          "evidence": "resource_398_overlay.s:426:pc-relative-literal"
+          "kind": "thumb",
+          "evidence": "resource_398_overlay.s:416:verified-C-placeholder"
         },
         {
           "start": 33555564,
@@ -18873,7 +18867,7 @@
           "start": 33555684,
           "end": 33555688,
           "kind": "literal_pool",
-          "evidence": "resource_398_overlay.s:475:pc-relative-literal"
+          "evidence": "resource_398_overlay.s:460:pc-relative-literal"
         },
         {
           "start": 33555688,
@@ -24277,7 +24271,7 @@
           "start": 33558848,
           "end": 33558852,
           "kind": "literal_pool",
-          "evidence": "resource_3a2_overlay.s:2068:pc-relative-literal"
+          "evidence": "resource_3a2_overlay.s:2053:pc-relative-literal"
         },
         {
           "start": 33558852,
@@ -24289,7 +24283,7 @@
           "start": 33558908,
           "end": 33558912,
           "kind": "literal_pool",
-          "evidence": "resource_3a2_overlay.s:2120:pc-relative-literal"
+          "evidence": "resource_3a2_overlay.s:2105:pc-relative-literal"
         },
         {
           "start": 33558912,
@@ -40155,18 +40149,6 @@
         },
         {
           "start": 33554680,
-          "end": 33554716,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33554716,
-          "end": 33554720,
-          "kind": "literal_pool",
-          "evidence": "resource_3c1_overlay.s:126:pc-relative-literal"
-        },
-        {
-          "start": 33554720,
           "end": 33554824,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -41831,24 +41813,6 @@
         },
         {
           "start": 33554928,
-          "end": 33554962,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33554962,
-          "end": 33554964,
-          "kind": "executable_alignment",
-          "evidence": "resource_3c6_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33554964,
-          "end": 33554968,
-          "kind": "literal_pool",
-          "evidence": "resource_3c6_overlay.s:691:pc-relative-literal"
-        },
-        {
-          "start": 33554968,
           "end": 33555992,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -41929,7 +41893,7 @@
           "start": 33558968,
           "end": 33558972,
           "kind": "literal_pool",
-          "evidence": "resource_3c6_overlay.s:2129:pc-relative-literal"
+          "evidence": "resource_3c6_overlay.s:2112:pc-relative-literal"
         },
         {
           "start": 33558972,
@@ -41965,7 +41929,7 @@
           "start": 33559588,
           "end": 33559592,
           "kind": "literal_pool",
-          "evidence": "resource_3c6_overlay.s:2448:pc-relative-literal"
+          "evidence": "resource_3c6_overlay.s:2431:pc-relative-literal"
         },
         {
           "start": 33559592,
@@ -41983,7 +41947,7 @@
           "start": 33559764,
           "end": 33559768,
           "kind": "literal_pool",
-          "evidence": "resource_3c6_overlay.s:2518:pc-relative-literal"
+          "evidence": "resource_3c6_overlay.s:2501:pc-relative-literal"
         },
         {
           "start": 33559772,

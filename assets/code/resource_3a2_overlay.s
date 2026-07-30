@@ -2023,23 +2023,8 @@ AlchemyC_02000fcc:
 	pop	{r5}
 	pop	{r1}
 	bx	r1
-	push	{r5, lr}
-	movs	r0, #0
-	bl	sub_0200259e
-	adds	r5, r0, #0
-	movs	r0, #14
-	bl	sub_020025a6
-	ldr	r2, [r5, #16]
-	ldr	r3, [r0, #16]
-	cmp	r2, r3
-	bgt.n	.L_020010b0
-	movs	r0, #14
-	movs	r1, #1
-	bl	sub_0200265e
-.L_020010b0:
-	pop	{r5}
-	pop	{r0}
-	bx	r0
+AlchemyC_02001090:
+	.space 0x26
 	.2byte 0x0000
 	push	{r5, r6, lr}
 	sub	sp, #8

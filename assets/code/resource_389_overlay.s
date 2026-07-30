@@ -2041,25 +2041,14 @@ AlchemyC_02000a00:
 	.4byte 0xffff8000
 	.2byte 0x0301
 	.2byte 0x0000
-	push	{lr}
-	bl	sub_020024cc
-	bl	sub_02001f5c
-	bl	sub_020024dc
-	pop	{r0}
-	bx	r0
+AlchemyC_02001088:
+	.space 0x12
 	.2byte 0x0000
-	push	{lr}
-	bl	sub_020024e0
-	bl	.L_02001168
-	bl	sub_02001f74
-	bl	sub_020024f4
-	pop	{r0}
-	bx	r0
+AlchemyC_0200109c:
+	.space 0x16
 	.2byte 0x0000
-	push	{lr}
-	bl	sub_020025a8
-	pop	{r0}
-	bx	r0
+AlchemyC_020010b4:
+	.space 0xa
 	.2byte 0x0000
 	.4byte 0x47704800
 	.2byte 0x9814

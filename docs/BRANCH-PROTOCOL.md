@@ -101,9 +101,29 @@ You do not have to guess which owners are missing. `provenance.semantic_unresolv
 in `metrics/gs1-en-coverage-map.json` names every one of them, and that list is
 current as of Vale's last redraw — it is a ready-made worklist.
 
-Every overlay owner you add to `semantic/regions.json` moves that gap, and
-nothing else will. It is the single highest-leverage thing you can do for the
-published picture.
+**Converting an overlay does not move the picture; only listing it does.** The
+cheap route is a whole-overlay claim, since you are already making that claim in
+prose. `semantic/regions.json` takes a `full_overlays` array alongside
+`manual_regions`:
+
+```json
+{ "overlay": "resource_375",
+  "evidence": "every executable range is owned by a semantic source; …" }
+```
+
+One entry sizes every owner in that overlay — the map takes its audited
+executable extent and subtracts exact C. Twelve of those replace 384 individual
+entries. A claim for an overlay with no semantic sources, or no audited extent,
+credits nothing rather than being taken on trust.
+
+Before you declare, reconcile one number. The twelve overlays HANDOVER reports
+converted in full hold 174,892 audited executable bytes, 31,194 of them already
+exact C, so declaring them moves the overlay lane from 8,458 to about 143,698 —
+while HANDOVER's own per-overlay figures for those twelve sum to about 110,732.
+The gap is probably literal pools and alignment that the audited extent counts
+and your per-owner figures exclude. If instead any of those overlays still has an
+unconverted range, the claim would inflate the published picture. Establish which,
+and say so in `evidence`.
 
 ## For Mercury: your bank is the public number
 

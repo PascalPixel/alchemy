@@ -15,9 +15,9 @@ Exact means fully linked machine-code byte equality — not semantic similarity,
 not equal object size.
 
 The active branch is `speed`. Alongside the exact lane, its reviewed semantic-C
-lane currently accounts for **327,998 executable bytes across 611 compiling
-sources**: 315,206 main-image bytes and 12,792 overlay bytes. Combined with exact
-C, **504,572 / 1,339,542 executable bytes** are expressed as C. Build that lane
+lane currently accounts for **332,406 executable bytes across 614 compiling
+sources**: 319,614 main-image bytes and 12,792 overlay bytes. Combined with exact
+C, **508,980 / 1,339,542 executable bytes** are expressed as C. Build that lane
 with `bun run build:semantic`; its sources live under `semantic/` and do not
 claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
 and multi-region traps out of the ordinary review queue.

@@ -1348,6 +1348,33 @@ except the call's own RTL form, because `schedule_insns` purges death notes
 distinguish two sites of one symbol — which is why the fix has to be in the
 source, and closes that search.
 
+## Sweep the return-type lever mechanically, do not hand-probe it
+
+A greedy fixpoint sweeper beats hand-probing badly and is cheap to write: one pass
+flips each `void` callee declaration to `s32` in turn and keeps any improvement;
+a second wraps individual call sites in `((s32 (*)())F)(...)` / `((void (*)())F)(...)`
+casts. At ~0.12 s per probe a 60-callee function converges in seconds. That found
+`resource_3bf:4794`, which needed a specific 5-of-10 partition of identical-looking
+`f(25,0)` call sites — no hand sweep would have located it. One such sweep closed
+9 functions / 1,628 bytes out of 41 candidates in a single lane.
+
+**Measured scope of the lever.** It moves *only* a transposition of two `movs`
+argument setters (`movs r0,#K` against `movs r1,#K'`). All 23 nulls in that sweep
+had `movs r0` transposed against something else — an `lsls` (the second half of a
+two-instruction immediate), a pool `ldr`, an `adds`, or a `str` — which is the
+separate immediate-build-transposition fingerprint that no return-type spelling
+touches.
+
+**The two levers compose**, which is the more useful half: on `resource_3bf:4794`
+and `resource_372:173c` the return type fixed the `movs`/`movs` swaps and
+`-mthumb-immediate-latency` then fixed the `movs`/`lsls` ones, and neither reached
+zero alone. Retry that pairing on anything parked under the latency flag by itself.
+
+Confirmed limitation: a prototype-less shared declaration blocks the lever
+entirely (`resource_3b1:0728` — neither `s32`, nor `void`, nor the `_b` split
+changed a byte). Where one symbol needs both orders, the per-site cast works and
+the `_b` split does not.
+
 ## Old park notes are stale evidence — re-probe them
 
 The return-type lever was discovered late, so **every park note whose residue is a
@@ -1700,6 +1727,25 @@ entire residual on the near-exact members is a scheduling transposition (the
 reference puts a neighbouring one-instruction immediate between a rematerialized
 constant's `movs` and its `lsls`). `-mthumb-immediate-latency` halves it on one
 member; the rest of that sweep is recorded in the write-up.
+
+## Two new levers (2026-07-30 overlay tail lane)
+
+- **The resource_37b stack-argument blocker is a source shape, not a compiler mode.**
+  For a 6-argument call with two distinct constant stack arguments, open a scope at
+  the call site and comma-declare the pair there:
+  `{ s32 k5 = 4, k6 = 3; Func(a,b,c,d,k5,k6); }`. That yields the reference's
+  `movs rA,#k5 / movs rB,#k6 / str / str`; function-top locals (the form the old
+  note tried) keep the serialised `movs r3 / str / movs r3 / str`. Took
+  resource_37b 0x02002244 and 0x020022f4 from 3 to 0. The five large sheets parked
+  behind `notes/resource_37b-stackargs.md` should be re-attacked.
+- **A narrow bitfield beats hand-written mask/or read-modify-write.** Where the
+  reference does `ldrh / and ~0x1ff / and 0x1ff / orr / strh` with both masks
+  hoisted into high registers, the exact form is a `u16 f:9;` bitfield plus a plain
+  `p->f = v;` — int-typed mask locals inside the loop get the same instructions but
+  the wrong operand/register identities (23 halfwords), the bitfield gets 0. Also
+  from the same function: a loop-invariant addend is better spelled *at the use*
+  (`p->f04 = sy + 8;`) than hoisted (`sy += 8;` before the loop) when the reference
+  interleaves it with the loop-counter initialisation.
 
 ## Required checks
 

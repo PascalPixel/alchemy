@@ -576,10 +576,20 @@ executable denominator must begin `metrics: correct executable denominator`.
 target's own disassembly and this repo. **No `asm()`, no inline assembly, no
 register pinning, no barriers, and no `volatile` as a matching device.**
 
-**Concurrency.** This host has 4 cores. Two walker lanes plus the main agent is
-the useful maximum; more thrash the compile step. Walkers must never share an
-overlay — that is the only mutable artifact — and should be told not to run git,
-the build scripts, `full_c_progress.ts` or `overlay_inventory.ts`.
+**Concurrency — do not inherit the old two-lane rule.** That limit was measured
+when a verification probe cost 1.8 s and a bank cycle 190 s, so compute really was
+the binding constraint. The content caches (§3) cut those to 0.12 s and 15 s, and
+the limit was never re-derived. Measured afterwards on the same 4-core host with
+two lanes running: **load average 1.18, and a probe costs 137 ms under load versus
+120 ms idle** — roughly 70% of the machine idle. Lanes are reasoning-bound, not
+compute-bound, so run **five or six** and re-measure `/proc/loadavg` before
+assuming a ceiling. If probe latency starts climbing well above ~150 ms, that is
+the real signal to stop adding lanes.
+
+The binding constraints are instead: walkers must never share an overlay (the
+overlay `.s` file is the only mutable artifact), and only the main agent may run
+git, the build scripts, `full_c_progress.ts` or `overlay_inventory.ts`. The bank
+cycle tolerates lanes adopting mid-build, so there is no need to pause them.
 
 **Agent economics.** Permuting is an audit pass, not an engine: one exact hit in
 65,543 candidates, though it cost ten minutes and cracked a function a careful

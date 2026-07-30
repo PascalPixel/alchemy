@@ -299,6 +299,68 @@ Cheapest possible way to fix an overlay's struct layout.
    metric by the row's *advertised* size — `080ec100` credited 144 of its 3,126
    bytes until its nine ranges were entered.
 
+**The Flash family (`old_agbcc -O1`) has a four-lever recipe.** `08007028`
+(112/112) took five probes; `08006d50` (156/156) and `08006e24` (292/292) then
+each matched on the **first** probe with the same four levers unchanged. That is
+what makes this a family recipe rather than a per-function grind — 560 bytes for
+seven probes total. Applied in this order:
+
+1. **Never let a pointer live across a call.** Declaring `u8 *info = (u8 *)...`
+   at function top hoists it into a callee-saved register; the reference
+   materializes it after the call in a call-clobbered one. Worth 5 halfwords.
+2. **Split the read-modify-write so the mask opens the chain**:
+   `w = MMIO; w &= 0xFFFC; w |= field; MMIO = w;` matches, while
+   `MMIO = (MMIO & 0xFFFC) | field;` loads the field's base too early. Worth 5.
+   (Same family as the mask-first RMW rule in §4, on the *other* compiler.)
+3. **Keep `base + offset` as base-plus-field, in a nested block placed AFTER the
+   masking statement.** A bare `*(u16 *)((u8 *)0x08007C10 + 36)` folds into one
+   pool word `0x08007c34` at offset 0; the reference keeps `0x08007c10` pooled
+   and uses `[r1, #36]`. Declaring the pointer at the enclosing block's top
+   re-hoists it — the nested scope *after* the mask is what makes it work. This
+   is the fiddliest of the four and cost three probes on its own.
+4. **Name a pointer local to order it against an adjacent built constant.**
+   `s32 *status = (s32 *)0x02004C00; f(..., *status);` emits the address `ldr`
+   before the `movs/lsls` pair that builds `0x0E000000`; folding the load into
+   the call argument reverses them. Worth 3.
+
+Two family facts worth reusing: the info block is reached **indirectly** in the
+sector routines (`info = *(u8 **)0x02004C08`, wait-state at `info[16]`, sector
+shift at `info[8]`) but **directly** in the chip routines (`0x08007C10`); and
+writing both wait-state masks as the same `0xFFFC` literal is what makes
+old_agbcc park it in a high register across the call, producing the high-register
+save with no source-level coaxing.
+
+**A "direct exit" may be inside the region.** `08006e24` was blocked for "direct
+exits into `08006f30`/`08006f32`" and a stack-copied payload. Both claims are
+labelling artifacts: `0x08006e24 + 292 = 0x08006f48`, so both addresses lie
+*within* the region — they are the two entry points of the function's own
+epilogue, promoted to function symbols by the disassembler because they are
+branch targets. And the copied payload is never executed here; the Thumb-tagged
+pointer to the copy is passed as an argument and executed in the callee, which C
+expresses as `(u16 *)((u32)Func_08006f48 ^ 1)` with the length as the difference
+of two tagged symbol addresses. **Before believing an "exit", check whether the
+target is inside `entry + size`.** It is one subtraction.
+
+What survives is narrower and worth keeping: `Func_08006f48` is genuine
+relocatable flash-read code that must run from RAM, and whether *it* is
+expressible without inline assembly is untested. That is the real hard case in
+this family, and admitting `08006e24` does not prejudge it.
+
+**Adding an `old_agbcc` stem touches FOUR places**, and the self-test guards two
+of them separately:
+1. `AGBCC_SOURCES`;
+2. `AGBCC_OPTIMIZE_O1_SOURCES`, when the unit is `-O1`;
+3. the hard-coded `expected` array in `selfTest()` — miss it and `bun run test`
+   fails with "old_agbcc source allowlist self-test failed";
+4. the **second** hard-coded `-O1` stem list inside `selfTest()`'s
+   `expectedFlags` — miss it and the message is "old_agbcc flags self-test
+   failed for <stem>".
+
+Both guards are deliberate; update the lists rather than working around them.
+Check the self-test's exit status rather than skimming its tail: it prints a
+`Bun v...` banner on failure that reads like ordinary output, and the fourth
+list is easy to miss because the third one is what fails first.
+
 **Where the remaining semantic work actually is: overlays, not the main image.**
 Measured after this session's waves, and it reframes the lane:
 

@@ -7,16 +7,23 @@ typedef int s32;
  * at 0x02004248 through `pop {r0} / bx r0` at 0x0200425c; next owner's
  * prologue at 0x02004260.
  *
- * This overlay executes at 0x02000000 (its bl targets land in the
- * 0x02008xxx resident module, which fits only under a flat base; the
- * image is 0x5190 bytes).  Callees are unidentified beyond call shape.
+ * CORRECTION (name sweep): the claim that "this overlay executes at
+ * 0x02000000 because its bl targets land in a 0x02008xxx resident
+ * module" is STRUCK.  There is no such module: the targets were a
+ * naive pc-relative misdecode.  Under the +2 rule
+ * (tools/overlay_call_targets.ts) every bl here resolves through the
+ * overlay's own import-veneer table to main-ROM code, and the pool
+ * pointers fit the standard 0x02008000 link base.  This wrapper's two
+ * calls are Func_0808a010 and Func_0808a180.
+ *
+ * Uncertainty: callee roles beyond call shape remain open.
  */
 
-extern void Func_02008cb4(s32 arg0, s32 arg1);
-extern void Func_02008bea(s32 arg0);
+extern void Func_0808a010(s32 arg0);
+extern void Func_0808a180(s32 arg0, s32 arg1);
 
 void Func_02004248(s32 arg0, s32 arg1)
 {
-    Func_02008cb4(arg0, 0);
-    Func_02008bea(arg1);
+    Func_0808a180(arg0, 0);
+    Func_0808a010(arg1);
 }

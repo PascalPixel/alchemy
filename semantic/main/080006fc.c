@@ -21,22 +21,69 @@
  * express_contract") -- it stays an opaque extern. What THIS function does
  * is expressible: a magic-signature guard in front of an IWRAM trampoline.
  *
- * The magic constant and the structure at *(u32*)0x03007ff0 are otherwise
- * unidentified; not guessed at here.
+ * SmshContext is named here rather than promoted to include/ -- nothing
+ * using it is exact-adopted yet (Func_0800070c stays opaque, and this file
+ * and jupiter's semantic/main/080f9c44.c are both semantic-tier drafts on
+ * separate branches), so it follows the same local-struct convention as
+ * semantic/main/080fae58.c and semantic/main/080f9ef8.c rather than
+ * touching the include/ registry ahead of an exact owner. Field layout
+ * below is posted to chat verbatim for jupiter to mirror in his own file
+ * until one of these goes exact and the struct can be promoted for real.
+ *
+ * Fields 0x00/0x04/0x0b/0x2c/the 12x64-byte array at 0x50 come from the
+ * exact src/080fa8d4.c (ground truth). Fields 0x06/0x10/0x14/0x18/0x1c/
+ * 0x20/0x24/0x28 come from reading Func_0800070c's retained-asm body
+ * directly (asm/0800070c.s) -- unconvertible, but its own field accesses
+ * are ordinary reads and fair evidence for this struct's shape, same as
+ * this project already reads other retained-asm bodies for structure
+ * without claiming to convert them. Total size is at least 0x350 (848)
+ * bytes -- 0x50 + 12*0x40 exactly matches Func_0800070c's own literal pool
+ * constant 0x00000350, independent corroboration this is the real stride.
  */
 
-extern void *Data_03007ff0;
+struct SmshContext {
+    u32 signature;      /* 0x00: 0x68736d53 ("Smsh") */
+    u8 countdown;         /* 0x04 */
+    u8 unknown_05;
+    u8 audio_param;         /* 0x06: passed as r0 into the IWRAM
+                              * trampoline, role not identified */
+    u8 unknown_07[4];
+    u8 countdown_reload;      /* 0x0b */
+    u8 unknown_0c[4];
+    u32 unknown_10;             /* 0x10: combined with a fixed pool base
+                                  * and this struct's own address before
+                                  * the trampoline call; role not
+                                  * identified */
+    u32 unknown_14;               /* 0x14: passed as r9 into the trampoline */
+    u32 unknown_18;                 /* 0x18: passed as ip into the trampoline */
+    void *unknown_1c;                 /* 0x1c: pointer to a separate
+                                        * linked/array structure, walked in
+                                        * 64-byte strides, up to 4 entries
+                                        * (src/080fa8d4.c) */
+    u32 unknown_20;                    /* 0x20: if nonzero, triggers an
+                                         * extra Func_0800070a(field_0x24)
+                                         * call before the unconditional
+                                         * Func_0800070a(field_0x28) */
+    u32 unknown_24;
+    u32 unknown_28;
+    void (*disable_callback)(u8);        /* 0x2c: exact, src/080fa8d4.c */
+    u8 unknown_30[0x20];
+    u8 channel_entries[12][0x40];          /* 0x50-0x34f: exact,
+                                             * src/080fa8d4.c; only byte 0
+                                             * of each entry established
+                                             * (active/state flag) */
+};
 
-/* Retained asm, "approved_compiler_cannot_express_contract" -- called only
- * as a tail branch, opaque from this caller's side. */
+extern struct SmshContext *Data_03007ff0;
+
 void Func_0800070c(void *signature_holder);
 
 void Func_080006fc(void)
 {
-    void *signature_holder = Data_03007ff0;
+    struct SmshContext *context = Data_03007ff0;
 
-    if (*(u32 *)signature_holder == 0x68736d53) {
-        Func_0800070c(signature_holder);
+    if (context->signature == 0x68736d53) {
+        Func_0800070c(context);
         return;
     }
 }

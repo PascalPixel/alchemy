@@ -1226,6 +1226,16 @@
           "size": 36
         }
       ]
+    },
+    {
+      "entry": "0x08002dd8",
+      "evidence": "Two adjacent leaf functions sharing one trailing pool, 40 bytes total: Func_08002dd8 at 0x08002dd8..0x08002dec (20 bytes, bx lr, no push/pop), one alignment halfword, Func_08002df0 at 0x08002df0..0x08002dfa (12 bytes, bx lr, no push/pop), then the shared table-base pool word 0x03001e50 at 0x08002dfc..0x08002e00. Flagged shared_literal_thumb_helper_module by the automated walk since neither function is push-rooted. The source asm (asm/08002dd8.s) carries pre-existing hand-written Japanese comments naming each function's role (transfer-state evacuation / transfer-state recording, both against a shared state-area address) which the semantic draft translates and keeps. bun tools/main_xref.ts reports both as heavily-called direct functions (333 and 72 call sites) each separately published as a Thumb pointer (0x08000154, 0x0800017c), confirming both are real, live code, not incidental fragments. Neither file has a .thumb-only-compiler header (checked live against HANDOVER section 7's ARM-only stem list, which flagged this address as potentially stale for this specific case), consistent with genuine Thumb C.",
+      "executable_ranges": [
+        {
+          "address": "0x08002dd8",
+          "size": 40
+        }
+      ]
     }
   ]
 }

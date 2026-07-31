@@ -1817,149 +1817,34 @@ cohort. It added **17,816 exact-C bytes**, taking exact Full-C Byte Share to
 
 In descending order of measured value.
 
-**THE OVERLAY STRICT QUEUE IS FINISHED — and the main image is very nearly
-finished too.** Everything below about overlay queues is history, kept because
-the method transferred.
+**THE OVERLAY STRICT QUEUE IS FINISHED. The main image is the only front.**
+Everything below about overlay queues is history, kept because the method
+transferred wholesale.
 
-**Measured, after two false starts that are worth knowing about.** The main
-image's remaining ground by retention class looks like this:
+**The measured backlog — compute it this way, not from a class label.** A stem is
+real work when it has an `asm/<stem>.s`, no `semantic/main/<stem>.c`, no
+`src/<stem>.c`, and is **not inside any `executable_ranges` entry** in
+`semantic/main-regions.json`. That last exclusion is the one everything else
+gets wrong: many rows are interiors of already-converted owners. Measured this
+way: **424 stems / 44,734 bytes.**
 
-| class | bytes | status |
-| --- | --- | --- |
-| `keep_structured_asm` | 44,136 | parked by design |
-| `keep_asm` | 11,988 | parked by design |
-| `split_first` (all `mixed_region`) | 23,432 | **already converted** — see below |
-| `merge_with_owner` / `merge_with_function_owner` | 7,088 | 4,528 already covered |
-| `adjacent_section_alignment` | 660 | padding |
+Do NOT size the front from `main_image_classes.ts`'s `convertible-thumb` count
+(748 owners / 30,946 bytes). It never consults `retention`, `semantic/`, or the
+registered ranges, so it counts retained assembly and already-absorbed interiors
+alike. Its `--list` also caps at 20, which makes the head of the list look like
+the whole of it. It is still the right tool for *classifying* what is not C —
+the IWRAM ARM runtime, linker veneers, BIOS `svc` wrappers and the
+returns-via-`ip` family, 5,298 bytes it correctly excludes.
 
-**All 599 `c_candidate` regions already have a semantic source.** There is no
-drafting backlog; the exact lane's constraint is adoption, not authorship.
+**All 599 `c_candidate` regions already have C of one kind or the other.** There
+is no drafting backlog in that class; the exact lane's constraint is adoption,
+not authorship.
 
-**The genuine remaining semantic gap is about 2,560 bytes across 36 small
-continuation regions** — the ones NOT inside any registered `executable_ranges`
-entry. Largest: `0800fd5c` (320), `0808f498` (148), `080e53f4` (136),
-`080f474a` (114), `0808b7b8` (108), `080bea9c` (108). Each genuinely has no
-independent entry (`live_parent_stack_and_high_registers`, `no_independent_entry`,
-`live_owner_`), so each must be folded into its owner's source rather than
-written standalone, with that owner's registered ranges extended to match.
-
-**`bun tools/main_xref.ts <address>...`** answers "who references this?" across
-the whole image: direct calls, branches, aligned pool words, and pool words
-holding **address + 1** — the Thumb bit, which is how an indirectly published
-callback is stored. That last case is the one that earns the tool: it is the
-only cheap way to tell an unreferenced tail from an independently callable
-function, and it proved `0808f498` a real function from five pool words holding
-`0x0808f499` with no branch into it at all. **What it cannot decide** is a
-region with no inbound reference: a genuine continuation is normally reached by
-*falling through*, which leaves no reference, so a pool and a fall-through
-continuation are indistinguishable. Of the 32 open continuation regions, 31 come
-back that way — narrowed to "pool or fall-through", no further. A reachability
-walk from the owner's entry is what settles those.
-
-**"Reached indirectly" is a CLAIM, and `main_xref.ts` is how you check it.** A
-lane described all six of its new main-image owners as reached indirectly; four
-are confirmed — pool words hold `entry + 1` — but `0801c9c0` and `080b7410` have
-**no reference of any kind** anywhere in the image: no call, no branch, no word
-holding the address, none holding address + 1, and nothing in the overlay
-assembly either. They are reached by a computed address, from data the scan does
-not cover, or not at all. The reconstruction is faithful to the bytes either
-way; say "caller unknown" rather than "indirect", because the second reads as
-established and is not.
-
-**`mov ip,pc; bx rN` is an ORDINARY INDIRECT CALL — do NOT stop on it.** I
-briefed three lanes to treat it as an on-sight signature of retained assembly.
-That was wrong, and the tree said so in three places I failed to check: this
-document already retires it above (`0800ebec`, admitted whole at 1,714 bytes,
-"an ordinary indirect call… `LAWS.md` already recorded this idiom as a
-codegen-only difference from `bl __call_via_r4`"); `main_image_classes.ts`'s
-`returns-via-ip` class is `mov ip, **lr**` paired with `bx ip`, pinned by its own
-self-test; and the tracked evidence for `0800ebec` in `main-regions.json` says
-the same. In every owner lanes parked on it, the shape was
-`ldr r3,[pc,…]` → `0x03000118` (the relocated IWRAM multiply) → `mov ip,pc; bx r3`,
-i.e. an inlined `call_via r3`. **At least eleven owners were parked on my bad
-rule; they are convertible.**
-
-The real stop signature is `mov ip, lr` with `bx ip`. Also genuinely retained:
-`08002dd8`, which loads r4 from its pool **without saving r4** — no C compiler
-emits that.
-
-**Confirmed on all eleven parked owners**, each showing the same shape: a pooled
-`0x03000118` loaded into a register, then `mov ip,pc; bx rN` returning to the
-halfword after the `bx` with frame and live registers intact, the landing site
-consuming r0 as that call's result. **38 further `asm/*.s` files contain
-`mov ip,pc` and have no semantic source** (`0800cacc`, `08097a10`, `0800d14c`,
-…) — ordinary backlog, and all known-convertible on this reading.
-
-**The thunk table is INDEXABLE, not the three entries I first listed.**
-`080072e4 + 4*N` is `call_via rN` for all sixteen registers — `080072f4` is via
-**r4**, `08007310` via **fp**. **Any `bl` into `080072e4..08007320` is an indirect
-call through the register loaded immediately before it.** Read it as a range,
-not as a handful of known addresses.
-
-**A GENUINE stop signature, distinct from the `03000118` family: the relocated
-stack ARM kernel.** `08004fe4` opens with `stmia r3!,{r0,r1,r2}` at
-`r3 = 0x040000d4` — a DMA3 kick copying `0x84000007` (7 words) from `0x08007994`
-into its OWN STACK FRAME at `sp+36` — then calls that stack buffer via
-`bl Func_080072f4` with r4 holding the destination. `asm/08007994.s` is the
-28-byte ARM three-term 16.16 dot-product kernel, already classified
-`relocated_stack_arm_kernel`. DMA-ing code into the frame and branching to it has
-no C form. The `03000118` family differs by being called *in place*.
-
-**The ratio helper `0300013c` takes the DIVISOR FIRST.** It returns
-`value / divisor` — its *second* argument over its first. Proved by
-`080979a4`, which passes `180 << 17` (360.0) as the first argument to
-`08097a10` and gets an angle reduced into one turn. `semantic/main/080123f4.c`
-names the first parameter "numerator", which reads backwards.
-
-**`if (v < 0) v += 0xffff; v >>= 16` is a TRUNCATING fixed-point-to-whole
-conversion**, with `0x0000ffff` in the pool as the giveaway that whole-unit
-distances follow. In `0800dd70` and `0800d14c`.
-
-**`lsls rN,#16` immediately before a `cmp` against `K<<16` is a HALFWORD COMPARE**
-on a counter (`0809a7f4`, `0809a738`), not arithmetic.
-
-**`bl Func_080072f0` / `Func_0800730c` / `Func_080072ec` ARE NOT FUNCTIONS.**
-They are entries in the `_call_via_rN` thunk table at `asm/080072e4.s` — r0 at
-`+0`, four bytes apart, so `080072f0` is via r3, `0800730c` via sl, `080072ec`
-via r2. A `bl` to one is an indirect call through the register loaded
-immediately before it: the same thing as `mov ip,pc; bx rN`, spelled with a
-`bl`. That resolves the pooled `0x03000250` (world-to-camera transform),
-`0x0300013c` (ratio), `0x030001d8` (square root), `0x030003f0` (divide) and
-`0x030002c0` (matrix loader). Some existing files (`08004bd4.c`, `08004c1c.c`,
-`08003fa4.c`) model `Func_080072f0` as a four-argument function whose last
-argument is the routine address — consistent, but it obscures what it is.
-
-**Writing r4 without saving it is NOT the `08002dd8` stop signature.** Three of
-the eleven (`080935d4`, `080982dc`, `08004ab0`) do it, and in all three r4 is
-assigned before every use and never read live-in — this image's call-used-r4
-convention, which is also why it is not plain agbcc. `08002dd8` differs by
-*loading* r4 from its pool and reading it live-in.
-
-This is the failure mode this document warns about two sections up, committed by
-the person maintaining the document: **a blocker invented from a plausible
-reading, without checking what was already resolved.**
-
-**`keep_structured_asm` is ABSORBING for continuations.** A `merge_with_owner`
-row whose head is `keep_structured_asm` is out of scope even though the row's
-own retention looks eligible — the row-level field invites the opposite reading.
-Zero of the 126 `keep_structured_asm` rows has a semantic source, by standing
-decision.
-
-**A row beginning with an alignment `0000` halfword cannot be a semantic
-filename.** `build_semantic` requires `Func_<filename-address>` to exist and the
-entry is at row + 2, so such rows must go through `main-regions.json` even when
-they are single-range. Four of six owners in one lane hit this.
-
-**`stmia r3!, {r0,r1,r2}` with `r3 = 0x040000b0` programs a whole DMA channel in
-one instruction** (SAD/DAD/CNT). The preceding `ldrh/ands/strh` pair on `+10`
-masked with `0xc5ff` then `0x7fff` is the standard two-step channel stop. This
-identified four sibling functions across three unrelated regions at a glance.
-
-**`objdump --adjust-vma` silently reinterprets `--start-address`.** With
-`--adjust-vma=0x080beb08 --start-address=0x080beb08` you disassemble **file
-offset 0** — the GBA header — under the address you asked for, and it reads as
-plausible garbage code. The correct form is `--adjust-vma=0x08000000
---start-address=<vma>`. This burned a full analysis pass.
+Read `asm/<address>.s` — reconstructed disassembly, byte-verified against the
+ROM by `build_asm.ts`. **The overlay `bl` rule does NOT apply here**, confirmed
+by resolving every `.set sub_*` symbol across four regions against the tree:
+thirteen land exactly on a region start with a real source, which the overlay
+`stored + 2` artefact would displace mid-instruction.
 
 **Two traps cost a lane a full pass; do not repeat them.**
 

@@ -96,6 +96,28 @@ export function publicationContentReason(data: Uint8Array): string | undefined {
   return undefined;
 }
 
+// 三つの枝が同じ文書を編集するため、未解決の競合印がそのまま記録される事故が
+// 三度起きた。人ではなく機械に捕まえさせる。
+//
+// Three branches edit the same documents, and an unresolved conflict marker has
+// been committed three times — each one sealing stale figures inside a paragraph
+// that then asserted several contradictory measurements at once. `git diff
+// --check` catches it only for whoever remembers to run it; this fires from the
+// tracked pre-commit and pre-push hooks on every branch, so nobody has to.
+//
+// Only the opening and closing markers are matched. A bare `=======` is a valid
+// Markdown heading underline and flagging it would reject honest documents.
+const CONFLICT_MARKER = /^(?:<{7}|>{7}) /m;
+const MARKER_EXTENSIONS = ["md", "ts", "js", "json", "sh", "c", "h", "s", "asm", "tsv", "txt"];
+
+export function conflictMarkerReason(path: string, data: Uint8Array): string | undefined {
+  if (!MARKER_EXTENSIONS.includes(extension(path))) return undefined;
+  const text = Buffer.from(data).toString();
+  if (!CONFLICT_MARKER.test(text)) return undefined;
+  const line = text.split("\n").findIndex((entry) => /^(?:<{7}|>{7}) /.test(entry)) + 1;
+  return `unresolved conflict marker at line ${line}; resolve the merge before committing`;
+}
+
 export function publicationEntryReason(path: string, data: Uint8Array): string | undefined {
   const pathReason = publicationPathReason(path);
   if (pathReason !== undefined) return pathReason;
@@ -138,7 +160,22 @@ function reject(entries: Array<{ scope: string; path: string; data: () => Buffer
 }
 
 function checkStaged(): void {
-  reject(stagedPaths().map((path) => ({ scope: "staged", path, data: () => stagedBlob(path) })));
+  const entries = stagedPaths().map((path) => ({ scope: "staged", path, data: () => stagedBlob(path) }));
+  reject(entries);
+  // Conflict markers are checked against staged content ONLY, never against
+  // history. The pre-push scan exists to catch a forbidden artifact that was
+  // added and later deleted, where the past genuinely matters; a marker is
+  // hygiene, where only what you are about to record matters. Applying it to
+  // history would reject every existing commit that carried one — immutable,
+  // already merged, and shared by all three branches — and block the ring
+  // permanently. That is not hypothetical: it happened the first time this
+  // check was wired into the shared path.
+  const failures: string[] = [];
+  for (const entry of entries) {
+    const reason = conflictMarkerReason(entry.path, entry.data());
+    if (reason !== undefined) failures.push(`${entry.scope} ${entry.path}: ${reason}`);
+  }
+  if (failures.length > 0) throw new Error(`publication gate rejected:\n${failures.join("\n")}`);
 }
 
 function revisions(local: string, remote: string): string[] {
@@ -206,6 +243,30 @@ function selfTest(): void {
   }
   if (publicationEntryReason("asm/08000000.s", Buffer.from(".incbin \"rom.gba\"\n")) !== "committed incbin payload") {
     throw new Error("committed incbin payload was accepted");
+  }
+
+  const bytes = (text: string): Uint8Array => new TextEncoder().encode(text);
+  if (conflictMarkerReason("HANDOVER.md", bytes("a\n<<<<<<< HEAD\nb\n")) === undefined) {
+    throw new Error("an opening conflict marker was accepted");
+  }
+  if (conflictMarkerReason("HANDOVER.md", bytes("a\n>>>>>>> origin/venus\n")) === undefined) {
+    throw new Error("a closing conflict marker was accepted");
+  }
+  // The shared entry reason must NOT flag markers: it also runs over history in
+  // the pre-push scan, where rejecting an immutable past commit blocks the ring.
+  if (publicationEntryReason("HANDOVER.md", bytes("x\n<<<<<<< HEAD\n")) !== undefined) {
+    throw new Error("the history-facing gate flagged a conflict marker");
+  }
+  // A bare ======= is a Markdown heading underline, not a conflict.
+  if (conflictMarkerReason("HANDOVER.md", bytes("Title\n=======\n\nbody\n")) !== undefined) {
+    throw new Error("a Markdown heading underline was rejected as a conflict marker");
+  }
+  // <<<<<<< without the trailing space is ordinary prose or a diff sample.
+  if (conflictMarkerReason("HANDOVER.md", bytes("see <<<<<<<HEAD in the output\n")) !== undefined) {
+    throw new Error("a marker-like string without the separator was rejected");
+  }
+  if (conflictMarkerReason("assets/readme/x.png", bytes("<<<<<<< HEAD\n")) !== undefined) {
+    throw new Error("a binary extension was scanned for conflict markers");
   }
 }
 

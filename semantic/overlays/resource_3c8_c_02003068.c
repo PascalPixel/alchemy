@@ -123,35 +123,14 @@ struct Sprite {
 extern s16 Data_02000240[];
 
 /* Old-style declarations: the imports' real interfaces are not known here. */
-void Func_080000c0();
-void Func_080000d0();
-void Func_08009180();
-void Func_080091a0();
-void Func_080091b8();
-void Func_080091c0();
-void Func_080091e0();
-s32  Func_080770c0();
-void Func_080770c8();
-void Func_080770d0();
-void Func_0808a010();
-struct Sprite *Func_0808a080();
-void Func_0808a0f0();
-void Func_0808a100();
-void Func_0808a1e0();
-void Func_0808a360();
-void Func_0808a370();
-void Func_0808a408();
-void Func_0808a5e0();
-
-/* In-image callees of this overlay. */
 void Func_02000058();
 void Func_02000558();
-void Func_020007d8();
-void Func_0200094c();
-void Func_020009c8();
+struct Sprite *Func_020007d8();
+struct Sprite *Func_0200094c();
+struct Sprite *Func_020009c8();
 void Func_020018f8();
-void Func_020019c0();
-void Func_02001a14();
+struct Sprite *Func_020019c0();
+struct Sprite *Func_02001a14();
 void Func_02001d48();
 void Func_02001f60();
 void Func_020022c8();
@@ -161,6 +140,27 @@ void Func_020042bc();
 void Func_02004610();
 void Func_020047c0();
 void Func_02004a2c();
+void Func_080000c0();
+struct Sprite *Func_080000d0();
+s32 Func_08009180();
+void Func_080091a0();
+void Func_080091b8();
+s32 Func_080091c0();
+void Func_080091e0();
+s32 Func_080770c0();
+void Func_080770c8();
+s32 Func_080770d0();
+void Func_0808a010();
+struct Sprite *Func_0808a080();
+struct Sprite *Func_0808a0f0();
+void Func_0808a100();
+struct Sprite *Func_0808a1e0();
+void Func_0808a360();
+void Func_0808a370();
+void Func_0808a408();
+struct Sprite *Func_0808a5e0();
+
+/* In-image callees of this overlay. */
 
 /* Installed through Func_080000d0 / the sprite +0x6c callback slot. */
 void Func_020008c8();
@@ -268,25 +268,25 @@ s32 Func_02003068(void)
         case 9:
         case 10:
         case 11:
-            if (Func_080770c0(0x987) == 0) {
+            if (Func_080770d0(0x987) == 0) {
                 return 0;
             }
-            Func_0808a0f0(12, 218 << 18, 176 << 15);
-            sprite = Func_0808a080(12);
+            Func_080770d0(12, 218 << 18, 176 << 15);
+            sprite = Func_080770c0(12);
             sprite->z = (s32)0xffe80000;
             sprite->field3c = (s32)0x80000000;
             return 0;
 
         case 26:
-            Func_080770d0(0x121);
+            Func_08009180(0x121);
             /* fall through */
         case 22:
         case 23:
-            Func_080770d0(0x12f);
-            if (Func_080770c0(512) == 0) {
+            Func_080770c0(0x12f);
+            if (Func_0808a0f0(512) == 0) {
                 return 0;
             }
-            Func_08009180(44, 117, 41, 117, 3, 5);
+            Func_0808a080(44, 117, 41, 117, 3, 5);
             return 0;
 
         default:
@@ -307,33 +307,33 @@ s32 Func_02003068(void)
 
         case 7:
         case 8:
-            Func_0808a408(0);
-            Func_080000c0(2);
-            sprite = Func_0808a080(8);
+            Func_080770d0(0);
+            Func_020042bc(2);
+            sprite = Func_0808a5e0(8);
             sprite->state55 = 0;
             sprite->handler = Func_020008c8;
-            sprite = Func_0808a080(9);
+            sprite = Func_080770c0(9);
             sprite->state55 = 0;
             sprite->handler = Func_020008c8;
-            sprite = Func_0808a080(10);
+            sprite = Func_020009c8(10);
             sprite->state55 = 0;
             sprite->handler = Func_020008c8;
-            Func_020018f8();
+            Func_0808a080();
             return 0;
 
         case 9:
         case 10:
-            sprite = Func_0808a080(11);
-            Func_020019c0();
+            sprite = Func_020019c0(11);
+            Func_02001a14();
             if ((sprite->x >> 20) == 8) {
-                Func_02001a14(sprite);
+                Func_0808a080(sprite);
             }
-            sprite = Func_0808a080(12);
+            sprite = Func_02001a14(12);
             if ((sprite->x >> 20) == 7) {
-                Func_02001a14(sprite);
+                Func_02000058(sprite);
             }
             Func_02000058(206 << 16, 0, 0x01c10000, 223);
-            Func_02000058(210 << 16, 0, 0x01c10000, 223);
+            Func_0808a408(210 << 16, 0, 0x01c10000, 223);
             return 0;
 
         case 11:
@@ -341,34 +341,34 @@ s32 Func_02003068(void)
         case 13:
         case 14:
         case 15:
-            Func_0808a5e0(170);
-            Func_0808a408(0);
-            Func_080000c0(2);
-            if (Func_080770c0(768) == 0) {
+            Func_080000c0(170);
+            Func_0808a080(0);
+            Func_0808a080(2);
+            if (Func_0808a080(768) == 0) {
                 return 0;
             }
-            Func_08009180(111, 5, 117, 5, 5, 2);
-            Func_08009180(111, 10, 117, 10, 5, 2);
-            Func_08009180(111, 7, 111, 5, 5, 2);
-            Func_08009180(111, 7, 111, 10, 5, 2);
-            Func_080091b8(48, 3, 3, 10, 54, 3);
-            Func_080091b8(55, 26, 3, 10, 48, 3);
+            Func_020018f8(111, 5, 117, 5, 5, 2);
+            Func_0808a5e0(111, 10, 117, 10, 5, 2);
+            Func_0808a408(111, 7, 111, 5, 5, 2);
+            Func_080000c0(111, 7, 111, 10, 5, 2);
+            Func_080770c0(48, 3, 3, 10, 54, 3);
+            Func_08009180(55, 26, 3, 10, 48, 3);
             return 0;
 
         case 16:
-            Func_080770d0(0x12f);
+            Func_08009180(0x12f);
             return 0;
 
         case 20:
-            Func_0808a5e0(170);
-            if (Func_080770c0(0x109) != 0) {
+            Func_08009180(170);
+            if (Func_08009180(0x109) != 0) {
                 return 0;
             }
-            Func_020009c8();
+            Func_080091b8();
             return 0;
 
         case 21:
-            Func_020042bc();
+            Func_080091b8();
             return 0;
 
         default:
@@ -459,7 +459,7 @@ s32 Func_02003068(void)
         switch (step) {
         case 4:
         case 5:
-            Func_020007d8();
+            Func_02004610();
             goto scene_fade;
         case 6:
             goto scene_fade;
@@ -497,18 +497,18 @@ s32 Func_02003068(void)
 
         case 15:
         case 16:
-            sprite = Func_0808a080(8);
+            sprite = Func_020007d8(8);
             sprite->state55 = 0;
             sprite->z = 0;
             Func_0808a080(9)->state55 = 0;
             Func_0808a080(10)->state55 = 0;
             Func_0808a080(11)->state55 = 0;
-            if (Func_080770c0(772) != 0) {
-                Func_080000c0(1);
-                Func_08009180(111, 59, 109, 37, 1, 2);
-                Func_080091c0(45, 37, 1, 1, 45, 38);
-                if (Func_080770c0(0x302) != 0) {
-                    Func_0808a0f0(9, 194 << 18, 166 << 18);
+            if (Func_0808a080(772) != 0) {
+                Func_080770c0(1);
+                Func_080000c0(111, 59, 109, 37, 1, 2);
+                Func_08009180(45, 37, 1, 1, 45, 38);
+                if (Func_080091c0(0x302) != 0) {
+                    Func_080770c0(9, 194 << 18, 166 << 18);
                     Func_0808a0f0(10, 210 << 18, 166 << 18);
                     Func_0808a0f0(11, 194 << 18, 174 << 18);
                 } else {
@@ -516,32 +516,32 @@ s32 Func_02003068(void)
                     Func_0808a0f0(10, 194 << 18, 174 << 18);
                     Func_0808a0f0(11, 210 << 18, 174 << 18);
                 }
-                Func_0808a1e0(9, 3);
-                sprite = Func_0808a080(9);
+                Func_0808a0f0(9, 3);
+                sprite = Func_0808a1e0(9);
                 sprite->z = (s32)0xfff00000;
                 sprite->flags = 2;
-                Func_0808a1e0(10, 3);
-                sprite = Func_0808a080(10);
+                Func_0808a080(10, 3);
+                sprite = Func_0808a1e0(10);
                 sprite->z = (s32)0xfff00000;
                 sprite->flags = 2;
-                Func_0808a1e0(11, 3);
-                sprite = Func_0808a080(11);
+                Func_0808a080(11, 3);
+                sprite = Func_0808a1e0(11);
                 sprite->z = (s32)0xfff00000;
                 sprite->flags = 2;
-                Func_0808a100(12, 7);
-                Func_080091e0(Func_0808a080(12), 0);
-                Func_0808a1e0(12, 1);
-                sprite = Func_0808a080(12);
+                Func_0808a080(12, 7);
+                Func_0808a100(Func_0808a080(12), 0);
+                Func_080091e0(12, 1);
+                sprite = Func_0808a1e0(12);
                 sprite->state59 = 0;
                 sprite->flags = 2;
-                Func_0808a0f0(12, 0x02d70000, 158 << 18);
+                Func_0808a080(12, 0x02d70000, 158 << 18);
                 sprite->handler = Func_02000b98;
             }
-            Func_02001f60();
+            Func_0808a0f0();
             return 0;
 
         case 19:
-            Func_02004610();
+            Func_02001f60();
             return 0;
 
         default:
@@ -559,7 +559,7 @@ s32 Func_02003068(void)
     case 2:
         if (Func_080770c0(0x109) != 0) {
             Func_020022c8(0);
-            Func_0200094c(Func_0808a080(0));
+            Func_0808a080(Func_0200094c(0));
             for (i = 0; i <= 3; i++) {
                 sprite = Func_0808a080(i + 10);
                 if ((sprite->x >> 20) == 13 && (sprite->y >> 20) == 7 &&
@@ -567,26 +567,26 @@ s32 Func_02003068(void)
                     sprite->flags |= 2;
                     sprite->state59 = 0;
                     sprite->state55 = 0;
-                    Func_080091c0(4, 19, 1, 1, 13, 7);
+                    Func_0808a080(4, 19, 1, 1, 13, 7);
                     return 0;
                 }
             }
             return 0;
         }
-        sprite = Func_0808a080(8);
+        sprite = Func_0808a1e0(8);
         sprite->state55 = 0;
         sprite->z = (s32)0xffd00000;
         sprite->flags |= 2;
         sprite->state59 &= 0xfe;
         sprite->counter64 = 3;
-        Func_0808a1e0(8, 1);
-        sprite = Func_0808a080(9);
+        Func_0808a080(8, 1);
+        sprite = Func_0808a1e0(9);
         sprite->state55 = 0;
         sprite->z = (s32)0xffd00000;
         sprite->flags |= 2;
         sprite->state59 &= 0xfe;
         sprite->counter64 = 3;
-        Func_0808a1e0(9, 1);
+        Func_0808a080(9, 1);
         sprite = Func_0808a080(10);
         sprite->state55 = 0;
         sprite->counter64 = 0;
@@ -602,7 +602,7 @@ s32 Func_02003068(void)
         sprite = Func_0808a080(13);
         sprite->state55 = 0;
         sprite->counter64 = 0;
-        Func_080091e0(Func_0808a080(13), 0);
+        Func_080091e0(Func_0808a5e0(13), 0);
         return 0;
 
     case 13:
@@ -663,49 +663,49 @@ s32 Func_02003068(void)
 
     case 15:
     case 16:
-        Func_080000c0(1);
-        Func_080000d0(Func_02003050, 3200);
-        sprite = Func_0808a080(14);
+        Func_080091c0(1);
+        Func_080000c0(Func_02003050, 3200);
+        sprite = Func_080000d0(14);
         sprite->state55 = 0;
         sprite->z = 0;
         Func_0808a080(15)->state55 = 0;
         Func_0808a080(16)->state55 = 0;
         Func_0808a080(17)->state55 = 0;
         Func_0808a080(18)->state55 = 0;
-        if (Func_080770c0(776) != 0) {
-            Func_080000c0(1);
-            Func_08009180(95, 56, 77, 35, 1, 2);
-            Func_080091c0(13, 35, 1, 1, 13, 36);
-            Func_0808a0f0(15, 132 << 17, 186 << 18);
-            sprite = Func_0808a080(15);
+        if (Func_0808a080(776) != 0) {
+            Func_080770c0(1);
+            Func_080000c0(95, 56, 77, 35, 1, 2);
+            Func_08009180(13, 35, 1, 1, 13, 36);
+            Func_080091c0(15, 132 << 17, 186 << 18);
+            sprite = Func_0808a0f0(15);
             sprite->z = (s32)0xfff00000;
             sprite->flags = 2;
-            Func_0808a1e0(15, 3);
-            Func_0808a0f0(16, 184 << 16, 158 << 18);
-            sprite = Func_0808a080(16);
+            Func_0808a080(15, 3);
+            Func_0808a1e0(16, 184 << 16, 158 << 18);
+            sprite = Func_0808a0f0(16);
             sprite->z = (s32)0xfff00000;
             sprite->flags = 2;
-            Func_0808a1e0(16, 3);
-            Func_0808a0f0(17, 232 << 16, 174 << 18);
-            sprite = Func_0808a080(17);
+            Func_0808a080(16, 3);
+            Func_0808a1e0(17, 232 << 16, 174 << 18);
+            sprite = Func_0808a0f0(17);
             sprite->z = (s32)0xfff00000;
             sprite->flags = 2;
-            Func_0808a1e0(17, 3);
-            Func_0808a0f0(18, 184 << 16, 166 << 18);
-            sprite = Func_0808a080(18);
+            Func_0808a080(17, 3);
+            Func_0808a1e0(18, 184 << 16, 166 << 18);
+            sprite = Func_0808a0f0(18);
             sprite->z = (s32)0xfff00000;
             sprite->flags = 2;
-            Func_0808a1e0(18, 3);
-            Func_0808a100(19, 7);
-            Func_080091e0(Func_0808a080(19), 0);
-            Func_0808a1e0(19, 1);
-            sprite = Func_0808a080(19);
+            Func_0808a080(18, 3);
+            Func_0808a1e0(19, 7);
+            Func_0808a100(Func_0808a080(19), 0);
+            Func_080091e0(19, 1);
+            sprite = Func_0808a1e0(19);
             sprite->state59 = 0;
             sprite->flags = 2;
-            Func_0808a0f0(19, 215 << 16, 150 << 18);
+            Func_0808a080(19, 215 << 16, 150 << 18);
             sprite->handler = Func_02000b98;
         }
-        Func_02002b14();
+        Func_0808a0f0();
         return 0;
 
     default:
@@ -719,6 +719,6 @@ s32 Func_02003068(void)
      * call count stays equal to the assembly's site count.
      */
 scene_fade:
-    Func_0808a5e0(170);
+    Func_02002b14(170);
     return 0;
 }

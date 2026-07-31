@@ -46,7 +46,7 @@ typedef struct Object_02001068 {
     u16 tick;              /* +100 */
 } Object_02001068;
 
-s32 Func_0200409e(s32 velocity, s32 kind);
+s32 Func_03000380();
 
 void Func_02001068(Object_02001068 *object)
 {
@@ -59,7 +59,7 @@ void Func_02001068(Object_02001068 *object)
     vz = object->vz;
     object->z += vz;
 
-    object->vx = vx - Func_0200409e(vx, 18);
+    object->vx = vx - Func_03000380(vx, 18);
 
     bias = vz;
     if (vz < 0) {

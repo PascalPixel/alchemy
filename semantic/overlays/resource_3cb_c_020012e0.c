@@ -107,38 +107,38 @@ extern u32 Data_02009f4c[];
 extern u32 Data_02009f50[];
 
 /* Old-style declarations: arities vary per site across this overlay. */
-void Func_08000378();
-void Func_080091c0();
+void Func_0200003c();
+s32 Func_02000128();
+s32 Func_02000f30();
+void Func_020011bc();
+void Func_02001228();
+void Func_02001294();
 void Func_080000c0();
+void Func_080000d0();
+void Func_08000300();
+void Func_08000378();
+void Func_080003b8();
 void Func_08009190();
+void Func_080091c0();
+void Func_08015120();
+s32 Func_080770c0();
 void Func_080770c8();
 void Func_080770d0();
+s32 Func_080770e0();
 void Func_080770e8();
+void Func_08077260();
 void Func_0808a018();
-void Func_0808a360();
-void Func_0808a370();
+void Func_0808a020();
+s32 Func_0808a070();
 void Func_0808a148();
 void Func_0808a170();
 void Func_0808a178();
 void Func_0808a180();
-void Func_08015120();
-void Func_08000300();
-void Func_080000d0();
-void Func_080003b8();
-void Func_08077260();
+void Func_0808a360();
+void Func_0808a370();
 void Func_080b5108();
-void Func_02000128();
-void Func_0200003c();
-void Func_02001294();
-void Func_020011bc();
-void Func_02001228();
 
 /* Used for their return values. */
-s32 Func_080770c0();
-s32 Func_080770e0();
-s32 Func_0808a070();
-s32 Func_02000f30();
-s32 Func_0808a020();
 
 s32 Func_020012e0(void)
 {
@@ -266,21 +266,21 @@ s32 Func_020012e0(void)
     }
 
     if (mode == 10) {
+        Func_02000128();
+        Func_0808a020();
         Func_0808a018();
-        Func_0808a360();
-        Func_0808a370();
-        Func_02000128(0);
-        Func_02000128(4);
+        Func_0808a360(0);
+        Func_0808a370(4);
 
-        if (Func_080770c0(1000) != 0) {
+        if (Func_02000128(1000) != 0) {
             u16 *phase = *(u16 **)0x03001ebc;
 
-            Func_080770d0(1000);
+            Func_02000128(1000);
             *(u16 *)((u32)phase + 386) = 2;
-            Func_080770d0(772);
-            Func_080000c0(20);
-            Func_0200003c();
-            Func_02000128(0);
+            Func_080770c0(772);
+            Func_080770d0(20);
+            Func_080770d0();
+            Func_080000c0(0);
             installTable = 4;
             goto finishInstall;
         }
@@ -294,56 +294,56 @@ s32 Func_020012e0(void)
                 *(u16 *)&record[688] = runs;
             }
         }
-        Func_02001294(*(u16 *)&record[688]);
-        Func_020011bc();
-        Func_080770c8(772);
-        Func_080770c8(0x305);
+        Func_0200003c(*(u16 *)&record[688]);
+        Func_02000128();
+        Func_02001294(772);
+        Func_020011bc(0x305);
         goto emitEnd;
     }
 
     if (mode == 11) {
+        Func_080770c8();
+        Func_080770c8();
         Func_0808a018();
-        Func_0808a360();
-        Func_0808a370();
-        Func_02000128(0);
-        Func_02000128(4);
+        Func_0808a360(0);
+        Func_0808a370(4);
 
-        if (Func_080770c0(0x173) == 0) {
+        if (Func_02000128(0x173) == 0) {
             *(u16 *)&record[686] = (u16)(*(u16 *)&record[686] + 1);
             *(u16 *)&record[690] = 0;
-            Func_020011bc();
+            Func_02000128();
         }
 
-        Func_080770c8(772);
-        Func_080770d0(0x305);
+        Func_080770c0(772);
+        Func_020011bc(0x305);
         goto emitEnd;
     }
 
-    Func_08000300();
+    Func_080770c8();
     Func_080770d0(370);
-    Func_080770e8(1016, -1);
+    Func_08000300(1016, -1);
 
     if (record[554] != 0) {
+        Func_080770d0();
+        Func_080770e8();
         Func_0808a018();
-        Func_0808a360();
-        Func_0808a370();
-        Func_0808a148(8, *(u32 *)&record[500], 0);
-        Func_0808a170(0x2929);
-        Func_0808a180(8, 0);
-        Func_0808a020();
+        Func_0808a360(8, *(u32 *)&record[500], 0);
+        Func_0808a370(0x2929);
+        Func_0808a148(8, 0);
+        Func_0808a170();
     }
 
     record[554] = 0;
     *(u8 *)0x03001d08 = 0;
-    Func_02000128(0);
-    Func_02000128(4);
+    Func_0808a180(0);
+    Func_0808a020(4);
     goto tail;
 
 finishInstall:
     Func_02000128(installTable);
 
 emitEnd:
-    Func_0808a020();
+    Func_02000128();
 
 tail:
     Func_080000d0((void *)0x02008149, 3200);

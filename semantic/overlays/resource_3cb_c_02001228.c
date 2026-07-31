@@ -46,14 +46,14 @@ typedef signed int s32;
 
 /* Imports. Old-style declarations: two Func_ names in one overlay can be the
  * same import and arities vary per site, so interfaces are left open. */
-void Func_080f9010();
-void Func_080000c0();
+s32 Func_080000c0();
+s32 Func_08015018();
+s32 Func_08015038();
+void Func_08015048();
 void Func_08015308();
+void Func_080f9010();
 
 /* Used for their return values, so these need a return type. */
-s32 Func_08015038();
-s32 Func_08015048();
-s32 Func_08015018();
 
 s32 Func_02001228(void)
 {
@@ -62,8 +62,8 @@ s32 Func_02001228(void)
     Func_080f9010(85);
 
     handle = Func_08015038(0x292c, 5, 4, 1);
-    while (Func_08015048() == 0) {
-        Func_080000c0(1);
+    while (Func_080000c0() == 0) {
+        Func_08015048(1);
     }
     Func_08015308();
     Func_08015018(handle, 1);
@@ -71,8 +71,8 @@ s32 Func_02001228(void)
     Func_080000c0(1);
 
     handle = Func_08015038(0x292d, 5, 4, 1);
-    while (Func_08015048() == 0) {
-        Func_080000c0(1);
+    while (Func_080000c0() == 0) {
+        Func_08015048(1);
     }
     return Func_08015018(handle, 1);
 }

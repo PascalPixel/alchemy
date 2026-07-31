@@ -1340,6 +1340,16 @@
           "size": 500
         }
       ]
+    },
+    {
+      "entry": "0x0800df04",
+      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), previously OPEN under Vale's ruling that a retention label alone is not a cannot-express contract. 796 bytes, prologue push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill at 0x0800df04, single epilogue pop {r3,r5,r6,r7}/mov r8,r3/mov r9,r5/mov sl,r6/mov fp,r7/pop {r5,r6,r7}/pop {r1}/bx r1 -- HANDOVER's real-return epilogue shape (popped word is r1, not r0), so r0 (always 1 on every path) is a genuine return value. Every branch target and pool address verified against arm-none-eabi-objdump -d out/full/asm/0800df04.elf, not inferred: four pool words at 0x800e210 (0x0000ffff), 0x800e214 (0x03000118), 0x800e218 (0xffffe000), 0x800e21c (0xffffc000), all confirmed inside the row and not overlapping another owner. Semantic-only: a sibling of the already-registered semantic/main/0800dd70.c (same struct field offsets -- program_00@0, step_04@4, heading_06@6, position_08@8, anchor_x_64@0x64, anchor_z_66@0x66 -- and the same five callees, same signatures), extending that owner's single wander probe into a seven-direction fan behind a leash pre-check, plus a second flee-from-anchor loop; a earlier partial read of this row (work/claude/notes/main_0800df04.md) mis-flagged two of the four pool words as unexplained wraparound constants -- corrected in this file's own header once the pool addresses were resolved from the .elf rather than guessed from instruction order. Not yet checked byte-exact.",
+      "executable_ranges": [
+        {
+          "address": "0x0800df04",
+          "size": 796
+        }
+      ]
     }
   ]
 }

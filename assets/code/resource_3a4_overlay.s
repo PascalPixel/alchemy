@@ -5526,21 +5526,8 @@ AlchemyC_02000c9c:
 .L_0200345c:
 	pop {r0}
 	bx r0
-	push {lr}
-	bl sub_02006ffc
-	adds r1, r0, #0
-	adds r1, #89
-	ldrb r2, [r1, #0]
-	movs r3, #254
-	ands r3, r2
-	strb r3, [r1, #0]
-	movs r3, #255
-	ldr r1, [r0, #8]
-	ldr r2, [r0, #16]
-	movs r0, #0
-	bl sub_02006fbc
-	pop {r0}
-	bx r0
+AlchemyC_02003460:
+	.space 0x22
 	.2byte 0x0000
 	push {r5, r6, lr}
 	mov r6, r11

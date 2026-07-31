@@ -5646,6 +5646,24 @@
       "entry": "0x02003788",
       "span_bytes": 216,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr}) and returning (pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing five-word literal pool to the next owner's prologue at 0x02003860, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02001280",
+      "span_bytes": 92,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} plus a 12-byte stack buffer at 0x02001280, epilogue add sp,#12 / pop {r5,r6,r7} / pop {r1} / bx r1 at 0x020012d0-0x020012d6; the one-word literal pool at 0x020012d8 (0x0200e668, the same bucket table used by 0x02001190) is included per the usual pool rule, immediately followed by the next owner's push {r5,lr} at 0x020012dc, already this overlay's row 0x020012dc (0x02001280-0x020012dc, 92 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x020063ac",
+      "span_bytes": 116,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} plus fp/r9/r8 spill at 0x020063ac, epilogue pop {r3,r5,r6} / mov r8,r3 / mov r9,r5 / mov sl,r6 / pop {r5,r6,r7} / pop {r0} / bx r0 at 0x02006412-0x0200641e; no literal pool for this owner, the bytes at 0x02006420 onward are a ldr r4,[pc,#0] / bx r4 ARM-interworking veneer table into main ROM (e.g. target 0x080000c1), a recognized structural category with no push{..,lr} prologue, so the span is exactly 0x020063ac-0x02006420, 116 bytes"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02005004",
+      "span_bytes": 52,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {lr} at 0x02005004, epilogue pop {r0} / bx r0 at 0x02005028-0x0200502a; the trailing pool at 0x0200502c-0x02005034 (0x0000092c, 0x00000935, 0x00000917, plain numeric arguments) is included per the usual pool rule, immediately followed by the next owner's push {r5,r6,r7,lr} at 0x02005038, already this overlay's row 0x02005038 (0x02005004-0x02005038, 52 bytes)"
     }
   ]
 }

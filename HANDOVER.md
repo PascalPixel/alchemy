@@ -2076,6 +2076,21 @@ adoption. Equal sizes with a handful of differing bytes is a branch
 displacement, so read the annotation and compare it to what the draft names.
 Order of suspicion: callee names, then `cflagsForSource`, then the span.
 
+**The semantic lane's naming convention is per-overlay — check it in one command
+before drafting.** Three conventions are in the tree and they cost very
+different amounts:
+
+```sh
+diff <(grep -o 'Func_[0-9a-f]\{8\}' semantic/overlays/<file> | sort -u) \
+     <(bun tools/overlay_show.ts <overlay> <off> -n <span> | grep -o '0x[0-9a-f]*$' | sort -u)
+```
+
+`resource_373` names callees **raw** and needs no transcription at all.
+`resource_371` and `:38c` name them **corrected** (`Func_080090d0`) — one or two
+sites to rewrite. `resource_383` names them **by main-image veneer** throughout,
+so all 27 sites in `:091c` needed their own address. Knowing which before you
+draft is the difference between a first-probe adoption and a rejection.
+
 **Transcribe callee names from `overlay_show.ts`; never extrapolate them.** An
 overlay `bl` stores the target's image offset minus two, so `overlay_show`'s
 pc-relative `bl 0x...` annotation is wrong for every site — that is exactly what

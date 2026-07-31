@@ -37,6 +37,9 @@ typedef struct SoftFloatRecord {
     u32 word[5];
 } SoftFloatRecord;
 
+s32 Func_020057ec();
+s32 Func_02005c38();
+void Func_02005e04();
 void Func_0200b894(const SoftDouble *packed, SoftFloatRecord *out);
 void Func_0200b89e(const SoftDouble *packed, SoftFloatRecord *out);
 SoftFloatRecord *Func_0200b298(SoftFloatRecord *a, SoftFloatRecord *b,
@@ -51,8 +54,8 @@ SoftDouble Func_02005a78(SoftDouble a, SoftDouble b)
     SoftFloatRecord recordB;
     SoftFloatRecord result;
 
-    Func_0200b894(&packedA, &recordA);
-    Func_0200b89e(&packedB, &recordB);
+    Func_02005e04(&packedA, &recordA);
+    Func_02005e04(&packedB, &recordB);
 
     /*
      * `ldr r3,[r4,#4]; eors r3,r2(=1); str r3,[r4,#4]` — the sign word of the
@@ -62,5 +65,5 @@ SoftDouble Func_02005a78(SoftDouble a, SoftDouble b)
      */
     recordB.word[1] ^= 1u;
 
-    return Func_0200b6e8(Func_0200b298(&recordA, &recordB, &result));
+    return Func_020057ec(Func_02005c38(&recordA, &recordB, &result));
 }

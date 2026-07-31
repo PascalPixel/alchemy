@@ -28,6 +28,11 @@ typedef signed int s32;
 extern void *Data_0200a488;
 
 /* Imports.  Two are used for their return value. */
+s32 Func_08000140();
+void Func_08000150();
+void Func_080001c8();
+s32 Func_080090c8();
+void Func_08015250();
 u8 *Func_02003de6();
 s32 Func_02003df4();
 void Func_02003e1a();
@@ -41,7 +46,7 @@ void Func_02001b1c(void)
     s32 buffer;
 
     /* movs/lsls build 0xf80000, 0x80000 and 0x980000. */
-    object = Func_02003de6(22, (s32)0xf80000, (s32)0x80000, (s32)0x980000);
+    object = Func_080090c8(22, (s32)0xf80000, (s32)0x80000, (s32)0x980000);
     if (object == NULL) {
         return;
     }
@@ -56,12 +61,12 @@ void Func_02001b1c(void)
     object[92] = 1;
 
     /* movs r1,#0xc1 / lsls r1,#3 builds 0x608. */
-    buffer = Func_02003df4(17, (s32)0x608);
+    buffer = Func_08000140(17, (s32)0x608);
     /* This result is discarded; only the side effect is wanted. */
-    Func_02003e7c((s32)0xe6);
+    Func_08015250((s32)0xe6);
     /* movs r3,#0x80 / lsls r3,#3 builds the 0x400 advance. */
     buffer += 0x400;
-    Func_02003e1c((s32)record[28], (s32)0x80, buffer);
-    Func_02003e1a(17);
+    Func_080001c8((s32)record[28], (s32)0x80, buffer);
+    Func_08000150(17);
     Data_0200a488 = object;
 }

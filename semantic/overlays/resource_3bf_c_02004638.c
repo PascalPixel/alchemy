@@ -26,6 +26,10 @@ typedef signed int s32;
  * The callees are other entry points of this same overlay module; none of them
  * is reconstructed here.
  */
+void Func_0808a010();
+void Func_0808a170();
+void Func_0808a180();
+void Func_0808a1b8();
 void Func_02009d70(s32 id);
 void Func_02009d88(s32 a, s32 b);
 void Func_02009da6(s32 a, s32 b, s32 c);
@@ -52,20 +56,20 @@ void Func_02004638(void)
     case 7: id = 0x241b; break;
 
     case 5:
-        Func_02009da6(21, 0xd000, 0);
-        Func_02009ccc(50);
-        Func_02009db8(21, 0xb000, 0);
-        Func_02009cde(50);
-        Func_02009dca(21, 0x5000, 0);
-        Func_02009cf0(50);
-        Func_02009db6(0x2419);
-        Func_02009dce(21, 0);
+        Func_0808a170(21, 0xd000, 0);
+        Func_0808a180(50);
+        Func_0808a1b8(21, 0xb000, 0);
+        Func_0808a010(50);
+        Func_0808a1b8(21, 0x5000, 0);
+        Func_0808a010(50);
+        Func_0808a1b8(0x2419);
+        Func_0808a010(21, 0);
         return;
 
     default:
         return;
     }
 
-    Func_02009d70(id);
-    Func_02009d88(21, 0);
+    Func_0808a170(id);
+    Func_0808a180(21, 0);
 }

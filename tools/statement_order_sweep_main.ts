@@ -21,7 +21,9 @@
 // Only *independent* statements are permuted, so the transformation preserves
 // semantics: a candidate ordering is generated only when no statement in the run
 // reads a name another writes, and any statement touching memory or calling a
-// function acts as a barrier against other such statements.
+// function acts as a barrier against other such statements. Plain declarations
+// are not memory accesses: the `*` in `s16 *cursor;` is a declarator. Keeping it
+// behind the memory barrier hid declaration-order register-allocation wins.
 import { readFileSync, writeFileSync, mkdirSync, rmSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 
@@ -87,7 +89,9 @@ export function topLevelStatements(body: string): Array<{ text: string; simple: 
       pieces.push({ text: current, simple: true }); current = "";
     }
   }
-  if (current.trim() !== "") pieces.push({ text: current, simple: false });
+  // Preserve trailing whitespace before the function's closing brace. Dropping
+  // it made an otherwise valid reordered source end in the needlessly ugly `}}`.
+  if (current !== "") pieces.push({ text: current, simple: false });
   return pieces;
 }
 
@@ -113,7 +117,18 @@ export function writesOf(text: string): Set<string> {
 }
 
 function touchesMemoryOrCalls(text: string): boolean {
+  if (isPlainDeclaration(text)) return false;
   return /\*|\[|->|\w\s*\(/.test(text.replace(/^\s*[A-Za-z_][A-Za-z0-9_]*\s*=/, ""));
+}
+
+// An uninitialised, fixed-size local declaration has no run-time effect. Reject
+// variable-length arrays and anything with an initializer; those can evaluate
+// expressions and must retain their source position.
+export function isPlainDeclaration(text: string): boolean {
+  const declaration = text.trim();
+  if (declaration.includes("=") || !declaration.endsWith(";")) return false;
+  if (/\[[^\]]*[A-Za-z_][A-Za-z0-9_]*[^\]]*\]/.test(declaration)) return false;
+  return /^(?:(?:register|const|volatile|signed|unsigned|short|long)\s+)*(?:(?:struct|union|enum)\s+[A-Za-z_][A-Za-z0-9_]*|[A-Za-z_][A-Za-z0-9_]*)\s+(?:\*+\s*)?[A-Za-z_][A-Za-z0-9_]*(?:\s*\[[^\]]+\])?\s*;$/.test(declaration);
 }
 
 export function independent(a: string, b: string): boolean {
@@ -150,12 +165,45 @@ export function independentRuns(
   return runs;
 }
 
+function selfTest(): void {
+  const declarations = [
+    "s16 *cursor;",
+    "volatile s32 *cursor;",
+    "s32 values[4];",
+    "struct Position *position;",
+  ];
+  for (const declaration of declarations) {
+    if (!isPlainDeclaration(declaration)) {
+      throw new Error(`statement-order self-test rejected declaration: ${declaration}`);
+    }
+  }
+  for (const statement of ["s32 value = 0;", "s32 values[count];", "*cursor = value;"]) {
+    if (isPlainDeclaration(statement)) {
+      throw new Error(`statement-order self-test accepted effectful statement: ${statement}`);
+    }
+  }
+  const pieces = topLevelStatements("\n    s16 *cursor;\n    volatile s32 *other;\n");
+  if (pieces.length !== 3 || !pieces[0].simple || !pieces[1].simple || pieces[2].text !== "\n") {
+    throw new Error("statement-order self-test did not preserve trailing whitespace");
+  }
+  const runs = independentRuns(pieces, 6);
+  if (runs.length !== 1 || runs[0][0] !== 0 || runs[0][1] !== 1) {
+    throw new Error("statement-order self-test did not expose pointer declarations");
+  }
+  console.log("self-test=ok");
+}
+
 function* permutations<T>(items: readonly T[]): Generator<T[]> {
   if (items.length <= 1) { yield [...items]; return; }
   for (let index = 0; index < items.length; index++) {
     const rest = [...items.slice(0, index), ...items.slice(index + 1)];
     for (const tail of permutations(rest)) yield [items[index], ...tail];
   }
+}
+
+if (Bun.argv.length === 3 && Bun.argv[2] === "--self-test") {
+  selfTest();
+  process.exit(0);
 }
 
 const options = parseArguments(Bun.argv.slice(2));

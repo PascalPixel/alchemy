@@ -37,13 +37,13 @@ new ordinary core debt fails the gate. `main_image_classes.ts --list 100`
 independently reports `convertible-thumb 0 owners / 0 bytes` among the
 source-attributed residuals.
 
-Current compiling totals are **1,561 semantic sources / 794,722 declared
-semantic bytes**: 416,258 core/main bytes and 378,464 overlay bytes. Of those,
+Current compiling totals are **1,558 semantic sources / 793,966 declared
+semantic bytes**: 415,502 core/main bytes and 378,464 overlay bytes. Of those,
 14,572 overlay bytes lie outside the audited executable extents, so the coverage
-map credits **780,150 semantic bytes**. Together with exact C, **1,012,338 /
+map credits **779,394 semantic bytes**. Together with exact C, **1,012,338 /
 1,339,594 executable bytes (75.57%)** are expressed in C, leaving 327,256
-audited executable bytes. In the core image specifically, exact C is 101,452 bytes and
-semantic C is 416,258 bytes; the remaining 30,654 bytes are retained
+audited executable bytes. In the core image specifically, exact C is 102,208 bytes and
+semantic C is 415,502 bytes; the remaining 30,654 bytes are retained
 assembly/structure rather than ordinary semantic-C work.
 The core dashboard therefore contains **zero gray assembly bytes**: it renders
 those 30,654 retained bytes orange. Gray means actionable semantic debt; orange
@@ -51,7 +51,7 @@ means pools, alignment, veneers, relocated runtime, or other reviewed structure
 that remains assembly by design.
 
 This does **not** mean the game is fully decompiled or fully byte-exact C.
-Exact-C ownership is **232,188 / 1,339,594 bytes (17.33%)**. The active speed
+Exact-C ownership is **232,944 / 1,339,594 bytes (17.39%)**. The active speed
 lane after waking is therefore exact-C replacement of semantic owners, plus
 continued overlay ownership—not another core semantic sweep.
 
@@ -179,9 +179,9 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently declares **794,722
-bytes across 1,561 compiling sources**: 416,258 main-image bytes and 378,464
-overlay bytes. The executable coverage map credits 780,150 of them after
+Alongside the exact lane, reviewed semantic C currently declares **793,966
+bytes across 1,558 compiling sources**: 415,502 main-image bytes and 378,464
+overlay bytes. The executable coverage map credits 779,394 of them after
 excluding 14,572 overlay bytes outside the audited extents; combined with exact
 C, **1,012,338 / 1,339,594 executable bytes (75.57%)** are expressed as C.
 Build that lane with `bun run build:semantic`; its
@@ -2522,6 +2522,45 @@ assembly region**: `cp work/claude/main/<stem>.c src/<stem>.c && rm asm/<stem>.s
 then `bun run build:claimed`. Routing keys on the **stem only**, so a draft
 anywhere gets the flags `src/` will get.
 
+**Semantic C is a ranking/specification layer, not an exact source drop-in.** A
+2026-07-31 measurement compiled every one of the 599 main-image semantic owners
+that still had a `c_candidate` assembly row: 557 compiled, 42 did not, 106 were
+already the exact reference size, and **zero were byte-exact unchanged**. This
+rules out a bulk semantic-to-exact rename as a useful strategy, but the 106
+same-size sources are a sharply reduced queue whose residuals are mostly source
+shape rather than recovered behaviour.
+
+The first exact result from that queue was `080a19a0` (160 bytes). Its semantic
+source was the right algorithm and size but differed in 11 halfwords, all one
+global r6/r7 identity swap. Giving the locals role names made the allocator
+cause legible; placing `volatile s32 *transformCursor` before
+`s16 *heightCursor` reproduced the reference. More importantly, the same result
+was reproduced from the untouched semantic source in **37 automated probes** by
+`statement_order_sweep_main.ts`. The sweep had mistakenly classified pointer
+declarations as memory accesses because `*` was read as dereference syntax; it
+now recognises effect-free declarations and can permute them. `finish_draft.sh`
+already invokes this sweep, so the repaired lever is in the normal pipeline.
+
+Scaling the repaired sweep across the whole same-size cohort produced a second,
+larger result: `080b1a14` (444 bytes) went from 204 differing halfwords to zero
+in 21 probes by exchanging the declarations of two initialized state locals.
+Across the 105 supported sources the sweep evaluated 59,565 candidates, improved
+21 sources, and made those two exact. One source had a signature shape the
+top-level parser does not support. A separate bounded `permute_v1` run seeded
+from **100 already-humanized semantic sources** (200 steps, one restart each)
+made `0809397c` exact for another 152 bytes by hoisting the IWRAM square-root
+address into a named local. The three semantic-seeded conversions total 756
+exact bytes.
+
+Use this order on future semantic-backed main rows: compile unchanged; prefer
+equal-size residuals; classify whether all differences are one global register
+swap; humanize names only far enough to expose variable roles/lifetimes; then
+run the declaration/statement sweep and then a bounded `permute_v1` pass. Do not
+perform a separate cosmetic 100-file humanization pass first: these sources were
+already readable enough to seed both searches. This is now a measured conversion
+lane, though 3/557 compiling sources also makes clear that it is not an
+exponential or push-button finish.
+
 **Measuring big functions.** Over ~500 bytes, halfword counts stop meaning
 anything: every `bl` displacement is target-absolute, so one positional drift
 makes all later `bl` halfwords differ (an 8-of-288-groups draft reported 1,235
@@ -3015,8 +3054,12 @@ the only question left is which §4/§5 lever the residual implies.
 result.** `tools/statement_order_sweep_main.ts <draft.c> [--flags …]` permutes
 maximal runs of *independent* top-level statements to a fixpoint — the §4 rule
 that a parameter's store position sets its live length and therefore its allocno
-priority. It was swept over 53 size-exact main-image targets for 10,982 probes:
-no zeros, five drafts improved (`080c1fa8` to 5 halfwords, `080a6a98` to 11).
+priority. An earlier sweep over 53 size-exact main-image targets reported no
+zeros because pointer declarations were incorrectly treated as memory accesses.
+After fixing that parser error, the 2026-07-31 semantic cohort evaluated 59,565
+candidates across 105 supported sources: two became exact (`080a19a0`, 160
+bytes; `080b1a14`, 444 bytes) and 19 more improved. `080c1fa8` still reaches 5
+halfwords and `080a6a98` 11.
 The binding limit is the independence test, not the search: two statements that
 both touch memory or call anything are held in order, because source alone cannot
 prove they do not alias, and on pointer-heavy drafts that leaves nothing to

@@ -1802,7 +1802,19 @@ real work when it has an `asm/<stem>.s`, no `semantic/main/<stem>.c`, no
 `src/<stem>.c`, and is **not inside any `executable_ranges` entry** in
 `semantic/main-regions.json`. That last exclusion is the one everything else
 gets wrong: many rows are interiors of already-converted owners. Measured this
-way: **424 stems / 44,734 bytes.**
+way: **424 stems / 44,734 bytes — but only 92 are genuine candidates.**
+
+**Filter the linker veneers FIRST, before ranking by size.** About **333 of the
+425** are the fixed sequence `ldr rN,[pc,#0]; bx rN` followed by one target
+word, across `08009000+`, `08077000+`, `080b0000+`, `080f2000+`, plus the IWRAM
+`ldr r3` veneers at `080022ec/f4/fc` and `08002304`. They are linker-emitted and
+have no C form. Filter them and the `swi`/`svc` wrapper rows before sorting, or
+the entire small tier is noise and a lane spends its pass on it.
+
+**Run `main_xref.ts` BEFORE drafting, not after.** It catches interiors the
+coverage rule misses: `0800230c` passes the "not inside any `executable_ranges`
+entry" test yet xref reports it INTERIOR (branched from `08001ffe` and
+`08002328`). It is a cheaper gate than reading the assembly.
 
 Do NOT size the front from `main_image_classes.ts`'s `convertible-thumb` count
 (748 owners / 30,946 bytes). It never consults `retention`, `semantic/`, or the

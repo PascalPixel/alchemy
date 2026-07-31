@@ -2150,6 +2150,21 @@ Thumb bit by hand either — `.thumb_set` already carries it, so `+ 1` overshoot
 Tell: a pool word in the `0x0200_8xxx` range next to a call that takes a
 function address.
 
+**The sweep's group count ranks; only the first differing line triages.** A
+branch sense inverted at the top of a function, or a local one width too narrow,
+cascades through every group after it — so a one-lever row and a genuine
+rewrite both show tens of groups and look identical in the summary.
+`resource_3a9:018c` sat at 26 groups and was one `bhi`/`bls` arm flip;
+`resource_390`'s four rows sat at 21 and were one `u16` local that should have
+been `u32`. I dismissed both overlays on the count and recovered five rows by
+reading line one of the diff instead. **Print at least a few rows of the
+comparator, always** — `tools/overlay_group_diff.sh ... 5` costs the same as
+`... 0`.
+
+Corollary: **re-sweep after any new lever lands.** The discard pile is scored
+against the levers you had at the time, and `390` went from "closest row 21
+groups" to four free rows with no flag at all.
+
 **Transcribe callee names from `overlay_show.ts`; never extrapolate them.** An
 overlay `bl` stores the target's image offset minus two, so `overlay_show`'s
 pc-relative `bl 0x...` annotation is wrong for every site — that is exactly what

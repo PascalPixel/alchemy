@@ -38,9 +38,12 @@ typedef int s32;
  * Func_0808a110(id, 3), and another 20-frame wait.
  *
  * Actor r6 gets Func_02003a00(id, 0x5000) -- a 12-byte owner in this
- * same overlay at 0x02003a00, undrafted, which is exactly
- * `Func_0808a1b8(arg0, arg1, 10)`; it is declared, not inlined, because
- * the source calls it -- then Func_0808a128(id, 4, 40),
+ * same overlay at 0x02003a00 that is ALREADY BANKED BYTE-EXACT
+ * (assets/code/resource_3af_c_02003a00.c), where it reads
+ * `Func_02007dda(a, b, 10)` against the veneer address; resolved
+ * through the +2 rule that veneer is Func_0808a1b8, so this call pins
+ * that helper's third argument to 10. It is declared, not inlined,
+ * because the source calls it -- then Func_0808a128(id, 4, 40),
  * Func_0808a130(id, 2), a dialogue line (Func_0808a170(0x1e39)), and
  * Func_0808a188(id, 0, 20). The beat closes with the transition bracket
  * and a 10-unit Func_0808a248.
@@ -53,9 +56,12 @@ typedef int s32;
  * 0x00000202) end at 0x02001d0b, and the next owner prologue
  * (`push {lr}`) begins at 0x02001d0c.
  *
- * That next prologue at 0x02001d0c is NOT a queue row -- it is an
- * uncovered boundary-gap owner running to the 0x02001db0 row, noted for
- * a later pass.
+ * That next prologue at 0x02001d0c is NOT a queue row, and it is NOT an
+ * uncovered gap either: it is already banked byte-exact as
+ * assets/code/resource_3af_c_02001d0c.c. resource_3af carries 36
+ * exact-C files, so in THIS overlay a prologue outside the queue is more
+ * likely already owned than free -- check assets/code before spending a
+ * boundary-gap read.
  *
  * Not found by the structural inventory walk: reached only by `bl`
  * (bun tools/overlay_call_targets.ts resource_3af 1c14 1d0c, the +2

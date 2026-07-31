@@ -131,7 +131,8 @@ function checked(command: string[], cwd: string): string {
   return process.stdout.toString();
 }
 
-function compileOverlayC(source: string, work: string, callViaBase: number): { address: number; data: Buffer } {
+function compileOverlayC(source: string, work: string, overlay: string): { address: number; data: Buffer } {
+  const callViaBase = overlayCallViaBase(overlay, source);
   const stem = basename(source, extname(source)).slice(-8);
   if (!/^[0-9a-f]{8}$/i.test(stem)) throw new Error(`overlay C filename is not an address: ${source}`);
   const address = Number.parseInt(stem, 16);
@@ -275,10 +276,10 @@ export function assembleOverlay(source: string | URL, base = OVERLAY_BASE): Buff
     const copied = Bun.spawnSync(["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", elf, binary], { stdout: "pipe", stderr: "pipe" });
     if (copied.exitCode !== 0) throw new Error(copied.stderr.toString().trim());
     const result = Buffer.from(readFileSync(binary));
-    const bank = overlayCallViaBase(basename(String(source)).replace(/_overlay\.s$/, ""));
+    const overlay = basename(String(source)).replace(/_overlay\.s$/, "");
     const occupied = new Set<number>();
     for (const cSource of overlayCSources(source)) {
-      const compiled = compileOverlayC(cSource, work, bank);
+      const compiled = compileOverlayC(cSource, work, overlay);
       const offset = compiled.address - base;
       if (offset < 0 || offset + compiled.data.length > result.length) {
         throw new Error(`overlay C span is outside ${source}: ${cSource}`);

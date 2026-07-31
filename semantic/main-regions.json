@@ -52,6 +52,26 @@
       ]
     },
     {
+      "entry": "0x0800d14c",
+      "evidence": "One 440-byte row holding a single function: prologue push {r5,r6,r7,lr} plus the sl/r9/r8 saves at 0x0800d14c, single epilogue at 0x0800d2e4 reached from every arm, no inbound branch from outside the row. The seven mov ip,pc; bx r3 sequences (0x0800d1c4, 0x0800d1d0, 0x0800d1dc, 0x0800d21c, 0x0800d254, 0x0800d266, 0x0800d274) are ordinary indirect calls through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after each bx and every landing site consumes r0 as that call's result in the same frame, the reading already recorded for 0x0800ebec. The three bl Func_080072f0 at 0x0800d19e, 0x0800d226 and 0x0800d244 are the runtime call_via_r3 thunk at 0x080072e4, so they are indirect calls to the pooled 0x030001d8 (integer square root) and twice 0x0300013c (ratio). r4 accumulates the squared sum and the eased coordinates without being saved, the ordinary call-used-r4 convention of this image and not the 0x08002dd8 shape. Excluded (18 bytes): the 2-byte movs r0,r0 alignment filler at 0x0800d2f2 and the four-word pool at 0x0800d2f4 (0x0000ffff, 0x030001d8, 0x03000118, 0x0300013c). The object is the 0x70-byte record already reconstructed for 0x0800ebec. Eleven direct callers, the first at 0x0800da2e, and published as a Thumb pointer at 0x08009154.",
+      "executable_ranges": [
+        {
+          "address": "0x0800d14c",
+          "size": 422
+        }
+      ]
+    },
+    {
+      "entry": "0x0800dd70",
+      "evidence": "One 404-byte row holding a single function: prologue push {r5,r6,r7,lr} plus the fp/sl/r9/r8 saves and sub sp,#32 at 0x0800dd70, single epilogue at 0x0800dee6 reached by the success arm at 0x0800ded4 and the give-up arm at 0x0800debe, no inbound branch from outside the row. mov ip,pc; bx r3 at 0x0800ddd0 is an ordinary indirect call through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after the bx, 0x0800ddd4, which consumes r0 as that call's result in the same frame, the reading already recorded for 0x0800ebec. Excluded (12 bytes): the three-word pool at 0x0800def8 (0x0000ffff, 0x03000118, 0xffffe000); there is no alignment filler, the code ends flush at 0x0800def8. 0x0000ffff is the round-toward-zero addend of the truncating >>16, and 0xffffe000 is the negative heading offset -(128<<6). The object is the 0x70-byte record already reconstructed for 0x0800ebec; +0x64 and +0x66 are read here as a leash anchor in whole units, the Object_0800c150 reading rather than the animation timer and phase of 0x0800ebec. No direct caller; published as a Thumb pointer at 0x08013644.",
+      "executable_ranges": [
+        {
+          "address": "0x0800dd70",
+          "size": 392
+        }
+      ]
+    },
+    {
       "entry": "0x0800ebec",
       "evidence": "One function across four manifest rows. The two mov ip,pc; bx r4 sequences at 0x0800f1ba and 0x0800f1c6 are ordinary indirect calls to the IWRAM-relocated ARM multiply at 0x03000118: mov ip,pc sets the return to the instruction after bx, and both landing sites continue the same live frame. The 62-byte executable-gap row at 0x0800f1bc is the continuation of one statement, not a control-flow anomaly. LAWS.md already records this idiom as a codegen-only difference from bl __call_via_r4. Excluded pools and alignment (90 bytes): 0x0800edf0 (36), 0x0800f186 (30), 0x0800f2ae (18), 0x0800f2d4 (4) and 2 bytes of trailing alignment. Previously recorded as a relocated_kernel_continuation blocker; resolved.",
       "executable_ranges": [

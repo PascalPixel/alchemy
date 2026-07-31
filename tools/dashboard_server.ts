@@ -56,7 +56,11 @@ const pageHtml = () => `<!doctype html><html><head><meta charset="utf-8"><meta n
   .col{display:flex;flex-direction:column;min-height:0}
   .col .name{font:italic 400 16px/1.2 'Weyard',system-ui,sans-serif;color:#dcebe2;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
   .col .stack{display:flex;flex-direction:column;gap:6px;overflow-y:auto;min-height:0;padding:1px 2px 6px}
-  .postit{background:#fffef8;border-radius:2px;box-shadow:0 1.5px 3px rgba(0,0,0,.35);padding:6px 7px 5px;font:italic 400 16px/1.1 'Weyard',system-ui,sans-serif;color:#333;position:relative}
+  .postit{padding:8px 9px 7px;font:italic 400 16px/1.1 'Weyard',system-ui,sans-serif;color:#333;position:relative;z-index:0}
+  .postit::before{content:"";position:absolute;inset:0;z-index:-1;background:#fffef8;border-radius:2px;box-shadow:0 2px 4px rgba(0,0,0,.35);transform:rotate(-2.2deg)}
+  .postit:nth-child(even)::before{transform:rotate(1.8deg)}
+  .postit:nth-child(3n)::before{transform:rotate(-1.2deg)}
+  .postit:nth-child(5n)::before{transform:rotate(2.6deg)}
   .postit .owners{display:flex;gap:3px;justify-content:flex-end;margin-top:4px}
   .postit .owners img{width:20px;height:20px;border-radius:3px}
   /* chat */

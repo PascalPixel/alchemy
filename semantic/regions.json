@@ -1004,6 +1004,18 @@
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started and returning but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the five-word literal pool 0x02004840-0x02004853 to the next owner's prologue at 0x02004854 (a veneer owner), inside the assembled overlay image and not overlapping another recorded owner. This overlay executes at 0x02000000: its bl targets resolve into the 0x02008xxx resident module, which only fits under a flat base given the 0x5190-byte image."
     },
     {
+      "overlay": "resource_380",
+      "entry": "0x02000a98",
+      "span_bytes": 708,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- prologue-started (push {r5,r6,lr} + r8/sl spill) and returning (pop {r0}/bx r0 at 0x02000d22), unseen by the strict sync test, reached only by bl; span read from the disassembly through the fourteen-word literal pool 0x02000d24-0x02000d5b to the next owner's prologue at 0x02000d5c (drafted alongside). This overlay executes at 0x02000000 (established in the 3ea23169 batch's entries)."
+    },
+    {
+      "overlay": "resource_380",
+      "entry": "0x02000d5c",
+      "span_bytes": 560,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- prologue-started (push {lr}) and returning (pop {r0}/bx r0 at 0x02000f48), unseen by the strict sync test, reached only by bl; span read from the disassembly through the sixteen-word literal pool 0x02000f4c-0x02000f8b to the next owner's prologue at 0x02000f8c. CORRECTION: an earlier lane note recorded a 'b.n 0x2000c50 shared tail into 0x02000a98' for this row; that was a misread of this owner's own pool word 0x0000e666 at 0x02000f80 -- the row is self-contained and the two owners are independent. This overlay executes at 0x02000000 (established in the 3ea23169 batch's entries)."
+    },
+    {
       "overlay": "resource_381",
       "entry": "0x02000054",
       "span_bytes": 3548,

@@ -1795,6 +1795,16 @@ continuation are indistinguishable. Of the 32 open continuation regions, 31 come
 back that way — narrowed to "pool or fall-through", no further. A reachability
 walk from the owner's entry is what settles those.
 
+**"Reached indirectly" is a CLAIM, and `main_xref.ts` is how you check it.** A
+lane described all six of its new main-image owners as reached indirectly; four
+are confirmed — pool words hold `entry + 1` — but `0801c9c0` and `080b7410` have
+**no reference of any kind** anywhere in the image: no call, no branch, no word
+holding the address, none holding address + 1, and nothing in the overlay
+assembly either. They are reached by a computed address, from data the scan does
+not cover, or not at all. The reconstruction is faithful to the bytes either
+way; say "caller unknown" rather than "indirect", because the second reads as
+established and is not.
+
 **`mov ip,pc; bx rN` (NOT `mov lr,pc`) is the private-ip-return call family**
 and the on-sight signature of a `keep_structured_asm` /
 `nonstandard_thumb_call_module` owner. Seeing it means **stop**, not decompile.

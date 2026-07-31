@@ -559,13 +559,52 @@ trickiest constant in that family.
 middle. Two independent owners agreeing on the hole confirms it; writing `9..17`
 folds it away.
 
+**A `bl` WHOSE `+2` TARGET IS NEITHER VENEER, `call_via` NOR PROLOGUE IS A LONG
+TAIL BRANCH, NOT A CALL — and getting this wrong makes a boundary walk overrun
+by hundreds of bytes.** `resource_38d:08c0` branches at 0x02000e16 to
+0x0200177e, its own shared close; control never returns, so the 18 bytes after
+the branch are literal pool. A walk that treats the site as a call falls
+straight through into that pool, decodes it as plausible `lsrs`/`movs`, and
+reports a much larger function. The test is cheap and total: classify the target
+the same way `overlay_call_targets.ts` does — veneer shape, `bx rN` slot, or
+`push` opening — and if it is none of the three, seed the target and STOP the
+fall-through. `overlay_multiset_check.ts` already excludes such a site from the
+multiset, so a correct walk and a correct multiset agree by construction. Four
+derived owners were scoped this way; only `38d:08c0` had one, and it was the
+only owner of the four whose span a naive walk would have got wrong.
+
+**THE REASON THESE OWNERS ARE INVISIBLE IS AN OBJDUMP MIS-PAIR, NOT A MISSING
+PROLOGUE.** At `resource_38d` offset 0x08be the last pool halfword `0xfffc` and
+the prologue `0xb520` decode together as one bogus 4-byte instruction, so a
+linear disassembly never emits a row at 0x08c0 at all. Any tool that builds an
+address→instruction map by scanning the whole image from offset 0 will have a
+HOLE exactly at the entry you are looking for. Re-run the disassembler with
+`--start-address` at the entry (and again at any address the walk cannot find)
+rather than trusting one linear pass.
+
+**A POOL WORD THAT RESOLVES A FEW BYTES PAST THE ASSEMBLED IMAGE END IS NOT
+IN-IMAGE.** `resource_371`'s 0x0200e7a0 resolves to 0x000067a0 against an
+assembled length of 0x0000679c, and `resource_3b3`'s 0x0200b6d0 resolves to
+0x000036d0 against 0x000036cc — four bytes past, both times.
+`assembleOverlay` does not carry the trailing zero/BSS region, so the band test
+`0x0200_8xxx..0200_bxxx` is necessary but NOT sufficient: check the resolved
+offset against the actual image length too. Both of those are written scratch
+globals adjacent to the overlay, and reading either as in-image data would
+invent a table.
+
+**`movs r0,#0` IMMEDIATELY BEFORE A `pop {rN} / bx rN` WITH N≠0 IS A RETURN
+VALUE, NOT DEAD CODE.** The epilogue rule says r0 is the result when the popped
+register is not r0; `resource_3b3:274c` sets r0 to 0 in the epilogue on every
+path, so it returns `s32 0` rather than being `void`. A dispatcher that always
+returns the same constant still has a return type, and its callers may test it.
+
 **THE OVERLAY INVENTORY IS INCOMPLETE, AND THE MISSING OWNERS ARE FINDABLE IN
 ONE SWEEP.** Sweeping the two-byte gaps in `metrics/gs1-en-executable.json` for
 a `push {..,lr}` prologue turned up **36 owners with no row in
 `out/decomp/overlays.json`**, no semantic source and no exact source — invisible
 to every tool that starts from the inventory. Fifteen are provably called by a
 `bl` in their own overlay. They are ordinary functions, not veneers or data:
-24 of the 36 have now been converted and every one verified per-target. Do this
+32 of the 36 have now been converted and every one verified per-target. Do this
 sweep before concluding an overlay is finished; "zero unconverted strict rows"
 means the *inventory* is exhausted, not the overlay.
 
@@ -601,6 +640,62 @@ something else entirely. So: diff the bytes, never trust the address family. The
 routine is a 3-D distance — three 16.16 differences reduced by `asrs #16`,
 squared, summed, and passed to the `0x030001d8` IWRAM square root through the
 `call_via` slot.
+
+**Mechanise the transposition hunt: MASK THE `bl` PAIRS AND SCAN EVERY IMAGE.**
+Byte-diffing candidates against each other only finds copies you already
+suspect. Masking both halfwords of every `bl` to zero and searching the masked
+48-byte prologue window across all assembled overlay images finds them
+regardless of offset, in about a minute for the whole set, and it is the only
+form of the search that would have found `resource_3a0:03cc`. Run before reading
+anything. Of the eight unrecorded owners converted on 2026-07-31 exactly one had
+a twin: **`resource_39d:09fc` and `resource_3c9:05ec` are one routine**,
+byte-identical over all 198 bytes with exactly **29** bytes differing, every one
+of them inside one of the ten `bl` halfword pairs — and one of the ten is an
+*intra-overlay* call, so a transposed routine's varying bytes are not only the
+import band. `resource_3c9:05ec` is likewise absent from the inventory. The
+other seven of the eight matched nothing anywhere, which is the honest base
+rate: **a repeated routine is worth two minutes of tooling, not an assumption**.
+
+**AN EMBEDDED JUMP TABLE PROVES THE LINK BASE FOR FREE, AND ITS ENTRIES ARE NOT
+`bl`s.** `resource_3af:02ec` dispatches with `lsls #2 / ldr r3,[r3,r2] /
+mov pc,r3` through a table at `0x0314` *inside its own span*; all eight entries
+sit exactly 0x8000 above their case bodies, so the 0x02008000 base is proved
+without resolving a single pool word. Two consequences. The table disassembles
+as a clean run of `strh`/`lsls`, so a walk that stops at the first plausible
+epilogue stops 30 bytes into the function — derive the span by following the
+table entries as branch targets like any other. And the table words contribute
+nothing to the multiset, correctly: `overlay_call_targets.ts` counted 15 sites
+against the source's 15 with the table in the middle of the range.
+
+**Two unrecorded owners CALLING EACH OTHER is why the sweep found clusters.**
+`resource_39e:13b8` is a dispatcher whose eight intra-overlay callees include
+six owners with no inventory row, two of which (`:0cd4`, `:102c`) were converted
+in the same pass; `resource_3b3:1aa8` calls `resource_3b3:19f0`, also from the
+sweep. Nothing that starts from the inventory can reach any of them, which is
+the mechanism behind the whole invisible set rather than a coincidence. **A
+converted derived owner's own call list is the cheapest source of further
+derived owners** — better than re-sweeping, because the callee address is exact.
+
+**A SHARED STORE IS NOT A SHARED CALL — do not contort one into a `goto`.** Both
+`resource_3b3:1aa8` and `resource_3af:02ec` branch two different arms onto a
+single `strb`/`strh` instruction with different pointers and values set up on
+each path. The bracket-close convention exists because a duplicated `bl`
+inflates the multiset; a duplicated store costs nothing, and folding it forces
+the pointer into a variable and reads as one write where the source has two.
+Spell each write where it happens.
+
+**`lsrs #16` after a multiply is a FLOOR, not a shift pair.** `lsls #4 / adds /
+lsrs #16 / lsls #16` reads as four shifts and is one operation: multiply by 17,
+then clear the low 16 bits so the product is a whole number carried in 16.16.
+It appears in every emitter converted on 2026-07-31 (`39d:3060`, `39e:0cd4`,
+`3a6:0f78`) and is what distinguishes a random *tile* from a random *fraction*.
+The related plain form, `(Func_080000f8() * N) >> 16`, keeps the fraction — the
+two are one `lsls #16` apart and mean different things.
+
+**Three sequential deltas that SUM TO ZERO are a recoil, not a displacement.**
+`resource_39d:09fc` adds -3.0, -2.0, +2.0, +2.0 and +1.0 to the same two fields
+with scheduler yields between them. Any step read alone looks like a permanent
+move. Checking the sum is a one-line test that names the routine.
 
 `resource_3c9:03a0` and `resource_3b3:13b0` are the same pattern one level
 looser: identical field map (+68/+72/+76 velocities integrated into +8/+12/+16,
@@ -887,7 +982,24 @@ call sites on every path — five phantom entries in the multiset.
 halfword after it belongs to nobody.** `resource_38e:090c` is 102/102, ending at
 0x0971 with `0x0000` at 0x0972 outside the row. Do not attach it.
 
-**THE INVENTORY IS INCOMPLETE — 36 real functions have no row at all.** Sweep
+**THE INVENTORY IS INCOMPLETE BY 422 CALLED FUNCTIONS — and the cheap sweep
+finds only a twelfth of them.** The decisive scan is by REFERENCE, not by gap:
+for every `bl` in an overlay image, resolve it with `target = stored + 2`; if the
+target's first halfword is a `push {…,lr}` (`(hw & 0xfe00) === 0xb400`), it is a
+function start. Drop targets that already have a row, a semantic source or an
+exact source, and drop those falling strictly inside a known row's span (15 of
+them — genuine interior functions). **422 remain, every one provably called.**
+`resource_3b1` alone holds 44, including `0x486c` called **179 times** and
+`0x4880` called 69 times. Concentration: `3b1` 44, `3bc` 30, `3a4` 28, `3b3` 27,
+`39c` 23, `3bb` 21, `3b9` 16, `3c9` 16.
+
+The two-byte-gap sweep below found 36 of these. It is not wrong, it is narrow —
+it only sees functions whose prologue happens to fall in an interval gap. A
+transposition hunt found `resource_3c9:05ec` by content, and that one is in
+neither the 36 nor any index. **Scan by reference first; use the gap sweep only
+as a cross-check.**
+
+**THE GAP SWEEP — 36 real functions have no row at all.** Sweep
 the two-byte gaps between intervals in `metrics/gs1-en-executable.json`: where
 the gap holds a `push {…,lr}` prologue, that is a function start. 53 such gaps
 exist; 17 correspond to known rows and **36 appear nowhere** — no semantic
@@ -2411,6 +2523,28 @@ from the stamp.
 
 Ordered roughly by how often they decide a function.
 
+**Three source-shape levers read straight off line one of the comparator.** All
+three are free — no flag, no routing entry — and each is a one-line edit:
+
+- **`lsl rA, rA, #k` against your `lsl rB, rA, #k`: write the shift in place.**
+  The reference clobbers the value because it is dead after the shift; a source
+  that spells `dst = base + (step << 16)` keeps `step` live in gcc's eyes and
+  buys a second register. `step <<= 16;` on its own line, then
+  `dst = base + step;`, and the register identity falls out. Three sites at once
+  on `resource_39f:00c4` (18 groups → 12) and two on `:02a8`.
+- **`push` differs by a callee-saved register the reference keeps for an index:
+  give the index its own local.** `:02a8` recomputed `*(u16 *)(actor + 6) >> 12`
+  in both halves of the routine; the reference computes it once and re-reads the
+  table through it, which is what puts r7 in the prologue. Hoisting it to a
+  local named `stepIndex` took 47 groups → 13 in one edit. The semantic sources
+  in the same family already spell it that way — compare siblings before
+  drafting.
+- **`bls` against your `ble` (or `bhi`/`bgt`): the loop bound is unsigned.**
+  `for (index = 0; index <= 5; index++)` with a signed index emits the signed
+  branch; the reference's `bls` says the counter is `u32`. One typedef and one
+  declaration. Distinct from the arm-order flip below — the mnemonics differ by
+  signedness, not by sense, and the arms are in the right order already.
+
 **Argument-setter order is set by the callee's declared return type.** `s32`
 emits `movs r1` before `movs r0`; `void` emits r0 first. `(void)Func(...)` does
 **not** work — the `CALL_EXPR`'s own type is unchanged, which is why years of
@@ -2445,6 +2579,29 @@ Seen on `resource_3b4:18e0` and `:1bc4` (reference pushes only `lr` — no room)
 and on `3bc:0404` (reference already pushes `r8`/`sl` — no room either). Both
 ends of the range fail for the same reason. Read line 1 first; if the pushes
 differ, do not spend the probe.
+
+**Where the local is *assigned* decides which register it gets.** Function scope
+is necessary but not sufficient. If the reference holds a stack argument in a
+**callee-saved** register across the r0-r3 setup —
+`mov r5,#0 / str r3,[sp] / mov r0..r3 / str r5,[sp,#4]` — the local has to be
+assigned at the **top of the enclosing block**, not on the line before the call.
+Assigned at the call its live range is short, gcc picks a scratch register and
+stores it immediately (`mov r2,#0 / str r2,[sp,#4] / mov r0..r3`); assigned at
+the top of the block the range crosses the argument setup and the allocator buys
+r5. `resource_39f:1454` went 7 groups → 1 on that one moved line. The two
+placements are otherwise identical source, so probe both before parking.
+
+**`ldmia rN!, {r0, r1}` / `stmia rM!, {r0, r1}` at a call site means an aggregate
+argument, not four loads you failed to fuse.** gcc emits its block move when a
+struct is passed **by value** and spills past r0-r3: the first four words go in
+registers and the tail is copied into the outgoing area. The tell is exact —
+`mov r3, sp` (dest) and `add r2, sp, #k` (source) straddling the `ldmia`/`stmia`
+pair, with `k` equal to the local's offset plus 16. Spell the argument
+`struct { s32 word[6]; }` passed by value and the whole prologue falls into
+place: `resource_39f:1454` went 23 groups → 8 and `:0f94` 15 → 3 on that change
+alone. Passing the tail as a *separate* two-word struct does **not** reproduce it
+— that gives individual loads and costs a register. It is the whole record or
+nothing.
 
 **Multi-arity callees use the `_b`/`_c` alias suffix**, not K&R declarations —
 and this changes argument-setup order, not just hygiene. A shared prototype-less

@@ -5568,6 +5568,30 @@
       "entry": "0x02003364",
       "span_bytes": 440,
       "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} plus r8 spill at 0x02003364, epilogue pop {r3} / mov r8,r3 / pop {r5,r6,r7} / pop {r0} / bx r0 at 0x020034f2-0x020034fa; the trailing pool at 0x020034fc-0x02003518 (0x00000928, 0x00000266, 0x00000925, 0x00000921, 0x000001db, 0x00000256, 0x0000026a, 0x00000293) is included per the usual pool rule, immediately followed by the next owner's push {r5,r6,lr} at 0x0200351c, already this overlay's row 0x0200351c (0x02003364-0x0200351c, 440 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x020040e8",
+      "span_bytes": 84,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {lr} at 0x020040e8, epilogue pop {r0} / bx r0 at 0x02004134-0x02004136; the one-word literal pool at 0x02004138 (0x00001e40) is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x0200413c, already this overlay's row 0x0200413c (0x020040e8-0x0200413c, 84 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x0200413c",
+      "span_bytes": 92,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {lr} at 0x0200413c, epilogue pop {r0} / bx r0 at 0x0200418e-0x02004190; the one-word literal pool at 0x02004194 (0x00001e43) is included per the usual pool rule, immediately followed by the next owner's push {r5,lr} at 0x02004198, already this overlay's row 0x02004198 (0x0200413c-0x02004198, 92 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02004198",
+      "span_bytes": 128,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,lr} at 0x02004198, epilogue pop {r5} / pop {r0} / bx r0 at 0x0200420a-0x0200420e; the two-word pool at 0x02004210-0x02004214 (0x0200e840, 0x0200e8e4) is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x02004218, already this overlay's row 0x02004218 (0x02004198-0x02004218, 128 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02004218",
+      "span_bytes": 60,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {lr} at 0x02004218, epilogue pop {r0} / bx r0 at 0x0200424a-0x0200424c; the one-word literal pool at 0x02004250 (0x00000928) is included per the usual pool rule, immediately followed by the next owner's push at 0x02004254, the still-parked resource_3b1 0x02004254 row (0x02004218-0x02004254, 60 bytes)"
     }
   ]
 }

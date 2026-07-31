@@ -582,6 +582,7 @@ export function retainedMainSpans(): Span[] {
     for (const r of manifest.regions ?? []) {
       if (typeof r.address !== "number" || typeof r.size !== "number" || r.size <= 0) continue;
       const permanent = r.retention === "keep_asm" ||
+        (r.kind ?? "").startsWith("deliberate_") ||
         r.retention === "adjacent_section_alignment" ||
         PERMANENT_KINDS.has(r.kind ?? "") ||
         String(r.evidence ?? "").includes("approved_compiler_cannot_express");

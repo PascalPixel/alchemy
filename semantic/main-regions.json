@@ -1256,6 +1256,16 @@
           "size": 586
         }
       ]
+    },
+    {
+      "entry": "0x0800c62c",
+      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), 592-byte keep_structured_asm row holding a single function: prologue push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill and sub sp,#80 at 0x0800c62c, single epilogue add sp,#80/pop.../bx r0 at 0x0800c83c-0x0800c84c, no branch out of the row and no inbound branch from outside it. bun tools/main_xref.ts 0800c62c: FUNCTION, indirectly published callback (published at 0x0800c0b8/0x0800c5f0/0x0800c61c, a raw word ref at 0x0848b6ec). Kraden's 2026-07-31 ruling upheld this row as an ordinary, expressible idiom, not a cannot-express contract: retention=keep_structured_asm was a default label the automated sweep applied without reading the body. The two mov ip,pc / bx fp sequences (0x0800c778, 0x0800c784) are ordinary indirect calls through the pooled 0x03000118, the same IWRAM-relocated ARM multiply already recorded as opaque for 0x0800447c/0x08004ab0/0x0808b3ec, not retained assembly. Excluded (46 bytes): the 2-byte movs r0,r0 alignment filler at 0x0800c84e and the eleven-word pool at 0x0800c850 holding 0x03001e70, 0xffff0000, 0x000002c4, 0x040000d4, 0x08009bb8, 0x03000118, 0x001fffff, 0x012ffffe, 0xffe00000, 0x00dfffff and 0xfec00000. Semantic-only: walks the same 64-record, 0x70-byte object array semantic/main/0800ebec.c already reconstructed as struct Object_0800ebec -- five of this row's own field accesses land exactly on that header's named fields (program_00@0, heading_06@6, position_08@8/12/16, ground_14@20), locally redeclared here per the same not-yet-exact include/ policy this dig used for struct SmshContext. Several intermediate values are transcribed with explicit inline Uncertainty comments rather than asserted. Not yet checked byte-exact.",
+      "executable_ranges": [
+        {
+          "address": "0x0800c62c",
+          "size": 546
+        }
+      ]
     }
   ]
 }

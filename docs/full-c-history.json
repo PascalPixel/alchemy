@@ -2,10 +2,10 @@
   "format": 1,
   "metric": "full-c-byte-share",
   "target": "gs1-en",
-  "denominator_commit": "8c3ac133200949801510a6d07956ad62b00bd8e5",
+  "denominator_commit": "326897e6dd21fa1e5e5e81a2fa5869b151e587c7",
   "executable_bytes": 1339582,
   "history_scope": "first-parent",
-  "generated_from": "21e7c5058010ee06554337bdc1c5e958cf2300ea",
+  "generated_from": "44aa68477e996676f676c85ac6a0e800166e1aec",
   "entries": [
     {
       "commit": "c0a101abc862998cc36a0ce13f6f893b614a16b8",
@@ -3124,6 +3124,22 @@
       "main_full_c_bytes": 101344,
       "overlay_full_c_bytes": 114366,
       "canonical_suffix": "[C 215,710/1,339,582 bytes]",
+      "derivation_status": "measured",
+      "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
+    },
+    {
+      "commit": "326897e6dd21fa1e5e5e81a2fa5869b151e587c7",
+      "first_parent_position": 196,
+      "author_time": "2026-07-31T01:37:31+00:00",
+      "committer_time": "2026-07-31T01:37:31+00:00",
+      "original_subject": "convert six rows and add a live-range lever [C 215,982/1,339,582 bytes]",
+      "full_c_bytes": 215982,
+      "executable_bytes": 1339582,
+      "remaining_bytes": 1123600,
+      "percent": 16.12,
+      "main_full_c_bytes": 101344,
+      "overlay_full_c_bytes": 114638,
+      "canonical_suffix": "[C 215,982/1,339,582 bytes]",
       "derivation_status": "measured",
       "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
     }

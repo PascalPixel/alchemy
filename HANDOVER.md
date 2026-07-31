@@ -2168,6 +2168,21 @@ Thumb bit by hand either — `.thumb_set` already carries it, so `+ 1` overshoot
 Tell: a pool word in the `0x0200_8xxx` range next to a call that takes a
 function address.
 
+**The sweep's group count ranks; only the first differing line triages.** A
+branch sense inverted at the top of a function, or a local one width too narrow,
+cascades through every group after it — so a one-lever row and a genuine
+rewrite both show tens of groups and look identical in the summary.
+`resource_3a9:018c` sat at 26 groups and was one `bhi`/`bls` arm flip;
+`resource_390`'s four rows sat at 21 and were one `u16` local that should have
+been `u32`. I dismissed both overlays on the count and recovered five rows by
+reading line one of the diff instead. **Print at least a few rows of the
+comparator, always** — `tools/overlay_group_diff.sh ... 5` costs the same as
+`... 0`.
+
+Corollary: **re-sweep after any new lever lands.** The discard pile is scored
+against the levers you had at the time, and `390` went from "closest row 21
+groups" to four free rows with no flag at all.
+
 **Transcribe callee names from `overlay_show.ts`; never extrapolate them.** An
 overlay `bl` stores the target's image offset minus two, so `overlay_show`'s
 pc-relative `bl 0x...` annotation is wrong for every site — that is exactly what
@@ -2313,6 +2328,19 @@ wins, while a void call leaves it collecting dependents, the ranks tie, and the
 tie-break falls to original order. **Not universal**: where both spellings give
 identical output the call has no live r0 dependency — look elsewhere rather than
 grinding. A prototype-less shared declaration blocks it entirely.
+
+**A six-argument call's two stack arguments each need their own local.** The
+reference builds both into separate registers before storing either; passing
+them as literals lets the fork reuse one register for both, giving
+`str r3,[sp] / mov r3,#k / str r3,[sp,#4]` where the reference has
+`mov r2,#k / … / str r3,[sp] / str r2,[sp,#4]`. Declare them at **function
+scope**, not inside the block holding the call — inside a nested block they
+float above a preceding `strb` and the row gets worse. No flag touches this:
+`-fsched-store-first`, `-fsched-low-dest-first`, `-fno-cse-two-insn-immediate`
+and `-fthumb-split-group-base` all leave it. Cleared nine rows at once on
+2026-07-31 — `resource_3a7` ×6, `3bb:00c0`, and it is the same family as the
+two-mask rule below. It does *not* clear `393:0bf8`, where the shape is
+compounded with the store-ordering one in §6.
 
 **Multi-arity callees use the `_b`/`_c` alias suffix**, not K&R declarations —
 and this changes argument-setup order, not just hygiene. A shared prototype-less
@@ -2854,11 +2882,9 @@ two levers land.
   exactly that shape and does not close it — written as a shared tail, both with
   an explicit `goto` and as a plain else-if chain (identical output), gcc hoists
   `movs r3,#208` *above* the compare that selects it. The merge is not the
-  problem; the placement is. `resource_393:0bf8` (148 bytes, 11 groups): a
-  six-argument call's two stack arguments, where the reference builds both into
-  separate registers before storing either and this fork reuses one. Giving each
-  its own local — the fix that works for the two-mask family — makes it *worse*
-  (11 → 14) by floating both constants above the preceding `strb`. Neither moves
+  problem; the placement is. `resource_393:0bf8` (148 bytes, 11 groups) has the
+  same shape compounded with the stack-argument one below, and the fix that
+  clears that one does not clear this. Neither moves
   under `-fsched-store-first`, `-fsched-low-dest-first`,
   `-fno-cse-two-insn-immediate`, `-fthumb-split-group-base`,
   `-fno-thread-jumps`, `-fno-schedule-insns`, `-fno-schedule-insns2`,

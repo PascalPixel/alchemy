@@ -147,7 +147,7 @@ export class Scorer {
       }
       const key = undefinedNames.sort().join(",");
       const symbolsSource = `${prefix}.symbols.s`;
-      writeFileSync(symbolsSource, ".syntax unified\n.thumb\n" + undefinedNames.map(externalSymbolAssembly).join(""));
+      writeFileSync(symbolsSource, ".syntax unified\n.thumb\n" + undefinedNames.map((name) => externalSymbolAssembly(name)).join(""));
       const symbolsObject = `${prefix}.symbols.o`;
       if ((await run(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", symbolsObject, symbolsSource])).code !== 0) return null;
       this.symbolsObject = symbolsObject;

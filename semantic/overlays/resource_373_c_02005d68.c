@@ -80,9 +80,9 @@ struct Resource373Spawn {
 #define RESOURCE_373_SPRITE_FLAGS09(sprite) \
     (((u8 *)&(sprite)->attribute08)[1])
 
-struct Resource373Actor *Func_0200bc96(s32 kind, s32 x, s32 y, s32 z);
-void Func_0200bcb4(s32 tileGroup);
-void Func_0200bcb6(struct Resource373Sprite *sprite, s32 mode);
+void Func_080001b8();
+void Func_08009020();
+struct Resource373Actor *Func_080090c8();
 
 void Func_02005d68(struct Resource373Spawn *spawn)
 {
@@ -94,7 +94,7 @@ void Func_02005d68(struct Resource373Spawn *spawn)
 
     for (index = 0; index <= 1; index++) {
         struct Resource373Actor *actor =
-            Func_0200bc96(26, spawn->x, spawn->y, spawn->z);
+            Func_080090c8(26, spawn->x, spawn->y, spawn->z);
         struct Resource373Sprite *sprite;
         s32 tileGroup;
         s32 packed;
@@ -113,9 +113,9 @@ void Func_02005d68(struct Resource373Spawn *spawn)
             continue;
         }
 
-        Func_0200bcb6(sprite, 0);
+        Func_08009020(sprite, 0);
         sprite->field26 = 0;
-        Func_0200bcb4(sprite->tileGroup);
+        Func_080001b8(sprite->tileGroup);
 
         tileGroup = *(const u16 *)(scene + 0x46);
         sprite->tileGroup = (u8)tileGroup;

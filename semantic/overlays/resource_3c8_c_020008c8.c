@@ -35,14 +35,14 @@ struct Actor_020008c8 {
 };
 
 /* Used for its return value. */
-struct Actor_020008c8 *Func_0200577c();
+struct Actor_020008c8 *Func_0808a080();
 
 s32 Func_020008c8(struct Actor_020008c8 *actor)
 {
     struct Actor_020008c8 *reference;
     u8 flags;
 
-    reference = Func_0200577c(0);
+    reference = Func_0808a080(0);
 
     flags = actor->flags23 | 2;
     actor->flags23 = flags;

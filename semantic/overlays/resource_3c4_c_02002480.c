@@ -23,18 +23,8 @@ typedef struct Slot_02002480 {
     s32 row;               /* +16, 12.20 fixed point */
 } Slot_02002480;
 
-void Func_02005532(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02005544(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-u8 *Func_020055ba(s32 slot);
-Slot_02002480 *Func_020055c6(s32 slot);
-Slot_02002480 *Func_020055ce(s32 slot);
-void Func_02005574(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-Slot_02002480 *Func_020055ea(s32 slot);
-Slot_02002480 *Func_020055f2(s32 slot);
-void Func_02005598(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-Slot_02002480 *Func_0200560e(s32 slot);
-Slot_02002480 *Func_02005616(s32 slot);
-void Func_020055bc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_080091c0();
+Slot_02002480 *Func_0808a080();
 
 void Func_02002480(void)
 {
@@ -42,21 +32,21 @@ void Func_02002480(void)
     s32 column;
     s32 row;
 
-    Func_02005532(89, 49, 3, 2, 25, 49);
-    Func_02005544(89, 51, 8, 5, 25, 51);
+    Func_080091c0(89, 49, 3, 2, 25, 49);
+    Func_080091c0(89, 51, 8, 5, 25, 51);
 
-    descriptor = Func_020055ba(14);
+    descriptor = Func_0808a080(14);
     descriptor[34] = 1;
 
-    column = Func_020055c6(12)->column;
-    row = Func_020055ce(12)->row >> 20;
-    Func_02005574(22, 52, 1, 1, column >> 20, row);
+    column = Func_0808a080(12)->column;
+    row = Func_0808a080(12)->row >> 20;
+    Func_080091c0(22, 52, 1, 1, column >> 20, row);
 
-    column = Func_020055ea(13)->column;
-    row = Func_020055f2(13)->row >> 20;
-    Func_02005598(22, 52, 1, 1, column >> 20, row);
+    column = Func_0808a080(13)->column;
+    row = Func_0808a080(13)->row >> 20;
+    Func_080091c0(22, 52, 1, 1, column >> 20, row);
 
-    column = Func_0200560e(14)->column;
-    row = Func_02005616(14)->row >> 20;
-    Func_020055bc(22, 52, 1, 1, column >> 20, row);
+    column = Func_0808a080(14)->column;
+    row = Func_0808a080(14)->row >> 20;
+    Func_080091c0(22, 52, 1, 1, column >> 20, row);
 }

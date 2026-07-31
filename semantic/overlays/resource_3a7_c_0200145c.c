@@ -53,7 +53,9 @@ SoftDouble Func_0200145c(s32 value)
 
     if (value == 0) {
         record.cls = 2u;
-        return Func_020015a4(&record);
+        /* `b.n 0x020014c2` -- the zero case reaches the SAME pack call site at
+         * 0x020014c4 as the normal path; there is one call, not two. */
+        goto pack;
     }
 
     record.exponent = 60;
@@ -81,5 +83,6 @@ SoftDouble Func_0200145c(s32 value)
         } while (record.high <= 0x0FFFFFFFu);
     }
 
+pack:
     return Func_020015a4(&record);
 }

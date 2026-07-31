@@ -27,22 +27,6 @@ typedef signed int s32;
 void Func_02001004();
 void Func_080091c0();
 s32 Func_080770c0();
-void Func_0200207e();
-void Func_0200209c();
-void Func_020020c4();
-void Func_020020e4();
-void Func_0200210c();
-void Func_0200212c();
-void Func_02003356();
-void Func_0200337c();
-s32 Func_02003384();
-void Func_0200339c();
-void Func_020033c4();
-s32 Func_020033ca();
-void Func_020033e4();
-void Func_0200340c();
-s32 Func_02003412();
-void Func_0200342c();
 
 void Func_02001050(void)
 {

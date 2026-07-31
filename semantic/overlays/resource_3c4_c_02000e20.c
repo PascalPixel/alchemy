@@ -40,11 +40,11 @@ typedef struct Workspace_02000e20 {
     Record_02000e20 *published;   /* +24 */
 } Workspace_02000e20;
 
-Record_02000e20 *Func_02003f32(s32 index);
+Record_02000e20 *Func_0808a080();
 
 void Func_02000e20(void)
 {
-    Record_02000e20 *record = Func_02003f32(0);
+    Record_02000e20 *record = Func_0808a080(0);
     Workspace_02000e20 *workspace = (Workspace_02000e20 *)Data_03001ee0;
     s32 threshold = 0;
 

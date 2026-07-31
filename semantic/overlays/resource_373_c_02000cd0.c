@@ -19,32 +19,31 @@ typedef signed int s32;
  * local owners for them would invent hidden-context ABIs.
  */
 
-void Func_02006b76(s32 count);
-void Func_02006c38(s32 x, s32 y, s32 z);
-void Func_02006c4c(s32 a, s32 b, s32 selector);
-void Func_02006c90(void);
-void Func_02006ce2(void);
-void Func_02006d7e(s32 channel, s32 slot, s32 value);
-void Func_02006d82(s32 script);
-void Func_02006da4(s32 channel, s32 slot, s32 value);
-void Func_02006dae(s32 channel, s32 slot);
+void Func_080000c0();
+void Func_080091f0();
+void Func_0808a018();
+void Func_0808a020();
+void Func_0808a148();
+void Func_0808a170();
+void Func_0808a180();
+void Func_0808a188();
 
 void Func_02000cd0(void)
 {
-    Func_02006c90();
+    Func_0808a018();
 
     /*
      * 0xc0 << 10 and 0x80 << 9 — the reference materialises each constant
      * with `movs` plus `lsls`, so they are spelled as the values produced.
      */
-    Func_02006c38(0x30000, 0x30000, 0x10000);
-    Func_02006b76(10);
-    Func_02006c4c(-1, -1, 0x0000e666);
-    Func_02006d82(0x00001c9a);
+    Func_080091f0(0x30000, 0x30000, 0x10000);
+    Func_080000c0(10);
+    Func_080091f0(-1, -1, 0x0000e666);
+    Func_0808a170(0x00001c9a);
 
-    Func_02006da4(17, 0, 20);
-    Func_02006d7e(17, 0, 20);
-    Func_02006dae(17, 0);
+    Func_0808a188(17, 0, 20);
+    Func_0808a148(17, 0, 20);
+    Func_0808a180(17, 0);
 
-    Func_02006ce2();
+    Func_0808a020();
 }

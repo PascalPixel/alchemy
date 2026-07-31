@@ -50,14 +50,14 @@ typedef struct Slot_02001c2c {
 } Slot_02001c2c;
 
 /* Returns the record for the given slot. */
+void Func_020011e0();
+void Func_08009150();
+void Func_0808a010();
 Slot_02001c2c *Func_0808a080();
-
-void Func_0808a090();      /* (slot, 0x40000, 0x20000) - reorientation */
-void Func_08009150();      /* (record, x, y, z) - start a move */
+void Func_0808a090();
 void Func_0808a0e8();
 void Func_080f9010();
-void Func_0808a010();
-void Func_020011e0();      /* this overlay's nine-step ring burst */
+
 
 void Func_02001c2c(s32 subject)
 {

@@ -66,11 +66,11 @@ extern u8 Data_02009940[];            /* in-image: per-index column selector */
 extern u32 Data_02009928[];           /* in-image: the value being agreed on */
 
 /* Old-style declarations: arities vary per site across this overlay. */
+s32 Func_080770c0();
 void Func_080770c8();
-void Func_080770d0();
+s32 Func_080770d0();
 
 /* Used for its return value. */
-s32 Func_080770c0();
 
 s32 Func_0200008c(s32 index)
 {
@@ -80,20 +80,20 @@ s32 Func_0200008c(s32 index)
 
     if ((*(u16 *)0x03001f64 & 3) == 3) {
         slot = (s32)((*(u32 *)0x04000128 << 26) >> 30);
-        Func_080770c0(0x303);
+        Func_080770c8(0x303);
     } else {
-        Func_080770d0(0x303);
+        Func_080770c8(0x303);
     }
 
     if (slot < 0) {
         return 0;
     }
-    if (Func_080770c0(0x303) == 0) {
+    if (Func_080770d0(0x303) == 0) {
         return 0;
     }
 
     if (slot != 0) {
-        Func_080770c8(0x302);
+        Func_080770c0(0x302);
     } else {
         Func_080770d0(0x302);
     }

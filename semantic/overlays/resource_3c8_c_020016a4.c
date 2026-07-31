@@ -55,20 +55,17 @@ struct Actor_020016a4 {
 };
 
 /* Used for their return values. */
-struct Actor_020016a4 *Func_02006558();
-s32 Func_02006588();
+void Func_08009180();
+s32 Func_080770c0();
+void Func_080770c8();
+void Func_080770d0();
+void Func_0808a010();
+void Func_0808a018();
+void Func_0808a020();
+struct Actor_020016a4 *Func_0808a080();
+void Func_080f9010();
 
 /* Old-style declarations: the imports' real interfaces are not known here. */
-void Func_020064fc();
-void Func_02006510();
-void Func_0200657e();
-void Func_020065b0();
-void Func_020065ae();
-void Func_02006550();
-void Func_02006564();
-void Func_020065ca();
-void Func_02006750();
-void Func_02006606();
 
 void Func_020016a4(void)
 {
@@ -76,35 +73,35 @@ void Func_020016a4(void)
     s16 across;
     s16 along;
 
-    actor = Func_02006558(0);
+    actor = Func_0808a080(0);
     across = actor->unkA;
     along = actor->unk12;
 
     if ((u32)(across - 676) > 7 || along < 788 || along >= 796) {
-        Func_020064fc(53, 50, 42, 49, 1, 1);
-        Func_02006510(55, 117, 41, 117, 3, 5);
-        Func_0200657e(0x201);
+        Func_08009180(53, 50, 42, 49, 1, 1);
+        Func_08009180(55, 117, 41, 117, 3, 5);
+        Func_080770d0(0x201);
         actor->mode55 |= 1;
         actor->unk14 = 0;
         actor->unkC = 0;
         return;
     }
 
-    if (Func_02006588(0x201) != 0) {
+    if (Func_080770c0(0x201) != 0) {
         return;
     }
 
     /* No argument register is written here; r0 still holds the 0 just
      * returned above, and that dataflow is preserved as written. */
-    Func_020065b0(0);
+    Func_0808a018(0);
 
-    Func_020065ae(5);
-    Func_02006550(52, 50, 42, 49, 1, 1);
-    Func_02006564(52, 117, 41, 117, 3, 5);
-    Func_020065ca(0x201);
-    Func_02006750(161);
+    Func_0808a010(5);
+    Func_08009180(52, 50, 42, 49, 1, 1);
+    Func_08009180(52, 117, 41, 117, 3, 5);
+    Func_080770c8(0x201);
+    Func_080f9010(161);
     actor->mode55 &= 0xfe;
     actor->unk14 = 0xfffe0000;
     actor->unkC = 0xfffe0000;
-    Func_02006606();
+    Func_0808a020();
 }

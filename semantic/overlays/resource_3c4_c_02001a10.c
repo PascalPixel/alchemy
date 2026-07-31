@@ -30,21 +30,18 @@ typedef struct Slot_02001a10 {
 struct Record_02000ec8;
 
 /* The installed handler; see the base note above. */
+void Func_080091c0();
+void Func_080770c8();
+void Func_0808a018();
+void Func_0808a020();
+Slot_02001a10 *Func_0808a080();
+void Func_0808a100();
+void Func_0808a158();
+void Func_0808a1e0();
 s32 Func_02000ec8(struct Record_02000ec8 *record);
 
 typedef s32 (*Handler_02001a10)(struct Record_02000ec8 *record);
 
-void Func_02004b0a(void);
-void Func_02004b8a(s32 slot, s32 value);
-void Func_02004b6a(s32 slot, s32 value);
-void Func_02004b7a(s32 slot, s32 value);
-u8 *Func_02004b48(s32 slot);
-void Func_02004b2a(s32 selector);
-Slot_02001a10 *Func_02004b60(s32 slot);
-Slot_02001a10 *Func_02004b68(s32 slot);
-void Func_02004b0e(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-u8 *Func_02004b84();
-u8 *Func_02004b8e(s32 slot);
 
 void Func_02001a10(void)
 {
@@ -52,26 +49,26 @@ void Func_02001a10(void)
     s32 column;
     s32 row;
 
-    Func_02004b0a();
-    Func_02004b8a(9, 1);
-    Func_02004b6a(9, 1);
-    Func_02004b8a(9, 0);
-    Func_02004b7a(9, 2);
+    Func_0808a018();
+    Func_0808a1e0(9, 1);
+    Func_0808a100(9, 1);
+    Func_0808a158(9, 0);
+    Func_0808a100(9, 2);
 
-    descriptor = Func_02004b48(9);
+    descriptor = Func_0808a080(9);
     descriptor[35] &= (u8)0xfd;
 
-    Func_02004b2a(0x204);
+    Func_080770c8(0x204);
 
-    column = Func_02004b60(9)->column;
-    row = Func_02004b68(9)->row >> 20;
-    Func_02004b0e(26, 8, 1, 1, column >> 20, row);
+    column = Func_0808a080(9)->column;
+    row = Func_0808a080(9)->row >> 20;
+    Func_080091c0(26, 8, 1, 1, column >> 20, row);
 
-    descriptor = Func_02004b84(9);
+    descriptor = Func_0808a080(9);
     *(Handler_02001a10 *)(descriptor + 108) = Func_02000ec8;
 
-    descriptor = Func_02004b8e(8);
+    descriptor = Func_0808a080(8);
     *(Handler_02001a10 *)(descriptor + 108) = Func_02000ec8;
 
-    Func_02004b84(descriptor);
+    Func_0808a020(descriptor);
 }

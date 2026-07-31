@@ -60,16 +60,16 @@ typedef signed int s32;
 extern u32 Data_02009f50[];
 
 /* Old-style declarations: arities vary per site across this overlay. */
-void Func_080770d0();
+void Func_080000c0();
+s32 Func_080770c0();
 void Func_080770c8();
+void Func_080770d0();
 void Func_0808a018();
+s32 Func_0808a020();
 void Func_0808a170();
 void Func_0808a178();
-void Func_080000c0();
 
 /* Used for their return values. */
-s32 Func_080770c0();
-s32 Func_0808a020();
 
 s32 Func_020002d8(void)
 {

@@ -41,10 +41,6 @@ void Func_020017a8();
 void Func_020017e4();
 s32 Func_080770c0();
 void Func_080770c8();
-void Func_02002f30();
-void Func_02002f72();
-s32 Func_02003a7e();
-void Func_02003aa4();
 
 s32 Func_02001750(void)
 {

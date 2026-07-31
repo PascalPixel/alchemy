@@ -71,16 +71,16 @@ typedef signed int s32;
  */
 
 /* Old-style declarations: arities vary per site across this overlay. */
-void Func_080000c0();
+s32 Func_080000c0();
+s32 Func_08000170();
+s32 Func_08000178();
+void Func_08000388();
+s32 Func_080003a8();
 void Func_08015020();
-void Func_08000178();
 void Func_08077000();
+void Func_08077008();
 
 /* Used for their return values. */
-s32 Func_08000170();
-s32 Func_080003a8();
-s32 Func_08000388();
-u8 *Func_08077008();
 
 s32 Func_02000398(void)
 {
@@ -99,8 +99,8 @@ s32 Func_02000398(void)
     handle = Func_08000170(340);
 
     for (block = 0; block <= 2; block++) {
-        payload = Func_08077008(block + 128);
-        status = Func_08000388();
+        payload = Func_080000c0(block + 128);
+        status = Func_080003a8();
         stalls = 0;
         if (status == -1) {
             result = status;
@@ -108,7 +108,7 @@ s32 Func_02000398(void)
         }
 
         for (;;) {
-            status = Func_080003a8();
+            status = Func_080000c0();
             if (status == 0) {
                 break;
             }
@@ -116,7 +116,7 @@ s32 Func_02000398(void)
                 goto fail;
             }
             budget--;
-            Func_080000c0(1);
+            Func_08015020(1);
             if (budget < 0 || (*linkState & 3) != 3) {
                 stalls++;
                 if (stalls > 24) {
@@ -133,8 +133,8 @@ s32 Func_02000398(void)
             result++;
         }
 
-        Func_080000c0(2);
-        Func_08015020(0x080c, scratch);
+        Func_08077008(2);
+        Func_08000388(0x080c, scratch);
 
         {
             s32 inserted = 0;
@@ -159,11 +159,11 @@ s32 Func_02000398(void)
         }
     }
 
-    Func_08000178(handle);
+    Func_080000c0(handle);
     expected = 320;
-    handle = Func_08000170(320);
-    Func_08077000(1);
-    status = Func_08000388();
+    handle = Func_080003a8(320);
+    Func_080000c0(1);
+    status = Func_08000178();
     stalls = 0;
     if (status == -1) {
         result = status;
@@ -171,7 +171,7 @@ s32 Func_02000398(void)
     }
 
     for (;;) {
-        status = Func_080003a8();
+        status = Func_08000170();
         if (status == 0) {
             break;
         }
@@ -179,7 +179,7 @@ s32 Func_02000398(void)
             goto fail;
         }
         budget--;
-        Func_080000c0(1);
+        Func_08077000(1);
         if (budget < 0 || (*linkState & 3) != 3) {
             stalls++;
             if (stalls > 24) {
@@ -191,7 +191,7 @@ s32 Func_02000398(void)
     if ((s32)*transferred != expected) {
         goto fail;
     }
-    Func_080000c0(2);
+    Func_08000388(2);
     goto close;
 
 fail:

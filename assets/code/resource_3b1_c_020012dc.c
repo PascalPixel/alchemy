@@ -27,9 +27,9 @@ extern u8 Value_00000929;
 s32 Func_02007784();
 s32 Func_02007792();
 s32 Func_020077a0();
-void Func_020062b6();
+s32 Func_020062b6();
 
-void Func_020012dc(void)
+s32 Func_020012dc(void)
 {
     s32 result = 0;
 
@@ -41,5 +41,5 @@ void Func_020012dc(void)
         result = 1;
     }
 
-    Func_020062b6(result, 1);
+    return Func_020062b6(result, 1);
 }

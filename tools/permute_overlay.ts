@@ -288,7 +288,7 @@ export class OverlayScorer {
     if (key !== this.symbolsKey || this.symbolsObject === null) {
       const symbolsSource = `${prefix}.symbols.s`;
       const symbolsObject = `${prefix}.symbols.o`;
-      writeFileSync(symbolsSource, ".syntax unified\n.thumb\n" + undefinedNames.map(externalSymbolAssembly).join(""));
+      writeFileSync(symbolsSource, ".syntax unified\n.thumb\n" + undefinedNames.map((name) => externalSymbolAssembly(name)).join(""));
       if ((await run(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", symbolsObject, symbolsSource], this.scratch)).code !== 0) return null;
       this.symbolsObject = symbolsObject;
       this.symbolsKey = key;

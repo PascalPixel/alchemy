@@ -26259,7 +26259,7 @@
           "start": 33555472,
           "end": 33555542,
           "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
+          "evidence": "resource_3a7_overlay.s:375:verified-C-placeholder"
         },
         {
           "start": 33555542,
@@ -26289,7 +26289,7 @@
           "start": 33555868,
           "end": 33555872,
           "kind": "literal_pool",
-          "evidence": "resource_3a7_overlay.s:474:pc-relative-literal"
+          "evidence": "resource_3a7_overlay.s:444:pc-relative-literal"
         },
         {
           "start": 33555872,
@@ -26307,7 +26307,7 @@
           "start": 33555944,
           "end": 33555948,
           "kind": "literal_pool",
-          "evidence": "resource_3a7_overlay.s:509:pc-relative-literal"
+          "evidence": "resource_3a7_overlay.s:479:pc-relative-literal"
         },
         {
           "start": 33555948,
@@ -26325,7 +26325,7 @@
           "start": 33556028,
           "end": 33556032,
           "kind": "literal_pool",
-          "evidence": "resource_3a7_overlay.s:548:pc-relative-literal"
+          "evidence": "resource_3a7_overlay.s:518:pc-relative-literal"
         },
         {
           "start": 33556032,
@@ -26343,7 +26343,7 @@
           "start": 33556192,
           "end": 33556196,
           "kind": "literal_pool",
-          "evidence": "resource_3a7_overlay.s:622:pc-relative-literal"
+          "evidence": "resource_3a7_overlay.s:592:pc-relative-literal"
         },
         {
           "start": 33556196,
@@ -26427,7 +26427,7 @@
           "start": 33557332,
           "end": 33557386,
           "kind": "thumb",
-          "evidence": "resource_3a7_overlay.s:1130:verified-C-placeholder"
+          "evidence": "resource_3a7_overlay.s:1100:verified-C-placeholder"
         },
         {
           "start": 33557386,
@@ -26565,7 +26565,7 @@
           "start": 33559872,
           "end": 33559876,
           "kind": "literal_pool",
-          "evidence": "resource_3a7_overlay.s:2167:pc-relative-literal"
+          "evidence": "resource_3a7_overlay.s:2137:pc-relative-literal"
         },
         {
           "start": 33559876,

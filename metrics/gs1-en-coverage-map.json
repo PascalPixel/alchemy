@@ -11,12 +11,12 @@
       "percent_of_executable": 17.23
     },
     "semantic_c": {
-      "bytes": 723068,
-      "percent_of_executable": 53.98
+      "bytes": 723490,
+      "percent_of_executable": 54.01
     },
     "assembly": {
-      "bytes": 385712,
-      "percent_of_executable": 28.79
+      "bytes": 385290,
+      "percent_of_executable": 28.76
     },
     "asset_data": {
       "bytes": 7300700,
@@ -26,7 +26,7 @@
   "main": {
     "executable_bytes": 548364,
     "exact_c_bytes": 101360,
-    "semantic_c_bytes": 399520
+    "semantic_c_bytes": 399942
   },
   "overlays": {
     "executable_bytes": 791220,
@@ -36,7 +36,7 @@
   "provenance": {
     "exact_lane": "worktree",
     "semantic_lane": "worktree",
-    "semantic_sources": 1499,
+    "semantic_sources": 1504,
     "semantic_superseded_bytes": 0,
     "semantic_outside_extent_bytes": 13994,
     "semantic_unresolved": []
@@ -48,8 +48,8 @@
       "bytes": 548364,
       "lanes": {
         "exact_c": 101360,
-        "semantic_c": 399520,
-        "assembly": 22112,
+        "semantic_c": 399942,
+        "assembly": 21690,
         "retained_asm": 25372
       },
       "tiles": 9
@@ -82,8 +82,8 @@
       "bytes": 548364,
       "lanes": {
         "exact_c": 101360,
-        "semantic_c": 399520,
-        "assembly": 22112,
+        "semantic_c": 399942,
+        "assembly": 21690,
         "retained_asm": 25372
       },
       "tiles": 54

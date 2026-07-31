@@ -4296,12 +4296,12 @@
       },
       {
         "start": 135007910,
-        "end": 135007928,
+        "end": 135007912,
         "kind": "structural",
         "evidence": "asm/executable_gaps/080c0ea6.s:executable_gap_continuation"
       },
       {
-        "start": 135007928,
+        "start": 135007912,
         "end": 135007978,
         "kind": "thumb",
         "evidence": "adjacent audited thumb spans; see namespace evidence"

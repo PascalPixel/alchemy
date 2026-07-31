@@ -64,6 +64,11 @@ extern s32 Func_080022ec(s32 value, s32 divisor);
 extern s32 Func_080f3898(s32 value); /* clamp [0,31] */
 extern s32 Func_080f38ac(s32 value); /* clamp to max 31744 */
 
+/* IWRAM-relocated fixed-point multiply, opaque -- same helper already
+ * treated as opaque for 0x0800c62c, 0x0808b3ec and 0x0808bec0. Reached
+ * here through the runtime's own indirect-call convention. */
+extern s32 Func_03000118(s32 value, s32 multiplier);
+
 static u16 BroadcastBlend(u16 color)
 {
     /* Repacks the BGR555 colour into a different 5-5-5 bit layout before
@@ -244,13 +249,17 @@ void Func_080f3078(s32 selector, u16 *source, u16 *dest, s32 mode)
        packed tint colour for the two blend branches below. Confirmed
        against the disassembly: `ands r3,r0` masks r0 (selector), not a
        separately-tracked mode/flags register. */
-    /* Uncertainty: bits 0x4000 and 0x8000 each independently branch to
-       their own copy of this same repack+divide+multiply+clamp body in
-       the disassembly (different scratch stack slots, identical
-       arithmetic) rather than sharing one path -- merged into a single
-       `||` here since the two bodies are indistinguishable in effect;
-       flagging in case a real difference surfaces on closer diffing. */
-    if ((selector & 0x4000) != 0 || (selector & 0x8000) != 0) {
+    /* Corrected after a second read against the addressed disassembly:
+       bits 0x4000 and 0x8000 are genuinely DIFFERENT bodies, not two
+       branches into the same code as I first assumed (and had merged
+       into one `||` before catching this) -- 0x4000 is a flat
+       luminance-scaled tint, 0x8000 is a per-channel ratio between the
+       pixel's own channel sum and the tint's, squared back through the
+       IWRAM multiply. Caught by tracing the twin (0x08090a5c) and
+       finding its own 0x8000 body used the multiply helper where this
+       row's did not -- which meant this row's own body needed
+       rechecking, not just the twin's. */
+    if ((selector & 0x4000) != 0) {
         s32 tintR = selector & 0x1f;
         s32 tintG = (selector >> 5) & 0x1f;
         s32 tintB = (selector >> 10) & 0x1f;
@@ -262,6 +271,36 @@ void Func_080f3078(s32 selector, u16 *source, u16 *dest, s32 mode)
             dest[i * 3 + 0] = (u16)Func_080f38ac(tintB * factor);
             dest[i * 3 + 1] = (u16)Func_080f38ac(tintG * factor);
             dest[i * 3 + 2] = (u16)Func_080f38ac(tintR * factor);
+        }
+    } else if ((selector & 0x8000) != 0) {
+        s32 tintR = selector & 0x1f;
+        s32 tintG = (selector >> 5) & 0x1f;
+        s32 tintB = (selector >> 10) & 0x1f;
+        s32 tintSum = tintR + tintG + tintB;
+
+        for (i = 0; i < count; i++) {
+            u16 color = source[i];
+            s32 r = color & 0x1f;
+            s32 g = (color >> 5) & 0x1f;
+            s32 b = (color >> 10) & 0x1f;
+            s32 ratio = Func_080022ec((r + g + b) << 4, tintSum);
+            s32 rOut = Func_03000118((((tintR * ratio) >> 4) << 16),
+                                      (tintR << 16) >> 4) >>
+                       16;
+            s32 gOut = Func_03000118((((tintG * ratio) >> 4) << 16),
+                                      (tintG << 16) >> 4) >>
+                       16;
+            s32 bOut = Func_03000118((((tintB * ratio) >> 4) << 16),
+                                      (tintB << 16) >> 4) >>
+                       16;
+
+            rOut = Func_080f3898(rOut);
+            gOut = Func_080f3898(gOut);
+            bOut = Func_080f3898(bOut);
+
+            dest[i * 3 + 0] = Table_080f39ee[bOut];
+            dest[i * 3 + 1] = Table_080f39ee[gOut];
+            dest[i * 3 + 2] = Table_080f39ee[rOut];
         }
     } else if ((selector & 0x10000) != 0) {
         for (i = 0; i < count; i++) {

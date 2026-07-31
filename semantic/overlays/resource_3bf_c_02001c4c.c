@@ -27,6 +27,11 @@ typedef signed int s32;
  * call produced it; nothing is deliberately returned, so this is a void
  * routine here.
  */
+void Func_0808a110();
+void Func_0808a138();
+void Func_0808a170();
+void Func_0808a180();
+void Func_0808a1e8();
 void Func_0200731c();
 void Func_02007338();
 void Func_02007344();
@@ -38,13 +43,13 @@ void Func_0200738e();
 
 void Func_02001c4c(s32 handle)
 {
-    Func_0200731c(handle, 1);
-    Func_02007344(0x241e);
-    Func_0200735c(handle, 0);
-    Func_02007388(handle, 258, 60);
-    Func_0200735e(0x241f);
-    Func_02007376(handle, 0);
-    Func_02007338(handle, 4);
-    Func_02007376(0x2420);
-    Func_0200738e(handle, 0);
+    Func_0808a138(handle, 1);
+    Func_0808a170(0x241e);
+    Func_0808a180(handle, 0);
+    Func_0808a1e8(handle, 258, 60);
+    Func_0808a170(0x241f);
+    Func_0808a180(handle, 0);
+    Func_0808a110(handle, 4);
+    Func_0808a170(0x2420);
+    Func_0808a180(handle, 0);
 }

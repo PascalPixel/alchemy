@@ -1257,7 +1257,7 @@ interface HueBand { fallback: string; p3: string }
 const CORE_HUE: HueBand = { fallback: "#a855f7", p3: "color(display-p3 0.55 0 1)" };
 const OVERLAY_HUE: HueBand = { fallback: "#22d3ee", p3: "color(display-p3 0 1 1)" };
 const ASSET_HUE: HueBand = { fallback: "#ff0080", p3: "color(display-p3 1 0 0.5)" };
-const GROUND = "#0a0a0a";
+const GROUND = "#ffffff";
 // The code completion ladder, opacity = completion: assembly 0 (dark, not
 // started) -> semantic C 0.5 -> byte-exact C 0.75 -> humanized byte-exact C
 // 1.0. The last tier has no members yet — exact sources are still address-
@@ -1278,8 +1278,14 @@ const ASSET_OPACITY: Record<string, number> = {
   asset_bytes: 0.08, asset_bw: 0.34, asset_color: 0.67, asset_objects: 1, asset_data: 0.08,
 };
 
-/** First-cut representation-form tier for one package, from its source names. */
-export function assetTierOf(sources: readonly string[]): AssetTier {
+/** Representation-form tier for one package: package kind first (music,
+ * samples and soundfonts are .mid/.wav/.sf2-backed object corpora even when
+ * their indexes reference sources by prefix), then source names. */
+export function assetTierOf(sources: readonly string[], kind = ""): AssetTier {
+  if (/music|sequence|midi|wave|pcm|sound-?font|audio/i.test(kind)) return "asset_objects";
+  if (/sprite|character-catalog|chr/i.test(kind) && sources.some((name) => /koma_|frame_/i.test(name))) {
+    return "asset_objects";
+  }
   let tier: AssetTier = "asset_bytes";
   const rank = (t: AssetTier) => ASSET_TIERS.indexOf(t);
   for (const name of sources) {
@@ -1299,10 +1305,13 @@ export function assetMaturityTiles(tree: SourceTree): Tile[] {
   const manifest = readJson(tree, "assets/manifest.json") as Record<string, unknown>;
   const buckets = new Map<string, Tile>();
   const visited = new Set<string>();
-  const record = (kind: string, size: number, sources: readonly string[]): void => {
+  const record = (kind: string, size: number, sources: readonly string[], rawKind = ""): void => {
     if (size <= 0) return;
     const bucket = assetBucket(kind);
-    const tier = assetTierOf(sources);
+    // Music, samples and soundfonts live as per-object .mid/.wav corpora even
+    // where package indexes name them by prefix, so the audio bucket is
+    // object-tier by construction.
+    const tier = bucket.id === "audio" ? "asset_objects" : assetTierOf(sources, rawKind || kind);
     const tile = buckets.get(bucket.id) ?? { label: bucket.label, bytes: 0, lanes: {} };
     tile.bytes += size;
     (tile.lanes as Record<string, number>)[tier] =
@@ -1347,7 +1356,7 @@ export function assetMaturityTiles(tree: SourceTree): Tile[] {
           try { gatherSources(JSON.parse(text), sources); } catch { /* no label */ }
         }
       }
-      record(local, size, sources);
+      record(local, size, sources, local);
     }
     for (const [key, value] of Object.entries(item)) {
       if (key !== "components") visit(value, local);

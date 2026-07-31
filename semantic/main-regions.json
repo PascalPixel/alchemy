@@ -1050,6 +1050,30 @@
           "size": 28
         }
       ]
+    },
+    {
+      "entry": "0x080b5368",
+      "evidence": "One 448-byte function, 0x080b5368..0x080b552e, split into two executable ranges by the interior literal pool at 0x080b543c. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 44-byte frame; the single epilogue at 0x080b551c unwinds all of it and ends pop {r1}; bx r1, so r0 - the flag held at sp+20 - is the result. Excluded (12 bytes): the two-word pool at 0x080b543c holding 0x00000000 (the zero halfword written by the clear loop, loaded at 0x080b540a) and 0x080c3f34 (the roster base, loaded at 0x080b53d2 and 0x080b541e), and the one-word pool at 0x080b5530 holding 0x080c3f34 again (loaded at 0x080b545a, 0x080b54b8 and 0x080b54f2). No alignment filler is needed: both pools are already word aligned and code resumes at 0x080b5444 immediately after the first. Every pool word is reached by ldr rN,[pc,#imm] from inside the ranges and none is branched to. No indirect calls and no relocated helpers: every call is a bl naming a ROM function, and nothing in the row is retained assembly. bun tools/main_xref.ts 080b5368 reports FUNCTION (called directly) with one caller at 0x080b578e and a published Thumb pointer at 0x080b5114.",
+      "executable_ranges": [
+        {
+          "address": "0x080b5368",
+          "size": 212
+        },
+        {
+          "address": "0x080b5444",
+          "size": 236
+        }
+      ]
+    },
+    {
+      "entry": "0x080930bc",
+      "evidence": "Single 152-byte function, 0x080930bc..0x08093152, prologue push {r5,r6,r7,lr} plus the r8 save and no stack frame; one epilogue at 0x0809314a ending pop {r0}; bx r0, so the owner is void. Excluded (8 bytes): the two-word pool at 0x08093154 holding 0x03001ebc (the context pointer, loaded at 0x080930c2) and 0x00000fff (the twelve-bit message mask, loaded at 0x080930c8). No alignment filler is needed - the pool begins immediately after the epilogue's last halfword. Every call is a bl naming a ROM function; there are no indirect calls and no relocated helpers, and nothing in the row is retained assembly. The placement reads r6 and r7 at 0x080930e8 and 0x080930ea; both are saved by the prologue push and neither is written on any path, the frame-balanced live-in of resource_3cd:04b0, converted as uninitialised locals. bun tools/main_xref.ts 080930bc reports FUNCTION (indirectly published callback) with no inbound call and a published Thumb pointer at 0x0808a1a4, so the caller is unknown.",
+      "executable_ranges": [
+        {
+          "address": "0x080930bc",
+          "size": 152
+        }
+      ]
     }
   ]
 }

@@ -242,6 +242,17 @@ function overlaps(region: Pick<Region, "address" | "size">, range: AddressRange)
   return region.address < range.end && range.start < region.address + region.size;
 }
 
+function censusDeclaredClosed(): boolean {
+  const path = join(ROOT, "semantic", "main-regions.json");
+  if (!existsSync(path)) return false;
+  const registry = JSON.parse(readFileSync(path, "utf8")) as {
+    ordinary_census?: { status?: string; check?: string; evidence?: string };
+  };
+  return registry.ordinary_census?.status === "closed" &&
+    registry.ordinary_census.check === "bun run semantic:check" &&
+    (registry.ordinary_census.evidence?.trim().length ?? 0) > 0;
+}
+
 export function openOwners(): Owner[] {
   const manifest = JSON.parse(
     readFileSync(join(ROOT, "out", "full", "asm", "manifest.json"), "utf8"),
@@ -349,6 +360,8 @@ function main(): void {
   if (args.includes("--self-test")) return selfTest();
   const owners = openOwners();
   if (args.includes("--check")) {
+    if (!censusDeclaredClosed())
+      throw new Error("core semantic census has no reviewed closed declaration");
     if (owners.length !== 0) {
       const bytes = owners.reduce((sum, owner) => sum + owner.executableBytes, 0);
       throw new Error(`core semantic census is open: ${owners.length} owners, ${bytes} bytes`);

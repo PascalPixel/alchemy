@@ -5848,15 +5848,8 @@ AlchemyC_02000c9c:
 	.4byte 0xffffc000
 	.4byte 0xfff00000
 	.4byte 0xfffffc00
-	push {lr}
-	adds r0, #102
-	movs r3, #33
-	strh r3, [r0, #0]
-	movs r0, #144
-	lsls r0, r0, #1
-	bl sub_02007452
-	pop {r0}
-	bx r0
+AlchemyC_02003724:
+	.space 0x14
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9

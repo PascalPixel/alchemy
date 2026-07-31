@@ -27,8 +27,8 @@ typedef signed int s32;
  * Both call sites were resolved with
  * `bun tools/overlay_call_targets.ts resource_387 0314 032a`, assigning the
  * i-th occurrence to the i-th site in address order:
- *   0x0200031a -> veneer 0x020011cc -> Func_0808a180
- *   0x02000320 -> veneer 0x02001124 -> Func_0808a010
+ *   0x0200031a -> veneer 0x020011cc -> Func_020014e8
+ *   0x02000320 -> veneer 0x02001124 -> Func_02001446
  * `overlay_show`'s printed targets (0x20014e8, 0x2001446) are the pc-relative
  * misreading and are not used.
  *
@@ -36,16 +36,16 @@ typedef signed int s32;
  * *before* r1 is zeroed, so the second argument is carried across the first
  * call and delivered to the second.  All twelve call sites in this overlay
  * pass a small selector in r0 and a frame count in r1 — 0x0200099a passes
- * (1, 20) — which is the established `Func_0808a010` "wait this many frames"
- * shape, here bracketed by a `Func_0808a180(selector, 0)` request of the same
- * family the resource_371 sources call as `Func_0808a180(8, 0)`.
+ * (1, 20) — which is the established `Func_02001446` "wait this many frames"
+ * shape, here bracketed by a `Func_020014e8(selector, 0)` request of the same
+ * family the resource_371 sources call as `Func_020014e8(8, 0)`.
  */
 
-void Func_0808a180();
-void Func_0808a010();          /* wait this many frames */
+void Func_020014e8();
+void Func_02001446();          /* wait this many frames */
 
 void Func_02000314(s32 selector, s32 frames)
 {
-    Func_0808a180(selector, 0);
-    Func_0808a010(frames);
+    Func_020014e8(selector, 0);
+    Func_02001446(frames);
 }

@@ -68,7 +68,6 @@ void Func_0808a0a0();
 void Func_0808a1e8();
 void Func_0808a1f0();
 void Func_0808a100();
-
 void Func_0808a1e0();
 void Func_0808a188();
 void Func_0808a170();
@@ -76,7 +75,6 @@ void Func_0808a1b8();
 void Func_0808a208();
 void Func_0808a210();
 void Func_0808a218();
-
 void Func_020042bc();
 void Func_080000d0();
 void Func_0808a0c0();
@@ -89,7 +87,6 @@ void Func_0808a5e8();
 void Func_0808a148();
 void Func_02004560();
 void Func_0808a110();
-
 void Func_0808a0b8();
 void Func_0808a0e8();
 void Func_0808a088();

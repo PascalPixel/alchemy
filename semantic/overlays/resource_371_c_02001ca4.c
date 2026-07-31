@@ -68,7 +68,6 @@ s32 Func_080770c0();
 void Func_080770c8();
 u8 *Func_0808a080();
 void Func_08077260();
-
 void Func_080771a8();
 void Func_0808a018();
 void Func_080771c8();
@@ -86,7 +85,6 @@ void Func_0808a0d0();
 void Func_0808a138();
 void Func_0808a5c0();
 void Func_0808a5c8();
-
 void Func_0808a128();
 void Func_0808a428();
 void Func_080f9010();

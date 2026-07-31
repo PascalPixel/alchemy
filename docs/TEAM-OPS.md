@@ -96,7 +96,9 @@ from the tracked `resource_f0` images. Mobile layout below 760 px.
 ## Current campaign (2026-07-31, update when it changes)
 
 Core drive: close the 47,592 asm-only bytes remaining in main ROM
-(548,364 total; rest is exact+semantic). Census in
-`/tmp/ALCHEMY_QUEUE_CORE.md` (Mercury builds, all lanes claim rows,
-smallest first). Parked design work and per-overlay state: see the kanban,
+(548,364 total; rest is exact+semantic). The unit of work is a SEMANTIC-C
+draft (manual_regions per the resource_397 precedent, build:semantic green)
+— identical discipline to the overlay item-28 work; exact-C ownership of
+these spans comes later. Census in `/tmp/ALCHEMY_QUEUE_CORE.md` (Mercury
+builds, all lanes claim rows, smallest first). Parked design work and per-overlay state: see the kanban,
 the chat CSV, and `work/claude/notes/` in each lane's worktree.

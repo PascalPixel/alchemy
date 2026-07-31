@@ -2,6 +2,16 @@
   "format": 1,
   "main_owners": [
     {
+      "entry": "0x080006fc",
+      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), unindexed leaf, 16 bytes incl. pool. push-free guard: loads the pointer at fixed RAM 0x03007ff0, dereferences it, compares the first word against magic constant 0x68736d53 (\"Smsh\"), and on match TAIL-BRANCHES (bare beq, no bl, no link set) into Func_0800070c passing the same pointer in r0; on mismatch it returns. Func_0800070c is retained asm with manifest evidence approved_compiler_cannot_express_contract (manual high-register/stack-frame contract, tail branch into IWRAM without link) -- expressible here only as an opaque extern called from the guard, not itself convertible. Semantic-only for now: a C tail call compiles to bl+return on this compiler, not the reference's bare beq, so this draft is control-flow-correct but not yet byte-exact (candidate_show.ts: 32 candidate vs 16 reference halfwords). Left for the exact lane to find the right lever rather than guessed at here.",
+      "executable_ranges": [
+        {
+          "address": "0x080006fc",
+          "size": 16
+        }
+      ]
+    },
+    {
       "entry": "0x0800447c",
       "evidence": "One 84-byte keep_structured_asm row holding a single function: prologue push {r5,r6,lr} plus the r8/sl save at 0x0800447c, matching epilogue at 0x080044b8, no inbound branch from outside the row. The two mov ip,pc; bx r6 sequences at 0x0800449e and 0x080044b0 are ordinary indirect calls through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after the bx (0x080044a2 and 0x080044b4) and both landing sites continue the same live frame, exactly as recorded for 0x0800ebec. Excluded (6 bytes): the 2-byte movs r0,r0 alignment filler at 0x080044ca and the one-word pool at 0x080044cc holding 0x03000118. 105 direct callers, the first at 0x0800ddf6, and published as a Thumb pointer at 0x0800012c.",
       "executable_ranges": [

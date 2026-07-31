@@ -1388,6 +1388,20 @@
           "size": 196
         }
       ]
+    },
+    {
+      "entry": "0x080f3078",
+      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), 1796-byte keep_structured_asm row holding a single function per out/asm/manifest.json (one row, source asm/080f3078.s): prologue push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill and sub sp,#40 at 0x080f3078, single epilogue add sp,#40/pop.../bx r0 at 0x080f3766-0x080f3776, no branch out of the row and no inbound branch from outside it. bun tools/main_xref.ts 080f3078: FUNCTION (called directly), three call sites (0x080f37c0, 0x080f3818, 0x080f3838). Colour/palette blend family, mapped first by jupiter (work/claude/notes/main_080f3078.md) as the structural twin of 0x08090a5c; drafted here after second-reading each arithmetic body against a fresh addressed objdump per Kraden's instruction, catching one real transcription error (the flag-gated tint branches read bits of the function's own first argument, not a separate mode/flags register, corrected before committing). Eight literal-pool clusters (132 bytes total: three-word 0x00007c00/0x000003e0/0x0000001f BGR555 masks recurring three separate times, a seven-word cluster including the genuine mov pc,r3 jump table base and three shared lookup tables, and several smaller two/three-word clusters) computed programmatically against the addressed disassembly rather than by hand, to avoid a manual boundary-counting mistake on a row this dense; registered as eight executable_ranges (1664 of 1796 bytes). A genuine mov pc,r3 jump table (7 entries, 0x080f3138) selects six distinct per-channel blend bodies (case 2 and case 6 byte-for-byte identical, factored into one shared helper) plus a plain broadcast mode reached directly without the table; values outside the table's narrow selector window fall to a plain per-channel repack or, when no blend flag matches at all, to queuing a DMA transfer instead of computing per-pixel (source/dest/control triad to the fixed 0x040000d4 DMA3 registers, the same construction 0x0800c62c already established). Every mov ip,pc-style and bl-to-thunk call in this row goes through the runtime's own _call_via_r2/r3/r7 thunks (0x080072e4-0x08007320), already documented as ordinary indirect calls by semantic/main/0800ebec.c's own header comment, not retained assembly. Not yet checked byte-exact.",
+      "executable_ranges": [
+        { "address": "0x080f3078", "size": 140 },
+        { "address": "0x080f3110", "size": 38 },
+        { "address": "0x080f3154", "size": 762 },
+        { "address": "0x080f346c", "size": 126 },
+        { "address": "0x080f34f8", "size": 22 },
+        { "address": "0x080f351c", "size": 454 },
+        { "address": "0x080f36f0", "size": 30 },
+        { "address": "0x080f371c", "size": 92 }
+      ]
     }
   ],
   "manual_regions": []

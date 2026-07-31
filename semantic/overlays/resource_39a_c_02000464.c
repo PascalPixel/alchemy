@@ -19,6 +19,13 @@ typedef signed int s32;
  */
 
 /* Imports. Those used for their return value are typed. */
+void Func_02000180();
+void Func_02001154();
+void Func_080000c0();
+s32 Func_080770c0();
+void Func_080770c8();
+void Func_080770d0();
+void Func_080f9010();
 void Func_020005fe();
 void Func_02000610();
 void Func_020015fc();
@@ -31,16 +38,16 @@ void Func_020028ae();
 
 void Func_02000464(void)
 {
-    Func_0200287a((s32)0xf1);
-    if (Func_02002788((s32)0x306) != 0) {
-        Func_020005fe(8, 16, 0);
-        Func_020027ac((s32)0x305);
+    Func_080f9010((s32)0xf1);
+    if (Func_080770c0((s32)0x306) != 0) {
+        Func_02000180(8, 16, 0);
+        Func_080770d0((s32)0x305);
     } else {
-        Func_02000610(8, 144, 0);
+        Func_02000180(8, 144, 0);
         /* movs r0,#0xc1 / lsls r0,#2 builds 0x304. */
-        Func_020027b8((s32)0x304);
+        Func_080770c8((s32)0x304);
     }
-    Func_020028ae((s32)0x121);
-    Func_02002704(2);
-    Func_020015fc();
+    Func_080f9010((s32)0x121);
+    Func_080000c0(2);
+    Func_02001154();
 }

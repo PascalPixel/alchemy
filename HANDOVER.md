@@ -144,6 +144,15 @@ executable bytes across 1,299 compiling sources**: 385,850 main-image bytes and
 Alongside the exact lane, reviewed semantic C currently accounts for **701,856
 executable bytes across 1,336 compiling sources**: 385,850 main-image bytes and
 316,006 overlay bytes. Combined with exact C, **918,026 / 1,339,582 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **707,118
+executable bytes across 1,359 compiling sources**: 385,850 main-image bytes and
+321,268 overlay bytes. Combined with exact C, **924,064 / 1,339,582 executable
+bytes** are expressed as C.
+Build that lane with `bun run build:semantic`; its
+sources live under `semantic/` and do not claim byte equality. Use
+`semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
+of the ordinary review queue.
+
 bytes** are expressed as C.
 Build that lane with `bun run build:semantic`; its
 sources live under `semantic/` and do not claim byte equality. Use
@@ -156,10 +165,11 @@ sources live under `semantic/` and do not claim byte equality. Use
 of the ordinary review queue.
 
 
-**55 overlays have zero unconverted rows in the strict queue**, holding
-308,700 strict bytes between them. Regenerate this list rather than editing it —
+**67 overlays have zero unconverted rows in the strict queue**, holding
+317,314 strict bytes between them. One overlay remains: `resource_3a9`, 656
+bytes. Regenerate this list rather than editing it —
 it has drifted twice from being maintained by hand:
-`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,252), `resource_3c8` (11,916), `resource_372` (9,838), `resource_371` (9,486), `resource_38f` (9,212), `resource_39f` (8,692), `resource_3c4` (8,642), `resource_383` (8,588), `resource_3c5` (7,866), `resource_3a8` (7,780), `resource_391` (7,648), `resource_374` (7,468), `resource_375` (6,424), `resource_37a` (6,200), `resource_37b` (6,032), `resource_3b2` (5,984), `resource_3aa` (5,960), `resource_3b7` (5,954), `resource_3bb` (5,548), `resource_395` (5,504), `resource_3cb` (5,488), `resource_39a` (5,368), `resource_381` (5,328), `resource_377` (5,226), `resource_3b4` (5,104), `resource_3c6` (5,094), `resource_3ae` (5,026), `resource_370` (4,718), `resource_38d` (4,680), `resource_399` (4,672), `resource_3a2` (4,484), `resource_3a7` (4,442), `resource_3c7` (4,252), `resource_37f` (4,216), `resource_3ad` (3,978), `resource_3ca` (3,926), `resource_3bc` (3,768), `resource_3ba` (3,344), `resource_38b` (3,318), `resource_394` (3,282), `resource_3a3` (3,156), `resource_389` (3,056), `resource_3b5` (2,914), `resource_3c2` (2,688), `resource_379` (2,628), `resource_3b6` (2,284), `resource_3ce` (2,274), `resource_38e` (2,206), `resource_3c3` (1,934), `resource_398` (1,620), `resource_386` (1,142), `resource_38c` (1,024), `resource_3b1` (994).
+`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,252), `resource_3c8` (11,916), `resource_372` (9,838), `resource_371` (9,486), `resource_38f` (9,212), `resource_39f` (8,692), `resource_3c4` (8,642), `resource_383` (8,588), `resource_3c5` (7,866), `resource_3a8` (7,780), `resource_391` (7,648), `resource_374` (7,468), `resource_375` (6,424), `resource_37a` (6,200), `resource_37b` (6,032), `resource_3b2` (5,984), `resource_3aa` (5,960), `resource_3b7` (5,954), `resource_3bb` (5,548), `resource_395` (5,504), `resource_3cb` (5,488), `resource_39a` (5,368), `resource_381` (5,328), `resource_377` (5,226), `resource_3b4` (5,104), `resource_3c6` (5,094), `resource_3ae` (5,026), `resource_370` (4,718), `resource_38d` (4,680), `resource_399` (4,672), `resource_3a2` (4,484), `resource_3a7` (4,442), `resource_3c7` (4,252), `resource_37f` (4,216), `resource_3ad` (3,978), `resource_3ca` (3,926), `resource_3bc` (3,768), `resource_3ba` (3,344), `resource_38b` (3,318), `resource_394` (3,282), `resource_3a3` (3,156), `resource_389` (3,056), `resource_3b5` (2,914), `resource_3c2` (2,688), `resource_379` (2,628), `resource_3b6` (2,284), `resource_3ce` (2,274), `resource_38e` (2,206), `resource_3c3` (1,934), `resource_393` (1,820), `resource_398` (1,620), `resource_392` (1,562), `resource_386` (1,142), `resource_38c` (1,024), `resource_3b1` (994), `resource_36f` (888), `resource_3cd` (880), `resource_3b0` (682), `resource_3af` (552), `resource_390` (532), `resource_3c1` (468), `resource_3b9` (444), `resource_397` (318), `resource_384` (248), `resource_378` (220).
 
 **"Converted in full" means zero unconverted STRICT-QUEUE rows, not that every
 executable byte of the overlay is C.** Measured across those overlays: their

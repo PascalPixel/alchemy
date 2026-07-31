@@ -46,12 +46,12 @@ typedef unsigned char u8;
 s32 Func_080770c0();
 void Func_0808a018();
 
-u8 *Func_0808a090();
+void Func_0808a090();
 u8 *Func_0808a080();
 
 void Func_0808a0f0();
 void Func_0808a1b8();
-u8 *Func_0808a0d0();
+void Func_0808a0d0();
 void Func_0808a138();
 void Func_0808a170();
 void Func_0808a188();

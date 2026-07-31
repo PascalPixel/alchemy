@@ -6534,6 +6534,12 @@
       "entry": "0x02003850",
       "span_bytes": 376,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus high-register saves) and returning (add sp, #12/pop sequence/bx r0 at 0x20039b6-0x20039c4) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached by bl per overlay_unindexed.ts; interior pool at 0x200391a-0x2003926 hopped by the b.n at 0x2003918, pad at 0x20039c6, followed by the exact owner at 0x020039c8; span read from the disassembly, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39e",
+      "entry": "0x02001dbc",
+      "span_bytes": 1704,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_39e 1dbc 244e, the +2 rule against the raw image), single forward branch skips the inline literal pool at 0x02002210-0x02002222, span read through the five trailing pool words ending 0x02002463 to the next owner prologue at 0x02002464, inside the assembled overlay image and not overlapping another recorded owner"
     }
   ]
 }

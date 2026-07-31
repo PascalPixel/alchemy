@@ -37,10 +37,10 @@ typedef signed int s32;
 
 extern u32 Data_03001e40;
 
-void *Func_02004378();
-void Func_02004618();
-void Func_020043dc();
-void Func_0200439c();
+void *Func_080090c8();
+void Func_080f9010();
+void Func_080091e0();
+void Func_08009080();
 
 /* This overlay's own owner, installed as the companion's step callback. */
 void Func_0200011c(u8 *object);
@@ -63,11 +63,11 @@ void Func_0200013c(u8 *object)
         return;
     }
 
-    spawned = Func_02004378(0x11d,
+    spawned = Func_080090c8(0x11d,
                             *(s32 *)(object + 0x08),
                             *(s32 *)(object + 0x0c),
                             *(s32 *)(object + 0x10));
-    Func_02004618(0xf6);
+    Func_080f9010(0xf6);
     if (spawned == 0) {
         return;
     }
@@ -75,8 +75,8 @@ void Func_0200013c(u8 *object)
     spawned[0x55] = 0;
     record = *(u8 **)(spawned + 0x50);
     record[9] = (u8)((record[9] & ~0x0c) | 0x04);
-    Func_020043dc(spawned, 0);
-    Func_0200439c(spawned, 1);
+    Func_080091e0(spawned, 0);
+    Func_08009080(spawned, 1);
     *(u16 *)(spawned + 0x64) = 0;
     *(void (**)(u8 *))(spawned + 0x6c) = Func_0200011c;
 }

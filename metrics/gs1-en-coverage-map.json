@@ -7,16 +7,16 @@
   "executable_bytes": 1339582,
   "lanes": {
     "exact_c": {
-      "bytes": 216946,
-      "percent_of_executable": 16.2
+      "bytes": 217970,
+      "percent_of_executable": 16.27
     },
     "semantic_c": {
-      "bytes": 694352,
-      "percent_of_executable": 51.83
+      "bytes": 693692,
+      "percent_of_executable": 51.78
     },
     "assembly": {
-      "bytes": 428284,
-      "percent_of_executable": 31.97
+      "bytes": 427920,
+      "percent_of_executable": 31.94
     },
     "asset_data": {
       "bytes": 7300700,
@@ -26,18 +26,18 @@
   "main": {
     "executable_bytes": 548364,
     "exact_c_bytes": 101344,
-    "semantic_c_bytes": 385850
+    "semantic_c_bytes": 386214
   },
   "overlays": {
     "executable_bytes": 791218,
-    "exact_c_bytes": 115602,
-    "semantic_c_bytes": 308502
+    "exact_c_bytes": 116626,
+    "semantic_c_bytes": 307478
   },
   "provenance": {
     "exact_lane": "origin/mercury",
     "semantic_lane": "origin/venus",
-    "semantic_sources": 1364,
-    "semantic_superseded_bytes": 0,
+    "semantic_sources": 1370,
+    "semantic_superseded_bytes": 1024,
     "semantic_outside_extent_bytes": 13424,
     "semantic_unresolved": []
   },
@@ -48,8 +48,8 @@
       "bytes": 548364,
       "lanes": {
         "exact_c": 101344,
-        "semantic_c": 385850,
-        "assembly": 61170
+        "semantic_c": 386214,
+        "assembly": 60806
       },
       "tiles": 9
     },
@@ -58,8 +58,8 @@
       "label": "Compressed code overlays",
       "bytes": 539544,
       "lanes": {
-        "exact_c": 78807,
-        "semantic_c": 209657,
+        "exact_c": 80026,
+        "semantic_c": 208438,
         "assembly": 251080
       },
       "tiles": 11
@@ -81,8 +81,8 @@
       "bytes": 548364,
       "lanes": {
         "exact_c": 101344,
-        "semantic_c": 385850,
-        "assembly": 61170
+        "semantic_c": 386214,
+        "assembly": 60806
       },
       "tiles": 54
     },
@@ -91,8 +91,8 @@
       "label": "Decoded code overlays",
       "bytes": 791218,
       "lanes": {
-        "exact_c": 115602,
-        "semantic_c": 308502,
+        "exact_c": 116626,
+        "semantic_c": 307478,
         "assembly": 367114
       },
       "tiles": 96

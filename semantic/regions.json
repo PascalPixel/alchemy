@@ -3771,6 +3771,12 @@
     },
     {
       "overlay": "resource_3b3",
+      "entry": "0x02001938",
+      "span_bytes": 184,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,lr} at 0x02001938, epilogue pop {r5,r6} / pop {r1} / bx r1 at 0x020019de-0x020019e2; the trailing pool at 0x020019e4-0x020019ec (0xfff00000, 0x0000ffff, 0xffe00000, the same triple as the neighbouring derived-boundary owner 0x020019f0) is included per the usual pool rule, immediately followed by that owner's push {r5,r6,lr} at 0x020019f0, so the span is exactly 0x02001938-0x020019f0, 184 bytes"
+    },
+    {
+      "overlay": "resource_3b3",
       "entry": "0x020019f0",
       "span_bytes": 172,
       "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json, span walked from the prologue through every internal branch to its matching interworking epilogue `pop {r5,r6} / pop {r1} / bx r1` at 0x02001a96, literal pool 0x02001a9c-0x02001aa7 (0xfff00000, 0x0000ffff, 0xffe00000) excluded, next prologue at 0x02001aa8"

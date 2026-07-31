@@ -21,7 +21,7 @@ typedef signed int s32;
 
 u8 *Func_02004fbc();
 void Func_02004fb2(void);
-void Func_020029e6();
+s32 Func_020029e6();
 void Func_02004fd6(void);
 
 void Func_02002498(void)

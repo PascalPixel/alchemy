@@ -25,6 +25,12 @@
 #                  not.
 #   * src/, tools/alchemy_gcc.ts  take Mercury's on add/add; it owns the exact
 #                  lane and its routing.
+#
+# Marker detection follows Mercury's rule in check_publication.ts: a marker is
+# `<<<<<<< ` WITH the trailing space, anchored to line start. Without that, this
+# script trips on prose — MEETING.md itself discusses conflict markers in
+# backticks, and an unanchored substring test reported that file as conflicted
+# when it was clean.
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 
@@ -64,7 +70,7 @@ for path in ("MEETING.md", "HANDOVER.md"):
         text = open(path).read()
     except FileNotFoundError:
         continue
-    if "<<<<<<< HEAD" not in text:
+    if not re.search(r'(?m)^<<<<<<< ', text):
         continue
     resolver = keep_both_by_timestamp if path == "MEETING.md" else (
         lambda m: m.group(1) if m.group(1).strip() == m.group(2).strip() else m.group(1) + m.group(2))
@@ -75,10 +81,10 @@ for path in ("MEETING.md", "HANDOVER.md"):
     for _ in range(8):
         text, n = sides(text).subn(resolver, text)
         count += n
-        if "<<<<<<< HEAD" not in text:
+        if not re.search(r'(?m)^<<<<<<< ', text):
             break
     open(path, "w").write(text)
-    status = "clean" if "<<<<<<< HEAD" not in text else "STILL CONFLICTED"
+    status = "clean" if not re.search(r'(?m)^<<<<<<< ', text) else "STILL CONFLICTED"
     print(f"{path}: {count} hunk(s) resolved, {status}")
 
 text = open("package.json").read()

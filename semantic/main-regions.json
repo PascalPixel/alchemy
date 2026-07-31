@@ -394,6 +394,20 @@
       ]
     },
     {
+      "entry": "0x0808bec0",
+      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), 1052-byte keep_structured_asm row holding a single function per out/asm/manifest.json (one row, source asm/0808bec0.s): prologue push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill and sub sp,#44 at 0x0808bec0, single epilogue add sp,#44/pop.../bx r0 at 0x0808c2ac-0x0808c2bc, no branch out of the row and no inbound branch from outside it. bun tools/main_xref.ts 0808bec0: FUNCTION (called directly), one call site (0x0808ce0e). The literal pool is split across two clusters rather than one trailing block: an 11-word cluster at 0x0808c0fc-0x0808c128 embedded mid-function (0x03001ebc, 0x02000240, 0x001fffff, 0x02020000, 0x02010000, 0x000fffff, 0x00000167, 0x03000118, 0x0000ffff, 0x0000022e, 0x00000232), with ordinary code resuming immediately at 0x0808c128 (4-aligned, no filler needed), and a 7-word trailing cluster at 0x0808c2c0-0x0808c2dc (0x00000232, 0x0000023e, 0x00002096, 0x0000022e, 0x00000101, 0x0000ffff, 0x00000131) after a 2-byte movs r0,r0 filler at 0x0808c2be. Registered as two executable_ranges around the mid-function pool, same construction as semantic/main/0800ebec.c's own multi-row split. The one mov ip,pc / bx r4 sequence (0x0808c074) is an ordinary indirect call through the pooled 0x03000118, already recorded as opaque for 0x0800447c/0x08004ab0/0x0800c62c/0x0808b3ec, not retained assembly. Semantic-only: fetches the party leader's struct MotionObject from Data_03001ebc via the same inlined index*4+0x14 formula src/0808ba1c.c's Func_0808ba1c itself uses, then runs a terrain-tile-change-detection pass (mirroring 0x0800c62c's own >>20 tile-index shape) and a damage-tick pass calling three already-exact siblings (src/0808c2dc.c, src/0808c30c.c, src/0808c3a4.c) and two more exact callees (src/0808b048.c, src/0808b02c.c) read this same session. Several Data_03001ebc/Data_02000240 offsets are named generically with explicit Uncertainty comments where this row alone doesn't establish their role. Not yet checked byte-exact.",
+      "executable_ranges": [
+        {
+          "address": "0x0808bec0",
+          "size": 572
+        },
+        {
+          "address": "0x0808c128",
+          "size": 406
+        }
+      ]
+    },
+    {
       "entry": "0x0808f32c",
       "evidence": "Single 340-byte function, 0x0808f32c..0x0808f480. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and an 8-byte frame; one epilogue at 0x0808f46e unwinding all of it and ending pop {r0}; bx r0, so the owner is void. Excluded (24 bytes): the six-word pool at 0x0808f480 holding 0x03001e70 (map state pointer, loaded at 0x0808f33a), 0x02000240 (party state block, 0x0808f342, indexed +500 = +0x1f4 for the leader slot), 0x02008000 (runtime services, 0x0808f3ae, field +0x24 read as the spawn provider), 0xfff00000 (the flag-class mask, 0x0808f3dc), 0x0809e8a0 (the script passed to Func_08009098, 0x0808f438) and 0x0808f28d (the Thumb pointer to Func_0808f28c stored to object+0x6c, 0x0808f446). The code ends 4-aligned at 0x0808f480 so there is no movs r0,r0 alignment filler. Every pool word is reached by ldr rN,[pc,#imm] from inside the range and none is branched to. The bl Func_080072e4 at 0x0808f3b2 is the runtime _call_via_r0 thunk inside 0x080072e4..0x08007320, index 0, an indirect call through r0 holding the provider pointer, the same construction already recorded for 0x0808e9c0, whose sequence walk this owner mirrors. The mov r0,sl at 0x0808f36a supplies the record id to the bl Func_0808ed4c at 0x0808f36e even though the byte-exact src/0808ed4c.c takes no parameter; the call site is reconstructed as it stands. The two asrs #20 at 0x0808f354 and 0x0808f35a carry no rounding bias, so they are plain arithmetic shifts, not the fixed-point-to-whole conversion. Nothing in the row is retained assembly. bun tools/main_xref.ts 0808f32c reports FUNCTION (called directly) with one caller at 0x08098460.",
       "executable_ranges": [

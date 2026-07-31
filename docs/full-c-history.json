@@ -2,10 +2,10 @@
   "format": 1,
   "metric": "full-c-byte-share",
   "target": "gs1-en",
-  "denominator_commit": "1791b804c2adbc5b28c80a1657f7c8bbec902ffc",
+  "denominator_commit": "3b387d67fe7bd6a60584b64e8a9a67debe3194f5",
   "executable_bytes": 1339582,
   "history_scope": "first-parent",
-  "generated_from": "6bd76f9378e0a29ada8c95722cdab8add947e5be",
+  "generated_from": "fe80f0bb86d4dcaaab769347525e2a4647064bdb",
   "entries": [
     {
       "commit": "c0a101abc862998cc36a0ce13f6f893b614a16b8",
@@ -3204,6 +3204,22 @@
       "main_full_c_bytes": 101344,
       "overlay_full_c_bytes": 115030,
       "canonical_suffix": "[C 216,374/1,339,582 bytes]",
+      "derivation_status": "measured",
+      "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
+    },
+    {
+      "commit": "3b387d67fe7bd6a60584b64e8a9a67debe3194f5",
+      "first_parent_position": 201,
+      "author_time": "2026-07-31T01:53:45+00:00",
+      "committer_time": "2026-07-31T01:54:02+00:00",
+      "original_subject": "convert resource_3a7:0398 and park a second addressing-fold row [C 216,444/1,339,582 bytes]",
+      "full_c_bytes": 216444,
+      "executable_bytes": 1339582,
+      "remaining_bytes": 1123138,
+      "percent": 16.16,
+      "main_full_c_bytes": 101344,
+      "overlay_full_c_bytes": 115100,
+      "canonical_suffix": "[C 216,444/1,339,582 bytes]",
       "derivation_status": "measured",
       "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
     }

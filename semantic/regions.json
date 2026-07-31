@@ -962,6 +962,48 @@
       "evidence": "admitted whole-owner semantic reconstruction; DERIVED span - no row in out/decomp/overlays.json. Control-flow walk from the push {r5,r6,r7,lr} prologue at 0x0200449c to the single matching unwind add sp,#68/pop {r3,r5,r6,r7}/.../pop {r0}/bx r0 at 0x02004762-0x02004773; no bl resolves inside the body and there is no mov pc,rN dispatch. NO interior pool: all 728 bytes are instructions the walk reaches, and the literal pool begins at 0x02004774, outside the span. Link base confirmed by five even pool words landing in-image as data (0x0200d0e4/d102/d120/d140/d168 -> 0x020050e4/5102/5120/5140/5168)."
     },
     {
+      "overlay": "resource_380",
+      "entry": "0x0200013c",
+      "span_bytes": 472,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started and returning but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the three-word literal pool 0x02000308-0x02000313 to the next owner's prologue at 0x02000314 (assets/code exact owner), inside the assembled overlay image and not overlapping another recorded owner. This overlay executes at 0x02000000: its bl targets resolve into the 0x02008xxx resident module, which only fits under a flat base given the 0x5190-byte image."
+    },
+    {
+      "overlay": "resource_380",
+      "entry": "0x0200227c",
+      "span_bytes": 388,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started and returning but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the six-word literal pool 0x020023e8-0x020023ff to the next owner's prologue at 0x02002400, inside the assembled overlay image and not overlapping another recorded owner. This overlay executes at 0x02000000: its bl targets resolve into the 0x02008xxx resident module, which only fits under a flat base given the 0x5190-byte image."
+    },
+    {
+      "overlay": "resource_380",
+      "entry": "0x02004248",
+      "span_bytes": 24,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started and returning but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing alignment halfword to the next owner's prologue at 0x02004260 (drafted this pass), inside the assembled overlay image and not overlapping another recorded owner. This overlay executes at 0x02000000: its bl targets resolve into the 0x02008xxx resident module, which only fits under a flat base given the 0x5190-byte image."
+    },
+    {
+      "overlay": "resource_380",
+      "entry": "0x02004260",
+      "span_bytes": 200,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started and returning but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly (pop {r1}/bx r1, a genuine s32 return value per HANDOVER's epilogue rule) through the one-word literal pool 0x02004324 to the next owner's prologue at 0x02004328 (drafted this pass), inside the assembled overlay image and not overlapping another recorded owner. This overlay executes at 0x02000000: its bl targets resolve into the 0x02008xxx resident module, which only fits under a flat base given the 0x5190-byte image."
+    },
+    {
+      "overlay": "resource_380",
+      "entry": "0x02004328",
+      "span_bytes": 148,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started and returning but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the three-word literal pool 0x020043b0-0x020043bb to the next owner's prologue at 0x020043bc (drafted this pass), inside the assembled overlay image and not overlapping another recorded owner. This overlay executes at 0x02000000: its bl targets resolve into the 0x02008xxx resident module, which only fits under a flat base given the 0x5190-byte image."
+    },
+    {
+      "overlay": "resource_380",
+      "entry": "0x020043bc",
+      "span_bytes": 224,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started and returning but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the literal pool 0x02004490-0x0200449b to the next owner's prologue at 0x0200449c (this overlay's own resource_380_c_0200449c.c), inside the assembled overlay image and not overlapping another recorded owner. This overlay executes at 0x02000000: its bl targets resolve into the 0x02008xxx resident module, which only fits under a flat base given the 0x5190-byte image."
+    },
+    {
+      "overlay": "resource_380",
+      "entry": "0x0200478c",
+      "span_bytes": 200,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started and returning but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the five-word literal pool 0x02004840-0x02004853 to the next owner's prologue at 0x02004854 (a veneer owner), inside the assembled overlay image and not overlapping another recorded owner. This overlay executes at 0x02000000: its bl targets resolve into the 0x02008xxx resident module, which only fits under a flat base given the 0x5190-byte image."
+    },
+    {
       "overlay": "resource_381",
       "entry": "0x02000054",
       "span_bytes": 3548,

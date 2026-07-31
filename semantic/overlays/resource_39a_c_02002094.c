@@ -57,25 +57,6 @@ extern void Func_02002014();
 
 /* Imports; those used for their return value are typed. 0x02004406 is reached
  * both as a three-argument probe and as a two-argument command. */
-u8 *Func_02004498();
-void Func_0200440a();
-s32 Func_020043ec();
-void Func_02004392();
-s32 Func_02004406();
-s32 Func_02004410();
-void Func_02004426();
-void Func_02004416();
-void Func_02004444();
-void Func_02004450();
-s32 Func_0200446e();
-void Func_02004480();
-void Func_0200448e();
-s32 Func_020044c4();
-void Func_020044c2();
-void Func_020044d0();
-void Func_02004466();
-void Func_02004484();
-void Func_02004568();
 
 void Func_02002094(void)
 {

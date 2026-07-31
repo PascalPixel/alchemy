@@ -65,36 +65,22 @@ struct Object_02004a2c {
 };
 
 /* Used for their return values. */
-struct Object_02004a2c *Func_020098e6();
-struct Object_02004a2c *Func_020098ee();
+void Func_080000c0();
+void Func_08009128();
+void Func_080770c8();
+void Func_0808a010();
+void Func_0808a018();
+struct Object_02004a2c *Func_0808a080();
+void Func_0808a100();
+void Func_0808a1e0();
+void Func_0808a1f0();
+void Func_0808a210();
+void Func_0808a248();
+void Func_0808a360();
+void Func_0808a370();
+void Func_080f9010();
 
 /* Old-style declarations: the imports' real interfaces are not known here. */
-void Func_020098dc();
-void Func_020099de();
-void Func_02009852();
-void Func_02009808();
-void Func_02009a48();
-void Func_02009a5c();
-void Func_02009a8a();
-void Func_02009920();
-void Func_0200992c();
-void Func_02009a1c();
-void Func_020099ac();
-void Func_0200987a();
-void Func_02009894();
-void Func_020098b0();
-void Func_020098c8();
-void Func_02009ac6();
-void Func_02009a56();
-void Func_020099ec();
-void Func_020099f6();
-void Func_02009ad6();
-void Func_02009ade();
-void Func_02009b7c();
-void Func_02009b84();
-void Func_02009a0a();
-void Func_0200994e();
-void Func_02009b5c();
 
 void Func_02004a2c(void)
 {
@@ -103,55 +89,55 @@ void Func_02004a2c(void)
     s32 step;
     s32 frame;
 
-    objectA = Func_020098e6(0);
-    objectB = Func_020098ee(20);
+    objectA = Func_0808a080(0);
+    objectB = Func_0808a080(20);
 
     /* No argument register is written here; r0 still holds the pointer just
      * returned above, and that dataflow is preserved as written. */
-    Func_020098dc(objectB);
+    Func_0808a018(objectB);
 
-    Func_020099de(-1, -1, -1, 0);
-    Func_02009852();
-    Func_02009808(1);
+    Func_0808a210(-1, -1, -1, 0);
+    Func_08009128();
+    Func_080000c0(1);
 
     objectA->y = 0x00820000;
     objectA->range = 0x8000;
     objectA->speed = 0;
     objectA->mode55 = 0;
 
-    Func_02009a48();
-    Func_02009a5c();
-    Func_02009a8a(204);
-    Func_02009920(30);
+    Func_0808a360();
+    Func_0808a370();
+    Func_080f9010(204);
+    Func_0808a010(30);
 
     objectA->mode55 = 3;
 
-    Func_0200992c(24);
-    Func_02009a1c(0, 0x101);
-    Func_020099ac(0, 22);
+    Func_0808a010(24);
+    Func_0808a1f0(0, 0x101);
+    Func_0808a100(0, 22);
 
     objectA->mode55 &= 0xfe;
 
     objectB->y += 0xfffd0000;
     objectA->y += 0xfffd0000;
     objectA->unk14 += 0xfffd0000;
-    Func_0200987a(2);
+    Func_080000c0(2);
 
     objectB->y += 0xfffe0000;
     objectA->y += 0xfffe0000;
     objectA->unk14 += 0xfffe0000;
-    Func_02009894(10);
+    Func_080000c0(10);
 
     step = 0x00020000;
     objectB->y += step;
     objectA->y += step;
     objectA->unk14 += step;
-    Func_020098b0(4);
+    Func_080000c0(4);
 
     objectB->y += step;
     objectA->y += step;
     objectA->unk14 += step;
-    Func_020098c8(4);
+    Func_080000c0(4);
 
     step = 0x00010000;
     objectB->y += step;
@@ -161,25 +147,25 @@ void Func_02004a2c(void)
     objectA->mode55 = 0;
     objectB->mode55 = 0;
 
-    Func_02009ac6(0, 256);
-    Func_02009a56(0, 1);
-    Func_020099ec(40);
+    Func_0808a1f0(0, 256);
+    Func_0808a100(0, 1);
+    Func_0808a010(40);
 
     objectA->callback = 0x0200c969;     /* = Func_02004968 | 1 */
-    Func_020099f6(60);
+    Func_0808a010(60);
 
-    Func_02009ad6(0, 1);
-    Func_02009ade(20, 1);
-    Func_02009b7c(17);
-    Func_02009b84(308);
-    Func_02009a0a(0x101);
+    Func_0808a1e0(0, 1);
+    Func_0808a1e0(20, 1);
+    Func_080f9010(17);
+    Func_080f9010(308);
+    Func_080770c8(0x101);
 
     for (frame = 0; frame <= 127; frame++) {
         objectA->y += step;
         objectA->unk14 += step;
         objectB->y += step;
-        Func_0200994e(1);
+        Func_080000c0(1);
     }
 
-    Func_02009b5c(21);
+    Func_0808a248(21);
 }

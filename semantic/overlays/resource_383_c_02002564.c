@@ -66,6 +66,8 @@ void Func_02002564(void)
 {
     u8 *workspace;
     s32 beat;
+    s32 expected;
+    u8 *descriptor;
 
     workspace = *(u8 **)0x03001ebc;
     /* 182 << 1. */
@@ -77,33 +79,47 @@ void Func_02002564(void)
         return;
     }
 
+    /* THREE call sites are SHARED between cases: the `b.n` at 0x020025b6
+     * takes case 0 into case 2's third call (0x020025f8), the one at
+     * 0x020025d6 takes case 1 into case 3's second call (0x02002612), and the
+     * one at 0x0200262a takes case 4 into case 6's third call (0x02002672).
+     * Seventeen sites, not twenty. */
     switch (beat) {
     case 0:
         Func_020026e4(24, 1, 2, Data_0200d5b0);
-        Func_020026e4(25, 3, 4, Data_0200d8bc);
-        break;
+        expected = 3;
+        descriptor = Data_0200d8bc;
+        goto next4;
 
     case 1:
         Func_020026e4(24, 1, 4, Data_0200d678);
         Func_020026e4(24, 2, 3, Data_0200d5d8);
-        Func_020026e4(25, 1, 3, Data_0200d830);
-        break;
+        expected = 1;
+        descriptor = Data_0200d830;
+        goto next3;
 
     case 2:
         Func_020026e4(24, 2, 1, Data_0200d538);
         Func_020026e4(24, 3, 6, Data_0200d718);
-        Func_020026e4(25, 2, 4, Data_0200d894);
+        expected = 2;
+        descriptor = Data_0200d894;
+    next4:
+        Func_020026e4(25, expected, 4, descriptor);
         break;
 
     case 3:
         Func_020026e4(24, 3, 2, Data_0200d5b0);
-        Func_020026e4(25, 4, 3, Data_0200d858);
+        expected = 4;
+        descriptor = Data_0200d858;
+    next3:
+        Func_020026e4(25, expected, 3, descriptor);
         break;
 
     case 4:
         Func_020026e4(24, 4, 5, Data_0200d6c8);
-        Func_020026e4(25, 1, 2, Data_0200d7cc);
-        break;
+        expected = 1;
+        descriptor = Data_0200d7cc;
+        goto next2;
 
     case 5:
         Func_020026e4(24, 4, 1, Data_0200d560);
@@ -114,7 +130,10 @@ void Func_02002564(void)
     case 6:
         Func_020026e4(24, 5, 4, Data_0200d650);
         Func_020026e4(24, 6, 3, Data_0200d600);
-        Func_020026e4(25, 4, 2, Data_0200d808);
+        expected = 4;
+        descriptor = Data_0200d808;
+    next2:
+        Func_020026e4(25, expected, 2, descriptor);
         break;
 
     case 7:

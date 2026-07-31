@@ -61,17 +61,17 @@ typedef signed int s32;
 extern u8 Data_02000240[];
 
 /* Old-style declarations: arities vary per site across this overlay. */
-void Func_0808a018();
-void Func_0808a148();
-void Func_080770c8();
+s32 Func_080770c0();
+s32 Func_080770c8();
 void Func_080770d0();
+void Func_08077148();
+void Func_0808a018();
+s32 Func_0808a020();
+void Func_0808a148();
 void Func_0808a170();
 void Func_0808a178();
 
 /* Used for their return values. */
-s32 Func_080770c0();
-s32 Func_08077148();
-s32 Func_0808a020();
 
 s32 Func_020010e8(s32 speaker)
 {
@@ -82,14 +82,14 @@ s32 Func_020010e8(s32 speaker)
 
     if (Func_080770c0(516) != 0) {
         cue = 0x298e;
-        Func_080770d0(516);
+        Func_08077148(516);
     } else {
-        if (Func_08077148() > 3) {
+        if (Func_080770c8() > 3) {
             cue = 0x298c;
         } else {
             cue = 0x298d;
         }
-        Func_080770c8(516);
+        Func_080770d0(516);
     }
 
     Func_0808a170(cue);

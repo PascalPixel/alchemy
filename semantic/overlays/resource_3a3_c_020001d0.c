@@ -56,8 +56,7 @@ void Func_020001d0(void)
     if (Func_080770c0(0x909) != 0) {
         Func_0808a170(0x191f);
         Func_0808a190(14, 0);
-        Func_0808a020();
-        return;
+        goto close;
     }
 
     Func_0808a100(14, 4);
@@ -85,5 +84,7 @@ void Func_020001d0(void)
     }
 
     Func_0808a110(14, 4);
+
+close:
     Func_0808a020();
 }

@@ -29,12 +29,6 @@ void Func_080091f0();
 s32 Func_08077040();
 void Func_080770c8();
 void Func_080f9010();
-s32 Func_02006542(s32 request);
-void Func_02001e34(s32 id);
-void Func_02006702(s32 id);
-void Func_0200655a(s32 x, s32 y, s32 z);
-void Func_02006564(s32 a, s32 b, s32 c);
-void Func_02006596(s32 id);
 
 void Func_02000f30(void)
 {

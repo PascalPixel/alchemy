@@ -495,6 +495,36 @@ confirms it is data.
 unrelated globals hides that the second is the well-known workspace pointer the
 rest of the overlay loads directly.
 
+**`stmia r3!, {r0,r1,r2}` with r3 = `0x040000d4` is a DMA3 CLEAR, not a struct
+copy.** `resource_381:330c` zeroes its 404-byte workspace this way: `0x85000065`
+is enable | 32-bit | source-fixed with a count of 0x65 words, exactly the size
+just requested from `Func_08000148`. The `subs r3,#12` after it merely rewinds
+the auto-incremented register and is dead. Read as a struct copy it invents
+three phantom fields.
+
+**A workspace-allocator call at the top of BOTH an installer and its task is the
+cheapest way to pair them.** `Func_08000148(33, 404)` appears identically in
+`resource_381:330c` and `:301c`, and the installer's odd `Func_080000d0` pool
+word then names the task outright. The size + id match is a free structural
+proof, and it hands you the whole struct layout before either body is opened.
+
+**`adds rN,#255 / lsls #24 / lsrs #24` is a u8 DECREMENT.** Twice in
+`resource_381:301c` (a 3-frame tick and a 24-frame blend counter). Read as an
+add-255, the "one frame in three" gating that keeps ten call sites off the other
+two frames is invisible.
+
+**The pool-word band test is TWO-SIDED.** Documented for `0x02000240` as "below
+the band, so not in-image"; the other half matters just as much.
+`resource_381:29a4`'s `0x004039d2`/`0x004049d2`/`0x00404a4e`/`0x00403a52` are
+below 0x02008000 and are packed argument words, while `0x02c70000` is above it
+and is a 16.16 coordinate. Neither is in-image.
+
+**A three-arm decision tree that differs only in WHICH WORD IT LOADS collapses
+onto one `bl`** — a sixth shape for the shared-call-site list. `resource_381:29a4`
+does it twice; writing the natural per-arm call inflates `Func_0808a330` from 3
+to 5. The tell is that the arms end in a `b` to a common `movs r1,#1 / bl`,
+not in the call itself.
+
 **Offset-0 veneer tables come in TWO flavours, and only one of them is a call.**
 `resource_389`'s table mixes real entry veneers (`ldr r4,[pc,#0] / bx r4`) with
 the constant-loader shape (`ldr r0,[pc,#0] / bx lr`) at 0x0b50/0x0b5c/0x0b64,

@@ -115,7 +115,7 @@ function linkedBytes(stem: string, source: string, scratch: string, kind: "asm" 
     if (externalSymbol(name) === null) throw new Error(`unsupported external symbol ${name}`);
   }
   const symbolsSource = `${prefix}.symbols.s`, symbolsObject = `${prefix}.symbols.o`;
-  writeFileSync(symbolsSource, ".syntax unified\n.thumb\n" + names.map(externalSymbolAssembly).join(""));
+  writeFileSync(symbolsSource, ".syntax unified\n.thumb\n" + names.map((name) => externalSymbolAssembly(name)).join(""));
   const symbolsAssembled = run([
     "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
     "-o", symbolsObject, symbolsSource,

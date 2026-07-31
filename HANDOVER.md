@@ -138,30 +138,6 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **683,124
-executable bytes across 1,299 compiling sources**: 385,850 main-image bytes and
-297,274 overlay bytes. Combined with exact C, **897,308 / 1,339,580 executable
-Alongside the exact lane, reviewed semantic C currently accounts for **701,856
-executable bytes across 1,336 compiling sources**: 385,850 main-image bytes and
-316,006 overlay bytes. Combined with exact C, **918,026 / 1,339,582 executable
-Alongside the exact lane, reviewed semantic C currently accounts for **707,774
-executable bytes across 1,364 compiling sources**: 385,850 main-image bytes and
-321,924 overlay bytes. Combined with exact C, **924,720 / 1,339,582 executable
-bytes** are expressed as C.
-Build that lane with `bun run build:semantic`; its
-sources live under `semantic/` and do not claim byte equality. Use
-`semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
-of the ordinary review queue.
-
-bytes** are expressed as C.
-Build that lane with `bun run build:semantic`; its
-sources live under `semantic/` and do not claim byte equality. Use
-`semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
-of the ordinary review queue.
-
-Alongside the exact lane, reviewed semantic C currently accounts for **701,856
-executable bytes across 1,336 compiling sources**: 385,850 main-image bytes and
-316,006 overlay bytes. Combined with exact C, **918,026 / 1,339,582 executable
 Alongside the exact lane, reviewed semantic C currently accounts for **707,774
 executable bytes across 1,364 compiling sources**: 385,850 main-image bytes and
 321,924 overlay bytes. Combined with exact C, **924,720 / 1,339,582 executable
@@ -2082,6 +2058,21 @@ finished one.
 **Span rule.** Function start through its own literal pool. The pool follows the
 final return after an optional 2-byte zero alignment word — include both. With no
 pool, exclude a trailing `.2byte 0`.
+
+**On a `semantic/X.c` → `assets/code/X.c` rename conflict, the `assets/code`
+content always wins — check every merge for it.** Every conversion deletes a
+semantic source and adds an exact one at the same file name, which git reports
+as a *rename*, so a three-way resolution can quietly substitute the semantic
+body into the exact path. It happened on 2026-07-31 to
+`assets/code/resource_3c4_c_02001f70.c`, which came back from a sibling branch
+with veneer callee names in place of the raw per-site addresses. A
+veneer-named source still compiles, so nothing complains at merge time; the
+overlay simply stops reproducing, and that surfaces two layers away as a
+`build_assets` failure on an overlay the merge never mentioned. The exact file
+only exists because `overlay_adopt` proved it rebuilds the overlay
+byte-identically; the semantic one has never been through that gate. **After any
+merge, run `git diff --cached --name-only -- assets/code/ src/` and read every
+hit** — a merge you did not intend to touch converted sources should list none.
 
 **Step zero on a semantic-backed row: compile Venus's source unmodified and read
 the group count.** It costs one command and no writing:

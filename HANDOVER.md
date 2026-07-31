@@ -1782,6 +1782,45 @@ independent entry (`live_parent_stack_and_high_registers`, `no_independent_entry
 `live_owner_`), so each must be folded into its owner's source rather than
 written standalone, with that owner's registered ranges extended to match.
 
+**`bun tools/main_xref.ts <address>...`** answers "who references this?" across
+the whole image: direct calls, branches, aligned pool words, and pool words
+holding **address + 1** — the Thumb bit, which is how an indirectly published
+callback is stored. That last case is the one that earns the tool: it is the
+only cheap way to tell an unreferenced tail from an independently callable
+function, and it proved `0808f498` a real function from five pool words holding
+`0x0808f499` with no branch into it at all. **What it cannot decide** is a
+region with no inbound reference: a genuine continuation is normally reached by
+*falling through*, which leaves no reference, so a pool and a fall-through
+continuation are indistinguishable. Of the 32 open continuation regions, 31 come
+back that way — narrowed to "pool or fall-through", no further. A reachability
+walk from the owner's entry is what settles those.
+
+**`mov ip,pc; bx rN` (NOT `mov lr,pc`) is the private-ip-return call family**
+and the on-sight signature of a `keep_structured_asm` /
+`nonstandard_thumb_call_module` owner. Seeing it means **stop**, not decompile.
+
+**`keep_structured_asm` is ABSORBING for continuations.** A `merge_with_owner`
+row whose head is `keep_structured_asm` is out of scope even though the row's
+own retention looks eligible — the row-level field invites the opposite reading.
+Zero of the 126 `keep_structured_asm` rows has a semantic source, by standing
+decision.
+
+**A row beginning with an alignment `0000` halfword cannot be a semantic
+filename.** `build_semantic` requires `Func_<filename-address>` to exist and the
+entry is at row + 2, so such rows must go through `main-regions.json` even when
+they are single-range. Four of six owners in one lane hit this.
+
+**`stmia r3!, {r0,r1,r2}` with `r3 = 0x040000b0` programs a whole DMA channel in
+one instruction** (SAD/DAD/CNT). The preceding `ldrh/ands/strh` pair on `+10`
+masked with `0xc5ff` then `0x7fff` is the standard two-step channel stop. This
+identified four sibling functions across three unrelated regions at a glance.
+
+**`objdump --adjust-vma` silently reinterprets `--start-address`.** With
+`--adjust-vma=0x080beb08 --start-address=0x080beb08` you disassemble **file
+offset 0** — the GBA header — under the address you asked for, and it reads as
+plausible garbage code. The correct form is `--adjust-vma=0x08000000
+--start-address=<vma>`. This burned a full analysis pass.
+
 **Two traps cost a lane a full pass; do not repeat them.**
 
 **A `split_first` / `mixed_region` row with NO prologue and NO epilogue is not a

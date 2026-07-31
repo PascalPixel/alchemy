@@ -3741,6 +3741,12 @@
     },
     {
       "overlay": "resource_3b3",
+      "entry": "0x02000d78",
+      "span_bytes": 48,
+      "evidence": "item-28 unindexed population, same reference-resolution basis as the resource_3b1 rows this session (bun tools/overlay_unindexed.ts). push {r5,r6,lr} at 0x02000d78, epilogue pop {r5,r6} / pop {r0} / bx r0 at 0x02000da2-0x02000da6, immediately followed with no gap by the next function's push {r5,r6,r7,lr} at 0x02000da8 (not part of this overlay's item-28 population, already indexed elsewhere), so the span is exactly 0x02000d78-0x02000da8, 48 bytes"
+    },
+    {
+      "overlay": "resource_3b3",
       "entry": "0x02001174",
       "span_bytes": 62,
       "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json, span walked from the prologue through every internal branch to its matching interworking epilogue at 0x020011ac, alignment 0x020011b2 and literal pool 0x020011b4-0x020011c3 (0x00001999, 0xffffe667, 0xffff3334, 0x00001998) excluded, next prologue at 0x020011c4"
@@ -3762,6 +3768,24 @@
       "entry": "0x02001aa8",
       "span_bytes": 310,
       "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json and confirmed as the next prologue by the neighbouring 0x020019f0 owner, span walked from the prologue through every internal branch to its matching high-register unwind `pop {r3} / mov r8,r3 / pop {r5,r6,r7} / pop {r1} / bx r1` at 0x02001bdc, alignment halfword 0x02001bde and literal pool 0x02001be0-0x02001be7 (0x03001ebc, 0x00000cc7) excluded, next prologue at 0x02001be8"
+    },
+    {
+      "overlay": "resource_3b3",
+      "entry": "0x02001fd4",
+      "span_bytes": 96,
+      "evidence": "item-28 unindexed population, same reference-resolution basis as the resource_3b1 rows this session. push {r5,lr} at 0x02001fd4, epilogue pop {r5} / pop {r0} / bx r0 at 0x0200202c-0x02002030; the halfword at 0x02002032 is the alignment pad, immediately followed by the next function's push {lr} at 0x02002034 (not part of this overlay's item-28 population, already indexed elsewhere), so the span is exactly 0x02001fd4-0x02002034, 96 bytes"
+    },
+    {
+      "overlay": "resource_3b3",
+      "entry": "0x0200209c",
+      "span_bytes": 28,
+      "evidence": "item-28 unindexed population, same reference-resolution basis as the resource_3b1 rows this session. push {lr} at 0x0200209c, epilogue pop {r0} / bx r0 at 0x020020b0-0x020020b2; the one-word literal pool at 0x020020b4 (0x03001ee0, the Data_03001ee0 pointer already declared elsewhere) is included per the usual pool rule, immediately followed by the next function's push {r5,lr} at 0x020020b8 (not part of this overlay's item-28 population, already indexed elsewhere), so the span is exactly 0x0200209c-0x020020b8, 28 bytes"
+    },
+    {
+      "overlay": "resource_3b3",
+      "entry": "0x02002498",
+      "span_bytes": 52,
+      "evidence": "item-28 unindexed population, same reference-resolution basis as the resource_3b1 rows this session. push {r5,lr} plus 8-byte stack buffer at 0x02002498, epilogue add sp,#8 / pop {r5} / pop {r0} / bx r0 at 0x020024c4-0x020024ca, immediately followed with no gap by the next function's push {r5,r6,lr} at 0x020024cc (not part of this overlay's item-28 population, already indexed elsewhere), so the span is exactly 0x02002498-0x020024cc, 52 bytes"
     },
     {
       "overlay": "resource_3b3",

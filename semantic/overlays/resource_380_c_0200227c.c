@@ -17,95 +17,88 @@ typedef unsigned char u8;
  * 0x020023e8-0x020023ff (five fixed-point x coordinates and the
  * descriptor 0x0200cbd0); next owner's prologue at 0x02002400.
  *
- * Uncertainty: callees unidentified beyond call shape -- each actor id
- * appears to have its own dedicated enable/fetch/bind entry points in
- * the resident module (6-to-20-byte address strides), which is why the
- * extern list is long.  Func_02006c8e enables (13, 1) early and binds
- * (object, table) late; it is declared old-style.  The final
- * Func_02006d7a call reuses whatever the preceding bind returned; both
- * are old-style for that reason.
+ * CORRECTION (name sweep): this file's callee names came from a naive
+ * pc-relative decode and were wrong; they are resolved here through the
+ * overlay's import-veneer table under the +2 rule
+ * (tools/overlay_call_targets.ts) to their main-ROM identities.  Two
+ * earlier readings fall with those names.  The claim that "each actor
+ * id has its own dedicated enable/fetch/bind entry points at
+ * 6-to-20-byte strides" was pure decode artifact: the strides were the
+ * call sites drifting, not distinct callees, and the real extern list
+ * is short and ordinary.  The two "old-style" declarations existed
+ * only because one phantom name covered two different functions
+ * (Func_0808a098/Func_08009098 and Func_0808a080/Func_0808a020);
+ * nothing here is old-style.  The final pair was written as a nested
+ * call -- "the last call reuses whatever the preceding bind returned"
+ * -- on the strength of that same phantom; the two bl at 0x020023d0
+ * and 0x020023d4 are consecutive with no register setup between them,
+ * so they are plain sequential calls and Func_0808a020 is the void
+ * scene-bracket close it is everywhere else in the item-28 drafts.
+ *
+ * Uncertainty: callee roles beyond call shape remain open.
  */
 
-extern s32 Func_02006c48(s32 arg0);
-extern void Func_02006c2e(void);
-extern void Func_02006c66(s32 actor, s32 arg1);
-extern void Func_02006c6e(s32 actor, s32 arg1);
-extern void Func_02006c76(s32 actor, s32 arg1);
-extern void Func_02006c7e(s32 actor, s32 arg1);
-extern void Func_02006c86(s32 actor, s32 arg1);
-extern s32 Func_02006c8e();
-extern void Func_02006cd2(s32 actor, s32 x, s32 y);
-extern void Func_02006cde(s32 actor, s32 x, s32 y);
-extern void Func_02006cea(s32 actor, s32 x, s32 y);
-extern void Func_02006cf6(s32 actor, s32 x, s32 y);
-extern void Func_02006d04(s32 actor, s32 x, s32 y);
-extern void Func_02006d10(s32 actor, s32 x, s32 y);
-extern s32 Func_02006cce(s32 actor);
-extern s32 Func_02006cf2(s32 actor);
-extern s32 Func_02006d0c(s32 actor);
-extern s32 Func_02006d26(s32 actor);
-extern s32 Func_02006d40(s32 actor);
-extern s32 Func_02006d5e(s32 actor);
-extern s32 Func_02006d7a();
-extern void Func_02006bec(s32 object, s32 table);
-extern void Func_02006c06(s32 object, s32 table);
-extern void Func_02006c20(s32 object, s32 table);
-extern void Func_02006c3a(s32 object, s32 table);
-extern void Func_02006c74(s32 object, s32 table);
+extern void Func_08009098(s32 object, s32 table);
+extern void Func_0808a018(void);
+extern void Func_0808a020(void);
+extern s32 Func_0808a080(s32 arg0);
+extern void Func_0808a098(s32 actor, s32 arg1);
+extern void Func_0808a0f0(s32 actor, s32 x, s32 y);
 
 void Func_0200227c(void)
 {
-    s32 handle = Func_02006c48(0);
+    s32 handle = Func_0808a080(0);
     s32 table = 0x0200cbd0;
     s32 object;
     s32 helper;
 
-    Func_02006c2e();
-    Func_02006c66(5, 1);
-    Func_02006c6e(9, 1);
-    Func_02006c76(11, 1);
-    Func_02006c7e(10, 1);
-    Func_02006c86(14, 1);
-    Func_02006c8e(13, 1);
-    Func_02006cd2(5, 0x01db0000, 0x14c0000);
-    Func_02006cde(9, 0x01eb0000, 0x14c0000);
-    Func_02006cea(11, 0x01cb0000, 0x15c0000);
-    Func_02006cf6(10, 0x01fb0000, 0x15c0000);
-    Func_02006d04(14, 0x1cc0000, 0x1680000);
-    Func_02006d10(13, 0x01d70000, 0x1320000);
+    Func_0808a018();
+    Func_0808a098(5, 1);
+    Func_0808a098(9, 1);
+    Func_0808a098(11, 1);
+    Func_0808a098(10, 1);
+    Func_0808a098(14, 1);
+    Func_0808a098(13, 1);
+    Func_0808a0f0(5, 0x01db0000, 0x14c0000);
+    Func_0808a0f0(9, 0x01eb0000, 0x14c0000);
+    Func_0808a0f0(11, 0x01cb0000, 0x15c0000);
+    Func_0808a0f0(10, 0x01fb0000, 0x15c0000);
+    Func_0808a0f0(14, 0x1cc0000, 0x1680000);
+    Func_0808a0f0(13, 0x01d70000, 0x1320000);
 
-    object = Func_02006cce(5);
+    object = Func_0808a080(5);
     *(s32 *)(object + 104) = handle;
     *(u8 *)(object + 90) |= 1;
-    Func_02006bec(object, table);
+    Func_08009098(object, table);
 
-    object = Func_02006cf2(9);
+    object = Func_0808a080(9);
     *(s32 *)(object + 104) = handle;
     *(u8 *)(object + 90) |= 1;
-    Func_02006c06(object, table);
+    Func_08009098(object, table);
 
-    object = Func_02006d0c(11);
+    object = Func_0808a080(11);
     *(s32 *)(object + 104) = handle;
     *(u8 *)(object + 90) |= 1;
-    Func_02006c20(object, table);
+    Func_08009098(object, table);
 
-    object = Func_02006d26(10);
+    object = Func_0808a080(10);
     *(s32 *)(object + 104) = handle;
     *(u8 *)(object + 90) |= 1;
-    Func_02006c3a(object, table);
+    Func_08009098(object, table);
 
-    object = Func_02006d40(14);
+    object = Func_0808a080(14);
     *(s32 *)(object + 104) = handle;
     *(u8 *)(object + 90) |= 1;
     *(s32 *)(object + 24) = 0x10000;
     *(s32 *)(object + 28) = 0x10000;
-    helper = Func_02006d5e(11);
+    helper = Func_0808a080(11);
     *(u8 *)(object + 85) = *(u8 *)(helper + 85);
     *(s32 *)(object + 12) = 0;
-    Func_02006c74(object, table);
+    Func_08009098(object, table);
 
-    object = Func_02006d7a(13);
+    object = Func_0808a080(13);
     *(s32 *)(object + 104) = handle;
     *(u8 *)(object + 90) |= 1;
-    Func_02006d7a(Func_02006c8e(object, table));
+    Func_08009098(object, table);
+    Func_0808a020();
 }

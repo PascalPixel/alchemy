@@ -1249,32 +1249,27 @@ function mapPath(target: DecompTargetId): string {
  * from a timestamp. Identical picture, identical URL: no spurious diffs on a
  * redraw that changed nothing. Different picture, different URL, immediately.
  */
-// Per-tree colour bands: each box tree is ONE hue at its most extreme
-// Display-P3 chroma; completion is encoded as opacity of that colour over a
-// dark ground (extreme = done, faint = raw). sRGB fallback rides the CSS
-// cascade for engines without P3.
-interface HueBand { fallback: string; p3: string }
-const CORE_HUE: HueBand = { fallback: "#a855f7", p3: "color(display-p3 0.55 0 1)" };
-const OVERLAY_HUE: HueBand = { fallback: "#22d3ee", p3: "color(display-p3 0 1 1)" };
-const ASSET_HUE: HueBand = { fallback: "#ff0080", p3: "color(display-p3 1 0 0.5)" };
+// Per-tree colour bands, perceptually equalized: every tree renders at ONE
+// OKLCH lightness (L=0.70), so no hue reads brighter than another, and
+// completion is encoded as CHROMA — full completion sits at the hue's
+// Display-P3 gamut edge at that lightness, zero completion is neutral gray at
+// the same lightness. An hsl() approximation rides the CSS cascade as the
+// fallback for engines without oklch().
+interface HueBand { hslHue: number; okHue: number; okCmax: number }
+const CORE_HUE: HueBand = { hslHue: 275, okHue: 295, okCmax: 0.26 };
+const OVERLAY_HUE: HueBand = { hslHue: 190, okHue: 200, okCmax: 0.17 };
+const ASSET_HUE: HueBand = { hslHue: 330, okHue: 355, okCmax: 0.30 };
 const GROUND = "#ffffff";
-// The code completion ladder, opacity = completion: assembly 0 (dark, not
-// started) -> semantic C 0.5 -> byte-exact C 0.75 -> humanized byte-exact C
-// 1.0. The last tier has no members yet — exact sources are still address-
-// named — so no code tile reaches full brightness until real humanization
-// lands. That is the point.
-const CODE_OPACITY: Record<string, number> = {
+const OK_LIGHTNESS = 0.70;
+// Completion fractions: code ladder assembly 0 -> semantic 0.5 -> exact 0.75
+// -> humanized 1 (empty until real humanization lands). Assets ladder ends at
+// individual objects; byte-represented keeps a faint tint floor.
+const CODE_FRACTION: Record<string, number> = {
   humanized_c: 1, exact_c: 0.75, semantic_c: 0.5, assembly: 0,
 };
-// Asset maturity: byte-represented -> b&w sheet -> coloured sheet -> cut into
-// individual objects (the final outcome: fanfare.wav, vale.mid, weyard.sf2,
-// spruce.png). Total pinkness — full opacity — is the goal state.
 export const ASSET_TIERS = ["asset_bytes", "asset_bw", "asset_color", "asset_objects"] as const;
 export type AssetTier = (typeof ASSET_TIERS)[number];
-// Asset ladder mirrors the code ladder: byte-represented keeps a faint floor
-// (visible gray, per the accounting brief) -> b&w sheet 1/3 -> coloured sheet
-// 2/3 -> individual objects (fanfare.wav, vale.mid, weyard.sf2, spruce.png) 1.
-const ASSET_OPACITY: Record<string, number> = {
+const ASSET_FRACTION: Record<string, number> = {
   asset_bytes: 0.08, asset_bw: 0.34, asset_color: 0.67, asset_objects: 1, asset_data: 0.08,
 };
 
@@ -1376,7 +1371,7 @@ export function renderBoxTree(
   area: Area,
   ariaLabel: string,
   hue: HueBand = CORE_HUE,
-  laneOpacity: Record<string, number> = CODE_OPACITY,
+  laneFraction: Record<string, number> = CODE_FRACTION,
   laneOrder: readonly string[] = ["humanized_c", "exact_c", "semantic_c", "assembly"],
 ): string {
   const width = 1600;
@@ -1388,10 +1383,16 @@ export function renderBoxTree(
     `width="${width}" height="${height}" role="img" aria-label="${escapeText(ariaLabel)}">`,
   );
   lines.push(`<rect x="0" y="0" width="${width}" height="${height}" fill="${GROUND}"/>`);
-  const cellRect = (r: Rect, opacity: number): string =>
-    `<rect x="${round(r.x)}" y="${round(r.y)}" width="${round(r.width)}" ` +
-    `height="${round(r.height)}" style="fill:${hue.fallback};fill:${hue.p3}" ` +
-    `fill-opacity="${opacity}"/>`;
+  const cellRect = (r: Rect, fraction: number): string => {
+    // One ramp for every hue: lightness falls 0.93 -> 0.55 and chroma rises to
+    // the hue's P3 edge as completion rises, so tiers separate strongly while
+    // no hue reads brighter than another at the same tier.
+    const light = 0.93 - 0.38 * fraction;
+    const hsl = `hsl(${hue.hslHue}, ${Math.round(fraction * 95)}%, ${Math.round(93 - 38 * fraction)}%)`;
+    const ok = `oklch(${light.toFixed(3)} ${(hue.okCmax * fraction).toFixed(3)} ${hue.okHue})`;
+    return `<rect x="${round(r.x)}" y="${round(r.y)}" width="${round(r.width)}" ` +
+      `height="${round(r.height)}" style="fill:${hsl};fill:${ok}"/>`;
+  };
   const placed = squarify(area.tiles, (tile) => tile.bytes, { x: 0, y: 0, width, height });
   for (const cell of placed) {
     const inner = {
@@ -1403,7 +1404,7 @@ export function renderBoxTree(
     const lanes = cell.item.lanes as Record<string, number>;
     const total = laneOrder.reduce((sum, lane) => sum + (lanes[lane] ?? 0), 0);
     if (total <= 0) {
-      lines.push(cellRect(inner, laneOpacity[laneOrder[laneOrder.length - 1]] ?? 0.12));
+      lines.push(cellRect(inner, laneFraction[laneOrder[laneOrder.length - 1]] ?? 0.08));
       continue;
     }
     let offset = 0;
@@ -1415,7 +1416,7 @@ export function renderBoxTree(
         y: inner.y + inner.height * offset,
         width: inner.width,
         height: inner.height * share,
-      }, laneOpacity[lane] ?? 0.12));
+      }, laneFraction[lane] ?? 0.08));
       offset += share;
     }
   }
@@ -1443,7 +1444,7 @@ export function renderBoxTrees(map: CoverageMap, tree?: SourceTree): Record<BoxT
   return {
     core: renderBoxTree(core, "Main-image code coverage box tree, purple band"),
     overlays: renderBoxTree(overlays, "Decoded overlay code coverage box tree, cyan band", OVERLAY_HUE),
-    assets: renderBoxTree(assetsArea, "Asset maturity box tree, pink band", ASSET_HUE, ASSET_OPACITY,
+    assets: renderBoxTree(assetsArea, "Asset maturity box tree, pink band", ASSET_HUE, ASSET_FRACTION,
       maturity.length ? [...ASSET_TIERS].reverse() : ["asset_data"]),
   };
 }

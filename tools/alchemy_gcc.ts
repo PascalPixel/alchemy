@@ -444,7 +444,13 @@ const SCHED_HIGH_DEST_FIRST_SOURCES = new Set(["08098954", "0809a294", "08097540
 // Keyed by stem, so every member here is also a claim that no other overlay has
 // a converted row at the same offset. 02001984 was moved out to the path-keyed
 // set below when resource_3b4 gained a row at that offset that the flag breaks.
-const SCHED_LOW_DEST_FIRST_SOURCES = new Set(["08097540", "020011bc", "02001958", "02000260", "020011d8"]);
+const SCHED_LOW_DEST_FIRST_SOURCES = new Set([
+  "08097540", "020011bc", "02001958", "02000260", "020011d8",
+  // resource_3b1's flat setter-sequence unindexed rows: a shifted constant
+  // argument (movs/lsls) with the callee's other args set between the two
+  // halves. Verified no other overlay owns these stems (bare-address key).
+  "02003dec", "02003e34", "02003d10",
+]);
 const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
   // resource_3b7:0154 and :0178 are the same four-call sheet over two ids. The
   // third call takes -1, built as movs #1 then negs, and the reference sets the

@@ -440,6 +440,33 @@ reads as a sign test if the quantisation above it was missed.
 without knowing any import: only the affordable arm calls the charge import with
 the *negated* amount.
 
+**The offset-0 export table is a COMPLETE LINK-BASE PROOF on its own, not just a
+root-finder — try it before any other witness.** `resource_3a2`'s six export
+words (`0x020091b1, 0x0200807d, 0x020080b1, 0x020080b9, 0x02009181,
+0x020080ad`) are all odd, all resolve at `word - 0x8000` onto function starts,
+and four of those starts are already-banked byte-exact siblings. That is six
+parity witnesses plus four banked cross-checks from a single
+`overlay_show <ov> 0 -n 96` — stronger than the jump-table and task-install
+witnesses this section recommends, and cheaper than both. The wider `_overlay.s`
+grep then confirmed it with zero exceptions: all 21 odd words on function
+starts, all 5 even words past the import band.
+
+**A window test spelled `subs / lsls #16 / cmp` is a two-value selector.**
+`resource_3a2:12a4` loads a sub-state unsigned, subtracts 4, shifts left 16 and
+compares against `0x00010000` — that selects exactly `{4, 5}`. Undo the shift or
+it reads as an arbitrary magnitude comparison.
+
+**`movs r2,#N / lsls r2,r2,#1` appears as a displacement AND as a value inside
+one owner, and it is a family-wide codegen habit rather than a one-owner trap.**
+Documented for `02000180`; `resource_3a2:11b0` does it twice more (448 as a `str`
+displacement, then `adds r2,#65` making 513 the stored *value*) and `:0c30`
+once.
+
+**Two workspace slots hang off the same `0x03001ebc` pointer and are easy to
+conflate.** `+472` is the u16 skip-beat counter; `+448` is an s32 scene/phase id
+published on entry with a per-scene constant (32 from `02000180`, 256 from
+`resource_3a2:11b0`, 513 from both `:01ec` and `:0c30`).
+
 **An overlay's image offset 0 can be an exported-entry veneer table.** In
 `resource_3b5` it is a run of `ldr r4,[pc,#0] / bx r4 / .word 0x0200_8xxx` pairs;
 resolving those words under the link base hands you the overlay's *roots* for
@@ -1575,6 +1602,16 @@ span from the pool rule.
 ---
 
 ## 2. Workflow
+
+**NEVER leave a draft under `semantic/` — scratch belongs in the scratchpad.**
+The banking scripts on both lanes (`venus_bank.sh`, `bank_cycle.sh`) sweep with
+`git add -A`, deliberately: lanes are told not to commit, so something has to
+pick their finished work up, and a completed source sitting untracked between
+rounds is the worse failure. The consequence is that **a file under `semantic/`
+is a claim of being finished, and the sweep will believe it.** The matching rule
+for whoever banks: a commit is not evidence that a proof happened, so a banked
+file whose lane report has not been read and recorded is an open item, not a
+finished one.
 
 **Span rule.** Function start through its own literal pool. The pool follows the
 final return after an optional 2-byte zero alignment word — include both. With no

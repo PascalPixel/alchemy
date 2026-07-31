@@ -637,6 +637,9 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // destination order at both.
   "assets/code/resource_383_c_020019a4.c",
   "assets/code/resource_3bf_c_02000bac.c",
+  // resource_3b6:0898 sets r0/r1/r2 for a three-argument call; ascending
+  // destination order.
+  "assets/code/resource_3b6_c_02000898.c",
   // resource_3a2:0870 and :08a8 each set r0/r1/r2 for a three-argument call and
   // the reference orders them by ascending destination. :08a8 also needs the
   // constant-sharing mode: both of its negated arguments are -1, so CSE builds
@@ -855,6 +858,9 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   // resource_38d:01b4 loads its 0x302 flag id at the test and again at the set.
   "assets/code/resource_38d_c_020001b4.c",
   "assets/code/resource_38d_c_0200028c.c",
+  // resource_3a7:0368 loads its 0x9a9 request id at the guard call and again
+  // at the commit call, the same shape as :03e0 in this overlay.
+  "assets/code/resource_3a7_c_02000368.c",
 ]);
 // -fno-gcse routed by path rather than by stem, for overlay rows whose address
 // is also an offset in another overlay that is already converted.
@@ -1135,7 +1141,7 @@ export function evidencedRoutingFlags(): string[] {
 const ADDRESS_SYMBOL = /^(Func|Data|Value)_([0-9a-f]{8})(?:_[a-z])?$/;
 const CALL_VIA_SYMBOL = /^_call_via_r(1[0-3]|[0-9])$/;
 const CALL_VIA_ALIAS = /^_call_via_(sl|fp|ip|sp)$/;
-const CALL_VIA_BASE = 0x080072e4;
+export const CALL_VIA_BASE = 0x080072e4;
 const CALL_VIA_REGISTERS: Record<string, number> = { sl: 10, fp: 11, ip: 12, sp: 13 };
 
 export interface ExternalSymbol {
@@ -1143,7 +1149,76 @@ export interface ExternalSymbol {
   thumb: boolean;
 }
 
-export function externalSymbol(name: string): ExternalSymbol | null {
+// `callViaBase` names the `bx rN` bank the `_call_via_rN` stubs branch through.
+// Every overlay carries its own bank, so a caller that knows which image it is
+// linking passes that bank's address; the default is the main image's, which is
+// what a `src/` translation unit links against.
+// Address of each overlay's own `_call_via_rN` bank, in the space the
+// reconstruction links against.
+//
+// An indirect call compiles to `bl _call_via_rN`, a stub that is nothing but
+// `bx rN`. Every overlay carries its own bank, so resolving the stub to the
+// main image's puts the branch a few bytes wrong: the row compares clean and
+// then fails adoption, because the comparator never links. Roughly half the
+// overlay rows that still have a semantic reference make an indirect call.
+//
+// Derive a new entry with `callViaBankBase` from `overlay_disasm.ts`, run
+// against the overlay's assembly *before* any row that calls the bank has been
+// adopted. It cannot be derived on demand: the address a `bl` encodes for a
+// slot and the slot's own address in the image differ by a per-overlay constant
+// (resource_373 +0x60, resource_3bc +0x19e), so the derivation has to read a
+// real call into the bank -- and once that row is C, the assembly no longer has
+// one. Hence a table, recorded once, rather than a scan on every build.
+const OVERLAY_CALL_VIA_BASE: Record<string, number> = {
+  resource_373: 0x020061b4,
+  resource_382: 0x02003138,
+  resource_385: 0x020014fc,
+  resource_389: 0x02001578,
+  resource_391: 0x02002d8c,
+  resource_392: 0x02000eec,
+  resource_393: 0x02000f34,
+  resource_39b: 0x02002960,
+  resource_39c: 0x02005fb0,
+  resource_39d: 0x02004108,
+  resource_39f: 0x02002f1c,
+  resource_3a0: 0x020018bc,
+  resource_3a5: 0x02002c6e,
+  resource_3a6: 0x020020a8,
+  resource_3b2: 0x02003180,
+  resource_3b3: 0x02002f00,
+  resource_3b4: 0x02002668,
+  resource_3b5: 0x02000edc,
+  resource_3b7: 0x020028e0,
+  resource_3ba: 0x02003f4e,
+  resource_3bc: 0x02004d4e,
+  resource_3bd: 0x02003ed8,
+  resource_3be: 0x02001920,
+  resource_3bf: 0x02005810,
+  resource_3c4: 0x02003214,
+  resource_3c5: 0x02002ff8,
+  resource_3c8: 0x02005324,
+  resource_3c9: 0x02006384,
+  resource_3cb: 0x02001a96,
+};
+
+// Per-source overrides, which win over the overlay's entry.
+//
+// The stored displacement is the same at every site that reaches a given slot,
+// so the address a `bl` to it resolves to depends on where the call is. One
+// address per overlay serves every site in a *narrow* address range and not a
+// wide one, so a row far from the rest gets its own.
+const SOURCE_CALL_VIA_BASE: Record<string, number> = {
+  // Same routine as resource_373_c_02000030.c and the same slot, called from
+  // 0x563e instead of 0x5e.
+  "assets/code/resource_373_c_02005610.c": 0x0200b794,
+};
+
+export function overlayCallViaBase(overlay: string, source?: string): number {
+  const override = source === undefined ? undefined : SOURCE_CALL_VIA_BASE[sourceKey(source)];
+  return override ?? OVERLAY_CALL_VIA_BASE[overlay] ?? CALL_VIA_BASE;
+}
+
+export function externalSymbol(name: string, callViaBase = CALL_VIA_BASE): ExternalSymbol | null {
   const addressed = name.match(ADDRESS_SYMBOL);
   if (addressed !== null) {
     return {
@@ -1154,14 +1229,14 @@ export function externalSymbol(name: string): ExternalSymbol | null {
   const callVia = name.match(CALL_VIA_SYMBOL);
   if (callVia !== null) {
     return {
-      address: CALL_VIA_BASE + Number.parseInt(callVia[1], 10) * 4,
+      address: callViaBase + Number.parseInt(callVia[1], 10) * 4,
       thumb: true,
     };
   }
   const callViaAlias = name.match(CALL_VIA_ALIAS);
   if (callViaAlias !== null) {
     return {
-      address: CALL_VIA_BASE + CALL_VIA_REGISTERS[callViaAlias[1]] * 4,
+      address: callViaBase + CALL_VIA_REGISTERS[callViaAlias[1]] * 4,
       thumb: true,
     };
   }
@@ -1175,8 +1250,8 @@ export function externalSymbol(name: string): ExternalSymbol | null {
 // reader at 08006ba8 loads 0x08006b85 and clears the tag at run time).
 // `.thumb_set` is the alias form that keeps the branch type, so both the
 // branch offset and the tagged data word come out right.
-export function externalSymbolAssembly(name: string): string {
-  const symbol = externalSymbol(name);
+export function externalSymbolAssembly(name: string, callViaBase = CALL_VIA_BASE): string {
+  const symbol = externalSymbol(name, callViaBase);
   if (symbol === null) throw new Error(`unsupported external symbol: ${name}`);
   const directive = symbol.thumb ? ".thumb_set" : ".set";
   return `.global ${name}\n${directive} ${name}, 0x${symbol.address.toString(16).padStart(8, "0")}\n`;

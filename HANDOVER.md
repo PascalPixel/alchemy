@@ -2411,6 +2411,28 @@ from the stamp.
 
 Ordered roughly by how often they decide a function.
 
+**Three source-shape levers read straight off line one of the comparator.** All
+three are free — no flag, no routing entry — and each is a one-line edit:
+
+- **`lsl rA, rA, #k` against your `lsl rB, rA, #k`: write the shift in place.**
+  The reference clobbers the value because it is dead after the shift; a source
+  that spells `dst = base + (step << 16)` keeps `step` live in gcc's eyes and
+  buys a second register. `step <<= 16;` on its own line, then
+  `dst = base + step;`, and the register identity falls out. Three sites at once
+  on `resource_39f:00c4` (18 groups → 12) and two on `:02a8`.
+- **`push` differs by a callee-saved register the reference keeps for an index:
+  give the index its own local.** `:02a8` recomputed `*(u16 *)(actor + 6) >> 12`
+  in both halves of the routine; the reference computes it once and re-reads the
+  table through it, which is what puts r7 in the prologue. Hoisting it to a
+  local named `stepIndex` took 47 groups → 13 in one edit. The semantic sources
+  in the same family already spell it that way — compare siblings before
+  drafting.
+- **`bls` against your `ble` (or `bhi`/`bgt`): the loop bound is unsigned.**
+  `for (index = 0; index <= 5; index++)` with a signed index emits the signed
+  branch; the reference's `bls` says the counter is `u32`. One typedef and one
+  declaration. Distinct from the arm-order flip below — the mnemonics differ by
+  signedness, not by sense, and the arms are in the right order already.
+
 **Argument-setter order is set by the callee's declared return type.** `s32`
 emits `movs r1` before `movs r0`; `void` emits r0 first. `(void)Func(...)` does
 **not** work — the `CALL_EXPR`'s own type is unchanged, which is why years of
@@ -2445,6 +2467,29 @@ Seen on `resource_3b4:18e0` and `:1bc4` (reference pushes only `lr` — no room)
 and on `3bc:0404` (reference already pushes `r8`/`sl` — no room either). Both
 ends of the range fail for the same reason. Read line 1 first; if the pushes
 differ, do not spend the probe.
+
+**Where the local is *assigned* decides which register it gets.** Function scope
+is necessary but not sufficient. If the reference holds a stack argument in a
+**callee-saved** register across the r0-r3 setup —
+`mov r5,#0 / str r3,[sp] / mov r0..r3 / str r5,[sp,#4]` — the local has to be
+assigned at the **top of the enclosing block**, not on the line before the call.
+Assigned at the call its live range is short, gcc picks a scratch register and
+stores it immediately (`mov r2,#0 / str r2,[sp,#4] / mov r0..r3`); assigned at
+the top of the block the range crosses the argument setup and the allocator buys
+r5. `resource_39f:1454` went 7 groups → 1 on that one moved line. The two
+placements are otherwise identical source, so probe both before parking.
+
+**`ldmia rN!, {r0, r1}` / `stmia rM!, {r0, r1}` at a call site means an aggregate
+argument, not four loads you failed to fuse.** gcc emits its block move when a
+struct is passed **by value** and spills past r0-r3: the first four words go in
+registers and the tail is copied into the outgoing area. The tell is exact —
+`mov r3, sp` (dest) and `add r2, sp, #k` (source) straddling the `ldmia`/`stmia`
+pair, with `k` equal to the local's offset plus 16. Spell the argument
+`struct { s32 word[6]; }` passed by value and the whole prologue falls into
+place: `resource_39f:1454` went 23 groups → 8 and `:0f94` 15 → 3 on that change
+alone. Passing the tail as a *separate* two-word struct does **not** reproduce it
+— that gives individual loads and costs a register. It is the whole record or
+nothing.
 
 **Multi-arity callees use the `_b`/`_c` alias suffix**, not K&R declarations —
 and this changes argument-setup order, not just hygiene. A shared prototype-less

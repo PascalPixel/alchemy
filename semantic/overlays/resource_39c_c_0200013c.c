@@ -43,15 +43,20 @@ typedef unsigned int u32;
  * Fields 0x30 and 0x34 on the spawned object are zeroed unconditionally
  * first and then, only under the bit-18 gate, recomputed through one of
  * two different callee pairs depending on whether bit 19 populated fields
- * 0x24/0x28 first (`Func_02005be8`/`Func_02005c0e` if so, else
+ * 0x18/0x1c first (`Func_02005be8`/`Func_02005c0e` if so, else
  * `Func_02005c00`/`Func_02005c0e` with a flat `-0x10000` adjustment
- * instead of the field-0x24/0x28 subtraction) -- recorded exactly as
+ * instead of the field-0x18/0x1c subtraction) -- recorded exactly as
  * compiled, not unified.
  *
  * Uncertainty: none of the ten callees, `Func_02005c32`'s result, `entry`,
  * or `extra`'s field roles are identified beyond this call shape; the
  * default spawn-argument constant 0xde is recorded as read, not decoded
  * further.
+ *
+ * Correction (caught while adapting this routine's byte-identical
+ * resource_3c9 copy): the bit-19 copy and the bit-18 subtraction read
+ * object fields 0x18/0x1c ([r6, #24]/[r6, #28]), not 0x24/0x28 as this
+ * file's first draft said -- four sites fixed against the disassembly.
  */
 
 extern u8 *Func_02005c32(s32 arg0);
@@ -123,20 +128,20 @@ void Func_0200013c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8
     }
 
     {
-        s32 field24Copied = (flags & 0x80000) != 0;
+        s32 field18Copied = (flags & 0x80000) != 0;
         s32 entryField0xc = *(s32 *)(entry + 0xc);
 
-        if (field24Copied) {
-            *(s32 *)(object + 0x24) = *(s32 *)(extra + 8);
-            *(s32 *)(object + 0x28) = *(s32 *)(extra + 12);
+        if (field18Copied) {
+            *(s32 *)(object + 0x18) = *(s32 *)(extra + 8);
+            *(s32 *)(object + 0x1c) = *(s32 *)(extra + 12);
         }
 
         if ((flags & 0x40000) != 0) {
-            if (field24Copied) {
+            if (field18Copied) {
                 *(s32 *)(object + 0x30) =
-                    Func_02005be8(*(s32 *)(extra + 0x10) - *(s32 *)(object + 0x24), entryField0xc);
+                    Func_02005be8(*(s32 *)(extra + 0x10) - *(s32 *)(object + 0x18), entryField0xc);
                 *(s32 *)(object + 0x34) =
-                    Func_02005c0e(*(s32 *)(extra + 0x14) - *(s32 *)(object + 0x28), entryField0xc);
+                    Func_02005c0e(*(s32 *)(extra + 0x14) - *(s32 *)(object + 0x1c), entryField0xc);
             } else {
                 *(s32 *)(object + 0x30) =
                     Func_02005c00(*(s32 *)(extra + 0x10) - 0x10000, entryField0xc);

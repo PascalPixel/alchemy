@@ -184,14 +184,27 @@ function admittedStems(): Set<string> {
   return stems;
 }
 
-/** Spans of owners already registered as whole modules. */
-function registeredSpans(): { lo: number; hi: number }[] {
+interface AddressRange { start: number; end: number }
+
+/** Registered semantic coverage plus reviewed ranges that deliberately stay non-C. */
+function registeredCoverage(): {
+  ownerSpans: { lo: number; hi: number }[];
+  executableRanges: AddressRange[];
+  nonCRanges: AddressRange[];
+} {
   const path = join(ROOT, "semantic", "main-regions.json");
-  if (!existsSync(path)) return [];
+  if (!existsSync(path)) return { ownerSpans: [], executableRanges: [], nonCRanges: [] };
   const registry = JSON.parse(readFileSync(path, "utf8")) as {
+    non_c_ranges?: { address: string; size: number; kind: string; evidence: string }[];
     main_owners: { executable_ranges: { address: string; size: number }[] }[];
   };
-  return registry.main_owners.map((owner) => {
+  const executableRanges = registry.main_owners.flatMap((owner) =>
+    owner.executable_ranges.map((range) => ({
+      start: parseInt(range.address, 16),
+      end: parseInt(range.address, 16) + range.size,
+    }))
+  );
+  const ownerSpans = registry.main_owners.map((owner) => {
     const ranges = owner.executable_ranges.map((range) => ({
       start: parseInt(range.address, 16),
       end: parseInt(range.address, 16) + range.size,
@@ -201,6 +214,43 @@ function registeredSpans(): { lo: number; hi: number }[] {
       hi: Math.max(...ranges.map((range) => range.end)),
     };
   });
+  const nonCRanges = (registry.non_c_ranges ?? []).map((range) => {
+    const start = parseInt(range.address, 16);
+    if (!/^0x08[0-9a-f]{6}$/i.test(range.address) ||
+        !Number.isSafeInteger(range.size) || range.size <= 0 ||
+        range.kind.trim() === "" || range.evidence.trim() === "") {
+      throw new Error(`invalid non-C range ${JSON.stringify(range)}`);
+    }
+    return { start, end: start + range.size };
+  });
+  for (let index = 0; index < nonCRanges.length; index++) {
+    for (let other = index + 1; other < nonCRanges.length; other++) {
+      if (nonCRanges[index].start < nonCRanges[other].end &&
+          nonCRanges[other].start < nonCRanges[index].end) {
+        throw new Error("overlapping non-C ranges in semantic/main-regions.json");
+      }
+    }
+    if (executableRanges.some((range) =>
+      nonCRanges[index].start < range.end && range.start < nonCRanges[index].end)) {
+      throw new Error("non-C range overlaps registered semantic executable coverage");
+    }
+  }
+  return { ownerSpans, executableRanges, nonCRanges };
+}
+
+function overlaps(region: Pick<Region, "address" | "size">, range: AddressRange): boolean {
+  return region.address < range.end && range.start < region.address + region.size;
+}
+
+function censusDeclaredClosed(): boolean {
+  const path = join(ROOT, "semantic", "main-regions.json");
+  if (!existsSync(path)) return false;
+  const registry = JSON.parse(readFileSync(path, "utf8")) as {
+    ordinary_census?: { status?: string; check?: string; evidence?: string };
+  };
+  return registry.ordinary_census?.status === "closed" &&
+    registry.ordinary_census.check === "bun run semantic:check" &&
+    (registry.ordinary_census.evidence?.trim().length ?? 0) > 0;
 }
 
 export function openOwners(): Owner[] {
@@ -208,7 +258,7 @@ export function openOwners(): Owner[] {
     readFileSync(join(ROOT, "out", "full", "asm", "manifest.json"), "utf8"),
   ) as { regions: Region[] };
   const admitted = admittedStems();
-  const spans = registeredSpans();
+  const coverage = registeredCoverage();
   // Group over EVERY region, not just the open continuation ones. An owner's
   // epilogue frequently lives in a neighbouring row of a different retention —
   // grouping only the open rows makes such an owner look unclosed, which reads
@@ -238,7 +288,14 @@ export function openOwners(): Owner[] {
     // bytes the tool reported as open**. The genuine remainder was ~1,830 bytes
     // across 11 small owners. A boundary tool that overstates the work by 6x
     // sends lanes at rows that are already done.
-    if (spans.some((span) => region.address >= span.lo && region.address < span.hi)) continue;
+    // A manifest row can begin with alignment before one or more registered
+    // leaf functions (0801c9be, 08021dfa, 080dbb9a, 080e72de). Checking only
+    // the row start therefore reports already-admitted code as open. Accept an
+    // overlap with any executable range, while retaining the bounding-span
+    // rule for continuation rows split by an excluded interior pool.
+    if (coverage.executableRanges.some((range) => overlaps(region, range))) continue;
+    if (coverage.ownerSpans.some((span) => region.address >= span.lo && region.address < span.hi)) continue;
+    if (coverage.nonCRanges.some((range) => overlaps(region, range))) continue;
     open.add(stem);
   }
   // Report only owners that still contain unconverted continuation work, and
@@ -291,6 +348,10 @@ function selfTest(): void {
   if (owners.length !== 1) throw new Error(`expected 1 owner, got ${owners.length}`);
   if (owners[0].excludedBytes !== 4) throw new Error("pool not excluded");
   if (!owners[0].closed) throw new Error("owner should be closed by its epilogue");
+  if (!overlaps({ address: 0x08000000, size: 8 }, { start: 0x08000004, end: 0x0800000c }))
+    throw new Error("range overlap missed");
+  if (overlaps({ address: 0x08000000, size: 4 }, { start: 0x08000004, end: 0x08000008 }))
+    throw new Error("touching ranges must not overlap");
   console.log("self-test=ok");
 }
 
@@ -298,6 +359,16 @@ function main(): void {
   const args = Bun.argv.slice(2);
   if (args.includes("--self-test")) return selfTest();
   const owners = openOwners();
+  if (args.includes("--check")) {
+    if (!censusDeclaredClosed())
+      throw new Error("core semantic census has no reviewed closed declaration");
+    if (owners.length !== 0) {
+      const bytes = owners.reduce((sum, owner) => sum + owner.executableBytes, 0);
+      throw new Error(`core semantic census is open: ${owners.length} owners, ${bytes} bytes`);
+    }
+    console.log("core_semantic_census=closed owners=0 executable_bytes=0");
+    return;
+  }
   if (args.includes("--json")) {
     console.log(JSON.stringify(owners, null, 2));
     return;

@@ -716,6 +716,15 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // which the bare-address key was silently handing the flag to. Found by the
   // collision scan `--lint` now runs.
   "assets/code/resource_3b5_c_0200028c.c",
+  // resource_372:198c sets r0 for a three-argument call whose r1 and r2 are both
+  // finished by a `lsls`, so both shifts tie with the r0 setter.
+  "assets/code/resource_372_c_0200198c.c",
+  // resource_39f:1818 sets r0 for a three-argument call whose r1 and r2 are both
+  // finished by a `lsls #17`, so both shifts tie with the r0 setter.
+  "assets/code/resource_39f_c_02001818.c",
+  // resource_39f:0d90 sets r0 for a three-argument call whose r1 is finished by
+  // a `lsls`, so the shift ties with the r0 setter.
+  "assets/code/resource_39f_c_02000d90.c",
   // resource_38e:045c has the tell at two sites: a shifted-constant pair and a
   // negated argument, both tying with the r0 setter.
   "assets/code/resource_38e_c_0200045c.c",
@@ -869,6 +878,10 @@ const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3c9_c_02003600.c",
 ]);
 const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
+  // resource_3ad:01b0 tests flag 0x202 and then sets it, so the pooled word is
+  // read twice and the rerun caches it in r5 across the guarded block where the
+  // reference reloads it into r0 at each site. Took the row from 14 groups to 0.
+  "assets/code/resource_3ad_c_020001b0.c",
   // resource_38c:035c tests one event flag and then sets the same flag id, so
   // 768 is built twice; the rerun caches it in r5 across the guarded block and
   // turns the leaf's `push {lr}` into `push {r5, lr}`. Paired with the

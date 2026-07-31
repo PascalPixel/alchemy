@@ -3743,7 +3743,19 @@
       "overlay": "resource_3b3",
       "entry": "0x02000d78",
       "span_bytes": 48,
-      "evidence": "item-28 unindexed population, same reference-resolution basis as the resource_3b1 rows this session (bun tools/overlay_unindexed.ts). push {r5,r6,lr} at 0x02000d78, epilogue pop {r5,r6} / pop {r0} / bx r0 at 0x02000da2-0x02000da6, immediately followed with no gap by the next function's push {r5,r6,r7,lr} at 0x02000da8 (not part of this overlay's item-28 population, already indexed elsewhere), so the span is exactly 0x02000d78-0x02000da8, 48 bytes"
+      "evidence": "item-28 unindexed population, same reference-resolution basis as the resource_3b1 rows this session (bun tools/overlay_unindexed.ts). push {r5,r6,lr} at 0x02000d78, epilogue pop {r5,r6} / pop {r0} / bx r0 at 0x02000da2-0x02000da6, immediately followed with no gap by the next owner's push {r5,r6,r7,lr} at 0x02000da8, already this overlay's row 0x02000da8, so the span is exactly 0x02000d78-0x02000da8, 48 bytes"
+    },
+    {
+      "overlay": "resource_3b3",
+      "entry": "0x02000da8",
+      "span_bytes": 52,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} at 0x02000da8, epilogue pop {r5,r6,r7} / pop {r0} / bx r0 at 0x02000dd4-0x02000dd8, immediately followed with no gap by the next owner's push {r5,r6,r7,lr} plus r8 spill at 0x02000ddc, already this overlay's row 0x02000ddc, so the span is exactly 0x02000da8-0x02000ddc, 52 bytes"
+    },
+    {
+      "overlay": "resource_3b3",
+      "entry": "0x02000ddc",
+      "span_bytes": 236,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} plus r8 spill at 0x02000ddc, epilogue pop {r3} / mov r8,r3 / pop {r5,r6,r7} / pop {r1} / bx r1 at 0x02000eb2-0x02000eba; the trailing pool at 0x02000ebc-0x02000ec4 (0x03001e70, 0x0200ace0, 0x0200acf8) is included per the usual pool rule, immediately followed by the next owner's push {r5,r6,r7,lr} at 0x02000ec8, already this overlay's row 0x02000ec8 (0x02000ddc-0x02000ec8, 236 bytes)"
     },
     {
       "overlay": "resource_3b3",

@@ -28,15 +28,15 @@ game.
 
 **Core** — main-image code, 548 KB of the executable universe:
 
-![Main-image code coverage box tree: blue is byte-exact C, teal is reviewed semantic C, grey is assembly.](assets/readme/gs1-en-core.svg?v=a5246f05)
+![Main-image code coverage box tree: blue is byte-exact C, teal is reviewed semantic C, grey is assembly.](assets/readme/gs1-en-core.svg?v=40c76721)
 
 **Overlays** — decoded overlay code, 791 KB:
 
-![Decoded overlay code coverage box tree: blue is byte-exact C, teal is reviewed semantic C, grey is assembly.](assets/readme/gs1-en-overlays.svg?v=be1454bb)
+![Decoded overlay code coverage box tree: blue is byte-exact C, teal is reviewed semantic C, grey is assembly.](assets/readme/gs1-en-overlays.svg?v=a133bf9b)
 
 **Assets** — the 7.3 MB of the cartridge that is data, not code:
 
-![Asset and data box tree in pink.](assets/readme/gs1-en-assets.svg?v=045b135f)
+![Asset and data box tree in pink.](assets/readme/gs1-en-assets.svg?v=b4819753)
 
 Every byte of the English cartridge. The left card is the ROM as it ships; the
 right card is the audited executable denominator behind Full-C Byte Share. Blue

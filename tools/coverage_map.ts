@@ -1249,24 +1249,23 @@ function mapPath(target: DecompTargetId): string {
  * from a timestamp. Identical picture, identical URL: no spurious diffs on a
  * redraw that changed nothing. Different picture, different URL, immediately.
  */
-// Per-tree colour bands: each box tree stays inside one hue so the three
-// pictures cannot be cross-read. Maturity runs dark/desaturated -> vivid.
-const CORE_BAND: Record<string, string> = {
-  assembly: "#322c3e", semantic_c: "#7e5fc7", exact_c: "#a855f7",
-};
-const OVERLAY_BAND: Record<string, string> = {
-  assembly: "#2a3639", semantic_c: "#3f95a8", exact_c: "#22d3ee",
-};
+// Per-tree colour bands: each box tree is ONE hue at its most extreme
+// Display-P3 chroma; completion is encoded as opacity of that colour over a
+// dark ground (extreme = done, faint = raw). sRGB fallback rides the CSS
+// cascade for engines without P3.
+interface HueBand { fallback: string; p3: string }
+const CORE_HUE: HueBand = { fallback: "#a855f7", p3: "color(display-p3 0.55 0 1)" };
+const OVERLAY_HUE: HueBand = { fallback: "#22d3ee", p3: "color(display-p3 0 1 1)" };
+const ASSET_HUE: HueBand = { fallback: "#ff0080", p3: "color(display-p3 1 0 0.5)" };
+const GROUND = "#0a0a0a";
+const CODE_OPACITY: Record<string, number> = { exact_c: 1, semantic_c: 0.5, assembly: 0.14 };
 // Asset maturity: byte-represented -> b&w sheet -> coloured sheet -> cut into
 // individual objects (the final outcome: fanfare.wav, vale.mid, weyard.sf2,
-// spruce.png). Total pinkness is the goal state.
+// spruce.png). Total pinkness — full opacity — is the goal state.
 export const ASSET_TIERS = ["asset_bytes", "asset_bw", "asset_color", "asset_objects"] as const;
 export type AssetTier = (typeof ASSET_TIERS)[number];
-const ASSET_BAND: Record<AssetTier, string> = {
-  asset_bytes: "#4a4a4a",
-  asset_bw: "#6b5560",
-  asset_color: "#e8a3c3",
-  asset_objects: "#ff0080",
+const ASSET_OPACITY: Record<string, number> = {
+  asset_bytes: 0.12, asset_bw: 0.3, asset_color: 0.6, asset_objects: 1, asset_data: 0.12,
 };
 
 /** First-cut representation-form tier for one package, from its source names. */
@@ -1345,7 +1344,8 @@ export function assetMaturityTiles(tree: SourceTree): Tile[] {
 export function renderBoxTree(
   area: Area,
   ariaLabel: string,
-  palette: Record<string, string> = { ...CORE_BAND },
+  hue: HueBand = CORE_HUE,
+  laneOpacity: Record<string, number> = CODE_OPACITY,
   laneOrder: readonly string[] = ["exact_c", "semantic_c", "assembly"],
 ): string {
   const width = 1600;
@@ -1356,6 +1356,11 @@ export function renderBoxTree(
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" ` +
     `width="${width}" height="${height}" role="img" aria-label="${escapeText(ariaLabel)}">`,
   );
+  lines.push(`<rect x="0" y="0" width="${width}" height="${height}" fill="${GROUND}"/>`);
+  const cellRect = (r: Rect, opacity: number): string =>
+    `<rect x="${round(r.x)}" y="${round(r.y)}" width="${round(r.width)}" ` +
+    `height="${round(r.height)}" style="fill:${hue.fallback};fill:${hue.p3}" ` +
+    `fill-opacity="${opacity}"/>`;
   const placed = squarify(area.tiles, (tile) => tile.bytes, { x: 0, y: 0, width, height });
   for (const cell of placed) {
     const inner = {
@@ -1367,19 +1372,19 @@ export function renderBoxTree(
     const lanes = cell.item.lanes as Record<string, number>;
     const total = laneOrder.reduce((sum, lane) => sum + (lanes[lane] ?? 0), 0);
     if (total <= 0) {
-      lines.push(rect(inner, palette[laneOrder[laneOrder.length - 1]] ?? "#4a4a4a"));
+      lines.push(cellRect(inner, laneOpacity[laneOrder[laneOrder.length - 1]] ?? 0.12));
       continue;
     }
     let offset = 0;
     for (const lane of laneOrder) {
       const share = (lanes[lane] ?? 0) / total;
       if (share <= 0) continue;
-      lines.push(rect({
+      lines.push(cellRect({
         x: inner.x,
         y: inner.y + inner.height * offset,
         width: inner.width,
         height: inner.height * share,
-      }, palette[lane] ?? "#4a4a4a"));
+      }, laneOpacity[lane] ?? 0.12));
       offset += share;
     }
   }
@@ -1405,10 +1410,9 @@ export function renderBoxTrees(map: CoverageMap, tree?: SourceTree): Record<BoxT
         lanes: {}, tiles: maturity }
     : romData;
   return {
-    core: renderBoxTree(core, "Main-image code coverage box tree, purple band", CORE_BAND),
-    overlays: renderBoxTree(overlays, "Decoded overlay code coverage box tree, cyan band", OVERLAY_BAND),
-    assets: renderBoxTree(assetsArea, "Asset maturity box tree, pink band",
-      { ...ASSET_BAND, asset_data: ASSET_BAND.asset_bytes },
+    core: renderBoxTree(core, "Main-image code coverage box tree, purple band"),
+    overlays: renderBoxTree(overlays, "Decoded overlay code coverage box tree, cyan band", OVERLAY_HUE),
+    assets: renderBoxTree(assetsArea, "Asset maturity box tree, pink band", ASSET_HUE, ASSET_OPACITY,
       maturity.length ? [...ASSET_TIERS].reverse() : ["asset_data"]),
   };
 }

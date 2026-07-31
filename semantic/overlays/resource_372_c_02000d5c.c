@@ -36,33 +36,21 @@ typedef unsigned char u8;
  */
 
 /* Imports, old-style: interfaces unknown. */
-s32 Func_02005440();
-void Func_0200546a();
-s32 Func_02005452();
-u8 *Func_020054ac();
-void Func_02005450();
-void Func_0200564e();
-void Func_020053de();
-void Func_0200565e();
-void Func_02005558();
-void Func_0200556e();
-void Func_020054fc();
-void Func_020056c2();
-void Func_020054d8();
-void Func_020054e4();
-void Func_020056d0();
-void Func_02005510();
-void Func_02001cf4();
-void Func_0200551c();
-s32 Func_0200551a();
-s32 Func_02005524();
-s32 Func_02005530();
-u8 *Func_0200558a();
-void Func_020028d8();
-void Func_020055fa();
-void Func_020028ec();
-void Func_02005574();
-void Func_02005598();
+s32 Func_080770c0();
+void Func_0808a018();
+u8 *Func_0808a080();
+void Func_080091f0();
+void Func_080f9010();
+void Func_080000c0();
+void Func_0808a0f0();
+void Func_0808a0d0();
+void Func_0808a010();
+void Func_080091f8();
+void Func_0808a5e8();
+void Func_080770c8();
+void Func_02000ec4();
+void Func_02001a64();
+void Func_0808a020();
 
 void Func_02000d5c(void)
 {
@@ -71,25 +59,25 @@ void Func_02000d5c(void)
     u8 *flag;
     u8 *rec;
 
-    if (Func_02005440(0x310) != 0) {   /* 196 << 2 */
+    if (Func_080770c0(0x310) != 0) {   /* 196 << 2 */
         return;
     }
 
-    Func_0200546a();
+    Func_0808a018();
 
-    if (Func_02005452(0x830) == 0) {   /* 131 << 4 */
-        p = Func_020054ac(11);
+    if (Func_080770c0(0x830) == 0) {   /* 131 << 4 */
+        p = Func_0808a080(11);
         o = *(u8 **)(p + 80);
-        Func_02005450(0x40000, 0x40000, 0x10000);   /* 128<<11, 128<<11, 128<<9 */
-        Func_0200564e(141);
+        Func_080091f0(0x40000, 0x40000, 0x10000);   /* 128<<11, 128<<11, 128<<9 */
+        Func_080f9010(141);
         flag = p + 35;
-        Func_020053de(40);
-        Func_0200565e(145);
+        Func_080000c0(40);
+        Func_080f9010(145);
 
         *flag = (u8)(*flag & 254);
         o[9] = (u8)((o[9] & ~12) | 4);
 
-        Func_02005558(11, 0x1d90000, 0x3a40000);    /* 233 << 18 */
+        Func_0808a0f0(11, 0x1d90000, 0x3a40000);    /* 233 << 18 */
 
         *(s32 *)(p + 48) = 0x18000;                 /* 192 << 9 */
         *(s32 *)(p + 52) = 0x18000;
@@ -97,33 +85,33 @@ void Func_02000d5c(void)
         *(s32 *)(p + 60) = *(s32 *)(p + 12);
         *(s32 *)(p + 68) = 0x6666;
 
-        Func_0200556e(11, 0x158, 0x3a4);            /* 172<<1, 233<<2 */
+        Func_0808a0d0(11, 0x158, 0x3a4);            /* 172<<1, 233<<2 */
 
         o[9] |= 12;
         *flag = (u8)(*flag | 1);
 
-        Func_020054fc(40);
-        Func_020056c2(0x121);
-        Func_020054d8(-1, -1, 0xe666);
-        Func_020054e4();
-        Func_020056d0();
-        Func_02005510(0x830);
+        Func_0808a010(40);
+        Func_080f9010(0x121);
+        Func_080091f0(-1, -1, 0xe666);
+        Func_080091f8();
+        Func_0808a5e8();
+        Func_080770c8(0x830);
     }
 
-    Func_02001cf4();
-    Func_0200551c(0x310);
+    Func_02000ec4();
+    Func_080770c8(0x310);
 
-    if (Func_0200551a(0x837) != 0 && Func_02005524(0x841) == 0 &&
-        Func_02005530(0x30c) == 0) {                /* 195 << 2 */
-        rec = Func_0200558a(0);
+    if (Func_080770c0(0x837) != 0 && Func_080770c0(0x841) == 0 &&
+        Func_080770c0(0x30c) == 0) {                /* 195 << 2 */
+        rec = Func_0808a080(0);
         if (*(s32 *)(rec + 12) > 0x800000) {        /* 128 << 16, signed */
-            Func_020028d8(0x146, 0x396);            /* 163 << 1 */
-            Func_020055fa(0, 0x123, 0x396);
+            Func_02001a64(0x146, 0x396);            /* 163 << 1 */
+            Func_0808a0d0(0, 0x123, 0x396);
         } else {
-            Func_020028ec(0x14f, 0x3bd);
+            Func_02001a64(0x14f, 0x3bd);
         }
-        Func_02005574(0x30c);
+        Func_080770c8(0x30c);
     }
 
-    Func_02005598();
+    Func_0808a020();
 }

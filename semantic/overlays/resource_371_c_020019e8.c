@@ -20,7 +20,7 @@ typedef signed int s32;
  * names.  See resource_371_c_0200008c.c for the same proof on a smaller pair.
  *
  * A blocking cutscene beat: acquire actor 8, set it up, clear the halfword
- * frame counter at +0x64, then spin on `Func_02005bde(1)` until that counter
+ * frame counter at +0x64, then spin on `Func_080000c0(1)` until that counter
  * becomes non-zero — a signed halfword read (`ldrsh`), so the wait ends on
  * any non-zero value.  The layout used on the actor (+0x18/+0x1c amplitude
  * pair, +0x64 frame counter) is the one proven by the byte-exact sibling
@@ -45,54 +45,51 @@ typedef signed int s32;
 
 extern u8 Data_0200d158[];
 
-u8 *Func_02005cea();
-void Func_02005cd0();
-void Func_02005dfa();
-void Func_02005b90();
-void Func_02005d72();
-void Func_02005d7e();
-void Func_02005bb4();
-void Func_02005e1c();
-void Func_02005e78();
-void Func_02005d52();
-void Func_02005d68();
-void Func_02005bde();
-void Func_02005eaa();
-void Func_02005eb6();
-void Func_02005d04();
-void Func_02005e82();
-void Func_02005d5e();
+u8 *Func_0808a080();
+void Func_0808a018();
+void Func_0808a210();
+void Func_080000c0();
+void Func_0808a0f0();
+void Func_0808a200();
+void Func_0808a360();
+void Func_0808a090();
+void Func_0808a098();
+void Func_0808a368();
+void Func_0808a370();
+void Func_080770c8();
+void Func_0808a248();
+void Func_0808a020();
 
 void Func_020019e8(void)
 {
-    u8 *actor = Func_02005cea(8);
+    u8 *actor = Func_0808a080(8);
     s16 *frame;
 
-    Func_02005cd0(actor);
-    Func_02005dfa(-1, -1, -1, 0);
-    Func_02005b90(1);
-    Func_02005d72(0, 0, 0);
-    Func_02005d7e(8, 0x1f080000, 0xc80000);
+    Func_0808a018(actor);
+    Func_0808a210(-1, -1, -1, 0);
+    Func_080000c0(1);
+    Func_0808a0f0(0, 0, 0);
+    Func_0808a0f0(8, 0x1f080000, 0xc80000);
 
     *(s32 *)(actor + 0x18) = 0x14000;
     *(s32 *)(actor + 0x1c) = 0x14000;
 
-    Func_02005bb4(1);
-    Func_02005e1c(8, 1);
-    Func_02005e78();
-    Func_02005d52(8, 0x9999, 0x4ccc);
+    Func_080000c0(1);
+    Func_0808a200(8, 1);
+    Func_0808a360();
+    Func_0808a090(8, 0x9999, 0x4ccc);
 
     frame = (s16 *)(actor + 0x64);
     *frame = 0;
-    Func_02005d68(8, Data_0200d158);
+    Func_0808a098(8, Data_0200d158);
 
     do {
-        Func_02005bde(1);
+        Func_080000c0(1);
     } while (*frame == 0);
 
-    Func_02005eaa();
-    Func_02005eb6();
-    Func_02005d04(0x927);
-    Func_02005e82(105);
-    Func_02005d5e();
+    Func_0808a368();
+    Func_0808a370();
+    Func_080770c8(0x927);
+    Func_0808a248(105);
+    Func_0808a020();
 }

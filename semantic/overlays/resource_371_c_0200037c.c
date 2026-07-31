@@ -59,10 +59,8 @@ extern u8 Data_0200e2ec[];
 extern u8 Data_0200e394[];
 extern u8 Data_0200e3c4[];
 
-s32 Func_020046a8();
-s32 Func_020046b2();
-s32 Func_020046c0();
-void Func_020046ee();
+s32 Func_080770c0();
+void Func_080770c8();
 
 u8 *Func_0200037c(void)
 {
@@ -71,12 +69,12 @@ u8 *Func_0200037c(void)
 
     switch (scene) {
     case 49:
-        if (Func_020046a8(0x94f) == 0 && Func_020046b2(0x941) != 0) {
+        if (Func_080770c0(0x94f) == 0 && Func_080770c0(0x941) != 0) {
             return Data_0200e154;
         }
         break;
     case 64:
-        if (Func_020046c0(0x85a) == 0) {
+        if (Func_080770c0(0x85a) == 0) {
             return Data_0200e04c;
         }
         break;
@@ -101,6 +99,6 @@ u8 *Func_0200037c(void)
         break;
     }
 
-    Func_020046ee(0x235);
+    Func_080770c8(0x235);
     return Data_0200db84;
 }

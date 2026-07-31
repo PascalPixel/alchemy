@@ -711,6 +711,12 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // Same tell twice in resource_38c:035c, whose other lever is the rerun-cse
   // one; the flags are independent and both are needed.
   "assets/code/resource_38c_c_0200035c.c",
+  // resource_383:091c and :19e4 are the plain form of the tell: one call takes a
+  // shifted constant and the `lsls` that finishes r1 ties with the `movs` that
+  // sets r0. Both are transcriptions of Venus's semantic sources, which name
+  // this overlay's callees by veneer rather than raw, so every site was renamed.
+  "assets/code/resource_383_c_0200091c.c",
+  "assets/code/resource_383_c_020019e4.c",
   // resource_38c:0124, :01e0 and :0250 close the same overlay's family; each has
   // one `(id, 128 << k, n)` call where the finishing `lsls` ties with the `movs`
   // that sets r0. Their other half is a declaration, not a flag: the two-argument
@@ -1753,7 +1759,11 @@ export function directCompilerCommandForSource(
   ];
 }
 
-function selfTest(): void {
+// Toolchain-free guards. Kept separate from `selfTest` so `main` -- which has
+// no compiler bundle -- can run them alone via `--lint`, since the branch that
+// carried the .map arity bug for four banks is exactly the one that could not
+// execute the check that catches it.
+export function callbackArityLint(): void {
   // `externalSymbolAssembly` grew a second parameter when overlays stopped
   // sharing one `call_via` bank, and every `names.map(externalSymbolAssembly)`
   // in the tree silently started feeding it the array index: `_call_via_r3`
@@ -1786,6 +1796,10 @@ function selfTest(): void {
       `array index in as callViaBase: ${leaking.join(", ")}`,
     );
   }
+}
+
+function selfTest(): void {
+  callbackArityLint();
   const expected = [
     "08006a00", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
     "08006e24", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
@@ -2190,6 +2204,11 @@ function main(): void {
   const argument = Bun.argv[2] ?? "gs1";
   if (argument === "--self-test") {
     selfTest();
+    return;
+  }
+  if (argument === "--lint") {
+    callbackArityLint();
+    console.log("lint=ok callback-arity");
     return;
   }
   if (argument === "agbcc") {

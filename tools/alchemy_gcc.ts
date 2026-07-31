@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { readFileSync, statSync } from "node:fs";
+import { readdirSync, readFileSync, statSync } from "node:fs";
 import { basename, dirname, extname, join, relative, resolve, sep } from "node:path";
 
 export const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
@@ -1741,6 +1741,38 @@ export function directCompilerCommandForSource(
 }
 
 function selfTest(): void {
+  // `externalSymbolAssembly` grew a second parameter when overlays stopped
+  // sharing one `call_via` bank, and every `names.map(externalSymbolAssembly)`
+  // in the tree silently started feeding it the array index: `_call_via_r3`
+  // resolved to 0x0000000c instead of 0x080072f0, the assembler could not reach
+  // it with a Thumb `bl`, and each affected main-image object grew a long-branch
+  // veneer that ran past its claimed span. `build:claimed` failed to link with
+  // fifteen section overlaps and nothing in the C had changed. Passing the
+  // callback by reference is the trap; this pins both arities so it cannot
+  // return silently.
+  const direct = externalSymbolAssembly("_call_via_r3");
+  if (!direct.includes("0x080072f0")) {
+    throw new Error(`call_via default base self-test failed: ${direct.trim()}`);
+  }
+  if (!externalSymbolAssembly("_call_via_r3", 0x020061b4).includes("0x020061c0")) {
+    throw new Error("call_via explicit base self-test failed");
+  }
+  // The arity check above only pins this file. Seven tools wrote the emitter as
+  // a bare callback and all seven were wrong, so scan for the shape itself.
+  const toolsDirectory = dirname(Bun.fileURLToPath(import.meta.url));
+  const leaking = readdirSync(toolsDirectory)
+    .filter((name) => name.endsWith(".ts"))
+    .filter((name) => readFileSync(join(toolsDirectory, name), "utf8")
+      .split("\n")
+      .filter((line) => !line.trimStart().startsWith("//"))
+      .some((line) => /\.map\(\s*externalSymbol(Assembly)?\s*\)/.test(line)))
+    .sort();
+  if (leaking.length > 0) {
+    throw new Error(
+      `these pass externalSymbolAssembly to .map() by reference, which feeds the ` +
+      `array index in as callViaBase: ${leaking.join(", ")}`,
+    );
+  }
   const expected = [
     "08006a00", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
     "08006e24", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",

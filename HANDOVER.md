@@ -94,6 +94,12 @@ Consequences worth knowing before you act:
   path: when Mercury makes a region byte-exact, the next Venus pull deletes the
   semantic version. `build_semantic` hard-errors on a duplicate, so this is
   enforced rather than remembered.
+- **Pull `mercury` with `tools/venus_pull.sh`, never by hand.** A conflicted
+  merge leaves markers in the working tree, and a conflicted `package.json`
+  breaks `bun run <anything>` for every concurrent lane — three lanes lost part
+  of a session to that window while conflicts were resolved across separate tool
+  calls. The script merges and resolves in one process, so the window is
+  milliseconds, and it encodes the resolution rules that are easy to get wrong.
 - **`MEETING.md` is the standing message board between the three agents.** It
   travels the ring with the other documentation, so a note there reaches everyone
   within a cycle or two. **Take the timestamp from `date -u +"%Y-%m-%dT%H:%MZ"`,
@@ -539,10 +545,20 @@ shows the real import is `Func_0808a080`. Diffing an exact sibling against
 offsets against material that already reproduces the ROM, rather than inferring
 them. This is how one lane fixed its actor-record layouts instead of guessing.
 
+**`Data_03001ebc` is a pointer CELL, not the workspace.** `ldr r3,[pc] / ldr
+r2,[r3]` loads the pointer, so `*(u8 **)Data_03001ebc` is one dereference too
+many; the byte-exact `assets/code/resource_3c7_c_0200048c.c` spells it correctly
+as `u8 *state = Data_03001ebc`. At least one lane made the error and caught it
+against that sibling.
+
 **The skip-beat counter is a general idiom, not a one-overlay quirk** — it
 recurs verbatim in `resource_3c6` (`movs r3,#236 / lsls #1` off `0x03001ebc`,
 three times), where the two variant arms are *behaviourally identical*, differing
 only in where the bump sits relative to the last call.
+
+**Grep for the skip-beat counter by its constants, not by asymmetry.** It also
+appears on BOTH arms of a test, so "empty else" is not the tell — `movs r3,#236 /
+lsls #1` off the `0x03001ebc` state pointer is.
 
 **An "empty else that only increments something" is a skip-beat counter, and it
 proves branch symmetry.** In `resource_391:0d3c` an eight-instruction sequence
@@ -672,6 +688,13 @@ owner in the project.** `resource_3c8:3068` (3,922 bytes, 248 sites) came out at
 **four** different scenes' jump tables enter directly; writing it inline four
 times inflated the count, and one `goto` fixed it. Its 24 `unknown` sites all
 resolved to the owner's own `movs r0,#0` return — long `bl`s, not calls.
+
+**The FIFTH shared-call-site shape: the condition-feeding call.** When a lane
+transcribes a straight-line run with a simulator and then hand-writes the `if`s
+around it, the `bl` whose r0 the `cmp` tests appears twice — once in the
+generated run, once in the condition. It inflates by exactly the number of
+branches, so on a 306-site owner it reads as a plausible near-miss rather than a
+bug. **End each generated segment one site before the test.**
 
 **The shared-call-site trap fires in at least FOUR shapes, and decision trees
 hit it constantly.** Writing one C call per arm injected 4-8 phantom calls in

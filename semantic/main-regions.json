@@ -1402,6 +1402,19 @@
         { "address": "0x080f36f0", "size": 30 },
         { "address": "0x080f371c", "size": 92 }
       ]
+    },
+    {
+      "entry": "0x08090a5c",
+      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), 1816-byte keep_structured_asm row holding a single function per out/asm/manifest.json (one row, source asm/08090a5c.s): prologue push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill and sub sp,#40 at 0x08090a5c, single epilogue add sp,#40/pop.../bx r0 at 0x0809115e-0x0809116e, no branch out of the row and no inbound branch from outside it. bun tools/main_xref.ts 08090a5c: FUNCTION (called directly), nine call sites. Structural twin of 0x080f3078 (jupiter's own park note confirmed via a masked-literal diff of both .s files: same skeleton, same three shared callees, no restructuring). Drafted from 0x080f3078's own corrected source (case 1 fully re-traced independently here to confirm the shared arithmetic really does carry over unchanged; every mode/count constant and the sentinel fallback and clamp-helper/table names re-checked against this row's own addressed disassembly rather than assumed). Real deltas from 0x080f3078: default and mode-1 bucket count both resolve to 448 here (0x080f3078's mode 1 genuinely changes 512->256, this row's mode-1 store is a same-value no-op); mode 2 uses count=224 (raw, not doubled), dest+=1344, source+=448, and the DMA-path mode-2 selector offset also uses 1344 (internally consistent, unlike 0x080f3078 where two unrelated mode-2 constants happen to share one value); the selector==0x8000 sentinel reads the fixed palette-RAM address 0x05000000 instead of re-reading through source; local clamp helpers are Func_08091294/Func_080912a8 (both exact, byte-identical bodies to 0x080f3078's Func_080f3898/Func_080f38ac); the three shared lookup tables are Table_0809e96e/Table_0809e9ae/Table_0809e92e, confirmed by pool-word position across two separate clusters to play the same per-case roles as 0x080f3078's three tables. Seven literal-pool clusters (104 bytes total, including the row's own mov pc,r3 jump table at 0x08090b1c) computed programmatically against the addressed disassembly, same method as 0x080f3078's registration; eight ranges collapsed to seven here since this row's clusters merge slightly differently. Not yet checked byte-exact.",
+      "executable_ranges": [
+        { "address": "0x08090a5c", "size": 138 },
+        { "address": "0x08090af4", "size": 850 },
+        { "address": "0x08090e64", "size": 126 },
+        { "address": "0x08090ef0", "size": 22 },
+        { "address": "0x08090f14", "size": 454 },
+        { "address": "0x80910e8", "size": 30 },
+        { "address": "0x8091114", "size": 92 }
+      ]
     }
   ],
   "manual_regions": []

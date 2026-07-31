@@ -1092,6 +1092,36 @@
           "size": 18
         }
       ]
+    },
+    {
+      "entry": "0x08010230",
+      "evidence": "Single 456-byte function, 0x08010230..0x080103f6, prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 32-byte frame; one epilogue at 0x080103e6 unwinding all of it and ending pop {r0}; bx r0, so the owner is void. Excluded (44 bytes): the eleven-word pool at 0x080103f8 holding 0x03001e70 (context pointer, 0x0801023e), 0xffa00000 and 0xff880000 (the y and x view biases, 0x08010252 and 0x08010258), 0xff100000 and 0xff600000 (the x and y clamp adjustments, 0x0801026c and 0x08010288), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x080102c2), 0x0007ffff (the wrap mask and the truncating 16.19-to-tile bias, 0x080102ec, 0x08010308, 0x08010326 and 0x08010332), 0x06002800 (screen block base, 0x0801033a), 0x02010000 (map base, 0x08010382), 0x02020000 and 0x02020004 (the two quadrant tables, 0x0801038a and 0x080103a4). No alignment filler is needed - the pool begins immediately after the epilogue's last halfword - and every pool word is reached by ldr rN,[pc,#imm] from inside the range. The four mov ip,pc; bx r3 sequences at 0x080102c4 and 0x080102d4 are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec; every other call is a bl naming a ROM function and nothing in the row is retained assembly. bun tools/main_xref.ts 08010230 reports FUNCTION (called directly) with one caller at 0x0800feb6 and a published Thumb pointer at 0x08009124.",
+      "executable_ranges": [
+        {
+          "address": "0x08010230",
+          "size": 456
+        }
+      ]
+    },
+    {
+      "entry": "0x0800daf0",
+      "evidence": "Single 462-byte function, 0x0800daf0..0x0800dcbc, prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and an 8-byte frame; one epilogue at 0x0800dcac unwinding all of it and ending pop {r1}; bx r1, so r0 is the result - the constant 1 loaded at 0x0800dca8. Excluded (30 bytes): the 2-byte movs r0,r0 alignment filler at 0x0800dcbe and the seven-word pool at 0x0800dcc0 holding 0x03001e70 (context pointer, 0x0800dafe), 0xff880000 and 0xffc00000 (the maximum-x and maximum-y insets, 0x0800db28 and 0x0800db34), 0x0000ffff (the truncating 16.16-to-whole bias, 0x0800dba8 and 0x0800dbbc), 0x030001d8 (the IWRAM square root, 0x0800dbce), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x0800dbf4 and 0x0800dc4e) and 0x0300013c (the IWRAM ratio helper, 0x0800dc42). Every pool word is reached by ldr rN,[pc,#imm] from inside the range. The bl Func_080072f0 at 0x0800dbd0 and the bl Func_08007310 at 0x0800dc4a and 0x0800dc60 are the runtime _call_via_r3 and _call_via_fp thunks inside 0x080072e4..0x08007320, so they are indirect calls through the pooled 0x030001d8 and 0x0300013c; the four mov ip,pc; bx rN sequences at 0x0800dbfc, 0x0800dc08, 0x0800dc54 and 0x0800dc68 are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec. Nothing in the row is retained assembly. The bounds at 0x0800db02..0x0800db36 dereference the target record before the null test at 0x0800db42 and are consumed only after it, so the C computes them after the test; no other statement order is observable. bun tools/main_xref.ts 0800daf0 reports FUNCTION (indirectly published callback) with no inbound call and a published Thumb pointer at 0x08013650, so the caller is unknown.",
+      "executable_ranges": [
+        {
+          "address": "0x0800daf0",
+          "size": 462
+        }
+      ]
+    },
+    {
+      "entry": "0x08093c00",
+      "evidence": "Single 530-byte function, 0x08093c00..0x08093e10, prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 20-byte frame; one epilogue at 0x08093e00 unwinding all of it and ending pop {r1}; bx r1, so r0 is the result. Excluded (22 bytes): the 2-byte movs r0,r0 alignment filler at 0x08093e12 and the five-word pool at 0x08093e14 holding 0x02000240 (party state block, loaded at 0x08093c0e and 0x08093d12), 0x03001ebc (context pointer, 0x08093c40), 0xfff00000 (the whole-tile mask, 0x08093c4e), 0xffff0000 (the fall step, 0x08093d56) and 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x08093dc0). Every pool word is reached by ldr rN,[pc,#imm] from inside the range and none is branched to. The mov ip,pc; bx r4 at 0x08093dc8 is an ordinary indirect call to the pooled 0x03000118 whose landing site 0x08093dcc consumes r0 in the same frame, as recorded for 0x0800ebec; every other call is a bl naming a ROM function, and nothing in the row is retained assembly. The bl Func_08009080 at 0x08093d52 takes r0 from the Func_08093af8 result that reached 0x08093d50, on both arms of the 207/205 test, so the shared tail is written once with that value rather than duplicated per arm. bun tools/main_xref.ts 08093c00 reports FUNCTION (called directly) with one caller at 0x0808d94c and a published Thumb pointer at 0x0808a2a4.",
+      "executable_ranges": [
+        {
+          "address": "0x08093c00",
+          "size": 530
+        }
+      ]
     }
   ]
 }

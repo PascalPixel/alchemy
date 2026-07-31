@@ -6372,6 +6372,12 @@
       "entry": "0x02000f8c",
       "span_bytes": 1220,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started and returning but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_380 f8c 1450, the +2 rule: 118 sites, 102 import-veneer, 16 to the drafted local wrapper 0x02004248); span read from the disassembly through the tail pool 0x02001448-0x0200144f to the next owner's prologue at 0x02001450 (already drafted), inside the assembled overlay image and not overlapping another recorded owner; the apparent branch at 0x020013a8 is the mid-function pool word 0xffffe667, not control flow."
+    },
+    {
+      "overlay": "resource_380",
+      "entry": "0x020027f8",
+      "span_bytes": 5932,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started and returning but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_380 27f8 3f24, the +2 rule: 556 sites, 516 import-veneer, 40 to drafted locals 0x02004248/0x02004328); one push/epilogue pair 0x020027f8-0x02003ef0, span read through the tail pool to the next owner's prologue at 0x02003f24, inside the assembled overlay image and not overlapping another recorded owner; the census's ~930-byte estimate measured to the first pool masquerade, and the 0xffffe667 pool word decodes as a phantom b.n at 0x02002c24 and 0x02003078 -- neither is control flow."
     }
   ]
 }

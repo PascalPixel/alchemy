@@ -417,6 +417,16 @@ distinct targets** — 1,047 veneer, 116 prologue, 1 `call_via`. The same collap
 holds on 371/372/373/38f/3b8/3bf/3c4/3c8, where 700-1,900 sites reduce to 70-133
 distinct displacements.
 
+**A byte-exact sibling names the imports for you — backwards.** The banked
+`assets/code/resource_3b6_c_0200073c.c` was written with the printed (wrong)
+`bl` names, but resolving its four sites through the rule gives veneer offsets
+0x9e0/0xa38/0xa48/0x9e8 → `Func_0808a018`/`0808a170`/`0808a180`/`0808a020`. That
+turned an already-banked file into a *proof* of the begin/message/act/end quartet
+used by nine of that overlay's fifteen rows, and settled the `void` return and
+the `s32` subject type without inference. Diff an exact sibling against
+`overlay_call_targets.ts` on sight — the wrong names are a consistent mapping,
+so they invert.
+
 Independent confirmations beyond the arithmetic: `resource_39f:00c4`'s three
 lookups — the exact case this file previously listed as unexplained, decoding to
 join points *inside itself* — all resolve to `0x0200006c`, whose byte-exact
@@ -572,6 +582,35 @@ here is a dropped argument register rather than a moved counter bump.
 Collapsing three such pairs in `resource_3ca:0430` would have deflated the
 multiset by six. Identical behaviour is not a licence to merge arms — the
 per-target count is over call *sites*, not over distinct behaviour.
+
+**`goto` is sometimes the FAITHFUL spelling, and per-arm copies are not.**
+`resource_3b6:05a8` reaches one `Func_0808a170` from two arms and the following
+`Func_0808a180` from three. Restructuring into per-arm copies would have inflated
+the per-target site count by two; two labels and a `goto` keep the multiset
+exact. Treat a shared tail as evidence for a label, not for duplication —
+inflation and deflation are the same class of error.
+
+**Two near-twin owners are worth diffing before either is written.** In
+`resource_3b6`, `0200066c` and `0200091c` differ in a way that exposed a
+genuinely *dropped* argument (0x080b0008 takes `(27, subject)`, 0x080b0010 takes
+`(subject)`); folding them would have normalised that away. In the same overlay
+`06ec`/`0760`/`08cc` are byte-identical over all 80 bytes except **one pool
+word** (0x239e/0x1fbb/0x23ac) with bit-identical `bl` halfwords — three files for
+the price of one, with a correctness proof attached.
+
+**Fixed-point argument constants identify an import.** `Func_0808a090`'s
+arguments across `resource_3b6:013c` are 0x10000/0x8000, 0x16666/0xb333,
+0x1cccc/0xe666 — 1.0/0.5, 1.4/0.7, 1.8/0.9 against 0x10000 as one. Consistent
+x/y pairs in 16.16 are cheap evidence for a scale setter, and cost nothing to
+check.
+
+**`0x02000240` is BOTH a cross-overlay RAM global block and a plausible file
+offset — a live trap for anyone typing a pool word by eye.** In
+`resource_3c2` the overlay's largest function sits at file offset 0x240; in
+`resource_3b6:03dc` the identical constant is a RAM address, proved not in-image
+because it is below the link band (link base 0x02008000, in-image address =
+`pool_word - 0x8000`). Spell the RAM one `(u8 *)0x02000240`, as `resource_370`
+does. Check the band before deciding which one a constant is.
 
 **The skip-beat guard appears with BOTH polarities, sometimes in one overlay.**
 `resource_377:0f90` tests `Func_0808a070(0,0) == 1` twice while `:0578` tests
@@ -989,6 +1028,19 @@ pool runs to the next label cannot.
 the gap consumes it — so the gap cannot be a body boundary. Both "run to the next
 label" and "run to the next branch target" would have mis-sized that owner by
 ~800 bytes. Use it as a sanity check on any walk-derived pool.
+
+**Interior pools vary in size — do not assume the usual 8–12 bytes.**
+`resource_3b6:05a8`'s is *six* bytes (one alignment halfword plus a single mask
+word), and the halfword immediately after it is code *and* a live `bne` target.
+Reading the customary pool length would have eaten a real instruction.
+
+**The manifest's `calls` field is a FLOOR, not an equality test — it only ever
+undercounts.** Five `resource_3b6` rows exceeded it (`013c` 54 vs 49, `0328`
+24 vs 23, `05a8` 16 vs 14, `07b0` 19 vs 18), in every case with the extra sites
+on reachable paths and no interior pool nearby. This documents the *opposite*
+direction from the overcount trap above (pool words decoding as BL pairs), and
+it is the safe one: a shortfall cannot hide an unplaced call, so treat a row
+that beats its advertised count as normal and a row that falls short as a bug.
 
 **Derive the pool map from a CONTROL-FLOW WALK. That method is immune to both
 traps below; nothing else is.** Walk the owner from its prologue following

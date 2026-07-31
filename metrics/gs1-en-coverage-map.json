@@ -7,16 +7,16 @@
   "executable_bytes": 1339582,
   "lanes": {
     "exact_c": {
-      "bytes": 225932,
-      "percent_of_executable": 16.87
+      "bytes": 227172,
+      "percent_of_executable": 16.96
     },
     "semantic_c": {
-      "bytes": 699910,
-      "percent_of_executable": 52.25
+      "bytes": 699474,
+      "percent_of_executable": 52.22
     },
     "assembly": {
-      "bytes": 413740,
-      "percent_of_executable": 30.89
+      "bytes": 412936,
+      "percent_of_executable": 30.83
     },
     "asset_data": {
       "bytes": 7300700,
@@ -30,15 +30,15 @@
   },
   "overlays": {
     "executable_bytes": 791218,
-    "exact_c_bytes": 124588,
-    "semantic_c_bytes": 300482
+    "exact_c_bytes": 125828,
+    "semantic_c_bytes": 300046
   },
   "provenance": {
     "exact_lane": "origin/mercury",
     "semantic_lane": "origin/venus",
-    "semantic_sources": 1385,
-    "semantic_superseded_bytes": 1040,
-    "semantic_outside_extent_bytes": 13460,
+    "semantic_sources": 1387,
+    "semantic_superseded_bytes": 1240,
+    "semantic_outside_extent_bytes": 13472,
     "semantic_unresolved": []
   },
   "rom_areas": [
@@ -58,9 +58,9 @@
       "label": "Compressed code overlays",
       "bytes": 539544,
       "lanes": {
-        "exact_c": 86425,
-        "semantic_c": 202748,
-        "assembly": 250371
+        "exact_c": 87369,
+        "semantic_c": 202397,
+        "assembly": 249778
       },
       "tiles": 11
     },
@@ -91,9 +91,9 @@
       "label": "Decoded code overlays",
       "bytes": 791218,
       "lanes": {
-        "exact_c": 124588,
-        "semantic_c": 300482,
-        "assembly": 366148
+        "exact_c": 125828,
+        "semantic_c": 300046,
+        "assembly": 365344
       },
       "tiles": 96
     }

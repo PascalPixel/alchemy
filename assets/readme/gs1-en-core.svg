@@ -1,14 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Main-image code coverage box tree, purple band">
 <rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
 <rect x="1" y="1" width="177.3" height="5.9" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
-<rect x="1" y="6.9" width="177.3" height="13.6" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
-<rect x="1" y="20.5" width="177.3" height="128.5" style="fill:hsl(275, 0%, 93%);fill:oklch(0.930 0.000 295)"/>
+<rect x="1" y="6.9" width="177.3" height="14.2" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
+<rect x="1" y="21" width="177.3" height="128" style="fill:hsl(275, 0%, 93%);fill:oklch(0.930 0.000 295)"/>
 <rect x="1" y="151" width="177.3" height="64.7" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
 <rect x="1" y="215.7" width="177.3" height="75" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
 <rect x="1" y="290.6" width="177.3" height="8.4" style="fill:hsl(275, 0%, 93%);fill:oklch(0.930 0.000 295)"/>
 <rect x="1" y="301" width="177.3" height="41.5" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
-<rect x="1" y="342.5" width="177.3" height="42.2" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
-<rect x="1" y="384.7" width="177.3" height="64.3" style="fill:hsl(275, 0%, 93%);fill:oklch(0.930 0.000 295)"/>
+<rect x="1" y="342.5" width="177.3" height="42.7" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
+<rect x="1" y="385.2" width="177.3" height="63.8" style="fill:hsl(275, 0%, 93%);fill:oklch(0.930 0.000 295)"/>
 <rect x="1" y="451" width="177.3" height="38.5" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
 <rect x="1" y="489.5" width="177.3" height="64.6" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
 <rect x="1" y="554.1" width="177.3" height="44.9" style="fill:hsl(275, 0%, 93%);fill:oklch(0.930 0.000 295)"/>

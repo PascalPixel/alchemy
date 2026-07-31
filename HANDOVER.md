@@ -141,6 +141,15 @@ still open (§8).
 Alongside the exact lane, reviewed semantic C currently accounts for **683,124
 executable bytes across 1,299 compiling sources**: 385,850 main-image bytes and
 297,274 overlay bytes. Combined with exact C, **897,308 / 1,339,580 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **662,952
+executable bytes across 1,253 compiling sources**: 385,850 main-image bytes and
+277,102 overlay bytes. Combined with exact C, **877,080 / 1,339,580 executable
+bytes** are expressed as C.
+Build that lane with `bun run build:semantic`; its
+sources live under `semantic/` and do not claim byte equality. Use
+`semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
+of the ordinary review queue.
+
 bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
 sources live under `semantic/` and do not claim byte equality. Use
 `semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
@@ -485,6 +494,38 @@ confirms it is data.
 `resource_3b5:0170` loads `[r3,#0]` and `[r3,#48]` off it. Reading those as two
 unrelated globals hides that the second is the well-known workspace pointer the
 rest of the overlay loads directly.
+
+**Offset-0 veneer tables come in TWO flavours, and only one of them is a call.**
+`resource_389`'s table mixes real entry veneers (`ldr r4,[pc,#0] / bx r4`) with
+the constant-loader shape (`ldr r0,[pc,#0] / bx lr`) at 0x0b50/0x0b5c/0x0b64,
+plus a bare `movs r0,#0 / bx lr` at 0x0b58. Resolving the table therefore hands
+you roots *and* exported data-address accessors — three of six entries here were
+the latter. Do not assume every entry names a function.
+
+**A three-word scene-script record names its callback AND its actor selector.**
+Shape `(selector | flag << 16, callback | 1, parameter)`. Corroborated five times
+across `resource_389`/`resource_38e`: `0xffff0008 / 0x02008b6d` where the owner
+calls `Func_0808a080(8)`, and `0xffff0063 / 0x0200915d` where 0x63 = 99 is the
+scene id the entry-0 root tests. Settles a row's signature *and* its entry
+condition with no disassembly.
+
+**`ldrh` + `subs #k` + `lsls #16` + unsigned `cmp` is a 16-bit WINDOWED RANGE
+test, not a signed comparison.** `resource_389:121c`'s `(v-2) << 16 <= 0x80 << 9`
+is exactly `(u16)(v - 2) <= 1`. Read without the truncation it looks like a
+sign/magnitude test against 0x10000.
+
+**The displacement/value trap has a third variant: value-then-mask.**
+`resource_38e:04bc` sets r3 = 0, *stores* it, then `subs r3,#13` to make `~0x0c`
+as a mask. One register, three roles, no arithmetic relationship between them.
+
+**A `while` entered at its test looks like a `do` in the listing.**
+`resource_38e:05dc` `b.n`s *forward past* a five-call body to the test at 0x073a,
+which branches backwards. Reading it as a `do` puts one extra execution of five
+call sites on every path — five phantom entries in the multiset.
+
+**A row with `code_bytes == span_bytes` has no pool at all, and the alignment
+halfword after it belongs to nobody.** `resource_38e:090c` is 102/102, ending at
+0x0971 with `0x0000` at 0x0972 outside the row. Do not attach it.
 
 **An inventory "second entry" row can be the `bl`-decoding artefact ITSELF.**
 `resource_379:00dc` is listed as a 2,524-byte contained row, and the banked

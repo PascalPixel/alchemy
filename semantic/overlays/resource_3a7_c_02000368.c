@@ -41,5 +41,29 @@
  */
 
 /* Old-style declarations: arities vary between call sites in this overlay.
- * The two used in conditions must still declare a return type. */
-s32_unused_guard:;
+ * The two imports/owners used in conditions must still declare a return type. */
+typedef signed int s32;
+
+s32 Func_080770c0();    /* test a scene completion flag */
+void Func_080770c8();   /* raise a scene completion flag */
+void Func_080f9010();   /* scripted delay, in frames */
+void Func_02000170();
+s32 Func_02000334();
+void Func_02000398();
+
+void Func_02000368(void)
+{
+    if (Func_080770c0(0x9a9) != 0) {
+        return;
+    }
+
+    Func_02000170();
+
+    if (Func_02000334() == 0) {
+        return;
+    }
+
+    Func_080770c8(0x9a9);
+    Func_080f9010(0x50);
+    Func_02000398();
+}

@@ -4293,6 +4293,18 @@
     },
     {
       "overlay": "resource_3bc",
+      "entry": "0x02002a94",
+      "span_bytes": 184,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6}/pop {r1}/bx r1) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image, eleven sites, first at 0x02002a9a), span read from the disassembly through the trailing seven-word literal pool to the next owner's prologue at 0x02002b50, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3bc",
+      "entry": "0x02002e54",
+      "span_bytes": 148,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr}) and returning (pop {r3}/mov r8,r3/pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image, six sites, first at 0x02002e60), span read from the disassembly through the trailing literal pool to the next owner's prologue at 0x02002ee8, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3bc",
       "entry": "0x020033d8",
       "span_bytes": 144,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image, one site at 0x020033ee), span read from the disassembly through the trailing literal pool to the next owner's prologue at 0x02003468, inside the assembled overlay image and not overlapping another recorded owner"

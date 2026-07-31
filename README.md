@@ -26,11 +26,12 @@ game.
 
 ## Coverage map
 
-**Core** — main-image code, 548 KB of the executable universe. One purple, four
-brightnesses: dark is assembly (0%), half is semantic C (50%), bright is
-byte-exact C (75%), full blaze is humanized byte-exact C (100%):
+**Core** — main-image code, 548 KB of the executable universe. Purple shows
+semantic and exact C; orange shows the reviewed pools, alignment, veneers, and
+runtime structure intentionally retained as assembly. There is no ordinary
+gray semantic debt left in the core census:
 
-![Main-image code coverage box tree in the purple band; brightness is completion.](assets/readme/gs1-en-core.svg?v=aa982ad0)
+![Main-image code coverage box tree in purple with retained assembly in orange.](assets/readme/gs1-en-core.svg?v=01247b34)
 
 **Overlays** — decoded overlay code, 791 KB:
 
@@ -43,11 +44,10 @@ coloured sheets, full blaze is assets cut into individual objects:
 ![Asset maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-assets.svg?v=7b01f5d0)
 
 Every byte of the English cartridge. The left card is the ROM as it ships; the
-right card is the audited executable denominator behind Full-C Byte Share. Blue
-is byte-exact C from the Mercury lighthouse, teal is reviewed semantic C from
-the Venus lighthouse, grey is code still held as reconstruction assembly, and
-pink is non-code data that the build already reproduces from tracked asset
-sources.
+right card is the audited executable denominator behind Full-C Byte Share.
+Bright color is byte-exact C, the middle tone is reviewed semantic C, gray is
+ordinary assembly debt, orange is reviewed permanent assembly, and pink is
+non-code data reproduced from tracked asset sources.
 
 The picture is derived from tracked evidence alone—no ROM, no toolchain, no
 build output—so it redraws in about a second:
@@ -56,12 +56,10 @@ build output—so it redraws in about a second:
 bun run coverage
 ```
 
-Neither lane lives here. The exact lane is read from the Mercury branch and the
-semantic lane from Venus, and the map records which tree each came from, so this
-picture shows the two lighthouses as they actually stand rather than whatever
-this branch happens to carry. It is regenerated on `main` alone, about every 20 minutes,
-from the metrics each lighthouse banks; neither lighthouse edits it, which is
-what keeps one published figure instead of three competing ones.
+`main` is the authoritative integrated tree. The map records the exact and
+semantic source refs used for a draw; the normal `main` close-out uses its own
+worktree for both. Regenerate it after a verified integration so the README and
+the local dashboard display the same evidence.
 
 The measured totals live in
 [`metrics/gs1-en-coverage-map.json`](metrics/gs1-en-coverage-map.json). The
@@ -94,14 +92,10 @@ bun run progress
 ```
 
 The exact fraction is stored in
-[`metrics/gs1-en-progress.json`](metrics/gs1-en-progress.json), which measures
-the tree it sits in. On this branch that is not the leading edge: exact C
-advances on the Mercury branch and reaches `main` only when those conversions
-are merged, so the coverage map above—drawn from Mercury's ref—is the current
-figure, and this file is the smaller number until then. Function
-counts, source ownership, asset round trips, and assembly-region counts are
-diagnostics rather than overall decompilation progress. Historical first-parent
-measurements are published non-destructively in
+[`metrics/gs1-en-progress.json`](metrics/gs1-en-progress.json). Function counts,
+source ownership, asset round trips, and assembly-region counts are diagnostics
+rather than overall decompilation progress. Historical first-parent measurements
+are published non-destructively in
 [`docs/full-c-history.json`](docs/full-c-history.json); existing commit IDs have
 not been rewritten.
 

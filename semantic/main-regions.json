@@ -52,6 +52,26 @@
       ]
     },
     {
+      "entry": "0x0800d14c",
+      "evidence": "One 440-byte row holding a single function: prologue push {r5,r6,r7,lr} plus the sl/r9/r8 saves at 0x0800d14c, single epilogue at 0x0800d2e4 reached from every arm, no inbound branch from outside the row. The seven mov ip,pc; bx r3 sequences (0x0800d1c4, 0x0800d1d0, 0x0800d1dc, 0x0800d21c, 0x0800d254, 0x0800d266, 0x0800d274) are ordinary indirect calls through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after each bx and every landing site consumes r0 as that call's result in the same frame, the reading already recorded for 0x0800ebec. The three bl Func_080072f0 at 0x0800d19e, 0x0800d226 and 0x0800d244 are the runtime call_via_r3 thunk at 0x080072e4, so they are indirect calls to the pooled 0x030001d8 (integer square root) and twice 0x0300013c (ratio). r4 accumulates the squared sum and the eased coordinates without being saved, the ordinary call-used-r4 convention of this image and not the 0x08002dd8 shape. Excluded (18 bytes): the 2-byte movs r0,r0 alignment filler at 0x0800d2f2 and the four-word pool at 0x0800d2f4 (0x0000ffff, 0x030001d8, 0x03000118, 0x0300013c). The object is the 0x70-byte record already reconstructed for 0x0800ebec. Eleven direct callers, the first at 0x0800da2e, and published as a Thumb pointer at 0x08009154.",
+      "executable_ranges": [
+        {
+          "address": "0x0800d14c",
+          "size": 422
+        }
+      ]
+    },
+    {
+      "entry": "0x0800dd70",
+      "evidence": "One 404-byte row holding a single function: prologue push {r5,r6,r7,lr} plus the fp/sl/r9/r8 saves and sub sp,#32 at 0x0800dd70, single epilogue at 0x0800dee6 reached by the success arm at 0x0800ded4 and the give-up arm at 0x0800debe, no inbound branch from outside the row. mov ip,pc; bx r3 at 0x0800ddd0 is an ordinary indirect call through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after the bx, 0x0800ddd4, which consumes r0 as that call's result in the same frame, the reading already recorded for 0x0800ebec. Excluded (12 bytes): the three-word pool at 0x0800def8 (0x0000ffff, 0x03000118, 0xffffe000); there is no alignment filler, the code ends flush at 0x0800def8. 0x0000ffff is the round-toward-zero addend of the truncating >>16, and 0xffffe000 is the negative heading offset -(128<<6). The object is the 0x70-byte record already reconstructed for 0x0800ebec; +0x64 and +0x66 are read here as a leash anchor in whole units, the Object_0800c150 reading rather than the animation timer and phase of 0x0800ebec. No direct caller; published as a Thumb pointer at 0x08013644.",
+      "executable_ranges": [
+        {
+          "address": "0x0800dd70",
+          "size": 392
+        }
+      ]
+    },
+    {
       "entry": "0x0800ebec",
       "evidence": "One function across four manifest rows. The two mov ip,pc; bx r4 sequences at 0x0800f1ba and 0x0800f1c6 are ordinary indirect calls to the IWRAM-relocated ARM multiply at 0x03000118: mov ip,pc sets the return to the instruction after bx, and both landing sites continue the same live frame. The 62-byte executable-gap row at 0x0800f1bc is the continuation of one statement, not a control-flow anomaly. LAWS.md already records this idiom as a codegen-only difference from bl __call_via_r4. Excluded pools and alignment (90 bytes): 0x0800edf0 (36), 0x0800f186 (30), 0x0800f2ae (18), 0x0800f2d4 (4) and 2 bytes of trailing alignment. Previously recorded as a relocated_kernel_continuation blocker; resolved.",
       "executable_ranges": [
@@ -730,12 +750,162 @@
       ]
     },
     {
+      "entry": "0x080f9a18",
+      "evidence": "One 22-byte keep_asm row holding a single leaf: mov ip,r4 at 0x080f9a18 saves r4 into ip without touching the stack, one epilogue mov r4,ip; bx lr at 0x080f9a2c/0x080f9a2e, and no branch inside the row. Nothing is excluded: 22 bytes of code, no pool word and no alignment filler, and the 0x080f9a30 row starts flush after it. Four stmia r0!,{r1,r2,r3,r4} with all four registers set to zero clear 64 bytes and leave r0 addressing the byte after them; 64 bytes is one sound channel record, and the writeback is the observable second effect, so the reconstruction returns the advanced pointer rather than dropping it. This is the one place in the neighbourhood where r4 is saved rather than used call-used, and it is saved in ip rather than on the stack, which is what lets the inbound tail branch reach it with a live caller frame. bun tools/main_xref.ts 080f9a18 reports one inbound branch, from 0x080f99dc, and one Thumb pointer, published at 0x080fb82c; there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9a18",
+          "size": 22
+        }
+      ]
+    },
+    {
       "entry": "0x080f9a30",
       "evidence": "Single 32-byte leaf, no pool, ends on bx lr. The manifest kind nonstandard_thumb_branch_module records the b.n that skips the else arm of the head/previous test; the two arms are distinct stores and are kept distinct. One direct caller at 0x080f9a6a, and the address+1 word at 0x080fb828 publishes it as a callback.",
       "executable_ranges": [
         {
           "address": "0x080f9a30",
           "size": 32
+        }
+      ]
+    },
+    {
+      "entry": "0x080f9ac0",
+      "evidence": "One 32-byte keep_structured_asm row holding a single function: push {lr} at 0x080f9ac0, one epilogue pop {r0}; bx r0 at 0x080f9adc/0x080f9ade, and no branch inside the row. Nothing is excluded: 32 bytes of code, no pool word and no alignment filler, and the next row starts flush at 0x080f9ae0. Per the epilogue rule pop {r0}; bx r0 makes this void. The one bl at 0x080f9ad2 targets Func_080f9a98 inside the retained 0x080f9a80 row: that entry does ldrb r3,[r2,#0] and falls into the 0x080f9a9a source-address check, so it reads the byte at the position still held in r2 and screens the position, returning 0 for a stream pointer below 0x02000000 and the byte unchanged otherwise. r0 carries the partially assembled destination across that call and survives because 0x080f9a9a saves and restores r0. The three raw ldrb from [r2,#1], [r2,#2] and [r2,#3] together with the checked low byte assemble a little-endian 32-bit pointer that is stored over track+0x40, replacing rather than advancing the stream position. bun tools/main_xref.ts 080f9ac0 reports one inbound branch, from 0x080f9af6, the b.n at the end of the 0x080f9ae0 row: that handler executes no push, so it reaches this entry with its own return address still in lr and the push {lr} here saves it, making the branch an ordinary tail call rather than a shared-frame continuation. It also reports one Thumb pointer, published at 0x080fb7a4 in the command handler table that begins at 0x080fb7a0. There is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9ac0",
+          "size": 32
+        }
+      ]
+    },
+    {
+      "entry": "0x080f9ae0",
+      "evidence": "One 28-byte row holding a single leaf handler in its first 26 bytes. There is no prologue and no epilogue of its own: the handler ends in two tail branches, b.n Func_080f9ac0 at 0x080f9af6 and b.n Func_080f9a50 at 0x080f9af8, each taken with the caller's return address still in lr, so the callee's own push/pop supplies the return and the result type is the callee's, which is void in both cases. There is no inbound branch from outside the row. Excluded (2 bytes): the 2-byte alignment filler at 0x080f9afa, recorded in the manifest as adjacent_section_alignment; there is no pool word. The nesting depth is a byte at track+0x02 compared with bcs.n against 3, so the stack at track+0x44 is three entries deep; lsls r2,r2,#2 then adds r3,r1,r2 and str r2,[r3,#68] index it, and the value stored is the stream position at track+0x40 plus four, that is the byte after the four-byte destination operand that Func_080f9ac0 is about to consume. The depth is reloaded from track+0x02 before being incremented rather than reusing the shifted copy. The overflow arm targets Func_080f9a50, whose exact C at src/080f9a50.c walks the channel list at track+0x20, marks and releases each channel through Func_080f9a30 and clears the track status byte, and whose first argument is unused; that matches the register state here. bun tools/main_xref.ts 080f9ae0 reports calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x080fb7a8 in the command handler table that begins at 0x080fb7a0, so the only caller is the table dispatcher and there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9ae0",
+          "size": 26
+        }
+      ]
+    },
+    {
+      "entry": "0x080f9afc",
+      "evidence": "One 20-byte keep_structured_asm row holding a single leaf handler with no prologue: one epilogue, the bx lr at 0x080f9b0e, reached by the beq.n depth-zero early-out at 0x080f9b00 and by fall-through, and no inbound branch from outside the row. Nothing is excluded: 20 bytes of code, no pool word and no alignment filler, and the next row starts flush at 0x080f9b10. No call of any kind, so r0 is untouched and the bx lr leaves no result; the handler is void. The decrement is stored back to the byte at track+0x02 before lsls r2,r2,#2 and adds r3,r1,r2 index the return stack, so the slot read by ldr r2,[r3,#68] is the already decremented one, the same slot the 0x080f9ae0 call handler wrote; it is reinstated as the stream position at track+0x40. The depth-zero arm falls straight to the epilogue without touching the stream, so an unmatched return re-executes this command indefinitely. bun tools/main_xref.ts 080f9afc reports calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x080fb7ac in the command handler table that begins at 0x080fb7a0, so the only caller is the table dispatcher and there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9afc",
+          "size": 20
+        }
+      ]
+    },
+    {
+      "entry": "0x080f9b40",
+      "evidence": "One 10-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080f9b40 saves the return address across the one call, the epilogue is the bx ip at 0x080f9b48, and there is no branch inside the row and no inbound branch from outside it. Nothing is excluded: the row is 10 bytes of code with no pool word and no alignment filler, and the next row starts flush at 0x080f9b4a. The bl at 0x080f9b42 targets Func_080f9ab4 inside the retained 0x080f9a80 row, the shared stream reader that post-increments the pointer at track+0x40 and returns the checked byte in r3; r3 is then stored to track+0x1d and nothing else is written, in particular not the flags byte at track+0x00 that the neighbouring handlers set. bun tools/main_xref.ts 080f9b40 reports calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x080fb7c4 in the command handler table that begins at 0x080fb7a0, so the caller is the table dispatcher and there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9b40",
+          "size": 10
+        }
+      ]
+    },
+    {
+      "entry": "0x080f9b4c",
+      "evidence": "One 20-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080f9b4c saves the return address across the one call, the epilogue is the bx ip at 0x080f9b5e, and the row contains no branch and has no inbound branch from outside it. Nothing is excluded: 20 bytes of code, no pool word and no alignment filler, and the next row starts flush at 0x080f9b60. The bl at 0x080f9b4e targets Func_080f9ab4 inside the retained 0x080f9a80 row, the shared operand reader that post-increments the byte-stream pointer at track+0x40 and returns the checked byte in r3. That reader saves and restores r0 across the 0x080f9a9a check, which is the evidence that the three halfword accesses after the call — strh r3,[r0,#28], ldrh r2,[r0,#30], strh r3,[r0,#32] — are made through the still-live first argument and not through a scratch value; this is the only handler in the table that writes the first argument instead of the track. lsls r3,r3,#1 doubles the operand before the store, and the muls is a 32-bit multiply of two zero-extended halfwords followed by lsrs r3,r3,#8, so the shift is unsigned and the stored result is the whole part of an 8.8 product. bun tools/main_xref.ts 080f9b4c reports calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x080fb7c8 in the command handler table that begins at 0x080fb7a0, so the only caller is the table dispatcher and there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9b4c",
+          "size": 20
+        }
+      ]
+    },
+    {
+      "entry": "0x080f9b60",
+      "evidence": "One 18-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080f9b60 saves the return address across the one call, the epilogue is the bx ip at 0x080f9b70, and the row contains no branch and has no inbound branch from outside it. Nothing is excluded: the row is 18 bytes of code with no pool word and no alignment filler. The bl at 0x080f9b62 targets Func_080f9ab4 inside the retained 0x080f9a80 row, the shared operand reader that post-increments the byte-stream pointer at track+0x40 and returns the checked byte in r3; that reader saves and restores r0 around the 0x080f9a9a check, so the player argument is live across the call. r3 is stored to track+0x0a. The store is followed by ldrb r3,[r1,#0]; movs r2,#12; orrs r3,r2; strb r3,[r1,#0], a read-modify-write that raises request bits 0x0c in the track status byte at track+0x00. bun tools/main_xref.ts 080f9b60 reports calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x080fb7cc in the command handler table that begins at 0x080fb7a0, so the only caller is the table dispatcher and there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9b60",
+          "size": 18
+        }
+      ]
+    },
+    {
+      "entry": "0x080f9ba4",
+      "evidence": "One 18-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080f9ba4 saves the return address across the one call, the epilogue is the bx ip at 0x080f9bb4, and the row contains no branch and has no inbound branch from outside it. Nothing is excluded: the row is 18 bytes of code with no pool word and no alignment filler. The bl at 0x080f9ba6 targets Func_080f9ab4 inside the retained 0x080f9a80 row, the shared operand reader that post-increments the byte-stream pointer at track+0x40 and returns the checked byte in r3; that reader saves and restores r0 around the 0x080f9a9a check, so the player argument is live across the call. r3 is stored to track+0x12. The store is followed by ldrb r3,[r1,#0]; movs r2,#3; orrs r3,r2; strb r3,[r1,#0], a read-modify-write that raises request bits 0x03 in the track status byte at track+0x00. bun tools/main_xref.ts 080f9ba4 reports calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x080fb7d4 in the command handler table that begins at 0x080fb7a0, so the only caller is the table dispatcher and there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9ba4",
+          "size": 18
+        }
+      ]
+    },
+    {
+      "entry": "0x080f9bb8",
+      "evidence": "One 20-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080f9bb8 saves the return address across the one call, the epilogue is the bx ip at 0x080f9bca, and the row contains no branch and has no inbound branch from outside it. Nothing is excluded: the row is 20 bytes of code with no pool word and no alignment filler. The bl at 0x080f9bba targets Func_080f9ab4 inside the retained 0x080f9a80 row, the shared operand reader that post-increments the byte-stream pointer at track+0x40 and returns the checked byte in r3; that reader saves and restores r0 around the 0x080f9a9a check, so the player argument is live across the call. r3 is stored to track+0x14. The subs r3,#64 before the store re-centres the unsigned operand on zero, so the field is signed. The store is followed by ldrb r3,[r1,#0]; movs r2,#3; orrs r3,r2; strb r3,[r1,#0], a read-modify-write that raises request bits 0x03 in the track status byte at track+0x00. bun tools/main_xref.ts 080f9bb8 reports calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x080fb7d8 in the command handler table that begins at 0x080fb7a0, so the only caller is the table dispatcher and there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9bb8",
+          "size": 20
+        }
+      ]
+    },
+    {
+      "entry": "0x080f9bcc",
+      "evidence": "One 20-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080f9bcc saves the return address across the one call, the epilogue is the bx ip at 0x080f9bde, and the row contains no branch and has no inbound branch from outside it. Nothing is excluded: the row is 20 bytes of code with no pool word and no alignment filler. The bl at 0x080f9bce targets Func_080f9ab4 inside the retained 0x080f9a80 row, the shared operand reader that post-increments the byte-stream pointer at track+0x40 and returns the checked byte in r3; that reader saves and restores r0 around the 0x080f9a9a check, so the player argument is live across the call. r3 is stored to track+0x0e. The subs r3,#64 before the store re-centres the unsigned operand on zero, so the field is signed. The store is followed by ldrb r3,[r1,#0]; movs r2,#12; orrs r3,r2; strb r3,[r1,#0], a read-modify-write that raises request bits 0x0c in the track status byte at track+0x00. bun tools/main_xref.ts 080f9bcc reports calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x080fb7dc in the command handler table that begins at 0x080fb7a0, so the only caller is the table dispatcher and there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9bcc",
+          "size": 20
+        }
+      ]
+    },
+    {
+      "entry": "0x080f9be0",
+      "evidence": "One 18-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080f9be0 saves the return address across the one call, the epilogue is the bx ip at 0x080f9bf0, and the row contains no branch and has no inbound branch from outside it. Nothing is excluded: the row is 18 bytes of code with no pool word and no alignment filler. The bl at 0x080f9be2 targets Func_080f9ab4 inside the retained 0x080f9a80 row, the shared operand reader that post-increments the byte-stream pointer at track+0x40 and returns the checked byte in r3; that reader saves and restores r0 around the 0x080f9a9a check, so the player argument is live across the call. r3 is stored to track+0x0f. The store is followed by ldrb r3,[r1,#0]; movs r2,#12; orrs r3,r2; strb r3,[r1,#0], a read-modify-write that raises request bits 0x0c in the track status byte at track+0x00. bun tools/main_xref.ts 080f9be0 reports calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x080fb7e0 in the command handler table that begins at 0x080fb7a0, so the only caller is the table dispatcher and there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9be0",
+          "size": 18
+        }
+      ]
+    },
+    {
+      "entry": "0x080f9bf4",
+      "evidence": "One 10-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080f9bf4 saves the return address across the one call, the epilogue is the bx ip at 0x080f9bfc, and the row contains no branch and has no inbound branch from outside it. Nothing is excluded: the row is 10 bytes of code with no pool word and no alignment filler. The bl at 0x080f9bf6 targets Func_080f9ab4 inside the retained 0x080f9a80 row, the shared operand reader that post-increments the byte-stream pointer at track+0x40 and returns the checked byte in r3; that reader saves and restores r0 around the 0x080f9a9a check, so the player argument is live across the call. r3 is stored to track+0x1b. Nothing else is written; in particular the status byte at track+0x00 is left alone, unlike the neighbouring handlers. bun tools/main_xref.ts 080f9bf4 reports calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x080fb7e8 in the command handler table that begins at 0x080fb7a0, so the only caller is the table dispatcher and there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9bf4",
+          "size": 10
+        }
+      ]
+    },
+    {
+      "entry": "0x080f9c00",
+      "evidence": "One 24-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080f9c00 saves the return address across the one call, and the single epilogue is the bx ip at 0x080f9c16, reached both by the beq.n early-out at 0x080f9c0a and by fall-through. There is no inbound branch from outside the row. Nothing is excluded: 24 bytes of code, no pool word and no alignment filler, and the next row starts flush at 0x080f9c18. The bl at 0x080f9c02 targets Func_080f9ab4 inside the retained 0x080f9a80 row, the shared operand reader that post-increments the byte-stream pointer at track+0x40 and returns the checked byte in r3. r0 is overwritten by ldrb r0,[r1,#24] immediately after the call, so the first argument is dead in this handler and is reused as the scratch holding the old value; that is the ordinary call-used register convention of this image and not a hidden second input. The compare is a byte compare of the old field at track+0x18 against the new operand, and only the unequal arm stores the value and raises request bits 0x0f in the status byte at track+0x00. bun tools/main_xref.ts 080f9c00 reports calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x080fb7f0 in the command handler table that begins at 0x080fb7a0, so the only caller is the table dispatcher and there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9c00",
+          "size": 24
+        }
+      ]
+    },
+    {
+      "entry": "0x080f9c18",
+      "evidence": "One 20-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080f9c18 saves the return address across the one call, the epilogue is the bx ip at 0x080f9c2a, and the row contains no branch and has no inbound branch from outside it. Nothing is excluded: the row is 20 bytes of code with no pool word and no alignment filler. The bl at 0x080f9c1a targets Func_080f9ab4 inside the retained 0x080f9a80 row, the shared operand reader that post-increments the byte-stream pointer at track+0x40 and returns the checked byte in r3; that reader saves and restores r0 around the 0x080f9a9a check, so the player argument is live across the call. r3 is stored to track+0x0c. The subs r3,#64 before the store re-centres the unsigned operand on zero, so the field is signed. The store is followed by ldrb r3,[r1,#0]; movs r2,#12; orrs r3,r2; strb r3,[r1,#0], a read-modify-write that raises request bits 0x0c in the track status byte at track+0x00. bun tools/main_xref.ts 080f9c18 reports calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x080fb7fc in the command handler table that begins at 0x080fb7a0, so the only caller is the table dispatcher and there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9c18",
+          "size": 20
+        }
+      ]
+    },
+    {
+      "entry": "0x080f9c2c",
+      "evidence": "One 24-byte row holding a single leaf handler in its first 20 bytes: mov ip,lr at 0x080f9c2c saves the return address across the one call, the epilogue is the bx ip at 0x080f9c3e, and the row contains no branch and has no inbound branch from outside it. Excluded (4 bytes): the one-word pool at 0x080f9c40 holding 0x04000060, the base of the sound register block, which is the ldr r0,[pc,#8] literal; there is no alignment filler and the next row starts flush at 0x080f9c44. The bl at 0x080f9c38 targets Func_080f9ab6, one halfword past Func_080f9ab4 inside the retained 0x080f9a80 row: entering there skips the ldr r2,[r1,#64] reload and uses the stream position this handler already advanced in r2, then stores r2+1 back to track+0x40, reads the byte at r2 and passes it through the 0x080f9a9a source-address check. That is why the first operand byte, read here by ldrb r3,[r2,#0] at 0x080f9c30, is unchecked while the second one is checked. r0 is formed as 0x04000060 plus the first operand before the call and survives it because the helper saves and restores r0 around the check, so the strb r3,[r0,#0] at 0x080f9c3c is a byte write into the sound register block at an offset taken from the sequence with no range check. bun tools/main_xref.ts 080f9c2c reports calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x080fb80c in the command handler table that begins at 0x080fb7a0, so the only caller is the table dispatcher and there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9c2c",
+          "size": 20
         }
       ]
     },

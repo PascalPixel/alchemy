@@ -117,7 +117,7 @@ void Func_080fae58(void)
 {
     struct SoundInfo_080fae58 *info = Data_03007ff0;
     struct CgbChannel_080fae58 *channel;
-    u32 number;
+    s32 number;
 
     if (info->cgb_frame_counter != 0) {
         info->cgb_frame_counter -= 1;
@@ -125,8 +125,9 @@ void Func_080fae58(void)
         info->cgb_frame_counter = 14;
     }
 
+    number = 1;
     channel = info->cgb_channels;
-    for (number = 1; number <= 4;
+    for (; number <= 4;
          number++,
          channel = (struct CgbChannel_080fae58 *)((u8 *)channel + 64)) {
         volatile u8 *reg_sweep;
@@ -134,7 +135,7 @@ void Func_080fae58(void)
         volatile u8 *reg_envelope;
         volatile u8 *reg_freq_low;
         volatile u8 *reg_freq_high;
-        s32 frame;
+        volatile s32 frame;
         u32 envelope_rate;
         u8 status = channel->status;
 
@@ -212,7 +213,14 @@ void Func_080fae58(void)
                     if (channel->length != 0) {
                         channel->n4_control = 0xc0;
                     } else {
-                        channel->n4_control = 0x80;
+                        /* Spelled -128: the reference materialises the
+                         * negative form here, which keeps it from
+                         * merging with the +128 status-bit tests (the
+                         * merge costs a callee-saved register and a
+                         * stack slot in the exact lane). */
+                        s32 wave_disabled = -128;
+
+                        channel->n4_control = wave_disabled;
                         goto seed_envelope;
                     }
                     goto seed_envelope;
@@ -247,6 +255,14 @@ void Func_080fae58(void)
             }
             goto output;
         }
+        goto not_killed;
+
+    kill:
+        Func_080fada0((u8)number);
+        channel->status = 0;
+        goto done;
+
+    not_killed:
 
         if ((status & 0x40) != 0 && (status & 0x03) != 0) {
             channel->status = status & 0xfc;
@@ -333,11 +349,6 @@ void Func_080fae58(void)
             envelope_rate = 8;
         }
         goto output;
-
-    kill:
-        Func_080fada0((u8)number);
-        channel->status = 0;
-        goto done;
 
     tick:
         channel->envelope_counter -= 1;

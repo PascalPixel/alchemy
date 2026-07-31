@@ -2282,6 +2282,102 @@
       "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json, span walked from the prologue to its matching interworking epilogue `pop {r5} / pop {r1} / bx r1` at 0x02000346, literal pool 0x0200034c (0x030001d8) excluded, next prologue at 0x02000350; byte-identical to the same routine in resource_385/39b/3a6/3b3/3be apart from the call_via `bl` encoding"
     },
     {
+      "overlay": "resource_39c",
+      "entry": "0x0200013c",
+      "span_bytes": 472,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8/r9/sl/fp spill) and returning (pop {r3, r5, r6, r7}/mov r8,r3/mov r9,r5/mov sl,r6/mov fp,r7/pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing three-word literal pool to the next owner's prologue at 0x02000314, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
+      "entry": "0x020015e0",
+      "span_bytes": 228,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8/r9/sl/fp spill) and returning (pop {r3, r5, r6, r7}/mov r8,r3/mov r9,r5/mov sl,r6/mov fp,r7/pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing one-word literal pool to the next owner's prologue at 0x020016c4 (this overlay's own resource_39c_c_020016c4.c), inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
+      "entry": "0x020016c4",
+      "span_bytes": 204,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8/r9/sl spill) and returning (pop {r3, r5, r6}/mov r8,r3/mov r9,r5/mov sl,r6/pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing one-word literal pool to the next owner's prologue at 0x02001790, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
+      "entry": "0x020021cc",
+      "span_bytes": 248,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6}/pop {r1}/bx r1, a real return value not the interworking-return shape) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing nine-word literal pool to the next owner's prologue at 0x020022c4, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
+      "entry": "0x0200251c",
+      "span_bytes": 228,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing two-word literal pool to the next owner's prologue at 0x02002600, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
+      "entry": "0x02002844",
+      "span_bytes": 108,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing alignment halfword to the next owner's prologue at 0x020028b0, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
+      "entry": "0x02002e08",
+      "span_bytes": 100,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly to the next owner's prologue at 0x02002e6c, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
+      "entry": "0x02003788",
+      "span_bytes": 216,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr}) and returning (pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing five-word literal pool to the next owner's prologue at 0x02003860, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
+      "entry": "0x02004f44",
+      "span_bytes": 76,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing two-word literal pool to the next owner's prologue at 0x02004f90, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
+      "entry": "0x02004f90",
+      "span_bytes": 60,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr}) and returning (pop {r3}/pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly to the next owner's prologue at 0x02004fcc, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
+      "entry": "0x02004fcc",
+      "span_bytes": 396,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8/r9/sl spill) and returning (pop {r3, r5, r6}/mov r8,r3/mov r9,r5/mov sl,r6/pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly (an inline literal pool sits mid-body, reached only via forward branches, rather than trailing the epilogue) through one alignment halfword to the next owner's prologue at 0x02005158 (this overlay's own resource_39c_c_02005158.c), inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
+      "entry": "0x02005158",
+      "span_bytes": 88,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr}) and returning (pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing one-word literal pool to the next owner's prologue at 0x020051b0, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
+      "entry": "0x02005388",
+      "span_bytes": 208,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr}) and returning (pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing three-word literal pool to the next owner's prologue at 0x02005458, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
+      "entry": "0x02005458",
+      "span_bytes": 288,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8/r9/sl spill) and returning (pop {r3, r5, r6}/mov r8,r3/mov r9,r5/mov sl,r6/pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing six-word literal pool to the next owner's prologue at 0x02005578 (this overlay's own resource_39c_c_02005578.c), inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
+      "entry": "0x02005578",
+      "span_bytes": 72,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr}) and returning (pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing three-word literal pool to the next owner's prologue at 0x020055c0, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
+      "entry": "0x02005900",
+      "span_bytes": 72,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing three-word literal pool to the next owner's prologue at 0x02005948, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
       "overlay": "resource_39d",
       "entry": "0x020009fc",
       "span_bytes": 198,
@@ -3308,6 +3404,198 @@
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
     },
     {
+      "overlay": "resource_3b1",
+      "entry": "0x02001144",
+      "span_bytes": 76,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} at 0x02001144, epilogue pop {r5,r6,r7} / pop {r1} / bx r1 at 0x02001186-0x0200118a; the one-word literal pool at 0x0200118c (0x03001ebc) is included per the usual pool rule, immediately followed by the next owner's push {r5,r6,r7,lr} at 0x02001190, already this overlay's row 0x02001190 (0x02001144-0x02001190, 76 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02001190",
+      "span_bytes": 240,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} plus r8/sl spill at 0x02001190, epilogue pop {r3,r5} / mov r8,r3 / mov sl,r5 / pop {r5,r6,r7} / pop {r0} / bx r0 at 0x02001262-0x0200126c; the trailing pool at 0x02001270-0x0200127c (0xffffc000, 0x0000cccc, 0x00019999, 0x0200e668) is included per the usual pool rule, immediately followed by the next owner's push {r5,r6,r7,lr} at 0x02001280, already this overlay's row 0x02001280 (0x02001190-0x02001280, 240 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02001280",
+      "span_bytes": 92,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} plus a 12-byte stack buffer at 0x02001280, epilogue add sp,#12 / pop {r5,r6,r7} / pop {r1} / bx r1 at 0x020012d0-0x020012d6; the one-word literal pool at 0x020012d8 (0x0200e668, the same bucket table used by 0x02001190) is included per the usual pool rule, immediately followed by the next owner's push {r5,lr} at 0x020012dc, already this overlay's row 0x020012dc (0x02001280-0x020012dc, 92 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x020012dc",
+      "span_bytes": 72,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,lr} at 0x020012dc, epilogue pop {r5} / pop {r1} / bx r1 at 0x02001310-0x02001314; the three-word literal pool at 0x02001318-0x02001324 (0x0000092b, 0x0000092a, 0x00000929) is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x02001324 (0x020012dc-0x02001324, 72 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02001804",
+      "span_bytes": 144,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} at 0x02001804, epilogue pop {r5,r6,r7} / pop {r0} / bx r0 at 0x0200188a-0x0200188e; the one-word literal pool at 0x02001890 (0x03001ebc) is the last instruction's own pool load and is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x02001894 (0x02001804-0x02001894, 144 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02003364",
+      "span_bytes": 440,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} plus r8 spill at 0x02003364, epilogue pop {r3} / mov r8,r3 / pop {r5,r6,r7} / pop {r0} / bx r0 at 0x020034f2-0x020034fa; the trailing pool at 0x020034fc-0x02003518 (0x00000928, 0x00000266, 0x00000925, 0x00000921, 0x000001db, 0x00000256, 0x0000026a, 0x00000293) is included per the usual pool rule, immediately followed by the next owner's push {r5,r6,lr} at 0x0200351c, already this overlay's row 0x0200351c (0x02003364-0x0200351c, 440 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x0200351c",
+      "span_bytes": 336,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,lr} plus sl/r8 spill at 0x0200351c, epilogue pop {r3,r5} / mov r8,r3 / mov sl,r5 / pop {r5,r6} / pop {r0} / bx r0 at 0x0200363e-0x02003648; the trailing pool at 0x0200364c-0x02003668 (0x0000093e, 0x0200e958, 0x0000020e, 0x0200e840, 0x00000928, 0x00000925, 0x00000911, 0x00000922) is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x0200366c, already this overlay's row 0x0200366c (0x0200351c-0x0200366c, 336 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x0200366c",
+      "span_bytes": 328,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {lr} at 0x0200366c, epilogue pop {r0} / bx r0 at 0x02003794-0x02003796; the trailing pool at 0x02003798-0x020037b0 (0x0000093e, 0x0000092b, 0x0000092a, 0x00000929, 0x00000928, 0x00000925, 0x00000926) is included per the usual pool rule, immediately followed by the next owner's push {r5,r6,r7,lr} at 0x020037b4, already this overlay's row 0x020037b4 (0x0200366c-0x020037b4, 328 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x020037b4",
+      "span_bytes": 36,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} at 0x020037b4, epilogue pop {r5,r6,r7} / pop {r0} / bx r0 at 0x020037d0-0x020037d4; no pool, the halfword at 0x020037d6 is the alignment pad, immediately followed by the next owner's push {r5,lr} at 0x020037d8, already this overlay's row 0x020037d8 (0x020037b4-0x020037d8, 36 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x020037d8",
+      "span_bytes": 212,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,lr} at 0x020037d8, epilogue pop {r5} / pop {r0} / bx r0 at 0x0200389a-0x0200389e; the trailing pool at 0x020038a0-0x020038a8 (0x00000929, 0x0000092a, 0x0000092b) is included per the usual pool rule, immediately followed by the next owner's push {r5,r6,r7,lr} at 0x020038ac, already this overlay's row 0x020038ac (0x020037d8-0x020038ac, 212 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02003d10",
+      "span_bytes": 220,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,lr} at 0x02003d10, epilogue pop {r5} / pop {r0} / bx r0 at 0x02003dd0-0x02003dd4; the trailing pool at 0x02003dd8-0x02003de8 (0x0000cccc, 0x00006666, 0x00000266, 0x0200e738, 0x00001e3b) is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x02003dec, already this overlay's row 0x02003dec (0x02003d10-0x02003dec, 220 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02003dec",
+      "span_bytes": 72,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {lr} at 0x02003dec, epilogue pop {r0} / bx r0 at 0x02003e2a-0x02003e2c; the one-word literal pool at 0x02003e30 (0x00001e3d) is included per the usual pool rule (the halfword at 0x2003e2e is the alignment pad), immediately followed by the next owner's push {lr} at 0x02003e34, already this overlay's row 0x02003e34 (0x02003dec-0x02003e34, 72 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02003e34",
+      "span_bytes": 184,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {lr} at 0x02003e34, epilogue pop {r0} / bx r0 at 0x02003ecc-0x02003ece; the trailing pool at 0x02003ed0-0x02003ee8 (0x024a0000, 0x01000001, 0x0000cccc, 0x00006666, 0x00000242, 0x0000022a, 0x00001e3c) is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x02003eec, already this overlay's row 0x02003eec (0x02003e34-0x02003eec, 184 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02003eec",
+      "span_bytes": 168,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {lr} at 0x02003eec, epilogue pop {r0} / bx r0 at 0x02003f74-0x02003f76; the trailing pool at 0x02003f78-0x02003f90 (0x024a0000, 0x01000001, 0x0000cccc, 0x00006666, 0x00000242, 0x0000022a, 0x00001e3c) is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x02003f94, already this overlay's row 0x02003f94 (0x02003eec-0x02003f94, 168 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02003f94",
+      "span_bytes": 340,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {lr} at 0x02003f94, epilogue pop {r0} / bx r0 at 0x020040c6-0x020040c8; the trailing pool at 0x020040cc-0x020040e4 (0x00006666, 0x00000ccc, 0x03001ebc, 0x0000092b, 0x0000092a, 0x00000929, 0x00000928) is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x020040e8, already this overlay's row 0x020040e8 (0x02003f94-0x020040e8, 340 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x020040e8",
+      "span_bytes": 84,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {lr} at 0x020040e8, epilogue pop {r0} / bx r0 at 0x02004134-0x02004136; the one-word literal pool at 0x02004138 (0x00001e40) is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x0200413c, already this overlay's row 0x0200413c (0x020040e8-0x0200413c, 84 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x0200413c",
+      "span_bytes": 92,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {lr} at 0x0200413c, epilogue pop {r0} / bx r0 at 0x0200418e-0x02004190; the one-word literal pool at 0x02004194 (0x00001e43) is included per the usual pool rule, immediately followed by the next owner's push {r5,lr} at 0x02004198, already this overlay's row 0x02004198 (0x0200413c-0x02004198, 92 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02004198",
+      "span_bytes": 128,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,lr} at 0x02004198, epilogue pop {r5} / pop {r0} / bx r0 at 0x0200420a-0x0200420e; the two-word pool at 0x02004210-0x02004214 (0x0200e840, 0x0200e8e4) is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x02004218, already this overlay's row 0x02004218 (0x02004198-0x02004218, 128 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02004218",
+      "span_bytes": 60,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {lr} at 0x02004218, epilogue pop {r0} / bx r0 at 0x0200424a-0x0200424c; the one-word literal pool at 0x02004250 (0x00000928) is included per the usual pool rule, immediately followed by the next owner's push at 0x02004254, the still-parked resource_3b1 0x02004254 row (0x02004218-0x02004254, 60 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x020045d0",
+      "span_bytes": 160,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,lr} plus r8 spill at 0x020045d0, epilogue pop {r3} / mov r8,r3 / pop {r5,r6} / pop {r1} / bx r1 at 0x0200465e-0x02004666; the two-word pool at 0x02004668-0x0200466c (0x0200e968, 0x01c70000) is included per the usual pool rule, immediately followed by the next owner's push {r5,r6,lr} at 0x02004670, already this overlay's row 0x02004670 (0x020045d0-0x02004670, 160 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02004670",
+      "span_bytes": 348,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,lr} at 0x02004670, epilogue pop {r5,r6} / pop {r0} / bx r0 at 0x020047b0-0x020047b4; the trailing pool at 0x020047b6-0x020047c8 (0x00000928, 0x00000929, 0xffff0000, 0x0000092a, 0x0000092b) is included per the usual pool rule, immediately followed by the next owner's push {r5,lr} at 0x020047cc, already this overlay's row 0x020047cc (0x02004670-0x020047cc, 348 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x020047cc",
+      "span_bytes": 160,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,lr} at 0x020047cc, epilogue pop {r5} / pop {r0} / bx r0 at 0x02004862-0x02004866; a 9-entry jump table (link base 0x02008000, same as 0x020048e8 and 0x0200012c) gates on a0 18..26, default a no-op. The one-word pool at 0x02004868 (table base 0x0200c7e0) is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x0200486c, already this overlay's row 0x0200486c (adopted exact earlier this session), so the span is 0x020047cc-0x0200486c, 160 bytes"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x020048ac",
+      "span_bytes": 60,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,lr} at 0x020048ac, epilogue pop {r5,r6} / pop {r0} / bx r0 at 0x020048de-0x020048e2; the one-word literal pool at 0x020048e4 (0x00001111) is the last instruction's mask constant and is included per the usual pool rule, immediately followed by the next owner's push at 0x020048e8 (0x020048ac-0x020048e8, 60 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02004fa8",
+      "span_bytes": 92,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} at 0x02004fa8, epilogue pop {r5,r6,r7} / pop {r1} / bx r1 at 0x02004ff2-0x02004ff6; the trailing pool at 0x02004ff8-0x02005000 (0x0000092c, 0x00000935, 0x00000917, plain numeric arguments) is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x02005004, already this overlay's row 0x02005004 (0x02004fa8-0x02005004, 92 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02005004",
+      "span_bytes": 52,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {lr} at 0x02005004, epilogue pop {r0} / bx r0 at 0x02005028-0x0200502a; the trailing pool at 0x0200502c-0x02005034 (0x0000092c, 0x00000935, 0x00000917, plain numeric arguments) is included per the usual pool rule, immediately followed by the next owner's push {r5,r6,r7,lr} at 0x02005038, already this overlay's row 0x02005038 (0x02005004-0x02005038, 52 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02005038",
+      "span_bytes": 48,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} at 0x02005038, epilogue pop {r5,r6,r7} / pop {r0} / bx r0 at 0x02005060-0x02005064; no pool, the halfword at 0x02005066 is the alignment pad, immediately followed by the next owner's push at 0x02005068, already this overlay's row 0x02005068 (0x02005038-0x02005068, 48 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02005068",
+      "span_bytes": 124,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,lr} at 0x02005068, epilogue pop {r5,r6} / pop {r0} / bx r0 at 0x020050d4-0x020050d8; the two-word pool at 0x020050dc-0x020050e0 (0x0200e840, 0x0200e8e4) is included per the usual pool rule, immediately followed by the next owner's push {r5,r6,r7,lr} at 0x020050e4, already this overlay's row 0x020050e4 (0x02005068-0x020050e4, 124 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02005684",
+      "span_bytes": 88,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,lr} at 0x02005684, epilogue pop {r5} / pop {r0} / bx r0 at 0x020056d0-0x020056d4; the one-word literal pool at 0x020056d8 (0x00000929) is included per the usual pool rule, immediately followed by the next owner's push {r5,r6,lr} at 0x020056dc, already this overlay's row 0x020056dc (0x02005684-0x020056dc, 88 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x020056dc",
+      "span_bytes": 164,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,lr} plus r8 spill at 0x020056dc, epilogue pop {r3} / mov r8,r3 / pop {r5,r6} / pop {r0} / bx r0 at 0x0200576c-0x02005774; the two-word pool at 0x02005778-0x0200577c (0x0200e840, 0x0200e8e4) is included per the usual pool rule, immediately followed by the next owner's push {r5,r6,lr} at 0x02005780, already this overlay's row 0x02005780 (0x020056dc-0x02005780, 164 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02005780",
+      "span_bytes": 108,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,lr} at 0x02005780, epilogue pop {r5,r6} / pop {r0} / bx r0 at 0x020057e0-0x020057e4; the one-word literal pool at 0x020057e8 (0x0000092a) is included per the usual pool rule, immediately followed by the next owner's push {r5,r6,lr} at 0x020057ec, already this overlay's row 0x020057ec (0x02005780-0x020057ec, 108 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02005ca4",
+      "span_bytes": 108,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {lr} at 0x02005ca4, epilogue pop {r0} / bx r0 at 0x02005d0c-0x02005d0e; no pool, immediately followed by the next owner's push {r5,r6,r7,lr} at 0x02005d10, already this overlay's row 0x02005d10 (0x02005ca4-0x02005d10, 108 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x020063ac",
+      "span_bytes": 116,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} plus fp/r9/r8 spill at 0x020063ac, epilogue pop {r3,r5,r6} / mov r8,r3 / mov r9,r5 / mov sl,r6 / pop {r5,r6,r7} / pop {r0} / bx r0 at 0x02006412-0x0200641e; no literal pool for this owner, the bytes at 0x02006420 onward are a ldr r4,[pc,#0] / bx r4 ARM-interworking veneer table into main ROM (e.g. target 0x080000c1), a recognized structural category with no push{..,lr} prologue, so the span is exactly 0x020063ac-0x02006420, 116 bytes"
+    },
+    {
       "overlay": "resource_3b2",
       "entry": "0x02000030",
       "span_bytes": 60,
@@ -4197,6 +4485,18 @@
     },
     {
       "overlay": "resource_3bb",
+      "entry": "0x02002940",
+      "span_bytes": 144,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing alignment halfword to the next owner's prologue at 0x020029d0, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3bb",
+      "entry": "0x020030e8",
+      "span_bytes": 80,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr}) and returning (pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing alignment halfword to the next owner's prologue at 0x02003138, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3bb",
       "entry": "0x02003638",
       "span_bytes": 964,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
@@ -4293,15 +4593,15 @@
     },
     {
       "overlay": "resource_3bc",
-      "entry": "0x0200288c",
-      "span_bytes": 288,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr}) and returning (pop {r3}/mov r8,r3/mov r9,r5/mov sl,r6/mov fp,r7/pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image, six sites), span read from the disassembly through the trailing six-word literal pool 0x2002994-0x20029ab to the furthest referenced pool word, inside the assembled overlay image and not overlapping another recorded owner"
-    },
-    {
-      "overlay": "resource_3bc",
       "entry": "0x02002640",
       "span_bytes": 208,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image, five sites, one from sibling item-28 owner 0x0200288c), span read from the disassembly including the mid-body three-word literal pool 0x20026b2-0x20026bd (branched over, same shape as resource_37b_c_02000150.c) to the final bx r0 at 0x0200270e, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3bc",
+      "entry": "0x0200288c",
+      "span_bytes": 288,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr}) and returning (pop {r3}/mov r8,r3/mov r9,r5/mov sl,r6/mov fp,r7/pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image, six sites), span read from the disassembly through the trailing six-word literal pool 0x2002994-0x20029ab to the furthest referenced pool word, inside the assembled overlay image and not overlapping another recorded owner"
     },
     {
       "overlay": "resource_3bc",
@@ -5430,90 +5730,6 @@
       "entry": "0x02000cf4",
       "span_bytes": 532,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
-    },
-    {
-      "overlay": "resource_39c",
-      "entry": "0x02002844",
-      "span_bytes": 108,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing alignment halfword to the next owner's prologue at 0x020028b0, inside the assembled overlay image and not overlapping another recorded owner"
-    },
-    {
-      "overlay": "resource_39c",
-      "entry": "0x02002e08",
-      "span_bytes": 100,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly to the next owner's prologue at 0x02002e6c, inside the assembled overlay image and not overlapping another recorded owner"
-    },
-    {
-      "overlay": "resource_39c",
-      "entry": "0x02004f44",
-      "span_bytes": 76,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing two-word literal pool to the next owner's prologue at 0x02004f90, inside the assembled overlay image and not overlapping another recorded owner"
-    },
-    {
-      "overlay": "resource_39c",
-      "entry": "0x02004f90",
-      "span_bytes": 60,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr}) and returning (pop {r3}/pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly to the next owner's prologue at 0x02004fcc, inside the assembled overlay image and not overlapping another recorded owner"
-    },
-    {
-      "overlay": "resource_39c",
-      "entry": "0x02005900",
-      "span_bytes": 72,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing three-word literal pool to the next owner's prologue at 0x02005948, inside the assembled overlay image and not overlapping another recorded owner"
-    },
-    {
-      "overlay": "resource_39c",
-      "entry": "0x02005158",
-      "span_bytes": 88,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr}) and returning (pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing one-word literal pool to the next owner's prologue at 0x020051b0, inside the assembled overlay image and not overlapping another recorded owner"
-    },
-    {
-      "overlay": "resource_39c",
-      "entry": "0x02005388",
-      "span_bytes": 208,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr}) and returning (pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing three-word literal pool to the next owner's prologue at 0x02005458, inside the assembled overlay image and not overlapping another recorded owner"
-    },
-    {
-      "overlay": "resource_39c",
-      "entry": "0x020021cc",
-      "span_bytes": 248,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6}/pop {r1}/bx r1, a real return value not the interworking-return shape) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing nine-word literal pool to the next owner's prologue at 0x020022c4, inside the assembled overlay image and not overlapping another recorded owner"
-    },
-    {
-      "overlay": "resource_3b1",
-      "entry": "0x020048ac",
-      "span_bytes": 60,
-      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,lr} at 0x020048ac, epilogue pop {r5,r6} / pop {r0} / bx r0 at 0x020048de-0x020048e2; the one-word literal pool at 0x020048e4 (0x00001111) is the last instruction's mask constant and is included per the usual pool rule, immediately followed by the next owner's push at 0x020048e8 (0x020048ac-0x020048e8, 60 bytes)"
-    },
-    {
-      "overlay": "resource_3b1",
-      "entry": "0x02001804",
-      "span_bytes": 144,
-      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} at 0x02001804, epilogue pop {r5,r6,r7} / pop {r0} / bx r0 at 0x0200188a-0x0200188e; the one-word literal pool at 0x02001890 (0x03001ebc) is the last instruction's own pool load and is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x02001894 (0x02001804-0x02001894, 144 bytes)"
-    },
-    {
-      "overlay": "resource_3b1",
-      "entry": "0x020012dc",
-      "span_bytes": 72,
-      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,lr} at 0x020012dc, epilogue pop {r5} / pop {r1} / bx r1 at 0x02001310-0x02001314; the three-word literal pool at 0x02001318-0x02001324 (0x0000092b, 0x0000092a, 0x00000929) is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x02001324 (0x020012dc-0x02001324, 72 bytes)"
-    },
-    {
-      "overlay": "resource_3b1",
-      "entry": "0x02001190",
-      "span_bytes": 240,
-      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} plus r8/sl spill at 0x02001190, epilogue pop {r3,r5} / mov r8,r3 / mov sl,r5 / pop {r5,r6,r7} / pop {r0} / bx r0 at 0x02001262-0x0200126c; the trailing pool at 0x02001270-0x0200127c (0xffffc000, 0x0000cccc, 0x00019999, 0x0200e668) is included per the usual pool rule, immediately followed by the next owner's push {r5,r6,r7,lr} at 0x02001280, already this overlay's row 0x02001280 (0x02001190-0x02001280, 240 bytes)"
-    },
-    {
-      "overlay": "resource_3b1",
-      "entry": "0x02004670",
-      "span_bytes": 348,
-      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,lr} at 0x02004670, epilogue pop {r5,r6} / pop {r0} / bx r0 at 0x020047b0-0x020047b4; the trailing pool at 0x020047b6-0x020047c8 (0x00000928, 0x00000929, 0xffff0000, 0x0000092a, 0x0000092b) is included per the usual pool rule, immediately followed by the next owner's push {r5,lr} at 0x020047cc, already this overlay's row 0x020047cc (0x02004670-0x020047cc, 348 bytes)"
-    },
-    {
-      "overlay": "resource_3b1",
-      "entry": "0x020037b4",
-      "span_bytes": 36,
-      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} at 0x020037b4, epilogue pop {r5,r6,r7} / pop {r0} / bx r0 at 0x020037d0-0x020037d4; no pool, the halfword at 0x020037d6 is the alignment pad, immediately followed by the next owner's push {r5,lr} at 0x020037d8, already this overlay's row 0x020037d8 (0x020037b4-0x020037d8, 36 bytes)"
     }
   ]
 }

@@ -31,12 +31,6 @@ s32 Func_08077040();
 s32 Func_080770c0();
 void Func_0808a018();
 void Func_0808a020();
-void Func_0200427a();
-s32 Func_0200427c();
-void Func_02004270();
-s32 Func_02004290();
-void Func_02004294();
-void Func_020042da();
 
 void Func_02001f58(void)
 {

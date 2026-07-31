@@ -25,14 +25,6 @@ void Func_02001154();
 void Func_080000c0();
 void Func_080770c8();
 void Func_080f9010();
-void Func_020006fc();
-void Func_02000706();
-void Func_02000712();
-void Func_020016fc();
-void Func_02002804();
-void Func_020028be();
-void Func_02002982();
-void Func_020029a8();
 
 void Func_02000568(void)
 {

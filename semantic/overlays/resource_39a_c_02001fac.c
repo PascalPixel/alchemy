@@ -39,9 +39,6 @@ void Func_080000c0();
 void Func_0808a330();
 void Func_0808a338();
 void Func_0808a348();
-void Func_0200425a();
-void Func_0200439e();
-void Func_020043b4();
 
 void Func_02001fac(void)
 {

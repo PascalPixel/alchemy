@@ -30,13 +30,6 @@ s32 Func_08077040();
 s32 Func_080770c0();
 void Func_080770c8();
 void Func_080f9010();
-s32 Func_020062f2(s32 request);
-s32 Func_02006316(s32 flag);
-void Func_020019a4(s32 selector);
-void Func_020064c2(s32 id);
-void Func_0200631a(s32 x, s32 y, s32 z);
-void Func_02006324(s32 a, s32 b, s32 c);
-void Func_02006356(s32 id);
 
 void Func_02000ce0(void)
 {

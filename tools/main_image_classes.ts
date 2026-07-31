@@ -24,6 +24,7 @@ const ROOT = resolve(dirname(new URL(import.meta.url).pathname), "..");
 
 export type OwnerClass =
   | "convertible-thumb"
+  | "retained-asm"
   | "arm-runtime"
   | "returns-via-ip"
   | "linker-veneer"
@@ -43,6 +44,26 @@ export function classifyOwner(assembly: string): OwnerClass {
   return "convertible-thumb";
 }
 
+// Retention per owner, read from the tracked `asm/classification.json` that
+// `build_asm` classifies against. Structural shape alone cannot tell a
+// convertible row from a retained one: a `keep_structured_asm` owner is
+// ordinary Thumb and looks exactly like a candidate. Counting those as
+// convertible overstated the front and sent lanes at rows that are deliberately
+// staying assembly, which is what happened to the main-image lane.
+//
+// Only the default classification -- `c_candidate` -- is work. Everything the
+// config names explicitly is a decision already taken.
+export function retentionByStem(config: {
+  structural?: { retention: string; files?: string[] }[];
+  groups?: { retention: string; files?: string[] }[];
+}): Map<string, string> {
+  const retention = new Map<string, string>();
+  for (const rule of [...(config.structural ?? []), ...(config.groups ?? [])]) {
+    for (const stem of rule.files ?? []) retention.set(stem, rule.retention);
+  }
+  return retention;
+}
+
 // Bytes attributed to each owner, from the intervals that name its assembly.
 export function ownerBytes(intervals: readonly { start: number; end: number; evidence?: string }[]): Map<string, number> {
   const bytes = new Map<string, number>();
@@ -59,13 +80,23 @@ function survey(): { classes: Map<OwnerClass, { owners: number; bytes: number }>
     main: { intervals: { start: number; end: number; evidence?: string }[] };
   };
   const bytes = ownerBytes(inventory.main.intervals);
+  const retention = retentionByStem(
+    JSON.parse(readFileSync(join(ROOT, "asm/classification.json"), "utf8")),
+  );
   const classes = new Map<OwnerClass, { owners: number; bytes: number }>();
   const convertible: { stem: string; bytes: number }[] = [];
   for (const name of readdirSync(join(ROOT, "asm"))) {
     if (!/^[0-9a-f]{8}\.s$/.test(name)) continue;
     const stem = name.slice(0, 8);
     if (existsSync(join(ROOT, "src", `${stem}.c`))) continue;
-    const kind = classifyOwner(readFileSync(join(ROOT, "asm", name), "utf8"));
+    const shape = classifyOwner(readFileSync(join(ROOT, "asm", name), "utf8"));
+    // The structural classes are findings about the code and outrank the
+    // config; a retained row that is also ARM runtime is still ARM runtime.
+    // Retention only overrides the convertible fallback.
+    const held = retention.get(stem);
+    const kind: OwnerClass = shape === "convertible-thumb" && held !== undefined && held !== "c_candidate"
+      ? "retained-asm"
+      : shape;
     const owned = bytes.get(stem) ?? 0;
     const row = classes.get(kind) ?? { owners: 0, bytes: 0 };
     row.owners += 1;

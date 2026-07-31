@@ -1222,6 +1222,7 @@ export function renderSvg(map: CoverageMap): string {
     { lane: "exact_c", value: `${exact.percent_of_executable}%`, note: "FULL-C BYTE SHARE" },
     { lane: "semantic_c", value: `${semantic.percent_of_executable}%` },
     { lane: "assembly", value: `${map.lanes.assembly.percent_of_executable}%` },
+    { lane: "retained_asm", value: `${map.lanes.retained_asm.percent_of_executable}%`, note: "BY DESIGN" },
     { lane: "asset_data", value: megabytes(map.lanes.asset_data.bytes), note: "NOT CODE" },
   ];
   const columnWidth = (width - margin * 2) / metrics.length;
@@ -1864,7 +1865,8 @@ export function selfTest(): void {
     lanes: {
       exact_c: { bytes: 60, percent_of_executable: 30 },
       semantic_c: { bytes: 40, percent_of_executable: 20 },
-      assembly: { bytes: 100, percent_of_executable: 50 },
+      assembly: { bytes: 80, percent_of_executable: 40 },
+      retained_asm: { bytes: 20, percent_of_executable: 10 },
       asset_data: { bytes: 824, percent_of_executable: 0 },
     },
     main: { executable_bytes: 120, exact_c_bytes: 60, semantic_c_bytes: 20 },

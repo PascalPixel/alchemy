@@ -24,7 +24,9 @@ typedef unsigned char u8;
  * known function starts (0x0a78, 0x0048) plus the Thumb bit, and the even
  * words 0x02008c3c / 0x02008da4 / 0x02008dd4 land inside the 0x13cc-byte image
  * at value - 0x8000.  Note 0x02000240 below is therefore NOT in-image: it is
- * the cross-overlay RAM global block, matching its use in other overlays.
+ * the cross-overlay RAM global block at a fixed RAM address, matching its use
+ * in other overlays (resource_370 spells it `(u8 *)0x02000240` too).  It is
+ * unrelated to this overlay's own code at file offset 0x240.
  *
  * Owner is complete: `push {r5, r6, lr}` + `push {r5, r6}` (sl, r8) prologue
  * at 0x02000a78, single interworking epilogue at 0x02000b28.  A literal pool
@@ -59,10 +61,6 @@ typedef unsigned char u8;
 void Func_080770c8();
 u8 *Func_0808a080();
 
-/* The cross-overlay RAM global block; the signed halfword at +450 selects the
- * scene variant. */
-extern u8 Data_02000240[];
-
 /* Pointer CELL, not the workspace itself: the original does
  * `ldr r3,[pc] / ldr r1,[r3]`. */
 extern u8 *Data_03001ebc;
@@ -84,7 +82,7 @@ s32 Func_02000a78(void)
     u8 *record;
     u8 *sub;
 
-    if (*(s16 *)(Data_02000240 + 450) == 90) {
+    if (*(s16 *)((u8 *)0x02000240 + 450) == 90) {
         Func_080770c8(0x96f);
     }
 

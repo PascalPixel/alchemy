@@ -85,7 +85,7 @@ const OPTIMIZE_O1_SOURCES = new Set(["080049e8", "08021e28"]);
 // them needs an overlay-aware key, not a wider set.
 const NO_INTERWORK_SOURCES = new Set([
   "0200142c", "0200143c", "0200144c",
-  "02001544", "02001564",
+  "02001564",
   "02001750", "02001760",
   "02005ac0", "02005ad0",
   "02005bd8", "02005be8", "02005bf8",
@@ -102,6 +102,9 @@ const NO_INTERWORK_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3a7_c_02001554.c",
   "assets/code/resource_3a7_c_02001740.c",
   "assets/code/resource_3bf_c_02005ae0.c",
+  // Moved out of the stem set: resource_377 now has an interworking row at
+  // 02001544, and the stem key would have stripped its interworking epilogue.
+  "assets/code/resource_3a7_c_02001544.c",
 ]);
 // Only the second flag does anything. The pre-reload scheduler is inert in this
 // fork: 40 converted sources, including the largest, compile byte-identically
@@ -627,6 +630,12 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // resource_3bf:0c78 sets r0, r1 and r2 for one call and the reference orders
   // them by ascending destination; without the tie-break r0 lands last.
   "assets/code/resource_3bf_c_02000c78.c",
+  // resource_39a:17a8 sets r0/r1/r2 at two three-argument calls and the
+  // reference orders them by ascending destination at both.
+  "assets/code/resource_39a_c_020017a8.c",
+  // resource_383:19a4 sets r0/r1/r2 at two three-argument calls; ascending
+  // destination order at both.
+  "assets/code/resource_383_c_020019a4.c",
   // resource_3a2:0870 and :08a8 each set r0/r1/r2 for a three-argument call and
   // the reference orders them by ascending destination. :08a8 also needs the
   // constant-sharing mode: both of its negated arguments are -1, so CSE builds
@@ -838,6 +847,10 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   // at the commit call; the rerun keeps it in r5 across both and costs the
   // prologue a register the reference does not push.
   "assets/code/resource_3b4_c_02001070.c",
+  // resource_37f:056c loads its 0x302 and 0x303 ids at two sites each; the
+  // rerun parks both in callee-saved registers and buys two prologue pushes.
+  "assets/code/resource_37f_c_0200056c.c",
+  "assets/code/resource_37f_c_020005ac.c",
 ]);
 // -fno-gcse routed by path rather than by stem, for overlay rows whose address
 // is also an offset in another overlay that is already converted.

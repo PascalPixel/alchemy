@@ -54,7 +54,9 @@ section, relayed through Vale as style characterizations — never wholesale
 quote reproduction): Isaac = direct purposeful statements, burden accepted
 plainly; Garet = colloquial bursts, mid-sentence self-correction,
 accidental truths; Ivan = courteous restraint with a rare flash of steel
-when a moral line is crossed; Mia = duty-and-care framing with
+when a moral line is crossed — he ASKS LEAVE to speak ("If I may—") and
+waits on the asking; Kraden urges him on ("Speak up, my boy!"), and Isaac
+backs him plainly ("Go ahead, Ivan") — a standing party ritual; Mia = duty-and-care framing with
 guilt-tinged resolve and unexpected dry humor — and she is the family's
 listener: when Kraden addresses everyone, Mia tends to be the one who
 replies with a short warm acknowledgment so he knows he's heard; Kraden = rhetorical

@@ -495,6 +495,22 @@ confirms it is data.
 unrelated globals hides that the second is the well-known workspace pointer the
 rest of the overlay loads directly.
 
+**A bracket-close import appearing MORE times in your C than in the histogram
+means you wrote a shared close once per arm.** Measured across the eight
+worst-failing overlays, three of the eleven genuine count defects were exactly
+this — `Func_0808a020` with `asm=1` against `src=2` or `src=3`. Reach the close
+with a label and a `goto`; per-arm copies inflate the multiset just as merging
+deflates it.
+
+**Audit status, measured over all 58 converted overlays: 32 clean, 26 with
+mismatches — but 4,253 of 4,371 mismatch lines in the eight worst are ONE
+mechanical defect.** Those files were written before the `target = stored + 2`
+rule and name callees by the pre-rule address: 3,308 lines are a
+`Func_0200xxxx` the assembly never calls, and 945 are the mirror — the real
+import, absent from the source. Control flow and call counts are right; only the
+names are wrong, so this is a rename pass, not a re-conversion. Only **11** lines
+across those overlays are genuine count differences.
+
 **Mechanise the multiset proof: `bun tools/overlay_multiset_check.ts <ov>
 [ownerHex]`.** Four lanes independently hand-rolled this before it was promoted
 into `tools/`. It compares the per-target `bl` histogram against

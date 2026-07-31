@@ -820,6 +820,29 @@ call sites on every path — five phantom entries in the multiset.
 halfword after it belongs to nobody.** `resource_38e:090c` is 102/102, ending at
 0x0971 with `0x0000` at 0x0972 outside the row. Do not attach it.
 
+**THE INVENTORY IS INCOMPLETE — 36 real functions have no row at all.** Sweep
+the two-byte gaps between intervals in `metrics/gs1-en-executable.json`: where
+the gap holds a `push {…,lr}` prologue, that is a function start. 53 such gaps
+exist; 17 correspond to known rows and **36 appear nowhere** — no semantic
+source, no exact source, no inventory row. **15 of the 36 are provably called**
+by a `bl` in their own overlay. Sizes must be derived by walking from the
+prologue to its matching epilogue, because the interval boundary next to them is
+exactly what is unreliable.
+
+**`0x0314` is a nine-overlay family**: `382`, `385`, `387`, `39b`, `3a0`, `3a6`,
+`3b3`, `3be`, `3c0` all have an unrecorded function at that same offset, and
+`387:0314` is called twelve times. A repeated offset across overlays is almost
+always one routine transposed — read one, byte-diff the rest.
+
+**None of the 226 two-byte gaps is padding**, so do not extend
+`two-byte-zero-between-executable-spans` to them: 53 hold a prologue, **93 hold
+the HIGH half of a `0xffffNNNN` script-record key** (the interval ends mid-record
+and the leftover halfword reads as a `bl` suffix — it is data, not a split call;
+zero of 103 had a `bl` prefix before them), 17 hold `sub sp,#16`, 63 hold other
+instruction halfwords, and **0 hold a zero**. The coverage cost is only 72 bytes
+because each gap is 2 bytes with the body already inside the next interval; the
+real defect is the 36 missing rows.
+
 **An inventory "second entry" row can be the `bl`-decoding artefact ITSELF.**
 `resource_379:00dc` is listed as a 2,524-byte contained row, and the banked
 byte-exact `resource_379_c_02000054.c` calls `Func_020000dc` — but the halfwords

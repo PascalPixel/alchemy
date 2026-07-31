@@ -6582,6 +6582,18 @@
       "entry": "0x02000cf4",
       "span_bytes": 532,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3a4",
+      "entry": "0x02002020",
+      "span_bytes": 176,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_3a4), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row while all nine of its handlers were already drafted; span read from the disassembly through the eleven-word literal pool 0x020020a4-0x020020cf to the next owner's prologue at 0x020020d0 (already drafted), inside the assembled overlay image and not overlapping another recorded owner."
+    },
+    {
+      "overlay": "resource_39e",
+      "entry": "0x02003e58",
+      "span_bytes": 580,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_39e), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row while the rows it leads to were drafted; span read from the disassembly through the sixteen-word literal pool 0x0200409c-0x020040db to the next owner's prologue at 0x020040dc (already drafted), inside the assembled overlay image and not overlapping another recorded owner."
     }
   ]
 }

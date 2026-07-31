@@ -138,20 +138,19 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **662,952
-executable bytes across 1,253 compiling sources**: 385,850 main-image bytes and
-277,102 overlay bytes. Combined with exact C, **877,080 / 1,339,580 executable
-bytes** are expressed as C.
+Alongside the exact lane, reviewed semantic C currently accounts for **683,124
+executable bytes across 1,299 compiling sources**: 385,850 main-image bytes and
+297,274 overlay bytes. Combined with exact C, **897,308 / 1,339,580 executable
 bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
 sources live under `semantic/` and do not claim byte equality. Use
 `semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
 of the ordinary review queue.
 
 
-**37 overlays have zero unconverted rows in the strict queue**, holding
-260,098 strict bytes between them. Regenerate this list rather than editing it —
+**43 overlays have zero unconverted rows in the strict queue**, holding
+274,570 strict bytes between them. Regenerate this list rather than editing it —
 it has drifted twice from being maintained by hand:
-`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,484), `resource_3c8` (12,800), `resource_372` (10,202), `resource_38f` (9,848), `resource_371` (9,650), `resource_39f` (9,278), `resource_3c5` (9,208), `resource_374` (9,148), `resource_3a8` (8,912), `resource_383` (8,652), `resource_391` (7,648), `resource_39a` (7,096), `resource_375` (6,568), `resource_3aa` (6,552), `resource_3b4` (6,462), `resource_3b2` (6,134), `resource_3b7` (6,062), `resource_37b` (6,032), `resource_3bb` (5,896), `resource_395` (5,780), `resource_3cb` (5,540), `resource_3c6` (5,250), `resource_38d` (5,212), `resource_399` (4,738), `resource_3a7` (4,728), `resource_370` (4,718), `resource_3c7` (4,440), `resource_37f` (4,428), `resource_3ad` (4,288), `resource_3ca` (3,978), `resource_3bc` (3,826), `resource_38b` (3,628), `resource_3a3` (3,428), `resource_3ba` (3,376), `resource_3a4` (36).
+`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,252), `resource_3c8` (11,916), `resource_372` (9,838), `resource_371` (9,486), `resource_38f` (9,212), `resource_39f` (8,692), `resource_383` (8,588), `resource_3c5` (7,866), `resource_3a8` (7,780), `resource_391` (7,648), `resource_374` (7,468), `resource_375` (6,424), `resource_37a` (6,200), `resource_37b` (6,032), `resource_3b2` (5,984), `resource_3aa` (5,960), `resource_3b7` (5,954), `resource_3bb` (5,548), `resource_395` (5,504), `resource_3cb` (5,488), `resource_39a` (5,368), `resource_377` (5,226), `resource_3b4` (5,104), `resource_3c6` (5,094), `resource_3ae` (5,026), `resource_370` (4,718), `resource_38d` (4,680), `resource_399` (4,672), `resource_3a2` (4,484), `resource_3a7` (4,442), `resource_3c7` (4,252), `resource_37f` (4,216), `resource_3ad` (3,978), `resource_3ca` (3,926), `resource_3bc` (3,768), `resource_3ba` (3,344), `resource_38b` (3,318), `resource_3a3` (3,156), `resource_3b5` (2,914), `resource_3c2` (2,688), `resource_3b6` (2,284).
 
 **"Converted in full" means zero unconverted STRICT-QUEUE rows, not that every
 executable byte of the overlay is C.** Measured across those overlays: their
@@ -168,10 +167,6 @@ that proportion.
 0x02003fa8-0x02003fb8 with `r0 = 0` before it, so it returns `s32`. That is
 **3,922 bytes as one owner across 18 inventory rows with ~260 static calls**; the
 18 sub-rows are `call:` seeds (import identities), not real entries, and the only
-true internal structure is the jump table. Build that lane
-with `bun run build:semantic`; its sources live under `semantic/` and do not
-claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
-and multi-region traps out of the ordinary review queue.
 true internal structure is the jump table.
 
 Both lanes are drawn together in the README coverage map

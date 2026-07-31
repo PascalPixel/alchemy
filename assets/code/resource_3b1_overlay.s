@@ -8020,33 +8020,13 @@ AlchemyC_02000fac:
 	bx	r0
 	.2byte 0xc7e0
 	.2byte 0x0200
-	push	{lr}
-	movs	r1, #0
-	bl	sub_0200ae2a
-	movs	r0, #10
-	bl	sub_0200ad38
-	pop	{r0}
-	bx	r0
+AlchemyC_0200486c:
+	.space 0x12
 	.2byte 0x0000
-	push	{lr}
-	lsls	r1, r1, #16
-	lsrs	r1, r1, #16
-	movs	r2, #10
-	bl	sub_0200ae5a
-	pop	{r0}
-	bx	r0
-	push	{r5, r6, lr}
-	adds	r5, r0, #0
-	lsls	r1, r1, #16
-	lsls	r2, r2, #16
-	adds	r6, r3, #0
-	bl	sub_0200ade4
-	adds	r0, r5, #0
-	bl	sub_0200ad8a
-	strh	r6, [r0, #6]
-	pop	{r5, r6}
-	pop	{r0}
-	bx	r0
+AlchemyC_02004880:
+	.space 0x10
+AlchemyC_02004890:
+	.space 0x1c
 	push	{r5, r6, lr}
 	adds	r5, r3, #0
 	movs	r3, #1

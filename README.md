@@ -26,17 +26,21 @@ game.
 
 ## Coverage map
 
-**Core** — main-image code, 548 KB of the executable universe:
+**Core** — main-image code, 548 KB of the executable universe. One purple, four
+brightnesses: dark is assembly (0%), half is semantic C (50%), bright is
+byte-exact C (75%), full blaze is humanized byte-exact C (100%):
 
-![Main-image code coverage box tree: blue is byte-exact C, teal is reviewed semantic C, grey is assembly.](assets/readme/gs1-en-core.svg?v=40c76721)
+![Main-image code coverage box tree in the purple band; brightness is completion.](assets/readme/gs1-en-core.svg?v=203c6f43)
 
 **Overlays** — decoded overlay code, 791 KB:
 
-![Decoded overlay code coverage box tree: blue is byte-exact C, teal is reviewed semantic C, grey is assembly.](assets/readme/gs1-en-overlays.svg?v=a133bf9b)
+![Decoded overlay code coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=e1e32d9b)
 
-**Assets** — the 7.3 MB of the cartridge that is data, not code:
+**Assets** — the 7.3 MB of the cartridge that is data, not code. Same ladder in
+magenta: faint is byte-represented, a third is b&w sheets, two thirds is
+coloured sheets, full blaze is assets cut into individual objects:
 
-![Asset and data box tree in pink.](assets/readme/gs1-en-assets.svg?v=b4819753)
+![Asset maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-assets.svg?v=1626b792)
 
 Every byte of the English cartridge. The left card is the ROM as it ships; the
 right card is the audited executable denominator behind Full-C Byte Share. Blue

@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Asset maturity box tree, pink band">
-<rect x="0" y="0" width="1600" height="900" fill="#0a0a0a"/>
+<rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
 <rect x="1" y="1" width="131.9" height="281.9" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.67"/>
 <rect x="1" y="282.9" width="131.9" height="616.1" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.08"/>
-<rect x="134.9" y="1" width="63.4" height="34.7" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.08"/>
+<rect x="134.9" y="1" width="63.4" height="34.7" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="1"/>
 <rect x="134.9" y="37.7" width="63.4" height="187.8" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.67"/>
 <rect x="134.9" y="225.5" width="63.4" height="0.9" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.34"/>
 <rect x="134.9" y="226.4" width="63.4" height="672.6" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.08"/>

@@ -25,9 +25,10 @@ main ────────────────▶ jupiter/mars ───�
 - Vale merges a spoke into `main` only after its work passes the verify
   chain, the hooks, and the counter check — a PR review without the
   ceremony.
-- **Only Vale writes `MEETING.md`.** Spokes report via commit messages
-  and their round returns; the board conflicts that plagued every ring
-  merge end here.
+- **The channel is `/tmp/ALCHEMY_GROUP_CHAT.md`** — a running group chat for all
+  agents, append-only, read at every loop boundary. The tracked MEETING.md
+  is retired; durable rulings live in HANDOVER/LAWS/commit messages. Vale
+  is engineering lead and authoritative on `main` and on disputes.
 - Assignments are disjoint by overlay so spoke merges never collide.
 
 Everything below documents the retired remote ring, kept for reading the

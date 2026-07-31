@@ -94,6 +94,11 @@ Consequences worth knowing before you act:
   path: when Mercury makes a region byte-exact, the next Venus pull deletes the
   semantic version. `build_semantic` hard-errors on a duplicate, so this is
   enforced rather than remembered.
+- **Bank with `tools/venus_bank.sh`, never by typed shell chain.** It syncs
+  spans, verifies, and stops if verify fails. This exists because a `;` where
+  `&&` was meant pushed a commit whose verify had failed seconds earlier — sound
+  only by luck. In a tree with concurrent writers a failed verify is usually
+  another lane mid-file, which is precisely why it must block rather than warn.
 - **Pull `mercury` with `tools/venus_pull.sh`, never by hand.** A conflicted
   merge leaves markers in the working tree, and a conflicted `package.json`
   breaks `bun run <anything>` for every concurrent lane — three lanes lost part

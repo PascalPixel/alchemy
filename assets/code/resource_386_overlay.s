@@ -319,29 +319,8 @@ AlchemyC_020001e4:
 	.4byte 0x00001384
 	.2byte 0x1ebc
 	.2byte 0x0300
-	push	{r5, lr}
-	bl	sub_0200093c
-	movs	r1, #1
-	movs	r0, #16
-	bl	sub_0200098c
-	bl	sub_02000950
-	movs	r0, #16
-	bl	sub_02000976
-	movs	r3, #1
-	adds	r0, #91
-	strb	r3, [r0, #0]
-	bl	.L_02000438
-	movs	r0, #16
-	bl	sub_02000986
-	movs	r5, #0
-	adds	r0, #91
-	strb	r5, [r0, #0]
-	movs	r1, #2
-	movs	r0, #16
-	bl	sub_0200099c
-	pop	{r5}
-	pop	{r0}
-	bx	r0
+AlchemyC_020002fc:
+	.space 0x3c
 	push	{lr}
 	bl	sub_02000978
 	bl	sub_0200096c
@@ -492,29 +471,8 @@ AlchemyC_020001e4:
 	.4byte 0x00003ffe
 	.2byte 0x1cec
 	.2byte 0x0000
-	push	{lr}
-	bl	sub_02000ae0
-	ldr	r0, [pc, #40]
-	bl	sub_02000abe
-	cmp	r0, #0
-	bne.n	.L_020004b8
-	ldr	r0, [pc, #32]
-	bl	sub_02000b48
-	b.n	.L_020004be
-.L_020004b8:
-	ldr	r0, [pc, #28]
-	bl	sub_02000b50
-.L_020004be:
-	movs	r0, #18
-	movs	r1, #0
-	bl	sub_02000b68
-	bl	sub_02000b0c
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0x0000085b
-	.4byte 0x00001382
-	.4byte 0x00001cf4
+AlchemyC_020004a0:
+	.space 0x3c
 	.4byte 0x47704800
 	.2byte 0x898c
 	.2byte 0x0200

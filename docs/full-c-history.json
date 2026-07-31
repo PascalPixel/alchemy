@@ -2,10 +2,10 @@
   "format": 1,
   "metric": "full-c-byte-share",
   "target": "gs1-en",
-  "denominator_commit": "bb402dfcad3a4e715d1059f950abbbcc44bec9fa",
+  "denominator_commit": "c4cd5535021a29ccd60ac7e21f132bbd7e84f959",
   "executable_bytes": 1339580,
   "history_scope": "first-parent",
-  "generated_from": "87a070cf137186e6023e0b95bf6eb2fa555576c6",
+  "generated_from": "baec141929ed02f2cf348e0b67b753783bb9abe3",
   "entries": [
     {
       "commit": "c0a101abc862998cc36a0ce13f6f893b614a16b8",
@@ -2820,6 +2820,38 @@
       "main_full_c_bytes": 101344,
       "overlay_full_c_bytes": 111736,
       "canonical_suffix": "[C 213,080/1,339,580 bytes]",
+      "derivation_status": "measured",
+      "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
+    },
+    {
+      "commit": "52f455fc97d3b62ad9499abae0a42cd49505e08c",
+      "first_parent_position": 177,
+      "author_time": "2026-07-31T00:14:11+00:00",
+      "committer_time": "2026-07-31T00:14:11+00:00",
+      "original_subject": "convert six rows and unpin a second colliding stem [C 213,440/1,339,580 bytes]",
+      "full_c_bytes": 213440,
+      "executable_bytes": 1339580,
+      "remaining_bytes": 1126140,
+      "percent": 15.93,
+      "main_full_c_bytes": 101344,
+      "overlay_full_c_bytes": 112096,
+      "canonical_suffix": "[C 213,440/1,339,580 bytes]",
+      "derivation_status": "measured",
+      "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
+    },
+    {
+      "commit": "c4cd5535021a29ccd60ac7e21f132bbd7e84f959",
+      "first_parent_position": 178,
+      "author_time": "2026-07-31T00:15:18+00:00",
+      "committer_time": "2026-07-31T00:15:18+00:00",
+      "original_subject": "merge origin/main into mercury [C 213,440/1,339,580 bytes]",
+      "full_c_bytes": 213440,
+      "executable_bytes": 1339580,
+      "remaining_bytes": 1126140,
+      "percent": 15.93,
+      "main_full_c_bytes": 101344,
+      "overlay_full_c_bytes": 112096,
+      "canonical_suffix": "[C 213,440/1,339,580 bytes]",
       "derivation_status": "measured",
       "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
     }

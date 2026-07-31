@@ -23,17 +23,17 @@
  *
  * The one call site was resolved with
  * `bun tools/overlay_call_targets.ts resource_3c0 0314 0322`:
- * 0x0200031a -> veneer 0x02001344 -> Func_0808a258.  `overlay_show`'s printed
+ * 0x0200031a -> veneer 0x02001344 -> Func_02001660.  `overlay_show`'s printed
  * 0x2001660 is the pc-relative misreading and is not used.  Both arguments are
  * immediates, so there is no dataflow to recover: this is a named shorthand
  * for one fixed request, the same two-argument import the resource_371 owners
- * at 0x0200008c and 0x020000d4 call as `Func_0808a258(0x809, 42)` and
- * `Func_0808a258(0x80a, 24)`.
+ * at 0x0200008c and 0x020000d4 call as `Func_02001660(0x809, 42)` and
+ * `Func_02001660(0x80a, 24)`.
  */
 
-void Func_0808a258();
+void Func_02001660();
 
 void Func_02000314(void)
 {
-    Func_0808a258(15, 45);
+    Func_02001660(15, 45);
 }

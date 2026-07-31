@@ -1,0 +1,57 @@
+typedef unsigned char u8;
+typedef int s32;
+
+/*
+ * resource_3c9 owner at 0x020038dc, 72 bytes: a scripted-scene bracket
+ * around two other candidates from this sweep, a story-flag set, a
+ * workspace write, and a closing call.
+ *
+ * Complete owner: `push {lr}` at 0x020038dc through `pop {r0} / bx r0`
+ * at 0x0200391a-0x0200391c, followed by the alignment halfword and
+ * one-word literal pool 0x0200391e-0x02003923; the next owner's
+ * prologue is exactly at 0x02003924 (this overlay's own
+ * resource_3c9_c_02003924.c candidate, not yet drafted). No incoming
+ * arguments are read before being overwritten, so `void`.
+ *
+ * Not found by the structural inventory walk (unindexed): reached only
+ * by `bl`, resolved with `bun tools/overlay_call_targets.ts resource_3c9
+ * 38dc 3924`'s `+2` rule. Calls this overlay's own Func_020048d8 and
+ * Func_02004b28 (the latter already drafted,
+ * resource_3c9_c_02004b28.c, void/no-argument).
+ *
+ * SHARED IDIOMS cited from the resource_3b9 mandate: scripted-scene
+ * bracket open/close and the story-flag set (Func_080770c8), plus the
+ * additive/subtractive workspace-write idiom on 0x03001ebc (first
+ * named in resource_377_c_02000a0c.c) -- here workspace+448 = 512
+ * (additive: 224<<1 + 64) and workspace+456 = 24 (subtractive:
+ * 512 - 56, plain immediate).
+ */
+
+extern u8 *Data_03001ebc;
+
+extern void Func_0808a018(void);
+extern void Func_0808a020(void);
+extern void Func_0808a248(s32 arg0);
+extern void Func_0808a368(void);
+extern void Func_0808a370(void);
+extern void Func_080770c8(s32 flag_id);
+extern void Func_020048d8();
+extern void Func_02004b28(void);
+
+void Func_020038dc(void)
+{
+    u8 *workspace = Data_03001ebc;
+
+    Func_0808a018();
+    Func_020048d8();
+    Func_02004b28();
+    Func_080770c8(141 << 1);
+
+    *(s32 *)(workspace + 448) = 512;   /* additive: 224<<1 + 64 */
+    *(s32 *)(workspace + 456) = 24;    /* subtractive: 512 - 56 */
+
+    Func_0808a368();
+    Func_0808a370();
+    Func_0808a248(1);
+    Func_0808a020();
+}

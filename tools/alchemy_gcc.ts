@@ -449,7 +449,7 @@ const SCHED_LOW_DEST_FIRST_SOURCES = new Set([
   // resource_3b1's flat setter-sequence unindexed rows: a shifted constant
   // argument (movs/lsls) with the callee's other args set between the two
   // halves. Verified no other overlay owns these stems (bare-address key).
-  "02003dec", "02003e34", "02003d10",
+  "02003dec", "02003e34", "02003d10", "020040e8",
 ]);
 const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
   // resource_3b7:0154 and :0178 are the same four-call sheet over two ids. The

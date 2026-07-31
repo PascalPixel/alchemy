@@ -45,16 +45,20 @@ typedef signed int s32;
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-s32 Func_080000f8();            /* sampled value */
+s32 Func_02001246();            /* sampled value (veneer to Func_080000f8) */
 
 s32 Func_0200007c(u8 *object)
 {
-    u32 sample = (u32)(Func_080000f8() << 6) >> 16;   /* bits 10..15 */
+    u32 sample = (u32)(Func_02001246() << 6) >> 16;   /* bits 10..15 */
 
     if (sample == 6) {
-        *(u16 *)(object + 6) = 0xd000;
+        s32 value = 0xd000;
+
+        *(u16 *)(object + 6) = value;
     } else if (sample == 9) {
-        *(u16 *)(object + 6) = 0xb000;
+        s32 value = 0xb000;
+
+        *(u16 *)(object + 6) = value;
     }
 
     return 1;

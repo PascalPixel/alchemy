@@ -18,19 +18,19 @@ typedef signed int s32;
  * table does not cover it -- resolved with `bun tools/overlay_show.ts
  * resource_3a4 3460 | bun tools/overlay_call_targets.ts resource_3a4 3460
  * 3480 --annotate`):
- *   0x2003462 -> veneer -> Func_0808a080(selector)          scene-record accessor, established
- *   0x200347a -> veneer -> Func_08009278(0, x, z, 255)      established, "place a marker (kind, x, z, level)" (resource_37b_c_020016dc.c, resource_3b2_c_02000f70.c)
+ *   0x2003462 -> veneer -> Func_02006ffc(selector)          scene-record accessor, established
+ *   0x200347a -> veneer -> Func_02006fbc(0, x, z, 255)      established, "place a marker (kind, x, z, level)" (resource_37b_c_020016dc.c, resource_3b2_c_02000f70.c)
  */
 
-u8 *Func_0808a080();           /* scene-record accessor, established */
-void Func_08009278();          /* place a marker (kind, x, z, level), established */
+u8 *Func_02006ffc();           /* scene-record accessor, established (veneer to Func_0808a080) */
+void Func_02006fbc();          /* place a marker (kind, x, z, level), established (veneer to Func_08009278) */
 
 void Func_02003460(s32 selector)
 {
     u8 *record;
 
-    record = Func_0808a080(selector);
+    record = Func_02006ffc(selector);
     record[89] &= 0xfe;
 
-    Func_08009278(0, *(s32 *)(record + 8), *(s32 *)(record + 16), 255);
+    Func_02006fbc(0, *(s32 *)(record + 8), *(s32 *)(record + 16), 255);
 }

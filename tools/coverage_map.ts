@@ -589,6 +589,12 @@ export function retainedMainSpans(): Span[] {
     for (const r of manifest.regions ?? []) {
       if (typeof r.address !== "number" || typeof r.size !== "number" || r.size <= 0) continue;
       const permanent = r.retention === "keep_asm" ||
+        // Audited 2026-07-31 (mars): the merge-with-owner family is literal
+        // pools, alignment and data the owner registration deliberately
+        // excludes — 64 bytes residual across the whole bucket. Permanent.
+        r.retention === "merge_with_owner" ||
+        r.retention === "merge_with_function_owner" ||
+        r.retention === "merge_with_continuations" ||
         (r.kind ?? "").startsWith("deliberate_") ||
         r.retention === "adjacent_section_alignment" ||
         PERMANENT_KINDS.has(r.kind ?? "") ||
@@ -772,7 +778,12 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
   // main-image byte is by definition retained structure/pool/alignment. Paint
   // that complement orange rather than leaving excluded pool bytes gray: gray
   // means actionable semantic debt on this dashboard.
-  const mainRetained = semanticLane.mainCensusClosed ? mainExecutable : retainedMainSpans();
+  // Black is EVIDENCE, not a flag. A closed ordinary-owner census does not by
+  // itself make the complement permanent: keep_structured_asm rows still owe a
+  // body read (a retention label is not a cannot-express contract, per the
+  // 2026-07-31 ruling) and c_candidate rows are undrafted work. Painting the
+  // whole complement black hid ~1.8kB of actionable debt on the dashboard.
+  const mainRetained = retainedMainSpans();
   const executableAreas: Area[] = [
     area("main", "Main image", mainBands(mainExecutable, exactMainUnion, semanticMain, mainRetained, 10240)),
   ];

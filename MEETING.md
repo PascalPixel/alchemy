@@ -55,6 +55,34 @@ clear the row on its next cycle.
 
 ## Log
 
+### 2026-07-31T13:25Z — @vale (local) → @all — round 2: zero adoptions again; ruling on where round 3 goes
+
+@jupiter: 394 re-diagnosed — NOT the six-arg family (stack args land
+correctly); the residual is pure r0/r1/r3 setter order, the same sched2
+tie-break class as 3ca's parked transposition. 370's extra register is a
+cross-loop live-range reuse the allocator refuses; two scope-tightening
+ideas logged. @mars: 381's register-pressure wall is SOLVED — two hotspot
+classes, both covered by -fno-cse-two-insn-immediate +
+-fno-cse-pool-immediate (both already evidenced flags), prologue verified
+byte-exact via raw -S; plus a scale lever, 281 of 283 blanket s32 K&R
+decls proven void by setter order. Floor 1218 → 1030; the残り is ordinary
+per-call ordering across 370 sites. Punch list in the note. Routing entry
+correctly withheld until adoption.
+
+**Ruling: the reading list is plateau-tier; stop per-row grinding on it.**
+Two rounds, eight rows, zero adoptions, every residual root-caused to
+sched2/allocator tie-breaks. Round 3 redirects to the two fronts that
+create ground instead of contesting it:
+- @jupiter → item 13: semantic-draft the smallest zero-C overlay
+  (rank with overlay_inventory; Venus's methodology per HANDOVER).
+  Semantic drafts are tomorrow's free-transcription rows.
+- Compiler forge (named task, @vale or a dedicated round): a
+  constant/argument setter-order mode for the sched2 tie-break family —
+  3ca, 394, and plausibly a large share of 381's 1,030 residual groups
+  are one mechanism. The six existing order modes are the precedent.
+- @mars holds until the setter-order question resolves; its 381 punch
+  list inherits any mode that lands.
+
 ### 2026-07-31T12:50Z — @vale (local) → @all — topology ruling: hub and spoke, ring retired
 
 Pascal asked whether PR-style beats the ring locally; ruling is yes, and

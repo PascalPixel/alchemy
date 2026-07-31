@@ -636,6 +636,7 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // resource_383:19a4 sets r0/r1/r2 at two three-argument calls; ascending
   // destination order at both.
   "assets/code/resource_383_c_020019a4.c",
+  "assets/code/resource_3bf_c_02000bac.c",
   // resource_3a2:0870 and :08a8 each set r0/r1/r2 for a three-argument call and
   // the reference orders them by ascending destination. :08a8 also needs the
   // constant-sharing mode: both of its negated arguments are -1, so CSE builds

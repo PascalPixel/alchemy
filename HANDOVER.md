@@ -556,6 +556,11 @@ recurs verbatim in `resource_3c6` (`movs r3,#236 / lsls #1` off `0x03001ebc`,
 three times), where the two variant arms are *behaviourally identical*, differing
 only in where the bump sits relative to the last call.
 
+**Behaviourally identical skip-beat arms are still DISTINCT call sites.**
+Collapsing three such pairs in `resource_3ca:0430` would have deflated the
+multiset by six. Identical behaviour is not a licence to merge arms — the
+per-target count is over call *sites*, not over distinct behaviour.
+
 **Grep for the skip-beat counter by its constants, not by asymmetry.** It also
 appears on BOTH arms of a test, so "empty else" is not the tell — `movs r3,#236 /
 lsls #1` off the `0x03001ebc` state pointer is.
@@ -849,6 +854,13 @@ applied *after* `adds r3,r3,r2`, where the offset that matters is the
 *pre*-arithmetic value: reading `resource_37f:092c` as `workspace+516` instead of
 `workspace+448` is the natural mistake, and neither owner carrying it has
 anything else to catch it.
+
+**A free layout witness: `array_base + count*stride == scalar_base`.** When an
+owner writes an array and a scalar drawn from adjacent pool words, that identity
+confirms the element count, the stride AND the link base in one arithmetic step,
+with no disassembly. `resource_3ca:11c4` has 24 records of 12 bytes at file
+offset 0x1af8, and 0x1af8 + 288 = 0x1c18, exactly the counter halfword the same
+owner drives — which caught the lane's element count before it could be wrong.
 
 **Cheapest link-base witness, full stop — and it needs no disassembly:
 `grep -o '0x0200[89ab][0-9a-f]*' assets/code/<overlay>_c_*.c`.** A byte-exact

@@ -565,15 +565,8 @@ AlchemyC_020000a0:
 	.4byte 0x02008105
 	.2byte 0x0000
 	.2byte 0xffff
-	.2byte 0xb520
-	adds	r5, r1, #0
-	movs	r1, #0
-	bl	sub_020014e8
-	adds	r0, r5, #0
-	bl	sub_02001446
-	pop	{r5}
-	pop	{r0}
-	bx	r0
+AlchemyC_02000314:
+	.space 0x16
 	.2byte 0x0000
 	.4byte 0x47704800
 	.4byte 0x020092f8

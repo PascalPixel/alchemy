@@ -25,5 +25,8 @@
   },
   "engines": {
     "bun": "1.3.14"
+  },
+  "dependencies": {
+    "opentype.js": "^2.0.0"
   }
 }

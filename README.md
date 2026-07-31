@@ -26,7 +26,7 @@ game.
 
 ## Coverage map
 
-![Treemap of the English Golden Sun ROM: the left card divides all 8,388,608 cartridge bytes into main-image code, compressed code overlays and asset data; the right card divides the audited executable bytes into the main image and its decoded overlays. Tiles are shaded blue for byte-exact C, teal for reviewed semantic C, grey for regions still held as assembly and pink for non-code asset data.](assets/readme/gs1-en-coverage.svg?v=db0df824)
+![Treemap of the English Golden Sun ROM: the left card divides all 8,388,608 cartridge bytes into main-image code, compressed code overlays and asset data; the right card divides the audited executable bytes into the main image and its decoded overlays. Tiles are shaded blue for byte-exact C, teal for reviewed semantic C, grey for regions still held as assembly and pink for non-code asset data.](assets/readme/gs1-en-coverage.svg?v=21eca0fa)
 
 Every byte of the English cartridge. The left card is the ROM as it ships; the
 right card is the audited executable denominator behind Full-C Byte Share. Blue

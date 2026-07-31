@@ -1815,6 +1815,38 @@ finished one.
 final return after an optional 2-byte zero alignment word — include both. With no
 pool, exclude a trailing `.2byte 0`.
 
+**Transcribe callee names from `overlay_show.ts`; never extrapolate them.** An
+overlay `bl` stores the target's image offset minus two, so `overlay_show`'s
+pc-relative `bl 0x...` annotation is wrong for every site — that is exactly what
+`overlay_call_targets.ts` exists to correct, and the semantic lane needs the
+correction. **The exact lane does not.** It names a callee by the address the
+*assembler* must encode, and the assembler computes `site + 4 + stored
+displacement`; the annotation's error and the encoding are the same error, so
+they cancel. `overlay_show`'s raw `bl 0x0200098c` is the exact lane's
+`Func_0200098c`, verbatim, byte for byte. Verified against the banked
+`resource_38c:0470`, whose four callees all reproduce as
+`site + veneer_offset + 2`.
+
+Two consequences:
+
+- **The one-byte adoption failure disappears.** Equal sizes with a single
+  differing byte is a branch displacement, and every instance of it this session
+  came from guessing a callee address off the spacing of its neighbours instead
+  of reading it. Transcription removes the whole class.
+- **Sibling families become a `sed`.** `resource_38c:005c → :00bc` was eight
+  symbol renames and four constants and was byte-exact on the first probe.
+
+The rule also predicts two collisions, and both are real. One callee reached
+from several sites gets a *different* name at each — correct, and each is right
+for its own site. And two genuinely *different* callees reached from sites a
+short distance apart can collapse onto **one** name: `resource_38c:0250` has
+0x020007aa as both the message import and a two-argument reader,
+and `:02f4` has 0x0200089c standing for veneer 0x570 in one arm and 0x560 in the
+other. Same arity, one declaration. Different arity, use the `_[a-z]` alias
+(`Func_020007aa_b`) that `ADDRESS_SYMBOL` already accepts — **not** a K&R
+declaration, which would serve both call shapes at the cost of argument-setter
+order at every site (§4).
+
 **Boundary oracle (free).** A dry-run adopt with a two-line stub returns
 `adopt=rejected ... size=N/N` when both ends land on instruction boundaries with
 no straddling label — independent of your C. It also settles a call's argument
@@ -1932,6 +1964,21 @@ grinding. A prototype-less shared declaration blocks it entirely.
 **Multi-arity callees use the `_b`/`_c` alias suffix**, not K&R declarations —
 and this changes argument-setup order, not just hygiene. A shared prototype-less
 declaration suppresses arg0-first ordering at *every* site that uses it.
+
+**Aim the return-type lever at the callee whose setters are out of order, not at
+its neighbour.** The setters that come out wrong belong to *one* call; the lever
+is that call's own declared return type. On `resource_38c:0124/01e0/0250` the
+reference put `movs r1,#0` before `movs r0,#id` on the two-argument call
+following a single-argument one, and I changed the *preceding* callee to `s32`,
+saw no movement, and parked all three as a flag-resistant class — correctly
+measured (the residual survives `-fno-schedule-insns`, `-fno-regmove`,
+`-fno-gcse`, `-fno-rerun-cse-after-loop`, `-fno-expensive-optimizations`,
+`-fno-peephole`, `-mthumb-immediate-latency`, and locals for either argument)
+and wrongly concluded. Declaring the two-argument callee itself `s32` fixed all
+three. **A flag sweep cannot find this**, so a clean sweep is not evidence that
+the answer is a flag — it is evidence to re-read this section. Before parking on
+argument order, name which call owns the bad setters and check *that* callee's
+return type.
 
 **The alias rule extends to arity zero, and that case is invisible to the return-
 type sweep.** A repeated `bl` to one address where the second site sets *no*
@@ -2846,6 +2893,25 @@ bun run verify
 Commit subjects must end in the suffix from
 `bun tools/full_c_progress.ts --subject`, and a subject that changes the
 executable denominator must begin `metrics: correct executable denominator`.
+
+**`bun run verify` is not optional, and "my change cannot have caused that" is
+not a reason to skip it.** On 2026-07-31 `build:claimed` was red for fifteen
+commits because a tooling change of mine gave `externalSymbolAssembly` a second
+parameter while seven callers still wrote `names.map(externalSymbolAssembly)` —
+`.map` passes `(element, index, array)`, so the array index arrived as
+`callViaBase` and every main-image `_call_via_rN` resolved to `index + N*4`
+instead of `0x080072e4 + N*4`. The assembler grew a long-branch veneer per
+affected object, each object outgrew its claimed span, and the link died on
+fifteen section overlaps with **no C changed anywhere**. It cost the other two
+lanes a stop-the-line and Venus a bisect. Two lessons, in order of importance:
+
+- The red step is red on *your* branch too. It went unseen through four of my
+  own banks because I ran everything except the step that was failing.
+- **A default parameter is invisible to `.map`.** Defaults fill only
+  `undefined`, and an index never is. `alchemy_gcc.ts --self-test` now scans
+  `tools/*.ts` for `.map(externalSymbol...)` passed by reference; extend that
+  scan rather than trusting review if you ever add a parameter to a callback
+  used this way.
 
 **The coverage map is Vale's, and only Vale's.** `assets/readme/gs1-en-coverage.svg`
 and `metrics/gs1-en-coverage-map.json` are regenerated on `main` and nowhere

@@ -30,11 +30,11 @@ game.
 brightnesses: dark is assembly (0%), half is semantic C (50%), bright is
 byte-exact C (75%), full blaze is humanized byte-exact C (100%):
 
-![Main-image code coverage box tree in the purple band; brightness is completion.](assets/readme/gs1-en-core.svg?v=4b639c20)
+![Main-image code coverage box tree in the purple band; brightness is completion.](assets/readme/gs1-en-core.svg?v=01e09c52)
 
 **Overlays** — decoded overlay code, 791 KB:
 
-![Decoded overlay code coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=34a522f4)
+![Decoded overlay code coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=54eef348)
 
 **Assets** — the 7.3 MB of the cartridge that is data, not code. Same ladder in
 magenta: faint is byte-represented, a third is b&w sheets, two thirds is

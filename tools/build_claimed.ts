@@ -330,7 +330,7 @@ async function main(): Promise<void> {
     .filter((name) => !defined.has(name)))].sort();
   const symbolsSource = join(output, "externals.s");
   const symbolsObject = join(output, "externals.o");
-  writeFileSync(symbolsSource, ".syntax unified\n.thumb\n" + undefinedNames.map(externalSymbolAssembly).join(""));
+  writeFileSync(symbolsSource, ".syntax unified\n.thumb\n" + undefinedNames.map((name) => externalSymbolAssembly(name)).join(""));
   await run([
     "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
     "-o", symbolsObject, symbolsSource,

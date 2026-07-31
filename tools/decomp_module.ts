@@ -106,7 +106,7 @@ async function main(): Promise<void> {
   const undefinedNames = (await run(["arm-none-eabi-nm", "-u", object])).split(/\r?\n/).filter(Boolean)
     .map((line) => line.trim().split(/\s+/).at(-1)!);
   for (const name of undefinedNames) if (externalSymbol(name) === null) throw new Error(`unsupported external ${name}`);
-  writeFileSync(symbolsSource, ".syntax unified\n.thumb\n" + undefinedNames.map(externalSymbolAssembly).join(""));
+  writeFileSync(symbolsSource, ".syntax unified\n.thumb\n" + undefinedNames.map((name) => externalSymbolAssembly(name)).join(""));
   await run(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", symbolsObject, symbolsSource]);
   await run(["arm-none-eabi-ld", `-Ttext=0x${stems[0]}`, "-e", `Func_${stems[0]}`, "-o", elf, object, symbolsObject]);
   await run(["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", elf, binary]);

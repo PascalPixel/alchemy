@@ -6480,36 +6480,10 @@ AlchemyC_02002a50:
 	pop	{r0}
 	bx	r0
 	.2byte 0x0000
-	push	{r5, lr}
-	bl	sub_020082f8
-	adds	r5, r0, #0
-	bl	sub_020081e6
-	movs	r3, #0
-	str	r3, [r5, #36]
-	str	r3, [r5, #44]
-	movs	r3, #128
-	lsls	r3, r3, #24
-	str	r3, [r5, #56]
-	str	r3, [r5, #64]
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	push	{r5, lr}
-	ldr	r5, [pc, #24]
-	movs	r2, #0
-	ldrsh	r3, [r5, r2]
-	movs	r2, #1
-	negs	r2, r2
-	cmp	r3, r2
-	bne.n	.L_02003912
-	bl	sub_0200829e
-	strh	r0, [r5, #0]
-.L_02003912:
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	.2byte 0xdace
-	.2byte 0x0200
+AlchemyC_020038dc:
+	.space 0x20
+AlchemyC_020038fc:
+	.space 0x20
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

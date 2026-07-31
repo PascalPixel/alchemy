@@ -26,9 +26,9 @@
  * a run of named constant pairs rather than a computation.
  */
 
-void Func_02004520();
+void Func_02008b1a();
 
 void Func_020045f0(void)
 {
-    Func_02004520(432, 32);
+    Func_02008b1a(432, 32);
 }

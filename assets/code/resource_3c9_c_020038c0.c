@@ -12,22 +12,22 @@
  * Not found by the structural inventory walk (unindexed): reached only
  * by `bl`, resolved with `bun tools/overlay_call_targets.ts resource_3c9
  * 38c0 38dc`'s `+2` rule. Three of the five resolved targets are this
- * same overlay's other unindexed candidates: Func_02003bc8,
- * Func_02003e9c and Func_0200423c (not yet drafted; declared old-style
+ * same overlay's other unindexed candidates: Func_02007490,
+ * Func_02007768 and Func_02007b0c (not yet drafted; declared old-style
  * here since their signatures aren't established yet).
  */
 
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern void Func_02003bc8();
-extern void Func_02003e9c();
-extern void Func_0200423c();
+extern void Func_020095f8(void);
+extern void Func_02009610(void);
+extern void Func_02007490();
+extern void Func_02007768();
+extern void Func_02007b0c();
 
 void Func_020038c0(void)
 {
-    Func_0808a018();
-    Func_02003bc8();
-    Func_02003e9c();
-    Func_0200423c();
-    Func_0808a020();
+    Func_020095f8();
+    Func_02007490();
+    Func_02007768();
+    Func_02007b0c();
+    Func_02009610();
 }

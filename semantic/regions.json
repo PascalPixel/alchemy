@@ -5604,6 +5604,18 @@
       "entry": "0x020045d0",
       "span_bytes": 160,
       "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,lr} plus r8 spill at 0x020045d0, epilogue pop {r3} / mov r8,r3 / pop {r5,r6} / pop {r1} / bx r1 at 0x0200465e-0x02004666; the two-word pool at 0x02004668-0x0200466c (0x0200e968, 0x01c70000) is included per the usual pool rule, immediately followed by the next owner's push {r5,r6,lr} at 0x02004670, already this overlay's row 0x02004670 (0x020045d0-0x02004670, 160 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02005038",
+      "span_bytes": 48,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} at 0x02005038, epilogue pop {r5,r6,r7} / pop {r0} / bx r0 at 0x02005060-0x02005064; no pool, the halfword at 0x02005066 is the alignment pad, immediately followed by the next owner's push at 0x02005068, already this overlay's row 0x02005068 (0x02005038-0x02005068, 48 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02005068",
+      "span_bytes": 124,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,lr} at 0x02005068, epilogue pop {r5,r6} / pop {r0} / bx r0 at 0x020050d4-0x020050d8; the two-word pool at 0x020050dc-0x020050e0 (0x0200e840, 0x0200e8e4) is included per the usual pool rule, immediately followed by the next owner's push {r5,r6,r7,lr} at 0x020050e4, already this overlay's row 0x020050e4 (0x02005068-0x020050e4, 124 bytes)"
     }
   ]
 }

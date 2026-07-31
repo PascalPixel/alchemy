@@ -21,16 +21,16 @@
  *
  * The one call site was resolved with
  * `bun tools/overlay_call_targets.ts resource_3a0 0314 0324`:
- * 0x0200031c -> veneer 0x020014a0 -> Func_0808a4f8.  `overlay_show`'s printed
+ * 0x0200031c -> veneer 0x020014a0 -> Func_020017be.  `overlay_show`'s printed
  * 0x20017be is the pc-relative misreading and is not used.  All three
  * arguments are immediates, so this is a named shorthand for one fixed
  * request; the same import is called with a different constant triple
  * (8, 0, 0) elsewhere in the semantic tree.
  */
 
-void Func_0808a4f8();
+void Func_020017be();
 
 void Func_02000314(void)
 {
-    Func_0808a4f8(22, 1, 2);
+    Func_020017be(22, 1, 2);
 }

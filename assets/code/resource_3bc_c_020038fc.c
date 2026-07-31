@@ -1,4 +1,5 @@
 typedef signed short s16;
+typedef signed int s32;
 typedef unsigned short u16;
 
 /*
@@ -24,11 +25,13 @@ typedef unsigned short u16;
 
 extern s16 Data_0200dace;
 
-u16 Func_080153b8(void);       /* established */
+s32 Func_0200829e(void);       /* established (veneer to Func_080153b8) */
 
 void Func_020038fc(void)
 {
-    if (Data_0200dace == -1) {
-        Data_0200dace = (s16)Func_080153b8();
+    s16 *cursor = &Data_0200dace;
+
+    if (*cursor == -1) {
+        *cursor = Func_0200829e();
     }
 }

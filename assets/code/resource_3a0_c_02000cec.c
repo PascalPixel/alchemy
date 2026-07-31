@@ -37,15 +37,15 @@ typedef signed int s32;
  * preserving in the asymmetric form documented for resource_3ae.
  */
 
-void Func_0808a018();          /* scene open */
-void Func_0808a170();
-void Func_0808a190();
-void Func_0808a020();          /* scene close */
+void Func_020020b0();          /* scene open */
+void Func_02002156();
+s32 Func_02002176();
+void Func_020020ca();          /* scene close */
 
 void Func_02000cec(void)
 {
-    Func_0808a018();
-    Func_0808a170(0x17f7);
-    Func_0808a190(17, 0);
-    Func_0808a020();
+    Func_020020b0();
+    Func_02002156(0x17f7);
+    Func_02002176(17, 0);
+    Func_020020ca();
 }

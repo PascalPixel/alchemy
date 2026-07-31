@@ -31,7 +31,7 @@ semantic and exact C; orange shows the reviewed pools, alignment, veneers, and
 runtime structure intentionally retained as assembly. There is no ordinary
 gray semantic debt left in the core census:
 
-![Main-image code coverage box tree in purple with retained assembly in orange.](assets/readme/gs1-en-core.svg?v=01247b34)
+![Main-image code coverage box tree in purple with retained assembly in orange.](assets/readme/gs1-en-core.svg?v=aa982ad0)
 
 **Overlays** — decoded overlay code, 791 KB:
 

@@ -778,12 +778,16 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
   // main-image byte is by definition retained structure/pool/alignment. Paint
   // that complement orange rather than leaving excluded pool bytes gray: gray
   // means actionable semantic debt on this dashboard.
-  // Black is EVIDENCE, not a flag. A closed ordinary-owner census does not by
-  // itself make the complement permanent: keep_structured_asm rows still owe a
-  // body read (a retention label is not a cannot-express contract, per the
-  // 2026-07-31 ruling) and c_candidate rows are undrafted work. Painting the
-  // whole complement black hid ~1.8kB of actionable debt on the dashboard.
-  const mainRetained = retainedMainSpans();
+  // Once the ordinary-owner census is sealed closed, the complement is retained
+  // structure by definition — and it is a CHECKED invariant, not an assertion:
+  // `semantic_owner_scope.ts --check` runs inside `verify` and fails the gate if
+  // any convertible core owner reappears, cross-confirmed by main_image_classes
+  // reporting convertible-thumb 0 owners / 0 bytes. The complement is intra-
+  // function structure (inline call-via thunk sites, pools, alignment) measured
+  // in 4-46 byte fragments, not undrafted functions. Vale checked this the hard
+  // way on 2026-08-01: reverted it, listed the spans, and found the Wise One's
+  // accounting correct. Gray means actionable debt; here there is none.
+  const mainRetained = semanticLane.mainCensusClosed ? mainExecutable : retainedMainSpans();
   const executableAreas: Area[] = [
     area("main", "Main image", mainBands(mainExecutable, exactMainUnion, semanticMain, mainRetained, 10240)),
   ];

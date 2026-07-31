@@ -2122,6 +2122,21 @@ finished one.
 final return after an optional 2-byte zero alignment word — include both. With no
 pool, exclude a trailing `.2byte 0`.
 
+**On a `semantic/X.c` → `assets/code/X.c` rename conflict, the `assets/code`
+content always wins — check every merge for it.** Every conversion deletes a
+semantic source and adds an exact one at the same file name, which git reports
+as a *rename*, so a three-way resolution can quietly substitute the semantic
+body into the exact path. It happened on 2026-07-31 to
+`assets/code/resource_3c4_c_02001f70.c`, which came back from a sibling branch
+with veneer callee names in place of the raw per-site addresses. A
+veneer-named source still compiles, so nothing complains at merge time; the
+overlay simply stops reproducing, and that surfaces two layers away as a
+`build_assets` failure on an overlay the merge never mentioned. The exact file
+only exists because `overlay_adopt` proved it rebuilds the overlay
+byte-identically; the semantic one has never been through that gate. **After any
+merge, run `git diff --cached --name-only -- assets/code/ src/` and read every
+hit** — a merge you did not intend to touch converted sources should list none.
+
 **Step zero on a semantic-backed row: compile Venus's source unmodified and read
 the group count.** It costs one command and no writing:
 

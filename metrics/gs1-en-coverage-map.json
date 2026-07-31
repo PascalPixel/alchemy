@@ -15,12 +15,12 @@
       "percent_of_executable": 58.18
     },
     "assembly": {
-      "bytes": 296602,
-      "percent_of_executable": 22.14
+      "bytes": 298806,
+      "percent_of_executable": 22.31
     },
     "retained_asm": {
-      "bytes": 30654,
-      "percent_of_executable": 2.29
+      "bytes": 28450,
+      "percent_of_executable": 2.12
     },
     "asset_data": {
       "bytes": 7300700,
@@ -54,7 +54,8 @@
       "lanes": {
         "exact_c": 102208,
         "semantic_c": 415502,
-        "retained_asm": 30654
+        "assembly": 2204,
+        "retained_asm": 28450
       },
       "tiles": 9
     },
@@ -87,7 +88,8 @@
       "lanes": {
         "exact_c": 102208,
         "semantic_c": 415502,
-        "retained_asm": 30654
+        "assembly": 2204,
+        "retained_asm": 28450
       },
       "tiles": 54
     },

@@ -1,6 +1,6 @@
 # Alchemy handover
 
-Updated: 2026-07-31
+Updated: 2026-08-01
 
 The single authoritative handover. Do not add dated handoff files; update this
 one in place. Per-function detail lives in `work/claude/notes/`; per-commit
@@ -55,7 +55,13 @@ Exact-C ownership is **232,944 / 1,339,594 bytes (17.39%)**. The active speed
 lane after waking is therefore exact-C replacement of semantic owners, plus
 continued overlay ownership—not another core semantic sweep.
 
-## The two lighthouses
+## Historical two-lighthouse protocol
+
+> **Superseded operating model.** `main` now contains both exact and semantic
+> work and is the sole integration point. The material in this section is kept
+> only to interpret older branch notes and helper names; do not use its old
+> pull/push ring as current instructions. Current branch handling is summarized
+> in [`docs/BRANCH-PROTOCOL.md`](docs/BRANCH-PROTOCOL.md).
 
 The project runs as two parallel efforts, named after the Golden Sun lighthouses.
 Know which one you are before you change anything.
@@ -74,7 +80,9 @@ it.
 "about once an hour" because it predates both. Twenty minutes is the number to
 work to.
 
-**Channel update (2026-07-31, local era): the chat is `/tmp/ALCHEMY_GROUP_CHAT.md` now; the tracked MEETING.md is retired.** Historical references below describe the remote ring. Original text: **`MEETING.md` is the channel between the three agents** and travels the ring
+**Channel update (2026-07-31, local era): the chat is
+`/tmp/ALCHEMY_GROUP_CHAT.csv`; the tracked `MEETING.md` is retired.** Historical
+references below describe the remote ring. Original text: **`MEETING.md` is the channel between the three agents** and travels the ring
 with everything else. Anything the other two need to know goes there rather than
 in a commit message only they would have to go looking for; evidence and long
 reasoning stay here. Read it every pull — items are addressed by `@mercury` and
@@ -238,9 +246,7 @@ bytes while preserving the exact lane and full verification.
    owner, its measured byte span, call count, warned registers/thunks, and the
    requirement to account for every assembly call. Treat m2c as a hint only.
    Fresh agents completed large 57–74-call owners where long-lived agents began
-   returning analysis without implementation. This runtime has three subagent
-   slots, so a six-agent experiment runs as two immediately consecutive waves
-   of three.
+   returning analysis without implementation.
 2. **Batch by established ABI or construct family first.** Owners that visibly
    publish callbacks through `Func_080cef64` or `Func_080ed408` share the proven
    six-argument renderer ABI. Fixed transfer, fill, scale, square-root, and
@@ -2554,6 +2560,16 @@ made `0809397c` exact for another 152 bytes by hoisting the IWRAM square-root
 address into a named local. The three semantic-seeded conversions total 756
 exact bytes.
 
+The wind-down sweep then closed the obvious automation gaps without finding a
+fourth exact source: `finish_draft.sh` covered every remaining same-size
+semantic source; the repaired declaration/statement pass covered all 106; a
+deeper 99-source stochastic pass and a 100-source non-size pass both returned no
+new zero. The closest newly exposed floor is `080798e0` at five differing
+halfwords. `0808fe38` and `08090824` share a three-halfword DMA scheduling
+residual under `-mgrouped-dma-store,-fthumb-group-control-last`, but the bounded
+shared pair/triple compiler sweep found no exact configuration. Treat those as
+measured floors and return to fresh drafting rather than repeating the cohort.
+
 Use this order on future semantic-backed main rows: compile unchanged; prefer
 equal-size residuals; classify whether all differences are one global register
 swap; humanize names only far enough to expose variable roles/lifetimes; then
@@ -3879,87 +3895,33 @@ it was not even needed. Re-screen and re-measure everything at the coordinator
 before installing it. Two policy escapes were caught this way in one session, the
 other being the register-pinned `080044d0` drafts.
 
-**Concurrency — do not inherit the old two-lane rule.** That limit was measured
-when a verification probe cost 1.8 s and a bank cycle 190 s, so compute really was
-the binding constraint. The content caches (§3) cut those to 0.12 s and 15 s, and
-the limit was never re-derived. Measured afterwards on the same 4-core host with
-two lanes running: **load average 1.18, and a probe costs 137 ms under load versus
-120 ms idle** — roughly 70% of the machine idle. Lanes are reasoning-bound, not
-compute-bound, so run **five or six** and re-measure `/proc/loadavg` before
-assuming a ceiling. If probe latency starts climbing well above ~150 ms, that is
-the real signal to stop adding lanes.
-
-**Runtime subagent slots are a separate ceiling from cores.** Some runtimes cap
-concurrent subagents independently of the hardware — the Codex runtime exposes
-three, so a six-agent experiment there runs as two immediately consecutive waves
-of three, and Venus Lighthouse cohorts are sized in threes for that reason. On a
-runtime exposing five or six slots the measurements above support testing the
-larger walker count rather than inheriting the historical two-lane ceiling.
-Whichever binds first — slots or cores — is the real limit; check both.
-
-**Where five lanes actually saturates a 4-core host.** Measured with five lanes
-running: load average **3.60**, and a warm `build_claimed` that costs ~0 s idle
-took **17.6 s** — longer than the entire warm bank cycle on a quiet machine. That
-is the ceiling arriving, not a fluke, and a sixth lane there buys nothing but
-contention. Memory is never the constraint (943 MB of 16 GB at five lanes). So
-the rule is not "five lanes"; it is **roughly one lane per core, verified against
-loadavg and probe latency**. On a bigger host, scale up — see §10.
-
 The binding constraints are instead: walkers must never share an overlay (the
 overlay `.s` file is the only mutable artifact), and only the main agent may run
 git, the build scripts, `full_c_progress.ts` or `overlay_inventory.ts`. The bank
 cycle tolerates lanes adopting mid-build, so there is no need to pause them.
 
-**Agent economics.** Permuting is an audit pass, not an engine: one exact hit in
-65,543 candidates, though it cost ten minutes and cracked a function a careful
-lane had declared unreachable. Run `tools/permute_overlay.ts` over a newly parked
-near-miss before believing the park; do not expect it to close a backlog. Cheap
-models are not useful for drafting here — the ≤32-byte "easy" population is 90%
-veneer thunks, word-table interiors and mid-function fragments, and the genuine
-small leaves are already taken as each walk passes them.
-
-**Do not spend an agent on enumerable search — that is the expensive mistake, and
-it is independent of model tier.** Measured 2026-07-30 on an 18-core host: `xargs`
-over `candidate_show` sustains **114 ms per probe at 18-way concurrency**, so a
-flag matrix of 38,480 probes finishes in about four minutes and produced 2 of that
-day's 8 conversions on its own. An agent exploring 20 source spellings takes about
-six minutes. That is roughly four orders of magnitude less search per minute.
-Split the work by whether it can be enumerated:
+**Automation boundary.** Permuting is an audit pass, not an engine: one exact hit
+in 65,543 candidates, though it cost ten minutes and cracked a function that had
+been declared unreachable. Run `tools/permute_overlay.ts` over a newly parked
+near-match before believing the park; do not expect it to close a backlog.
+Measured 2026-07-30 on an 18-core host, `xargs` over `candidate_show` sustained
+**114 ms per probe at 18-way concurrency** and completed a 38,480-probe flag
+matrix in about four minutes. Split work by whether it can be enumerated:
 
 - **Enumerable** — flag sets and their pairings, callee return types, independent
   statement orderings, constant spellings: script it. `tools/mode_sweep.ts`,
   `tools/return_type_sweep_main.sh`, `tools/statement_order_sweep_main.ts`.
 - **Not enumerable** — deciding which lever a residual implies, decoding assembly
-  into semantics, noticing that an epilogue contradicts a draft's signature: that
-  is what an agent is for, and it wants a strong model.
-
-**Cheap-model breadth was measured and did not substitute for lever selection.**
-Four haiku lanes were each given a size-exact near-miss with its residual quoted,
-the lever sections named, and the sweeps pointed out. Result: **0 of 4 improved**
-across 66 spellings, ~6-8 minutes and ~90k tokens per lane, with honest reports
-(one correctly spotted that the statement-order sweep had only produced 3 probes
-on its target, so that lever had never been exercised there). Caveat, stated
-plainly: those four were the residual-hard remainder — two had already resisted a
-full-effort attempt — so this is not a controlled comparison and should not be
-read as a model benchmark. What it does show is that quoting the fingerprint and
-listing the levers is not enough; choosing the lever is the costly step.
-
-**Workflow orchestration is not the overhead people assume.** Verify stages fired
-the moment each solve returned and nothing queued at 12 lanes. But note the cap:
-concurrent agents per workflow are `min(16, cores - 2)`, so on an 18-core host a
-32-agent workflow runs 16 and queues the rest. For very wide cheap breadth,
-separate `Agent` calls avoid that ceiling; for pipelined solve-then-verify work
-the workflow is the right shape.
+  into semantics, or noticing that an epilogue contradicts a draft's signature:
+  reason from the residual and the reference.
 
 ---
 
 ## 10. Mercury Lighthouse — running the exact-C effort on a high-compute host
 
-This section is written for an agent taking `mercury` over with substantially
-more compute than the 4-core cloud container the measurements below come from.
-Those sessions were **reasoning-bound per lane but core-bound in aggregate**; more
-cores changes only the second term, so read this as "how to spend cores", not
-"how to work". Everything in §1-§9 still applies unchanged.
+This section records measurements from a host with substantially more compute
+than the 4-core cloud container. Read it as "how to spend cores", not "how to
+work". Everything in §1-§9 still applies unchanged.
 
 **Bringing up a bare cloud container (2026-07-30, measured end to end: ~35 min).**
 A fresh clone cannot run anything in the exact lane: `bun run verify`,
@@ -4145,50 +4107,22 @@ a day.
 The conclusion is not "the big machine is bad", it is that §9 was right and the
 implication is sharper than it looks: **compute makes enumerable search free, and
 enumerable search is nearly exhausted.** In that session 38,480 flag probes ran in
-about four minutes and yielded 2 conversions, while agent drafting lanes yielded
-7. Cores now buy you `tools/finish_draft.sh` finishing in ~2 s instead of an hour
-of hand-probing — real, permanent, and *not* where the remaining bytes are.
+about four minutes and yielded 2 conversions, while fresh drafting yielded 7.
+Cores now buy you `tools/finish_draft.sh` finishing in ~2 s instead of an hour of
+hand-probing — real, permanent, and *not* where the remaining bytes are.
 
-So the thing to scale is **concurrent drafting lanes on unconverted regions**, not
-probes and not lanes grinding near-miss residuals. Measured hit rates on the same
-day: fresh drafting converted **7 of ~18 lanes**; re-probing existing drafts
-converted **2 of 1,259 draft-probes**; four cheap-model lanes on residual-hard
-near-misses converted **0 of 4**. The binding limits are agent concurrency and
-model quality on assembly-to-semantics, so pick the host for how many strong
-drafting lanes it can run, not for its core count.
-
-**Measured 2026-07-30: an 18-core host did not beat the 4-core one on bytes.**
-Daily exact-byte gains on the 4-core cloud host, from `docs/full-c-history.csv`:
-1,426 / 12,720 / 5,148 / 7,400 / 2,484 / 6,328 / 21,792 / 7,174 / 14,634 / 6,468 /
-10,282 / 5,134. Median about 6,800. A full session on the 18-core machine
-produced **2,554 bytes**, below their typical day. Confounders, stated so the
-comparison is not oversold: those days include overlay conversions, which come in
-larger and easier rows, while that session was main-image only; a large share of
-it went into tooling and measurement rather than conversion; and it was hours, not
-a day.
-
-The conclusion is not "the big machine is bad", it is that §9 was right and the
-implication is sharper than it looks: **compute makes enumerable search free, and
-enumerable search is nearly exhausted.** In that session 38,480 flag probes ran in
-about four minutes and yielded 2 conversions, while agent drafting lanes yielded
-7. Cores now buy you `tools/finish_draft.sh` finishing in ~2 s instead of an hour
-of hand-probing — real, permanent, and *not* where the remaining bytes are.
-
-So the thing to scale is **concurrent drafting lanes on unconverted regions**, not
-probes and not lanes grinding near-miss residuals. Measured hit rates on the same
-day: fresh drafting converted **7 of ~18 lanes**; re-probing existing drafts
-converted **2 of 1,259 draft-probes**; four cheap-model lanes on residual-hard
-near-misses converted **0 of 4**. The binding limits are agent concurrency and
-model quality on assembly-to-semantics, so pick the host for how many strong
-drafting lanes it can run, not for its core count.
+So prioritize **fresh drafting on unconverted regions**, not repeated probes on
+near-match residuals. Measured hit rates on the same day: fresh drafting
+converted **7 of ~18 attempts**; re-probing existing drafts converted **2 of
+1,259 probes**; four additional residual-hard attempts converted **0 of 4**.
 
 **When extra compute stops paying — hand the branch back.** More cores buy
 throughput on *parallelisable* work, and this project has two kinds. Fan-out work
 scales: walking fresh overlays, the stale-note re-probe sweep, mode sweeps,
 `return_type_sweep.sh`, `permute_overlay.ts` runs. Serial work does not: the
 compiler problems in §8, a park that needs a new lever rather than another probe,
-and any question about whether a mode is admissible at all. Those are one-agent,
-one-thread problems where twenty lanes produce twenty copies of the same floor.
+and any question about whether a mode is admissible at all. Those are serial
+investigations where parallel repetition produces copies of the same floor.
 
 The signal to hand back is therefore **not** a byte count — it is when the
 *remaining* work is mostly of the second kind. Concretely, hand `mercury` back

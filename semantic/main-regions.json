@@ -470,6 +470,40 @@
       ]
     },
     {
+      "entry": "0x08090a5c",
+      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), 1816-byte keep_structured_asm row holding a single function per out/asm/manifest.json (one row, source asm/08090a5c.s): prologue push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill and sub sp,#40 at 0x08090a5c, single epilogue add sp,#40/pop.../bx r0 at 0x0809115e-0x0809116e, no branch out of the row and no inbound branch from outside it. bun tools/main_xref.ts 08090a5c: FUNCTION (called directly), nine call sites. Structural twin of 0x080f3078 (jupiter's own park note confirmed via a masked-literal diff of both .s files: same skeleton, same three shared callees, no restructuring). Drafted from 0x080f3078's own corrected source (case 1 fully re-traced independently here to confirm the shared arithmetic really does carry over unchanged; every mode/count constant and the sentinel fallback and clamp-helper/table names re-checked against this row's own addressed disassembly rather than assumed). Real deltas from 0x080f3078: default and mode-1 bucket count both resolve to 448 here (0x080f3078's mode 1 genuinely changes 512->256, this row's mode-1 store is a same-value no-op); mode 2 uses count=224 (raw, not doubled), dest+=1344, source+=448, and the DMA-path mode-2 selector offset also uses 1344 (internally consistent, unlike 0x080f3078 where two unrelated mode-2 constants happen to share one value); the selector==0x8000 sentinel reads the fixed palette-RAM address 0x05000000 instead of re-reading through source; local clamp helpers are Func_08091294/Func_080912a8 (both exact, byte-identical bodies to 0x080f3078's Func_080f3898/Func_080f38ac); the three shared lookup tables are Table_0809e96e/Table_0809e9ae/Table_0809e92e, confirmed by pool-word position across two separate clusters to play the same per-case roles as 0x080f3078's three tables. Seven literal-pool clusters (104 bytes total, including the row's own mov pc,r3 jump table at 0x08090b1c) computed programmatically against the addressed disassembly, same method as 0x080f3078's registration; eight ranges collapsed to seven here since this row's clusters merge slightly differently. Not yet checked byte-exact.",
+      "executable_ranges": [
+        {
+          "address": "0x08090a5c",
+          "size": 138
+        },
+        {
+          "address": "0x08090af4",
+          "size": 850
+        },
+        {
+          "address": "0x08090e64",
+          "size": 126
+        },
+        {
+          "address": "0x08090ef0",
+          "size": 22
+        },
+        {
+          "address": "0x08090f14",
+          "size": 454
+        },
+        {
+          "address": "0x80910e8",
+          "size": 30
+        },
+        {
+          "address": "0x8091114",
+          "size": 92
+        }
+      ]
+    },
+    {
       "entry": "0x080930bc",
       "evidence": "Single 152-byte function, 0x080930bc..0x08093152, prologue push {r5,r6,r7,lr} plus the r8 save and no stack frame; one epilogue at 0x0809314a ending pop {r0}; bx r0, so the owner is void. Excluded (8 bytes): the two-word pool at 0x08093154 holding 0x03001ebc (the context pointer, loaded at 0x080930c2) and 0x00000fff (the twelve-bit message mask, loaded at 0x080930c8). No alignment filler is needed - the pool begins immediately after the epilogue's last halfword. Every call is a bl naming a ROM function; there are no indirect calls and no relocated helpers, and nothing in the row is retained assembly. The placement reads r6 and r7 at 0x080930e8 and 0x080930ea; both are saved by the prologue push and neither is written on any path, the frame-balanced live-in of resource_3cd:04b0, converted as uninitialised locals. bun tools/main_xref.ts 080930bc reports FUNCTION (indirectly published callback) with no inbound call and a published Thumb pointer at 0x0808a1a4, so the caller is unknown.",
       "executable_ranges": [
@@ -1094,6 +1128,44 @@
         {
           "address": "0x080ecbd8",
           "size": 634
+        }
+      ]
+    },
+    {
+      "entry": "0x080f3078",
+      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), 1796-byte keep_structured_asm row holding a single function per out/asm/manifest.json (one row, source asm/080f3078.s): prologue push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill and sub sp,#40 at 0x080f3078, single epilogue add sp,#40/pop.../bx r0 at 0x080f3766-0x080f3776, no branch out of the row and no inbound branch from outside it. bun tools/main_xref.ts 080f3078: FUNCTION (called directly), three call sites (0x080f37c0, 0x080f3818, 0x080f3838). Colour/palette blend family, mapped first by jupiter (work/claude/notes/main_080f3078.md) as the structural twin of 0x08090a5c; drafted here after second-reading each arithmetic body against a fresh addressed objdump per Kraden's instruction, catching one real transcription error (the flag-gated tint branches read bits of the function's own first argument, not a separate mode/flags register, corrected before committing). Eight literal-pool clusters (132 bytes total: three-word 0x00007c00/0x000003e0/0x0000001f BGR555 masks recurring three separate times, a seven-word cluster including the genuine mov pc,r3 jump table base and three shared lookup tables, and several smaller two/three-word clusters) computed programmatically against the addressed disassembly rather than by hand, to avoid a manual boundary-counting mistake on a row this dense; registered as eight executable_ranges (1664 of 1796 bytes). A genuine mov pc,r3 jump table (7 entries, 0x080f3138) selects six distinct per-channel blend bodies (case 2 and case 6 byte-for-byte identical, factored into one shared helper) plus a plain broadcast mode reached directly without the table; values outside the table's narrow selector window fall to a plain per-channel repack or, when no blend flag matches at all, to queuing a DMA transfer instead of computing per-pixel (source/dest/control triad to the fixed 0x040000d4 DMA3 registers, the same construction 0x0800c62c already established). Every mov ip,pc-style and bl-to-thunk call in this row goes through the runtime's own _call_via_r2/r3/r7 thunks (0x080072e4-0x08007320), already documented as ordinary indirect calls by semantic/main/0800ebec.c's own header comment, not retained assembly. Not yet checked byte-exact.",
+      "executable_ranges": [
+        {
+          "address": "0x080f3078",
+          "size": 140
+        },
+        {
+          "address": "0x080f3110",
+          "size": 38
+        },
+        {
+          "address": "0x080f3154",
+          "size": 762
+        },
+        {
+          "address": "0x080f346c",
+          "size": 126
+        },
+        {
+          "address": "0x080f34f8",
+          "size": 22
+        },
+        {
+          "address": "0x080f351c",
+          "size": 454
+        },
+        {
+          "address": "0x080f36f0",
+          "size": 30
+        },
+        {
+          "address": "0x080f371c",
+          "size": 92
         }
       ]
     },

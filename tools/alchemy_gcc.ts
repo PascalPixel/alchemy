@@ -711,6 +711,11 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // Same tell twice in resource_38c:035c, whose other lever is the rerun-cse
   // one; the flags are independent and both are needed.
   "assets/code/resource_38c_c_0200035c.c",
+  // resource_386:0204 and :011c, same plain form. :011c also needed one callee
+  // declared `s32` -- the reference sets r1 before r0 at that site, which only a
+  // value-returning callee does; the flag alone leaves that pair swapped.
+  "assets/code/resource_386_c_02000204.c",
+  "assets/code/resource_386_c_0200011c.c",
   // resource_383:091c and :19e4 are the plain form of the tell: one call takes a
   // shifted constant and the `lsls` that finishes r1 ties with the `movs` that
   // sets r0. Both are transcriptions of Venus's semantic sources, which name

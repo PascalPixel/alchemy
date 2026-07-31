@@ -637,6 +637,9 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // destination order at both.
   "assets/code/resource_383_c_020019a4.c",
   "assets/code/resource_3bf_c_02000bac.c",
+  // resource_3b6:0898 sets r0/r1/r2 for a three-argument call; ascending
+  // destination order.
+  "assets/code/resource_3b6_c_02000898.c",
   // resource_3a2:0870 and :08a8 each set r0/r1/r2 for a three-argument call and
   // the reference orders them by ascending destination. :08a8 also needs the
   // constant-sharing mode: both of its negated arguments are -1, so CSE builds
@@ -855,6 +858,9 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   // resource_38d:01b4 loads its 0x302 flag id at the test and again at the set.
   "assets/code/resource_38d_c_020001b4.c",
   "assets/code/resource_38d_c_0200028c.c",
+  // resource_3a7:0368 loads its 0x9a9 request id at the guard call and again
+  // at the commit call, the same shape as :03e0 in this overlay.
+  "assets/code/resource_3a7_c_02000368.c",
 ]);
 // -fno-gcse routed by path rather than by stem, for overlay rows whose address
 // is also an offset in another overlay that is already converted.

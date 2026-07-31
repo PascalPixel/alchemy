@@ -20,6 +20,13 @@ typedef signed int s32;
  */
 
 /* Imports. Those used for their return value are typed. */
+void Func_02000180();
+void Func_020012cc();
+void Func_080000c0();
+s32 Func_080770c0();
+void Func_080770c8();
+void Func_080770d0();
+void Func_080f9010();
 void Func_0200081e();
 void Func_0200197a();
 s32 Func_02002988();
@@ -33,19 +40,19 @@ void Func_0200290a();
 void Func_02000668(void)
 {
     /* movs r0,#0xc4 / lsls r0,#2 builds 0x310. */
-    if (Func_02002988((s32)0x310) != 0) {
+    if (Func_080770c0((s32)0x310) != 0) {
         return;
     }
-    if (Func_02002992((s32)0x30d) != 0) {
+    if (Func_080770c0((s32)0x30d) != 0) {
         return;
     }
-    Func_02002a94((s32)0xf1);
+    Func_080f9010((s32)0xf1);
     /* movs r0,#0xc2 / lsls r0,#2 builds 0x308. */
-    Func_020029ac((s32)0x308);
-    Func_020029ba((s32)0x309);
+    Func_080770c8((s32)0x308);
+    Func_080770d0((s32)0x309);
     /* movs r1,#0x30 / negs r1,r1 */
-    Func_0200081e(8, -48, 0);
-    Func_02002ab4((s32)0x121);
-    Func_0200290a(2);
-    Func_0200197a();
+    Func_02000180(8, -48, 0);
+    Func_080f9010((s32)0x121);
+    Func_080000c0(2);
+    Func_020012cc();
 }

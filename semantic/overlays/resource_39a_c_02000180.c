@@ -33,6 +33,12 @@ typedef signed int s32;
 extern s16 Data_02000240[];
 
 /* Imports.  The two lookups are typed for their return value. */
+void Func_08009080();
+void Func_08009150();
+void Func_08009158();
+void Func_0808a018();
+void Func_0808a020();
+s32 Func_0808a080();
 void Func_02002492();
 void Func_020024b2();
 void Func_020024ca();
@@ -56,25 +62,25 @@ void Func_02000180(s32 subject, s32 x, s32 z)
     s32 dx;
     s32 dz;
 
-    anchor = Func_020024f2(*(s32 *)((u8 *)Data_02000240 + 500));
-    mover = Func_020024fa(subject);
+    anchor = Func_0808a080(*(s32 *)((u8 *)Data_02000240 + 500));
+    mover = Func_0808a080(subject);
     /* No argument register is written before this branch. */
-    Func_020024e8();
+    Func_0808a018();
 
     dx = x << 16;
     dz = z << 16;
 
     *(s32 *)(anchor + 48) = 0x10000;
     *(s32 *)(anchor + 52) = 0x8000;
-    Func_020024b2(anchor,
+    Func_08009150(anchor,
                   PLACE_02000180(*(s32 *)(anchor + 8), dx),
                   *(s32 *)(anchor + 12),
                   PLACE_02000180(*(s32 *)(anchor + 16), dz));
-    Func_02002492(anchor, 27);
+    Func_08009080(anchor, 27);
 
     *(s32 *)(mover + 48) = 0x10000;
     *(s32 *)(mover + 52) = 0x8000;
-    Func_020024de(mover,
+    Func_08009150(mover,
                   PLACE_02000180(*(s32 *)(mover + 8), dx),
                   *(s32 *)(mover + 12),
                   PLACE_02000180(*(s32 *)(mover + 16), dz));
@@ -82,11 +88,11 @@ void Func_02000180(s32 subject, s32 x, s32 z)
     /* The signs tested here are the original arguments reloaded from the
      * frame, not the shifted copies. */
     if (x < 0 || z < 0) {
-        Func_020024ca(mover, 4);
+        Func_08009080(mover, 4);
     } else {
-        Func_020024d4(mover, 3);
+        Func_08009080(mover, 3);
     }
 
-    Func_0200250a(anchor);
-    Func_0200257e();
+    Func_08009158(anchor);
+    Func_0808a020();
 }

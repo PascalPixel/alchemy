@@ -91,6 +91,18 @@ const NO_INTERWORK_SOURCES = new Set([
   "02005bd8", "02005be8", "02005bf8",
   "02005dd4", "02005de4", "02005df4",
 ]);
+// Same mode, keyed by repository path instead of by stem. A `pop {pc}` epilogue
+// is common in these overlays, so the offsets collide across overlays often --
+// every stem above is also an implicit claim that no other overlay converts a
+// row at that offset, and that claim keeps getting falsified. Prefer this set
+// for anything new; the stem set stays only for its existing members.
+const NO_INTERWORK_OVERLAY_SOURCES = new Set([
+  // Three single-comparison predicates whose stems are already taken by
+  // resource_373 and resource_3b2 rows that must keep interworking.
+  "assets/code/resource_3a7_c_02001554.c",
+  "assets/code/resource_3a7_c_02001740.c",
+  "assets/code/resource_3bf_c_02005ae0.c",
+]);
 // Only the second flag does anything. The pre-reload scheduler is inert in this
 // fork: 40 converted sources, including the largest, compile byte-identically
 // with -fschedule-insns and with -fno-schedule-insns (measured 2026-07-26,
@@ -426,8 +438,17 @@ const SCHED_HIGH_DEST_FIRST_SOURCES = new Set(["08098954", "0809a294", "08097540
 // overlay owns 020011bc. Its sibling `02000178` has the same residual and is
 // *not* routable: resource_3ba already owns that address, and §7's routing key
 // is the bare address.
-const SCHED_LOW_DEST_FIRST_SOURCES = new Set(["08097540", "020011bc", "02001958", "02001984", "02000260", "020011d8", "0200028c"]);
+// Keyed by stem, so every member here is also a claim that no other overlay has
+// a converted row at the same offset. 02001984 was moved out to the path-keyed
+// set below when resource_3b4 gained a row at that offset that the flag breaks.
+const SCHED_LOW_DEST_FIRST_SOURCES = new Set(["08097540", "020011bc", "02001958", "02000260", "020011d8", "0200028c"]);
 const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
+  // resource_3b7:0154 and :0178 are the same four-call sheet over two ids. The
+  // third call takes -1, built as movs #1 then negs, and the reference sets the
+  // second argument between those two halves; only the latency mode reproduces
+  // that split. Neither tie-break direction reaches it.
+  "assets/code/resource_3b7_c_02000154.c",
+  "assets/code/resource_3b7_c_02000178.c",
   "assets/code/resource_383_c_02000428.c",
   // Paired with the callee-return-type lever: the return type fixed these
   // functions' movs/movs swaps and the latency mode their movs/lsls ones —
@@ -532,6 +553,8 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   "assets/code/resource_38d_c_02001984.c",
   // Same shape: 0x80000 feeds both of this call's shifted arguments.
   "assets/code/resource_3b4_c_020011d8.c",
+  // Same -1 pair shape as the entry two lines below; see the tie-break set.
+  "assets/code/resource_3a2_c_020008a8.c",
   // Both negated arguments are -1, so CSE builds one and copies it.
   "assets/code/resource_3b5_c_0200028c.c",
   "assets/code/resource_372_c_02000f38.c",
@@ -597,6 +620,19 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // resource_3aa:0184 is the same tell across sixteen call sites: the setters
   // for r0/r1/r2 tie and the reference orders them by ascending destination.
   "assets/code/resource_3aa_c_02000184.c",
+  // Moved here from the stem-keyed set: resource_3b4 now has a row at 02001984
+  // whose six-argument call wants the reference's own order, and the stem key
+  // would have applied resource_38d's flag to it.
+  "assets/code/resource_38d_c_02001984.c",
+  // resource_3bf:0c78 sets r0, r1 and r2 for one call and the reference orders
+  // them by ascending destination; without the tie-break r0 lands last.
+  "assets/code/resource_3bf_c_02000c78.c",
+  // resource_3a2:0870 and :08a8 each set r0/r1/r2 for a three-argument call and
+  // the reference orders them by ascending destination. :08a8 also needs the
+  // constant-sharing mode: both of its negated arguments are -1, so CSE builds
+  // one and copies it where the reference negates each in place.
+  "assets/code/resource_3a2_c_02000870.c",
+  "assets/code/resource_3a2_c_020008a8.c",
   "assets/code/resource_3c8_c_02001780.c",
   "assets/code/resource_3c8_c_02001150.c",
   "assets/code/resource_372_c_02000f38.c",
@@ -798,6 +834,10 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3a7_c_020003e0.c",
   // resource_3cd:00c0 needs this alongside -fno-gcse; see NO_GCSE_OVERLAY_SOURCES.
   "assets/code/resource_3cd_c_020000c0.c",
+  // resource_3b4:1070 loads its 0x9c4 request id at the guard call and again
+  // at the commit call; the rerun keeps it in r5 across both and costs the
+  // prologue a register the reference does not push.
+  "assets/code/resource_3b4_c_02001070.c",
 ]);
 // -fno-gcse routed by path rather than by stem, for overlay rows whose address
 // is also an offset in another overlay that is already converted.
@@ -907,7 +947,7 @@ export function cflagsForSource(source: string): readonly string[] {
   const abiBase = DEFAULT_ABI_SOURCES.has(stem)
     ? CFLAGS.filter((flag) => flag !== "-fcall-used-r4")
     : [...CFLAGS];
-  const base = NO_INTERWORK_SOURCES.has(stem)
+  const base = NO_INTERWORK_SOURCES.has(stem) || NO_INTERWORK_OVERLAY_SOURCES.has(sourceKey(source))
     ? abiBase.filter((flag) => flag !== "-mthumb-interwork")
     : abiBase;
   return [
@@ -1054,6 +1094,7 @@ export function evidencedRoutingFlags(): string[] {
     ...NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES,
     ...NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES,
     ...NO_GCSE_OVERLAY_SOURCES,
+    ...NO_INTERWORK_OVERLAY_SOURCES,
     ...NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES,
     ...NO_STRICT_ALIASING_OVERLAY_SOURCES,
     ...NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES,

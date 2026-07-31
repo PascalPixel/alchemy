@@ -5556,6 +5556,12 @@
       "entry": "0x02003f94",
       "span_bytes": 340,
       "evidence": "item-28 unindexed population, same reference-resolution basis. push {lr} at 0x02003f94, epilogue pop {r0} / bx r0 at 0x020040c6-0x020040c8; the trailing pool at 0x020040cc-0x020040e4 (0x00006666, 0x00000ccc, 0x03001ebc, 0x0000092b, 0x0000092a, 0x00000929, 0x00000928) is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x020040e8, already this overlay's row 0x020040e8 (0x02003f94-0x020040e8, 340 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02003d10",
+      "span_bytes": 220,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,lr} at 0x02003d10, epilogue pop {r5} / pop {r0} / bx r0 at 0x02003dd0-0x02003dd4; the trailing pool at 0x02003dd8-0x02003de8 (0x0000cccc, 0x00006666, 0x00000266, 0x0200e738, 0x00001e3b) is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x02003dec, already this overlay's row 0x02003dec (0x02003d10-0x02003dec, 220 bytes)"
     }
   ]
 }

@@ -76,7 +76,7 @@ function inventory(): OverlayFunction[] {
  * Overlay image bytes, as the reconstruction assembles them. This is the same
  * path `overlay_show` reads, so the offsets here line up with its listing.
  */
-function overlayImage(overlay: string): Uint8Array {
+export function overlayImage(overlay: string): Uint8Array {
   const source = join(ROOT, "assets", "code", `${overlay}_overlay.s`);
   if (!existsSync(source)) throw new Error(`no reconstruction assembly for ${overlay}`);
   return assembleOverlay(source);

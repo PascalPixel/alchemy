@@ -4,7 +4,7 @@ typedef unsigned int u32;
 typedef signed int s32;
 
 /*
- * Resource 386 approach guard at 0x02000380 — member 0 of a four-member
+ * Resource 386 approach guard at 0x02000380 — one of a four-member
  * family (0x0200_0380, 0x0200_03c8, 0x0200_0410, 0x0200_0458).
  *
  * Complete owner: `push {r5, lr}` at 0x02000380, interworking return
@@ -15,7 +15,7 @@ typedef signed int s32;
  *
  * Signature: `pop {r0} / bx r0` puts the return address in r0 — `void`.
  *
- * Link base 0x02008000; 0x0200 80380 in the overlay's handler pool is
+ * Link base 0x02008000; 0x02008381 in the overlay's handler pool is
  * `Func_02000380 + 1`, which named this row as a scene handler in advance.
  *
  * FAMILY PROOF (byte diff, not inference).  Over all 72 bytes this row and

@@ -1,10 +1,10 @@
 #include "types.h"
 
 /*
- * Reset one battle participant's object to its opening pose: fixed scale and
- * height, the 0x9999 marker in the field at +0x48, the +0x5a byte cleared,
- * then place it and start animation program 5.  The placement's x comes from
- * scaling the slot's +0x0c field by 0x14ccc.
+ * Reset one battle participant's object to its opening pose: the fixed scale
+ * words at +0x28, +0x30 and +0x34, the 0x9999 marker at +0x48, then +0x44 and
+ * the +0x5a byte cleared, then place it and start animation program 5.  The
+ * placement's x comes from scaling the slot's +0x0c field by 0x14ccc.
  *
  * `ldr r3,[pc,#40]` loads 0x03000118 - the ARM fixed-point multiply relocated
  * into IWRAM - and `mov ip, pc ; bx r3` calls it.  `mov ip, pc` sets the
@@ -21,11 +21,12 @@ typedef s32 (*Multiply_080b81c8)(s32 a, s32 b);
 
 struct Object_080b81c8 {
     u8 unknown_00[0x28];
-    s32 height_28;
+    s32 field_28;
     u8 unknown_2c[4];
-    s32 scale_30;
-    s32 depth_34;
-    u8 unknown_38[0x10];
+    s32 field_30;
+    s32 field_34;
+    u8 unknown_38[0xc];
+    s32 zero_44;
     s32 marker_48;
     u8 unknown_4c[0xe];
     u8 flag_5a;
@@ -49,10 +50,11 @@ void Func_080b81c8(s32 id)
     struct Slot_080b81c8 *slot = Func_080b7dd0(id);
     struct Object_080b81c8 *object = slot->object;
 
-    object->depth_34 = 128 << 9;
-    object->scale_30 = 128 << 11;
-    object->height_28 = 128 << 11;
+    object->field_34 = 128 << 9;
+    object->field_30 = 128 << 11;
+    object->field_28 = 128 << 11;
     object->marker_48 = 0x9999;
+    object->zero_44 = 0;
     object->flag_5a = 0;
     Func_08009140(object);
     Func_08009150(object, multiply(slot->offset_0c, 0x14ccc), 0,

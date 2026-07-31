@@ -34,7 +34,7 @@ byte-exact C (75%), full blaze is humanized byte-exact C (100%):
 
 **Overlays** — decoded overlay code, 791 KB:
 
-![Decoded overlay code coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=c4fe7662)
+![Decoded overlay code coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=99297f43)
 
 **Assets** — the 7.3 MB of the cartridge that is data, not code. Same ladder in
 magenta: faint is byte-represented, a third is b&w sheets, two thirds is

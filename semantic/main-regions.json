@@ -258,6 +258,16 @@
       ]
     },
     {
+      "entry": "0x0809a738",
+      "evidence": "One 188-byte row holding a single function: prologue push {r5,r6,r7,lr} plus the r8/sl saves at 0x0809a738, single epilogue at 0x0809a7da reached from every arm, no inbound branch from outside the row. The two mov ip,pc; bx r5 sequences at 0x0809a760 and 0x0809a770 are ordinary indirect calls through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after each bx (0x0809a764, 0x0809a774) and both landing sites consume r0 as that call's result in the same frame, the reading already recorded for 0x0800ebec. Excluded (14 bytes): the 2-byte movs r0,r0 alignment filler at 0x0809a7e6 and the three-word pool at 0x0809a7e8 (0x03000118, 0x0000fff0, 0x0809f0b0); the movs r0,r0 at 0x0809a75e is alignment filler inside the code. No direct caller; published as a Thumb pointer at 0x0809a888, which is the pool word 0x0809a739 that 0x0809a7f4 stores to +0x6c as its successor handler.",
+      "executable_ranges": [
+        {
+          "address": "0x0809a738",
+          "size": 174
+        }
+      ]
+    },
+    {
       "entry": "0x0809a7f4",
       "evidence": "One 156-byte row holding a single function: prologue push {r5,r6,r7,lr} plus the r8/r9/sl saves at 0x0809a7f4, single epilogue at 0x0809a876 reached both by the counter test and by the hand-off arm, no inbound branch from outside the row. The two mov ip,pc; bx r5 sequences at 0x0809a818 and 0x0809a828 are ordinary indirect calls through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after each bx (0x0809a81c, 0x0809a82c) and both landing sites consume r0 as that call's result in the same frame, the reading already recorded for 0x0800ebec. Excluded (12 bytes): the three-word pool at 0x0809a884 (0x03000118, 0x0809a739, 0x00001999); there is no alignment filler, the code ends flush at 0x0809a884. The pool word 0x0809a739 is the Thumb pointer to the successor handler Func_0809a738, stored to +0x6c. No direct caller; published as a Thumb pointer at 0x0809aa94.",
       "executable_ranges": [

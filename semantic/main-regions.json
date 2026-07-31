@@ -2,16 +2,82 @@
   "format": 1,
   "main_owners": [
     {
-      "entry": "0x080d0ee0",
-      "evidence": "One function with its only prologue at 0x080d0ee0 and its only epilogue at 0x080d133e. Direct branches into 0x080d12a8 carry the live 116-byte stack frame and r8-r11 state. The intervening 60-byte literal pool at 0x080d126c-0x080d12a8 and the following literal pool at 0x080d1340 are excluded.",
+      "entry": "0x0800ebec",
+      "evidence": "One function across four manifest rows. The two mov ip,pc; bx r4 sequences at 0x0800f1ba and 0x0800f1c6 are ordinary indirect calls to the IWRAM-relocated ARM multiply at 0x03000118: mov ip,pc sets the return to the instruction after bx, and both landing sites continue the same live frame. The 62-byte executable-gap row at 0x0800f1bc is the continuation of one statement, not a control-flow anomaly. LAWS.md already records this idiom as a codegen-only difference from bl __call_via_r4. Excluded pools and alignment (90 bytes): 0x0800edf0 (36), 0x0800f186 (30), 0x0800f2ae (18), 0x0800f2d4 (4) and 2 bytes of trailing alignment. Previously recorded as a relocated_kernel_continuation blocker; resolved.",
       "executable_ranges": [
         {
-          "address": "0x080d0ee0",
-          "size": 908
+          "address": "0x0800ebec",
+          "size": 516
         },
         {
-          "address": "0x080d12a8",
-          "size": 152
+          "address": "0x0800ee14",
+          "size": 882
+        },
+        {
+          "address": "0x0800f1a4",
+          "size": 24
+        },
+        {
+          "address": "0x0800f1bc",
+          "size": 62
+        },
+        {
+          "address": "0x0800f1fa",
+          "size": 180
+        },
+        {
+          "address": "0x0800f2c0",
+          "size": 20
+        },
+        {
+          "address": "0x0800f2d8",
+          "size": 30
+        }
+      ]
+    },
+    {
+      "entry": "0x08016018",
+      "evidence": "One module: Func_08015fb8 has exactly one caller in the tree (this owner, three sites), so the r9 hand-off is module-internal and is spelled as a third parameter. Its bl Func_080072f0 is a call-via-r3 to the relocated IWRAM helper at 0x03000164. Previously blocked as hidden_register_module; that was a joint-scoping blocker.",
+      "executable_ranges": [
+        {
+          "address": "0x08015fb8",
+          "size": 72
+        },
+        {
+          "address": "0x08016018",
+          "size": 172
+        }
+      ]
+    },
+    {
+      "entry": "0x0801c9c0",
+      "evidence": "Three independent leaf functions inside manifest row 0801c9be, which begins with a two-byte alignment halfword so no owner can start at the row address. None of the three has a prologue and each ends in bx lr; the nearest preceding non-continuation row 0801c8a0 closes on its own return at 0x0801c912 and a gap separates it from this row, so this is not its continuation, and no branch or pool word in the image names any of the three entries. The alignment halfwords at 0x0801c9be, 0x0801c9c2 and 0x0801c9c6, the 2-byte alignment at 0x0801ca16 and the 4-byte pool at 0x0801ca18 are excluded.",
+      "executable_ranges": [
+        {
+          "address": "0x0801c9c0",
+          "size": 2
+        },
+        {
+          "address": "0x0801c9c4",
+          "size": 2
+        },
+        {
+          "address": "0x0801c9c8",
+          "size": 78
+        }
+      ]
+    },
+    {
+      "entry": "0x08021dfc",
+      "evidence": "Two independent leaf functions inside manifest row 08021dfa, which begins with a two-byte alignment halfword. Neither has a prologue and both end in bx lr. The nearest preceding non-continuation row 08021cb8 is reached only as far as 0x08021d70, where it returns, and the 138 bytes between that and this row are its literal pool, so this row is not its continuation. The alignment halfwords at 0x08021dfa, 0x08021e0e and 0x08021e22 and the pool words at 0x08021e10 and 0x08021e24 are excluded.",
+      "executable_ranges": [
+        {
+          "address": "0x08021dfc",
+          "size": 18
+        },
+        {
+          "address": "0x08021e14",
+          "size": 14
         }
       ]
     },
@@ -34,52 +100,34 @@
       ]
     },
     {
-      "entry": "0x080ddde0",
-      "evidence": "One function with a complete prologue at 0x080ddde0 and live stack/high-register state carried by direct branches into 0x080de0d4; the intervening 72-byte 0x080de08c region is a literal pool and is excluded.",
+      "entry": "0x08095778",
+      "evidence": "Func_080022ec/080022fc are div/mod; page and entry recombine to the integer flag id event-252, corroborated by this owner's own record match. Previously blocked as cross_file_abi against src/080955b0.c, whose void* parameter is semantically mistyped but byte-exact.",
       "executable_ranges": [
         {
-          "address": "0x080ddde0",
-          "size": 684
-        },
-        {
-          "address": "0x080de0d4",
-          "size": 548
+          "address": "0x08095778",
+          "size": 244
         }
       ]
     },
     {
-      "entry": "0x080d4ce8",
-      "evidence": "One function with a complete prologue at 0x080d4ce8 and live stack/high-register state carried by direct branches through 0x080d5094. Embedded literal pools at 0x080d4d50-0x080d4d70, 0x080d5052-0x080d5094, and 0x080d5238-0x080d5258 are excluded.",
+      "entry": "0x080b9724",
+      "evidence": "One module: r9 = sp+20 is one past this owner's 20-byte local block and the callees' negative offsets from it are header/size/records/result/count, spelled as a struct pointer. Both callees have only this caller. Previously blocked as shared_stack_context_module.",
       "executable_ranges": [
         {
-          "address": "0x080d4ce8",
-          "size": 104
+          "address": "0x080b9554",
+          "size": 172
         },
         {
-          "address": "0x080d4d70",
-          "size": 738
+          "address": "0x080b9604",
+          "size": 280
         },
         {
-          "address": "0x080d5094",
-          "size": 420
-        }
-      ]
-    },
-    {
-      "entry": "0x080dd9c0",
-      "evidence": "One function with its only prologue at 0x080dd9c0 and its only epilogue at 0x080ddd82 (pop {r0}; bx r0). Six inter-row branches carry the live 52-byte frame and r8-r11 across the rows. The literal pools at 0x080dda18 (36 bytes), 0x080ddb0c (40 bytes) and 0x080dddb8 (40 bytes) are excluded. Previously recorded as a multi_region_function blocker; resolved by whole-module admission.",
-      "executable_ranges": [
-        {
-          "address": "0x080dd9c0",
-          "size": 88
+          "address": "0x080b9724",
+          "size": 344
         },
         {
-          "address": "0x080dda3c",
-          "size": 208
-        },
-        {
-          "address": "0x080ddb34",
-          "size": 644
+          "address": "0x080b9890",
+          "size": 36
         }
       ]
     },
@@ -102,6 +150,236 @@
         {
           "address": "0x080bef88",
           "size": 608
+        }
+      ]
+    },
+    {
+      "entry": "0x080c1798",
+      "evidence": "Blocker premise disproved on both halves: Func_080c1470 clobbers r2 before any read, so it takes one argument; and the 0x03000164 helper is reached with r2 unset at all three sites in the image, so it reads as (destination, length) rather than as intentional callee residue. Previously blocked as implicit_callee_return_state_module.",
+      "executable_ranges": [
+        {
+          "address": "0x080c1798",
+          "size": 536
+        }
+      ]
+    },
+    {
+      "entry": "0x080d0ee0",
+      "evidence": "One function with its only prologue at 0x080d0ee0 and its only epilogue at 0x080d133e. Direct branches into 0x080d12a8 carry the live 116-byte stack frame and r8-r11 state. The intervening 60-byte literal pool at 0x080d126c-0x080d12a8 and the following literal pool at 0x080d1340 are excluded.",
+      "executable_ranges": [
+        {
+          "address": "0x080d0ee0",
+          "size": 908
+        },
+        {
+          "address": "0x080d12a8",
+          "size": 152
+        }
+      ]
+    },
+    {
+      "entry": "0x080d4ce8",
+      "evidence": "One function with a complete prologue at 0x080d4ce8 and live stack/high-register state carried by direct branches through 0x080d5094. Embedded literal pools at 0x080d4d50-0x080d4d70, 0x080d5052-0x080d5094, and 0x080d5238-0x080d5258 are excluded.",
+      "executable_ranges": [
+        {
+          "address": "0x080d4ce8",
+          "size": 104
+        },
+        {
+          "address": "0x080d4d70",
+          "size": 738
+        },
+        {
+          "address": "0x080d5094",
+          "size": 420
+        }
+      ]
+    },
+    {
+      "entry": "0x080d5c48",
+      "evidence": "Both sub_08007300 sites are call-via-r7 through the pointer at 0x03001f08, loaded once and reused, with the established six-argument renderer ABI. A 32-byte interior pool and a 20-byte trailing pool are excluded. Previously blocked as hidden_register_module.",
+      "executable_ranges": [
+        {
+          "address": "0x080d5c48",
+          "size": 80
+        },
+        {
+          "address": "0x080d5cb8",
+          "size": 392
+        }
+      ]
+    },
+    {
+      "entry": "0x080d765c",
+      "evidence": "One function with its only prologue at 0x080d765c (332-byte frame, never restored until the end) and its sole epilogue at 0x080d829a, reached through plain b edges across nine manifest rows. Ten of its 91 bl sites are call_via thunk-bank indirect calls whose via-register is loaded from frame slots filled once from *(0x03001f08) and *(0x03001f0c); the rest are ordinary calls and no internal edge is emitted as bl. Excluded pools (290 bytes): 0x080d76d0 (32), 0x080d778c (40), 0x080d7862 (26, interior), 0x080d7bd2 (54), 0x080d7e5c (68, a whole row), 0x080d821a (62) and 0x080d82a8 (8); all 78 pc-relative ldr sites resolve into exactly these pools and no branch targets any of them. Previously recorded as a multi_region_function blocker; resolved by whole-module admission.",
+      "executable_ranges": [
+        {
+          "address": "0x080d765c",
+          "size": 116
+        },
+        {
+          "address": "0x080d76f0",
+          "size": 156
+        },
+        {
+          "address": "0x080d77b4",
+          "size": 174
+        },
+        {
+          "address": "0x080d787c",
+          "size": 854
+        },
+        {
+          "address": "0x080d7c08",
+          "size": 596
+        },
+        {
+          "address": "0x080d7ea0",
+          "size": 890
+        },
+        {
+          "address": "0x080d8258",
+          "size": 80
+        }
+      ]
+    },
+    {
+      "entry": "0x080dbb9c",
+      "evidence": "One leaf function inside manifest row 080dbb9a, which begins with a two-byte alignment halfword. It has no prologue and ends in bx lr. The walk from the nearest preceding non-continuation row 080db6e0 reaches 0x080dbb12 and stops on that function's own return, and a gap separates the rows, so this is not its tail. The 24-byte literal pool at 0x080dbbc4 is excluded.",
+      "executable_ranges": [
+        {
+          "address": "0x080dbb9c",
+          "size": 40
+        }
+      ]
+    },
+    {
+      "entry": "0x080dd9c0",
+      "evidence": "One function with its only prologue at 0x080dd9c0 and its only epilogue at 0x080ddd82 (pop {r0}; bx r0). Six inter-row branches carry the live 52-byte frame and r8-r11 across the rows. The literal pools at 0x080dda18 (36 bytes), 0x080ddb0c (40 bytes) and 0x080dddb8 (40 bytes) are excluded. Previously recorded as a multi_region_function blocker; resolved by whole-module admission.",
+      "executable_ranges": [
+        {
+          "address": "0x080dd9c0",
+          "size": 88
+        },
+        {
+          "address": "0x080dda3c",
+          "size": 208
+        },
+        {
+          "address": "0x080ddb34",
+          "size": 644
+        }
+      ]
+    },
+    {
+      "entry": "0x080ddde0",
+      "evidence": "One function with a complete prologue at 0x080ddde0 and live stack/high-register state carried by direct branches into 0x080de0d4; the intervening 72-byte 0x080de08c region is a literal pool and is excluded.",
+      "executable_ranges": [
+        {
+          "address": "0x080ddde0",
+          "size": 684
+        },
+        {
+          "address": "0x080de0d4",
+          "size": 548
+        }
+      ]
+    },
+    {
+      "entry": "0x080e15e8",
+      "evidence": "One function with its only prologue at 0x080e15e8 and its sole epilogue in the 0x080e21e8 range; every inter-row edge is a plain Thumb b.n and none of the 130 bl sites encodes internal control flow. Eighteen bl sites are call_via thunk-bank indirect calls through live registers (renderer entries from 0x03001f08/0x03001f0c, or relocated IWRAM helpers at 0x0300013c, 0x03001388, 0x03000168). Two further calls use the inline mov ip,pc; bx r7 idiom into the relocated ARM helper at 0x03000118 and return inline into the same range. Excluded as data (316 bytes): interior pools 0x080e1660 (28), 0x080e1704 (32), 0x080e179c (40), 0x080e1830 (24 plus 2 alignment) and 0x080e1a98 (52), plus the whole rows 0x080e1daa (78) and 0x080e21ae (58), each confirmed by resolving sibling pc-relative ldr targets. Previously recorded as a multi_region_function blocker; resolved by whole-module admission. The 592-byte span from 0x080e1848 is listed as two ranges because it crosses the manifest row boundary at 0x080e1a48; the code is contiguous.",
+      "executable_ranges": [
+        {
+          "address": "0x080e15e8",
+          "size": 120
+        },
+        {
+          "address": "0x080e167c",
+          "size": 134
+        },
+        {
+          "address": "0x080e1724",
+          "size": 120
+        },
+        {
+          "address": "0x080e17c4",
+          "size": 106
+        },
+        {
+          "address": "0x080e1848",
+          "size": 512
+        },
+        {
+          "address": "0x080e1a48",
+          "size": 80
+        },
+        {
+          "address": "0x080e1acc",
+          "size": 734
+        },
+        {
+          "address": "0x080e1df8",
+          "size": 950
+        },
+        {
+          "address": "0x080e21e8",
+          "size": 786
+        }
+      ]
+    },
+    {
+      "entry": "0x080e47b8",
+      "evidence": "One function with its only prologue at 0x080e47b8 and its sole epilogue at 0x080e660a, spanning 16 manifest rows. Of its 231 bl sites, 14 are long branches the build emitted as bl because a Thumb b displacement cannot span 7 KiB, and 53 are interworking veneers through the 0x080072e4 call_via bank. Excluded (380 bytes): the literal pools at 0x080e4ddc (48), 0x080e5790 (36), 0x080e5acc (48), 0x080e5dee (58) and 0x080e6252 (54), plus the 34-entry jump table at 0x080e53f4 (136). A further 776 bytes of pool and alignment sit inside the listed ranges, so pure instruction bytes are 6,606.",
+      "executable_ranges": [
+        {
+          "address": "0x080e47b8",
+          "size": 768
+        },
+        {
+          "address": "0x080e4ab8",
+          "size": 148
+        },
+        {
+          "address": "0x080e4b4c",
+          "size": 656
+        },
+        {
+          "address": "0x080e4e0c",
+          "size": 1512
+        },
+        {
+          "address": "0x080e547c",
+          "size": 136
+        },
+        {
+          "address": "0x080e5504",
+          "size": 652
+        },
+        {
+          "address": "0x080e57b4",
+          "size": 792
+        },
+        {
+          "address": "0x080e5afc",
+          "size": 754
+        },
+        {
+          "address": "0x080e5e28",
+          "size": 1066
+        },
+        {
+          "address": "0x080e6288",
+          "size": 898
+        }
+      ]
+    },
+    {
+      "entry": "0x080e72e0",
+      "evidence": "One leaf function inside manifest row 080e72de, which begins with a two-byte alignment halfword. It has no prologue and ends in bx lr. The walk from the preceding row 080e727c stops at 0x080e72de on that function's own return and nothing branches into this row. The 2-byte alignment at 0x080e730a and the 20-byte literal pool at 0x080e730c are excluded.",
+      "executable_ranges": [
+        {
+          "address": "0x080e72e0",
+          "size": 42
         }
       ]
     },
@@ -174,208 +452,6 @@
       ]
     },
     {
-      "entry": "0x080e47b8",
-      "evidence": "One function with its only prologue at 0x080e47b8 and its sole epilogue at 0x080e660a, spanning 16 manifest rows. Of its 231 bl sites, 14 are long branches the build emitted as bl because a Thumb b displacement cannot span 7 KiB, and 53 are interworking veneers through the 0x080072e4 call_via bank. Excluded (380 bytes): the literal pools at 0x080e4ddc (48), 0x080e5790 (36), 0x080e5acc (48), 0x080e5dee (58) and 0x080e6252 (54), plus the 34-entry jump table at 0x080e53f4 (136). A further 776 bytes of pool and alignment sit inside the listed ranges, so pure instruction bytes are 6,606.",
-      "executable_ranges": [
-        {
-          "address": "0x080e47b8",
-          "size": 768
-        },
-        {
-          "address": "0x080e4ab8",
-          "size": 148
-        },
-        {
-          "address": "0x080e4b4c",
-          "size": 656
-        },
-        {
-          "address": "0x080e4e0c",
-          "size": 1512
-        },
-        {
-          "address": "0x080e547c",
-          "size": 136
-        },
-        {
-          "address": "0x080e5504",
-          "size": 652
-        },
-        {
-          "address": "0x080e57b4",
-          "size": 792
-        },
-        {
-          "address": "0x080e5afc",
-          "size": 754
-        },
-        {
-          "address": "0x080e5e28",
-          "size": 1066
-        },
-        {
-          "address": "0x080e6288",
-          "size": 898
-        }
-      ]
-    },
-    {
-      "entry": "0x080d765c",
-      "evidence": "One function with its only prologue at 0x080d765c (332-byte frame, never restored until the end) and its sole epilogue at 0x080d829a, reached through plain b edges across nine manifest rows. Ten of its 91 bl sites are call_via thunk-bank indirect calls whose via-register is loaded from frame slots filled once from *(0x03001f08) and *(0x03001f0c); the rest are ordinary calls and no internal edge is emitted as bl. Excluded pools (290 bytes): 0x080d76d0 (32), 0x080d778c (40), 0x080d7862 (26, interior), 0x080d7bd2 (54), 0x080d7e5c (68, a whole row), 0x080d821a (62) and 0x080d82a8 (8); all 78 pc-relative ldr sites resolve into exactly these pools and no branch targets any of them. Previously recorded as a multi_region_function blocker; resolved by whole-module admission.",
-      "executable_ranges": [
-        {
-          "address": "0x080d765c",
-          "size": 116
-        },
-        {
-          "address": "0x080d76f0",
-          "size": 156
-        },
-        {
-          "address": "0x080d77b4",
-          "size": 174
-        },
-        {
-          "address": "0x080d787c",
-          "size": 854
-        },
-        {
-          "address": "0x080d7c08",
-          "size": 596
-        },
-        {
-          "address": "0x080d7ea0",
-          "size": 890
-        },
-        {
-          "address": "0x080d8258",
-          "size": 80
-        }
-      ]
-    },
-    {
-      "entry": "0x080e15e8",
-      "evidence": "One function with its only prologue at 0x080e15e8 and its sole epilogue in the 0x080e21e8 range; every inter-row edge is a plain Thumb b.n and none of the 130 bl sites encodes internal control flow. Eighteen bl sites are call_via thunk-bank indirect calls through live registers (renderer entries from 0x03001f08/0x03001f0c, or relocated IWRAM helpers at 0x0300013c, 0x03001388, 0x03000168). Two further calls use the inline mov ip,pc; bx r7 idiom into the relocated ARM helper at 0x03000118 and return inline into the same range. Excluded as data (316 bytes): interior pools 0x080e1660 (28), 0x080e1704 (32), 0x080e179c (40), 0x080e1830 (24 plus 2 alignment) and 0x080e1a98 (52), plus the whole rows 0x080e1daa (78) and 0x080e21ae (58), each confirmed by resolving sibling pc-relative ldr targets. Previously recorded as a multi_region_function blocker; resolved by whole-module admission. The 592-byte span from 0x080e1848 is listed as two ranges because it crosses the manifest row boundary at 0x080e1a48; the code is contiguous.",
-      "executable_ranges": [
-        {
-          "address": "0x080e15e8",
-          "size": 120
-        },
-        {
-          "address": "0x080e167c",
-          "size": 134
-        },
-        {
-          "address": "0x080e1724",
-          "size": 120
-        },
-        {
-          "address": "0x080e17c4",
-          "size": 106
-        },
-        {
-          "address": "0x080e1848",
-          "size": 512
-        },
-        {
-          "address": "0x080e1a48",
-          "size": 80
-        },
-        {
-          "address": "0x080e1acc",
-          "size": 734
-        },
-        {
-          "address": "0x080e1df8",
-          "size": 950
-        },
-        {
-          "address": "0x080e21e8",
-          "size": 786
-        }
-      ]
-    },
-    {
-      "entry": "0x0800ebec",
-      "evidence": "One function across four manifest rows. The two mov ip,pc; bx r4 sequences at 0x0800f1ba and 0x0800f1c6 are ordinary indirect calls to the IWRAM-relocated ARM multiply at 0x03000118: mov ip,pc sets the return to the instruction after bx, and both landing sites continue the same live frame. The 62-byte executable-gap row at 0x0800f1bc is the continuation of one statement, not a control-flow anomaly. LAWS.md already records this idiom as a codegen-only difference from bl __call_via_r4. Excluded pools and alignment (90 bytes): 0x0800edf0 (36), 0x0800f186 (30), 0x0800f2ae (18), 0x0800f2d4 (4) and 2 bytes of trailing alignment. Previously recorded as a relocated_kernel_continuation blocker; resolved.",
-      "executable_ranges": [
-        {
-          "address": "0x0800ebec",
-          "size": 516
-        },
-        {
-          "address": "0x0800ee14",
-          "size": 882
-        },
-        {
-          "address": "0x0800f1a4",
-          "size": 24
-        },
-        {
-          "address": "0x0800f1bc",
-          "size": 62
-        },
-        {
-          "address": "0x0800f1fa",
-          "size": 180
-        },
-        {
-          "address": "0x0800f2c0",
-          "size": 20
-        },
-        {
-          "address": "0x0800f2d8",
-          "size": 30
-        }
-      ]
-    },
-    {
-      "entry": "0x08016018",
-      "evidence": "One module: Func_08015fb8 has exactly one caller in the tree (this owner, three sites), so the r9 hand-off is module-internal and is spelled as a third parameter. Its bl Func_080072f0 is a call-via-r3 to the relocated IWRAM helper at 0x03000164. Previously blocked as hidden_register_module; that was a joint-scoping blocker.",
-      "executable_ranges": [
-        {
-          "address": "0x08015fb8",
-          "size": 72
-        },
-        {
-          "address": "0x08016018",
-          "size": 172
-        }
-      ]
-    },
-    {
-      "entry": "0x08095778",
-      "evidence": "Func_080022ec/080022fc are div/mod; page and entry recombine to the integer flag id event-252, corroborated by this owner's own record match. Previously blocked as cross_file_abi against src/080955b0.c, whose void* parameter is semantically mistyped but byte-exact.",
-      "executable_ranges": [
-        {
-          "address": "0x08095778",
-          "size": 244
-        }
-      ]
-    },
-    {
-      "entry": "0x080b9724",
-      "evidence": "One module: r9 = sp+20 is one past this owner's 20-byte local block and the callees' negative offsets from it are header/size/records/result/count, spelled as a struct pointer. Both callees have only this caller. Previously blocked as shared_stack_context_module.",
-      "executable_ranges": [
-        {
-          "address": "0x080b9554",
-          "size": 172
-        },
-        {
-          "address": "0x080b9604",
-          "size": 280
-        },
-        {
-          "address": "0x080b9724",
-          "size": 344
-        },
-        {
-          "address": "0x080b9890",
-          "size": 36
-        }
-      ]
-    },
-    {
       "entry": "0x080f9f6c",
       "evidence": "Func_080f9f3c is a 48-byte leaf with no push/pop taking r4/r5 from its caller, spelled as two explicit pointers. The Func_080fa678 call-via-r1 concern is that callee's internals; from here it is an ordinary one-argument call. Previously blocked as hidden_register_module.",
       "executable_ranges": [
@@ -386,30 +462,6 @@
         {
           "address": "0x080f9f6c",
           "size": 504
-        }
-      ]
-    },
-    {
-      "entry": "0x080d5c48",
-      "evidence": "Both sub_08007300 sites are call-via-r7 through the pointer at 0x03001f08, loaded once and reused, with the established six-argument renderer ABI. A 32-byte interior pool and a 20-byte trailing pool are excluded. Previously blocked as hidden_register_module.",
-      "executable_ranges": [
-        {
-          "address": "0x080d5c48",
-          "size": 80
-        },
-        {
-          "address": "0x080d5cb8",
-          "size": 392
-        }
-      ]
-    },
-    {
-      "entry": "0x080c1798",
-      "evidence": "Blocker premise disproved on both halves: Func_080c1470 clobbers r2 before any read, so it takes one argument; and the 0x03000164 helper is reached with r2 unset at all three sites in the image, so it reads as (destination, length) rather than as intentional callee residue. Previously blocked as implicit_callee_return_state_module.",
-      "executable_ranges": [
-        {
-          "address": "0x080c1798",
-          "size": 536
         }
       ]
     }

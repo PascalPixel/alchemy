@@ -559,6 +559,73 @@ trickiest constant in that family.
 middle. Two independent owners agreeing on the hole confirms it; writing `9..17`
 folds it away.
 
+**THE OVERLAY INVENTORY IS INCOMPLETE, AND THE MISSING OWNERS ARE FINDABLE IN
+ONE SWEEP.** Sweeping the two-byte gaps in `metrics/gs1-en-executable.json` for
+a `push {..,lr}` prologue turned up **36 owners with no row in
+`out/decomp/overlays.json`**, no semantic source and no exact source — invisible
+to every tool that starts from the inventory. Fifteen are provably called by a
+`bl` in their own overlay. They are ordinary functions, not veneers or data:
+24 of the 36 have now been converted and every one verified per-target. Do this
+sweep before concluding an overlay is finished; "zero unconverted strict rows"
+means the *inventory* is exhausted, not the overlay.
+
+Consequences, each of which cost time before it was written down:
+
+* **Derive the span; do NOT take it from the next interval start.** Two of the
+  24 (`resource_3a0:0314`, `resource_3c8:45f0`) have the next prologue
+  immediately after the epilogue with no alignment halfword, and several others
+  have a pool between them. Walk from the prologue to the matching epilogue and
+  treat everything the walk never reaches as pool.
+* **Admit them with a `manual_regions` entry in `semantic/regions.json`.**
+  `build_semantic` throws `has no admitted semantic owner` otherwise, since
+  there is no inventory row to take `span_bytes` from.
+* **`overlay_multiset_check.ts` now reads `semantic/regions.json` as well as
+  the inventory** (changed in this pass). Before that it silently reported
+  `checked=0` for a freshly converted derived owner — which reads as a pass.
+* **`overlay_call_targets.ts` does not recognise a `sub sp,#N` prologue.**
+  `resource_3b3:08ec` opens with `sub sp,#16` *before* its `push {r5,r6,r7,lr}`,
+  so calls to it classify as `unknown` and are dropped from the histogram. That
+  is a classifier limitation, not a bad target; `resource_3b3:253c` documents
+  its one hand-checked site.
+
+**A REPEATED OFFSET ACROSS OVERLAYS IS A TRANSPOSED ROUTINE — AND THE OFFSET
+ALONE IS NEITHER NECESSARY NOR SUFFICIENT.** Nine overlays carry a prologue at
+`0x0314` (`382 385 387 39b 3a0 3a6 3b3 3be 3c0`). Byte-diffing them:
+**five are one routine** (`385 39b 3a6 3b3 3be`), byte-identical over all 60
+bytes including the pool word, differing in **exactly the four bytes of one
+`bl`** — each overlay's own `call_via` slot, which is the only thing that *can*
+differ, because the slot's image offset moves with the import band. The other
+four are unrelated. A **sixth** copy of the same routine sits at
+`resource_3a0:03cc`, at a different offset, while `resource_3a0:0314` is
+something else entirely. So: diff the bytes, never trust the address family. The
+routine is a 3-D distance — three 16.16 differences reduced by `asrs #16`,
+squared, summed, and passed to the `0x030001d8` IWRAM square root through the
+`call_via` slot.
+
+`resource_3c9:03a0` and `resource_3b3:13b0` are the same pattern one level
+looser: identical field map (+68/+72/+76 velocities integrated into +8/+12/+16,
++48/+52 added into +24/+28, the +80 pointer accumulating the object's u16 at
++100 into its own +30) but re-scheduled and with **different decay sets** — 3c9
+damps two axes by 22 and 20 and leaves the third alone, 3b3 damps all three by
+10, 3 and 10. Transposition does not imply byte identity, and assuming it moves
+a decay onto an axis that has none.
+
+**`v -= Func_03000380(v, N)` is a proportional decay, not a division.** The
+IWRAM quotient helper appears in the middle of an assignment to its own
+argument; read as a plain divide it looks like the velocity is being scaled when
+it is being reduced by a fraction of itself each frame.
+
+**`lsls #28 / lsrs #30` is a two-bit field extract at bits 2-3**, and the mask
+that writes it back is spelled `movs r2,#13 / negs r2` (0xfffffff3).
+`resource_3b3:19f0` extracts one, compares it, and writes it into a second
+record along with bits 2-3 of a neighbouring byte. Read as a shift pair it looks
+like a sign manipulation.
+
+**`if (v < 0) v += 0xffff; v >>= 16` is round-TOWARD-ZERO division by 65536**,
+not an arithmetic shift with a stray bias. `resource_3b3:19f0` applies it to
+both operands before comparing them, so dropping the bias changes the answer for
+every negative coordinate.
+
 **`overlay_call_targets.ts`'s site count on a jump-table row can be right by
 luck.** `resource_3b0:0240` reports 168 code bytes against a 452-byte span
 because the linear walk stops at a 56-byte `mov pc,r3` table — yet the naive
@@ -829,10 +896,15 @@ by a `bl` in their own overlay. Sizes must be derived by walking from the
 prologue to its matching epilogue, because the interval boundary next to them is
 exactly what is unreliable.
 
-**`0x0314` is a nine-overlay family**: `382`, `385`, `387`, `39b`, `3a0`, `3a6`,
-`3b3`, `3be`, `3c0` all have an unrecorded function at that same offset, and
-`387:0314` is called twelve times. A repeated offset across overlays is almost
-always one routine transposed — read one, byte-diff the rest.
+**A repeated offset is a HINT, not the family — THE BYTES ARE.** Of the nine
+overlays with an unrecorded function at `0x0314`, **five are one routine**
+(`385`, `39b`, `3a6`, `3b3`, `3be`, byte-identical over all 60 bytes including
+the pool word, with **exactly four bytes differing**: the `bl` halfword pair,
+which resolves onto each overlay's own `call_via` slot — the only thing that
+*can* differ, since the slot moves with the import band). The other four are
+unrelated routines that happen to share the offset. And a **sixth copy lives at a
+different offset entirely**, `resource_3a0:03cc`. So the offset is neither
+necessary nor sufficient: use it to find candidates, then byte-diff to decide.
 
 **None of the 226 two-byte gaps is padding**, so do not extend
 `two-byte-zero-between-executable-spans` to them: 53 hold a prologue, **93 hold

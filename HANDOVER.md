@@ -425,6 +425,26 @@ far stronger link-base proof than a single task-install witness, and the same 36
 words named the role of **all fifteen** unconverted rows before any disassembly —
 signatures decided in advance. Do this before opening a body.
 
+**A row that sets the same event flag its table key names is a one-shot scene —
+proven in one line.** `resource_3ae:0e40`'s handler-table entry is keyed
+`0x08ab0032` and its first instruction is `Func_080770c8(0x8ab)`; `:08cc`
+read-then-sets `0x8ac` around its only call. That settles both "is this
+one-shot" and the scene's identity with no dataflow work at all.
+
+**The asymmetric scene bracket is REAL, not a decoding artefact.** In
+`resource_3ae`, both `:0328` and `:051c` have an arm that branches past
+`Func_0808a020` straight to the epilogue after `Func_0808a018` has already run.
+Preserve it; "fixing" it into a shared close changes behaviour and the multiset.
+
+**`ldrh` + `adds #0x2000` + `ands #0xffffc000` + `lsls/asrs #16` is facing
+quantisation to a signed quadrant**, not a sign manipulation. After it, the
+`cmp r3, #0x80000000` in `resource_3ae:0328` is simply `facing == 0x8000`, which
+reads as a sign test if the quantisation above it was missed.
+
+**`cmp rN,r3 / bls` on a price/coin pair tells you which arm is the purchase**
+without knowing any import: only the affordable arm calls the charge import with
+the *negated* amount.
+
 **An overlay's image offset 0 can be an exported-entry veneer table.** In
 `resource_3b5` it is a run of `ldr r4,[pc,#0] / bx r4 / .word 0x0200_8xxx` pairs;
 resolving those words under the link base hands you the overlay's *roots* for

@@ -5682,6 +5682,18 @@
       "entry": "0x02005780",
       "span_bytes": 108,
       "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,lr} at 0x02005780, epilogue pop {r5,r6} / pop {r0} / bx r0 at 0x020057e0-0x020057e4; the one-word literal pool at 0x020057e8 (0x0000092a) is included per the usual pool rule, immediately followed by the next owner's push {r5,r6,lr} at 0x020057ec, already this overlay's row 0x020057ec (0x02005780-0x020057ec, 108 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02005ca4",
+      "span_bytes": 108,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {lr} at 0x02005ca4, epilogue pop {r0} / bx r0 at 0x02005d0c-0x02005d0e; no pool, immediately followed by the next owner's push {r5,r6,r7,lr} at 0x02005d10, already this overlay's row 0x02005d10 (0x02005ca4-0x02005d10, 108 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x020047cc",
+      "span_bytes": 160,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,lr} at 0x020047cc, epilogue pop {r5} / pop {r0} / bx r0 at 0x02004862-0x02004866; a 9-entry jump table (link base 0x02008000, same as 0x020048e8 and 0x0200012c) gates on a0 18..26, default a no-op. The one-word pool at 0x02004868 (table base 0x0200c7e0) is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x0200486c, already this overlay's row 0x0200486c (adopted exact earlier this session), so the span is 0x020047cc-0x0200486c, 160 bytes"
     }
   ]
 }

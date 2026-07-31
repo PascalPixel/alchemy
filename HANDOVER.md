@@ -1814,12 +1814,30 @@ real work when it has an `asm/<stem>.s`, no `semantic/main/<stem>.c`, no
 gets wrong: many rows are interiors of already-converted owners. Measured this
 way: **424 stems / 44,734 bytes — but only 92 are genuine candidates.**
 
-**Filter the linker veneers FIRST, before ranking by size.** About **333 of the
-425** are the fixed sequence `ldr rN,[pc,#0]; bx rN` followed by one target
-word, across `08009000+`, `08077000+`, `080b0000+`, `080f2000+`, plus the IWRAM
-`ldr r3` veneers at `080022ec/f4/fc` and `08002304`. They are linker-emitted and
-have no C form. Filter them and the `swi`/`svc` wrapper rows before sorting, or
-the entire small tier is noise and a lane spends its pass on it.
+**Filter the linker veneers FIRST, and filter on SHAPE, not on address range.**
+**334** of the stems are `ldr rN,[pc,#0]; bx rN` plus exactly one `.4byte`
+(≤3 body lines). The address-range list under-counts by nearly half: beyond
+`08009000+`, `08077000+`, `080b0000+`, `080f2000+` and the four IWRAM `ldr r3`
+veneers, there are 158 more at `08015000+`, `0808a000+`, `080a1000+`,
+`080b5000+`, `080c9000+`, `080f4000`, `080f6000`, `080f9000+` and `08185000`.
+Match the shape. Filter the `swi`/`svc` wrappers too, before sorting, or the
+entire small tier is noise.
+
+**ARM-mode rows are a skip signal in themselves — `grep -L '\.thumb' asm/<stem>.s`
+is the whole test.** Every ARM row carries the header 「承認済みコンパイラはサム
+専用のため構造化アセンブリで保持する」 — the approved compiler is Thumb-only, so
+no C form can exist. That is **14 stems**, not just the four named ones
+(`08002dd8`, `08004fe4`, `08007994`, `080f95e0`); it also covers `08002544`,
+`08002808`, `08002cf4`, `08002d5c`, `08009bb8`, `08009e7c`, `0800a0f8`,
+`0800a37c` and more. One line removes them before any reading.
+
+**`main_xref.ts` reporting DATA is the RELOCATED-ARM signature, not a data row.**
+The word reference is the *source address of a runtime copy*, not a pointer to
+data — every DATA row measured was ARM. Treat DATA exactly like ARM: skip.
+
+**Two ROM entry points can share one instruction stream.** `0800231c` (cosine)
+and `08002322` (sine) share a tail, are separately called, and branch backward
+into `0800230c`. No single C function has two entries — skip.
 
 **Run `main_xref.ts` BEFORE drafting, not after.** It catches interiors the
 coverage rule misses: `0800230c` passes the "not inside any `executable_ranges`

@@ -1753,7 +1753,11 @@ export function directCompilerCommandForSource(
   ];
 }
 
-function selfTest(): void {
+// Toolchain-free guards. Kept separate from `selfTest` so `main` -- which has
+// no compiler bundle -- can run them alone via `--lint`, since the branch that
+// carried the .map arity bug for four banks is exactly the one that could not
+// execute the check that catches it.
+export function callbackArityLint(): void {
   // `externalSymbolAssembly` grew a second parameter when overlays stopped
   // sharing one `call_via` bank, and every `names.map(externalSymbolAssembly)`
   // in the tree silently started feeding it the array index: `_call_via_r3`
@@ -1786,6 +1790,10 @@ function selfTest(): void {
       `array index in as callViaBase: ${leaking.join(", ")}`,
     );
   }
+}
+
+function selfTest(): void {
+  callbackArityLint();
   const expected = [
     "08006a00", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
     "08006e24", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
@@ -2190,6 +2198,11 @@ function main(): void {
   const argument = Bun.argv[2] ?? "gs1";
   if (argument === "--self-test") {
     selfTest();
+    return;
+  }
+  if (argument === "--lint") {
+    callbackArityLint();
+    console.log("lint=ok callback-arity");
     return;
   }
   if (argument === "agbcc") {

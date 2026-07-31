@@ -450,34 +450,10 @@ AlchemyC_02000044:
 	bx	r0
 	.2byte 0x0240
 	.2byte 0x0200
-	push	{lr}
-	bl	sub_02001a74
-	ldr	r0, [pc, #24]
-	bl	sub_02001ac2
-	movs	r0, #1
-	movs	r1, #0
-	negs	r0, r0
-	bl	sub_02001ad4
-	bl	sub_02001a90
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.2byte 0x0e34
-	.2byte 0x0000
-	push	{lr}
-	bl	sub_02001a98
-	ldr	r0, [pc, #24]
-	bl	sub_02001ae6
-	movs	r0, #1
-	movs	r1, #0
-	negs	r0, r0
-	bl	sub_02001af8
-	bl	sub_02001ab4
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.2byte 0x0e35
-	.2byte 0x0000
+AlchemyC_02000154:
+	.space 0x24
+AlchemyC_02000178:
+	.space 0x24
 AlchemyC_0200019c:
 	.space 0xc
 AlchemyC_020001a8:

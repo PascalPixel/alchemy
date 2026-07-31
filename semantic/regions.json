@@ -5262,6 +5262,18 @@
       "entry": "0x02000cf4",
       "span_bytes": 532,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3c9",
+      "entry": "0x020003a0",
+      "span_bytes": 94,
+      "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json, span walked from the prologue through every internal branch to its matching interworking epilogue at 0x020003f6, no literal pool, halfword 0x020003fe is alignment before the next owner at 0x02000400"
+    },
+    {
+      "overlay": "resource_3a0",
+      "entry": "0x02000de8",
+      "span_bytes": 94,
+      "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json, span walked from the prologue through every internal branch to its matching interworking epilogue at 0x02000e40, alignment 0x02000e46 and literal pool 0x02000e48 (0x03001ebc) excluded, next prologue at 0x02000e4c"
     }
   ]
 }

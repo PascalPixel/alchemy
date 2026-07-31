@@ -38,7 +38,7 @@ typedef signed int s32;
 s32 Func_080770c0();
 void Func_0808a018();
 s32 *Func_0808a080();
-s32 *Func_080091f0();
+void Func_080091f0();
 
 void Func_080f9010();
 void Func_080000c0();

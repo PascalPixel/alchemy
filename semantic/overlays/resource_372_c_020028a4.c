@@ -69,7 +69,7 @@ void Func_0808a5e8();
 u8 *Func_0808a080();
 s32 Func_080000f8();
 s32 Func_030003e0();
-u8 *Func_0808a010();
+void Func_0808a010();
 void Func_0808a0a0();
 void Func_0808a138();
 void Func_0808a170();

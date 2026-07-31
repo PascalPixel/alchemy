@@ -506,6 +506,10 @@ const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
   "assets/code/resource_399_c_02000a3c.c",
   "assets/code/resource_3cd_c_0200004c.c",
   "assets/code/resource_3ce_c_02000244.c",
+  // resource_3c4:1068 is the same heuristic on a load rather than a setter: the
+  // dependence count hoists the +76 field's `ldr` above the store to +12, which
+  // is the source's own order. Nothing else moves it, in either direction.
+  "assets/code/resource_3c4_c_02001068.c",
 ]);
 // In resource_37a:0054 the cse rerun after the copy loop folds the shared
 // window base back into per-site constants; in resource_399:0abc it rewrites

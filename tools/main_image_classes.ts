@@ -68,14 +68,45 @@ export function retentionByStem(config: {
 export function ownerBytes(intervals: readonly { start: number; end: number; evidence?: string }[]): Map<string, number> {
   const bytes = new Map<string, number>();
   for (const interval of intervals) {
-    const match = /asm\/([0-9a-f]{8})\.s/.exec(interval.evidence ?? "");
+    const match = /asm\/(?:executable_gaps\/)?([0-9a-f]{8})\.s/.exec(interval.evidence ?? "");
     if (!match) continue;
     bytes.set(match[1], (bytes.get(match[1]) ?? 0) + (interval.end - interval.start));
   }
   return bytes;
 }
 
-function survey(): { classes: Map<OwnerClass, { owners: number; bytes: number }>; convertible: { stem: string; bytes: number }[] } {
+function sourceStems(directory: string): Set<string> {
+  if (!existsSync(directory)) return new Set();
+  return new Set(readdirSync(directory)
+    .filter((name) => /^08[0-9a-f]{6}\.c$/i.test(name))
+    .map((name) => name.slice(0, 8).toLowerCase()));
+}
+
+function semanticCoverage(): {
+  stems: Set<string>;
+  executable: { start: number; end: number }[];
+  nonC: { start: number; end: number }[];
+} {
+  const document = JSON.parse(readFileSync(join(ROOT, "semantic/main-regions.json"), "utf8")) as {
+    main_owners: { executable_ranges: { address: string; size: number }[] }[];
+    non_c_ranges?: { address: string; size: number }[];
+  };
+  const ranges = (items: { address: string; size: number }[]) => items.map((item) => ({
+    start: Number.parseInt(item.address, 16),
+    end: Number.parseInt(item.address, 16) + item.size,
+  }));
+  return {
+    stems: sourceStems(join(ROOT, "semantic/main")),
+    executable: ranges(document.main_owners.flatMap((owner) => owner.executable_ranges)),
+    nonC: ranges(document.non_c_ranges ?? []),
+  };
+}
+
+function survey(): {
+  classes: Map<OwnerClass, { owners: number; bytes: number }>;
+  convertible: { stem: string; bytes: number }[];
+  totalNotC: number;
+} {
   const inventory = JSON.parse(readFileSync(join(ROOT, "metrics/gs1-en-executable.json"), "utf8")) as {
     main: { intervals: { start: number; end: number; evidence?: string }[] };
   };
@@ -83,21 +114,34 @@ function survey(): { classes: Map<OwnerClass, { owners: number; bytes: number }>
   const retention = retentionByStem(
     JSON.parse(readFileSync(join(ROOT, "asm/classification.json"), "utf8")),
   );
+  const semantic = semanticCoverage();
   const classes = new Map<OwnerClass, { owners: number; bytes: number }>();
   const convertible: { stem: string; bytes: number }[] = [];
-  for (const name of readdirSync(join(ROOT, "asm"))) {
-    if (!/^[0-9a-f]{8}\.s$/.test(name)) continue;
-    const stem = name.slice(0, 8);
+  for (const [stem, owned] of bytes) {
     if (existsSync(join(ROOT, "src", `${stem}.c`))) continue;
-    const shape = classifyOwner(readFileSync(join(ROOT, "asm", name), "utf8"));
+    if (semantic.stems.has(stem)) continue;
+    const address = Number.parseInt(stem, 16);
+    const overlaps = (range: { start: number; end: number }) =>
+      address < range.end && range.start < address + owned;
+    if (semantic.executable.some(overlaps)) continue;
+    const source = [
+      join(ROOT, "asm", `${stem}.s`),
+      join(ROOT, "asm", "executable_gaps", `${stem}.s`),
+    ].find(existsSync);
+    if (source === undefined) continue;
+    const assembly = readFileSync(source, "utf8");
+    const shape = classifyOwner(assembly);
     // The structural classes are findings about the code and outrank the
     // config; a retained row that is also ARM runtime is still ARM runtime.
     // Retention only overrides the convertible fallback.
     const held = retention.get(stem);
-    const kind: OwnerClass = shape === "convertible-thumb" && held !== undefined && held !== "c_candidate"
+    const alignmentOnly = /^\s*\.2byte\s+0\s*$/m.test(assembly) &&
+      !/^\s*[a-z][a-z0-9.]*\s/im.test(assembly);
+    const explicitlyNonC = semantic.nonC.some(overlaps) || alignmentOnly;
+    const kind: OwnerClass = shape === "convertible-thumb" &&
+        (explicitlyNonC || (held !== undefined && held !== "c_candidate"))
       ? "retained-asm"
       : shape;
-    const owned = bytes.get(stem) ?? 0;
     const row = classes.get(kind) ?? { owners: 0, bytes: 0 };
     row.owners += 1;
     row.bytes += owned;
@@ -105,7 +149,14 @@ function survey(): { classes: Map<OwnerClass, { owners: number; bytes: number }>
     if (kind === "convertible-thumb" && owned > 0) convertible.push({ stem, bytes: owned });
   }
   convertible.sort((a, b) => a.bytes - b.bytes || a.stem.localeCompare(b.stem));
-  return { classes, convertible };
+  const coverage = JSON.parse(readFileSync(join(ROOT, "metrics/gs1-en-coverage-map.json"), "utf8")) as {
+    main: { executable_bytes: number; exact_c_bytes: number; semantic_c_bytes: number };
+  };
+  if (coverage.main.executable_bytes !== inventory.main.executable_bytes)
+    throw new Error("coverage map and executable inventory disagree; run bun run coverage");
+  const totalNotC = coverage.main.executable_bytes - coverage.main.exact_c_bytes -
+    coverage.main.semantic_c_bytes;
+  return { classes, convertible, totalNotC };
 }
 
 function selfTest(): void {
@@ -142,14 +193,20 @@ function main(): void {
     selfTest();
     return;
   }
-  const { classes, convertible } = survey();
+  const { classes, convertible, totalNotC } = survey();
   const rows = [...classes].sort((a, b) => b[1].bytes - a[1].bytes);
   let notC = 0;
   for (const [kind, row] of rows) {
     if (kind !== "convertible-thumb") notC += row.bytes;
     console.log(`${kind.padEnd(18)} ${String(row.owners).padStart(4)} owners  ${String(row.bytes).padStart(6)} bytes`);
   }
-  console.log(`not-c-total        ${String(notC).padStart(11)} bytes`);
+  if (!classes.has("convertible-thumb"))
+    console.log(`${"convertible-thumb".padEnd(18)} ${String(0).padStart(4)} owners  ${String(0).padStart(6)} bytes`);
+  const unattributed = totalNotC - notC;
+  if (unattributed < 0) throw new Error(`classified retained bytes exceed the audited complement by ${-unattributed}`);
+  if (unattributed > 0)
+    console.log(`${"retained-unattributed".padEnd(18)} ${String(0).padStart(4)} owners  ${String(unattributed).padStart(6)} bytes`);
+  console.log(`not-c-total        ${String(totalNotC).padStart(11)} bytes`);
   const listIndex = argv.indexOf("--list");
   if (listIndex >= 0) {
     const limit = Number(argv[listIndex + 1] ?? 20);

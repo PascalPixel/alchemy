@@ -6396,6 +6396,18 @@
       "entry": "0x020041c4",
       "span_bytes": 40,
       "evidence": "admitted whole-owner semantic reconstruction; boundary-gap owner NOT in the unindexed population -- found by checking 0x02004140's pool end against 0x020041ec's prologue (the resource_3b9 0x02001a14 precedent); prologue-started (push {lr}) and returning (pop {r0}/bx r0), one trailing pool word (0x03001e40) ending 0x020041eb, next owner prologue at 0x020041ec, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39e",
+      "entry": "0x02000db4",
+      "span_bytes": 224,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8/sl spill and a 16-byte sp frame) and returning (add sp,#16/full unspill/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_39e db4 e74, the +2 rule against the raw image), span read through the seven trailing pool words ending 0x02000e93 to the next owner prologue at 0x02000e94 (drafted the same round), inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39e",
+      "entry": "0x02000e94",
+      "span_bytes": 236,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8/sl spill and a 16-byte sp frame) and returning (add sp,#16/full unspill/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_39e e94 f68, the +2 rule against the raw image), span read through the five trailing pool words ending 0x02000f7f to the next owner prologue at 0x02000f80 (the already-drafted resource_39e_c_02000f80.c), inside the assembled overlay image and not overlapping another recorded owner"
     }
   ]
 }

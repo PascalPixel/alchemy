@@ -408,7 +408,7 @@ const CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES = new Set([
 // Overlay streams whose constant pool sits between the entry block and the loop
 // that reads it, rather than after the return (LAWS.md, "A mid-function literal
 // pool is a compiler layout choice, not a source shape").
-const EARLY_LITERAL_POOL_OVERLAY_SOURCES = new Set(["02000e3c", "02000dfc"]);
+const EARLY_LITERAL_POOL_OVERLAY_SOURCES = new Set(["02000e3c", "02000dfc", "02003a44"]);
 // Path-scoped members: the 02000ee0 stem collides with default-flag
 // adoptions in other overlays, so the resource_394 and resource_3bd members
 // are routed by full path instead.

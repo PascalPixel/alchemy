@@ -6178,24 +6178,8 @@ AlchemyC_02003724:
 	.4byte 0x040000d4
 	.4byte 0x05000006
 	.4byte 0x80000009
-	push {lr}
-	ldr r2, [pc, #20]
-	ldr r3, [pc, #20]
-	strh r2, [r3, #0]
-	ldr r3, [pc, #20]
-	movs r1, #200
-	strh r2, [r3, #0]
-	lsls r1, r1, #4
-	ldr r0, [pc, #16]
-	bl sub_020074d8
-	b .L_02003a6c
-	.4byte 0x00000000
-	.4byte 0x0200d260
-	.4byte 0x0200d25c
-	.4byte 0x0200b9c9
-.L_02003a6c:
-	pop {r0}
-	bx r0
+AlchemyC_02003a44:
+	.space 0x2c
 	.4byte 0x47204c00
 	.4byte 0x030003e0
 	.4byte 0x47204c00

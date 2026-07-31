@@ -188,6 +188,16 @@
       ]
     },
     {
+      "entry": "0x08097a10",
+      "evidence": "One 68-byte row holding a single function: prologue push {r5,r6,lr} at 0x08097a10, single epilogue at 0x08097a42 reached by the zero-step early-out and by fall-through, no inbound branch from outside the row. bl Func_080072f0 at 0x08097a2e is the runtime call_via_r3 thunk in the table at 0x080072e4, so it is an indirect call through the pooled 0x0300013c, the IWRAM ratio helper. mov ip,pc; bx r4 at 0x08097a3c is an ordinary indirect call through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after the bx, 0x08097a40, which consumes r0 as that call's result in the same frame, the reading already recorded for 0x0800ebec. Excluded (12 bytes): the three-word pool at 0x08097a48 (0x0300013c, 0xffff0000, 0x03000118); the movs r0,r0 at 0x08097a3a is alignment filler inside the code, not a tail. One direct caller, at 0x080979ae; no thumb pointer and no word reference.",
+      "executable_ranges": [
+        {
+          "address": "0x08097a10",
+          "size": 56
+        }
+      ]
+    },
+    {
       "entry": "0x080982dc",
       "evidence": "One 196-byte keep_structured_asm row holding a single function: prologue push {r5,r6,lr} at 0x080982dc, single epilogue pop {r5,r6} / pop {r0} / bx r0 at 0x08098378, every branch internal, no inbound branch from outside the row. The mov ip,pc; bx r3 at 0x0809832e is an ordinary indirect call through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to 0x08098332, the halfword after the bx, and the landing site keeps r0 as that call's result inside the same frame - the reading recorded for 0x0800ebec, not retained assembly. Excluded (36 bytes): the nine-word pool at 0x0809837c (0x03001ebc, 0x02000240, 0x00000cba, 0x00000cbc, 0x0000ffff, 0x03000118, 0x0000d105, 0x00000cbe, 0x00002090); the code ends flush at 0x0809837c with no alignment filler. r4 is written without being saved, which is the ordinary call-used-r4 convention of this image and not the 0x08002dd8 shape: it is assigned the result of Func_0808ba1c before any use and is never read live-in. Reached only as a published Thumb pointer, at 0x080984bc and 0x08098584; no direct caller.",
       "executable_ranges": [

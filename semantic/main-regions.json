@@ -82,16 +82,6 @@
       ]
     },
     {
-      "entry": "0x080069a4",
-      "evidence": "Core-drive census row (kind nonstandard_thumb_branch_module, admitted per Vale's 2026-07-31 ruling; body read confirms two ordinary bx lr leaves, no register trick). asm/executable_gaps/080069a4.s holds two functions sharing a pool, resolved against the compiled out/asm/080069a4.bin since two ldr rN,[pc,#24] at different addresses land on different words despite the identical immediate. Func_080069a4 (tick handler): decrements the u16 countdown Data_02004c22 when nonzero, sets flag byte Data_02004c24 to 1 the instant it reaches zero. Func_080069c8 (installer): rejects timerIndex outside 0-3 (returns 1); otherwise stores timerIndex to Data_02004c20, computes the GBA hardware timer register address 0x04000100 + timerIndex*4 into Data_02004c28, publishes Func_080069a4's own address through the caller's callback out-pointer, returns 0. Complete owner: both functions in full, entry to bx lr. Span: 92 bytes, matching the census row exactly.",
-      "executable_ranges": [
-        {
-          "address": "0x080069a4",
-          "size": 92
-        }
-      ]
-    },
-    {
       "entry": "0x08006a78",
       "evidence": "Single 46-byte leaf at the head of a three-function row. The function runs 0x08006a78..0x08006aa4 and ends on the bx lr at 0x08006aa4; the two later entries in the same asm row (the relocated helper at 0x08006abc and Func_08006ac0 at 0x08006ac0) are outside the claimed range and stay in reconstruction assembly. Excluded (22 bytes): the 2-byte .balign filler at 0x08006aa6 and the five-word pool at 0x08006aa8 holding 0x02004c28, 0x04000208, 0x04000200, 0x02004c20 and 0x02004c2c, all reached by ldr rN,[pc,#imm] from inside the range. No stack frame and no call, so the plain bx lr epilogue leaves no result convention and the owner is void. bun tools/main_xref.ts 08006a78 reports FUNCTION (called directly) with a single caller at 0x08006b70.",
       "executable_ranges": [

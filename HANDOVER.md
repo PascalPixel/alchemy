@@ -94,6 +94,12 @@ Consequences worth knowing before you act:
   path: when Mercury makes a region byte-exact, the next Venus pull deletes the
   semantic version. `build_semantic` hard-errors on a duplicate, so this is
   enforced rather than remembered.
+- **Pull `mercury` with `tools/venus_pull.sh`, never by hand.** A conflicted
+  merge leaves markers in the working tree, and a conflicted `package.json`
+  breaks `bun run <anything>` for every concurrent lane — three lanes lost part
+  of a session to that window while conflicts were resolved across separate tool
+  calls. The script merges and resolves in one process, so the window is
+  milliseconds, and it encodes the resolution rules that are easy to get wrong.
 - **`MEETING.md` is the standing message board between the three agents.** It
   travels the ring with the other documentation, so a note there reaches everyone
   within a cycle or two. **Take the timestamp from `date -u +"%Y-%m-%dT%H:%MZ"`,
@@ -127,19 +133,24 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **623,540
-executable bytes across 1,137 compiling sources**: 385,850 main-image bytes and
-237,690 overlay bytes. Combined with exact C, **836,336 / 1,339,580 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **643,652
+executable bytes across 1,191 compiling sources**: 385,850 main-image bytes and
+257,802 overlay bytes. Combined with exact C, **856,448 / 1,339,580 executable
+bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
+sources live under `semantic/` and do not claim byte equality. Use
+`semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
+of the ordinary review queue.
+
 bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
 sources live under `semantic/` and do not claim byte equality. Use
 `semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
 of the ordinary review queue.
 
 
-**27 overlays have zero unconverted rows in the strict queue**, holding
-217,888 strict bytes between them. Regenerate this list rather than editing it —
+**32 overlays have zero unconverted rows in the strict queue**, holding
+239,158 strict bytes between them. Regenerate this list rather than editing it —
 it has drifted twice from being maintained by hand:
-`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,484), `resource_3c8` (12,800), `resource_372` (10,202), `resource_38f` (9,848), `resource_371` (9,650), `resource_39f` (9,278), `resource_3c5` (9,208), `resource_374` (9,148), `resource_3a8` (8,912), `resource_383` (8,652), `resource_391` (7,648), `resource_39a` (7,096), `resource_375` (6,568), `resource_3aa` (6,552), `resource_3b4` (6,462), `resource_3b2` (6,134), `resource_3b7` (6,062), `resource_37b` (6,032), `resource_3bb` (5,896), `resource_3cb` (5,540), `resource_3c6` (5,250), `resource_38d` (5,212), `resource_370` (4,718), `resource_37f` (4,428), `resource_3a4` (36).
+`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,484), `resource_3c8` (12,800), `resource_372` (10,202), `resource_38f` (9,848), `resource_371` (9,650), `resource_39f` (9,278), `resource_3c5` (9,208), `resource_374` (9,148), `resource_3a8` (8,912), `resource_383` (8,652), `resource_391` (7,648), `resource_39a` (7,096), `resource_375` (6,568), `resource_3aa` (6,552), `resource_3b4` (6,462), `resource_3b2` (6,134), `resource_3b7` (6,062), `resource_37b` (6,032), `resource_3bb` (5,896), `resource_3cb` (5,540), `resource_3c6` (5,250), `resource_38d` (5,212), `resource_399` (4,738), `resource_370` (4,718), `resource_3c7` (4,440), `resource_37f` (4,428), `resource_3ad` (4,288), `resource_3ca` (3,978), `resource_3bc` (3,826), `resource_3a4` (36).
 
 **"Converted in full" means zero unconverted STRICT-QUEUE rows, not that every
 executable byte of the overlay is C.** Measured across those overlays: their
@@ -524,10 +535,25 @@ shows the real import is `Func_0808a080`. Diffing an exact sibling against
 offsets against material that already reproduces the ROM, rather than inferring
 them. This is how one lane fixed its actor-record layouts instead of guessing.
 
+**`Data_03001ebc` is a pointer CELL, not the workspace.** `ldr r3,[pc] / ldr
+r2,[r3]` loads the pointer, so `*(u8 **)Data_03001ebc` is one dereference too
+many; the byte-exact `assets/code/resource_3c7_c_0200048c.c` spells it correctly
+as `u8 *state = Data_03001ebc`. At least one lane made the error and caught it
+against that sibling.
+
 **The skip-beat counter is a general idiom, not a one-overlay quirk** — it
 recurs verbatim in `resource_3c6` (`movs r3,#236 / lsls #1` off `0x03001ebc`,
 three times), where the two variant arms are *behaviourally identical*, differing
 only in where the bump sits relative to the last call.
+
+**Behaviourally identical skip-beat arms are still DISTINCT call sites.**
+Collapsing three such pairs in `resource_3ca:0430` would have deflated the
+multiset by six. Identical behaviour is not a licence to merge arms — the
+per-target count is over call *sites*, not over distinct behaviour.
+
+**Grep for the skip-beat counter by its constants, not by asymmetry.** It also
+appears on BOTH arms of a test, so "empty else" is not the tell — `movs r3,#236 /
+lsls #1` off the `0x03001ebc` state pointer is.
 
 **An "empty else that only increments something" is a skip-beat counter, and it
 proves branch symmetry.** In `resource_391:0d3c` an eight-instruction sequence
@@ -658,6 +684,13 @@ owner in the project.** `resource_3c8:3068` (3,922 bytes, 248 sites) came out at
 times inflated the count, and one `goto` fixed it. Its 24 `unknown` sites all
 resolved to the owner's own `movs r0,#0` return — long `bl`s, not calls.
 
+**The FIFTH shared-call-site shape: the condition-feeding call.** When a lane
+transcribes a straight-line run with a simulator and then hand-writes the `if`s
+around it, the `bl` whose r0 the `cmp` tests appears twice — once in the
+generated run, once in the condition. It inflates by exactly the number of
+branches, so on a 306-site owner it reads as a plausible near-miss rather than a
+bug. **End each generated segment one site before the test.**
+
 **The shared-call-site trap fires in at least FOUR shapes, and decision trees
 hit it constantly.** Writing one C call per arm injected 4-8 phantom calls in
 five separate owners of one overlay. The shapes:
@@ -691,6 +724,14 @@ hunt for a symbol that does not exist.
 **`>> 20` on a 16.16 coordinate is the tile-grid idiom**, not an odd shift:
 `>> 16` to integers then `>> 4` for the 16-pixel grid. Read as a single shift,
 every column and row constant looks arbitrary.
+
+**`overlay_twins.ts` misses same-overlay twins, and it misses them often.**
+`resource_399:07a4` and `:088c` are two 232-byte rows differing in five values —
+`--unconverted` reports nothing for that overlay, yet sorting rows by span and
+eyeballing equal sizes found the pair in seconds and made the second file a
+two-minute transposition with a built-in correctness proof. **Always do the
+sort-by-span scan even when the tool says `groups=0`.** Reported by four separate
+lanes now.
 
 **Equal span AND equal `calls` is a stronger twin filter than span alone** — it
 found a bit-identical 64-byte pair differing in three pool words that
@@ -790,6 +831,13 @@ eight-byte veneer entries, so skimming the band calls it a veneer.
 `overlay_call_targets.ts` classifies it correctly as `prologue` — trust the tool
 over the neighbourhood.
 
+**Reference example for both displacement/value forms: `resource_399:0f90`.**
+Subtractive at `0x02000fda` (448 displacement, `subs #192` gives value 32,
+`adds #200` gives the next displacement 232) and additive at `0x02001506` (448
+displacement, `adds #73` gives value 521, `subs #65` gives the next displacement
+456) — 60 bytes apart in one owner. Read that pair once and the family is
+recognisable everywhere.
+
 **The displacement/value trap has a second, ADDITIVE form.** The documented
 shape is `subs r3,#192` after a store. The other is `adds r2,#68` / `subs r2,#192`
 applied *after* `adds r3,r3,r2`, where the offset that matters is the
@@ -797,7 +845,22 @@ applied *after* `adds r3,r3,r2`, where the offset that matters is the
 `workspace+448` is the natural mistake, and neither owner carrying it has
 anything else to catch it.
 
-**Cheapest link-base witness of all: an in-image handler table.** One 24-byte
+**A free layout witness: `array_base + count*stride == scalar_base`.** When an
+owner writes an array and a scalar drawn from adjacent pool words, that identity
+confirms the element count, the stride AND the link base in one arithmetic step,
+with no disassembly. `resource_3ca:11c4` has 24 records of 12 bytes at file
+offset 0x1af8, and 0x1af8 + 288 = 0x1c18, exactly the counter halfword the same
+owner drives — which caught the lane's element count before it could be wrong.
+
+**Cheapest link-base witness, full stop — and it needs no disassembly:
+`grep -o '0x0200[89ab][0-9a-f]*' assets/code/<overlay>_c_*.c`.** A byte-exact
+sibling's pooled task-callback argument is already a proven in-image address.
+`assets/code/resource_3bc_c_020001b4.c` passes `0x0200804d` to the installer;
+under the 0x8000 base that is `Func_0200004c + 1`, which proves the base AND
+names an unconverted row as a task callback — from one read of an eight-line
+file. Do this before opening a disassembler on any new overlay.
+
+**Next cheapest: an in-image handler table.** One 24-byte
 read of the table at `resource_3c6`'s file offset 0x1ee4 gives two Thumb-bit
 witnesses at once (`0x020087c5` = `Func_020007c4 + 1`, `0x020091bd` =
 `Func_020011bc + 1`). No jump table, no control-flow analysis — find the table,
@@ -833,6 +896,13 @@ All three guards are needed together.**
    ten times across three owners.
 3. *Never model a pool word as an instruction, even a harmless-looking one* — see
    below.
+
+**A pool can end MID-ROW, several bytes before the next branch target.** In
+`resource_399:0f90` the pool at `0x0200124c` is followed at `0x02001284` by the
+body of a spin-wait reached only by a *backward* `beq.n` from below the pool.
+Ending the pool at the next branch target would have swallowed two live
+instructions. Only a control-flow walk finds this — a heuristic that assumes a
+pool runs to the next label cannot.
 
 **Derive the pool map from a CONTROL-FLOW WALK. That method is immune to both
 traps below; nothing else is.** Walk the owner from its prologue following

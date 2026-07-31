@@ -2296,6 +2296,19 @@ tie-break falls to original order. **Not universal**: where both spellings give
 identical output the call has no live r0 dependency — look elsewhere rather than
 grinding. A prototype-less shared declaration blocks it entirely.
 
+**A six-argument call's two stack arguments each need their own local.** The
+reference builds both into separate registers before storing either; passing
+them as literals lets the fork reuse one register for both, giving
+`str r3,[sp] / mov r3,#k / str r3,[sp,#4]` where the reference has
+`mov r2,#k / … / str r3,[sp] / str r2,[sp,#4]`. Declare them at **function
+scope**, not inside the block holding the call — inside a nested block they
+float above a preceding `strb` and the row gets worse. No flag touches this:
+`-fsched-store-first`, `-fsched-low-dest-first`, `-fno-cse-two-insn-immediate`
+and `-fthumb-split-group-base` all leave it. Cleared nine rows at once on
+2026-07-31 — `resource_3a7` ×6, `3bb:00c0`, and it is the same family as the
+two-mask rule below. It does *not* clear `393:0bf8`, where the shape is
+compounded with the store-ordering one in §6.
+
 **Multi-arity callees use the `_b`/`_c` alias suffix**, not K&R declarations —
 and this changes argument-setup order, not just hygiene. A shared prototype-less
 declaration suppresses arg0-first ordering at *every* site that uses it.
@@ -2836,11 +2849,9 @@ two levers land.
   exactly that shape and does not close it — written as a shared tail, both with
   an explicit `goto` and as a plain else-if chain (identical output), gcc hoists
   `movs r3,#208` *above* the compare that selects it. The merge is not the
-  problem; the placement is. `resource_393:0bf8` (148 bytes, 11 groups): a
-  six-argument call's two stack arguments, where the reference builds both into
-  separate registers before storing either and this fork reuses one. Giving each
-  its own local — the fix that works for the two-mask family — makes it *worse*
-  (11 → 14) by floating both constants above the preceding `strb`. Neither moves
+  problem; the placement is. `resource_393:0bf8` (148 bytes, 11 groups) has the
+  same shape compounded with the stack-argument one below, and the fix that
+  clears that one does not clear this. Neither moves
   under `-fsched-store-first`, `-fsched-low-dest-first`,
   `-fno-cse-two-insn-immediate`, `-fthumb-split-group-base`,
   `-fno-thread-jumps`, `-fno-schedule-insns`, `-fno-schedule-insns2`,

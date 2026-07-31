@@ -7,16 +7,16 @@
   "executable_bytes": 1339582,
   "lanes": {
     "exact_c": {
-      "bytes": 223992,
-      "percent_of_executable": 16.72
+      "bytes": 224384,
+      "percent_of_executable": 16.75
     },
     "semantic_c": {
-      "bytes": 696448,
-      "percent_of_executable": 51.99
+      "bytes": 697868,
+      "percent_of_executable": 52.1
     },
     "assembly": {
-      "bytes": 419142,
-      "percent_of_executable": 31.29
+      "bytes": 417330,
+      "percent_of_executable": 31.15
     },
     "asset_data": {
       "bytes": 7300700,
@@ -26,18 +26,18 @@
   "main": {
     "executable_bytes": 548364,
     "exact_c_bytes": 101344,
-    "semantic_c_bytes": 394992
+    "semantic_c_bytes": 396804
   },
   "overlays": {
     "executable_bytes": 791218,
-    "exact_c_bytes": 122648,
-    "semantic_c_bytes": 301456
+    "exact_c_bytes": 123040,
+    "semantic_c_bytes": 301064
   },
   "provenance": {
     "exact_lane": "origin/mercury",
     "semantic_lane": "origin/venus",
-    "semantic_sources": 1382,
-    "semantic_superseded_bytes": 1854,
+    "semantic_sources": 1368,
+    "semantic_superseded_bytes": 392,
     "semantic_outside_extent_bytes": 13424,
     "semantic_unresolved": []
   },
@@ -48,8 +48,8 @@
       "bytes": 548364,
       "lanes": {
         "exact_c": 101344,
-        "semantic_c": 394992,
-        "assembly": 52028
+        "semantic_c": 396804,
+        "assembly": 50216
       },
       "tiles": 9
     },
@@ -58,9 +58,9 @@
       "label": "Compressed code overlays",
       "bytes": 539544,
       "lanes": {
-        "exact_c": 85007,
-        "semantic_c": 203457,
-        "assembly": 251080
+        "exact_c": 85280,
+        "semantic_c": 203182,
+        "assembly": 251082
       },
       "tiles": 11
     },
@@ -81,8 +81,8 @@
       "bytes": 548364,
       "lanes": {
         "exact_c": 101344,
-        "semantic_c": 394992,
-        "assembly": 52028
+        "semantic_c": 396804,
+        "assembly": 50216
       },
       "tiles": 54
     },
@@ -91,8 +91,8 @@
       "label": "Decoded code overlays",
       "bytes": 791218,
       "lanes": {
-        "exact_c": 122648,
-        "semantic_c": 301456,
+        "exact_c": 123040,
+        "semantic_c": 301064,
         "assembly": 367114
       },
       "tiles": 96

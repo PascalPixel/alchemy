@@ -417,6 +417,33 @@ distinct targets** — 1,047 veneer, 116 prologue, 1 `call_via`. The same collap
 holds on 371/372/373/38f/3b8/3bf/3c4/3c8, where 700-1,900 sites reduce to 70-133
 distinct displacements.
 
+**When the byte-exact sibling grep comes back empty, grep the overlay's own
+`_overlay.s` for `0x0200[89ab]xxx` instead.** One command; on `resource_3b5` it
+returned 36 distinct words, **eleven of them odd and resolving to already-banked
+byte-exact siblings** (`0x02008031` → `Func_02000030`+1, and ten more). That is a
+far stronger link-base proof than a single task-install witness, and the same 36
+words named the role of **all fifteen** unconverted rows before any disassembly —
+signatures decided in advance. Do this before opening a body.
+
+**An overlay's image offset 0 can be an exported-entry veneer table.** In
+`resource_3b5` it is a run of `ldr r4,[pc,#0] / bx r4 / .word 0x0200_8xxx` pairs;
+resolving those words under the link base hands you the overlay's *roots* for
+free, which is exactly where call-graph-first ordering should start. Entry 0 was
+the initialiser, entry 4 the script selector.
+
+**The complement of the "a pool word decodes as a BL pair" trap: a word that
+LOOKS like a BL pair can be a genuine constant.** `resource_3b5:007c` loads
+`0xf8b6f001` and immediately masks with `0xf000`, so only the low half matters
+and it acts as `-0x0fff` — one less than the `-0x1000` its four sibling biases
+(`+0x2000`, `+0x1000`, `0`, `-0x2000`) predict, which is the sort of detail a
+"tidy" reading destroys. `assets/code`'s `.2byte 0xf001 / .2byte 0xf8b6` spelling
+confirms it is data.
+
+**`0x03001e8c` is a pointer TABLE, and its entry 12 is `0x03001ebc`.**
+`resource_3b5:0170` loads `[r3,#0]` and `[r3,#48]` off it. Reading those as two
+unrelated globals hides that the second is the well-known workspace pointer the
+rest of the overlay loads directly.
+
 **A byte-exact sibling names the imports for you — backwards.** The banked
 `assets/code/resource_3b6_c_0200073c.c` was written with the printed (wrong)
 `bl` names, but resolving its four sites through the rule gives veneer offsets

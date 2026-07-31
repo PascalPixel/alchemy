@@ -57,7 +57,6 @@ extern s32 Data_0200e79c;
 /* This overlay's own owners, installed here as timed callbacks. */
 void Func_02000598(void);
 void Func_02003678(void);
-
 void Func_020039fc();
 void Func_0808a238();
 void Func_0808a018();

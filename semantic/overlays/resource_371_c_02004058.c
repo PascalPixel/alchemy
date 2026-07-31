@@ -53,7 +53,6 @@ extern u16 Data_03001b10[];
 u8 *Func_080090c8();
 void Func_08009020();
 void Func_080001b8();
-
 void Func_02004004(void *object);
 void Func_02003fb4(void *object);
 

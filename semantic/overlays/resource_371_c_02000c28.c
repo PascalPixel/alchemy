@@ -69,7 +69,6 @@ extern u8 Data_0200cebc[];
 
 /* This overlay's own owner, registered here as a timed callback. */
 void Func_020017a4(void);
-
 void Func_0200155c();
 void Func_02001680();
 void Func_080000c0();

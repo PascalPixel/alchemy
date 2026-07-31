@@ -45,10 +45,8 @@ typedef unsigned char u8;
 /* Imports, old-style: interfaces unknown, several with varying arity. */
 s32 Func_080770c0();
 void Func_0808a018();
-
 void Func_0808a090();
 u8 *Func_0808a080();
-
 void Func_0808a0f0();
 void Func_0808a1b8();
 void Func_0808a0d0();

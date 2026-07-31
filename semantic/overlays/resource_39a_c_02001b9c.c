@@ -27,6 +27,12 @@ typedef signed int s32;
 extern void *Data_0200a488;
 
 /* Imports. */
+void Func_080090d0();
+void Func_080770c8();
+void Func_0808a018();
+void Func_0808a020();
+void Func_0808a060();
+void Func_0808a390();
 void Func_02003e86();
 void Func_02003ed8();
 void Func_02003edc();
@@ -36,16 +42,16 @@ void Func_02003f8e();
 
 void Func_02001b9c(void)
 {
-    Func_02003ed8();
+    Func_0808a018();
     /* r5 holds &Data_0200a488 across the calls; the word is reloaded before
      * the second test. */
     if (Data_0200a488 != 0) {
-        Func_02003f8e(Data_0200a488, 3);
+        Func_0808a390(Data_0200a488, 3);
     }
-    Func_02003efe((s32)0xe6, 0);
-    Func_02003edc((s32)0xf13);
+    Func_0808a060((s32)0xe6, 0);
+    Func_080770c8((s32)0xf13);
     if (Data_0200a488 != 0) {
-        Func_02003e86(Data_0200a488);
+        Func_080090d0(Data_0200a488);
     }
-    Func_02003f0a();
+    Func_0808a020();
 }

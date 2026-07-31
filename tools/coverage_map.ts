@@ -45,7 +45,7 @@ const SEMANTIC_OVERLAY_SOURCE = /^(resource_[0-9a-f]+)_c_([0-9a-f]{8})\.c$/i;
 const OVERLAY_ASSEMBLY = /^(resource_[0-9a-f]+)_overlay\.s$/i;
 const OVERLAY_SERIES = "golden-sun-thumb-overlay-series";
 
-export type Lane = "exact_c" | "semantic_c" | "assembly" | "asset_data";
+export type Lane = "exact_c" | "semantic_c" | "assembly" | "retained_asm" | "asset_data";
 
 // Lane order is also the stacking order inside a tile: exact at the bottom.
 // `ink` is the label colour a tile takes when that lane fills most of it.
@@ -53,9 +53,10 @@ const LANE_STYLE: Record<Lane, { fill: string; ink: string; label: string }> = {
   exact_c: { fill: "#0072f5", ink: "#eaf2ff", label: "byte-exact C" },
   semantic_c: { fill: "#50e3c2", ink: "#04241d", label: "semantic C" },
   assembly: { fill: "#333333", ink: "#a1a1a1", label: "assembly" },
+  retained_asm: { fill: "#141414", ink: "#8a8a8a", label: "permanent asm" },
   asset_data: { fill: "#ff0080", ink: "#2b0016", label: "assets & data" },
 };
-const LANE_ORDER: Lane[] = ["exact_c", "semantic_c", "assembly", "asset_data"];
+const LANE_ORDER: Lane[] = ["exact_c", "semantic_c", "assembly", "retained_asm", "asset_data"];
 
 export interface Span {
   start: number;
@@ -545,7 +546,7 @@ function laneTotal(tiles: readonly Tile[], lane: Lane): number {
 
 function area(id: string, label: string, tiles: Tile[]): Area {
   const lanes: Partial<Record<Lane, number>> = {};
-  for (const lane of ["exact_c", "semantic_c", "assembly", "asset_data"] as Lane[]) {
+  for (const lane of ["exact_c", "semantic_c", "assembly", "retained_asm", "asset_data"] as Lane[]) {
     const bytes = laneTotal(tiles, lane);
     if (bytes) lanes[lane] = bytes;
   }
@@ -562,6 +563,36 @@ function hex8(address: number): string {
   return address.toString(16).padStart(8, "0");
 }
 
+// Regions that will NEVER become C by design (Pascal's ruling 2026-07-31:
+// rendered black). keep_asm retention, structural runtime/veneer/padding
+// kinds, and explicit cannot-express contracts qualify; keep_structured_asm
+// alone does NOT (it is a default, not a contract — see TEAM-OPS).
+const PERMANENT_KINDS = new Set([
+  "linker_veneer", "alignment_padding", "relocated_arm_runtime_module",
+  "armv4t_helper_bank", "iwram_runtime_veneer",
+]);
+export function retainedMainSpans(): Span[] {
+  const path = join(dirname(Bun.fileURLToPath(import.meta.url)), "..", "out", "asm", "manifest.json");
+  if (!existsSync(path)) return [];
+  try {
+    const manifest = JSON.parse(readFileSync(path, "utf8")) as {
+      regions?: { address?: number; size?: number; kind?: string; retention?: string; evidence?: unknown }[];
+    };
+    const spans: Span[] = [];
+    for (const r of manifest.regions ?? []) {
+      if (typeof r.address !== "number" || typeof r.size !== "number" || r.size <= 0) continue;
+      const permanent = r.retention === "keep_asm" ||
+        r.retention === "adjacent_section_alignment" ||
+        PERMANENT_KINDS.has(r.kind ?? "") ||
+        String(r.evidence ?? "").includes("approved_compiler_cannot_express");
+      if (permanent) spans.push({ start: r.address, end: r.address + r.size });
+    }
+    return normalize(spans);
+  } catch {
+    return [];
+  }
+}
+
 /**
  * Group audited main-image regions into contiguous address bands of roughly
  * `target` executable bytes so the drawing stays legible. Bands never split a
@@ -571,6 +602,7 @@ function mainBands(
   executable: readonly Span[],
   exact: readonly Span[],
   semantic: readonly Span[],
+  retained: readonly Span[],
   target: number,
 ): Tile[] {
   const tiles: Tile[] = [];
@@ -580,13 +612,17 @@ function mainBands(
     const bytes = spanBytes(current.spans);
     const exactBytes = spanBytes(intersect(current.spans, exact));
     const semanticBytes = spanBytes(intersect(current.spans, semantic));
+    // Retained spans may only claim bytes no C lane already owns.
+    const owned = normalize([...exact, ...semantic]);
+    const retainedBytes = spanBytes(intersect(subtract(current.spans, owned), retained));
     tiles.push({
       label: hex8(current.start).slice(0, 6),
       bytes,
       lanes: {
         exact_c: exactBytes,
         semantic_c: semanticBytes,
-        assembly: bytes - exactBytes - semanticBytes,
+        assembly: Math.max(bytes - exactBytes - semanticBytes - retainedBytes, 0),
+        retained_asm: retainedBytes,
       },
     });
     current = undefined;
@@ -725,7 +761,7 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
 
   // -------------------------------------------------- executable universe
   const executableAreas: Area[] = [
-    area("main", "Main image", mainBands(mainExecutable, exactMainUnion, semanticMain, 10240)),
+    area("main", "Main image", mainBands(mainExecutable, exactMainUnion, semanticMain, retainedMainSpans(), 10240)),
   ];
   const overlayTiles: Tile[] = [];
   for (const overlay of inventory.overlays) {
@@ -758,7 +794,7 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
     area(
       "rom-main-code",
       "Main image code",
-      mainBands(mainExecutable, exactMainUnion, semanticMain, 65536),
+      mainBands(mainExecutable, exactMainUnion, semanticMain, retainedMainSpans(), 65536),
     ),
   ];
   const streamTiles: Tile[] = [];
@@ -1130,7 +1166,7 @@ function laneBar(map: CoverageMap, frame: Rect, lines: string[]): void {
     rect(frame, HAIRLINE),
   );
   let cursor = frame.x;
-  for (const lane of ["exact_c", "semantic_c", "assembly"] as Lane[]) {
+  for (const lane of ["exact_c", "semantic_c", "assembly", "retained_asm"] as Lane[]) {
     const laneWidth = frame.width * (map.lanes[lane].bytes / map.executable_bytes);
     lines.push(rect({ ...frame, x: cursor, width: laneWidth }, LANE_STYLE[lane].fill));
     cursor += laneWidth;
@@ -1265,7 +1301,7 @@ const OK_LIGHTNESS = 0.70;
 // -> humanized 1 (empty until real humanization lands). Assets ladder ends at
 // individual objects; byte-represented keeps a faint tint floor.
 const CODE_FRACTION: Record<string, number> = {
-  humanized_c: 1, exact_c: 0.75, semantic_c: 0.5, assembly: 0,
+  humanized_c: 1, exact_c: 0.75, semantic_c: 0.5, assembly: 0, retained_asm: 0,
 };
 export const ASSET_TIERS = ["asset_bytes", "asset_bw", "asset_color", "asset_objects"] as const;
 export type AssetTier = (typeof ASSET_TIERS)[number];
@@ -1372,7 +1408,7 @@ export function renderBoxTree(
   ariaLabel: string,
   hue: HueBand = CORE_HUE,
   laneFraction: Record<string, number> = CODE_FRACTION,
-  laneOrder: readonly string[] = ["humanized_c", "exact_c", "semantic_c", "assembly"],
+  laneOrder: readonly string[] = ["humanized_c", "exact_c", "semantic_c", "assembly", "retained_asm"],
 ): string {
   const width = 1600;
   const height = 900;
@@ -1411,12 +1447,18 @@ export function renderBoxTree(
     for (const lane of laneOrder) {
       const share = (lanes[lane] ?? 0) / total;
       if (share <= 0) continue;
-      lines.push(cellRect({
+      const rect = {
         x: inner.x,
         y: inner.y + inner.height * offset,
         width: inner.width,
         height: inner.height * share,
-      }, laneFraction[lane] ?? 0.08));
+      };
+      // Permanent asm renders black in every hue: it will never climb the
+      // ladder, so it must never read as "not started yet" gray.
+      if (lane === "retained_asm")
+        lines.push(`<rect x="${round(rect.x)}" y="${round(rect.y)}" width="${round(rect.width)}" ` +
+          `height="${round(rect.height)}" style="fill:#141414"/>`);
+      else lines.push(cellRect(rect, laneFraction[lane] ?? 0.08));
       offset += share;
     }
   }
@@ -1803,10 +1845,12 @@ export function selfTest(): void {
     [{ start: 0x08000000, end: 0x08000100 }],
     [{ start: 0x08000000, end: 0x08000040 }],
     [{ start: 0x08000040, end: 0x08000080 }],
+    [{ start: 0x080000c0, end: 0x080000e0 }],
     128,
   );
   if (bands.length !== 2 || bands[0].bytes !== 128 || bands[0].lanes.exact_c !== 64 ||
-      bands[0].lanes.semantic_c !== 64 || bands[1].lanes.assembly !== 128) {
+      bands[0].lanes.semantic_c !== 64 || bands[1].lanes.assembly !== 96 ||
+      bands[1].lanes.retained_asm !== 32) {
     throw new Error("main band composition failed");
   }
 

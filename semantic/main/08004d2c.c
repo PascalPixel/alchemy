@@ -10,7 +10,7 @@
  * Neither relocated helper is reached by a `bl` naming it, and neither is
  * retained assembly:
  *
- *   - the seventeen `mov ip, pc ; bx r3` sequences from 0x08004d78 to
+ *   - the sixteen `mov ip, pc ; bx r3` sequences from 0x08004d78 to
  *     0x08004e22 call 0x03000118 inline.  `mov ip, pc` sets the return
  *     address to the halfword after each `bx`, so each returns into the same
  *     frame and stack adjustment with the live registers unchanged, and every

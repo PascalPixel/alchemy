@@ -3915,102 +3915,10 @@ AlchemyC_02002354:
 	.space 0x1c
 AlchemyC_02002370:
 	.space 0x30
-	push	{r5, lr}
-	sub	sp, #8
-	movs	r3, #9
-	movs	r2, #38
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r3, #5
-	movs	r2, #5
-	movs	r0, #73
-	movs	r1, #38
-	bl	sub_02005452
-	movs	r1, #8
-	movs	r0, #9
-	bl	sub_020032ce
-	movs	r0, #8
-	bl	sub_020054d0
-	ldr	r5, [r0, #8]
-	movs	r0, #8
-	bl	sub_020054d8
-	ldr	r3, [r0, #16]
-	asrs	r3, r3, #20
-	str	r3, [sp, #4]
-	movs	r1, #36
-	movs	r2, #1
-	movs	r3, #1
-	asrs	r5, r5, #20
-	movs	r0, #2
-	str	r5, [sp, #0]
-	bl	sub_0200547e
-	movs	r0, #9
-	bl	sub_020054f4
-	ldr	r5, [r0, #8]
-	movs	r0, #9
-	bl	sub_020054fc
-	ldr	r3, [r0, #16]
-	asrs	r3, r3, #20
-	str	r3, [sp, #4]
-	asrs	r5, r5, #20
-	movs	r0, #2
-	movs	r1, #36
-	movs	r2, #1
-	movs	r3, #1
-	str	r5, [sp, #0]
-	bl	sub_020054a2
-	add	sp, #8
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	push	{r5, lr}
-	sub	sp, #8
-	movs	r3, #29
-	movs	r2, #30
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r3, #5
-	movs	r2, #6
-	movs	r0, #93
-	movs	r1, #30
-	bl	sub_020054c2
-	movs	r1, #10
-	movs	r0, #11
-	bl	sub_0200333e
-	movs	r0, #10
-	bl	sub_02005540
-	ldr	r5, [r0, #8]
-	movs	r0, #10
-	bl	sub_02005548
-	ldr	r3, [r0, #16]
-	asrs	r3, r3, #20
-	str	r3, [sp, #4]
-	movs	r1, #36
-	movs	r2, #1
-	movs	r3, #1
-	asrs	r5, r5, #20
-	movs	r0, #2
-	str	r5, [sp, #0]
-	bl	sub_020054ee
-	movs	r0, #11
-	bl	sub_02005564
-	ldr	r5, [r0, #8]
-	movs	r0, #11
-	bl	sub_0200556c
-	ldr	r3, [r0, #16]
-	asrs	r3, r3, #20
-	str	r3, [sp, #4]
-	asrs	r5, r5, #20
-	movs	r0, #2
-	movs	r1, #36
-	movs	r2, #1
-	movs	r3, #1
-	str	r5, [sp, #0]
-	bl	sub_02005512
-	add	sp, #8
-	pop	{r5}
-	pop	{r0}
-	bx	r0
+AlchemyC_020023a0:
+	.space 0x70
+AlchemyC_02002410:
+	.space 0x70
 	push	{r5, lr}
 	sub	sp, #8
 	movs	r3, #49

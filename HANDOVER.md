@@ -486,6 +486,31 @@ confirms it is data.
 unrelated globals hides that the second is the well-known workspace pointer the
 rest of the overlay loads directly.
 
+**The pool hop can be the ONLY branch in a kilobyte-plus owner.**
+`resource_3ce:029c` is 1,574 bytes of pure straight line whose single branch
+instruction exists solely to hop its one pool word — and the hop is
+mid-computation (r1 = 236 set before it, consumed after). A walker that treats
+"first branch" as structure, or that stops carrying registers across a branch,
+silently drops an argument. Same shape at `resource_37a:2108`.
+
+**A `bl` count of 191 to a single import is a SCRIPT TABLE, not a loop.**
+`resource_3ce:029c` is sixteen runs of an identical `movs/movs/bl` triple with no
+counter, no back edge and no compare; folding it would have deflated the multiset
+by 175. The banked byte-exact sibling `resource_3ce_c_020008c4.c` spells its own
+run out the same way — check for such a sibling before "tidying" a long run.
+
+**A one-shot gate proves itself when the scene's own tail sets the flag it
+tested.** `resource_37a:0488` opens `if (Func_080770c0(0x809)) return;` and closes
+`Func_080770c8(0x809)`. Gate and setter agreeing settles "is this one-shot" in
+one line — the positive counterpart to the documented trap where a gate flag's
+setter lives in a different owner.
+
+**Non-sequential refresh order is a free cross-file witness.** Both
+`resource_3ce:029c` and `:0b10` close with `Func_08077010` over slots in the
+order 0, 1, 3, 2. Two independently-read owners agreeing on an odd ordering
+confirms neither was transcribed with a swapped pair — look for these rather
+than smoothing them out.
+
 **A byte-exact sibling names the imports for you — backwards.** The banked
 `assets/code/resource_3b6_c_0200073c.c` was written with the printed (wrong)
 `bl` names, but resolving its four sites through the rule gives veneer offsets

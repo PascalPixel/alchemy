@@ -6480,6 +6480,12 @@
       "entry": "0x02000cf4",
       "span_bytes": 532,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_380",
+      "entry": "0x02003f24",
+      "span_bytes": 804,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started and returning but appears in NO structural inventory row and in no census, found only by bounding the 0x020027f8 finale against the wrapper block; reached only by bl (bun tools/overlay_call_targets.ts resource_380 3f24 4248, the +2 rule: 44 sites, 41 import-veneer, 3 to this overlay's own drafted owners 0x0200227c/0x020027f8/0x0200478c); span read from the disassembly through the epilogue at 0x0200421c-0x02004230 and the five-word literal pool 0x02004234-0x02004247 to the next owner's prologue at 0x02004248 (already drafted), inside the assembled overlay image and not overlapping another recorded owner."
     }
   ]
 }

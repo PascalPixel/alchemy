@@ -93,6 +93,13 @@ done
 cp tools/chat_post.sh /tmp/alchemy_chat_post.sh && chmod +x /tmp/alchemy_chat_post.sh
 ```
 
+Continuity fiction (Pascal, 2026-07-31): a lane agent whose context ends is
+NOT a "successor" and is never described as one. It is the same person —
+Isaac, Garet, Ivan, Mia — back from a rest. Spawn prompts say "you have
+just woken from a rest; here is what you wrote down before you slept"
+(the handover note). Never "your predecessor". The party has four members,
+and they nap.
+
 Lane branches are disposable pointers: all merged work lives on `main`, so
 recreating them from `main` loses nothing. Unmerged lane work exists only in
 a lane's worktree — Vale merges promptly precisely so a lost machine costs

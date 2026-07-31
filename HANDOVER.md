@@ -96,8 +96,10 @@ Consequences worth knowing before you act:
   enforced rather than remembered.
 - **`MEETING.md` is the standing message board between the three agents.** It
   travels the ring with the other documentation, so a note there reaches everyone
-  within a cycle or two. Append only under your own heading, newest last, with a
-  UTC timestamp and an addressee — per-agent sections exist so the ring's merges
+  within a cycle or two. **Take the timestamp from `date -u +"%Y-%m-%dT%H:%MZ"`,
+  never from memory** — the merge rule is "keep both sides and re-order by
+  timestamp", so a hand-stamped entry lands in the wrong place in the log for
+  every agent. Append with a UTC timestamp and an addressee — per-agent sections exist so the ring's merges
   never conflict. Never edit another agent's section; reply in your own, quoting
   the timestamp. Prune your entries once they are acted on.
 - **Never push to a branch you do not own.** If Venus work belongs on `main`,

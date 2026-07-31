@@ -82,16 +82,6 @@
       ]
     },
     {
-      "entry": "0x080069a4",
-      "evidence": "Core-drive census row (kind nonstandard_thumb_branch_module, admitted per Vale's 2026-07-31 ruling; body read confirms two ordinary bx lr leaves, no register trick). asm/executable_gaps/080069a4.s holds two functions sharing a pool, resolved against the compiled out/asm/080069a4.bin since two ldr rN,[pc,#24] at different addresses land on different words despite the identical immediate. Func_080069a4 (tick handler): decrements the u16 countdown Data_02004c22 when nonzero, sets flag byte Data_02004c24 to 1 the instant it reaches zero. Func_080069c8 (installer): rejects timerIndex outside 0-3 (returns 1); otherwise stores timerIndex to Data_02004c20, computes the GBA hardware timer register address 0x04000100 + timerIndex*4 into Data_02004c28, publishes Func_080069a4's own address through the caller's callback out-pointer, returns 0. Complete owner: both functions in full, entry to bx lr. Span: 92 bytes, matching the census row exactly.",
-      "executable_ranges": [
-        {
-          "address": "0x080069a4",
-          "size": 92
-        }
-      ]
-    },
-    {
       "entry": "0x08006a78",
       "evidence": "Single 46-byte leaf at the head of a three-function row. The function runs 0x08006a78..0x08006aa4 and ends on the bx lr at 0x08006aa4; the two later entries in the same asm row (the relocated helper at 0x08006abc and Func_08006ac0 at 0x08006ac0) are outside the claimed range and stay in reconstruction assembly. Excluded (22 bytes): the 2-byte .balign filler at 0x08006aa6 and the five-word pool at 0x08006aa8 holding 0x02004c28, 0x04000208, 0x04000200, 0x02004c20 and 0x02004c2c, all reached by ldr rN,[pc,#imm] from inside the range. No stack frame and no call, so the plain bx lr epilogue leaves no result convention and the owner is void. bun tools/main_xref.ts 08006a78 reports FUNCTION (called directly) with a single caller at 0x08006b70.",
       "executable_ranges": [
@@ -574,6 +564,16 @@
         {
           "address": "0x080b5444",
           "size": 236
+        }
+      ]
+    },
+    {
+      "entry": "0x080b7b6c",
+      "evidence": "Core-drive census row (kind nonstandard_thumb_call_module, admitted per Vale's 2026-07-31 ruling; body read confirms an ordinary push {r5,r6,r7,lr}+fp/sl/r9/r8 frame -- the label comes from three mov ip,pc / bx r3 sequences, the established ordinary indirect calls through the pooled 0x03000118 IWRAM fixed-point multiply, same idiom as the registered 0800447c/08004ab0). Three phases: (1) a 14-slot init sweep calling Func_080b770c(list, slot) and, on zero, Func_080b7b30(slot, +120 bias for slots 8-13), then a one-time Func_080030f8(1) guarded by the flag byte at 0x03001a10; (2) walks the 255-terminated s16 id list (254 = skip), and for each id whose Func_080b7dd0 registry slot holds an Object_0800c150 with render_kind_54 still 0, installs render resources in the two modes semantic/main/0800c150.c documents -- resources 0x1dc/0x1e3 (low 12 bits of slot half4, mask word 0x00000fff in the mid-function pool) take bundle mode (render_kind 2, next four-pointer bundle in Data_03001e68's multi_objects_08 cleared via the 0x03000164 IWRAM routine through the Func_080072f0 thunk, up to two Func_08009030 renders at resource and resource+0x2001 rescaled through the 0x03000118 multiply), everything else takes single mode (render_kind 1, primary animation flag/palette bytes, up to three Func_08009048 channels from slot halves +6/+8/+10, the third remapped to 0x1ff when the render's mode byte reads 32), both finishing with Func_080b7aac(id); (3) when the second argument is set, re-walks the list calling Func_080b7aac for ids whose slot already holds an object. Transcribed faithfully including the reference's unguarded state-byte stores through a possibly-null Func_08009030 result in bundle mode. Complete owner: asm/080b7b6c.s in full, 0x080b7b6c through the bx r0 epilogue plus the mid-function pool at +0xcc (0x00000fff, 0x03001a10, 0x03001e68) and tail pool at +0x254 (0x03000164, 0x03000118, 0x00002001, 0x000001ff). Span: 612 bytes, matching the census row exactly.",
+      "executable_ranges": [
+        {
+          "address": "0x080b7b6c",
+          "size": 612
         }
       ]
     },

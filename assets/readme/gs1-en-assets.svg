@@ -1,16 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Asset maturity box tree, pink band">
-<rect x="1" y="1" width="131.9" height="281.9" fill="#e8a3c3"/>
-<rect x="1" y="282.9" width="131.9" height="616.1" fill="#4a4a4a"/>
-<rect x="134.9" y="1" width="63.4" height="34.7" fill="#4a4a4a"/>
-<rect x="134.9" y="37.7" width="63.4" height="187.8" fill="#e8a3c3"/>
-<rect x="134.9" y="225.5" width="63.4" height="0.9" fill="#6b5560"/>
-<rect x="134.9" y="226.4" width="63.4" height="672.6" fill="#4a4a4a"/>
-<rect x="200.3" y="1" width="358.4" height="165.2" fill="#e8a3c3"/>
-<rect x="200.3" y="166.2" width="358.4" height="732.8" fill="#4a4a4a"/>
-<rect x="560.7" y="1" width="127.9" height="4.4" fill="#4a4a4a"/>
-<rect x="560.7" y="7.4" width="127.9" height="123.3" fill="#e8a3c3"/>
-<rect x="560.7" y="130.7" width="127.9" height="15.9" fill="#6b5560"/>
-<rect x="560.7" y="146.6" width="127.9" height="752.4" fill="#4a4a4a"/>
-<rect x="690.7" y="1" width="908.3" height="674.8" fill="#e8a3c3"/>
-<rect x="690.7" y="675.8" width="908.3" height="223.2" fill="#4a4a4a"/>
+<rect x="0" y="0" width="1600" height="900" fill="#0a0a0a"/>
+<rect x="1" y="1" width="131.9" height="281.9" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.6"/>
+<rect x="1" y="282.9" width="131.9" height="616.1" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.12"/>
+<rect x="134.9" y="1" width="63.4" height="34.7" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.12"/>
+<rect x="134.9" y="37.7" width="63.4" height="187.8" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.6"/>
+<rect x="134.9" y="225.5" width="63.4" height="0.9" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.3"/>
+<rect x="134.9" y="226.4" width="63.4" height="672.6" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.12"/>
+<rect x="200.3" y="1" width="358.4" height="165.2" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.6"/>
+<rect x="200.3" y="166.2" width="358.4" height="732.8" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.12"/>
+<rect x="560.7" y="1" width="127.9" height="4.4" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.12"/>
+<rect x="560.7" y="7.4" width="127.9" height="123.3" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.6"/>
+<rect x="560.7" y="130.7" width="127.9" height="15.9" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.3"/>
+<rect x="560.7" y="146.6" width="127.9" height="752.4" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.12"/>
+<rect x="690.7" y="1" width="908.3" height="674.8" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.6"/>
+<rect x="690.7" y="675.8" width="908.3" height="223.2" style="fill:#ff0080;fill:color(display-p3 1 0 0.5)" fill-opacity="0.12"/>
 </svg>

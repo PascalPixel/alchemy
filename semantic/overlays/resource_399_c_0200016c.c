@@ -26,7 +26,7 @@ typedef signed int s32;
  *
  * Call targets resolved with `bun tools/overlay_call_targets.ts resource_399
  * 016c` (an overlay `bl` stores `target - 2`, so the disassembler's own
- * annotations are wrong).  Four sites, two distinct imports:
+ * annotations are wrong).  Three sites, two distinct imports:
  *   0x02000184 -> Func_0808a038(script)     announce the chosen script
  *   0x0200018a -> Func_080770c0(0x881)      story-flag query, result tested
  *   0x020001b2 -> Func_080770c0(0x881)      the same query on the other arm

@@ -3320,6 +3320,62 @@ directly and diffing the assembly against `overlay_show.ts` output.
 
 ---
 
+## 8b. Semantic-C main-image idioms (added 2026-07-31)
+
+Found while converting nine pre-analysed main-image owners. All of these cost a
+lane real time before they were named.
+
+* **`movs r0,r0` between instructions is not padding.** Inside a
+  `mov ip,pc ; bx rN` call sequence the nop shifts `mov ip,pc` so the return
+  address it captures lands *past* the `bx`. Call sites that are already
+  4-aligned carry no nop. Two sites in the same function will therefore
+  disagree — that is correct, not a disassembly error. Excluding one of these
+  as filler corrupts the range size. Seen at 0x080945fe, 0x0800fc9a,
+  0x0800fcaa, 0x08011232, 0x0801125e, 0x080100e2, 0x080c12da, 0x080c12ea,
+  0x080c14d6, 0x080c155a, 0x080c156a.
+
+* **The truncating fixed-point conversion is not only 16-bit.** `if (v < 0)
+  v += K; v >>= n` shows up with (K, n) = (0xffff, 16), (0xfffff, 20),
+  (0x7ffff, 19), (0xff, 8) and (7, 3). Read K as `(1 << n) - 1` and the shift
+  follows. The `eors` against `1 << n` immediately after is the paired
+  "did that whole-unit digit change" boundary test, not a flag mask.
+
+* **A `b.n` into `asm/executable_gaps/<addr>.s` can be a continuation, not a
+  tail call.** 0x0800fb38 branches to 0x0800fd5c, which begins by reading r0,
+  ip, r5 and `[sp,#8]` of the caller's frame and ends with the epilogue that
+  unwinds 0x0800fb38's prologue. Register BOTH spans in one owner's
+  `executable_ranges`; `semantic_owner_scope.ts` already expects an owner's
+  epilogue to live in a neighbouring row of a different retention. The
+  push-or-not test only decides tail-call-versus-continuation for rows that
+  start with a push at all.
+
+* **`pop {rN}; bx rN` with N != 0 does not guarantee a deliberate result.**
+  0x080be18c, 0x080c1470 and 0x080c11ec all end that way, but only one path in
+  each sets r0 on purpose (or none does). Write an uninitialised `result`
+  local assigned on the paths that set it, the same device already used for a
+  frame-balanced live-in — do not invent a return value and do not downgrade
+  the owner to `void`.
+
+* **A pooled `0x03000164` and `0x03001388` join `0x03000118` and
+  `0x0300013c`.** 0x03000164 is an IWRAM-relocated block clear `(void*, size)`
+  and 0x03001388 an IWRAM-relocated palette upload `(dst, src, size)`; both are
+  reached through the `_call_via_rN` thunks, never by `bl`.
+
+* **A head-start note can be wrong about shape.** The 0x080c1470 brief named a
+  15-word pool and three `stmia r3!` DMA writes; the row has a 17-word pool at
+  the stated address and exactly one `stmia`, followed by a subs/adds walk of
+  the same pointer across the BG2 affine registers. Re-derive the pool from the
+  `ldr rN,[pc,#imm]` targets rather than trusting a count.
+
+* **Cross-owner layout agreement is usable evidence.** 0x08010000 writes
+  `Data_03001ad0 + (3-index)*4`; 0x08094544 reads the same six halfwords at
+  +4..+14 as its per-scanline scroll bases. 0x080c1470 seeds the particle and
+  ring blocks that 0x080c11ec integrates, which is what settles the 28-byte
+  particle as position/velocity/life rather than the position/radius/phase a
+  single-file reading suggests.
+
+---
+
 ## 9. Required checks
 
 `tools/bank_cycle.sh` does all of this. Manually:

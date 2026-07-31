@@ -2,86 +2,22 @@
   "format": 1,
   "main_owners": [
     {
-      "entry": "0x080f9a80",
-      "evidence": "Core-drive census row (kind nonstandard_thumb_call_module, retention keep_structured_asm, manifest evidence tags manual_return_address_preserved_in_ip,direct_bl_clobbers_lr,no_lr_stack_save,approved_compiler_call_prologue_mismatch,byte_exact_reconstruction). The tag is a PROCEDURAL exclusion (this shape does not match the compiler's own prologue-emission pattern, so the automatic c_candidate walk skips it) not a cannot-express contract -- unlike 0800070c's approved_compiler_cannot_express_contract tag, which is a genuine hard exclusion. Admitted per Vale's 2026-07-31 ruling that a keep_structured_asm label alone is not disqualifying; body read confirms an ordinary leaf-calling-leaf shape with no register trick that C cannot reproduce behaviourally (the mov ip,lr / bx ip dodge is an optimisation a semantic draft need not match byte-for-byte). Fourteen-plus already-registered sound-command-handler entries elsewhere in this file (0x080f9ac0, 0x080f9ae0, 0x080f9afc, 0x080f9b40, 0x080f9b4c, 0x080f9b60, 0x080f9ba4, 0x080f9bb8, 0x080f9bcc, 0x080f9be0, 0x080f9bf4, 0x080f9c00, 0x080f9c18, 0x080f9c2c) each independently describe calling into 'the retained 0x080f9a80 row' as an un-owned dependency; those descriptions remain accurate about THEIR OWN bytes regardless of whether this row now also has its own C form, and this entry does not contradict or supersede them. asm/080f9a80.s packs four functions sharing tails (its own comment: '080f9a98 and 080f9a9a share a tail, keep as one source unit'): Func_080f9a80 (copies 36 words from the fixed table Data_080fb7a0, each routed through the shared validator with the table element's own address as the candidate), Func_080f9a98 (reads a byte at its pointer argument, then validates), Func_080f9a9a (the validator itself, two arguments), and Func_080f9ab4 (reads-and-advances a byte cursor at object+64, reached by a bare tail branch into Func_080f9a9a). The validator's branch shape is transcribed literally rather than algebraically simplified, even though two of its arms are reachable only in combination (documented in semantic/main/080f9a80.c's own header). Span: 64 bytes, matching the census row exactly, no literal pool.",
-      "executable_ranges": [
-        {
-          "address": "0x080f9a80",
-          "size": 64
-        }
-      ]
-    },
-    {
-      "entry": "0x080f9b74",
-      "evidence": "Core-drive census row (kind nonstandard_thumb_call_module, same procedural mov-ip-lr exclusion as sibling row 0x080f9a80, admitted per Vale's 2026-07-31 ruling). Reads a byte from cursorHolder's stream cursor at +64, advances the cursor, uses the byte as a 12-byte-stride index into a table whose base pointer lives at tableHolder+48, then runs the record's three words through Func_080f9a9a (candidate = field's own address, passthrough = field's value, established in semantic/main/080f9a80.c), storing the three results at cursorHolder+36/+40/+44. Complete owner: asm/080f9b74.s in full, mov ip,lr through bx ip; no literal pool, no branch. Span: 46 bytes, matching the census row exactly.",
-      "executable_ranges": [
-        {
-          "address": "0x080f9b74",
-          "size": 46
-        }
-      ]
-    },
-    {
-      "entry": "0x080f9b10",
-      "evidence": "Core-drive census row (kind shared_stack_continuation_module, admitted per Vale's 2026-07-31 ruling). Reached only as a normal function entry; internally, on two arms it tail-branches into the interior label 0x080f9ac2 of the already-registered 0x080f9ac0 (that entry's own comment already documents the same shared-tail shape for a different caller, 0x080f9ae0), modelled here as an ordinary call to Func_080f9ac0(player, track) since this owner's own push {lr} plus the shared pop {r0}; bx r0 tail is behaviourally identical to a normal call/return pair. Reuses the struct Track_080f9ac0 and Func_080f9ac0 signature from semantic/main/080f9ac0.c; reads the repeat-count flag at the stream cursor -- if zero, skip it and delegate to Func_080f9ac0; otherwise increment the track's repeat sub-counter (+3, outside the known struct fields, read via raw byte cast), pull the next stream byte through Func_080f9ab4 (established in semantic/main/080f9a80.c), and keep delegating to Func_080f9ac0 to re-parse the same operand while the sub-counter trails that byte; once caught up, reset the sub-counter and advance the cursor past the whole 5-byte repeat block using the cursor value captured at entry, not wherever Func_080f9ab4's own advance left it -- transcribed exactly as the reference computes it. Complete owner: asm/080f9b10.s in full, push {lr} through the tail branches and the final pop {r0}; bx r0; no literal pool. Span: 48 bytes, matching the census row exactly.",
-      "executable_ranges": [
-        {
-          "address": "0x080f9b10",
-          "size": 48
-        }
-      ]
-    },
-    {
-      "entry": "0x080fa16c",
-      "evidence": "Core-drive census row (kind nonstandard_thumb_branch_module, admitted per Vale's 2026-07-31 ruling; body read confirms an ordinary push {r4,r5}/pop {r4,r5}; bx lr leaf, no register trick). Reads a value byte from the stream cursor at track+64; a byte >= 128 is a 'repeat last value' marker (cursor not advanced, value comes from track+5 instead), otherwise the byte is cached to track+5 and the cursor advances. Walks a singly linked list headed at track+32 (next pointer at +52 per node), finds the first node whose flags byte has bit 0x83 set and bit 0x40 clear and whose byte at +17 equals the value, sets bit 0x40 on match and stops. Complete owner: asm/080fa16c.s in full; no literal pool. Span: 64 bytes, matching the census row exactly.",
-      "executable_ranges": [
-        {
-          "address": "0x080fa16c",
-          "size": 64
-        }
-      ]
-    },
-    {
-      "entry": "0x080069a4",
-      "evidence": "Core-drive census row (kind nonstandard_thumb_branch_module, admitted per Vale's 2026-07-31 ruling; body read confirms two ordinary bx lr leaves, no register trick). asm/executable_gaps/080069a4.s holds two functions sharing a pool, resolved against the compiled out/asm/080069a4.bin since two ldr rN,[pc,#24] at different addresses land on different words despite the identical immediate. Func_080069a4 (tick handler): decrements the u16 countdown Data_02004c22 when nonzero, sets flag byte Data_02004c24 to 1 the instant it reaches zero. Func_080069c8 (installer): rejects timerIndex outside 0-3 (returns 1); otherwise stores timerIndex to Data_02004c20, computes the GBA hardware timer register address 0x04000100 + timerIndex*4 into Data_02004c28, publishes Func_080069a4's own address through the caller's callback out-pointer, returns 0. Complete owner: both functions in full, entry to bx lr. Span: 92 bytes, matching the census row exactly.",
-      "executable_ranges": [
-        {
-          "address": "0x080069a4",
-          "size": 92
-        }
-      ]
-    },
-    {
-      "entry": "0x080f9c44",
-      "evidence": "Core-drive census row (kind shared_literal_function_module, admitted per Vale's 2026-07-31 ruling). Its two far ldr rN,[pc,#680] loads resolve past its own compiled out/asm/080f9c44.bin; read directly from out/asm/080f9c90.bin at file offsets 0x260/0x264 rather than guessed, giving 0x03007ff0 and 0x68736d53 -- the same Smsh-tagged context pointer and magic constant semantic/main/080006fc.c established. Mirrors that file's SmshContext local struct (Garet's settled field layout) rather than raw byte casts: countdown at +0x04, countdown_reload at +0x0b are exactly the two fields this owner touches. If the context's signature is not exactly the magic constant or one past it, does nothing. Otherwise decrements countdown (32-bit zero-extended comparison, not a re-read-as-signed-byte one -- the register-level subs result is what the bgt branch tests, verified against the original's zero-extension semantics); once it reaches zero or below, reloads it from countdown_reload and re-arms two DMA-shaped hardware channel control registers (base 0x040000bc, +8/+20) with 0x84400004 when their own top bit reads clear, then stamps the paired length halfwords at +10/+22 with 0x0400 immediately overwritten by 0xb600, transcribed literally rather than collapsed. Complete owner: asm/080f9c44.s in full plus its own local two-word pool. Span: 76 bytes, matching the census row exactly.",
-      "executable_ranges": [
-        {
-          "address": "0x080f9c44",
-          "size": 76
-        }
-      ]
-    },
-    {
-      "entry": "0x0808b674",
-      "evidence": "Core-drive census flagged 0x0808b7b8 (108 bytes, kind parent_function_fragment, retention merge_with_owner) as having no C owner, but its already-tracked semantic/main/0808b674.c fully covers it -- this is a registration gap, not missing work. asm/0808b674.s (FunctionHead_0808b674, kind multi_region_function_head, retention merge_with_continuations, 324 bytes) is the head: builds a spawn descriptor, then two `beq`/`bne sub_0808b7b8` guards fork away to the fragment on the FLOOR-ADJUSTMENT-SKIPPED path (parameters->use_floor_adjustment == 0, or either of the two 0xfd tile checks fails), while the taken-adjustment path falls through past both branches. asm/0808b7b8.s (Fragment_0808b7b8, 108 bytes, `direct_branch_without_call,live_parent_stack_and_high_register_state`) is reached only from those two guards and is the shared tail both arms rejoin at: it is the code AFTER the fragment's own guard header would have executed had the branch not skipped it, ending in the same epilogue the head's frame expects (pop {r3,r5}/mov r8,r3/mov r10,r5/pop{r5,r6,r7}/pop{r0}/bx r0). semantic/main/0808b674.c's existing `if (parameters->use_floor_adjustment != 0 && ...) { ... } else { parameters->floor_adjusted = 0; }` is exactly this fork already written as one C if/else rather than two asm regions -- the else arm and the tail statements after the if/else (spawned->display_y, Func_080090e0, the scene_mode==3 animation-flag block, the two workspace/scene writes at the end) are Fragment_0808b7b8's logic, confirmed line-by-line: the `scene->scene_mode == 3` check matches the fragment's `cmp r3,#3 / bne .L_0808b7fc`, `animation[5]=15; animation[6]=9` matches the fragment's two strb writes to r0+5/r0+6 after `bl sub_08009048`, and the closing `**(u8***)0x03001e70 = spawned+8; scene->spawned_object = spawned;` matches the fragment's final pointer stores through the pooled 0x03001ebc-relative workspace and 0x03001e70. Combined span: head (324 bytes, 0x0808b674-0x0808b7b8) + fragment (108 bytes, 0x0808b7b8-0x0808b7c4) = 432 bytes total; the head's trailing `b sub_0808b7c4` on the taken-adjustment path is a separate continuation not part of this owner and not touched here.",
-      "executable_ranges": [
-        {
-          "address": "0x0808b674",
-          "size": 324
-        },
-        {
-          "address": "0x0808b7b8",
-          "size": 108
-        }
-      ]
-    },
-    {
       "entry": "0x080006fc",
       "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), unindexed leaf, 16 bytes incl. pool. push-free guard: loads the pointer at fixed RAM 0x03007ff0, dereferences it, compares the first word against magic constant 0x68736d53 (\"Smsh\"), and on match TAIL-BRANCHES (bare beq, no bl, no link set) into Func_0800070c passing the same pointer in r0; on mismatch it returns. Func_0800070c is retained asm with manifest evidence approved_compiler_cannot_express_contract (manual high-register/stack-frame contract, tail branch into IWRAM without link) -- expressible here only as an opaque extern called from the guard, not itself convertible. Semantic-only for now: a C tail call compiles to bl+return on this compiler, not the reference's bare beq, so this draft is control-flow-correct but not yet byte-exact (candidate_show.ts: 32 candidate vs 16 reference halfwords). Left for the exact lane to find the right lever rather than guessed at here.",
       "executable_ranges": [
         {
           "address": "0x080006fc",
           "size": 16
+        }
+      ]
+    },
+    {
+      "entry": "0x08002dd8",
+      "evidence": "Two adjacent leaf functions sharing one trailing pool, 40 bytes total: Func_08002dd8 at 0x08002dd8..0x08002dec (20 bytes, bx lr, no push/pop), one alignment halfword, Func_08002df0 at 0x08002df0..0x08002dfa (12 bytes, bx lr, no push/pop), then the shared table-base pool word 0x03001e50 at 0x08002dfc..0x08002e00. Flagged shared_literal_thumb_helper_module by the automated walk since neither function is push-rooted. The source asm (asm/08002dd8.s) carries pre-existing hand-written Japanese comments naming each function's role (transfer-state evacuation / transfer-state recording, both against a shared state-area address) which the semantic draft translates and keeps. bun tools/main_xref.ts reports both as heavily-called direct functions (333 and 72 call sites) each separately published as a Thumb pointer (0x08000154, 0x0800017c), confirming both are real, live code, not incidental fragments. Neither file has a .thumb-only-compiler header (checked live against HANDOVER section 7's ARM-only stem list, which flagged this address as potentially stale for this specific case), consistent with genuine Thumb C.",
+      "executable_ranges": [
+        {
+          "address": "0x08002dd8",
+          "size": 40
         }
       ]
     },
@@ -126,6 +62,16 @@
       ]
     },
     {
+      "entry": "0x08004fe4",
+      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), 500-byte (0x1f4, confirmed via out/full/asm/08004fe4.elf's .text size) keep_structured_asm row holding a single function: prologue push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill at 0x08004fe4, single epilogue pop {r3,r5,r6,r7}/mov r8,r3/mov r9,r5/mov sl,r6/mov fp,r7/pop {r5,r6,r7}/pop {r0}/bx r0 (void, HANDOVER's epilogue rule), no branch out of the row (one internal conditional, .L0) and no inbound branch from outside it. bun tools/main_xref.ts 08004fe4: FUNCTION (called directly), two call sites (0x080051dc, 0x080051f0). Checked live against HANDOVER's 14-stem ARM-only list (which flags this address): asm/08004fe4.s carries .thumb with no ARM directive and no Thumb-only-compiler header, so the flag is stale here, the same correction already made this session for 0x08002dd8. Six-word trailing pool (0x040000d4 REG_DMA3SAD, 0x08007994 the DMA source, 0x84000007 the DMA control word, 0x030001d8/0x030003f0/0x03000118 the three IWRAM-relocated helper addresses) confirmed inside the row and not overlapping another owner. Semantic-only: DMAs asm/08007994.s's own already-reconstructed ARM routine (a signed 16.16 three-term dot product, per that file's own comment) onto the caller's stack and calls it via the ordinary call-via-r4 thunk alongside the sqrt/divide/multiply IWRAM helpers already named in resource_3b3_c_02000314.c and semantic/main/08005268.c; every register in the body was traced line-by-line against the .s source, not yet checked byte-exact.",
+      "executable_ranges": [
+        {
+          "address": "0x08004fe4",
+          "size": 500
+        }
+      ]
+    },
+    {
       "entry": "0x08005268",
       "evidence": "One 140-byte keep_structured_asm row holding a single function: prologue push {r5,r6,r7,lr} at 0x08005268, one epilogue at 0x080052d4 reached by the range-check early-out and by fall-through, no inbound branch from outside the row. The mov ip,pc; bx r6 at 0x080052a6 and 0x080052be are ordinary indirect calls through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after each bx (0x080052aa, 0x080052c2) and both landing sites consume r0 as the call's result in the same frame, the reading already recorded for 0x0800ebec. The two bl Func_080072f0 / Func_0800730c are the runtime call_via_r3 and call_via_sl thunks at 0x080072e4, so they too are indirect calls, to 0x03000250 and 0x030003f0. Excluded (24 bytes): the six-word pool at 0x080052dc (0x03000250, 0x03001ce0, 0x030003f0, 0x000151eb, 0x03000118, 0x0000ffff); there is no alignment filler, the code ends flush at 0x080052dc. 16 direct callers, the first at 0x0800b3ba, and published as a Thumb pointer at 0x0800026c.",
       "executable_ranges": [
@@ -136,12 +82,62 @@
       ]
     },
     {
+      "entry": "0x080069a4",
+      "evidence": "Core-drive census row (kind nonstandard_thumb_branch_module, admitted per Vale's 2026-07-31 ruling; body read confirms two ordinary bx lr leaves, no register trick). asm/executable_gaps/080069a4.s holds two functions sharing a pool, resolved against the compiled out/asm/080069a4.bin since two ldr rN,[pc,#24] at different addresses land on different words despite the identical immediate. Func_080069a4 (tick handler): decrements the u16 countdown Data_02004c22 when nonzero, sets flag byte Data_02004c24 to 1 the instant it reaches zero. Func_080069c8 (installer): rejects timerIndex outside 0-3 (returns 1); otherwise stores timerIndex to Data_02004c20, computes the GBA hardware timer register address 0x04000100 + timerIndex*4 into Data_02004c28, publishes Func_080069a4's own address through the caller's callback out-pointer, returns 0. Complete owner: both functions in full, entry to bx lr. Span: 92 bytes, matching the census row exactly.",
+      "executable_ranges": [
+        {
+          "address": "0x080069a4",
+          "size": 92
+        }
+      ]
+    },
+    {
+      "entry": "0x08006a78",
+      "evidence": "Single 46-byte leaf at the head of a three-function row. The function runs 0x08006a78..0x08006aa4 and ends on the bx lr at 0x08006aa4; the two later entries in the same asm row (the relocated helper at 0x08006abc and Func_08006ac0 at 0x08006ac0) are outside the claimed range and stay in reconstruction assembly. Excluded (22 bytes): the 2-byte .balign filler at 0x08006aa6 and the five-word pool at 0x08006aa8 holding 0x02004c28, 0x04000208, 0x04000200, 0x02004c20 and 0x02004c2c, all reached by ldr rN,[pc,#imm] from inside the range. No stack frame and no call, so the plain bx lr epilogue leaves no result convention and the owner is void. bun tools/main_xref.ts 08006a78 reports FUNCTION (called directly) with a single caller at 0x08006b70.",
+      "executable_ranges": [
+        {
+          "address": "0x08006a78",
+          "size": 46
+        }
+      ]
+    },
+    {
+      "entry": "0x08006f48",
+      "evidence": "36-byte leaf function, 0x08006f48..0x08006f6c (no push/pop, bare bx lr return). Prologue-free structural walk flagged it nonstandard_thumb_branch_module because of the b .L_08006f5a jump-to-loop-test-first at 0x08006f50, which skips over an inline one-word pool (0x02004c08) embedded mid-body at 0x08006f52-0x08006f55 rather than trailing the function -- the same inline-pool shape already documented on the overlay lanes. Scans a run of consecutive 0xff bytes from the r0 argument, capped by a limit read from *(u32*)(*(u32*)0x02004c08 + 4), decrementing that limit per matching byte and returning it in r0 (the leaf epilogue's bx lr leaves r0 as the result, never popped). Excluded (4 bytes): the alignment halfword (.inst.n 0x0000) at 0x08006f66 and the pool word itself already counted in the 36-byte span. bun tools/main_xref.ts 08006f48 reports FUNCTION (indirectly published callback) with calls=0 branches=0 word_refs=0 and two Thumb pointers, published at 0x08006e68 and 0x08007b2c, so there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x08006f48",
+          "size": 36
+        }
+      ]
+    },
+    {
+      "entry": "0x0800c62c",
+      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), 592-byte keep_structured_asm row holding a single function: prologue push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill and sub sp,#80 at 0x0800c62c, single epilogue add sp,#80/pop.../bx r0 at 0x0800c83c-0x0800c84c, no branch out of the row and no inbound branch from outside it. bun tools/main_xref.ts 0800c62c: FUNCTION, indirectly published callback (published at 0x0800c0b8/0x0800c5f0/0x0800c61c, a raw word ref at 0x0848b6ec). Kraden's 2026-07-31 ruling upheld this row as an ordinary, expressible idiom, not a cannot-express contract: retention=keep_structured_asm was a default label the automated sweep applied without reading the body. The two mov ip,pc / bx fp sequences (0x0800c778, 0x0800c784) are ordinary indirect calls through the pooled 0x03000118, the same IWRAM-relocated ARM multiply already recorded as opaque for 0x0800447c/0x08004ab0/0x0808b3ec, not retained assembly. Excluded (46 bytes): the 2-byte movs r0,r0 alignment filler at 0x0800c84e and the eleven-word pool at 0x0800c850 holding 0x03001e70, 0xffff0000, 0x000002c4, 0x040000d4, 0x08009bb8, 0x03000118, 0x001fffff, 0x012ffffe, 0xffe00000, 0x00dfffff and 0xfec00000. Semantic-only: walks the same 64-record, 0x70-byte object array semantic/main/0800ebec.c already reconstructed as struct Object_0800ebec -- five of this row's own field accesses land exactly on that header's named fields (program_00@0, heading_06@6, position_08@8/12/16, ground_14@20), locally redeclared here per the same not-yet-exact include/ policy this dig used for struct SmshContext. Several intermediate values are transcribed with explicit inline Uncertainty comments rather than asserted. Not yet checked byte-exact.",
+      "executable_ranges": [
+        {
+          "address": "0x0800c62c",
+          "size": 546
+        }
+      ]
+    },
+    {
       "entry": "0x0800d14c",
       "evidence": "One 440-byte row holding a single function: prologue push {r5,r6,r7,lr} plus the sl/r9/r8 saves at 0x0800d14c, single epilogue at 0x0800d2e4 reached from every arm, no inbound branch from outside the row. The seven mov ip,pc; bx r3 sequences (0x0800d1c4, 0x0800d1d0, 0x0800d1dc, 0x0800d21c, 0x0800d254, 0x0800d266, 0x0800d274) are ordinary indirect calls through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after each bx and every landing site consumes r0 as that call's result in the same frame, the reading already recorded for 0x0800ebec. The three bl Func_080072f0 at 0x0800d19e, 0x0800d226 and 0x0800d244 are the runtime call_via_r3 thunk at 0x080072e4, so they are indirect calls to the pooled 0x030001d8 (integer square root) and twice 0x0300013c (ratio). r4 accumulates the squared sum and the eased coordinates without being saved, the ordinary call-used-r4 convention of this image and not the 0x08002dd8 shape. Excluded (18 bytes): the 2-byte movs r0,r0 alignment filler at 0x0800d2f2 and the four-word pool at 0x0800d2f4 (0x0000ffff, 0x030001d8, 0x03000118, 0x0300013c). The object is the 0x70-byte record already reconstructed for 0x0800ebec. Eleven direct callers, the first at 0x0800da2e, and published as a Thumb pointer at 0x08009154.",
       "executable_ranges": [
         {
           "address": "0x0800d14c",
           "size": 422
+        }
+      ]
+    },
+    {
+      "entry": "0x0800daf0",
+      "evidence": "Single 462-byte function, 0x0800daf0..0x0800dcbc, prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and an 8-byte frame; one epilogue at 0x0800dcac unwinding all of it and ending pop {r1}; bx r1, so r0 is the result - the constant 1 loaded at 0x0800dca8. Excluded (30 bytes): the 2-byte movs r0,r0 alignment filler at 0x0800dcbe and the seven-word pool at 0x0800dcc0 holding 0x03001e70 (context pointer, 0x0800dafe), 0xff880000 and 0xffc00000 (the maximum-x and maximum-y insets, 0x0800db28 and 0x0800db34), 0x0000ffff (the truncating 16.16-to-whole bias, 0x0800dba8 and 0x0800dbbc), 0x030001d8 (the IWRAM square root, 0x0800dbce), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x0800dbf4 and 0x0800dc4e) and 0x0300013c (the IWRAM ratio helper, 0x0800dc42). Every pool word is reached by ldr rN,[pc,#imm] from inside the range. The bl Func_080072f0 at 0x0800dbd0 and the bl Func_08007310 at 0x0800dc4a and 0x0800dc60 are the runtime _call_via_r3 and _call_via_fp thunks inside 0x080072e4..0x08007320, so they are indirect calls through the pooled 0x030001d8 and 0x0300013c; the four mov ip,pc; bx rN sequences at 0x0800dbfc, 0x0800dc08, 0x0800dc54 and 0x0800dc68 are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec. Nothing in the row is retained assembly. The bounds at 0x0800db02..0x0800db36 dereference the target record before the null test at 0x0800db42 and are consumed only after it, so the C computes them after the test; no other statement order is observable. bun tools/main_xref.ts 0800daf0 reports FUNCTION (indirectly published callback) with no inbound call and a published Thumb pointer at 0x08013650, so the caller is unknown.",
+      "executable_ranges": [
+        {
+          "address": "0x0800daf0",
+          "size": 462
         }
       ]
     },
@@ -186,6 +182,50 @@
         {
           "address": "0x0800f2d8",
           "size": 30
+        }
+      ]
+    },
+    {
+      "entry": "0x0800fb38",
+      "evidence": "One function spanning two assembled rows, 0x0800fb38..0x0800fd22 and 0x0800fd5c..0x0800fe70, 766 bytes of code. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 12-byte frame at 0x0800fb38; the b.n at 0x0800fd20 leaves this row for 0x0800fd5c, which does NOT begin with a push - it reads r0 (block+0x101, set at 0x0800fcde), ip (block+0x102, set at 0x0800fcfa), r5 (the scene header from 0x0800fb86) and this frame's [sp,#8] - and ends at 0x0800fe5e with the epilogue that unwinds exactly this prologue, so 0x0800fd5c is the continuation of this owner rather than a tail call, and both spans are registered here. That epilogue ends pop {r1}; bx r1 with N != 0, so r0 is the result, and the only value reaching it is the movs r0,#2 at 0x0800fe5c. Excluded (102 bytes): the 2-byte movs r0,r0 alignment filler at 0x0800fd22, the fourteen-word pool at 0x0800fd24 holding 0x00000400 (0x0800fcec), 0x00000200 (0x0800fd06), 0x0000c1ff (the DISPCNT mask, 0x0800fb4c), 0x08013784 (the twelve-byte scene table, 0x0800fb5e), 0x03000164 (the IWRAM-relocated block clear, 0x0800fb76), 0x00000128 (the resource-id bias, 0x0800fb80), 0x02010001 (0x0800fb8e), 0x0202c000 (0x0800fb9c), 0x02010000 (0x0800fba6 and 0x0800fc86), 0x0202d000 (0x0800fbb8), 0x0202de00 (0x0800fbce), 0x00000101 (0x0800fc24 and 0x0800fcde), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x0800fc38) and 0x0400000e (BG3CNT, 0x0800fd1c), and the eleven-word pool at 0x0800fe70 holding 0x0400000c (0x0800fd6a), 0x0400000a (0x0800fd7e), 0x00000128 (0x0800fdb8), 0x03001388 (0x0800fdca), 0x06004000 (0x0800fdf2), 0x06008000 (0x0800fe0c), 0x0600c000 (0x0800fe26), 0x02028000 (0x0800fe36), 0x0400004c (0x0800fe42), 0x08010001 (0x0800fe54) and 0x00000c85 (0x0800fe56). The second row ends 4-aligned at 0x0800fe70 with no filler. Every pool word is reached by ldr rN,[pc,#imm] from inside the ranges and none is branched to. The bl Func_080072f0 at 0x0800fb7a is the runtime _call_via_r3 thunk inside 0x080072e4..0x08007320, index 3, an indirect call through r3 holding the pooled 0x03000164. The mov ip,pc; bx r9 at 0x0800fc9c and 0x0800fcac are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec; the movs r0,r0 at 0x0800fc9a and 0x0800fcaa are inside the instruction stream, aligning the return address mov ip,pc captures so it lands past the bx, not padding. The mov sl,r3 at 0x0800fdd2 loads the pooled 0x03001388 into a register no later instruction reads, so it is dead. Nothing in the row is retained assembly. bun tools/main_xref.ts 0800fb38 reports FUNCTION (indirectly published callback) with calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x08009114, so there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x0800fb38",
+          "size": 490
+        },
+        {
+          "address": "0x0800fd5c",
+          "size": 276
+        }
+      ]
+    },
+    {
+      "entry": "0x08010000",
+      "evidence": "Single 528-byte function, 0x08010000..0x08010210. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and an 8-byte frame; one epilogue at 0x080101fe unwinding all of it and ending pop {r0}; bx r0, so the owner is void. Excluded (32 bytes): the eight-word pool at 0x08010210 holding 0x03001e70 (the map state pointer, loaded at 0x0801000e), 0xff880000 (the camera X bias, 0x08010026), 0xffa00000 (the camera Y bias, 0x0801002e), 0xff100000 (the X bound bias, 0x0801004a), 0xff600000 (the Y bound bias, 0x08010062), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x080100a6, 0x080100dc and 0x08010106), 0x0007ffff (the wrap-mask tail and the truncation bias, 0x0801013a, 0x08010152, 0x08010168 and 0x08010176) and 0x03001ad0 (the published scroll bases, 0x080101de). The code ends 4-aligned at 0x08010210 so there is no alignment filler. Every pool word is reached by ldr rN,[pc,#imm] from inside the range and none is branched to. The six mov ip,pc; bx r3 / bx r9 at 0x080100ac, 0x080100b8, 0x080100e4, 0x080100f0, 0x08010118 and 0x08010124 are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec; the movs r0,r0 at 0x080100e2 sits inside the instruction stream aligning the return address mov ip,pc captures so it lands past the bx, and the five already-aligned sites carry no nop. The cmp/bge/adds 0x0007ffff followed by asrs #19 at 0x08010164 and 0x08010172 is the truncating fixed-point-to-whole conversion at 19 fractional bits; the eors against 0x80000 and 0x100000 that follow are the bit-19 and bit-20 boundary tests. The strh pair at 0x080101e4 and 0x080101ea writes Data_03001ad0 + (3-index)*4 and +2, so layer 0 lands on the pair at +12 and layer 2 on the pair at +4 - the same six halfwords 0x08094544 reads as its scroll bases. Nothing in the row is retained assembly. bun tools/main_xref.ts 08010000 reports FUNCTION (called directly) with one caller at 0x0800feba, two Thumb pointers published at 0x0800fe94 and 0x080a00e8, and three word references at 0x0807c1d4, 0x083dd584 and 0x0841901c; the verdict is FUNCTION, not INTERIOR and not DATA.",
+      "executable_ranges": [
+        {
+          "address": "0x08010000",
+          "size": 528
+        }
+      ]
+    },
+    {
+      "entry": "0x08010230",
+      "evidence": "Single 456-byte function, 0x08010230..0x080103f6, prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 32-byte frame; one epilogue at 0x080103e6 unwinding all of it and ending pop {r0}; bx r0, so the owner is void. Excluded (44 bytes): the eleven-word pool at 0x080103f8 holding 0x03001e70 (context pointer, 0x0801023e), 0xffa00000 and 0xff880000 (the y and x view biases, 0x08010252 and 0x08010258), 0xff100000 and 0xff600000 (the x and y clamp adjustments, 0x0801026c and 0x08010288), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x080102c2), 0x0007ffff (the wrap mask and the truncating 16.19-to-tile bias, 0x080102ec, 0x08010308, 0x08010326 and 0x08010332), 0x06002800 (screen block base, 0x0801033a), 0x02010000 (map base, 0x08010382), 0x02020000 and 0x02020004 (the two quadrant tables, 0x0801038a and 0x080103a4). No alignment filler is needed - the pool begins immediately after the epilogue's last halfword - and every pool word is reached by ldr rN,[pc,#imm] from inside the range. The four mov ip,pc; bx r3 sequences at 0x080102c4 and 0x080102d4 are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec; every other call is a bl naming a ROM function and nothing in the row is retained assembly. bun tools/main_xref.ts 08010230 reports FUNCTION (called directly) with one caller at 0x0800feb6 and a published Thumb pointer at 0x08009124.",
+      "executable_ranges": [
+        {
+          "address": "0x08010230",
+          "size": 456
+        }
+      ]
+    },
+    {
+      "entry": "0x080111b4",
+      "evidence": "Single 520-byte function, 0x080111b4..0x080113bc. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 36-byte frame; one epilogue at 0x080113aa unwinding all of it and ending pop {r0}; bx r0, so the owner is void. Excluded (40 bytes): the ten-word pool at 0x080113bc holding 0x03001e80 (the camera state pointer, loaded at 0x080111c2, and walked back to 0x03001e6c by the subs #20 at 0x080111cc and to 0x03001e70 by the subs #16 at 0x080111d2), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x08011222 and 0x0801124e), 0x000fffff (the truncation bias, 0x0801126c and 0x08011278), 0x03001ce0 (the transfer block, 0x080112e0), 0x03000250 (the view publisher, 0x08011342), 0x03001af4 (the cached heading, 0x08011354), 0x0300013c (the ratio helper, 0x0801136c), 0x03001f60 (0x0801137e), 0x03001e40 (the page flag, 0x08011388) and 0x03001e50 (the renderer table, 0x08011390, used at +184). The code ends 4-aligned at 0x080113bc so there is no alignment filler. Every pool word is reached by ldr rN,[pc,#imm] from inside the range and none is branched to. The four mov ip,pc; bx r3 at 0x08011228, 0x08011234, 0x08011254 and 0x08011260 are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec; the movs r0,r0 at 0x08011232 and 0x0801125e sit inside the instruction stream aligning the return address mov ip,pc captures so it lands past the bx, and are not padding. The bl Func_080072f0 at 0x08011344 and 0x08011372 is the runtime _call_via_r3 thunk inside 0x080072e4..0x08007320, index 3, an indirect call through the pooled 0x03000250 and 0x0300013c respectively; the bl Func_080072f4 at 0x080113a6 is _call_via_r4, index 4, an indirect call through the renderer pointer at Data_03001e50+184. The cmp/bge/adds 0x000fffff followed by asrs #20 at 0x08011266 and 0x08011272 is the truncating fixed-point-to-whole conversion at 20 fractional bits; the eors against 0x100000 that follows is the bit-20 boundary test. The str r1,[sp,#12] at 0x08011300 writes back the advanced walker pointer, which no later instruction reads, so it is a dead store. Nothing in the row is retained assembly. bun tools/main_xref.ts 080111b4 reports FUNCTION (indirectly published callback) with calls=0 branches=0 word_refs=0 and two Thumb pointers, published at 0x0800916c and 0x08010d3c, so there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080111b4",
+          "size": 520
         }
       ]
     },
@@ -284,6 +324,24 @@
       ]
     },
     {
+      "entry": "0x08022a7c",
+      "evidence": "One 198-byte function, 0x08022a7c..0x08022b40, split into three executable ranges by two interior literal pools. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 4-byte frame; the single epilogue at 0x08022b30 unwinds all of it and ends pop {r0}; bx r0, so the owner is void. Excluded (30 bytes): the four-word pool at 0x08022af4 holding 0x000001ff (0x08022ace), 0x40000400 (0x08022aba), 0xfffffe00 (0x08022ad8) and 0x080313a4 (0x08022af0); the 2-byte movs r0,r0 alignment filler at 0x08022b22; and the three-word pool at 0x08022b24 holding 0x000003ff (0x08022b0a), 0x08031424 (0x08022b04) and 0xfffffc00 (0x08022b10). Every pool word is reached by ldr rN,[pc,#imm] from inside the ranges and none is branched to. Every call is a bl naming a ROM function; there are no indirect calls and no relocated helpers, and nothing in the row is retained assembly. r9 is saved and restored but never written, and is read at 0x08022a8e and 0x08022ac6 as the base of the view pointer at r9-4 - the frame-balanced live-in of resource_3cd:04b0, converted as an uninitialised local. bun tools/main_xref.ts 08022a7c reports FUNCTION (called directly) with six callers, the first at 0x08022ff4.",
+      "executable_ranges": [
+        {
+          "address": "0x08022a7c",
+          "size": 120
+        },
+        {
+          "address": "0x08022b04",
+          "size": 30
+        },
+        {
+          "address": "0x08022b30",
+          "size": 18
+        }
+      ]
+    },
+    {
       "entry": "0x08026080",
       "evidence": "One function with its only prologue at 0x08026080 and its only epilogue at 0x08026e72. Direct branches carry the live 324-byte stack frame and r8-r11 state from the head through 0x0802691c into 0x08026b44. The 66-byte gap at 0x080268da, the 2-byte alignment at 0x08026b06, and the 60-byte literal pool at 0x08026b08 are excluded.",
       "executable_ranges": [
@@ -302,6 +360,16 @@
       ]
     },
     {
+      "entry": "0x0808ae74",
+      "evidence": "Single 410-byte function, 0x0808ae74..0x0808b00c, prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and an 8-byte frame; one epilogue at 0x0808affc unwinding all of it and ending pop {r1}; bx r1, so r0 is the result. Excluded (30 bytes): the 2-byte movs r0,r0 alignment filler at 0x0808b00e and the seven-word pool at 0x0808b010 holding 0x03001ebc (context pointer, 0x0808ae88), 0x0000015f and 0x00000161 (the flag ids 351 and 353, 0x0808ae8c and 0x0808aea6), 0x02000240 (state block, 0x0808aeba, 0x0808af18, 0x0808af84), 0x0809c610 (the 28-byte encounter table, 0x0808aed2), 0x0300013c (the IWRAM ratio helper, 0x0808af74) and 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x0808af7a). The bl Func_080072f0 at 0x0808af76 is the runtime _call_via_r3 thunk inside 0x080072e4..0x08007320, an indirect call through the pooled 0x0300013c; the mov ip,pc; bx r3 at 0x0808af80 is an ordinary indirect call to the pooled 0x03000118 whose landing site 0x0808af84 consumes r0 in the same frame, as recorded for 0x0800ebec. r9 is saved and restored but is not written on the path that enters the roll from 0x0808ae98, the frame-balanced live-in of resource_3cd:04b0, converted as an uninitialised local. Nothing in the row is retained assembly. bun tools/main_xref.ts 0808ae74 reports FUNCTION (called directly) with callers at 0x0808b03a and 0x0808b052.",
+      "executable_ranges": [
+        {
+          "address": "0x0808ae74",
+          "size": 410
+        }
+      ]
+    },
+    {
       "entry": "0x0808b320",
       "evidence": "The manifest kind implicit_callee_saved_input_module records that r6 is read before it is written on the paths that skip the flagged-record store. It is an uninitialised local, not a hidden input: the byte-exact source src/08091eb0.c already calls this owner as Func_0808b320(s32, s32), fixing the two-argument interface, and the owner does not push r4 or otherwise preserve a caller context. The remaining structure is an ordinary zero-terminated 16-bit table scan. Excluded from the 120-byte manifest row: 2 bytes of alignment at 0x0808b38a and the 12-byte literal pool at 0x0808b38c (0x0809e488, 0x00000fff, 0x02000240). Four direct callers: 0x0808aff6, 0x0808dbee, 0x08091efc, 0x08091f78.",
       "executable_ranges": [
@@ -312,12 +380,76 @@
       ]
     },
     {
+      "entry": "0x0808b3ec",
+      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), 608-byte keep_structured_asm row holding a single function: prologue push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill and sub sp,#8 at 0x0808b3ec, single epilogue add sp,#8/pop.../bx r0 at 0x0808b624-0x0808b636, no branch out of the row and no inbound branch from outside it. bun tools/main_xref.ts 0808b3ec: FUNCTION (called directly), four call sites (0x0808b6f0, 0x0808b6f8, 0x0808b9e4, 0x080917b8; two of the four are inside asm/0808b674.s, the neighbour whose own 0x0808b7b8 fragment is already registered under semantic/main/0808b674.c) plus one published Thumb pointer at 0x0808a3f4. The one mov ip,pc / bx r3 sequence (0x0808b5dc) is an ordinary indirect call through the pooled 0x03000118, the same IWRAM-relocated ARM multiply already recorded as an opaque call for 0x0800447c/0x08004ab0/0x0800c62c, not retained assembly. Excluded (22 bytes): the 2-byte movs r0,r0 alignment filler at 0x0808b636 and the five-word pool at 0x0808b638 holding 0x03001ebc, 0x00002705, 0x00000109, 0x0000ffff and 0x03000118. Semantic-only: iterates a caller array of 24-byte publish-request records against a struct MotionObject-typed slot table (include/motion_object.h, confirmed via six exact field-offset hits during this trace), not yet checked byte-exact.",
+      "executable_ranges": [
+        {
+          "address": "0x0808b3ec",
+          "size": 586
+        }
+      ]
+    },
+    {
+      "entry": "0x0808b674",
+      "evidence": "Core-drive census flagged 0x0808b7b8 (108 bytes, kind parent_function_fragment, retention merge_with_owner) as having no C owner, but its already-tracked semantic/main/0808b674.c fully covers it -- this is a registration gap, not missing work. asm/0808b674.s (FunctionHead_0808b674, kind multi_region_function_head, retention merge_with_continuations, 324 bytes) is the head: builds a spawn descriptor, then two `beq`/`bne sub_0808b7b8` guards fork away to the fragment on the FLOOR-ADJUSTMENT-SKIPPED path (parameters->use_floor_adjustment == 0, or either of the two 0xfd tile checks fails), while the taken-adjustment path falls through past both branches. asm/0808b7b8.s (Fragment_0808b7b8, 108 bytes, `direct_branch_without_call,live_parent_stack_and_high_register_state`) is reached only from those two guards and is the shared tail both arms rejoin at: it is the code AFTER the fragment's own guard header would have executed had the branch not skipped it, ending in the same epilogue the head's frame expects (pop {r3,r5}/mov r8,r3/mov r10,r5/pop{r5,r6,r7}/pop{r0}/bx r0). semantic/main/0808b674.c's existing `if (parameters->use_floor_adjustment != 0 && ...) { ... } else { parameters->floor_adjusted = 0; }` is exactly this fork already written as one C if/else rather than two asm regions -- the else arm and the tail statements after the if/else (spawned->display_y, Func_080090e0, the scene_mode==3 animation-flag block, the two workspace/scene writes at the end) are Fragment_0808b7b8's logic, confirmed line-by-line: the `scene->scene_mode == 3` check matches the fragment's `cmp r3,#3 / bne .L_0808b7fc`, `animation[5]=15; animation[6]=9` matches the fragment's two strb writes to r0+5/r0+6 after `bl sub_08009048`, and the closing `**(u8***)0x03001e70 = spawned+8; scene->spawned_object = spawned;` matches the fragment's final pointer stores through the pooled 0x03001ebc-relative workspace and 0x03001e70. Combined span: head (324 bytes, 0x0808b674-0x0808b7b8) + fragment (108 bytes, 0x0808b7b8-0x0808b7c4) = 432 bytes total; the head's trailing `b sub_0808b7c4` on the taken-adjustment path is a separate continuation not part of this owner and not touched here.",
+      "executable_ranges": [
+        {
+          "address": "0x0808b674",
+          "size": 324
+        },
+        {
+          "address": "0x0808b7b8",
+          "size": 108
+        }
+      ]
+    },
+    {
+      "entry": "0x0808f32c",
+      "evidence": "Single 340-byte function, 0x0808f32c..0x0808f480. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and an 8-byte frame; one epilogue at 0x0808f46e unwinding all of it and ending pop {r0}; bx r0, so the owner is void. Excluded (24 bytes): the six-word pool at 0x0808f480 holding 0x03001e70 (map state pointer, loaded at 0x0808f33a), 0x02000240 (party state block, 0x0808f342, indexed +500 = +0x1f4 for the leader slot), 0x02008000 (runtime services, 0x0808f3ae, field +0x24 read as the spawn provider), 0xfff00000 (the flag-class mask, 0x0808f3dc), 0x0809e8a0 (the script passed to Func_08009098, 0x0808f438) and 0x0808f28d (the Thumb pointer to Func_0808f28c stored to object+0x6c, 0x0808f446). The code ends 4-aligned at 0x0808f480 so there is no movs r0,r0 alignment filler. Every pool word is reached by ldr rN,[pc,#imm] from inside the range and none is branched to. The bl Func_080072e4 at 0x0808f3b2 is the runtime _call_via_r0 thunk inside 0x080072e4..0x08007320, index 0, an indirect call through r0 holding the provider pointer, the same construction already recorded for 0x0808e9c0, whose sequence walk this owner mirrors. The mov r0,sl at 0x0808f36a supplies the record id to the bl Func_0808ed4c at 0x0808f36e even though the byte-exact src/0808ed4c.c takes no parameter; the call site is reconstructed as it stands. The two asrs #20 at 0x0808f354 and 0x0808f35a carry no rounding bias, so they are plain arithmetic shifts, not the fixed-point-to-whole conversion. Nothing in the row is retained assembly. bun tools/main_xref.ts 0808f32c reports FUNCTION (called directly) with one caller at 0x08098460.",
+      "executable_ranges": [
+        {
+          "address": "0x0808f32c",
+          "size": 340
+        }
+      ]
+    },
+    {
+      "entry": "0x080930bc",
+      "evidence": "Single 152-byte function, 0x080930bc..0x08093152, prologue push {r5,r6,r7,lr} plus the r8 save and no stack frame; one epilogue at 0x0809314a ending pop {r0}; bx r0, so the owner is void. Excluded (8 bytes): the two-word pool at 0x08093154 holding 0x03001ebc (the context pointer, loaded at 0x080930c2) and 0x00000fff (the twelve-bit message mask, loaded at 0x080930c8). No alignment filler is needed - the pool begins immediately after the epilogue's last halfword. Every call is a bl naming a ROM function; there are no indirect calls and no relocated helpers, and nothing in the row is retained assembly. The placement reads r6 and r7 at 0x080930e8 and 0x080930ea; both are saved by the prologue push and neither is written on any path, the frame-balanced live-in of resource_3cd:04b0, converted as uninitialised locals. bun tools/main_xref.ts 080930bc reports FUNCTION (indirectly published callback) with no inbound call and a published Thumb pointer at 0x0808a1a4, so the caller is unknown.",
+      "executable_ranges": [
+        {
+          "address": "0x080930bc",
+          "size": 152
+        }
+      ]
+    },
+    {
       "entry": "0x080935d4",
       "evidence": "One 204-byte keep_structured_asm row holding a single function: prologue push {r5,r6,r7,lr} plus the sl/r8 saves at 0x080935d4, single epilogue at 0x0809367c reached by three internal early-outs and by fall-through, no inbound branch from outside the row. The mov ip,pc; bx r4 at 0x08093650 is an ordinary indirect call through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to 0x08093654, the halfword after the bx, and that landing site stores r0 as the call's result into the progress block within the same frame - the reading recorded for 0x0800ebec, not retained assembly. The bl Func_080022ec is the runtime veneer to the IWRAM signed divide at 0x03000380. Excluded (24 bytes): the six-word pool at 0x08093688 (0x03001e70, 0x00000ccc, 0x0000035a, 0x03000118, 0x03001af4, 0x080935d5); the code ends flush at 0x08093688 with no alignment filler, and the last word is this function's own Thumb pointer, handed to Func_08004278. r4 is written without being saved, which is ordinary for this image's call-used-r4 family and is not the 0x08002dd8 shape: it is written before every use, never read live-in. Reached only as a published Thumb pointer, at 0x0809369c and 0x08093708; no direct caller.",
       "executable_ranges": [
         {
           "address": "0x080935d4",
           "size": 180
+        }
+      ]
+    },
+    {
+      "entry": "0x08093c00",
+      "evidence": "Single 530-byte function, 0x08093c00..0x08093e10, prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 20-byte frame; one epilogue at 0x08093e00 unwinding all of it and ending pop {r1}; bx r1, so r0 is the result. Excluded (22 bytes): the 2-byte movs r0,r0 alignment filler at 0x08093e12 and the five-word pool at 0x08093e14 holding 0x02000240 (party state block, loaded at 0x08093c0e and 0x08093d12), 0x03001ebc (context pointer, 0x08093c40), 0xfff00000 (the whole-tile mask, 0x08093c4e), 0xffff0000 (the fall step, 0x08093d56) and 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x08093dc0). Every pool word is reached by ldr rN,[pc,#imm] from inside the range and none is branched to. The mov ip,pc; bx r4 at 0x08093dc8 is an ordinary indirect call to the pooled 0x03000118 whose landing site 0x08093dcc consumes r0 in the same frame, as recorded for 0x0800ebec; every other call is a bl naming a ROM function, and nothing in the row is retained assembly. The bl Func_08009080 at 0x08093d52 takes r0 from the Func_08093af8 result that reached 0x08093d50, on both arms of the 207/205 test, so the shared tail is written once with that value rather than duplicated per arm. bun tools/main_xref.ts 08093c00 reports FUNCTION (called directly) with one caller at 0x0808d94c and a published Thumb pointer at 0x0808a2a4.",
+      "executable_ranges": [
+        {
+          "address": "0x08093c00",
+          "size": 530
+        }
+      ]
+    },
+    {
+      "entry": "0x08094544",
+      "evidence": "Single 458-byte function, 0x08094544..0x0809470e. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 24-byte frame; one epilogue at 0x080946fc unwinding all of it and ending pop {r0}; bx r0, so the owner is void. Excluded (34 bytes): the 2-byte movs r0,r0 alignment filler at 0x0809470e and the eight-word pool at 0x08094710 holding 0x03001ed8 (the scroll-table block pointer, loaded at 0x08094552), 0x03001ad0 (the six base halfwords, 0x08094556), 0x00000f02 (the frame counter offset, 0x08094596, 0x08094648 and 0x080946e4), 0x00000f18 (the low-pass amplitude offset, 0x080945ce), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x080945e0 and 0x0809469a), 0x0809ed84 (the 256-entry signed wave table, 0x080945f6 and 0x080946b0), 0x00000f14 (the high-pass step offset, 0x0809463c) and 0x00000f1c (the high-pass amplitude offset, 0x08094686). Every pool word is reached by ldr rN,[pc,#imm] from inside the range and none is branched to. The movs r0,r0 at 0x080945fe is NOT filler - it sits between mov r1,r8 and mov ip,pc inside the instruction stream, aligning the return address that mov ip,pc captures so it lands past the bx sl; the second call site at 0x080946b8 already has that alignment and carries no nop. The mov ip,pc; bx sl at 0x08094600 and 0x080946b8 are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec. The cmp r0,#0; bge; adds r0,#255 at 0x08094604 and 0x080946bc followed by lsls #8; lsrs #16 is the truncating divide by 256 of a signed product kept to sixteen bits, the 8-bit form of the 0xffff/>>16 idiom. Nothing in the row is retained assembly. bun tools/main_xref.ts 08094544 reports FUNCTION (indirectly published callback) with calls=0 branches=0 word_refs=0 and two Thumb pointers, published at 0x080947dc and 0x08094810, so there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x08094544",
+          "size": 458
         }
       ]
     },
@@ -412,12 +544,36 @@
       ]
     },
     {
+      "entry": "0x0809b8f4",
+      "evidence": "Single 306-byte function, 0x0809b8f4..0x0809ba24, prologue push {r5,r6,r7,lr} with a 4-byte frame and one epilogue at 0x0809ba1e ending pop {r0}; bx r0, so the owner is void. Excluded (14 bytes): the 2-byte movs r0,r0 alignment filler at 0x0809ba26 and the three-word pool at 0x0809ba28 holding 0x0000ffff (the truncating 16.16-to-whole bias, loaded at 0x0809b924 and 0x0809b930), 0x030001d8 (the IWRAM square root, loaded at 0x0809b944) and 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, loaded at 0x0809b954 and 0x0809b9fc). The bl Func_080072f0 at 0x0809b946 is the runtime _call_via_r3 thunk inside 0x080072e4..0x08007320, so it is an indirect call through the pooled 0x030001d8; the four mov ip,pc; bx rN sequences at 0x0809b95c, 0x0809b968, 0x0809ba00 and 0x0809ba14 are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec. Nothing in the row is retained assembly. bun tools/main_xref.ts 0809b8f4 reports FUNCTION (called directly) with one caller at 0x0809b84e.",
+      "executable_ranges": [
+        {
+          "address": "0x0809b8f4",
+          "size": 306
+        }
+      ]
+    },
+    {
       "entry": "0x080a22f4",
       "evidence": "Single 24-byte leaf plus its 24-byte pool, ending on bx lr, with three direct callers (0x080a47d6, 0x080a4846, 0x080a9e36). The manifest kind deliberate_dma_kick_macro names the two stmia r3!, {r0, r1, r2} stores to 0x040000d4; that is the DMA3 source/destination/control triple, already spelled as a volatile register struct in semantic/main/0800300c.c and semantic/main/0808e9c0.c, so the row has an ordinary C form. The subs r3, #12 after each stmia only rewinds the writeback pointer and has no visible effect. Pool walked from the four pc-relative loads: 0x040000d4, 0x05000200, 0x050001c0, 0x80000010, 0x050001e8, 0x80000001.",
       "executable_ranges": [
         {
           "address": "0x080a22f4",
           "size": 48
+        }
+      ]
+    },
+    {
+      "entry": "0x080b5368",
+      "evidence": "One 448-byte function, 0x080b5368..0x080b552e, split into two executable ranges by the interior literal pool at 0x080b543c. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 44-byte frame; the single epilogue at 0x080b551c unwinds all of it and ends pop {r1}; bx r1, so r0 - the flag held at sp+20 - is the result. Excluded (12 bytes): the two-word pool at 0x080b543c holding 0x00000000 (the zero halfword written by the clear loop, loaded at 0x080b540a) and 0x080c3f34 (the roster base, loaded at 0x080b53d2 and 0x080b541e), and the one-word pool at 0x080b5530 holding 0x080c3f34 again (loaded at 0x080b545a, 0x080b54b8 and 0x080b54f2). No alignment filler is needed: both pools are already word aligned and code resumes at 0x080b5444 immediately after the first. Every pool word is reached by ldr rN,[pc,#imm] from inside the ranges and none is branched to. No indirect calls and no relocated helpers: every call is a bl naming a ROM function, and nothing in the row is retained assembly. bun tools/main_xref.ts 080b5368 reports FUNCTION (called directly) with one caller at 0x080b578e and a published Thumb pointer at 0x080b5114.",
+      "executable_ranges": [
+        {
+          "address": "0x080b5368",
+          "size": 212
+        },
+        {
+          "address": "0x080b5444",
+          "size": 236
         }
       ]
     },
@@ -494,6 +650,16 @@
       ]
     },
     {
+      "entry": "0x080be18c",
+      "evidence": "Single 482-byte function, 0x080be18c..0x080be36e. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 28-byte frame; one epilogue at 0x080be35c unwinding all of it and ending pop {r1}; bx r1 with N != 0, so r0 is the result. Excluded (10 bytes): the 2-byte movs r0,r0 alignment filler at 0x080be36e and the two-word pool at 0x080be370 holding 0x00000816 (the message id passed to Func_080151c8, loaded at 0x080be33c) and 0x0000012b (the flag offset, 0x080be348). Both pool words are reached by ldr rN,[pc,#imm] from inside the range and neither is branched to. The mov r1,r9 at 0x080be19e reads r9 before any path writes it; r9 is saved and restored by the prologue, so this is the frame-balanced live-in already recorded for 0x080e7338 - a close without its open - and it converts as an uninitialised local rather than a skip. Every access in the owner is at a negative offset from it: base-4 the selection block, base-8 the single-target value, base-12 the candidate list, base-16 the caster state, base-20 the flag block. The str r1,[r3,#0] at 0x080be1a0 parks the same value at [sp,#24], which no later instruction reads, so it is a dead store. The kind-0 arm at 0x080be1dc and the kind-4 arm at 0x080be1f4 store the same four values (0 to +16, 1 to +1 and +30, the base-8 value to +2) and are reconstructed as one case block. Only the empty-list path at 0x080be358 sets r0, to -1; the two kind arms and the non-empty path reach the epilogue with r0 holding the last computed value, so the result is written as an uninitialised local assigned on that one path. Nothing in the row is retained assembly. bun tools/main_xref.ts 080be18c reports FUNCTION (called directly) with six callers: 0x080be77c, 0x080be7e6, 0x080be90e, 0x080be992, 0x080bec96 and 0x080bed62.",
+      "executable_ranges": [
+        {
+          "address": "0x080be18c",
+          "size": 482
+        }
+      ]
+    },
+    {
       "entry": "0x080be378",
       "evidence": "One function with its only prologue at 0x080be378 and its only epilogue at 0x080bf1d4/0x080bf1d6. Direct branches and ten out-of-range bl edges carry the live frame across the rows. The literal pools at 0x080bea9c (108 bytes), 0x080bef58 (48 bytes) and 0x080bf1e8 (32 bytes) are excluded; true executable size is 3,540 bytes.",
       "executable_ranges": [
@@ -512,6 +678,54 @@
         {
           "address": "0x080bef88",
           "size": 608
+        }
+      ]
+    },
+    {
+      "entry": "0x080c0a24",
+      "evidence": "One 448-byte function, 0x080c0a24..0x080c0be2, split into three executable ranges by two interior literal pools. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 16-byte frame; the single epilogue at 0x080c0bd2 unwinds all of it and ends pop {r0}; bx r0, so the owner is void. Excluded (52 bytes): the 2-byte movs r0,r0 alignment fillers at 0x080c0b6a and 0x080c0bbe, the ten-word pool at 0x080c0b6c holding 0x00003f8e (0x080c0b3e), 0x0000478a (0x080c0b58), 0x03001f00 (0x080c0a36), 0x03001ad0 (0x080c0a92), 0x0300013c (0x080c0ab6 and 0x080c0b26), 0xffff0000 (0x080c0ad2), 0x03000118 (0x080c0ada), 0x00007fff (0x080c0b00), 0xfffff000 (0x080c0b12) and 0x0000016b (0x080c0b32), and the two-word pool at 0x080c0bc0 holding 0x0000478e (0x080c0b9a) and 0x00003f8e (0x080c0bb0). Every one is reached by ldr rN,[pc,#imm] from inside the ranges and none is branched to. The bl Func_080072ec at 0x080c0aba and 0x080c0b2a is the runtime _call_via_r2 thunk inside 0x080072e4..0x08007320, an indirect call through the pooled 0x0300013c; the four mov ip,pc; bx r4 sequences at 0x080c0ae0, 0x080c0ae8, 0x080c0af4 and 0x080c0afc are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec. Nothing in the row is retained assembly. bun tools/main_xref.ts 080c0a24 reports FUNCTION (called directly) with seven callers, the first at 0x080b593e.",
+      "executable_ranges": [
+        {
+          "address": "0x080c0a24",
+          "size": 326
+        },
+        {
+          "address": "0x080c0b94",
+          "size": 42
+        },
+        {
+          "address": "0x080c0bc8",
+          "size": 28
+        }
+      ]
+    },
+    {
+      "entry": "0x080c0be4",
+      "evidence": "Single 248-byte function, 0x080c0be4..0x080c0cdc, the sibling of 0x080c0cec: the same body apart from the missing phase argument and the transform third component. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 40-byte frame; one epilogue at 0x080c0cca unwinding all of it and ending pop {r0}; bx r0, so the owner is void. Excluded (16 bytes): the four-word pool at 0x080c0cdc holding 0x03001e80 (runtime block, loaded at 0x080c0bf2), 0x0300013c (the ratio helper, 0x080c0c1c), 0x03000250 (the projection helper, 0x080c0c70) and 0x03001ce0 (the transfer block, 0x080c0c76). The code ends 4-aligned at 0x080c0cdc, so unlike 0x080c0cec this row carries no movs r0,r0 alignment filler. Every pool word is reached by ldr rN,[pc,#imm] from inside the range and none is branched to. The bl Func_08007310 at 0x080c0c36 and 0x080c0cba is the runtime _call_via_fp thunk inside 0x080072e4..0x08007320, index (0x08007310-0x080072e4)/4 = 11, an indirect call through fp holding the pooled 0x0300013c ratio helper; the bl Func_080072f0 at 0x080c0c72 is _call_via_r3, index 3, an indirect call through the pooled 0x03000250. The lsls r0,r4,#16 at 0x080c0c02 reads r4, which the prologue never saves and no path writes, so it converts as an uninitialised local rather than a skip. Nothing in the row is retained assembly. bun tools/main_xref.ts 080c0be4 reports NO INBOUND REFERENCE (calls=0 branches=0 word_refs=0 thumb_pointers=0), so the caller is unknown.",
+      "executable_ranges": [
+        {
+          "address": "0x080c0be4",
+          "size": 248
+        }
+      ]
+    },
+    {
+      "entry": "0x080c11ec",
+      "evidence": "Single 556-byte function, 0x080c11ec..0x080c1418. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 16-byte frame; one epilogue at 0x080c1406 unwinding all of it and ending pop {r1}; bx r1 with N != 0, so r0 is the result. Excluded (32 bytes): the eight-word pool at 0x080c1418 holding 0x03001e50 (the scene table, loaded at 0x080c11fa and 0x080c1392, used at +156 the scene, +160 the surface, +184 and +188 the two blit entry points), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x080c1226 and 0x080c1278), 0x00000fff (the retirement threshold, 0x080c125a), 0x0300013c (the ratio helper, 0x080c1268), 0x000013bc (the frame counter offset, 0x080c12b4 and 0x080c13f2), 0x080c3620 (the particle size table, 0x080c1368), 0x080c3604 (the particle sprite offsets, 0x080c136a) and 0x080c3628 (the ring sprite offsets, 0x080c13ce). The code ends 4-aligned at 0x080c1418 so there is no alignment filler, and the pool ends flush at 0x080c1438, the entry 0x080c1470's pooled 0x080c1439 names. Every pool word is reached by ldr rN,[pc,#imm] from inside the range and none is branched to. The bl Func_080072f0 at 0x080c126c is the runtime _call_via_r3 thunk inside 0x080072e4..0x08007320, index 3, an indirect call through the pooled 0x0300013c, which returns its second argument over its first, so 0x10000 over the measured length. The bl Func_08007310 at 0x080c1380 and 0x080c13e6 is _call_via_fp, index (0x08007310-0x080072e4)/4 = 11, an indirect call through the blit pointer held in fp. The four mov ip,pc; bx r6 / bx r9 at 0x080c1288, 0x080c1290, 0x080c12dc and 0x080c12ec are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec; the movs r0,r0 at 0x080c12da and 0x080c12ea sits inside the instruction stream aligning the return address mov ip,pc captures so it lands past the bx. The cmp/bge/adds #7 followed by asrs #3 at 0x080c13ba is the truncating divide by eight of a ring's frame counter. No path sets r0 deliberately before the epilogue - the last write is the movs r0,#32 of a ring blit or the 3 - frame/8 of the ring test - so the result is written as an uninitialised local. The particle and ring layouts match those 0x080c1470 seeds: 28-byte particles at scene+4544 as a three-component position, a three-component velocity and a life, and 20-byte rings at scene+4992 as position, velocity and frame counter. Nothing in the row is retained assembly. bun tools/main_xref.ts 080c11ec reports FUNCTION (indirectly published callback) with calls=0 branches=0 word_refs=0 and two Thumb pointers, published at 0x080c16c8 and 0x080c171c, so there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080c11ec",
+          "size": 556
+        }
+      ]
+    },
+    {
+      "entry": "0x080c1470",
+      "evidence": "Single 538-byte function, 0x080c1470..0x080c168a. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 36-byte frame; one epilogue at 0x080c1678 unwinding all of it and ending pop {r1}; bx r1 with N != 0, so r0 is the result, and the value reaching it is the second Func_080041d8 return. Excluded (70 bytes): the 2-byte movs r0,r0 alignment filler at 0x080c168a and the seventeen-word pool at 0x080c168c holding 0x03001f00 (runtime block pointer, loaded at 0x080c1482), 0x000013d0 (the scene allocation size, 0x080c148a), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x080c149e and 0x080c1548), 0x00005555 (the ring angle step, 0x080c1592), 0x000013bc (0x080c15a8), 0x000013cc (0x080c15b6), 0x03001e50 (the surface table, 0x080c15bc, used at +160), 0x03000164 (the IWRAM-relocated block clear, 0x080c15c6), 0x000000c9 (0x080c15cc), 0x03001388 (the IWRAM-relocated palette upload, 0x080c15da), 0x000000c8 (0x080c1606), 0x000000ca (0x080c160e), 0x000000cb (0x080c1612), 0x040000d4 (DMA3, 0x080c161c), 0x84000020 (the transfer control, 0x080c1622), 0x080c11ed (the Thumb pointer to Func_080c11ec, 0x080c166a) and 0x080c1439 (the Thumb pointer to 0x080c1438, 0x080c1672). Every pool word is reached by ldr rN,[pc,#imm] from inside the range and none is branched to. The six mov ip,pc; bx sl / bx r6 at 0x080c14c8, 0x080c14d8, 0x080c155c, 0x080c156c, 0x080c157c and 0x080c158c are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec; the movs r0,r0 at 0x080c14d6, 0x080c155a and 0x080c156a sit inside the instruction stream aligning the return address mov ip,pc captures so it lands past the bx, and the already-aligned sites carry no nop. The bl Func_080072f0 at 0x080c15c8 and 0x080c15e2 is the runtime _call_via_r3 thunk inside 0x080072e4..0x08007320, index 3, an indirect call through the pooled 0x03000164 and 0x03001388 respectively. There is ONE stmia r3!,{r0,r1,r2}, at 0x080c1624, writing the three DMA3 registers through the pooled 0x040000d4; the subs/adds walk that follows steps the same pointer back to 0x04000028 and forward over BG2X, BG2Y and the four BG2 affine halfwords, so it is register addressing, not further transfers. Nothing in the row is retained assembly. bun tools/main_xref.ts 080c1470 reports FUNCTION (called directly) with one caller at 0x080c1824.",
+      "executable_ranges": [
+        {
+          "address": "0x080c1470",
+          "size": 538
         }
       ]
     },
@@ -756,6 +970,16 @@
       ]
     },
     {
+      "entry": "0x080e7338",
+      "evidence": "Single 102-byte function, 0x080e7338..0x080e739c, no literal pool and no alignment filler: nothing follows the epilogue in the row, so no words are excluded. Prologue push {r5,r6,r7,lr} plus the r9 save through r7 and a 4-byte frame; the epilogue at 0x080e7392 unwinds that frame and ends pop {r0}; bx r0, so the owner is void. r9 is saved and restored but never written, and is read exactly once at 0x080e7344 as the base of the pointer at r9-136 \u2014 the frame-balanced live-in already recorded for resource_3cd:04b0, converted as an uninitialised local rather than skipped. The slot array is 16 entries of 28 bytes at *(base-136) + 0x7400 with the free marker -1 at +24; the two str-of-zero instructions at 0x080e735c and 0x080e738a are distinct and both fall into the shared store tail at 0x080e738c, written as a goto rather than duplicated. bun tools/main_xref.ts 080e7338 reports FUNCTION (called directly) with one caller at 0x080e7c0c.",
+      "executable_ranges": [
+        {
+          "address": "0x080e7338",
+          "size": 102
+        }
+      ]
+    },
+    {
       "entry": "0x080e73a0",
       "evidence": "Single 98-byte body, no pool (every constant is built with movs/lsls), ending pop {r0}; bx r0, so the owner is void. No direct call, branch or pool word in the image names this address, so the caller is unknown rather than indirect. Manifest kind hidden_register_context_module is accurate: the table base is read once as *(r9 - 136) and r9 is saved and restored around the body, so the owner is frame-balanced and self-contained and the context is spelled as an uninitialised local, per the HANDOVER rule for a close without its open. The status store is duplicated in both arms and the owner/payload stores are a shared tail reached by goto, matching the two-arm structure exactly.",
       "executable_ranges": [
@@ -854,6 +1078,16 @@
       ]
     },
     {
+      "entry": "0x080f9a80",
+      "evidence": "Core-drive census row (kind nonstandard_thumb_call_module, retention keep_structured_asm, manifest evidence tags manual_return_address_preserved_in_ip,direct_bl_clobbers_lr,no_lr_stack_save,approved_compiler_call_prologue_mismatch,byte_exact_reconstruction). The tag is a PROCEDURAL exclusion (this shape does not match the compiler's own prologue-emission pattern, so the automatic c_candidate walk skips it) not a cannot-express contract -- unlike 0800070c's approved_compiler_cannot_express_contract tag, which is a genuine hard exclusion. Admitted per Vale's 2026-07-31 ruling that a keep_structured_asm label alone is not disqualifying; body read confirms an ordinary leaf-calling-leaf shape with no register trick that C cannot reproduce behaviourally (the mov ip,lr / bx ip dodge is an optimisation a semantic draft need not match byte-for-byte). Fourteen-plus already-registered sound-command-handler entries elsewhere in this file (0x080f9ac0, 0x080f9ae0, 0x080f9afc, 0x080f9b40, 0x080f9b4c, 0x080f9b60, 0x080f9ba4, 0x080f9bb8, 0x080f9bcc, 0x080f9be0, 0x080f9bf4, 0x080f9c00, 0x080f9c18, 0x080f9c2c) each independently describe calling into 'the retained 0x080f9a80 row' as an un-owned dependency; those descriptions remain accurate about THEIR OWN bytes regardless of whether this row now also has its own C form, and this entry does not contradict or supersede them. asm/080f9a80.s packs four functions sharing tails (its own comment: '080f9a98 and 080f9a9a share a tail, keep as one source unit'): Func_080f9a80 (copies 36 words from the fixed table Data_080fb7a0, each routed through the shared validator with the table element's own address as the candidate), Func_080f9a98 (reads a byte at its pointer argument, then validates), Func_080f9a9a (the validator itself, two arguments), and Func_080f9ab4 (reads-and-advances a byte cursor at object+64, reached by a bare tail branch into Func_080f9a9a). The validator's branch shape is transcribed literally rather than algebraically simplified, even though two of its arms are reachable only in combination (documented in semantic/main/080f9a80.c's own header). Span: 64 bytes, matching the census row exactly, no literal pool.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9a80",
+          "size": 64
+        }
+      ]
+    },
+    {
       "entry": "0x080f9ac0",
       "evidence": "One 32-byte keep_structured_asm row holding a single function: push {lr} at 0x080f9ac0, one epilogue pop {r0}; bx r0 at 0x080f9adc/0x080f9ade, and no branch inside the row. Nothing is excluded: 32 bytes of code, no pool word and no alignment filler, and the next row starts flush at 0x080f9ae0. Per the epilogue rule pop {r0}; bx r0 makes this void. The one bl at 0x080f9ad2 targets Func_080f9a98 inside the retained 0x080f9a80 row: that entry does ldrb r3,[r2,#0] and falls into the 0x080f9a9a source-address check, so it reads the byte at the position still held in r2 and screens the position, returning 0 for a stream pointer below 0x02000000 and the byte unchanged otherwise. r0 carries the partially assembled destination across that call and survives because 0x080f9a9a saves and restores r0. The three raw ldrb from [r2,#1], [r2,#2] and [r2,#3] together with the checked low byte assemble a little-endian 32-bit pointer that is stored over track+0x40, replacing rather than advancing the stream position. bun tools/main_xref.ts 080f9ac0 reports one inbound branch, from 0x080f9af6, the b.n at the end of the 0x080f9ae0 row: that handler executes no push, so it reaches this entry with its own return address still in lr and the push {lr} here saves it, making the branch an ordinary tail call rather than a shared-frame continuation. It also reports one Thumb pointer, published at 0x080fb7a4 in the command handler table that begins at 0x080fb7a0. There is no direct call site.",
       "executable_ranges": [
@@ -884,6 +1118,16 @@
       ]
     },
     {
+      "entry": "0x080f9b10",
+      "evidence": "Core-drive census row (kind shared_stack_continuation_module, admitted per Vale's 2026-07-31 ruling). Reached only as a normal function entry; internally, on two arms it tail-branches into the interior label 0x080f9ac2 of the already-registered 0x080f9ac0 (that entry's own comment already documents the same shared-tail shape for a different caller, 0x080f9ae0), modelled here as an ordinary call to Func_080f9ac0(player, track) since this owner's own push {lr} plus the shared pop {r0}; bx r0 tail is behaviourally identical to a normal call/return pair. Reuses the struct Track_080f9ac0 and Func_080f9ac0 signature from semantic/main/080f9ac0.c; reads the repeat-count flag at the stream cursor -- if zero, skip it and delegate to Func_080f9ac0; otherwise increment the track's repeat sub-counter (+3, outside the known struct fields, read via raw byte cast), pull the next stream byte through Func_080f9ab4 (established in semantic/main/080f9a80.c), and keep delegating to Func_080f9ac0 to re-parse the same operand while the sub-counter trails that byte; once caught up, reset the sub-counter and advance the cursor past the whole 5-byte repeat block using the cursor value captured at entry, not wherever Func_080f9ab4's own advance left it -- transcribed exactly as the reference computes it. Complete owner: asm/080f9b10.s in full, push {lr} through the tail branches and the final pop {r0}; bx r0; no literal pool. Span: 48 bytes, matching the census row exactly.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9b10",
+          "size": 48
+        }
+      ]
+    },
+    {
       "entry": "0x080f9b40",
       "evidence": "One 10-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080f9b40 saves the return address across the one call, the epilogue is the bx ip at 0x080f9b48, and there is no branch inside the row and no inbound branch from outside it. Nothing is excluded: the row is 10 bytes of code with no pool word and no alignment filler, and the next row starts flush at 0x080f9b4a. The bl at 0x080f9b42 targets Func_080f9ab4 inside the retained 0x080f9a80 row, the shared stream reader that post-increments the pointer at track+0x40 and returns the checked byte in r3; r3 is then stored to track+0x1d and nothing else is written, in particular not the flags byte at track+0x00 that the neighbouring handlers set. bun tools/main_xref.ts 080f9b40 reports calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x080fb7c4 in the command handler table that begins at 0x080fb7a0, so the caller is the table dispatcher and there is no direct call site.",
       "executable_ranges": [
@@ -895,7 +1139,7 @@
     },
     {
       "entry": "0x080f9b4c",
-      "evidence": "One 20-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080f9b4c saves the return address across the one call, the epilogue is the bx ip at 0x080f9b5e, and the row contains no branch and has no inbound branch from outside it. Nothing is excluded: 20 bytes of code, no pool word and no alignment filler, and the next row starts flush at 0x080f9b60. The bl at 0x080f9b4e targets Func_080f9ab4 inside the retained 0x080f9a80 row, the shared operand reader that post-increments the byte-stream pointer at track+0x40 and returns the checked byte in r3. That reader saves and restores r0 across the 0x080f9a9a check, which is the evidence that the three halfword accesses after the call — strh r3,[r0,#28], ldrh r2,[r0,#30], strh r3,[r0,#32] — are made through the still-live first argument and not through a scratch value; this is the only handler in the table that writes the first argument instead of the track. lsls r3,r3,#1 doubles the operand before the store, and the muls is a 32-bit multiply of two zero-extended halfwords followed by lsrs r3,r3,#8, so the shift is unsigned and the stored result is the whole part of an 8.8 product. bun tools/main_xref.ts 080f9b4c reports calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x080fb7c8 in the command handler table that begins at 0x080fb7a0, so the only caller is the table dispatcher and there is no direct call site.",
+      "evidence": "One 20-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080f9b4c saves the return address across the one call, the epilogue is the bx ip at 0x080f9b5e, and the row contains no branch and has no inbound branch from outside it. Nothing is excluded: 20 bytes of code, no pool word and no alignment filler, and the next row starts flush at 0x080f9b60. The bl at 0x080f9b4e targets Func_080f9ab4 inside the retained 0x080f9a80 row, the shared operand reader that post-increments the byte-stream pointer at track+0x40 and returns the checked byte in r3. That reader saves and restores r0 across the 0x080f9a9a check, which is the evidence that the three halfword accesses after the call \u2014 strh r3,[r0,#28], ldrh r2,[r0,#30], strh r3,[r0,#32] \u2014 are made through the still-live first argument and not through a scratch value; this is the only handler in the table that writes the first argument instead of the track. lsls r3,r3,#1 doubles the operand before the store, and the muls is a 32-bit multiply of two zero-extended halfwords followed by lsrs r3,r3,#8, so the shift is unsigned and the stored result is the whole part of an 8.8 product. bun tools/main_xref.ts 080f9b4c reports calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x080fb7c8 in the command handler table that begins at 0x080fb7a0, so the only caller is the table dispatcher and there is no direct call site.",
       "executable_ranges": [
         {
           "address": "0x080f9b4c",
@@ -910,6 +1154,16 @@
         {
           "address": "0x080f9b60",
           "size": 18
+        }
+      ]
+    },
+    {
+      "entry": "0x080f9b74",
+      "evidence": "Core-drive census row (kind nonstandard_thumb_call_module, same procedural mov-ip-lr exclusion as sibling row 0x080f9a80, admitted per Vale's 2026-07-31 ruling). Reads a byte from cursorHolder's stream cursor at +64, advances the cursor, uses the byte as a 12-byte-stride index into a table whose base pointer lives at tableHolder+48, then runs the record's three words through Func_080f9a9a (candidate = field's own address, passthrough = field's value, established in semantic/main/080f9a80.c), storing the three results at cursorHolder+36/+40/+44. Complete owner: asm/080f9b74.s in full, mov ip,lr through bx ip; no literal pool, no branch. Span: 46 bytes, matching the census row exactly.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9b74",
+          "size": 46
         }
       ]
     },
@@ -994,6 +1248,16 @@
       ]
     },
     {
+      "entry": "0x080f9c44",
+      "evidence": "Core-drive census row (kind shared_literal_function_module, admitted per Vale's 2026-07-31 ruling). Its two far ldr rN,[pc,#680] loads resolve past its own compiled out/asm/080f9c44.bin; read directly from out/asm/080f9c90.bin at file offsets 0x260/0x264 rather than guessed, giving 0x03007ff0 and 0x68736d53 -- the same Smsh-tagged context pointer and magic constant semantic/main/080006fc.c established. Mirrors that file's SmshContext local struct (Garet's settled field layout) rather than raw byte casts: countdown at +0x04, countdown_reload at +0x0b are exactly the two fields this owner touches. If the context's signature is not exactly the magic constant or one past it, does nothing. Otherwise decrements countdown (32-bit zero-extended comparison, not a re-read-as-signed-byte one -- the register-level subs result is what the bgt branch tests, verified against the original's zero-extension semantics); once it reaches zero or below, reloads it from countdown_reload and re-arms two DMA-shaped hardware channel control registers (base 0x040000bc, +8/+20) with 0x84400004 when their own top bit reads clear, then stamps the paired length halfwords at +10/+22 with 0x0400 immediately overwritten by 0xb600, transcribed literally rather than collapsed. Complete owner: asm/080f9c44.s in full plus its own local two-word pool. Span: 76 bytes, matching the census row exactly.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9c44",
+          "size": 76
+        }
+      ]
+    },
+    {
       "entry": "0x080f9f6c",
       "evidence": "Func_080f9f3c is a 48-byte leaf with no push/pop taking r4/r5 from its caller, spelled as two explicit pointers. The Func_080fa678 call-via-r1 concern is that callee's internals; from here it is an ordinary one-argument call. Previously blocked as hidden_register_module.",
       "executable_ranges": [
@@ -1004,6 +1268,16 @@
         {
           "address": "0x080f9f6c",
           "size": 504
+        }
+      ]
+    },
+    {
+      "entry": "0x080fa16c",
+      "evidence": "Core-drive census row (kind nonstandard_thumb_branch_module, admitted per Vale's 2026-07-31 ruling; body read confirms an ordinary push {r4,r5}/pop {r4,r5}; bx lr leaf, no register trick). Reads a value byte from the stream cursor at track+64; a byte >= 128 is a 'repeat last value' marker (cursor not advanced, value comes from track+5 instead), otherwise the byte is cached to track+5 and the cursor advances. Walks a singly linked list headed at track+32 (next pointer at +52 per node), finds the first node whose flags byte has bit 0x83 set and bit 0x40 clear and whose byte at +17 equals the value, sets bit 0x40 on match and stops. Complete owner: asm/080fa16c.s in full; no literal pool. Span: 64 bytes, matching the census row exactly.",
+      "executable_ranges": [
+        {
+          "address": "0x080fa16c",
+          "size": 64
         }
       ]
     },
@@ -1019,7 +1293,7 @@
     },
     {
       "entry": "0x080fa1d4",
-      "evidence": "One 18-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080fa1d4 saves the return address across the two calls, one epilogue, the bx ip at 0x080fa1e4, reached by the bne.n non-zero arm at 0x080fa1de and by fall-through from the second call, and no inbound branch from outside the row. Nothing is excluded from the row itself: 18 bytes of code with no pool word and no alignment filler in it. Both bl targets are outside this owner and already reconstructed elsewhere: the bl at 0x080fa1d6 targets Func_080fa1c8, the player's operand reader, whose exact C at src/080fa1c8.c advances the stream pointer at track+0x40 and reads the byte, returning it in r3 — the byte-exact source does not model that result because it has no use for it, while this handler does, and the reconstruction declares it with the byte result; the bl at 0x080fa1e0 targets Func_080fa1ac, the 26-byte routine reconstructed in this same batch, which clears track+0x16 and track+0x1a and raises 0x0c or 0x03 in the status byte. The stored operand goes to track+0x19, and the cmp r3,#0 that gates the second call tests the byte that was stored, not a reloaded copy. bun tools/main_xref.ts 080fa1d4 reports calls=0 branches=0 word_refs=0 and two Thumb pointers, published at 0x080fa640 and 0x080fb7e4, so both callers are table dispatchers and there is no direct call site.",
+      "evidence": "One 18-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080fa1d4 saves the return address across the two calls, one epilogue, the bx ip at 0x080fa1e4, reached by the bne.n non-zero arm at 0x080fa1de and by fall-through from the second call, and no inbound branch from outside the row. Nothing is excluded from the row itself: 18 bytes of code with no pool word and no alignment filler in it. Both bl targets are outside this owner and already reconstructed elsewhere: the bl at 0x080fa1d6 targets Func_080fa1c8, the player's operand reader, whose exact C at src/080fa1c8.c advances the stream pointer at track+0x40 and reads the byte, returning it in r3 \u2014 the byte-exact source does not model that result because it has no use for it, while this handler does, and the reconstruction declares it with the byte result; the bl at 0x080fa1e0 targets Func_080fa1ac, the 26-byte routine reconstructed in this same batch, which clears track+0x16 and track+0x1a and raises 0x0c or 0x03 in the status byte. The stored operand goes to track+0x19, and the cmp r3,#0 that gates the second call tests the byte that was stored, not a reloaded copy. bun tools/main_xref.ts 080fa1d4 reports calls=0 branches=0 word_refs=0 and two Thumb pointers, published at 0x080fa640 and 0x080fb7e4, so both callers are table dispatchers and there is no direct call site.",
       "executable_ranges": [
         {
           "address": "0x080fa1d4",
@@ -1029,7 +1303,7 @@
     },
     {
       "entry": "0x080fa1e8",
-      "evidence": "One 18-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080fa1e8 saves the return address across the two calls, one epilogue, the bx ip at 0x080fa1f8, reached by the bne.n non-zero arm at 0x080fa1f2 and by fall-through from the second call, and no inbound branch from outside the row. Nothing is excluded from the row itself: 18 bytes of code with no pool word and no alignment filler in it. Both bl targets are outside this owner and already reconstructed elsewhere: the bl at 0x080fa1ea targets Func_080fa1c8, the player's operand reader, whose exact C at src/080fa1c8.c advances the stream pointer at track+0x40 and reads the byte, returning it in r3 — the byte-exact source does not model that result because it has no use for it, while this handler does, and the reconstruction declares it with the byte result; the bl at 0x080fa1f4 targets Func_080fa1ac, the 26-byte routine reconstructed in this same batch, which clears track+0x16 and track+0x1a and raises 0x0c or 0x03 in the status byte. The stored operand goes to track+0x17, and the cmp r3,#0 that gates the second call tests the byte that was stored, not a reloaded copy. bun tools/main_xref.ts 080fa1e8 reports calls=0 branches=0 word_refs=0 and two Thumb pointers, published at 0x080fa644 and 0x080fb7ec, so both callers are table dispatchers and there is no direct call site.",
+      "evidence": "One 18-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080fa1e8 saves the return address across the two calls, one epilogue, the bx ip at 0x080fa1f8, reached by the bne.n non-zero arm at 0x080fa1f2 and by fall-through from the second call, and no inbound branch from outside the row. Nothing is excluded from the row itself: 18 bytes of code with no pool word and no alignment filler in it. Both bl targets are outside this owner and already reconstructed elsewhere: the bl at 0x080fa1ea targets Func_080fa1c8, the player's operand reader, whose exact C at src/080fa1c8.c advances the stream pointer at track+0x40 and reads the byte, returning it in r3 \u2014 the byte-exact source does not model that result because it has no use for it, while this handler does, and the reconstruction declares it with the byte result; the bl at 0x080fa1f4 targets Func_080fa1ac, the 26-byte routine reconstructed in this same batch, which clears track+0x16 and track+0x1a and raises 0x0c or 0x03 in the status byte. The stored operand goes to track+0x17, and the cmp r3,#0 that gates the second call tests the byte that was stored, not a reloaded copy. bun tools/main_xref.ts 080fa1e8 reports calls=0 branches=0 word_refs=0 and two Thumb pointers, published at 0x080fa644 and 0x080fb7ec, so both callers are table dispatchers and there is no direct call site.",
       "executable_ranges": [
         {
           "address": "0x080fa1e8",
@@ -1039,7 +1313,7 @@
     },
     {
       "entry": "0x080fa264",
-      "evidence": "One 28-byte row holding a single leaf in its first 20 bytes: no prologue, one epilogue, the bx lr at 0x080fa276, reached by the bne.n signature-mismatch early-out at 0x080fa26c and by fall-through, no call of any kind and no inbound branch from outside the row. Excluded (8 bytes): the two-word pool at 0x080fa278 (0x68736d53, the 'Smsh' signature literal loaded by ldr r0,[pc,#12], and 0x7fffffff, the mask loaded by ldr r1,[pc,#8]); there is no alignment filler and the row ends flush at 0x080fa280. The opening adds r2,r0,#0 is the register copy that lets r0 be reused for the two pool loads; r0 is written without being saved, the ordinary call-used-r4-style convention of this image, and it is assigned before each use and never read live-in after the copy. r0 holds the pool literal on the mismatch arm and the updated flag word on the matching arm, so it is not a consistent result and the bx lr returns nothing; the function is void. The word at track+0x34 is compared against the signature and only the matching arm does ldr r0,[r2,#4]; ands r0,r1; str r0,[r2,#4], clearing bit 31 of the flag word at track+0x04 — the same bit the 0x080fa4ec sibling clears. bun tools/main_xref.ts 080fa264 reports four direct callers, at 0x080fa3e8, 0x080fa446, 0x080fa486 and 0x080fa4a2, and no Thumb pointer.",
+      "evidence": "One 28-byte row holding a single leaf in its first 20 bytes: no prologue, one epilogue, the bx lr at 0x080fa276, reached by the bne.n signature-mismatch early-out at 0x080fa26c and by fall-through, no call of any kind and no inbound branch from outside the row. Excluded (8 bytes): the two-word pool at 0x080fa278 (0x68736d53, the 'Smsh' signature literal loaded by ldr r0,[pc,#12], and 0x7fffffff, the mask loaded by ldr r1,[pc,#8]); there is no alignment filler and the row ends flush at 0x080fa280. The opening adds r2,r0,#0 is the register copy that lets r0 be reused for the two pool loads; r0 is written without being saved, the ordinary call-used-r4-style convention of this image, and it is assigned before each use and never read live-in after the copy. r0 holds the pool literal on the mismatch arm and the updated flag word on the matching arm, so it is not a consistent result and the bx lr returns nothing; the function is void. The word at track+0x34 is compared against the signature and only the matching arm does ldr r0,[r2,#4]; ands r0,r1; str r0,[r2,#4], clearing bit 31 of the flag word at track+0x04 \u2014 the same bit the 0x080fa4ec sibling clears. bun tools/main_xref.ts 080fa264 reports four direct callers, at 0x080fa3e8, 0x080fa446, 0x080fa486 and 0x080fa4a2, and no Thumb pointer.",
       "executable_ranges": [
         {
           "address": "0x080fa264",
@@ -1076,270 +1350,7 @@
           "size": 30
         }
       ]
-    },
-    {
-      "entry": "0x08006a78",
-      "evidence": "Single 46-byte leaf at the head of a three-function row. The function runs 0x08006a78..0x08006aa4 and ends on the bx lr at 0x08006aa4; the two later entries in the same asm row (the relocated helper at 0x08006abc and Func_08006ac0 at 0x08006ac0) are outside the claimed range and stay in reconstruction assembly. Excluded (22 bytes): the 2-byte .balign filler at 0x08006aa6 and the five-word pool at 0x08006aa8 holding 0x02004c28, 0x04000208, 0x04000200, 0x02004c20 and 0x02004c2c, all reached by ldr rN,[pc,#imm] from inside the range. No stack frame and no call, so the plain bx lr epilogue leaves no result convention and the owner is void. bun tools/main_xref.ts 08006a78 reports FUNCTION (called directly) with a single caller at 0x08006b70.",
-      "executable_ranges": [
-        {
-          "address": "0x08006a78",
-          "size": 46
-        }
-      ]
-    },
-    {
-      "entry": "0x080e7338",
-      "evidence": "Single 102-byte function, 0x080e7338..0x080e739c, no literal pool and no alignment filler: nothing follows the epilogue in the row, so no words are excluded. Prologue push {r5,r6,r7,lr} plus the r9 save through r7 and a 4-byte frame; the epilogue at 0x080e7392 unwinds that frame and ends pop {r0}; bx r0, so the owner is void. r9 is saved and restored but never written, and is read exactly once at 0x080e7344 as the base of the pointer at r9-136 — the frame-balanced live-in already recorded for resource_3cd:04b0, converted as an uninitialised local rather than skipped. The slot array is 16 entries of 28 bytes at *(base-136) + 0x7400 with the free marker -1 at +24; the two str-of-zero instructions at 0x080e735c and 0x080e738a are distinct and both fall into the shared store tail at 0x080e738c, written as a goto rather than duplicated. bun tools/main_xref.ts 080e7338 reports FUNCTION (called directly) with one caller at 0x080e7c0c.",
-      "executable_ranges": [
-        {
-          "address": "0x080e7338",
-          "size": 102
-        }
-      ]
-    },
-    {
-      "entry": "0x0809b8f4",
-      "evidence": "Single 306-byte function, 0x0809b8f4..0x0809ba24, prologue push {r5,r6,r7,lr} with a 4-byte frame and one epilogue at 0x0809ba1e ending pop {r0}; bx r0, so the owner is void. Excluded (14 bytes): the 2-byte movs r0,r0 alignment filler at 0x0809ba26 and the three-word pool at 0x0809ba28 holding 0x0000ffff (the truncating 16.16-to-whole bias, loaded at 0x0809b924 and 0x0809b930), 0x030001d8 (the IWRAM square root, loaded at 0x0809b944) and 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, loaded at 0x0809b954 and 0x0809b9fc). The bl Func_080072f0 at 0x0809b946 is the runtime _call_via_r3 thunk inside 0x080072e4..0x08007320, so it is an indirect call through the pooled 0x030001d8; the four mov ip,pc; bx rN sequences at 0x0809b95c, 0x0809b968, 0x0809ba00 and 0x0809ba14 are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec. Nothing in the row is retained assembly. bun tools/main_xref.ts 0809b8f4 reports FUNCTION (called directly) with one caller at 0x0809b84e.",
-      "executable_ranges": [
-        {
-          "address": "0x0809b8f4",
-          "size": 306
-        }
-      ]
-    },
-    {
-      "entry": "0x0808ae74",
-      "evidence": "Single 410-byte function, 0x0808ae74..0x0808b00c, prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and an 8-byte frame; one epilogue at 0x0808affc unwinding all of it and ending pop {r1}; bx r1, so r0 is the result. Excluded (30 bytes): the 2-byte movs r0,r0 alignment filler at 0x0808b00e and the seven-word pool at 0x0808b010 holding 0x03001ebc (context pointer, 0x0808ae88), 0x0000015f and 0x00000161 (the flag ids 351 and 353, 0x0808ae8c and 0x0808aea6), 0x02000240 (state block, 0x0808aeba, 0x0808af18, 0x0808af84), 0x0809c610 (the 28-byte encounter table, 0x0808aed2), 0x0300013c (the IWRAM ratio helper, 0x0808af74) and 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x0808af7a). The bl Func_080072f0 at 0x0808af76 is the runtime _call_via_r3 thunk inside 0x080072e4..0x08007320, an indirect call through the pooled 0x0300013c; the mov ip,pc; bx r3 at 0x0808af80 is an ordinary indirect call to the pooled 0x03000118 whose landing site 0x0808af84 consumes r0 in the same frame, as recorded for 0x0800ebec. r9 is saved and restored but is not written on the path that enters the roll from 0x0808ae98, the frame-balanced live-in of resource_3cd:04b0, converted as an uninitialised local. Nothing in the row is retained assembly. bun tools/main_xref.ts 0808ae74 reports FUNCTION (called directly) with callers at 0x0808b03a and 0x0808b052.",
-      "executable_ranges": [
-        {
-          "address": "0x0808ae74",
-          "size": 410
-        }
-      ]
-    },
-    {
-      "entry": "0x080c0a24",
-      "evidence": "One 448-byte function, 0x080c0a24..0x080c0be2, split into three executable ranges by two interior literal pools. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 16-byte frame; the single epilogue at 0x080c0bd2 unwinds all of it and ends pop {r0}; bx r0, so the owner is void. Excluded (52 bytes): the 2-byte movs r0,r0 alignment fillers at 0x080c0b6a and 0x080c0bbe, the ten-word pool at 0x080c0b6c holding 0x00003f8e (0x080c0b3e), 0x0000478a (0x080c0b58), 0x03001f00 (0x080c0a36), 0x03001ad0 (0x080c0a92), 0x0300013c (0x080c0ab6 and 0x080c0b26), 0xffff0000 (0x080c0ad2), 0x03000118 (0x080c0ada), 0x00007fff (0x080c0b00), 0xfffff000 (0x080c0b12) and 0x0000016b (0x080c0b32), and the two-word pool at 0x080c0bc0 holding 0x0000478e (0x080c0b9a) and 0x00003f8e (0x080c0bb0). Every one is reached by ldr rN,[pc,#imm] from inside the ranges and none is branched to. The bl Func_080072ec at 0x080c0aba and 0x080c0b2a is the runtime _call_via_r2 thunk inside 0x080072e4..0x08007320, an indirect call through the pooled 0x0300013c; the four mov ip,pc; bx r4 sequences at 0x080c0ae0, 0x080c0ae8, 0x080c0af4 and 0x080c0afc are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec. Nothing in the row is retained assembly. bun tools/main_xref.ts 080c0a24 reports FUNCTION (called directly) with seven callers, the first at 0x080b593e.",
-      "executable_ranges": [
-        {
-          "address": "0x080c0a24",
-          "size": 326
-        },
-        {
-          "address": "0x080c0b94",
-          "size": 42
-        },
-        {
-          "address": "0x080c0bc8",
-          "size": 28
-        }
-      ]
-    },
-    {
-      "entry": "0x080b5368",
-      "evidence": "One 448-byte function, 0x080b5368..0x080b552e, split into two executable ranges by the interior literal pool at 0x080b543c. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 44-byte frame; the single epilogue at 0x080b551c unwinds all of it and ends pop {r1}; bx r1, so r0 - the flag held at sp+20 - is the result. Excluded (12 bytes): the two-word pool at 0x080b543c holding 0x00000000 (the zero halfword written by the clear loop, loaded at 0x080b540a) and 0x080c3f34 (the roster base, loaded at 0x080b53d2 and 0x080b541e), and the one-word pool at 0x080b5530 holding 0x080c3f34 again (loaded at 0x080b545a, 0x080b54b8 and 0x080b54f2). No alignment filler is needed: both pools are already word aligned and code resumes at 0x080b5444 immediately after the first. Every pool word is reached by ldr rN,[pc,#imm] from inside the ranges and none is branched to. No indirect calls and no relocated helpers: every call is a bl naming a ROM function, and nothing in the row is retained assembly. bun tools/main_xref.ts 080b5368 reports FUNCTION (called directly) with one caller at 0x080b578e and a published Thumb pointer at 0x080b5114.",
-      "executable_ranges": [
-        {
-          "address": "0x080b5368",
-          "size": 212
-        },
-        {
-          "address": "0x080b5444",
-          "size": 236
-        }
-      ]
-    },
-    {
-      "entry": "0x080930bc",
-      "evidence": "Single 152-byte function, 0x080930bc..0x08093152, prologue push {r5,r6,r7,lr} plus the r8 save and no stack frame; one epilogue at 0x0809314a ending pop {r0}; bx r0, so the owner is void. Excluded (8 bytes): the two-word pool at 0x08093154 holding 0x03001ebc (the context pointer, loaded at 0x080930c2) and 0x00000fff (the twelve-bit message mask, loaded at 0x080930c8). No alignment filler is needed - the pool begins immediately after the epilogue's last halfword. Every call is a bl naming a ROM function; there are no indirect calls and no relocated helpers, and nothing in the row is retained assembly. The placement reads r6 and r7 at 0x080930e8 and 0x080930ea; both are saved by the prologue push and neither is written on any path, the frame-balanced live-in of resource_3cd:04b0, converted as uninitialised locals. bun tools/main_xref.ts 080930bc reports FUNCTION (indirectly published callback) with no inbound call and a published Thumb pointer at 0x0808a1a4, so the caller is unknown.",
-      "executable_ranges": [
-        {
-          "address": "0x080930bc",
-          "size": 152
-        }
-      ]
-    },
-    {
-      "entry": "0x08022a7c",
-      "evidence": "One 198-byte function, 0x08022a7c..0x08022b40, split into three executable ranges by two interior literal pools. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 4-byte frame; the single epilogue at 0x08022b30 unwinds all of it and ends pop {r0}; bx r0, so the owner is void. Excluded (30 bytes): the four-word pool at 0x08022af4 holding 0x000001ff (0x08022ace), 0x40000400 (0x08022aba), 0xfffffe00 (0x08022ad8) and 0x080313a4 (0x08022af0); the 2-byte movs r0,r0 alignment filler at 0x08022b22; and the three-word pool at 0x08022b24 holding 0x000003ff (0x08022b0a), 0x08031424 (0x08022b04) and 0xfffffc00 (0x08022b10). Every pool word is reached by ldr rN,[pc,#imm] from inside the ranges and none is branched to. Every call is a bl naming a ROM function; there are no indirect calls and no relocated helpers, and nothing in the row is retained assembly. r9 is saved and restored but never written, and is read at 0x08022a8e and 0x08022ac6 as the base of the view pointer at r9-4 - the frame-balanced live-in of resource_3cd:04b0, converted as an uninitialised local. bun tools/main_xref.ts 08022a7c reports FUNCTION (called directly) with six callers, the first at 0x08022ff4.",
-      "executable_ranges": [
-        {
-          "address": "0x08022a7c",
-          "size": 120
-        },
-        {
-          "address": "0x08022b04",
-          "size": 30
-        },
-        {
-          "address": "0x08022b30",
-          "size": 18
-        }
-      ]
-    },
-    {
-      "entry": "0x08010230",
-      "evidence": "Single 456-byte function, 0x08010230..0x080103f6, prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 32-byte frame; one epilogue at 0x080103e6 unwinding all of it and ending pop {r0}; bx r0, so the owner is void. Excluded (44 bytes): the eleven-word pool at 0x080103f8 holding 0x03001e70 (context pointer, 0x0801023e), 0xffa00000 and 0xff880000 (the y and x view biases, 0x08010252 and 0x08010258), 0xff100000 and 0xff600000 (the x and y clamp adjustments, 0x0801026c and 0x08010288), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x080102c2), 0x0007ffff (the wrap mask and the truncating 16.19-to-tile bias, 0x080102ec, 0x08010308, 0x08010326 and 0x08010332), 0x06002800 (screen block base, 0x0801033a), 0x02010000 (map base, 0x08010382), 0x02020000 and 0x02020004 (the two quadrant tables, 0x0801038a and 0x080103a4). No alignment filler is needed - the pool begins immediately after the epilogue's last halfword - and every pool word is reached by ldr rN,[pc,#imm] from inside the range. The four mov ip,pc; bx r3 sequences at 0x080102c4 and 0x080102d4 are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec; every other call is a bl naming a ROM function and nothing in the row is retained assembly. bun tools/main_xref.ts 08010230 reports FUNCTION (called directly) with one caller at 0x0800feb6 and a published Thumb pointer at 0x08009124.",
-      "executable_ranges": [
-        {
-          "address": "0x08010230",
-          "size": 456
-        }
-      ]
-    },
-    {
-      "entry": "0x0800daf0",
-      "evidence": "Single 462-byte function, 0x0800daf0..0x0800dcbc, prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and an 8-byte frame; one epilogue at 0x0800dcac unwinding all of it and ending pop {r1}; bx r1, so r0 is the result - the constant 1 loaded at 0x0800dca8. Excluded (30 bytes): the 2-byte movs r0,r0 alignment filler at 0x0800dcbe and the seven-word pool at 0x0800dcc0 holding 0x03001e70 (context pointer, 0x0800dafe), 0xff880000 and 0xffc00000 (the maximum-x and maximum-y insets, 0x0800db28 and 0x0800db34), 0x0000ffff (the truncating 16.16-to-whole bias, 0x0800dba8 and 0x0800dbbc), 0x030001d8 (the IWRAM square root, 0x0800dbce), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x0800dbf4 and 0x0800dc4e) and 0x0300013c (the IWRAM ratio helper, 0x0800dc42). Every pool word is reached by ldr rN,[pc,#imm] from inside the range. The bl Func_080072f0 at 0x0800dbd0 and the bl Func_08007310 at 0x0800dc4a and 0x0800dc60 are the runtime _call_via_r3 and _call_via_fp thunks inside 0x080072e4..0x08007320, so they are indirect calls through the pooled 0x030001d8 and 0x0300013c; the four mov ip,pc; bx rN sequences at 0x0800dbfc, 0x0800dc08, 0x0800dc54 and 0x0800dc68 are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec. Nothing in the row is retained assembly. The bounds at 0x0800db02..0x0800db36 dereference the target record before the null test at 0x0800db42 and are consumed only after it, so the C computes them after the test; no other statement order is observable. bun tools/main_xref.ts 0800daf0 reports FUNCTION (indirectly published callback) with no inbound call and a published Thumb pointer at 0x08013650, so the caller is unknown.",
-      "executable_ranges": [
-        {
-          "address": "0x0800daf0",
-          "size": 462
-        }
-      ]
-    },
-    {
-      "entry": "0x08093c00",
-      "evidence": "Single 530-byte function, 0x08093c00..0x08093e10, prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 20-byte frame; one epilogue at 0x08093e00 unwinding all of it and ending pop {r1}; bx r1, so r0 is the result. Excluded (22 bytes): the 2-byte movs r0,r0 alignment filler at 0x08093e12 and the five-word pool at 0x08093e14 holding 0x02000240 (party state block, loaded at 0x08093c0e and 0x08093d12), 0x03001ebc (context pointer, 0x08093c40), 0xfff00000 (the whole-tile mask, 0x08093c4e), 0xffff0000 (the fall step, 0x08093d56) and 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x08093dc0). Every pool word is reached by ldr rN,[pc,#imm] from inside the range and none is branched to. The mov ip,pc; bx r4 at 0x08093dc8 is an ordinary indirect call to the pooled 0x03000118 whose landing site 0x08093dcc consumes r0 in the same frame, as recorded for 0x0800ebec; every other call is a bl naming a ROM function, and nothing in the row is retained assembly. The bl Func_08009080 at 0x08093d52 takes r0 from the Func_08093af8 result that reached 0x08093d50, on both arms of the 207/205 test, so the shared tail is written once with that value rather than duplicated per arm. bun tools/main_xref.ts 08093c00 reports FUNCTION (called directly) with one caller at 0x0808d94c and a published Thumb pointer at 0x0808a2a4.",
-      "executable_ranges": [
-        {
-          "address": "0x08093c00",
-          "size": 530
-        }
-      ]
-    },
-    {
-      "entry": "0x080c0be4",
-      "evidence": "Single 248-byte function, 0x080c0be4..0x080c0cdc, the sibling of 0x080c0cec: the same body apart from the missing phase argument and the transform third component. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 40-byte frame; one epilogue at 0x080c0cca unwinding all of it and ending pop {r0}; bx r0, so the owner is void. Excluded (16 bytes): the four-word pool at 0x080c0cdc holding 0x03001e80 (runtime block, loaded at 0x080c0bf2), 0x0300013c (the ratio helper, 0x080c0c1c), 0x03000250 (the projection helper, 0x080c0c70) and 0x03001ce0 (the transfer block, 0x080c0c76). The code ends 4-aligned at 0x080c0cdc, so unlike 0x080c0cec this row carries no movs r0,r0 alignment filler. Every pool word is reached by ldr rN,[pc,#imm] from inside the range and none is branched to. The bl Func_08007310 at 0x080c0c36 and 0x080c0cba is the runtime _call_via_fp thunk inside 0x080072e4..0x08007320, index (0x08007310-0x080072e4)/4 = 11, an indirect call through fp holding the pooled 0x0300013c ratio helper; the bl Func_080072f0 at 0x080c0c72 is _call_via_r3, index 3, an indirect call through the pooled 0x03000250. The lsls r0,r4,#16 at 0x080c0c02 reads r4, which the prologue never saves and no path writes, so it converts as an uninitialised local rather than a skip. Nothing in the row is retained assembly. bun tools/main_xref.ts 080c0be4 reports NO INBOUND REFERENCE (calls=0 branches=0 word_refs=0 thumb_pointers=0), so the caller is unknown.",
-      "executable_ranges": [
-        {
-          "address": "0x080c0be4",
-          "size": 248
-        }
-      ]
-    },
-    {
-      "entry": "0x0808f32c",
-      "evidence": "Single 340-byte function, 0x0808f32c..0x0808f480. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and an 8-byte frame; one epilogue at 0x0808f46e unwinding all of it and ending pop {r0}; bx r0, so the owner is void. Excluded (24 bytes): the six-word pool at 0x0808f480 holding 0x03001e70 (map state pointer, loaded at 0x0808f33a), 0x02000240 (party state block, 0x0808f342, indexed +500 = +0x1f4 for the leader slot), 0x02008000 (runtime services, 0x0808f3ae, field +0x24 read as the spawn provider), 0xfff00000 (the flag-class mask, 0x0808f3dc), 0x0809e8a0 (the script passed to Func_08009098, 0x0808f438) and 0x0808f28d (the Thumb pointer to Func_0808f28c stored to object+0x6c, 0x0808f446). The code ends 4-aligned at 0x0808f480 so there is no movs r0,r0 alignment filler. Every pool word is reached by ldr rN,[pc,#imm] from inside the range and none is branched to. The bl Func_080072e4 at 0x0808f3b2 is the runtime _call_via_r0 thunk inside 0x080072e4..0x08007320, index 0, an indirect call through r0 holding the provider pointer, the same construction already recorded for 0x0808e9c0, whose sequence walk this owner mirrors. The mov r0,sl at 0x0808f36a supplies the record id to the bl Func_0808ed4c at 0x0808f36e even though the byte-exact src/0808ed4c.c takes no parameter; the call site is reconstructed as it stands. The two asrs #20 at 0x0808f354 and 0x0808f35a carry no rounding bias, so they are plain arithmetic shifts, not the fixed-point-to-whole conversion. Nothing in the row is retained assembly. bun tools/main_xref.ts 0808f32c reports FUNCTION (called directly) with one caller at 0x08098460.",
-      "executable_ranges": [
-        {
-          "address": "0x0808f32c",
-          "size": 340
-        }
-      ]
-    },
-    {
-      "entry": "0x08094544",
-      "evidence": "Single 458-byte function, 0x08094544..0x0809470e. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 24-byte frame; one epilogue at 0x080946fc unwinding all of it and ending pop {r0}; bx r0, so the owner is void. Excluded (34 bytes): the 2-byte movs r0,r0 alignment filler at 0x0809470e and the eight-word pool at 0x08094710 holding 0x03001ed8 (the scroll-table block pointer, loaded at 0x08094552), 0x03001ad0 (the six base halfwords, 0x08094556), 0x00000f02 (the frame counter offset, 0x08094596, 0x08094648 and 0x080946e4), 0x00000f18 (the low-pass amplitude offset, 0x080945ce), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x080945e0 and 0x0809469a), 0x0809ed84 (the 256-entry signed wave table, 0x080945f6 and 0x080946b0), 0x00000f14 (the high-pass step offset, 0x0809463c) and 0x00000f1c (the high-pass amplitude offset, 0x08094686). Every pool word is reached by ldr rN,[pc,#imm] from inside the range and none is branched to. The movs r0,r0 at 0x080945fe is NOT filler - it sits between mov r1,r8 and mov ip,pc inside the instruction stream, aligning the return address that mov ip,pc captures so it lands past the bx sl; the second call site at 0x080946b8 already has that alignment and carries no nop. The mov ip,pc; bx sl at 0x08094600 and 0x080946b8 are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec. The cmp r0,#0; bge; adds r0,#255 at 0x08094604 and 0x080946bc followed by lsls #8; lsrs #16 is the truncating divide by 256 of a signed product kept to sixteen bits, the 8-bit form of the 0xffff/>>16 idiom. Nothing in the row is retained assembly. bun tools/main_xref.ts 08094544 reports FUNCTION (indirectly published callback) with calls=0 branches=0 word_refs=0 and two Thumb pointers, published at 0x080947dc and 0x08094810, so there is no direct call site.",
-      "executable_ranges": [
-        {
-          "address": "0x08094544",
-          "size": 458
-        }
-      ]
-    },
-    {
-      "entry": "0x0800fb38",
-      "evidence": "One function spanning two assembled rows, 0x0800fb38..0x0800fd22 and 0x0800fd5c..0x0800fe70, 766 bytes of code. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 12-byte frame at 0x0800fb38; the b.n at 0x0800fd20 leaves this row for 0x0800fd5c, which does NOT begin with a push - it reads r0 (block+0x101, set at 0x0800fcde), ip (block+0x102, set at 0x0800fcfa), r5 (the scene header from 0x0800fb86) and this frame's [sp,#8] - and ends at 0x0800fe5e with the epilogue that unwinds exactly this prologue, so 0x0800fd5c is the continuation of this owner rather than a tail call, and both spans are registered here. That epilogue ends pop {r1}; bx r1 with N != 0, so r0 is the result, and the only value reaching it is the movs r0,#2 at 0x0800fe5c. Excluded (102 bytes): the 2-byte movs r0,r0 alignment filler at 0x0800fd22, the fourteen-word pool at 0x0800fd24 holding 0x00000400 (0x0800fcec), 0x00000200 (0x0800fd06), 0x0000c1ff (the DISPCNT mask, 0x0800fb4c), 0x08013784 (the twelve-byte scene table, 0x0800fb5e), 0x03000164 (the IWRAM-relocated block clear, 0x0800fb76), 0x00000128 (the resource-id bias, 0x0800fb80), 0x02010001 (0x0800fb8e), 0x0202c000 (0x0800fb9c), 0x02010000 (0x0800fba6 and 0x0800fc86), 0x0202d000 (0x0800fbb8), 0x0202de00 (0x0800fbce), 0x00000101 (0x0800fc24 and 0x0800fcde), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x0800fc38) and 0x0400000e (BG3CNT, 0x0800fd1c), and the eleven-word pool at 0x0800fe70 holding 0x0400000c (0x0800fd6a), 0x0400000a (0x0800fd7e), 0x00000128 (0x0800fdb8), 0x03001388 (0x0800fdca), 0x06004000 (0x0800fdf2), 0x06008000 (0x0800fe0c), 0x0600c000 (0x0800fe26), 0x02028000 (0x0800fe36), 0x0400004c (0x0800fe42), 0x08010001 (0x0800fe54) and 0x00000c85 (0x0800fe56). The second row ends 4-aligned at 0x0800fe70 with no filler. Every pool word is reached by ldr rN,[pc,#imm] from inside the ranges and none is branched to. The bl Func_080072f0 at 0x0800fb7a is the runtime _call_via_r3 thunk inside 0x080072e4..0x08007320, index 3, an indirect call through r3 holding the pooled 0x03000164. The mov ip,pc; bx r9 at 0x0800fc9c and 0x0800fcac are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec; the movs r0,r0 at 0x0800fc9a and 0x0800fcaa are inside the instruction stream, aligning the return address mov ip,pc captures so it lands past the bx, not padding. The mov sl,r3 at 0x0800fdd2 loads the pooled 0x03001388 into a register no later instruction reads, so it is dead. Nothing in the row is retained assembly. bun tools/main_xref.ts 0800fb38 reports FUNCTION (indirectly published callback) with calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x08009114, so there is no direct call site.",
-      "executable_ranges": [
-        {
-          "address": "0x0800fb38",
-          "size": 490
-        },
-        {
-          "address": "0x0800fd5c",
-          "size": 276
-        }
-      ]
-    },
-    {
-      "entry": "0x080be18c",
-      "evidence": "Single 482-byte function, 0x080be18c..0x080be36e. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 28-byte frame; one epilogue at 0x080be35c unwinding all of it and ending pop {r1}; bx r1 with N != 0, so r0 is the result. Excluded (10 bytes): the 2-byte movs r0,r0 alignment filler at 0x080be36e and the two-word pool at 0x080be370 holding 0x00000816 (the message id passed to Func_080151c8, loaded at 0x080be33c) and 0x0000012b (the flag offset, 0x080be348). Both pool words are reached by ldr rN,[pc,#imm] from inside the range and neither is branched to. The mov r1,r9 at 0x080be19e reads r9 before any path writes it; r9 is saved and restored by the prologue, so this is the frame-balanced live-in already recorded for 0x080e7338 - a close without its open - and it converts as an uninitialised local rather than a skip. Every access in the owner is at a negative offset from it: base-4 the selection block, base-8 the single-target value, base-12 the candidate list, base-16 the caster state, base-20 the flag block. The str r1,[r3,#0] at 0x080be1a0 parks the same value at [sp,#24], which no later instruction reads, so it is a dead store. The kind-0 arm at 0x080be1dc and the kind-4 arm at 0x080be1f4 store the same four values (0 to +16, 1 to +1 and +30, the base-8 value to +2) and are reconstructed as one case block. Only the empty-list path at 0x080be358 sets r0, to -1; the two kind arms and the non-empty path reach the epilogue with r0 holding the last computed value, so the result is written as an uninitialised local assigned on that one path. Nothing in the row is retained assembly. bun tools/main_xref.ts 080be18c reports FUNCTION (called directly) with six callers: 0x080be77c, 0x080be7e6, 0x080be90e, 0x080be992, 0x080bec96 and 0x080bed62.",
-      "executable_ranges": [
-        {
-          "address": "0x080be18c",
-          "size": 482
-        }
-      ]
-    },
-    {
-      "entry": "0x080111b4",
-      "evidence": "Single 520-byte function, 0x080111b4..0x080113bc. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 36-byte frame; one epilogue at 0x080113aa unwinding all of it and ending pop {r0}; bx r0, so the owner is void. Excluded (40 bytes): the ten-word pool at 0x080113bc holding 0x03001e80 (the camera state pointer, loaded at 0x080111c2, and walked back to 0x03001e6c by the subs #20 at 0x080111cc and to 0x03001e70 by the subs #16 at 0x080111d2), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x08011222 and 0x0801124e), 0x000fffff (the truncation bias, 0x0801126c and 0x08011278), 0x03001ce0 (the transfer block, 0x080112e0), 0x03000250 (the view publisher, 0x08011342), 0x03001af4 (the cached heading, 0x08011354), 0x0300013c (the ratio helper, 0x0801136c), 0x03001f60 (0x0801137e), 0x03001e40 (the page flag, 0x08011388) and 0x03001e50 (the renderer table, 0x08011390, used at +184). The code ends 4-aligned at 0x080113bc so there is no alignment filler. Every pool word is reached by ldr rN,[pc,#imm] from inside the range and none is branched to. The four mov ip,pc; bx r3 at 0x08011228, 0x08011234, 0x08011254 and 0x08011260 are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec; the movs r0,r0 at 0x08011232 and 0x0801125e sit inside the instruction stream aligning the return address mov ip,pc captures so it lands past the bx, and are not padding. The bl Func_080072f0 at 0x08011344 and 0x08011372 is the runtime _call_via_r3 thunk inside 0x080072e4..0x08007320, index 3, an indirect call through the pooled 0x03000250 and 0x0300013c respectively; the bl Func_080072f4 at 0x080113a6 is _call_via_r4, index 4, an indirect call through the renderer pointer at Data_03001e50+184. The cmp/bge/adds 0x000fffff followed by asrs #20 at 0x08011266 and 0x08011272 is the truncating fixed-point-to-whole conversion at 20 fractional bits; the eors against 0x100000 that follows is the bit-20 boundary test. The str r1,[sp,#12] at 0x08011300 writes back the advanced walker pointer, which no later instruction reads, so it is a dead store. Nothing in the row is retained assembly. bun tools/main_xref.ts 080111b4 reports FUNCTION (indirectly published callback) with calls=0 branches=0 word_refs=0 and two Thumb pointers, published at 0x0800916c and 0x08010d3c, so there is no direct call site.",
-      "executable_ranges": [
-        {
-          "address": "0x080111b4",
-          "size": 520
-        }
-      ]
-    },
-    {
-      "entry": "0x080c1470",
-      "evidence": "Single 538-byte function, 0x080c1470..0x080c168a. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 36-byte frame; one epilogue at 0x080c1678 unwinding all of it and ending pop {r1}; bx r1 with N != 0, so r0 is the result, and the value reaching it is the second Func_080041d8 return. Excluded (70 bytes): the 2-byte movs r0,r0 alignment filler at 0x080c168a and the seventeen-word pool at 0x080c168c holding 0x03001f00 (runtime block pointer, loaded at 0x080c1482), 0x000013d0 (the scene allocation size, 0x080c148a), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x080c149e and 0x080c1548), 0x00005555 (the ring angle step, 0x080c1592), 0x000013bc (0x080c15a8), 0x000013cc (0x080c15b6), 0x03001e50 (the surface table, 0x080c15bc, used at +160), 0x03000164 (the IWRAM-relocated block clear, 0x080c15c6), 0x000000c9 (0x080c15cc), 0x03001388 (the IWRAM-relocated palette upload, 0x080c15da), 0x000000c8 (0x080c1606), 0x000000ca (0x080c160e), 0x000000cb (0x080c1612), 0x040000d4 (DMA3, 0x080c161c), 0x84000020 (the transfer control, 0x080c1622), 0x080c11ed (the Thumb pointer to Func_080c11ec, 0x080c166a) and 0x080c1439 (the Thumb pointer to 0x080c1438, 0x080c1672). Every pool word is reached by ldr rN,[pc,#imm] from inside the range and none is branched to. The six mov ip,pc; bx sl / bx r6 at 0x080c14c8, 0x080c14d8, 0x080c155c, 0x080c156c, 0x080c157c and 0x080c158c are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec; the movs r0,r0 at 0x080c14d6, 0x080c155a and 0x080c156a sit inside the instruction stream aligning the return address mov ip,pc captures so it lands past the bx, and the already-aligned sites carry no nop. The bl Func_080072f0 at 0x080c15c8 and 0x080c15e2 is the runtime _call_via_r3 thunk inside 0x080072e4..0x08007320, index 3, an indirect call through the pooled 0x03000164 and 0x03001388 respectively. There is ONE stmia r3!,{r0,r1,r2}, at 0x080c1624, writing the three DMA3 registers through the pooled 0x040000d4; the subs/adds walk that follows steps the same pointer back to 0x04000028 and forward over BG2X, BG2Y and the four BG2 affine halfwords, so it is register addressing, not further transfers. Nothing in the row is retained assembly. bun tools/main_xref.ts 080c1470 reports FUNCTION (called directly) with one caller at 0x080c1824.",
-      "executable_ranges": [
-        {
-          "address": "0x080c1470",
-          "size": 538
-        }
-      ]
-    },
-    {
-      "entry": "0x08010000",
-      "evidence": "Single 528-byte function, 0x08010000..0x08010210. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and an 8-byte frame; one epilogue at 0x080101fe unwinding all of it and ending pop {r0}; bx r0, so the owner is void. Excluded (32 bytes): the eight-word pool at 0x08010210 holding 0x03001e70 (the map state pointer, loaded at 0x0801000e), 0xff880000 (the camera X bias, 0x08010026), 0xffa00000 (the camera Y bias, 0x0801002e), 0xff100000 (the X bound bias, 0x0801004a), 0xff600000 (the Y bound bias, 0x08010062), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x080100a6, 0x080100dc and 0x08010106), 0x0007ffff (the wrap-mask tail and the truncation bias, 0x0801013a, 0x08010152, 0x08010168 and 0x08010176) and 0x03001ad0 (the published scroll bases, 0x080101de). The code ends 4-aligned at 0x08010210 so there is no alignment filler. Every pool word is reached by ldr rN,[pc,#imm] from inside the range and none is branched to. The six mov ip,pc; bx r3 / bx r9 at 0x080100ac, 0x080100b8, 0x080100e4, 0x080100f0, 0x08010118 and 0x08010124 are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec; the movs r0,r0 at 0x080100e2 sits inside the instruction stream aligning the return address mov ip,pc captures so it lands past the bx, and the five already-aligned sites carry no nop. The cmp/bge/adds 0x0007ffff followed by asrs #19 at 0x08010164 and 0x08010172 is the truncating fixed-point-to-whole conversion at 19 fractional bits; the eors against 0x80000 and 0x100000 that follow are the bit-19 and bit-20 boundary tests. The strh pair at 0x080101e4 and 0x080101ea writes Data_03001ad0 + (3-index)*4 and +2, so layer 0 lands on the pair at +12 and layer 2 on the pair at +4 - the same six halfwords 0x08094544 reads as its scroll bases. Nothing in the row is retained assembly. bun tools/main_xref.ts 08010000 reports FUNCTION (called directly) with one caller at 0x0800feba, two Thumb pointers published at 0x0800fe94 and 0x080a00e8, and three word references at 0x0807c1d4, 0x083dd584 and 0x0841901c; the verdict is FUNCTION, not INTERIOR and not DATA.",
-      "executable_ranges": [
-        {
-          "address": "0x08010000",
-          "size": 528
-        }
-      ]
-    },
-    {
-      "entry": "0x080c11ec",
-      "evidence": "Single 556-byte function, 0x080c11ec..0x080c1418. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 16-byte frame; one epilogue at 0x080c1406 unwinding all of it and ending pop {r1}; bx r1 with N != 0, so r0 is the result. Excluded (32 bytes): the eight-word pool at 0x080c1418 holding 0x03001e50 (the scene table, loaded at 0x080c11fa and 0x080c1392, used at +156 the scene, +160 the surface, +184 and +188 the two blit entry points), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x080c1226 and 0x080c1278), 0x00000fff (the retirement threshold, 0x080c125a), 0x0300013c (the ratio helper, 0x080c1268), 0x000013bc (the frame counter offset, 0x080c12b4 and 0x080c13f2), 0x080c3620 (the particle size table, 0x080c1368), 0x080c3604 (the particle sprite offsets, 0x080c136a) and 0x080c3628 (the ring sprite offsets, 0x080c13ce). The code ends 4-aligned at 0x080c1418 so there is no alignment filler, and the pool ends flush at 0x080c1438, the entry 0x080c1470's pooled 0x080c1439 names. Every pool word is reached by ldr rN,[pc,#imm] from inside the range and none is branched to. The bl Func_080072f0 at 0x080c126c is the runtime _call_via_r3 thunk inside 0x080072e4..0x08007320, index 3, an indirect call through the pooled 0x0300013c, which returns its second argument over its first, so 0x10000 over the measured length. The bl Func_08007310 at 0x080c1380 and 0x080c13e6 is _call_via_fp, index (0x08007310-0x080072e4)/4 = 11, an indirect call through the blit pointer held in fp. The four mov ip,pc; bx r6 / bx r9 at 0x080c1288, 0x080c1290, 0x080c12dc and 0x080c12ec are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec; the movs r0,r0 at 0x080c12da and 0x080c12ea sits inside the instruction stream aligning the return address mov ip,pc captures so it lands past the bx. The cmp/bge/adds #7 followed by asrs #3 at 0x080c13ba is the truncating divide by eight of a ring's frame counter. No path sets r0 deliberately before the epilogue - the last write is the movs r0,#32 of a ring blit or the 3 - frame/8 of the ring test - so the result is written as an uninitialised local. The particle and ring layouts match those 0x080c1470 seeds: 28-byte particles at scene+4544 as a three-component position, a three-component velocity and a life, and 20-byte rings at scene+4992 as position, velocity and frame counter. Nothing in the row is retained assembly. bun tools/main_xref.ts 080c11ec reports FUNCTION (indirectly published callback) with calls=0 branches=0 word_refs=0 and two Thumb pointers, published at 0x080c16c8 and 0x080c171c, so there is no direct call site.",
-      "executable_ranges": [
-        {
-          "address": "0x080c11ec",
-          "size": 556
-        }
-      ]
-    },
-    {
-      "entry": "0x08006f48",
-      "evidence": "36-byte leaf function, 0x08006f48..0x08006f6c (no push/pop, bare bx lr return). Prologue-free structural walk flagged it nonstandard_thumb_branch_module because of the b .L_08006f5a jump-to-loop-test-first at 0x08006f50, which skips over an inline one-word pool (0x02004c08) embedded mid-body at 0x08006f52-0x08006f55 rather than trailing the function -- the same inline-pool shape already documented on the overlay lanes. Scans a run of consecutive 0xff bytes from the r0 argument, capped by a limit read from *(u32*)(*(u32*)0x02004c08 + 4), decrementing that limit per matching byte and returning it in r0 (the leaf epilogue's bx lr leaves r0 as the result, never popped). Excluded (4 bytes): the alignment halfword (.inst.n 0x0000) at 0x08006f66 and the pool word itself already counted in the 36-byte span. bun tools/main_xref.ts 08006f48 reports FUNCTION (indirectly published callback) with calls=0 branches=0 word_refs=0 and two Thumb pointers, published at 0x08006e68 and 0x08007b2c, so there is no direct call site.",
-      "executable_ranges": [
-        {
-          "address": "0x08006f48",
-          "size": 36
-        }
-      ]
-    },
-    {
-      "entry": "0x08002dd8",
-      "evidence": "Two adjacent leaf functions sharing one trailing pool, 40 bytes total: Func_08002dd8 at 0x08002dd8..0x08002dec (20 bytes, bx lr, no push/pop), one alignment halfword, Func_08002df0 at 0x08002df0..0x08002dfa (12 bytes, bx lr, no push/pop), then the shared table-base pool word 0x03001e50 at 0x08002dfc..0x08002e00. Flagged shared_literal_thumb_helper_module by the automated walk since neither function is push-rooted. The source asm (asm/08002dd8.s) carries pre-existing hand-written Japanese comments naming each function's role (transfer-state evacuation / transfer-state recording, both against a shared state-area address) which the semantic draft translates and keeps. bun tools/main_xref.ts reports both as heavily-called direct functions (333 and 72 call sites) each separately published as a Thumb pointer (0x08000154, 0x0800017c), confirming both are real, live code, not incidental fragments. Neither file has a .thumb-only-compiler header (checked live against HANDOVER section 7's ARM-only stem list, which flagged this address as potentially stale for this specific case), consistent with genuine Thumb C.",
-      "executable_ranges": [
-        {
-          "address": "0x08002dd8",
-          "size": 40
-        }
-      ]
-    },
-    {
-      "entry": "0x0808b3ec",
-      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), 608-byte keep_structured_asm row holding a single function: prologue push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill and sub sp,#8 at 0x0808b3ec, single epilogue add sp,#8/pop.../bx r0 at 0x0808b624-0x0808b636, no branch out of the row and no inbound branch from outside it. bun tools/main_xref.ts 0808b3ec: FUNCTION (called directly), four call sites (0x0808b6f0, 0x0808b6f8, 0x0808b9e4, 0x080917b8; two of the four are inside asm/0808b674.s, the neighbour whose own 0x0808b7b8 fragment is already registered under semantic/main/0808b674.c) plus one published Thumb pointer at 0x0808a3f4. The one mov ip,pc / bx r3 sequence (0x0808b5dc) is an ordinary indirect call through the pooled 0x03000118, the same IWRAM-relocated ARM multiply already recorded as an opaque call for 0x0800447c/0x08004ab0/0x0800c62c, not retained assembly. Excluded (22 bytes): the 2-byte movs r0,r0 alignment filler at 0x0808b636 and the five-word pool at 0x0808b638 holding 0x03001ebc, 0x00002705, 0x00000109, 0x0000ffff and 0x03000118. Semantic-only: iterates a caller array of 24-byte publish-request records against a struct MotionObject-typed slot table (include/motion_object.h, confirmed via six exact field-offset hits during this trace), not yet checked byte-exact.",
-      "executable_ranges": [
-        {
-          "address": "0x0808b3ec",
-          "size": 586
-        }
-      ]
-    },
-    {
-      "entry": "0x0800c62c",
-      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), 592-byte keep_structured_asm row holding a single function: prologue push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill and sub sp,#80 at 0x0800c62c, single epilogue add sp,#80/pop.../bx r0 at 0x0800c83c-0x0800c84c, no branch out of the row and no inbound branch from outside it. bun tools/main_xref.ts 0800c62c: FUNCTION, indirectly published callback (published at 0x0800c0b8/0x0800c5f0/0x0800c61c, a raw word ref at 0x0848b6ec). Kraden's 2026-07-31 ruling upheld this row as an ordinary, expressible idiom, not a cannot-express contract: retention=keep_structured_asm was a default label the automated sweep applied without reading the body. The two mov ip,pc / bx fp sequences (0x0800c778, 0x0800c784) are ordinary indirect calls through the pooled 0x03000118, the same IWRAM-relocated ARM multiply already recorded as opaque for 0x0800447c/0x08004ab0/0x0808b3ec, not retained assembly. Excluded (46 bytes): the 2-byte movs r0,r0 alignment filler at 0x0800c84e and the eleven-word pool at 0x0800c850 holding 0x03001e70, 0xffff0000, 0x000002c4, 0x040000d4, 0x08009bb8, 0x03000118, 0x001fffff, 0x012ffffe, 0xffe00000, 0x00dfffff and 0xfec00000. Semantic-only: walks the same 64-record, 0x70-byte object array semantic/main/0800ebec.c already reconstructed as struct Object_0800ebec -- five of this row's own field accesses land exactly on that header's named fields (program_00@0, heading_06@6, position_08@8/12/16, ground_14@20), locally redeclared here per the same not-yet-exact include/ policy this dig used for struct SmshContext. Several intermediate values are transcribed with explicit inline Uncertainty comments rather than asserted. Not yet checked byte-exact.",
-      "executable_ranges": [
-        {
-          "address": "0x0800c62c",
-          "size": 546
-        }
-      ]
     }
-  ]
+  ],
+  "manual_regions": []
 }

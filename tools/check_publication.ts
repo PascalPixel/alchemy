@@ -118,6 +118,32 @@ export function conflictMarkerReason(path: string, data: Uint8Array): string | u
   return `unresolved conflict marker at line ${line}; resolve the merge before committing`;
 }
 
+// The semantic-lane paragraph in HANDOVER.md states a measurement, and a
+// document cannot hold two of them. It regenerates by insertion rather than
+// replacement, so each trip round the ring has added another copy -- two
+// openers, then three, then five -- and the keep-both-sides rule that protects
+// MEETING.md makes this worse rather than better, because two measurements are
+// not two opinions. Asking for it to be fixed at the source has not held across
+// four cycles, so it is a gate now.
+//
+// Staged-only, for exactly the reason the conflict-marker check is staged-only:
+// history already carries the duplicated copies, and rejecting those would
+// block all three branches permanently.
+const SINGLETON_MEASUREMENTS: readonly (readonly [string, RegExp])[] = [
+  ["HANDOVER.md", /^Alongside the exact lane, reviewed semantic C/gm],
+];
+
+export function duplicateMeasurementReason(path: string, data: Uint8Array): string | undefined {
+  for (const [target, pattern] of SINGLETON_MEASUREMENTS) {
+    if (path !== target) continue;
+    const found = Buffer.from(data).toString().match(pattern);
+    if (found !== null && found.length > 1) {
+      return `${found.length} copies of the semantic-lane measurement; keep the newest and delete the rest`;
+    }
+  }
+  return undefined;
+}
+
 export function publicationEntryReason(path: string, data: Uint8Array): string | undefined {
   const pathReason = publicationPathReason(path);
   if (pathReason !== undefined) return pathReason;
@@ -172,7 +198,8 @@ function checkStaged(): void {
   // check was wired into the shared path.
   const failures: string[] = [];
   for (const entry of entries) {
-    const reason = conflictMarkerReason(entry.path, entry.data());
+    const reason = conflictMarkerReason(entry.path, entry.data())
+      ?? duplicateMeasurementReason(entry.path, entry.data());
     if (reason !== undefined) failures.push(`${entry.scope} ${entry.path}: ${reason}`);
   }
   if (failures.length > 0) throw new Error(`publication gate rejected:\n${failures.join("\n")}`);
@@ -267,6 +294,25 @@ function selfTest(): void {
   }
   if (conflictMarkerReason("assets/readme/x.png", bytes("<<<<<<< HEAD\n")) !== undefined) {
     throw new Error("a binary extension was scanned for conflict markers");
+  }
+
+  const measurement = "Alongside the exact lane, reviewed semantic C accounts for **1**\n";
+  if (duplicateMeasurementReason("HANDOVER.md", bytes(measurement)) !== undefined) {
+    throw new Error("a single semantic-lane measurement was rejected");
+  }
+  if (duplicateMeasurementReason("HANDOVER.md", bytes(measurement + measurement)) === undefined) {
+    throw new Error("a doubled semantic-lane measurement was accepted");
+  }
+  // The opener only counts at the start of a line; prose quoting it is fine.
+  if (duplicateMeasurementReason(
+    "HANDOVER.md",
+    bytes(measurement + "see Alongside the exact lane, reviewed semantic C above\n"),
+  ) !== undefined) {
+    throw new Error("an inline mention was counted as a second measurement");
+  }
+  // The rule is scoped to the one document that states the measurement.
+  if (duplicateMeasurementReason("MEETING.md", bytes(measurement + measurement)) !== undefined) {
+    throw new Error("the singleton rule leaked outside HANDOVER.md");
   }
 }
 

@@ -41,7 +41,7 @@ const pageHtml = () => `<!doctype html><html><head><meta charset="utf-8"><meta n
   .trees img{width:100%;aspect-ratio:16/9;object-fit:contain;display:block;border-radius:4px}
   .panel{background:var(--edge);border-radius:10px;overflow:hidden;padding:0 5px 5px;display:flex;flex-direction:column;min-height:0}
   .panel>.titlebar{color:#fff;font:700 10px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;height:18px;padding:0.5px 5px 0;flex:0 0 auto}
-  .panel>*:not(.titlebar){border-radius:5px;overflow:hidden}
+  .panel>*:not(.titlebar){border-radius:5px}
   .p-core{--edge:#6d4fc2}
   .p-overlays{--edge:#1f7f93}
   .p-assets{--edge:#bb2f77}

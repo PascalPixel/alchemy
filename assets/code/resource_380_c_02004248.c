@@ -14,16 +14,16 @@ typedef int s32;
  * (tools/overlay_call_targets.ts) every bl here resolves through the
  * overlay's own import-veneer table to main-ROM code, and the pool
  * pointers fit the standard 0x02008000 link base.  This wrapper's two
- * calls are Func_0808a010 and Func_0808a180.
+ * calls are Func_02008bea and Func_02008cb4.
  *
  * Uncertainty: callee roles beyond call shape remain open.
  */
 
-extern void Func_0808a010(s32 arg0);
-extern void Func_0808a180(s32 arg0, s32 arg1);
+extern void Func_02008bea(s32 arg0);
+extern void Func_02008cb4(s32 arg0, s32 arg1);
 
 void Func_02004248(s32 arg0, s32 arg1)
 {
-    Func_0808a180(arg0, 0);
-    Func_0808a010(arg1);
+    Func_02008cb4(arg0, 0);
+    Func_02008bea(arg1);
 }

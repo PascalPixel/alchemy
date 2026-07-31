@@ -154,7 +154,7 @@ void Func_02000150(void)
     *(u32 *)(workspace + 448) = 0x202;
     *(u32 *)(workspace + 456) = 16;
 
-    Func_0808a360();
+    Func_0808a368();
     Func_0808a370();
     Func_0808a210(0x11f0000, -1, 0xb00000, 0);
     Func_08009128();

@@ -118,6 +118,7 @@ void Func_02000ae8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
 
     if ((flags & 0x40000) != 0) {                   /* 128 << 11 */
         const s32 *descriptor = (const s32 *)Data_0200b134[flags & 15];
+        s32 delta;
 
         /* The 0x80000 test is the same register the previous block left live:
          * with a destination supplied the step is measured from it, otherwise
@@ -126,17 +127,19 @@ void Func_02000ae8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
             *(s32 *)(effect + 48) =
                 Func_03000380(*(s32 *)(options + 16) - *(s32 *)(effect + 24),
                               descriptor[3]);
-            *(s32 *)(effect + 52) =
-                Func_03000380(*(s32 *)(options + 20) - *(s32 *)(effect + 28),
-                              descriptor[3]);
+            delta = *(s32 *)(options + 20) - *(s32 *)(effect + 28);
         } else {
             *(s32 *)(effect + 48) =
                 Func_03000380(*(s32 *)(options + 16) + (s32)0xffff0000,
                               descriptor[3]);
-            *(s32 *)(effect + 52) =
-                Func_03000380(*(s32 *)(options + 20) + (s32)0xffff0000,
-                              descriptor[3]);
+            delta = *(s32 *)(options + 20) + (s32)0xffff0000;
         }
+
+        /* Only the FIRST call is per-arm.  The `b.n 0x02000c4c` at the end of
+         * the first arm joins both arms onto the single second call site, so
+         * the second delta is computed in each arm and the call is spelled
+         * once. */
+        *(s32 *)(effect + 52) = Func_03000380(delta, descriptor[3]);
     }
 
     if ((flags & 0x200000) != 0) {                  /* 128 << 14 */

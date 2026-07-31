@@ -34,6 +34,26 @@
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 
+# REFUSE TO MERGE OVER A LANE'S UNBANKED WORK.
+#
+# A repair lane reported its uncommitted edits being reverted twice mid-session.
+# The mechanism is this script: `git merge` (and the `git checkout --theirs`
+# resolution below) will happily replace a file that a concurrent lane is part
+# way through writing, and the lane has no way to notice. An hour of a lane's
+# analysis is worth far more than a merge landing promptly.
+#
+# Banking first is always the right answer: a committed file cannot be lost, and
+# `venus_bank.sh` already knows how to bank while another gate is red.
+DIRTY=$(git status --porcelain -- semantic/ src/ assets/code/ | grep -c .)
+if [ "$DIRTY" -gt 0 ] && [ "${ALLOW_DIRTY_MERGE:-}" != "1" ]; then
+  echo "REFUSING TO MERGE: $DIRTY unbanked file(s) under semantic/, src/ or assets/code/."
+  echo "A concurrent lane may be mid-write; merging can silently revert its work."
+  echo "Bank first (tools/venus_bank.sh \"<subject>\"), then re-run."
+  echo "(override with ALLOW_DIRTY_MERGE=1 only if you know the tree is yours)"
+  git status --porcelain -- semantic/ src/ assets/code/ | head -5
+  exit 1
+fi
+
 git fetch origin mercury >/dev/null 2>&1 || { echo "fetch failed"; exit 1; }
 AHEAD=$(git rev-list --count venus..origin/mercury)
 echo "mercury ahead: $AHEAD"
@@ -105,6 +125,35 @@ if match:
 
 remaining = subprocess.run(["git", "diff", "--name-only", "--diff-filter=U"],
                            capture_output=True, text=True).stdout.split()
+
+# Overlay sources conflict on ONE recurring thing: a declaration's return type.
+# The rename pass collapses two pre-rule names onto one import, and the two
+# branches can disagree about whether the survivor is `void` or typed. The typed
+# side is right whenever a call site consumes the result — and a `void`
+# declaration against a consuming call site is a HARD COMPILE ERROR, while the
+# reverse merely loses information. So prefer the side that declares a type.
+declaration = re.compile(r'<<<<<<< HEAD\n(.*?)=======\n(.*?)>>>>>>> [^\n]*\n', re.S)
+def prefer_typed(match):
+    ours, theirs = match.group(1), match.group(2)
+    void_only = lambda text: all(
+        line.strip() == "" or line.lstrip().startswith("void ")
+        for line in text.splitlines())
+    if void_only(ours) and not void_only(theirs):
+        return theirs
+    if void_only(theirs) and not void_only(ours):
+        return ours
+    return ours + theirs          # not this case; keep both and let the gate speak
+for path in list(remaining):
+    if not path.startswith("semantic/overlays/") or not path.endswith(".c"):
+        continue
+    text = open(path).read()
+    resolved, count = declaration.subn(prefer_typed, text)
+    if count == 0 or re.search(r'(?m)^<<<<<<< ', resolved):
+        continue
+    open(path, "w").write(resolved)
+    subprocess.run(["git", "add", "--", path])
+    remaining.remove(path)
+    print(f"{path}: {count} declaration conflict(s) resolved, kept the typed side")
 for path in remaining:
     if path.startswith("src/") or path == "tools/alchemy_gcc.ts":
         subprocess.run(["git", "checkout", "--theirs", "--", path])

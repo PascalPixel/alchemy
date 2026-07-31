@@ -32,14 +32,6 @@ void Func_0808a138();
 void Func_0808a170();
 void Func_0808a180();
 void Func_0808a1e8();
-void Func_0200731c();
-void Func_02007338();
-void Func_02007344();
-void Func_0200735c();
-void Func_0200735e();
-void Func_02007376();
-void Func_02007388();
-void Func_0200738e();
 
 void Func_02001c4c(s32 handle)
 {

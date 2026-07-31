@@ -33,11 +33,6 @@ void Func_08000150();
 void Func_080001c8();
 s32 Func_080090c8();
 void Func_08015250();
-u8 *Func_02003de6();
-s32 Func_02003df4();
-void Func_02003e1a();
-void Func_02003e1c();
-void Func_02003e7c();
 
 void Func_02001b1c(void)
 {

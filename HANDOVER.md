@@ -638,6 +638,61 @@ counting (**including the owner's own definition line**, or the function counts
 as a call to itself), and a long `bl` landing inside the owner's own span is a
 `goto` rather than a call.
 
+**The rename pass, mechanised, and the five things that break it.** Assigning
+the i-th `Func_xxxxxxxx(` call occurrence in the source to the i-th `bl` site in
+ADDRESS order corrects the pre-rule names outright — 117 of 144 files across
+`39a/3b8/3bf/3c4/3c8/373/3cb` in one pass, gated on
+`overlay_multiset_check.ts`. Never find-and-replace: the mapping is many-to-one
+(two pre-rule names collapse onto one import in 35 of those files, 114 names in
+all) and a global replace silently merges them. Five traps, each of which
+produced a red `build:semantic` before it was understood:
+
+- **Consumption is not a one-line test.** `struct Particle *p =` on the line
+  ABOVE the call is a consumer, and so is `(u8 *)` in front of it, and so is
+  `Func_x(...)->field` behind it. Read back to the last `;`/`{`/`}` for the
+  prefix, strip casts recursively, and look at what FOLLOWS the matching close
+  paren. Judging declaration-versus-call, in contrast, must stay line-local —
+  widening that test to the statement reclassified live calls as prototypes and
+  deleted them.
+- **`s32` is the fallback for a collapsed declaration, not the answer.** When
+  the pre-rule names carried real types, keep one: flattening
+  `Slot_02001a10 *` to `s32` turns every `->` at the call site into a hard
+  error. When the result is dereferenced, prefer a struct/typedef pointer over a
+  byte pointer — `u8 *` parses and then has no members.
+- **`s32` is not always in scope.** The soft-float sources
+  (`resource_3bf:5a40/5a78`) typedef only `u32`/`u64`; `s32` there is a parse
+  error, not a warning. Emit `int` unless the file has the typedef — and test
+  for the TYPEDEF, not for any use of the name, or a previous bad pass's own
+  output makes the test circular.
+- **`return Func_x(...)` looks exactly like a prototype** to a "type precedes
+  the name" test. Without a control-keyword guard the tail call is deleted, and
+  the multiset check then reports the callee as missing rather than as an error.
+- **Two declarations must not survive one import.** Rebuild the block from the
+  new names, but keep verbatim any prototype whose name is only ADDRESS-TAKEN
+  (`*(void **)(object + 108) = (void *)Func_02001bdc;`): a pool word is not a
+  `bl`, so the rule never touched that name. Wrapped prototypes are kept or
+  dropped as a whole group, and the self-reference on a declaration line must be
+  excluded from the "is it still referenced" scan or nothing is ever removed.
+
+**A rename pass cannot fix a count difference, and 27 files have one.** Where
+the source places more calls than the assembly has sites the excess is usually a
+duplicated statement in one arm — `resource_39a:07f0` writes
+`Func_02002b3a(0x30b)` twice in arms 1 and 2 where the assembly has one call,
+and the third arm's four-call shape is the correct model. Where it places fewer,
+the conversion is genuinely short. Both need a conversion lane, not a rename
+lane; the index assignment is meaningless once the counts disagree, so skip the
+file rather than sliding every name by one. The 27: `39a` 07f0/0920/0b04/12cc/
+2014, `3b8` 0674/0af8/17e8/2014/40b4, `3bf` 4f60/57ec/5af0, `3c4` 0ae8/1550/
+1744/1d04, `3c8` 1f60/247c/2b14/4bd8, `373` 564c, `3cb` 0148/0580/07b0/0860/0e10.
+
+**Compile one file at a time, not one overlay at a time.** `build:semantic` over
+the whole tree takes long enough that a broken intermediate sits in the shared
+tree while it runs, and a concurrent banking sweep can push it — that happened
+to this pass's `resource_3bf`. `sourceToAssemblyPlan({target:"gs1",
+routingSource, input, output})` from `tools/alchemy_gcc.ts` compiles a single
+source in a temp dir in about a second; run it per file, then `build:semantic`
+per overlay.
+
 **A near-twin of a BANKED EXACT source is the strongest single proof
 available.** `resource_394:07e0` against `assets/code/resource_394_c_020008b0.c`
 is 21 steps in the same order differing in four immediates; it named all ten
@@ -1787,9 +1842,26 @@ not cover, or not at all. The reconstruction is faithful to the bytes either
 way; say "caller unknown" rather than "indirect", because the second reads as
 established and is not.
 
-**`mov ip,pc; bx rN` (NOT `mov lr,pc`) is the private-ip-return call family**
-and the on-sight signature of a `keep_structured_asm` /
-`nonstandard_thumb_call_module` owner. Seeing it means **stop**, not decompile.
+**`mov ip,pc; bx rN` is an ORDINARY INDIRECT CALL — do NOT stop on it.** I
+briefed three lanes to treat it as an on-sight signature of retained assembly.
+That was wrong, and the tree said so in three places I failed to check: this
+document already retires it above (`0800ebec`, admitted whole at 1,714 bytes,
+"an ordinary indirect call… `LAWS.md` already recorded this idiom as a
+codegen-only difference from `bl __call_via_r4`"); `main_image_classes.ts`'s
+`returns-via-ip` class is `mov ip, **lr**` paired with `bx ip`, pinned by its own
+self-test; and the tracked evidence for `0800ebec` in `main-regions.json` says
+the same. In every owner lanes parked on it, the shape was
+`ldr r3,[pc,…]` → `0x03000118` (the relocated IWRAM multiply) → `mov ip,pc; bx r3`,
+i.e. an inlined `call_via r3`. **At least eleven owners were parked on my bad
+rule; they are convertible.**
+
+The real stop signature is `mov ip, lr` with `bx ip`. Also genuinely retained:
+`08002dd8`, which loads r4 from its pool **without saving r4** — no C compiler
+emits that.
+
+This is the failure mode this document warns about two sections up, committed by
+the person maintaining the document: **a blocker invented from a plausible
+reading, without checking what was already resolved.**
 
 **`keep_structured_asm` is ABSORBING for continuations.** A `merge_with_owner`
 row whose head is `keep_structured_asm` is out of scope even though the row's

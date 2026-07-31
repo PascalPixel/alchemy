@@ -2,6 +2,16 @@
   "format": 1,
   "main_owners": [
     {
+      "entry": "0x0800447c",
+      "evidence": "One 84-byte keep_structured_asm row holding a single function: prologue push {r5,r6,lr} plus the r8/sl save at 0x0800447c, matching epilogue at 0x080044b8, no inbound branch from outside the row. The two mov ip,pc; bx r6 sequences at 0x0800449e and 0x080044b0 are ordinary indirect calls through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after the bx (0x080044a2 and 0x080044b4) and both landing sites continue the same live frame, exactly as recorded for 0x0800ebec. Excluded (6 bytes): the 2-byte movs r0,r0 alignment filler at 0x080044ca and the one-word pool at 0x080044cc holding 0x03000118. 105 direct callers, the first at 0x0800ddf6, and published as a Thumb pointer at 0x0800012c.",
+      "executable_ranges": [
+        {
+          "address": "0x0800447c",
+          "size": 78
+        }
+      ]
+    },
+    {
       "entry": "0x0800ebec",
       "evidence": "One function across four manifest rows. The two mov ip,pc; bx r4 sequences at 0x0800f1ba and 0x0800f1c6 are ordinary indirect calls to the IWRAM-relocated ARM multiply at 0x03000118: mov ip,pc sets the return to the instruction after bx, and both landing sites continue the same live frame. The 62-byte executable-gap row at 0x0800f1bc is the continuation of one statement, not a control-flow anomaly. LAWS.md already records this idiom as a codegen-only difference from bl __call_via_r4. Excluded pools and alignment (90 bytes): 0x0800edf0 (36), 0x0800f186 (30), 0x0800f2ae (18), 0x0800f2d4 (4) and 2 bytes of trailing alignment. Previously recorded as a relocated_kernel_continuation blocker; resolved.",
       "executable_ranges": [
@@ -46,6 +56,24 @@
         {
           "address": "0x08016018",
           "size": 172
+        }
+      ]
+    },
+    {
+      "entry": "0x0801a7f4",
+      "evidence": "The manifest kind hidden_register_context_module does not hold here: r9 is loaded from the pool word 0x03001e98 at 0x0801a802 before any use, and every other high register (r8, sl, fp) is written before it is read, so the owner has no live-in beyond the ordinary argument registers and takes none. Ranges from a control-flow walk. Excluded (18 bytes): the 4-byte pool at 0x0801a850 (0x03001e98), 2 bytes of alignment at 0x0801a8be, the 8-byte pool at 0x0801a8c0 (0x00000064, 0x00000396), 2 bytes of alignment at 0x0801a90a, and the unreachable 2-byte bx lr stub at 0x0801a90c. Called directly from 0x0801c31a and published as a thumb pointer at 0x080151b4.",
+      "executable_ranges": [
+        {
+          "address": "0x0801a7f4",
+          "size": 92
+        },
+        {
+          "address": "0x0801a854",
+          "size": 106
+        },
+        {
+          "address": "0x0801a8c8",
+          "size": 66
         }
       ]
     },
@@ -100,12 +128,52 @@
       ]
     },
     {
+      "entry": "0x0808b320",
+      "evidence": "The manifest kind implicit_callee_saved_input_module records that r6 is read before it is written on the paths that skip the flagged-record store. It is an uninitialised local, not a hidden input: the byte-exact source src/08091eb0.c already calls this owner as Func_0808b320(s32, s32), fixing the two-argument interface, and the owner does not push r4 or otherwise preserve a caller context. The remaining structure is an ordinary zero-terminated 16-bit table scan. Excluded from the 120-byte manifest row: 2 bytes of alignment at 0x0808b38a and the 12-byte literal pool at 0x0808b38c (0x0809e488, 0x00000fff, 0x02000240). Four direct callers: 0x0808aff6, 0x0808dbee, 0x08091efc, 0x08091f78.",
+      "executable_ranges": [
+        {
+          "address": "0x0808b320",
+          "size": 106
+        }
+      ]
+    },
+    {
       "entry": "0x08095778",
       "evidence": "Func_080022ec/080022fc are div/mod; page and entry recombine to the integer flag id event-252, corroborated by this owner's own record match. Previously blocked as cross_file_abi against src/080955b0.c, whose void* parameter is semantically mistyped but byte-exact.",
       "executable_ranges": [
         {
           "address": "0x08095778",
           "size": 244
+        }
+      ]
+    },
+    {
+      "entry": "0x080992f0",
+      "evidence": "One 80-byte keep_structured_asm row holding a single leaf-plus-calls function: prologue at 0x080992f0, epilogue pop {r5,r6} / pop {r0} / bx r0 at 0x08099336, and no inbound branch from outside the row. The mov ip,pc; bx r3 at 0x08099310 is an ordinary indirect call to the IWRAM-relocated ARM multiply at 0x03000118, not retained assembly: mov ip,pc sets the return address to 0x08099314, the instruction after the bx, and execution continues in the same frame with every live register intact - the same finding already recorded for 0x0800ebec. Excluded (4 bytes): the one-word pool at 0x0809933c holding 0x03000118. Reached only as the published Thumb pointer 0x080992f1 at 0x080994b4, the pool word Func_080993b0 stores into the object it spawns.",
+      "executable_ranges": [
+        {
+          "address": "0x080992f0",
+          "size": 76
+        }
+      ]
+    },
+    {
+      "entry": "0x080a22f4",
+      "evidence": "Single 24-byte leaf plus its 24-byte pool, ending on bx lr, with three direct callers (0x080a47d6, 0x080a4846, 0x080a9e36). The manifest kind deliberate_dma_kick_macro names the two stmia r3!, {r0, r1, r2} stores to 0x040000d4; that is the DMA3 source/destination/control triple, already spelled as a volatile register struct in semantic/main/0800300c.c and semantic/main/0808e9c0.c, so the row has an ordinary C form. The subs r3, #12 after each stmia only rewinds the writeback pointer and has no visible effect. Pool walked from the four pc-relative loads: 0x040000d4, 0x05000200, 0x050001c0, 0x80000010, 0x050001e8, 0x80000001.",
+      "executable_ranges": [
+        {
+          "address": "0x080a22f4",
+          "size": 48
+        }
+      ]
+    },
+    {
+      "entry": "0x080b7f20",
+      "evidence": "One 80-byte keep_structured_asm row holding a single function: prologue push {r5,r6,lr} / push {r6} / sub sp,#12 at 0x080b7f20, matching epilogue at 0x080b7f60, and no inbound branch from outside the row. The mov ip,pc; bx r3 at 0x080b7f58 is an ordinary indirect call through the pooled 0x03000118, the IWRAM-relocated ARM multiply; mov ip,pc sets the return address to 0x080b7f5c, the halfword after the bx, and the landing site continues the same frame and stack adjustment - the reading already recorded for 0x0800ebec, not retained assembly. Excluded (6 bytes): the 2-byte movs r0,r0 alignment filler at 0x080b7f6a and the one-word pool at 0x080b7f6c holding 0x03000118. Reached only as the published Thumb pointer at 0x080b50ac; no direct caller.",
+      "executable_ranges": [
+        {
+          "address": "0x080b7f20",
+          "size": 74
         }
       ]
     },
@@ -128,6 +196,16 @@
         {
           "address": "0x080b9890",
           "size": 36
+        }
+      ]
+    },
+    {
+      "entry": "0x080bd850",
+      "evidence": "Single 60-byte body plus a 12-byte pool at 0x080bd88c (0x03001b10, 0x06010000, 0x03000164), walked from the three pc-relative loads; one direct caller at 0x080bdf36. Manifest kind hidden_register_context_module overstates the case here: r9 is pushed, spilled to the frame slot at [sp, #0] and popped, and is never read back, so the owner carries no hidden context and needs no r9 spelling. The bl Func_080072f0 is a call-via-r3 to the relocated IWRAM helper at 0x03000164, typed as a function pointer per the Func_080072f0 convention; r2 still holds the destination at the call and is a leftover of the address computation, not a third argument. Epilogue pop {r0}; bx r0 makes the owner void.",
+      "executable_ranges": [
+        {
+          "address": "0x080bd850",
+          "size": 72
         }
       ]
     },
@@ -384,6 +462,16 @@
       ]
     },
     {
+      "entry": "0x080e73a0",
+      "evidence": "Single 98-byte body, no pool (every constant is built with movs/lsls), ending pop {r0}; bx r0, so the owner is void. No direct call, branch or pool word in the image names this address, so the caller is unknown rather than indirect. Manifest kind hidden_register_context_module is accurate: the table base is read once as *(r9 - 136) and r9 is saved and restored around the body, so the owner is frame-balanced and self-contained and the context is spelled as an uninitialised local, per the HANDOVER rule for a close without its open. The status store is duplicated in both arms and the owner/payload stores are a shared tail reached by goto, matching the two-arm structure exactly.",
+      "executable_ranges": [
+        {
+          "address": "0x080e73a0",
+          "size": 98
+        }
+      ]
+    },
+    {
       "entry": "0x080ec100",
       "evidence": "One function with its only prologue at 0x080ec100 (116-byte frame) and its only epilogue at 0x080ece3e. Eleven inter-row branches reuse the live frame plus r10 (frame counter) and r11 (work-RAM base). Interior literal pools at 0x080ec170 (32), 0x080ec1d4 (20), 0x080ec23c (40), 0x080ec2e2 (22 incl. alignment), 0x080ec44c (40), 0x080ec6f4 (52), 0x080ecaba (46) and 0x080ecbb8 (32) are excluded, as is the trailing pool at 0x080ece52 (42). Previously recorded as a multi_region_function blocker; resolved by whole-module admission.",
       "executable_ranges": [
@@ -452,6 +540,16 @@
       ]
     },
     {
+      "entry": "0x080f9a30",
+      "evidence": "Single 32-byte leaf, no pool, ends on bx lr. The manifest kind nonstandard_thumb_branch_module records the b.n that skips the else arm of the head/previous test; the two arms are distinct stores and are kept distinct. One direct caller at 0x080f9a6a, and the address+1 word at 0x080fb828 publishes it as a callback.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9a30",
+          "size": 32
+        }
+      ]
+    },
+    {
       "entry": "0x080f9f6c",
       "evidence": "Func_080f9f3c is a 48-byte leaf with no push/pop taking r4/r5 from its caller, spelled as two explicit pointers. The Func_080fa678 call-via-r1 concern is that callee's internals; from here it is an ordinary one-argument call. Previously blocked as hidden_register_module.",
       "executable_ranges": [
@@ -462,6 +560,26 @@
         {
           "address": "0x080f9f6c",
           "size": 504
+        }
+      ]
+    },
+    {
+      "entry": "0x080fa4cc",
+      "evidence": "Two independent leaves in one 72-byte row, each with its own 8-byte trailing pool (0x080fa4e4 and 0x080fa50c), both ending on bx lr and neither reachable from the other. Neither entry has any inbound reference in the image, so the row is admitted whole rather than split. The manifest kind nonstandard_thumb_branch_module records the early-out branch over the body, which converts as a guard clause; both 0x68736d53 pool words are the same 'Smsh' signature literal, kept as one constant.",
+      "executable_ranges": [
+        {
+          "address": "0x080fa4cc",
+          "size": 72
+        }
+      ]
+    },
+    {
+      "entry": "0x080fb410",
+      "evidence": "Single 30-byte leaf, no pool, ends on bx lr. The manifest kind nonstandard_thumb_branch_module records the b.n over an else arm that the approved compiler spells as a conditional move; that is a codegen difference, not a control-flow one, and the arm structure converts directly. Two direct callers, 0x080fb47e and 0x080fb4f2.",
+      "executable_ranges": [
+        {
+          "address": "0x080fb410",
+          "size": 30
         }
       ]
     }

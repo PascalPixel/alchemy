@@ -71,7 +71,7 @@ struct Resource373Box {
 #define RESOURCE_373_KIND_LIST ((const s32 *)0x0200e1d0)
 #define RESOURCE_373_KIND_BOXES ((const struct Resource373Box *)0x0200e1e8)
 
-struct Resource373Object *Func_0200634e(s32 index);
+struct Resource373Object *Func_0808a080();
 
 struct Resource373Object *Func_0200034c(s32 *directionOut, s32 *slotOut,
                                         s32 *kindIndexOut)
@@ -79,7 +79,7 @@ struct Resource373Object *Func_0200034c(s32 *directionOut, s32 *slotOut,
     u8 *scene = RESOURCE_373_SCENE;
     struct Resource373Object **objects =
         (struct Resource373Object **)(scene + 0x34);
-    struct Resource373Object *player = Func_0200634e(0);
+    struct Resource373Object *player = Func_0808a080(0);
     s32 slot;
 
     *directionOut = ((const u16 *)player)[3] >> 12;   /* halfword at +6 */

@@ -489,6 +489,9 @@ const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
 // (or, for 399:05dc and 0a3c, together with the routed immediate-latency
 // mode). Each entry has its own exact-byte proof.
 const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
+  // resource_398:04b4 sets r0 then r1 for a six-argument call; the dependence
+  // count reverses that pair and neither tie-break direction restores it.
+  "assets/code/resource_398_c_020004b4.c",
   "assets/code/resource_3c8_c_0200096c.c",
   "assets/code/resource_3c5_c_02000cf0.c",
   "assets/code/resource_3b2_c_02000da4.c",

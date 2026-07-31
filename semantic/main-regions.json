@@ -2,6 +2,16 @@
   "format": 1,
   "main_owners": [
     {
+      "entry": "0x08006f48",
+      "evidence": "Core-band gap census (/tmp/ALCHEMY_QUEUE_CORE.md), kind nonstandard_thumb_branch_module, 36 bytes, retention keep_structured_asm so not auto-eligible via the manifest fallback. Single-block leaf: no push/pop, one bare `bx lr`, the classifier's automation-resistant shape is the mid-body conditional branch back over the byte-scan loop rather than a standard call/return. Dereferences the flash-chip descriptor pointer at 0x02004C08 and reads its `size` field at offset +4, the same struct src/08006cdc.c already establishes byte-exact (`struct FlashInfo08006cdc`); scans forward from the incoming buffer pointer counting down `size` while each byte is 0xff (flash's erased value), stopping at the first non-erased byte or when the count reaches zero, and returns whatever remains of the count. bun tools/main_xref.ts 08006f48 reports FUNCTION (indirectly published callback) with two Thumb pointers (0x08006e68, 0x08007b2c) and no direct bl call site, confirming it is a genuine standalone entry, not interior to a neighbour.",
+      "executable_ranges": [
+        {
+          "address": "0x08006f48",
+          "size": 36
+        }
+      ]
+    },
+    {
       "entry": "0x0800447c",
       "evidence": "One 84-byte keep_structured_asm row holding a single function: prologue push {r5,r6,lr} plus the r8/sl save at 0x0800447c, matching epilogue at 0x080044b8, no inbound branch from outside the row. The two mov ip,pc; bx r6 sequences at 0x0800449e and 0x080044b0 are ordinary indirect calls through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after the bx (0x080044a2 and 0x080044b4) and both landing sites continue the same live frame, exactly as recorded for 0x0800ebec. Excluded (6 bytes): the 2-byte movs r0,r0 alignment filler at 0x080044ca and the one-word pool at 0x080044cc holding 0x03000118. 105 direct callers, the first at 0x0800ddf6, and published as a Thumb pointer at 0x0800012c.",
       "executable_ranges": [

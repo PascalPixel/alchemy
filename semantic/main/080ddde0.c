@@ -80,15 +80,16 @@ typedef void (*Renderer_080ddde0)(
     s32 height);
 
 /*
- * The resident routine at 0x03000168, reached through __call_via_r5.  Its
- * body lives in IWRAM and is not part of this ROM region, so only the
- * argument shape is asserted here: this function always calls it with the
- * render context, 0x4000 and 0x10101010.  Uncertainty: the role of the
- * two constants is not established -- 0x4000 is a plausible byte count and
- * 0x10101010 a plausible four-pixel fill pattern, but neither is proven
- * from this function alone, so the parameters stay unnamed.
+ * The relocated IWRAM routine at 0x03000168, reached here through
+ * __call_via_r5.  This draft first left its parameters unnamed.  The
+ * veneer audit then found that semantic/main/080e15e8.c had already
+ * established the same address as a fill taking (destination, size,
+ * value), reached in that owner through __call_via_r6 -- different
+ * veneer, same callee, and the argument shape agrees: 0x4000 bytes of the
+ * four-pixel pattern 0x10101010.  Named on that evidence rather than left
+ * open.
  */
-typedef void (*Resident_080ddde0)(void *context, s32 arg1, s32 arg2);
+typedef void (*ArmFill_080ddde0)(void *destination, u32 size, u32 value);
 
 /*
  * Effect table at 0x080eebd6, four u8 columns per `variant`, three rows
@@ -167,7 +168,7 @@ void Func_080ddde0(struct Scene_080ddde0 *scene)
     u8 *runtime = (u8 *)runtime_header[0];
     void *render_context = (void *)runtime_header[1];
     u8 *effect_tiles = (u8 *)runtime_header[2];
-    Resident_080ddde0 resident = (Resident_080ddde0)0x03000168;
+    ArmFill_080ddde0 arm_fill = (ArmFill_080ddde0)0x03000168;
     struct Scene_080ddde0 **scene_slot =
         (struct Scene_080ddde0 **)(runtime + 0x7828);
     struct EffectStep *local_sparks =
@@ -212,7 +213,7 @@ void Func_080ddde0(struct Scene_080ddde0 *scene)
 
         for (index = 0; index < (*scene_slot)->object_count; index++) {
             if (frame == index * 8)
-                resident(render_context, 0x4000, 0x10101010);
+                arm_fill(render_context, 0x4000, 0x10101010);
         }
 
         id_offset = 0x24;

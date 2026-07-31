@@ -125,17 +125,14 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **624,710
-executable bytes across 1,160 compiling sources**: 385,850 main-image bytes and
-238,860 overlay bytes. Combined with exact C, **836,336 / 1,339,578 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **623,540
+executable bytes across 1,137 compiling sources**: 385,850 main-image bytes and
+237,690 overlay bytes. Combined with exact C, **836,336 / 1,339,580 executable
 bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
 sources live under `semantic/` and do not claim byte equality. Use
 `semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
 of the ordinary review queue.
-bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
-sources live under `semantic/` and do not claim byte equality. Use
-`semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
-of the ordinary review queue.
+
 
 **27 overlays have zero unconverted rows in the strict queue**, holding
 217,888 strict bytes between them. Regenerate this list rather than editing it —

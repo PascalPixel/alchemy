@@ -2330,15 +2330,8 @@ AlchemyC_02001544:
 	.space 0xa
 .L_0200154e:
 	.space 0x6
-	push	{lr}
-	ldr	r3, [r0, #0]
-	movs	r2, #0
-	cmp	r3, #4
-	bne.n	.L_02001560
-	movs	r2, #1
-.L_02001560:
-	adds	r0, r2, #0
-	pop	{pc}
+AlchemyC_02001554:
+	.space 0x10
 AlchemyC_02001564:
 	.space 0x10
 	push	{r4, r5, r6, lr}
@@ -2599,16 +2592,12 @@ AlchemyC_02001564:
 	mov	r8, r3
 	mov	sl, r4
 	pop	{r4, r5, r6, r7, pc}
-	push	{lr}
-	ldr	r3, [r0, #0]
-	movs	r2, #0
-	cmp	r3, #1
-	bhi.n	.L_0200174c
+AlchemyC_02001740:
+	.space 0xa
 .L_0200174a:
-	movs	r2, #1
+	.space 0x2
 .L_0200174c:
-	adds	r0, r2, #0
-	pop	{pc}
+	.space 0x4
 AlchemyC_02001750:
 	.space 0x10
 AlchemyC_02001760:

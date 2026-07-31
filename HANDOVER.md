@@ -2065,6 +2065,17 @@ intact; `:0cd0` needed one flag and no source edit. Batch this across a whole
 overlay before drafting anything: the group counts rank the queue for you, and
 the free rows fall out immediately.
 
+**When the comparator says exact and `overlay_adopt` rejects, check the callee
+names before anything else.** The first suspect used to be a routing collision,
+and `cflagsForSource` on the installed path still settles that in one line — but
+it is not the only cause, and on `resource_371:011c` it was a clean miss:
+default flags on both sides, `groups_differing=0`, `differing_bytes=3`. The
+comparator normalises every `bl <target>` to `bl X`, so **it is blind to callee
+addresses by construction** and a wrong callee is invisible to it right up to
+adoption. Equal sizes with a handful of differing bytes is a branch
+displacement, so read the annotation and compare it to what the draft names.
+Order of suspicion: callee names, then `cflagsForSource`, then the span.
+
 **Transcribe callee names from `overlay_show.ts`; never extrapolate them.** An
 overlay `bl` stores the target's image offset minus two, so `overlay_show`'s
 pc-relative `bl 0x...` annotation is wrong for every site — that is exactly what

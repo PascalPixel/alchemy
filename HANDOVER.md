@@ -495,6 +495,38 @@ confirms it is data.
 unrelated globals hides that the second is the well-known workspace pointer the
 rest of the overlay loads directly.
 
+**A jump table's own base pool word is a FREE link-base witness.**
+`resource_3af`'s table base is `0x020080ec` and the table physically sits at file
+offset 0x00ec; `resource_3b9`'s is `0x020080ac` at 0x00ac. This is the cheapest
+base proof available on any dispatcher row, and it falls out of the same read
+that seeds the pool map.
+
+**A 66-entry jump table can be 6 distinct arms and 57 default entries.**
+`resource_3b9:007c`. Grouped `switch` cases over the raw selector, plus the
+table's own default, is the faithful spelling; one arm per entry is inflation in
+its purest form.
+
+**`ldrsh` immediately followed by `lsls #16 / lsrs #16` is a signed load consumed
+UNSIGNED, not a redundant pair.** `resource_3c1:0120`. Keep both halves — the
+table is declared signed and read unsigned.
+
+**The displacement/value trap with THREE roles in five instructions, all in one
+register.** `resource_3c1:022c` runs 448 (displacement) → 256 (stored value, via
+`subs #192`) → 456 (next displacement, via `adds #200`). This is the reference
+example for the subtractive form, and it independently confirms that `+448`
+carries the scene id 256, matching `resource_3a2:11b0`.
+
+**`Func_0808a080(0)->[+0x55]` is a cross-overlay control byte.**
+`resource_393:0aac` brackets it (mask with 0x7e on entry, restore on exit) and
+`semantic/overlays/resource_370_c_02000054.c` clears the same `record[85]` after
+the same accessor. Two independent overlays agreeing is what names the field.
+
+**Reading TWO neighbouring byte-exact siblings before starting is worth more
+than reading one.** `assets/code/resource_3b9_c_02000030.c` and `_02000238.c`
+between them fixed `Data_02000240[224]` as the map id and `[225]` as the
+sub-state, the result spelling, and the significance of sub-state 12 — settling
+`resource_3b9:007c` before any dataflow work.
+
 **A bracket-close import appearing MORE times in your C than in the histogram
 means you wrote a shared close once per arm.** Measured across the eight
 worst-failing overlays, three of the eleven genuine count defects were exactly
@@ -554,6 +586,10 @@ is an event-flag id, the handler sets that flag — `resource_398:0214`, key
 a small fraction of `span_bytes` and `calls` reads as 0 or 1. Both converted
 without incident, beating their advertised counts by 10 and 11. **The tell is a
 prologue row, not contained, whose `calls` is 0–2 against a span of 128+ bytes.**
+Note this tier is narrower than it looks: a lane reported `resource_3af:00c4`
+and `resource_3b9:007c` as further instances, but both have `returns=1` and were
+ordinary **strict-queue** rows — a jump table does not by itself push a row out
+of the queue. Check `returns` before counting one.
 Measured across the whole inventory, only **2 such rows remain unconverted (548
 bytes, in `resource_3ca` and `resource_399`)** — so this is a tier worth
 knowing about, not a large hidden pool.

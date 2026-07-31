@@ -50,9 +50,9 @@ typedef signed int s32;
 extern u8 *Data_03001f30;
 extern u16 Data_03001b10[];
 
-u8 *Func_0200828e();
-void Func_020082ae();
-void Func_020082a4();
+u8 *Func_080090c8();
+void Func_08009020();
+void Func_080001b8();
 
 void Func_02004004(void *object);
 void Func_02003fb4(void *object);
@@ -66,7 +66,7 @@ void Func_02004058(u8 *parent)
     s32 index;
 
     for (index = 0; index <= 1; index++) {
-        piece = Func_0200828e(26,
+        piece = Func_080090c8(26,
                               *(s32 *)(parent + 0x08),
                               *(s32 *)(parent + 0x0c),
                               *(s32 *)(parent + 0x10));
@@ -84,9 +84,9 @@ void Func_02004058(u8 *parent)
             continue;
         }
 
-        Func_020082ae(record, 0);
+        Func_08009020(record, 0);
         record[0x26] = 0;
-        Func_020082a4(record[0x1c]);
+        Func_080001b8(record[0x1c]);
 
         record[0x1c] = (u8)*(u16 *)(state + 70);
         record[0x1d] |= 1;

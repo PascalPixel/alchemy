@@ -1032,6 +1032,24 @@
           "size": 410
         }
       ]
+    },
+    {
+      "entry": "0x080c0a24",
+      "evidence": "One 448-byte function, 0x080c0a24..0x080c0be2, split into three executable ranges by two interior literal pools. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 16-byte frame; the single epilogue at 0x080c0bd2 unwinds all of it and ends pop {r0}; bx r0, so the owner is void. Excluded (52 bytes): the 2-byte movs r0,r0 alignment fillers at 0x080c0b6a and 0x080c0bbe, the ten-word pool at 0x080c0b6c holding 0x00003f8e (0x080c0b3e), 0x0000478a (0x080c0b58), 0x03001f00 (0x080c0a36), 0x03001ad0 (0x080c0a92), 0x0300013c (0x080c0ab6 and 0x080c0b26), 0xffff0000 (0x080c0ad2), 0x03000118 (0x080c0ada), 0x00007fff (0x080c0b00), 0xfffff000 (0x080c0b12) and 0x0000016b (0x080c0b32), and the two-word pool at 0x080c0bc0 holding 0x0000478e (0x080c0b9a) and 0x00003f8e (0x080c0bb0). Every one is reached by ldr rN,[pc,#imm] from inside the ranges and none is branched to. The bl Func_080072ec at 0x080c0aba and 0x080c0b2a is the runtime _call_via_r2 thunk inside 0x080072e4..0x08007320, an indirect call through the pooled 0x0300013c; the four mov ip,pc; bx r4 sequences at 0x080c0ae0, 0x080c0ae8, 0x080c0af4 and 0x080c0afc are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec. Nothing in the row is retained assembly. bun tools/main_xref.ts 080c0a24 reports FUNCTION (called directly) with seven callers, the first at 0x080b593e.",
+      "executable_ranges": [
+        {
+          "address": "0x080c0a24",
+          "size": 326
+        },
+        {
+          "address": "0x080c0b94",
+          "size": 42
+        },
+        {
+          "address": "0x080c0bc8",
+          "size": 28
+        }
+      ]
     }
   ]
 }

@@ -133,7 +133,7 @@ export async function verifyCandidate(
     if (externalSymbol(external) === null) throw new ValueError(`unsupported external symbol: ${external}`);
     names.push(external);
   }
-  writeFileSync(symbolsSource, ".syntax unified\n.thumb\n" + names.map(externalSymbolAssembly).join(""));
+  writeFileSync(symbolsSource, ".syntax unified\n.thumb\n" + names.map((name) => externalSymbolAssembly(name)).join(""));
   await run([
     "arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork",
     "-o", symbolsObject, symbolsSource,

@@ -59,15 +59,31 @@ function parseArguments(argv: string[]): Options {
 
 // 関数本体を切り出す。最初の `Func_` 定義の `{` から対応する `}` まで。
 export function functionBody(source: string): { start: number; end: number } | null {
-  const signature = /\b[A-Za-z_][A-Za-z0-9_ *]*\bFunc_[0-9a-f]{8}\s*\([^)]*\)\s*\{/.exec(source);
-  if (signature === null) return null;
-  const start = signature.index + signature[0].length;
-  let depth = 1;
-  for (let at = start; at < source.length; at++) {
-    if (source[at] === "{") depth++;
-    else if (source[at] === "}") {
-      depth--;
-      if (depth === 0) return { start, end: at };
+  const signatures = /\bFunc_[0-9a-f]{8}\s*\(/g;
+  for (const signature of source.matchAll(signatures)) {
+    const open = source.indexOf("(", signature.index);
+    let parameterDepth = 0;
+    let brace = -1;
+    for (let at = open; at < source.length; at++) {
+      if (source[at] === "(") parameterDepth++;
+      else if (source[at] === ")") {
+        parameterDepth--;
+        if (parameterDepth !== 0) continue;
+        let after = at + 1;
+        while (/\s/.test(source[after] ?? "")) after++;
+        if (source[after] === "{") brace = after;
+        break;
+      }
+    }
+    if (brace < 0) continue;
+    const start = brace + 1;
+    let bodyDepth = 1;
+    for (let at = start; at < source.length; at++) {
+      if (source[at] === "{") bodyDepth++;
+      else if (source[at] === "}") {
+        bodyDepth--;
+        if (bodyDepth === 0) return { start, end: at };
+      }
     }
   }
   return null;
@@ -189,6 +205,11 @@ function selfTest(): void {
   const runs = independentRuns(pieces, 6);
   if (runs.length !== 1 || runs[0][0] !== 0 || runs[0][1] !== 1) {
     throw new Error("statement-order self-test did not expose pointer declarations");
+  }
+  const nestedParameter = "void Func_08000000(s32 *value, u16 (*table)[2]) {\n    s32 index;\n}\n";
+  const nestedBounds = functionBody(nestedParameter);
+  if (nestedBounds === null || nestedParameter.slice(nestedBounds.start, nestedBounds.end) !== "\n    s32 index;\n") {
+    throw new Error("statement-order self-test did not parse a pointer-to-array parameter");
   }
   console.log("self-test=ok");
 }

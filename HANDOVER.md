@@ -495,6 +495,43 @@ confirms it is data.
 unrelated globals hides that the second is the well-known workspace pointer the
 rest of the overlay loads directly.
 
+**Mechanise the multiset proof: `bun tools/overlay_multiset_check.ts <ov>
+[ownerHex]`.** Four lanes independently hand-rolled this before it was promoted
+into `tools/`. It compares the per-target `bl` histogram against
+`Func_xxxxxxxx(` counts in the finished C and exits non-zero on any mismatch, so
+a lane can gate its own loop on it. Two subtleties it already handles, both of
+which cost lanes time: comments and declarations must be stripped before
+counting (**including the owner's own definition line**, or the function counts
+as a call to itself), and a long `bl` landing inside the owner's own span is a
+`goto` rather than a call.
+
+**A near-twin of a BANKED EXACT source is the strongest single proof
+available.** `resource_394:07e0` against `assets/code/resource_394_c_020008b0.c`
+is 21 steps in the same order differing in four immediates; it named all ten
+imports backwards in one read with zero dataflow work, and exposed that one
+printed name there takes two different arities at different sites.
+
+**Verify a six-argument extraction against a banked argument LIST, not just an
+import identity.** `resource_394:0150`'s else arm is `(0, 0, 1, 4, 6, 9)` —
+literally `Func_020019cc(0, 0, 1, 4, 6, 9)` in the exact sibling. That is a free
+check catching a swapped `sp+0`/`sp+4`, which nothing else in the row would
+catch.
+
+**The exported-entry veneer table's LENGTH is told by the first prologue after
+it**, and every entry is a root — six entries to 0x2f in `resource_398`, five in
+`resource_394`. Both lanes' call graphs fell out of that in one read.
+
+**A large `call_via` count is NOT evidence of a thunk.** `resource_398:0538` has
+**15** sites to `0x02000904`, a bare `bx lr`, and no site loads r3/r4 — it is a
+one-argument no-op leaf. Check the argument registers before believing an
+indirect call.
+
+**The 12-byte interaction record `{key, param, handler | 1}` is shared across
+overlays** (`resource_398` and `resource_394` both use it), and the handler word
+names an unconverted row's role before disassembly. Where the key's second word
+is an event-flag id, the handler sets that flag — `resource_398:0214`, key
+`0x08830008`.
+
 **The strict-queue filter HIDES real dispatchers, and they convert normally.**
 `resource_3b1:012c` and `:037c` fail the filter purely *because* they contain a
 `mov pc,rN` table: the linear walk stops at the table, so `code_bytes` comes out

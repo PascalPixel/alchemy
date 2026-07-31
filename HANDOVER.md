@@ -1890,6 +1890,34 @@ consuming r0 as that call's result. **38 further `asm/*.s` files contain
 `mov ip,pc` and have no semantic source** (`0800cacc`, `08097a10`, `0800d14c`,
 …) — ordinary backlog, and all known-convertible on this reading.
 
+**The thunk table is INDEXABLE, not the three entries I first listed.**
+`080072e4 + 4*N` is `call_via rN` for all sixteen registers — `080072f4` is via
+**r4**, `08007310` via **fp**. **Any `bl` into `080072e4..08007320` is an indirect
+call through the register loaded immediately before it.** Read it as a range,
+not as a handful of known addresses.
+
+**A GENUINE stop signature, distinct from the `03000118` family: the relocated
+stack ARM kernel.** `08004fe4` opens with `stmia r3!,{r0,r1,r2}` at
+`r3 = 0x040000d4` — a DMA3 kick copying `0x84000007` (7 words) from `0x08007994`
+into its OWN STACK FRAME at `sp+36` — then calls that stack buffer via
+`bl Func_080072f4` with r4 holding the destination. `asm/08007994.s` is the
+28-byte ARM three-term 16.16 dot-product kernel, already classified
+`relocated_stack_arm_kernel`. DMA-ing code into the frame and branching to it has
+no C form. The `03000118` family differs by being called *in place*.
+
+**The ratio helper `0300013c` takes the DIVISOR FIRST.** It returns
+`value / divisor` — its *second* argument over its first. Proved by
+`080979a4`, which passes `180 << 17` (360.0) as the first argument to
+`08097a10` and gets an angle reduced into one turn. `semantic/main/080123f4.c`
+names the first parameter "numerator", which reads backwards.
+
+**`if (v < 0) v += 0xffff; v >>= 16` is a TRUNCATING fixed-point-to-whole
+conversion**, with `0x0000ffff` in the pool as the giveaway that whole-unit
+distances follow. In `0800dd70` and `0800d14c`.
+
+**`lsls rN,#16` immediately before a `cmp` against `K<<16` is a HALFWORD COMPARE**
+on a counter (`0809a7f4`, `0809a738`), not arithmetic.
+
 **`bl Func_080072f0` / `Func_0800730c` / `Func_080072ec` ARE NOT FUNCTIONS.**
 They are entries in the `_call_via_rN` thunk table at `asm/080072e4.s` — r0 at
 `+0`, four bytes apart, so `080072f0` is via r3, `0800730c` via sl, `080072ec`

@@ -231,6 +231,12 @@
     },
     {
       "overlay": "resource_371",
+      "entry": "0x020039fc",
+      "span_bytes": 1296,
+      "evidence": "admitted whole-owner semantic reconstruction; DERIVED span - no row in out/decomp/overlays.json. Control-flow walk from the push {r5,r6,r7,lr} prologue at 0x020039fc to the single matching high-register unwind pop {r3,r5,r6,r7}/mov r8,r3/.../pop {r0}/bx r0 at 0x02003efc-0x02003f0b; no bl resolves inside the body and there is no mov pc,rN dispatch. 1,154 instruction bytes plus six interior literal pools totalling 142 bytes (0x02003b32, 0x02003bb2, 0x02003bfa, 0x02003cfc, 0x02003e80, 0x02003ed8); the trailing pool from 0x02003f0c is excluded. Link base confirmed by two odd pool words, 0x0200b8fd -> prologue 0x020038fc and 0x0200b95d -> prologue 0x0200395c."
+    },
+    {
+      "overlay": "resource_371",
       "entry": "0x02003f10",
       "span_bytes": 60,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
@@ -1473,6 +1479,12 @@
     },
     {
       "overlay": "resource_38d",
+      "entry": "0x020008c0",
+      "span_bytes": 3790,
+      "evidence": "admitted whole-owner semantic reconstruction; DERIVED span - no row in out/decomp/overlays.json. Control-flow walk from the push {r5,lr} prologue at 0x020008c0 to the single matching epilogue pop {r5}/pop {r0}/bx r0 at 0x02001788-0x0200178d, following every branch and treating the bl at 0x02000e16 (target 0x0200177e, neither veneer nor prologue) as a long tail branch. 3,568 instruction bytes plus five interior literal pools totalling 222 bytes (0x02000cd0, 0x02000e1a, 0x02001206, 0x0200129e, 0x02001690); the trailing pool 0x02001790-0x0200179b and the 0x0200178e alignment halfword are excluded. End confirmed by the next prologue at 0x0200179c, already converted."
+    },
+    {
+      "overlay": "resource_38d",
       "entry": "0x0200179c",
       "span_bytes": 444,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
@@ -2294,6 +2306,18 @@
       "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json, span walked from the prologue through every internal branch to its matching epilogue at 0x02001018, literal pool 0x0200101c-0x0200102b (0xffffe000, 0x3fff0000, 0x00003fff, 0xffffa000) excluded, next prologue at 0x0200102c"
     },
     {
+      "overlay": "resource_39e",
+      "entry": "0x0200102c",
+      "span_bytes": 282,
+      "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json and confirmed as the next prologue by the neighbouring 0x02000f80 owner, span walked from the prologue through both forward branches to its matching interworking epilogue `pop {r5,r6} / pop {r0} / bx r0` at 0x02001144, alignment halfword 0x02001146 and literal pool 0x02001148-0x0200115f (0x0000cccc, 0x00006666, 0x0000183a, 0x00000101, 0x000018ae, 0x000018ac) excluded, next prologue at 0x02001160"
+    },
+    {
+      "overlay": "resource_39e",
+      "entry": "0x020013b8",
+      "span_bytes": 196,
+      "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json, span walked from the prologue through every internal branch to its matching interworking epilogue `pop {r5} / pop {r0} / bx r0` at 0x0200147a, literal pool 0x0200147c-0x02001493 (0xffffe000, 0x3fff0000, 0x00003fff, 0xffffa000, 0x0000089a, 0x0000089b) excluded, next prologue at 0x02001494"
+    },
+    {
       "overlay": "resource_39f",
       "entry": "0x02000030",
       "span_bytes": 60,
@@ -2700,6 +2724,12 @@
       "entry": "0x02000314",
       "span_bytes": 56,
       "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json, span walked from the prologue to its matching interworking epilogue `pop {r5} / pop {r1} / bx r1` at 0x02000346, literal pool 0x0200034c (0x030001d8) excluded, next prologue at 0x02000350; byte-identical to the same routine in resource_385/39b/3a6/3b3/3be apart from the call_via `bl` encoding"
+    },
+    {
+      "overlay": "resource_3a6",
+      "entry": "0x02000f78",
+      "span_bytes": 320,
+      "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json, span walked from the prologue through the guard branch and the loop back edge to its matching high-register unwind `add sp,#56 / pop {r3,r5} / mov r8,r3 / mov sl,r5 / pop {r5,r6,r7} / pop {r0} / bx r0` at 0x020010b6, literal pool 0x020010b8-0x020010c7 (0xfff80000, 0x00009999, 0xffff8000, 0x00000201) excluded, next prologue at 0x020010c8"
     },
     {
       "overlay": "resource_3a6",

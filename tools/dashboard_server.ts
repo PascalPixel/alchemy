@@ -37,10 +37,11 @@ const pageHtml = () => `<!doctype html><html><head><meta charset="utf-8"><meta n
   @font-face{font-family:'Weyard';src:url('/weyard.otf') format('opentype');font-weight:400;font-style:italic}
   *{box-sizing:border-box;font-smooth:never;-webkit-font-smoothing:none;font-synthesis:none}
   html,body{margin:0;background:#ffffff;height:100%}
-  #root{height:100vh;display:flex;flex-direction:column;gap:10px;padding:10px;max-width:1700px;margin:0 auto}
+  #root{height:100vh;display:flex;flex-direction:column;gap:12px;padding:12px;max-width:1700px;margin:0 auto}
   .trees{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;flex:0 0 auto}
   .trees img{width:100%;aspect-ratio:16/9;object-fit:contain;display:block;border-radius:4px}
-  .panel{background:var(--edge);border-radius:10px;overflow:hidden;padding:0 5px 5px;display:flex;flex-direction:column;min-height:0}
+  .panel{background:var(--edge);border-radius:8px;overflow:hidden;padding:0 5px 5px;display:flex;flex-direction:column;min-height:0;
+    box-shadow:0 0 0 2px #1c1c26, inset 0 0 0 1px rgba(255,255,255,.6)}
   .panel>.titlebar{color:#fff;font:italic 400 16px/15px 'Weyard',system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;height:18px;padding:0.5px 5px 0;flex:0 0 auto}
   .panel>*:not(.titlebar){border-radius:5px}
   .p-core{--edge:#6d4fc2}

@@ -6886,25 +6886,8 @@ AlchemyC_02003c94:
 	.4byte 0x47708013
 	.2byte 0x1000
 	.2byte 0x0200
-	push	{r5, lr}
-	ldr	r5, [pc, #28]
-	movs	r2, #0
-	ldrsh	r3, [r5, r2]
-	cmp	r3, #9
-	beq.n	.L_02003cea
-.L_02003cdc:
-	movs	r0, #1
-	bl	sub_02008520
-	movs	r2, #0
-	ldrsh	r3, [r5, r2]
-	cmp	r3, #9
-	bne.n	.L_02003cdc
-.L_02003cea:
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	.2byte 0x1000
-	.2byte 0x0200
+AlchemyC_02003cd0:
+	.space 0x24
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	ldr	r3, [r5, #40]

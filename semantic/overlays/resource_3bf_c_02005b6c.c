@@ -54,7 +54,7 @@ typedef struct SoftFloatRecord {
 s32 Func_02005bd8();
 s32 Func_02005be8();
 s32 Func_02005bf8();
-s32 Func_02005c08();
+u32 Func_02005c08();  /* result is used and cast; a void declaration hard-errors */
 void Func_02005e04();
 
 s32 Func_02005b6c(SoftDouble value)

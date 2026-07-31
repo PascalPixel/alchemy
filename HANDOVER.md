@@ -141,6 +141,15 @@ still open (§8).
 Alongside the exact lane, reviewed semantic C currently accounts for **683,124
 executable bytes across 1,299 compiling sources**: 385,850 main-image bytes and
 297,274 overlay bytes. Combined with exact C, **897,308 / 1,339,580 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **662,952
+executable bytes across 1,253 compiling sources**: 385,850 main-image bytes and
+277,102 overlay bytes. Combined with exact C, **877,080 / 1,339,580 executable
+bytes** are expressed as C.
+Build that lane with `bun run build:semantic`; its
+sources live under `semantic/` and do not claim byte equality. Use
+`semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
+of the ordinary review queue.
+
 bytes** are expressed as C.
 Build that lane with `bun run build:semantic`; its
 sources live under `semantic/` and do not claim byte equality. Use
@@ -491,6 +500,136 @@ confirms it is data.
 `resource_3b5:0170` loads `[r3,#0]` and `[r3,#48]` off it. Reading those as two
 unrelated globals hides that the second is the well-known workspace pointer the
 rest of the overlay loads directly.
+
+**Mechanise the multiset proof: `bun tools/overlay_multiset_check.ts <ov>
+[ownerHex]`.** Four lanes independently hand-rolled this before it was promoted
+into `tools/`. It compares the per-target `bl` histogram against
+`Func_xxxxxxxx(` counts in the finished C and exits non-zero on any mismatch, so
+a lane can gate its own loop on it. Two subtleties it already handles, both of
+which cost lanes time: comments and declarations must be stripped before
+counting (**including the owner's own definition line**, or the function counts
+as a call to itself), and a long `bl` landing inside the owner's own span is a
+`goto` rather than a call.
+
+**A near-twin of a BANKED EXACT source is the strongest single proof
+available.** `resource_394:07e0` against `assets/code/resource_394_c_020008b0.c`
+is 21 steps in the same order differing in four immediates; it named all ten
+imports backwards in one read with zero dataflow work, and exposed that one
+printed name there takes two different arities at different sites.
+
+**Verify a six-argument extraction against a banked argument LIST, not just an
+import identity.** `resource_394:0150`'s else arm is `(0, 0, 1, 4, 6, 9)` —
+literally `Func_020019cc(0, 0, 1, 4, 6, 9)` in the exact sibling. That is a free
+check catching a swapped `sp+0`/`sp+4`, which nothing else in the row would
+catch.
+
+**The exported-entry veneer table's LENGTH is told by the first prologue after
+it**, and every entry is a root — six entries to 0x2f in `resource_398`, five in
+`resource_394`. Both lanes' call graphs fell out of that in one read.
+
+**A large `call_via` count is NOT evidence of a thunk.** `resource_398:0538` has
+**15** sites to `0x02000904`, a bare `bx lr`, and no site loads r3/r4 — it is a
+one-argument no-op leaf. Check the argument registers before believing an
+indirect call.
+
+**The 12-byte interaction record `{key, param, handler | 1}` is shared across
+overlays** (`resource_398` and `resource_394` both use it), and the handler word
+names an unconverted row's role before disassembly. Where the key's second word
+is an event-flag id, the handler sets that flag — `resource_398:0214`, key
+`0x08830008`.
+
+**The strict-queue filter HIDES real dispatchers, and they convert normally.**
+`resource_3b1:012c` and `:037c` fail the filter purely *because* they contain a
+`mov pc,rN` table: the linear walk stops at the table, so `code_bytes` comes out
+a small fraction of `span_bytes` and `calls` reads as 0 or 1. Both converted
+without incident, beating their advertised counts by 10 and 11. **The tell is a
+prologue row, not contained, whose `calls` is 0–2 against a span of 128+ bytes.**
+Measured across the whole inventory, only **2 such rows remain unconverted (548
+bytes, in `resource_3ca` and `resource_399`)** — so this is a tier worth
+knowing about, not a large hidden pool.
+
+**A "band guard" family: `ldrh +6` / `adds 0xffff5fff` / `cmp 0x3ffe` / `bhi` is
+an unsigned half-open range test on a wrapped position word** — not a mask and
+not a sign trick. It appears seven times across `resource_386` and
+`resource_38c` and anchors both overlays' approach-guard families, so
+recognising it identifies a whole family from the first row.
+
+**`movs r3,#N / negs r3` (or `movs r3,#0 / subs r3,#N`) is an AND-mask of `-N`,
+NOT of `~N`.** Three times here: `resource_386:0570` (−33), `resource_38c:04c8`
+(−13), `resource_3b1:02f4` (−13, used for two consecutive stores from one
+register). `-33` clears only 0x20; writing `~0x21` is wrong by one bit.
+
+**The additive displacement/value trap recurs VERBATIM across overlays.**
+`movs r2,#224 / lsls #1` (448, a displacement) then `adds r2,#73` (521, the
+stored value) appears identically in `resource_386:04e4` and
+`resource_38c:04c8`. Grep for the constants directly.
+
+**An overlay `bl` to an in-image prologue is ordinary in cutscene overlays.**
+`resource_386:02fc → 0200011c` and three sites in `resource_3b1:012c` are plain
+intra-overlay calls, classified correctly as `prologue`. Do not treat one as a
+sign of a mis-decode.
+
+**`stmia r3!, {r0,r1,r2}` with r3 = `0x040000d4` is a DMA3 CLEAR, not a struct
+copy.** `resource_381:330c` zeroes its 404-byte workspace this way: `0x85000065`
+is enable | 32-bit | source-fixed with a count of 0x65 words, exactly the size
+just requested from `Func_08000148`. The `subs r3,#12` after it merely rewinds
+the auto-incremented register and is dead. Read as a struct copy it invents
+three phantom fields.
+
+**A workspace-allocator call at the top of BOTH an installer and its task is the
+cheapest way to pair them.** `Func_08000148(33, 404)` appears identically in
+`resource_381:330c` and `:301c`, and the installer's odd `Func_080000d0` pool
+word then names the task outright. The size + id match is a free structural
+proof, and it hands you the whole struct layout before either body is opened.
+
+**`adds rN,#255 / lsls #24 / lsrs #24` is a u8 DECREMENT.** Twice in
+`resource_381:301c` (a 3-frame tick and a 24-frame blend counter). Read as an
+add-255, the "one frame in three" gating that keeps ten call sites off the other
+two frames is invisible.
+
+**The pool-word band test is TWO-SIDED.** Documented for `0x02000240` as "below
+the band, so not in-image"; the other half matters just as much.
+`resource_381:29a4`'s `0x004039d2`/`0x004049d2`/`0x00404a4e`/`0x00403a52` are
+below 0x02008000 and are packed argument words, while `0x02c70000` is above it
+and is a 16.16 coordinate. Neither is in-image.
+
+**A three-arm decision tree that differs only in WHICH WORD IT LOADS collapses
+onto one `bl`** — a sixth shape for the shared-call-site list. `resource_381:29a4`
+does it twice; writing the natural per-arm call inflates `Func_0808a330` from 3
+to 5. The tell is that the arms end in a `b` to a common `movs r1,#1 / bl`,
+not in the call itself.
+
+**Offset-0 veneer tables come in TWO flavours, and only one of them is a call.**
+`resource_389`'s table mixes real entry veneers (`ldr r4,[pc,#0] / bx r4`) with
+the constant-loader shape (`ldr r0,[pc,#0] / bx lr`) at 0x0b50/0x0b5c/0x0b64,
+plus a bare `movs r0,#0 / bx lr` at 0x0b58. Resolving the table therefore hands
+you roots *and* exported data-address accessors — three of six entries here were
+the latter. Do not assume every entry names a function.
+
+**A three-word scene-script record names its callback AND its actor selector.**
+Shape `(selector | flag << 16, callback | 1, parameter)`. Corroborated five times
+across `resource_389`/`resource_38e`: `0xffff0008 / 0x02008b6d` where the owner
+calls `Func_0808a080(8)`, and `0xffff0063 / 0x0200915d` where 0x63 = 99 is the
+scene id the entry-0 root tests. Settles a row's signature *and* its entry
+condition with no disassembly.
+
+**`ldrh` + `subs #k` + `lsls #16` + unsigned `cmp` is a 16-bit WINDOWED RANGE
+test, not a signed comparison.** `resource_389:121c`'s `(v-2) << 16 <= 0x80 << 9`
+is exactly `(u16)(v - 2) <= 1`. Read without the truncation it looks like a
+sign/magnitude test against 0x10000.
+
+**The displacement/value trap has a third variant: value-then-mask.**
+`resource_38e:04bc` sets r3 = 0, *stores* it, then `subs r3,#13` to make `~0x0c`
+as a mask. One register, three roles, no arithmetic relationship between them.
+
+**A `while` entered at its test looks like a `do` in the listing.**
+`resource_38e:05dc` `b.n`s *forward past* a five-call body to the test at 0x073a,
+which branches backwards. Reading it as a `do` puts one extra execution of five
+call sites on every path — five phantom entries in the multiset.
+
+**A row with `code_bytes == span_bytes` has no pool at all, and the alignment
+halfword after it belongs to nobody.** `resource_38e:090c` is 102/102, ending at
+0x0971 with `0x0000` at 0x0972 outside the row. Do not attach it.
 
 **An inventory "second entry" row can be the `bl`-decoding artefact ITSELF.**
 `resource_379:00dc` is listed as a 2,524-byte contained row, and the banked

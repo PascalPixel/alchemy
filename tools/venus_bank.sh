@@ -53,6 +53,16 @@ if [ -z "$(git diff --cached --name-only)" ]; then
   exit 0
 fi
 
+# Vale caught a HANDOVER.md banked with three nested conflict markers in it,
+# sealing two whole metric generations inside a paragraph that then read as
+# three contradictory figures at once. `venus_pull.sh` now loops until a file is
+# clean, but the guard belongs here too: this is the last gate before a commit,
+# and it costs one line.
+if ! git diff --check --cached; then
+  echo "conflict markers or whitespace errors staged — nothing committed."
+  exit 1
+fi
+
 MESSAGE="${PREFIX}${SUBJECT} ${SUFFIX}"
 [ -n "$BODY" ] && MESSAGE="${MESSAGE}
 

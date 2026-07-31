@@ -992,6 +992,16 @@
           "size": 30
         }
       ]
+    },
+    {
+      "entry": "0x08006a78",
+      "evidence": "Single 46-byte leaf at the head of a three-function row. The function runs 0x08006a78..0x08006aa4 and ends on the bx lr at 0x08006aa4; the two later entries in the same asm row (the relocated helper at 0x08006abc and Func_08006ac0 at 0x08006ac0) are outside the claimed range and stay in reconstruction assembly. Excluded (22 bytes): the 2-byte .balign filler at 0x08006aa6 and the five-word pool at 0x08006aa8 holding 0x02004c28, 0x04000208, 0x04000200, 0x02004c20 and 0x02004c2c, all reached by ldr rN,[pc,#imm] from inside the range. No stack frame and no call, so the plain bx lr epilogue leaves no result convention and the owner is void. bun tools/main_xref.ts 08006a78 reports FUNCTION (called directly) with a single caller at 0x08006b70.",
+      "executable_ranges": [
+        {
+          "address": "0x08006a78",
+          "size": 46
+        }
+      ]
     }
   ]
 }

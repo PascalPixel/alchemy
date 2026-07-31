@@ -1859,6 +1859,30 @@ The real stop signature is `mov ip, lr` with `bx ip`. Also genuinely retained:
 `08002dd8`, which loads r4 from its pool **without saving r4** — no C compiler
 emits that.
 
+**Confirmed on all eleven parked owners**, each showing the same shape: a pooled
+`0x03000118` loaded into a register, then `mov ip,pc; bx rN` returning to the
+halfword after the `bx` with frame and live registers intact, the landing site
+consuming r0 as that call's result. **38 further `asm/*.s` files contain
+`mov ip,pc` and have no semantic source** (`0800cacc`, `08097a10`, `0800d14c`,
+…) — ordinary backlog, and all known-convertible on this reading.
+
+**`bl Func_080072f0` / `Func_0800730c` / `Func_080072ec` ARE NOT FUNCTIONS.**
+They are entries in the `_call_via_rN` thunk table at `asm/080072e4.s` — r0 at
+`+0`, four bytes apart, so `080072f0` is via r3, `0800730c` via sl, `080072ec`
+via r2. A `bl` to one is an indirect call through the register loaded
+immediately before it: the same thing as `mov ip,pc; bx rN`, spelled with a
+`bl`. That resolves the pooled `0x03000250` (world-to-camera transform),
+`0x0300013c` (ratio), `0x030001d8` (square root), `0x030003f0` (divide) and
+`0x030002c0` (matrix loader). Some existing files (`08004bd4.c`, `08004c1c.c`,
+`08003fa4.c`) model `Func_080072f0` as a four-argument function whose last
+argument is the routine address — consistent, but it obscures what it is.
+
+**Writing r4 without saving it is NOT the `08002dd8` stop signature.** Three of
+the eleven (`080935d4`, `080982dc`, `08004ab0`) do it, and in all three r4 is
+assigned before every use and never read live-in — this image's call-used-r4
+convention, which is also why it is not plain agbcc. `08002dd8` differs by
+*loading* r4 from its pool and reading it live-in.
+
 This is the failure mode this document warns about two sections up, committed by
 the person maintaining the document: **a blocker invented from a plausible
 reading, without checking what was already resolved.**
@@ -2147,6 +2171,21 @@ addresses by construction** and a wrong callee is invisible to it right up to
 adoption. Equal sizes with a handful of differing bytes is a branch
 displacement, so read the annotation and compare it to what the draft names.
 Order of suspicion: callee names, then `cflagsForSource`, then the span.
+
+**The semantic lane's naming convention is per-overlay — check it in one command
+before drafting.** Three conventions are in the tree and they cost very
+different amounts:
+
+```sh
+diff <(grep -o 'Func_[0-9a-f]\{8\}' semantic/overlays/<file> | sort -u) \
+     <(bun tools/overlay_show.ts <overlay> <off> -n <span> | grep -o '0x[0-9a-f]*$' | sort -u)
+```
+
+`resource_373` names callees **raw** and needs no transcription at all.
+`resource_371` and `:38c` name them **corrected** (`Func_080090d0`) — one or two
+sites to rewrite. `resource_383` names them **by main-image veneer** throughout,
+so all 27 sites in `:091c` needed their own address. Knowing which before you
+draft is the difference between a first-probe adoption and a rejection.
 
 **Transcribe callee names from `overlay_show.ts`; never extrapolate them.** An
 overlay `bl` stores the target's image offset minus two, so `overlay_show`'s

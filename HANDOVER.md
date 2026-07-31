@@ -133,9 +133,9 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **659,116
-executable bytes across 1,238 compiling sources**: 385,850 main-image bytes and
-273,266 overlay bytes. Combined with exact C, **873,244 / 1,339,580 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **662,952
+executable bytes across 1,253 compiling sources**: 385,850 main-image bytes and
+277,102 overlay bytes. Combined with exact C, **877,080 / 1,339,580 executable
 bytes** are expressed as C.
 bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
 sources live under `semantic/` and do not claim byte equality. Use
@@ -2090,6 +2090,15 @@ two levers land.
   **mid-function literal-pool dumps** at barriers we cannot reproduce.
 - **Register-identity-only swaps**, often where our allocation is strictly better
   or one instruction shorter.
+- **Branching leaf with a bare `bx lr`.** The fork returns from any leaf that
+  contains a conditional branch with `push {lr}` / `pop {r0}` / `bx r0`; it emits
+  the bare `bx lr` only for straight-line leaves. The reference does both. It is
+  not register pressure and not the return type -- a leaf using r0-r4 returns
+  bare if it is straight-line, and a leaf using only r0-r3 pushes if it branches
+  (measured on both, 2026-07-31). Costs four bytes and blocks the row outright.
+  Only 13 unconverted main-image owners have the shape, which is why this is a
+  park rather than a compiler change: modifying the Thumb epilogue would put
+  every byte-exact source in the tree up for re-verification to win ~13 rows.
 - **Two loop pseudos allocated in swapped registers.** A loop that carries both a
   walking pointer and a counter: the reference puts the pointer in the register
   the *preceding* instruction just freed and the counter in the next one, and gcc

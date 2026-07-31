@@ -95,7 +95,11 @@ use the `metrics: correct executable denominator` convention. (4) Push
 (6) Re-mandate the lane immediately — an idle lane is a bug. Resume agents
 with SendMessage (orientation is paid once); never respawn a live lane.
 
-Standing lane rules: ≥8–10 units per report; park with root-cause notes
+Standing lane rules: retention labels (e.g. `keep_structured_asm`) are
+defaults, not contracts — a KEEP-ASM verdict on any row requires body-level
+evidence of a genuine cannot-express pattern; only explicit
+`approved_compiler_cannot_express_*` markers exclude a row on their own.
+≥8–10 units per report; park with root-cause notes
 rather than grind oversized rows; `manual_regions` entries per the
 `resource_397` precedent; pull `main` (the LOCAL ref, not `origin/main`)
 at every loop boundary; commit locally with the counter subject.

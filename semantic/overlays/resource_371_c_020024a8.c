@@ -79,7 +79,6 @@ void Func_0808a210();
 void Func_0808a1f0();
 void Func_0808a218();
 void Func_0808a010();
-
 void Func_0808a098();
 void Func_080000c0();
 void Func_0808a138();

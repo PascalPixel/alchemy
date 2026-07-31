@@ -58,33 +58,30 @@ struct EffectObject_020007d8 {
 };
 
 /* Used for their return values. */
-struct EffectObject_020007d8 *Func_0200568a();
-s32 Func_0200565a();
-s32 Func_020056d8();
-s32 Func_02005712();
+s32 Func_080091e0();
+s32 Func_080770c0();
+void Func_0808a018();
+void Func_0808a020();
+struct EffectObject_020007d8 *Func_0808a080();
+void Func_0808a090();
+void Func_0808a0f0();
+void Func_0808a158();
+void Func_0808a210();
+void Func_0808a360();
+void Func_0808a370();
+void Func_0808a580();
+void Func_0808a5e8();
+void Func_080f9010();
 
 /* Old-style declarations: the imports' real interfaces are not known here. */
-void Func_02005684();
-void Func_0200578a();
-void Func_0200575a();
-void Func_02005676();
-void Func_020057fa();
-void Func_0200580e();
-void Func_0200583c();
-void Func_02005702();
-void Func_02005794();
-void Func_020056b0();
-void Func_0200585a();
-void Func_02005874();
-void Func_02005720();
 
 void Func_020007d8(void)
 {
     struct EffectObject_020007d8 *object;
     s32 busy;
 
-    object = Func_0200568a(0);
-    busy = Func_0200565a(0x109);
+    object = Func_0808a080(0);
+    busy = Func_080770c0(0x109);
     if (busy != 0) {
         return;
     }
@@ -92,31 +89,31 @@ void Func_020007d8(void)
     /* No argument register is written here; r0 still holds the 0 just
      * returned by 0x0200565a, and that dataflow is preserved as written.
      * Whether the callee reads it is unverified. */
-    Func_02005684(0);
+    Func_0808a018(0);
 
-    Func_0200578a(-1, -1, -1, 0);
+    Func_0808a210(-1, -1, -1, 0);
     object->mode55 = 0;
 
-    Func_02005712(0, object->unkA << 16, (object->unk12 << 16) + 0xfff00000);
-    Func_0200575a(0, 15);
-    Func_02005676(Func_020056d8(0), 0);
-    Func_020057fa();
-    Func_0200580e();
-    Func_0200583c(228);
+    Func_0808a0f0(0, object->unkA << 16, (object->unk12 << 16) + 0xfff00000);
+    Func_0808a158(0, 15);
+    Func_0808a080(Func_080091e0(0), 0);
+    Func_0808a360();
+    Func_0808a370();
+    Func_080f9010(228);
 
     object->callback = 0x020086a1;      /* = Func_020006a0 | 1 */
     /* r3 still holds that same word at the branch below; it is treated as the
      * leftover of the store, not as a fourth argument. */
-    Func_02005702(0, 0x6666, 0x3333);
+    Func_0808a090(0, 0x6666, 0x3333);
 
-    Func_0200583c(0, 0, 8);
-    Func_02005794(0, 0);
-    Func_020056b0(Func_02005712(0), 1);
-    Func_0200585a(0, 0, 8);
+    Func_0808a580(0, 0, 8);
+    Func_0808a158(0, 0);
+    Func_0808a080(Func_080091e0(0), 1);
+    Func_0808a580(0, 0, 8);
 
     object->mode55 = 3;
     object->callback = 0;
 
-    Func_02005874();
-    Func_02005720();
+    Func_0808a5e8();
+    Func_0808a020();
 }

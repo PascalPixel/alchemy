@@ -88,20 +88,17 @@ struct Position_02000374 {
 extern s32 Data_0200d0e8[];
 
 /* Used for their return values. */
-struct Actor_02000374 *Func_02005230();
-struct Actor_02000374 *Func_020006e6();
-struct Actor_02000374 *Func_02000712();
-struct Actor_02000374 *Func_0200073e();
-s32 Func_0200528c();
+struct Actor_02000374 *Func_0200032c();
+void Func_080000c0();
+void Func_08009080();
+void Func_08009150();
+void Func_08009158();
+s32 Func_080091d8();
+struct Actor_02000374 *Func_0808a080();
+void Func_0808a5e8();
+void Func_080f9010();
 
 /* Old-style declarations: the imports' real interfaces are not known here. */
-void Func_0200523c();
-void Func_02005214();
-void Func_02005472();
-void Func_0200528a();
-void Func_0200529a();
-void Func_020052a8();
-void Func_02005494();
 
 void Func_02000374(void)
 {
@@ -112,14 +109,14 @@ void Func_02000374(void)
     s32 heading;
     s32 step;
 
-    player = Func_02005230(0);
+    player = Func_0808a080(0);
     heading = player->heading >> 12;
 
     step = Data_0200d0e8[heading];
     probe.x = player->x + (s32)(step & 0xffff0000);
     probe.y = player->y;
     probe.z = player->z + (step << 16);
-    pushed = Func_020006e6(&probe, player);
+    pushed = Func_0200032c(&probe, player);
     if (pushed == 0) {
         return;
     }
@@ -128,7 +125,7 @@ void Func_02000374(void)
     probe.x = pushed->x + (s32)(step & 0xffff0000);
     probe.y = pushed->y;
     probe.z = pushed->z + (step << 16);
-    blocker = Func_02000712(&probe, pushed);
+    blocker = Func_0200032c(&probe, pushed);
     if (blocker != 0 && (blocker->state59 & 1) != 0) {
         return;
     }
@@ -136,7 +133,7 @@ void Func_02000374(void)
     probe.x = pushed->x;
     probe.y = pushed->y + 0x00100000;
     probe.z = pushed->z;
-    blocker = Func_0200073e(&probe, pushed);
+    blocker = Func_0200032c(&probe, pushed);
     if (blocker != 0 && (blocker->state59 & 1) != 0) {
         return;
     }
@@ -147,7 +144,7 @@ void Func_02000374(void)
     probe.x = pushed->x + (s32)(step & 0xffff0000);
     probe.y = pushed->y;
     probe.z = pushed->z + (step << 16);
-    if (Func_0200528c(pushed, &probe) > 0) {
+    if (Func_080091d8(pushed, &probe) > 0) {
         return;
     }
 
@@ -155,20 +152,20 @@ void Func_02000374(void)
         return;
     }
 
-    Func_0200523c(player, 8);
-    Func_02005214(15);
-    Func_02005472(185);
+    Func_08009080(player, 8);
+    Func_080000c0(15);
+    Func_080f9010(185);
 
     pushed->rate30 = 0x3333;
     pushed->rate34 = 0x3333;
-    Func_0200528a(pushed, probe.x, probe.y, probe.z);
+    Func_08009150(pushed, probe.x, probe.y, probe.z);
 
     player->rate30 = 0x3333;
     player->rate34 = 0x3333;
-    Func_0200529a(player, probe.x, probe.y, probe.z);
+    Func_08009150(player, probe.x, probe.y, probe.z);
 
-    Func_020052a8(pushed);
-    Func_02005494();
+    Func_08009158(pushed);
+    Func_0808a5e8();
 
     pushed->x = probe.x;
     pushed->z = probe.z;
@@ -183,5 +180,5 @@ void Func_02000374(void)
      * parts of the 16.16 x and z words above. */
     player->x = *(s16 *)((u8 *)player + 10) << 16;
     player->z = *(s16 *)((u8 *)player + 18) << 16;
-    Func_020052a8(player, 1);
+    Func_08009080(player, 1);
 }

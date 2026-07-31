@@ -26,15 +26,6 @@ s32 Func_080770c0();
 void Func_080770c8();
 void Func_080770d0();
 void Func_080f9010();
-void Func_020005fe();
-void Func_02000610();
-void Func_020015fc();
-void Func_02002704();
-s32 Func_02002788();
-void Func_020027ac();
-void Func_020027b8();
-void Func_0200287a();
-void Func_020028ae();
 
 void Func_02000464(void)
 {

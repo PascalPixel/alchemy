@@ -30,16 +30,6 @@ void Func_0808a010();
 void Func_0808a170();
 void Func_0808a180();
 void Func_0808a1b8();
-void Func_02009d70(s32 id);
-void Func_02009d88(s32 a, s32 b);
-void Func_02009da6(s32 a, s32 b, s32 c);
-void Func_02009db8(s32 a, s32 b, s32 c);
-void Func_02009dca(s32 a, s32 b, s32 c);
-void Func_02009ccc(s32 a);
-void Func_02009cde(s32 a);
-void Func_02009cf0(s32 a);
-void Func_02009db6(s32 id);
-void Func_02009dce(s32 a, s32 b);
 
 void Func_02004638(void)
 {

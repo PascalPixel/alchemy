@@ -956,6 +956,12 @@
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
     },
     {
+      "overlay": "resource_380",
+      "entry": "0x0200449c",
+      "span_bytes": 728,
+      "evidence": "admitted whole-owner semantic reconstruction; DERIVED span - no row in out/decomp/overlays.json. Control-flow walk from the push {r5,r6,r7,lr} prologue at 0x0200449c to the single matching unwind add sp,#68/pop {r3,r5,r6,r7}/.../pop {r0}/bx r0 at 0x02004762-0x02004773; no bl resolves inside the body and there is no mov pc,rN dispatch. NO interior pool: all 728 bytes are instructions the walk reaches, and the literal pool begins at 0x02004774, outside the span. Link base confirmed by five even pool words landing in-image as data (0x0200d0e4/d102/d120/d140/d168 -> 0x020050e4/5102/5120/5140/5168)."
+    },
+    {
       "overlay": "resource_381",
       "entry": "0x02000054",
       "span_bytes": 3548,
@@ -3248,6 +3254,12 @@
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
     },
     {
+      "overlay": "resource_3af",
+      "entry": "0x020002ec",
+      "span_bytes": 526,
+      "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json, span walked from the prologue through every internal branch and through all eight entries of the embedded jump table at 0x02000314-0x02000333 to its matching high-register unwind `pop {r3} / mov r8,r3 / pop {r5,r6,r7} / pop {r1} / bx r1` at 0x020004f8, alignment halfword 0x020004fa and literal pool 0x020004fc-0x02000513 (0x02008314, 0x00000103, 0xffffc000, 0xff17ffff, 0x0027fffe, 0xffff8000) excluded, next prologue at 0x02000514"
+    },
+    {
       "overlay": "resource_3b0",
       "entry": "0x0200007c",
       "span_bytes": 38,
@@ -3453,9 +3465,21 @@
     },
     {
       "overlay": "resource_3b3",
+      "entry": "0x02001aa8",
+      "span_bytes": 310,
+      "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json and confirmed as the next prologue by the neighbouring 0x020019f0 owner, span walked from the prologue through every internal branch to its matching high-register unwind `pop {r3} / mov r8,r3 / pop {r5,r6,r7} / pop {r1} / bx r1` at 0x02001bdc, alignment halfword 0x02001bde and literal pool 0x02001be0-0x02001be7 (0x03001ebc, 0x00000cc7) excluded, next prologue at 0x02001be8"
+    },
+    {
+      "overlay": "resource_3b3",
       "entry": "0x0200253c",
       "span_bytes": 66,
       "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json, span walked from the prologue through every internal branch to its matching interworking epilogue at 0x02002576, no literal pool, halfword 0x0200257e is alignment before the next owner at 0x02002580"
+    },
+    {
+      "overlay": "resource_3b3",
+      "entry": "0x0200274c",
+      "span_bytes": 696,
+      "evidence": "admitted whole-owner semantic reconstruction; DERIVED span - no row in out/decomp/overlays.json. Control-flow walk from the push {r5,lr} prologue at 0x0200274c to the single matching unwind movs r0,#0/add sp,#8/pop {r5}/pop {r1}/bx r1 at 0x020029fa-0x02002a03; no bl resolves inside the body and there is no mov pc,rN dispatch. NO interior pool: all 696 bytes are instructions the walk reaches. The ten-word literal pool at 0x02002a04-0x02002a2b lies outside the span and is bounded by the overlay's import veneer band, which begins at 0x02002a2c, so this owner is the last code in the image. Link base confirmed by the odd pool word 0x0200a6b9 -> prologue 0x020026b8, the task handed to Func_080000d0."
     },
     {
       "overlay": "resource_3b4",

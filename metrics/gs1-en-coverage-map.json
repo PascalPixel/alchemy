@@ -7,16 +7,16 @@
   "executable_bytes": 1339580,
   "lanes": {
     "exact_c": {
-      "bytes": 213080,
-      "percent_of_executable": 15.91
+      "bytes": 213936,
+      "percent_of_executable": 15.97
     },
     "semantic_c": {
-      "bytes": 617920,
-      "percent_of_executable": 46.13
+      "bytes": 634776,
+      "percent_of_executable": 47.39
     },
     "assembly": {
-      "bytes": 508580,
-      "percent_of_executable": 37.97
+      "bytes": 490868,
+      "percent_of_executable": 36.64
     },
     "asset_data": {
       "bytes": 7300700,
@@ -30,15 +30,15 @@
   },
   "overlays": {
     "executable_bytes": 791216,
-    "exact_c_bytes": 111736,
-    "semantic_c_bytes": 232070
+    "exact_c_bytes": 112592,
+    "semantic_c_bytes": 248926
   },
   "provenance": {
     "exact_lane": "origin/mercury",
     "semantic_lane": "origin/venus",
-    "semantic_sources": 1164,
-    "semantic_superseded_bytes": 7454,
-    "semantic_unresolved": ["semantic/overlays/resource_399_c_020002b8.c", "semantic/overlays/resource_3ad_c_02000384.c", "semantic/overlays/resource_3ad_c_02001a0c.c", "semantic/overlays/resource_3bc_c_020004a4.c", "semantic/overlays/resource_3bc_c_02000ba4.c", "semantic/overlays/resource_3c7_c_020000c8.c", "semantic/overlays/resource_3ca_c_02000100.c"]
+    "semantic_sources": 1191,
+    "semantic_superseded_bytes": 8878,
+    "semantic_unresolved": []
   },
   "rom_areas": [
     {
@@ -57,9 +57,9 @@
       "label": "Compressed code overlays",
       "bytes": 539544,
       "lanes": {
-        "exact_c": 75846,
-        "semantic_c": 152803,
-        "assembly": 310895
+        "exact_c": 76422,
+        "semantic_c": 164545,
+        "assembly": 298577
       },
       "tiles": 11
     },
@@ -90,9 +90,9 @@
       "label": "Decoded code overlays",
       "bytes": 791216,
       "lanes": {
-        "exact_c": 111736,
-        "semantic_c": 232070,
-        "assembly": 447410
+        "exact_c": 112592,
+        "semantic_c": 248926,
+        "assembly": 429698
       },
       "tiles": 96
     }

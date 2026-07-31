@@ -924,6 +924,56 @@
       ]
     },
     {
+      "entry": "0x080fa1ac",
+      "evidence": "One 26-byte keep_structured_asm row holding a single leaf with no prologue and no call: one epilogue, the bx lr at 0x080fa1c4, and no inbound branch from outside the row. Nothing is excluded from the row itself: 26 bytes of code with no pool word; the 2-byte adjacent_section_alignment filler at 0x080fa1c6 is a separate manifest row and is not claimed here. r0 is never read or written, so the bx lr leaves no result and the function is void. Two byte stores clear track+0x16 and track+0x1a with the same zero register, then ldrb r2,[r1,#24] selects between movs r2,#12 and movs r2,#3; the two arms are distinct constants and are kept distinct, and they join at the shared read-modify-write ldrb r3,[r1,#0]; orrs r3,r2; strb r3,[r1,#0] on the track status byte, which is expressed with a single assignment of the selected mask rather than duplicated per arm. bun tools/main_xref.ts 080fa1ac reports three direct callers, at 0x080fa0ce, 0x080fa1e0 and 0x080fa1f4, and no Thumb pointer; the latter two are the bl inside the 0x080fa1d4 and 0x080fa1e8 handlers, taken when their operand is zero.",
+      "executable_ranges": [
+        {
+          "address": "0x080fa1ac",
+          "size": 26
+        }
+      ]
+    },
+    {
+      "entry": "0x080fa1d4",
+      "evidence": "One 18-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080fa1d4 saves the return address across the two calls, one epilogue, the bx ip at 0x080fa1e4, reached by the bne.n non-zero arm at 0x080fa1de and by fall-through from the second call, and no inbound branch from outside the row. Nothing is excluded from the row itself: 18 bytes of code with no pool word and no alignment filler in it. Both bl targets are outside this owner and already reconstructed elsewhere: the bl at 0x080fa1d6 targets Func_080fa1c8, the player's operand reader, whose exact C at src/080fa1c8.c advances the stream pointer at track+0x40 and reads the byte, returning it in r3 — the byte-exact source does not model that result because it has no use for it, while this handler does, and the reconstruction declares it with the byte result; the bl at 0x080fa1e0 targets Func_080fa1ac, the 26-byte routine reconstructed in this same batch, which clears track+0x16 and track+0x1a and raises 0x0c or 0x03 in the status byte. The stored operand goes to track+0x19, and the cmp r3,#0 that gates the second call tests the byte that was stored, not a reloaded copy. bun tools/main_xref.ts 080fa1d4 reports calls=0 branches=0 word_refs=0 and two Thumb pointers, published at 0x080fa640 and 0x080fb7e4, so both callers are table dispatchers and there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080fa1d4",
+          "size": 18
+        }
+      ]
+    },
+    {
+      "entry": "0x080fa1e8",
+      "evidence": "One 18-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080fa1e8 saves the return address across the two calls, one epilogue, the bx ip at 0x080fa1f8, reached by the bne.n non-zero arm at 0x080fa1f2 and by fall-through from the second call, and no inbound branch from outside the row. Nothing is excluded from the row itself: 18 bytes of code with no pool word and no alignment filler in it. Both bl targets are outside this owner and already reconstructed elsewhere: the bl at 0x080fa1ea targets Func_080fa1c8, the player's operand reader, whose exact C at src/080fa1c8.c advances the stream pointer at track+0x40 and reads the byte, returning it in r3 — the byte-exact source does not model that result because it has no use for it, while this handler does, and the reconstruction declares it with the byte result; the bl at 0x080fa1f4 targets Func_080fa1ac, the 26-byte routine reconstructed in this same batch, which clears track+0x16 and track+0x1a and raises 0x0c or 0x03 in the status byte. The stored operand goes to track+0x17, and the cmp r3,#0 that gates the second call tests the byte that was stored, not a reloaded copy. bun tools/main_xref.ts 080fa1e8 reports calls=0 branches=0 word_refs=0 and two Thumb pointers, published at 0x080fa644 and 0x080fb7ec, so both callers are table dispatchers and there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080fa1e8",
+          "size": 18
+        }
+      ]
+    },
+    {
+      "entry": "0x080fa264",
+      "evidence": "One 28-byte row holding a single leaf in its first 20 bytes: no prologue, one epilogue, the bx lr at 0x080fa276, reached by the bne.n signature-mismatch early-out at 0x080fa26c and by fall-through, no call of any kind and no inbound branch from outside the row. Excluded (8 bytes): the two-word pool at 0x080fa278 (0x68736d53, the 'Smsh' signature literal loaded by ldr r0,[pc,#12], and 0x7fffffff, the mask loaded by ldr r1,[pc,#8]); there is no alignment filler and the row ends flush at 0x080fa280. The opening adds r2,r0,#0 is the register copy that lets r0 be reused for the two pool loads; r0 is written without being saved, the ordinary call-used-r4-style convention of this image, and it is assigned before each use and never read live-in after the copy. r0 holds the pool literal on the mismatch arm and the updated flag word on the matching arm, so it is not a consistent result and the bx lr returns nothing; the function is void. The word at track+0x34 is compared against the signature and only the matching arm does ldr r0,[r2,#4]; ands r0,r1; str r0,[r2,#4], clearing bit 31 of the flag word at track+0x04 — the same bit the 0x080fa4ec sibling clears. bun tools/main_xref.ts 080fa264 reports four direct callers, at 0x080fa3e8, 0x080fa446, 0x080fa486 and 0x080fa4a2, and no Thumb pointer.",
+      "executable_ranges": [
+        {
+          "address": "0x080fa264",
+          "size": 20
+        }
+      ]
+    },
+    {
+      "entry": "0x080fa280",
+      "evidence": "One 32-byte row holding a single leaf in its first 26 bytes: no prologue, one epilogue, the bx lr at 0x080fa298, reached by the bne.n signature-mismatch early-out at 0x080fa28c and by fall-through, no call of any kind and no inbound branch from outside the row. Excluded (6 bytes): the 2-byte movs r0,r0 alignment filler at 0x080fa29a and the one-word pool at 0x080fa29c holding 0x68736d53, the 'Smsh' signature literal loaded by ldr r0,[pc,#16]. The narrowing of the second argument, lsls r1,r1,#16 then lsrs r1,r1,#16, happens before the signature test and is a plain zero-extension of the low halfword, not a halfword compare. The opening adds r2,r0,#0 copies the track pointer so r0 can carry the pool literal; r0 holds that literal at the bx lr and no result is computed, so the function is void. The matching arm stores the narrowed value to track+0x26 and then track+0x24 in that order and writes 0x0100 to track+0x28, built as movs r0,#128; lsls r0,r0,#1. That is the same current/target pair the 0x080fa4cc and 0x080fa4ec entries write, with a third distinct state constant. bun tools/main_xref.ts 080fa280 reports one direct caller, at 0x080fa4c2, and no Thumb pointer.",
+      "executable_ranges": [
+        {
+          "address": "0x080fa280",
+          "size": 26
+        }
+      ]
+    },
+    {
       "entry": "0x080fa4cc",
       "evidence": "Two independent leaves in one 72-byte row, each with its own 8-byte trailing pool (0x080fa4e4 and 0x080fa50c), both ending on bx lr and neither reachable from the other. Neither entry has any inbound reference in the image, so the row is admitted whole rather than split. The manifest kind nonstandard_thumb_branch_module records the early-out branch over the body, which converts as a guard clause; both 0x68736d53 pool words are the same 'Smsh' signature literal, kept as one constant.",
       "executable_ranges": [
@@ -940,6 +990,46 @@
         {
           "address": "0x080fb410",
           "size": 30
+        }
+      ]
+    },
+    {
+      "entry": "0x08006a78",
+      "evidence": "Single 46-byte leaf at the head of a three-function row. The function runs 0x08006a78..0x08006aa4 and ends on the bx lr at 0x08006aa4; the two later entries in the same asm row (the relocated helper at 0x08006abc and Func_08006ac0 at 0x08006ac0) are outside the claimed range and stay in reconstruction assembly. Excluded (22 bytes): the 2-byte .balign filler at 0x08006aa6 and the five-word pool at 0x08006aa8 holding 0x02004c28, 0x04000208, 0x04000200, 0x02004c20 and 0x02004c2c, all reached by ldr rN,[pc,#imm] from inside the range. No stack frame and no call, so the plain bx lr epilogue leaves no result convention and the owner is void. bun tools/main_xref.ts 08006a78 reports FUNCTION (called directly) with a single caller at 0x08006b70.",
+      "executable_ranges": [
+        {
+          "address": "0x08006a78",
+          "size": 46
+        }
+      ]
+    },
+    {
+      "entry": "0x080e7338",
+      "evidence": "Single 102-byte function, 0x080e7338..0x080e739c, no literal pool and no alignment filler: nothing follows the epilogue in the row, so no words are excluded. Prologue push {r5,r6,r7,lr} plus the r9 save through r7 and a 4-byte frame; the epilogue at 0x080e7392 unwinds that frame and ends pop {r0}; bx r0, so the owner is void. r9 is saved and restored but never written, and is read exactly once at 0x080e7344 as the base of the pointer at r9-136 — the frame-balanced live-in already recorded for resource_3cd:04b0, converted as an uninitialised local rather than skipped. The slot array is 16 entries of 28 bytes at *(base-136) + 0x7400 with the free marker -1 at +24; the two str-of-zero instructions at 0x080e735c and 0x080e738a are distinct and both fall into the shared store tail at 0x080e738c, written as a goto rather than duplicated. bun tools/main_xref.ts 080e7338 reports FUNCTION (called directly) with one caller at 0x080e7c0c.",
+      "executable_ranges": [
+        {
+          "address": "0x080e7338",
+          "size": 102
+        }
+      ]
+    },
+    {
+      "entry": "0x0809b8f4",
+      "evidence": "Single 306-byte function, 0x0809b8f4..0x0809ba24, prologue push {r5,r6,r7,lr} with a 4-byte frame and one epilogue at 0x0809ba1e ending pop {r0}; bx r0, so the owner is void. Excluded (14 bytes): the 2-byte movs r0,r0 alignment filler at 0x0809ba26 and the three-word pool at 0x0809ba28 holding 0x0000ffff (the truncating 16.16-to-whole bias, loaded at 0x0809b924 and 0x0809b930), 0x030001d8 (the IWRAM square root, loaded at 0x0809b944) and 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, loaded at 0x0809b954 and 0x0809b9fc). The bl Func_080072f0 at 0x0809b946 is the runtime _call_via_r3 thunk inside 0x080072e4..0x08007320, so it is an indirect call through the pooled 0x030001d8; the four mov ip,pc; bx rN sequences at 0x0809b95c, 0x0809b968, 0x0809ba00 and 0x0809ba14 are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec. Nothing in the row is retained assembly. bun tools/main_xref.ts 0809b8f4 reports FUNCTION (called directly) with one caller at 0x0809b84e.",
+      "executable_ranges": [
+        {
+          "address": "0x0809b8f4",
+          "size": 306
+        }
+      ]
+    },
+    {
+      "entry": "0x0808ae74",
+      "evidence": "Single 410-byte function, 0x0808ae74..0x0808b00c, prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and an 8-byte frame; one epilogue at 0x0808affc unwinding all of it and ending pop {r1}; bx r1, so r0 is the result. Excluded (30 bytes): the 2-byte movs r0,r0 alignment filler at 0x0808b00e and the seven-word pool at 0x0808b010 holding 0x03001ebc (context pointer, 0x0808ae88), 0x0000015f and 0x00000161 (the flag ids 351 and 353, 0x0808ae8c and 0x0808aea6), 0x02000240 (state block, 0x0808aeba, 0x0808af18, 0x0808af84), 0x0809c610 (the 28-byte encounter table, 0x0808aed2), 0x0300013c (the IWRAM ratio helper, 0x0808af74) and 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x0808af7a). The bl Func_080072f0 at 0x0808af76 is the runtime _call_via_r3 thunk inside 0x080072e4..0x08007320, an indirect call through the pooled 0x0300013c; the mov ip,pc; bx r3 at 0x0808af80 is an ordinary indirect call to the pooled 0x03000118 whose landing site 0x0808af84 consumes r0 in the same frame, as recorded for 0x0800ebec. r9 is saved and restored but is not written on the path that enters the roll from 0x0808ae98, the frame-balanced live-in of resource_3cd:04b0, converted as an uninitialised local. Nothing in the row is retained assembly. bun tools/main_xref.ts 0808ae74 reports FUNCTION (called directly) with callers at 0x0808b03a and 0x0808b052.",
+      "executable_ranges": [
+        {
+          "address": "0x0808ae74",
+          "size": 410
         }
       ]
     }

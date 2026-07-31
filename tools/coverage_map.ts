@@ -46,6 +46,7 @@ const OVERLAY_ASSEMBLY = /^(resource_[0-9a-f]+)_overlay\.s$/i;
 const OVERLAY_SERIES = "golden-sun-thumb-overlay-series";
 
 export type Lane = "exact_c" | "semantic_c" | "assembly" | "retained_asm" | "asset_data";
+const RETAINED_ASM_FILL = "#ff8a00";
 
 // Lane order is also the stacking order inside a tile: exact at the bottom.
 // `ink` is the label colour a tile takes when that lane fills most of it.
@@ -53,7 +54,7 @@ const LANE_STYLE: Record<Lane, { fill: string; ink: string; label: string }> = {
   exact_c: { fill: "#0072f5", ink: "#eaf2ff", label: "byte-exact C" },
   semantic_c: { fill: "#50e3c2", ink: "#04241d", label: "semantic C" },
   assembly: { fill: "#333333", ink: "#a1a1a1", label: "assembly" },
-  retained_asm: { fill: "#141414", ink: "#8a8a8a", label: "permanent asm" },
+  retained_asm: { fill: RETAINED_ASM_FILL, ink: "#2b1600", label: "permanent asm" },
   asset_data: { fill: "#ff0080", ink: "#2b0016", label: "assets & data" },
 };
 const LANE_ORDER: Lane[] = ["exact_c", "semantic_c", "assembly", "retained_asm", "asset_data"];
@@ -570,7 +571,7 @@ function hex8(address: number): string {
 }
 
 // Regions that will NEVER become C by design (Pascal's ruling 2026-07-31:
-// rendered black). keep_asm retention, structural runtime/veneer/padding
+// rendered orange). keep_asm retention, structural runtime/veneer/padding
 // kinds, and explicit cannot-express contracts qualify; keep_structured_asm
 // alone does NOT (it is a default, not a contract — see TEAM-OPS).
 const PERMANENT_KINDS = new Set([
@@ -769,7 +770,7 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
   // -------------------------------------------------- executable universe
   // Once the audited ordinary-owner census is sealed closed, every remaining
   // main-image byte is by definition retained structure/pool/alignment. Paint
-  // that complement black rather than leaving excluded pool bytes gray: gray
+  // that complement orange rather than leaving excluded pool bytes gray: gray
   // means actionable semantic debt on this dashboard.
   const mainRetained = semanticLane.mainCensusClosed ? mainExecutable : retainedMainSpans();
   const executableAreas: Area[] = [
@@ -1474,11 +1475,11 @@ export function renderBoxTree(
         width: inner.width,
         height: inner.height * share,
       };
-      // Permanent asm renders black in every hue: it will never climb the
-      // ladder, so it must never read as "not started yet" gray.
+      // Permanent asm renders orange in every graph: it will never climb the
+      // ladder, so it must never read as "not started yet" gray or empty black.
       if (lane === "retained_asm")
         lines.push(`<rect x="${round(rect.x)}" y="${round(rect.y)}" width="${round(rect.width)}" ` +
-          `height="${round(rect.height)}" style="fill:#141414"/>`);
+          `height="${round(rect.height)}" style="fill:${RETAINED_ASM_FILL}"/>`);
       else lines.push(cellRect(rect, laneFraction[lane] ?? 0.08));
       offset += share;
     }
@@ -1873,6 +1874,13 @@ export function selfTest(): void {
       bands[0].lanes.semantic_c !== 64 || bands[1].lanes.assembly !== 96 ||
       bands[1].lanes.retained_asm !== 32) {
     throw new Error("main band composition failed");
+  }
+  const retainedTree = renderBoxTree(
+    area("retained", "Retained", [{ label: "r", bytes: 32, lanes: { retained_asm: 32 } }]),
+    "retained colour test",
+  );
+  if (!retainedTree.includes(`fill:${RETAINED_ASM_FILL}`) || retainedTree.includes("#141414")) {
+    throw new Error("retained assembly is not rendered orange in the box trees");
   }
 
   const map: CoverageMap = {

@@ -3807,6 +3807,12 @@
     },
     {
       "overlay": "resource_3b3",
+      "entry": "0x02000cc0",
+      "span_bytes": 184,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill, 8-byte stack frame at 0x02000cc0, epilogue add sp,#8 / pop {r3,r5,r6,r7} / mov r8,r3 / mov r9,r5 / mov sl,r6 / mov fp,r7 / pop {r5,r6,r7} / pop {r0} / bx r0 at 0x02000d4e-0x02000d5e; the trailing pool at 0x02000d60-0x02000d74 (0x02010000, 0x00000fff, 0x06002800, 0x02020000, 0x02020004, 0x06002840) is included per the usual pool rule, immediately followed by the next owner's push {r5,r6,lr} at 0x02000d78, already this overlay's row 0x02000d78, so the span is exactly 0x02000cc0-0x02000d78, 184 bytes"
+    },
+    {
+      "overlay": "resource_3b3",
       "entry": "0x02000d78",
       "span_bytes": 48,
       "evidence": "item-28 unindexed population, same reference-resolution basis as the resource_3b1 rows this session (bun tools/overlay_unindexed.ts). push {r5,r6,lr} at 0x02000d78, epilogue pop {r5,r6} / pop {r0} / bx r0 at 0x02000da2-0x02000da6, immediately followed with no gap by the next owner's push {r5,r6,r7,lr} at 0x02000da8, already this overlay's row 0x02000da8, so the span is exactly 0x02000d78-0x02000da8, 48 bytes"

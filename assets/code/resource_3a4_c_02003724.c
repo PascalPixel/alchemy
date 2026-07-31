@@ -18,10 +18,15 @@ typedef signed int s32;
  *   0x2003730 -> veneer -> Func_080f9010(288)   established, play a sound cue (288 = 144 << 1)
  */
 
-void Func_080f9010();          /* play a sound cue, established */
+void Func_02007452();          /* play a sound cue, established (veneer to Func_080f9010) */
 
 void Func_02003724(u16 *record)
 {
-    *(u16 *)((char *)record + 102) = 0x21;
-    Func_080f9010(288);
+    record = (u16 *)((char *)record + 102);
+    {
+        s32 value = 0x21;
+
+        *record = value;
+    }
+    Func_02007452(288);
 }

@@ -140,8 +140,16 @@ quiet toward the user when all is healthy.
 
 ## Dashboard
 
-`bun tools/dashboard_server.ts` → http://localhost:4649 (or via
-`.claude/launch.json` name `progress`). Renders: the three README box trees
+The dashboard runs as a launchd service
+(`~/Library/LaunchAgents/com.pascalpixel.alchemy-dashboard.plist`):
+KeepAlive restarts it on crash, RunAtLoad starts it at login, and
+WatchPaths restarts it automatically when `tools/dashboard_server.ts`
+changes — never stop/start it by hand, just edit the file and save.
+`.claude/launch.json`'s `progress` entry attaches to the running server
+(url-only, no command). Bootstrap on a new machine:
+`launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.pascalpixel.alchemy-dashboard.plist`
+(plist template: copy from this section's path on any existing machine or
+recreate — bun path, WorkingDirectory at the repo root, port 4649). Renders: the three README box trees
 (core/overlays/assets), the kanban as post-it columns with portrait owners,
 and the chat CSV as a Slack-style feed (newest pinned, live time-ago,
 monotonic stamp guard). Hot-reloads data by mtime every 2 s; the page

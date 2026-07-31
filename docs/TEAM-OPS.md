@@ -109,9 +109,12 @@ merge, never rebase; union-merge `semantic/regions.json` tail-append
 conflicts (both sides' entries, canonical order). (2) `bun run verify` —
 must be green before push, no exceptions. (3) Subject line carries the
 counter from `bun tools/full_c_progress.ts --subject`; denominator shifts
-use the `metrics: correct executable denominator` convention. (4) Push
-`main` (Vale only). (5) Redraw kanban, post the cycle summary to chat.
-(6) Re-mandate the lane immediately — an idle lane is a bug. Resume agents
+use the `metrics: correct executable denominator` convention. (4) Regenerate the coverage
+trees (`bun run coverage -- --write --exact-ref worktree --semantic-ref
+worktree`) and commit them with the merge if changed — the dashboard is
+Pascal's monitoring surface and must never lag the tree. (5) Push
+`main` (Vale only). (6) Redraw kanban, post the cycle summary to chat.
+(7) Re-mandate the lane immediately — an idle lane is a bug. Resume agents
 with SendMessage (orientation is paid once); never respawn a live lane.
 
 Standing lane rules: retention labels (e.g. `keep_structured_asm`) are

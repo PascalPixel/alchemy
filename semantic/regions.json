@@ -6546,6 +6546,12 @@
       "entry": "0x02002464",
       "span_bytes": 32,
       "evidence": "admitted whole-owner semantic reconstruction; boundary-gap owner NOT in the unindexed population -- found by checking 0x02001dbc's pool end against the next prologue (the resource_3b9 0x02001a14 precedent); prologue-started (push {lr}) and returning (pop {r0}/bx r0), one trailing pool word (0x00001a58) ending 0x02002483, next owner prologue at 0x02002484, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39e",
+      "entry": "0x02001494",
+      "span_bytes": 2236,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_39e 1494 1d46, the +2 rule against the raw image), two inline literal pools skipped by forward branches at 0x0200188e and 0x02001cc2, span read through the two trailing pool words ending 0x02001d4f to the next owner prologue at 0x02001d50, inside the assembled overlay image and not overlapping another recorded owner"
     }
   ]
 }

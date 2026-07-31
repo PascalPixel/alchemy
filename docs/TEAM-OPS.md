@@ -1,0 +1,102 @@
+# TEAM-OPS — resurrecting the Vale team on any machine
+
+This runbook codifies the local multi-agent era (2026-07-31 onward) so the
+whole operation — lead, four lanes, dashboard, comms — can be rebuilt from a
+fresh clone after a session or machine loss. Methodology lives in
+`HANDOVER.md`; branch rules in `docs/BRANCH-PROTOCOL.md`. This file owns the
+*organization*.
+
+## Roster
+
+| Agent   | Role                            | Model  | Branch    | Worktree                | Portrait (dashboard)            |
+|---------|---------------------------------|--------|-----------|-------------------------|---------------------------------|
+| Vale    | engineering lead, merge gate    | Fable  | `main`    | repo root               | Kraden — `resource_f0_images_image_12.png` |
+| Mercury | exact-C lane (+special rotations)| Sonnet | `mercury` | `../alchemy-mercury`    | Mia — `…image_03.png`           |
+| Venus   | semantic-C lane                 | Sonnet | `venus`   | `../alchemy-venus`      | Isaac — `…image_00.png`         |
+| Jupiter | semantic-C lane                 | Sonnet | `jupiter` | `../alchemy-jupiter`    | Ivan — `…image_02.png`          |
+| Mars    | semantic-C lane                 | Sonnet | `mars`    | `../alchemy-mars`       | Garet — `…image_01.png`         |
+
+Vale is authoritative on `main` and on all disputes. Lanes are grunts: they
+never push, never write the kanban, and treat Vale's messages as mandates —
+but they are *expected* to verify surprising claims against the repo before
+acting (the Mercury skepticism episode of 2026-07-31 is the desired
+behavior, not a bug).
+
+## Bootstrap on a fresh machine
+
+```bash
+git clone <origin> alchemy && cd alchemy
+for lane in mercury venus jupiter mars; do
+  git branch "$lane" main 2>/dev/null || true
+  git worktree add "../alchemy-$lane" "$lane"
+done
+cp tools/chat_post.sh /tmp/alchemy_chat_post.sh && chmod +x /tmp/alchemy_chat_post.sh
+```
+
+Lane branches are disposable pointers: all merged work lives on `main`, so
+recreating them from `main` loses nothing. Unmerged lane work exists only in
+a lane's worktree — Vale merges promptly precisely so a lost machine costs
+at most one round.
+
+The sibling `alchemy-gcc` fork (pinned digests, see memory/HANDOVER) must be
+cloned next to the repo root: comparator scripts resolve it as `../alchemy-gcc`.
+
+## Communication
+
+- **Group chat**: `/tmp/ALCHEMY_GROUP_CHAT.csv`, columns `utc,author,message`
+  (RFC 4180, multiline messages quoted). Post ONLY via
+  `bash /tmp/alchemy_chat_post.sh <author> "<message>"` — it stamps real UTC
+  itself. Never hand-write timestamps; never append to the old `.md`.
+- **Kanban**: `/tmp/ALCHEMY_KANBAN.md`. Vale-only writes. Markdown table,
+  columns `BACKLOG | TODO | DOING | REVIEW (merge gate) | DONE | PARKED`;
+  first line `# ALCHEMY KANBAN · @vale · [C <counter>] · <UTC>`. Redrawn each
+  merge cycle. `@name` tokens in cells render as owner portraits on the
+  dashboard. Volatile: after a machine loss, rebuild from `git log` + the
+  chat CSV.
+- **Shared queues**: cross-lane queue files live in `/tmp`
+  (e.g. `/tmp/ALCHEMY_QUEUE_CORE.md` for the core drive) because `work/` is
+  per-worktree gitignored — a lane's `work/` files are INVISIBLE to other
+  lanes. Anything one lane writes for another goes in `/tmp` or the repo.
+
+## The Vale merge cycle
+
+On every lane report: (1) `git merge <lane>` in the root worktree — plain
+merge, never rebase; union-merge `semantic/regions.json` tail-append
+conflicts (both sides' entries, canonical order). (2) `bun run verify` —
+must be green before push, no exceptions. (3) Subject line carries the
+counter from `bun tools/full_c_progress.ts --subject`; denominator shifts
+use the `metrics: correct executable denominator` convention. (4) Push
+`main` (Vale only). (5) Redraw kanban, post the cycle summary to chat.
+(6) Re-mandate the lane immediately — an idle lane is a bug. Resume agents
+with SendMessage (orientation is paid once); never respawn a live lane.
+
+Standing lane rules: ≥8–10 units per report; park with root-cause notes
+rather than grind oversized rows; `manual_regions` entries per the
+`resource_397` precedent; pull `main` (the LOCAL ref, not `origin/main`)
+at every loop boundary; commit locally with the counter subject.
+
+## Supervision
+
+Vale runs a recurring ~8-minute tick (session cron): check each lane's
+task-output mtime and branch tip; nudge any lane silent >15 min with a
+status-check message; run the merge cycle on any unmerged report; stay
+quiet toward the user when all is healthy.
+
+## Dashboard
+
+`bun tools/dashboard_server.ts` → http://localhost:4649 (or via
+`.claude/launch.json` name `progress`). Renders: the three README box trees
+(core/overlays/assets), the kanban as post-it columns with portrait owners,
+and the chat CSV as a Slack-style feed (newest pinned, live time-ago,
+monotonic stamp guard). Hot-reloads data by mtime every 2 s; the page
+self-reloads when the server restarts (boot-id in `/mtimes`), so restarting
+the server ships UI changes to every open tab. Portraits are served straight
+from the tracked `resource_f0` images. Mobile layout below 760 px.
+
+## Current campaign (2026-07-31, update when it changes)
+
+Core drive: close the 47,592 asm-only bytes remaining in main ROM
+(548,364 total; rest is exact+semantic). Census in
+`/tmp/ALCHEMY_QUEUE_CORE.md` (Mercury builds, all lanes claim rows,
+smallest first). Parked design work and per-overlay state: see the kanban,
+the chat CSV, and `work/claude/notes/` in each lane's worktree.

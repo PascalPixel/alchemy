@@ -2,8 +2,7 @@
 <rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
 <rect x="1" y="1" width="177.3" height="5.9" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
 <rect x="1" y="6.9" width="177.3" height="14.2" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
-<rect x="1" y="21" width="177.3" height="8.2" style="fill:hsl(275, 0%, 93%);fill:oklch(0.930 0.000 295)"/>
-<rect x="1" y="29.2" width="177.3" height="119.8" style="fill:#141414"/>
+<rect x="1" y="21" width="177.3" height="128" style="fill:#141414"/>
 <rect x="1" y="151" width="177.3" height="64.7" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
 <rect x="1" y="215.7" width="177.3" height="82.2" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
 <rect x="1" y="297.9" width="177.3" height="0.8" style="fill:hsl(275, 0%, 93%);fill:oklch(0.930 0.000 295)"/>

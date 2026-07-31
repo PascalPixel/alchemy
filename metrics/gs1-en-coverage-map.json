@@ -49,8 +49,8 @@
       "lanes": {
         "exact_c": 101452,
         "semantic_c": 415080,
-        "assembly": 6460,
-        "retained_asm": 25372
+        "assembly": 5892,
+        "retained_asm": 25940
       },
       "tiles": 9
     },
@@ -83,8 +83,8 @@
       "lanes": {
         "exact_c": 101452,
         "semantic_c": 415080,
-        "assembly": 6460,
-        "retained_asm": 25372
+        "assembly": 5892,
+        "retained_asm": 25940
       },
       "tiles": 54
     },

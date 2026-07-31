@@ -65,17 +65,17 @@ typedef unsigned long long u64;
 
 /* Old-style declarations are mandatory in overlay sources: one name can be
  * reached with different argument counts from different sites. */
-u8 *Func_0808a080();     /* import veneer 0x02005650 */
-s32 Func_080770c0();     /* import veneer 0x02005610 */
-void Func_080770c8();    /* import veneer 0x02005618 */
-
-s32 Func_02001108(void);
+s32 Func_02001108();
 s32 Func_020018e4();
 s32 Func_02001918();
+s32 Func_02005a78();
+s32 Func_02005af0();
+s32 Func_02005b6c();
+s32 Func_080770c0();
+void Func_080770c8();
+s32 Func_0808a080();
 
-u64 Func_02005af0();     /* s32 -> packed double */
-u64 Func_02005a78();     /* packed double subtraction */
-s32 Func_02005b6c();     /* packed double -> s32 */
+
 
 void Func_02001150(void)
 {
@@ -113,7 +113,7 @@ void Func_02001150(void)
         u64 value = Func_02005af0(*(s32 *)(actor9 + 8));
 
         /* r0/r1 = 0x41610000 / 0 == 8912896.0 in this library's word order. */
-        record[8] = Func_02005b6c(Func_02005a78((u64)0x41610000u, value));
+        record[8] = Func_02005a78(Func_02005b6c((u64)0x41610000u, value));
     }
 
     if (Func_02001108() != 0) {

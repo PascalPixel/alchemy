@@ -51,6 +51,11 @@ typedef struct SoftFloatRecord {
     u32 high;
 } SoftFloatRecord;
 
+s32 Func_02005bd8();
+s32 Func_02005be8();
+s32 Func_02005bf8();
+void Func_02005c08();
+void Func_02005e04();
 void Func_0200b982(const SoftDouble *packed, SoftFloatRecord *out);
 s32 Func_0200b77c(const SoftFloatRecord *record);
 s32 Func_0200b766(const SoftFloatRecord *record);
@@ -64,16 +69,16 @@ s32 Func_02005b6c(SoftDouble value)
     u32 magnitude;
     int saturate;
 
-    Func_0200b982(&packed, &record);
+    Func_02005e04(&packed, &record);
 
-    if (Func_0200b77c(&record) != 0) {
+    if (Func_02005bf8(&record) != 0) {
         return 0;
     }
-    if (Func_0200b766(&record) != 0) {
+    if (Func_02005bd8(&record) != 0) {
         return 0;
     }
 
-    saturate = Func_0200b784(&record) != 0;
+    saturate = Func_02005be8(&record) != 0;
     if (!saturate) {
         if (record.exponent < 0) {
             return 0;
@@ -87,7 +92,7 @@ s32 Func_02005b6c(SoftDouble value)
         return (s32)((((u32)(0u - sign) | sign) >> 31) + 0x7fffffffu);
     }
 
-    magnitude = (u32)Func_0200b7ce(((u64)record.high << 32) | record.low,
+    magnitude = (u32)Func_02005c08(((u64)record.high << 32) | record.low,
                                    (u32)(60 - record.exponent));
 
     if (record.sign != 0u) {

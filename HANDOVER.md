@@ -1961,6 +1961,21 @@ finished one.
 final return after an optional 2-byte zero alignment word — include both. With no
 pool, exclude a trailing `.2byte 0`.
 
+**Step zero on a semantic-backed row: compile Venus's source unmodified and read
+the group count.** It costs one command and no writing:
+
+```sh
+tools/overlay_group_diff.sh <overlay> <off> <span> semantic/overlays/<file>
+```
+
+Where the semantic lane already names callees with `overlay_show.ts`'s raw
+annotations — `resource_373` does throughout — the file is a *finished exact
+candidate* and the transcription step below is redundant. `resource_373:345c`
+came out byte-exact on the first probe with no flags and a struct definition
+intact; `:0cd0` needed one flag and no source edit. Batch this across a whole
+overlay before drafting anything: the group counts rank the queue for you, and
+the free rows fall out immediately.
+
 **Transcribe callee names from `overlay_show.ts`; never extrapolate them.** An
 overlay `bl` stores the target's image offset minus two, so `overlay_show`'s
 pc-relative `bl 0x...` annotation is wrong for every site — that is exactly what
@@ -2621,6 +2636,25 @@ two levers land.
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**
+- **A pool `ldr` scheduled ahead of the setters the reference emits first.** Two
+  independent rows in `resource_373` now show it, so it is a class rather than a
+  one-off: `:11d8` (108 bytes, 2 clusters, `ldr r5, POOL` hoisted above a whole
+  argument block and above the preceding `bl`) and `:10d8` (256 bytes, 4 groups,
+  `ldr r2, POOL` hoisted above the `ldr r3, [r5, #8]` it is added to, plus one
+  `mov r3, sl` / `mov r2, r8` pair). `:10d8` reaches those 4 under
+  `-fsched-low-dest-first -fno-strength-reduce` with both loop tests respelled
+  `step != 40`; that combination is worth keeping, since it took the row from 43
+  groups to 4 and only this class is left. Nothing moves the residual: not
+  `-fno-cse-pool-immediate`, `-mthumb-load-latency-one`,
+  `-mthumb-early-literal-pool`, `-mthumb-entry-literal-first`,
+  `-fthumb-minipool-tail-first`, `-fthumb-literal-before-index-shift`,
+  `-fno-sched-alias`, `-fsched-store-first`, `-fsched-high-dest-first`,
+  `-fno-thumb-contiguous-immediate`, `-fno-cse-follow-jumps`, `-fno-regmove`,
+  `-fno-expensive-optimizations`, `-fno-schedule-insns`, nor any callee declared
+  non-void. `-fno-schedule-insns2` removes the hoist and costs several argument
+  orders instead, which is the tell that the reference had sched2 on with a
+  load-ordering rule this fork does not carry. **Do not re-sweep it** — measure
+  the group count, name this class, and move on.
 - ~~The same **two-instruction immediate** built at two or more call sites.~~
   **This class is now disproved — see below.** It is listed here only because
   hundreds of old notes still cite it.

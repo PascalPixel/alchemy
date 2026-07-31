@@ -1216,6 +1216,16 @@
           "size": 556
         }
       ]
+    },
+    {
+      "entry": "0x08006f48",
+      "evidence": "36-byte leaf function, 0x08006f48..0x08006f6c (no push/pop, bare bx lr return). Prologue-free structural walk flagged it nonstandard_thumb_branch_module because of the b .L_08006f5a jump-to-loop-test-first at 0x08006f50, which skips over an inline one-word pool (0x02004c08) embedded mid-body at 0x08006f52-0x08006f55 rather than trailing the function -- the same inline-pool shape already documented on the overlay lanes. Scans a run of consecutive 0xff bytes from the r0 argument, capped by a limit read from *(u32*)(*(u32*)0x02004c08 + 4), decrementing that limit per matching byte and returning it in r0 (the leaf epilogue's bx lr leaves r0 as the result, never popped). Excluded (4 bytes): the alignment halfword (.inst.n 0x0000) at 0x08006f66 and the pool word itself already counted in the 36-byte span. bun tools/main_xref.ts 08006f48 reports FUNCTION (indirectly published callback) with calls=0 branches=0 word_refs=0 and two Thumb pointers, published at 0x08006e68 and 0x08007b2c, so there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x08006f48",
+          "size": 36
+        }
+      ]
     }
   ]
 }

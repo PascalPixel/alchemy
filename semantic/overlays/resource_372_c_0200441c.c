@@ -45,10 +45,10 @@ typedef unsigned int u32;
 
 /* Imports, old-style: interfaces unknown.  Named by the address each call site
  * computes, per this overlay's established convention. */
-void Func_02008cec();
-u8 *Func_02008ac0();
-void Func_02008af2();
-void Func_02008af8();
+void Func_080f9010();
+u8 *Func_080090c8();
+void Func_08009020();
+void Func_080001b8();
 
 /* In-image per-frame updaters installed as callbacks (pool words 0x0200c3c9
  * and 0x0200c379 = these entry points plus the Thumb bit). */
@@ -66,10 +66,10 @@ void Func_0200441c(u8 *desc)
     u32 v;
 
     gp = *(u8 **)0x03001f30;
-    Func_02008cec(152);
+    Func_080f9010(152);
 
     for (i = 0; i <= 1; i++) {
-        obj = Func_02008ac0(26, *(s32 *)(desc + 8), *(s32 *)(desc + 12),
+        obj = Func_080090c8(26, *(s32 *)(desc + 8), *(s32 *)(desc + 12),
                             *(s32 *)(desc + 16));
         slot[i] = obj;
         if (obj == 0) {
@@ -85,9 +85,9 @@ void Func_0200441c(u8 *desc)
             continue;
         }
 
-        Func_02008af2(spr, 0);
+        Func_08009020(spr, 0);
         spr[38] = 0;
-        Func_02008af8(spr[28]);
+        Func_080001b8(spr[28]);
 
         spr[28] = (u8)*(u16 *)(gp + 70);
         spr[29] |= 1;

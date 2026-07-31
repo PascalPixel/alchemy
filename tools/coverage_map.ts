@@ -678,14 +678,25 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
 
   // Exact always wins over semantic: the semantic lane only shows the ground
   // the exact lane has not already taken.
+  //
+  // Two different things shrink the semantic lane, and they must be counted
+  // apart. Supersession means the exact lane took ground the semantic lane had
+  // -- expected, and the whole point of the ring. Outside-extent means a
+  // semantic source claims an address the executable audit does not call
+  // executable, so the work is real but will never appear on this map. Folding
+  // them into one figure invites reading a total as supersession when none of
+  // it is, which is a mistake this tool has already caused once.
   const exactMainUnion = normalize(exactMain);
   const semanticMain = subtract([...semanticLane.main.values()].flat(), exactMainUnion);
   const semanticOverlayByResource = new Map<string, Span[]>();
   let semanticSuperseded = spanBytes([...semanticLane.main.values()].flat()) - spanBytes(semanticMain);
+  let semanticOutsideExtent = 0;
   for (const [overlay, spans] of semanticLane.overlays) {
     const executable = overlayExecutable.get(overlay) ?? [];
-    const owned = subtract(intersect(spans, executable), exactOverlayByResource.get(overlay) ?? []);
-    semanticSuperseded += spanBytes(spans) - spanBytes(owned);
+    const inExtent = intersect(spans, executable);
+    const owned = subtract(inExtent, exactOverlayByResource.get(overlay) ?? []);
+    semanticOutsideExtent += spanBytes(spans) - spanBytes(inExtent);
+    semanticSuperseded += spanBytes(inExtent) - spanBytes(owned);
     if (owned.length) semanticOverlayByResource.set(overlay, owned);
   }
 
@@ -848,6 +859,7 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
       semantic_lane: options.semantic?.id ?? "absent",
       semantic_sources: semanticLane.sources,
       semantic_superseded_bytes: semanticSuperseded,
+      semantic_outside_extent_bytes: semanticOutsideExtent,
       semantic_unresolved: semanticLane.unresolved.sort(),
     },
     rom_areas: romAreas,

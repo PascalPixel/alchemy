@@ -1741,33 +1741,58 @@ cohort. It added **17,816 exact-C bytes**, taking exact Full-C Byte Share to
 
 In descending order of measured value.
 
-**THE OVERLAY STRICT QUEUE IS FINISHED — start on the MAIN IMAGE.** Everything
-below about overlay queues is history, kept because the method transferred.
-Measured after the queue emptied, the main image's remaining semantic ground
-breaks down by retention class like this:
+**THE OVERLAY STRICT QUEUE IS FINISHED — and the main image is very nearly
+finished too.** Everything below about overlay queues is history, kept because
+the method transferred.
 
-| class | bytes | what it means |
+**Measured, after two false starts that are worth knowing about.** The main
+image's remaining ground by retention class looks like this:
+
+| class | bytes | status |
 | --- | --- | --- |
 | `keep_structured_asm` | 44,136 | parked by design |
-| `split_first` (all `mixed_region`) | 23,432 | **the live front** |
 | `keep_asm` | 11,988 | parked by design |
-| `merge_with_owner` / `merge_with_function_owner` | 7,088 | continuations wanting an owner |
+| `split_first` (all `mixed_region`) | 23,432 | **already converted** — see below |
+| `merge_with_owner` / `merge_with_function_owner` | 7,088 | 4,528 already covered |
 | `adjacent_section_alignment` | 660 | padding |
 
-**Every one of the 599 `c_candidate` regions already has a semantic source**, so
-there is no drafting backlog there — the exact lane's constraint is adoption,
-not authorship. The work is the **79 `split_first` regions**: each carries
-evidence `mixed_or_invalid_function_boundary`, meaning several functions and/or
-interleaved data share one region and nobody has split it into owners. Splitting
-is the substance; the overlay boundary method (control-flow walk from each
-prologue, everything unreached is pool or data) transfers directly. Largest are
-`080e4e0c` (1,512), `080f4f04` (1,226), `080beb08` (1,104), `080f4318` (1,074),
-`080e5e28` (1,066), `080d77b4` (1,054).
+**All 599 `c_candidate` regions already have a semantic source.** There is no
+drafting backlog; the exact lane's constraint is adoption, not authorship.
+
+**The genuine remaining semantic gap is about 2,560 bytes across 36 small
+continuation regions** — the ones NOT inside any registered `executable_ranges`
+entry. Largest: `0800fd5c` (320), `0808f498` (148), `080e53f4` (136),
+`080f474a` (114), `0808b7b8` (108), `080bea9c` (108). Each genuinely has no
+independent entry (`live_parent_stack_and_high_registers`, `no_independent_entry`,
+`live_owner_`), so each must be folded into its owner's source rather than
+written standalone, with that owner's registered ranges extended to match.
+
+**Two traps cost a lane a full pass; do not repeat them.**
+
+**A `split_first` / `mixed_region` row with NO prologue and NO epilogue is not a
+mixed region at all — it is one owner's interior.** All 27 `split_first` rows
+(23,432 bytes, every byte of the class) already lie inside a registered owner's
+`executable_ranges`. The evidence string `mixed_or_invalid_function_boundary`
+describes the **classifier's uncertainty**, not a finding about the bytes.
+Settle it in one command before any control-flow walk:
+
+    grep -c 'push\|pop\|bx' asm/<row>.s      # 0 means interior, nothing to split
+
+**`semantic_owner_scope.ts <row>` returning `owners=0` means "already converted
+and registered", NOT "no owner".** That inverted reading is the trap. Grep the
+row address in `semantic/main-regions.json` to confirm in a second call. Note
+that file registers spans for only 18 owners against 617 sources, so a source
+existing does NOT imply its span is registered or that a neighbouring
+continuation is covered — `08021cb8`'s source is a self-contained 208-byte
+function ending at 0x08021d88 while its "continuation" starts at 0x08021dfa.
+Read before crediting.
 
 Read `asm/<address>.s` — reconstructed disassembly, byte-verified against the
-ROM by `build_asm.ts`. **The overlay `bl` rule does NOT apply here.** It is an
-artefact of unlinked overlay images; the main image is linked, so its `bl`
-targets and printed names are ordinary.
+ROM by `build_asm.ts`. **The overlay `bl` rule does NOT apply here**, confirmed
+by resolving every `.set sub_*` symbol across four regions against the tree:
+thirteen land exactly on a region start with a real source, which the overlay
+`stored + 2` artefact would displace mid-instruction. The only non-region
+targets were `080072f0`/`080072f4`, the main-image `call_via` thunk bank.
 
 **Overlay strict queues.** Two discovery fixes originally took this queue from
 20 rows / 6,110 bytes to 1,334 rows / 311,324 bytes, and rediscovery of

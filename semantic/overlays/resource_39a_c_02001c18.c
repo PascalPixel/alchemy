@@ -39,6 +39,11 @@ typedef signed int s32;
 /* In-image data: three pointers at 0x02008000 + 0x2418. */
 extern void *Data_0200a418[3];
 /* The installed callback, named by its in-image address. */
+s32 Func_03000380();
+void Func_08009080();
+void Func_08009098();
+s32 Func_080090c8();
+void Func_0808a160();
 extern void Func_02001bdc();
 
 /* Imports.  0x02003f04, 0x02003f84, 0x02003fa0 and 0x02003fae are used for
@@ -66,14 +71,14 @@ void Func_02001c18(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, u32 flags,
     table[1] = Data_0200a418[1];
     table[2] = Data_0200a418[2];
 
-    object = Func_02003f04(222, a, b, c);
+    object = Func_080090c8(222, a, b, c);
     if (object == NULL) {
         return;
     }
 
     record = *(u8 **)(object + 80);
     /* r0 is not reloaded, so the object is this call's first argument. */
-    Func_02003f02(object, (s32)((flags + 1) & 15));
+    Func_08009080(object, (s32)((flags + 1) & 15));
 
     /*
      * Uncertainty: the selector is masked to four bits but the frame table
@@ -81,7 +86,7 @@ void Func_02001c18(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, u32 flags,
      * mask is reproduced as written.
      */
     entry = (u8 *)table[flags & 15];
-    Func_02003f22(object, entry);
+    Func_08009098(object, entry);
 
     object[85] = 0;
     record[38] = 0;
@@ -99,7 +104,7 @@ void Func_02001c18(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, u32 flags,
     }
 
     if ((flags & 0x10000) != 0) {
-        Func_02004058(object, *(s32 *)(source + 4));
+        Func_0808a160(object, *(s32 *)(source + 4));
     }
 
     if ((flags & 0x20000) != 0) {
@@ -121,15 +126,15 @@ void Func_02001c18(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, u32 flags,
     entry = (u8 *)table[flags & 15];
     if ((flags & 0x80000) != 0) {
         *(s32 *)(object + 48) =
-            Func_02003f84(*(s32 *)(source + 16) - *(s32 *)(object + 24),
+            Func_03000380(*(s32 *)(source + 16) - *(s32 *)(object + 24),
                           *(s32 *)(entry + 12));
         scaled = *(s32 *)(source + 20) - *(s32 *)(object + 28);
     } else {
         *(s32 *)(object + 48) =
-            Func_02003fa0(*(s32 *)(source + 16) + (s32)0xffff0000,
+            Func_03000380(*(s32 *)(source + 16) + (s32)0xffff0000,
                           *(s32 *)(entry + 12));
         scaled = *(s32 *)(source + 20) + (s32)0xffff0000;
     }
     /* Both arms converge on this call. */
-    *(s32 *)(object + 52) = Func_02003fae(scaled, *(s32 *)(entry + 12));
+    *(s32 *)(object + 52) = Func_03000380(scaled, *(s32 *)(entry + 12));
 }

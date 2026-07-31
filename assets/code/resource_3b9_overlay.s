@@ -3569,21 +3569,10 @@ AlchemyC_02000238:
 	.4byte 0x0000090e
 	.2byte 0x090f
 	.2byte 0x0000
-	push	{lr}
-	movs	r1, #0
-	bl	sub_020048f2
-	movs	r0, #10
-	bl	sub_02004840
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	push	{lr}
-	lsls	r1, r1, #16
-	lsrs	r1, r1, #16
-	movs	r2, #10
-	bl	sub_02004922
-	pop	{r0}
-	bx	r0
+AlchemyC_02001c48:
+	.space 0x14
+AlchemyC_02001c5c:
+	.space 0x10
 	push	{lr}
 	movs	r0, #149
 	lsls	r0, r0, #4

@@ -116,7 +116,12 @@ export function verdict(xref: Xref): string {
   if (xref.calls.length > 0) return "FUNCTION (called directly)";
   if (xref.thumbPointers.length > 0) return "FUNCTION (indirectly published callback)";
   if (xref.branches.length > 0) return "INTERIOR to another owner — not an entry";
-  if (xref.wordRefs.length > 0) return "DATA — referenced as a word, never branched to";
+  // Measured: every row reaching this verdict on the main image was ARM-mode.
+  // The word reference is the SOURCE ADDRESS OF A RUNTIME COPY — a relocated
+  // ARM helper DMA'd or memcpy'd into IWRAM or a stack frame — not a pointer to
+  // data. Treat it exactly like an ARM row: skip, no C form.
+  if (xref.wordRefs.length > 0)
+    return "DATA / RELOCATED-ARM SOURCE — referenced as a word, never branched to; skip";
   // NOT a proof of anything on its own. A genuine continuation is normally
   // reached by FALLING THROUGH from the preceding instruction, which leaves no
   // reference for this tool to find — so a literal pool and a fall-through

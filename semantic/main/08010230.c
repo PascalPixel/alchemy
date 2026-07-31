@@ -71,6 +71,8 @@ void Func_08010230(s32 x, s32 y)
     s32 rows;
     s32 biased_x;
     s32 biased_y;
+    s32 adjusted_x;
+    s32 adjusted_y;
     s32 tile_x;
     s32 tile_y;
     u32 index;
@@ -133,31 +135,27 @@ void Func_08010230(s32 x, s32 y)
         biased_y += layer->offset_y;
         layer++;
 
-        tile_x = biased_x;
+        adjusted_x = biased_x;
         if (biased_x < 0) {
-            tile_x = biased_x + 0x7ffff;
+            adjusted_x = biased_x + 0x7ffff;
         }
-        tile_x >>= 19;
-        tile_y = biased_y;
+        tile_x = adjusted_x >> 19;
+        adjusted_y = biased_y;
         if (biased_y < 0) {
-            tile_y = biased_y + 0x7ffff;
+            adjusted_y = biased_y + 0x7ffff;
         }
-        tile_y >>= 19;
+        tile_y = adjusted_y >> 19;
 
         block = (u32 *)(0x06002800 + (index << 11));
 
-        map_row = (u32)((tile_y + (s32)((u32)(biased_y < 0
-                                              ? biased_y + 0x7ffff
-                                              : biased_y) >> 31)) >> 1) & 127;
-        map_row <<= 7;
+        map_row = ((u32)((tile_y + (s32)((u32)adjusted_y >> 31)) >> 1) & 127)
+                  << 7;
         screen_row = ((u32)tile_y & 30) << 5;
 
         rows >>= 1;
         for (row = 0; (s32)row < rows; row++) {
-            map_column = (u32)(((tile_x
-                                 + (s32)((u32)(biased_x < 0
-                                               ? biased_x + 0x7ffff
-                                               : biased_x) >> 31)) >> 1)) & 127;
+            map_column =
+                (u32)((tile_x + (s32)((u32)adjusted_x >> 31)) >> 1) & 127;
             screen_column = (u32)tile_x & 30;
 
             for (column = 0; column <= 15; column++) {

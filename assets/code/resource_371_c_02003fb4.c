@@ -53,8 +53,8 @@ struct Actor_02003fb4 {
     struct Actor_02003fb4 *anchor;  /* 0x68 */
 };
 
-void Func_080090d0();
-s32 Func_08000118();
+void Func_020081e4();
+s32 Func_0200817c();
 
 void Func_02003fb4(struct Actor_02003fb4 *self)
 {
@@ -62,16 +62,16 @@ void Func_02003fb4(struct Actor_02003fb4 *self)
     s32 frame;
     s32 amplitude;
 
-    self->frame = (u16)(self->frame + 1);
     anchor = self->anchor;
+    self->frame = (u16)(self->frame + 1);
     frame = (s16)self->frame;
 
     if (frame > 31) {
-        Func_080090d0(self);
+        Func_020081e4(self);
         return;
     }
 
-    amplitude = Func_08000118(frame << 10);
+    amplitude = Func_0200817c(frame << 10);
     self->amplitude_x = amplitude;
     self->amplitude_y = amplitude;
     self->x = anchor->x;

@@ -1,22 +1,6 @@
-/*
- * resource_3c4 @ 0x02001068 (90 bytes).
- *
- * One integration step of a moving object.  The three velocity words at +68,
- * +72 and +76 are added into the position words at +8, +12 and +16, then two
- * of the velocities are damped:
- *
- *   - the +68 velocity loses whatever the service at 0x0200409e returns for
- *     (velocity, 18) — a per-step friction lookup;
- *   - the +76 velocity loses a sixteenth of itself, computed with the classic
- *     signed `x < 0 ? x + 15 : x` bias before `asrs #4`, i.e. a division that
- *     truncates toward zero rather than an arithmetic shift.
- *
- * Two further accumulators at +24 and +28 take their own increments from +48
- * and +52, and the unsigned halfword counter at +30 of the object referenced
- * through +80 is advanced by the unsigned halfword at +100.
- *
- * `pop {r5, r6, r7} ; pop {r0} ; bx r0` return: void.
- */
+/* Byte-exact reconstruction of resource_3c4's per-frame object step at
+ * 0x02001068. Routed -fno-sched-depend-count: without it the `ldr` of the
+ * +76 field is hoisted above the store to +12. */
 typedef signed int s32;
 typedef unsigned short u16;
 typedef unsigned char u8;
@@ -46,7 +30,7 @@ typedef struct Object_02001068 {
     u16 tick;              /* +100 */
 } Object_02001068;
 
-s32 Func_03000380();
+extern s32 Func_0200409e(s32, s32);
 
 void Func_02001068(Object_02001068 *object)
 {
@@ -59,7 +43,7 @@ void Func_02001068(Object_02001068 *object)
     vz = object->vz;
     object->z += vz;
 
-    object->vx = vx - Func_03000380(vx, 18);
+    object->vx = vx - Func_0200409e(vx, 18);
 
     bias = vz;
     if (vz < 0) {

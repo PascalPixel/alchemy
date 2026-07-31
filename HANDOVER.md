@@ -1741,6 +1741,34 @@ cohort. It added **17,816 exact-C bytes**, taking exact Full-C Byte Share to
 
 In descending order of measured value.
 
+**THE OVERLAY STRICT QUEUE IS FINISHED — start on the MAIN IMAGE.** Everything
+below about overlay queues is history, kept because the method transferred.
+Measured after the queue emptied, the main image's remaining semantic ground
+breaks down by retention class like this:
+
+| class | bytes | what it means |
+| --- | --- | --- |
+| `keep_structured_asm` | 44,136 | parked by design |
+| `split_first` (all `mixed_region`) | 23,432 | **the live front** |
+| `keep_asm` | 11,988 | parked by design |
+| `merge_with_owner` / `merge_with_function_owner` | 7,088 | continuations wanting an owner |
+| `adjacent_section_alignment` | 660 | padding |
+
+**Every one of the 599 `c_candidate` regions already has a semantic source**, so
+there is no drafting backlog there — the exact lane's constraint is adoption,
+not authorship. The work is the **79 `split_first` regions**: each carries
+evidence `mixed_or_invalid_function_boundary`, meaning several functions and/or
+interleaved data share one region and nobody has split it into owners. Splitting
+is the substance; the overlay boundary method (control-flow walk from each
+prologue, everything unreached is pool or data) transfers directly. Largest are
+`080e4e0c` (1,512), `080f4f04` (1,226), `080beb08` (1,104), `080f4318` (1,074),
+`080e5e28` (1,066), `080d77b4` (1,054).
+
+Read `asm/<address>.s` — reconstructed disassembly, byte-verified against the
+ROM by `build_asm.ts`. **The overlay `bl` rule does NOT apply here.** It is an
+artefact of unlinked overlay images; the main image is linked, so its `bl`
+targets and printed names are ordinary.
+
 **Overlay strict queues.** Two discovery fixes originally took this queue from
 20 rows / 6,110 bytes to 1,334 rows / 311,324 bytes, and rediscovery of
 known-exact functions from 14% to 67%. Subsequent exact-C waves have materially

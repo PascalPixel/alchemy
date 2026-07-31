@@ -32565,18 +32565,6 @@
         },
         {
           "start": 33555632,
-          "end": 33555812,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33555812,
-          "end": 33555816,
-          "kind": "literal_pool",
-          "evidence": "resource_3b5_overlay.s:670:pc-relative-literal"
-        },
-        {
-          "start": 33555816,
           "end": 33556024,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -32681,7 +32669,7 @@
           "start": 33557752,
           "end": 33557756,
           "kind": "literal_pool",
-          "evidence": "resource_3b5_overlay.s:1427:pc-relative-literal"
+          "evidence": "resource_3b5_overlay.s:1404:pc-relative-literal"
         },
         {
           "start": 33557760,

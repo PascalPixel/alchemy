@@ -23,6 +23,8 @@
 //   bun tools/overlay_call_targets.ts resource_39f            # whole overlay
 //   bun tools/overlay_call_targets.ts resource_39f 1078       # one owner
 //   bun tools/overlay_call_targets.ts resource_39f --json
+//   bun tools/overlay_show.ts resource_39f 1078 -n 180 | \
+//     bun tools/overlay_call_targets.ts resource_39f --annotate   # fix the bl names
 //   bun tools/overlay_call_targets.ts --self-test
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -160,6 +162,12 @@ function selfTest(): void {
   if (storedDisplacement(0xf000, 0x4770) !== null) throw new Error("BL suffix must be checked");
   // A negative prefix must sign-extend rather than wrap.
   if (storedDisplacement(0xf7ff, 0xf800) !== -0x1000) throw new Error("sign extension is wrong");
+  // The annotator must replace the listing's wrong callee, and leave other lines alone.
+  const listing = " 2001082:\tf002 fedd \tbl\t0x2003e40\n 2001086:\tmovs r0, #1\n";
+  const annotated = annotate(listing, new Map([[0x1082, "Func_0808a010"]]));
+  if (!annotated.includes("bl Func_0808a010")) throw new Error("annotation did not apply");
+  if (annotated.includes("0x2003e40")) throw new Error("wrong target survived");
+  if (!annotated.includes("movs r0, #1")) throw new Error("a non-call line was altered");
   const image = new Uint8Array(16);
   // Trailing word 0x0808a011 — the Thumb bit must be masked off.
   image.set([0x00, 0x4c, 0x20, 0x47, 0x11, 0xa0, 0x08, 0x08], 0);
@@ -175,6 +183,29 @@ function selfTest(): void {
   console.log("self-test=ok");
 }
 
+/**
+ * Rewrite an `overlay_show` listing so each `bl` names its REAL callee.
+ *
+ * Three separate lanes wrote this by hand before it was promoted here, which is
+ * the argument for it existing: the listing's own `bl` annotations are wrong for
+ * every overlay, and hand-pairing the summary histogram against call shapes has
+ * already produced one exactly-backwards mapping. Annotating in place removes
+ * that whole class of error.
+ */
+export function annotate(listing: string, sites: Map<number, string>): string {
+  return listing
+    .split("\n")
+    .map((line) => {
+      const at = /^\s*([0-9a-f]+):/.exec(line);
+      if (at === null) return line;
+      const site = Number.parseInt(at[1], 16) - OVERLAY_BASE;
+      const name = sites.get(site);
+      if (name === undefined) return line;
+      return line.replace(/\bbl\s+\S+/, `bl ${name}`);
+    })
+    .join("\n");
+}
+
 function main(): void {
   const args = Bun.argv.slice(2);
   if (args.includes("--self-test")) return selfTest();
@@ -188,6 +219,25 @@ function main(): void {
   const sites = resolveOverlay(overlay, ownerText === undefined ? undefined : parseInt(ownerText, 16));
   if (args.includes("--json")) {
     console.log(JSON.stringify(sites, null, 2));
+    return;
+  }
+  if (args.includes("--annotate")) {
+    // Read an overlay_show listing on stdin and rewrite its bl names in place.
+    const image = overlayImage(overlay);
+    const prologues = new Set(
+      inventory().filter((row) => row.overlay === overlay && row.starts_with_prologue).map((row) => row.offset),
+    );
+    const names = new Map<number, string>();
+    for (const site of sites) {
+      const detail = classify(image, site.target, prologues);
+      names.set(
+        site.site,
+        detail.imported !== undefined
+          ? `Func_${detail.imported.toString(16).padStart(8, "0")}`
+          : `Func_${(OVERLAY_BASE + site.target).toString(16)}`,
+      );
+    }
+    console.log(annotate(readFileSync(0, "utf8"), names));
     return;
   }
   const image = overlayImage(overlay);

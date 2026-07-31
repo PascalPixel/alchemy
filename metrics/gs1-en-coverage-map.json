@@ -4,19 +4,19 @@
   "target": "gs1-en",
   "derivation": "tracked-evidence-v1",
   "rom_bytes": 8388608,
-  "executable_bytes": 1339576,
+  "executable_bytes": 1339580,
   "lanes": {
     "exact_c": {
-      "bytes": 211362,
-      "percent_of_executable": 15.78
+      "bytes": 213020,
+      "percent_of_executable": 15.9
     },
     "semantic_c": {
-      "bytes": 593254,
-      "percent_of_executable": 44.29
+      "bytes": 616172,
+      "percent_of_executable": 46
     },
     "assembly": {
-      "bytes": 534960,
-      "percent_of_executable": 39.94
+      "bytes": 510388,
+      "percent_of_executable": 38.1
     },
     "asset_data": {
       "bytes": 7300700,
@@ -26,18 +26,18 @@
   "main": {
     "executable_bytes": 548364,
     "exact_c_bytes": 101344,
-    "semantic_c_bytes": 383866
+    "semantic_c_bytes": 385850
   },
   "overlays": {
-    "executable_bytes": 791212,
-    "exact_c_bytes": 110018,
-    "semantic_c_bytes": 209388
+    "executable_bytes": 791216,
+    "exact_c_bytes": 111676,
+    "semantic_c_bytes": 230322
   },
   "provenance": {
     "exact_lane": "origin/mercury",
     "semantic_lane": "origin/venus",
-    "semantic_sources": 1092,
-    "semantic_superseded_bytes": 6606,
+    "semantic_sources": 1137,
+    "semantic_superseded_bytes": 7370,
     "semantic_unresolved": []
   },
   "rom_areas": [
@@ -47,8 +47,8 @@
       "bytes": 548364,
       "lanes": {
         "exact_c": 101344,
-        "semantic_c": 383866,
-        "assembly": 63154
+        "semantic_c": 385850,
+        "assembly": 61170
       },
       "tiles": 9
     },
@@ -57,9 +57,9 @@
       "label": "Compressed code overlays",
       "bytes": 539544,
       "lanes": {
-        "exact_c": 74558,
-        "semantic_c": 137617,
-        "assembly": 327369
+        "exact_c": 75797,
+        "semantic_c": 151648,
+        "assembly": 312099
       },
       "tiles": 11
     },
@@ -80,19 +80,19 @@
       "bytes": 548364,
       "lanes": {
         "exact_c": 101344,
-        "semantic_c": 383866,
-        "assembly": 63154
+        "semantic_c": 385850,
+        "assembly": 61170
       },
       "tiles": 54
     },
     {
       "id": "overlays",
       "label": "Decoded code overlays",
-      "bytes": 791212,
+      "bytes": 791216,
       "lanes": {
-        "exact_c": 110018,
-        "semantic_c": 209388,
-        "assembly": 471806
+        "exact_c": 111676,
+        "semantic_c": 230322,
+        "assembly": 449218
       },
       "tiles": 96
     }

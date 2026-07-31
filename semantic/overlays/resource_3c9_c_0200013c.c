@@ -4,10 +4,16 @@ typedef int s32;
 typedef unsigned int u32;
 
 /*
- * resource_39c owner at 0x0200013c, 472 bytes: the overlay's general
- * "spawn and fully configure" routine -- the same spawn-then-owner-record
- * shape resource_39c_c_02000048.c/02005158.c/02005388.c already document,
- * generalised to eight caller-supplied parameters (three spawn arguments,
+ * resource_3c9 owner at 0x0200013c, 472 bytes: the overlay's general
+ * "spawn and fully configure" routine. Byte-identical to
+ * resource_39c_c_0200013c.c (this overlay's own copy of the same
+ * routine) apart from the ten bl halfword pairs and the variant-table
+ * pool word -- verified by diffing the two full 472-byte disassemblies;
+ * that file's spawn-then-owner-record commentary applies here wholesale.
+ * Adapting it here surfaced a transcription error in the sibling (the
+ * bit-19 copy targets object fields 0x18/0x1c, not 0x24/0x28 as the
+ * sibling's first draft said); fixed in both files in the same commit.
+ * The routine takes eight caller-supplied parameters (three spawn arguments,
  * three plain copy-through fields, a bitmask of optional features, and a
  * pointer to a record of further optional per-feature values) instead of
  * pulling everything from a fixed "current slot" lookup.
@@ -24,18 +30,18 @@ typedef unsigned int u32;
  * `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2` rule.
  *
  * `entry = table[idx]` where `table` is the fixed pointer array at
- * 0x0200de64 and `idx = flags & 0xf` -- the low nibble of the `flags`
+ * 0x0200dfb8 and `idx = flags & 0xf` -- the low nibble of the `flags`
  * bitmask parameter selects a variant record, while bits 16 and up are
  * independent boolean feature switches, each gating one optional
  * initialisation step below. Bit 20 (tested once, before the spawn, using
  * the caller's `extra` pointer) picks the spawn call's own first argument
  * and is never tested again afterward.
  *
- * `Func_02005c32(0)`'s result is read once, through its own field 0x50,
+ * `Func_02005eaa(0)`'s result is read once, through its own field 0x50,
  * for two bits (0x0c) of the owner record's field 9 -- the same
- * clear-two-bits-then-copy idiom resource_39c_c_02000048.c's adopted
- * Func_02005a2e pair and resource_39c_c_02005158.c already use on this
- * overlay's owner-record field 9, just sourced from a different place. The
+ * clear-two-bits-then-copy idiom resource_39c's drafted owners
+ * (resource_39c_c_02000048.c, resource_39c_c_02005158.c) already use on
+ * that overlay's owner-record field 9, just sourced from a different place. The
  * bit-17 block below can overwrite those same two bits again afterward
  * with a value taken from `extra`'s own byte field 0 -- both updates are
  * kept exactly as compiled, not merged.
@@ -43,36 +49,31 @@ typedef unsigned int u32;
  * Fields 0x30 and 0x34 on the spawned object are zeroed unconditionally
  * first and then, only under the bit-18 gate, recomputed through one of
  * two different callee pairs depending on whether bit 19 populated fields
- * 0x18/0x1c first (`Func_02005be8`/`Func_02005c0e` if so, else
- * `Func_02005c00`/`Func_02005c0e` with a flat `-0x10000` adjustment
+ * 0x18/0x1c first (`Func_02005e68`/`Func_02005e8e` if so, else
+ * `Func_02005e80`/`Func_02005e8e` with a flat `-0x10000` adjustment
  * instead of the field-0x18/0x1c subtraction) -- recorded exactly as
  * compiled, not unified.
  *
- * Uncertainty: none of the ten callees, `Func_02005c32`'s result, `entry`,
+ * Uncertainty: none of the ten callees, `Func_02005eaa`'s result, `entry`,
  * or `extra`'s field roles are identified beyond this call shape; the
  * default spawn-argument constant 0xde is recorded as read, not decoded
  * further.
- *
- * Correction (caught while adapting this routine's byte-identical
- * resource_3c9 copy): the bit-19 copy and the bit-18 subtraction read
- * object fields 0x18/0x1c ([r6, #24]/[r6, #28]), not 0x24/0x28 as this
- * file's first draft said -- four sites fixed against the disassembly.
  */
 
-extern u8 *Func_02005c32(s32 arg0);
-extern u8 *Func_02005b58(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_02005b62(u8 *object, s32 arg1);
-extern void Func_02005b7c(u8 *object, s32 entryValue);
-extern void Func_02005d8e(u8 *object, s32 arg1);
-extern s32 Func_02005be8(s32 arg0, s32 arg1);
-extern s32 Func_02005c00(s32 arg0, s32 arg1);
-extern s32 Func_02005c0e(s32 arg0, s32 arg1);
-extern void Func_02005c7c(u8 *object, s32 arg1);
-extern void Func_02005c8c(u8 *object, s32 arg1);
+extern u8 *Func_02005eaa(s32 arg0);
+extern u8 *Func_02005df0(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_02005dfa(u8 *object, s32 arg1);
+extern void Func_02005e14(u8 *object, s32 entryValue);
+extern void Func_02006006(u8 *object, s32 arg1);
+extern s32 Func_02005e68(s32 arg0, s32 arg1);
+extern s32 Func_02005e80(s32 arg0, s32 arg1);
+extern s32 Func_02005e8e(s32 arg0, s32 arg1);
+extern void Func_02005f14(u8 *object, s32 arg1);
+extern void Func_02005f24(u8 *object, s32 arg1);
 
 void Func_0200013c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra)
 {
-    u8 **table = (u8 **)0x0200de64;
+    u8 **table = (u8 **)0x0200dfb8;
     u32 idx = flags & 0xf;
     u8 *object;
     u8 *ownerRecord;
@@ -87,17 +88,17 @@ void Func_0200013c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8
         spawnArg0 = 0xde;
     }
 
-    object = Func_02005b58(spawnArg0, a1, a2, a3);
+    object = Func_02005df0(spawnArg0, a1, a2, a3);
     if (object == 0) {
         return;
     }
 
     ownerRecord = *(u8 **)(object + 0x50);
 
-    Func_02005b62(object, (idx + 1) & 0xf);
+    Func_02005dfa(object, (idx + 1) & 0xf);
 
     entry = table[idx];
-    Func_02005b7c(object, (s32)entry);
+    Func_02005e14(object, (s32)entry);
 
     object[0x55] = 0;
     ownerRecord[0x26] = 0;
@@ -106,7 +107,7 @@ void Func_0200013c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8
     *(s32 *)(object + 0x48) = a5;
     *(s32 *)(object + 0x4c) = a6;
 
-    callResult = Func_02005c32(0);
+    callResult = Func_02005eaa(0);
     ownerRecord[9] = (ownerRecord[9] & ~0x0c) | (*(u8 *)(*(u8 **)(callResult + 0x50) + 9) & 0x0c);
 
     *(s32 *)(object + 0x30) = 0;
@@ -119,7 +120,7 @@ void Func_0200013c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8
     }
 
     if ((flags & 0x10000) != 0) {
-        Func_02005d8e(object, *(s32 *)(extra + 4));
+        Func_02006006(object, *(s32 *)(extra + 4));
     }
 
     if ((flags & 0x20000) != 0) {
@@ -139,21 +140,21 @@ void Func_0200013c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8
         if ((flags & 0x40000) != 0) {
             if (field18Copied) {
                 *(s32 *)(object + 0x30) =
-                    Func_02005be8(*(s32 *)(extra + 0x10) - *(s32 *)(object + 0x18), entryField0xc);
+                    Func_02005e68(*(s32 *)(extra + 0x10) - *(s32 *)(object + 0x18), entryField0xc);
                 *(s32 *)(object + 0x34) =
-                    Func_02005c0e(*(s32 *)(extra + 0x14) - *(s32 *)(object + 0x1c), entryField0xc);
+                    Func_02005e8e(*(s32 *)(extra + 0x14) - *(s32 *)(object + 0x1c), entryField0xc);
             } else {
                 *(s32 *)(object + 0x30) =
-                    Func_02005c00(*(s32 *)(extra + 0x10) - 0x10000, entryField0xc);
+                    Func_02005e80(*(s32 *)(extra + 0x10) - 0x10000, entryField0xc);
                 *(s32 *)(object + 0x34) =
-                    Func_02005c0e(*(s32 *)(extra + 0x14) - 0x10000, entryField0xc);
+                    Func_02005e8e(*(s32 *)(extra + 0x14) - 0x10000, entryField0xc);
             }
         }
     }
 
     if ((flags & 0x200000) != 0) {
-        Func_02005c7c(object, 1);
-        Func_02005c8c(object, *(s32 *)(extra + 0x1c));
+        Func_02005f14(object, 1);
+        Func_02005f24(object, *(s32 *)(extra + 0x1c));
     }
 
     if ((flags & 0x400000) != 0) {

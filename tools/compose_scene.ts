@@ -124,28 +124,41 @@ export function graphics_catalog(): Catalog {
   for (const series of manifest.series ?? []) {
     const kind = series.kind;
     if (kind === "golden-sun-map-charblock-series") {
-      for (const family of series.families) {
-        const base = Number.parseInt(family.id, 16);
-        const directory = join(ROOT, resourceGraphicsDir(family.id));
-        palettes[(base + 1).toString(16)] = join(directory, "palette.224.png");
-        for (const [index, resource] of family.charblocks.entries()) {
-          banks[(base + 2 + index).toString(16)] = resource.source
-            ? join(ROOT, resource.source)
-            : join(directory, `charblock${index + 1}.4bpp.png`);
-        }
-        if (family.animation_source !== undefined && family.animation_source !== null) {
-          banks[(base + 5).toString(16)] = join(directory, "animation_source.4bpp.png");
+      // Tuple schema since manifest.json commit f872662d ("charblock families
+      // become tuples"): [id, palAddr, palSize, animAddr|null, animSize|null,
+      // [charblockAddr, charblockSize, objectSource|null]...] -- one line per
+      // family, replacing the former {id, charblocks: [...], animation_source}
+      // object shape this function was still reading. build_assets.ts was
+      // updated for the tuple in that same commit; this function was not, and
+      // is outside `bun run test`, so it silently stopped working.
+      // The flat asset tree (commit f84618638) also means `directory` is a
+      // filename PREFIX, not a real directory: siblings are named
+      // `${directory}_suffix`, never `join(directory, suffix)`.
+      for (const family of series.families as Array<
+        [string, string, string, string | null, string | null, ...Array<[string, string, string | null]>]
+      >) {
+        const [familyId, , , animAddr, , ...charblockTuples] = family;
+        const base = Number.parseInt(familyId, 16);
+        const directory = join(ROOT, resourceGraphicsDir(familyId));
+        palettes[(base + 1).toString(16)] = `${directory}_palette.224.png`;
+        charblockTuples.forEach(([, , objectSource], index) => {
+          banks[(base + 2 + index).toString(16)] = objectSource
+            ? join(ROOT, objectSource)
+            : `${directory}_charblock${index + 1}.4bpp.png`;
+        });
+        if (animAddr !== undefined && animAddr !== null) {
+          banks[(base + 5).toString(16)] = `${directory}_animation_source.4bpp.png`;
         }
       }
     } else if (kind === "golden-sun-standalone-palette-series") {
       for (const palette of series.palettes) {
         const resource = String(palette.id).toLowerCase();
-        palettes[resource] = join(ROOT, resourceGraphicsDir(resource), "palette.224.png");
+        palettes[resource] = `${join(ROOT, resourceGraphicsDir(resource))}_palette.224.png`;
       }
     } else if (kind === "golden-sun-standalone-tile-series") {
       for (const bank of series.resources) {
         const resource = String(bank.id).toLowerCase();
-        banks[resource] = join(ROOT, resourceGraphicsDir(resource), "tiles.4bpp.png");
+        banks[resource] = `${join(ROOT, resourceGraphicsDir(resource))}_tiles.4bpp.png`;
       }
     }
   }
@@ -403,8 +416,48 @@ function integer(value: string, option: string): number {
   return Number(value);
 }
 
+/**
+ * ROM非依存の自己診断。tracked済みの manifest.json / assets/graphics を
+ * 対象に graphics_catalog() のタプル解析と、既知コンテナ一枚の合成を検証する。
+ * f872662d でタプル化されて以降 compose_scene.ts が壊れたまま `bun run test`
+ * に含まれていなかった -- 同じ回帰を再び黙らせないための最小限のテスト。
+ */
+function selfTest(): void {
+  const [palettes, banks] = graphics_catalog();
+  if (Object.keys(palettes).length === 0 || Object.keys(banks).length === 0) {
+    throw new Error("self-test: graphics_catalog returned no entries -- manifest schema drifted again?");
+  }
+  // Family "128" is the smallest map-charblock family; its derived paths are
+  // known and checked in by commit f872662d's own byte-identical claim.
+  const directory = join(ROOT, resourceGraphicsDir("128"));
+  const expectedPalette = `${directory}_palette.224.png`;
+  const expectedCharblock1 = `${directory}_charblock1.4bpp.png`;
+  if (palettes["129"] !== expectedPalette) {
+    throw new Error(`self-test: family 128's palette key resolved to ${palettes["129"]}, expected ${expectedPalette}`);
+  }
+  if (banks["12a"] !== expectedCharblock1) {
+    throw new Error(`self-test: family 128's charblock1 key resolved to ${banks["12a"]}, expected ${expectedCharblock1}`);
+  }
+  if (!existsSync(expectedPalette) || !existsSync(expectedCharblock1)) {
+    throw new Error("self-test: graphics_catalog paths for family 128 do not exist on disk");
+  }
+  // End-to-end: compose one small, known-flat container and require every
+  // tile to resolve. This is what silently threw for every container after
+  // the tuple compaction; catching it here means a future manifest reshape
+  // fails `bun run test` instead of rotting unnoticed again.
+  const linkage = select_record("128", 0);
+  const [composed, missing] = compose(join(ROOT, "assets/maps/resource_128"), linkage);
+  if (missing !== 0) throw new Error(`self-test: container 128 left ${missing} tiles unresolved`);
+  if (composed.width === 0 || composed.height === 0) throw new Error("self-test: container 128 composed to an empty image");
+  console.log("self-test=ok tool=compose_scene");
+}
+
 /** 表示用地図画像の生成命令を処理する。 */
 export function main(arguments_ = Bun.argv.slice(2)): void {
+  if (arguments_.includes("--self-test")) {
+    selfTest();
+    return;
+  }
   if (arguments_.includes("-h") || arguments_.includes("--help")) {
     print_help();
     return;

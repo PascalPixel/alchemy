@@ -1,0 +1,269 @@
+@font-face {
+  font-family: Weyard;
+  src: url("/weyard.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+  font-smooth: never;
+  -webkit-font-smoothing: none;
+  font-synthesis: none;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background: #fff;
+}
+
+#root {
+  height: 100vh;
+  max-width: 1700px;
+  margin: 0 auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sprite { image-rendering: pixelated; }
+.trees {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.tree-image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  display: block;
+  border-radius: 4px;
+}
+
+.panel {
+  min-width: 0;
+  min-height: 0;
+  padding: 0 5px 5px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--edge);
+  border-radius: 8px;
+  box-shadow: 0 0 0 2px #1c1c26, inset 0 0 0 1px rgb(255 255 255 / 60%);
+}
+
+.titlebar {
+  height: 18px;
+  padding: 0.5px 5px 0;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  color: #fff;
+  font: italic 400 16px/15px Weyard, system-ui, sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.panel > :not(.titlebar) { border-radius: 5px; }
+.p-core { --edge: #6d4fc2; }
+.p-overlays { --edge: #1f7f93; }
+.p-assets { --edge: #bb2f77; }
+.p-chat { --edge: #6e6e6e; }
+.p-board { --edge: #2e5c42; }
+
+.main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(320px, 28%, 460px);
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+}
+
+.board {
+  min-height: 0;
+  padding: 8px 10px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  background: #3f7d5a;
+}
+
+.columns {
+  min-height: 0;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 8px;
+  flex: 1;
+}
+
+.column {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.column-name {
+  margin-bottom: 5px;
+  overflow: hidden;
+  color: #dcebe2;
+  font: italic 400 16px/15px Weyard, system-ui, sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-stack {
+  min-height: 0;
+  padding: 1px 2px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+}
+
+.postit {
+  position: relative;
+  z-index: 0;
+  padding: 8px 9px 7px;
+  color: #333;
+  font: italic 400 16px/15px Weyard, system-ui, sans-serif;
+  overflow-wrap: anywhere;
+}
+
+.postit::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: #fffef8;
+  border-radius: 2px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 35%);
+  transform: rotate(-2.2deg);
+}
+
+.postit:nth-child(even)::before { transform: rotate(1.8deg); }
+.postit:nth-child(3n)::before { transform: rotate(-1.2deg); }
+.postit:nth-child(5n)::before { transform: rotate(2.6deg); }
+.owners {
+  margin-top: 4px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 3px;
+}
+
+.owners img {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+}
+
+.chat {
+  min-height: 0;
+  padding: 10px 14px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  background: #f6f6f6;
+}
+
+.message {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.avatar img {
+  width: 36px;
+  height: 36px;
+  display: block;
+}
+
+.message-head,
+.message-body { font: italic 400 16px/15px Weyard, system-ui, sans-serif; }
+.message-head {
+  margin-bottom: 1px;
+  color: #111;
+}
+
+.message-head strong { font-weight: 400; }
+.handle { color: #111; }
+.time {
+  margin-left: 8px;
+  color: #999;
+}
+
+.message-body {
+  min-width: 0;
+  color: #222;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.error {
+  padding: 8px 10px;
+  color: #7d211b;
+  background: #fff1ef;
+  border: 2px solid #7c2626;
+  border-radius: 6px;
+  font: italic 400 16px/15px Weyard, system-ui, sans-serif;
+}
+
+.loading {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: #555;
+  font: italic 400 16px/15px Weyard, system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  html, body { background: #131318; }
+  .chat { background: #1e1e24; }
+  .message-body { color: #d6d6da; }
+  .message-head, .handle { color: #ececf0; }
+  .avatar { background: #333; }
+  .board { background: #31614a; }
+  .p-chat { --edge: #4a4a52; }
+  .panel { box-shadow: 0 0 0 2px #000, inset 0 0 0 1px rgb(255 255 255 / 35%); }
+  .tree-image { filter: brightness(0.92); }
+  .postit::before { background: #f3f0e6; }
+  .error { color: #ffc1bb; background: #371b1a; }
+}
+
+@media (max-width: 760px) {
+  #root { height: auto; padding: 8px; gap: 8px; }
+  .trees { grid-template-columns: 1fr; gap: 8px; }
+  .main { min-height: auto; display: flex; flex-direction: column; gap: 8px; }
+  .panel { min-height: auto; }
+  .board { flex: none; }
+  .columns {
+    padding-bottom: 4px;
+    grid-auto-columns: 72vw;
+    flex: none;
+    overflow-x: auto;
+  }
+  .card-stack { max-height: none; overflow-y: visible; }
+  .p-chat .chat { max-height: 65vh; flex: none; }
+}

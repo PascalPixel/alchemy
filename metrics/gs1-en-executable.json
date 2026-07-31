@@ -7875,18 +7875,6 @@
         },
         {
           "start": 33576368,
-          "end": 33576520,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33576520,
-          "end": 33576524,
-          "kind": "literal_pool",
-          "evidence": "resource_373_overlay.s:9440:pc-relative-literal"
-        },
-        {
-          "start": 33576524,
           "end": 33576744,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -7895,7 +7883,7 @@
           "start": 33576744,
           "end": 33576748,
           "kind": "literal_pool",
-          "evidence": "resource_373_overlay.s:9505:pc-relative-literal"
+          "evidence": "resource_373_overlay.s:9478:pc-relative-literal"
         },
         {
           "start": 33576748,
@@ -7913,7 +7901,7 @@
           "start": 33577200,
           "end": 33577254,
           "kind": "thumb",
-          "evidence": "resource_373_overlay.s:9676:verified-C-placeholder"
+          "evidence": "resource_373_overlay.s:9649:verified-C-placeholder"
         },
         {
           "start": 33577254,
@@ -7925,7 +7913,7 @@
           "start": 33577256,
           "end": 33577294,
           "kind": "thumb",
-          "evidence": "resource_373_overlay.s:9679:verified-C-placeholder"
+          "evidence": "resource_373_overlay.s:9652:verified-C-placeholder"
         },
         {
           "start": 33577294,
@@ -7943,7 +7931,7 @@
           "start": 33577504,
           "end": 33577508,
           "kind": "literal_pool",
-          "evidence": "resource_373_overlay.s:9684:pc-relative-literal"
+          "evidence": "resource_373_overlay.s:9657:pc-relative-literal"
         },
         {
           "start": 33577508,
@@ -8021,7 +8009,7 @@
           "start": 33578620,
           "end": 33578624,
           "kind": "literal_pool",
-          "evidence": "resource_373_overlay.s:9926:pc-relative-literal"
+          "evidence": "resource_373_overlay.s:9899:pc-relative-literal"
         },
         {
           "start": 33578624,

@@ -1152,6 +1152,20 @@
           "size": 458
         }
       ]
+    },
+    {
+      "entry": "0x0800fb38",
+      "evidence": "One function spanning two assembled rows, 0x0800fb38..0x0800fd22 and 0x0800fd5c..0x0800fe70, 766 bytes of code. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 12-byte frame at 0x0800fb38; the b.n at 0x0800fd20 leaves this row for 0x0800fd5c, which does NOT begin with a push - it reads r0 (block+0x101, set at 0x0800fcde), ip (block+0x102, set at 0x0800fcfa), r5 (the scene header from 0x0800fb86) and this frame's [sp,#8] - and ends at 0x0800fe5e with the epilogue that unwinds exactly this prologue, so 0x0800fd5c is the continuation of this owner rather than a tail call, and both spans are registered here. That epilogue ends pop {r1}; bx r1 with N != 0, so r0 is the result, and the only value reaching it is the movs r0,#2 at 0x0800fe5c. Excluded (102 bytes): the 2-byte movs r0,r0 alignment filler at 0x0800fd22, the fourteen-word pool at 0x0800fd24 holding 0x00000400 (0x0800fcec), 0x00000200 (0x0800fd06), 0x0000c1ff (the DISPCNT mask, 0x0800fb4c), 0x08013784 (the twelve-byte scene table, 0x0800fb5e), 0x03000164 (the IWRAM-relocated block clear, 0x0800fb76), 0x00000128 (the resource-id bias, 0x0800fb80), 0x02010001 (0x0800fb8e), 0x0202c000 (0x0800fb9c), 0x02010000 (0x0800fba6 and 0x0800fc86), 0x0202d000 (0x0800fbb8), 0x0202de00 (0x0800fbce), 0x00000101 (0x0800fc24 and 0x0800fcde), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x0800fc38) and 0x0400000e (BG3CNT, 0x0800fd1c), and the eleven-word pool at 0x0800fe70 holding 0x0400000c (0x0800fd6a), 0x0400000a (0x0800fd7e), 0x00000128 (0x0800fdb8), 0x03001388 (0x0800fdca), 0x06004000 (0x0800fdf2), 0x06008000 (0x0800fe0c), 0x0600c000 (0x0800fe26), 0x02028000 (0x0800fe36), 0x0400004c (0x0800fe42), 0x08010001 (0x0800fe54) and 0x00000c85 (0x0800fe56). The second row ends 4-aligned at 0x0800fe70 with no filler. Every pool word is reached by ldr rN,[pc,#imm] from inside the ranges and none is branched to. The bl Func_080072f0 at 0x0800fb7a is the runtime _call_via_r3 thunk inside 0x080072e4..0x08007320, index 3, an indirect call through r3 holding the pooled 0x03000164. The mov ip,pc; bx r9 at 0x0800fc9c and 0x0800fcac are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec; the movs r0,r0 at 0x0800fc9a and 0x0800fcaa are inside the instruction stream, aligning the return address mov ip,pc captures so it lands past the bx, not padding. The mov sl,r3 at 0x0800fdd2 loads the pooled 0x03001388 into a register no later instruction reads, so it is dead. Nothing in the row is retained assembly. bun tools/main_xref.ts 0800fb38 reports FUNCTION (indirectly published callback) with calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x08009114, so there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x0800fb38",
+          "size": 490
+        },
+        {
+          "address": "0x0800fd5c",
+          "size": 276
+        }
+      ]
     }
   ]
 }

@@ -716,6 +716,9 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // which the bare-address key was silently handing the flag to. Found by the
   // collision scan `--lint` now runs.
   "assets/code/resource_3b5_c_0200028c.c",
+  // resource_39f:0d90 sets r0 for a three-argument call whose r1 is finished by
+  // a `lsls`, so the shift ties with the r0 setter.
+  "assets/code/resource_39f_c_02000d90.c",
   // resource_38e:045c has the tell at two sites: a shifted-constant pair and a
   // negated argument, both tying with the r0 setter.
   "assets/code/resource_38e_c_0200045c.c",

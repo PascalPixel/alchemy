@@ -506,6 +506,10 @@ const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
   "assets/code/resource_399_c_02000a3c.c",
   "assets/code/resource_3cd_c_0200004c.c",
   "assets/code/resource_3ce_c_02000244.c",
+  // resource_3c4:1068 is the same heuristic on a load rather than a setter: the
+  // dependence count hoists the +76 field's `ldr` above the store to +12, which
+  // is the source's own order. Nothing else moves it, in either direction.
+  "assets/code/resource_3c4_c_02001068.c",
 ]);
 // In resource_37a:0054 the cse rerun after the copy loop folds the shared
 // window base back into per-site constants; in resource_399:0abc it rewrites
@@ -646,6 +650,9 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // resource_39f:2004's last placement sets r0, r1 and r2 and the reference
   // puts `movs r0,#22` ahead of the two finishing `lsls`. See the CSE set.
   "assets/code/resource_39f_c_02002004.c",
+  // resource_38d:0150 has the same tie at three of its eleven sites: a shifted
+  // r1 argument finishing against a plain `movs r0,#14`.
+  "assets/code/resource_38d_c_02000150.c",
   // resource_39a:17a8 sets r0/r1/r2 at two three-argument calls and the
   // reference orders them by ascending destination at both.
   "assets/code/resource_39a_c_020017a8.c",

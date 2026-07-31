@@ -152,6 +152,14 @@ unconverted strict rows, holding 315,208 strict bytes between them.
 it has drifted twice from being maintained by hand:
 `resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,252), `resource_3c8` (11,916), `resource_372` (9,838), `resource_371` (9,486), `resource_38f` (9,212), `resource_39f` (8,692), `resource_3c4` (8,642), `resource_383` (8,588), `resource_3c5` (7,866), `resource_3a8` (7,780), `resource_391` (7,648), `resource_374` (7,468), `resource_375` (6,424), `resource_37a` (6,200), `resource_37b` (6,032), `resource_3b2` (5,984), `resource_3aa` (5,960), `resource_3b7` (5,954), `resource_3bb` (5,548), `resource_395` (5,504), `resource_3cb` (5,488), `resource_39a` (5,368), `resource_381` (5,328), `resource_377` (5,226), `resource_3b4` (5,104), `resource_3c6` (5,094), `resource_3ae` (5,026), `resource_370` (4,718), `resource_38d` (4,680), `resource_399` (4,672), `resource_3a2` (4,484), `resource_3a7` (4,442), `resource_3c7` (4,252), `resource_37f` (4,216), `resource_3ad` (3,978), `resource_3ca` (3,926), `resource_3bc` (3,768), `resource_3ba` (3,344), `resource_38b` (3,318), `resource_394` (3,282), `resource_3a3` (3,156), `resource_389` (3,056), `resource_3b5` (2,914), `resource_3c2` (2,688), `resource_379` (2,628), `resource_3b6` (2,284), `resource_3ce` (2,274), `resource_38e` (2,206), `resource_3c3` (1,934), `resource_393` (1,820), `resource_398` (1,620), `resource_392` (1,562), `resource_386` (1,142), `resource_38c` (1,024), `resource_3b1` (994), `resource_36f` (888), `resource_3cd` (880), `resource_3b0` (682), `resource_3af` (552), `resource_390` (532), `resource_3c1` (468), `resource_3b9` (444), `resource_397` (318), `resource_384` (248), `resource_378` (220).
 
+**"CONVERTED IN FULL" IS WEAKER THAN IT SOUNDS, AND I MEASURED HOW MUCH.** Of
+the 68 overlays declared converted in full, **28 contain 204 called functions
+with no source and no inventory row.** The claim was true as stated — zero
+unconverted strict-queue rows — but it was measured against an inventory that is
+itself short 422 functions, so it certifies the queue, not the overlay. Re-check
+any completeness claim with the reference scan above, never against the
+inventory alone.
+
 **"Converted in full" means zero unconverted STRICT-QUEUE rows, not that every
 executable byte of the overlay is C.** Measured across those overlays: their
 assembled images total 231,694 bytes, of which semantic sources cover 116,466 and
@@ -983,7 +991,10 @@ halfword after it belongs to nobody.** `resource_38e:090c` is 102/102, ending at
 0x0971 with `0x0000` at 0x0972 outside the row. Do not attach it.
 
 **THE INVENTORY IS INCOMPLETE BY 422 CALLED FUNCTIONS — and the cheap sweep
-finds only a twelfth of them.** The decisive scan is by REFERENCE, not by gap:
+finds only a twelfth of them.** Run **`bun tools/overlay_unindexed.ts
+[resource_NNN]`**; it reports them ranked, with call counts, and separates the
+15 genuine interior functions from the 422 that are missing. The decisive scan
+is by REFERENCE, not by gap:
 for every `bl` in an overlay image, resolve it with `target = stored + 2`; if the
 target's first halfword is a `push {…,lr}` (`(hw & 0xfe00) === 0xb400`), it is a
 function start. Drop targets that already have a row, a semantic source or an

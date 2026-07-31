@@ -2,10 +2,10 @@
   "format": 1,
   "metric": "full-c-byte-share",
   "target": "gs1-en",
-  "denominator_commit": "2b816902f6ccd76bec9ff909c9f5a9e9439a6be0",
+  "denominator_commit": "caa9ec063d6c73df78242ec3682cc44437fd65c2",
   "executable_bytes": 1339580,
   "history_scope": "first-parent",
-  "generated_from": "e5ba51ac75b86d7a56b7f90c5ae0265037e63560",
+  "generated_from": "82bbb7b49f3a9ae62be751d636c0bbf28b992d96",
   "entries": [
     {
       "commit": "c0a101abc862998cc36a0ce13f6f893b614a16b8",
@@ -2868,6 +2868,22 @@
       "main_full_c_bytes": 101344,
       "overlay_full_c_bytes": 112404,
       "canonical_suffix": "[C 213,748/1,339,580 bytes]",
+      "derivation_status": "measured",
+      "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
+    },
+    {
+      "commit": "caa9ec063d6c73df78242ec3682cc44437fd65c2",
+      "first_parent_position": 180,
+      "author_time": "2026-07-31T00:25:08+00:00",
+      "committer_time": "2026-07-31T00:25:08+00:00",
+      "original_subject": "convert three rows and park a DMA descriptor pair [C 213,936/1,339,580 bytes]",
+      "full_c_bytes": 213936,
+      "executable_bytes": 1339580,
+      "remaining_bytes": 1125644,
+      "percent": 15.97,
+      "main_full_c_bytes": 101344,
+      "overlay_full_c_bytes": 112592,
+      "canonical_suffix": "[C 213,936/1,339,580 bytes]",
       "derivation_status": "measured",
       "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
     }

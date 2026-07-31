@@ -2,6 +2,16 @@
   "format": 1,
   "main_owners": [
     {
+      "entry": "0x08002dd8",
+      "evidence": "Core-band gap census (/tmp/ALCHEMY_QUEUE_CORE.md), kind shared_literal_thumb_helper_module, 40 bytes, retention keep_structured_asm so not auto-eligible via the manifest fallback. Manifest evidence tags: two_callable_thumb_helpers, cross_function_literal_pool, former_08002df0_boundary_merged -- one manifest row holds two functions (Func_08002dd8 at file offset 0, Func_08002df0 at file offset 24) sharing one trailing pool word (0x03001e50) at offset 36. Both index the same IWRAM word array src/080048b0.c already establishes byte-exact as a two-slot bump-allocator base (base[0]/base[1]). bun tools/main_xref.ts 08002dd8 08002df0 confirms both are genuine standalone entries: 333 and 72 direct callers respectively, each also published as a Thumb pointer, neither interior to the other or to anything else.",
+      "executable_ranges": [
+        {
+          "address": "0x08002dd8",
+          "size": 40
+        }
+      ]
+    },
+    {
       "entry": "0x08006f48",
       "evidence": "Core-band gap census (/tmp/ALCHEMY_QUEUE_CORE.md), kind nonstandard_thumb_branch_module, 36 bytes, retention keep_structured_asm so not auto-eligible via the manifest fallback. Single-block leaf: no push/pop, one bare `bx lr`, the classifier's automation-resistant shape is the mid-body conditional branch back over the byte-scan loop rather than a standard call/return. Dereferences the flash-chip descriptor pointer at 0x02004C08 and reads its `size` field at offset +4, the same struct src/08006cdc.c already establishes byte-exact (`struct FlashInfo08006cdc`); scans forward from the incoming buffer pointer counting down `size` while each byte is 0xff (flash's erased value), stopping at the first non-erased byte or when the count reaches zero, and returns whatever remains of the count. bun tools/main_xref.ts 08006f48 reports FUNCTION (indirectly published callback) with two Thumb pointers (0x08006e68, 0x08007b2c) and no direct bl call site, confirming it is a genuine standalone entry, not interior to a neighbour.",
       "executable_ranges": [

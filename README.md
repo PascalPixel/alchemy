@@ -26,7 +26,17 @@ game.
 
 ## Coverage map
 
-![Treemap of the English Golden Sun ROM: the left card divides all 8,388,608 cartridge bytes into main-image code, compressed code overlays and asset data; the right card divides the audited executable bytes into the main image and its decoded overlays. Tiles are shaded blue for byte-exact C, teal for reviewed semantic C, grey for regions still held as assembly and pink for non-code asset data.](assets/readme/gs1-en-coverage.svg?v=5e66bb13)
+**Core** — main-image code, 548 KB of the executable universe:
+
+![Main-image code coverage box tree: blue is byte-exact C, teal is reviewed semantic C, grey is assembly.](assets/readme/gs1-en-core.svg?v=a5246f05)
+
+**Overlays** — decoded overlay code, 791 KB:
+
+![Decoded overlay code coverage box tree: blue is byte-exact C, teal is reviewed semantic C, grey is assembly.](assets/readme/gs1-en-overlays.svg?v=be1454bb)
+
+**Assets** — the 7.3 MB of the cartridge that is data, not code:
+
+![Asset and data box tree in pink.](assets/readme/gs1-en-assets.svg?v=045b135f)
 
 Every byte of the English cartridge. The left card is the ROM as it ships; the
 right card is the audited executable denominator behind Full-C Byte Share. Blue

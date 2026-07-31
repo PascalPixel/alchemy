@@ -100,8 +100,7 @@ void Func_0200051c(void)
 
     if (Func_0808a070(0, 0) == 1) {
         Func_0808a188(8, 0, 10);
-        Func_0808a020();
-        return;
+        goto close;
     }
 
     *(u16 *)(Data_03001ebc + 472) += 1;
@@ -134,10 +133,11 @@ void Func_0200051c(void)
         Func_0808a060(235, 0);
         Func_080770c8(0x8a5);
         Func_08077230(-price);
-        Func_0808a020();
-        return;
+        goto close;
     }
 
     Func_0808a180(8, 0);
+
+close:
     Func_0808a020();
 }

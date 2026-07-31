@@ -46,7 +46,7 @@ audited executable bytes. In the core image specifically, exact C is 101,452 byt
 semantic C is 416,258 bytes; the remaining 30,654 bytes are retained
 assembly/structure rather than ordinary semantic-C work.
 The core dashboard therefore contains **zero gray assembly bytes**: it renders
-those 30,654 retained bytes black. Gray means actionable semantic debt; black
+those 30,654 retained bytes orange. Gray means actionable semantic debt; orange
 means pools, alignment, veneers, relocated runtime, or other reviewed structure
 that remains assembly by design.
 

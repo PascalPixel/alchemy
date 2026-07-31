@@ -167,11 +167,36 @@ interface Row {
   span_bytes: number;
 }
 
+/**
+ * Rows to check for one overlay: the discovery inventory, PLUS the reviewed
+ * boundaries in `semantic/regions.json`.
+ *
+ * The inventory is not complete. Sweeping the two-byte gaps in
+ * `metrics/gs1-en-executable.json` for `push {..,lr}` prologues turns up owners
+ * the discovery pass never recorded — 36 of them in one sweep, 15 provably
+ * called by a `bl` in their own overlay. Those owners have no inventory row, so
+ * an inventory-only scan reported `checked=0` for a freshly converted file and
+ * looked like a pass. A derived owner is admitted by a `manual_regions` entry,
+ * which carries the same `entry`/`span_bytes` this check needs, so read it too
+ * and let the inventory win where both describe the same offset.
+ */
 function rows(overlay: string): Row[] {
   const inventory = JSON.parse(
     readFileSync(join(ROOT, "out", "decomp", "overlays.json"), "utf8"),
   ) as { functions: Row[] };
-  return inventory.functions.filter((row) => row.overlay === overlay);
+  const found = inventory.functions.filter((row) => row.overlay === overlay);
+  const manualPath = join(ROOT, "semantic", "regions.json");
+  if (!existsSync(manualPath)) return found;
+  const manual = JSON.parse(readFileSync(manualPath, "utf8")) as {
+    manual_regions?: { overlay: string; entry: string; span_bytes: number }[];
+  };
+  for (const region of manual.manual_regions ?? []) {
+    if (region.overlay !== overlay) continue;
+    const offset = Number.parseInt(region.entry, 16) - 0x02000000;
+    if (found.some((row) => row.offset === offset)) continue;
+    found.push({ overlay, offset, span_bytes: region.span_bytes });
+  }
+  return found.sort((a, b) => a.offset - b.offset);
 }
 
 function selfTest(): void {

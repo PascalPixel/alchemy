@@ -1,7 +1,9 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, join } from "node:path";
 import {
+  CALL_VIA_BASE,
   externalSymbol,
+  overlayCallViaBase,
   externalSymbolAssembly,
   sourceToAssemblyPlan,
 } from "./alchemy_gcc.ts";
@@ -129,7 +131,7 @@ function checked(command: string[], cwd: string): string {
   return process.stdout.toString();
 }
 
-function compileOverlayC(source: string, work: string): { address: number; data: Buffer } {
+function compileOverlayC(source: string, work: string, callViaBase: number): { address: number; data: Buffer } {
   const stem = basename(source, extname(source)).slice(-8);
   if (!/^[0-9a-f]{8}$/i.test(stem)) throw new Error(`overlay C filename is not an address: ${source}`);
   const address = Number.parseInt(stem, 16);
@@ -151,7 +153,7 @@ function compileOverlayC(source: string, work: string): { address: number; data:
     preprocessedOutput: join(work, `${stem}.i`),
   });
   const keyDigest = new Bun.CryptoHasher("sha256");
-  keyDigest.update(`overlay-c-v1:${hex(address)}\0`);
+  keyDigest.update(`overlay-c-v2:${hex(address)}:${hex(callViaBase)}\0`);
   keyDigest.update(planStamp(plan.steps.map((step) => step.command), work));
   keyDigest.update("\0");
   keyDigest.update(readFileSync(source));
@@ -164,9 +166,12 @@ function compileOverlayC(source: string, work: string): { address: number; data:
     .filter(Boolean)
     .map((line) => line.trim().split(/\s+/).at(-1)!);
   for (const external of undefinedSymbols) {
-    if (externalSymbol(external) === null) throw new Error(`unsupported overlay C external symbol: ${external}`);
+    if (externalSymbol(external, callViaBase) === null) throw new Error(`unsupported overlay C external symbol: ${external}`);
   }
-  writeFileSync(symbolsSource, ".syntax unified\n.thumb\n" + undefinedSymbols.map(externalSymbolAssembly).join(""));
+  writeFileSync(
+    symbolsSource,
+    ".syntax unified\n.thumb\n" + undefinedSymbols.map((name) => externalSymbolAssembly(name, callViaBase)).join(""),
+  );
   checked(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", symbolsObject, symbolsSource], work);
   checked(["arm-none-eabi-ld", `-Ttext=0x${hex(address)}`, "-e", symbol, "-o", elf, object, symbolsObject], work);
   checked(["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", elf, binary], work);
@@ -185,6 +190,76 @@ function compileOverlayC(source: string, work: string): { address: number; data:
   return { address, data };
 }
 
+// Address of the overlay's own `_call_via_rN` bank, or the main image's if it
+// has none.
+//
+// An indirect call compiles to `bl _call_via_rN`, a stub that is nothing but
+// `bx rN`. Every overlay carries its own bank of them, and resolving the stub to
+// the main image's bank instead puts the branch a few bytes wrong -- the row
+// then fails adoption while comparing clean, because the comparator never links.
+// Roughly half the overlay rows that still have a semantic reference make an
+// indirect call, so this is not a corner.
+//
+// The signature is four consecutive `bx r0 / nop … bx r3 / nop` pairs, which is
+// unambiguous: a `bx` of a *different* register or a missing `nop` breaks it, and
+// the run has to start at r0. Scanning the assembled image rather than a table
+// keeps this derived from tracked evidence.
+export function callViaBankBase(image: Uint8Array, base = OVERLAY_BASE): number | null {
+  const halfword = (offset: number): number => image[offset] | (image[offset + 1] << 8);
+
+  // The bank itself, found by its shape: `bx r0 / nop … bx r3 / nop`. A `bx` of
+  // a different register or a missing `nop` breaks the run, and it has to start
+  // at r0, so the match is unambiguous.
+  let bank = -1;
+  for (let offset = 0; offset + 16 <= image.length && bank < 0; offset += 2) {
+    let matched = true;
+    for (let slot = 0; slot < 4 && matched; slot += 1) {
+      matched = halfword(offset + slot * 4) === (0x4700 | (slot << 3)) &&
+        halfword(offset + slot * 4 + 2) === 0x46c0;
+    }
+    if (matched) bank = offset;
+  }
+  if (bank < 0) return null;
+
+  // The bank's address in the image is not the address a `bl` to it encodes.
+  // An overlay `bl` stores `target - 2` as a displacement that is not the
+  // assembler's PC-relative one, so the two disagree by a per-overlay constant
+  // and the assembler needs the *linking* address to reproduce the bytes.
+  //
+  // Recover it from any call the overlay already makes into its own bank. One
+  // site gives both readings of the same branch: the stored rule says which
+  // slot it reaches, which names the register, and the assembler's rule says
+  // what address that slot must have for these bytes to come out. The base is
+  // then the linking address of slot zero. Verified against two overlays whose
+  // constants differ (resource_373 +0x60, resource_3bc +0x19e), so a fixed
+  // offset would have been wrong.
+  // Take the consensus over every such site rather than the first. A rehearsal
+  // blanks the span it is about to replace, so the first matching site can be
+  // the one inside the placeholder -- and a lone stray `bl` whose displacement
+  // happens to land on a slot would otherwise decide the whole overlay.
+  const votes = new Map<number, number>();
+  for (let site = 0; site + 4 <= image.length; site += 2) {
+    const high = halfword(site);
+    const low = halfword(site + 2);
+    if ((high & 0xf800) !== 0xf000 || (low & 0xf800) !== 0xf800) continue;
+    const stored = (((high & 0x7ff) << 12) | ((low & 0x7ff) << 1)) << 9 >> 9;
+    const slot = stored + 2 - bank;
+    if (slot < 0 || slot > 13 * 4 || slot % 4 !== 0) continue;
+    if (halfword(bank + slot) !== (0x4700 | ((slot / 4) << 3))) continue;
+    const candidate = base + site + 4 + stored - slot;
+    votes.set(candidate, (votes.get(candidate) ?? 0) + 1);
+  }
+  let best: number | null = null;
+  let bestVotes = 0;
+  for (const [candidate, count] of votes) {
+    if (count > bestVotes) {
+      best = candidate;
+      bestVotes = count;
+    }
+  }
+  return best;
+}
+
 export function assembleOverlay(source: string | URL, base = OVERLAY_BASE): Buffer {
   const work = mkdtempSync(join(TMPDIR, "alchemy-overlay-"));
   try {
@@ -200,9 +275,10 @@ export function assembleOverlay(source: string | URL, base = OVERLAY_BASE): Buff
     const copied = Bun.spawnSync(["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", elf, binary], { stdout: "pipe", stderr: "pipe" });
     if (copied.exitCode !== 0) throw new Error(copied.stderr.toString().trim());
     const result = Buffer.from(readFileSync(binary));
+    const bank = overlayCallViaBase(basename(String(source)).replace(/_overlay\.s$/, ""));
     const occupied = new Set<number>();
     for (const cSource of overlayCSources(source)) {
-      const compiled = compileOverlayC(cSource, work);
+      const compiled = compileOverlayC(cSource, work, bank);
       const offset = compiled.address - base;
       if (offset < 0 || offset + compiled.data.length > result.length) {
         throw new Error(`overlay C span is outside ${source}: ${cSource}`);

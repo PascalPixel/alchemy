@@ -37,7 +37,8 @@
     "exact_lane": "origin/mercury",
     "semantic_lane": "origin/venus",
     "semantic_sources": 1364,
-    "semantic_superseded_bytes": 13424,
+    "semantic_superseded_bytes": 0,
+    "semantic_outside_extent_bytes": 13424,
     "semantic_unresolved": []
   },
   "rom_areas": [

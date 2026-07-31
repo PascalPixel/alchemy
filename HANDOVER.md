@@ -1950,6 +1950,15 @@ two levers land.
   **mid-function literal-pool dumps** at barriers we cannot reproduce.
 - **Register-identity-only swaps**, often where our allocation is strictly better
   or one instruction shorter.
+- **Branching leaf with a bare `bx lr`.** The fork returns from any leaf that
+  contains a conditional branch with `push {lr}` / `pop {r0}` / `bx r0`; it emits
+  the bare `bx lr` only for straight-line leaves. The reference does both. It is
+  not register pressure and not the return type -- a leaf using r0-r4 returns
+  bare if it is straight-line, and a leaf using only r0-r3 pushes if it branches
+  (measured on both, 2026-07-31). Costs four bytes and blocks the row outright.
+  Only 13 unconverted main-image owners have the shape, which is why this is a
+  park rather than a compiler change: modifying the Thumb epilogue would put
+  every byte-exact source in the tree up for re-verification to win ~13 rows.
 - **Two loop pseudos allocated in swapped registers.** A loop that carries both a
   walking pointer and a counter: the reference puts the pointer in the register
   the *preceding* instruction just freed and the counter in the next one, and gcc

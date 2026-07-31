@@ -42,6 +42,17 @@ extern s16 Data_02000240[];
 extern u32 Data_03001ae8;
 
 /* The installed callback, named by its in-image address. */
+void Func_080000c0();
+void Func_08000128();
+void Func_08009080();
+void Func_08009088();
+s32 Func_08009150();
+s32 Func_08009158();
+s32 Func_080091a8();
+s32 Func_080091b0();
+void Func_0808a018();
+void Func_0808a020();
+s32 Func_0808a400();
 extern void Func_02002014();
 
 /* Imports; those used for their return value are typed. 0x02004406 is reached
@@ -76,7 +87,7 @@ void Func_02002094(void)
     s32 x;
     s32 z;
 
-    subject = Func_02004498(*(s32 *)((u8 *)Data_02000240 + 500));
+    subject = Func_0808a400(*(s32 *)((u8 *)Data_02000240 + 500));
 
     for (;;) {
         heading = Data_0200a464[(Data_03001ae8 >> 4) & 15];
@@ -86,7 +97,7 @@ void Func_02002094(void)
             return;
         }
         /* No argument register is written before this branch. */
-        Func_0200440a();
+        Func_0808a018();
 
         /* movs r3,#0x80 / lsls r3,#12 builds the 0x80000 bias kept in fp. */
         x = (*(s32 *)(subject + 8) & (s32)0xfff00000) + 0x80000;
@@ -95,17 +106,17 @@ void Func_02002094(void)
         z = (*(s32 *)(subject + 16) & (s32)0xfff00000) + 0x80000;
         probe[2] = z;
 
-        goal = Func_020043ec((s32)subject[34], x, z);
+        goal = Func_080091b0((s32)subject[34], x, z);
         /* movs r0,#0x80 / lsls r0,#13 builds 0x100000.  The probe block is
          * passed by address and is advanced by the callee. */
-        Func_02004392((s32)0x100000, heading, probe);
+        Func_08000128((s32)0x100000, heading, probe);
 
-        marker = Func_02004406((s32)subject[34], probe[0], probe[2]);
+        marker = Func_080091b0((s32)subject[34], probe[0], probe[2]);
         if (marker == 255) {
             *(u16 *)(subject + 6) = (u16)heading;
             goto tail;
         }
-        if (Func_02004410((s32)subject[34], probe[0], probe[2])
+        if (Func_080091a8((s32)subject[34], probe[0], probe[2])
                 - *(s32 *)(subject + 12) > 0x80000) {
             *(u16 *)(subject + 6) = (u16)heading;
             goto tail;
@@ -117,20 +128,20 @@ void Func_02002094(void)
         *(s32 *)(subject + 48) = 0x20000;
         *(s32 *)(subject + 52) = 0x1999;
         *(u16 *)(subject + 100) = 0;
-        Func_02004426(subject, x, *(s32 *)(subject + 12), z);
+        Func_08009150(subject, x, *(s32 *)(subject + 12), z);
         /* Same import as the probe above, two arguments here. */
-        Func_02004406(subject, 2);
-        Func_02004416(subject, 48);
-        Func_02004444(subject);
+        Func_08009080(subject, 2);
+        Func_08009088(subject, 48);
+        Func_08009158(subject);
         *(void **)(subject + 108) = (void *)Func_02002014;
 
         for (;;) {
-            Func_02004450((s32)0x100000, heading, probe);
-            marker = Func_020044c4((s32)subject[34], probe[0], probe[2]);
+            Func_080091a8((s32)0x100000, heading, probe);
+            marker = Func_08009150((s32)subject[34], probe[0], probe[2]);
             if (marker == 255) {
                 break;
             }
-            if (Func_0200446e((s32)subject[34], probe[0], probe[2])
+            if (Func_08009158((s32)subject[34], probe[0], probe[2])
                     - *(s32 *)(subject + 12) > 0x80000) {
                 break;
             }
@@ -138,8 +149,8 @@ void Func_02002094(void)
             *(s32 *)(subject + 52) = 0x1999;
             x = probe[0];
             z = probe[2];
-            Func_02004480(subject, probe[0], probe[1], probe[2]);
-            Func_0200448e(subject);
+            Func_08000128(subject, probe[0], probe[1], probe[2]);
+            Func_080091b0(subject);
             if (marker != goal) {
                 goto blocked;
             }
@@ -147,9 +158,9 @@ void Func_02002094(void)
 
         *(s32 *)(subject + 48) = 0x20000;
         *(s32 *)(subject + 52) = 0x10000;
-        Func_020044c2(subject, x, *(s32 *)(subject + 12), z);
-        Func_020044d0(subject);
-        Func_02004466(2);
+        Func_08009150(subject, x, *(s32 *)(subject + 12), z);
+        Func_08009158(subject);
+        Func_080000c0(2);
         /* The back edge re-reads the heading table and starts again. */
     }
 
@@ -160,6 +171,6 @@ blocked:
     *(s32 *)(subject + 52) = 0x4000;
 
 tail:
-    Func_02004484(10);
-    Func_02004568();
+    Func_080000c0(10);
+    Func_0808a020();
 }

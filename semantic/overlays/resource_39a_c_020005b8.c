@@ -19,6 +19,13 @@ typedef signed int s32;
  */
 
 /* Imports; the two queried ones are typed for their return value. */
+void Func_02000180();
+void Func_020012cc();
+void Func_080000c0();
+s32 Func_080770c0();
+void Func_080770c8();
+void Func_080770d0();
+void Func_080f9010();
 void Func_02000760();
 void Func_0200077c();
 void Func_020018e6();
@@ -34,19 +41,19 @@ void Func_02002a20();
 
 void Func_020005b8(void)
 {
-    Func_020029ce((s32)0xf1);
+    Func_080f9010((s32)0xf1);
     /* movs r0,#0xc4 / lsls r0,#2 builds 0x310.  The second test is only
      * reached when the first fails, and both truths take the same path. */
-    if (Func_020028de((s32)0x310) != 0 || Func_020028e8((s32)0x30d) != 0) {
-        Func_02000760(8, -48, 0);
-        Func_02002910((s32)0x308);
-        Func_0200290e((s32)0x309);
+    if (Func_080770c0((s32)0x310) != 0 || Func_080770c0((s32)0x30d) != 0) {
+        Func_02000180(8, -48, 0);
+        Func_080770d0((s32)0x308);
+        Func_080770c8((s32)0x309);
     } else {
-        Func_0200077c(8, -96, 0);
-        Func_02002924((s32)0x308);
-        Func_02002932((s32)0x309);
+        Func_02000180(8, -96, 0);
+        Func_080770c8((s32)0x308);
+        Func_080770d0((s32)0x309);
     }
-    Func_02002a20((s32)0x121);
-    Func_02002876(2);
-    Func_020018e6();
+    Func_080f9010((s32)0x121);
+    Func_080000c0(2);
+    Func_020012cc();
 }

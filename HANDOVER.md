@@ -138,34 +138,19 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **683,124
-executable bytes across 1,299 compiling sources**: 385,850 main-image bytes and
-297,274 overlay bytes. Combined with exact C, **897,308 / 1,339,580 executable
-Alongside the exact lane, reviewed semantic C currently accounts for **662,952
-executable bytes across 1,253 compiling sources**: 385,850 main-image bytes and
-277,102 overlay bytes. Combined with exact C, **877,080 / 1,339,580 executable
-bytes** are expressed as C.
-Build that lane with `bun run build:semantic`; its
-sources live under `semantic/` and do not claim byte equality. Use
-`semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
-of the ordinary review queue.
-
-bytes** are expressed as C.
-Build that lane with `bun run build:semantic`; its
-sources live under `semantic/` and do not claim byte equality. Use
-`semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
-of the ordinary review queue.
-
+Alongside the exact lane, reviewed semantic C currently accounts for **701,856
+executable bytes across 1,336 compiling sources**: 385,850 main-image bytes and
+316,006 overlay bytes. Combined with exact C, **918,026 / 1,339,582 executable
 bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
 sources live under `semantic/` and do not claim byte equality. Use
 `semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
 of the ordinary review queue.
 
 
-**43 overlays have zero unconverted rows in the strict queue**, holding
-274,570 strict bytes between them. Regenerate this list rather than editing it —
+**55 overlays have zero unconverted rows in the strict queue**, holding
+308,700 strict bytes between them. Regenerate this list rather than editing it —
 it has drifted twice from being maintained by hand:
-`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,252), `resource_3c8` (11,916), `resource_372` (9,838), `resource_371` (9,486), `resource_38f` (9,212), `resource_39f` (8,692), `resource_383` (8,588), `resource_3c5` (7,866), `resource_3a8` (7,780), `resource_391` (7,648), `resource_374` (7,468), `resource_375` (6,424), `resource_37a` (6,200), `resource_37b` (6,032), `resource_3b2` (5,984), `resource_3aa` (5,960), `resource_3b7` (5,954), `resource_3bb` (5,548), `resource_395` (5,504), `resource_3cb` (5,488), `resource_39a` (5,368), `resource_377` (5,226), `resource_3b4` (5,104), `resource_3c6` (5,094), `resource_3ae` (5,026), `resource_370` (4,718), `resource_38d` (4,680), `resource_399` (4,672), `resource_3a2` (4,484), `resource_3a7` (4,442), `resource_3c7` (4,252), `resource_37f` (4,216), `resource_3ad` (3,978), `resource_3ca` (3,926), `resource_3bc` (3,768), `resource_3ba` (3,344), `resource_38b` (3,318), `resource_3a3` (3,156), `resource_3b5` (2,914), `resource_3c2` (2,688), `resource_3b6` (2,284).
+`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,252), `resource_3c8` (11,916), `resource_372` (9,838), `resource_371` (9,486), `resource_38f` (9,212), `resource_39f` (8,692), `resource_3c4` (8,642), `resource_383` (8,588), `resource_3c5` (7,866), `resource_3a8` (7,780), `resource_391` (7,648), `resource_374` (7,468), `resource_375` (6,424), `resource_37a` (6,200), `resource_37b` (6,032), `resource_3b2` (5,984), `resource_3aa` (5,960), `resource_3b7` (5,954), `resource_3bb` (5,548), `resource_395` (5,504), `resource_3cb` (5,488), `resource_39a` (5,368), `resource_381` (5,328), `resource_377` (5,226), `resource_3b4` (5,104), `resource_3c6` (5,094), `resource_3ae` (5,026), `resource_370` (4,718), `resource_38d` (4,680), `resource_399` (4,672), `resource_3a2` (4,484), `resource_3a7` (4,442), `resource_3c7` (4,252), `resource_37f` (4,216), `resource_3ad` (3,978), `resource_3ca` (3,926), `resource_3bc` (3,768), `resource_3ba` (3,344), `resource_38b` (3,318), `resource_394` (3,282), `resource_3a3` (3,156), `resource_389` (3,056), `resource_3b5` (2,914), `resource_3c2` (2,688), `resource_379` (2,628), `resource_3b6` (2,284), `resource_3ce` (2,274), `resource_38e` (2,206), `resource_3c3` (1,934), `resource_398` (1,620), `resource_386` (1,142), `resource_38c` (1,024), `resource_3b1` (994).
 
 **"Converted in full" means zero unconverted STRICT-QUEUE rows, not that every
 executable byte of the overlay is C.** Measured across those overlays: their
@@ -500,6 +485,22 @@ confirms it is data.
 `resource_3b5:0170` loads `[r3,#0]` and `[r3,#48]` off it. Reading those as two
 unrelated globals hides that the second is the well-known workspace pointer the
 rest of the overlay loads directly.
+
+**A bracket-close import appearing MORE times in your C than in the histogram
+means you wrote a shared close once per arm.** Measured across the eight
+worst-failing overlays, three of the eleven genuine count defects were exactly
+this — `Func_0808a020` with `asm=1` against `src=2` or `src=3`. Reach the close
+with a label and a `goto`; per-arm copies inflate the multiset just as merging
+deflates it.
+
+**Audit status, measured over all 58 converted overlays: 32 clean, 26 with
+mismatches — but 4,253 of 4,371 mismatch lines in the eight worst are ONE
+mechanical defect.** Those files were written before the `target = stored + 2`
+rule and name callees by the pre-rule address: 3,308 lines are a
+`Func_0200xxxx` the assembly never calls, and 945 are the mirror — the real
+import, absent from the source. Control flow and call counts are right; only the
+names are wrong, so this is a rename pass, not a re-conversion. Only **11** lines
+across those overlays are genuine count differences.
 
 **Mechanise the multiset proof: `bun tools/overlay_multiset_check.ts <ov>
 [ownerHex]`.** Four lanes independently hand-rolled this before it was promoted

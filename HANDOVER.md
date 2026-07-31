@@ -133,9 +133,9 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **642,700
-executable bytes across 1,175 compiling sources**: 385,850 main-image bytes and
-256,850 overlay bytes. Combined with exact C, **856,448 / 1,339,580 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **655,680
+executable bytes across 1,231 compiling sources**: 385,850 main-image bytes and
+269,830 overlay bytes. Combined with exact C, **869,808 / 1,339,580 executable
 bytes** are expressed as C.
 bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
 sources live under `semantic/` and do not claim byte equality. Use
@@ -143,10 +143,10 @@ sources live under `semantic/` and do not claim byte equality. Use
 of the ordinary review queue.
 
 
-**32 overlays have zero unconverted rows in the strict queue**, holding
-239,158 strict bytes between them. Regenerate this list rather than editing it —
+**34 overlays have zero unconverted rows in the strict queue**, holding
+248,366 strict bytes between them. Regenerate this list rather than editing it —
 it has drifted twice from being maintained by hand:
-`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,484), `resource_3c8` (12,800), `resource_372` (10,202), `resource_38f` (9,848), `resource_371` (9,650), `resource_39f` (9,278), `resource_3c5` (9,208), `resource_374` (9,148), `resource_3a8` (8,912), `resource_383` (8,652), `resource_391` (7,648), `resource_39a` (7,096), `resource_375` (6,568), `resource_3aa` (6,552), `resource_3b4` (6,462), `resource_3b2` (6,134), `resource_3b7` (6,062), `resource_37b` (6,032), `resource_3bb` (5,896), `resource_3cb` (5,540), `resource_3c6` (5,250), `resource_38d` (5,212), `resource_399` (4,738), `resource_370` (4,718), `resource_3c7` (4,440), `resource_37f` (4,428), `resource_3ad` (4,288), `resource_3ca` (3,978), `resource_3bc` (3,826), `resource_3a4` (36).
+`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,484), `resource_3c8` (12,800), `resource_372` (10,202), `resource_38f` (9,848), `resource_371` (9,650), `resource_39f` (9,278), `resource_3c5` (9,208), `resource_374` (9,148), `resource_3a8` (8,912), `resource_383` (8,652), `resource_391` (7,648), `resource_39a` (7,096), `resource_375` (6,568), `resource_3aa` (6,552), `resource_3b4` (6,462), `resource_3b2` (6,134), `resource_3b7` (6,062), `resource_37b` (6,032), `resource_3bb` (5,896), `resource_395` (5,780), `resource_3cb` (5,540), `resource_3c6` (5,250), `resource_38d` (5,212), `resource_399` (4,738), `resource_370` (4,718), `resource_3c7` (4,440), `resource_37f` (4,428), `resource_3ad` (4,288), `resource_3ca` (3,978), `resource_3bc` (3,826), `resource_3a3` (3,428), `resource_3a4` (36).
 
 **"Converted in full" means zero unconverted STRICT-QUEUE rows, not that every
 executable byte of the overlay is C.** Measured across those overlays: their
@@ -848,6 +848,13 @@ with no disassembly. `resource_3ca:11c4` has 24 records of 12 bytes at file
 offset 0x1af8, and 0x1af8 + 288 = 0x1c18, exactly the counter halfword the same
 owner drives — which caught the lane's element count before it could be wrong.
 
+**Grep `0x0200[89ab]` across an overlay's ALREADY-CONVERTED semantic files, not
+just `assets/code`.** An overlay's task-callback pool words make its rows
+self-cross-validating in a chain: four of `resource_395`'s owners name each other
+through `+1` pool words, and the largest writes the scratch words the smallest
+reads. One command named three of four owners' roles before anything was
+disassembled.
+
 **Cheapest link-base witness, full stop — and it needs no disassembly:
 `grep -o '0x0200[89ab][0-9a-f]*' assets/code/<overlay>_c_*.c`.** A byte-exact
 sibling's pooled task-callback argument is already a proven in-image address.
@@ -892,6 +899,13 @@ All three guards are needed together.**
    ten times across three owners.
 3. *Never model a pool word as an instruction, even a harmless-looking one* — see
    below.
+
+**A jump table can ABUT its own first case body, with no branch between them.**
+The mirror of the pool trap below: `resource_395:12f4`'s table B ends at 0x1477
+and entry 0's body starts at 0x1478, and its 41-entry table does the same. The
+table ends exactly *at* a target reached only by falling out of the dispatch, so
+neither "run to the next label" nor "run to the next branch target" is safe.
+Only the control-flow walk is.
 
 **A pool can end MID-ROW, several bytes before the next branch target.** In
 `resource_399:0f90` the pool at `0x0200124c` is followed at `0x02001284` by the

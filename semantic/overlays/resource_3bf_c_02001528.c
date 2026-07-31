@@ -54,7 +54,7 @@ s32 Func_020018e4();
 s32 Func_02001918();
 s32 Func_080770c0();
 void Func_080770c8();
-void Func_0808a080();
+u8 *Func_0808a080();  /* result is used and cast; a void declaration hard-errors */
 s32 Func_02006b82(s32 kind);
 s32 Func_02006b74(s32 state);
 s32 Func_02006ba6(s32 state);

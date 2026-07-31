@@ -57,7 +57,9 @@ extern s32 Data_0200d144;           /* RAM: this sequence's step counter */
 extern u8 Data_0200bec0[];          /* in-image script at offset 0x3ec0 */
 extern u8 Data_0200bfb0[];          /* in-image script at offset 0x3fb0 */
 
-#define COMPLETION(sel) (*(s16 *)(Func_0808a080(sel) + 100))
+/* The completion halfword of a scene entity.  Written out at every use: each
+ * one is a SEPARATE Func_0808a080 call site in the assembly (eight of them),
+ * so it is deliberately not a macro or a cached local. */
 
 void Func_02001f14(void)
 {
@@ -65,40 +67,40 @@ void Func_02001f14(void)
 
     switch (step) {
     case 0:
-        COMPLETION(21) = 0;
+        *(s16 *)(Func_0808a080(21) + 100) = 0;
         Func_0808a098(21, Data_0200bec0);
         Data_0200d144 = step + 1;
         break;
 
     case 1:
-        if (COMPLETION(21) == 0) {
+        if (*(s16 *)(Func_0808a080(21) + 100) == 0) {
             return;
         }
-        COMPLETION(20) = 0;
+        *(s16 *)(Func_0808a080(20) + 100) = 0;
         Func_0808a098(20, Data_0200bfb0);
         Data_0200d144 = step + 1;
         break;
 
     case 2:
-        if (COMPLETION(20) == 0) {
+        if (*(s16 *)(Func_0808a080(20) + 100) == 0) {
             return;
         }
-        COMPLETION(20) = 0;
+        *(s16 *)(Func_0808a080(20) + 100) = 0;
         Func_0808a098(20, Data_0200bec0);
         Data_0200d144 = step + 1;
         break;
 
     case 3:
-        if (COMPLETION(20) == 0) {
+        if (*(s16 *)(Func_0808a080(20) + 100) == 0) {
             return;
         }
-        COMPLETION(21) = 0;
+        *(s16 *)(Func_0808a080(21) + 100) = 0;
         Func_0808a098(21, Data_0200bfb0);
         Data_0200d144 = step + 1;
         break;
 
     case 4:
-        if (COMPLETION(21) == 0) {
+        if (*(s16 *)(Func_0808a080(21) + 100) == 0) {
             return;
         }
         Data_0200d144 = 0;

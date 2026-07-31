@@ -35,11 +35,6 @@ s32 Func_020018e4();
 void Func_080000d8();
 s32 Func_080770c0();
 void Func_080770c8();
-s32 Func_02006dd6(s32 flag);
-s32 Func_020030b4(s32 state);
-void Func_02006e02(s32 flag);
-void Func_02006d88(s32 message);
-void Func_02006d8e(s32 message);
 
 void Func_020017bc(void)
 {

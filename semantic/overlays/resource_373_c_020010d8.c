@@ -40,25 +40,18 @@ struct Resource373Reference {
 /* IWRAM word naming the camera focus slot. */
 #define RESOURCE_373_FOCUS_SLOT (*(struct Resource373Focus **volatile *)0x03001e70)
 
-s32 Func_02007082(s32 guard);
-void Func_02007076(void);
-void Func_020070a6(void);
-void Func_020070b0(void);
-void Func_020070c4(s32 mode);
-void Func_020070ee(s32 index, s32 x, s32 y);
-void Func_020070f0(s32 id, s32 mode);
-void Func_02007112(s32 frames);
-struct Resource373Reference *Func_02007114(s32 index);
-void Func_02007120(s32 frames);
-void Func_0200712e(s32 count);
-void Func_02007142(s32 frames);
-void Func_0200714e(s32 index, s32 mode);
-void Func_02007156(s32 frames);
-void Func_02007174(void);
-void Func_0200719a(s32 id);
-void Func_020071bc(s32 channel, s32 slot, s32 value);
-void Func_020071c6(s32 channel, s32 slot, s32 value);
-void Func_020071d0(s32 index, s32 id, s32 script);
+void Func_08009128();
+void Func_08015040();
+s32 Func_080770c0();
+void Func_0808a010();
+void Func_0808a018();
+void Func_0808a020();
+struct Resource373Reference *Func_0808a080();
+void Func_0808a090();
+void Func_0808a0d0();
+void Func_0808a100();
+void Func_0808a170();
+void Func_0808a188();
 
 void Func_020010d8(void)
 {
@@ -68,21 +61,21 @@ void Func_020010d8(void)
     struct Resource373Reference *reference;
     s32 step;
 
-    if (Func_02007082(0x00000808) != 0) {
+    if (Func_080770c0(0x00000808) != 0) {
         return;
     }
 
     slot = RESOURCE_373_FOCUS_SLOT;
 
-    Func_020070b0();
-    Func_020070ee(0, 0x10000, 0x8000);   /* 0x80 << 9, 0x80 << 8 */
-    Func_0200714e(0, 1);
-    Func_020070c4(2);
-    Func_0200719a(0x00000f4d);
-    Func_020071bc(15, 0, 2);
-    Func_020071c6(16, 0, 2);
+    Func_0808a018();
+    Func_0808a090(0, 0x10000, 0x8000);   /* 0x80 << 9, 0x80 << 8 */
+    Func_0808a100(0, 1);
+    Func_0808a010(2);
+    Func_0808a170(0x00000f4d);
+    Func_0808a188(15, 0, 2);
+    Func_0808a188(16, 0, 2);
 
-    reference = Func_02007114(0);
+    reference = Func_0808a080(0);
     focus.x = reference->x;
     focus.y = reference->y;
     focus.z = reference->z;
@@ -92,23 +85,23 @@ void Func_020010d8(void)
 
     for (step = 0; step < 40; step++) {
         focus.z += 0x20000;          /* 0x80 << 10 */
-        Func_02007112(1);
-        Func_02007076();
+        Func_0808a010(1);
+        Func_08009128();
     }
 
-    Func_02007120(60);
-    Func_020070f0(0x00000f4f, 1);
-    Func_0200712e(6);
+    Func_0808a010(60);
+    Func_08015040(0x00000f4f, 1);
+    Func_0808a010(6);
 
     for (step = 0; step < 40; step++) {
         focus.z += (s32)0xfffe0000;  /* pool word */
-        Func_02007142(1);
-        Func_020070a6();
+        Func_0808a010(1);
+        Func_08009128();
     }
 
     *slot = savedFocus;
 
-    Func_02007156(60);
-    Func_020071d0(0, 70, 0x000002e5);
-    Func_02007174();
+    Func_0808a010(60);
+    Func_0808a0d0(0, 70, 0x000002e5);
+    Func_0808a020();
 }

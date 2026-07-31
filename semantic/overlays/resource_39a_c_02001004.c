@@ -25,8 +25,6 @@ typedef signed int s32;
 /* Import; used for its return value. */
 s32 Func_0808a080();
 void Func_0808a1e0();
-u8 *Func_02003362();
-void Func_020033b8();
 
 void Func_02001004(s32 subject, s32 x, s32 y)
 {

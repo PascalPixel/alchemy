@@ -71,15 +71,15 @@ typedef signed int s32;
 extern u8 Data_02000240[];
 
 /* Old-style declarations: arities vary per site across this overlay. */
+s32 Func_02000f30();
+s32 Func_080770c0();
 void Func_0808a018();
+s32 Func_0808a020();
 void Func_0808a148();
 void Func_0808a170();
 void Func_0808a180();
 
 /* Used for their return values. */
-s32 Func_080770c0();
-s32 Func_0808a020();
-s32 Func_02000f30();
 
 s32 Func_02000f8c(s32 speaker)
 {

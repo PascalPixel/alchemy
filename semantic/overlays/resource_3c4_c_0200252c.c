@@ -46,14 +46,13 @@ typedef struct Slot_0200252c {
 } Slot_0200252c;
 
 /* Four register arguments plus two stack words. */
+void Func_02000244();
 void Func_080091c0();
-
-/* Returns the actor record for the given slot. */
 Slot_0200252c *Func_0808a080();
 
+/* Returns the actor record for the given slot. */
+
 /* Byte-exact in assets/code: (layer, x, z, width, height, value). */
-s32 Func_02000244(unsigned int layer, s32 x, s32 z,
-                  unsigned int width, unsigned int height, s32 value);
 
 void Func_0200252c(void)
 {

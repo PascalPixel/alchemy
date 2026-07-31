@@ -16,32 +16,29 @@ typedef struct Slot_02001f70 {
     s32 w8;                /* +8, 12.20 fixed point */
 } Slot_02001f70;
 
-void Func_02005068(void);
-Slot_02001f70 *Func_02005086(s32 slot);
-Slot_02001f70 *Func_020050a2(s32 slot);
-void Func_02005064(s32 selector);
-void Func_02005074(s32 selector);
-void Func_02005080(s32 selector);
-void Func_02005090(s32 selector);
-void Func_020044dc(void);
-void Func_020050b0(void);
+void Func_0200252c();
+void Func_080770c8();
+void Func_080770d0();
+void Func_0808a018();
+void Func_0808a020();
+Slot_02001f70 *Func_0808a080();
 
 void Func_02001f70(void)
 {
-    Func_02005068();
+    Func_0808a018();
 
-    if ((Func_02005086(17)->w8 >> 20) == 45) {
-        Func_02005064(0x974);
+    if ((Func_0808a080(17)->w8 >> 20) == 45) {
+        Func_080770c8(0x974);
     } else {
-        Func_02005074(0x974);
+        Func_080770d0(0x974);
     }
 
-    if ((Func_020050a2(18)->w8 >> 20) == 46) {
-        Func_02005080(0x975);
+    if ((Func_0808a080(18)->w8 >> 20) == 46) {
+        Func_080770c8(0x975);
     } else {
-        Func_02005090(0x975);
+        Func_080770d0(0x975);
     }
 
-    Func_020044dc();
-    Func_020050b0();
+    Func_0200252c();
+    Func_0808a020();
 }

@@ -51,15 +51,15 @@ typedef unsigned char u8;
  */
 
 /* Returns the subject record whose words at +8, +12 and +16 are read. */
+void Func_02000ae8();
+s32 Func_03000380();
+s32 Func_08000118();
+s32 Func_08000120();
 u8 *Func_0808a080();
 
-s32 Func_08000120();       /* ROM dispatch[12] -> Func_0800231c */
-s32 Func_08000118();       /* ROM dispatch[11] -> Func_08002322 */
-s32 Func_03000380();       /* relocated IWRAM helper */
 
 /* This overlay's effect spawner: four register arguments plus four stack
  * words - (x, y, z, vx, vy, vz, flags, options). */
-void Func_02000ae8();
 
 void Func_020011e0(s32 subject)
 {

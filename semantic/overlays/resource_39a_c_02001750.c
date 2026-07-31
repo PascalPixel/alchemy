@@ -37,6 +37,10 @@ extern u8 *Data_03001ebc;
 extern s16 Data_02000240[];
 
 /* Imports. Those used for their return value are typed. */
+void Func_020017a8();
+void Func_020017e4();
+s32 Func_080770c0();
+void Func_080770c8();
 void Func_02002f30();
 void Func_02002f72();
 s32 Func_02003a7e();
@@ -50,12 +54,12 @@ s32 Func_02001750(void)
      * lsls r2,#2 builds 0x204. */
     *(s32 *)(workspace + 448) = 0x204;
 
-    if (Func_02003a7e((s32)0x109) == 0 && Data_02000240[224] == 0x34) {
+    if (Func_080770c0((s32)0x109) == 0 && Data_02000240[224] == 0x34) {
         /* movs r0,#0xa2 / lsls r0,#1 builds 0x144. */
-        Func_02003aa4((s32)0x144);
-        Func_02002f30();
+        Func_080770c8((s32)0x144);
+        Func_020017a8();
     } else {
-        Func_02002f72();
+        Func_020017e4();
     }
     return 0;
 }

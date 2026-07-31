@@ -22,6 +22,26 @@
       ]
     },
     {
+      "entry": "0x08004d2c",
+      "evidence": "One 296-byte row holding a single straight-line function: prologue push {r5,r6,r7,lr} plus the fp/sl/r9/r8 saves and sub sp,#48 at 0x08004d2c, single epilogue at 0x08004e3a, no branch of any kind inside the row and no inbound branch from outside it. The sixteen mov ip,pc; bx r3 sequences (0x08004d78 through 0x08004e22) are ordinary indirect calls through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after each bx and every landing site consumes r0 as that call's result within the same frame and stack adjustment, the reading already recorded for 0x0800ebec. The closing bl Func_080072f0 at 0x08004e36 is the runtime call_via_r3 thunk at 0x080072e4, so it is an indirect call to the pooled 0x030002c0, the same IWRAM matrix loader 0x08004ab0 calls. Excluded (8 bytes): the two-word pool at 0x08004e4c (0x03000118, 0x030002c0); there is no alignment filler, the code ends flush at 0x08004e4c, and the movs r0,r0 inside the code are alignment. r4 accumulates the compound terms without being saved, the ordinary call-used-r4 convention of this image and not the 0x08002dd8 shape. No direct caller; published as a Thumb pointer at 0x08000254, the same table that publishes 0x08004ab0. Same Euler product as 0x08004ab0 with the translation column filled from the second argument instead of zeroed.",
+      "executable_ranges": [
+        {
+          "address": "0x08004d2c",
+          "size": 288
+        }
+      ]
+    },
+    {
+      "entry": "0x08004e54",
+      "evidence": "One 400-byte row holding a single straight-line function: prologue push {r5,r6,r7,lr} plus the fp/sl/r9/r8 saves and sub sp,#56 at 0x08004e54, single epilogue at 0x08004fc8, no branch of any kind inside the row and no inbound branch from outside it. The twenty-five mov ip,pc; bx r3 sequences (0x08004ea4 through 0x08004fac) are ordinary indirect calls through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after each bx and every landing site consumes r0 as that call's result within the same frame and stack adjustment, the reading already recorded for 0x0800ebec. The closing bl Func_080072f0 at 0x08004fc4 is the runtime call_via_r3 thunk at 0x080072e4, so it is an indirect call to the pooled 0x030002c0, the IWRAM matrix loader. Excluded (10 bytes): the 2-byte movs r0,r0 alignment filler at 0x08004fda and the two-word pool at 0x08004fdc (0x03000118, 0x030002c0); the movs r0,r0 inside the code are alignment. r4 accumulates the compound terms without being saved, the ordinary call-used-r4 convention of this image and not the 0x08002dd8 shape. No direct caller; published as a Thumb pointer at 0x0800025c, the same table that publishes 0x08004ab0 and 0x08004d2c. Same Euler product as 0x08004d2c with each row scaled by its own factor from the third argument.",
+      "executable_ranges": [
+        {
+          "address": "0x08004e54",
+          "size": 390
+        }
+      ]
+    },
+    {
       "entry": "0x08005268",
       "evidence": "One 140-byte keep_structured_asm row holding a single function: prologue push {r5,r6,r7,lr} at 0x08005268, one epilogue at 0x080052d4 reached by the range-check early-out and by fall-through, no inbound branch from outside the row. The mov ip,pc; bx r6 at 0x080052a6 and 0x080052be are ordinary indirect calls through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after each bx (0x080052aa, 0x080052c2) and both landing sites consume r0 as the call's result in the same frame, the reading already recorded for 0x0800ebec. The two bl Func_080072f0 / Func_0800730c are the runtime call_via_r3 and call_via_sl thunks at 0x080072e4, so they too are indirect calls, to 0x03000250 and 0x030003f0. Excluded (24 bytes): the six-word pool at 0x080052dc (0x03000250, 0x03001ce0, 0x030003f0, 0x000151eb, 0x03000118, 0x0000ffff); there is no alignment filler, the code ends flush at 0x080052dc. 16 direct callers, the first at 0x0800b3ba, and published as a Thumb pointer at 0x0800026c.",
       "executable_ranges": [

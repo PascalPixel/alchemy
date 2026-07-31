@@ -62,7 +62,7 @@ function main(args: string[]): void {
   }
   const font = new opentype.Font({
     familyName: "Weyard",
-    styleName: "Regular",
+    styleName: "Italic",
     unitsPerEm: UNITS_PER_EM,
     ascender: BASELINE_ROW * PX,
     descender: (BASELINE_ROW - 15) * PX,

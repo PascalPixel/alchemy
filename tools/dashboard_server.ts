@@ -34,14 +34,14 @@ const KRADEN_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
 </svg>`;
 
 const pageHtml = () => `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>coverage</title><style>
-  @font-face{font-family:'Weyard';src:url('/weyard.otf') format('opentype')}
-  *{box-sizing:border-box;font-smooth:never;-webkit-font-smoothing:none}
+  @font-face{font-family:'Weyard';src:url('/weyard.otf') format('opentype');font-weight:400;font-style:italic}
+  *{box-sizing:border-box;font-smooth:never;-webkit-font-smoothing:none;font-synthesis:none}
   html,body{margin:0;background:#ffffff;height:100%}
   #root{height:100vh;display:flex;flex-direction:column;gap:10px;padding:10px;max-width:1700px;margin:0 auto}
   .trees{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;flex:0 0 auto}
   .trees img{width:100%;aspect-ratio:16/9;object-fit:contain;display:block;border-radius:4px}
   .panel{background:var(--edge);border-radius:10px;overflow:hidden;padding:0 5px 5px;display:flex;flex-direction:column;min-height:0}
-  .panel>.titlebar{color:#fff;font:16px/1 'Weyard',system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;height:18px;padding:0.5px 5px 0;flex:0 0 auto}
+  .panel>.titlebar{color:#fff;font:italic 400 16px/1 'Weyard',system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;height:18px;padding:0.5px 5px 0;flex:0 0 auto}
   .panel>*:not(.titlebar){border-radius:5px}
   .p-core{--edge:#6d4fc2}
   .p-overlays{--edge:#1f7f93}
@@ -54,9 +54,9 @@ const pageHtml = () => `<!doctype html><html><head><meta charset="utf-8"><meta n
   .board{display:flex;flex-direction:column;background:#3f7d5a;padding:8px 10px;min-height:0;flex:1}
   .cols{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px;flex:1;min-height:0}
   .col{display:flex;flex-direction:column;min-height:0}
-  .col .name{font:16px/1.2 'Weyard',system-ui,sans-serif;color:#dcebe2;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+  .col .name{font:italic 400 16px/1.2 'Weyard',system-ui,sans-serif;color:#dcebe2;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
   .col .stack{display:flex;flex-direction:column;gap:6px;overflow-y:auto;min-height:0;padding:1px 2px 6px}
-  .postit{background:#fffef8;border-radius:2px;box-shadow:0 1.5px 3px rgba(0,0,0,.35);padding:6px 7px 5px;font:16px/1.1 'Weyard',system-ui,sans-serif;color:#333;position:relative}
+  .postit{background:#fffef8;border-radius:2px;box-shadow:0 1.5px 3px rgba(0,0,0,.35);padding:6px 7px 5px;font:italic 400 16px/1.1 'Weyard',system-ui,sans-serif;color:#333;position:relative}
   .postit:nth-child(odd){transform:rotate(-.7deg)}
   .postit:nth-child(even){transform:rotate(.6deg)}
   .postit .owners{display:flex;gap:3px;justify-content:flex-end;margin-top:4px}
@@ -67,8 +67,8 @@ const pageHtml = () => `<!doctype html><html><head><meta charset="utf-8"><meta n
   .msg .ava{width:36px;height:36px;flex:none;border-radius:6px;overflow:hidden}
   .msg .ava img{width:36px;height:36px;display:block}
   .msg .ava svg{width:36px;height:36px}
-  .msg .body{font:16px/1.15 'Weyard',system-ui,sans-serif;color:#222;white-space:pre-wrap;min-width:0}
-  .msg .head{font:16px/1.2 'Weyard',system-ui,sans-serif;color:#111;margin-bottom:1px}
+  .msg .body{font:italic 400 16px/1.15 'Weyard',system-ui,sans-serif;color:#222;white-space:pre-wrap;min-width:0}
+  .msg .head{font:italic 400 16px/1.2 'Weyard',system-ui,sans-serif;color:#111;margin-bottom:1px}
   .msg .head .time{color:#999;margin-left:8px;font-size:16px}
   @media (max-width:760px){
     #root{height:auto;padding:8px;gap:8px}

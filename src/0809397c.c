@@ -9,6 +9,7 @@ s32 Func_08009080(s32, s32);
 
 s32 Func_0809397c(s32 arg0)
 {
+    s32 squareRoot = 0x030001d8;
     s32 object;
     void *target;
     s32 deltaX;
@@ -30,7 +31,7 @@ s32 Func_0809397c(s32 arg0)
             deltaY += 0xffff;
         cellY = deltaY >> 16;
         distance = Func_080072f0(cellX * cellX + cellY * cellY,
-                                 (s32)target, cellY, 0x030001d8);
+                                 (s32)target, cellY, squareRoot);
         arg0 = *(s16 *)(object + 0x64);
         if (distance >= arg0) {
             newX = *(s32 *)(object + 8) +

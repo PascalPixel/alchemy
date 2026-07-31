@@ -20,6 +20,7 @@
 // The derived exact totals are reconciled against the tracked Full-C report
 // before anything is written: a mismatch is an error, never a rounded picture.
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { basename, dirname, join } from "node:path";
 import { canonicalJson } from "./canonical_json.ts";
 import {
@@ -1229,6 +1230,35 @@ function mapPath(target: DecompTargetId): string {
   return join(ROOT, "metrics", `${target}-coverage-map.json`);
 }
 
+/**
+ * GitHub proxies README images through its own cache, which serves a stale
+ * picture long after the SVG changes. A query parameter defeats that, but only
+ * if it actually moves — so it is derived from the SVG's own bytes rather than
+ * from a timestamp. Identical picture, identical URL: no spurious diffs on a
+ * redraw that changed nothing. Different picture, different URL, immediately.
+ */
+export function svgCacheVersion(svg: string): string {
+  return createHash("sha1").update(svg).digest("hex").slice(0, 8);
+}
+
+/** Rewrite the README's embed to carry `version`, replacing any it already has. */
+export function readmeWithCacheBuster(
+  readme: string,
+  target: DecompTargetId,
+  version: string,
+): string {
+  const file = `assets/readme/${target}-coverage.svg`;
+  const escaped = file.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return readme.replace(
+    new RegExp(`\\(${escaped}(?:\\?v=[0-9a-f]*)?\\)`, "g"),
+    `(${file}?v=${version})`,
+  );
+}
+
+function readmePath(): string {
+  return join(ROOT, "README.md");
+}
+
 function svgPath(target: DecompTargetId): string {
   return join(ROOT, "assets", "readme", `${target}-coverage.svg`);
 }
@@ -1466,6 +1496,27 @@ export function selfTest(): void {
     throw new Error("an explicit --semantic-ref none was overridden by the record");
   }
 
+  // The README cache-buster: derived from the SVG, idempotent, and replacing any
+  // version already present rather than accumulating them.
+  const embed = "![alt](assets/readme/gs1-en-coverage.svg)";
+  const once = readmeWithCacheBuster(embed, "gs1-en", "abcd1234");
+  if (once !== "![alt](assets/readme/gs1-en-coverage.svg?v=abcd1234)") {
+    throw new Error("the cache-buster was not applied to a bare embed");
+  }
+  if (readmeWithCacheBuster(once, "gs1-en", "abcd1234") !== once) {
+    throw new Error("the cache-buster is not idempotent");
+  }
+  if (readmeWithCacheBuster(once, "gs1-en", "99887766")
+      !== "![alt](assets/readme/gs1-en-coverage.svg?v=99887766)") {
+    throw new Error("an existing cache-buster was not replaced");
+  }
+  if (svgCacheVersion("<svg/>") === svgCacheVersion("<svg />")) {
+    throw new Error("the cache version does not track the SVG bytes");
+  }
+  if (svgCacheVersion("<svg/>") !== svgCacheVersion("<svg/>")) {
+    throw new Error("the cache version is not deterministic");
+  }
+
   // A ref tree must list subdirectories, not only files. mainBoundaries walks
   // `asm/` recursively; if a directory reports no children the walk stops at
   // the first level, boundaries go missing and every main-image region is
@@ -1628,6 +1679,12 @@ async function main(argv: string[]): Promise<void> {
         (trackedMap !== json || trackedSvg !== svg) && !stale.length) {
       stale.push("rendered map");
     }
+    const expected = readmeWithCacheBuster(
+      readFileSync(readmePath(), "utf8"),
+      options.target,
+      svgCacheVersion(trackedSvg),
+    );
+    if (expected !== readFileSync(readmePath(), "utf8")) stale.push("README cache-buster");
     if (stale.length) {
       throw new Error(
         `tracked coverage map is stale (${stale.join(", ")}); run: bun run coverage`,
@@ -1642,6 +1699,11 @@ async function main(argv: string[]): Promise<void> {
     if (refusal) throw new Error(refusal);
     writeFileSync(mapPath(options.target), json);
     writeFileSync(svgPath(options.target), svg);
+    // Keep the README's cache-buster in step with the picture it busts. Doing it
+    // here rather than by hand means the two cannot drift.
+    const readme = readFileSync(readmePath(), "utf8");
+    const busted = readmeWithCacheBuster(readme, options.target, svgCacheVersion(svg));
+    if (busted !== readme) writeFileSync(readmePath(), busted);
     console.log(
       `map=${mapPath(options.target).slice(ROOT.length + 1)} ` +
       `svg=${svgPath(options.target).slice(ROOT.length + 1)} ${summarize(map)}`,

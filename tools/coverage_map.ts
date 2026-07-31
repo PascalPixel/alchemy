@@ -1249,22 +1249,190 @@ function mapPath(target: DecompTargetId): string {
  * from a timestamp. Identical picture, identical URL: no spurious diffs on a
  * redraw that changed nothing. Different picture, different URL, immediately.
  */
+// Per-tree colour bands: each box tree stays inside one hue so the three
+// pictures cannot be cross-read. Maturity runs dark/desaturated -> vivid.
+const CORE_BAND: Record<string, string> = {
+  assembly: "#322c3e", semantic_c: "#7e5fc7", exact_c: "#a855f7",
+};
+const OVERLAY_BAND: Record<string, string> = {
+  assembly: "#2a3639", semantic_c: "#3f95a8", exact_c: "#22d3ee",
+};
+// Asset maturity: byte-represented -> b&w sheet -> coloured sheet -> cut into
+// individual objects (the final outcome: fanfare.wav, vale.mid, weyard.sf2,
+// spruce.png). Total pinkness is the goal state.
+export const ASSET_TIERS = ["asset_bytes", "asset_bw", "asset_color", "asset_objects"] as const;
+export type AssetTier = (typeof ASSET_TIERS)[number];
+const ASSET_BAND: Record<AssetTier, string> = {
+  asset_bytes: "#4a4a4a",
+  asset_bw: "#6b5560",
+  asset_color: "#e8a3c3",
+  asset_objects: "#ff0080",
+};
+
+/** First-cut representation-form tier for one package, from its source names. */
+export function assetTierOf(sources: readonly string[]): AssetTier {
+  let tier: AssetTier = "asset_bytes";
+  const rank = (t: AssetTier) => ASSET_TIERS.indexOf(t);
+  for (const name of sources) {
+    let seen: AssetTier | undefined;
+    if (/\.(mid|wav|sf2|pcm)$/i.test(name)) seen = "asset_objects";
+    else if (/koma_\d+\.png$|frame_\d+\.png$|object[^/]*\.png$/i.test(name)) seen = "asset_objects";
+    else if (/(1bpp|mask|value_low|value_high|grid_sentinels)[^/]*\.png$/i.test(name)) seen = "asset_bw";
+    else if (/\.png$/i.test(name)) seen = "asset_color";
+    else if (/\.(bin|tilemap)$/i.test(name)) seen = "asset_bytes";
+    if (seen !== undefined && rank(seen) > rank(tier)) tier = seen;
+  }
+  return tier;
+}
+
+/** Asset maturity tiles: same buckets as the ROM card, lanes keyed by tier. */
+export function assetMaturityTiles(tree: SourceTree): Tile[] {
+  const manifest = readJson(tree, "assets/manifest.json") as Record<string, unknown>;
+  const buckets = new Map<string, Tile>();
+  const visited = new Set<string>();
+  const record = (kind: string, size: number, sources: readonly string[]): void => {
+    if (size <= 0) return;
+    const bucket = assetBucket(kind);
+    const tier = assetTierOf(sources);
+    const tile = buckets.get(bucket.id) ?? { label: bucket.label, bytes: 0, lanes: {} };
+    tile.bytes += size;
+    (tile.lanes as Record<string, number>)[tier] =
+      ((tile.lanes as Record<string, number>)[tier] ?? 0) + size;
+    buckets.set(bucket.id, tile);
+  };
+  const gatherSources = (node: unknown, out: string[]): void => {
+    if (Array.isArray(node)) { for (const child of node) gatherSources(child, out); return; }
+    if (node === null || typeof node !== "object") {
+      if (typeof node === "string" && /\.[a-z0-9]{2,4}$/i.test(node)) out.push(node);
+      return;
+    }
+    for (const value of Object.values(node as Record<string, unknown>)) gatherSources(value, out);
+  };
+  const visit = (node: unknown, kind: string): void => {
+    if (Array.isArray(node)) { for (const child of node) visit(child, kind); return; }
+    if (node === null || typeof node !== "object") return;
+    const item = node as Record<string, unknown>;
+    const local = typeof item.kind === "string" ? item.kind : kind;
+    const size = hexValue(item.size);
+    if (size !== undefined && size > 0) {
+      const sources: string[] = [];
+      gatherSources(item, sources);
+      for (const reference of [item.index, item.source, item.plan]) {
+        if (typeof reference !== "string" || !reference.endsWith(".json")) continue;
+        if (visited.has(reference)) continue;
+        visited.add(reference);
+        const text = tree.read(reference);
+        if (text !== undefined) {
+          try { gatherSources(JSON.parse(text), sources); } catch { /* no label */ }
+        }
+      }
+      record(local, size, sources);
+    }
+    for (const [key, value] of Object.entries(item)) {
+      if (key !== "components") visit(value, local);
+    }
+  };
+  visit(manifest, "asset");
+  return [...buckets.values()].filter((tile) => tile.bytes > 0);
+}
+
+/**
+ * One text-free 16:9 box tree for a single area: tiles squarified by bytes,
+ * each tile split vertically by the lane shares it owns. The only text is the
+ * aria label; captions live in the README, which prevents the scale confusion
+ * of mixing an 8 MB cartridge and a 1.3 MB executable universe in one frame.
+ */
+export function renderBoxTree(
+  area: Area,
+  ariaLabel: string,
+  palette: Record<string, string> = { ...CORE_BAND },
+  laneOrder: readonly string[] = ["exact_c", "semantic_c", "assembly"],
+): string {
+  const width = 1600;
+  const height = 900;
+  const gap = 2;
+  const lines: string[] = [];
+  lines.push(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" ` +
+    `width="${width}" height="${height}" role="img" aria-label="${escapeText(ariaLabel)}">`,
+  );
+  const placed = squarify(area.tiles, (tile) => tile.bytes, { x: 0, y: 0, width, height });
+  for (const cell of placed) {
+    const inner = {
+      x: cell.rect.x + gap / 2,
+      y: cell.rect.y + gap / 2,
+      width: Math.max(cell.rect.width - gap, 0.5),
+      height: Math.max(cell.rect.height - gap, 0.5),
+    };
+    const lanes = cell.item.lanes as Record<string, number>;
+    const total = laneOrder.reduce((sum, lane) => sum + (lanes[lane] ?? 0), 0);
+    if (total <= 0) {
+      lines.push(rect(inner, palette[laneOrder[laneOrder.length - 1]] ?? "#4a4a4a"));
+      continue;
+    }
+    let offset = 0;
+    for (const lane of laneOrder) {
+      const share = (lanes[lane] ?? 0) / total;
+      if (share <= 0) continue;
+      lines.push(rect({
+        x: inner.x,
+        y: inner.y + inner.height * offset,
+        width: inner.width,
+        height: inner.height * share,
+      }, palette[lane] ?? "#4a4a4a"));
+      offset += share;
+    }
+  }
+  lines.push("</svg>");
+  return lines.join("\n");
+}
+
+export const BOX_TREES = ["core", "overlays", "assets"] as const;
+export type BoxTreeId = (typeof BOX_TREES)[number];
+
+export function boxTreePath(target: DecompTargetId, tree: BoxTreeId): string {
+  return join(ROOT, "assets", "readme", `${target}-${tree}.svg`);
+}
+
+export function renderBoxTrees(map: CoverageMap, tree?: SourceTree): Record<BoxTreeId, string> {
+  const core = map.executable_areas.find((item) => item.id === "main");
+  const overlays = map.executable_areas.find((item) => item.id === "overlays");
+  const romData = map.rom_areas.find((item) => item.id === "rom-data");
+  if (!core || !overlays || !romData) throw new Error("coverage map is missing a box-tree area");
+  const maturity = tree ? assetMaturityTiles(tree) : [];
+  const assetsArea: Area = maturity.length
+    ? { id: "rom-data", label: romData.label, bytes: maturity.reduce((s, t) => s + t.bytes, 0),
+        lanes: {}, tiles: maturity }
+    : romData;
+  return {
+    core: renderBoxTree(core, "Main-image code coverage box tree, purple band", CORE_BAND),
+    overlays: renderBoxTree(overlays, "Decoded overlay code coverage box tree, cyan band", OVERLAY_BAND),
+    assets: renderBoxTree(assetsArea, "Asset maturity box tree, pink band",
+      { ...ASSET_BAND, asset_data: ASSET_BAND.asset_bytes },
+      maturity.length ? [...ASSET_TIERS].reverse() : ["asset_data"]),
+  };
+}
+
 export function svgCacheVersion(svg: string): string {
   return createHash("sha1").update(svg).digest("hex").slice(0, 8);
 }
 
-/** Rewrite the README's embed to carry `version`, replacing any it already has. */
+/** Rewrite the README's embeds to carry per-tree versions, replacing any present. */
 export function readmeWithCacheBuster(
   readme: string,
   target: DecompTargetId,
-  version: string,
+  versions: Record<BoxTreeId, string>,
 ): string {
-  const file = `assets/readme/${target}-coverage.svg`;
-  const escaped = file.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return readme.replace(
-    new RegExp(`\\(${escaped}(?:\\?v=[0-9a-f]*)?\\)`, "g"),
-    `(${file}?v=${version})`,
-  );
+  let out = readme;
+  for (const tree of BOX_TREES) {
+    const file = `assets/readme/${target}-${tree}.svg`;
+    const escaped = file.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    out = out.replace(
+      new RegExp(`\\(${escaped}(?:\\?v=[0-9a-f]*)?\\)`, "g"),
+      `(${file}?v=${versions[tree]})`,
+    );
+  }
+  return out;
 }
 
 function readmePath(): string {
@@ -1510,16 +1678,17 @@ export function selfTest(): void {
 
   // The README cache-buster: derived from the SVG, idempotent, and replacing any
   // version already present rather than accumulating them.
-  const embed = "![alt](assets/readme/gs1-en-coverage.svg)";
-  const once = readmeWithCacheBuster(embed, "gs1-en", "abcd1234");
-  if (once !== "![alt](assets/readme/gs1-en-coverage.svg?v=abcd1234)") {
+  const embed = "![a](assets/readme/gs1-en-core.svg) ![b](assets/readme/gs1-en-overlays.svg) ![c](assets/readme/gs1-en-assets.svg)";
+  const sameVersion = { core: "abcd1234", overlays: "abcd1234", assets: "abcd1234" } as const;
+  const once = readmeWithCacheBuster(embed, "gs1-en", sameVersion);
+  if (once !== "![a](assets/readme/gs1-en-core.svg?v=abcd1234) ![b](assets/readme/gs1-en-overlays.svg?v=abcd1234) ![c](assets/readme/gs1-en-assets.svg?v=abcd1234)") {
     throw new Error("the cache-buster was not applied to a bare embed");
   }
-  if (readmeWithCacheBuster(once, "gs1-en", "abcd1234") !== once) {
+  if (readmeWithCacheBuster(once, "gs1-en", sameVersion) !== once) {
     throw new Error("the cache-buster is not idempotent");
   }
-  if (readmeWithCacheBuster(once, "gs1-en", "99887766")
-      !== "![alt](assets/readme/gs1-en-coverage.svg?v=99887766)") {
+  if (!readmeWithCacheBuster(once, "gs1-en", { core: "99887766", overlays: "abcd1234", assets: "abcd1234" })
+      .includes("![a](assets/readme/gs1-en-core.svg?v=99887766)")) {
     throw new Error("an existing cache-buster was not replaced");
   }
   if (svgCacheVersion("<svg/>") === svgCacheVersion("<svg />")) {
@@ -1634,6 +1803,9 @@ export function selfTest(): void {
   };
   const svg = renderSvg(map);
   if (!svg.startsWith("<svg ") || !svg.trimEnd().endsWith("</svg>")) throw new Error("SVG shape failed");
+  const boxTree = renderBoxTree(map.executable_areas[0], "self-test box tree");
+  if (boxTree.includes("<text")) throw new Error("box tree must carry no text elements");
+  if (!boxTree.includes('viewBox="0 0 1600 900"')) throw new Error("box tree must be 16:9");
   if (svg.includes("undefined") || svg.includes("NaN")) throw new Error("SVG contains unresolved values");
   for (const lane of LANE_ORDER) {
     if (!svg.toUpperCase().includes(escapeText(LANE_STYLE[lane].label).toUpperCase())) {
@@ -1666,12 +1838,14 @@ async function main(argv: string[]): Promise<void> {
     trackedDocumentOnDisk?.provenance.semantic_lane,
   );
   const map = buildCoverageMap({ target: options.target, exact, semantic });
-  const svg = renderSvg(map);
+  const trees = renderBoxTrees(map, exact);
   const json = canonicalJson(trackedDocument(map));
 
   if (options.check) {
     const trackedMap = readFileSync(mapPath(options.target), "utf8");
-    const trackedSvg = readFileSync(svgPath(options.target), "utf8");
+    const trackedTrees = Object.fromEntries(BOX_TREES.map((tree) =>
+      [tree, readFileSync(boxTreePath(options.target, tree), "utf8")],
+    )) as Record<BoxTreeId, string>;
     const stale: string[] = [];
     // Only the lanes this tree owns can be enforced here: a picture generated
     // with another branch's semantic sources is refreshed by regeneration, not
@@ -1688,13 +1862,16 @@ async function main(argv: string[]): Promise<void> {
     }
     if (trackedJson.executable_bytes !== map.executable_bytes) stale.push("executable denominator");
     if (semantic?.id === trackedJson.provenance.semantic_lane &&
-        (trackedMap !== json || trackedSvg !== svg) && !stale.length) {
+        (trackedMap !== json ||
+         BOX_TREES.some((tree) => trackedTrees[tree] !== trees[tree])) && !stale.length) {
       stale.push("rendered map");
     }
     const expected = readmeWithCacheBuster(
       readFileSync(readmePath(), "utf8"),
       options.target,
-      svgCacheVersion(trackedSvg),
+      Object.fromEntries(BOX_TREES.map((tree) =>
+        [tree, svgCacheVersion(trackedTrees[tree])],
+      )) as Record<BoxTreeId, string>,
     );
     if (expected !== readFileSync(readmePath(), "utf8")) stale.push("README cache-buster");
     if (stale.length) {
@@ -1710,15 +1887,19 @@ async function main(argv: string[]): Promise<void> {
     const refusal = semanticEraseRefusal(semantic !== undefined, options.semantic, trackedDocumentOnDisk);
     if (refusal) throw new Error(refusal);
     writeFileSync(mapPath(options.target), json);
-    writeFileSync(svgPath(options.target), svg);
-    // Keep the README's cache-buster in step with the picture it busts. Doing it
-    // here rather than by hand means the two cannot drift.
+    for (const tree of BOX_TREES) writeFileSync(boxTreePath(options.target, tree), trees[tree]);
+    // Keep the README's cache-busters in step with the pictures they bust. Doing
+    // it here rather than by hand means they cannot drift.
     const readme = readFileSync(readmePath(), "utf8");
-    const busted = readmeWithCacheBuster(readme, options.target, svgCacheVersion(svg));
+    const busted = readmeWithCacheBuster(readme, options.target,
+      Object.fromEntries(BOX_TREES.map((tree) =>
+        [tree, svgCacheVersion(trees[tree])],
+      )) as Record<BoxTreeId, string>);
     if (busted !== readme) writeFileSync(readmePath(), busted);
     console.log(
       `map=${mapPath(options.target).slice(ROOT.length + 1)} ` +
-      `svg=${svgPath(options.target).slice(ROOT.length + 1)} ${summarize(map)}`,
+      `trees=${BOX_TREES.map((tree) => boxTreePath(options.target, tree).slice(ROOT.length + 1)).join(",")} ` +
+      `${summarize(map)}`,
     );
     return;
   }

@@ -94,6 +94,11 @@ Consequences worth knowing before you act:
   path: when Mercury makes a region byte-exact, the next Venus pull deletes the
   semantic version. `build_semantic` hard-errors on a duplicate, so this is
   enforced rather than remembered.
+- **Bank with `tools/venus_bank.sh`, never by typed shell chain.** It syncs
+  spans, verifies, and stops if verify fails. This exists because a `;` where
+  `&&` was meant pushed a commit whose verify had failed seconds earlier — sound
+  only by luck. In a tree with concurrent writers a failed verify is usually
+  another lane mid-file, which is precisely why it must block rather than warn.
 - **Pull `mercury` with `tools/venus_pull.sh`, never by hand.** A conflicted
   merge leaves markers in the working tree, and a conflicted `package.json`
   breaks `bun run <anything>` for every concurrent lane — three lanes lost part
@@ -133,9 +138,9 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **659,116
-executable bytes across 1,238 compiling sources**: 385,850 main-image bytes and
-273,266 overlay bytes. Combined with exact C, **873,244 / 1,339,580 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **662,952
+executable bytes across 1,253 compiling sources**: 385,850 main-image bytes and
+277,102 overlay bytes. Combined with exact C, **877,080 / 1,339,580 executable
 bytes** are expressed as C.
 Build that lane with `bun run build:semantic`; its
 sources live under `semantic/` and do not claim byte equality. Use
@@ -417,6 +422,63 @@ distinct targets** — 1,047 veneer, 116 prologue, 1 `call_via`. The same collap
 holds on 371/372/373/38f/3b8/3bf/3c4/3c8, where 700-1,900 sites reduce to 70-133
 distinct displacements.
 
+**When the byte-exact sibling grep comes back empty, grep the overlay's own
+`_overlay.s` for `0x0200[89ab]xxx` instead.** One command; on `resource_3b5` it
+returned 36 distinct words, **eleven of them odd and resolving to already-banked
+byte-exact siblings** (`0x02008031` → `Func_02000030`+1, and ten more). That is a
+far stronger link-base proof than a single task-install witness, and the same 36
+words named the role of **all fifteen** unconverted rows before any disassembly —
+signatures decided in advance. Do this before opening a body.
+
+**A row that sets the same event flag its table key names is a one-shot scene —
+proven in one line.** `resource_3ae:0e40`'s handler-table entry is keyed
+`0x08ab0032` and its first instruction is `Func_080770c8(0x8ab)`; `:08cc`
+read-then-sets `0x8ac` around its only call. That settles both "is this
+one-shot" and the scene's identity with no dataflow work at all.
+
+**The asymmetric scene bracket is REAL, not a decoding artefact.** In
+`resource_3ae`, both `:0328` and `:051c` have an arm that branches past
+`Func_0808a020` straight to the epilogue after `Func_0808a018` has already run.
+Preserve it; "fixing" it into a shared close changes behaviour and the multiset.
+
+**`ldrh` + `adds #0x2000` + `ands #0xffffc000` + `lsls/asrs #16` is facing
+quantisation to a signed quadrant**, not a sign manipulation. After it, the
+`cmp r3, #0x80000000` in `resource_3ae:0328` is simply `facing == 0x8000`, which
+reads as a sign test if the quantisation above it was missed.
+
+**`cmp rN,r3 / bls` on a price/coin pair tells you which arm is the purchase**
+without knowing any import: only the affordable arm calls the charge import with
+the *negated* amount.
+
+**An overlay's image offset 0 can be an exported-entry veneer table.** In
+`resource_3b5` it is a run of `ldr r4,[pc,#0] / bx r4 / .word 0x0200_8xxx` pairs;
+resolving those words under the link base hands you the overlay's *roots* for
+free, which is exactly where call-graph-first ordering should start. Entry 0 was
+the initialiser, entry 4 the script selector.
+
+**The complement of the "a pool word decodes as a BL pair" trap: a word that
+LOOKS like a BL pair can be a genuine constant.** `resource_3b5:007c` loads
+`0xf8b6f001` and immediately masks with `0xf000`, so only the low half matters
+and it acts as `-0x0fff` — one less than the `-0x1000` its four sibling biases
+(`+0x2000`, `+0x1000`, `0`, `-0x2000`) predict, which is the sort of detail a
+"tidy" reading destroys. `assets/code`'s `.2byte 0xf001 / .2byte 0xf8b6` spelling
+confirms it is data.
+
+**`0x03001e8c` is a pointer TABLE, and its entry 12 is `0x03001ebc`.**
+`resource_3b5:0170` loads `[r3,#0]` and `[r3,#48]` off it. Reading those as two
+unrelated globals hides that the second is the well-known workspace pointer the
+rest of the overlay loads directly.
+
+**A byte-exact sibling names the imports for you — backwards.** The banked
+`assets/code/resource_3b6_c_0200073c.c` was written with the printed (wrong)
+`bl` names, but resolving its four sites through the rule gives veneer offsets
+0x9e0/0xa38/0xa48/0x9e8 → `Func_0808a018`/`0808a170`/`0808a180`/`0808a020`. That
+turned an already-banked file into a *proof* of the begin/message/act/end quartet
+used by nine of that overlay's fifteen rows, and settled the `void` return and
+the `s32` subject type without inference. Diff an exact sibling against
+`overlay_call_targets.ts` on sight — the wrong names are a consistent mapping,
+so they invert.
+
 Independent confirmations beyond the arithmetic: `resource_39f:00c4`'s three
 lookups — the exact case this file previously listed as unexplained, decoding to
 join points *inside itself* — all resolve to `0x0200006c`, whose byte-exact
@@ -572,6 +634,40 @@ here is a dropped argument register rather than a moved counter bump.
 Collapsing three such pairs in `resource_3ca:0430` would have deflated the
 multiset by six. Identical behaviour is not a licence to merge arms — the
 per-target count is over call *sites*, not over distinct behaviour.
+
+**`goto` is sometimes the FAITHFUL spelling, and per-arm copies are not.**
+`resource_3b6:05a8` reaches one `Func_0808a170` from two arms and the following
+`Func_0808a180` from three. Restructuring into per-arm copies would have inflated
+the per-target site count by two; two labels and a `goto` keep the multiset
+exact. Treat a shared tail as evidence for a label, not for duplication —
+inflation and deflation are the same class of error.
+
+**Two near-twin owners are worth diffing before either is written.** In
+`resource_3b6`, `0200066c` and `0200091c` differ in a way that exposed a
+genuinely *dropped* argument (0x080b0008 takes `(27, subject)`, 0x080b0010 takes
+`(subject)`); folding them would have normalised that away. In the same overlay
+`06ec`/`0760`/`08cc` are byte-identical over all 80 bytes except **one pool
+word** (0x239e/0x1fbb/0x23ac) with bit-identical `bl` halfwords — three files for
+the price of one, with a correctness proof attached.
+
+**Fixed-point argument constants identify an import.** `Func_0808a090`'s
+arguments across `resource_3b6:013c` are 0x10000/0x8000, 0x16666/0xb333,
+0x1cccc/0xe666 — 1.0/0.5, 1.4/0.7, 1.8/0.9 against 0x10000 as one. Consistent
+x/y pairs in 16.16 are cheap evidence for a scale setter, and cost nothing to
+check.
+
+**`0x02000240` is BOTH a cross-overlay RAM global block and a plausible file
+offset — a live trap for anyone typing a pool word by eye.** In
+`resource_3c2` the overlay's largest function sits at file offset 0x240; in
+`resource_3b6:03dc` the identical constant is a RAM address, proved not in-image
+because it is below the link band (link base 0x02008000, in-image address =
+`pool_word - 0x8000`). Spell the RAM one `(u8 *)0x02000240`, as `resource_370`
+does. Check the band before deciding which one a constant is.
+
+**The skip-beat guard appears with BOTH polarities, sometimes in one overlay.**
+`resource_377:0f90` tests `Func_0808a070(0,0) == 1` twice while `:0578` tests
+`== 0`. Assuming the guard is always `!= 0` inverts those beats. Read the
+comparison at each site.
 
 **Grep for the skip-beat counter by its constants, not by asymmetry.** It also
 appears on BOTH arms of a test, so "empty else" is not the tell — `movs r3,#236 /
@@ -978,6 +1074,25 @@ body of a spin-wait reached only by a *backward* `beq.n` from below the pool.
 Ending the pool at the next branch target would have swallowed two live
 instructions. Only a control-flow walk finds this — a heuristic that assumes a
 pool runs to the next label cannot.
+
+**Cheap second tell that a gap is a pool: an argument register crosses it.**
+`resource_377:0578` sets `movs r0,#8` *before* a bare `b.n` and the `bl` after
+the gap consumes it — so the gap cannot be a body boundary. Both "run to the next
+label" and "run to the next branch target" would have mis-sized that owner by
+~800 bytes. Use it as a sanity check on any walk-derived pool.
+
+**Interior pools vary in size — do not assume the usual 8–12 bytes.**
+`resource_3b6:05a8`'s is *six* bytes (one alignment halfword plus a single mask
+word), and the halfword immediately after it is code *and* a live `bne` target.
+Reading the customary pool length would have eaten a real instruction.
+
+**The manifest's `calls` field is a FLOOR, not an equality test — it only ever
+undercounts.** Five `resource_3b6` rows exceeded it (`013c` 54 vs 49, `0328`
+24 vs 23, `05a8` 16 vs 14, `07b0` 19 vs 18), in every case with the extra sites
+on reachable paths and no interior pool nearby. This documents the *opposite*
+direction from the overcount trap above (pool words decoding as BL pairs), and
+it is the safe one: a shortfall cannot hide an unplaced call, so treat a row
+that beats its advertised count as normal and a row that falls short as a bug.
 
 **Derive the pool map from a CONTROL-FLOW WALK. That method is immune to both
 traps below; nothing else is.** Walk the owner from its prologue following
@@ -2095,6 +2210,15 @@ two levers land.
   **mid-function literal-pool dumps** at barriers we cannot reproduce.
 - **Register-identity-only swaps**, often where our allocation is strictly better
   or one instruction shorter.
+- **Branching leaf with a bare `bx lr`.** The fork returns from any leaf that
+  contains a conditional branch with `push {lr}` / `pop {r0}` / `bx r0`; it emits
+  the bare `bx lr` only for straight-line leaves. The reference does both. It is
+  not register pressure and not the return type -- a leaf using r0-r4 returns
+  bare if it is straight-line, and a leaf using only r0-r3 pushes if it branches
+  (measured on both, 2026-07-31). Costs four bytes and blocks the row outright.
+  Only 13 unconverted main-image owners have the shape, which is why this is a
+  park rather than a compiler change: modifying the Thumb epilogue would put
+  every byte-exact source in the tree up for re-verification to win ~13 rows.
 - **Two loop pseudos allocated in swapped registers.** A loop that carries both a
   walking pointer and a counter: the reference puts the pointer in the register
   the *preceding* instruction just freed and the counter in the next one, and gcc

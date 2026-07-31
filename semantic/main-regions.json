@@ -1384,6 +1384,16 @@
           "size": 616
         }
       ]
+    },
+    {
+      "entry": "0x080fae58",
+      "evidence": "Clean-room redraft of the quarantined row, per Pascal's ruling relayed by Vale 2026-07-31 18:09 and assigned to a lane that never opened the old body. Written solely from asm/080fae58.s plus in-repo vocabulary (struct CgbChannel from src/080fadf0.c, SoundInfo offsets shared with semantic/main/080f9f6c.c); no external reference consulted. The CGB sound-channel tick: a 15-step frame counter at SoundInfo+10 (14..0, the 0 tick advancing every envelope one extra step via the preserved replay loop); four 64-byte channels from SoundInfo+28 mapped to their register banks (0x04000060..65, 0x68/69/6c/6d, 0x70..75, 0x78/79/7c/7d, with unused sweep slots parked on 0x61/0x71 exactly as the reference does); per channel a start path (status 3, Func_080fadf0 pan refresh, duty/length/sweep programming, channel 3 reloading wave RAM at 0x04000090 on a changed wave pointer with current_wave caching), kill via Func_080fada0, pseudo-echo fade (status bit 4, pseudo_echo_length countdown), key release (release rate reload), and the attack/decay/sustain envelope state machine in status low bits with sustain_goal hold at counter 7 and the ((pseudo_echo_volume * envelope_goal + 255) >> 8) echo tail; output stage gated by the modify bits at +29 (pitch: SOUNDBIAS-amplitude frequency nudge at 0x04000089 for channels 1-3 with type bit 8, NRx3 low byte with channel 4 preserving NR43 bit 3, NRx4 from (control cache & 0xc0) + frequency>>8; volume: stereo-enable byte 0x04000081 masked through pan/pan_mask, channel 3 through the Data_080fba04 level table with the NR30=0x80 retrigger, others (envelope_volume << 4) + rate nibble with the NRx4|0x80 retrigger, channel 1 double-writing when NR10 bit 3 reads clear). Complete owner: asm/080fae58.s in full including interleaved pools. Span: 1098 bytes, matching the census row.",
+      "executable_ranges": [
+        {
+          "address": "0x080fae58",
+          "size": 1098
+        }
+      ]
     }
   ],
   "manual_regions": []

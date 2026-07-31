@@ -716,6 +716,9 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // which the bare-address key was silently handing the flag to. Found by the
   // collision scan `--lint` now runs.
   "assets/code/resource_3b5_c_0200028c.c",
+  // resource_3a3:06a4 sets r1 and negates r2 for a three-argument call and the
+  // reference takes the r1 setter first.
+  "assets/code/resource_3a3_c_020006a4.c",
   // resource_3c6:010c has the tell at two call sites; its sibling :0078 has the
   // same flag need but a pool-load residual on top and stays unconverted.
   "assets/code/resource_3c6_c_0200010c.c",

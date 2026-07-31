@@ -124,8 +124,6 @@ export function publicationEntryReason(path: string, data: Uint8Array): string |
   if (["asm", "s"].includes(extension(path)) && /^\s*\.incbin\b/im.test(Buffer.from(data).toString())) {
     return "committed incbin payload";
   }
-  const markerReason = conflictMarkerReason(path, data);
-  if (markerReason !== undefined) return markerReason;
   return publicationContentReason(data);
 }
 
@@ -162,7 +160,22 @@ function reject(entries: Array<{ scope: string; path: string; data: () => Buffer
 }
 
 function checkStaged(): void {
-  reject(stagedPaths().map((path) => ({ scope: "staged", path, data: () => stagedBlob(path) })));
+  const entries = stagedPaths().map((path) => ({ scope: "staged", path, data: () => stagedBlob(path) }));
+  reject(entries);
+  // Conflict markers are checked against staged content ONLY, never against
+  // history. The pre-push scan exists to catch a forbidden artifact that was
+  // added and later deleted, where the past genuinely matters; a marker is
+  // hygiene, where only what you are about to record matters. Applying it to
+  // history would reject every existing commit that carried one — immutable,
+  // already merged, and shared by all three branches — and block the ring
+  // permanently. That is not hypothetical: it happened the first time this
+  // check was wired into the shared path.
+  const failures: string[] = [];
+  for (const entry of entries) {
+    const reason = conflictMarkerReason(entry.path, entry.data());
+    if (reason !== undefined) failures.push(`${entry.scope} ${entry.path}: ${reason}`);
+  }
+  if (failures.length > 0) throw new Error(`publication gate rejected:\n${failures.join("\n")}`);
 }
 
 function revisions(local: string, remote: string): string[] {
@@ -239,8 +252,10 @@ function selfTest(): void {
   if (conflictMarkerReason("HANDOVER.md", bytes("a\n>>>>>>> origin/venus\n")) === undefined) {
     throw new Error("a closing conflict marker was accepted");
   }
-  if (publicationEntryReason("HANDOVER.md", bytes("x\n<<<<<<< HEAD\n")) === undefined) {
-    throw new Error("the publication gate accepted a conflict marker");
+  // The shared entry reason must NOT flag markers: it also runs over history in
+  // the pre-push scan, where rejecting an immutable past commit blocks the ring.
+  if (publicationEntryReason("HANDOVER.md", bytes("x\n<<<<<<< HEAD\n")) !== undefined) {
+    throw new Error("the history-facing gate flagged a conflict marker");
   }
   // A bare ======= is a Markdown heading underline, not a conflict.
   if (conflictMarkerReason("HANDOVER.md", bytes("Title\n=======\n\nbody\n")) !== undefined) {

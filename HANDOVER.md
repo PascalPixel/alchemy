@@ -1814,12 +1814,30 @@ real work when it has an `asm/<stem>.s`, no `semantic/main/<stem>.c`, no
 gets wrong: many rows are interiors of already-converted owners. Measured this
 way: **424 stems / 44,734 bytes — but only 92 are genuine candidates.**
 
-**Filter the linker veneers FIRST, before ranking by size.** About **333 of the
-425** are the fixed sequence `ldr rN,[pc,#0]; bx rN` followed by one target
-word, across `08009000+`, `08077000+`, `080b0000+`, `080f2000+`, plus the IWRAM
-`ldr r3` veneers at `080022ec/f4/fc` and `08002304`. They are linker-emitted and
-have no C form. Filter them and the `swi`/`svc` wrapper rows before sorting, or
-the entire small tier is noise and a lane spends its pass on it.
+**Filter the linker veneers FIRST, and filter on SHAPE, not on address range.**
+**334** of the stems are `ldr rN,[pc,#0]; bx rN` plus exactly one `.4byte`
+(≤3 body lines). The address-range list under-counts by nearly half: beyond
+`08009000+`, `08077000+`, `080b0000+`, `080f2000+` and the four IWRAM `ldr r3`
+veneers, there are 158 more at `08015000+`, `0808a000+`, `080a1000+`,
+`080b5000+`, `080c9000+`, `080f4000`, `080f6000`, `080f9000+` and `08185000`.
+Match the shape. Filter the `swi`/`svc` wrappers too, before sorting, or the
+entire small tier is noise.
+
+**ARM-mode rows are a skip signal in themselves — `grep -L '\.thumb' asm/<stem>.s`
+is the whole test.** Every ARM row carries the header 「承認済みコンパイラはサム
+専用のため構造化アセンブリで保持する」 — the approved compiler is Thumb-only, so
+no C form can exist. That is **14 stems**, not just the four named ones
+(`08002dd8`, `08004fe4`, `08007994`, `080f95e0`); it also covers `08002544`,
+`08002808`, `08002cf4`, `08002d5c`, `08009bb8`, `08009e7c`, `0800a0f8`,
+`0800a37c` and more. One line removes them before any reading.
+
+**`main_xref.ts` reporting DATA is the RELOCATED-ARM signature, not a data row.**
+The word reference is the *source address of a runtime copy*, not a pointer to
+data — every DATA row measured was ARM. Treat DATA exactly like ARM: skip.
+
+**Two ROM entry points can share one instruction stream.** `0800231c` (cosine)
+and `08002322` (sine) share a tail, are separately called, and branch backward
+into `0800230c`. No single C function has two entries — skip.
 
 **Run `main_xref.ts` BEFORE drafting, not after.** It catches interiors the
 coverage rule misses: `0800230c` passes the "not inside any `executable_ranges`
@@ -2810,6 +2828,24 @@ two levers land.
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**
+- **A small literal pooled into the function's constant block instead of
+  materialised.** Tell in the comparator: `ldrh rX, .LN` on your side where the
+  reference has `movs rX, #k` for a *small* k. Look at the emitted `.s` and you
+  will find the fork appended `.word k` to the same pool that holds the
+  function's genuinely large constants, then read it back with `ldrh`. Four rows
+  so far, all the same shape — a `u16` store of a literal in a function that
+  already pools several larger constants: `resource_3ca:004c` (store of 0 to
+  palette RAM), `resource_37f:0200` and `:03bc` (store of 1 to workspace+370,
+  two branches deep), `resource_389:10c8` (99). **Not a flag**:
+  `-fno-cse-pool-immediate`, `-fno-cse-two-insn-immediate`,
+  `-fno-cse-follow-jumps`, `-fno-cse-skip-blocks`, `-fno-gcse`,
+  `-fno-rerun-cse-after-loop`, `-fno-expensive-optimizations`,
+  `-fno-thumb-contiguous-immediate`, `-fthumb-minipool-tail-first`,
+  `-mthumb-early-literal-pool` and `-fsched-low-dest-first` all leave it, and
+  `-mthumb-early-literal-pool` makes it worse. **Not source shape either**:
+  storing through `s16` instead of `u16`, and hoisting the value into an `s32`
+  local, both leave it (the local is worse). The decision is made where the
+  constant pool is built, and nothing exposed reaches it.
 - **A constant materialised on the wrong side of a store.** Two rows, same
   shape, and it is *not* the pool-load class below — these are plain `movs`.
   `resource_3b0:007c` (38 bytes): both arms of an if/else-if store the same

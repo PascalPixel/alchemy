@@ -7747,16 +7747,8 @@ AlchemyC_02000a64:
 	.4byte 0x0000083e
 	.2byte 0x0240
 	.2byte 0x0200
-	push	{r5, lr}
-	adds	r5, r1, #0
-	movs	r1, #0
-	bl	sub_02008cb4
-	adds	r0, r5, #0
-	bl	sub_02008bea
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
+AlchemyC_02004248:
+	.space 0x18
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9

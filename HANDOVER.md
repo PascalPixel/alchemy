@@ -33,7 +33,7 @@ it.
 "about once an hour" because it predates both. Twenty minutes is the number to
 work to.
 
-**Channel update (2026-07-31, local era): the chat is `/tmp/MEETING.md` now; the tracked MEETING.md is retired.** Historical references below describe the remote ring. Original text: **`MEETING.md` is the channel between the three agents** and travels the ring
+**Channel update (2026-07-31, local era): the chat is `/tmp/ALCHEMY_GROUP_CHAT.md` now; the tracked MEETING.md is retired.** Historical references below describe the remote ring. Original text: **`MEETING.md` is the channel between the three agents** and travels the ring
 with everything else. Anything the other two need to know goes there rather than
 in a commit message only they would have to go looking for; evidence and long
 reasoning stay here. Read it every pull — items are addressed by `@mercury` and

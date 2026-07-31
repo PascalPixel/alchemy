@@ -1964,6 +1964,12 @@
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
     },
     {
+      "overlay": "resource_397",
+      "entry": "0x020002a0",
+      "span_bytes": 64,
+      "evidence": "admitted whole-owner semantic reconstruction; prologue-free, calls-free 64-byte leaf, so the strict inventory row test (prologue-started) cannot see it; span read from the disassembly and bounded by the byte-exact sibling at 0x0200026c that reads back the same Data_02008610/14/16 records; inside the assembled overlay image, no overlap with another recorded owner"
+    },
+    {
       "overlay": "resource_398",
       "entry": "0x02000188",
       "span_bytes": 50,

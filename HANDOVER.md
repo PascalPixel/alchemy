@@ -141,9 +141,9 @@ still open (§8).
 Alongside the exact lane, reviewed semantic C currently accounts for **683,124
 executable bytes across 1,299 compiling sources**: 385,850 main-image bytes and
 297,274 overlay bytes. Combined with exact C, **897,308 / 1,339,580 executable
-Alongside the exact lane, reviewed semantic C currently accounts for **662,952
-executable bytes across 1,253 compiling sources**: 385,850 main-image bytes and
-277,102 overlay bytes. Combined with exact C, **877,080 / 1,339,580 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **701,856
+executable bytes across 1,336 compiling sources**: 385,850 main-image bytes and
+316,006 overlay bytes. Combined with exact C, **918,026 / 1,339,582 executable
 bytes** are expressed as C.
 Build that lane with `bun run build:semantic`; its
 sources live under `semantic/` and do not claim byte equality. Use
@@ -156,10 +156,10 @@ sources live under `semantic/` and do not claim byte equality. Use
 of the ordinary review queue.
 
 
-**43 overlays have zero unconverted rows in the strict queue**, holding
-274,570 strict bytes between them. Regenerate this list rather than editing it —
+**55 overlays have zero unconverted rows in the strict queue**, holding
+308,700 strict bytes between them. Regenerate this list rather than editing it —
 it has drifted twice from being maintained by hand:
-`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,252), `resource_3c8` (11,916), `resource_372` (9,838), `resource_371` (9,486), `resource_38f` (9,212), `resource_39f` (8,692), `resource_383` (8,588), `resource_3c5` (7,866), `resource_3a8` (7,780), `resource_391` (7,648), `resource_374` (7,468), `resource_375` (6,424), `resource_37a` (6,200), `resource_37b` (6,032), `resource_3b2` (5,984), `resource_3aa` (5,960), `resource_3b7` (5,954), `resource_3bb` (5,548), `resource_395` (5,504), `resource_3cb` (5,488), `resource_39a` (5,368), `resource_377` (5,226), `resource_3b4` (5,104), `resource_3c6` (5,094), `resource_3ae` (5,026), `resource_370` (4,718), `resource_38d` (4,680), `resource_399` (4,672), `resource_3a2` (4,484), `resource_3a7` (4,442), `resource_3c7` (4,252), `resource_37f` (4,216), `resource_3ad` (3,978), `resource_3ca` (3,926), `resource_3bc` (3,768), `resource_3ba` (3,344), `resource_38b` (3,318), `resource_3a3` (3,156), `resource_3b5` (2,914), `resource_3c2` (2,688), `resource_3b6` (2,284).
+`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,252), `resource_3c8` (11,916), `resource_372` (9,838), `resource_371` (9,486), `resource_38f` (9,212), `resource_39f` (8,692), `resource_3c4` (8,642), `resource_383` (8,588), `resource_3c5` (7,866), `resource_3a8` (7,780), `resource_391` (7,648), `resource_374` (7,468), `resource_375` (6,424), `resource_37a` (6,200), `resource_37b` (6,032), `resource_3b2` (5,984), `resource_3aa` (5,960), `resource_3b7` (5,954), `resource_3bb` (5,548), `resource_395` (5,504), `resource_3cb` (5,488), `resource_39a` (5,368), `resource_381` (5,328), `resource_377` (5,226), `resource_3b4` (5,104), `resource_3c6` (5,094), `resource_3ae` (5,026), `resource_370` (4,718), `resource_38d` (4,680), `resource_399` (4,672), `resource_3a2` (4,484), `resource_3a7` (4,442), `resource_3c7` (4,252), `resource_37f` (4,216), `resource_3ad` (3,978), `resource_3ca` (3,926), `resource_3bc` (3,768), `resource_3ba` (3,344), `resource_38b` (3,318), `resource_394` (3,282), `resource_3a3` (3,156), `resource_389` (3,056), `resource_3b5` (2,914), `resource_3c2` (2,688), `resource_379` (2,628), `resource_3b6` (2,284), `resource_3ce` (2,274), `resource_38e` (2,206), `resource_3c3` (1,934), `resource_398` (1,620), `resource_386` (1,142), `resource_38c` (1,024), `resource_3b1` (994).
 
 **"Converted in full" means zero unconverted STRICT-QUEUE rows, not that every
 executable byte of the overlay is C.** Measured across those overlays: their
@@ -2192,6 +2192,14 @@ non-trivial constant argument** (exemplar `assets/code/resource_372_c_02002180.c
   reference overwrites the operand. On `resource_373:02a8` it closed 4 of 16
   groups on its own, and the same shape recurs wherever a packed word is split
   into a masked half and a shifted half.
+- **Narrow the type at the store, not at the arithmetic.** When the reference
+  builds a small constant out of a value already in a register -- a mask from a
+  zero it just stored, `movs r3,#0` then `subs r3,#13` for 0xf3 -- the C has to
+  give gcc a 32-bit expression to fold through. Declaring the intermediate `u8`
+  loses it: `clear -= 13` on a `u8` folds to 243 and gcc materialises that
+  directly. Make the local `s32` and cast at the byte store. Same family as the
+  pooled-zero and halfword-store levers below, and the same rule states all
+  three: narrowing early is what loses the reference's form.
 - **The first `return` names the value materialised before the compare.** A
   two-arm predicate compiles as `mov r0, A; cmp; b<COND> end; mov r0, B; end:`
   where `A` is the *first* return's value and `COND` is its condition. So an

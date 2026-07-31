@@ -489,6 +489,9 @@ const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
 // (or, for 399:05dc and 0a3c, together with the routed immediate-latency
 // mode). Each entry has its own exact-byte proof.
 const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
+  // resource_398:04b4 sets r0 then r1 for a six-argument call; the dependence
+  // count reverses that pair and neither tie-break direction restores it.
+  "assets/code/resource_398_c_020004b4.c",
   "assets/code/resource_3c8_c_0200096c.c",
   "assets/code/resource_3c5_c_02000cf0.c",
   "assets/code/resource_3b2_c_02000da4.c",
@@ -640,6 +643,12 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // resource_3b6:0898 sets r0/r1/r2 for a three-argument call; ascending
   // destination order.
   "assets/code/resource_3b6_c_02000898.c",
+  // resource_3b5:0568 is the same three-argument setter shape.
+  "assets/code/resource_3b5_c_02000568.c",
+  // resource_3b5:0224 sets r0/r1/r2 for a four-argument call; ascending
+  // destination order.
+  "assets/code/resource_3b5_c_02000224.c",
+  "assets/code/resource_3b5_c_02000528.c",
   // resource_3a2:0870 and :08a8 each set r0/r1/r2 for a three-argument call and
   // the reference orders them by ascending destination. :08a8 also needs the
   // constant-sharing mode: both of its negated arguments are -1, so CSE builds
@@ -861,6 +870,10 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   // resource_3a7:0368 loads its 0x9a9 request id at the guard call and again
   // at the commit call, the same shape as :03e0 in this overlay.
   "assets/code/resource_3a7_c_02000368.c",
+  // resource_3a7:04d0 loads its 0x9aa request id at the guard and again at
+  // the commit, the third row in this overlay with that shape.
+  "assets/code/resource_3a7_c_020004d0.c",
+  "assets/code/resource_3a7_c_0200048c.c",
 ]);
 // -fno-gcse routed by path rather than by stem, for overlay rows whose address
 // is also an offset in another overlay that is already converted.

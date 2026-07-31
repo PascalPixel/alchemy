@@ -1002,6 +1002,36 @@
           "size": 46
         }
       ]
+    },
+    {
+      "entry": "0x080e7338",
+      "evidence": "Single 102-byte function, 0x080e7338..0x080e739c, no literal pool and no alignment filler: nothing follows the epilogue in the row, so no words are excluded. Prologue push {r5,r6,r7,lr} plus the r9 save through r7 and a 4-byte frame; the epilogue at 0x080e7392 unwinds that frame and ends pop {r0}; bx r0, so the owner is void. r9 is saved and restored but never written, and is read exactly once at 0x080e7344 as the base of the pointer at r9-136 — the frame-balanced live-in already recorded for resource_3cd:04b0, converted as an uninitialised local rather than skipped. The slot array is 16 entries of 28 bytes at *(base-136) + 0x7400 with the free marker -1 at +24; the two str-of-zero instructions at 0x080e735c and 0x080e738a are distinct and both fall into the shared store tail at 0x080e738c, written as a goto rather than duplicated. bun tools/main_xref.ts 080e7338 reports FUNCTION (called directly) with one caller at 0x080e7c0c.",
+      "executable_ranges": [
+        {
+          "address": "0x080e7338",
+          "size": 102
+        }
+      ]
+    },
+    {
+      "entry": "0x0809b8f4",
+      "evidence": "Single 306-byte function, 0x0809b8f4..0x0809ba24, prologue push {r5,r6,r7,lr} with a 4-byte frame and one epilogue at 0x0809ba1e ending pop {r0}; bx r0, so the owner is void. Excluded (14 bytes): the 2-byte movs r0,r0 alignment filler at 0x0809ba26 and the three-word pool at 0x0809ba28 holding 0x0000ffff (the truncating 16.16-to-whole bias, loaded at 0x0809b924 and 0x0809b930), 0x030001d8 (the IWRAM square root, loaded at 0x0809b944) and 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, loaded at 0x0809b954 and 0x0809b9fc). The bl Func_080072f0 at 0x0809b946 is the runtime _call_via_r3 thunk inside 0x080072e4..0x08007320, so it is an indirect call through the pooled 0x030001d8; the four mov ip,pc; bx rN sequences at 0x0809b95c, 0x0809b968, 0x0809ba00 and 0x0809ba14 are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec. Nothing in the row is retained assembly. bun tools/main_xref.ts 0809b8f4 reports FUNCTION (called directly) with one caller at 0x0809b84e.",
+      "executable_ranges": [
+        {
+          "address": "0x0809b8f4",
+          "size": 306
+        }
+      ]
+    },
+    {
+      "entry": "0x0808ae74",
+      "evidence": "Single 410-byte function, 0x0808ae74..0x0808b00c, prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and an 8-byte frame; one epilogue at 0x0808affc unwinding all of it and ending pop {r1}; bx r1, so r0 is the result. Excluded (30 bytes): the 2-byte movs r0,r0 alignment filler at 0x0808b00e and the seven-word pool at 0x0808b010 holding 0x03001ebc (context pointer, 0x0808ae88), 0x0000015f and 0x00000161 (the flag ids 351 and 353, 0x0808ae8c and 0x0808aea6), 0x02000240 (state block, 0x0808aeba, 0x0808af18, 0x0808af84), 0x0809c610 (the 28-byte encounter table, 0x0808aed2), 0x0300013c (the IWRAM ratio helper, 0x0808af74) and 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x0808af7a). The bl Func_080072f0 at 0x0808af76 is the runtime _call_via_r3 thunk inside 0x080072e4..0x08007320, an indirect call through the pooled 0x0300013c; the mov ip,pc; bx r3 at 0x0808af80 is an ordinary indirect call to the pooled 0x03000118 whose landing site 0x0808af84 consumes r0 in the same frame, as recorded for 0x0800ebec. r9 is saved and restored but is not written on the path that enters the roll from 0x0808ae98, the frame-balanced live-in of resource_3cd:04b0, converted as an uninitialised local. Nothing in the row is retained assembly. bun tools/main_xref.ts 0808ae74 reports FUNCTION (called directly) with callers at 0x0808b03a and 0x0808b052.",
+      "executable_ranges": [
+        {
+          "address": "0x0808ae74",
+          "size": 410
+        }
+      ]
     }
   ]
 }

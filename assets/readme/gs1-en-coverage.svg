@@ -1,27 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" font-family="'Geist Sans', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Coverage treemap of the English Golden Sun ROM: 68.36% of the 1,339,582 audited executable bytes are expressed as C">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" font-family="'Geist Sans', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Coverage treemap of the English Golden Sun ROM: 68.44% of the 1,339,582 audited executable bytes are expressed as C">
 <rect x="0" y="0" width="1200" height="660" fill="#000000"/>
 <text x="32" y="46" font-size="15" fill="#ededed" font-weight="600" letter-spacing="-0.2">Alchemy — Golden Sun</text>
 <text x="32" y="64" font-size="10" fill="#8f8f8f">gs1-en · 8.00 MB cartridge</text>
-<text x="1168" y="46" font-size="26" fill="#ededed" text-anchor="end" font-weight="600" letter-spacing="-0.6">68.36%</text>
+<text x="1168" y="46" font-size="26" fill="#ededed" text-anchor="end" font-weight="600" letter-spacing="-0.6">68.44%</text>
 <text x="1168" y="64" font-size="9.5" fill="#8f8f8f" text-anchor="end" letter-spacing="0.9">EXACT + SEMANTIC C</text>
 <rect x="32" y="96" width="8" height="8" fill="#0072f5" rx="2"/>
 <text x="46" y="104" font-size="9.5" fill="#8f8f8f" letter-spacing="0.8">BYTE-EXACT C · FULL-C BYTE SHARE</text>
-<text x="32" y="128" font-size="21" fill="#ededed" font-weight="600" letter-spacing="-0.4">16.45%</text>
+<text x="32" y="128" font-size="21" fill="#ededed" font-weight="600" letter-spacing="-0.4">16.49%</text>
 <rect x="316" y="96" width="8" height="8" fill="#50e3c2" rx="2"/>
 <text x="330" y="104" font-size="9.5" fill="#8f8f8f" letter-spacing="0.8">SEMANTIC C</text>
-<text x="316" y="128" font-size="21" fill="#ededed" font-weight="600" letter-spacing="-0.4">51.91%</text>
+<text x="316" y="128" font-size="21" fill="#ededed" font-weight="600" letter-spacing="-0.4">51.95%</text>
 <rect x="600" y="96" width="8" height="8" fill="#333333" rx="2"/>
 <text x="614" y="104" font-size="9.5" fill="#8f8f8f" letter-spacing="0.8">ASSEMBLY</text>
-<text x="600" y="128" font-size="21" fill="#ededed" font-weight="600" letter-spacing="-0.4">31.64%</text>
+<text x="600" y="128" font-size="21" fill="#ededed" font-weight="600" letter-spacing="-0.4">31.56%</text>
 <rect x="884" y="96" width="8" height="8" fill="#ff0080" rx="2"/>
 <text x="898" y="104" font-size="9.5" fill="#8f8f8f" letter-spacing="0.8">ASSETS &amp; DATA · NOT CODE</text>
 <text x="884" y="128" font-size="21" fill="#ededed" font-weight="600" letter-spacing="-0.4">6.96 MB</text>
 <defs><clipPath id="lane-bar-clip"><rect x="32" y="146" width="1136" height="6" rx="3"/></clipPath></defs>
 <g clip-path="url(#lane-bar-clip)">
 <rect x="32" y="146" width="1136" height="6" fill="#1f1f1f"/>
-<rect x="32" y="146" width="186.9" height="6" fill="#0072f5"/>
-<rect x="218.9" y="146" width="589.7" height="6" fill="#50e3c2"/>
-<rect x="808.6" y="146" width="359.4" height="6" fill="#333333"/>
+<rect x="32" y="146" width="187.3" height="6" fill="#0072f5"/>
+<rect x="219.3" y="146" width="590.2" height="6" fill="#50e3c2"/>
+<rect x="809.5" y="146" width="358.5" height="6" fill="#333333"/>
 </g>
 <rect x="32" y="176" width="372" height="440" fill="#0a0a0a" stroke="#262626" stroke-width="1" rx="8"/>
 <text x="48" y="201" font-size="10" fill="#8f8f8f" letter-spacing="0.9">ROM IMAGE</text>
@@ -42,8 +42,8 @@
 <rect x="313.2" y="521.4" width="72.3" height="25.8" fill="#ff0080"/>
 <text x="50" y="567.7" font-size="9.5" fill="#8f8f8f" letter-spacing="0.8">MAIN IMAGE CODE</text>
 <rect x="50.5" y="592" width="18.5" height="5.5" fill="#0072f5"/>
-<rect x="50.5" y="584.1" width="18.5" height="7.8" fill="#50e3c2"/>
-<rect x="50.5" y="576.2" width="18.5" height="8" fill="#333333"/>
+<rect x="50.5" y="583.9" width="18.5" height="8.1" fill="#50e3c2"/>
+<rect x="50.5" y="576.2" width="18.5" height="7.7" fill="#333333"/>
 <rect x="70" y="592.3" width="18.5" height="5.2" fill="#0072f5"/>
 <rect x="70" y="577.4" width="18.5" height="15" fill="#50e3c2"/>
 <rect x="70" y="576.2" width="18.5" height="1.2" fill="#333333"/>
@@ -66,8 +66,8 @@
 <rect x="187.2" y="577.2" width="18.5" height="19.8" fill="#50e3c2"/>
 <rect x="187.2" y="576.2" width="18.5" height="1" fill="#333333"/>
 <rect x="206.7" y="593.6" width="6.2" height="3.9" fill="#0072f5"/>
-<rect x="206.7" y="578.7" width="6.2" height="14.9" fill="#50e3c2"/>
-<rect x="206.7" y="576.2" width="6.2" height="2.5" fill="#333333"/>
+<rect x="206.7" y="578.5" width="6.2" height="15.1" fill="#50e3c2"/>
+<rect x="206.7" y="576.2" width="6.2" height="2.3" fill="#333333"/>
 <text x="225.4" y="567.7" font-size="9.5" fill="#8f8f8f" letter-spacing="0.8">COMPRESSED CODE OVERLAYS</text>
 <rect x="225.9" y="593.6" width="14.7" height="3.9" fill="#0072f5"/>
 <rect x="225.9" y="580" width="14.7" height="13.6" fill="#50e3c2"/>
@@ -76,16 +76,16 @@
 <rect x="241.7" y="585.5" width="15.4" height="9.2" fill="#50e3c2"/>
 <rect x="241.7" y="576.2" width="15.4" height="9.4" fill="#333333"/>
 <rect x="258.1" y="594.1" width="14.3" height="3.4" fill="#0072f5"/>
-<rect x="258.1" y="585.7" width="14.3" height="8.4" fill="#50e3c2"/>
+<rect x="258.1" y="585.7" width="14.3" height="8.3" fill="#50e3c2"/>
 <rect x="258.1" y="576.2" width="14.3" height="9.5" fill="#333333"/>
-<rect x="273.3" y="594.6" width="13.8" height="2.9" fill="#0072f5"/>
+<rect x="273.3" y="594.5" width="13.8" height="3" fill="#0072f5"/>
 <rect x="273.3" y="585.2" width="13.8" height="9.3" fill="#50e3c2"/>
 <rect x="273.3" y="576.2" width="13.8" height="9.1" fill="#333333"/>
 <rect x="288.2" y="594.5" width="14.4" height="3" fill="#0072f5"/>
 <rect x="288.2" y="590.9" width="14.4" height="3.6" fill="#50e3c2"/>
 <rect x="288.2" y="576.2" width="14.4" height="14.7" fill="#333333"/>
 <rect x="303.6" y="594.9" width="14.6" height="2.6" fill="#0072f5"/>
-<rect x="303.6" y="588.6" width="14.6" height="6.3" fill="#50e3c2"/>
+<rect x="303.6" y="588.6" width="14.6" height="6.2" fill="#50e3c2"/>
 <rect x="303.6" y="576.2" width="14.6" height="12.4" fill="#333333"/>
 <rect x="319.2" y="593.2" width="15.4" height="4.3" fill="#0072f5"/>
 <rect x="319.2" y="589.3" width="15.4" height="3.9" fill="#50e3c2"/>
@@ -181,8 +181,8 @@
 <rect x="508.2" y="462.8" width="24" height="58.5" fill="#50e3c2"/>
 <rect x="508.2" y="406.1" width="24" height="56.7" fill="#333333"/>
 <text x="520.2" y="479.3" font-size="9" fill="#04241d" text-anchor="middle" font-family="'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" opacity="0.9">383</text>
-<rect x="508.2" y="549.6" width="24" height="1.8" fill="#0072f5"/>
-<rect x="508.2" y="548.1" width="24" height="1.5" fill="#50e3c2"/>
+<rect x="508.2" y="548.8" width="24" height="2.5" fill="#0072f5"/>
+<rect x="508.2" y="548.1" width="24" height="0.8" fill="#50e3c2"/>
 <rect x="508.2" y="547.2" width="24" height="0.9" fill="#333333"/>
 <rect x="508.2" y="583.2" width="24" height="1.3" fill="#0072f5"/>
 <rect x="508.2" y="552.3" width="24" height="30.9" fill="#333333"/>
@@ -252,8 +252,8 @@
 <rect x="533.2" y="496.4" width="19.3" height="15.9" fill="#0072f5"/>
 <rect x="533.2" y="453.5" width="19.3" height="42.9" fill="#50e3c2"/>
 <rect x="533.2" y="430.1" width="19.3" height="23.4" fill="#333333"/>
-<rect x="533.2" y="576.3" width="19.3" height="21.2" fill="#0072f5"/>
-<rect x="533.2" y="527.7" width="19.3" height="48.7" fill="#50e3c2"/>
+<rect x="533.2" y="574.9" width="19.3" height="22.6" fill="#0072f5"/>
+<rect x="533.2" y="527.7" width="19.3" height="47.2" fill="#50e3c2"/>
 <rect x="533.2" y="513.3" width="19.3" height="14.3" fill="#333333"/>
 <rect x="553.5" y="334.3" width="34.1" height="2.6" fill="#0072f5"/>
 <rect x="553.5" y="291.3" width="34.1" height="43" fill="#333333"/>
@@ -301,8 +301,8 @@
 <rect x="583.2" y="467.3" width="25.5" height="53.3" fill="#50e3c2"/>
 <rect x="583.2" y="429.8" width="25.5" height="37.5" fill="#333333"/>
 <text x="596" y="487.7" font-size="9" fill="#04241d" text-anchor="middle" font-family="'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" opacity="0.9">3a8</text>
-<rect x="583.2" y="545.6" width="25.5" height="1.8" fill="#0072f5"/>
-<rect x="583.2" y="541.5" width="25.5" height="4.1" fill="#50e3c2"/>
+<rect x="583.2" y="545.2" width="25.5" height="2.2" fill="#0072f5"/>
+<rect x="583.2" y="541.5" width="25.5" height="3.7" fill="#50e3c2"/>
 <rect x="583.2" y="540.2" width="25.5" height="1.4" fill="#333333"/>
 <rect x="583.2" y="592.7" width="25.5" height="4.8" fill="#0072f5"/>
 <rect x="583.2" y="551.1" width="25.5" height="41.6" fill="#50e3c2"/>
@@ -340,8 +340,8 @@
 <rect x="609.8" y="594.3" width="40.2" height="3.2" fill="#0072f5"/>
 <rect x="609.8" y="548" width="40.2" height="46.3" fill="#333333"/>
 <text x="629.9" y="576" font-size="9" fill="#a1a1a1" text-anchor="middle" font-family="'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" opacity="0.9">3b3</text>
-<rect x="651" y="395.5" width="47" height="7.1" fill="#0072f5"/>
-<rect x="651" y="376.9" width="47" height="18.7" fill="#50e3c2"/>
+<rect x="651" y="395.2" width="47" height="7.5" fill="#0072f5"/>
+<rect x="651" y="376.9" width="47" height="18.3" fill="#50e3c2"/>
 <rect x="651" y="366.3" width="47" height="10.5" fill="#333333"/>
 <text x="674.5" y="387.7" font-size="9" fill="#04241d" text-anchor="middle" font-family="'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" opacity="0.9">3b4</text>
 <rect x="699" y="396.4" width="17.5" height="6.2" fill="#0072f5"/>
@@ -421,8 +421,8 @@
 <rect x="770.7" y="593.7" width="20.7" height="3.8" fill="#0072f5"/>
 <rect x="770.7" y="562.5" width="20.7" height="31.2" fill="#50e3c2"/>
 <rect x="770.7" y="557.6" width="20.7" height="5" fill="#333333"/>
-<rect x="792.5" y="596.7" width="28.1" height="0.8" fill="#0072f5"/>
-<rect x="792.5" y="561.9" width="28.1" height="34.8" fill="#50e3c2"/>
+<rect x="792.5" y="596.2" width="28.1" height="1.3" fill="#0072f5"/>
+<rect x="792.5" y="561.9" width="28.1" height="34.4" fill="#50e3c2"/>
 <rect x="792.5" y="557.6" width="28.1" height="4.3" fill="#333333"/>
 <text x="806.5" y="580.7" font-size="9" fill="#04241d" text-anchor="middle" font-family="'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" opacity="0.9">3cb</text>
 <rect x="821.5" y="562.3" width="1" height="7.7" fill="#0072f5"/>
@@ -454,8 +454,8 @@
 <rect x="988" y="238.5" width="39.6" height="14" fill="#333333"/>
 <text x="1007.8" y="264.7" font-size="9" fill="#04241d" text-anchor="middle" font-family="'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" opacity="0.9">0800a9</text>
 <rect x="1028.6" y="267.1" width="39.6" height="17.4" fill="#0072f5"/>
-<rect x="1028.6" y="258" width="39.6" height="9.1" fill="#50e3c2"/>
-<rect x="1028.6" y="238.5" width="39.6" height="19.5" fill="#333333"/>
+<rect x="1028.6" y="254.4" width="39.6" height="12.7" fill="#50e3c2"/>
+<rect x="1028.6" y="238.5" width="39.6" height="15.9" fill="#333333"/>
 <text x="1048.4" y="264.7" font-size="9" fill="#04241d" text-anchor="middle" font-family="'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" opacity="0.9">0800d1</text>
 <rect x="1069.3" y="276.3" width="39.6" height="8.3" fill="#0072f5"/>
 <rect x="1069.3" y="249.8" width="39.6" height="26.5" fill="#50e3c2"/>
@@ -636,8 +636,8 @@
 <rect x="1091.9" y="515.3" width="57.6" height="2.6" fill="#333333"/>
 <text x="1120.7" y="534.3" font-size="9" fill="#04241d" text-anchor="middle" font-family="'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" opacity="0.9">080f35</text>
 <rect x="1091.9" y="593.8" width="36.8" height="3.7" fill="#0072f5"/>
-<rect x="1091.9" y="559.8" width="36.8" height="34" fill="#50e3c2"/>
-<rect x="1091.9" y="547.9" width="36.8" height="11.9" fill="#333333"/>
+<rect x="1091.9" y="558.3" width="36.8" height="35.4" fill="#50e3c2"/>
+<rect x="1091.9" y="547.9" width="36.8" height="10.4" fill="#333333"/>
 <rect x="1129.7" y="566.8" width="19.8" height="30.7" fill="#0072f5"/>
 <rect x="1129.7" y="549.4" width="19.8" height="17.4" fill="#50e3c2"/>
 <rect x="1129.7" y="547.9" width="19.8" height="1.5" fill="#333333"/>

@@ -1016,6 +1016,12 @@
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- prologue-started (push {lr}) and returning (pop {r0}/bx r0 at 0x02000f48), unseen by the strict sync test, reached only by bl; span read from the disassembly through the sixteen-word literal pool 0x02000f4c-0x02000f8b to the next owner's prologue at 0x02000f8c. CORRECTION: an earlier lane note recorded a 'b.n 0x2000c50 shared tail into 0x02000a98' for this row; that was a misread of this owner's own pool word 0x0000e666 at 0x02000f80 -- the row is self-contained and the two owners are independent. This overlay executes at 0x02000000 (established in the 3ea23169 batch's entries)."
     },
     {
+      "overlay": "resource_380",
+      "entry": "0x02001450",
+      "span_bytes": 828,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- prologue-started (push {lr}) and returning (pop {r0}/bx r0 at 0x02001778), unseen by the strict sync test, reached only by bl; span read from the disassembly through the alignment halfword and the three-word literal pool 0x02001780-0x0200178b (0x01050000, 0x109b, 0x01dd0000) to the next owner's prologue at 0x0200178c (itself an unindexed row on the same ranked list). Branch-free linear scene beat, ~90 calls, no local state beyond the call sequence; four callees hit two arities inside the owner and are declared old-style. This overlay executes at 0x02000000 (established in the 3ea23169 batch's entries)."
+    },
+    {
       "overlay": "resource_381",
       "entry": "0x02000054",
       "span_bytes": 3548,

@@ -1394,6 +1394,16 @@
           "size": 1098
         }
       ]
+    },
+    {
+      "entry": "0x0800b388",
+      "evidence": "Core-drive census row (kind nonstandard_thumb_call_module; the label comes from three mov ip,pc / bx rN sequences, the established ordinary indirect calls through the pooled 0x03000118 IWRAM fixed-point multiply, same idiom as the registered 0800447c/08004ab0). The perspective sprite-attribute builder, sibling of semantic/main/0800b168.c (orthographic variant, whose m2c trace fixes the shared field meanings) with the 0800c62c-identical pause gate on the s16 at *(Data_03001e68)+4. Projects the caller's position triple via Func_08005268, rejects zero depth or screen coordinates outside x [-32,272] / y [-32,208] (releasing the sprite once through Func_08003f78 with the released_25 stamp, gated by flags_1d bit 0); perspective scale (cached_scale_18, cached raw when flags_1d bit 2 else multiplied) rounded to 0x800 steps, multiplied against the caller's two size words into an x/y zoom pair clamped at 0x1f800; mode select (double-size affine 3 above 0x10000 with doubled dimensions and margins, plain 0 at exactly 0x10000 with no rotation and no Func_0800aa0c mirror, else affine 1); affine parameter pair (8.8 zooms, x negated on mirror, rotation_1e halfword) through Func_08003d28 for the OAM attr bits 9-13 slot, plain mirror using slot 8; masked OAM y/mode/attr writes; priority via Func_08003dec (caller override, else 128 + (512 - depth)/2 clamped to 1); and when sub_flags_26 bit 0 is set the shadow slot at +12 re-projects the position with y zeroed and repeats the attribute build with the 8/16 margin and priority 0. Every pool word resolved in-body (0x03001e68, 0x03000118, 0xfffff800, 0x0001f7ff, 0xffff0000, 0x0000ffff, 0x000001ff, 0xfffffe00). Complete owner: asm/0800b388.s in full including interleaved pools. Span: 762 bytes, matching the census row exactly.",
+      "executable_ranges": [
+        {
+          "address": "0x0800b388",
+          "size": 762
+        }
+      ]
     }
   ],
   "manual_regions": []

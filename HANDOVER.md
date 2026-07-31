@@ -2544,9 +2544,11 @@ already invokes this sweep, so the repaired lever is in the normal pipeline.
 Scaling the repaired sweep across the whole same-size cohort produced a second,
 larger result: `080b1a14` (444 bytes) went from 204 differing halfwords to zero
 in 21 probes by exchanging the declarations of two initialized state locals.
-Across the 105 supported sources the sweep evaluated 59,565 candidates, improved
-21 sources, and made those two exact. One source had a signature shape the
-top-level parser does not support. A separate bounded `permute_v1` run seeded
+Across all 106 same-size sources the sweep evaluated 59,709 candidates, improved
+21 sources, and made those two exact. The last source used a pointer-to-array
+parameter that the signature parser initially rejected; it now balances nested
+parentheses and exercised 144 orderings on that source without improvement. A
+separate bounded `permute_v1` run seeded
 from **100 already-humanized semantic sources** (200 steps, one restart each)
 made `0809397c` exact for another 152 bytes by hoisting the IWRAM square-root
 address into a named local. The three semantic-seeded conversions total 756
@@ -3056,8 +3058,8 @@ maximal runs of *independent* top-level statements to a fixpoint — the §4 rul
 that a parameter's store position sets its live length and therefore its allocno
 priority. An earlier sweep over 53 size-exact main-image targets reported no
 zeros because pointer declarations were incorrectly treated as memory accesses.
-After fixing that parser error, the 2026-07-31 semantic cohort evaluated 59,565
-candidates across 105 supported sources: two became exact (`080a19a0`, 160
+After fixing that parser error, the 2026-07-31 semantic cohort evaluated 59,709
+candidates across all 106 same-size sources: two became exact (`080a19a0`, 160
 bytes; `080b1a14`, 444 bytes) and 19 more improved. `080c1fa8` still reaches 5
 halfwords and `080a6a98` 11.
 The binding limit is the independence test, not the search: two statements that

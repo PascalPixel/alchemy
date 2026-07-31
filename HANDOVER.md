@@ -138,9 +138,9 @@ Alongside the exact lane, reviewed semantic C currently accounts for **581,276
 executable bytes across 1,047 compiling sources**: 382,970 main-image bytes and
 198,306 overlay bytes. Combined with exact C, **791,994 / 1,339,576 executable
 <<<<<<< HEAD
-Alongside the exact lane, reviewed semantic C currently accounts for **623,540
-executable bytes across 1,137 compiling sources**: 385,850 main-image bytes and
-237,690 overlay bytes. Combined with exact C, **836,336 / 1,339,580 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **643,652
+executable bytes across 1,191 compiling sources**: 385,850 main-image bytes and
+257,802 overlay bytes. Combined with exact C, **856,448 / 1,339,580 executable
 bytes** are expressed as C.
 =======
 =======
@@ -157,10 +157,10 @@ of the ordinary review queue.
 =======
 >>>>>>> origin/mercury
 
-**27 overlays have zero unconverted rows in the strict queue**, holding
-217,888 strict bytes between them. Regenerate this list rather than editing it —
+**32 overlays have zero unconverted rows in the strict queue**, holding
+239,158 strict bytes between them. Regenerate this list rather than editing it —
 it has drifted twice from being maintained by hand:
-`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,484), `resource_3c8` (12,800), `resource_372` (10,202), `resource_38f` (9,848), `resource_371` (9,650), `resource_39f` (9,278), `resource_3c5` (9,208), `resource_374` (9,148), `resource_3a8` (8,912), `resource_383` (8,652), `resource_391` (7,648), `resource_39a` (7,096), `resource_375` (6,568), `resource_3aa` (6,552), `resource_3b4` (6,462), `resource_3b2` (6,134), `resource_3b7` (6,062), `resource_37b` (6,032), `resource_3bb` (5,896), `resource_3cb` (5,540), `resource_3c6` (5,250), `resource_38d` (5,212), `resource_370` (4,718), `resource_37f` (4,428), `resource_3a4` (36).
+`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,484), `resource_3c8` (12,800), `resource_372` (10,202), `resource_38f` (9,848), `resource_371` (9,650), `resource_39f` (9,278), `resource_3c5` (9,208), `resource_374` (9,148), `resource_3a8` (8,912), `resource_383` (8,652), `resource_391` (7,648), `resource_39a` (7,096), `resource_375` (6,568), `resource_3aa` (6,552), `resource_3b4` (6,462), `resource_3b2` (6,134), `resource_3b7` (6,062), `resource_37b` (6,032), `resource_3bb` (5,896), `resource_3cb` (5,540), `resource_3c6` (5,250), `resource_38d` (5,212), `resource_399` (4,738), `resource_370` (4,718), `resource_3c7` (4,440), `resource_37f` (4,428), `resource_3ad` (4,288), `resource_3ca` (3,978), `resource_3bc` (3,826), `resource_3a4` (36).
 
 **"Converted in full" means zero unconverted STRICT-QUEUE rows, not that every
 executable byte of the overlay is C.** Measured across those overlays: their
@@ -730,6 +730,14 @@ hunt for a symbol that does not exist.
 `>> 16` to integers then `>> 4` for the 16-pixel grid. Read as a single shift,
 every column and row constant looks arbitrary.
 
+**`overlay_twins.ts` misses same-overlay twins, and it misses them often.**
+`resource_399:07a4` and `:088c` are two 232-byte rows differing in five values —
+`--unconverted` reports nothing for that overlay, yet sorting rows by span and
+eyeballing equal sizes found the pair in seconds and made the second file a
+two-minute transposition with a built-in correctness proof. **Always do the
+sort-by-span scan even when the tool says `groups=0`.** Reported by four separate
+lanes now.
+
 **Equal span AND equal `calls` is a stronger twin filter than span alone** — it
 found a bit-identical 64-byte pair differing in three pool words that
 `overlay_twins.ts` reported as `groups=0`.
@@ -828,6 +836,13 @@ eight-byte veneer entries, so skimming the band calls it a veneer.
 `overlay_call_targets.ts` classifies it correctly as `prologue` — trust the tool
 over the neighbourhood.
 
+**Reference example for both displacement/value forms: `resource_399:0f90`.**
+Subtractive at `0x02000fda` (448 displacement, `subs #192` gives value 32,
+`adds #200` gives the next displacement 232) and additive at `0x02001506` (448
+displacement, `adds #73` gives value 521, `subs #65` gives the next displacement
+456) — 60 bytes apart in one owner. Read that pair once and the family is
+recognisable everywhere.
+
 **The displacement/value trap has a second, ADDITIVE form.** The documented
 shape is `subs r3,#192` after a store. The other is `adds r2,#68` / `subs r2,#192`
 applied *after* `adds r3,r3,r2`, where the offset that matters is the
@@ -835,7 +850,15 @@ applied *after* `adds r3,r3,r2`, where the offset that matters is the
 `workspace+448` is the natural mistake, and neither owner carrying it has
 anything else to catch it.
 
-**Cheapest link-base witness of all: an in-image handler table.** One 24-byte
+**Cheapest link-base witness, full stop — and it needs no disassembly:
+`grep -o '0x0200[89ab][0-9a-f]*' assets/code/<overlay>_c_*.c`.** A byte-exact
+sibling's pooled task-callback argument is already a proven in-image address.
+`assets/code/resource_3bc_c_020001b4.c` passes `0x0200804d` to the installer;
+under the 0x8000 base that is `Func_0200004c + 1`, which proves the base AND
+names an unconverted row as a task callback — from one read of an eight-line
+file. Do this before opening a disassembler on any new overlay.
+
+**Next cheapest: an in-image handler table.** One 24-byte
 read of the table at `resource_3c6`'s file offset 0x1ee4 gives two Thumb-bit
 witnesses at once (`0x020087c5` = `Func_020007c4 + 1`, `0x020091bd` =
 `Func_020011bc + 1`). No jump table, no control-flow analysis — find the table,
@@ -871,6 +894,13 @@ All three guards are needed together.**
    ten times across three owners.
 3. *Never model a pool word as an instruction, even a harmless-looking one* — see
    below.
+
+**A pool can end MID-ROW, several bytes before the next branch target.** In
+`resource_399:0f90` the pool at `0x0200124c` is followed at `0x02001284` by the
+body of a spin-wait reached only by a *backward* `beq.n` from below the pool.
+Ending the pool at the next branch target would have swallowed two live
+instructions. Only a control-flow walk finds this — a heuristic that assumes a
+pool runs to the next label cannot.
 
 **Derive the pool map from a CONTROL-FLOW WALK. That method is immune to both
 traps below; nothing else is.** Walk the owner from its prologue following

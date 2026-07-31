@@ -113,11 +113,23 @@ void Func_02000714(void)
     /* `record` still points at participant 25 here, which is what the field
      * test below reads. */
     if (Data_0200c838 == 0 && *(s32 *)(record + 56) == 0x80000000) {
+        /* ONE call site (0x020007c6): the `b.n 0x020007c4` at 0x020007b4
+         * joins the two arms, which differ only in r1, r2 and the second
+         * stacked word. */
+        s32 arg1;
+        s32 arg2;
+        s32 stacked;
+
         if (Data_0200c834 != 0) {
-            Func_080091c0(58, 10, 1, 1, 58, 11);
+            arg1 = 10;
+            arg2 = 1;
+            stacked = 11;
         } else {
-            Func_080091c0(58, 28, 7, 1, 58, 13);
+            arg1 = 28;
+            arg2 = 7;
+            stacked = 13;
         }
+        Func_080091c0(58, arg1, arg2, 1, 58, stacked);
     } else {
         Func_080091c0(57, 11, 1, 1, 58, 11);
         Func_080091c0(58, 14, 7, 1, 58, 13);

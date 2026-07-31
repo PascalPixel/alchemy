@@ -32,10 +32,6 @@ typedef signed int s32;
  */
 void Func_080091b8();
 void Func_080091c0();
-void Func_02006346(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02006358(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02006376(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02006390(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 void Func_02000d54(s32 index)
 {

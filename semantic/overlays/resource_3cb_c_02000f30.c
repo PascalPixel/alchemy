@@ -42,8 +42,8 @@ typedef signed int s32;
 extern u8 Data_02000240[];
 
 /* Old-style declarations; both are used for their return values. */
-s32 Func_08077148();
 s32 Func_080770c0();
+s32 Func_08077148();
 
 s32 Func_02000f30(s32 member)
 {

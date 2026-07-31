@@ -21,6 +21,7 @@ const PORTRAITS: Record<string, string> = {
   jupiter: "resource_f0_images_image_02.png",
   mercury: "resource_f0_images_image_03.png",
   vale: "resource_f0_images_image_12.png",
+  "wise-one": "battle_characters_chr_0fc_koma_003.png",
 };
 const KRADEN_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
   <path d="M12 48 Q12 34 24 34 Q36 34 36 48 Z" fill="#8a6d4a"/>
@@ -113,7 +114,7 @@ function ago(ts){
   return Math.floor(s/86400)+'d ago';
 }
 setInterval(()=>{document.querySelectorAll('.time').forEach(e=>{const t=ago(e.getAttribute('data-ts'));if(t)e.textContent=t;})},30000);
-const CAST={vale:'Kraden',mercury:'Mia',venus:'Isaac',mars:'Garet',jupiter:'Ivan'};
+const CAST={vale:'Kraden',mercury:'Mia',venus:'Isaac',mars:'Garet',jupiter:'Ivan','wise-one':'The Wise One'};
 const avatar=(who,cls)=>{
   if(who==='vale'){const s=h('span',{class:cls||''});s.innerHTML=window.KRADEN;return s.firstElementChild?s:s;}
   return h('img',{class:'sprite '+(cls||''),src:'/avatar/'+who+'.png',alt:CAST[who]||who});
@@ -207,7 +208,7 @@ Bun.serve({
       return new Response(Bun.file(svgFile(tree)), { headers: { "content-type": "image/svg+xml", "cache-control": "no-store" } });
     if (path === "/avatar/vale.svg")
       return new Response(KRADEN_SVG, { headers: { "content-type": "image/svg+xml", "cache-control": "max-age=3600" } });
-    const who = /^\/avatar\/(\w+)\.png$/.exec(path)?.[1];
+    const who = /^\/avatar\/([\w-]+)\.png$/.exec(path)?.[1];
     if (who && PORTRAITS[who])
       return new Response(Bun.file(join(ROOT, "assets", "graphics", PORTRAITS[who])), { headers: { "content-type": "image/png", "cache-control": "no-store" } });
     if (path === "/weyard.otf")

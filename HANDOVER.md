@@ -2324,6 +2324,15 @@ and `-fthumb-split-group-base` all leave it. Cleared nine rows at once on
 two-mask rule below. It does *not* clear `393:0bf8`, where the shape is
 compounded with the store-ordering one in §6.
 
+**Check the reference prologue before applying it.** The two locals are two
+extra live pseudos, so the lever is a register-pressure trade. It fails wherever
+the allocator has to buy a callee-saved register to pay for them, and the
+comparator says so on **line 1**: `push {lr}` against your `push {r5, r6, lr}`.
+Seen on `resource_3b4:18e0` and `:1bc4` (reference pushes only `lr` — no room)
+and on `3bc:0404` (reference already pushes `r8`/`sl` — no room either). Both
+ends of the range fail for the same reason. Read line 1 first; if the pushes
+differ, do not spend the probe.
+
 **Multi-arity callees use the `_b`/`_c` alias suffix**, not K&R declarations —
 and this changes argument-setup order, not just hygiene. A shared prototype-less
 declaration suppresses arg0-first ordering at *every* site that uses it.

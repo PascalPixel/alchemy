@@ -34,23 +34,6 @@ extern u16 Data_02000240[];
 void Func_02001004();
 void Func_080091c0();
 s32 Func_080770c0();
-void Func_02002636();
-void Func_02002656();
-void Func_02002680();
-void Func_020026a0();
-void Func_020026c8();
-void Func_020026e8();
-void Func_020038f8();
-void Func_0200390e();
-void Func_02003936();
-s32 Func_0200393c();
-void Func_02003956();
-void Func_02003980();
-s32 Func_02003986();
-void Func_020039a0();
-void Func_020039c8();
-s32 Func_020039ce();
-void Func_020039e8();
 
 void Func_020015dc(void)
 {

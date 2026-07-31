@@ -161,15 +161,10 @@ void Func_080000c0();
 void Func_080000d0();
 void Func_080000d8();
 
-/* `ldrb / and 0xfe / strb` and `ldrb / orr 1 / strb` on the record byte. */
-#define FLAG23_CLEAR(sel) do { u8 *r_ = Func_0808a080(sel); \
-    r_[0x23] = r_[0x23] & 0xfe; } while (0)
-#define FLAG23_SET(sel) do { u8 *r_ = Func_0808a080(sel); \
-    r_[0x23] = r_[0x23] | 1; } while (0)
-#define FLAG5A_CLEAR(sel) do { u8 *r_ = Func_0808a080(sel); \
-    r_[0x5a] = r_[0x5a] & 0xfe; } while (0)
-#define FLAG5A_SET(sel) do { u8 *r_ = Func_0808a080(sel); \
-    r_[0x5a] = r_[0x5a] | 1; } while (0)
+/* `ldrb / and 0xfe / strb` and `ldrb / orr 1 / strb` on the record byte.
+ * These were once four macros; they are written out at every use because each
+ * use is a SEPARATE Func_0808a080 call site in the assembly and the per-target
+ * call multiset is taken over sites. */
 
 void Func_020008ec(void)
 {
@@ -273,10 +268,16 @@ void Func_020008ec(void)
 
     Func_0808a1e8(2, 256, 40);
     Func_0808a090(2, 0x10000, 0x8000);      /* 1.0 / 0.5 */
-    FLAG5A_CLEAR(2);
+    {
+        u8 *r_ = Func_0808a080(2);
+        r_[0x5a] = r_[0x5a] & 0xfe;
+    }
     Func_0808a0d0(2, 80, 310);
     Func_0808a010(1);
-    FLAG5A_SET(2);
+    {
+        u8 *r_ = Func_0808a080(2);
+        r_[0x5a] = r_[0x5a] | 1;
+    }
     Func_0808a1e8(1, 258, 40);
     Func_020025a8(1, 20);
     Func_0808a1e8(2, 258, 40);
@@ -293,10 +294,16 @@ void Func_020008ec(void)
     Func_0808a130(1, 1);
     Func_020025a8(1, 20);
     Func_0808a090(2, 0x8000, 0x4000);       /* 0.5 / 0.25 */
-    FLAG5A_CLEAR(2);
+    {
+        u8 *r_ = Func_0808a080(2);
+        r_[0x5a] = r_[0x5a] & 0xfe;
+    }
     Func_0808a0d0(2, 72, 286);
     Func_0808a010(1);
-    FLAG5A_SET(2);
+    {
+        u8 *r_ = Func_0808a080(2);
+        r_[0x5a] = r_[0x5a] | 1;
+    }
     Func_0808a098(2, Data_0200ac08);
 
     if (Data_0200b69c != 0) {
@@ -481,10 +488,22 @@ void Func_020008ec(void)
     }
 
     Data_0200b694 = 3;
-    FLAG23_CLEAR(0);
-    FLAG23_CLEAR(1);
-    FLAG23_CLEAR(2);
-    FLAG23_CLEAR(3);
+    {
+        u8 *r_ = Func_0808a080(0);
+        r_[0x23] = r_[0x23] & 0xfe;
+    }
+    {
+        u8 *r_ = Func_0808a080(1);
+        r_[0x23] = r_[0x23] & 0xfe;
+    }
+    {
+        u8 *r_ = Func_0808a080(2);
+        r_[0x23] = r_[0x23] & 0xfe;
+    }
+    {
+        u8 *r_ = Func_0808a080(3);
+        r_[0x23] = r_[0x23] & 0xfe;
+    }
     Func_0808a1e0(0, 3);
     Func_0808a1e0(1, 3);
     Func_0808a1e0(2, 3);
@@ -494,24 +513,36 @@ void Func_020008ec(void)
     Func_080000d0(Func_02000800, 3200);
     Func_080f9010(220);
 
-    FLAG23_CLEAR(19);
+    {
+        u8 *r_ = Func_0808a080(19);
+        r_[0x23] = r_[0x23] & 0xfe;
+    }
     Func_0808a1e0(19, 2);
     Func_0808a0f0(19, 0x00780000, 0x00f80000);
     Func_0808a098(19, Data_0200ad20);
 
-    FLAG23_CLEAR(20);
+    {
+        u8 *r_ = Func_0808a080(20);
+        r_[0x23] = r_[0x23] & 0xfe;
+    }
     Func_0808a1e0(20, 2);
     Func_0808a0f0(20, 0x00640000, 0x01120000);
     Func_0808a098(20, Data_0200ad20);
 
     if (Data_0200b69c != 0) {
-        FLAG23_CLEAR(21);
+        {
+            u8 *r_ = Func_0808a080(21);
+            r_[0x23] = r_[0x23] & 0xfe;
+        }
         Func_0808a1e0(21, 2);
         Func_0808a0f0(21, 0x004a0000, 0x00fe0000);
         Func_0808a098(21, Data_0200ad20);
     }
 
-    FLAG23_CLEAR(22);
+    {
+        u8 *r_ = Func_0808a080(22);
+        r_[0x23] = r_[0x23] & 0xfe;
+    }
     Func_0808a1e0(22, 2);
     Func_0808a0f0(22, 0x005e0000, 0x00e10000);
     Func_0808a098(22, Data_0200ad20);
@@ -574,7 +605,10 @@ void Func_020008ec(void)
     Func_0808a138(1, 3);
     Func_0808a010(40);
     Func_0808a1e0(1, 2);
-    FLAG23_SET(1);
+    {
+        u8 *r_ = Func_0808a080(1);
+        r_[0x23] = r_[0x23] | 1;
+    }
     Func_080091e0(Func_0808a080(1), 1);
     Func_0808a128(1, 6, 0);
     Func_0808a100(1, 1);
@@ -604,7 +638,10 @@ void Func_020008ec(void)
         Func_0808a138(3, 2);
         Func_0808a010(80);
         Func_0808a1e0(3, 2);
-        FLAG23_SET(3);
+        {
+            u8 *r_ = Func_0808a080(3);
+            r_[0x23] = r_[0x23] | 1;
+        }
         Func_080091e0(Func_0808a080(3), 1);
         Func_0808a128(3, 4, 0);
         Func_0808a0e0(3, -2, 0);
@@ -629,7 +666,10 @@ void Func_020008ec(void)
     Func_0808a138(2, 2);
     Func_0808a010(20);
     Func_0808a1e0(2, 2);
-    FLAG23_SET(2);
+    {
+        u8 *r_ = Func_0808a080(2);
+        r_[0x23] = r_[0x23] | 1;
+    }
     Func_080091e0(Func_0808a080(2), 1);
     Func_0808a128(2, 4, 0);
     Func_0808a100(2, 1);
@@ -637,7 +677,10 @@ void Func_020008ec(void)
     Func_0808a138(0, 2);
     Func_0808a010(10);
     Func_0808a1e0(0, 2);
-    FLAG23_SET(0);
+    {
+        u8 *r_ = Func_0808a080(0);
+        r_[0x23] = r_[0x23] | 1;
+    }
     Func_080091e0(Func_0808a080(0), 1);
     Func_0808a128(0, 4, 0);
     Func_0808a100(0, 1);
@@ -762,10 +805,22 @@ void Func_020008ec(void)
         Func_020025c0(3, 0xc000, 10);
     }
 
-    FLAG23_CLEAR(0);
-    FLAG23_CLEAR(1);
-    FLAG23_CLEAR(2);
-    FLAG23_CLEAR(3);
+    {
+        u8 *r_ = Func_0808a080(0);
+        r_[0x23] = r_[0x23] & 0xfe;
+    }
+    {
+        u8 *r_ = Func_0808a080(1);
+        r_[0x23] = r_[0x23] & 0xfe;
+    }
+    {
+        u8 *r_ = Func_0808a080(2);
+        r_[0x23] = r_[0x23] & 0xfe;
+    }
+    {
+        u8 *r_ = Func_0808a080(3);
+        r_[0x23] = r_[0x23] & 0xfe;
+    }
     Func_0808a1e0(0, 3);
     Func_0808a1e0(1, 3);
     Func_0808a1e0(2, 3);
@@ -909,10 +964,22 @@ void Func_020008ec(void)
     Func_0808a1e0(1, 2);
     Func_0808a1e0(2, 2);
     Func_0808a1e0(3, 2);
-    FLAG23_SET(0);
-    FLAG23_SET(1);
-    FLAG23_SET(2);
-    FLAG23_SET(3);
+    {
+        u8 *r_ = Func_0808a080(0);
+        r_[0x23] = r_[0x23] | 1;
+    }
+    {
+        u8 *r_ = Func_0808a080(1);
+        r_[0x23] = r_[0x23] | 1;
+    }
+    {
+        u8 *r_ = Func_0808a080(2);
+        r_[0x23] = r_[0x23] | 1;
+    }
+    {
+        u8 *r_ = Func_0808a080(3);
+        r_[0x23] = r_[0x23] | 1;
+    }
 
     Func_0808a138(2, 2);
     Func_020025c0(2, 0xe000, 10);
@@ -950,7 +1017,6 @@ void Func_020008ec(void)
         }
         Func_0808a100(3, 3);
         Func_0808a110(1, 3);
-        Func_0808a110(2, 3);
     } else {
         Func_0808a010(20);
         Func_0808a110(1, 3);

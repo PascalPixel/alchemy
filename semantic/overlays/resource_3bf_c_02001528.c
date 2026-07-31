@@ -54,16 +54,7 @@ s32 Func_020018e4();
 s32 Func_02001918();
 s32 Func_080770c0();
 void Func_080770c8();
-void Func_0808a080();
-s32 Func_02006b82(s32 kind);
-s32 Func_02006b74(s32 state);
-s32 Func_02006ba6(s32 state);
-s32 Func_02006bb8(s32 state);
-s32 Func_02002a96(void);
-s32 Func_02002eec(s32 kind);
-s32 Func_02002eea(s32 kind);
-void Func_02006c28(s32 id);
-s32 Func_02006c30(s32 state);
+s32 Func_0808a080();
 
 void Func_02001528(void)
 {

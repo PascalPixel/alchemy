@@ -16,27 +16,25 @@
 typedef signed int s32;
 typedef unsigned char u8;
 
-s32 Func_0200458e(s32 selector);
-u8 *Func_020045d0(s32 slot);
-u8 *Func_020045dc(s32 slot);
-u8 *Func_020045ec(s32 slot);
-u8 *Func_020045f8(s32 slot);
+s32 Func_080770c0();
+void Func_080770c8();
+u8 *Func_0808a080();
 
 void Func_020014ac(void)
 {
     u8 *state;
     u8 *flags;
 
-    Func_0200458e(0x201);
-    if (Func_0200458e(0x200) != 0) {
-        state = Func_020045d0(14);
+    Func_080770c8(0x201);
+    if (Func_080770c0(0x200) != 0) {
+        state = Func_0808a080(14);
         state[98] = 0;
-        flags = Func_020045dc(14);
+        flags = Func_0808a080(14);
         flags[89] = (u8)(flags[89] & 0xf7);
     } else {
-        state = Func_020045ec(14);
+        state = Func_0808a080(14);
         state[98] = 1;
-        flags = Func_020045f8(14);
+        flags = Func_0808a080(14);
         flags[89] = (u8)(flags[89] | 8);
     }
 }

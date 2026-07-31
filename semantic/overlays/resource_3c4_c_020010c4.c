@@ -64,22 +64,22 @@ typedef unsigned char u8;
  */
 
 /* Returns the record for the given slot. */
+void Func_02000ae8();
+s32 Func_030003e0();
+void Func_080000c0();
+s32 Func_080000f8();
+void Func_08009080();
+void Func_08009150();
+void Func_080091e0();
+void Func_0808a018();
+void Func_0808a020();
 u8 *Func_0808a080();
-
-void Func_0808a018();      /* scripted-action bracket: open */
-void Func_08009080();      /* (record, pose) */
 void Func_0808a118();
-void Func_080091e0();      /* (record, phase) */
 void Func_080f9010();
-void Func_08009150();      /* (record, x, y, z) - start a move */
-void Func_080000c0();      /* ROM dispatch[0] -> Func_080030f8 */
-s32 Func_080000f8();       /* ROM dispatch[7] -> Func_08004458 */
-s32 Func_030003e0();       /* relocated IWRAM helper: (value, 10) */
-void Func_0808a020();      /* scripted-action bracket: close */
+
 
 /* This overlay's effect spawner: four register arguments plus four stack
  * words - (x, y, z, vx, vy, vz, flags, options). */
-void Func_02000ae8();
 
 void Func_020010c4(void)
 {
@@ -130,8 +130,8 @@ void Func_020010c4(void)
 
         if ((tick & 1) == 0) continue;
 
-        kick = (Func_030003e0(Func_080000f8(), 10) - 5) * 0x3332;
-        lift = (s32)0xffff8003 - Func_030003e0(Func_080000f8(), 10) * 6553;
+        kick = (Func_080000f8(Func_030003e0(), 10) - 5) * 0x3332;
+        lift = (s32)0xffff8003 - Func_080000f8(Func_030003e0(), 10) * 6553;
 
         Func_02000ae8(*(s32 *)(record + 8), *(s32 *)(record + 12),
                       *(s32 *)(record + 16),

@@ -46,26 +46,7 @@ void Func_0808a0e8();
 void Func_0808a0f0();
 void Func_0808a148();
 void Func_0808a1b8();
-ActorRecord *Func_02007b82(s32 slot);
-ActorRecord *Func_02007b96(s32 slot);
-ActorRecord *Func_02007baa(s32 slot);
 
-void Func_02007be0(s32 actor, s32 a, s32 b);
-void Func_02007bf4(s32 actor, s32 a, s32 b);
-void Func_02007c08();
-void Func_02007c7a(s32 a, s32 b, s32 c);
-void Func_02007bd4(s32 actor, s32 a, s32 b);
-void Func_02007bea(s32 actor, s32 a, s32 b);
-void Func_02007c1e(s32 actor, s32 x, s32 y);
-void Func_02007c00(s32 actor, s32 a, s32 b);
-void Func_02007c34(s32 actor, s32 x, s32 y);
-void Func_02007c52(s32 actor);
-void Func_02007c62(s32 actor);
-void Func_02007c68(s32 actor);
-void Func_02007c94(s32 actor, s32 a, s32 b);
-void Func_02007caa(s32 actor, s32 a, s32 b);
-void Func_02007cb4(s32 actor, s32 a, s32 b);
-void Func_02007c12(s32 a);
 
 void Func_0200252c(void)
 {

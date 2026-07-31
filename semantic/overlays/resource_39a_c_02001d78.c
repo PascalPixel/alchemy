@@ -42,10 +42,6 @@ extern u32 Data_03001e40;
 void Func_02001c18();
 s32 Func_080000f8();
 void Func_080f9010();
-void Func_020041ba();
-s32 Func_02004026();
-s32 Func_02004034();
-void Func_02003a04();
 
 void Func_02001d78(void)
 {

@@ -65,7 +65,6 @@ void Func_02000a24(void)
     s16 *scenario;
     u32 step;
     s32 tint;
-    s32 id;
 
     workspace = Data_03001ebc;
     *(s32 *)(workspace + 448) = 516;
@@ -112,9 +111,19 @@ void Func_02000a24(void)
     case 10:
     case 11:
     case 12:
-        for (id = 9; id <= 19; id++) {
-            Func_080091e0(Func_0808a080(id), 0);
-        }
+        /* Fully UNROLLED in the assembly: 11 separate
+         * Func_0808a080/Func_080091e0 pairs at 0x02000b44-0x02000bc2, not a loop. */
+        Func_080091e0(Func_0808a080(9), 0);
+        Func_080091e0(Func_0808a080(10), 0);
+        Func_080091e0(Func_0808a080(11), 0);
+        Func_080091e0(Func_0808a080(12), 0);
+        Func_080091e0(Func_0808a080(13), 0);
+        Func_080091e0(Func_0808a080(14), 0);
+        Func_080091e0(Func_0808a080(15), 0);
+        Func_080091e0(Func_0808a080(16), 0);
+        Func_080091e0(Func_0808a080(17), 0);
+        Func_080091e0(Func_0808a080(18), 0);
+        Func_080091e0(Func_0808a080(19), 0);
         if (Func_080770c0(0x804) == 0) {
             Func_02000f8c();
         }
@@ -139,9 +148,14 @@ void Func_02000a24(void)
     case 13:
     case 14:
     case 15:
-        for (id = 9; id <= 14; id++) {
-            Func_080091e0(Func_0808a080(id), 0);
-        }
+        /* Fully UNROLLED in the assembly: 6 separate
+         * Func_0808a080/Func_080091e0 pairs at 0x02000c32-0x02000c74, not a loop. */
+        Func_080091e0(Func_0808a080(9), 0);
+        Func_080091e0(Func_0808a080(10), 0);
+        Func_080091e0(Func_0808a080(11), 0);
+        Func_080091e0(Func_0808a080(12), 0);
+        Func_080091e0(Func_0808a080(13), 0);
+        Func_080091e0(Func_0808a080(14), 0);
         if (Func_080770c0(0x825) == 0) {
             Func_0200161c();
         }

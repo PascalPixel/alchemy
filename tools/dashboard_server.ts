@@ -7,6 +7,8 @@ import { statSync, existsSync, readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 
 const ROOT = join(dirname(Bun.fileURLToPath(import.meta.url)), "..");
+const SOURCE = Bun.fileURLToPath(import.meta.url);
+const SOURCE_MTIME = statSync(SOURCE).mtimeMs;
 const TREES = ["core", "overlays", "assets"] as const;
 const svgFile = (tree: string) => join(ROOT, "assets", "readme", `gs1-en-${tree}.svg`);
 const KANBAN = "/tmp/ALCHEMY_KANBAN.md";
@@ -222,6 +224,18 @@ Bun.serve({
     return new Response(pageHtml(), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
   },
 });
+
+// launchd's WatchPaths starts a stopped job but does not replace one that is
+// already running. Exit when this source changes so KeepAlive relaunches the
+// dashboard with the new cast, routes, and client bundle instead of serving a
+// stale in-memory page indefinitely.
+setInterval(() => {
+  try {
+    if (statSync(SOURCE).mtimeMs !== SOURCE_MTIME) process.exit(0);
+  } catch {
+    process.exit(0);
+  }
+}, 1000);
 
 function readChatCsv(): { time: string; who: string; text: string }[] {
   if (!existsSync(CHAT)) return [];

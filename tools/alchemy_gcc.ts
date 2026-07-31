@@ -444,7 +444,7 @@ const SCHED_HIGH_DEST_FIRST_SOURCES = new Set(["08098954", "0809a294", "08097540
 // Keyed by stem, so every member here is also a claim that no other overlay has
 // a converted row at the same offset. 02001984 was moved out to the path-keyed
 // set below when resource_3b4 gained a row at that offset that the flag breaks.
-const SCHED_LOW_DEST_FIRST_SOURCES = new Set(["08097540", "020011bc", "02001958", "02000260", "020011d8", "0200028c"]);
+const SCHED_LOW_DEST_FIRST_SOURCES = new Set(["08097540", "020011bc", "02001958", "02000260", "020011d8"]);
 const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
   // resource_3b7:0154 and :0178 are the same four-call sheet over two ids. The
   // third call takes -1, built as movs #1 then negs, and the reference sets the
@@ -711,6 +711,11 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // Same tell twice in resource_38c:035c, whose other lever is the rerun-cse
   // one; the flags are independent and both are needed.
   "assets/code/resource_38c_c_0200035c.c",
+  // Moved out of the stem-keyed set: 0200028c was added for resource_3b5 and
+  // three more overlays have since gained a row at that offset (38d, 3bb, 399),
+  // which the bare-address key was silently handing the flag to. Found by the
+  // collision scan `--lint` now runs.
+  "assets/code/resource_3b5_c_0200028c.c",
   // resource_3c3:0288 sets r1 and negates r2 for a three-argument call and the
   // reference takes the r1 setter first.
   "assets/code/resource_3c3_c_02000288.c",
@@ -1804,6 +1809,41 @@ export function callbackArityLint(): void {
       `array index in as callViaBase: ${leaking.join(", ")}`,
     );
   }
+  overlayStemCollisionLint();
+}
+
+// §7's routing key is the bare address, so every stem-keyed set is
+// **overlay-blind**: an entry added for one overlay silently applies to every
+// other overlay that later gains a row at the same offset. It does not fail as
+// a byte diff — it surfaces two layers away as `palette token plan does not
+// reconstruct input` from `build_assets`, on an overlay the change never
+// mentions. @venus lost a cycle to that shape and proposed this check; it is a
+// generalisation of the rule already written above `NO_INTERWORK_SOURCES`, and
+// like the scan above it needs no toolchain, so `main` can run it too.
+export function overlayStemCollisionLint(): void {
+  const root = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
+  const source = readFileSync(join(root, "tools/alchemy_gcc.ts"), "utf8");
+  const owners = new Map<string, string[]>();
+  for (const name of readdirSync(join(root, "assets/code"))) {
+    const stem = name.match(/_c_([0-9a-f]{8})\.c$/);
+    if (stem === null) continue;
+    owners.set(stem[1], [...(owners.get(stem[1]) ?? []), name]);
+  }
+  const collisions: string[] = [];
+  const sets = source.matchAll(/const\s+([A-Z0-9_]+)\s*=\s*new Set\(\[([\s\S]*?)\]\)/g);
+  for (const [, name, body] of sets) {
+    for (const [, stem] of body.matchAll(/"([0-9a-f]{8})"/g)) {
+      const files = owners.get(stem) ?? [];
+      if (files.length > 1) collisions.push(`${name} "${stem}" -> ${files.sort().join(", ")}`);
+    }
+  }
+  if (collisions.length > 0) {
+    throw new Error(
+      `these stem-keyed routing entries match more than one overlay source, so they ` +
+      `apply to overlays they were never meant for -- move each to the path-keyed ` +
+      `set naming the overlay it was added for: ${collisions.join("; ")}`,
+    );
+  }
 }
 
 function selfTest(): void {
@@ -2216,7 +2256,7 @@ function main(): void {
   }
   if (argument === "--lint") {
     callbackArityLint();
-    console.log("lint=ok callback-arity");
+    console.log("lint=ok callback-arity overlay-stem-collisions");
     return;
   }
   if (argument === "agbcc") {

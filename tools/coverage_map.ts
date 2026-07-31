@@ -1258,14 +1258,24 @@ const CORE_HUE: HueBand = { fallback: "#a855f7", p3: "color(display-p3 0.55 0 1)
 const OVERLAY_HUE: HueBand = { fallback: "#22d3ee", p3: "color(display-p3 0 1 1)" };
 const ASSET_HUE: HueBand = { fallback: "#ff0080", p3: "color(display-p3 1 0 0.5)" };
 const GROUND = "#0a0a0a";
-const CODE_OPACITY: Record<string, number> = { exact_c: 1, semantic_c: 0.5, assembly: 0.14 };
+// The code completion ladder, opacity = completion: assembly 0 (dark, not
+// started) -> semantic C 0.5 -> byte-exact C 0.75 -> humanized byte-exact C
+// 1.0. The last tier has no members yet — exact sources are still address-
+// named — so no code tile reaches full brightness until real humanization
+// lands. That is the point.
+const CODE_OPACITY: Record<string, number> = {
+  humanized_c: 1, exact_c: 0.75, semantic_c: 0.5, assembly: 0,
+};
 // Asset maturity: byte-represented -> b&w sheet -> coloured sheet -> cut into
 // individual objects (the final outcome: fanfare.wav, vale.mid, weyard.sf2,
 // spruce.png). Total pinkness — full opacity — is the goal state.
 export const ASSET_TIERS = ["asset_bytes", "asset_bw", "asset_color", "asset_objects"] as const;
 export type AssetTier = (typeof ASSET_TIERS)[number];
+// Asset ladder mirrors the code ladder: byte-represented keeps a faint floor
+// (visible gray, per the accounting brief) -> b&w sheet 1/3 -> coloured sheet
+// 2/3 -> individual objects (fanfare.wav, vale.mid, weyard.sf2, spruce.png) 1.
 const ASSET_OPACITY: Record<string, number> = {
-  asset_bytes: 0.12, asset_bw: 0.3, asset_color: 0.6, asset_objects: 1, asset_data: 0.12,
+  asset_bytes: 0.08, asset_bw: 0.34, asset_color: 0.67, asset_objects: 1, asset_data: 0.08,
 };
 
 /** First-cut representation-form tier for one package, from its source names. */
@@ -1302,7 +1312,19 @@ export function assetMaturityTiles(tree: SourceTree): Tile[] {
   const gatherSources = (node: unknown, out: string[]): void => {
     if (Array.isArray(node)) { for (const child of node) gatherSources(child, out); return; }
     if (node === null || typeof node !== "object") {
-      if (typeof node === "string" && /\.[a-z0-9]{2,4}$/i.test(node)) out.push(node);
+      if (typeof node !== "string") return;
+      if (/\.json$/i.test(node) && !visited.has(node)) {
+        // Follow nested plans (bank.json, index.json chains) so per-object
+        // sources — koma frames, .mid tracks, .wav samples — are seen even
+        // when they sit two or three references deep.
+        visited.add(node);
+        const text = tree.read(node);
+        if (text !== undefined) {
+          try { gatherSources(JSON.parse(text), out); } catch { /* no label */ }
+        }
+        return;
+      }
+      if (/\.[a-z0-9]{2,4}$/i.test(node)) out.push(node);
       return;
     }
     for (const value of Object.values(node as Record<string, unknown>)) gatherSources(value, out);
@@ -1346,7 +1368,7 @@ export function renderBoxTree(
   ariaLabel: string,
   hue: HueBand = CORE_HUE,
   laneOpacity: Record<string, number> = CODE_OPACITY,
-  laneOrder: readonly string[] = ["exact_c", "semantic_c", "assembly"],
+  laneOrder: readonly string[] = ["humanized_c", "exact_c", "semantic_c", "assembly"],
 ): string {
   const width = 1600;
   const height = 900;

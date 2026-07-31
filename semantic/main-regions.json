@@ -1266,6 +1266,20 @@
           "size": 546
         }
       ]
+    },
+    {
+      "entry": "0x0808bec0",
+      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), 1052-byte keep_structured_asm row holding a single function per out/asm/manifest.json (one row, source asm/0808bec0.s): prologue push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill and sub sp,#44 at 0x0808bec0, single epilogue add sp,#44/pop.../bx r0 at 0x0808c2ac-0x0808c2bc, no branch out of the row and no inbound branch from outside it. bun tools/main_xref.ts 0808bec0: FUNCTION (called directly), one call site (0x0808ce0e). The literal pool is split across two clusters rather than one trailing block: an 11-word cluster at 0x0808c0fc-0x0808c128 embedded mid-function (0x03001ebc, 0x02000240, 0x001fffff, 0x02020000, 0x02010000, 0x000fffff, 0x00000167, 0x03000118, 0x0000ffff, 0x0000022e, 0x00000232), with ordinary code resuming immediately at 0x0808c128 (4-aligned, no filler needed), and a 7-word trailing cluster at 0x0808c2c0-0x0808c2dc (0x00000232, 0x0000023e, 0x00002096, 0x0000022e, 0x00000101, 0x0000ffff, 0x00000131) after a 2-byte movs r0,r0 filler at 0x0808c2be. Registered as two executable_ranges around the mid-function pool, same construction as semantic/main/0800ebec.c's own multi-row split. The one mov ip,pc / bx r4 sequence (0x0808c074) is an ordinary indirect call through the pooled 0x03000118, already recorded as opaque for 0x0800447c/0x08004ab0/0x0800c62c/0x0808b3ec, not retained assembly. Semantic-only: fetches the party leader's struct MotionObject from Data_03001ebc via the same inlined index*4+0x14 formula src/0808ba1c.c's Func_0808ba1c itself uses, then runs a terrain-tile-change-detection pass (mirroring 0x0800c62c's own >>20 tile-index shape) and a damage-tick pass calling three already-exact siblings (src/0808c2dc.c, src/0808c30c.c, src/0808c3a4.c) and two more exact callees (src/0808b048.c, src/0808b02c.c) read this same session. Several Data_03001ebc/Data_02000240 offsets are named generically with explicit Uncertainty comments where this row alone doesn't establish their role. Not yet checked byte-exact.",
+      "executable_ranges": [
+        {
+          "address": "0x0808bec0",
+          "size": 572
+        },
+        {
+          "address": "0x0808c128",
+          "size": 406
+        }
+      ]
     }
   ]
 }

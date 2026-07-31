@@ -230,6 +230,24 @@
       ]
     },
     {
+      "entry": "0x0800f2f8",
+      "evidence": "Core-band census row (/tmp/ALCHEMY_QUEUE_CORE.md), 1252 bytes, a sibling of 0x0800ebec's Func_0800ebec (player walk step): the state object's fields match struct Object_0800ebec exactly (position_08/step_04/heading_06/velocity_24/pushback_38/animation_timer_64/animation_phase_66), and +0x54 is status_54, the field name 0800c62c.c already established on the same 64-record Data_03001e64 array. Reads confirmed against out/asm/0800f2f8.elf via arm-none-eabi-objdump rather than a naive resolver, since several pc-relative loads are mid-function embedded pools. Two callees, Func_080122ac and Func_08012204, are not established anywhere else and are declared from their call shape alone (self-documented as Uncertainty in the draft). Excluded (110 bytes): the 2-byte movs r0,r0 alignment filler at 0x0800f62a, the 44-byte pool at 0x0800f62c (0x02000240, 0x03001ae8, 0x03001b04, 0x08013254, 0x0000ffff, 0x03001f54, 0xfffff000, 0xffffe000, 0xffffd000, 0xffffc000, 0x03001ebc), the 24-byte pool at 0x0800f720 (0x00000000, 0x03000118, 0x03001e70, 0x03001ae8, 0x0801328c, 0xfffffe00), and the 4-byte trailing pool at 0x0800f7d8 (0x08013280).",
+      "executable_ranges": [
+        {
+          "address": "0x0800f2f8",
+          "size": 818
+        },
+        {
+          "address": "0x0800f658",
+          "size": 200
+        },
+        {
+          "address": "0x0800f738",
+          "size": 160
+        }
+      ]
+    },
+    {
       "entry": "0x080123f4",
       "evidence": "One 292-byte keep_structured_asm row holding a single function: prologue push {r5,r6,r7,lr} plus the fp/sl/r9/r8 saves and sub sp,#40 at 0x080123f4, single epilogue at 0x080124ee, and every branch is internal to the row (the loop back-edge to 0x08012440, the scale guard to 0x080124e0 and its join at 0x080124e4). The six mov ip,pc; bx r3 / bx r6 sequences (0x0801242c through 0x080124d4) are ordinary indirect calls through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after each bx, and every landing site consumes r0 as that call's result inside the same frame and stack adjustment - the reading already recorded for 0x0800ebec, not retained assembly. The three bl targets are the runtime call_via thunks at 0x080072e4, not functions in their own right: Func_080072f0 is call_via_r3 to the pooled 0x03000250 world-to-camera transform, Func_0800730c is call_via_sl to the pooled 0x0300013c ratio helper, and Func_080072ec is call_via_r2 to the pooled 0x030001d8 square root. Excluded (22 bytes): the 2-byte movs r0,r0 alignment filler at 0x08012502 and the five-word pool at 0x08012504 (0x03000250, 0x03000118, 0x03001ce0, 0x0300013c, 0x030001d8). Two direct callers, 0x08010be0 and 0x0801137a.",
       "executable_ranges": [

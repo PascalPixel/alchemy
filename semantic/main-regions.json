@@ -1392,6 +1392,20 @@
           "size": 30
         }
       ]
+    },
+    {
+      "entry": "0x0800d340",
+      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), 788-byte keep_structured_asm row holding a single function: prologue push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill and sub sp,#16 at 0x0800d340, single epilogue add sp,#16/pop.../bx r0 at 0x0800d63e-0x0800d64e, no branch out of the row and no inbound branch from outside it. bun tools/main_xref.ts 0800d340: FUNCTION, indirectly published callback (published at 0x0800c0a8). Same 64-record Data_03001e64 object array 0x0800c62c and 0x0808bec0 already walk (this row processes only the first 14), at the same true offsets semantic/main/0800ebec.c's struct Object_0800ebec establishes -- program_00@0, heading_06@6, position_08@8/12/16, ground_14@20, velocity_24@36/40/44, speed_30@48, acceleration_34@52, pushback_38@56/60/64, vertical_motion_strength@72 -- locally redeclared here per this dig's not-yet-exact include/ policy. The literal pool is split: a 2-byte movs r0,r0 filler at 0x0800d572 plus a six-word cluster at 0x0800d574-0x0800d58c (0x03001e64, 0x0000ffff, 0x030001d8, 0x00ffffff, 0x03000118, 0x0300013c) embedded mid-function, with ordinary code resuming immediately at 0x0800d58c (4-aligned, no filler needed), and a one-word trailing pool at 0x0800d650 (0xfffff000, the -0x1000 turn-clamp bound) with no filler needed (196 bytes of code from 0x0800d58c lands exactly on it). Registered as two executable_ranges around the mid-function split, same construction as 0x0808bec0's own entry. Every mov ip,pc-style call in this row is a bl through the runtime's own _call_via_r2/r3/r4 thunks (0x080072e4-0x08007320), already documented as ordinary indirect calls by semantic/main/0800ebec.c's own header comment, not retained assembly. Semantic-only: per-object physics tick, pushback-recoil resolution (park note's originally-traced half) feeding a ground-step + pushback-target-crossing-detection + position-commit + heading-turn-clamp tail (the second half, finished this pass after the sibling read this dig did for 0x0808bec0 revealed the shared shape). Not yet checked byte-exact.",
+      "executable_ranges": [
+        {
+          "address": "0x0800d340",
+          "size": 562
+        },
+        {
+          "address": "0x0800d58c",
+          "size": 196
+        }
+      ]
     }
   ],
   "manual_regions": []

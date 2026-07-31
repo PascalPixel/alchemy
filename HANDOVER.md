@@ -138,9 +138,9 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **662,952
-executable bytes across 1,253 compiling sources**: 385,850 main-image bytes and
-277,102 overlay bytes. Combined with exact C, **877,080 / 1,339,580 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **683,124
+executable bytes across 1,299 compiling sources**: 385,850 main-image bytes and
+297,274 overlay bytes. Combined with exact C, **897,308 / 1,339,580 executable
 bytes** are expressed as C.
 Build that lane with `bun run build:semantic`; its
 sources live under `semantic/` and do not claim byte equality. Use
@@ -153,10 +153,10 @@ sources live under `semantic/` and do not claim byte equality. Use
 of the ordinary review queue.
 
 
-**37 overlays have zero unconverted rows in the strict queue**, holding
-260,098 strict bytes between them. Regenerate this list rather than editing it —
+**43 overlays have zero unconverted rows in the strict queue**, holding
+274,570 strict bytes between them. Regenerate this list rather than editing it —
 it has drifted twice from being maintained by hand:
-`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,484), `resource_3c8` (12,800), `resource_372` (10,202), `resource_38f` (9,848), `resource_371` (9,650), `resource_39f` (9,278), `resource_3c5` (9,208), `resource_374` (9,148), `resource_3a8` (8,912), `resource_383` (8,652), `resource_391` (7,648), `resource_39a` (7,096), `resource_375` (6,568), `resource_3aa` (6,552), `resource_3b4` (6,462), `resource_3b2` (6,134), `resource_3b7` (6,062), `resource_37b` (6,032), `resource_3bb` (5,896), `resource_395` (5,780), `resource_3cb` (5,540), `resource_3c6` (5,250), `resource_38d` (5,212), `resource_399` (4,738), `resource_3a7` (4,728), `resource_370` (4,718), `resource_3c7` (4,440), `resource_37f` (4,428), `resource_3ad` (4,288), `resource_3ca` (3,978), `resource_3bc` (3,826), `resource_38b` (3,628), `resource_3a3` (3,428), `resource_3ba` (3,376), `resource_3a4` (36).
+`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,252), `resource_3c8` (11,916), `resource_372` (9,838), `resource_371` (9,486), `resource_38f` (9,212), `resource_39f` (8,692), `resource_383` (8,588), `resource_3c5` (7,866), `resource_3a8` (7,780), `resource_391` (7,648), `resource_374` (7,468), `resource_375` (6,424), `resource_37a` (6,200), `resource_37b` (6,032), `resource_3b2` (5,984), `resource_3aa` (5,960), `resource_3b7` (5,954), `resource_3bb` (5,548), `resource_395` (5,504), `resource_3cb` (5,488), `resource_39a` (5,368), `resource_377` (5,226), `resource_3b4` (5,104), `resource_3c6` (5,094), `resource_3ae` (5,026), `resource_370` (4,718), `resource_38d` (4,680), `resource_399` (4,672), `resource_3a2` (4,484), `resource_3a7` (4,442), `resource_3c7` (4,252), `resource_37f` (4,216), `resource_3ad` (3,978), `resource_3ca` (3,926), `resource_3bc` (3,768), `resource_3ba` (3,344), `resource_38b` (3,318), `resource_3a3` (3,156), `resource_3b5` (2,914), `resource_3c2` (2,688), `resource_3b6` (2,284).
 
 **"Converted in full" means zero unconverted STRICT-QUEUE rows, not that every
 executable byte of the overlay is C.** Measured across those overlays: their
@@ -173,10 +173,6 @@ that proportion.
 0x02003fa8-0x02003fb8 with `r0 = 0` before it, so it returns `s32`. That is
 **3,922 bytes as one owner across 18 inventory rows with ~260 static calls**; the
 18 sub-rows are `call:` seeds (import identities), not real entries, and the only
-true internal structure is the jump table. Build that lane
-with `bun run build:semantic`; its sources live under `semantic/` and do not
-claim byte equality. Use `semantic/ordinary-blockers.json` to keep proven ABI
-and multi-region traps out of the ordinary review queue.
 true internal structure is the jump table.
 
 Both lanes are drawn together in the README coverage map
@@ -450,6 +446,33 @@ reads as a sign test if the quantisation above it was missed.
 without knowing any import: only the affordable arm calls the charge import with
 the *negated* amount.
 
+**The offset-0 export table is a COMPLETE LINK-BASE PROOF on its own, not just a
+root-finder — try it before any other witness.** `resource_3a2`'s six export
+words (`0x020091b1, 0x0200807d, 0x020080b1, 0x020080b9, 0x02009181,
+0x020080ad`) are all odd, all resolve at `word - 0x8000` onto function starts,
+and four of those starts are already-banked byte-exact siblings. That is six
+parity witnesses plus four banked cross-checks from a single
+`overlay_show <ov> 0 -n 96` — stronger than the jump-table and task-install
+witnesses this section recommends, and cheaper than both. The wider `_overlay.s`
+grep then confirmed it with zero exceptions: all 21 odd words on function
+starts, all 5 even words past the import band.
+
+**A window test spelled `subs / lsls #16 / cmp` is a two-value selector.**
+`resource_3a2:12a4` loads a sub-state unsigned, subtracts 4, shifts left 16 and
+compares against `0x00010000` — that selects exactly `{4, 5}`. Undo the shift or
+it reads as an arbitrary magnitude comparison.
+
+**`movs r2,#N / lsls r2,r2,#1` appears as a displacement AND as a value inside
+one owner, and it is a family-wide codegen habit rather than a one-owner trap.**
+Documented for `02000180`; `resource_3a2:11b0` does it twice more (448 as a `str`
+displacement, then `adds r2,#65` making 513 the stored *value*) and `:0c30`
+once.
+
+**Two workspace slots hang off the same `0x03001ebc` pointer and are easy to
+conflate.** `+472` is the u16 skip-beat counter; `+448` is an s32 scene/phase id
+published on entry with a per-scene constant (32 from `02000180`, 256 from
+`resource_3a2:11b0`, 513 from both `:01ec` and `:0c30`).
+
 **An overlay's image offset 0 can be an exported-entry veneer table.** In
 `resource_3b5` it is a run of `ldr r4,[pc,#0] / bx r4 / .word 0x0200_8xxx` pairs;
 resolving those words under the link base hands you the overlay's *roots* for
@@ -468,6 +491,58 @@ confirms it is data.
 `resource_3b5:0170` loads `[r3,#0]` and `[r3,#48]` off it. Reading those as two
 unrelated globals hides that the second is the well-known workspace pointer the
 rest of the overlay loads directly.
+
+**An inventory "second entry" row can be the `bl`-decoding artefact ITSELF.**
+`resource_379:00dc` is listed as a 2,524-byte contained row, and the banked
+byte-exact `resource_379_c_02000054.c` calls `Func_020000dc` — but the halfwords
+`f000 f839` store 0x072, so the real target is 0x0074 and `0x020000dc` is an
+`ldr r1,[pc,#944]` in the middle of a body. The +2 rule does not only invert
+*import* names in exact siblings; it **invalidates inventory rows seeded from the
+wrong target**. Check any `contained_by` row whose offset is a `bl` target before
+treating it as a real entry.
+
+**A jump table is a pool the walk CANNOT SEE PAST — seed it before believing any
+gap.** Walking `resource_3c4:259c` without seeding its two `mov pc,r3` tables
+reported 2,496 "pool" bytes against a true 228, a 10× overcount that looks
+exactly like a mis-spanned row. Read the table first: base = the pool word the
+dispatch loads, entry count = the `cmp`/`bls` bound, entries even.
+
+**A long `bl` to the owner's own epilogue and a jump-table entry can name the
+same address with different meanings.** In `resource_3c4:259c` five `bl`s and
+three of table B's entries all land on 0x2fda. The `bl`s are `goto`s — **excluded
+from the multiset** — while the table entries are ordinary `default` arms. Five
+phantom calls if the distinction is missed.
+
+**`overlay_call_targets.ts`'s naive overlapping scan agreeing with a proper CFG
+walk is CORROBORATION, never a substitute.** It matched per target on both
+`resource_3c4:259c` (211/211) and `resource_379:0074` (287/287) — but only
+because neither owner's pool happens to hold a BL-shaped word, which is the exact
+case the walk exists to survive.
+
+**The pool hop can be the ONLY branch in a kilobyte-plus owner.**
+`resource_3ce:029c` is 1,574 bytes of pure straight line whose single branch
+instruction exists solely to hop its one pool word — and the hop is
+mid-computation (r1 = 236 set before it, consumed after). A walker that treats
+"first branch" as structure, or that stops carrying registers across a branch,
+silently drops an argument. Same shape at `resource_37a:2108`.
+
+**A `bl` count of 191 to a single import is a SCRIPT TABLE, not a loop.**
+`resource_3ce:029c` is sixteen runs of an identical `movs/movs/bl` triple with no
+counter, no back edge and no compare; folding it would have deflated the multiset
+by 175. The banked byte-exact sibling `resource_3ce_c_020008c4.c` spells its own
+run out the same way — check for such a sibling before "tidying" a long run.
+
+**A one-shot gate proves itself when the scene's own tail sets the flag it
+tested.** `resource_37a:0488` opens `if (Func_080770c0(0x809)) return;` and closes
+`Func_080770c8(0x809)`. Gate and setter agreeing settles "is this one-shot" in
+one line — the positive counterpart to the documented trap where a gate flag's
+setter lives in a different owner.
+
+**Non-sequential refresh order is a free cross-file witness.** Both
+`resource_3ce:029c` and `:0b10` close with `Func_08077010` over slots in the
+order 0, 1, 3, 2. Two independently-read owners agreeing on an odd ordering
+confirms neither was transcribed with a swapped pair — look for these rather
+than smoothing them out.
 
 **A byte-exact sibling names the imports for you — backwards.** The banked
 `assets/code/resource_3b6_c_0200073c.c` was written with the printed (wrong)
@@ -1585,6 +1660,16 @@ span from the pool rule.
 ---
 
 ## 2. Workflow
+
+**NEVER leave a draft under `semantic/` — scratch belongs in the scratchpad.**
+The banking scripts on both lanes (`venus_bank.sh`, `bank_cycle.sh`) sweep with
+`git add -A`, deliberately: lanes are told not to commit, so something has to
+pick their finished work up, and a completed source sitting untracked between
+rounds is the worse failure. The consequence is that **a file under `semantic/`
+is a claim of being finished, and the sweep will believe it.** The matching rule
+for whoever banks: a commit is not evidence that a proof happened, so a banked
+file whose lane report has not been read and recorded is an open item, not a
+finished one.
 
 **Span rule.** Function start through its own literal pool. The pool follows the
 final return after an optional 2-byte zero alignment word — include both. With no

@@ -18,11 +18,21 @@ typedef unsigned char u8;
  * owner is void.
  */
 
-void Func_0808a018();
-s32 *Func_0808a080();
-/* Byte-exact: (layer, x, z, width, height, value). */
-s32 Func_02000244();
-void Func_0808a020();
+void Func_02004932();
+s32 *Func_02004950();
+s32 *Func_02004958();
+/* Byte-exact-shaped: (layer, x, z, width, height, value). Each call site
+ * keeps its own raw overlay_show target per HANDOVER's exact-lane
+ * transcription rule -- overlay_call_targets.ts resolves all five to the
+ * established Func_02000244 interface, but the assembler encodes each site
+ * independently. */
+s32 Func_02001dfa();
+s32 Func_02001e0e();
+s32 Func_02001e20();
+s32 Func_02001e32();
+s32 Func_02001e44();
+s32 *Func_020049ca();
+void Func_020049cc();
 
 void Func_02001b84(void)
 {
@@ -30,19 +40,19 @@ void Func_02001b84(void)
     s32 z;
 
     /* No argument register is written before this branch. */
-    Func_0808a018();
+    Func_02004932();
 
-    x = Func_0808a080(13)[2] >> 20;
-    z = Func_0808a080(13)[4] >> 20;
+    x = Func_02004950(13)[2] >> 20;
+    z = Func_02004958(13)[4] >> 20;
 
-    Func_02000244(2, x, z, 1, 1, 0xff);
-    Func_02000244(2, x + 1, z, 1, 1, 0);
-    Func_02000244(2, x - 1, z, 1, 1, 0);
-    Func_02000244(2, x, z + 1, 1, 1, 0);
-    Func_02000244(2, x, z - 1, 1, 1, 0);
+    Func_02001dfa(2, x, z, 1, 1, 0xff);
+    Func_02001e0e(2, x + 1, z, 1, 1, 0);
+    Func_02001e20(2, x - 1, z, 1, 1, 0);
+    Func_02001e32(2, x, z + 1, 1, 1, 0);
+    Func_02001e44(2, x, z - 1, 1, 1, 0);
 
     if (x == 45 && z == 6) {
-        u8 *record = (u8 *)Func_0808a080(13);
+        u8 *record = (u8 *)Func_020049ca(13);
 
         record[85] = 0;
         *(s32 *)(record + 20) = (s32)0xfffe0000;
@@ -50,5 +60,5 @@ void Func_02001b84(void)
     }
 
     /* Common exit; no argument registers are set. */
-    Func_0808a020();
+    Func_020049cc();
 }

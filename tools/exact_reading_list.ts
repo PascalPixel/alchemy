@@ -12,10 +12,17 @@
 //   bun tools/exact_reading_list.ts                  # every overlay, ranked
 //   bun tools/exact_reading_list.ts resource_373     # one overlay
 //   bun tools/exact_reading_list.ts --json
+//   bun tools/exact_reading_list.ts --blocked        # only the rows held back
 //   bun tools/exact_reading_list.ts --self-test
 //
 // Ranking is by bytes-with-a-reference descending, because that is the axis on
 // which reading someone else's reconstruction saves the most time.
+//
+// Rows whose start address is not inside an audited executable interval are held
+// back: they compile, they adopt, and they reproduce the ROM byte-identically,
+// but `full_c_progress --write-report` cannot then write its report, so the
+// conversion has to be backed out whole. Offering such a row costs a full
+// conversion to discover. See `startsInAuditedSpan` below.
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 
@@ -32,11 +39,18 @@ interface Row {
   contained_by: unknown[];
 }
 
+export interface Interval {
+  start: number;
+  end: number;
+}
+
 export interface Pairing {
   overlay: string;
   address: string;
   bytes: number;
   semanticSource: string;
+  /** True when the report would reject this row; see `startsInAuditedSpan`. */
+  blocked: boolean;
 }
 
 /** Strict-queue rows only: the same filter the semantic lane converts from. */
@@ -50,6 +64,27 @@ export function isStrictRow(row: Row): boolean {
   );
 }
 
+/**
+ * Whether a row's *start* address lands inside one of its overlay's audited
+ * executable intervals.
+ *
+ * The intervals in `metrics/gs1-en-executable.json` do not tile their overlay:
+ * small unclassified gaps sit between them, and a row that begins in one of
+ * those gaps cannot be attributed by the report writer. Only the start matters
+ * — a row that begins inside an interval and runs past its end is fine — which
+ * is why this is not a containment test.
+ */
+export function startsInAuditedSpan(address: number, intervals: Interval[]): boolean {
+  return intervals.some((interval) => interval.start <= address && address < interval.end);
+}
+
+function auditedIntervals(): Map<string, Interval[]> {
+  const executable = JSON.parse(
+    readFileSync(join(ROOT, "metrics", "gs1-en-executable.json"), "utf8"),
+  ) as { overlays: { id: string; intervals: Interval[] }[] };
+  return new Map(executable.overlays.map((overlay) => [overlay.id, overlay.intervals]));
+}
+
 export function readingList(): Pairing[] {
   const inventory = JSON.parse(
     readFileSync(join(ROOT, "out", "decomp", "overlays.json"), "utf8"),
@@ -60,19 +95,29 @@ export function readingList(): Pairing[] {
       : [],
   );
   const exact = new Set(readdirSync(join(ROOT, "assets", "code")));
+  const audited = auditedIntervals();
   const pairings: Pairing[] = [];
   for (const row of inventory.functions) {
     if (!isStrictRow(row)) continue;
-    const address = (0x02000000 + row.offset).toString(16).padStart(8, "0");
+    const start = 0x02000000 + row.offset;
+    const address = start.toString(16).padStart(8, "0");
     const base = `${row.overlay}_c_${address}.c`;
     // Already byte-exact: nothing for the exact lane to do here.
     if (exact.has(base)) continue;
     if (!semantic.has(base)) continue;
+    const intervals = audited.get(row.overlay);
+    if (intervals === undefined) {
+      throw new Error(
+        `${row.overlay} is in the inventory but not in metrics/gs1-en-executable.json; ` +
+          `the executable map is stale and every row's blocked flag would be a guess`,
+      );
+    }
     pairings.push({
       overlay: row.overlay,
       address: `0x${address}`,
       bytes: row.span_bytes,
       semanticSource: `semantic/overlays/${base}`,
+      blocked: !startsInAuditedSpan(start, intervals),
     });
   }
   return pairings;
@@ -96,6 +141,29 @@ function selfTest(): void {
     throw new Error("a contained row is a fragment, not an owner");
   if (isStrictRow({ ...base, starts_with_prologue: false }))
     throw new Error("a prologue-less seed is not an owner");
+
+  // The two intervals below are adjacent-but-not-touching, which is exactly the
+  // shape that produced the five backed-out conversions: a two-byte gap at
+  // 0x02000110..0x02000112.
+  const intervals = [
+    { start: 0x02000100, end: 0x02000110 },
+    { start: 0x02000112, end: 0x02000200 },
+  ];
+  if (!startsInAuditedSpan(0x02000100, intervals))
+    throw new Error("an interval's first byte is inside it");
+  if (!startsInAuditedSpan(0x0200010e, intervals))
+    throw new Error("a byte before an interval's end is inside it");
+  if (startsInAuditedSpan(0x02000110, intervals))
+    throw new Error("an interval's end byte is past it, not inside it");
+  if (startsInAuditedSpan(0x02000111, intervals))
+    throw new Error("a row starting in the gap is blocked");
+  if (!startsInAuditedSpan(0x02000112, intervals))
+    throw new Error("the byte after the gap is inside the next interval");
+  if (startsInAuditedSpan(0x02000200, intervals))
+    throw new Error("a row starting past the last interval is blocked");
+  if (startsInAuditedSpan(0x02000100, []))
+    throw new Error("an overlay with no audited intervals blocks everything");
+
   console.log("self-test=ok");
 }
 
@@ -103,7 +171,9 @@ function main(): void {
   const args = Bun.argv.slice(2);
   if (args.includes("--self-test")) return selfTest();
   const only = args.find((argument) => /^resource_[0-9a-f]+$/.test(argument));
-  let list = readingList();
+  const wantBlocked = args.includes("--blocked");
+  const all = readingList();
+  let list = all.filter((item) => item.blocked === wantBlocked);
   if (only !== undefined) list = list.filter((item) => item.overlay === only);
   if (args.includes("--json")) {
     console.log(JSON.stringify(list, null, 2));
@@ -126,9 +196,17 @@ function main(): void {
     }
   }
   const total = list.reduce((sum, item) => sum + item.bytes, 0);
+  const held = all.filter((item) => item.blocked);
   console.log(
     `\noverlays=${ranked.length} owners=${list.length} bytes_with_a_reference=${total.toLocaleString()}`,
   );
+  if (!wantBlocked && held.length > 0) {
+    const heldBytes = held.reduce((sum, item) => sum + item.bytes, 0);
+    console.log(
+      `held back (start address not in an audited span, --blocked to list): ` +
+        `owners=${held.length} bytes=${heldBytes.toLocaleString()}`,
+    );
+  }
 }
 
 if (import.meta.main) main();

@@ -1974,6 +1974,14 @@ non-trivial constant argument** (exemplar `assets/code/resource_372_c_02002180.c
   reference overwrites the operand. On `resource_373:02a8` it closed 4 of 16
   groups on its own, and the same shape recurs wherever a packed word is split
   into a masked half and a shifted half.
+- **Narrow the type at the store, not at the arithmetic.** When the reference
+  builds a small constant out of a value already in a register -- a mask from a
+  zero it just stored, `movs r3,#0` then `subs r3,#13` for 0xf3 -- the C has to
+  give gcc a 32-bit expression to fold through. Declaring the intermediate `u8`
+  loses it: `clear -= 13` on a `u8` folds to 243 and gcc materialises that
+  directly. Make the local `s32` and cast at the byte store. Same family as the
+  pooled-zero and halfword-store levers below, and the same rule states all
+  three: narrowing early is what loses the reference's form.
 - **The first `return` names the value materialised before the compare.** A
   two-arm predicate compiles as `mov r0, A; cmp; b<COND> end; mov r0, B; end:`
   where `A` is the *first* return's value and `COND` is its condition. So an

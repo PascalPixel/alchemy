@@ -1,5 +1,6 @@
 typedef unsigned int u32;
 typedef unsigned long long u64;
+typedef signed int s32;
 
 /*
  * Resource 3bf soft-float double subtraction at 0x02005a78.

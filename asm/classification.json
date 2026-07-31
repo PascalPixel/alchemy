@@ -784,7 +784,7 @@
         "byte_exact_reconstruction"
       ],
       "expected_files": 41,
-      "expected_bytes": 2710,
+      "expected_bytes": 2694,
       "files": [
         "0800f1bc",
         "0800fd5c",

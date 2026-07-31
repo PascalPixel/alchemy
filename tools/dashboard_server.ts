@@ -73,6 +73,18 @@ const pageHtml = () => `<!doctype html><html><head><meta charset="utf-8"><meta n
   .msg .body{font:italic 400 16px/15px 'Weyard',system-ui,sans-serif;color:#222;white-space:pre-wrap;min-width:0}
   .msg .head{font:italic 400 16px/15px 'Weyard',system-ui,sans-serif;color:#111;margin-bottom:1px}
   .msg .head .time{color:#999;margin-left:8px;font-size:16px}
+  @media (prefers-color-scheme:dark){
+    html,body{background:#131318}
+    .chat{background:#1e1e24}
+    .msg .body{color:#d6d6da}
+    .msg .head{color:#ececf0}
+    .msg .ava{background:#333}
+    .board{background:#31614a}
+    .p-chat{--edge:#4a4a52}
+    .panel{box-shadow:0 0 0 2px #000, inset 0 0 0 1px rgba(255,255,255,.35)}
+    .trees img{filter:brightness(.92)}
+    .postit::before{background:#f3f0e6}
+  }
   @media (max-width:760px){
     #root{height:auto;padding:8px;gap:8px}
     .trees{grid-template-columns:1fr;gap:8px}

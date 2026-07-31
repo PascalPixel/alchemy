@@ -991,7 +991,10 @@ halfword after it belongs to nobody.** `resource_38e:090c` is 102/102, ending at
 0x0971 with `0x0000` at 0x0972 outside the row. Do not attach it.
 
 **THE INVENTORY IS INCOMPLETE BY 422 CALLED FUNCTIONS — and the cheap sweep
-finds only a twelfth of them.** The decisive scan is by REFERENCE, not by gap:
+finds only a twelfth of them.** Run **`bun tools/overlay_unindexed.ts
+[resource_NNN]`**; it reports them ranked, with call counts, and separates the
+15 genuine interior functions from the 422 that are missing. The decisive scan
+is by REFERENCE, not by gap:
 for every `bl` in an overlay image, resolve it with `target = stored + 2`; if the
 target's first halfword is a `push {…,lr}` (`(hw & 0xfe00) === 0xb400`), it is a
 function start. Drop targets that already have a row, a semantic source or an

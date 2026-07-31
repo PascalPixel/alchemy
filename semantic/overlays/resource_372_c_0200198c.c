@@ -17,7 +17,7 @@ typedef signed int s32;
  * field offsets — `*(s16 *)(p + 10)` and `*(s16 *)(p + 18)` from the
  * `ldrsh rN, [r0, r3]` pair with r3 = 10 and r3 = 18.
  *
- * Note `Func_020061a6` is reached twice with different argument counts (once
+ * Note `Func_0808a170` is reached twice with different argument counts (once
  * with r0 only, once with r0 and r1).  That is the documented overlay idiom,
  * and it is why every import here carries an old-style declaration.
  *
@@ -31,65 +31,60 @@ typedef signed int s32;
 
 /* Imports, old-style: interfaces unknown; 0x020061a6 takes one argument at
  * one site and two at another. */
-void Func_0200608c();
-void Func_02006130();
-void Func_020060ee();
-void Func_02006138();
-void Func_0200618a();
-void Func_020060c0();
-void Func_020061a6();
-void Func_020061be();
-void Func_020061a0();
-void Func_020060de();
-void Func_020060ec();
-void Func_02006200();
-void Func_020061f0();
-void Func_020061a8();
-void Func_02006190();
-void Func_020061b6();
-void Func_020061c8();
-void Func_020061c4();
-void Func_02006150();
+void Func_0808a018();
+void Func_0808a0f0();
+void Func_0808a090();
+void Func_0808a0d0();
+void Func_0808a150();
+void Func_0808a010();
+void Func_0808a170();
+void Func_0808a138();
+void Func_0808a180();
+void Func_0808a148();
+void Func_0808a1b8();
+void Func_0808a100();
+void Func_0808a0b8();
+void Func_0808a0e8();
+void Func_0808a020();
 
 /* Used for their return values: both yield a descriptor pointer or null. */
-s32 *Func_020060c2();
-s16 *Func_02006146();
+s32 *Func_0808a080();
 
 void Func_0200198c(void)
 {
     s32 *desc;
     s16 *pos;
 
-    Func_0200608c();
+    Func_0808a018();
 
-    desc = Func_020060c2(0);
+    desc = Func_0808a080(0);
     if (desc != 0) {
         /* word fields at +8 and +16 of the descriptor */
-        Func_02006130(22, desc[2], desc[4]);
+        Func_0808a0f0(22, desc[2], desc[4]);
     }
 
-    Func_020060ee(22, 0x10000, 0x8000);   /* 128 << 9, 128 << 8 */
-    Func_02006138(22, 0x119, 0x1fb);
-    Func_0200618a(22, 0, 0);
-    Func_020060c0(30);
-    Func_020061a6(0xe7b);
-    Func_020061be(22, 0);
-    Func_020061a0(0, 22, 0);
-    Func_020060de(10);
-    Func_020061a6(0, 1);                  /* same name, two arguments here */
-    Func_020060ec(20);
-    Func_02006200(22, 0x4000, 0);         /* 128 << 7 */
-    Func_020061f0(22, 0);
-    Func_020061a8(22, 2);
+    Func_0808a090(22, 0x10000, 0x8000);   /* 128 << 9, 128 << 8 */
+    Func_0808a0d0(22, 0x119, 0x1fb);
+    Func_0808a150(22, 0, 0);
+    Func_0808a010(30);
+    Func_0808a170(0xe7b);
+    Func_0808a180(22, 0);
+    Func_0808a148(0, 22, 0);
+    Func_0808a010(10);
+    Func_0808a138(0, 1);                  /* same name, two arguments here */
+    Func_0808a010(20);
+    Func_0808a1b8(22, 0x4000, 0);         /* 128 << 7 */
+    Func_0808a180(22, 0);
+    Func_0808a100(22, 2);
 
-    pos = Func_02006146(0);
+    pos = Func_0808a080(0);
     if (pos != 0) {
         /* signed halfword fields at +10 and +18, as in 0x0200173c */
-        Func_02006190(22, pos[5], pos[9]);
+        Func_0808a0b8(22, pos[5], pos[9]);
     }
 
-    Func_020061b6(22);
-    Func_020061c8(22, 0, 0);
-    Func_020061c4(0, 0x100, 0x205);       /* 128 << 1 */
-    Func_02006150();
+    Func_0808a0e8(22);
+    Func_0808a0f0(22, 0, 0);
+    Func_0808a0d0(0, 0x100, 0x205);       /* 128 << 1 */
+    Func_0808a020();
 }

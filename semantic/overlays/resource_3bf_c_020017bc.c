@@ -31,6 +31,10 @@ typedef signed int s32;
  * symbol names and the raw pool value for absolute data addresses, which is
  * self-consistent; nothing here depends on which of the two bases is real.
  */
+s32 Func_020018e4();
+void Func_080000d8();
+s32 Func_080770c0();
+void Func_080770c8();
 s32 Func_02006dd6(s32 flag);
 s32 Func_020030b4(s32 state);
 void Func_02006e02(s32 flag);
@@ -42,18 +46,18 @@ void Func_020017bc(void)
     u8 *workspace = *(u8 **)0x03001ebc;
     const s16 *table = (const s16 *)0x02000240;
 
-    if (Func_02006dd6(0x225) != 0) {
+    if (Func_080770c0(0x225) != 0) {
         return;
     }
-    if (Func_020030b4(21) == 0) {
+    if (Func_020018e4(21) == 0) {
         return;
     }
     if (table[294] != 0) {
         return;
     }
 
-    Func_02006e02(0x225);
-    Func_02006d88(0x020097bd);
-    Func_02006d8e(0x0200975d);
+    Func_080770c8(0x225);
+    Func_080000d8(0x020097bd);
+    Func_080000d8(0x0200975d);
     *(s16 *)(workspace + 386) = 96;
 }

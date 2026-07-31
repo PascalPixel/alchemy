@@ -55,6 +55,14 @@ typedef unsigned int u32;
  * and +91, so it is modelled as an opaque byte block rather than given a
  * speculative layout.
  */
+s32 Func_02001324();
+s32 Func_020018e4();
+s32 Func_02001918();
+void Func_02001980();
+s32 Func_080770c0();
+void Func_080770c8();
+void Func_0808a080();
+void Func_0808a228();
 s32 Func_020069e6(s32 kind);
 void Func_02006afa(void *object);
 void Func_02002dbc(s32 kind);
@@ -69,14 +77,14 @@ s32 Func_02006a9e(s32 state);
 
 void Func_0200138c(void)
 {
-    u8 *object = (u8 *)Func_020069e6(17);
+    u8 *object = (u8 *)Func_0808a080(17);
     u8 *base = *(u8 **)0x03001e70;
     s32 *record = (s32 *)(base + 356);
     u8 *workspace = *(u8 **)(base + 76);
     u32 flags;
     const s16 *table = (const s16 *)0x02000240;
 
-    Func_02006afa(object);
+    Func_0808a228(object);
     flags = *(u32 *)0x03001e40;
 
     if ((flags & 1u) != 0u) {
@@ -87,30 +95,30 @@ void Func_0200138c(void)
         record[7] = -1;
     }
 
-    if (Func_020069dc(262) != 0
+    if (Func_080770c0(262) != 0
         || *(s16 *)(workspace + 382) != 0
         || *(s16 *)(workspace + 384) == 0) {
         object[91] = 1;
         return;
     }
 
-    if (Func_02006a0e(532) != 0) {
+    if (Func_080770c0(532) != 0) {
         return;
     }
     object[91] = 0;
 
-    if (Func_02006a20(532) == 0 && object[91] == 0) {
+    if (Func_080770c0(532) == 0 && object[91] == 0) {
         record[8] = 0x03400000 - *(s32 *)(object + 8);    /* +32 */
         record[9] = 0x02400000 - *(s32 *)(object + 16);   /* +36 */
     }
 
-    if (Func_02002756() != 0) {
+    if (Func_02001324() != 0) {
         return;
     }
 
-    Func_02002dbc(17);
+    Func_02001980(17);
 
-    if (Func_02002d5a(17) != 0) {
+    if (Func_02001918(17) != 0) {
         if (table[294] != 0) {
             *(s16 *)(workspace + 382) = 0x2092;
             return;
@@ -121,13 +129,13 @@ void Func_0200138c(void)
         }
     }
 
-    if (Func_02002d58(17) != 0) {
-        Func_02006a96(0x215);
-        Func_02006a9e(532);
+    if (Func_020018e4(17) != 0) {
+        Func_080770c8(0x215);
+        Func_080770c8(532);
     }
 
 lastGate:
-    if (Func_02006a9e(532) != 0) {
+    if (Func_080770c0(532) != 0) {
         *(s16 *)(workspace + 386) = 92;
     }
 }

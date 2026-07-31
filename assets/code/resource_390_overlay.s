@@ -62,126 +62,14 @@ AlchemyC_02000030:
 	.2byte 0x0200
 AlchemyC_02000070:
 	.space 0x2c
-	push	{r5, lr}
-	movs	r0, #0
-	bl	sub_0200038a
-	ldrh	r5, [r0, #6]
-	bl	sub_02000378
-	ldr	r3, [pc, #44]
-	adds	r5, r5, r3
-	ldr	r3, [pc, #44]
-.L_020000b0:
-	cmp	r5, r3
-	bhi.n	.L_020000be
-	movs	r0, #13
-	movs	r1, #16
-	bl	sub_020003c2
-	b.n	.L_020000cc
-.L_020000be:
-	ldr	r0, [pc, #32]
-	bl	sub_020003ba
-	movs	r0, #16
-	movs	r1, #0
-	bl	sub_020003ca
-.L_020000cc:
-	bl	sub_020003a6
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0xffff5fff
-	.4byte 0x00003ffe
-	.2byte 0x16ad
-	.2byte 0x0000
-	push	{r5, lr}
-	movs	r0, #0
-	bl	sub_020003d2
-	ldrh	r5, [r0, #6]
-	bl	sub_020003c0
-	ldr	r3, [pc, #44]
-	adds	r5, r5, r3
-	ldr	r3, [pc, #44]
-	cmp	r5, r3
-	bhi.n	.L_02000106
-	movs	r0, #14
-	movs	r1, #17
-	bl	sub_0200040a
-	b.n	.L_02000114
-.L_02000106:
-	ldr	r0, [pc, #32]
-	bl	sub_02000402
-	movs	r0, #17
-	movs	r1, #0
-	bl	sub_02000412
-.L_02000114:
-	bl	sub_020003ee
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0xffff5fff
-	.4byte 0x00003ffe
-	.2byte 0x16af
-	.2byte 0x0000
-	push	{r5, lr}
-	movs	r0, #0
-	bl	sub_0200041a
-	ldrh	r5, [r0, #6]
-	bl	sub_02000408
-	ldr	r3, [pc, #44]
-	adds	r5, r5, r3
-	ldr	r3, [pc, #44]
-	cmp	r5, r3
-	bhi.n	.L_0200014e
-	movs	r0, #15
-	movs	r1, #18
-	bl	sub_02000452
-	b.n	.L_0200015c
-.L_0200014e:
-	ldr	r0, [pc, #32]
-	bl	sub_0200044a
-	movs	r0, #18
-	movs	r1, #0
-	bl	sub_0200045a
-.L_0200015c:
-	bl	sub_02000436
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0xffff5fff
-	.4byte 0x00003ffe
-	.2byte 0x16b1
-	.2byte 0x0000
-	push	{r5, lr}
-	movs	r0, #0
-	bl	sub_02000462
-	ldrh	r5, [r0, #6]
-	bl	sub_02000450
-	ldr	r3, [pc, #44]
-	adds	r5, r5, r3
-	ldr	r3, [pc, #44]
-	cmp	r5, r3
-	bhi.n	.L_02000196
-	movs	r0, #3
-	movs	r1, #19
-	bl	sub_020004a2
-	b.n	.L_020001a4
-.L_02000196:
-	ldr	r0, [pc, #32]
-	bl	sub_02000492
-	movs	r0, #19
-	movs	r1, #0
-	bl	sub_020004a2
-.L_020001a4:
-	bl	sub_0200047e
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0xffff5fff
-	.4byte 0x00003ffe
-	.4byte 0x000016b7
+AlchemyC_0200009c:
+	.space 0x48
+AlchemyC_020000e4:
+	.space 0x48
+AlchemyC_0200012c:
+	.space 0x48
+AlchemyC_02000174:
+	.space 0x48
 	.4byte 0x47704800
 	.2byte 0x8658
 	.2byte 0x0200

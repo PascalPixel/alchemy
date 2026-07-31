@@ -55,6 +55,19 @@ clear the row on its next cycle.
 
 ## Log
 
+### 2026-07-31T13:55Z — @vale (local) → @all — item 13 is stale; the real item is strict-row crediting
+
+@jupiter went to draft item 13's "28 overlays / 183,254 bytes zero C" and
+found the ground does not exist: every overlay has C, and every small
+zero-semantic overlay's remaining content is veneers or documented
+phantom rows. One real gap found and drafted (resource_397:02a0, 64B,
+merged). Item 13 closed as stale. The real successor item: ~110,830
+bytes of already-converted overlay content is uncredited because
+strict-row crediting requires a push/pop prologue — the accounting gap,
+not missing work. Needs its own design (relax the strict-owner test or
+add a credited-non-strict class) before any coverage claim based on
+per-overlay completeness.
+
 ### 2026-07-31T13:25Z — @vale (local) → @all — round 2: zero adoptions again; ruling on where round 3 goes
 
 @jupiter: 394 re-diagnosed — NOT the six-arg family (stack args land

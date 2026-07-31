@@ -126,6 +126,26 @@
       ]
     },
     {
+      "entry": "0x0801cbd4",
+      "evidence": "One 124-byte row holding a single straight-line function: prologue push {r5,r6,r7,lr} at 0x0801cbd4, single epilogue at 0x0801cc3e, only forward clamp branches inside the row and no inbound branch from outside it. The three mov ip,pc; bx r4 sequences at 0x0801cbe4, 0x0801cbf8 and 0x0801cc08 are ordinary indirect calls through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after each bx (0x0801cbe8, 0x0801cbfc, 0x0801cc0c) and every landing site consumes r0 as that call's result in the same frame, the reading already recorded for 0x0800ebec. r4 holds the pooled helper address without being saved, the ordinary call-used-r4 convention of this image and not the 0x08002dd8 shape: it is assigned before its first use and never read live-in. Excluded (12 bytes): the three-word pool at 0x0801cc44 (0x00000576, 0x03000118, 0x0000057a); there is no alignment filler, the code ends flush at 0x0801cc44. Seven direct callers, the first at 0x0801cafc; no thumb pointer and no word reference. Same BGR555 packer as 0x0801cc50, reading unsigned halfwords at fixed block offsets.",
+      "executable_ranges": [
+        {
+          "address": "0x0801cbd4",
+          "size": 112
+        }
+      ]
+    },
+    {
+      "entry": "0x0801cc50",
+      "evidence": "One 112-byte row holding a single straight-line function: prologue push {r5,r6,r7,lr} at 0x0801cc50, single epilogue at 0x0801ccb6, only forward clamp branches inside the row and no inbound branch from outside it. The three mov ip,pc; bx r4 sequences at 0x0801cc60, 0x0801cc70 and 0x0801cc80 are ordinary indirect calls through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after each bx (0x0801cc64, 0x0801cc74, 0x0801cc84) and every landing site consumes r0 as that call's result in the same frame, the reading already recorded for 0x0800ebec. r4 holds the pooled helper address without being saved, the ordinary call-used-r4 convention of this image and not the 0x08002dd8 shape. Excluded (4 bytes): the one-word pool at 0x0801ccbc holding 0x03000118; the movs r0,r0 at 0x0801cc5e, 0x0801cc6e and 0x0801cc7e are alignment filler inside the code, and the code ends flush at 0x0801ccbc. Seven direct callers, the first at 0x0801cd6a; no thumb pointer and no word reference. Signed-triple variant of the BGR555 packer 0x0801cbd4.",
+      "executable_ranges": [
+        {
+          "address": "0x0801cc50",
+          "size": 108
+        }
+      ]
+    },
+    {
       "entry": "0x08021dfc",
       "evidence": "Two independent leaf functions inside manifest row 08021dfa, which begins with a two-byte alignment halfword. Neither has a prologue and both end in bx lr. The nearest preceding non-continuation row 08021cb8 is reached only as far as 0x08021d70, where it returns, and the 138 bytes between that and this row are its literal pool, so this row is not its continuation. The alignment halfwords at 0x08021dfa, 0x08021e0e and 0x08021e22 and the pool words at 0x08021e10 and 0x08021e24 are excluded.",
       "executable_ranges": [
@@ -188,6 +208,16 @@
       ]
     },
     {
+      "entry": "0x080979a4",
+      "evidence": "One 108-byte row holding a single function: prologue push {r5,r6,lr} at 0x080979a4, single epilogue at 0x080979f4 reached by every arm of the segment chain, no inbound branch from outside the row. mov ip,pc; bx r3 at 0x080979e0 is an ordinary indirect call through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after the bx, 0x080979e4, which consumes r0 as that call's result in the same frame, the reading already recorded for 0x0800ebec. bl Func_080072f0 at 0x080979ec is the runtime call_via_r3 thunk in the table at 0x080072e4, so it is an indirect call through the pooled 0x0300013c ratio helper. r4 holds the reduced angle without being saved, the ordinary call-used-r4 convention of this image and not the 0x08002dd8 shape: it is assigned before every use and never read live-in. Excluded (22 bytes): the 2-byte movs r0,r0 alignment filler at 0x080979fa and the five-word pool at 0x080979fc (0x003bffff, 0x03000118, 0xffc40000, 0xff4c0000, 0x0300013c). Three direct callers, at 0x0809796a, 0x08097978 and 0x0809798a, which pass hues 120.0 apart; no thumb pointer and no word reference.",
+      "executable_ranges": [
+        {
+          "address": "0x080979a4",
+          "size": 86
+        }
+      ]
+    },
+    {
       "entry": "0x08097a10",
       "evidence": "One 68-byte row holding a single function: prologue push {r5,r6,lr} at 0x08097a10, single epilogue at 0x08097a42 reached by the zero-step early-out and by fall-through, no inbound branch from outside the row. bl Func_080072f0 at 0x08097a2e is the runtime call_via_r3 thunk in the table at 0x080072e4, so it is an indirect call through the pooled 0x0300013c, the IWRAM ratio helper. mov ip,pc; bx r4 at 0x08097a3c is an ordinary indirect call through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after the bx, 0x08097a40, which consumes r0 as that call's result in the same frame, the reading already recorded for 0x0800ebec. Excluded (12 bytes): the three-word pool at 0x08097a48 (0x0300013c, 0xffff0000, 0x03000118); the movs r0,r0 at 0x08097a3a is alignment filler inside the code, not a tail. One direct caller, at 0x080979ae; no thumb pointer and no word reference.",
       "executable_ranges": [
@@ -224,6 +254,26 @@
         {
           "address": "0x080993b0",
           "size": 244
+        }
+      ]
+    },
+    {
+      "entry": "0x0809a7f4",
+      "evidence": "One 156-byte row holding a single function: prologue push {r5,r6,r7,lr} plus the r8/r9/sl saves at 0x0809a7f4, single epilogue at 0x0809a876 reached both by the counter test and by the hand-off arm, no inbound branch from outside the row. The two mov ip,pc; bx r5 sequences at 0x0809a818 and 0x0809a828 are ordinary indirect calls through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after each bx (0x0809a81c, 0x0809a82c) and both landing sites consume r0 as that call's result in the same frame, the reading already recorded for 0x0800ebec. Excluded (12 bytes): the three-word pool at 0x0809a884 (0x03000118, 0x0809a739, 0x00001999); there is no alignment filler, the code ends flush at 0x0809a884. The pool word 0x0809a739 is the Thumb pointer to the successor handler Func_0809a738, stored to +0x6c. No direct caller; published as a Thumb pointer at 0x0809aa94.",
+      "executable_ranges": [
+        {
+          "address": "0x0809a7f4",
+          "size": 144
+        }
+      ]
+    },
+    {
+      "entry": "0x0809b86c",
+      "evidence": "One 136-byte row holding a single function: prologue push {r5,r6,r7,lr} and sub sp,#24 at 0x0809b86c, single epilogue at 0x0809b8dc reached by the three off-screen rejections and by fall-through, no inbound branch from outside the row. The two mov ip,pc; bx r3 sequences at 0x0809b894 and 0x0809b8a0 are ordinary indirect calls through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after each bx (0x0809b898, 0x0809b8a4) and both landing sites store r0 as that call's result in the same frame, the reading already recorded for 0x0800ebec. r4 holds the sprite pointer without being saved, the ordinary call-used-r4 convention of this image and not the 0x08002dd8 shape. Excluded (16 bytes): the four-word pool at 0x0809b8e4 (0x03000118, 0x001fffff, 0x012ffffe, 0xffe00000); the movs r0,r0 at 0x0809b892 and 0x0809b89e are alignment filler inside the code, and the code ends flush at 0x0809b8e4. One direct caller, at 0x0809b862; no thumb pointer and no word reference.",
+      "executable_ranges": [
+        {
+          "address": "0x0809b86c",
+          "size": 120
         }
       ]
     },

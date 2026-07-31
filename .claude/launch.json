@@ -3,10 +3,7 @@
   "configurations": [
     {
       "name": "progress",
-      "runtimeExecutable": "bun",
-      "runtimeArgs": [
-        "tools/dashboard_server.ts"
-      ],
+      "url": "http://localhost:4649",
       "port": 4649
     }
   ]

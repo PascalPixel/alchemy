@@ -68,9 +68,12 @@ struct SceneEntity {
 };
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-s32 Func_08000118();                /* trig, cosine lobe */
-s32 Func_08000120();                /* trig, sine lobe */
-s32 Func_080000f8();                /* random source, no arguments */
+extern s32 Func_0200137a(s32);
+extern s32 Func_02001390(s32);
+extern s32 Func_020013aa(s32);
+
+extern s32 Func_020013a0(void);   /* random source, two call sites */
+extern s32 Func_020013a6(void);
 
 s32 Func_0200090c(struct SceneEntity *entity)
 {
@@ -79,20 +82,20 @@ s32 Func_0200090c(struct SceneEntity *entity)
     s32 tilt;
     s32 step;
 
-    vertical = Func_08000118(entity->phase) * 2;
+    vertical = Func_0200137a(entity->phase) * 2;
     if (vertical > 0) vertical = -vertical;
 
-    entity->x = entity->originX + Func_08000120(entity->phase) * 2;
+    entity->x = entity->originX + Func_02001390(entity->phase) * 2;
     entity->y = entity->originY + vertical;
 
     /* A quarter turn on from the position phase. */
-    tilt = Func_08000120(entity->phase + 0x8000);
+    tilt = Func_020013aa(entity->phase + 0x8000);
     if (tilt < 0) tilt += 7;
     handle->field1e = (s16)(tilt >> 3);
 
     /* `lsrs` in the original: the extraction is unsigned. */
-    step = (s32)(((u32)Func_080000f8() << 9) >> 16)
-         + (s32)(((u32)Func_080000f8() << 9) >> 16);
+    step = (s32)(((u32)Func_020013a0() << 9) >> 16)
+         + (s32)(((u32)Func_020013a6() << 9) >> 16);
     entity->phase = entity->phase + step + 1024;
 
     return 0;

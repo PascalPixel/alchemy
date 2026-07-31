@@ -881,21 +881,8 @@ AlchemyC_02000044:
 	bx	r0
 	.2byte 0xc41c
 	.2byte 0x0200
-	push	{r5, lr}
-	ldr	r3, [pc, #24]
-	ldr	r5, [pc, #24]
-	movs	r2, #0
-	str	r2, [r3, #0]
-	adds	r0, r5, #0
-	bl	sub_02003c5a
-	bl	sub_02003f62
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0x0200c41c
-	.2byte 0x804d
-	.2byte 0x0200
+AlchemyC_02000134:
+	.space 0x24
 AlchemyC_02000158:
 	.space 0x20
 AlchemyC_02000178:

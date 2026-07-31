@@ -74,15 +74,15 @@ struct PushProbe {
 
 /* Old-style declarations are mandatory here: one overlay import is reached
  * with different argument counts at different sites. */
-struct PushMover *Func_0808a080();      /* subject by slot index */
-struct PushMover *Func_0200006c();      /* occupant of a tile, or 0 */
-s32 Func_080091d8();                    /* terrain/collision probe */
-void Func_08009080();
+s32 Func_0200006c();
 void Func_080000c0();
+void Func_08009080();
 void Func_08009150();
 void Func_08009158();
-void Func_080f9010();
+s32 Func_080091d8();
+s32 Func_0808a080();
 void Func_0808a5e8();
+void Func_080f9010();
 
 static void step_from(const struct PushMover *mover, s32 step,
                       struct PushProbe *probe)

@@ -70,20 +70,20 @@ typedef unsigned int u32;
 
 /* Old-style declarations are mandatory in overlay sources: one name can be
  * reached with different argument counts from different sites. */
-s32 Func_080000f8();
-void Func_080091e0();
-void Func_08009258();
-s32 Func_080770c0();
-u8 *Func_0808a080();
-void Func_0808a0f0();
-void Func_0808a100();
-void Func_0808a1b8();
-
 void Func_02003054();
 void Func_02004f60();
 void Func_020050e4();
 void Func_02005324();
 void Func_02005520();
+s32 Func_080000f8();
+s32 Func_080091e0();
+void Func_08009258();
+s32 Func_080770c0();
+s32 Func_0808a080();
+void Func_0808a0f0();
+void Func_0808a100();
+void Func_0808a1b8();
+
 
 s32 Func_02004da0(void)
 {
@@ -158,7 +158,7 @@ s32 Func_02004da0(void)
             Func_0808a1b8(13, 0x5000, 0);
 
             Func_0808a0f0(17, 0x01c80000, 0x01400000);
-            Func_080091e0(Func_0808a080(17), 0);
+            Func_0808a080(Func_080091e0(17), 0);
         }
     }
 

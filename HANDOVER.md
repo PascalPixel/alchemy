@@ -2775,6 +2775,23 @@ two levers land.
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**
+- **A constant materialised on the wrong side of a store.** Two rows, same
+  shape, and it is *not* the pool-load class below — these are plain `movs`.
+  `resource_3b0:007c` (38 bytes): both arms of an if/else-if store the same
+  halfword and the reference merges them, pre-loading only the high byte per arm
+  and sharing one `lsls #8` and one `strh`. §5's cross-jump parameterisation is
+  exactly that shape and does not close it — written as a shared tail, both with
+  an explicit `goto` and as a plain else-if chain (identical output), gcc hoists
+  `movs r3,#208` *above* the compare that selects it. The merge is not the
+  problem; the placement is. `resource_393:0bf8` (148 bytes, 11 groups): a
+  six-argument call's two stack arguments, where the reference builds both into
+  separate registers before storing either and this fork reuses one. Giving each
+  its own local — the fix that works for the two-mask family — makes it *worse*
+  (11 → 14) by floating both constants above the preceding `strb`. Neither moves
+  under `-fsched-store-first`, `-fsched-low-dest-first`,
+  `-fno-cse-two-insn-immediate`, `-fthumb-split-group-base`,
+  `-fno-thread-jumps`, `-fno-schedule-insns`, `-fno-schedule-insns2`,
+  `-fno-cse-follow-jumps` or `-fno-canonicalize-comparison`.
 - **A pool `ldr` scheduled ahead of the setters the reference emits first.** Two
   independent rows in `resource_373` now show it, so it is a class rather than a
   one-off: `:11d8` (108 bytes, 2 clusters, `ldr r5, POOL` hoisted above a whole

@@ -138,6 +138,16 @@
       ]
     },
     {
+      "entry": "0x080992f0",
+      "evidence": "One 80-byte keep_structured_asm row holding a single leaf-plus-calls function: prologue at 0x080992f0, epilogue pop {r5,r6} / pop {r0} / bx r0 at 0x08099336, and no inbound branch from outside the row. The mov ip,pc; bx r3 at 0x08099310 is an ordinary indirect call to the IWRAM-relocated ARM multiply at 0x03000118, not retained assembly: mov ip,pc sets the return address to 0x08099314, the instruction after the bx, and execution continues in the same frame with every live register intact - the same finding already recorded for 0x0800ebec. Excluded (4 bytes): the one-word pool at 0x0809933c holding 0x03000118. Reached only as the published Thumb pointer 0x080992f1 at 0x080994b4, the pool word Func_080993b0 stores into the object it spawns.",
+      "executable_ranges": [
+        {
+          "address": "0x080992f0",
+          "size": 76
+        }
+      ]
+    },
+    {
       "entry": "0x080a22f4",
       "evidence": "Single 24-byte leaf plus its 24-byte pool, ending on bx lr, with three direct callers (0x080a47d6, 0x080a4846, 0x080a9e36). The manifest kind deliberate_dma_kick_macro names the two stmia r3!, {r0, r1, r2} stores to 0x040000d4; that is the DMA3 source/destination/control triple, already spelled as a volatile register struct in semantic/main/0800300c.c and semantic/main/0808e9c0.c, so the row has an ordinary C form. The subs r3, #12 after each stmia only rewinds the writeback pointer and has no visible effect. Pool walked from the four pc-relative loads: 0x040000d4, 0x05000200, 0x050001c0, 0x80000010, 0x050001e8, 0x80000001.",
       "executable_ranges": [

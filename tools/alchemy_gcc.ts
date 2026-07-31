@@ -564,6 +564,11 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   "assets/code/resource_38d_c_02001984.c",
   // Same shape: 0x80000 feeds both of this call's shifted arguments.
   "assets/code/resource_3b4_c_020011d8.c",
+  // resource_39f:2004 places the same 744/504 pair twice, once in whole units
+  // and once in 16.16. CSE keeps 186 and 252 in r5/r6 across the whole body and
+  // buys a `push {r5, r6, lr}` the reference does not have -- 34 groups from
+  // that one decision. Paired with -fsched-low-dest-first for the r0 setter.
+  "assets/code/resource_39f_c_02002004.c",
   // Same -1 pair shape as the entry two lines below; see the tie-break set.
   "assets/code/resource_3a2_c_020008a8.c",
   // Both negated arguments are -1, so CSE builds one and copies it.
@@ -638,6 +643,9 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // resource_3bf:0c78 sets r0, r1 and r2 for one call and the reference orders
   // them by ascending destination; without the tie-break r0 lands last.
   "assets/code/resource_3bf_c_02000c78.c",
+  // resource_39f:2004's last placement sets r0, r1 and r2 and the reference
+  // puts `movs r0,#22` ahead of the two finishing `lsls`. See the CSE set.
+  "assets/code/resource_39f_c_02002004.c",
   // resource_39a:17a8 sets r0/r1/r2 at two three-argument calls and the
   // reference orders them by ascending destination at both.
   "assets/code/resource_39a_c_020017a8.c",

@@ -122,6 +122,20 @@
       ]
     },
     {
+      "entry": "0x0800d340",
+      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), 788-byte keep_structured_asm row holding a single function: prologue push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill and sub sp,#16 at 0x0800d340, single epilogue add sp,#16/pop.../bx r0 at 0x0800d63e-0x0800d64e, no branch out of the row and no inbound branch from outside it. bun tools/main_xref.ts 0800d340: FUNCTION, indirectly published callback (published at 0x0800c0a8). Same 64-record Data_03001e64 object array 0x0800c62c and 0x0808bec0 already walk (this row processes only the first 14), at the same true offsets semantic/main/0800ebec.c's struct Object_0800ebec establishes -- program_00@0, heading_06@6, position_08@8/12/16, ground_14@20, velocity_24@36/40/44, speed_30@48, acceleration_34@52, pushback_38@56/60/64, vertical_motion_strength@72 -- locally redeclared here per this dig's not-yet-exact include/ policy. The literal pool is split: a 2-byte movs r0,r0 filler at 0x0800d572 plus a six-word cluster at 0x0800d574-0x0800d58c (0x03001e64, 0x0000ffff, 0x030001d8, 0x00ffffff, 0x03000118, 0x0300013c) embedded mid-function, with ordinary code resuming immediately at 0x0800d58c (4-aligned, no filler needed), and a one-word trailing pool at 0x0800d650 (0xfffff000, the -0x1000 turn-clamp bound) with no filler needed (196 bytes of code from 0x0800d58c lands exactly on it). Registered as two executable_ranges around the mid-function split, same construction as 0x0808bec0's own entry. Every mov ip,pc-style call in this row is a bl through the runtime's own _call_via_r2/r3/r4 thunks (0x080072e4-0x08007320), already documented as ordinary indirect calls by semantic/main/0800ebec.c's own header comment, not retained assembly. Semantic-only: per-object physics tick, pushback-recoil resolution (park note's originally-traced half) feeding a ground-step + pushback-target-crossing-detection + position-commit + heading-turn-clamp tail (the second half, finished this pass after the sibling read this dig did for 0x0808bec0 revealed the shared shape). Not yet checked byte-exact.",
+      "executable_ranges": [
+        {
+          "address": "0x0800d340",
+          "size": 562
+        },
+        {
+          "address": "0x0800d58c",
+          "size": 196
+        }
+      ]
+    },
+    {
       "entry": "0x0800daf0",
       "evidence": "Single 462-byte function, 0x0800daf0..0x0800dcbc, prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and an 8-byte frame; one epilogue at 0x0800dcac unwinding all of it and ending pop {r1}; bx r1, so r0 is the result - the constant 1 loaded at 0x0800dca8. Excluded (30 bytes): the 2-byte movs r0,r0 alignment filler at 0x0800dcbe and the seven-word pool at 0x0800dcc0 holding 0x03001e70 (context pointer, 0x0800dafe), 0xff880000 and 0xffc00000 (the maximum-x and maximum-y insets, 0x0800db28 and 0x0800db34), 0x0000ffff (the truncating 16.16-to-whole bias, 0x0800dba8 and 0x0800dbbc), 0x030001d8 (the IWRAM square root, 0x0800dbce), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x0800dbf4 and 0x0800dc4e) and 0x0300013c (the IWRAM ratio helper, 0x0800dc42). Every pool word is reached by ldr rN,[pc,#imm] from inside the range. The bl Func_080072f0 at 0x0800dbd0 and the bl Func_08007310 at 0x0800dc4a and 0x0800dc60 are the runtime _call_via_r3 and _call_via_fp thunks inside 0x080072e4..0x08007320, so they are indirect calls through the pooled 0x030001d8 and 0x0300013c; the four mov ip,pc; bx rN sequences at 0x0800dbfc, 0x0800dc08, 0x0800dc54 and 0x0800dc68 are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec. Nothing in the row is retained assembly. The bounds at 0x0800db02..0x0800db36 dereference the target record before the null test at 0x0800db42 and are consumed only after it, so the C computes them after the test; no other statement order is observable. bun tools/main_xref.ts 0800daf0 reports FUNCTION (indirectly published callback) with no inbound call and a published Thumb pointer at 0x08013650, so the caller is unknown.",
       "executable_ranges": [
@@ -186,6 +200,24 @@
       ]
     },
     {
+      "entry": "0x0800f2f8",
+      "evidence": "Core-band census row (/tmp/ALCHEMY_QUEUE_CORE.md), 1252 bytes, a sibling of 0x0800ebec's Func_0800ebec (player walk step): the state object's fields match struct Object_0800ebec exactly (position_08/step_04/heading_06/velocity_24/pushback_38/animation_timer_64/animation_phase_66), and +0x54 is status_54, the field name 0800c62c.c already established on the same 64-record Data_03001e64 array. Reads confirmed against out/asm/0800f2f8.elf via arm-none-eabi-objdump rather than a naive resolver, since several pc-relative loads are mid-function embedded pools. Two callees, Func_080122ac and Func_08012204, are not established anywhere else and are declared from their call shape alone (self-documented as Uncertainty in the draft). Excluded (110 bytes): the 2-byte movs r0,r0 alignment filler at 0x0800f62a, the 44-byte pool at 0x0800f62c (0x02000240, 0x03001ae8, 0x03001b04, 0x08013254, 0x0000ffff, 0x03001f54, 0xfffff000, 0xffffe000, 0xffffd000, 0xffffc000, 0x03001ebc), the 24-byte pool at 0x0800f720 (0x00000000, 0x03000118, 0x03001e70, 0x03001ae8, 0x0801328c, 0xfffffe00), and the 4-byte trailing pool at 0x0800f7d8 (0x08013280).",
+      "executable_ranges": [
+        {
+          "address": "0x0800f2f8",
+          "size": 818
+        },
+        {
+          "address": "0x0800f658",
+          "size": 200
+        },
+        {
+          "address": "0x0800f738",
+          "size": 160
+        }
+      ]
+    },
+    {
       "entry": "0x0800fb38",
       "evidence": "One function spanning two assembled rows, 0x0800fb38..0x0800fd22 and 0x0800fd5c..0x0800fe70, 766 bytes of code. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 12-byte frame at 0x0800fb38; the b.n at 0x0800fd20 leaves this row for 0x0800fd5c, which does NOT begin with a push - it reads r0 (block+0x101, set at 0x0800fcde), ip (block+0x102, set at 0x0800fcfa), r5 (the scene header from 0x0800fb86) and this frame's [sp,#8] - and ends at 0x0800fe5e with the epilogue that unwinds exactly this prologue, so 0x0800fd5c is the continuation of this owner rather than a tail call, and both spans are registered here. That epilogue ends pop {r1}; bx r1 with N != 0, so r0 is the result, and the only value reaching it is the movs r0,#2 at 0x0800fe5c. Excluded (102 bytes): the 2-byte movs r0,r0 alignment filler at 0x0800fd22, the fourteen-word pool at 0x0800fd24 holding 0x00000400 (0x0800fcec), 0x00000200 (0x0800fd06), 0x0000c1ff (the DISPCNT mask, 0x0800fb4c), 0x08013784 (the twelve-byte scene table, 0x0800fb5e), 0x03000164 (the IWRAM-relocated block clear, 0x0800fb76), 0x00000128 (the resource-id bias, 0x0800fb80), 0x02010001 (0x0800fb8e), 0x0202c000 (0x0800fb9c), 0x02010000 (0x0800fba6 and 0x0800fc86), 0x0202d000 (0x0800fbb8), 0x0202de00 (0x0800fbce), 0x00000101 (0x0800fc24 and 0x0800fcde), 0x03000118 (the IWRAM-relocated ARM fixed-point multiply, 0x0800fc38) and 0x0400000e (BG3CNT, 0x0800fd1c), and the eleven-word pool at 0x0800fe70 holding 0x0400000c (0x0800fd6a), 0x0400000a (0x0800fd7e), 0x00000128 (0x0800fdb8), 0x03001388 (0x0800fdca), 0x06004000 (0x0800fdf2), 0x06008000 (0x0800fe0c), 0x0600c000 (0x0800fe26), 0x02028000 (0x0800fe36), 0x0400004c (0x0800fe42), 0x08010001 (0x0800fe54) and 0x00000c85 (0x0800fe56). The second row ends 4-aligned at 0x0800fe70 with no filler. Every pool word is reached by ldr rN,[pc,#imm] from inside the ranges and none is branched to. The bl Func_080072f0 at 0x0800fb7a is the runtime _call_via_r3 thunk inside 0x080072e4..0x08007320, index 3, an indirect call through r3 holding the pooled 0x03000164. The mov ip,pc; bx r9 at 0x0800fc9c and 0x0800fcac are ordinary indirect calls to the pooled 0x03000118, each landing site consuming r0 in the same frame, as recorded for 0x0800ebec; the movs r0,r0 at 0x0800fc9a and 0x0800fcaa are inside the instruction stream, aligning the return address mov ip,pc captures so it lands past the bx, not padding. The mov sl,r3 at 0x0800fdd2 loads the pooled 0x03001388 into a register no later instruction reads, so it is dead. Nothing in the row is retained assembly. bun tools/main_xref.ts 0800fb38 reports FUNCTION (indirectly published callback) with calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x08009114, so there is no direct call site.",
       "executable_ranges": [
@@ -226,24 +258,6 @@
         {
           "address": "0x080111b4",
           "size": 520
-        }
-      ]
-    },
-    {
-      "entry": "0x0800f2f8",
-      "evidence": "Core-band census row (/tmp/ALCHEMY_QUEUE_CORE.md), 1252 bytes, a sibling of 0x0800ebec's Func_0800ebec (player walk step): the state object's fields match struct Object_0800ebec exactly (position_08/step_04/heading_06/velocity_24/pushback_38/animation_timer_64/animation_phase_66), and +0x54 is status_54, the field name 0800c62c.c already established on the same 64-record Data_03001e64 array. Reads confirmed against out/asm/0800f2f8.elf via arm-none-eabi-objdump rather than a naive resolver, since several pc-relative loads are mid-function embedded pools. Two callees, Func_080122ac and Func_08012204, are not established anywhere else and are declared from their call shape alone (self-documented as Uncertainty in the draft). Excluded (110 bytes): the 2-byte movs r0,r0 alignment filler at 0x0800f62a, the 44-byte pool at 0x0800f62c (0x02000240, 0x03001ae8, 0x03001b04, 0x08013254, 0x0000ffff, 0x03001f54, 0xfffff000, 0xffffe000, 0xffffd000, 0xffffc000, 0x03001ebc), the 24-byte pool at 0x0800f720 (0x00000000, 0x03000118, 0x03001e70, 0x03001ae8, 0x0801328c, 0xfffffe00), and the 4-byte trailing pool at 0x0800f7d8 (0x08013280).",
-      "executable_ranges": [
-        {
-          "address": "0x0800f2f8",
-          "size": 818
-        },
-        {
-          "address": "0x0800f658",
-          "size": 200
-        },
-        {
-          "address": "0x0800f738",
-          "size": 160
         }
       ]
     },
@@ -1300,6 +1314,16 @@
       ]
     },
     {
+      "entry": "0x080f9c90",
+      "evidence": "Core-drive census row (kind shared_literal_function_module; body scan in the census note confirmed ordinary push/pop shapes, no register trick -- the classification reflects its function-pointer entry and the fallthrough boundary its own header comment describes). The per-frame music player tick: guarded by the 0x68736d53 lock word at player+52 (same magic pair 080006fc/080f9c44 established at 0x03007ff0), optional pre-callback at +56/+60, fade tick via Func_080fab7c, then per 150 accumulated tempo units (tempo_counter+34 += tempo_increment+32) one command pass per active track: channel-chain gate_time countdown raising release bit 0x40, restart requests (track flags bit 0x40) muted via Func_080fa68c and reinitialized, the command interpreter (running status below 0x80 through last_command+7, 0xcf+ to the extended handler at SoundInfo+56, 0xb1..0xce through the handler table at SoundInfo+52 with track-kill on cleared flags, 0x80..0xb0 wait lengths from Data_080fba14), and the LFO tick marking the dirty nibble. Output pass per dirty track: Func_080fac44 volume recompute, pitch-dirty (0x03) via the r4/r5-convention Func_080f9f3c spelled two-argument per semantic/main/080f9f6c.c, volume-dirty (0x0c) frequency recompute (CGB types through the function pointer at SoundInfo+48, PCM via Func_080fa1fc), dirty nibble cleared with &= 0xf0. Settles the channel-flags byte for the census: 0x80 active, 0x40 restart, 0x03 pitch-dirty, 0x0c volume-dirty, LFO writes 0x0c when mod_type is 0 else 0x03. Struct layouts shared with semantic/main/080f9f6c.c and src/080fab7c.c; the SoundInfo+48 pcm_rate-vs-function-pointer discrepancy with 080f9f6c is flagged in the source header rather than resolved. Complete owner: asm/080f9c90.s in full including the three-word tail pool (0x080fba14, 0x03007ff0, 0x68736d53). Span: 616 bytes, matching the census row exactly.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9c90",
+          "size": 616
+        }
+      ]
+    },
+    {
       "entry": "0x080f9f6c",
       "evidence": "Func_080f9f3c is a 48-byte leaf with no push/pop taking r4/r5 from its caller, spelled as two explicit pointers. The Func_080fa678 call-via-r1 concern is that callee's internals; from here it is an ordinary one-argument call. Previously blocked as hidden_register_module.",
       "executable_ranges": [
@@ -1384,26 +1408,22 @@
       ]
     },
     {
+      "entry": "0x080fae58",
+      "evidence": "Clean-room redraft of the quarantined row, per Pascal's ruling relayed by Vale 2026-07-31 18:09 and assigned to a lane that never opened the old body. Written solely from asm/080fae58.s plus in-repo vocabulary (struct CgbChannel from src/080fadf0.c, SoundInfo offsets shared with semantic/main/080f9f6c.c); no external reference consulted. The CGB sound-channel tick: a 15-step frame counter at SoundInfo+10 (14..0, the 0 tick advancing every envelope one extra step via the preserved replay loop); four 64-byte channels from SoundInfo+28 mapped to their register banks (0x04000060..65, 0x68/69/6c/6d, 0x70..75, 0x78/79/7c/7d, with unused sweep slots parked on 0x61/0x71 exactly as the reference does); per channel a start path (status 3, Func_080fadf0 pan refresh, duty/length/sweep programming, channel 3 reloading wave RAM at 0x04000090 on a changed wave pointer with current_wave caching), kill via Func_080fada0, pseudo-echo fade (status bit 4, pseudo_echo_length countdown), key release (release rate reload), and the attack/decay/sustain envelope state machine in status low bits with sustain_goal hold at counter 7 and the ((pseudo_echo_volume * envelope_goal + 255) >> 8) echo tail; output stage gated by the modify bits at +29 (pitch: SOUNDBIAS-amplitude frequency nudge at 0x04000089 for channels 1-3 with type bit 8, NRx3 low byte with channel 4 preserving NR43 bit 3, NRx4 from (control cache & 0xc0) + frequency>>8; volume: stereo-enable byte 0x04000081 masked through pan/pan_mask, channel 3 through the Data_080fba04 level table with the NR30=0x80 retrigger, others (envelope_volume << 4) + rate nibble with the NRx4|0x80 retrigger, channel 1 double-writing when NR10 bit 3 reads clear). Complete owner: asm/080fae58.s in full including interleaved pools. Span: 1098 bytes, matching the census row.",
+      "executable_ranges": [
+        {
+          "address": "0x080fae58",
+          "size": 1098
+        }
+      ]
+    },
+    {
       "entry": "0x080fb410",
       "evidence": "Single 30-byte leaf, no pool, ends on bx lr. The manifest kind nonstandard_thumb_branch_module records the b.n over an else arm that the approved compiler spells as a conditional move; that is a codegen difference, not a control-flow one, and the arm structure converts directly. Two direct callers, 0x080fb47e and 0x080fb4f2.",
       "executable_ranges": [
         {
           "address": "0x080fb410",
           "size": 30
-        }
-      ]
-    },
-    {
-      "entry": "0x0800d340",
-      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), 788-byte keep_structured_asm row holding a single function: prologue push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill and sub sp,#16 at 0x0800d340, single epilogue add sp,#16/pop.../bx r0 at 0x0800d63e-0x0800d64e, no branch out of the row and no inbound branch from outside it. bun tools/main_xref.ts 0800d340: FUNCTION, indirectly published callback (published at 0x0800c0a8). Same 64-record Data_03001e64 object array 0x0800c62c and 0x0808bec0 already walk (this row processes only the first 14), at the same true offsets semantic/main/0800ebec.c's struct Object_0800ebec establishes -- program_00@0, heading_06@6, position_08@8/12/16, ground_14@20, velocity_24@36/40/44, speed_30@48, acceleration_34@52, pushback_38@56/60/64, vertical_motion_strength@72 -- locally redeclared here per this dig's not-yet-exact include/ policy. The literal pool is split: a 2-byte movs r0,r0 filler at 0x0800d572 plus a six-word cluster at 0x0800d574-0x0800d58c (0x03001e64, 0x0000ffff, 0x030001d8, 0x00ffffff, 0x03000118, 0x0300013c) embedded mid-function, with ordinary code resuming immediately at 0x0800d58c (4-aligned, no filler needed), and a one-word trailing pool at 0x0800d650 (0xfffff000, the -0x1000 turn-clamp bound) with no filler needed (196 bytes of code from 0x0800d58c lands exactly on it). Registered as two executable_ranges around the mid-function split, same construction as 0x0808bec0's own entry. Every mov ip,pc-style call in this row is a bl through the runtime's own _call_via_r2/r3/r4 thunks (0x080072e4-0x08007320), already documented as ordinary indirect calls by semantic/main/0800ebec.c's own header comment, not retained assembly. Semantic-only: per-object physics tick, pushback-recoil resolution (park note's originally-traced half) feeding a ground-step + pushback-target-crossing-detection + position-commit + heading-turn-clamp tail (the second half, finished this pass after the sibling read this dig did for 0x0808bec0 revealed the shared shape). Not yet checked byte-exact.",
-      "executable_ranges": [
-        {
-          "address": "0x0800d340",
-          "size": 562
-        },
-        {
-          "address": "0x0800d58c",
-          "size": 196
         }
       ]
     }

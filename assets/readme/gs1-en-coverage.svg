@@ -6,10 +6,10 @@
 <text x="1168" y="64" font-size="9.5" fill="#8f8f8f" text-anchor="end" letter-spacing="0.9">EXACT + SEMANTIC C</text>
 <rect x="32" y="96" width="8" height="8" fill="#0072f5" rx="2"/>
 <text x="46" y="104" font-size="9.5" fill="#8f8f8f" letter-spacing="0.8">BYTE-EXACT C · FULL-C BYTE SHARE</text>
-<text x="32" y="128" font-size="21" fill="#ededed" font-weight="600" letter-spacing="-0.4">16.27%</text>
+<text x="32" y="128" font-size="21" fill="#ededed" font-weight="600" letter-spacing="-0.4">16.29%</text>
 <rect x="316" y="96" width="8" height="8" fill="#50e3c2" rx="2"/>
 <text x="330" y="104" font-size="9.5" fill="#8f8f8f" letter-spacing="0.8">SEMANTIC C</text>
-<text x="316" y="128" font-size="21" fill="#ededed" font-weight="600" letter-spacing="-0.4">51.78%</text>
+<text x="316" y="128" font-size="21" fill="#ededed" font-weight="600" letter-spacing="-0.4">51.77%</text>
 <rect x="600" y="96" width="8" height="8" fill="#333333" rx="2"/>
 <text x="614" y="104" font-size="9.5" fill="#8f8f8f" letter-spacing="0.8">ASSEMBLY</text>
 <text x="600" y="128" font-size="21" fill="#ededed" font-weight="600" letter-spacing="-0.4">31.94%</text>
@@ -19,8 +19,8 @@
 <defs><clipPath id="lane-bar-clip"><rect x="32" y="146" width="1136" height="6" rx="3"/></clipPath></defs>
 <g clip-path="url(#lane-bar-clip)">
 <rect x="32" y="146" width="1136" height="6" fill="#1f1f1f"/>
-<rect x="32" y="146" width="184.8" height="6" fill="#0072f5"/>
-<rect x="216.8" y="146" width="588.3" height="6" fill="#50e3c2"/>
+<rect x="32" y="146" width="185" height="6" fill="#0072f5"/>
+<rect x="217" y="146" width="588.1" height="6" fill="#50e3c2"/>
 <rect x="805.1" y="146" width="362.9" height="6" fill="#333333"/>
 </g>
 <rect x="32" y="176" width="372" height="440" fill="#0a0a0a" stroke="#262626" stroke-width="1" rx="8"/>
@@ -69,7 +69,7 @@
 <rect x="206.7" y="578.8" width="6.2" height="14.7" fill="#50e3c2"/>
 <rect x="206.7" y="576.2" width="6.2" height="2.7" fill="#333333"/>
 <text x="225.4" y="567.7" font-size="9.5" fill="#8f8f8f" letter-spacing="0.8">COMPRESSED CODE OVERLAYS</text>
-<rect x="225.9" y="593.7" width="14.7" height="3.8" fill="#0072f5"/>
+<rect x="225.9" y="593.6" width="14.7" height="3.9" fill="#0072f5"/>
 <rect x="225.9" y="580" width="14.7" height="13.6" fill="#50e3c2"/>
 <rect x="225.9" y="576.2" width="14.7" height="3.9" fill="#333333"/>
 <rect x="241.7" y="594.7" width="15.4" height="2.8" fill="#0072f5"/>
@@ -122,8 +122,8 @@
 <rect x="438.5" y="374.1" width="34.1" height="52.1" fill="#50e3c2"/>
 <rect x="438.5" y="364.8" width="34.1" height="9.3" fill="#333333"/>
 <text x="455.6" y="417.4" font-size="9" fill="#04241d" text-anchor="middle" font-family="'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" opacity="0.9">372</text>
-<rect x="438.5" y="573" width="34.1" height="24.5" fill="#0072f5"/>
-<rect x="438.5" y="477.2" width="34.1" height="95.8" fill="#50e3c2"/>
+<rect x="438.5" y="571.9" width="34.1" height="25.6" fill="#0072f5"/>
+<rect x="438.5" y="477.2" width="34.1" height="94.7" fill="#50e3c2"/>
 <rect x="438.5" y="464.5" width="34.1" height="12.7" fill="#333333"/>
 <text x="455.6" y="534.2" font-size="9" fill="#04241d" text-anchor="middle" font-family="'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" opacity="0.9">373</text>
 <rect x="473.6" y="282.2" width="33.5" height="11.6" fill="#0072f5"/>

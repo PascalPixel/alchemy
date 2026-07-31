@@ -1320,6 +1320,16 @@
           "size": 40
         }
       ]
+    },
+    {
+      "entry": "0x0808b3ec",
+      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), 608-byte keep_structured_asm row holding a single function: prologue push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill and sub sp,#8 at 0x0808b3ec, single epilogue add sp,#8/pop.../bx r0 at 0x0808b624-0x0808b636, no branch out of the row and no inbound branch from outside it. bun tools/main_xref.ts 0808b3ec: FUNCTION (called directly), four call sites (0x0808b6f0, 0x0808b6f8, 0x0808b9e4, 0x080917b8; two of the four are inside asm/0808b674.s, the neighbour whose own 0x0808b7b8 fragment is already registered under semantic/main/0808b674.c) plus one published Thumb pointer at 0x0808a3f4. The one mov ip,pc / bx r3 sequence (0x0808b5dc) is an ordinary indirect call through the pooled 0x03000118, the same IWRAM-relocated ARM multiply already recorded as an opaque call for 0x0800447c/0x08004ab0/0x0800c62c, not retained assembly. Excluded (22 bytes): the 2-byte movs r0,r0 alignment filler at 0x0808b636 and the five-word pool at 0x0808b638 holding 0x03001ebc, 0x00002705, 0x00000109, 0x0000ffff and 0x03000118. Semantic-only: iterates a caller array of 24-byte publish-request records against a struct MotionObject-typed slot table (include/motion_object.h, confirmed via six exact field-offset hits during this trace), not yet checked byte-exact.",
+      "executable_ranges": [
+        {
+          "address": "0x0808b3ec",
+          "size": 586
+        }
+      ]
     }
   ]
 }

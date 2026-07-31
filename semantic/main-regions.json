@@ -1330,6 +1330,16 @@
           "size": 586
         }
       ]
+    },
+    {
+      "entry": "0x08004fe4",
+      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), 500-byte (0x1f4, confirmed via out/full/asm/08004fe4.elf's .text size) keep_structured_asm row holding a single function: prologue push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill at 0x08004fe4, single epilogue pop {r3,r5,r6,r7}/mov r8,r3/mov r9,r5/mov sl,r6/mov fp,r7/pop {r5,r6,r7}/pop {r0}/bx r0 (void, HANDOVER's epilogue rule), no branch out of the row (one internal conditional, .L0) and no inbound branch from outside it. bun tools/main_xref.ts 08004fe4: FUNCTION (called directly), two call sites (0x080051dc, 0x080051f0). Checked live against HANDOVER's 14-stem ARM-only list (which flags this address): asm/08004fe4.s carries .thumb with no ARM directive and no Thumb-only-compiler header, so the flag is stale here, the same correction already made this session for 0x08002dd8. Six-word trailing pool (0x040000d4 REG_DMA3SAD, 0x08007994 the DMA source, 0x84000007 the DMA control word, 0x030001d8/0x030003f0/0x03000118 the three IWRAM-relocated helper addresses) confirmed inside the row and not overlapping another owner. Semantic-only: DMAs asm/08007994.s's own already-reconstructed ARM routine (a signed 16.16 three-term dot product, per that file's own comment) onto the caller's stack and calls it via the ordinary call-via-r4 thunk alongside the sqrt/divide/multiply IWRAM helpers already named in resource_3b3_c_02000314.c and semantic/main/08005268.c; every register in the body was traced line-by-line against the .s source, not yet checked byte-exact.",
+      "executable_ranges": [
+        {
+          "address": "0x08004fe4",
+          "size": 500
+        }
+      ]
     }
   ]
 }

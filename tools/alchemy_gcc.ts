@@ -864,6 +864,8 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   // rerun parks both in callee-saved registers and buys two prologue pushes.
   "assets/code/resource_37f_c_0200056c.c",
   "assets/code/resource_37f_c_020005ac.c",
+  "assets/code/resource_37f_c_020005ec.c",
+  "assets/code/resource_37f_c_02000634.c",
   // resource_38d:01b4 loads its 0x302 flag id at the test and again at the set.
   "assets/code/resource_38d_c_020001b4.c",
   "assets/code/resource_38d_c_0200028c.c",

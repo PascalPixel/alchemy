@@ -3236,123 +3236,24 @@ AlchemyC_02001ac8:
 	.4byte 0x02000240
 	.2byte 0x022b
 	.2byte 0x0000
-	push	{r5, r6, lr}
-	movs	r0, #16
-	sub	sp, #16
-	bl	sub_02004ba4
-	adds	r5, r0, #0
-	bl	sub_02004b92
-	movs	r0, #16
-	movs	r1, #1
-	bl	.L_02002c9e
-	movs	r1, #228
+AlchemyC_02001de0:
+	.space 0x1a
 .L_02001dfa:
-	movs	r3, #192
-	lsls	r1, r1, #1
-	lsls	r3, r3, #11
-	movs	r2, #152
-	movs	r0, #16
-	bl	sub_02002b96
-	movs	r0, #10
-	bl	sub_02004ba8
+	.space 0x14
 .L_02001e0e:
-	ldr	r2, [r5, #16]
-	movs	r3, #128
-	lsls	r3, r3, #11
-	adds	r2, r2, r3
-	movs	r3, #1
-	movs	r4, #0
-	ldr	r0, [r5, #8]
-	ldr	r1, [r5, #12]
-	str	r3, [sp, #8]
+	.space 0x12
 .L_02001e20:
-	movs	r3, #0
-	str	r4, [sp, #0]
-	str	r4, [sp, #4]
-	str	r4, [sp, #12]
-	bl	sub_02002912
-	movs	r0, #16
-	movs	r1, #1
-	bl	sub_02004c86
-	movs	r2, #0
-	movs	r1, #0
-	movs	r0, #16
-	bl	sub_02004c58
-	movs	r0, #20
-	bl	sub_02004bde
+	.space 0x24
 .L_02001e44:
-	movs	r0, #16
-	movs	r1, #2
-	bl	sub_02004c4e
-	movs	r1, #129
-	lsls	r1, r1, #1
-	movs	r0, #16
-	bl	sub_02004ca0
-	movs	r5, #192
+	.space 0x14
 .L_02001e58:
-	movs	r0, #60
-	bl	sub_02004bf8
-	lsls	r5, r5, #10
-	movs	r1, #224
-	adds	r3, r5, #0
-	lsls	r1, r1, #1
-	movs	r0, #16
-	movs	r2, #192
-	bl	.L_02002bfc
-	movs	r6, #212
-	movs	r1, #16
-	movs	r2, #0
-	movs	r0, #0
-	bl	sub_02004c8c
-	lsls	r6, r6, #1
-	movs	r0, #6
-	bl	sub_02004c1c
-	adds	r3, r5, #0
-	adds	r1, r6, #0
-	movs	r0, #16
-	movs	r2, #208
-	bl	.L_02002c1c
-	movs	r1, #16
-	movs	r2, #0
-	movs	r0, #0
-	bl	sub_02004caa
-	movs	r0, #6
-	bl	sub_02004c38
-	adds	r3, r5, #0
-	adds	r1, r6, #0
-	movs	r0, #16
-	movs	r2, #224
-	bl	.L_02002c38
-	movs	r2, #0
-	movs	r1, #16
-	movs	r0, #0
+	.space 0x58
 .L_02001eb0:
-	bl	sub_02004cc6
-	movs	r0, #6
-	bl	sub_02004c54
-	movs	r0, #0
-	movs	r1, #1
-	bl	sub_02004d14
+	.space 0x12
 .L_02001ec2:
-	movs	r1, #0
-	movs	r2, #0
-	movs	r0, #16
-	bl	sub_02004cbe
-	movs	r0, #30
-	bl	sub_02004c6c
+	.space 0x10
 .L_02001ed2:
-	movs	r0, #194
-	lsls	r0, r0, #2
-	bl	sub_02004c6c
-	movs	r0, #20
-	movs	r1, #0
-	movs	r2, #0
-	bl	sub_02004cd6
-	bl	sub_02004c92
-	add	sp, #16
-	pop	{r5, r6}
-	pop	{r0}
-	bx	r0
+	.space 0x1e
 	push	{r5, r6, lr}
 	movs	r0, #17
 .L_02001ef4:

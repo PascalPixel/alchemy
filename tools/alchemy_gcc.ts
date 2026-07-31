@@ -1135,7 +1135,7 @@ export function evidencedRoutingFlags(): string[] {
 const ADDRESS_SYMBOL = /^(Func|Data|Value)_([0-9a-f]{8})(?:_[a-z])?$/;
 const CALL_VIA_SYMBOL = /^_call_via_r(1[0-3]|[0-9])$/;
 const CALL_VIA_ALIAS = /^_call_via_(sl|fp|ip|sp)$/;
-const CALL_VIA_BASE = 0x080072e4;
+export const CALL_VIA_BASE = 0x080072e4;
 const CALL_VIA_REGISTERS: Record<string, number> = { sl: 10, fp: 11, ip: 12, sp: 13 };
 
 export interface ExternalSymbol {
@@ -1143,7 +1143,48 @@ export interface ExternalSymbol {
   thumb: boolean;
 }
 
-export function externalSymbol(name: string): ExternalSymbol | null {
+// `callViaBase` names the `bx rN` bank the `_call_via_rN` stubs branch through.
+// Every overlay carries its own bank, so a caller that knows which image it is
+// linking passes that bank's address; the default is the main image's, which is
+// what a `src/` translation unit links against.
+// Address of each overlay's own `_call_via_rN` bank, in the space the
+// reconstruction links against.
+//
+// An indirect call compiles to `bl _call_via_rN`, a stub that is nothing but
+// `bx rN`. Every overlay carries its own bank, so resolving the stub to the
+// main image's puts the branch a few bytes wrong: the row compares clean and
+// then fails adoption, because the comparator never links. Roughly half the
+// overlay rows that still have a semantic reference make an indirect call.
+//
+// Derive a new entry with `callViaBankBase` from `overlay_disasm.ts`, run
+// against the overlay's assembly *before* any row that calls the bank has been
+// adopted. It cannot be derived on demand: the address a `bl` encodes for a
+// slot and the slot's own address in the image differ by a per-overlay constant
+// (resource_373 +0x60, resource_3bc +0x19e), so the derivation has to read a
+// real call into the bank -- and once that row is C, the assembly no longer has
+// one. Hence a table, recorded once, rather than a scan on every build.
+const OVERLAY_CALL_VIA_BASE: Record<string, number> = {
+  resource_373: 0x020061b4,
+  resource_389: 0x02001578,
+  resource_391: 0x02002d8c,
+  resource_392: 0x02000eec,
+  resource_393: 0x02000f34,
+  resource_39f: 0x02002f1c,
+  resource_3b2: 0x02003180,
+  resource_3b4: 0x02002668,
+  resource_3b5: 0x02000edc,
+  resource_3bc: 0x02004d4e,
+  resource_3bf: 0x02005810,
+  resource_3c4: 0x02003214,
+  resource_3c5: 0x02002ff8,
+  resource_3c8: 0x02005324,
+};
+
+export function overlayCallViaBase(overlay: string): number {
+  return OVERLAY_CALL_VIA_BASE[overlay] ?? CALL_VIA_BASE;
+}
+
+export function externalSymbol(name: string, callViaBase = CALL_VIA_BASE): ExternalSymbol | null {
   const addressed = name.match(ADDRESS_SYMBOL);
   if (addressed !== null) {
     return {
@@ -1154,14 +1195,14 @@ export function externalSymbol(name: string): ExternalSymbol | null {
   const callVia = name.match(CALL_VIA_SYMBOL);
   if (callVia !== null) {
     return {
-      address: CALL_VIA_BASE + Number.parseInt(callVia[1], 10) * 4,
+      address: callViaBase + Number.parseInt(callVia[1], 10) * 4,
       thumb: true,
     };
   }
   const callViaAlias = name.match(CALL_VIA_ALIAS);
   if (callViaAlias !== null) {
     return {
-      address: CALL_VIA_BASE + CALL_VIA_REGISTERS[callViaAlias[1]] * 4,
+      address: callViaBase + CALL_VIA_REGISTERS[callViaAlias[1]] * 4,
       thumb: true,
     };
   }
@@ -1175,8 +1216,8 @@ export function externalSymbol(name: string): ExternalSymbol | null {
 // reader at 08006ba8 loads 0x08006b85 and clears the tag at run time).
 // `.thumb_set` is the alias form that keeps the branch type, so both the
 // branch offset and the tagged data word come out right.
-export function externalSymbolAssembly(name: string): string {
-  const symbol = externalSymbol(name);
+export function externalSymbolAssembly(name: string, callViaBase = CALL_VIA_BASE): string {
+  const symbol = externalSymbol(name, callViaBase);
   if (symbol === null) throw new Error(`unsupported external symbol: ${name}`);
   const directive = symbol.thumb ? ".thumb_set" : ".set";
   return `.global ${name}\n${directive} ${name}, 0x${symbol.address.toString(16).padStart(8, "0")}\n`;

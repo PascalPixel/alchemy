@@ -597,6 +597,21 @@ between them fixed `Data_02000240[224]` as the map id and `[225]` as the
 sub-state, the result spelling, and the significance of sub-state 12 — settling
 `resource_3b9:007c` before any dataflow work.
 
+**The four defect shapes the multiset checker reports, and what each one means.**
+Learned from auditing 69 converted overlays; 45 were clean, and the failures
+sorted into exactly these:
+
+| reading | meaning |
+| --- | --- |
+| wholesale failure, source names `Func_0200xxxx` the assembly never calls | pre-rule naming — a rename pass, not a re-conversion |
+| `asm=1 src=2` on a bracket-close import | a shared close written once per arm; use a label and `goto` |
+| `asm=3 src=4` on one target with `asm=2 src=1` on the NEXT | a site attributed to the adjacent veneer entry — they are 8 bytes apart and easy to be one off on |
+| a large shortfall (`asm=18 src=3`, `asm=46 src=26`) | a repeated block folded into a loop, or arms merged — but check for an interior pool first, because if the "missing" sites are pool words the *assembly* count is the wrong one |
+| `asm=1 src=0` | a call dropped outright, often an intra-overlay call to another row |
+
+Never bend a source to satisfy the checker. Its declaration filter is the
+fragile part; one honest "the tool is wrong here" beats a source edited to fit.
+
 **A bracket-close import appearing MORE times in your C than in the histogram
 means you wrote a shared close once per arm.** Measured across the eight
 worst-failing overlays, three of the eleven genuine count defects were exactly
@@ -1723,33 +1738,107 @@ cohort. It added **17,816 exact-C bytes**, taking exact Full-C Byte Share to
 
 In descending order of measured value.
 
-**THE OVERLAY STRICT QUEUE IS FINISHED — start on the MAIN IMAGE.** Everything
-below about overlay queues is history, kept because the method transferred.
-Measured after the queue emptied, the main image's remaining semantic ground
-breaks down by retention class like this:
+**THE OVERLAY STRICT QUEUE IS FINISHED — and the main image is very nearly
+finished too.** Everything below about overlay queues is history, kept because
+the method transferred.
 
-| class | bytes | what it means |
+**Measured, after two false starts that are worth knowing about.** The main
+image's remaining ground by retention class looks like this:
+
+| class | bytes | status |
 | --- | --- | --- |
 | `keep_structured_asm` | 44,136 | parked by design |
-| `split_first` (all `mixed_region`) | 23,432 | **the live front** |
 | `keep_asm` | 11,988 | parked by design |
-| `merge_with_owner` / `merge_with_function_owner` | 7,088 | continuations wanting an owner |
+| `split_first` (all `mixed_region`) | 23,432 | **already converted** — see below |
+| `merge_with_owner` / `merge_with_function_owner` | 7,088 | 4,528 already covered |
 | `adjacent_section_alignment` | 660 | padding |
 
-**Every one of the 599 `c_candidate` regions already has a semantic source**, so
-there is no drafting backlog there — the exact lane's constraint is adoption,
-not authorship. The work is the **79 `split_first` regions**: each carries
-evidence `mixed_or_invalid_function_boundary`, meaning several functions and/or
-interleaved data share one region and nobody has split it into owners. Splitting
-is the substance; the overlay boundary method (control-flow walk from each
-prologue, everything unreached is pool or data) transfers directly. Largest are
-`080e4e0c` (1,512), `080f4f04` (1,226), `080beb08` (1,104), `080f4318` (1,074),
-`080e5e28` (1,066), `080d77b4` (1,054).
+**All 599 `c_candidate` regions already have a semantic source.** There is no
+drafting backlog; the exact lane's constraint is adoption, not authorship.
+
+**The genuine remaining semantic gap is about 2,560 bytes across 36 small
+continuation regions** — the ones NOT inside any registered `executable_ranges`
+entry. Largest: `0800fd5c` (320), `0808f498` (148), `080e53f4` (136),
+`080f474a` (114), `0808b7b8` (108), `080bea9c` (108). Each genuinely has no
+independent entry (`live_parent_stack_and_high_registers`, `no_independent_entry`,
+`live_owner_`), so each must be folded into its owner's source rather than
+written standalone, with that owner's registered ranges extended to match.
+
+**`bun tools/main_xref.ts <address>...`** answers "who references this?" across
+the whole image: direct calls, branches, aligned pool words, and pool words
+holding **address + 1** — the Thumb bit, which is how an indirectly published
+callback is stored. That last case is the one that earns the tool: it is the
+only cheap way to tell an unreferenced tail from an independently callable
+function, and it proved `0808f498` a real function from five pool words holding
+`0x0808f499` with no branch into it at all. **What it cannot decide** is a
+region with no inbound reference: a genuine continuation is normally reached by
+*falling through*, which leaves no reference, so a pool and a fall-through
+continuation are indistinguishable. Of the 32 open continuation regions, 31 come
+back that way — narrowed to "pool or fall-through", no further. A reachability
+walk from the owner's entry is what settles those.
+
+**"Reached indirectly" is a CLAIM, and `main_xref.ts` is how you check it.** A
+lane described all six of its new main-image owners as reached indirectly; four
+are confirmed — pool words hold `entry + 1` — but `0801c9c0` and `080b7410` have
+**no reference of any kind** anywhere in the image: no call, no branch, no word
+holding the address, none holding address + 1, and nothing in the overlay
+assembly either. They are reached by a computed address, from data the scan does
+not cover, or not at all. The reconstruction is faithful to the bytes either
+way; say "caller unknown" rather than "indirect", because the second reads as
+established and is not.
+
+**`mov ip,pc; bx rN` (NOT `mov lr,pc`) is the private-ip-return call family**
+and the on-sight signature of a `keep_structured_asm` /
+`nonstandard_thumb_call_module` owner. Seeing it means **stop**, not decompile.
+
+**`keep_structured_asm` is ABSORBING for continuations.** A `merge_with_owner`
+row whose head is `keep_structured_asm` is out of scope even though the row's
+own retention looks eligible — the row-level field invites the opposite reading.
+Zero of the 126 `keep_structured_asm` rows has a semantic source, by standing
+decision.
+
+**A row beginning with an alignment `0000` halfword cannot be a semantic
+filename.** `build_semantic` requires `Func_<filename-address>` to exist and the
+entry is at row + 2, so such rows must go through `main-regions.json` even when
+they are single-range. Four of six owners in one lane hit this.
+
+**`stmia r3!, {r0,r1,r2}` with `r3 = 0x040000b0` programs a whole DMA channel in
+one instruction** (SAD/DAD/CNT). The preceding `ldrh/ands/strh` pair on `+10`
+masked with `0xc5ff` then `0x7fff` is the standard two-step channel stop. This
+identified four sibling functions across three unrelated regions at a glance.
+
+**`objdump --adjust-vma` silently reinterprets `--start-address`.** With
+`--adjust-vma=0x080beb08 --start-address=0x080beb08` you disassemble **file
+offset 0** — the GBA header — under the address you asked for, and it reads as
+plausible garbage code. The correct form is `--adjust-vma=0x08000000
+--start-address=<vma>`. This burned a full analysis pass.
+
+**Two traps cost a lane a full pass; do not repeat them.**
+
+**A `split_first` / `mixed_region` row with NO prologue and NO epilogue is not a
+mixed region at all — it is one owner's interior.** All 27 `split_first` rows
+(23,432 bytes, every byte of the class) already lie inside a registered owner's
+`executable_ranges`. The evidence string `mixed_or_invalid_function_boundary`
+describes the **classifier's uncertainty**, not a finding about the bytes.
+Settle it in one command before any control-flow walk:
+
+    grep -c 'push\|pop\|bx' asm/<row>.s      # 0 means interior, nothing to split
+
+**`semantic_owner_scope.ts <row>` returning `owners=0` means "already converted
+and registered", NOT "no owner".** That inverted reading is the trap. Grep the
+row address in `semantic/main-regions.json` to confirm in a second call. Note
+that file registers spans for only 18 owners against 617 sources, so a source
+existing does NOT imply its span is registered or that a neighbouring
+continuation is covered — `08021cb8`'s source is a self-contained 208-byte
+function ending at 0x08021d88 while its "continuation" starts at 0x08021dfa.
+Read before crediting.
 
 Read `asm/<address>.s` — reconstructed disassembly, byte-verified against the
-ROM by `build_asm.ts`. **The overlay `bl` rule does NOT apply here.** It is an
-artefact of unlinked overlay images; the main image is linked, so its `bl`
-targets and printed names are ordinary.
+ROM by `build_asm.ts`. **The overlay `bl` rule does NOT apply here**, confirmed
+by resolving every `.set sub_*` symbol across four regions against the tree:
+thirteen land exactly on a region start with a real source, which the overlay
+`stored + 2` artefact would displace mid-instruction. The only non-region
+targets were `080072f0`/`080072f4`, the main-image `call_via` thunk bank.
 
 **Overlay strict queues.** Two discovery fixes originally took this queue from
 20 rows / 6,110 bytes to 1,334 rows / 311,324 bytes, and rediscovery of

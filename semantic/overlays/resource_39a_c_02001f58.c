@@ -26,6 +26,11 @@ typedef signed int s32;
 extern u8 *Data_03001ebc;
 
 /* Imports. Those used for their return value are typed. */
+void Func_08015040();
+s32 Func_08077040();
+s32 Func_080770c0();
+void Func_0808a018();
+void Func_0808a020();
 void Func_0200427a();
 s32 Func_0200427c();
 void Func_02004270();
@@ -35,18 +40,18 @@ void Func_020042da();
 
 void Func_02001f58(void)
 {
-    Func_02004294();
+    Func_0808a018();
     /* movs r0,#0x82 / lsls r0,#4 builds 0x820. */
-    if (Func_0200427c((s32)0x820) != 0) {
-        Func_02004270((s32)0x17e5, 1);
+    if (Func_080770c0((s32)0x820) != 0) {
+        Func_08015040((s32)0x17e5, 1);
     } else {
-        Func_0200427a((s32)0x17e4, 1);
-        if (Func_02004290((s32)0xe6) != -1) {
+        Func_08015040((s32)0x17e4, 1);
+        if (Func_08077040((s32)0xe6) != -1) {
             u8 *workspace = Data_03001ebc;
 
             /* movs r1,#0xb9 / lsls r1,#1 gives the byte offset 370. */
             *(u16 *)(workspace + 370) = 1;
         }
     }
-    Func_020042da();
+    Func_0808a020();
 }

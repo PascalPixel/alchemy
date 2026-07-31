@@ -28,6 +28,9 @@ typedef signed int s32;
  */
 
 /* Imports.  0x020031a2 is used for its return value. */
+s32 Func_080090c8();
+void Func_080091e0();
+void Func_0808a160();
 u8 *Func_020031a2();
 void Func_02003206();
 void Func_020032a6();
@@ -38,7 +41,7 @@ u8 *Func_02000ed8(s32 a, s32 b, s32 c, s32 d)
 
     /* The four incoming arguments are permuted before the call: r0<-d,
      * r1<-a, r2<-b, r3<-c. */
-    object = Func_020031a2(d, a, b, c);
+    object = Func_080090c8(d, a, b, c);
     if (object == NULL) {
         return NULL;
     }
@@ -52,8 +55,8 @@ u8 *Func_02000ed8(s32 a, s32 b, s32 c, s32 d)
     }
 
     /* r0 still holds the object here: it was never reloaded after the call. */
-    Func_02003206(object, 0);
-    Func_020032a6(object, 15);
+    Func_080091e0(object, 0);
+    Func_0808a160(object, 15);
     object[35] |= 2;
     return object;
 }

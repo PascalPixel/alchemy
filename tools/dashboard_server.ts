@@ -232,7 +232,7 @@ function mtimes() {
       ["kanban", existsSync(KANBAN) ? statSync(KANBAN).mtimeMs : 0],
       ["chat", existsSync(CHAT) ? statSync(CHAT).mtimeMs : 0],
       ["page", BOOT],
-      ["avatars", ["mercury","venus","mars","jupiter","vale"].reduce((a, w) => a + (existsSync(join(AVATAR_DIR, w + ".png")) ? statSync(join(AVATAR_DIR, w + ".png")).mtimeMs : 0), 0)],
+      ["avatars", Object.values(PORTRAITS).reduce((a, f) => { const p = join(ROOT, "assets", "graphics", f); return a + (existsSync(p) ? statSync(p).mtimeMs : 0); }, 0)],
     ]),
   );
 }

@@ -573,6 +573,11 @@ Collapsing three such pairs in `resource_3ca:0430` would have deflated the
 multiset by six. Identical behaviour is not a licence to merge arms — the
 per-target count is over call *sites*, not over distinct behaviour.
 
+**The skip-beat guard appears with BOTH polarities, sometimes in one overlay.**
+`resource_377:0f90` tests `Func_0808a070(0,0) == 1` twice while `:0578` tests
+`== 0`. Assuming the guard is always `!= 0` inverts those beats. Read the
+comparison at each site.
+
 **Grep for the skip-beat counter by its constants, not by asymmetry.** It also
 appears on BOTH arms of a test, so "empty else" is not the tell — `movs r3,#236 /
 lsls #1` off the `0x03001ebc` state pointer is.
@@ -978,6 +983,12 @@ body of a spin-wait reached only by a *backward* `beq.n` from below the pool.
 Ending the pool at the next branch target would have swallowed two live
 instructions. Only a control-flow walk finds this — a heuristic that assumes a
 pool runs to the next label cannot.
+
+**Cheap second tell that a gap is a pool: an argument register crosses it.**
+`resource_377:0578` sets `movs r0,#8` *before* a bare `b.n` and the `bl` after
+the gap consumes it — so the gap cannot be a body boundary. Both "run to the next
+label" and "run to the next branch target" would have mis-sized that owner by
+~800 bytes. Use it as a sanity check on any walk-derived pool.
 
 **Derive the pool map from a CONTROL-FLOW WALK. That method is immune to both
 traps below; nothing else is.** Walk the owner from its prologue following

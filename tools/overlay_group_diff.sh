@@ -5,11 +5,12 @@
 # running in the background and a probe running in the foreground would
 # otherwise overwrite each other's intermediates and report numbers that are not
 # measurements of anything (`ref=0`, instruction counts several times the row).
-cd /home/user/alchemy
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
 export WORK
 WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
-/home/user/alchemy-gcc/dist/xgcc -B/home/user/alchemy-gcc/dist/ -O2 -mthumb -mthumb-interwork \
+"$ROOT/../alchemy-gcc/dist/xgcc" -B"$ROOT/../alchemy-gcc/dist/" -O2 -mthumb -mthumb-interwork \
   -mcpu=arm7tdmi -fno-builtin -nostdinc -ffreestanding -fcall-used-r4 -Iinclude ${EXTRA_CFLAGS:-} -S "$4" -o "$WORK/m.s" 2>/dev/null
 grep -E "^	[a-z]" "$WORK/m.s" | sed 's/\t/ /g;s/^ *//' > "$WORK/mine.txt"
 bun tools/overlay_show.ts "$1" "$2" -n "$3" 2>/dev/null | sed 's/^ *[0-9a-f]*:\t[0-9a-f ]*\t//' \

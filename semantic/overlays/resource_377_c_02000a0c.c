@@ -1,5 +1,6 @@
 typedef unsigned char u8;
 typedef unsigned short u16;
+typedef unsigned int u32;
 typedef signed int s32;
 
 /*
@@ -107,7 +108,6 @@ void Func_0808a0c8();
 void Func_0808a130();
 void Func_0808a1f0();
 void Func_0808a150();
-void Func_0808a0b0();
 void Func_0808a0b0();
 void Func_0808a368();
 void Func_0808a370();

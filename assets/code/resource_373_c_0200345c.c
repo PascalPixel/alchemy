@@ -30,9 +30,9 @@ struct Resource373Actor {
     u8 flag55;
 };
 
-struct Resource373Actor *Func_02009458(s32 selector);
-void Func_020093d0(struct Resource373Actor *actor, s32 mode);
-void Func_020094ec(s32 selector, s32 a, s32 b);
+extern struct Resource373Actor *Func_02009458(s32 selector);
+extern void Func_020093d0(struct Resource373Actor *actor, s32 mode);
+extern void Func_020094ec(s32 selector, s32 a, s32 b);
 
 void Func_0200345c(s32 firstSelector, u32 count, s32 mode)
 {

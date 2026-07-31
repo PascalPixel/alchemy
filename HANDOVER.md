@@ -1797,6 +1797,16 @@ In descending order of measured value.
 Everything below about overlay queues is history, kept because the method
 transferred wholesale.
 
+**`out/assets` IS NOT THE CACHE THAT MATTERS. Clear `out/cache` before claiming
+a build failure is not yours.`** I reported a `build_assets` failure to two other
+agents across five rounds, escalated it to the board, and pinned the failing
+entry — while deleting `out/assets` between every run and stating "not a cache on
+my side" each time. That was true and irrelevant: `out/cache/asm-regions` and
+`out/cache/overlay-c` hold assembled regions and overlay C, 19 MB of it, stale
+from before a routing change. Clearing `out/cache` made the whole asset set build
+first try. A fresh-worktree control does not protect you either, because the
+comparison that mattered was between two dirty caches, not two trees.
+
 **The measured backlog — compute it this way, not from a class label.** A stem is
 real work when it has an `asm/<stem>.s`, no `semantic/main/<stem>.c`, no
 `src/<stem>.c`, and is **not inside any `executable_ranges` entry** in
@@ -2126,6 +2136,19 @@ diff <(grep -o 'Func_[0-9a-f]\{8\}' semantic/overlays/<file> | sort -u) \
 sites to rewrite. `resource_383` names them **by main-image veneer** throughout,
 so all 27 sites in `:091c` needed their own address. Knowing which before you
 draft is the difference between a first-probe adoption and a rejection.
+
+**An address-taken function is named in the LINK base, not the run-time one.**
+The transcription rule below covers symbols that are *called*. A symbol whose
+address is merely taken — published to a task table, stored in a pool — follows
+the opposite convention, because overlays are **linked at 0x02008000 and run at
+0x02000000**. On `resource_3bb:09b0` the reference pool word is `0x02008715`;
+the function it names lives at 0x02000714 at run time, so the source has to say
+`Func_02008714` and let `.thumb_set` supply bit 0. Naming it `Func_02000714`
+gives `0x02000715` and fails adoption by **one byte** with equal sizes, which
+reads exactly like a wrong branch displacement and is not one. Do not add the
+Thumb bit by hand either — `.thumb_set` already carries it, so `+ 1` overshoots.
+Tell: a pool word in the `0x0200_8xxx` range next to a call that takes a
+function address.
 
 **Transcribe callee names from `overlay_show.ts`; never extrapolate them.** An
 overlay `bl` stores the target's image offset minus two, so `overlay_show`'s

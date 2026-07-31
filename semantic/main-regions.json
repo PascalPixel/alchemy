@@ -750,6 +750,16 @@
       ]
     },
     {
+      "entry": "0x080f9a18",
+      "evidence": "One 22-byte keep_asm row holding a single leaf: mov ip,r4 at 0x080f9a18 saves r4 into ip without touching the stack, one epilogue mov r4,ip; bx lr at 0x080f9a2c/0x080f9a2e, and no branch inside the row. Nothing is excluded: 22 bytes of code, no pool word and no alignment filler, and the 0x080f9a30 row starts flush after it. Four stmia r0!,{r1,r2,r3,r4} with all four registers set to zero clear 64 bytes and leave r0 addressing the byte after them; 64 bytes is one sound channel record, and the writeback is the observable second effect, so the reconstruction returns the advanced pointer rather than dropping it. This is the one place in the neighbourhood where r4 is saved rather than used call-used, and it is saved in ip rather than on the stack, which is what lets the inbound tail branch reach it with a live caller frame. bun tools/main_xref.ts 080f9a18 reports one inbound branch, from 0x080f99dc, and one Thumb pointer, published at 0x080fb82c; there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9a18",
+          "size": 22
+        }
+      ]
+    },
+    {
       "entry": "0x080f9a30",
       "evidence": "Single 32-byte leaf, no pool, ends on bx lr. The manifest kind nonstandard_thumb_branch_module records the b.n that skips the else arm of the head/previous test; the two arms are distinct stores and are kept distinct. One direct caller at 0x080f9a6a, and the address+1 word at 0x080fb828 publishes it as a callback.",
       "executable_ranges": [
@@ -776,6 +786,16 @@
         {
           "address": "0x080f9ae0",
           "size": 26
+        }
+      ]
+    },
+    {
+      "entry": "0x080f9afc",
+      "evidence": "One 20-byte keep_structured_asm row holding a single leaf handler with no prologue: one epilogue, the bx lr at 0x080f9b0e, reached by the beq.n depth-zero early-out at 0x080f9b00 and by fall-through, and no inbound branch from outside the row. Nothing is excluded: 20 bytes of code, no pool word and no alignment filler, and the next row starts flush at 0x080f9b10. No call of any kind, so r0 is untouched and the bx lr leaves no result; the handler is void. The decrement is stored back to the byte at track+0x02 before lsls r2,r2,#2 and adds r3,r1,r2 index the return stack, so the slot read by ldr r2,[r3,#68] is the already decremented one, the same slot the 0x080f9ae0 call handler wrote; it is reinstated as the stream position at track+0x40. The depth-zero arm falls straight to the epilogue without touching the stream, so an unmatched return re-executes this command indefinitely. bun tools/main_xref.ts 080f9afc reports calls=0 branches=0 word_refs=0 and one Thumb pointer, published at 0x080fb7ac in the command handler table that begins at 0x080fb7a0, so the only caller is the table dispatcher and there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9afc",
+          "size": 20
         }
       ]
     },

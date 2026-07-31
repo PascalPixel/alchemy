@@ -979,7 +979,7 @@
     },
     {
       "entry": "0x080ddde0",
-      "evidence": "One function with a complete prologue at 0x080ddde0 and live stack/high-register state carried by direct branches into 0x080de0d4; the intervening 72-byte 0x080de08c region is a literal pool and is excluded.",
+      "evidence": "One function with a complete prologue at 0x080ddde0 and live stack/high-register state carried by direct branches into 0x080de0d4; the intervening 72-byte 0x080de08c region is this function's OWN literal pool (the entry ldr r5,[pc,#668] at 0x080dddee reads from it, the b.n at 0x080de08a jumps over it) and is excluded. Corrected on the drafting pass: the second range is 494 bytes of code, not 548 -- the last instruction is bx r0 at 0x080de2c0, followed by a two-byte movs r0,r0 alignment pad at 0x080de2c2 and a 52-byte trailing literal pool at 0x080de2c4 (13 words, all verified data: 0x080eebd6/0x080eded0/0x080edeca/0x080eebe2/0x080eebe6/0x080edebe/0x080ede48 table bases, 0x03001f0c, 0x02010000, 0x080cd261, the runtime offsets 0x7828/0x7824 and the clip limit 0x007effff). The manifest region length of 548 runs to 0x080de2f8 and so swallows the pad and the pool. The neighbouring 40-byte region at 0x080dddb8 is the PREVIOUS function's pool (0x080ddb34) and is not part of this owner. Semantic draft at semantic/main/080ddde0.c: all 18 interior pool words resolved, decoded against the sibling family that shares the 0x03001eec runtime-header idiom (semantic/main/080dfa48.c, semantic/main/080e01e4.c) and the exact sources src/080cef64.c, src/080e3908.c, src/080e3980.c, src/080e0524.c. Two traps recorded in the draft header: bl 0x080072f4 and bl 0x080072f8 are the GCC __call_via_r4 / __call_via_r5 veneers (the bx rN table begins at 0x080072e4), so every such site is an indirect call through the register loaded immediately before it -- which is why r4 is reloaded from a pooled global before each blit and never read afterwards; and per src/080cef64.c, Func_080ed408(46,7,7,...) and (47,7,7,...) publish their renderer pointers at Data_03001e50+184 = 0x03001f08 and +188 = 0x03001f0c, which is what this function's two pooled IWRAM addresses are. The four ROM tables cross-verify: the 0x080edebe source offsets are the running sum of 0x080edeca widths times 0x080eded0 heights, and 0x080ede48 is the running sum of 2*n*n.",
       "executable_ranges": [
         {
           "address": "0x080ddde0",
@@ -987,7 +987,7 @@
         },
         {
           "address": "0x080de0d4",
-          "size": 548
+          "size": 494
         }
       ]
     },

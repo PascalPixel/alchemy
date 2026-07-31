@@ -2,10 +2,10 @@
   "format": 1,
   "metric": "full-c-byte-share",
   "target": "gs1-en",
-  "denominator_commit": "4aff83e34a23ebf109465e514a9950b1c878d2fd",
+  "denominator_commit": "1e177ff94cfe43c8edbe825fd4e250ba27deb585",
   "executable_bytes": 1339582,
   "history_scope": "first-parent",
-  "generated_from": "5adc6fcd9b6e7cd10d55ea040a8ce3aaf71addac",
+  "generated_from": "5f539b09dab2af62c25e785d8c1fc8e10132fc8d",
   "entries": [
     {
       "commit": "c0a101abc862998cc36a0ce13f6f893b614a16b8",
@@ -3044,6 +3044,22 @@
       "main_full_c_bytes": 101344,
       "overlay_full_c_bytes": 113724,
       "canonical_suffix": "[C 215,068/1,339,582 bytes]",
+      "derivation_status": "measured",
+      "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
+    },
+    {
+      "commit": "1e177ff94cfe43c8edbe825fd4e250ba27deb585",
+      "first_parent_position": 191,
+      "author_time": "2026-07-31T01:22:19+00:00",
+      "committer_time": "2026-07-31T01:22:19+00:00",
+      "original_subject": "convert four rows, three off the newly unblocked indirect calls [C 215,204/1,339,582 bytes]",
+      "full_c_bytes": 215204,
+      "executable_bytes": 1339582,
+      "remaining_bytes": 1124378,
+      "percent": 16.07,
+      "main_full_c_bytes": 101344,
+      "overlay_full_c_bytes": 113860,
+      "canonical_suffix": "[C 215,204/1,339,582 bytes]",
       "derivation_status": "measured",
       "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
     }

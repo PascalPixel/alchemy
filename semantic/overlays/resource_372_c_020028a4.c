@@ -55,7 +55,6 @@ typedef unsigned char u8;
 void Func_0808a1b8();
 void Func_0808a100();
 void Func_0808a110();
-
 void Func_0808a208();
 void Func_0808a210();
 void Func_0808a090();
@@ -79,7 +78,6 @@ void Func_0808a178();
 s32 Func_0808a070();
 void Func_0808a180();
 void Func_0808a150();
-
 void Func_0808a0b8();
 void Func_0808a0e8();
 

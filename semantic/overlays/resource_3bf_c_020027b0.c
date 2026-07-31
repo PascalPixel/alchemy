@@ -92,6 +92,10 @@ typedef unsigned char u8;
 
 /* Old-style declarations are mandatory in overlay sources: one name can be
  * reached with different argument counts from different sites. */
+void Func_0200252c();
+void Func_020025f8();
+void Func_0200269c();
+void Func_02002718();
 void Func_080091e0();
 void Func_08015040();
 s32 Func_080770c0();
@@ -124,10 +128,6 @@ void Func_0808a250();
 void Func_0808a260();
 void Func_080f9010();
 
-void Func_0200252c();
-void Func_020025f8();
-void Func_0200269c();
-void Func_02002718();
 
 void Func_020027b0(void)
 {

@@ -615,6 +615,21 @@ between them fixed `Data_02000240[224]` as the map id and `[225]` as the
 sub-state, the result spelling, and the significance of sub-state 12 — settling
 `resource_3b9:007c` before any dataflow work.
 
+**The four defect shapes the multiset checker reports, and what each one means.**
+Learned from auditing 69 converted overlays; 45 were clean, and the failures
+sorted into exactly these:
+
+| reading | meaning |
+| --- | --- |
+| wholesale failure, source names `Func_0200xxxx` the assembly never calls | pre-rule naming — a rename pass, not a re-conversion |
+| `asm=1 src=2` on a bracket-close import | a shared close written once per arm; use a label and `goto` |
+| `asm=3 src=4` on one target with `asm=2 src=1` on the NEXT | a site attributed to the adjacent veneer entry — they are 8 bytes apart and easy to be one off on |
+| a large shortfall (`asm=18 src=3`, `asm=46 src=26`) | a repeated block folded into a loop, or arms merged — but check for an interior pool first, because if the "missing" sites are pool words the *assembly* count is the wrong one |
+| `asm=1 src=0` | a call dropped outright, often an intra-overlay call to another row |
+
+Never bend a source to satisfy the checker. Its declaration filter is the
+fragile part; one honest "the tool is wrong here" beats a source edited to fit.
+
 **A bracket-close import appearing MORE times in your C than in the histogram
 means you wrote a shared close once per arm.** Measured across the eight
 worst-failing overlays, three of the eleven genuine count defects were exactly

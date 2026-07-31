@@ -258,6 +258,26 @@
       ]
     },
     {
+      "entry": "0x080b845c",
+      "evidence": "One 100-byte row holding a single function: prologue push {r5,r6,lr} plus the r8/sl saves and sub sp,#12 at 0x080b845c, single epilogue at 0x080b84ae reached only by fall-through, no branch of any kind inside the row and no inbound branch from outside it. The two mov ip,pc; bx r5 sequences at 0x080b848c and 0x080b84a0 are ordinary indirect calls through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after each bx (0x080b8490, 0x080b84a4) and both landing sites consume r0 as that call's result in the same frame, the reading already recorded for 0x0800ebec. Excluded (4 bytes): the one-word pool at 0x080b84bc holding 0x03000118; the movs r0,r0 at 0x080b849e is alignment filler inside the code. Two direct callers, at 0x080c1864 and 0x080c18f0, and published as a Thumb pointer at 0x080b50b4. Sibling of the byte-adjacent camera hook 0x080b7f20, which has the same slot/record/projector sequence.",
+      "executable_ranges": [
+        {
+          "address": "0x080b845c",
+          "size": 96
+        }
+      ]
+    },
+    {
+      "entry": "0x080b84c0",
+      "evidence": "One 112-byte row holding a single function: prologue push {r5,r6,r7,lr} plus the r8 save at 0x080b84c0, single epilogue at 0x080b8520 reached from both arms of the one branch in the row, no inbound branch from outside it. The two mov ip,pc; bx r5 sequences at 0x080b84ec and 0x080b8514 are ordinary indirect calls through the pooled 0x03000118, the IWRAM-relocated ARM multiply: mov ip,pc sets the return address to the halfword after each bx (0x080b84f0, 0x080b8518) and both landing sites consume r0 as that call's result in the same frame, the reading already recorded for 0x0800ebec. Excluded (6 bytes): the 2-byte movs r0,r0 alignment filler at 0x080b852a and the one-word pool at 0x080b852c holding 0x03000118; the movs r0,r0 at 0x080b8512 is alignment filler inside the code, not a tail. No direct caller; published as a Thumb pointer at 0x080b50bc, alongside the pointers for its siblings 0x080b7f20 and 0x080b845c, whose slot/record/projector sequence it repeats.",
+      "executable_ranges": [
+        {
+          "address": "0x080b84c0",
+          "size": 106
+        }
+      ]
+    },
+    {
       "entry": "0x080b9724",
       "evidence": "One module: r9 = sp+20 is one past this owner's 20-byte local block and the callees' negative offsets from it are header/size/records/result/count, spelled as a struct pointer. Both callees have only this caller. Previously blocked as shared_stack_context_module.",
       "executable_ranges": [

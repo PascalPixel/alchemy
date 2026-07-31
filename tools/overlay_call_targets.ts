@@ -129,16 +129,44 @@ export function classify(
   return { kind: "unknown" };
 }
 
-export function resolveOverlay(overlay: string, owner?: number): CallSite[] {
+export function resolveOverlay(overlay: string, owner?: number, ownerEnd?: number): CallSite[] {
   const image = overlayImage(overlay);
   const rows = inventory().filter((row) => row.overlay === overlay);
   const prologues = new Set(rows.filter((row) => row.starts_with_prologue).map((row) => row.offset));
-  const spans = owner === undefined
+  let spans = owner === undefined
     ? rows.filter((row) => (row.contained_by ?? []).length === 0)
     : rows.filter((row) => row.offset === owner);
+  // An owner that is already banked byte-exact is not in the discovery
+  // inventory, so the filter above returns nothing and the tool prints an empty
+  // listing — which reads as "this function makes no calls" rather than "this
+  // function is not in the queue". That is exactly backwards for the most
+  // valuable use of a banked sibling: inverting its printed (wrong) `bl` names
+  // to recover real import identities. Synthesise the span from the next known
+  // row instead, and say so.
+  if (owner !== undefined && spans.length === 0) {
+    if (owner >= image.length) throw new Error(`owner 0x${owner.toString(16)} is past the image end`);
+    const offsets = [...new Set(rows.map((row) => row.offset))].sort((a, b) => a - b);
+    const next = offsets.find((offset) => offset > owner);
+    const end = ownerEnd ?? next ?? image.length;
+    if (ownerEnd === undefined) {
+      // The next *unconverted* row can be far past the owner's real end, with
+      // other banked functions in between, so this bound over-reads by default.
+      // Say so rather than returning a clean-looking listing.
+      console.error(
+        `note: 0x${owner.toString(16)} is not an unconverted inventory row (already banked?).\n` +
+          `      Walking 0x${owner.toString(16)}..0x${end.toString(16)}, bounded by the next ` +
+          `unconverted row — this MAY INCLUDE neighbouring banked functions.\n` +
+          `      Pass an explicit end offset as a third argument to bound it exactly.`,
+      );
+    }
+    spans = [{ overlay, offset: owner, span_bytes: end - owner } as (typeof rows)[number]];
+  }
   const sites: CallSite[] = [];
   for (const span of spans) {
-    const end = Math.min(span.offset + span.span_bytes, image.length - 3);
+    // An explicit end always wins: it is the caller stating a boundary they have
+    // established, against an inventory span that may be wrong or absent.
+    const claimed = ownerEnd !== undefined && owner !== undefined ? ownerEnd : span.offset + span.span_bytes;
+    const end = Math.min(claimed, image.length - 3);
     for (let at = span.offset; at < end; at += 2) {
       const high = image[at] | (image[at + 1] << 8);
       const low = image[at + 2] | (image[at + 3] << 8);
@@ -211,12 +239,12 @@ function main(): void {
   if (args.includes("--self-test")) return selfTest();
   const overlay = args.find((argument) => /^resource_[0-9a-f]+$/.test(argument));
   if (overlay === undefined) {
-    console.log("usage: overlay_call_targets.ts <resource_NNN> [ownerHex] [--json]");
+    console.log("usage: overlay_call_targets.ts <resource_NNN> [ownerHex [endHex]] [--json]");
     process.exitCode = 1;
     return;
   }
-  const ownerText = args.find((argument) => /^[0-9a-f]{1,4}$/i.test(argument));
-  const sites = resolveOverlay(overlay, ownerText === undefined ? undefined : parseInt(ownerText, 16));
+  const bounds = args.filter((argument) => /^[0-9a-f]{1,4}$/i.test(argument)).map((h) => parseInt(h, 16));
+  const sites = resolveOverlay(overlay, bounds[0], bounds[1]);
   if (args.includes("--json")) {
     console.log(JSON.stringify(sites, null, 2));
     return;

@@ -706,6 +706,14 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // Same tell twice in resource_38c:035c, whose other lever is the rerun-cse
   // one; the flags are independent and both are needed.
   "assets/code/resource_38c_c_0200035c.c",
+  // resource_38c:0124, :01e0 and :0250 close the same overlay's family; each has
+  // one `(id, 128 << k, n)` call where the finishing `lsls` ties with the `movs`
+  // that sets r0. Their other half is a declaration, not a flag: the two-argument
+  // callee that follows the single-argument (10) call returns a value, so its
+  // setters leave r1 before r0 (HANDOVER 4, first lever).
+  "assets/code/resource_38c_c_02000124.c",
+  "assets/code/resource_38c_c_020001e0.c",
+  "assets/code/resource_38c_c_02000250.c",
   "assets/code/resource_3b8_c_02003df8.c",
   "assets/code/resource_3b8_c_02003e40.c",
   // resource_373: this overlay's real fingerprint is the low-dest tie-break,

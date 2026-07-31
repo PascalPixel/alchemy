@@ -698,6 +698,14 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   "assets/code/resource_372_c_02000400.c",
   "assets/code/resource_3b8_c_020003b0.c",
   "assets/code/resource_3b8_c_02003d40.c",
+  // resource_38c:01a8 and :0430 are the same beat over actors 21 and 23: the
+  // last call takes (id, 192 << 8, 10), so the `lsls` that finishes r1 ties
+  // with the `movs` that sets r0, and the reference takes r0 first.
+  "assets/code/resource_38c_c_020001a8.c",
+  "assets/code/resource_38c_c_02000430.c",
+  // Same tell twice in resource_38c:035c, whose other lever is the rerun-cse
+  // one; the flags are independent and both are needed.
+  "assets/code/resource_38c_c_0200035c.c",
   "assets/code/resource_3b8_c_02003df8.c",
   "assets/code/resource_3b8_c_02003e40.c",
   // resource_373: this overlay's real fingerprint is the low-dest tie-break,
@@ -817,6 +825,11 @@ const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3c9_c_02003600.c",
 ]);
 const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
+  // resource_38c:035c tests one event flag and then sets the same flag id, so
+  // 768 is built twice; the rerun caches it in r5 across the guarded block and
+  // turns the leaf's `push {lr}` into `push {r5, lr}`. Paired with the
+  // low-destination tie-break for its two `(id, 192 << 8, n)` calls.
+  "assets/code/resource_38c_c_0200035c.c",
   "assets/code/resource_37a_c_02000054.c",
   "assets/code/resource_37a_c_02000108.c",
   "assets/code/resource_37a_c_02000150.c",

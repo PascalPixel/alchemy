@@ -82,8 +82,8 @@ s32 Func_080b1a14(void)
         *(BattleMenuState_080b1a14 **)0x03001f2c;
     s32 list_window;
     s32 selection = 0;
-    s32 actor = 0;
     s32 redraw = 1;
+    s32 actor = 0;
 
     state->base_window = Func_08015010(0, 9, 12, 4, 2);
     Func_080b10cc();

@@ -486,6 +486,33 @@ confirms it is data.
 unrelated globals hides that the second is the well-known workspace pointer the
 rest of the overlay loads directly.
 
+**An inventory "second entry" row can be the `bl`-decoding artefact ITSELF.**
+`resource_379:00dc` is listed as a 2,524-byte contained row, and the banked
+byte-exact `resource_379_c_02000054.c` calls `Func_020000dc` — but the halfwords
+`f000 f839` store 0x072, so the real target is 0x0074 and `0x020000dc` is an
+`ldr r1,[pc,#944]` in the middle of a body. The +2 rule does not only invert
+*import* names in exact siblings; it **invalidates inventory rows seeded from the
+wrong target**. Check any `contained_by` row whose offset is a `bl` target before
+treating it as a real entry.
+
+**A jump table is a pool the walk CANNOT SEE PAST — seed it before believing any
+gap.** Walking `resource_3c4:259c` without seeding its two `mov pc,r3` tables
+reported 2,496 "pool" bytes against a true 228, a 10× overcount that looks
+exactly like a mis-spanned row. Read the table first: base = the pool word the
+dispatch loads, entry count = the `cmp`/`bls` bound, entries even.
+
+**A long `bl` to the owner's own epilogue and a jump-table entry can name the
+same address with different meanings.** In `resource_3c4:259c` five `bl`s and
+three of table B's entries all land on 0x2fda. The `bl`s are `goto`s — **excluded
+from the multiset** — while the table entries are ordinary `default` arms. Five
+phantom calls if the distinction is missed.
+
+**`overlay_call_targets.ts`'s naive overlapping scan agreeing with a proper CFG
+walk is CORROBORATION, never a substitute.** It matched per target on both
+`resource_3c4:259c` (211/211) and `resource_379:0074` (287/287) — but only
+because neither owner's pool happens to hold a BL-shaped word, which is the exact
+case the walk exists to survive.
+
 **The pool hop can be the ONLY branch in a kilobyte-plus owner.**
 `resource_3ce:029c` is 1,574 bytes of pure straight line whose single branch
 instruction exists solely to hop its one pool word — and the hop is

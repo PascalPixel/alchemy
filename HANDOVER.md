@@ -2202,6 +2202,19 @@ sites to rewrite. `resource_383` names them **by main-image veneer** throughout,
 so all 27 sites in `:091c` needed their own address. Knowing which before you
 draft is the difference between a first-probe adoption and a rejection.
 
+**An address-taken function is named in the LINK base, not the run-time one.**
+The transcription rule below covers symbols that are *called*. A symbol whose
+address is merely taken — published to a task table, stored in a pool — follows
+the opposite convention, because overlays are **linked at 0x02008000 and run at
+0x02000000**. On `resource_3bb:09b0` the reference pool word is `0x02008715`;
+the function it names lives at 0x02000714 at run time, so the source has to say
+`Func_02008714` and let `.thumb_set` supply bit 0. Naming it `Func_02000714`
+gives `0x02000715` and fails adoption by **one byte** with equal sizes, which
+reads exactly like a wrong branch displacement and is not one. Do not add the
+Thumb bit by hand either — `.thumb_set` already carries it, so `+ 1` overshoots.
+Tell: a pool word in the `0x0200_8xxx` range next to a call that takes a
+function address.
+
 **Transcribe callee names from `overlay_show.ts`; never extrapolate them.** An
 overlay `bl` stores the target's image offset minus two, so `overlay_show`'s
 pc-relative `bl 0x...` annotation is wrong for every site — that is exactly what

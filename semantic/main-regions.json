@@ -1,5 +1,25 @@
 {
   "format": 1,
+  "non_c_ranges": [
+    {
+      "address": "0x080bf1e8",
+      "size": 32,
+      "kind": "literal_pool",
+      "evidence": "Trailing literal pool of the registered 0x080be378 owner; its PC-relative provenance and exclusion are recorded on that owner."
+    },
+    {
+      "address": "0x080c0ea6",
+      "size": 2,
+      "kind": "alignment_padding",
+      "evidence": "Two-byte alignment before the exact-C owner at 0x080c0ea8; the reconstruction is the single filler instruction movs r0, r0."
+    },
+    {
+      "address": "0x080dddb8",
+      "size": 40,
+      "kind": "literal_pool",
+      "evidence": "Trailing literal pool of the registered 0x080dd9c0 owner; its PC-relative provenance and exclusion are recorded on that owner."
+    }
+  ],
   "main_owners": [
     {
       "entry": "0x080006fc",

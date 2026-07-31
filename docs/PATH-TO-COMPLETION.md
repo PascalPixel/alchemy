@@ -1,11 +1,15 @@
 # Path to completion
 
-Current verified exact **Full-C Byte Share: 194,390 / 1,339,558 executable
-bytes (14.51%)**. The reviewed semantic lane contains another 369,358 bytes, so
-combined C expression is **563,748 / 1,339,558 bytes**.
+Current verified exact **Full-C Byte Share: 232,188 / 1,339,594 executable
+bytes (17.33%)**. The reviewed semantic tier compiles 794,722 declared bytes;
+the executable audit credits 780,150 after excluding 14,572 overlay bytes
+outside its extents. Combined executable C expression is therefore **1,012,338
+/ 1,339,594 bytes (75.57%)**.
 
-The byte-exact process is **Mercury Lighthouse**. The reviewed semantic-C run is
-**Venus Lighthouse** and lives on the `venus` branch.
+The primary integration point is `main`. The core/main-ROM reviewed semantic-C
+census is closed and enforced by `bun run semantic:check`; exact-C replacement
+remains the principal completion task. Lane branches are work queues, not
+authoritative progress snapshots.
 
 The detailed exact-lane measurements below were taken on 2026-07-28 and are
 retained as historical evidence for the compiler and queue decisions they

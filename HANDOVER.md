@@ -1,6 +1,6 @@
 # Alchemy handover
 
-Updated: 2026-07-30
+Updated: 2026-07-31
 
 The single authoritative handover. Do not add dated handoff files; update this
 one in place. Per-function detail lives in `work/claude/notes/`; per-commit
@@ -13,6 +13,43 @@ rather than real limits.
 
 Exact means fully linked machine-code byte equality — not semantic similarity,
 not equal object size.
+
+## Current seal — read before the historical lane notes
+
+During the 2026-07-31 rest window, the interrupted `mercury`, `mars`,
+`jupiter`, and `venus` work was reviewed, committed on its originating branch,
+and merged into the primary `main` checkout. `main` is the authoritative
+continuation point. Waking lanes must first reconcile from `main`; do not
+re-merge, re-create, or overwrite the recovered commits.
+
+The **core/main ROM is closed at the reviewed semantic-C tier**. This is now a
+checked invariant, not a queue note:
+
+```text
+$ bun run semantic:check
+core_semantic_census=closed owners=0 executable_bytes=0
+```
+
+`semantic_owner_scope.ts` accounts for registered whole owners whose code
+begins inside a manifest row and for three explicitly evidenced non-C residuals
+(two literal pools and one alignment word). `verify` runs this closure check, so
+new ordinary core debt fails the gate. `main_image_classes.ts --list 100`
+independently reports `convertible-thumb 0 owners / 0 bytes` among the
+source-attributed residuals.
+
+Current compiling totals are **1,561 semantic sources / 794,722 declared
+semantic bytes**: 416,258 core/main bytes and 378,464 overlay bytes. Of those,
+14,572 overlay bytes lie outside the audited executable extents, so the coverage
+map credits **780,150 semantic bytes**. Together with exact C, **1,012,338 /
+1,339,594 executable bytes (75.57%)** are expressed in C, leaving 327,256
+audited executable bytes. In the core image specifically, exact C is 101,452 bytes and
+semantic C is 416,258 bytes; the remaining 30,654 bytes are retained
+assembly/structure rather than ordinary semantic-C work.
+
+This does **not** mean the game is fully decompiled or fully byte-exact C.
+Exact-C ownership is **232,188 / 1,339,594 bytes (17.33%)**. The active speed
+lane after waking is therefore exact-C replacement of semantic owners, plus
+continued overlay ownership—not another core semantic sweep.
 
 ## The two lighthouses
 
@@ -138,10 +175,12 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **707,774
-executable bytes across 1,364 compiling sources**: 385,850 main-image bytes and
-321,924 overlay bytes. Combined with exact C, **924,720 / 1,339,582 executable
-bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
+Alongside the exact lane, reviewed semantic C currently declares **794,722
+bytes across 1,561 compiling sources**: 416,258 main-image bytes and 378,464
+overlay bytes. The executable coverage map credits 780,150 of them after
+excluding 14,572 overlay bytes outside the audited extents; combined with exact
+C, **1,012,338 / 1,339,594 executable bytes (75.57%)** are expressed as C.
+Build that lane with `bun run build:semantic`; its
 sources live under `semantic/` and do not claim byte equality. Use
 `semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
 of the ordinary review queue.
@@ -273,15 +312,12 @@ the numbers before it was fixed:
    alignment are labelled executable gaps in the manifest and inflate the
    remainder while being unconvertible by construction.
 
-**Measured state of the main image.** The remaining continuation rows are not 80
-separate jobs and not 31,088 bytes: they collapse into **22 owners / 37,128
-executable bytes** (upper bound; at least 272 of those are suspected pool), with
-240 bytes of confirmed pool excluded. Of the two groups reported unclosed,
-`080bf1e8` is not an owner at all — it is the last literal pool of `080be378`,
-settled by that owner's admitting agent. Largest first: `080e47b8`
-(7,762 / 232 calls), `080f4168` (4,596 / 108), `080e15e8` (3,858 / 130),
-`080be378` (3,696 / 125), `08026080` (3,584 / 69), `080ec100` (3,358 / 87),
-`080d765c` (3,156 / 91), `0800ebec` (1,804 / 46), `080d4ce8` (1,392 / 40).
+**Measured state of the main image (superseding the historical open-owner
+snapshot below):** `bun run semantic:check` now reports **0 owners / 0
+executable bytes**. The formerly reported continuation set has been admitted,
+proved to be excluded pools/alignment, or classified as retained structure.
+`080bf1e8` is the last literal pool of `080be378`; `080dddb8` is the last pool
+of `080dd9c0`; and `080c0ea6` is alignment before exact owner `080c0ea8`.
 **The `multi_region_function` blocker class is stale.** Five owners carry it, and
 its wording is a *request for whole-module accounting* — "admit the head and
 continuation as one semantic module" — not a statement that the work is

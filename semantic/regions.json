@@ -6594,6 +6594,18 @@
       "entry": "0x02003e58",
       "span_bytes": 580,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_39e), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row while the rows it leads to were drafted; span read from the disassembly through the sixteen-word literal pool 0x0200409c-0x020040db to the next owner's prologue at 0x020040dc (already drafted), inside the assembled overlay image and not overlapping another recorded owner."
+    },
+    {
+      "overlay": "resource_3af",
+      "entry": "0x02001c14",
+      "span_bytes": 248,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr} followed by the sl/r8 spill mov r6,sl / mov r5,r8 / push {r5, r6}) and returning (pop {r3, r5} / mov r8,r3 / mov sl,r5 / pop {r5, r6} / pop {r0} / bx r0 at 0x02001ce8-0x02001cf2) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_3af 1c14 1d0c, the +2 rule against the raw image), span read through the six trailing pool words (0x03001ebc, 0x0000cccc, 0x00006666, 0x0000026a, 0x00001e39, 0x00000202) ending 0x02001d0b to the next owner prologue (push {lr}) at 0x02001d0c, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3af",
+      "entry": "0x02001684",
+      "span_bytes": 284,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6} / pop {r0} / bx r0 at 0x02001786-0x0200178a) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_3af 1684 17a0, the +2 rule against the raw image), span read through the five trailing pool words (0x029a0000, 0x00000922, 0x02be0000, 0x0200c4d8, 0x00000923) plus alignment ending 0x0200179f to the next owner prologue (push {r5, r6, lr}) at 0x020017a0, inside the assembled overlay image and not overlapping another recorded owner"
     }
   ]
 }

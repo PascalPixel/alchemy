@@ -69,23 +69,15 @@ struct Resource373Probe {
 
 #define RESOURCE_373_DIRECTION_STEPS ((const s32 *)0x0200e190)
 
-struct Resource373Mover *Func_020060b8(s32 index);
-struct Resource373Mover *Func_02000176(const struct Resource373Probe *probe,
-                                       struct Resource373Mover *mover);
-struct Resource373Mover *Func_020001a2(const struct Resource373Probe *probe,
-                                       struct Resource373Mover *mover);
-struct Resource373Mover *Func_020001ce(const struct Resource373Probe *probe,
-                                       struct Resource373Mover *mover);
-s32 Func_020060e4(struct Resource373Mover *mover,
-                  const struct Resource373Probe *probe);
-void Func_0200604c(s32 channel);
-void Func_020060ac(struct Resource373Mover *mover, s32 mode);
-void Func_020060f2(struct Resource373Mover *mover, s32 x, s32 y, s32 z);
-void Func_02006102(struct Resource373Mover *mover, s32 x, s32 y, s32 z);
-void Func_02006110(struct Resource373Mover *mover);
-void Func_02006118(struct Resource373Mover *mover, s32 mode);
-void Func_02006312(s32 sound);
-void Func_02006334(void);
+struct Resource373Mover *Func_0200006c();
+void Func_080000c0();
+void Func_08009080();
+void Func_08009150();
+void Func_08009158();
+s32 Func_080091d8();
+struct Resource373Mover *Func_0808a080();
+void Func_0808a5e8();
+void Func_080f9010();
 
 static void step_from(const struct Resource373Mover *mover, s32 step,
                       struct Resource373Probe *probe)
@@ -98,19 +90,19 @@ static void step_from(const struct Resource373Mover *mover, s32 step,
 void Func_020000c4(void)
 {
     struct Resource373Probe probe;
-    struct Resource373Mover *player = Func_020060b8(0);
+    struct Resource373Mover *player = Func_0808a080(0);
     s32 direction = player->heading >> 12;
     struct Resource373Mover *pushed;
     struct Resource373Mover *obstacle;
 
     step_from(player, RESOURCE_373_DIRECTION_STEPS[direction], &probe);
-    pushed = Func_02000176(&probe, player);
+    pushed = Func_0200006c(&probe, player);
     if (pushed == 0) {
         return;
     }
 
     step_from(pushed, RESOURCE_373_DIRECTION_STEPS[direction], &probe);
-    obstacle = Func_020001a2(&probe, pushed);
+    obstacle = Func_0200006c(&probe, pushed);
     if (obstacle != 0 && (obstacle->flags59 & 1) != 0) {
         return;
     }
@@ -119,7 +111,7 @@ void Func_020000c4(void)
     probe.x = pushed->x;
     probe.y = pushed->y + 0x00100000;   /* 0x80 << 13 */
     probe.z = pushed->z;
-    obstacle = Func_020001ce(&probe, pushed);
+    obstacle = Func_0200006c(&probe, pushed);
     if (obstacle != 0 && (obstacle->flags59 & 1) != 0) {
         return;
     }
@@ -127,27 +119,27 @@ void Func_020000c4(void)
     pushed->state22 = 2;
 
     step_from(pushed, RESOURCE_373_DIRECTION_STEPS[direction], &probe);
-    if (Func_020060e4(pushed, &probe) > 0) {
+    if (Func_080091d8(pushed, &probe) > 0) {
         return;
     }
     if (pushed->blocked62 != 0) {
         return;
     }
 
-    Func_020060ac(player, 8);
-    Func_0200604c(15);
-    Func_02006312(185);
+    Func_08009080(player, 8);
+    Func_080000c0(15);
+    Func_080f9010(185);
 
     pushed->field30 = 0x3333;
     pushed->field34 = 0x3333;
-    Func_020060f2(pushed, probe.x, probe.y, probe.z);
+    Func_08009150(pushed, probe.x, probe.y, probe.z);
 
     player->field30 = 0x3333;
     player->field34 = 0x3333;
-    Func_02006102(player, probe.x, probe.y, probe.z);
+    Func_08009150(player, probe.x, probe.y, probe.z);
 
-    Func_02006110(pushed);
-    Func_02006334();
+    Func_08009158(pushed);
+    Func_0808a5e8();
 
     pushed->x = probe.x;
     pushed->z = probe.z;
@@ -161,5 +153,5 @@ void Func_020000c4(void)
     player->x = (s32)RESOURCE_373_WHOLE(player->x) << 16;
     player->z = (s32)RESOURCE_373_WHOLE(player->z) << 16;
 
-    Func_02006118(player, 1);
+    Func_08009080(player, 1);
 }

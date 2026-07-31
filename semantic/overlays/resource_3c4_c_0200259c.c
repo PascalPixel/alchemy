@@ -84,36 +84,36 @@ extern s16 Data_02000240[];
 extern u8 *Data_03001ebc;
 
 /* Scene-flag query and clear, and the scene-script kick. */
-s32 Func_080770c0(s32 flag);
-void Func_080770c8(s32 flag);
-void Func_080770d0(s32 script);
+Actor_0200259c *Func_02001abc();
+void Func_02001fdc();
+void Func_020023a0();
+void Func_02002410();
+void Func_02002480();
+void Func_0200252c();
+void Func_080000d0();
+void Func_08009180();
+void Func_080091b8();
+Actor_0200259c *Func_080091c0();
+Actor_0200259c *Func_080091e0();
+Actor_0200259c *Func_080770c0();
+Actor_0200259c *Func_080770c8();
+void Func_080770d0();
+Actor_0200259c *Func_0808a010();
+Actor_0200259c *Func_0808a080();
+Actor_0200259c *Func_0808a0f0();
+void Func_0808a100();
+Actor_0200259c *Func_0808a158();
+Actor_0200259c *Func_0808a1e0();
+void Func_0808a408();
 
 /* Placement services: four register arguments plus two stack words. */
-void Func_08009180(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_080091b8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_080091c0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 /* Resets the actor record the first argument points at. */
-void Func_080091e0(Actor_0200259c *actor, s32 mode);
 
 /* Task installer; the first argument is a Thumb entry, not data. */
-void Func_080000d0();
 
 /* Actor services, all keyed by slot id. */
-void Func_0808a010(s32 group);
-Actor_0200259c *Func_0808a080(s32 slot);
-void Func_0808a0f0(s32 slot, s32 x, s32 z);
-void Func_0808a100(s32 slot, s32 action);
-void Func_0808a158(s32 slot, s32 facing);
-void Func_0808a1e0(s32 slot, s32 enable);
-void Func_0808a408(s32 which);
 
 /* Beat helpers inside this overlay. */
-void Func_020023a0(void);
-void Func_02002410(void);
-void Func_02002480(void);
-void Func_0200252c(void);
-void Func_02001fdc(void);
-void Func_02001abc(s32 mode);
 
 /* Per-frame watches installed through +108 and through Func_080000d0. */
 s32 Func_02000ec8(void *actor);
@@ -168,8 +168,8 @@ s32 Func_0200259c(void)
         Func_020023a0();
         Func_0808a080(8)->hidden = 0;
         Func_0808a080(9)->hidden = 0;
-        Func_080091e0(Func_0808a080(8), 0);
-        Func_080091e0(Func_0808a080(9), 0);
+        Func_0808a080(Func_080091e0(8), 0);
+        Func_0808a080(Func_080091e0(9), 0);
         Func_0808a080(8)->watch = Func_02000ec8;
         slot = 9;
         goto install_watch;
@@ -187,19 +187,19 @@ s32 Func_0200259c(void)
         Func_02002410();
         Func_0808a080(10)->hidden = 0;
         Func_0808a080(11)->hidden = 0;
-        Func_080091e0(Func_0808a080(10), 0);
-        Func_080091e0(Func_0808a080(11), 0);
+        Func_0808a080(Func_080091e0(10), 0);
+        Func_0808a080(Func_080091e0(11), 0);
         Func_0808a080(10)->watch = Func_02000ec8;
         slot = 11;
         goto install_watch;
 
     case 10:
     case 11:                                    /* 0x020027d2 */
-        Func_080091e0(Func_0808a080(18), 0);
-        Func_080091e0(Func_0808a080(19), 0);
+        Func_0808a080(Func_080091e0(18), 0);
+        Func_0808a080(Func_080091e0(19), 0);
         Func_0808a100(18, 2);
-        Func_080091e0(Func_0808a080(20), 0);
-        Func_080091e0(Func_0808a080(21), 0);
+        Func_0808a080(Func_080091e0(20), 0);
+        Func_0808a080(Func_080091e0(21), 0);
         Func_0808a158(20, 15);
         Func_0808a158(21, 15);
 
@@ -241,12 +241,12 @@ s32 Func_0200259c(void)
         Func_02002480();
         Func_0808a080(12)->hidden = 0;
         Func_0808a080(13)->hidden = 0;
-        Func_080091e0(Func_0808a080(15), 0);
-        Func_080091e0(Func_0808a080(16), 0);
-        Func_080091e0(Func_0808a080(17), 0);
-        Func_080091e0(Func_0808a080(12), 0);
-        Func_080091e0(Func_0808a080(13), 0);
-        Func_080091e0(Func_0808a080(14), 0);
+        Func_0808a080(Func_080091e0(15), 0);
+        Func_0808a080(Func_080091e0(16), 0);
+        Func_0808a080(Func_080091e0(17), 0);
+        Func_0808a080(Func_080091e0(12), 0);
+        Func_0808a080(Func_080091e0(13), 0);
+        Func_0808a080(Func_080091e0(14), 0);
         Func_0808a080(12)->watch = Func_02000ec8;
         Func_0808a080(13)->watch = Func_02000ec8;
         slot = 14;
@@ -278,25 +278,25 @@ other_chapter:                                  /* 0x02002a30 */
 
     case 4:
     case 5:                                     /* 0x02002bac */
-        if (Func_080770c0(0x109) != 0) goto restart_chapter;
+        if (Func_0808a1e0(0x109) != 0) goto restart_chapter;
         Func_0808a080(10)->hidden = 0;
         Func_0808a080(11)->hidden = 0;
-        Func_0808a080(10)->y = 0xffd00000;
-        Func_0808a080(11)->y = 0xffd00000;
-        Func_0808a080(10)->flags |= 2;
+        Func_080091e0(10)->y = 0xffd00000;
+        Func_0808a1e0(11)->y = 0xffd00000;
+        Func_0808a158(10)->flags |= 2;
         Func_0808a080(11)->flags |= 2;
-        Func_0808a080(10)->mode &= 0xfe;
+        Func_080091e0(10)->mode &= 0xfe;
         Func_0808a080(11)->mode &= 0xfe;
-        Func_0808a080(10)->pose = 3;
-        Func_0808a080(11)->pose = 3;
-        Func_0808a1e0(10, 1);
-        Func_0808a1e0(11, 1);
+        Func_080770c0(10)->pose = 3;
+        Func_0808a158(11)->pose = 3;
+        Func_0808a100(10, 1);
+        Func_0808a080(11, 1);
         Func_0808a080(12)->hidden = 0;
-        Func_0808a080(13)->hidden = 0;
+        Func_080091c0(13)->hidden = 0;
         Func_0808a080(14)->hidden = 0;
-        Func_080091e0(Func_0808a080(12), 0);
-        Func_080091e0(Func_0808a080(13), 0);
-        Func_080091e0(Func_0808a080(14), 0);
+        Func_0808a080(Func_080770c0(12), 0);
+        Func_0808a080(Func_0808a080(13), 0);
+        Func_0808a080(Func_0808a080(14), 0);
         Func_0808a080(12)->pose = 0;
         Func_0808a080(13)->pose = 0;
         actor = Func_0808a080(14);
@@ -307,44 +307,44 @@ other_chapter:                                  /* 0x02002a30 */
         Func_0808a080(10)->y = 0xffe00000;
         Func_0808a080(11)->y = 0xffc00000;
         Func_0808a080(10)->pose = 2;
-        Func_0808a080(11)->pose = 4;
-        Func_0808a0f0(12, 0x00c80000, 0x00980000);
+        Func_0808a1e0(11)->pose = 4;
+        Func_0808a1e0(12, 0x00c80000, 0x00980000);
         Func_0808a080(12)->pose = 11;
         Func_0808a080(12)->watch = Func_02001a98;
         Func_0808a080(12)->flags |= 2;
-        Func_0808a0f0(13, 0x00c80000, 0x00980000);
-        Func_0808a080(13)->pose = 12;
+        Func_0808a080(13, 0x00c80000, 0x00980000);
+        Func_080091e0(13)->pose = 12;
         Func_0808a080(13)->watch = Func_02001a98;
-        Func_0808a080(13)->flags |= 2;
-        Func_0808a0f0(14, 0x00880000, 0x00980000);
-        Func_0808a080(14)->pose = 10;
+        Func_080091e0(13)->flags |= 2;
+        Func_0808a080(14, 0x00880000, 0x00980000);
+        Func_080091e0(14)->pose = 10;
         Func_0808a080(14)->watch = Func_02001a98;
         Func_0808a080(14)->flags |= 2;
-        Func_0808a010(2);
-        Func_080770c8(512);
-        Func_080770c8(0x201);
-        Func_080770c8(0x202);
+        Func_0808a080(2);
+        Func_0808a080(512);
+        Func_0808a080(0x201);
+        Func_0808a080(0x202);
     restart_chapter:                            /* 0x02002daa */
-        Func_02001abc(0);
+        Func_0808a080(0);
         goto done;
 
     case 6:
     case 7:                                     /* 0x02002aee */
-        Func_0808a1e0(8, 1);
+        Func_0808a0f0(8, 1);
         Func_0808a080(8)->hidden = 0;
-        Func_080091e0(Func_0808a080(8), 0);
-        Func_0808a1e0(9, 1);
-        Func_0808a158(9, 15);
-        Func_080091e0(Func_0808a080(9), 0);
-        Func_0808a080(9)->hidden = 0;
-        if (Func_080770c0(516) == 0) goto done;
-        Func_0808a158(9, 0);
-        Func_0808a100(9, 5);
-        x = Func_0808a080(9)->x;
-        z = Func_0808a080(9)->z >> 20;
-        Func_080091c0(26, 8, 1, 1, x >> 20, z);
-        Func_0808a080(9)->watch = Func_02000ec8;
-        Func_0808a080(8)->watch = Func_02000ec8;
+        Func_0808a080(Func_0808a080(8), 0);
+        Func_0808a0f0(9, 1);
+        Func_0808a080(9, 15);
+        Func_0808a080(Func_0808a080(9), 0);
+        Func_0808a0f0(9)->hidden = 0;
+        if (Func_0808a080(516) == 0) goto done;
+        Func_0808a080(9, 0);
+        Func_0808a080(9, 5);
+        x = Func_0808a010(9)->x;
+        z = Func_080770c8(9)->z >> 20;
+        Func_080770c8(26, 8, 1, 1, x >> 20, z);
+        Func_080770c8(9)->watch = Func_02000ec8;
+        Func_02001abc(8)->watch = Func_02000ec8;
         goto done;
 
     case 8:

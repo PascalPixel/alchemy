@@ -89,6 +89,7 @@ s32 Func_02000244();
 s32 Func_02002500(void)
 {
     s32 step;
+    s32 releaseSlot;
     s32 x;
     s32 z;
     u8 *record;
@@ -180,9 +181,10 @@ s32 Func_02002500(void)
             if (Func_080770c0(772) != 0) return 0;           /* 193 << 2 */
             Func_0808a158(13, 15);
             /* The assembly jumps into the shared two-call tail at 0x02002962
-             * with r0 already holding 13. */
-            Func_080091e0(Func_0808a080(13), 0);
-            return 0;
+             * with r0 already holding 13, so this is the SAME call site as the
+             * one spelled below for slot 21, not a second one. */
+            releaseSlot = 13;
+            goto release;
         }
 
         if (step > 12 || step < 10) return 0;
@@ -246,7 +248,9 @@ s32 Func_02002500(void)
         if (Func_080770c0(0x309) != 0) return 0;
         Func_0808a158(17, 15);
         Func_080091e0(Func_0808a080(17), 0);
-        Func_080091e0(Func_0808a080(21), 0);
+        releaseSlot = 21;
+release:
+        Func_080091e0(Func_0808a080(releaseSlot), 0);
         return 0;
 
     case 7:

@@ -47,21 +47,21 @@ typedef unsigned char u8;
 extern s32 Data_0200b1f0[];   /* 16 packed direction words, file offset 0x31f0 */
 
 /* Returns the party record. */
+s32 *Func_0200006c();
+void Func_080000c0();
+void Func_08009080();
+void Func_08009150();
+void Func_08009158();
+s32 Func_080091d8();
 u8 *Func_0808a080();
+void Func_0808a5e8();
+void Func_080f9010();
 
 /* Byte-exact in assets/code: returns the slot occupying the probe cell, or 0.
  * Old-style because these sites also set r1, which that source does not read. */
-s32 *Func_0200006c();
 
 /* Returns a signed terrain result; positive blocks the push. */
-s32 Func_080091d8();
 
-void Func_08009080();
-void Func_080000c0();      /* ROM dispatch[0] -> Func_080030f8 */
-void Func_080f9010();
-void Func_08009150();
-void Func_08009158();
-void Func_0808a5e8();
 
 void Func_020000c4(void)
 {

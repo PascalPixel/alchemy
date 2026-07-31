@@ -58,16 +58,17 @@ struct Resource373Entity {
     void (*behaviour)(void);        /* 0x6c */
 };
 
-struct Resource373Entity *Func_0200bb38(s32 selector);
-s32 Func_0200ba98(s32 channel, s32 amount);
-void Func_0200babe(s32 channel);
-void Func_0200bac8(s32 paletteIndex, s32 count, s32 target);
-void Func_0200bad2(struct Resource373Entity *entity, s32 mode);
-s32 Func_0200bb60(s32 id);
+s32 Func_08000140();
+void Func_08000150();
+void Func_080001c8();
+void Func_080091e0();
+void Func_08015250();
+struct Resource373Entity *Func_080770c0();
+struct Resource373Entity *Func_0808a080();
 
 void Func_02005b48(s32 selector)
 {
-    struct Resource373Entity *entity = Func_0200bb38(selector);
+    struct Resource373Entity *entity = Func_0808a080(selector);
     struct Resource373Handle *handle = entity->handle;
     s32 gradient;
 
@@ -75,13 +76,13 @@ void Func_02005b48(s32 selector)
     handle->flags09 = (u8)(((handle->flags09 & ~0x0c) | 0x04) & 0x0f);
     handle->field27 = 0;
 
-    Func_0200bad2(entity, 0);
+    Func_080091e0(entity, 0);
 
     entity->field5c = 0;
     entity->field55 = 0;
 
     /* 0x109 selects a companion entity; when absent the sprite drops a row. */
-    if (Func_0200bb38(0x109) == 0) {
+    if (Func_080770c0(0x109) == 0) {
         entity->y += 0x00200000;    /* 0x80 << 14 */
     }
 
@@ -94,11 +95,11 @@ void Func_02005b48(s32 selector)
      * 0x400 (0x80 << 3) bytes into it.  Func_0200bb60's result is discarded,
      * so only its side effect on the shared workspace matters.
      */
-    gradient = Func_0200ba98(17, 0x608);
-    Func_0200bb60(0xb5);
+    gradient = Func_08000140(17, 0x608);
+    Func_08015250(0xb5);
     gradient += 0x400;
-    Func_0200bac8(handle->paletteIndex, 0x80, gradient);
-    Func_0200babe(17);
+    Func_080001c8(handle->paletteIndex, 0x80, gradient);
+    Func_08000150(17);
 
     entity->shadowX = entity->x;
     entity->field30 = 0;

@@ -46,9 +46,9 @@ extern s32 Data_0200b248[];   /* 16-byte footprint boxes, four words each */
  * argument and fills the request record through its third.  Returns the
  * subject record or 0. */
 u8 *Func_0200034c();
+s32 Func_080091d8();
 
 /* Terrain probe.  A result of 2 means the tested cell is blocked. */
-s32 Func_080091d8();
 
 s32 Func_02000474(s32 *request)
 {

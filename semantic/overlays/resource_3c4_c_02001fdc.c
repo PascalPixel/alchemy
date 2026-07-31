@@ -18,20 +18,17 @@
  */
 typedef signed int s32;
 
-void Func_0200508e(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_020050a0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_020051a2(s32 a, s32 b, s32 c);
-void Func_020051ac(s32 a, s32 b, s32 c);
-void Func_02005162(s32 a, s32 b, s32 c);
-void Func_02005170(s32 a, s32 b, s32 c);
+void Func_080091c0();
+void Func_0808a0f0();
+void Func_0808a3c0();
 
 void Func_02001fdc(void)
 {
-    Func_0200508e(72, 49, 1, 1, 8, 49);
-    Func_020050a0(113, 43, 1, 1, 49, 43);
-    Func_020051a2(100, 0, 0);
-    Func_020051ac(101, 0, 0);
-    Func_02005162(15, 0x00880000, 0x03180000);
+    Func_080091c0(72, 49, 1, 1, 8, 49);
+    Func_080091c0(113, 43, 1, 1, 49, 43);
+    Func_0808a3c0(100, 0, 0);
+    Func_0808a3c0(101, 0, 0);
+    Func_0808a0f0(15, 0x00880000, 0x03180000);
     /* secondary entry 0x02002028 */
-    Func_02005170(16, 0x03180000, 0x02b80000);
+    Func_0808a0f0(16, 0x03180000, 0x02b80000);
 }

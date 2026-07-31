@@ -21,28 +21,23 @@ typedef struct Slot_020023a0 {
     s32 row;               /* +16, 12.20 fixed point */
 } Slot_020023a0;
 
-void Func_02005452(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_020032ce(s32 a, s32 b);
-Slot_020023a0 *Func_020054d0(s32 slot);
-Slot_020023a0 *Func_020054d8(s32 slot);
-void Func_0200547e(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-Slot_020023a0 *Func_020054f4(s32 slot);
-Slot_020023a0 *Func_020054fc(s32 slot);
-void Func_020054a2(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_02000f10();
+void Func_080091c0();
+Slot_020023a0 *Func_0808a080();
 
 void Func_020023a0(void)
 {
     s32 column;
     s32 row;
 
-    Func_02005452(73, 38, 5, 5, 9, 38);
-    Func_020032ce(9, 8);
+    Func_080091c0(73, 38, 5, 5, 9, 38);
+    Func_02000f10(9, 8);
 
-    column = Func_020054d0(8)->column;
-    row = Func_020054d8(8)->row >> 20;
-    Func_0200547e(2, 36, 1, 1, column >> 20, row);
+    column = Func_0808a080(8)->column;
+    row = Func_0808a080(8)->row >> 20;
+    Func_080091c0(2, 36, 1, 1, column >> 20, row);
 
-    column = Func_020054f4(9)->column;
-    row = Func_020054fc(9)->row >> 20;
-    Func_020054a2(2, 36, 1, 1, column >> 20, row);
+    column = Func_0808a080(9)->column;
+    row = Func_0808a080(9)->row >> 20;
+    Func_080091c0(2, 36, 1, 1, column >> 20, row);
 }

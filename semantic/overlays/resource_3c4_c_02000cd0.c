@@ -48,23 +48,20 @@ typedef struct Target_02000cd0 {
     s32 z;                 /* +8, 12.20 fixed point */
 } Target_02000cd0;
 
-Actor_02000cd0 *Func_02003dec();
-void Func_02003d6a(s32 kind, s32 mask, const s32 *probe);
-s32 Func_02003dca();
-s32 Func_02003dd6(Actor_02000cd0 *actor, const Target_02000cd0 *target);
-void Func_02003e2e(void);
-void Func_02003d96(Actor_02000cd0 *actor, s32 arg1);
-void Func_02003d6c(s32 arg0);
-void Func_02003efa(s32 arg0);
-void Func_02003daa(Actor_02000cd0 *actor, s32 arg1);
-void Func_02003e24(Actor_02000cd0 *actor, s32 arg1);
-void Func_02003eb4(s32 arg0, s32 x, s32 z);
-void Func_02003e4c(Actor_02000cd0 *actor, s32 arg1);
-void Func_02003eaa(void);
+void Func_080000c0();
+void Func_08000128();
+void Func_08009080();
+s32 Func_080091d8();
+void Func_080091e0();
+void Func_0808a018();
+void Func_0808a020();
+Actor_02000cd0 *Func_0808a080();
+void Func_0808a0c0();
+void Func_080f9010();
 
 s32 Func_02000cd0(const Target_02000cd0 *target)
 {
-    Actor_02000cd0 *actor = Func_02003dec(0);
+    Actor_02000cd0 *actor = Func_0808a080(0);
     u8 savedFlags = actor->flags;
     s32 probe[3];
 
@@ -72,33 +69,33 @@ s32 Func_02000cd0(const Target_02000cd0 *target)
     probe[1] = actor->y;
     probe[2] = (actor->z & (s32)0xfff00000) + 0x00080000;
 
-    Func_02003d6a(0x00100000, (actor->tag + 0x2000) & 0xc000, probe);
+    Func_08000128(0x00100000, (actor->tag + 0x2000) & 0xc000, probe);
 
-    if (Func_02003dca(actor, probe) == 1) {
+    if (Func_080091d8(actor, probe) == 1) {
         return 1;
     }
-    if (Func_02003dd6(actor, target) != 0) {
+    if (Func_080091d8(actor, target) != 0) {
         return 1;
     }
 
-    Func_02003e2e();
-    Func_02003d96(actor, 6);
-    Func_02003d6c(6);
-    Func_02003efa(152);
-    Func_02003daa(actor, 7);
+    Func_0808a018();
+    Func_08009080(actor, 6);
+    Func_080000c0(6);
+    Func_080f9010(152);
+    Func_08009080(actor, 7);
 
     actor->speedX = 0x00030000;
     actor->speedY = 0x00020000;
     actor->speedZ = 0x00040000;
     actor->flags &= (u8)0x7e;   /* re-read from memory, not from the saved copy */
 
-    Func_02003e24(actor, 0);
-    Func_02003eb4(0, ((target->x >> 20) << 4) + 8, ((target->z >> 20) << 4) + 8);
-    Func_02003dec(actor, 6);
-    Func_02003e4c(actor, 1);
-    Func_02003dca(6);
+    Func_080091e0(actor, 0);
+    Func_0808a0c0(0, ((target->x >> 20) << 4) + 8, ((target->z >> 20) << 4) + 8);
+    Func_08009080(actor, 6);
+    Func_080091e0(actor, 1);
+    Func_080000c0(6);
 
     actor->flags = savedFlags;
-    Func_02003eaa();
+    Func_0808a020();
     return 0;
 }

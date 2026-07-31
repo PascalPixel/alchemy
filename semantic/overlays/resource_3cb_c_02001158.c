@@ -54,14 +54,14 @@ typedef signed int s32;
 extern u8 Data_02000240[];
 
 /* Old-style declarations: arities vary per site across this overlay. */
-void Func_0808a018();
-void Func_0808a148();
 void Func_08015120();
+void Func_0808a018();
+s32 Func_0808a020();
+void Func_0808a148();
 void Func_0808a170();
 void Func_0808a178();
 
 /* Used for its return value. */
-s32 Func_0808a020();
 
 s32 Func_02001158(s32 handle)
 {

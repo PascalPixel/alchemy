@@ -67,16 +67,17 @@ typedef unsigned char u8;
 
 /* Old-style declarations are mandatory in overlay sources: one import name can
  * legitimately take different argument counts at different sites. */
+void Func_080770c8();
+void Func_0808a010();
 void Func_0808a018();
 void Func_0808a020();
-void Func_0808a010();
+s32 Func_0808a070();
+u8 *Func_0808a080();
+void Func_0808a090();
 void Func_0808a0b8();
 void Func_0808a0d0();
 void Func_0808a0e8();
 void Func_0808a0f0();
-s32 Func_0808a070();
-u8 *Func_0808a080();
-void Func_0808a090();
 void Func_0808a100();
 void Func_0808a110();
 void Func_0808a130();
@@ -91,7 +92,6 @@ void Func_0808a1b8();
 void Func_0808a1e8();
 void Func_0808a208();
 void Func_0808a210();
-void Func_080770c8();
 
 void Func_02002cb0(void)
 {

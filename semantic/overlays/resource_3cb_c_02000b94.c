@@ -83,22 +83,22 @@ typedef signed int s32;
 extern u8 Data_02000240[];
 
 /* Old-style declarations: arities vary per site across this overlay. */
-void Func_0808a018();
-void Func_0808a148();
-void Func_0808a170();
-void Func_0808a178();
+void Func_0200003c();
+s32 Func_0200008c();
+void Func_02000128();
 void Func_080000c0();
-void Func_080770c8();
+s32 Func_080770c0();
+s32 Func_080770c8();
 void Func_080770d0();
 void Func_080770e8();
-void Func_02000128();
-void Func_0200003c();
+void Func_0808a018();
+s32 Func_0808a020();
+s32 Func_0808a070();
+void Func_0808a148();
+s32 Func_0808a170();
+s32 Func_0808a178();
 
 /* Used for their return values. */
-s32 Func_080770c0();
-s32 Func_0200008c();
-s32 Func_0808a070();
-s32 Func_0808a020();
 
 s32 Func_02000b94(void)
 {
@@ -154,24 +154,24 @@ s32 Func_02000b94(void)
         goto emit;
     }
 
-    if (Func_080770c0(0x201) == 0 && Func_080770c0(768) == 0) {
-        Func_0808a170(cue);
-        Func_0808a178(8, 0);
-        Func_080770c8(768);
+    if (Func_0808a170(0x201) == 0 && Func_0808a178(768) == 0) {
+        Func_080770c0(cue);
+        Func_080770c0(8, 0);
+        Func_0808a170(768);
         goto done;
     }
 
-    Func_080770c8(768);
-    if (Func_080770c0(0x201) != 0) {
-        Func_0808a170(cue + 2);
+    Func_0808a178(768);
+    if (Func_080770c8(0x201) != 0) {
+        Func_080770c8(cue + 2);
     } else {
-        Func_0808a170(cue + 1);
+        Func_080770c0(cue + 1);
     }
-    Func_0808a178(8, 0);
+    Func_0808a170(8, 0);
 
-    if (Func_0808a070(0, 0) != 0) {
-        Func_0808a170(cue);
-        Func_0808a178(8, 0);
+    if (Func_0808a170(0, 0) != 0) {
+        Func_0808a178(cue);
+        Func_0808a070(8, 0);
         goto done;
     }
 
@@ -181,13 +181,13 @@ s32 Func_02000b94(void)
     }
 
     Func_080770c8(364);
-    Func_080770c8(370);
-    if (Func_080770c0(0x201) != 0) {
+    Func_080770c0(370);
+    if (Func_0808a170(0x201) != 0) {
         Func_0808a170(cue + 3);
     } else {
-        Func_0808a170(cue + 4);
+        Func_02000128(cue + 4);
     }
-    Func_02000128(1);
+    Func_080770c8(1);
     Func_080770c8(0x202);
     goto closeLine;
 

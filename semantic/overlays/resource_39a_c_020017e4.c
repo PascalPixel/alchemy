@@ -51,22 +51,6 @@ void Func_0808a330();
 void Func_0808a338();
 void Func_0808a348();
 void Func_0808a408();
-void Func_02002718();
-void Func_02002726();
-void Func_02003132();
-void Func_02003334();
-s32 Func_02003b1a();
-void Func_02003b7c();
-u8 *Func_02003bac();
-void Func_02003bb6();
-void Func_02003bc8();
-s32 Func_02003be0();
-void Func_02003c02();
-void Func_02003c0a();
-void Func_02003c88();
-void Func_02003c94();
-void Func_02003cc0();
-void Func_02003cd6();
 
 void Func_020017e4(void)
 {

@@ -76,13 +76,18 @@ extern u8 Data_0200e5cc[];
 
 /* Old-style declarations are mandatory in overlay sources: one import name can
  * legitimately take different argument counts at different sites. */
+void Func_020032b0();
+void Func_02003380();
+void Func_02005594();
+void Func_020055a4();
+void Func_02005c20();
 void Func_080000c0();
 void Func_080000d0();
 void Func_080000d8();
 void Func_08009128();
 void Func_08009180();
 void Func_080091c0();
-void Func_080091e0();
+u8 *Func_080091e0();
 void Func_080091f0();
 void Func_080091f8();
 void Func_080770c8();
@@ -126,11 +131,6 @@ void Func_0808a360();
 void Func_080f9010();
 
 /* Intra-overlay callees, all with byte-exact sources in assets/code. */
-void Func_020032b0();
-void Func_02003380();
-void Func_02005594(void);
-void Func_020055a4(void);
-void Func_02005c20();
 
 /* The per-beat callbacks installed through Func_080000d0.  Their in-image
  * addresses carry the Thumb bit. */
@@ -589,7 +589,7 @@ void Func_02003fb0(void)
     Func_080f9010(0x8f);
     Func_080091f0(0, 0x40000, 0x10000);
     Func_08009180(1, 0x66, 0x53, 0x29, 1, 1);
-    Func_080091e0(Func_0808a080(1), 0);
+    Func_0808a080(Func_080091e0(1), 0);
     Func_0808a1b8(0, 0xd000, 10);
     Func_0808a130(1, 3);
     Func_080091f0(-1, -1, 0xe666);
@@ -641,7 +641,7 @@ void Func_02003fb0(void)
     Func_0808a138(1, 3);
     Func_0808a010(10);
     Func_0808a138(1, 3);
-    Func_080091e0(Func_0808a080(1), 1);
+    Func_0808a080(Func_080091e0(1), 1);
 
     /* Split by the interior pool at 0x02004ffa. */
     Func_0808a128(1, 6, 0);
@@ -662,7 +662,7 @@ void Func_02003fb0(void)
     Func_0808a1e8(1, 0x100, 0);
     Func_0808a100(1, 13);
     Func_0808a128(1, 2, 5);
-    Func_080091e0(Func_0808a080(1), 0);
+    Func_0808a080(Func_080091e0(1), 0);
     Func_08009180(2, 0x66, 0x54, 0x29, 2, 1);
     Func_080f9010(0x8f);
     Func_080091f0(0, 0x40000, 0x10000);
@@ -727,7 +727,7 @@ void Func_02003fb0(void)
     Func_0808a188(21, 0, 60);
     Func_0808a138(1, 3);
     Func_0808a090(1, 0x10000, 0x8000);
-    Func_080091e0(Func_0808a080(1), 0);
+    Func_0808a080(Func_080091e0(1), 0);
     Func_0808a128(1, 4, 0);
     Func_0808a0d0(1, 0x18e, 0x33c);
     Func_0808a010(60);

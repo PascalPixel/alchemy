@@ -29,6 +29,13 @@ import { classify, overlayImage, resolveOverlay } from "./overlay_call_targets.t
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 
+/**
+ * Marker for a `bl` through the overlay's own `call_via` bank. The destination
+ * lives in a register at run time, so the assembly cannot name it; the source
+ * names the real callee, which is an IWRAM address on every case seen.
+ */
+export const CALL_VIA = "(call_via)";
+
 export interface Mismatch {
   target: string;
   assembly: number;
@@ -96,6 +103,27 @@ export function assemblyCounts(overlay: string, owner: number, span: number): Ma
       name = `Func_${detail.imported.toString(16).padStart(8, "0")}`;
     } else if (site.target > owner && site.target < owner + span) {
       continue; // a long `bl` inside our own body is a goto, not a call
+    } else if (detail.kind === "unknown") {
+      // A LITERAL POOL WORD OF THE FORM `f0xx f8xx` DECODES AS A BL PAIR. The
+      // walk here is a flat 2-byte stride with no pool map, so those words are
+      // seen as calls to addresses that are not functions — and they surface as
+      // `asm=1 src=0`, which reads as a dropped call. Three of four such reports
+      // in one audit were pool words (`resource_399:00d8` 0xf896f001,
+      // `resource_3b5:007c` 0xf8b6f001, `resource_383:48c8` 0xfd92f005), and a
+      // repair lane came close to inventing calls to match them.
+      //
+      // An unresolvable target cannot be named, so it can never match anything
+      // in the C either way; counting it can only manufacture a defect. A
+      // genuinely dropped call still shows up, because its target resolves to a
+      // veneer or a prologue and reports `src=0` under a real name.
+      continue;
+    } else if (detail.kind === "call_via") {
+      // The slot forwards to whatever the register holds, so the assembly
+      // cannot name the destination — but the source can and does, usually an
+      // IWRAM `Func_030xxxxx`. Record the site under a marker the comparison
+      // reconciles against those names, rather than under the slot's own
+      // address, which would produce a phantom pair at identical counts.
+      name = CALL_VIA;
     } else {
       name = `Func_${(0x02000000 + site.target).toString(16).padStart(8, "0")}`;
     }
@@ -106,6 +134,25 @@ export function assemblyCounts(overlay: string, owner: number, span: number): Ma
 
 export function compare(assembly: Map<string, number>, source: Map<string, number>): Mismatch[] {
   const mismatches: Mismatch[] = [];
+  // Reconcile `call_via` sites against the IWRAM callees the source names. Both
+  // sides are counted, so a genuine miscount still shows: only the pairing of
+  // "N indirect sites" with "N IWRAM calls" is forgiven.
+  const viaSites = assembly.get(CALL_VIA) ?? 0;
+  if (viaSites > 0) {
+    assembly = new Map(assembly);
+    source = new Map(source);
+    assembly.delete(CALL_VIA);
+    let remaining = viaSites;
+    for (const [name, count] of [...source]) {
+      if (remaining === 0) break;
+      if (!/^Func_03[0-9a-f]{6}$/.test(name)) continue;
+      const taken = Math.min(count, remaining);
+      remaining -= taken;
+      if (count === taken) source.delete(name);
+      else source.set(name, count - taken);
+    }
+    if (remaining > 0) mismatches.push({ target: CALL_VIA, assembly: remaining, source: 0 });
+  }
   for (const target of new Set([...assembly.keys(), ...source.keys()])) {
     const left = assembly.get(target) ?? 0;
     const right = source.get(target) ?? 0;

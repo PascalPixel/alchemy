@@ -553,6 +553,11 @@ const NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES = new Set([
 // deliberately excluded, since a pool load is one instruction and sharing it is
 // not a size change.
 const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // resource_373:0cd0 has the sharing tell twice in one row: a three-argument
+  // call whose first two arguments are both 0x30000, and a later one that takes
+  // -1 twice. The reference builds each in place -- two `movs`/`lsls` pairs and
+  // two `negs` -- where CSE builds one and copies it.
+  "assets/code/resource_373_c_02000cd0.c",
   // 0xC000 appears at two of this call sheet's three sites, so CSE hoists it
   // into a callee-saved register and buys a prologue the reference does not
   // have. Paired with -fsched-low-dest-first, which orders the r0 setter.

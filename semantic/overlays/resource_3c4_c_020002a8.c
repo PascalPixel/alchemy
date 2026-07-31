@@ -43,9 +43,9 @@ extern s32 Data_0200b230[];   /* six exempt occupant ids */
  * matching slot record or 0.  Old-style: this site also sets r1, which that
  * source does not read. */
 s32 *Func_0200006c();
+s32 Func_080091d8();
 
 /* Import.  Returns a signed result that is tested with `ble`. */
-s32 Func_080091d8();
 
 s32 Func_020002a8(u8 *actor)
 {

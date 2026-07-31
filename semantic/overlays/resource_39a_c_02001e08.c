@@ -45,31 +45,6 @@ void Func_080f9010();
 extern void Func_02001d78();
 
 /* Imports. */
-void Func_020040a0();
-void Func_020040dc();
-void Func_020040e6();
-void Func_020040f8();
-void Func_020040fa();
-void Func_0200410c();
-void Func_02004118();
-void Func_02004122();
-void Func_0200412e();
-void Func_0200413e();
-void Func_02004156();
-void Func_020041e4();
-void Func_020041f6();
-void Func_020041fa();
-void Func_0200420c();
-void Func_0200421a();
-void Func_0200421e();
-void Func_02004224();
-void Func_0200422a();
-void Func_02004234();
-void Func_02004250();
-void Func_02004266();
-void Func_02004272();
-void Func_02004288();
-void Func_020042e0();
 
 void Func_02001e08(void)
 {

@@ -17,8 +17,8 @@ typedef signed int s32;
  * source names it Func_02002af2 under the pre-correction 'bl' reading).
  *
  * The tool reports a SECOND site at +0x54 as 'unknown'.  It is not a call: the
- * span's last word is the literal 0xf8b4f001 (the negative turn clamp,
- * -0x74b0ffff), which happens to decode as a BL pair.  The disassembly confirms
+ * span's last word is the literal 0xf896f001 (the negative turn clamp,
+ * -0x07690fff), which happens to decode as a BL pair.  The disassembly confirms
  * it - the preceding halfwords are 'movs r0,#1 / pop {r5} / pop {r1} / bx r1'
  * followed by an alignment 'movs r0,r0', so the word is past the return and is
  * loaded by the 'ldr r2,[pc,#20]' inside the body.  There is exactly one call.
@@ -62,8 +62,8 @@ s32 Func_020000d8(struct Ent *p) {
             if (t > 0x1000) {
                 t = 0x1000;
             }
-            if (t < (s32)0xf8b4f001) {
-                t = (s32)0xf8b4f001;
+            if (t < (s32)0xf896f001) {
+                t = (s32)0xf896f001;
             }
             p->f06 = p->f06 + t;
         }

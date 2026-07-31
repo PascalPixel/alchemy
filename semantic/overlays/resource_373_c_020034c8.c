@@ -75,6 +75,10 @@ extern u8 Data_0200e590[];
 
 /* Old-style declarations are mandatory in overlay sources: one import name can
  * legitimately take different argument counts at different sites. */
+void Func_02005594();
+void Func_020055a4();
+void Func_020057fc();
+u8 *Func_02005c20();
 void Func_080000c0();
 void Func_080000d0();
 void Func_080000d8();
@@ -82,11 +86,11 @@ void Func_08009128();
 void Func_08009150();
 void Func_08009180();
 void Func_080091c0();
-void Func_080091e0();
+u8 *Func_080091e0();
 void Func_08009208();
 void Func_08009210();
 void Func_08015210();
-u8 *Func_0808a010();
+void Func_0808a010();
 void Func_0808a018();
 void Func_0808a020();
 u8 *Func_0808a080();
@@ -126,10 +130,6 @@ void Func_0808a4f0();
 void Func_080f9010();
 
 /* Intra-overlay callees, all with byte-exact sources in assets/code. */
-void Func_02005594(void);
-void Func_020055a4(void);
-void Func_020057fc();
-void Func_02005c20();
 
 void Func_020034c8(void)
 {
@@ -181,8 +181,8 @@ void Func_020034c8(void)
     *(s32 *)(actor + 8) = 0x01840000;
     Func_080091e0(actor, 0);
 
-    Func_080091e0(Func_0808a080(11), 0);
-    Func_080091e0(Func_0808a080(12), 0);
+    Func_0808a080(Func_080091e0(11), 0);
+    Func_0808a080(Func_080091e0(12), 0);
 
     Func_0808a100(0, 11);
     Func_0808a098(0, Data_0200e590);
@@ -295,7 +295,7 @@ void Func_020034c8(void)
 
     /* 60 frames of the per-frame step, one call per frame. */
     for (frame = 0; frame <= 59; frame++) {
-        Func_02005c20(Func_0808a080(1));
+        Func_0808a080(Func_02005c20(1));
         Func_080000c0(1);
     }
 
@@ -307,7 +307,7 @@ void Func_020034c8(void)
     Func_080000d0((void *)0x0200d5b1, 0xc80);
     Func_080000d0((void *)0x0200d5d1, 0xc80);
 
-    Func_080091e0(Func_0808a080(14), 0);
+    Func_0808a080(Func_080091e0(14), 0);
 
     sceneActor[0x55] = 0;
     *(s32 *)(sceneActor + 8) = 0x01ac0000;

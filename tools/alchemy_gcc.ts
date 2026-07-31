@@ -872,6 +872,7 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   // resource_3a7:04d0 loads its 0x9aa request id at the guard and again at
   // the commit, the third row in this overlay with that shape.
   "assets/code/resource_3a7_c_020004d0.c",
+  "assets/code/resource_3a7_c_0200048c.c",
 ]);
 // -fno-gcse routed by path rather than by stem, for overlay rows whose address
 // is also an offset in another overlay that is already converted.

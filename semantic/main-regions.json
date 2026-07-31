@@ -1074,6 +1074,24 @@
           "size": 152
         }
       ]
+    },
+    {
+      "entry": "0x08022a7c",
+      "evidence": "One 198-byte function, 0x08022a7c..0x08022b40, split into three executable ranges by two interior literal pools. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 4-byte frame; the single epilogue at 0x08022b30 unwinds all of it and ends pop {r0}; bx r0, so the owner is void. Excluded (30 bytes): the four-word pool at 0x08022af4 holding 0x000001ff (0x08022ace), 0x40000400 (0x08022aba), 0xfffffe00 (0x08022ad8) and 0x080313a4 (0x08022af0); the 2-byte movs r0,r0 alignment filler at 0x08022b22; and the three-word pool at 0x08022b24 holding 0x000003ff (0x08022b0a), 0x08031424 (0x08022b04) and 0xfffffc00 (0x08022b10). Every pool word is reached by ldr rN,[pc,#imm] from inside the ranges and none is branched to. Every call is a bl naming a ROM function; there are no indirect calls and no relocated helpers, and nothing in the row is retained assembly. r9 is saved and restored but never written, and is read at 0x08022a8e and 0x08022ac6 as the base of the view pointer at r9-4 - the frame-balanced live-in of resource_3cd:04b0, converted as an uninitialised local. bun tools/main_xref.ts 08022a7c reports FUNCTION (called directly) with six callers, the first at 0x08022ff4.",
+      "executable_ranges": [
+        {
+          "address": "0x08022a7c",
+          "size": 120
+        },
+        {
+          "address": "0x08022b04",
+          "size": 30
+        },
+        {
+          "address": "0x08022b30",
+          "size": 18
+        }
+      ]
     }
   ]
 }

@@ -2810,6 +2810,24 @@ two levers land.
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**
+- **A small literal pooled into the function's constant block instead of
+  materialised.** Tell in the comparator: `ldrh rX, .LN` on your side where the
+  reference has `movs rX, #k` for a *small* k. Look at the emitted `.s` and you
+  will find the fork appended `.word k` to the same pool that holds the
+  function's genuinely large constants, then read it back with `ldrh`. Four rows
+  so far, all the same shape — a `u16` store of a literal in a function that
+  already pools several larger constants: `resource_3ca:004c` (store of 0 to
+  palette RAM), `resource_37f:0200` and `:03bc` (store of 1 to workspace+370,
+  two branches deep), `resource_389:10c8` (99). **Not a flag**:
+  `-fno-cse-pool-immediate`, `-fno-cse-two-insn-immediate`,
+  `-fno-cse-follow-jumps`, `-fno-cse-skip-blocks`, `-fno-gcse`,
+  `-fno-rerun-cse-after-loop`, `-fno-expensive-optimizations`,
+  `-fno-thumb-contiguous-immediate`, `-fthumb-minipool-tail-first`,
+  `-mthumb-early-literal-pool` and `-fsched-low-dest-first` all leave it, and
+  `-mthumb-early-literal-pool` makes it worse. **Not source shape either**:
+  storing through `s16` instead of `u16`, and hoisting the value into an `s32`
+  local, both leave it (the local is worse). The decision is made where the
+  constant pool is built, and nothing exposed reaches it.
 - **A constant materialised on the wrong side of a store.** Two rows, same
   shape, and it is *not* the pool-load class below — these are plain `movs`.
   `resource_3b0:007c` (38 bytes): both arms of an if/else-if store the same

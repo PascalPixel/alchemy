@@ -6188,6 +6188,12 @@
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing five-word literal pool to the next owner's prologue at 0x02002b1c (this overlay's own resource_3b9_c_02002b1c.c, already drafted), inside the assembled overlay image and not overlapping another recorded owner"
     },
     {
+      "overlay": "resource_3b9",
+      "entry": "0x02001a4c",
+      "span_bytes": 508,
+      "evidence": "admitted whole-owner semantic reconstruction; the overlay's parked 66-entry dispatcher row -- owner is prologue-started (push {lr}) and returning (pop {r0}/bx r0 at 0x02001c2e) but its twelve arm bodies at 0x02001b78-0x02001c2d are reachable only through the mov pc,r3 jump table at 0x02001a70 (link base 0x02009a70, the table's own base pool word as link-base witness), so the reconstructed disassembly left them as raw .4byte data; recovered by re-disassembling those 182 bytes as Thumb at their runtime address. 66 entries collapse to 12 distinct arms (selectors 5/7/12/21/31/64/65/66/67/68/69/70) plus the shared exit. Span read from the prologue through the pop, alignment halfword, and the five-word literal pool 0x02001c34-0x02001c47 (0x02000240, 0x02009a70, 0x109, 0x90e, 0x90f) to the next owner's prologue at 0x02001c48 (this overlay's own resource_3b9_c_02001c48 owner, already recorded), inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
       "overlay": "resource_3c9",
       "entry": "0x02000480",
       "span_bytes": 56,

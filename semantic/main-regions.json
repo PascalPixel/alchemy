@@ -596,6 +596,36 @@
       ]
     },
     {
+      "entry": "0x080ad6d4",
+      "evidence": "Core-band census row (/tmp/ALCHEMY_QUEUE_CORE.md), 3104 bytes, the largest single function attempted this drive. Battle command/action menu family: dereferences Data_03001f2c once at entry, the same global behind 080a38d0.c/080a448c.c, but reads bytes out to +0x258 -- past the 0x21c LAYOUT_SIZE_GUARD both landed files carry -- so the draft declares its own wider file-local view (window slots at +0x10/24/28/30/34/0x10c, metric tables +0x134/+0x144, packed class codes +0x178/17a, script-channel pointer +0x184, member ids +0x21a/21b, attribute bytes +0x254..+0x258) and deliberately takes offset guards only, no size guard. All twelve Func_08015xxx callees are far-call veneers into the solved Data_03001e8c window/text engine (see work/claude/notes/func_08015xxx_cluster.md); the 19-entry jump table at 0x080adc78 collapses to 4 handler bodies (stage 5/12/23 auto-press, stages 10/11 text-popup with 512-byte engine save/restore via the relocated ARM copy routine at 0x03001388, default fall-through). The original reaches the IWRAM helpers through call_via thunks Func_080072f0/f4/f8 (targets 0x03001388 copy, 0x03000168 fill, and one inline mov ip,pc/bx r3 to 0x03000118); the draft calls them through typed pointers per the 080e15e8.c precedent, so it is semantic-only, not byte-exact. Pools resolved against out/asm/080ad6d4.elf. Excluded (294 bytes): padding+pool 0x080ad746..0x080ad758, padding+pool 0x080ad79e..0x080ad7a4, padding+pool 0x080adb7e..0x080adbb4, padding+jump table 0x080adc76..0x080adcc4, padding+pool 0x080adf1a..0x080adf64, trailing pool 0x080ae2b4..0x080ae2f4.",
+      "executable_ranges": [
+        {
+          "address": "0x080ad6d4",
+          "size": 114
+        },
+        {
+          "address": "0x080ad758",
+          "size": 70
+        },
+        {
+          "address": "0x080ad7a4",
+          "size": 986
+        },
+        {
+          "address": "0x080adbb4",
+          "size": 194
+        },
+        {
+          "address": "0x080adcc4",
+          "size": 598
+        },
+        {
+          "address": "0x080adf64",
+          "size": 848
+        }
+      ]
+    },
+    {
       "entry": "0x080b5368",
       "evidence": "One 448-byte function, 0x080b5368..0x080b552e, split into two executable ranges by the interior literal pool at 0x080b543c. Prologue push {r5,r6,r7,lr} plus the fp/sl/r9 and r8 saves and a 44-byte frame; the single epilogue at 0x080b551c unwinds all of it and ends pop {r1}; bx r1, so r0 - the flag held at sp+20 - is the result. Excluded (12 bytes): the two-word pool at 0x080b543c holding 0x00000000 (the zero halfword written by the clear loop, loaded at 0x080b540a) and 0x080c3f34 (the roster base, loaded at 0x080b53d2 and 0x080b541e), and the one-word pool at 0x080b5530 holding 0x080c3f34 again (loaded at 0x080b545a, 0x080b54b8 and 0x080b54f2). No alignment filler is needed: both pools are already word aligned and code resumes at 0x080b5444 immediately after the first. Every pool word is reached by ldr rN,[pc,#imm] from inside the ranges and none is branched to. No indirect calls and no relocated helpers: every call is a bl naming a ROM function, and nothing in the row is retained assembly. bun tools/main_xref.ts 080b5368 reports FUNCTION (called directly) with one caller at 0x080b578e and a published Thumb pointer at 0x080b5114.",
       "executable_ranges": [

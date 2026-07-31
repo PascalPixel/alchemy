@@ -1384,8 +1384,12 @@ export function renderBoxTree(
   );
   lines.push(`<rect x="0" y="0" width="${width}" height="${height}" fill="${GROUND}"/>`);
   const cellRect = (r: Rect, fraction: number): string => {
-    const hsl = `hsl(${hue.hslHue}, ${Math.round(fraction * 90)}%, ${Math.round(70 - fraction * 12)}%)`;
-    const ok = `oklch(${OK_LIGHTNESS} ${(hue.okCmax * fraction).toFixed(3)} ${hue.okHue})`;
+    // One ramp for every hue: lightness falls 0.93 -> 0.55 and chroma rises to
+    // the hue's P3 edge as completion rises, so tiers separate strongly while
+    // no hue reads brighter than another at the same tier.
+    const light = 0.93 - 0.38 * fraction;
+    const hsl = `hsl(${hue.hslHue}, ${Math.round(fraction * 95)}%, ${Math.round(93 - 38 * fraction)}%)`;
+    const ok = `oklch(${light.toFixed(3)} ${(hue.okCmax * fraction).toFixed(3)} ${hue.okHue})`;
     return `<rect x="${round(r.x)}" y="${round(r.y)}" width="${round(r.width)}" ` +
       `height="${round(r.height)}" style="fill:${hsl};fill:${ok}"/>`;
   };

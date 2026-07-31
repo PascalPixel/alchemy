@@ -6408,6 +6408,18 @@
       "entry": "0x02000e94",
       "span_bytes": 236,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8/sl spill and a 16-byte sp frame) and returning (add sp,#16/full unspill/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_39e e94 f68, the +2 rule against the raw image), span read through the five trailing pool words ending 0x02000f7f to the next owner prologue at 0x02000f80 (the already-drafted resource_39e_c_02000f80.c), inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39e",
+      "entry": "0x02000bf4",
+      "span_bytes": 224,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8 spill and a 16-byte sp frame) and returning (add sp,#16/pop {r3}/mov r8,r3/pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_39e bf4 cb4, the +2 rule against the raw image), span read through the seven trailing pool words ending 0x02000cd3 to the next owner prologue at 0x02000cd4 (the already-drafted resource_39e_c_02000cd4.c), inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39e",
+      "entry": "0x02001160",
+      "span_bytes": 384,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {lr}) and returning (pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_39e 1160 12c6, the +2 rule against the raw image), span read through the six trailing pool words ending 0x020012df to the next owner prologue at 0x020012e0 (already recorded in this file), inside the assembled overlay image and not overlapping another recorded owner"
     }
   ]
 }

@@ -182,7 +182,7 @@ async function tick(){
       const chatEl=h('div',{class:'chat'},msgs.map(msgEl));
       document.getElementById('root').replaceChildren(
         h('div',{class:'trees'},TREES.map(t=>h('div',{class:'panel p-'+t},
-          h('div',{class:'titlebar'},({core:'Core ROM — semantic closed · orange = permanent asm · exact C advancing',overlays:'Overlays — orange = permanent asm · gray › semantic › exact',assets:'Assets — orange = permanent structure · bytes › b&w › color › objects'})[t]),
+          h('div',{class:'titlebar'},({core:'Core ROM',overlays:'Overlays',assets:'Assets'})[t]),
           h('img',{src:'/svg/'+t+'?t='+mt[t],alt:t})))),
         h('div',{class:'main'},
           h('div',{class:'panel p-board'},

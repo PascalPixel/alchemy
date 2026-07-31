@@ -25,14 +25,14 @@ typedef signed short s16;
 
 /* Old-style declaration: the import's interface is not known, and the same
  * import may be reached with different argument counts elsewhere. */
-void Func_02004348();
+void Func_080090d0();
 
 void Func_0200011c(u8 *object)
 {
     u16 *counter = (u16 *)(object + 0x64);
 
     if (*(s16 *)counter > 0) {
-        Func_02004348(object);
+        Func_080090d0(object);
     } else {
         *counter = (u16)(*counter + 1);
     }

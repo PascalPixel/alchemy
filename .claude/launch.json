@@ -4,7 +4,9 @@
     {
       "name": "progress",
       "runtimeExecutable": "bun",
-      "runtimeArgs": ["work/claude/progress_server.ts"],
+      "runtimeArgs": [
+        "tools/dashboard_server.ts"
+      ],
       "port": 4649
     }
   ]

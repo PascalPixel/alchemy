@@ -30,17 +30,17 @@ game.
 brightnesses: dark is assembly (0%), half is semantic C (50%), bright is
 byte-exact C (75%), full blaze is humanized byte-exact C (100%):
 
-![Main-image code coverage box tree in the purple band; brightness is completion.](assets/readme/gs1-en-core.svg?v=fa440ee5)
+![Main-image code coverage box tree in the purple band; brightness is completion.](assets/readme/gs1-en-core.svg?v=3086f8aa)
 
 **Overlays** — decoded overlay code, 791 KB:
 
-![Decoded overlay code coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=b916944e)
+![Decoded overlay code coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=3a77d7c7)
 
 **Assets** — the 7.3 MB of the cartridge that is data, not code. Same ladder in
 magenta: faint is byte-represented, a third is b&w sheets, two thirds is
 coloured sheets, full blaze is assets cut into individual objects:
 
-![Asset maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-assets.svg?v=0e98fae9)
+![Asset maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-assets.svg?v=7b01f5d0)
 
 Every byte of the English cartridge. The left card is the ROM as it ships; the
 right card is the audited executable denominator behind Full-C Byte Share. Blue

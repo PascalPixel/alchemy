@@ -67,10 +67,8 @@ struct Resource373Mover {
 /* Six identifiers whose presence suppresses the motion cancellation. */
 #define RESOURCE_373_PASSABLE_KINDS ((const s32 *)0x0200e1d0)
 
-struct Resource373Mover *Func_02000342(const struct Resource373Probe *probe,
-                                       struct Resource373Mover *mover);
-s32 Func_02006266(struct Resource373Mover *mover,
-                  const struct Resource373Probe *probe);
+struct Resource373Mover *Func_0200006c();
+s32 Func_080091d8();
 
 static void cancel_motion(struct Resource373Mover *mover)
 {
@@ -96,7 +94,7 @@ s32 Func_020002a8(struct Resource373Mover *mover)
     struct Resource373Mover *blocker;
 
     step_ahead(mover, step, &probe);
-    blocker = Func_02000342(&probe, mover);
+    blocker = Func_0200006c(&probe, mover);
     if (blocker != 0) {
         s16 kind = blocker->handle->kind->id;
         s32 index = 0;
@@ -114,7 +112,7 @@ s32 Func_020002a8(struct Resource373Mover *mover)
     /* The table word is re-read after the probe call, exactly as encoded. */
     step = RESOURCE_373_DIRECTION_STEPS[direction];
     step_ahead(mover, step, &probe);
-    if (Func_02006266(mover, &probe) > 0) {
+    if (Func_080091d8(mover, &probe) > 0) {
         return 0;
     }
 

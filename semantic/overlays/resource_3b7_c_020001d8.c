@@ -211,15 +211,15 @@ s32 Func_020001d8(void)
     Func_0808a370();
     Func_0808a010(10);
 
+    /* Both early exits BRANCH to the shared close at 0x0200045e
+     * (`b.n` at 0x020003c4, `beq` at 0x020003cc); there is one call site. */
     if (*prize == -1) {
         Func_020008f8(1);
-        Func_0808a020();
-        return 0;
+        goto finish;
     }
 
     if (*prize == -2) {
-        Func_0808a020();
-        return 0;
+        goto finish;
     }
 
     Func_0808a170(0xe2e);
@@ -228,8 +228,13 @@ s32 Func_020001d8(void)
     if (*prize != -1) {
         cursor = prize;
         do {
-            /* First entry gets its own lead-in line. */
-            Func_0808a170(cursor == prize ? 0xe2f : 0xe30);
+            /* First entry gets its own lead-in line.  These are two SEPARATE
+             * call sites (0x020003ee and 0x020003f6), not one. */
+            if (cursor == prize) {
+                Func_0808a170(0xe2f);
+            } else {
+                Func_0808a170(0xe30);
+            }
 
             id = Func_02000d70(*cursor);
             Func_08015120(id, 2);
@@ -249,6 +254,8 @@ s32 Func_020001d8(void)
 
     Func_0808a170(0xe31);
     Func_0808a180(8, 0);
+
+finish:
     Func_0808a020();
     return 0;
 }

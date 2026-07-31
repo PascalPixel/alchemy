@@ -30,9 +30,9 @@ struct Resource373Actor {
     u8 flag55;
 };
 
-struct Resource373Actor *Func_02009458(s32 selector);
-void Func_020093d0(struct Resource373Actor *actor, s32 mode);
-void Func_020094ec(s32 selector, s32 a, s32 b);
+void Func_080091e0();
+struct Resource373Actor *Func_0808a080();
+void Func_0808a0f0();
 
 void Func_0200345c(s32 firstSelector, u32 count, s32 mode)
 {
@@ -41,10 +41,10 @@ void Func_0200345c(s32 firstSelector, u32 count, s32 mode)
 
     if (mode == 0) {
         for (index = 0; index < count; index++) {
-            struct Resource373Actor *actor = Func_02009458(selector);
+            struct Resource373Actor *actor = Func_0808a080(selector);
 
             actor->flag55 = 0;
-            Func_020093d0(actor, 0);
+            Func_080091e0(actor, 0);
             actor->field08 = 0x01860000;   /* 0xc3 << 17 */
             actor->field0c = 0x00a00000;   /* 0xa0 << 16 */
             actor->field10 = 0x034a0000;   /* pool word */
@@ -54,7 +54,7 @@ void Func_0200345c(s32 firstSelector, u32 count, s32 mode)
     }
 
     for (index = 0; index < count; index++) {
-        Func_020094ec(selector, 0, 0);
+        Func_0808a0f0(selector, 0, 0);
         selector++;
     }
 }

@@ -33,12 +33,6 @@ void Func_0808a018();
 void Func_0808a020();
 void Func_0808a060();
 void Func_0808a390();
-void Func_02003e86();
-void Func_02003ed8();
-void Func_02003edc();
-void Func_02003efe();
-void Func_02003f0a();
-void Func_02003f8e();
 
 void Func_02001b9c(void)
 {

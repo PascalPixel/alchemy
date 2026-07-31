@@ -29,11 +29,11 @@ typedef struct Record_02000ec8 {
     u8 flags;              /* +35 */
 } Record_02000ec8;
 
-Record_02000ec8 *Func_02003fdc(s32 index);
+Record_02000ec8 *Func_0808a080();
 
 s32 Func_02000ec8(Record_02000ec8 *record)
 {
-    Record_02000ec8 *other = Func_02003fdc(0);
+    Record_02000ec8 *other = Func_0808a080(0);
     u8 raised = (u8)(record->flags | 2);
 
     record->flags = raised;

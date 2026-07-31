@@ -2602,6 +2602,18 @@ the top of the block the range crosses the argument setup and the allocator buys
 r5. `resource_39f:1454` went 7 groups → 1 on that one moved line. The two
 placements are otherwise identical source, so probe both before parking.
 
+**`-mgrouped-dma-store` only fires when the descriptor's offset-0 and offset-4
+stores are instruction-adjacent.** Verified in the mode's own source
+(`thumb_order_grouped_dma_store` in the compiler's arm.c): interleaved value
+computation between the first two word stores defeats the peephole and the row
+keeps three separate `str`. Fix from source shape, no flag change: hoist the
+offset-0 and offset-4 values into locals declared **before** the store block so
+both stores sit back to back, leaving the offset-8 value inline. Found on
+`resource_370:0054`; minimal repro in its park note. Also from the same round:
+dropping a not-yet-exact probe file into `assets/code/` breaks `overlay_show`
+for every later probe at that address (`overlay C placeholder is not zero`) —
+probe from scratch paths only, and move a candidate in only at adoption.
+
 **`ldmia rN!, {r0, r1}` / `stmia rM!, {r0, r1}` at a call site means an aggregate
 argument, not four loads you failed to fuse.** gcc emits its block move when a
 struct is passed **by value** and spills past r0-r3: the first four words go in

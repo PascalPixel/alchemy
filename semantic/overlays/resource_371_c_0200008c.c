@@ -48,8 +48,8 @@ typedef signed int s32;
 extern u8 *Data_03001ebc;
 extern s16 Data_02000240[];
 
-s32 Func_0200421c();
-void Func_020044d2();
+s32 Func_03000380();
+void Func_0808a258();
 
 void Func_0200008c(void)
 {
@@ -58,8 +58,8 @@ void Func_0200008c(void)
     s32 *progress = (s32 *)&table[284];
     s32 *level = (s32 *)(workspace + 428);
 
-    if (*progress >= Func_0200421c(*level * 9, 10)) {
-        Func_020044d2(0x809, 42);
+    if (*progress >= Func_03000380(*level * 9, 10)) {
+        Func_0808a258(0x809, 42);
         *(s32 *)(workspace + 424) = 0;
     }
 }

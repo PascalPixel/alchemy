@@ -96,12 +96,36 @@ export function publicationContentReason(data: Uint8Array): string | undefined {
   return undefined;
 }
 
+// 三つの枝が同じ文書を編集するため、未解決の競合印がそのまま記録される事故が
+// 三度起きた。人ではなく機械に捕まえさせる。
+//
+// Three branches edit the same documents, and an unresolved conflict marker has
+// been committed three times — each one sealing stale figures inside a paragraph
+// that then asserted several contradictory measurements at once. `git diff
+// --check` catches it only for whoever remembers to run it; this fires from the
+// tracked pre-commit and pre-push hooks on every branch, so nobody has to.
+//
+// Only the opening and closing markers are matched. A bare `=======` is a valid
+// Markdown heading underline and flagging it would reject honest documents.
+const CONFLICT_MARKER = /^(?:<{7}|>{7}) /m;
+const MARKER_EXTENSIONS = ["md", "ts", "js", "json", "sh", "c", "h", "s", "asm", "tsv", "txt"];
+
+export function conflictMarkerReason(path: string, data: Uint8Array): string | undefined {
+  if (!MARKER_EXTENSIONS.includes(extension(path))) return undefined;
+  const text = Buffer.from(data).toString();
+  if (!CONFLICT_MARKER.test(text)) return undefined;
+  const line = text.split("\n").findIndex((entry) => /^(?:<{7}|>{7}) /.test(entry)) + 1;
+  return `unresolved conflict marker at line ${line}; resolve the merge before committing`;
+}
+
 export function publicationEntryReason(path: string, data: Uint8Array): string | undefined {
   const pathReason = publicationPathReason(path);
   if (pathReason !== undefined) return pathReason;
   if (["asm", "s"].includes(extension(path)) && /^\s*\.incbin\b/im.test(Buffer.from(data).toString())) {
     return "committed incbin payload";
   }
+  const markerReason = conflictMarkerReason(path, data);
+  if (markerReason !== undefined) return markerReason;
   return publicationContentReason(data);
 }
 
@@ -206,6 +230,28 @@ function selfTest(): void {
   }
   if (publicationEntryReason("asm/08000000.s", Buffer.from(".incbin \"rom.gba\"\n")) !== "committed incbin payload") {
     throw new Error("committed incbin payload was accepted");
+  }
+
+  const bytes = (text: string): Uint8Array => new TextEncoder().encode(text);
+  if (conflictMarkerReason("HANDOVER.md", bytes("a\n<<<<<<< HEAD\nb\n")) === undefined) {
+    throw new Error("an opening conflict marker was accepted");
+  }
+  if (conflictMarkerReason("HANDOVER.md", bytes("a\n>>>>>>> origin/venus\n")) === undefined) {
+    throw new Error("a closing conflict marker was accepted");
+  }
+  if (publicationEntryReason("HANDOVER.md", bytes("x\n<<<<<<< HEAD\n")) === undefined) {
+    throw new Error("the publication gate accepted a conflict marker");
+  }
+  // A bare ======= is a Markdown heading underline, not a conflict.
+  if (conflictMarkerReason("HANDOVER.md", bytes("Title\n=======\n\nbody\n")) !== undefined) {
+    throw new Error("a Markdown heading underline was rejected as a conflict marker");
+  }
+  // <<<<<<< without the trailing space is ordinary prose or a diff sample.
+  if (conflictMarkerReason("HANDOVER.md", bytes("see <<<<<<<HEAD in the output\n")) !== undefined) {
+    throw new Error("a marker-like string without the separator was rejected");
+  }
+  if (conflictMarkerReason("assets/readme/x.png", bytes("<<<<<<< HEAD\n")) !== undefined) {
+    throw new Error("a binary extension was scanned for conflict markers");
   }
 }
 

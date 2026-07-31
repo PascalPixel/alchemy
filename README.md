@@ -30,7 +30,7 @@ game.
 brightnesses: dark is assembly (0%), half is semantic C (50%), bright is
 byte-exact C (75%), full blaze is humanized byte-exact C (100%):
 
-![Main-image code coverage box tree in the purple band; brightness is completion.](assets/readme/gs1-en-core.svg?v=c7aa2412)
+![Main-image code coverage box tree in the purple band; brightness is completion.](assets/readme/gs1-en-core.svg?v=35b6ac21)
 
 **Overlays** — decoded overlay code, 791 KB:
 

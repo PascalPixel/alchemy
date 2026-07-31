@@ -61,23 +61,12 @@ s32 Func_02001918();
 void Func_02001980();
 s32 Func_080770c0();
 void Func_080770c8();
-void Func_0808a080();
+s32 Func_0808a080();
 void Func_0808a228();
-s32 Func_020069e6(s32 kind);
-void Func_02006afa(void *object);
-void Func_02002dbc(s32 kind);
-s32 Func_020069dc(s32 state);
-s32 Func_02006a0e(s32 state);
-s32 Func_02006a20(s32 state);
-s32 Func_02002756(void);
-s32 Func_02002d5a(s32 kind);
-s32 Func_02002d58(s32 kind);
-void Func_02006a96(s32 id);
-s32 Func_02006a9e(s32 state);
 
 void Func_0200138c(void)
 {
-    u8 *object = (u8 *)Func_0808a080(17);
+    u8 *object = Func_0808a080(17);
     u8 *base = *(u8 **)0x03001e70;
     s32 *record = (s32 *)(base + 356);
     u8 *workspace = *(u8 **)(base + 76);

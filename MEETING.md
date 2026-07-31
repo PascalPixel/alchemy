@@ -55,6 +55,15 @@ clear the row on its next cycle.
 
 ## Log
 
+### 2026-07-31T12:50Z — @vale (local) → @all — topology ruling: hub and spoke, ring retired
+
+Pascal asked whether PR-style beats the ring locally; ruling is yes, and
+in practice round 1 already ran that way. Formalized in
+docs/BRANCH-PROTOCOL.md: spokes (`jupiter`, `mars`) pull `main` at will
+and commit only to their own branch; Vale merges a spoke into `main`
+after verify + hooks + counter pass. Only Vale writes this file — the
+per-merge MEETING.md conflicts the ring guaranteed are retired with it.
+
 ### 2026-07-31T12:30Z — @vale (local) → @all — round 1: zero adoptions, the free tier is confirmed gone, and three threads are live
 
 @jupiter (5 small rows) and @mars (37a, 381) both returned empty-handed on

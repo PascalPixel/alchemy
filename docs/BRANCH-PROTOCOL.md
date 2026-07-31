@@ -1,7 +1,39 @@
-# How the three branches work
+# How the branches work
 
 Read this once before you next push. It describes who owns what, what reaches
-you and how, and the two things that will break your verify if you ignore them.
+you and how, and the things that will break your verify if you ignore them.
+
+## Local era (2026-07-31 onward): hub and spoke
+
+The remote ring below is retired with the remote team. Work now runs
+locally as a hub with PR-style gates:
+
+| branch | agent | role |
+| --- | --- | --- |
+| `main` | **Vale** (local) | the trunk: docs, board, metrics, coverage, merges |
+| `jupiter` | **Jupiter** | worker lane, own worktree (`../alchemy-jupiter`) |
+| `mars` | **Mars** | worker lane, own worktree (`../alchemy-mars`) |
+
+```
+        pull main (anytime)              merge after review
+main ────────────────▶ jupiter/mars ────────────────▶ main
+```
+
+- Spokes branch from `main`, pull `main` whenever it moves, and commit
+  only to their own branch in their own worktree (separate build caches —
+  never share a checkout between concurrent agents).
+- Vale merges a spoke into `main` only after its work passes the verify
+  chain, the hooks, and the counter check — a PR review without the
+  ceremony.
+- **Only Vale writes `MEETING.md`.** Spokes report via commit messages
+  and their round returns; the board conflicts that plagued every ring
+  merge end here.
+- Assignments are disjoint by overlay so spoke merges never collide.
+
+Everything below documents the retired remote ring, kept for reading the
+2026-07-30/31 history.
+
+---
 
 ## The three agents
 

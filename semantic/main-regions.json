@@ -2,6 +2,56 @@
   "format": 1,
   "main_owners": [
     {
+      "entry": "0x080f9a80",
+      "evidence": "Core-drive census row (kind nonstandard_thumb_call_module, retention keep_structured_asm, manifest evidence tags manual_return_address_preserved_in_ip,direct_bl_clobbers_lr,no_lr_stack_save,approved_compiler_call_prologue_mismatch,byte_exact_reconstruction). The tag is a PROCEDURAL exclusion (this shape does not match the compiler's own prologue-emission pattern, so the automatic c_candidate walk skips it) not a cannot-express contract -- unlike 0800070c's approved_compiler_cannot_express_contract tag, which is a genuine hard exclusion. Admitted per Vale's 2026-07-31 ruling that a keep_structured_asm label alone is not disqualifying; body read confirms an ordinary leaf-calling-leaf shape with no register trick that C cannot reproduce behaviourally (the mov ip,lr / bx ip dodge is an optimisation a semantic draft need not match byte-for-byte). Fourteen-plus already-registered sound-command-handler entries elsewhere in this file (0x080f9ac0, 0x080f9ae0, 0x080f9afc, 0x080f9b40, 0x080f9b4c, 0x080f9b60, 0x080f9ba4, 0x080f9bb8, 0x080f9bcc, 0x080f9be0, 0x080f9bf4, 0x080f9c00, 0x080f9c18, 0x080f9c2c) each independently describe calling into 'the retained 0x080f9a80 row' as an un-owned dependency; those descriptions remain accurate about THEIR OWN bytes regardless of whether this row now also has its own C form, and this entry does not contradict or supersede them. asm/080f9a80.s packs four functions sharing tails (its own comment: '080f9a98 and 080f9a9a share a tail, keep as one source unit'): Func_080f9a80 (copies 36 words from the fixed table Data_080fb7a0, each routed through the shared validator with the table element's own address as the candidate), Func_080f9a98 (reads a byte at its pointer argument, then validates), Func_080f9a9a (the validator itself, two arguments), and Func_080f9ab4 (reads-and-advances a byte cursor at object+64, reached by a bare tail branch into Func_080f9a9a). The validator's branch shape is transcribed literally rather than algebraically simplified, even though two of its arms are reachable only in combination (documented in semantic/main/080f9a80.c's own header). Span: 64 bytes, matching the census row exactly, no literal pool.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9a80",
+          "size": 64
+        }
+      ]
+    },
+    {
+      "entry": "0x080f9b74",
+      "evidence": "Core-drive census row (kind nonstandard_thumb_call_module, same procedural mov-ip-lr exclusion as sibling row 0x080f9a80, admitted per Vale's 2026-07-31 ruling). Reads a byte from cursorHolder's stream cursor at +64, advances the cursor, uses the byte as a 12-byte-stride index into a table whose base pointer lives at tableHolder+48, then runs the record's three words through Func_080f9a9a (candidate = field's own address, passthrough = field's value, established in semantic/main/080f9a80.c), storing the three results at cursorHolder+36/+40/+44. Complete owner: asm/080f9b74.s in full, mov ip,lr through bx ip; no literal pool, no branch. Span: 46 bytes, matching the census row exactly.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9b74",
+          "size": 46
+        }
+      ]
+    },
+    {
+      "entry": "0x080f9b10",
+      "evidence": "Core-drive census row (kind shared_stack_continuation_module, admitted per Vale's 2026-07-31 ruling). Reached only as a normal function entry; internally, on two arms it tail-branches into the interior label 0x080f9ac2 of the already-registered 0x080f9ac0 (that entry's own comment already documents the same shared-tail shape for a different caller, 0x080f9ae0), modelled here as an ordinary call to Func_080f9ac0(player, track) since this owner's own push {lr} plus the shared pop {r0}; bx r0 tail is behaviourally identical to a normal call/return pair. Reuses the struct Track_080f9ac0 and Func_080f9ac0 signature from semantic/main/080f9ac0.c; reads the repeat-count flag at the stream cursor -- if zero, skip it and delegate to Func_080f9ac0; otherwise increment the track's repeat sub-counter (+3, outside the known struct fields, read via raw byte cast), pull the next stream byte through Func_080f9ab4 (established in semantic/main/080f9a80.c), and keep delegating to Func_080f9ac0 to re-parse the same operand while the sub-counter trails that byte; once caught up, reset the sub-counter and advance the cursor past the whole 5-byte repeat block using the cursor value captured at entry, not wherever Func_080f9ab4's own advance left it -- transcribed exactly as the reference computes it. Complete owner: asm/080f9b10.s in full, push {lr} through the tail branches and the final pop {r0}; bx r0; no literal pool. Span: 48 bytes, matching the census row exactly.",
+      "executable_ranges": [
+        {
+          "address": "0x080f9b10",
+          "size": 48
+        }
+      ]
+    },
+    {
+      "entry": "0x080fa16c",
+      "evidence": "Core-drive census row (kind nonstandard_thumb_branch_module, admitted per Vale's 2026-07-31 ruling; body read confirms an ordinary push {r4,r5}/pop {r4,r5}; bx lr leaf, no register trick). Reads a value byte from the stream cursor at track+64; a byte >= 128 is a 'repeat last value' marker (cursor not advanced, value comes from track+5 instead), otherwise the byte is cached to track+5 and the cursor advances. Walks a singly linked list headed at track+32 (next pointer at +52 per node), finds the first node whose flags byte has bit 0x83 set and bit 0x40 clear and whose byte at +17 equals the value, sets bit 0x40 on match and stops. Complete owner: asm/080fa16c.s in full; no literal pool. Span: 64 bytes, matching the census row exactly.",
+      "executable_ranges": [
+        {
+          "address": "0x080fa16c",
+          "size": 64
+        }
+      ]
+    },
+    {
+      "entry": "0x080069a4",
+      "evidence": "Core-drive census row (kind nonstandard_thumb_branch_module, admitted per Vale's 2026-07-31 ruling; body read confirms two ordinary bx lr leaves, no register trick). asm/executable_gaps/080069a4.s holds two functions sharing a pool, resolved against the compiled out/asm/080069a4.bin since two ldr rN,[pc,#24] at different addresses land on different words despite the identical immediate. Func_080069a4 (tick handler): decrements the u16 countdown Data_02004c22 when nonzero, sets flag byte Data_02004c24 to 1 the instant it reaches zero. Func_080069c8 (installer): rejects timerIndex outside 0-3 (returns 1); otherwise stores timerIndex to Data_02004c20, computes the GBA hardware timer register address 0x04000100 + timerIndex*4 into Data_02004c28, publishes Func_080069a4's own address through the caller's callback out-pointer, returns 0. Complete owner: both functions in full, entry to bx lr. Span: 92 bytes, matching the census row exactly.",
+      "executable_ranges": [
+        {
+          "address": "0x080069a4",
+          "size": 92
+        }
+      ]
+    },
+    {
       "entry": "0x0808b674",
       "evidence": "Core-drive census flagged 0x0808b7b8 (108 bytes, kind parent_function_fragment, retention merge_with_owner) as having no C owner, but its already-tracked semantic/main/0808b674.c fully covers it -- this is a registration gap, not missing work. asm/0808b674.s (FunctionHead_0808b674, kind multi_region_function_head, retention merge_with_continuations, 324 bytes) is the head: builds a spawn descriptor, then two `beq`/`bne sub_0808b7b8` guards fork away to the fragment on the FLOOR-ADJUSTMENT-SKIPPED path (parameters->use_floor_adjustment == 0, or either of the two 0xfd tile checks fails), while the taken-adjustment path falls through past both branches. asm/0808b7b8.s (Fragment_0808b7b8, 108 bytes, `direct_branch_without_call,live_parent_stack_and_high_register_state`) is reached only from those two guards and is the shared tail both arms rejoin at: it is the code AFTER the fragment's own guard header would have executed had the branch not skipped it, ending in the same epilogue the head's frame expects (pop {r3,r5}/mov r8,r3/mov r10,r5/pop{r5,r6,r7}/pop{r0}/bx r0). semantic/main/0808b674.c's existing `if (parameters->use_floor_adjustment != 0 && ...) { ... } else { parameters->floor_adjusted = 0; }` is exactly this fork already written as one C if/else rather than two asm regions -- the else arm and the tail statements after the if/else (spawned->display_y, Func_080090e0, the scene_mode==3 animation-flag block, the two workspace/scene writes at the end) are Fragment_0808b7b8's logic, confirmed line-by-line: the `scene->scene_mode == 3` check matches the fragment's `cmp r3,#3 / bne .L_0808b7fc`, `animation[5]=15; animation[6]=9` matches the fragment's two strb writes to r0+5/r0+6 after `bl sub_08009048`, and the closing `**(u8***)0x03001e70 = spawned+8; scene->spawned_object = spawned;` matches the fragment's final pointer stores through the pooled 0x03001ebc-relative workspace and 0x03001e70. Combined span: head (324 bytes, 0x0808b674-0x0808b7b8) + fragment (108 bytes, 0x0808b7b8-0x0808b7c4) = 432 bytes total; the head's trailing `b sub_0808b7c4` on the taken-adjustment path is a separate continuation not part of this owner and not touched here.",
       "executable_ranges": [
@@ -12,6 +62,16 @@
         {
           "address": "0x0808b7b8",
           "size": 108
+        }
+      ]
+    },
+    {
+      "entry": "0x080006fc",
+      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), unindexed leaf, 16 bytes incl. pool. push-free guard: loads the pointer at fixed RAM 0x03007ff0, dereferences it, compares the first word against magic constant 0x68736d53 (\"Smsh\"), and on match TAIL-BRANCHES (bare beq, no bl, no link set) into Func_0800070c passing the same pointer in r0; on mismatch it returns. Func_0800070c is retained asm with manifest evidence approved_compiler_cannot_express_contract (manual high-register/stack-frame contract, tail branch into IWRAM without link) -- expressible here only as an opaque extern called from the guard, not itself convertible. Semantic-only for now: a C tail call compiles to bl+return on this compiler, not the reference's bare beq, so this draft is control-flow-correct but not yet byte-exact (candidate_show.ts: 32 candidate vs 16 reference halfwords). Left for the exact lane to find the right lever rather than guessed at here.",
+      "executable_ranges": [
+        {
+          "address": "0x080006fc",
+          "size": 16
         }
       ]
     },
@@ -1228,6 +1288,26 @@
         {
           "address": "0x080c11ec",
           "size": 556
+        }
+      ]
+    },
+    {
+      "entry": "0x08006f48",
+      "evidence": "36-byte leaf function, 0x08006f48..0x08006f6c (no push/pop, bare bx lr return). Prologue-free structural walk flagged it nonstandard_thumb_branch_module because of the b .L_08006f5a jump-to-loop-test-first at 0x08006f50, which skips over an inline one-word pool (0x02004c08) embedded mid-body at 0x08006f52-0x08006f55 rather than trailing the function -- the same inline-pool shape already documented on the overlay lanes. Scans a run of consecutive 0xff bytes from the r0 argument, capped by a limit read from *(u32*)(*(u32*)0x02004c08 + 4), decrementing that limit per matching byte and returning it in r0 (the leaf epilogue's bx lr leaves r0 as the result, never popped). Excluded (4 bytes): the alignment halfword (.inst.n 0x0000) at 0x08006f66 and the pool word itself already counted in the 36-byte span. bun tools/main_xref.ts 08006f48 reports FUNCTION (indirectly published callback) with calls=0 branches=0 word_refs=0 and two Thumb pointers, published at 0x08006e68 and 0x08007b2c, so there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x08006f48",
+          "size": 36
+        }
+      ]
+    },
+    {
+      "entry": "0x08002dd8",
+      "evidence": "Two adjacent leaf functions sharing one trailing pool, 40 bytes total: Func_08002dd8 at 0x08002dd8..0x08002dec (20 bytes, bx lr, no push/pop), one alignment halfword, Func_08002df0 at 0x08002df0..0x08002dfa (12 bytes, bx lr, no push/pop), then the shared table-base pool word 0x03001e50 at 0x08002dfc..0x08002e00. Flagged shared_literal_thumb_helper_module by the automated walk since neither function is push-rooted. The source asm (asm/08002dd8.s) carries pre-existing hand-written Japanese comments naming each function's role (transfer-state evacuation / transfer-state recording, both against a shared state-area address) which the semantic draft translates and keeps. bun tools/main_xref.ts reports both as heavily-called direct functions (333 and 72 call sites) each separately published as a Thumb pointer (0x08000154, 0x0800017c), confirming both are real, live code, not incidental fragments. Neither file has a .thumb-only-compiler header (checked live against HANDOVER section 7's ARM-only stem list, which flagged this address as potentially stale for this specific case), consistent with genuine Thumb C.",
+      "executable_ranges": [
+        {
+          "address": "0x08002dd8",
+          "size": 40
         }
       ]
     }

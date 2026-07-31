@@ -5406,6 +5406,12 @@
       "entry": "0x02004670",
       "span_bytes": 348,
       "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,lr} at 0x02004670, epilogue pop {r5,r6} / pop {r0} / bx r0 at 0x020047b0-0x020047b4; the trailing pool at 0x020047b6-0x020047c8 (0x00000928, 0x00000929, 0xffff0000, 0x0000092a, 0x0000092b) is included per the usual pool rule, immediately followed by the next owner's push {r5,lr} at 0x020047cc, already this overlay's row 0x020047cc (0x02004670-0x020047cc, 348 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x020037b4",
+      "span_bytes": 36,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} at 0x020037b4, epilogue pop {r5,r6,r7} / pop {r0} / bx r0 at 0x020037d0-0x020037d4; no pool, the halfword at 0x020037d6 is the alignment pad, immediately followed by the next owner's push {r5,lr} at 0x020037d8, already this overlay's row 0x020037d8 (0x020037b4-0x020037d8, 36 bytes)"
     }
   ]
 }

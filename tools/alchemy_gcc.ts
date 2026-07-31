@@ -711,6 +711,12 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // Same tell twice in resource_38c:035c, whose other lever is the rerun-cse
   // one; the flags are independent and both are needed.
   "assets/code/resource_38c_c_0200035c.c",
+  // resource_383:091c and :19e4 are the plain form of the tell: one call takes a
+  // shifted constant and the `lsls` that finishes r1 ties with the `movs` that
+  // sets r0. Both are transcriptions of Venus's semantic sources, which name
+  // this overlay's callees by veneer rather than raw, so every site was renamed.
+  "assets/code/resource_383_c_0200091c.c",
+  "assets/code/resource_383_c_020019e4.c",
   // resource_38c:0124, :01e0 and :0250 close the same overlay's family; each has
   // one `(id, 128 << k, n)` call where the finishing `lsls` ties with the `movs`
   // that sets r0. Their other half is a declaration, not a flag: the two-argument

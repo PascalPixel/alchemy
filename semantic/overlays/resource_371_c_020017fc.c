@@ -35,40 +35,40 @@ typedef signed int s32;
  * reached with different argument counts.
  */
 
-u8 *Func_02005afe();
-void Func_02005ae4();
-void Func_02005c0e();
-void Func_020059a4();
-void Func_02005b86();
-void Func_02005c1e();
-void Func_02005c7a();
-void Func_02005b54();
-void Func_02005b96();
-void Func_02005c9a();
-void Func_02005ca6();
-void Func_02005af4();
-void Func_02005c72();
-void Func_02005b4e();
+u8 *Func_0808a080();
+void Func_0808a018();
+void Func_0808a210();
+void Func_080000c0();
+void Func_0808a0f0();
+void Func_0808a200();
+void Func_0808a360();
+void Func_0808a090();
+void Func_0808a0d0();
+void Func_0808a368();
+void Func_0808a370();
+void Func_080770c8();
+void Func_0808a248();
+void Func_0808a020();
 
 void Func_020017fc(void)
 {
-    u8 *actor = Func_02005afe(8);
+    u8 *actor = Func_0808a080(8);
 
-    Func_02005ae4(actor);
-    Func_02005c0e(-1, -1, -1, 0);
-    Func_020059a4(1);
-    Func_02005b86(0, 0, 0);
+    Func_0808a018(actor);
+    Func_0808a210(-1, -1, -1, 0);
+    Func_080000c0(1);
+    Func_0808a0f0(0, 0, 0);
 
     *(s32 *)(actor + 0x1c) = 0x14000;
     *(s32 *)(actor + 0x18) = 0x14000;
 
-    Func_02005c1e(8, 1);
-    Func_02005c7a();
-    Func_02005b54(8, 0x6666, 0x3333);
-    Func_02005b96(8, 0x14a8, 0x918);
-    Func_02005c9a();
-    Func_02005ca6();
-    Func_02005af4(0x927);
-    Func_02005c72(102);
-    Func_02005b4e();
+    Func_0808a200(8, 1);
+    Func_0808a360();
+    Func_0808a090(8, 0x6666, 0x3333);
+    Func_0808a0d0(8, 0x14a8, 0x918);
+    Func_0808a368();
+    Func_0808a370();
+    Func_080770c8(0x927);
+    Func_0808a248(102);
+    Func_0808a020();
 }

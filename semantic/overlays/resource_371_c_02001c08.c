@@ -32,51 +32,46 @@
  * reached with different argument counts.
  */
 
-void Func_02006070();
-void Func_020060a2();
-void Func_020060ae();
-void Func_0200607a();
-void Func_02005faa();
-void Func_02005fd0();
-void Func_02005fe8();
-void Func_02005f0e();
-void Func_020060e4();
-void Func_02005ecc();
-void Func_02005eea();
-void Func_02005ef0();
-void Func_020060f4();
-void Func_02005fd6();
-void Func_0200600c();
-void Func_02006024();
-void Func_02005f12();
-void Func_02005f10();
-void Func_0200611c();
-void Func_02005f5a();
+void Func_0808a3e0();
+void Func_0808a5c0();
+void Func_0808a250();
+void Func_0808a5c8();
+void Func_0808a3d8();
+void Func_0808a138();
+void Func_0808a170();
+void Func_0808a180();
+void Func_0808a010();
+void Func_080f9010();
+void Func_080153e8();
+void Func_080770d0();
+void Func_080a1040();
+void Func_0808a128();
+void Func_080770c8();
 
 void Func_02001c08(void)
 {
-    Func_02006070();
-    Func_020060a2(0x10000, 6);
-    Func_020060ae();
-    Func_0200607a();
+    Func_0808a3e0();
+    Func_0808a5c0(0x10000, 6);
+    Func_0808a5c8();
+    Func_0808a3d8();
 
-    Func_02005faa(8, 2);
-    Func_02005fd0(0xc66);
-    Func_02005fe8(8, 0);
-    Func_02005f0e(30);
-    Func_020060e4(111);
-    Func_02005ecc(0, 2);
-    Func_02005eea(0x16f);
-    Func_02005ef0(0x171);
-    Func_020060f4();
+    Func_0808a138(8, 2);
+    Func_0808a170(0xc66);
+    Func_0808a180(8, 0);
+    Func_0808a010(30);
+    Func_080f9010(111);
+    Func_080153e8(0, 2);
+    Func_080770d0(0x16f);
+    Func_080770d0(0x171);
+    Func_080a1040();
 
-    Func_02005fd6(8, 4, 30);
-    Func_0200600c(0xc67);
-    Func_02006024(8, 0);
-    Func_02005f12(0x16f);
-    Func_02005f10(0x171);
-    Func_0200611c();
+    Func_0808a128(8, 4, 30);
+    Func_0808a170(0xc67);
+    Func_0808a180(8, 0);
+    Func_080770d0(0x16f);
+    Func_080770c8(0x171);
+    Func_080a1040();
 
-    Func_02005f5a(30);
-    Func_020060a2(12, 6);
+    Func_0808a010(30);
+    Func_0808a250(12, 6);
 }

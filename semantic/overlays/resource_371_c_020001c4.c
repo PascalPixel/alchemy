@@ -40,10 +40,9 @@ typedef s32 (*RelocatedHelper_020001c4)(s32, s32);
 
 extern u32 Data_03001e40;
 
-void Func_02004434();
-void Func_0200443e();
-s32 Func_020043a4();
-void Func_020043d2();
+void Func_08009240();
+s32 Func_08000118();
+void Func_08000128();
 
 void Func_020001c4(u8 *object)
 {
@@ -52,9 +51,9 @@ void Func_020001c4(u8 *object)
     s32 offset;
 
     if ((Data_03001e40 & 2) != 0) {
-        Func_02004434(object, 10);
+        Func_08009240(object, 10);
     } else {
-        Func_0200443e(object, 7);
+        Func_08009240(object, 7);
     }
 
     if (*(s16 *)(object + 0x66) != 0) {
@@ -63,12 +62,12 @@ void Func_020001c4(u8 *object)
 
     *(s32 *)(object + 0x08) = 0x15d00000;
 
-    curve = Func_020043a4((s32)*(s16 *)frame << 3);
+    curve = Func_08000118((s32)*(s16 *)frame << 3);
     offset = ((RelocatedHelper_020001c4)0x03000118)(curve, 0x40000);
     *(s32 *)(object + 0x0c) = offset + 0x100000;
     *(s32 *)(object + 0x10) = 0x5300000;
 
-    Func_020043d2(0x100000, (s32)*(s16 *)frame, object + 0x08);
+    Func_08000128(0x100000, (s32)*(s16 *)frame, object + 0x08);
 
     *(u16 *)(object + 0x06) = (u16)(*frame + 0x4000);
     *frame = (u16)(*frame + 0x400);

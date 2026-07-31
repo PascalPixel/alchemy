@@ -41,7 +41,7 @@ const pageHtml = () => `<!doctype html><html><head><meta charset="utf-8"><meta n
   .trees{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;flex:0 0 auto}
   .trees img{width:100%;aspect-ratio:16/9;object-fit:contain;display:block;border-radius:4px}
   .panel{background:var(--edge);border-radius:10px;overflow:hidden;padding:0 5px 5px;display:flex;flex-direction:column;min-height:0}
-  .panel>.titlebar{color:#fff;font:italic 400 16px/1 'Weyard',system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;height:18px;padding:0.5px 5px 0;flex:0 0 auto}
+  .panel>.titlebar{color:#fff;font:italic 400 16px/15px 'Weyard',system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;height:18px;padding:0.5px 5px 0;flex:0 0 auto}
   .panel>*:not(.titlebar){border-radius:5px}
   .p-core{--edge:#6d4fc2}
   .p-overlays{--edge:#1f7f93}
@@ -54,9 +54,9 @@ const pageHtml = () => `<!doctype html><html><head><meta charset="utf-8"><meta n
   .board{display:flex;flex-direction:column;background:#3f7d5a;padding:8px 10px;min-height:0;flex:1}
   .cols{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px;flex:1;min-height:0}
   .col{display:flex;flex-direction:column;min-height:0}
-  .col .name{font:italic 400 16px/1.2 'Weyard',system-ui,sans-serif;color:#dcebe2;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+  .col .name{font:italic 400 16px/15px 'Weyard',system-ui,sans-serif;color:#dcebe2;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
   .col .stack{display:flex;flex-direction:column;gap:6px;overflow-y:auto;min-height:0;padding:1px 2px 6px}
-  .postit{padding:8px 9px 7px;font:italic 400 16px/1.1 'Weyard',system-ui,sans-serif;color:#333;position:relative;z-index:0}
+  .postit{padding:8px 9px 7px;font:italic 400 16px/15px 'Weyard',system-ui,sans-serif;color:#333;position:relative;z-index:0}
   .postit::before{content:"";position:absolute;inset:0;z-index:-1;background:#fffef8;border-radius:2px;box-shadow:0 2px 4px rgba(0,0,0,.35);transform:rotate(-2.2deg)}
   .postit:nth-child(even)::before{transform:rotate(1.8deg)}
   .postit:nth-child(3n)::before{transform:rotate(-1.2deg)}
@@ -69,8 +69,8 @@ const pageHtml = () => `<!doctype html><html><head><meta charset="utf-8"><meta n
   .msg .ava{width:36px;height:36px;flex:none;border-radius:6px;overflow:hidden}
   .msg .ava img{width:36px;height:36px;display:block}
   .msg .ava svg{width:36px;height:36px}
-  .msg .body{font:italic 400 16px/1.15 'Weyard',system-ui,sans-serif;color:#222;white-space:pre-wrap;min-width:0}
-  .msg .head{font:italic 400 16px/1.2 'Weyard',system-ui,sans-serif;color:#111;margin-bottom:1px}
+  .msg .body{font:italic 400 16px/15px 'Weyard',system-ui,sans-serif;color:#222;white-space:pre-wrap;min-width:0}
+  .msg .head{font:italic 400 16px/15px 'Weyard',system-ui,sans-serif;color:#111;margin-bottom:1px}
   .msg .head .time{color:#999;margin-left:8px;font-size:16px}
   @media (max-width:760px){
     #root{height:auto;padding:8px;gap:8px}

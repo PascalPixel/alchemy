@@ -3,6 +3,13 @@
 // a u16 advance and 15 u16 bitmap rows for codepoints 0x20-0xFF; every set
 // pixel becomes a 100-unit square (unitsPerEm 1600), so rendering at any
 // multiple of 16 px reproduces the ROM pixels exactly.
+// Metrics follow the game's own layout routine (semantic/main/08018850.c):
+// line pitch is exactly 15 px (ascender 1200 + |descender| 300 = 1500 units),
+// the space glyph advances 5 px (the renderer hardcodes 5 and never reads the
+// table's 6), default letter spacing is zero (advance-only; wide modes add
+// +1 px, not encoded), and the engine has no kerning — it justifies by
+// stretching word gaps. Render at 16 px with line-height 15 px for the
+// game's exact vertical rhythm.
 // Run: bun tools/font_to_otf.ts [--out assets/fonts/weyard.otf]
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
@@ -49,10 +56,11 @@ function main(args: string[]): void {
   ];
   for (let index = 0; index < GLYPHS; index++) {
     const record = base + index * 32;
-    const advance = rom.readUInt16LE(record);
+    const code = FIRST_CODE + index;
+    // The layout routine hardcodes 5 for space; the table's 6 is never used.
+    const advance = code === 0x20 ? 5 : rom.readUInt16LE(record);
     const rows: number[] = [];
     for (let y = 0; y < 15; y++) rows.push(rom.readUInt16LE(record + 2 + y * 2));
-    const code = FIRST_CODE + index;
     glyphs.push(new opentype.Glyph({
       name: `uni${code.toString(16).toUpperCase().padStart(4, "0")}`,
       unicode: code,

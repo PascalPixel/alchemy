@@ -1012,6 +1012,7 @@ const DEFAULT_ABI_SOURCES = new Set([
 // independent exact stock-compiler proof; the rest stay on the fork until
 // exact-byte proof.
 const AGBCC_SOURCES = new Set([
+  "080069a4",
   "08006a00", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
   "08006e24", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
   "080f9a50",
@@ -1895,6 +1896,7 @@ export function overlayStemCollisionLint(): void {
 function selfTest(): void {
   callbackArityLint();
   const expected = [
+    "080069a4",
     "08006a00", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
     "08006e24", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
     "080f9a50",

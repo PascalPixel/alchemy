@@ -869,6 +869,10 @@ const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3c9_c_02003600.c",
 ]);
 const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
+  // resource_3ad:01b0 tests flag 0x202 and then sets it, so the pooled word is
+  // read twice and the rerun caches it in r5 across the guarded block where the
+  // reference reloads it into r0 at each site. Took the row from 14 groups to 0.
+  "assets/code/resource_3ad_c_020001b0.c",
   // resource_38c:035c tests one event flag and then sets the same flag id, so
   // 768 is built twice; the rerun caches it in r5 across the guarded block and
   // turns the leaf's `push {lr}` into `push {r5, lr}`. Paired with the

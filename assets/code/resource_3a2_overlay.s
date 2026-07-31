@@ -1972,31 +1972,8 @@ AlchemyC_02001090:
 	.2byte 0x0000
 	.2byte 0x9061
 	.2byte 0x0200
-	push	{lr}
-	sub	sp, #8
-	bl	sub_0200263a
-	movs	r3, #21
-	movs	r2, #11
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r1, #6
-	movs	r2, #1
-	movs	r3, #2
-	movs	r0, #14
-	bl	sub_02002616
-	movs	r0, #15
-	bl	sub_0200266c
-	movs	r3, #254
-	adds	r0, #89
-	strb	r3, [r0, #0]
-	ldr	r0, [pc, #12]
-	bl	sub_02002648
-	bl	sub_0200266c
-	add	sp, #8
-	pop	{r0}
-	bx	r0
-	.2byte 0x0201
-	.2byte 0x0000
+AlchemyC_02001144:
+	.space 0x3c
 AlchemyC_02001180:
 	.space 0x30
 	push	{r5, r6, lr}

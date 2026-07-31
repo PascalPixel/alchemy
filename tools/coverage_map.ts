@@ -93,6 +93,8 @@ export interface CoverageMap {
     semantic_lane: string;
     semantic_sources: number;
     semantic_superseded_bytes: number;
+    semantic_outside_extent_bytes: number;
+    main_semantic_census: "closed" | "open";
     semantic_unresolved: string[];
   };
   rom_areas: Area[];
@@ -346,6 +348,7 @@ export interface SemanticLane {
   overlays: Map<string, Span[]>;
   sources: number;
   unresolved: string[];
+  mainCensusClosed: boolean;
 }
 
 /**
@@ -365,11 +368,14 @@ export function semanticSpans(
   const overlays = new Map<string, Span[]>();
   const unresolved: string[] = [];
   let sources = 0;
+  let mainCensusClosed = false;
 
   const ownerDocument = tree.read("semantic/main-regions.json");
   const owners = new Map<number, Span[]>();
   if (ownerDocument !== undefined) {
-    for (const owner of JSON.parse(ownerDocument).main_owners ?? []) {
+    const document = JSON.parse(ownerDocument);
+    mainCensusClosed = document.ordinary_census?.status === "closed";
+    for (const owner of document.main_owners ?? []) {
       owners.set(
         Number.parseInt(owner.entry, 16),
         (owner.executable_ranges ?? []).map((range: { address: string; size: number }) => ({
@@ -440,7 +446,7 @@ export function semanticSpans(
     overlays.set(overlay, normalize([...(overlays.get(overlay) ?? []), ...extent]));
   }
   for (const [overlay, spans] of overlays) overlays.set(overlay, normalize(spans));
-  return { main, overlays, sources, unresolved };
+  return { main, overlays, sources, unresolved, mainCensusClosed };
 }
 
 // --------------------------------------------------------------- ROM layout
@@ -711,7 +717,7 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
   const boundaries = mainBoundaries(options.exact);
   const semanticLane = options.semantic
     ? semanticSpans(options.semantic, boundaries, mainExecutable, overlayExecutable)
-    : { main: new Map(), overlays: new Map(), sources: 0, unresolved: [] as string[] };
+    : { main: new Map(), overlays: new Map(), sources: 0, unresolved: [] as string[], mainCensusClosed: false };
 
   // Exact always wins over semantic: the semantic lane only shows the ground
   // the exact lane has not already taken.
@@ -761,8 +767,13 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
   const semanticBytes = semanticMainBytes + semanticOverlayBytes;
 
   // -------------------------------------------------- executable universe
+  // Once the audited ordinary-owner census is sealed closed, every remaining
+  // main-image byte is by definition retained structure/pool/alignment. Paint
+  // that complement black rather than leaving excluded pool bytes gray: gray
+  // means actionable semantic debt on this dashboard.
+  const mainRetained = semanticLane.mainCensusClosed ? mainExecutable : retainedMainSpans();
   const executableAreas: Area[] = [
-    area("main", "Main image", mainBands(mainExecutable, exactMainUnion, semanticMain, retainedMainSpans(), 10240)),
+    area("main", "Main image", mainBands(mainExecutable, exactMainUnion, semanticMain, mainRetained, 10240)),
   ];
   const overlayTiles: Tile[] = [];
   for (const overlay of inventory.overlays) {
@@ -795,7 +806,7 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
     area(
       "rom-main-code",
       "Main image code",
-      mainBands(mainExecutable, exactMainUnion, semanticMain, retainedMainSpans(), 65536),
+      mainBands(mainExecutable, exactMainUnion, semanticMain, mainRetained, 65536),
     ),
   ];
   const streamTiles: Tile[] = [];
@@ -856,6 +867,9 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
     throw new Error(`executable areas cover ${executableCheck} of ${executableBytes} bytes`);
   }
 
+  const retainedBytes = executableAreas.reduce(
+    (sum, item) => sum + (item.lanes.retained_asm ?? 0), 0,
+  );
   return {
     format: 1,
     kind: "golden-sun-rom-coverage-map",
@@ -870,11 +884,15 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
         percent_of_executable: roundHalfUpPercent(semanticBytes, executableBytes),
       },
       assembly: {
-        bytes: executableBytes - exactBytes - semanticBytes,
+        bytes: executableBytes - exactBytes - semanticBytes - retainedBytes,
         percent_of_executable: roundHalfUpPercent(
-          executableBytes - exactBytes - semanticBytes,
+          executableBytes - exactBytes - semanticBytes - retainedBytes,
           executableBytes,
         ),
+      },
+      retained_asm: {
+        bytes: retainedBytes,
+        percent_of_executable: roundHalfUpPercent(retainedBytes, executableBytes),
       },
       asset_data: {
         bytes: spanBytes(dataSpans),
@@ -895,6 +913,7 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
       exact_lane: options.exact.id,
       semantic_lane: options.semantic?.id ?? "absent",
       semantic_sources: semanticLane.sources,
+      main_semantic_census: semanticLane.mainCensusClosed ? "closed" : "open",
       semantic_superseded_bytes: semanticSuperseded,
       semantic_outside_extent_bytes: semanticOutsideExtent,
       semantic_unresolved: semanticLane.unresolved.sort(),
@@ -1877,6 +1896,8 @@ export function selfTest(): void {
       semantic_lane: "origin/venus",
       semantic_sources: 2,
       semantic_superseded_bytes: 0,
+      semantic_outside_extent_bytes: 0,
+      main_semantic_census: "open",
       semantic_unresolved: [],
     },
     rom_areas: [area("rom-data", "Assets & data", [

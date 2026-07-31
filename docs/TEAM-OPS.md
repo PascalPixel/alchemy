@@ -22,6 +22,31 @@ but they are *expected* to verify surprising claims against the repo before
 acting (the Mercury skepticism episode of 2026-07-31 is the desired
 behavior, not a bug).
 
+## Personas
+
+Per Pascal (2026-07-31), each agent speaks in the voice of its namesake —
+in chat posts and report prose ONLY. Personas never alter evidence
+standards, verify discipline, commit conventions, or code style.
+
+Each agent studies its own source page at
+`https://goldensunwiki.net/wiki/<Name>` (Mia, Isaac, Garet, Ivan, Kraden)
+to carry the voice authentically. HARD BOUNDARY: the wiki is persona
+reference only — its game-mechanics and story content must never be used
+as evidence, naming input, or structural hints in the decompilation work
+or anything committed to the tree. Clean-room discipline outranks theater.
+
+- **Vale / Kraden** — elderly scholar: insatiable curiosity, formal speech,
+  earnest wisdom with flashes of childlike excitement at discoveries,
+  impatient sarcasm when standards slip. Mentor and mediator.
+- **Mercury / Mia** — compassionate healer: measured, dutiful, quiet
+  resolve, dry wit, sharp judgment toward sloppy work.
+- **Venus / Isaac** — calm anchor: deliberate, few words, sound judgment,
+  accepts responsibility without drama.
+- **Mars / Garet** — gung-ho and blunt: loud, loyal, says the uncomfortable
+  truth, brings the manpower.
+- **Jupiter / Ivan** — soft-spoken strategist: composed, diplomatic,
+  intuitive reads, raises concerns gently but always raises them.
+
 ## Bootstrap on a fresh machine
 
 ```bash
@@ -70,7 +95,11 @@ use the `metrics: correct executable denominator` convention. (4) Push
 (6) Re-mandate the lane immediately — an idle lane is a bug. Resume agents
 with SendMessage (orientation is paid once); never respawn a live lane.
 
-Standing lane rules: ≥8–10 units per report; park with root-cause notes
+Standing lane rules: retention labels (e.g. `keep_structured_asm`) are
+defaults, not contracts — a KEEP-ASM verdict on any row requires body-level
+evidence of a genuine cannot-express pattern; only explicit
+`approved_compiler_cannot_express_*` markers exclude a row on their own.
+≥8–10 units per report; park with root-cause notes
 rather than grind oversized rows; `manual_regions` entries per the
 `resource_397` precedent; pull `main` (the LOCAL ref, not `origin/main`)
 at every loop boundary; commit locally with the counter subject.

@@ -2,26 +2,6 @@
   "format": 1,
   "main_owners": [
     {
-      "entry": "0x08002dd8",
-      "evidence": "Core-band gap census (/tmp/ALCHEMY_QUEUE_CORE.md), kind shared_literal_thumb_helper_module, 40 bytes, retention keep_structured_asm so not auto-eligible via the manifest fallback. Manifest evidence tags: two_callable_thumb_helpers, cross_function_literal_pool, former_08002df0_boundary_merged -- one manifest row holds two functions (Func_08002dd8 at file offset 0, Func_08002df0 at file offset 24) sharing one trailing pool word (0x03001e50) at offset 36. Both index the same IWRAM word array src/080048b0.c already establishes byte-exact as a two-slot bump-allocator base (base[0]/base[1]). bun tools/main_xref.ts 08002dd8 08002df0 confirms both are genuine standalone entries: 333 and 72 direct callers respectively, each also published as a Thumb pointer, neither interior to the other or to anything else.",
-      "executable_ranges": [
-        {
-          "address": "0x08002dd8",
-          "size": 40
-        }
-      ]
-    },
-    {
-      "entry": "0x08006f48",
-      "evidence": "Core-band gap census (/tmp/ALCHEMY_QUEUE_CORE.md), kind nonstandard_thumb_branch_module, 36 bytes, retention keep_structured_asm so not auto-eligible via the manifest fallback. Single-block leaf: no push/pop, one bare `bx lr`, the classifier's automation-resistant shape is the mid-body conditional branch back over the byte-scan loop rather than a standard call/return. Dereferences the flash-chip descriptor pointer at 0x02004C08 and reads its `size` field at offset +4, the same struct src/08006cdc.c already establishes byte-exact (`struct FlashInfo08006cdc`); scans forward from the incoming buffer pointer counting down `size` while each byte is 0xff (flash's erased value), stopping at the first non-erased byte or when the count reaches zero, and returns whatever remains of the count. bun tools/main_xref.ts 08006f48 reports FUNCTION (indirectly published callback) with two Thumb pointers (0x08006e68, 0x08007b2c) and no direct bl call site, confirming it is a genuine standalone entry, not interior to a neighbour.",
-      "executable_ranges": [
-        {
-          "address": "0x08006f48",
-          "size": 36
-        }
-      ]
-    },
-    {
       "entry": "0x080006fc",
       "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), unindexed leaf, 16 bytes incl. pool. push-free guard: loads the pointer at fixed RAM 0x03007ff0, dereferences it, compares the first word against magic constant 0x68736d53 (\"Smsh\"), and on match TAIL-BRANCHES (bare beq, no bl, no link set) into Func_0800070c passing the same pointer in r0; on mismatch it returns. Func_0800070c is retained asm with manifest evidence approved_compiler_cannot_express_contract (manual high-register/stack-frame contract, tail branch into IWRAM without link) -- expressible here only as an opaque extern called from the guard, not itself convertible. Semantic-only for now: a C tail call compiles to bl+return on this compiler, not the reference's bare beq, so this draft is control-flow-correct but not yet byte-exact (candidate_show.ts: 32 candidate vs 16 reference halfwords). Left for the exact lane to find the right lever rather than guessed at here.",
       "executable_ranges": [
@@ -1244,6 +1224,26 @@
         {
           "address": "0x080c11ec",
           "size": 556
+        }
+      ]
+    },
+    {
+      "entry": "0x08006f48",
+      "evidence": "36-byte leaf function, 0x08006f48..0x08006f6c (no push/pop, bare bx lr return). Prologue-free structural walk flagged it nonstandard_thumb_branch_module because of the b .L_08006f5a jump-to-loop-test-first at 0x08006f50, which skips over an inline one-word pool (0x02004c08) embedded mid-body at 0x08006f52-0x08006f55 rather than trailing the function -- the same inline-pool shape already documented on the overlay lanes. Scans a run of consecutive 0xff bytes from the r0 argument, capped by a limit read from *(u32*)(*(u32*)0x02004c08 + 4), decrementing that limit per matching byte and returning it in r0 (the leaf epilogue's bx lr leaves r0 as the result, never popped). Excluded (4 bytes): the alignment halfword (.inst.n 0x0000) at 0x08006f66 and the pool word itself already counted in the 36-byte span. bun tools/main_xref.ts 08006f48 reports FUNCTION (indirectly published callback) with calls=0 branches=0 word_refs=0 and two Thumb pointers, published at 0x08006e68 and 0x08007b2c, so there is no direct call site.",
+      "executable_ranges": [
+        {
+          "address": "0x08006f48",
+          "size": 36
+        }
+      ]
+    },
+    {
+      "entry": "0x08002dd8",
+      "evidence": "Two adjacent leaf functions sharing one trailing pool, 40 bytes total: Func_08002dd8 at 0x08002dd8..0x08002dec (20 bytes, bx lr, no push/pop), one alignment halfword, Func_08002df0 at 0x08002df0..0x08002dfa (12 bytes, bx lr, no push/pop), then the shared table-base pool word 0x03001e50 at 0x08002dfc..0x08002e00. Flagged shared_literal_thumb_helper_module by the automated walk since neither function is push-rooted. The source asm (asm/08002dd8.s) carries pre-existing hand-written Japanese comments naming each function's role (transfer-state evacuation / transfer-state recording, both against a shared state-area address) which the semantic draft translates and keeps. bun tools/main_xref.ts reports both as heavily-called direct functions (333 and 72 call sites) each separately published as a Thumb pointer (0x08000154, 0x0800017c), confirming both are real, live code, not incidental fragments. Neither file has a .thumb-only-compiler header (checked live against HANDOVER section 7's ARM-only stem list, which flagged this address as potentially stale for this specific case), consistent with genuine Thumb C.",
+      "executable_ranges": [
+        {
+          "address": "0x08002dd8",
+          "size": 40
         }
       ]
     }

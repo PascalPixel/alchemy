@@ -82,6 +82,16 @@
       ]
     },
     {
+      "entry": "0x080069a4",
+      "evidence": "Core-drive census row (kind nonstandard_thumb_branch_module, admitted per Vale's 2026-07-31 ruling; body read confirms two ordinary bx lr leaves, no register trick). asm/executable_gaps/080069a4.s holds two functions sharing a pool, resolved against the compiled out/asm/080069a4.bin since two ldr rN,[pc,#24] at different addresses land on different words despite the identical immediate. Func_080069a4 (tick handler): decrements the u16 countdown Data_02004c22 when nonzero, sets flag byte Data_02004c24 to 1 the instant it reaches zero. Func_080069c8 (installer): rejects timerIndex outside 0-3 (returns 1); otherwise stores timerIndex to Data_02004c20, computes the GBA hardware timer register address 0x04000100 + timerIndex*4 into Data_02004c28, publishes Func_080069a4's own address through the caller's callback out-pointer, returns 0. Complete owner: both functions in full, entry to bx lr. Span: 92 bytes, matching the census row exactly.",
+      "executable_ranges": [
+        {
+          "address": "0x080069a4",
+          "size": 92
+        }
+      ]
+    },
+    {
       "entry": "0x08006a78",
       "evidence": "Single 46-byte leaf at the head of a three-function row. The function runs 0x08006a78..0x08006aa4 and ends on the bx lr at 0x08006aa4; the two later entries in the same asm row (the relocated helper at 0x08006abc and Func_08006ac0 at 0x08006ac0) are outside the claimed range and stay in reconstruction assembly. Excluded (22 bytes): the 2-byte .balign filler at 0x08006aa6 and the five-word pool at 0x08006aa8 holding 0x02004c28, 0x04000208, 0x04000200, 0x02004c20 and 0x02004c2c, all reached by ldr rN,[pc,#imm] from inside the range. No stack frame and no call, so the plain bx lr epilogue leaves no result convention and the owner is void. bun tools/main_xref.ts 08006a78 reports FUNCTION (called directly) with a single caller at 0x08006b70.",
       "executable_ranges": [
@@ -138,6 +148,16 @@
         {
           "address": "0x0800dd70",
           "size": 392
+        }
+      ]
+    },
+    {
+      "entry": "0x0800df04",
+      "evidence": "Core-band census row (work: /tmp/ALCHEMY_QUEUE_CORE.md), previously OPEN under Vale's ruling that a retention label alone is not a cannot-express contract. 796 bytes, prologue push {r5,r6,r7,lr} plus fp/sl/r9/r8 spill at 0x0800df04, single epilogue pop {r3,r5,r6,r7}/mov r8,r3/mov r9,r5/mov sl,r6/mov fp,r7/pop {r5,r6,r7}/pop {r1}/bx r1 -- HANDOVER's real-return epilogue shape (popped word is r1, not r0), so r0 (always 1 on every path) is a genuine return value. Every branch target and pool address verified against arm-none-eabi-objdump -d out/full/asm/0800df04.elf, not inferred: four pool words at 0x800e210 (0x0000ffff), 0x800e214 (0x03000118), 0x800e218 (0xffffe000), 0x800e21c (0xffffc000), all confirmed inside the row and not overlapping another owner. Semantic-only: a sibling of the already-registered semantic/main/0800dd70.c (same struct field offsets -- program_00@0, step_04@4, heading_06@6, position_08@8, anchor_x_64@0x64, anchor_z_66@0x66 -- and the same five callees, same signatures), extending that owner's single wander probe into a seven-direction fan behind a leash pre-check, plus a second flee-from-anchor loop; a earlier partial read of this row (work/claude/notes/main_0800df04.md) mis-flagged two of the four pool words as unexplained wraparound constants -- corrected in this file's own header once the pool addresses were resolved from the .elf rather than guessed from instruction order. Not yet checked byte-exact.",
+      "executable_ranges": [
+        {
+          "address": "0x0800df04",
+          "size": 796
         }
       ]
     },

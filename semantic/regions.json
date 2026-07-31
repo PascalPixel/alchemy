@@ -3759,6 +3759,12 @@
     },
     {
       "overlay": "resource_3b3",
+      "entry": "0x02000fcc",
+      "span_bytes": 80,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,lr} at 0x02000fcc, epilogue pop {r5} / pop {r0} / bx r0 at 0x02001008-0x0200100c; the trailing pool at 0x02001010-0x02001018 (0x03001e70, 0x040000d4, 0x84000001) is included per the usual pool rule, immediately followed by the next owner's push {r5,lr} at 0x0200101c, already this overlay's row 0x0200101c (0x02000fcc-0x0200101c, 80 bytes)"
+    },
+    {
+      "overlay": "resource_3b3",
       "entry": "0x02001174",
       "span_bytes": 62,
       "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json, span walked from the prologue through every internal branch to its matching interworking epilogue at 0x020011ac, alignment 0x020011b2 and literal pool 0x020011b4-0x020011c3 (0x00001999, 0xffffe667, 0xffff3334, 0x00001998) excluded, next prologue at 0x020011c4"
@@ -3801,9 +3807,21 @@
     },
     {
       "overlay": "resource_3b3",
+      "entry": "0x020020f0",
+      "span_bytes": 84,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,lr} plus 8-byte stack buffer at 0x020020f0, epilogue add sp,#8 / pop {r5,r6} / pop {r0} / bx r0 at 0x02002130-0x02002136; the trailing pool at 0x02002138-0x02002140 (0x0200a0b9, 0x000001f5, 0x0200ad64) is included per the usual pool rule, immediately followed by the next function's push {lr} at 0x02002144 (not part of this overlay's item-28 population, already indexed elsewhere), so the span is exactly 0x020020f0-0x02002144, 84 bytes"
+    },
+    {
+      "overlay": "resource_3b3",
       "entry": "0x02002498",
       "span_bytes": 52,
-      "evidence": "item-28 unindexed population, same reference-resolution basis as the resource_3b1 rows this session. push {r5,lr} plus 8-byte stack buffer at 0x02002498, epilogue add sp,#8 / pop {r5} / pop {r0} / bx r0 at 0x020024c4-0x020024ca, immediately followed with no gap by the next function's push {r5,r6,lr} at 0x020024cc (not part of this overlay's item-28 population, already indexed elsewhere), so the span is exactly 0x02002498-0x020024cc, 52 bytes"
+      "evidence": "item-28 unindexed population, same reference-resolution basis as the resource_3b1 rows this session. push {r5,lr} plus 8-byte stack buffer at 0x02002498, epilogue add sp,#8 / pop {r5} / pop {r0} / bx r0 at 0x020024c4-0x020024ca, immediately followed with no gap by the next owner's push {r5,r6,lr} at 0x020024cc, already this overlay's row 0x020024cc, so the span is exactly 0x02002498-0x020024cc, 52 bytes"
+    },
+    {
+      "overlay": "resource_3b3",
+      "entry": "0x020024cc",
+      "span_bytes": 112,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,lr} plus 8-byte stack buffer at 0x020024cc, epilogue add sp,#8 / pop {r5,r6} / pop {r0} / bx r0 at 0x0200252e-0x02002534; the one-word pool at 0x02002538 (0xfffe0000) is included per the usual pool rule, immediately followed by the next function's push {r5,lr} at 0x0200253c (not part of this overlay's item-28 population, already indexed elsewhere), so the span is exactly 0x020024cc-0x0200253c, 112 bytes"
     },
     {
       "overlay": "resource_3b3",

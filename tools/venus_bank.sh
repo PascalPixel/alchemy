@@ -33,13 +33,39 @@ trap 'rm -f "$LOG"' EXIT
 
 bun tools/semantic_regions_sync.ts --write 2>&1 | tail -1
 
-if ! bun run verify > "$LOG" 2>&1; then
-  echo "VERIFY FAILED — nothing committed. First errors:"
+# The semantic build is checked SEPARATELY and FIRST, even though `verify` runs
+# it too. Reason: while `verify` is red for an inherited reason (the exact
+# lane's main-image section overlaps), it is tempting to bank by hand with the
+# failure noted in the commit body — and a hand-typed chain is where the real
+# accident lives. On 2026-07-31 a `;` where `&&` was meant let a red
+# `build:semantic` through and pushed a tree containing another lane's
+# mid-edit file that did not compile. The lesson is not "be careful with `;`",
+# it is "never hand-type the chain": this gate belongs in the script, so
+# ALLOW_RED_VERIFY can relax the inherited failure without ever relaxing the
+# one thing that is genuinely mine.
+if ! bun run build:semantic > "$LOG" 2>&1; then
+  echo "BUILD:SEMANTIC FAILED — nothing committed. First errors:"
   grep -m3 "error:" "$LOG"
   echo "(if this is another lane mid-file, wait and re-run; do not bypass)"
   exit 1
 fi
-echo "verify green"
+echo "build:semantic green"
+
+if ! bun run verify > "$LOG" 2>&1; then
+  if [ "${ALLOW_RED_VERIFY:-}" = "1" ]; then
+    echo "verify RED — proceeding because ALLOW_RED_VERIFY=1 (build:semantic is green)."
+    echo "State the failure in the commit body; never let it pass silently."
+    grep -m3 "error:" "$LOG"
+  else
+    echo "VERIFY FAILED — nothing committed. First errors:"
+    grep -m3 "error:" "$LOG"
+    echo "(if this is another lane mid-file, wait and re-run; do not bypass)"
+    echo "(if this is the inherited exact-lane link failure, re-run with ALLOW_RED_VERIFY=1)"
+    exit 1
+  fi
+else
+  echo "verify green"
+fi
 
 SUFFIX=$(bun tools/full_c_progress.ts --subject)
 HEAD_DENOM=$(git log -1 --pretty=%s | grep -oE '/[0-9,]+ bytes' | tr -cd '0-9')

@@ -224,8 +224,21 @@ export function openOwners(): Owner[] {
     if (!CONTINUATION.has(region.retention)) continue;
     if (admitted.has(stem)) continue;
     // Already accounted for as part of a registered whole owner.
-    if (spans.some((span) => region.address >= span.lo && region.address + region.size <= span.hi))
-      continue;
+    //
+    // Test the row's START against the registered range, not its end. A
+    // registered `hi` is the end of the owner's EXECUTABLE ranges, while
+    // `region.size` is the manifest row's full size INCLUDING its trailing
+    // literal pool — which the registration deliberately excludes. Requiring
+    // `address + size <= hi` therefore fails forever for any owner whose last
+    // row ends in a pool, and reports it as open work permanently.
+    //
+    // Measured when this was found: five owners were false positives this way
+    // (`0800ebec` overhanging by 2 bytes, `08026080` by 14, `080d0ee0` by 16,
+    // `080d4ce8` by 32, `080d765c` by 8), accounting for **11,012 of the 12,842
+    // bytes the tool reported as open**. The genuine remainder was ~1,830 bytes
+    // across 11 small owners. A boundary tool that overstates the work by 6x
+    // sends lanes at rows that are already done.
+    if (spans.some((span) => region.address >= span.lo && region.address < span.hi)) continue;
     open.add(stem);
   }
   // Report only owners that still contain unconverted continuation work, and

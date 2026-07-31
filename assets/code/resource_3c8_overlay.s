@@ -6416,13 +6416,8 @@ AlchemyC_02003050:
 	.4byte 0x03001e40
 	.2byte 0x0000
 	.2byte 0xfffc
-	.2byte 0xb500
-	movs	r0, #216
-	lsls	r0, r0, #1
-	movs	r1, #32
-	bl	sub_02008b1a
-	pop	{r0}
-	bx	r0
+AlchemyC_020045f0:
+	.space 0x10
 	push	{lr}
 	movs	r0, #140
 	lsls	r0, r0, #2

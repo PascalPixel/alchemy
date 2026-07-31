@@ -17,19 +17,19 @@ typedef unsigned int u32;
  * outside a recorded row, so overlay_call_targets.ts's own table does not
  * cover it -- resolved with `bun tools/overlay_show.ts resource_3bc 38dc |
  * bun tools/overlay_call_targets.ts resource_3bc 38dc 38fa --annotate`):
- *   0x20038de -> veneer -> Func_0808a080(selector)   scene-record accessor, established
+ *   0x20038de -> veneer -> Func_020082f8(selector)   scene-record accessor, established
  *   0x20038e4 -> veneer -> Func_08009140()           unestablished, reached with the leftover record pointer in r0 but no evidence it is read
  */
 
-u8 *Func_0808a080();           /* scene-record accessor, established */
-void Func_08009140();          /* unestablished */
+u8 *Func_020082f8();           /* scene-record accessor, established (veneer to Func_0808a080) */
+void Func_020081e6();          /* unestablished */
 
 void Func_020038dc(s32 selector)
 {
     u8 *record;
 
-    record = Func_0808a080(selector);
-    Func_08009140();
+    record = Func_020082f8(selector);
+    Func_020081e6();
 
     *(u32 *)(record + 36) = 0;
     *(u32 *)(record + 44) = 0;

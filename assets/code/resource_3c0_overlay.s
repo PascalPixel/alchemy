@@ -472,12 +472,8 @@ AlchemyC_020000a0:
 	.4byte 0x02008105
 	.2byte 0x0000
 	.2byte 0xffff
-	.2byte 0xb500
-	movs	r0, #15
-	movs	r1, #45
-	bl	sub_02001660
-	pop	{r0}
-	bx	r0
+AlchemyC_02000314:
+	.space 0xe
 	.2byte 0x0000
 	push	{r5, lr}
 	movs	r1, #0

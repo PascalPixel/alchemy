@@ -6998,15 +6998,8 @@ AlchemyC_02003600:
 	.4byte 0x03001e40
 	.2byte 0xf004
 	.2byte 0xfc5e
-	push	{lr}
-	bl	sub_020095f8
-	bl	sub_02007490
-	bl	sub_02007768
-	bl	sub_02007b0c
-	bl	sub_02009610
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
+AlchemyC_020038c0:
+	.space 0x1c
 	push	{lr}
 	bl	sub_02009614
 	bl	sub_020081bc

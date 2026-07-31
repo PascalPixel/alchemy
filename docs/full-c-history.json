@@ -2,10 +2,10 @@
   "format": 1,
   "metric": "full-c-byte-share",
   "target": "gs1-en",
-  "denominator_commit": "2771875d65d0992314dd87d5f49501fd135ff391",
+  "denominator_commit": "4aff83e34a23ebf109465e514a9950b1c878d2fd",
   "executable_bytes": 1339582,
   "history_scope": "first-parent",
-  "generated_from": "683a26847b3f595b25c01df7c1742d7dfa54a937",
+  "generated_from": "5adc6fcd9b6e7cd10d55ea040a8ce3aaf71addac",
   "entries": [
     {
       "commit": "c0a101abc862998cc36a0ce13f6f893b614a16b8",
@@ -3012,6 +3012,38 @@
       "main_full_c_bytes": 101344,
       "overlay_full_c_bytes": 113664,
       "canonical_suffix": "[C 215,008/1,339,582 bytes]",
+      "derivation_status": "measured",
+      "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
+    },
+    {
+      "commit": "d79ed52cf55e45a7fd8cc82c584491106ed1d7cf",
+      "first_parent_position": 189,
+      "author_time": "2026-07-31T01:17:19+00:00",
+      "committer_time": "2026-07-31T01:17:19+00:00",
+      "original_subject": "record every overlay's call_via bank while the assembly still shows them [C 215,068/1,339,582 bytes]",
+      "full_c_bytes": 215068,
+      "executable_bytes": 1339582,
+      "remaining_bytes": 1124514,
+      "percent": 16.05,
+      "main_full_c_bytes": 101344,
+      "overlay_full_c_bytes": 113724,
+      "canonical_suffix": "[C 215,068/1,339,582 bytes]",
+      "derivation_status": "measured",
+      "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
+    },
+    {
+      "commit": "4aff83e34a23ebf109465e514a9950b1c878d2fd",
+      "first_parent_position": 190,
+      "author_time": "2026-07-31T01:17:45+00:00",
+      "committer_time": "2026-07-31T01:17:45+00:00",
+      "original_subject": "merge origin/main into mercury [C 215,068/1,339,582 bytes]",
+      "full_c_bytes": 215068,
+      "executable_bytes": 1339582,
+      "remaining_bytes": 1124514,
+      "percent": 16.05,
+      "main_full_c_bytes": 101344,
+      "overlay_full_c_bytes": 113724,
+      "canonical_suffix": "[C 215,068/1,339,582 bytes]",
       "derivation_status": "measured",
       "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
     }

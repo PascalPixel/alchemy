@@ -20,7 +20,7 @@ typedef unsigned char u8;
  * a location, so that call site is not evidence of a second entry point here;
  * the owner is reconstructed whole from its own prologue to its own epilogue.
  *
- * Note `Func_02005d6e` is reached twice with different argument counts (one
+ * Note `Func_0808a170` is reached twice with different argument counts (one
  * argument at 0x02001598, two at 0x020015b8).  Old-style declarations are
  * therefore mandatory.
  *
@@ -32,29 +32,25 @@ typedef unsigned char u8;
 
 /* Imports, old-style: interfaces unknown, and 0x02005d6e takes different
  * argument counts at its two sites. */
-void Func_02005c0c();
-void Func_02005c98();
-void Func_02005cb4();
-void Func_02005ca8();
-void Func_02005c7e();
-void Func_02005cf0();
-void Func_02005cd4();
-void Func_02005cf4();
-void Func_02005d0e();
-void Func_02005d38();
-void Func_02005e24();
-void Func_02005c72();
-void Func_02005d3a();
-void Func_02005d9e();
-void Func_02005d6e();
-void Func_02005d86();
-void Func_02005c9c();
-void Func_02005da4();
-void Func_02005d94();
-void Func_02005db6();
-void Func_02005d2e();
-void Func_02005cbc();
-void Func_02005ce0();
+void Func_0808a018();
+void Func_0808a0d0();
+void Func_0808a0f0();
+void Func_0808a0c8();
+void Func_0808a090();
+void Func_0808a128();
+void Func_0808a100();
+void Func_0808a150();
+void Func_0808a5e8();
+void Func_0808a010();
+void Func_0808a138();
+void Func_0808a1e8();
+void Func_0808a170();
+void Func_0808a180();
+void Func_0808a190();
+void Func_0808a188();
+void Func_0808a0b0();
+void Func_080770c8();
+void Func_0808a020();
 
 /* In-image data block referenced by the pool word 0x0200c8c0. */
 extern u8 Data_0200c8c0[];
@@ -63,29 +59,29 @@ void Func_0200150c(void)
 {
     s32 msg = 0xe67;   /* r5 */
 
-    Func_02005c0c();
-    Func_02005c98(0, 0x106, 0x32a);          /* 131 << 1 */
-    Func_02005cb4(20, 0x1060000, 0x3250000); /* 131 << 17 */
-    Func_02005ca8(20, 0x106, 0x339);         /* 131 << 1 */
-    Func_02005c7e(0, 0x20000, 0x10000);      /* 128 << 10, 128 << 9 */
-    Func_02005cf0(0, 2, 0);
-    Func_02005cd4(0, 0x11a, 0x357);          /* 141 << 1 */
-    Func_02005cf4(20, 1);
-    Func_02005d0e(0, 4, 0);
-    Func_02005d38(0, 20, 0);
-    Func_02005e24();
-    Func_02005c72(30);
-    Func_02005d3a(0, 2);
-    Func_02005d9e(20, 0x100, 20);            /* 128 << 1 */
-    Func_02005d6e(msg);                      /* one argument here */
-    Func_02005d86(20, 0);
-    Func_02005c9c(20);
-    Func_02005da4(20, 0);
+    Func_0808a018();
+    Func_0808a0d0(0, 0x106, 0x32a);          /* 131 << 1 */
+    Func_0808a0f0(20, 0x1060000, 0x3250000); /* 131 << 17 */
+    Func_0808a0c8(20, 0x106, 0x339);         /* 131 << 1 */
+    Func_0808a090(0, 0x20000, 0x10000);      /* 128 << 10, 128 << 9 */
+    Func_0808a128(0, 2, 0);
+    Func_0808a0d0(0, 0x11a, 0x357);          /* 141 << 1 */
+    Func_0808a100(20, 1);
+    Func_0808a128(0, 4, 0);
+    Func_0808a150(0, 20, 0);
+    Func_0808a5e8();
+    Func_0808a010(30);
+    Func_0808a138(0, 2);
+    Func_0808a1e8(20, 0x100, 20);            /* 128 << 1 */
+    Func_0808a170(msg);                      /* one argument here */
+    Func_0808a180(20, 0);
+    Func_0808a010(20);
+    Func_0808a190(20, 0);
     msg += 4;
-    Func_02005d6e(20, 2);                    /* two arguments here */
-    Func_02005d94(msg);
-    Func_02005db6(20, 0, 20);
-    Func_02005d2e(20, Data_0200c8c0);
-    Func_02005cbc(0x835);
-    Func_02005ce0();
+    Func_0808a138(20, 2);                    /* two arguments here */
+    Func_0808a170(msg);
+    Func_0808a188(20, 0, 20);
+    Func_0808a0b0(20, Data_0200c8c0);
+    Func_080770c8(0x835);
+    Func_0808a020();
 }

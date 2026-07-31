@@ -138,19 +138,19 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **701,856
-executable bytes across 1,336 compiling sources**: 385,850 main-image bytes and
-316,006 overlay bytes. Combined with exact C, **918,026 / 1,339,582 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **707,774
+executable bytes across 1,364 compiling sources**: 385,850 main-image bytes and
+321,924 overlay bytes. Combined with exact C, **924,720 / 1,339,582 executable
 bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
 sources live under `semantic/` and do not claim byte equality. Use
 `semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out
 of the ordinary review queue.
 
 
-**55 overlays have zero unconverted rows in the strict queue**, holding
-308,700 strict bytes between them. Regenerate this list rather than editing it —
+**THE OVERLAY STRICT QUEUE IS EMPTY.** All **68** overlays have zero
+unconverted strict rows, holding 315,208 strict bytes between them.
 it has drifted twice from being maintained by hand:
-`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,252), `resource_3c8` (11,916), `resource_372` (9,838), `resource_371` (9,486), `resource_38f` (9,212), `resource_39f` (8,692), `resource_3c4` (8,642), `resource_383` (8,588), `resource_3c5` (7,866), `resource_3a8` (7,780), `resource_391` (7,648), `resource_374` (7,468), `resource_375` (6,424), `resource_37a` (6,200), `resource_37b` (6,032), `resource_3b2` (5,984), `resource_3aa` (5,960), `resource_3b7` (5,954), `resource_3bb` (5,548), `resource_395` (5,504), `resource_3cb` (5,488), `resource_39a` (5,368), `resource_381` (5,328), `resource_377` (5,226), `resource_3b4` (5,104), `resource_3c6` (5,094), `resource_3ae` (5,026), `resource_370` (4,718), `resource_38d` (4,680), `resource_399` (4,672), `resource_3a2` (4,484), `resource_3a7` (4,442), `resource_3c7` (4,252), `resource_37f` (4,216), `resource_3ad` (3,978), `resource_3ca` (3,926), `resource_3bc` (3,768), `resource_3ba` (3,344), `resource_38b` (3,318), `resource_394` (3,282), `resource_3a3` (3,156), `resource_389` (3,056), `resource_3b5` (2,914), `resource_3c2` (2,688), `resource_379` (2,628), `resource_3b6` (2,284), `resource_3ce` (2,274), `resource_38e` (2,206), `resource_3c3` (1,934), `resource_398` (1,620), `resource_386` (1,142), `resource_38c` (1,024), `resource_3b1` (994).
+`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,252), `resource_3c8` (11,916), `resource_372` (9,838), `resource_371` (9,486), `resource_38f` (9,212), `resource_39f` (8,692), `resource_3c4` (8,642), `resource_383` (8,588), `resource_3c5` (7,866), `resource_3a8` (7,780), `resource_391` (7,648), `resource_374` (7,468), `resource_375` (6,424), `resource_37a` (6,200), `resource_37b` (6,032), `resource_3b2` (5,984), `resource_3aa` (5,960), `resource_3b7` (5,954), `resource_3bb` (5,548), `resource_395` (5,504), `resource_3cb` (5,488), `resource_39a` (5,368), `resource_381` (5,328), `resource_377` (5,226), `resource_3b4` (5,104), `resource_3c6` (5,094), `resource_3ae` (5,026), `resource_370` (4,718), `resource_38d` (4,680), `resource_399` (4,672), `resource_3a2` (4,484), `resource_3a7` (4,442), `resource_3c7` (4,252), `resource_37f` (4,216), `resource_3ad` (3,978), `resource_3ca` (3,926), `resource_3bc` (3,768), `resource_3ba` (3,344), `resource_38b` (3,318), `resource_394` (3,282), `resource_3a3` (3,156), `resource_389` (3,056), `resource_3b5` (2,914), `resource_3c2` (2,688), `resource_379` (2,628), `resource_3b6` (2,284), `resource_3ce` (2,274), `resource_38e` (2,206), `resource_3c3` (1,934), `resource_393` (1,820), `resource_398` (1,620), `resource_392` (1,562), `resource_386` (1,142), `resource_38c` (1,024), `resource_3b1` (994), `resource_36f` (888), `resource_3cd` (880), `resource_3b0` (682), `resource_3af` (552), `resource_390` (532), `resource_3c1` (468), `resource_3b9` (444), `resource_397` (318), `resource_384` (248), `resource_378` (220).
 
 **"Converted in full" means zero unconverted STRICT-QUEUE rows, not that every
 executable byte of the overlay is C.** Measured across those overlays: their
@@ -486,6 +486,117 @@ confirms it is data.
 unrelated globals hides that the second is the well-known workspace pointer the
 rest of the overlay loads directly.
 
+**THE `bl` RULE DOES NOT INVERT CLEANLY — a pre-rule name is many-to-one AND
+one-to-many, so find-and-replace SILENTLY MERGES two callees.** Because the
+printed name is `site + 4 + stored_disp`, two different real callees can share
+one printed name, and one callee appears under many. This bit 17 of 42 rows in
+the `resource_371`/`372` rename pass (17 ambiguous names in `372:31ac` alone).
+The method that works: **assign the i-th call occurrence in the source to the
+i-th site in address order.** It is checkable on sight, because the last site is
+almost always `Func_0808a020` (scene close) and the first `Func_0808a018`.
+
+**Renaming COLLAPSES declarations, and the survivors' return types are not
+interchangeable.** Two pre-rule names resolving to one import leaves two
+declarations of one function — a hard compile error when they disagree. Pick by
+**consumption**, not by order and not by "non-void wins": that tie-break was
+wrong in 7 files. A result that is assigned, tested or compared is `s32`; one
+never read is `void`. Beware `case N:` labels, which a naive "something precedes
+the call" test reads as consumers.
+
+**A jump table whose entries are EVEN is normal for `mov pc, rN`.** `mov pc`
+does not interwork on this core, so bit 0 is not a Thumb flag there, while
+`offset = word - 0x8000` still applies. The parity heuristic — odd = Thumb
+entry, even = data — is for **pool words** and does not carry to table entries.
+
+**Offset 450 of `Data_02000240` is the scene sub-state, cross-overlay.**
+`resource_384:01e4` and `resource_378:0070` both read it as a *signed* halfword
+and both build the 450 the same odd way; `378` switches 35 ways on it, `384`
+three ways.
+
+**The displacement/value trap has a fourth variant: displacement → value →
+displacement.** `resource_384:01e4` builds r2 as 448 (a displacement),
+`adds #73` → 521 (the stored value), then `subs #71` → 450 (a displacement into
+a *different* base). The 448/521 pair is already recorded; the third step is new,
+and 450 has no arithmetic relation to either.
+
+**`0x03001ecc` and `0x03001ebc + 16` are the same slot, and one overlay uses
+both spellings.** `resource_397:015c` and its near-twin root `:0200` differ in
+exactly this, which makes two identical routines look like they touch unrelated
+globals.
+
+**A `bl` where only r0 is loaded is not necessarily one-argument.**
+`resource_397`'s two `Func_080091a8` sites leave r1/r2 live from the two lines
+above, holding the freshly-stored x and z. Reading it as
+`Func_080091a8(layer)` drops an established three-argument probe ABI.
+
+**`strh r5,[r5]` with r5 = `0x04000208` is an IME CLEAR, not a store of data.**
+Storing the register's own address writes the low halfword 0x0208, whose bit 0
+is clear. `resource_36f:02e8` wraps five queue enqueues in
+`ldrh/strh r5,[r5] … strh r1,[r5]` critical sections. Read as a data store it
+invents a phantom value.
+
+**A modulo helper called with a step of `modulus ± 1` is a SEARCH, not a wrap.**
+`resource_3cd:04b0` re-enters `Func_030003ac` with 270 on the first pass and
+then 269 or 271 — that is `counter ∓ 1 mod 270`, written as an addition because
+the helper needs a non-negative dividend. Reading the later steps as another
+plain wrap deletes the entire availability search.
+
+**A close without its open is a real defect IN THE ORIGINAL SOURCE, not live
+caller state — convert it, do not skip it.** `resource_3cd:04b0` saves and
+restores r9, reads it exactly once as a window handle for `Func_08015018`, and
+never writes it; its twin `resource_3ce:0cf4` has two `Func_08015010` calls where
+this copy has one. Frame-balanced and self-contained means convert with an
+uninitialised local. The skip rule is for state that genuinely crosses the
+owner's boundary.
+
+**Two sibling band guards whose biases differ by exactly 0x4000 check each
+other.** `resource_3a9:018c` (`+0xffff9fff`) and `:01fc` (`+0x5fff`) share the
+`0x3ffe` bound and cover adjacent facing arcs — a free correctness proof on the
+trickiest constant in that family.
+
+**A compare chain with a HOLE is not a range.** Both `resource_3a9:007c` and
+`:033c` accept `9..15 or 17` over the same halfword, excluding 16 from the
+middle. Two independent owners agreeing on the hole confirms it; writing `9..17`
+folds it away.
+
+**`overlay_call_targets.ts`'s site count on a jump-table row can be right by
+luck.** `resource_3b0:0240` reports 168 code bytes against a 452-byte span
+because the linear walk stops at a 56-byte `mov pc,r3` table — yet the naive
+scan still agreed at 28 sites. Seed the table from the pool word the dispatch
+loads and the `cmp`/`bhi` bound before believing either number.
+
+**A jump table's own base pool word is a FREE link-base witness.**
+`resource_3af`'s table base is `0x020080ec` and the table physically sits at file
+offset 0x00ec; `resource_3b9`'s is `0x020080ac` at 0x00ac. This is the cheapest
+base proof available on any dispatcher row, and it falls out of the same read
+that seeds the pool map.
+
+**A 66-entry jump table can be 6 distinct arms and 57 default entries.**
+`resource_3b9:007c`. Grouped `switch` cases over the raw selector, plus the
+table's own default, is the faithful spelling; one arm per entry is inflation in
+its purest form.
+
+**`ldrsh` immediately followed by `lsls #16 / lsrs #16` is a signed load consumed
+UNSIGNED, not a redundant pair.** `resource_3c1:0120`. Keep both halves — the
+table is declared signed and read unsigned.
+
+**The displacement/value trap with THREE roles in five instructions, all in one
+register.** `resource_3c1:022c` runs 448 (displacement) → 256 (stored value, via
+`subs #192`) → 456 (next displacement, via `adds #200`). This is the reference
+example for the subtractive form, and it independently confirms that `+448`
+carries the scene id 256, matching `resource_3a2:11b0`.
+
+**`Func_0808a080(0)->[+0x55]` is a cross-overlay control byte.**
+`resource_393:0aac` brackets it (mask with 0x7e on entry, restore on exit) and
+`semantic/overlays/resource_370_c_02000054.c` clears the same `record[85]` after
+the same accessor. Two independent overlays agreeing is what names the field.
+
+**Reading TWO neighbouring byte-exact siblings before starting is worth more
+than reading one.** `assets/code/resource_3b9_c_02000030.c` and `_02000238.c`
+between them fixed `Data_02000240[224]` as the map id and `[225]` as the
+sub-state, the result spelling, and the significance of sub-state 12 — settling
+`resource_3b9:007c` before any dataflow work.
+
 **A bracket-close import appearing MORE times in your C than in the histogram
 means you wrote a shared close once per arm.** Measured across the eight
 worst-failing overlays, three of the eleven genuine count defects were exactly
@@ -545,6 +656,13 @@ is an event-flag id, the handler sets that flag — `resource_398:0214`, key
 a small fraction of `span_bytes` and `calls` reads as 0 or 1. Both converted
 without incident, beating their advertised counts by 10 and 11. **The tell is a
 prologue row, not contained, whose `calls` is 0–2 against a span of 128+ bytes.**
+**This tier is narrower than it looks, and it has now been over-claimed twice.**
+Lanes offered `resource_3af:00c4`, `resource_3b9:007c` and `resource_378:0070`
+as further instances; all three have `returns=1` and were ordinary
+**strict-queue** rows. A `mov pc,rN` table depresses `code_bytes` and `calls`
+without removing the row from the queue, so those symptoms alone prove nothing.
+**Check `returns` before counting one** — that is the field the strict filter
+turns on.
 Measured across the whole inventory, only **2 such rows remain unconverted (548
 bytes, in `resource_3ca` and `resource_399`)** — so this is a tier worth
 knowing about, not a large hidden pool.
@@ -1604,6 +1722,34 @@ cohort. It added **17,816 exact-C bytes**, taking exact Full-C Byte Share to
 ## 1. Where to work
 
 In descending order of measured value.
+
+**THE OVERLAY STRICT QUEUE IS FINISHED — start on the MAIN IMAGE.** Everything
+below about overlay queues is history, kept because the method transferred.
+Measured after the queue emptied, the main image's remaining semantic ground
+breaks down by retention class like this:
+
+| class | bytes | what it means |
+| --- | --- | --- |
+| `keep_structured_asm` | 44,136 | parked by design |
+| `split_first` (all `mixed_region`) | 23,432 | **the live front** |
+| `keep_asm` | 11,988 | parked by design |
+| `merge_with_owner` / `merge_with_function_owner` | 7,088 | continuations wanting an owner |
+| `adjacent_section_alignment` | 660 | padding |
+
+**Every one of the 599 `c_candidate` regions already has a semantic source**, so
+there is no drafting backlog there — the exact lane's constraint is adoption,
+not authorship. The work is the **79 `split_first` regions**: each carries
+evidence `mixed_or_invalid_function_boundary`, meaning several functions and/or
+interleaved data share one region and nobody has split it into owners. Splitting
+is the substance; the overlay boundary method (control-flow walk from each
+prologue, everything unreached is pool or data) transfers directly. Largest are
+`080e4e0c` (1,512), `080f4f04` (1,226), `080beb08` (1,104), `080f4318` (1,074),
+`080e5e28` (1,066), `080d77b4` (1,054).
+
+Read `asm/<address>.s` — reconstructed disassembly, byte-verified against the
+ROM by `build_asm.ts`. **The overlay `bl` rule does NOT apply here.** It is an
+artefact of unlinked overlay images; the main image is linked, so its `bl`
+targets and printed names are ordinary.
 
 **Overlay strict queues.** Two discovery fixes originally took this queue from
 20 rows / 6,110 bytes to 1,334 rows / 311,324 bytes, and rediscovery of

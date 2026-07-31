@@ -68,9 +68,18 @@ for path in ("MEETING.md", "HANDOVER.md"):
         continue
     resolver = keep_both_by_timestamp if path == "MEETING.md" else (
         lambda m: m.group(1) if m.group(1).strip() == m.group(2).strip() else m.group(1) + m.group(2))
-    text, count = sides(text).subn(resolver, text)
+    # Conflicts can NEST — a non-greedy match takes the inner pair and leaves the
+    # outer, which then reaches the publication gate as a stray marker. Loop
+    # until the file is clean rather than substituting once.
+    count = 0
+    for _ in range(8):
+        text, n = sides(text).subn(resolver, text)
+        count += n
+        if "<<<<<<< HEAD" not in text:
+            break
     open(path, "w").write(text)
-    print(f"{path}: {count} hunk(s) resolved")
+    status = "clean" if "<<<<<<< HEAD" not in text else "STILL CONFLICTED"
+    print(f"{path}: {count} hunk(s) resolved, {status}")
 
 text = open("package.json").read()
 match = re.search(r'<<<<<<< HEAD\n(.*?)\n=======\n(.*?)\n>>>>>>> origin/mercury\n', text, re.S)
@@ -95,6 +104,14 @@ for path in remaining:
         subprocess.run(["git", "checkout", "--theirs", "--", path])
         subprocess.run(["git", "add", "--", path])
         print(f"{path}: took mercury's")
+
+# Stage the files resolved above. Editing the working tree does NOT clear a
+# path's unmerged state — only `git add` does — so without this the caller's
+# unresolved check fires on files that are already correct.
+for path in ("MEETING.md", "HANDOVER.md", "package.json"):
+    if path in remaining:
+        subprocess.run(["git", "add", "--", path])
+        print(f"{path}: staged")
 RESOLVE
 
 # Anything still conflicted is genuinely novel and wants a human decision.

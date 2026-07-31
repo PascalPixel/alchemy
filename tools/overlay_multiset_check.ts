@@ -117,6 +117,16 @@ export function assemblyCounts(overlay: string, owner: number, span: number): Ma
       // genuinely dropped call still shows up, because its target resolves to a
       // veneer or a prologue and reports `src=0` under a real name.
       continue;
+    } else if (detail.kind === "call_via" && (image[site.target] | (image[site.target + 1] << 8)) === 0x4770) {
+      // `bx lr` is a RETURN, so a target that is only `bx lr` is a real
+      // (do-nothing) leaf function, not a thunk slot. `classify()` matches the
+      // whole `bx rN` encoding and calls it `call_via`, which made
+      // `resource_398:0538`'s fifteen calls to `0x02000904` report as
+      // `(call_via) assembly=15` against `Func_02000904 source=15` — a phantom
+      // pair at identical counts, with the source right and the tool wrong.
+      // HANDOVER already warns that a large `call_via` count is not evidence of
+      // a thunk; this is that warning enforced.
+      name = `Func_${(0x02000000 + site.target).toString(16).padStart(8, "0")}`;
     } else if (detail.kind === "call_via") {
       // The slot forwards to whatever the register holds, so the assembly
       // cannot name the destination — but the source can and does, usually an
@@ -277,6 +287,23 @@ function main(): void {
     }
   }
   console.log(`\nchecked=${checked} failed=${failed}`);
+  // CHECKING NOTHING IS NOT PASSING. `checked=0 failed=0` reads as a clean
+  // result and exits 0, so a lane gating its loop on this tool would sail past
+  // rows it never examined. That happened: the 36 functions found by the
+  // two-byte-gap sweep have no inventory row, and every one of them reported
+  // `checked=0` until `rows()` learned to read `manual_regions`. A tool whose
+  // silent-success case is indistinguishable from real success is worse than no
+  // tool, so this is an explicit failure.
+  if (checked === 0) {
+    console.log(
+      "NOTHING CHECKED — this is a FAILURE, not a pass.\n" +
+        "  No row matched. Either the overlay/owner is wrong, or the owner has no\n" +
+        "  inventory row and no `manual_regions` entry in semantic/regions.json.\n" +
+        "  Rows found by the two-byte-gap sweep are always in the second case.",
+    );
+    process.exitCode = 1;
+    return;
+  }
   if (failed > 0) process.exitCode = 1;
 }
 

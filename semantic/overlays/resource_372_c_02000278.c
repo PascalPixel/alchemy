@@ -33,39 +33,37 @@ typedef unsigned char u8;
  */
 
 /* Imports, old-style: interfaces not yet known. */
-void Func_02004b3c();
-void Func_0200491e();
-void Func_020017b6();
-void Func_02004994();
-void Func_02004a32();
-void Func_020049b8();
-void Func_02000426();
+void Func_080f9010();
+void Func_08009178();
+void Func_0200150c();
+void Func_080770c8();
+void Func_0808a0c8();
+void Func_0808a010();
+void Func_0200015c();
 
 /* Used for their return values. */
-s32 Func_0200495a();
-s32 Func_02004974();
-s32 Func_0200497e();
+s32 Func_080770c0();
 
 /* In-image data block referenced by the pool word 0x0200d7a0. */
 extern u8 Data_0200d7a0[];
 
 void Func_02000278(void)
 {
-    if (Func_0200495a(0x206) == 0) {
-        Func_02004b3c(158);
-        Func_0200491e(Data_0200d7a0, 45, 39);
+    if (Func_080770c0(0x206) == 0) {
+        Func_080f9010(158);
+        Func_08009178(Data_0200d7a0, 45, 39);
     }
 
     /* 0x835 and 0x831 are tested in sequence; either one non-zero takes the
      * second branch.  Note the second test is only reached when the first
      * returned 0. */
-    if (Func_02004974(0x835) == 0 && Func_0200497e(0x831) == 0) {
-        Func_020017b6();
-        Func_02004994(0x206);
+    if (Func_080770c0(0x835) == 0 && Func_080770c0(0x831) == 0) {
+        Func_0200150c();
+        Func_080770c8(0x206);
     } else {
         /* r1 is built as 131 << 1 = 0x106; r2 comes from the pool. */
-        Func_02004a32(0, 0x106, 0x325);
-        Func_020049b8(3);
-        Func_02000426(6);
+        Func_0808a0c8(0, 0x106, 0x325);
+        Func_0808a010(3);
+        Func_0200015c(6);
     }
 }

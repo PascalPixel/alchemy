@@ -27,55 +27,33 @@
  * Old-style declarations, because the interfaces are unknown.
  */
 
-void Func_02005a84();
-void Func_0200581a();
-void Func_02005a98();
-void Func_0200582e();
-void Func_02005aac();
-void Func_02005842();
-void Func_02005ac0();
-void Func_02005856();
-void Func_02005ad4();
-void Func_0200586a();
-void Func_02005aea();
-void Func_02005880();
-void Func_02005b00();
-void Func_02005896();
-void Func_02005b14();
-void Func_020058aa();
-void Func_02005b28();
-void Func_020058be();
-void Func_02005b3c();
-void Func_020058d2();
-void Func_02005b50();
-void Func_020058e6();
-void Func_02005b66();
-void Func_020058fc();
+void Func_0808a210();
+void Func_080000c0();
 
 void Func_02001680(void)
 {
-    Func_02005a84(0x15ec0000, -1, 0x06c80000, 1);
-    Func_0200581a(4);
-    Func_02005a98(0x15e40000, -1, 0x06cc0000, 1);
-    Func_0200582e(4);
-    Func_02005aac(0x15ec0000, -1, 0x06c40000, 1);
-    Func_02005842(4);
-    Func_02005ac0(0x15ec0000, -1, 0x06cc0000, 1);
-    Func_02005856(4);
-    Func_02005ad4(0x15e40000, -1, 0x06c40000, 1);
-    Func_0200586a(4);
-    Func_02005aea(0x15e80000, -1, 0x06c80000, 1);
-    Func_02005880(4);
-    Func_02005b00(0x15ea0000, -1, 0x06c80000, 1);
-    Func_02005896(4);
-    Func_02005b14(0x15e60000, -1, 0x06ca0000, 1);
-    Func_020058aa(4);
-    Func_02005b28(0x15ea0000, -1, 0x06c60000, 1);
-    Func_020058be(4);
-    Func_02005b3c(0x15ea0000, -1, 0x06ca0000, 1);
-    Func_020058d2(4);
-    Func_02005b50(0x15e60000, -1, 0x06c60000, 1);
-    Func_020058e6(4);
-    Func_02005b66(0x15e80000, -1, 0x06c80000, 1);
-    Func_020058fc(4);
+    Func_0808a210(0x15ec0000, -1, 0x06c80000, 1);
+    Func_080000c0(4);
+    Func_0808a210(0x15e40000, -1, 0x06cc0000, 1);
+    Func_080000c0(4);
+    Func_0808a210(0x15ec0000, -1, 0x06c40000, 1);
+    Func_080000c0(4);
+    Func_0808a210(0x15ec0000, -1, 0x06cc0000, 1);
+    Func_080000c0(4);
+    Func_0808a210(0x15e40000, -1, 0x06c40000, 1);
+    Func_080000c0(4);
+    Func_0808a210(0x15e80000, -1, 0x06c80000, 1);
+    Func_080000c0(4);
+    Func_0808a210(0x15ea0000, -1, 0x06c80000, 1);
+    Func_080000c0(4);
+    Func_0808a210(0x15e60000, -1, 0x06ca0000, 1);
+    Func_080000c0(4);
+    Func_0808a210(0x15ea0000, -1, 0x06c60000, 1);
+    Func_080000c0(4);
+    Func_0808a210(0x15ea0000, -1, 0x06ca0000, 1);
+    Func_080000c0(4);
+    Func_0808a210(0x15e60000, -1, 0x06c60000, 1);
+    Func_080000c0(4);
+    Func_0808a210(0x15e80000, -1, 0x06c80000, 1);
+    Func_080000c0(4);
 }

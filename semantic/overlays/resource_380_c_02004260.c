@@ -15,40 +15,48 @@ typedef unsigned char u8;
  * then the one-word literal pool 0x02004324 (0x0200cbe4); next owner's
  * prologue at 0x02004328.
  *
- * Uncertainty: callees unidentified beyond call shape.  Func_02008bd8
- * is called with one argument for the first companion and with
- * (first, 224) for the second, so it is declared old-style.  The
- * object layout (+80 record pointer, record +5/+9 flag bytes, +38/+39
- * clear pair, +28 sprite byte) matches the shapes the other rows of
- * this overlay touch.
+ * CORRECTION (name sweep): this file's callee names came from a naive
+ * pc-relative decode and were wrong; they are resolved here through the
+ * overlay's import-veneer table under the +2 rule
+ * (tools/overlay_call_targets.ts) to their main-ROM identities.  The
+ * earlier "one argument for the first companion, (first, 224) for the
+ * second, so declared old-style" reading was an artifact: one phantom
+ * name covered two different functions (Func_08077040 and
+ * Func_08077038).  Nothing here is old-style.
+ *
+ * Uncertainty: callee roles beyond call shape remain open.  The object
+ * layout (+80 record pointer, record +5/+9 flag bytes, +38/+39 clear
+ * pair, +28 sprite byte) matches the shapes the other rows of this
+ * overlay touch.
  */
 
-extern s32 Func_02008b38(s32 kind);
-extern s32 Func_02008bd8();
-extern void Func_02008b50(s32 object, s32 descriptor);
-extern s32 Func_02008b5e(s32 row, s32 source);
-extern void Func_02008c06(s32 arg0);
-extern void Func_02008b8c(s32 sprite, s32 arg1, s32 destination);
-extern void Func_02008b8a(s32 row);
-extern void Func_02008e00(s32 arg0);
-extern void Func_02008df0(s32 object, s32 arg1);
-extern void Func_02008c80(s32 first, s32 second);
-extern void Func_02008c48(s32 first, s32 arg1);
-extern void Func_02008bd6(s32 object);
-extern void Func_02008d1e(s32 arg0, s32 arg1);
+extern s32 Func_08000140(s32 row, s32 source);
+extern void Func_08000150(s32 row);
+extern void Func_080001c8(s32 sprite, s32 arg1, s32 destination);
+extern void Func_08009098(s32 object, s32 descriptor);
+extern s32 Func_080090c8(s32 kind);
+extern void Func_080090d0(s32 object);
+extern void Func_08015250(s32 arg0);
+extern void Func_08077028(s32 first, s32 arg1);
+extern s32 Func_08077038(s32 arg0, s32 arg1);
+extern s32 Func_08077040(s32 arg0);
+extern void Func_080772b0(s32 first, s32 second);
+extern void Func_0808a100(s32 arg0, s32 arg1);
+extern void Func_0808a390(s32 object, s32 arg1);
+extern void Func_080f9010(s32 arg0);
 
 s32 Func_02004260(s32 arg0)
 {
-    s32 object = Func_02008b38(22);
-    s32 first = Func_02008bd8(224);
-    s32 second = Func_02008bd8(first, 224);
+    s32 object = Func_080090c8(22);
+    s32 first = Func_08077040(224);
+    s32 second = Func_08077038(first, 224);
     u8 *record;
     s32 slot;
 
     if (object == 0)
         return first;
 
-    Func_02008b50(object, 0x0200cbe4);
+    Func_08009098(object, 0x0200cbe4);
     record = *(u8 **)(object + 80);
     record[38] = 0;
     record[39] = 0;
@@ -56,15 +64,15 @@ s32 Func_02004260(s32 arg0)
     record[9] &= 15;
     *(s32 *)(object + 40) = 0x28000;
     *(s32 *)(object + 72) = 0x4000;
-    slot = Func_02008b5e(17, 0x608);
-    Func_02008c06(arg0);
-    Func_02008b8c(record[28], 128, slot + 0x400);
-    Func_02008b8a(17);
-    Func_02008e00(0x53);
-    Func_02008df0(object, 3);
-    Func_02008c80(first, second);
-    Func_02008c48(first, arg0);
-    Func_02008bd6(object);
-    Func_02008d1e(0, 1);
+    slot = Func_08000140(17, 0x608);
+    Func_08015250(arg0);
+    Func_080001c8(record[28], 128, slot + 0x400);
+    Func_08000150(17);
+    Func_080f9010(0x53);
+    Func_0808a390(object, 3);
+    Func_080772b0(first, second);
+    Func_08077028(first, arg0);
+    Func_080090d0(object);
+    Func_0808a100(0, 1);
     return first;
 }

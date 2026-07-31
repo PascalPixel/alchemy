@@ -711,6 +711,9 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // Same tell twice in resource_38c:035c, whose other lever is the rerun-cse
   // one; the flags are independent and both are needed.
   "assets/code/resource_38c_c_0200035c.c",
+  // resource_3c3:0288 sets r1 and negates r2 for a three-argument call and the
+  // reference takes the r1 setter first.
+  "assets/code/resource_3c3_c_02000288.c",
   // resource_386:0204 and :011c, same plain form. :011c also needed one callee
   // declared `s32` -- the reference sets r1 before r0 at that site, which only a
   // value-returning callee does; the flag alone leaves that pair swapped.

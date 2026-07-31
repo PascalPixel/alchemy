@@ -133,9 +133,9 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently accounts for **655,680
-executable bytes across 1,231 compiling sources**: 385,850 main-image bytes and
-269,830 overlay bytes. Combined with exact C, **869,808 / 1,339,580 executable
+Alongside the exact lane, reviewed semantic C currently accounts for **659,116
+executable bytes across 1,238 compiling sources**: 385,850 main-image bytes and
+273,266 overlay bytes. Combined with exact C, **873,244 / 1,339,580 executable
 bytes** are expressed as C.
 bytes** are expressed as C. Build that lane with `bun run build:semantic`; its
 sources live under `semantic/` and do not claim byte equality. Use
@@ -143,10 +143,10 @@ sources live under `semantic/` and do not claim byte equality. Use
 of the ordinary review queue.
 
 
-**34 overlays have zero unconverted rows in the strict queue**, holding
-248,366 strict bytes between them. Regenerate this list rather than editing it —
+**37 overlays have zero unconverted rows in the strict queue**, holding
+260,098 strict bytes between them. Regenerate this list rather than editing it —
 it has drifted twice from being maintained by hand:
-`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,484), `resource_3c8` (12,800), `resource_372` (10,202), `resource_38f` (9,848), `resource_371` (9,650), `resource_39f` (9,278), `resource_3c5` (9,208), `resource_374` (9,148), `resource_3a8` (8,912), `resource_383` (8,652), `resource_391` (7,648), `resource_39a` (7,096), `resource_375` (6,568), `resource_3aa` (6,552), `resource_3b4` (6,462), `resource_3b2` (6,134), `resource_3b7` (6,062), `resource_37b` (6,032), `resource_3bb` (5,896), `resource_395` (5,780), `resource_3cb` (5,540), `resource_3c6` (5,250), `resource_38d` (5,212), `resource_399` (4,738), `resource_370` (4,718), `resource_3c7` (4,440), `resource_37f` (4,428), `resource_3ad` (4,288), `resource_3ca` (3,978), `resource_3bc` (3,826), `resource_3a3` (3,428), `resource_3a4` (36).
+`resource_373` (18,044), `resource_3b8` (15,028), `resource_3bf` (13,484), `resource_3c8` (12,800), `resource_372` (10,202), `resource_38f` (9,848), `resource_371` (9,650), `resource_39f` (9,278), `resource_3c5` (9,208), `resource_374` (9,148), `resource_3a8` (8,912), `resource_383` (8,652), `resource_391` (7,648), `resource_39a` (7,096), `resource_375` (6,568), `resource_3aa` (6,552), `resource_3b4` (6,462), `resource_3b2` (6,134), `resource_3b7` (6,062), `resource_37b` (6,032), `resource_3bb` (5,896), `resource_395` (5,780), `resource_3cb` (5,540), `resource_3c6` (5,250), `resource_38d` (5,212), `resource_399` (4,738), `resource_3a7` (4,728), `resource_370` (4,718), `resource_3c7` (4,440), `resource_37f` (4,428), `resource_3ad` (4,288), `resource_3ca` (3,978), `resource_3bc` (3,826), `resource_38b` (3,628), `resource_3a3` (3,428), `resource_3ba` (3,376), `resource_3a4` (36).
 
 **"Converted in full" means zero unconverted STRICT-QUEUE rows, not that every
 executable byte of the overlay is C.** Measured across those overlays: their
@@ -523,6 +523,14 @@ Thumb bit.** `0x0200a609` = `Func_02002608 + 1`, `0x0200a7ad` =
 pointers passed to `Func_080000d0`/`Func_080000d8`, not data. It works on any
 overlay that installs a task and needs no jump table.
 
+**But a byte-exact sibling's POOL-WORD TYPING predates the parity test and can
+be wrong.** `assets/code/resource_3ba_c_0200384c.c` declares
+`extern u8 Data_0200b1c1[]` and passes it to a two-argument import. `0x0200b1c1`
+is **odd** — it is `Func_020031c0` plus the Thumb bit, and the import is the task
+installer `Func_080000d0`. A callback spelled as a data array is invisible to the
+build and wrong in the model. Trust siblings for field offsets and workspace
+pointers; re-check their pool-word kinds against parity.
+
 **Cross-check imports against a byte-exact sibling — it is free and it is
 banked.** An `assets/code` source in the same overlay was written with the
 *printed* (wrong) `bl` names, e.g. `Func_02002d10`; resolving its own call sites
@@ -541,6 +549,19 @@ against that sibling.
 recurs verbatim in `resource_3c6` (`movs r3,#236 / lsls #1` off `0x03001ebc`,
 three times), where the two variant arms are *behaviourally identical*, differing
 only in where the bump sits relative to the last call.
+
+**A provably dead call is still a call SITE.** In `resource_3a7:0754` the sample
+is built with `lsls #11 / lsrs #16`, so it is always non-negative and the `bge`
+guarding the unsigned-to-double `+2^32` correction is always taken — the call can
+never execute. Deleting it drops one from the multiset. Expect this wherever
+soft-float code converts an unsigned value.
+
+**A repeated endpoint block at the end of a builder is two sites, not a loop.**
+`resource_3ba:33a0` ends with two 78-byte blocks differing only in a selector
+field and one tile offset — and the second's final `bl` sets only r0/r1 where the
+first sets r0/r1/r2. Folding them into a two-iteration loop would have deflated
+the multiset by four *and* silently normalised away that dropped r2. The tell
+here is a dropped argument register rather than a moved counter bump.
 
 **Behaviourally identical skip-beat arms are still DISTINCT call sites.**
 Collapsing three such pairs in `resource_3ca:0430` would have deflated the
@@ -707,6 +728,11 @@ negate it. Convert the hub first and each member costs minutes while the family
 cross-checks itself. **`overlay_twins.ts` does NOT find these** — the bodies
 differ too much — so sort rows by span and eyeball adjacent sizes.
 
+**...but only the SELECTOR is shared, not the arms.** Three `resource_38b`
+owners test it against the same constants 0x1e/0x23/0x20 and map them to
+*different* targets each time. Reading one owner settles the selector's layout
+and nothing else.
+
 **`Data_02000240[224]` is a cross-overlay idiom with a fixed shape** — the
 signed halfword at byte offset 448, branched on. Four byte-exact siblings
 (`39a:0050`, `3b2:0d48`, `3b7:0044`) plus `370:0384` share it, so reading one
@@ -720,6 +746,19 @@ hunt for a symbol that does not exist.
 **`>> 20` on a 16.16 coordinate is the tile-grid idiom**, not an odd shift:
 `>> 16` to integers then `>> 4` for the 16-pixel grid. Read as a single shift,
 every column and row constant looks arbitrary.
+
+**The span scan can BE the lane.** On `resource_3a7` it exposed a six-member
+family, a bit-identical pair differing in eight immediates, and a subset pair —
+**twelve of twenty-four files were transpositions**. Sort by (span, calls) before
+anything else on a high-row-count overlay.
+
+**Calibration, honestly: the span scan also produces false positives.** In
+`resource_38b` two rows matched on span AND `calls` (220/15 each) and were
+unrelated, and a 100-byte pair turned out to be caller/callee. The scan costs two
+minutes and the disassembly is not wasted, but "equal span and equal calls" is a
+candidate filter, not a twin test — confirm with a byte diff before transposing.
+
+**Five lanes have now confirmed this; treat `groups=0` as no information.**
 
 **`overlay_twins.ts` misses same-overlay twins, and it misses them often.**
 `resource_399:07a4` and `:088c` are two 232-byte rows differing in five values —
@@ -847,6 +886,27 @@ confirms the element count, the stride AND the link base in one arithmetic step,
 with no disassembly. `resource_3ca:11c4` has 24 records of 12 bytes at file
 offset 0x1af8, and 0x1af8 + 288 = 0x1c18, exactly the counter halfword the same
 owner drives — which caught the lane's element count before it could be wrong.
+
+**Order the lane by the CALL GRAPH, not smallest-first.** Resolve every odd
+`0x0200_8xxx` pool word in the overlay before drafting anything: each one is
+`Func_A` storing `Func_B + 1`, and where B is still unconverted the witness
+*names B's role in advance*. On `resource_3a3` all three witnesses were forward
+references — they established that `02000c44` was a per-frame callback and
+`02000d08` a task before either was opened, which pre-decided their signatures
+(`void f(u8 *object)`) and let the pair be cross-checked on field offsets
+(`02000c0c` initialises +0x18/+0x1c/+0x64/+0x68; `02000c44` consumes exactly
+those). Convert the named callee alongside its installer rather than whenever
+its size comes up.
+
+**An empty grep is NOT "no base evidence" — the next witness is the first task
+install you meet.** `resource_3a7`'s nineteen byte-exact siblings hold no in-image
+pool word at all, and the base arrived free on the first row disassembled
+(`0c08`'s `0x02008aa1` = `Func_02000aa0 + 1`, which also named that row).
+
+**Grep for BOTH `0x0200[89ab]` and `Data_0200[89ab]`.** Some overlays' byte-exact
+siblings spell in-image data as symbols rather than numeric pool words —
+`resource_3a3` returns nothing for the numeric form and everything for the
+symbolic one.
 
 **Grep `0x0200[89ab]` across an overlay's ALREADY-CONVERTED semantic files, not
 just `assets/code`.** An overlay's task-callback pool words make its rows

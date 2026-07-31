@@ -49,12 +49,12 @@ typedef unsigned char u8;
 
 extern s32 Data_03001e40;
 
-void Func_08009080();      /* (record, pose) */
-unsigned int Func_080000f8();  /* ROM dispatch[7] -> Func_08004458 */
+void Func_02000ae8();
+unsigned int Func_080000f8();
+void Func_08009080();
 
 /* This overlay's effect spawner: four register arguments plus four stack
  * words - (x, y, z, vx, vy, vz, flags, options). */
-void Func_02000ae8();
 
 s32 Func_02000f4c(u8 *subject)
 {

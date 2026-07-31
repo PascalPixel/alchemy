@@ -48,13 +48,6 @@ extern void Func_02001bdc();
 
 /* Imports.  0x02003f04, 0x02003f84, 0x02003fa0 and 0x02003fae are used for
  * their return value. */
-u8 *Func_02003f04();
-void Func_02003f02();
-void Func_02003f22();
-void Func_02004058();
-s32 Func_02003f84();
-s32 Func_02003fa0();
-s32 Func_02003fae();
 
 void Func_02001c18(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, u32 flags,
                    u8 *source)

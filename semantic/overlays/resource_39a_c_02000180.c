@@ -39,16 +39,6 @@ void Func_08009158();
 void Func_0808a018();
 void Func_0808a020();
 s32 Func_0808a080();
-void Func_02002492();
-void Func_020024b2();
-void Func_020024ca();
-void Func_020024d4();
-void Func_020024de();
-void Func_020024e8();
-u8 *Func_020024f2();
-u8 *Func_020024fa();
-void Func_0200250a();
-void Func_0200257e();
 
 /* Both placements share this shape: a fixed-point coordinate is biased by the
  * caller's offset, truncated to its top twelve bits and re-biased by 0x80000. */

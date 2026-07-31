@@ -62,14 +62,11 @@ struct EffectParams_020005e4 {
 };
 
 /* Random source; the byte-exact siblings declare this family `(void)`. */
-s32 Func_020053b2(void);
-s32 Func_020053d0(void);
-s32 Func_020053e4(void);
-s32 Func_020053f8(void);
+void Func_02000118();
+s32 Func_03000380();
+s32 Func_080000f8();
 
 /* Old-style declarations: the imports' real interfaces are not known here. */
-s32 Func_020053f6();
-void Func_0200078e();
 
 s32 Func_020005e4(struct Object_020005e4 *object)
 {
@@ -84,17 +81,17 @@ s32 Func_020005e4(struct Object_020005e4 *object)
         return 0;
     }
 
-    params.unk00 = 3 - (s32)((u32)(Func_020053b2() * 2) >> 16);
+    params.unk00 = 3 - (s32)((u32)(Func_080000f8() * 2) >> 16);
     params.color1 = 0x6666;
     params.color2 = 0x6666;
     params.mode = 14;
 
-    x = object->x + (((s32)((u32)(Func_020053d0() * 9) >> 16) - 4) << 16);
-    y = object->y + ((32 - (s32)((u32)(Func_020053e4() * 32) >> 16)) << 16);
-    speed = Func_020053f6(
-        ((s32)((u32)(Func_020053f8() * 5) >> 16) << 16) + 0x00050000,
+    x = object->x + (((s32)((u32)(Func_080000f8() * 9) >> 16) - 4) << 16);
+    y = object->y + ((32 - (s32)((u32)(Func_080000f8() * 32) >> 16)) << 16);
+    speed = Func_080000f8(
+        ((s32)((u32)(Func_03000380() * 5) >> 16) << 16) + 0x00050000,
         10);
 
-    Func_0200078e(x, y, object->z, 0, speed, phase, 0x000b0000, &params);
+    Func_02000118(x, y, object->z, 0, speed, phase, 0x000b0000, &params);
     return 0;
 }

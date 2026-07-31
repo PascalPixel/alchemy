@@ -56,11 +56,6 @@ s32 Func_02005be8();
 s32 Func_02005bf8();
 u32 Func_02005c08();  /* result is used and cast; a void declaration hard-errors */
 void Func_02005e04();
-void Func_0200b982(const SoftDouble *packed, SoftFloatRecord *out);
-s32 Func_0200b77c(const SoftFloatRecord *record);
-s32 Func_0200b766(const SoftFloatRecord *record);
-s32 Func_0200b784(const SoftFloatRecord *record);
-u64 Func_0200b7ce(u64 significand, u32 count);
 
 s32 Func_02005b6c(SoftDouble value)
 {

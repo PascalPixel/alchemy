@@ -103,24 +103,6 @@ void Func_02000eac();
 void Func_020027f4();
 void Func_02002820();
 
-/* Poses one of the four background actors: clear its two state bytes, set its
- * timer halfword, force presentation bits 2-3, clear the sub-block's byte 38
- * and set its halfword 30. */
-#define POSE(slot, timer, blockValue)                                   \
-    do {                                                                \
-        u8 *rec = Func_0808a080(slot);                                  \
-        u8 *block;                                                      \
-        rec[89] = 0;                                                    \
-        rec[35] = 0;                                                    \
-        *(u16 *)(rec + 94) = (timer);                                   \
-        block = *(u8 **)(rec + 80);                                     \
-        block[9] = (u8)(block[9] | 12);                                 \
-        block = *(u8 **)(rec + 80);                                     \
-        block[38] = 0;                                                  \
-        block = *(u8 **)(rec + 80);                                     \
-        *(u16 *)(block + 30) = (blockValue);                            \
-        Func_0808a100((slot), 0);                                       \
-    } while (0)
 
 s32 Func_020028a0(void)
 {
@@ -172,10 +154,76 @@ s32 Func_020028a0(void)
             Func_020027f4();
         }
 
-        POSE(11, 0, 0xc000);        /* 192 << 8 */
-        POSE(12, 30, 0x4000);       /* 128 << 7 */
-        POSE(13, 60, 0x8000);       /* 128 << 8 */
-        POSE(14, 90, 0x8000);       /* the same r8-held 0x8000 */
+        /* Four poses, written out: these are four SEPARATE call sites each of
+         * Func_0808a080 and Func_0808a100 in the assembly, not one shared
+         * block, so they are not folded into a macro or a helper. */
+        {
+            /* Pose background actor 11 (192 << 8). */
+            u8 *rec = Func_0808a080(11);
+            u8 *block;
+
+            rec[89] = 0;
+            rec[35] = 0;
+            *(u16 *)(rec + 94) = 0;
+            block = *(u8 **)(rec + 80);
+            block[9] = (u8)(block[9] | 12);
+            block = *(u8 **)(rec + 80);
+            block[38] = 0;
+            block = *(u8 **)(rec + 80);
+            *(u16 *)(block + 30) = 0xc000;
+            Func_0808a100(11, 0);
+        }
+
+        {
+            /* Pose background actor 12 (128 << 7). */
+            u8 *rec = Func_0808a080(12);
+            u8 *block;
+
+            rec[89] = 0;
+            rec[35] = 0;
+            *(u16 *)(rec + 94) = 30;
+            block = *(u8 **)(rec + 80);
+            block[9] = (u8)(block[9] | 12);
+            block = *(u8 **)(rec + 80);
+            block[38] = 0;
+            block = *(u8 **)(rec + 80);
+            *(u16 *)(block + 30) = 0x4000;
+            Func_0808a100(12, 0);
+        }
+
+        {
+            /* Pose background actor 13 (128 << 8). */
+            u8 *rec = Func_0808a080(13);
+            u8 *block;
+
+            rec[89] = 0;
+            rec[35] = 0;
+            *(u16 *)(rec + 94) = 60;
+            block = *(u8 **)(rec + 80);
+            block[9] = (u8)(block[9] | 12);
+            block = *(u8 **)(rec + 80);
+            block[38] = 0;
+            block = *(u8 **)(rec + 80);
+            *(u16 *)(block + 30) = 0x8000;
+            Func_0808a100(13, 0);
+        }
+
+        {
+            /* Pose background actor 14 (the same r8-held 0x8000). */
+            u8 *rec = Func_0808a080(14);
+            u8 *block;
+
+            rec[89] = 0;
+            rec[35] = 0;
+            *(u16 *)(rec + 94) = 90;
+            block = *(u8 **)(rec + 80);
+            block[9] = (u8)(block[9] | 12);
+            block = *(u8 **)(rec + 80);
+            block[38] = 0;
+            block = *(u8 **)(rec + 80);
+            *(u16 *)(block + 30) = 0x8000;
+            Func_0808a100(14, 0);
+        }
         return 0;
     }
 

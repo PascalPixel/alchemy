@@ -23,40 +23,39 @@ typedef signed int s32;
  * whose callers ignore r0, which is how it is spelled here.
  */
 
-s32 Func_0200717a(s32 flag);
-void Func_02007196(s32 id, s32 mode);
-void Func_020071a2(void);
-void Func_020071d4(s32 count);
-void Func_020071e0(s32 index, s32 x, s32 y);
-void Func_020071f2(void);
-void Func_0200724e(s32 index, s32 id, s32 script);
-void Func_02007280(s32 id);
-void Func_020072a2(s32 channel, s32 slot, s32 value);
-void Func_020072ae(s32 channel, s32 slot, s32 value);
+void Func_08015040();
+s32 Func_080770c0();
+void Func_0808a010();
+void Func_0808a018();
+void Func_0808a020();
+void Func_0808a090();
+void Func_0808a0d0();
+void Func_0808a170();
+void Func_0808a188();
 
 void Func_020011d8(void)
 {
     s32 id;
 
     /* The guard flag word is materialised from the pool as 0x00000808. */
-    if (Func_0200717a(0x00000808) != 0) {
+    if (Func_080770c0(0x00000808) != 0) {
         return;
     }
 
-    Func_020071a2();
+    Func_0808a018();
 
     /* 0x80 << 9 and 0x80 << 8. */
-    Func_020071e0(0, 0x10000, 0x8000);
+    Func_0808a090(0, 0x10000, 0x8000);
 
     id = 0x00000f4d;
-    Func_02007280(id);
-    Func_020072a2(15, 0, 2);
+    Func_0808a170(id);
+    Func_0808a188(15, 0, 2);
 
     id += 2;                      /* 0x00000f4f */
-    Func_020072ae(16, 0, 2);
-    Func_02007196(id, 1);
+    Func_0808a188(16, 0, 2);
+    Func_08015040(id, 1);
 
-    Func_020071d4(6);
-    Func_0200724e(0, 69, 0x00000366);
-    Func_020071f2();
+    Func_0808a010(6);
+    Func_0808a0d0(0, 69, 0x00000366);
+    Func_0808a020();
 }

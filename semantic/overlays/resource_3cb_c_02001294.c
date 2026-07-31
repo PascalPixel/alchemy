@@ -47,12 +47,12 @@ typedef signed int s32;
  */
 
 /* Old-style declarations: arities vary per site across this overlay. */
-void Func_08009180();
-
-/* Used for their return values. */
 s32 Func_03000380();
 s32 Func_030003ac();
 s32 Func_08009128();
+void Func_08009180();
+
+/* Used for their return values. */
 
 s32 Func_02001294(s32 value)
 {

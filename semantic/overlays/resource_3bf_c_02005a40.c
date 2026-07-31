@@ -38,14 +38,9 @@ typedef struct SoftFloatRecord {
     u32 word[5];
 } SoftFloatRecord;
 
-s32 Func_020057ec();
-s32 Func_02005c38();
+int Func_020057ec();
+int Func_02005c38();
 void Func_02005e04();
-void Func_0200b85c(const SoftDouble *packed, SoftFloatRecord *out);
-void Func_0200b866(const SoftDouble *packed, SoftFloatRecord *out);
-SoftFloatRecord *Func_0200b258(SoftFloatRecord *a, SoftFloatRecord *b,
-                               SoftFloatRecord *result);
-SoftDouble Func_0200b6a8(SoftFloatRecord *result);
 
 SoftDouble Func_02005a40(SoftDouble a, SoftDouble b)
 {

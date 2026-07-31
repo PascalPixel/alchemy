@@ -31,9 +31,6 @@ typedef signed int s32;
 s32 Func_080090c8();
 void Func_080091e0();
 void Func_0808a160();
-u8 *Func_020031a2();
-void Func_02003206();
-void Func_020032a6();
 
 u8 *Func_02000ed8(s32 a, s32 b, s32 c, s32 d)
 {

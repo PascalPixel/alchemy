@@ -22,21 +22,18 @@ typedef struct Record_02000fe8 {
     s32 w16;               /* +16 */
 } Record_02000fe8;
 
-Record_02000fe8 *Func_020040fc(s32 index);
-Record_02000fe8 *Func_0200410a(s32 slot);
-Record_02000fe8 *Func_02004118(s32 slot);
-Record_02000fe8 *Func_02004126(s32 slot);
+Record_02000fe8 *Func_0808a080();
 
 s32 Func_02000fe8(Record_02000fe8 *record)
 {
-    Record_02000fe8 *reference = Func_020040fc(0);
+    Record_02000fe8 *reference = Func_0808a080(0);
     s32 w16 = 0;
 
     if (reference->w12 > (s32)0xffd00000
-        && (Func_0200410a(8)->w16 >> 20) == 10) {
-        record->w8 = Func_02004118(8)->w8;
+        && (Func_0808a080(8)->w16 >> 20) == 10) {
+        record->w8 = Func_0808a080(8)->w8;
         record->w12 = (s32)0xffe00000;
-        w16 = Func_02004126(8)->w16;
+        w16 = Func_0808a080(8)->w16;
     } else {
         record->w8 = 0;
         record->w12 = 0;

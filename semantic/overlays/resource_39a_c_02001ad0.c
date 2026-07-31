@@ -26,13 +26,6 @@ void Func_0808a0e0();
 void Func_0808a0e8();
 void Func_0808a100();
 void Func_0808a128();
-void Func_02003e10();
-void Func_02003e3e();
-void Func_02003e54();
-void Func_02003e58();
-void Func_02003e78();
-void Func_02003e7a();
-void Func_02003e88();
 
 void Func_02001ad0(s32 x, s32 y)
 {

@@ -64,12 +64,12 @@ typedef signed int s32;
  * and arities vary per site, so interfaces are left open. */
 void Func_02000128();
 void Func_080770d0();
+void Func_0808a018();
+s32 Func_0808a020();
 void Func_0808a170();
 void Func_0808a178();
-void Func_0808a018();
 
 /* Used for its return value. */
-s32 Func_0808a020();
 
 s32 Func_02000340(void)
 {

@@ -45,40 +45,8 @@ void Func_0808a180();
 void Func_0808a1b8();
 s32 Func_0808a460();
 void Func_0808a580();
-void Func_020044e4();
-void Func_020044f2();
-void Func_0200453c();
-void Func_0200456c();
-void Func_0200456e();
-void Func_0200459c();
-void Func_020045b4();
-void Func_020045c4();
-void Func_020045e0();
-void Func_020045f8();
-void Func_02004604();
-void Func_02004612();
-void Func_02004630();
-void Func_02004636();
-void Func_0200463c();
-void Func_02004664();
-void Func_02004680();
-void Func_0200468c();
-void Func_02004696();
-void Func_0200469c();
-void Func_020046a6();
-void Func_020046b6();
-void Func_020046be();
-void Func_020046ce();
-void Func_020046d0();
-void Func_020046da();
-void Func_02004776();
-void Func_02004780();
 
 /* These are used for their return values. */
-u16 *Func_02004510();
-s32 Func_02004504();
-s32 Func_020044d0();
-s32 Func_020045fc();
 
 void Func_02000108(s32 actor)
 {

@@ -40,91 +40,74 @@ struct Resource373Published {
     void (*behaviour)(void);
 };
 
-struct Resource373Actor *Func_020072a6(s32 actorId);
-struct Resource373Published *Func_020073f0(s32 actorId);
-void Func_02007284(void);
-void Func_020072c2(s32 actorId, s32 x, s32 y);
-void Func_020072f6(s32 count);
-void Func_02007308(s32 actorId, s32 id, s32 script);
-void Func_0200730c(s32 actorId, s32 x, s32 y);
-void Func_02007328(s32 count);
-void Func_02007334(s32 actorId, s32 mode, s32 value);
-void Func_0200733c(s32 actorId, s32 a, s32 b);
-void Func_02007344(s32 count);
-void Func_02007358(s32 actorId, s32 id, s32 script);
-void Func_0200736e(s32 actorId, s32 x, s32 y);
-void Func_0200737e();          /* see UNCERTAINTY 2 */
-void Func_02007380(s32 actorId, s32 mode);
-void Func_02007396(s32 actorId, const void *data);
-void Func_020073a4(s32 actorId);
-void Func_020073ac(s32 count);
-void Func_020073b8(s32 actorId, s32 amount, s32 frames);
-void Func_020073c2(s32 id);
-void Func_020073c4(s32 actorId);
-void Func_020073ca(s32 actorId, s32 mode);
-void Func_020073da(s32 actorId, s32 a, s32 b);
-void Func_020073e6(void);
-void Func_020073fa(s32 actorId, s32 a, s32 b);
-void Func_02007406(s32 actorId, s32 amount, s32 frames);
-void Func_0200740c(s32 actorId, const void *data);
-void Func_02007422(s32 actorId, s32 mode);
-void Func_0200742a(s32 actorId, s32 a, s32 b);
-void Func_0200744e(s32 actorId, s32 mode);
-void Func_0200745e(s32 actorId, s32 a, s32 b);
-void Func_0200746e(s32 actorId, s32 a, s32 b);
-void Func_02007482(s32 id);
-void Func_02007496(s32 actorId, s32 amount, s32 frames);
-void Func_020074aa(s32 actorId, s32 mode);
+void Func_080770c8();
+void Func_0808a010();
+void Func_0808a018();
+void Func_0808a020();
+struct Resource373Published *Func_0808a080();
+void Func_0808a090();
+void Func_0808a098();
+void Func_0808a0a0();
+void Func_0808a0c8();
+void Func_0808a0d0();
+void Func_0808a0f0();
+void Func_0808a100();
+void Func_0808a128();
+void Func_0808a130();
+void Func_0808a170();
+void Func_0808a190();
+void Func_0808a1b8();
+void Func_0808a1e8();
 
 void Func_020012bc(void)
 {
-    struct Resource373Actor *actor = Func_020072a6(22);
+    struct Resource373Actor *actor = Func_0808a080(22);
     u8 *flags = &actor->flags5a;
     struct Resource373Published *published;
 
-    Func_02007284();
-    Func_020072c2(0, 0x20000, 0x20000);     /* 0x80 << 10 twice */
-    Func_02007334(0, 5, 0);
-    Func_02007308(0, 215, 0x193);
+    Func_0808a018();
+    Func_0808a090(0, 0x20000, 0x20000);     /* 0x80 << 10 twice */
+    Func_0808a128(0, 5, 0);
+    Func_0808a0c8(0, 215, 0x193);
 
     *flags = (u8)(*flags | 1);
 
-    Func_0200733c(22, 0x00a60000, 0x01770000);
-    Func_020073b8(22, 0x2000, 20);          /* 0x80 << 6 */
+    Func_0808a0f0(22, 0x00a60000, 0x01770000);
+    Func_0808a1b8(22, 0x2000, 20);          /* 0x80 << 6 */
 
     *flags = (u8)(*flags ^ 1);
 
-    Func_0200730c(22, 0x28000, 0x28000);    /* 0xa0 << 10 twice */
-    Func_0200737e(22, 4, 0);
-    Func_02007358(22, 202, 0x18b);
-    Func_02007380(0, 1);
-    Func_020072f6(10);
-    Func_020073fa(0, 0xb000, 0);            /* 0xb0 << 8 */
-    Func_02007406(22, 0x3000, 24);          /* 0xc0 << 6 */
-    Func_0200742a(0, 0x100, 0);             /* 0x80 << 1 */
-    Func_020073ca(0, 2);
-    Func_02007328(20);
-    Func_0200736e(22, 0x18000, 0x10000);    /* 0xc0 << 9, 0x80 << 9 */
-    Func_0200737e(0, (const void *)0x0200f59c);
-    Func_02007344(10);
-    Func_0200745e(22, 0x103, 0);
-    Func_02007396(22, (const void *)0x0200f5ec);
-    Func_020073a4(0);
-    Func_020073da(0, 0x100, 0x1da);         /* 0x80 << 1, 0xed << 1 */
-    Func_0200746e(0, 0xc000, 0);            /* 0xc0 << 8 */
-    Func_020073c4(22);
-    Func_020073fa(22, 0x100, 0x1c8);        /* 0x80 << 1, 0xe4 << 1 */
-    Func_02007422(0, 1);
-    Func_02007496(22, 0x4000, 20);          /* 0x80 << 7 */
-    Func_0200744e(22, 2);
-    Func_020073ac(20);
-    Func_02007482(0xfce);
-    Func_020074aa(22, 0);
+    Func_0808a090(22, 0x28000, 0x28000);    /* 0xa0 << 10 twice */
+    Func_0808a128(22, 4, 0);
+    Func_0808a0d0(22, 202, 0x18b);
+    Func_0808a100(0, 1);
+    Func_0808a010(10);
+    Func_0808a1b8(0, 0xb000, 0);            /* 0xb0 << 8 */
+    Func_0808a1b8(22, 0x3000, 24);          /* 0xc0 << 6 */
+    Func_0808a1e8(0, 0x100, 0);             /* 0x80 << 1 */
+    Func_0808a130(0, 2);
+    Func_0808a010(20);
+    Func_0808a090(22, 0x18000, 0x10000);    /* 0xc0 << 9, 0x80 << 9 */
+    Func_0808a098(0, (const void *)0x0200f59c);
+    Func_0808a010(10);
+    Func_0808a1e8(22, 0x103, 0);
+    Func_0808a098(22, (const void *)0x0200f5ec);
+    Func_0808a0a0(0);
+    Func_0808a0d0(0, 0x100, 0x1da);         /* 0x80 << 1, 0xed << 1 */
+    Func_0808a1b8(0, 0xc000, 0);            /* 0xc0 << 8 */
+    Func_0808a0a0(22);
+    Func_0808a0d0(22, 0x100, 0x1c8);        /* 0x80 << 1, 0xe4 << 1 */
+    Func_0808a100(0, 1);
+    Func_0808a1b8(22, 0x4000, 20);          /* 0x80 << 7 */
+    Func_0808a130(22, 2);
+    Func_0808a010(20);
+    Func_0808a170(0xfce);
+    Func_0808a190(22, 0);
 
-    published = Func_020073f0(22);
+    published = Func_0808a080(22);
     published->behaviour = (void (*)(void))0x0200d72d;
 
-    Func_0200740c(22, (const void *)0x0200e248);
-    Func_020073c2(0x823);
-    Func_020073e6();
+    Func_0808a098(22, (const void *)0x0200e248);
+    Func_080770c8(0x823);
+    Func_0808a020();
 }

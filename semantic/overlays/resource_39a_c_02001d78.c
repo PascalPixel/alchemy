@@ -39,6 +39,9 @@ struct Params_02001d78 {
 extern u32 Data_03001e40;
 
 /* Imports; two are used for their return value. */
+void Func_02001c18();
+s32 Func_080000f8();
+void Func_080f9010();
 void Func_020041ba();
 s32 Func_02004026();
 s32 Func_02004034();
@@ -64,18 +67,18 @@ void Func_02001d78(void)
     params.fourth = (s32)0x1cccc;
 
     if ((Data_03001e40 & 7) == 0) {
-        Func_020041ba((s32)0x88);
+        Func_080f9010((s32)0x88);
     }
 
     /* (value * 2) kept to its high halfword, subtracted from 0xffff0000. */
-    sweep = (s32)((u32)0xffff0000 - (((u32)Func_02004026() << 1) & 0xffff0000));
+    sweep = (s32)((u32)0xffff0000 - (((u32)Func_080000f8() << 1) & 0xffff0000));
 
     /* (value * 3) >> 16, then multiplied by 3, 17 and 257 with shift-adds -
      * 3 * 17 * 257 = 13107 - and negated. */
-    spin = -(s32)(13107 * (((u32)(Func_02004034() * 3)) >> 16));
+    spin = -(s32)(13107 * (((u32)(Func_080000f8() * 3)) >> 16));
 
     /* movs/lsls build 0x1340000, 0x400000 and 0xde0000; the last four
      * arguments are the ones stored into sp+0..sp+12. */
-    Func_02003a04((s32)0x1340000, (s32)0x400000, (s32)0xde0000, sweep,
+    Func_02001c18((s32)0x1340000, (s32)0x400000, (s32)0xde0000, sweep,
                   spin, phase, (s32)0x000d0001, &params);
 }

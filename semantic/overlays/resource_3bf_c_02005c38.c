@@ -90,10 +90,10 @@ typedef struct SoftFloatRecord {
 
 /* Old-style declarations: overlay imports may be reached with different
  * argument counts, so arities are left open. */
+s32 Func_02005c08();
 s32 Func_02005dd4();
 s32 Func_02005de4();
 s32 Func_02005df4();
-u64 Func_02005c08();
 
 SoftDouble Func_02005c38(SoftFloatRecord *record)
 {

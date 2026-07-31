@@ -19,6 +19,13 @@ typedef signed int s32;
  */
 
 /* Imports. */
+void Func_0808a018();
+void Func_0808a020();
+void Func_0808a090();
+void Func_0808a0e0();
+void Func_0808a0e8();
+void Func_0808a100();
+void Func_0808a128();
 void Func_02003e10();
 void Func_02003e3e();
 void Func_02003e54();
@@ -31,15 +38,15 @@ void Func_02001ad0(s32 x, s32 y)
 {
     /* No argument register is written before this branch, so no argument is
      * asserted; r0 and r1 still hold this owner's own two arguments. */
-    Func_02003e10();
+    Func_0808a018();
     /* movs r1,#0xa0 / lsls r1,#10 and movs r2,#0xa0 / lsls r2,#9. */
-    Func_02003e3e(0, (s32)0x28000, (s32)0x14000);
-    Func_02003e58(0, x, y);
-    Func_02003e7a(0, 4, 0);
+    Func_0808a090(0, (s32)0x28000, (s32)0x14000);
+    Func_0808a0e0(0, x, y);
+    Func_0808a128(0, 4, 0);
     /* Same import, two arguments here: r2 is not rewritten in this window and
      * was clobbered by the preceding call. */
-    Func_02003e7a(0, 7);
-    Func_02003e78(0);
-    Func_02003e88(0, 6);
-    Func_02003e54();
+    Func_0808a100(0, 7);
+    Func_0808a0e8(0);
+    Func_0808a100(0, 6);
+    Func_0808a020();
 }

@@ -1,17 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Asset maturity box tree, pink band">
 <rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
-<rect x="1" y="1" width="131.9" height="281.9" style="fill:hsl(330, 60%, 62%);fill:oklch(0.7 0.201 355)"/>
-<rect x="1" y="282.9" width="131.9" height="616.1" style="fill:hsl(330, 7%, 69%);fill:oklch(0.7 0.024 355)"/>
-<rect x="134.9" y="1" width="63.4" height="34.7" style="fill:hsl(330, 90%, 58%);fill:oklch(0.7 0.300 355)"/>
-<rect x="134.9" y="37.7" width="63.4" height="187.8" style="fill:hsl(330, 60%, 62%);fill:oklch(0.7 0.201 355)"/>
-<rect x="134.9" y="225.5" width="63.4" height="0.9" style="fill:hsl(330, 31%, 66%);fill:oklch(0.7 0.102 355)"/>
-<rect x="134.9" y="226.4" width="63.4" height="672.6" style="fill:hsl(330, 7%, 69%);fill:oklch(0.7 0.024 355)"/>
-<rect x="200.3" y="1" width="358.4" height="165.2" style="fill:hsl(330, 60%, 62%);fill:oklch(0.7 0.201 355)"/>
-<rect x="200.3" y="166.2" width="358.4" height="732.8" style="fill:hsl(330, 7%, 69%);fill:oklch(0.7 0.024 355)"/>
-<rect x="560.7" y="1" width="127.9" height="4.4" style="fill:hsl(330, 7%, 69%);fill:oklch(0.7 0.024 355)"/>
-<rect x="560.7" y="7.4" width="127.9" height="123.3" style="fill:hsl(330, 60%, 62%);fill:oklch(0.7 0.201 355)"/>
-<rect x="560.7" y="130.7" width="127.9" height="15.9" style="fill:hsl(330, 31%, 66%);fill:oklch(0.7 0.102 355)"/>
-<rect x="560.7" y="146.6" width="127.9" height="752.4" style="fill:hsl(330, 7%, 69%);fill:oklch(0.7 0.024 355)"/>
-<rect x="690.7" y="1" width="908.3" height="674.8" style="fill:hsl(330, 60%, 62%);fill:oklch(0.7 0.201 355)"/>
-<rect x="690.7" y="675.8" width="908.3" height="223.2" style="fill:hsl(330, 7%, 69%);fill:oklch(0.7 0.024 355)"/>
+<rect x="1" y="1" width="131.9" height="281.9" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
+<rect x="1" y="282.9" width="131.9" height="616.1" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
+<rect x="134.9" y="1" width="63.4" height="34.7" style="fill:hsl(330, 95%, 55%);fill:oklch(0.550 0.300 355)"/>
+<rect x="134.9" y="37.7" width="63.4" height="187.8" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
+<rect x="134.9" y="225.5" width="63.4" height="0.9" style="fill:hsl(330, 32%, 80%);fill:oklch(0.801 0.102 355)"/>
+<rect x="134.9" y="226.4" width="63.4" height="672.6" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
+<rect x="200.3" y="1" width="358.4" height="165.2" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
+<rect x="200.3" y="166.2" width="358.4" height="732.8" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
+<rect x="560.7" y="1" width="127.9" height="4.4" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
+<rect x="560.7" y="7.4" width="127.9" height="123.3" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
+<rect x="560.7" y="130.7" width="127.9" height="15.9" style="fill:hsl(330, 32%, 80%);fill:oklch(0.801 0.102 355)"/>
+<rect x="560.7" y="146.6" width="127.9" height="752.4" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
+<rect x="690.7" y="1" width="908.3" height="674.8" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
+<rect x="690.7" y="675.8" width="908.3" height="223.2" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
 </svg>

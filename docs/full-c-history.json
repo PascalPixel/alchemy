@@ -2,10 +2,10 @@
   "format": 1,
   "metric": "full-c-byte-share",
   "target": "gs1-en",
-  "denominator_commit": "fe7350536844d3e6011c53ae287c1d4800af13e9",
+  "denominator_commit": "2771875d65d0992314dd87d5f49501fd135ff391",
   "executable_bytes": 1339582,
   "history_scope": "first-parent",
-  "generated_from": "09942bbd7b54d8302deec5c257c973890365a240",
+  "generated_from": "683a26847b3f595b25c01df7c1742d7dfa54a937",
   "entries": [
     {
       "commit": "c0a101abc862998cc36a0ce13f6f893b614a16b8",
@@ -2996,6 +2996,22 @@
       "main_full_c_bytes": 101344,
       "overlay_full_c_bytes": 112840,
       "canonical_suffix": "[C 214,184/1,339,582 bytes]",
+      "derivation_status": "measured",
+      "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
+    },
+    {
+      "commit": "2771875d65d0992314dd87d5f49501fd135ff391",
+      "first_parent_position": 188,
+      "author_time": "2026-07-31T01:12:37+00:00",
+      "committer_time": "2026-07-31T01:12:37+00:00",
+      "original_subject": "metrics: correct executable denominator and resolve overlay call_via banks [C 215,008/1,339,582 bytes]",
+      "full_c_bytes": 215008,
+      "executable_bytes": 1339582,
+      "remaining_bytes": 1124574,
+      "percent": 16.05,
+      "main_full_c_bytes": 101344,
+      "overlay_full_c_bytes": 113664,
+      "canonical_suffix": "[C 215,008/1,339,582 bytes]",
       "derivation_status": "measured",
       "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded", "excluded=src/080a7440.c:noncanonical-C;src/080b6e7c.c:noncanonical-C"]
     }

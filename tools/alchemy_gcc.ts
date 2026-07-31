@@ -1165,23 +1165,51 @@ export interface ExternalSymbol {
 // one. Hence a table, recorded once, rather than a scan on every build.
 const OVERLAY_CALL_VIA_BASE: Record<string, number> = {
   resource_373: 0x020061b4,
+  resource_382: 0x02003138,
+  resource_385: 0x020014fc,
   resource_389: 0x02001578,
   resource_391: 0x02002d8c,
   resource_392: 0x02000eec,
   resource_393: 0x02000f34,
+  resource_39b: 0x02002960,
+  resource_39c: 0x02005fb0,
+  resource_39d: 0x02004108,
   resource_39f: 0x02002f1c,
+  resource_3a0: 0x020018bc,
+  resource_3a5: 0x02002c6e,
+  resource_3a6: 0x020020a8,
   resource_3b2: 0x02003180,
+  resource_3b3: 0x02002f00,
   resource_3b4: 0x02002668,
   resource_3b5: 0x02000edc,
+  resource_3b7: 0x020028e0,
+  resource_3ba: 0x02003f4e,
   resource_3bc: 0x02004d4e,
+  resource_3bd: 0x02003ed8,
+  resource_3be: 0x02001920,
   resource_3bf: 0x02005810,
   resource_3c4: 0x02003214,
   resource_3c5: 0x02002ff8,
   resource_3c8: 0x02005324,
+  resource_3c9: 0x02006384,
+  resource_3cb: 0x02001a96,
 };
 
-export function overlayCallViaBase(overlay: string): number {
-  return OVERLAY_CALL_VIA_BASE[overlay] ?? CALL_VIA_BASE;
+// Per-source overrides, which win over the overlay's entry.
+//
+// The stored displacement is the same at every site that reaches a given slot,
+// so the address a `bl` to it resolves to depends on where the call is. One
+// address per overlay serves every site in a *narrow* address range and not a
+// wide one, so a row far from the rest gets its own.
+const SOURCE_CALL_VIA_BASE: Record<string, number> = {
+  // Same routine as resource_373_c_02000030.c and the same slot, called from
+  // 0x563e instead of 0x5e.
+  "assets/code/resource_373_c_02005610.c": 0x0200b794,
+};
+
+export function overlayCallViaBase(overlay: string, source?: string): number {
+  const override = source === undefined ? undefined : SOURCE_CALL_VIA_BASE[sourceKey(source)];
+  return override ?? OVERLAY_CALL_VIA_BASE[overlay] ?? CALL_VIA_BASE;
 }
 
 export function externalSymbol(name: string, callViaBase = CALL_VIA_BASE): ExternalSymbol | null {

@@ -495,6 +495,37 @@ confirms it is data.
 unrelated globals hides that the second is the well-known workspace pointer the
 rest of the overlay loads directly.
 
+**The strict-queue filter HIDES real dispatchers, and they convert normally.**
+`resource_3b1:012c` and `:037c` fail the filter purely *because* they contain a
+`mov pc,rN` table: the linear walk stops at the table, so `code_bytes` comes out
+a small fraction of `span_bytes` and `calls` reads as 0 or 1. Both converted
+without incident, beating their advertised counts by 10 and 11. **The tell is a
+prologue row, not contained, whose `calls` is 0–2 against a span of 128+ bytes.**
+Measured across the whole inventory, only **2 such rows remain unconverted (548
+bytes, in `resource_3ca` and `resource_399`)** — so this is a tier worth
+knowing about, not a large hidden pool.
+
+**A "band guard" family: `ldrh +6` / `adds 0xffff5fff` / `cmp 0x3ffe` / `bhi` is
+an unsigned half-open range test on a wrapped position word** — not a mask and
+not a sign trick. It appears seven times across `resource_386` and
+`resource_38c` and anchors both overlays' approach-guard families, so
+recognising it identifies a whole family from the first row.
+
+**`movs r3,#N / negs r3` (or `movs r3,#0 / subs r3,#N`) is an AND-mask of `-N`,
+NOT of `~N`.** Three times here: `resource_386:0570` (−33), `resource_38c:04c8`
+(−13), `resource_3b1:02f4` (−13, used for two consecutive stores from one
+register). `-33` clears only 0x20; writing `~0x21` is wrong by one bit.
+
+**The additive displacement/value trap recurs VERBATIM across overlays.**
+`movs r2,#224 / lsls #1` (448, a displacement) then `adds r2,#73` (521, the
+stored value) appears identically in `resource_386:04e4` and
+`resource_38c:04c8`. Grep for the constants directly.
+
+**An overlay `bl` to an in-image prologue is ordinary in cutscene overlays.**
+`resource_386:02fc → 0200011c` and three sites in `resource_3b1:012c` are plain
+intra-overlay calls, classified correctly as `prologue`. Do not treat one as a
+sign of a mis-decode.
+
 **`stmia r3!, {r0,r1,r2}` with r3 = `0x040000d4` is a DMA3 CLEAR, not a struct
 copy.** `resource_381:330c` zeroes its 404-byte workspace this way: `0x85000065`
 is enable | 32-bit | source-fixed with a count of 0x65 words, exactly the size

@@ -2744,6 +2744,13 @@ two levers land.
   orders instead, which is the tell that the reference had sched2 on with a
   load-ordering rule this fork does not carry. **Do not re-sweep it** — measure
   the group count, name this class, and move on.
+  **It runs in both directions**, which is why no single mode fixes it:
+  `resource_3c8:06a0` (180 bytes) is *one* swap from exact with the reference
+  emitting `ldr r6, POOL` **before** `lsl r3, r4, #4` where this fork emits it
+  after — the mirror of the two `373` rows. `-fthumb-literal-before-index-shift`
+  and `-mthumb-entry-literal-first` are the modes that name exactly this shape
+  and neither moves it. Four rows, two directions, one missing rule: the fork
+  places a pool load by its own latency model rather than the reference's.
 - ~~The same **two-instruction immediate** built at two or more call sites.~~
   **This class is now disproved — see below.** It is listed here only because
   hundreds of old notes still cite it.

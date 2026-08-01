@@ -110,7 +110,7 @@ void Func_02006692();
 void Func_0200669c();
 void Func_020066a0();
 void Func_020066b0();
-void Func_020066b6();
+s32 Func_020066b6();
 void Func_020066bc();
 void Func_020066cc();
 void Func_020066ce();
@@ -226,7 +226,7 @@ void Func_02006b14();
 void Func_02006b1e();
 void Func_02006b26();
 void Func_02006b28();
-void Func_02006b32();
+s32 Func_02006b32();
 void Func_02006b44();
 void Func_02006b52();
 void Func_02006b54();
@@ -302,12 +302,13 @@ void Func_02006dfa();
 void Func_02006e02();
 void Func_02006e0a();
 s32 Func_02006e0c();
-void Func_02006e16();
+s32 Func_02006e16();
 void Func_02006e20();
 void Func_02006e28();
 void Func_02006e2a();
 void Func_02006e40();
 s32 Func_02006e56();
+void Func_02006e56_v();
 void Func_02006e58();
 void Func_02006e62();
 void Func_02006e6e();
@@ -317,14 +318,14 @@ void Func_02006e86();
 void Func_02006e8c();
 void Func_02006e8e();
 void Func_02006e9a();
-void Func_02006eac();
+s32 Func_02006eac();
 void Func_02006eb8();
 void Func_02006ec6();
 void Func_02006ecc();
 void Func_02006ece();
 void Func_02006eda();
 void Func_02006ee8();
-void Func_02006ef6();
+s32 Func_02006ef6();
 void Func_02006f00();
 void Func_02006f0e();
 void Func_02006f16();
@@ -619,7 +620,7 @@ void Func_02007924();
 void Func_02007928();
 void Func_02007932();
 void Func_02007934();
-void Func_02007946();
+s32 Func_02007946();
 void Func_0200794a();
 void Func_02007956();
 void Func_02007958();
@@ -673,7 +674,7 @@ void Func_02007b12();
 void Func_02007b26();
 void Func_02007b32();
 void Func_02007b38();
-void Func_02007b3a();
+s32 Func_02007b3a();
 void Func_02007b52();
 void Func_02007b62();
 void Func_02007b68();
@@ -734,7 +735,7 @@ void Func_02007d54();
 void Func_02007d62();
 void Func_02007d70();
 void Func_02007d74();
-void Func_02007d86();
+s32 Func_02007d86();
 void Func_02007d88();
 void Func_02007d96();
 void Func_02007da6();
@@ -842,16 +843,25 @@ void Func_020081ac();
 s32 Func_0200824c();
 
 /* The scene step counter, advanced on every arm of every choice below. */
-static void bump_step(s32 amount)
+static __inline__ __attribute__((always_inline)) void bump_step(s32 amount)
 {
     u8 *scene = *(u8 **)0x03001ebc;
 
     *(u16 *)(scene + 0x1d8) = (u16)(*(u16 *)(scene + 0x1d8) + amount);
 }
 
+static __inline__ __attribute__((always_inline)) void bump_step_at(
+    u8 **scene_address, s32 amount)
+{
+    u8 *scene = *scene_address;
+
+    *(u16 *)(scene + 0x1d8) = (u16)(*(u16 *)(scene + 0x1d8) + amount);
+}
+
 /* Three identical tails: an optional record whose signed halfwords at +10 and
  * +18 are forwarded to a per-channel import. */
-static void follow_record(s16 *record, s32 channel, void (*apply)())
+static __inline__ __attribute__((always_inline)) void follow_record(
+    s16 *record, s32 channel, void (*apply)())
 {
     if (record != 0)
         apply(channel, record[5], record[9]);
@@ -860,7 +870,7 @@ static void follow_record(s16 *record, s32 channel, void (*apply)())
 void Func_02002014(void)
 {
     s32 carry;
-    u8 *record;
+    s16 *position;
 
     carry = Func_02006562(30);
     Func_020063fe(carry);
@@ -932,11 +942,14 @@ void Func_02002014(void)
         Func_020066ec(20, 0x4000, 0);
         Func_0200661a(20);
         Func_02006654(20, 0xcccc, 0x6666);
-        record = Func_02006652(20);
-        record[90] = (u8)(record[90] & 0xfe);
+        Func_02006652(20)[90] &= 0xfe;
         Func_02006798(20, 0, -16);
-        record = Func_0200666e(20);
-        record[90] = (u8)(record[90] | 1);
+        {
+            volatile u8 *record = Func_0200666e(20);
+            u8 value = record[90];
+
+            record[90] = (u8)(value | 1);
+        }
         Func_02006734(14, 0x4000, 0);
         Func_02006662(40);
         Func_0200669c(14, 0xcccc, 0x6666);
@@ -1162,7 +1175,7 @@ void Func_02002014(void)
     Func_02006d5e(10);
     Func_02006e20(1, 0, 0);
     Func_02006e2a(3, 2, 60);
-    Func_02006e56(0, 0xc000, 0);
+    Func_02006e56_v(0, 0xc000, 0);
     Func_02006e62(1, 0xc000, 0);
     Func_02006e6e(3, 0xc000, 0);
     Func_02006e7a(2, 0xc000, 0);
@@ -1180,16 +1193,22 @@ void Func_02002014(void)
         Func_02006ece(1, 0);
         bump_step(3);
     } else {
-        Func_02006e16(10);
-        bump_step(1);
-        Func_02006ef6(1, 0);
-        if (Func_02006e56(0, 0) == 0) {
-            Func_02006e40(20);
-            Func_02006f18(1, 0);
-            bump_step(1);
-        } else {
-            bump_step(1);
-            Func_02006f48(1, 0);
+        do {
+            Func_02006e16(10);
+        } while (0);
+        {
+            u8 **scene_address = (u8 **)0x03001ebc;
+
+            bump_step_at(scene_address, 1);
+            Func_02006ef6(1, 0);
+            if (Func_02006e56(0, 0) == 0) {
+                Func_02006e40(20);
+                Func_02006f18(1, 0);
+                bump_step_at(scene_address, 1);
+            } else {
+                bump_step_at(scene_address, 1);
+                Func_02006f48(1, 0);
+            }
         }
     }
 
@@ -1756,15 +1775,21 @@ void Func_02002014(void)
     Func_02008080(2, 0x13333, 0x9999);
     Func_0200808a(3, 0x13333, 0x9999);
     Func_020080ea(1, 2);
-    follow_record(Func_02008090(0), 1, Func_020080ca);
+    position = Func_02008090(0);
+    if (position != 0)
+        Func_020080ca(1, position[5], position[9]);
     Func_020080f8(1);
     Func_0200810a(1, 0, 0);
     Func_0200811a(2, 2);
-    follow_record(Func_020080c0(0), 2, Func_020080fa);
+    position = Func_020080c0(0);
+    if (position != 0)
+        Func_020080fa(2, position[5], position[9]);
     Func_02008128(2);
     Func_0200813a(2, 0, 0);
     Func_0200814a(3, 2);
-    follow_record(Func_020080f0(0), 3, Func_0200812a);
+    position = Func_020080f0(0);
+    if (position != 0)
+        Func_0200812a(3, position[5], position[9]);
     Func_02008170(3);
     Func_02008182(3, 0, 0);
     carry = Func_02008108(10);

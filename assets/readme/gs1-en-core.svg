@@ -324,7 +324,7 @@
 <rect x="43.4" y="275.3" width="5.6" height="10.4" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
 </g>
 <g aria-label="0x08004760–0x0800479c: 60 bytes">
-<rect x="43.4" y="287.7" width="5.6" height="18.7" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
+<rect x="43.4" y="287.7" width="5.6" height="18.7" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
 </g>
 <g aria-label="0x0800479c–0x08004838: 156 bytes">
 <rect x="43.4" y="308.4" width="5.6" height="51.8" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
@@ -2557,7 +2557,7 @@
 <rect x="238.9" y="739.1" width="9.4" height="5.4" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
 </g>
 <g aria-label="0x08019d2c–0x08019da8: 124 bytes">
-<rect x="238.9" y="746.5" width="9.4" height="26.6" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
+<rect x="238.9" y="746.5" width="9.4" height="26.6" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
 </g>
 <g aria-label="0x08019da8–0x08019e48: 160 bytes">
 <rect x="238.9" y="775.1" width="9.4" height="34.9" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
@@ -7318,7 +7318,7 @@
 <rect x="826.8" y="115.6" width="303.5" height="8.6" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
 </g>
 <g aria-label="0x080b7410–0x080b7424: 20 bytes">
-<rect x="1132.3" y="115.6" width="3" height="8.6" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
+<rect x="1132.3" y="115.6" width="3" height="8.6" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
 </g>
 <g aria-label="0x080b7424–0x080b7514: 240 bytes">
 <rect x="1137.3" y="115.6" width="57.7" height="8.6" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>

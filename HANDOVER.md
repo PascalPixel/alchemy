@@ -5947,6 +5947,10 @@ the empty one, so "no sites" and "the scan did not run" cannot read alike.
 | minimal owners holding them | **33**, **25,194** bytes |
 | in code with NO inventory row at all | **25** |
 
+(Figures as first measured. After adopting `371:037c` and regenerating the
+inventory they read 33 / 31 owners / 24,682 bytes / 3 adopted / 24
+unattributed — see the three-bucket table below for why the totals move.)
+
 So the old **60 sites / 29 overlays** headline survives — every one of the
 four uninventoried hits examined disassembles as the same genuine idiom,
 `bhi / ldr POOL / lsls #2 / ldr [r3,r2] / mov pc, r3`, so these are
@@ -5992,6 +5996,41 @@ applies at every size: **what does this print when it does nothing?** If a
 clean result and a dead result are the same text, it is not a check. Run
 any per-row loop under `bash -c`, and confirm one row by hand before
 believing a column of zeroes.
+
+### Working the uninventoried seam — three buckets, and one number nobody has
+
+Re-run after regenerating the inventory (`tools/overlay_inventory.ts`, five
+seconds — never work off the one on disk), `overlay_dispatch_sites --all`
+sorts all 60 sites:
+
+| bucket | sites |
+| --- | --- |
+| instructions inside an inventoried owner | **33** (31 owners, 24,682 bytes) |
+| inside an `AlchemyC_` placeholder — already exact C | **3** |
+| **unattributed** | **24** |
+
+**The adopted bucket is not bookkeeping.** Without it the census moves
+*backwards* as the tree improves: adopting a dispatch row turns its
+assembly into a placeholder, its inventory row vanishes, and a site that
+was attributed becomes "outside the inventory". Two sites did exactly that
+between one run and the next — `371:037c` and `378:0070`, both closed
+byte-exact this shift. A census that punishes progress is measuring the
+wrong thing.
+
+**And the question Vale asked cannot be answered yet, which is itself the
+finding.** "How many of the unattributed lie inside a row already drafted?"
+requires a draft's span, and **a semantic draft states its span in prose,
+not in a machine-readable field.** Three reasonable parses of that prose
+gave three different answers — 22, then 9, then 8 never-seen — and the
+loosest one confidently mapped `3c9:56c2` into a draft at `0x12c8`, some
+seventeen thousand bytes away, because the largest number followed by the
+word "bytes" anywhere in the file happened to be big enough. Every one of
+those three answers looked reasonable on its own.
+
+So: **24 unattributed is the honest figure**, and the split of those 24
+between drafted and never-described is **unknown**. It stays unknown until
+drafts carry their span as data. That is a small, real piece of work and it
+is the ground under this seam.
 
 ### The confirmed population, probed (2026-08-01)
 

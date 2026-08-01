@@ -7,9 +7,9 @@ typedef signed int s32;
  * resource_3c9 owner at 0x02005a28, 360 bytes: the SPAWNER for the
  * orbiting actor that Func_02005b90 drives. It first retargets scene
  * record 23 -- to one of three fixed destinations chosen by a signed
- * halfword at 0x03001e70+234 and a bit of the global at 0x03001e40 --
- * and then, if a four-bit gate in that same global is clear, asks the
- * spawner for a record, attaches a blob, seeds the angle and radius,
+ * halfword at 0x03001e70+234 and a bit of the frame counter at
+ * 0x03001e40 -- and then, one frame in sixteen, asks the spawner for a
+ * record, attaches a blob, seeds the angle and radius,
  * parks record 23's own pointer in the new record's +104 anchor slot,
  * and installs Func_02005b90 at +108.
  *
@@ -53,8 +53,12 @@ typedef signed int s32;
  *     no counterpart at all in 0x020036d0.
  *
  * Uncertainties, flagged rather than smoothed:
- *   - Func_03000380 and the 0x03001e40 / 0x03001e70 globals are
- *     IWRAM-side and unestablished; Func_03000380 is called with the
+ *   - 0x03001e40 is the tree's free-running FRAME COUNTER, so `& 1`
+ *     alternates the retarget every other frame and `& 15` is a
+ *     one-frame-in-sixteen gate on the spawn, NOT a state test. That
+ *     correction is taken from HANDOVER rather than guessed here.
+ *     0x03001e70 and Func_03000380 stay unestablished;
+ *     Func_03000380 is called with the
  *     masked random value and 0x60000 and its result is shifted left 16
  *     before use, which is consistent with a scaling helper but is not
  *     evidence of one.

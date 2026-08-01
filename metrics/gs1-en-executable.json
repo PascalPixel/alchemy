@@ -1236,18 +1236,6 @@
       },
       {
         "start": 134284324,
-        "end": 134285508,
-        "kind": "thumb",
-        "evidence": "adjacent audited thumb spans; see namespace evidence"
-      },
-      {
-        "start": 134285508,
-        "end": 134285540,
-        "kind": "structural",
-        "evidence": "asm/executable_gaps/080108c4.s:executable_gap_continuation"
-      },
-      {
-        "start": 134285540,
         "end": 134287796,
         "kind": "thumb",
         "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -2352,18 +2340,6 @@
       },
       {
         "start": 134714296,
-        "end": 134714392,
-        "kind": "thumb",
-        "evidence": "adjacent audited thumb spans; see namespace evidence"
-      },
-      {
-        "start": 134714392,
-        "end": 134714420,
-        "kind": "structural",
-        "evidence": "asm/executable_gaps/08079418.s:executable_gap_continuation"
-      },
-      {
-        "start": 134714420,
         "end": 134715570,
         "kind": "thumb",
         "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -34421,42 +34397,6 @@
         },
         {
           "start": 33565764,
-          "end": 33566672,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33566672,
-          "end": 33566696,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33566696,
-          "end": 33567716,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33567716,
-          "end": 33567732,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33567732,
-          "end": 33567924,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33567924,
-          "end": 33567932,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33567932,
           "end": 33568322,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -34507,7 +34447,7 @@
           "start": 33569324,
           "end": 33569328,
           "kind": "literal_pool",
-          "evidence": "resource_3bd_overlay.s:6072:pc-relative-literal"
+          "evidence": "resource_3bd_overlay.s:5244:pc-relative-literal"
         },
         {
           "start": 33569328,
@@ -34609,7 +34549,7 @@
           "start": 33572738,
           "end": 33572740,
           "kind": "thumb",
-          "evidence": "resource_3bd_overlay.s:7005:canonical-instruction"
+          "evidence": "resource_3bd_overlay.s:6177:canonical-instruction"
         },
         {
           "start": 33572742,
@@ -34639,7 +34579,7 @@
           "start": 33572858,
           "end": 33572860,
           "kind": "thumb",
-          "evidence": "resource_3bd_overlay.s:7067:canonical-instruction"
+          "evidence": "resource_3bd_overlay.s:6239:canonical-instruction"
         },
         {
           "start": 33572872,
@@ -34753,7 +34693,7 @@
           "start": 33573110,
           "end": 33573112,
           "kind": "thumb",
-          "evidence": "resource_3bd_overlay.s:7196:canonical-instruction"
+          "evidence": "resource_3bd_overlay.s:6368:canonical-instruction"
         }
       ],
       "evidence": ["assets/code/resource_3bd_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]

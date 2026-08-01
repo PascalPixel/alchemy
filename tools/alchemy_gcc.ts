@@ -144,6 +144,12 @@ const UNSCHEDULED_OVERLAY_SOURCES = new Set([
 // base.  Following jumps during CSE rematerializes one arm's base in r3;
 // disabling that pass preserves the reference's r6 lifetime and coalescing.
 const NO_CSE_FOLLOW_SOURCES = new Set(["0800f9f4", "08019d2c"]);
+// The state-mask leaf at 080108c4 rematerializes its two-instruction mask
+// instead of sharing the equivalent value across the halfword load/store.
+// The clean C witness is byte-exact only with this source-scoped CSE switch;
+// keep it separate from the overlay path below because the overlay set is
+// keyed by repository path.
+const NO_CSE_TWO_INSN_IMMEDIATE_SOURCES = new Set(["080108c4"]);
 // In 08006088 the post-loop CSE rerun rewrites the field9 arm's OR to read the
 // return accumulator instead of the equal packed-value pseudo. That makes the
 // latter die at its copy, so local allocation ties both quantities and removes
@@ -1270,6 +1276,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(UNSCHEDULED_SOURCES.has(stem) ? ["-fno-schedule-insns", "-fno-schedule-insns2"] : []),
     ...(UNSCHEDULED_OVERLAY_SOURCES.has(sourceKey(source)) ? ["-fno-schedule-insns2"] : []),
     ...(NO_CSE_FOLLOW_SOURCES.has(stem) ? ["-fno-cse-follow-jumps"] : []),
+    ...(NO_CSE_TWO_INSN_IMMEDIATE_SOURCES.has(stem)
+      ? ["-fno-cse-two-insn-immediate"]
+      : []),
     ...(NO_RERUN_CSE_AFTER_LOOP_SOURCES.has(stem) ? ["-fno-rerun-cse-after-loop"] : []),
     ...(NO_RERUN_LOOP_OPT_SOURCES.has(stem) ? ["-fno-rerun-loop-opt"] : []),
     ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),

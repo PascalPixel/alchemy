@@ -111,7 +111,7 @@ function reachable(input: Uint8Array, base: number): Map<number, number> {
   const discovery = new Discovery(data, base);
   for (let offset = 0; offset < data.length - 1; offset += 2) {
     // THE ROOT PROLOGUE DOOR, stated because it is a design constraint and not
-    // a one-line bug (2026-08-01, mars). Discovery is seeded on `push {..., lr}`
+    // a one-line bug (2026-08-01). Discovery is seeded on `push {..., lr}`
     // and on the veneer shape below, and on nothing else -- so the inventory
     // this produces STRUCTURALLY CANNOT contain a leaf, and every consumer that
     // filters on `starts_with_prologue` inherits that blindness rather than
@@ -244,7 +244,7 @@ function compileOverlayC(source: string, work: string, overlay: string): { addre
   // It was `overlay-c-v3`, bumped by hand whenever the post-compile rewriting
   // changed — correctly bumped, with an honest comment about why. The defect
   // was the MECHANISM: it held only while every future editor remembered. The
-  // cost was measured, not argued — one key present in two worktrees with
+  // cost was measured, not argued — one key present in two checkouts with
   // different contents and different lengths, 160 bytes against 164, and a
   // poisoned entry that made `verify` die in `build_assets` on resource_39c.
   // Because `git checkout` does not touch `out/`, runs at three different
@@ -568,8 +568,8 @@ function selfTest(): void {
     throw new Error("bias self-test: a label with no definition in the file must not be biased");
   }
 
-  // The cache key must move with THIS FILE. Asserted on synthetic input so no
-  // lane's progress can break it: the digest of the real source must be a
+  // The cache key must move with THIS FILE. Asserted on synthetic input so
+  // unrelated source progress cannot break it: the digest of the real source must be a
   // stable 64-hex string, and any edit at all must produce a different one.
   const digest = selfDigest();
   if (!/^[0-9a-f]{64}$/.test(digest)) throw new Error(`self-digest is not a sha256: ${digest}`);

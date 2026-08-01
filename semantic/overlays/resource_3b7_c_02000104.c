@@ -8,7 +8,7 @@
  * That pool word is the base of `Data_02000240`, the same overlay workspace the
  * byte-exact siblings `assets/code/resource_3b7_c_02000044.c` and
  * `assets/code/resource_3b7_c_020001a8.c` already name, so the layout is taken
- * from banked material rather than rederived.  The value is used raw (it is not
+ * from tracked material rather than rederived.  The value is used raw (it is not
  * in the 0x0200_8xxx..0200_bxxx in-image band, so no link-base shift applies).
  * The prologue computes `250 << 1` = 500 and loads the word at
  * `Data_02000240 + 500`, i.e. the s16 array's element 250 read as a 32-bit

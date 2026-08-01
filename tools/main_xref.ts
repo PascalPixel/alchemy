@@ -19,7 +19,7 @@
 // Settling those needs a reachability walk from the owner's entry.
 //
 // That last case is the one that earns this tool. It is the only cheap way to
-// tell an unreferenced tail from an independently callable function: a lane
+// tell an unreferenced tail from an independently callable function: a draft
 // proved `0808f498` is a real function, not a continuation, from five pool
 // words holding `0x0808f499` and no branch into it at all. Five witnesses, one
 // command, no disassembly.

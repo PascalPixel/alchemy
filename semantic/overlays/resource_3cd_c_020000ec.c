@@ -20,8 +20,8 @@ typedef signed int s32;
  * offset-0 export table's odd words 0x02008031 / 0x02008039 / 0x0200803d /
  * 0x02008045 / 0x0200804d / 0x02008099 / 0x0200871d all land on function
  * starts at `word - 0x8000`, 0x0200804d is `Func_0200004c + 1` whose byte-exact
- * source is banked as `assets/code/resource_3cd_c_0200004c.c`, and the table
- * above names two more banked starts.  The table also carries even words
+ * source is tracked as `assets/code/resource_3cd_c_0200004c.c`, and the table
+ * above names two more tracked starts.  The table also carries even words
  * (0x020088d0 and up) which are in-image DATA, and one of them is read here.
  *
  * Complete owner.  Prologue `push {r5, r6, r7, lr} / mov r7,r8 / push {r7}` at
@@ -38,15 +38,15 @@ typedef signed int s32;
  *   0x0828 Func_080150b0 x1   0x00c0 (prologue) x2      0x08c8 Func_080f9010 x3
  *   0x07e8 Func_080000c0 x2   0x07f8 Func_08015018 x1   0x0858 Func_08077010 x4
  * The 0x00c0 prologue is the in-overlay helper whose byte-exact source is
- * banked as `assets/code/resource_3cd_c_020000c0.c` — it walks a 16-entry list
+ * tracked as `assets/code/resource_3cd_c_020000c0.c` — it walks a 16-entry list
  * and applies `arg` to each member.
  *
- * The Func_08015xxx family is the window/text layer established by the banked
+ * The Func_08015xxx family is the window/text layer established by the tracked
  * main-image sources: `src/080a153c.c` fixes Func_08015090 and Func_08015098 as
  * `(image, layer, x, y)` and `src/080a14f0.c` fixes Func_080150a8 as
  * `(value, digits, layer, x, y)`, which is the same shape Func_080150b0 is
  * called with here.  The item record's byte at +15 being a count is confirmed
- * independently by the banked `assets/code/resource_3cd_c_020000a0.c`, which
+ * independently by the tracked `assets/code/resource_3cd_c_020000a0.c`, which
  * reads `entry[15]` off the same accessor.
  *
  * Closing with `Func_08077010` over slots 0, 1, 3, 2 is the documented
@@ -59,7 +59,7 @@ typedef signed int s32;
  * repaint block on the first pass.
  *
  * Uncertainties: 0x03001c94 is the button-press latch this family spins on (the
- * banked `assets/code/resource_36f_c_02000054.c` waits on the same word); bits
+ * tracked `assets/code/resource_36f_c_02000054.c` waits on the same word); bits
  * 0/1/2/3 are read here as A / B / Select / Start on the standard GBA key
  * assignment, which fits "A adjusts by 1, Select-or-Start adjusts by 5, B
  * closes" but is not otherwise witnessed.  The pointer handed to Func_08015090

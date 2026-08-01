@@ -3,7 +3,7 @@ typedef signed int s32;
 /*
  * Resource 3b1 unindexed helper at 0x02004fa8 (92 bytes incl. pool,
  * 27 calls -- the highest call count left in the item-28 queue after
- * the top four rows were adopted/drafted at the start of this session).
+ * the top four rows were adopted/drafted at the start of this reconstruction).
  *
  * Derived span: no inventory row (item 28's unindexed population). `push
  * {r5,r6,r7,lr}` at 0x02004fa8, epilogue `pop {r5,r6,r7} / pop {r1} /

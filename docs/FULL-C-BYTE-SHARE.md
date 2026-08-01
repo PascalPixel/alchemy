@@ -97,23 +97,20 @@ than from a build—so it runs without a ROM or toolchain:
 
 The exact-C numbers it derives must equal `metrics/gs1-en-progress.json`
 exactly; a disagreement is an error rather than a redrawn picture. That report
-is read from whichever tree the exact lane was drawn from, so the check holds
-when the lane comes from a ref rather than the working tree. The semantic lane
-is not part of Full-C Byte Share and is drawn as a separate colour, never
-folded into the headline fraction.
+is read from the selected exact source tree, so the check also holds when an
+explicit ref is used. Semantic C is not part of Full-C Byte Share and is drawn
+as a separate colour, never folded into the headline fraction.
 
-The map records which tree each lane came from in `provenance.exact_lane` and
-`provenance.semantic_lane`. Both `--write` and `--check` re-resolve from that
-record; `--exact-ref` and `--semantic-ref` can override it, while `worktree`
-selects the local tree. The normal integrated `main` close-out uses `worktree`
-for both lanes, so the pictures and dashboard describe the commit being
-published.
+The map records its input trees in `provenance.exact_source` and
+`provenance.semantic_source`. Both `--write` and `--check` re-resolve those
+values; `--exact-ref` and `--semantic-ref` can override them, while `worktree`
+selects the local tree. Normal `main` publication uses `worktree` for both, so
+the pictures and dashboard describe the commit being published.
 
 A recorded ref that is not available locally is an error, not a fall back to
-the working tree: falling back would quietly republish a smaller lane as though
-it were the current state. Likewise a redraw that cannot see the semantic lane
-refuses rather than publishing that half as zero.
+the working tree: falling back could quietly republish an older measurement.
+Likewise a redraw that cannot see the recorded semantic source refuses rather
+than publishing that portion as zero.
 
-The map is regenerated on `main` and nowhere else, so `bun run coverage:check`
-is not part of `bun run verify`: a picture lagging a lighthouse's newest commit
-is refreshed on `main`, never by failing that lighthouse's verification.
+The map is regenerated on `main`, so `bun run coverage:check` is not part of
+`bun run verify`; regenerate the pictures explicitly when coverage changes.

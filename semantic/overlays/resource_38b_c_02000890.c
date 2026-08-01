@@ -16,9 +16,9 @@ typedef signed int s32;
  * signed halfword at byte offset 448 — compared against 0x1e, 0x23 and 0x20.
  * The byte-exact sibling assets/code/resource_38b_c_02000088.c tests the
  * *same* word against the *same* three constants, which confirms both the
- * layout and the constants against banked material.  (That sibling spells the
+ * layout and the constants against tracked material.  (That sibling spells the
  * constants `(s32)&Value_0000001e` and so on; that is a literal-pooling
- * device for the byte-exact lane only, so the integers are written directly
+ * device for the byte-exact reconstruction only, so the integers are written directly
  * here.)
  *
  * Link-base witness: the pool word 0x02008ed9 passed to the task installer

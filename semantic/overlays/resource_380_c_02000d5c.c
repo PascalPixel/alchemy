@@ -11,7 +11,7 @@ typedef int s32;
  * 0x0200227c owner before the closing fade pair.
  *
  * CORRECTION to the earlier park note: the "b.n 0x2000c50 shared tail
- * into 0x02000a98" recorded in work/claude/notes/resource_380_notes.md
+ * into 0x02000a98" recorded in a prior working note
  * was a misread -- 0x2000f80 is this owner's own pool word 0x0000e666,
  * not an instruction.  The row is self-contained.
  *

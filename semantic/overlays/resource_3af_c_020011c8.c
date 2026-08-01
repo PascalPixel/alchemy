@@ -44,7 +44,7 @@ typedef int s32;
  * alignment halfword and ten pool words (identical to the twin's:
  * 0x00000911, 0x00000922, 0x00006666, 0x00003333, 0x00013333,
  * 0x00009999, 0x00033333, 0x00019999, 0x0000030a, 0x00000101) end at
- * 0x020012ef, and the next owner (0x020012f0, already banked
+ * 0x020012ef, and the next owner (0x020012f0, already tracked
  * byte-exact) begins at 0x020012f0.
  *
  * Uncertainty: the actor id and the Func_0808a0d0 arguments are

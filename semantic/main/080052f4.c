@@ -1,5 +1,5 @@
 /*
- * Correctness fix, veneer audit (mars, 2026-07-31).
+ * Correctness fix, veneer audit (2026-07-31).
  *
  * This file previously declared `void Func_08007318(s32, s32)` and called
  * it as an ordinary function.  There is no function at 0x08007318.

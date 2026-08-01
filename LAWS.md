@@ -1,7 +1,7 @@
 # Compiler law ledger
 
 This ledger records compiler behavior that Alchemy has reproduced from its
-approved evidence and exact, installed C matches. It prevents later sessions
+approved evidence and exact, installed C matches. It prevents later work
 from rediscovering the same source-shape constraints.
 
 The clean-room evidence boundary in [PROVENANCE.md](PROVENANCE.md) and the
@@ -584,8 +584,8 @@ against the approved bundle; full sourced notes in
   PERM macro family (alternative sets, statement lineswap, deferred
   meta-variables) and per-compiler weight files are proven mechanisms to
   port into `permute_v1.ts`; scoring uses graded objdump-diff penalties
-  with stack offsets excluded by default. Matched-example retrieval into
-  drafting prompts is the community's highest-value context signal
+  with stack offsets excluded by default. Matched-example retrieval during
+  drafting is the community's highest-value context signal
   (validates tool-investment priority 5).
 
 ### In-place pointer advance and preheader statement order (2026-07-24)
@@ -641,8 +641,7 @@ against the approved bundle; full sourced notes in
   but the last one forms** — 2 `stmia`s of 3 and 1 of 2 respectively. So the
   peephole does fire on volatile MEMs. What defeats the final group is that its
   three values never land in three consecutive ascending registers. Attack that
-  register-assignment problem, not the peephole's volatile handling
-  (work/claude/notes/main-grouped-dma-multi-kick.md).
+  register-assignment problem, not the peephole's volatile handling.
 - **Current evidence:** 080a22f4 (48-byte leaf, two kicks): kick #2
   reproduced byte-exact under the mode; best full-function floor 37
   mismatches.
@@ -731,7 +730,7 @@ against the approved bundle; full sourced notes in
 - **Next test:** make the descriptor group a single output template in
   alchemy-gcc so sched2 cannot split it, then re-measure `080c08a8`,
   `0800d304` and `08005a78` together; a toolchain change, so it belongs in the
-  alchemy-gcc lane rather than a batch.
+  compiler work rather than a source batch.
 - **Recorded:** 2026-07-24.
 
 ### An old_agbcc region can be pinned by one callee-saved choice (2026-07-24)
@@ -770,7 +769,7 @@ against the approved bundle; full sourced notes in
   installed: the reference *uses* `r3`, for the ident it compares.
 - **Where it goes.** Not a source-shape park and not a C problem — an allocation
   order in a binary we did not build. Leave `080fb2a4` in assembly and out of
-  `AGBCC_SOURCES` until the alchemy-gcc lane can explain why the reference
+  `AGBCC_SOURCES` until compiler analysis can explain why the reference
   preferred `r4` over a free `r3`; the candidate is saved so the measurement
   does not have to be repeated.
 - **Recorded:** 2026-07-24.
@@ -796,7 +795,7 @@ against the approved bundle; full sourced notes in
   ground down with more source variants — prior attempts had already exhausted
   their budgets against a transform that provably cannot fire. Four regions'
   worth of effort was spent discovering one toolchain limitation four times.
-- **Next test:** in the alchemy-gcc lane, relax the base-register and liveness
+- **Next test:** in alchemy-gcc, relax the base-register and liveness
   guards and re-measure all four; any such change must re-verify the existing
   grouped-DMA installs, since it widens a transform they already depend on.
 - **Recorded:** 2026-07-24.
@@ -854,7 +853,7 @@ against the approved bundle; full sourced notes in
   `-mno-sched-prolog` leaves that one untouched. Two independent witnesses now
   point at one missing mode in the family of `-mcall-arg0-move-first` and
   `-mhigh-register-move-first`: a return-value copy that stays put. That is
-  alchemy-gcc lane work, not source work, and both stems should be re-measured
+  alchemy-gcc work, not source work, and both stems should be re-measured
   the day such a switch exists.
 - **Recorded:** 2026-07-24.
 
@@ -995,7 +994,7 @@ against the approved bundle; full sourced notes in
   `r2`. Whatever order that allocator used, it served `r2` before `r3`. No source
   shape can change which register a compiler hands out first, so this is a
   compiler-side difference, established without appeal to anything we compiled.
-- **Lane item, and a second witness for the family.** `08006dec` closes if
+- **Compiler item, and a second witness for the family.** `08006dec` closes if
   `arm_order_regs_for_local_alloc_block` gains a `{2, 3, 1, 0}` low order — the
   fork's default with `3` and `2` transposed. It is not the only region whose
   entry block wants a register the fork's order cannot hand out: `08096c80`
@@ -1135,7 +1134,7 @@ against the approved bundle; full sourced notes in
   insn before a ready higher-priority one cannot have come from this scheduler.
   `0801fd34`'s reference does that twice — prio 5 before prio 6, and a prio-2 insn
   ready at cycle 0 placed dead last — which proves the tail is unscheduled and
-  makes `-fno-schedule-insns2` the correct lane. Use this before spending any
+  makes `-fno-schedule-insns2` the correct avenue. Use this before spending any
   effort on a "the scheduler moved it" theory; it answers the question in one
   compile instead of a sweep.
 - **Recorded:** 2026-07-24.
@@ -1480,7 +1479,7 @@ against the approved bundle; full sourced notes in
   not guessed — with `extern u8 Data_02000500[];` and `extern u8 *Data_03001f28;`.
   A single merge variable for the two returned pointers is needed to break a
   `*thumb_mulsi3` reload tie.
-- **Possible lane work:** a fork switch suppressing DCE of the `arm_return_addr`
+- **Possible compiler work:** a fork switch suppressing DCE of the `arm_return_addr`
   set would close this region. It is the only known use, so it is low priority.
 - **Recorded:** 2026-07-24.
 
@@ -1743,7 +1742,7 @@ against the approved bundle; full sourced notes in
   earlier block in which to name them. Before reaching for this law on a long
   function, count its branches; a near-branchless region cannot use it.
 - **A mechanism that was proposed for `37a:2614` and does not hold.** A prior
-  lane reported the function as a single straight-line block whose argument
+  earlier analysis reported the function as a single straight-line block whose argument
   constants are over-CSE'd by `cse1`, on the theory that `update_equiv_regs`'
   `REG_BASIC_BLOCK (regno) < 0` gate can never fire. Two direct counts refute
   the shape of that account and it should not be repeated. It is not one block
@@ -2320,7 +2319,7 @@ singletons. Each is an installed byte-exact match.
 - **Effect:** 33-34 mismatched bytes down to 19-20, uniformly, at the correct
   60/60 size. 168 bytes across the family. Not closed.
 - **This corrects the recorded cause.** The family was parked as blocked on the
-  `*thumb_mulsi3` earlyclobber item in the fork lane. It is not: with the two
+  `*thumb_mulsi3` earlyclobber item in the compiler fork. It is not: with the two
   levers above, all three multiply pairs match byte-for-byte, and the
   earlyclobber never enters. That fork item should be re-justified on a
   different witness or dropped.
@@ -2447,7 +2446,7 @@ singletons. Each is an installed byte-exact match.
 
 # Addenda (2026-07-26)
 
-Established this session against the live tree. Kept separate from the body
+Established against the live tree. Kept separate from the body
 above so the provenance stays clear.
 
 ## Screen a target before drafting it
@@ -2552,8 +2551,8 @@ tail-jumps to RAM through `ldr r3, [pc]` / `bx r3`.
   member of `UNSCHEDULED_SOURCES` is carried by `-fno-schedule-insns2` alone.
 
 - **`arm_reorg` pulls split constants back together, and sometimes should not.**
-  `-fno-thumb-contiguous-immediate` disables it. 080a1090 was four bytes out for
-  a whole session on exactly this and is byte-exact with the flag.
+  `-fno-thumb-contiguous-immediate` disables it. 080a1090 remained four bytes
+  out through an entire investigation and is byte-exact with the flag.
 
 - **Read the RTL dumps before proposing a mode.** On 080a1090 three modes were
   proposed by inspection and every one made it worse (4 bytes to 16, to 29, and
@@ -2653,7 +2652,7 @@ With two masked values GCC loads `0xffff` once and shares it, exactly as the
 references do. **So a region showing `ands` against a pooled 0xffff wants wide
 (`u32`/`s32`) parameters and locals with explicit `& 0xffff`, not `u16` typed
 ones.** A `u16` parameter forces the shift pair and can never match. This is
-the single most reusable finding of the session and it is source-level.
+the single most reusable finding from that investigation and it is source-level.
 
 Do not reach for the compiler here. `zero_extendhisi2` is *not* the path a
 promoted `u16` parameter takes — a flag added there has no effect whatsoever
@@ -2898,7 +2897,7 @@ diffing the generated assembly revealed it.
 So a compiler change that leaves the score unchanged has not necessarily done
 nothing — it may have done something wrong. **Diff the assembly, both when a
 change appears to do nothing and when it appears to work.** That is the third
-time in one session that a score alone pointed somewhere wrong: it also produced
+case in the same investigation where a score alone pointed somewhere wrong: it also produced
 a fabricated "GCC folds the extract" mechanism, and an inflated family count
 twice over.
 
@@ -2937,7 +2936,7 @@ buffer in r6 by itself, because it is the value that must survive the DMA.
 
 ## Addendum (2026-07-26): the parameter-save hoist, and a call spelled honestly
 
-`08019bac` converts. It had been parked for a session at 3 halfwords with its
+`08019bac` converts. It had been parked during an earlier pass at 3 halfwords with its
 residual written up as needing "a third hook … one shape for one region", and
 deliberately left alone. Two things closed it.
 
@@ -3031,7 +3030,7 @@ sweep — a few minutes — and it reranks the whole board:
 
 `08093054` closed with `-fthumb-entry-saves-descending`: ours always saves
 parameters in order, r0's home then r1's, and some references do the opposite.
-Two adjacent independent copies, and an earlier session had recorded 74 mode
+Two adjacent independent copies, and an earlier investigation had recorded 74 mode
 combinations all stuck at the same 2.
 
 **Two cautions from the sweep itself.** `timeout` is not a macOS command — a loop
@@ -3052,7 +3051,7 @@ before a `cmp` it could equally have passed. That wants tracing, not guessing.
 
 `08096c80` clears bits with `subs r3, #17`, deriving the mask from a `4` it has
 live for two nearby stores (`4 - 17 = -13 = ~12`). Ours materialised
-`movs r3, #243`. An earlier session tried `&= ~12`, `&= -13`, an `s32` widen and
+`movs r3, #243`. Earlier attempts tried `&= ~12`, `&= -13`, an `s32` widen and
 an arithmetic form, and recorded that the derivation was "cse's related-constant
 decision and not reachable from the source".
 
@@ -3096,11 +3095,11 @@ u32 saved = *interrupt_master;
 `= 0` uses a zero register and `= 0x0208` pools the constant separately; neither
 matches.
 
-**And the process point, which cost more than the idiom is worth.** Earlier today
-I tested those two spellings on `0800651c`, failed, and wrote up "a cse/combine
+**And the process point, which cost more than the idiom is worth.** Those two
+spellings were tested on `0800651c`, failed, and were recorded as "a cse/combine
 difference in the reference compiler, not a source shape — not worth a mode".
-The correct spelling was already sitting in `work/hand/0800430c/0800430c.c`,
-written by an earlier session. **Before concluding that no source shape exists,
+The correct spelling was already present in `work/hand/0800430c/0800430c.c`.
+**Before concluding that no source shape exists,
 grep the existing candidates for the construct.** Two failed guesses is not a
 search.
 

@@ -38,14 +38,14 @@ typedef signed int s32;
  * Calls: 2 sites, one target, from
  * 'bun tools/overlay_call_targets.ts resource_3b9 007c'.
  *
- * STYLE AND LAYOUT CONFIRMED AGAINST BANKED BYTE-EXACT SIBLINGS.
+ * STYLE AND LAYOUT CONFIRMED AGAINST tracked byte-exact SIBLINGS.
  * assets/code/resource_3b9_c_02000030.c and _02000238.c are the same family in
  * this same overlay and already reproduce the ROM: they establish that
  * Data_02000240[224] is the map id, that Data_02000240[225] is the sub-state,
  * that the result is spelled '(s32)Data_0200bxxx', and that 0x8c/0x8e are the
  * two interesting maps.  _02000238 even tests sub-state 12 - the same value
  * that selects a dedicated arm here.  Their '(s32)&Value_0000008c' spelling is
- * the exact lane's pooling device for the integer 0x8c and carries no meaning,
+ * the exact reconstruction's pooling device for the integer 0x8c and carries no meaning,
  * so this file writes the integer.
  *
  * All ten result words are EVEN, so under the proven base they are in-image

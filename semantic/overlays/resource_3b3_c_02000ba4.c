@@ -6,8 +6,7 @@ typedef signed int s32;
 /*
  * Resource 3b3 unindexed helper at 0x02000ba4 (284 bytes, 15 calls --
  * the highest call count in this overlay's item-28 queue). Converted
- * from a parked scope note (work/claude/notes/resource_3b3_ba4.md) per
- * Vale's steer, built directly on the bucket-search shape already
+ * from a parked scope note, built directly on the bucket-search shape already
  * drafted for 0x02000ddc (same `BucketKeyTable_0200ace0` search,
  * `BucketGeomTable_0200acf8` geometry lookup, and sentinel-7 idiom).
  *
@@ -19,7 +18,7 @@ typedef signed int s32;
  * [`BucketKeyTable_0200ace0`], 0x0200acf8 [`BucketGeomTable_0200acf8`])
  * is included per the usual pool rule, immediately followed by the
  * next owner's push {r5,r6,r7,lr} at 0x02000cc0, already this
- * overlay's row `0x02000cc0` (parked this session), so the span is
+ * overlay's row `0x02000cc0` (parked in this reconstruction), so the span is
  * 0x02000ba4-0x02000cc0, 284 bytes.
  *
  * Same 6-way bucket search over `BucketKeyTable_0200ace0[0..5]` as

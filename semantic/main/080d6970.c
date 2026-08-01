@@ -51,12 +51,12 @@
  * The draft's `((void **)&tiles_a)[i & 1]` aliased two separate locals as an
  * array. The ROM has one object, so it is now one array.
  *
- * UNCERTAINTY, NOT RESOLVED, and it is the shape of my own batch-3 error:
+ * UNCERTAINTY, NOT RESOLVED, and it is the shape of a prior batch-3 error:
  * 0x080d6b9a calls 0x03000164 with r0 and r1 plainly set (render_context and
  * 0x4000) and r2 holding 3. But r2 was loaded `movs r2, #3` at 0x080d6b7e to
  * be the mask of the `ands r3, r2` two instructions later, and NOTHING
  * rewrites it before the call. A live leftover from a mask is exactly what a
- * false third argument looks like -- that is how I mistyped 0x030001d8 as
+ * false third argument looks like -- that is how 0x030001d8 was mistyped as
  * three-argument -- and the recorded evidence says a genuine third argument to
  * 0x03000164 is almost always zero, where this is 3. The site cannot
  * discriminate: r2 already holds 3 either way, so both the two- and
@@ -64,7 +64,7 @@
  * argument form is KEPT because changing it on suspicion would be the same
  * mistake in the other direction. This is a bounded uncertainty and the
  * final answer available from this site, not a waypoint. 0x03000164 remains
- * an exact-lane question.
+ * an exact-reconstruction question.
  *
  * UNCERTAINTY, left standing: what slots 46 and 47 CONTAIN is not settled
  * here, and nothing here says the two eras hold the same pair.

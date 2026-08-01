@@ -37,7 +37,7 @@ typedef signed int s32;
  *
  * The 0x02008000 link base is confirmed four more times here, each pool word
  * being one of this overlay's own prologues plus the Thumb bit, and each
- * naming a routine this lane has already converted:
+ * naming a routine this reconstruction has already converted:
  *   0x020092b5 = Func_020012b4 + 1  (installed and removed as a per-frame task)
  *   0x020095a1 = Func_020015a0 + 1  (installed twice, removed twice — the
  *                                    periodic burst emitter)

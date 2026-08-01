@@ -38,7 +38,7 @@ typedef signed int s32;
  * THREE OF THE FOUR ARMS SHARE ONE Func_0808a1b8 SITE (0x02000ffc) and the
  * fourth has its own (0x02001014).  Writing the close into each arm would put
  * four Func_0808a1b8 calls in the C against two in the assembly — the
- * bracket-close overcount the lane's convention warns about — so the shared
+ * bracket-close overcount the reconstruction's convention warns about — so the shared
  * tail is spelled with a label and a `goto`, which is what the original
  * control flow is.
  *

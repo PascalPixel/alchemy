@@ -18,7 +18,7 @@ typedef int s32;
  * SPAN CORRECTION: earlier queue notes estimated 232 bytes from a
  * partial read; the disassembly's own literal pool runs through
  * 0x020024d7 with no gap before the next prologue, so the real span is
- * 248 bytes. Recorded here per this session's recurring "confirm the
+ * 248 bytes. Recorded here per the reconstruction's recurring "confirm the
  * next owner's prologue byte, don't trust the first `bx r0`" lesson.
  *
  * Not found by the structural inventory walk (unindexed): reached only

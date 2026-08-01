@@ -14,7 +14,7 @@ typedef signed int s32;
  * LINK BASE.  Proven at 0x02008000 for this overlay in
  * semantic/overlays/resource_3a2_c_020011b0.c: image offset 0 is an
  * exported-entry veneer table whose six words are all odd and all resolve, at
- * pool_word - 0x8000, to known function starts, four of them already-banked
+ * pool_word - 0x8000, to known function starts, four of them already-tracked
  * byte-exact siblings under assets/code/.  In-image address = pool_word -
  * 0x8000; odd = Thumb entry, even = data.
  *

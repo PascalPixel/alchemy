@@ -28,7 +28,7 @@ typedef unsigned char u8;
  * cheapest witness in the overlay: the four odd pool words 0x02008d9d,
  * 0x02008ef9, 0x0200901d and 0x02009141 are exactly Func_02000d9c + 1,
  * Func_02000ef8 + 1, Func_0200101c + 1 and Func_02001140 + 1 — four functions
- * whose byte-exact sources are already banked as
+ * whose byte-exact sources are already tracked as
  * assets/code/resource_37a_c_02000d9c.c, _02000ef8.c, _0200101c.c and
  * _02001140.c.  They are installed here through Func_080000d0 and removed
  * again through Func_080000d8, which is precisely the per-frame task ABI.

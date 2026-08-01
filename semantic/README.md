@@ -1,4 +1,4 @@
-# Semantic-C speed lane
+# Semantic C
 
 This tree contains behaviorally reconstructed C that is not yet claimed to
 reproduce the original machine code.
@@ -17,7 +17,7 @@ Main-image files use `semantic/main/080AAAAA.c`. Both layouts preserve the
 existing `Func_ADDRESS` entry symbol.
 
 Each file must define `Func_0200aaaa`, compile as freestanding ARM7TDMI C, and
-contain no inline assembly. Validate the complete semantic lane with:
+contain no inline assembly. Validate the complete semantic tree with:
 
 ```sh
 bun run build:semantic
@@ -41,15 +41,14 @@ diagnostic inventory misses a genuine outer owner and seeds hidden-context
 entries inside it, record the reviewed prologue-to-return span and its evidence
 in `semantic/regions.json`; never rename an internal seed into a fake function.
 
-For throughput, assign one complete owner to each fresh agent and require an
-accounting of every assembly call. Use m2c output as a drafting hint, not as
-authority: missing stack arguments, fake thunk arguments, unset call-clobbered
-values, and conflated high-register lifetimes must be recovered from assembly
-dataflow and typed call-site evidence. Work in independent three-owner cohorts,
-run `bun run build:semantic` during drafting, and run one `bun run verify`
-before banking the settled cohort.
+Reconstruct one complete owner at a time and account for every assembly call.
+Use m2c output as a drafting hint, not as authority: missing stack arguments,
+fake thunk arguments, unset call-clobbered values, and conflated high-register
+lifetimes must be recovered from assembly dataflow and typed call-site evidence.
+Run `bun run build:semantic` during drafting and `bun run verify` before
+committing a settled group.
 
-Before assigning a candidate labelled `split_first` or
+Before selecting a candidate labelled `split_first` or
 `merge_with_continuations`, resolve its transitive continuation graph and size
 the complete owner. The queue row may describe only a dispatcher or first
 fragment, so using its byte count as the work budget can turn a nominally small

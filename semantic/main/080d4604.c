@@ -47,8 +47,8 @@ typedef unsigned int u32;
  *
  * PINNING: the first two entry-0 sites are the two arms of `cmp r3, #1 / bne
  * 0x080d4a18` at 0x080d499c and join at 0x080d4a46; the outer `bge 0x080d4a46`
- * at 0x080d4994 skips BOTH and is not the branch that separates them -- I had
- * that wrong on the first pass and went back to the disassembly. The third
+ * at 0x080d4994 skips BOTH and is not the branch that separates them -- the
+ * first reading was corrected against the disassembly. The third
  * entry-0 site sits past that join. All three read the same slot with nothing
  * between them that could change it, so no pin is needed. The indexed site is
  * separated from all three by its own read.

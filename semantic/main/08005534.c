@@ -1,5 +1,5 @@
 /*
- * Correctness fix, veneer audit (mars, 2026-07-31).  Same idiom as
+ * Correctness fix, veneer audit (2026-07-31).  Same idiom as
  * semantic/main/080052f4.c, which carries the full write-up.
  *
  * `void Func_08007318(void *, void *, void *)` was a phantom: there is no

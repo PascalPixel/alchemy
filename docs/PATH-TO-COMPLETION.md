@@ -1,15 +1,11 @@
 # Path to completion
 
-Current verified exact **Full-C Byte Share: 236,292 / 1,341,386 executable
-bytes (17.62%)**. The reviewed semantic tier compiles 850,110 declared bytes;
-the executable audit credits 827,656 after excluding 22,454 overlay bytes
-outside its extents. Combined executable C expression is therefore **1,063,948
-/ 1,341,386 bytes (79.32%)**.
+Current verified exact **Full-C Byte Share: 236,386 / 1,343,002 executable
+bytes (17.60%)**. The reviewed semantic tier compiles 852,330 declared bytes.
 
 The primary integration point is `main`. The core/main-ROM reviewed semantic-C
 census is closed and enforced by `bun run semantic:check`; exact-C replacement
-remains the principal completion task. Lane branches are work queues, not
-authoritative progress snapshots.
+remains the principal completion task.
 
 Everything below this paragraph is a historical planning study from 2026-07-28.
 It is retained for the measured compiler and queue evidence, not as a live
@@ -59,7 +55,7 @@ High-water conversion count by day, from commit subjects:
 running out, and compiler lineage now matters as much as drafting. At the last
 two completed days' rate, 632 regions is roughly 23 working days; at the
 three-day average, about 18. The estimates move materially with one cohort and
-neither is a session.
+neither is a schedule.
 
 ## What is actually left
 
@@ -1024,14 +1020,11 @@ stopped immediately and effort returned to fresh decompilation.
 ## Recommended order
 
 **2026-07-30 semantic-speed correction.** The recommendations below describe
-the byte-exact lane and remain valid for exact adoption, but they are no longer
-the fastest route to the `speed` branch's reviewed semantic-C objective.
-Measured consecutive cohorts established a higher-throughput lane:
+byte-exact adoption. Measured consecutive cohorts also established a
+higher-throughput semantic-C route:
 
-1. Run fresh agents on complete owners in waves of three, with exact assembly as
-   authority and m2c only as a hint. Reassign when an agent returns analysis
-   without implementation; do not turn agent-runtime exhaustion into a
-   technical blocker.
+1. Work on complete owners, with exact assembly as authority and m2c only as a
+   hint.
 2. Drain established callback and construct families before unknown thunks.
    Typed renderer, transfer, fill, scale, square-root, and initializer ABIs
    amortize across unrelated owners.
@@ -1047,11 +1040,11 @@ Measured consecutive cohorts established a higher-throughput lane:
    live 184-byte frame reaches the sole epilogue at `080e660a`. The complete
    span is 7,762 bytes including embedded data and contains 231 static calls,
    more than ten times the work implied by the queue.
-5. Bank each coherent cohort after `bun run verify`. The semantic lane does not
-   weaken the exact lane: exact builds must remain byte-identical and
-   source-only ownership must remain complete.
+5. Verify each coherent cohort with `bun run verify`. Semantic C does not weaken
+   the exact standard: exact builds must remain byte-identical and source-only
+   ownership must remain complete.
 
-The exact-lane order follows:
+The exact-C order follows:
 
 Screen every target first: `grep 'mov\s*ip, pc'`, and check for a callee-saved
 register read but never written. Both classes are now reclassified out of Y, but

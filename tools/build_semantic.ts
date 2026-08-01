@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Compile the speed-lane semantic reconstructions without placing their output
+// Compile semantic reconstructions without placing their output
 // in the byte-exact ROM.  This makes "understood and expressed as C" a useful
 // intermediate state while the existing exact build remains authoritative.
 import {

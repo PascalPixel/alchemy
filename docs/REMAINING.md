@@ -59,8 +59,8 @@ Three things are worth more than continuing:
    forensics in `work/hand/080a1090/NOTES.md` narrowed it to a single clause;
    the next step is instrumenting that clause, not guessing another mode.
 2. **Classify the 43.** They are counted in Y, they cannot be emitted, and two
-   of them sit near the top of any size-ordered target list. Every session that
-   picks one up loses hours. `0800070c` is a candidate 44th.
+   of them sit near the top of any size-ordered target list. Every mistaken
+   selection loses hours. `0800070c` is a candidate 44th.
 3. **The compiler-blocked families.** The alloca-DMA and twelve-store matrix
    groups are ~11 regions between them with diagnosed, specific blockers.
 

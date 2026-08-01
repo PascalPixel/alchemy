@@ -58,7 +58,7 @@ typedef unsigned char u8;
  *   +0x50  ptr  sprite/attribute sub-record
  *   +0x59  u8   flag byte
  *   +0x5a  u8   bit 0 is toggled around every reposition (the "hold still
- *               while I move you" latch) — cleared before Func_0808a090 +
+ *               movement latch) — cleared before Func_0808a090 +
  *               Func_0808a580 and set again after
  *   sub+9, sub+21  u8 flag bytes, |= 12
  *   sub+0x26 u8, sub+30 u16 (angle)

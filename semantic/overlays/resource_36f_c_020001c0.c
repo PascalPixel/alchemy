@@ -19,7 +19,7 @@ typedef unsigned int u32;
  * six `ldr r4,[pc,#0] / bx r4` veneers whose words are 0x02008055, 0x02008031,
  * 0x0200803d, 0x02008045, 0x0200804d and 0x02008039 — every one of them odd and
  * landing on a function start at `word - 0x8000`, and 0x02008055 is
- * `Func_02000054 + 1`, whose byte-exact source is already banked as
+ * `Func_02000054 + 1`, whose byte-exact source is already tracked as
  * `assets/code/resource_36f_c_02000054.c`.  A seventh entry at offset 0x30 is
  * the constant-loader flavour (`ldr r0,[pc,#0] / bx lr`) returning the *data*
  * address 0x020085f8.  So the pool word 0x02008650 read here is the in-image
@@ -34,7 +34,7 @@ typedef unsigned int u32;
  *   0x020001e8 -> 0x0558 -> Func_080001a8   decompress asset into the scratch
  *   0x02000204 -> 0x0560 -> Func_080001c8   upload the decoded tiles
  *   0x02000218 -> 0x0550 -> Func_08000178   release the scratch
- * The decompress/upload/release trio is the same sequence the banked
+ * The decompress/upload/release trio is the same sequence the tracked
  * `semantic/overlays/resource_3bb_c_020039fc.c` and
  * `semantic/overlays/resource_370_c_02000cfc.c` use, which is where the roles
  * of Func_08000170/0x1a8/0x1d0/0x1c8/0x178 come from — they are not inferred

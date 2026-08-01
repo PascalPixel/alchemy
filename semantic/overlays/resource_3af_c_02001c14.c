@@ -38,7 +38,7 @@ typedef int s32;
  * Func_0808a110(id, 3), and another 20-frame wait.
  *
  * Actor r6 gets Func_02003a00(id, 0x5000) -- a 12-byte owner in this
- * same overlay at 0x02003a00 that is ALREADY BANKED BYTE-EXACT
+ * same overlay at 0x02003a00 that is already tracked byte-exact
  * (assets/code/resource_3af_c_02003a00.c), where it reads
  * `Func_02007dda(a, b, 10)` against the veneer address; resolved
  * through the +2 rule that veneer is Func_0808a1b8, so this call pins
@@ -57,7 +57,7 @@ typedef int s32;
  * (`push {lr}`) begins at 0x02001d0c.
  *
  * That next prologue at 0x02001d0c is NOT a queue row, and it is NOT an
- * uncovered gap either: it is already banked byte-exact as
+ * uncovered gap either: it is already tracked byte-exact as
  * assets/code/resource_3af_c_02001d0c.c. resource_3af carries 36
  * exact-C files, so in THIS overlay a prologue outside the queue is more
  * likely already owned than free -- check assets/code before spending a

@@ -17,9 +17,9 @@ typedef signed int s32;
  * measureSpan IS WRONG HERE, AND IN THE OTHER DIRECTION. It reports 356
  * bytes, ending 0x02003b2c -- it runs straight through the next owner and
  * on into the import-veneer bank at 0x02003a70. Every previous row on this
- * overlay ran PAST measureSpan, so "treat it as a lower bound" is the rule
- * I have been applying; this row breaks that rule the other way and would
- * have been drafted 232 bytes too long if I had trusted it. The true end is
+ * overlay ran PAST measureSpan, so "treat it as a lower bound" had been the
+ * working rule; this row breaks that rule the other way and would have been
+ * drafted 232 bytes too long if trusted. The true end is
  * fixed by the already-recorded owner at 0x02003a44 (44 bytes, per
  * semantic/regions.json), so the span is 0x02003a44 - 0x020039c8 = 124.
  * measureSpan is not a bound in either direction; it is a hint.

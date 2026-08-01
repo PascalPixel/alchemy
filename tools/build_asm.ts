@@ -216,7 +216,7 @@ const REGION_CACHE = join(ROOT, "out/cache/asm-regions");
  * The input closure above is right about the SOURCE, but the assembler flags,
  * the link step and the post-processing all live in this file and were covered
  * by nothing — `asm-v1` was a hand-maintained string, the same mechanism that
- * poisoned `out/cache/overlay-c` across three worktrees. Deriving the key from
+ * poisoned `out/cache/overlay-c` across multiple checkouts. Deriving the key from
  * the source means any edit here moves every region automatically.
  *
  * No fallback, deliberately: a key that quietly stops discriminating is worse

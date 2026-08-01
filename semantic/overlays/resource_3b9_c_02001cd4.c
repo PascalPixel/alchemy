@@ -15,7 +15,7 @@ typedef unsigned char u8;
  * the six-word tail pool 0x020023c8-0x020023df (0x03001ebc, 0x105,
  * 0x0200adac, 0x33e, 0x6666, 0xccc). The next owner's prologue is
  * exactly at 0x020023e0. **1804 bytes**, measured to the named
- * epilogue -- an earlier note of mine called this row ">700 bytes" off
+ * epilogue -- an earlier note called this row ">700 bytes" off
  * a truncated dump and was wrong by a factor of 2.5.
  *
  * THIS ROW CARRIES AN INTERIOR LITERAL POOL. `b.n 0x02002154` at

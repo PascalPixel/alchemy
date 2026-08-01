@@ -17,9 +17,9 @@ typedef signed int s32;
  * Link base 0x02008000, proved by that same table before any disassembly: its
  * six words 0x02008309, 0x02008031, 0x02008075, 0x0200807d, 0x020080e5 and
  * 0x02008071 are ALL odd and all land on function starts at `word - 0x8000`,
- * and three of those starts — 0x0308, 0x0030 and 0x00e4 — are already banked
+ * and three of those starts — 0x0308, 0x0030 and 0x00e4 — are already tracked
  * byte-exact as `assets/code/resource_3a9_c_02000308.c`, `..._02000030.c` and
- * `..._020000e4.c`.  Six parity witnesses plus three banked cross-checks from
+ * `..._020000e4.c`.  Six parity witnesses plus three tracked cross-checks from
  * one `overlay_show <ov> 0 -n 96`.  Under the same base the four EVEN words
  * this owner loads (0x0200879c, 0x020088d4, 0x02008a0c, 0x02008784) are
  * in-image DATA at file offsets 0x079c, 0x08d4, 0x0a0c and 0x0784.
@@ -28,7 +28,7 @@ typedef signed int s32;
  * `pop {r5} / pop {r1} / bx r1` at 0x020000c2.  The popped register is r1, not
  * r0, so **r0 survives and IS the result** — the owner returns the selected
  * table.  Code runs 0x0200007c..0x020000c7; the literal pool is
- * 0x020000c8..0x020000e3 and 0x020000e4 is the next (banked) prologue.  104
+ * 0x020000c8..0x020000e3 and 0x020000e4 is the next (tracked) prologue.  104
  * bytes, matching the inventory row.
  *
  * One call site, resolved with `bun tools/overlay_call_targets.ts resource_3a9
@@ -37,10 +37,10 @@ typedef signed int s32;
  * that asymmetry is preserved.
  *
  * `Data_02000240 + 448` and `+ 450` are the map id and sub-state halfwords of
- * the shared work area — the same two slots the banked
+ * the shared work area — the same two slots the tracked
  * `assets/code/resource_3a9_c_02000308.c` reads as `Data_02000240[224]` and the
- * banked `resource_36f` sources read as `[225]`, so the offsets are evidence
- * rather than inference.  0x64 is likewise the map id that banked source
+ * tracked `resource_36f` sources read as `[225]`, so the offsets are evidence
+ * rather than inference.  0x64 is likewise the map id that tracked source
  * compares against.
  *
  * The sub-state window `>= 9 && (<= 15 || == 17)` is a three-compare test with

@@ -23,7 +23,7 @@ typedef signed short s16;
  * `assets/code/resource_3a3_c_02000030.c` and `_0200011c.c` read the same
  * cell.  Those sources spell the compared constants as `(s32)&Value_0000004b`
  * and `(s32)&Value_0000004c`, which is a literal-pooling device for the
- * byte-exact lane; the integers 0x4b and 0x4c are written directly here.
+ * byte-exact reconstruction; the integers 0x4b and 0x4c are written directly here.
  */
 
 /* Imports.  Old-style declarations are mandatory in overlay sources. */

@@ -37,8 +37,8 @@ typedef unsigned char u8;
  * locations.  That is why every import below is named by the address its call
  * site computes and is never resolved.
  *
- * `work/claude/notes/resource_372-1828.md` parks this row for the byte-exact
- * lane over constant re-materialisation (0x837 twice cross-block, 0x100 twice
+ * `a prior working note` parks this row for the byte-exact
+ * reconstruction over constant re-materialisation (0x837 twice cross-block, 0x100 twice
  * inside one basic block).  That is a codegen obstacle, not a semantic one.
  */
 

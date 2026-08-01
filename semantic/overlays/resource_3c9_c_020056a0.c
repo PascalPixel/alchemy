@@ -91,6 +91,10 @@ typedef signed int s32;
  *     Func_080091f0 / Func_080770c8 / Func_080f9010 are transcribed by
  *     arity and argument only; none of their meanings is established.
  *   - the constants are left in the shifted form the row builds them.
+ *   - 0x03001e40 in the settle block is the tree's free-running FRAME
+ *     COUNTER (established in HANDOVER), so `& 7` fires the
+ *     Func_080f9010(246) call one frame in eight rather than selecting
+ *     a mode.
  *   - the `goto` shape below is the row's own control flow: states 25
  *     and 26 both jump into a shared settle block at 0x02005876, and
  *     state 48 falls straight through into the join. Restructuring

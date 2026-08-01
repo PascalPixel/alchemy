@@ -53,9 +53,11 @@ typedef signed int s32;
  *     four calls). Other drafts in the tree show a three-argument site
  *     for the same address; that disagreement is NOT resolved here and
  *     the declaration is left old-style deliberately.
- *   - Func_030003e0 is an IWRAM-relocated routine of unknown purpose,
- *     called with a global loaded from 0x03001e40 and the constant 3.
- *     Nothing here establishes what it decides.
+ *   - 0x03001e40 is the tree's free-running FRAME COUNTER (established
+ *     in HANDOVER, not guessed here), and Func_030003e0 reads as a
+ *     remainder helper. So the second gate is a per-frame 1-in-3
+ *     throttle: the row proceeds when the frame number is a multiple
+ *     of 3. Read, not named -- neither is drafted anywhere.
  *   - the masks and shifts are transcribed exactly and NOT rounded to a
  *     tidier equivalent: the angle seed is `random & 0x0ffff000` stored
  *     into a u16, so only the low nibble-aligned bits survive, and that
@@ -65,7 +67,7 @@ typedef signed int s32;
  */
 
 extern s32 Func_080770c0();            /* scene/event flag test */
-extern s32 Func_030003e0();            /* IWRAM-relocated, unestablished */
+extern s32 Func_030003e0();            /* remainder helper (frame throttle) */
 extern u8 *Func_0808a080(s32 index);   /* scene-record accessor */
 extern s32 Func_080000f8();            /* pseudo-random source (see above) */
 extern u8 *Func_080090c8(s32 kind, s32 a, s32 b, s32 c);   /* spawner */

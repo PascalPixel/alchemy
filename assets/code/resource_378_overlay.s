@@ -1244,7 +1244,8 @@ AlchemyC_02000030:
 	.space 0x2c
 	.4byte 0x47704800
 	.4byte 0x0200baa8
-	.4byte 0x47702000
+AlchemyC_02000064:
+	.space 0x4
 	.4byte 0x47704800
 	.2byte 0xbbc8
 	.2byte 0x0200

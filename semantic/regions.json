@@ -3171,6 +3171,12 @@
     },
     {
       "overlay": "resource_39c",
+      "entry": "0x02000ba4",
+      "span_bytes": 284,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8/sl spill) and returning with a real value (pop {r1}/bx r1) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached by five bl sites in the whole overlay and independently measured with m2c_guard as 272 code bytes ending at 0x02000cb4; its three referenced literal words occupy 0x02000cb4-0x02000cbf and the next owner's prologue is at 0x02000cc0, making the whole-owner span 284 bytes; all four direct call sites inside the owner were resolved from the bounded overlay image; inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
       "entry": "0x020015e0",
       "span_bytes": 228,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8/r9/sl/fp spill) and returning (pop {r3, r5, r6, r7}/mov r8,r3/mov r9,r5/mov sl,r6/mov fp,r7/pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing one-word literal pool to the next owner's prologue at 0x020016c4 (this overlay's own resource_39c_c_020016c4.c), inside the assembled overlay image and not overlapping another recorded owner"

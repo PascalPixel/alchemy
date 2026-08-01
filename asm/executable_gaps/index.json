@@ -1411,21 +1411,6 @@
       ]
     },
     {
-      "address": "0x08079418",
-      "size": 28,
-      "sections": [
-        {
-          "address": "0x08079418",
-          "size": 28,
-          "kind": "thumb",
-          "source": "08079418.s",
-          "instruction_bytes": 24,
-          "literal_words": 1,
-          "undefined_words": 0
-        }
-      ]
-    },
-    {
       "address": "0x0808b854",
       "size": 20,
       "sections": [

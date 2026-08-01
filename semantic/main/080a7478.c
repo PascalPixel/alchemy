@@ -1,3 +1,14 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
+ * range is an indirect call through the named register, not a call to a
+ * function at the branch target.  Resolved with tools/veneer_resolve.ts.
+ *
+ * Callee signatures here are established, not guessed: 0x03001388 is the
+ * word copy declared in the EXACT src/080d40ec.c, and 0x03000168 is the fill
+ * documented in semantic/main/080e15e8.c as (destination, size, value).
+ */
 #include "types.h"
 
 /*
@@ -43,14 +54,10 @@ void Func_080a1070(void);
 void Func_080a1090(s32 mode);
 s32 Func_08077158(void *state);
 void Func_080a8034(s32 a, s32 b, s32 c, s32 d);
-void Func_080072f8(void *destination, const void *source, s32 size);
 void Func_080a2144(s32 index);
-/* Func_080072f0 is the `call via r3` entry of the 080072e4 thunk bank: it
- * branches to the address in r3 with r0-r2 as that target's arguments. The
- * target here is an ARM-mode helper relocated into IWRAM. */
-typedef void (*FillHelper_080A7478)(void *destination, s32 size, u32 pattern);
-void Func_080072f0(void *destination, s32 size, u32 pattern,
-                   FillHelper_080A7478 helper);
+
+typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
+typedef void (*ArmFill)(void *destination, u32 size, u32 value);
 void Func_080153e0(s32 enable);
 s32 Func_08015010(s32 kind, s32 x, s32 y, s32 width, s32 layer);
 s32 Func_08077290(s32 slot);
@@ -126,12 +133,11 @@ s32 Func_080a7478(void)
     Func_080a8034(0, 3, 0, 7);
 
     /* Snapshot palette RAM and the 8 KiB tile block before overwriting them. */
-    Func_080072f8(palette_save, (const void *)0x05000000, 64);
+    ((WordCopy)0x03001388)(palette_save, (const void *)0x05000000, 64);
     Func_080a2144(14);
     ApplyPaletteOverrides_080a7478();
-    Func_080072f8(tile_save, (const void *)0x06004000, 128 << 6);
-    Func_080072f0((void *)0x06004000, 128 << 6, 0x33333333,
-                  (FillHelper_080A7478)0x03000168);
+    ((WordCopy)0x03001388)(tile_save, (const void *)0x06004000, 128 << 6);
+    ((ArmFill)0x03000168)((void *)0x06004000, 128 << 6, 0x33333333);
 
     Func_080153e0(1);
     *(s32 *)(workspace + WS_WINDOW_080A7478) =
@@ -177,8 +183,8 @@ s32 Func_080a7478(void)
     Func_080030f8(1);
 
     /* Restore what was snapshotted, then release both save buffers. */
-    Func_080072f8((void *)0x05000000, palette_save, 64);
-    Func_080072f8((void *)0x06004000, tile_save, 128 << 6);
+    ((WordCopy)0x03001388)((void *)0x05000000, palette_save, 64);
+    ((WordCopy)0x03001388)((void *)0x06004000, tile_save, 128 << 6);
     Func_08002df0(tile_save);
     Func_08002df0(palette_save);
 
@@ -201,14 +207,17 @@ s32 Func_080a7478(void)
  * - Func_080a7478 takes no register arguments (r0..r3 are all written before
  *   any use), so it is reconstructed as `void`.  It returns the value produced
  *   by Func_080a76d0 in r0.
- * - Two `ldr r5, =0x03001388` loads (080a74f8, 080a763e) are dead: r5 is never
- *   read before being reloaded at 080a7662.  They are omitted here.  They are
- *   most likely scheduling residue from a shared source idiom.
- * - Func_080072f0's fourth argument (0x03000168) is the relocated ARM helper
- *   that the thunk branches to, not scratch: 080072f0 is `call via r3`.
+ * - CORRECTED by the veneer audit (2026-08-01).  This note previously said
+ *   the two `ldr r5, =0x03001388` loads at 0x080a74f8 and 0x080a763e were
+ *   DEAD and omitted them.  They are not dead: they are the callee loads for
+ *   the four `bl 0x080072f8` sites, which are `__call_via_r5`.  Each load
+ *   feeds the two calls that follow it.  The file had already worked out that
+ *   0x080072f0 is `call via r3` and that its fourth argument is the real
+ *   helper -- it simply did not carry that reading across to r5, and so wrote
+ *   off the r5 callees as scheduling residue.
  * - Func_080072f8's argument order is taken as (destination, source, size)
- *   from the symmetric snapshot/restore pair; the helper's own body is not in
- *   this tree.
+ *   from the symmetric snapshot/restore pair; that reading is unchanged, and
+ *   it agrees with the word copy's signature in the exact src/080d40ec.c.
  * - Workspace field names describe observed use, not original names.  The
  *   allocation is 2672 bytes and only the offsets listed above are touched
  *   here; it is modelled as a byte array rather than a fabricated struct.

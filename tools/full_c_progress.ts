@@ -25,6 +25,7 @@ import {
   type DecompTargetId,
 } from "./decomp_targets.ts";
 import { canonicalJson } from "./canonical_json.ts";
+import { targetOffset } from "./overlay_call_targets.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const OVERLAY_BASE = 0x02000000;
@@ -312,11 +313,84 @@ function directiveValue(line: string): number | undefined {
   return match ? Number.parseInt(match[1], 0) : undefined;
 }
 
-function overlayInventory(source: string): NamespaceInventory {
+interface DirectiveSpan {
+  start: number;
+  end: number;
+}
+
+/**
+ * Recover leaf code written as raw halfwords only when two independent facts
+ * agree: the overlay BL decoder resolves a branch to the first halfword, and
+ * that bounded run of adjacent two-byte directives reaches `bx lr`. Neither a
+ * BL-shaped word alone nor a return-shaped data run alone is sufficient.
+ */
+export function reachedDirectiveLeaves(
+  binary: Uint8Array,
+  callers: readonly Interval[],
+  directives: readonly DirectiveSpan[],
+): Interval[] {
+  const starts = new Set<number>();
+  for (const caller of callers) {
+    if (caller.kind !== "thumb") continue;
+    const from = Math.max(0, caller.start - OVERLAY_BASE);
+    const to = Math.min(binary.length, caller.end - OVERLAY_BASE);
+    for (let offset = from; offset + 4 <= to; offset += 2) {
+      const target = targetOffset(
+        binary[offset] | (binary[offset + 1] << 8),
+        binary[offset + 2] | (binary[offset + 3] << 8),
+      );
+      if (target !== null && target >= 0 && target < binary.length) {
+        starts.add(OVERLAY_BASE + target);
+      }
+    }
+  }
+
+  const byStart = new Map(directives.map((span) => [span.start, span]));
+  const leaves: Interval[] = [];
+  for (const start of starts) {
+    if (!byStart.has(start)) continue;
+    let cursor = start;
+    const limit = Math.min(OVERLAY_BASE + binary.length, start + 128);
+    const pools = new Set<number>();
+    while (cursor < limit) {
+      const span = byStart.get(cursor);
+      if (!span || span.end !== cursor + 2) break;
+      const offset = cursor - OVERLAY_BASE;
+      const halfword = binary[offset] | (binary[offset + 1] << 8);
+      if ((halfword & 0xf800) === 0x4800) {
+        pools.add(((cursor + 4) & ~3) + ((halfword & 0xff) << 2));
+      }
+      cursor = span.end;
+      if (halfword === 0x4770) {
+        leaves.push({
+          start,
+          end: cursor,
+          kind: "thumb",
+          evidence: "BL-reached bounded raw-halfword leaf",
+        });
+        for (const pool of pools) {
+          if ([0, 2].every((byte) => byStart.has(pool + byte))) {
+            leaves.push({
+              start: pool,
+              end: pool + 4,
+              kind: "literal_pool",
+              evidence: "literal pool referenced by BL-reached raw-halfword leaf",
+            });
+          }
+        }
+        break;
+      }
+    }
+  }
+  return leaves;
+}
+
+function overlayInventory(source: string, auditedCallers: readonly Interval[]): NamespaceInventory {
   const lines = readFileSync(source, "utf8").split(/\r?\n/);
   const listing = assemblerListing(source);
   const intervals: Interval[] = [];
   const directiveRows: Array<{ address: number; value: number }> = [];
+  const halfwordDirectives: DirectiveSpan[] = [];
   const dataAddresses = new Set<number>();
   let inCPlaceholder = false;
 
@@ -346,7 +420,13 @@ function overlayInventory(source: string): NamespaceInventory {
     if (value !== undefined) {
       for (let byte = 0; byte < row.width; byte++) dataAddresses.add(row.address + byte);
       directiveRows.push({ address: row.address, value });
+      for (let byte = 0; byte + 2 <= row.width; byte += 2) {
+        halfwordDirectives.push({ start: row.address + byte, end: row.address + byte + 2 });
+      }
       continue;
+    }
+    if (/^\s*\.(?:2byte|hword)\b/i.test(line) && row.width === 2) {
+      halfwordDirectives.push({ start: row.address, end: row.address + 2 });
     }
     if (/^\s*\.(?:2byte|byte|hword|word|space)\b/i.test(line)) {
       for (let byte = 0; byte < row.width; byte++) dataAddresses.add(row.address + byte);
@@ -386,6 +466,15 @@ function overlayInventory(source: string): NamespaceInventory {
       });
     }
   }
+
+  const rawLeaves: Interval[] = [];
+  for (const leaf of reachedDirectiveLeaves(listing.binary, [...intervals, ...auditedCallers], halfwordDirectives)
+    .sort((left, right) => left.start - right.start || left.end - right.end)) {
+    if (intervals.some((interval) => interval.start < leaf.end && leaf.start < interval.end)) continue;
+    if (rawLeaves.some((accepted) => accepted.start < leaf.end && leaf.start < accepted.end)) continue;
+    rawLeaves.push(leaf);
+  }
+  intervals.push(...rawLeaves);
 
   const veneers = intervals.filter((interval) => interval.kind === "veneer");
   const classified = intervals.filter((interval) =>
@@ -455,7 +544,7 @@ export function deriveInventory(target: DecompTargetId): ExecutableInventory {
       ],
     };
   }
-  const overlays = overlaySources(target).map(overlayInventory);
+  const overlays = overlaySources(target).map((source) => overlayInventory(source, []));
   const total = main.executable_bytes +
     overlays.reduce((sum, overlay) => sum + overlay.executable_bytes, 0);
   return {
@@ -706,6 +795,50 @@ function selfTest(): void {
     if (!parseSubject(invalid)) throw new Error("rejected");
   }, invalid);
   if (roundHalfUpPercent(1, 8) !== 12.5) throw new Error("round-half-up failed");
+
+  const leafImage = new Uint8Array(0x20);
+  leafImage.set([0x00, 0xf0, 0x07, 0xf8], 0); // stored displacement 0xe -> target +0x10
+  leafImage.set([0x01, 0x20, 0x70, 0x47], 0x10); // movs r0,#1; bx lr
+  const rawLeaf = [{ start: OVERLAY_BASE + 0x10, end: OVERLAY_BASE + 0x12 },
+    { start: OVERLAY_BASE + 0x12, end: OVERLAY_BASE + 0x14 }];
+  const caller = [item(OVERLAY_BASE, OVERLAY_BASE + 4)];
+  const reached = reachedDirectiveLeaves(leafImage, caller, rawLeaf);
+  if (reached.length !== 1 || reached[0].start !== OVERLAY_BASE + 0x10 ||
+      reached[0].end !== OVERLAY_BASE + 0x14) {
+    throw new Error("BL-reached directive leaf was not classified as Thumb");
+  }
+  const dataOnly = leafImage.slice();
+  dataOnly.fill(0, 0, 4);
+  if (reachedDirectiveLeaves(dataOnly, caller, rawLeaf).length !== 0) {
+    throw new Error("a return-shaped raw-halfword data run without a BL must remain data");
+  }
+  const noReturn = leafImage.slice();
+  noReturn[0x12] = 0;
+  noReturn[0x13] = 0;
+  if (reachedDirectiveLeaves(noReturn, caller, rawLeaf).length !== 0) {
+    throw new Error("a reached directive run without bx lr must remain data");
+  }
+  if (reachedDirectiveLeaves(leafImage, [], rawLeaf).length !== 0) {
+    throw new Error("a BL-shaped pair in unaudited data must not reach a raw leaf");
+  }
+  const poolBlShape = leafImage.slice();
+  poolBlShape.fill(0, 0, 4);
+  poolBlShape.set([0x00, 0xf0, 0x07, 0xf8], 4);
+  if (reachedDirectiveLeaves(poolBlShape, caller, rawLeaf).length !== 0) {
+    throw new Error("a BL-shaped pair in an adjacent literal pool must not reach a raw leaf");
+  }
+  const getterImage = leafImage.slice();
+  getterImage.set([0x00, 0x48, 0x70, 0x47, 0x88, 0x98, 0x00, 0x02], 0x10);
+  const rawGetter = Array.from({ length: 4 }, (_, index) => ({
+    start: OVERLAY_BASE + 0x10 + index * 2,
+    end: OVERLAY_BASE + 0x12 + index * 2,
+  }));
+  const getter = reachedDirectiveLeaves(getterImage, caller, rawGetter);
+  if (getter.length !== 2 || getter[0].kind !== "thumb" || getter[0].end !== OVERLAY_BASE + 0x14 ||
+      getter[1].kind !== "literal_pool" || getter[1].start !== OVERLAY_BASE + 0x14 ||
+      getter[1].end !== OVERLAY_BASE + 0x18) {
+    throw new Error("a reached raw getter must carry its referenced literal pool");
+  }
 
   const inventory: ExecutableInventory = {
     format: 1,

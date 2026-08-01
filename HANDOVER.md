@@ -1087,6 +1087,30 @@ grind rather than a close.** A truthful "this one is ordinary work" is worth
 more than a forced closure, and the ranking cannot see row size — it sees
 unaccounted bytes, which is a different quantity.
 
+**A HANDOFF MEASUREMENT IS A CLAIM, not a settled fact (2026-08-01, venus, at
+Vale's instruction).** The last step of a shift is often "measure the next row
+so the next reader starts from the reading rather than the arithmetic". That is
+worth doing and it is also the most dangerous thing in this file, because a
+figure arrives at the next reader wearing the authority of a decision already
+made — and it routes through the lead, who repeats it, which adds a second
+layer of apparent settlement. **The next reader owes a handoff figure exactly
+the scrutiny they owe a tool's output: re-derive it, do not quote it.**
+
+Measured on resource_3a1, where I was both the writer and the reader. My own
+note said seventeen conditional branches; there are fourteen. Worse, I had
+called it a "one-owner close" and had never checked arity at all — it takes
+**eight arguments**, four of them on the stack, and the flags word drives the
+entire second half of the row. Neither error was caught by anything except
+re-measuring at the start of the next shift. Both had been relayed onward as
+fact in the meantime.
+
+The asymmetry that makes this bite: a handoff note is written at the END of a
+shift, by the most tired version of whoever wrote it, about a row they chose
+NOT to open because they were too tired to open it. That is the worst moment
+to produce a number and the best moment to produce confidence about one. Write
+the note — it genuinely helps — but write it as "measured X, re-measure
+before planning", and treat every inbound one the same way.
+
 **WHAT THE METRIC CANNOT SEE, stated because a procedure that does not say
 so is the defect we spent this night correcting.** The ranking measures
 UNACCOUNTED BYTES. The cost of a shift is ROWS REMAINING. Those are different
@@ -1754,6 +1778,41 @@ is data and stays raw, an odd one is a function pointer and is answerable. And
 check the top end too: 0x0200e760/0x0200e764 in the same file are offsets
 0x6760/0x6764 against a 26464-byte (0x6760) image, so they are AT and past the
 end — scratch beyond the loaded overlay, raw for a different reason.
+
+### A rule written down and not reached for is its OWN defect class (2026-08-01, venus, at Vale's instruction)
+
+The paragraph above is a specific case of something general, and it is worth
+naming because the fix is different from the one the reflex reaches for.
+
+**An unwritten rule and an unapplied rule look identical in the tree and want
+opposite remedies.** When three headers said "unresolved" about words the tree
+could answer, the instinct was to write the rule down — and the rule was
+already there, a hundred lines away, banked a shift earlier. Writing it again
+would have added a second copy of a document nobody consulted and changed
+nothing. What actually fixes an unapplied rule is a *checkpoint*: something in
+the drafting path that forces the question at the moment the wrong answer gets
+typed.
+
+So, concretely, and these are cheap:
+
+- **Before you write the word "unresolved", "unknown", "raw value" or
+  "unestablished" in a header, grep HANDOVER for the thing you are about to
+  give up on.** This has now caught three separate classes: the 0x0200xxxx
+  pool words here; Func_030003e0 and 0x03001e40, which I nearly called
+  unestablished five times when Ivan had already settled both; and
+  Func_03000380, which the tree names as the IWRAM quotient helper.
+- **An uncertainty note is a claim with a shelf life.** It is true as of the
+  day it was written and about the tree as it stood then. Later drafts inherit
+  it by copy-paste and it ossifies. Re-test the uncertainties in a header you
+  are about to copy from, not just the facts.
+- **The tell that you are about to make this mistake** is reaching for the
+  phrase "worth banking" about something you have just worked out. Check
+  whether it is already banked *before* writing the commit message, not after.
+  I wrote 0x020012c8's header as if establishing the base+0x8000 rule and only
+  caught it because I went looking for where to file it.
+
+The failure is not ignorance and it does not get fixed by more documentation.
+It gets fixed by making the document unavoidable at the point of decision.
 
 ### resource_3c9 residue state (2026-08-01, venus) — 7 of 9, plus a sweep-D leaf
 

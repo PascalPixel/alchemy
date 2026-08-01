@@ -60,8 +60,9 @@ typedef signed int s32;
  *     "almost certainly" is not evidence, and it is transcribed exactly
  *     and left unexplained.
  *   - `& -13` clears bits 2 and 3; the constants 0x235 and 0x234 are
- *     scene flag ids of unestablished meaning; 0x03001e40 is a global
- *     also tested by this overlay's 0x020036d0.
+ *     scene flag ids of unestablished meaning; 0x03001e40 is the
+ *     tree's free-running FRAME COUNTER, so `& 2` alternates the two
+ *     arms every other frame rather than selecting a mode.
  *   - field +6 is a u16 of unknown role; +24/+28 and +8/+16 are s32
  *     position-family fields, not named to an axis.
  */

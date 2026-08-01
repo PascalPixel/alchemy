@@ -976,6 +976,18 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
 ]);
 // -fno-gcse routed by path rather than by stem, for overlay rows whose address
 // is also an offset in another overlay that is already converted.
+// Path-keyed twin of NO_EXPENSIVE_SOURCES. resource_3b2:12b4 sets a flag bit
+// with `ldrb / movs #2 / orrs / strb`; the reference loads into r2 and builds
+// the constant in r3, and this fork allocates them the other way round. Six
+// source spellings reach nothing (mask-first, a store-address local, a loaded
+// local, a compound `|=`, an index local, and every pairing of those), and no
+// scheduler or CSE mode moves it -- only -fno-expensive-optimizations does.
+// It MUST be keyed by path: the bare stem 020012b4 is already taken by
+// resource_395's converted row, and the stem set would silently recompile that
+// one too (§7's overlay-blindness trap).
+const NO_EXPENSIVE_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3b2_c_020012b4.c",
+]);
 const NO_GCSE_OVERLAY_SOURCES = new Set([
   // resource_3cd:00c0 fills a 16-halfword stack list through a call and then
   // walks it. Both the call argument and the walk's induction base are the
@@ -1149,6 +1161,9 @@ export function cflagsForSource(source: string): readonly string[] {
       ? ["-fno-rerun-cse-after-loop"]
       : []),
     ...(NO_GCSE_OVERLAY_SOURCES.has(sourceKey(source)) ? ["-fno-gcse"] : []),
+    ...(NO_EXPENSIVE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fno-expensive-optimizations"]
+      : []),
     ...(NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-cse-follow-jumps", "-fno-cse-skip-blocks"]
       : []),
@@ -1230,6 +1245,7 @@ export function evidencedRoutingFlags(): string[] {
     ...NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES,
     ...NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES,
     ...NO_GCSE_OVERLAY_SOURCES,
+    ...NO_EXPENSIVE_OVERLAY_SOURCES,
     ...NO_INTERWORK_OVERLAY_SOURCES,
     ...NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES,
     ...NO_STRICT_ALIASING_OVERLAY_SOURCES,

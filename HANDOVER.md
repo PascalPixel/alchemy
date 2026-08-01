@@ -427,7 +427,71 @@ row that fails to compile is omitted rather than guessed at, which leaves the
 old UNRULED behaviour for that row only.
 
 So a D-class "cannot tell" no longer exists: **A and B must be empty, and C must
-be classified.** There is nothing left to defer to the owning lane.
+be classified.**
+
+**That is still NOT SUFFICIENT.** A, B and C between them cannot see a leaf
+function, and one was found on resource_3a4 after both A and B had gone empty.
+**Sweep D below is required before any overlay is certified.** Every overlay
+certified before 2026-08-01 was certified without it and must be re-run.
+
+### Sweep D — read the gaps (2026-08-01, jupiter). REQUIRED for certification
+
+**The instrument in one line: after every owner on an overlay is drafted, walk
+the gap between each row's TRUE end and the next recorded owner and read it.
+Never assume a gap is alignment and literal pool.**
+
+Sweeps A, B and C are all *keyed* — they look for a `bl` target, a published
+pointer word, or a `push`-shaped halfword. A leaf function offers none of the
+three: it is called from outside the overlay or not at all, its address is
+stored nowhere in the image, and being a leaf it saves no register, so it opens
+with ordinary work and closes with `bx lr`. Sweep D is the only unkeyed one —
+it looks at *unaccounted bytes* rather than at a signature, which is exactly
+why it catches what the signatures cannot.
+
+Procedure, per overlay, after drafting:
+
+1. For each recorded owner, establish its TRUE end — epilogue, then any
+   alignment halfword, then its literal pool. Not `measureSpan`, which is a
+   hint in neither direction.
+2. Subtract that end from the next recorded owner's start. A remainder of 0-2
+   bytes is alignment and is fine.
+3. **Any larger remainder must be read and ruled**, not assumed. Disassemble
+   it. Three outcomes: it is more literal pool (confirm each word is referenced
+   by a `pc`-relative load in the row above); it is data (confirm a shape — a
+   table, an ascending run, a terminator); or **it is code**, in which case the
+   overlay is not closed.
+4. Rule a candidate function in or out with two cheap image-wide checks before
+   drafting anything:
+   - resolve every BL-shaped halfword pair across the whole image with the
+     `+2` rule and look for the offset as a target;
+   - scan every 4-aligned word for its published spelling, `offset + 0x8000`
+     both with and without the Thumb bit.
+   If both come back empty and the bytes still disassemble coherently to a
+   return, it is a real function that no keyed sweep can reach.
+
+Worked example, and the test case for whatever tool implements this:
+**resource_3a4's 0x02003410.** Twenty-four bytes —
+
+```
+ldr r3, =0x03001ebc / movs r1, #191 / ldr r3, [r3] / lsls r1, #1 /
+adds r2, r3, r1 / ldr r3, =0x1018 / strh r3, [r2] / bx lr
+```
+
+— writing 0x1018 into the halfword at workspace + 382, with its own two-word
+pool at 0x02003420-0x02003427. It surfaced because 0x02003028's recorded-owner
+bound said 1024 while the row measured 1000, and the 24-byte remainder was read
+instead of waved through as pool and padding. No `bl` in the 0x5238-byte image
+targets 0x3410; no word in the image holds 0x0200b411 or 0x0200b410; and it has
+no `push` for sweep C to key on. All three sweeps, blind at once.
+
+Cost is low and falls where the work already is: the true end of every row is
+something the drafting lane must establish anyway, so sweep D is arithmetic over
+figures already in hand plus a read of whatever is left over.
+
+**The same arithmetic also catches the opposite error.** A gap that comes out
+NEGATIVE means a drafted span ran past its neighbour, which is the
+over-measure failure `measureSpan` produced on 0x020039c8 (356 reported, 124
+real). Sweep D is one subtraction that screens for both directions.
 
 ### Sweep A and sweep B are NOT independent populations
 
@@ -457,40 +521,21 @@ rate. **A function installed as data is invisible to every technique that
 follows control flow.** If you want the rule in one line, use that; if you want
 someone to *feel* it, show them 0x02002b58's 88 bytes.
 
-### THE THREE SWEEPS ARE NOT ENOUGH: a leaf with no push prologue (2026-08-01, jupiter)
+### The fourth population: leaf functions (2026-08-01, jupiter)
 
-**resource_3a4 has a complete function at 0x02003410 that all three sweeps
-miss at once.** Twenty-four bytes:
+The procedure lives above under **Sweep D — read the gaps**, with 0x02003410 as
+its worked example. What belongs here is the consequence for this overlay and
+the shape of the population.
 
-```
-ldr r3, =0x03001ebc / movs r1, #191 / ldr r3, [r3] / lsls r1, #1 /
-adds r2, r3, r1 / ldr r3, =0x1018 / strh r3, [r2] / bx lr
-```
-
-with its own two-word pool at 0x02003420-0x02003427, sitting between
-0x02003028's closing pool and the recorded owner 0x02003428. It is real code
-and it is invisible three ways:
-
-- **sweep A cannot see it** — no `bl` anywhere in the image targets 0x3410.
-  Checked by resolving every BL-shaped halfword pair across the whole
-  0x5238-byte image with the same `+2` rule, not by trusting a tool's summary.
-- **sweep B cannot see it** — no word anywhere in the image holds 0x0200b411
-  or 0x0200b410, its published spelling.
-- **sweep C cannot see it** — it has **NO PUSH PROLOGUE**. It is a leaf: it
-  saves no register and returns with `bx lr`, so the shaped scan, which keys
-  on `b5xx`/`b4xx`, has nothing to key on.
-
-So "A and B empty, C classified" is necessary and **not sufficient**. There is
-a fourth population: **leaf functions that neither save a register nor appear
-as a target**. The cheap instrument is the one that found this — after
-drafting every owner, walk the *gaps* between a row's true end and the next
-recorded owner and read them, rather than assuming the difference is padding
-and pool. The recorded-owner bound said 1024; the row was 1000; the missing 24
-bytes were a function.
+**A leaf function is a fourth population, not an edge case.** It neither saves
+a register nor appears as a target, so it presents no key to any of the three
+sweeps. Expect it to look exactly like 0x02003410 does: a handful of
+instructions doing one store through a global, closing on `bx lr`, sitting in
+what reads at a glance like the tail of the previous row's literal pool.
 
 **resource_3a4 is therefore NOT certified closed**, even though sweeps A and B
-are now empty, and it is the right test case for whatever fourth sweep gets
-written.
+are now empty and the class-C row is settled as table data. It is the right
+test case for whatever tool implements sweep D.
 
 ### 0x02005210 is NOT CODE — settled (2026-08-01, jupiter)
 

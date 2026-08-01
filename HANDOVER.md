@@ -5885,6 +5885,67 @@ claims to.** Ask of every fixture: which lane's ordinary progress breaks this?
 does it print when it does nothing?** If that is indistinguishable from a
 clean result, it is not a check.
 
+## 5g. WORKTREE DRIFT IN BUILD OUTPUT — the same command, two answers (2026-08-01, jupiter)
+
+**`out/` is per-worktree, untracked, and nothing keeps it in step.** Two people
+ran the same command on the same commit and got opposite answers three times in
+one night. Every instance was `out/` or `roms/`, never the tracked tree.
+
+**The one that mattered: `out/decomp/overlays.json`.** Counting
+`overlay_call_targets.ts` exit codes across all 96 overlays gave **exit0=66
+exit1=30** in a lane worktree and **exit0=30 exit1=66** in the repo root, at
+commit `a3645be5`, with the identical loop and no pipeline involved. Settled by
+substitution, not argument: copying the root's inventory into the lane worktree
+and changing NOTHING else reproduced 30/66 exactly, and restoring it gave 66/30
+back. The inventory was the whole cause.
+
+Which one is real:
+
+| worktree | rows | overlays | file date |
+|---|---|---|---|
+| repo root (`alchemy`) | **553** | **85** | 07-28 |
+| alchemy-mercury | 12,129 | 96 | 07-31 |
+| alchemy-venus | 12,124 | 96 | 07-31 |
+| alchemy-jupiter | 12,129 | 96 | 08-01 |
+| alchemy-mars | 12,125 | 96 | 07-31 |
+| **fresh regeneration** | **12,117** | **96** | — |
+
+A fresh `bun tools/overlay_inventory.ts -o <path>` produces 12,117 rows over 96
+overlays. **The root's inventory is four days stale, carries 4% of the rows and
+misses 11 overlays entirely; all four lanes agree with the fresh run.** So the
+true figure is 30 refusing and 66 resolving — the refusal is CONSERVATIVE, not
+over-broad — and the root is the sole outlier.
+
+**This matters far beyond one count, because the root is the merge gate.**
+Every tool that reads the inventory misreports there: `overlay_call_targets`
+(`resolveOverlay`), `overlay_multiset_check` (`rows()`, whose `checked=0`
+failure fires far more often on a thin inventory), `semantic_regions_sync`
+(`planSync` computes `addable` from it), and `overlay_driver` (`ownerOf`'s
+"inventory row"). A certification argued from the root's numbers is arguing
+from a 553-row world.
+
+Regenerate before trusting any inventory-derived figure, and say which worktree
+a surprising number came from:
+
+```bash
+bun tools/overlay_inventory.ts          # rewrites out/decomp/overlays.json
+```
+
+**The other two instances, same root cause.** A lane worktree had only
+`gs1-en.gba` where the root has all twelve ROMs — fixed with symlinks into the
+root's `roms/`. And a **stale `out/cache` produced a phantom `verify` red**:
+`build_assets` failed on resource 39c at `0x087ac2d8` with "token plan does not
+reconstruct decoded input" in the lane worktree while the root passed at the
+identical commit; removing `out/cache` fixed it, and the cache rebuilds. **A red
+that exists only in one worktree costs a merge cycle and shakes confidence in a
+green tree.** Before reporting a red, re-run it somewhere else, or clear `out/`
+and try again.
+
+**Standing rule: when two people get different answers from the same command on
+the same commit, suspect untracked state before suspecting either reading.**
+Prove it by substituting the suspect file and nothing else — that turns an
+argument into a measurement in one step.
+
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**

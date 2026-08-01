@@ -1,5 +1,49 @@
 #include "types.h"
 
+/*
+ * __call_via_rN veneer sites, resolved per-site against the ROM.
+ *
+ * Three `bl` sites in this function land inside the 0x080072e4 veneer bank
+ * (fifteen four-byte `bx rN; nop` entries, r0..lr). None of them is a call to
+ * a function at the branch target; each is an indirect call through the named
+ * register, and the instruction that last wrote that register is the callee
+ * load.
+ *
+ * 0x080db754 -- `bl 0x080072f0` = __call_via_r3. r3 is loaded at 0x080db74e
+ * from this function's own pool word 0x080dba44, which holds 0x03001388: the
+ * relocated word-copy helper, established from the EXACT src/080d40ec.c as
+ * (destination, source, size). r0 = 0x05000000 (built as 0xa0 << 19 at
+ * 0x080db74c/0x080db750), r1 = the return of Func_08002f40(0x96), r2 = 0x80.
+ * r3 is inside the r0-r3 argument registers, so this is the case where the
+ * draft's fourth argument WAS the callee address; the call takes three.
+ *
+ * 0x080db930 and 0x080db9bc -- `bl 0x080072f4` = __call_via_r4. Both load r4
+ * from [sp, #28] in the instruction immediately before the branch
+ * (0x080db92e, 0x080db9ba). That slot is filled once, at 0x080db828, from
+ * `ldr r3, [r3, #0]` at 0x080db826 where r3 = pool word 0x080dba50
+ * (0x03001e50) plus 184. 0x03001e50 is Func_080048b0's slot table and
+ * 184 = 46 * 4, so the word is allocator slot 46 at 0x03001f08 -- exactly the
+ * pointer that `Func_080ed408(46, ...)` at 0x080db81e publishes, per the
+ * exact src/080cef64.c. The load sits four instructions after that publish.
+ *
+ * ARITY of the renderer: six. r0..r3 are set at 0x080db92c / 0x080db910 /
+ * 0x080db922 / 0x080db928 and two more words go out at [sp, #0] and [sp, #4]
+ * (0x080db926, 0x080db92a). r4 is ABOVE the argument registers, so the
+ * register-index regularity does not apply and no argument slot is holding
+ * the callee -- every one of the six arguments the draft passed is real. The
+ * shape matches the six-argument renderer ABI already recorded for slot 46 in
+ * the sibling semantic/main/080da2ac.c.
+ *
+ * UNCERTAINTY, deliberately left standing: what slot 46 CONTAINS is not
+ * settled here. The slot table unifies the ADDRESSING, never the contents --
+ * other slots are known to take different ROM payloads from different
+ * callers. This file proves which pointer is called, not which routine it is.
+ */
+typedef void *(*Transfer_080db6e0)(void *destination, const void *source,
+                                   s32 size);
+typedef void (*Renderer_080db6e0)(
+    s32 target, const void *source, s32 x, s32 y, s32 width, s32 height);
+
 #define U8_AT(p, o)  (*(u8 *)((u8 *)(p) + (o)))
 #define U16_AT(p, o) (*(u16 *)((u8 *)(p) + (o)))
 #define S16_AT(p, o) (*(s16 *)((u8 *)(p) + (o)))
@@ -20,7 +64,6 @@ struct Particle_080db6e0 {
 void Func_080cd594(s32);
 void Func_080e0524(s32, void *, s32, s32);
 void *Func_08002f40(s32);
-void Func_080072f0(s32, s32, s32, s32);
 u32 Func_08004458(void);
 void Func_080ed408(s32, s32, s32, s32, s32);
 void Func_080041d8(const void *, s32);
@@ -29,7 +72,6 @@ void Func_080051d8(void *, void *);
 void Func_080f9010(s32);
 void Func_080b50e8(s32);
 void Func_080e3944(void *, s32 *);
-void Func_080072f4(s32, const void *, s32, s32, s32, s32);
 void Func_080e38b8(void *, s32, s32);
 s32 Func_080022ec(s32, s32);
 void Func_080d6888(s16, s32, s32, s32, s32);
@@ -53,6 +95,7 @@ s32 Func_080db6e0(void *argument, s32 monochrome)
     s32 table_index;
     s32 frame;
     s32 i;
+    Renderer_080db6e0 renderer;
 
     PTR_AT(runtime, 0x7828) = argument;
     Func_080cd594(1);
@@ -67,9 +110,8 @@ s32 Func_080db6e0(void *argument, s32 monochrome)
         }
         variant = 1;
     } else {
-        Func_080072f0(
-            0x05000000, (s32)Func_08002f40(0x96),
-            0x80, 0x03001388);
+        ((Transfer_080db6e0)0x03001388)(
+            (void *)0x05000000, Func_08002f40(0x96), 0x80);
         variant = S32_AT(argument, 0x18);
     }
 
@@ -104,6 +146,8 @@ s32 Func_080db6e0(void *argument, s32 monochrome)
     }
 
     Func_080ed408(0x2e, 7, 7, 3, 2);
+    /* Allocator slot 46, read once at 0x080db828 and held in [sp, #28]. */
+    renderer = *(Renderer_080db6e0 *)0x03001f08;
     S32_AT(runtime, 0x7780) = 2;
     S32_AT(runtime, 0x7784) = 0x4b;
     Func_080041d8((const void *)0x080cd261, 0x480);
@@ -148,7 +192,7 @@ s32 Func_080db6e0(void *argument, s32 monochrome)
                 source =
                     runtime + 0x3200 + (i & 1) * 0x302 +
                     U16_AT((void *)0x080ede48, height - 2);
-                Func_080072f4(
+                renderer(
                     graphics, source,
                     projected[0] -
                         ((size + (size >> 31)) >> 1),
@@ -179,7 +223,7 @@ s32 Func_080db6e0(void *argument, s32 monochrome)
                         const void *source =
                             runtime +
                             U16_AT((void *)0x080eeaec, animation);
-                        Func_080072f4(
+                        renderer(
                             graphics, source,
                             projected[0] - (size >> 1),
                             projected[1] - (size >> 1),

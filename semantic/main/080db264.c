@@ -1,5 +1,54 @@
 #include "types.h"
 
+/*
+ * __call_via_rN veneer sites, resolved per-site against the ROM. Four `bl`
+ * sites land inside the 0x080072e4 bank; each is an indirect call through the
+ * named register, not a call to a function at the branch target.
+ *
+ * 0x080db3f0 -- `bl 0x080072f0` = __call_via_r3, and r3 comes from this
+ * function's pool word 0x080db6a0 = 0x03000168, the relocated IWRAM fill
+ * (destination, size, value), established in semantic/main/080e15e8.c. r3 is
+ * an argument register, so the draft's fourth argument WAS the callee; the
+ * call takes three.
+ *
+ * A TWO-ENTRY RENDERER TABLE LIVES IN THIS FRAME. At 0x080db2c6..0x080db2ce
+ * r5 = pool 0x080db2f4 = 0x03001e50 (Func_080048b0's slot table); +184 is
+ * slot 46 and its contents go to [sp, #36]. At 0x080db2e0..0x080db300, +188
+ * is slot 47 and its contents go to [sp, #40] via `str r3, [r2, #4]`, where
+ * r2 = sp + 36. The address sp + 36 is itself parked in [sp, #12]. So the two
+ * pointers published by the `Func_080ed408(46, ...)` and
+ * `Func_080ed408(47, ...)` calls immediately above them (src/080cef64.c) are
+ * a two-element local array, and [sp, #12] is its base.
+ *
+ * 0x080db474 and 0x080db5c6 -- `bl 0x080072f4` = __call_via_r4, r4 loaded
+ * from [sp, #36] in the instruction before each branch: entry 0, slot 46.
+ *
+ * 0x080db4b8 -- `bl 0x080072f4` = __call_via_r4, and r4 is
+ * `ldr r4, [r1, r3]` at 0x080db4ae: r3 = [sp, #12] (the table base) and
+ * r1 = ([sp, #20] & 1) << 2. [sp, #20] is the wave counter, zeroed at
+ * 0x080db3fa and used at 0x080db40a as the multiplier of the per-frame angle.
+ * So this site alternates between renderer 46 and renderer 47 on wave parity.
+ *
+ * STRUCTURE CORRECTED. The draft carried `if (variant == 0) { A } else { A }`
+ * with two byte-identical bodies and no stated reason for the split. The
+ * branch is real -- `cmp r3, #0; bne 0x080db47a` at 0x080db43c on
+ * argument+0x18 -- and the difference is the callee, which the draft could
+ * not see: the taken arm calls entry 0 unconditionally, the other indexes the
+ * table by wave parity. A wrong callee had flattened a genuine distinction
+ * into a duplicated body.
+ *
+ * ARITY of the renderer: six, at all three sites. r0..r3 are set and two more
+ * words go out at [sp, #0] and [sp, #4]. r4 is above the argument registers,
+ * so no argument slot holds the callee and every argument the draft passed is
+ * real.
+ *
+ * UNCERTAINTY, left standing: what slots 46 and 47 CONTAIN is not settled
+ * here. The slot table unifies the addressing, never the contents.
+ */
+typedef void (*ArmFill_080db264)(void *destination, u32 size, u32 value);
+typedef void (*Renderer_080db264)(
+    s32 target, const void *source, s32 x, s32 y, s32 width, s32 height);
+
 #define U8_AT(p, o)  (*(u8 *)((u8 *)(p) + (o)))
 #define U16_AT(p, o) (*(u16 *)((u8 *)(p) + (o)))
 #define S16_AT(p, o) (*(s16 *)((u8 *)(p) + (o)))
@@ -26,8 +75,6 @@ void Func_080041d8(const void *, s32);
 void Func_080f9010(s32);
 void Func_080b50e8(s32);
 s32 Func_080022fc(s32, s32);
-void Func_080072f0(s32, s32, s32, s32);
-void Func_080072f4(s32, const void *, s32, s32, s32, s32);
 void Func_080e3908(void *, s32, s32);
 void Func_080d6888(s16, s32, s32, s32, s32);
 void Func_080e155c(s32, s32);
@@ -47,13 +94,16 @@ void Func_080db264(void *argument)
     s32 variant;
     s32 frame;
     s32 i;
+    Renderer_080db264 renderers[2];
 
     PTR_AT(runtime, 0x7828) = argument;
     Func_080cdb24(1);
     variant = S32_AT(argument, 0x18);
     *(volatile u16 *)0x04000020 = variant == 2 ? 0x80 : 0x100;
     Func_080ed408(0x2e, 7, 7, 3, 2);
+    renderers[0] = *(Renderer_080db264 *)0x03001f08;
     Func_080ed408(0x2f, 7, 7, 7, 3);
+    renderers[1] = *(Renderer_080db264 *)0x03001f0c;
     Func_080e0524(0xc4, runtime + 0x60e, 1, 1);
     Func_080e0524(0x73, effect_tiles, 0, 0);
 
@@ -91,8 +141,8 @@ void Func_080db264(void *argument)
             s32 wave;
 
             if (Func_080022fc(frame, 5) == 2)
-                Func_080072f0(
-                    graphics, 0x4000, 0x10101010, 0x03000168);
+                ((ArmFill_080db264)0x03000168)(
+                    (void *)graphics, 0x4000, 0x10101010);
 
             for (wave = 0; wave < 4; wave++) {
                 s32 angle = wave * ((frame << 11) + 0x4000);
@@ -108,7 +158,7 @@ void Func_080db264(void *argument)
                     const void *source =
                         runtime + 0x60e +
                         (Func_08004458() & 3) * 0xb40;
-                    Func_080072f4(
+                    renderers[0](
                         graphics, source,
                         center_x + (Func_08004458() & 7) - 0x10,
                         center_y, 0x18, 0x78);
@@ -116,7 +166,7 @@ void Func_080db264(void *argument)
                     const void *source =
                         runtime + 0x60e +
                         (Func_08004458() & 3) * 0xb40;
-                    Func_080072f4(
+                    renderers[wave & 1](
                         graphics, source,
                         center_x + (Func_08004458() & 7) - 0x10,
                         center_y, 0x18, 0x78);
@@ -169,7 +219,7 @@ void Func_080db264(void *argument)
                     effect_tiles +
                     U16_AT((void *)0x080ede48, height - 2);
 
-                Func_080072f4(
+                renderers[0](
                     graphics, source,
                     (particle->x >> 16) -
                         ((size + (size >> 31)) >> 1),

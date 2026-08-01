@@ -1,4 +1,25 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320.  A `bl` into that range
+ * is an indirect call through the named register.
+ *
+ * The regularity that makes these readable, and it is CHECKED per site rather
+ * than assumed: the callee value always appeared in the draft's argument list
+ * at exactly the position matching the veneer's register index.  The compiler
+ * loaded the callee into rN and the draft read rN as argument N.  So a
+ * __call_via_r0 site has ZERO real arguments, r1 has one, r2 has two.  Each
+ * site below was confirmed by checking that the register and the argument
+ * position agree.
+ *
+ * `callback`, read from 0x03001cfc and then cleared, is the CALLEE via
+ * __call_via_r2 -- the draft had already named it correctly and then passed
+ * it as a third argument. Two real arguments; confirmed at 0x080036c8, where
+ * r1 genuinely holds the address 0x03001cfc and r2 holds the loaded value.
+ */
 #include "types.h"
+
+typedef void (*PendingCallback_08003650)(s32 context, volatile s32 *slot);
 
 struct DmaChannel_08003650 {
     const void *source;
@@ -15,7 +36,6 @@ s32 Func_08003a7c(
     void *destination,
     u32 control,
     volatile struct DmaChannel_08003650 *dma);
-void Func_080072ec(s32 context, volatile s32 *pending, s32 callback);
 void Func_08004420(s32 sound);
 void Func_080006fc(void);
 
@@ -60,7 +80,7 @@ void Func_08003650(void)
         s32 callback = *(volatile s32 *)0x03001cfc;
 
         *(volatile s32 *)0x03001cfc = 0;
-        Func_080072ec(context, (volatile s32 *)0x03001cfc, callback);
+        ((PendingCallback_08003650)callback)(context, (volatile s32 *)0x03001cfc);
     }
 
     Func_08004420(0x480);

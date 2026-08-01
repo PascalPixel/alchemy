@@ -3387,6 +3387,95 @@ two levers land.
 
 ---
 
+## 5b. Mercury session levers and blocker classes (2026-07-31/08-01)
+
+Banked from `work/claude/notes/` because `work/` is per-worktree gitignored
+and would be lost with the worktree. Every claim below was measured.
+
+**The tail rule.** *A draft that is right for its whole length but stops
+early reads exactly like a draft that is structurally wrong.* Before
+parking anything, compare the REFERENCE's tail against the DRAFT's tail.
+Three "hard rows" in one night were span errors or omitted trailing
+statements: `398:46c` was labelled a 22-group rewrite and was really span
+54-vs-72 plus pool-loaded comparison constants; `3a4:2a10`'s residual was
+two omitted tail stores of a pooled constant; `3bc:22c4` was span 44 vs 48.
+A short compile (`mine=` well under `ref=`) is the tell.
+
+**Span is suspect before the draft is.** When a probe says the draft
+compiles LARGER than its row, check the span first. `3b6:6ec` was probed at
+44 bytes against an 80-byte owner and wrongly diagnosed as a structural
+gap; with the right span it closed, and its two siblings fell out by
+substitution.
+
+**Cohort expansion is a hypothesis, never a licence to copy.** Generating
+siblings from one exact source works (`3b6` triplet, `380` quintuplet), but
+read EACH row's own call sites: `380:27cc`'s third call used a different
+symbol than its four siblings. Copying the role map would have produced a
+silent wrong seal.
+
+**Never build source edits through shell interpolation.** A word-split that
+happens to produce VALID C is the version that reaches a commit unnoticed.
+Single-pass scripted edits only.
+
+**The zero-register mask lever** (`3a4:2a10`, 18 -> 1 group). The reference
+zeroes a register for a store and reuses it to build a mask by subtraction
+(`subs r3,#13` for 0xf3) instead of materialising the constant. Three
+placements are all required:
+1. compute the store ADDRESS into its own local FIRST, then the zero;
+2. one `s32 v = 0;` serves both the store and the mask;
+3. the AND chain starts with the MASK (`v &= field;`), per §4's mask-first
+   rule — operand order is what fixes the register identities.
+
+**Pooled comparison constants.** Where the reference does `ldr r3,POOL /
+cmp r2,r3`, plain literals lose. Spell each as `(s32)&Value_000000XX`
+(`398:46c`, three arms). Same family as §4's constant table, but for
+COMPARISONS, not just call arguments.
+
+**Callee-blindness is the most common single blocker.** Ten of twelve seals
+in one tranche needed nothing but per-site callee names. Subtlest form:
+ONE name serving two genuinely distinct call sites (`39e:41c4`) — split it
+into per-site externs. Always resolve names from raw `overlay_show`
+addresses, never from veneer-corrected labels.
+
+**Pool word ORDER can be the last 12 bytes.** `3bc:3b18` is
+instruction-exact and still rejects: the reference sorts its pool words
+ascending, the fork emits them in use order. No source lever found.
+
+### Named compiler blockers, with test cases (for any fork work)
+
+1. **Dead constant sets stripped by DCE.** The reference keeps a constant
+   live in a callee-saved register that is never read; gcc's DCE removes
+   every C spelling of it. TWO independent test cases: `3b1:37b4` (dead
+   zero in r7) and `3a7:704` (dead zero in r8). Also permuter-immune.
+2. **Copy-before-destructive — THREE distinct passes, not one.** Prototype
+   built and measured (see below): `fae58`'s 0xce copy is a cse/combine
+   equal-value fold; `39d:31c0`'s copy-before-shift is local-alloc plus the
+   two-address pattern; `371:350`'s AND-operand choice is commutative
+   canonicalisation. One flag does not cover them.
+3. **Literal-pool placement.** `fae58`'s residual and `39d:31c0`'s residual
+   are the SAME problem: the reference dumps a minipool mid-function where
+   the fork floats it to the end. This is the single named blocker on
+   `fae58`, the largest exact win available (1,098 bytes, currently
+   1086/1098 with five levers folded in).
+
+**Fork prototype status (NOT staged; `dist/` digest unchanged).**
+`../alchemy-gcc` carries a working `-fmatch0-keeps-input` /
+`-mmatch0-keeps-input`: agbcc `thumb.h` + `local-alloc.c`; gcc-2.96
+`flags.h`, `toplev.c`, `local-alloc.c` (`qty_phys_avoid[]`), `global.c`
+(`set_preference`), and a flag-gated `*thumb_ashrsi3_match0` pattern in
+`config/arm/arm.md`. With the flag ON it reproduces the reference's
+`mov r2,r1 / asr r2,r2,#20` exactly; with it OFF it is byte-identical to
+`dist` across 25/25 `src/` sources. Trace instrumentation is compiled in
+behind `getenv("MATCH0_TRACE")` and must be removed before any staging.
+
+**The permuter law holds, and now for a measured reason.** Tested on the
+correct endgame population (four regalloc-only near-misses, three of them
+size-exact, ~5,089 candidates): zero hits and the floor never improved on
+any row. The reason: the permuter searches source-level degrees of freedom,
+while these residuals are allocator and pool-placement decisions that have
+none. `decomp-permuter-agbcc` could NOT be evaluated — the lane has no
+network access.
+
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**

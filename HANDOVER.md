@@ -338,6 +338,40 @@ the ROM reads slot 46. One slot off, in the direction that made a pair of
 distinct renderers look like one renderer used twice. **Resolve the base
 before trusting an offset that looks familiar.**
 
+#### The two standing refusals, and why each needed its own reading
+
+Both are now settled and the `unknown` class is EMPTY. What matters is that
+they refused for **different mechanisms**, so no single rule of thumb would
+have cleared both — a refusal is a pointer to a specific gap in the walk, and
+reading which gap is the work.
+
+* `0x080d39a4` in `080d3854` — *"0x080d3998 is a branch target, so the write
+  at 0x080d3992 may be skipped."* The one-register test settles it. r6 is
+  written seven times in the function, but only 0x080d3992 lies between entry
+  and the site, and the ONLY branch targeting 0x080d3998 is `bne.n` at
+  0x080d39b2 — the back edge of the loop that starts at 0x080d3998, downstream
+  of the write and unreachable without it. Nothing in the loop touches r6, so
+  the write dominates. Callee: pool 0x080d39cc = 0x03000168, the ARM fill.
+* `0x080e7b6c` and two siblings in `080e7404` — *"no fall-through past
+  0x080e7802."* Not a dominance question at all. 0x080e7802 is `b.n
+  0x080e7850`, an unconditional jump over an **inline literal pool** at
+  0x080e7804..0x080e784f. The walk cannot cross it; following the branch shows
+  the value stored at 0x080e7850 is the r5 loaded at 0x080e77fe, four
+  instructions after the publish.
+
+**Read the refusal's stated reason and answer that reason.** A branch-target
+refusal wants a dominance argument; a no-fall-through refusal usually wants
+you to follow a jump over data. Treating them as one class would have made
+the second look much harder than it is.
+
+#### Slot 46 now has SIX base spellings, two of them in one function
+
+`0x03001e50 + 184`, `0x03001eec + 28`, `0x03001e80 + 0x88`,
+`0x03001ef0 + 0x18`, `0x03001e8c + 140`, and `0x03001f00 + 8`. `080e7404`
+uses two of them for the same slot in its two eras. **Resolve the base; never
+recognise an offset.** Every structure defect this audit has found downstream
+of addressing came from an offset that looked familiar.
+
 #### An `unknown` cluster on ONE register is usually one fact, not N
 
 `08018038` reported **ten** `unknown` sites and resolved to **one** answer.

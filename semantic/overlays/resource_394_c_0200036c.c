@@ -21,7 +21,7 @@ typedef unsigned short u16;
  *
  * It reloads the three background scroll register pairs at 0x04000014,
  * 0x04000018 and 0x0400001c from one of two twelve-byte sources: the settled
- * values at 0x03001ad4, or the displaced copy at 0x0200a0d0 that banked
+ * values at 0x03001ad4, or the displaced copy at 0x0200a0d0 that tracked
  * byte-exact assets/code/resource_394_c_020003c0.c builds from the same
  * twelve bytes by adding 0xb0 to each vertical component.  The displaced copy
  * is selected on a probability: only while VCOUNT reads 0xe3 or is at most

@@ -66,7 +66,7 @@ typedef signed int s32;
  * LINK BASE 0x02008000, with the strongest witness available: the word handed
  * to Func_080000d8 at 0x02000d38 is 0x02009f15, i.e. file offset 0x1f14 plus
  * the Thumb bit - and 0x02001f14 is the five-step ping-pong state machine
- * reconstructed in this same lane, whose `push {lr}` prologue is right there.
+ * reconstructed in this same reconstruction, whose `push {lr}` prologue is right there.
  * Installing exactly that routine here is also what the two owners mean
  * together, and its state word Data_0200d144 is the one the byte-exact
  * assets/code/resource_3a8_c_02001ed8.c zeroes - which is the routine called

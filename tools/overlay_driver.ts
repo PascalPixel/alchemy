@@ -17,7 +17,7 @@
 //
 // This matters for closure. An overlay's driver is frequently absent from the
 // structural inventory, and it is never the target of any `bl` inside the image
-// -- nothing in the resource calls it, the loader does -- so a lane can draft
+// -- nothing in the resource calls it, the loader does -- so a draft can
 // every listed row and still be missing the function that sequences them.
 // resource_380's driver at 0x02003f24 was found by hand, by bounding the gap
 // between the finale and the wrapper block; this rule finds it directly, and
@@ -117,9 +117,9 @@ function selfTest(): void {
   const self = Bun.fileURLToPath(import.meta.url);
   const run = (name: string) =>
     Bun.spawnSync(["bun", self, name], { stdout: "pipe", stderr: "pipe" }).exitCode;
-  // The passing fixture is NAMED BY THE TREE, not by me: whichever overlay is
-  // first. This tool exits 0 for any overlay whose image assembles, whatever
-  // its driver turns out to be owned by, so no lane's progress can turn it red.
+  // The passing fixture is selected from the tree: whichever overlay is first.
+  // This tool exits 0 for any overlay whose image assembles, whatever
+  // its driver turns out to be owned by, so ordinary source changes cannot turn it red.
   if (run("resource_ffffff") === 0)
     throw new Error("overlay driver self-test: an unknown overlay must NOT exit 0");
   const anyOverlay = overlayNames()[0];

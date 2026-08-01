@@ -97,7 +97,7 @@ export interface OverlayResidue {
    * bl-reached targets with no owner that are NOT prologue-shaped: LEAVES.
    *
    * THE SAME DEFECT AS `publishedLeaf`, IN SWEEP A, TEN LINES ABOVE WHERE IT
-   * WAS FIXED IN SWEEP B (found 2026-08-01, mars). The call loop resolved every
+   * WAS FIXED IN SWEEP B (found 2026-08-01). The call loop resolved every
    * `bl` correctly and then dropped any target that did not open with a `push`,
    * so a leaf called from inside its own overlay was found, discarded, and
    * never appeared in residue. A fix applied to one branch and not its sibling.
@@ -209,7 +209,7 @@ export function ownerSet(overlay: string): Set<number> {
  * These are the only spans the tree states outright. Exact-C rows under
  * assets/code carry no span here — their extent is whatever the compiler
  * produces — so a candidate sitting behind an exact row cannot be ruled inside
- * a body by this data alone, and is reported as needing the owning lane's
+ * a body by this data alone, and is reported as needing the owner's
  * check rather than silently dropped.
  */
 export function manualRegions(overlay: string): { start: number; end: number }[] {
@@ -471,7 +471,7 @@ function selfTest(): void {
 function main(): void {
   const args = Bun.argv.slice(2);
   if (args.includes("--self-test")) return selfTest();
-  // A NAME IS REJECTED BY EXISTENCE, NOT BY SHAPE (fixed 2026-08-01, venus).
+  // A NAME IS REJECTED BY EXISTENCE, NOT BY SHAPE (fixed 2026-08-01).
   // This filter used to be `/^resource_[0-9a-f]+$/` with a fall-back to every
   // overlay when nothing matched, so `resource_zzz` -- a typo, a stale name, a
   // name from another game -- silently swept all 96 and exited 0. It could not

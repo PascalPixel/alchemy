@@ -17,11 +17,11 @@ typedef signed int s32;
  * INVISIBLE TO SWEEPS A, B AND C AT ONCE, which is the point of it. It
  * saves no register, so sweep C's `push` key finds nothing. Its address
  * appears in no word of the image in the base + 0x8000 spelling, so
- * sweep B finds nothing -- I scanned every 4-aligned word for
+ * sweep B finds nothing -- every 4-aligned word was scanned for
  * 0x0200d688 with and without the Thumb bit and there are none. And
  * although two rows DO reach it by `bl`, sweep A looks for unowned
  * bl-reached PROLOGUES, and this has none, so sweep A discards it on
- * the same gate Ivan found rejecting 185 published words tree-wide.
+ * the same gate that rejects 185 published words tree-wide.
  * SWEEP D is the only instrument that saw it: `overlay_gaps
  * resource_3c9` reported `CODE-SUSPECT 0x5688-0x569f 24B after 0x4bec,
  * returns at 0x569e`. Same shape and very nearly the same size as
@@ -30,7 +30,7 @@ typedef signed int s32;
  * It was also identified BY HAND, twice, before any tool caught it:
  * this overlay's 0x020059f0 and 0x020056a0 both declare it as a
  * push-less leaf because the resolver returned `unknown` for their call
- * to it. Two lanes' worth of hand-flagging did not make it a recorded
+ * to it. Repeated hand-flagging did not make it a recorded
  * owner; the unkeyed sweep did. A note that something exists is not the
  * same as the tree knowing it exists.
  *
@@ -39,15 +39,15 @@ typedef signed int s32;
  * arm calls it on scene record 23 immediately after setting that
  * record's +8/+12/+16/+24/+28.
  *
- * WHAT IT SETTLES, and it corrects the draft I wrote for 0x020037c4
- * earlier in this same shift. That row gates on
+ * WHAT IT SETTLES, and it corrects the earlier draft for 0x020037c4.
+ * That row gates on
  * `follow[56] == 0x80000000 && follow[60] == follow[56] &&
- * follow[64] == follow[60]`, and I described the condition as waiting
+ * follow[64] == follow[60]`; the condition was described as waiting
  * for the orbit steps to "park on the sentinel", flagging +60 as read
  * by that row and written by nothing. Both parts were wrong, and this
  * leaf is why: the orbit steps write live coordinates into +56 and +64
  * and never the sentinel, and it is THIS routine that writes all three
- * -- including the +60 I could not account for. So 0x020037c4 is not
+ * -- including the previously unexplained +60. So 0x020037c4 is not
  * watching an animation finish; it is testing whether the record has
  * been parked by Func_02005688. The 0x020037c4 header is corrected in
  * the same commit rather than left to be inherited.

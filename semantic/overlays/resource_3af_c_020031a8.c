@@ -62,7 +62,7 @@ typedef unsigned int u32;
  * pop {r5, r6} / pop {r0} / bx r0` at 0x02003258-0x02003264; an
  * alignment halfword and seven pool words (0x03001e70, 0x0200db58,
  * 0x0200db38, 0x0000ffff, 0x0200db50, 0x0200db60, 0xffe00000) end at
- * 0x02003283, and the next owner (0x02003284, already banked
+ * 0x02003283, and the next owner (0x02003284, already tracked
  * byte-exact) begins at 0x02003284.
  *
  * Cross-link: 0x0200db50 and 0x0200db60 are the same two blocks the

@@ -189,7 +189,7 @@ void Func_080f9010(s32 sound_id);
  * context block this function keeps at frame offset 0x1c.  The callee reads
  * context_end[-1] .. context_end[-5], i.e. the plan, the Func_080b9a44 handle,
  * the turn-order pointer, the request and the unit, in that order.  Freestanding
- * C cannot pin r9 without inline assembly, so the semantic lane spells the
+ * C cannot pin r9 without inline assembly, so the semantic reconstruction spells the
  * hidden input as an explicit trailing parameter.  A byte-exact promotion has
  * to restore the register convention.
  */

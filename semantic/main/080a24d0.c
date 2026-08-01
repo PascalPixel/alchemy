@@ -12,7 +12,7 @@
  * shared display record when the interaction was confirmed, then restores VRAM
  * and tears everything back down.  It returns the Func_080a2680 result code.
  *
- * Correctness fix, veneer audit (mars, 2026-08-01).
+ * Correctness fix, veneer audit (2026-08-01).
  *
  * Neither `Func_08007310` nor `Func_080072f0` is a function.  0x080072e4
  * begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte `bx rN; nop`

@@ -26,7 +26,7 @@ typedef signed int s32;
  * (site 0x02000496, resolving to this prologue), on the once-only path for
  * scene id 19.
  *
- * The begin/message/act/end quartet is the one banked byte-exact source
+ * The begin/message/act/end quartet is the one tracked byte-exact source
  * assets/code/resource_3b6_c_0200073c.c uses under its printed names, which
  * also fixes the void return.
  *

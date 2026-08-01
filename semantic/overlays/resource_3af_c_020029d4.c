@@ -30,7 +30,7 @@ typedef int s32;
  * The beat itself is a long, ordinary run of scene calls; the only
  * things worth naming are the two intra-overlay helpers it leans on
  * heavily -- Func_02003a00(id, value) (four sites) and
- * Func_020039ec(id) (two sites), both already banked byte-exact in
+ * Func_020039ec(id) (two sites), both already tracked byte-exact in
  * assets/code -- and Func_02000bb8, this overlay's once-only flag-0x271
  * reward grant, called near the end. That is the SECOND caller found
  * for 0xbb8, after 0x02001c14, and both calls sit inside a scripted
@@ -52,7 +52,7 @@ typedef int s32;
  * 0x0200c980, 0x00006666, 0x0000cccc, 0x0200c628, 0x03001ebc,
  * 0x00019999, 0x00001ee1, 0x00000105, 0x00000209, 0x0000092b,
  * 0x00000302) end at 0x02002b7b, and the next owner (0x02002b7c,
- * already banked byte-exact) begins with `push {r5, lr}` at
+ * already tracked byte-exact) begins with `push {r5, lr}` at
  * 0x02002b7c.
  *
  * Second read done (over 400 bytes): every `movs`/`lsls` immediate pair

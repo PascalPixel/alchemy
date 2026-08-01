@@ -39,7 +39,7 @@ interface Candidate {
   establishedThunkFamily?: string;
   boundaryShape: string;
   scopeAuditRequired: boolean;
-  blockedLane?: string;
+  blockerClass?: string;
   blockedReason?: string;
   draft: string;
   score: number;
@@ -149,7 +149,7 @@ export function semanticQueue(): Candidate[] {
   const blockersPath = join(ROOT, "semantic", "ordinary-blockers.json");
   const blockers = existsSync(blockersPath)
     ? (JSON.parse(readFileSync(blockersPath, "utf8")) as {
-      owners: Record<string, { lane: string; reason: string }>;
+      owners: Record<string, { class: string; reason: string }>;
     }).owners
     : {};
   const candidates: Candidate[] = [];
@@ -169,7 +169,7 @@ export function semanticQueue(): Candidate[] {
       const blocker = blockers[stem];
       if (blocker !== undefined) {
         candidate.score += 10_000;
-        candidate.blockedLane = blocker.lane;
+        candidate.blockerClass = blocker.class;
         candidate.blockedReason = blocker.reason;
       }
       candidates.push(candidate);
@@ -226,7 +226,7 @@ if (import.meta.main) {
           `unk=${item.unknownTypes.toString().padStart(2)} ` +
           `shape=${item.boundaryShape} ` +
           `${item.scopeAuditRequired ? "scope=transitive-unsized " : ""}` +
-          `${item.blockedLane === undefined ? "" : `blocked=${item.blockedLane} `}` +
+          `${item.blockerClass === undefined ? "" : `blocked=${item.blockerClass} `}` +
           `${item.draft}`,
         );
       }

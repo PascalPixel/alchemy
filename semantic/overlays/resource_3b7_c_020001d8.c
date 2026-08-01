@@ -45,7 +45,7 @@
  * `sites=55 distinct_targets=22`.  The inventory row says calls=47, the
  * documented lower bound.
  *
- * All three in-overlay callees are converted in this lane:
+ * All three in-overlay callees are converted in this reconstruction:
  * Func_020016a8 is the scene initialiser, Func_020008f8 the conversation node,
  * and Func_02000d70 the non-repeating variant picker whose result is used here
  * as a prize id.

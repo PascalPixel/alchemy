@@ -48,8 +48,8 @@ export function classifyOwner(assembly: string): OwnerClass {
 // `build_asm` classifies against. Structural shape alone cannot tell a
 // convertible row from a retained one: a `keep_structured_asm` owner is
 // ordinary Thumb and looks exactly like a candidate. Counting those as
-// convertible overstated the front and sent lanes at rows that are deliberately
-// staying assembly, which is what happened to the main-image lane.
+// convertible overstated the front and prioritized rows that are deliberately
+// staying assembly.
 //
 // Only the default classification -- `c_candidate` -- is work. Everything the
 // config names explicitly is a decision already taken.

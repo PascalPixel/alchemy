@@ -9,7 +9,7 @@ typedef int s32;
  * in resource_3b9_c_020002a0.c.
  *
  * FIRST MEMBER TO USE THE OVERLAY'S OWN TRAMPOLINES. It calls
- * Func_02001c48(14) and Func_02001c5c(14, 0), both already banked
+ * Func_02001c48(14) and Func_02001c5c(14, 0), both already tracked
  * byte-exact under assets/code. Their signatures are taken from those
  * files rather than re-derived: (s32) and (s32, s32).
  *
@@ -19,7 +19,7 @@ typedef int s32;
  * assets/code/resource_3b9_c_02001c5c.c settles it: it takes two
  * arguments and forwards them. The void spelling is wrong, but the
  * files carrying it belong to other rows and rewriting them mid-flight
- * would hand another lane a merge conflict.
+ * would hand another reconstruction a merge conflict.
  *
  * Shape, and note the two arms are very different lengths:
  *     open scene

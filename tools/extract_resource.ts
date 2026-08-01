@@ -154,10 +154,8 @@ function encodeGeneralInner(decoded: Uint8Array, tokens: GeneralToken[], prefill
   // A failure here must name a COORDINATE, not just a verdict.
   //
   // This threw a bare "token plan does not reconstruct decoded input", and that
-  // one sentence cost several people a great deal: three lanes chased "the 39c
-  // complaint" without knowing which resource it was, whether the replay was
-  // long or short, or where it first went wrong. Every one of them had to
-  // re-instrument this line by hand to learn anything at all. The divergence
+  // bare error hid which resource failed, whether the replay was long or short,
+  // and where it first diverged. The divergence
   // offset is the whole diagnosis — 0x10cc with 55 bytes differing and equal
   // total lengths says "localized layout shift", which is a different bug from
   // a length mismatch — and it costs one loop to compute on a path that is

@@ -5,8 +5,8 @@
  * 0xff bytes starting at `ptr`, capped by a limit read from a global
  * object's field 4.
  *
- * Core-drive census row (work/claude/queue-core.md task; census file
- * /tmp/ALCHEMY_QUEUE_CORE.md): flagged `nonstandard_thumb_branch_module`
+ * Core-drive census row (the core census task; census file
+ * the core census): flagged `nonstandard_thumb_branch_module`
  * because the automated walk couldn't classify the `b .L_08006f5a`
  * jump-to-loop-test-first shape. Leaf function -- no `push`/`pop`, a
  * bare `bx lr` return -- so it never appeared as a `push`-rooted owner
@@ -16,7 +16,7 @@
  * 0x08006f64, followed by one alignment halfword (`.inst.n 0x0000`);
  * the one-word pool (`0x02004c08`) sits inline, mid-body, skipped by
  * the initial `b .L_08006f5a` -- the same inline-pool shape already
- * documented on the overlay lanes (e.g. resource_39c_c_02002844.c).
+ * documented on the overlay reconstructions (e.g. resource_39c_c_02002844.c).
  * One argument, `s32` return (the remaining budget when the scan
  * stopped).
  *

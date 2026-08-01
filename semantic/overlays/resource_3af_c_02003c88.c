@@ -8,7 +8,7 @@ typedef int s32;
  *
  * THIS OWNER IS IN NO LIST AT ALL -- not a queue row, not in
  * assets/code, not in out/decomp/overlays.json, and not reachable by
- * any `bl` in the overlay. It is Ivan's resource_380 lesson repeating:
+ * any `bl` in the overlay. It repeats the resource_380 lesson:
  * an owner can be absent from every inventory. Here is how it was
  * bounded, since the method is the transferable part:
  *
@@ -26,7 +26,7 @@ typedef int s32;
  *
  * The same sweep bounds the rest of the overlay: above 0x02004218 there
  * is exactly one prologue-shaped halfword in the whole remaining
- * 0x1914 bytes (0x02004218 itself, already banked), so the tail is
+ * 0x1914 bytes (0x02004218 itself, already tracked), so the tail is
  * veneers, pointer tables and data with no further owners hiding in it.
  *
  * Structure. Opens the scripted-scene bracket, dresses slot 0, then

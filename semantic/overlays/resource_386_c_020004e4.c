@@ -25,10 +25,10 @@ typedef signed int s32;
  * LINK-BASE PROOF, and the strongest one available here.  The pool word
  * 0x02008031 is odd; under `offset = value - 0x8000` it is `0x30 + 1`, that
  * is `Func_02000030` plus the Thumb bit — and assets/code/resource_386_c_
- * 02000030.c is a banked byte-exact source for exactly that address.  It is
+ * 02000030.c is a tracked byte-exact source for exactly that address.  It is
  * passed to Func_080000d0, the per-frame task installer, so this word is a
  * task callback and not data.  That single word proves the base against
- * already-banked material and names 0x02000030's role at the same time.
+ * already-tracked material and names 0x02000030's role at the same time.
  *
  * The displacement/value trap, additive form (HANDOVER).  r2 is built as
  * 224 << 1 = 448 and used as the workspace displacement; `adds r2, #73`

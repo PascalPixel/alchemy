@@ -15,7 +15,7 @@ typedef unsigned int u32;
  * bx r0` at 0x02001550.  r0 holds the popped return address, so the owner is
  * `void`.  Bytes 0x0200155a-0x020015b3 are the literal pool (22 words,
  * listed by `overlay_show.ts`), reached only by `ldr rN, [pc, #imm]`.  The
- * next prologue at 0x020015b4 is a separate owner in this lane.
+ * next prologue at 0x020015b4 is a separate owner in this reconstruction.
  *
  * This owner is the continuation of 0x02001084, which calls it as its last
  * real action.

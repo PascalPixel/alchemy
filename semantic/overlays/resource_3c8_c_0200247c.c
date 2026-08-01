@@ -35,7 +35,7 @@ typedef unsigned char u8;
  *
  * `Func_02007540(target)->callback = 0x0200a2a5` installs Func_020022a4: at
  * this overlay's proven 0x02008000 link base, 0x0200a2a5 - 0x8000 - 1 =
- * 0x020022a4, this lane's `s32`-returning per-frame callback that parks an
+ * 0x020022a4, this reconstruction's `s32`-returning per-frame callback that parks an
  * actor one unit above the object its kind word names.
  *
  * `Func_02004966` is called two bytes before the real prologue at

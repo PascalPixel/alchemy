@@ -1,5 +1,5 @@
 /*
- * Correctness fix, veneer audit (mars, 2026-08-01).
+ * Correctness fix, veneer audit (2026-08-01).
  *
  * `Func_080072f8` and `Func_080072fc` are not functions.  0x080072e4 begins the GCC
  * `__call_via_rN` veneer bank -- fifteen four-byte `bx rN; nop` entries,

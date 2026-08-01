@@ -58,7 +58,7 @@ struct EffectState_080f7460 {
  * cannot be mistaken for an argument. This is the second site to show the
  * two-argument form of 0x03000164, after 0x080bd87e in
  * semantic/main/080bd850.c, where nothing in the whole function writes r2.
- * 0x03000164 itself remains UNESTABLISHED -- an exact-lane question -- and
+ * 0x03000164 itself remains UNESTABLISHED -- an exact-reconstruction question -- and
  * nothing here settles what it does.
  *
  * A TWO-ENTRY RENDERER TABLE LIVES IN THIS FRAME, the same idiom as

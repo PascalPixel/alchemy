@@ -24,7 +24,7 @@ typedef unsigned char u8;
  * whole first-time body; the second guards only a second increment of
  * the counter. So the workspace+472 u16 is bumped once or twice
  * depending on how far the player lets the beat run, not exactly once.
- * That is a genuine departure from the converging shape I recorded for
+ * That is a genuine departure from the converging shape recorded for
  * the resource_3c9 copies, where the bump is duplicated so it happens
  * once either way. Do not assume the converging form.
  *

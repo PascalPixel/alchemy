@@ -65,7 +65,7 @@ typedef int s32;
  * (0x0200d1d8, 0x00001f69, 0x00002016, 0x03001ebc, 0x00013333,
  * 0x00009999, 0x03090000, 0x00002014, 0x00000101, 0x00006014,
  * 0x00008014, 0x0000cccc, 0x00019999, 0x0200c918) end at 0x02004217,
- * and the next owner (0x02004218, already banked byte-exact) begins
+ * and the next owner (0x02004218, already tracked byte-exact) begins
  * there.
  *
  * Second read done (over 400 bytes): the correction was the gate's

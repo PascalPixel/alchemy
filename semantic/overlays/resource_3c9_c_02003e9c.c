@@ -21,14 +21,14 @@ typedef unsigned int u32;
  * resource_38b_c_02000584.c) is incremented on EITHER path, before or
  * after the Func_02000894(2) call depending on the arm. The same
  * Func_0808a070==1 gate closes resource_3c9_c_020008b4.c; this confirms
- * the shared idiom my earlier queue note guessed at, resolved here as
+ * the shared idiom an earlier note proposed, resolved here as
  * "advance the beat exactly once, arm-dependent ordering".
  *
  * Complete owner: `push {r5, r6, lr}` + the r8/sl spill at
  * 0x02003e9c-0x02003ea2 through `pop {r3, r5} / mov r8,r3 / mov sl,r5 /
  * pop {r5, r6} / pop {r0} / bx r0` at 0x02004200-0x200420a, trailing
  * pool 0x200420c-0x200423b; next owner prologue at 0x0200423c
- * (resource_3c9_c_0200423c.c, drafted this shift). No incoming
+ * (resource_3c9_c_0200423c.c, drafted in this reconstruction). No incoming
  * arguments read, so `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only

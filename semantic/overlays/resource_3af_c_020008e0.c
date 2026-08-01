@@ -43,7 +43,7 @@ typedef unsigned int u32;
  * Complete owner: `push {r5, r6, r7, lr}` at 0x020008e0 through
  * `pop {r5, r6, r7} / pop {r1} / bx r1` at 0x02000930-0x02000934 -- note
  * the return is through r1, not r0, because r0 carries the return value
- * 1. No literal pool; the next owner (0x02000938, already banked
+ * 1. No literal pool; the next owner (0x02000938, already tracked
  * byte-exact) begins at 0x02000938.
  *
  * Uncertainty: record +98 is the counter and +6 the facing by shape;

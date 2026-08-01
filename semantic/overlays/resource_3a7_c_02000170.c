@@ -1,5 +1,5 @@
 /*
- * resource_3a7 "push the object in front of me" step at 0x02000170, 332 bytes.
+ * resource_3a7 "push the object in front of the actor" step at 0x02000170, 332 bytes.
  *
  * Complete owner: `push {r5, r6, r7, lr} / mov r7,sl / mov r6,r9 / mov r5,r8 /
  * push {r5, r6, r7} / sub sp, #12` at 0x02000170 through the matching

@@ -3,8 +3,8 @@ typedef signed int s32;
 
 /*
  * Resource 3b3 unindexed helper at 0x02000ec8 (144 bytes, 14 calls).
- * Converted from a parked scope note (work/claude/notes/resource_3b3_ec8.md)
- * per Vale's steer, drafted alongside its sibling 0x02000f58 which shares
+ * Converted from a parked scope note and drafted alongside its sibling
+ * 0x02000f58, which shares
  * the same out-param call shape against a different helper
  * (`Func_02001cc4` here, `Func_02001d54` there).
  *

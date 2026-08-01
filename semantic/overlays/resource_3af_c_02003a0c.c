@@ -8,7 +8,7 @@ typedef int s32;
  * It is case 19 of the 0x02001444 entry driver, the last live case.
  *
  * THE PACKED-ID FORM IS SOLVED HERE. This owner calls Func_020039ec
- * (the banked two-line helper `Func_0808a180(id, 0); Func_0808a010(10);`)
+ * (the tracked two-line helper `Func_0808a180(id, 0); Func_0808a010(10);`)
  * five times, once with the plain id 21 and four times with the pool
  * constants 0x6014, 0x5015, 0x9016 and 0xa014. Lined up, the low byte
  * is always an actor this scene is already driving -- 0x14 = 20,

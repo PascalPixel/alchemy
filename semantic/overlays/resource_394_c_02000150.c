@@ -14,13 +14,13 @@ typedef signed int s32;
  * Called once, from 0x02000194's tail.
  *
  * 0x020092c4 is a pointer CELL, not the value: the body is
- * `ldr r3,[pc] / ldr r3,[r3] / ldrsh r3,[r3]`, and banked byte-exact
+ * `ldr r3,[pc] / ldr r3,[r3] / ldrsh r3,[r3]`, and tracked byte-exact
  * assets/code/resource_394_c_020008b0.c already declares it
  * `extern u16 *Data_020092c4` and writes through it.  The selector it points
  * at is the same one 0x02000194 branches on.
  *
  * Cross-check on the argument order: the else arm's six arguments are
- * (0, 0, 1, 4, 6, 9), which is literally the argument list banked byte-exact
+ * (0, 0, 1, 4, 6, 9), which is literally the argument list tracked byte-exact
  * assets/code/resource_394_c_020008b0.c passes to the same import under its
  * printed name Func_020019cc.  That fixes the four-register-plus-two-stack
  * spelling without inference.

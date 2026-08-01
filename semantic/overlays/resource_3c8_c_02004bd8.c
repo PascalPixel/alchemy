@@ -43,7 +43,7 @@ typedef unsigned char u8;
  * `Data_0200f77c[slot]` / `Data_0200f7ec[slot]`.
  *
  * The map-position table is selected by the scene id `Data_02000240[224]`,
- * the same selector the byte-exact sibling 0x02000e04 and this lane's
+ * the same selector the byte-exact sibling 0x02000e04 and this reconstruction's
  * 0x02002f8c read.  Scene 0xb9 uses a four-entry table, everything else an
  * eight-entry table; both hold `(x >> 20, z >> 20)` pairs.  When no entry
  * matches, the index runs one past the end (4 or 8) and that slot is used, so

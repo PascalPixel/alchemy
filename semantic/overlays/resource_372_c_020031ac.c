@@ -21,8 +21,8 @@ typedef unsigned char u8;
  * (`adds r0, #60` / `adds r3, #100`), so the store after it belongs to the
  * 0x020080ea result computed before the branch.
  *
- * `work/claude/notes/resource_372-31ac.md` parked this row for the byte-exact
- * lane on size and on those mid-function pools.  Neither is a semantic
+ * `a prior working note` parked this row for the byte-exact
+ * reconstruction on size and on those mid-function pools.  Neither is a semantic
  * obstacle; there are no jump tables and no DMA blocks in the span.
  *
  * The single stack word holds `obj19 + 85`, saved at 0x020035b0 and reused at

@@ -55,7 +55,7 @@ typedef unsigned int u32;
  * still open in this audit read a callee out of a heap record whose contents
  * depend on what ran before, and those SHOULD end as written uncertainties
  * rather than names. A page of bounded uncertainties is this job going right,
- * not a lane giving up.
+ * not a reconstruction giving up.
  */
 typedef void (*Renderer_080e89ec)(
     s32 target, void *source, s32 x, s32 y, u32 width, s32 height);

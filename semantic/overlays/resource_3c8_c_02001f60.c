@@ -20,7 +20,7 @@ typedef unsigned char u8;
  * call at 0x020070d0 and lands on the same unwind.
  *
  * `Data_0200d128` is the four-entry `(x >> 20, z >> 20)` position table this
- * lane's 0x02004bd8 also reads for scene 0xb9; the match index is scaled by 8
+ * reconstruction's 0x02004bd8 also reads for scene 0xb9; the match index is scaled by 8
  * because each entry is a pair of words.  A match additionally requires the
  * actor's `y` to be non-negative.  Index 5 is the sentinel for "no tile", and
  * it is also written back over a real index when a second follower is found

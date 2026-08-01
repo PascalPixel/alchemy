@@ -20,7 +20,7 @@ typedef unsigned char u8;
  * returns nothing.  The early exit at 0x02002d98 skips the loop's own tail
  * call at 0x02007d42 and lands on the same unwind.
  *
- * `Data_0200d164` is the eight-entry `(x >> 20, z >> 20)` table this lane's
+ * `Data_0200d164` is the eight-entry `(x >> 20, z >> 20)` table this reconstruction's
  * 0x02004bd8 reads for every scene other than 0xb9; entries are word pairs,
  * so the match index is scaled by 8.  A match additionally requires the
  * actor's `y` to be non-negative.  Index 8 is the "no tile" sentinel and is

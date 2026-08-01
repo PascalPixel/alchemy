@@ -10,11 +10,11 @@ typedef signed int s32;
  * the brightness back out and hand control on.
  *
  * It is the root by the call graph, not by assumption.  Nothing inside the
- * strict rows calls it; its one caller is the banked byte-exact sibling
+ * strict rows calls it; its one caller is the tracked byte-exact sibling
  * `assets/code/resource_36f_c_02000054.c`, whose `bl` at 0x02000080 prints as
  * `Func_0200036a` and resolves through the +2 rule to 0x036a - 0x080 - 2 =
  * 0x02e8 — this function.  (That source was written with the printed, wrong
- * names, which HANDOVER records as the normal state of banked overlay C; the
+ * names, which HANDOVER records as the normal state of tracked overlay C; the
  * mapping is consistent and inverts.)  So this scene runs when the mode
  * halfword `Data_02000240[225]` is 10.
  *

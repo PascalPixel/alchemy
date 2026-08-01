@@ -17,7 +17,7 @@ typedef signed int s32;
  * Func_0200007c, converted alongside it.  Link-base evidence is in the header
  * of `semantic/overlays/resource_3b0_c_02000240.c`.
  *
- * Object layout is taken from the BANKED BYTE-EXACT sibling
+ * Object layout is taken from the tracked byte-exact sibling
  * `assets/code/resource_3b0_c_02000030.c`, which types the same record: +8 is
  * the s32 X coordinate and +12 the s32 Z coordinate.  That source reproduces
  * the ROM, so the two field offsets are evidence rather than inference.  The

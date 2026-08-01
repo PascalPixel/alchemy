@@ -4,7 +4,7 @@
  * Main-image owners at 0x08002dd8 and 0x08002df0, 40 bytes total: a pair
  * of leaf helpers sharing one small "transfer state" table at
  * 0x03001e50, plus the table-base literal pool itself. Census row
- * (work/claude/queue-core.md task; /tmp/ALCHEMY_QUEUE_CORE.md) flagged
+ * (core census) flagged
  * this `shared_literal_thumb_helper_module` because the automated walk
  * saw two adjacent leaf functions sharing one trailing pool rather than
  * a single push-rooted owner.

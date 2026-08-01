@@ -26,7 +26,7 @@
  * separates this table from the installed-handler pool words elsewhere in the
  * overlay.  A fourth witness follows in case B: 0x020086e5 handed to
  * Func_080000d0 is Func_020006e4 + 1, and 0x020006e4 has a BYTE-EXACT source in
- * assets/code, so the base is confirmed against banked material.
+ * assets/code, so the base is confirmed against tracked material.
  *
  * Jump table, index `sub - 1` for `sub` in 1..14:
  *   1,2,3,4      -> 0x02000dd4  (case A)

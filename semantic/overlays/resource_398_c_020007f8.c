@@ -28,7 +28,7 @@ typedef unsigned char u8;
  *
  * Coordinate views.  The s16 at +0x0a and +0x12 are the integer parts of the
  * 16.16 words at +0x08 and +0x10, so `(integer + (step >> 16)) >> 4` is the
- * neighbouring tile.  That is exactly the pair the banked byte-exact
+ * neighbouring tile.  That is exactly the pair the tracked byte-exact
  * assets/code/resource_398_c_020007c4.c compares as `p[2] >> 20` and
  * `p[4] >> 20` — the lookup takes tile coordinates.
  *

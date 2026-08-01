@@ -47,8 +47,8 @@ typedef signed int s32;
  * free cross-check that both were read correctly.
  *
  * `Data_02000240 + 450` is the s16 sub-state slot of the shared work area,
- * `Data_02000240[225]`, as the banked `assets/code/resource_3a9_c_02000308.c`
- * and the banked resource_36f sources spell it.
+ * `Data_02000240[225]`, as the tracked `assets/code/resource_3a9_c_02000308.c`
+ * and the tracked resource_36f sources spell it.
  *
  * Uncertainties: 0x911 is read as an event-flag id from its argument position
  * on Func_080770c0; the six-argument Func_08009180(30, 14, 30, 16, 4, 2) is the

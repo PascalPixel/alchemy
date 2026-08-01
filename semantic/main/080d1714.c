@@ -1,5 +1,5 @@
 /*
- * Correctness fix, veneer audit (mars, 2026-08-01).
+ * Correctness fix, veneer audit (2026-08-01).
  *
  * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
  * `bx rN; nop` entries, r0..lr, ending at 0x08007320.  A `bl` into that range
@@ -34,11 +34,11 @@
  *
  * On the square-root gateway: this file's own header already recorded that it
  * "only consumes its first argument", and it was right, while its call sites
- * passed three.  That reading was reached from usage; mine was reached from
+ * passed three. That reading was reached from usage; a separate audit used
  * register liveness at the branch (only r0 is ever set; r1 and r2 hold live
  * intermediates from computing r0).  Two independent methods agreeing is
  * worth more than two drafts agreeing -- which is exactly the trap that made
- * me type this routine with three arguments in batch 3.  Still not asserted
+ * the routine being typed with three arguments in batch 3. Still not asserted
  * as a name; the type says arity and return, and the comment says the rest.
  */
 #include "types.h"

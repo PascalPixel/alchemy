@@ -32,12 +32,12 @@ typedef unsigned int u32;
  *   0x2003e5e -> veneer -> Func_080770c8(0x211)         set the same story flag just queried, established
  *   0x2003e66 -> veneer -> Func_08009098(record, script)   established, "attach an animation script" (resource_3a7_c_02000b8c.c, resource_39a_c_02001c18.c, resource_3c8_c_02000118.c)
  *   0x2003e74 -> veneer -> Func_080000c0(1)              established, advance the task scheduler
- *   0x2003e88, 0x2003e9a -> raw prologue -> Func_02002e18(0, handle)   sibling item-28 owner drafted earlier this session (resource_3bc_c_02002e18.c)
+ *   0x2003e88, 0x2003e9a -> raw prologue -> Func_02002e18(0, handle)   sibling item-28 owner drafted earlier in the reconstruction (resource_3bc_c_02002e18.c)
  *   0x2003e90, 0x2003ea2, 0x2003eb2 -> veneer -> Func_08015120(handle, mode)   established, release/select by handle
  *   0x2003eba -> veneer -> Func_08015040(0x96a, 3)       established shape, id + mode (resource_37f/38b/383)
  *   0x2003ec0 -> veneer -> Func_08009148(record)         unestablished, single argument
  *
- * 0x03001f3c is the second overlay workspace pointer this session already
+ * 0x03001f3c is the second overlay workspace pointer this reconstruction already
  * saw in resource_3bc_c_0200457c.c; this owner reads its +226/+228 (u16),
  * +232 and +236 (s32) fields.  Data_02000240+500 is the established
  * subject-selector idiom, read here twice (fresh each time, matching the

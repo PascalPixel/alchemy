@@ -61,7 +61,7 @@
  * Func_080000c0 - 17 sites over 6 distinct targets, exactly the tool's
  * `sites=17 distinct_targets=6` and the inventory row's calls=17.
  *
- * Func_02000e44 is banked byte-exact C in this very overlay
+ * Func_02000e44 is tracked byte-exact C in this very overlay
  * (`assets/code/resource_3b7_c_02000e44.c`): it looks a slot record up and,
  * when it exists, writes its second argument to the record's +0x54 byte.  So
  * the six calls here are six per-slot tag writes, and the Func_0808a080 /

@@ -256,7 +256,7 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // the mode is evidenced even while its region is still assembly. 080170c4,
 // 0800d304, 080c08a8 and 0808fecc are four such -- all pinned near-misses whose
 // residual is scheduler-internal, and delisting them would make diagnose lie to
-// the next agent that picks them up. 0808fecc's residual is the smallest of the
+// later diagnostics. 0808fecc's residual is the smallest of the
 // four: the mode takes it from 26 mismatches to 4, and what remains is the
 // return-value copy and the stack restore in the opposite order. 08005a78 is a
 // fifth: 15 mismatches unrouted, 17 on the mode alone and 11 with sched2 also
@@ -771,7 +771,7 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   "assets/code/resource_386_c_0200011c.c",
   // resource_383:091c and :19e4 are the plain form of the tell: one call takes a
   // shifted constant and the `lsls` that finishes r1 ties with the `movs` that
-  // sets r0. Both are transcriptions of Venus's semantic sources, which name
+  // sets r0. Both are transcriptions of the semantic sources, which name
   // this overlay's callees by veneer rather than raw, so every site was renamed.
   "assets/code/resource_383_c_0200091c.c",
   "assets/code/resource_383_c_020019e4.c",
@@ -1884,8 +1884,8 @@ export function callbackArityLint(): void {
 // other overlay that later gains a row at the same offset. It does not fail as
 // a byte diff — it surfaces two layers away as `palette token plan does not
 // reconstruct input` from `build_assets`, on an overlay the change never
-// mentions. @venus lost a cycle to that shape and proposed this check; it is a
-// generalisation of the rule already written above `NO_INTERWORK_SOURCES`, and
+// mentions. This check generalises the rule already written above
+// `NO_INTERWORK_SOURCES`, and
 // like the scan above it needs no toolchain, so `main` can run it too.
 export function overlayStemCollisionLint(): void {
   const root = dirname(dirname(Bun.fileURLToPath(import.meta.url)));

@@ -17,7 +17,7 @@ typedef signed int s32;
  *
  * A long flat setter cascade (~26 calls), one workspace-slot store using
  * the `offset<<1, +bias` idiom also seen in 0x020048e8's block at
- * 0x02004a90 (see work/claude/notes/resource_3b1_48e8.md), followed by a
+ * 0x02004a90 (see a prior working note), followed by a
  * four-way `Value_XXXXXXXX` else-if chain (each arm one call, no further
  * nesting) with a final unconditional default arm.
  *

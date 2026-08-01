@@ -53,7 +53,7 @@ typedef unsigned int u32;
  *   +0x100000), ids 0..3 also adding it to field+0x10, each followed by
  *   Func_02005688(record).
  *
- * CORRECTION (2026-08-01, venus, while drafting 0x020012c8): the two
+ * CORRECTION (2026-08-01, found while drafting 0x020012c8): the two
  * ODD pool pointers this header used to list as unresolved are not
  * unresolved. Under the tree's base + 0x8000 rule (tracked HANDOVER,
  * "In-image pointers are spelled base + 0x8000") 0x0200b6d1 is offset

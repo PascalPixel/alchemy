@@ -1,5 +1,5 @@
 /*
- * resource_3a7 "claim the entity standing on my tile" predicate at 0x02000944,
+ * resource_3a7 "claim the entity occupying the actor's tile" predicate at 0x02000944,
  * 124 bytes.
  *
  * Complete owner: `push {r5, r6, r7, lr}` at 0x02000944 through `pop {r5, r6,

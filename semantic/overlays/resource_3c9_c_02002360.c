@@ -56,9 +56,9 @@ typedef int s32;
  * forward `if` blocks. Of the six real unconditional `b.n`, FIVE are
  * the pool skips above and the sixth (0x02002c54) is a genuine if/else
  * join -- the then-arm of the second Func_0808a070 test jumps over the
- * else-arm at 0x02002c70. (An earlier measuring pass of mine recorded
+ * else-arm at 0x02002c70. (An earlier measuring pass recorded
  * "no unconditional joins at all"; that was wrong, and this is the
- * sixth handoff figure of mine to have been corrected by re-reading.)
+ * sixth handoff figure corrected by re-reading.)
  *
  * THE TWO ORBIT LOOPS are the point of the 136-byte frame. Each runs
  * i = 0..16 inclusive, computes 3*Func_08000120(i << 12) and

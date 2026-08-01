@@ -12,14 +12,14 @@ WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
 "$ROOT/../alchemy-gcc/dist/xgcc" -B"$ROOT/../alchemy-gcc/dist/" -O2 -mthumb -mthumb-interwork \
   -mcpu=arm7tdmi -fno-builtin -nostdinc -ffreestanding -fcall-used-r4 -Iinclude ${EXTRA_CFLAGS:-} -S "$4" -o "$WORK/m.s" 2>/dev/null
-grep -E "^	[a-z]" "$WORK/m.s" | sed 's/\t/ /g;s/^ *//' > "$WORK/mine.txt"
+grep -E "^	[a-z]" "$WORK/m.s" | sed 's/\t/ /g;s/^ *//' > "$WORK/candidate.txt"
 bun tools/overlay_show.ts "$1" "$2" -n "$3" 2>/dev/null | sed 's/^ *[0-9a-f]*:\t[0-9a-f ]*\t//' \
   | grep -v "^--- pool\|^  0x" | sed 's/\t/ /g;s/  *@.*//' > "$WORK/refall.txt"
 python3 - "${5:-8}" <<'PY'
 import os,re,sys
 work=os.environ['WORK']
 r=[l.strip() for l in open(work+'/refall.txt') if l.strip()]
-m=[l.strip() for l in open(work+'/mine.txt') if l.strip()]
+m=[l.strip() for l in open(work+'/candidate.txt') if l.strip()]
 r=r[:len(m)+6]
 ALU=('and','orr','eor','add','sub','lsl','lsr','asr','mul','bic','adc','sbc','ror')
 def n(s):
@@ -41,6 +41,6 @@ d=[];
 for i in range(max(len(r),len(m))):
     a=n(r[i]) if i<len(r) else '---'; b=n(m[i]) if i<len(m) else '---'
     if a!=b: d.append((i+1,a,b))
-print('ref=%d mine=%d groups_differing=%d'%(len(r),len(m),len(d)))
+print('ref=%d candidate=%d groups_differing=%d'%(len(r),len(m),len(d)))
 for i,a,b in d[:int(sys.argv[1] if len(sys.argv)>1 else 8)]: print('%4d  %-30s | %s'%(i,a,b))
 PY

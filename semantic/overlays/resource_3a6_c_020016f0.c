@@ -18,7 +18,7 @@ typedef signed int s32;
  * transcribed as compiled: 516 is stored unconditionally and 256
  * replaces it inside the scene-93 arm, so the first value is only
  * observable to something that runs between them -- nothing here
- * does.  I have not folded it away.
+ * does. The first write is therefore kept.
  *
  * Complete owner: `push {lr}` at 0x020016f0 through `movs r0, #0 /
  * pop {r1} / bx r1` at 0x02001732-0x02001736, alignment halfword,

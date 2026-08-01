@@ -31,7 +31,7 @@ typedef signed int s32;
  * used.
  *
  * First `Func_0808a018` and last `Func_0808a020` is the scene bracket the
- * overlay lane's convention predicts, and it is the cheapest check that the
+ * overlay reconstruction's convention predicts, and it is the cheapest check that the
  * call assignment above is in the right order.  The bracket is symmetric here:
  * there is no arm that reaches the close without the open, so nothing needs
  * preserving in the asymmetric form documented for resource_3ae.

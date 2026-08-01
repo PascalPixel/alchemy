@@ -20,7 +20,7 @@ typedef signed int s32;
  * epilogue `pop {r5, r6, r7} / pop {r0} / bx r0` at 0x020002fa, so the popped
  * word is the return address and the owner is **void**.  Code runs
  * 0x02000240..0x020002ff; the literal pool is the two words
- * 0x02000300..0x02000307 and 0x02000308 is the next (banked byte-exact)
+ * 0x02000300..0x02000307 and 0x02000308 is the next (tracked byte-exact)
  * prologue.  200 bytes, matching the inventory row.
  *
  * All 13 call sites resolved with `bun tools/overlay_call_targets.ts
@@ -33,7 +33,7 @@ typedef signed int s32;
  *
  * The clearing loop runs slots 8..65 inclusive (`movs r5,#8` /
  * `cmp r5,#65 / bls`) and skips a slot whose record comes back null; the +85
- * byte it zeroes is the same field the banked
+ * byte it zeroes is the same field the tracked
  * `assets/code/resource_36f_c_02000054.c` clears on a scene record, so the
  * offset is evidence rather than inference.  The later single clear of the
  * player's own +85 byte does NOT test for null, and that asymmetry is in the
@@ -55,7 +55,7 @@ typedef signed int s32;
  * `+ 364` (built as `movs r2,#182 / lsls r2,r2,#1`, the documented
  * displacement-as-shifted-constant habit) is the s16 sub-state slot of the
  * workspace the pointer cell 0x03001ebc addresses — one dereference, as the
- * banked `assets/code/resource_3a9_c_02000308.c` spells it.  It is read twice,
+ * tracked `assets/code/resource_3a9_c_02000308.c` spells it.  It is read twice,
  * once for the switch and once for Func_0808a248, and both reads are kept.
  *
  * Uncertainty: 158 is a Func_080f9010 cue id from its argument position.

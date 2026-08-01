@@ -60,7 +60,7 @@ typedef unsigned int u32;
  * remaining memory sites in this audit read a callee out of a heap record
  * whose contents depend on what ran before, and those SHOULD end as written
  * uncertainties rather than names. A page of bounded uncertainties is this
- * job going right, not a lane giving up.
+ * job going right, not a reconstruction giving up.
  */
 typedef void (*Renderer_080dab74)(
     s32 target, void *source, u8 x, s16 y, s32 width, s32 height);

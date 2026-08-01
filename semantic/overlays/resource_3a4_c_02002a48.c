@@ -54,8 +54,8 @@ typedef signed int s32;
  * stamps into these same two fields, but 0xfda6f337 does not -- it is
  * -600.06 in 16.16, three orders off its sibling. The word is verified
  * twice, from `overlay_show`'s pool listing and again by reading the image
- * bytes directly, and it is transcribed as it stands. I do not have an
- * explanation for the asymmetry and am not inventing one.
+ * bytes directly, and it is transcribed as it stands. The asymmetry remains
+ * unexplained.
  *
  * The record field roles are recorded by offset: +8 the axis this row
  * drifts, +16, +24 and +28 the three advanced fields, +100 a halfword read

@@ -8,7 +8,7 @@ typedef unsigned int u32;
  * Link base proof for this overlay: see the header of
  * semantic/overlays/resource_3ce_c_02000b10.c — fifteen odd
  * `0x0200[89ab]xxx` words in `assets/code/resource_3ce_overlay.s` resolve at
- * `word - 0x8000 - 1` onto already-banked byte-exact sibling entries.  Under
+ * `word - 0x8000 - 1` onto already-tracked byte-exact sibling entries.  Under
  * that base this owner's three even pool words 0x02009390, 0x0200939c and
  * 0x020093b4 are IN-IMAGE DATA at file offsets 0x1390, 0x139c and 0x13b4
  * (parity test: even = data, odd = Thumb entry), and all three are the first

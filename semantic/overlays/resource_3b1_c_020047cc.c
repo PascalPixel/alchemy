@@ -10,7 +10,7 @@ typedef signed int s32;
  * (`r3 = a0 - 18`, unsigned range 0..8, i.e. `a0` 18..26 inclusive;
  * anything outside that is a silent no-op). LINK BASE 0x02008000 (same
  * as the 0x020048e8 dispatcher documented in
- * work/claude/notes/resource_3b1_48e8.md and the 0x0200012c dispatcher
+ * a prior working note and the 0x0200012c dispatcher
  * in assets/code/resource_3b1_c_0200012c.c): table pool word
  * 0x0200c7e0 resolves to file offset 0x47e0, immediately after `mov pc,
  * r3`, and its 9 entries' targets (each `value - 0x02008000`) all land
@@ -18,7 +18,7 @@ typedef signed int s32;
  * at 0x02004868 (the table-base address itself) is included per the
  * usual pool rule, immediately followed by the next owner's push {lr}
  * at 0x0200486c, already this overlay's row `0x0200486c` (already
- * adopted exact earlier this session), so the span is
+ * adopted exact earlier in the reconstruction), so the span is
  * 0x020047cc-0x0200486c, 160 bytes.
  *
  * Raw callee naming.

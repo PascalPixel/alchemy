@@ -18,7 +18,7 @@ typedef unsigned char u8;
  * already have byte-exact sources here (0x02008031 = Func_02000030 + 1,
  * 0x02008261 = Func_02000260 + 1, 0x0200828d, 0x020082b9, 0x020082d5,
  * 0x020084e9, 0x02008509, 0x0200859d, 0x020085bd, 0x02008955, 0x02008965),
- * so the base is proven against banked material.
+ * so the base is proven against tracked material.
  *
  * Role, from the call graph: the overlay initialiser Func_02000728 installs
  * 0x02008171 (= Func_02000170 + 1) as the per-frame callback of actors 16 and

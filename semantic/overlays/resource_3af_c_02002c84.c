@@ -11,7 +11,7 @@ typedef unsigned int u32;
  * is CLEAR.
  *
  * Drafted from the structural map in
- * work/claude/notes/resource_3af_02002c84.md, written when this row was
+ * a prior working note, written when this row was
  * parked. Every claim in that map was re-verified against the bytes
  * before being written here; the map's phase 5 was unread at the time
  * and is now read.
@@ -97,7 +97,7 @@ typedef unsigned int u32;
  * 0x00001ee8, 0x00000105, 0x00001ee9, 0x00001eea, 0x00001eeb,
  * 0x00001eec, 0x00000107, 0x00001eed, 0x0200c8e0, 0x00001eee,
  * 0x0000022b, 0x0000012f) end at 0x0200314f, and the next owner
- * (0x02003150, already banked byte-exact) begins there.
+ * (0x02003150, already tracked byte-exact) begins there.
  *
  * Second read done: the correction was phase 4's dressing conditional.
  * A first pass read `cmp r3,#20` at 0x02002e88 as the jump table's own

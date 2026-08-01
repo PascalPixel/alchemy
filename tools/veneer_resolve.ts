@@ -766,7 +766,7 @@ export function stripComments(source: string): string {
 const VENEER_CALL = /\bFunc_0800(?:72(?:e4|e8|ec|f0|f4|f8|fc)|730[0-9a-c]|731[0-9c])\s*\(/;
 
 /**
- * ISAAC'S RULE, applied to this audit: wherever partial work is
+ * Audit rule: wherever partial work is
  * indistinguishable by eye from complete work, assert the invariant on the
  * output and throw.
  *
@@ -781,7 +781,7 @@ const VENEER_CALL = /\bFunc_0800(?:72(?:e4|e8|ec|f0|f4|f8|fc)|730[0-9a-c]|731[0-
  * The claim is the header marker, written by hand at the moment the file is
  * converted; the check is the absence of live calls. Note the scope:
  * `semantic/` only. The 37 exact `src/` files deliberately still declare their
- * phantoms per Vale's standing ruling and must NOT be swept in here.
+ * phantoms and must not be swept in here.
  */
 function semanticSources(root: string): string[] {
   const found: string[] = [];

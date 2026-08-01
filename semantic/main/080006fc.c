@@ -23,12 +23,12 @@
  *
  * SmshContext is named here rather than promoted to include/ -- nothing
  * using it is exact-adopted yet (Func_0800070c stays opaque, and this file
- * and jupiter's semantic/main/080f9c44.c are both semantic-tier drafts on
- * separate branches), so it follows the same local-struct convention as
+ * and semantic/main/080f9c44.c are both semantic-tier drafts), so it
+ * follows the same local-struct convention as
  * semantic/main/080fae58.c and semantic/main/080f9ef8.c rather than
  * touching the include/ registry ahead of an exact owner. Field layout
- * below is posted to chat verbatim for jupiter to mirror in his own file
- * until one of these goes exact and the struct can be promoted for real.
+ * below is mirrored in 080f9c44.c until one of these goes exact and the
+ * struct can be promoted for real.
  *
  * Fields 0x00/0x04/0x0b/0x2c/the 12x64-byte array at 0x50 come from the
  * exact src/080fa8d4.c (ground truth). Fields 0x06/0x10/0x14/0x18/0x1c/

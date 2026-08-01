@@ -13,12 +13,12 @@ typedef unsigned char u8;
  * 0x02000244 (0xffff0001), 0x0200029c (0xffff0002), 0x0200021c (0xffff0003),
  * 0x02000208 (0xffff0008), 0x020008c4 (0xffff0009), 0x02000f14 (0xffff000b),
  * 0x020001f8 (0xffff000c), 0x0200117c (0xffff000d), 0x02001170 (0xffff000f)
- * and 0x02000bb8 (0xffff0005) — nine of which are already banked byte-exact
+ * and 0x02000bb8 (0xffff0005) — nine of which are already tracked byte-exact
  * siblings.  So this is a no-argument command handler, command id 0x0a.
  *
  * Link base proof for this overlay: `assets/code/resource_3ce_overlay.s`
  * holds 31 distinct `0x0200[89ab]xxx` words, and FIFTEEN of the odd ones
- * resolve at `word - 0x8000 - 1` onto already-banked byte-exact sibling
+ * resolve at `word - 0x8000 - 1` onto already-tracked byte-exact sibling
  * entries — 0x02008131 -> Func_02000130, 0x02008149 -> Func_02000148,
  * 0x02008161 -> Func_02000160, 0x02008181 -> Func_02000180,
  * 0x02008199 -> Func_02000198, 0x020081b9 -> Func_020001b8,

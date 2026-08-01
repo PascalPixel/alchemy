@@ -157,13 +157,13 @@ async function main(): Promise<void> {
   const actual = linked.subarray(0, extent);
   const expected = Buffer.from(rom).subarray(address - ROM_BASE, address - ROM_BASE + expectedSize);
 
-  const mine = join(options.work, "candidate.bin");
-  const theirs = join(options.work, "reference.bin");
-  await Bun.write(mine, actual);
-  await Bun.write(theirs, expected);
+  const candidate = join(options.work, "candidate.bin");
+  const reference = join(options.work, "reference.bin");
+  await Bun.write(candidate, actual);
+  await Bun.write(reference, expected);
 
-  const left = disassemble(mine, 0);
-  const right = disassemble(theirs, 0);
+  const left = disassemble(candidate, 0);
+  const right = disassemble(reference, 0);
   const differing = differingOffsets(actual, expected);
   const offsets = [...new Set([...left.keys(), ...right.keys()])].sort((a, b) => a - b);
 

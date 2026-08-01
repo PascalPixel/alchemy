@@ -29,7 +29,7 @@ typedef unsigned char u8;
  * with different argument counts elsewhere in this overlay).  Small integer
  * pool constants (0x206, 0x835, 0x831, 0x325) are event/flag identifiers in
  * the byte-exact sources' `Value_xxxxxxxx` spelling; here they are written as
- * plain constants because the semantic lane makes no pool-placement claim.
+ * plain constants because the semantic reconstruction makes no pool-placement claim.
  */
 
 /* Imports, old-style: interfaces not yet known. */

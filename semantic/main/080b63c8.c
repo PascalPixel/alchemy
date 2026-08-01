@@ -1,5 +1,5 @@
 /*
- * Correctness fix, veneer audit (mars, 2026-08-01).
+ * Correctness fix, veneer audit (2026-08-01).
  * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
  * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
  * range is an indirect call through the named register, not a call to a
@@ -12,7 +12,7 @@
  * always zero.  It also sits four bytes -- one ARM instruction -- from the
  * fill at 0x03000168, the way the sin/cos pair at 0x0800231c/0x08002322
  * does.  That is suggestive of two entry points into one routine and it is
- * NOT asserted here: the evidence is recorded so the exact lane can settle
+ * NOT asserted here: the evidence is recorded so the exact reconstruction can settle
  * it, and the type below says only what this call site proves.
  */
 #include "types.h"

@@ -14,15 +14,15 @@ typedef signed int s32;
  * returns 0 and does nothing else. Every other overlay's driver sequences
  * its scene; this one declines to.
  *
- * A CORRECTION TO A COUNT OF MINE. I wrote that all 96 entry drivers were
- * drafted. `overlay_driver.ts --all --unowned` reported 0 and that is what
- * I read, but its `ownerOf` accepts "inventory row" -- merely appearing in
+ * CORRECTION TO AN EARLIER COUNT. All 96 entry drivers were reported as
+ * drafted because `overlay_driver.ts --all --unowned` reported 0, but its
+ * `ownerOf` accepts "inventory row" -- merely appearing in
  * the census -- as ownership, so an undrafted driver is not UNOWNED to it.
  * Two drivers are in that state, this one and resource_373's 0x02002a54.
  * The blind spot was in what the tool ACCEPTS, not in what it scans, which
- * is the same fault I found in sweep B and then wrote into sweep D's tail.
+ * is the same fault already identified in sweep B and covered by sweep D's tail.
  *
- * Reached this shift as leaf residue rather than as a driver: sweep B saw
+ * Reached through leaf-residue analysis rather than as a driver: sweep B saw
  * the header word as a publication and discarded the target for opening
  * with no `push`. The two populations meet here.
  *

@@ -2,8 +2,8 @@
 // Sweep E: rule what sweep D reports, and count returns PER OWNER.
 //
 // RECONCILED WITH SWEEP D, 2026-08-01. This tool and `overlay_gaps.ts` were
-// built in the same window by two lanes from the same argument -- a Thumb
-// function cannot avoid returning -- and for one shift both implemented the
+// built from the same argument -- a Thumb function cannot avoid returning --
+// and initially both implemented the
 // head, the tail and the veneer/call_via masks. Two instruments answering one
 // question diverge, and the day they disagree nobody knows which is
 // authoritative. So the questions are divided by evidence, not by tidiness:
@@ -25,10 +25,9 @@
 //      return against the ROM. resource_3b8's tail carries 24 and not one is
 //      code: every one is the low half of a 4-aligned Thumb pointer inside a
 //      12-byte descriptor record (`0x0200bd41` reads as `pop {r0, r6, pc}`).
-//      Mars named that class independently from the other end -- **a published
-//      pointer word whose low halfword wears a return shape** -- and his name
-//      is the one kept, because two names for one thing is the same defect as
-//      two tools for one question.
+//      This class is **a published pointer word whose low halfword wears a
+//      return shape**. Keeping one structural name avoids two tools describing
+//      the same case differently.
 //   2. THE RETURN CENSUS PER OWNER, which nothing else asks at all. A recorded
 //      span inflated to its neighbour's start SWALLOWS whatever sits between
 //      the real end and that start: sweep D subtracts against the recorded
@@ -198,7 +197,7 @@ export function certifyImage(
   const ruledDispatch = new Set<number>();
   for (const at of tail.returns) {
     // Class one: the low half of a 4-aligned Thumb pointer onto a recorded
-    // owner -- mars's published pointer word wearing a return shape.
+    // owner -- a published pointer word wearing a return shape.
     if (at % 4 === 0) {
       const value = word(at);
       const target = pointerOffset(value, image.length);

@@ -8,7 +8,7 @@ typedef unsigned char u8;
  * 0x02002634-0x02002638; the halfword at 0x0200263a is the alignment
  * pad, immediately followed by the next owner's push {r5,r6,lr} at
  * 0x0200263c, already this overlay's row `0x0200263c | 3 calls`
- * (drafted this session), so the span is 0x020025f8-0x0200263c,
+ * (drafted in this reconstruction), so the span is 0x020025f8-0x0200263c,
  * 68 bytes.
  *
  * Fetches an object, clears bit 0 of `+0x59`, sets bit 1 of `+0x23`,

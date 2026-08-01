@@ -398,7 +398,22 @@ function selfTest(): void {
 function main(): void {
   const args = Bun.argv.slice(2);
   if (args.includes("--self-test")) return selfTest();
-  const requested = args.filter((argument) => /^resource_[0-9a-f]+$/.test(argument));
+  // A NAME IS REJECTED BY EXISTENCE, NOT BY SHAPE (fixed 2026-08-01, venus).
+  // This filter used to be `/^resource_[0-9a-f]+$/` with a fall-back to every
+  // overlay when nothing matched, so `resource_zzz` -- a typo, a stale name, a
+  // name from another game -- silently swept all 96 and exited 0. It could not
+  // fake a certification, because the fall-back prints residue=1602 rather than
+  // 0, but `overlays=1` was the only line in the output telling you your name
+  // had matched anything. HANDOVER's claim that "sweep A/B/C already refused an
+  // unknown name" was false as measured; only a WELL-FORMED absent name threw.
+  // Seventh sighting of the fault living in what a tool ACCEPTS.
+  const known = new Set(overlayNames());
+  const requested = args.filter((argument) => !argument.startsWith("--"));
+  for (const name of requested)
+    if (!known.has(name)) {
+      console.log(`NOTHING SWEPT — no overlay named ${name}. This is a FAILURE, not a pass.`);
+      process.exit(1);
+    }
   const overlays = requested.length > 0 ? requested : overlayNames();
   const results = overlays.map(sweep);
   if (args.includes("--json")) {

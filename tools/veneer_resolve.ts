@@ -84,7 +84,7 @@ export function decodeBl(high: number, low: number, pc: number): number | null {
 export type Writer =
   | { kind: "literal"; register: number; pool: number }
   | { kind: "move"; register: number; from: number }
-  | { kind: "memory"; register: number; detail: string }
+  | { kind: "memory"; register: number; detail: string; slot?: number; base?: number; disp?: number }
   | { kind: "computed"; register: number }
   | { kind: "unknown"; register: number };
 
@@ -123,12 +123,13 @@ export function decodeWriter(hw: number, pc: number): Writer | null {
   if ((hw & 0xf800) === 0x6800) {
     const register = hw & 7;
     const base = (hw >> 3) & 7;
-    return { kind: "memory", register, detail: `[r${base}, #${((hw >> 6) & 31) * 4}]` };
+    const disp = ((hw >> 6) & 31) * 4;
+    return { kind: "memory", register, detail: `[r${base}, #${disp}]`, base, disp };
   }
   // ldr rD, [sp, #imm8*4]
   if ((hw & 0xf800) === 0x9800) {
     const register = (hw >> 8) & 7;
-    return { kind: "memory", register, detail: `[sp, #${(hw & 0xff) * 4}]` };
+    return { kind: "memory", register, detail: `[sp, #${(hw & 0xff) * 4}]`, slot: (hw & 0xff) * 4 };
   }
   // ldr rD, [rN, rM]
   if ((hw & 0xfe00) === 0x5800) {
@@ -158,9 +159,11 @@ export function decodeWriter(hw: number, pc: number): Writer | null {
 export type Resolution =
   | { kind: "literal"; pool: number; value: number; via: string[] }
   | { kind: "memory"; detail: string; at: number; via: string[] }
+  | { kind: "global"; address: number; at: number; via: string[] }
   | { kind: "computed"; at: number; via: string[] }
   | { kind: "call-return"; at: number; target: number | null; via: string[] }
   | { kind: "incoming"; register: number; via: string[] }
+  | { kind: "stack"; slot: number; storedAt: number; inner: Resolution; via: string[] }
   | { kind: "unknown"; reason: string };
 
 /**
@@ -234,7 +237,25 @@ function resolveRegister(
       const name = VENEER_REGISTERS[writer.from] ?? `r${writer.from}`;
       return resolveRegister(rom, entry, pc, writer.from, [...via, `${name}@0x${pc.toString(16)}`]);
     }
-    if (writer.kind === "memory") return { kind: "memory", detail: writer.detail, at: pc, via };
+    if (writer.kind === "memory") {
+      // A stack slot is not an opaque memory read: the function filled it, and
+      // the `str` that did is findable. Chase it one level.
+      if (writer.slot !== undefined) {
+        const chased = resolveStackSlot(rom, entry, pc, writer.slot, via);
+        if (chased) return chased;
+      }
+      // When the BASE register is itself a pooled constant, the load has a
+      // fixed address: the callee is whatever lives at that global. That is a
+      // real answer, not an opaque memory read -- it is how the renderer slots
+      // at 0x03001f08 / 0x03001f0c are reached.
+      if (writer.base !== undefined && writer.disp !== undefined) {
+        const baseResolution = resolveRegister(rom, entry, pc, writer.base, [...via, `r${writer.base}@0x${pc.toString(16)}`]);
+        if (baseResolution.kind === "literal") {
+          return { kind: "global", address: baseResolution.value + writer.disp, at: pc, via };
+        }
+      }
+      return { kind: "memory", detail: writer.detail, at: pc, via };
+    }
     if (writer.kind === "computed") return { kind: "computed", at: pc, via };
     return { kind: "unknown", reason: `unknown writer at 0x${pc.toString(16)}` };
   }
@@ -245,6 +266,37 @@ function resolveRegister(
   // the function's declared `(void)` signature is wrong.
   if (site - 2 - WALK_LIMIT * 2 < entry) return { kind: "incoming", register, via };
   return { kind: "unknown", reason: `no write to r${register} within ${WALK_LIMIT} instructions` };
+}
+
+/**
+ * Trace a value that came out of a stack slot back to the `str` that filled it.
+ *
+ * Only sound while sp is unchanged between the store and the load: an
+ * `add sp` / `sub sp` in between re-bases the slot and the same displacement
+ * means a different location. Any sp adjustment aborts the chase rather than
+ * producing a confident wrong answer. `push`/`pop` move sp too and abort it
+ * for the same reason.
+ */
+function resolveStackSlot(
+  rom: Uint8Array,
+  entry: number,
+  load: number,
+  slot: number,
+  via: string[],
+): Resolution | null {
+  for (let pc = load - 2; pc >= entry; pc -= 2) {
+    const hw = readHalf(rom, pc);
+    // add sp,#imm / sub sp,#imm (0xb000) and push/pop (0xb400/0xbc00) re-base sp
+    if ((hw & 0xff00) === 0xb000) return null;
+    if ((hw & 0xfe00) === 0xb400 || (hw & 0xfe00) === 0xbc00) return null;
+    // str rD, [sp, #imm8*4]
+    if ((hw & 0xf800) === 0x9000 && ((hw & 0xff) * 4) === slot) {
+      const stored = (hw >> 8) & 7;
+      const inner = resolveRegister(rom, entry, pc, stored, [...via, `[sp,#${slot}]@0x${pc.toString(16)}`]);
+      return { kind: "stack", slot, storedAt: pc, inner, via };
+    }
+  }
+  return null;
 }
 
 /** Every veneer call site in [entry, end), with its callee resolved. */
@@ -300,6 +352,10 @@ function describe(resolution: Resolution): string {
       }${via}`;
     case "incoming":
       return `INCOMING r${resolution.register} -- never written here, supplied by the caller${via}`;
+    case "stack":
+      return `via [sp,#${resolution.slot}] stored at 0x${resolution.storedAt.toString(16).padStart(8, "0")}: ${describe(resolution.inner)}`;
+    case "global":
+      return `the value stored at GLOBAL 0x${resolution.address.toString(16).padStart(8, "0")} (loaded at 0x${resolution.at.toString(16).padStart(8, "0")})${via}`;
     default:
       return `UNRESOLVED (${resolution.reason})`;
   }
@@ -413,6 +469,25 @@ function selfTest(): void {
         }
       }
     }
+    // The stack-slot and pooled-base chases, checked against a file that
+    // documented its own answer by hand. 080e15e8.c records that its renderers
+    // come from 0x03001f08 and 0x03001f0c; the site at 0x080e1b80 loads one
+    // through a stack slot, so resolving it end to end must land on 0x03001f0c.
+    const chased = sites.find((s) => s.address === 0x080e1b80);
+    if (!chased) throw new Error("veneer self-test: 080e1b80 site missing");
+    if (chased.resolution.kind !== "stack") {
+      throw new Error("veneer self-test: stack slot not chased to its store");
+    }
+    const inner = chased.resolution.inner;
+    if (inner.kind !== "global" || inner.address !== 0x03001f0c) {
+      throw new Error("veneer self-test: pooled-base load not resolved to its global");
+    }
+    // The sp guard: a slot chase must abort rather than answer across an sp
+    // adjustment, because the same displacement then means a different place.
+    if (resolveStackSlot(image, 0x080e15e8, 0x080e15ea, 0, []) !== null) {
+      throw new Error("veneer self-test: stack chase crossed a push/sp adjustment");
+    }
+
     // An unwritten register is an incoming argument, not a failed walk.
     // 0x08006f6c's `bl __call_via_r1` is its SECOND instruction.
     const thunk = resolveFunction(image, 0x08006f6c, 0x08006f80);

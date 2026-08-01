@@ -202,7 +202,17 @@ a map written off a raw listing carries the error into everything built on it.
 
 **A literal pool proves nothing about where a function ends.** Pools sit
 *inside* functions with the epilogue after them, branched over. One driver
-carries four interior pools. `measureSpan` numbers are therefore lower bounds.
+carries four interior pools.
+
+**`measureSpan` is NOT A BOUND IN EITHER DIRECTION.** It was recorded as a
+lower bound on the strength of thirteen of fourteen rows exceeding it; a
+fourteenth row broke it the other way — measureSpan 356 against a true span of
+124, the extra 232 bytes being the *next owner* plus the import-veneer bank.
+Measure every span to its epilogue against the next recorded owner. That same
+row is the cleanest proof that guard coverage is not a certificate: run
+without explicit bounds it reports a shortfall naming a *real* callee — real
+because it belongs to the owner the over-measured span swallowed, which is
+exactly what makes the wrong answer convincing.
 
 **`bx rN` after `mov ip, pc` is a CALL, not a return.** m2c treats it as a
 return and silently ends the function there; the guard refuses such rows.

@@ -1,3 +1,5 @@
+> **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
+
 # 第7回 100ファイル humanization — 2026-07-28
 
 大型のraw-layout関数を中心に100候補を調べた。初回79候補から、

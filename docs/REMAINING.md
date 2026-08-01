@@ -1,3 +1,5 @@
+> **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
+
 # What is actually left, measured (2026-07-26)
 
 > Historical snapshot from early 2026-07-26. Its measurements and conclusions

@@ -1,3 +1,5 @@
+> **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
+
 # Alchemy project audit and forward plan
 
 Audit checkpoint: 2026-08-01, `main`. This is the single authoritative current

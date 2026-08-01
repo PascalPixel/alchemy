@@ -1,3 +1,5 @@
+> **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
+
 # ソース命名規約
 
 再構築ソースは、2001年頃の日本製コンソールゲームらしい簡潔な書き方を

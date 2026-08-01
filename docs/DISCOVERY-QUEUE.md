@@ -1,3 +1,5 @@
+> **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
+
 # Discovery queue (historical measurement, 2026-07-30)
 
 This document records the 2026-07-30 queue/discovery audit.  Its region counts,

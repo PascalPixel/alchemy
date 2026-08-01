@@ -812,6 +812,49 @@ gets switched off. And the stripper is asserted in both directions, so it
 cannot silently start eating live code and passing everything. The guard was
 verified by breaking a converted file on purpose and watching it throw.
 
+## Overlay SELECTION procedure (2026-08-01, venus) — measure, do not read a queue
+
+**Vale's ruling: this replaces "pick by queue position", and the queue files are
+still sitting there looking authoritative.** The ranked queue is a list filtered
+by "not yet done", and this file already says such a list cannot bound anything
+— that applies to choosing work as much as to measuring a span. It also goes
+stale the moment any lane commits.
+
+The procedure, three commands, no judgement until the last step:
+
+1. `bun tools/overlay_gaps.ts --json` — sweep D over all 96. For each overlay
+   sum the bytes of its `CODE-SUSPECT` gaps and note `owners` and the `tail`
+   verdict. **Sweep D first is not a preference, it is the order that works:**
+   it is the only unkeyed sweep, so it is the only one whose answer can change
+   the SHAPE of the overlay rather than just add to a list. On resource_37b its
+   single gap held the sixth owner; planning off A/B/C first would have
+   produced a five-row plan and a surprise.
+2. Rank ascending by summed code-suspect bytes, keeping only overlays with
+   `owners > 0`. As of this run: **40 of 96 are already gap-clean**, and the
+   smallest non-zero burdens were 37b (42B), 37a (24B over 1 gap), 395 (8B),
+   3b9 (10B), 3a4 (52B).
+3. On the shortlist only, run `overlay_published.ts <ov>` and **deduplicate to
+   OWNERS**, never take the line count — `grep -E '^  [ABC] ' | awk '{print $3}'
+   | sort -u`. A residue of 7 lines was 6 owners on 37b, and 18 lines was 9 on
+   3c9.
+
+Then pick the overlay whose (owners × apparent size) fits the shift you
+actually have, and **say plainly if the top of the ranking turns out to be a
+grind rather than a close.** A truthful "this one is ordinary work" is worth
+more than a forced closure, and the ranking cannot see row size — it sees
+unaccounted bytes, which is a different quantity.
+
+Two cautions the procedure does not remove:
+
+- **A small burden is not a small overlay.** resource_3b9 ranks second by
+  code-suspect bytes and is 5.9 KB of drafted rows. The ranking finds overlays
+  that are nearly ACCOUNTED FOR, which correlates with closability but is not
+  the same thing.
+- **`tools/inventory_gaps.ts` is not this.** It audits executable intervals for
+  holes in the audit itself and currently reports `gaps=0`. It answers "is the
+  bookkeeping self-consistent", not "what should I work on". Vale referred to
+  it as the picker on 2026-08-01 and corrected it when told.
+
 ## Overlay closure standard (2026-08-01) — supersedes any earlier claim
 
 **No overlay is closed without the published-pointer sweep.** The old standard
@@ -1105,6 +1148,32 @@ That is the difference between a cohort and a copy-paste.
 
 The 17-instance integrator is the same family as resource_3a4's 0x020000bc,
 which used +36/+40/+44 where these use +68/+72/+76. Every one of the 17 is core.
+
+#### NEVER TAKE A COHORT ROW'S SPAN FROM ITS SHAPE (2026-08-01, venus)
+
+The cohort makes reading cheap per shape, which makes it tempting to make
+SPANS cheap per shape too. They are not, and the counter-example sits inside a
+single run of five adjacent rows — resource_37b's head stubs at 0x02000030,
+0x38, 0x3c, 0x44, 0x4c:
+
+- four are constant getters, `ldr r0, [pc, #0] / bx lr`, and each is **8
+  bytes**, because the pool word it loads sits PAST the `bx lr` and belongs to
+  the owner;
+- the fifth, 0x02000038, is `movs r0, #0 / bx lr` and is **4 bytes**, because
+  a constant that fits in an immediate needs no pool.
+
+Same population, same table, adjacent addresses, two different spans. Infer
+span from shape at volume and you are wrong on one row in five here — and the
+error is the silent kind, because a 4-byte span recorded as 8 overlaps its
+neighbour and an 8 recorded as 4 leaves a phantom gap. Both mislead sweep D,
+which is the instrument you would then be trusting to tell you the overlay is
+clean.
+
+The rule is the same one the span section already gives and it does not get an
+exemption for being small: **measure to the return, then take the pool.** For
+this family that is two halfwords plus however many pool words the row's own
+`ldr`s reference — zero or one. It is seconds per row, and it is the only
+figure `manual_regions` will ever be checked against.
 
 #### Five rows in the cohort are NOT functions, and they are mechanically separable
 

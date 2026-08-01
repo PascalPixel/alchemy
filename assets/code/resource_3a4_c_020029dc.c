@@ -19,9 +19,9 @@ typedef signed int s32;
  * table does not cover it -- resolved with `bun tools/overlay_show.ts
  * resource_3a4 29dc | bun tools/overlay_call_targets.ts resource_3a4
  * 29dc 2a0a --annotate`):
- *   0x20029e0 -> veneer -> Func_0808a080(9)        scene-record accessor, established
- *   0x20029e6 -> veneer -> Func_080091e0(record, 0)   established, set presentation phase
- *   0x2002a04 -> veneer -> Func_0808a0f0(9, x, z)  established, place an entity at (x, z)
+ *   0x20029e0 -> veneer -> Func_0200657a(9)        scene-record accessor, established
+ *   0x20029e6 -> veneer -> Func_02006518(record, 0)   established, set presentation phase
+ *   0x2002a04 -> veneer -> Func_020065ee(9, x, z)  established, place an entity at (x, z)
  *
  * Data_02000240+450 (byte offset, index 225 << 1) is the established
  * word-blob idiom, read here as a signed halfword.
@@ -29,18 +29,22 @@ typedef signed int s32;
 
 extern u8 Data_02000240[];
 
-u8 *Func_0808a080();           /* scene-record accessor, established */
-void Func_080091e0();          /* established (record, phase) */
-void Func_0808a0f0();          /* established (slot, x, z) */
+u8 *Func_0200657a();           /* scene-record accessor, established */
+void Func_02006518();          /* established (record, phase) */
+void Func_020065ee();          /* established (slot, x, z) */
 
 void Func_020029dc(void)
 {
     u8 *record;
 
-    record = Func_0808a080(9);
-    Func_080091e0(record, 0);
+    record = Func_0200657a(9);
+    Func_02006518(record, 0);
 
-    if (*(s16 *)&Data_02000240[450] == 2) {
-        Func_0808a0f0(9, 0xb80000, 0x1480000);
+    {
+        s32 off = 450;
+
+        if (*(s16 *)&Data_02000240[off] == 2) {
+        Func_020065ee(9, 0xb80000, 0x1480000);
+    }
     }
 }

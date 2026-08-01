@@ -1,4 +1,5 @@
 typedef int s32;
+extern unsigned char Value_00001f00;
 
 /*
  * resource_3af owner at 0x02000b98, 32 bytes: a one-line dialogue
@@ -31,15 +32,15 @@ typedef int s32;
  * that record represents is not.
  */
 
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern void Func_0808a170(s32 dialogueId);
-extern void Func_0808a190(s32 id, s32 arg1);
+extern void Func_02004e88(void);
+extern void Func_02004ea2(void);
+extern void Func_02004f4e(s32 dialogueId);
+extern s32 Func_02004f76(s32 id, s32 arg1);
 
 void Func_02000b98(void)
 {
-    Func_0808a018();
-    Func_0808a170(0x1f00);
-    Func_0808a190(21, 0);
-    Func_0808a020();
+    Func_02004e88();
+    Func_02004f4e((s32)&Value_00001f00);
+    Func_02004f76(21, 0);
+    Func_02004ea2();
 }

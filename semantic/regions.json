@@ -7077,6 +7077,12 @@
     },
     {
       "overlay": "resource_3c9",
+      "entry": "0x020012c8",
+      "span_bytes": 3604,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8/sl spill, no stack frame) and returning (pop {r3, r5}/mov r8,r3/mov sl,r5/pop {r5, r6, r7}/pop {r0}/bx r0 at 0x020020ae-0x020020b9) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_3c9 12c8 20dc, the +2 rule against the raw image, sites=363 distinct_targets=41 veneer=280 prologue=83 over exactly these bounds), span 0x020020dc - 0x020012c8 = 0xe14 = 3604 read from the disassembly across THREE interior literal pools that are branched over rather than fallen into (0x020016c8-0x020016ff, 0x02001a30-0x02001a4f, 0x02001e54-0x02001e73), plus a two-byte alignment halfword at 0x020020ba and the trailing eight-word pool 0x020020bc-0x020020db, to the next owner prologue at 0x020020dc (this overlay own resource_3c9_c_020020dc.c, already drafted, and itself called from inside this row 40-iteration loop, which confirms the upper bound from the callee side); sweep D reports this exact gap with one return-shaped halfword at 0x020020b8, which is the bx r0; inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3c9",
       "entry": "0x02002200",
       "span_bytes": 308,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8/r9/sl/fp spill and an 8-byte stack frame) and returning (add sp,#8/pop {r3, r5, r6, r7}/mov r8,r3/mov r9,r5/mov sl,r6/mov fp,r7/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the two trailing pool words (0x0200232c-0x02002333) to the next owner's prologue at 0x02002334, inside the assembled overlay image and not overlapping another recorded owner"

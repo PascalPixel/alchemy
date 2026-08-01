@@ -1845,6 +1845,39 @@ rate. **A function installed as data is invisible to every technique that
 follows control flow.** If you want the rule in one line, use that; if you want
 someone to *feel* it, show them 0x02002b58's 88 bytes.
 
+### A `push` is not an entry, in EITHER direction (2026-08-01, mercury)
+
+Garet's leaves are functions with no prologue that a prologue-keyed tool will
+not admit. This is the mirror image: **one prologue spelled as two `push`
+instructions, whose second half a prologue-keyed tool will admit as a
+function that does not exist.**
+
+`resource_3b1` at 0x020048e8:
+
+```
+20048e8: push {r5, r6, r7, lr}
+20048ea: mov  r7, sl
+20048ec: mov  r6, r9
+20048ee: mov  r5, r8
+20048f0: push {r5, r6, r7}      <-- NOT an entry
+```
+
+Thumb cannot push r8-sl directly, so the high registers are copied down into
+r5/r6/r7 and pushed as a second group. The mirror is visible at the other
+end (`pop {r3, r5, r6} / mov r8, r3 / mov r9, r5 / mov sl, r6 / pop {r5, r6,
+r7}`), and the same shape appears in `3c4:0cd0`, `3b2:12b4` and `3b1:48e8`.
+
+**The discriminator is exact, so no judgement is needed:** a `push` is the
+second half of one prologue when the register set it pushes is exactly the
+set of destinations of the `mov rLow, rHigh` sequence immediately preceding
+it. Anything else is an entry.
+
+Why it matters beyond tidiness: an owner entry taken at 0x020048f0 instead of
+0x020048e8 is short by the first four instructions, and **a span that starts
+late still assembles, still adopts, and still verifies green** — it simply
+describes a different function than the one the ROM has. Settle the entry
+before measuring anything on the row.
+
 ### The fourth population: leaf functions (2026-08-01, jupiter)
 
 The procedure lives above under **Sweep D — read the gaps**, with 0x02003410 as
@@ -6185,8 +6218,16 @@ re-derivation:
 | site | owner entry | extent | first look |
 | --- | --- | --- | --- |
 | 3a6:19b4 | **0x02001984** | to 0x02001bfc, **632 bytes** | guards on `Data_02000240[224]` against a pooled constant BEFORE the `[225]` dispatch; `subs #1 / cmp #9`, 10 entries at 0x020019b8 |
-| 3b1:4902 | **0x020048e8** | next `push` at 0x020048f0 is the high-register half of the same prologue — resolve the entry before drafting | |
+| 3b1:4902 | **0x020048e8** | to 0x02004fa8, **1728 bytes** | entry SETTLED: 0x020048f0 is the high-register half of one prologue, not a function — see "A `push` is not an entry, in EITHER direction". Selector is the ARGUMENT, `cmp #25`, 26 entries at 0x02004904; the literal pool sits mid-function at 0x02004cb8 |
 | 3bf:516c | **0x020050e4** | to 0x02005324, **576 bytes** | long preamble of four guarded calls, then `subs #1 / cmp #30`, 31 entries at 0x02005170 after a two-byte align |
+
+**The count is FOUR open, not three.** `overlay_dispatch_sites --all` after
+the four adoptions: 33 in inventoried owners, 7 in adopted C, 15 in semantic
+drafts, **5 described nowhere** — `396:1432`, `396:1658`, `3a6:19b4`,
+`3b1:4902`, `3bf:516c`. `396:1432` is the row parked at 6 bytes on the fork
+item, so it is handled but still undescribed; `396:1658` is a fourth OPEN
+row and had dropped out of the spoken list. Re-run the census rather than
+carrying a remembered list; that is what it is for.
 
 **Do not carry a table across rows.** Every seam row so far has had its own:
 `378:014c` and `378:3334` share a selector and a guard and differ in every

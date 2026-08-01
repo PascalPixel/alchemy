@@ -23,24 +23,48 @@ const RETURN = 0x4700;
 
 interface Options { overlay: string; offset: number; length: number }
 
-function optionsOf(argv: string[]): Options {
+const USAGE = "usage: overlay_show.ts <overlay> <offsetHex> [endHex | -n BYTES]";
+
+/**
+ * Parse the command line.
+ *
+ * An END bound is accepted as a second positional so this tool takes the same
+ * `<overlay> <startHex> <endHex>` spelling as `overlay_call_targets.ts`. It
+ * used to IGNORE a third argument and fall back to `extentOf`, which stops at
+ * the first return-shaped halfword — so `overlay_show <ov> 1cd4 23e0` silently
+ * printed 60% of an 1804-byte row, complete with the pool-word footer that
+ * makes a truncated listing look like a finished function. Two resource_3b9
+ * rows lost ~40% each that way, and one of them hid both its inner gates and
+ * its epilogue. Anything unparseable now throws rather than being dropped: a
+ * silently ignored bound is the entire bug.
+ */
+export function optionsOf(argv: string[]): Options {
   const rest: string[] = [];
   const options: Options = { overlay: "", offset: -1, length: 0 };
+  let explicitLength = false;
   for (let index = 0; index < argv.length; index++) {
     const argument = argv[index];
-    if (argument === "--length" || argument === "-n") options.length = Number(argv[++index]);
-    else if (argument === "-h" || argument === "--help") {
-      console.log("usage: overlay_show.ts <overlay> <offsetHex> [-n BYTES]");
+    if (argument === "--length" || argument === "-n") {
+      options.length = Number(argv[++index]);
+      explicitLength = true;
+    } else if (argument === "-h" || argument === "--help") {
+      console.log(USAGE);
       process.exit(0);
     } else rest.push(argument);
   }
-  const [overlay, offsetText] = rest;
-  if (overlay === undefined || offsetText === undefined) {
-    throw new Error("usage: overlay_show.ts <overlay> <offsetHex> [-n BYTES]");
-  }
+  const [overlay, offsetText, endText, ...extra] = rest;
+  if (overlay === undefined || offsetText === undefined) throw new Error(USAGE);
+  if (extra.length > 0) throw new Error(`${USAGE}\nunexpected argument: ${extra[0]}`);
   options.overlay = overlay;
   options.offset = Number.parseInt(offsetText, 16);
   if (!Number.isInteger(options.offset) || options.offset < 0) throw new Error("offset must be hexadecimal");
+  if (endText !== undefined) {
+    if (explicitLength) throw new Error("pass an end bound OR -n BYTES, not both");
+    if (!/^(0x)?[0-9a-f]+$/i.test(endText)) throw new Error(`end bound must be hexadecimal: ${endText}`);
+    const end = Number.parseInt(endText.replace(/^0x/i, ""), 16);
+    if (end <= options.offset) throw new Error("end bound must be greater than the start offset");
+    options.length = end - options.offset;
+  }
   return options;
 }
 
@@ -69,6 +93,33 @@ function selfTest(): void {
   if (poolTarget(0, 0x4800) !== 4) throw new Error("overlay show self-test: pool target at 0");
   if (poolTarget(2, 0x4800) !== 4) throw new Error("overlay show self-test: pool target rounding");
   if (poolTarget(0, 0x4801) !== 8) throw new Error("overlay show self-test: pool target displacement");
+
+  // A second positional is an END bound, not something to drop. This is the
+  // regression that matters: `resource_3b9 1cd4 23e0` used to ignore `23e0`,
+  // fall back to extentOf, and print 60% of the row under a pool-word footer
+  // that reads exactly like the end of a function.
+  const bounded = optionsOf(["resource_3b9", "1cd4", "23e0"]);
+  if (bounded.offset !== 0x1cd4) throw new Error("overlay show self-test: start bound");
+  if (bounded.length !== 0x23e0 - 0x1cd4) throw new Error("overlay show self-test: end bound ignored");
+  const prefixed = optionsOf(["resource_3b9", "1cd4", "0x23e0"]);
+  if (prefixed.length !== 0x23e0 - 0x1cd4) throw new Error("overlay show self-test: 0x end bound");
+  if (optionsOf(["resource_3b9", "1cd4", "-n", "1804"]).length !== 1804)
+    throw new Error("overlay show self-test: -n must still work");
+  if (optionsOf(["resource_3b9", "1cd4"]).length !== 0)
+    throw new Error("overlay show self-test: no bound must defer to extentOf");
+
+  // Every way of being ambiguous or wrong must THROW rather than be dropped.
+  const rejects = (argv: string[], why: string): void => {
+    let threw = false;
+    try { optionsOf(argv); } catch { threw = true; }
+    if (!threw) throw new Error(`overlay show self-test: ${why}`);
+  };
+  rejects(["resource_3b9", "1cd4", "23e0", "-n", "1804"], "end bound and -n together must be rejected");
+  rejects(["resource_3b9", "1cd4", "1cd4"], "an end bound at the start must be rejected");
+  rejects(["resource_3b9", "1cd4", "11ac"], "an end bound below the start must be rejected");
+  rejects(["resource_3b9", "1cd4", "zzz"], "a non-hex end bound must be rejected");
+  rejects(["resource_3b9", "1cd4", "23e0", "2400"], "a fourth positional must be rejected");
+
   console.log("overlay show self-test passed");
 }
 

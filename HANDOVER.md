@@ -680,6 +680,69 @@ miss — no instrument the team had could see them.
   `bx r0`, so the gap is that return plus the row's literal pool. Three on 3a4
   (0x2478, 0x2e76, 0x2ede). Harmless until someone treats the gap as unowned.
 
+#### The leaf cohort, swept and measured (2026-08-01, jupiter) — 306 rows, 19 bodies
+
+Not 306 problems. **The whole cohort collapses to nineteen distinct bodies,
+and three of them cover 91% of it.** Sweeping this is reading nineteen
+functions once and then transcribing, which is why it should never be
+approached row by row.
+
+Measured after the four blocking leaves were drafted, so the figures are 306
+rather than the 310 first reported. Core = also lands in bytes sweep D calls
+unaccounted and code-shaped; wider = published but not corroborated that way.
+
+| count | core | body | span |
+|---|---|---|---|
+| **191** | 102 | `ldr r0, [pc, #0] / bx lr` + one pool word | **8** bytes |
+| **70** | 44 | `movs r0, #0 / bx lr` | 4 bytes |
+| **17** | 17 | 54-byte record integrator, `+8 += +68`, `+12 += +72`, `+16 += +76` … | 54 bytes |
+| 3 | 3 | `ldr r3,=X / ldr r3,[r3] / movs r2,#1 / adds r3,#52 / strb r2,[r3] / bx lr` | 12 |
+| 3 | 1 | `ldrb r2,[r0,#20] / ldr r1,=X / ldrh r3,[r2,#30] / adds r3,r3,r1 / strh / bx lr` | 12 |
+| 3 | 2 | `bx lr` alone — a two-byte no-op stub | 2 |
+| 2 | 1 | as row four with `adds r3, #53` | 12 |
+| 12 more | | one occurrence each, 10-62 bytes | |
+
+**The getter's span is 8 bytes, not 4.** The pool word it loads sits after the
+`bx lr` and is read by the row's own `pc`-relative load, so it belongs to the
+row. Recording 4 would leave a stray word behind and manufacture exactly the
+kind of gap sweep D is meant to rule.
+
+**Identical bytes are NOT identical semantics.** All 191 getters share one body
+and each returns a DIFFERENT address, because the pool word differs per
+overlay. The reading is done once per shape; the drafting is still per row, and
+each row's pool word must be resolved and spelled `base + 0x8000` on its own.
+That is the difference between a cohort and a copy-paste.
+
+The 17-instance integrator is the same family as resource_3a4's 0x020000bc,
+which used +36/+40/+44 where these use +68/+72/+76. Every one of the 17 is core.
+
+#### Five rows in the cohort are NOT functions, and they are mechanically separable
+
+**301 of 306 reach a `bx lr` within 128 bytes. Five never do**, and reading
+them shows why:
+
+```
+resource_3c8 0x51c6  0x0500 0x0800 0x0500 0x0700 0x0008 0x0003 ...
+resource_3c8 0x51c8  0x0800 0x0500 0x0700 0x0008 0x0003 0x0003 ...
+resource_3c8 0x51ca  0x0500 0x0700 0x0008 0x0003 0x0003 0xd040 ...
+resource_3c8 0x51cc  0x0700 0x0008 0x0003 0x0003 0xd040 0x0200 ...
+resource_3b7 0x2056  0x0009 0x0403 0xa050 0x4850 0x6820 0x4844 ...
+```
+
+Four "functions" starting two bytes apart is a TABLE, not code — the words
+0x0200d040 and 0x0200d078 visible in it are ordinary in-image data pointers
+that happen to be odd. These are the false positives the relaxed gate was
+always going to admit, and they are exactly the ones the earlier caution about
+the wider 125 was about.
+
+**The discriminator is cheap and should go into sweep B**: a published target
+that does not reach a return within a bounded window is data, not a leaf. It
+costs one scan and removes all five without a human read.
+
+So the honest fraction: **301 of 306 hold as leaf functions (98%)**, of which
+181 are corroborated by sweep D as well. Nineteen bodies to read, three of
+which account for 278 rows.
+
 #### Cleanup board (2026-08-01, jupiter) — not blockers
 
 Neither of these can hide an owner. Both mislead the next reader who subtracts

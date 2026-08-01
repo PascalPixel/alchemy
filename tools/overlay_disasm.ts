@@ -261,6 +261,44 @@ export function callViaBankBase(image: Uint8Array, base = OVERLAY_BASE): number 
   return best;
 }
 
+/**
+ * The image-offset span of every already-adopted exact-C row in an overlay.
+ *
+ * An exact-C row states no span anywhere in the tree: its extent is whatever
+ * the compiler produces. That gap is not cosmetic -- it is what let a whole
+ * class of work hide. A data-installed callback sitting behind an exact row
+ * could be ruled neither inside that row's body nor outside it, so
+ * `tools/overlay_published.ts` had to report UNRULED and defer to a human.
+ * `compileOverlayC` already computes the answer and discards it; this exports
+ * it.
+ *
+ * Each row compiles in its own temp directory, so asking for spans never
+ * touches the image build. `compileOverlayC` caches content-addressed, so a
+ * second call after a verification is nearly free.
+ *
+ * A row that fails to compile is OMITTED rather than guessed at, and callers
+ * must read a missing start as "still unknown". Reporting a span this function
+ * could not produce would recreate exactly the false confidence it exists to
+ * remove.
+ */
+export function overlayCSpans(source: string | URL, base = OVERLAY_BASE): { start: number; end: number }[] {
+  const overlay = basename(String(source)).replace(/_overlay\.s$/, "");
+  const spans: { start: number; end: number }[] = [];
+  for (const cSource of overlayCSources(source)) {
+    const work = mkdtempSync(join(TMPDIR, "alchemy-overlay-span-"));
+    try {
+      const compiled = compileOverlayC(cSource, work, overlay);
+      const start = compiled.address - base;
+      spans.push({ start, end: start + compiled.data.length });
+    } catch {
+      // Omitted on purpose; see the note above.
+    } finally {
+      rmSync(work, { recursive: true, force: true });
+    }
+  }
+  return spans.sort((a, b) => a.start - b.start);
+}
+
 export function assembleOverlay(source: string | URL, base = OVERLAY_BASE): Buffer {
   const work = mkdtempSync(join(TMPDIR, "alchemy-overlay-"));
   try {

@@ -372,6 +372,52 @@ words are the same space: `word - 0x8000 - 0x02000000`. This rule must be
 applied before anything reaches PROSE, not merely before it reaches a draft —
 a map written off a raw listing carries the error into everything built on it.
 
+### Inline literal pools corrupt a register-tracking reader (2026-08-01, venus)
+
+An inline literal pool skipped by a forward `b.n` disassembles as
+*instructions*, and those pseudo-instructions **write r0-r3**. On
+resource_39e's 0x02002ad0 the pool word 0x00000101 at 0x02002ed4 reads as
+`lsls r1, r0, #4`, and 0x00003333 reads as `adds r3, #51`. Any reader that
+carries register state across a pool — a person or a tool — is silently
+holding corrupted arguments for the first call after it. Step OVER the pool;
+do not walk it. (On this row the corruption happened to reach no argument,
+because every call past a pool rebuilt its registers first — but that was
+luck, and it was only knowable by running both ways and diffing.)
+
+**A forward `b.n` is a pool skip ONLY when the skipped region contains no
+`bl`.** A forward branch over real calls is a control-flow JOIN, not data —
+on this row the join at 0x02003d26 hops the skip-beat's taken arm, which
+holds four calls. A first cut of the skip rule that keyed on "forward b.n"
+alone swallowed them. It was caught by the output invariant (525 asserted
+against the tool's own `sites=`), not by eye, which is the whole argument
+for putting the check on the output.
+
+### Drafting a row too big to second-read by eye (2026-08-01, venus)
+
+For rows in the thousands of bytes, an eyeball second read does not fit in a
+sitting, and a half-read row is worse than none. The method that does fit:
+
+1. Read one prefix BY HAND — a hundred calls is enough.
+2. Extract the whole row MECHANICALLY from the bounded listing, with the
+   extractor **throwing** on any register it cannot resolve rather than
+   emitting a guess, and asserting its own call count against the tool's
+   `sites=`.
+3. Diff the mechanical output against the hand prefix. Agreement between an
+   independent eye read and an independent mechanical read is real evidence;
+   104 for 104 including every shift form settled it here.
+4. Assert the invariant on the OUTPUT: the ordered callee sequence of the
+   finished C body must equal the ordered `bl` sequence of the listing.
+5. Enumerate the non-call structure by grep — every branch, every store —
+   so it is covered by construction rather than by attention. On a 5,000-byte
+   row that was eight branches and four real stores, and three of the seven
+   apparent stores were pool words wearing `str r6, [r4, #100]` (all three
+   being the constant 0x6666).
+
+What this method does NOT cover, and must be read by hand: the meaning of
+each branch, and any block where a call result flows into memory. That is
+where judgement lives, and it is small — which is the point of mechanising
+the rest.
+
 ### The two ways a span source lies (2026-08-01)
 
 Both were caught the same night, they fail in OPPOSITE directions, and a span
@@ -436,8 +482,18 @@ several in-image `bl` targets, draft it EARLY and for the free evidence, not
 last because it is small. This is the driver-first habit applied to sweep
 output.
 
-**Open row, any lane: `resource_39e` 0x02002ad0 is the overlay's LAST.**
-`overlay_published resource_39e` reports residue=2 and both lines are that one
+**CLOSED 2026-08-01 (venus, 916c6275): `resource_39e` 0x02002ad0 is drafted,
+residue is 0, and the overlay is CERTIFIED against the full standard —
+sweeps A/B/C empty-and-classified with the liveness control (the same tool
+returned residue=18 on `resource_3c9` in the same session), PLUS Sweep D:
+`overlay_gaps resource_39e` gives `code_suspect_gaps=0 overlaps=0`. Its two
+STALE-SPAN lines are 2-byte alignment halfwords (0x266c compiles to 14B of a
+recorded 16 with the next owner at 0x267c; 0x2764 to 18B of 20 with the next
+at 0x2778), inside the standard's 0-2 byte tolerance. No push-less leaf stub
+turned up here. The paragraph below is kept as the record of what the row
+was before it was drafted.**
+
+`overlay_published resource_39e` reported residue=2 and both lines were that one
 address. Measured, not estimated: span **5,000 bytes** (0x02003e58 - 0x02002ad0
 = 0x1388), `sites=525` and 525 `bl` lines transcribed, so the arithmetic
 agrees. Bare `push {lr}` — no callee-saved registers, no sp frame, no loops,
@@ -2083,6 +2139,16 @@ path, and 0x898 is what the same overlay's dispatcher 0x020012e0 tests to choose
 its follow-up — so skipping the beat changes which function runs later. Never
 carry a skip-beat shape over from a sibling; read both arms and check whether
 either has a side effect the other lacks.
+
+**The strongest case for that rule is two shapes in ONE overlay.**
+`resource_39e:2ad0`'s gate at 0x02003cf6 is the shape-(1) *converging* form —
+both arms bump `Data_03001ebc + 472`, neither touches a story flag, and the
+arms differ only in the slot posed (1 when `Func_0808a070(0,0)` returns 0,
+3 otherwise) and in where the bump sits. That is one screen away from
+`39e:1d50`'s shape (4) in the same overlay, with the same callee and the same
+counter. A carried-over description of these arms sat flagged UNVERIFIED in a
+parked note; re-reading confirmed it but sharpened it, and had it been trusted
+from `1d50` next door it would have invented a flag write that is not there.
 
 **A provably dead call is still a call SITE.** In `resource_3a7:0754` the sample
 is built with `lsls #11 / lsrs #16`, so it is always non-negative and the `bge`

@@ -1,5 +1,74 @@
 #include "types.h"
 
+/*
+ * __call_via_rN veneer sites, resolved per-site against the ROM. Owner range
+ * 0x080d6970 .. 0x080d765c (next owner semantic/main/080d765c.c) -- the bound
+ * is stated rather than assumed. Ten `bl` sites land in the 0x080072e4 bank:
+ * one __call_via_r3 and nine __call_via_r4.
+ *
+ * This file arrived PART-CONVERTED: an earlier draft had already expressed the
+ * nine renderer sites as indirect calls. So this pass is an audit of that
+ * draft, not a transcription of a fresh one, and the nine were re-derived from
+ * the ROM rather than read off the C.
+ *
+ * TWO ERAS, PROVEN AND NOT ASSUMED, over ONE object. `[sp, #68]` is the table
+ * base and it is materialized EXACTLY ONCE, at 0x080d6a6e, then parked in
+ * [sp, #36]. Entry 0 is stored exactly twice -- 0x080d6a34 and 0x080d732e --
+ * and entry 1 exactly twice -- 0x080d6a72 and 0x080d7344, the second reached
+ * by reloading the same parked base. There are exactly four Func_080ed408
+ * calls in the owner range, two per era, one per slot; 0x080d6a3e is `b.n
+ * 0x080d6a64` over the inline literal pool at 0x080d6a40..0x080d6a62, not a
+ * conditional. So each era is single-publish per slot and each era holds
+ * DIFFERENT pointers: era 1 is 0x080d6a26..0x080d70d2, era 2 begins at
+ * 0x080d7320. Counted over every store to [sp, #68] and every access to
+ * [sp, #36] -- six in total, all listed above -- not sampled.
+ *
+ * THE THREE INDEXED SITES ARE SPELLED THREE WAYS AND MEAN ONE THING, and each
+ * was read separately rather than matched to its neighbour:
+ *   0x080d6e18 -- `ands r0, sl, #1` inline, then `lsls r0, #2`.
+ *   0x080d6e76 -- the SAME value, computed once at 0x080d6e24 and hoisted into
+ *   [sp, #32] already scaled by 4, so no shift appears at the site.
+ *   0x080d6ed2 -- `mov r6, sl; ands r6, r4` at 0x080d6e8a with r4 = 1, then
+ *   `lsls r0, r6, #2`. Guarded by `beq 0x080d6ee0` on that same r6, so inside
+ *   the branch the index is provably 1.
+ * All three are (i & 1). Three spellings agreeing here is evidence because
+ * they are three independent reads of the ROM, not one read copied twice.
+ *
+ * PINNING. Six sites read entry 0 directly and cannot differ from each other,
+ * so no pin is needed between them and none was invented. The two that could
+ * differ were pinned on argument agreement at every position: era 2's
+ * 0x080d74d8 and 0x080d74f4 take the same y (projected[1] - 24), the same 20
+ * and 24, and differ in EXACTLY the x -- `subs r2, #20` against a plain
+ * `ldr r2, [r1, #0]` -- which is the entry-0/entry-1 boundary. Era 1's
+ * 0x080d6edc was pinned by its `adds r2, #8` on x and its r8 y against the
+ * draft's `particle->x + 8` and `strip`.
+ *
+ * THE EARLIER DRAFT WAS NOT WRONG at 0x080d6edc. It wrote the constant
+ * entry 1 where the ROM indexes; the guard makes those the same value. The
+ * index is restored because it is the ROM's shape, and the draft is credited
+ * with what it actually claimed.
+ *
+ * The draft's `((void **)&tiles_a)[i & 1]` aliased two separate locals as an
+ * array. The ROM has one object, so it is now one array.
+ *
+ * UNCERTAINTY, NOT RESOLVED, and it is the shape of my own batch-3 error:
+ * 0x080d6b9a calls 0x03000164 with r0 and r1 plainly set (render_context and
+ * 0x4000) and r2 holding 3. But r2 was loaded `movs r2, #3` at 0x080d6b7e to
+ * be the mask of the `ands r3, r2` two instructions later, and NOTHING
+ * rewrites it before the call. A live leftover from a mask is exactly what a
+ * false third argument looks like -- that is how I mistyped 0x030001d8 as
+ * three-argument -- and the recorded evidence says a genuine third argument to
+ * 0x03000164 is almost always zero, where this is 3. The site cannot
+ * discriminate: r2 already holds 3 either way, so both the two- and
+ * three-argument forms would emit the same bytes here. The draft's three-
+ * argument form is KEPT because changing it on suspicion would be the same
+ * mistake in the other direction. This is a bounded uncertainty and the
+ * final answer available from this site, not a waypoint. 0x03000164 remains
+ * an exact-lane question.
+ *
+ * UNCERTAINTY, left standing: what slots 46 and 47 CONTAIN is not settled
+ * here, and nothing here says the two eras hold the same pair.
+ */
 typedef void (*Transfer_080d6970)(void *, const void *, u32);
 typedef void (*Publisher_080d6970)(
     void *, const void *, s32, s32, s32, s32);
@@ -48,7 +117,6 @@ void Func_08004278(const void *);
 s32 Func_08004458(void);
 void Func_080049ac(void);
 void Func_080051d8(void *, void *);
-void Func_080072f0(void *, const void *, u32, Transfer_080d6970);
 void Func_08009020(void *, s32);
 void Func_08009038(void *);
 void Func_080b5088(s16);
@@ -96,8 +164,8 @@ void Func_080d6970(struct Scene_080d6970 *scene)
     u8 *runtime = (u8 *)runtime_header[0];
     void *render_context = (void *)runtime_header[1];
     void **graphics_header = (void **)0x03001e50;
-    void *tiles_a;
-    void *tiles_b;
+    /* One object in the ROM: the two-entry table at sp + 68. */
+    Publisher_080d6970 tiles[2];
     struct Particle_080d6970 *ribbons =
         (struct Particle_080d6970 *)(runtime + 0x7080);
     struct Particle_080d6970 *rain =
@@ -129,9 +197,9 @@ void Func_080d6970(struct Scene_080d6970 *scene)
     *(volatile u16 *)0x04000050 = 0x177;
     Func_080e0524(0x080cd261, runtime, 1, 1);
     Func_080ed408(46, 7, 7, 3, 1);
-    tiles_a = graphics_header[46];
+    tiles[0] = (Publisher_080d6970)graphics_header[46];
     Func_080ed408(47, 7, 7, 7, 1);
-    tiles_b = graphics_header[47];
+    tiles[1] = (Publisher_080d6970)graphics_header[47];
 
     *(s32 *)(runtime + 0x7780) = 1;
     *(s32 *)(runtime + 0x7240) = 0;
@@ -169,11 +237,8 @@ void Func_080d6970(struct Scene_080d6970 *scene)
 
         if ((*(volatile u32 *)0x03001b04 & 3) != 0 &&
             frame > 190 && frame <= 0x11d) {
-            Func_080072f0(
-                render_context,
-                (const void *)0x4000,
-                3,
-                (Transfer_080d6970)0x03000164);
+            ((Transfer_080d6970)0x03000164)(
+                render_context, (const void *)0x4000, 3);
             frame = 286;
         }
         if (frame == 224)
@@ -221,7 +286,7 @@ void Func_080d6970(struct Scene_080d6970 *scene)
                     s32 width = *(const u8 *)(0x080ee920 + index);
                     s32 height = *(const u8 *)(0x080ee925 + index);
                     Publish_080d6970(
-                        tiles_a,
+                        tiles[0],
                         render_context,
                         runtime + *(const u16 *)(0x080ee916 + index * 2),
                         *(s16 *)((u8 *)particle + 2) - width / 2,
@@ -265,7 +330,7 @@ void Func_080d6970(struct Scene_080d6970 *scene)
                         wrapped -= 64;
                     if (wrapped <= 119) {
                         Publish_080d6970(
-                            ((void **)&tiles_a)[i & 1],
+                            tiles[i & 1],
                             render_context,
                             runtime + (i <= 5 ? 0 : 0x6c0),
                             particle->x,
@@ -287,7 +352,7 @@ void Func_080d6970(struct Scene_080d6970 *scene)
                             if (y + height > particle->y)
                                 height -= y + height - particle->y;
                             Publish_080d6970(
-                                ((void **)&tiles_a)[i & 1],
+                                tiles[i & 1],
                                 render_context,
                                 runtime + (i <= 5 ? 0 : 0x6c0) +
                                     source_y + 192,
@@ -307,7 +372,11 @@ void Func_080d6970(struct Scene_080d6970 *scene)
                             width -= strip + width - particle->y;
                         if (width > 0)
                             Publish_080d6970(
-                                tiles_b,
+                                /* The ROM indexes the table here; the
+                                   (i & 1) guard above makes it provably
+                                   entry 1, so the earlier draft's tiles[1]
+                                   was the right VALUE, not an error. */
+                                tiles[i & 1],
                                 render_context,
                                 runtime +
                                     *(const u16 *)(0x080ee92a + index * 2),
@@ -328,7 +397,7 @@ void Func_080d6970(struct Scene_080d6970 *scene)
                     s32 width = *(const u8 *)(0x080ee93e + index);
                     s32 height = *(const u8 *)(0x080ee943 + index);
                     Publish_080d6970(
-                        tiles_a,
+                        tiles[0],
                         render_context,
                         runtime + *(const u16 *)(0x080ee934 + index * 2),
                         *(s16 *)((u8 *)particle + 2),
@@ -393,7 +462,7 @@ void Func_080d6970(struct Scene_080d6970 *scene)
                     if ((u32)spark->age <= 4) {
                         s32 size = *(const u8 *)(0x080ee952 + spark->age);
                         Publish_080d6970(
-                            tiles_a,
+                            tiles[0],
                             render_context,
                             runtime +
                                 *(const u16 *)(0x080ee948 + spark->age * 2),
@@ -484,9 +553,9 @@ void Func_080d6970(struct Scene_080d6970 *scene)
             Func_080e0524(0x98, runtime, 1, 0);
             Func_080e0524(0xc0, runtime + 0x1680, 1, 1);
             Func_080ed408(46, 7, 7, 3, 2);
-            tiles_a = graphics_header[46];
+            tiles[0] = (Publisher_080d6970)graphics_header[46];
             Func_080ed408(47, 7, 7, 7, 2);
-            tiles_b = graphics_header[47];
+            tiles[1] = (Publisher_080d6970)graphics_header[47];
             *(volatile u16 *)0x04000050 = 0x3f46;
             *(volatile u16 *)0x04000020 = 0x80;
             *(volatile u32 *)0x04000028 = 0;
@@ -533,7 +602,7 @@ void Func_080d6970(struct Scene_080d6970 *scene)
                     projected[0] /= 2;
                     scale = scale * 15 * 32;
                     Publish_080d6970(
-                        tiles_a,
+                        tiles[0],
                         render_context,
                         runtime + scale,
                         projected[0] - 20,
@@ -541,7 +610,7 @@ void Func_080d6970(struct Scene_080d6970 *scene)
                         20,
                         24);
                     Publish_080d6970(
-                        tiles_b,
+                        tiles[1],
                         render_context,
                         runtime + scale,
                         projected[0],
@@ -563,7 +632,7 @@ void Func_080d6970(struct Scene_080d6970 *scene)
                             size = *(const u16 *)
                                 (0x080ee966 + 12);
                             Publish_080d6970(
-                                tiles_a,
+                                tiles[0],
                                 render_context,
                                 runtime +
                                     *(const u16 *)(0x080ee958 + 12),

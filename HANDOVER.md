@@ -7014,13 +7014,95 @@ lanes each re-instrumented the same line by hand to learn anything — "the 39c
 complaint" stayed anonymous for days for want of one coordinate. **An error
 that does not name its subject is a silent gate wearing a different hat.**
 
+### Second pass, from the coordinate (same shift)
+
+Going back at it with the coordinate in hand narrowed it further and did not
+close it. Two new facts, both measured:
+
+- **It reproduces, rarely.** One failure in five cold `assembleOverlay` runs
+  (`first_diff=0x10cc differing=55`, identical to the earlier sightings), then
+  **eight consecutive clean runs**. Roughly three occurrences in ~25 runs
+  tonight. Any future "I ran it and it was fine" means nothing below about
+  twenty cold runs — this is the sample size the next person needs.
+- **The owning row's compilation is DETERMINISTIC.** Hashing the spliced image
+  slice `0x10c0-0x1408` across six cold compiles gives one digest, six times
+  (`11de310d…`, 840 bytes). So `resource_39c_c_020010c0.c` compiles bit-identically
+  every time, and **the intermittency is not in that row's compile output** —
+  which was the obvious hypothesis and is now excluded.
+
+That leaves the splice, or a neighbouring row landing over `0x10cc`, or
+something above `assembleOverlay`. Not established, and I stopped here rather
+than keep burning the shift on a one-in-eight event.
+
 ### If it recurs
 
-Capture the message (it now carries the coordinate), then check whether
-`assets/code/resource_39c_c_020010c0.c` compiles byte-exact cold, and compare
-its cached entry against a fresh compile. Do NOT weaken `stageStamp` and do not
-exempt 39c: the stamp is what made this visible at all, and a full re-encode
-costs 3.6s.
+Capture the message — it now carries the coordinate. Then: run at least twenty
+cold iterations before concluding anything; hash the spliced slice per run to
+tell a compile difference from a splice difference (the row itself is already
+cleared); and when a run goes dirty, print the first and last differing offsets
+together with every `overlayCSpans` row overlapping that range, which tells you
+whether one row or the splice boundary owns the damage.
+
+Do NOT weaken `stageStamp` and do not exempt 39c: the stamp is what made this
+visible at all, and a full re-encode costs 3.6s.
+
+## 5j. A FAILURE MUST NAME ITS SUBJECT (2026-08-01, jupiter)
+
+Companion to §5f. That one asked *what does a tool print when it does nothing*;
+this one asks **what does a failure print when it fires**. Same defect class:
+an anonymous throw is a silent gate wearing a different hat, because the lane
+learns that something is wrong without learning what.
+
+**Do NOT fix this by rewriting every message.** 331 anonymous throws exist
+across the lane-facing tools; 187 are self-test assertions, where the assertion
+text *is* the subject, and many of the remaining 144 are usage and argument
+errors, where the flag is the subject. Rewriting those is churn.
+
+**The fix is to WRAP at the layer that knows.** A codec, a linker step or a
+compile plan legitimately does not know which of 2,431 regions or 1,800 modules
+it is working on — the loop above it does. One wrap supplies the coordinate for
+every throw beneath it.
+
+Wraps now in place, each covering a whole family:
+
+| loop | supplies | covers |
+|---|---|---|
+| `build_assets` entry loop | asset address + kind | all 42 `extract_resource` `DecodeError`s |
+| `build_asm` region loop | region source name | veneer/alignment/toolchain throws in `buildRegion` |
+| `build_claimed` module loop | module basename | `moduleEnd`'s symbol errors |
+| `overlay_disasm` row loop | overlay + row basename | bare `xgcc failed: …` from the compile plan |
+
+And the codec itself now reports a coordinate rather than a verdict:
+`replay=… decoded=… cursor=… first_diff=… differing=…`. That single line is
+what reduced "the 39c complaint" from an anonymous days-old mystery to
+`0x10cc, 55 bytes, equal lengths` — which reads immediately as a layout shift
+rather than corruption.
+
+**Already correct, left alone:** `build_semantic`'s missing-inventory throw
+names the file *and* the command that fixes it, and is the model to copy;
+`build_claimed`'s per-module `failures.push` diagnostics all lead with
+`basename(source)`; `build_asm`'s manifest errors lead with
+`asm/manifest.json`.
+
+### On a lint for this: NOT possible, and a weak one would be worse
+
+I looked and I am not going to invent one. A lint can detect "throw with a
+literal message and no interpolation", but that flags all 144 sites, and the
+large majority are *correctly* literal — `--top must be a positive integer`
+needs no coordinate. A rule whose findings are mostly not defects is one a lane
+learns to skip, and §5f's own standard says that is worse than no rule.
+
+The real property — *every throw reachable from a per-item loop is wrapped by a
+layer that names the item* — needs whole-program reachability to check, and
+"is this a per-item loop" is not statically decidable. There is no cheap proxy
+that is not mostly noise.
+
+**So this is a review rule, not a lint, and it is deliberately narrow:** when
+you add a loop over regions, modules, rows or overlays, wrap the body's throws
+with the item's identity. When you write a throw, ask what the reader will have
+to do to find out which thing failed — if the answer is "re-instrument this
+line by hand", the message is unfinished. Three of us did exactly that to one
+line in `extract_resource` before anyone changed it.
 
 ## 5i. SWEEP E — the head, the tail and the swallowed leaf, ruled by RETURNS (2026-08-01, venus)
 

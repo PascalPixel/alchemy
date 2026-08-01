@@ -5274,6 +5274,51 @@ trusted on an unknown one.
 and owner set so it cannot rot when the repository's real spans move — which
 they do at every adoption.
 
+## 5d. The STALE-SPAN class is DELETE, not correct (ruled 2026-08-01)
+
+Sweep D's `STALE-SPAN` rows are `manual_regions` entries left behind when a
+row was promoted from a semantic draft to exact C: the entry's `span_bytes`
+now disagrees with what the compiler produces. Sixteen existed tree-wide
+(resource_380 ×2, 39e ×2, 3a0, 3a4 ×2, 3b3, 3b9 ×2, 3bb, 3bc ×4, 3c9).
+**The ruling is: delete the entry.** Do not correct the span.
+
+The question that settles it is what each consumer does when the entry is
+ABSENT, and it was answered by removing one entry in a worktree and running
+every consumer, not by reading the code:
+
+- `overlay_gaps.ts` / `overlay_published.ts` — `ownerSpans` unions
+  `manualRegions` with `exactSpans`, which compiles the exact row. The owner
+  is admitted by its compiled extent with no entry at all.
+- `overlay_driver.ts` — `ownerOf` falls through the `manual_regions` test to
+  `assets/code/<overlay>_c_<addr>.c`; the probe returned `exact-C`.
+- `coverage_map.ts` / `build_semantic.ts` — `reviewed` is consulted ONLY
+  while iterating `semantic/overlays/*.c`. A promoted row has no file there,
+  so the entry was already sizing nothing.
+- `overlay_multiset_check.ts` — `rows()` reads `manual_regions`, but the loop
+  skips any row without a `semantic/overlays` source. Same dead path.
+- `semantic_regions_sync.ts` — appends only for files under
+  `semantic/overlays`. It will NOT re-add a deleted entry, so deletion sticks.
+
+Evidence, all sixteen removed at once: `coverage_map`, `overlay_published`,
+`semantic_regions_sync` and `build_semantic` output byte-for-byte identical
+before and after (`c_expressed=1074354/1339678`, sync `addable=0`),
+`bun run verify` green with `byte_identical=yes`, and the only change in
+sweep D was the sixteen STALE-SPAN lines disappearing — **no new gap and no
+new overlap anywhere**. All sixteen rows were confirmed to have no
+`semantic/overlays` source and a live `assets/code` exact source.
+
+Direction matters and was checked: `ownerSpans` keeps the LONGER span, so a
+stale SHORT entry is already inert for gap computation while a stale LONG one
+can hide a real gap. Six of the sixteen were long (380@0x27ec, 380@0x4248,
+39e@0x266c, 39e@0x2764, 3b3@0xda8, 3c9@0x38c0), each overstating by exactly
+two bytes — inside `ALIGNMENT_SLACK`, which is why removing them revealed
+nothing. That is luck, not design: a longer overstatement WOULD have hidden a
+gap, so the class must be deleted on sight rather than left to accumulate.
+
+Standing rule: when a row is promoted to exact C, delete its `manual_regions`
+entry in the same commit. Sweep D reporting STALE-SPAN means that step was
+missed.
+
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**

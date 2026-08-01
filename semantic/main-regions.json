@@ -126,7 +126,7 @@
     },
     {
       "entry": "0x080a7440",
-      "evidence": "Reviewed complete 56-byte Thumb owner at 0x080a7440..0x080a7478. out/decomp/diagnose/080a7440/080a7440.s shows the sole prologue (push {r5,lr}), write of zero to halfword state+0x174, the direct Func_080a77a4(0) call, the -1 sentinel branch, byte load state+0x21a on success, and the matching pop/bx return. The fixed state pointer is 0x03001f2c; the direct caller in semantic/main/080a7380.c consumes r0 as the result. src/080a7440.c is deliberately noncanonical exact-match scaffolding (inline asm), so this reviewed source owns the semantic coverage instead.",
+      "evidence": "Reviewed complete 56-byte Thumb owner at 0x080a7440..0x080a7478. asm/080a7440.s shows the sole prologue (push {r5,lr}), write of zero to halfword state+0x174, the direct Func_080a77a4(0) call, the -1 sentinel branch, byte load state+0x21a on success, and the matching pop/bx return. The fixed state pointer is 0x03001f2c; the direct caller in semantic/main/080a7380.c consumes r0 as the result. The retained assembly owns byte identity while semantic/main/080a7440.c is the canonical behavioral reconstruction.",
       "executable_ranges": [
         {
           "address": "0x080a7440",
@@ -136,7 +136,7 @@
     },
     {
       "entry": "0x080b6e7c",
-      "evidence": "Reviewed complete 56-byte Thumb table-search leaf at 0x080b6e7c..0x080b6eb4. out/decomp/diagnose/080b6e7c/080b6e7c.s initializes index 0, reads each u16 Data_080c593c entry, compares its low nine bits against r0, returns entry >> 9 on a match, and after a failed comparison sign-tests the same entry for the 0xffff terminator before incrementing. src/080b6eb4.c directly calls it with a masked u16 key and indexes five result tables with the returned 0..6 selection. src/080b6e7c.c is deliberately noncanonical exact-match scaffolding (register pins and inline asm), so this reviewed source owns the semantic coverage instead.",
+      "evidence": "Reviewed complete 56-byte Thumb table-search leaf at 0x080b6e7c..0x080b6eb4. asm/080b6e7c.s initializes index 0, reads each u16 Data_080c593c entry, compares its low nine bits against r0, returns entry >> 9 on a match, and after a failed comparison sign-tests the same entry for the 0xffff terminator before incrementing. src/080b6eb4.c directly calls it with a masked u16 key and indexes five result tables with the returned 0..6 selection. The retained assembly owns byte identity while semantic/main/080b6e7c.c is the canonical behavioral reconstruction.",
       "executable_ranges": [
         {
           "address": "0x080b6e7c",

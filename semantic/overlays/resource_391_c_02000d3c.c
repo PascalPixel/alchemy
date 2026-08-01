@@ -110,8 +110,12 @@ extern s32 Data_0200b394;
 extern s32 Data_0200b398;
 
 /* IWRAM workspace pointer. */
-#define WORKSPACE (*(u8 **)0x03001ebc)
-#define SKIP_BEAT() (*(u16 *)(WORKSPACE + 472) += 1)
+#define WORKSPACE (*(u8 *volatile *)0x03001ebc)
+#define SKIP_BEAT() do { \
+    u8 *skip_workspace = WORKSPACE; \
+    u16 *skip_counter = (u16 *)(skip_workspace + 472); \
+    *skip_counter += 1; \
+} while (0)
 
 struct Obj {
     u8 pad00[8];
@@ -175,6 +179,13 @@ void Func_0808a4f0();
 void Func_02000d3c(void)
 {
     struct Obj *p;
+    s32 movement_2000;
+    s32 movement_4000;
+    s32 movement_6000;
+    s32 movement_a000;
+    s32 movement_c000;
+    s32 actor1_2000;
+    s32 actor1_6000;
 
     Func_0808a018();
     Func_0808a210(-1, -1, -1, 0);
@@ -241,41 +252,46 @@ void Func_02000d3c(void)
         Func_0808a098(3, Data_0200ae88);
     }
 
+    movement_2000 = 0x2000;
     Func_0808a0a0(2);
-    Func_02002780(2, 0x2000, 40);
+    Func_02002780(2, movement_2000, 40);
     Func_02002780(2, 0x8000, 20);
-    Func_02002780(2, 0x4000, 40);
+    movement_4000 = 0x4000;
+    Func_02002780(2, movement_4000, 40);
     Func_0808a1e8(2, 0x101, 0);
     Func_0808a010(60);
-    Func_0808a1b8(1, 0x4000, 0);
-    Func_02002780(0, 0x6000, 60);
-    Func_02002780(3, 0x2000, 10);
-    Func_0808a1b8(1, 0x2000, 0);
-    Func_02002780(0, 0xa000, 10);
+    Func_0808a1b8(1, movement_4000, 0);
+    movement_6000 = 0x6000;
+    Func_02002780(0, movement_6000, 60);
+    Func_02002780(3, movement_2000, 10);
+    Func_0808a1b8(1, movement_2000, 0);
+    movement_a000 = 0xa000;
+    Func_02002780(0, movement_a000, 10);
     Func_0808a1e8(1, 0x101, 0);
     Func_0808a1e8(0, 0x101, 0);
     Func_0808a010(40);
-    Func_0808a1b8(1, 0x4000, 0);
-    Func_02002780(0, 0x6000, 10);
+    Func_0808a1b8(1, movement_4000, 0);
+    Func_02002780(0, movement_6000, 10);
     Func_0808a138(1, 2);
     Func_0808a170(0x1474);
     Func_02002768(1, 10);
     Func_0808a170(0x147c);
-    Func_02002780(2, 0xc000, 20);
+    movement_c000 = 0xc000;
+    Func_02002780(2, movement_c000, 20);
     Func_0808a110(2, 3);
     Func_02002768(2, 20);
     Func_02002780(1, 0, 20);
-    Func_02002780(0, 0xa000, 40);
-    Func_02002780(1, 0x4000, 20);
-    Func_02002780(0, 0x6000, 30);
-    Func_02002780(1, 0x6000, 20);
+    Func_02002780(0, movement_a000, 40);
+    Func_02002780(1, movement_4000, 20);
+    Func_02002780(0, movement_6000, 30);
+    Func_02002780(1, movement_6000, 20);
     Func_02002780(0, 0xe000, 30);
     Func_0808a138(2, 2);
     Func_0808a1e8(2, 256, 0);
     Func_0808a010(40);
-    Func_0808a1b8(1, 0x4000, 0);
-    Func_02002780(0, 0x6000, 20);
-    Func_02002780(2, 0xc000, 10);
+    Func_0808a1b8(1, movement_4000, 0);
+    Func_02002780(0, movement_6000, 20);
+    Func_02002780(2, movement_c000, 10);
     Func_080f9010(17);
     Func_080f9010(206);
     Func_0808a330(0x7fff, 0);
@@ -310,47 +326,57 @@ void Func_02000d3c(void)
 
     Func_0808a010(20);
 
-    if (Data_0200b394 != 0) {
-        p = Func_0808a080(3);
-        p->f28 = 0x20000;
+    {
+        u8 *actor_data;
+        s32 placement_20000;
+
+        if (Data_0200b394 != 0) {
+            s32 conditional_placement;
+
+            p = Func_0808a080(3);
+            conditional_placement = 0x20000;
+            p->f28 = conditional_placement;
+            Func_0808a010(10);
+            Func_0808a090(3, conditional_placement, conditional_placement);
+            Func_0808a0e0(3, -2, 0);
+            Func_0808a098(3, Data_0200af48);
+            p = Func_0808a080(3);
+            Func_080091e0(p, 0);
+            Func_0808a100(3, 19);
+            Func_0808a010(10);
+        }
+
+        p = Func_0808a080(0);
+        placement_20000 = 0x20000;
+        p->f28 = placement_20000;
         Func_0808a010(10);
-        Func_0808a090(3, 0x20000, 0x20000);
-        Func_0808a0e0(3, -2, 0);
-        Func_0808a098(3, Data_0200af48);
-        p = Func_0808a080(3);
+        Func_0808a090(0, placement_20000, placement_20000);
+        actor_data = Data_0200af48;
+        Func_0808a098(0, actor_data);
+        p = Func_0808a080(0);
         Func_080091e0(p, 0);
-        Func_0808a100(3, 19);
+        Func_0808a100(0, 19);
+        Func_0808a010(20);
+
+        p = Func_0808a080(1);
+        p->f28 = placement_20000;
         Func_0808a010(10);
+        Func_0808a090(1, placement_20000, placement_20000);
+        Func_0808a098(1, actor_data);
+        p = Func_0808a080(1);
+        Func_080091e0(p, 0);
+        Func_0808a100(1, 19);
+        Func_0808a010(40);
+
+        p = Func_0808a080(2);
+        p->f28 = placement_20000;
+        Func_0808a010(10);
+        /* Slot 2 gets no Func_0808a090 - that asymmetry is in the original. */
+        Func_0808a098(2, actor_data);
+        p = Func_0808a080(2);
+        Func_080091e0(p, 0);
+        Func_0808a100(2, 19);
     }
-
-    p = Func_0808a080(0);
-    p->f28 = 0x20000;
-    Func_0808a010(10);
-    Func_0808a090(0, 0x20000, 0x20000);
-    Func_0808a098(0, Data_0200af48);
-    p = Func_0808a080(0);
-    Func_080091e0(p, 0);
-    Func_0808a100(0, 19);
-    Func_0808a010(20);
-
-    p = Func_0808a080(1);
-    p->f28 = 0x20000;
-    Func_0808a010(10);
-    Func_0808a090(1, 0x20000, 0x20000);
-    Func_0808a098(1, Data_0200af48);
-    p = Func_0808a080(1);
-    Func_080091e0(p, 0);
-    Func_0808a100(1, 19);
-    Func_0808a010(40);
-
-    p = Func_0808a080(2);
-    p->f28 = 0x20000;
-    Func_0808a010(10);
-    /* Slot 2 gets no Func_0808a090 - that asymmetry is in the original. */
-    Func_0808a098(2, Data_0200af48);
-    p = Func_0808a080(2);
-    Func_080091e0(p, 0);
-    Func_0808a100(2, 19);
 
     /* Stop the 0x27c8 spawner, then uninstall it. */
     Data_0200b398 = 0;
@@ -406,14 +432,10 @@ void Func_02000d3c(void)
 
     Data_0200b38c = 3;
 
-    p = Func_0808a080(0);
-    p->f23 = p->f23 & 0xfe;
-    p = Func_0808a080(1);
-    p->f23 = p->f23 & 0xfe;
-    p = Func_0808a080(2);
-    p->f23 = p->f23 & 0xfe;
-    p = Func_0808a080(3);
-    p->f23 = p->f23 & 0xfe;
+    Func_0808a080(0)->f23 &= 0xfe;
+    Func_0808a080(1)->f23 &= 0xfe;
+    Func_0808a080(2)->f23 &= 0xfe;
+    Func_0808a080(3)->f23 &= 0xfe;
     Func_0808a1e0(0, 3);
     Func_0808a1e0(1, 3);
     Func_0808a1e0(2, 3);
@@ -425,28 +447,24 @@ void Func_02000d3c(void)
 
     Func_080f9010(220);
 
-    p = Func_0808a080(13);
-    p->f23 = p->f23 & 0xfe;
+    Func_0808a080(13)->f23 &= 0xfe;
     Func_0808a1e0(13, 2);
     Func_0808a0f0(13, 253 << 16, 0x025b0000);
     Func_0808a098(13, Data_0200af6c);
 
-    p = Func_0808a080(14);
-    p->f23 = p->f23 & 0xfe;
+    Func_0808a080(14)->f23 &= 0xfe;
     Func_0808a1e0(14, 2);
     Func_0808a0f0(14, 233 << 16, 0x02750000);
     Func_0808a098(14, Data_0200af6c);
 
     if (Data_0200b394 != 0) {
-        p = Func_0808a080(15);
-        p->f23 = p->f23 & 0xfe;
+        Func_0808a080(15)->f23 &= 0xfe;
         Func_0808a1e0(15, 2);
         Func_0808a0f0(15, 207 << 16, 0x02610000);
         Func_0808a098(15, Data_0200af6c);
     }
 
-    p = Func_0808a080(16);
-    p->f23 = p->f23 & 0xfe;
+    Func_0808a080(16)->f23 &= 0xfe;
     Func_0808a1e0(16, 2);
     Func_0808a0f0(16, 227 << 16, 145 << 18);
     Func_0808a098(16, Data_0200af6c);
@@ -515,8 +533,7 @@ void Func_02000d3c(void)
     Func_0808a010(40);
     Func_0808a1e0(1, 2);
 
-    p = Func_0808a080(1);
-    p->f23 = p->f23 | 1;
+    Func_0808a080(1)->f23 |= 1;
     p = Func_0808a080(1);
     Func_080091e0(p, 1);
     Func_0808a128(1, 6, 0);
@@ -525,15 +542,17 @@ void Func_02000d3c(void)
     Func_02002780(1, 0x4000, 60);
     Func_02002768(1, 20);
     Func_0808a130(1, 2);
+    actor1_2000 = 0x2000;
     Func_02002768(1, 10);
     Func_0808a138(0, 3);
-    Func_02002780(1, 0x2000, 20);
+    Func_02002780(1, actor1_2000, 20);
+    actor1_6000 = 0x6000;
     Func_0808a1e8(1, 0x101, 0);
     Func_0808a010(40);
-    Func_02002780(1, 0x6000, 40);
-    Func_02002780(1, 0x2000, 20);
-    Func_02002780(1, 0x6000, 20);
-    Func_02002780(1, 0x2000, 10);
+    Func_02002780(1, actor1_6000, 40);
+    Func_02002780(1, actor1_2000, 20);
+    Func_02002780(1, actor1_6000, 20);
+    Func_02002780(1, actor1_2000, 10);
     Func_0808a128(1, 2, 0);
     Func_0808a010(40);
     Func_0808a128(1, 2, 0);
@@ -548,8 +567,7 @@ void Func_02000d3c(void)
         Func_0808a138(3, 2);
         Func_0808a010(80);
         Func_0808a1e0(3, 2);
-        p = Func_0808a080(3);
-        p->f23 = p->f23 | 1;
+        Func_0808a080(3)->f23 |= 1;
         p = Func_0808a080(3);
         Func_080091e0(p, 1);
         Func_0808a128(3, 4, 0);
@@ -575,8 +593,7 @@ void Func_02000d3c(void)
     Func_0808a138(2, 2);
     Func_0808a010(20);
     Func_0808a1e0(2, 2);
-    p = Func_0808a080(2);
-    p->f23 = p->f23 | 1;
+    Func_0808a080(2)->f23 |= 1;
     p = Func_0808a080(2);
     Func_080091e0(p, 1);
     Func_0808a128(2, 4, 0);
@@ -585,8 +602,7 @@ void Func_02000d3c(void)
     Func_0808a138(0, 2);
     Func_0808a010(10);
     Func_0808a1e0(0, 2);
-    p = Func_0808a080(0);
-    p->f23 = p->f23 | 1;
+    Func_0808a080(0)->f23 |= 1;
     p = Func_0808a080(0);
     Func_080091e0(p, 1);
     Func_0808a128(0, 4, 0);
@@ -715,14 +731,10 @@ void Func_02000d3c(void)
         Func_02002780(3, 0xc000, 10);
     }
 
-    p = Func_0808a080(0);
-    p->f23 = p->f23 & 0xfe;
-    p = Func_0808a080(1);
-    p->f23 = p->f23 & 0xfe;
-    p = Func_0808a080(2);
-    p->f23 = p->f23 & 0xfe;
-    p = Func_0808a080(3);
-    p->f23 = p->f23 & 0xfe;
+    Func_0808a080(0)->f23 &= 0xfe;
+    Func_0808a080(1)->f23 &= 0xfe;
+    Func_0808a080(2)->f23 &= 0xfe;
+    Func_0808a080(3)->f23 &= 0xfe;
     Func_0808a1e0(0, 3);
     Func_0808a1e0(1, 3);
     Func_0808a1e0(2, 3);
@@ -868,14 +880,10 @@ void Func_02000d3c(void)
     Func_0808a1e0(1, 2);
     Func_0808a1e0(2, 2);
     Func_0808a1e0(3, 2);
-    p = Func_0808a080(0);
-    p->f23 = p->f23 | 1;
-    p = Func_0808a080(1);
-    p->f23 = p->f23 | 1;
-    p = Func_0808a080(2);
-    p->f23 = p->f23 | 1;
-    p = Func_0808a080(3);
-    p->f23 = p->f23 | 1;
+    Func_0808a080(0)->f23 |= 1;
+    Func_0808a080(1)->f23 |= 1;
+    Func_0808a080(2)->f23 |= 1;
+    Func_0808a080(3)->f23 |= 1;
 
     Func_0808a138(2, 2);
     Func_02002780(2, 0xe000, 10);

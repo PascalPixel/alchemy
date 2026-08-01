@@ -4,8 +4,8 @@
  * ROM 0x080b6e7c..0x080b6eb4: complete table-search leaf, reviewed from
  * out/decomp/diagnose/080b6e7c/080b6e7c.s and its direct caller
  * src/080b6eb4.c.  Table entries carry a 9-bit key and a 7-bit result; the
- * signed 0xffff entry terminates a miss.  src/080b6e7c.c uses register pins
- * and an asm barrier for an exact-match experiment, neither semantic state.
+ * signed 0xffff entry terminates a miss.  asm/080b6e7c.s retains byte identity
+ * while this file expresses the behavior without compiler escape hatches.
  */
 extern const u16 Data_080c593c[];
 

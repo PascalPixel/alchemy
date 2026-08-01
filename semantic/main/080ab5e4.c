@@ -163,7 +163,6 @@ s32 Func_080ab5e4(s32 arg0) {
     void *temp_r9;
     s32 var_r5;
     s32 dialog;
-    u8 currentFlags;
     s8 slotFlags[8];
 
     sp50 = arg0;
@@ -804,15 +803,15 @@ block_236:
                             }
                             Func_080ab1f4(FIELD(sp4C, void **, 0x30), (sp18 - sp38) + 1, sp30 + 2, 6, 1, 0xF);
                             var_r0_3 = sp38;
-                            currentFlags = (u8)sp1C[var_r0_3];
-                            if (4 & currentFlags) {
+                            temp_r2_3 = (u8)sp1C[var_r0_3];
+                            if (4 & temp_r2_3) {
                                 goto redraw_entry;
                             }
-                            if (1 & currentFlags) {
-                                sp1C[var_r0_3] = (s8)(currentFlags & ~1);
+                            if (1 & temp_r2_3) {
+                                sp1C[var_r0_3] = (s8)(temp_r2_3 & ~1);
                                 sp30 = 0;
-                            } else if ((sp30 == 0) && (2 & currentFlags)) {
-                                sp1C[sp38] = (s8)(currentFlags | 1);
+                            } else if ((sp30 == 0) && (2 & temp_r2_3)) {
+                                sp1C[sp38] = (s8)(temp_r2_3 | 1);
                                 sp48 = 2;
                                 goto redraw_entry;
                             }

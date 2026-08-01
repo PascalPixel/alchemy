@@ -9,7 +9,7 @@ typedef unsigned int u32;
  * finale and its largest function by far -- the queue's ~930-byte
  * estimate missed by a factor of six.  A full Func_0808a018/
  * Func_0808a020 bracketed cutscene: 556 call sites, 43 distinct
- * callees, and only real control flow of five counted slide loops,
+ * callees, and only real control flow of four counted slide loops,
  * four skip-beat gates, one poll loop, and two entry-guard ifs.
  *
  * Shape: two repetitions of the f8c drop-in pattern (record fields
@@ -31,8 +31,9 @@ typedef unsigned int u32;
  * at 0x020027f8-0x02002806 through the matching epilogue at
  * 0x02003ee0-0x02003ef0, alignment halfword, tail pool to
  * 0x02003f23; next owner's prologue at 0x02003f24 (an owner NOT on
- * the census -- flagged to the queue).  The fixed-point loop counters
- * (r5 += 0x10000, compare r5>>16) are written as plain integer loops.
+ * the census -- flagged to the queue).  The counters are 16.16
+ * fixed-point values: each frame adds
+ * 0x10000 and the high half is compared against 90 or 60.
  * The 0xffffe667 pool word masquerades as `b.n` twice more here
  * (0x2002c24, 0x2003078); neither is control flow.
  *
@@ -97,33 +98,52 @@ extern void Func_080f9010(s32 arg0);
 
 void Func_020027f8(void)
 {
-    u8 *record8;
+    union {
+        u8 *pointer;
+        s32 value;
+    } record8;
     u8 *record;
     u8 *channel;
-    u8 *phase;
-    u8 *flag;
+    union {
+        u8 *pointer;
+        s32 value;
+    } phase;
     u8 *entry;
-    s32 tick;
+    u8 dropZero;
+    s32 initialFieldValue;
+    s32 loopDelta;
+    s32 packed4009;
+    s32 packed8009;
+    s32 packed8009Tail;
+    s32 field28Value;
+    u32 tick;
+    u32 nextTick;
 
     Func_0808a018();
-    Func_080091c0(27, 16, 5, 1, 27, 17);
+    {
+        s32 panelX = 27;
+        s32 panelY = 17;
+        Func_080091c0(27, 16, 5, 1, panelX, panelY);
+    }
     Func_0808a210(0x01d70000, -1, 0x01050000, 0);
     Func_0808a218();
     Func_08009128();
 
     /* First drop-in: actor 0, against record 8 (the f8c pattern). */
-    record8 = Func_0808a080(8);
-    *(s32 *)(record8 + 24) = 0x1999;
-    *(s32 *)(record8 + 28) = 0x1999;
+    record8.pointer = Func_0808a080(8);
+    initialFieldValue = 0x1999;
+    *(s32 *)(record8.pointer + 24) = initialFieldValue;
+    *(s32 *)(record8.pointer + 28) = initialFieldValue;
     record = Func_0808a080(0);
     channel = *(u8 **)(record + 0x50) + 38;
-    *channel = 0;
-    *(s32 *)(record + 24) = 0x1999;
-    *(s32 *)(record + 28) = 0x1999;
+    loopDelta = 0;
+    *channel = loopDelta;
+    *(s32 *)(record + 24) = initialFieldValue;
+    *(s32 *)(record + 28) = initialFieldValue;
     Func_0808a158(0, 256);
     Func_0808a0f0(0, 0x01d70000, 0x1220000);
-    phase = record + 0x55;
-    *phase = 0;
+    phase.pointer = record + 0x55;
+    *phase.pointer = loopDelta;
     *(s32 *)(record + 12) = 0x280000;
     *(s32 *)(Data_03001ebc + 448) = 515;
     *(s32 *)(Data_03001ebc + 456) = 32;
@@ -133,23 +153,24 @@ void Func_020027f8(void)
     Func_0808a0f0(8, 0x01d70000, 0x1220000);
     Func_080f9010(0xbe);
     Func_0808a1e0(0, 2);
-    for (tick = 0; tick != 90; tick++) {
+    loopDelta = 0x28f;
+    for (tick = 0; (tick >> 16) != 90; tick += 0x10000) {
         *(s32 *)(record + 12) += -0x1999;
-        *(s32 *)(record + 24) += 0x28f;
-        *(s32 *)(record + 28) += 0x28f;
-        *(s32 *)(record8 + 24) += 0x28f;
-        *(s32 *)(record8 + 28) += 0x28f;
+        *(s32 *)(record + 24) += loopDelta;
+        *(s32 *)(record + 28) += loopDelta;
+        *(s32 *)(record8.pointer + 24) += loopDelta;
+        *(s32 *)(record8.pointer + 28) += loopDelta;
         Func_0808a010(1);
     }
-    *phase = 5;
+    *phase.pointer = 5;
     Func_0808a010(80);
     Func_0808a208(0x4ccc, 0x999);
     Func_0808a210(0x01d70000, -1, 0x1220000, 1);
-    for (tick = 0; tick != 60; tick++) {
+    for (tick = 0; (tick >> 16) != 60; tick += 0x10000) {
         *(s32 *)(record + 12) += -0x8000;
         Func_0808a010(1);
     }
-    *phase = 3;
+    *phase.pointer = 3;
     Func_0808a010(20);
     Func_0808a1e0(0, 1);
     Func_0808a080(0)[0x23] |= 1;
@@ -165,6 +186,7 @@ void Func_020027f8(void)
     Func_0808a138(0, 2);
     Func_0808a010(20);
 
+    dropZero = 0;
     entry = Func_0808a080(0);
     if (entry != 0) {
         Func_0808a0f0(5, *(s32 *)(entry + 8), *(s32 *)(entry + 16));
@@ -235,15 +257,15 @@ void Func_020027f8(void)
     /* Second drop-in: actor 9, same pattern. */
     record = Func_0808a080(9);
     channel = *(u8 **)(record + 0x50) + 38;
-    *channel = 0;
+    *channel = dropZero;
     *(s32 *)(record + 24) = 0x1999;
     *(s32 *)(record + 28) = 0x1999;
-    *(s32 *)(record8 + 24) = 0x1999;
-    *(s32 *)(record8 + 28) = 0x1999;
+    *(s32 *)(record8.pointer + 24) = 0x1999;
+    *(s32 *)(record8.pointer + 28) = 0x1999;
     Func_0808a158(9, 256);
     Func_0808a0f0(9, 0x01d70000, 0x1220000);
-    phase = record + 0x55;
-    *phase = 0;
+    phase.pointer = record + 0x55;
+    *phase.pointer = dropZero;
     *(s32 *)(record + 12) = 0x280000;
     Func_0808a010(1);
     Func_0808a170(0x103c);
@@ -260,21 +282,24 @@ void Func_020027f8(void)
     Func_0808a0f0(8, 0x01d70000, 0x1220000);
     Func_080f9010(0xbe);
     Func_0808a1e0(9, 2);
-    for (tick = 0; tick != 90; tick++) {
+    loopDelta = 0x28f;
+    for (tick = 0; (tick >> 16) != 90; tick += 0x10000) {
         *(s32 *)(record + 12) += -0x1999;
-        *(s32 *)(record + 24) += 0x28f;
-        *(s32 *)(record + 28) += 0x28f;
-        *(s32 *)(record8 + 24) += 0x28f;
-        *(s32 *)(record8 + 28) += 0x28f;
+        *(s32 *)(record + 24) += loopDelta;
+        *(s32 *)(record + 28) += loopDelta;
+        *(s32 *)(record8.pointer + 24) += loopDelta;
+        *(s32 *)(record8.pointer + 28) += loopDelta;
         Func_0808a010(1);
     }
-    *phase = 5;
+    *phase.pointer = 5;
     Func_0808a010(80);
-    for (tick = 0; tick != 60; tick++) {
+    for (tick = 0; (tick >> 16) != 60;) {
         *(s32 *)(record + 12) += -0x8000;
         Func_0808a010(1);
+        nextTick = tick + 0x10000;
+        tick = nextTick;
     }
-    *phase = 3;
+    *phase.pointer = 3;
     Func_0808a010(30);
     Func_0808a1e0(9, 1);
     Func_0808a080(9)[0x23] |= 1;
@@ -316,9 +341,10 @@ void Func_020027f8(void)
     Func_0808a1b8(1, 0xd000, 20);
     Func_0808a138(9, 2);
     Func_0808a010(30);
+    packed4009 = 0x4009;
     Func_0808a110(9, 4);
     Func_0808a010(40);
-    Func_02004248(0x4009, 30);
+    Func_02004248(packed4009, 30);
     Func_0808a150(0, 5, 0);
     Func_0808a010(40);
     Func_0808a130(0, 2);
@@ -326,13 +352,13 @@ void Func_020027f8(void)
     Func_0808a1e8(1, 0x101, 40);
     Func_02004248(1, 40);
     Func_0808a1b8(9, 0x5000, 20);
-    Func_02004248(0x4009, 20);
+    Func_02004248(packed4009, 20);
     Func_0808a1b8(0, 0xd000, 0);
     Func_0808a1b8(5, 0xe000, 20);
     Func_0808a1e8(0, 0x101, 0);
     Func_0808a1e8(5, 0x101, 40);
     Func_0808a110(9, 4);
-    Func_02004248(0x4009, 10);
+    Func_02004248(packed4009, 10);
     Func_0808a100(1, 3);
     Func_0808a100(5, 3);
     Func_0808a110(0, 3);
@@ -367,7 +393,7 @@ void Func_020027f8(void)
     Func_0808a0d0(9, 471, 360);
     Func_0808a010(20);
     Func_0808a1b8(9, 0x3000, 30);
-    Func_0808a1e8(9, 258, 0);
+    Func_0808a1e8(9, 256, 0);
     Func_0808a138(9, 2);
     Func_0808a010(30);
     Func_02004248(9, 30);
@@ -511,19 +537,20 @@ void Func_020027f8(void)
     Func_0808a170(0x1056);
     Func_0808a1b8(1, 0x6000, 20);
     Func_0808a128(9, 4, 40);
-    Func_02004248(0x8009, 10);
+    packed8009 = 0x8009;
+    Func_02004248(packed8009, 10);
     Func_0808a1e8(0, 0x101, 0);
     Func_0808a1e8(5, 0x101, 0);
     Func_0808a1e8(1, 0x101, 80);
     Func_0808a1f0(9, 258);
     Func_0808a010(40);
-    Func_02004248(0x8009, 40);
+    Func_02004248(packed8009, 40);
     Func_0808a1e8(0, 262, 0);
     Func_0808a1e8(5, 262, 0);
     Func_0808a1e8(1, 262, 60);
     Func_0808a1b8(5, 0, 0);
     Func_0808a1b8(1, 0x8000, 20);
-    Func_0808a178(0x8009, 0);
+    Func_0808a178(packed8009, 0);
     if (Func_0808a070(0, 0) == 1) {
         *(u16 *)(Data_03001ebc + 472) += 1;
     }
@@ -531,7 +558,7 @@ void Func_020027f8(void)
     Func_0808a010(20);
     Func_0808a1b8(5, 0x2000, 0);
     Func_0808a1b8(1, 0x5000, 20);
-    Func_02004248(0x8009, 40);
+    Func_02004248(packed8009, 40);
     Func_0808a170(0x105b);
     Func_0808a100(5, 4);
     Func_02004248(5, 10);
@@ -545,7 +572,7 @@ void Func_020027f8(void)
     Func_0808a010(40);
     Func_0808a1b8(9, 0xc000, 10);
     Func_0808a138(9, 1);
-    Func_02004248(0x8009, 40);
+    Func_02004248(packed8009, 40);
     Func_0808a1e8(0, 0x105, 0);
     Func_0808a1e8(5, 0x105, 0);
     Func_0808a1e8(1, 0x105, 120);
@@ -555,7 +582,7 @@ void Func_020027f8(void)
     Func_0808a138(9, 1);
     Func_0808a010(40);
     Func_0808a1b8(9, 0x4000, 80);
-    Func_02004248(0x8009, 10);
+    Func_02004248(packed8009, 10);
     Func_0808a1b8(1, 0x8000, 0);
     Func_0808a1b8(0, 0, 30);
     Func_0808a130(0, 2);
@@ -575,21 +602,24 @@ void Func_020027f8(void)
     Func_0808a010(80);
     Func_0808a110(9, 3);
     Func_0808a010(20);
-    Func_02004248(0x8009, 40);
+    Func_02004248(packed8009, 40);
 
     /* Closing text blocks on record 9 (the 178c idiom, bracketed by
      * Func_080000c0(6) refreshes). */
     record = Func_0808a080(9);
     Func_080000c0(6);
-    *(s32 *)(record + 0x34) = 0x20000;
-    *(s32 *)(record + 0x30) = 0x30000;
+    phase.value = 0x30000;
+    record8.value = 0x20000;
+    *(s32 *)(record + 0x34) = record8.value;
+    *(s32 *)(record + 0x30) = phase.value;
+    field28Value = 0x60000;
     Func_080f9010(0x99);
-    *(s32 *)(record + 0x28) = 0x60000;
+    *(s32 *)(record + 0x28) = field28Value;
     Func_0808a0c0(9, 471, 395);
     Func_080000c0(6);
     Func_0808a090(9, 0x4ccc, 0x2666);
-    flag = record + 90;
-    *flag &= 0xfe;
+    channel = record + 90;
+    *channel &= 0xfe;
     Func_0808a0b8(9, 473, 395);
     Func_0808a0e8(9);
     Func_0808a138(9, 2);
@@ -602,7 +632,7 @@ void Func_020027f8(void)
     Func_0808a090(9, 0xcccc, 0x6666);
     Func_0808a0d0(9, 471, 411);
     Func_0808a090(9, 0x4ccc, 0x2666);
-    *flag &= 0xfe;
+    *channel &= 0xfe;
     Func_0808a0b8(9, 474, 411);
     Func_0808a0e8(9);
     Func_0808a138(9, 3);
@@ -618,13 +648,13 @@ void Func_020027f8(void)
     Func_0808a0d0(9, 471, 395);
     Func_0808a098(9, 1);
     Func_0808a010(30);
-    *flag |= 1;
+    *channel |= 1;
     Func_0808a1b8(9, 0xc000, 60);
     Func_080000c0(6);
-    *(s32 *)(record + 0x30) = 0x30000;
-    *(s32 *)(record + 0x34) = 0x20000;
+    *(s32 *)(record + 0x30) = phase.value;
+    *(s32 *)(record + 0x34) = record8.value;
     Func_080f9010(0x99);
-    *(s32 *)(record + 0x28) = 0x60000;
+    *(s32 *)(record + 0x28) = field28Value;
     Func_0808a0c0(9, 471, 360);
     Func_080000c0(6);
     Func_0808a010(40);
@@ -656,7 +686,7 @@ void Func_020027f8(void)
     Func_0808a1b8(9, 0xd000, 30);
     Func_0808a138(9, 1);
     Func_0808a010(20);
-    Func_02004248(0x8009, 20);
+    Func_02004248(packed8009, 20);
     Func_0808a1b8(0, 0x4000, 0);
     Func_0808a1b8(1, 0x5000, 30);
     Func_0808a130(0, 2);
@@ -687,10 +717,11 @@ void Func_020027f8(void)
     Func_0808a090(9, 0x3333, 0x1999);
     Func_0808a0d0(9, 471, 352);
     Func_0808a010(20);
+    packed8009Tail = 0x8009;
     Func_0808a138(9, 2);
     Func_0808a010(20);
-    Func_02004248(0x8009, 60);
-    *flag &= 0xfe;
+    Func_02004248(packed8009Tail, 60);
+    *channel &= 0xfe;
     Func_0808a0d0(9, 456, 360);
     Func_0808a010(20);
     Func_0808a138(5, 2);
@@ -704,18 +735,18 @@ void Func_020027f8(void)
     Func_02004248(1, 10);
     Func_0808a1b8(9, 0xd000, 20);
     Func_0808a110(9, 3);
-    Func_02004248(0x8009, 20);
+    Func_02004248(packed8009Tail, 20);
     Func_0808a1b8(0, 0, 0);
     Func_0808a1b8(1, 0x8000, 40);
     Func_0808a1e8(0, 0x101, 0);
     Func_0808a1e8(1, 0x101, 40);
     Func_0808a138(9, 2);
-    Func_02004248(0x8009, 10);
+    Func_02004248(packed8009Tail, 10);
     Func_0808a1b8(0, 0x4000, 0);
     Func_0808a1b8(1, 0x5000, 30);
     Func_0808a110(9, 3);
     Func_0808a010(10);
-    Func_02004248(0x8009, 30);
+    Func_02004248(packed8009Tail, 30);
     Func_0808a100(1, 3);
     Func_0808a110(0, 3);
     Func_0808a010(20);
@@ -736,7 +767,11 @@ void Func_020027f8(void)
     Func_080770c8(0x83b);
     Func_0808a058(5);
     Func_02004328();
-    Func_080091c0(8, 0, 5, 1, 27, 17);
+    {
+        s32 panelX = 27;
+        s32 panelY = 17;
+        Func_080091c0(8, 0, 5, 1, panelX, panelY);
+    }
     *(s32 *)(Data_03001ebc + 456) = 16;
     Func_080770d0(0x12f);
     Func_0808a020();

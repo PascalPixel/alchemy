@@ -626,7 +626,7 @@ export function calculateProgress(
   };
 }
 
-function currentProgress(target: DecompTargetId): ProgressReport {
+export function currentProgress(target: DecompTargetId): ProgressReport {
   const inventory = readJson(inventoryPath(target)) as ExecutableInventory;
   if (inventory.target !== target) throw new Error("inventory target mismatch");
   const overlayMap = new Map<string, OwnedSpan[]>();

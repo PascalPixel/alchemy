@@ -6543,6 +6543,12 @@
     },
     {
       "overlay": "resource_3bb",
+      "entry": "0x020010dc",
+      "span_bytes": 532,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8/r9/sl spill) and returning (pop {r3, r5, r6}/mov r8,r3/mov r9,r5/mov sl,r6/pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached by one bl from resource_3bb_c_02000bd4.c (overlay_call_targets +2 rule); code span independently measured by m2c_guard as 508 bytes ending at 0x020012d8, followed by this owner's five-word literal pool through 0x020012ef; the next owner's prologue is at 0x020012f0, making the admitted whole-owner span 532 bytes, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3bb",
       "entry": "0x02001898",
       "span_bytes": 292,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8/r9/sl/fp spill) and returning (pop {r3, r5, r6, r7}/mov r8,r3/mov r9,r5/mov sl,r6/mov fp,r7/pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing two-word literal pool to the next owner's prologue at 0x020019bc, inside the assembled overlay image and not overlapping another recorded owner"

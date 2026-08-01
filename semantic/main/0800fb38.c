@@ -1,3 +1,19 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
+ * range is an indirect call through the named register, not a call to a
+ * function at the branch target.  Resolved with tools/veneer_resolve.ts.
+ *
+ * Callee signatures here are established, not guessed: 0x03001388 is the
+ * word copy declared in the EXACT src/080d40ec.c, and 0x03000168 is the fill
+ * documented in semantic/main/080e15e8.c as (destination, size, value).
+ *
+ * This file's own header already identified the bank correctly, including
+ * the index arithmetic, before this audit began -- it is the third place in
+ * the tree that had. The four sites below reach 0x03001388 through
+ * __call_via_sl, sl taking its value from r3 at 0x0800fdd2.
+ */
 #include "types.h"
 
 /*
@@ -101,6 +117,8 @@ typedef s32 (*Multiply_0800fb38)(s32 a, s32 b);
 /* 0x03000164, the IWRAM-relocated block clear. */
 typedef void (*Clear_0800fb38)(void *block, s32 size);
 
+typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
+
 void Func_08003bb4(s32 mode);
 struct Block_0800fb38 *Func_080048f4(s32 kind, s32 size);
 struct Header_0800fb38 *Func_08002f40(s32 resource);
@@ -113,7 +131,6 @@ void Func_08011a84(void *buffer);
 s32 Func_080770c0(s32 condition);
 void Func_080770d0(s32 condition);
 void *Func_08004938(s32 size);
-void Func_0800730c(void *destination, const void *source, s32 size);
 void Func_08002df0(void *buffer);
 void Func_080041d8(s32 first, s32 second);
 
@@ -221,19 +238,19 @@ s32 Func_0800fb38(s32 index)
 
             Func_08005340(Func_08002f40(scene->palette + 0x128), buffer);
             *(s16 *)buffer = saved;
-            Func_0800730c((void *)0x05000000, buffer, 448);
+            ((WordCopy)0x03001388)((void *)0x05000000, buffer, 448);
 
             Func_08005394(Func_08002f40(scene->first_character + 0x128),
                           buffer);
-            Func_0800730c((void *)0x06004000, buffer, 0x4000);
+            ((WordCopy)0x03001388)((void *)0x06004000, buffer, 0x4000);
 
             Func_08005394(Func_08002f40(scene->second_character + 0x128),
                           buffer);
-            Func_0800730c((void *)0x06008000, buffer, 0x4000);
+            ((WordCopy)0x03001388)((void *)0x06008000, buffer, 0x4000);
 
             Func_08005394(Func_08002f40(scene->third_character + 0x128),
                           buffer);
-            Func_0800730c((void *)0x0600c000, buffer, 0x4000);
+            ((WordCopy)0x03001388)((void *)0x0600c000, buffer, 0x4000);
 
             Func_08005394(Func_08002f40(scene->sprite + 0x128),
                           (void *)0x02028000);

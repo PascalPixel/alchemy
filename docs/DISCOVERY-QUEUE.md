@@ -1,4 +1,10 @@
-# Discovery queue (measured 2026-07-30)
+# Discovery queue (historical measurement, 2026-07-30)
+
+This document records the 2026-07-30 queue/discovery audit.  Its region counts,
+bytes, and recommendations below are historical snapshots, not current project
+metrics.  For verified current exact/semantic coverage, target limitations,
+provenance, compiler stopping rules, and the quarantined alchemy-gcc
+experiment, use [`../HANDOVER.md`](../HANDOVER.md).
 
 **`asm_c_debt_bytes=395816` and the overlay inventory's ~16 KB adoptable queue
 do not describe the same bytes, and neither one is missing the other's work.**

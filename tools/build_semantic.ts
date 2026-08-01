@@ -12,6 +12,11 @@ import {
 import { tmpdir } from "node:os";
 import { basename, dirname, extname, join, relative } from "node:path";
 import { sourceToAssemblyPlan } from "./alchemy_gcc.ts";
+import {
+  canonicalCSource,
+  unionIntervals,
+  type ExecutableInventory,
+} from "./full_c_progress.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const SEMANTIC = join(ROOT, "semantic");
@@ -36,6 +41,12 @@ interface MainManifestRegion {
   address: number;
   size: number;
   retention: string;
+}
+
+interface MainClaimedRegion {
+  address: number;
+  size: number;
+  source: string;
 }
 
 interface MainExecutableRange {
@@ -67,6 +78,7 @@ function parseAddress(value: string, field: string): number {
 export function validateMainSemanticOwners(
   owners: MainSemanticOwner[],
   manifestRegions: MainManifestRegion[],
+  claimedRegions: MainClaimedRegion[] = [],
   source = "semantic/main-regions.json",
 ): ValidatedMainSemanticOwner[] {
   const validated: ValidatedMainSemanticOwner[] = [];
@@ -95,9 +107,25 @@ export function validateMainSemanticOwners(
         item.address <= address &&
         address + range.size <= item.address + item.size
       );
-      if (manifestRegion === undefined) {
+      // A few historically byte-matched main sources are deliberately
+      // noncanonical (register pins or inline asm).  They are omitted from
+      // the ordinary-assembly manifest, but a reviewed semantic owner may
+      // replace their coverage without promoting that source to exact C.
+      const noncanonicalExactSource = join(ROOT, "src", `${owner.entry.slice(2)}.c`);
+      const hasNoncanonicalExactSource = existsSync(noncanonicalExactSource) &&
+        !canonicalCSource(readFileSync(noncanonicalExactSource, "utf8"));
+      const expectedClaimSource = `src/${owner.entry.slice(2).toLowerCase()}.c`;
+      const noncanonicalClaim = hasNoncanonicalExactSource
+        ? claimedRegions.find((item) =>
+          item.source.toLowerCase() === expectedClaimSource &&
+          item.address <= address &&
+          address + range.size <= item.address + item.size
+        )
+        : undefined;
+      if (manifestRegion === undefined && noncanonicalClaim === undefined) {
         throw new Error(
-          `${rangeField} is not fully contained in a main manifest row`,
+          `${rangeField} is not fully contained in an assembly-manifest row ` +
+          `or its same-entry noncanonical claimed-C row`,
         );
       }
       return { address, size: range.size };
@@ -180,6 +208,8 @@ function validateSource(source: string): {
 export function buildSemantic(directory = SEMANTIC): {
   sources: number;
   sourceBytes: number;
+  reviewedBytes: number;
+  outsideExecutableBytes: number;
   semanticBytes: number;
   mainSemanticBytes: number;
   overlaySemanticBytes: number;
@@ -200,6 +230,12 @@ export function buildSemantic(directory = SEMANTIC): {
       regions: MainManifestRegion[];
     }).regions
     : [];
+  const mainClaimedPath = join(ROOT, "out", "full", "claimed", "manifest.json");
+  const mainClaimedRegions = existsSync(mainClaimedPath)
+    ? (JSON.parse(readFileSync(mainClaimedPath, "utf8")) as {
+      regions: MainClaimedRegion[];
+    }).regions
+    : [];
   const mainOwnerPath = join(SEMANTIC, "main-regions.json");
   const mainOwnerDocument = existsSync(mainOwnerPath)
     ? (JSON.parse(readFileSync(mainOwnerPath, "utf8")) as {
@@ -213,6 +249,7 @@ export function buildSemantic(directory = SEMANTIC): {
   const mainOwners = validateMainSemanticOwners(
     mainOwnerDocument.main_owners,
     mainManifestRegions,
+    mainClaimedRegions,
     relative(ROOT, mainOwnerPath),
   );
   const manualPath = join(SEMANTIC, "regions.json");
@@ -225,9 +262,7 @@ export function buildSemantic(directory = SEMANTIC): {
   const work = mkdtempSync(join(tmpdir(), "alchemy-semantic-"));
   try {
     let sourceBytes = 0;
-    let semanticBytes = 0;
-    let mainSemanticBytes = 0;
-    let overlaySemanticBytes = 0;
+    let reviewedBytes = 0;
     const admitted: Array<{
       overlay: string;
       ranges: Array<{ address: number; size: number }>;
@@ -242,7 +277,7 @@ export function buildSemantic(directory = SEMANTIC): {
       const exactSource = identity.kind === "overlay"
         ? join(ROOT, "assets", "code", name)
         : join(ROOT, "src", name);
-      if (existsSync(exactSource)) {
+      if (existsSync(exactSource) && canonicalCSource(readFileSync(exactSource, "utf8"))) {
         throw new Error(`${relative(ROOT, source)} duplicates exact source ${relative(ROOT, exactSource)}`);
       }
       const inventoried = identity.kind === "overlay"
@@ -278,9 +313,7 @@ export function buildSemantic(directory = SEMANTIC): {
         throw new Error(`${relative(ROOT, manualPath)} contains an invalid reviewed boundary`);
       }
       const spanBytes = ranges.reduce((sum, range) => sum + range.size, 0);
-      semanticBytes += spanBytes;
-      if (identity.kind === "main") mainSemanticBytes += spanBytes;
-      else overlaySemanticBytes += spanBytes;
+      reviewedBytes += spanBytes;
       for (const prior of admitted) {
         if (prior.overlay !== overlay) continue;
         for (const range of ranges) {
@@ -309,9 +342,39 @@ export function buildSemantic(directory = SEMANTIC): {
       join(ROOT, "metrics", "gs1-en-progress.json"),
       "utf8",
     )) as { full_c_bytes: number; executable_bytes: number };
+    const executable = JSON.parse(readFileSync(
+      join(ROOT, "metrics", "gs1-en-executable.json"),
+      "utf8",
+    )) as ExecutableInventory;
+    const coveredBytes = (namespace: string, intervals: Array<{ start: number; end: number }>): number => {
+      const ranges = admitted
+        .filter((item) => item.overlay === namespace)
+        .flatMap((item) => item.ranges.map((range) => ({
+          start: range.address,
+          end: range.address + range.size,
+        })))
+        .sort((left, right) => left.start - right.start || left.end - right.end);
+      let total = 0;
+      for (const range of ranges) {
+        for (const interval of intervals) {
+          const start = Math.max(range.start, interval.start);
+          const end = Math.min(range.end, interval.end);
+          if (end > start) total += end - start;
+        }
+      }
+      return total;
+    };
+    const mainSemanticBytes = coveredBytes("main", unionIntervals(executable.main.intervals));
+    const overlaySemanticBytes = executable.overlays.reduce(
+      (sum, overlay) => sum + coveredBytes(overlay.id, unionIntervals(overlay.intervals)),
+      0,
+    );
+    const semanticBytes = mainSemanticBytes + overlaySemanticBytes;
     return {
       sources: sources.length,
       sourceBytes,
+      reviewedBytes,
+      outsideExecutableBytes: reviewedBytes - semanticBytes,
       semanticBytes,
       mainSemanticBytes,
       overlaySemanticBytes,
@@ -339,7 +402,7 @@ function selfTest(): void {
       { address: "0x08001000", size: 12 },
       { address: "0x08001020", size: 8 },
     ],
-  }], manifest, "self-test");
+  }], manifest, [], "self-test");
   if (valid[0].executableRanges.reduce((sum, range) => sum + range.size, 0) !== 20) {
     throw new Error("noncontiguous owner byte sum rejected");
   }
@@ -350,13 +413,13 @@ function selfTest(): void {
       { address: "0x08001000", size: 4 },
       { address: "0x08001008", size: 4 },
     ],
-  }], manifest, "self-test");
+  }], manifest, [], "self-test");
   if (contained[0].executableRanges.reduce((sum, range) => sum + range.size, 0) !== 8) {
     throw new Error("contained main-row split rejected");
   }
   const rejects = (owner: MainSemanticOwner, message: string): void => {
     try {
-      validateMainSemanticOwners([owner], manifest, "self-test");
+      validateMainSemanticOwners([owner], manifest, [], "self-test");
     } catch {
       return;
     }
@@ -395,6 +458,7 @@ if (import.meta.main) {
     console.log(
       `semantic_sources=${report.sources} semantic_bytes=${report.semanticBytes} ` +
       `main_semantic=${report.mainSemanticBytes} overlay_semantic=${report.overlaySemanticBytes} ` +
+      `reviewed_bytes=${report.reviewedBytes} outside_executable=${report.outsideExecutableBytes} ` +
       `c_expressed=${report.expressedBytes}/${report.executableBytes} ` +
       `remaining=${report.executableBytes - report.expressedBytes} ` +
       `source_bytes=${report.sourceBytes} compile=ok`,

@@ -445,7 +445,7 @@ const SCHED_HIGH_DEST_FIRST_SOURCES = new Set(["08098954", "0809a294", "08097540
 // a converted row at the same offset. 02001984 was moved out to the path-keyed
 // set below when resource_3b4 gained a row at that offset that the flag breaks.
 const SCHED_LOW_DEST_FIRST_SOURCES = new Set([
-  "08097540", "020011bc", "02001958", "02000260", "020011d8",
+  "08097540", "020011bc", "02001958", "02000260",
   // resource_3b1's flat setter-sequence unindexed rows: a shifted constant
   // argument (movs/lsls) with the callee's other args set between the two
   // halves. Verified no other overlay owns these stems (bare-address key).
@@ -645,6 +645,11 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  // Both overlays now own an exact-C function at 0x020011d8. The address-only
+  // route became ambiguous as soon as resource_373 joined resource_3b4, so
+  // preserve the proven scheduler choice without leaking it to future twins.
+  "assets/code/resource_373_c_020011d8.c",
+  "assets/code/resource_3b4_c_020011d8.c",
   // resource_3aa:140c and :1450 are the sibling pair in HANDOVER 0: four
   // three-argument setter calls, then a guarded wait. Void callees put r0 and
   // r2 in the wrong order at every site and the low-destination tie-break puts

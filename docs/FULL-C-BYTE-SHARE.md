@@ -5,7 +5,7 @@ Full-C Byte Share is Alchemy's sole headline progress metric:
 ```text
 union(byte-identical executable spans emitted from canonical C)
 ----------------------------------------------------------------
-union(all audited executable spans in the main image and overlays)
+union(all audited executable spans in the main image and code overlays)
 ```
 
 The current exact fraction is generated with `bun run progress`. The
@@ -20,7 +20,7 @@ This includes Thumb and ARM bodies, startup code, structural assembly, linker
 veneers, literal-bearing regions, and executable alignment while excluding
 asset-owned ROM gaps.
 
-Each of the 96 decoded overlays is independently namespaced. Its tracked,
+Each of the 96 decoded code overlays is independently namespaced. Its tracked,
 byte-round-tripping canonical assembly distinguishes instruction lines from
 data directives. The inventory maps assembler listing addresses back to those
 source lines, adds PC-relative literal targets, fixed `ldr`/`bx` veneers,
@@ -83,19 +83,22 @@ commit tree rather than trusting incompatible legacy subject suffixes.
 [`gs1-en-assets.svg`](../assets/readme/gs1-en-assets.svg), with the tile data in
 [`metrics/gs1-en-coverage-map.json`](../metrics/gs1-en-coverage-map.json).
 
-It derives ownership the way the history ledger does—from tracked trees rather
-than from a build—so it runs without a ROM or toolchain:
+It derives exact and semantic ownership the way the history ledger does—from
+tracked trees. Orange retained ownership additionally reads the latest verified
+full-build assembly manifest; run the publication redraw after `bun run verify`.
+If that manifest is absent, only explicit tracked non-code spans are orange and
+the unresolved complement remains gray:
 
 * main-image exact C: `src/<address>.c` against audited region boundaries,
   excluding register-pinned, inline-assembly and fakematch sources;
-* overlay exact C: `AlchemyC_` placeholder spans in `assets/code/*_overlay.s`;
+* code-overlay exact C: `AlchemyC_` placeholder spans in `assets/code/*_overlay.s`;
 * semantic C: `semantic/` sources sized by `semantic/main-regions.json`,
   `semantic/regions.json`, or their single audited region, clipped to the
   executable union and with exact C subtracted, because exact always wins;
 * ROM layout: the audited executable union, the compressed overlay streams in
   `assets/manifest.json`, and the complement of both as asset data.
 
-For call-target evidence, overlay inventory scans the compiler-filled image,
+For call-target evidence, code-overlay inventory scans the compiler-filled image,
 not the zero-filled assembly placeholder image. Canonical assembly listings
 still supply the instruction/directive boundaries. This keeps raw leaf and
 call-via-bank code visible when its only caller has already become exact C.
@@ -108,9 +111,10 @@ as a separate colour, never folded into the headline fraction.
 
 `bun tools/dashboard_server.ts` serves a separate live worktree view. It
 derives the same ownership map directly in memory, watches `asm/`, `assets/`,
-`metrics/`, `semantic/`, and `src/`, and pushes a new draw to the browser after
-relevant changes. It deliberately tolerates a temporarily stale tracked
-progress report while editing; the normal publication path does not.
+`metrics/`, `semantic/`, `src/`, and the verified assembly manifest, and pushes
+a new draw to the browser after relevant changes. It deliberately tolerates a
+temporarily stale tracked progress report while editing; the normal publication
+path does not.
 
 The map records its input trees in `provenance.exact_source` and
 `provenance.semantic_source`. Both `--write` and `--check` re-resolve those

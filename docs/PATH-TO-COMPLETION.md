@@ -1,11 +1,14 @@
 # Path to completion
 
-Current verified exact **Full-C Byte Share: 244,808 / 1,343,206 executable
-bytes (18.23%)**. After exact-C supersession and executable-extent accounting,
-the reviewed semantic tier contributes another **821,588 bytes**; together
-they cover **1,066,396 / 1,343,206 bytes (79.39%)**.
+Current verified exact **Full-C Byte Share: 245,044 / 1,343,206 executable
+bytes (18.24%)**. Exact main-image ownership is 102,208 bytes and exact overlay
+ownership is 142,836 bytes. After exact-C supersession and executable-extent
+accounting, the reviewed semantic tier contributes another **821,520 bytes**;
+together they cover **1,066,564 / 1,343,206 bytes (79.40%)**. This combined
+figure is reviewed semantic coverage, not the Full-C headline or a completion
+forecast; [`../HANDOVER.md`](../HANDOVER.md) is the authoritative current audit.
 
-The primary integration point is `main`. The core/main-ROM reviewed semantic-C
+The primary integration point is `main`. The main-executable reviewed semantic-C
 census is closed and enforced by `bun run semantic:check`; exact-C replacement
 remains the principal completion task.
 

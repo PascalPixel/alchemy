@@ -7,9 +7,11 @@
 // reviewed semantic C, and which are
 // still assembly or non-code asset data.
 //
-// Every number here is derived from tracked evidence only. There is no ROM
-// read, no toolchain, and no build output in the derivation, so either
-// reconstruction can regenerate the picture from a fresh clone:
+// Exact and semantic ownership are derived from tracked evidence without a ROM
+// read or compiler. The orange retained-assembly layer additionally consumes
+// the latest verified full-build assembly manifest; when that manifest is
+// absent, only explicit tracked non-code ranges are orange and the rest stays
+// gray. Publish the map after `bun run verify`, never from stale build output:
 //
 //   * executable classification  metrics/<target>-executable.json
 //   * exact main ownership       src/<address>.c against audited region bounds
@@ -579,16 +581,39 @@ const PERMANENT_KINDS = new Set([
   "armv4t_helper_bank", "iwram_runtime_veneer",
 ]);
 export function retainedMainSpans(): Span[] {
-  const path = join(dirname(Bun.fileURLToPath(import.meta.url)), "..", "out", "asm", "manifest.json");
-  if (!existsSync(path)) return [];
+  // This is the same full-build assembly evidence checked by
+  // core_retained_audit.ts. If it is unavailable, render no orange rather than
+  // guessing from a census complement or from a partial build manifest.
+  const path = join(dirname(Bun.fileURLToPath(import.meta.url)), "..", "out", "full", "asm", "manifest.json");
+  const explicitNonC: Span[] = [];
+  const nonCPath = join(ROOT, "semantic", "main-regions.json");
+  if (existsSync(nonCPath)) {
+    try {
+      const document = JSON.parse(readFileSync(nonCPath, "utf8")) as {
+        non_c_ranges?: { address?: string | number; size?: number; kind?: string; evidence?: string }[];
+      };
+      for (const region of document.non_c_ranges ?? []) {
+        const start = typeof region.address === "string" ? Number.parseInt(region.address, 16) : region.address;
+        if (!Number.isSafeInteger(start) || !Number.isSafeInteger(region.size) || region.size <= 0 ||
+            !["literal_pool", "alignment_padding", "lookup_table"].includes(region.kind ?? "") ||
+            !region.evidence?.trim()) continue;
+        explicitNonC.push({ start, end: start + region.size });
+      }
+    } catch {
+      // An unavailable/invalid registry never becomes orange evidence.
+    }
+  }
+  if (!existsSync(path)) return normalize(explicitNonC);
   try {
     const manifest = JSON.parse(readFileSync(path, "utf8")) as {
-      regions?: { address?: number; size?: number; kind?: string; retention?: string; evidence?: unknown }[];
+      regions?: { address?: number; size?: number; kind?: string; retention?: string; confidence?: string; evidence?: unknown }[];
     };
     const spans: Span[] = [];
     for (const r of manifest.regions ?? []) {
       if (typeof r.address !== "number" || typeof r.size !== "number" || r.size <= 0) continue;
       const permanent = r.retention === "keep_asm" ||
+        (r.retention === "keep_structured_asm" && r.confidence === "proven" &&
+          typeof r.evidence === "string" && r.evidence.trim().length > 0) ||
         // Audited 2026-07-31: the merge-with-owner family is literal
         // pools, alignment and data the owner registration deliberately
         // excludes — 64 bytes residual across the whole bucket. Permanent.
@@ -601,16 +626,16 @@ export function retainedMainSpans(): Span[] {
         String(r.evidence ?? "").includes("approved_compiler_cannot_express");
       if (permanent) spans.push({ start: r.address, end: r.address + r.size });
     }
-    return normalize(spans);
+    return normalize([...spans, ...explicitNonC]);
   } catch {
-    return [];
+    return normalize(explicitNonC);
   }
 }
 
 /**
  * Group audited main-image regions into contiguous address bands of roughly
- * `target` executable bytes so the drawing stays legible. Bands never split a
- * region, so every tile is a real run of the image.
+ * `target` executable bytes. This coarser view is used by the ROM dashboard,
+ * where the main image shares space with the whole cartridge.
  */
 function mainBands(
   executable: readonly Span[],
@@ -653,6 +678,47 @@ function mainBands(
     }
   }
   flush();
+  return tiles;
+}
+
+/**
+ * One tile per audited source/owner boundary. Unlike `mainBands`, this never
+ * invents a display-sized partition: a tile owns its natural executable bytes
+ * between consecutive audited starts (or an audited extent edge).
+ */
+export function mainOwnerTiles(
+  executable: readonly Span[],
+  boundaries: readonly number[],
+  exact: readonly Span[],
+  semantic: readonly Span[],
+  retained: readonly Span[],
+): Tile[] {
+  const tiles: Tile[] = [];
+  const owned = normalize([...exact, ...semantic]);
+  for (const executableSpan of normalize(executable)) {
+    const cuts = [...new Set([
+      executableSpan.start,
+      executableSpan.end,
+      ...boundaries.filter((address) => address > executableSpan.start && address < executableSpan.end),
+    ])].sort((left, right) => left - right);
+    for (let index = 0; index < cuts.length - 1; index++) {
+      const span = { start: cuts[index], end: cuts[index + 1] };
+      const bytes = span.end - span.start;
+      const exactBytes = spanBytes(intersect([span], exact));
+      const semanticBytes = spanBytes(intersect([span], semantic));
+      const retainedBytes = spanBytes(intersect(subtract([span], owned), retained));
+      tiles.push({
+        label: `0x${hex8(span.start)}–0x${hex8(span.end)}`,
+        bytes,
+        categories: {
+          exact_c: exactBytes,
+          semantic_c: semanticBytes,
+          assembly: Math.max(bytes - exactBytes - semanticBytes - retainedBytes, 0),
+          retained_asm: retainedBytes,
+        },
+      });
+    }
+  }
   return tiles;
 }
 
@@ -781,22 +847,13 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
   const semanticBytes = semanticMainBytes + semanticOverlayBytes;
 
   // -------------------------------------------------- executable universe
-  // Once the audited ordinary-owner census is sealed closed, every remaining
-  // main-image byte is by definition retained structure/pool/alignment. Paint
-  // that complement orange rather than leaving excluded pool bytes gray: gray
-  // means actionable semantic debt on this dashboard.
-  // Once the ordinary-owner census is sealed closed, the complement is retained
-  // structure by definition — and it is a CHECKED invariant, not an assertion:
-  // `semantic_owner_scope.ts --check` runs inside `verify` and fails the gate if
-  // any convertible core owner reappears, cross-confirmed by main_image_classes
-  // reporting convertible-thumb 0 owners / 0 bytes. The complement is intra-
-  // function structure (inline call-via thunk sites, pools, alignment) measured
-  // in 4-46 byte fragments, not undrafted functions. This was checked on
-  // 2026-08-01 by reverting the classification and listing every span. Gray means
-  // actionable debt; here there is none.
-  const mainRetained = semanticCoverage.mainCensusClosed ? mainExecutable : retainedMainSpans();
+  // Orange is reserved for spans with an explicit retained-assembly contract
+  // in the audited manifest. A closed semantic-owner census does not itself
+  // prove the remaining bytes permanent: any complement without such evidence
+  // stays gray as unresolved assembly.
+  const mainRetained = retainedMainSpans();
   const executableAreas: Area[] = [
-    area("main", "Main image", mainBands(mainExecutable, exactMainUnion, semanticMain, mainRetained, 10240)),
+    area("main", "Main image", mainOwnerTiles(mainExecutable, boundaries, exactMainUnion, semanticMain, mainRetained)),
   ];
   const overlayTiles: Tile[] = [];
   for (const overlay of inventory.overlays) {
@@ -1350,7 +1407,8 @@ const CODE_FRACTION: Record<string, number> = {
 export const ASSET_TIERS = ["asset_bytes", "asset_bw", "asset_color", "asset_objects"] as const;
 export type AssetTier = (typeof ASSET_TIERS)[number];
 const ASSET_FRACTION: Record<string, number> = {
-  asset_bytes: 0.08, asset_bw: 0.34, asset_color: 0.67, asset_objects: 1, asset_data: 0.08,
+  asset_bytes: 0.08, asset_unclassified: 0.08, asset_bw: 0.34, asset_color: 0.67, asset_objects: 1,
+  asset_data: 0.08,
 };
 
 /** Representation-form tier for one package: package kind first (music,
@@ -1483,8 +1541,12 @@ export function renderBoxTree(
     };
     const categories = cell.item.categories as Record<string, number>;
     const total = categoryOrder.reduce((sum, category) => sum + (categories[category] ?? 0), 0);
+    // Keep the publication image text-free, but retain the source/owner (or
+    // manifest-bucket) label and its natural byte extent for assistive readers.
+    lines.push(`<g aria-label="${escapeText(`${cell.item.label}: ${commas(cell.item.bytes)} bytes`)}">`);
     if (total <= 0) {
       lines.push(cellRect(inner, categoryFraction[categoryOrder[categoryOrder.length - 1]] ?? 0.08));
+      lines.push("</g>");
       continue;
     }
     let offset = 0;
@@ -1505,6 +1567,7 @@ export function renderBoxTree(
       else lines.push(cellRect(rect, categoryFraction[category] ?? 0.08));
       offset += share;
     }
+    lines.push("</g>");
   }
   lines.push("</svg>");
   return lines.join("\n");
@@ -1523,15 +1586,33 @@ export function renderBoxTrees(map: CoverageMap, tree?: SourceTree): Record<BoxT
   const romData = map.rom_areas.find((item) => item.id === "rom-data");
   if (!core || !overlays || !romData) throw new Error("coverage map is missing a box-tree area");
   const maturity = tree ? assetMaturityTiles(tree) : [];
-  const assetsArea: Area = maturity.length
-    ? { id: "rom-data", label: romData.label, bytes: maturity.reduce((s, t) => s + t.bytes, 0),
-        categories: {}, tiles: maturity }
+  const cataloguedBytes = maturity.reduce((sum, tile) => sum + tile.bytes, 0);
+  const unclassifiedBytes = Math.max(romData.bytes - cataloguedBytes, 0);
+  // The maturity census is manifest-backed and intentionally does not claim
+  // unknown ROM data as decoded. Keep that remainder in the tree at the
+  // byte-represented floor, rather than silently drawing a smaller universe or
+  // crediting it to a higher maturity tier.
+  const maturityWithRemainder = tree !== undefined && unclassifiedBytes
+    ? [...maturity, {
+        label: "Unclassified ROM data (byte-represented)",
+        bytes: unclassifiedBytes,
+        categories: { asset_unclassified: unclassifiedBytes },
+      }]
+    : maturity;
+  const assetsArea: Area = tree !== undefined
+    ? { id: "rom-data", label: romData.label, bytes: romData.bytes,
+        categories: {}, tiles: maturityWithRemainder }
     : romData;
   return {
-    core: renderBoxTree(core, "Main-image code coverage box tree, purple band"),
-    overlays: renderBoxTree(overlays, "Decoded overlay code coverage box tree, cyan band", OVERLAY_HUE),
-    assets: renderBoxTree(assetsArea, "Asset maturity box tree, pink band", ASSET_HUE, ASSET_FRACTION,
-      maturity.length ? [...ASSET_TIERS].reverse() : ["asset_data"]),
+    core: renderBoxTree(core,
+      "Main-image code coverage box tree, purple band; each tile is one audited source or owner boundary with its natural executable byte size"),
+    overlays: renderBoxTree(overlays, "Decoded code-overlay coverage box tree, cyan band", OVERLAY_HUE),
+    assets: renderBoxTree(assetsArea,
+      tree !== undefined
+        ? `Asset maturity box tree, pink band; ${commas(cataloguedBytes)} catalogued bytes are tiered by tracked sources and ${commas(unclassifiedBytes)} unclassified ROM-data bytes remain at the byte-represented floor`
+        : "Asset maturity box tree, pink band",
+      ASSET_HUE, ASSET_FRACTION,
+      tree !== undefined ? ["asset_objects", "asset_color", "asset_bw", "asset_bytes", "asset_unclassified"] : ["asset_data"]),
   };
 }
 
@@ -1874,6 +1955,17 @@ export function selfTest(): void {
       bands[1].categories.retained_asm !== 32) {
     throw new Error("main band composition failed");
   }
+  const ownerTiles = mainOwnerTiles(
+    [{ start: 0x08000000, end: 0x08000100 }],
+    [0x08000000, 0x08000030, 0x080000a0],
+    [{ start: 0x08000000, end: 0x08000040 }],
+    [{ start: 0x08000040, end: 0x08000080 }],
+    [{ start: 0x080000c0, end: 0x080000e0 }],
+  );
+  if (ownerTiles.length !== 3 || ownerTiles.map((tile) => tile.bytes).join(",") !== "48,112,96" ||
+      ownerTiles[1].categories.semantic_c !== 64 || ownerTiles[2].categories.retained_asm !== 32) {
+    throw new Error("main owner tiles did not retain audited boundaries");
+  }
   const retainedTree = renderBoxTree(
     area("retained", "Retained", [{ label: "r", bytes: 32, categories: { retained_asm: 32 } }]),
     "retained colour test",
@@ -1926,6 +2018,30 @@ export function selfTest(): void {
   }
   const openTags = (svg.match(/<rect /g) ?? []).length;
   if (openTags < 4) throw new Error("SVG drew no tiles");
+
+  const maturityTree: SourceTree = {
+    id: "maturity-test",
+    list: () => [],
+    read: (path) => path === "assets/manifest.json"
+      ? JSON.stringify({ kind: "sprite", size: 100, source: "assets/example.bin" })
+      : undefined,
+  };
+  const maturityMap = {
+    ...map,
+    rom_areas: [area("rom-data", "Assets & data", [
+      { label: "Other data", bytes: 200, categories: { asset_data: 200 } },
+    ])],
+    executable_areas: [
+      ...map.executable_areas,
+      area("overlays", "Decoded code overlays", [
+        { label: "test", bytes: 80, categories: { assembly: 80 } },
+      ]),
+    ],
+  };
+  const maturitySvg = renderBoxTrees(maturityMap, maturityTree).assets;
+  if (!maturitySvg.includes("100 catalogued bytes") || !maturitySvg.includes("100 unclassified ROM-data bytes")) {
+    throw new Error("asset maturity tree did not include its unclassified remainder");
+  }
 
   expectReject(() => optionsOf(["--unknown"]), "unknown argument");
   if (optionsOf(["--semantic-ref", "none"]).semantic !== "none") throw new Error("option parsing failed");

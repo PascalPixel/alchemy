@@ -6630,6 +6630,12 @@
       "entry": "0x020022c0",
       "span_bytes": 856,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr}) and returning (pop {r5, r6, r7} / pop {r0} / bx r0 at 0x02002602-0x02002606) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_3af 22c0 2618, the +2 rule against the raw image), and confirmed independently as dispatch case 14 of the 0x02001444 entry driver. Span walked through every internal branch INCLUDING two internal literal pools that code branches over -- 0x020023b6-0x020023d7 hopped by the b.n at 0x020023b4, and 0x0200252a-0x02002557 hopped by the b.n at 0x02002528 -- plus the do-while drift loop at 0x02002472-0x02002488; trailing pool (0x0000cccc, 0x00019999, 0x0200c888, 0x00001e45) ends 0x02002617, next owner prologue (push {r5, lr}) at 0x02002618, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3af",
+      "entry": "0x02003a0c",
+      "span_bytes": 636,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6} / pop {r0} / bx r0 at 0x02003c3e-0x02003c42) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_3af 3a0c 3c88, the +2 rule against the raw image), and confirmed independently as dispatch case 19 of the 0x02001444 entry driver. Body is branch-free so the span needs no branch walk; read through the seventeen trailing pool words (0x0200db50, 0xffff8000, 0x0200db60, 0x0200d160, 0x026a0000, 0x020e0000, 0x03001ebc, 0x0000cccc, 0x00006666, 0x00001f23, 0x00006014, 0x00000101, 0x00019999, 0x00000206, 0x00005015, 0x00009016, 0x0000a014) ending 0x02003c87 to the next prologue (push {r5, r6, lr}) at 0x02003c88 -- itself an uncovered owner, absent from the queue, from assets/code and from the inventory. Inside the assembled overlay image and not overlapping another recorded owner"
     }
   ]
 }

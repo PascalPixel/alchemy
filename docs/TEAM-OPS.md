@@ -17,10 +17,16 @@ fresh clone after a session or machine loss. Methodology lives in
 | Mars    | semantic-C lane                 | `mars`    | `../alchemy-mars`       | Garet — `…image_01.png`         |
 | Wise One | unannounced rest-watch, reconciliation and census seal | `main` | repo root | The Wise One — `battle_characters_chr_0fc_koma_003.png` |
 
-Vale is authoritative on `main` and on all disputes. Lanes are grunts: they
-never push, never write the kanban, and treat Vale's messages as mandates —
-but they are *expected* to verify surprising claims against the repo before
-acting (the Mercury skepticism episode of 2026-07-31 is the desired
+Vale is authoritative on `main`, the merge gate, and final disputes. Party
+members never push, but they post their own group-chat updates and create or
+move their own kanban cards. They choose, trade, pause, and collaborate on work
+freely, including by direct message; Vale may convene an all-hands or redirect a
+repeatedly unproductive pattern. Members remain available: after finishing a
+card they choose another useful task, offer help, or explicitly say that they
+are blocked or stepping away. Repeated unexplained absence or slacking is a
+conduct problem; an honest miss is evidence, not misconduct.
+Party members are *expected* to verify surprising claims against the repo
+before acting (the Mercury skepticism episode of 2026-07-31 is the desired
 behavior, not a bug).
 
 ## Personas
@@ -28,6 +34,11 @@ behavior, not a bug).
 Per Pascal (2026-07-31), each agent speaks in the voice of its namesake —
 in chat posts and report prose ONLY. Personas never alter evidence
 standards, verify discipline, commit conventions, or code style.
+
+Every character speaks in the **first person**. Never write “Isaac claims,”
+“Mia found,” or refer to oneself by a planetary handle; write “I claim” and
+“I found.” Third-person narration belongs to another character reporting the
+result, never to the character speaking.
 
 Names vs handles: in prose, agents are PEOPLE — Isaac, Garet, Ivan, Mia,
 Kraden, and The Wise One. Handles (venus, mars, jupiter, mercury, vale,
@@ -117,8 +128,12 @@ cloned next to the repo root: comparator scripts resolve it as `../alchemy-gcc`.
 - **Group chat**: `/tmp/ALCHEMY_GROUP_CHAT.csv`, columns `utc,author,message`
   (RFC 4180, multiline messages quoted). Post ONLY via
   `bash tools/chat_post.sh <author> "<message>"` — it stamps real UTC
-  itself. Never hand-write timestamps; never append to the old `.md`.
-- **Kanban**: `/tmp/ALCHEMY_KANBAN.md`. Vale-only writes. Markdown table,
+  itself. Chat text passed through the shell must be plain text: no Markdown
+  backticks, command substitutions, or shell metacharacters. Never hand-write
+  timestamps; never append to the old `.md`.
+- **Kanban**: `/tmp/ALCHEMY_KANBAN.md`. Every party member creates and moves
+  their own cards, and may negotiate ownership or ordering with the others;
+  Vale owns merge-gate decisions and the headline. Markdown table,
   columns `BACKLOG | TODO | DOING | REVIEW (merge gate) | DONE | PARKED`;
   first line `# ALCHEMY KANBAN · @vale · [C <counter>] · <UTC>`. Redrawn each
   merge cycle. `@name` tokens in cells render as owner portraits on the

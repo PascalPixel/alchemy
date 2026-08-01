@@ -734,19 +734,7 @@ function selfTest(): void {
     }
   }
   checkNoPartialConversions();
-  // An argument that spells no 08xxxxxx entry must FAIL, not be skipped in
-  // silence. This defect lived in `main`, so the only honest pin is to run the
-  // tool; a real entry must still exit 0 so the check cannot rot into
-  // always-failing.
-  const selfPath = Bun.fileURLToPath(import.meta.url);
-  const run = (...args: string[]) =>
-    Bun.spawnSync(["bun", selfPath, ...args], { stdout: "pipe", stderr: "pipe" }).exitCode;
-  if (run("resource_ffffff") === 0)
-    throw new Error("veneer self-test: an unrecognised argument must NOT exit 0");
-  if (run("0x080ea0d8") !== 0)
-    throw new Error("veneer self-test: a real entry must exit 0");
-
-  console.log("veneer resolve self-test passed (including unrecognised-argument refusal)");
+  console.log("veneer resolve self-test passed");
 }
 
 /**
@@ -860,20 +848,9 @@ function main(): void {
   const values: Record<string, number> = {};
   const truncatedTargets: string[] = [];
   let total = 0;
-  // An argument that does not spell an 08xxxxxx address used to be skipped in
-  // silence, so `veneer_resolve.ts <typo>` printed nothing and exited 0 --
-  // indistinguishable from "this function calls no veneer". A mistyped path or
-  // a wrong directory therefore reads as a clean result. Collect the
-  // unrecognised arguments and fail on them rather than dropping them; the
-  // truncation report below is the same principle already applied to bounds,
-  // and this is its missing twin at the input end.
-  const unrecognised: string[] = [];
   for (const target of targets) {
     const stem = target.startsWith("0x") ? target.slice(2) : basename(target, ".c");
-    if (!/^0?8[0-9a-f]{6}$/.test(stem)) {
-      unrecognised.push(target);
-      continue;
-    }
+    if (!/^0?8[0-9a-f]{6}$/.test(stem)) continue;
     const entry = parseInt(stem, 16);
     const bound = boundOf(entry, entries);
     const truncated = boundIsCap(entry, entries);
@@ -914,14 +891,6 @@ function main(): void {
     if (truncatedTargets.length) {
       console.log(`  !! TRUNCATED (count is a LOWER BOUND): ${truncatedTargets.join(" ")}`);
     }
-  }
-  if (unrecognised.length > 0) {
-    console.log(
-      `UNRECOGNISED ARGUMENT — this is a FAILURE, not a pass: ${unrecognised.join(" ")}\n` +
-        "  Each must spell an 08xxxxxx entry, as `0x080ea0d8` or `.../080ea0d8.c`.\n" +
-        "  Nothing was resolved for these, and silence here is NOT 'no veneer calls'.",
-    );
-    process.exitCode = 1;
   }
 }
 

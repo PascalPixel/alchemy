@@ -1017,6 +1017,54 @@
     },
     {
       "overlay": "resource_380",
+      "entry": "0x02002674",
+      "span_bytes": 108,
+      "evidence": "admitted whole-owner semantic reconstruction; published-callback population (bun tools/overlay_published.ts resource_380) -- owner is prologue-started and returning but is reached by no bl at all: its Thumb pointer is written into a script record as a plain word, so both the whole-image call-graph sweep and tools/overlay_unindexed.ts are structurally blind to it. Span read from the disassembly: push {lr} at 0x02002674 through pop {r0}/bx r0 at 0x020026c8, then the five-word literal pool 0x020026cc-0x020026df, to the twin owner prologue at 0x020026e0. All bl targets resolved through the overlay import-veneer table under the +2 rule (tools/overlay_call_targets.ts), not by naive pc-relative decode. Checked to lie inside the assembled overlay image and not to overlap another recorded owner."
+    },
+    {
+      "overlay": "resource_380",
+      "entry": "0x020026e0",
+      "span_bytes": 108,
+      "evidence": "admitted whole-owner semantic reconstruction; published-callback population (bun tools/overlay_published.ts resource_380) -- owner is prologue-started and returning but is reached by no bl at all: its Thumb pointer is written into a script record as a plain word, so both the whole-image call-graph sweep and tools/overlay_unindexed.ts are structurally blind to it. Span read from the disassembly: push {lr} at 0x020026e0 through pop {r0}/bx r0 at 0x02002734, then the five-word literal pool 0x02002738-0x0200274b, to the next owner prologue at 0x0200274c. All bl targets resolved through the overlay import-veneer table under the +2 rule (tools/overlay_call_targets.ts), not by naive pc-relative decode. Checked to lie inside the assembled overlay image and not to overlap another recorded owner."
+    },
+    {
+      "overlay": "resource_380",
+      "entry": "0x0200274c",
+      "span_bytes": 32,
+      "evidence": "admitted whole-owner semantic reconstruction; published-callback population (bun tools/overlay_published.ts resource_380) -- owner is prologue-started and returning but is reached by no bl at all: its Thumb pointer is written into a script record as a plain word, so both the whole-image call-graph sweep and tools/overlay_unindexed.ts are structurally blind to it. Span read from the disassembly: push {lr} at 0x0200274c through pop {r0}/bx r0 at 0x02002764, one-word pool at 0x02002768 and a zero alignment halfword at 0x0200276a, to the next owner prologue at 0x0200276c. All bl targets resolved through the overlay import-veneer table under the +2 rule (tools/overlay_call_targets.ts), not by naive pc-relative decode. Checked to lie inside the assembled overlay image and not to overlap another recorded owner."
+    },
+    {
+      "overlay": "resource_380",
+      "entry": "0x0200276c",
+      "span_bytes": 32,
+      "evidence": "admitted whole-owner semantic reconstruction; published-callback population (bun tools/overlay_published.ts resource_380) -- owner is prologue-started and returning but is reached by no bl at all: its Thumb pointer is written into a script record as a plain word, so both the whole-image call-graph sweep and tools/overlay_unindexed.ts are structurally blind to it. Span read from the disassembly: push {lr} at 0x0200276c through pop {r0}/bx r0 at 0x02002784, one-word pool at 0x02002788 and a zero alignment halfword at 0x0200278a, to the next owner prologue at 0x0200278c. All bl targets resolved through the overlay import-veneer table under the +2 rule (tools/overlay_call_targets.ts), not by naive pc-relative decode. Checked to lie inside the assembled overlay image and not to overlap another recorded owner."
+    },
+    {
+      "overlay": "resource_380",
+      "entry": "0x0200278c",
+      "span_bytes": 32,
+      "evidence": "admitted whole-owner semantic reconstruction; published-callback population (bun tools/overlay_published.ts resource_380) -- owner is prologue-started and returning but is reached by no bl at all: its Thumb pointer is written into a script record as a plain word, so both the whole-image call-graph sweep and tools/overlay_unindexed.ts are structurally blind to it. Span read from the disassembly: push {lr} at 0x0200278c through pop {r0}/bx r0 at 0x020027a4, one-word pool at 0x020027a8 and a zero alignment halfword at 0x020027aa, to the next owner prologue at 0x020027ac. All bl targets resolved through the overlay import-veneer table under the +2 rule (tools/overlay_call_targets.ts), not by naive pc-relative decode. Checked to lie inside the assembled overlay image and not to overlap another recorded owner."
+    },
+    {
+      "overlay": "resource_380",
+      "entry": "0x020027ac",
+      "span_bytes": 32,
+      "evidence": "admitted whole-owner semantic reconstruction; published-callback population (bun tools/overlay_published.ts resource_380) -- owner is prologue-started and returning but is reached by no bl at all: its Thumb pointer is written into a script record as a plain word, so both the whole-image call-graph sweep and tools/overlay_unindexed.ts are structurally blind to it. Span read from the disassembly: push {lr} at 0x020027ac through pop {r0}/bx r0 at 0x020027c4, one-word pool at 0x020027c8 and a zero alignment halfword at 0x020027ca, to the next owner prologue at 0x020027cc. All bl targets resolved through the overlay import-veneer table under the +2 rule (tools/overlay_call_targets.ts), not by naive pc-relative decode. Checked to lie inside the assembled overlay image and not to overlap another recorded owner."
+    },
+    {
+      "overlay": "resource_380",
+      "entry": "0x020027cc",
+      "span_bytes": 32,
+      "evidence": "admitted whole-owner semantic reconstruction; published-callback population (bun tools/overlay_published.ts resource_380) -- owner is prologue-started and returning but is reached by no bl at all: its Thumb pointer is written into a script record as a plain word, so both the whole-image call-graph sweep and tools/overlay_unindexed.ts are structurally blind to it. Span read from the disassembly: push {lr} at 0x020027cc through pop {r0}/bx r0 at 0x020027e4, one-word pool at 0x020027e8 and a zero alignment halfword at 0x020027ea, to the next owner prologue at 0x020027ec. Not a copy of the four stubs before it: its third call is the direct intra-image Func_02004248, not the imported Func_0808a180. All bl targets resolved through the overlay import-veneer table under the +2 rule (tools/overlay_call_targets.ts), not by naive pc-relative decode. Checked to lie inside the assembled overlay image and not to overlap another recorded owner."
+    },
+    {
+      "overlay": "resource_380",
+      "entry": "0x020027ec",
+      "span_bytes": 12,
+      "evidence": "admitted whole-owner semantic reconstruction; published-callback population (bun tools/overlay_published.ts resource_380) -- owner is prologue-started and returning but is reached by no bl at all: its Thumb pointer is written into a script record as a plain word, so both the whole-image call-graph sweep and tools/overlay_unindexed.ts are structurally blind to it. Span read from the disassembly: push {lr} at 0x020027ec, veneer call at 0x020027ee, pop {r0}/bx r0 at 0x020027f2-0x020027f4, zero alignment halfword at 0x020027f6, to the already-recorded owner prologue at 0x020027f8. No literal pool. All bl targets resolved through the overlay import-veneer table under the +2 rule (tools/overlay_call_targets.ts), not by naive pc-relative decode. Checked to lie inside the assembled overlay image and not to overlap another recorded owner."
+    },
+    {
+      "overlay": "resource_380",
       "entry": "0x020027f8",
       "span_bytes": 5932,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started and returning but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_380 27f8 3f24, the +2 rule: 556 sites, 516 import-veneer, 40 to drafted locals 0x02004248/0x02004328); one push/epilogue pair 0x020027f8-0x02003ef0, span read through the tail pool to the next owner's prologue at 0x02003f24, inside the assembled overlay image and not overlapping another recorded owner; the census's ~930-byte estimate measured to the first pool masquerade, and the 0xffffe667 pool word decodes as a phantom b.n at 0x02002c24 and 0x02003078 -- neither is control flow."

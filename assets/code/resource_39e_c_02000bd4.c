@@ -2,7 +2,7 @@ typedef int s32;
 
 /*
  * resource_39e owner at 0x02000bd4, 32 bytes: a one-line scripted beat --
- * open the scene bracket, speak line 0x182d, run Func_0808a190 on slot
+ * open the scene bracket, speak line 0x182d, run Func_020050a2 on slot
  * 15, close the bracket.
  *
  * Complete owner: `push {lr}` at 0x02000bd4 through `pop {r0} / bx r0` at
@@ -20,25 +20,25 @@ typedef int s32;
  * `bun tools/overlay_call_targets.ts resource_39e bd4 bf4`; sites=4 and
  * four bl lines were transcribed.
  *
- * SHARED IDIOMS, cited: the Func_0808a018/Func_0808a020 scripted-scene
- * bracket and dialogue-by-id Func_0808a170, both from
+ * SHARED IDIOMS, cited: the Func_02004fb4/Func_02004fce scripted-scene
+ * bracket and dialogue-by-id Func_0200507a, both from
  * resource_39e_c_02001494.c.
  *
- * Uncertainty: Func_0808a190(15, 0) is transcribed, not identified. The
+ * Uncertainty: Func_020050a2(15, 0) is transcribed, not identified. The
  * dialogue id 0x182d sits immediately below 0x182a, the default line in
  * this overlay's 0x02000afc exit chain, so the two probably belong to one
  * text block -- that is an observation about id adjacency, not evidence.
  */
 
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern void Func_0808a170(s32 dialogueId);
-extern void Func_0808a190(s32 slot, s32 arg1);
+extern void Func_02004fb4(void);
+extern void Func_02004fce(void);
+extern void Func_0200507a(s32 dialogueId);
+extern s32 Func_020050a2(s32 slot, s32 arg1);
 
 void Func_02000bd4(void)
 {
-    Func_0808a018();
-    Func_0808a170(0x182d);
-    Func_0808a190(15, 0);
-    Func_0808a020();
+    Func_02004fb4();
+    Func_0200507a(0x182d);
+    Func_020050a2(15, 0);
+    Func_02004fce();
 }

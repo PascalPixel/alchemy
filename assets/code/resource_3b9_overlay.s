@@ -898,10 +898,10 @@ Overlay_02000000:
 	.2byte 0x0200
 AlchemyC_02000030:
 	.space 0x40
-	.4byte 0x47702000
-	.4byte 0x47704800
-	.2byte 0xb2bc
-	.2byte 0x0200
+AlchemyC_02000070:
+	.space 0x4
+AlchemyC_02000074:
+	.space 0x8
 	push	{lr}
 	ldr	r1, [pc, #380]
 	movs	r0, #224

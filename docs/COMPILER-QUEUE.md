@@ -302,7 +302,7 @@ translation unit.
 
 ### The reference's own rule
 
-Read off two overlay rows in different overlays. Within one arm of a
+Read off two code-overlay rows in different code overlays. Within one arm of a
 dispatcher, the reference orders a two-argument call's register setters as:
 
 - the **last** call of the arm sets **r0 first**;

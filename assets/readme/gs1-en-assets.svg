@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Asset maturity box tree, pink band; 3,857,517 catalogued bytes are tiered by tracked sources and 3,443,183 unclassified ROM-data bytes remain at the byte-represented floor">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Asset maturity box tree, pink band; 3,857,517 catalogued bytes are tiered by tracked sources and 3,443,183 unclassified ROM-image data bytes remain at the byte-represented floor">
 <rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
 <g aria-label="Other data: 322,895 bytes">
 <rect x="1" y="1" width="103.3" height="189.2" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
@@ -28,7 +28,7 @@
 <rect x="365.4" y="1" width="479" height="674.8" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
 <rect x="365.4" y="675.8" width="479" height="223.2" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
 </g>
-<g aria-label="Unclassified ROM data (byte-represented): 3,443,183 bytes">
+<g aria-label="Unclassified ROM-image data (byte-represented): 3,443,183 bytes">
 <rect x="846.4" y="1" width="752.6" height="898" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
 </g>
 </svg>

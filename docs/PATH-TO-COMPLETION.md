@@ -1,7 +1,7 @@
 # Path to completion
 
 Current verified exact **Full-C Byte Share: 245,044 / 1,343,206 executable
-bytes (18.24%)**. Exact main-image ownership is 102,208 bytes and exact overlay
+bytes (18.24%)**. Exact main-image ownership is 102,208 bytes and exact code-overlay
 ownership is 142,836 bytes. After exact-C supersession and executable-extent
 accounting, the reviewed semantic tier contributes another **821,520 bytes**;
 together they cover **1,066,564 / 1,343,206 bytes (79.40%)**. This combined

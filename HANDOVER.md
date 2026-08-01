@@ -22,7 +22,7 @@ Alchemy is a complete, byte-identical, source-owned reconstruction of the
   materially faster by itself.
 - The current exact-C 20% threshold is 268,642 bytes. The remaining gap is
   **23,598 exact bytes**. This audit produced one fresh 108-byte exact code
-  overlay conversion; it did not manufacture a 20% claim.
+  code-overlay conversion; it did not manufacture a 20% claim.
 - The largest practical exact-C queue is now the code overlays, not the main
   executable's semantic reconstruction.
 - Compiler and permuter improvements reduce the cost of individual trials, but
@@ -55,7 +55,7 @@ Additional ROM-image facts:
 - Total ROM image: **8,388,608 bytes**.
 - Data/assets outside the executable denominator: **7,300,700 bytes**.
 - Compressed code-overlay streams occupy **539,544 ROM bytes**; their decoded
-  executable size is counted in the separate 794,842-byte overlay namespace.
+  executable size is counted in the separate 794,842-byte code-overlay namespace.
 - The source-only full build owns **8,388,608 / 8,388,608 bytes**, uses zero
   fallback, and reproduces the reference ROM byte for byte.
 - Diagnostic source counts are 1,413 main-image C files, 1,758 exact code-overlay
@@ -65,7 +65,7 @@ Additional ROM-image facts:
 
 The semantic compiler reviews 843,840 bytes of owner spans, but 22,320 of those
 bytes lie outside the audited executable extents, chiefly pool/tail portions of
-overlay owner spans. The coverage numerator therefore uses 821,520, not
+code-overlay owner spans. The coverage numerator therefore uses 821,520, not
 843,840. `tools/build_semantic.ts` now reports both figures instead of silently
 adding out-of-scope bytes.
 
@@ -142,7 +142,7 @@ The 96 decoded code overlays are the largest open program scope:
 - Additional semantic C: **405,850 bytes**.
 - Remaining without exact or semantic C: **246,156 bytes**.
 - Current semantic-backed exact reading list: **587 owners / 289,384 bytes**
-  across 66 overlays.
+  across 66 code overlays.
 
 The largest reading-list portfolios are `resource_373` (17,232 bytes),
 `resource_3b8` (15,028), `resource_3bf` (12,808), `resource_3c8` (10,636),
@@ -158,7 +158,7 @@ The exact-twin report shows only 1,804 theoretical recoverable bytes. Its three
 remaining families have already demonstrated address-, pool-, veneer-, or
 one-to-four-byte compiler differences, so 1,804 is an upper bound, not an easy
 batch. During this audit, `resource_373:11d8` converted exactly for 108 bytes
-after correcting overlay-local call targets and using its already-proven
+after correcting code-overlay-local call targets and using its already-proven
 scheduler route. That is the productive pattern: start from a complete owner,
 resolve the module-local ABI correctly, and reuse a demonstrated family route.
 
@@ -187,7 +187,7 @@ acceptable public pret evidence. Non-2.96 routes are GS1-only and every routed
 binary is digest/smoke checked.
 
 The wrapper self-test currently reports 46 older-compiler sources, 41 grouped
-DMA sources, and 29 overlay call-argument sources. The mode/cohort tools use
+DMA sources, and 29 code-overlay call-argument sources. The mode/cohort tools use
 content-addressed cache keys; the local compiler corpus cache contains 25,980
 entries. Direct compiler invocation, reference-once assembly, and caching make
 trials materially cheaper, but they do not improve convergence probability.
@@ -198,7 +198,7 @@ Measured conclusions:
 - Broad compiler-option exploration is saturated unless multiple unrelated
   residuals point to one mechanism.
 - The hard problems are vintage-specific code generation, register allocation,
-  scheduling, literal pools, overlay link bases, switch tables, and an expanding
+  scheduling, literal pools, code-overlay link bases, switch tables, and an expanding
   set of source-scoped route exceptions.
 - Compiler-family and mode work is worthwhile only when it improves several
   unrelated owners or precisely explains one reusable structural family.
@@ -218,7 +218,7 @@ Compiler policy going forward:
 2. Require a sampled exact-corpus regression for any wrapper/routing change and
    the full corpus before enabling a new general mode.
 3. Record route evidence in a machine-readable registry so path-specific flags
-   cannot silently spread to a same-address function in another overlay.
+   cannot silently spread to a same-address function in another code overlay.
 4. Keep experimental compiler modes default-off and source-scoped until shared
    evidence justifies anything broader.
 
@@ -232,9 +232,9 @@ The permuter is a bounded rescue tool, not the main work engine.
   one subsequent rescue, and two from the older Python bridge.
 - A measured code-overlay run evaluated 65,543 candidates across 15 targets and
   produced one 92-byte exact match; no other target's floor improved.
-- The current overlay floor set has 11 targets, minimum 4, median 17, maximum
+- The current code-overlay floor set has 11 targets, minimum 4, median 17, maximum
   136, and no saved exact recipes.
-- The broad overlay matcher measured 300 targets × 527 configurations and found
+- The broad code-overlay matcher measured 300 targets × 527 configurations and found
   seven exact results. That is useful harvesting, not a reason to run an
   unbounded overnight job.
 
@@ -253,7 +253,7 @@ The repository has 157 top-level TypeScript tools. Its strongest guarantees are:
 - byte-identical ROM verification;
 - audited executable inventories and independent exact ownership;
 - content-addressed compiler/object caches;
-- overlay adoption dry-runs and collision checks;
+- code-overlay adoption dry-runs and collision checks;
 - clean-room publication/provenance scanning;
 - semantic compilation and owner-scope checks.
 
@@ -272,7 +272,7 @@ Remaining tool debt:
 
 - `remaining_survey.ts` reports only the 596 `c_candidate` rows and omits the 96
   split/merge rows / 38,440 bytes of structural exactness debt.
-- Overlay discovery's 12,046-row output needs a non-overlapping, confidence-
+- Code-overlay discovery's 12,046-row output needs a non-overlapping, confidence-
   tiered queue instead of headline discovery counts.
 - Route evidence still lives largely in hand-maintained allowlists and comments.
 - Full compiler-corpus regression exists but is not a mandatory CI gate.
@@ -371,12 +371,12 @@ The target is **+23,598 exact bytes**. Treat it as a portfolio, not one heroic
 function:
 
 1. Work the 587-owner semantic-backed code-overlay reading list in descending
-   byte value, beginning with the top eight overlays listed above.
-2. Give each worker a different overlay/owner and require an exact adoption
+   byte value, beginning with the top eight code overlays listed above.
+2. Give each worker a different code overlay and owner and require an exact adoption
    dry-run before integration.
-3. Resolve overlay-local imports, pools, link base, and sibling compiler route
+3. Resolve code-overlay-local imports, pools, link base, and sibling compiler route
    before trying source permutations.
-4. Harvest exact twins only where the receiving overlay verifies independently;
+4. Harvest exact twins only where the receiving code overlay verifies independently;
    do not budget the 1,804-byte theoretical twin total as guaranteed output.
 5. In parallel, use one lane on fresh 81–320-instruction main-image owners from
    a proven compiler/source family. Avoid already documented floors.
@@ -387,10 +387,10 @@ function:
 
 1. Extend `remaining_survey.ts` to include all five C-debt retentions and emit a
    non-overlapping owner queue.
-2. Turn overlay discovery into ordinary / contained / data-walk / veneer
+2. Turn code-overlay discovery into ordinary / contained / data-walk / veneer
    confidence tiers with byte totals that reconcile to the inventory.
 3. Build a machine-readable compiler-route evidence registry and lint every
-   address-only overlay route for namespace collisions.
+   address-only code-overlay route for namespace collisions.
 4. Add sampled exact-corpus regression to normal compiler-wrapper changes.
 5. Run bounded compiler/permuter cohorts only when at least two unrelated
    residuals predict the same mechanism.
@@ -430,7 +430,7 @@ main-image complement, and current tracked metrics.
 Historical evidence indexes:
 
 - `docs/PATH-TO-COMPLETION.md` — historical delivery/compiler cohorts.
-- `docs/DISCOVERY-QUEUE.md` — historical main/overlay queue audit.
+- `docs/DISCOVERY-QUEUE.md` — historical main-image/code-overlay queue audit.
 - `docs/COMPILER-QUEUE.md` — historical compiler experiments and stop rules.
 - `docs/full-c-history.md` — first-parent exact-C ledger index.
 - `LAWS.md` — source/compiler reconstruction laws.

@@ -18,7 +18,7 @@ For GS1-English, the main-image inventory is the non-overlapping union of the
 byte-verified claimed-C and classified reconstruction-assembly manifests.
 This includes Thumb and ARM bodies, startup code, structural assembly, linker
 veneers, literal-bearing regions, and executable alignment while excluding
-asset-owned ROM gaps.
+data/assets gaps in the ROM image.
 
 Each of the 96 decoded code overlays is independently namespaced. Its tracked,
 byte-round-tripping canonical assembly distinguishes instruction lines from
@@ -41,8 +41,8 @@ denominator.
 ## Numerator evidence
 
 Main C spans come from the normal claimed-code manifest after compilation and
-linking. Overlay C spans come from the verified `AlchemyC_` placeholder
-ownership represented by matching overlay C files. Every span must be wholly
+linking. Code-overlay C spans come from the verified `AlchemyC_` placeholder
+ownership represented by matching code-overlay C files. Every span must be wholly
 contained in its target's audited executable union and ownership may not
 overlap.
 
@@ -95,7 +95,7 @@ the unresolved complement remains gray:
 * semantic C: `semantic/` sources sized by `semantic/main-regions.json`,
   `semantic/regions.json`, or their single audited region, clipped to the
   executable union and with exact C subtracted, because exact always wins;
-* ROM layout: the audited executable union, the compressed overlay streams in
+* ROM-image layout: the audited executable union, the compressed code-overlay streams in
   `assets/manifest.json`, and the complement of both as asset data.
 
 For call-target evidence, code-overlay inventory scans the compiler-filled image,

@@ -687,7 +687,7 @@ function main(): void {
   if (Object.keys(report).length === 0) {
     console.log(
       "NOTHING SWEPT — this is a FAILURE, not a pass.\n" +
-        "  No overlay matched. Check the name against assets/code/*_overlay.s.",
+        "  No code overlay matched. Check the name against assets/code/*_overlay.s.",
     );
     process.exitCode = 1;
   }

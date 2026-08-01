@@ -13,7 +13,7 @@ re-pin is admissible only after the source-only build reproduces gs1-en.gba
 
 ## cse-two-insn-immediate
 
-Blocks the largest single class of unconverted overlay functions: the reference
+Blocks the largest single class of unconverted code-overlay functions: the reference
 objects rematerialize a two-instruction immediate (Thumb `movs rN,#K` then
 `lsls rN,rN,#n`, or `movs`/`negs` for a negatable value) independently at each
 call site, while our builds compute it once and copy it from a register, which

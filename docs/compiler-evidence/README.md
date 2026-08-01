@@ -26,9 +26,26 @@ sources. The previously exact grouped-DMA owners `08005a78`, `08005c68`, and
 `resource_3bd_c_02000c98` remained byte-identical in the compiler regression.
 
 The darwin-arm64 `cc1` digest is pinned in `tools/alchemy_gcc.ts` as
-`e654b8f55bef2f2a06efec89f171f46a76f0a55f671eb75e8b82ddc994f85b27`. The
+`0767fccd6046d0b4dcaae1150a82e505a29e59ca9f4f979e2535e7970f3de449`. The
 source-only and full builds both reproduce the ROM byte-for-byte, with no
 fallback bytes and no forbidden inline assembly.
+
+## applied: call argument before store
+
+The clean witness `08077f70` is now exact C (284/284 bytes). Its reference
+copies the first call argument into `r0` immediately before a preceding store,
+where the installed compiler's post-reload Thumb scheduler leaves that copy
+after the store. The experimental `-fthumb-call-arg0-before-store` mode adds a
+strict, default-off post-reload recognizer for the single-store/single-`r0`
+copy/call shape and moves only that copy. The source route also uses the paired
+`-fno-sched-alias -fsched-store-first` controls; no inline assembly or
+hard-register binding is involved.
+
+The mode was tested across the same 0807/0809 near-match cohort and produced
+no collateral changes when enabled by itself. The full source-only and ROM
+builds remain byte-identical, with zero fallback bytes. The current bundled
+darwin-arm64 `cc1` digest is
+`0767fccd6046d0b4dcaae1150a82e505a29e59ca9f4f979e2535e7970f3de449`.
 
 ## cse-two-insn-immediate
 

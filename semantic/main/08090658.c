@@ -1,4 +1,21 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
+ * range is an indirect call through the named register, not a call to a
+ * function at the branch target.  Resolved with tools/veneer_resolve.ts.
+ *
+ * 0x03000380 is NOT established.  Its two call sites in the tree (here and
+ * semantic/main/0808f52c.c) are byte-identical instruction sequences.  r0 and
+ * r1 are unambiguously deliberate -- r1 is freshly loaded with
+ * `movs r1,#0; ldrsb r1,[r4,r1]` immediately before the branch.  r2 is live
+ * but was computed as an input to r0, so it may be an argument or may be a
+ * leftover; typed as three because three is the safer reproduction, with the
+ * doubt recorded here rather than resolved by guess.
+ */
 #include "types.h"
+
+typedef s32 (*Resident_03000380)(s32 arg0, s32 arg1, s32 arg2);
 
 struct TileFadeState_08090658 {
     u8 unknown_000[0x508];
@@ -25,7 +42,6 @@ struct TransferQueue_08090658 {
 };
 
 void Func_08004278(void (*callback)(void));
-s32 Func_080072f0(s32 numerator, s32 denominator, s32 range, s32 workspace);
 
 /*
  * Advance the two-frame tile fade, update the packed four-bit tile entries,
@@ -59,8 +75,8 @@ void Func_08090658(void)
 
             state->fade_progress++;
             state->fade_position = state->fade_start +
-                Func_080072f0(state->fade_progress * range,
-                              state->fade_frames, range, 0x03000380);
+                ((Resident_03000380)0x03000380)(state->fade_progress * range,
+                              state->fade_frames, range);
         }
     }
 

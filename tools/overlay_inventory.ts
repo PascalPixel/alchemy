@@ -84,10 +84,21 @@ const POOL_WORD_BUDGET = 64;
 //   * `0x20xx-0x27xx`  movs rN,#imm -- a leaf whose first statement is a constant;
 //   * `0x48xx-0x4fxx`  ldr rN,[pc]  -- a leaf that opens on its own pool word.
 //
-// The three additions can only ever act as *relays*: the conversion queue still
-// filters on `starts_with_prologue`, so a widened entry never becomes a queue
-// row itself. What it does is let the chain step past a leaf and reach the
-// ordinary functions laid out behind it, which is where the recall was lost.
+// The three additions let the chain step past a leaf and reach the ordinary
+// functions laid out behind it, which is where the recall was lost.
+//
+// CORRECTED 2026-08-01. This used to read "the three additions can only ever
+// act as *relays*: the conversion queue still filters on
+// `starts_with_prologue`, so a widened entry never becomes a queue row itself."
+// **That is no longer true.** The conversion queue is return-based now
+// (`isConvertibleRow` in `semantic_regions_sync`, which `exact_reading_list`'s
+// `isStrictRow` delegates to), and a leaf entry CAN become a queue row — 204 of
+// them did.
+//
+// The old sentence is quoted rather than deleted because it was a door written
+// in prose: it told a reader that leaves were structurally unconvertible, which
+// is reason enough never to look. When a rule is removed from the code, the
+// comments and self-tests asserting it are where it survives.
 function isEntryShape(half: number): boolean {
   return (half & 0xff00) === 0xb500 || half === 0x4770 ||
     (half & 0xf800) === 0x2000 || (half & 0xf800) === 0x4800;
@@ -555,9 +566,13 @@ function main(): void {
   // advertised 328 against 340), while every other row ended at exactly one
   // return. Row ends landing on a non-prologue address flag 74 rows and are
   // almost all veneer banks, so they are not worth reporting.
-  // Requires `starts_with_prologue` for the same reason the strict queue does:
-  // without it the relay seeds that land on data (2-4 byte walks) drown the
-  // signal, 503 rows against the 3 that matter.
+  // KEPT prologue-keyed, on measured grounds and NOT "for the same reason the
+  // strict queue does" — the strict queue is return-based now (§5k), and this
+  // filter is deliberately not following it. The reason is signal-to-noise in a
+  // WARNING, not eligibility for work: without the prologue test the relay seeds
+  // that land on data (2-4 byte walks) drown it, 503 rows against the 3 that
+  // matter. A diagnostic nobody reads is worse than no diagnostic, and no owner
+  // is excluded from anything by this line.
   const spanSuspects = functions.filter((fn) =>
     fn.returns === 0 && fn.starts_with_prologue && !fn.structural_veneer &&
     !fn.data_walk && fn.contained_by.length === 0);

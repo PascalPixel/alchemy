@@ -5352,6 +5352,55 @@ Standing rule: when a row is promoted to exact C, delete its `manual_regions`
 entry in the same commit. Sweep D reporting STALE-SPAN means that step was
 missed.
 
+## 5e. resource_380 CERTIFIED CLOSED (2026-08-01, jupiter)
+
+The full standard, end to end, with the liveness controls in the same session.
+
+- **Sweeps A/B/C** — `overlay_published.ts resource_380` → `residue=0`.
+- **Sweep D** — `overlay_gaps.ts resource_380` → `code_suspect_gaps=0
+  overlaps=0 prologue_suspect_tails=0`.
+- **The one gap, ruled not assumed.** `POOL-OR-DATA 0x4774-0x478c, 24B` is the
+  literal pool of the owner at 0x449c (0x449c-0x4774, closing `pop {r0} /
+  bx r0`). All six words were confirmed referenced by `ldr rN,[pc,#imm]` inside
+  that body — reference counts 2,1,1,2,2,1. Not a remainder waved through.
+- **The tail, ruled in two parts.** 0x4854-0x5190, 2,364 bytes. The import
+  veneer bank is contiguous 0x4854-0x4b1c: 89 veneers, 712 bytes. The
+  remaining **1,652 bytes at 0x4b1c-0x5190 contain ZERO return shapes** outside
+  a veneer, and a Thumb function cannot avoid returning — so no function of any
+  kind lives there, leaf included. That closes the hole Isaac found on 3c9,
+  where the tail rule keys on lr-saving prologues and would miss a leaf.
+- **Corroborated by two instruments with no shared failure mode.** All 1,590
+  `bl` sites inside recorded owner bodies resolve (via `targetOffset`) either
+  into the veneer bank (1,475) or onto a recorded local owner (115) —
+  **none into the tail data, none unclassified**. And all 20 image words that
+  point into 0x4b1c-0x5190 are **even**: plain data pointers, not one carrying
+  the Thumb bit a published function entry requires.
+- **Liveness, same session.** `overlay_gaps.ts` over all 96 →
+  `code_suspect_gaps=246 prologue_suspect_tails=19`; `overlay_published.ts`
+  over all 96 → `residue=1607`; sweep D `--self-test` passed. A zero on 380 is
+  a measurement, not a dead instrument.
+
+**A methodology warning from this certification, worth more than the seal.**
+An ad-hoc `bl` scan written on the spot reported 110 calls landing in the
+tail data, flatly contradicting the return-shape reading. The mechanism, once
+named, was in the scan and not in the overlay: it added the call site's own pc
+(`at + 4 + off`), which is exactly the pc-relative error
+`tools/overlay_call_targets.ts` exists to correct — an overlay `bl` stores the
+target offset minus two and nothing else. The number 110 is the same 110 that
+the 2026-07-31 name sweep recorded as naive-decode phantom collisions on this
+overlay. **Use `targetOffset` from `overlay_call_targets.ts`. Never hand-roll
+overlay branch arithmetic in a throwaway script**, and when a fresh instrument
+contradicts a careful reading, suspect the instrument you just wrote first.
+
+**And the liveness control found a defect in sweep D itself.** With a name
+matching no overlay, `overlay_gaps.ts` printed `overlays=0 code_suspect_gaps=0
+overlaps=0 prologue_suspect_tails=0` and **exited 0** — indistinguishable from
+a clean overlay, so a lane gating a certification loop on it would record a
+pass for an overlay it never opened. Sweep A/B/C already refused an unknown
+name; sweep D now does too (`NOTHING SWEPT — this is a FAILURE, not a pass`,
+exit 1). This is the fifth sighting of the named pattern and the second in my
+own hand: the fault lives in what the tool ACCEPTS, not in what it scans.
+
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**

@@ -7843,7 +7843,11 @@ bodies differing in one pool word, which is the cleanest twin on the tree and
 exactly what that tool exists to find. A queue that is a subset is fine; a queue
 mistaken for a population is not.
 
-### Reconciliation with sweep E (`overlay_certify.ts`, jupiter)
+### Reconciliation with sweep E (`overlay_certify.ts`)
+
+*(I first attributed this tool to the wrong lane. The tree cannot settle it —
+every commit carries one git author — so no lane is named here. Attribute from
+the section headers or from the person, never from `git log`.)*
 
 Isaac and I built overlapping instruments in the same window from the same
 argument. His is the broader tool and imports `isReturnShape`, `ownerSpans` and
@@ -8037,8 +8041,14 @@ measured, and load-bearing here.
 
 ## 5m. resource_3b8 — INDEPENDENT SECOND CERTIFICATION (2026-08-01, mars)
 
-**READ ## 5k FIRST. Venus certified this overlay hours earlier and I did not
-check before starting.** I was sent at "the next overlay by measurement" and the
+**READ "## 5k. resource_3b8 CERTIFIED CLOSED — five sweeps" FIRST. Isaac
+certified this overlay hours earlier and I did not check before starting.**
+
+*(Referenced by TITLE, not by number, and deliberately: there are THREE `## 5k`
+sections in this file, plus two `## 5h`, two `## 5i` and three `## 5j`. Lanes
+append in parallel and hand-assign the next letter, so the labels collide and a
+cross-reference by number points at whichever one the reader finds first. Cite
+section TITLES until the numbering is reconciled.)* I was sent at "the next overlay by measurement" and the
 seal already existed in this file. **Grep `resource_<id>` together with `certif`
 before opening any overlay** — including when a mandate names one for you.
 
@@ -8048,17 +8058,17 @@ the first kind. Neither reading saw the other. Where they overlap they agree
 exactly (23,352 bytes, 26 owners, 0x30 to 0x4340, no gap/overlap/duplicate,
 every sweep clean). What each adds alone:
 
-- **5k only:** all 26 spans contain EXACTLY ONE return shape; the `bl` census
+- **Isaac's section only:** all 26 spans contain EXACTLY ONE return shape; the `bl` census
   through `targetOffset` (1,871 into the bank, 3 into code, none into tail
   data); and all 17 image words pointing into tail data are EVEN.
-- **5m only:** the closing byte-accounting with an explicit delta; the
+- **This section only:** the closing byte-accounting with an explicit delta; the
   concentration of the tail dispatch table on two handlers; the stale A/B/C
   liveness control; and the ruling that sweep E must not be ported into sweep D.
 
 **A COINCIDENCE OF NUMBERS TO NOT CONFLATE.** Both sections say "17" and they
-are different measurements. 5k's 17 is *image words pointing INTO tail data, all
-even* — corroboration that no tail-data address carries the Thumb bit, so none
-is a function entry. 5m's 17 is *distinct owners published FROM tail slots*.
+are different measurements. Isaac's 17 is *image words pointing INTO tail data,
+all even* — corroboration that no tail-data address carries the Thumb bit, so none
+is a function entry. mine is *distinct owners published FROM tail slots*.
 Re-measured both in one session: 17 and 17, unrelated. Two sections, one number,
 two meanings is exactly how a reader manufactures a false cross-check.
 
@@ -8253,6 +8263,54 @@ avoid returning, that is a proof no function lives there.
 **Coverage is a flag to investigate, never a verdict.** It correctly told me to
 look harder here; looking harder is what settled it. The overlay is small and
 mostly data, which is a fact about the overlay and not a gap in the reading.
+
+## 5p. THE SUB-SLACK HOLE IN THE ACCOUNTING (2026-08-01, mars) — applies to seals already held
+
+**A closing sum of `owners + head + tail == image` is weaker than it looks, and
+every certification sealed on one rests on a check that cannot confirm.**
+
+`gapsBetween` skips any gap of `ALIGNMENT_SLACK` (2) or less, so sub-slack
+remainders appear in no gap list, in no `--json`, and in no naive total. On
+`resource_398` the sum came out **sixteen short**; enumerating found eight
+two-byte `00 00` remainders at `0x3e, 0x166, 0x186, 0x1ba, 0x1ee, 0x2aa, 0x2d6,
+0x302`.
+
+**`resource_3b8` summed to zero because that overlay has no interior slack at
+all — not because the check is strong.** Same clean sum, completely different
+amount of evidence behind it. **Enumerate the sub-slack remainders. The sum can
+only disagree; it can never confirm.**
+
+### The audit of all ten sealed overlays, and what it found
+
+Every sum closes (`380, 3af, 3b9, 3a4, 37a, 37b, 3a1, 3c9, 3b8, 398`), so no
+seal needed re-opening — but that is luck confirming a weak check, not a strong
+check confirming a result.
+
+**376 sub-slack remainders exist tree-wide. Exactly TWO are non-zero, and both
+are `bx r0`:**
+
+| overlay | remainder | after owner | what it is |
+|---|---|---|---|
+| `resource_3a4` | `0x2d56` | `0x2d08` | span stops between its own `pop {r0}` and `bx r0` |
+| `resource_3bc` | `0x3b7e` | `0x3b40` | same |
+
+Both are **undercounted spans** whose undercount is exactly the two-byte return
+— which is why nobody found them: the three previously-known undercounts on
+`resource_3a4` (`0x2478, 0x2e76, 0x2ede`) had larger remainders because they
+also swallowed a literal pool, so sweep D reported those and silently dropped
+these.
+
+**FIXED at `7b4a9c41`: alignment padding is zero by definition, so the skip now
+tests CONTENT and not just size.** Self-tested in both directions — a zero
+two-byte remainder stays quiet, a `bx r0` in one reports CODE-SUSPECT. The
+population was measured BEFORE the rule changed, because a guard that cries wolf
+gets switched off: 2 of 376, no noise.
+
+**Sweep E reaches the same two owners from the other side**, via its "recorded
+span contains NO return shape" check — `0x2002d08` is in its findings list for
+`resource_3a4`. Two instruments with unrelated failure modes landing on one
+answer is evidence. Sweep D's route is the cheaper one: it needs no owner-start
+set and no `bl` resolution.
 
 ## 6. Park classes
 

@@ -283,7 +283,26 @@ export function gapsBetween(
       overlaps.push({ owner: current.start, next: next.start, bytes: -size });
       continue;
     }
-    if (size <= ALIGNMENT_SLACK) continue;
+    // ALIGNMENT PADDING IS ZERO. A sub-slack remainder used to be skipped on
+    // its SIZE alone, which quietly assumed that anything two bytes or smaller
+    // is padding. It is not: an UNDERCOUNTED SPAN that stops between its own
+    // `pop {r0}` and its own `bx r0` leaves a two-byte remainder holding a
+    // RETURN SHAPE, and sweep D discarded it without looking (found 2026-08-01,
+    // mars, by auditing the sealed overlays after `resource_398` showed that a
+    // clean owners+head+tail sum silently omits every sub-slack byte).
+    //
+    // Measured before changing the rule, because a guard that cries wolf gets
+    // switched off: **376 sub-slack remainders tree-wide, exactly 2 of them
+    // non-zero, and both are `bx r0`** -- `resource_3a4` 0x2d56 after owner
+    // 0x2d08, and `resource_3bc` 0x3b7e after owner 0x3b40. No noise at all.
+    //
+    // Sweep E reaches the same two owners from the other side, by its "recorded
+    // span contains NO return shape" check. Two instruments with unrelated
+    // failure modes landing on one answer is evidence; this one is cheaper,
+    // because it needs no owner-start set and no `bl` resolution.
+    let padded = true;
+    for (let at = current.end; at < next.start; at += 1) if (image[at] !== 0) padded = false;
+    if (size <= ALIGNMENT_SLACK && padded) continue;
 
     rule(current.end, next.start, current.start, next.start, false);
   }
@@ -436,6 +455,20 @@ function selfTest(): void {
   ]);
   if (short.gaps.length !== 1 || short.gaps[0].returns[0] !== short.gaps[0].start)
     throw new Error("sweep D self-test: undercount signature not reproduced");
+
+  // A SUB-SLACK remainder is skipped when it is zero and REPORTED when it is
+  // not, in both directions, because the whole hazard is a size test standing
+  // in for a content test.
+  const padding2 = new Uint8Array(0x20);
+  if (gapsBetween(padding2, [{ start: 0, end: 0x10 }, { start: 0x12, end: 0x20 }]).gaps.length !== 0)
+    throw new Error("sweep D self-test: a zero 2-byte remainder is alignment and must stay quiet");
+  const live2 = new Uint8Array(0x20);
+  live2[0x10] = 0x00; live2[0x11] = 0x47; // `bx r0` in a two-byte remainder
+  const caught = gapsBetween(live2, [{ start: 0, end: 0x10 }, { start: 0x12, end: 0x20 }]);
+  if (caught.gaps.length !== 1 || caught.gaps[0].verdict !== "CODE-SUSPECT")
+    throw new Error("sweep D self-test: a RETURN in a two-byte remainder is an undercounted span, not padding");
+  if (caught.gaps[0].returns.length !== 1 || caught.gaps[0].returns[0] !== 0x10)
+    throw new Error("sweep D self-test: the remainder's return must be located");
 
   // A negative gap is an over-measure, the opposite error, and must be caught.
   const past = gapsBetween(new Uint8Array(0x20), [

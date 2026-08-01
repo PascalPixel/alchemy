@@ -6642,6 +6642,12 @@
       "entry": "0x02002618",
       "span_bytes": 956,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5} / pop {r0} / bx r0 at 0x020029a6-0x020029aa) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_3af 2618 29d4, the +2 rule against the raw image), and confirmed independently as dispatch case 15 of the 0x02001444 entry driver. Span walked through every internal branch and through the INTERNAL literal pool at 0x0200275c-0x0200277f, which the b.n at 0x0200275a hops; that pool's last word 0x0000e666 disassembles as a backward b.n into the neighbouring owner 0x020022c0 and is data, not a branch. The three beq at 0x02002806/0x0200281a/0x0200282e are forward null-guards inside the span. Trailing pool (0x0000b333, 0x020088c1, 0x0000026a, 0x00000262, 0x00000256, 0x0000cccc, 0x00006666, 0x02000240, 0x0000006f, 0x0000006d) ends 0x020029d3, next owner prologue (push {r5, r6, lr}) at 0x020029d4, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3af",
+      "entry": "0x02003f30",
+      "span_bytes": 744,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr} followed by the r8 spill mov r6,r8 / push {r6}) and returning (pop {r3} / mov r8,r3 / pop {r5, r6} / pop {r0} / bx r0 at 0x020041d4-0x020041dc) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_3af 3f30 4218, the +2 rule against the raw image). Span walked through both branches: the bne at 0x02003fa8 and the b.n at 0x02003fb4, which is an early return jumping 526 bytes forward to the epilogue at 0x020041d4, not a local skip. Alignment halfword plus fourteen pool words (0x0200d1d8, 0x00001f69, 0x00002016, 0x03001ebc, 0x00013333, 0x00009999, 0x03090000, 0x00002014, 0x00000101, 0x00006014, 0x00008014, 0x0000cccc, 0x00019999, 0x0200c918) end 0x02004217 -- note 0x0200d1d8 at 0x020041e0 disassembles as bne.n 0x02004194 and is data -- next owner at 0x02004218 (already banked byte-exact as assets/code/resource_3af_c_02004218.c), inside the assembled overlay image and not overlapping another recorded owner"
     }
   ]
 }

@@ -32,11 +32,11 @@ typedef int s32;
  * advancing by one, but this owner alone is no evidence for that.
  */
 
-extern void Func_080770c8(s32 flagId);
-extern void Func_080770d0(s32 flagId);
+extern void Func_02003d7e();
+
 
 void Func_020011ac(void)
 {
-    Func_080770d0(0x235);
-    Func_080770c8(564);
+    Func_02003d7e(0x235);
+    Func_02003d7e(564);
 }

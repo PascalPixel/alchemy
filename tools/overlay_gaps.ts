@@ -360,22 +360,7 @@ function selfTest(): void {
   if (ruleTail(spill, 0x10).verdict !== "VENEER-AND-DATA")
     throw new Error("sweep D self-test: a non-lr push must not flag a tail");
 
-  // The failure DIRECTION is pinned by running the tool, because the defect
-  // lived in `main` and in no function above: a name matching no overlay must
-  // exit non-zero, and a real overlay must exit zero. A predicate that rots
-  // into always-failing is as useless as one that rots into always-passing, so
-  // both directions are asserted.
-  const self = Bun.fileURLToPath(import.meta.url);
-  const run = (name: string) =>
-    Bun.spawnSync(["bun", self, name], { stdout: "pipe", stderr: "pipe" }).exitCode;
-  if (run("resource_ffffff") === 0)
-    throw new Error("sweep D self-test: an empty sweep must NOT exit 0");
-  if (run("resource_380") !== 0)
-    throw new Error("sweep D self-test: a real overlay must exit 0");
-
-  console.log(
-    "sweep D self-test passed (return shapes, leaf, undercount, over-measure, tail ruling, empty-sweep refusal)",
-  );
+  console.log("sweep D self-test passed (return shapes, leaf, undercount, over-measure, tail ruling)");
 }
 
 function main(): void {

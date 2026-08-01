@@ -14,6 +14,67 @@ rather than real limits.
 Exact means fully linked machine-code byte equality — not semantic similarity,
 not equal object size.
 
+## THE CERTIFIED REGISTER — grep this BEFORE opening any overlay (2026-08-01)
+
+**Required first step of every overlay shift.** Vale mandated `resource_3b8` to
+two lanes on one night, having written its own seal into the kanban in between.
+The cost was a duplicated shift, and the cause was that a seal lived in a
+section heading nobody greps.
+
+The heading convention is `## 5<x>. resource_<id> CERTIFIED CLOSED`, and **as
+written it finds only two of the sealed overlays** — 380 and 3b8. resource_3c9
+and resource_3a1 are sealed under `### resource_<id> CLOSED`, so the mandated
+grep misses them. Do not trust the convention; **regenerate the register**:
+
+```bash
+bun tools/overlay_published.ts <ov>   # residue=0
+bun tools/overlay_gaps.ts <ov>        # code_suspect_gaps=0 overlaps=0
+bun tools/overlay_certify.ts <ov>     # sweep_e_findings=0
+```
+
+**42 overlays pass all five sweeps as of this run**, with sub-slack gaps
+enumerated and none of them suspicious, largest first: 3c9, 3b8, 3af, 39e, 380,
+3b9, 374, 38f, 38d, 37a, 37b, 3ae, 3c7, 3aa, 3c6, 375, 3a3, 3b6, 3a2, 38b, 370,
+3c2, 394, 398, 3a9, 379, 3c3, 38e, 38c, 3a1, 3ac, 386, 390, 3c1, 36f, 397, 384,
+3cc, 388, 37d, 37e, 37c. **Passing all five is not the same as sealed** — a seal
+is a written section with its liveness controls recorded. But an overlay on this
+list is not new work, and picking one off the ranking without checking here is
+how the same overlay gets mandated twice.
+
+### A ZERO BYTE-ACCOUNTING DELTA IS NOT PROOF (2026-08-01, mars)
+
+Sweep D skips any gap of `ALIGNMENT_SLACK` bytes or fewer, so a byte-accounting
+sum that comes out to zero can only ever DISAGREE with the sweep, never confirm
+it. `resource_3b8` summed to zero because it happens to have **no interior slack
+at all** — 26 owners, contiguous, zero sub-slack gaps. That is luck, not method.
+
+**Enumerate the sub-slack gaps explicitly before sealing anything, including
+seals already held.** Both of this lane's seals were re-checked under this rule
+after Garet raised it: 3b8 has 0, and `resource_3c9` has **11**, every one two
+bytes of `0x0000` alignment padding with no return shape. Both survive. The
+check costs one loop and it is the only thing standing between "the arithmetic
+agreed" and "I read the bytes".
+
+### The A/B/C liveness control is DEAD — use a known-dirty overlay
+
+`overlay_published.ts` now refuses an unknown name (exit 1), which was the right
+fix and it killed the control that depended on the old behaviour. A bogus name
+no longer produces a number, so **a zero from it proves nothing about
+liveness**. Run a KNOWN-DIRTY overlay in the same session instead:
+`overlay_published.ts resource_3a4` → `residue=1`. Sweep D and sweep E keep
+their own refusals, which are gates, not controls — do not confuse the two.
+
+### Two identical two-byte `bx lr` owners, opposite dispositions
+
+The bytes cannot discriminate them; **only who references them can**:
+
+- **published from a data slot** → a game-side callback, and OURS to own;
+- **`bl`-reached and never published** → compiler dispatch runtime, and NOT
+  ours.
+
+This is the same discipline as the `__call_via_rN` bank one level down, and it
+is why sweep E rules a tail `bx rN` by its call sites rather than by its pad.
+
 ## Published-callback campaign — scope as measured 2026-08-01
 
 Formerly-miscertified overlays, regenerated at tip 974ef372 rather than

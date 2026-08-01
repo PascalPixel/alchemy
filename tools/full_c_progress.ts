@@ -26,6 +26,7 @@ import {
 } from "./decomp_targets.ts";
 import { canonicalJson } from "./canonical_json.ts";
 import { targetOffset } from "./overlay_call_targets.ts";
+import { publishedOffset } from "./overlay_published.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const OVERLAY_BASE = 0x02000000;
@@ -318,6 +319,17 @@ interface DirectiveSpan {
   end: number;
 }
 
+interface PublishedLeafEvidence {
+  pointer: number;
+  target: number;
+}
+
+const AUDITED_PUBLISHED_RAW_LEAVES = new Map<string, PublishedLeafEvidence[]>([
+  ["resource_377", [{ pointer: 0x0200002c, target: 0x02000090 }]],
+  ["resource_378", [{ pointer: 0x0200002c, target: 0x02000064 }]],
+  ["resource_3a7", [{ pointer: 0x020021f8, target: 0x020004cc }]],
+]);
+
 /**
  * Recover leaf code written as raw halfwords only when two independent facts
  * agree: the overlay BL decoder resolves a branch to the first halfword, and
@@ -345,6 +357,39 @@ export function reachedDirectiveLeaves(
     }
   }
 
+  return directiveLeavesAtStarts(binary, starts, directives, "BL-reached");
+}
+
+/** Raw leaves whose Thumb entry address is installed in aligned overlay data. */
+export function publishedDirectiveLeaves(
+  binary: Uint8Array,
+  directives: readonly DirectiveSpan[],
+  publications: readonly PublishedLeafEvidence[],
+): Interval[] {
+  const directiveStarts = new Set(directives.map((span) => span.start));
+  const starts = new Set<number>();
+  for (const publication of publications) {
+    const address = publication.pointer;
+    const offset = address - OVERLAY_BASE;
+    if (offset < 0 || offset + 4 > binary.length || offset % 4 !== 0) continue;
+    if (!directiveStarts.has(address) || !directiveStarts.has(address + 2)) continue;
+    const word = binary[offset] |
+      (binary[offset + 1] << 8) |
+      (binary[offset + 2] << 16) |
+      (binary[offset + 3] << 24);
+    const target = publishedOffset(word >>> 0, binary.length);
+    if (target !== null && OVERLAY_BASE + target === publication.target) starts.add(publication.target);
+  }
+  return directiveLeavesAtStarts(binary, starts, directives, "published");
+}
+
+function directiveLeavesAtStarts(
+  binary: Uint8Array,
+  starts: ReadonlySet<number>,
+  directives: readonly DirectiveSpan[],
+  evidencePrefix: string,
+): Interval[] {
+
   const byStart = new Map(directives.map((span) => [span.start, span]));
   const leaves: Interval[] = [];
   for (const start of starts) {
@@ -366,7 +411,7 @@ export function reachedDirectiveLeaves(
           start,
           end: cursor,
           kind: "thumb",
-          evidence: "BL-reached bounded raw-halfword leaf",
+          evidence: `${evidencePrefix} bounded raw-halfword leaf`,
         });
         for (const pool of pools) {
           if ([0, 2].every((byte) => byStart.has(pool + byte))) {
@@ -374,7 +419,7 @@ export function reachedDirectiveLeaves(
               start: pool,
               end: pool + 4,
               kind: "literal_pool",
-              evidence: "literal pool referenced by BL-reached raw-halfword leaf",
+              evidence: `literal pool referenced by ${evidencePrefix} raw-halfword leaf`,
             });
           }
         }
@@ -468,7 +513,15 @@ function overlayInventory(source: string, auditedCallers: readonly Interval[]): 
   }
 
   const rawLeaves: Interval[] = [];
-  for (const leaf of reachedDirectiveLeaves(listing.binary, [...intervals, ...auditedCallers], halfwordDirectives)
+  const overlay = basename(source).replace(/_overlay\.s$/, "");
+  for (const leaf of [
+    ...reachedDirectiveLeaves(listing.binary, [...intervals, ...auditedCallers], halfwordDirectives),
+    ...publishedDirectiveLeaves(
+      listing.binary,
+      halfwordDirectives,
+      AUDITED_PUBLISHED_RAW_LEAVES.get(overlay) ?? [],
+    ),
+  ]
     .sort((left, right) => left.start - right.start || left.end - right.end)) {
     if (intervals.some((interval) => interval.start < leaf.end && leaf.start < interval.end)) continue;
     if (rawLeaves.some((accepted) => accepted.start < leaf.end && leaf.start < accepted.end)) continue;
@@ -838,6 +891,42 @@ function selfTest(): void {
       getter[1].kind !== "literal_pool" || getter[1].start !== OVERLAY_BASE + 0x14 ||
       getter[1].end !== OVERLAY_BASE + 0x18) {
     throw new Error("a reached raw getter must carry its referenced literal pool");
+  }
+  const publishedImage = leafImage.slice();
+  publishedImage.fill(0, 0, 4);
+  publishedImage.set([0x11, 0x80, 0x00, 0x02], 0); // Thumb pointer to overlay offset 0x10
+  const publishedDirectives = [
+    { start: OVERLAY_BASE, end: OVERLAY_BASE + 2 },
+    { start: OVERLAY_BASE + 2, end: OVERLAY_BASE + 4 },
+    ...rawLeaf,
+  ];
+  const publicationEvidence = [{ pointer: OVERLAY_BASE, target: OVERLAY_BASE + 0x10 }];
+  const published = publishedDirectiveLeaves(publishedImage, publishedDirectives, publicationEvidence);
+  if (published.length !== 1 || published[0].start !== OVERLAY_BASE + 0x10 ||
+      published[0].end !== OVERLAY_BASE + 0x14) {
+    throw new Error("a published raw leaf was not classified as Thumb");
+  }
+  const evenPublication = publishedImage.slice();
+  evenPublication[0] &= 0xfe;
+  if (publishedDirectiveLeaves(evenPublication, publishedDirectives, publicationEvidence).length !== 0) {
+    throw new Error("an even data pointer must not publish a raw leaf");
+  }
+  const outOfRangePublication = publishedImage.slice();
+  outOfRangePublication.set([0x01, 0x81, 0x00, 0x02], 0);
+  if (publishedDirectiveLeaves(outOfRangePublication, publishedDirectives, publicationEvidence).length !== 0) {
+    throw new Error("an out-of-range data pointer must not publish a raw leaf");
+  }
+  const publishedWithoutReturn = publishedImage.slice();
+  publishedWithoutReturn.fill(0, 0x10, 0x14);
+  if (publishedDirectiveLeaves(publishedWithoutReturn, publishedDirectives, publicationEvidence).length !== 0) {
+    throw new Error("a published directive run without bx lr must remain data");
+  }
+  if (publishedDirectiveLeaves(publishedImage, rawLeaf, publicationEvidence).length !== 0) {
+    throw new Error("a pointer-shaped instruction word must not publish a raw leaf");
+  }
+  const stalePublication = [{ pointer: OVERLAY_BASE, target: OVERLAY_BASE + 0x14 }];
+  if (publishedDirectiveLeaves(publishedImage, publishedDirectives, stalePublication).length !== 0) {
+    throw new Error("a changed publication target must require fresh audit evidence");
   }
 
   const inventory: ExecutableInventory = {

@@ -7625,6 +7625,82 @@ defect that the instrument which seeds rows does.
 export-table overlays, already sweep B's, plus `39c` held. Adopting owners is
 the honest way the number goes down.
 
+## 5k. THE POINTER-HALF SWEEP: the answer is ONE (2026-08-01, mars)
+
+Asked whether `3bd:0x24` — a published pointer word's low halfword seeded as a
+function — is a class or a singleton. **Swept all 12,106 inventory rows against
+the same predicate: exactly ONE.** No other row on the tree has a 4-aligned,
+prologue-shaped entry whose word resolves as an in-image published pointer.
+
+**So it does NOT want a fix at the seeding step, and I am saying so rather than
+building one.** A seeding change risks every row in the inventory; the
+population it would protect is one row, already adopted, with the real function
+twelve bytes later now recorded. The finding stands as a documented hazard, not
+as a campaign. **The instrument that masks banks does not have the defect that
+the instrument which seeds rows does** — but on this tree the defect fired once.
+
+### The second class I ran was my own instrument misused, and it nearly landed
+
+I also asked how many inventory rows START inside a masked veneer or `call_via`
+bank entry. The answer came back **538 unflagged**, which looks like a major
+finding. It is not. `maskBanks` is built for HEAD and TAIL regions; run
+image-wide it matches inside data. The tell was in the output and I nearly did
+not look: **the span histogram of the 538 has nine rows running from 226 to
+2,802 bytes, and no veneer is 2,802 bytes.**
+
+Same shape as `resource_37b`'s 54 returns at a stride of 8, with a bigger
+number. **A tool applied outside the domain it was designed for produces
+confident output about nothing**, and the only defence is asking what the
+population should look like before believing its size.
+
+## 5l. THE HEADS ARE CLOSED — 25 overlays and 53 returns down to 1 (2026-08-01, mars)
+
+Adopted this shift: the 22-byte bitfield setter on 13 overlays, `3bd:0x30`, and
+**38 head export stubs across the remaining ten**. The only CODE-SUSPECT head
+left on the tree is `resource_39c`, deliberately held while Ivan measures
+against that overlay.
+
+### The 38, and what the enumeration showed
+
+Three shapes, every one published, **none unreferenced**:
+
+| shape | bytes | count | what |
+|---|---|---|---|
+| `ldr r0,[pc,#0] / bx lr` + pool | 8 | 29 | returns an in-image table address |
+| `movs r0,#0 / bx lr` | 4 | 8 | returns 0 |
+| `bx lr` | **2** | 1 | a do-nothing handler |
+
+The header layout is regular and worth knowing: getters are published from image
+offsets `0xc`, `0x14`, `0x1c`, `0x24`, and the `return 0` stub from **`0x2c` on
+eight of the ten overlays**. That is a layout fact worth more than any of the
+bodies.
+
+**28 of the 29 pool words are distinct, and the single repeat is a trap.**
+`0x2009c34` is returned by both `resource_395 0x48` and `resource_3ad 0x30`.
+That is a coincidence of ADDRESS, not shared identity: only one overlay is
+resident at `0x02000000` at a time, so the same VA designates different bytes
+depending which is loaded. Two rows returning the same address across two
+overlays tells you nothing about either.
+
+**`resource_3bb 0x4c` is a two-byte owner** — the whole function is one `bx lr`.
+It is published TWICE, from words at `0x4928` and `0x4934`, which are data-table
+slots rather than header slots: two table entries install it as a handler, so it
+is a deliberate no-op callback and not padding. **A two-byte owner has no push
+for sweep C and reads as alignment to anyone measuring by eye**, which is
+precisely what an unkeyed sweep is for. What it does NOT settle is the return
+value: `bx lr` leaves r0 untouched, so a caller reading a result gets whatever
+it passed in, and whether those slots expect a void handler or an identity is
+not decidable from this row.
+
+### Why the head sweep could see any of this
+
+All 38 are `B leaf` rows sweep B already carried, and the head sweep reached
+them **only because the veneer predicate compares registers**. `ldr r0,=X /
+bx lr` is a leaf; a veneer branches to the register it just loaded. Under the
+old predicate every one of these 38 was masked as structure. That is the
+tightening measured as changing zero tail veneer counts — inert where it was
+measured, and load-bearing here.
+
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**

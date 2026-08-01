@@ -14,7 +14,7 @@ typedef unsigned short u16;
  * 0x020080b9, 0x02009181 and 0x020080ad -- every one ODD, i.e. a Thumb entry,
  * and every one resolving to a known function start in this image: 0x11b0
  * (this owner), 0x007c, 0x00b0, 0x00b8, 0x1180 and 0x00ac.  Four of those six
- * are ALREADY-BANKED BYTE-EXACT siblings (assets/code/resource_3a2_c_0200007c.c,
+ * are already-tracked byte-exact siblings (assets/code/resource_3a2_c_0200007c.c,
  * _020000b8.c, _02001180.c and the leaf at 0x00ac's neighbour _02000054.c), so
  * the base is proven against material that already reproduces the ROM.  The
  * overlay's remaining `0x0200[89ab]xxx` pool words agree without exception:

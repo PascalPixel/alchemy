@@ -65,8 +65,7 @@ bun tools/check_publication.ts --self-test
 ```
 
 The file-shape gate is defense in depth; it cannot determine where knowledge
-came from. Contributors and coding agents remain responsible for honoring the
-evidence boundary above.
+came from. Every contribution must honor the evidence boundary above.
 
 Before claiming a milestone, run the source-only build, the full ROM build, and
 the aggregate test suite. “Byte closure” means a zero-fallback, byte-identical

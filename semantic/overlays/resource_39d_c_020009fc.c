@@ -36,7 +36,7 @@ typedef signed int s32;
  * own local callee sit at different image offsets.  Every `movs` immediate,
  * every `ldr [pc]` displacement and every field offset is identical.
  * `resource_3c9:05ec` is likewise absent from the inventory; it is not in this
- * lane's set but it is a free conversion for whoever takes 3c9.
+ * reconstruction's set but it is a free conversion for whoever takes 3c9.
  *
  * All ten call sites were resolved with
  * `bun tools/overlay_call_targets.ts resource_39d 09fc ac2`, and the

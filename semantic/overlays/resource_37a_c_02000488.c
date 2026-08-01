@@ -13,19 +13,19 @@ typedef signed short s16;
  * 0x02000054 (0xffff000d), 0x02000108 (0xffff000f), 0x02000150 (0xffff000e),
  * 0x020001ec (0xffff000c), 0x0200022c (0xffff0013), 0x02000c00 (0xffff0009),
  * 0x02001a58 (0xffff0008), 0x02001ca8 (0xffff0014) and 0x02002924
- * (0xffff0010).  Nine of those are already banked byte-exact or semantic
+ * (0xffff0010).  Nine of those are already tracked byte-exact or semantic
  * siblings, so this owner is a scripted-scene command handler taking no
  * arguments, exactly like them.
  *
  * Link base proof for this overlay (three independent witnesses, all odd pool
- * words resolving to already-banked sibling entries under
+ * words resolving to already-tracked sibling entries under
  * in-image address = pool_word - 0x8000):
  *   0x02008d9d -> Func_02000d9c + 1   (assets/code/resource_37a_c_02000d9c.c)
  *   0x02008ef9 -> Func_02000ef8 + 1   (assets/code/resource_37a_c_02000ef8.c)
  *   0x0200901d -> Func_0200101c + 1   (assets/code/resource_37a_c_0200101c.c)
  *   0x02009141 -> Func_02001140 + 1   (assets/code/resource_37a_c_02001140.c)
  * plus 0x02008151/0x020081ed/0x0200822d/0x02008109/0x02008c01/0x02009a59/
- * 0x0200a925 naming seven more banked entries.  The base is not in doubt here.
+ * 0x0200a925 naming seven more tracked entries.  The base is not in doubt here.
  *
  * Complete owner: `push {lr}` prologue at 0x02000488 and the matching
  * interworking return `pop {r0} / bx r0` at 0x020009da.  r0 holds the popped
@@ -71,7 +71,7 @@ typedef signed short s16;
  *
  * Control flow, both branches verified against the resolved targets:
  *  - 0x02000492: `Func_080770c0(0x0814) != 0` runs the sibling command handler
- *    Func_02000054 (banked byte-exact) before the scene.
+ *    Func_02000054 (tracked byte-exact) before the scene.
  *  - 0x020004a0: `Func_080770c0(0x0809) != 0` branches straight to the
  *    epilogue at 0x020009da, so the whole scene is one-shot on flag 0x0809 —
  *    and the scene's own closing call is `Func_080770c8(0x0809)`, the setter

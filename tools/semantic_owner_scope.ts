@@ -56,8 +56,8 @@ export interface RowFacts {
    * a pool disassemble as perfectly plausible `lsrs`/`movs` pairs, so `isData`
    * alone undercounts pools badly in rows that came from a regular `asm/*.s`
    * rather than an executable-gap reconstruction: two such rows in `080be378`
-   * (108 and 48 bytes) were counted as code until an admitting agent resolved
-   * their PC-relative provenance by hand.
+   * (108 and 48 bytes) were counted as code until their PC-relative provenance
+   * was resolved manually.
    */
   suspectedPool: boolean;
   calls: number;
@@ -287,7 +287,7 @@ export function openOwners(): Owner[] {
     // `080d4ce8` by 32, `080d765c` by 8), accounting for **11,012 of the 12,842
     // bytes the tool reported as open**. The genuine remainder was ~1,830 bytes
     // across 11 small owners. A boundary tool that overstates the work by 6x
-    // sends lanes at rows that are already done.
+    // sends the queue toward rows that are already done.
     // A manifest row can begin with alignment before one or more registered
     // leaf functions (0801c9be, 08021dfa, 080dbb9a, 080e72de). Checking only
     // the row start therefore reports already-admitted code as open. Accept an

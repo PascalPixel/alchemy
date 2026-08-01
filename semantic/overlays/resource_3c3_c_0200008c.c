@@ -25,7 +25,7 @@ typedef signed int s32;
  * `Data_02000240` is the cross-overlay RAM global block; its signed halfword
  * at element 224 (byte offset 448) is the scene id this overlay keys on.  The
  * byte-exact siblings spell the compared constants `(s32)&Value_000000aa` —
- * that is the exact lane's pooling device for a small integer, not a symbol,
+ * that is the exact reconstruction's pooling device for a small integer, not a symbol,
  * so they are written here as the integers 0xaa and 0xa9.
  *
  * The single call site resolves through `tools/overlay_call_targets.ts` to the

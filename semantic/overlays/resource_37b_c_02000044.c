@@ -22,7 +22,7 @@ typedef unsigned char u8;
  * INVISIBLE TO SWEEPS A AND C, and only sweep B reaches it: no `push`
  * for C to key on, and nothing calls it for A. Sweep B finds it because
  * it validates a published word by looking for a prologue -- and this
- * has none -- so it lands in the "B leaf" class Ivan opened up rather
+ * has none -- so it lands in the "B leaf" class rather
  * than in the prologue-confirmed population.
  *
  * IDENTICAL BYTES ARE NOT IDENTICAL SEMANTICS. Four of this overlay's

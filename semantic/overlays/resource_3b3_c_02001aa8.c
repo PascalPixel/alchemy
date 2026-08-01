@@ -10,7 +10,7 @@ typedef signed int s32;
  * out/decomp/overlays.json and no exact sibling.  It was found by sweeping the
  * two-byte gaps in metrics/gs1-en-executable.json for `push {..,lr}`
  * prologues, and its start is confirmed from the other side: the sibling
- * lane's resource_3b3_c_020019f0.c ends its literal pool at 0x02001aa7 and
+ * reconstruction's resource_3b3_c_020019f0.c ends its literal pool at 0x02001aa7 and
  * names 0x02001aa8 as the next prologue.  Walking from that prologue every
  * branch (0x02001ac8, 0x02001aec, 0x02001b0e, 0x02001b12, 0x02001b28,
  * 0x02001b32, 0x02001b66, 0x02001ba4, 0x02001bc4) lands inside
@@ -41,7 +41,7 @@ typedef signed int s32;
  *   0x02001b04 -> prologue 0x01938 -> Func_02001938
  *   0x02001b18 -> veneer 0x02b1c -> Func_0808a080   record fetch, index 8..11
  *   0x02001b22 -> prologue 0x019f0 -> Func_020019f0
- * Func_020019f0 is the proximity/priority merge the sibling lane converted
+ * Func_020019f0 is the proximity/priority merge the sibling reconstruction converted
  * from this same sweep — so, as in resource_39e, one unrecorded owner calls
  * another, which is why the inventory reaches neither.
  *

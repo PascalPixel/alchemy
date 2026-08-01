@@ -92,8 +92,9 @@ decompilation residual supplies new cross-region evidence.
 
 Prototyped in `../alchemy-gcc/build-296/`, which is a separate tree from the
 digest-pinned `dist/`. **`dist/` was never touched**, so every alchemy build in
-this repo still uses the approved bundle. Before changing anything I verified
-the prototype toolchain reproduces `dist` byte-for-byte on a known source.
+this repo still uses the approved bundle. Before changing anything, the
+prototype toolchain was verified to reproduce `dist` byte-for-byte on a known
+source.
 
 Harness (all git-ignored, under `work/`):
 `proto_probe.ts` compiles with an arbitrary toolchain prefix, `proto_score.ts`
@@ -186,22 +187,22 @@ candidates were tested and ruled out in `work/hand/080f377c/NOTES.md`).
 ## Patch 3 — relax the `regs_ever_live` guards. TRIED, POINTLESS, REVERTED.
 
 This was the third blocker: `thumb_order_grouped_dma_store` requires r0 and r4
-unused *anywhere in the function*, which I said confined the twelve-store
+unused *anywhere in the function*, which was thought to confine the twelve-store
 `stmia r0!, {r1, r2, r3, r4}` path to argument-free leaves like `src/08004a94.c`.
 
 Dropping both tests changes nothing. 08004bd4 stays at 52 mismatched bytes and
-the group still does not form. **My diagnosis was wrong.** The scan breaks at
+the group still does not form. **That diagnosis was wrong.** The scan breaks at
 `index != 12` long before those guards are reached, because dead store
 elimination has already removed the descriptor slots a later statement
 overwrites, leaving nine stores where the recognizer needs twelve. The
-`regs_ever_live` guards were never the binding constraint; I inferred them from
+`regs_ever_live` guards were never the binding constraint; the claim came from
 reading the precondition list rather than measuring which one fired.
 
 Reverted, with the measurement recorded at the guard.
 
-## Scoreboard for the four blockers I published
+## Scoreboard for the four published blockers
 
-Two of the four did not survive contact with a compiler I could actually run:
+Two of the four did not survive measurement with the runnable compiler:
 
 | # | claim | verdict |
 | --- | --- | --- |
@@ -279,13 +280,13 @@ before low move*, so *constant before low move* should complete it. Measured
 across the six closest parked regions it is a net loss: `08019bac` 6 to 10
 bytes, `080b0744` 10 to 18, others unchanged or marginal. Reverted.
 
-The general rule this session kept confirming: a hook needs several regions
+The general rule confirmed by these experiments: a hook needs several regions
 sharing a residual *and* a measurement across the parked set before it lands.
-Symmetry is not evidence. Seven modes proposed by inspection this session were
+Symmetry is not evidence. Seven modes proposed by inspection were
 wrong; the three that worked came from `-da` dumps and gating passes one at a
 time.
 
-## QUEUED ITEM — per-call-site granularity for `-mcall-arg0-move-first` (2026-08-01, mercury)
+## QUEUED ITEM — per-call-site granularity for `-mcall-arg0-move-first` (2026-08-01)
 
 **Status: specified, with two reproducers and a readable rule. Implementable
 from this section without re-deriving anything.**
@@ -318,7 +319,7 @@ the reference does.
 
 ### Reproducer 1 — `resource_3c4:0cd0`, wants arg0-first at 2 of 4 sites
 
-Source: `work/claude/notes/3c4_0cd0_working_copy.c` (mercury worktree).
+Reproducer: `resource_3c4:0cd0` with a 216-byte draft.
 
 ```
 bun tools/overlay_adopt.ts resource_3c4:0cd0 --source <src> --where
@@ -332,7 +333,7 @@ fixes 0x02000d92 and breaks the other two — 4 bytes becomes worse.
 
 ### Reproducer 2 — `resource_396:1424`, wants arg1-first at 2 of ~30 sites
 
-Source: `work/claude/notes/396_1424_working_copy.c`, adopt with `--span 392`.
+Reproducer: `resource_396:1424`, using `--span 392`.
 
 ```
 bun tools/overlay_adopt.ts resource_396:1424 --source <src> --span 392 --where

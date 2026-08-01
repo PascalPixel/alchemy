@@ -17,7 +17,7 @@ typedef unsigned short u16;
  * unconverted inventory rows; the refusal names its own escape hatch, and
  * `overlay_call_targets.ts resource_3a5 0 26c2` resolves 315 sites. THE BOUNDS
  * ARE HEX. Passing the image length in decimal silently scans the wrong region
- * -- the first ruling I made here used `0 a14` for a 2,580-byte image and
+ * -- the first check used `0 a14` for a 2,580-byte image and
  * stopped exactly at the candidate.
  *
  * The ROM, verbatim:

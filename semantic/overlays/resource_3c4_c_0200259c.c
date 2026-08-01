@@ -31,7 +31,7 @@
  * table bases 0x0200a604 and 0x0200aa48 equal the tables' own file offsets
  * 0x2604/0x2a48; the callback words 0x02008ec9 and 0x02008e21 are
  * Func_02000ec8 and Func_02000e20 plus the Thumb bit; and 0x02009a99 is
- * Func_02001a98 plus the Thumb bit, whose byte-exact source is banked in
+ * Func_02001a98 plus the Thumb bit, whose byte-exact source is tracked in
  * assets/code.  The table entries are even, as `mov pc,rN` does not interwork.
  *
  * CALLS: 211 `bl` sites on the walk, of which five (0x020025f6, 0x0200269e,

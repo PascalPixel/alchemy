@@ -17,7 +17,7 @@ typedef signed int s32;
  * All sites resolve with tools/overlay_call_targets.ts — an overlay `bl`
  * stores `target_offset - 2`, so the disassembler's labels are artefacts — and
  * are named for the main-image address in each veneer entry's trailing word.
- * The begin/message/act/end quartet is the one banked byte-exact source
+ * The begin/message/act/end quartet is the one tracked byte-exact source
  * assets/code/resource_3b6_c_0200073c.c uses under its printed names.
  *
  * FLAG PAIR.  0x080770c0 and 0x080770c8 are adjacent veneer entries used here

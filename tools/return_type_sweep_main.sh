@@ -4,10 +4,9 @@
 #
 #   tools/return_type_sweep_main.sh <draft.c> [--flags -fa,-fb] [--out FILE]
 #
-# The overlay sweep (tools/return_type_sweep.sh) scores through
-# work/claude/overlay_verify.ts, which only exists on the semantic branch and only
-# accepts <overlay:offset> targets. Main-image drafts therefore had no way to run
-# this lever at all, so every main-image park predates it -- the same stale-
+# The overlay sweep uses an overlay-specific scorer and accepts
+# <overlay:offset> targets. Main-image drafts previously had no way to run this
+# lever, so every older main-image park predates it -- the same stale-
 # evidence shape HANDOVER.md §5 describes for the pre-2026-07-30 sweep nulls.
 # This scores through tools/candidate_show.ts, whose first line already reports
 # candidate/reference sizes and the differing-halfword count.

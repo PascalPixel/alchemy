@@ -13,7 +13,7 @@ typedef signed int s32;
  * 0x02000fcc earlier in this overlay) is included per the usual pool
  * rule, immediately followed by the next owner's push
  * {r5,r6,r7,lr} at 0x02001074, already this overlay's row
- * `0x02001074` (parked earlier this session), so the span is
+ * `0x02001074` (parked earlier in the reconstruction), so the span is
  * 0x0200101c-0x02001074, 88 bytes.
  *
  * Same workspace-keyed table lookup as 0x02000fcc

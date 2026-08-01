@@ -20,12 +20,12 @@ Full-C Byte Share for that target.
 ROM areas, executable areas, and the byte split of every tile between
 byte-exact C, semantic C, assembly, and asset data. `tools/coverage_map.ts`
 derives it from tracked evidence only—the executable inventory, `src/`,
-`asm/`, `assets/code/`, `assets/manifest.json`, and the Venus `semantic/`
-tree—so a fresh clone can regenerate it without a ROM, a toolchain, or a build
+`asm/`, `assets/code/`, `assets/manifest.json`, and the tracked `semantic/`
+sources—so a fresh clone can regenerate it without a ROM, a toolchain, or a build
 output. Its derived exact-C totals must equal the tracked Full-C report or the
 tool refuses to write.
 
 ```sh
 bun run coverage        # rewrite the map and assets/readme/<target>-coverage.svg
-bun run coverage:check  # fail if this branch's lanes have moved past the map
+bun run coverage:check  # fail if tracked coverage has moved past the map
 ```

@@ -18,7 +18,7 @@ typedef unsigned char u8;
  *
  * Imports resolved with tools/overlay_call_targets.ts (an overlay `bl` stores
  * `target_offset - 2`).  The begin/end bracket Func_0808a018/Func_0808a020 and
- * the Func_080770c8 flag setter are the same quartet the banked byte-exact
+ * the Func_080770c8 flag setter are the same quartet the tracked byte-exact
  * source assets/code/resource_398_c_020001f0.c uses under its printed names
  * Func_02000b5c / Func_02000b78 / Func_02000b54.
  *

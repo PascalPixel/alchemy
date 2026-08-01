@@ -1,7 +1,7 @@
 #include "types.h"
 
 /*
- * Correctness fix, veneer audit (mars, 2026-08-01).
+ * Correctness fix, veneer audit (2026-08-01).
  *
  * Neither `Func_080072f0` nor `Func_080072f4` is a function.  0x080072e4
  * begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte `bx rN; nop`
@@ -42,9 +42,9 @@
  * trailing arguments are artefacts of an eight-parameter phantom prototype
  * being filled from the last two loads before the branch.
  *
- * Pool constants SETTLED against the ROM (2026-08-01, exact lane).  The
- * four values Garet flagged were read straight from the built reference and
- * his reading was correct on all four; the draft has been corrected:
+ * Pool constants SETTLED against the ROM (2026-08-01, exact reconstruction).  The
+ * four previously disputed values were read straight from the built reference
+ * and the earlier reading was correct on all four; the draft has been corrected:
  *   0x080d1274 = 0x79        (was drafted 0x9d)
  *   0x080d127c = 0x73        (was drafted 0x9e)
  *   0x080d1294 = 0x080ee140  (was drafted 0x080ee200)

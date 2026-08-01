@@ -7,11 +7,9 @@
 
 # Alchemy — Golden Sun decompilation
 
-An all-AI, for-fun attempt at decompiling Golden Sun (GBA). The reconstruction
-and tooling in this repository are being written collaboratively with AI coding
-agents—Anthropic's Claude and OpenAI's Codex—as an experiment in how far they
-can take a clean-room decompilation together. It is a hobby/research project,
-not a serious or community-driven decomp, and it is nowhere near complete.
+A for-fun, clean-room attempt at decompiling Golden Sun (GBA). It is a
+hobby/research project, not a serious or community-driven decomp, and it is
+nowhere near complete.
 
 The name comes from the moment alchemy is released upon Weyard. This project
 is similarly trying to release the games from their finished cartridge images
@@ -35,7 +33,7 @@ gray semantic debt left in the core census:
 
 **Overlays** — decoded overlay code, 791 KB:
 
-![Decoded overlay code coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=37c4618d)
+![Decoded overlay code coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=75444d5f)
 
 **Assets** — the 7.3 MB of the cartridge that is data, not code. Same ladder in
 magenta: faint is byte-represented, a third is b&w sheets, two thirds is
@@ -57,16 +55,15 @@ bun run coverage
 ```
 
 `main` is the authoritative integrated tree. The map records the exact and
-semantic source refs used for a draw; the normal `main` close-out uses its own
-worktree for both. Regenerate it after a verified integration so the README and
-the local dashboard display the same evidence.
+semantic source revisions used for a draw. Regenerate it after a verified
+integration so the README and local dashboard display the same evidence.
 
 The measured totals live in
 [`metrics/gs1-en-coverage-map.json`](metrics/gs1-en-coverage-map.json). The
-exact-C numbers behind the picture are reconciled against the
-`metrics/gs1-en-progress.json` of the same tree the lane was drawn from, and a
-disagreement is an error rather than a redrawn picture. The semantic lane is
-drawn beside the headline metric rather than folded into it.
+exact-C numbers behind the picture are reconciled against
+`metrics/gs1-en-progress.json` from the same source revision, and a disagreement
+is an error rather than a redrawn picture. Semantic coverage is drawn beside
+the headline metric rather than folded into it.
 
 ## Clean-room boundary
 

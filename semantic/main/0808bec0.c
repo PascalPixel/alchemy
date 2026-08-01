@@ -2,8 +2,8 @@
 #include "motion_object.h"
 
 /*
- * Core-drive row 0x0808bec0, 1052 bytes. Kraden's bottom-up call was
- * right: reading the three unread siblings (Func_0808c2dc/c30c/c3a4,
+ * Core-drive row 0x0808bec0, 1052 bytes. A bottom-up reading of the three
+ * unread siblings (Func_0808c2dc/c30c/c3a4,
  * all already exact in src/) plus Func_0808b048/Func_0808b02c (also
  * exact) resolved every open question the first pass over this row
  * left standing, including the sp+28 local-array-size worry (the real
@@ -59,8 +59,7 @@
 
 /* RosterMember: Func_08077008(id)'s return type. field_34/status_131
  * confirmed exact via the three siblings (src/0808c2dc.c,
- * src/0808c30c.c, src/0808c3a4.c) -- proposed in chat for jupiter/Ivan
- * before either lane builds further on it. field_38 is new to this
+ * src/0808c30c.c, src/0808c3a4.c). field_38 is new to this
  * row: read unsigned in the cache pass and signed in the classify
  * pass (an `ldrh` feeding a later `ldrsh` read-back, not a real
  * signedness conflict), compared against both 0 and a per-member
@@ -107,7 +106,7 @@ extern void Func_08091858(void);
  * dig has hit. */
 extern s32 Func_080b50f8(void);
 
-/* IWRAM-relocated fixed-point multiply, opaque -- same helper this dig
+/* IWRAM-relocated fixed-point multiply, opaque -- same helper this reconstruction
  * already treated as opaque for 0x0800c62c and 0x0808b3ec. */
 extern s32 Func_03000118(s32 value, s32 multiplier);
 

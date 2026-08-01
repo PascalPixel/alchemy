@@ -43,7 +43,7 @@
  * documented lower bound.
  *
  * Func_02000dd0 and Func_02000e44 are this overlay's own, both converted in
- * this lane; Func_02000e44 is banked byte-exact in `assets/code`.  The
+ * this reconstruction; Func_02000e44 is tracked byte-exact in `assets/code`.  The
  * Func_02000dd0 call sites confirm that owner's reconstruction from the other
  * side: r1 is always a pointer whose +0/+4/+8 are an s32 position triple, r2 is
  * a heading halfword, r3 a tag byte and [sp, #0] the fifth argument.

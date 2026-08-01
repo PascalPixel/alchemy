@@ -166,8 +166,8 @@ export function classify(
  *
  * Extracted as a pure predicate so the self-test can pin BOTH directions on
  * synthetic input. Naming real overlays as fixtures was the defect in the
- * first attempt: `resource_37b` was chosen as the resolving fixture, a lane
- * banked a row byte-exact, 37b moved into the refusing set, and the test went
+ * first attempt: `resource_37b` was chosen as the resolving fixture, a
+ * converted a row to byte-exact C, 37b moved into the refusing set, and the test went
  * red because the PROJECT PROGRESSED. That is HANDOVER's own rule -- self-tests
  * go on synthetic input -- violated by the person who wrote it down.
  *
@@ -185,11 +185,11 @@ export function resolveOverlay(overlay: string, owner?: number, ownerEnd?: numbe
   let spans = owner === undefined
     ? rows.filter((row) => (row.contained_by ?? []).length === 0)
     : rows.filter((row) => row.offset === owner);
-  // An owner that is already banked byte-exact is not in the discovery
+  // An owner that is already tracked byte-exact is not in the discovery
   // inventory, so the filter above returns nothing and the tool prints an empty
   // listing — which reads as "this function makes no calls" rather than "this
   // function is not in the queue". That is exactly backwards for the most
-  // valuable use of a banked sibling: inverting its printed (wrong) `bl` names
+  // valuable use of a tracked sibling: inverting its printed (wrong) `bl` names
   // to recover real import identities. Synthesise the span from the next known
   // row instead, and say so.
   if (owner !== undefined && spans.length === 0) {
@@ -199,12 +199,12 @@ export function resolveOverlay(overlay: string, owner?: number, ownerEnd?: numbe
     const end = ownerEnd ?? next ?? image.length;
     if (ownerEnd === undefined) {
       // The next *unconverted* row can be far past the owner's real end, with
-      // other banked functions in between, so this bound over-reads by default.
+      // other tracked functions in between, so this bound over-reads by default.
       // Say so rather than returning a clean-looking listing.
       console.error(
-        `note: 0x${owner.toString(16)} is not an unconverted inventory row (already banked?).\n` +
+        `note: 0x${owner.toString(16)} is not an unconverted inventory row (already tracked?).\n` +
           `      Walking 0x${owner.toString(16)}..0x${end.toString(16)}, bounded by the next ` +
-          `unconverted row — this MAY INCLUDE neighbouring banked functions.\n` +
+          `unconverted row — this MAY INCLUDE neighbouring tracked functions.\n` +
           `      Pass an explicit end offset as a third argument to bound it exactly.`,
       );
     }
@@ -234,8 +234,8 @@ export function resolveOverlay(overlay: string, owner?: number, ownerEnd?: numbe
  * any bound written in the `0x` form every other tool here accepts. The failure
  * was not an error: with both bounds dropped the tool falls back to walking the
  * WHOLE overlay's top-level rows and prints a clean, plausible listing that
- * reads exactly like a per-owner one. A lane spent a round drawing conclusions
- * from a right-looking listing of the wrong function, so the parser now takes
+ * reads exactly like a per-owner one. That produced conclusions from a
+ * right-looking listing of the wrong function, so the parser now takes
  * both spellings and is covered by the self-test.
  *
  * The overlay name cannot collide: `resource_3af` is longer than four hex
@@ -389,7 +389,7 @@ function selfTest(): void {
   if (unannotatedCallSites("  0x20003fc = 0x02000240\n", new Map()).length !== 0)
     throw new Error("a pool footer line is not a call site");
   // The refusal decision, both directions, on SYNTHETIC input. No overlay is
-  // named, so no lane's progress can turn this red.
+  // named, so ordinary source changes cannot turn this red.
   if (!resolvesNothing(0, 0)) throw new Error("self-test: an empty whole-overlay run must refuse");
   if (resolvesNothing(1, 0)) throw new Error("self-test: a run with sites must not refuse");
   if (resolvesNothing(0, 2)) throw new Error("self-test: an explicitly bounded run must not refuse");
@@ -424,8 +424,8 @@ function selfTest(): void {
 /**
  * Rewrite an `overlay_show` listing so each `bl` names its REAL callee.
  *
- * Three separate lanes wrote this by hand before it was promoted here, which is
- * the argument for it existing: the listing's own `bl` annotations are wrong for
+ * Repeated hand-written versions motivated promoting this here: the listing's
+ * own `bl` annotations are wrong for
  * every overlay, and hand-pairing the summary histogram against call shapes has
  * already produced one exactly-backwards mapping. Annotating in place removes
  * that whole class of error.
@@ -449,7 +449,7 @@ export function annotate(listing: string, sites: Map<number, string>): string {
  *
  * This exists because partial annotation is indistinguishable from complete
  * annotation by eye. Run without bounds, `--annotate` resolves only
- * *unconverted inventory rows*, so a listing for a banked or published-population
+ * *unconverted inventory rows*, so a listing for a tracked or published-population
  * row came back with every `bl` untouched — and an untouched `bl` in an overlay
  * listing carries objdump's pc-relative target, which is wrong. Measured on
  * `resource_39e` 0x02000388: 0 of 2 sites annotated with no bounds, 2 of 2 with
@@ -500,7 +500,7 @@ function main(): void {
       throw new Error(
         "--annotate needs the SAME bounds as the overlay_show that produced the listing:\n" +
           "  overlay_show <ov> A B | overlay_call_targets <ov> A B --annotate\n" +
-          "Without bounds only unconverted inventory rows resolve, so a banked or " +
+          "Without bounds only unconverted inventory rows resolve, so a tracked or " +
           "published-population row's listing keeps objdump's pc-relative — and therefore " +
           "wrong — bl targets, with no error and nothing to see.",
       );
@@ -567,7 +567,7 @@ function main(): void {
   // for a tool a certification leans on.
   //
   // MEASURED CAUSE, because the first draft of this message GUESSED one and was
-  // wrong. It said "every row is already banked byte-exact"; the refusing
+  // wrong. It said "every row is already tracked byte-exact"; the refusing
   // overlays do still carry top-level inventory rows. What they carry is rows
   // lying PAST THE LAST RECORDED OWNER -- veneer-bank stubs and data-tail
   // fragments, which hold no call sites by construction. Across the 30, the

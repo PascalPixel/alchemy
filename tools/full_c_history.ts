@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 // Non-destructive Full-C history ledger. Commit objects are never rewritten.
 // Each first-parent tree is measured from its tracked C ownership against the
-// current audited, fixed executable denominator; legacy subject numbers are
-// retained only as text and are never used as metric evidence.
+// current audited, fixed executable denominator. Commit subjects are omitted:
+// this file is a numeric progress ledger, not a copy of repository messages.
 import { readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { canonicalJson } from "./canonical_json.ts";
@@ -20,7 +20,6 @@ interface HistoryEntry {
   first_parent_position: number;
   author_time: string;
   committer_time: string;
-  original_subject: string;
   full_c_bytes: number;
   executable_bytes: number;
   remaining_bytes: number;
@@ -88,16 +87,15 @@ function commits(): Array<{
   commit: string;
   author: string;
   committer: string;
-  subject: string;
 }> {
-  const format = "%H%x1f%aI%x1f%cI%x1f%s%x1e";
+  const format = "%H%x1f%aI%x1f%cI%x1e";
   return git(["log", "--first-parent", "--reverse", `--format=${format}`])
     .split("\x1e")
     .map((record) => record.trim())
     .filter(Boolean)
     .map((record) => {
-      const [commit, author, committer, subject] = record.split("\x1f");
-      return { commit, author, committer, subject };
+      const [commit, author, committer] = record.split("\x1f");
+      return { commit, author, committer };
     });
 }
 
@@ -247,7 +245,6 @@ function ledger(): HistoryLedger {
       first_parent_position: index + 1,
       author_time: commit.author,
       committer_time: commit.committer,
-      original_subject: commit.subject,
       full_c_bytes: fullC,
       executable_bytes: denominator,
       remaining_bytes: denominator - fullC,
@@ -296,7 +293,7 @@ function writeLedger(): void {
   writeFileSync(jsonPath, canonicalJson(output));
   const columns = [
     "commit", "first_parent_position", "author_time", "committer_time",
-    "original_subject", "full_c_bytes", "executable_bytes", "remaining_bytes",
+    "full_c_bytes", "executable_bytes", "remaining_bytes",
     "percent", "main_full_c_bytes", "overlay_full_c_bytes", "canonical_suffix",
     "derivation_status", "correction",
   ] as const;

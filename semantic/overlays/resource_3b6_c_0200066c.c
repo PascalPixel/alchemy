@@ -20,7 +20,7 @@ typedef unsigned int u32;
  * Imports are resolved with tools/overlay_call_targets.ts — an overlay `bl`
  * stores `target_offset - 2`, so the disassembler's labels are artefacts — and
  * named for the main-image address in the veneer entry's trailing word.  All
- * eight real sites resolve.  The message/act pair is the one banked byte-exact
+ * eight real sites resolve.  The message/act pair is the one tracked byte-exact
  * source assets/code/resource_3b6_c_0200073c.c uses under its printed names.
  *
  * Near-twin of 0x0200091c, which has the same shape and the same predicate

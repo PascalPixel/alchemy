@@ -40,7 +40,7 @@ typedef signed int s32;
  * LINK BASE 0x02008000, and this owner supplies the strongest witness in the
  * overlay: the pool word 0x0200b769 handed to Func_080000d0 as the per-frame
  * task is 0x3768 plus the Thumb bit, and file offset 0x3768 is Func_02003768 -
- * the follower-stepping routine reconstructed in this same lane, whose
+ * the follower-stepping routine reconstructed in this same reconstruction, whose
  * `push {r5, r6, lr}` prologue is right there.  Installing exactly that
  * routine here is also what the two owners mean together.  The remaining pool
  * words are the IWRAM pointers 0x03001ebc and (via `[r6,#36]`) 0x03001ee0 -

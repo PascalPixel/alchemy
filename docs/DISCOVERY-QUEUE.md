@@ -333,7 +333,7 @@ some new seeds are pool words that happen to look like prologues. The existing
 | ---: | ---: | --- |
 | 357,388 | 632 | **Convertible.** Single function bodies, ROM-proven spans, `Func_` entries. Obstacles are compiler fidelity and drafting time, not structure. |
 | 11,014 | 64 | **Convertible after a merge.** Heads, continuations and fragments of otherwise ordinary functions; needs the section 2d relink, then joins the tier above. |
-| 27,352 | 30 | **Partly convertible, not measured.** `mixed_region` interleaves code and data. The code fraction cannot be stated without performing the split, and I did not perform it. |
+| 27,352 | 30 | **Partly convertible, not measured.** `mixed_region` interleaves code and data. The code fraction cannot be stated until the split is performed. |
 | 62 | 1 | **Permanently structural.** `Fragment_0800f1bc`, the single remaining `mov ip, pc` row; neither approved compiler emits it. |
 | **395,816** | **727** | |
 
@@ -353,7 +353,7 @@ largest — would calibrate the rest.
 The bottleneck is not discovery. **The main image has a complete, boundary-proven,
 727-row queue that nothing has been drafting against**: the `work/hand/` tree
 referenced by [REMAINING.md](REMAINING.md) no longer exists, and all 575 notes
-under `work/claude/notes/` are `resource_*` overlays. The overlay lane
+under the historical `work/` notes are `resource_*` overlays. Overlay work
 absorbed the effort while a 395,816-byte queue with 72% of its bytes carrying no
-construct blocker sat unattended. Section 3 is that queue; section 4 is what to
-fix if the overlay lane is resumed instead.
+construct blocker sat unattended. Section 3 is that queue; section 4 describes
+the corresponding overlay work.

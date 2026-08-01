@@ -148,8 +148,8 @@ function inventorySpan(id: string): number | undefined {
 
 function resolveDraft(overlay: string, offsetText: string): string | undefined {
   const candidates = [
-    join(ROOT, "work/claude/notes", `${overlay}-${offsetText}-best.c`),
-    join(ROOT, "work/claude", `${overlay}-${offsetText}.c`),
+    join(ROOT, "work/notes", `${overlay}-${offsetText}-best.c`),
+    join(ROOT, "work/drafts", `${overlay}-${offsetText}.c`),
     join(CODE, `${overlay}_c_${(OVERLAY_BASE + Number.parseInt(offsetText, 16)).toString(16).padStart(8, "0")}.c`),
   ];
   return candidates.find(existsSync);
@@ -507,9 +507,9 @@ async function reduce(target: Target, scorer: OverlayScorer, draft: string, hit:
 // ---- 自己検査 ---------------------------------------------------------
 
 async function selfTest(): Promise<void> {
-  const specification = parseTargetSpecification("resource_3b8:00c8 span=0x40 source=work/claude/x.c");
+  const specification = parseTargetSpecification("resource_3b8:00c8 span=0x40 source=work/drafts/x.c");
   if (specification === null || specification.overlay !== "resource_3b8" || specification.offset !== 0xc8 ||
-      specification.stem !== "020000c8" || specification.span !== 64 || specification.draft !== "work/claude/x.c") {
+      specification.stem !== "020000c8" || specification.span !== 64 || specification.draft !== "work/drafts/x.c") {
     throw new Error("target specification self-test failed");
   }
   if (parseTargetSpecification("  # comment") !== null) throw new Error("comment self-test failed");

@@ -1,9 +1,8 @@
 # 100-file humanization batch — 2026-07-28
 
 This run scaled the proven batch-and-isolate method from 20 to 100 already
-exact C sources. The files were divided into six independently owned domain
-groups, edited in parallel, checked individually, and then verified as one
-aggregate project build.
+exact C sources. The files were partitioned into six domain groups, checked
+individually, and then verified as one aggregate project build.
 
 ## Result
 

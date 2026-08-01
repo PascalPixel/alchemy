@@ -28,7 +28,7 @@ typedef signed int s32;
  * The printed annotations (0x02000560, 0x0200051e) are the usual `bl`
  * decoding artefact; the stored displacement is the target's image offset
  * minus 2.  0x020002e0 is a real intra-overlay call -- the byte-exact
- * assets/code/resource_397_c_020002e0.c is already banked for it -- and it is
+ * assets/code/resource_397_c_020002e0.c is already tracked for it -- and it is
  * NOT inside this owner's span, so it is a call and not a `goto`.
  *
  * Pool words.  0x03001ebc is the well-known IWRAM workspace pointer;

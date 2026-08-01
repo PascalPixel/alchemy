@@ -30,7 +30,7 @@ typedef unsigned char u8;
  *
  * The compared constants 0x4b/0x4c appear in the byte-exact siblings as
  * `(s32)&Value_0000004b` / `(s32)&Value_0000004c`, which is a literal-pooling
- * device for that lane; the integers are written directly here.
+ * device for that reconstruction; the integers are written directly here.
  */
 
 /* Imports.  Old-style declarations are mandatory in overlay sources. */

@@ -22,7 +22,7 @@ void Func_02004932();
 s32 *Func_02004950();
 s32 *Func_02004958();
 /* Byte-exact-shaped: (layer, x, z, width, height, value). Each call site
- * keeps its own raw overlay_show target per HANDOVER's exact-lane
+ * keeps its own raw overlay_show target per HANDOVER's exact-reconstruction
  * transcription rule -- overlay_call_targets.ts resolves all five to the
  * established Func_02000244 interface, but the assembler encodes each site
  * independently. */

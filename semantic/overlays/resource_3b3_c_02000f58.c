@@ -3,8 +3,8 @@ typedef signed int s32;
 
 /*
  * Resource 3b3 unindexed helper at 0x02000f58 (116 bytes, 7 calls).
- * Converted from a parked scope note (work/claude/notes/resource_3b3_f58.md)
- * per Vale's steer, drafted alongside its sibling 0x02000ec8 which shares
+ * Converted from a parked scope note and drafted alongside its sibling
+ * 0x02000ec8, which shares
  * the same out-param call shape against a different helper.
  *
  * Derived span: no inventory row (item 28's unindexed population). `push
@@ -12,7 +12,7 @@ typedef signed int s32;
  * sp,#48 / pop {r5,r6,r7} / pop {r1} / bx r1` at
  * 0x02000fc4-0x02000fca, immediately followed with no gap by the next
  * owner's push {r5,lr} at 0x02000fcc, already this overlay's row
- * `0x02000fcc` (drafted earlier this session), so the span is exactly
+ * `0x02000fcc` (drafted earlier in the reconstruction), so the span is exactly
  * 0x02000f58-0x02000fcc, 116 bytes.
  *
  * `Func_02001d54` is an opaque out-param helper: besides its return

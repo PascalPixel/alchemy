@@ -1,5 +1,5 @@
 /*
- * Correctness fix, veneer audit (mars, 2026-08-01).
+ * Correctness fix, veneer audit (2026-08-01).
  * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
  * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
  * range is an indirect call through the named register, not a call to a
@@ -17,7 +17,7 @@
  * consistent across eight call sites in four files: the argument is always a
  * sum of squares, the result is always consumed as a length -- a distance
  * comparison, or shifted right by 8 as a 16.16 magnitude.  That reads as a
- * square root.  Left as a comment for the exact lane to settle, not a name.
+ * square root.  Left as a comment for the exact reconstruction to settle, not a name.
  *
  * 0x03000380 is NOT established.  Its two call sites in the tree (here and
  * semantic/main/08090658.c) are byte-identical instruction sequences.  r0 and

@@ -36,8 +36,8 @@ typedef signed int s32;
  * Uncertainty: the packed status word at 0x03001e40 is masked with 3
  * here, with 7 at 0x02002ce0 and with bit 1 at 0x02002ffc -- a shared
  * field across this overlay's callbacks, observed rather than proven.
- * Data_0200d240 is the three-word coordinate block Garet's existing
- * files already declare.  222, 30, 1, 20 and 1 are literal; record
+ * Data_0200d240 is the three-word coordinate block the existing files
+ * already declare.  222, 30, 1, 20 and 1 are literal; record
  * fields +100, +102, +104 and +108 are recorded by offset with roles
  * open, though +108 is demonstrably a callback slot.
  */

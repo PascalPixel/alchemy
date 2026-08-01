@@ -3,9 +3,9 @@
 //
 // `build_semantic.ts` throws `duplicates exact source` when a semantic source
 // and an exact source share an address, and `verify` runs `build:semantic`, so
-// every conversion that supersedes a Venus source breaks the lane's verify
-// until that file is deleted. The error names one pair per run; this names all
-// of them at once, before a bank rather than during it.
+// every conversion that supersedes a semantic source breaks verification until
+// that file is deleted. The error names one pair per run; this names all of
+// them at once.
 //
 // Tracked-tree only: it compares file names, reads nothing from `out/`, and
 // needs neither the ROM nor the toolchain, so it runs on any branch.
@@ -21,9 +21,9 @@ const ROOT = resolve(dirname(new URL(import.meta.url).pathname), "..");
 
 // Each pair is (semantic directory, the exact directory that supersedes it).
 // A semantic source is superseded when the exact directory holds the same file
-// name -- both lanes name a source after the address it owns, so equal names
+// name -- both source trees name a file after the address it owns, so equal names
 // mean equal addresses.
-const LANES: readonly (readonly [string, string])[] = [
+const SOURCE_PAIRS: readonly (readonly [string, string])[] = [
   ["semantic/overlays", "assets/code"],
   ["semantic/main", "src"],
 ];
@@ -33,7 +33,7 @@ export function supersededSources(
   present: (path: string) => boolean,
 ): string[] {
   const found: string[] = [];
-  for (const [semantic, exact] of LANES) {
+  for (const [semantic, exact] of SOURCE_PAIRS) {
     for (const name of listing(semantic)) {
       if (!name.endsWith(".c")) continue;
       if (present(`${exact}/${name}`)) found.push(`${semantic}/${name}`);

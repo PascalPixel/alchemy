@@ -20,7 +20,7 @@ typedef int s32;
  *
  * The second argument to Func_0808a1e8 is built as `movs r1,#129 /
  * lsls r1,#1`, so it is 258 and not the pool-looking 0x102. This is the
- * transcription error I have made before on exactly this shape.
+ * same transcription error previously seen on this shape.
  *
  * Shape:
  *     open scene

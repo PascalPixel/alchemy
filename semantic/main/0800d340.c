@@ -1,20 +1,19 @@
 #include "types.h"
 
 /*
- * Core-drive row 0x0800d340, 788 bytes. Kraden called this one "the
- * same shape cracked in bec0" and that held: this row walks the first
+ * Core-drive row 0x0800d340, 788 bytes. This has the same shape as the
+ * already reconstructed 0x0808bec0, and that comparison held: this row walks the first
  * 14 records of the SAME Data_03001e64 object array 0x0800c62c and
  * 0x0808bec0 both already used, at the same true offsets
  * semantic/main/0800ebec.c's struct Object_0800ebec establishes
  * (program_00@0, heading_06@6, position_08@8/12/16, ground_14@20,
  * velocity_24@36/40/44, speed_30@48, acceleration_34@52,
  * pushback_38@56/60/64, vertical_motion_strength@72). Locally
- * redeclared per this dig's not-yet-exact include/ policy.
+ * redeclared per this reconstruction's not-yet-exact include/ policy.
  *
  * Per-object physics tick, in two halves:
  *
- *   Half 1 (park note's fully-traced piece, work/claude/notes/
- *   main_0800d340.md): resolve any active pushback recoil --
+ *   Half 1 (the previously traced piece): resolve any active pushback recoil --
  *   compute a whole-unit distance to the pushback target, and if
  *   under ~255 units, redo it at full fixed-point precision (two
  *   0x03000118 IWRAM multiplies + sqrt via the runtime's own
@@ -43,7 +42,7 @@
  * Object_0800ebec's own named class_58 (u32 @88) as individual bytes,
  * consistent with that field's own documented "packed flags" role
  * (0800ebec.c: "byte 0x59 carries the live/solid bits"). Left as raw
- * offsets with comments, same convention as every other row this dig
+ * offsets with comments, same convention as every other row this reconstruction
  * has drafted. Not yet checked byte-exact.
  */
 
@@ -83,7 +82,7 @@ struct Object_0800d340 {
 extern struct Object_0800d340 *Data_03001e64;
 
 /* IWRAM-relocated fixed-point multiply and square root, opaque -- same
- * helpers this dig already treated as opaque for 0x0800c62c,
+ * helpers this reconstruction already treated as opaque for 0x0800c62c,
  * 0x0808b3ec and 0x0808bec0. Called here through the runtime's own
  * _call_via_rN thunks (0x080072e4-0x08007320), already documented as
  * ordinary indirect calls by semantic/main/0800ebec.c's own header

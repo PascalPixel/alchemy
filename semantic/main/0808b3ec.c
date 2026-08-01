@@ -23,10 +23,10 @@
  * other offset this function touches (6, 20, 28, 29, 35, 36, 80, 84, 89,
  * 100, 102 on this object or the one linked through its own +80 field)
  * falls cleanly inside the header's existing unknown_* padding ranges with
- * zero contradictions. Posted to chat (2026-07-31) for jupiter/Ivan to
- * reuse; not promoted into motion_object.h itself since a header-only
+ * zero contradictions. Kept local for reuse; not promoted into
+ * motion_object.h itself since a header-only
  * change there stages no real byte movement and trips the commit hook's
- * progress-report requirement for nothing (see this session's mars log).
+ * progress-report requirement for nothing.
  *
  * The +80 field is confirmed to hold a pointer to a SECOND MotionObject
  * (its own +24/+28/+29/+84 fields get touched the same way as the primary

@@ -21,7 +21,7 @@ typedef unsigned char u8;
  * `(0x0200a5b9 & ~1) - 0x8000 = 0x020025b8` -- this function. 0x020026d8
  * passes that word to Func_080000d0 with 200<<4 on the way in and to
  * Func_080000d8 on the way out, so it is a register/unregister pair
- * around a scene. That is the same mechanism jupiter recorded on
+ * around a scene. That is the same mechanism recorded on
  * resource_3a4's 0x02002b58, and it is the concrete reason a call-graph
  * sweep cannot see this row: its address is a plain word in an argument,
  * never a branch target.

@@ -21,7 +21,7 @@ typedef unsigned int u32;
  * 0x00013333, 0x00002666, 0x02f60000, 0x0000cccc, 0x00001999, 0x030a0000,
  * 0x0200a874, 0x0200ac00).  The first is jumped over by the `b.n 0x02000dec`
  * at 0x02000dbe; the second follows the epilogue.  The next prologue at
- * 0x02001084 is a separate owner in this lane.
+ * 0x02001084 is a separate owner in this reconstruction.
  *
  * Link base 0x02008000: the five in-image pool words 0x0200aef0, 0x0200af50,
  * 0x0200af78, 0x0200a874 and 0x0200ac00 are file offsets 0x2ef0, 0x2f50,

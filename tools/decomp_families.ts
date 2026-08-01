@@ -44,7 +44,7 @@ interface DebtItem {
   candidate: string | null;
   diagnosis: Diagnosis | null;
   signature_confidence: "candidate" | "unknown";
-  lane: "reuse" | "family" | "research";
+  strategy: "reuse" | "family" | "research";
   estimated_cpu_hours: number;
   expected_conversions_per_cpu_hour: number;
   score: number;
@@ -148,7 +148,7 @@ function report(): { format: 1; generated_at: string; totals: Record<string, num
     const complexity = 1 + item.branches * 1.8 + item.calls * 1.3 + item.region.size / 48;
     const reusable = item.executableFunction && candidate !== null && diagnostic !== null &&
       (diagnostic.byte_mismatches <= 12 || mismatchRatio <= 0.08);
-    const lane: DebtItem["lane"] = reusable ? "reuse" : item.executableFunction && structuralFamilySize > 1 ? "family" : "research";
+    const strategy: DebtItem["strategy"] = reusable ? "reuse" : item.executableFunction && structuralFamilySize > 1 ? "family" : "research";
     const familyLeverage = Math.max(exactFamilySize, structuralFamilySize * 0.75);
     const estimatedCpuHours = Math.max(0.03, complexity * (0.035 + mismatchRatio * 0.16) / Math.sqrt(familyLeverage));
     const throughput = familyLeverage / estimatedCpuHours;
@@ -160,7 +160,7 @@ function report(): { format: 1; generated_at: string; totals: Record<string, num
       exact_family_size: exactFamilySize, structural_family_size: structuralFamilySize,
       branches: item.branches, calls: item.calls, executable_function: item.executableFunction, complexity,
       candidate, diagnosis: diagnostic, signature_confidence: candidate ? "candidate" : "unknown",
-      lane, estimated_cpu_hours: estimatedCpuHours,
+      strategy, estimated_cpu_hours: estimatedCpuHours,
       expected_conversions_per_cpu_hour: throughput, score,
     };
   }).sort((left, right) => right.score - left.score || left.address - right.address);
@@ -173,7 +173,7 @@ function report(): { format: 1; generated_at: string; totals: Record<string, num
     id, members: members.map((item) => item.stem), count: members.length,
     bytes: members.reduce((sum, item) => sum + item.size, 0),
     exact_subfamilies: new Set(members.map((item) => item.exact_family)).size,
-    lane: members.some((item) => item.lane === "reuse") ? "reuse" : members.length > 1 ? "family" : "research",
+    strategy: members.some((item) => item.strategy === "reuse") ? "reuse" : members.length > 1 ? "family" : "research",
     score: members.reduce((sum, item) => sum + item.score, 0),
     expected_conversions_per_cpu_hour: members.reduce((sum, item) => sum + item.expected_conversions_per_cpu_hour, 0),
   })).sort((left, right) => right.score - left.score);
@@ -183,9 +183,9 @@ function report(): { format: 1; generated_at: string; totals: Record<string, num
       regions: queue.length, bytes: queue.reduce((sum, item) => sum + item.size, 0),
       exact_duplicate_regions: queue.filter((item) => item.exact_family_size > 1).length,
       structural_family_regions: queue.filter((item) => item.structural_family_size > 1).length,
-      reuse: queue.filter((item) => item.lane === "reuse").length,
-      family: queue.filter((item) => item.lane === "family").length,
-      research: queue.filter((item) => item.lane === "research").length,
+      reuse: queue.filter((item) => item.strategy === "reuse").length,
+      family: queue.filter((item) => item.strategy === "family").length,
+      research: queue.filter((item) => item.strategy === "research").length,
     },
     families, queue,
   };
@@ -206,8 +206,8 @@ else {
   mkdirSync(dirname(options.output), { recursive: true });
   writeFileSync(options.output, canonicalJson(value) + "\n");
   console.log(`regions=${value.totals.regions} bytes=${value.totals.bytes} reuse=${value.totals.reuse} family=${value.totals.family} research=${value.totals.research}`);
-  for (const family of value.families.slice(0, options.top) as Array<{ id: string; members: string[]; count: number; bytes: number; lane: string; expected_conversions_per_cpu_hour: number }>) {
-    console.log(`${family.id}\tlane=${family.lane}\tcount=${family.count}\tbytes=${family.bytes}\tyield=${family.expected_conversions_per_cpu_hour.toFixed(1)}\t${family.members.join(",")}`);
+  for (const family of value.families.slice(0, options.top) as Array<{ id: string; members: string[]; count: number; bytes: number; strategy: string; expected_conversions_per_cpu_hour: number }>) {
+    console.log(`${family.id}\tstrategy=${family.strategy}\tcount=${family.count}\tbytes=${family.bytes}\tyield=${family.expected_conversions_per_cpu_hour.toFixed(1)}\t${family.members.join(",")}`);
   }
   console.log(`report=${options.output}`);
 }

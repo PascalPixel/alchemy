@@ -1,11 +1,10 @@
 #include "types.h"
 
 /*
- * Core-drive row 0x0800c62c, 592 bytes. Kraden's ruling upheld this row's
+ * Core-drive row 0x0800c62c, 592 bytes. This row's
  * body as an ordinary, expressible idiom (retention=keep_structured_asm
  * was a default label, not a cannot-express contract) -- confirmed here
- * with a full draft after two earlier passes (park note
- * work/claude/notes/main_0800c62c.md) mapped its structure.
+ * with a full draft after two earlier passes mapped its structure.
  *
  * bun tools/main_xref.ts 0800c62c: FUNCTION, indirectly published
  * callback (published at 0x0800c0b8/0x0800c5f0/0x0800c61c, a raw word
@@ -15,7 +14,7 @@
  * own field accesses land exactly on that header's named fields
  * (program_00@0, heading_06@6, position_08[0/1/2]@8/12/16, ground_14@20)
  * -- redeclared locally here rather than shared via include/, the same
- * choice this dig already made for struct SmshContext (a header-only
+ * choice this reconstruction already made for struct SmshContext (a header-only
  * change stages no exact-byte movement and trips the commit hook's
  * progress-report requirement for nothing).
  *
@@ -108,7 +107,7 @@ extern s32 Func_0800b168(struct SubObject_0800c62c *sub,
                           struct MultiplyRecord_0800c62c *multiplied,
                           s32 heading);
 
-/* IWRAM-relocated fixed-point multiply, opaque -- same helper this dig
+/* IWRAM-relocated fixed-point multiply, opaque -- same helper this reconstruction
  * already treated as opaque for 0x0808b3ec. */
 extern s32 Func_03000118(s32 value, s32 multiplier);
 

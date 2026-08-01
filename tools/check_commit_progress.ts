@@ -2,7 +2,8 @@
 // Enforce the canonical Full-C Byte Share suffix against the metric report
 // staged in Git's index. The working tree is deliberately not consulted.
 import { DEFAULT_TARGET, parseDecompTarget, type DecompTargetId } from "./decomp_targets.ts";
-import { formatSubject, parseSubject } from "./full_c_progress.ts";
+import { currentProgress, formatSubject, parseSubject } from "./full_c_progress.ts";
+import { canonicalJson } from "./canonical_json.ts";
 
 interface MetricReport {
   format: 1;
@@ -110,6 +111,31 @@ function stagedReport(target: DecompTargetId): MetricReport {
   return validatedReport(JSON.parse(text), target);
 }
 
+/**
+ * True when the committed content of the derived progress report already
+ * matches what regenerating it right now would produce.
+ *
+ * `git show :path` reads the INDEX -- the exact bytes this commit will carry --
+ * so a report that is already correct passes whether or not it was touched,
+ * and a report that would change fails unless the new content is staged.
+ */
+function reportIsCurrent(
+  target: DecompTargetId,
+  readCommitted: (path: string) => string | null = (path) => {
+    try {
+      return git(["show", `:${path}`]);
+    } catch {
+      return null; // not tracked, or not in the index at all
+    }
+  },
+  regenerate: (target: DecompTargetId) => string =
+    (id) => canonicalJson(currentProgress(id)),
+): boolean {
+  const committed = readCommitted(`metrics/${target}-progress.json`);
+  if (committed === null) return false;
+  return committed.trim() === regenerate(target).trim();
+}
+
 function stagedPaths(): string[] {
   const unmerged = git(["ls-files", "-u"]).trim();
   if (unmerged) throw new Error("cannot validate Full-C progress with unmerged index entries");
@@ -178,6 +204,45 @@ function selfTest(): void {
     { ...report, executable_bytes: 1234568, remaining_bytes: 1111112 },
     "prior [C 123,456/1,234,567 bytes]",
   );
+  // --- the report-currency rule, both branches -------------------------------
+  // Intent: the derived report must not be STALE. Not: it must appear in every
+  // commit. A change that touches executable source without altering compiled
+  // output regenerates to an identical file, so there is nothing to stage.
+  const freshReport = '{"full_c_bytes":1}';
+  const staleReport = '{"full_c_bytes":0}';
+  if (!reportIsCurrent("gs1-en", () => freshReport, () => freshReport)) {
+    throw new Error("self-test: an already-current report was rejected");
+  }
+  // Trailing-whitespace differences are not staleness.
+  if (!reportIsCurrent("gs1-en", () => freshReport + "\n", () => freshReport)) {
+    throw new Error("self-test: whitespace-only difference treated as stale");
+  }
+  if (reportIsCurrent("gs1-en", () => staleReport, () => freshReport)) {
+    throw new Error("self-test: a stale report was accepted");
+  }
+  // A report absent from the index is stale, not current.
+  if (reportIsCurrent("gs1-en", () => null, () => freshReport)) {
+    throw new Error("self-test: a missing report was accepted");
+  }
+
+  // --- an unsuffixed parent subject is REPORTED, never a crash ---------------
+  // parseSubject returns undefined for a subject carrying no counter. main()'s
+  // denominator guard once compared that against null, so `undefined !== null`
+  // was true and the property read threw a TypeError before the designed
+  // diagnostic could fire -- which blocked every commit after such a parent.
+  if (parseSubject("docs") !== undefined) {
+    throw new Error("self-test: parseSubject no longer returns undefined for an unsuffixed subject");
+  }
+  let unsuffixedRejected = false;
+  try {
+    checkCommitProgress("subject [C 123,456/1,234,567 bytes]", report, "docs");
+  } catch (error) {
+    unsuffixedRejected = true;
+    if (error instanceof TypeError) {
+      throw new Error("self-test: unsuffixed parent subject crashed instead of being reported");
+    }
+  }
+  if (!unsuffixedRejected) throw new Error("self-test: unsuffixed parent subject was accepted");
   console.log("self-test=ok suffix=full-c-byte-share");
 }
 
@@ -193,8 +258,20 @@ async function main(argv: string[]): Promise<void> {
   if (!path) throw new Error("usage: check_commit_progress.ts [--target TARGET] COMMIT_MESSAGE");
   const paths = stagedPaths();
   const reportPath = `metrics/${target}-progress.json`;
-  if (reportRequired(paths, target) && !paths.includes(reportPath)) {
-    throw new Error(`${reportPath} must be regenerated and staged with executable-source changes`);
+  // The rule is that the derived report must not be STALE -- not that it must
+  // appear in every commit. Those differ for a change that touches executable
+  // source without altering compiled output (a comment added to an exact `src/`
+  // file, say): regenerating produces an identical file, so there is nothing
+  // for git to stage and the old "must be staged" form was unsatisfiable.
+  //
+  // So: regenerate, and require no diff against what this commit will contain.
+  // If regeneration changes the report it must be staged; if it changes
+  // nothing, the requirement is already met.
+  if (reportRequired(paths, target) && !reportIsCurrent(target)) {
+    throw new Error(
+      `${reportPath} is stale: regenerate it (bun tools/full_c_progress.ts --write-report) ` +
+      "and stage it with executable-source changes",
+    );
   }
   const report = stagedReport(target);
   const previous = git(["log", "-1", "--format=%s"]).trim() || undefined;

@@ -6798,6 +6798,12 @@
       "entry": "0x0200035c",
       "span_bytes": 528,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_39d), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; span read from the disassembly through the epilogue at 0x02000540 and the ten-word literal pool 0x02000544-0x0200056b to the next function at 0x0200056c, which this driver itself calls; inside the assembled overlay image and not overlapping another recorded owner; hand-drafted from the bytes with tools/m2c_guard.ts reporting full call coverage."
+    },
+    {
+      "overlay": "resource_3a0",
+      "entry": "0x02001148",
+      "span_bytes": 488,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_3a0), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; the twelve-word literal pool at 0x020012f4-0x02001323 sits INSIDE the function and is jumped over by the b at 0x020012f2, with the epilogue following at 0x02001324-0x0200132c; span read to the import-veneer table at 0x02001330, inside the assembled overlay image and not overlapping another recorded owner; hand-drafted from the bytes with tools/m2c_guard.ts reporting full call coverage."
     }
   ]
 }

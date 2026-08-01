@@ -465,12 +465,6 @@
     },
     {
       "overlay": "resource_373",
-      "entry": "0x020011d8",
-      "span_bytes": 108,
-      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
-    },
-    {
-      "overlay": "resource_373",
       "entry": "0x020012bc",
       "span_bytes": 408,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"

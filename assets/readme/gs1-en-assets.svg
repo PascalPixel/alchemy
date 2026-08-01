@@ -1,17 +1,34 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Asset maturity box tree, pink band">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Asset maturity box tree, pink band; 3,857,517 catalogued bytes are tiered by tracked sources and 3,443,183 unclassified ROM-data bytes remain at the byte-represented floor">
 <rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
-<rect x="1" y="1" width="131.9" height="281.9" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
-<rect x="1" y="282.9" width="131.9" height="616.1" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
-<rect x="134.9" y="1" width="63.4" height="34.7" style="fill:hsl(330, 95%, 55%);fill:oklch(0.550 0.300 355)"/>
-<rect x="134.9" y="37.7" width="63.4" height="187.8" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
-<rect x="134.9" y="225.5" width="63.4" height="0.9" style="fill:hsl(330, 32%, 80%);fill:oklch(0.801 0.102 355)"/>
-<rect x="134.9" y="226.4" width="63.4" height="672.6" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
-<rect x="200.3" y="1" width="358.4" height="165.2" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
-<rect x="200.3" y="166.2" width="358.4" height="732.8" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
-<rect x="560.7" y="1" width="127.9" height="4.4" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
-<rect x="560.7" y="7.4" width="127.9" height="123.3" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
-<rect x="560.7" y="130.7" width="127.9" height="15.9" style="fill:hsl(330, 32%, 80%);fill:oklch(0.801 0.102 355)"/>
-<rect x="560.7" y="146.6" width="127.9" height="752.4" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
-<rect x="690.7" y="1" width="908.3" height="674.8" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
-<rect x="690.7" y="675.8" width="908.3" height="223.2" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
+<g aria-label="Other data: 322,895 bytes">
+<rect x="1" y="1" width="103.3" height="189.2" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
+<rect x="1" y="190.2" width="103.3" height="413.5" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
+</g>
+<g aria-label="Music &amp; sound: 6,434 bytes">
+<rect x="1" y="605.7" width="103.3" height="10" style="fill:hsl(330, 95%, 55%);fill:oklch(0.550 0.300 355)"/>
+</g>
+<g aria-label="Tables &amp; databases: 151,231 bytes">
+<rect x="1" y="617.8" width="103.3" height="61.3" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
+<rect x="1" y="679.1" width="103.3" height="0.3" style="fill:hsl(330, 32%, 80%);fill:oklch(0.801 0.102 355)"/>
+<rect x="1" y="679.4" width="103.3" height="219.6" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
+</g>
+<g aria-label="Backgrounds &amp; stills: 868,965 bytes">
+<rect x="106.3" y="1" width="188.4" height="165.2" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
+<rect x="106.3" y="166.2" width="188.4" height="732.8" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
+</g>
+<g aria-label="Maps &amp; world: 2,232 bytes">
+<rect x="296.8" y="1" width="66.7" height="4.4" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
+</g>
+<g aria-label="Text &amp; fonts: 311,038 bytes">
+<rect x="296.8" y="7.4" width="66.7" height="123.3" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
+<rect x="296.8" y="130.7" width="66.7" height="15.9" style="fill:hsl(330, 32%, 80%);fill:oklch(0.801 0.102 355)"/>
+<rect x="296.8" y="146.6" width="66.7" height="752.4" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
+</g>
+<g aria-label="Sprites &amp; battle art: 2,194,722 bytes">
+<rect x="365.4" y="1" width="479" height="674.8" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
+<rect x="365.4" y="675.8" width="479" height="223.2" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
+</g>
+<g aria-label="Unclassified ROM data (byte-represented): 3,443,183 bytes">
+<rect x="846.4" y="1" width="752.6" height="898" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
+</g>
 </svg>

@@ -2,10 +2,11 @@
 // List semantic sources that an exact source at the same address has superseded.
 //
 // `build_semantic.ts` throws `duplicates exact source` when a semantic source
-// and an exact source share an address, and `verify` runs `build:semantic`, so
-// every conversion that supersedes a semantic source breaks verification until
-// that file is deleted. The error names one pair per run; this names all of
-// them at once.
+// and a canonical exact source share an address, and `verify` runs
+// `build:semantic`, so every conversion that supersedes a semantic source
+// breaks verification until that file is deleted. Noncanonical match scaffolds
+// do not supersede the semantic owner. The error names one pair per run; this
+// names all of them at once.
 //
 // Tracked-tree only: it compares file names, reads nothing from `out/`, and
 // needs neither the ROM nor the toolchain, so it runs on any branch.
@@ -14,15 +15,16 @@
 //   bun tools/semantic_superseded.ts --check     # exit 1 if any exist
 //   bun tools/semantic_superseded.ts --self-test
 
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
+import { canonicalCSource } from "./full_c_progress.ts";
 
 const ROOT = resolve(dirname(new URL(import.meta.url).pathname), "..");
 
 // Each pair is (semantic directory, the exact directory that supersedes it).
 // A semantic source is superseded when the exact directory holds the same file
-// name -- both source trees name a file after the address it owns, so equal names
-// mean equal addresses.
+// name -- both source trees name a file after the address it owns, so equal
+// names mean equal addresses. `fromDisk` additionally requires canonical C.
 const SOURCE_PAIRS: readonly (readonly [string, string])[] = [
   ["semantic/overlays", "assets/code"],
   ["semantic/main", "src"],
@@ -48,7 +50,10 @@ function fromDisk(): string[] {
       const path = join(ROOT, directory);
       return existsSync(path) ? readdirSync(path) : [];
     },
-    (path) => existsSync(join(ROOT, path)),
+    (path) => {
+      const exact = join(ROOT, path);
+      return existsSync(exact) && canonicalCSource(readFileSync(exact, "utf8"));
+    },
   );
 }
 

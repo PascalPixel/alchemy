@@ -32,7 +32,7 @@ extern void Func_08009158(u8 *object);
 extern void Func_080091c0(s32, s32, s32, s32, s32, s32);
 extern u8 *Func_0808a010(s32 index);
 extern u8 *Func_0808a080(s32 index);
-extern u8 *Func_0808a090();
+extern void Func_0808a090(s32, s32, s32);
 extern void Func_0808a0e0(s32 index, s32 x, s32 z);
 extern void Func_0808a0e8(s32 index);
 extern void Func_0808a100(s32 index, s32 value);

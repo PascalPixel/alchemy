@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * CORE-orange guard.
+ * Main-image retained-assembly guard.
  *
  * The orange part of the main-image map is not a hand-maintained total.  It is
  * exactly the audited executable inventory less byte-identical C and reviewed
@@ -115,7 +115,7 @@ function hex(value: number): string { return `0x${value.toString(16).padStart(8,
 function mainInventory(path: string): InventoryInterval[] {
   const document = json(path);
   if (document.format !== 1 || document.target !== "gs1-en" || !Array.isArray(document.main?.intervals))
-    throw new Error("executable inventory is not the gs1-en main inventory");
+    throw new Error("executable inventory is not the gs1-en main-image executable inventory");
   return document.main.intervals.map((item: any, index: number) => {
     const result = span(item, `inventory.main.intervals[${index}]`);
     if (typeof item.kind !== "string" || typeof item.evidence !== "string" || !item.evidence.trim())

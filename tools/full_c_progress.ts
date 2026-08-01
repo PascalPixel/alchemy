@@ -4,7 +4,7 @@
 // The denominator is an audited union of executable intervals, not a ROM-size,
 // file-size, function-count, or discovery-count proxy. The numerator is the
 // union of byte-identical C-owned intervals from the normal claimed build and
-// verified overlay placeholders. Every address space is unioned independently.
+// verified code-overlay placeholders. Every address space is unioned independently.
 import {
   createHash,
 } from "node:crypto";
@@ -313,7 +313,7 @@ function assemblerListing(source: string): { rows: Map<number, ListingRow>; deco
       ? placeholderImage
       : assembleOverlay(source);
     if (data.length !== placeholderImage.length) {
-      throw new Error(`${source}: compiled overlay length differs from its canonical placeholder image`);
+      throw new Error(`${source}: compiled code-overlay length differs from its canonical placeholder image`);
     }
     return { rows, decodedBytes: data.length, binary: data };
   } finally {
@@ -578,7 +578,7 @@ function overlayInventory(source: string, auditedCallers: readonly Interval[]): 
       `assets/code/${basename(source)}`,
       "assembler listing mapped to canonical instruction/directive source lines",
       "PC-relative literal targets and fixed ldr/bx veneers",
-      "byte-identical decoded-overlay round trip",
+      "byte-identical decoded code-overlay round trip",
     ],
   };
 }
@@ -754,7 +754,7 @@ export function calculateProgress(
     overlayBytes += spansContained(overlaySpans.get(overlay.id) ?? [], overlay);
   }
   for (const id of overlaySpans.keys()) {
-    if (!expected.has(id)) throw new Error(`C spans belong to un-inventoried overlay ${id}`);
+    if (!expected.has(id)) throw new Error(`C spans belong to un-inventoried code overlay ${id}`);
   }
   const fullCBytes = mainBytes + overlayBytes;
   const executableBytes = inventory.total_union_bytes;
@@ -798,8 +798,8 @@ function stableInventoryShape(inventory: ExecutableInventory): string {
 function formatReport(report: ProgressReport): string {
   return [
     `Full-C Byte Share: ${commas(report.full_c_bytes)} / ${commas(report.executable_bytes)} executable bytes (${report.percent.toFixed(2)}%)`,
-    `Main: ${commas(report.main.full_c_bytes)} / ${commas(report.main.executable_bytes)} executable bytes`,
-    `Overlays: ${commas(report.overlays.full_c_bytes)} / ${commas(report.overlays.executable_bytes)} executable bytes`,
+    `Main image: ${commas(report.main.full_c_bytes)} / ${commas(report.main.executable_bytes)} executable bytes`,
+    `Code overlays: ${commas(report.overlays.full_c_bytes)} / ${commas(report.overlays.executable_bytes)} executable bytes`,
   ].join("\n");
 }
 
@@ -820,7 +820,7 @@ function checkCurrentInventory(target: DecompTargetId, tracked: ExecutableInvent
   for (let index = 0; index < tracked.overlays.length; index++) {
     if (tracked.overlays[index].id !== derived.overlays[index].id ||
         !equalUnion(tracked.overlays[index], derived.overlays[index])) {
-      throw new Error(`tracked ${target} overlay inventory is stale at ${tracked.overlays[index].id}`);
+      throw new Error(`tracked ${target} code-overlay inventory is stale at ${tracked.overlays[index].id}`);
     }
   }
 }

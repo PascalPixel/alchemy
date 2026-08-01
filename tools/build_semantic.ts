@@ -219,7 +219,7 @@ export function buildSemantic(directory = SEMANTIC): {
   const sources = sourcesBelow(directory);
   const inventoryPath = join(ROOT, "out", "decomp", "overlays.json");
   if (sources.length !== 0 && !existsSync(inventoryPath)) {
-    throw new Error("semantic build requires out/decomp/overlays.json; run the overlay inventory first");
+    throw new Error("semantic build requires out/decomp/overlays.json; run the code-overlay inventory first");
   }
   const inventory = sources.length === 0
     ? []

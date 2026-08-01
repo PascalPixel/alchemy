@@ -11,10 +11,6 @@ A for-fun, clean-room attempt at decompiling Golden Sun (GBA). It is a
 hobby/research project, not a serious or community-driven decomp, and it is
 nowhere near complete.
 
-The name comes from the moment alchemy is released upon Weyard. This project
-is similarly trying to release the games from their finished cartridge images
-into code, art, maps, and music that people can explore.
-
 ## Full-C Byte Share
 
 Alchemy has one headline progress metric: exact executable bytes generated

@@ -243,7 +243,7 @@ function syntheticOverlay(items: Array<[offset: number, width: "h" | "w", value:
 function selfTest(): void {
   const base = OVERLAY_BASE;
   const check = (label: string, ok: boolean): void => {
-    if (!ok) throw new Error(`overlay inventory self-test: ${label}`);
+    if (!ok) throw new Error(`code-overlay inventory self-test: ${label}`);
   };
   const fromScan = (discovery: Discovery, entry: number): boolean => {
     const fn = discovery.functions.get(entry);
@@ -350,7 +350,7 @@ function selfTest(): void {
   ]));
   check("an unresolved indirect branch seeds no successor", !indirect.functions.has(base + 0x04));
 
-  console.log("overlay inventory self-test passed");
+  console.log("code-overlay inventory self-test passed");
 }
 
 function targetClass(discovery: Discovery, value: number): string {

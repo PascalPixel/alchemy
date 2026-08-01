@@ -361,10 +361,10 @@ function main(): void {
   const owners = openOwners();
   if (args.includes("--check")) {
     if (!censusDeclaredClosed())
-      throw new Error("core semantic census has no reviewed closed declaration");
+      throw new Error("main-image semantic census has no reviewed closed declaration");
     if (owners.length !== 0) {
       const bytes = owners.reduce((sum, owner) => sum + owner.executableBytes, 0);
-      throw new Error(`core semantic census is open: ${owners.length} owners, ${bytes} bytes`);
+      throw new Error(`main-image semantic census is open: ${owners.length} owners, ${bytes} bytes`);
     }
     console.log("core_semantic_census=closed owners=0 executable_bytes=0");
     return;

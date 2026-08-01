@@ -57,7 +57,7 @@ const CATEGORY_STYLE: Record<CoverageCategory, { fill: string; ink: string; labe
   semantic_c: { fill: "#50e3c2", ink: "#04241d", label: "semantic C" },
   assembly: { fill: "#333333", ink: "#a1a1a1", label: "assembly" },
   retained_asm: { fill: RETAINED_ASM_FILL, ink: "#2b1600", label: "permanent asm" },
-  asset_data: { fill: "#ff0080", ink: "#2b0016", label: "assets & data" },
+  asset_data: { fill: "#ff0080", ink: "#2b0016", label: "data / assets" },
 };
 const CATEGORY_ORDER: CoverageCategory[] = ["exact_c", "semantic_c", "assembly", "retained_asm", "asset_data"];
 
@@ -635,7 +635,7 @@ export function retainedMainSpans(): Span[] {
 /**
  * Group audited main-image regions into contiguous address bands of roughly
  * `target` executable bytes. This coarser view is used by the ROM dashboard,
- * where the main image shares space with the whole cartridge.
+ * where the main image shares space with the whole ROM image.
  */
 function mainBands(
   executable: readonly Span[],
@@ -724,7 +724,7 @@ export function mainOwnerTiles(
 
 /**
  * Merge neighbouring tiles until each carries at least `target` bytes. The
- * ROM view holds the whole cartridge, so its code areas are drawn at a coarser
+ * ROM view holds the whole ROM image, so its code areas are drawn at a coarser
  * grain than the executable view where the same regions get the full mosaic.
  */
 export function groupTiles(tiles: readonly Tile[], target: number): Tile[] {
@@ -1277,7 +1277,7 @@ function categoryBar(map: CoverageMap, frame: Rect, lines: string[]): void {
 export function renderSvg(map: CoverageMap): string {
   const width = 1200;
   // Tall enough that the ROM card stays portrait: its two code areas are an
-  // eighth of the cartridge, and only a portrait card gives them a readable
+  // eighth of the ROM image, and only a portrait card gives them a readable
   // band instead of a sliver.
   const height = 660;
   const margin = 32;
@@ -1292,12 +1292,12 @@ export function renderSvg(map: CoverageMap): string {
     // letterboxes the drawing.
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" ` +
     `width="${width}" height="${height}" font-family="${SANS}" role="img" ` +
-    `aria-label="Coverage treemap of the English Golden Sun ROM: ` +
+    `aria-label="Coverage treemap of the English Golden Sun ROM image: ` +
     `${roundHalfUpPercent(combined, map.executable_bytes)}% of the ` +
     `${commas(map.executable_bytes)} audited executable bytes are expressed as C">`,
     rect({ x: 0, y: 0, width, height }, SURFACE),
     label(margin, 46, "Alchemy — Golden Sun", { size: 15, weight: 600, tracking: -0.2 }),
-    label(margin, 64, `${map.target} · ${megabytes(map.rom_bytes)} cartridge`, {
+    label(margin, 64, `${map.target} · ${megabytes(map.rom_bytes)} ROM image`, {
       size: 10,
       fill: MUTED,
     }),
@@ -1343,7 +1343,7 @@ export function renderSvg(map: CoverageMap): string {
   const cardHeight = height - cardTop - 44;
   card(
     "ROM image",
-    `${megabytes(map.rom_bytes)} on the cartridge`,
+    `${megabytes(map.rom_bytes)} in the ROM image`,
     map.rom_areas,
     { x: margin, y: cardTop, width: 372, height: cardHeight },
     lines,
@@ -1357,8 +1357,8 @@ export function renderSvg(map: CoverageMap): string {
   );
 
   lines.push(
-    label(margin, height - 20, "Tiles are main-image address bands and one per overlay; compressed " +
-      "overlay tiles are sized by ROM bytes and shaded by decoded coverage category.", {
+    label(margin, height - 20, "Tiles are main-image address bands and one per code overlay; compressed " +
+      "code-overlay tiles are sized by ROM-image bytes and shaded by decoded coverage category.", {
       size: 9.5,
       fill: MUTED,
     }),
@@ -1503,7 +1503,7 @@ export function assetMaturityTiles(tree: SourceTree): Tile[] {
  * One text-free 16:9 box tree for a single area: tiles squarified by bytes,
  * each tile split vertically by the category shares it owns. The only text is the
  * aria label; captions live in the README, which prevents the scale confusion
- * of mixing an 8 MB cartridge and a 1.3 MB executable universe in one frame.
+ * of mixing an 8 MB ROM image and a 1.3 MB executable universe in one frame.
  */
 export function renderBoxTree(
   area: Area,
@@ -1594,7 +1594,7 @@ export function renderBoxTrees(map: CoverageMap, tree?: SourceTree): Record<BoxT
   // crediting it to a higher maturity tier.
   const maturityWithRemainder = tree !== undefined && unclassifiedBytes
     ? [...maturity, {
-        label: "Unclassified ROM data (byte-represented)",
+        label: "Unclassified ROM-image data (byte-represented)",
         bytes: unclassifiedBytes,
         categories: { asset_unclassified: unclassifiedBytes },
       }]
@@ -1609,7 +1609,7 @@ export function renderBoxTrees(map: CoverageMap, tree?: SourceTree): Record<BoxT
     overlays: renderBoxTree(overlays, "Decoded code-overlay coverage box tree, cyan band", OVERLAY_HUE),
     assets: renderBoxTree(assetsArea,
       tree !== undefined
-        ? `Asset maturity box tree, pink band; ${commas(cataloguedBytes)} catalogued bytes are tiered by tracked sources and ${commas(unclassifiedBytes)} unclassified ROM-data bytes remain at the byte-represented floor`
+        ? `Asset maturity box tree, pink band; ${commas(cataloguedBytes)} catalogued bytes are tiered by tracked sources and ${commas(unclassifiedBytes)} unclassified ROM-image data bytes remain at the byte-represented floor`
         : "Asset maturity box tree, pink band",
       ASSET_HUE, ASSET_FRACTION,
       tree !== undefined ? ["asset_objects", "asset_color", "asset_bw", "asset_bytes", "asset_unclassified"] : ["asset_data"]),
@@ -1803,7 +1803,7 @@ export function selfTest(): void {
     [], [], extent,
   );
   if (spanBytes(claimed.overlays.get("resource_375") ?? []) !== 256) {
-    throw new Error("a whole-overlay claim did not take the overlay's executable extent");
+    throw new Error("a whole-code-overlay claim did not take the code overlay's executable extent");
   }
   if (claimed.unresolved.length !== 0 || claimed.sources !== 1) {
     throw new Error("a claimed overlay's owners were still reported unresolved");
@@ -1813,7 +1813,7 @@ export function selfTest(): void {
     [], [], extent,
   );
   if ((unbacked.overlays.get("resource_375") ?? []).length !== 0) {
-    throw new Error("a whole-overlay claim with no semantic source credited bytes");
+    throw new Error("a whole-code-overlay claim with no semantic source credited bytes");
   }
   const noExtent = semanticSpans(
     sourceTree({ full_overlays: [{ overlay: "resource_999", evidence: "not audited" }] },
@@ -1821,7 +1821,7 @@ export function selfTest(): void {
     [], [], extent,
   );
   if ((noExtent.overlays.get("resource_999") ?? []).length !== 0) {
-    throw new Error("a whole-overlay claim without an audited extent credited bytes");
+    throw new Error("a whole-code-overlay claim without an audited extent credited bytes");
   }
   const unlisted = semanticSpans(sourceTree({}, ["resource_375_c_02000030.c"]), [], [], extent);
   if (unlisted.unresolved.length !== 1) {
@@ -2039,7 +2039,7 @@ export function selfTest(): void {
     ],
   };
   const maturitySvg = renderBoxTrees(maturityMap, maturityTree).assets;
-  if (!maturitySvg.includes("100 catalogued bytes") || !maturitySvg.includes("100 unclassified ROM-data bytes")) {
+  if (!maturitySvg.includes("100 catalogued bytes") || !maturitySvg.includes("100 unclassified ROM-image data bytes")) {
     throw new Error("asset maturity tree did not include its unclassified remainder");
   }
 

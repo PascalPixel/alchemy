@@ -2072,6 +2072,12 @@
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
     },
     {
+      "overlay": "resource_396",
+      "entry": "0x02001004",
+      "span_bytes": 544,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_396), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; tools/m2c_guard.ts REFUSES this row for m2c seeding (two call-through-register sites at 0x020010ac and 0x020010c4) so it is drafted from the bytes alone, and the guard reports 21 of 21 callees present; span read from the disassembly through the epilogue at 0x020011d8 and the eighteen-word literal pool 0x020011dc-0x02001223 to the next function at 0x02001224 (a leaf that this driver itself calls), inside the assembled overlay image and not overlapping another recorded owner."
+    },
+    {
       "overlay": "resource_397",
       "entry": "0x0200005c",
       "span_bytes": 124,
@@ -2601,9 +2607,33 @@
     },
     {
       "overlay": "resource_39e",
+      "entry": "0x0200265c",
+      "span_bytes": 16,
+      "evidence": "admitted whole-owner semantic reconstruction; owner is absent from every inventory and from tools/overlay_unindexed.ts, and no bl in the image resolves here; DATA-INSTALLED callback found by bun tools/overlay_published.ts resource_39e (published Thumb pointer in a script record). Owner is prologue-started (push {lr}) and returning (pop {r0} / bx r0 at 0x02002668-0x0200266a), branch-free, no literal pool; its single call resolves by the +2 rule to 0x0200268c, this overlay's already-drafted 76-byte beat, which is what identifies the three siblings 0x265c/0x266c/0x267c as its three documented callers. Next owner prologue at 0x0200266c, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39e",
+      "entry": "0x0200266c",
+      "span_bytes": 16,
+      "evidence": "admitted whole-owner semantic reconstruction; owner is absent from every inventory and from tools/overlay_unindexed.ts, and no bl in the image resolves here; DATA-INSTALLED callback found by bun tools/overlay_published.ts resource_39e. Owner is prologue-started (push {lr}) and returning (pop {r0} / bx r0 at 0x02002676-0x02002678), branch-free, no literal pool, one alignment halfword at 0x0200267a; its single call resolves by the +2 rule to 0x0200268c. Next owner prologue at 0x0200267c, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39e",
+      "entry": "0x0200267c",
+      "span_bytes": 16,
+      "evidence": "admitted whole-owner semantic reconstruction; owner is absent from every inventory and from tools/overlay_unindexed.ts, and no bl in the image resolves here; DATA-INSTALLED callback found by bun tools/overlay_published.ts resource_39e. Owner is prologue-started (push {lr}) and returning (pop {r0} / bx r0 at 0x02002688-0x0200268a), branch-free, no literal pool; its single call resolves by the +2 rule to 0x0200268c, which begins immediately at the end of this span. Inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39e",
       "entry": "0x0200268c",
       "span_bytes": 76,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_39e 268c 26d8, the +2 rule against the raw image), no literal pool, next owner prologue (push {r5, lr}) immediately at 0x020026d8, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39e",
+      "entry": "0x02002764",
+      "span_bytes": 20,
+      "evidence": "admitted whole-owner semantic reconstruction; owner is absent from every inventory and from tools/overlay_unindexed.ts, and no bl in the image resolves here; DATA-INSTALLED callback found by bun tools/overlay_published.ts resource_39e. Owner is prologue-started (push {lr}) and returning (pop {r0} / bx r0 at 0x02002772-0x02002774), branch-free, no literal pool; both call targets resolved per-site with the +2 rule (bun tools/overlay_call_targets.ts resource_39e 0x2764 0x2778 --annotate) rather than from the summary histogram. Next published owner at 0x02002778, inside the assembled overlay image and not overlapping another recorded owner"
     },
     {
       "overlay": "resource_39e",
@@ -6786,12 +6816,6 @@
       "entry": "0x02000cf4",
       "span_bytes": 532,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
-    },
-    {
-      "overlay": "resource_396",
-      "entry": "0x02001004",
-      "span_bytes": 544,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_396), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; tools/m2c_guard.ts REFUSES this row for m2c seeding (two call-through-register sites at 0x020010ac and 0x020010c4) so it is drafted from the bytes alone, and the guard reports 21 of 21 callees present; span read from the disassembly through the epilogue at 0x020011d8 and the eighteen-word literal pool 0x020011dc-0x02001223 to the next function at 0x02001224 (a leaf that this driver itself calls), inside the assembled overlay image and not overlapping another recorded owner."
     }
   ]
 }

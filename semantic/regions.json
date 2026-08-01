@@ -596,6 +596,12 @@
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
     },
     {
+      "overlay": "resource_376",
+      "entry": "0x02000368",
+      "span_bytes": 372,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_376), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; span read from the disassembly through the epilogue at 0x020004bc and the seven-word literal pool 0x020004c0-0x020004db to the next function's prologue at 0x020004dc, inside the assembled overlay image and not overlapping another recorded owner; hand-drafted from the bytes, with tools/m2c_guard.ts clearing the row and reporting full call coverage."
+    },
+    {
       "overlay": "resource_377",
       "entry": "0x020000b8",
       "span_bytes": 96,
@@ -1302,6 +1308,12 @@
       "entry": "0x02000314",
       "span_bytes": 22,
       "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json, span walked from the prologue to its matching interworking epilogue `pop {r5} / pop {r0} / bx r0` at 0x02000324, no literal pool, halfword 0x0200032a is alignment before the next owner at 0x0200032c"
+    },
+    {
+      "overlay": "resource_387",
+      "entry": "0x020004f4",
+      "span_bytes": 392,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_387), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; span read from the disassembly through the epilogue at 0x02000668 and the four-word literal pool 0x0200066c-0x0200067b to the next function's prologue at 0x0200067c, inside the assembled overlay image and not overlapping another recorded owner; hand-drafted from the bytes, with tools/m2c_guard.ts clearing the row and reporting full call coverage."
     },
     {
       "overlay": "resource_389",

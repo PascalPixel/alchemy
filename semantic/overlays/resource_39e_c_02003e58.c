@@ -57,6 +57,7 @@ typedef signed int s32;
  * called here.
  */
 
+extern s16 Data_02000240[];
 extern u8 *Data_03001ebc;
 
 extern void *Func_02000048(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
@@ -77,9 +78,9 @@ s32 Func_02003e58(void)
     u8 *record;
     s16 sub;
 
-    if (*(s16 *)((u8 *)0x02000240 + 448) == 61) {
+    if (Data_02000240[224] == 61) {
         *(s32 *)(Data_03001ebc + 448) = 521;
-        sub = *(s16 *)((u8 *)0x02000240 + 450);
+        sub = Data_02000240[225];
         if (sub == 1) {
             if (Func_080770c0(0x88f) != 0) {
                 Func_0808a100(8, 6);
@@ -140,7 +141,7 @@ s32 Func_02003e58(void)
 
     Func_0808a5e0(170);
     Func_0808a080(9)[89] |= 16;
-    if (*(s16 *)((u8 *)0x02000240 + 450) == 3
+    if (Data_02000240[225] == 3
         && Func_080770c0(0xf14) != 0
         && Func_080770c0(0x894) == 0) {
         Func_080091c0(10, 84, 1, 1, 10, 24);

@@ -7,8 +7,50 @@ typedef unsigned int u32;
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
+/*
+ * __call_via_rN veneer sites, resolved per-site against the ROM. This file is
+ * still a raw m2c draft; the veneer pass below is the only thing corrected.
+ *
+ * 0x080d2dea -- `bl 0x080072f0` = __call_via_r3, r3 from pool 0x080d2e1c =
+ * 0x03001388, the relocated word copy (destination, source, size) established
+ * in the EXACT src/080d40ec.c. r0 = 0x05000000, r1 = the Func_08002f40(0x6e)
+ * result, r2 = 0x80. r3 is an argument register, so the draft's fourth
+ * argument WAS the callee; the call takes three.
+ *
+ * THE RENDERER PAIR ARRIVES HERE AS AN OUT-PARAMETER, not as two loads. At
+ * 0x080d2dca r0 = sp + 52 and that address is kept in [sp, #36]; then
+ * `Func_080cef64(0, sp + 52)` at 0x080d2dd4 fills sp+52 with allocator slot 46
+ * and sp+56 with slot 47 -- read straight off the byte-exact src/080cef64.c,
+ * whose two stores are `output[0] = *(state + 184)` and
+ * `output[1] = *(state + 188)`, i.e. 46 * 4 and 47 * 4 off 0x03001e50. So
+ * m2c's single `u32 projection_context` is really a two-element renderer
+ * array, and [sp, #36] is its base.
+ *
+ * 0x080d3108, 0x080d3120, 0x080d3164 -- `bl 0x080072f4` = __call_via_r4, with
+ * r4 = `ldr r4, [sp, #52]` immediately before each branch: entry 0, slot 46.
+ *
+ * 0x080d323c -- r4 = `ldr r4, [r6, r0]` at 0x080d3238, r0 = [sp, #36] (the
+ * base) and r6 set at 0x080d320c-0x080d3212 as `r6 = 4; if (r3 <= 0) r6 = 0;`
+ * where r3 is field 0x10 of the strip record. So renderers[field_0x10 > 0].
+ *
+ * AND THAT IS WHERE THE EMPTY IF CAME FROM. The draft carried
+ * `if (temp_r3 <= 0) { }` with nothing in the body -- m2c kept the branch and
+ * discarded its only effect, because that effect was choosing the callee and
+ * the callee register looked dead. The empty block is now the index.
+ *
+ * ARITY: six at every site. r0..r3 are set and two more words go out at
+ * [sp, #0] and [sp, #4]. r4 is above the argument registers, so no argument
+ * slot holds the callee.
+ *
+ * UNCERTAINTY, left standing: what slots 46 and 47 CONTAIN is not settled
+ * here. The slot table unifies the addressing, never the contents.
+ */
+typedef void (*Renderer_080d2d98)(
+    s32 target, void *source, s32 x, s32 y, u32 width, s32 height);
+typedef void *(*WordCopy_080d2d98)(void *destination, const void *source,
+                                   s32 size);
+
 void Func_08002dd8(s32);
-void Func_080072f4(s32, void *, s32, s32, u32, s32);
 void **Func_080b5098(s32);
 void Func_080b50e8(s32);
 void Func_080cd594(s32);
@@ -82,7 +124,7 @@ void Func_080d2d98(s32 *arg0) {
     void *var_r6;
     void *var_r7;
     void *var_r7_2;
-    u32 projection_context;
+    Renderer_080d2d98 renderers[2];
 
     sp30 = M2C_FIELD((void *)0x03001EF0, s32 *, 0);
     temp_r2 = *(void **)0x03001EEC;
@@ -91,10 +133,10 @@ void Func_080d2d98(s32 *arg0) {
     M2C_FIELD(temp_r2, s32 **, 0x7828) = arg0;
     Func_080cd594(0);
     *(s16 *)0x04000052 = 0x1010;
-    sp24 = &projection_context;
+    sp24 = (u32 *)renderers;
     Func_080cef64(0, sp24);
     temp_r0 = Func_08002f40(0x6E);
-    Func_080072f0(0x05000000, temp_r0, 0x80, 0x03001388);
+    ((WordCopy_080d2d98)0x03001388)((void *)0x05000000, temp_r0, 0x80);
     Func_08005340(temp_r0 + 0x80, (s32) sp2C);
     Func_08005340(Func_08002f40(0x85) + 0x80, (s32) (temp_r2 + 0x6E4));
     Func_08005340(Func_08002f40(0x73), sp28);
@@ -209,8 +251,8 @@ loop_30:
         var_r7_3 = (var_r9 * 0x10) + 0xFFFFFF00;
         do {
             temp_r0_6 = Func_080022fc(var_r7_3, 0x68);
-            Func_080072f4(sp30, temp_r0_5, M2C_FIELD(var_r6, u8 *, 0) - 0x11, (M2C_FIELD(var_r6, u8 *, 1) - temp_r0_6) - 0x68, 0x22U, 0x68);
-            Func_080072f4(sp30, temp_r0_5, M2C_FIELD(var_r6, u8 *, 0) - 0x11, M2C_FIELD(var_r6, u8 *, 1) - temp_r0_6, 0x22U, temp_r0_6);
+            renderers[0](sp30, temp_r0_5, M2C_FIELD(var_r6, u8 *, 0) - 0x11, (M2C_FIELD(var_r6, u8 *, 1) - temp_r0_6) - 0x68, 0x22U, 0x68);
+            renderers[0](sp30, temp_r0_5, M2C_FIELD(var_r6, u8 *, 0) - 0x11, M2C_FIELD(var_r6, u8 *, 1) - temp_r0_6, 0x22U, temp_r0_6);
             var_r8_6 += 1;
             var_r6 += 2;
             var_r7_3 += 0x19;
@@ -223,7 +265,7 @@ loop_30:
             if (var_r2 < 0) {
                 var_r2 += 3;
             }
-            Func_080072f4(sp30, sp2C, ((var_r8_7 << 5) + ((var_r2 >> 2) & 0x1F)) - 0x20, 0x78 - sp10, 0x20U, 0x20);
+            renderers[0](sp30, sp2C, ((var_r8_7 << 5) + ((var_r2 >> 2) & 0x1F)) - 0x20, 0x78 - sp10, 0x20U, 0x20);
             var_r8_7 += 1;
         } while (var_r8_7 != 5);
     }
@@ -253,11 +295,8 @@ loop_48:
         if (var_r9 > 0x4C) {
             var_r4 = 0xA;
         }
-        if (temp_r3 <= 0) {
-
-        }
         temp_r0_7 = var_r4 * 2;
-        Func_080072f4(sp30, (void *)(sp28 + M2C_FIELD((temp_r0_7 - 2), u16 *, 0x080EDE48)), M2C_FIELD(var_r5_2, s16 *, 2) - ((s32) (var_r4 + ((u32) var_r4 >> 0x1F)) >> 1), M2C_FIELD(var_r5_2, s16 *, 6) - var_r4, (u32) var_r4, temp_r0_7);
+        renderers[temp_r3 > 0](sp30, (void *)(sp28 + M2C_FIELD((temp_r0_7 - 2), u16 *, 0x080EDE48)), M2C_FIELD(var_r5_2, s16 *, 2) - ((s32) (var_r4 + ((u32) var_r4 >> 0x1F)) >> 1), M2C_FIELD(var_r5_2, s16 *, 6) - var_r4, (u32) var_r4, temp_r0_7);
         M2C_FIELD(var_r5_2, s32 *, 0) = (s32) (M2C_FIELD(var_r5_2, s32 *, 0) + M2C_FIELD(var_r5_2, s32 *, 0xC));
         temp_r1_2 = M2C_FIELD(var_r5_2, s32 *, 0x10);
         M2C_FIELD(var_r5_2, s32 *, 4) = (s32) (M2C_FIELD(var_r5_2, s32 *, 4) + temp_r1_2);

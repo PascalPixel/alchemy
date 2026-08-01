@@ -22,25 +22,29 @@ void Func_08077428(s32 owner);
 s32 Func_08078708(s32 owner, s32 index)
 {
     struct State *state = Func_08077394(owner);
-    u16 entry = state->entries[index];
+    unsigned int mask;
+    unsigned int entry = state->entries[index];
     struct Description *description;
     u8 category;
     s32 other;
 
     if (Func_0807842c(owner, entry) == 0)
         return -1;
-    if (entry & 0x200)
+    mask = 0x200;
+    if (entry & mask)
         return 0;
 
-    description = Func_08078414(entry);
+    description = (u8 *) Func_08078414(entry);
     category = description->category;
     if (category != 6) {
-        for (other = 0; other <= 14; other++) {
-            u16 other_entry = state->entries[other];
+        for (other = 0, entry = 0xD8; other <= 14; entry += 2, other++) {
+            unsigned int checkMask = mask;
+            unsigned int bits = *(u16 *)(entry + (unsigned int)state);
 
-            if (!(other_entry & 0x200))
+            bits &= checkMask;
+            if (bits == 0)
                 continue;
-            if (Func_08078414(other_entry)->category == category)
+            if (Func_08078414(*(volatile u16 *)(entry + (unsigned int)state))->category == category)
                 break;
         }
 

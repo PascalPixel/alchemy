@@ -22,7 +22,7 @@ document.
 | [COMPILER-QUEUE.md](COMPILER-QUEUE.md) | compiler-mode candidates |
 | [REMAINING.md](REMAINING.md) | the residual categories |
 | [SOURCE-STYLE.md](SOURCE-STYLE.md) | how canonical C is written here |
-| [TWIN-384-DRAFT.md](TWIN-384-DRAFT.md) | working draft for the 384-byte twin |
+| [TWIN-384-DRAFT.md](TWIN-384-DRAFT.md) | resolved twin-template evidence and transposition method |
 | [compiler-evidence/](compiler-evidence/) | collateral for each admitted compiler lever |
 | [full-c-history.json](full-c-history.json) / [.csv](full-c-history.csv) | first-parent measurement history |
 

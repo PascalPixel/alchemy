@@ -7,14 +7,18 @@ what performs the work.
 ## Current state
 
 - `main` is the authoritative integration branch.
-- GS1 English Full-C Byte Share is **236,386 / 1,343,002 executable bytes
-  (17.60%)**.
-- Reviewed semantic C declares **852,330 bytes** and compiles successfully.
-  After exact-C supersession and executable-extent accounting, it contributes
-  **829,974 additional bytes**; exact and semantic C together cover
-  **1,066,360 / 1,343,002 bytes (79.40%)**.
+- GS1 English Full-C Byte Share is **244,808 / 1,343,206 executable bytes
+  (18.23%)**.
+- Reviewed semantic C compiles successfully. After exact-C supersession and
+  executable-extent accounting, it contributes **821,588 additional bytes**;
+  exact and semantic C together cover
+  **1,066,396 / 1,343,206 bytes (79.39%)**.
 - The main-image ordinary semantic census is closed and enforced by
   `bun run semantic:check`.
+- The denominator increased by 204 bytes in this checkpoint: inventory now
+  scans compiled exact-C overlay bytes for call targets instead of zero-filled
+  placeholders, recovering one 36-byte leaf and 168 bytes of raw call-via
+  banks that were always executable.
 - The most recent complete verification proved a byte-identical, source-owned
   ROM with zero fallback. Re-run it after any new integration.
 
@@ -32,16 +36,21 @@ bun run coverage:check
    shape, and direct/indirect calls from the reconstructed bytes.
 3. Prefer readable byte-exact C. Use semantic C when exactness is not yet
    attainable, without weakening or bypassing any ownership gate.
-4. Do not manually permute a previously documented compiler floor. Test an
+4. Run `bun tools/overlay_twins.ts --unconverted` before drafting a fresh
+   overlay owner. It compares ordinary assembly against already exact C and
+   exposes cross-overlay templates; the corrected scan closed 7,456 bytes in
+   the 384- and 404-byte families in one pass.
+5. Do not manually permute a previously documented compiler floor. Test an
    established compiler family or bounded automated cohort, record the floor,
    and move on when it does not close.
-5. Admit exact C only when the affected linked bytes and whole image reproduce
+6. Admit exact C only when the affected linked bytes and whole image reproduce
    exactly. Exact C supersedes semantic C for the same owner.
 
 Useful commands:
 
 ```sh
 bun tools/overlay_inventory.ts
+bun tools/overlay_twins.ts --unconverted
 bun tools/overlay_call_targets.ts <resource> <offset>
 bun tools/overlay_multiset_check.ts <resource> <offset> <semantic-source>
 bun tools/m2c_guard.ts <resource> <offset>
@@ -49,7 +58,12 @@ bun run build:semantic
 bun run semantic:check
 bun run build:claimed
 bun run verify
+bun tools/dashboard_server.ts
 ```
+
+The dashboard derives coverage from the live worktree and refreshes when
+source or evidence changes. It is an operational view; checked-in metrics and
+SVGs remain the authoritative published `main` snapshot.
 
 ## Durable references
 

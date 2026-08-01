@@ -19,4 +19,4 @@ into code, art, maps, and music that people can explore.
 
 Alchemy has one headline progress metric: exact executable bytes generated
 from byte-matching, canonical C divided by all audited executable bytes in the
-main image and decoded overlays.
+main image and decoded code overlays.

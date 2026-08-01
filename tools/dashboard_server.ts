@@ -21,12 +21,13 @@ const STYLES = join(DASHBOARD, "styles.css");
 const FONT = join(ROOT, "assets", "fonts", "weyard.otf");
 const PORT = Number(Bun.env.ALCHEMY_DASHBOARD_PORT ?? 4649);
 const COVERAGE_DIRECTORIES = ["asm", "assets", "metrics", "semantic", "src"] as const;
+const COVERAGE_BUILD_FILES = [join(ROOT, "out", "full", "asm", "manifest.json")];
 const RESTART_FILES = [SOURCE, join(dirname(SOURCE), "coverage_map.ts")];
 
 const TREE_LABELS: Record<BoxTreeId, string> = {
-  core: "Core ROM",
-  overlays: "Overlays",
-  assets: "Assets",
+  core: "Main image",
+  overlays: "Code overlays",
+  assets: "Data / assets",
 };
 const PAGE_FILES = [CLIENT, STYLES];
 const encoder = new TextEncoder();
@@ -192,6 +193,17 @@ function watchRepository(): FSWatcher[] {
     notify();
   });
   watchers.push(pageWatcher);
+  // Exact and semantic ownership are tracked-tree projections. Orange retained
+  // ownership comes from the last verified assembly manifest, so a completed
+  // full build must wake the live dashboard too.
+  for (const file of COVERAGE_BUILD_FILES.filter(existsSync)) {
+    const watcher = watch(file, scheduleCoverageRebuild);
+    watcher.on("error", (error) => {
+      scanError = `build-evidence watcher: ${error.message}`;
+      notify();
+    });
+    watchers.push(watcher);
+  }
   return watchers;
 }
 

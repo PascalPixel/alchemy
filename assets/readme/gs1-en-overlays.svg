@@ -146,7 +146,8 @@
 <rect x="961.7" y="5.1" width="97.7" height="11.3" style="fill:hsl(190, 48%, 74%);fill:oklch(0.740 0.085 200)"/>
 <rect x="961.7" y="16.4" width="97.7" height="73.9" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
 <rect x="1061.3" y="1" width="32" height="53.8" style="fill:hsl(190, 71%, 65%);fill:oklch(0.645 0.128 200)"/>
-<rect x="1061.3" y="54.8" width="32" height="35.6" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
+<rect x="1061.3" y="54.8" width="32" height="24.7" style="fill:hsl(190, 48%, 74%);fill:oklch(0.740 0.085 200)"/>
+<rect x="1061.3" y="79.5" width="32" height="10.9" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
 <rect x="1095.3" y="1" width="109.5" height="13.4" style="fill:hsl(190, 71%, 65%);fill:oklch(0.645 0.128 200)"/>
 <rect x="1095.3" y="14.4" width="109.5" height="69.1" style="fill:hsl(190, 48%, 74%);fill:oklch(0.740 0.085 200)"/>
 <rect x="1095.3" y="83.5" width="109.5" height="6.9" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
@@ -264,8 +265,8 @@
 <rect x="1226.6" y="645.1" width="258.4" height="64.8" style="fill:hsl(190, 48%, 74%);fill:oklch(0.740 0.085 200)"/>
 <rect x="1226.6" y="709.9" width="258.4" height="23.7" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
 <rect x="1226.6" y="735.6" width="258.4" height="12.7" style="fill:hsl(190, 71%, 65%);fill:oklch(0.645 0.128 200)"/>
-<rect x="1226.6" y="748.3" width="258.4" height="87.9" style="fill:hsl(190, 48%, 74%);fill:oklch(0.740 0.085 200)"/>
-<rect x="1226.6" y="836.2" width="258.4" height="62.8" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
+<rect x="1226.6" y="748.3" width="258.4" height="112.8" style="fill:hsl(190, 48%, 74%);fill:oklch(0.740 0.085 200)"/>
+<rect x="1226.6" y="861.1" width="258.4" height="37.9" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
 <rect x="1487" y="613.3" width="112" height="7" style="fill:hsl(190, 71%, 65%);fill:oklch(0.645 0.128 200)"/>
 <rect x="1487" y="620.2" width="112" height="56.5" style="fill:hsl(190, 48%, 74%);fill:oklch(0.740 0.085 200)"/>
 <rect x="1487" y="676.7" width="112" height="9.6" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>

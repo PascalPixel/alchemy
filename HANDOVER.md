@@ -534,6 +534,67 @@ target off a raw listing when you are DRAFTING. That is about what a semantic
 draft's prose should say a row calls. It was never about how exact C spells
 the reference, and conflating the two is what produced this.
 
+### RULE: a passing check that contradicts your reading is evidence AGAINST the reading
+
+Promoted out of the withdrawal above at Vale's instruction, because the gap it
+exposed is general and this file had no line for it.
+
+Rule 1 already says: *when a check agrees with what you want to believe, ask
+what it cannot see.* It has caught things repeatedly. But it only covers
+agreement. **There was no rule for a check that DISAGREES with you**, and that
+turns out to be the easier failure, because disagreement invites you to explain
+the check away rather than to doubt yourself — and the explanation feels like
+diligence.
+
+The mechanism, from the case that produced it: I believed 579 exact-C files
+carried wrong callee names. `bun run verify` returned `byte_identical=yes` on
+every one of them. Instead of taking that as evidence my reading was wrong, I
+invented a reason the check could not see the defect — "the harness resolves
+the same wrong way consistently" — and wrote it into HANDOVER as though it were
+a finding. It was fiction, produced to protect a conclusion. The simpler
+reading, *the files verify because they are correct*, was available the whole
+time and cost nothing to test.
+
+**The rule: a green check that contradicts your reading is evidence about your
+reading, not a limitation of the check — until you have opened the thing that
+produces the artifact and can name the mechanism.** Two corollaries:
+
+- **Read the emitter before ruling on the output.** I called my detector
+  "cannot false-positive, because there is no legitimate reason for such a name
+  to exist". One look at `externalSymbol` in `tools/alchemy_gcc.ts` would have
+  ended it. Confidence about what cannot exist is always a claim about code you
+  have not read, and it was 100% false positives.
+- **"The check is blind here" is a claim requiring evidence, exactly like any
+  other.** If you cannot state the mechanism of the blindness in terms of code
+  you have actually read, you do not have a blind spot — you have a wrong
+  belief and a story.
+
+The tell is the shape of the sentence. If you find yourself writing *"X is TRUE
+and MEANINGLESS as a check on this"*, stop and prove the meaninglessness first.
+
+### RULE: a note that something exists is not the tree knowing it exists
+
+Also promoted at Vale's instruction, from resource_3c9's 0x02005688.
+
+That 24-byte leaf was declared BY HAND in two separate file headers — both
+0x020059f0 and 0x020056a0 name it as a push-less leaf, because the resolver
+returns `unknown` for their call to it — across two shifts. It was still absent
+from `semantic/regions.json`, still absent from every residue and coverage
+count quoted anywhere in this file, and it took Sweep D to surface it as an
+owner. Two correct hand-observations produced exactly zero effect on what the
+tree knew.
+
+**Prose in a file header is not a record. If a lane writes "there is an
+undrafted function here", that sentence is a `manual_regions` entry waiting to
+be made** — make it in the same commit, or accept that the next person to count
+anything will count without it. The same goes for a parked row, a suspected
+leaf, or an address named in an uncertainty paragraph.
+
+The generalisation past regions: any number this project quotes is computed
+from the tracked data, never from prose. So a fact that lives only in prose is
+a fact that does not participate in any measurement — which is the same defect
+as the per-worktree `work/` notes being invisible to other lanes, one level in.
+
 ### Inline literal pools corrupt a register-tracking reader (2026-08-01, venus)
 
 An inline literal pool skipped by a forward `b.n` disassembles as

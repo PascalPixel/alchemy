@@ -129,6 +129,32 @@ cloned next to the repo root: comparator scripts resolve it as `../alchemy-gcc`.
   per-worktree gitignored — a lane's `work/` files are INVISIBLE to other
   lanes. Anything one lane writes for another goes in `/tmp` or the repo.
 
+## NEVER WRITE "STABLE" — QUOTE A BOUND WITH ITS N
+
+**A nondeterministic defect cannot be proved absent by sampling. It can only be
+bounded.** Nobody on this team reports a flaky thing as "stable", "fixed" or
+"clean". Report the split and the N:
+
+- **Good:** `398/400 identical (~0.5%)`; `84/16 over 100 (16%)`; `0 failures in
+  400, so the rate is under about 1%`.
+- **Banned:** "stable"; "it's fine now"; "clean across forty runs".
+
+The arithmetic is why. At a 1-in-10 rate, forty clean runs happen by chance
+about once in seventy tries — and at a *suppressed* 1% rate forty clean runs are
+simply the expected outcome, so forty runs cannot tell 0% from 2%. On
+2026-08-01 small-N screening returned a false "STABLE" verdict **three times in
+one task**: at N=12 for four different compiler flags, at N=45 for two of them,
+and at N=100 for one that a 60-run had *already* failed. Each was run by someone
+who knew the risk.
+
+**Choose N against the rate you want to exclude, not the rate you measured.** To
+claim a rate is under 1% takes roughly 300 clean runs; to say anything about a
+16% rate takes about 30. And when a small run comes back clean, that is the
+moment to raise N, not to conclude.
+
+This sits beside the rule below because it is the same class: a defence against
+a conclusion the tooling makes it natural to reach.
+
 ## NEVER READ AN EXIT CODE THROUGH A PIPE
 
 **Hard command form. Use this and nothing else when a pass/fail decision

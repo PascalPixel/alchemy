@@ -1,10 +1,10 @@
 # Path to completion
 
-Current verified exact **Full-C Byte Share: 232,944 / 1,339,594 executable
-bytes (17.39%)**. The reviewed semantic tier compiles 793,966 declared bytes;
-the executable audit credits 779,394 after excluding 14,572 overlay bytes
-outside its extents. Combined executable C expression is therefore **1,012,338
-/ 1,339,594 bytes (75.57%)**.
+Current verified exact **Full-C Byte Share: 236,292 / 1,341,386 executable
+bytes (17.62%)**. The reviewed semantic tier compiles 849,242 declared bytes;
+the executable audit credits 826,838 after excluding 22,404 overlay bytes
+outside its extents. Combined executable C expression is therefore **1,063,130
+/ 1,341,386 bytes (79.26%)**.
 
 The primary integration point is `main`. The core/main-ROM reviewed semantic-C
 census is closed and enforced by `bun run semantic:check`; exact-C replacement

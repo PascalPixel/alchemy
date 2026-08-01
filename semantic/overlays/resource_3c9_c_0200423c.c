@@ -53,12 +53,29 @@ typedef unsigned int u32;
  *   +0x100000), ids 0..3 also adding it to field+0x10, each followed by
  *   Func_02005688(record).
  *
- * Uncertainty: callees identified by shape only; the six odd 0x0200xxxx
- * pool pointers (0x0200e088/e0d0/e0f4/e130 continuation-style values
- * written through Func_0808a098/Func_0808a0b0, 0x0200b6d1 and
- * 0x0200d6a1 passed to Func_080000d8/Func_080000d0) are recorded as
- * read; the flag ids 0x236/0x237/0x101/0x11a and the two u32 cells
- * 0x0200e760/0x0200e764 are raw values.
+ * CORRECTION (2026-08-01, venus, while drafting 0x020012c8): the two
+ * ODD pool pointers this header used to list as unresolved are not
+ * unresolved. Under the tree's base + 0x8000 rule (tracked HANDOVER,
+ * "In-image pointers are spelled base + 0x8000") 0x0200b6d1 is offset
+ * 0x36d1 and 0x0200d6a1 is offset 0x56a1 -- this overlay's OWN owners
+ * 0x020036d0 and 0x020056a0 with the Thumb bit, both already drafted,
+ * and both carrying a `push {r5, r6, r7, lr}` prologue at that exact
+ * offset. Func_080000d8/Func_080000d0 here are registering this
+ * overlay's own spawner and state-machine rows as callbacks, the same
+ * shape 0x020012c8 uses to register 0x02002350. They stay written as
+ * the raw pool values, which is the house convention, but they are no
+ * longer an uncertainty. The rule already existed; this header had
+ * simply not applied it.
+ *
+ * Uncertainty: callees identified by shape only; the four EVEN pool
+ * pointers 0x0200e088/e0d0/e0f4/e130, written through
+ * Func_0808a098/Func_0808a0b0, are image offsets
+ * 0x6088/0x60d0/0x60f4/0x6130 in the data region, but nothing here
+ * establishes what they point at; the flag ids 0x236/0x237/0x101/0x11a
+ * are raw values; and the two u32 cells 0x0200e760/0x0200e764 are
+ * offsets 0x6760/0x6764, which is AT and just past the 26464-byte image
+ * end -- scratch past the loaded overlay rather than image data, so
+ * those two are left raw for a different reason than the others.
  */
 
 extern u8 *Data_03001ebc;

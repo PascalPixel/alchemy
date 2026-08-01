@@ -7,8 +7,61 @@ typedef unsigned int u32;
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
+/*
+ * __call_via_rN veneer sites, resolved per-site against the ROM. Six `bl`
+ * sites land in the 0x080072e4 bank: two __call_via_r3 and four
+ * __call_via_r4.
+ *
+ * 0x080e2ab4 -- pool 0x080e2dec = 0x03001388, the IWRAM word copy.
+ * 0x080e2d88 -- pool 0x080e2e08 = 0x03000168, the IWRAM ARM fill; its fill
+ * value is the SEPARATE pool word 0x080e2e0c = 0x2f2f2f2f, which is why two
+ * pool loads sit next to each other there. r3 is an ARGUMENT register at
+ * both, so the draft's fourth argument WAS the callee and each takes three.
+ *
+ * THE OTHER FOUR ARE THE FRAME-LOCAL TWO-ENTRY TABLE, and the draft had
+ * already found the array without knowing what it held: `loaded_handles` at
+ * sp + 88 is it. At 0x080e2b8c-0x080e2b98 `mov r0, sp; adds r0, #88` parks
+ * the ADDRESS sp + 88 in [sp, #28]; entry 0 is written from
+ * `[0x03001e50 + 0xb8]` = 0x03001f08 and entry 1 from pool 0x03001f0c via
+ * `str r3, [r0, #4]`. m2c split that array into `sp58` and `sp1C`, so the
+ * same two words appeared as a scalar and a pointer; they are one object.
+ *
+ * TWO ERAS, both single-publish, and the first one only looks otherwise.
+ * Group one issues FOUR Func_080ed408 calls -- 0x080e2bdc (46), 0x080e2bec
+ * (47), 0x080e2bfe (46), 0x080e2c0e (47) -- but 0x080e2bf0 is `b.n
+ * 0x080e2c12`, so they are two ALTERNATIVE arms of one if/else and each path
+ * publishes each slot exactly once. Both reads happen after the join at
+ * 0x080e2c12 and nothing republishes before the releases at 0x080e2ed8 and
+ * 0x080e2ede. Era two is publishes 0x080e2ef8 / 0x080e2f08, reads at
+ * 0x080e2f10 / 0x080e2f18, releases 0x080e2fa8 / 0x080e2fae. Counted over
+ * every Func_080ed408 in 0x080e2974..0x080e302c, not sampled.
+ *
+ * Both eras sit INSIDE the outer loop whose back edge is `b.n 0x080e2ba6` at
+ * 0x080e2fe4, so each pass republishes and re-reads. Assigning the locals
+ * inside the loop body is therefore the faithful shape, not a hoist.
+ *
+ * STRUCTURE CORRECTED at three sites. The draft called one renderer where the
+ * ROM indexes the table:
+ *   0x080e2d2a and 0x080e2d62 -- `ldr r4, [r4, r5]` with r5 = [sp, #28] and
+ *   r4 = (r8 & 1) << 2, r8 being the group counter. Renderer parity.
+ *   0x080e2f70 -- `ldr r4, [r0, r5]` with r0 = (((r8 + (r8 >>> 31)) >> 1) & 1)
+ *   << 2, so this one alternates on HALF the counter, not on the counter.
+ *   Two different index expressions in one function; neither is the other.
+ * 0x080e2ebc is the only one that is plain entry 0, read straight from
+ * [sp, #88] at 0x080e2eb8.
+ *
+ * ARITY: six at the renderer sites; r4 is above the argument registers.
+ *
+ * UNCERTAINTY, left standing: what slots 46 and 47 CONTAIN is not settled
+ * here, and nothing here says the two eras hold the same pair.
+ */
+typedef void *(*WordCopy_080e2974)(void *destination, const void *source,
+                                   s32 size);
+typedef void (*ArmFill_080e2974)(void *destination, u32 size, u32 value);
+typedef void (*Renderer_080e2974)(s32 target, void *source, s32 x, s32 y,
+                                  u32 width, s32 height);
+
 void Func_08002dd8(s32);
-void Func_080072f4(s32, void *, s32, s32, u32, s32);
 void Func_080b5088(s16, s32);
 void **Func_080b5098(s32);
 void Func_080b50e8(s32);
@@ -29,7 +82,6 @@ s32 Func_080e2974(void *arg0, s32 arg1) {
     s32 sp10;
     s32 sp14;
     void *sp18;
-    void *sp1C;
     s32 sp20;
     s32 sp24;
     s32 sp28;
@@ -44,13 +96,12 @@ s32 Func_080e2974(void *arg0, s32 arg1) {
     s32 sp4C;
     void *sp50;
     s32 sp54;
-    s32 sp58;
     s32 sp60;
     s32 sp64;
     s32 sp68[3];
     s32 primary_position[2];
     s32 target_position[2];
-    s32 loaded_handles[2];
+    Renderer_080e2974 renderers[2];
     s32 *var_r5_3;
     s32 temp_r0_2;
     s32 temp_r2_10;
@@ -152,7 +203,7 @@ loop_5:
         var_r0_2 = 0xB4;
         break;
     }
-    Func_080072f0(0x05000000, Func_08002f40(var_r0_2), 0x80, 0x03001388);
+    ((WordCopy_080e2974)0x03001388)((void *)0x05000000, Func_08002f40(var_r0_2), 0x80);
     Func_080030f8(1U);
     temp_r3_3 = primary_position;
     sp38 = temp_r3_3;
@@ -184,7 +235,6 @@ loop_5:
 
     } else {
         sp18 = target_position;
-        sp1C = loaded_handles;
         sp14 = sp40 + 0xC;
         sp30 = sp50 + 0x7828;
         sp2C = (void *)0x03001E50;
@@ -200,8 +250,8 @@ loop_27:
             Func_080ed408(0x2E, 7, 7, 7, 2);
             Func_080ed408(0x2F, 7, 7, 0xF, 2);
         }
-        sp58 = M2C_FIELD(sp2C, s32 *, 0xB8);
-        M2C_FIELD(sp1C, s32 *, 4) = (s32) *(s32 *)0x03001F0C;
+        renderers[0] = *(Renderer_080e2974 *)0x03001F08;
+        renderers[1] = *(Renderer_080e2974 *)0x03001F0C;
         var_r8_2 = 0;
         if (sp34 == 0) {
 
@@ -237,10 +287,10 @@ loop_33:
                     var_r2 = ((s32) (temp_r2_6 + (temp_r2_6 >> 0x1F)) >> 1) - 0x10;
                     var_r3 = M2C_FIELD(sp18, s32 *, 4) - 8;
 block_43:
-                    Func_080072f4(sp4C, var_r1_2, var_r2, var_r3, 0x30U, 0x10);
+                    renderers[var_r8_2 & 1](sp4C, var_r1_2, var_r2, var_r3, 0x30U, 0x10);
                 } else {
                     temp_r2_7 = M2C_FIELD(sp38, u32 *, 0);
-                    Func_080072f4(sp4C, (void *)((temp_r2_3 * 0x300) + 0x02015E00), ((s32) (temp_r2_7 + (temp_r2_7 >> 0x1F)) >> 1) - 0x20, M2C_FIELD(sp18, s32 *, 4) - 8, 0x30U, 0x10);
+                    renderers[var_r8_2 & 1](sp4C, (void *)((temp_r2_3 * 0x300) + 0x02015E00), ((s32) (temp_r2_7 + (temp_r2_7 >> 0x1F)) >> 1) - 0x20, M2C_FIELD(sp18, s32 *, 4) - 8, 0x30U, 0x10);
                 }
             }
             temp_r0_2 = temp_r2_2 + 2;
@@ -248,7 +298,7 @@ block_43:
 
             } else {
                 if (M2C_FIELD(sp24, u8 *, 0x080EED3E) == 1) {
-                    Func_080072f0(sp4C, 0x4000, 0x2F2F2F2F, 0x03000168);
+                    ((ArmFill_080e2974)0x03000168)((void *)sp4C, 0x4000, 0x2F2F2F2F);
                 }
                 Func_080d6888(M2C_FIELD(M2C_FIELD(sp50, void **, 0x7828), s16 *, 0x24), 7, 5, 0, 4);
                 if (var_r8_2 == (sp34 - 1)) {
@@ -279,7 +329,7 @@ block_43:
             if ((sp48 >= temp_r0_2) && (sp48 < (s32) (temp_r2_2 + 0xE))) {
                 temp_r3_7 = (sp48 - temp_r2_2) - 2;
                 temp_r2_8 = M2C_FIELD(sp38, u32 *, 0);
-                Func_080072f4(sp4C, sp50 + (((s32) (temp_r3_7 + (temp_r3_7 >> 0x1F)) >> 1) * 0x3C0) + 0x5100, ((s32) (temp_r2_8 + (temp_r2_8 >> 0x1F)) >> 1) - 0xA, M2C_FIELD(sp38, s32 *, 4) - 0x18, 0x14U, 0x30);
+                renderers[0](sp4C, sp50 + (((s32) (temp_r3_7 + (temp_r3_7 >> 0x1F)) >> 1) * 0x3C0) + 0x5100, ((s32) (temp_r2_8 + (temp_r2_8 >> 0x1F)) >> 1) - 0xA, M2C_FIELD(sp38, s32 *, 4) - 0x18, 0x14U, 0x30);
             }
             var_r8_2 += 1;
             sp10 += 0x380;
@@ -293,8 +343,8 @@ block_43:
         Func_080051d8(sp40, sp14);
         Func_080ed408(0x2E, 7, 7, 3, 3);
         Func_080ed408(0x2F, 7, 7, 3, 2);
-        sp58 = M2C_FIELD(sp2C, s32 *, 0xB8);
-        M2C_FIELD(sp1C, s32 *, 4) = *(s32 *)0x03001F0C;
+        renderers[0] = *(Renderer_080e2974 *)0x03001F08;
+        renderers[1] = *(Renderer_080e2974 *)0x03001F0C;
         var_r6_3 = (void *)0x02010000;
         var_r8_3 = 0;
         do {
@@ -306,7 +356,7 @@ block_43:
                 temp_r4 = temp_r5_3 * 2;
                 temp_r2_10 = (s32) (temp_r2_9 + (temp_r2_9 >> 0x1F)) >> 1;
                 M2C_FIELD(sp68, u32 *, 0) = (u32) temp_r2_10;
-                Func_080072f4(sp4C, sp44 + M2C_FIELD((temp_r4 - 2), u16 *, 0x080EDE48), temp_r2_10 - ((s32) (temp_r5_3 + (temp_r5_3 >> 0x1F)) >> 1), M2C_FIELD(sp68, s32 *, 4) - temp_r5_3, temp_r5_3, temp_r4);
+                renderers[((s32) (var_r8_3 + ((u32) var_r8_3 >> 0x1F)) >> 1) & 1](sp4C, sp44 + M2C_FIELD((temp_r4 - 2), u16 *, 0x080EDE48), temp_r2_10 - ((s32) (temp_r5_3 + (temp_r5_3 >> 0x1F)) >> 1), M2C_FIELD(sp68, s32 *, 4) - temp_r5_3, temp_r5_3, temp_r4);
                 Func_080e38b8(var_r6_3, 0x3C, -0x400);
                 if ((s32) M2C_FIELD(var_r6_3, s32 *, 4) <= 0x7FFFF) {
                     temp_r3_8 = 0 - M2C_FIELD(var_r6_3, s32 *, 0x10);

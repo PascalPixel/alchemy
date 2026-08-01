@@ -40,18 +40,25 @@ struct Resource373Reference {
 /* IWRAM word naming the camera focus slot. */
 #define RESOURCE_373_FOCUS_SLOT (*(struct Resource373Focus **volatile *)0x03001e70)
 
-void Func_08009128();
-void Func_08015040();
-s32 Func_080770c0();
-void Func_0808a010();
-void Func_0808a018();
-void Func_0808a020();
-struct Resource373Reference *Func_0808a080();
-void Func_0808a090();
-void Func_0808a0d0();
-void Func_0808a100();
-void Func_0808a170();
-void Func_0808a188();
+s32 Func_02007082();
+void Func_020070b0();
+void Func_020070ee();
+void Func_0200714e();
+void Func_020070c4();
+void Func_0200719a();
+void Func_020071bc();
+void Func_020071c6();
+struct Resource373Reference *Func_02007114();
+void Func_02007112();
+void Func_02007076();
+void Func_02007120();
+void Func_020070f0();
+void Func_0200712e();
+void Func_02007142();
+void Func_020070a6();
+void Func_02007156();
+void Func_020071d0();
+void Func_02007174();
 
 void Func_020010d8(void)
 {
@@ -61,21 +68,21 @@ void Func_020010d8(void)
     struct Resource373Reference *reference;
     s32 step;
 
-    if (Func_080770c0(0x00000808) != 0) {
+    if (Func_02007082(0x00000808) != 0) {
         return;
     }
 
     slot = RESOURCE_373_FOCUS_SLOT;
 
-    Func_0808a018();
-    Func_0808a090(0, 0x10000, 0x8000);   /* 0x80 << 9, 0x80 << 8 */
-    Func_0808a100(0, 1);
-    Func_0808a010(2);
-    Func_0808a170(0x00000f4d);
-    Func_0808a188(15, 0, 2);
-    Func_0808a188(16, 0, 2);
+    Func_020070b0();
+    Func_020070ee(0, 0x10000, 0x8000);   /* 0x80 << 9, 0x80 << 8 */
+    Func_0200714e(0, 1);
+    Func_020070c4(2);
+    Func_0200719a(0x00000f4d);
+    Func_020071bc(15, 0, 2);
+    Func_020071c6(16, 0, 2);
 
-    reference = Func_0808a080(0);
+    reference = Func_02007114(0);
     focus.x = reference->x;
     focus.y = reference->y;
     focus.z = reference->z;
@@ -83,25 +90,25 @@ void Func_020010d8(void)
     savedFocus = *slot;
     *slot = &focus;
 
-    for (step = 0; step < 40; step++) {
+    for (step = 0; step != 40; step++) {
         focus.z += 0x20000;          /* 0x80 << 10 */
-        Func_0808a010(1);
-        Func_08009128();
+        Func_02007112(1);
+        Func_02007076();
     }
 
-    Func_0808a010(60);
-    Func_08015040(0x00000f4f, 1);
-    Func_0808a010(6);
+    Func_02007120(60);
+    Func_020070f0(0x00000f4f, 1);
+    Func_0200712e(6);
 
-    for (step = 0; step < 40; step++) {
+    for (step = 0; step != 40; step++) {
         focus.z += (s32)0xfffe0000;  /* pool word */
-        Func_0808a010(1);
-        Func_08009128();
+        Func_02007142(1);
+        Func_020070a6();
     }
 
     *slot = savedFocus;
 
-    Func_0808a010(60);
-    Func_0808a0d0(0, 70, 0x000002e5);
-    Func_0808a020();
+    Func_02007156(60);
+    Func_020071d0(0, 70, 0x000002e5);
+    Func_02007174();
 }

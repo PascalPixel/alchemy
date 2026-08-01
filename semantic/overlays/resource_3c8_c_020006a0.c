@@ -61,9 +61,11 @@ struct EffectParams_020006a0 {
     u8 unknown_10[0x18];
 };
 
-/* Random source; the byte-exact siblings declare this family `(void)`. */
-s32 Func_02000118();
-s32 Func_080000f8();
+/* Old-style declarations: the imports' real interfaces are not known here. */
+s32 Func_02005470();
+s32 Func_0200081a();
+s32 Func_020054cc();
+s32 Func_02000852();
 
 /* Old-style declarations: the imports' real interfaces are not known here. */
 
@@ -77,10 +79,10 @@ s32 Func_020006a0(struct Object_020006a0 *object)
     params.color2 = 0x0000cccc;
     params.unk00 = 0;
 
-    speed = (s32)((u32)(Func_080000f8() * 8) >> 16) * 0x3333;
+    speed = (s32)((u32)(Func_02005470() * 8) >> 16) * 0x3333;
     phase = *(u32 *)0x03001e40 & 15;
 
-    Func_02000118(
+    Func_0200081a(
         object->x + ((8 - phase) << 16),
         object->y + 0x001a0000,
         object->z,
@@ -95,9 +97,9 @@ s32 Func_020006a0(struct Object_020006a0 *object)
     if (phase == 0) {
         params.color1 = 0x00008000;
         params.color2 = 0x00008000;
-        Func_080000f8(
+        Func_02000852(
             object->x
-                + (((s32)((u32)(Func_02000118() * 9) >> 16) - 4) << 16),
+                + (((s32)((u32)(Func_020054cc() * 9) >> 16) - 4) << 16),
             object->y,
             object->z,
             0,

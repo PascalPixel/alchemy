@@ -57,25 +57,29 @@ struct Object_02001808 {
 };
 
 /* Used for their return values. */
-void Func_02000058();
-void Func_0200094c();
-void Func_080091c0();
-s32 Func_080091e0();
-void Func_0808a010();
-void Func_0808a018();
-void Func_0808a020();
-struct Object_02001808 *Func_0808a080();
-void Func_0808a090();
-void Func_0808a0c0();
-void Func_0808a100();
-void Func_0808a108();
-void Func_0808a138();
-void Func_0808a158();
-void Func_0808a1f0();
-void Func_0808a210();
-void Func_0808a248();
-void Func_0808a368();
-void Func_0808a370();
+struct Object_02001808 *Func_020066bc();
+void Func_020066aa();
+void Func_020067ac();
+s32 Func_020066da();
+void Func_02006678();
+void Func_020066fc();
+void Func_0200672a();
+void Func_020066e8();
+void Func_02006760();
+void Func_020066f6();
+void Func_020067e8();
+void Func_02006790();
+void Func_0200670e();
+void Func_0200678c();
+void Func_0200679c();
+void Func_02001910();
+void Func_020066fe();
+void Func_0200221c();
+void Func_0200680c();
+void Func_02006882();
+void Func_020068ae();
+void Func_020068ba();
+void Func_02006786();
 
 /* Old-style declarations: the imports' real interfaces are not known here. */
 
@@ -83,40 +87,40 @@ void Func_02001808(void)
 {
     struct Object_02001808 *object;
 
-    object = Func_0808a080(0);
+    object = Func_020066bc(0);
 
     /* No argument register is written here; r0 still holds the pointer just
      * returned above, and that dataflow is preserved as written. */
-    Func_0808a018(object);
+    Func_020066aa(object);
 
-    Func_0808a210(-1, -1, -1, 0);
-    Func_0808a080(Func_080091e0(0), 0);
+    Func_020067ac(-1, -1, -1, 0);
+    Func_02006678(Func_020066da(0), 0);
 
     object->unk6 = 0x4000;
-    Func_0808a090(0, 0x00030000, 0x00018000);
+    Func_020066fc(0, 0x00030000, 0x00018000);
     /* +0x0a is the integer part of the 16.16 x above. */
-    Func_0808a0c0(0, *(s16 *)((u8 *)object + 10), 552);
-    Func_0808a010(10);
-    Func_0808a100(0, 22);
-    Func_0808a010(30);
-    Func_0808a1f0(0, 258);
-    Func_0808a138(0, 2);
-    Func_0808a010(20);
+    Func_0200672a(0, *(s16 *)((u8 *)object + 10), 552);
+    Func_020066e8(10);
+    Func_02006760(0, 22);
+    Func_020066f6(30);
+    Func_020067e8(0, 258);
+    Func_02006790(0, 2);
+    Func_0200670e(20);
 
     object->unk6 = 0xc000;
-    Func_0808a100(0, 5);
-    Func_0808a108(0, 24);
-    Func_0808a010(40);
+    Func_0200678c(0, 5);
+    Func_0200679c(0, 24);
+    Func_0200672a(40);
 
     object->state48 = 0x9999;
     object->state44 = 0;
-    Func_02000058(object->x, 0, object->z + 0x00480000, 223);
+    Func_02001910(object->x, 0, object->z + 0x00480000, 223);
 
-    Func_080091c0(34, 35, 5, 1, 34, 34);
-    Func_0200094c(0);
-    Func_0808a158(0, 15);
-    Func_0808a248(20);
-    Func_0808a368();
-    Func_0808a370();
-    Func_0808a020();
+    Func_020066fe(34, 35, 5, 1, 34, 34);
+    Func_0200221c(0);
+    Func_0200680c(0, 15);
+    Func_02006882(20);
+    Func_020068ae();
+    Func_020068ba();
+    Func_02006786();
 }

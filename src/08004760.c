@@ -3,15 +3,15 @@ typedef unsigned int u32;
 
 struct DmaTransfer {
     u32 source;
-    u32 destination;
-    u32 control;
+    volatile u32 destination;
+    volatile u32 control;
 };
 
 extern volatile u16 Data_04000008;
 
 void Func_08004760(void)
 {
-    u32 fill;
+    volatile u32 fill;
     u32 *source;
     u32 destination;
     u32 control;
@@ -27,7 +27,7 @@ void Func_08004760(void)
     control = 0x85000140;
     dma->control = control;
     destination = 0x03001cbc;
-    *(u32 *)destination = 0x06002000;
+    *(volatile u32 *)destination = 0x06002000;
     display = 128;
     display <<= 3;
     Data_04000008 = display;

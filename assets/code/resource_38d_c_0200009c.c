@@ -2,6 +2,17 @@ typedef signed short s16;
 typedef unsigned char u8;
 typedef signed int s32;
 
+struct SceneRecord {
+    u8 padding_000[166];
+    u8 field_166;
+    u8 padding_167[23];
+    u8 field_190;
+    u8 padding_191[23];
+    u8 field_214;
+    u8 padding_215[23];
+    u8 field_238;
+};
+
 /*
  * resource_38d owner at 0x0200009c, 100 bytes: code 0x0200009c-0x020000eb and
  * the five-word literal pool at 0x020000ec-0x020000ff.  A control-flow walk
@@ -48,32 +59,34 @@ typedef signed int s32;
  */
 
 extern s16 Data_02000240[];     /* external EWRAM globals, not overlay data */
+extern u8 Value_00000021;
 extern u8 Data_0200a9b4[];      /* in-image at file offset 0x29b4 */
 extern u8 Data_0200a99c[];      /* in-image at file offset 0x299c */
 
 /* Imports. Old-style declarations: one name can take different argument
  * counts at different sites in this overlay. */
-void Func_0808a038();           /* record hand-off; interface not established */
-s32 Func_080770c0();            /* story-flag test; used in a condition */
+void Func_02002536();           /* record hand-off; raw per-site import label */
+s32 Func_0200250c();            /* story-flag test; raw per-site import label */
 
-u8 *Func_0200009c(void)
+s32 Func_0200009c(void)
 {
     u8 *record;
 
     /* `ldrsh` through a zero index register, so a signed halfword read. */
-    if (Data_02000240[224] != 0x21) {
-        return Data_0200a99c;
+    if (Data_02000240[224] == (s32)&Value_00000021) {
+        record = Data_0200a9b4;
+        Func_02002536(record);
+
+        if (Func_0200250c(0x84e) != 0) {
+            struct SceneRecord *scene = (struct SceneRecord *)record;
+
+            scene->field_166 = 2;
+            scene->field_190 = 0;
+            scene->field_214 = 3;
+            scene->field_238 = 1;
+        }
+
+        return (s32)record;
     }
-
-    record = Data_0200a9b4;
-    Func_0808a038(record);
-
-    if (Func_080770c0(0x84e) != 0) {
-        record[166] = 2;
-        record[190] = 0;
-        record[214] = 3;
-        record[238] = 1;
-    }
-
-    return record;
+    return (s32)Data_0200a99c;
 }

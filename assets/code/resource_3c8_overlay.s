@@ -5327,52 +5327,14 @@ AlchemyC_02003050:
 	.4byte 0xfff00000
 	.2byte 0x8b99
 	.2byte 0x0200
-	push	{lr}
-	sub	sp, #12
-	mov	r0, sp
-	movs	r3, #0
-	str	r3, [r0, #0]
-	subs	r3, #1
-	str	r3, [r0, #8]
-	bl	sub_0200803c
-	add	sp, #12
-	pop	{r0}
-	bx	r0
-	push	{lr}
-	sub	sp, #12
-	mov	r0, sp
-	movs	r3, #0
-	str	r3, [r0, #0]
-	movs	r3, #1
-	str	r3, [r0, #8]
-	bl	sub_02008054
-	add	sp, #12
-	pop	{r0}
-	bx	r0
-	push	{lr}
-	sub	sp, #12
-	movs	r3, #1
-	mov	r0, sp
-	negs	r3, r3
-	str	r3, [r0, #0]
-	movs	r3, #0
-	str	r3, [r0, #8]
-	bl	sub_0200806e
-	add	sp, #12
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	push	{lr}
-	sub	sp, #12
-	mov	r0, sp
-	movs	r3, #1
-	str	r3, [r0, #0]
-	movs	r3, #0
-	str	r3, [r0, #8]
-	bl	sub_02008088
-	add	sp, #12
-	pop	{r0}
-	bx	r0
+AlchemyC_02003fe4:
+	.space 0x18
+AlchemyC_02003ffc:
+	.space 0x18
+AlchemyC_02004014:
+	.space 0x1c
+AlchemyC_02004030:
+	.space 0x18
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -6054,13 +6016,8 @@ AlchemyC_02003050:
 	.2byte 0xfffc
 AlchemyC_020045f0:
 	.space 0x10
-	push	{lr}
-	movs	r0, #140
-	lsls	r0, r0, #2
-	movs	r1, #44
-	bl	sub_02008b2a
-	pop	{r0}
-	bx	r0
+AlchemyC_02004600:
+	.space 0x10
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

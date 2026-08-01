@@ -339,6 +339,10 @@ interface PublishedLeafEvidence {
 const AUDITED_PUBLISHED_RAW_LEAVES = new Map<string, PublishedLeafEvidence[]>([
   ["resource_377", [{ pointer: 0x0200002c, target: 0x02000090 }]],
   ["resource_378", [{ pointer: 0x0200002c, target: 0x02000064 }]],
+  ["resource_398", [
+    { pointer: 0x02000fc4, target: 0x0200044c },
+    { pointer: 0x02000fd0, target: 0x0200045c },
+  ]],
   ["resource_3a7", [{ pointer: 0x020021f8, target: 0x020004cc }]],
 ]);
 

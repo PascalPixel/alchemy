@@ -38,20 +38,30 @@ typedef struct SoftFloatRecord {
     u32 word[5];
 } SoftFloatRecord;
 
-int Func_020057ec();
-int Func_02005c38();
-void Func_02005e04();
+void Func_0200b85c(const SoftDouble *packed, SoftFloatRecord *record);
+void Func_0200b866(const SoftDouble *packed, SoftFloatRecord *record);
+SoftFloatRecord *Func_0200b258(SoftFloatRecord *left, SoftFloatRecord *right, SoftFloatRecord *result);
+SoftDouble Func_0200b6a8(SoftFloatRecord *record);
 
-SoftDouble Func_02005a40(SoftDouble a, SoftDouble b)
+SoftDouble Func_02005a40(u32 a0, u32 a1, u32 b0, u32 b1)
 {
-    SoftDouble packedA = a;
-    SoftDouble packedB = b;
-    SoftFloatRecord recordA;
-    SoftFloatRecord recordB;
-    SoftFloatRecord result;
+    struct {
+        SoftDouble packedB;
+        SoftDouble packedA;
+        SoftFloatRecord result;
+        SoftFloatRecord recordB;
+        SoftFloatRecord recordA;
+    } frame;
+    u32 *packedAWords = (u32 *)&frame.packedA;
+    volatile u32 *packedBWords = (u32 *)&frame.packedB;
 
-    Func_02005e04(&packedA, &recordA);
-    Func_02005e04(&packedB, &recordB);
+    packedAWords[0] = a0;
+    packedAWords[1] = a1;
+    packedBWords[0] = b0;
+    packedBWords[1] = b1;
 
-    return Func_020057ec(Func_02005c38(&recordA, &recordB, &result));
+    Func_0200b85c(&frame.packedA, &frame.recordA);
+    Func_0200b866(&frame.packedB, &frame.recordB);
+
+    return Func_0200b6a8(Func_0200b258(&frame.recordA, &frame.recordB, &frame.result));
 }

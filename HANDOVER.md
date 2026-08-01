@@ -5912,6 +5912,23 @@ independent row, so it is a lever rather than a coincidence:
 > the reference has a word and three instructions, and on a dispatch row that
 > six-byte deficit relocates the entire jump table.
 
+**WHEN the lever is needed — it is not universal, and applying it blind is
+how a playbook becomes ritual.** Measured on three rows:
+
+| spelling | folds? |
+| --- | --- |
+| `*(s16 *)((u8 *)0x02000240 + 450)` — literal base | **yes**, `378:0070` |
+| `&Data_02000240[224]` where the POINTER stays live across calls | **yes**, `3b2:12b4` |
+| `s16 *table = Data_02000240; scene = table[225];` — loaded once | **no**, `371:037c` is byte-exact as written |
+
+The tell is whether the *address* is a value the function keeps, not
+whether the expression has a base and an offset. A literal base folds
+because there is nothing to relocate; a symbol whose address is held in a
+callee-saved register across calls folds because the address itself
+becomes the pooled constant. A symbol dereferenced once does not fold, and
+forcing the `s32 off` spelling there is equally exact but says something
+untrue about the source. Probe both spellings and keep the simpler one.
+
 Note what did NOT need doing: the five arms were already in the reference's
 order, so §5b5's reordering never came up. Check the arm order off the ROM
 anyway before concluding a row needs it — here it cost one command to rule
@@ -5997,40 +6014,68 @@ clean result and a dead result are the same text, it is not a check. Run
 any per-row loop under `bash -c`, and confirm one row by hand before
 believing a column of zeroes.
 
-### Working the uninventoried seam — three buckets, and one number nobody has
+### The seam, fully sorted — and the field I said did not exist
 
-Re-run after regenerating the inventory (`tools/overlay_inventory.ts`, five
-seconds — never work off the one on disk), `overlay_dispatch_sites --all`
-sorts all 60 sites:
+All 60 `mov pc` sites, against a regenerated inventory
+(`tools/overlay_inventory.ts`, five seconds — never work off the copy on
+disk) and the machine-readable draft spans:
 
 | bucket | sites |
 | --- | --- |
 | instructions inside an inventoried owner | **33** (31 owners, 24,682 bytes) |
 | inside an `AlchemyC_` placeholder — already exact C | **3** |
-| **unattributed** | **24** |
+| inside a semantic draft | **15** |
+| **described nowhere** | **9** |
 
-**The adopted bucket is not bookkeeping.** Without it the census moves
-*backwards* as the tree improves: adopting a dispatch row turns its
-assembly into a placeholder, its inventory row vanishes, and a site that
-was attributed becomes "outside the inventory". Two sites did exactly that
-between one run and the next — `371:037c` and `378:0070`, both closed
-byte-exact this shift. A census that punishes progress is measuring the
-wrong thing.
+The nine: `378:166`, `378:3362`, `396:1432`, `396:1658`, `3a0:e6c`,
+`3a6:19b4`, `3b1:566`, `3b1:4902`, `3bf:516c`. No inventory row, no draft,
+no exact C. That is the true size of the seam, and it is nine, not
+twenty-four and not sixty.
 
-**And the question Vale asked cannot be answered yet, which is itself the
-finding.** "How many of the unattributed lie inside a row already drafted?"
-requires a draft's span, and **a semantic draft states its span in prose,
-not in a machine-readable field.** Three reasonable parses of that prose
-gave three different answers — 22, then 9, then 8 never-seen — and the
-loosest one confidently mapped `3c9:56c2` into a draft at `0x12c8`, some
-seventeen thousand bytes away, because the largest number followed by the
-word "bytes" anywhere in the file happened to be big enough. Every one of
-those three answers looked reasonable on its own.
+**RETRACTION — the machine-readable span field already existed, and was
+complete.** I reported that a semantic draft states its span only in
+prose, that three reasonable parses gave 22 / 9 / 8, and that the split
+could not be known until drafts carried the span as data. Wrong.
+`semantic/regions.json` carries `{overlay, entry, span_bytes, evidence}`
+for **1,064 of 1,064** overlay semantic drafts, and `build_semantic`
+already enforces it: no admitted owner throws, a non-positive span or an
+empty `evidence` throws, and overlapping spans throw. The field is a
+field, populated at draft time, and enforced. Every constraint I was about
+to go and build was already met.
 
-So: **24 unattributed is the honest figure**, and the split of those 24
-between drafted and never-described is **unknown**. It stays unknown until
-drafts carry their span as data. That is a small, real piece of work and it
-is the ground under this seam.
+**So the defect was never in the tree. It was that my instrument did not
+read the data the tree already had, and I reached for a parser instead of
+looking.** The three contradictory numbers were not evidence of a missing
+field; they were evidence that I was parsing prose nobody had asked me to
+parse. Before concluding that a fact lives only in prose, grep the tree
+for the fact — `semantic/regions.json` is 751 KB and answers in one line
+of Python.
+
+The census now reports `drafts_without_span` on every run, currently 0. If
+it is ever non-zero, `described_nowhere` is an over-count and the header
+line says so, so a census cannot silently absorb a draft it could not
+search.
+
+**One live disagreement, worth two bytes and a look.** `resource_394` at
+`0x020003f0` has `span_bytes` 1008 in `regions.json` and 1006 in the
+overlay inventory. `build_semantic` prefers the inventory, so the build
+uses 1006 while the reviewed boundary claims 1008. One row of 1,338, but
+two authorities disagreeing on a span is the shape of a later surprise.
+
+### RULE: a measure that worsens as the tree improves is measuring the wrong quantity
+
+Banked at its own size because it will recur. The dispatch census moved
+**backwards** between two of its own runs: adopting a row turns its
+assembly into an `AlchemyC_` placeholder, its inventory row disappears,
+and a site that had been attributed becomes "outside the inventory".
+`371:037c` and `378:0070` — the two rows closed that same shift — each
+made the number look worse by being finished.
+
+The fix is not a fudge factor. It is an extra bucket that names the good
+state explicitly, so progress moves a site *between* buckets instead of
+out of the accounting. Whenever a metric gets worse after work that was
+plainly correct, suspect the metric's denominator or its buckets before
+suspecting the work.
 
 ### The confirmed population, probed (2026-08-01)
 

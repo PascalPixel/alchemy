@@ -1,3 +1,22 @@
+// __call_via_rN veneer site, resolved per-site against the ROM.
+//
+// The `bl Func_080072f0` at 0x0801215a is `__call_via_r3` -- an indirect call
+// through r3. The draft's fourth argument is the callee load, not an argument.
+//
+// Callee: `ldr r3, [r4, r2]` at 0x08012154, with r4 loaded at 0x08012148 from
+// the pool word at 0x08012190. That word was READ FROM THE ROM at this site
+// rather than carried over from the neighbour: it is 0x080134fc, the same
+// sixteen-entry sampler table 0x08011f54 dispatches through, and r2 is
+// (attribute & 15) << 2 routed via ip. Same table, checked here.
+//
+// Register agreement at the branch: r0 set at 0x08012150, r1 at 0x08012156,
+// r2 at 0x08012158; the callee lands in r3 at 0x08012154. Three arguments,
+// callee in the r3 slot -- the r0-r3 argument-register domain again.
+//
+// The result is consumed arithmetically right after the branch
+// (`ldr r3, [r7, #20]; subs r0, r0, r3`), so the sampler returns a value.
+// That is an instrument independent of the tail-position evidence at
+// 0x08011f54, and the two agree.
 typedef unsigned char u8;
 typedef signed short s16;
 typedef signed int s32;
@@ -34,10 +53,13 @@ struct MapState {
     struct MapLayer layers[3];
 };
 
-extern struct MapState *Data_03001e70;
-extern const s32 Data_080134fc[];
+/// One of the sixteen samplers at 0x080134fc, selected by the tile's low
+/// attribute nibble. See 0x08011f54 for the table dump and the callee-side
+/// arity evidence.
+typedef s32 (*TileSampler)(const u8 *parameters, s32 subX, s32 subY);
 
-s32 Func_080072f0(const u8 *tile, s32 x, s32 y, s32 shape);
+extern struct MapState *Data_03001e70;
+extern const TileSampler Data_080134fc[];
 
 s32 Func_080120dc(const struct ObjectPosition *object,
                   const struct ProbePosition *position)
@@ -67,11 +89,8 @@ s32 Func_080120dc(const struct ObjectPosition *object,
         return 2;
 
     tile_data = (const u8 *)(0x0202c000 + cell->tile * 4);
-    difference = Func_080072f0(
-        tile_data + 1,
-        x & 15,
-        y & 15,
-        Data_080134fc[tile_data[0] & 15]) - object->height_14;
+    difference = Data_080134fc[tile_data[0] & 15](
+        tile_data + 1, x & 15, y & 15) - object->height_14;
 
     if (difference > 0x80000)
         return 1;

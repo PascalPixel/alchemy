@@ -34,34 +34,6 @@ function hex(value: number, width = 8): string {
 const OVERLAY_C_CACHE = join(dirname(dirname(Bun.fileURLToPath(import.meta.url))), "out/cache/overlay-c");
 const planStampCache = new Map<string, string>();
 
-/**
- * A digest of this file's own source, mixed into every overlay-C cache key.
- *
- * The command plan stamps the compiler binaries and flags, but NOT the work
- * this file does after the compile — the label-word bias, the external-symbol
- * rules, the splice. Those used to be covered by a hand-bumped `-vN` string,
- * which is only ever as good as the next editor's memory.
- *
- * NEVER give this a fallback. A key that quietly stops discriminating is worse
- * than a version string someone forgets to bump, because the forgotten string
- * at least fails loudly the day somebody does remember. If the source cannot be
- * read, that is a broken installation and it must say so.
- */
-let selfDigestCache: string | undefined;
-export function selfDigest(): string {
-  if (selfDigestCache !== undefined) return selfDigestCache;
-  const path = Bun.fileURLToPath(import.meta.url);
-  let source: Buffer;
-  try {
-    source = readFileSync(path);
-  } catch (cause) {
-    throw new Error(`overlay_disasm cannot read its own source at ${path} to key the cache`, { cause });
-  }
-  if (source.byteLength === 0) throw new Error(`overlay_disasm read an EMPTY source at ${path}; refusing to key the cache`);
-  selfDigestCache = new Bun.CryptoHasher("sha256").update(source).digest("hex");
-  return selfDigestCache;
-}
-
 function planStamp(commands: readonly (readonly string[])[], work: string): string {
   const identity = commands
     .map((command) => command.map((part) => (part.startsWith(work) ? "<work>" : part)).join("|"))
@@ -222,23 +194,10 @@ function compileOverlayC(source: string, work: string, overlay: string): { addre
     preprocessedOutput: join(work, `${stem}.i`),
   });
   const keyDigest = new Bun.CryptoHasher("sha256");
-  // The key carries a digest of THIS FILE's own source, not a hand-bumped
-  // version string.
-  //
-  // It was `overlay-c-v3`, bumped by hand whenever the post-compile rewriting
-  // changed — correctly bumped, with an honest comment about why. The defect
-  // was the MECHANISM: it held only while every future editor remembered. The
-  // cost was measured, not argued — one key present in two worktrees with
-  // different contents and different lengths, 160 bytes against 164, and a
-  // poisoned entry that made `verify` die in `build_assets` on resource_39c.
-  // Because `git checkout` does not touch `out/`, runs at three different
-  // commits all shared that entry and none was a test of its commit.
-  //
-  // Hashing the source means any edit to the compile plan, the label-word bias
-  // or the external-symbol rules moves every key automatically. It cannot rot,
-  // because it derives from the thing that actually changes rather than from a
-  // number describing it.
-  keyDigest.update(`overlay-c:${selfDigest()}:${hex(address)}:${hex(callViaBase)}\0`);
+  // v3: in-image label words are biased by 0x8000 after the compile step. The
+  // stamp covers the commands, not this rewrite, so the key has to move with it
+  // or a warm cache would serve pre-bias bytes.
+  keyDigest.update(`overlay-c-v3:${hex(address)}:${hex(callViaBase)}\0`);
   keyDigest.update(planStamp(plan.steps.map((step) => step.command), work));
   keyDigest.update("\0");
   keyDigest.update(readFileSync(source));
@@ -540,22 +499,7 @@ function selfTest(): void {
   if (biasInImageLabelWords("\t.word\t.L4").biased !== 0) {
     throw new Error("bias self-test: a label with no definition in the file must not be biased");
   }
-
-  // The cache key must move with THIS FILE. Asserted on synthetic input so no
-  // lane's progress can break it: the digest of the real source must be a
-  // stable 64-hex string, and any edit at all must produce a different one.
-  const digest = selfDigest();
-  if (!/^[0-9a-f]{64}$/.test(digest)) throw new Error(`self-digest is not a sha256: ${digest}`);
-  if (selfDigest() !== digest) throw new Error("self-digest must be stable within a run");
-  const real = readFileSync(Bun.fileURLToPath(import.meta.url));
-  const edited = new Bun.CryptoHasher("sha256").update(Buffer.concat([real, Buffer.from("//\n")])).digest("hex");
-  if (edited === digest) throw new Error("self-digest must change when the source changes");
-  // And it must never silently degrade to a constant: an empty read is fatal.
-  if (new Bun.CryptoHasher("sha256").update(Buffer.alloc(0)).digest("hex") === digest) {
-    throw new Error("self-digest collapsed to the empty digest");
-  }
-
-  console.log("self-test=ok (including source-keyed cache digest)");
+  console.log("self-test=ok");
 }
 
 if (import.meta.main) {

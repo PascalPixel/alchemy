@@ -5921,40 +5921,100 @@ Adopting it moved the denominator again, 1,340,136 -> 1,340,308 (+172): the
 row was inventoried but its 140-byte table and 28-byte pool were not audited
 as executable until the span became C.
 
-### CORRECTION — three of the seven ranked rows are NOT dispatch owners (2026-08-01)
+### The `mov pc` population, REBUILT against the built image (2026-08-01)
 
-The table above is a correct list of spans and residuals and a **wrong**
-population. Re-measured against the built image with
-`overlay_show <overlay> <off> -n <span> | grep -E "mov[[:space:]]+pc"`:
+The earlier table headed "the dispatch-row population, probed and ranked"
+is a correct list of spans and residuals over a **wrong** population, and
+the headline that went with it was attributed wrongly. Rebuilt from two
+instruments that fail differently and agree:
 
-| row | carries a `mov pc` |
+1. `assembleOverlay` for each overlay image, then a halfword test for the
+   Thumb high-register `mov pc, rN` encoding, `(hw & 0xff87) === 0x4687`;
+2. instruction boundaries taken from `out/decomp/overlays.json`'s
+   `instruction_offsets`, never from label positions in the `.s`;
+3. spot-checked against `overlay_show` on five rows — all five agree.
+
+The census is now `tools/overlay_dispatch_sites.ts` rather than a shell
+loop. `--self-test` pins the encoding test against `bx r3` and a plain
+high-register `mov`, and it prints a header line in every case including
+the empty one, so "no sites" and "the scan did not run" cannot read alike.
+`--all` adds the whole-image scan and the uninventoried count.
+
+| figure | value |
 | --- | --- |
-| 371:0350, 3b2:12b4, 3c4:0cd0 | **no** |
-| 378:0070, 372:3ce4, 3b1:012c, 3b9:007c, 3b9:1a4c | yes |
+| `mov pc, rN` halfwords in the overlay images | **60**, across **29** overlays |
+| of those, instructions inside an inventoried owner | **35** |
+| minimal owners holding them | **33**, **25,194** bytes |
+| in code with NO inventory row at all | **25** |
 
-So the jump-table emitter fix of §5b4 is still proven — on 3b9:1a4c and
-378:0070, both genuine dispatch rows — but "the dispatch-row population,
-ranked" over-claims. Whatever mapped `mov pc` sites to owners attributed
-three non-dispatch rows to it, and the 60-sites/29-overlays and
-27-owners/27,760-bytes headline numbers rest on that same mapping. **Treat
-those counts as unconfirmed until the mapping is rebuilt against the
-built image rather than against label positions in the `.s`.**
+So the old **60 sites / 29 overlays** headline survives — every one of the
+four uninventoried hits examined disassembles as the same genuine idiom,
+`bhi / ldr POOL / lsls #2 / ldr [r3,r2] / mov pc, r3`, so these are
+dispatch sites and not data. What does **not** survive is the attribution:
+"36 map to 27 inventoried owners totalling 27,760 bytes, 24 sit in owners
+with no inventory row" is really **35 in 33 owners totalling 25,194
+bytes, 25 with no inventory row**.
 
-**And the check that produced this correction lied first.** The obvious
-shape,
+**The failure had a signature, and it is worth recognising.** The three
+rows that carry no dispatch each sit one owner away from one that does:
+`371:0350` vs the real `371:037c`, `3b2:12b4` vs `3b2:13ac`, `3c4:0cd0`
+vs `3c4:0e20`. A nearest-preceding-label mapping over the `.s` lands on
+the wrong owner by exactly one, which reads as plausible and is not.
+
+**Uninventoried does not mean unreachable.** `3b9:1a6e` is in the
+25 — it is inside `3b9:1a4c`, the 508-byte dispatcher already closed
+byte-exact. That row had no inventory entry until adopting it created
+one. The 25 are a real seam, not a residue.
+
+**Caution on the minimal-owner rule.** Attributing a site to the smallest
+enclosing owner can land on a fragment: `3c8:33c8` (4 bytes) and
+`3c8:3a94` (6 bytes) are nested candidate rows, not dispatchers. The real
+`3c8` owner is the 3,922-byte row at `3068`. Read the row before queueing
+it.
+
+### The check that hid the error printed a clean sweep (2026-08-01)
+
+The per-row check that first contradicted the ranked table reported `0`
+for every row. The shape was
 
 ```sh
 for r in "378 0x70 220" …; do set -- $r; …; done
 ```
 
-reports `0` for every row **under zsh**, which does not word-split an
-unquoted `$r`: `$1` is the whole string and `$2`/`$3` are empty, so
-`overlay_show` runs on its defaults and the grep finds nothing. The same
-loop under `bash -c` gives the table above. A per-row check that says `0`
-for every row is the "what does it print when it does nothing?" question
-answering itself — the tool printed exactly what a clean sweep would
-print. Run any new per-row loop under `bash -c`, and confirm one row by
-hand before believing a column of zeroes.
+and **zsh does not word-split an unquoted `$r`**: `$1` is the whole
+string, `$2` and `$3` are empty, so `overlay_show` ran on its defaults and
+the grep found nothing. Every row printed exactly what a genuinely clean
+row prints. Under `bash -c` the same loop gives the real table.
+
+Sixth sighting of this pattern in one night and the first inside a lane's
+own five-line throwaway rather than a tracked tool. The standing question
+applies at every size: **what does this print when it does nothing?** If a
+clean result and a dead result are the same text, it is not a check. Run
+any per-row loop under `bash -c`, and confirm one row by hand before
+believing a column of zeroes.
+
+### The confirmed population, probed (2026-08-01)
+
+Measured against each owner's existing semantic draft, smallest residual
+first:
+
+| row | span | differing bytes |
+| --- | --- | --- |
+| 371:037c | 292 | **26 — best of the confirmed population** |
+| 3c4:0e20 | 168 | 72 |
+| 38f:0304 | 196 | 79 |
+| 3b2:13ac | 232 | 197 |
+| 378:0070 | 220 | adopted, byte-exact |
+| 3b9:1a4c | 508 | adopted, byte-exact |
+
+`3bf:4638`, `3a8:1f14` and `383:0690` threw on the probe and are
+**UNMEASURED**, not clean — the same state as `3b4:1fd8`, `383:2564` and
+`395:15a0`. Six unmeasured rows now; do not let one quietly become a clean
+one.
+
+The rest of the 33 (`372:3ce4` 296/262, `3b1:012c` 342/273, `3b9:007c`
+444/235 from the earlier probe, and the unprobed remainder up to 3,922
+bytes) stand as before.
 
 ## 5b6. The shared-return-tail lever (2026-08-01)
 

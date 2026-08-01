@@ -7217,6 +7217,15 @@ So the live options are back to two, and both are Vale's:
 For the deliberate fork session, alongside Mia's per-call-site
 `-mcall-arg0-move-first` specification.
 
+> **IF YOU HAVE JUST HIT THIS: a flaky `verify` red on `resource_39c` is KNOWN
+> AND EXPECTED, at roughly 16% of cold builds. It is not your change and not
+> your worktree. Re-run; it passes about five times in six. Do not spend a shift
+> on it — read this entry, and if you want to confirm it is the same thing, the
+> failure names its own coordinate (`first_diff=0x10cc` or `0x10e2` inside
+> `0x10c0-0x1164`). Ruled 2026-08-01 by Vale: leave it, because `build_full`
+> compares against the reference ROM, so this is a loud red and never a wrong
+> byte.**
+
 **Symptom.** One row of `resource_39c`, 16% of compiles, emits a
 semantically identical but one-instruction-shorter sequence; everything
 downstream shifts and the row fails its ROM comparison.
@@ -7537,14 +7546,52 @@ assertion is now inverted to *"a returning leaf must be a queue row"*, which is
 the point worth carrying: **a test can be the place a defect is written down and
 defended.** When you remove a rule, go and look at what asserted it.
 
-### Still prologue-keyed, and NOT mine
+### The remaining four doors, resolved (2026-08-01, jupiter)
 
-`overlay_inventory`'s own strict-queue definitions (`starts_with_prologue` at
-the generator level), `overlay_call_targets`' caller classification, `m2c_guard`
-and `overlay_phantom_rows`. Sweep A's caller counting is the one that tagged
-`3a5:0x1c78` `unknown` despite four callers. Those are the tool side and Garet
-is working them; changing the generator's definition would move the ground under
-his instruments mid-shift.
+Taken after Garet's heads work landed. **Two were already closed by him, and
+checking before rebuilding is the point** — Vale asked, and it saved the work:
+
+- **`overlay_call_targets`' `classify` — CLOSED by Garet.** A `leaf` kind now
+  sits between `prologue` and `unknown`, and `unknown` still means unknown, so a
+  phantom `bl` into a data table does not become a residue owner.
+- **Sweep A's caller counting — CLOSED by Garet.** `overlay_published` carries
+  the tri-class `called` / `calledLeaf` / `calledData`. Verified end to end
+  rather than by reading: `resource_3a5` `0x1c78` now reports as an owner
+  (`nearest owner 0x2001c78`), where it was `unknown` with four callers.
+
+The two I changed, and one I deliberately did not:
+
+- **`overlay_inventory`, prose not code.** The generator's two prologue filters
+  are a *reported statistic* (`ordinary_prologue_return_discoveries`) and a
+  *warning* (`spanSuspects`); neither excludes an owner from anything. The
+  warning's filter is kept, on measured grounds now written down: without it the
+  relay seeds drown the signal, 503 rows against the 3 that matter, and a
+  diagnostic nobody reads is worse than none. **The defect there was a
+  sentence.** The header asserted "the conversion queue still filters on
+  `starts_with_prologue`, so a widened entry never becomes a queue row itself" —
+  false since §5k, and a door written in prose, because it told a reader that
+  leaves were structurally unconvertible, which is reason enough never to look.
+  Corrected in place with the old text quoted.
+- **`overlay_phantom_rows` — MARKED, not opened.** A leaf is not in `prologues`,
+  so a genuine leaf can be reported as a phantom. Skipping leaf-shaped rows
+  would be the wrong fix: of the five in the tree, three are overlapping walks
+  from different starts to one common end (`resource_397` 0x16e/0x17c/0x18e all
+  end at 0x1b4), so at most one of the three is a function at all, and skipping
+  them would hide real phantoms to protect rows that mostly are not functions.
+  They now carry `leaf_shaped` and print **`LEAF-SHAPED — reaches a return; read
+  it before acting`**. Two of the five open with the documented leaf entry
+  shapes, `ldr rN,[pc]` and `movs rN,#imm`. The second, decisive test stays
+  prologue-keyed on measured grounds: an interior row reaches a return just as a
+  leaf does, so relaxing it would re-admit the 76 false positives `resource_379`
+  produced.
+- **`m2c_guard` — not a door.** Its `prologues` set is only a hint passed into
+  `classify`, which now recognises the prologue shape and the leaf shape itself.
+  No owner is excluded and every kind still yields a name. Left alone.
+
+**The pattern this shift adds: a rule you remove from the code survives in the
+comments and self-tests that assert it.** §5k caught a self-test defending a
+door ("a prologue-less seed is not an owner"); this one caught a header comment
+doing the same job. Both would have told the next reader the door was correct.
 
 ## 5i. THE PROLOGUE-DOOR AUDIT — every place a `push` was the test for "is this a function" (2026-08-01, mars)
 

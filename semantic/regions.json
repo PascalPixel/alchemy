@@ -6970,8 +6970,8 @@
     {
       "overlay": "resource_3c9",
       "entry": "0x02000480",
-      "span_bytes": 56,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5}/pop {r1}/bx r1, a genuine s32 return value per HANDOVER's epilogue rule) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing one-word literal pool to the next owner's prologue at 0x020004bc, inside the assembled overlay image and not overlapping another recorded owner"
+      "span_bytes": 60,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5}/pop {r1}/bx r1, a genuine s32 return value per HANDOVER's epilogue rule) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span 0x020004bc - 0x02000480 = 60 read from the disassembly through the trailing one-word literal pool 0x020004b8-0x020004bb (0x030001d8, loaded by the ldr at 0x020004ac inside this owner) to the next owner's prologue at 0x020004bc, inside the assembled overlay image and not overlapping another recorded owner; span_bytes was recorded as 56 until 2026-08-01 -- the evidence text already named 0x020004bc as the bound and the one-word pool as included, but the NUMBER excluded the pool, and sweep D saw the four bytes as a POOL-OR-DATA gap, which is the only part any sweep reads"
     },
     {
       "overlay": "resource_3c9",

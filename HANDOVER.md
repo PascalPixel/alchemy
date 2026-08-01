@@ -6640,6 +6640,109 @@ has looked. `resource_384` is clean at **45.3%**, with a 624-byte tail on a
 arithmetic over figures sweep D already loads, and it separates "closed"
 from "unexamined" better than any number currently printed.
 
+## 5i. SWEEP E — the head, the tail and the swallowed leaf, ruled by RETURNS (2026-08-01, venus)
+
+`bun tools/overlay_certify.ts <overlay>`, self-test in `bun run test`.
+Garet named three blind spots in one shift and all three have the same shape:
+a region no sweep reads, and a KEYED test (`push`) that a leaf does not answer.
+Sweep E closes all three with one argument, and it is the argument Ivan used on
+380 rather than a new one: **a Thumb function cannot avoid returning.** So stop
+hunting entries and count RETURNS instead, then require every return in the
+image to be accounted for.
+
+Three regions, three rules:
+
+- **head** — `0x00 .. spans[0].start` must be a whole number of eight-byte
+  export thunks (`ldr rN,[pc,#0] / bx rN / .word target`) whose targets are
+  recorded owner starts. `resource_3b8`'s six thunks resolve to 0x40b4, 0x30,
+  0x68, 0x70, 0x4034 and 0x60, every one an owner.
+- **tail** — every return-shaped halfword past the last owner must be inside an
+  eight-byte import veneer, inside the overlay's own four-byte `__call_via_rN`
+  bank, or the low half of a word-aligned **Thumb** pointer to a recorded owner.
+- **owners** — every recorded span must hold at least one return, and a span
+  holding MORE than one is reported. That is where a swallowed leaf shows: an
+  inflated `span_bytes` hides a leaf from sweep D (no gap to subtract) and from
+  sweep C (no prologue to key on), but it cannot hide the second return.
+
+Plus the two corroborations from the 380 certification, both required: every
+`bl` resolved through `targetOffset` (never hand-rolled) lands in a veneer or in
+the code region and none in tail data; and every image word pointing into tail
+data is EVEN, since a published entry must carry the Thumb bit.
+
+**Tree-wide: 397 findings over 53 overlays — HEAD 233, TAIL 63, POINTER 55, BL
+37, OWNER 26.** A candidate list, like sweeps C and D, not a verdict. 45
+overlays have a head finding, and on `resource_3bd` sweep E independently
+reproduces Garet's function at 0x0030 without being told to look there.
+
+**Forty overlays are now clean on all five sweeps** (A/B/C residue 0, D
+code-suspect 0 and no overlaps, E 0 findings), largest first: 3b8, 3af, 39e,
+380, 3b9, 374, 38f, 38d, 37a, 37b, 3ae, 3c7, 3aa, 3c6, 375, 3a3, 3b6, 3a2, 38b,
+370, 3c2, 394, 3a9, 379, 3c3, 38e, 38c, 3a1, 3ac, 386, 390, 3c1, 36f, 397, 384,
+3cc, 388, 37d, 37e, 37c. Re-derive that list, do not quote it.
+
+### Two defects sweep E found in the tools it was built beside
+
+- **`ruleTail`'s veneer mask misaligns.** It steps `at += 4` from the last
+  owner's END, so on an overlay whose last owner ends at 2 mod 4 the scan lands
+  on 2 mod 4 forever and matches **no veneer at all**. Six overlays are in that
+  state — 378, 37b, 386, 39b, 3a6, 3ce — and all six report `veneers=0` with a
+  full bank sitting there. Align to the IMAGE, not the tail.
+  **The verdicts survive it:** I expected three false PROLOGUE-SUSPECT tails
+  (378, 39b, 3a6) and re-ran their prologue scan with the mask aligned — 13, 7
+  and 4 prologues, identical both ways. Veneer bytes do not wear push shapes,
+  so the defect inflated my noise and changed nobody's answer. The exciting
+  retraction was measured and did not survive; say so rather than bank it.
+- **`overlay_published.ts` does not refuse an unknown name — it sweeps all 96.**
+  Its argument filter is `/^resource_[0-9a-f]+$/` and it falls back to every
+  overlay when nothing matches, so `resource_zzz` prints `overlays=96
+  residue=1602` and exits 0. This file's claim that "sweep A/B/C already refused
+  an unknown name" is **false as measured**; only a WELL-FORMED absent name
+  (`resource_fff`) throws. It cannot fake a certification — the fallback prints
+  1602, not 0 — but `overlays=1` is the only line telling you your name matched.
+  Sixth sighting of the fault living in what a tool ACCEPTS. Sweep E rejects by
+  existence, not by shape.
+
+**And a correction to my own last handoff.** I reported that sweep D's
+`NOTHING SWEPT` refusal "still exits 0, so anyone keying on the exit status is
+fooled". It exits **1**, and has all along. I produced that figure with
+`bun tools/overlay_gaps.ts resource_zzz | tail -2; echo $?`, which returns
+`tail`'s status — the pipe trap this file warns about, in the hand of the person
+who relayed the warning. Seventh bad handoff figure of mine. Capture exit codes
+with `cmd > file; echo $?`, never through a pipe, and that applies to a two-line
+diagnostic as much as to `bun run verify`.
+
+## 5j. resource_3b8 CERTIFIED CLOSED (2026-08-01, venus) — five sweeps
+
+The largest overlay certified so far: **23,352 bytes, 26 owners** (19 exact-C
+spans, 7 semantic `manual_regions`), contiguous from 0x30 to 0x4340 with no
+gap, no overlap and no duplicate.
+
+- **A/B/C** — `overlay_published.ts resource_3b8` → `residue=0`.
+- **D** — `overlay_gaps.ts resource_3b8` → `code_suspect_gaps=0 overlaps=0
+  prologue_suspect_tails=0`.
+- **E, head** — 48 bytes, six export thunks, every target a recorded owner
+  start. Read word by word, not accepted because 48 is the usual size.
+- **E, tail** — 0x4340..0x5b38, 6,136 bytes. The import veneer bank is
+  contiguous 0x4340-0x4550, 66 veneers, 528 bytes. In the remaining 5,608 bytes
+  there are **24 return shapes and every one is the low half of a word-aligned
+  Thumb pointer onto a recorded owner** — `0x0200bd41` reads as
+  `pop {r0, r6, pc}` in its low half and is a published-callback table entry in
+  a 12-byte record whose other fields are `ffff000N` counters. Nothing else in
+  the tail returns, so nothing lives there, leaf included.
+- **E, owners** — **all 26 spans contain EXACTLY ONE return shape.** This is the
+  check that rules out the swallowed leaf, and it mattered here: all seven
+  `manual_regions` end exactly where the next owner begins, which is the shape
+  of a span filled to its neighbour rather than measured. One return each, with
+  0-40 bytes of trailing pool, says they were measured after all.
+- **Corroboration, two unrelated failure modes.** 1,874 `bl` sites inside owner
+  bodies resolve through `targetOffset`: 1,871 into the veneer bank, 3 onto
+  local owners, **none into tail data, none unclassified**. And all 17 image
+  words pointing into tail data are **even** — not one carries the Thumb bit.
+- **Liveness, same session.** Sweep D over 96 → `code_suspect_gaps=243
+  prologue_suspect_tails=19`; A/B/C over 96 → `residue=1602`; A/B/C on
+  `resource_3a4` → `residue=1`; sweep E over 96 → 397 findings; all three
+  self-tests pass; sweep D and sweep E both refuse a bogus name with exit 1.
+
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**

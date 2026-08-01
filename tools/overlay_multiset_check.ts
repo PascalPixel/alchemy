@@ -84,7 +84,32 @@ export function sourceCounts(source: string): Map<string, number> {
   for (const match of strippedBody(source).matchAll(/\b(Func_[0-9a-f]{8})\s*\(/g)) {
     counts.set(match[1], (counts.get(match[1]) ?? 0) + 1);
   }
+  const callbacks = runtimeCallbackCount(source);
+  if (callbacks > 0) counts.set(CALL_VIA, callbacks);
   return counts;
+}
+
+/**
+ * Count calls through variables that the source itself declares as function
+ * pointers. This is source-level evidence for a runtime `call_via`: unlike a
+ * fixed `Func_03xxxxxx` name, the destination is supplied by the caller and
+ * no address can honestly be invented for it.
+ */
+export function runtimeCallbackCount(source: string): number {
+  const withoutComments = source
+    .replace(/\/\*[\s\S]*?\*\//g, " ")
+    .replace(/\/\/[^\n]*/g, " ");
+  const names = new Set<string>();
+  for (const match of withoutComments.matchAll(/\(\s*\*\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)\s*\([^)]*\)/g)) {
+    names.add(match[1]);
+  }
+  const body = strippedBody(source);
+  let calls = 0;
+  for (const name of names) {
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    calls += [...body.matchAll(new RegExp(`\\b${escaped}\\s*\\(`, "g"))].length;
+  }
+  return calls;
 }
 
 /**
@@ -153,6 +178,11 @@ export function compare(assembly: Map<string, number>, source: Map<string, numbe
     source = new Map(source);
     assembly.delete(CALL_VIA);
     let remaining = viaSites;
+    const runtimeCallbacks = source.get(CALL_VIA) ?? 0;
+    const runtimeTaken = Math.min(runtimeCallbacks, remaining);
+    remaining -= runtimeTaken;
+    if (runtimeCallbacks === runtimeTaken) source.delete(CALL_VIA);
+    else source.set(CALL_VIA, runtimeCallbacks - runtimeTaken);
     for (const [name, count] of [...source]) {
       if (remaining === 0) break;
       if (!/^Func_03[0-9a-f]{6}$/.test(name)) continue;
@@ -232,6 +262,44 @@ void Func_0200011c(void)
   if (counts.get("Func_080770c8") !== 1) throw new Error("an assigned call must count");
   if (counts.get("Func_080770c0") !== 1) throw new Error("a call inside a test still counts");
   if (counts.has("Func_08000000")) throw new Error("comments must not be counted");
+
+  const callbackSource = `
+void Func_02000000(void (*callback)(void), void (*unused)(s32))
+{
+    if (callback != 0) callback();
+    if (unused != 0) { /* testing a pointer is not calling it */ }
+}
+`;
+  const callbackCounts = sourceCounts(callbackSource);
+  if (callbackCounts.get(CALL_VIA) !== 1) throw new Error("a declared callback invocation must count");
+  if (compare(new Map([[CALL_VIA, 1]]), callbackCounts).length !== 0) {
+    throw new Error("one runtime callback must reconcile with one call_via site");
+  }
+  const excessCallback = new Map(callbackCounts);
+  excessCallback.set(CALL_VIA, 2);
+  const excessMismatch = compare(new Map([[CALL_VIA, 1]]), excessCallback);
+  if (excessMismatch.length !== 1 || excessMismatch[0].target !== CALL_VIA ||
+      excessMismatch[0].assembly !== 0 || excessMismatch[0].source !== 1) {
+    throw new Error("an extra callback expression must remain a mismatch");
+  }
+  const noCallbackCall = `
+void Func_02000000(void (*callback)(void))
+{
+    if (callback != 0) return;
+}
+`;
+  if (runtimeCallbackCount(noCallbackCall) !== 0) {
+    throw new Error("a declaration or null test must not count as a callback invocation");
+  }
+  const undeclaredLookalike = `
+void Func_02000000(void)
+{
+    callback();
+}
+`;
+  if (runtimeCallbackCount(undeclaredLookalike) !== 0) {
+    throw new Error("an undeclared call-like name must not count as runtime callback evidence");
+  }
 
   const assembly = new Map([
     ["Func_0808a018", 2],

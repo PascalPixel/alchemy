@@ -16,6 +16,94 @@
  * written, rather than pointers stored at those addresses unless a `**` access
  * says otherwise.
  */
+/*
+ * __call_via_rN veneer sites, resolved per-site against the ROM. THIRTY-FOUR
+ * of them, not the 25 my own tool reported: `boundOf` capped this function at
+ * 0x080ea0d8 + 0x1000 and said nothing. The real owner runs to the next entry
+ * at 0x080eb754, and the count is now printed with a truncation warning when
+ * the cap bites. Nine sites lived past it.
+ *
+ * Three are pooled IWRAM helpers reached through r3, an ARGUMENT register, so
+ * the draft's fourth argument WAS the callee and each call takes three:
+ * 0x080ea290 -> 0x03001388 (word copy), 0x080ea35e and 0x080ea900 ->
+ * 0x03000168 (ARM fill).
+ *
+ * The other thirty-one are Func_080048b0 allocator slots 46 (0x03001f08) and
+ * 47 (0x03001f0c), and this function is the widest spread of lifetimes in the
+ * audit: FOUR eras, and only the second of them may be re-read.
+ *
+ *   ERA 1, slot 46 -- publish 0x080ea138, read 0x080ea13c into [sp, #88],
+ *   release 0x080ea962. ONE publish across the whole era. Three sites read
+ *   the parked copy: 0x080ea460 (r4), 0x080ea558 (r5), 0x080ea7c6 (r4).
+ *
+ *   THE SLOT-47 BRACKETS -- eleven publishes with different parameters, each
+ *   with exactly one site between it and its release, each site RE-READING:
+ *   0x080ea668/0x080ea694, 0x080ea6aa/0x080ea6c2, 0x080ea6d8/0x080ea6f0,
+ *   0x080ea706/0x080ea71c, 0x080ea7e6/0x080ea800, 0x080ea816/0x080ea82a,
+ *   0x080ea870/0x080ea8b4, 0x080eaee4/0x080eaefe, 0x080eaf12/0x080eaf28,
+ *   0x080eaf3c/0x080eaf54, 0x080eaf68/0x080eaf7e. Publish, read, call,
+ *   release, eleven times. NONE of these may be hoisted.
+ *
+ *   ERA 2, slot 46 -- released at 0x080ea962 and REPUBLISHED at 0x080ea972,
+ *   re-read at 0x080ea97a into the SAME [sp, #88], released at 0x080eb72a.
+ *   One publish across the era, so it caches -- but it is a DIFFERENT pointer
+ *   from era 1 and needs its own local. Fourteen sites: 0x080eafa8,
+ *   0x080eafca, 0x080eb00e, 0x080eb026, 0x080eb03c, 0x080eb050, 0x080eb074,
+ *   0x080eb096, 0x080eb0de, 0x080eb0f6, 0x080eb10e, 0x080eb122, 0x080eb188,
+ *   0x080eb3da -- reached through r4, r9, sl and r5, four registers, one
+ *   pointer.
+ *
+ *   ERA 3, slot 47 tail -- publish 0x080eb3ee, read 0x080eb3f6 into
+ *   [sp, #92], release 0x080eb6d4. One publish, so it caches. Three sites:
+ *   0x080eb40c uses the register the load left behind and 0x080eb600,
+ *   0x080eb6ca read the parked copy; with nothing republishing between them
+ *   the two forms are the same value, and one local expresses all three.
+ *
+ * Both slot-46 eras are CLOSED against loops: no branch inside
+ * 0x080ea140..0x080ea962 targets an address at or before 0x080ea140, and none
+ * inside 0x080ea984..0x080eb72a targets one at or before 0x080ea984. Checked
+ * over every branch in both spans, not sampled -- a single back edge would
+ * carry a cached pointer across a republication.
+ *
+ * A FOURTH BASE for slot 46 shows up here: the era-1 read is written by m2c
+ * as `M2C_FIELD((void *)0x03001EF0, s32 *, 0x18)`, and 0x03001ef0 + 0x18 is
+ * 0x03001f08. With 0x03001e50 + 184, 0x03001eec + 28 and 0x03001e80 + 0x88
+ * that makes four spellings of one word. Resolve the base before trusting an
+ * offset.
+ *
+ * PINNING. Thirty-four C statements against thirty-four sites, one to one per
+ * dispatch register once the prototypes are discounted. Order was NOT used:
+ * every pin that changes the answer -- each boundary between a cache and a
+ * re-read -- was settled by argument agreement at every position. 0x080ea460
+ * pushes (counter, r0) and its statement passes (temp_r4, temp_r0_2);
+ * 0x080ea7c6 adds 0x3c and 0x50 and pushes a table byte; 0x080eb3da adds 0x2c
+ * and 0x11 and pushes 0x20, 0x36; 0x080eb40c passes 0, 0 and pushes 0x78,
+ * 0x78. Four statements DO remain interchangeable in pairs -- the frame-0x40
+ * and frame-0x4e blocks are argument-identical, as are frame-0x42 and
+ * frame-0x50 -- but all four are era-2 sites, so the ambiguity cannot change
+ * the callee and it is recorded rather than papered over.
+ *
+ * STRUCTURE CORRECTED at 0x080eb00e: a DROPPED ARGUMENT. The draft called it
+ * with five arguments where the ROM sets r0-r3 and pushes two. Its y is
+ * recovered from the argument pattern, not from order: the four r9 sites form
+ * (A,B), (A,C), (D,B), (D,C) in x and y, the draft's four statements form
+ * (A,?), (A,C), (D,B), (D,C), so the hole is B -- `0x26 - temp_r6_7`, the
+ * same y the third statement passes. m2c had lost it because r3 is written
+ * eight instructions before the branch and saved into r8 on the way.
+ *
+ * ARITY: six at every renderer site. The dispatch register is r4 or above at
+ * all thirty-one, so no argument slot holds a callee in disguise.
+ *
+ * UNCERTAINTY, left standing: this settles which pointer each site calls and
+ * when it is read. It settles nothing about what slots 46 and 47 CONTAIN --
+ * the slot table unifies the addressing, never the contents.
+ */
+typedef void *(*WordCopy_080ea0d8)(void *destination, const void *source,
+                                   s32 size);
+typedef void (*ArmFill_080ea0d8)(void *destination, u32 size, u32 value);
+typedef void (*Renderer_080ea0d8)(s32 target, void *source, s32 x, s32 y,
+                                  u32 width, s32 height);
+
 s32 Func_080022ec();
 s32 Func_080022fc();
 s32 Func_0800231c();
@@ -33,11 +121,6 @@ void Func_08004bd4();
 void Func_08004c1c();
 void Func_08004c6c();
 void Func_080051d8();
-void Func_080072f0();
-void Func_080072f4();
-void Func_080072f8();
-void Func_08007308();
-void Func_0800730c();
 void Func_08009008();
 void Func_08009020();
 void Func_08009038();
@@ -79,8 +162,9 @@ void Func_080ea0d8(s32 *arg0) {
     s32 sp4C;
     u8 *sp50;
     s32 frame;
-    s32 sp58;
-    s32 sp5C;
+    Renderer_080ea0d8 renderer_46_early;
+    Renderer_080ea0d8 renderer_46_late;
+    Renderer_080ea0d8 renderer_47_tail;
     void *sp60;
     u8 *sp64;
     s32 sp68;
@@ -292,7 +376,7 @@ void Func_080ea0d8(s32 *arg0) {
     M2C_FIELD((void *)0x05000000, s16 *, 0) = 0;
     M2C_FIELD((void *)0x05000000, s16 *, 2) = 0;
     Func_080ed408(0x2E, 7, 7, 3, 3);
-    sp58 = M2C_FIELD((void *)0x03001EF0, s32 *, 0x18);
+    renderer_46_early = *(Renderer_080ea0d8 *)0x03001F08;
     M2C_FIELD(sp64, s32 *, 0x7780) = 0;
     Func_080041d8(0x080CD261, 0x480);
     Func_080cd104(0, 0);
@@ -342,7 +426,7 @@ loop_4:
         var_r5 += 0x302;
         var_r4 -= 7;
     } while (var_r7 != 8);
-    Func_080072f0(0x05000000, Func_08002f40(0x64), 0x80, 0x03001388);
+    ((WordCopy_080ea0d8)0x03001388)((void *)0x05000000, Func_08002f40(0x64), 0x80);
     var_r5_2 = (void *)0x02010000;
     var_r7_2 = 0;
     do {
@@ -377,7 +461,7 @@ loop_4:
     spC = 0xFFFFFA70;
 loop_15:
     if (frame == 0x8F) {
-        Func_080072f0(sp68, 0x4000, 0x2A2A2A2A, 0x03000168);
+        ((ArmFill_080ea0d8)0x03000168)(sp68, 0x4000, 0x2A2A2A2A);
         Func_080f9010(0x91);
     }
     if (frame == 0x50) {
@@ -412,7 +496,7 @@ loop_15:
                 sp3C = temp_r5;
             }
             temp_r0_2 = temp_r4 * 2;
-            Func_080072f4(sp68, &sp50[M2C_FIELD((temp_r0_2 - 2), u16 *, 0x080EDE48)], projected[0] - ((s32) (temp_r4 + (temp_r4 >> 0x1F)) >> 1), projected[1] - temp_r4, temp_r4, temp_r0_2);
+            renderer_46_early(sp68, &sp50[M2C_FIELD((temp_r0_2 - 2), u16 *, 0x080EDE48)], projected[0] - ((s32) (temp_r4 + (temp_r4 >> 0x1F)) >> 1), projected[1] - temp_r4, temp_r4, temp_r0_2);
             if (frame == 0x40) {
                 M2C_FIELD(var_r6_2, s32 *, 0xC) = (s32) (M2C_FIELD(var_r6_2, s32 *, 0xC) + ((s32) (Func_08002322(M2C_FIELD(var_r6_2, s32 *, 0x18)) * 0xFF) >> 3));
                 M2C_FIELD(var_r6_2, s32 *, 0x10) = (s32) (M2C_FIELD(var_r6_2, s32 *, 0x10) + ((s32) (Func_0800231c(M2C_FIELD(var_r6_2, s32 *, 0x18)) * 0xFF) >> 3));
@@ -463,7 +547,7 @@ loop_15:
             projected[0] = temp_r2;
             projected[1] = temp_r3_2;
             temp_r5_2 = temp_r0_4 * 2;
-            Func_080072f8(sp68, &sp50[M2C_FIELD((temp_r5_2 - 2), u16 *, 0x080EDE48)], temp_r2 - ((s32) (temp_r0_4 + (temp_r0_4 >> 0x1F)) >> 1), temp_r3_2 - temp_r0_4, temp_r0_4, temp_r5_2);
+            renderer_46_early(sp68, &sp50[M2C_FIELD((temp_r5_2 - 2), u16 *, 0x080EDE48)], temp_r2 - ((s32) (temp_r0_4 + (temp_r0_4 >> 0x1F)) >> 1), temp_r3_2 - temp_r0_4, temp_r0_4, temp_r5_2);
         }
         var_r7_5 += 1;
         var_r6_3 += 0x1C;
@@ -544,16 +628,16 @@ loop_15:
         temp_r3_4 = temp_sl * 2;
         temp_r6_2 = &sp64[temp_r6];
         temp_r5_3 = 0x50 - temp_r3_4;
-        Func_080072f4(sp68, temp_r6_2, temp_r2_2, temp_r5_3, (u32) temp_sl, temp_r3_4);
+        (*(Renderer_080ea0d8 *)0x03001F0C)(sp68, temp_r6_2, temp_r2_2, temp_r5_3, (u32) temp_sl, temp_r3_4);
         Func_08002dd8(0x2F);
         Func_080ed408(0x2F, 7, 7, 7, 2);
-        Func_080072f4(sp68, temp_r6_2, 0x3C, temp_r5_3, (u32) temp_sl, temp_r3_4);
+        (*(Renderer_080ea0d8 *)0x03001F0C)(sp68, temp_r6_2, 0x3C, temp_r5_3, (u32) temp_sl, temp_r3_4);
         Func_08002dd8(0x2F);
         Func_080ed408(0x2F, 7, 7, 0xB, 2);
-        Func_080072f4(sp68, temp_r6_2, temp_r2_2, 0x50, (u32) temp_sl, temp_r3_4);
+        (*(Renderer_080ea0d8 *)0x03001F0C)(sp68, temp_r6_2, temp_r2_2, 0x50, (u32) temp_sl, temp_r3_4);
         Func_08002dd8(0x2F);
         Func_080ed408(0x2F, 7, 7, 0xF, 2);
-        Func_080072f4(sp68, temp_r6_2, 0x3C, 0x50, (u32) temp_sl, temp_r3_4);
+        (*(Renderer_080ea0d8 *)0x03001F0C)(sp68, temp_r6_2, 0x3C, 0x50, (u32) temp_sl, temp_r3_4);
         Func_08002dd8(0x2F);
         var_r7_9 = 0;
         do {
@@ -563,16 +647,16 @@ loop_15:
             temp_r5_4 = ((s32) (Func_08002322((s32) temp_r0_8) * 0x10) >> 0x10) - ((u8) M2C_FIELD(temp_r4_2, u8 *, 0x080EEF4A) >> 1);
             temp_r0_9 = M2C_FIELD(sp8, u8 *, 0x080EEF50);
             var_r7_9 += 1;
-            Func_080072f4(sp68, &sp64[M2C_FIELD((sp8 * 2), u16 *, 0x080EEF3E)], temp_r5_4 + 0x3C, (((s32) (Func_0800231c((s32) temp_r0_8) * 0x10) >> 0x10) - (temp_r0_9 >> 1)) + 0x50, (u32) M2C_FIELD(sp8, u8 *, 0x080EEF4A), (s32) temp_r0_9);
+            renderer_46_early(sp68, &sp64[M2C_FIELD((sp8 * 2), u16 *, 0x080EEF3E)], temp_r5_4 + 0x3C, (((s32) (Func_0800231c((s32) temp_r0_8) * 0x10) >> 0x10) - (temp_r0_9 >> 1)) + 0x50, (u32) M2C_FIELD(sp8, u8 *, 0x080EEF4A), (s32) temp_r0_9);
         } while (var_r7_9 != 6);
     }
     if (frame > 0x8F) {
         temp_r6_3 = (frame * 0x10) + 0xFFFFF720;
         Func_080ed408(0x2F, 7, 7, 3, 3);
-        Func_080072f4(sp68, sp64, 0x24, temp_r6_3, 0x18U, 0x40);
+        (*(Renderer_080ea0d8 *)0x03001F0C)(sp68, sp64, 0x24, temp_r6_3, 0x18U, 0x40);
         Func_08002dd8(0x2F);
         Func_080ed408(0x2F, 7, 7, 7, 3);
-        Func_080072f4(sp68, sp64, 0x3C, temp_r6_3, 0x18U, 0x40);
+        (*(Renderer_080ea0d8 *)0x03001F0C)(sp68, sp64, 0x3C, temp_r6_3, 0x18U, 0x40);
         Func_08002dd8(0x2F);
         temp_r3_5 = frame - 0x90;
         temp_r1_3 = (s32) (temp_r3_5 + (temp_r3_5 >> 0x1F)) >> 1;
@@ -585,7 +669,7 @@ loop_15:
                 temp_r6_4 = var_r7_10 << 9;
                 temp_r5_6 = ((s32) (spC * Func_08002322(temp_r6_4)) >> 0x10) - 4;
                 var_r7_10 += 1;
-                Func_08007308(sp68, &sp64[temp_r5_5], temp_r5_6 + 0x3C, ((s32) (spC * Func_0800231c(temp_r6_4)) >> 0x11) + 0x48, 8, 0x10);
+                (*(Renderer_080ea0d8 *)0x03001F0C)(sp68, &sp64[temp_r5_5], temp_r5_6 + 0x3C, ((s32) (spC * Func_0800231c(temp_r6_4)) >> 0x11) + 0x48, 8, 0x10);
             } while (var_r7_10 != 0x80);
             Func_08002dd8(0x2F);
         }
@@ -603,7 +687,7 @@ loop_15:
             goto loop_15;
         }
     }
-    Func_080072f0(sp68, 0x4000, 0, 0x03000168);
+    ((ArmFill_080ea0d8)0x03000168)(sp68, 0x4000, 0);
     var_r7_11 = 0;
     var_r5_6 = sp64 + 0x77D8;
     do {
@@ -628,7 +712,7 @@ loop_15:
     } while (var_r7_12 != 0x10);
     Func_08002dd8(0x2E);
     Func_080ed408(0x2E, 7, 7, 3, 2);
-    sp58 = *(s32 *)0x03001F08;
+    renderer_46_late = *(Renderer_080ea0d8 *)0x03001F08;
     Func_080e0524((void *)0x64, sp64 + 0x4000, 1, 1);
     var_r1_3 = sp50;
     var_r7_13 = 0;
@@ -866,24 +950,24 @@ second_frame_loop:
         }
         Func_080ed408(0x2F, 7, 7, 3, 2);
         temp_r6_5 = (frame - 4) - 0x18;
-        Func_080072f4(sp68, var_r7_18, 0x24, temp_r6_5, 0x18U, 0x18);
+        (*(Renderer_080ea0d8 *)0x03001F0C)(sp68, var_r7_18, 0x24, temp_r6_5, 0x18U, 0x18);
         Func_08002dd8(0x2F);
         Func_080ed408(0x2F, 7, 7, 7, 2);
-        Func_080072f4(sp68, var_r7_18, 0x3B, temp_r6_5, 0x18U, 0x18);
+        (*(Renderer_080ea0d8 *)0x03001F0C)(sp68, var_r7_18, 0x3B, temp_r6_5, 0x18U, 0x18);
         Func_08002dd8(0x2F);
         Func_080ed408(0x2F, 7, 7, 0xB, 2);
         temp_r6_6 = temp_r6_5 + 0x17;
-        Func_080072f4(sp68, var_r7_18, 0x24, temp_r6_6, 0x18U, 0x18);
+        (*(Renderer_080ea0d8 *)0x03001F0C)(sp68, var_r7_18, 0x24, temp_r6_6, 0x18U, 0x18);
         Func_08002dd8(0x2F);
         Func_080ed408(0x2F, 7, 7, 0xF, 2);
-        Func_080072f4(sp68, var_r7_18, 0x3B, temp_r6_6, 0x18U, 0x18);
+        (*(Renderer_080ea0d8 *)0x03001F0C)(sp68, var_r7_18, 0x3B, temp_r6_6, 0x18U, 0x18);
         Func_08002dd8(0x2F);
     }
     if ((u32) (frame - 0x40) <= 1U) {
-        Func_080072f4(sp68, sp64 + 0x6000, 0x34, 0x33, 0x10U, 0x11);
+        renderer_46_late(sp68, sp64 + 0x6000, 0x34, 0x33, 0x10U, 0x11);
     }
     if ((u32) (frame - 0x42) <= 1U) {
-        Func_080072f4(sp68, sp64 + 0x6110, 0x30, 0x28, 0x18U, 0x29);
+        renderer_46_late(sp68, sp64 + 0x6110, 0x30, 0x28, 0x18U, 0x29);
     }
     if ((u32) (frame - 0x44) <= 7U) {
         temp_r6_7 = 0x4C - frame;
@@ -891,18 +975,18 @@ second_frame_loop:
         temp_r5_8 = (s32) (temp_r6_7 + (temp_r6_7 >> 0x1F)) >> 1;
         temp_r4_3 = 0x31 - temp_r5_8;
         sp8 = temp_r4_3;
-        Func_08007308(sp68, temp_r0_16, temp_r4_3, 0x16, 0x2C);
+        renderer_46_late(sp68, temp_r0_16, temp_r4_3, 0x26 - temp_r6_7, 0x16, 0x2C);
         temp_r6_8 = temp_r6_7 + 0x26;
-        Func_08007308(sp68, temp_r0_16, temp_r4_3, temp_r6_8, 0x16, 0x2C);
+        renderer_46_late(sp68, temp_r0_16, temp_r4_3, temp_r6_8, 0x16, 0x2C);
         temp_r5_9 = temp_r5_8 + 0x31;
-        Func_08007308(sp68, temp_r0_16, temp_r5_9, 0x26 - temp_r6_7, 0x16, 0x2C);
-        Func_08007308(sp68, temp_r0_16, temp_r5_9, temp_r6_8, 0x16, 0x2C);
+        renderer_46_late(sp68, temp_r0_16, temp_r5_9, 0x26 - temp_r6_7, 0x16, 0x2C);
+        renderer_46_late(sp68, temp_r0_16, temp_r5_9, temp_r6_8, 0x16, 0x2C);
     }
     if ((u32) (frame - 0x4E) <= 1U) {
-        Func_080072f4(sp68, sp64 + 0x6000, 0x34, 0x33, 0x10U, 0x11);
+        renderer_46_late(sp68, sp64 + 0x6000, 0x34, 0x33, 0x10U, 0x11);
     }
     if ((u32) (frame - 0x50) <= 1U) {
-        Func_080072f4(sp68, sp64 + 0x6110, 0x30, 0x28, 0x18U, 0x29);
+        renderer_46_late(sp68, sp64 + 0x6110, 0x30, 0x28, 0x18U, 0x29);
     }
     if ((u32) (frame - 0x52) <= 3U) {
         temp_r7 = frame * 2;
@@ -915,12 +999,12 @@ second_frame_loop:
         temp_r3_16 = var_r3_6 >> 2;
         temp_r5_10 = 0x31 - temp_r3_16;
         temp_r6_9 = 0x26 - temp_r2_9;
-        Func_0800730c(sp68, sp1C, temp_r5_10, temp_r6_9, 0x16, 0x2C);
+        renderer_46_late(sp68, sp1C, temp_r5_10, temp_r6_9, 0x16, 0x2C);
         temp_r7_2 = temp_r7 - 0x7E;
-        Func_0800730c(sp68, sp1C, temp_r5_10, temp_r7_2, 0x16, 0x2C);
+        renderer_46_late(sp68, sp1C, temp_r5_10, temp_r7_2, 0x16, 0x2C);
         temp_r9 = temp_r3_16 + 0x31;
-        Func_0800730c(sp68, sp1C, temp_r9, temp_r6_9, 0x16, 0x2C);
-        Func_0800730c(sp68, sp1C, temp_r9, temp_r7_2, 0x16, 0x2C);
+        renderer_46_late(sp68, sp1C, temp_r9, temp_r6_9, 0x16, 0x2C);
+        renderer_46_late(sp68, sp1C, temp_r9, temp_r7_2, 0x16, 0x2C);
     }
     if ((u32) (frame - 0x48) <= 3U) {
         temp_r0_17 = (frame * 0x10) + 0xFFFFFB90;
@@ -929,7 +1013,7 @@ second_frame_loop:
             temp_r6_10 = var_r7_19 << 8;
             temp_r5_11 = ((s32) (temp_r0_17 * Func_08002322(temp_r6_10)) >> 0x10) - 5;
             var_r7_19 += 1;
-            Func_080072f8(sp68, &sp50[*(u16 *)0x080EDE5A], temp_r5_11 + 0x3C, ((s32) (temp_r0_17 * Func_0800231c(temp_r6_10)) >> 0x11) + 0x32, 0xAU, 0x14);
+            renderer_46_late(sp68, &sp50[*(u16 *)0x080EDE5A], temp_r5_11 + 0x3C, ((s32) (temp_r0_17 * Func_0800231c(temp_r6_10)) >> 0x11) + 0x32, 0xAU, 0x14);
         } while (var_r7_19 != 0x100);
     }
     if (frame <= 0x55) {
@@ -1076,14 +1160,14 @@ loop_184:
                 var_r3_13 = temp_r2_11 + 3;
             }
             var_r7_21 += 1;
-            Func_080072f4(sp68, sp64 + ((temp_r2_11 - ((var_r3_13 >> 2) * 4)) * 0x6C0) + 0x4000, temp_r5_13 + 0x2C, temp_r0_18 + 0x11, 0x20U, 0x36);
+            renderer_46_late(sp68, sp64 + ((temp_r2_11 - ((var_r3_13 >> 2) * 4)) * 0x6C0) + 0x4000, temp_r5_13 + 0x2C, temp_r0_18 + 0x11, 0x20U, 0x36);
             var_r6_5 += 0x1000;
         } while (var_r7_21 != 9);
     }
     Func_080ed408(0x2F, 7, 7, 3, 3);
-    sp5C = *(s32 *)0x03001F0C;
+    renderer_47_tail = *(Renderer_080ea0d8 *)0x03001F0C;
     if (frame > 0x55) {
-        Func_080072f4(sp68, sp64, 0, 0, 0x78U, 0x78);
+        renderer_47_tail(sp68, sp64, 0, 0, 0x78U, 0x78);
     }
     if (frame > 0x117) {
         sp20 -= 8;
@@ -1172,7 +1256,7 @@ loop_184:
                     var_r3_17 = temp_r2_13 + 3;
                 }
                 var_r7_24 += 1;
-                Func_080072f4(sp68, sp64 + ((temp_r2_13 - ((var_r3_17 >> 2) * 4)) * 0x6C0) + 0x4000, temp_r6_12 - 0x10, temp_r5_15, 0x20U, 0x36);
+                renderer_47_tail(sp68, sp64 + ((temp_r2_13 - ((var_r3_17 >> 2) * 4)) * 0x6C0) + 0x4000, temp_r6_12 - 0x10, temp_r5_15, 0x20U, 0x36);
             } while (var_r7_24 != 8);
         } else {
             var_r7_25 = 0;
@@ -1186,7 +1270,7 @@ loop_184:
                     var_r3_18 = temp_r2_14 + 3;
                 }
                 var_r7_25 += 1;
-                Func_080072f4(sp68, sp64 + ((temp_r2_14 - ((var_r3_18 >> 2) * 4)) * 0x6C0) + 0x4000, temp_r6_13 - 0x10, temp_r5_17, 0x20U, 0x36);
+                renderer_47_tail(sp68, sp64 + ((temp_r2_14 - ((var_r3_18 >> 2) * 4)) * 0x6C0) + 0x4000, temp_r6_13 - 0x10, temp_r5_17, 0x20U, 0x36);
             } while (var_r7_25 != 8);
         }
     }

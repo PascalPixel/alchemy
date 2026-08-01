@@ -6726,6 +6726,12 @@
       "entry": "0x020031a8",
       "span_bytes": 220,
       "evidence": "admitted whole-owner semantic reconstruction; owner is absent from out/decomp/overlays.json, from tools/overlay_unindexed.ts and from assets/code, and no bl in the image resolves here -- it is installed as a per-frame task by the drafted 0x02001444 entry driver, which calls Func_080000d0 with the pool word 0x0200b1a9, i.e. this offset plus the 0x8000 link base with the Thumb bit set. Owner is prologue-started (push {r5, r6, lr} followed by the sl/r9 spill mov r6,sl / mov r5,r9 / push {r5, r6} and the r8 spill mov r6,r8 / push {r6}) and returning (pop {r3, r5, r6} / mov r8,r3 / mov r9,r5 / mov sl,r6 / pop {r5, r6} / pop {r0} / bx r0 at 0x02003258-0x02003264); span walked through all four internal branches (the three wrap guards and the ble at 0x02003238); alignment halfword and seven trailing pool words (0x03001e70, 0x0200db58, 0x0200db38, 0x0000ffff, 0x0200db50, 0x0200db60, 0xffe00000) end 0x02003283, next owner at 0x02003284 (already banked byte-exact as assets/code/resource_3af_c_02003284.c), inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3af",
+      "entry": "0x02000598",
+      "span_bytes": 396,
+      "evidence": "admitted whole-owner semantic reconstruction; owner is absent from every inventory and from tools/overlay_unindexed.ts, and no bl in the image resolves here; DATA-INSTALLED callback whose Thumb pointer 0x02008599 is published at 0x020048c0 in the script-record table. Owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6} / pop {r0} / bx r0 at 0x0200070a onward, with r0 carrying the s32 return value 1). Span walked through every internal branch AND through all ten entries of the embedded jump table at 0x020005b4-0x020005db (entries are image addresses in the +0x8000 link form, e.g. 0x020085dc = image 0x020005dc; the table sits inside the body with the mov pc,r3 at 0x020005b0 entering it and the first arm resuming at 0x020005dc, and every word disassembles as a plausible strh). Five trailing pool words (0x020085b4 -- the table's own base -- 0x02960000, 0x00000103, 0x02860000, 0x02ae0000) end 0x02000723, next owner prologue at 0x02000724, inside the assembled overlay image and not overlapping another recorded owner"
     }
   ]
 }

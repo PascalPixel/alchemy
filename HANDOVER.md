@@ -4326,6 +4326,48 @@ while these residuals are allocator and pool-placement decisions that have
 none. `decomp-permuter-agbcc` could NOT be evaluated — the lane has no
 network access.
 
+## 5c. Auditing the executable inventory for holes (2026-08-01)
+
+Twice in one night `full_c_progress` threw `C span is outside audited
+executable intervals` *after* an adoption had been applied. That discovery
+method only fires when someone happens to seal that exact row, so the holes
+it finds are the ones we tripped over, not the ones that exist.
+`tools/inventory_gaps.ts` makes it a standing check.
+
+**The four sources, and why the fourth is the only pre-emptive one.**
+Ownable spans are gathered from four independent places and each is tested
+for containment in the union of its namespace's audited intervals:
+  1. every assembled row in `out/asm/manifest.json` (main);
+  2. every `executable_ranges` entry in `semantic/main-regions.json` (main);
+  3. every `AlchemyC_`/`AlchemyAsm_` owner label in `assets/code/*_overlay.s`;
+  4. every owner in `out/decomp/overlay-shapes.json` — the UNINVENTORIED
+     population: real code with no owner label and no C source.
+Sources 1-3 are what the tree already owns, and they only tell you the audit
+is consistent with our own bookkeeping. **Source 4 is the only one that can
+find a hole before it bites**, because a hole under an unowned span is
+invisible to every consistency check until someone converts that row.
+Corollary: re-deriving the inventory does NOT fix a source-4 hole —
+`deriveInventory` reads the `.s`, and these owners have no label there.
+
+**UNION BEFORE TESTING CONTAINMENT.** An audited namespace routinely stores
+adjacent intervals separately (`[0x100,0x200)` and `[0x200,0x280)`), and a
+span crossing that join is contained even though it fits inside neither
+interval. Testing against raw intervals reports false holes: a first pass on
+2026-08-01 claimed four holes and 352 bytes, of which **two were this bug**.
+The tool unions first and its self-test pins the behaviour with a
+`spans-the-join` case.
+
+**Validate a method like this by historical replay, not by today's output.**
+Pull earlier inventories out of git (`git show <commit>~1:metrics/…json`) and
+confirm the method reproduces holes that were found by accident, without
+being told to look for them. Both 2026-08-01 holes fall out of their pre-fix
+inventories that way; a method that cannot re-find a known hole must not be
+trusted on an unknown one.
+
+**Self-tests go on synthetic input.** `--self-test` builds its own inventory
+and owner set so it cannot rot when the repository's real spans move — which
+they do at every adoption.
+
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**

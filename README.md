@@ -30,12 +30,12 @@ runtime structure intentionally retained as assembly. There is no ordinary
 gray semantic debt left in the main-image census. Each tile follows one audited
 source/owner boundary and keeps that owner's natural byte size:
 
-![Main-image code coverage box tree in purple with retained assembly in orange.](assets/readme/gs1-en-core.svg?v=3be98291)
+![Main-image code coverage box tree in purple with retained assembly in orange.](assets/readme/gs1-en-core.svg?v=7bb89618)
 
 **Code overlays** — 794,842 executable bytes across 96 decoded RAM-loaded
 modules:
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=7a5418ac)
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=87b08561)
 
 **Data / assets** — the 7.3 MB of the ROM image that is data, not code. Same ladder in
 magenta: faint is byte-represented, a third is b&w sheets, two thirds is

@@ -57,6 +57,11 @@ const FIXED_LR_SOURCES = new Set<string>();
 // These compact hardware helpers match the reference load/store order at -O1;
 // -O2 only swaps independent descriptor setup instructions.
 const OPTIMIZE_O1_SOURCES = new Set(["080049e8", "08021e28"]);
+// This two-table signed lookup keeps its compact loop layout at -Os.  With
+// jump-following CSE disabled, the resulting 124-byte owner matches exactly;
+// the bounded compiler cohort found the same exact result independently with
+// the already-evidenced two-insn-immediate CSE switch.
+const OPTIMIZE_OS_SOURCES = new Set(["08019d2c"]);
 // One overlay predicate family returns through a single `pop {pc}` where every
 // other reconstructed function returns `pop {rN}` + `bx rN`. That is the
 // interworking epilogue, not a scheduling or allocation difference: the whole
@@ -105,6 +110,11 @@ const NO_INTERWORK_OVERLAY_SOURCES = new Set([
   // Moved out of the stem set: resource_377 now has an interworking row at
   // 02001544, and the stem key would have stripped its interworking epilogue.
   "assets/code/resource_3a7_c_02001544.c",
+  // These resource_3bf soft-double wrappers are stock-ABI library leaves whose
+  // references return with pop {pc}; both bodies independently match once the
+  // two ABI properties are selected.
+  "assets/code/resource_3bf_c_02005a40.c",
+  "assets/code/resource_3bf_c_02005a78.c",
 ]);
 // Only the second flag does anything. The pre-reload scheduler is inert in this
 // fork: 40 converted sources, including the largest, compile byte-identically
@@ -119,10 +129,21 @@ const UNSCHEDULED_SOURCES = new Set([
   "080fb714", "080fb728", "080fb73c", "080fb750", "080fb75c",
   "080fb768", "080fb77c",
 ]);
+// These four independently identical leaves need only the post-reload
+// scheduler disabled: it keeps the second field update ahead of the later
+// pointer load.  Their matching reference bytes demonstrate one shared
+// compiler behaviour, so keep the evidence path-scoped rather than claiming
+// the repeatedly used 02000acc stem globally.
+const UNSCHEDULED_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_39f_c_02000acc.c",
+  "assets/code/resource_3b2_c_02000acc.c",
+  "assets/code/resource_3c4_c_02000acc.c",
+  "assets/code/resource_3c5_c_02000acc.c",
+]);
 // This decoder has mutually exclusive switch arms that reuse the same input
 // base.  Following jumps during CSE rematerializes one arm's base in r3;
 // disabling that pass preserves the reference's r6 lifetime and coalescing.
-const NO_CSE_FOLLOW_SOURCES = new Set(["0800f9f4"]);
+const NO_CSE_FOLLOW_SOURCES = new Set(["0800f9f4", "08019d2c"]);
 // In 08006088 the post-loop CSE rerun rewrites the field9 arm's OR to read the
 // return accumulator instead of the equal packed-value pseudo. That makes the
 // latter die at its copy, so local allocation ties both quantities and removes
@@ -223,7 +244,7 @@ const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78", "08005c68"]);
 // 08094730 has the same scheduler tell immediately before its grouped DMA
 // descriptor; original-order tie breaking closes its last transposition.
 const NO_SCHED_DEPEND_COUNT_SOURCES = new Set([
-  "08002fb0", "08003e10", "08005340", "08005394", "080053e8", "0800d304", "08019bac", "08021d88", "080903bc", "08094730",
+  "08002fb0", "08003e10", "08004760", "08005340", "08005394", "080053e8", "0800d304", "08019bac", "08021d88", "080903bc", "08094730",
   // First overlay member. §4's pool-load hoist, but the flag that reaches it is
   // this one, not -fsched-low-dest-first: the reference issues the argument
   // group's `ldr r0,[pc]` ahead of its `movs r1,#1`, and both -fsched-*-dest-first
@@ -588,6 +609,18 @@ const NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES = new Set([
 // deliberately excluded, since a pool load is one instruction and sharing it is
 // not a size change.
 const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // The largest open overlay owner is a long event call sheet whose repeated
+  // wide immediates are independently materialized throughout the reference.
+  // Sharing them changes the saved-register set and every later pool boundary.
+  "assets/code/resource_3b8_c_02002014.c",
+  // The two placement calls in resource_37b:1624 each rematerialize 0x800000;
+  // sharing it introduces r5 and changes the whole call sequence.
+  "assets/code/resource_37b_c_02001624.c",
+  // resource_373:3380 independently materialises the repeated 0x10000/0x8000
+  // scale pair.  CSE sharing changes the prologue and grows the owner by eight
+  // bytes; the low-destination scheduler route below restores its call setup.
+  "assets/code/resource_373_c_02003380.c",
+  "assets/code/resource_373_c_020012bc.c",
   // resource_3bb:0b38 is the target-specific transpose of the exact
   // resource_3ba:0974 source; both independently materialize repeated wide
   // immediates before the low-destination call scheduler orders them.
@@ -668,6 +701,14 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  // Paired with both CSE gates for resource_3b8's long event call sheet; once
+  // constants are rematerialized, this restores the reference argument order.
+  "assets/code/resource_3b8_c_02002014.c",
+  // Near-twin of resource_394:08b0.  Its shared straight-line call sequence
+  // has the same proven tied-argument ordering; paired with the pool-CSE route.
+  "assets/code/resource_394_c_020007e0.c",
+  "assets/code/resource_373_c_02003380.c",
+  "assets/code/resource_373_c_020012bc.c",
   "assets/code/resource_3b5_c_02000644.c",
   "assets/code/resource_3bb_c_02000b38.c",
   // After the paired CSE route rematerializes resource_3c8:07d8's three -1
@@ -843,6 +884,7 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   "assets/code/resource_37b_c_020015d4.c",
   "assets/code/resource_37b_c_020015fc.c",
   "assets/code/resource_37b_c_0200101c.c",
+  "assets/code/resource_37b_c_02001624.c",
   "assets/code/resource_37b_c_0200166c.c",
   "assets/code/resource_37b_c_020016a4.c",
   "assets/code/resource_37b_c_0200195c.c",
@@ -921,6 +963,9 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
 // (measured on resource_373:2cb0 — do not re-attack it with a whole-function
 // flag). docs/compiler-evidence/cse-pool-immediate.diff.
 const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // This event call sheet reloads recurring addresses at their call sites;
+  // sharing them shifts all eight inline literal pools and grows the prologue.
+  "assets/code/resource_3b8_c_02002014.c",
   "assets/code/resource_38b_c_02000240.c",
   "assets/code/resource_372_c_02000f38.c",
   "assets/code/resource_37b_c_02001b44.c",
@@ -940,6 +985,7 @@ const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
   "assets/code/resource_37b_c_020022f4.c",
   "assets/code/resource_3a4_c_02000c9c.c",
   "assets/code/resource_394_c_020008b0.c",
+  "assets/code/resource_394_c_020007e0.c",
   "assets/code/resource_3b8_c_02000264.c",
   "assets/code/resource_3bf_c_02004bfc.c",
   "assets/code/resource_39c_c_020014cc.c",
@@ -1065,6 +1111,12 @@ const DEFAULT_ABI_SOURCES = new Set([
   "08006a00", "08006b84", "08006ba8", "08006c24", "08006dec", "08007098",
   "080fada0", "080fadf0",
 ]);
+// Overlay-safe counterpart to DEFAULT_ABI_SOURCES.  Addresses are extensively
+// reused between overlays, so new evidence belongs to the full source path.
+const DEFAULT_ABI_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3bf_c_02005a40.c",
+  "assets/code/resource_3bf_c_02005a78.c",
+]);
 // The stock m4a object linked into GS1 was built with the public old_agbcc
 // compiler rather than Camelot's gcc-2.96 fork. Keep adoption source-scoped:
 // every listed unit must have an independent exact-byte proof.
@@ -1148,7 +1200,7 @@ function sourceKey(source: string): string {
 
 export function cflagsForSource(source: string): readonly string[] {
   const stem = overlayStem(source);
-  const abiBase = DEFAULT_ABI_SOURCES.has(stem)
+  const abiBase = DEFAULT_ABI_SOURCES.has(stem) || DEFAULT_ABI_OVERLAY_SOURCES.has(sourceKey(source))
     ? CFLAGS.filter((flag) => flag !== "-fcall-used-r4")
     : [...CFLAGS];
   const base = NO_INTERWORK_SOURCES.has(stem) || NO_INTERWORK_OVERLAY_SOURCES.has(sourceKey(source))
@@ -1159,7 +1211,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(FIXED_R3_SOURCES.has(stem) ? ["-ffixed-r3"] : []),
     ...(FIXED_LR_SOURCES.has(stem) ? ["-ffixed-r14"] : []),
     ...(OPTIMIZE_O1_SOURCES.has(stem) ? ["-O1"] : []),
+    ...(OPTIMIZE_OS_SOURCES.has(stem) ? ["-Os"] : []),
     ...(UNSCHEDULED_SOURCES.has(stem) ? ["-fno-schedule-insns", "-fno-schedule-insns2"] : []),
+    ...(UNSCHEDULED_OVERLAY_SOURCES.has(sourceKey(source)) ? ["-fno-schedule-insns2"] : []),
     ...(NO_CSE_FOLLOW_SOURCES.has(stem) ? ["-fno-cse-follow-jumps"] : []),
     ...(NO_RERUN_CSE_AFTER_LOOP_SOURCES.has(stem) ? ["-fno-rerun-cse-after-loop"] : []),
     ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),
@@ -1326,6 +1380,8 @@ export function evidencedRoutingFlags(): string[] {
     ...NO_GCSE_INSERT_LOAD_OVERLAY_SOURCES,
     ...SCHED_STORE_FIRST_OVERLAY_SOURCES,
     ...GROUPED_DMA_STORE_OVERLAY_SOURCES,
+    ...UNSCHEDULED_OVERLAY_SOURCES,
+    ...DEFAULT_ABI_OVERLAY_SOURCES,
     ...EARLY_LITERAL_POOL_OVERLAY_PATHS,
   ]) inspect(join(ROOT, source));
   for (const stem of EARLY_LITERAL_POOL_OVERLAY_SOURCES) inspect(`/tmp/${stem}.c`);
@@ -2022,6 +2078,17 @@ function selfTest(): void {
   if (usesAgbccCompiler("gs1", "/tmp/080000c0.c") ||
       JSON.stringify(cflagsForTargetSource("gs1", "/tmp/080000c0.c")) === JSON.stringify(AGBCC_CFLAGS)) {
     throw new Error("old_agbcc unrelated-source routing self-test failed");
+  }
+  for (const stem of ["02005a40", "02005a78"]) {
+    const source = join(ROOT, `assets/code/resource_3bf_c_${stem}.c`);
+    const flags = cflagsForTargetSource("gs1", source);
+    if (flags.includes("-fcall-used-r4") || flags.includes("-mthumb-interwork")) {
+      throw new Error(`${stem} stock non-interworking ABI routing self-test failed`);
+    }
+    const unrelated = cflagsForTargetSource("gs1", join(ROOT, `assets/code/resource_3aa_c_${stem}.c`));
+    if (!unrelated.includes("-fcall-used-r4") || !unrelated.includes("-mthumb-interwork")) {
+      throw new Error(`${stem} overlay-path isolation self-test failed`);
+    }
   }
   const groupedDma = [...GROUPED_DMA_STORE_SOURCES].sort();
   if (JSON.stringify(groupedDma) !== JSON.stringify([

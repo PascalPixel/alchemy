@@ -1214,13 +1214,8 @@ AlchemyC_02000474:
 	.4byte 0x69036cc2
 	.4byte 0x6103189b
 	.4byte 0x69836b02
-	.4byte 0x6183189b
-	.4byte 0x69c36b42
-	.4byte 0x61c3189b
-	.4byte 0x30646d01
-	.4byte 0x88028bcb
-	.4byte 0x83cb189b
-	.2byte 0x4770
+AlchemyC_02000acc:
+	.space 0x1a
 	.2byte 0x0000
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

@@ -527,23 +527,6 @@ function overlaySources(target: DecompTargetId): string[] {
     .map((name) => join(directory, name));
 }
 
-function semanticOverlayCallers(): Map<string, Interval[]> {
-  const document = readJson(join(ROOT, "semantic", "regions.json")) as {
-    manual_regions: { overlay: string; entry: string; span_bytes: number }[];
-  };
-  const result = new Map<string, Interval[]>();
-  for (const region of document.manual_regions) {
-    const start = Number.parseInt(region.entry, 16);
-    result.set(region.overlay, [...(result.get(region.overlay) ?? []), {
-      start,
-      end: start + region.span_bytes,
-      kind: "thumb",
-      evidence: "tracked semantic owner span",
-    }]);
-  }
-  return result;
-}
-
 export function deriveInventory(target: DecompTargetId): ExecutableInventory {
   const main = mainInventory(target);
   if (target === "gs2-en") {
@@ -561,11 +544,7 @@ export function deriveInventory(target: DecompTargetId): ExecutableInventory {
       ],
     };
   }
-  const callers = semanticOverlayCallers();
-  const overlays = overlaySources(target).map((source) => {
-    const id = basename(source).replace(/_overlay\.s$/, "");
-    return overlayInventory(source, callers.get(id) ?? []);
-  });
+  const overlays = overlaySources(target).map((source) => overlayInventory(source, []));
   const total = main.executable_bytes +
     overlays.reduce((sum, overlay) => sum + overlay.executable_bytes, 0);
   return {
@@ -841,6 +820,12 @@ function selfTest(): void {
   }
   if (reachedDirectiveLeaves(leafImage, [], rawLeaf).length !== 0) {
     throw new Error("a BL-shaped pair in unaudited data must not reach a raw leaf");
+  }
+  const poolBlShape = leafImage.slice();
+  poolBlShape.fill(0, 0, 4);
+  poolBlShape.set([0x00, 0xf0, 0x07, 0xf8], 4);
+  if (reachedDirectiveLeaves(poolBlShape, caller, rawLeaf).length !== 0) {
+    throw new Error("a BL-shaped pair in an adjacent literal pool must not reach a raw leaf");
   }
   const getterImage = leafImage.slice();
   getterImage.set([0x00, 0x48, 0x70, 0x47, 0x88, 0x98, 0x00, 0x02], 0x10);

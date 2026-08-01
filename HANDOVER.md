@@ -157,6 +157,20 @@ a dispatch of `renderers[counter & 1]`. Confirmed at:
 | `semantic/main/080db264.c` | `[sp,#36]`, `[sp,#40]` | `[sp,#12]` | wave parity |
 | `semantic/main/080f7460.c` | `[sp,#48]`, `[sp,#52]` | `[sp,#12]` | particle index parity |
 | `semantic/main/080dd2c4.c` | `[sp,#48]`, `[sp,#52]` | `[sp,#28]` | emitter index parity |
+| `semantic/main/080d41a4.c` | `[sp,#44]`, `[sp,#48]` | `[sp,#12]` | particle index parity |
+| `semantic/main/080d2d98.c` | `[sp,#52]`, `[sp,#56]` | `[sp,#36]` | `field_0x10 > 0` |
+
+Two variants of the same thing. `080d41a4` reaches the slots as `[r5, #28]`
+and `[r5, #32]` off the runtime header at 0x03001eec rather than off
+0x03001e50 — 0x03001eec + 28 is 0x03001f08, which is why these read as struct
+fields in some files and globals in others. `080d2d98` never loads them at
+all: it passes `sp + 52` to `Func_080cef64(0, …)`, whose byte-exact source
+writes `output[0] = *(state + 184)` and `output[1] = *(state + 188)`. The
+out-parameter IS the two-element array.
+
+`semantic/main/080de2f8.c` has the two slots without any base pointer and no
+indexed dispatch — each site names one slot outright — which is the reminder
+that the table is a habit of this family, not a law.
 
 **Both directions of structural damage show up around this idiom**, and both
 were repaired by reading it:
@@ -169,6 +183,11 @@ were repaired by reading it:
   same routine twice. They are renderer 46 then renderer 47.
 - `080f7460` read the index CORRECTLY and even named both renderers — then
   passed the chosen one as a seventh ARGUMENT. Arity is six.
+- `080d2d98` carried `if (temp_r3 <= 0) { }` — an if with an EMPTY body. m2c
+  kept the branch and dropped its only effect, because that effect was
+  `r6 = 4; if (r3 <= 0) r6 = 0;` at 0x080d320c, i.e. choosing the callee. An
+  empty conditional next to a veneer site is a dropped dispatch, not dead
+  code.
 
 Do NOT pattern-match this across files. It is confirmed per file by reading
 the two slot stores and the base store in that function's own prologue; a
@@ -187,9 +206,16 @@ nowhere in the assembly. This is the second independent two-argument site
 after 0x080bd87e in `semantic/main/080bd850.c`, where nothing in the whole
 function writes r2 at all. Two different instruments, not two drafts.
 
-0x03000164 itself stays **UNESTABLISHED** — still the exact-lane question.
-Nothing here says what it does; it says how many arguments these two callers
-hand it.
+Two more at `0x080de914` and `0x080de91e` in `semantic/main/080de2f8.c`,
+both `__call_via_r5` off a single pooled load. Only r0 and r1 (0x4000) are
+set, and r2 is provably not an argument at either: each site is preceded by a
+`bl` that clobbers r2 as a caller-saved register. The m2c draft agreed from
+its own side, writing the calls with two arguments and declaring the routine
+with an empty argument list.
+
+Four sites now, in three files, reached through r3 and r5. **0x03000164
+itself stays UNESTABLISHED** — still the exact-lane question. Nothing here
+says what it does; it says how many arguments these callers hand it.
 
 ### A struct field is not always a pointer: tagged words
 

@@ -6837,13 +6837,37 @@ lanes each re-instrumented the same line by hand to learn anything — "the 39c
 complaint" stayed anonymous for days for want of one coordinate. **An error
 that does not name its subject is a silent gate wearing a different hat.**
 
+### Second pass, from the coordinate (same shift)
+
+Going back at it with the coordinate in hand narrowed it further and did not
+close it. Two new facts, both measured:
+
+- **It reproduces, rarely.** One failure in five cold `assembleOverlay` runs
+  (`first_diff=0x10cc differing=55`, identical to the earlier sightings), then
+  **eight consecutive clean runs**. Roughly three occurrences in ~25 runs
+  tonight. Any future "I ran it and it was fine" means nothing below about
+  twenty cold runs — this is the sample size the next person needs.
+- **The owning row's compilation is DETERMINISTIC.** Hashing the spliced image
+  slice `0x10c0-0x1408` across six cold compiles gives one digest, six times
+  (`11de310d…`, 840 bytes). So `resource_39c_c_020010c0.c` compiles bit-identically
+  every time, and **the intermittency is not in that row's compile output** —
+  which was the obvious hypothesis and is now excluded.
+
+That leaves the splice, or a neighbouring row landing over `0x10cc`, or
+something above `assembleOverlay`. Not established, and I stopped here rather
+than keep burning the shift on a one-in-eight event.
+
 ### If it recurs
 
-Capture the message (it now carries the coordinate), then check whether
-`assets/code/resource_39c_c_020010c0.c` compiles byte-exact cold, and compare
-its cached entry against a fresh compile. Do NOT weaken `stageStamp` and do not
-exempt 39c: the stamp is what made this visible at all, and a full re-encode
-costs 3.6s.
+Capture the message — it now carries the coordinate. Then: run at least twenty
+cold iterations before concluding anything; hash the spliced slice per run to
+tell a compile difference from a splice difference (the row itself is already
+cleared); and when a run goes dirty, print the first and last differing offsets
+together with every `overlayCSpans` row overlapping that range, which tells you
+whether one row or the splice boundary owns the damage.
+
+Do NOT weaken `stageStamp` and do not exempt 39c: the stamp is what made this
+visible at all, and a full re-encode costs 3.6s.
 
 ## 5j. A FAILURE MUST NAME ITS SUBJECT (2026-08-01, jupiter)
 

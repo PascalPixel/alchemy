@@ -49,6 +49,78 @@
  * 0x03001eec is the runtime header used across this family.  Only the slots
  * this owner touches are named.
  */
+/*
+ * __call_via_rN veneer sites, resolved per-site against the ROM.
+ *
+ * Fifteen `bl` sites land inside the 0x080072e4 bank: fourteen `bl 0x080072f4`
+ * (__call_via_r4) and one `bl 0x08007308` (__call_via_r9). None is a call to a
+ * function at the branch target.
+ *
+ * THE PAIR AND ITS BASE. r6 = pool 0x080ec178 = 0x03001ef0. `[r6, #24]` is
+ * read at 0x080ec28c into [sp, #80] and `[r6, #28]` at 0x080ec29e into
+ * [sp, #84] via `str r3, [r2, #4]` with r2 = sp + 80; the base address sp + 80
+ * is parked in [sp, #24] at 0x080ec2a4. 0x03001ef0 + 24 = 0x03001f08 and
+ * + 28 = 0x03001f0c -- allocator slots 46 and 47, matching the
+ * `Func_080ed408(46, ...)` and `(47, ...)` publishes those two loads bracket.
+ * In this file's own struct terms that is RuntimeHeader +0x1c and +0x20.
+ *
+ * A SECOND SLOT HOLDS THE SAME BASE. At 0x080ecbaa [sp, #20] is filled from
+ * [sp, #24] because r7 is about to be reused. The three sites at 0x080ecc1c,
+ * 0x080ecc3a and 0x080ecc58 read their base from [sp, #20], not [sp, #24].
+ * They are the same table -- but that was CHASED, not assumed, and a reader
+ * who assumes any `[rN, #4]` is the table will eventually be wrong.
+ *
+ * Site accounting: four read [sp, #80] directly (entry 0) -- 0x080ec696,
+ * 0x080ec78c, 0x080ec986, 0x080ec9a0. Nine read `[rN, #4]` off the parked base
+ * (entry 1). One is indexed: 0x080ecdda does `ldr r4, [r4, r0]` with
+ * r0 = [sp, #24] and r4 = (r8 & 1) << 2, the particle index.
+ *
+ * THE r9 SITE, AND WHY IT IS THE ONLY ONE STANDING ALONE. At 0x080ec9ec the
+ * callee is in r9, a callee-saved register. `tools/veneer_resolve.ts` refuses
+ * it: 0x080ec9b8 is a branch target, so the linear walk cannot prove the write
+ * at 0x080ec9b2 is on the path. A whole-function argument supplies the answer.
+ * r9 is written at exactly three places -- 0x080ec640, 0x080ec9b2, 0x080ecc8c.
+ * 0x080ec9b2 is `mov r9, r4` where r4 was just loaded as `[[sp,#24] + 4]`, i.e.
+ * entry 1. The block 0x080ec9aa..0x080ec9b6 is the ONLY entry to the loop --
+ * the `ble 0x080eca2a` at 0x080ec9a8 skips the loop entirely -- and the back
+ * edge `bne 0x080ec9b8` at 0x080eca28 does not cross any other write to r9.
+ * 0x080ec640 is before that block, which unconditionally overwrites r9;
+ * 0x080ecc8c is after the loop. So every path reaching 0x080ec9ec passes
+ * through 0x080ec9b2. Entry 1. This is the callee-latched-in-a-callee-saved-
+ * register shape: r9 reads as dead because the VENEER reads it, not the body.
+ *
+ * THE DRAFT ALREADY HAD THE INDEX, UNDER THE WRONG NAME. It carried
+ * `void *palettes[2]`, filled from the same two header fields, and passed
+ * `palettes[0]`, `palettes[1]` or `palettes[i & 1]` as a SEVENTH argument to a
+ * six-argument routine. At all fourteen r4 sites its index agrees with the
+ * register walk here -- constants check out at every position (0x6c/0x3c,
+ * 0x64/0x34, 0x3f/0x12, 0x48/0x1e, 0x42/0x16), and the indexed site's `i & 1`
+ * is the ROM's `(r8 & 1) << 2`. That is two INDEPENDENT METHODS agreeing, not
+ * two drafts: whoever drafted this read the pointer pair off the header and
+ * got the selection right while misnaming what was selected.
+ *
+ * The corroboration does NOT extend to the r9 site. The draft passed no
+ * seventh argument there -- correctly, because r9 is outside the argument
+ * registers and nothing leaked into the argument list -- so it makes no claim
+ * about which slot that site uses. The entry-1 reading at 0x080ec9ec rests
+ * solely on the sole-writer argument above. Said plainly so that a future
+ * reader does not credit it with support it never had.
+ *
+ * ARITY: six everywhere. The fourteen r4 sites set r0..r3 and push two more
+ * words at [sp, #0] and [sp, #4]; the seventh argument was the callee. The r9
+ * site already had six for the reason above.
+ *
+ * UNCERTAINTY, left standing: what slots 46 and 47 CONTAIN is not settled
+ * here, and the two are NOT interchangeable merely because they are selected
+ * by one index -- the slot table unifies the addressing, never the contents.
+ * The memory sites still open elsewhere in this audit read a callee out of a
+ * heap record whose contents depend on what ran before, and those SHOULD end
+ * as written uncertainties rather than names. A page of bounded uncertainties
+ * is this job going right, not a lane giving up.
+ */
+typedef void (*Renderer_080ec100)(void *context, const void *source, s32 x,
+                                  s32 y, s32 width, s32 height);
+
 struct RuntimeHeader_080ec100 {
     u8 *runtime;            /* +0x00 : work RAM base, held in r11 all along  */
     void *render_context;   /* +0x04 : first argument of the blit helpers    */
@@ -57,8 +129,8 @@ struct RuntimeHeader_080ec100 {
     u32 unused_10;
     void *display;          /* +0x14 : object whose +16 word is a line count */
     u32 unused_18;
-    void *palette_a;        /* +0x1c                                         */
-    void *palette_b;        /* +0x20                                         */
+    Renderer_080ec100 renderer_a; /* +0x1c : 0x03001f08, allocator slot 46   */
+    Renderer_080ec100 renderer_b; /* +0x20 : 0x03001f0c, allocator slot 47   */
 };
 
 /*
@@ -129,10 +201,6 @@ s32 Func_08004458(void);                 /* pseudo-random word */
  * original source is unknown; sibling semantic files spell this prototype
  * differently.  Here it is (context, source, x, y, width, height, palette).
  */
-void Func_080072f4(void *context, const void *source, s32 x, s32 y,
-                   s32 width, s32 height, void *palette);
-void Func_08007308(void *context, const void *source, s32 x, s32 y,
-                   s32 width, s32 height);
 
 void Func_08009008(void *object, s32 *placement, s32 *transform, s32 flags);
 void Func_08009038(void *object);
@@ -222,7 +290,7 @@ void Func_080ec100(void *target)
     void *render_context = header->render_context;
     u8 *graphics = header->graphics;
     void *display;
-    void *palettes[2];
+    Renderer_080ec100 renderers[2];
 
     struct Particle_080ec100 *sprites =
         (struct Particle_080ec100 *)(runtime + OFF_SPRITES_080EC100);
@@ -294,9 +362,9 @@ void Func_080ec100(void *target)
     *(s32 *)((u8 *)display + 16) = scroll_step;
 
     Func_080ed408(46, 7, 7, 3, 3);
-    palettes[0] = header->palette_a;
+    renderers[0] = header->renderer_a;
     Func_080ed408(47, 7, 7, 3, 2);
-    palettes[1] = header->palette_b;
+    renderers[1] = header->renderer_b;
 
     REG16_080EC100(0x0400000c) = 0x0784;   /* BG3CNT */
 
@@ -428,10 +496,10 @@ void Func_080ec100(void *target)
                     const u8 *source = runtime +
                         DOT_TILES_080EC100[size - 1] + OFF_BEAM_TILES_080EC100;
 
-                    Func_080072f4(render_context, source,
+                    renderers[0](render_context, source,
                                   (s32)(s16)(sprites[i].x >> 16) + 112 - size,
                                   (s32)(s16)(sprites[i].y >> 16) + 62 - size,
-                                  extent, extent, palettes[0]);
+                                  extent, extent);
                     sprites[i].x += sprites[i].velocity_x;
                     sprites[i].y += sprites[i].velocity_y;
                 }
@@ -470,8 +538,8 @@ void Func_080ec100(void *target)
                     const u8 *source = runtime + DOT_TILES_080EC100[0] +
                         OFF_BEAM_TILES_080EC100;
 
-                    Func_080072f4(render_context, source, sprites[i].x - 1,
-                                  sprites[i].y - 1, 2, 2, palettes[0]);
+                    renderers[0](render_context, source, sprites[i].x - 1,
+                                  sprites[i].y - 1, 2, 2);
                     sprites[i].x += sprites[i].velocity_x;
                     sprites[i].y += sprites[i].velocity_y;
                     if (sprites[i].y < 0) {
@@ -521,8 +589,8 @@ void Func_080ec100(void *target)
             extent = size * 2;
             source = runtime + DOT_TILES_080EC100[size - 1] +
                 OFF_BEAM_TILES_080EC100;
-            Func_080072f4(render_context, source, 108 - size, 60 - size,
-                          extent, extent, palettes[1]);
+            renderers[1](render_context, source, 108 - size, 60 - size,
+                          extent, extent);
         }
 
         if ((u32)(frame - 192) <= 7) {
@@ -535,8 +603,8 @@ void Func_080ec100(void *target)
             extent = size * 2;
             source = runtime + DOT_TILES_080EC100[size - 1] +
                 OFF_BEAM_TILES_080EC100;
-            Func_080072f4(render_context, source, 108 - size, 60 - size,
-                          extent, extent, palettes[1]);
+            renderers[1](render_context, source, 108 - size, 60 - size,
+                          extent, extent);
         }
 
         if (frame > 199) {
@@ -550,8 +618,8 @@ void Func_080ec100(void *target)
             extent = size * 2;
             source = runtime + DOT_TILES_080EC100[size - 1] +
                 OFF_BEAM_TILES_080EC100;
-            Func_080072f4(render_context, source, 108 - size, 60 - size,
-                          extent, extent, palettes[1]);
+            renderers[1](render_context, source, 108 - size, 60 - size,
+                          extent, extent);
 
             if (frame <= 213) {
                 s32 inner = quarter + 1;
@@ -561,8 +629,8 @@ void Func_080ec100(void *target)
                 extent = inner * 2;
                 source = runtime + DOT_TILES_080EC100[inner - 1] +
                     OFF_BEAM_TILES_080EC100;
-                Func_080072f4(render_context, source, 100 - inner, 52 - inner,
-                              extent, extent, palettes[1]);
+                renderers[1](render_context, source, 100 - inner, 52 - inner,
+                              extent, extent);
             }
         }
 
@@ -572,21 +640,21 @@ void Func_080ec100(void *target)
 
             if (index > 2)
                 index = 2;
-            Func_080072f4(render_context,
+            renderers[1](render_context,
                           runtime + ((index * 9) << 8) + 1024,
-                          63, 18, 48, 48, palettes[1]);
+                          63, 18, 48, 48);
         }
 
         if (frame > 221) {
             s32 half = (frame - 222) / 2;
             s32 index = half % 4 + 3;
 
-            Func_080072f4(render_context,
+            renderers[0](render_context,
                           runtime + ((index * 9) << 8) + 1024,
-                          72, 30, 48, 48, palettes[0]);
+                          72, 30, 48, 48);
             if (index == 5)
-                Func_080072f4(render_context, runtime + (176 << 5),
-                              66, 22, 48, 48, palettes[0]);
+                renderers[0](render_context, runtime + (176 << 5),
+                              66, 22, 48, 48);
         }
 
         /* From frame 28 the EWRAM particles are integrated and drawn. */
@@ -601,7 +669,7 @@ void Func_080ec100(void *target)
 
                 size = Func_080022fc(i, 3) + 2;
                 source = graphics + SPARK_TILES_080EC100[size - 1];
-                Func_08007308(render_context, source,
+                renderers[1](render_context, source,
                               (s32)(s16)(particle->x >> 16) - size / 2,
                               (s32)(s16)(particle->y >> 16) - size,
                               size, size * 2);
@@ -615,9 +683,9 @@ void Func_080ec100(void *target)
 
         /* Scrolling ground strip: five 32-pixel tiles. */
         for (i = 0; i < 5; i++) {
-            Func_080072f4(render_context, runtime,
+            renderers[1](render_context, runtime,
                           i * 32 + ((frame / 4) & 31) - 32, 88,
-                          32, 32, palettes[1]);
+                          32, 32);
         }
 
         *(s32 *)(runtime + OFF_PRESENT_080EC100) = 1;
@@ -705,14 +773,12 @@ void Func_080ec100(void *target)
             {
                 s32 split = Func_080022fc(frame * 16, 104);
 
-                Func_080072f4(render_context, runtime, curtain->x - 8,
-                              curtain->y + split - 216, 17, 104, palettes[1]);
-                Func_080072f4(render_context, runtime, curtain->x - 8,
-                              curtain->y + split - 112, 17, 104 - split,
-                              palettes[1]);
-                Func_080072f4(render_context, runtime + 1768,
-                              curtain->x - 17, curtain->y - 65, 34, 65,
-                              palettes[1]);
+                renderers[1](render_context, runtime, curtain->x - 8,
+                              curtain->y + split - 216, 17, 104);
+                renderers[1](render_context, runtime, curtain->x - 8,
+                              curtain->y + split - 112, 17, 104 - split);
+                renderers[1](render_context, runtime + 1768,
+                              curtain->x - 17, curtain->y - 65, 34, 65);
             }
 
             if (curtain->y <= 111)
@@ -791,9 +857,9 @@ void Func_080ec100(void *target)
                 s32 size = particle->state / 8 + 3;
                 const u8 *source = graphics + SPARK_TILES_080EC100[size - 1];
 
-                Func_080072f4(render_context, source,
+                renderers[i & 1](render_context, source,
                               (particle->x >> 16) - size / 2, line - size,
-                              size, size * 2, palettes[i & 1]);
+                              size, size * 2);
             }
         }
 

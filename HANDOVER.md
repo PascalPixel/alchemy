@@ -161,6 +161,8 @@ a dispatch of `renderers[counter & 1]`. Confirmed at:
 | `semantic/main/080d2d98.c` | `[sp,#52]`, `[sp,#56]` | `[sp,#36]` | `field_0x10 > 0` |
 | `semantic/main/080dab74.c` | `[sp,#52]`, `[sp,#56]` | `[sp,#32]` | named per site, `[rN,#4]` |
 | `semantic/main/080e89ec.c` | `[sp,#48]`, `[sp,#52]` | `[sp,#16]` | named per site, `[rN,#4]` |
+| `semantic/main/080ec100.c` | `[sp,#80]`, `[sp,#84]` | `[sp,#24]` (copied to `[sp,#20]`) | mixed; one `i & 1` |
+| `semantic/main/080cfef4.c` | `[sp,#44]`, `[sp,#48]` | `[sp,#16]` | RAW `scene->field_4` |
 
 Two variants of the same thing. `080d41a4` reaches the slots as `[r5, #28]`
 and `[r5, #32]` off the runtime header at 0x03001eec rather than off
@@ -189,6 +191,15 @@ were repaired by reading it:
   both arms, which read as differing only in an x expression.
 - `080e89ec`'s adjacent `0x30` and `0x38` statements read as one call twice
   with a changed coordinate. They are entry 0 and entry 1.
+- `080ec100` carried `void *palettes[2]`, filled from the right two header
+  fields, passed as a SEVENTH argument to a six-argument routine — with the
+  index CORRECT at all fourteen r4 sites, including the `i & 1` one. Two
+  independent methods agreeing, not two drafts: whoever drafted it read the
+  pointer pair off the header and got the selection right while misnaming what
+  was selected. **The corroboration stopped exactly where the callee left the
+  argument registers** — at the r9 site the draft passed no seventh argument
+  (correctly), so it makes no claim there, and that site rests solely on a
+  sole-writer argument. Credit a draft only for what it actually asserted.
 - `080d2d98` carried `if (temp_r3 <= 0) { }` — an if with an EMPTY body. m2c
   kept the branch and dropped its only effect, because that effect was
   `r6 = 4; if (r3 <= 0) r6 = 0;` at 0x080d320c, i.e. choosing the callee. An
@@ -207,6 +218,25 @@ Resolve rN before treating such a site as unresolvable. Ten of the audit's
 `semantic/main/080e89ec.c`, and both files resolved completely once rN was
 chased. That is a real dent in the memory population and it is NOT a claim
 that the rest of it will go the same way.
+
+**A SECOND STACK SLOT MAY HOLD THE SAME BASE.** `080ec100` fills `[sp, #20]`
+from `[sp, #24]` at 0x080ecbaa because r7 is about to be reused, and three
+later sites read their base from the copy. Same table — but chase it; a reader
+who assumes any `[rN, #4]` is the table will eventually be wrong.
+
+**THE INDEX IS SOMETIMES THE RAW FIELD, AND THAT IS A REAL UNCERTAINTY.**
+`080cfef4` dispatches `renderers[scene->field_4]` with the field used raw
+(`ldr r0, [r3, #4]`, `lsls r0, r0, #2`, no normalisation) into a table this
+function fills with exactly TWO words. The same function normalises the same
+field elsewhere — `r7 = (field_4 != 0)` at 0x080d0180-0x080d0190, feeding the
+`* 7` byte tables — which is affirmative evidence it does not treat the field
+as already boolean. Three readings survive: the caller constrains the field;
+the table is longer than two words and the rest of the frame is deliberate; or
+the field is boolean in practice and the normalisation is only a materialised
+`!= 0`. **Nothing in that function separates them.** The draft's single
+`variant` name had covered both quantities, and only one of them is a boolean.
+Reproduce the raw index, and say in the header that it does not prove the
+field is bounded.
 
 **A runtime value feeding the SETUP call does not make the callee runtime
 dependent.** `080e89ec` calls `Func_080cef64(alternate, sp + 48)` where
@@ -562,6 +592,27 @@ the listing is the thing you actually meant.
 
 **The driver anatomy is a habit, not a rule:** several drivers read no scene
 id at all, and one derives the sub-selector when it is zero.
+
+### The audit asserts its own completeness (Isaac's rule)
+
+Wherever partial work is indistinguishable by eye from complete work, assert
+the invariant on the output and throw. A half-converted veneer file is exactly
+that: it carries the audit header, most of its sites are proper indirect
+calls, and the one statement still calling a phantom reads as ordinary code in
+a 900-line file. Nothing about the page looks wrong.
+
+`tools/veneer_resolve.ts --self-test` now enforces: **a `semantic/` file that
+contains the audit's header marker must contain NO call to a veneer-bank
+address.** The claim is the header, written by hand at conversion time; the
+check is the absence of live calls. Scope is `semantic/` only — the 37 exact
+`src/` files deliberately still declare their phantoms per Vale's ruling.
+
+Two details that make it a guard rather than a decoration. It strips C
+comments first, because the audit's headers QUOTE the prototypes they removed
+and a naive text search reports every audited file — a guard that cries wolf
+gets switched off. And the stripper is asserted in both directions, so it
+cannot silently start eating live code and passing everything. The guard was
+verified by breaking a converted file on purpose and watching it throw.
 
 ## Overlay closure standard (2026-08-01) — supersedes any earlier claim
 

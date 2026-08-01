@@ -4023,8 +4023,16 @@ non-trivial constant argument** (exemplar `assets/code/resource_372_c_02002180.c
 - Split a shared addend out of sibling scaled expressions: `Func(a, x*16+8,
   y*16+8)` emits `movs r3,#8` twice, while hoisting the multiplies shares one.
 - A `pop {r1}/bx` tail is `return Func_xxx(...);` with an `s32` return type.
-- `p[108 + i]` (offset inside the index) reproduces a `biv init = base+K` pairing
-  that `p += 108` before the loop does not.
+- **Match the reference's ADDRESSING MODE; read it off the load lines.** Neither
+  indexing nor pointer-increment is preferred — the reference decides, and the
+  tell is the load instruction itself: `ldmia rN!, {rX}` (post-increment) means
+  the source walks a pointer (`*p++`), while `ldr rX, [rN, #k]` means it indexes
+  (`p[k/4]`). Both directions are attested: `p[108 + i]` (offset inside the
+  index) reproduces a `biv init = base+K` pairing that `p += 108` before the loop
+  does not, while the 0x314 distance cohort needs the opposite — `*a++ - *b++`
+  in place of `a[0] - b[0]`, which took it 23 groups -> 17. A rule that prefers
+  either form makes the mirror case harder to see; look at what the reference
+  does.
 - `extern u8 Base[]` plus a function-top `s32 off = 500;` where gcc would
   otherwise fold `Base + 500` into the pool.
 

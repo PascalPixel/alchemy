@@ -6636,6 +6636,12 @@
       "entry": "0x02003a0c",
       "span_bytes": 636,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6} / pop {r0} / bx r0 at 0x02003c3e-0x02003c42) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_3af 3a0c 3c88, the +2 rule against the raw image), and confirmed independently as dispatch case 19 of the 0x02001444 entry driver. Body is branch-free so the span needs no branch walk; read through the seventeen trailing pool words (0x0200db50, 0xffff8000, 0x0200db60, 0x0200d160, 0x026a0000, 0x020e0000, 0x03001ebc, 0x0000cccc, 0x00006666, 0x00001f23, 0x00006014, 0x00000101, 0x00019999, 0x00000206, 0x00005015, 0x00009016, 0x0000a014) ending 0x02003c87 to the next prologue (push {r5, r6, lr}) at 0x02003c88 -- itself an uncovered owner, absent from the queue, from assets/code and from the inventory. Inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3af",
+      "entry": "0x02002618",
+      "span_bytes": 956,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5} / pop {r0} / bx r0 at 0x020029a6-0x020029aa) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_3af 2618 29d4, the +2 rule against the raw image), and confirmed independently as dispatch case 15 of the 0x02001444 entry driver. Span walked through every internal branch and through the INTERNAL literal pool at 0x0200275c-0x0200277f, which the b.n at 0x0200275a hops; that pool's last word 0x0000e666 disassembles as a backward b.n into the neighbouring owner 0x020022c0 and is data, not a branch. The three beq at 0x02002806/0x0200281a/0x0200282e are forward null-guards inside the span. Trailing pool (0x0000b333, 0x020088c1, 0x0000026a, 0x00000262, 0x00000256, 0x0000cccc, 0x00006666, 0x02000240, 0x0000006f, 0x0000006d) ends 0x020029d3, next owner prologue (push {r5, r6, lr}) at 0x020029d4, inside the assembled overlay image and not overlapping another recorded owner"
     }
   ]
 }

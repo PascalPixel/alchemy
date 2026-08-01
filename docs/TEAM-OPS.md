@@ -156,6 +156,15 @@ rather than grind oversized rows; `manual_regions` entries per the
 `resource_397` precedent; pull `main` (the LOCAL ref, not `origin/main`)
 at every loop boundary; commit locally with the counter subject.
 
+**A MERGE commit's subject must carry the counter too.** Pulling `main`
+mid-shift produces a merge commit, and `git merge --no-edit`'s default
+subject ("Merge commit …") is rejected by `tools/check_commit_progress.ts` —
+the gate reads the subject of every commit, not just hand-written ones. Take
+the counter from `bun tools/full_c_progress.ts --subject` and commit as
+`merge main into <lane> [C …]`. Two lanes have now met this gate; both
+complied rather than routing around it, which is the required behavior —
+`--no-verify` is the lead's call, never a lane's.
+
 ## Supervision
 
 Vale runs a recurring ~8-minute tick (session cron): check each lane's

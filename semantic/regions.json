@@ -6970,8 +6970,8 @@
     {
       "overlay": "resource_3c9",
       "entry": "0x02000480",
-      "span_bytes": 56,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5}/pop {r1}/bx r1, a genuine s32 return value per HANDOVER's epilogue rule) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing one-word literal pool to the next owner's prologue at 0x020004bc, inside the assembled overlay image and not overlapping another recorded owner"
+      "span_bytes": 60,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5}/pop {r1}/bx r1, a genuine s32 return value per HANDOVER's epilogue rule) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span 0x020004bc - 0x02000480 = 60 read from the disassembly through the trailing one-word literal pool 0x020004b8-0x020004bb (0x030001d8, loaded by the ldr at 0x020004ac inside this owner) to the next owner's prologue at 0x020004bc, inside the assembled overlay image and not overlapping another recorded owner; span_bytes was recorded as 56 until 2026-08-01 -- the evidence text already named 0x020004bc as the bound and the one-word pool as included, but the NUMBER excluded the pool, and sweep D saw the four bytes as a POOL-OR-DATA gap, which is the only part any sweep reads"
     },
     {
       "overlay": "resource_3c9",
@@ -7002,6 +7002,12 @@
       "entry": "0x02002200",
       "span_bytes": 308,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8/r9/sl/fp spill and an 8-byte stack frame) and returning (add sp,#8/pop {r3, r5, r6, r7}/mov r8,r3/mov r9,r5/mov sl,r6/mov fp,r7/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the two trailing pool words (0x0200232c-0x02002333) to the next owner's prologue at 0x02002334, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3c9",
+      "entry": "0x02002360",
+      "span_bytes": 4708,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8/r9/sl/fp spill and a 136-byte stack frame) and returning (add sp,#136/pop {r3, r5, r6, r7}/mov r8,r3/mov r9,r5/mov sl,r6/mov fp,r7/pop {r5, r6, r7}/pop {r0}/bx r0 at 0x02003598-0x020035a8) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_3c9 2360 35c4, the +2 rule against the raw image, sites=433 distinct_targets=56 veneer=356 prologue=76 unknown=1 over exactly these bounds, the one unknown being the real bl at 0x02002af8 to the push-less leaf Func_02005688 which classify cannot key on); span 0x020035c4 - 0x02002360 = 0x1264 = 4708 read from the disassembly across SIX interior literal pools that are branched over rather than fallen into (0x020023d0, 0x02002830-0x0200285f, 0x0200292c, 0x02002c58-0x02002c6f reached only by a conditional bne so the forward-b.n tell never fires, 0x02003064-0x02003093, 0x020034d0-0x020034f7), plus a two-byte alignment halfword at 0x020035aa and the trailing six-word pool 0x020035ac-0x020035c3, to the next owner prologue at 0x020035c4, which this row itself calls seven times and which confirms the upper bound from the callee side; four of the ten apparent b.n in the span are pool words (0x02002830, 0x02003070, 0x02003080, 0x020034e0) and the last of those decodes as a branch to 0x0200393c, past this owner's end; sweep D reports this exact gap; inside the assembled overlay image and not overlapping another recorded owner"
     },
     {
       "overlay": "resource_3c9",

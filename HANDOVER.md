@@ -7007,6 +7007,11 @@ memory; a source digest is a measurement.**
 length because the next person to meet it should start from the evidence rather
 than from scratch, and because two of my own attempts to explain it were wrong.
 
+> **SOLVED, 2026-08-01. See §5i-SOLVED at the end of this section.** The cause is
+> compiler nondeterminism in one row, not the cache, not the splice, not any
+> lane's branch. The investigation below is left in place because its dead ends
+> are instructive, but read the solution first.
+
 ### Established
 
 - The failing entry is **resource_39c at `0x087ac2d8`**, a
@@ -7086,6 +7091,63 @@ whether one row or the splice boundary owns the damage.
 
 Do NOT weaken `stageStamp` and do not exempt 39c: the stamp is what made this
 visible at all, and a full re-encode costs 3.6s.
+
+### §5i-SOLVED — the compiler emits the literal pool in a different order
+
+**`assets/code/resource_39c_c_020010c0.c` compiles NONDETERMINISTICALLY.** Same
+source, same flags, same compiler binary: two different outputs, observed about
+**1 run in 14**.
+
+The compiled length is **invariant at 164 bytes** (`0x10c0-0x1164`) — which is
+why every earlier hypothesis about the splice or a neighbouring row was wrong.
+Inside the row, **55 bytes differ**, in two distinct patterns:
+
+- every pc-relative reference shifts by exactly one word — `38d0`→`37d0`,
+  `1f48`→`1e48`, `1c48`→`1b48`, `2e..`→`2d..`;
+- from `0x1128` the literal pool holds **the same words in a different order**.
+
+So the constant pool is emitted in a different sequence, and every `ldr
+rN,[pc,…]` and conditional branch that addresses through it moves by one word.
+That is the classic old-GCC nondeterminism: pool/hash iteration order seeded by
+pointer values, so it varies with the address-space layout of the compiler
+process itself.
+
+**The evidence chain, each link excluding a suspect:**
+
+1. **Cache excluded.** The probe clears `out/cache/overlay-c` every iteration
+   and hashes only this row's bytes.
+2. **Splice excluded.** `overlayCSpans` reports `0x10c0-0x1164`, length 164,
+   five cold runs out of five. Nothing shifts.
+3. **Lane branches excluded, by measurement.** In a fresh worktree, **`main`
+   alone failed once in eight cold runs**, and **`main` with `mars` merged was
+   clean six out of six.** The merge that looked deterministic was not.
+4. **Directly observed.** Fourteen cold compiles of the row: thirteen produced
+   digest `e1e59f12…`, one produced `673c3dc9…`.
+
+**The cache was never a cause — only a curtain.** A warm entry serves whichever
+compile happened to be good, so anything that forces recompiles raises the
+exposure. That is why source-keying the cache key appeared to "introduce" this:
+it made every row recompile. **Do not pin the key back.** That restores the
+hiding, not the correctness.
+
+**The tree is never silently wrong.** `build_full` compares the composed image
+against the reference ROM, so a bad compile is a loud red, never a bad byte.
+The cost is flaky reds, not corruption.
+
+**Reproducer** (about a minute; recreate the throwaway worktree with
+`git worktree add -f -b <tmp> ../alchemy-39c main`, symlink `roms/`, then):
+
+```bash
+for i in $(seq 1 20); do rm -rf out/cache/overlay-c; bun <probe>; done
+```
+
+where the probe calls `assembleOverlay` on `resource_39c_overlay.s` and hashes
+`img.subarray(0x10c0, 0x1164)`. A second digest appearing is the bug.
+
+**Open, and Vale's to rule:** the fix belongs in `alchemy-gcc`'s pool ordering,
+and that fork carries pinned digests — no lane should touch it unasked. Until
+then this is a known flaky red on one row, with a named cause and a reproducer,
+which is a different thing from a mystery.
 
 ## 5j. A FAILURE MUST NAME ITS SUBJECT (2026-08-01, jupiter)
 

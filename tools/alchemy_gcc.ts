@@ -237,7 +237,11 @@ const ENTRY_SAVES_DESCENDING_SOURCES = new Set(["08093054"]);
 // permutes the constant pool. See alchemy-gcc ff7c566.
 // 08005c68 writes a three-word descriptor whose control word the reference
 // stores last; without this the grouper emits it in source order.
-const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78", "08005c68"]);
+// 08090824 is the strict stack-zero DMA3 fill: the isolated compiler witness
+// moves the saved zero before the DMA base load after grouped-DMA formation.
+// Keep it on the same control-last route; the backend fingerprint is narrower
+// than the generic grouped-store reorder and leaves existing owners unchanged.
+const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78", "08005c68", "08090824"]);
 // resource_3bd:0c98 writes the same three-word DMA descriptor after an object
 // factory call.  Its reference copies the live source and destination into r0
 // and r1 before loading the pooled control word into r2; the path-scoped mode
@@ -318,7 +322,7 @@ const GROUPED_DMA_STORE_SOURCES = new Set([
   "08005c68", "080060e8", "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
   "08004a5c", "08004a94", "08005340", "08005394", "080053e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "08019bac",
   "0801d014", "0801d980",
-  "080251d4", "080284dc", "08094730", "08095160", "08095290", "080958a8", "08097540", "0809bb34", "080c0184", "080c08a8",
+  "080251d4", "080284dc", "08090824", "08094730", "08095160", "08095290", "080958a8", "08097540", "0809bb34", "080c0184", "080c08a8",
   "0808fecc", "08004760", "08005a78", "080037d4", "080b5ad4", "0800300c", "080f377c",
   "08002fb0", "08003e10",
   "080a1090",
@@ -1613,6 +1617,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4",
         "792d4cd9b47acafaf93f6873f58b8701918db5a39af62852e3796037473387c4",
         "cce7c26cfda8ee1844256ac9226d0420d74c476fb24823c46bcce26db89a4983",
+        "e654b8f55bef2f2a06efec89f171f46a76f0a55f671eb75e8b82ddc994f85b27",
       ],
     },
     gs2: {
@@ -2160,7 +2165,7 @@ function selfTest(): void {
     "08002f10", "08002fb0", "0800300c", "080037d4", "08003e10", "08004760",
     "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c",
     "08004a94", "08005340", "08005394", "080053e8", "08005a78", "08005c68", "080060e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304",
-    "080170c4", "08019bac", "0801d014", "0801d980", "080251d4", "080284dc", "0808fecc", "08094730", "08095160", "08095290", "080958a8", "08097540",
+    "080170c4", "08019bac", "0801d014", "0801d980", "080251d4", "080284dc", "0808fecc", "08090824", "08094730", "08095160", "08095290", "080958a8", "08097540",
     "0809bb34", "080a1090", "080b5ad4", "080c0184", "080c08a8", "080f377c",
   ])) {
     throw new Error("grouped DMA source allowlist self-test failed");

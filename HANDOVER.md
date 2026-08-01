@@ -6319,6 +6319,83 @@ the same commit, suspect untracked state before suspecting either reading.**
 Prove it by substituting the suspect file and nothing else — that turns an
 argument into a measurement in one step.
 
+## 5h. DERIVED STATE MUST BE KEYED ON ITS INPUTS (2026-08-01, jupiter)
+
+Three faces of one defect, fixed together: **our derived state was keyed on an
+author's memory rather than on its inputs, and every consumer read it happily.**
+
+**The sharpest statement of the problem: `git checkout` moves tracked files and
+leaves `out/` alone, so checking out a commit and running `verify` does not
+test that commit.** Three lanes concluded `main` was red from runs that were all
+really testing the same poisoned cache entry. That is not carelessness; it is
+the tooling making a false conclusion the natural one.
+
+### 1. The overlay-C cache key was hand-maintained
+
+`tools/overlay_disasm.ts` keyed on `overlay-c-v3`, a string bumped by hand when
+the post-compile rewriting changed. It was bumped correctly and its comment was
+honest — the defect was the MECHANISM, which holds only while every future
+editor remembers. Measured cost, not argued: one key present in two worktrees
+with different contents and different lengths, 160 bytes against 164; a
+poisoned entry that made `verify` die in `build_assets` on resource_39c; three
+lanes hitting it from three directions.
+
+**Fixed by hashing the tool's own source into the key.** Any edit to the
+compile plan, the label-word bias or the external-symbol rules now moves every
+key automatically. Confirmed: `out/cache/overlay-c` went from 1,717 entries to
+3,434 — every entry rewritten under a new key. **Never give such a digest a
+fallback**: a key that quietly stops discriminating is worse than a version
+string someone forgets to bump, because the forgotten string at least fails
+loudly the day somebody does remember.
+
+### 2. `stageStamp` never hashed `assets/code` or `semantic/overlays`
+
+`tools/build_assets.ts` walked `assets/` *minus* `assets/code`, plus `tools/`.
+Both omitted trees feed the overlay images that several asset regions compress.
+Reproduced before fixing: touching `assets/code/resource_39c_overlay.s` or
+`semantic/overlays/resource_39c_c_02003d20.c` printed `reused=stamp` and
+skipped the entire re-encode. **Those are exactly the files a lane changes when
+it banks a row, and this sits under the merge gate** — an adoption could land
+with `verify` green and the asset round-trip never re-run. Found independently
+by Garet forwards and by Mia as `build:full` reusing stale output; two
+instruments with no shared failure mode.
+
+Fixed by walking `assets/`, `tools/` and `semantic/` entire. **A full re-encode
+of all 2,431 regions measures 3.6s**, so there was never anything to buy by
+being clever about which inputs matter.
+
+### 3. The stale inventory, and the same fix applied to a twin
+
+`out/decomp/overlays.json` — see §5g. `bun run verify` now regenerates it
+first (`build:inventory`), which costs **4.8s** and makes the staleness
+impossible rather than noticeable. The generator is content-deterministic: two
+runs differ only in a `generated_at` timestamp, which is itself the field that
+lets a stale file look fresh.
+
+`tools/build_asm.ts` carried the same shape (`asm-v1`, keyed on source bytes
+and link address but not on its own assembler flags or link step) and was fixed
+the same way. `build_assets`'s `assets-v1` was already input-covered by its
+`tools/` walk, and was converted anyway for uniformity — **an exception in a
+rule is the same author's-memory defect the rule exists to remove.**
+
+### The guard: `tools/cache_key_lint.ts`
+
+Fixing three caches leaves nothing stopping a fourth being written the old way,
+so the class is now forbidden rather than merely corrected. The lint fails on a
+hand-maintained version literal in a digest-construction line, runs in
+`bun run test`, and scans 153 files at zero violations. It satisfies both
+standing questions: it **fails loudly when it scans nothing** (`NOTHING
+SCANNED — this is a FAILURE, not a pass`), and it has **no fixtures that lane
+progress can move** — the self-test runs on synthetic strings, both directions,
+and its own offending examples are ASSEMBLED at runtime so the file does not
+contain the pattern. Exempting the lint's own file would have been an
+allowlist, which is the defect wearing a different hat.
+
+**The rule, stated once: a cache key is a function of its inputs — the source
+bytes it derives from, plus a digest of the tool's own source for the logic
+applied to them. Never a literal describing the logic. `-vN` is a promise about
+memory; a source digest is a measurement.**
+
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**

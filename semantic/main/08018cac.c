@@ -1,4 +1,31 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320.  A `bl` into that range
+ * is an indirect call through the named register.
+ *
+ * `bl 0x080072fc` here is __call_via_r6, and r6 is the RETURN of the
+ * Func_08004938(0x318) at 0x08018d1c -- the workspace this function just
+ * allocated and then DMA'd 0x318 bytes into from 0x080155D0.  So the call
+ * runs the copied bytes: the same idiom as the nine stack kernels closed
+ * earlier in this audit, heap-allocated rather than on the stack.
+ *
+ * 0x080155D0 confirms as ARM and confirms the arity: it opens
+ * `push {r5,r6,r7,r8,r9,sl,lr}`, subtracts 44 from sp, and reads
+ * `[sp, #72]` -- which after 28 bytes of pushed registers plus that 44-byte
+ * frame is the FIRST STACK ARGUMENT, i.e. argument five.  The five-argument
+ * call is confirmed from the callee's own side, not just the caller's.
+ *
+ * The regularity that governed the earlier batches does NOT apply here: the
+ * callee occupied the draft's argument slot matching the veneer's register
+ * index only for r0-r3, which are the argument registers.  r6 is not one, so
+ * the callee never appeared as an argument and all five here are real.
+ * What the copied routine DOES is not named -- only located.
+ */
 #include "types.h"
+
+typedef s32 (*HeapKernel_08018cac)(void *object, s32 character, s32 x, s32 y,
+                                   s32 alternate);
 
 #define NULL ((void *)0)
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
@@ -12,7 +39,6 @@ struct DmaTransfer_08018cac {
 void Func_08002df0(void *);
 s32 Func_08002f40(s32);
 void *Func_08004938(s32);
-s32 Func_080072fc(void *, s32, s32, s32, s32);
 u8 *Func_08015e8c(void);
 void Func_08016584(void *, void *);
 s32 Func_080178b0(s32, void *);
@@ -68,7 +94,7 @@ s32 Func_08018cac(void *object, s32 character, s32 x, s32 y, s32 forced)
             dma->source = (const void *)0x080155D0;
             dma->destination = workspace;
             dma->control = 0x84000000 | (0x318 >> 2);
-            result = Func_080072fc(object, character, x, y, alternate);
+            result = ((HeapKernel_08018cac)workspace)(object, character, x, y, alternate);
             Func_08002df0(workspace);
         }
         return result;

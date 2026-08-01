@@ -5604,6 +5604,149 @@ two levers land.
 
 ---
 
+## 5a-wake. MERCURY WAKE NOTE — read this first (written 2026-08-01, end of session)
+
+Written for a self who has forgotten everything. Everything below is measured,
+not remembered. Where a number and a memory disagree, the number wins — that
+happened four times this session and the memory lost every time.
+
+**Run this before believing anything about state:**
+
+```bash
+bun run verify > /tmp/verify.log 2>&1; echo "verify exit=$?"   # the ONLY licensed form
+bun tools/overlay_inventory.ts -o out/decomp/overlays.json     # ~5s, the copy on disk goes stale
+bun tools/overlay_dispatch_sites.ts --all                      # the seam census
+bun tools/full_c_progress.ts --subject                         # commit subject
+```
+
+**NEVER `bun run verify | tail` and read `$?`.** That is `tail`'s status,
+always 0, so a red tree reports green. I did this all session while believing
+I was capturing the exit code, and reported "verify green" on evidence that
+was not evidence. The tree was in fact green — checked properly at the end —
+but that was luck, not method. Five people have now fallen in this hole.
+
+### 1. The three open seam rows (the priority)
+
+The `mov pc` dispatch census sorts all 60 sites into four buckets. As of this
+note: 33 in inventoried owners, 7 in adopted C, 15 in semantic drafts,
+**5 described nowhere**.
+
+**RE-RUN THE CENSUS, DO NOT RECALL IT.** A remembered list drifts: `396:1658`
+silently dropped out of both my account and Vale's, and neither of us noticed
+until the tool was run again. The census exists so nobody has to remember.
+
+| row | owner entry | size | state and trap |
+| --- | --- | --- | --- |
+| `396:1432` | 0x02001424 | 392 | **PARKED at 6 bytes**, not open — the fork item, see docs/COMPILER-QUEUE.md. Do not re-grind. |
+| `396:1658` | 0x02001638 | **UNSIZED** | The one that went missing. Size it first. |
+| `3a6:19b4` | 0x02001984 | 632 | Guards `Data_02000240[224]` against a POOLED constant *before* the `[225]` dispatch; `subs #1 / cmp #9`, 10 entries at 0x020019b8. |
+| `3bf:516c` | 0x020050e4 | 576 | Four guarded calls of preamble, then `subs #1 / cmp #30`, 31 entries at 0x02005170 after a two-byte align. |
+| `3b1:4902` | **0x020048e8** | 1728 | Entry SETTLED (see §3). Argument selector, `cmp #25`, 26 entries at 0x02004904, literal pool sits MID-FUNCTION at 0x02004cb8. |
+
+Method that closed four of these cold, none needing a second probe
+(`378:014c`, `378:3334`, `3b1:054c`, `3a0:0e4c`):
+
+1. `overlay_adopt <id> --source <src> --span <N>` — `--span` adopts a
+   function discovery never seeded, so an undescribed row needs no inventory
+   row.
+2. Read the table entry by entry. **Six rows, six different tables, one
+   method: the method has held on all six and the shape has held on none.**
+   The temptation grows with each row that looks familiar. `3a0:0e4c` did not
+   even share the base pointer or the index.
+3. `--where` on rejection prints differing byte addresses as runs. Four `bl`
+   encodings differing three bytes each is callee naming and nothing else.
+4. A partly transcribed table is how a silent wrong seal happens. Stop rather
+   than half-finish one.
+
+### 2. The levers, WITH their preconditions
+
+A lever without its precondition turns into ritual.
+
+- **The jump-table link bias** (§5b4). An overlay links 0x8000 above where it
+  loads, so every in-image code pointer the ROM stores is `base + 0x8000`.
+  gcc emits switch tables as bare `.word .LN` and the linker resolves them
+  unbiased. `biasInImageLabelWords` in `tools/overlay_disasm.ts` rewrites only
+  those rows between compile and `as`. **Do not "fix" this by shifting
+  `-Ttext`** — §5b3a pins callee names to fixed literals, so a global shift
+  would fix the table and move every `bl` by -0x8000. The reason is in the
+  code, not only here. This is what made the whole dispatch population
+  workable; two lanes suspected it of unrelated failures and both cleared it
+  on measurement.
+- **The folded-address lever, and WHEN.** A pooled base plus a small offset
+  must sometimes be spelled as a symbol plus a named local in its own block.
+  It is NOT universal — measured three ways: a *literal* base folds
+  (`378:0070`); a symbol whose ADDRESS stays live in a callee-saved register
+  across calls folds (`3b2:12b4`); a symbol dereferenced once does NOT fold
+  (`371:037c` is byte-exact with the plain `table[225]`). The tell is whether
+  the address is a value the function keeps. Forcing `s32 off` where it is not
+  needed is equally exact and says something untrue about the source.
+- **§5b5, arm order off the ROM.** Group the jump-table entries by value, sort
+  the distinct values ascending; that is the reference's source order. One
+  command rules it out, and a head-length error and an arm-order error present
+  identically.
+- **§5b6, the shared-return-tail.** Two `return K;` guards branching to ONE
+  constant load must be `goto refuse;` plus one labelled tail. 137 differing
+  bytes to 34 on `3c4:0cd0` with no body change.
+- **The two MID-BODY cases, which are NOT the same thing.** A **table entry**
+  landing inside another arm's body is a **fallthrough** (`396:1424`, entries
+  1 and 8). A **branch from an earlier arm** landing inside a later arm's body
+  is a **shared tail reached by `goto` into that arm**, with the shared
+  arguments as locals (`3a0:0e4c`, cases 2 and 3 into case 6). Somebody will
+  meet one and read it as the other.
+- **§5b3a, per-site RAW callee names.** `name = insn_address + 2 +
+  true_target_offset` — which is exactly what `overlay_show` prints. Two sites
+  calling one routine carry different names; one name can serve two routines.
+  Never "correct" them to resolved targets.
+- **Diff by ADDRESS, never by disassembled group, on a dispatch row.**
+  `overlay_group_diff.sh` reads an in-span jump table as instructions and
+  reports nonsense. Use `overlay_adopt --where`.
+
+### 3. The multi-`push` prologue rule
+
+**A `push` is the second half of one prologue exactly when the set it pushes
+is the set of destinations of the `mov rLow, rHigh` sequence immediately
+preceding it.** Thumb cannot push r8-sl directly. Anything else is an entry.
+
+Why it is a rule and not a note: an owner entry taken four instructions late
+**still assembles, still adopts, and still verifies green.** It just describes
+a different function than the one the ROM has. Settle the entry before
+measuring anything on the row. This is the mirror of jupiter's and mars's leaf
+population — theirs are functions a prologue-keyed tool will not admit, this
+is a non-function it will.
+
+### 4. UNMEASURED, not clean
+
+Six rows threw on the probe and are recorded **UNMEASURED, not clean**:
+`3b4:1fd8`, `383:2564`, `395:15a0`, `3bf:4638`, `3a8:1f14`, `383:0690`.
+An unmeasured row quietly becoming a clean one is the silent-pass shape that
+has been found repeatedly in this project. Keep the wording.
+
+### 5. Carried from other lanes, before resting
+
+- **A zero byte-accounting delta is not proof** (mars). Sweep D skips
+  sub-slack gaps, so a clean sum can only ever DISAGREE, never confirm.
+  Enumerate them.
+- **The `overlay_published` bogus-name liveness control is DEAD.** It refuses
+  now, so a zero from it proves nothing.
+
+### 6. The two headline figures I retracted, so they are not re-adopted
+
+- "36 sites map to 27 inventoried owners totalling 27,760 bytes" — **wrong**.
+  It was 35 in 33 owners, 25,194 bytes, from a nearest-preceding-label mapping
+  that lands **one owner short**, which reads as plausible: `371:0350` for
+  `371:037c`, `3b2:12b4` for `3b2:13ac`, `3c4:0cd0` for `3c4:0e20`. The
+  60-sites/29-overlays headline survived; the attribution did not.
+- "A semantic draft states its span only in prose" — **wrong**.
+  `semantic/regions.json` carries `span_bytes` and `evidence` for 1,064 of
+  1,064 drafts and `build_semantic` already enforces it. **Before building an
+  instrument to derive a fact, grep the tree for the fact.**
+
+And the sharpest one to keep: **a single instrument can be worse than
+useless.** Sweeping for the `resource_394` span defect by shape returns 562 of
+1,339 rows of which 561 are correct, and every one looks like the real hit. It
+was findable only by comparing two authorities that derive the span
+differently.
+
 ## 5b. Mercury session levers and blocker classes (2026-07-31/08-01)
 
 Banked from `work/claude/notes/` because `work/` is per-worktree gitignored

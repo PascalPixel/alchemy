@@ -15,11 +15,25 @@
 // `(hw & 0xff87) === 0x4687` -- Rd = pc means H1 = 1 and the low three bits are
 // 7. Cross-checked against `overlay_show` on five rows; all five agree.
 //
-// `--all` additionally scans every even offset, inventoried or not. That upper
-// bound is where the "60 sites across 29 overlays" headline came from: 35 of
-// the 60 are instructions inside an inventoried owner and 25 are in code with
-// no inventory row. Uninventoried is not the same as absent -- `3b9:1a6e` is in
-// that 25 and sits inside `3b9:1a4c`, which is closed byte-exact.
+// `--all` additionally scans every even offset and sorts every site into three
+// buckets: inside an inventoried owner, inside an `AlchemyC_` placeholder (a
+// region that is ALREADY exact C, so it has no inventory row by construction),
+// and unattributed. The third bucket is the seam worth working.
+//
+// The adopted bucket exists because without it the census moves backwards as
+// the tree improves: adopting a dispatch row turns its assembly into a
+// placeholder, its inventory row disappears, and a site that was attributed
+// becomes "outside the inventory". Two of them did exactly that between one
+// run and the next. Uninventoried is not the same as undescribed.
+//
+// It also will not answer "is this site inside a semantic draft": a draft
+// states its span in PROSE, not in a machine-readable field, and parsing that
+// prose gave three different answers (22, 9 and 8 unattributed) for three
+// reasonable parses. Do not put a number on that until drafts carry the span
+// as data.
+//
+// Re-derive the inventory before trusting a run -- `tools/overlay_inventory.ts`
+// takes about five seconds, and a stale one silently mis-sorts the buckets.
 //
 // It prints a header line ALWAYS, including the zero case, so "no sites" and
 // "the scan did not run" cannot be confused for one another.
@@ -76,6 +90,7 @@ function main(): void {
   const owners = new Map<string, { id: string; span: number; sites: number }>();
   const overlays = new Set<string>();
   const outside: string[] = [];
+  const adopted: string[] = [];
   let inventoried = 0;
   let scanned = 0;
 
@@ -89,6 +104,19 @@ function main(): void {
     catch (error) { console.log(`skip overlay=${overlay} reason=${(error as Error).message}`); continue; }
     scanned++;
 
+    // `AlchemyC_0AAAAAAA:` followed by `.space N` -- a region already converted
+    // to exact C, read from the assembly rather than guessed from file names.
+    const converted: [number, number][] = [];
+    {
+      const lines = readFileSync(join(ROOT, "assets/code", name), "utf8").split("\n");
+      for (let index = 0; index + 1 < lines.length; index++) {
+        const label = /^AlchemyC_0([0-9a-f]{7}):/.exec(lines[index]);
+        if (label === null) continue;
+        const space = /^\s*\.space\s+(0x[0-9a-f]+|\d+)/.exec(lines[index + 1]);
+        if (space === null) continue;
+        converted.push([parseInt(label[1], 16) - (OVERLAY_BASE & 0xfffffff), Number(space[1])]);
+      }
+    }
     const instructionSites = new Set<number>();
     const known = new Set<number>();
     for (const row of rows) {
@@ -116,7 +144,10 @@ function main(): void {
     for (let at = 0; at + 1 < image.length; at += 2) {
       if (!isMovPc(image.readUInt16LE(at))) continue;
       overlays.add(overlay);
-      if (!known.has(at)) outside.push(`${overlay}:${at.toString(16)}`);
+      if (known.has(at)) continue;
+      if (converted.some(([from, size]) => from <= at && at < from + size)) {
+        adopted.push(`${overlay}:${at.toString(16)}`);
+      } else outside.push(`${overlay}:${at.toString(16)}`);
     }
   }
 
@@ -125,10 +156,13 @@ function main(): void {
   console.log(
     `dispatch_sites overlays_scanned=${scanned} sites_in_inventoried_owners=${inventoried}` +
     ` owners=${rows.length} owner_bytes=${ownerBytes} overlays_with_sites=${overlays.size}` +
-    (all ? ` sites_outside_inventory=${outside.length}` : " (pass --all for the uninventoried count)"),
+    (all ? ` sites_in_adopted_c=${adopted.length} sites_unattributed=${outside.length}` : " (pass --all for the whole-image buckets)"),
   );
   for (const row of rows) console.log(`${row.id}\tspan=${row.span}\tsites=${row.sites}`);
-  if (all) for (const site of outside) console.log(`uninventoried\t${site}`);
+  if (all) {
+    for (const site of adopted) console.log(`adopted_c\t${site}`);
+    for (const site of outside) console.log(`unattributed\t${site}`);
+  }
 }
 
 if (import.meta.main) main();

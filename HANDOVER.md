@@ -77,6 +77,20 @@ empty or wrong answer* instead of failing. Both nearly reached prose.
 - **`overlay_call_targets` whole-overlay mode returns zero sites when the
   overlay has no recorded owners.** Explicit bounds are mandatory. A silent
   empty result is indistinguishable from a row that genuinely has no calls.
+- **`overlay_show` STOPS at the first interior literal pool and prints its
+  pool-word summary, which reads exactly like the end of a function.** Verified
+  on `resource_3b9:0x02001cd4`: given the true bounds `1cd4 23e0` it emitted 459
+  lines ending at the pool 0x0200213c-0x02002153 with a tidy "pool words
+  referenced" footer — 60% of a 1804-byte row, and nothing marks the cut. The
+  `b.n` immediately before the pool is the tell: 0x0200213a is `b.n 0x02002154`,
+  a jump OVER the pool into the code that follows it. Re-run `overlay_show` from
+  that branch target to the row's real end to get the remainder. This is the
+  same fact as the "a literal pool proves nothing about where a function ends"
+  rule below, but as a tool that quietly agrees with the wrong reading: the
+  output looks complete, the epilogue is simply absent, and a draft written off
+  it is a tail omission of arbitrary size. Cross-check the call census —
+  `overlay_call_targets` prints `sites=N` for the true bounds, and that must
+  equal the number of `bl` lines you actually transcribed.
 
 General rule: when a tool's answer agrees with a convenient hypothesis,
 confirm the tool actually ran on what you think it ran on.

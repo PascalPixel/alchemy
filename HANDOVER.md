@@ -5905,6 +5905,17 @@ each arm's absolute address. Group the entries by value, sort the distinct
 values ascending, and the selectors fall out in the reference's own source
 order. Do the same on your own compile and the two lists sit side by side.
 
+**A table entry can point INSIDE another arm's body — that is a fallthrough,
+not a broken table.** `396:1424` has thirteen entries and two of them land
+mid-body: entry 1 at 0x020014e8, inside the body entry 4 points at, and
+entry 8 at 0x0200158a, inside entry 11's. In C those are `case 4:` running
+on into `case 1:` with no `break`. A third entry points at the shared tail
+itself, so that selector is simply the default and gets no arm at all.
+Sorting the distinct values ascending is what makes them legible: a
+fallthrough pair is adjacent in that order and nowhere near adjacent in
+selector order. Read a mid-body target as a fallthrough before reading it
+as a decoding error.
+
 **Ordering and callee naming are ONE fix, not two.** The callee names obey
 §5b3a's identity, `name = insn_address + 2 + true_target_offset`, so they are
 keyed to the reference's instruction addresses. Every name in a draft read off
@@ -6038,6 +6049,22 @@ the wrong owner by exactly one, which reads as plausible and is not.
 25 — it is inside `3b9:1a4c`, the 508-byte dispatcher already closed
 byte-exact. That row had no inventory entry until adopting it created
 one. The 25 are a real seam, not a residue.
+
+### RULE: a single instrument can be WORSE than useless — 562 hits, 561 wrong
+
+The `resource_394` span disagreement (1008 in `regions.json`, 1006 in the
+inventory) is two bytes of trailing alignment padding. The tempting way to
+sweep for its siblings is by shape: find every region whose span ends on a
+`0x0000` halfword. That sweep returns **562 of 1,339 rows, of which 561 are
+correct** — because a span usually ends on a pool word, and the high half of
+a pool word like `0x00000001` is `0x0000`.
+
+A shape sweep here does not merely fail. It produces a confident list that
+is 99.8% noise, and every entry on it looks exactly like the one real hit.
+The disagreement was findable only by **comparing two authorities** that
+derive the span differently. That is the sharpest form of the
+instrument-agreement rule: agreement between instruments that fail
+differently is not a nicety, it is sometimes the only signal there is.
 
 **Caution on the minimal-owner rule.** Attributing a site to the smallest
 enclosing owner can land on a fragment: `3c8:33c8` (4 bytes) and

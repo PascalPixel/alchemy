@@ -1017,6 +1017,12 @@
     },
     {
       "overlay": "resource_380",
+      "entry": "0x02002400",
+      "span_bytes": 628,
+      "evidence": "admitted whole-owner semantic reconstruction; published-callback population (bun tools/overlay_published.ts resource_380) -- owner is prologue-started and returning but is reached by no bl at all: its Thumb pointer is written into a script record as a plain word, so both the whole-image call-graph sweep and tools/overlay_unindexed.ts are structurally blind to it. Span MEASURED to its epilogue, not taken from the queue bound: push {r5,lr} + sub sp,#8 at 0x02002400 through add sp,#8 / pop {r5} / pop {r0} / bx r0 at 0x02002646-0x0200264c, a zero alignment halfword at 0x0200264e, then the nine-word literal pool 0x02002650-0x02002673, to the next owner prologue at 0x02002674. The prologue-to-next-known-start upper bound of 628 recorded in the queue was tight, but that was confirmed rather than assumed -- four pool words in this overlay family have posed as branches and made spans read short. All 57 bl targets resolved through the overlay import-veneer table under the +2 rule (tools/overlay_call_targets.ts); two are direct intra-image branches to Func_02004260 rather than veneer calls, a distinction visible only in the resolved target. Checked to lie inside the assembled overlay image and not to overlap another recorded owner."
+    },
+    {
+      "overlay": "resource_380",
       "entry": "0x02002674",
       "span_bytes": 108,
       "evidence": "admitted whole-owner semantic reconstruction; published-callback population (bun tools/overlay_published.ts resource_380) -- owner is prologue-started and returning but is reached by no bl at all: its Thumb pointer is written into a script record as a plain word, so both the whole-image call-graph sweep and tools/overlay_unindexed.ts are structurally blind to it. Span read from the disassembly: push {lr} at 0x02002674 through pop {r0}/bx r0 at 0x020026c8, then the five-word literal pool 0x020026cc-0x020026df, to the twin owner prologue at 0x020026e0. All bl targets resolved through the overlay import-veneer table under the +2 rule (tools/overlay_call_targets.ts), not by naive pc-relative decode. Checked to lie inside the assembled overlay image and not to overlap another recorded owner."

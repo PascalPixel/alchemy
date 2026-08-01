@@ -299,20 +299,33 @@ empty or wrong answer* instead of failing. Both nearly reached prose.
 - **`overlay_call_targets` whole-overlay mode returns zero sites when the
   overlay has no recorded owners.** Explicit bounds are mandatory. A silent
   empty result is indistinguishable from a row that genuinely has no calls.
-- **`overlay_show` STOPS at the first interior literal pool and prints its
-  pool-word summary, which reads exactly like the end of a function.** Verified
-  on `resource_3b9:0x02001cd4`: given the true bounds `1cd4 23e0` it emitted 459
-  lines ending at the pool 0x0200213c-0x02002153 with a tidy "pool words
-  referenced" footer — 60% of a 1804-byte row, and nothing marks the cut. The
-  `b.n` immediately before the pool is the tell: 0x0200213a is `b.n 0x02002154`,
-  a jump OVER the pool into the code that follows it. Re-run `overlay_show` from
-  that branch target to the row's real end to get the remainder. This is the
-  same fact as the "a literal pool proves nothing about where a function ends"
-  rule below, but as a tool that quietly agrees with the wrong reading: the
-  output looks complete, the epilogue is simply absent, and a draft written off
-  it is a tail omission of arbitrary size. Cross-check the call census —
-  `overlay_call_targets` prints `sites=N` for the true bounds, and that must
-  equal the number of `bl` lines you actually transcribed.
+- **`overlay_show` used to IGNORE a second positional bound — FIXED, and the
+  fix is the point.** The symptom was a listing that stopped partway through a
+  row and printed its ordinary "pool words referenced" footer, so a truncated
+  listing looked exactly like a finished function. I first recorded this as
+  "the tool stops at the first interior literal pool". That was the symptom,
+  not the mechanism, and the workaround I wrote (re-run from the branch target
+  over the pool) was clumsier than the real fix. **The mechanism:**
+  `overlay_show <ov> <startHex> <endHex>` parsed only the first two
+  positionals and silently dropped the third, then fell back to `extentOf`,
+  which scans forward and stops at the first *return-shaped* halfword — and a
+  literal pool routinely contains one. So the truncation point was wherever a
+  pool word happened to look like `bx rN`. `resource_3b9:0x02001cd4` returned
+  122 of its 180 call sites; `:0x02000710` returned 101 of 177, losing both
+  inner gates, two of three tails and the epilogue.
+  **As of this session the second positional is honoured**, matching
+  `overlay_call_targets`' spelling, and anything unparseable, ambiguous, or
+  extra now THROWS instead of being dropped. `overlay_show resource_3b9 1cd4
+  23e0` now yields all 180 sites. `-n BYTES` still works and was always
+  correct — the only programmatic caller used it, which is why nobody hit
+  this. Covered by `bun tools/overlay_show.ts --self-test`, wired into
+  `bun run test`.
+  **The general lesson outlives the fix:** a tool that accepts arguments it
+  does not use will eventually be handed one that mattered. When two tools in
+  one workflow take bounds in different spellings, the mismatch does not error
+  — it truncates. And the cheap backstop that catches it regardless:
+  `overlay_call_targets` prints `sites=N` for the true bounds, so count the
+  `bl` lines you actually transcribed and require equality.
 
 - **`overlay_published.ts` with an unrecognised overlay name sweeps ALL 96
   overlays instead of erroring.** `resource_zzz` returns `overlays=96
@@ -337,19 +350,38 @@ words are the same space: `word - 0x8000 - 0x02000000`. This rule must be
 applied before anything reaches PROSE, not merely before it reaches a draft —
 a map written off a raw listing carries the error into everything built on it.
 
-**A literal pool proves nothing about where a function ends.** Pools sit
-*inside* functions with the epilogue after them, branched over. One driver
-carries four interior pools.
+### The two ways a span source lies (2026-08-01)
 
-**`measureSpan` is NOT A BOUND IN EITHER DIRECTION.** It was recorded as a
-lower bound on the strength of thirteen of fourteen rows exceeding it; a
-fourteenth row broke it the other way — measureSpan 356 against a true span of
-124, the extra 232 bytes being the *next owner* plus the import-veneer bank.
-Measure every span to its epilogue against the next recorded owner. That same
-row is the cleanest proof that guard coverage is not a certificate: run
-without explicit bounds it reports a shortfall naming a *real* callee — real
-because it belongs to the owner the over-measured span swallowed, which is
-exactly what makes the wrong answer convincing.
+Both were caught the same night, they fail in OPPOSITE directions, and a span
+is only trustworthy when it has survived both. Measure to the epilogue. Nothing
+else is a span.
+
+**1. A literal pool proves nothing about where a function ends — spans read
+this way are TOO SHORT.** Pools sit *inside* functions with the epilogue after
+them, branched over. One driver carries four interior pools. `measureSpan`
+numbers are therefore lower bounds. This is also what made `overlay_show`'s
+dropped-bound bug bite so hard: its `extentOf` fallback stops at the first
+return-shaped halfword, and pool words routinely look like one (see "Tooling
+that lies quietly" — the bound is now honoured, so pass the end explicitly).
+
+**2. A bound taken from a residue list is a bound against the next UNDRAFTED
+row, not the next row — spans read this way are TOO LONG.** `overlay_published`
+reports only what is still unowned, so an already-recorded owner sitting between
+two residue entries is absent *by construction*, and the gap silently folds into
+the earlier row's apparent size. On `resource_39e`'s 0x2484-0x26d8 cluster this
+over-estimated three spans of five; `0x0200254c` reads as 108 bytes off the
+residue list and measures **40**, because 0x02002574 is already owned. Nearly
+threefold on one row.
+
+The same trap applies to any "next candidate" list, not just residue output: a
+queue file, a ranked backlog, a set of sweep hits. If the list was filtered by
+"not yet done", it cannot bound anything. Bound against the full owner set from
+`semantic/regions.json` plus the exact-C spans, or measure.
+
+**Corollary — guard coverage is not a certificate.** Run without explicit
+bounds, `m2c_guard` on an over-measured row reports a shortfall naming a *real*
+callee — real because it belongs to the owner the bad span swallowed. A wrong
+answer built entirely from true parts is the hardest kind to catch.
 
 **`bx rN` after `mov ip, pc` is a CALL, not a return.** m2c treats it as a
 return and silently ends the function there; the guard refuses such rows.
@@ -433,36 +465,112 @@ rate. **A function installed as data is invisible to every technique that
 follows control flow.** If you want the rule in one line, use that; if you want
 someone to *feel* it, show them 0x02002b58's 88 bytes.
 
-### resource_3a4 residue state (2026-08-01, jupiter) — 2 published + 2 called
+### THE THREE SWEEPS ARE NOT ENOUGH: a leaf with no push prologue (2026-08-01, jupiter)
 
-Fourteen owners drafted across two shifts, residue regenerated with
-`bun tools/overlay_published.ts` at each checkpoint and never carried over
-from a written figure. **16 published + 2 called -> 2 + 2.**
+**resource_3a4 has a complete function at 0x02003410 that all three sweeps
+miss at once.** Twenty-four bytes:
 
-Four rows remain, NOT started. Every bound below is the **next recorded
-owner**, which is a hard upper bound; measureSpan is given only for contrast
-and must not be drafted against.
+```
+ldr r3, =0x03001ebc / movs r1, #191 / ldr r3, [r3] / lsls r1, #1 /
+adds r2, r3, r1 / ldr r3, =0x1018 / strh r3, [r2] / bx lr
+```
 
-| entry | bound | measureSpan | class | already known |
+with its own two-word pool at 0x02003420-0x02003427, sitting between
+0x02003028's closing pool and the recorded owner 0x02003428. It is real code
+and it is invisible three ways:
+
+- **sweep A cannot see it** — no `bl` anywhere in the image targets 0x3410.
+  Checked by resolving every BL-shaped halfword pair across the whole
+  0x5238-byte image with the same `+2` rule, not by trusting a tool's summary.
+- **sweep B cannot see it** — no word anywhere in the image holds 0x0200b411
+  or 0x0200b410, its published spelling.
+- **sweep C cannot see it** — it has **NO PUSH PROLOGUE**. It is a leaf: it
+  saves no register and returns with `bx lr`, so the shaped scan, which keys
+  on `b5xx`/`b4xx`, has nothing to key on.
+
+So "A and B empty, C classified" is necessary and **not sufficient**. There is
+a fourth population: **leaf functions that neither save a register nor appear
+as a target**. The cheap instrument is the one that found this — after
+drafting every owner, walk the *gaps* between a row's true end and the next
+recorded owner and read them, rather than assuming the difference is padding
+and pool. The recorded-owner bound said 1024; the row was 1000; the missing 24
+bytes were a function.
+
+**resource_3a4 is therefore NOT certified closed**, even though sweeps A and B
+are now empty, and it is the right test case for whatever fourth sweep gets
+written.
+
+### 0x02005210 is NOT CODE — settled (2026-08-01, jupiter)
+
+The class-C row that stood unresolved for two shifts is data. **The assembled
+resource_3a4 image is 0x5238 bytes long** (measured from `overlayImage`, not
+inferred), and image offsets 0x51b4-0x5237 hold a 33-entry table of ascending
+16.16 fixed-point words: 0x00010000 at 0x51b4, 0x00020000 at 0x51f4,
+0x00040000 at 0x5234 — sixteen steps to the octave, i.e. 2^(n/16). The
+`b560 push {r5, r6, lr}` the sweep reports at 0x5210 is the low halfword of
+the table word 0x0002b560. No decision about that stretch is outstanding.
+
+Two method notes earned finding it, both instances of the standing rule that a
+tool agreeing with you must be checked on what it actually ran:
+
+1. `overlay_show` fails outright past the end of the image rather than saying
+   so; a bisection of *where it starts failing* is a usable length probe, but
+   the honest length comes from `overlayImage(...).length`.
+2. Extracting pool words by pairing halfwords from an `overlay_show` listing
+   **silently drops entries wherever objdump printed a 32-bit instruction**
+   (`bic.w`, `vaddl.u8`). Two of the 33 table entries came out as 0xea4b and
+   0xf422 instead of 0x0001ea4b and 0x0002f422. Read words from the image
+   bytes, not from a text listing of them.
+
+### In-image pointers are spelled base + 0x8000
+
+Easy to get wrong and it changes the answer. `Data_0200cd18` is image offset
+**0x4d18**, not 0x8cd18 and not 0xcd18. So a published pointer word
+`0x02009771` is `0x9771 - 0x8000 = 0x1771` = image offset 0x1770 with the
+Thumb bit. Applying this correctly is what turned an apparently out-of-range
+pool word into the identification of 0x02001770's publishers.
+
+### resource_3a4 residue state (2026-08-01, jupiter) — sweeps A and B EMPTY
+
+Eighteen owners drafted across three shifts. Residue regenerated with
+`bun tools/overlay_published.ts resource_3a4` at each checkpoint and never
+carried over from a written figure. **16 published + 2 called -> 0 + 0.**
+The only line the sweep still prints is the class-C 0x2005210, which is the
+table word settled above.
+
+| entry | span | measureSpan | commit | note |
 |---|---|---|---|---|
-| 0x02000ec0 | **1240, exact** | 1240 | A called | called by the drafted 0x02000d2c(5) and 0x02001398(10); both neighbours drafted, so fixed at both ends |
-| 0x02003028 | <= 1024 | 938 | A called | starts immediately after the drafted 0x02002ffc; next owner 0x02003428 |
-| 0x02001838 | <= 1236 | 1200 | B published | next residue row is 0x02001d0c |
-| 0x02001d0c | <= 788 | 762 | B published | next owner is the drafted 0x02002020 |
+| 0x02001838 | 1236 | 1200 | 0ef4cd5d | exactly its recorded-owner bound; publishes 0x02001770 |
+| 0x02001d0c | 788 | 762 | 25c0b387 | fixed by the tiling, not measured twice; publishes 0x02001770 too |
+| 0x02003028 | **1000** | 938 | 2446855c | bound said 1024; the 24-byte difference is the leaf above |
+| 0x02000ec0 | 1240 | 1240 | 177bebcb | one of only two rows here where measureSpan agreed |
 
-0x02001838 and 0x02001d0c **tile 0x02001838..0x02002020 exactly**, so measuring
-either one fixes the other's span.
+**The published-pointer mechanism has now been seen SIX times on this one
+overlay**: 0x02002b58 -> 0x02002a48, 0x02002f10 -> 0x02002eec,
+0x02001838 -> 0x02001770, 0x02001d0c -> 0x02001770, 0x02000ec0 -> 0x02000098,
+and 0x02000ec0 -> 0x02002be0. Two of those are *install and then remove*
+(0x02003028 and 0x02000ec0 both call `Func_080000d8` on the word they gave
+`Func_080000d0`), and 0x02001770 has **two publishers and no callers at all**
+— a row drafted blind three shifts before anything was known to reach it.
 
-VERIFIED: the four addresses, their sweep class, the bounds above (computed
-from the recorded owner list), and 0x02000ec0's two callers with their
-arguments. NOT VERIFIED: any body, any callee, any span end except
-0x02000ec0's. No call resolution has been run over any of the four.
+0x02000ec0 closed two open questions about itself. Its single argument is a
+FRAME COUNT: r0 goes to sp+8 at 0x02000ed0 and is read back exactly once, at
+0x020010a8, straight into `Func_0808a010`. And the flag wiring with
+0x02001398 runs **both ways** — 0x02001398 sets 0x205 before calling, and this
+row tests 0x205 four times to decide whether its actor-1 material runs, so the
+same 1240 bytes play differently depending on which caller arrived with no
+argument distinguishing them; then this row sets 0x908, which is exactly what
+0x02001398 tests to bail out. Neither direction is visible from either row
+alone.
 
-**A fifth shaped row, 0x02005210, is in NEITHER sweep** — class C only, nearest
-recorded owner 0x02003a44, 6,092 bytes back, i.e. past the import-veneer bank
-in a stretch with no owners at all. It has not been looked at. Do not fold it
-into the four, and do not call this overlay closed, until someone decides
-whether that stretch is code.
+**The displacement-from-value chain now has five sightings**, three of them
+Isaac's on resource_3b9 and two more here in 0x02003028: at 0x02003054, `224
+<< 1` makes the POINTER 448, `subs #192` turns 448 into the VALUE 256 stored
+at +448, and `adds #200` turns 256 into the DISPLACEMENT 456; at 0x020033a4
+the same 448 pointer plus `adds #68` becomes the value 516. Five instances
+across two overlays makes it this compiler's normal shape for a workspace
+write, not a curiosity — read either subtraction against the base and you
+write the wrong field.
 
 Two corrections to earlier resource_3a4 notes of mine, so nobody inherits
 them: the word at **0x03001e40 is the free-running FRAME COUNTER**, not the

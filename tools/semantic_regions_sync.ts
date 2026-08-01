@@ -97,7 +97,7 @@ export function diagnoseMissingRow(
     if ((image[at] | (image[at + 1] << 8)) === 0x4770) returns = true;
   }
   if (!returns)
-    return "no strict inventory row for this owner, and no `bx lr` within 128 bytes -- these bytes may not be a function at all";
+    return "no strict inventory row for this owner, and no `bx lr` within 128 bytes -- these bytes may not be a function at all.";
   return (
     "LEAF-CONSISTENT: opens with no push and a bx lr follows within 128 bytes, so the strict inventory -- which " +
     "is seeded on push-shaped halfwords and filtered on starts_with_prologue -- structurally CANNOT hold this " +
@@ -240,14 +240,14 @@ export function planSync(): SyncResult {
       const why = raw === undefined
         ? diagnoseMissingRow(overlay, offset, images)
         : raw.structural_veneer
-          ? "its inventory row is marked structural_veneer"
+          ? "its inventory row is marked structural_veneer."
           : raw.data_walk
-            ? "its inventory row is marked data_walk"
+            ? "its inventory row is marked data_walk."
             : (raw.contained_by ?? []).length > 0
-              ? `its inventory row is contained by ${(raw.contained_by ?? []).join(", ")}`
+              ? `its inventory row is contained by ${(raw.contained_by ?? []).join(", ")}.`
               : raw.returns <= 0
-                ? "its inventory row records no return, so no span can be derived from it"
-                : "its inventory row has no positive span";
+                ? "its inventory row records no return, so no span can be derived from it."
+                : "its inventory row has no positive span.";
       rejected.push({
         source: name,
         reason:

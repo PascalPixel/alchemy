@@ -191,11 +191,53 @@ export function resolveOverlay(overlay: string, owner?: number, ownerEnd?: numbe
  *
  * The overlay name cannot collide: `resource_3af` is longer than four hex
  * digits and carries a prefix, and the flags all start with `--`.
+ *
+ * SECOND FAILURE OF THE SAME SHAPE, fixed 2026-08-01. A filter drops what it
+ * does not recognise, so anything that is neither the overlay name, a known
+ * flag, nor a bound vanished — and the tool fell back to whole-overlay mode
+ * and printed `sites=0`, which is indistinguishable from a row that genuinely
+ * has no calls. The way to be handed such an argument is not exotic: zsh does
+ * NOT word-split an unquoted expansion, so
+ *
+ *     for r in "3660 36d0"; do bun ... resource_3c9 $r; done
+ *
+ * passes the single argument `"3660 36d0"`. That returned `sites=0` for six
+ * spans in a row and was only caught because the reader already knew one of
+ * the six was 3. `overlay_show` was given the same treatment earlier tonight;
+ * this is its sibling and it had the same hole.
+ *
+ * So `parseBounds` now CONSUMES rather than filters: every argument must be
+ * accounted for, and an unrecognised or surplus one throws with the offending
+ * text quoted. A tool that accepts arguments it does not use will eventually
+ * be handed one that mattered.
  */
-export function parseBounds(args: string[]): number[] {
-  return args
-    .filter((argument) => /^(0x)?[0-9a-f]{1,4}$/i.test(argument))
-    .map((argument) => Number.parseInt(argument.replace(/^0x/i, ""), 16));
+const KNOWN_FLAGS = new Set(["--self-test", "--json", "--annotate"]);
+
+export function parseBounds(args: string[], overlay?: string): number[] {
+  const bounds: number[] = [];
+  for (const argument of args) {
+    if (KNOWN_FLAGS.has(argument)) continue;
+    if (argument === overlay) continue;
+    if (overlay === undefined && /^resource_[0-9a-f]+$/.test(argument)) continue;
+    if (/^(0x)?[0-9a-f]{1,4}$/i.test(argument)) {
+      bounds.push(Number.parseInt(argument.replace(/^0x/i, ""), 16));
+      continue;
+    }
+    throw new Error(
+      `overlay_call_targets: unrecognised argument ${JSON.stringify(argument)}.\n` +
+        "Bounds are two SEPARATE arguments in either spelling (`1c14 1d0c` or " +
+        "`0x1c14 0x1d0c`).\n" +
+        "If this looks like two bounds in one string, a shell passed them " +
+        "unsplit — zsh does not word-split an unquoted expansion.",
+    );
+  }
+  if (bounds.length > 2) {
+    throw new Error(
+      `overlay_call_targets: ${bounds.length} bounds given, at most two are used ` +
+        "(owner start and end). Refusing rather than silently ignoring the rest.",
+    );
+  }
+  return bounds;
 }
 
 function selfTest(): void {
@@ -242,6 +284,33 @@ function selfTest(): void {
     throw new Error("mixed case and flags must not disturb bounds");
   if (parseBounds(["resource_3af", "--json"]).length !== 0)
     throw new Error("neither the overlay name nor a flag is a bound");
+  // An UNRECOGNISED argument must throw rather than vanish. Filtering made a
+  // shell mistake indistinguishable from a row with no calls; these five are
+  // the ways of being wrong that must not print a plausible answer.
+  const rejects: string[][] = [
+    // The founding case: zsh handing both bounds through as ONE argument.
+    ["resource_3c9", "3660 36d0"],
+    // A decimal bound, or any typo, must not be silently dropped.
+    ["resource_3c9", "14000"],
+    ["resource_3c9", "1c14", "1d0g"],
+    // An unknown flag is not a bound and is not ignorable either.
+    ["resource_3c9", "--anotate"],
+    // More bounds than the tool consumes: refuse rather than drop the rest.
+    ["resource_3c9", "1c14", "1d0c", "1e00"],
+  ];
+  for (const argv of rejects) {
+    let threw = false;
+    try {
+      parseBounds(argv, "resource_3c9");
+    } catch {
+      threw = true;
+    }
+    if (!threw) throw new Error(`bad arguments must throw: ${JSON.stringify(argv)}`);
+  }
+  // ...and the good spellings must still pass with the overlay name consumed.
+  const named = parseBounds(["resource_3c9", "0x1c14", "1d0c", "--annotate"], "resource_3c9");
+  if (named.length !== 2 || named[0] !== 0x1c14 || named[1] !== 0x1d0c)
+    throw new Error("valid bounds must survive the stricter parser");
   // Partial annotation must be DETECTABLE. This is the check that would have
   // caught the no-bounds bug: the resolver covering none of the listing's calls
   // is just the extreme case of covering some of them.
@@ -340,7 +409,7 @@ function main(): void {
     process.exitCode = 1;
     return;
   }
-  const bounds = parseBounds(args);
+  const bounds = parseBounds(args, overlay);
   const sites = resolveOverlay(overlay, bounds[0], bounds[1]);
   if (args.includes("--json")) {
     console.log(JSON.stringify(sites, null, 2));

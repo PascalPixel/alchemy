@@ -15,7 +15,40 @@ void *Func_0808e14c(s32);
 void Func_08096fb0(u16, s32);
 void Func_08097194(void);
 
-/* Resolves an item owner and dispatches its field-use or scripted behavior. */
+/*
+ * __call_via_rN veneer site, resolved per-site against the ROM.
+ *
+ * The `bl Func_080072f0` at 0x0808e36c is `__call_via_r3` -- an indirect call
+ * through r3, and the draft's fourth argument is the callee.
+ *
+ * WHERE r3 COMES FROM, and a warning about the tool. `tools/veneer_resolve.ts`
+ * reports this site as the RETURN of the `bl 0x08091750` at 0x0808e360. That
+ * is wrong, and wrong in an instructive way: 0x0808e360 is the LINEAR
+ * predecessor, not the control-flow predecessor. The instruction after it,
+ * `b.n 0x0808e370` at 0x0808e364, branches PAST the veneer call entirely. The
+ * only way to reach 0x0808e366 is the `bge.n 0x808e366` at 0x0808e33c, and on
+ * that path r3 was set two instructions earlier by `ldr r3, [r6, #8]` at
+ * 0x0808e336 and nothing writes it again.
+ *
+ * So the callee is the owner record's field at +8. The guard is the same
+ * shape found at 0x0808d9a4: `cmp r3, #0x10000; bge` -- small values are
+ * packed script ids handled by the 0x08091750 path, large values are
+ * addresses called directly. Same offset, same tagged-word discipline.
+ *
+ * Two instruments agree here: the branch-target scan above, and this file's
+ * own reconstructed control flow, which already placed the call in the
+ * `temp_r3_3 >= 0x10000` arm.
+ *
+ * ARITY: three. r0 = fp, r1 = sl, r2 = [sp, #4], all set in the block at
+ * 0x0808e366; callee in the r3 slot, which is why the draft read it as a
+ * fourth argument.
+ *
+ * Resolves an item owner and dispatches its field-use or scripted behavior.
+ */
+
+/// An owner record's +8 field when it holds an address rather than a packed
+/// script id.
+typedef void (*OwnerHandler)(s32 itemId, s32 slot, s32 arg);
 s32 Func_0808e23c(s32 arg0, s32 arg1) {
     s32 sp0;
     s32 sp4;
@@ -108,7 +141,7 @@ loop_4:
             Func_08092f84(temp_r5, 0);
             Func_08091750();
         } else {
-            Func_080072f0((s32) temp_r2, var_sl, sp4, temp_r3_3);
+            ((OwnerHandler) temp_r3_3)((s32) temp_r2, var_sl, sp4);
         }
         sp0 = 0;
         goto block_32;

@@ -39,6 +39,28 @@ SMALLEST residues in the tree; ranked by published hits the largest are
 382 (46), 3ab (32), 385 (32), 396 (28), 3b1 (27), 39c (26). The campaign's
 scope is the miscertified overlays deliberately, not the biggest work.
 
+## Before parking a row as a "real rewrite" (2026-08-01)
+
+Three times in one night a park diagnosed as a hard structural rewrite was
+actually a **span error or an incomplete draft**:
+
+- one residual was two missing tail stores of a pooled constant the draft had
+  omitted entirely (span 50, truly 56);
+- another was span 44 against a true 48;
+- a third was the same class again.
+
+**Check the reference's TAIL against the draft's tail before parking
+anything.** A draft that is right for its whole length but stops early reads
+exactly like a draft that is structurally wrong.
+
+Related lever, fully stated (the zero-register reuse, worth 18 -> 1 groups):
+1. compute the store address into its own local first, then the zero, matching
+   the reference's address-then-value order;
+2. let ONE `s32 v = 0;` serve both the store and the later mask, so the zeroed
+   register is reused by subtraction rather than materialising the constant;
+3. start the AND chain with the mask, per the mask-first rule, which is what
+   fixes the register identities.
+
 ## Tooling that lies quietly (2026-08-01)
 
 Two near-misses in one night, same class: a tool that returns a *plausible

@@ -743,23 +743,44 @@ const VENEER_CALL = /\bFunc_0800(?:72(?:e4|e8|ec|f0|f4|f8|fc)|730[0-9a-c]|731[0-
  * `semantic/` only. The 37 exact `src/` files deliberately still declare their
  * phantoms per Vale's standing ruling and must NOT be swept in here.
  */
-export function findPartialConversions(root: string = ROOT): string[] {
-  const marker = "__call_via_rN veneer site";
-  const offenders: string[] = [];
+function semanticSources(root: string): string[] {
+  const found: string[] = [];
   const walk = (dir: string): void => {
     for (const entry of readdirSync(dir, { withFileTypes: true })) {
       const full = join(dir, entry.name);
       if (entry.isDirectory()) walk(full);
-      else if (entry.name.endsWith(".c")) {
-        const source = readFileSync(full, "utf8");
-        if (!source.includes(marker)) continue;
-        if (VENEER_CALL.test(stripComments(source))) offenders.push(full);
-      }
+      else if (entry.name.endsWith(".c")) found.push(full);
     }
   };
   const semantic = join(root, "semantic");
   if (existsSync(semantic)) walk(semantic);
-  return offenders.sort();
+  return found.sort();
+}
+
+/**
+ * Semantic files that still CALL a veneer address -- the audit's live scope.
+ *
+ * This exists because measuring the scope with `grep Func_08007...` is WRONG,
+ * and wrong in the direction that inflates it. Every converted file's header
+ * QUOTES the phantom prototype it removed, so grep counts finished files as
+ * outstanding. That error was made and caught on 2026-08-01: a reported
+ * remainder of 15 files / 129 sites was really 11 files / 117 sites, with four
+ * files -- 080052f4, 08005534, 080dd2c4, 080de2f8 -- already complete and
+ * counted only for their own prose. Comments are stripped here so the number
+ * cannot drift that way again. Measure with `--scope`, not with grep.
+ */
+export function findVeneerCallers(root: string = ROOT): string[] {
+  return semanticSources(root).filter((path) =>
+    VENEER_CALL.test(stripComments(readFileSync(path, "utf8"))),
+  );
+}
+
+export function findPartialConversions(root: string = ROOT): string[] {
+  const marker = "__call_via_rN veneer site";
+  return semanticSources(root).filter((path) => {
+    const source = readFileSync(path, "utf8");
+    return source.includes(marker) && VENEER_CALL.test(stripComments(source));
+  });
 }
 
 function checkNoPartialConversions(): void {
@@ -783,10 +804,15 @@ function checkNoPartialConversions(): void {
 function main(): void {
   const argv = Bun.argv.slice(2);
   if (argv.includes("--self-test")) return selfTest();
+  if (argv.includes("--scope")) {
+    for (const path of findVeneerCallers()) console.log(path);
+    return;
+  }
   const summary = argv.includes("--summary");
   const targets = argv.filter((a) => !a.startsWith("--"));
   if (targets.length === 0) {
     console.log("usage: veneer_resolve.ts <0xADDRESS | path/to/08xxxxxx.c> ... [--summary]");
+    console.log("       veneer_resolve.ts --scope        # semantic files that still CALL a veneer");
     console.log("       veneer_resolve.ts --self-test");
     process.exitCode = 1;
     return;

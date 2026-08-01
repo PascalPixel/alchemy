@@ -77,10 +77,10 @@ commit tree rather than trusting incompatible legacy subject suffixes.
 
 ## Coverage map
 
-`tools/coverage_map.ts` publishes the same measurement as a picture:
-[`assets/readme/gs1-en-coverage.svg`](../assets/readme/gs1-en-coverage.svg),
-a treemap of the cartridge and of the audited executable
-denominator, with the tile data in
+`tools/coverage_map.ts` publishes the same measurement as three pictures:
+[`gs1-en-core.svg`](../assets/readme/gs1-en-core.svg),
+[`gs1-en-overlays.svg`](../assets/readme/gs1-en-overlays.svg), and
+[`gs1-en-assets.svg`](../assets/readme/gs1-en-assets.svg), with the tile data in
 [`metrics/gs1-en-coverage-map.json`](../metrics/gs1-en-coverage-map.json).
 
 It derives ownership the way the history ledger does—from tracked trees rather
@@ -102,17 +102,12 @@ when the lane comes from a ref rather than the working tree. The semantic lane
 is not part of Full-C Byte Share and is drawn as a separate colour, never
 folded into the headline fraction.
 
-Because the semantic lane lives on `venus` and the exact lane advances on
-`mercury`, the map records which tree each lane came from, in
-`provenance.exact_lane` and `provenance.semantic_lane`. Both `--write` and
-`--check` re-resolve from that record, so a branch keeps drawing the picture the
-way it was drawn last time without needing its own `coverage` script;
-`--exact-ref` and `--semantic-ref` override it, and `worktree` restores the
-local tree. Each lighthouse records `exact_lane: worktree` and draws its own
-lane from its working tree, which is what lets it bank uncommitted work. `main`
-records `origin/mercury` and `origin/venus`, because Mercury never pushes back
-to main and a picture drawn from main's own tree would freeze while the project
-moved on.
+The map records which tree each lane came from in `provenance.exact_lane` and
+`provenance.semantic_lane`. Both `--write` and `--check` re-resolve from that
+record; `--exact-ref` and `--semantic-ref` can override it, while `worktree`
+selects the local tree. The normal integrated `main` close-out uses `worktree`
+for both lanes, so the pictures and dashboard describe the commit being
+published.
 
 A recorded ref that is not available locally is an error, not a fall back to
 the working tree: falling back would quietly republish a smaller lane as though

@@ -1,14 +1,16 @@
 # Where things are
 
-One page so nobody has to guess. Maintained by Vale on `main`; if something here
-is wrong, say so in `MEETING.md` and it gets fixed on the next cycle.
+One page so nobody has to guess. `main` is authoritative; update the single
+handover when an operational fact changes instead of creating another status
+document.
 
 ## Start here
 
 | you want | read |
 | --- | --- |
-| how the three branches work, who owns what | [BRANCH-PROTOCOL.md](BRANCH-PROTOCOL.md) |
-| what is happening right now, who owes what | [`../MEETING.md`](../MEETING.md) |
+| current state and what to do next | [`../HANDOVER.md`](../HANDOVER.md) |
+| how worker branches return to `main` | [BRANCH-PROTOCOL.md](BRANCH-PROTOCOL.md) |
+| local dashboard, chat, and kanban | [TEAM-OPS.md](TEAM-OPS.md) |
 | how to do the work — levers, park classes, compiler modes | [`../HANDOVER.md`](../HANDOVER.md) |
 | the rules that are not negotiable | [`../PROVENANCE.md`](../PROVENANCE.md), [`../LAWS.md`](../LAWS.md) |
 
@@ -36,8 +38,7 @@ you are looking for what to do next, they are the wrong place.
 
 ## The rule that keeps this list short
 
-A dated document is a **record**, not a queue. When a session ends, its findings
-belong in `HANDOVER.md` where they will be read, and the session record moves to
-`archive/`. `MEETING.md` is pruned the same way: resolved entries leave the board
-once they are acted on, because git holds the history and a board nobody can scan
-is not a board.
+A dated document is a **record**, not a queue. When a session ends, actionable
+findings belong in `HANDOVER.md`; finished session records belong in `archive/`.
+The live chat and kanban are intentionally local dashboard state, while git
+holds durable history.

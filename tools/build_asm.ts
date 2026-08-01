@@ -2,6 +2,7 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
 import { canonicalJson } from "./canonical_json.ts";
+import { writeCacheEntryAtomically } from "./cache_entry.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const ROM_BASE = 0x08000000;
@@ -209,9 +210,31 @@ function validateClassificationCounts(
 // overlay it touched and reuses the other ~1,806 regions.
 const REGION_CACHE = join(ROOT, "out/cache/asm-regions");
 
+/**
+ * A digest of this file's own source, mixed into every region key.
+ *
+ * The input closure above is right about the SOURCE, but the assembler flags,
+ * the link step and the post-processing all live in this file and were covered
+ * by nothing — `asm-v1` was a hand-maintained string, the same mechanism that
+ * poisoned `out/cache/overlay-c` across three worktrees. Deriving the key from
+ * the source means any edit here moves every region automatically.
+ *
+ * No fallback, deliberately: a key that quietly stops discriminating is worse
+ * than a version string someone forgets to bump.
+ */
+let selfDigestCache: string | undefined;
+export function selfDigest(): string {
+  if (selfDigestCache !== undefined) return selfDigestCache;
+  const path = Bun.fileURLToPath(import.meta.url);
+  const source = readFileSync(path);
+  if (source.byteLength === 0) throw new Error(`build_asm read an EMPTY source at ${path}; refusing to key the cache`);
+  selfDigestCache = new Bun.CryptoHasher("sha256").update(source).digest("hex");
+  return selfDigestCache;
+}
+
 export function regionCacheKey(sourceBytes: Uint8Array, linkedAddress: number): string {
   const digest = new Bun.CryptoHasher("sha256");
-  digest.update(`asm-v1:${linkedAddress.toString(16)}\0`);
+  digest.update(`asm:${selfDigest()}:${linkedAddress.toString(16)}\0`);
   digest.update(sourceBytes);
   return digest.digest("hex");
 }
@@ -263,7 +286,10 @@ async function buildRegion(source: string, outputDir: string, runAddress?: numbe
   await run(["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", elf, binary]);
   const data = readFileSync(binary);
   mkdirSync(REGION_CACHE, { recursive: true });
-  writeFileSync(cached, data);
+  // Atomic, for the reason documented on `writeCacheEntryAtomically`: a direct
+  // write to the final path can be interrupted or raced, and a truncated entry
+  // under a valid key is then served for ever.
+  writeCacheEntryAtomically(cached, data);
   return { address, runAddress: linkedAddress, data };
 }
 

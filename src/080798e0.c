@@ -34,6 +34,7 @@ u32 Func_080798e0(s32 owner, s16 destination[4][2])
 {
     struct OwnerState *state = Func_08077394(owner);
     u32 index;
+    u32 result;
     s32 values[4];
     s32 i;
 
@@ -42,16 +43,29 @@ u32 Func_080798e0(s32 owner, s16 destination[4][2])
         if (index > 43)
             index = 0;
 
-        for (i = 0; i < 4; i++)
-            ((s32 *)destination)[i] = Data_08088e38[index].values[i];
+        i = 0;
+        for (;;) {
+            ((s32 *)destination)[i] =
+                Data_08088e38[index].values[i];
+            i++;
+            if (i > 3)
+                goto copied;
+        }
+copied:
         return index;
     }
 
     Func_080797fc(state->record_128, state->source_f8, values);
-    for (i = 0; i < 4; i++) {
-        s32 value = values[i];
-        s32 ones = Func_080022fc(value, 10);
-        s32 tens = Func_080022ec(value, 10);
+    i = 0;
+    do {
+        s32 value;
+        s32 ones;
+        s32 tens;
+
+        result = (u32)Data_08088df8;
+        value = values[i];
+        ones = Func_080022fc(value, 10);
+        tens = Func_080022ec(value, 10);
 
         if (tens > 15)
             tens = 15;
@@ -59,7 +73,9 @@ u32 Func_080798e0(s32 owner, s16 destination[4][2])
             tens = 0;
 
         destination[i][0] = Data_08088df8[tens].first + ones;
-        destination[i][1] = Data_08088df8[tens].second + ones;
-    }
-    return (u32)Data_08088df8;
+        destination[i][1] =
+            ((volatile const struct DigitOffsets *)Data_08088df8)[tens].second + ones;
+        i++;
+    } while (i < 4);
+    return result;
 }

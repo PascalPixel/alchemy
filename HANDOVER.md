@@ -5424,13 +5424,34 @@ EXISTING semantic draft where one probed cleanly:
 not clean and not dirty. The remaining 17 owners (464 bytes to 5,604) are
 unprobed.
 
-**378:0070 is the row to take next and its residual is already characterised.**
-Its head is 4 bytes short of the reference's — the reference opens
-`lsls r2,r2,#1 / adds r3,.. / movs r2,#0` ahead of the `ldrsh`/`subs #1`/
-`cmp #0x22` bound check that the draft starts with — and that single shift is
-what puts every table entry 4 low. Fix the head first and re-measure before
-reading anything else as a defect; on a dispatch row a head-length error and
-an arm-order error both present as a table full of wrong words.
+**378:0070 CLOSED, 220 bytes byte-exact, on the head alone** — and the
+diagnosis above needs one correction. The head was **6** bytes short, not 4;
+it presented as 4 at the table because the assembler realigns the table to a
+word boundary and absorbs two of the six. Quote the head's own length, not
+the table's displacement.
+
+The cause was a FOLDED SELECTOR ADDRESS. The draft spelled the read
+`*(s16 *)((u8 *)0x02000240 + 450)`, which pools the sum 0x02000402; the
+reference pools 0x02000240 and reaches +450 with
+`movs r2,#225 / lsls r2,#1 / adds r3,r3,r2`. Replacing the fold with an
+`extern u8 Data_02000240[]` and an `s32 off = 450;` local in its own block
+took the row from 85 differing bytes to **0** in one edit. That is the same
+lever that closed the dispatcher head of `resource_3b9:1a4c`, now on a second
+independent row, so it is a lever rather than a coincidence:
+
+> **A pooled base plus a small offset must be spelled as a symbol plus a
+> named local.** Any spelling gcc can constant-fold gives one pool word where
+> the reference has a word and three instructions, and on a dispatch row that
+> six-byte deficit relocates the entire jump table.
+
+Note what did NOT need doing: the five arms were already in the reference's
+order, so §5b5's reordering never came up. Check the arm order off the ROM
+anyway before concluding a row needs it — here it cost one command to rule
+out.
+
+Adopting it moved the denominator again, 1,340,136 -> 1,340,308 (+172): the
+row was inventoried but its 140-byte table and 28-byte pool were not audited
+as executable until the span became C.
 
 ## 5c. Auditing the executable inventory for holes (2026-08-01)
 

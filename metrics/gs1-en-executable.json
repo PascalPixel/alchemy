@@ -4,7 +4,7 @@
   "target": "gs1-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1343206,
+  "total_union_bytes": 1343212,
   "main": {
     "id": "main",
     "executable_bytes": 548364,
@@ -5362,7 +5362,7 @@
           "evidence": "resource_36f_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_36f_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_36f_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_370",
@@ -5636,7 +5636,7 @@
           "evidence": "resource_370_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_370_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_370_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_371",
@@ -6708,7 +6708,7 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         }
       ],
-      "evidence": ["assets/code/resource_371_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_371_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_372",
@@ -6797,18 +6797,6 @@
         },
         {
           "start": 33554956,
-          "end": 33555152,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33555152,
-          "end": 33555172,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33555172,
           "end": 33557774,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -6841,7 +6829,7 @@
           "start": 33558212,
           "end": 33558326,
           "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
+          "evidence": "resource_372_overlay.s:1968:verified-C-placeholder"
         },
         {
           "start": 33558326,
@@ -6865,7 +6853,7 @@
           "start": 33559280,
           "end": 33559366,
           "kind": "thumb",
-          "evidence": "resource_372_overlay.s:2233:verified-C-placeholder"
+          "evidence": "resource_372_overlay.s:2142:verified-C-placeholder"
         },
         {
           "start": 33559366,
@@ -7087,7 +7075,7 @@
           "start": 33570372,
           "end": 33570376,
           "kind": "literal_pool",
-          "evidence": "resource_372_overlay.s:5238:pc-relative-literal"
+          "evidence": "resource_372_overlay.s:5147:pc-relative-literal"
         },
         {
           "start": 33570376,
@@ -7189,7 +7177,7 @@
           "start": 33572176,
           "end": 33572190,
           "kind": "thumb",
-          "evidence": "resource_372_overlay.s:5850:verified-C-placeholder"
+          "evidence": "resource_372_overlay.s:5759:verified-C-placeholder"
         },
         {
           "start": 33572190,
@@ -7201,7 +7189,7 @@
           "start": 33572192,
           "end": 33572202,
           "kind": "thumb",
-          "evidence": "resource_372_overlay.s:5853:verified-C-placeholder"
+          "evidence": "resource_372_overlay.s:5762:verified-C-placeholder"
         },
         {
           "start": 33572202,
@@ -7234,7 +7222,7 @@
           "evidence": "resource_372_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_372_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_372_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_373",
@@ -7251,18 +7239,6 @@
         },
         {
           "start": 33554480,
-          "end": 33555264,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33555264,
-          "end": 33555276,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33555276,
           "end": 33555556,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -7277,7 +7253,7 @@
           "start": 33555572,
           "end": 33555976,
           "kind": "thumb",
-          "evidence": "resource_373_overlay.s:2008:verified-C-placeholder"
+          "evidence": "resource_373_overlay.s:1929:verified-C-placeholder"
         },
         {
           "start": 33555978,
@@ -7325,7 +7301,7 @@
           "start": 33557912,
           "end": 33557950,
           "kind": "thumb",
-          "evidence": "resource_373_overlay.s:2514:verified-C-placeholder"
+          "evidence": "resource_373_overlay.s:2435:verified-C-placeholder"
         },
         {
           "start": 33557950,
@@ -7349,7 +7325,7 @@
           "start": 33558060,
           "end": 33558078,
           "kind": "thumb",
-          "evidence": "resource_373_overlay.s:2524:verified-C-placeholder"
+          "evidence": "resource_373_overlay.s:2445:verified-C-placeholder"
         },
         {
           "start": 33558078,
@@ -7361,7 +7337,7 @@
           "start": 33558080,
           "end": 33558098,
           "kind": "thumb",
-          "evidence": "resource_373_overlay.s:2527:verified-C-placeholder"
+          "evidence": "resource_373_overlay.s:2448:verified-C-placeholder"
         },
         {
           "start": 33558098,
@@ -7383,27 +7359,9 @@
         },
         {
           "start": 33559000,
-          "end": 33559094,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33559094,
-          "end": 33559096,
-          "kind": "executable_alignment",
-          "evidence": "resource_373_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33559096,
-          "end": 33559108,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33559108,
           "end": 33559166,
           "kind": "thumb",
-          "evidence": "resource_373_overlay.s:2694:verified-C-placeholder"
+          "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
           "start": 33559166,
@@ -7415,7 +7373,7 @@
           "start": 33559168,
           "end": 33559226,
           "kind": "thumb",
-          "evidence": "resource_373_overlay.s:2697:verified-C-placeholder"
+          "evidence": "resource_373_overlay.s:2577:verified-C-placeholder"
         },
         {
           "start": 33559226,
@@ -7631,7 +7589,7 @@
           "start": 33570948,
           "end": 33570952,
           "kind": "literal_pool",
-          "evidence": "resource_373_overlay.s:6963:pc-relative-literal"
+          "evidence": "resource_373_overlay.s:6843:pc-relative-literal"
         },
         {
           "start": 33570952,
@@ -7733,7 +7691,7 @@
           "start": 33576340,
           "end": 33576354,
           "kind": "thumb",
-          "evidence": "resource_373_overlay.s:9133:verified-C-placeholder"
+          "evidence": "resource_373_overlay.s:9013:verified-C-placeholder"
         },
         {
           "start": 33576354,
@@ -7745,7 +7703,7 @@
           "start": 33576356,
           "end": 33576366,
           "kind": "thumb",
-          "evidence": "resource_373_overlay.s:9136:verified-C-placeholder"
+          "evidence": "resource_373_overlay.s:9016:verified-C-placeholder"
         },
         {
           "start": 33576366,
@@ -7763,7 +7721,7 @@
           "start": 33576744,
           "end": 33576748,
           "kind": "literal_pool",
-          "evidence": "resource_373_overlay.s:9210:pc-relative-literal"
+          "evidence": "resource_373_overlay.s:9090:pc-relative-literal"
         },
         {
           "start": 33576748,
@@ -7781,7 +7739,7 @@
           "start": 33577200,
           "end": 33577254,
           "kind": "thumb",
-          "evidence": "resource_373_overlay.s:9381:verified-C-placeholder"
+          "evidence": "resource_373_overlay.s:9261:verified-C-placeholder"
         },
         {
           "start": 33577254,
@@ -7793,7 +7751,7 @@
           "start": 33577256,
           "end": 33577294,
           "kind": "thumb",
-          "evidence": "resource_373_overlay.s:9384:verified-C-placeholder"
+          "evidence": "resource_373_overlay.s:9264:verified-C-placeholder"
         },
         {
           "start": 33577294,
@@ -7811,7 +7769,7 @@
           "start": 33577504,
           "end": 33577508,
           "kind": "literal_pool",
-          "evidence": "resource_373_overlay.s:9389:pc-relative-literal"
+          "evidence": "resource_373_overlay.s:9269:pc-relative-literal"
         },
         {
           "start": 33577508,
@@ -7889,7 +7847,7 @@
           "start": 33578620,
           "end": 33578624,
           "kind": "literal_pool",
-          "evidence": "resource_373_overlay.s:9631:pc-relative-literal"
+          "evidence": "resource_373_overlay.s:9511:pc-relative-literal"
         },
         {
           "start": 33578624,
@@ -7916,7 +7874,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_373_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_373_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_374",
@@ -8244,7 +8202,7 @@
           "evidence": "resource_374_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_374_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_374_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_375",
@@ -8440,7 +8398,7 @@
           "evidence": "resource_375_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_375_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_375_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_376",
@@ -8744,7 +8702,7 @@
           "evidence": "resource_376_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_376_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_376_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_377",
@@ -8767,24 +8725,6 @@
         },
         {
           "start": 33554576,
-          "end": 33554682,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33554682,
-          "end": 33554684,
-          "kind": "executable_alignment",
-          "evidence": "resource_377_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33554684,
-          "end": 33554712,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33554712,
           "end": 33555066,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -8829,7 +8769,7 @@
           "start": 33555248,
           "end": 33555266,
           "kind": "thumb",
-          "evidence": "resource_377_overlay.s:647:verified-C-placeholder"
+          "evidence": "resource_377_overlay.s:605:verified-C-placeholder"
         },
         {
           "start": 33555266,
@@ -8841,7 +8781,7 @@
           "start": 33555268,
           "end": 33555286,
           "kind": "thumb",
-          "evidence": "resource_377_overlay.s:650:verified-C-placeholder"
+          "evidence": "resource_377_overlay.s:608:verified-C-placeholder"
         },
         {
           "start": 33555286,
@@ -8853,7 +8793,7 @@
           "start": 33555288,
           "end": 33555306,
           "kind": "thumb",
-          "evidence": "resource_377_overlay.s:653:verified-C-placeholder"
+          "evidence": "resource_377_overlay.s:611:verified-C-placeholder"
         },
         {
           "start": 33555306,
@@ -8865,7 +8805,7 @@
           "start": 33555308,
           "end": 33555326,
           "kind": "thumb",
-          "evidence": "resource_377_overlay.s:656:verified-C-placeholder"
+          "evidence": "resource_377_overlay.s:614:verified-C-placeholder"
         },
         {
           "start": 33555326,
@@ -8877,7 +8817,7 @@
           "start": 33555328,
           "end": 33555346,
           "kind": "thumb",
-          "evidence": "resource_377_overlay.s:659:verified-C-placeholder"
+          "evidence": "resource_377_overlay.s:617:verified-C-placeholder"
         },
         {
           "start": 33555346,
@@ -8889,7 +8829,7 @@
           "start": 33555348,
           "end": 33555366,
           "kind": "thumb",
-          "evidence": "resource_377_overlay.s:662:verified-C-placeholder"
+          "evidence": "resource_377_overlay.s:620:verified-C-placeholder"
         },
         {
           "start": 33555366,
@@ -8901,7 +8841,7 @@
           "start": 33555368,
           "end": 33555386,
           "kind": "thumb",
-          "evidence": "resource_377_overlay.s:665:verified-C-placeholder"
+          "evidence": "resource_377_overlay.s:623:verified-C-placeholder"
         },
         {
           "start": 33555386,
@@ -8913,7 +8853,7 @@
           "start": 33555388,
           "end": 33555406,
           "kind": "thumb",
-          "evidence": "resource_377_overlay.s:668:verified-C-placeholder"
+          "evidence": "resource_377_overlay.s:626:verified-C-placeholder"
         },
         {
           "start": 33555406,
@@ -8925,7 +8865,7 @@
           "start": 33555408,
           "end": 33555426,
           "kind": "thumb",
-          "evidence": "resource_377_overlay.s:671:verified-C-placeholder"
+          "evidence": "resource_377_overlay.s:629:verified-C-placeholder"
         },
         {
           "start": 33555426,
@@ -8937,7 +8877,7 @@
           "start": 33555428,
           "end": 33555446,
           "kind": "thumb",
-          "evidence": "resource_377_overlay.s:674:verified-C-placeholder"
+          "evidence": "resource_377_overlay.s:632:verified-C-placeholder"
         },
         {
           "start": 33555446,
@@ -9063,7 +9003,7 @@
           "start": 33559476,
           "end": 33559522,
           "kind": "thumb",
-          "evidence": "resource_377_overlay.s:2248:verified-C-placeholder"
+          "evidence": "resource_377_overlay.s:2206:verified-C-placeholder"
         },
         {
           "start": 33559522,
@@ -9147,7 +9087,7 @@
           "start": 33560488,
           "end": 33560502,
           "kind": "thumb",
-          "evidence": "resource_377_overlay.s:2546:verified-C-placeholder"
+          "evidence": "resource_377_overlay.s:2504:verified-C-placeholder"
         },
         {
           "start": 33560502,
@@ -9159,7 +9099,7 @@
           "start": 33560504,
           "end": 33560514,
           "kind": "thumb",
-          "evidence": "resource_377_overlay.s:2549:verified-C-placeholder"
+          "evidence": "resource_377_overlay.s:2507:verified-C-placeholder"
         },
         {
           "start": 33560514,
@@ -9180,7 +9120,7 @@
           "evidence": "resource_377_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_377_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_377_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_378",
@@ -9688,7 +9628,7 @@
           "evidence": "resource_378_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_378_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_378_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_379",
@@ -9758,7 +9698,7 @@
           "evidence": "resource_379_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_379_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_379_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_37a",
@@ -9966,7 +9906,7 @@
           "evidence": "resource_37a_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_37a_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_37a_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_37b",
@@ -10276,7 +10216,7 @@
           "evidence": "resource_37b_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_37b_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_37b_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_37c",
@@ -10304,7 +10244,7 @@
           "evidence": "resource_37c_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_37c_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_37c_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_37d",
@@ -10332,7 +10272,7 @@
           "evidence": "resource_37d_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_37d_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_37d_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_37e",
@@ -10360,7 +10300,7 @@
           "evidence": "resource_37e_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_37e_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_37e_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_37f",
@@ -10491,24 +10431,6 @@
         },
         {
           "start": 33555820,
-          "end": 33556370,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33556370,
-          "end": 33556372,
-          "kind": "executable_alignment",
-          "evidence": "resource_37f_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33556372,
-          "end": 33556380,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33556380,
           "end": 33556708,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -10670,7 +10592,7 @@
           "evidence": "resource_37f_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_37f_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_37f_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_380",
@@ -11136,7 +11058,7 @@
           "evidence": "resource_380_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_380_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_380_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_381",
@@ -11536,7 +11458,7 @@
           "evidence": "resource_381_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_381_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_381_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_382",
@@ -12458,7 +12380,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_382_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_382_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_383",
@@ -12948,7 +12870,7 @@
           "evidence": "resource_383_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_383_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_383_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_384",
@@ -12994,7 +12916,7 @@
           "evidence": "resource_384_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_384_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_384_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_385",
@@ -13580,7 +13502,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_385_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_385_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_386",
@@ -13644,7 +13566,7 @@
           "evidence": "resource_386_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_386_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_386_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_387",
@@ -13876,7 +13798,7 @@
           "evidence": "resource_387_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_387_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_387_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_388",
@@ -13904,7 +13826,7 @@
           "evidence": "resource_388_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_388_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_388_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_389",
@@ -13921,18 +13843,6 @@
         },
         {
           "start": 33554480,
-          "end": 33555264,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33555264,
-          "end": 33555276,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33555276,
           "end": 33555556,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -13947,7 +13857,7 @@
           "start": 33555572,
           "end": 33555976,
           "kind": "thumb",
-          "evidence": "resource_389_overlay.s:451:verified-C-placeholder"
+          "evidence": "resource_389_overlay.s:372:verified-C-placeholder"
         },
         {
           "start": 33555978,
@@ -14037,7 +13947,7 @@
           "start": 33557724,
           "end": 33557728,
           "kind": "literal_pool",
-          "evidence": "resource_389_overlay.s:1117:pc-relative-literal"
+          "evidence": "resource_389_overlay.s:1038:pc-relative-literal"
         },
         {
           "start": 33557728,
@@ -14067,7 +13977,7 @@
           "start": 33558664,
           "end": 33558682,
           "kind": "thumb",
-          "evidence": "resource_389_overlay.s:1630:verified-C-placeholder"
+          "evidence": "resource_389_overlay.s:1551:verified-C-placeholder"
         },
         {
           "start": 33558682,
@@ -14079,7 +13989,7 @@
           "start": 33558684,
           "end": 33558706,
           "kind": "thumb",
-          "evidence": "resource_389_overlay.s:1633:verified-C-placeholder"
+          "evidence": "resource_389_overlay.s:1554:verified-C-placeholder"
         },
         {
           "start": 33558706,
@@ -14091,7 +14001,7 @@
           "start": 33558708,
           "end": 33558718,
           "kind": "thumb",
-          "evidence": "resource_389_overlay.s:1636:verified-C-placeholder"
+          "evidence": "resource_389_overlay.s:1557:verified-C-placeholder"
         },
         {
           "start": 33558728,
@@ -14154,7 +14064,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_389_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_389_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_38a",
@@ -14260,7 +14170,7 @@
           "evidence": "resource_38a_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_38a_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_38a_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_38b",
@@ -14492,7 +14402,7 @@
           "evidence": "resource_38b_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_38b_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_38b_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_38c",
@@ -14526,7 +14436,7 @@
           "evidence": "resource_38c_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_38c_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_38c_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_38d",
@@ -14824,7 +14734,7 @@
           "evidence": "resource_38d_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_38d_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_38d_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_38e",
@@ -14954,13 +14864,13 @@
           "evidence": "resource_38e_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_38e_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_38e_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_38f",
       "decoded_bytes": 13964,
-      "executable_bytes": 11088,
-      "excluded_bytes": 2876,
+      "executable_bytes": 11090,
+      "excluded_bytes": 2874,
       "audit": "complete",
       "intervals": [
         {
@@ -15223,30 +15133,6 @@
         },
         {
           "start": 33564120,
-          "end": 33564530,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33564530,
-          "end": 33564532,
-          "kind": "executable_alignment",
-          "evidence": "resource_38f_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33564532,
-          "end": 33564580,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33564580,
-          "end": 33564584,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33564586,
           "end": 33564896,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -15261,7 +15147,7 @@
           "start": 33564944,
           "end": 33565084,
           "kind": "thumb",
-          "evidence": "resource_38f_overlay.s:4617:verified-C-placeholder"
+          "evidence": "resource_38f_overlay.s:4513:verified-C-placeholder"
         },
         {
           "start": 33565088,
@@ -15270,7 +15156,7 @@
           "evidence": "resource_38f_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_38f_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_38f_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_390",
@@ -15322,7 +15208,7 @@
           "evidence": "resource_390_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_390_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_390_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_391",
@@ -15339,18 +15225,6 @@
         },
         {
           "start": 33554480,
-          "end": 33555264,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33555264,
-          "end": 33555276,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33555276,
           "end": 33555556,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -15365,7 +15239,7 @@
           "start": 33555572,
           "end": 33555976,
           "kind": "thumb",
-          "evidence": "resource_391_overlay.s:986:verified-C-placeholder"
+          "evidence": "resource_391_overlay.s:907:verified-C-placeholder"
         },
         {
           "start": 33555978,
@@ -15407,7 +15281,7 @@
           "start": 33556984,
           "end": 33556988,
           "kind": "literal_pool",
-          "evidence": "resource_391_overlay.s:1456:pc-relative-literal"
+          "evidence": "resource_391_overlay.s:1377:pc-relative-literal"
         },
         {
           "start": 33556988,
@@ -15533,7 +15407,7 @@
           "start": 33561596,
           "end": 33561600,
           "kind": "literal_pool",
-          "evidence": "resource_391_overlay.s:3038:pc-relative-literal"
+          "evidence": "resource_391_overlay.s:2959:pc-relative-literal"
         },
         {
           "start": 33561600,
@@ -15593,7 +15467,7 @@
           "start": 33564520,
           "end": 33564542,
           "kind": "thumb",
-          "evidence": "resource_391_overlay.s:4366:verified-C-placeholder"
+          "evidence": "resource_391_overlay.s:4287:verified-C-placeholder"
         },
         {
           "start": 33564542,
@@ -15605,7 +15479,7 @@
           "start": 33564544,
           "end": 33564566,
           "kind": "thumb",
-          "evidence": "resource_391_overlay.s:4369:verified-C-placeholder"
+          "evidence": "resource_391_overlay.s:4290:verified-C-placeholder"
         },
         {
           "start": 33564566,
@@ -15615,24 +15489,6 @@
         },
         {
           "start": 33564568,
-          "end": 33564754,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33564754,
-          "end": 33564756,
-          "kind": "executable_alignment",
-          "evidence": "resource_391_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33564756,
-          "end": 33564772,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33564772,
           "end": 33565352,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -15647,7 +15503,7 @@
           "start": 33565400,
           "end": 33565572,
           "kind": "thumb",
-          "evidence": "resource_391_overlay.s:4623:verified-C-placeholder"
+          "evidence": "resource_391_overlay.s:4474:verified-C-placeholder"
         },
         {
           "start": 33565576,
@@ -15668,7 +15524,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_391_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_391_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_392",
@@ -15685,18 +15541,6 @@
         },
         {
           "start": 33554480,
-          "end": 33555264,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33555264,
-          "end": 33555276,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33555276,
           "end": 33555556,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -15711,7 +15555,7 @@
           "start": 33555572,
           "end": 33555976,
           "kind": "thumb",
-          "evidence": "resource_392_overlay.s:340:verified-C-placeholder"
+          "evidence": "resource_392_overlay.s:261:verified-C-placeholder"
         },
         {
           "start": 33555978,
@@ -15759,7 +15603,7 @@
           "start": 33557084,
           "end": 33557088,
           "kind": "literal_pool",
-          "evidence": "resource_392_overlay.s:845:pc-relative-literal"
+          "evidence": "resource_392_overlay.s:766:pc-relative-literal"
         },
         {
           "start": 33557096,
@@ -15795,7 +15639,7 @@
           "start": 33557356,
           "end": 33557360,
           "kind": "literal_pool",
-          "evidence": "resource_392_overlay.s:955:pc-relative-literal"
+          "evidence": "resource_392_overlay.s:876:pc-relative-literal"
         },
         {
           "start": 33557360,
@@ -15855,7 +15699,7 @@
           "start": 33557892,
           "end": 33557896,
           "kind": "literal_pool",
-          "evidence": "resource_392_overlay.s:1087:pc-relative-literal"
+          "evidence": "resource_392_overlay.s:1008:pc-relative-literal"
         },
         {
           "start": 33557896,
@@ -15882,13 +15726,13 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_392_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_392_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_393",
       "decoded_bytes": 4308,
-      "executable_bytes": 3782,
-      "excluded_bytes": 526,
+      "executable_bytes": 3784,
+      "excluded_bytes": 524,
       "audit": "complete",
       "intervals": [
         {
@@ -15899,18 +15743,6 @@
         },
         {
           "start": 33554480,
-          "end": 33555264,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33555264,
-          "end": 33555276,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33555276,
           "end": 33555556,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -15925,7 +15757,7 @@
           "start": 33555572,
           "end": 33555976,
           "kind": "thumb",
-          "evidence": "resource_393_overlay.s:350:verified-C-placeholder"
+          "evidence": "resource_393_overlay.s:271:verified-C-placeholder"
         },
         {
           "start": 33555978,
@@ -15967,25 +15799,13 @@
           "start": 33557160,
           "end": 33557164,
           "kind": "literal_pool",
-          "evidence": "resource_393_overlay.s:890:pc-relative-literal"
+          "evidence": "resource_393_overlay.s:811:pc-relative-literal"
         },
         {
           "start": 33557164,
-          "end": 33557412,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33557414,
-          "end": 33557480,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33557480,
           "end": 33557488,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+          "kind": "thumb",
+          "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
           "start": 33557496,
@@ -16009,7 +15829,7 @@
           "start": 33557820,
           "end": 33557824,
           "kind": "literal_pool",
-          "evidence": "resource_393_overlay.s:1021:pc-relative-literal"
+          "evidence": "resource_393_overlay.s:910:pc-relative-literal"
         },
         {
           "start": 33557824,
@@ -16051,7 +15871,7 @@
           "start": 33557980,
           "end": 33558044,
           "kind": "thumb",
-          "evidence": "resource_393_overlay.s:1110:verified-C-placeholder"
+          "evidence": "resource_393_overlay.s:999:verified-C-placeholder"
         },
         {
           "start": 33558056,
@@ -16072,7 +15892,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_393_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_393_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_394",
@@ -16304,7 +16124,7 @@
           "evidence": "resource_394_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_394_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_394_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_395",
@@ -16435,18 +16255,6 @@
         },
         {
           "start": 33558764,
-          "end": 33559204,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33559204,
-          "end": 33559220,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33559220,
           "end": 33559306,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -16477,18 +16285,6 @@
         },
         {
           "start": 33559852,
-          "end": 33559964,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33559964,
-          "end": 33559968,
-          "kind": "literal_pool",
-          "evidence": "resource_395_overlay.s:2431:pc-relative-literal"
-        },
-        {
-          "start": 33559968,
           "end": 33560000,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -16527,7 +16323,7 @@
           "start": 33560600,
           "end": 33560604,
           "kind": "literal_pool",
-          "evidence": "resource_395_overlay.s:2659:pc-relative-literal"
+          "evidence": "resource_395_overlay.s:2534:pc-relative-literal"
         },
         {
           "start": 33560604,
@@ -16584,7 +16380,7 @@
           "evidence": "resource_395_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_395_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_395_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_396",
@@ -17188,7 +16984,7 @@
           "evidence": "resource_396_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_396_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_396_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_397",
@@ -17336,7 +17132,7 @@
           "evidence": "resource_397_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_397_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_397_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_398",
@@ -17532,13 +17328,13 @@
           "evidence": "resource_398_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_398_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_398_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_399",
       "decoded_bytes": 12780,
-      "executable_bytes": 8952,
-      "excluded_bytes": 3828,
+      "executable_bytes": 8954,
+      "excluded_bytes": 3826,
       "audit": "complete",
       "intervals": [
         {
@@ -17549,33 +17345,9 @@
         },
         {
           "start": 33554480,
-          "end": 33554648,
-          "kind": "thumb",
-          "evidence": "resource_399_overlay.s:639:verified-C-placeholder"
-        },
-        {
-          "start": 33554650,
-          "end": 33554730,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33554730,
-          "end": 33554732,
-          "kind": "executable_alignment",
-          "evidence": "resource_399_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33554732,
-          "end": 33554736,
-          "kind": "literal_pool",
-          "evidence": "resource_399_overlay.s:671:pc-relative-literal"
-        },
-        {
-          "start": 33554736,
           "end": 33554784,
           "kind": "thumb",
-          "evidence": "resource_399_overlay.s:687:verified-C-placeholder"
+          "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
           "start": 33554796,
@@ -17599,7 +17371,7 @@
           "start": 33554912,
           "end": 33554922,
           "kind": "thumb",
-          "evidence": "resource_399_overlay.s:747:verified-C-placeholder"
+          "evidence": "resource_399_overlay.s:703:verified-C-placeholder"
         },
         {
           "start": 33554922,
@@ -17791,7 +17563,7 @@
           "start": 33560204,
           "end": 33560208,
           "kind": "literal_pool",
-          "evidence": "resource_399_overlay.s:2418:pc-relative-literal"
+          "evidence": "resource_399_overlay.s:2374:pc-relative-literal"
         },
         {
           "start": 33560236,
@@ -17809,7 +17581,7 @@
           "start": 33560464,
           "end": 33560468,
           "kind": "literal_pool",
-          "evidence": "resource_399_overlay.s:2529:pc-relative-literal"
+          "evidence": "resource_399_overlay.s:2485:pc-relative-literal"
         },
         {
           "start": 33560468,
@@ -17896,7 +17668,7 @@
           "evidence": "resource_399_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_399_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_399_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_39a",
@@ -17931,24 +17703,6 @@
         },
         {
           "start": 33554680,
-          "end": 33555026,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33555026,
-          "end": 33555028,
-          "kind": "executable_alignment",
-          "evidence": "resource_39a_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33555028,
-          "end": 33555036,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33555036,
           "end": 33556212,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -18041,7 +17795,7 @@
           "start": 33557536,
           "end": 33557540,
           "kind": "literal_pool",
-          "evidence": "resource_39a_overlay.s:899:pc-relative-literal"
+          "evidence": "resource_39a_overlay.s:799:pc-relative-literal"
         },
         {
           "start": 33557540,
@@ -18059,7 +17813,7 @@
           "start": 33557812,
           "end": 33557816,
           "kind": "literal_pool",
-          "evidence": "resource_39a_overlay.s:928:pc-relative-literal"
+          "evidence": "resource_39a_overlay.s:828:pc-relative-literal"
         },
         {
           "start": 33557816,
@@ -18095,7 +17849,7 @@
           "start": 33558136,
           "end": 33558158,
           "kind": "thumb",
-          "evidence": "resource_39a_overlay.s:988:verified-C-placeholder"
+          "evidence": "resource_39a_overlay.s:888:verified-C-placeholder"
         },
         {
           "start": 33558158,
@@ -18107,7 +17861,7 @@
           "start": 33558160,
           "end": 33558182,
           "kind": "thumb",
-          "evidence": "resource_39a_overlay.s:991:verified-C-placeholder"
+          "evidence": "resource_39a_overlay.s:891:verified-C-placeholder"
         },
         {
           "start": 33558182,
@@ -18119,7 +17873,7 @@
           "start": 33558184,
           "end": 33558206,
           "kind": "thumb",
-          "evidence": "resource_39a_overlay.s:994:verified-C-placeholder"
+          "evidence": "resource_39a_overlay.s:894:verified-C-placeholder"
         },
         {
           "start": 33558206,
@@ -18131,7 +17885,7 @@
           "start": 33558208,
           "end": 33558230,
           "kind": "thumb",
-          "evidence": "resource_39a_overlay.s:997:verified-C-placeholder"
+          "evidence": "resource_39a_overlay.s:897:verified-C-placeholder"
         },
         {
           "start": 33558230,
@@ -18155,7 +17909,7 @@
           "start": 33558520,
           "end": 33558530,
           "kind": "thumb",
-          "evidence": "resource_39a_overlay.s:1067:verified-C-placeholder"
+          "evidence": "resource_39a_overlay.s:967:verified-C-placeholder"
         },
         {
           "start": 33558530,
@@ -18311,19 +18065,19 @@
           "start": 33561496,
           "end": 33561500,
           "kind": "literal_pool",
-          "evidence": "resource_39a_overlay.s:2350:pc-relative-literal"
+          "evidence": "resource_39a_overlay.s:2250:pc-relative-literal"
         },
         {
           "start": 33561500,
           "end": 33561564,
           "kind": "thumb",
-          "evidence": "resource_39a_overlay.s:2360:verified-C-placeholder"
+          "evidence": "resource_39a_overlay.s:2260:verified-C-placeholder"
         },
         {
           "start": 33561608,
           "end": 33561622,
           "kind": "thumb",
-          "evidence": "resource_39a_overlay.s:2374:verified-C-placeholder"
+          "evidence": "resource_39a_overlay.s:2274:verified-C-placeholder"
         },
         {
           "start": 33561622,
@@ -18428,7 +18182,7 @@
           "evidence": "resource_39a_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_39a_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_39a_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_39b",
@@ -19062,7 +18816,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_39b_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_39b_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_39c",
@@ -20356,7 +20110,7 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         }
       ],
-      "evidence": ["assets/code/resource_39c_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_39c_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_39d",
@@ -20840,7 +20594,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_39d_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_39d_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_39e",
@@ -21474,7 +21228,7 @@
           "evidence": "resource_39e_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_39e_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_39e_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_39f",
@@ -21491,18 +21245,6 @@
         },
         {
           "start": 33554480,
-          "end": 33555264,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33555264,
-          "end": 33555276,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33555276,
           "end": 33555556,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -21517,7 +21259,7 @@
           "start": 33555572,
           "end": 33555976,
           "kind": "thumb",
-          "evidence": "resource_39f_overlay.s:813:verified-C-placeholder"
+          "evidence": "resource_39f_overlay.s:734:verified-C-placeholder"
         },
         {
           "start": 33555978,
@@ -21583,7 +21325,7 @@
           "start": 33557696,
           "end": 33557710,
           "kind": "thumb",
-          "evidence": "resource_39f_overlay.s:1636:verified-C-placeholder"
+          "evidence": "resource_39f_overlay.s:1557:verified-C-placeholder"
         },
         {
           "start": 33557710,
@@ -21595,7 +21337,7 @@
           "start": 33557712,
           "end": 33557866,
           "kind": "thumb",
-          "evidence": "resource_39f_overlay.s:1639:verified-C-placeholder"
+          "evidence": "resource_39f_overlay.s:1560:verified-C-placeholder"
         },
         {
           "start": 33557866,
@@ -21625,7 +21367,7 @@
           "start": 33558180,
           "end": 33558184,
           "kind": "literal_pool",
-          "evidence": "resource_39f_overlay.s:1687:pc-relative-literal"
+          "evidence": "resource_39f_overlay.s:1608:pc-relative-literal"
         },
         {
           "start": 33558184,
@@ -21673,7 +21415,7 @@
           "start": 33560300,
           "end": 33560304,
           "kind": "literal_pool",
-          "evidence": "resource_39f_overlay.s:2010:pc-relative-literal"
+          "evidence": "resource_39f_overlay.s:1931:pc-relative-literal"
         },
         {
           "start": 33560304,
@@ -21709,7 +21451,7 @@
           "start": 33561856,
           "end": 33561860,
           "kind": "literal_pool",
-          "evidence": "resource_39f_overlay.s:2228:pc-relative-literal"
+          "evidence": "resource_39f_overlay.s:2149:pc-relative-literal"
         },
         {
           "start": 33561862,
@@ -21745,7 +21487,7 @@
           "start": 33563324,
           "end": 33563328,
           "kind": "literal_pool",
-          "evidence": "resource_39f_overlay.s:2481:pc-relative-literal"
+          "evidence": "resource_39f_overlay.s:2402:pc-relative-literal"
         },
         {
           "start": 33563328,
@@ -21817,7 +21559,7 @@
           "start": 33565916,
           "end": 33565920,
           "kind": "literal_pool",
-          "evidence": "resource_39f_overlay.s:3410:pc-relative-literal"
+          "evidence": "resource_39f_overlay.s:3331:pc-relative-literal"
         },
         {
           "start": 33565920,
@@ -21844,7 +21586,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_39f_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_39f_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3a0",
@@ -22130,7 +21872,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_3a0_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3a0_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3a1",
@@ -22218,7 +21960,7 @@
           "evidence": "resource_3a1_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3a1_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3a1_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3a2",
@@ -22414,7 +22156,7 @@
           "evidence": "resource_3a2_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3a2_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3a2_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3a3",
@@ -22592,7 +22334,7 @@
           "evidence": "resource_3a3_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3a3_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3a3_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3a4",
@@ -23424,7 +23166,7 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         }
       ],
-      "evidence": ["assets/code/resource_3a4_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3a4_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3a5",
@@ -24268,7 +24010,7 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         }
       ],
-      "evidence": ["assets/code/resource_3a5_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3a5_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3a6",
@@ -24758,7 +24500,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_3a6_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3a6_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3a7",
@@ -25104,7 +24846,7 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         }
       ],
-      "evidence": ["assets/code/resource_3a7_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3a7_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3a8",
@@ -25498,7 +25240,7 @@
           "evidence": "resource_3a8_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3a8_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3a8_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3a9",
@@ -25521,18 +25263,6 @@
         },
         {
           "start": 33554556,
-          "end": 33554632,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33554632,
-          "end": 33554660,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33554660,
           "end": 33555200,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -25568,7 +25298,7 @@
           "evidence": "resource_3a9_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3a9_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3a9_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3aa",
@@ -25716,7 +25446,7 @@
           "evidence": "resource_3aa_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3aa_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3aa_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3ab",
@@ -26326,7 +26056,7 @@
           "evidence": "resource_3ab_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3ab_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3ab_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3ac",
@@ -26354,7 +26084,7 @@
           "evidence": "resource_3ac_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3ac_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3ac_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3ad",
@@ -26586,7 +26316,7 @@
           "evidence": "resource_3ad_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3ad_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3ad_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3ae",
@@ -26884,7 +26614,7 @@
           "evidence": "resource_3ae_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3ae_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3ae_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3af",
@@ -27452,7 +27182,7 @@
           "evidence": "resource_3af_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3af_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3af_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3b0",
@@ -27636,7 +27366,7 @@
           "evidence": "resource_3b0_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3b0_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3b0_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3b1",
@@ -28666,7 +28396,7 @@
           "evidence": "resource_3b1_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3b1_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3b1_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3b2",
@@ -28683,18 +28413,6 @@
         },
         {
           "start": 33554480,
-          "end": 33555264,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33555264,
-          "end": 33555276,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33555276,
           "end": 33555556,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -28709,7 +28427,7 @@
           "start": 33555572,
           "end": 33555976,
           "kind": "thumb",
-          "evidence": "resource_3b2_overlay.s:769:verified-C-placeholder"
+          "evidence": "resource_3b2_overlay.s:690:verified-C-placeholder"
         },
         {
           "start": 33555978,
@@ -28775,7 +28493,7 @@
           "start": 33557700,
           "end": 33557820,
           "kind": "thumb",
-          "evidence": "resource_3b2_overlay.s:1593:verified-C-placeholder"
+          "evidence": "resource_3b2_overlay.s:1514:verified-C-placeholder"
         },
         {
           "start": 33557828,
@@ -28791,24 +28509,6 @@
         },
         {
           "start": 33558016,
-          "end": 33558142,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33558142,
-          "end": 33558144,
-          "kind": "executable_alignment",
-          "evidence": "resource_3b2_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33558144,
-          "end": 33558152,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33558152,
           "end": 33559002,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -28899,21 +28599,9 @@
         },
         {
           "start": 33560384,
-          "end": 33560660,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33560660,
-          "end": 33560668,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33560668,
           "end": 33560750,
           "kind": "thumb",
-          "evidence": "resource_3b2_overlay.s:2349:verified-C-placeholder"
+          "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
           "start": 33560750,
@@ -28925,7 +28613,7 @@
           "start": 33560752,
           "end": 33560834,
           "kind": "thumb",
-          "evidence": "resource_3b2_overlay.s:2352:verified-C-placeholder"
+          "evidence": "resource_3b2_overlay.s:2108:verified-C-placeholder"
         },
         {
           "start": 33560834,
@@ -29009,7 +28697,7 @@
           "start": 33563728,
           "end": 33563846,
           "kind": "thumb",
-          "evidence": "resource_3b2_overlay.s:2431:verified-C-placeholder"
+          "evidence": "resource_3b2_overlay.s:2187:verified-C-placeholder"
         },
         {
           "start": 33563846,
@@ -29111,7 +28799,7 @@
           "start": 33566632,
           "end": 33566636,
           "kind": "literal_pool",
-          "evidence": "resource_3b2_overlay.s:3713:pc-relative-literal"
+          "evidence": "resource_3b2_overlay.s:3469:pc-relative-literal"
         },
         {
           "start": 33566636,
@@ -29138,7 +28826,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_3b2_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3b2_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3b3",
@@ -29820,7 +29508,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_3b3_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3b3_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3b4",
@@ -29837,18 +29525,6 @@
         },
         {
           "start": 33554480,
-          "end": 33555264,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33555264,
-          "end": 33555276,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33555276,
           "end": 33555556,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -29863,7 +29539,7 @@
           "start": 33555572,
           "end": 33555976,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:723:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:644:verified-C-placeholder"
         },
         {
           "start": 33555978,
@@ -29905,7 +29581,7 @@
           "start": 33556976,
           "end": 33557060,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:1202:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:1123:verified-C-placeholder"
         },
         {
           "start": 33557072,
@@ -29941,7 +29617,7 @@
           "start": 33557348,
           "end": 33557352,
           "kind": "literal_pool",
-          "evidence": "resource_3b4_overlay.s:1235:pc-relative-literal"
+          "evidence": "resource_3b4_overlay.s:1156:pc-relative-literal"
         },
         {
           "start": 33557352,
@@ -29995,7 +29671,7 @@
           "start": 33558216,
           "end": 33558238,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:1651:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:1572:verified-C-placeholder"
         },
         {
           "start": 33558238,
@@ -30031,7 +29707,7 @@
           "start": 33558488,
           "end": 33558492,
           "kind": "literal_pool",
-          "evidence": "resource_3b4_overlay.s:1685:pc-relative-literal"
+          "evidence": "resource_3b4_overlay.s:1606:pc-relative-literal"
         },
         {
           "start": 33558492,
@@ -30049,7 +29725,7 @@
           "start": 33558636,
           "end": 33558640,
           "kind": "literal_pool",
-          "evidence": "resource_3b4_overlay.s:1749:pc-relative-literal"
+          "evidence": "resource_3b4_overlay.s:1670:pc-relative-literal"
         },
         {
           "start": 33558640,
@@ -30073,7 +29749,7 @@
           "start": 33558996,
           "end": 33559000,
           "kind": "literal_pool",
-          "evidence": "resource_3b4_overlay.s:1820:pc-relative-literal"
+          "evidence": "resource_3b4_overlay.s:1741:pc-relative-literal"
         },
         {
           "start": 33559000,
@@ -30217,7 +29893,7 @@
           "start": 33561244,
           "end": 33561286,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2495:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2416:verified-C-placeholder"
         },
         {
           "start": 33561286,
@@ -30235,7 +29911,7 @@
           "start": 33561436,
           "end": 33561440,
           "kind": "literal_pool",
-          "evidence": "resource_3b4_overlay.s:2505:pc-relative-literal"
+          "evidence": "resource_3b4_overlay.s:2426:pc-relative-literal"
         },
         {
           "start": 33561440,
@@ -30247,7 +29923,7 @@
           "start": 33561536,
           "end": 33561540,
           "kind": "literal_pool",
-          "evidence": "resource_3b4_overlay.s:2579:pc-relative-literal"
+          "evidence": "resource_3b4_overlay.s:2500:pc-relative-literal"
         },
         {
           "start": 33561540,
@@ -30289,7 +29965,7 @@
           "start": 33561760,
           "end": 33561802,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2672:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2593:verified-C-placeholder"
         },
         {
           "start": 33561802,
@@ -30301,7 +29977,7 @@
           "start": 33561804,
           "end": 33561846,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2675:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2596:verified-C-placeholder"
         },
         {
           "start": 33561846,
@@ -30319,13 +29995,13 @@
           "start": 33561952,
           "end": 33561956,
           "kind": "literal_pool",
-          "evidence": "resource_3b4_overlay.s:2683:pc-relative-literal"
+          "evidence": "resource_3b4_overlay.s:2604:pc-relative-literal"
         },
         {
           "start": 33561956,
           "end": 33561974,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2733:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2654:verified-C-placeholder"
         },
         {
           "start": 33561974,
@@ -30337,7 +30013,7 @@
           "start": 33561976,
           "end": 33562014,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2736:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2657:verified-C-placeholder"
         },
         {
           "start": 33562014,
@@ -30349,7 +30025,7 @@
           "start": 33562016,
           "end": 33562102,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2739:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2660:verified-C-placeholder"
         },
         {
           "start": 33562102,
@@ -30373,13 +30049,13 @@
           "start": 33562192,
           "end": 33562196,
           "kind": "literal_pool",
-          "evidence": "resource_3b4_overlay.s:2749:pc-relative-literal"
+          "evidence": "resource_3b4_overlay.s:2670:pc-relative-literal"
         },
         {
           "start": 33562196,
           "end": 33562206,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2786:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2707:verified-C-placeholder"
         },
         {
           "start": 33562206,
@@ -30391,7 +30067,7 @@
           "start": 33562208,
           "end": 33562226,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2789:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2710:verified-C-placeholder"
         },
         {
           "start": 33562226,
@@ -30403,7 +30079,7 @@
           "start": 33562228,
           "end": 33562238,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2792:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2713:verified-C-placeholder"
         },
         {
           "start": 33562238,
@@ -30415,7 +30091,7 @@
           "start": 33562240,
           "end": 33562258,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2795:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2716:verified-C-placeholder"
         },
         {
           "start": 33562258,
@@ -30427,7 +30103,7 @@
           "start": 33562260,
           "end": 33562302,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2798:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2719:verified-C-placeholder"
         },
         {
           "start": 33562302,
@@ -30445,7 +30121,7 @@
           "start": 33562484,
           "end": 33562488,
           "kind": "literal_pool",
-          "evidence": "resource_3b4_overlay.s:2840:pc-relative-literal"
+          "evidence": "resource_3b4_overlay.s:2761:pc-relative-literal"
         },
         {
           "start": 33562488,
@@ -30568,7 +30244,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_3b4_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3b4_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3b5",
@@ -30693,24 +30369,6 @@
         },
         {
           "start": 33556036,
-          "end": 33556190,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33556190,
-          "end": 33556192,
-          "kind": "executable_alignment",
-          "evidence": "resource_3b5_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33556192,
-          "end": 33556200,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33556200,
           "end": 33556262,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -30785,7 +30443,7 @@
           "start": 33557752,
           "end": 33557756,
           "kind": "literal_pool",
-          "evidence": "resource_3b5_overlay.s:1404:pc-relative-literal"
+          "evidence": "resource_3b5_overlay.s:1335:pc-relative-literal"
         },
         {
           "start": 33557760,
@@ -30806,7 +30464,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_3b5_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3b5_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3b6",
@@ -31014,7 +30672,7 @@
           "evidence": "resource_3b6_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3b6_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3b6_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3b7",
@@ -31031,42 +30689,6 @@
         },
         {
           "start": 33554500,
-          "end": 33554614,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33554614,
-          "end": 33554616,
-          "kind": "executable_alignment",
-          "evidence": "resource_3b7_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33554616,
-          "end": 33554620,
-          "kind": "literal_pool",
-          "evidence": "resource_3b7_overlay.s:359:pc-relative-literal"
-        },
-        {
-          "start": 33554620,
-          "end": 33554686,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33554686,
-          "end": 33554688,
-          "kind": "executable_alignment",
-          "evidence": "resource_3b7_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33554688,
-          "end": 33554692,
-          "kind": "literal_pool",
-          "evidence": "resource_3b7_overlay.s:390:pc-relative-literal"
-        },
-        {
-          "start": 33554692,
           "end": 33554768,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -31075,7 +30697,7 @@
           "start": 33554768,
           "end": 33554772,
           "kind": "literal_pool",
-          "evidence": "resource_3b7_overlay.s:421:pc-relative-literal"
+          "evidence": "resource_3b7_overlay.s:363:pc-relative-literal"
         },
         {
           "start": 33554772,
@@ -31171,7 +30793,7 @@
           "start": 33558048,
           "end": 33558052,
           "kind": "literal_pool",
-          "evidence": "resource_3b7_overlay.s:1738:pc-relative-literal"
+          "evidence": "resource_3b7_overlay.s:1680:pc-relative-literal"
         },
         {
           "start": 33558052,
@@ -31219,7 +30841,7 @@
           "start": 33559456,
           "end": 33559460,
           "kind": "literal_pool",
-          "evidence": "resource_3b7_overlay.s:2457:pc-relative-literal"
+          "evidence": "resource_3b7_overlay.s:2399:pc-relative-literal"
         },
         {
           "start": 33559460,
@@ -31282,7 +30904,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_3b7_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3b7_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3b8",
@@ -31610,7 +31232,7 @@
           "evidence": "resource_3b8_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3b8_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3b8_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3b9",
@@ -32142,7 +31764,7 @@
           "evidence": "resource_3b9_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3b9_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3b9_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3ba",
@@ -32794,7 +32416,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_3ba_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3ba_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3bb",
@@ -32987,7 +32609,7 @@
           "start": 33557304,
           "end": 33557458,
           "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
+          "evidence": "resource_3bb_overlay.s:1740:verified-C-placeholder"
         },
         {
           "start": 33557458,
@@ -33461,7 +33083,7 @@
           "start": 33566652,
           "end": 33566656,
           "kind": "literal_pool",
-          "evidence": "resource_3bb_overlay.s:5751:pc-relative-literal"
+          "evidence": "resource_3bb_overlay.s:5686:pc-relative-literal"
         },
         {
           "start": 33566656,
@@ -33581,7 +33203,7 @@
           "start": 33567552,
           "end": 33567556,
           "kind": "literal_pool",
-          "evidence": "resource_3bb_overlay.s:6111:pc-relative-literal"
+          "evidence": "resource_3bb_overlay.s:6046:pc-relative-literal"
         },
         {
           "start": 33567556,
@@ -33710,7 +33332,7 @@
           "evidence": "resource_3bb_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3bb_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3bb_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3bc",
@@ -34740,7 +34362,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_3bc_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3bc_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3bd",
@@ -35482,7 +35104,7 @@
           "evidence": "resource_3bd_overlay.s:7811:canonical-instruction"
         }
       ],
-      "evidence": ["assets/code/resource_3bd_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3bd_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3be",
@@ -35852,7 +35474,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_3be_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3be_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3bf",
@@ -36103,18 +35725,6 @@
         },
         {
           "start": 33560144,
-          "end": 33560584,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33560584,
-          "end": 33560604,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33560604,
           "end": 33560854,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -36141,7 +35751,7 @@
           "start": 33561760,
           "end": 33561764,
           "kind": "literal_pool",
-          "evidence": "resource_3bf_overlay.s:3045:pc-relative-literal"
+          "evidence": "resource_3bf_overlay.s:3006:pc-relative-literal"
         },
         {
           "start": 33561764,
@@ -36189,7 +35799,7 @@
           "start": 33563296,
           "end": 33563346,
           "kind": "thumb",
-          "evidence": "resource_3bf_overlay.s:3319:verified-C-placeholder"
+          "evidence": "resource_3bf_overlay.s:3280:verified-C-placeholder"
         },
         {
           "start": 33563346,
@@ -36201,7 +35811,7 @@
           "start": 33563348,
           "end": 33563398,
           "kind": "thumb",
-          "evidence": "resource_3bf_overlay.s:3322:verified-C-placeholder"
+          "evidence": "resource_3bf_overlay.s:3283:verified-C-placeholder"
         },
         {
           "start": 33563398,
@@ -36339,7 +35949,7 @@
           "start": 33569924,
           "end": 33569928,
           "kind": "literal_pool",
-          "evidence": "resource_3bf_overlay.s:5347:pc-relative-literal"
+          "evidence": "resource_3bf_overlay.s:5308:pc-relative-literal"
         },
         {
           "start": 33569928,
@@ -36549,7 +36159,7 @@
           "start": 33577940,
           "end": 33577944,
           "kind": "literal_pool",
-          "evidence": "resource_3bf_overlay.s:7839:pc-relative-literal"
+          "evidence": "resource_3bf_overlay.s:7800:pc-relative-literal"
         },
         {
           "start": 33577944,
@@ -36594,7 +36204,7 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         }
       ],
-      "evidence": ["assets/code/resource_3bf_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3bf_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3c0",
@@ -36862,7 +36472,7 @@
           "evidence": "resource_3c0_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3c0_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3c0_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3c1",
@@ -36879,42 +36489,6 @@
         },
         {
           "start": 33554500,
-          "end": 33554602,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33554602,
-          "end": 33554604,
-          "kind": "executable_alignment",
-          "evidence": "resource_3c1_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33554604,
-          "end": 33554608,
-          "kind": "literal_pool",
-          "evidence": "resource_3c1_overlay.s:54:pc-relative-literal"
-        },
-        {
-          "start": 33554608,
-          "end": 33554674,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33554674,
-          "end": 33554676,
-          "kind": "executable_alignment",
-          "evidence": "resource_3c1_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33554676,
-          "end": 33554680,
-          "kind": "literal_pool",
-          "evidence": "resource_3c1_overlay.s:85:pc-relative-literal"
-        },
-        {
-          "start": 33554680,
           "end": 33554824,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -36962,7 +36536,7 @@
           "evidence": "resource_3c1_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3c1_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3c1_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3c2",
@@ -37069,24 +36643,6 @@
         },
         {
           "start": 33554900,
-          "end": 33554966,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33554966,
-          "end": 33554968,
-          "kind": "executable_alignment",
-          "evidence": "resource_3c2_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33554968,
-          "end": 33554972,
-          "kind": "literal_pool",
-          "evidence": "resource_3c2_overlay.s:453:pc-relative-literal"
-        },
-        {
-          "start": 33554972,
           "end": 33556036,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -37134,7 +36690,7 @@
           "evidence": "resource_3c2_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3c2_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3c2_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3c3",
@@ -37258,7 +36814,7 @@
           "evidence": "resource_3c3_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3c3_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3c3_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3c4",
@@ -37275,18 +36831,6 @@
         },
         {
           "start": 33554480,
-          "end": 33555264,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33555264,
-          "end": 33555276,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33555276,
           "end": 33555556,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -37301,7 +36845,7 @@
           "start": 33555572,
           "end": 33555976,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:721:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:642:verified-C-placeholder"
         },
         {
           "start": 33555978,
@@ -37367,7 +36911,7 @@
           "start": 33557696,
           "end": 33557710,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:1544:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:1465:verified-C-placeholder"
         },
         {
           "start": 33557710,
@@ -37385,13 +36929,13 @@
           "start": 33557956,
           "end": 33557960,
           "kind": "literal_pool",
-          "evidence": "resource_3c4_overlay.s:1558:pc-relative-literal"
+          "evidence": "resource_3c4_overlay.s:1479:pc-relative-literal"
         },
         {
           "start": 33557960,
           "end": 33558002,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:1658:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:1579:verified-C-placeholder"
         },
         {
           "start": 33558002,
@@ -37403,7 +36947,7 @@
           "start": 33558004,
           "end": 33558048,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:1661:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:1582:verified-C-placeholder"
         },
         {
           "start": 33558050,
@@ -37433,7 +36977,7 @@
           "start": 33558216,
           "end": 33558286,
           "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
+          "evidence": "resource_3c4_overlay.s:1655:verified-C-placeholder"
         },
         {
           "start": 33558286,
@@ -37535,7 +37079,7 @@
           "start": 33559520,
           "end": 33559586,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2034:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:1922:verified-C-placeholder"
         },
         {
           "start": 33559586,
@@ -37547,7 +37091,7 @@
           "start": 33559588,
           "end": 33559638,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2037:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:1925:verified-C-placeholder"
         },
         {
           "start": 33559638,
@@ -37565,7 +37109,7 @@
           "start": 33559720,
           "end": 33559724,
           "kind": "literal_pool",
-          "evidence": "resource_3c4_overlay.s:2043:pc-relative-literal"
+          "evidence": "resource_3c4_overlay.s:1931:pc-relative-literal"
         },
         {
           "start": 33559724,
@@ -37577,13 +37121,13 @@
           "start": 33559804,
           "end": 33559808,
           "kind": "literal_pool",
-          "evidence": "resource_3c4_overlay.s:2078:pc-relative-literal"
+          "evidence": "resource_3c4_overlay.s:1966:pc-relative-literal"
         },
         {
           "start": 33559808,
           "end": 33559822,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2117:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:2005:verified-C-placeholder"
         },
         {
           "start": 33559822,
@@ -37613,7 +37157,7 @@
           "start": 33560308,
           "end": 33560330,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2303:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:2191:verified-C-placeholder"
         },
         {
           "start": 33560330,
@@ -37625,7 +37169,7 @@
           "start": 33560332,
           "end": 33560386,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2306:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:2194:verified-C-placeholder"
         },
         {
           "start": 33560386,
@@ -37649,7 +37193,7 @@
           "start": 33560824,
           "end": 33560846,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2495:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:2383:verified-C-placeholder"
         },
         {
           "start": 33560846,
@@ -37673,7 +37217,7 @@
           "start": 33561036,
           "end": 33561058,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2509:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:2397:verified-C-placeholder"
         },
         {
           "start": 33561058,
@@ -37697,7 +37241,7 @@
           "start": 33561236,
           "end": 33561240,
           "kind": "literal_pool",
-          "evidence": "resource_3c4_overlay.s:2555:pc-relative-literal"
+          "evidence": "resource_3c4_overlay.s:2443:pc-relative-literal"
         },
         {
           "start": 33561240,
@@ -37739,7 +37283,7 @@
           "start": 33561856,
           "end": 33561860,
           "kind": "literal_pool",
-          "evidence": "resource_3c4_overlay.s:2740:pc-relative-literal"
+          "evidence": "resource_3c4_overlay.s:2628:pc-relative-literal"
         },
         {
           "start": 33561862,
@@ -37757,13 +37301,13 @@
           "start": 33562456,
           "end": 33562460,
           "kind": "literal_pool",
-          "evidence": "resource_3c4_overlay.s:3059:pc-relative-literal"
+          "evidence": "resource_3c4_overlay.s:2947:pc-relative-literal"
         },
         {
           "start": 33562460,
           "end": 33562478,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:3096:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:2984:verified-C-placeholder"
         },
         {
           "start": 33562478,
@@ -37823,7 +37367,7 @@
           "start": 33563392,
           "end": 33563438,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:3455:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:3343:verified-C-placeholder"
         },
         {
           "start": 33563438,
@@ -37865,7 +37409,7 @@
           "start": 33565588,
           "end": 33565592,
           "kind": "literal_pool",
-          "evidence": "resource_3c4_overlay.s:3924:pc-relative-literal"
+          "evidence": "resource_3c4_overlay.s:3812:pc-relative-literal"
         },
         {
           "start": 33566682,
@@ -37892,7 +37436,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_3c4_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3c4_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3c5",
@@ -37909,18 +37453,6 @@
         },
         {
           "start": 33554480,
-          "end": 33555264,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33555264,
-          "end": 33555276,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33555276,
           "end": 33555556,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -37935,7 +37467,7 @@
           "start": 33555572,
           "end": 33555976,
           "kind": "thumb",
-          "evidence": "resource_3c5_overlay.s:1000:verified-C-placeholder"
+          "evidence": "resource_3c5_overlay.s:921:verified-C-placeholder"
         },
         {
           "start": 33555978,
@@ -38001,7 +37533,7 @@
           "start": 33557696,
           "end": 33557710,
           "kind": "thumb",
-          "evidence": "resource_3c5_overlay.s:1823:verified-C-placeholder"
+          "evidence": "resource_3c5_overlay.s:1744:verified-C-placeholder"
         },
         {
           "start": 33557710,
@@ -38013,7 +37545,7 @@
           "start": 33557712,
           "end": 33557742,
           "kind": "thumb",
-          "evidence": "resource_3c5_overlay.s:1826:verified-C-placeholder"
+          "evidence": "resource_3c5_overlay.s:1747:verified-C-placeholder"
         },
         {
           "start": 33557742,
@@ -38025,7 +37557,7 @@
           "start": 33557744,
           "end": 33557834,
           "kind": "thumb",
-          "evidence": "resource_3c5_overlay.s:1829:verified-C-placeholder"
+          "evidence": "resource_3c5_overlay.s:1750:verified-C-placeholder"
         },
         {
           "start": 33557834,
@@ -38067,7 +37599,7 @@
           "start": 33558796,
           "end": 33558870,
           "kind": "thumb",
-          "evidence": "resource_3c5_overlay.s:1994:verified-C-placeholder"
+          "evidence": "resource_3c5_overlay.s:1915:verified-C-placeholder"
         },
         {
           "start": 33558870,
@@ -38079,7 +37611,7 @@
           "start": 33558872,
           "end": 33558914,
           "kind": "thumb",
-          "evidence": "resource_3c5_overlay.s:1997:verified-C-placeholder"
+          "evidence": "resource_3c5_overlay.s:1918:verified-C-placeholder"
         },
         {
           "start": 33558914,
@@ -38292,7 +37824,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_3c5_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3c5_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3c6",
@@ -38327,24 +37859,6 @@
         },
         {
           "start": 33554628,
-          "end": 33554694,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33554694,
-          "end": 33554696,
-          "kind": "executable_alignment",
-          "evidence": "resource_3c6_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33554696,
-          "end": 33554700,
-          "kind": "literal_pool",
-          "evidence": "resource_3c6_overlay.s:563:pc-relative-literal"
-        },
-        {
-          "start": 33554700,
           "end": 33554910,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -38443,7 +37957,7 @@
           "start": 33558968,
           "end": 33558972,
           "kind": "literal_pool",
-          "evidence": "resource_3c6_overlay.s:2084:pc-relative-literal"
+          "evidence": "resource_3c6_overlay.s:2055:pc-relative-literal"
         },
         {
           "start": 33558972,
@@ -38479,7 +37993,7 @@
           "start": 33559588,
           "end": 33559592,
           "kind": "literal_pool",
-          "evidence": "resource_3c6_overlay.s:2403:pc-relative-literal"
+          "evidence": "resource_3c6_overlay.s:2374:pc-relative-literal"
         },
         {
           "start": 33559592,
@@ -38497,7 +38011,7 @@
           "start": 33559764,
           "end": 33559768,
           "kind": "literal_pool",
-          "evidence": "resource_3c6_overlay.s:2473:pc-relative-literal"
+          "evidence": "resource_3c6_overlay.s:2444:pc-relative-literal"
         },
         {
           "start": 33559772,
@@ -38506,7 +38020,7 @@
           "evidence": "resource_3c6_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3c6_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3c6_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3c7",
@@ -38822,7 +38336,7 @@
           "evidence": "resource_3c7_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3c7_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3c7_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3c8",
@@ -38875,21 +38389,9 @@
         },
         {
           "start": 33555884,
-          "end": 33556104,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33556104,
-          "end": 33556112,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33556112,
           "end": 33556126,
           "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:1148:verified-C-placeholder"
+          "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
           "start": 33556126,
@@ -38911,18 +38413,6 @@
         },
         {
           "start": 33556308,
-          "end": 33556620,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33556620,
-          "end": 33556640,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33556640,
           "end": 33556750,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -38949,7 +38439,7 @@
           "start": 33556844,
           "end": 33556934,
           "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:1369:verified-C-placeholder"
+          "evidence": "resource_3c8_overlay.s:1184:verified-C-placeholder"
         },
         {
           "start": 33556934,
@@ -39003,7 +38493,7 @@
           "start": 33560820,
           "end": 33560824,
           "kind": "literal_pool",
-          "evidence": "resource_3c8_overlay.s:1879:pc-relative-literal"
+          "evidence": "resource_3c8_overlay.s:1694:pc-relative-literal"
         },
         {
           "start": 33560824,
@@ -39021,7 +38511,7 @@
           "start": 33560940,
           "end": 33560986,
           "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:1921:verified-C-placeholder"
+          "evidence": "resource_3c8_overlay.s:1736:verified-C-placeholder"
         },
         {
           "start": 33560986,
@@ -39045,7 +38535,7 @@
           "start": 33561108,
           "end": 33561166,
           "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:1931:verified-C-placeholder"
+          "evidence": "resource_3c8_overlay.s:1746:verified-C-placeholder"
         },
         {
           "start": 33561166,
@@ -39093,7 +38583,7 @@
           "start": 33562408,
           "end": 33562462,
           "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:2429:verified-C-placeholder"
+          "evidence": "resource_3c8_overlay.s:2244:verified-C-placeholder"
         },
         {
           "start": 33562462,
@@ -39117,7 +38607,7 @@
           "start": 33563244,
           "end": 33563298,
           "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:2801:verified-C-placeholder"
+          "evidence": "resource_3c8_overlay.s:2616:verified-C-placeholder"
         },
         {
           "start": 33563298,
@@ -39129,7 +38619,7 @@
           "start": 33563300,
           "end": 33563334,
           "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:2804:verified-C-placeholder"
+          "evidence": "resource_3c8_overlay.s:2619:verified-C-placeholder"
         },
         {
           "start": 33563334,
@@ -39165,7 +38655,7 @@
           "start": 33563768,
           "end": 33563772,
           "kind": "literal_pool",
-          "evidence": "resource_3c8_overlay.s:2934:pc-relative-literal"
+          "evidence": "resource_3c8_overlay.s:2749:pc-relative-literal"
         },
         {
           "start": 33563774,
@@ -39183,13 +38673,13 @@
           "start": 33564384,
           "end": 33564388,
           "kind": "literal_pool",
-          "evidence": "resource_3c8_overlay.s:3263:pc-relative-literal"
+          "evidence": "resource_3c8_overlay.s:3078:pc-relative-literal"
         },
         {
           "start": 33564388,
           "end": 33564406,
           "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:3302:verified-C-placeholder"
+          "evidence": "resource_3c8_overlay.s:3117:verified-C-placeholder"
         },
         {
           "start": 33564406,
@@ -39249,7 +38739,7 @@
           "start": 33566436,
           "end": 33566510,
           "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:4242:verified-C-placeholder"
+          "evidence": "resource_3c8_overlay.s:4057:verified-C-placeholder"
         },
         {
           "start": 33566510,
@@ -39303,7 +38793,7 @@
           "start": 33567878,
           "end": 33567880,
           "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:4640:canonical-instruction"
+          "evidence": "resource_3c8_overlay.s:4455:canonical-instruction"
         },
         {
           "start": 33567882,
@@ -39528,7 +39018,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_3c8_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3c8_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3c9",
@@ -40384,7 +39874,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_3c9_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3c9_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3ca",
@@ -40652,7 +40142,7 @@
           "evidence": "resource_3ca_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3ca_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3ca_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3cb",
@@ -41034,7 +40524,7 @@
           "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
-      "evidence": ["assets/code/resource_3cb_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3cb_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3cc",
@@ -41098,7 +40588,7 @@
           "evidence": "resource_3cc_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3cc_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3cc_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3cd",
@@ -41240,7 +40730,7 @@
           "evidence": "resource_3cd_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3cd_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3cd_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     },
     {
       "id": "resource_3ce",
@@ -41382,7 +40872,7 @@
           "evidence": "resource_3ce_overlay.s:fixed-ldr-bx-veneer"
         }
       ],
-      "evidence": ["assets/code/resource_3ce_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
+      "evidence": ["assets/code/resource_3ce_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded code-overlay round trip"]
     }
   ]
 }

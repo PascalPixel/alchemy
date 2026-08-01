@@ -1,10 +1,10 @@
 # Path to completion
 
-Current verified exact **Full-C Byte Share: 245,044 / 1,343,206 executable
-bytes (18.24%)**. Exact main-image ownership is 102,208 bytes and exact code-overlay
-ownership is 142,836 bytes. After exact-C supersession and executable-extent
-accounting, the reviewed semantic tier contributes another **821,520 bytes**;
-together they cover **1,066,564 / 1,343,206 bytes (79.40%)**. This combined
+Current verified exact **Full-C Byte Share: 249,940 / 1,343,212 executable
+bytes (18.61%)**. Exact main-image ownership is 102,208 bytes and exact code-overlay
+ownership is 147,732 bytes. After exact-C supersession and executable-extent
+accounting, the reviewed semantic tier contributes another **816,630 bytes**;
+together they cover **1,066,570 / 1,343,212 bytes (79.40%)**. This combined
 figure is reviewed semantic coverage, not the Full-C headline or a completion
 forecast; [`../HANDOVER.md`](../HANDOVER.md) is the authoritative current audit.
 

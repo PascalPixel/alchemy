@@ -62,8 +62,10 @@ typedef unsigned int u32;
  * staging its ensemble, which is the cross-link that gives it meaning
  * beyond "a flag".
  *
- * Complete owner: `push {r5, r6, lr}` at 0x02000598 through `pop {r5,
- * r6} / pop {r0} / bx r0` at 0x0200070a onward; five trailing pool
+ * Complete owner: `push {r5, r6, lr}` at 0x02000598 through
+ * `pop {r5, r6} / pop {r1} / bx r1` at 0x0200070a-0x0200070e -- the
+ * unwind returns through r1, not r0, because r0 carries the return
+ * value 1 loaded at 0x02000708; five trailing pool
  * words (0x020085b4 -- the table's own base -- 0x02960000, 0x00000103,
  * 0x02860000, 0x02ae0000) end at 0x02000723, and the next owner
  * prologue (0x02000724) begins there.

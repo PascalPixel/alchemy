@@ -6618,6 +6618,12 @@
       "entry": "0x02001db0",
       "span_bytes": 480,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5} / pop {r0} / bx r0 at 0x02001f52-0x02001f56) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_3af 1db0 1f90, the +2 rule against the raw image), the body's single branch is the backward beq at 0x02001f08 to 0x02001ef4 (a do-while poll, walked and confirmed to stay inside the span), span read through the fourteen trailing pool words (0x0200d160, 0x0200d208, 0x03001ebc, 0x00019999, 0x0000cccc, 0x000002a6, 0x0000028e, 0x00001e44, 0x0000a015, 0x00026666, 0x00013333, 0x00000261, 0x0200c4ec, 0x00001e45) ending 0x02001f8f to the next owner at 0x02001f90 (already banked byte-exact as assets/code/resource_3af_c_02001f90.c), inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3af",
+      "entry": "0x02001444",
+      "span_bytes": 576,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5} / pop {r0} / bx r0 at 0x02001638-0x0200163c) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_3af 1444 1684, the +2 rule against the raw image). Span walked through every internal branch AND through all sixteen entries of the embedded jump table at 0x02001518-0x02001557 (entries are image addresses in the +0x8000 link form, e.g. 0x02009558 = image 0x02001558; the table sits inside the body with the mov pc,r3 at 0x02001514 entering it and the first case body resuming at 0x02001558). The queue's 528-byte estimate was wrong: the push at 0x02001654 that looked like the next prologue is the pool word 0x0200b4bd and carries no lr, so it cannot be a prologue. Alignment halfword plus seventeen trailing pool words (0x00000109, 0x00000271, 0x00000272, 0x0000093e, 0x00000927, 0x0200b4bd, 0x0200db50, 0x0200db60, 0x00013333, 0x0200b1a9, 0x00000928, 0x02000240, 0x02009518, 0x03001e70, 0x0000092b, 0x00000925, 0x00000911) end at 0x02001683, next owner prologue (push {r5, r6, lr}) at 0x02001684, inside the assembled overlay image and not overlapping another recorded owner"
     }
   ]
 }

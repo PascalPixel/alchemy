@@ -1261,7 +1261,7 @@ Easy to get wrong and it changes the answer. `Data_0200cd18` is image offset
 Thumb bit. Applying this correctly is what turned an apparently out-of-range
 pool word into the identification of 0x02001770's publishers.
 
-### resource_3c9 residue state (2026-08-01, venus) — 7 of 9 drafted
+### resource_3c9 residue state (2026-08-01, venus) — 7 of 9, plus a sweep-D leaf
 
 `overlay_published.ts resource_3c9` prints **18 residue LINES and they are
 NINE owners**, each listed twice: once as A-called or B-published and again as
@@ -1309,9 +1309,32 @@ precedent. And 0x020056a0 computes the sine radius into +48 and overwrites it
 two instructions later from the anchor's +50 halfword; the folded version
 would claim that spawner has no sine call, and it demonstrably does.
 
+**An EIGHTH owner, found by sweep D and by nothing else: 0x02005688**, 24
+bytes, no prologue, `bx lr`. It parks a record — 0x80000000 into +56/+60/+64,
+zero into +36/+40/+44 and the +100 angle. All three keyed sweeps are blind to
+it at once: no `push` for C, no published word anywhere in the image for B,
+and sweep A wants bl-reached *prologues* so it discards it too. It is the same
+shape and nearly the same size as 3a4's 0x02003410.
+
+The part worth generalising: **it had already been identified by hand, twice.**
+Both 0x020059f0 and 0x020056a0 declare it as a push-less leaf, because the
+resolver returns `unknown` for their call to it. Two hand-flags across two
+shifts did not make it a recorded owner, and every residue count in this file
+was computed without it. A note that something exists is not the tree knowing
+it exists — if a lane writes "there is an undrafted leaf here" in a header,
+that is a REGIONS ENTRY waiting to be made, not a finding.
+
+It also corrected 0x020037c4's header. I had read that row's
+`+56 == +60 == +64 == 0x80000000` gate as waiting for the orbit steps to
+finish, and flagged +60 as written by nothing. The orbit steps write live
+coordinates and never the sentinel; this leaf writes all three. The gate means
+"parked by Func_02005688". I reached for the rows I had just drafted because
+they were nearby, which is proximity reasoning wearing the clothes of a
+cluster read.
+
 Residue after this shift: **4 lines, 2 owners**, re-measured with the liveness
-control in the same session (3a4 = 1, a bogus overlay name = 1748). Both are
-parked on size rather than on structure:
+control in the same session (3a4 = 1, a bogus overlay name = 1748). Sweep D
+goes from three code-suspect gaps to **two**, and the two are exactly these:
 - **0x020012c8** — 3,604 bytes, `sites=363`, one return-shaped halfword in the
   whole gap. Not opened.
 - **0x02002360** — 4,708 bytes, `sites=` not re-measured; the largest owner in

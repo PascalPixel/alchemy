@@ -1,7 +1,26 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
+ * range is an indirect call through the named register, not a call to a
+ * function at the branch target.  Resolved with tools/veneer_resolve.ts.
+ *
+ * UNCERTAINTY, and it is deliberate.  What 0x03000164 DOES is not
+ * established.  semantic/main/080c1ffc.c calls it a resident two-argument
+ * owner initializer; across the tree it is reached with two arguments at
+ * some sites and three at others, and where a third is passed it is almost
+ * always zero.  It also sits four bytes -- one ARM instruction -- from the
+ * fill at 0x03000168, the way the sin/cos pair at 0x0800231c/0x08002322
+ * does.  That is suggestive of two entry points into one routine and it is
+ * NOT asserted here: the evidence is recorded so the exact lane can settle
+ * it, and the type below says only what this call site proves.
+ */
 typedef unsigned short u16;
 typedef unsigned char u8;
 typedef unsigned int u32;
 typedef signed int s32;
+
+typedef void (*Resident_03000164)(void *destination, u32 size, u32 value);
 
 struct Entry {
     u16 size;
@@ -17,7 +36,6 @@ struct Dma {
 extern struct Entry Data_03001b10[];
 extern s32 Func_08003e58(s32, s32);
 extern void Func_08003f3c(u32);
-extern void Func_080072f0(u32, u32, s32, u32);
 
 s32 Func_08003fa4(s32 index, s32 size, s32 source)
 {
@@ -55,7 +73,7 @@ allocated:
 
             if (source != 0) {
                 if (source == -1) {
-                    Func_080072f0(destination, size, source, 0x03000164);
+                    ((Resident_03000164)0x03000164)((void *)destination, size, source);
                 } else {
                     struct Dma *dma;
                     dma = (struct Dma *)0x040000d4;

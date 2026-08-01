@@ -1,4 +1,23 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
+ * range is an indirect call through the named register, not a call to a
+ * function at the branch target.  Resolved with tools/veneer_resolve.ts.
+ *
+ * UNCERTAINTY, and it is deliberate.  What 0x03000164 DOES is not
+ * established.  semantic/main/080c1ffc.c calls it a resident two-argument
+ * owner initializer; across the tree it is reached with two arguments at
+ * some sites and three at others, and where a third is passed it is almost
+ * always zero.  It also sits four bytes -- one ARM instruction -- from the
+ * fill at 0x03000168, the way the sin/cos pair at 0x0800231c/0x08002322
+ * does.  That is suggestive of two entry points into one routine and it is
+ * NOT asserted here: the evidence is recorded so the exact lane can settle
+ * it, and the type below says only what this call site proves.
+ */
 #include "types.h"
+
+typedef void (*Resident_03000164)(void *destination, u32 size, u32 value);
 
 struct DeferredWrite_080cdbc0 {
     u32 value;
@@ -7,7 +26,6 @@ struct DeferredWrite_080cdbc0 {
 };
 
 void Func_080f9010(s32 sound);
-void Func_080072f0(s32 source, s32 size, s32 register_address, s32 work);
 void Func_08004278(void *callback);
 void Func_080030f8(u32 frames);
 void Func_080b5038(s32 mode, u16 object, s32 arg2);
@@ -46,7 +64,7 @@ void Func_080cdbc0(void)
     *(s32 *)0x03001cec = 0x78;
     *(s32 *)0x03001cf0 = 0x78;
     *(volatile u16 *)0x0400000c = 0x0787;
-    Func_080072f0(0x06004000, 0x4000, 0x0400000c, 0x03000164);
+    ((Resident_03000164)0x03000164)((void *)0x06004000, 0x4000, 0x0400000c);
     Func_08004278((void *)0x080cd4b5);
     *(s16 *)0x03001ad6 = 0x20;
 

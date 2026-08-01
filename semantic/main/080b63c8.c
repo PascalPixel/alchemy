@@ -1,4 +1,23 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
+ * range is an indirect call through the named register, not a call to a
+ * function at the branch target.  Resolved with tools/veneer_resolve.ts.
+ *
+ * UNCERTAINTY, and it is deliberate.  What 0x03000164 DOES is not
+ * established.  semantic/main/080c1ffc.c calls it a resident two-argument
+ * owner initializer; across the tree it is reached with two arguments at
+ * some sites and three at others, and where a third is passed it is almost
+ * always zero.  It also sits four bytes -- one ARM instruction -- from the
+ * fill at 0x03000168, the way the sin/cos pair at 0x0800231c/0x08002322
+ * does.  That is suggestive of two entry points into one routine and it is
+ * NOT asserted here: the evidence is recorded so the exact lane can settle
+ * it, and the type below says only what this call site proves.
+ */
 #include "types.h"
+
+typedef void (*Resident_03000164)(void *destination, u32 size, u32 value);
 
 typedef struct Transfer_080b63c8 {
     const void *source;
@@ -52,7 +71,6 @@ void Func_0800488c(void);
 void Func_080048a0(void);
 void *Func_080048f4(s32, u32);
 void Func_080049ac(void);
-void Func_080072f0(void *, u32, u32, void *);
 void Func_08009078(s32);
 void Func_08015008(s32);
 void Func_08015018(s32, s32);
@@ -137,7 +155,7 @@ s32 Func_080b63c8(s32 mode)
         Fade_080b63c8 *window = Func_080048f4(44, 32);
 
         Func_080048f4(11, 640);
-        Func_080072f0(graphics, 0x7c8, 0, (void *)0x03000164);
+        ((Resident_03000164)0x03000164)(graphics, 0x7c8, 0);
         Func_080040e8();
 
         window->target = 0x2000;
@@ -270,11 +288,7 @@ restart:
     fade->target = 0x2800;
     fade->step = 60;
     Func_08015130(scene->display_mode_041);
-    Func_080072f0(
-        scene->entries_2ec,
-        320,
-        0,
-        (void *)0x03000164);
+    ((Resident_03000164)0x03000164)(scene->entries_2ec, 320, 0);
     Func_08003f3c(scene->graphics_054);
 
     if (Func_080770c0(0x16a) == 0) {

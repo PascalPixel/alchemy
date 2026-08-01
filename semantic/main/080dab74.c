@@ -8,9 +8,65 @@ typedef unsigned int u32;
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 #define NULL ((void *)0)
 
+/*
+ * __call_via_rN veneer sites, resolved per-site against the ROM. This file is
+ * still a raw m2c draft; the veneer pass below is the only thing corrected.
+ *
+ * All five `bl 0x080072f4` sites are __call_via_r4 -- 0x080072f4 is index 4 of
+ * the 0x080072e4 bank -- so each is an indirect call through r4.
+ *
+ * THE RENDERER PAIR ARRIVES AS AN OUT-PARAMETER. At 0x080dabbe r3 = sp + 52,
+ * that address is parked in [sp, #32], and `Func_080cef64(0, sp + 52)` at
+ * 0x080dabc8 fills sp+52 with allocator slot 46 and sp+56 with slot 47 -- the
+ * byte-exact src/080cef64.c writes `output[0] = *(state + 184)` and
+ * `output[1] = *(state + 188)`, i.e. 46 * 4 and 47 * 4 off 0x03001e50. So
+ * m2c's single `u32 projection_context` is really a two-element array.
+ *
+ * WHY THE RESOLVER CALLED ALL FIVE OF THESE "memory". Four sites read
+ * `ldr r4, [rN, #4]` where rN was just loaded from [sp, #32]. That is
+ * renderers[1], not an unknown struct field -- but the tool cannot know rN is
+ * a table base, so it correctly refuses and reports an indirect memory load.
+ * **A `[rN, #4]` load whose rN is the parked table base is entry 1.** Resolve
+ * rN before treating such a site as unresolvable.
+ *
+ * Each site is pinned to its C statement by ARGUMENT AGREEMENT AT EVERY
+ * POSITION, never by order -- all five dispatch through r4, so the register
+ * cannot separate them:
+ *
+ * - 0x080dae0c, r4 = [r0, #4] with r0 = [sp, #32]: entry 1. Width and height
+ *   are two byte-table reads indexed by r7, and x and y subtract each halved.
+ *   The `0x080EEAA2` statement.
+ * - 0x080daf18, r4 = [r0, #4] with r0 = [sp, #32]: entry 1. Width is the
+ *   constant 0x20 and x is a byte-table lookup. The `0x080EEA62` statement.
+ * - 0x080daf7c, r4 = [sp, #52] directly: ENTRY 0. Same 0x080eeab2 source
+ *   table and the same 0x20 width as the site above, but x is `ldrb [r5, #0]`.
+ * - 0x080db062, r4 = [r6, #4] with r6 = [sp, #32] loaded at 0x080db05a:
+ *   entry 1. x and y are `ldrsh [r5, #2]` and `ldrsh [r5, #6]`.
+ * - 0x080db188, r4 = [r6, #4] with r6 reloaded from [sp, #32] at 0x080db17a:
+ *   entry 1. y comes from `ldrsh [r5, #18]`.
+ *
+ * STRUCTURE: the two arms of the `blt` at 0x080daef6 call DIFFERENT
+ * renderers -- entry 1 on the fall-through, entry 0 on the taken path. The
+ * draft kept both arms but they read as differing only in an x expression;
+ * the renderer difference was invisible to it.
+ *
+ * ARITY: six at every site. r0..r3 are set and two more words go out at
+ * [sp, #0] and [sp, #4]. r4 is above the argument registers, so no argument
+ * slot holds the callee.
+ *
+ * UNCERTAINTY, left standing: what slots 46 and 47 CONTAIN is not settled
+ * here. The slot table unifies the addressing, never the contents. This file
+ * resolved cleanly because its table lives in the caller's own frame; the
+ * remaining memory sites in this audit read a callee out of a heap record
+ * whose contents depend on what ran before, and those SHOULD end as written
+ * uncertainties rather than names. A page of bounded uncertainties is this
+ * job going right, not a lane giving up.
+ */
+typedef void (*Renderer_080dab74)(
+    s32 target, void *source, u8 x, s16 y, s32 width, s32 height);
+
 void Func_08002dd8(s32);
 void Func_08004cb4(void *);
-void Func_080072f4(s32, void *, u8, s16, s32, s32);
 void Func_080b50e8(s32);
 void Func_080cd594(s32);
 void Func_080d6888(s16, s32, s32, s32, s32);
@@ -37,7 +93,7 @@ void Func_080dab74(s32 arg0) {
     s32 sp48[3];
     s32 sp54[3];
     s32 display_state[3];
-    u32 projection_context;
+    Renderer_080dab74 renderers[2];
     s32 temp_r0;
     s32 temp_r0_3;
     s32 temp_r1_3;
@@ -98,7 +154,7 @@ void Func_080dab74(s32 arg0) {
     *(s16 *)0x04000020 = 0x100;
     Func_080e0524((void *)0xB8, temp_r1, 1, 1);
     Func_080e0524((void *)0xBA, sp24, 0, 0);
-    temp_r3 = &projection_context;
+    temp_r3 = (u32 *)renderers;
     sp20 = temp_r3;
     Func_080cef64(0, temp_r3);
     var_sl = 0;
@@ -187,7 +243,7 @@ loop_26:
                         M2C_FIELD(sp48, s32 *, 4) = temp_r3_3;
                         temp_r5 = M2C_FIELD(temp_r7, u8 *, 0x080EEA91);
                         temp_r4 = M2C_FIELD(temp_r7, u8 *, 0x080EEA99);
-                        Func_080072f4(sp2C, sp30 + M2C_FIELD((temp_r7 * 2), u16 *, 0x080EEAA2), temp_r2_3 - (temp_r5 >> 1), temp_r3_3 - (temp_r4 >> 1), (s32) temp_r5, (s32) temp_r4);
+                        renderers[1](sp2C, sp30 + M2C_FIELD((temp_r7 * 2), u16 *, 0x080EEAA2), temp_r2_3 - (temp_r5 >> 1), temp_r3_3 - (temp_r4 >> 1), (s32) temp_r5, (s32) temp_r4);
                     }
                     if (sp28 < (s32) M2C_FIELD(((M2C_FIELD(*sp10, s32 *, 0x18) * 3) + 2), u8 *, 0x080EEA88)) {
                         if (sp28 > (s32) (var_sl_3 + 0x10)) {
@@ -233,10 +289,10 @@ loop_26:
                         temp_r4_2 = Func_080022fc(var_sl_4, 3);
                         if (sp28 >= (s32) (M2C_FIELD(((M2C_FIELD(*sp10, s32 *, 0x18) * 3) + 2), u8 *, 0x080EEA88) - 7)) {
                             temp_r4_3 = M2C_FIELD(temp_r4_2, u8 *, 0x080EEAB8);
-                            Func_080072f4(sp2C, sp30 + M2C_FIELD((temp_r4_2 * 2), u16 *, 0x080EEAB2), M2C_FIELD(var_r6_2, u8 *, 0x080EEA62), M2C_FIELD(var_r5_3, u8 *, 1) - temp_r4_3, 0x20, (s32) temp_r4_3);
+                            renderers[1](sp2C, sp30 + M2C_FIELD((temp_r4_2 * 2), u16 *, 0x080EEAB2), M2C_FIELD(var_r6_2, u8 *, 0x080EEA62), M2C_FIELD(var_r5_3, u8 *, 1) - temp_r4_3, 0x20, (s32) temp_r4_3);
                         } else {
                             temp_r4_4 = M2C_FIELD(temp_r4_2, u8 *, 0x080EEAB8);
-                            Func_080072f4(sp2C, sp30 + M2C_FIELD((temp_r4_2 * 2), u16 *, 0x080EEAB2), M2C_FIELD(var_r5_3, u8 *, 0), M2C_FIELD(var_r5_3, u8 *, 1) - temp_r4_4, 0x20, (s32) temp_r4_4);
+                            renderers[0](sp2C, sp30 + M2C_FIELD((temp_r4_2 * 2), u16 *, 0x080EEAB2), M2C_FIELD(var_r5_3, u8 *, 0), M2C_FIELD(var_r5_3, u8 *, 1) - temp_r4_4, 0x20, (s32) temp_r4_4);
                         }
                     }
                     var_sl_4 += 1;
@@ -268,7 +324,7 @@ loop_26:
                         var_r3 += 7;
                     }
                     temp_r4_5 = var_sl_6 - ((var_r3 >> 3) * 8);
-                    Func_080072f4(sp2C, sp30 + M2C_FIELD((temp_r4_5 * 2), u16 *, 0x080EEACC), (u8) M2C_FIELD(var_r5_5, s16 *, 2), M2C_FIELD(var_r5_5, s16 *, 6), (s32) M2C_FIELD(temp_r4_5, u8 *, 0x080EEABB), (s32) M2C_FIELD(temp_r4_5, u8 *, 0x080EEAC3));
+                    renderers[1](sp2C, sp30 + M2C_FIELD((temp_r4_5 * 2), u16 *, 0x080EEACC), (u8) M2C_FIELD(var_r5_5, s16 *, 2), M2C_FIELD(var_r5_5, s16 *, 6), (s32) M2C_FIELD(temp_r4_5, u8 *, 0x080EEABB), (s32) M2C_FIELD(temp_r4_5, u8 *, 0x080EEAC3));
                     M2C_FIELD(var_r5_5, s32 *, 0) = (s32) (M2C_FIELD(var_r5_5, s32 *, 0) + M2C_FIELD(var_r5_5, s32 *, 0xC));
                     M2C_FIELD(var_r5_5, s32 *, 4) = (s32) (M2C_FIELD(var_r5_5, s32 *, 4) + M2C_FIELD(var_r5_5, s32 *, 0x10));
                     M2C_FIELD(var_r5_5, s32 *, 0x18) = (s32) (M2C_FIELD(var_r5_5, s32 *, 0x18) - 1);
@@ -318,7 +374,7 @@ loop_26:
                     temp_r0_3 = (s32) (temp_r0_2 + (temp_r0_2 >> 0x1F)) >> 1;
                     temp_r4_6 = M2C_FIELD(temp_r0_3, u8 *, 0x080EDE96);
                     temp_r0_4 = temp_r4_6 >> 1;
-                    Func_080072f4(sp2C, sp24 + M2C_FIELD((temp_r0_3 * 2), u16 *, 0x080EDE84), M2C_FIELD(var_r5_7, s16 *, 0xE) - temp_r0_4, (M2C_FIELD(var_r5_7, s16 *, 0x12) - temp_r0_4) - ((s32) (temp_r3_9 + (temp_r3_9 >> 0x1F)) >> 1), (s32) temp_r4_6, (s32) temp_r4_6);
+                    renderers[1](sp2C, sp24 + M2C_FIELD((temp_r0_3 * 2), u16 *, 0x080EDE84), M2C_FIELD(var_r5_7, s16 *, 0xE) - temp_r0_4, (M2C_FIELD(var_r5_7, s16 *, 0x12) - temp_r0_4) - ((s32) (temp_r3_9 + (temp_r3_9 >> 0x1F)) >> 1), (s32) temp_r4_6, (s32) temp_r4_6);
                 }
                 temp_r3_11 = M2C_FIELD(var_r5_7, u32 *, 0x18) - 1;
                 M2C_FIELD(var_r5_7, u32 *, 0x18) = temp_r3_11;

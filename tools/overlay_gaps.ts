@@ -122,7 +122,7 @@ export function isReturnShape(halfword: number): boolean {
  *
  * A VENEER is `ldr rN,[pc,#0] / bx rN / .word target` -- and the register test
  * is load-bearing, not decoration. The old predicate accepted any `bx rM` after
- * any `ldr rN`, which makes `ldr r0,=table / bx lr` -- jupiter's published
+ * any `ldr rN`, which makes `ldr r0,=table / bx lr` -- a published
  * getter stub, a REAL FUNCTION -- indistinguishable from a veneer. A veneer
  * branches to the register it just loaded; a leaf returns through lr. Pin by
  * register agreement, and resource_3cb's 0x30 and resource_3ce's 0x30, 0x3c and
@@ -288,7 +288,7 @@ export function gapsBetween(
     // is padding. It is not: an UNDERCOUNTED SPAN that stops between its own
     // `pop {r0}` and its own `bx r0` leaves a two-byte remainder holding a
     // RETURN SHAPE, and sweep D discarded it without looking (found 2026-08-01,
-    // mars, by auditing the sealed overlays after `resource_398` showed that a
+    // by auditing the sealed overlays after `resource_398` showed that a
     // clean owners+head+tail sum silently omits every sub-slack byte).
     //
     // Measured before changing the rule, because a guard that cries wolf gets
@@ -315,15 +315,15 @@ export function gapsBetween(
  *
  * `gapsOf` used to COMPUTE a tail byte-count and print nothing about it, which
  * is the same defect this file was written to fix in sweep B: scan a region,
- * then decline to say anything about it. Isaac caught it, and the cost was
- * real -- resource_3c9's tail held two owners with genuine push prologues, and
+ * then decline to say anything about it. resource_3c9's tail held two owners
+ * with genuine push prologues, and
  * four overlays stood certified on a sweep that never looked past their last
  * owner.
  *
  * A tail is USUALLY legitimate: the import-veneer bank and the overlay's data
  * tables live there. So this classifies rather than accuses.
  *
- * THE PROLOGUE GATE WAS STILL HERE (fixed 2026-08-01, mars). This function was
+ * THE PROLOGUE GATE WAS STILL HERE (fixed 2026-08-01). This function was
  * written to close sweep B's blind spot at the other end of the image, and it
  * shipped carrying the exact defect it was answering: it decided
  * `prologues.length > 0 ? PROLOGUE-SUSPECT : VENEER-AND-DATA`, on `push`
@@ -334,8 +334,7 @@ export function gapsBetween(
  * `bl`-reached, none is published, none has a `push`: invisible to all four
  * sweeps at once, which this file had recorded as a hypothetical.
  *
- * THE ARGUMENT THAT REPLACES IT is Isaac's, made structural here instead of
- * being left for a lane to reconstruct per overlay: **a Thumb function cannot
+ * THE REPLACEMENT ARGUMENT is structural: **a Thumb function cannot
  * avoid returning.** So count RETURN shapes outside the two banks that
  * legitimately contain them. Zero uncovered returns is not "no push found", it
  * is a proof that no function of any shape -- leaf, stub, or ordinary -- lives
@@ -400,7 +399,7 @@ export function gapsOf(overlay: string): {
 }
 
 /**
- * Overlays whose residue is empty under sweeps A and B, i.e. the ones a lane
+ * Overlays whose residue is empty under sweeps A and B, i.e. the ones a pass
  * would be entitled to call closed under the pre-sweep-D standard.
  */
 export function overlayNames(): string[] {
@@ -536,7 +535,7 @@ function selfTest(): void {
     throw new Error(`sweep D self-test: the call_via bank ruled ${banked.verdict} -- the mask is not working`);
 
   // THE REGISTER TEST inside `maskBanks`, both directions. `ldr r0 / bx r0` is
-  // structure and must be masked; `ldr r0 / bx lr` is jupiter's getter stub, a
+  // structure and must be masked; `ldr r0 / bx lr` is a getter stub, a
   // real function, and must NOT be. Same four bytes to any predicate that does
   // not compare the registers.
   const veneer = new Uint8Array(8);
@@ -580,7 +579,7 @@ function selfTest(): void {
   // No overlay is NAMED as the passing fixture: it is whichever overlay is
   // first in the tree, because sweep D exits 0 for any overlay it can actually
   // sweep, whatever it finds there. Naming one pins the test to a tree state
-  // that lanes change every shift.
+  // that source changes move every cycle.
   if (run("resource_ffffff") === 0)
     throw new Error("sweep D self-test: an empty sweep must NOT exit 0");
   const anyOverlay = overlayNames()[0];
@@ -677,7 +676,7 @@ function main(): void {
   );
   // SWEEPING NOTHING IS NOT PASSING. A mistyped overlay name used to print
   // `overlays=0 code_suspect_gaps=0 overlaps=0 prologue_suspect_tails=0` and
-  // exit 0, which is indistinguishable from a clean overlay -- a lane gating a
+  // exit 0, which is indistinguishable from a clean overlay -- an automated
   // certification loop on this tool would have recorded a pass for an overlay
   // it never opened. Sweep A/B/C already refuses an unknown name; sweep D did
   // not, and the gap was found by the liveness control of resource_380's

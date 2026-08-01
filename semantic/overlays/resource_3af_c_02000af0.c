@@ -4,7 +4,7 @@ typedef int s32;
 typedef unsigned int u32;
 
 /*
- * resource_3af owner at 0x02000af0, 168 bytes: actor 24's "talk to me"
+ * resource_3af owner at 0x02000af0, 168 bytes: actor 24's interaction
  * callback -- three story-dependent replies chosen from flags 0x925 and
  * 0x922.
  *

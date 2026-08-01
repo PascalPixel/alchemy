@@ -32,7 +32,7 @@ struct FontEntry_080178b0 {
 #define FONT_080178B0 ((const struct FontEntry_080178b0 *)0x08031e24)
 
 /*
- * Correctness fix, veneer audit (mars, 2026-08-01).
+ * Correctness fix, veneer audit (2026-08-01).
  *
  * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
  * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that

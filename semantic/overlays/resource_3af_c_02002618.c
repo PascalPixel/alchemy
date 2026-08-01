@@ -43,7 +43,7 @@ typedef int s32;
  * helpers: +40 = 0x80000, +72 = 0xb333, +24 and +28 = 0x1a000,
  * +68 = 0x8000, and +108 = a THUMB FUNCTION POINTER. The pool word is
  * 0x020088c1, which in the overlay's +0x8000 link form is
- * Func_020008c0 (already banked byte-exact) with the Thumb bit set. So
+ * Func_020008c0 (already tracked byte-exact) with the Thumb bit set. So
  * this scene installs a per-record callback; it is spelled as the
  * address-of expression, not as the raw constant, because the target is
  * resolved and certain.

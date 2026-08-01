@@ -16,13 +16,13 @@ typedef unsigned short u16;
  * pool word 0x020087e1 (= 0x0200_07e0 plus the Thumb bit under the proven
  * 0x02008000 link base), keyed 0x00008602/0xffff000d.
  *
- * NEAR-TWIN of banked byte-exact assets/code/resource_394_c_020008b0.c, and
+ * NEAR-TWIN of tracked byte-exact assets/code/resource_394_c_020008b0.c, and
  * that is this file's correctness proof.  The two owners run the same
  * twenty-one step sequence in the same order with the same imports; they
  * differ in four immediates (0x48 against 0x68 for the second placement
  * argument, -8 against 8 for the nudge, and the fifth argument of the two
  * fixture placements) and in the value finally written through
- * Data_020092c4 — 1 here, 0 there.  Resolving that banked file's own printed
+ * Data_020092c4 — 1 here, 0 there.  Resolving that tracked file's own printed
  * `bl` labels through the `+2` rule therefore names every import used here,
  * backwards: Func_02001952 is Func_0808a018, Func_02001a08 is Func_0808a020,
  * Func_020019de/02001a42/02001a48 are all Func_080f9010, and so on.  It also
@@ -31,7 +31,7 @@ typedef unsigned short u16;
  *
  * The two Func_0808a090 calls carry 16.16 scale pairs — (0x8000, 0x3333) and
  * (0x4ccc, 0x3333) against 0x10000 as one, i.e. 0.5/0.2 and 0.3/0.2 — the same
- * two pairs the banked sibling passes.
+ * two pairs the tracked sibling passes.
  *
  * Twenty call sites, matching the row's advertised count.
  */

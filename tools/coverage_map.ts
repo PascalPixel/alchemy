@@ -3,13 +3,13 @@
 // product-dashboard card for the README.
 //
 // The map answers one question visually: of every byte in the English ROM,
-// which bytes are already expressed as byte-exact C (Mercury Lighthouse),
-// which are expressed as reviewed semantic C (Venus Lighthouse), and which are
+// which bytes are already expressed as byte-exact C, which are expressed as
+// reviewed semantic C, and which are
 // still assembly or non-code asset data.
 //
 // Every number here is derived from tracked evidence only. There is no ROM
 // read, no toolchain, and no build output in the derivation, so either
-// lighthouse can regenerate the picture from a fresh clone:
+// reconstruction can regenerate the picture from a fresh clone:
 //
 //   * executable classification  metrics/<target>-executable.json
 //   * exact main ownership       src/<address>.c against audited region bounds
@@ -45,37 +45,37 @@ const SEMANTIC_OVERLAY_SOURCE = /^(resource_[0-9a-f]+)_c_([0-9a-f]{8})\.c$/i;
 const OVERLAY_ASSEMBLY = /^(resource_[0-9a-f]+)_overlay\.s$/i;
 const OVERLAY_SERIES = "golden-sun-thumb-overlay-series";
 
-export type Lane = "exact_c" | "semantic_c" | "assembly" | "retained_asm" | "asset_data";
+export type CoverageCategory = "exact_c" | "semantic_c" | "assembly" | "retained_asm" | "asset_data";
 const RETAINED_ASM_FILL = "#ff8a00";
 
-// Lane order is also the stacking order inside a tile: exact at the bottom.
-// `ink` is the label colour a tile takes when that lane fills most of it.
-const LANE_STYLE: Record<Lane, { fill: string; ink: string; label: string }> = {
+// CoverageCategory order is also the stacking order inside a tile: exact at the bottom.
+// `ink` is the label colour a tile takes when that category fills most of it.
+const CATEGORY_STYLE: Record<CoverageCategory, { fill: string; ink: string; label: string }> = {
   exact_c: { fill: "#0072f5", ink: "#eaf2ff", label: "byte-exact C" },
   semantic_c: { fill: "#50e3c2", ink: "#04241d", label: "semantic C" },
   assembly: { fill: "#333333", ink: "#a1a1a1", label: "assembly" },
   retained_asm: { fill: RETAINED_ASM_FILL, ink: "#2b1600", label: "permanent asm" },
   asset_data: { fill: "#ff0080", ink: "#2b0016", label: "assets & data" },
 };
-const LANE_ORDER: Lane[] = ["exact_c", "semantic_c", "assembly", "retained_asm", "asset_data"];
+const CATEGORY_ORDER: CoverageCategory[] = ["exact_c", "semantic_c", "assembly", "retained_asm", "asset_data"];
 
 export interface Span {
   start: number;
   end: number;
 }
 
-/** One drawable leaf: a byte run of the image with its lane composition. */
+/** One drawable leaf: a byte run of the image with its category composition. */
 export interface Tile {
   label: string;
   bytes: number;
-  lanes: Partial<Record<Lane, number>>;
+  categories: Partial<Record<CoverageCategory, number>>;
 }
 
 export interface Area {
   id: string;
   label: string;
   bytes: number;
-  lanes: Partial<Record<Lane, number>>;
+  categories: Partial<Record<CoverageCategory, number>>;
   tiles: Tile[];
 }
 
@@ -86,12 +86,12 @@ export interface CoverageMap {
   derivation: "tracked-evidence-v1";
   rom_bytes: number;
   executable_bytes: number;
-  lanes: Record<Lane, { bytes: number; percent_of_executable: number }>;
+  categories: Record<CoverageCategory, { bytes: number; percent_of_executable: number }>;
   main: { executable_bytes: number; exact_c_bytes: number; semantic_c_bytes: number };
   overlays: { executable_bytes: number; exact_c_bytes: number; semantic_c_bytes: number };
   provenance: {
-    exact_lane: string;
-    semantic_lane: string;
+    exact_source: string;
+    semantic_source: string;
     semantic_sources: number;
     semantic_superseded_bytes: number;
     semantic_outside_extent_bytes: number;
@@ -103,7 +103,7 @@ export interface CoverageMap {
 }
 
 /**
- * The tracked document is a summary: lane totals and one row per area. Tile
+ * The tracked document is a summary: category totals and one row per area. Tile
  * geometry is a drawing detail that the SVG already carries, and keeping it
  * out of the tree keeps a per-cycle regeneration to a few changed numbers.
  */
@@ -113,7 +113,7 @@ export function trackedDocument(map: CoverageMap): unknown {
       id: item.id,
       label: item.label,
       bytes: item.bytes,
-      lanes: item.lanes,
+      categories: item.categories,
       tiles: item.tiles.length,
     }));
   return {
@@ -344,7 +344,7 @@ export function exactOverlaySpans(tree: SourceTree): Map<string, Span[]> {
   return owned;
 }
 
-export interface SemanticLane {
+export interface SemanticCoverage {
   main: Map<number, Span[]>;
   overlays: Map<string, Span[]>;
   sources: number;
@@ -363,7 +363,7 @@ export function semanticSpans(
   boundaries: readonly number[],
   executable: readonly Span[],
   overlayExecutable: ReadonlyMap<string, Span[]> = new Map(),
-): SemanticLane {
+): SemanticCoverage {
   const limit = executable.at(-1)?.end ?? ROM_BASE;
   const main = new Map<number, Span[]>();
   const overlays = new Map<string, Span[]>();
@@ -407,7 +407,7 @@ export function semanticSpans(
   // A whole-overlay claim sizes every owner in one reviewed assertion: if each
   // executable byte of an overlay belongs to some semantic source, the owners
   // need no individual spans and the overlay's audited executable extent is the
-  // lane. That is one evidence-bearing entry instead of one per owner, which is
+  // covered extent. That is one evidence-bearing entry instead of one per owner, which is
   // what an overlay converted in full actually warrants. Exact C is subtracted
   // downstream, so a partially exact overlay stays honest.
   const fullOverlays = new Map<string, string>();
@@ -547,21 +547,21 @@ export function assetBucket(kind: string): { id: string; label: string } {
 
 // ------------------------------------------------------------- map assembly
 
-function laneTotal(tiles: readonly Tile[], lane: Lane): number {
-  return tiles.reduce((sum, tile) => sum + (tile.lanes[lane] ?? 0), 0);
+function categoryTotal(tiles: readonly Tile[], category: CoverageCategory): number {
+  return tiles.reduce((sum, tile) => sum + (tile.categories[category] ?? 0), 0);
 }
 
 function area(id: string, label: string, tiles: Tile[]): Area {
-  const lanes: Partial<Record<Lane, number>> = {};
-  for (const lane of ["exact_c", "semantic_c", "assembly", "retained_asm", "asset_data"] as Lane[]) {
-    const bytes = laneTotal(tiles, lane);
-    if (bytes) lanes[lane] = bytes;
+  const categories: Partial<Record<CoverageCategory, number>> = {};
+  for (const category of ["exact_c", "semantic_c", "assembly", "retained_asm", "asset_data"] as CoverageCategory[]) {
+    const bytes = categoryTotal(tiles, category);
+    if (bytes) categories[category] = bytes;
   }
   return {
     id,
     label,
     bytes: tiles.reduce((sum, tile) => sum + tile.bytes, 0),
-    lanes,
+    categories,
     tiles: tiles.filter((tile) => tile.bytes > 0),
   };
 }
@@ -570,10 +570,10 @@ function hex8(address: number): string {
   return address.toString(16).padStart(8, "0");
 }
 
-// Regions that will NEVER become C by design (Pascal's ruling 2026-07-31:
-// rendered orange). keep_asm retention, structural runtime/veneer/padding
+// Regions that will never become C by design are rendered orange. keep_asm
+// retention, structural runtime/veneer/padding
 // kinds, and explicit cannot-express contracts qualify; keep_structured_asm
-// alone does NOT (it is a default, not a contract — see TEAM-OPS).
+// alone does not (it is a default, not a contract).
 const PERMANENT_KINDS = new Set([
   "linker_veneer", "alignment_padding", "relocated_arm_runtime_module",
   "armv4t_helper_bank", "iwram_runtime_veneer",
@@ -589,7 +589,7 @@ export function retainedMainSpans(): Span[] {
     for (const r of manifest.regions ?? []) {
       if (typeof r.address !== "number" || typeof r.size !== "number" || r.size <= 0) continue;
       const permanent = r.retention === "keep_asm" ||
-        // Audited 2026-07-31 (mars): the merge-with-owner family is literal
+        // Audited 2026-07-31: the merge-with-owner family is literal
         // pools, alignment and data the owner registration deliberately
         // excludes — 64 bytes residual across the whole bucket. Permanent.
         r.retention === "merge_with_owner" ||
@@ -626,13 +626,13 @@ function mainBands(
     const bytes = spanBytes(current.spans);
     const exactBytes = spanBytes(intersect(current.spans, exact));
     const semanticBytes = spanBytes(intersect(current.spans, semantic));
-    // Retained spans may only claim bytes no C lane already owns.
+    // Retained spans may only claim bytes no C category already owns.
     const owned = normalize([...exact, ...semantic]);
     const retainedBytes = spanBytes(intersect(subtract(current.spans, owned), retained));
     tiles.push({
       label: hex8(current.start).slice(0, 6),
       bytes,
-      lanes: {
+      categories: {
         exact_c: exactBytes,
         semantic_c: semanticBytes,
         assembly: Math.max(bytes - exactBytes - semanticBytes - retainedBytes, 0),
@@ -668,14 +668,14 @@ export function groupTiles(tiles: readonly Tile[], target: number): Tile[] {
   let last = "";
   for (const tile of tiles) {
     if (!current) {
-      current = { label: tile.label, bytes: 0, lanes: {} };
+      current = { label: tile.label, bytes: 0, categories: {} };
       first = tile.label;
     }
     current.bytes += tile.bytes;
     last = tile.label;
-    for (const lane of LANE_ORDER) {
-      const bytes = tile.lanes[lane] ?? 0;
-      if (bytes) current.lanes[lane] = (current.lanes[lane] ?? 0) + bytes;
+    for (const category of CATEGORY_ORDER) {
+      const bytes = tile.categories[category] ?? 0;
+      if (bytes) current.categories[category] = (current.categories[category] ?? 0) + bytes;
     }
     if (current.bytes >= target) {
       current.label = first === last ? first : `${first}–${last}`;
@@ -722,26 +722,26 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
   }
 
   const boundaries = mainBoundaries(options.exact);
-  const semanticLane = options.semantic
+  const semanticCoverage = options.semantic
     ? semanticSpans(options.semantic, boundaries, mainExecutable, overlayExecutable)
     : { main: new Map(), overlays: new Map(), sources: 0, unresolved: [] as string[], mainCensusClosed: false };
 
-  // Exact always wins over semantic: the semantic lane only shows the ground
-  // the exact lane has not already taken.
+  // Exact always wins over semantic: semantic coverage only shows executable
+  // bytes that are not already byte-exact.
   //
-  // Two different things shrink the semantic lane, and they must be counted
-  // apart. Supersession means the exact lane took ground the semantic lane had
-  // -- expected, and the whole point of the ring. Outside-extent means a
+  // Two different things shrink semantic coverage, and they must be counted
+  // apart. Supersession means exact C replaced a semantic draft. Outside-extent
+  // means a
   // semantic source claims an address the executable audit does not call
   // executable, so the work is real but will never appear on this map. Folding
   // them into one figure invites reading a total as supersession when none of
   // it is, which is a mistake this tool has already caused once.
   const exactMainUnion = normalize(exactMain);
-  const semanticMain = subtract([...semanticLane.main.values()].flat(), exactMainUnion);
+  const semanticMain = subtract([...semanticCoverage.main.values()].flat(), exactMainUnion);
   const semanticOverlayByResource = new Map<string, Span[]>();
-  let semanticSuperseded = spanBytes([...semanticLane.main.values()].flat()) - spanBytes(semanticMain);
+  let semanticSuperseded = spanBytes([...semanticCoverage.main.values()].flat()) - spanBytes(semanticMain);
   let semanticOutsideExtent = 0;
-  for (const [overlay, spans] of semanticLane.overlays) {
+  for (const [overlay, spans] of semanticCoverage.overlays) {
     const executable = overlayExecutable.get(overlay) ?? [];
     const inExtent = intersect(spans, executable);
     const owned = subtract(inExtent, exactOverlayByResource.get(overlay) ?? []);
@@ -784,10 +784,10 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
   // any convertible core owner reappears, cross-confirmed by main_image_classes
   // reporting convertible-thumb 0 owners / 0 bytes. The complement is intra-
   // function structure (inline call-via thunk sites, pools, alignment) measured
-  // in 4-46 byte fragments, not undrafted functions. Vale checked this the hard
-  // way on 2026-08-01: reverted it, listed the spans, and found the Wise One's
-  // accounting correct. Gray means actionable debt; here there is none.
-  const mainRetained = semanticLane.mainCensusClosed ? mainExecutable : retainedMainSpans();
+  // in 4-46 byte fragments, not undrafted functions. This was checked on
+  // 2026-08-01 by reverting the classification and listing every span. Gray means
+  // actionable debt; here there is none.
+  const mainRetained = semanticCoverage.mainCensusClosed ? mainExecutable : retainedMainSpans();
   const executableAreas: Area[] = [
     area("main", "Main image", mainBands(mainExecutable, exactMainUnion, semanticMain, mainRetained, 10240)),
   ];
@@ -799,7 +799,7 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
     overlayTiles.push({
       label: overlay.id.replace(/^resource_/, ""),
       bytes: spanBytes(executable),
-      lanes: {
+      categories: {
         exact_c: exactBytesHere,
         semantic_c: semanticBytesHere,
         assembly: spanBytes(executable) - exactBytesHere - semanticBytesHere,
@@ -833,13 +833,13 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
     const semanticShare = decoded ? spanBytes(semanticOverlayByResource.get(overlay) ?? []) / decoded : 0;
     // A compressed stream has no per-byte correspondence with the code it
     // decodes to, so its tile is sized by ROM bytes and shaded by the share
-    // of its decoded executable bytes each lane owns.
+    // of its decoded executable bytes each category owns.
     const exactPart = Math.round(stream.romBytes * exactShare);
     const semanticPart = Math.round(stream.romBytes * semanticShare);
     streamTiles.push({
       label: overlay.replace(/^resource_/, ""),
       bytes: stream.romBytes,
-      lanes: {
+      categories: {
         exact_c: exactPart,
         semantic_c: semanticPart,
         assembly: stream.romBytes - exactPart - semanticPart,
@@ -871,7 +871,7 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
     "rom-data",
     "Assets & data",
     [...buckets].sort((left, right) => right[1].bytes - left[1].bytes)
-      .map(([, entry]) => ({ label: entry.label, bytes: entry.bytes, lanes: { asset_data: entry.bytes } })),
+      .map(([, entry]) => ({ label: entry.label, bytes: entry.bytes, categories: { asset_data: entry.bytes } })),
   ));
 
   const romBytesCheck = romAreas.reduce((sum, item) => sum + item.bytes, 0);
@@ -884,7 +884,7 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
   }
 
   const retainedBytes = executableAreas.reduce(
-    (sum, item) => sum + (item.lanes.retained_asm ?? 0), 0,
+    (sum, item) => sum + (item.categories.retained_asm ?? 0), 0,
   );
   return {
     format: 1,
@@ -893,7 +893,7 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
     derivation: "tracked-evidence-v1",
     rom_bytes: romSize,
     executable_bytes: executableBytes,
-    lanes: {
+    categories: {
       exact_c: { bytes: exactBytes, percent_of_executable: roundHalfUpPercent(exactBytes, executableBytes) },
       semantic_c: {
         bytes: semanticBytes,
@@ -926,13 +926,13 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
       semantic_c_bytes: semanticOverlayBytes,
     },
     provenance: {
-      exact_lane: options.exact.id,
-      semantic_lane: options.semantic?.id ?? "absent",
-      semantic_sources: semanticLane.sources,
-      main_semantic_census: semanticLane.mainCensusClosed ? "closed" : "open",
+      exact_source: options.exact.id,
+      semantic_source: options.semantic?.id ?? "absent",
+      semantic_sources: semanticCoverage.sources,
+      main_semantic_census: semanticCoverage.mainCensusClosed ? "closed" : "open",
       semantic_superseded_bytes: semanticSuperseded,
       semantic_outside_extent_bytes: semanticOutsideExtent,
-      semantic_unresolved: semanticLane.unresolved.sort(),
+      semantic_unresolved: semanticCoverage.unresolved.sort(),
     },
     rom_areas: romAreas,
     executable_areas: executableAreas,
@@ -1010,7 +1010,7 @@ export function squarify<T>(items: readonly T[], value: (item: T) => number, rec
 // ---------------------------------------------------------------- rendering
 //
 // The drawing is a dark product-dashboard card: a black surface, hairline
-// borders, one accent per lane, and monospaced addresses. It reads the same on
+// borders, one accent per category, and monospaced addresses. It reads the same on
 // a light or a dark README because it carries its own surface.
 
 const SURFACE = "#000000";
@@ -1097,20 +1097,20 @@ function tileRects(tile: Tile, area: Rect, lines: string[]): void {
     height: Math.max(area.height - 1, 0.5),
   };
   let offset = 0;
-  let midpointLane: Lane = "assembly";
-  for (const lane of LANE_ORDER) {
-    const share = tile.lanes[lane] ?? 0;
+  let midpointCategory: CoverageCategory = "assembly";
+  for (const category of CATEGORY_ORDER) {
+    const share = tile.categories[category] ?? 0;
     if (share <= 0) continue;
-    // Lanes stack from the bottom of the tile, so a converting region reads as
+    // Categories stack from the bottom of the tile, so a converting region reads as
     // a filling gauge rather than as a different region.
     const height = body.height * (share / tile.bytes);
     lines.push(rect(
       { x: body.x, y: body.y + body.height - offset - height, width: body.width, height },
-      LANE_STYLE[lane].fill,
+      CATEGORY_STYLE[category].fill,
     ));
     // The label sits on the tile's midline, so it takes its contrast from the
-    // lane that actually lies under it rather than from the largest one.
-    if (offset <= body.height / 2 && body.height / 2 < offset + height) midpointLane = lane;
+    // category that actually lies under it rather than from the largest one.
+    if (offset <= body.height / 2 && body.height / 2 < offset + height) midpointCategory = category;
     offset += height;
   }
   const text = body.height >= 12 ? fitText(tile.label, body.width - 6, 9) : undefined;
@@ -1120,7 +1120,7 @@ function tileRects(tile: Tile, area: Rect, lines: string[]): void {
       anchor: "middle",
       // Addresses and resource ids are monospaced; prose bucket names are not.
       mono: /^[0-9a-f]+(–[0-9a-f]+)?$/i.test(tile.label),
-      fill: LANE_STYLE[midpointLane].ink,
+      fill: CATEGORY_STYLE[midpointCategory].ink,
       opacity: 0.9,
     }));
   }
@@ -1192,9 +1192,9 @@ function card(
   }
 }
 
-/** A stacked, rounded lane bar across the whole executable denominator. */
-function laneBar(map: CoverageMap, frame: Rect, lines: string[]): void {
-  const clip = "lane-bar-clip";
+/** A stacked, rounded category bar across the whole executable denominator. */
+function categoryBar(map: CoverageMap, frame: Rect, lines: string[]): void {
+  const clip = "category-bar-clip";
   lines.push(
     `<defs><clipPath id="${clip}"><rect x="${frame.x}" y="${frame.y}" width="${frame.width}" ` +
     `height="${frame.height}" rx="${frame.height / 2}"/></clipPath></defs>`,
@@ -1202,10 +1202,10 @@ function laneBar(map: CoverageMap, frame: Rect, lines: string[]): void {
     rect(frame, HAIRLINE),
   );
   let cursor = frame.x;
-  for (const lane of ["exact_c", "semantic_c", "assembly", "retained_asm"] as Lane[]) {
-    const laneWidth = frame.width * (map.lanes[lane].bytes / map.executable_bytes);
-    lines.push(rect({ ...frame, x: cursor, width: laneWidth }, LANE_STYLE[lane].fill));
-    cursor += laneWidth;
+  for (const category of ["exact_c", "semantic_c", "assembly", "retained_asm"] as CoverageCategory[]) {
+    const categoryWidth = frame.width * (map.categories[category].bytes / map.executable_bytes);
+    lines.push(rect({ ...frame, x: cursor, width: categoryWidth }, CATEGORY_STYLE[category].fill));
+    cursor += categoryWidth;
   }
   lines.push("</g>");
 }
@@ -1218,8 +1218,8 @@ export function renderSvg(map: CoverageMap): string {
   const height = 660;
   const margin = 32;
   const lines: string[] = [];
-  const exact = map.lanes.exact_c;
-  const semantic = map.lanes.semantic_c;
+  const exact = map.categories.exact_c;
+  const semantic = map.categories.semantic_c;
   const combined = exact.bytes + semantic.bytes;
 
   lines.push(
@@ -1244,7 +1244,7 @@ export function renderSvg(map: CoverageMap): string {
       tracking: -0.6,
     }),
     // Naming the hero number as a sum keeps it from reading as the headline
-    // metric, which is the byte-exact lane alone.
+    // metric, which is byte-exact C alone.
     label(width - margin, 64, "EXACT + SEMANTIC C", {
       size: 9.5,
       fill: MUTED,
@@ -1253,27 +1253,27 @@ export function renderSvg(map: CoverageMap): string {
     }),
   );
 
-  // The metric row doubles as the legend: one dot, one lane, one number.
-  const metrics: Array<{ lane: Lane; value: string; note?: string }> = [
-    { lane: "exact_c", value: `${exact.percent_of_executable}%`, note: "FULL-C BYTE SHARE" },
-    { lane: "semantic_c", value: `${semantic.percent_of_executable}%` },
-    { lane: "assembly", value: `${map.lanes.assembly.percent_of_executable}%` },
-    { lane: "retained_asm", value: `${map.lanes.retained_asm.percent_of_executable}%`, note: "BY DESIGN" },
-    { lane: "asset_data", value: megabytes(map.lanes.asset_data.bytes), note: "NOT CODE" },
+  // The metric row doubles as the legend: one dot, one category, one number.
+  const metrics: Array<{ category: CoverageCategory; value: string; note?: string }> = [
+    { category: "exact_c", value: `${exact.percent_of_executable}%`, note: "FULL-C BYTE SHARE" },
+    { category: "semantic_c", value: `${semantic.percent_of_executable}%` },
+    { category: "assembly", value: `${map.categories.assembly.percent_of_executable}%` },
+    { category: "retained_asm", value: `${map.categories.retained_asm.percent_of_executable}%`, note: "BY DESIGN" },
+    { category: "asset_data", value: megabytes(map.categories.asset_data.bytes), note: "NOT CODE" },
   ];
   const columnWidth = (width - margin * 2) / metrics.length;
   metrics.forEach((metric, index) => {
     const x = margin + index * columnWidth;
-    const name = LANE_STYLE[metric.lane].label.toUpperCase() +
+    const name = CATEGORY_STYLE[metric.category].label.toUpperCase() +
       (metric.note ? ` · ${metric.note}` : "");
     lines.push(
-      rect({ x, y: 96, width: 8, height: 8 }, LANE_STYLE[metric.lane].fill, { radius: 2 }),
+      rect({ x, y: 96, width: 8, height: 8 }, CATEGORY_STYLE[metric.category].fill, { radius: 2 }),
       label(x + 14, 104, name, { size: 9.5, fill: MUTED, tracking: 0.8 }),
       label(x, 128, metric.value, { size: 21, weight: 600, tracking: -0.4 }),
     );
   });
 
-  laneBar(map, { x: margin, y: 146, width: width - margin * 2, height: 6 }, lines);
+  categoryBar(map, { x: margin, y: 146, width: width - margin * 2, height: 6 }, lines);
 
   const cardTop = 176;
   const cardHeight = height - cardTop - 44;
@@ -1294,12 +1294,12 @@ export function renderSvg(map: CoverageMap): string {
 
   lines.push(
     label(margin, height - 20, "Tiles are main-image address bands and one per overlay; compressed " +
-      "overlay tiles are sized by ROM bytes and shaded by the decoded share each lane owns.", {
+      "overlay tiles are sized by ROM bytes and shaded by decoded coverage category.", {
       size: 9.5,
       fill: MUTED,
     }),
     label(width - margin, height - 20,
-      `exact C: ${map.provenance.exact_lane} · semantic C: ${map.provenance.semantic_lane}`, {
+      `exact C: ${map.provenance.exact_source} · semantic C: ${map.provenance.semantic_source}`, {
         size: 9.5,
         fill: MUTED,
         anchor: "end",
@@ -1368,7 +1368,7 @@ export function assetTierOf(sources: readonly string[], kind = ""): AssetTier {
   return tier;
 }
 
-/** Asset maturity tiles: same buckets as the ROM card, lanes keyed by tier. */
+/** Asset maturity tiles: same buckets as the ROM card, categories keyed by tier. */
 export function assetMaturityTiles(tree: SourceTree): Tile[] {
   const manifest = readJson(tree, "assets/manifest.json") as Record<string, unknown>;
   const buckets = new Map<string, Tile>();
@@ -1380,10 +1380,10 @@ export function assetMaturityTiles(tree: SourceTree): Tile[] {
     // where package indexes name them by prefix, so the audio bucket is
     // object-tier by construction.
     const tier = bucket.id === "audio" ? "asset_objects" : assetTierOf(sources, rawKind || kind);
-    const tile = buckets.get(bucket.id) ?? { label: bucket.label, bytes: 0, lanes: {} };
+    const tile = buckets.get(bucket.id) ?? { label: bucket.label, bytes: 0, categories: {} };
     tile.bytes += size;
-    (tile.lanes as Record<string, number>)[tier] =
-      ((tile.lanes as Record<string, number>)[tier] ?? 0) + size;
+    (tile.categories as Record<string, number>)[tier] =
+      ((tile.categories as Record<string, number>)[tier] ?? 0) + size;
     buckets.set(bucket.id, tile);
   };
   const gatherSources = (node: unknown, out: string[]): void => {
@@ -1436,7 +1436,7 @@ export function assetMaturityTiles(tree: SourceTree): Tile[] {
 
 /**
  * One text-free 16:9 box tree for a single area: tiles squarified by bytes,
- * each tile split vertically by the lane shares it owns. The only text is the
+ * each tile split vertically by the category shares it owns. The only text is the
  * aria label; captions live in the README, which prevents the scale confusion
  * of mixing an 8 MB cartridge and a 1.3 MB executable universe in one frame.
  */
@@ -1444,8 +1444,8 @@ export function renderBoxTree(
   area: Area,
   ariaLabel: string,
   hue: HueBand = CORE_HUE,
-  laneFraction: Record<string, number> = CODE_FRACTION,
-  laneOrder: readonly string[] = ["humanized_c", "exact_c", "semantic_c", "assembly", "retained_asm"],
+  categoryFraction: Record<string, number> = CODE_FRACTION,
+  categoryOrder: readonly string[] = ["humanized_c", "exact_c", "semantic_c", "assembly", "retained_asm"],
 ): string {
   const width = 1600;
   const height = 900;
@@ -1474,15 +1474,15 @@ export function renderBoxTree(
       width: Math.max(cell.rect.width - gap, 0.5),
       height: Math.max(cell.rect.height - gap, 0.5),
     };
-    const lanes = cell.item.lanes as Record<string, number>;
-    const total = laneOrder.reduce((sum, lane) => sum + (lanes[lane] ?? 0), 0);
+    const categories = cell.item.categories as Record<string, number>;
+    const total = categoryOrder.reduce((sum, category) => sum + (categories[category] ?? 0), 0);
     if (total <= 0) {
-      lines.push(cellRect(inner, laneFraction[laneOrder[laneOrder.length - 1]] ?? 0.08));
+      lines.push(cellRect(inner, categoryFraction[categoryOrder[categoryOrder.length - 1]] ?? 0.08));
       continue;
     }
     let offset = 0;
-    for (const lane of laneOrder) {
-      const share = (lanes[lane] ?? 0) / total;
+    for (const category of categoryOrder) {
+      const share = (categories[category] ?? 0) / total;
       if (share <= 0) continue;
       const rect = {
         x: inner.x,
@@ -1492,10 +1492,10 @@ export function renderBoxTree(
       };
       // Permanent asm renders orange in every graph: it will never climb the
       // ladder, so it must never read as "not started yet" gray or empty black.
-      if (lane === "retained_asm")
+      if (category === "retained_asm")
         lines.push(`<rect x="${round(rect.x)}" y="${round(rect.y)}" width="${round(rect.width)}" ` +
           `height="${round(rect.height)}" style="fill:${RETAINED_ASM_FILL}"/>`);
-      else lines.push(cellRect(rect, laneFraction[lane] ?? 0.08));
+      else lines.push(cellRect(rect, categoryFraction[category] ?? 0.08));
       offset += share;
     }
   }
@@ -1518,7 +1518,7 @@ export function renderBoxTrees(map: CoverageMap, tree?: SourceTree): Record<BoxT
   const maturity = tree ? assetMaturityTiles(tree) : [];
   const assetsArea: Area = maturity.length
     ? { id: "rom-data", label: romData.label, bytes: maturity.reduce((s, t) => s + t.bytes, 0),
-        lanes: {}, tiles: maturity }
+        categories: {}, tiles: maturity }
     : romData;
   return {
     core: renderBoxTree(core, "Main-image code coverage box tree, purple band"),
@@ -1559,9 +1559,8 @@ function svgPath(target: DecompTargetId): string {
 }
 
 /**
- * The semantic lane lives on the Venus branch. A tree that carries semantic
- * sources describes itself; otherwise the tracked Venus ref is used when it is
- * available locally, and the lane is reported as absent when it is not.
+ * Resolve the tree containing semantic sources. A requested or recorded ref
+ * wins; otherwise a work tree that contains semantic sources describes itself.
  */
 export function resolveSemanticTree(
   exact: SourceTree,
@@ -1569,39 +1568,23 @@ export function resolveSemanticTree(
   recorded?: string,
 ): SourceTree | undefined {
   if (requested === "none") return undefined;
-  // The recorded lane wins over the describes-itself heuristic below. Once the
-  // ring carries semantic C to every branch, "this tree has semantic sources"
-  // stops identifying the lane owner: the exact tree has them too, and the
-  // heuristic would silently draw Venus's lane from whichever tree it was handed
-  // — reporting a smaller, older semantic figure as though it were current.
+  // A recorded source wins over the describes-itself heuristic so regenerating
+  // the map is stable when an explicit external ref was previously selected.
   const wanted = requested ??
     (recorded && !["worktree", "absent", "none"].includes(recorded) ? recorded : undefined);
   if (wanted) {
     const tree = wanted === "worktree" ? workTree() : refTree(wanted);
-    if (!tree) throw new Error(`cannot resolve semantic lane ref ${wanted}`);
+    if (!tree) throw new Error(`cannot resolve semantic source ref ${wanted}`);
     return tree;
   }
   if (exact.list("semantic/main").some((name) => MAIN_SOURCE.test(name))) return exact;
-  for (const ref of ["venus", "origin/venus"]) {
-    const tree = refTree(ref);
-    if (tree && tree.list("semantic/main").some((name) => MAIN_SOURCE.test(name))) return tree;
-  }
   return undefined;
 }
 
 /**
- * The exact lane belongs to Mercury. A tree that advances the lane itself
- * describes itself, so Mercury and Venus keep drawing from their own worktree
- * and are unaffected by this. `main` is the exception: Mercury pulls from main
- * and never pushes back, so main's own `src/` never receives those conversions
- * and its picture would freeze at whatever exact C main happens to carry while
- * the project moved on. Main therefore records `origin/mercury` as its exact
- * lane in the map's provenance and keeps drawing from there — the same way the
- * semantic lane is read from venus. An explicit `--exact-ref` wins; pass
- * `worktree` to force this tree's own exact C.
- *
- * An unavailable recorded ref is an error, never a quiet fall back to the
- * worktree: falling back would silently republish a smaller exact lane.
+ * Resolve the tree containing byte-exact sources. An explicit ref wins; pass
+ * `worktree` to force the current tree. An unavailable recorded ref is an
+ * error because falling back could silently republish an older measurement.
  */
 export function resolveExactTree(requested?: string, recorded?: string): SourceTree {
   const wanted = requested ?? (recorded && recorded !== "worktree" ? recorded : undefined);
@@ -1609,7 +1592,7 @@ export function resolveExactTree(requested?: string, recorded?: string): SourceT
   const tree = refTree(wanted);
   if (!tree) {
     throw new Error(
-      `exact lane ref ${wanted} is not available here; run: ` +
+      `exact source ref ${wanted} is not available here; run: ` +
       `git fetch origin ${wanted.replace(/^origin\//, "")} ` +
       `(or --exact-ref worktree to draw this tree's own exact C)`,
     );
@@ -1618,13 +1601,9 @@ export function resolveExactTree(requested?: string, recorded?: string): SourceT
 }
 
 /**
- * A tree that cannot see the semantic lane must not publish it as zero. The
- * lane lives on venus, but Mercury redraws this map from its bank cycle and
- * has no reason to hold a venus ref; without this guard the first such bank
- * silently erases Venus's half of the published picture. Returns the refusal
- * message, or undefined when writing is safe: the lane resolved, it was
- * dropped on purpose with `--semantic-ref none`, or the tracked map has no
- * semantic lane to lose.
+ * A tree that cannot resolve the recorded semantic source must not publish its
+ * coverage as zero. Returns a refusal message unless the source resolved, was
+ * explicitly disabled, or the tracked map contains no semantic coverage.
  */
 export function semanticEraseRefusal(
   resolved: boolean,
@@ -1632,11 +1611,11 @@ export function semanticEraseRefusal(
   tracked: CoverageMap | undefined,
 ): string | undefined {
   if (resolved || requested === "none") return undefined;
-  const bytes = tracked?.lanes.semantic_c.bytes ?? 0;
+  const bytes = tracked?.categories.semantic_c.bytes ?? 0;
   if (bytes <= 0) return undefined;
-  return `refusing to erase the semantic lane: the tracked map records ${bytes} ` +
-    `semantic bytes from ${tracked?.provenance.semantic_lane}, which is not available ` +
-    `here; run: git fetch origin venus (or --semantic-ref none to publish without it)`;
+  return `refusing to erase semantic coverage: the tracked map records ${bytes} ` +
+    `semantic bytes from ${tracked?.provenance.semantic_source}, which is not available ` +
+    `here; fetch that ref or pass --semantic-ref none to publish without it`;
 }
 
 interface Options {
@@ -1670,15 +1649,15 @@ function optionsOf(argv: string[]): Options {
 }
 
 function summarize(map: CoverageMap): string {
-  const combined = map.lanes.exact_c.bytes + map.lanes.semantic_c.bytes;
+  const combined = map.categories.exact_c.bytes + map.categories.semantic_c.bytes;
   return [
     `target=${map.target}`,
     `rom=${commas(map.rom_bytes)}`,
     `executable=${commas(map.executable_bytes)}`,
-    `exact=${commas(map.lanes.exact_c.bytes)} (${map.lanes.exact_c.percent_of_executable}%)`,
-    `semantic=${commas(map.lanes.semantic_c.bytes)} (${map.lanes.semantic_c.percent_of_executable}%)`,
+    `exact=${commas(map.categories.exact_c.bytes)} (${map.categories.exact_c.percent_of_executable}%)`,
+    `semantic=${commas(map.categories.semantic_c.bytes)} (${map.categories.semantic_c.percent_of_executable}%)`,
     `combined=${commas(combined)} (${roundHalfUpPercent(combined, map.executable_bytes)}%)`,
-    `semantic_lane=${map.provenance.semantic_lane}`,
+    `semantic_source=${map.provenance.semantic_source}`,
   ].join(" ");
 }
 
@@ -1724,14 +1703,14 @@ export function selfTest(): void {
   if (assetBucket("brand-new-package").id !== "other") throw new Error("unknown bucket failed");
 
   // Whole-overlay semantic claims.
-  const laneTree = (regions: unknown, overlaySources: string[]): SourceTree => ({
+  const sourceTree = (regions: unknown, overlaySources: string[]): SourceTree => ({
     id: "test",
     list: (directory) => (directory === "semantic/overlays" ? overlaySources : []),
     read: (path) => (path === "semantic/regions.json" ? JSON.stringify(regions) : undefined),
   });
   const extent = new Map<string, Span[]>([["resource_375", [{ start: 0x02000000, end: 0x02000100 }]]]);
   const claimed = semanticSpans(
-    laneTree({ full_overlays: [{ overlay: "resource_375", evidence: "converted in full" }] },
+    sourceTree({ full_overlays: [{ overlay: "resource_375", evidence: "converted in full" }] },
       ["resource_375_c_02000030.c"]),
     [], [], extent,
   );
@@ -1742,26 +1721,26 @@ export function selfTest(): void {
     throw new Error("a claimed overlay's owners were still reported unresolved");
   }
   const unbacked = semanticSpans(
-    laneTree({ full_overlays: [{ overlay: "resource_375", evidence: "no sources" }] }, []),
+    sourceTree({ full_overlays: [{ overlay: "resource_375", evidence: "no sources" }] }, []),
     [], [], extent,
   );
   if ((unbacked.overlays.get("resource_375") ?? []).length !== 0) {
     throw new Error("a whole-overlay claim with no semantic source credited bytes");
   }
   const noExtent = semanticSpans(
-    laneTree({ full_overlays: [{ overlay: "resource_999", evidence: "not audited" }] },
+    sourceTree({ full_overlays: [{ overlay: "resource_999", evidence: "not audited" }] },
       ["resource_999_c_02000030.c"]),
     [], [], extent,
   );
   if ((noExtent.overlays.get("resource_999") ?? []).length !== 0) {
     throw new Error("a whole-overlay claim without an audited extent credited bytes");
   }
-  const unlisted = semanticSpans(laneTree({}, ["resource_375_c_02000030.c"]), [], [], extent);
+  const unlisted = semanticSpans(sourceTree({}, ["resource_375_c_02000030.c"]), [], [], extent);
   if (unlisted.unresolved.length !== 1) {
     throw new Error("an unlisted overlay owner is no longer reported");
   }
   const perOwner = semanticSpans(
-    laneTree({ manual_regions: [{ overlay: "resource_375", entry: "0x02000030", span_bytes: 64 }] },
+    sourceTree({ manual_regions: [{ overlay: "resource_375", entry: "0x02000030", span_bytes: 64 }] },
       ["resource_375_c_02000030.c"]),
     [], [], extent,
   );
@@ -1769,25 +1748,23 @@ export function selfTest(): void {
     throw new Error("per-owner manual_regions sizing regressed");
   }
 
-  // A recorded semantic lane must beat the describes-itself heuristic: once every
-  // branch carries semantic C, having semantic sources no longer identifies the
-  // lane owner, and the heuristic would draw Venus's lane from the exact tree.
+  // A recorded semantic source must beat the describes-itself heuristic.
   const semanticBearing: SourceTree = {
     id: "exact-with-semantic",
     list: (directory) => (directory === "semantic/main" ? ["08000000.c"] : []),
     read: () => undefined,
   };
   expectReject(
-    () => resolveSemanticTree(semanticBearing, undefined, "origin/no-such-lane"),
-    "an unresolvable recorded semantic lane",
+    () => resolveSemanticTree(semanticBearing, undefined, "refs/heads/no-such-source"),
+    "an unresolvable recorded semantic source",
   );
   if (resolveSemanticTree(semanticBearing, undefined, undefined).id !== "exact-with-semantic") {
-    throw new Error("the describes-itself heuristic stopped applying with no recorded lane");
+    throw new Error("the describes-itself heuristic stopped applying with no recorded source");
   }
   if (resolveSemanticTree(semanticBearing, undefined, "worktree").id !== "exact-with-semantic") {
-    throw new Error("a recorded worktree lane did not fall through to the heuristic");
+    throw new Error("a recorded worktree source did not fall through to the heuristic");
   }
-  if (resolveSemanticTree(semanticBearing, "none", "origin/venus") !== undefined) {
+  if (resolveSemanticTree(semanticBearing, "none", "refs/heads/example") !== undefined) {
     throw new Error("an explicit --semantic-ref none was overridden by the record");
   }
 
@@ -1817,7 +1794,7 @@ export function selfTest(): void {
   // `asm/` recursively; if a directory reports no children the walk stops at
   // the first level, boundaries go missing and every main-image region is
   // measured too long. Asserted against HEAD rather than the worktree so the
-  // check holds mid-bank, when the worktree carries uncommitted sources.
+  // check also holds while the work tree carries uncommitted sources.
   const headTree = refTree("HEAD");
   if (headTree === undefined) throw new Error("HEAD did not resolve to a tree");
   if (!headTree.list("asm").some((name) => !name.includes("."))) {
@@ -1825,12 +1802,12 @@ export function selfTest(): void {
   }
 
   if (resolveExactTree(undefined, undefined).id !== "worktree") {
-    throw new Error("the exact lane did not default to the worktree");
+    throw new Error("the exact source did not default to the worktree");
   }
   if (resolveExactTree(undefined, "worktree").id !== "worktree") {
-    throw new Error("a recorded worktree exact lane was not honoured");
+    throw new Error("a recorded worktree exact source was not honoured");
   }
-  if (resolveExactTree("worktree", "origin/mercury").id !== "worktree") {
+  if (resolveExactTree("worktree", "refs/heads/example").id !== "worktree") {
     throw new Error("an explicit --exact-ref worktree did not override the recorded ref");
   }
   expectReject(
@@ -1842,30 +1819,30 @@ export function selfTest(): void {
     "an unavailable requested exact ref",
   );
 
-  const withLane = {
-    lanes: { semantic_c: { bytes: 391428 } },
-    provenance: { semantic_lane: "origin/venus" },
+  const withSemantic = {
+    categories: { semantic_c: { bytes: 391428 } },
+    provenance: { semantic_source: "refs/heads/example" },
   } as CoverageMap;
-  if (semanticEraseRefusal(false, undefined, withLane) === undefined) {
-    throw new Error("an unresolved semantic lane was allowed to erase a tracked one");
+  if (semanticEraseRefusal(false, undefined, withSemantic) === undefined) {
+    throw new Error("unresolved semantic coverage was allowed to erase a tracked value");
   }
-  if (semanticEraseRefusal(true, undefined, withLane) !== undefined) {
-    throw new Error("a resolved semantic lane was refused");
+  if (semanticEraseRefusal(true, undefined, withSemantic) !== undefined) {
+    throw new Error("resolved semantic coverage was refused");
   }
-  if (semanticEraseRefusal(false, "none", withLane) !== undefined) {
+  if (semanticEraseRefusal(false, "none", withSemantic) !== undefined) {
     throw new Error("an explicit --semantic-ref none was refused");
   }
   if (semanticEraseRefusal(false, undefined, undefined) !== undefined) {
     throw new Error("a first write with no tracked map was refused");
   }
   if (semanticEraseRefusal(false, undefined,
-      { lanes: { semantic_c: { bytes: 0 } }, provenance: { semantic_lane: "none" } } as CoverageMap) !== undefined) {
-    throw new Error("a tracked map with no semantic lane was refused");
+      { categories: { semantic_c: { bytes: 0 } }, provenance: { semantic_source: "none" } } as CoverageMap) !== undefined) {
+    throw new Error("a tracked map with no semantic coverage was refused");
   }
 
   const tiles: Tile[] = [
-    { label: "a", bytes: 60, lanes: { exact_c: 30, assembly: 30 } },
-    { label: "b", bytes: 40, lanes: { semantic_c: 40 } },
+    { label: "a", bytes: 60, categories: { exact_c: 30, assembly: 30 } },
+    { label: "b", bytes: 40, categories: { semantic_c: 40 } },
   ];
   const placed = squarify(tiles, (tile) => tile.bytes, { x: 0, y: 0, width: 100, height: 100 });
   if (placed.length !== 2) throw new Error("treemap placement failed");
@@ -1885,13 +1862,13 @@ export function selfTest(): void {
     [{ start: 0x080000c0, end: 0x080000e0 }],
     128,
   );
-  if (bands.length !== 2 || bands[0].bytes !== 128 || bands[0].lanes.exact_c !== 64 ||
-      bands[0].lanes.semantic_c !== 64 || bands[1].lanes.assembly !== 96 ||
-      bands[1].lanes.retained_asm !== 32) {
+  if (bands.length !== 2 || bands[0].bytes !== 128 || bands[0].categories.exact_c !== 64 ||
+      bands[0].categories.semantic_c !== 64 || bands[1].categories.assembly !== 96 ||
+      bands[1].categories.retained_asm !== 32) {
     throw new Error("main band composition failed");
   }
   const retainedTree = renderBoxTree(
-    area("retained", "Retained", [{ label: "r", bytes: 32, lanes: { retained_asm: 32 } }]),
+    area("retained", "Retained", [{ label: "r", bytes: 32, categories: { retained_asm: 32 } }]),
     "retained colour test",
   );
   if (!retainedTree.includes(`fill:${RETAINED_ASM_FILL}`) || retainedTree.includes("#141414")) {
@@ -1905,7 +1882,7 @@ export function selfTest(): void {
     derivation: "tracked-evidence-v1",
     rom_bytes: 1024,
     executable_bytes: 200,
-    lanes: {
+    categories: {
       exact_c: { bytes: 60, percent_of_executable: 30 },
       semantic_c: { bytes: 40, percent_of_executable: 20 },
       assembly: { bytes: 80, percent_of_executable: 40 },
@@ -1915,8 +1892,8 @@ export function selfTest(): void {
     main: { executable_bytes: 120, exact_c_bytes: 60, semantic_c_bytes: 20 },
     overlays: { executable_bytes: 80, exact_c_bytes: 0, semantic_c_bytes: 20 },
     provenance: {
-      exact_lane: "worktree",
-      semantic_lane: "origin/venus",
+      exact_source: "worktree",
+      semantic_source: "refs/heads/example",
       semantic_sources: 2,
       semantic_superseded_bytes: 0,
       semantic_outside_extent_bytes: 0,
@@ -1924,7 +1901,7 @@ export function selfTest(): void {
       semantic_unresolved: [],
     },
     rom_areas: [area("rom-data", "Assets & data", [
-      { label: "Other data", bytes: 824, lanes: { asset_data: 824 } },
+      { label: "Other data", bytes: 824, categories: { asset_data: 824 } },
     ])],
     executable_areas: [area("main", "Main image", tiles)],
   };
@@ -1934,11 +1911,11 @@ export function selfTest(): void {
   if (boxTree.includes("<text")) throw new Error("box tree must carry no text elements");
   if (!boxTree.includes('viewBox="0 0 1600 900"')) throw new Error("box tree must be 16:9");
   if (svg.includes("undefined") || svg.includes("NaN")) throw new Error("SVG contains unresolved values");
-  for (const lane of LANE_ORDER) {
-    if (!svg.toUpperCase().includes(escapeText(LANE_STYLE[lane].label).toUpperCase())) {
-      throw new Error(`SVG does not name the ${lane} lane`);
+  for (const category of CATEGORY_ORDER) {
+    if (!svg.toUpperCase().includes(escapeText(CATEGORY_STYLE[category].label).toUpperCase())) {
+      throw new Error(`SVG does not name the ${category} category`);
     }
-    if (!svg.includes(LANE_STYLE[lane].fill)) throw new Error(`SVG does not draw the ${lane} lane`);
+    if (!svg.includes(CATEGORY_STYLE[category].fill)) throw new Error(`SVG does not draw the ${category} category`);
   }
   const openTags = (svg.match(/<rect /g) ?? []).length;
   if (openTags < 4) throw new Error("SVG drew no tiles");
@@ -1952,17 +1929,16 @@ export function selfTest(): void {
 async function main(argv: string[]): Promise<void> {
   const options = optionsOf(argv);
   if (options.selfTest) return selfTest();
-  // The tracked map records where each lane was drawn from, so a redraw keeps
-  // drawing it the same way unless told otherwise. Mercury and Venus record
-  // "worktree" and are unaffected; main records origin/mercury.
+  // Reuse recorded source refs so a redraw is stable unless explicitly
+  // overridden.
   const trackedDocumentOnDisk = existsSync(mapPath(options.target))
     ? (JSON.parse(readFileSync(mapPath(options.target), "utf8")) as CoverageMap)
     : undefined;
-  const exact = resolveExactTree(options.exact, trackedDocumentOnDisk?.provenance.exact_lane);
+  const exact = resolveExactTree(options.exact, trackedDocumentOnDisk?.provenance.exact_source);
   const semantic = resolveSemanticTree(
     exact,
     options.semantic,
-    trackedDocumentOnDisk?.provenance.semantic_lane,
+    trackedDocumentOnDisk?.provenance.semantic_source,
   );
   const map = buildCoverageMap({ target: options.target, exact, semantic });
   const trees = renderBoxTrees(map, exact);
@@ -1974,21 +1950,20 @@ async function main(argv: string[]): Promise<void> {
       [tree, readFileSync(boxTreePath(options.target, tree), "utf8")],
     )) as Record<BoxTreeId, string>;
     const stale: string[] = [];
-    // Only the lanes this tree owns can be enforced here: a picture generated
-    // with another branch's semantic sources is refreshed by regeneration, not
-    // by failing this branch's verification.
+    // Exact coverage is always checked. Semantic coverage is checked when its
+    // selected source is the current work tree.
     const trackedJson = JSON.parse(trackedMap) as CoverageMap;
-    if (trackedJson.lanes.exact_c.bytes !== map.lanes.exact_c.bytes ||
+    if (trackedJson.categories.exact_c.bytes !== map.categories.exact_c.bytes ||
         trackedJson.main.exact_c_bytes !== map.main.exact_c_bytes ||
         trackedJson.overlays.exact_c_bytes !== map.overlays.exact_c_bytes) {
-      stale.push("exact lane");
+      stale.push("exact coverage");
     }
     if (semantic && semantic.id === "worktree" &&
-        trackedJson.lanes.semantic_c.bytes !== map.lanes.semantic_c.bytes) {
-      stale.push("semantic lane");
+        trackedJson.categories.semantic_c.bytes !== map.categories.semantic_c.bytes) {
+      stale.push("semantic coverage");
     }
     if (trackedJson.executable_bytes !== map.executable_bytes) stale.push("executable denominator");
-    if (semantic?.id === trackedJson.provenance.semantic_lane &&
+    if (semantic?.id === trackedJson.provenance.semantic_source &&
         (trackedMap !== json ||
          BOX_TREES.some((tree) => trackedTrees[tree] !== trees[tree])) && !stale.length) {
       stale.push("rendered map");

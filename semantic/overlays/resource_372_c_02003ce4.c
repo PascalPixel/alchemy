@@ -20,8 +20,8 @@ typedef unsigned char u8;
  * `ldr r3,[r5,#24] / ldr r2,[pc,#imm]` case body at 0x3dd0 / 0x3dd6 / 0x3ddc.
  * So **resource_372 is linked at 0x02008000**, the same as resource_3bf and
  * resource_3c4: a pool word in 0x0200_8xxx..0200_dxxx is an in-image address at
- * offset = value - 0x8000.  (`work/claude/notes/resource_372-3ce4.md` parked
- * this row for the byte-exact lane precisely because that table cannot be
+ * offset = value - 0x8000.  (`a prior working note` parked
+ * this row for the byte-exact reconstruction precisely because that table cannot be
  * emitted from C at the current link base.  That is a byte-exactness obstacle,
  * not a semantic one, so the switch is written out normally below.)
  *

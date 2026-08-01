@@ -45,17 +45,17 @@ typedef signed int s32;
  * hardware performs the load and then throws it away.
  *
  * CORRECTED after drafting Func_02005688, and the first version of
- * this paragraph is worth stating so nobody re-derives it. I wrote that
+ * this paragraph is worth stating so the error is not re-derived. The first draft said
  * this row waits for the orbit steps Func_02003600 and Func_02003660 to
  * "park on the sentinel", and flagged +60 as read here and written by
  * nothing. Both were wrong. The orbit steps write LIVE COORDINATES into
  * +56 and +64 and never write 0x80000000 at all; the 24-byte leaf
  * Func_02005688 stamps the sentinel into +56, +60 AND +64 in one go,
- * which is also what accounts for the +60 I could not place. So the
+ * which is also what accounts for the previously unexplained +60. So the
  * gate is not "the animation finished" -- it is "this record has been
  * parked", and the thing that parks it is a routine no keyed sweep
  * could see. Reading +56/+64 as belonging to the orbit steps was
- * proximity reasoning: they were the rows I had just drafted.
+ * proximity reasoning: they were the rows drafted immediately beforehand.
  *
  * Uncertainties:
  *   - the pool constant added to +16 at the end is 0xfc5ef004, read

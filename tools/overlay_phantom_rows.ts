@@ -30,9 +30,8 @@
 //   bun tools/overlay_phantom_rows.ts --json
 //   bun tools/overlay_phantom_rows.ts --self-test
 //
-// Rows are reported, never rewritten. The inventory is Mercury's discovery
-// artefact and the queue is measured from it; silently editing it would move
-// numbers three agents quote at each other.
+// Rows are reported, never rewritten. The queue is measured from the inventory,
+// so silently editing it would invalidate published counts.
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { overlayImage, storedDisplacement, targetOffset } from "./overlay_call_targets.ts";

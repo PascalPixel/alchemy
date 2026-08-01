@@ -1514,11 +1514,10 @@ function stageStamp(manifestPath: string, sourceOnly: boolean): string {
   // the stamp reported a hit for work it had not done: touching
   // `assets/code/resource_39c_overlay.s` or
   // `semantic/overlays/resource_39c_c_02003d20.c` both printed `reused=stamp`
-  // and skipped the whole re-encode. That is exactly the files a lane changes
-  // when it banks a row, sitting under the merge gate — an adoption could land
-  // with `verify` green and the asset round-trip never re-run. Found
-  // independently from two directions, by Garet forwards and by Mia as
-  // `build:full` reusing stale output.
+  // and skipped the whole re-encode. Those are exactly the files changed by an
+  // overlay conversion, so `verify` could pass without rerunning the asset
+  // round trip. The forward dependency scan and a stale `build:full` result
+  // independently exposed the omission.
   //
   // A full re-encode of all 2,431 regions measures 3.6s, so there is nothing to
   // buy by being clever about which inputs matter. Walk them all and stay
@@ -1593,7 +1592,7 @@ function main(): void {
     // Name the entry on failure. `buildEntry` throws from deep inside a codec
     // that has no idea which of 2,431 regions it is encoding, so an unadorned
     // throw here produced a stack trace with no address in it — which is how
-    // "the 39c complaint" stayed anonymous across three lanes and several days.
+    // the original resource_39c failure remained anonymous for several days.
     let builtData: Buffer;
     let builtSources: string[];
     let report: Json;

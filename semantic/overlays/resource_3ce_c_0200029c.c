@@ -9,13 +9,13 @@ typedef signed int s32;
  * under the proven 0x02008000 link base is 0x0200029c + the Thumb bit -- this
  * owner's own entry -- and it appears in the overlay's script-command table as
  * the triple `0xffff0002 / 0x0200829d / 0x00000000`, the same shape that names
- * nine already-banked byte-exact siblings.  So this is a no-argument command
+ * nine already-tracked byte-exact siblings.  So this is a no-argument command
  * handler, command id 0x02.
  *
  * Link base proof for this overlay: see the header of
  * semantic/overlays/resource_3ce_c_02000b10.c -- fifteen odd
  * `0x0200[89ab]xxx` words in `assets/code/resource_3ce_overlay.s` resolve at
- * `word - 0x8000 - 1` onto already-banked byte-exact sibling entries.
+ * `word - 0x8000 - 1` onto already-tracked byte-exact sibling entries.
  *
  * Complete owner: `push {lr}` prologue at 0x0200029c and the matching
  * interworking return `pop {r0} / bx r0` at 0x020008be.  r0 holds the popped
@@ -53,7 +53,7 @@ typedef signed int s32;
  * sixteen consecutive runs of one (slot, id) pair; there is no counter, no
  * back edge and no comparison anywhere in the owner.  Writing them as sixteen
  * loops would deflate the multiset by 175, which is exactly the error class
- * HANDOVER warns about.  The banked byte-exact sibling
+ * HANDOVER warns about.  The tracked byte-exact sibling
  * `assets/code/resource_3ce_c_020008c4.c` spells its own long call run out the
  * same way, so this is the established shape in this overlay rather than a
  * transcription choice.

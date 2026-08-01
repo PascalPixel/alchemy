@@ -12,7 +12,7 @@ typedef signed int s32;
  * a bare `bx lr` at 0x020002ca, followed by the five-word literal pool
  * 0x020002cc-0x020002e0 that closes the 64-byte span (0x03001e70,
  * 0x02008610, 0x02008614, 0x03001e40, 0x02008616).  The next owner's
- * prologue is at 0x020002e0, already banked as
+ * prologue is at 0x020002e0, already tracked as
  * assets/code/resource_397_c_020002e0.c.  No calls -- matches
  * `bun tools/overlay_call_targets.ts resource_397 02a0` reporting none.
  *

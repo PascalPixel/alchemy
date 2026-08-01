@@ -37,7 +37,7 @@ typedef unsigned char u8;
  * setting the flag the large one waits on, and the large one hands back by
  * setting the flag the small one cleared. Neither calls the other and
  * neither appears in the other's call graph; the entire linkage is two
- * flag ids. This is the H3 case in my published-owner taxonomy -- owners
+ * flag ids. This is the H3 case in the published-owner taxonomy -- owners
  * wired through STATE -- and it has no tool. The only instrument is
  * grepping story-flag ids across an overlay and lining them up.
  *

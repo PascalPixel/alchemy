@@ -18,7 +18,7 @@ typedef unsigned char u8;
  * Link base proof: see the header of
  * semantic/overlays/resource_37a_c_02000488.c — eleven odd
  * `0x0200[89ab]xxx` words in `assets/code/resource_37a_overlay.s` resolve to
- * already-banked byte-exact sibling entries at `word - 0x8000 - 1`.
+ * already-tracked byte-exact sibling entries at `word - 0x8000 - 1`.
  *
  * Complete owner: `push {r5, r6, r7, lr} / mov r7, r8 / push {r7} / sub sp,#8`
  * prologue at 0x02002108 and the matching interworking return

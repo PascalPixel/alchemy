@@ -96,17 +96,8 @@ export function publicationContentReason(data: Uint8Array): string | undefined {
   return undefined;
 }
 
-// 三つの枝が同じ文書を編集するため、未解決の競合印がそのまま記録される事故が
-// 三度起きた。人ではなく機械に捕まえさせる。
-//
-// Three branches edit the same documents, and an unresolved conflict marker has
-// been committed three times — each one sealing stale figures inside a paragraph
-// that then asserted several contradictory measurements at once. `git diff
-// --check` catches it only for whoever remembers to run it; this fires from the
-// tracked pre-commit and pre-push hooks on every branch, so nobody has to.
-//
 // Only the opening and closing markers are matched. A bare `=======` is a valid
-// Markdown heading underline and flagging it would reject honest documents.
+// Markdown heading underline, so it is deliberately not matched.
 const CONFLICT_MARKER = /^(?:<{7}|>{7}) /m;
 const MARKER_EXTENSIONS = ["md", "ts", "js", "json", "sh", "c", "h", "s", "asm", "tsv", "txt"];
 
@@ -116,32 +107,6 @@ export function conflictMarkerReason(path: string, data: Uint8Array): string | u
   if (!CONFLICT_MARKER.test(text)) return undefined;
   const line = text.split("\n").findIndex((entry) => /^(?:<{7}|>{7}) /.test(entry)) + 1;
   return `unresolved conflict marker at line ${line}; resolve the merge before committing`;
-}
-
-// The semantic-lane paragraph in HANDOVER.md states a measurement, and a
-// document cannot hold two of them. It regenerates by insertion rather than
-// replacement, so each trip round the ring has added another copy -- two
-// openers, then three, then five -- and the keep-both-sides rule that protects
-// MEETING.md makes this worse rather than better, because two measurements are
-// not two opinions. Asking for it to be fixed at the source has not held across
-// four cycles, so it is a gate now.
-//
-// Staged-only, for exactly the reason the conflict-marker check is staged-only:
-// history already carries the duplicated copies, and rejecting those would
-// block all three branches permanently.
-const SINGLETON_MEASUREMENTS: readonly (readonly [string, RegExp])[] = [
-  ["HANDOVER.md", /^Alongside the exact lane, reviewed semantic C/gm],
-];
-
-export function duplicateMeasurementReason(path: string, data: Uint8Array): string | undefined {
-  for (const [target, pattern] of SINGLETON_MEASUREMENTS) {
-    if (path !== target) continue;
-    const found = Buffer.from(data).toString().match(pattern);
-    if (found !== null && found.length > 1) {
-      return `${found.length} copies of the semantic-lane measurement; keep the newest and delete the rest`;
-    }
-  }
-  return undefined;
 }
 
 export function publicationEntryReason(path: string, data: Uint8Array): string | undefined {
@@ -188,18 +153,11 @@ function reject(entries: Array<{ scope: string; path: string; data: () => Buffer
 function checkStaged(): void {
   const entries = stagedPaths().map((path) => ({ scope: "staged", path, data: () => stagedBlob(path) }));
   reject(entries);
-  // Conflict markers are checked against staged content ONLY, never against
-  // history. The pre-push scan exists to catch a forbidden artifact that was
-  // added and later deleted, where the past genuinely matters; a marker is
-  // hygiene, where only what you are about to record matters. Applying it to
-  // history would reject every existing commit that carried one — immutable,
-  // already merged, and shared by all three branches — and block the ring
-  // permanently. That is not hypothetical: it happened the first time this
-  // check was wired into the shared path.
+  // Conflict markers are current-tree hygiene, so scan staged content only.
+  // The publication scan over immutable outgoing history remains separate.
   const failures: string[] = [];
   for (const entry of entries) {
-    const reason = conflictMarkerReason(entry.path, entry.data())
-      ?? duplicateMeasurementReason(entry.path, entry.data());
+    const reason = conflictMarkerReason(entry.path, entry.data());
     if (reason !== undefined) failures.push(`${entry.scope} ${entry.path}: ${reason}`);
   }
   if (failures.length > 0) throw new Error(`publication gate rejected:\n${failures.join("\n")}`);
@@ -276,11 +234,11 @@ function selfTest(): void {
   if (conflictMarkerReason("HANDOVER.md", bytes("a\n<<<<<<< HEAD\nb\n")) === undefined) {
     throw new Error("an opening conflict marker was accepted");
   }
-  if (conflictMarkerReason("HANDOVER.md", bytes("a\n>>>>>>> origin/venus\n")) === undefined) {
+  if (conflictMarkerReason("HANDOVER.md", bytes("a\n>>>>>>> topic\n")) === undefined) {
     throw new Error("a closing conflict marker was accepted");
   }
-  // The shared entry reason must NOT flag markers: it also runs over history in
-  // the pre-push scan, where rejecting an immutable past commit blocks the ring.
+  // The shared entry reason must not flag markers because it also scans
+  // immutable outgoing history.
   if (publicationEntryReason("HANDOVER.md", bytes("x\n<<<<<<< HEAD\n")) !== undefined) {
     throw new Error("the history-facing gate flagged a conflict marker");
   }
@@ -294,25 +252,6 @@ function selfTest(): void {
   }
   if (conflictMarkerReason("assets/readme/x.png", bytes("<<<<<<< HEAD\n")) !== undefined) {
     throw new Error("a binary extension was scanned for conflict markers");
-  }
-
-  const measurement = "Alongside the exact lane, reviewed semantic C accounts for **1**\n";
-  if (duplicateMeasurementReason("HANDOVER.md", bytes(measurement)) !== undefined) {
-    throw new Error("a single semantic-lane measurement was rejected");
-  }
-  if (duplicateMeasurementReason("HANDOVER.md", bytes(measurement + measurement)) === undefined) {
-    throw new Error("a doubled semantic-lane measurement was accepted");
-  }
-  // The opener only counts at the start of a line; prose quoting it is fine.
-  if (duplicateMeasurementReason(
-    "HANDOVER.md",
-    bytes(measurement + "see Alongside the exact lane, reviewed semantic C above\n"),
-  ) !== undefined) {
-    throw new Error("an inline mention was counted as a second measurement");
-  }
-  // The rule is scoped to the one document that states the measurement.
-  if (duplicateMeasurementReason("MEETING.md", bytes(measurement + measurement)) !== undefined) {
-    throw new Error("the singleton rule leaked outside HANDOVER.md");
   }
 }
 

@@ -1,5 +1,5 @@
 /*
- * VENEER AUDIT NOTE (mars, 2026-08-01) -- COMMENT ONLY, NO CODE CHANGE.
+ * VENEER AUDIT NOTE (2026-08-01) -- COMMENT ONLY, NO CODE CHANGE.
  *
  * This file is byte-exact, so nothing below is rewritten.  The note records
  * what the call sites actually are, so the next reader is not misled.
@@ -15,7 +15,7 @@
  * declared function at 0x080072f0 emits exactly the same `bl` the real
  * indirect call emits.  Converting to a function-pointer call would require
  * the compiler to choose the same register and therefore the same veneer
- * entry, which is an exact-lane question and is deliberately NOT attempted
+ * entry, which is a byte-exact source question and is deliberately NOT attempted
  * here.
  *
  * Sites in this owner, resolved with tools/veneer_resolve.ts:

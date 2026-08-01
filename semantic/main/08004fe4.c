@@ -12,7 +12,7 @@
  * 08004fe4.elf` and cross-checked line-by-line against `asm/08004fe4.s`;
  * every register in the trace below is accounted for, not inferred.
  *
- * HANDOVER stale-list correction (already recorded once in this session's
+ * HANDOVER stale-list correction (already recorded once in the reconstruction's
  * park note): 08004fe4 is on HANDOVER's 14-stem "ARM-only" list, but
  * `asm/08004fe4.s` has `.thumb`, no ARM directive, and never carries the
  * Thumb-only-compiler header. Genuine convertible Thumb, same finding as

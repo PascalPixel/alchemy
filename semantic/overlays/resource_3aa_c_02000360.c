@@ -63,7 +63,7 @@ typedef unsigned char u8;
  * per site with the decoder behind `tools/overlay_call_targets.ts`:
  * 412 import veneers over 27 distinct imports, and 14 calls into this
  * overlay's own owners - 10 to Func_02001450 and 4 to Func_0200140c, both
- * already converted in this lane.  No `call_via` site and no unresolved site.
+ * already converted in this reconstruction.  No `call_via` site and no unresolved site.
  * Every one appears exactly once below.
  * NOTE: the inventory row advertises 396 calls for this span.  The disassembly
  * has 426, none inside the five pools, so the inventory figure is an

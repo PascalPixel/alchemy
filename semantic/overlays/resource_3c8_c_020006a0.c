@@ -8,7 +8,7 @@ typedef unsigned char u8;
  * This is the routine the byte-exact sibling 0x02000754 installs: it writes
  * `object->callback = 0x020086a1`, which is this entry point plus the Thumb
  * bit at the overlay's 0x02008000 link base (0x020086a1 - 0x8000 - 1 =
- * 0x020006a0).  The same install appears in this lane's 0x020007d8.
+ * 0x020006a0).  The same install appears in this reconstruction's 0x020007d8.
  *
  * The owner is complete: `push {r5, r6, r7, lr}` plus the high-register save
  * `mov r7, sl ; mov r6, r8 ; push {r6, r7}` at 0x020006a0, a 56-byte frame,

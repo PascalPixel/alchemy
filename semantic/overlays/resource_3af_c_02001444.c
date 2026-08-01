@@ -43,7 +43,7 @@ typedef int s32;
  * 0x925 -> Func_020017a0, 0x911 -> Func_02001684.
  *
  * WHAT THIS CORROBORATES. The driver names, as dispatch targets or tail
- * arms, every semantic draft I have filed in this overlay -- 0x0200185c,
+ * arms, every semantic draft recorded in this overlay -- 0x0200185c,
  * 0x02001920, 0x02001684, 0x02001db0, 0x020029d4 -- plus the three
  * remaining queue rows 0x020022c0, 0x02002618, 0x02002c84 and
  * 0x02003a0c. That is independent confirmation that all of them are
@@ -60,7 +60,7 @@ typedef int s32;
  * Two indirect installs go through Func_080000d0(callback, 3200), the
  * established per-frame task installer. Both pool words are Thumb
  * function pointers in the +0x8000 link form: 0x0200b4bd is
- * Func_020034bc (already banked byte-exact) and 0x0200b1a9 is
+ * Func_020034bc (already tracked byte-exact) and 0x0200b1a9 is
  * Func_020031a8, a real `push {r5, r6, lr}` prologue that is in no
  * inventory row and has no draft -- an owner for a later pass, recorded
  * here because this is where it is published.

@@ -26,7 +26,7 @@ typedef unsigned int u32;
  *
  * Call targets resolved with `bun tools/overlay_call_targets.ts resource_36f
  * 0238`: exactly ONE site, 0x020002b2 -> veneer 0x0570 -> Func_080001e8, the
- * 12-byte sprite-request submitter whose role is established by the banked
+ * 12-byte sprite-request submitter whose role is established by the tracked
  * `semantic/overlays/resource_3ba_c_020033a0.c`.  Note the arity: that source
  * calls it `(entry, 255, 12)`, but this site never sets r2 (the register holds
  * a leftover from the visibility test), so it is a two-argument site.  Overlay

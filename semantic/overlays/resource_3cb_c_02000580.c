@@ -53,7 +53,7 @@ typedef signed int s32;
  * Stage two closes the session, reopens it at 320 bytes, serialises the block
  * from Func_08077000(0), and then compacts that block's record list in place:
  * each record's byte at +2 is remapped through the scratch map, and a record
- * whose byte maps to 0 — meaning its owner is not in the roster this session
+ * whose byte maps to 0 — meaning its owner is not in the roster this reconstruction
  * sent — is removed by shifting the remaining 4-byte records down and
  * decrementing the count at +264.  The compacted block is then sent with the
  * same poll discipline.

@@ -116,7 +116,7 @@
  * The memory sites still open elsewhere in this audit read a callee out of a
  * heap record whose contents depend on what ran before, and those SHOULD end
  * as written uncertainties rather than names. A page of bounded uncertainties
- * is this job going right, not a lane giving up.
+ * is this job going right, not a reconstruction giving up.
  */
 typedef void (*Renderer_080ec100)(void *context, const void *source, s32 x,
                                   s32 y, s32 width, s32 height);

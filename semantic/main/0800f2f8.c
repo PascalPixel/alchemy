@@ -25,7 +25,7 @@
  *      comment at its use site.
  *
  * Uncertainty: Func_080122ac and Func_08012204 are not established anywhere
- * else in this dig. Func_080122ac's call shape, (state, positionRecord) ->
+ * else in this reconstruction. Func_080122ac's call shape, (state, positionRecord) ->
  * nonzero-on-reject, is identical to Func_080120dc's from 0800ebec.c, so it
  * is declared with the same signature on that basis, not a confirmed match.
  * Func_08012204's role (state-machine transition keyed off the sub-object
@@ -56,7 +56,7 @@ struct Object_0800f2f8 {
     void *effect_50; /* 0x50: linked effect/sub-object pointer, read only
                        * when status_54 == 1 */
     u8 status_54;    /* 0x54: state byte; gates the Func_08012204 block and
-                       * the dust-effect spawn, Garet's naming from
+                       * the dust-effect spawn, named consistently with
                        * 0800c62c.c's Object_0800c62c */
     u8 unknown_55[0xf];
     s16 animation_timer_64;
@@ -142,7 +142,7 @@ extern struct {
  * most +-0x200 (snapping exactly once within 15). Uncertainty: the field's
  * meaning is not established; declared as its own small view rather than
  * folding into 0800c62c.c's or 0800ebec.c's own (different) views of the
- * same pointer, following this dig's convention of per-file local structs
+ * same pointer, following this reconstruction's convention of per-file local structs
  * over shared headers. */
 extern struct {
     u8 unknown_0[0x11a];
@@ -325,7 +325,7 @@ resolve:
     /* Smooth Data_03001e70's followValue_11a toward Data_0801328c[dpadIndex]
      * in steps of at most +-0x200, snapping exactly once within 15.
      * Uncertainty: this field/table pair is not established anywhere else
-     * in this dig; the arithmetic (divide-by-8, clamp to +-0x200, snap
+     * in this reconstruction; the arithmetic (divide-by-8, clamp to +-0x200, snap
      * inside +-15) is transcribed faithfully but its purpose is unclear --
      * plausibly a trailing camera/formation offset. */
     {

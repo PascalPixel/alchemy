@@ -22,7 +22,7 @@ typedef int s32;
  * branching 0x02002674. Which script record installs which is not
  * established here.
  *
- * Func_02006a26 is already banked byte-exact as
+ * Func_02006a26 is already tracked byte-exact as
  * assets/code/resource_380_c_02004248.c, a two-call wrapper the file's
  * own header describes as this overlay's most-called workhorse; its
  * signature (s32, s32) is taken from there rather than re-derived.

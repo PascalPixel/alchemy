@@ -31,7 +31,7 @@ typedef unsigned int u32;
  * dbcc/db90) are not otherwise cross-referenced from this owner alone; their
  * roles are inferred only from this store/copy/zero pattern (three fresh
  * arguments, two carried-over values, one reset counter) and the identical
- * shape of the sibling installers already banked in this overlay.
+ * shape of the sibling installers already tracked in this overlay.
  */
 
 extern u16 Data_0200dba0;

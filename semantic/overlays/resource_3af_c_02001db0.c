@@ -25,7 +25,7 @@ typedef int s32;
  * Func_0808a0d0 triples, Func_0808a138(21, 2)), a dialogue line 0x1e44
  * plays, and then Func_020039ec is called with 0xa015 -- a PACKED
  * CONSTANT where every other site in this overlay passes a small actor
- * id. That helper (banked byte-exact at 0x020039ec) forwards its
+ * id. That helper (tracked byte-exact at 0x020039ec) forwards its
  * argument straight to Func_0808a180, so the packing is the callee's
  * business; it is transcribed, not decomposed.
  *
@@ -61,7 +61,7 @@ typedef int s32;
  * words (0x0200d160, 0x0200d208, 0x03001ebc, 0x00019999, 0x0000cccc,
  * 0x000002a6, 0x0000028e, 0x00001e44, 0x0000a015, 0x00026666,
  * 0x00013333, 0x00000261, 0x0200c4ec, 0x00001e45) end at 0x02001f8f,
- * and the next owner (0x02001f90, already banked byte-exact) begins
+ * and the next owner (0x02001f90, already tracked byte-exact) begins
  * there.
  *
  * Second read done (over 400 bytes): the loop bound was the correction.

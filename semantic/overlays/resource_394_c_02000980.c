@@ -27,7 +27,7 @@ typedef unsigned char u8;
  * Thumb bit under the 0x02008000 link base.  The other five table entries name
  * the constant-loader leaves at 0x30/0x38/0x3c/0x44/0x4c.  Working the call
  * graph root-down from here reaches 0x02000194, 0x02000a90, 0x02000b3c and the
- * banked byte-exact 0x02000e64.
+ * tracked byte-exact 0x02000e64.
  *
  * Signature.  The return address is popped into r1, not r0, so r0 survives and
  * is the result — and `movs r0,#0` immediately precedes the pop, so the owner
@@ -37,7 +37,7 @@ typedef unsigned char u8;
  * pointer cells (even pool words under the proven base, so data), initialised
  * here to three addresses two bytes apart inside a plain EWRAM scratch buffer
  * at 0x02001000 — below the link band, so a RAM address rather than an
- * in-image offset.  Banked byte-exact assets/code/resource_394_c_020008b0.c
+ * in-image offset.  tracked byte-exact assets/code/resource_394_c_020008b0.c
  * already declares the middle one `extern u16 *Data_020092c4` and writes a
  * halfword through it, which is exactly the shape used below.
  *

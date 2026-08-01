@@ -18,7 +18,7 @@
  */
 /*
  * __call_via_rN veneer sites, resolved per-site against the ROM. THIRTY-FOUR
- * of them, not the 25 my own tool reported: `boundOf` capped this function at
+ * of them, not the 25 originally reported: `boundOf` capped this function at
  * 0x080ea0d8 + 0x1000 and said nothing. The real owner runs to the next entry
  * at 0x080eb754, and the count is now printed with a truncation warning when
  * the cap bites. Nine sites lived past it.

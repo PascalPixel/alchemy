@@ -17,7 +17,7 @@
  *
  * 1636 bytes. Full body verified against
  * `arm-none-eabi-objdump -d out/full/asm/0800cacc.elf` across three
- * passes (this session), each catching something the previous pass
+ * passes (this reconstruction), each catching something the previous pass
  * got wrong or missed:
  *   - pass 1: overall shape, Object_0800ebec field match, found the
  *     three physics-phase split.
@@ -75,7 +75,7 @@
  * skips both physics phases entirely when set. Bit 7 of `class_58[3]`
  * gates the post-integration position-validity re-check.
  *
- * PHASE A vs PHASE B, the real distinction confirmed this session:
+ * PHASE A vs PHASE B, the real distinction confirmed in this reconstruction:
  * phase A (byte@0x55 == 0) works all three axes and always uses the
  * IWRAM square root (0x030001d8) on wrapped/truncated deltas. Phase B
  * (byte@0x55 != 0) works X/Z only, and has TWO precision regimes for
@@ -96,7 +96,7 @@
  * doesn't independently re-verify `Func_08011f54`'s own body.
  *
  * `Data_08013624` (the 64-entry script-handler table) and
- * `Data_080131c0` (the bob lookup table) are both new to this session
+ * `Data_080131c0` (the bob lookup table) are both new to this reconstruction
  * and not cross-checked against any other reader.
  *
  * Uncertainty: `onScriptExpire_6c`'s real trigger condition (a

@@ -14,7 +14,7 @@ typedef signed int s32;
  * LINK BASE.  0x02008000, proven in
  * semantic/overlays/resource_3a2_c_020011b0.c from the offset-0 exported-entry
  * veneer table (six odd words, all resolving at pool_word - 0x8000 to known
- * function starts, four of them already-banked byte-exact siblings under
+ * function starts, four of them already-tracked byte-exact siblings under
  * assets/code/).  In-image address = pool_word - 0x8000; odd = Thumb entry,
  * even = data.  This owner's two pointer pool words 0x02009788 and 0x0200979e
  * are both EVEN and both land past the import band's end at 0x1620, so they are

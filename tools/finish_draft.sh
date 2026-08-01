@@ -7,7 +7,7 @@
 #
 # Why this exists: HANDOVER.md §9 now records the measurement that decides how to
 # spend effort here -- `xargs` over candidate_show sustains ~114 ms per probe at
-# 18-way concurrency, so a few thousand probes cost seconds, while an agent
+# 18-way concurrency, so a few thousand probes cost seconds, while manually
 # exploring twenty source spellings costs minutes. Everything that can be
 # enumerated should therefore be enumerated before anyone reasons about the
 # residual. Those steps existed as three separate tools plus a hand-built flag
@@ -18,7 +18,7 @@
 # sweep, then re-sweep because a scheduler flag changes WHICH return types help,
 # then statement order.
 #
-# It never writes to src/ or asm/ and never runs a build, git or the bank cycle.
+# It never writes to src/ or asm/ and never runs a build, git or the integration workflow.
 # Output is a best-of report plus the surviving residual, which is exactly the
 # input a human or a strong model needs in order to pick a lever.
 set -uo pipefail
@@ -208,7 +208,7 @@ POOL
 fi
 
 # ---- phase 1c: the other approved compiler families ------------------------
-# Two of the 20 conversions banked on 2026-07-30 needed `--family old-agbcc`
+# Two of the 20 conversions tracked on 2026-07-30 needed `--family old-agbcc`
 # rather than the routed gcc 2.96: 08006cdc (0 with old-agbcc -O1 against 56
 # routed) and 08006878. Region families cluster, so a stem whose neighbours are
 # already in AGBCC_SOURCES is a strong candidate. Probing four family settings
@@ -313,7 +313,7 @@ if [ -s "$OUT/family-probes.tsv" ]; then
     echo "  to adopt, route the stem through AGBCC_SOURCES (and AGBCC_OPTIMIZE_O1_SOURCES for -O1)"
   fi
 fi
-echo "best    diff=$BEST size=$BESTSIZE/$REFSIZE flags=${BESTFLAGS:-BASE}  (gcc 2.96 routed lane)"
+echo "best    diff=$BEST size=$BESTSIZE/$REFSIZE flags=${BESTFLAGS:-BASE}  (gcc 2.96 routed configuration)"
 echo "source  $BESTSRC"
 echo "${BESTFLAGS:-BASE}" > "$OUT/flags.txt"
 echo "residual (candidate | reference):"

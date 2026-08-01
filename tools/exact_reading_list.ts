@@ -1,11 +1,11 @@
 #!/usr/bin/env bun
-// For the exact lane: which semantic reconstruction explains each overlay row
+// Which semantic reconstruction explains each overlay row
 // you have not yet matched byte-exactly.
 //
-// Venus has already worked out *what the code does* for most overlay owners.
-// When Mercury attacks one of those rows, the expensive part — reading assembly
+// Semantic reconstruction already explains *what the code does* for most
+// overlay owners. When converting one of those rows, the expensive part — reading assembly
 // until the behaviour is clear — is already done and sitting in
-// `semantic/overlays/`. This prints the pairing so nobody has to hunt for it:
+// `semantic/overlays/`. This prints the pairing directly:
 // every strict-queue owner that has a semantic source but no exact source, with
 // the path to read and the row's size.
 //
@@ -55,7 +55,7 @@ export interface Pairing {
 }
 
 /**
- * Strict-queue rows only: the same filter the semantic lane converts from.
+ * Strict-queue rows only: the same filter semantic reconstruction uses.
  *
  * "The same filter" is now literally true — it delegates to the ONE definition
  * in `semantic_regions_sync`. It was a hand-copied duplicate, and a duplicate
@@ -66,7 +66,7 @@ export interface Pairing {
  * The prologue requirement that lived here was the door on the CONVERSION
  * QUEUE, and `overlay_inventory` states it outright — a widened entry "never
  * becomes a queue row itself". So a leaf could be discovered, ruled, and
- * drafted, and still never be offered to a lane as work.
+ * drafted, and still never be offered as work.
  */
 export function isStrictRow(row: Row): boolean {
   return isConvertibleRow(row);
@@ -110,7 +110,7 @@ export function readingList(): Pairing[] {
     const start = 0x02000000 + row.offset;
     const address = start.toString(16).padStart(8, "0");
     const base = `${row.overlay}_c_${address}.c`;
-    // Already byte-exact: nothing for the exact lane to do here.
+    // Already byte-exact: no remaining conversion work here.
     if (exact.has(base)) continue;
     if (!semantic.has(base)) continue;
     const intervals = audited.get(row.overlay);

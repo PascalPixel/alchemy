@@ -37,8 +37,7 @@ typedef unsigned int u32;
  * form (displacement 448 = 224<<1, value 513 = 448+65, exactly as
  * first named in resource_377_c_02000a0c.c) plus a second write of 16
  * to workspace+456. The tail then reaches the WINDOW ENGINE global
- * 0x03001e8c (the Data_03001e8c text/window state Ivan's
- * func_08015xxx cluster note documents): clears the two u16s at
+ * 0x03001e8c (the documented Data_03001e8c text/window state): clears the two u16s at
  * +0x12f4/+0x12f6 and calls the main-image window routine
  * Func_08015210(0x284f, 0, 0) between Func_08009208/Func_08009210 --
  * the only row in this overlay so far that touches it. The compiled

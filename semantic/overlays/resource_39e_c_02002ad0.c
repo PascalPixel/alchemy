@@ -39,7 +39,7 @@ typedef unsigned int u32;
  *     not control flow.
  *   - 0x02003cf6 `bne.n 0x02003d28` with its join branch at 0x02003d26
  *     `b.n 0x02003d56`: the row's ONE skip-beat gate, on
- *     Func_0808a070(0, 0). VERIFIED by reading both arms this session
+ *     Func_0808a070(0, 0). VERIFIED by reading both arms in this reconstruction
  *     (the carried-over description in the parked note was flagged
  *     UNVERIFIED and is now confirmed, with one point sharpened):
  *     BOTH arms bump the workspace u16 at Data_03001ebc + 472, and

@@ -19,7 +19,7 @@ typedef unsigned char u8;
  * variants and the only one that populates the full cast.
  *
  * Workspace.  0x03001ebc is a pointer CELL (`ldr r3,[pc] / ldr r3,[r3]`), as
- * the banked byte-exact assets/code/resource_398_c_020007c4.c spells it.  The
+ * the tracked byte-exact assets/code/resource_398_c_020007c4.c spells it.  The
  * opening store is the additive displacement/value pair: r2 is 448 while the
  * address is formed and only then becomes 516, so it writes 516 at
  * workspace + 448 — the same opening 0x020004e8 has.

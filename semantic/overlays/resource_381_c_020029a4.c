@@ -25,7 +25,7 @@ typedef signed int s32;
  *     The byte-exact sibling `assets/code/resource_381_c_02002ba0.c` already
  *     declares exactly these two as `s32 Data_0200bb40[]` and
  *     `Ent *Data_0200bb10[]` — an independent confirmation of both the link
- *     base and the layout, taken from banked material rather than inferred.
+ *     base and the layout, taken from tracked material rather than inferred.
  *   0x0200aba1 (ODD) -> Thumb entry at 0x2ba0, i.e. Func_02002ba0 — that same
  *     byte-exact sibling.  It is the per-frame task this owner installs with
  *     Func_080000d0 and removes with Func_080000d8, and it is what advances

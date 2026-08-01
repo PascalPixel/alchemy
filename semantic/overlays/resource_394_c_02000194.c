@@ -17,7 +17,7 @@ typedef unsigned char u8;
  * chain; it in turn calls 0x02000b3c twice and 0x02000150 once.
  *
  * 0x020092c0 and 0x020092c8 are pointer CELLS, not values — the body always
- * loads through them twice.  Banked byte-exact assets/code/
+ * loads through them twice.  tracked byte-exact assets/code/
  * resource_394_c_02000054.c reads `*(s32 *)0x020092C0` the same way, and
  * assets/code/resource_394_c_020008b0.c declares the neighbouring cell
  * `extern u16 *Data_020092c4`.

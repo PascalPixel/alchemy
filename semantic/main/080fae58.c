@@ -7,7 +7,7 @@
  * (struct CgbChannel from src/080fadf0.c, SoundInfo offsets from
  * semantic/main/080f9f6c.c). No external reference of any kind was
  * consulted, and the quarantined earlier draft was never opened by
- * this lane.
+ * this reconstruction.
  *
  * Behaviour, read off the reference body:
  *
@@ -217,7 +217,7 @@ void Func_080fae58(void)
                          * negative form here, which keeps it from
                          * merging with the +128 status-bit tests (the
                          * merge costs a callee-saved register and a
-                         * stack slot in the exact lane). */
+                         * stack slot in the exact reconstruction). */
                         s32 wave_disabled = -128;
 
                         channel->n4_control = wave_disabled;

@@ -10,7 +10,7 @@ typedef signed int s32;
  * out/decomp/overlays.json and no exact sibling.  It was found by sweeping the
  * two-byte gaps in metrics/gs1-en-executable.json for `push {..,lr}`
  * prologues.  Its lower bound is confirmed from the other side: the sibling
- * lane's resource_39e_c_02000f80.c ends its literal pool at 0x0200102b and
+ * reconstruction's resource_39e_c_02000f80.c ends its literal pool at 0x0200102b and
  * names 0x0200102c as the next prologue.  Walking from that prologue, both
  * forward branches (0x0200104a -> 0x020010a4 and 0x020010a6 -> 0x020010bc)
  * land inside the body and the walk stops at the interworking return
@@ -55,7 +55,7 @@ typedef signed int s32;
  *   0x020010a0 -> 0x043d4 Func_0808a010   0x0200113c -> 0x044c4 Func_0808a1b8
  *   0x020010aa -> 0x0449c Func_0808a170   0x020010b2 -> 0x04474 Func_0808a138
  * The one intra-overlay call is to Func_02000f80, the facing-quadrant selector
- * the sibling lane converted from this same sweep — so two of the owners this
+ * the sibling reconstruction converted from this same sweep — so two of the owners this
  * sweep found call each other, which is why neither is reachable from the
  * inventory.
  *

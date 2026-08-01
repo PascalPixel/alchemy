@@ -2,13 +2,13 @@
 
 /*
  * Core-drive row 0x080f9c44, 76 bytes (kind shared_literal_function_module,
- * admitted per Vale's 2026-07-31 ruling). Its two far `ldr rN,[pc,#680]`
+ * admitted by the 2026-07-31 classification rule). Its two far `ldr rN,[pc,#680]`
  * loads resolve past the end of its own compiled out/asm/080f9c44.bin;
  * read directly from the neighbouring out/asm/080f9c90.bin at the matching
  * file offset (0x260/0x264) rather than guessed at, giving 0x03007ff0 and
  * 0x68736d53 -- the SAME "Smsh"-tagged context pointer and magic constant
  * semantic/main/080006fc.c established. Mirrors that file's `SmshContext`
- * local struct (Garet's field layout, posted to chat) rather than raw byte
+ * local struct (using the settled field layout) rather than raw byte
  * casts, now that it is settled: `countdown` at +0x04 and
  * `countdown_reload` at +0x0b are exactly the two fields this owner touches.
  *

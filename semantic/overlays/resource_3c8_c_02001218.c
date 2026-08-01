@@ -20,7 +20,7 @@ typedef unsigned char u8;
  *
  * 0x03001ebc is the package workspace pointer proven by the byte-exact
  * sibling 0x02000754.  The two halfword flags at +0xcba and +0xcb6 are the
- * same pair this lane's 0x02001780 writes; +0xcb6 is set to 1 on entry and
+ * same pair this reconstruction's 0x02001780 writes; +0xcb6 is set to 1 on entry and
  * cleared again on the way out, i.e. it is a "scene running" latch.
  *
  * The eight reserved stack bytes carry arguments five and six of this

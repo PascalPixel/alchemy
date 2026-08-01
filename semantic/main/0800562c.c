@@ -1,5 +1,5 @@
 /*
- * Correctness fix, veneer audit (mars, 2026-07-31).  One of nine files
+ * Correctness fix, veneer audit (2026-07-31).  One of nine files
  * sharing this idiom; semantic/main/080052f4.c carries the full write-up
  * and semantic/main/080e15e8.c documented the thunk bank before any of us.
  *

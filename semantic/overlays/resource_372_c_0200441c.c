@@ -14,8 +14,8 @@ typedef unsigned int u32;
  * 0x020044e6-0x020044ef, each branched over (`b.n` at 0x02004474 and 0x020044e4
  * respectively) and each genuinely referenced by `ldr rN, [pc, #imm]`; the pool
  * word 0x02004478 is the constant 0 that is loaded into r8 and stored three
- * times.  `work/claude/notes/resource_372-441c.md` parked this row for the
- * byte-exact lane over that mid-function pool.  That is a code-placement
+ * times.  `a prior working note` parked this row for the
+ * byte-exact reconstruction over that mid-function pool.  That is a code-placement
  * obstacle, not a semantic one.
  *
  * LINK BASE — second independent witness for 0x02008000.  The two pool words

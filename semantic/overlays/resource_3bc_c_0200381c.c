@@ -41,8 +41,8 @@ typedef unsigned int u32;
  *
  * Data_0200dc44/Data_0200db9c/Data_0200dbc8 are the same three-word group
  * referenced from resource_3bc's parked sibling 0x02003640 (see
- * work/claude/notes/resource_3bc_2bac.md's neighbourhood -- 0x02003640 was
- * disassembled but not drafted this session); copied here into the record's
+ * a prior working note's neighbourhood -- 0x02003640 was
+ * disassembled but not drafted in this reconstruction); copied here into the record's
  * fields at +8/+16/+6 respectively, the last one truncated from a full word
  * read to a stored halfword.
  *

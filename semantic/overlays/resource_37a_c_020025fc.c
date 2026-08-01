@@ -19,7 +19,7 @@ typedef signed int s32;
  * 25fc 2614`'s `+2` rule: `sites=2 veneer=2`, and two are transcribed.
  *
  * NOT PUBLISHED -- it is the one owner in this overlay's residue that is
- * bl-reached instead. I scanned every 4-aligned word for 0x0200a5fc
+ * bl-reached instead. Every 4-aligned word was scanned for 0x0200a5fc
  * with and without the Thumb bit and there are none, which matches sweep A
  * having found it and sweep B not.
  *

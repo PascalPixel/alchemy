@@ -3,8 +3,8 @@
 /*
  * Overlay resource_3b3 owner at 0x02000cc0, 184 bytes
  * (0x02000cc0-0x02000d78): item-28 unindexed-function population,
- * 6 calls. Full body traced this session; previously parked only for
- * span-scoping (work/claude/notes/resource_3b3_cc0.md), including an
+ * 6 calls. Full body traced in this reconstruction; previously parked only for
+ * span-scoping (a prior working note), including an
  * open question about the exact stack-argument offsets that this
  * draft resolves against the live disassembly.
  *

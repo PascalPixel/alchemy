@@ -2,9 +2,8 @@
 // Prove a semantic overlay source places every call the assembly makes — per
 // target, never by total.
 //
-// This is the completeness proof every overlay lane runs, and until now every
-// lane wrote its own throwaway for it. Four independent reports asked for it to
-// be promoted into `tools/`, which is the signal to stop retyping it.
+// This is the reusable completeness proof for overlay sources. It replaces
+// repeated throwaway versions of the same check.
 //
 // Why per target and never a total: a run once showed 137 = 137 while five
 // targets were mutually mis-assigned — four calls moved from one import to
@@ -15,9 +14,9 @@
 //   bun tools/overlay_multiset_check.ts resource_398          # every converted row
 //   bun tools/overlay_multiset_check.ts --self-test
 //
-// Exit status is 1 when any row fails, so it can gate a lane's own loop.
+// Exit status is 1 when any row fails, so it can gate an automated loop.
 //
-// Two subtleties that cost lanes real time, both handled here:
+// Two easy-to-miss cases are handled here:
 //   * Declarations and comments must be stripped before counting `Func_x(`, or
 //     every forward declaration inflates its target by one.
 //   * A `bl` to the owner's OWN epilogue is a `goto`, not a call, and a target
@@ -135,7 +134,7 @@ export function assemblyCounts(overlay: string, owner: number, span: number): Ma
       // `asm=1 src=0`, which reads as a dropped call. Three of four such reports
       // in one audit were pool words (`resource_399:00d8` 0xf896f001,
       // `resource_3b5:007c` 0xf8b6f001, `resource_383:48c8` 0xfd92f005), and a
-      // repair lane came close to inventing calls to match them.
+      // an earlier repair came close to inventing calls to match them.
       //
       // An unresolvable target cannot be named, so it can never match anything
       // in the C either way; counting it can only manufacture a defect. A
@@ -356,7 +355,7 @@ function main(): void {
   }
   console.log(`\nchecked=${checked} failed=${failed}`);
   // CHECKING NOTHING IS NOT PASSING. `checked=0 failed=0` reads as a clean
-  // result and exits 0, so a lane gating its loop on this tool would sail past
+  // result and exits 0, so an automated loop would sail past
   // rows it never examined. That happened: the 36 functions found by the
   // two-byte-gap sweep have no inventory row, and every one of them reported
   // `checked=0` until `rows()` learned to read `manual_regions`. A tool whose

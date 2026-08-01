@@ -28,7 +28,7 @@ extern u8 Value_000023ac;
  * Imports are resolved with tools/overlay_call_targets.ts — an overlay `bl`
  * stores `target_offset - 2` — and named for the main-image address in the
  * veneer entry's trailing word.  Nine sites, matching the row's advertised
- * call count.  The begin/message/act/end quartet is the same one that banked
+ * call count.  The begin/message/act/end quartet is the same one that tracked
  * byte-exact source assets/code/resource_3b6_c_0200073c.c uses under its
  * printed names, which also fixes the void return and the s32 argument.
  */

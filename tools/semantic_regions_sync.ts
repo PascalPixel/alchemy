@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // Record the span of every admitted overlay semantic owner in
 // `semantic/regions.json`, so the published coverage map can size the semantic
-// lane.
+// coverage category.
 //
 // `tools/coverage_map.ts` sizes an overlay semantic owner ONLY from a
 // `manual_regions` entry here. That is deliberate: the map is a
@@ -56,7 +56,7 @@ interface InventoryRow {
 /**
  * Say WHY a strict row is missing, instead of only that it is.
  *
- * THE ADOPTION DOOR IS PROLOGUE-KEYED TOO (2026-08-01, mars). The strict row
+ * THE ADOPTION DOOR IS PROLOGUE-KEYED TOO (2026-08-01). The strict row
  * set is filtered on `starts_with_prologue`, and the inventory that produces it
  * is seeded on `push`-shaped halfwords in the first place -- so a LEAF has no
  * row here and never will. Four real ones hit this on the day the sweeps were
@@ -226,7 +226,7 @@ export function planSync(): SyncResult {
     const row = rows.get(`${overlay}@${offset}`);
     if (row === undefined) {
       // REFUSE LOUDLY AND SAY WHAT IS NEEDED. "no strict inventory row for this
-      // owner" told a lane that something was wrong and nothing about what to
+      // owner" reported that something was wrong and nothing about what to
       // do, so four ruled leaves became hand-written entries with no record
       // that the tool had been routed around.
       //
@@ -302,7 +302,7 @@ function selfTest(): void {
     throw new Error("adjacent spans must be allowed");
   if (spanIsSubstantiated(0x100, 0, image, []).ok) throw new Error("zero span must be rejected");
 
-  // Row eligibility, on SYNTHETIC rows so no lane's progress can move it.
+  // Row eligibility uses synthetic rows so source progress cannot move it.
   // The load-bearing case is the first one: a LEAF — returns, but opens with
   // ordinary work and saves no register — must be accepted. That is the whole
   // point of the return-based test, and the regression that would silently

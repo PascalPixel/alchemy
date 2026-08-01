@@ -1,16 +1,15 @@
 #!/usr/bin/env bun
 // Forbid hand-maintained version literals in cache keys.
 //
-// WHY THIS EXISTS. Three worktrees were poisoned by one `out/cache/overlay-c`
-// entry. The key carried `overlay-c-v3`, a string bumped by hand whenever the
+// WHY THIS EXISTS. One stale `out/cache/overlay-c` entry affected multiple
+// checkouts. The key carried `overlay-c-v3`, a string bumped by hand whenever the
 // post-compile rewriting changed. It was bumped correctly and the comment
 // explaining it was honest; the defect was the MECHANISM, which holds only
 // while every future editor remembers. When it was not bumped, a stale entry
 // served bytes that no longer reconstruct resource_39c's LZ plan **under a key
-// the tool accepts**, `verify` died in `build_assets`, and three lanes
-// independently concluded that `main` was red. It was not: `git checkout` does
-// not touch `out/`, so every one of those runs shared the same poisoned entry
-// and none of them was a test of its commit.
+// the tool accepts**, `verify` died in `build_assets`, and made `main` appear
+// red. It was not: switching commits does not touch `out/`, so repeated runs
+// shared the same poisoned entry.
 //
 // THE RULE. A cache key must be a function of its inputs — the source bytes it
 // derives from, and a digest of the TOOL'S OWN SOURCE for the logic applied to

@@ -13,7 +13,7 @@ typedef signed int s32;
  *
  * Signature.  The return address is popped into r1, not r0, so r0 survives and
  * is the result — and `movs r0,#0` immediately precedes the pop, so the owner
- * returns 0.  Same shape as the banked byte-exact assets/code/
+ * returns 0.  Same shape as the tracked byte-exact assets/code/
  * resource_398_c_02000030.c, which is written `s32 Func_02000030(...)
  * { ...; return 0; }`.
  *
@@ -23,10 +23,10 @@ typedef signed int s32;
  * here reaches 0x020004b4, 0x020004e8 and 0x02000538 and nothing else.
  *
  * The selector itself is the cross-overlay Data_02000240 idiom: the signed
- * halfword at byte offset 448 (element 224), branched on.  The banked
+ * halfword at byte offset 448 (element 224), branched on.  The tracked
  * byte-exact assets/code/resource_398_c_02000040.c reads the same halfword and
  * tests it against the same three values, spelling them `(s32)&Value_00000031`
- * and so on — that is the exact lane's constant-pooling device, and the plain
+ * and so on — that is the exact reconstruction's constant-pooling device, and the plain
  * integers below are the same numbers.
  *
  * Three call sites, matching the row's advertised count.  All three are

@@ -79,7 +79,7 @@ typedef unsigned int u32;
  * unwind returns through r1, not r0, because r0 carries the return
  * value 1 loaded at 0x0200088c; two trailing pool words (0x02008740 --
  * the table's own base -- and 0x00000103) end at 0x0200089b, and the
- * next owner (0x0200089c, already banked byte-exact) begins there.
+ * next owner (0x0200089c, already tracked byte-exact) begins there.
  *
  * Second read done: the correction was reading state 6 as two calls by
  * analogy with 0x02000598. It is one call with a selected pair of

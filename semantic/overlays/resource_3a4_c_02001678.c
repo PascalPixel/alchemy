@@ -31,7 +31,7 @@ typedef signed int s32;
  *
  * The twelve targets are in-image data: 0x0200cd18 through 0x0200d150,
  * i.e. image offsets 0x4d18..0x5150, spelled by linked address per the
- * convention Garet's existing resource_3a4 files already set for
+ * convention the existing resource_3a4 files already set for
  * Data_0200cd6c and its neighbours.  They sit in one ascending run,
  * which is consistent with a table of scripts laid out in scene order.
  *

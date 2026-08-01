@@ -26,7 +26,7 @@ typedef signed int s32;
  * and 0x020098c5 are ODD, i.e. Thumb entry points, and are passed to
  * Func_080000d0 with a frame budget: under the proven 0x02008000 overlay link
  * base they are `Func_02001794 + 1` and `Func_020018c4 + 1`, and
- * `assets/code/resource_399_c_020018c4.c` is a banked byte-exact source for
+ * `assets/code/resource_399_c_020018c4.c` is a tracked byte-exact source for
  * the second.  The even pool word 0x0200a4f4 is in-image data at file offset
  * 0x24f4, the same animation script the owner at 0x02000384 hands to
  * Func_0808a098.

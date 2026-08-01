@@ -31,8 +31,8 @@
 // 1,064 of 1,064, and `build_semantic` already enforces it. An earlier version
 // of this comment claimed a draft's span lived only in prose and refused to put
 // a number on it. That was wrong: the field existed and was complete, and the
-// three contradictory answers (22, 9 and 8) came from parsing prose that nobody
-// had asked me to parse. Read the field.
+// three contradictory answers (22, 9 and 8) came from parsing prose instead of
+// reading the field.
 //
 // `drafts_without_span` is reported on every run for exactly that reason. If it
 // is ever non-zero the unattributed count is an OVER-count, and the census says

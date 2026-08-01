@@ -27,7 +27,7 @@ typedef unsigned int u32;
  * Call targets resolved with `tools/overlay_call_targets.ts`, never from the
  * disassembler's `bl` annotations: 49 import veneers and 4 prologues in this
  * overlay.  The four prologues are the scene bodies this dispatcher selects —
- * 0x020017c8, 0x020015b4, 0x02001084 (all in this lane) and the byte-exact
+ * 0x020017c8, 0x020015b4, 0x02001084 (all in this reconstruction) and the byte-exact
  * 0x020025b0 — and they are the reason the printed targets (0x02002284,
  * 0x02002100, 0x02001bea, 0x02002f62) look like unrelated addresses.
  *

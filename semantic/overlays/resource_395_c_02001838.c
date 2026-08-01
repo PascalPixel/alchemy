@@ -26,7 +26,7 @@ typedef volatile unsigned int vu32;
  * SPAN IS 32 BYTES, NOT 16. All four pool words at 0x2001848-0x2001857 are
  * reached by this row's own pc-relative loads -- each offset re-derived from
  * the aligned pc rather than read off a listing -- so they belong to this
- * owner. The bound at the far end is the ROM's, not mine: the halfword at
+ * owner. The bound at the far end comes from the ROM: the halfword at
  * 0x2001878 is `b500`, the next function's prologue.
  *
  * WHAT IT DOES. `stmia r3!` with r3 = 0x040000d4 writes DMA3SAD, DMA3DAD and

@@ -16,8 +16,8 @@ typedef signed int s32;
  *
  * Link base 0x02008000, proved without disassembly: the table's other odd words
  * include 0x02008031 and 0x020080a5, which are `Func_02000030 + 1` and
- * `Func_020000a4 + 1` — both already banked byte-exact as
- * `assets/code/resource_3b0_c_02000030.c` and `..._020000a4.c` — and the banked
+ * `Func_020000a4 + 1` — both already tracked byte-exact as
+ * `assets/code/resource_3b0_c_02000030.c` and `..._020000a4.c` — and the tracked
  * 0x02000030 source already types 0x02009930 and 0x02009938 as in-image data
  * arrays at their runtime addresses.  The same spelling is used here.
  *
@@ -50,7 +50,7 @@ typedef signed int s32;
  *   0x0468, 0x0564, 0x07b0, 0x0af8 and 0x0e78.
  * The tool's naive overlapping scan reports the same 28, which corroborates the
  * walk — no pool word or table entry here decodes as a BL pair.  0x02000468 is
- * already banked byte-exact as `assets/code/resource_3b0_c_02000468.c`.
+ * already tracked byte-exact as `assets/code/resource_3b0_c_02000468.c`.
  *
  * `Func_080000d0(0x020090a1, 3200)` is the task install, and 0x020090a1 is
  * file offset 0x10a0 plus the Thumb bit — an in-image per-frame task, which is

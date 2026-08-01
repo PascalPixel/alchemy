@@ -37,7 +37,7 @@ typedef signed int s32;
  *   0x0200d5d1 -> file offset 0x55d0 = Func_020055d0 + Thumb bit
  *   0x0200d75d -> file offset 0x575c = Func_0200575c + Thumb bit
  * All three have byte-exact sources in assets/code, so the base is proven
- * against banked material.  The first two are installed as callbacks through
+ * against tracked material.  The first two are installed as callbacks through
  * Func_080000d0 and removed again through Func_080000d8; the third is stored
  * into the actor's +0x6c behaviour slot and cleared later in the same owner.
  * The remaining pointer-shaped word, 0x0200e590, is in-image data at file

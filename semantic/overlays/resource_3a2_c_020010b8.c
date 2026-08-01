@@ -16,7 +16,7 @@ typedef unsigned char u8;
  * function entry, and 0x02009061 - 0x8000 - 1 = 0x1060, which is exactly
  * Func_02001060 -- a function this overlay already has byte-exact in
  * assets/code/resource_3a2_c_02001060.c.  That confirms the 0x02008000 link
- * base for resource_3a2 against banked material, and identifies the pool word
+ * base for resource_3a2 against tracked material, and identifies the pool word
  * as an installed per-entity callback rather than data.  It is stored into the
  * entity record at +0x6c.
  *

@@ -27,7 +27,7 @@ typedef signed int s32;
  * base they are Thumb entries, not data: 0x0200ae5d -> Func_02002e5c and
  * 0x0200ae0d -> Func_02002e0c, BOTH of which are already byte-exact in
  * `assets/code/`.  This owner therefore spawns two effect entities and hooks
- * each one's per-frame handler at record + 108; reading those two banked
+ * each one's per-frame handler at record + 108; reading those two tracked
  * sources confirms the record layout used here (the 16.16 triple at +8/+12/+16
  * and the sub-record pointer at +0x50) without inference.
  *

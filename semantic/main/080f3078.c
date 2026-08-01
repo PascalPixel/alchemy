@@ -2,11 +2,10 @@
 
 /*
  * Core-drive row 0x080f3078, 1796 bytes. Colour/palette blend family --
- * Ivan mapped this one first (work/claude/notes/main_080f3078.md) and
- * flagged it as the twin of 0x08090a5c I'd independently parked; Kraden's
- * call was to draft this one (the "canonical" twin) first, second-reading
+ * A prior working note mapped this one first and flagged it as the twin of
+ * 0x08090a5c. This "canonical" twin was drafted first, second-reading
  * every arithmetic body against the addressed disassembly rather than
- * trusting either park note's summary.
+ * trusting the earlier summary.
  *
  * Signature (best read): Func_080f3078(s32 selector, u16 *source,
  * u16 *dest, s32 mode). `mode` (0/1/2) only adjusts the bucket count
@@ -251,7 +250,7 @@ void Func_080f3078(s32 selector, u16 *source, u16 *dest, s32 mode)
        separately-tracked mode/flags register. */
     /* Corrected after a second read against the addressed disassembly:
        bits 0x4000 and 0x8000 are genuinely DIFFERENT bodies, not two
-       branches into the same code as I first assumed (and had merged
+       branches into the same code as first assumed (and initially merged
        into one `||` before catching this) -- 0x4000 is a flat
        luminance-scaled tint, 0x8000 is a per-channel ratio between the
        pixel's own channel sum and the tint's, squared back through the

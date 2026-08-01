@@ -2,7 +2,7 @@
 
 /*
  * Core-drive row 0x080fa16c, 64 bytes (kind nonstandard_thumb_branch_module,
- * admitted per Vale's 2026-07-31 ruling -- body read: an ordinary
+ * admitted by the 2026-07-31 classification rule -- body read: an ordinary
  * `push {r4, r5}` / `pop {r4, r5}; bx lr` leaf with no register trick, the
  * label is a classification artifact of its branch density, not a
  * cannot-express shape).

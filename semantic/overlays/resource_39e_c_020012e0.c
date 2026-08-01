@@ -12,7 +12,7 @@ typedef unsigned char u8;
  * (0x00000898). The next owner's prologue is exactly at 0x02001334.
  * **84 bytes**, measured to the epilogue.
  *
- * Published population (sweep B), and this is the row my earlier
+ * Published population (sweep B), and this is the row an earlier
  * story-chain note already predicted: "0x12e0 tests 0x898". It does, and
  * it is a `bl` caller of FOUR already-drafted owners at once, so each of
  * those four drafts is independently corroborated by this one.

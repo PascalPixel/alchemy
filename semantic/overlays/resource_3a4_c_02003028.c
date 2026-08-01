@@ -38,7 +38,7 @@ typedef signed int s32;
  * cannot see it because it has NO PUSH PROLOGUE -- being a leaf, it
  * returns with `bx lr` and never saves a register, so the shaped scan,
  * which keys on `b5xx`/`b4xx`, has nothing to key on. It is written up
- * here rather than drafted because it is not this row and not in my
+ * here rather than drafted because it is not this row and not in this file's
  * contract; resource_3a4 must NOT be certified closed while it stands.
  *
  * Ninety-six call sites, every one resolved with the `+2` rule via
@@ -67,7 +67,7 @@ typedef signed int s32;
  *     256 into the DISPLACEMENT 456 for the next store of 40;
  *   - 0x020033a4: 224 << 1 makes the pointer 448 again and `adds r2, #68`
  *     turns 448 into the VALUE 516 stored at +448.
- * That is the same habit Isaac recorded twice on resource_3b9, now with
+ * That is the same habit already recorded twice on resource_3b9, now with
  * two more sightings on a different overlay -- five in all, so it is
  * this compiler's normal shape for a workspace write and not a curiosity.
  *

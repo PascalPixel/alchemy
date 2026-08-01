@@ -25,7 +25,7 @@ typedef unsigned char u8;
  * Imports resolved with tools/overlay_call_targets.ts (an overlay `bl` stores
  * `target_offset - 2`).  The Func_0808a018/Func_0808a020 bracket and the
  * Func_0808a010/Func_080f9010/Func_0808a110/Func_080091c0 body are the same
- * shape the banked byte-exact source assets/code/resource_398_c_02000280.c
+ * shape the tracked byte-exact source assets/code/resource_398_c_02000280.c
  * uses under its printed names.
  *
  * Twenty-six call sites against the row's advertised 24; the manifest's

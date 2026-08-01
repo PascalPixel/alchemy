@@ -2,9 +2,9 @@
 
 /*
  * Core-drive row 0x08090a5c, 1816 bytes. Structural twin of
- * 0x080f3078 (Ivan's diff: same skeleton, same three shared callees,
+ * 0x080f3078 (same skeleton, same three shared callees,
  * near-1:1 control flow with a couple of registers renamed but not
- * restructured) -- drafted second per Kraden's call, adapted from that
+ * restructured) -- drafted second and adapted from that
  * row's own corrected draft rather than re-deriving each blend body
  * from scratch, then spot-checked (case 1 fully re-traced here) to
  * confirm the shared bodies really do carry over unchanged.
@@ -54,7 +54,7 @@ extern s32 Func_08091294(s32 value); /* clamp [0,31] */
 extern s32 Func_080912a8(s32 value); /* clamp to max 31744 */
 
 /* IWRAM-relocated fixed-point multiply, opaque -- same helper already
- * treated as opaque throughout this dig. */
+ * treated as opaque throughout this reconstruction. */
 extern s32 Func_03000118(s32 value, s32 multiplier);
 
 static u16 BroadcastBlend(u16 color)

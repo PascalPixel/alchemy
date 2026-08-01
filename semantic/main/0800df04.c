@@ -15,8 +15,7 @@
  * 796 bytes total. Full body cross-checked against
  * `arm-none-eabi-objdump -d out/full/asm/0800df04.elf` for every pool
  * address (four words: 0x0000ffff, 0x03000118, 0xffffe000, 0xffffc000),
- * resolving what an earlier read of this owner (work/claude/notes/
- * main_0800df04.md) had flagged as two mystery wraparound constants --
+ * resolving what an earlier read had flagged as two mystery wraparound constants --
  * they are NOT wraparound constants at all. All FIVE `if (x < 0) x +=
  * K` sites in this function use the SAME K, 0x0000ffff, exactly
  * 0800dd70.c's truncation idiom. 0xffffe000 (-8192) and 0xffffc000

@@ -19,8 +19,8 @@ typedef signed int s32;
  * once with three.  That is the documented overlay idiom, hence the old-style
  * declarations.
  *
- * `work/claude/notes/resource_372-1348.md` parks this row for the byte-exact
- * lane over constant re-materialisation (the pool words 0x313, 0x833 and 0x30c
+ * `a prior working note` parks this row for the byte-exact
+ * reconstruction over constant re-materialisation (the pool words 0x313, 0x833 and 0x30c
  * are each used twice and get CSE'd into registers).  That is a codegen
  * obstacle, not a semantic one.
  *

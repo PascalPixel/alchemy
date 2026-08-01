@@ -5334,6 +5334,34 @@ Adopting an UNINVENTORIED row moves the denominator: this one added its 508
 bytes as a newly audited executable interval, so `--write-inventory` AND
 `--write-report` were both required before `verify` would pass (§5c).
 
+### The dispatch-row population, probed and ranked (2026-08-01)
+
+With §5b4 in, the `mov pc, rN` rows are workable for the first time. The 27
+inventoried owners, smallest first, and the adopt dry-run against each one's
+EXISTING semantic draft where one probed cleanly:
+
+| row | span | differing bytes of the semantic draft |
+| --- | --- | --- |
+| 371:0350 | 44 | known copy-choice blocker (§5b), not a dispatch problem |
+| 3b2:12b4 | 192 | 174 — rewrite class |
+| 378:0070 | 220 | **85 — the best of the population** |
+| 3c4:0cd0 | 248 | 137 |
+| 372:3ce4 | 296 | 262 |
+| 3b1:012c | 342 | 273 |
+| 3b9:007c | 444 | 235 |
+
+`3b4:1fd8`, `383:2564` and `395:15a0` threw on the probe and are UNMEASURED,
+not clean and not dirty. The remaining 17 owners (464 bytes to 5,604) are
+unprobed.
+
+**378:0070 is the row to take next and its residual is already characterised.**
+Its head is 4 bytes short of the reference's — the reference opens
+`lsls r2,r2,#1 / adds r3,.. / movs r2,#0` ahead of the `ldrsh`/`subs #1`/
+`cmp #0x22` bound check that the draft starts with — and that single shift is
+what puts every table entry 4 low. Fix the head first and re-measure before
+reading anything else as a defect; on a dispatch row a head-length error and
+an arm-order error both present as a table full of wrong words.
+
 ## 5c. Auditing the executable inventory for holes (2026-08-01)
 
 Twice in one night `full_c_progress` threw `C span is outside audited

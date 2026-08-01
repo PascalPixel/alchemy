@@ -6095,6 +6095,14 @@ empty `evidence` throws, and overlapping spans throw. The field is a
 field, populated at draft time, and enforced. Every constraint I was about
 to go and build was already met.
 
+**RULE: before building an instrument to derive a fact, grep the tree for
+the fact.** The field existed, was populated for all 1,064 drafts, and was
+already enforced at draft time. A shift of work was approved on my report
+and neither Vale nor I looked; 751 KB answered in one line of Python. The
+cost of the check is always smaller than the cost of the instrument, and
+the check has to come first even when — especially when — the missing fact
+feels obviously missing.
+
 **So the defect was never in the tree. It was that my instrument did not
 read the data the tree already had, and I reached for a parser instead of
 looking.** The three contradictory numbers were not evidence of a missing

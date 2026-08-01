@@ -33,7 +33,7 @@ gray semantic debt left in the core census:
 
 **Overlays** — decoded overlay code, 791 KB:
 
-![Decoded overlay code coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=75444d5f)
+![Decoded overlay code coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=efd04750)
 
 **Assets** — the 7.3 MB of the cartridge that is data, not code. Same ladder in
 magenta: faint is byte-represented, a third is b&w sheets, two thirds is
@@ -48,15 +48,22 @@ ordinary assembly debt, orange is reviewed permanent assembly, and pink is
 non-code data reproduced from tracked asset sources.
 
 The picture is derived from tracked evidence alone—no ROM, no toolchain, no
-build output—so it redraws in about a second:
+build output—so the publication snapshot redraws in about a second:
 
 ```sh
 bun run coverage
 ```
 
-`main` is the authoritative integrated tree. The map records the exact and
-semantic source revisions used for a draw. Regenerate it after a verified
-integration so the README and local dashboard display the same evidence.
+For a hands-off working view, run:
+
+```sh
+bun tools/dashboard_server.ts
+```
+
+The local dashboard scans the actual worktree, rebuilds its three graphs in
+memory, and pushes changes to the browser as source or evidence files change.
+It does not need `bun run coverage`; that command updates the checked-in
+publication snapshot. `main` remains the authoritative integrated tree.
 
 The measured totals live in
 [`metrics/gs1-en-coverage-map.json`](metrics/gs1-en-coverage-map.json). The

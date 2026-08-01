@@ -1,14 +1,16 @@
-# The 384-byte twin family — working draft
+# Twin-template evidence — resolved 384-byte family
 
-`tools/overlay_twins.ts` reports 32 groups of owners that are the same routine
-across overlays, differing only in `bl` displacements and pool words. The largest
-is **384 bytes x 11**, and no member is converted, so the first correct draft is
-worth **4,224 bytes** — 384 for itself and 3,840 by transposition.
+The corrected `tools/overlay_twins.ts` includes exact-C owners as canonical
+family members instead of mistaking semantic C for completed work. That made
+cross-overlay source transposition productive: the 384-byte family below
+closed **4,224 bytes**, and the adjacent 404-byte family closed another
+**3,232 bytes**. Run `bun tools/overlay_twins.ts --unconverted` for the live
+remainder; do not resume this old compiler-floor draft.
 
 Members: `resource_373:00c4`, `389:00c4`, `392:00c4`, `393:00c4`, `39f:00c4`,
 `3b2:00c4`, `3b4:00c4`, `3bf:00c4`, `3c4:00c4`, `3c5:00c4`, `3c8:0374`.
 
-## State on 2026-07-30
+## Historical state on 2026-07-30
 
 The draft below is **structurally correct and not yet byte-exact**: 172 emitted
 instructions, matching the reference exactly, with **22 instruction groups still

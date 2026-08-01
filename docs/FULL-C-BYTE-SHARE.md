@@ -95,17 +95,28 @@ than from a build—so it runs without a ROM or toolchain:
 * ROM layout: the audited executable union, the compressed overlay streams in
   `assets/manifest.json`, and the complement of both as asset data.
 
+For call-target evidence, overlay inventory scans the compiler-filled image,
+not the zero-filled assembly placeholder image. Canonical assembly listings
+still supply the instruction/directive boundaries. This keeps raw leaf and
+call-via-bank code visible when its only caller has already become exact C.
+
 The exact-C numbers it derives must equal `metrics/gs1-en-progress.json`
 exactly; a disagreement is an error rather than a redrawn picture. That report
 is read from the selected exact source tree, so the check also holds when an
 explicit ref is used. Semantic C is not part of Full-C Byte Share and is drawn
 as a separate colour, never folded into the headline fraction.
 
+`bun tools/dashboard_server.ts` serves a separate live worktree view. It
+derives the same ownership map directly in memory, watches `asm/`, `assets/`,
+`metrics/`, `semantic/`, and `src/`, and pushes a new draw to the browser after
+relevant changes. It deliberately tolerates a temporarily stale tracked
+progress report while editing; the normal publication path does not.
+
 The map records its input trees in `provenance.exact_source` and
 `provenance.semantic_source`. Both `--write` and `--check` re-resolve those
 values; `--exact-ref` and `--semantic-ref` can override them, while `worktree`
 selects the local tree. Normal `main` publication uses `worktree` for both, so
-the pictures and dashboard describe the commit being published.
+the checked-in pictures describe the commit being published.
 
 A recorded ref that is not available locally is an error, not a fall back to
 the working tree: falling back could quietly republish an older measurement.

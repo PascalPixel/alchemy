@@ -36,6 +36,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { classify, overlayImage, OVERLAY_BASE, BASE_SHIFT, targetOffset } from "./overlay_call_targets.ts";
+import { overlayCSpans } from "./overlay_disasm.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 
@@ -113,7 +114,24 @@ export function manualRegions(overlay: string): { start: number; end: number }[]
   return spans.sort((a, b) => a.start - b.start);
 }
 
-/** Exact-C rows, whose spans are not recorded anywhere this tool can read. */
+/**
+ * Real, compiled spans for this overlay's exact-C rows.
+ *
+ * These are not recorded in the tree -- an exact row's extent is whatever the
+ * compiler produces -- so this tool used to have no way to tell an address
+ * inside such a row from an address after it, and reported UNRULED. That
+ * ambiguity is what hid the data-installed callbacks in the first place, so
+ * closing it is worth the compile. `overlayCSpans` omits any row that fails to
+ * build rather than guessing, and the omission simply leaves the old UNRULED
+ * behaviour in place for that row, which is the safe direction.
+ */
+export function exactSpans(overlay: string): { start: number; end: number }[] {
+  const source = join(ROOT, "assets", "code", `${overlay}_overlay.s`);
+  if (!existsSync(source)) return [];
+  return overlayCSpans(source);
+}
+
+/** Exact-C row start offsets, used only to name the rows a span is missing for. */
 export function exactStarts(overlay: string): Set<number> {
   const starts = new Set<number>();
   const path = join(ROOT, "assets", "code");
@@ -132,17 +150,27 @@ export function sweep(overlay: string): OverlayResidue {
   const sorted = [...owners].sort((a, b) => a - b);
   const bodies = manualRegions(overlay);
   const exact = exactStarts(overlay);
-  /** Inside a body the tree explicitly measured — a pool word or a spill. */
+  const compiled = exactSpans(overlay);
+  const measuredExactStart = new Set(compiled.map((span) => span.start));
+  /**
+   * Inside a body the tree measured, or inside an exact-C row this tool has now
+   * compiled. Both are real spans; the second used to be invisible.
+   */
   const insideRecordedBody = (offset: number): boolean =>
-    bodies.some((body) => offset > body.start && offset < body.end);
-  /** Behind an exact-C row, whose real extent this tool cannot read. */
+    bodies.some((body) => offset > body.start && offset < body.end) ||
+    compiled.some((span) => offset > span.start && offset < span.end);
+  /**
+   * Behind an exact-C row whose span is STILL unknown -- that is, one
+   * `overlayCSpans` could not compile. A row it did compile is now decided by
+   * `insideRecordedBody` above, either way, so it is no longer UNRULED.
+   */
   const behindExactRow = (offset: number): boolean => {
     let nearest: number | null = null;
     for (const start of sorted) {
       if (start <= offset) nearest = start;
       else break;
     }
-    return nearest !== null && exact.has(nearest);
+    return nearest !== null && exact.has(nearest) && !measuredExactStart.has(nearest);
   };
 
   const called: number[] = [];
@@ -226,6 +254,30 @@ function selfTest(): void {
   // Out of range must be rejected rather than clamped.
   if (publishedOffset(0x0200bc89, 0x100) !== null) throw new Error("out-of-range must be rejected");
   if (publishedOffset(0x00000001, 0x5b2c) !== null) throw new Error("a word below the link base must be rejected");
+  // Exact-C spans, the limitation this tool shipped with. resource_380's exact
+  // row at 0x02000390 compiles to 868 bytes and therefore ends exactly at
+  // 0x020006f4, where a published callback begins. Before the spans were
+  // readable the tool could not tell those two apart and reported UNRULED, so
+  // this asserts BOTH halves of the fix: the span is produced at all, and it
+  // decides 0x020006f4 to be outside rather than inside.
+  const spans = exactSpans("resource_380");
+  const row = spans.find((span) => span.start === 0x390);
+  if (row === undefined) throw new Error("resource_380's exact row at 0x02000390 must compile to a span");
+  if (row.end !== 0x6f4) throw new Error(`exact row 0x02000390 must end at 0x020006f4, got 0x${row.end.toString(16)}`);
+  if (spans.some((span) => 0x6f4 > span.start && 0x6f4 < span.end)) {
+    throw new Error("0x020006f4 is a row start, not an interior address");
+  }
+  // A row that fails to compile must be omitted, never guessed at, so a start
+  // with no span has to stay absent rather than appear with a zero length.
+  if (spans.some((span) => span.end <= span.start)) throw new Error("an empty span is a guess, not a measurement");
+  // The verdict string is UPPERCASE. An earlier draft of this check compared
+  // against "unruled" and therefore matched nothing and passed vacuously --
+  // which is the whole failure mode this tool exists to catch, reproduced
+  // inside its own self-test.
+  const unruled = sweep("resource_380").shaped.filter((row) => row.verdict.startsWith("UNRULED"));
+  if (unruled.length !== 0) {
+    throw new Error(`resource_380 must have no UNRULED rows left, got ${unruled.length}`);
+  }
   console.log("self-test=ok");
 }
 

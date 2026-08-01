@@ -1,6 +1,27 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ *
+ * `Func_080072f0` is not a function.  0x080072e4 begins the GCC
+ * `__call_via_rN` veneer bank -- fifteen four-byte `bx rN; nop` entries,
+ * r0..lr, ending at 0x08007320 -- so 0x080072f0 is `__call_via_r3` and
+ * `bl 0x80072f0` calls whatever r3 holds.
+ *
+ * At every site in this file the ROM loads r3 from the literal pool with
+ * the constant 0x03001388, so the callee is the relocated IWRAM word copy
+ * at that address.  Its signature is not guessed: the EXACT source
+ * src/080d40ec.c declares it as
+ * `void *(*)(void *destination, const void *source, s32 size)` and
+ * src/080e0524.c casts the same address to the same shape.
+ *
+ * Note what the previous draft had already half-seen: it passed
+ * 0x03001388 as a fourth ARGUMENT.  That value was never an argument --
+ * it is the callee, and the register load that produced it is the call
+ * target, not a parameter.
+ */
 #include "layout_guard.h"
 #include "types.h"
 
+typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 typedef struct ConfirmMenuState_080a5388 {
     u8 padding000[0x10c];
     s32 window;
@@ -40,7 +61,6 @@ s32 Func_080022fc(s32, s32);
 void Func_08002df0(void *);
 void Func_080030f8(s32);
 void *Func_08004938(s32);
-void Func_080072f0(void *, const void *, s32, const void *);
 void Func_08015068(s32, s32, s32, s32, s32);
 void Func_08015080(s32, s32, s32, s32);
 void *Func_08077008(u8);
@@ -69,7 +89,7 @@ s32 Func_080a5388(void)
 
     Func_080a3ef0(character, state->subject_id, 0);
     snapshot = Func_08004938(0x14c);
-    Func_080072f0(snapshot, character_state, 0x14c, (void *)0x03001388);
+    ((WordCopy)0x03001388)(snapshot, character_state, 0x14c);
 
     if ((u32)(Func_08077050(character, state->subject_id) + 2) <= 1) {
         selection = 1;
@@ -115,7 +135,7 @@ s32 Func_080a5388(void)
         selection = 1;
 
     if (selection == 1)
-        Func_080072f0(character_state, snapshot, 0x14c, (void *)0x03001388);
+        ((WordCopy)0x03001388)(character_state, snapshot, 0x14c);
 
     Func_08002df0(snapshot);
     Func_08077010(character);

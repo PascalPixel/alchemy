@@ -1,4 +1,25 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ *
+ * `Func_080072f0` is not a function.  0x080072e4 begins the GCC
+ * `__call_via_rN` veneer bank -- fifteen four-byte `bx rN; nop` entries,
+ * r0..lr, ending at 0x08007320 -- so 0x080072f0 is `__call_via_r3` and
+ * `bl 0x80072f0` calls whatever r3 holds.
+ *
+ * At every site in this file the ROM loads r3 from the literal pool with
+ * the constant 0x03001388, so the callee is the relocated IWRAM word copy
+ * at that address.  Its signature is not guessed: the EXACT source
+ * src/080d40ec.c declares it as
+ * `void *(*)(void *destination, const void *source, s32 size)` and
+ * src/080e0524.c casts the same address to the same shape.
+ *
+ * This draft had modelled the callee as a fourth ARGUMENT (and as an
+ * `extern` data symbol at 0x03001388).  It was never data and never an
+ * argument: it is the call target.
+ */
 #include "types.h"
+
+typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -7,7 +28,6 @@ void Func_080030f8(u32);
 u8 *Func_08004970(s32);
 s32 Func_080063bc(void *, s32);
 void Func_08006458(void);
-void Func_080072f0(s32, s32, s32, s32);
 s32 Func_08077000(s32);
 s32 Func_08077008(s32);
 s32 Func_080b6a60(u16 *);
@@ -37,8 +57,8 @@ void Func_080b5f0c(void) {
     var_r5_2 = 0;
     if (temp_r0 > 0) {
 loop_4:
-        Func_080072f0((s32) temp_r6, Func_08077008(ids[var_r5_2]),
-            0x154, 0x03001388);
+        ((WordCopy)0x03001388)((void *)temp_r6,
+            (const void *)Func_08077008(ids[var_r5_2]), 0x154);
         M2C_FIELD(temp_r6, s8 *, 0x12A) = 2;
         M2C_FIELD(temp_r3, s8 *, ids[var_r5_2] + 0x48) =
             (s8)(var_r5_2 - 0x80);
@@ -63,7 +83,8 @@ loop_8:
     }
     Func_08002df0(temp_r6);
     temp_r6_2 = Func_08004970(0x140);
-    Func_080072f0((s32) temp_r6_2, Func_08077000(0), 0x140, 0x03001388);
+    ((WordCopy)0x03001388)((void *)temp_r6_2,
+        (const void *)Func_08077000(0), 0x140);
     var_r1 = 0;
     if ((s32) M2C_FIELD(temp_r6_2, s32 *, 0x108) > 0) {
         var_r2 = temp_r6_2 + 8;

@@ -1,4 +1,26 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ *
+ * `Func_08007304` is not functions.  0x080072e4 begins the GCC
+ * `__call_via_rN` veneer bank -- fifteen four-byte `bx rN; nop` entries,
+ * r0..lr, ending at 0x08007320 -- so a `bl` into that range calls
+ * whatever the named register holds.
+ *
+ * 0x08007304 is `__call_via_r8`.  All three sites (0x080b9512, 0x080b951c,
+ * 0x080b9526) dispatch r8, which takes its value from r1, loaded from the
+ * pool at 0x080b9550 with 0x03001388 -- one load hoisted out of the sort
+ * loop and reused by all three swaps.
+ *
+ * The callee's signature is not guessed: the EXACT source
+ * src/080d40ec.c declares 0x03001388 as
+ * `void *(*)(void *destination, const void *source, s32 size)`, and
+ * src/080e0524.c casts the same address to the same shape.  The previous
+ * draft already had the right arity and argument order -- only the callee
+ * was wrong.
+ */
 #include "types.h"
+
+typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 
 struct Record_080b9470 {
     s16 owner;
@@ -18,7 +40,6 @@ struct ActionDefinition_080b9470 {
 void *Func_08077008(s32 owner);
 s32 Func_080771e8(s32 group, s32 index);
 struct ActionDefinition_080b9470 *Func_08077080(s32 action);
-void *Func_08007304(void *destination, const void *source, u32 size);
 
 void Func_080b9470(struct Record_080b9470 *records, s32 count)
 {
@@ -52,9 +73,9 @@ void Func_080b9470(struct Record_080b9470 *records, s32 count)
         for (index = count - 1; index > 0; index--) {
             if ((s16)records[index].sort_key >
                 (s16)records[index - 1].sort_key) {
-                Func_08007304(&temporary, &records[index], 16);
-                Func_08007304(&records[index], &records[index - 1], 16);
-                Func_08007304(&records[index - 1], &temporary, 16);
+                ((WordCopy)0x03001388)(&temporary, &records[index], 16);
+                ((WordCopy)0x03001388)(&records[index], &records[index - 1], 16);
+                ((WordCopy)0x03001388)(&records[index - 1], &temporary, 16);
                 swapped++;
             }
         }

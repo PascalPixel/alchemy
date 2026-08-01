@@ -1,5 +1,26 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ *
+ * `Func_080072f0` is not a function.  0x080072e4 begins the GCC
+ * `__call_via_rN` veneer bank -- fifteen four-byte `bx rN; nop` entries,
+ * r0..lr, ending at 0x08007320 -- so 0x080072f0 is `__call_via_r3` and
+ * `bl 0x80072f0` calls whatever r3 holds.
+ *
+ * At every site in this file the ROM loads r3 from the literal pool with
+ * the constant 0x03001388, so the callee is the relocated IWRAM word copy
+ * at that address.  Its signature is not guessed: the EXACT source
+ * src/080d40ec.c declares it as
+ * `void *(*)(void *destination, const void *source, s32 size)` and
+ * src/080e0524.c casts the same address to the same shape.
+ *
+ * Note what the previous draft had already half-seen: it passed
+ * 0x03001388 as a fourth ARGUMENT.  That value was never an argument --
+ * it is the callee, and the register load that produced it is the call
+ * target, not a parameter.
+ */
 #include "types.h"
 
+typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 typedef struct {
     u32 allocation;
     u16 attr0;
@@ -43,7 +64,6 @@ void Func_08003f3c(void *);
 void Func_080030f8(s32);
 void Func_08002df0(void *);
 void *Func_08004938(s32);
-void Func_080072f0(const void *, void *, s32, const void *);
 MenuWindow_08023178 *Func_080162d4(s32, s32, s32, s32, s32);
 void Func_08016418(void *, s32);
 void Func_08016498(void *);
@@ -420,8 +440,7 @@ refresh:
                 if (kind == 0 && SHALF_AT(data, 56) == 0)
                     kind = 16;
                 snapshot = Func_08004938(0x14c);
-                Func_080072f0(snapshot, data, 0x14c,
-                              (const void *)0x03001388);
+                ((WordCopy)0x03001388)(snapshot, data, 0x14c);
                 old_60 = BYTE_AT(data, 60);
                 old_62 = BYTE_AT(data, 62);
                 old_64 = BYTE_AT(data, 64);
@@ -440,8 +459,7 @@ refresh:
                 case 15: delta = SBYTE_AT(data, 0x147) * 20; break;
                 default: break;
                 }
-                Func_080072f0(data, snapshot, 0x14c,
-                              (const void *)0x03001388);
+                ((WordCopy)0x03001388)(data, snapshot, 0x14c);
                 Func_08002df0(snapshot);
                 Func_08019908(delta, 5);
                 description_id = kind + 0x8d2;

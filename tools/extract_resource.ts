@@ -151,8 +151,33 @@ function encodeGeneralInner(decoded: Uint8Array, tokens: GeneralToken[], prefill
     for (let index = 0; index < length; index++) replay.push(replay[replay.length - distance]);
     cursor += length;
   }
-  if (cursor !== decoded.length || !Buffer.from(replay.slice(prefill)).equals(Buffer.from(decoded)))
-    throw new DecodeError("token plan does not reconstruct decoded input");
+  // A failure here must name a COORDINATE, not just a verdict.
+  //
+  // This threw a bare "token plan does not reconstruct decoded input", and that
+  // one sentence cost several people a great deal: three lanes chased "the 39c
+  // complaint" without knowing which resource it was, whether the replay was
+  // long or short, or where it first went wrong. Every one of them had to
+  // re-instrument this line by hand to learn anything at all. The divergence
+  // offset is the whole diagnosis — 0x10cc with 55 bytes differing and equal
+  // total lengths says "localized layout shift", which is a different bug from
+  // a length mismatch — and it costs one loop to compute on a path that is
+  // already throwing.
+  const rebuilt = Buffer.from(replay.slice(prefill));
+  const target = Buffer.from(decoded);
+  if (cursor !== decoded.length || !rebuilt.equals(target)) {
+    let at = -1;
+    const shared = Math.min(rebuilt.length, target.length);
+    for (let index = 0; index < shared; index++) {
+      if (rebuilt[index] !== target[index]) { at = index; break; }
+    }
+    let differing = 0;
+    for (let index = 0; index < shared; index++) if (rebuilt[index] !== target[index]) differing++;
+    throw new DecodeError(
+      "token plan does not reconstruct decoded input " +
+        `(replay=${rebuilt.length} decoded=${target.length} cursor=${cursor} ` +
+        `first_diff=${at < 0 ? "none" : `0x${at.toString(16)}`} differing=${differing})`,
+    );
+  }
   return finishBits(bits, header);
 }
 

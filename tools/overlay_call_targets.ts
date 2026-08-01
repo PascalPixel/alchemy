@@ -242,6 +242,34 @@ function selfTest(): void {
     throw new Error("mixed case and flags must not disturb bounds");
   if (parseBounds(["resource_3af", "--json"]).length !== 0)
     throw new Error("neither the overlay name nor a flag is a bound");
+  // Partial annotation must be DETECTABLE. This is the check that would have
+  // caught the no-bounds bug: the resolver covering none of the listing's calls
+  // is just the extreme case of covering some of them.
+  const twoCalls =
+    " 2000388:\tb520      \tpush\t{r5, lr}\n" +
+    " 20003b4:\tf004 f9dd \tbl\t0x2004772\n" +
+    " 20003ee:\tf004 f9f5 \tbl\t0x20047dc\n";
+  if (unannotatedCallSites(twoCalls, new Map()).length !== 2)
+    throw new Error("an unresolved listing must report every bl site");
+  const half = unannotatedCallSites(twoCalls, new Map([[0x3b4, "Func_080770c0"]]));
+  if (half.length !== 1 || half[0] !== 0x3ee)
+    throw new Error("partial coverage must report exactly the uncovered site");
+  const full = new Map([
+    [0x3b4, "Func_080770c0"],
+    [0x3ee, "Func_0808a038"],
+  ]);
+  if (unannotatedCallSites(twoCalls, full).length !== 0)
+    throw new Error("full coverage must report nothing");
+  if (!annotate(twoCalls, full).includes("bl Func_0808a038"))
+    throw new Error("a fully covered listing must still annotate");
+  // Conditional branches are not calls. `bls`/`blt` share the first two letters
+  // and must not be demanded of the resolver.
+  const conditional = " 20012f4:\td90a      \tbls.n\t0x200130c\n";
+  if (unannotatedCallSites(conditional, new Map()).length !== 0)
+    throw new Error("bls is a branch, not a call site");
+  // Pool-word footer lines carry no colon and must never be read as sites.
+  if (unannotatedCallSites("  0x20003fc = 0x02000240\n", new Map()).length !== 0)
+    throw new Error("a pool footer line is not a call site");
   console.log("self-test=ok");
 }
 
@@ -268,6 +296,38 @@ export function annotate(listing: string, sites: Map<number, string>): string {
     .join("\n");
 }
 
+/**
+ * Every `bl` line in the listing whose site the resolver did NOT cover.
+ *
+ * This exists because partial annotation is indistinguishable from complete
+ * annotation by eye. Run without bounds, `--annotate` resolves only
+ * *unconverted inventory rows*, so a listing for a banked or published-population
+ * row came back with every `bl` untouched — and an untouched `bl` in an overlay
+ * listing carries objdump's pc-relative target, which is wrong. Measured on
+ * `resource_39e` 0x02000388: 0 of 2 sites annotated with no bounds, 2 of 2 with
+ * `388 414`. No error, no warning, and the output looks exactly like a listing
+ * that had nothing worth renaming.
+ *
+ * Requiring bounds alone would not be enough: bounds that merely *disagree* with
+ * the `overlay_show` half annotate the overlap and leave the rest, equally
+ * quietly. So the invariant is checked on the listing itself — every call site
+ * present must have been resolved — which catches both spellings of the mistake.
+ *
+ * Matches `bl ` with a trailing space so that `bls`, `blt` and friends, which are
+ * conditional branches and not calls, are not counted.
+ */
+export function unannotatedCallSites(listing: string, sites: Map<number, string>): number[] {
+  const missed: number[] = [];
+  for (const line of listing.split("\n")) {
+    const at = /^\s*([0-9a-f]+):/.exec(line);
+    if (at === null) continue;
+    if (!/\bbl\s/.test(line)) continue;
+    const site = Number.parseInt(at[1], 16) - OVERLAY_BASE;
+    if (!sites.has(site)) missed.push(site);
+  }
+  return missed;
+}
+
 function main(): void {
   const args = Bun.argv.slice(2);
   if (args.includes("--self-test")) return selfTest();
@@ -288,6 +348,15 @@ function main(): void {
   }
   if (args.includes("--annotate")) {
     // Read an overlay_show listing on stdin and rewrite its bl names in place.
+    if (bounds.length === 0) {
+      throw new Error(
+        "--annotate needs the SAME bounds as the overlay_show that produced the listing:\n" +
+          "  overlay_show <ov> A B | overlay_call_targets <ov> A B --annotate\n" +
+          "Without bounds only unconverted inventory rows resolve, so a banked or " +
+          "published-population row's listing keeps objdump's pc-relative — and therefore " +
+          "wrong — bl targets, with no error and nothing to see.",
+      );
+    }
     const image = overlayImage(overlay);
     const prologues = new Set(
       inventory().filter((row) => row.overlay === overlay && row.starts_with_prologue).map((row) => row.offset),
@@ -302,7 +371,22 @@ function main(): void {
           : `Func_${(OVERLAY_BASE + site.target).toString(16)}`,
       );
     }
-    console.log(annotate(readFileSync(0, "utf8"), names));
+    const listing = readFileSync(0, "utf8");
+    const missed = unannotatedCallSites(listing, names);
+    if (missed.length > 0) {
+      const shown = missed
+        .slice(0, 5)
+        .map((site) => `0x${(OVERLAY_BASE + site).toString(16)}`)
+        .join(", ");
+      throw new Error(
+        `${missed.length} bl site(s) in the listing were not resolved, starting at ${shown}.\n` +
+          "The bounds passed here do not cover the listing on stdin. Pass the SAME bounds to " +
+          "both halves of the pipe — a partially annotated listing is indistinguishable by eye " +
+          "from a fully annotated one, and every unresolved bl still carries objdump's wrong " +
+          "pc-relative target.",
+      );
+    }
+    console.log(annotate(listing, names));
     return;
   }
   const image = overlayImage(overlay);

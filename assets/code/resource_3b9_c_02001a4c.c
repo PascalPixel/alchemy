@@ -1,6 +1,7 @@
 typedef int s32;
 typedef short s16;
 typedef unsigned char u8;
+extern u8 Data_02000240[];
 
 /*
  * resource_3b9 owner at 0x02001a4c, 508 bytes: the parked 66-entry
@@ -23,6 +24,16 @@ typedef unsigned char u8;
  * were recovered here by re-disassembling those 182 bytes as Thumb at
  * their runtime address, which is where the twelve arms and all their
  * call targets below come from.
+ *
+ * CASE ORDER IS LOAD-BEARING, and it is not the selector order.  The arms
+ * are written 5, 69, 7, 70, 64, 65, 66, 12, 21, 67, 68, 31 because that is
+ * the order the reference lays their bodies out, and the jump table stores
+ * their absolute addresses: written in ascending selector order the row is
+ * 164 bytes wrong, and every one of those bytes is layout, not content.
+ * The callee names are keyed to the reference's instruction addresses (the
+ * `name = insn + 2 + target_offset` identity), so putting each arm back at
+ * its reference address is what makes the names emit the right bl bytes --
+ * the ordering and the naming are one fix, not two.
  *
  * Uncertainty: none of the callees are identified beyond call shape.
  * Func_020047ec is called with two arguments by selector 69 and with
@@ -66,14 +77,38 @@ void Func_02001a4c(void)
     s32 selector;
 
     Func_020045de(1);
-    selector = *(s16 *)((u8 *)0x02000240 + 450);
+    {
+        s32 off = 450;
+
+        selector = *(s16 *)(Data_02000240 + off);
+    }
     switch (selector) {
     case 5:
         Func_020047da(8, 2);
         Func_020047e2(9, 2);
         break;
+    case 69:
+        Func_020047ec(8, 2);
+        Func_020047f4(9, 2);
+        if (Func_0200475a(0x109) != 0)
+            break;
+        Func_020031b2();
+        break;
     case 7:
         Func_02002e44();
+        break;
+    case 70:
+        Func_0200323a();
+        break;
+    case 64:
+        Func_0200388c();
+        Func_020047a0();
+        break;
+    case 65:
+        Func_02003fa2();
+        break;
+    case 66:
+        Func_020041b8();
         break;
     case 12:
         Func_02004796(324);
@@ -89,38 +124,18 @@ void Func_02001a4c(void)
         Func_020047c2(0x90e);
         Func_0200426a();
         break;
-    case 31:
-        Func_020047ea(1);
-        Func_020047f0(2);
-        Func_020047f6(3);
-        Func_020047ec(0x90f);
-        Func_02004590();
-        break;
-    case 64:
-        Func_0200388c();
-        Func_020047a0();
-        break;
-    case 65:
-        Func_02003fa2();
-        break;
-    case 66:
-        Func_020041b8();
-        break;
     case 67:
         Func_02004428();
         break;
     case 68:
         Func_02004512();
         break;
-    case 69:
-        Func_020047ec(8, 2);
-        Func_020047f4(9, 2);
-        if (Func_0200475a(0x109) != 0)
-            break;
-        Func_020031b2();
-        break;
-    case 70:
-        Func_0200323a();
+    case 31:
+        Func_020047ea(1);
+        Func_020047f0(2);
+        Func_020047f6(3);
+        Func_020047ec(0x90f);
+        Func_02004590();
         break;
     default:
         break;

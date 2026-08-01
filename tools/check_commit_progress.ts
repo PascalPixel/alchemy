@@ -199,7 +199,10 @@ async function main(argv: string[]): Promise<void> {
   const report = stagedReport(target);
   const previous = git(["log", "-1", "--format=%s"]).trim() || undefined;
   const previousMetric = previous === undefined ? null : parseSubject(previous);
-  if (previousMetric !== null && report.executable_bytes !== previousMetric.executableBytes &&
+  // parseSubject returns undefined for a subject that carries no counter (a
+  // commit that bypassed this hook). Guard both empties: one such commit on the
+  // branch would otherwise crash the hook for every commit that follows it.
+  if (previousMetric != null && report.executable_bytes !== previousMetric.executableBytes &&
       !paths.includes(`metrics/${target}-executable.json`)) {
     throw new Error(`denominator correction requires staged metrics/${target}-executable.json`);
   }

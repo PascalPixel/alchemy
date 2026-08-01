@@ -41,9 +41,10 @@ typedef unsigned char u8;
  * No arguments and no return value: r0 is never read and never written.
  */
 
-extern u8 *Data_03001ebc;   /* the scene workspace pointer */
+extern u8 *Data_03001ebc;
+extern u8 Value_00001018;   /* the scene workspace pointer */
 
 void Func_02003410(void)
 {
-    *(u16 *)(Data_03001ebc + (191 << 1)) = 0x1018;
+    *(u16 *)(Data_03001ebc + (191 << 1)) = (int)&Value_00001018;
 }

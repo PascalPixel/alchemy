@@ -284,3 +284,99 @@ sharing a residual *and* a measurement across the parked set before it lands.
 Symmetry is not evidence. Seven modes proposed by inspection this session were
 wrong; the three that worked came from `-da` dumps and gating passes one at a
 time.
+
+## QUEUED ITEM — per-call-site granularity for `-mcall-arg0-move-first` (2026-08-01, mercury)
+
+**Status: specified, with two reproducers and a readable rule. Implementable
+from this section without re-deriving anything.**
+
+### What the mode does today
+
+`-mcall-arg0-move-first` (the only member of its family in the fork —
+confirmed by `strings dist/cc1 | grep -oE '^call-[a-z0-9-]+$'`) puts the
+argument-0 register setter ahead of its immediate companions at a call.
+It is **whole-function**: routed per source in
+`CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES`, applied to every call site in the
+translation unit.
+
+### The reference's own rule
+
+Read off two overlay rows in different overlays. Within one arm of a
+dispatcher, the reference orders a two-argument call's register setters as:
+
+- the **last** call of the arm sets **r0 first**;
+- **every earlier** call of the arm sets **r1 first**.
+
+Where an arm falls through into the next case, its last call is the
+*one-argument* call, so the last **two**-argument call of that arm is NOT
+last and stays r1-first.
+
+This fork gets the general case right and mis-handles exactly the ends: it
+promotes the last two-argument call of a fallthrough arm as though it were
+the arm's last call, and (in the other direction) declines to promote where
+the reference does.
+
+### Reproducer 1 — `resource_3c4:0cd0`, wants arg0-first at 2 of 4 sites
+
+Source: `work/claude/notes/3c4_0cd0_working_copy.c` (mercury worktree).
+
+```
+bun tools/overlay_adopt.ts resource_3c4:0cd0 --source <src> --where
+  -> adopt=rejected differing_bytes=4
+```
+
+The reference's final basic block holds four structurally identical
+two-argument calls and uses **both** orderings: arg0-first at 0x02000d50 and
+0x02000d92, arg1-first at 0x02000d3c and 0x02000d9a. Turning the mode on
+fixes 0x02000d92 and breaks the other two — 4 bytes becomes worse.
+
+### Reproducer 2 — `resource_396:1424`, wants arg1-first at 2 of ~30 sites
+
+Source: `work/claude/notes/396_1424_working_copy.c`, adopt with `--span 392`.
+
+```
+bun tools/overlay_adopt.ts resource_396:1424 --source <src> --span 392 --where
+  -> adopt=rejected differing_bytes=6
+  -> differing_at 0x20014da+4 0x200157d+1 0x200157f+1
+```
+
+Both differing sites are the **fourth two-argument call of an eight-call arm
+that falls through** (case 4 into case 1 at 0x020014e8; case 11 into case 8
+at 0x0200158a). The three earlier two-argument calls in each of those arms
+come out right, and so does every other site in the function.
+
+### What was measured and does NOT reach it
+
+Neither row moves under: `-fno-schedule-insns2`, `-fschedule-insns`,
+`-fno-schedule-insns`, `-fsched-low-dest-first`, `-fsched-high-dest-first`,
+`-fno-sched-depend-count`, `-fsched-store-first`, `-fno-sched-alias`,
+`-fno-cse-two-insn-immediate`, `-fno-cse-pool-immediate`,
+`-fno-gcse-insert-load`, `-fno-regmove`, `-fno-expensive-optimizations`,
+`-mthumb-immediate-latency`, `-mhigh-register-move-first`,
+`-fthumb-move-before-alu`, `-fthumb-orr-dead-input-reuse`,
+`-fno-canonicalize-comparison`, `-fno-thumb-contiguous-immediate`, or
+`-mcall-arg0-move-first` itself. **The order does not change under any
+scheduler flag, so it is emission order, decided before scheduling** — the
+fix belongs where the call's argument setters are emitted, not in a
+scheduling hook.
+
+Source spellings tried and rejected across the two rows: pointer aliases,
+`void *` casts, comma expressions, unsigned literals, shared and per-site
+constant locals, a dummy result local, argument locals on either operand,
+argument locals for the preceding call, an empty statement at the case
+label, removing the fallthrough comment, and three respellings of earlier
+statements in the same block to shift insn uids. The only spelling that
+flips the order — consuming the call's return value — overruns the span.
+
+### Acceptance test
+
+Both rows byte-exact: `3c4:0cd0` at 248 bytes and `396:1424` at 392 bytes,
+each with no source change from the reproducer above. Per §7, a fork change
+needs the rebuild, the re-pin, and the source-only build reproducing
+gs1-en.gba at SHA-1 `5c4695205413df7db52b9a184815a07783999971` before the
+re-pin is admissible — and then a routed set **and** a `tools/mode_sweep.ts`
+entry.
+
+**Do not land this as a wider whole-function mode.** Symmetry is not
+evidence (see the rejected hook above), and the whole point of this item is
+that the existing whole-function mode is what fails here.

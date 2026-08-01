@@ -32,16 +32,34 @@ struct FontEntry_080178b0 {
 #define FONT_080178B0 ((const struct FontEntry_080178b0 *)0x08031e24)
 
 /*
- * IWRAM veneers.  Func_080072f0 dispatches through the vector at 0x03000164
- * and clears a byte range; the assembly never initialises the third argument,
- * so that operation ignores it (zero is passed here to keep the C defined).
- * Func_080072f8 and Func_080072fc are the two glyph blitters; which one is
- * used depends on the glyph slot and the text mode, exactly as reproduced
- * below.
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ *
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
+ * range is an indirect call through the named register.
+ *
+ * THERE ARE NOT TWO GLYPH BLITTERS.  This file previously read 0x080072f8 and
+ * 0x080072fc as "the two glyph blitters" and filed an explicit Uncertainty
+ * about the asymmetry -- why the second glyph used the neighbouring veneer
+ * where the first used 0x080072f8.  That uncertainty dissolves: they are
+ * `__call_via_r5` and `__call_via_r6`, and at all twelve sites in this
+ * function BOTH hold the same pooled value, 0x03000214.  There is one
+ * blitter, called through whichever register the compiler had the address in.
+ * The asymmetry is a register-allocation detail with no meaning in the
+ * source, and the Uncertainty it produced is withdrawn rather than preserved.
+ *
+ * The other veneer here is real and was already understood: the site at
+ * 0x080178da is `__call_via_r3` dispatching the pooled 0x03000164, and this
+ * file's own note that the assembly never initialises the third argument
+ * still stands.  0x03000164 remains NOT established -- see the audit note.
+ *
+ * The blitter's argument shape is unchanged from the previous draft and was
+ * re-checked against the ROM at 0x08017920: r0 the glyph, r1 the destination,
+ * r2 the colour.  Only the callee was wrong.
  */
-void Func_080072f0(void *destination, s32 size, s32 value, s32 vector);
-void Func_080072f8(const void *glyph, void *destination, s32 colour);
-void Func_080072fc(const void *glyph, void *destination, s32 colour);
+typedef void (*Resident_03000164)(void *destination, s32 size, s32 value);
+typedef void (*GlyphBlit_03000214)(const void *glyph, void *destination,
+                                   s32 colour);
 
 /* Scratch bitmap geometry: 16 pixels per row, one byte per pixel. */
 #define BITMAP_STRIDE_080178B0 16
@@ -78,7 +96,7 @@ s32 Func_080178b0(s32 code, void *tile_data)
      */
     second_code = ((s32)((u32)code << 8)) >> 16;
 
-    Func_080072f0(bitmap, BITMAP_BYTES_080178B0, 0, 0x03000164);
+    ((Resident_03000164)0x03000164)(bitmap, BITMAP_BYTES_080178B0, 0);
 
     if (*(const u8 *)(state + 0xea4) != 0) {
         text_colour = 8;
@@ -98,17 +116,17 @@ s32 Func_080178b0(s32 code, void *tile_data)
          * Emphasised text: every copy is drawn twice, one pixel apart, and
          * the advance grows by one pixel to match.
          */
-        Func_080072f8(glyph, &bitmap[SHADOW_ORIGIN_080178B0],
+        ((GlyphBlit_03000214)0x03000214)(glyph, &bitmap[SHADOW_ORIGIN_080178B0],
                       shadow_colour);
-        Func_080072f8(glyph, &bitmap[SHADOW_ORIGIN_080178B0 + 1],
+        ((GlyphBlit_03000214)0x03000214)(glyph, &bitmap[SHADOW_ORIGIN_080178B0 + 1],
                       shadow_colour);
-        Func_080072f8(glyph, &bitmap[GLYPH_ORIGIN_080178B0], text_colour);
-        Func_080072f8(glyph, &bitmap[GLYPH_ORIGIN_080178B0 + 1], text_colour);
+        ((GlyphBlit_03000214)0x03000214)(glyph, &bitmap[GLYPH_ORIGIN_080178B0], text_colour);
+        ((GlyphBlit_03000214)0x03000214)(glyph, &bitmap[GLYPH_ORIGIN_080178B0 + 1], text_colour);
         advance += 1;
     } else {
-        Func_080072f8(glyph, &bitmap[SHADOW_ORIGIN_080178B0],
+        ((GlyphBlit_03000214)0x03000214)(glyph, &bitmap[SHADOW_ORIGIN_080178B0],
                       shadow_colour);
-        Func_080072f8(glyph, &bitmap[GLYPH_ORIGIN_080178B0], text_colour);
+        ((GlyphBlit_03000214)0x03000214)(glyph, &bitmap[GLYPH_ORIGIN_080178B0], text_colour);
     }
 
     if ((u16)second_code != 0) {
@@ -126,23 +144,22 @@ s32 Func_080178b0(s32 code, void *tile_data)
 
         mode = *(const u16 *)(state + 0xeac);
         if (mode == 1) {
-            Func_080072f8(glyph, slot + SHADOW_ORIGIN_080178B0,
+            ((GlyphBlit_03000214)0x03000214)(glyph, slot + SHADOW_ORIGIN_080178B0,
                           shadow_colour);
-            Func_080072f8(glyph, slot + SHADOW_ORIGIN_080178B0 + 1,
+            ((GlyphBlit_03000214)0x03000214)(glyph, slot + SHADOW_ORIGIN_080178B0 + 1,
                           shadow_colour);
-            Func_080072f8(glyph, slot + GLYPH_ORIGIN_080178B0, text_colour);
-            Func_080072f8(glyph, slot + GLYPH_ORIGIN_080178B0 + 1,
+            ((GlyphBlit_03000214)0x03000214)(glyph, slot + GLYPH_ORIGIN_080178B0, text_colour);
+            ((GlyphBlit_03000214)0x03000214)(glyph, slot + GLYPH_ORIGIN_080178B0 + 1,
                           text_colour);
             second_advance = (s16)(second_advance + 1);
         } else {
             /*
-             * Uncertainty: the second glyph uses the neighbouring veneer
-             * Func_080072fc here where the first uses Func_080072f8.  The
-             * asymmetry is present in the machine code and is preserved.
+             * The veneer asymmetry that used to be flagged here is resolved:
+             * both entries dispatch the same pooled 0x03000214.  See header.
              */
-            Func_080072fc(glyph, slot + SHADOW_ORIGIN_080178B0,
+            ((GlyphBlit_03000214)0x03000214)(glyph, slot + SHADOW_ORIGIN_080178B0,
                           shadow_colour);
-            Func_080072fc(glyph, slot + GLYPH_ORIGIN_080178B0, text_colour);
+            ((GlyphBlit_03000214)0x03000214)(glyph, slot + GLYPH_ORIGIN_080178B0, text_colour);
         }
 
         advance += (u16)second_advance;

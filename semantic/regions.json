@@ -1166,6 +1166,12 @@
       "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json, span walked from the prologue through every internal branch to its matching high-register unwind `pop {r3,r5,r6} / mov r8,r3 / ... / pop {r1} / bx r1` at 0x02000396, literal pool 0x020003a4-0x020003ab (0x03001e8c, 0x00000ea4) plus alignment excluded, next prologue at 0x020003ac"
     },
     {
+      "overlay": "resource_382",
+      "entry": "0x0200136c",
+      "span_bytes": 716,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_382), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; span read from the disassembly through the epilogue at 0x020015f4-0x020015fc, one alignment halfword, and the trailing fourteen-word literal pool 0x02001600-0x02001637 to the next function at 0x02001638, inside the assembled overlay image and not overlapping another recorded owner; hand-drafted from the bytes with every bl resolved as an absolute image offset (stored displacement + 2) rather than pc-relative -- the objdump listing reads the call at 0x020013ac as 0x0200144e where it is in fact 0x020000a0; tools/m2c_guard.ts finds no call-through-register site and no jump table here and reports 22 of 22 callees present in the draft."
+    },
+    {
       "overlay": "resource_383",
       "entry": "0x02000690",
       "span_bytes": 288,
@@ -1242,6 +1248,12 @@
       "entry": "0x02002564",
       "span_bytes": 312,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_383",
+      "entry": "0x02002758",
+      "span_bytes": 1096,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_383), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; a 13-entry jump table at image offset 0x2784 whose nine distinct arms all run PAST it to the shared epilogue at 0x02002b92-0x02002b9a, so the 1092 bytes a table-blind span reports is a lower bound; the bulk of the literal pool sits INSIDE the function at 0x02002af4-0x02002b2b, jumped over between arms, with one trailing pool word at 0x02002b9c; span read to the next function at 0x02002ba0, which is itself the callback this driver installs as 0x0200aba1, inside the assembled overlay image and not overlapping another recorded owner; hand-drafted from the bytes with every bl resolved as an absolute image offset (stored displacement + 2) and every table word as word - 0x8000 in the same space; tools/m2c_guard.ts finds no call-through-register site and reports 24 of 24 callees present in the draft."
     },
     {
       "overlay": "resource_383",
@@ -2474,6 +2486,12 @@
       "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json, span walked from the prologue to its matching interworking epilogue `pop {r5} / pop {r1} / bx r1` at 0x02000346, literal pool 0x0200034c (0x030001d8) excluded, next prologue at 0x02000350; byte-identical to the same routine in resource_385/39b/3a6/3b3/3be apart from the call_via `bl` encoding"
     },
     {
+      "overlay": "resource_39b",
+      "entry": "0x020012e0",
+      "span_bytes": 1104,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_39b), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; a 31-entry jump table at image offset 0x1368 whose ten distinct arms all run PAST it to the shared epilogue at 0x02001718, so the 1098 bytes a table-blind span reports is a lower bound; two arms fall THROUGH to the next rather than branch (sub-selector 1 into 2, 18..20 into 17) and two share a close at 0x0200168e, so the arms are not independent blocks; the bulk of the literal pool sits INSIDE the function at 0x020016a4-0x020016f3, jumped over between arms, with one alignment halfword and one trailing pool word at 0x0200172c; span read through the r8/r9/sl unspill and bx r1 at 0x0200171a-0x02001728 to the next function at 0x02001730, which this driver itself calls, inside the assembled overlay image and not overlapping another recorded owner; hand-drafted from the bytes with every bl resolved as an absolute image offset (stored displacement + 2) and every table word as word - 0x8000 in the same space; tools/m2c_guard.ts finds no call-through-register site and reports 36 of 36 callees present in the draft."
+    },
+    {
       "overlay": "resource_39c",
       "entry": "0x0200013c",
       "span_bytes": 472,
@@ -3314,6 +3332,12 @@
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {lr}) and returning (pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (three incoming sites per overlay_unindexed.ts), span read from the disassembly through the trailing four-word literal pool to the final bx r0 at 0x2003a6e, inside the assembled overlay image and not overlapping another recorded owner"
     },
     {
+      "overlay": "resource_3a5",
+      "entry": "0x02001638",
+      "span_bytes": 572,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_3a5), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; span read from the disassembly through the epilogue at 0x02001846-0x0200184e and the trailing nine-word literal pool 0x02001850-0x02001873 to the next function at 0x02001874, inside the assembled overlay image and not overlapping another recorded owner; hand-drafted from the bytes, with every bl target resolved as an absolute image offset (stored displacement + 2) rather than pc-relative -- a plain objdump listing annotates the twenty Func_080091b8 calls with twenty different targets that are all the one veneer at 0x02001d14; tools/m2c_guard.ts finds no call-through-register site and no jump table here and reports full call coverage against the draft."
+    },
+    {
       "overlay": "resource_3a6",
       "entry": "0x02000314",
       "span_bytes": 56,
@@ -4080,6 +4104,12 @@
       "entry": "0x02001804",
       "span_bytes": 144,
       "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,r7,lr} at 0x02001804, epilogue pop {r5,r6,r7} / pop {r0} / bx r0 at 0x0200188a-0x0200188e; the one-word literal pool at 0x02001890 (0x03001ebc) is the last instruction's own pool load and is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x02001894 (0x02001804-0x02001894, 144 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02002ff0",
+      "span_bytes": 884,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_3b1), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; TWO jump tables on the same sub-selector, at image offsets 0x3028 (24 entries, four arms) and 0x30f0 (30 entries, twenty arms), whose arms all run PAST their tables to the shared epilogue at 0x02003320-0x02003326, so the 824 bytes a table-blind span reports is a lower bound; span read through that epilogue and the fifteen-word literal pool 0x02003328-0x02003363 to the next function at 0x02003364, which this driver itself calls, inside the assembled overlay image and not overlapping another recorded owner; hand-drafted from the bytes with every bl resolved as an absolute image offset (stored displacement + 2) and every table word as word - 0x8000 in the same space; tools/m2c_guard.ts finds no call-through-register site and reports 31 of 31 callees present in the draft."
     },
     {
       "overlay": "resource_3b1",
@@ -5706,6 +5736,12 @@
       "entry": "0x02000608",
       "span_bytes": 696,
       "evidence": "register-spill/high-register prologue through outer bx return at 0x020008a0 and alignment/literal pool before next owner 0x020008c0; apparent 0x020007de and 0x02000902 entries are hidden-context services"
+    },
+    {
+      "overlay": "resource_3bd",
+      "entry": "0x02003644",
+      "span_bytes": 1004,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_3bd), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; the nineteen-word literal pool at 0x020039b8-0x02003a03 sits INSIDE the function with the tail at 0x02003a04-0x02003a28 after it and one further pool word at 0x02003a2c, so a span measured as code-then-pool stops 118 bytes early; span read through the r8 unspill and bx r1 at 0x02003a1e-0x02003a28 to the next function at 0x02003a30, inside the assembled overlay image and not overlapping another recorded owner; hand-drafted from the bytes with every bl resolved as an absolute image offset (stored displacement + 2) rather than pc-relative; tools/m2c_guard.ts finds no call-through-register site and no jump table here and reports 14 of 14 callees present in the draft."
     },
     {
       "overlay": "resource_3be",

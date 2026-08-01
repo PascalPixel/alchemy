@@ -48,6 +48,12 @@ const OVERLAY_ASSEMBLY = /^(resource_[0-9a-f]+)_overlay\.s$/i;
 const OVERLAY_SERIES = "golden-sun-thumb-overlay-series";
 
 export type CoverageCategory = "exact_c" | "semantic_c" | "assembly" | "retained_asm" | "asset_data";
+export type AssetMaturityCategory =
+  | "asset_objects"
+  | "asset_color"
+  | "asset_bw"
+  | "asset_bytes"
+  | "asset_unclassified";
 const RETAINED_ASM_FILL = "#ff8a00";
 
 // CoverageCategory order is also the stacking order inside a tile: exact at the bottom.
@@ -70,7 +76,12 @@ export interface Span {
 export interface Tile {
   label: string;
   bytes: number;
-  categories: Partial<Record<CoverageCategory, number>>;
+  categories: Partial<Record<CoverageCategory | AssetMaturityCategory, number>>;
+  /** Logical folders for the SpaceMonger-style dashboard projection. */
+  group?: string;
+  subgroup?: string;
+  /** Physical ROM/RAM address used to assign honest address-bank owners. */
+  address?: number;
 }
 
 export interface Area {
@@ -309,46 +320,75 @@ export function exactMainSpans(
  * label followed by the `.space` reservation that stands in for the compiled
  * C body.
  */
-export function overlayPlaceholderSpans(source: string): Span[] {
-  const spans: Span[] = [];
-  let address: number | undefined;
-  let inPlaceholder = false;
+export interface OverlayOwner {
+  label: string;
+  entry: number;
+  spans: Span[];
+}
+
+export function overlayPlaceholderOwners(source: string): OverlayOwner[] {
+  const owners: OverlayOwner[] = [];
+  let owner: OverlayOwner | undefined;
+  let cursor = 0;
+  const flush = (): void => {
+    if (owner !== undefined && owner.spans.length > 0) owners.push(owner);
+    owner = undefined;
+  };
   for (const line of source.split(/\r?\n/)) {
     const label = /^\s*AlchemyC_([0-9a-f]{8}):\s*$/i.exec(line);
     if (label) {
-      address = Number.parseInt(label[1], 16);
-      inPlaceholder = true;
+      flush();
+      cursor = Number.parseInt(label[1], 16);
+      owner = { label: `AlchemyC_${label[1].toLowerCase()}`, entry: cursor, spans: [] };
       continue;
     }
-    if (inPlaceholder && (/^\s*$/.test(line) || /^\s*\.L_[0-9a-z_.$]+:\s*$/i.test(line))) continue;
+    if (owner !== undefined && (/^\s*$/.test(line) || /^\s*\.L_[0-9a-z_.$]+:\s*$/i.test(line))) continue;
     const reservation = /^\s*\.space\s+(0x[0-9a-f]+|\d+)\s*$/i.exec(line);
-    if (reservation && inPlaceholder && address !== undefined) {
+    if (reservation && owner !== undefined) {
       const size = Number.parseInt(reservation[1], 0);
-      spans.push({ start: address, end: address + size });
-      address += size;
+      owner.spans.push({ start: cursor, end: cursor + size });
+      cursor += size;
       continue;
     }
-    if (line.trim()) inPlaceholder = false;
+    if (line.trim()) flush();
   }
-  return normalize(spans);
+  flush();
+  return owners;
 }
 
-export function exactOverlaySpans(tree: SourceTree): Map<string, Span[]> {
-  const owned = new Map<string, Span[]>();
+export function overlayPlaceholderSpans(source: string): Span[] {
+  return normalize(overlayPlaceholderOwners(source).flatMap((owner) => owner.spans));
+}
+
+export function exactOverlayOwners(tree: SourceTree): Map<string, OverlayOwner[]> {
+  const owned = new Map<string, OverlayOwner[]>();
   for (const name of tree.list("assets/code")) {
     const match = OVERLAY_ASSEMBLY.exec(name);
     if (!match) continue;
     const source = tree.read(`assets/code/${name}`);
     if (source === undefined) continue;
-    const spans = overlayPlaceholderSpans(source);
-    if (spans.length) owned.set(match[1], spans);
+    const owners = overlayPlaceholderOwners(source).filter((owner) => {
+      const cPath = `assets/code/${match[1]}_c_${hex8(owner.entry)}.c`;
+      const cSource = tree.read(cPath);
+      return cSource !== undefined && canonicalCSource(cSource);
+    });
+    if (owners.length) owned.set(match[1], owners);
   }
   return owned;
+}
+
+export function exactOverlaySpans(tree: SourceTree): Map<string, Span[]> {
+  return new Map([...exactOverlayOwners(tree)].map(([overlay, owners]) => [
+    overlay,
+    normalize(owners.flatMap((owner) => owner.spans)),
+  ]));
 }
 
 export interface SemanticCoverage {
   main: Map<number, Span[]>;
   overlays: Map<string, Span[]>;
+  /** Natural source-owner spans before adjacent coverage is normalized. */
+  overlayOwners: Map<string, Span[]>;
   sources: number;
   unresolved: string[];
   mainCensusClosed: boolean;
@@ -369,6 +409,7 @@ export function semanticSpans(
   const limit = executable.at(-1)?.end ?? ROM_BASE;
   const main = new Map<number, Span[]>();
   const overlays = new Map<string, Span[]>();
+  const overlayOwners = new Map<string, Span[]>();
   const unresolved: string[] = [];
   let sources = 0;
   let mainCensusClosed = false;
@@ -437,7 +478,9 @@ export function semanticSpans(
       unresolved.push(`semantic/overlays/${name}`);
       continue;
     }
-    overlays.set(overlay, [...(overlays.get(overlay) ?? []), { start: address, end: address + span }]);
+    const owner = { start: address, end: address + span };
+    overlayOwners.set(overlay, [...(overlayOwners.get(overlay) ?? []), owner]);
+    overlays.set(overlay, [...(overlays.get(overlay) ?? []), owner]);
   }
 
   // A claim is only honoured for an overlay that actually carries semantic
@@ -449,7 +492,7 @@ export function semanticSpans(
     overlays.set(overlay, normalize([...(overlays.get(overlay) ?? []), ...extent]));
   }
   for (const [overlay, spans] of overlays) overlays.set(overlay, normalize(spans));
-  return { main, overlays, sources, unresolved, mainCensusClosed };
+  return { main, overlays, overlayOwners, sources, unresolved, mainCensusClosed };
 }
 
 // --------------------------------------------------------------- ROM layout
@@ -458,6 +501,9 @@ interface RomRange {
   start: number;
   end: number;
   kind: string;
+  family: string;
+  label: string;
+  sources: string[];
 }
 
 function hexValue(value: unknown): number | undefined {
@@ -475,29 +521,86 @@ function hexValue(value: unknown): number | undefined {
 export function manifestRanges(tree: SourceTree, romSize: number): RomRange[] {
   const ranges: RomRange[] = [];
   const visited = new Set<string>();
-  const push = (start: number | undefined, size: number | undefined, kind: string): void => {
-    if (start === undefined || size === undefined || size <= 0) return;
-    if (start < ROM_BASE || start + size > ROM_BASE + romSize) return;
-    ranges.push({ start, end: start + size, kind });
-  };
-  const visit = (node: unknown, kind: string): void => {
-    if (Array.isArray(node)) {
-      const [, address, size] = node as unknown[];
-      if (node.length >= 3 && hexValue(address) !== undefined && hexValue(size) !== undefined) {
-        push(hexValue(address), hexValue(size), kind);
-        for (const child of node.slice(3)) visit(child, kind);
+  const sourceCache = new Map<string, string[]>();
+  const sourcesOf = (node: unknown, chain = new Set<string>()): string[] => {
+    const found = new Set<string>();
+    const gather = (value: unknown): void => {
+      if (Array.isArray(value)) {
+        for (const child of value) gather(child);
         return;
       }
-      for (const child of node) visit(child, kind);
+      if (value === null || typeof value !== "object") {
+        if (typeof value !== "string") return;
+        if (/\.json$/i.test(value)) {
+          if (chain.has(value)) return;
+          const cached = sourceCache.get(value);
+          if (cached !== undefined) {
+            for (const source of cached) found.add(source);
+            return;
+          }
+          const text = tree.read(value);
+          if (text === undefined) return;
+          try {
+            const nestedChain = new Set(chain).add(value);
+            const nested = sourcesOf(JSON.parse(text), nestedChain);
+            sourceCache.set(value, nested);
+            for (const source of nested) found.add(source);
+          } catch {
+            // An unreadable nested plan contributes no representation evidence.
+          }
+          return;
+        }
+        if (/\.[a-z0-9]{2,5}$/i.test(value)) found.add(value);
+        return;
+      }
+      for (const child of Object.values(value as Record<string, unknown>)) gather(child);
+    };
+    gather(node);
+    return [...found].sort();
+  };
+  const push = (
+    start: number | undefined,
+    size: number | undefined,
+    kind: string,
+    family: string,
+    label: string,
+    sources: string[],
+  ): void => {
+    if (start === undefined || size === undefined || size <= 0) return;
+    if (start < ROM_BASE || start + size > ROM_BASE + romSize) return;
+    ranges.push({ start, end: start + size, kind, family, label, sources });
+  };
+  const visit = (node: unknown, kind: string, family: string): void => {
+    if (Array.isArray(node)) {
+      // Manifest families use both [id, address, size, ...] and embedded
+      // [address, size, source] tuples; a few family records carry several
+      // address/size pairs in one row. Recognize every ROM-address pair rather
+      // than teaching the dashboard a display-specific version of each schema.
+      for (let index = 0; index + 1 < node.length; index++) {
+        const start = hexValue(node[index]);
+        const size = hexValue(node[index + 1]);
+        if (start === undefined || start < ROM_BASE || size === undefined || size <= 0) continue;
+        const identity = index > 0 && typeof node[index - 1] === "string" &&
+            hexValue(node[index - 1]) === undefined
+          ? node[index - 1]
+          : kind;
+        push(start, size, kind, family, `${String(identity)} · ${kind}`, sourcesOf(node));
+      }
+      for (const child of node) visit(child, kind, family);
       return;
     }
     if (node === null || typeof node !== "object") return;
     const record = node as Record<string, unknown>;
     const local = typeof record.kind === "string" ? record.kind : kind;
-    push(hexValue(record.address), hexValue(record.size), local);
+    const identity = record.id ?? record.name ?? record.source ?? record.index ?? local;
+    push(
+      hexValue(record.address), hexValue(record.size), local, family,
+      `${String(identity)} · ${local}`,
+      sourcesOf(record),
+    );
     for (const [key, value] of Object.entries(record)) {
       // Components describe decoded payloads, not ROM ranges.
-      if (key !== "components") visit(value, local);
+      if (key !== "components") visit(value, local, family);
     }
     for (const reference of [record.index, record.source, record.plan]) {
       if (typeof reference !== "string" || !reference.endsWith(".json")) continue;
@@ -506,20 +609,29 @@ export function manifestRanges(tree: SourceTree, romSize: number): RomRange[] {
       const text = tree.read(reference);
       if (text === undefined) continue;
       try {
-        visit(JSON.parse(text), local);
+        visit(JSON.parse(text), local, family);
       } catch {
         // A package index that cannot be parsed simply contributes no label.
       }
     }
   };
-  visit(readJson(tree, "assets/manifest.json"), "asset");
+  const manifest = readJson(tree, "assets/manifest.json");
+  for (const section of [manifest.series, manifest.regions, manifest.closure_packages]) {
+    if (!Array.isArray(section)) continue;
+    for (const entry of section) {
+      if (entry === null || typeof entry !== "object") continue;
+      const family = typeof entry.kind === "string" ? entry.kind : "asset";
+      visit(entry, family, family);
+    }
+  }
   return ranges;
 }
 
 /** Compressed ROM footprint and decoded size of every Thumb code overlay. */
 export function overlayStreams(tree: SourceTree): Map<string, { start: number; romBytes: number; decodedBytes: number }> {
   const streams = new Map<string, { start: number; romBytes: number; decodedBytes: number }>();
-  for (const series of readJson(tree, "assets/manifest.json").series ?? []) {
+  const manifest = readJson(tree, "assets/manifest.json");
+  for (const series of manifest.series ?? []) {
     if (series.kind !== OVERLAY_SERIES) continue;
     for (const entry of series.resources ?? []) {
       const [id, address, size, decoded] = entry as [string, string, string, string];
@@ -529,6 +641,24 @@ export function overlayStreams(tree: SourceTree): Map<string, { start: number; r
       if (start === undefined || romBytes === undefined) continue;
       streams.set(`resource_${id}`, { start, romBytes, decodedBytes: decodedBytes ?? 0 });
     }
+  }
+  // The final-battle module is selected through a dedicated layout rather than
+  // the ordinary 3xx series table. It is still compressed code and must not be
+  // painted as asset data merely because it has a different manifest schema.
+  for (const entry of [...(manifest.series ?? []), ...(manifest.closure_packages ?? [])]) {
+    if (entry.kind !== "golden-sun-final-battle-overlay-series" ||
+        typeof entry.source !== "string") continue;
+    const layoutText = tree.read(entry.source);
+    if (layoutText === undefined) continue;
+    const layout = JSON.parse(layoutText);
+    const start = hexValue(layout.address);
+    const romBytes = hexValue(layout.stream_size);
+    const decodedBytes = hexValue(layout.decoded_size);
+    const resource = hexValue(layout.resource_id);
+    if (start === undefined || romBytes === undefined || resource === undefined) continue;
+    streams.set(`resource_${resource.toString(16)}`, {
+      start, romBytes, decodedBytes: decodedBytes ?? 0,
+    });
   }
   return streams;
 }
@@ -545,6 +675,222 @@ const ASSET_BUCKETS: Array<{ id: string; label: string; match: RegExp }> = [
 export function assetBucket(kind: string): { id: string; label: string } {
   for (const bucket of ASSET_BUCKETS) if (bucket.match.test(kind)) return bucket;
   return { id: "other", label: "Other data" };
+}
+
+/**
+ * Natural ROM-data leaves. Every tile is backed by one addressed manifest
+ * range; overlapping parent packages lose the bytes owned by their more
+ * specific children, so nested manifests cannot double-count the cartridge.
+ * Compressed packages remain one package tile because decoded children have no
+ * honest one-to-one ROM-byte footprint. The final remainder is explicit.
+ */
+export function manifestAssetTiles(
+  tree: SourceTree,
+  romSize: number,
+  dataSpans: readonly Span[],
+): Tile[] {
+  const byExtent = new Map<string, RomRange>();
+  for (const range of manifestRanges(tree, romSize)) {
+    const key = `${range.start}:${range.end}`;
+    const previous = byExtent.get(key);
+    if (previous === undefined) {
+      byExtent.set(key, { ...range, sources: [...range.sources] });
+      continue;
+    }
+    previous.sources = [...new Set([...previous.sources, ...range.sources])].sort();
+    if (previous.kind === "asset" && range.kind !== "asset") {
+      previous.kind = range.kind;
+      previous.family = range.family;
+      previous.label = range.label;
+    }
+  }
+
+  // Children first. A parent can then claim only its still-unclaimed ROM
+  // footprint, preserving both byte conservation and the finest known unit.
+  const ranges = [...byExtent.values()].sort((left, right) =>
+    (left.end - left.start) - (right.end - right.start) ||
+    left.start - right.start || left.end - right.end || left.label.localeCompare(right.label));
+  const tiles: Tile[] = [];
+  let claimed: Span[] = [];
+  for (const range of ranges) {
+    const fresh = subtract(intersect([range], dataSpans), claimed);
+    const bytes = spanBytes(fresh);
+    if (bytes <= 0) continue;
+    claimed = normalize([...claimed, ...fresh]);
+    const tier = assetTierOf(range.sources, range.kind);
+    const categories: Tile["categories"] = { asset_data: bytes };
+    categories[tier] = bytes;
+    tiles.push({
+      label: `${range.label} · 0x${hex8(range.start)} · ${bytes.toLocaleString("en-US")} bytes`,
+      bytes,
+      categories,
+      group: range.family,
+      subgroup: range.family === range.kind ? undefined : range.kind,
+      address: range.start,
+    });
+  }
+
+  const unclassified = spanBytes(dataSpans) - spanBytes(claimed);
+  if (unclassified > 0) {
+    tiles.push({
+      label: "Unclassified ROM-image data",
+      bytes: unclassified,
+      categories: { asset_data: unclassified, asset_unclassified: unclassified },
+      group: "unclassified-rom-data",
+    });
+  }
+  return tiles;
+}
+
+interface BuiltAssetRegion {
+  address: number;
+  size: number;
+  kind: string;
+  sources?: string[];
+}
+
+/** Map every tracked asset source back to the real top-level manifest family
+ * that owns it. Nested JSON indexes are followed with their paths resolved
+ * relative to the referring index; first-party region/series owners take
+ * precedence over the later closure bookkeeping packages. */
+function assetFamiliesBySource(tree: SourceTree): Map<string, string> {
+  const manifest = readJson(tree, "assets/manifest.json");
+  const families = new Map<string, string>();
+  const visited = new Set<string>();
+  const visit = (value: unknown, family: string, base = ""): void => {
+    if (Array.isArray(value)) {
+      for (const child of value) visit(child, family, base);
+      return;
+    }
+    if (value !== null && typeof value === "object") {
+      for (const child of Object.values(value as Record<string, unknown>)) visit(child, family, base);
+      return;
+    }
+    if (typeof value !== "string" || !/\.[a-z0-9]{2,5}$/i.test(value)) return;
+    const path = /^(?:assets|asm|semantic|src)\//.test(value) ? value : join(base, value);
+    if (!families.has(path)) families.set(path, family);
+    if (!path.endsWith(".json") || visited.has(path)) return;
+    visited.add(path);
+    const text = tree.read(path);
+    if (text === undefined) return;
+    try {
+      visit(JSON.parse(text), family, dirname(path));
+    } catch {
+      // A malformed or intentionally non-JSON reference contributes no lineage.
+    }
+  };
+  for (const section of [manifest.series, manifest.regions, manifest.closure_packages]) {
+    if (!Array.isArray(section)) continue;
+    for (const entry of section) {
+      if (entry === null || typeof entry !== "object") continue;
+      const family = typeof entry.kind === "string" ? entry.kind : "asset";
+      visit(entry, family);
+    }
+  }
+  return families;
+}
+
+/**
+ * Leaves from the byte-verified asset build. This is the schema-aware expansion
+ * of every tracked package and series, so it is the authoritative live
+ * dashboard source when available; the generic tracked-manifest walk remains
+ * the clone-safe publication fallback.
+ */
+export function verifiedAssetTiles(
+  tree: SourceTree,
+  target: DecompTargetId,
+): Tile[] | undefined {
+  const text = tree.read("out/full/assets/manifest.json");
+  if (text === undefined) return undefined;
+  const document = JSON.parse(text) as {
+    format?: number;
+    rom_size?: number;
+    verification?: string;
+    regions?: BuiltAssetRegion[];
+  };
+  const registry = decompTarget(target);
+  if (document.format !== 1 || document.rom_size !== registry.romSize ||
+      !["rom", "source_only"].includes(document.verification ?? "") ||
+      !Array.isArray(document.regions)) {
+    throw new Error("verified asset manifest has an unsupported or incomplete schema");
+  }
+  const inventory = readJson(tree, `metrics/${target}-executable.json`) as ExecutableInventory;
+  const mainExecutable = unionIntervals(inventory.main.intervals);
+  const streams = overlayStreams(tree);
+  const codeSpans = normalize([
+    ...mainExecutable,
+    ...[...streams.values()].map((stream) => ({
+      start: stream.start,
+      end: stream.start + stream.romBytes,
+    })),
+  ]);
+  const dataSpans = subtract(
+    [{ start: ROM_BASE, end: ROM_BASE + registry.romSize }],
+    codeSpans,
+  );
+
+  const ordered = [...document.regions].sort((left, right) =>
+    left.address - right.address || left.size - right.size);
+  const lineage = manifestRanges(tree, registry.romSize);
+  const sourceFamilies = assetFamiliesBySource(tree);
+  const assetManifest = readJson(tree, "assets/manifest.json");
+  const topFamilies = new Set<string>(
+    [...(assetManifest.series ?? []), ...(assetManifest.regions ?? [])]
+      .map((entry) => entry.kind)
+      .filter((kind): kind is string => typeof kind === "string"),
+  );
+  const familyOf = (region: BuiltAssetRegion): string => {
+    const directSeries = `${region.kind}-series`;
+    if (topFamilies.has(directSeries)) return directSeries;
+    for (const source of region.sources ?? []) {
+      const family = sourceFamilies.get(source);
+      if (family !== undefined) return family;
+    }
+    const end = region.address + region.size;
+    return lineage
+      .filter((range) => range.start <= region.address && range.end >= end)
+      .sort((left, right) =>
+        (left.end - left.start) - (right.end - right.start))[0]?.family ?? region.kind;
+  };
+  let previousEnd = ROM_BASE;
+  const tiles: Tile[] = [];
+  let covered: Span[] = [];
+  for (const region of ordered) {
+    if (!Number.isSafeInteger(region.address) || !Number.isSafeInteger(region.size) || region.size <= 0 ||
+        region.address < ROM_BASE || region.address + region.size > ROM_BASE + registry.romSize) {
+      throw new Error("verified asset manifest contains an invalid region");
+    }
+    if (region.address < previousEnd) throw new Error("verified asset manifest regions overlap");
+    previousEnd = region.address + region.size;
+    const span = { start: region.address, end: region.address + region.size };
+    const data = intersect([span], dataSpans);
+    const bytes = spanBytes(data);
+    if (bytes <= 0) continue;
+    if (bytes !== region.size) {
+      throw new Error(`asset region 0x${hex8(region.address)} partially overlaps code`);
+    }
+    covered.push(...data);
+    const sources = region.sources ?? [];
+    const tier = assetTierOf(sources, region.kind);
+    const family = familyOf(region);
+    const categories: Tile["categories"] = { asset_data: bytes };
+    categories[tier] = bytes;
+    const identity = sources.length > 0 ? basename(sources[0]) : region.kind;
+    tiles.push({
+      label: `${identity} · ${region.kind} · 0x${hex8(region.address)}`,
+      bytes,
+      categories,
+      group: family,
+      subgroup: family === region.kind ? undefined : region.kind,
+      address: region.address,
+    });
+  }
+  const expected = spanBytes(dataSpans);
+  const actual = spanBytes(normalize(covered));
+  if (actual !== expected) {
+    throw new Error(`verified asset leaves cover ${actual} of ${expected} ROM-data bytes`);
+  }
+  return tiles;
 }
 
 // ------------------------------------------------------------- map assembly
@@ -696,9 +1042,15 @@ export function mainOwnerTiles(
   const tiles: Tile[] = [];
   const owned = normalize([...exact, ...semantic]);
   for (const executableSpan of normalize(executable)) {
+    const bankCuts: number[] = [];
+    for (let address = Math.floor(executableSpan.start / 0x10000) * 0x10000 + 0x10000;
+         address < executableSpan.end; address += 0x10000) {
+      bankCuts.push(address);
+    }
     const cuts = [...new Set([
       executableSpan.start,
       executableSpan.end,
+      ...bankCuts,
       ...boundaries.filter((address) => address > executableSpan.start && address < executableSpan.end),
     ])].sort((left, right) => left - right);
     for (let index = 0; index < cuts.length - 1; index++) {
@@ -716,8 +1068,62 @@ export function mainOwnerTiles(
           assembly: Math.max(bytes - exactBytes - semanticBytes - retainedBytes, 0),
           retained_asm: retainedBytes,
         },
+        group: `${hex8(Math.floor(span.start / 0x10000) * 0x10000).slice(0, 4)} · 64 KiB bank`,
+        address: span.start,
       });
     }
+  }
+  return tiles;
+}
+
+/** One tile per source-backed owner, plus one per contiguous unowned run. */
+export function overlayOwnerTiles(
+  overlay: string,
+  executable: readonly Span[],
+  exactOwners: readonly OverlayOwner[],
+  semanticOwners: readonly Span[],
+): Tile[] {
+  const extent = normalize(executable);
+  const exact = normalize(exactOwners.flatMap((owner) => owner.spans));
+  const tiles: Tile[] = [];
+
+  for (const owner of exactOwners) {
+    const bytes = spanBytes(intersect(owner.spans, extent));
+    if (bytes <= 0) continue;
+    tiles.push({
+      label: `${overlay.replace(/^resource_/, "")} · ${owner.label} · byte-exact C`,
+      bytes,
+      categories: { exact_c: bytes },
+      group: overlay.replace(/^resource_/, ""),
+      address: owner.entry,
+    });
+  }
+
+  const semanticCredited: Span[] = [];
+  for (const owner of semanticOwners) {
+    const credited = subtract(intersect([owner], extent), exact);
+    const bytes = spanBytes(credited);
+    if (bytes <= 0) continue;
+    semanticCredited.push(...credited);
+    tiles.push({
+      label: `${overlay.replace(/^resource_/, "")} · semantic owner 0x${hex8(owner.start)}`,
+      bytes,
+      categories: { semantic_c: bytes },
+      group: overlay.replace(/^resource_/, ""),
+      address: owner.start,
+    });
+  }
+
+  const owned = normalize([...exact, ...semanticCredited]);
+  for (const span of subtract(extent, owned)) {
+    const bytes = span.end - span.start;
+    tiles.push({
+      label: `${overlay.replace(/^resource_/, "")} · unowned assembly 0x${hex8(span.start)}–0x${hex8(span.end)}`,
+      bytes,
+      categories: { assembly: bytes },
+      group: overlay.replace(/^resource_/, ""),
+      address: span.start,
+    });
   }
   return tiles;
 }
@@ -767,6 +1173,10 @@ export interface BuildOptions {
    * disable only this publication check while retaining every ownership rule.
    */
   validateTrackedProgress?: boolean;
+  /** Prefer the schema-expanded, byte-verified build manifest for ROM-data
+   * leaves. Publication and the live dashboard enable this after verification;
+   * source/ref-only projections retain the tracked-manifest fallback. */
+  preferVerifiedAssets?: boolean;
 }
 
 export function buildCoverageMap(options: BuildOptions): CoverageMap {
@@ -788,15 +1198,22 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
   );
 
   const exactMain = [...exactMainSpans(options.exact, mainExecutable).values()].flat();
-  const exactOverlayByResource = exactOverlaySpans(options.exact);
-  for (const [overlay, spans] of exactOverlayByResource) {
-    exactOverlayByResource.set(overlay, intersect(spans, overlayExecutable.get(overlay) ?? []));
+  const exactOverlayOwnersByResource = exactOverlayOwners(options.exact);
+  const exactOverlayByResource = new Map<string, Span[]>();
+  for (const [overlay, owners] of exactOverlayOwnersByResource) {
+    exactOverlayByResource.set(
+      overlay,
+      intersect(owners.flatMap((owner) => owner.spans), overlayExecutable.get(overlay) ?? []),
+    );
   }
 
   const boundaries = mainBoundaries(options.exact);
   const semanticCoverage = options.semantic
     ? semanticSpans(options.semantic, boundaries, mainExecutable, overlayExecutable)
-    : { main: new Map(), overlays: new Map(), sources: 0, unresolved: [] as string[], mainCensusClosed: false };
+    : {
+        main: new Map(), overlays: new Map(), overlayOwners: new Map(),
+        sources: 0, unresolved: [] as string[], mainCensusClosed: false,
+      };
 
   // Exact always wins over semantic: semantic coverage only shows executable
   // bytes that are not already byte-exact.
@@ -858,17 +1275,15 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
   const overlayTiles: Tile[] = [];
   for (const overlay of inventory.overlays) {
     const executable = overlayExecutable.get(overlay.id) ?? [];
-    const exactBytesHere = spanBytes(exactOverlayByResource.get(overlay.id) ?? []);
-    const semanticBytesHere = spanBytes(semanticOverlayByResource.get(overlay.id) ?? []);
-    overlayTiles.push({
-      label: overlay.id.replace(/^resource_/, ""),
-      bytes: spanBytes(executable),
-      categories: {
-        exact_c: exactBytesHere,
-        semantic_c: semanticBytesHere,
-        assembly: spanBytes(executable) - exactBytesHere - semanticBytesHere,
-      },
-    });
+    const semanticOwners = semanticCoverage.overlayOwners.get(overlay.id) ?? [];
+    overlayTiles.push(...overlayOwnerTiles(
+      overlay.id,
+      executable,
+      exactOverlayOwnersByResource.get(overlay.id) ?? [],
+      semanticOwners.length > 0
+        ? semanticOwners
+        : semanticOverlayByResource.get(overlay.id) ?? [],
+    ));
   }
   executableAreas.push(area("overlays", "Decoded code overlays", overlayTiles));
 
@@ -912,31 +1327,11 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
   }
   romAreas.push(area("rom-overlay-streams", "Compressed code overlays", groupTiles(streamTiles, 49152)));
 
-  const labels = manifestRanges(options.exact, romSize);
-  const buckets = new Map<string, { label: string; bytes: number }>();
-  let claimed: Span[] = [];
-  for (const range of labels.sort((left, right) => left.start - right.start || left.end - right.end)) {
-    const fresh = subtract(intersect([range], dataSpans), claimed);
-    const bytes = spanBytes(fresh);
-    if (!bytes) continue;
-    claimed = normalize([...claimed, ...fresh]);
-    const bucket = assetBucket(range.kind);
-    const entry = buckets.get(bucket.id) ?? { label: bucket.label, bytes: 0 };
-    entry.bytes += bytes;
-    buckets.set(bucket.id, entry);
-  }
-  const unlabelled = spanBytes(dataSpans) - spanBytes(claimed);
-  if (unlabelled > 0) {
-    const entry = buckets.get("other") ?? { label: "Other data", bytes: 0 };
-    entry.bytes += unlabelled;
-    buckets.set("other", entry);
-  }
-  romAreas.push(area(
-    "rom-data",
-    "Assets & data",
-    [...buckets].sort((left, right) => right[1].bytes - left[1].bytes)
-      .map(([, entry]) => ({ label: entry.label, bytes: entry.bytes, categories: { asset_data: entry.bytes } })),
-  ));
+  const assetTiles = options.preferVerifiedAssets
+    ? verifiedAssetTiles(options.exact, options.target) ??
+      manifestAssetTiles(options.exact, romSize, dataSpans)
+    : manifestAssetTiles(options.exact, romSize, dataSpans);
+  romAreas.push(area("rom-data", "Assets & data", assetTiles));
 
   const romBytesCheck = romAreas.reduce((sum, item) => sum + item.bytes, 0);
   if (romBytesCheck !== romSize) {
@@ -1018,12 +1413,18 @@ export interface Placed<T> {
 }
 
 /**
- * Squarified treemap placement (Bruls, Huizing, van Wijk). Items are laid out
- * in the order given; the caller sorts them so the result is deterministic.
+ * Squarified treemap placement (Bruls, Huizing, van Wijk). The algorithm's
+ * aspect-ratio guarantee depends on descending area order; address order turns
+ * a dense owner census into barcode strips. Stable sorting here makes every
+ * caller correct while retaining deterministic order for equal-sized leaves.
  */
 export function squarify<T>(items: readonly T[], value: (item: T) => number, rect: Rect): Array<Placed<T>> {
   const placed: Array<Placed<T>> = [];
-  const queue = items.filter((item) => value(item) > 0);
+  const queue = items
+    .map((item, index) => ({ item, index }))
+    .filter(({ item }) => value(item) > 0)
+    .sort((left, right) => value(right.item) - value(left.item) || left.index - right.index)
+    .map(({ item }) => item);
   const totalValue = queue.reduce((sum, item) => sum + value(item), 0);
   if (!queue.length || totalValue <= 0 || rect.width <= 0 || rect.height <= 0) return placed;
   let free = { ...rect };
@@ -1031,6 +1432,7 @@ export function squarify<T>(items: readonly T[], value: (item: T) => number, rec
   let index = 0;
   while (index < queue.length) {
     const short = Math.min(free.width, free.height);
+    if (short <= 0) throw new Error("treemap exhausted its rectangle before placing every item");
     const row: T[] = [];
     let rowValue = 0;
     let best = Number.POSITIVE_INFINITY;
@@ -1049,25 +1451,35 @@ export function squarify<T>(items: readonly T[], value: (item: T) => number, rec
       best = worstNext;
       index++;
     }
-    const thickness = rowValue / short;
+    const finalRow = index === queue.length;
+    const horizontal = free.width >= free.height;
+    const thickness = finalRow ? (horizontal ? free.width : free.height) : rowValue / short;
+    const rawRowValue = row.reduce((sum, item) => sum + value(item), 0);
     let offset = 0;
-    for (const item of row) {
-      const side = (value(item) * scale) / thickness;
+    row.forEach((item, rowIndex) => {
+      // Shared final boundaries prevent accumulated floating-point drift from
+      // producing hairline gaps. The final row consumes the exact remainder.
+      const side = rowIndex === row.length - 1
+        ? short - offset
+        : finalRow
+        ? short * value(item) / rawRowValue
+        : (value(item) * scale) / thickness;
       placed.push({
         item,
-        rect: free.width >= free.height
+        rect: horizontal
           ? { x: free.x, y: free.y + offset, width: thickness, height: side }
           : { x: free.x + offset, y: free.y, width: side, height: thickness },
       });
       offset += side;
-    }
+    });
     // The row consumed exactly its own area, so the value-to-area scale still
     // holds for the rectangle that is left.
-    free = free.width >= free.height
+    free = horizontal
       ? { x: free.x + thickness, y: free.y, width: free.width - thickness, height: free.height }
       : { x: free.x, y: free.y + thickness, width: free.width, height: free.height - thickness };
-    if (free.width <= 0.01 || free.height <= 0.01) break;
+    if (finalRow) break;
   }
+  if (placed.length !== queue.length) throw new Error("treemap did not place every positive item");
   return placed;
 }
 
@@ -1087,8 +1499,13 @@ const SANS = "'Geist Sans', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI'
 const MONO = "'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace";
 
 function escapeText(value: string): string {
-  return value.replace(/[&<>]/g, (character) =>
-    character === "&" ? "&amp;" : character === "<" ? "&lt;" : "&gt;");
+  return value.replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&apos;",
+  })[character] ?? character);
 }
 
 function commas(value: number): string {
@@ -1392,10 +1809,10 @@ function mapPath(target: DecompTargetId): string {
 // Display-P3 gamut edge at that lightness, zero completion is neutral gray at
 // the same lightness. An hsl() approximation rides the CSS cascade as the
 // fallback for engines without oklch().
-interface HueBand { hslHue: number; okHue: number; okCmax: number }
-const CORE_HUE: HueBand = { hslHue: 275, okHue: 295, okCmax: 0.26 };
-const OVERLAY_HUE: HueBand = { hslHue: 190, okHue: 200, okCmax: 0.17 };
-const ASSET_HUE: HueBand = { hslHue: 330, okHue: 355, okCmax: 0.30 };
+interface HueBand { hslHue: number; okHue: number; okCmax: number; edge: string }
+const CORE_HUE: HueBand = { hslHue: 275, okHue: 295, okCmax: 0.26, edge: "#6d4fc2" };
+const OVERLAY_HUE: HueBand = { hslHue: 190, okHue: 200, okCmax: 0.17, edge: "#1f7f93" };
+const ASSET_HUE: HueBand = { hslHue: 330, okHue: 355, okCmax: 0.30, edge: "#bb2f77" };
 const GROUND = "#ffffff";
 const OK_LIGHTNESS = 0.70;
 // Completion fractions: code ladder assembly 0 -> semantic 0.5 -> exact 0.75
@@ -1410,6 +1827,24 @@ const ASSET_FRACTION: Record<string, number> = {
   asset_bytes: 0.08, asset_unclassified: 0.08, asset_bw: 0.34, asset_color: 0.67, asset_objects: 1,
   asset_data: 0.08,
 };
+const BOX_TREE_LEGEND: Record<string, string> = {
+  exact_c: "Exact C",
+  semantic_c: "Semantic C",
+  assembly: "Assembly",
+  retained_asm: "Permanent asm",
+  asset_objects: "Objects",
+  asset_color: "Color images",
+  asset_bw: "B&W",
+  asset_bytes: "Encoded bytes",
+  asset_unclassified: "Unclassified",
+  asset_data: "Data / assets",
+};
+
+let weyardFontBase64: string | undefined;
+function embeddedWeyardFont(): string {
+  weyardFontBase64 ??= readFileSync(join(ROOT, "assets", "fonts", "weyard.otf")).toString("base64");
+  return weyardFontBase64;
+}
 
 /** Representation-form tier for one package: package kind first (music,
  * samples and soundfonts are .mid/.wav/.sf2-backed object corpora even when
@@ -1499,11 +1934,82 @@ export function assetMaturityTiles(tree: SourceTree): Tile[] {
   return [...buckets.values()].filter((tile) => tile.bytes > 0);
 }
 
+/** Logical folder keys carried by addressed leaves in the 16:9 box trees. */
+export type TileFolder = "group" | "subgroup";
+
+type BoxTreeNode =
+  | { node: "group"; id: string; label: string; children: BoxTreeNode[] }
+  | { node: "leaf"; id: string; tile: Tile };
+
+function boxTreeNodes(
+  tiles: readonly Tile[],
+  folders: readonly TileFolder[],
+  depth = 0,
+  path = "root",
+): BoxTreeNode[] {
+  if (depth >= folders.length) {
+    return tiles.map((tile, index) => ({
+      node: "leaf",
+      id: `${path}/leaf-${index}-${tile.address === undefined ? "na" : hex8(tile.address)}`,
+      tile,
+    }));
+  }
+  const key = folders[depth];
+  const groups = new Map<string, Tile[]>();
+  const direct: Tile[] = [];
+  for (const tile of tiles) {
+    const label = tile[key];
+    if (label === undefined) {
+      direct.push(tile);
+      continue;
+    }
+    groups.set(label, [...(groups.get(label) ?? []), tile]);
+  }
+  return [
+    ...boxTreeNodes(direct, folders, folders.length, `${path}/direct`),
+    ...[...groups].map(([label, children], index) => ({
+    node: "group",
+    id: `${path}/${depth}-${index}`,
+    label,
+    children: boxTreeNodes(children, folders, depth + 1, `${path}/${depth}-${index}`),
+    }) as BoxTreeNode),
+  ];
+}
+
+function boxNodeBytes(node: BoxTreeNode): number {
+  return node.node === "leaf"
+    ? node.tile.bytes
+    : node.children.reduce((sum, child) => sum + boxNodeBytes(child), 0);
+}
+
+function folderDisplayName(label: string): string {
+  if (/^resource_[0-9a-f]+$/i.test(label)) return label.replace(/^resource_/, "").toUpperCase();
+  return label
+    .replace(/^golden-sun-/, "")
+    .replace(/^gba-/, "GBA ")
+    .replaceAll("-", " ")
+    .replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
+function precise(value: number): string {
+  const rounded = Math.round(value * 1_000_000) / 1_000_000;
+  return Object.is(rounded, -0) ? "0" : String(rounded);
+}
+
+function preciseRect(rectangle: Rect, attributes: string): string {
+  const x = Math.round(rectangle.x * 1_000_000) / 1_000_000;
+  const y = Math.round(rectangle.y * 1_000_000) / 1_000_000;
+  const right = Math.round((rectangle.x + rectangle.width) * 1_000_000) / 1_000_000;
+  const bottom = Math.round((rectangle.y + rectangle.height) * 1_000_000) / 1_000_000;
+  return `<rect x="${precise(x)}" y="${precise(y)}" width="${precise(right - x)}" ` +
+    `height="${precise(bottom - y)}" ${attributes}/>`;
+}
+
 /**
- * One text-free 16:9 box tree for a single area: tiles squarified by bytes,
- * each tile split vertically by the category shares it owns. The only text is the
- * aria label; captions live in the README, which prevents the scale confusion
- * of mixing an 8 MB ROM image and a 1.3 MB executable universe in one frame.
+ * A recursive SpaceMonger-style box tree. Parent rectangles are real logical
+ * owners and derive their byte size exclusively from their descendants. Leaves
+ * have zero gutter and zero minimum size; folder outlines and labels overlay
+ * the data field, so hierarchy never steals or invents byte area.
  */
 export function renderBoxTree(
   area: Area,
@@ -1511,63 +2017,116 @@ export function renderBoxTree(
   hue: HueBand = CORE_HUE,
   categoryFraction: Record<string, number> = CODE_FRACTION,
   categoryOrder: readonly string[] = ["humanized_c", "exact_c", "semantic_c", "assembly", "retained_asm"],
+  folders: readonly TileFolder[] = [],
+  title = area.label,
 ): string {
-  const width = 1600;
-  const height = 900;
-  const gap = 2;
+  // This is also the CSS/native README size. Keeping the viewBox 1:1 is what
+  // makes the one permitted 16px Weyard face pixel-exact instead of scaling it
+  // down with a large responsive SVG canvas.
+  const width = 540;
+  const height = 304;
+  const plot: Rect = { x: 3, y: 22, width: width - 6, height: height - 46 };
   const lines: string[] = [];
   lines.push(
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" ` +
-    `width="${width}" height="${height}" role="img" aria-label="${escapeText(ariaLabel)}">`,
+    `width="${width}" height="${height}" shape-rendering="crispEdges" role="img" ` +
+    `aria-label="${escapeText(ariaLabel)}">`,
+    "<defs><style>" +
+      `@font-face{font-family:Weyard;src:url(data:font/otf;base64,${embeddedWeyardFont()}) format('opentype');font-style:italic;}` +
+      ".weyard{font-family:Weyard;font-size:16px;font-style:italic;fill:#fff;}" +
+    "</style></defs>",
+    preciseRect({ x: 0, y: 0, width, height }, `fill="${hue.edge}"`),
+    preciseRect({ x: 1, y: 1, width: width - 2, height: height - 2 },
+      `fill="none" stroke="#1c1c26" stroke-width="2" rx="7"`),
+    preciseRect(plot, `fill="${GROUND}" rx="3"`),
   );
-  lines.push(`<rect x="0" y="0" width="${width}" height="${height}" fill="${GROUND}"/>`);
-  const cellRect = (r: Rect, fraction: number): string => {
+  const cellAttributes = (fraction: number): string => {
     // One ramp for every hue: lightness falls 0.93 -> 0.55 and chroma rises to
     // the hue's P3 edge as completion rises, so tiers separate strongly while
     // no hue reads brighter than another at the same tier.
     const light = 0.93 - 0.38 * fraction;
     const hsl = `hsl(${hue.hslHue}, ${Math.round(fraction * 95)}%, ${Math.round(93 - 38 * fraction)}%)`;
     const ok = `oklch(${light.toFixed(3)} ${(hue.okCmax * fraction).toFixed(3)} ${hue.okHue})`;
-    return `<rect x="${round(r.x)}" y="${round(r.y)}" width="${round(r.width)}" ` +
-      `height="${round(r.height)}" style="fill:${hsl};fill:${ok}"/>`;
+    return `style="fill:${hsl};fill:${ok}"`;
   };
-  const placed = squarify(area.tiles, (tile) => tile.bytes, { x: 0, y: 0, width, height });
-  for (const cell of placed) {
-    const inner = {
-      x: cell.rect.x + gap / 2,
-      y: cell.rect.y + gap / 2,
-      width: Math.max(cell.rect.width - gap, 0.5),
-      height: Math.max(cell.rect.height - gap, 0.5),
-    };
-    const categories = cell.item.categories as Record<string, number>;
-    const total = categoryOrder.reduce((sum, category) => sum + (categories[category] ?? 0), 0);
-    // Keep the publication image text-free, but retain the source/owner (or
-    // manifest-bucket) label and its natural byte extent for assistive readers.
-    lines.push(`<g aria-label="${escapeText(`${cell.item.label}: ${commas(cell.item.bytes)} bytes`)}">`);
+  const cellRect = (rectangle: Rect, fraction: number): string =>
+    preciseRect(rectangle, cellAttributes(fraction));
+  const drawLeaf = (tile: Tile, rectangle: Rect): void => {
+    const categories = tile.categories as Record<string, number>;
+    const populated = categoryOrder.filter((category) => (categories[category] ?? 0) > 0);
+    const total = populated.reduce((sum, category) => sum + (categories[category] ?? 0), 0);
+    lines.push(`<g data-byte-leaf="true" aria-label="${escapeText(`${tile.label}: ${commas(tile.bytes)} bytes`)}">`,
+      `<title>${escapeText(`${tile.label}: ${commas(tile.bytes)} bytes`)}</title>`);
     if (total <= 0) {
-      lines.push(cellRect(inner, categoryFraction[categoryOrder[categoryOrder.length - 1]] ?? 0.08));
-      lines.push("</g>");
-      continue;
+      lines.push(cellRect(rectangle, categoryFraction[categoryOrder.at(-1) ?? ""] ?? 0.08), "</g>");
+      return;
     }
-    let offset = 0;
-    for (const category of categoryOrder) {
-      const share = (categories[category] ?? 0) / total;
-      if (share <= 0) continue;
-      const rect = {
-        x: inner.x,
-        y: inner.y + inner.height * offset,
-        width: inner.width,
-        height: inner.height * share,
-      };
-      // Permanent asm renders orange in every graph: it will never climb the
-      // ladder, so it must never read as "not started yet" gray or empty black.
-      if (category === "retained_asm")
-        lines.push(`<rect x="${round(rect.x)}" y="${round(rect.y)}" width="${round(rect.width)}" ` +
-          `height="${round(rect.height)}" style="fill:${RETAINED_ASM_FILL}"/>`);
-      else lines.push(cellRect(rect, categoryFraction[category] ?? 0.08));
-      offset += share;
-    }
+    let credited = 0;
+    populated.forEach((category, index) => {
+      const top = rectangle.y + rectangle.height * (credited / total);
+      credited += categories[category] ?? 0;
+      const bottom = index === populated.length - 1
+        ? rectangle.y + rectangle.height
+        : rectangle.y + rectangle.height * (credited / total);
+      const band = { x: rectangle.x, y: top, width: rectangle.width, height: bottom - top };
+      if (category === "retained_asm") {
+        lines.push(preciseRect(band, `style="fill:${RETAINED_ASM_FILL}"`));
+      } else {
+        lines.push(cellRect(band, categoryFraction[category] ?? 0.08));
+      }
+    });
     lines.push("</g>");
+  };
+  let folderSequence = 0;
+  const drawNodes = (nodes: readonly BoxTreeNode[], rectangle: Rect, depth: number): void => {
+    for (const placed of squarify(nodes, boxNodeBytes, rectangle)) {
+      const node = placed.item;
+      if (node.node === "leaf") {
+        drawLeaf(node.tile, placed.rect);
+        continue;
+      }
+      const bytes = boxNodeBytes(node);
+      const folderDepth = depth + 1;
+      lines.push(`<g data-folder-depth="${folderDepth}" aria-label="${escapeText(`${node.label}: ${commas(bytes)} bytes`)}">`,
+        `<title>${escapeText(`${node.label}: ${commas(bytes)} bytes`)}</title>`);
+      drawNodes(node.children, placed.rect, folderDepth);
+      const stroke = folderDepth === 1 ? 2 : 1;
+      lines.push(preciseRect(placed.rect,
+        `fill="none" stroke="hsl(${hue.hslHue} 70% 24%)" stroke-width="${stroke}" vector-effect="non-scaling-stroke"`));
+      const showLabel = placed.rect.height >= 18 &&
+        placed.rect.width >= (folderDepth === 1 ? 50 : 120);
+      if (showLabel) {
+        const id = `folder-clip-${folderSequence++}`;
+        const headerHeight = Math.min(18, placed.rect.height);
+        lines.push(
+          `<clipPath id="${id}">${preciseRect(placed.rect, "")}</clipPath>`,
+          preciseRect({ ...placed.rect, height: headerHeight },
+            `fill="hsl(${hue.hslHue} 70% 24%)" fill-opacity="0.9"`),
+          `<text class="weyard" x="${precise(Math.round(placed.rect.x) + 3)}" ` +
+            `y="${precise(Math.round(placed.rect.y) + 15)}" clip-path="url(#${id})">` +
+            `${escapeText(folderDisplayName(node.label))}</text>`,
+        );
+      }
+      lines.push("</g>");
+    }
+  };
+  const nodes = boxTreeNodes(area.tiles, folders);
+  if (nodes.reduce((sum, node) => sum + boxNodeBytes(node), 0) !== area.bytes) {
+    throw new Error(`${area.id} hierarchy does not conserve its byte total`);
+  }
+  drawNodes(nodes, plot, 0);
+  lines.push(`<text class="weyard" x="6" y="17">${escapeText(title.toUpperCase())}</text>`);
+  let legendX = 6;
+  for (const category of categoryOrder) {
+    const legendLabel = BOX_TREE_LEGEND[category];
+    if (legendLabel === undefined) continue;
+    const swatch = { x: legendX, y: height - 17, width: 10, height: 10 };
+    lines.push(category === "retained_asm"
+      ? preciseRect(swatch, `fill="${RETAINED_ASM_FILL}"`)
+      : preciseRect(swatch, cellAttributes(categoryFraction[category] ?? 0.08)));
+    lines.push(`<text class="weyard" x="${precise(legendX + 14)}" y="${height - 4}">` +
+      `${escapeText(legendLabel)}</text>`);
+    legendX += 24 + legendLabel.length * 8;
   }
   lines.push("</svg>");
   return lines.join("\n");
@@ -1580,39 +2139,72 @@ export function boxTreePath(target: DecompTargetId, tree: BoxTreeId): string {
   return join(ROOT, "assets", "readme", `${target}-${tree}.svg`);
 }
 
-export function renderBoxTrees(map: CoverageMap, tree?: SourceTree): Record<BoxTreeId, string> {
+export function renderBoxTrees(
+  map: CoverageMap,
+  tree?: SourceTree,
+  preferVerifiedAssets = false,
+): Record<BoxTreeId, string> {
   const core = map.executable_areas.find((item) => item.id === "main");
   const overlays = map.executable_areas.find((item) => item.id === "overlays");
   const romData = map.rom_areas.find((item) => item.id === "rom-data");
   if (!core || !overlays || !romData) throw new Error("coverage map is missing a box-tree area");
-  const maturity = tree ? assetMaturityTiles(tree) : [];
-  const cataloguedBytes = maturity.reduce((sum, tile) => sum + tile.bytes, 0);
-  const unclassifiedBytes = Math.max(romData.bytes - cataloguedBytes, 0);
+  const embeddedMaturity = romData.tiles.filter((tile) =>
+    ASSET_TIERS.some((tier) => (tile.categories[tier] ?? 0) > 0) ||
+    (tile.categories.asset_unclassified ?? 0) > 0);
+  const verifiedMaturity = preferVerifiedAssets && tree !== undefined
+    ? verifiedAssetTiles(tree, map.target)
+    : undefined;
+  // New maps carry exact addressed package leaves. The fallback keeps older
+  // tracked/synthetic maps renderable, but the live dashboard never collapses
+  // those leaves back into the seven historical display buckets.
+  const maturity = verifiedMaturity ?? (embeddedMaturity.length > 0
+    ? embeddedMaturity
+    : tree ? assetMaturityTiles(tree) : []);
+  const cataloguedBytes = maturity.reduce(
+    (sum, tile) => sum + ((tile.categories.asset_unclassified ?? 0) > 0 ? 0 : tile.bytes),
+    0,
+  );
+  const embeddedUnclassified = maturity.reduce(
+    (sum, tile) => sum + (tile.categories.asset_unclassified ?? 0), 0);
+  const unclassifiedBytes = verifiedMaturity !== undefined || embeddedMaturity.length > 0
+    ? embeddedUnclassified
+    : Math.max(romData.bytes - cataloguedBytes, 0);
   // The maturity census is manifest-backed and intentionally does not claim
   // unknown ROM data as decoded. Keep that remainder in the tree at the
   // byte-represented floor, rather than silently drawing a smaller universe or
   // crediting it to a higher maturity tier.
-  const maturityWithRemainder = tree !== undefined && unclassifiedBytes
+  const maturityWithRemainder = verifiedMaturity !== undefined || embeddedMaturity.length > 0
+    ? maturity
+    : tree !== undefined && unclassifiedBytes
     ? [...maturity, {
         label: "Unclassified ROM-image data (byte-represented)",
         bytes: unclassifiedBytes,
         categories: { asset_unclassified: unclassifiedBytes },
       }]
     : maturity;
-  const assetsArea: Area = tree !== undefined
+  const detailedAssets = tree !== undefined || embeddedMaturity.length > 0 || verifiedMaturity !== undefined;
+  const assetsArea: Area = detailedAssets
     ? { id: "rom-data", label: romData.label, bytes: romData.bytes,
         categories: {}, tiles: maturityWithRemainder }
     : romData;
   return {
     core: renderBoxTree(core,
-      "Main-image code coverage box tree, purple band; each tile is one audited source or owner boundary with its natural executable byte size"),
-    overlays: renderBoxTree(overlays, "Decoded code-overlay coverage box tree, cyan band", OVERLAY_HUE),
+      "Main-image code coverage box tree, purple band; 64 KiB address banks contain audited source-owner leaves at their natural executable byte size",
+      CORE_HUE, CODE_FRACTION,
+      ["humanized_c", "exact_c", "semantic_c", "assembly", "retained_asm"], ["group"], "Main image"),
+    overlays: renderBoxTree(overlays,
+      "Decoded code-overlay coverage box tree, cyan band; each resource contains its exact, semantic, and unowned source regions",
+      OVERLAY_HUE, CODE_FRACTION,
+      ["humanized_c", "exact_c", "semantic_c", "assembly", "retained_asm"], ["group"], "Code overlays"),
     assets: renderBoxTree(assetsArea,
-      tree !== undefined
+      detailedAssets
         ? `Asset maturity box tree, pink band; ${commas(cataloguedBytes)} catalogued bytes are tiered by tracked sources and ${commas(unclassifiedBytes)} unclassified ROM-image data bytes remain at the byte-represented floor`
         : "Asset maturity box tree, pink band",
       ASSET_HUE, ASSET_FRACTION,
-      tree !== undefined ? ["asset_objects", "asset_color", "asset_bw", "asset_bytes", "asset_unclassified"] : ["asset_data"]),
+      detailedAssets ? ["asset_objects", "asset_color", "asset_bw", "asset_bytes", "asset_unclassified"] : ["asset_data"],
+      maturityWithRemainder.some((tile) => tile.group !== undefined)
+        ? ["group", "subgroup"]
+        : [], "Data / assets"),
   };
 }
 
@@ -1942,6 +2534,16 @@ export function selfTest(): void {
       throw new Error("treemap escaped its rectangle");
     }
   }
+  const subpixel = squarify(
+    [{ bytes: 999_999 }, { bytes: 1 }],
+    (item) => item.bytes,
+    { x: 0, y: 0, width: 1600, height: 900 },
+  );
+  if (subpixel.length !== 2 ||
+      Math.min(subpixel[1].rect.width, subpixel[1].rect.height) <= 0 ||
+      Math.min(subpixel[1].rect.width, subpixel[1].rect.height) >= 0.5) {
+    throw new Error("treemap enlarged or dropped a sub-0.5-pixel byte leaf");
+  }
 
   const bands = mainBands(
     [{ start: 0x08000000, end: 0x08000100 }],
@@ -1965,6 +2567,14 @@ export function selfTest(): void {
   if (ownerTiles.length !== 3 || ownerTiles.map((tile) => tile.bytes).join(",") !== "48,112,96" ||
       ownerTiles[1].categories.semantic_c !== 64 || ownerTiles[2].categories.retained_asm !== 32) {
     throw new Error("main owner tiles did not retain audited boundaries");
+  }
+  const crossingOwner = mainOwnerTiles(
+    [{ start: 0x0800fff0, end: 0x08010010 }],
+    [0x0800fff0], [], [], [],
+  );
+  if (crossingOwner.length !== 2 || crossingOwner.map((tile) => tile.bytes).join(",") !== "16,16" ||
+      new Set(crossingOwner.map((tile) => tile.group)).size !== 2) {
+    throw new Error("a main-image owner was not split at its real 64 KiB bank edge");
   }
   const retainedTree = renderBoxTree(
     area("retained", "Retained", [{ label: "r", bytes: 32, categories: { retained_asm: 32 } }]),
@@ -2007,8 +2617,27 @@ export function selfTest(): void {
   const svg = renderSvg(map);
   if (!svg.startsWith("<svg ") || !svg.trimEnd().endsWith("</svg>")) throw new Error("SVG shape failed");
   const boxTree = renderBoxTree(map.executable_areas[0], "self-test box tree");
-  if (boxTree.includes("<text")) throw new Error("box tree must carry no text elements");
-  if (!boxTree.includes('viewBox="0 0 1600 900"')) throw new Error("box tree must be 16:9");
+  if (!boxTree.includes("font-family:Weyard;font-size:16px") ||
+      /font-size:(?!16px)/.test(boxTree)) {
+    throw new Error("box-tree chrome does not use only 16px Weyard");
+  }
+  if (!boxTree.includes("Exact C") || !boxTree.includes("Semantic C") ||
+      !boxTree.includes("Permanent asm")) {
+    throw new Error("box-tree title or legend is missing from the reproducible SVG");
+  }
+  if (!boxTree.includes('viewBox="0 0 540 304"') ||
+      !boxTree.includes('width="540" height="304"')) {
+    throw new Error("box tree lost its fixed pixel-exact dashboard canvas");
+  }
+  const folderTree = renderBoxTree(area("folders", "Folders", [
+    { label: "one", bytes: 60, categories: { exact_c: 60 }, group: "first" },
+    { label: "two", bytes: 40, categories: { assembly: 40 }, group: "second" },
+  ]), "folder self-test", CORE_HUE, CODE_FRACTION,
+    ["exact_c", "assembly"], ["group"]);
+  if ((folderTree.match(/data-folder-depth="1"/g) ?? []).length !== 2 ||
+      (folderTree.match(/data-byte-leaf="true"/g) ?? []).length !== 2) {
+    throw new Error("recursive box-tree hierarchy lost a group or leaf");
+  }
   if (svg.includes("undefined") || svg.includes("NaN")) throw new Error("SVG contains unresolved values");
   for (const category of CATEGORY_ORDER) {
     if (!svg.toUpperCase().includes(escapeText(CATEGORY_STYLE[category].label).toUpperCase())) {
@@ -2063,8 +2692,16 @@ async function main(argv: string[]): Promise<void> {
     options.semantic,
     trackedDocumentOnDisk?.provenance.semantic_source,
   );
-  const map = buildCoverageMap({ target: options.target, exact, semantic });
-  const trees = renderBoxTrees(map, exact);
+  const map = buildCoverageMap({
+    target: options.target,
+    exact,
+    semantic,
+    preferVerifiedAssets: true,
+  });
+  // `bun run coverage` is intentionally run after the verified build. Consume
+  // the same schema-expanded asset evidence as the live dashboard so the
+  // checked-in SVG panels are the dashboard artifacts, not approximations.
+  const trees = renderBoxTrees(map, exact, true);
   const json = canonicalJson(trackedDocument(map));
 
   if (options.check) {

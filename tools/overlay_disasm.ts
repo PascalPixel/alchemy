@@ -131,6 +131,46 @@ function checked(command: string[], cwd: string): string {
   return process.stdout.toString();
 }
 
+// An overlay image is linked 0x8000 above the address it is loaded at, so every
+// ABSOLUTE in-image code pointer the ROM stores is spelled `base + 0x8000`
+// (HANDOVER, "In-image pointers are spelled base + 0x8000"). Hand-written exact
+// C carries that bias in its literals, but the compiler cannot: when a switch
+// becomes a `mov pc, rN` dispatch, gcc emits the jump table as bare `.word .LN`
+// rows and the pool word holding the table's own base as one more of them, and
+// `ld -Ttext` resolves them all to the load address with no bias at all.
+//
+// The whole difference is those words. Shifting `-Ttext` instead would move
+// every instruction address too, and the `bl` identity in `externalSymbol`
+// (`name_address = insn_address + 2 + true_target_offset`, HANDOVER §5b3a)
+// pins the callee name to a FIXED literal -- so a global shift would move every
+// call by -0x8000 while fixing the table. The bias belongs on the label
+// references alone.
+//
+// Only a bare reference to a label DEFINED IN THIS FILE is biased. `.word` rows
+// naming an external symbol, an integer, or a label DIFFERENCE (`.L5-.L2`, a
+// pc-relative table) are all left alone: a difference of two in-image addresses
+// is already right, and biasing it would be wrong by 0x8000.
+const LOCAL_LABEL_DEFINITION = /^(\.L[A-Za-z0-9_$.]*):/;
+const LOCAL_LABEL_WORD = /^(\s*\.word\s+)(\.L[A-Za-z0-9_$.]*)\s*$/;
+export const OVERLAY_LINK_BIAS = 0x8000;
+
+export function biasInImageLabelWords(assembly: string): { text: string; biased: number } {
+  const lines = assembly.split("\n");
+  const defined = new Set<string>();
+  for (const line of lines) {
+    const found = LOCAL_LABEL_DEFINITION.exec(line.trim());
+    if (found !== null) defined.add(found[1]);
+  }
+  let biased = 0;
+  const text = lines.map((line) => {
+    const found = LOCAL_LABEL_WORD.exec(line);
+    if (found === null || !defined.has(found[2])) return line;
+    biased++;
+    return `${found[1]}${found[2]} + 0x${OVERLAY_LINK_BIAS.toString(16)}`;
+  }).join("\n");
+  return { text, biased };
+}
+
 function compileOverlayC(source: string, work: string, overlay: string): { address: number; data: Buffer } {
   const callViaBase = overlayCallViaBase(overlay, source);
   const stem = basename(source, extname(source)).slice(-8);
@@ -154,13 +194,17 @@ function compileOverlayC(source: string, work: string, overlay: string): { addre
     preprocessedOutput: join(work, `${stem}.i`),
   });
   const keyDigest = new Bun.CryptoHasher("sha256");
-  keyDigest.update(`overlay-c-v2:${hex(address)}:${hex(callViaBase)}\0`);
+  // v3: in-image label words are biased by 0x8000 after the compile step. The
+  // stamp covers the commands, not this rewrite, so the key has to move with it
+  // or a warm cache would serve pre-bias bytes.
+  keyDigest.update(`overlay-c-v3:${hex(address)}:${hex(callViaBase)}\0`);
   keyDigest.update(planStamp(plan.steps.map((step) => step.command), work));
   keyDigest.update("\0");
   keyDigest.update(readFileSync(source));
   const cached = join(OVERLAY_C_CACHE, `${keyDigest.digest("hex")}.bin`);
   if (existsSync(cached)) return { address, data: readFileSync(cached) };
   for (const step of plan.steps) checked([...step.command], work);
+  writeFileSync(assembly, biasInImageLabelWords(readFileSync(assembly, "utf8")).text);
   checked(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", object, assembly], work);
   const undefinedSymbols = checked(["arm-none-eabi-nm", "-u", object], work)
     .split(/\r?\n/)
@@ -426,3 +470,39 @@ export function buildOverlaySource(input: Uint8Array, base = OVERLAY_BASE): stri
   throw new Error("overlay reconstruction did not converge");
 }
 export const build_overlay_source = buildOverlaySource;
+
+// The in-image bias rewrite is the only step between the compiler's assembly
+// and the assembler, so it gets its own test rather than riding on a byte
+// comparison somewhere downstream. Both directions matter: a row that must be
+// biased and, just as much, the four `.word` shapes that must NOT be.
+function selfTest(): void {
+  const assembly = [
+    "\t.text",
+    ".L2:",
+    "\t.word\t.L4",
+    "\t.word\t.L4-.L2",
+    "\t.word\tData_02000240",
+    "\t.word\t265",
+    "\t.word\t.Lelsewhere",
+    "\t.word\t.L2",
+    ".L4:",
+    "\tbx\tlr",
+  ].join("\n");
+  const { text, biased } = biasInImageLabelWords(assembly);
+  if (biased !== 2) throw new Error(`bias self-test: expected 2 biased words, got ${biased}`);
+  const lines = text.split("\n");
+  if (lines[2] !== "\t.word\t.L4 + 0x8000") throw new Error(`bias self-test: jump-table row not biased: ${lines[2]}`);
+  if (lines[7] !== "\t.word\t.L2 + 0x8000") throw new Error(`bias self-test: table-base pool word not biased: ${lines[7]}`);
+  for (const index of [3, 4, 5, 6]) {
+    if (lines[index] !== assembly.split("\n")[index]) throw new Error(`bias self-test: row ${index} must be left alone: ${lines[index]}`);
+  }
+  if (biasInImageLabelWords("\t.word\t.L4").biased !== 0) {
+    throw new Error("bias self-test: a label with no definition in the file must not be biased");
+  }
+  console.log("self-test=ok");
+}
+
+if (import.meta.main) {
+  if (Bun.argv[2] === "--self-test") selfTest();
+  else throw new Error("usage: overlay_disasm.ts --self-test");
+}

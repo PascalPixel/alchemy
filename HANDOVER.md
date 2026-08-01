@@ -5302,6 +5302,136 @@ the compiler-side queue, not in the exact lane.
 larger than the 579/57 originally reported, so the two counts use different
 image-end definitions and should be reconciled before either is quoted.
 
+## 5b4. A compiler-emitted jump table needs the 0x8000 link bias — FIXED in the emitter (2026-08-01)
+
+**A `switch` that becomes a `mov pc, rN` dispatch could not be byte-exact from
+any source spelling, and the reason had nothing to do with the case bodies.**
+
+An overlay image is linked 0x8000 above the address it is loaded at, so every
+absolute in-image code pointer the ROM stores is spelled `base + 0x8000`.
+Hand-written exact C carries that bias in its literals. The compiler cannot:
+gcc emits the jump table as bare `.word .LN` rows plus one more for the pool
+word holding the table's own base, and `compileOverlayC`'s
+`ld -Ttext=0x<load address>` resolves every one of them with no bias at all.
+
+Measured on the parked interpreter `resource_3b9:1a4c` (508 bytes), whose
+66-entry table sits inside its own span at 0x02001a70:
+
+| region | differing bytes before | after |
+| --- | --- | --- |
+| jump table 0x02001a70-0x02001b78 | 77 | 15 |
+| case bodies 0x02001b78-0x02001c2e | 150 | 149 |
+| **row total** | **227** | **164** |
+
+Of the 66 entries, **55 differed by exactly 0x8000** and nothing else; the
+other 11 differ because those case bodies are laid out differently, and are
+downstream of body work, not of the bias. The pool word holding the table
+base (ref 0x02009a70) is the 67th `.word .L` row and takes the same bias.
+
+**The fix is `biasInImageLabelWords` in tools/overlay_disasm.ts**, applied
+between the compile step and `as`, with the cache key moved to
+`overlay-c-v3` so a warm cache cannot serve pre-bias bytes. It biases ONLY a
+bare `.word` reference to a label defined in the same file. Left alone, and
+self-tested as left alone: external symbols, integers, labels with no
+definition in the file, and label DIFFERENCES (`.L5-.L2`) — a difference of
+two in-image addresses is already right and biasing it would be wrong by
+0x8000.
+
+**Why not shift `-Ttext` by 0x8000 instead.** That moves every instruction
+address too, and §5b3a's identity pins a callee name to a FIXED literal
+(`name_address = insn_address + 2 + true_target_offset`). A global shift
+would fix the table and move every `bl` in the row by -0x8000. The bias
+belongs on the label references alone.
+
+**It is a proven no-op for everything already in the tree.** `bun run verify`
+is green with `byte_identical=yes` across all 1,413 adopted rows, twice,
+with the cache key bumped so every overlay C actually recompiled. No adopted
+row today emits a biasable word.
+
+**What it unblocks, measured.** Scanning `assets/code/*_overlay.s` for
+`mov pc, rN` — still-unconverted code, since adopted rows are `.space` —
+gives **60 dispatch sites across 29 overlays**. 36 of them map to 27
+inventoried owners totalling **27,760 bytes**; the remaining 24 sit in
+owners with no inventory row (`resource_3b9:1a4c` is one of them), so the
+true figure is larger. Read that as the size of the population this
+unblocks, NOT as bytes recovered: each of those owners still has to be
+transcribed correctly. Before this change every one of them carried a floor
+of one differing byte per table entry that no amount of body work could
+reach.
+
+*Method note, since it cost the row a whole earlier sitting.*
+`overlay_group_diff.sh` is useless on a row with an in-span table: it
+disassembles the 264 table bytes as instructions and reported 71 differing
+groups of garbage from the table onward. The earlier reading — "227 bytes of
+per-case-body transcription work" — came from that, and it was wrong about
+66 of the 227. On any row with a `mov pc` dispatch, diff BYTES aligned by
+address, not instruction groups.
+
+## 5b5. The case-order lever — and the 508-byte row it closed (2026-08-01)
+
+`resource_3b9:1a4c`, the 66-entry dispatcher parked as "227 bytes of
+per-case-body work", closed BYTE-EXACT in one edit once the jump-table bias
+of §5b4 was in: **reordering the `case` arms in the source**. Nothing in any
+arm's body changed.
+
+The reference lays its arms out 5, 69, 7, 70, 64, 65, 66, 12, 21, 67, 68, 31.
+Written in ascending selector order — the obvious way, and the way the draft
+had it — gcc lays them out in source order, every arm lands at the wrong
+address, and the row is 164 bytes wrong with every one of those bytes being
+layout rather than content. Reordering took it to **0**.
+
+**How to read the order off the ROM without guessing.** The jump table stores
+each arm's absolute address. Group the entries by value, sort the distinct
+values ascending, and the selectors fall out in the reference's own source
+order. Do the same on your own compile and the two lists sit side by side.
+
+**Ordering and callee naming are ONE fix, not two.** The callee names obey
+§5b3a's identity, `name = insn_address + 2 + true_target_offset`, so they are
+keyed to the reference's instruction addresses. Every name in a draft read off
+the reference disassembly is already correct *for the reference layout*. Put
+each arm back at its reference address and the names emit the right `bl` bytes
+with no renaming at all; leave the arms in the wrong order and the names look
+like the defect, because a moved `bl` encodes differently. Do the ordering
+first and re-measure before touching a single name.
+
+**Arm sizes are the confirmation to run before editing.** Ref and draft agreed
+on 10 of 12 arm sizes here (32, 6, 10, 6, 6, 28, 30, 6, 6, 28) and disagreed
+on two only by a branch halfword at the layout boundary — that pattern says
+the bodies are right and the order is wrong. Genuinely wrong bodies do not
+line up ten for ten.
+
+Adopting an UNINVENTORIED row moves the denominator: this one added its 508
+bytes as a newly audited executable interval, so `--write-inventory` AND
+`--write-report` were both required before `verify` would pass (§5c).
+
+### The dispatch-row population, probed and ranked (2026-08-01)
+
+With §5b4 in, the `mov pc, rN` rows are workable for the first time. The 27
+inventoried owners, smallest first, and the adopt dry-run against each one's
+EXISTING semantic draft where one probed cleanly:
+
+| row | span | differing bytes of the semantic draft |
+| --- | --- | --- |
+| 371:0350 | 44 | known copy-choice blocker (§5b), not a dispatch problem |
+| 3b2:12b4 | 192 | 174 — rewrite class |
+| 378:0070 | 220 | **85 — the best of the population** |
+| 3c4:0cd0 | 248 | 137 |
+| 372:3ce4 | 296 | 262 |
+| 3b1:012c | 342 | 273 |
+| 3b9:007c | 444 | 235 |
+
+`3b4:1fd8`, `383:2564` and `395:15a0` threw on the probe and are UNMEASURED,
+not clean and not dirty. The remaining 17 owners (464 bytes to 5,604) are
+unprobed.
+
+**378:0070 is the row to take next and its residual is already characterised.**
+Its head is 4 bytes short of the reference's — the reference opens
+`lsls r2,r2,#1 / adds r3,.. / movs r2,#0` ahead of the `ldrsh`/`subs #1`/
+`cmp #0x22` bound check that the draft starts with — and that single shift is
+what puts every table entry 4 low. Fix the head first and re-measure before
+reading anything else as a defect; on a dispatch row a head-length error and
+an arm-order error both present as a table full of wrong words.
+
 ## 5c. Auditing the executable inventory for holes (2026-08-01)
 
 Twice in one night `full_c_progress` threw `C span is outside audited

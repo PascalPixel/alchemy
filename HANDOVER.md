@@ -24,7 +24,7 @@ trusted from any written figure:
 | 3a4 | 16 | 2 |
 | 3b9 | 15 | 1 |
 | 39e | 13 | 1 |
-| 3c9 | 8 | 1 |
+| 3c9 | 8 | 1 | — **CLOSED 2026-08-01, all four sweeps clean with controls** |
 
 **52 published PLUS 5 bl-reached, not 52.** The closure standard requires
 sweeps A and B both empty, and "published-only counts" is a shorthand that
@@ -2040,8 +2040,53 @@ Residue is now **2 lines, 1 owner**; sweep D reports **one** code-suspect gap.
   ruled and cleared at 406644f1. Sweep D on 3c9 is now one CODE-SUSPECT gap and
   nothing else.
 
-3c9 is NOT certified and must not be described as closed. Sweeps A/B/C plus
-sweep D plus the tail read all have to come after 0x02002360.
+~~3c9 is NOT certified and must not be described as closed.~~ **SUPERSEDED —
+resource_3c9 is CERTIFIED, see the next section.**
+
+### resource_3c9 CLOSED (2026-08-01, venus) — the last owner drafted
+
+**0x02002360 — 4,708 bytes, 433 of 433 call sites, drafted at 8dfc2b69.**
+`c_expressed` moved by exactly 4708, which is the independent check that the
+file is wired in and accounts for the whole span. Read fresh at the start of a
+shift it took one sitting, exactly as the twice-parked 0x020012c8 had.
+
+Fifty-three owners. All four sweeps clean **with the liveness controls run in
+the same session**:
+
+| sweep | 3c9 | control |
+|---|---|---|
+| A/B/C `overlay_published.ts` | residue **0** | bogus name = 96 overlays, residue **1602** |
+| D `overlay_gaps.ts` | **0** code-suspect gaps, 0 overlaps, 0 gaps of any verdict | `resource_3a4` = 3 gaps, 1 prologue-suspect tail |
+| tail | 0x02005bec–0x02006760, 2,932 bytes, 93 veneers, **zero prologues**, `VENEER-AND-DATA` | 3a4 = `PROLOGUE-SUSPECT`, one at 0x5210 |
+
+**The sweep-D bogus-name control now refuses loudly, and it is still not safe
+to key on.** Ivan's fix landed: a name that matches nothing prints
+`NOTHING SWEPT — this is a FAILURE, not a pass` under the summary line, which
+kills the trick I flagged last shift where `overlays=0` was indistinguishable
+from a clean run. **But the process still exits 0.** A wrapper that reads the
+exit status rather than the text is fooled exactly as before. Read the words,
+not the code — and this is the same shape as the `verify | tail` trap, one
+level up.
+
+#### A recorded span that its own evidence text contradicted — caught by sweep D
+
+Certifying 3c9 turned up one gap that had been sitting in the overlay the whole
+time: 4 bytes at 0x020004b8–0x020004bb, ruled `POOL-OR-DATA`. It is a genuine
+one-word literal pool (0x030001d8) loaded by the `ldr` at 0x020004ac **inside**
+owner 0x02000480, and the next owner's prologue is at 0x020004bc.
+
+`manual_regions` recorded `span_bytes: 56`. Its own evidence string in the same
+entry said "through the trailing one-word literal pool to the next owner's
+prologue at 0x020004bc" — which is **60**. The prose was right, the number was
+wrong, and the number is the only part any sweep reads. Corrected to 60;
+`c_expressed` moved by exactly 4 and the gap list went empty.
+
+This is the second confirmed instance of the rule I wrote after the last one,
+and it upgrades it: **cross-checking a header against `manual_regions` is not
+optional hygiene, it is a defect class with a hit rate.** The new part is that
+sweep D *found* it — a 4-byte `POOL-OR-DATA` gap is easy to read as noise, and
+it was not noise. Do not dismiss small non-code gaps in an overlay you are
+certifying; open every one against the ROM.
 
 #### 0x02002360 MEASURED WHOLE, not drafted (2026-08-01, venus)
 
@@ -2087,9 +2132,16 @@ all four are listed pool addresses. **0x020034e0's fake `b.n` points to
 function entirely. Cross-check every branch target against the pool address
 list before believing it.
 
-**All six real `b.n` are pool skips, so the row has NO unconditional joins at
-all.** Of the nine conditional branches, two are loop backedges, leaving seven
-forward `if` blocks. This is the same long-not-hard family as 0x020012c8, and
+~~**All six real `b.n` are pool skips, so the row has NO unconditional joins at
+all.**~~ **WRONG, corrected on drafting (8dfc2b69): FIVE are pool skips. The
+sixth, `b.n` @0x02002c54, is a genuine if/else join — the then-arm of the
+second `Func_0808a070` test jumps over the else-arm at 0x02002c70. That is a
+**sixth** handoff figure of mine to fall to re-reading, and it is the one that
+would have cost most: a reader trusting it would have flattened a two-armed
+branch whose arms differ only in the id passed to `Func_0808a100` (3 against 4)
+and in when the workspace counter is bumped — precisely the swapped-arm defect
+the ordered callee check cannot see.** Of the nine conditional branches, two
+are loop backedges, leaving seven forward `if` blocks. This is the same long-not-hard family as 0x020012c8, and
 bigger only by instruction count: 1,918 against 1,438.
 
 **Two 17-iteration loops** (`cmp r7,#16 / bls`, backedges at 0x02003402 and

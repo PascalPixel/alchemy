@@ -78,6 +78,8 @@ export interface Tail {
   bytes: number;
   /** Eight-byte `ldr rN,[pc,#0] / bx rN / .word` interworking veneers found. */
   veneers: number;
+  /** `bx rN / nop` entries of the compiler's `call_via` bank. */
+  callVia: number;
   /**
    * lr-SAVING prologues in the tail that are not inside a veneer entry.
    *
@@ -86,7 +88,12 @@ export interface Tail {
    * or table entry wearing a `push` cannot be one.
    */
   prologues: number[];
-  verdict: "EMPTY" | "VENEER-AND-DATA" | "PROLOGUE-SUSPECT";
+  /**
+   * RETURN-shaped halfwords in the tail outside the veneer and `call_via`
+   * banks. This is the field that makes VENEER-AND-DATA mean something.
+   */
+  returns: number[];
+  verdict: "EMPTY" | "VENEER-AND-DATA" | "RETURN-SUSPECT" | "PROLOGUE-SUSPECT";
 }
 
 export interface Overlap {
@@ -107,6 +114,61 @@ export function isReturnShape(halfword: number): boolean {
   if ((halfword & 0xff87) === 0x4700) return true; // bx rN
   if ((halfword & 0xff00) === 0xbd00) return true; // pop {..., pc}
   return false;
+}
+
+/**
+ * The two banks that legitimately contain return shapes, masked off so the
+ * return-shape discriminator means something in the regions that hold them.
+ *
+ * A VENEER is `ldr rN,[pc,#0] / bx rN / .word target` -- and the register test
+ * is load-bearing, not decoration. The old predicate accepted any `bx rM` after
+ * any `ldr rN`, which makes `ldr r0,=table / bx lr` -- jupiter's published
+ * getter stub, a REAL FUNCTION -- indistinguishable from a veneer. A veneer
+ * branches to the register it just loaded; a leaf returns through lr. Pin by
+ * register agreement, and resource_3cb's 0x30 and resource_3ce's 0x30, 0x3c and
+ * 0x44 stay visible instead of being masked as structure. Measured separately
+ * before the alignment fix below: the register tightening changes the tail
+ * veneer count on 0 of 96 overlays, so it removed a hazard rather than moved a
+ * number. The alignment fix changes it on 6, from zero to between 32 and 72.
+ *
+ * A CALL_VIA entry is `bx rN / nop`, the compiler's dispatch bank.
+ */
+export function maskBanks(
+  image: Uint8Array,
+  from: number,
+  to: number,
+): { covered: Uint8Array; veneers: number; callVia: number } {
+  const covered = new Uint8Array(Math.max(0, to - from));
+  let veneers = 0;
+  let callVia = 0;
+
+  // ALIGN TO THE IMAGE, NOT TO THE REGION. The old scan stepped `at = from;
+  // at += 4`, so whenever a region began at an offset 2 mod 4 -- which is
+  // whatever the last owner happened to end on -- every four-byte veneer entry
+  // was read straddling its own boundary and none matched. It was invisible
+  // while the verdict keyed on prologues only; the moment returns began to
+  // count, resource_37b reported 54 of them at a perfect stride of 8, which is
+  // a veneer bank announcing itself. A run at a fixed stride is a table, and a
+  // table the instrument cannot see is the instrument's fault first.
+  const aligned = from + ((4 - (from % 4)) % 4);
+  for (let at = aligned; at + 8 <= to; at += 4) {
+    const first = image[at] | (image[at + 1] << 8);
+    const second = image[at + 2] | (image[at + 3] << 8);
+    if ((first & 0xf800) !== 0x4800 || (second & 0xff87) !== 0x4700) continue;
+    if (((second >> 3) & 0xf) !== ((first >> 8) & 7)) continue; // branches elsewhere: not a veneer
+    veneers += 1;
+    for (let k = at; k < at + 8 && k < to; k += 1) covered[k - from] = 1;
+  }
+  for (let at = from; at + 4 <= to; at += 2) {
+    if (covered[at - from]) continue;
+    const first = image[at] | (image[at + 1] << 8);
+    const second = image[at + 2] | (image[at + 3] << 8);
+    if ((first & 0xff87) !== 0x4700 || second !== 0x46c0) continue;
+    callVia += 1;
+    for (let k = at; k < at + 4 && k < to; k += 1) covered[k - from] = 1;
+  }
+
+  return { covered, veneers, callVia };
 }
 
 export interface Duplicate {
@@ -168,6 +230,50 @@ export function gapsBetween(
   const gaps: Gap[] = [];
   const overlaps: Overlap[] = [];
 
+  // `maskBanks` is applied to the HEAD and not to interior gaps. The head is
+  // where an overlay's veneer/pointer header lives, so unmasked it fires on
+  // every overlay at once -- resource_3a4's 48-byte head reported six returns,
+  // one per veneer, which is a guard that cries wolf and gets switched off.
+  // Interior gaps keep the raw classifier: they are small, they are read by
+  // hand, and the founding case depends on nothing being masked there.
+  const rule = (start: number, end: number, after: number, before: number, mask: boolean): void => {
+    const returns: number[] = [];
+    let padding = true;
+    const covered = mask ? maskBanks(image, start, end).covered : undefined;
+    for (let at = start; at < end; at += 1) if (image[at] !== 0) padding = false;
+    for (let at = start; at + 1 < end; at += 2) {
+      if (covered !== undefined && covered[at - start]) continue;
+      if (isReturnShape(image[at] | (image[at + 1] << 8))) returns.push(at);
+    }
+    gaps.push({
+      start,
+      end,
+      after,
+      before,
+      bytes: end - start,
+      returns,
+      padding,
+      verdict: padding ? "PADDING" : returns.length > 0 ? "CODE-SUSPECT" : "POOL-OR-DATA",
+    });
+  };
+
+  // THE HEAD. This loop used to start by pairing owner 0 with owner 1, so the
+  // region from image start to the FIRST recorded owner was never read -- the
+  // same defect as the unswept tail, at the other end, in the same function.
+  // Most overlays put their first owner at 0x30 and those 48 bytes are the
+  // pointer/veneer header, which rules POOL-OR-DATA and stays quiet. Twenty-five
+  // overlays have a larger head, and resource_3bd has a whole function at
+  // 0x0030: `push {r5, lr}`, a body, a `bl`, and `pop {r5} / pop {r1} / bx r1`
+  // at 0x0066. Sweep C could see it and its own output said so in a way nobody
+  // read -- `C shaped 0x2000030 b520 nearest owner 0x? +null`, where the `+null`
+  // is not a formatting wart but the statement that NO OWNER PRECEDES IT.
+  //
+  // `after` is -1 because no owner opens the head. Consumers formatting an owner
+  // address must handle it; that is the point of encoding it rather than
+  // pretending owner 0 sits at offset 0.
+  const first = spans[0];
+  if (first !== undefined && first.start > ALIGNMENT_SLACK) rule(0, first.start, -1, first.start, true);
+
   for (let index = 0; index + 1 < spans.length; index += 1) {
     const current = spans[index];
     const next = spans[index + 1];
@@ -179,25 +285,7 @@ export function gapsBetween(
     }
     if (size <= ALIGNMENT_SLACK) continue;
 
-    const start = current.end;
-    const end = next.start;
-    const returns: number[] = [];
-    let padding = true;
-    for (let at = start; at < end; at += 1) if (image[at] !== 0) padding = false;
-    for (let at = start; at + 1 < end; at += 2) {
-      if (isReturnShape(image[at] | (image[at + 1] << 8))) returns.push(at);
-    }
-
-    gaps.push({
-      start,
-      end,
-      after: current.start,
-      before: next.start,
-      bytes: size,
-      returns,
-      padding,
-      verdict: padding ? "PADDING" : returns.length > 0 ? "CODE-SUSPECT" : "POOL-OR-DATA",
-    });
+    rule(current.end, next.start, current.start, next.start, false);
   }
 
   return { gaps, overlaps };
@@ -215,28 +303,46 @@ export function gapsBetween(
  *
  * A tail is USUALLY legitimate: the import-veneer bank and the overlay's data
  * tables live there. So this classifies rather than accuses.
+ *
+ * THE PROLOGUE GATE WAS STILL HERE (fixed 2026-08-01, mars). This function was
+ * written to close sweep B's blind spot at the other end of the image, and it
+ * shipped carrying the exact defect it was answering: it decided
+ * `prologues.length > 0 ? PROLOGUE-SUSPECT : VENEER-AND-DATA`, on `push`
+ * prologues ALONE. A leaf saves no register, so every leaf in every tail on the
+ * tree was filed VENEER-AND-DATA. Three were: resource_395's 0x1838 and
+ * 0x1858 -- 14 bytes each, byte-identical, one `stmia` writing DMA3 SAD/DAD/CNT
+ * and differing in exactly one pool word -- and resource_3cd's 0x07b8. None is
+ * `bl`-reached, none is published, none has a `push`: invisible to all four
+ * sweeps at once, which this file had recorded as a hypothetical.
+ *
+ * THE ARGUMENT THAT REPLACES IT is Isaac's, made structural here instead of
+ * being left for a lane to reconstruct per overlay: **a Thumb function cannot
+ * avoid returning.** So count RETURN shapes outside the two banks that
+ * legitimately contain them. Zero uncovered returns is not "no push found", it
+ * is a proof that no function of any shape -- leaf, stub, or ordinary -- lives
+ * in those bytes. That is what VENEER-AND-DATA now asserts.
+ *
+ * Two banks must be masked or the discriminator drowns:
+ *   - the interworking veneer, `ldr rN,[pc,#0] / bx rN / .word`;
+ *   - the compiler's `call_via` bank, a run of `bx rN / nop` for each register.
+ *     `overlay_call_targets` tags its entry `call_via`; on resource_398 the
+ *     `bx lr` at 0x0904 carries FIFTEEN call sites. An isolated `bx lr` in a
+ *     tail is not automatically a find, and 29 of the 36 uncovered returns on
+ *     the tree are this bank.
  */
 export function ruleTail(image: Uint8Array, from: number): Tail {
   const bytes = image.length - from;
-  if (bytes <= 0) return { start: from, end: image.length, bytes: 0, veneers: 0, prologues: [], verdict: "EMPTY" };
+  if (bytes <= 0)
+    return { start: from, end: image.length, bytes: 0, veneers: 0, callVia: 0, prologues: [], returns: [], verdict: "EMPTY" };
 
-  // An interworking veneer is `ldr rN,[pc,#0] / bx rN / .word target`, eight
-  // bytes. Mark them so a `push`-shaped byte inside one is not read as code.
-  const covered = new Uint8Array(bytes);
-  let veneers = 0;
-  for (let at = from; at + 8 <= image.length; at += 4) {
-    const first = image[at] | (image[at + 1] << 8);
-    const second = image[at + 2] | (image[at + 3] << 8);
-    if ((first & 0xf800) === 0x4800 && (second & 0xff87) === 0x4700) {
-      veneers += 1;
-      for (let k = at; k < at + 8 && k < image.length; k += 1) covered[k - from] = 1;
-    }
-  }
+  const { covered, veneers, callVia } = maskBanks(image, from, image.length);
 
   const prologues: number[] = [];
+  const returns: number[] = [];
   for (let at = from; at + 1 < image.length; at += 2) {
     if (covered[at - from]) continue;
     const halfword = image[at] | (image[at + 1] << 8);
+    if (isReturnShape(halfword)) returns.push(at);
     if (!isPrologueShape(halfword) || !savesLinkRegister(halfword)) continue;
     prologues.push(at);
   }
@@ -246,8 +352,11 @@ export function ruleTail(image: Uint8Array, from: number): Tail {
     end: image.length,
     bytes,
     veneers,
+    callVia,
     prologues,
-    verdict: prologues.length > 0 ? "PROLOGUE-SUSPECT" : "VENEER-AND-DATA",
+    returns,
+    verdict:
+      prologues.length > 0 ? "PROLOGUE-SUSPECT" : returns.length > 0 ? "RETURN-SUSPECT" : "VENEER-AND-DATA",
   };
 }
 
@@ -360,6 +469,73 @@ function selfTest(): void {
   if (ruleTail(spill, 0x10).verdict !== "VENEER-AND-DATA")
     throw new Error("sweep D self-test: a non-lr push must not flag a tail");
 
+  // THE LEAF IN THE TAIL. The whole point of the RETURN-SUSPECT class: a
+  // function with no `push` at all, which the prologue-only verdict filed as
+  // VENEER-AND-DATA. resource_3cd's 0x07b8, verbatim.
+  const tailLeaf = new Uint8Array(0x30);
+  tailLeaf.set(tailImage);
+  [0x4b02, 0x681b, 0x2201, 0x3335, 0x701a, 0x4770].forEach((halfword, index) => {
+    tailLeaf[0x20 + index * 2] = halfword & 0xff;
+    tailLeaf[0x20 + index * 2 + 1] = halfword >> 8;
+  });
+  const leafTail = ruleTail(tailLeaf, 0x10);
+  if (leafTail.prologues.length !== 0)
+    throw new Error("sweep D self-test: the tail leaf must have NO prologue -- that is why it was missed");
+  if (leafTail.verdict !== "RETURN-SUSPECT")
+    throw new Error(`sweep D self-test: tail leaf ruled ${leafTail.verdict}, not RETURN-SUSPECT`);
+  if (leafTail.returns.length !== 1 || leafTail.returns[0] !== 0x2a)
+    throw new Error("sweep D self-test: the tail leaf's `bx lr` must be the flagged return");
+
+  // ...and the OTHER direction, or the new class is just noise: the `call_via`
+  // bank is a legitimate run of `bx rN / nop` and must NOT flag a tail. Without
+  // this mask, 29 of the tree's 36 uncovered returns are this bank and the
+  // verdict means nothing.
+  const bank = new Uint8Array(0x30);
+  for (let index = 0; index < 8; index += 1) {
+    bank[0x10 + index * 4] = index << 3;
+    bank[0x10 + index * 4 + 1] = 0x47;   // bx rN
+    bank[0x10 + index * 4 + 2] = 0xc0;
+    bank[0x10 + index * 4 + 3] = 0x46;   // nop
+  }
+  const banked = ruleTail(bank, 0x10);
+  if (banked.callVia !== 8) throw new Error(`sweep D self-test: expected 8 call_via entries, got ${banked.callVia}`);
+  if (banked.verdict !== "VENEER-AND-DATA")
+    throw new Error(`sweep D self-test: the call_via bank ruled ${banked.verdict} -- the mask is not working`);
+
+  // THE REGISTER TEST inside `maskBanks`, both directions. `ldr r0 / bx r0` is
+  // structure and must be masked; `ldr r0 / bx lr` is jupiter's getter stub, a
+  // real function, and must NOT be. Same four bytes to any predicate that does
+  // not compare the registers.
+  const veneer = new Uint8Array(8);
+  veneer[0] = 0x00; veneer[1] = 0x48; veneer[2] = 0x00; veneer[3] = 0x47;
+  if (maskBanks(veneer, 0, 8).veneers !== 1) throw new Error("sweep D self-test: `ldr r0 / bx r0` is a veneer");
+  const getter = new Uint8Array(8);
+  getter[0] = 0x00; getter[1] = 0x48; getter[2] = 0x70; getter[3] = 0x47;
+  if (maskBanks(getter, 0, 8).veneers !== 0)
+    throw new Error("sweep D self-test: `ldr r0 / bx lr` is a LEAF GETTER, not a veneer");
+
+  // THE HEAD. resource_3bd's 0x0030 function, reduced to its epilogue: a region
+  // before the FIRST owner must be ruled, and a return shape in it is
+  // CODE-SUSPECT. The loop used to begin at owner 0, so this region did not
+  // exist as far as sweep D was concerned.
+  const headed = new Uint8Array(0x40);
+  headed[0x20] = 0x08; headed[0x21] = 0x47; // bx r1, inside the head
+  const withHead = gapsBetween(headed, [{ start: 0x30, end: 0x40 }]);
+  if (withHead.gaps.length !== 1) throw new Error("sweep D self-test: the head was not ruled");
+  if (withHead.gaps[0].start !== 0 || withHead.gaps[0].end !== 0x30)
+    throw new Error("sweep D self-test: the head must run from image start to the first owner");
+  if (withHead.gaps[0].after !== -1)
+    throw new Error("sweep D self-test: the head has no owner before it and must say so");
+  if (withHead.gaps[0].verdict !== "CODE-SUSPECT")
+    throw new Error(`sweep D self-test: a return in the head ruled ${withHead.gaps[0].verdict}`);
+  // A first owner at offset 0 leaves no head, and an all-zero head is PADDING,
+  // not a finding -- the new region must not invent work.
+  if (gapsBetween(new Uint8Array(0x20), [{ start: 0, end: 0x20 }]).gaps.length !== 0)
+    throw new Error("sweep D self-test: an owner at offset 0 must leave no head");
+  const blank = gapsBetween(new Uint8Array(0x40), [{ start: 0x30, end: 0x40 }]);
+  if (blank.gaps.length !== 1 || blank.gaps[0].verdict !== "PADDING")
+    throw new Error("sweep D self-test: an all-zero head must rule PADDING");
+
   // The failure DIRECTION is pinned by running the tool, because the defect
   // lived in `main` and in no function above: a name matching no overlay must
   // exit non-zero, and a real overlay must exit zero. A predicate that rots
@@ -379,7 +555,8 @@ function selfTest(): void {
     throw new Error(`sweep D self-test: a real overlay (${anyOverlay}) must exit 0`);
 
   console.log(
-    "sweep D self-test passed (return shapes, leaf, undercount, over-measure, tail ruling, empty-sweep refusal)",
+    "sweep D self-test passed (return shapes, leaf, undercount, over-measure, tail ruling,\n" +
+      "  tail leaf, call_via mask, head region, empty-sweep refusal)",
   );
 }
 
@@ -395,6 +572,7 @@ function main(): void {
   let suspects = 0;
   let overlapping = 0;
   let tails = 0;
+  let returnTails = 0;
 
   for (const overlay of overlays) {
     let result: ReturnType<typeof gapsOf>;
@@ -408,23 +586,33 @@ function main(): void {
     suspects += interesting.length;
     overlapping += result.overlaps.length;
     if (result.tail.verdict === "PROLOGUE-SUSPECT") tails += 1;
+    if (result.tail.verdict === "RETURN-SUSPECT") returnTails += 1;
     if (json) continue;
     if (
       interesting.length === 0 &&
       result.overlaps.length === 0 &&
       result.duplicates.length === 0 &&
-      result.tail.verdict !== "PROLOGUE-SUSPECT"
+      result.tail.verdict !== "PROLOGUE-SUSPECT" &&
+      result.tail.verdict !== "RETURN-SUSPECT"
     )
       continue;
 
     console.log(overlay);
-    if (result.tail.verdict === "PROLOGUE-SUSPECT") {
-      const where = result.tail.prologues.slice(0, 8).map((at) => `0x${at.toString(16)}`).join(" ");
+    if (result.tail.verdict === "PROLOGUE-SUSPECT" || result.tail.verdict === "RETURN-SUSPECT") {
+      const at = (offsets: number[]) => offsets.slice(0, 8).map((offset) => `0x${offset.toString(16)}`).join(" ");
       console.log(
         `  TAIL         0x${result.tail.start.toString(16)}-0x${(result.tail.end - 1).toString(16)} ` +
-          `${result.tail.bytes}B, ${result.tail.veneers} veneers, ` +
-          `${result.tail.prologues.length} lr-saving prologues at ${where}`,
+          `${result.tail.bytes}B, ${result.tail.veneers} veneers, ${result.tail.callVia} call_via`,
       );
+      // BOTH signals, always. A single-verdict line let the stronger one shadow
+      // the weaker: resource_395's tail reads PROLOGUE-SUSPECT on five pushes,
+      // and printing only those hid the returns at 0x1846 and 0x1866 -- the two
+      // leaves this whole class was added to surface. The tiering is fine for a
+      // one-word verdict and useless as a report.
+      if (result.tail.prologues.length > 0)
+        console.log(`               ${result.tail.prologues.length} lr-saving prologues at ${at(result.tail.prologues)}`);
+      if (result.tail.returns.length > 0)
+        console.log(`               ${result.tail.returns.length} returns outside the banks at ${at(result.tail.returns)}`);
     }
     for (const overlap of result.overlaps) {
       console.log(
@@ -452,7 +640,7 @@ function main(): void {
   }
   console.log(
     `\noverlays=${Object.keys(report).length} code_suspect_gaps=${suspects} ` +
-      `overlaps=${overlapping} prologue_suspect_tails=${tails}`,
+      `overlaps=${overlapping} prologue_suspect_tails=${tails} return_suspect_tails=${returnTails}`,
   );
   // SWEEPING NOTHING IS NOT PASSING. A mistyped overlay name used to print
   // `overlays=0 code_suspect_gaps=0 overlaps=0 prologue_suspect_tails=0` and

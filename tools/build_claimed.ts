@@ -380,7 +380,16 @@ async function main(): Promise<void> {
     const moduleSymbols = compiled[sourceIndex].definedNames.sort((left, right) =>
       symbols.get(left)![0] - symbols.get(right)![0]
     );
-    const end = moduleEnd(moduleSymbols, symbols);
+    // Name the module. `moduleEnd` sees only symbol names, so its throws
+    // ("C module has no functions", "invalid module symbol …") cannot say which
+    // of ~1,400 modules failed. Every other diagnostic in this loop already
+    // leads with `basename(source)`; this one did not.
+    let end: number;
+    try {
+      end = moduleEnd(moduleSymbols, symbols);
+    } catch (cause) {
+      throw new Error(`${basename(source)}: ${cause instanceof Error ? cause.message : String(cause)}`, { cause });
+    }
     const size = end - address;
     if (address < previousEnd) failures.push(`${basename(source)}: overlaps previous function`);
     previousEnd = Math.max(previousEnd, end);

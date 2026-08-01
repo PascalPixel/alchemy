@@ -427,12 +427,30 @@ function main(): void {
 
   if (json) {
     console.log(JSON.stringify(report, null, 2));
+    if (Object.keys(report).length === 0) process.exitCode = 1;
     return;
   }
   console.log(
     `\noverlays=${Object.keys(report).length} code_suspect_gaps=${suspects} ` +
       `overlaps=${overlapping} prologue_suspect_tails=${tails}`,
   );
+  // SWEEPING NOTHING IS NOT PASSING. A mistyped overlay name used to print
+  // `overlays=0 code_suspect_gaps=0 overlaps=0 prologue_suspect_tails=0` and
+  // exit 0, which is indistinguishable from a clean overlay -- a lane gating a
+  // certification loop on this tool would have recorded a pass for an overlay
+  // it never opened. Sweep A/B/C already refuses an unknown name; sweep D did
+  // not, and the gap was found by the liveness control of resource_380's
+  // certification rather than by reading this file. Same blind spot as sweep
+  // B's push requirement, sweep D's tail counting, `ownerOf` accepting an
+  // inventory row, and `veneer_resolve`'s 0x1000 cap: the fault lives in what
+  // the tool ACCEPTS, not in what it scans.
+  if (Object.keys(report).length === 0) {
+    console.log(
+      "NOTHING SWEPT — this is a FAILURE, not a pass.\n" +
+        "  No overlay matched. Check the name against assets/code/*_overlay.s.",
+    );
+    process.exitCode = 1;
+  }
 }
 
 if (import.meta.main) main();

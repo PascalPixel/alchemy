@@ -47,6 +47,7 @@ typedef signed int s32;
  * here only.
  */
 
+extern s16 Data_02000240[];
 extern u8 *Data_03001ebc;
 
 extern void Func_0200088c(void);
@@ -66,7 +67,7 @@ s32 Func_020005cc(void)
     Func_0808a330(0x10000, 0);
     Func_0808a348(1);
     Func_0808a010(1);
-    switch (*(s16 *)((u8 *)0x02000240 + 450)) {
+    switch (Data_02000240[225]) {
     case 10:
     case 11:
     case 12:

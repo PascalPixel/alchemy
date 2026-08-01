@@ -25,11 +25,13 @@ typedef signed int s32;
  * - sub-selector 13 -> raise flag 288.
  * Returns 0.
  *
- * The last two tests read the SAME halfword at 0x02000240+450, and
- * the reference re-reads it after the 0x12f raise rather than reusing
- * the register -- so the second test sees any change that raise
- * caused.  Reading through the pointer at each use keeps that
- * behaviour; it is not a redundant load folded away.
+ * The last two tests read the SAME halfword at Data_02000240[225],
+ * and the reference re-reads it after the 0x12f raise rather than
+ * reusing the register -- so the second test sees any change that
+ * raise caused.  Reading the cell at each use keeps that behaviour;
+ * it is not a redundant load folded away.  The final test is an
+ * unsigned `ldrh` in the reference, so it is spelled through a u16
+ * pointer rather than as the array's signed element.
  *
  * Complete owner: `push {r5, r6, lr}` at 0x02000f30 with `sub sp, #8`
  * through `movs r0, #0 / add sp, #8 / pop {r5, r6} / pop {r1} /
@@ -48,6 +50,7 @@ typedef signed int s32;
  * callback, not called here.
  */
 
+extern s16 Data_02000240[];
 extern void Func_020000a0(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
 extern void Func_080000c0(s32 arg0);
@@ -60,8 +63,6 @@ extern void Func_0808a0f0(s32 id, s32 x, s32 y);
 
 s32 Func_02000f30(void)
 {
-    u16 *selector;
-
     if (Func_080770c0(512) != 0) {
         Func_080091c0(55, 26, 4, 2, 23, 26);
     }
@@ -75,8 +76,7 @@ s32 Func_02000f30(void)
     if (Func_080770c0(0x858) != 0) {
         Func_0808a0f0(18, 0xd80000, 0x1880000);
     }
-    selector = (u16 *)((u8 *)0x02000240 + 450);
-    if (*(s16 *)selector <= 2
+    if (Data_02000240[225] <= 2
         && Func_080770c0(52) == 0
         && Func_080770c0(0x109) == 0) {
         Func_080770d0(0x867);
@@ -84,10 +84,10 @@ s32 Func_02000f30(void)
     if (Func_080770c0(0x867) != 0 && Func_080770c0(52) == 0) {
         Func_0808a0f0(21, 0x1980000, 0x780000);
     }
-    if (*(s16 *)selector == 11) {
+    if (Data_02000240[225] == 11) {
         Func_080770d0(0x12f);
     }
-    if (*selector == 13) {
+    if (*(u16 *)&Data_02000240[225] == 13) {
         Func_080770d0(288);
     }
     return 0;

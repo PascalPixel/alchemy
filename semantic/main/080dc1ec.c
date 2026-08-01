@@ -47,7 +47,36 @@ void Func_08004bd4(s32);
 void Func_08004c6c(s32);
 void Func_080e3944(struct Particle_080dc1ec *, struct Position_080dc1ec *);
 void Func_08004a5c(void);
-void Func_080072f4(s32, const void *, s32, s32, s32, s32);
+/*
+ * __call_via_rN veneer site, resolved per-site against the ROM.
+ *
+ * The `bl Func_080072f4` at 0x080dc390 is `__call_via_r4` -- an indirect call
+ * through r4, loaded at 0x080dc38e from `[sp, #20]`.
+ *
+ * That stack slot is not opaque: `add r1, sp, #20` at 0x080dc226 hands it to
+ * Func_080cef64 as an OUT-PARAMETER two hundred instructions earlier, and
+ * Func_080cef64 is byte-exact in src/, so its body can simply be read. It
+ * writes output[0] = *(u32 *)(Data_03001e50 + 184) and
+ * output[1] = *(u32 *)(Data_03001e50 + 188).
+ *
+ * 184 = 46 * 4 and 188 = 47 * 4, so those are Func_080048b0's allocation
+ * slots for ids 46 and 47 -- the SAME slot table as ids 0x31 and 0x32 read at
+ * 0x08012388, 0x08021be0, 0x080f02b0 and 0x080196c4. The two calls to
+ * Func_080ed408(46, ...) and Func_080ed408(47, ...) just above each write are
+ * what fill them. So the whole "renderer globals at 0x03001f08 / 0x03001f0c"
+ * family is one mechanism with the heap-kernel family: relocated routines
+ * living in numbered allocator slots.
+ *
+ * The callee here is state[0], i.e. slot 46.
+ *
+ * ARITY: six. r4 is OUTSIDE the r0-r3 argument registers, so the callee never
+ * occupied an argument slot and every argument the draft passed is real --
+ * four in r0-r3 plus two pushed at [sp, #0] and [sp, #4] (0x080dc388,
+ * 0x080dc38a). Nothing to strip here, which is the opposite failure mode from
+ * the r0-r3 sites and the reason the domain limit has to be stated.
+ */
+typedef void (*ParticleRenderer)(s32 context, const void *sprite, s32 x, s32 y,
+                                 s32 size, s32 doubledSize);
 void Func_080e38b8(struct Particle_080dc1ec *, s32, s32);
 void Func_080030f8(s32);
 void Func_08004278(s32);
@@ -137,7 +166,7 @@ void Func_080dc1ec(void *argument)
                 size = 9 - ((position.z - 250 +
                     ((position.z - 250) < 0 ? 63 : 0)) >> 6);
                 doubled_size = size << 1;
-                Func_080072f4(
+                ((ParticleRenderer)state[0])(
                     render_context,
                     (const u8 *)runtime + phase * 0x604 +
                         Data_080ede48[doubled_size - 2],

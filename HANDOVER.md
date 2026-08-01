@@ -575,6 +575,67 @@ Near-misses of one class: a tool that returns a *plausible empty or wrong
 answer* instead of failing. Each of these nearly reached prose, and the last
 is about the tools we write to catch the others.
 
+### THE BUILD CACHE SURVIVES `git checkout` — "I tested that commit" is false with a warm cache (2026-08-01, venus)
+
+The worst near-miss of the night, and it nearly went to Vale as a false
+report that **main was red**. It was not. `out/cache/overlay-c` was.
+
+What happened, in order. After merging main I ran `bun run verify` and it
+failed in `tools/build_assets.ts` with `token plan does not reconstruct
+decoded input` on `resource_39c`. I checked out main's own tip, re-ran, and
+got the same failure — and concluded main was broken. Then I checked out my
+last known-green commit and it passed. Every one of those runs shared the same
+`out/` directory, which `git checkout` does not touch, so **none of them was a
+test of a commit; they were tests of a commit plus whatever the cache already
+held.**
+
+The proof, once suspicion landed on the cache: set `out/cache/overlay-c` aside,
+re-run, green — main and branch both. Then compare the fresh cache against the
+old one entry by entry. **One key present in both with different contents and
+different LENGTHS, 160 bytes against 164.** Same key, two answers. A cache key
+that does not determine its own value is not a cache, it is a random oracle
+with a plausible face.
+
+```
+# when a build failure makes no sense against the diff, do this FIRST
+mv out/cache/overlay-c out/cache/overlay-c.aside && bun run verify
+# and to prove it rather than assume it:
+for f in out/cache/overlay-c/*.bin; do b=$(basename $f); \
+  [ -f out/cache/overlay-c.aside/$b ] && ! cmp -s $f out/cache/overlay-c.aside/$b \
+  && echo "SAME KEY DIFFERENT BYTES: $b"; done
+```
+
+**The mechanism is a hand-maintained version string, and the code says so in
+its own comment.** The key is
+`overlay-c-vN:<address>:<callViaBase>` + `planStamp(commands)` + the C source
+bytes. `planStamp` covers the compile *commands*; it does not cover
+`biasInImageLabelWords`, which rewrites the assembly *after* those commands
+run, nor `externalSymbolAssembly`. The v3 comment states the consequence
+plainly — "the stamp covers the commands, not this rewrite, so the key has to
+move with it or a warm cache would serve pre-bias bytes." That is correct and
+it is also the defect: it works only for as long as every future editor
+remembers to bump a string by hand. A 160-vs-164 length difference is exactly
+the shape of pre-bias against post-bias output, where `.word .L5` and `.word
+.L5 + 0x8000` lead the assembler to a different pool layout.
+
+**The fix that removes the remembering: hash the tool's own source into the
+key.** `keyDigest.update(readFileSync(<overlay_disasm.ts>))` costs one read per
+overlay and makes every edit to the rewrite, the external-symbol emitter, or
+anything else in that file invalidate the cache automatically. Not written —
+reported, since this is a shared tool and a lane should not restage a cache
+format under the lead. **Until it is: bump the version string in the same
+commit as ANY change to `overlay_disasm.ts`'s post-compile path, and treat a
+build failure that does not match the diff as a cache fault until proven
+otherwise.**
+
+Two things I got wrong that are worth copying as anti-patterns. I ran `bun run
+verify 2>&1 | tail -4` and committed on the `&&` — **`tail` returns 0, so the
+pipe swallowed the failure and I committed on red.** Never pipe a gate's output
+into anything without capturing `PIPESTATUS`, or better, redirect to a file and
+test `$?`. And I ran `git stash -u` in this worktree, which stashed the
+untracked `roms/` directory — the ROM inputs — and turned the next run into a
+meaningless `ENOENT`. **Never `git stash -u` here.**
+
 - **A self-test that encodes today's residue rots the moment the work gets
   done. Assert the SHAPE on a synthetic input, never the state of the tree.**
   Sweep D's first self-test asserted that resource_3a4's 0x3410 gap *exists*.

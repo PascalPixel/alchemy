@@ -21,12 +21,18 @@ typedef unsigned char u8;
  * THIS ROW CARRIES AN INTERIOR LITERAL POOL. `b.n 0x02002154` at
  * 0x0200213a jumps over the six-word pool 0x0200213c-0x02002153
  * (0x03001ebc, 0x00010002, 0x20f8, 0x105, 0x103, 0x101), and the body
- * resumes at 0x02002154 with the gate's compare. `tools/overlay_show.ts`
- * STOPS at that pool and prints its pool-word summary, which reads
- * exactly like the end of the function; the first 459 lines of listing
- * are only 60% of the row. Disassemble the remainder separately
- * (`overlay_show resource_3b9 2154 23e0`) -- the epilogue is there, not
- * at 0x02002154.
+ * resumes at 0x02002154 with the gate's compare.
+ *
+ * When this row was drafted, `tools/overlay_show.ts` SILENTLY DROPPED a
+ * second positional bound and fell back to its own extent scan, which
+ * stops at the first return-shaped halfword -- and a pool word routinely
+ * looks like `bx rN`. So `overlay_show resource_3b9 1cd4 23e0` returned
+ * 122 of this row's 180 call sites under a tidy "pool words referenced"
+ * footer, which reads exactly like a finished function. That bound is now
+ * honoured and the tool rejects anything it cannot use; the same command
+ * returns all 180. The cross-check that caught it in the first place is
+ * still the cheap one: `overlay_call_targets` prints `sites=N`, and the
+ * `bl` lines transcribed must equal it.
  *
  * Not found by the structural inventory walk (unindexed): reached only
  * by `bl`. All 180 call sites resolved with

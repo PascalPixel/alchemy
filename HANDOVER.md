@@ -7984,6 +7984,86 @@ is sound, not whether the count changed — a predicate that cannot distinguish
 two things is broken wherever both things occur, and you have only measured
 where you looked.
 
+## 5o. resource_398 CERTIFIED CLOSED (2026-08-01, mars)
+
+Selected by measurement and **checked against the seals before opening** —
+`grep resource_398 ... certif` returned nothing. It ranked first on zero
+code-suspect bytes and zero residue, and I had set it aside on coverage grounds
+a shift earlier.
+
+### The accounting, and why a delta of ZERO is not the test
+
+```
+image      4,260
+owners     2,244   (25 spans, 0x30 .. 0x904)
+head          48   (one POOL-OR-DATA gap, the veneer/pointer header)
+alignment     16   (EIGHT 2-byte gaps, every one `00 00`)
+tail       1,952   (21 veneers, 1 ruled return, 0 unruled)
+                   -------
+sum        4,260   delta 0
+```
+
+**The first sum came out 16 short, and that is the useful part.** Sweep D skips
+any gap of `ALIGNMENT_SLACK` or less, so eight two-byte remainders never appear
+in `gaps` and never appear in a naive owners+head+tail total. I enumerated them
+rather than writing the delta off: `0x3e, 0x166, 0x186, 0x1ba, 0x1ee, 0x2aa,
+0x2d6, 0x302`, each two bytes, each `00 00`.
+
+**So a delta of zero is not proof of accounting.** On `resource_3b8` it came out
+zero because that overlay happens to have no interior slack at all — not because
+the check is strong. **Always enumerate the sub-slack gaps; the sum can only
+disagree, it cannot confirm.** A nonzero delta is the informative case and I got
+lucky that this overlay produced one.
+
+### Five sweeps, each with a discriminating control in the same session
+
+| sweep | resource_398 | control `resource_3a4` |
+|---|---|---|
+| A `overlay_call_targets` | `sites=120` live, **no `unknown`** | — |
+| A/B/C `overlay_published` | `residue=0` | `1` |
+| D `overlay_gaps` | `code_suspect_gaps=0 overlaps=0` | `3` |
+| D tail | RETURN-SUSPECT, the one return ruled by E | PROLOGUE-SUSPECT |
+| E `overlay_certify` | `sweep_e_findings=0` | `4` |
+| refusal | `resource_zzz` exits 1 | — |
+
+### The tail's single return, and a distinction worth keeping
+
+`0x904` is `bx lr` at a 4-aligned offset, `bl`-reached **15 times**, tagged
+`call_via` by sweep A and ruled `dispatched` by sweep E. From the ROM: it is
+padded with `0000` at `0x906` and the interworking veneer bank starts at
+`0x908`. **It is a SINGLE-SLOT `call_via` bank — the `lr` entry alone, not a run
+of `bx r0..bx lr`** — which is exactly why `maskBanks` does not cover it: that
+mask requires `bx rN` followed by `46c0`, and a lone slot padded with zero
+matches nothing. Correct behaviour from both tools: D flags a candidate, E rules
+it.
+
+**TWO-BYTE `bx lr` OWNERS EXIST ON THIS TREE AND THEY ARE NOT THE SAME THING.**
+`resource_3bb 0x4c` was adopted as an owner this campaign; `resource_398 0x904`
+is not adopted and should not be. Identical bytes, opposite disposition, and
+**the discriminator is who references them**:
+
+- `3bb:0x4c` is PUBLISHED, twice, from data-table slots — two table entries
+  install it as a handler, so it is a game-side no-op callback.
+- `398:0x904` is `bl`-reached from inside owners and never published — it is
+  compiler dispatch runtime, which belongs to the retained-asm helper bank and
+  not to the C population.
+
+Identical bytes are not identical semantics, and here the semantics live
+entirely outside the function.
+
+### What 52.7% coverage does and does not mean
+
+This overlay is 52.7% covered by owners, which by my own rule is the shape of
+"clean because nobody looked". It is not, and the arithmetic says why: head 1.1%
++ alignment 0.4% + owners 52.7% + tail 45.8% = 100%, and **the tail is RULED,
+not merely counted** — 21 veneers, one dispatched slot, and not one other return
+shape in 1,952 bytes. Under the structural argument that a Thumb function cannot
+avoid returning, that is a proof no function lives there.
+
+**Coverage is a flag to investigate, never a verdict.** It correctly told me to
+look harder here; looking harder is what settled it. The overlay is small and
+mostly data, which is a fact about the overlay and not a gap in the reading.
+
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**

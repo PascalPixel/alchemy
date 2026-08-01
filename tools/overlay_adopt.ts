@@ -29,6 +29,7 @@ interface Options {
   id: string;
   source: string;
   apply: boolean;
+  where: boolean;
 }
 
 interface FunctionRow {
@@ -45,17 +46,22 @@ interface InternalAlias {
 }
 
 function optionsOf(argv: string[]): Options {
-  const options: Options = { id: "", source: "", apply: false };
+  const options: Options = { id: "", source: "", apply: false, where: false };
   for (let index = 0; index < argv.length; index++) {
     const argument = argv[index];
     if (argument === "--source" || argument === "-s") options.source = argv[++index];
     else if (argument === "--apply") options.apply = true;
+    // §5b5: on a row whose span contains a `mov pc` dispatch, the group diff
+    // disassembles the in-span jump table as instructions and reports nonsense.
+    // The only trustworthy view of such a residual is the byte addresses, so
+    // the rejection path can print them instead of only counting them.
+    else if (argument === "--where") options.where = true;
     else if (argument === "--span") {
       options.span = Number(argv[++index]);
       if (!Number.isInteger(options.span) || options.span <= 0) throw new Error("--span must be a positive byte count");
     }
     else if (argument === "-h" || argument === "--help") {
-      console.log("usage: overlay_adopt.ts <overlay:offsetHex> --source FILE [--span BYTES] [--apply]");
+      console.log("usage: overlay_adopt.ts <overlay:offsetHex> --source FILE [--span BYTES] [--apply] [--where]");
       process.exit(0);
     } else if (options.id === "") options.id = argument;
     else throw new Error(`unrecognized argument: ${argument}`);
@@ -253,8 +259,28 @@ function main(): void {
     for (let byte = 0; byte < Math.min(rebuilt.length, baseline.length); byte++) {
       if (rebuilt[byte] !== baseline[byte]) differing++;
     }
+    const addresses: number[] = [];
+    if (options.where) {
+      for (let byte = 0; byte < Math.min(rebuilt.length, baseline.length); byte++) {
+        if (rebuilt[byte] !== baseline[byte]) addresses.push(byte);
+      }
+    }
     revert();
     console.log(`adopt=rejected ${options.id} differing_bytes=${differing} size=${rebuilt.length}/${baseline.length}`);
+    if (options.where) {
+      // Runs of consecutive addresses, printed as ROM addresses. An empty list
+      // with a non-zero count means the difference is a length change only.
+      const runs: string[] = [];
+      for (let index = 0; index < addresses.length;) {
+        let end = index;
+        while (end + 1 < addresses.length && addresses[end + 1] === addresses[end] + 1) end++;
+        const from = OVERLAY_BASE + addresses[index];
+        const bytes = end - index + 1;
+        runs.push(`0x${from.toString(16)}+${bytes}`);
+        index = end + 1;
+      }
+      console.log(`differing_at ${runs.length === 0 ? "(none; length change only)" : runs.join(" ")}`);
+    }
     process.exitCode = 1;
     return;
   }

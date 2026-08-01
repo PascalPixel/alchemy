@@ -390,6 +390,38 @@ words are the same space: `word - 0x8000 - 0x02000000`. This rule must be
 applied before anything reaches PROSE, not merely before it reaches a draft —
 a map written off a raw listing carries the error into everything built on it.
 
+### The raw-annotation error IS ALREADY IN THE TREE, at scale (2026-08-01, venus)
+
+The rule above was written as a warning. It is also a description of 579 of
+the 1,707 exact-C files in `assets/code`, across 57 overlays: they name at
+least one `Func_02xxxxxx` whose offset lies **past the end of its own overlay
+image**. Overlays all load at 0x02000000, so a cross-overlay call cannot
+exist — an out-of-image overlay-space name is a raw objdump annotation and
+nothing else. The arithmetic that recovers the truth is
+`true = raw - site - 2`.
+
+The founding case, `resource_3c9_c_020038c0.c`, is worth reading because of
+how well it hides. Its five callees are spelled `Func_020095f8`,
+`Func_02007490`, `Func_02007768`, `Func_02007b0c`, `Func_02009610` — every
+one outside a 26,464-byte image. The real targets are two main-image veneers
+and **0x02003bc8, 0x02003e9c, 0x0200423c, three already-drafted owners of
+that same overlay**. The header then compounds it: it claims the `+2` rule
+was applied, and it introduces the three phantoms as "not yet drafted"
+candidates, inventing work that does not exist.
+
+**`bun run verify` cannot see this, and that is the durable part.** The names
+in an exact-C file are labels; the emitted `bl` encodes a displacement the
+harness resolves the same (wrong) way consistently, so the file still
+compiles byte-identical and `byte_identical=yes` is TRUE and MEANINGLESS as a
+check on it. Byte-identity constrains the bytes, not the reading — the same
+hole that lets a wrong callee name corrupt structure in both directions.
+
+Cheap detector, and it should become a `bun run test` gate rather than a note:
+for each exact-C file, parse every `Func_02[0-9a-f]{6}` and flag any whose
+offset is >= its overlay's assembled length. It is a whole-tree scan in about
+a second and it cannot false-positive, because there is no legitimate reason
+for such a name to exist.
+
 ### Inline literal pools corrupt a register-tracking reader (2026-08-01, venus)
 
 An inline literal pool skipped by a forward `b.n` disassembles as
@@ -409,6 +441,20 @@ holds four calls. A first cut of the skip rule that keyed on "forward b.n"
 alone swallowed them. It was caught by the output invariant (525 asserted
 against the tool's own `sites=`), not by eye, which is the whole argument
 for putting the check on the output.
+
+**Assert against the RESOLVED count, not against `sites=` — a pool word wears
+a `bl` too.** The 525-row's invariant worked because that row had no pool word
+that happened to decode as a call. `resource_3c9`'s 0x020037c4 does:
+`sites=11 distinct_targets=4 veneer=10 unknown=1`, and the eleventh "site" is
+the literal pool word 0xfc5ef004 at 0x020038bc. Ten `bl` instructions is the
+correct transcription. So the equality to require is transcribed == resolved
+(`veneer` + `prologue` + in-image), with every `unknown` RULED individually —
+either it is a real call the resolver could not follow, which is a finding, or
+it is a pool word, which is arithmetic. Taking `sites=` as the target would
+have sent a reader hunting for an eleventh call that does not exist; taking
+`veneer=` blindly would hide a genuine unresolved one. Neither number is the
+check on its own. This is the same species as the three apparent stores on the
+5,000-byte row that were pool words wearing `str r6, [r4, #100]`.
 
 ### Drafting a row too big to second-read by eye (2026-08-01, venus)
 
@@ -658,6 +704,61 @@ figures already in hand plus a read of whatever is left over.
 NEGATIVE means a drafted span ran past its neighbour, which is the
 over-measure failure `measureSpan` produced on 0x020039c8 (356 reported, 124
 real). Sweep D is one subtraction that screens for both directions.
+
+### Sweep D STOPS AT THE LAST OWNER — the tail is unswept (2026-08-01, venus)
+
+`gapsOf` walks `index + 1 < spans.length`, so it reads the gaps *between*
+owners and never the region from the LAST owner's end to the image end. It
+computes that region as `tail` and then nothing prints it, sums it, or rules
+it. A `code_suspect_gaps=0` line is therefore silent about it, which is
+exactly the shape of a check agreeing with what you wanted to believe.
+
+The blind spot is not hypothetical and it was proven on the overlay that
+exposed it: `resource_3c9`'s tail was **3,384 bytes**, and TWO of its nine
+residue owners lived inside it — 0x02005a28 and 0x02005b90, both with real
+`push` prologues. Sweeps A and B reach them; the *unkeyed* sweep, which is
+the one that exists precisely to catch what signatures cannot, stopped short
+of them. A leaf in a tail would be invisible to all four sweeps at once.
+
+Every certified overlay carries a large one: 380 = 2,364; 39e = 3,796;
+3b9 = 5,676; 3a4 = 6,088; 3af = 6,360. Those figures are NOT a claim that
+undrafted code is sitting in them — an overlay's veneer bank and its data
+tables live after the last owner, and on 3c9 the tail from 0x02005bec on is
+exactly that: `ldr r4, [pc, #0] / bx r4` pairs and then tables. The claim is
+only that nothing has read them, and "it is probably data" is the assumption
+sweep D was written to stop people making.
+
+Practical rule until the tool prints it: **the tail is part of the sweep.**
+Take `tail` from `--json`, disassemble from the last owner's end, and rule it
+the same three ways as any gap — pool, data (show the shape, e.g. the veneer
+bank's repeating `4c00 4720` pairs), or code. Drafting a genuine owner out of
+the tail shrinks it, which is the honest way the number goes down.
+
+### Publishers are findable in one scan, and they map a cluster (2026-08-01, venus)
+
+Sweep B tells you an address is published. It does not tell you WHERE FROM,
+and that one extra fact turns a list of residue addresses into a structure.
+Scan every 4-aligned word of the assembled image for `offset + 0x8000`, with
+and without the Thumb bit, and locate each hit against the owner spans:
+
+```
+0x3660 -> 0x5984                      (inside owner 0x020056a0)
+0x36d0 -> 0x307c 0x3e94 0x4778        (0x02002360, 0x02003bc8, 0x0200423c)
+0x37c4 -> 0x35ac                      (0x02002360's trailing pool)
+0x5a28 -> 0x3bbc 0x4b1c               (0x02003924, 0x020048d8)
+0x5b90 -> 0x5b70                      (inside owner 0x02005a28)
+0x0518 -> 0x66f4 0x670c               (data tables past the veneer bank)
+```
+
+On resource_3c9 that ordered the whole residue before a line was drafted: the
+publisher of a callback is its SPAWNER, so the pair is a near-twin candidate
+by construction rather than by proximity. It also isolates the exception —
+0x02000518's two words are in the data tables, so it is installed from a
+table and no drafted row points at it, which is worth saying in a header.
+
+A hit inside a row you have already drafted is a free audit of that row: the
+word must appear in its pool listing. A hit inside a PARKED row (0x02002360
+published two of these) is a structural fact you get without opening it.
 
 ### SWEEP B's VALIDATION IS THE DEFECT (2026-08-01, jupiter) — re-certification result
 
@@ -913,6 +1014,48 @@ Easy to get wrong and it changes the answer. `Data_0200cd18` is image offset
 `0x02009771` is `0x9771 - 0x8000 = 0x1771` = image offset 0x1770 with the
 Thumb bit. Applying this correctly is what turned an apparently out-of-range
 pool word into the identification of 0x02001770's publishers.
+
+### resource_3c9 residue state (2026-08-01, venus) — 6 of 9 drafted
+
+`overlay_published.ts resource_3c9` prints **18 residue LINES and they are
+NINE owners**, each listed twice: once as A-called or B-published and again as
+C-shaped. Extract with `grep -E '^  [ABC] ' | awk '{print $3}' | sort -u`,
+never off the line count. resource_39e read the same way (residue=2 was one
+address) and it went unremarked for a whole shift.
+
+All nine carry a real `push` prologue — seven `b5e0`, two `b560` — so sweep B
+found them *because* they have one, and the push-less shared-body leaf cohort
+is a different population entirely. There is no 8-byte-span shortcut here.
+
+Drafted this shift, read in clusters rather than in address order:
+
+| owner | bytes | role |
+|---|---|---|
+| 0x02000518 | 212 | probe-then-act on record 0; published from data TABLES |
+| 0x02003660 | 112 | orbit step, counter-driven twin of exact-C 0x02003600 |
+| 0x020036d0 | 244 | spawner; installs 0x02003600 at the new record's +108 |
+| 0x020037c4 | 252 | arrival check; consumes the +56/+64 the orbit steps write |
+| 0x02005a28 | 360 | spawner, near-twin of 0x020036d0; installs 0x02005b90 |
+| 0x02005b90 | 92 | third orbit step; anchor from the actor's own +104 |
+
+**resource_3c9 holds THREE copies of one orbit step** — 0x02003600 (exact C),
+0x02003660, 0x02005b90 — and they differ in the anchor source, both radii, and
+the angle increment (-0x800, -0x800, -0x200). The two spawners differ in the
+callback installed, the `Func_0808a160` mode, and, the one that mattered,
+whether bits 2-3 of the attached object's +9 byte are a CONSTANT 4 or are
+COPIED from the anchor's own attached object. Diffing before writing is what
+kept a copy from being normalised into a constant, exactly as on 3b6.
+
+Left, and both parked on size rather than on structure:
+- **0x020012c8** — 3,604 bytes, `sites=363`, one return-shaped halfword in the
+  whole gap. Not opened.
+- **0x02002360** — 4,708 bytes, `sites=` not re-measured; the largest owner in
+  the overlay, mapped in detail at `work/claude/notes/resource_3c9_02002360.md`
+  (which is per-worktree and therefore invisible to other lanes). Its published
+  words are now located: it publishes 0x020036d0 and 0x020037c4.
+
+3c9 is NOT certified and must not be described as closed. Sweeps A/B/C plus
+sweep D plus the tail read all have to come after those two rows.
 
 ### resource_3a4 residue state (2026-08-01, jupiter) — sweeps A and B EMPTY
 

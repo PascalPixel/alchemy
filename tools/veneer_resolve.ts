@@ -160,6 +160,7 @@ export type Resolution =
   | { kind: "memory"; detail: string; at: number; via: string[] }
   | { kind: "computed"; at: number; via: string[] }
   | { kind: "call-return"; at: number; target: number | null; via: string[] }
+  | { kind: "incoming"; register: number; via: string[] }
   | { kind: "unknown"; reason: string };
 
 /**
@@ -237,6 +238,12 @@ function resolveRegister(
     if (writer.kind === "computed") return { kind: "computed", at: pc, via };
     return { kind: "unknown", reason: `unknown writer at 0x${pc.toString(16)}` };
   }
+  // Reaching the entry without finding a write is not a failure: the register
+  // was never assigned in this function, so its value came from the CALLER.
+  // 0x08006f6c is the clearest case in the tree -- its `bl __call_via_r1` is
+  // the second instruction, so r1 is plainly an incoming function pointer and
+  // the function's declared `(void)` signature is wrong.
+  if (site - 2 - WALK_LIMIT * 2 < entry) return { kind: "incoming", register, via };
   return { kind: "unknown", reason: `no write to r${register} within ${WALK_LIMIT} instructions` };
 }
 
@@ -288,9 +295,11 @@ function describe(resolution: Resolution): string {
     case "computed":
       return `COMPUTED at 0x${resolution.at.toString(16)}${via}`;
     case "call-return":
-      return `RETURN of the call at 0x${resolution.at.toString(16)}${
-        resolution.target !== null ? ` -> 0x${resolution.target.toString(16)}` : ""
+      return `RETURN of the call at 0x${resolution.at.toString(16).padStart(8, "0")}${
+        resolution.target !== null ? ` -> 0x${resolution.target.toString(16).padStart(8, "0")}` : ""
       }${via}`;
+    case "incoming":
+      return `INCOMING r${resolution.register} -- never written here, supplied by the caller${via}`;
     default:
       return `UNRESOLVED (${resolution.reason})`;
   }
@@ -403,6 +412,12 @@ function selfTest(): void {
           );
         }
       }
+    }
+    // An unwritten register is an incoming argument, not a failed walk.
+    // 0x08006f6c's `bl __call_via_r1` is its SECOND instruction.
+    const thunk = resolveFunction(image, 0x08006f6c, 0x08006f80);
+    if (thunk.length !== 1 || thunk[0].resolution.kind !== "incoming") {
+      throw new Error("veneer self-test: unwritten register not reported as incoming");
     }
     // 0x080052f4 dispatches sp into a DMA-filled stack buffer: the walk must
     // land on the `mov sp, r1` that retargets the stack, not wander past it.

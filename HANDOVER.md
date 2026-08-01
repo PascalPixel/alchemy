@@ -307,8 +307,26 @@ such error goes in the safe direction.
 
 ## Tooling that lies quietly (2026-08-01)
 
-Two near-misses in one night, same class: a tool that returns a *plausible
-empty or wrong answer* instead of failing. Both nearly reached prose.
+Near-misses of one class: a tool that returns a *plausible empty or wrong
+answer* instead of failing. Each of these nearly reached prose, and the last
+is about the tools we write to catch the others.
+
+- **A self-test that encodes today's residue rots the moment the work gets
+  done. Assert the SHAPE on a synthetic input, never the state of the tree.**
+  Sweep D's first self-test asserted that resource_3a4's 0x3410 gap *exists*.
+  It passed for exactly as long as the bug did: drafting the row broke the
+  test that had found it. Right alarm, wrong design — and worse than useless
+  at scale, because it would have fired on every lane that made progress and
+  taught them the alarm is noise. Rebuilt against a fabricated 0x40-byte
+  image, it now pins the three things that are actually invariant: a real
+  leaf's return sits at the gap's END, a two-byte undercount's return sits at
+  its FIRST halfword (being the previous owner's own `bx r0`), and a negative
+  gap is an over-measure. That last case had never been exercised at all
+  while the test was busy describing one address.
+
+  The tell that you are writing one of these: the assertion names a specific
+  address from the current tree. A test may READ the tree to find candidates;
+  it must not require a particular answer to still be there.
 
 - **Never build source edits or tool arguments through shell interpolation.**
   The dangerous case is not the one that fails to compile — it is the

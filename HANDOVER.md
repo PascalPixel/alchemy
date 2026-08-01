@@ -817,6 +817,61 @@ have sent a reader hunting for an eleventh call that does not exist; taking
 check on its own. This is the same species as the three apparent stores on the
 5,000-byte row that were pool words wearing `str r6, [r4, #100]`.
 
+**A pool footer `overlay_show` prints can itself be a fiction (2026-08-01,
+venus).** The tool follows `ldr rN,[pc,#K]` to find pool addresses — including
+the fake `ldr`s that pool words decode to. On resource_3c9's 0x020012c8 the
+pool word 0x00004ccc at 0x02001a48 renders as `ldr r4,[pc,#816]`, so the tool
+dutifully prints a pool footer for 0x02001d7c, which is ordinary code (`lsls
+r1,r1,#8`) in the middle of the body. This is the same corruption as the
+paragraph above, one level up: the pool listing is downstream of the
+disassembly, so it inherits the disassembly's fictions. **Cross-check every
+pool address the footer names against where the code actually branches.** A
+real interior pool is entered by nothing and left by nothing; if the address
+sits between two live instructions, the footer is an artifact.
+
+**A big row can carry SEVERAL interior pools, and their count is not
+predictable from length.** 0x020012c8 has three (0x020016c8-0x020016ff,
+0x02001a30-0x02001a4f, 0x02001e54-0x02001e73), 30 words in total, each
+branched over. Two are skipped by a plain `b.n`; the middle one is skipped by
+a *conditional* `bne.n` — it sits in the gap between a two-armed test's
+fall-through arm and its taken arm, so the "forward b.n" tell does not fire on
+it at all. Read naively the row appears to end at the first pool, a third of
+the way in. The reliable bound is still sweep D's subtraction plus a single
+return-shaped halfword, never the shape of the listing.
+
+### The callee MULTISET is the assertion; the ordered list is the second one (2026-08-01, venus)
+
+On 0x020012c8 (363 sites) two mechanical checks were run against the annotated
+listing, and they catch different things:
+
+1. **Sorted multiset of callee names, C versus ROM.** Catches every dropped,
+   added, or misidentified call. It came back identical — 363 against 363,
+   the only difference being the C file's own definition name.
+2. **Ordered list, C versus ROM.** Differed in exactly two places, and both
+   were the nested calls (`Func_020020dc(Func_0808a080(6))` and
+   `Func_080770c8(Func_08077040(65) + 0x345)`) where the ROM evaluates the
+   argument first and the C says the same thing. Predict those before running
+   the diff; a third mismatch would have been a real defect.
+
+**Both checks are BLIND to a swapped if/else arm** when the two arms call the
+same functions with different arguments — which is exactly the shape of the
+two `Func_0808a070(0, 0)` tests on this row (both arms call `Func_0808a010`
+then `Func_0808a110`, differing only in 3 versus 4). The name lists cannot
+see it. Arms must be pinned on the branch *sense* and on the arguments, by
+hand, every time. Note also that these two checks are not independent of each
+other — both read the same `overlay_call_targets` resolution — so they are one
+instrument used two ways, not two instruments. The genuinely independent
+confirmations on this row were `c_expressed` moving by exactly 3604, and the
+next owner 0x020020dc turning up as a callee *inside* the row's loop, which
+confirms the upper bound from the callee side rather than by subtraction.
+
+**Re-derive every callee-saved cached argument from a write/read listing, not
+from memory.** On this row r5 is rewritten thirteen times, r6 six, r8 three
+and sl twice, and two of the rewrites are `ands r5,r3` / `orrs r6,r3` inside a
+flag edit — the register is clobbered by the very idiom that reads it, and any
+later use of the old value would be a silent wrong constant. Grep the writes,
+grep the reads, and match them pairwise.
+
 ### Drafting a row too big to second-read by eye (2026-08-01, venus)
 
 For rows in the thousands of bytes, an eyeball second read does not fit in a
@@ -1216,6 +1271,31 @@ Take `tail` from `--json`, disassemble from the last owner's end, and rule it
 the same three ways as any gap — pool, data (show the shape, e.g. the veneer
 bank's repeating `4c00 4720` pairs), or code. Drafting a genuine owner out of
 the tail shrinks it, which is the honest way the number goes down.
+
+**FIXED — and the paragraph above is now stale in its complaint (2026-08-01,
+venus, verified while closing resource_3a1).** `bb01a085` ("sweep D: rule the
+tail instead of counting it") landed after the note above was written, and the
+`--json` tail now carries `prologues` and a `verdict`, so the tail IS ruled
+rather than merely computed. The text output still says nothing, so `--json`
+remains the way to read it, and the summary line's `prologue_suspect_tails=N`
+is the count. Use it:
+
+```
+bun tools/overlay_gaps.ts <overlay> --json   # tail.verdict, tail.prologues
+```
+
+**The verdict is live, and here is the control to prove it in-session.**
+`resource_3a4` returns `PROLOGUE-SUSPECT` with one prologue in a 6,088-byte
+tail, while `resource_3a1`, `resource_3b9` and `resource_3c9` return
+`VENEER-AND-DATA` with zero. A blanket "clean" would give the same answer
+everywhere; it does not. Run 3a4 alongside whatever you are closing.
+
+**The bogus-name control does NOT work on sweep D, and does on sweep A/B/C.**
+`overlay_gaps.ts resource_zzz` prints `overlays=0` — which is also what a
+broken filter prints, so zero proves nothing there. `overlay_published.ts
+resource_zzz` instead FALLS BACK to the whole tree and prints `residue=1604`,
+which is a genuine liveness signal. Different tools, different fallbacks; the
+real sweep-D control is a known-dirty overlay, not a fake name.
 
 ### Publishers are findable in one scan, and they map a cluster (2026-08-01, venus)
 
@@ -1660,6 +1740,21 @@ Easy to get wrong and it changes the answer. `Data_0200cd18` is image offset
 Thumb bit. Applying this correctly is what turned an apparently out-of-range
 pool word into the identification of 0x02001770's publishers.
 
+**The rule is banked and STILL was not being applied to drafted headers
+(2026-08-01, venus).** Three resource_3c9 headers listed odd `0x0200xxxx` pool
+words as unresolved raw values when this rule resolves all three onto the
+overlay's own already-drafted owners: 0x0200a351 -> 0x02002350 (0x020012c8's
+header), 0x0200b6d1 -> 0x020036d0 and 0x0200d6a1 -> 0x020056a0 (0x0200423c's).
+Every one lands on a real `push` prologue at that exact offset, so the calls
+handing them to Func_080000d0/Func_080000d8 are registering this overlay's own
+rows as callbacks. Corrected in 0x0200423c's header. **Odd word, in image
+range: subtract 0x8000, clear bit 0, and look for a prologue before writing
+the word "unresolved".** The parity is the whole tell — an even in-range word
+is data and stays raw, an odd one is a function pointer and is answerable. And
+check the top end too: 0x0200e760/0x0200e764 in the same file are offsets
+0x6760/0x6764 against a 26464-byte (0x6760) image, so they are AT and past the
+end — scratch beyond the loaded overlay, raw for a different reason.
+
 ### resource_3c9 residue state (2026-08-01, venus) — 7 of 9, plus a sweep-D leaf
 
 `overlay_published.ts resource_3c9` prints **18 residue LINES and they are
@@ -1731,18 +1826,82 @@ coordinates and never the sentinel; this leaf writes all three. The gate means
 they were nearby, which is proximity reasoning wearing the clothes of a
 cluster read.
 
-Residue after this shift: **4 lines, 2 owners**, re-measured with the liveness
+Residue after that shift: **4 lines, 2 owners**, re-measured with the liveness
 control in the same session (3a4 = 1, a bogus overlay name = 1748). Sweep D
-goes from three code-suspect gaps to **two**, and the two are exactly these:
-- **0x020012c8** — 3,604 bytes, `sites=363`, one return-shaped halfword in the
-  whole gap. Not opened.
-- **0x02002360** — 4,708 bytes, `sites=` not re-measured; the largest owner in
-  the overlay, mapped in detail at `work/claude/notes/resource_3c9_02002360.md`
-  (which is per-worktree and therefore invisible to other lanes). Its published
-  words are now located: it publishes 0x020036d0 and 0x020037c4.
+went from three code-suspect gaps to **two**: 0x020012c8 and 0x02002360.
+
+#### Updated 2026-08-01 (venus): 0x020012c8 is DRAFTED, ONE owner left
+
+**0x020012c8 — 3,604 bytes, 363 of 363 sites, drafted at b45da6fc.** True
+bounds 0x020012c8-0x020020dc: code to the `bx r0` at 0x020020b8, a two-byte
+alignment halfword, then an eight-word trailing pool. `c_expressed` moved by
+exactly 3604, which is the independent check that the file is wired in and
+accounts for the whole span. Three interior literal pools and only eight
+conditional branches — it was long, not hard, and the twice-repeated park on
+it was a judgement about *when*, which held up: read fresh it took one sitting
+end to end.
+
+Residue is now **2 lines, 1 owner**; sweep D reports **one** code-suspect gap.
+
+- **0x02002360** — 4,708 bytes, the largest owner in the overlay and the only
+  thing between 3c9 and certification. Mapped in detail at
+  `work/claude/notes/resource_3c9_02002360.md` (per-worktree, so invisible to
+  other lanes). It publishes 0x020036d0 and 0x020037c4. Re-measure `sites=`
+  over the TRUE bounds before planning it — 0x020012c8's figure was quoted
+  correctly but only because it had been measured over the true bounds rather
+  than the recorded ones.
+- Sweep D also still reports **STALE-SPAN 0x38c0, recorded 28B, compiles to
+  26B**. That is Ivan's promoted-to-exact-C class, sixteen rows tree-wide, and
+  it is a class decision rather than a 3c9 one.
 
 3c9 is NOT certified and must not be described as closed. Sweeps A/B/C plus
-sweep D plus the tail read all have to come after those two rows.
+sweep D plus the tail read all have to come after 0x02002360.
+
+### resource_3a1 CLOSED (2026-08-01, venus) — one owner, and it was one owner
+
+Eighteen owners: seventeen exact-C and one semantic, `0x0200013c` at 9386e7a6.
+All four sweeps clean with the liveness controls run in the same session —
+A/B/C residue **0** (bogus name = 1604), sweep D **0 gaps and not even a stale
+span** (3a4 = 3), and the tail past the last owner reads `VENEER-AND-DATA`
+with **zero prologues** over 2,016 bytes (3a4 = `PROLOGUE-SUSPECT`, one).
+
+**Two figures I had written down myself were wrong, and re-measuring caught
+both.** I recorded seventeen conditional branches; there are fourteen. Worse,
+I called it a "one-owner close" without ever checking arity: it takes **EIGHT
+arguments**, four of them on the stack at `[sp,#40]`..`[sp,#52]`, all four
+read. Stopping at r0-r3 gives a four-argument function that silently drops the
+flags word — the argument the entire second half of the row is about. Rule 1
+("re-measure everything") is not only about the tree's numbers; it is about
+the ones in your own handover.
+
+**The row and its neighbour corroborate each other field for field.**
+0x0200013c is the spawner-and-initialiser for the per-frame step at
+0x02000104, the row immediately before it, and installs it by writing the pool
+word 0x02008105 (offset 0x105 + Thumb bit) into the record's +108 callback
+slot. 0x02000104 per frame adds +68/+72/+76 into +8/+12/+16, adds +48/+52 into
++24/+28, and accumulates +100 into its sub-record's +30 — and every one of
+those source fields is written by 0x0200013c. Two rows read independently,
+agreeing on the whole field set, is worth more than either read twice.
+
+**A shared call between two arms deflates nothing and inflates nothing — it
+just isn't where you think.** The draft's first cut had four `Func_03000380`
+calls; the ROM has three, because the second call is SHARED between the arms
+via the `b.n` at 0x02000288. The callee multiset check fired on it before any
+second read. This is the deflation class the tree already documents, met from
+the other direction.
+
+**Two option bits are coupled, and a register reuse is the only tell.** The
+`128 << 12` test leaves its result in r2 and the `128 << 11` block re-tests
+that same r2 without recomputing it — nothing writes r2 between. So `128 << 11`
+measures from the offset `128 << 12` just wrote when both are set, and from a
+fixed -65536 when only one is. Read as independent bits, the else arm looks
+like a default; it is the other bit's absence.
+
+**Alignment padding again, and the number is the part that matters.** The
+2-byte halfword at 0x0200013a belongs to 0x02000104, not to this owner. Sweep
+D reports the gap as 474 for that reason and the owner is 472. Recorded 472,
+and sweep D then reports nothing at all — which is the check on the
+subtraction, not a matter of taste about where padding lives.
 
 ### resource_3a4 residue state (2026-08-01, jupiter) — sweeps A and B EMPTY
 

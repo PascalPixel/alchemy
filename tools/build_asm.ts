@@ -364,7 +364,19 @@ async function main(): Promise<void> {
   for (const source of sources) {
     const sourceName = relative(ROOT, source);
     const placement = layout.get(sourceName);
-    const { address, runAddress, data } = await buildRegion(source, output, placement?.runAddress);
+    // Name the region on failure. `buildRegion` assembles, links and caches,
+    // and every throw inside it — a missing veneer classification, an
+    // unsupported alignment source, a toolchain non-zero exit — knows nothing
+    // about WHICH of ~1,800 regions it was working on. One wrap here supplies
+    // the coordinate for all of them: the same pattern that turned the
+    // anonymous "39c complaint" into an address in `build_assets`.
+    let built: BuiltRegion;
+    try {
+      built = await buildRegion(source, output, placement?.runAddress);
+    } catch (cause) {
+      throw new Error(`${sourceName}: ${cause instanceof Error ? cause.message : String(cause)}`, { cause });
+    }
+    const { address, runAddress, data } = built;
     const limit = rom === null ? ROM_BASE + 0x00800000 : ROM_BASE + rom.length;
     if (address < ROM_BASE || address >= limit || data.length === 0 || address + data.length > limit) {
       throw new Error(`${basename(source)}: region outside ROM`);

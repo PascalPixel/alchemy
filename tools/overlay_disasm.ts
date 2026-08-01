@@ -403,7 +403,18 @@ export function assembleOverlay(source: string | URL, base = OVERLAY_BASE): Buff
     const overlay = basename(String(source)).replace(/_overlay\.s$/, "");
     const occupied = new Set<number>();
     for (const cSource of overlayCSources(source)) {
-      const compiled = compileOverlayC(cSource, work, overlay);
+      // Name the row. `compileOverlayC` runs the whole compile plan, and a
+      // toolchain failure inside it surfaced as a bare `xgcc failed: …` with no
+      // indication of which overlay, or which of its rows, was being built.
+      let compiled: { address: number; data: Buffer };
+      try {
+        compiled = compileOverlayC(cSource, work, overlay);
+      } catch (cause) {
+        throw new Error(
+          `${overlay}: ${basename(cSource)}: ${cause instanceof Error ? cause.message : String(cause)}`,
+          { cause },
+        );
+      }
       const offset = compiled.address - base;
       if (offset < 0 || offset + compiled.data.length > result.length) {
         throw new Error(`overlay C span is outside ${source}: ${cSource}`);

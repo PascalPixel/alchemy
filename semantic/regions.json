@@ -3189,6 +3189,12 @@
     },
     {
       "overlay": "resource_39c",
+      "entry": "0x020008ee",
+      "span_bytes": 694,
+      "evidence": "admitted whole-owner semantic reconstruction; derived owner absent from the structural inventory -- r8/r9/sl/fp-saving prologue at 0x020008ee through the void interworking return at 0x02000b72-0x02000b84; independently measured with m2c_guard as 664 code bytes ending at 0x02000b86, followed by alignment and seven referenced pool words at 0x02000b88-0x02000ba3, with the next owner's prologue at 0x02000ba4, making the whole span 694 bytes; all 31 bounded call sites resolve across fourteen targets and the only call_via site is the explicit sixth callback argument; inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
       "entry": "0x02000ba4",
       "span_bytes": 284,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8/sl spill) and returning with a real value (pop {r1}/bx r1) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached by five bl sites in the whole overlay and independently measured with m2c_guard as 272 code bytes ending at 0x02000cb4; its three referenced literal words occupy 0x02000cb4-0x02000cbf and the next owner's prologue is at 0x02000cc0, making the whole-owner span 284 bytes; all four direct call sites inside the owner were resolved from the bounded overlay image; inside the assembled overlay image and not overlapping another recorded owner"

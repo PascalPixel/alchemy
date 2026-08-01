@@ -1168,6 +1168,31 @@ the same three ways as any gap — pool, data (show the shape, e.g. the veneer
 bank's repeating `4c00 4720` pairs), or code. Drafting a genuine owner out of
 the tail shrinks it, which is the honest way the number goes down.
 
+**FIXED — and the paragraph above is now stale in its complaint (2026-08-01,
+venus, verified while closing resource_3a1).** `bb01a085` ("sweep D: rule the
+tail instead of counting it") landed after the note above was written, and the
+`--json` tail now carries `prologues` and a `verdict`, so the tail IS ruled
+rather than merely computed. The text output still says nothing, so `--json`
+remains the way to read it, and the summary line's `prologue_suspect_tails=N`
+is the count. Use it:
+
+```
+bun tools/overlay_gaps.ts <overlay> --json   # tail.verdict, tail.prologues
+```
+
+**The verdict is live, and here is the control to prove it in-session.**
+`resource_3a4` returns `PROLOGUE-SUSPECT` with one prologue in a 6,088-byte
+tail, while `resource_3a1`, `resource_3b9` and `resource_3c9` return
+`VENEER-AND-DATA` with zero. A blanket "clean" would give the same answer
+everywhere; it does not. Run 3a4 alongside whatever you are closing.
+
+**The bogus-name control does NOT work on sweep D, and does on sweep A/B/C.**
+`overlay_gaps.ts resource_zzz` prints `overlays=0` — which is also what a
+broken filter prints, so zero proves nothing there. `overlay_published.ts
+resource_zzz` instead FALLS BACK to the whole tree and prints `residue=1604`,
+which is a genuine liveness signal. Different tools, different fallbacks; the
+real sweep-D control is a known-dirty overlay, not a fake name.
+
 ### Publishers are findable in one scan, and they map a cluster (2026-08-01, venus)
 
 Sweep B tells you an address is published. It does not tell you WHERE FROM,
@@ -1727,6 +1752,52 @@ Residue is now **2 lines, 1 owner**; sweep D reports **one** code-suspect gap.
 
 3c9 is NOT certified and must not be described as closed. Sweeps A/B/C plus
 sweep D plus the tail read all have to come after 0x02002360.
+
+### resource_3a1 CLOSED (2026-08-01, venus) — one owner, and it was one owner
+
+Eighteen owners: seventeen exact-C and one semantic, `0x0200013c` at 9386e7a6.
+All four sweeps clean with the liveness controls run in the same session —
+A/B/C residue **0** (bogus name = 1604), sweep D **0 gaps and not even a stale
+span** (3a4 = 3), and the tail past the last owner reads `VENEER-AND-DATA`
+with **zero prologues** over 2,016 bytes (3a4 = `PROLOGUE-SUSPECT`, one).
+
+**Two figures I had written down myself were wrong, and re-measuring caught
+both.** I recorded seventeen conditional branches; there are fourteen. Worse,
+I called it a "one-owner close" without ever checking arity: it takes **EIGHT
+arguments**, four of them on the stack at `[sp,#40]`..`[sp,#52]`, all four
+read. Stopping at r0-r3 gives a four-argument function that silently drops the
+flags word — the argument the entire second half of the row is about. Rule 1
+("re-measure everything") is not only about the tree's numbers; it is about
+the ones in your own handover.
+
+**The row and its neighbour corroborate each other field for field.**
+0x0200013c is the spawner-and-initialiser for the per-frame step at
+0x02000104, the row immediately before it, and installs it by writing the pool
+word 0x02008105 (offset 0x105 + Thumb bit) into the record's +108 callback
+slot. 0x02000104 per frame adds +68/+72/+76 into +8/+12/+16, adds +48/+52 into
++24/+28, and accumulates +100 into its sub-record's +30 — and every one of
+those source fields is written by 0x0200013c. Two rows read independently,
+agreeing on the whole field set, is worth more than either read twice.
+
+**A shared call between two arms deflates nothing and inflates nothing — it
+just isn't where you think.** The draft's first cut had four `Func_03000380`
+calls; the ROM has three, because the second call is SHARED between the arms
+via the `b.n` at 0x02000288. The callee multiset check fired on it before any
+second read. This is the deflation class the tree already documents, met from
+the other direction.
+
+**Two option bits are coupled, and a register reuse is the only tell.** The
+`128 << 12` test leaves its result in r2 and the `128 << 11` block re-tests
+that same r2 without recomputing it — nothing writes r2 between. So `128 << 11`
+measures from the offset `128 << 12` just wrote when both are set, and from a
+fixed -65536 when only one is. Read as independent bits, the else arm looks
+like a default; it is the other bit's absence.
+
+**Alignment padding again, and the number is the part that matters.** The
+2-byte halfword at 0x0200013a belongs to 0x02000104, not to this owner. Sweep
+D reports the gap as 474 for that reason and the owner is 472. Recorded 472,
+and sweep D then reports nothing at all — which is the check on the
+subtraction, not a matter of taste about where padding lives.
 
 ### resource_3a4 residue state (2026-08-01, jupiter) — sweeps A and B EMPTY
 

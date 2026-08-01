@@ -390,7 +390,7 @@ function selfTest(): void {
     throw new Error("a pool footer line is not a call site");
   // The refusal decision, both directions, on SYNTHETIC input. No overlay is
   // named, so ordinary source changes cannot turn this red.
-  if (!resolvesNothing(0, 0)) throw new Error("self-test: an empty whole-overlay run must refuse");
+  if (!resolvesNothing(0, 0)) throw new Error("self-test: an empty whole-code-overlay run must refuse");
   if (resolvesNothing(1, 0)) throw new Error("self-test: a run with sites must not refuse");
   if (resolvesNothing(0, 2)) throw new Error("self-test: an explicitly bounded run must not refuse");
 
@@ -418,7 +418,7 @@ function selfTest(): void {
   if (Bun.spawnSync(["bun", self, "resource_ffffff"], { stdout: "pipe", stderr: "pipe" }).exitCode === 0)
     throw new Error("self-test: an unknown overlay must NOT exit 0");
 
-  console.log("self-test=ok (including empty whole-overlay refusal)");
+  console.log("self-test=ok (including empty whole-code-overlay refusal)");
 }
 
 /**
@@ -558,7 +558,7 @@ function main(): void {
     `\nsites=${sites.length} distinct_targets=${distinct.size} ` +
       Object.entries(kinds).map(([k, v]) => `${k}=${v}`).join(" "),
   );
-  // RESOLVING NOTHING IS NOT A RESULT. The whole-overlay path walks only
+  // RESOLVING NOTHING IS NOT A RESULT. The whole-code-overlay path walks only
   // UNCONVERTED inventory rows, so on a well-advanced overlay it can print
   // `sites=0 distinct_targets=0` at exit 0 -- which reads as "this overlay
   // makes no calls". Thirty of ninety-six overlays are in that state, and they
@@ -588,10 +588,10 @@ function main(): void {
   if (resolvesNothing(sites.length, bounds.length)) {
     console.log(
       "NOTHING RESOLVED — this is a FAILURE, not a pass.\n" +
-        `  The whole-overlay path walks only UNCONVERTED inventory rows, and for ${overlay}\n` +
+        `  The whole-code-overlay path walks only UNCONVERTED inventory rows, and for ${overlay}\n` +
         "  those rows yielded no call site. Typically what remains are veneer-bank and\n" +
         "  data-tail fragments, but this tool has NOT established that, and this is in no\n" +
-        "  case evidence that the overlay makes no calls.\n" +
+        "  case evidence that the code overlay makes no calls.\n" +
         "  Pass explicit owner bounds — `overlay_call_targets.ts <overlay> START END` —\n" +
         "  which synthesises the span and resolves it properly.",
     );

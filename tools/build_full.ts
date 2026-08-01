@@ -484,7 +484,7 @@ async function main(): Promise<void> {
     const size = Number(region.size);
     const start = address - ROM_BASE;
     const end = start + size;
-    if (start < 0 || end > romSize || end <= start) throw new Error(`source outside image at 0x${hexadecimal(address)}`);
+    if (start < 0 || end > romSize || end <= start) throw new Error(`compiled source outside ROM image at 0x${hexadecimal(address)}`);
     const source = image.subarray(address - imageBase, address - imageBase + size);
     const expected = rom?.subarray(start, end);
     if (expected !== undefined && !source.equals(expected)) {
@@ -512,7 +512,7 @@ async function main(): Promise<void> {
       const size = Number(region.size);
       const start = address - ROM_BASE;
       const end = start + size;
-      if (start < 0 || end > romSize || end <= start) throw new Error(`assembly outside image at 0x${hexadecimal(address)}`);
+      if (start < 0 || end > romSize || end <= start) throw new Error(`assembly outside ROM image at 0x${hexadecimal(address)}`);
       if (claimedMask.subarray(start, end).some((value) => value !== 0)) {
         throw new Error(`assembly overlaps another source at 0x${address.toString(16).padStart(8, "0")}`);
       }
@@ -542,7 +542,7 @@ async function main(): Promise<void> {
       const size = Number(region.size);
       const start = address - ROM_BASE;
       const end = start + size;
-      if (start < 0 || end > romSize || end <= start) throw new Error(`asset outside image at 0x${hexadecimal(address)}`);
+      if (start < 0 || end > romSize || end <= start) throw new Error(`data/assets output outside ROM image at 0x${hexadecimal(address)}`);
       if (claimedMask.subarray(start, end).some((value) => value !== 0)) {
         throw new Error(`asset overlaps another source at 0x${address.toString(16).padStart(8, "0")}`);
       }
@@ -556,7 +556,7 @@ async function main(): Promise<void> {
       assetRegions.push(region);
     }
   }
-  if (rebuilt !== null && rom !== null && !rebuilt.equals(rom)) throw new Error("full rebuild differs from private ROM");
+  if (rebuilt !== null && rom !== null && !rebuilt.equals(rom)) throw new Error("full rebuild differs from reference ROM image");
   const output = rooted(args.output);
   mkdirSync(dirname(output), { recursive: true });
   if (rebuilt !== null) writeFileSync(output, rebuilt);

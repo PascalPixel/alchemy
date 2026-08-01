@@ -2014,8 +2014,8 @@
     {
       "overlay": "resource_394",
       "entry": "0x020003f0",
-      "span_bytes": 1008,
-      "evidence": "push/sub-sp owner through its outer return at 0x020007dc; diagnostic inventory seeds inside this span are hidden-context entries"
+      "span_bytes": 1006,
+      "evidence": "push/sub-sp owner through its outer return at 0x020007dc; diagnostic inventory seeds inside this span are hidden-context entries. Span RESOLVED FROM THE ROM 2026-08-01, not from either authority: the last owned byte is 0x020007dd (the `bx r0` at 0x020007dc, with the function's own literal pool at 0x020007cc-0x020007d7 preceding the epilogue), the halfword at 0x020007de is 0x0000 alignment padding, and the next owner begins at 0x020007e0. 1008 tiled the gap into this owner and disagreed with the overlay inventory's 1006; 1006 is the strict extent and the padding is covered by overlay_gaps ALIGNMENT_SLACK, as it is for every other owner whose successor is word-aligned"
     },
     {
       "overlay": "resource_394",

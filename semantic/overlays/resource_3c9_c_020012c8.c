@@ -49,16 +49,17 @@ typedef int s32;
  * unconditional `b.n`, three are the pool skips above and the fourth
  * (0x02001a2e) is the join of the second two-armed test.
  *
- * POOL WORDS RESOLVE UNDER THE 0x02008000 LOAD BASE. The overlay image
- * is 26464 bytes and is linked at 0x02008000 (`BASE_SHIFT` in
- * tools/overlay_call_targets.ts), so an in-image pointer spells as
- * `0x02008000 + offset`. The word 0x0200a351 at 0x020016fc is therefore
+ * Pool pointers, resolved with the tree's existing base + 0x8000 rule
+ * (tracked HANDOVER, "In-image pointers are spelled base + 0x8000") --
+ * no new rule here, only its application. The image is 26464 bytes and
+ * is linked at 0x02008000, so the word 0x0200a351 at 0x020016fc is
  * offset 0x2351 = this overlay's own owner 0x02002350 with the Thumb
- * bit set (resource_3c9_c_02002350.c, already drafted); it is passed to
- * Func_080000d0 and then to Func_080000d8, which is a callback
- * registration. 0x0200e004 and 0x0200e03c are offsets 0x6004 and
- * 0x603c, inside the image's data region. They are recorded here as the
- * raw pool values, matching this overlay's other drafts.
+ * bit set (resource_3c9_c_02002350.c, already drafted, and a `push
+ * {lr}` prologue at that exact offset); it is handed to Func_080000d0
+ * and then to Func_080000d8, which is a callback registration.
+ * 0x0200e004 and 0x0200e03c are offsets 0x6004 and 0x603c, inside the
+ * image's data region. All three are written here as the raw pool
+ * values, matching this overlay's other drafts.
  *
  * SHARED IDIOMS with the rest of resource_3c9: the `Func_0808a080(id)`
  * record fetch followed by a `+90` bit edit (clear bit 0 / set bit 0),

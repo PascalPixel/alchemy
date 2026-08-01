@@ -3086,6 +3086,12 @@
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_3a0), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; the twelve-word literal pool at 0x020012f4-0x02001323 sits INSIDE the function and is jumped over by the b at 0x020012f2, with the epilogue following at 0x02001324-0x0200132c; span read to the import-veneer table at 0x02001330, inside the assembled overlay image and not overlapping another recorded owner; hand-drafted from the bytes with tools/m2c_guard.ts reporting full call coverage."
     },
     {
+      "overlay": "resource_3a1",
+      "entry": "0x0200013c",
+      "span_bytes": 472,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8/r9/sl/fp spill and an 8-byte stack frame) and returning (add sp,#8/pop {r3, r5, r6, r7}/mov r8,r3/mov r9,r5/mov sl,r6/mov fp,r7/pop {r5, r6, r7}/pop {r0}/bx r0 at 0x020002f6-0x02000306) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_3a1 13c 314, the +2 rule against the raw image, sites=10 distinct_targets=6 veneer=10 over exactly these bounds); span 0x02000314 - 0x0200013c = 0x1d8 = 472 read from the disassembly through the trailing three-word literal pool 0x02000308-0x02000313; sweep D reports the gap as 0x13a-0x313 = 474 bytes because the 2-byte halfword at 0x0200013a is ALIGNMENT PADDING after the bx lr at 0x02000138 that ends the previous row 0x02000104, and belongs to that row and not to this one -- 472 is the owner, 474 is the owner plus the pad; the +108 callback slot is written with the pool word 0x02008105, image offset 0x105 under the base+0x8000 spelling = that same previous row 0x02000104 with the Thumb bit, and every field 0x02000104 reads per frame (+68/+72/+76, +48/+52, +24/+28, +100) is written here, which corroborates the bound from the callee side; inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
       "overlay": "resource_3a2",
       "entry": "0x020000e8",
       "span_bytes": 88,

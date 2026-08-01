@@ -1,3 +1,20 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
+ * range is an indirect call through the named register, not a call to a
+ * function at the branch target.  Resolved with tools/veneer_resolve.ts.
+ *
+ * UNCERTAINTY, and it is deliberate.  What 0x03000164 DOES is not
+ * established.  semantic/main/080c1ffc.c calls it a resident two-argument
+ * owner initializer; across the tree it is reached with two arguments at
+ * some sites and three at others, and where a third is passed it is almost
+ * always zero.  It also sits four bytes -- one ARM instruction -- from the
+ * fill at 0x03000168, the way the sin/cos pair at 0x0800231c/0x08002322
+ * does.  That is suggestive of two entry points into one routine and it is
+ * NOT asserted here: the evidence is recorded so the exact lane can settle
+ * it, and the type below says only what this call site proves.
+ */
 #include "layout_guard.h"
 #include "types.h"
 
@@ -62,6 +79,8 @@
 /* 0x03000118, the IWRAM-relocated ARM fixed-point multiply. */
 typedef s32 (*Multiply_080b7b6c)(s32 a, s32 b);
 
+typedef void (*Resident_03000164)(void *destination, u32 size, u32 value);
+
 typedef struct RenderManager_080b7b6c {
     u8 padding_00[8];
     void *multi_objects_08[4];
@@ -117,7 +136,6 @@ u8 *Func_08185000(s32 resource);
 u8 *Func_08009048(Render_080b7b6c *render, s32 animation);
 void Func_08009070(u8 *animation, s32 mode);
 void Func_080b7aac(s32 id);
-extern void Func_080072f0(u32, u32, s32, u32);
 
 void Func_080b7b6c(s16 *list, s32 announce)
 {
@@ -175,8 +193,8 @@ void Func_080b7b6c(s16 *list, s32 announce)
 
                             *kind_cell = 2;
                             *(void ***)(object + 0x50) = insertion;
-                            Func_080072f0(
-                                (u32)insertion, 16, 0, 0x03000164);
+                            ((Resident_03000164)0x03000164)(
+                                insertion, 16, 0);
                             render = Func_08009030(resource);
                             if (render != 0) {
                                 render->scale_18 = multiply(

@@ -8,14 +8,14 @@ fresh clone after a session or machine loss. Methodology lives in
 
 ## Roster
 
-| Agent   | Role                            | Model  | Branch    | Worktree                | Portrait (dashboard)            |
-|---------|---------------------------------|--------|-----------|-------------------------|---------------------------------|
-| Vale    | engineering lead, merge gate    | Fable  | `main`    | repo root               | Kraden — `resource_f0_images_image_12.png` |
-| Mercury | exact-C lane (+special rotations)| Sonnet | `mercury` | `../alchemy-mercury`    | Mia — `…image_03.png`           |
-| Venus   | semantic-C lane                 | Sonnet | `venus`   | `../alchemy-venus`      | Isaac — `…image_00.png`         |
-| Jupiter | semantic-C lane                 | Sonnet | `jupiter` | `../alchemy-jupiter`    | Ivan — `…image_02.png`          |
-| Mars    | semantic-C lane                 | Sonnet | `mars`    | `../alchemy-mars`       | Garet — `…image_01.png`         |
-| Wise One | unannounced rest-watch, reconciliation and census seal | Codex | `main` | repo root | The Wise One — `battle_characters_chr_0fc_koma_003.png` |
+| Agent   | Role                            | Branch    | Worktree                | Portrait (dashboard)            |
+|---------|---------------------------------|-----------|-------------------------|---------------------------------|
+| Vale    | engineering lead, merge gate    | `main`    | repo root               | Kraden — `resource_f0_images_image_12.png` |
+| Mercury | exact-C lane (+special rotations)| `mercury` | `../alchemy-mercury`    | Mia — `…image_03.png`           |
+| Venus   | semantic-C lane                 | `venus`   | `../alchemy-venus`      | Isaac — `…image_00.png`         |
+| Jupiter | semantic-C lane                 | `jupiter` | `../alchemy-jupiter`    | Ivan — `…image_02.png`          |
+| Mars    | semantic-C lane                 | `mars`    | `../alchemy-mars`       | Garet — `…image_01.png`         |
+| Wise One | unannounced rest-watch, reconciliation and census seal | `main` | repo root | The Wise One — `battle_characters_chr_0fc_koma_003.png` |
 
 Vale is authoritative on `main` and on all disputes. Lanes are grunts: they
 never push, never write the kanban, and treat Vale's messages as mandates —
@@ -95,7 +95,6 @@ for lane in mercury venus jupiter mars; do
   git branch "$lane" main 2>/dev/null || true
   git worktree add "../alchemy-$lane" "$lane"
 done
-cp tools/chat_post.sh /tmp/alchemy_chat_post.sh && chmod +x /tmp/alchemy_chat_post.sh
 ```
 
 Continuity fiction (Pascal, 2026-07-31): a lane agent whose context ends is
@@ -117,7 +116,7 @@ cloned next to the repo root: comparator scripts resolve it as `../alchemy-gcc`.
 
 - **Group chat**: `/tmp/ALCHEMY_GROUP_CHAT.csv`, columns `utc,author,message`
   (RFC 4180, multiline messages quoted). Post ONLY via
-  `bash /tmp/alchemy_chat_post.sh <author> "<message>"` — it stamps real UTC
+  `bash tools/chat_post.sh <author> "<message>"` — it stamps real UTC
   itself. Never hand-write timestamps; never append to the old `.md`.
 - **Kanban**: `/tmp/ALCHEMY_KANBAN.md`. Vale-only writes. Markdown table,
   columns `BACKLOG | TODO | DOING | REVIEW (merge gate) | DONE | PARKED`;
@@ -183,12 +182,9 @@ self-reloads when the server restarts (boot-id in `/mtimes`), so restarting
 the server ships UI changes to every open tab. Portraits are served straight
 from the tracked `resource_f0` images. Mobile layout below 760 px.
 
-## Current campaign (2026-07-31, update when it changes)
+## Current campaign
 
-Core drive: close the 47,592 asm-only bytes remaining in main ROM
-(548,364 total; rest is exact+semantic). The unit of work is a SEMANTIC-C
-draft (manual_regions per the resource_397 precedent, build:semantic green)
-— identical discipline to the overlay item-28 work; exact-C ownership of
-these spans comes later. Census in `/tmp/ALCHEMY_QUEUE_CORE.md` (Mercury
-builds, all lanes claim rows, smallest first). Parked design work and per-overlay state: see the kanban,
-the chat CSV, and `work/claude/notes/` in each lane's worktree.
+The core reviewed semantic-C census is closed. Work now prioritizes byte-exact
+C replacement of semantic owners and continued overlay ownership. The live
+counter and queue are the opening section of `HANDOVER.md`; the dashboard chat
+and kanban are coordination views, not durable project truth.

@@ -1,8 +1,8 @@
 # Path to completion
 
-Current verified exact **Full-C Byte Share: 232,188 / 1,339,594 executable
-bytes (17.33%)**. The reviewed semantic tier compiles 794,722 declared bytes;
-the executable audit credits 780,150 after excluding 14,572 overlay bytes
+Current verified exact **Full-C Byte Share: 232,944 / 1,339,594 executable
+bytes (17.39%)**. The reviewed semantic tier compiles 793,966 declared bytes;
+the executable audit credits 779,394 after excluding 14,572 overlay bytes
 outside its extents. Combined executable C expression is therefore **1,012,338
 / 1,339,594 bytes (75.57%)**.
 
@@ -11,11 +11,10 @@ census is closed and enforced by `bun run semantic:check`; exact-C replacement
 remains the principal completion task. Lane branches are work queues, not
 authoritative progress snapshots.
 
-The detailed exact-lane measurements below were taken on 2026-07-28 and are
-retained as historical evidence for the compiler and queue decisions they
-describe. They are not current counts or the active scheduling order. Use
-`HANDOVER.md` for the live semantic queue, measured speed policy, remote intake,
-and current overlay ranking; regenerate exact status with `bun run progress`.
+Everything below this paragraph is a historical planning study from 2026-07-28.
+It is retained for the measured compiler and queue evidence, not as a live
+counter or scheduling order. Use [`../HANDOVER.md`](../HANDOVER.md) for current
+work and `bun run progress` plus `bun run coverage:check` for current numbers.
 
 The main-image diagnostic ledger contains 1,369 exact-C regions and 631
 `c_candidate` regions. These region counts are useful scheduling diagnostics,

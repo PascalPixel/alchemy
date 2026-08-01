@@ -129,6 +129,36 @@ cloned next to the repo root: comparator scripts resolve it as `../alchemy-gcc`.
   per-worktree gitignored — a lane's `work/` files are INVISIBLE to other
   lanes. Anything one lane writes for another goes in `/tmp` or the repo.
 
+## NEVER READ AN EXIT CODE THROUGH A PIPE
+
+**Hard command form. Use this and nothing else when a pass/fail decision
+depends on the answer:**
+
+```bash
+bun run verify >/tmp/verify.log 2>&1; echo "EXIT=$?"
+```
+
+**Never** `cmd | tail -1; echo $?`, `cmd | grep …; echo $?`, or
+`cmd 2>&1 | tail -3 && git push`. `$?` after a pipeline is the **last**
+command's status: `tail` and `head` always succeed, so a failing build reads as
+`0`; `grep` succeeds only when it *matches*, so a count taken through it can
+come out exactly inverted.
+
+This is not a caution, it is a rule, because knowing about it does not protect
+anyone. In one night on 2026-08-01 it produced, in three separate hands:
+
+- a red `main` pushed to origin, from `bun run verify 2>&1 | tail -1 && git push`;
+- a disputed 30/66 measurement that was exactly inverted, from a count piped
+  into `grep -q`, which cost a full cycle of two people asserting readings at
+  each other;
+- two "cold builds are green" reports that were `tail`'s exit code, which sent
+  a lane chasing a failure it had actually reproduced.
+
+Every one of those people already knew about the trap; two of them had
+documented it. **The shell defaults to the dangerous answer, so the defence has
+to be the command form, not the knowledge.** If you need both the output and
+the status, redirect to a file and read the file.
+
 ## The Vale merge cycle
 
 On every lane report: (1) `git merge <lane>` in the root worktree — plain

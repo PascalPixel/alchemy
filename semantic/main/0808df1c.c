@@ -10,6 +10,29 @@ typedef int bool;
 #define NULL ((void *)0)
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
+/*
+ * __call_via_rN veneer site, resolved per-site against the ROM.
+ *
+ * The `bl Func_080072f0` at 0x0808dfea is `__call_via_r3`. r3 is loaded one
+ * instruction earlier at 0x0808dfe8 from the pool word at 0x0808e074, which
+ * reads 0x030001d8 -- a fixed target, verified at this site.
+ *
+ * ARITY: ONE argument. Only r0 is set for the call, by `adds r0, r0, r3` at
+ * 0x0808dfe6. r1 and r2 hold the two squares that were multiplied to build
+ * that sum (0x0808dfdc, 0x0808dfe0); they are live intermediates, not
+ * arguments. Passing them as arguments is precisely the batch-3 error --
+ * 0x030001d8 was typed as three-argument there because two drafts agreed,
+ * and it takes one.
+ *
+ * The gateway at 0x030001d8 is not named. Every one of its call sites takes a
+ * sum of squares and consumes the result as a length; here `var_r5` is
+ * compared against a distance bound. That reads as a square root and is
+ * recorded as such WITHOUT being asserted -- an IWRAM routine with no ROM
+ * body to read is a bounded uncertainty, and that is the final answer, not a
+ * waypoint.
+ */
+typedef s32 (*LengthGateway)(s32 sumOfSquares);
+
 u32 Func_0808df1c(u32 arg0, s32 arg1) {
     u32 sp4;
     s32 sp0;
@@ -85,7 +108,7 @@ block_16:
                         sum_b = temp_r2_2;
                         sum = sum_a;
                         sum += sum_b;
-                        var_r5 = Func_080072f0(sum, sum_a, sum_b, 0x030001D8);
+                        var_r5 = ((LengthGateway)0x030001D8)(sum);
                         if (0x10 & M2C_FIELD(temp_r0_2, u8 *, 0x59)) {
                             var_r5 = Func_080022ec(var_r5 * 2, 3);
                         }

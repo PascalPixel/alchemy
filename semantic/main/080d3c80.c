@@ -24,7 +24,44 @@ u32 Func_08004458(void);
 void Func_080b50e8(s32);
 s32 Func_080022fc(s32, s32);
 s32 Func_080022ec(s32, s32);
-void Func_080072f4(s32, const void *, s32, s32, s32, s32);
+/*
+ * __call_via_rN veneer sites, resolved per-site against the ROM.
+ *
+ * Both `bl Func_080072f4` sites (0x080d3ee8, 0x080d3f74) are `__call_via_r4`,
+ * and at both the callee comes out of `layer_sources` -- the two-word buffer
+ * at sp+32 that Func_080cef64 fills. `str r2, [sp, #20]` at 0x080d3cc2 parks
+ * the buffer's ADDRESS, so `[sp, #20]` is a pointer, not the callee; the
+ * indexed loads read through it.
+ *
+ * Func_080cef64 is byte-exact in src/ and can simply be read: it writes
+ * output[0] = *(u32 *)(Data_03001e50 + 184) and output[1] = the word at +188,
+ * i.e. Func_080048b0's allocation slots 46 and 47 (184 = 46*4, 188 = 47*4).
+ * So both callees are relocated routines in numbered allocator slots, and the
+ * only question per site is WHICH of the two.
+ *
+ *   0x080d3ee8: `ldr r4, [r5, r0]` with r0 = the buffer address and
+ *     r5 = ip. ip is 4 when sl <= 2 and 0 otherwise (0x080d3eac..0x080d3eb4).
+ *     sl is the counter incremented at 0x080d3f14 and compared against 16 at
+ *     0x080d3f1a -- the sixteen-iteration PARTICLE loop, not the emitter loop,
+ *     which runs to emitter_count. So the selector is particle_index <= 2.
+ *
+ *   0x080d3f74: `ldr r4, [r0, r1]` with r1 = the buffer address and
+ *     r0 = (fp & 1) * 4 (0x080d3f66, 0x080d3f6a). fp is the emitter loop
+ *     variable; the draft had already read it that way.
+ *
+ * STRUCTURE CORRECTED at the second site. The draft passed
+ * `(u8 *)runtime + (emitter_index & 1) * 4` as the second argument. That is
+ * two different things welded together: r1 at the branch is `mov r1, r9`
+ * (0x080d3f72), plain runtime, and the `(emitter_index & 1) * 4` is the
+ * callee's table index. A wrong callee corrupts structure in both directions,
+ * and this is the folding direction.
+ *
+ * ARITY: six at both sites. r4 is outside the r0-r3 argument registers, so
+ * the callee never occupied an argument slot -- four registers plus two
+ * pushed at [sp, #0] and [sp, #4]. Every argument the draft passed is real.
+ */
+typedef void (*LayerRenderer)(s32 graphics, const void *source, s32 x, s32 y,
+                              s32 width, s32 height);
 void Func_080e3908(void *, s32, s32);
 void Func_080f9010(s32);
 void Func_080d6888(s16, s32, s32, s32, s32);
@@ -125,7 +162,8 @@ void Func_080d3c80(void *argument)
                             (u8 *)runtime + 0x800 +
                             S32_AT((void *)0x080ee214, image * 4);
 
-                        Func_080072f4(
+                        ((LayerRenderer)
+                             layer_sources[particle_index <= 2 ? 1 : 0])(
                             graphics, source,
                             (particle->x >> 16) - (width >> 1),
                             (particle->y >> 16) - (height >> 1),
@@ -136,9 +174,10 @@ void Func_080d3c80(void *argument)
                             particle->state--;
                     }
                 } else if (frame >= emitter->timer) {
-                    Func_080072f4(
+                    ((LayerRenderer)
+                     layer_sources[emitter_index & 1])(
                         graphics,
-                        (u8 *)runtime + (emitter_index & 1) * 4,
+                        runtime,
                         (emitter->x >> 16) - 0x10,
                         emitter->y >> 16,
                         0x20, 0x40);

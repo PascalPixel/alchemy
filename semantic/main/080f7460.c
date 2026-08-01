@@ -39,7 +39,54 @@ struct EffectState_080f7460 {
     s32 message_window;
 };
 
-typedef void (*Renderer_080f7460)(void);
+/*
+ * __call_via_rN veneer sites, resolved per-site against the ROM. Three `bl`
+ * sites land inside the 0x080072e4 bank; each is an indirect call through the
+ * named register, not a call to a function at the branch target.
+ *
+ * 0x080f78de -- `bl 0x080072f0` = __call_via_r3, r3 from pool 0x080f7964 =
+ * 0x03000168, the relocated IWRAM fill (destination, size, value). r0 =
+ * [sp, #40] (the canvas), r1 = 0x8000, r2 = 0 -- all three set deliberately.
+ * r3 is an argument register, so the draft's fourth argument WAS the callee.
+ *
+ * 0x080f75c6 -- `bl 0x080072f0` = __call_via_r3, r3 from pool 0x080f7614 =
+ * 0x03000164. TWO arguments, not three. Only r0 (pool 0x080f7618) and r1
+ * (0x300) are set for this call; r2's last write on the path is
+ * `ldr r2, [pc, #100]` at 0x080f75a0, the DMA control word 0x84000008 used by
+ * the loop just above. The draft's third argument, a literal 0, is not in the
+ * assembly at all -- r2 is a live leftover, and a leftover with a value that
+ * cannot be mistaken for an argument. This is the second site to show the
+ * two-argument form of 0x03000164, after 0x080bd87e in
+ * semantic/main/080bd850.c, where nothing in the whole function writes r2.
+ * 0x03000164 itself remains UNESTABLISHED -- an exact-lane question -- and
+ * nothing here settles what it does.
+ *
+ * A TWO-ENTRY RENDERER TABLE LIVES IN THIS FRAME, the same idiom as
+ * semantic/main/080db264.c. r5 = pool 0x080f7960 = 0x03001e50, the
+ * Func_080048b0 slot table; +184 (slot 46) goes to [sp, #48] at 0x080f78ba
+ * and +188 (slot 47) goes to [sp, #52] at 0x080f78d4 via `str r3, [r7, #4]`
+ * with r7 = sp + 48. The base address sp + 48 is parked in [sp, #12] at
+ * 0x080f78d0. Each load follows its own `Func_080c9000(46/47, ...)` publish.
+ *
+ * 0x080f7b56 -- `bl 0x080072f4` = __call_via_r4, and r4 is
+ * `ldr r4, [r2, r0]` at 0x080f7b4c with r0 = [sp, #12] (the table base) and
+ * r2 = (r8 & 1) << 2, r8 being the particle index. The draft READ that index
+ * correctly and even named the two renderers -- it simply passed the chosen
+ * one as a seventh ARGUMENT instead of calling through it.
+ *
+ * ARITY of the renderer: SIX, not seven. r0..r3 are set at 0x080f7b50 /
+ * 0x080f7b4e / 0x080f7b54 / 0x080f7b52 and two more words go out at [sp, #0]
+ * and [sp, #4] (0x080f7b44, 0x080f7b48). r4 is above the argument registers,
+ * so no argument slot holds the callee.
+ *
+ * UNCERTAINTY, left standing: what slots 46 and 47 CONTAIN is not settled
+ * here. The slot table unifies the addressing, never the contents.
+ */
+typedef void (*Renderer_080f7460)(
+    void *target, const void *source, s32 x, s32 y, s32 width, s32 height);
+typedef void (*ArmFill_080f7460)(void *destination, u32 size, u32 value);
+/* Unestablished IWRAM routine; see the header. Two arguments here. */
+typedef void (*Iwram_03000164_080f7460)(void *destination, u32 size);
 
 void *Func_080048b0(s32 resource, s32 size);
 void *Func_080048f4(s32 resource, s32 size);
@@ -57,15 +104,6 @@ s32 Func_08002304(s32 value, s32 divisor);
 s32 Func_0800231c(s32 angle);
 s32 Func_08002322(s32 angle);
 void Func_08005340(const void *source, void *destination);
-void Func_080072f0(void *buffer, u32 size, s32 mode, void *descriptor);
-void Func_080072f4(
-    void *destination,
-    const void *source,
-    s32 x,
-    s32 y,
-    s32 width,
-    s32 height,
-    Renderer_080f7460 renderer);
 void Func_08015000(void);
 s32 Func_08015010(s32 kind, s32 x, s32 y, s32 style, s32 layer);
 void Func_08015080(s32 message, s32 window, s32 x, s32 flags);
@@ -149,11 +187,8 @@ void Func_080f7460(void)
             }
         }
     }
-    Func_080072f0(
-        (void *)0x06002d00,
-        0x300,
-        0,
-        (void *)0x03000164);
+    ((Iwram_03000164_080f7460)0x03000164)(
+        (void *)0x06002d00, 0x300);
 
     for (row = 0; row < 20; row++) {
         for (column = 0; column < 32; column++) {
@@ -266,7 +301,7 @@ void Func_080f7460(void)
     Func_080c9000(47, 8, 7, 3, 3);
     renderers[1] = *(Renderer_080f7460 *)0x03001f0c;
 
-    Func_080072f0(canvas, 0x8000, 0, (void *)0x03000168);
+    ((ArmFill_080f7460)0x03000168)(canvas, 0x8000, 0);
     dma->source = canvas;
     dma->destination = (void *)0x06003500;
     dma->control = 0x84002000;
@@ -365,15 +400,14 @@ void Func_080f7460(void)
                             particle->y <= 0x007fffff) {
                             size =
                                 Func_080022ec(particle->timer, 12) + 1;
-                            Func_080072f4(
+                            renderers[index & 1](
                                 canvas,
                                 tiles +
                                     ((const u16 *)0x080f86f8)[size - 1],
                                 (particle->x >> 16) - size,
                                 (particle->y >> 16) - size,
                                 size * 2,
-                                size * 2,
-                                renderers[index & 1]);
+                                size * 2);
                         }
                         particle->x += particle->velocity_x;
                         particle->y += particle->velocity_y;

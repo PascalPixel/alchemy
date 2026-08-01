@@ -7845,7 +7845,32 @@ old predicate every one of these 38 was masked as structure. That is the
 tightening measured as changing zero tail veneer counts — inert where it was
 measured, and load-bearing here.
 
-## 5m. resource_3b8 CERTIFIED CLOSED (2026-08-01, mars)
+## 5m. resource_3b8 — INDEPENDENT SECOND CERTIFICATION (2026-08-01, mars)
+
+**READ ## 5k FIRST. Venus certified this overlay hours earlier and I did not
+check before starting.** I was sent at "the next overlay by measurement" and the
+seal already existed in this file. **Grep `resource_<id>` together with `certif`
+before opening any overlay** — including when a mandate names one for you.
+
+The section is kept rather than deleted because **two independent certifications
+agreeing is evidence, and two drafts agreeing is shared inheritance** — this is
+the first kind. Neither reading saw the other. Where they overlap they agree
+exactly (23,352 bytes, 26 owners, 0x30 to 0x4340, no gap/overlap/duplicate,
+every sweep clean). What each adds alone:
+
+- **5k only:** all 26 spans contain EXACTLY ONE return shape; the `bl` census
+  through `targetOffset` (1,871 into the bank, 3 into code, none into tail
+  data); and all 17 image words pointing into tail data are EVEN.
+- **5m only:** the closing byte-accounting with an explicit delta; the
+  concentration of the tail dispatch table on two handlers; the stale A/B/C
+  liveness control; and the ruling that sweep E must not be ported into sweep D.
+
+**A COINCIDENCE OF NUMBERS TO NOT CONFLATE.** Both sections say "17" and they
+are different measurements. 5k's 17 is *image words pointing INTO tail data, all
+even* — corroboration that no tail-data address carries the Thumb bit, so none
+is a function entry. 5m's 17 is *distinct owners published FROM tail slots*.
+Re-measured both in one session: 17 and 17, unrelated. Two sections, one number,
+two meanings is exactly how a reader manufactures a false cross-check.
 
 Chosen by measurement, not queue position: sweep D tree-wide with `--json`,
 ranked by summed code-suspect bytes, each rank paired with the deduplicated
@@ -7901,10 +7926,11 @@ the count alone does not: **the 24 slots designate only TWO owners, `0x3d40`
 (21 slots) and `0x3df8` (3).** It is a dispatch table with two handlers, not 24
 callbacks.
 
-Wider context, also measured: the tail publishes **17 distinct owners across 47
+Wider context, also measured: the tail publishes **17 distinct owners across 46
 slots**. Only 24 of those slots have a low halfword that happens to wear a
 return shape, which is the entire reason sweep D flagged that subset and not the
-others. **The flagged count is an artefact of the discriminator, not a property
+others. (I first wrote 47 — a hand count off by one, corrected by re-running the
+tally rather than re-adding the column. Do not hand-total a histogram.) **The flagged count is an artefact of the discriminator, not a property
 of the table** — do not read "24" as the table's size.
 
 ### The one `unknown`, identified rather than waved through

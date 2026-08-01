@@ -45,6 +45,12 @@ typedef signed int s32;
  * computes, which is a per-call-site label for a load-time-relocated import
  * (see resource_371_c_0200008c.c).  Old-style declarations, because the
  * interfaces are unknown.
+ *
+ * Case-arm ORDER is taken off the ROM, not written ascending (HANDOVER §5b5):
+ * group the 32 table entries by value, sort the distinct values ascending, and
+ * the selectors fall out in the reference's own source order -- 49; 64; 65,70;
+ * 71; 72; 73; 66,67,68,69,75; 80.  Written ascending, the 66..69/75 arm lands
+ * six arms too early and every jump-table word after it is wrong.
  */
 
 extern s16 Data_02000240[];
@@ -59,8 +65,16 @@ extern u8 Data_0200e2ec[];
 extern u8 Data_0200e394[];
 extern u8 Data_0200e3c4[];
 
-s32 Func_080770c0();
-void Func_080770c8();
+/*
+ * Per-site RAW callee names (HANDOVER §5b3a): the identifier is the arithmetic
+ * operand `insn_address + 2 + true_target_offset`, so three sites reaching the
+ * same import carry three different names. Read off `overlay_show resource_371
+ * 0x37c`; the veneer-resolved names do not emit these bytes.
+ */
+s32 Func_020046a8();
+s32 Func_020046b2();
+s32 Func_020046c0();
+void Func_020046ee();
 
 u8 *Func_0200037c(void)
 {
@@ -69,36 +83,36 @@ u8 *Func_0200037c(void)
 
     switch (scene) {
     case 49:
-        if (Func_080770c0(0x94f) == 0 && Func_080770c0(0x941) != 0) {
+        if (Func_020046a8(0x94f) == 0 && Func_020046b2(0x941) != 0) {
             return Data_0200e154;
         }
         break;
     case 64:
-        if (Func_080770c0(0x85a) == 0) {
+        if (Func_020046c0(0x85a) == 0) {
             return Data_0200e04c;
         }
         break;
     case 65:
     case 70:
         return Data_0200e1e4;
-    case 66:
-    case 67:
-    case 68:
-    case 69:
-    case 75:
-        return Data_0200e25c;
     case 71:
         return Data_0200e28c;
     case 72:
         return Data_0200e394;
     case 73:
         return Data_0200e3c4;
+    case 66:
+    case 67:
+    case 68:
+    case 69:
+    case 75:
+        return Data_0200e25c;
     case 80:
         return Data_0200e2ec;
     default:
         break;
     }
 
-    Func_080770c8(0x235);
+    Func_020046ee(0x235);
     return Data_0200db84;
 }

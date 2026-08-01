@@ -36,6 +36,7 @@
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { overlayImage, storedDisplacement, targetOffset } from "./overlay_call_targets.ts";
+import { reachesReturn } from "./overlay_published.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 
@@ -53,6 +54,12 @@ export interface Phantom {
   span_bytes: number;
   real_target: number;
   sites: number;
+  /**
+   * True when this row opens with ordinary work and reaches a `bx lr` — the
+   * shape of a LEAF. A phantom verdict on such a row is not wrong, but it is
+   * not safe to act on unread either, so it is MARKED rather than dropped.
+   */
+  leaf_shaped: boolean;
 }
 
 /**
@@ -93,6 +100,19 @@ export function phantomRows(rows: Row[], image: Uint8Array, overlay: string): Ph
   const phantoms: Phantom[] = [];
   for (const row of rows) {
     // A row the inventory itself calls a function start is not a phantom.
+    //
+    // PROLOGUE-KEYED, AND KNOWINGLY SO. A leaf opens with ordinary work, so it
+    // is not in `prologues` and is not skipped here — meaning a genuine leaf
+    // CAN be reported as a phantom. The fix is not to skip leaf-shaped rows:
+    // most of them are interior fragments of the discovery walk, and three of
+    // the five in the tree today are overlapping walks from different starts to
+    // one common end (`resource_397` 0x16e/0x17c/0x18e all end at 0x1b4), so at
+    // most one of the three is a function at all. Skipping them would hide real
+    // phantoms to protect rows that are mostly not functions.
+    //
+    // So they are MARKED, not dropped. Two of the five open with the documented
+    // leaf entry shapes — `ldr rN,[pc]` (0x4b0a) and `movs rN,#imm` (0x2000) —
+    // and those deserve a human read before anyone acts on the verdict.
     if (row.starts_with_prologue || prologues.has(row.offset)) continue;
     const seed = stale.get(row.offset);
     if (seed === undefined || seed.real < 0) continue;
@@ -100,8 +120,20 @@ export function phantomRows(rows: Row[], image: Uint8Array, overlay: string): Ph
     // function start. Without this, any `bl` whose stale decode happens to land
     // on an interior row marks it phantom — which on `resource_379` alone
     // produced 76 false positives, more rows than the overlay has functions.
+    //
+    // This one stays prologue-keyed on MEASURED grounds, not by default: a leaf
+    // target reaches a return, but so does an interior row of an enclosing
+    // function, so relaxing it to a return test would re-admit exactly the 76.
+    // Recorded here so the next reader does not have to rediscover the reason.
     if (!prologues.has(seed.real)) continue;
-    phantoms.push({ overlay, offset: row.offset, span_bytes: row.span_bytes, real_target: seed.real, sites: seed.sites });
+    phantoms.push({
+      overlay,
+      offset: row.offset,
+      span_bytes: row.span_bytes,
+      real_target: seed.real,
+      sites: seed.sites,
+      leaf_shaped: reachesReturn(image, row.offset),
+    });
   }
   return phantoms;
 }
@@ -139,7 +171,23 @@ function selfTest(): void {
   if (found[0].real_target !== 0x074) throw new Error("the real target is two bytes back");
   // A non-prologue row nothing points at is an ordinary interior row.
   if (found.some((row) => row.offset === 0x100)) throw new Error("unreferenced rows are not phantoms");
-  console.log("self-test=ok");
+
+  // The LEAF-SHAPED marker, both directions, on synthetic bytes. The image
+  // above is all zeroes past the seed, so 0x076 reaches no `bx lr` and must NOT
+  // be marked. Planting one within the window must flip it — and must NOT
+  // change the verdict, because the marker annotates a phantom, it does not
+  // withdraw one. A marker that silently dropped rows would hide real phantoms
+  // to protect rows that are mostly interior fragments.
+  if (found[0].leaf_shaped) throw new Error("a row with no return in range must not be marked leaf-shaped");
+  const withReturn = new Uint8Array(image);
+  withReturn[0x080] = 0x70;
+  withReturn[0x081] = 0x47; // bx lr, inside the window from 0x076
+  const marked = phantomRows(rows, withReturn, "t");
+  if (marked.length !== 1) throw new Error("marking must not change how many phantoms are reported");
+  if (!marked[0].leaf_shaped) throw new Error("a row reaching a return must be marked leaf-shaped");
+  if (marked[0].offset !== 0x076) throw new Error("marking must not change which row is reported");
+
+  console.log("self-test=ok (including the leaf-shaped marker, both directions)");
 }
 
 function main(): void {
@@ -168,7 +216,8 @@ function main(): void {
     console.log(
       `${phantom.overlay}:${phantom.offset.toString(16).padStart(4, "0")}  ` +
         `${String(phantom.span_bytes).padStart(6)} bytes  ` +
-        `real target 0x${phantom.real_target.toString(16)}  (${phantom.sites} stale site(s))`,
+        `real target 0x${phantom.real_target.toString(16)}  (${phantom.sites} stale site(s))` +
+        (phantom.leaf_shaped ? "  LEAF-SHAPED — reaches a return; read it before acting" : ""),
     );
   }
   const bytes = all.reduce((sum, phantom) => sum + phantom.span_bytes, 0);

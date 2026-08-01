@@ -40,10 +40,10 @@
   "provenance": {
     "exact_lane": "worktree",
     "semantic_lane": "worktree",
-    "semantic_sources": 1779,
+    "semantic_sources": 1783,
     "main_semantic_census": "closed",
     "semantic_superseded_bytes": 0,
-    "semantic_outside_extent_bytes": 21724,
+    "semantic_outside_extent_bytes": 21816,
     "semantic_unresolved": []
   },
   "rom_areas": [

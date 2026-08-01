@@ -5193,6 +5193,48 @@
     },
     {
       "overlay": "resource_3b9",
+      "entry": "0x02000468",
+      "span_bytes": 96,
+      "evidence": "admitted whole-owner semantic reconstruction; published-callback population (bun tools/overlay_published.ts resource_3b9) -- owner is prologue-started and returning but is reached by no bl at all: its Thumb pointer is written into a script record as a plain word, so both the whole-image call-graph sweep and tools/overlay_unindexed.ts are structurally blind to it. It sits in the contiguous eleven-handler bank 0x020002a0-0x020006bc behind the 31-line exact-C selector at 0x02000238. push {r5,lr} at 0x02000468 through pop {r5}/pop {r0}/bx r0 at 0x020004be-0x020004c2, then a one-word literal pool at 0x020004c4 and a zero alignment halfword at 0x020004c6, to the next owner prologue at 0x020004c8. The r5 spill holds the Func_0808a080(13) object pointer across the body; the owner stores u16 fields at object+100 and object+102. No story-flag test, unlike the four members before it. Span MEASURED to the epilogue rather than taken from the prologue-to-next-known-start bound. All bl targets resolved through the overlay import-veneer table under the +2 rule (tools/overlay_call_targets.ts), not by naive pc-relative decode. Checked to lie inside the assembled overlay image and not to overlap another recorded owner."
+    },
+    {
+      "overlay": "resource_3b9",
+      "entry": "0x020004c8",
+      "span_bytes": 68,
+      "evidence": "admitted whole-owner semantic reconstruction; published-callback population (bun tools/overlay_published.ts resource_3b9) -- owner is prologue-started and returning but is reached by no bl at all: its Thumb pointer is written into a script record as a plain word, so both the whole-image call-graph sweep and tools/overlay_unindexed.ts are structurally blind to it. It sits in the contiguous eleven-handler bank 0x020002a0-0x020006bc behind the 31-line exact-C selector at 0x02000238. push {lr} at 0x020004c8 through pop {r0}/bx r0 at 0x02000504-0x02000506, then a one-word literal pool at 0x02000508 and a zero alignment halfword at 0x0200050a, to the next owner prologue at 0x0200050c. Span MEASURED to the epilogue rather than taken from the prologue-to-next-known-start bound. All bl targets resolved through the overlay import-veneer table under the +2 rule (tools/overlay_call_targets.ts), not by naive pc-relative decode. Checked to lie inside the assembled overlay image and not to overlap another recorded owner."
+    },
+    {
+      "overlay": "resource_3b9",
+      "entry": "0x0200050c",
+      "span_bytes": 80,
+      "evidence": "admitted whole-owner semantic reconstruction; published-callback population (bun tools/overlay_published.ts resource_3b9) -- owner is prologue-started and returning but is reached by no bl at all: its Thumb pointer is written into a script record as a plain word, so both the whole-image call-graph sweep and tools/overlay_unindexed.ts are structurally blind to it. It sits in the contiguous eleven-handler bank 0x020002a0-0x020006bc behind the 31-line exact-C selector at 0x02000238. push {lr} at 0x0200050c through pop {r0}/bx r0 at 0x02000552-0x02000554, a zero alignment halfword at 0x02000556, then a one-word literal pool at 0x02000558, to the next owner prologue at 0x0200055c. Span MEASURED to the epilogue rather than taken from the prologue-to-next-known-start bound. All bl targets resolved through the overlay import-veneer table under the +2 rule (tools/overlay_call_targets.ts), not by naive pc-relative decode. Checked to lie inside the assembled overlay image and not to overlap another recorded owner."
+    },
+    {
+      "overlay": "resource_3b9",
+      "entry": "0x0200055c",
+      "span_bytes": 148,
+      "evidence": "admitted whole-owner semantic reconstruction; published-callback population (bun tools/overlay_published.ts resource_3b9) -- owner is prologue-started and returning but is reached by no bl at all: its Thumb pointer is written into a script record as a plain word, so both the whole-image call-graph sweep and tools/overlay_unindexed.ts are structurally blind to it. It sits in the contiguous eleven-handler bank 0x020002a0-0x020006bc behind the 31-line exact-C selector at 0x02000238. push {lr} at 0x0200055c through pop {r0}/bx r0 at 0x020005de-0x020005e0, a zero alignment halfword at 0x020005e2, then the three-word literal pool 0x020005e4-0x020005ef, to the next owner prologue at 0x020005f0. Once-only grant on flag 0x3c1 with the first-time body in the ELSE arm: beq past the short arm means the flag-set case is the two-instruction one. Span MEASURED to the epilogue rather than taken from the prologue-to-next-known-start bound. All bl targets resolved through the overlay import-veneer table under the +2 rule (tools/overlay_call_targets.ts), not by naive pc-relative decode. Checked to lie inside the assembled overlay image and not to overlap another recorded owner."
+    },
+    {
+      "overlay": "resource_3b9",
+      "entry": "0x020005f0",
+      "span_bytes": 88,
+      "evidence": "admitted whole-owner semantic reconstruction; published-callback population (bun tools/overlay_published.ts resource_3b9) -- owner is prologue-started and returning but is reached by no bl at all: its Thumb pointer is written into a script record as a plain word, so both the whole-image call-graph sweep and tools/overlay_unindexed.ts are structurally blind to it. It sits in the contiguous eleven-handler bank 0x020002a0-0x020006bc behind the 31-line exact-C selector at 0x02000238. push {lr} at 0x020005f0 through pop {r0}/bx r0 at 0x0200063e-0x02000640, a zero alignment halfword at 0x02000642, then a one-word literal pool at 0x02000644, to the next owner prologue at 0x02000648. One call takes id 0 rather than the handler's actor 17: Func_0808a110(0,3) immediately precedes Func_0808a110(17,3). Span MEASURED to the epilogue rather than taken from the prologue-to-next-known-start bound. All bl targets resolved through the overlay import-veneer table under the +2 rule (tools/overlay_call_targets.ts), not by naive pc-relative decode. Checked to lie inside the assembled overlay image and not to overlap another recorded owner."
+    },
+    {
+      "overlay": "resource_3b9",
+      "entry": "0x02000648",
+      "span_bytes": 116,
+      "evidence": "admitted whole-owner semantic reconstruction; published-callback population (bun tools/overlay_published.ts resource_3b9) -- owner is prologue-started and returning but is reached by no bl at all: its Thumb pointer is written into a script record as a plain word, so both the whole-image call-graph sweep and tools/overlay_unindexed.ts are structurally blind to it. It sits in the contiguous eleven-handler bank 0x020002a0-0x020006bc behind the 31-line exact-C selector at 0x02000238. push {lr} at 0x02000648 through pop {r0}/bx r0 at 0x020006b4-0x020006b6, then a one-word literal pool at 0x020006b8 and a zero alignment halfword at 0x020006ba, to the next owner prologue at 0x020006bc. Span MEASURED to the epilogue rather than taken from the prologue-to-next-known-start bound. All bl targets resolved through the overlay import-veneer table under the +2 rule (tools/overlay_call_targets.ts), not by naive pc-relative decode. Checked to lie inside the assembled overlay image and not to overlap another recorded owner."
+    },
+    {
+      "overlay": "resource_3b9",
+      "entry": "0x020006bc",
+      "span_bytes": 84,
+      "evidence": "admitted whole-owner semantic reconstruction; published-callback population (bun tools/overlay_published.ts resource_3b9) -- owner is prologue-started and returning but is reached by no bl at all: its Thumb pointer is written into a script record as a plain word, so both the whole-image call-graph sweep and tools/overlay_unindexed.ts are structurally blind to it. It sits in the contiguous eleven-handler bank 0x020002a0-0x020006bc behind the 31-line exact-C selector at 0x02000238. push {lr} at 0x020006bc through pop {r0}/bx r0 at 0x02000702-0x02000704, a zero alignment halfword at 0x02000706, then the two-word literal pool 0x02000708-0x0200070f, to the next owner prologue at 0x02000710. Its skip-beat gate runs the OPPOSITE way round from 0x0200039c: beq skips the bump here, so workspace+472 advances when Func_0808a070(0,0) is non-zero, where 0x0200039c bumps when it is zero. Span MEASURED to the epilogue rather than taken from the prologue-to-next-known-start bound. All bl targets resolved through the overlay import-veneer table under the +2 rule (tools/overlay_call_targets.ts), not by naive pc-relative decode. Checked to lie inside the assembled overlay image and not to overlap another recorded owner."
+    },
+    {
+      "overlay": "resource_3b9",
       "entry": "0x02001298",
       "span_bytes": 884,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr} plus the r8/r9/sl spill) and returning (pop {r3, r5, r6}/mov r8,r3/mov r9,r5/mov sl,r6/pop {r5, r6}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing eight-word literal pool to the next owner's prologue at 0x0200160c (this overlay's own resource_3b9_c_0200160c.c), inside the assembled overlay image and not overlapping another recorded owner"

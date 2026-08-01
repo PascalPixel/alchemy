@@ -92,6 +92,15 @@ empty or wrong answer* instead of failing. Both nearly reached prose.
   `overlay_call_targets` prints `sites=N` for the true bounds, and that must
   equal the number of `bl` lines you actually transcribed.
 
+- **`overlay_published.ts` with an unrecognised overlay name sweeps ALL 96
+  overlays instead of erroring.** `resource_zzz` returns `overlays=96
+  residue=1505`. The failure is loud enough to notice, but it is the same
+  family, and it doubles as the cheapest liveness control there is: when a
+  sweep you want to be empty comes back empty, re-run it on an overlay with
+  known residue and on a bogus name. `resource_3b9` returning `overlays=1
+  residue=0` means something only once `resource_3a4` returns 23 in the same
+  session.
+
 General rule: when a tool's answer agrees with a convenient hypothesis,
 confirm the tool actually ran on what you think it ran on.
 

@@ -6606,6 +6606,30 @@
       "entry": "0x02001684",
       "span_bytes": 284,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6} / pop {r0} / bx r0 at 0x02001786-0x0200178a) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_3af 1684 17a0, the +2 rule against the raw image), span read through the five trailing pool words (0x029a0000, 0x00000922, 0x02be0000, 0x0200c4d8, 0x00000923) plus alignment ending 0x0200179f to the next owner prologue (push {r5, r6, lr}) at 0x020017a0, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3cd",
+      "entry": "0x0200071c",
+      "span_bytes": 76,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_3cd), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; span read from the disassembly through the trailing literal pool to the next function prologue at 0x02000768, inside the assembled overlay image and not overlapping another recorded owner."
+    },
+    {
+      "overlay": "resource_392",
+      "entry": "0x02000a68",
+      "span_bytes": 84,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_392), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; span read from the disassembly through the trailing literal pool to the next owner at 0x02000abc, which this driver itself calls, inside the assembled overlay image and not overlapping another recorded owner."
+    },
+    {
+      "overlay": "resource_3a6",
+      "entry": "0x020016f0",
+      "span_bytes": 88,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_3a6), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; span read from the disassembly through the trailing literal pool to the end of its four-word pool at 0x02001748, inside the assembled overlay image and not overlapping another recorded owner."
+    },
+    {
+      "overlay": "resource_38a",
+      "entry": "0x02000414",
+      "span_bytes": 176,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_38a), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; span read from the disassembly through the five-word literal pool 0x020004b0-0x020004c3 to the next function's entry at 0x020004c4, inside the assembled overlay image and not overlapping another recorded owner."
     }
   ]
 }

@@ -3171,6 +3171,12 @@
     },
     {
       "overlay": "resource_39c",
+      "entry": "0x02000314",
+      "span_bytes": 60,
+      "evidence": "admitted whole-owner semantic reconstruction; derived owner absent from the structural inventory -- prologue push {r5, lr} at 0x02000314 through the real-value interworking return pop {r5}/pop {r1}/bx r1 at 0x02000346-0x0200034a; independently measured with m2c_guard as 56 code bytes ending at 0x0200034c; the sole referenced pool word at 0x0200034c is the even absolute IWRAM helper address 0x030001d8 and the next owner's prologue is at 0x02000350, making the whole-owner span 60 bytes; the bounded call sweep finds exactly one call_via site, whose pool-loaded target and one-input/one-output dataflow are explicit in the bytes; inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
       "entry": "0x02000630",
       "span_bytes": 296,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} plus the r8/r9/sl/fp spill) and returns a real pointer value (pop {r1}/bx r1) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached by bl within the overlay and independently measured with m2c_guard as 280 code bytes ending at 0x02000748; its four referenced literal words occupy 0x02000748-0x02000757 and the next owner's prologue is at 0x02000758, making the whole-owner span 296 bytes; its sole direct call resolves from the bounded overlay image and there is no indirect-call hazard; inside the assembled overlay image and not overlapping another recorded owner"

@@ -1,12 +1,32 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ *
+ * `Func_080072f0` is not a function.  0x080072e4 begins the GCC
+ * `__call_via_rN` veneer bank -- fifteen four-byte `bx rN; nop` entries,
+ * r0..lr, ending at 0x08007320 -- so 0x080072f0 is `__call_via_r3` and
+ * `bl 0x80072f0` calls whatever r3 holds.
+ *
+ * At every site in this file the ROM loads r3 from the literal pool with
+ * the constant 0x03001388, so the callee is the relocated IWRAM word copy
+ * at that address.  Its signature is not guessed: the EXACT source
+ * src/080d40ec.c declares it as
+ * `void *(*)(void *destination, const void *source, s32 size)` and
+ * src/080e0524.c casts the same address to the same shape.
+ *
+ * Note what the previous draft had already half-seen: it passed
+ * 0x03001388 as a fourth ARGUMENT.  That value was never an argument --
+ * it is the callee, and the register load that produced it is the call
+ * target, not a parameter.
+ */
 #include "types.h"
 
+typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 #define U8_AT(p, o)  (*(u8 *)((u8 *)(p) + (o)))
 #define U16_AT(p, o) (*(u16 *)((u8 *)(p) + (o)))
 #define S16_AT(p, o) (*(s16 *)((u8 *)(p) + (o)))
 
 void *Func_08004938(s32);
 void Func_08002df0(void *);
-void Func_080072f0(void *, const void *, s32, void *);
 void Func_08015070(void *, s32, s32, s32, s32);
 void Func_08015080(s32, void *, s32, s32);
 void Func_08015090(const void *, void *, s32, s32);
@@ -52,7 +72,7 @@ s32 Func_080acab8(
     second_flag = U16_AT(party, 376 + second_index * 2) & 0x8000;
 
     work = Func_08004938(332);
-    Func_080072f0(work, character, 332, (void *)0x03001388);
+    ((WordCopy)0x03001388)(work, character, 332);
 
     if (comparison_row == 0) {
         if (operation == 3) {
@@ -236,7 +256,7 @@ s32 Func_080acab8(
     if (comparison_row == 0)
         Func_080150d8(character_id, 0, draw_portrait, window, 0, 0);
 
-    Func_080072f0(character, work, 332, (void *)0x03001388);
+    ((WordCopy)0x03001388)(character, work, 332);
     Func_08002df0(work);
     return 1;
 }

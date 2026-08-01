@@ -6545,17 +6545,27 @@ lr` surrounded by data is not automatically a find.
 
 **The three that are real, each ruled by both keyed instruments:**
 
-- **`resource_395` `0x1838` and `0x1858`** — 14 bytes each, byte-identical code,
-  four-word pool each. `ldr r2,[pc,#12] / ldr r3,[pc,#16] / ldr r0,[r2] /
+- **`resource_395` `0x1838` and `0x1858`** — **32 bytes each**, 16 of code plus a
+  four-word pool. `ldr r2,[pc,#12] / ldr r3,[pc,#16] / ldr r0,[r2] /
   ldr r1,[pc,#16] / ldr r2,[pc,#16] / stmia r3!,{r0,r1,r2} / subs r3,#12 /
   bx lr`. r3 is `0x040000d4` — DMA3SAD — so the `stmia` writes SAD, DAD and CNT
-  in one go: source `[0x03001ed0]`, control `0x008400e0` (enable + 32-bit, 224
-  units). **The twins differ in exactly one pool word: destination `0x02009de0`
-  against `0x0200a4e0`.** Shared shape is not permission to carry an answer
-  across, and this pair is the cheap proof — everything agrees except the one
-  word the function exists to supply. The trailing `subs r3,#12` restores a dead
-  register and is compiler residue, not a fifth effect.
-- **`resource_3cd` `0x07b8`** — 12 bytes plus one pool word. `ldr r3,[pc,#8] /
+  in one go: source `[0x03001ed0]`, control `0x840000e0` (CNT_L `0x00e0` = 224
+  units, CNT_H `0x8400` = enable plus 32-bit). **The twins differ in exactly one
+  pool word: destination `0x02009de0` against `0x0200a4e0`.** Shared shape is not
+  permission to carry an answer across, and this pair is the cheap proof —
+  everything agrees except the one word the function exists to supply. The
+  trailing `subs r3,#12` restores a dead register and is compiler residue, not a
+  fifth effect.
+  **TWO CORRECTIONS TO MY OWN FIRST NOTE**, both caught by re-measuring before
+  drafting rather than by anyone reading it. I wrote "14 bytes each": the code is
+  16 bytes and the SPAN is 32, because all four pool words are reached by the
+  row's own pc-relative loads and recording 16 would orphan four words and
+  manufacture a phantom gap. And I wrote the control word as `0x008400e0` — the
+  halfwords transposed. The reading was right and the number was wrong, which is
+  the more dangerous of the two because a wrong number survives review that a
+  wrong reading would not.
+- **`resource_3cd` `0x07b8`** — **16 bytes**, 12 of code plus one pool word.
+  `ldr r3,[pc,#8] /
   ldr r3,[r3] / movs r2,#1 / adds r3,#53 / strb r2,[r3] / bx lr`, pool
   `0x03001f30`. Writes 1 to the byte at `[0x03001f30] + 53`. The function
   immediately after it at `0x07c8` DOES have a `push`, so the tail's
@@ -6578,7 +6588,124 @@ reports with **51** call sites. My decoder found zero. It was dead, and every
 exactly what a clean sweep prints.** Use the tool. The negative results above
 are the tool's, not mine.
 
-**Four more candidates that CANNOT currently be ruled, and why that matters.**
+### FIXED, and what the fix found (2026-08-01, mars, at Vale's instruction)
+
+Both holes are closed in `tools/overlay_gaps.ts`. The four leaves above are
+adopted as owners. What follows is what the fixed instrument reported, because
+a fix that is not re-run against the tree is a claim.
+
+**The tail verdict now keys on RETURN shapes, per Isaac's argument made
+structural: a Thumb function cannot avoid returning, so zero uncovered returns
+is a proof that no function of any shape lives in those bytes — not merely "no
+push found".** Two banks are masked or the discriminator drowns: the
+interworking veneer, and the compiler's `call_via` bank (`bx rN / nop`), which
+is 29 of the tree's 36 uncovered returns.
+
+**THE VENEER PREDICATE WAS UNDER-SPECIFIED AND I TIGHTENED IT.** It accepted any
+`bx rM` after any `ldr rN`, which makes `ldr r0,=table / bx lr` — jupiter's
+published getter stub, a REAL FUNCTION — indistinguishable from structure. A
+veneer branches to the register it just loaded; a leaf returns through lr. Pin
+by register agreement. Measured separately: the tightening changes the tail
+veneer count on **0 of 96** overlays, so it removed a hazard rather than moved a
+number.
+
+**AND THE BANK SCAN WAS MISALIGNED, which only the new class could expose.** It
+stepped `at = from; at += 4`, so a region beginning at an offset 2 mod 4 — which
+is whatever the last owner happened to end on — read every four-byte entry
+straddling its own boundary and matched none. Invisible while the verdict keyed
+on prologues; the moment returns counted, `resource_37b` reported 54 of them at
+a perfect stride of 8, which is a veneer bank announcing itself. **A run at a
+fixed stride is a table, and a table the instrument cannot see is the
+instrument's fault first.** Aligning to the image fixed six overlays that had
+been reporting ZERO veneers in tails holding 32 to 72 of them: 378, 37b, 386,
+39b, 3a6, 3ce.
+
+**A single-verdict line is useless as a report.** PROLOGUE-SUSPECT shadowed
+RETURN-SUSPECT, so `resource_395`'s tail — flagged on five pushes — printed
+nothing about the returns at `0x1846` and `0x1866`, the very leaves the class
+was added to surface. Both signals now print whenever either fires. **A tail
+flagged for one reason is not a tail that has been read.**
+
+Tree-wide after the fix: `code_suspect_gaps=268 overlaps=0
+prologue_suspect_tails=19 return_suspect_tails=5`. The five RETURN-SUSPECT tails
+are all ruled, here, so nobody re-derives them:
+`resource_398` `0x904` is the `call_via` bank's `lr` entry, 15 call sites by
+sweep A, padded with `0000` instead of `46c0` so the mask misses it;
+`resource_3ba` `0x3f1c` and `resource_3bb` `0x419c` are the same 24-byte
+high-entropy run on two overlays, a shared asset blob whose `bddc` wears a
+`pop {..,pc}` shape by accident; `resource_3b8`'s 24 and `resource_3bc`'s 3 are
+the low halfwords of 4-aligned POINTER words inside 12-byte descriptor records
+(`0x000002c6 / 0xffff0006 / 0x0200bd41`, stride 12, index field incrementing,
+handler pointer repeated). That last is a new noise class worth naming: **a
+published pointer word whose low halfword wears a return shape.**
+
+**The head now rules from image start to the first owner**, with the same bank
+mask — unmasked it fires on every overlay's header at once, six returns on
+`resource_3a4` alone, and a guard that cries wolf gets switched off. Interior
+gaps keep the raw classifier: they are small, read by hand, and the founding
+case depends on nothing being masked there. Twenty-five overlays report a
+CODE-SUSPECT head. `resource_395`'s is four leaf getters at `0x32 0x3a 0x42
+0x4a` — visible only because of the register test above.
+
+**Adopting the leaves shrinks the tail, which is the honest way the number goes
+down.** `resource_395`'s tail went from 1,696 bytes with 5 prologues and 7
+returns to 1,348 bytes with 2 and 2.
+
+### THE ADOPTION DOOR IS PROLOGUE-KEYED TOO — the fifth blind spot has a fifth blind door
+
+`semantic_regions_sync` REJECTS all four leaves with **"no strict inventory row
+for this owner"**. The strict inventory is built from prologue-started returning
+rows, so the functions the fixed sweep exists to find cannot enter through the
+normal door. They are recorded as HAND-WRITTEN `manual_regions` entries, which
+that tool preserves and never modifies, with the span measured from the ROM
+rather than taken from an inventory row. **If you find a leaf, expect the
+adoption path to refuse it, and do not read that refusal as doubt about the
+find.**
+
+### CAN AN OVERLAY SWEEP A REFUSES ON BE CERTIFIED? YES — the refusal names its own escape hatch
+
+**30 of 96 overlays** exit 1 from the whole-overlay path of
+`overlay_call_targets`. The refusal is correct and it is not a wall: its own
+message says to pass explicit owner bounds, and a full-image span works.
+`overlay_call_targets.ts resource_3a5 0 26c2` resolves 315 sites where the
+row-walk resolved none. So the standard gains a PRECONDITION rather than an
+exclusion:
+
+> **An overlay whose whole-overlay sweep A refuses must be swept over explicit
+> bounds before it can be certified, and the refusal must be recorded as having
+> been answered that way.**
+
+**THE BOUNDS ARE HEX — `parseBounds` takes `1..4` hex digits and no `0x` is
+required, so a decimal image length is silently accepted as a different number.**
+I ruled all four candidates with decimal lengths first. `resource_38a`'s came out
+as `0 a14` for a 2,580-byte image, which stopped the scan *exactly at the
+candidate offset*, and `resource_396`'s five-digit length threw rather than
+matching — the crash is the only reason I looked. **Every negative I had just
+produced was worthless.** Re-ruled with hex bounds and a live control
+(`resource_395` `0x12f4`, 51 sites, reproduced on the bounds path):
+
+| candidate | ruling |
+|---|---|
+| `387:0x0da8`, `38a:0x04c6` | not `bl`-reached (311 and 55 sites, live). Same 12-byte leaf on two overlays: `ldr r2,[r0,#80] / ldr r1,[pc,#8] / ldrh r3,[r2,#30] / adds r3,r3,r1 / strh r3,[r2,#30] / bx lr`, and here even the pool word matches (`0xfffff800`, subtract 2048) |
+| `396:0x1226` | not `bl`-reached (417 sites, live) |
+| `3a5:0x1c78` | **`bl`-reached, FOUR call sites — and tagged `unknown`.** Adopted |
+
+**`unknown` in sweep A's tag column is the prologue gate a FOURTH time.** It is
+what the classifier emits for a resolved target that opens with no `push`: the
+tool found the function, counted its callers, and declined to call it a
+function. Sweep A saw `3a5:0x1c78` all along and said nothing anyone would act
+on. Treat a non-zero `unknown=` count in that summary line as a leaf candidate
+list, not as noise.
+
+**Two instrument errors of mine in one shift, both caught by controls, neither
+by review** — the dead `+2` decoder below, and the decimal bounds above. Both
+printed exactly what a clean answer prints. A third: I read `bun tools/... |
+tail -3; echo $?` as the tool exiting 0 when the refusal was working perfectly
+and `tail` was reporting its own success. That is the pipe rule from this file
+catching the person who wrote it into a chat post the same night.
+
+**The four original candidates, kept below as written, because the record of
+what could not be ruled is the reason the precondition now exists.**
 `resource_387` `0x0da8` and `resource_38a` `0x04c6` are the same 12-byte leaf
 on two different overlays — `ldr r2,[r0,#80] / ldr r1,[pc,#8] / ldrh r3,[r2,#30]
 / adds r3,r3,r1 / strh r3,[r2,#30] / bx lr`, and here even the pool word matches
@@ -6588,6 +6715,11 @@ setter. **On all four of those overlays `overlay_call_targets` REFUSES with
 `sites=0`**, so sweep A cannot rule them at all. A refusal is the correct
 behaviour and it is also a hole in the certification: an overlay sweep A refuses
 on cannot be certified, and nothing currently says so.
+**~~cannot be certified~~ — WRONG, and corrected in the section above: the
+refusal names its own escape hatch and explicit bounds sweep the overlay fine.
+The paragraph is left standing because "the instrument refused, so the question
+is unanswerable" is a comfortable error and worth seeing in its own handwriting.
+`3a5:0x1c78` is not unreachable either — it has four callers.**
 
 ### The HEAD is unswept too — the same defect at the other end again
 

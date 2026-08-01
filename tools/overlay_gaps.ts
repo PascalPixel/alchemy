@@ -134,15 +134,19 @@ export function ownerSpans(overlay: string): { spans: { start: number; end: numb
   };
 }
 
-export function gapsOf(overlay: string): {
-  gaps: Gap[];
-  overlaps: Overlap[];
-  duplicates: Duplicate[];
-  owners: number;
-  tail: number;
-} {
-  const image = overlayImage(overlay);
-  const { spans, duplicates } = ownerSpans(overlay);
+/**
+ * The whole of sweep D, as a pure function over an image and a span list.
+ *
+ * Kept separate from `gapsOf` so the self-test can exercise it on a SYNTHETIC
+ * image. A self-test pinned to live tree state is a self-test that fails the
+ * moment the work it describes gets done -- this one did exactly that when
+ * resource_3a4's 0x3410 was drafted, which is the right alarm from the wrong
+ * design.
+ */
+export function gapsBetween(
+  image: Uint8Array,
+  spans: { start: number; end: number }[],
+): { gaps: Gap[]; overlaps: Overlap[] } {
   const gaps: Gap[] = [];
   const overlaps: Overlap[] = [];
 
@@ -178,6 +182,19 @@ export function gapsOf(overlay: string): {
     });
   }
 
+  return { gaps, overlaps };
+}
+
+export function gapsOf(overlay: string): {
+  gaps: Gap[];
+  overlaps: Overlap[];
+  duplicates: Duplicate[];
+  owners: number;
+  tail: number;
+} {
+  const image = overlayImage(overlay);
+  const { spans, duplicates } = ownerSpans(overlay);
+  const { gaps, overlaps } = gapsBetween(image, spans);
   const last = spans[spans.length - 1];
   return {
     gaps,
@@ -210,13 +227,50 @@ function selfTest(): void {
   if (isReturnShape(0xb5e0)) throw new Error("sweep D self-test: push is not a return");
   if (isReturnShape(0x0000)) throw new Error("sweep D self-test: zero is not a return");
 
-  // The founding case: resource_3a4's leaf at 0x3410 must be reported, and the
-  // gap must be CODE-SUSPECT rather than pool.
-  const found = gapsOf("resource_3a4").gaps.find((gap) => gap.start === 0x3410);
-  if (found === undefined) throw new Error("sweep D self-test: 0x3410 gap not reported");
-  if (found.bytes !== 24) throw new Error(`sweep D self-test: 0x3410 gap is ${found.bytes}, expected 24`);
-  if (found.verdict !== "CODE-SUSPECT") throw new Error(`sweep D self-test: 0x3410 ruled ${found.verdict}`);
-  console.log("sweep D self-test passed (bx lr, bx rN, pop pc, and the 0x3410 leaf)");
+  // The founding case, rebuilt synthetically so drafting the real row cannot
+  // break it: an owner ending at 0x10, then 24 unaccounted bytes carrying
+  // resource_3a4's actual 0x02003410 leaf, then the next owner.
+  const image = new Uint8Array(0x40);
+  const leaf = [0x4b03, 0x21bf, 0x681b, 0x0049, 0x185a, 0x4b02, 0x8013, 0x4770];
+  leaf.forEach((halfword, index) => {
+    image[0x10 + index * 2] = halfword & 0xff;
+    image[0x10 + index * 2 + 1] = halfword >> 8;
+  });
+  const { gaps, overlaps } = gapsBetween(image, [
+    { start: 0, end: 0x10 },
+    { start: 0x28, end: 0x40 },
+  ]);
+  if (gaps.length !== 1) throw new Error(`sweep D self-test: expected one gap, got ${gaps.length}`);
+  if (gaps[0].start !== 0x10 || gaps[0].bytes !== 24)
+    throw new Error(`sweep D self-test: gap is 0x${gaps[0].start.toString(16)}/${gaps[0].bytes}B`);
+  if (gaps[0].verdict !== "CODE-SUSPECT")
+    throw new Error(`sweep D self-test: leaf ruled ${gaps[0].verdict}`);
+  // Its return is at the gap's END, which is what tells a real hidden function
+  // from a span that merely stopped two bytes before its own `bx r0`.
+  if (gaps[0].returns.length !== 1 || gaps[0].returns[0] !== 0x1e)
+    throw new Error("sweep D self-test: the leaf's return must be at the gap's end");
+
+  // A two-byte undercount: the gap opens ON the previous owner's return, then
+  // runs through its pool. Same verdict, opposite signature.
+  const undercount = new Uint8Array(0x20);
+  undercount[0x10] = 0x00;
+  undercount[0x11] = 0x47; // bx r0 at the gap's FIRST halfword
+  const short = gapsBetween(undercount, [
+    { start: 0, end: 0x10 },
+    { start: 0x1c, end: 0x20 },
+  ]);
+  if (short.gaps.length !== 1 || short.gaps[0].returns[0] !== short.gaps[0].start)
+    throw new Error("sweep D self-test: undercount signature not reproduced");
+
+  // A negative gap is an over-measure, the opposite error, and must be caught.
+  const past = gapsBetween(new Uint8Array(0x20), [
+    { start: 0, end: 0x18 },
+    { start: 0x10, end: 0x20 },
+  ]);
+  if (past.overlaps.length !== 1 || past.overlaps[0].bytes !== 8)
+    throw new Error("sweep D self-test: over-measure not caught");
+
+  console.log("sweep D self-test passed (return shapes, leaf, undercount signature, over-measure)");
 }
 
 function main(): void {

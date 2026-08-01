@@ -338,6 +338,43 @@ the ROM reads slot 46. One slot off, in the direction that made a pair of
 distinct renderers look like one renderer used twice. **Resolve the base
 before trusting an offset that looks familiar.**
 
+#### An `unknown` cluster on ONE register is usually one fact, not N
+
+`08018038` reported **ten** `unknown` sites and resolved to **one** answer.
+All ten are `__call_via_r9` and r9 is written exactly once in the whole
+function, at 0x080180bc; the only branch targeting the site region is the
+loop's own back edge at 0x08018626, which is downstream of that write. So the
+write dominates every site and the value never changes.
+
+**The resolver was right to refuse and wrong to be believed as a verdict.**
+Its backward walk cannot prove a write is on every path when a branch target
+sits between; that is a limit of the walk. Rule 6 in its working form: when
+several `unknown`s share a dispatch register, do not resolve them one by one
+— ask first how many times that register is written in the whole body. Three
+greps settle ten sites:
+
+```
+grep -c 'mov  r9'      # writes, minus the prologue save and epilogue restore
+grep    'b.*0x<site>'  # who branches into the region
+```
+
+Report it as one resolution covering ten sites, not as ten resolutions. Ten
+confident-sounding independent answers would be the worrying outcome; one fact
+with ten consequences is the honest shape, and it is why the answer is firm.
+
+The callee there is the text token reader in Func_080048b0's slot 0x32, read
+as `*(0x03001e8c + 140)` = 0x03001f18 = `0x03001e50 + 200` — a **fifth** base
+spelling in this family. The function proves the identification from its own
+body: 0x08018098 calls `Func_080048b0(0x32, 0x140)` and 0x0801809c-0x080180aa
+DMAs 0x140 bytes from 0x08015430 into the result. `080196c4` is a recognised
+precedent, not the source; the arithmetic was read here.
+
+**Where pinning was not needed, say so.** All ten C statements and all ten ROM
+sites take the same single argument and the same latched callee, so no
+assignment between them can change the answer. Recording "there was nothing to
+separate" is the honest form — inventing a pinning argument for statements
+that cannot differ is how a lane learns to trust order.
+
 #### `veneer_resolve.ts` truncates at 0x1000 and now says so
 
 `boundOf` caps a function at `entry + 0x1000` when the next owner is further

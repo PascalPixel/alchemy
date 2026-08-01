@@ -35,7 +35,7 @@ gray semantic debt left in the core census:
 
 **Overlays** — decoded overlay code, 791 KB:
 
-![Decoded overlay code coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=22f47ee1)
+![Decoded overlay code coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=7b79da4a)
 
 **Assets** — the 7.3 MB of the cartridge that is data, not code. Same ladder in
 magenta: faint is byte-represented, a third is b&w sheets, two thirds is

@@ -238,6 +238,52 @@ the field is boolean in practice and the normalisation is only a materialised
 Reproduce the raw index, and say in the header that it does not prove the
 field is bounded.
 
+### THE GLOBAL SITES ARE THE SAME TWO SLOTS — AND MUST NOT BE CACHED
+
+Every `global` resolution left in the audit is one of exactly two addresses.
+Checked exhaustively across the whole remaining scope, not sampled:
+**15 sites read 0x03001f08 and 16 read 0x03001f0c. There is no third
+address.** So the global population is not a new mechanism; it is the same
+renderer pair as the frame-parked files, read straight from the slot at the
+point of use instead of being copied into the frame.
+
+**DO NOT convert them the way the frame-parked files were converted.** The two
+forms have identical ADDRESSING and different SEMANTICS, which is Ivan's rule
+in its sharpest form: a site that re-reads the global observes republication,
+a hoisted `renderers[2]` local does not.
+
+`semantic/main/080ea0d8.c` proves it, and proves it inside one function.
+Locating every `bl 0x080ed408` in its body and reading the id in r0 gives
+slot-47 publishes at 0x080ea668, 0x080ea6aa, 0x080ea6d8, 0x080ea706,
+0x080eaee4, 0x080eaf12, 0x080eaf3c and 0x080eaf68 — each with DIFFERENT
+parameters — and the slot-47 re-read sites fall between them:
+
+| publish | site that then re-reads 0x03001f0c |
+|---|---|
+| 0x080ea668 | 0x080ea694 |
+| 0x080ea6aa | 0x080ea6c2 |
+| 0x080ea6d8 | 0x080ea6f0 |
+| 0x080eaee4 | 0x080eaefe |
+| 0x080eaf12 | 0x080eaf28 |
+| 0x080eaf3c | 0x080eaf54 |
+| 0x080eaf68 | 0x080eaf7e |
+
+Publish, read, call. Publish, read, call. The re-read is not redundancy the
+compiler failed to eliminate — it is the point.
+
+The same function settles it beyond argument by using BOTH disciplines at
+once: slot 46 is published once at 0x080ea138 and its sites go through the
+parked copy at `[sp, #88]`, while slot 47 is republished eight times and never
+parked. One function, one pair of slots, two deliberately different
+lifetimes.
+
+**So the rule for these files is: reproduce the read where the ROM does it.**
+`*(Renderer *)0x03001f0c` at the call site, not a local hoisted to the top. A
+conversion that caches would compile, would look exactly like the six files
+that legitimately cache, and would silently freeze a pointer the ROM
+deliberately refreshes — the failure mode this audit exists to remove,
+reintroduced by the audit itself.
+
 **A runtime value feeding the SETUP call does not make the callee runtime
 dependent.** `080e89ec` calls `Func_080cef64(alternate, sp + 48)` where
 `alternate` is read out of a scene record. The byte-exact source takes the

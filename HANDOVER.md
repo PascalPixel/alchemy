@@ -607,6 +607,15 @@ address.** The claim is the header, written by hand at conversion time; the
 check is the absence of live calls. Scope is `semantic/` only — the 37 exact
 `src/` files deliberately still declare their phantoms per Vale's ruling.
 
+**MEASURE THE SCOPE WITH `--scope`, NEVER WITH GREP.** The same cry-wolf
+failure bites the measurement, and in the direction that inflates it: every
+converted file's header QUOTES the phantom prototype it removed, so a plain
+`grep Func_08007...` counts finished files as outstanding. That error was made
+and caught on 2026-08-01 — a reported remainder of **15 files / 129 sites was
+really 11 files / 117 sites**, with four files (`080052f4`, `08005534`,
+`080dd2c4`, `080de2f8`) already complete and counted only for their own prose.
+`tools/veneer_resolve.ts --scope` strips comments and prints the live scope.
+
 Two details that make it a guard rather than a decoration. It strips C
 comments first, because the audit's headers QUOTE the prototypes they removed
 and a naive text search reports every audited file — a guard that cries wolf

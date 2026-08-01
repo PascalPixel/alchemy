@@ -36,7 +36,7 @@ body {
 
 .trees {
   display: grid;
-  grid-template-columns: repeat(3, 540px);
+  grid-template-columns: repeat(auto-fit, 540px);
   gap: 10px;
   flex: 1;
   align-items: center;

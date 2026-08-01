@@ -2035,7 +2035,7 @@ export function renderBoxTree(
       `@font-face{font-family:Weyard;src:url(data:font/otf;base64,${embeddedWeyardFont()}) format('opentype');font-style:italic;}` +
       ".weyard{font-family:Weyard;font-size:16px;font-style:italic;fill:#fff;}" +
     "</style></defs>",
-    preciseRect({ x: 0, y: 0, width, height }, `fill="${hue.edge}"`),
+    preciseRect({ x: 0, y: 0, width, height }, `fill="${hue.edge}" rx="8"`),
     preciseRect({ x: 1, y: 1, width: width - 2, height: height - 2 },
       `fill="none" stroke="#1c1c26" stroke-width="2" rx="7"`),
     preciseRect(plot, `fill="${GROUND}" rx="3"`),
@@ -2628,6 +2628,9 @@ export function selfTest(): void {
   if (!boxTree.includes('viewBox="0 0 540 304"') ||
       !boxTree.includes('width="540" height="304"')) {
     throw new Error("box tree lost its fixed pixel-exact dashboard canvas");
+  }
+  if (!boxTree.includes('width="540" height="304" fill="#6d4fc2" rx="8"')) {
+    throw new Error("box tree background no longer follows its rounded outer border");
   }
   const folderTree = renderBoxTree(area("folders", "Folders", [
     { label: "one", bytes: 60, categories: { exact_c: 60 }, group: "first" },

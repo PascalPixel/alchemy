@@ -38,6 +38,7 @@ typedef signed int s32;
  * six-tuples are positional, roles open.
  */
 
+extern s16 Data_02000240[];
 extern void Func_080091c0(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 extern void Func_080091e0(void *record, s32 arg1);
 extern s32 Func_080770c0(s32 flagId);
@@ -48,14 +49,14 @@ extern void Func_0808a100(s32 id, s32 arg1);
 
 s32 Func_02001394(void)
 {
-    if (*(s16 *)((u8 *)0x02000240 + 448) == 152) {
+    if (Data_02000240[224] == 152) {
         Func_080770c8(324);
         if (Func_080770c0(0x9a0) != 0) {
             Func_0808a0f0(11, 0, 0);
         }
     }
-    if (*(s16 *)((u8 *)0x02000240 + 448) == 158) {
-        if (*(s16 *)((u8 *)0x02000240 + 450) == 1) {
+    if (Data_02000240[224] == 158) {
+        if (Data_02000240[225] == 1) {
             Func_080091c0(108, 17, 1, 1, 107, 17);
         }
         if (Func_080770c0(0x9a2) != 0) {

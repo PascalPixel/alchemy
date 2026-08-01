@@ -33,6 +33,7 @@ typedef signed int s32;
  * fields +35, +89 are recorded by offset with roles open.
  */
 
+extern s16 Data_02000240[];
 extern u8 *Data_03001ebc;
 
 extern void Func_080091c0(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
@@ -46,10 +47,10 @@ extern void Func_0808a100(s32 id, s32 arg1);
 s32 Func_02000414(void)
 {
     *(s32 *)(Data_03001ebc + 448) = 516;
-    if (*(s16 *)((u8 *)0x02000240 + 448) != 28) {
+    if (Data_02000240[224] != 28) {
         return 0;
     }
-    if (*(s16 *)((u8 *)0x02000240 + 450) == 5) {
+    if (Data_02000240[225] == 5) {
         Func_080770d0(0x12f);
         return 0;
     }

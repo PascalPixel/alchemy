@@ -32,13 +32,13 @@ runtime structure intentionally retained as assembly. There is no ordinary
 gray semantic debt left in the main-image census. Each tile follows one audited
 source/owner boundary and keeps that owner's natural byte size:
 
-![Main-image code coverage box tree in purple with retained assembly in orange.](assets/readme/gs1-en-core.svg?v=a5548642)
+![Main-image code coverage box tree in purple with retained assembly in orange.](assets/readme/gs1-en-core.svg?v=fb0fff9f)
 
 **Code overlays** — 795,042 executable bytes across 96 decoded RAM-loaded
 modules. Each module is a real parent containing its exact-C owners,
 source-backed semantic owners, and contiguous unowned assembly runs:
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=e714ff9f)
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=d1305fb8)
 
 **Data / assets** — 7,298,755 bytes of the ROM image that are data, not code.
 Fifty-two real manifest families wrap their built leaf kinds and 2,335 disjoint,
@@ -46,7 +46,7 @@ byte-verified ROM objects. The magenta ladder shows representation maturity:
 faint is encoded bytes, a third is b&w sheets, two thirds is coloured sheets,
 and full blaze is assets cut into individual objects:
 
-![Asset maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-assets.svg?v=f5c9aff3)
+![Asset maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-assets.svg?v=9fbd282c)
 
 These are the same complete SVG panels used by the live dashboard: title,
 hierarchical byte tree, and left-aligned legend are all inside each artifact.

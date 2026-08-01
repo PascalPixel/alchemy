@@ -33,15 +33,17 @@ typedef signed int s32;
 
 extern s32 Data_03001e40;
 
-extern void Func_0808a160(s32 arg0, s32 arg1);
+extern void Func_02006912();
+extern void Func_0200691e();
+
 
 void Func_02002ce0(s32 arg0)
 {
     s32 selector = Data_03001e40 & 7;
 
     if (selector == 0) {
-        Func_0808a160(arg0, 2);
+        Func_02006912(arg0, 2);
     } else if (selector == 2) {
-        Func_0808a160(arg0, 0);
+        Func_0200691e(arg0, 0);
     }
 }

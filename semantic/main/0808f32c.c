@@ -1,3 +1,21 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320.  A `bl` into that range
+ * is an indirect call through the named register.
+ *
+ * The regularity that makes these readable, and it is CHECKED per site rather
+ * than assumed: the callee value always appeared in the draft's argument list
+ * at exactly the position matching the veneer's register index.  The compiler
+ * loaded the callee into rN and the draft read rN as argument N.  So a
+ * __call_via_r0 site has ZERO real arguments, r1 has one, r2 has two.  Each
+ * site below was confirmed by checking that the register and the argument
+ * position agree.
+ *
+ * The provider read from Data_02008000.spawn_provider is the CALLEE, not an
+ * argument: __call_via_r0 takes no arguments at all. The draft already had
+ * the value right and its role wrong.
+ */
 #include "types.h"
 
 /*
@@ -55,6 +73,8 @@ struct MapState_0808f32c {
 
 typedef struct SpawnRecord_0808f32c *(*SpawnProvider_0808f32c)(void);
 
+typedef struct SpawnRecord_0808f32c *(*SpawnProviderCall_0808f32c)(void);
+
 struct RuntimeServices_0808f32c {
     u8 unknown_00[0x24];
     SpawnProvider_0808f32c spawn_provider;
@@ -66,7 +86,6 @@ extern u8 Data_02000240[];
 
 struct SceneObject_0808f32c *Func_0808ba1c(u32 slot);
 s32 Func_0808ed4c(s32 id);
-struct SpawnRecord_0808f32c *Func_080072e4(SpawnProvider_0808f32c provider);
 s32 Func_080770c0(s32 condition);
 struct SceneObject_0808f32c *Func_080090c8(s32 kind, s32 x, s32 y, s32 z);
 void Func_08009098(struct SceneObject_0808f32c *object, const void *script);
@@ -115,7 +134,7 @@ void Func_0808f32c(void)
             continue;
         }
 
-        record = Func_080072e4(Data_02008000.spawn_provider);
+        record = ((SpawnProviderCall_0808f32c)Data_02008000.spawn_provider)();
         while (record->kind != -1) {
             u32 flags;
 

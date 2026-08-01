@@ -1,4 +1,24 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320.  A `bl` into that range
+ * is an indirect call through the named register.
+ *
+ * The regularity that makes these readable, and it is CHECKED per site rather
+ * than assumed: the callee value always appeared in the draft's argument list
+ * at exactly the position matching the veneer's register index.  The compiler
+ * loaded the callee into rN and the draft read rN as argument N.  So a
+ * __call_via_r0 site has ZERO real arguments, r1 has one, r2 has two.  Each
+ * site below was confirmed by checking that the register and the argument
+ * position agree.
+ *
+ * The value at 0x02004004 is the callee, reached through __call_via_r2, so
+ * the call takes TWO arguments. Confirmed at 0x080fb658: r0 and r1 are set
+ * from r4 and r6 immediately before the branch, and r2 holds the load.
+ */
 #include "types.h"
+
+typedef void (*Callee_02004004)(void *player, void *track);
 
 struct MusicPlayerState_080fb518 {
     u8 unknown_00[0x18];
@@ -10,10 +30,6 @@ struct MusicTrackState_080fb518 {
     u8 *command;
 };
 
-void Func_080072ec(
-    struct MusicPlayerState_080fb518 *player,
-    struct MusicTrackState_080fb518 *track,
-    s32 handler);
 
 /*
  * Execute an M4A MEMACC command.  The first operand selects an assignment or
@@ -93,7 +109,7 @@ void Func_080fb518(
     }
 
     if (condition) {
-        Func_080072ec(player, track, *(s32 *)0x02004004);
+        ((Callee_02004004)*(s32 *)0x02004004)(player, track);
     } else {
         track->command += 4;
     }

@@ -2763,6 +2763,12 @@
     },
     {
       "overlay": "resource_39e",
+      "entry": "0x02002ad0",
+      "span_bytes": 5000,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {lr}) and returning (pop {r0}/bx r0 at 0x02003e3c-0x02003e3e) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_39e 2ad0 3e58, the +2 rule against the raw image, sites=525 equalling the 525 bl lines of the bounded listing), three inline literal pools skipped by forward branches at 0x02002ec4, 0x020034ca and 0x020038d4, span read through the six trailing pool words ending 0x02003e57 to the next owner prologue at 0x02003e58 (the already-drafted resource_39e_c_02003e58.c); 0x02003e58 - 0x02002ad0 = 0x1388 = 5000 bytes computed rather than hand-translated, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39e",
       "entry": "0x02003e58",
       "span_bytes": 580,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_39e), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row while the rows it leads to were drafted; span read from the disassembly through the sixteen-word literal pool 0x0200409c-0x020040db to the next owner's prologue at 0x020040dc (already drafted), inside the assembled overlay image and not overlapping another recorded owner."

@@ -311,6 +311,43 @@ never a correctness certificate.
 
 **The row after a driver is often what it INSTALLED, not what it calls.**
 
+**A published row can be the thing that CORROBORATES your drafted rows.**
+Sweep-invisible does not mean story-invisible. In `resource_39e` the two
+published-only owners 0x020012e0 and 0x02001334 are dispatchers, and between
+them they `bl` six rows that were already drafted — each dispatch case
+independently confirms that row's address, its void-void signature, and its
+place in the flag chain. The corroboration runs the opposite way round from
+what the sweeps suggest: the rows nothing can reach are the ones that name
+everything else. So when the published population turns up a small row with
+several in-image `bl` targets, draft it EARLY and for the free evidence, not
+last because it is small. This is the driver-first habit applied to sweep
+output.
+
+**Open row, any lane: `resource_39e` 0x02002ad0 is the overlay's LAST.**
+`overlay_published resource_39e` reports residue=2 and both lines are that one
+address. Measured, not estimated: span **5,000 bytes** (0x02003e58 - 0x02002ad0
+= 0x1388), `sites=525` and 525 `bl` lines transcribed, so the arithmetic
+agrees. Bare `push {lr}` — no callee-saved registers, no sp frame, no loops,
+eight branches in the whole 5,000 bytes, one epilogue. One in-image callee
+(Func_020041ec, drafted); every other target is vocabulary the overlay already
+declares. It is transcription, not analysis, and it wants a dedicated sitting.
+An earlier note of mine called it 4,488 bytes — hand-computed hex, wrong twice
+over; the figure above is computed. Detail map in venus's
+`work/claude/notes/resource_39e_02002ad0.md` (gitignored, so this paragraph is
+the durable copy).
+
+**`overlay_call_targets.ts --annotate` annotates NOTHING unless you pass
+bounds.** With no bounds it resolves only *unconverted inventory rows*, so a
+listing for an already-banked or published-population row comes back with its
+original — and therefore wrong, pc-relative — `bl` targets untouched. There is
+no error and no warning; the output looks exactly like a listing that had no
+calls worth renaming. Measured on `resource_39e` 0x02000388: piped without
+bounds, zero of two sites annotated; with `388 414` on both sides, two of two.
+Always spell it
+`overlay_show <ov> A B | overlay_call_targets <ov> A B --annotate`, the same
+bounds on both halves. Same family as the dropped-bound bug — a tool that
+silently does less than you asked is worse than one that refuses.
+
 **The driver anatomy is a habit, not a rule:** several drivers read no scene
 id at all, and one derives the sub-selector when it is zero.
 
@@ -1697,6 +1734,19 @@ against that sibling.
 recurs verbatim in `resource_3c6` (`movs r3,#236 / lsls #1` off `0x03001ebc`,
 three times), where the two variant arms are *behaviourally identical*, differing
 only in where the bump sits relative to the last call.
+
+**The skip-beat counter has at least FOUR shapes, and the fourth changes the
+story, not just the count.** Known so far: (1) the *converging* form — both arms
+bump, so the counter advances exactly once either way (the `resource_3c9`
+copies); (2) the *early-exit* form — the taken arm returns and only the
+not-taken path bumps (`resource_3af:3f30`); (3) arms that differ only in where
+the bump sits relative to the last call (`resource_3c6`); and now (4)
+`resource_39e:1d50`, where **only the skip arm bumps and only the non-skip arm
+sets a story flag**. There flag 0x898 is set exclusively on the played-through
+path, and 0x898 is what the same overlay's dispatcher 0x020012e0 tests to choose
+its follow-up — so skipping the beat changes which function runs later. Never
+carry a skip-beat shape over from a sibling; read both arms and check whether
+either has a side effect the other lacks.
 
 **A provably dead call is still a call SITE.** In `resource_3a7:0754` the sample
 is built with `lsls #11 / lsrs #16`, so it is always non-negative and the `bge`

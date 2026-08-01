@@ -168,6 +168,9 @@ const GROUP_VALUE2_IN_PLACE_SOURCES = new Set(["080b5ad4"]);
 const NO_RERUN_CSE_AFTER_LOOP_SOURCES = new Set([
   "08006088", "0808c30c", "080ba918", "080044d0",
 ]);
+// The second loop pass rematerializes the owner-state offset in 0807a0f4,
+// breaking the reference object's reuse of the shifted 280-byte field offset.
+const NO_RERUN_LOOP_OPT_SOURCES = new Set(["0807a0f4"]);
 // 080044d0 keeps a division quotient under two names so the range comparison
 // reads the copy rather than the call's return register, as the reference does.
 // The rerun of CSE after loop optimisation collapses that copy pair back into
@@ -1264,6 +1267,7 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(UNSCHEDULED_OVERLAY_SOURCES.has(sourceKey(source)) ? ["-fno-schedule-insns2"] : []),
     ...(NO_CSE_FOLLOW_SOURCES.has(stem) ? ["-fno-cse-follow-jumps"] : []),
     ...(NO_RERUN_CSE_AFTER_LOOP_SOURCES.has(stem) ? ["-fno-rerun-cse-after-loop"] : []),
+    ...(NO_RERUN_LOOP_OPT_SOURCES.has(stem) ? ["-fno-rerun-loop-opt"] : []),
     ...(NO_GCSE_SOURCES.has(stem) ? ["-fno-gcse"] : []),
     ...(NO_EXPENSIVE_SOURCES.has(stem) ? ["-fno-expensive-optimizations"] : []),
     ...(NO_STRENGTH_REDUCE_SOURCES.has(stem) ? ["-fno-strength-reduce"] : []),

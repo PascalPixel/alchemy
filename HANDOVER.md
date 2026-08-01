@@ -260,6 +260,78 @@ old UNRULED behaviour for that row only.
 So a D-class "cannot tell" no longer exists: **A and B must be empty, and C must
 be classified.** There is nothing left to defer to the owning lane.
 
+### Sweep A and sweep B are NOT independent populations
+
+**A sweep-A row is not "already covered by the call graph".** On resource_3a4,
+0x02000ec0 is in sweep A — a caller exists in the image — and *both* of its
+callers are sweep-B published callbacks: `Func_02000ec0(5)` from 0x02000d2c and
+`Func_02000ec0(10)` from 0x02001398. Neither caller is reachable by a BL walk,
+so a census starting from reachable code finds neither the callers nor the
+callee's reason for existing.
+
+This is the same family as the blind spot the standard exists to catch — a
+fourth way this work hides. Plan A and B as one bill, never as "B plus a
+handful already accounted for".
+
+Both of those sites are also the IN-IMAGE case of the `+2` rule: the encoding
+is `f000 ff5f` and the resolved target is a **prologue, not a veneer**.
+`overlay_call_targets` labels that distinction in its output; read the label
+rather than assuming every resolved site lands in the veneer bank.
+
+### The blind spot recurs WITHIN one overlay
+
+resource_3a4 does it twice. 0x02002b58 spawns a record and stores the plain
+word `0x0200aa49` into it at +108 — image offset 0x2a48 with the Thumb bit,
+the overlay's own 0x02002a48 — and never calls it. 0x02002f10 does the same to
+0x02002eec, handing `0x0200aeed` to `Func_080000d0` at the standard 200-frame
+rate. **A function installed as data is invisible to every technique that
+follows control flow.** If you want the rule in one line, use that; if you want
+someone to *feel* it, show them 0x02002b58's 88 bytes.
+
+### resource_3a4 residue state (2026-08-01, jupiter) — 2 published + 2 called
+
+Fourteen owners drafted across two shifts, residue regenerated with
+`bun tools/overlay_published.ts` at each checkpoint and never carried over
+from a written figure. **16 published + 2 called -> 2 + 2.**
+
+Four rows remain, NOT started. Every bound below is the **next recorded
+owner**, which is a hard upper bound; measureSpan is given only for contrast
+and must not be drafted against.
+
+| entry | bound | measureSpan | class | already known |
+|---|---|---|---|---|
+| 0x02000ec0 | **1240, exact** | 1240 | A called | called by the drafted 0x02000d2c(5) and 0x02001398(10); both neighbours drafted, so fixed at both ends |
+| 0x02003028 | <= 1024 | 938 | A called | starts immediately after the drafted 0x02002ffc; next owner 0x02003428 |
+| 0x02001838 | <= 1236 | 1200 | B published | next residue row is 0x02001d0c |
+| 0x02001d0c | <= 788 | 762 | B published | next owner is the drafted 0x02002020 |
+
+0x02001838 and 0x02001d0c **tile 0x02001838..0x02002020 exactly**, so measuring
+either one fixes the other's span.
+
+VERIFIED: the four addresses, their sweep class, the bounds above (computed
+from the recorded owner list), and 0x02000ec0's two callers with their
+arguments. NOT VERIFIED: any body, any callee, any span end except
+0x02000ec0's. No call resolution has been run over any of the four.
+
+**A fifth shaped row, 0x02005210, is in NEITHER sweep** — class C only, nearest
+recorded owner 0x02003a44, 6,092 bytes back, i.e. past the import-veneer bank
+in a stretch with no owners at all. It has not been looked at. Do not fold it
+into the four, and do not call this overlay closed, until someone decides
+whether that stretch is code.
+
+Two corrections to earlier resource_3a4 notes of mine, so nobody inherits
+them: the word at **0x03001e40 is the free-running FRAME COUNTER**, not the
+"packed status field" I first guessed — the tree masks it with 15, 8, 4, 3 and
+1 elsewhere, and 0x02002be0 hands it to `Func_030003e0` with 3 and 9 to gate
+per-frame work. **`Func_030003e0` reads as a remainder helper**, corroborated
+by the corpus's `Func_030003e0(rng, 90) + 60` producing a 60..149 range. Read,
+not named.
+
+A byte store into the loader global cannot always be written in the array
+form: 0x02002f10 writes `0x02000240 + 0x22b`, an ODD byte offset, so it is the
+high byte of element 277 and is expressed as a byte store through the array's
+address rather than misstated as `Data_02000240[n]`.
+
 Whole-tree context at the time of writing: 60 of 96 overlays show residue,
 542 published hits — mostly overlays never claimed closed, i.e. undone work
 rather than bad certifications.

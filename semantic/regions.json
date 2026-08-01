@@ -5666,6 +5666,12 @@
       "evidence": "register-spill/high-register prologue through outer bx return at 0x020008a0 and alignment/literal pool before next owner 0x020008c0; apparent 0x020007de and 0x02000902 entries are hidden-context services"
     },
     {
+      "overlay": "resource_3bd",
+      "entry": "0x02003644",
+      "span_bytes": 1004,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_3bd), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; the nineteen-word literal pool at 0x020039b8-0x02003a03 sits INSIDE the function with the tail at 0x02003a04-0x02003a28 after it and one further pool word at 0x02003a2c, so a span measured as code-then-pool stops 118 bytes early; span read through the r8 unspill and bx r1 at 0x02003a1e-0x02003a28 to the next function at 0x02003a30, inside the assembled overlay image and not overlapping another recorded owner; hand-drafted from the bytes with every bl resolved as an absolute image offset (stored displacement + 2) rather than pc-relative; tools/m2c_guard.ts finds no call-through-register site and no jump table here and reports 14 of 14 callees present in the draft."
+    },
+    {
       "overlay": "resource_3be",
       "entry": "0x02000314",
       "span_bytes": 56,

@@ -79,6 +79,16 @@ eleven mutually incompatible signatures.** A real function has one.
 Resolve with `tools/veneer_resolve.ts`; read the contract for its `unknown`
 in the section below before trusting or doubting any answer.
 
+**STATUS: the semantic-side audit is CLOSED.**
+`bun tools/veneer_resolve.ts --scope` prints nothing tree-wide, and the
+`global` and `unknown` classes are both empty. Measure it with `--scope`
+before believing that sentence — never with grep, because converted files'
+headers quote the prototypes they removed. What remains is *not* this audit:
+the 37 exact `src/` files still carry veneer addresses as annotated phantom
+prototypes (Vale's ruling), and four files converted early are still raw m2c
+drafts whose veneer sites alone were touched — `080d2d98`, `080de2f8`,
+`080dab74`, `080e89ec`. Rewriting an m2c dump is a drafting job, not this pass.
+
 ### Arity has a DOMAIN: r0–r3 versus r4 and above
 
 For `__call_via_r0` .. `__call_via_r3` the callee usually sits in the draft's
@@ -175,6 +185,62 @@ out-parameter IS the two-element array.
 `semantic/main/080de2f8.c` has the two slots without any base pointer and no
 indexed dispatch — each site names one slot outright — which is the reminder
 that the table is a habit of this family, not a law.
+
+#### The index is per SITE, and the last three files spelled it four ways
+
+The audit closed on `080cf8e0`, `080d4604` and `080d6970`, all three the same
+table shape, and the index was different in each — which is the whole reason
+the shape must never be pattern-matched:
+
+| file | slots at | base at | index |
+|---|---|---|---|
+| `semantic/main/080cf8e0.c` | `[sp,#60]`, `[sp,#64]` | `[sp,#32]` | `[sp,#56]+4`'s word, XOR 1 when `[r8,#12] > 0` |
+| `semantic/main/080d4604.c` | `[sp,#60]`, `[sp,#64]` | `[sp,#24]` | `sl & 1`, plain loop parity |
+| `semantic/main/080d6970.c` | `[sp,#68]`, `[sp,#72]` | `[sp,#36]` | `i & 1`, spelled three ways in one file |
+
+`080d6970` is the case worth remembering: its three indexed sites compute the
+same `(i & 1)` by three different routes — inline `ands`, a value hoisted into
+`[sp,#32]` **already scaled by 4** so no shift appears at the site, and a
+register reused from a preceding `beq` guard. A site with no visible shift is
+not a site with no index. Read each one; three spellings agreeing is evidence
+only because they were three independent reads.
+
+#### Counting publishes is not enough, and neither is counting branches
+
+`080e2974` taught that a 46/47/46/47 group can be two arms of one if/else.
+`080cf8e0` is the harder form: **five** `Func_080ed408` calls for **four**
+mutually exclusive paths, because `0x080cfac4` is a `b.n` that jumps out of one
+arm into the *other* arm's tail, so one publish is shared by two paths. Neither
+the publish count nor the branch count alone gets this right — you have to
+follow where each arm actually goes and confirm each PATH publishes each slot
+once.
+
+Two `b.n`s in these files — `0x080d46be` and `0x080d6a3e` — look like control
+flow and are jumps over **inline literal pools**, the same class as
+`0x080e7802`. Before reading a `b.n` as an if/else, check whether its target is
+just past a run of data.
+
+#### A part-converted file is an AUDIT, not a transcription
+
+`080d6970` arrived with nine of its ten sites already expressed as indirect
+calls by an earlier draft. Re-derive them from the ROM anyway; reading them off
+the C is the shared-inheritance trap. Doing so found one site where the draft
+wrote a constant entry where the ROM indexes — and the guard made the two the
+same value, so **the draft was not wrong**. Restore the ROM's shape, and say
+plainly that the draft was right about the value. Credit and correction are
+separate judgements.
+
+#### `0x03000164`: one site that cannot discriminate its own arity
+
+At `0x080d6b9a` (`semantic/main/080d6970.c`) r0 and r1 are plainly set and r2
+holds 3 — but r2 was loaded to be the mask of an `ands` two instructions
+earlier and nothing rewrites it. **A live leftover from a mask is exactly what
+a false third argument looks like**; that is how `0x030001d8` was mistyped as
+three-argument in batch 3. Recorded evidence says a genuine third argument to
+`0x03000164` is almost always zero, and this is 3. The site cannot settle it:
+r2 already holds 3 either way, so both arities emit the same bytes. The draft's
+three-argument form was KEPT — changing it on suspicion is the same error
+mirrored. Bounded uncertainty is the final answer here, not a waypoint.
 
 **Both directions of structural damage show up around this idiom**, and both
 were repaired by reading it:

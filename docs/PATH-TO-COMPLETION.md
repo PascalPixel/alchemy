@@ -2,11 +2,11 @@
 
 # Path to completion
 
-Current verified exact **Full-C Byte Share: 249,940 / 1,343,212 executable
-bytes (18.61%)**. Exact main-image ownership is 102,208 bytes and exact code-overlay
-ownership is 147,732 bytes. After exact-C supersession and executable-extent
-accounting, the reviewed semantic tier contributes another **816,630 bytes**;
-together they cover **1,066,570 / 1,343,212 bytes (79.40%)**. This combined
+Current verified exact **Full-C Byte Share: 264,780 / 1,343,410 executable
+bytes (19.71%)**. Exact main-image ownership is 103,908 bytes and exact code-overlay
+ownership is 160,872 bytes. After exact-C supersession and executable-extent
+accounting, the reviewed semantic tier contributes another **805,246 bytes**;
+together they cover **1,070,026 / 1,343,410 bytes (79.65%)**. This combined
 figure is reviewed semantic coverage, not the Full-C headline or a completion
 forecast; [`../HANDOVER.md`](../HANDOVER.md) is the authoritative current audit.
 
@@ -443,6 +443,7 @@ claims:
 | region | best measured shape | remaining blocker |
 | --- | --- | --- |
 | `08090824` | 104/104 bytes, exact C | the new narrowly fingerprinted post-reload grouped-DMA rule restores the stack-zero-before-base order; it is routed with `-mgrouped-dma-store -fthumb-group-control-last` |
+| `080108c4` | 32/32 bytes, exact C | executable-gap continuation promoted with the existing source-scoped `-fno-cse-two-insn-immediate` and `-fno-sched-depend-count` routes |
 | `0800430c` | 76/76 bytes, 3 differing instruction slots | one loop block wants copy/AND before a constant, while enabling second scheduling damages the otherwise exact entry, exit, and pool |
 | `080bd7a4` | 52/56 bytes, 28 differing halfwords | volatile grouping preserves all three repeated DMA descriptors, but CSE hoists the shared zero/control constants instead of rematerializing each group |
 | `080b1dec` | 140/148 bytes, 51 differing halfwords | the loop offset loses the allocator contest and forces an eight-byte frame; narrowing it restores the reference register family but adds mandatory truncation |

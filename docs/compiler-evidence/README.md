@@ -121,6 +121,12 @@ The flag also makes emitted size exactly equal the reference span on every membe
 of the class, taking it off the critical path for a further band whose remaining
 residuals are other blockers.
 
+**Main-image witness.** `080108c4` independently reproduces a 32-byte executable-gap
+continuation as canonical C with this same CSE switch, paired with the existing
+source-scoped `-fno-sched-depend-count` route. It is now promoted to
+`src/080108c4.c`; the executable-gap assembly and semantic draft were removed only
+after the full source-only and ROM builds both passed byte-identically.
+
 **Two negative results worth keeping.** resource_373:2cb0, the function that
 motivated the investigation, is *not* unlocked and cannot be: its reference
 reloads several pool words but keeps one in a register to derive a related value

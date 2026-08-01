@@ -1261,21 +1261,6 @@
       ]
     },
     {
-      "address": "0x080108c4",
-      "size": 32,
-      "sections": [
-        {
-          "address": "0x080108c4",
-          "size": 32,
-          "kind": "thumb",
-          "source": "080108c4.s",
-          "instruction_bytes": 24,
-          "literal_words": 2,
-          "undefined_words": 0
-        }
-      ]
-    },
-    {
       "address": "0x08011568",
       "size": 40,
       "sections": [

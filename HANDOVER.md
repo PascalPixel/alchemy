@@ -920,6 +920,36 @@ miss — no instrument the team had could see them.
   `bx r0`, so the gap is that return plus the row's literal pool. Three on 3a4
   (0x2478, 0x2e76, 0x2ede). Harmless until someone treats the gap as unowned.
 
+#### The tail is now RULED, not merely counted (2026-08-01, jupiter, on Isaac's finding)
+
+`gapsOf` computed a tail byte-count and printed nothing about it — the same
+defect this file exists to fix in sweep B: **scan a region, then decline to say
+anything about it.** Isaac caught it, and the cost was real: resource_3c9's
+tail held two owners with genuine push prologues, and four overlays stood
+certified on a sweep that never looked past their last owner.
+
+A tail is USUALLY legitimate — the import-veneer bank and the overlay's data
+tables live there — so `ruleTail` classifies rather than accuses:
+
+- **veneers are marked first.** An interworking veneer is eight bytes,
+  `ldr rN,[pc,#0] / bx rN / .word target`. A `push`-shaped byte inside one is
+  not code and must not be counted.
+- **the lr test is sweep C's discriminator, and it applies here for the same
+  reason.** A prologue you can return through has to save `lr`, so a pool word
+  or table entry wearing a bare `push {r5, r6}` cannot be one.
+- verdict is `VENEER-AND-DATA` or `PROLOGUE-SUSPECT`.
+
+**Re-run across the certified set: no certification moves.** Twelve of the
+thirteen rule `VENEER-AND-DATA`. The single hit is resource_3a4 at 0x5210 —
+which is the exponential-table word already settled above, rediscovered
+independently by a different instrument. That is the outcome you want from a
+new check: it reproduces the known answer and finds nothing else.
+
+Tree-wide, **19 of 96 overlays have a `PROLOGUE-SUSPECT` tail**, none of them
+in the certified set. Those are candidates for the lane that owns each overlay,
+not findings — `lr`-saving and outside a veneer is a strong filter but not a
+proof, and a large data table will eventually contain the bytes `b5 xx`.
+
 #### The leaf cohort, swept and measured (2026-08-01, jupiter) — 306 rows, 19 bodies
 
 Not 306 problems. **The whole cohort collapses to nineteen distinct bodies,

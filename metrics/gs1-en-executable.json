@@ -4,7 +4,7 @@
   "target": "gs1-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1342990,
+  "total_union_bytes": 1343002,
   "main": {
     "id": "main",
     "executable_bytes": 548364,
@@ -8755,8 +8755,8 @@
     {
       "id": "resource_377",
       "decoded_bytes": 11548,
-      "executable_bytes": 6800,
-      "excluded_bytes": 4748,
+      "executable_bytes": 6804,
+      "excluded_bytes": 4744,
       "audit": "complete",
       "intervals": [
         {
@@ -8772,7 +8772,7 @@
           "evidence": "resource_377_overlay.s:482:verified-C-placeholder"
         },
         {
-          "start": 33554580,
+          "start": 33554576,
           "end": 33554682,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -9191,8 +9191,8 @@
     {
       "id": "resource_378",
       "decoded_bytes": 16784,
-      "executable_bytes": 13896,
-      "excluded_bytes": 2888,
+      "executable_bytes": 13900,
+      "excluded_bytes": 2884,
       "audit": "complete",
       "intervals": [
         {
@@ -9206,6 +9206,12 @@
           "end": 33554524,
           "kind": "thumb",
           "evidence": "resource_378_overlay.s:1244:verified-C-placeholder"
+        },
+        {
+          "start": 33554532,
+          "end": 33554536,
+          "kind": "thumb",
+          "evidence": "published bounded raw-halfword leaf"
         },
         {
           "start": 33554544,
@@ -24943,8 +24949,8 @@
     {
       "id": "resource_3a7",
       "decoded_bytes": 8756,
-      "executable_bytes": 5814,
-      "excluded_bytes": 2942,
+      "executable_bytes": 5818,
+      "excluded_bytes": 2938,
       "audit": "complete",
       "intervals": [
         {
@@ -25033,9 +25039,15 @@
         },
         {
           "start": 33555544,
-          "end": 33555660,
+          "end": 33555662,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33555662,
+          "end": 33555664,
+          "kind": "executable_alignment",
+          "evidence": "resource_3a7_overlay.s:two-byte-zero-between-executable-spans"
         },
         {
           "start": 33555664,

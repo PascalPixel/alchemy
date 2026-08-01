@@ -178,6 +178,26 @@ export function resolveOverlay(overlay: string, owner?: number, ownerEnd?: numbe
   return sites;
 }
 
+/**
+ * Pick the owner/end bounds out of the command line.
+ *
+ * This used to be an inline `/^[0-9a-f]{1,4}$/` filter, which silently dropped
+ * any bound written in the `0x` form every other tool here accepts. The failure
+ * was not an error: with both bounds dropped the tool falls back to walking the
+ * WHOLE overlay's top-level rows and prints a clean, plausible listing that
+ * reads exactly like a per-owner one. A lane spent a round drawing conclusions
+ * from a right-looking listing of the wrong function, so the parser now takes
+ * both spellings and is covered by the self-test.
+ *
+ * The overlay name cannot collide: `resource_3af` is longer than four hex
+ * digits and carries a prefix, and the flags all start with `--`.
+ */
+export function parseBounds(args: string[]): number[] {
+  return args
+    .filter((argument) => /^(0x)?[0-9a-f]{1,4}$/i.test(argument))
+    .map((argument) => Number.parseInt(argument.replace(/^0x/i, ""), 16));
+}
+
 function selfTest(): void {
   // `f000 fe67` stores 0xcce, so the callee is at 0xcd0 — a real
   // `resource_39f` owner. Measured from the live disassembly.
@@ -208,6 +228,20 @@ function selfTest(): void {
   const unlisted = new Uint8Array([0x10, 0xb5, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
   if (classify(unlisted, 0, new Set()).kind !== "prologue")
     throw new Error("an unlisted push prologue must be recognised");
+  // Bounds must parse in BOTH spellings. The `0x` form silently produced a
+  // whole-overlay listing before this was fixed, which is worse than an error
+  // because the output looks correct.
+  const bare = parseBounds(["resource_3af", "1c14", "1d0c"]);
+  if (bare.length !== 2 || bare[0] !== 0x1c14 || bare[1] !== 0x1d0c)
+    throw new Error("bare hex bounds must parse");
+  const prefixed = parseBounds(["resource_3af", "0x1c14", "0x1d0c"]);
+  if (prefixed.length !== 2 || prefixed[0] !== 0x1c14 || prefixed[1] !== 0x1d0c)
+    throw new Error("0x-prefixed bounds must parse");
+  const mixed = parseBounds(["resource_3af", "0X1C14", "1d0c", "--annotate", "--json"]);
+  if (mixed.length !== 2 || mixed[0] !== 0x1c14 || mixed[1] !== 0x1d0c)
+    throw new Error("mixed case and flags must not disturb bounds");
+  if (parseBounds(["resource_3af", "--json"]).length !== 0)
+    throw new Error("neither the overlay name nor a flag is a bound");
   console.log("self-test=ok");
 }
 
@@ -239,11 +273,14 @@ function main(): void {
   if (args.includes("--self-test")) return selfTest();
   const overlay = args.find((argument) => /^resource_[0-9a-f]+$/.test(argument));
   if (overlay === undefined) {
-    console.log("usage: overlay_call_targets.ts <resource_NNN> [ownerHex [endHex]] [--json]");
+    console.log(
+      "usage: overlay_call_targets.ts <resource_NNN> [ownerHex [endHex]] [--json|--annotate]\n" +
+        "       bounds take either spelling: `1c14 1d0c` or `0x1c14 0x1d0c`",
+    );
     process.exitCode = 1;
     return;
   }
-  const bounds = args.filter((argument) => /^[0-9a-f]{1,4}$/i.test(argument)).map((h) => parseInt(h, 16));
+  const bounds = parseBounds(args);
   const sites = resolveOverlay(overlay, bounds[0], bounds[1]);
   if (args.includes("--json")) {
     console.log(JSON.stringify(sites, null, 2));

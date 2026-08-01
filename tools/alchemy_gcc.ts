@@ -363,6 +363,13 @@ const ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES = new Set([
 const CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES = new Set([
   "assets/code/resource_38f_c_020008ec.c",
 ]);
+// This main-image scheduler fingerprint leaves an independent r0 call-argument
+// copy immediately after a halfword store.  The reference places that copy
+// before the store; the strict post-reload transform only moves a register
+// copy when the next instruction is the same call, so the memory operation and
+// flags remain untouched.  08077f70 is exact with this mode plus the paired
+// no-alias/store-first scheduler settings (work/0807root/08077f70.c).
+const CALL_ARG0_BEFORE_STORE_SOURCES = new Set(["08077f70"]);
 // This no-argument initializer's reference fills the first global literal
 // load's latency with the frame allocation and dependent load, then fills the
 // table-index shift's latency with two stack initializers.  The compiler mode
@@ -1332,6 +1339,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mcall-arg0-move-first"]
       : []),
+    ...(CALL_ARG0_BEFORE_STORE_SOURCES.has(stem)
+      ? ["-fno-sched-alias", "-fsched-store-first", "-fthumb-call-arg0-before-store"]
+      : []),
     ...(THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mthumb-immediate-latency"]
       : []),
@@ -1627,6 +1637,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "792d4cd9b47acafaf93f6873f58b8701918db5a39af62852e3796037473387c4",
         "cce7c26cfda8ee1844256ac9226d0420d74c476fb24823c46bcce26db89a4983",
         "e654b8f55bef2f2a06efec89f171f46a76f0a55f671eb75e8b82ddc994f85b27",
+        "0767fccd6046d0b4dcaae1150a82e505a29e59ca9f4f979e2535e7970f3de449",
       ],
     },
     gs2: {
@@ -2404,6 +2415,15 @@ function selfTest(): void {
       cflagsForTargetSource("gs1", join(ROOT, "assets/code/resource_381/c/020000a0.c"))
         .includes("-mcall-arg0-move-first")) {
     throw new Error("overlay call-argument unrelated-source routing self-test failed");
+  }
+  const callArg0BeforeStore = "-fthumb-call-arg0-before-store";
+  const callArg0BeforeStoreFlags = cflagsForTargetSource("gs1", "/tmp/08077f70.c");
+  if (!callArg0BeforeStoreFlags.includes(callArg0BeforeStore) ||
+      !callArg0BeforeStoreFlags.includes("-fno-sched-alias") ||
+      !callArg0BeforeStoreFlags.includes("-fsched-store-first") ||
+      cflagsForTargetSource("gs1", "/tmp/08077f74.c").includes(callArg0BeforeStore) ||
+      cflagsForTargetSource("gs2", "/tmp/08077f70.c").includes(callArg0BeforeStore)) {
+    throw new Error("08077f70 call-argument-before-store routing self-test failed");
   }
 
   const plannedGcc = sourceToAssemblyPlan({

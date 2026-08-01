@@ -15,6 +15,13 @@ struct OwnerState_08077f70 {
     u16 entries[15];
 };
 
+struct SharedState_08077f70 {
+    u8 padding00[0x10];
+    u32 elapsed;
+};
+
+extern struct SharedState_08077f70 Data_02000240;
+
 typedef char Assert_08077f70_scaled_x[
     OFFSET_OF(struct OwnerState_08077f70, scaledX) == 0x14 ? 1 : -1];
 typedef char Assert_08077f70_scaled_y[
@@ -41,37 +48,46 @@ void Func_08077f70(void)
 
     Func_08079374(32);
     Func_08079374(33);
-    Func_08079358(0x1ff);
+    Func_08079358(0x901);
     Func_08079ae8(5);
     Func_08077428(5);
-    Func_08079374(0x901);
+    Func_08079374(0x11b);
     Func_08079358(0x11a);
 
     for (owner = 0; owner <= 1; owner++) {
         struct OwnerState_08077f70 *state = Func_08077394(owner);
         s32 value;
+        s32 clamped;
         s32 index;
+        s32 baseX;
+        s32 baseY;
 
-        state->sourceX = state->baseX;
-        state->sourceY = state->baseY;
+        baseX = state->baseX;
+        baseY = state->baseY;
+        state->sourceX = baseX;
+        state->sourceY = baseY;
 
         value = Func_080022ec(
-            (s16)state->sourceX << 14, (s16)state->baseX);
-        if (value > 0x4000)
-            value = 0x4000;
-        else if (value < 0)
-            value = 0;
-        state->scaledX = value;
+            (s16)baseX << 14, (s16)baseX);
+        clamped = 0x4000;
+        if (value <= clamped) {
+            clamped = 0;
+            if (value >= 0)
+                clamped = value;
+        }
+        state->scaledX = clamped;
         if ((s16)state->scaledX == 0 && (s16)state->sourceX != 0)
             state->scaledX = 1;
 
         value = Func_080022ec(
             (s16)state->sourceY << 14, (s16)state->baseY);
-        if (value > 0x4000)
-            value = 0x4000;
-        else if (value < 0)
-            value = 0;
-        state->scaledY = value;
+        clamped = 0x4000;
+        if (value <= clamped) {
+            clamped = 0;
+            if (value >= 0)
+                clamped = value;
+        }
+        state->scaledY = clamped;
         if ((s16)state->scaledY == 0 && (s16)state->sourceY != 0)
             state->scaledY = 1;
 
@@ -92,5 +108,5 @@ void Func_08077f70(void)
     Func_08078e28(1, 140);
     Func_08078e28(2, 141);
 
-    *(volatile u32 *)0x02000250 += 300;
+    Data_02000240.elapsed += 300;
 }

@@ -4,7 +4,7 @@
   "target": "gs1-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1341386,
+  "total_union_bytes": 1342990,
   "main": {
     "id": "main",
     "executable_bytes": 548364,
@@ -7227,8 +7227,8 @@
     {
       "id": "resource_373",
       "decoded_bytes": 30764,
-      "executable_bytes": 24892,
-      "excluded_bytes": 5872,
+      "executable_bytes": 24942,
+      "excluded_bytes": 5822,
       "audit": "complete",
       "intervals": [
         {
@@ -7908,6 +7908,18 @@
           "end": 33579344,
           "kind": "veneer",
           "evidence": "resource_373_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33579344,
+          "end": 33579348,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33579360,
+          "end": 33579406,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_373_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -11529,8 +11541,8 @@
     {
       "id": "resource_382",
       "decoded_bytes": 10484,
-      "executable_bytes": 6732,
-      "excluded_bytes": 3752,
+      "executable_bytes": 6782,
+      "excluded_bytes": 3702,
       "audit": "complete",
       "intervals": [
         {
@@ -12432,6 +12444,18 @@
           "end": 33561292,
           "kind": "veneer",
           "evidence": "resource_382_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33561292,
+          "end": 33561296,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33561308,
+          "end": 33561354,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_382_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -12975,8 +12999,8 @@
     {
       "id": "resource_385",
       "decoded_bytes": 6720,
-      "executable_bytes": 4392,
-      "excluded_bytes": 2328,
+      "executable_bytes": 4442,
+      "excluded_bytes": 2278,
       "audit": "complete",
       "intervals": [
         {
@@ -13542,6 +13566,18 @@
           "end": 33558964,
           "kind": "veneer",
           "evidence": "resource_385_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33558964,
+          "end": 33558968,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33558980,
+          "end": 33559026,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_385_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -13873,8 +13909,8 @@
     {
       "id": "resource_389",
       "decoded_bytes": 6380,
-      "executable_bytes": 5348,
-      "excluded_bytes": 1032,
+      "executable_bytes": 5398,
+      "excluded_bytes": 982,
       "audit": "complete",
       "intervals": [
         {
@@ -14134,6 +14170,18 @@
           "end": 33559828,
           "kind": "veneer",
           "evidence": "resource_389_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33559828,
+          "end": 33559832,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33559844,
+          "end": 33559890,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_389_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -15321,8 +15369,8 @@
     {
       "id": "resource_391",
       "decoded_bytes": 13188,
-      "executable_bytes": 11508,
-      "excluded_bytes": 1680,
+      "executable_bytes": 11558,
+      "excluded_bytes": 1630,
       "audit": "complete",
       "intervals": [
         {
@@ -15648,6 +15696,18 @@
           "end": 33565992,
           "kind": "veneer",
           "evidence": "resource_391_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33565992,
+          "end": 33565996,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33566008,
+          "end": 33566054,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_391_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -15655,8 +15715,8 @@
     {
       "id": "resource_392",
       "decoded_bytes": 4260,
-      "executable_bytes": 3602,
-      "excluded_bytes": 658,
+      "executable_bytes": 3716,
+      "excluded_bytes": 544,
       "audit": "complete",
       "intervals": [
         {
@@ -15811,9 +15871,27 @@
         },
         {
           "start": 33557360,
-          "end": 33557388,
+          "end": 33557404,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33557404,
+          "end": 33557420,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33557420,
+          "end": 33557436,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
+        },
+        {
+          "start": 33557436,
+          "end": 33557452,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33557452,
@@ -15874,6 +15952,18 @@
           "end": 33558152,
           "kind": "veneer",
           "evidence": "resource_392_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33558152,
+          "end": 33558156,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33558168,
+          "end": 33558214,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_392_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -15881,8 +15971,8 @@
     {
       "id": "resource_393",
       "decoded_bytes": 4308,
-      "executable_bytes": 3668,
-      "excluded_bytes": 640,
+      "executable_bytes": 3782,
+      "excluded_bytes": 526,
       "audit": "complete",
       "intervals": [
         {
@@ -16055,9 +16145,27 @@
         },
         {
           "start": 33557824,
-          "end": 33557852,
+          "end": 33557868,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33557868,
+          "end": 33557884,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33557884,
+          "end": 33557900,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
+        },
+        {
+          "start": 33557900,
+          "end": 33557916,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33557916,
@@ -16088,6 +16196,18 @@
           "end": 33558224,
           "kind": "veneer",
           "evidence": "resource_393_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33558224,
+          "end": 33558228,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33558240,
+          "end": 33558286,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_393_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -16327,8 +16447,8 @@
     {
       "id": "resource_395",
       "decoded_bytes": 7612,
-      "executable_bytes": 5862,
-      "excluded_bytes": 1750,
+      "executable_bytes": 5926,
+      "excluded_bytes": 1686,
       "audit": "complete",
       "intervals": [
         {
@@ -16549,9 +16669,27 @@
         },
         {
           "start": 33560604,
-          "end": 33560632,
+          "end": 33560648,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33560648,
+          "end": 33560664,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33560664,
+          "end": 33560680,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
+        },
+        {
+          "start": 33560680,
+          "end": 33560696,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33560696,
@@ -16589,8 +16727,8 @@
     {
       "id": "resource_396",
       "decoded_bytes": 11708,
-      "executable_bytes": 5924,
-      "excluded_bytes": 5784,
+      "executable_bytes": 5956,
+      "excluded_bytes": 5752,
       "audit": "complete",
       "intervals": [
         {
@@ -17044,6 +17182,24 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33559076,
+          "end": 33559094,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
+        },
+        {
+          "start": 33559094,
+          "end": 33559096,
+          "kind": "executable_alignment",
+          "evidence": "resource_396_overlay.s:two-byte-zero-between-executable-spans"
+        },
+        {
+          "start": 33559096,
+          "end": 33559108,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
           "start": 33559108,
           "end": 33559568,
           "kind": "thumb",
@@ -17323,8 +17479,8 @@
     {
       "id": "resource_398",
       "decoded_bytes": 4260,
-      "executable_bytes": 2416,
-      "excluded_bytes": 1844,
+      "executable_bytes": 2418,
+      "excluded_bytes": 1842,
       "audit": "complete",
       "intervals": [
         {
@@ -17500,6 +17656,12 @@
           "end": 33556740,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33556740,
+          "end": 33556742,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         },
         {
           "start": 33556748,
@@ -18421,8 +18583,8 @@
     {
       "id": "resource_39b",
       "decoded_bytes": 12284,
-      "executable_bytes": 8634,
-      "excluded_bytes": 3650,
+      "executable_bytes": 8684,
+      "excluded_bytes": 3600,
       "audit": "complete",
       "intervals": [
         {
@@ -19036,6 +19198,18 @@
           "end": 33564184,
           "kind": "veneer",
           "evidence": "resource_39b_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33564184,
+          "end": 33564188,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33564200,
+          "end": 33564246,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_39b_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -19043,8 +19217,8 @@
     {
       "id": "resource_39c",
       "decoded_bytes": 28696,
-      "executable_bytes": 22100,
-      "excluded_bytes": 6596,
+      "executable_bytes": 22174,
+      "excluded_bytes": 6522,
       "audit": "complete",
       "intervals": [
         {
@@ -19052,6 +19226,18 @@
           "end": 33554476,
           "kind": "veneer",
           "evidence": "resource_39c_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33554480,
+          "end": 33554502,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
+        },
+        {
+          "start": 33554502,
+          "end": 33554504,
+          "kind": "executable_alignment",
+          "evidence": "resource_39c_overlay.s:two-byte-zero-between-executable-spans"
         },
         {
           "start": 33554504,
@@ -20026,6 +20212,18 @@
           "evidence": "resource_39c_overlay.s:fixed-ldr-bx-veneer"
         },
         {
+          "start": 33578088,
+          "end": 33578092,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33578104,
+          "end": 33578150,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
+        },
+        {
           "start": 33582368,
           "end": 33582374,
           "kind": "thumb",
@@ -20313,8 +20511,8 @@
     {
       "id": "resource_39d",
       "decoded_bytes": 15488,
-      "executable_bytes": 14366,
-      "excluded_bytes": 1122,
+      "executable_bytes": 14416,
+      "excluded_bytes": 1072,
       "audit": "complete",
       "intervals": [
         {
@@ -20778,6 +20976,18 @@
           "end": 33568836,
           "kind": "veneer",
           "evidence": "resource_39d_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33568836,
+          "end": 33568840,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33568852,
+          "end": 33568898,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_39d_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -21419,8 +21629,8 @@
     {
       "id": "resource_39f",
       "decoded_bytes": 15916,
-      "executable_bytes": 11118,
-      "excluded_bytes": 4798,
+      "executable_bytes": 11168,
+      "excluded_bytes": 4748,
       "audit": "complete",
       "intervals": [
         {
@@ -21800,6 +22010,18 @@
           "end": 33566392,
           "kind": "veneer",
           "evidence": "resource_39f_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33566392,
+          "end": 33566396,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33566408,
+          "end": 33566454,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_39f_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -21807,8 +22029,8 @@
     {
       "id": "resource_3a0",
       "decoded_bytes": 7576,
-      "executable_bytes": 5170,
-      "excluded_bytes": 2406,
+      "executable_bytes": 5220,
+      "excluded_bytes": 2356,
       "audit": "complete",
       "intervals": [
         {
@@ -22074,6 +22296,18 @@
           "end": 33559740,
           "kind": "veneer",
           "evidence": "resource_3a0_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33559740,
+          "end": 33559744,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33559756,
+          "end": 33559802,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_3a0_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -23375,8 +23609,8 @@
     {
       "id": "resource_3a5",
       "decoded_bytes": 9922,
-      "executable_bytes": 8934,
-      "excluded_bytes": 988,
+      "executable_bytes": 8998,
+      "excluded_bytes": 924,
       "audit": "complete",
       "intervals": [
         {
@@ -23734,10 +23968,46 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33561718,
+          "end": 33561720,
+          "kind": "executable_alignment",
+          "evidence": "resource_3a5_overlay.s:two-byte-zero-between-executable-spans"
+        },
+        {
+          "start": 33561720,
+          "end": 33561726,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
+        },
+        {
+          "start": 33561726,
+          "end": 33561728,
+          "kind": "executable_alignment",
+          "evidence": "resource_3a5_overlay.s:two-byte-zero-between-executable-spans"
+        },
+        {
+          "start": 33561728,
+          "end": 33561732,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
           "start": 33561744,
           "end": 33562184,
           "kind": "veneer",
           "evidence": "resource_3a5_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33562184,
+          "end": 33562188,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33562200,
+          "end": 33562246,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         },
         {
           "start": 33562858,
@@ -24183,8 +24453,8 @@
     {
       "id": "resource_3a6",
       "decoded_bytes": 9872,
-      "executable_bytes": 7096,
-      "excluded_bytes": 2776,
+      "executable_bytes": 7146,
+      "excluded_bytes": 2726,
       "audit": "complete",
       "intervals": [
         {
@@ -24654,6 +24924,18 @@
           "end": 33561952,
           "kind": "veneer",
           "evidence": "resource_3a6_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33561952,
+          "end": 33561956,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33561968,
+          "end": 33562014,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_3a6_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -24661,8 +24943,8 @@
     {
       "id": "resource_3a7",
       "decoded_bytes": 8756,
-      "executable_bytes": 5804,
-      "excluded_bytes": 2952,
+      "executable_bytes": 5814,
+      "excluded_bytes": 2942,
       "audit": "complete",
       "intervals": [
         {
@@ -24952,6 +25234,24 @@
           "end": 33559586,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33559586,
+          "end": 33559588,
+          "kind": "executable_alignment",
+          "evidence": "resource_3a7_overlay.s:two-byte-zero-between-executable-spans"
+        },
+        {
+          "start": 33559588,
+          "end": 33559592,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
+        },
+        {
+          "start": 33559592,
+          "end": 33559596,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33559596,
@@ -26275,8 +26575,8 @@
     {
       "id": "resource_3ad",
       "decoded_bytes": 7756,
-      "executable_bytes": 7172,
-      "excluded_bytes": 584,
+      "executable_bytes": 7176,
+      "excluded_bytes": 580,
       "audit": "complete",
       "intervals": [
         {
@@ -26437,12 +26737,6 @@
         },
         {
           "start": 33559212,
-          "end": 33559324,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33559328,
           "end": 33559576,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -28593,8 +28887,8 @@
     {
       "id": "resource_3b2",
       "decoded_bytes": 15796,
-      "executable_bytes": 12358,
-      "excluded_bytes": 3438,
+      "executable_bytes": 12408,
+      "excluded_bytes": 3388,
       "audit": "complete",
       "intervals": [
         {
@@ -29076,6 +29370,18 @@
           "end": 33567004,
           "kind": "veneer",
           "evidence": "resource_3b2_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33567004,
+          "end": 33567008,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33567020,
+          "end": 33567066,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_3b2_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -29083,8 +29389,8 @@
     {
       "id": "resource_3b3",
       "decoded_bytes": 14028,
-      "executable_bytes": 11014,
-      "excluded_bytes": 3014,
+      "executable_bytes": 11064,
+      "excluded_bytes": 2964,
       "audit": "complete",
       "intervals": [
         {
@@ -29746,6 +30052,18 @@
           "end": 33565624,
           "kind": "veneer",
           "evidence": "resource_3b3_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33565624,
+          "end": 33565628,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33565640,
+          "end": 33565686,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_3b3_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -29753,8 +30071,8 @@
     {
       "id": "resource_3b4",
       "decoded_bytes": 12164,
-      "executable_bytes": 9472,
-      "excluded_bytes": 2692,
+      "executable_bytes": 9522,
+      "excluded_bytes": 2642,
       "audit": "complete",
       "intervals": [
         {
@@ -30512,6 +30830,18 @@
           "end": 33564164,
           "kind": "veneer",
           "evidence": "resource_3b4_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33564164,
+          "end": 33564168,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33564180,
+          "end": 33564226,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_3b4_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -30519,8 +30849,8 @@
     {
       "id": "resource_3b5",
       "decoded_bytes": 7496,
-      "executable_bytes": 3646,
-      "excluded_bytes": 3850,
+      "executable_bytes": 3650,
+      "excluded_bytes": 3846,
       "audit": "complete",
       "intervals": [
         {
@@ -30738,6 +31068,12 @@
           "end": 33558120,
           "kind": "veneer",
           "evidence": "resource_3b5_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33558120,
+          "end": 33558124,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_3b5_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -30953,8 +31289,8 @@
     {
       "id": "resource_3b7",
       "decoded_bytes": 8298,
-      "executable_bytes": 6552,
-      "excluded_bytes": 1746,
+      "executable_bytes": 6602,
+      "excluded_bytes": 1696,
       "audit": "complete",
       "intervals": [
         {
@@ -31202,6 +31538,18 @@
           "end": 33561032,
           "kind": "veneer",
           "evidence": "resource_3b7_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33561032,
+          "end": 33561036,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33561048,
+          "end": 33561094,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_3b7_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -32069,8 +32417,8 @@
     {
       "id": "resource_3ba",
       "decoded_bytes": 18256,
-      "executable_bytes": 15562,
-      "excluded_bytes": 2694,
+      "executable_bytes": 15566,
+      "excluded_bytes": 2690,
       "audit": "complete",
       "intervals": [
         {
@@ -32702,6 +33050,12 @@
           "end": 33570308,
           "kind": "veneer",
           "evidence": "resource_3ba_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33570308,
+          "end": 33570312,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_3ba_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -32709,8 +33063,8 @@
     {
       "id": "resource_3bb",
       "decoded_bytes": 19440,
-      "executable_bytes": 16178,
-      "excluded_bytes": 3262,
+      "executable_bytes": 16180,
+      "excluded_bytes": 3260,
       "audit": "complete",
       "intervals": [
         {
@@ -33459,7 +33813,7 @@
         },
         {
           "start": 33567212,
-          "end": 33567272,
+          "end": 33567274,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
@@ -33637,8 +33991,8 @@
     {
       "id": "resource_3bc",
       "decoded_bytes": 23416,
-      "executable_bytes": 18960,
-      "excluded_bytes": 4456,
+      "executable_bytes": 18966,
+      "excluded_bytes": 4450,
       "audit": "complete",
       "intervals": [
         {
@@ -34477,7 +34831,7 @@
         },
         {
           "start": 33569924,
-          "end": 33569984,
+          "end": 33569986,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
@@ -34648,6 +35002,12 @@
           "end": 33573804,
           "kind": "veneer",
           "evidence": "resource_3bc_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33573804,
+          "end": 33573808,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_3bc_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -34655,8 +35015,8 @@
     {
       "id": "resource_3bd",
       "decoded_bytes": 18692,
-      "executable_bytes": 16328,
-      "excluded_bytes": 2364,
+      "executable_bytes": 16378,
+      "excluded_bytes": 2314,
       "audit": "complete",
       "intervals": [
         {
@@ -35170,6 +35530,18 @@
           "evidence": "resource_3bd_overlay.s:fixed-ldr-bx-veneer"
         },
         {
+          "start": 33570420,
+          "end": 33570424,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33570436,
+          "end": 33570482,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
+        },
+        {
           "start": 33572556,
           "end": 33572602,
           "kind": "thumb",
@@ -35385,8 +35757,8 @@
     {
       "id": "resource_3be",
       "decoded_bytes": 7572,
-      "executable_bytes": 5450,
-      "excluded_bytes": 2122,
+      "executable_bytes": 5500,
+      "excluded_bytes": 2072,
       "audit": "complete",
       "intervals": [
         {
@@ -35736,6 +36108,18 @@
           "end": 33560024,
           "kind": "veneer",
           "evidence": "resource_3be_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33560024,
+          "end": 33560028,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33560040,
+          "end": 33560086,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_3be_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -35743,8 +36127,8 @@
     {
       "id": "resource_3bf",
       "decoded_bytes": 30580,
-      "executable_bytes": 23408,
-      "excluded_bytes": 7172,
+      "executable_bytes": 23458,
+      "excluded_bytes": 7122,
       "audit": "complete",
       "intervals": [
         {
@@ -36382,6 +36766,18 @@
           "end": 33576876,
           "kind": "veneer",
           "evidence": "resource_3bf_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33576876,
+          "end": 33576880,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33576892,
+          "end": 33576938,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         },
         {
           "start": 33576940,
@@ -37155,8 +37551,8 @@
     {
       "id": "resource_3c4",
       "decoded_bytes": 16764,
-      "executable_bytes": 10028,
-      "excluded_bytes": 6736,
+      "executable_bytes": 10078,
+      "excluded_bytes": 6686,
       "audit": "complete",
       "intervals": [
         {
@@ -37818,6 +38214,18 @@
           "end": 33567152,
           "kind": "veneer",
           "evidence": "resource_3c4_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33567152,
+          "end": 33567156,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33567168,
+          "end": 33567214,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_3c4_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -37825,8 +38233,8 @@
     {
       "id": "resource_3c5",
       "decoded_bytes": 15604,
-      "executable_bytes": 11838,
-      "excluded_bytes": 3766,
+      "executable_bytes": 11888,
+      "excluded_bytes": 3716,
       "audit": "complete",
       "intervals": [
         {
@@ -38236,6 +38644,18 @@
           "end": 33566612,
           "kind": "veneer",
           "evidence": "resource_3c5_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33566612,
+          "end": 33566616,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33566628,
+          "end": 33566674,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_3c5_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -38773,8 +39193,8 @@
     {
       "id": "resource_3c8",
       "decoded_bytes": 30732,
-      "executable_bytes": 17520,
-      "excluded_bytes": 13212,
+      "executable_bytes": 17524,
+      "excluded_bytes": 13208,
       "audit": "complete",
       "intervals": [
         {
@@ -39478,6 +39898,12 @@
           "end": 33574912,
           "kind": "veneer",
           "evidence": "resource_3c8_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33574912,
+          "end": 33574916,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_3c8_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -39485,8 +39911,8 @@
     {
       "id": "resource_3c9",
       "decoded_bytes": 26464,
-      "executable_bytes": 23680,
-      "excluded_bytes": 2784,
+      "executable_bytes": 23754,
+      "excluded_bytes": 2710,
       "audit": "complete",
       "intervals": [
         {
@@ -40210,7 +40636,7 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33576608,
+          "start": 33576584,
           "end": 33576644,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -40322,6 +40748,18 @@
           "end": 33578704,
           "kind": "veneer",
           "evidence": "resource_3c9_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33578704,
+          "end": 33578708,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33578720,
+          "end": 33578766,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_3c9_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]
@@ -40597,8 +41035,8 @@
     {
       "id": "resource_3cb",
       "decoded_bytes": 8012,
-      "executable_bytes": 6288,
-      "excluded_bytes": 1724,
+      "executable_bytes": 6370,
+      "excluded_bytes": 1642,
       "audit": "complete",
       "intervals": [
         {
@@ -40630,6 +41068,24 @@
           "end": 33554728,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33554728,
+          "end": 33554746,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
+        },
+        {
+          "start": 33554746,
+          "end": 33554748,
+          "kind": "executable_alignment",
+          "evidence": "resource_3cb_overlay.s:two-byte-zero-between-executable-spans"
+        },
+        {
+          "start": 33554748,
+          "end": 33554760,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33554760,
@@ -40942,6 +41398,18 @@
           "end": 33560808,
           "kind": "veneer",
           "evidence": "resource_3cb_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33560808,
+          "end": 33560812,
+          "kind": "literal_pool",
+          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+        },
+        {
+          "start": 33560824,
+          "end": 33560870,
+          "kind": "thumb",
+          "evidence": "BL-reached bounded raw-halfword leaf"
         }
       ],
       "evidence": ["assets/code/resource_3cb_overlay.s", "assembler listing mapped to canonical instruction/directive source lines", "PC-relative literal targets and fixed ldr/bx veneers", "byte-identical decoded-overlay round trip"]

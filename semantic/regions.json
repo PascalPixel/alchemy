@@ -6708,6 +6708,18 @@
       "entry": "0x02000af0",
       "span_bytes": 168,
       "evidence": "admitted whole-owner semantic reconstruction; owner is absent from every inventory and from tools/overlay_unindexed.ts, and no bl in the image resolves here; DATA-INSTALLED callback whose Thumb pointer 0x02008af1 is published at 0x020057f8 in the script-record table. Derived by verified diff against its byte-identical twin 0x02000a48: the two spans differ only in the actor id (24 vs 21) and three dialogue pool words (0x1e09/0x1d70/0x1d37 vs 0x1e08/0x1d6f/0x1d36); instruction sequence, branch offsets, both story flags and the shared data pointer 0x0200c4d8 are identical, and both listings were compared before either draft was written. Owner is prologue-started (push {r5, lr}) and returning (pop {r5} / pop {r0} / bx r0 at 0x02000b76-0x02000b7a); seven trailing pool words end 0x02000b97, next owner prologue at 0x02000b98, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3af",
+      "entry": "0x020010a0",
+      "span_bytes": 296,
+      "evidence": "admitted whole-owner semantic reconstruction; owner is absent from every inventory and from tools/overlay_unindexed.ts, and no bl in the image resolves here; DATA-INSTALLED callback whose Thumb pointer 0x020090a1 is published at 0x0200593c in the script-record table. Owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6} / pop {r0} / bx r0 at 0x02001198-0x0200119c); the two guard branches at 0x020010aa and 0x020010b4 both target the epilogue, so the whole body is one short-circuit condition; alignment halfword and ten trailing pool words (0x00000911, 0x00000922, 0x00006666, 0x00003333, 0x00013333, 0x00009999, 0x00033333, 0x00019999, 0x0000030a, 0x00000101) end 0x020011c7, next owner prologue (its near-identical twin) at 0x020011c8, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3af",
+      "entry": "0x020011c8",
+      "span_bytes": 296,
+      "evidence": "admitted whole-owner semantic reconstruction; owner is absent from every inventory and from tools/overlay_unindexed.ts, and no bl in the image resolves here; DATA-INSTALLED callback whose Thumb pointer 0x020091c9 is published at 0x02005948 in the script-record table. Derived by verified halfword diff against its twin 0x020010a0: over the full 296 bytes exactly four halfwords differ, all of them the movs r1,#imm feeding Func_0808a0d0 (at span offsets 0x42, 0x8c, 0xbe and 0xca -- 202/192/180/180 here against 232/244/248/248 there), and all ten pool words are identical. Owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6} / pop {r0} / bx r0 at 0x020012c0-0x020012c4); alignment halfword and ten trailing pool words end 0x020012ef, next owner at 0x020012f0 (already banked byte-exact as assets/code/resource_3af_c_020012f0.c), inside the assembled overlay image and not overlapping another recorded owner"
     }
   ]
 }

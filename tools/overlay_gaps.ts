@@ -360,7 +360,27 @@ function selfTest(): void {
   if (ruleTail(spill, 0x10).verdict !== "VENEER-AND-DATA")
     throw new Error("sweep D self-test: a non-lr push must not flag a tail");
 
-  console.log("sweep D self-test passed (return shapes, leaf, undercount, over-measure, tail ruling)");
+  // The failure DIRECTION is pinned by running the tool, because the defect
+  // lived in `main` and in no function above: a name matching no overlay must
+  // exit non-zero, and a real overlay must exit zero. A predicate that rots
+  // into always-failing is as useless as one that rots into always-passing, so
+  // both directions are asserted.
+  const self = Bun.fileURLToPath(import.meta.url);
+  const run = (name: string) =>
+    Bun.spawnSync(["bun", self, name], { stdout: "pipe", stderr: "pipe" }).exitCode;
+  // No overlay is NAMED as the passing fixture: it is whichever overlay is
+  // first in the tree, because sweep D exits 0 for any overlay it can actually
+  // sweep, whatever it finds there. Naming one pins the test to a tree state
+  // that lanes change every shift.
+  if (run("resource_ffffff") === 0)
+    throw new Error("sweep D self-test: an empty sweep must NOT exit 0");
+  const anyOverlay = overlayNames()[0];
+  if (anyOverlay !== undefined && run(anyOverlay) !== 0)
+    throw new Error(`sweep D self-test: a real overlay (${anyOverlay}) must exit 0`);
+
+  console.log(
+    "sweep D self-test passed (return shapes, leaf, undercount, over-measure, tail ruling, empty-sweep refusal)",
+  );
 }
 
 function main(): void {

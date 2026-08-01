@@ -31,13 +31,14 @@ typedef signed int s32;
 
 extern s32 Data_0200d1b0;   /* image offset 0x51b0 */
 
-extern void Func_080f9010(s32 arg0);
+extern void Func_02006c1e();
+
 
 void Func_02002eec(void)
 {
     Data_0200d1b0 = Data_0200d1b0 + 1;
     if (Data_0200d1b0 == 60) {
-        Func_080f9010(183);
+        Func_02006c1e(183);
         Data_0200d1b0 = 0;
     }
 }

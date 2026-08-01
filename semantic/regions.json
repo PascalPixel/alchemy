@@ -6951,18 +6951,6 @@
     },
     {
       "overlay": "resource_3bd",
-      "entry": "0x02000030",
-      "span_bytes": 60,
-      "evidence": "admitted whole-owner semantic reconstruction; HEAD FUNCTION -- the only one of the tree's 25 CODE-SUSPECT heads that is neither an export-table stub nor the shared bitfield setter; it lies BEFORE the first recorded owner (0x0200006c) in the region gapsBetween never read, nothing publishes it and no bl targets it (overlay_call_targets over explicit whole-image bounds, sites=1224, a LIVE run), and sweep C is the ONE instrument that sees it -- its 'nearest owner 0x? +null' being the statement that no owner precedes it, not a formatting wart; HAND-WRITTEN because semantic_regions_sync rejects it, and the diagnosis it now prints is the correct one -- it DOES open with a push, so the missing row is not the leaf case; THE INVENTORY HAS NO ROW FOR IT and its only row below 0x120 on this overlay is at 0x24, span 12, returns 0, where 0x24 is the TARGET WORD of the interworking veneer at 0x20 holding 0x0200b599, whose low halfword 0xb599 wears a push{r0,r3,r4,r7,lr} shape: a published pointer half seeded as a function while the real function twelve bytes later was not; maskBanks covers 0x20-0x27 as a veneer so sweep D's head reports exactly one return here (0x66) and no prologue noise; SPAN IS 60 BYTES: the pool word 0x030001d8 at 0x2000068 is reached by this row's own ldr r3,[pc,#8] (pc 0x2000060 after alignment, plus 8) and the far bound is the ROM's first recorded owner at 0x0200006c; the row walks two 16.16 FIXED POINT three-component vectors in step by paired ldmia writebacks, takes each component difference as a full word then asrs #16, squares and sums the three, and passes the sum to the IWRAM routine at 0x030001d8 through the call_via bank, returning its result unchanged; WHAT 0x030001d8 computes is NOT decidable from this row -- a square root is the obvious reading and obvious is not measured, so it is left bounded; THE RECONSTRUCTION IS AN APPROXIMATION AND SAYS SO: the tail call through an IWRAM function pointer and the pop{r5}/pop{r1}/bx r1 epilogue returning through a popped register are not expressible in the semantic dialect, so the arithmetic is reconstructed and the return shape is documented rather than encoded; 1 of 1 callees resolved"
-    },
-    {
-      "overlay": "resource_3bd",
-      "entry": "0x02000474",
-      "span_bytes": 404,
-      "evidence": "high-register prologue through common bx return at 0x020005f8, alignment and literal pool through 0x02000608; next independent owner begins at 0x02000608"
-    },
-    {
-      "overlay": "resource_3bd",
       "entry": "0x02000608",
       "span_bytes": 696,
       "evidence": "register-spill/high-register prologue through outer bx return at 0x020008a0 and alignment/literal pool before next owner 0x020008c0; apparent 0x020007de and 0x02000902 entries are hidden-context services"

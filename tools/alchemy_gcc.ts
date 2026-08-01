@@ -235,6 +235,13 @@ const ENTRY_SAVES_DESCENDING_SOURCES = new Set(["08093054"]);
 // 08005c68 writes a three-word descriptor whose control word the reference
 // stores last; without this the grouper emits it in source order.
 const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78", "08005c68"]);
+// resource_3bd:0c98 writes the same three-word DMA descriptor after an object
+// factory call.  Its reference copies the live source and destination into r0
+// and r1 before loading the pooled control word into r2; the path-scoped mode
+// preserves that order without changing unrelated overlays sharing 02000c98.
+const GROUP_CONTROL_LAST_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3bd_c_02000c98.c",
+]);
 // The descriptor's base pool load wins a priority-68 ready-list tie on forward
 // dependent count alone; these references break it by original order instead.
 // 08021d88 likewise needs original-order tie breaking for its frame adjustment
@@ -329,6 +336,20 @@ const HIGH_REGISTER_MOVE_FIRST_SOURCES = new Set(["0808b8e8", "080b6e30", "08002
 // load. The compiler mode requires this exact death-note-proven volatile-HI
 // window; keep it source-scoped.
 const ORR_DEAD_INPUT_REUSE_SOURCES = new Set(["08003adc"]);
+// Overlay-safe counterpart. resource_38f:08ec has two ordinary byte-field
+// updates where a constant OR input dies at the OR and the reference reuses
+// that register for the result immediately stored to the field.
+const ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_38f_c_020008ec.c",
+  "semantic/overlays/resource_38f_c_020008ec.c",
+]);
+// The same call sheet mostly follows the established low-destination scheduler
+// fingerprint, with a repeated post-reload exception: an adjacent r1 setter
+// fills the slot before a literal r0 setter. The mode recognizes the call-fed
+// pair structurally and does not depend on this address.
+const CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_38f_c_020008ec.c",
+]);
 // This no-argument initializer's reference fills the first global literal
 // load's latency with the frame allocation and dependent load, then fills the
 // table-index shift's latency with two stack initializers.  The compiler mode
@@ -563,6 +584,7 @@ const THUMB_LOAD_LATENCY_ONE_OVERLAY_SOURCES = new Set([
 // the descriptor inputs; both modes carry existing evidence and the pairing
 // is byte-exact for this source alone.
 const GROUPED_DMA_STORE_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3bd_c_02000c98.c",
   "assets/code/resource_3ca_c_020010d4.c",
   // resource_392:0c0c and resource_393:0ddc are exact-template twins of
   // resource_394:0fb4.  Keep the three descriptor stores on the compiler's
@@ -609,6 +631,11 @@ const NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES = new Set([
 // deliberately excluded, since a pool load is one instruction and sharing it is
 // not a size change.
 const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // resource_38f:08ec is a 732-call cutscene script. The reference rebuilds
+  // recurring shifted immediates at their individual call sites rather than
+  // carrying them through callee-saved registers across the whole owner.
+  "assets/code/resource_38f_c_020008ec.c",
+  "semantic/overlays/resource_38f_c_020008ec.c",
   // The largest open overlay owner is a long event call sheet whose repeated
   // wide immediates are independently materialized throughout the reference.
   // Sharing them changes the saved-register set and every later pool boundary.
@@ -701,6 +728,10 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  // The same resource_38f call sheet consistently orders tied r0-r2 argument
+  // setters by ascending destination once its constants are rematerialized.
+  "assets/code/resource_38f_c_020008ec.c",
+  "semantic/overlays/resource_38f_c_020008ec.c",
   // Paired with both CSE gates for resource_3b8's long event call sheet; once
   // constants are rematerialized, this restores the reference argument order.
   "assets/code/resource_3b8_c_02002014.c",
@@ -963,6 +994,10 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
 // (measured on resource_373:2cb0 — do not re-attack it with a whole-function
 // flag). docs/compiler-evidence/cse-pool-immediate.diff.
 const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // Its nine literal-pool islands likewise reload recurring words locally;
+  // sharing them changes both the saved-register set and pool boundaries.
+  "assets/code/resource_38f_c_020008ec.c",
+  "semantic/overlays/resource_38f_c_020008ec.c",
   // This event call sheet reloads recurring addresses at their call sites;
   // sharing them shifts all eight inline literal pools and grows the prologue.
   "assets/code/resource_3b8_c_02002014.c",
@@ -1091,6 +1126,10 @@ const NO_EXPENSIVE_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3b2_c_020012b4.c",
 ]);
 const NO_GCSE_OVERLAY_SOURCES = new Set([
+  // The long resource_38f call sheet retains the original local lifetimes
+  // only without global common-subexpression elimination.
+  "assets/code/resource_38f_c_020008ec.c",
+  "semantic/overlays/resource_38f_c_020008ec.c",
   // resource_3cd:00c0 fills a 16-halfword stack list through a call and then
   // walks it. Both the call argument and the walk's induction base are the
   // frame address, and the reference materialises `mov rX, sp` twice -- once
@@ -1228,6 +1267,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(MINIPOOL_TAIL_FIRST_SOURCES.has(stem) ? ["-fthumb-minipool-tail-first"] : []),
     ...(ENTRY_SAVES_DESCENDING_SOURCES.has(stem) ? ["-fthumb-entry-saves-descending"] : []),
     ...(GROUP_CONTROL_LAST_SOURCES.has(stem) ? ["-fthumb-group-control-last"] : []),
+    ...(GROUP_CONTROL_LAST_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-group-control-last"]
+      : []),
     ...(MOVE_BEFORE_ALU_SOURCES.has(stem) ? ["-fthumb-move-before-alu"] : []),
     ...(NO_REGMOVE_SOURCES.has(stem) ? ["-fno-regmove"] : []),
     ...(ENTRY_LITERAL_FIRST_SOURCES.has(stem)
@@ -1235,6 +1277,12 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(HIGH_REGISTER_MOVE_FIRST_SOURCES.has(stem) ? ["-mhigh-register-move-first"] : []),
     ...(ORR_DEAD_INPUT_REUSE_SOURCES.has(stem)
       ? ["-fthumb-orr-dead-input-reuse"]
+      : []),
+    ...(ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-orr-dead-input-reuse"]
+      : []),
+    ...(CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-call-arg1-before-arg0"]
       : []),
     ...(ENTRY_FRAME_CLUSTER_SOURCES.has(stem)
       ? ["-fthumb-entry-frame-cluster"]
@@ -1548,7 +1596,11 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
       xgcc: ["87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed"],
       cpp: ["f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575"],
       tradcpp: ["822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b"],
-      cc1: ["df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4"],
+      cc1: [
+        "df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4",
+        "792d4cd9b47acafaf93f6873f58b8701918db5a39af62852e3796037473387c4",
+        "cce7c26cfda8ee1844256ac9226d0420d74c476fb24823c46bcce26db89a4983",
+      ],
     },
     gs2: {
       xgcc: ["128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2"],
@@ -2108,6 +2160,17 @@ function selfTest(): void {
   if (cflagsForTargetSource("gs1", "/tmp/080000c0.c").includes("-mgrouped-dma-store") ||
       cflagsForTargetSource("gs2", "/tmp/080958a8.c").includes("-mgrouped-dma-store")) {
     throw new Error("grouped DMA unrelated-source routing self-test failed");
+  }
+  const overlayDmaSource = join(ROOT, "assets/code/resource_3bd_c_02000c98.c");
+  const overlayDmaFlags = cflagsForTargetSource("gs1", overlayDmaSource);
+  const overlayDmaNeighbor = cflagsForTargetSource(
+    "gs1", join(ROOT, "assets/code/resource_3bc_c_02000c98.c"),
+  );
+  for (const flag of ["-mgrouped-dma-store", "-fthumb-group-control-last"]) {
+    if (!overlayDmaFlags.includes(flag) || overlayDmaNeighbor.includes(flag) ||
+        cflagsForTargetSource("gs2", overlayDmaSource).includes(flag)) {
+      throw new Error(`resource_3bd:0c98 grouped-DMA routing self-test failed for ${flag}`);
+    }
   }
   for (const stem of ["08095160", "08095290"]) {
     const flags = cflagsForTargetSource("gs1", `/tmp/${stem}.c`);

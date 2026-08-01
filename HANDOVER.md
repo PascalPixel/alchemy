@@ -7402,6 +7402,229 @@ and `overlay_phantom_rows`. Sweep A's caller counting is the one that tagged
 is working them; changing the generator's definition would move the ground under
 his instruments mid-shift.
 
+## 5i. THE PROLOGUE-DOOR AUDIT — every place a `push` was the test for "is this a function" (2026-08-01, mars)
+
+We spent two days teaching the SWEEPS to stop keying on prologues and left the
+DOORS keyed on them. A leaf the fixed sweeps now surface still could not be
+adopted, classified, or queued. This is the ledger of every site, each ruled.
+
+**The result in one line: two silent declines FIXED, one door made loud, one
+root constraint documented as unfixable, two work queues ruled legitimate but
+blind.**
+
+### FIXED — sweep A dropped non-prologue `bl` targets
+
+`overlay_published.ts` resolved every `bl` correctly and then did
+`if (classify(...).kind !== "prologue") continue;`. **Ten lines above where the
+same defect had already been fixed in sweep B.** A fix applied to one branch and
+not its sibling — this file's own recurring finding, found in this file's own
+tool.
+
+Sweep A now carries the same tri-class as sweep B: `called` (prologue-shaped),
+`calledLeaf` (no push, reaches a `bx lr` within 128 bytes), `calledData`
+(reaches no return — reported, not counted). The regression invariant is the one
+Isaac used for sweep B and it holds exactly: **`A called` is 224 before and
+after, `B published` is 464 before and after, and residue moves 1,597 -> 1,607 —
+the difference being precisely the ten new `A leaf` rows.** Measured by running
+the committed version of the tool against the same tree, not by comparing to a
+figure from earlier in the night, because four owners were adopted in between
+and that baseline was stale. **A regression invariant compared against a stale
+baseline is not an invariant.**
+
+The ten, all previously invisible: `371:0x2cc`, `392:0xb8c`, `392:0xbac`,
+`393:0xd5c`, `393:0xd7c`, `396:0x1224`, `39c:0x30`, `3a7:0x1424`, `3ad:0x131c`,
+`3cb:0x128`.
+
+**`396:0x1224` corrects a ruling of mine from the previous shift.** I had ruled
+"`396:0x1226` not `bl`-reached", having estimated the start by hand from a
+return shape. The function starts at `0x1224` — `ldr r2,[pc,#16] / movs r0,#160
+/ ldr r1,[r2] / ldr r3,[pc,#16] / lsls r0,#19 / ldr r2,[pc,#16] /
+stmia r3!,{r0,r1,r2} / subs r3,#12 / bx lr` — and it IS `bl`-reached. My query
+offset was two bytes past the entry, so the negative was about my arithmetic and
+not about the ROM. **Do not infer an entry from a return; the tool that resolves
+callers knows the entry and you do not.** It is the same DMA3 family as 395's
+twins and it runs the other way: `r0 = 160 << 19 = 0x05000000`, palette RAM, is
+the SOURCE, and the destination is the pointer at `0x03001ed0`.
+
+### FIXED — `classify` reported a leaf as `unknown`
+
+`overlay_call_targets.ts` fell through to `{ kind: "unknown" }` for any target
+that was not a prologue, a veneer or a `call_via` slot. `unknown` reads as
+"suspicious, probably not code" and was acted on that way. There is now a `leaf`
+kind for a target that reaches a `bx lr` within the window, and `unknown` still
+means unknown — a target that reaches no return is not code, and calling it a
+leaf would be the same overreach pointing the other way.
+
+`resource_3a5 0x1c78` now reports `leaf` with four call sites, and the summary
+line splits `leaf=4 unknown=1` where it used to say `unknown=5`. **Treat a
+non-zero `leaf=` count as a residue list.**
+
+One implementation note for whoever edits it: `reachesReturn` lives in
+`overlay_published.ts`, which imports `overlay_call_targets.ts`. It is
+deliberately duplicated as five local lines rather than imported, because
+closing that cycle to share five lines makes the module load order load-bearing.
+If the two ever need to agree on the window, move the constant to a leaf module.
+
+### MADE LOUD — the adoption door
+
+`semantic_regions_sync` rejected all four leaves with **"no strict inventory row
+for this owner"**, which is true and useless: it reads as "your reconstruction is
+unsubstantiated" when the real statement is "this tool structurally cannot see
+this class of owner". It now diagnoses the cause from the image bytes —
+LEAF-CONSISTENT, opens-with-a-push (so check the other strict flags),
+no-return-within-128-bytes, or offset-outside-the-image — and names the
+sanctioned path.
+
+**The diagnosis carries its own limit, in the message, because it over-claims
+and I would rather that be visible than fixed badly.** `reachesReturn` from an
+arbitrary offset will find a return belonging to a LATER function, so
+`resource_395 0x1848` — a literal pool word — diagnoses LEAF-CONSISTENT off its
+twin's return downstream. It is a diagnosis, not a verdict, and the offset still
+has to be defended from the ROM. That caveat is pinned by a self-test so nobody
+tightens the wording back into a verdict.
+
+### DOCUMENTED, NOT FIXED — the root door, and why it cannot be
+
+`overlay_disasm.ts` seeds discovery on `push {..., lr}` and the veneer shape and
+nothing else. **Every `starts_with_prologue` filter downstream inherits that
+blindness rather than adding it**, which is why relaxing any single downstream
+gate would not have helped: there is no row to find.
+
+It is not fixable there. **A leaf offers no entry signature at all, and you
+cannot walk backwards from a `bx lr` to a function start** — that is the whole
+reason this class exists. The addresses that DO find leaves come from outside
+that file: published pointer words and resolved `bl` targets, which sweeps A and
+B scan. So the hand-written `manual_regions` entry is not a workaround to be
+retired, it is the correct path for an owner with no discoverable entry, and the
+thing that needed fixing was the door failing to say so. That is now fixed.
+
+### RULED LEGITIMATE BUT BLIND — two work queues
+
+`exact_reading_list.ts`'s `isStrictRow` and `overlay_twins.ts` both filter on
+`starts_with_prologue`. Neither is answering "is this a function"; both are
+selecting drafting candidates, and a queue is allowed to be a subset. **Stated
+here because the cost is real and measurable:** `overlay_twins` produces 24 twin
+groups and **cannot see the `resource_395` pair** — two byte-identical 16-byte
+bodies differing in one pool word, which is the cleanest twin on the tree and
+exactly what that tool exists to find. A queue that is a subset is fine; a queue
+mistaken for a population is not.
+
+### Reconciliation with sweep E (`overlay_certify.ts`, jupiter)
+
+Isaac and I built overlapping instruments in the same window from the same
+argument. His is the broader tool and imports `isReturnShape`, `ownerSpans` and
+`overlayNames` from mine, so they compose rather than collide. Where each is
+better, plainly:
+
+- **His is better on tail data.** His published-pointer-half rule mechanically
+  rules the 27 sites I ruled BY HAND — `resource_3b8`'s 24 and `resource_3bc`'s
+  3, the low halves of word-aligned Thumb pointers inside 12-byte descriptor
+  records. A hand ruling in a HANDOVER table is worth less than a predicate.
+- **His is better on owners.** "Every recorded owner must contain at least one
+  return, and is reported when it contains more than one" has no analogue in
+  mine, and the second return is where a swallowed leaf shows itself.
+- **Mine is better on the veneer predicate, and it is the one thing I would ask
+  him to take.** `isPcLoad(at) && isBranchExchange(at + 2)` does not compare
+  registers, so `ldr r0,=table / bx lr` — a published getter stub, a REAL
+  FUNCTION — is masked as structure. A veneer branches to the register it just
+  loaded; a leaf returns through lr. It costs one comparison. Measured: zero
+  live instances in tails today, so it changes no count — but his HEAD rule
+  shares the predicate, and heads are full of getters (`3cb:0x30`, `3ce:0x30`,
+  `0x3c`, `0x44`, and four on `395`). A hazard removed without a number moving
+  is the hardest kind of fix to justify and exactly the kind that prevents the
+  next silent miss. **Do not revert it for being inert.**
+
+**The corroboration nobody planned is the strongest evidence in this file.** He
+found the misaligned bank scan by noticing tails starting at 2 mod 4; I found it
+by noticing `resource_37b` print 54 returns at a perfect stride of 8. Different
+tells, no shared failure mode, same six overlays — `378, 37b, 386, 39b, 3a6,
+3ce`. Two methods agreeing is evidence; two drafts agreeing is shared
+inheritance. This was the first kind.
+
+## 5j. THE 25 CODE-SUSPECT HEADS, RULED (2026-08-01, mars)
+
+**The population is 25 overlays and 53 return shapes with the banks masked, not
+46.** Correcting the handoff figure I was given, by the rule that a handoff
+measurement is a claim.
+
+It is **two populations plus one singleton**, and they separate exactly on
+publication — which is why sweep D's head and sweep B agree here without either
+knowing about the other.
+
+### Population 1 — the export table (10 overlays), already sweep B's
+
+`381, 383, 395, 3ad, 3bb, 3bc, 3ca, 3cb, 3cd, 3ce`. Stubs at `0x30, 0x38, 0x3c,
+0x44, 0x4c`, each published from that overlay's OWN header words at `0xc, 0x14,
+0x1c, 0x24, 0x2c`. These are `ldr r0,=table / bx lr` getters and `movs r0,#0 /
+bx lr` stubs — jupiter's published-leaf class, living in the head. **Ruled: they
+are the overlay's export table, sweep B already carries them as residue, and
+they are not a separate find.** They are visible to the head sweep only because
+the veneer predicate compares registers; the old predicate masked every one of
+them as structure.
+
+### Population 2 — ONE function on FOURTEEN overlays (13 adopted)
+
+`382, 385, 387, 38a, 396, 39b, 39c, 3a0, 3a5, 3a6, 3ab, 3b3, 3be, 3c0` each
+carry a **byte-identical 22-byte function at `0x30`**, first owner at `0x48` on
+every one:
+
+```
+ldr r0,[r0,#80] / movs r3,#3 / ldrb r2,[r0,#9] / ands r1,r3 / movs r3,#13 /
+negs r3,r3 / lsls r1,#2 / ands r3,r2 / orrs r3,r1 / strb r3,[r0,#9] / bx lr
+```
+
+A two-bit bitfield write at bits 2-3 of the byte at +9 of the record held at
++80 of the argument. **`negs r3,r3` on 13 yields `~0x0c`, not `~0x0d`** — the
+immediate in the ROM is one greater than the mask it produces, and reading it
+as `~13` clears the wrong bit. That is the whole reason to write the mask out.
+
+**On THIRTEEN of the fourteen nothing calls or publishes it. On `39c` it has 28
+call sites.** A shared body says nothing about who calls it, and an
+unreferenced copy is not evidence that the referenced one is unreachable.
+
+**SHARED SHAPE IS NORMALLY NOT PERMISSION, AND HERE IT IS — for a specific,
+checkable reason.** This function has **no literal pool**: every constant is an
+immediate encoded in the instruction, so there is no per-overlay word for two
+copies to differ in. That is exactly what 37a/37b had, and what the 3c9/3a1
+pair at `0x200013c` had — eleven differing halfwords and different table
+pointers behind identical-looking bodies. **The claim is about THIS body's
+operand encoding and does not generalise to the next identical-looking pair.**
+Check for a pool before reusing this argument.
+
+`39c`'s copy is deliberately **NOT adopted**: it is the overlay Ivan is
+bisecting for the LZ round-trip, and adding a semantic body changes the overlay
+C population he is measuring against. It is also the best-evidenced of the
+fourteen, so it loses nothing by waiting.
+
+### The singleton — `3bd:0x30`, and a phantom in the inventory
+
+60 bytes, `push {r5, lr}`. It walks two 16.16 fixed-point three-component
+vectors in step by paired `ldmia` writebacks, takes each component difference
+as a full word then `asrs #16`, squares and sums the three, and passes the sum
+to the IWRAM routine at `0x030001d8` through the `call_via` bank, returning its
+result unchanged. **What `0x030001d8` computes is not decidable from this row.
+A square root is the obvious reading and obvious is not measured.**
+
+Sweep C is the only instrument that saw it, and its output said so in a way
+easy to miss: `C shaped 0x2000030 b520 nearest owner 0x? +null`.
+
+**What the inventory has instead is the finding.** Its only row below `0x120` on
+this overlay is at **`0x24`, span 12, returns 0** — and `0x24` is the TARGET
+WORD of the interworking veneer at `0x20`, holding `0x0200b599`, whose low
+halfword `0xb599` wears a `push {r0,r3,r4,r7,lr}` shape. **A published pointer
+half was seeded as a function; the real function twelve bytes later was not.**
+This is the same "pointer word whose halfword wears a code shape" class ruled in
+tails, corrupting the inventory rather than a sweep. `maskBanks` covers
+`0x20-0x27` as a veneer, which is why the head sweep reports exactly one return
+here and no prologue noise — the instrument that masks banks does not have the
+defect that the instrument which seeds rows does.
+
+### Result
+
+**25 overlays and 53 return shapes down to 11 and 39.** The remainder is the ten
+export-table overlays, already sweep B's, plus `39c` held. Adopting owners is
+the honest way the number goes down.
+
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**

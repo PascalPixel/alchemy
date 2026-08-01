@@ -1970,18 +1970,8 @@ AlchemyC_02000adc:
 	pop	{r0}
 	bx	r0
 	.2byte 0x0000
-	push	{lr}
-	bl	sub_02004fb4
-	ldr	r0, [pc, #20]
-	bl	sub_0200507a
-	movs	r1, #0
-	movs	r0, #15
-	bl	sub_020050a2
-	bl	sub_02004fce
-	pop	{r0}
-	bx	r0
-	.2byte 0x182d
-	.2byte 0x0000
+AlchemyC_02000bd4:
+	.space 0x20
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

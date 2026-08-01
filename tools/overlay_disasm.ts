@@ -110,6 +110,21 @@ function reachable(input: Uint8Array, base: number): Map<number, number> {
   const data = Buffer.from(input);
   const discovery = new Discovery(data, base);
   for (let offset = 0; offset < data.length - 1; offset += 2) {
+    // THE ROOT PROLOGUE DOOR, stated because it is a design constraint and not
+    // a one-line bug (2026-08-01, mars). Discovery is seeded on `push {..., lr}`
+    // and on the veneer shape below, and on nothing else -- so the inventory
+    // this produces STRUCTURALLY CANNOT contain a leaf, and every consumer that
+    // filters on `starts_with_prologue` inherits that blindness rather than
+    // adding it. Four real leaves were adopted on 2026-08-01 and not one of them
+    // has an inventory row.
+    //
+    // It is not fixable here. A leaf offers no entry signature at all; you
+    // cannot walk backwards from a `bx lr` to a function start. The addresses
+    // that DO find leaves come from outside this file -- published pointer
+    // words and resolved `bl` targets, which sweeps A and B scan -- so the
+    // sanctioned path for a leaf is a hand-written `manual_regions` entry with
+    // a ROM-measured span, and `semantic_regions_sync` now says so by name when
+    // it declines one.
     if ((data.readUInt16LE(offset) & 0xff00) === 0xb500) discovery.add_seed(base + offset, "thumb", "prologue");
   }
   for (let offset = 0; offset < data.length - 8; offset += 2) {

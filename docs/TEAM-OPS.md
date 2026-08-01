@@ -165,6 +165,22 @@ the counter from `bun tools/full_c_progress.ts --subject` and commit as
 complied rather than routing around it, which is the required behavior —
 `--no-verify` is the lead's call, never a lane's.
 
+## The verify command form (mandatory)
+
+Never pipe `verify` and read the pipe's status. `bun run verify | tail` returns
+`tail`'s exit code, which is always 0, so a red tree reports green. In one
+night this trap put unverified commits in the tree four times, across three
+lanes and the lead twice -- every one of us having read the warning first. A
+caution four careful people ignore is a defect in the tooling we hand each
+other, not in the people. The required form captures the code on its own line:
+
+```bash
+bun run verify > /tmp/verify.log 2>&1; echo "verify exit=$?"
+```
+
+Only an `exit=0` printed by that form licenses a commit, a push, or the words
+"verify green" in a report.
+
 ## Supervision
 
 Vale runs a recurring ~8-minute tick (session cron): check each lane's

@@ -26,11 +26,17 @@
 // becomes "outside the inventory". Two of them did exactly that between one
 // run and the next. Uninventoried is not the same as undescribed.
 //
-// It also will not answer "is this site inside a semantic draft": a draft
-// states its span in PROSE, not in a machine-readable field, and parsing that
-// prose gave three different answers (22, 9 and 8 unattributed) for three
-// reasonable parses. Do not put a number on that until drafts carry the span
-// as data.
+// The draft bucket comes from `semantic/regions.json`, which carries
+// `{overlay, entry, span_bytes, evidence}` for every overlay semantic draft --
+// 1,064 of 1,064, and `build_semantic` already enforces it. An earlier version
+// of this comment claimed a draft's span lived only in prose and refused to put
+// a number on it. That was wrong: the field existed and was complete, and the
+// three contradictory answers (22, 9 and 8) came from parsing prose that nobody
+// had asked me to parse. Read the field.
+//
+// `drafts_without_span` is reported on every run for exactly that reason. If it
+// is ever non-zero the unattributed count is an OVER-count, and the census says
+// so instead of quietly absorbing the gap.
 //
 // Re-derive the inventory before trusting a run -- `tools/overlay_inventory.ts`
 // takes about five seconds, and a stale one silently mis-sorts the buckets.
@@ -91,8 +97,30 @@ function main(): void {
   const overlays = new Set<string>();
   const outside: string[] = [];
   const adopted: string[] = [];
+  const drafted: string[] = [];
   let inventoried = 0;
   let scanned = 0;
+
+  // Machine-readable draft spans. Every overlay semantic draft must have a row;
+  // a draft without one cannot be searched and would inflate `unattributed`.
+  const regionsPath = join(ROOT, "semantic/regions.json");
+  const regions = existsSync(regionsPath)
+    ? (JSON.parse(readFileSync(regionsPath, "utf8")) as
+      { manual_regions: { overlay: string; entry: string; span_bytes: number }[] }).manual_regions
+    : [];
+  const draftSpans = new Map<string, [number, number][]>();
+  for (const region of regions) {
+    const list = draftSpans.get(region.overlay) ?? [];
+    list.push([Number.parseInt(region.entry, 16) - (OVERLAY_BASE & 0xfffffff), region.span_bytes]);
+    draftSpans.set(region.overlay, list);
+  }
+  const described = new Set(regions.map((region) => `${region.overlay}:${Number.parseInt(region.entry, 16)}`));
+  let draftsWithoutSpan = 0;
+  for (const draft of readdirSync(join(ROOT, "semantic/overlays"))) {
+    const identity = /^(resource_[0-9a-f]+)_c_([0-9a-f]{8})\.c$/.exec(draft);
+    if (identity === null) continue;
+    if (!described.has(`${identity[1]}:${Number.parseInt(identity[2], 16)}`)) draftsWithoutSpan++;
+  }
 
   for (const name of readdirSync(join(ROOT, "assets/code")).sort()) {
     const match = /^(resource_[0-9a-f]+)_overlay\.s$/.exec(name);
@@ -147,6 +175,8 @@ function main(): void {
       if (known.has(at)) continue;
       if (converted.some(([from, size]) => from <= at && at < from + size)) {
         adopted.push(`${overlay}:${at.toString(16)}`);
+      } else if ((draftSpans.get(overlay) ?? []).some(([from, size]) => from <= at && at < from + size)) {
+        drafted.push(`${overlay}:${at.toString(16)}`);
       } else outside.push(`${overlay}:${at.toString(16)}`);
     }
   }
@@ -156,12 +186,17 @@ function main(): void {
   console.log(
     `dispatch_sites overlays_scanned=${scanned} sites_in_inventoried_owners=${inventoried}` +
     ` owners=${rows.length} owner_bytes=${ownerBytes} overlays_with_sites=${overlays.size}` +
-    (all ? ` sites_in_adopted_c=${adopted.length} sites_unattributed=${outside.length}` : " (pass --all for the whole-image buckets)"),
+    (all
+      ? ` sites_in_adopted_c=${adopted.length} sites_in_semantic_draft=${drafted.length}` +
+        ` sites_described_nowhere=${outside.length} drafts_without_span=${draftsWithoutSpan}` +
+        (draftsWithoutSpan > 0 ? " WARNING: described-nowhere is an over-count" : "")
+      : " (pass --all for the whole-image buckets)"),
   );
   for (const row of rows) console.log(`${row.id}\tspan=${row.span}\tsites=${row.sites}`);
   if (all) {
     for (const site of adopted) console.log(`adopted_c\t${site}`);
-    for (const site of outside) console.log(`unattributed\t${site}`);
+    for (const site of drafted) console.log(`semantic_draft\t${site}`);
+    for (const site of outside) console.log(`described_nowhere\t${site}`);
   }
 }
 

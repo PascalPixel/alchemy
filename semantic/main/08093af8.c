@@ -5,16 +5,24 @@
  * range is an indirect call through the named register, not a call to a
  * function at the branch target.  Resolved with tools/veneer_resolve.ts.
  *
- * UNCERTAINTY: the routine at 0x030001d8 is not established.  It RETURNS a
- * value, unlike the other relocated helpers in this audit, and both callers
- * feed it sums of squares and use the result as a distance -- which reads
- * like a magnitude or square root.  That reading is an inference from two
- * call sites and is NOT asserted; the type records the arity and the return,
- * nothing else.
+ * 0x030001d8 takes ONE argument and returns one.  This was got WRONG in the
+ * first pass of this audit (batch 3), which typed it as three because two
+ * independent drafts agreed on three -- and agreement between drafts is not
+ * evidence, it is a shared inheritance.  Checked properly against the ROM at
+ * every site: only r0 is ever set for the call.  The values the drafts had
+ * passed as second and third arguments are the compiler's live intermediates
+ * from computing r0, which happen to sit in r1 and r2 at the branch.
+ *
+ * What it DOES is still not asserted, though the evidence is now strong and
+ * consistent across eight call sites in four files: the argument is always a
+ * sum of squares, the result is always consumed as a length -- a distance
+ * comparison, or shifted right by 8 as a 16.16 magnitude.  That reads as a
+ * square root.  Left as a comment for the exact lane to settle, not a name.
  */
 #include "types.h"
 
-typedef s32 (*Resident_030001D8)(s32 arg0, s32 arg1, s32 arg2);
+typedef s32 (*Resident_030001D8)(s32 value);
+
 
 struct ObjectVisual_08093af8 {
     u8 unknown_00[0x28];
@@ -74,9 +82,7 @@ struct WorldObject_08093af8 *Func_08093af8(
                 delta_z >>= 16;
                 z_squared = delta_z * delta_z;
                 distance = ((Resident_030001D8)0x030001d8)(
-                    delta_x * delta_x + z_squared,
-                    candidate->y,
-                    z_squared);
+                    delta_x * delta_x + z_squared);
 
                 if (distance < nearest_distance) {
                     u16 direction = (u16)Func_080044d0(

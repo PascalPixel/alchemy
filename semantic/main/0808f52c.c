@@ -1,3 +1,32 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
+ * range is an indirect call through the named register, not a call to a
+ * function at the branch target.  Resolved with tools/veneer_resolve.ts.
+ *
+ * 0x030001d8 takes ONE argument and returns one.  This was got WRONG in the
+ * first pass of this audit (batch 3), which typed it as three because two
+ * independent drafts agreed on three -- and agreement between drafts is not
+ * evidence, it is a shared inheritance.  Checked properly against the ROM at
+ * every site: only r0 is ever set for the call.  The values the drafts had
+ * passed as second and third arguments are the compiler's live intermediates
+ * from computing r0, which happen to sit in r1 and r2 at the branch.
+ *
+ * What it DOES is still not asserted, though the evidence is now strong and
+ * consistent across eight call sites in four files: the argument is always a
+ * sum of squares, the result is always consumed as a length -- a distance
+ * comparison, or shifted right by 8 as a 16.16 magnitude.  That reads as a
+ * square root.  Left as a comment for the exact lane to settle, not a name.
+ *
+ * 0x03000380 is NOT established.  Its two call sites in the tree (here and
+ * semantic/main/08090658.c) are byte-identical instruction sequences.  r0 and
+ * r1 are unambiguously deliberate -- r1 is freshly loaded with
+ * `movs r1,#0; ldrsb r1,[r4,r1]` immediately before the branch.  r2 is live
+ * but was computed as an input to r0, so it may be an argument or may be a
+ * leftover; typed as three because three is the safer reproduction, with the
+ * doubt recorded here rather than resolved by guess.
+ */
 typedef signed char s8;
 typedef unsigned char u8;
 typedef signed short s16;
@@ -5,13 +34,13 @@ typedef unsigned short u16;
 typedef signed int s32;
 typedef unsigned int u32;
 
+typedef s32 (*Resident_030001D8)(s32 value);
+typedef s32 (*Resident_03000380)(s32 arg0, s32 arg1, s32 arg2);
+
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 s32 Func_080022ec(s32, s32);
 s32 Func_08004458(void);
-s32 Func_080072f0(s32, s32, s32, s32);
-s32 Func_08007300(s32);
-s32 Func_08007308(s32);
 void Func_08004278(void *);
 void Func_08015268(void *);
 void *Func_0808ba1c(u32);
@@ -166,7 +195,7 @@ void Func_0808f52c(void) {
             temp_r2_2 = (s8) M2C_FIELD(sp14, u8 *, 0x53B) - M2C_FIELD(sp14, s8 *, 0x53A);
             temp_r3_2 = (u8) M2C_FIELD(temp_r3, s8 *, 0x53D) + 1;
             M2C_FIELD(temp_r3, s8 *, 0x53D) = temp_r3_2;
-            M2C_FIELD(sp14, u16 *, 0x52A) = (u16) (M2C_FIELD(sp14, s8 *, 0x53A) + Func_080072f0(temp_r3_2 * temp_r2_2, (s32) M2C_FIELD(temp_r3, s8 *, 0x53C), temp_r2_2, 0x03000380));
+            M2C_FIELD(sp14, u16 *, 0x52A) = (u16) (M2C_FIELD(sp14, s8 *, 0x53A) + ((Resident_03000380)0x03000380)(temp_r3_2 * temp_r2_2, (s32) M2C_FIELD(temp_r3, s8 *, 0x53C), temp_r2_2));
         }
     }
     temp_r4 = sp14 + ((1 ^ M2C_FIELD(sp14, u8 *, 0x539)) * 0x284);
@@ -292,7 +321,7 @@ void Func_0808f52c(void) {
         do {
             temp_r5_7 = var_r8_4 - 0x50;
             sp0 = var_r4_4;
-            temp_r0_2 = Func_08007300(((temp_r5_6 * temp_r5_6) << 0x10) - ((temp_r5_7 * temp_r5_7) << 0x10)) >> 8;
+            temp_r0_2 = ((Resident_030001D8)0x030001d8)(((temp_r5_6 * temp_r5_6) << 0x10) - ((temp_r5_7 * temp_r5_7) << 0x10)) >> 8;
             var_r6 = 0x78 - temp_r0_2;
             var_r0_2 = temp_r0_2 + 0x78;
             if (var_r6 < 0) {
@@ -363,7 +392,7 @@ void Func_0808f52c(void) {
         do {
             temp_r5_13 = var_r8_6 - ((var_r0_3 >> 0x10) - 0x10);
             sp0 = var_r4_6;
-            temp_r0_4 = Func_08007308(((temp_r5_12 * temp_r5_12) << 0x10) - (temp_r5_13 * temp_r5_13 * 0x18000)) >> 8;
+            temp_r0_4 = ((Resident_030001D8)0x030001d8)(((temp_r5_12 * temp_r5_12) << 0x10) - (temp_r5_13 * temp_r5_13 * 0x18000)) >> 8;
             var_r6_2 = temp_r7_2 - temp_r0_4;
             var_r0_4 = temp_r7_2 + temp_r0_4;
             if (var_r6_2 < 0) {
@@ -410,7 +439,7 @@ void Func_0808f52c(void) {
         do {
             temp_r5_16 = var_r8_7 - temp_r3_5;
             sp0 = var_r4_7;
-            temp_r0_5 = Func_080072f0(temp_r3_6 - (temp_r5_16 * temp_r5_16 * 0x18000), temp_r3_5, temp_r3_6, 0x030001D8) >> 8;
+            temp_r0_5 = ((Resident_030001D8)0x030001d8)(temp_r3_6 - (temp_r5_16 * temp_r5_16 * 0x18000)) >> 8;
             var_r6_3 = temp_r7_3 - temp_r0_5;
             var_r0_5 = temp_r7_3 + temp_r0_5;
             if (var_r6_3 < var_r0_5) {
@@ -468,7 +497,7 @@ void Func_0808f52c(void) {
         do {
             temp_r5_20 = var_r8_8 - ((var_r0_6 >> 0x10) - 0x10);
             sp0 = var_r4_8;
-            temp_r0_7 = Func_08007308(((temp_r5_19 * temp_r5_19) << 0x10) - (temp_r5_20 * temp_r5_20 * 0x18000)) >> 8;
+            temp_r0_7 = ((Resident_030001D8)0x030001d8)(((temp_r5_19 * temp_r5_19) << 0x10) - (temp_r5_20 * temp_r5_20 * 0x18000)) >> 8;
             var_r6_4 = temp_r7_4 - temp_r0_7;
             var_r0_7 = temp_r7_4 + temp_r0_7;
             if (var_r6_4 < 0) {
@@ -516,7 +545,7 @@ void Func_0808f52c(void) {
         do {
             temp_r5_24 = var_r8_9 - ((var_r0_8 >> 0x10) - 8);
             sp0 = var_r4_9;
-            temp_r0_9 = Func_08007308(((temp_r5_23 * temp_r5_23) << 0x10) - (temp_r5_24 * temp_r5_24 * 0xC000)) >> 8;
+            temp_r0_9 = ((Resident_030001D8)0x030001d8)(((temp_r5_23 * temp_r5_23) << 0x10) - (temp_r5_24 * temp_r5_24 * 0xC000)) >> 8;
             var_r6_5 = temp_r7_5 - temp_r0_9;
             var_r0_9 = temp_r7_5 + temp_r0_9;
             if (var_r6_5 < 0) {

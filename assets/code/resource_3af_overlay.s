@@ -1957,18 +1957,8 @@ AlchemyC_020009fc:
 	.4byte 0x00000103
 	.2byte 0x1d37
 	.2byte 0x0000
-	push	{lr}
-	bl	sub_02004e88
-	ldr	r0, [pc, #20]
-	bl	sub_02004f4e
-	movs	r1, #0
-	movs	r0, #21
-	bl	sub_02004f76
-	bl	sub_02004ea2
-	pop	{r0}
-	bx	r0
-	.2byte 0x1f00
-	.2byte 0x0000
+AlchemyC_02000b98:
+	.space 0x20
 	push	{lr}
 	ldr	r0, [pc, #48]
 	sub	sp, #8

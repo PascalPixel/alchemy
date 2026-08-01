@@ -336,17 +336,42 @@ over; the figure above is computed. Detail map in venus's
 `work/claude/notes/resource_39e_02002ad0.md` (gitignored, so this paragraph is
 the durable copy).
 
-**`overlay_call_targets.ts --annotate` annotates NOTHING unless you pass
-bounds.** With no bounds it resolves only *unconverted inventory rows*, so a
-listing for an already-banked or published-population row comes back with its
-original — and therefore wrong, pc-relative — `bl` targets untouched. There is
-no error and no warning; the output looks exactly like a listing that had no
-calls worth renaming. Measured on `resource_39e` 0x02000388: piped without
-bounds, zero of two sites annotated; with `388 414` on both sides, two of two.
+**`overlay_call_targets.ts --annotate` used to annotate NOTHING when given no
+bounds — FIXED, and the fix is wider than the bug.** With no bounds it resolves
+only *unconverted inventory rows*, so a listing for an already-banked or
+published-population row came back with its original — and therefore wrong,
+pc-relative — `bl` targets untouched. No error, no warning; the output looked
+exactly like a listing that had no calls worth renaming. Measured on
+`resource_39e` 0x02000388: piped without bounds, **0 of 2** sites annotated;
+with `388 414` on both sides, 2 of 2.
+
+Requiring bounds alone would have fixed only half of it. Bounds that merely
+*disagree* with the `overlay_show` half annotate the overlap and leave the rest,
+just as quietly — and that becomes the likelier mistake once everyone knows to
+pass bounds at all. So the tool now enforces the invariant on the listing
+itself: **every `bl` line on stdin must have been resolved, or it throws**,
+naming the first unresolved sites. Missing bounds is simply the extreme case of
+that check. All three paths verified:
+
+- no bounds → throws, printing the correct pipe spelling;
+- `resource_39e 3ee 414` against a `388 414` listing → `1 bl site(s) in the
+  listing were not resolved, starting at 0x20003b4`;
+- `resource_39e 2ad0 3e58` on both halves → 525 of 525, unchanged.
+
+`bls`/`blt` are conditional branches, not calls, and are excluded; pool-word
+footer lines carry no colon and are never read as sites. Covered by
+`bun tools/overlay_call_targets.ts --self-test`, already wired into
+`bun run test`. No other caller is affected — the sibling tools import
+`resolveOverlay`/`classify` directly rather than going through the CLI flag.
+
 Always spell it
 `overlay_show <ov> A B | overlay_call_targets <ov> A B --annotate`, the same
-bounds on both halves. Same family as the dropped-bound bug — a tool that
-silently does less than you asked is worse than one that refuses.
+bounds on both halves. **This is the fourth tool in two shifts to fail by
+silently doing less than it was asked.** The pattern worth generalising is not
+"document the right spelling" but: wherever partial work is indistinguishable
+by eye from complete work, check the invariant on the *output* and throw.
+Bounds are an input you can get wrong in more ways than one; full coverage of
+the listing is the thing you actually meant.
 
 **The driver anatomy is a habit, not a rule:** several drivers read no scene
 id at all, and one derives the sub-selector when it is zero.

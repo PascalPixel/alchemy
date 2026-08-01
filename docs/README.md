@@ -1,3 +1,5 @@
+> **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
+
 # Where things are
 
 One page so nobody has to guess. `main` is authoritative; update the single

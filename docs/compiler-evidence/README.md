@@ -1,3 +1,5 @@
+> **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
+
 # Compiler evidence
 
 Findings that justify a change to the pinned gcc 2.96 Camelot fork, kept here

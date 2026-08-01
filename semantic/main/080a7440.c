@@ -4,8 +4,8 @@
  * ROM 0x080a7440..0x080a7478: ordinary Thumb leaf/call owner, reviewed from
  * out/decomp/diagnose/080a7440/080a7440.s.  It clears state halfword 186,
  * asks Func_080a77a4 to select an entry, and returns either its -1 sentinel
- * or state byte 0x21a.  src/080a7440.c pins registers/uses inline asm only
- * for byte matching; this is the canonical semantic expression.
+ * or state byte 0x21a.  asm/080a7440.s retains byte identity while this file
+ * remains the canonical semantic expression.
  */
 s32 Func_080a77a4(s32 selection);
 

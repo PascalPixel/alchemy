@@ -72,6 +72,7 @@ u32 Func_080c1fa8(s32);
  * ABI-callable functions.
  */
 s32 Func_080bbb0c(void *arg0, s32 arg1) {
+    s16 queued_ids[7];
     s16 *sp4;
     s32 sp8;
     s32 spC;
@@ -92,7 +93,6 @@ s32 Func_080bbb0c(void *arg0, s32 arg1) {
     u8 *actor_state;
     u8 *action;
     u8 *request;
-    s16 sp54;
     s16 *var_r6;
     s16 temp_r0_3;
     s16 temp_r1_3;
@@ -117,12 +117,10 @@ s32 Func_080bbb0c(void *arg0, s32 arg1) {
     s16 temp_r6_6;
     s16 temp_r6_7;
     s16 temp_r6_9;
-    u8 *temp_r0;
     u8 *target_state;
     s32 temp_r0_4;
     s32 temp_r0_6;
     s32 temp_r3_4;
-    s32 temp_r4;
     s32 temp_r5;
     s32 temp_r5_3;
     s32 temp_r8;
@@ -164,13 +162,12 @@ s32 Func_080bbb0c(void *arg0, s32 arg1) {
     s8 *var_r2_6;
     s8 *var_r2_7;
     s8 *var_r2_8;
-    s8 temp_r3;
     s8 temp_r3_12;
     s8 temp_r3_3;
     s8 temp_r3_5;
     s8 temp_r3_8;
     s8 temp_r3_9;
-    s8 range_distance;
+    s32 range_distance;
     s8 var_r0_2;
     u16 temp_r0_7;
     u16 temp_r1_2;
@@ -243,25 +240,22 @@ s32 Func_080bbb0c(void *arg0, s32 arg1) {
     sp1C = 0;
     sp14 = 0;
     battle_state = *(void **)0x03001E74;
-    temp_r0 = Func_08004938(0x14C);
-    target_snapshot = temp_r0;
+    target_snapshot = Func_08004938(0x14C);
     actor_id = (s32) M2C_FIELD(request, u8, 0);
     temp_r2 = request + 2;
-    temp_r4 = M2C_FIELD(request, s32, 0x4C);
+    action_id = M2C_FIELD(request, s32, 0x4C);
     target_id = *(temp_r2 + arg1);
-    action_id = temp_r4;
-    sp30 = (s8) *(temp_r2 + (arg1 + 0x1C));
+    sp30 = *((s8 *) temp_r2 + (arg1 + 0x1C));
     range_index = M2C_FIELD(arg0, s32, 0x50);
-    sp20 = (s8) *(request + (arg1 + 0x2C));
-    action = Func_08077080(temp_r4);
+    sp20 = *((s8 *) request + (arg1 + 0x2C));
+    action = Func_08077080(action_id);
     actor_state = Func_08077008(actor_id);
     target_state = Func_08077008((s32) target_id);
-    ((WordCopy)0x03001388)(temp_r0, target_state, 0x14C);
+    ((WordCopy)0x03001388)(target_snapshot, target_state, 0x14C);
     if (M2C_FIELD(action, u8, 8) != 0xFF) {
-        temp_r3 = *(request + (arg1 + 0x10));
-        range_distance = temp_r3;
-        if ((s32) temp_r3 < 0) {
-            range_distance = 0 - range_distance;
+        range_distance = *((s8 *) request + (arg1 + 0x10));
+        if (range_distance < 0) {
+            range_distance = -range_distance;
         }
     } else {
         range_distance = 0;
@@ -314,8 +308,10 @@ block_21:
         spC = 0x64;
     }
     if ((*sp4 == 5) && (temp_r2_2 <= 3U) && (sp14 > 0)) {
-        temp_r5 = ((spC - M2C_FIELD((target_state + ((temp_r2_2 * 4) + 0x48)), s16, 2)) + 0x1E) * 0x28F;
-        if (temp_r5 > (s32) (u16) Func_080771a0()) {
+        temp_r5 = spC - M2C_FIELD((target_state + ((temp_r2_2 * 4) + 0x48)), s16, 2);
+        temp_r5 += 0x1E;
+        temp_r5 *= 0x28F;
+        if (temp_r5 > (Func_080771a0() & 0xFFFF)) {
             Func_080bbabc(0xDU, 5U);
         }
     }
@@ -384,9 +380,9 @@ loop_41:
             }
             Func_080b6f44(temp_r0_5, temp_r8, var_r2_3 >> 0x10, var_r3 >> 0x10);
             Func_080b6c90();
-            temp_r0_6 = Func_080b6ae0(&sp54);
+            temp_r0_6 = Func_080b6ae0(queued_ids);
             if (temp_r0_6 > 0) {
-                var_r6 = &sp54;
+                var_r6 = queued_ids;
                 var_r5_3 = temp_r0_6;
                 do {
                     temp_r0_7 = (u16) *var_r6;

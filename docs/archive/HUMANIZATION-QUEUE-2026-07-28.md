@@ -1,3 +1,5 @@
+> **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
+
 # Humanization throughput queue — 2026-07-28
 
 The “Next 20” below were consumed by the subsequent 100-file run. Its verified

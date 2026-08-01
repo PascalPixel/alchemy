@@ -1,3 +1,5 @@
+> **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
+
 # Twin-template evidence — resolved 384-byte family
 
 The corrected `tools/overlay_twins.ts` includes exact-C owners as canonical

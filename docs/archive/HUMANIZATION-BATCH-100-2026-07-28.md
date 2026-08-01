@@ -1,3 +1,5 @@
+> **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
+
 # 100-file humanization batch — 2026-07-28
 
 This run scaled the proven batch-and-isolate method from 20 to 100 already

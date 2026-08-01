@@ -6684,6 +6684,12 @@
       "entry": "0x02000cf4",
       "span_bytes": 532,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_378",
+      "entry": "0x020005cc",
+      "span_bytes": 284,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_378), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; the body dispatches through a 26-entry jump table at 0x0200060c whose arms follow the table inside the function, so tools/m2c_guard.ts's 256-byte measurement is a lower bound and the true span runs through the epilogue at 0x020006ca and the seven-word literal pool 0x020006cc-0x020006e7 to the next function's prologue at 0x020006e8; inside the assembled overlay image and not overlapping another recorded owner."
     }
   ]
 }

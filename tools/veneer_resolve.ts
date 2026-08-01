@@ -505,6 +505,20 @@ export function boundOf(entry: number, entries: number[], cap = 0x1000): number 
   return entry + cap;
 }
 
+/**
+ * True when `boundOf` stopped at the runaway cap rather than at the next
+ * owner -- i.e. the function is longer than `cap` and its tail was NOT
+ * decoded. Found the hard way on 0x080ea0d8: the tool reported 25 sites and
+ * the C file called a veneer four more times, at 0x080eb0de and after, past
+ * the 0x080ea0d8 + 0x1000 cap. Truncating is fine; truncating SILENTLY is the
+ * accept-gate defect this audit exists to remove, so every caller that prints
+ * sites must say so.
+ */
+export function boundIsCap(entry: number, entries: number[], cap = 0x1000): boolean {
+  for (const other of entries) if (other > entry) return other > entry + cap;
+  return true;
+}
+
 function describe(resolution: Resolution): string {
   const via = resolution.kind !== "unknown" && resolution.via.length
     ? `  (via ${resolution.via.join(" <- ")})`
@@ -629,6 +643,17 @@ function selfTest(): void {
     if (site.resolution.kind !== "call-return" || site.resolution.target !== 0x08004938) {
       throw new Error("veneer self-test: caller-saved clobber not detected at 0x08003e36");
     }
+    // Truncation must be REPORTED, not silent. 0x080ea0d8 is longer than the
+    // 0x1000 cap -- the tool lists 25 sites and the C file calls a veneer four
+    // more times at 0x080eb0de and after. A synthetic pair pins both
+    // directions so the predicate cannot rot into always-false.
+    if (!boundIsCap(0x080ea0d8, entries)) {
+      throw new Error("veneer self-test: 0x080ea0d8 truncation not reported");
+    }
+    if (boundIsCap(0x08000000, [0x08000000, 0x08000010])) {
+      throw new Error("veneer self-test: a near next-owner misreported as the cap");
+    }
+
     // No literal resolution anywhere in the tree may be a non-code address.
     for (const entry of entries) {
       for (const s of resolveFunction(image, entry, boundOf(entry, entries))) {
@@ -821,15 +846,27 @@ function main(): void {
   const entries = ownerEntries();
   const kinds: Record<string, number> = {};
   const values: Record<string, number> = {};
+  const truncatedTargets: string[] = [];
   let total = 0;
   for (const target of targets) {
     const stem = target.startsWith("0x") ? target.slice(2) : basename(target, ".c");
     if (!/^0?8[0-9a-f]{6}$/.test(stem)) continue;
     const entry = parseInt(stem, 16);
-    const sites = resolveFunction(image, entry, boundOf(entry, entries));
+    const bound = boundOf(entry, entries);
+    const truncated = boundIsCap(entry, entries);
+    if (truncated) truncatedTargets.push(`0x${entry.toString(16).padStart(8, "0")}`);
+    const sites = resolveFunction(image, entry, bound);
     if (sites.length === 0) continue;
     total += sites.length;
-    if (!summary) console.log(`=== 0x${entry.toString(16).padStart(8, "0")}  ${target}`);
+    if (!summary) {
+      console.log(`=== 0x${entry.toString(16).padStart(8, "0")}  ${target}`);
+      if (truncated) {
+        console.log(
+          `   !! TRUNCATED at 0x${bound.toString(16)} (runaway cap, not the next owner).` +
+            " Sites past it are NOT listed.",
+        );
+      }
+    }
     for (const site of sites) {
       kinds[site.resolution.kind] = (kinds[site.resolution.kind] ?? 0) + 1;
       if (site.resolution.kind === "literal") {
@@ -850,6 +887,9 @@ function main(): void {
     }
     for (const [value, count] of Object.entries(values).sort((a, b) => b[1] - a[1])) {
       console.log(`  callee ${value}  x${count}`);
+    }
+    if (truncatedTargets.length) {
+      console.log(`  !! TRUNCATED (count is a LOWER BOUND): ${truncatedTargets.join(" ")}`);
     }
   }
 }

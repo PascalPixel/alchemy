@@ -560,6 +560,83 @@ NEGATIVE means a drafted span ran past its neighbour, which is the
 over-measure failure `measureSpan` produced on 0x020039c8 (356 reported, 124
 real). Sweep D is one subtraction that screens for both directions.
 
+### SWEEP B's VALIDATION IS THE DEFECT (2026-08-01, jupiter) — re-certification result
+
+Running sweep D across the tree turned the leaf finding inside out, and the
+corrected version is better news than the original.
+
+**Sweep B already FINDS these pointers. It then throws them away.** It resolves
+every 4-aligned word with the Thumb bit, subtracts the link base, and then
+*validates the target by checking for a `push` prologue*. A leaf has no push.
+So the pointer is found and discarded in the same breath — the blind spot is
+not in what sweep B scans, it is in what sweep B accepts.
+
+Measured across all 96 overlays: **185 published words on 61 overlays resolve
+into unaccounted bytes and are rejected solely by the prologue gate.** They are
+candidates, not confirmed owners — each needs a read — but the shape repeats so
+mechanically that most will be real:
+
+```
+resource_3a3 0x70:  movs r0, #0        / bx lr        <- return 0
+resource_3a3 0x74:  ldr r0, =0x0200939c / bx lr       <- return &Data_...
+resource_3c6 0x40:  ldr r0, =0x0200975c / bx lr
+```
+
+A `return 0` stub and a `return &table` getter, published in the overlay's own
+header or a nearby table, four bytes each, no push. Nearly every overlay has a
+pair.
+
+**The fix is one line in sweep B, not a new sweep**: accept a resolved target
+that is 2-aligned and inside the code region whether or not it opens with a
+push, and let the classification step rule it. That recovers four of the five
+leaves found tonight.
+
+**Sweep D is still required**, because it catches the one that nothing
+publishes at all: resource_3a4's 0x02003410 has no `bl` and no published word
+anywhere in the image. Relaxing sweep B would never have seen it. The two
+instruments cover different halves of the population.
+
+#### What the re-run found on the overlays currently closed
+
+Closed = residue 0 under sweeps A and B: **3af, 380, 3b9**, plus **3a4** whose
+single class-C line is settled table data.
+
+| overlay | sweep D verdict |
+|---|---|
+| resource_3af | **clean** — no gaps at all. Genuinely complete. |
+| resource_380 | **clean** — no code-suspect gaps; two stale spans only (below). |
+| resource_3b9 | **two leaves**, 0x70 `return 0` and 0x74 `return &Data_0200b2bc`, both published, both rejected by the prologue gate |
+| resource_3a4 | **three leaves** — 0xbc (40B, a record integrator published from the table at 0x4020), 0x204 (published from the overlay HEADER at 0x14), and 0x3410, published by nothing |
+
+So Isaac's 380 and 3af are the first genuinely complete certifications on the
+tree, and his 3b9 is two four-byte stubs short. Those two are not a drafting
+miss — no instrument the team had could see them.
+
+#### Two benign classes sweep D also surfaces, worth fixing while passing
+
+- **STALE-SPAN** — a row promoted from a semantic draft to exact C keeps its old
+  `manual_regions` entry, and the recorded span disagrees with what the compiler
+  now produces (3a4's 0x29dc records 46B against 52B compiled; 0x2a10 records
+  50B against 56B). The exact row is the truth; the stale figure is what someone
+  drafting a neighbour would subtract against.
+- **Undercounted spans** — a recorded span that stops two bytes before its own
+  `bx r0`, so the gap is that return plus the row's literal pool. Three on 3a4
+  (0x2478, 0x2e76, 0x2ede). Harmless until someone treats the gap as unowned.
+
+#### A checker of mine agreed with the exciting answer and was wrong
+
+Recording it because it is the third of its kind on this team tonight. My
+scratch script for "is this offset published anywhere?" compared each image
+word against `offset + 0x8000` and **dropped the 0x02000000 base**. It duly
+reported NO PUBLISHED POINTER for all five leaves, which is exactly the answer
+that made them a thrilling new population. Four of the five are published.
+
+The tell that caught it: the overlay header table at offset 0 spells its entry
+points `0x02008205`, and 0x204 was one of them, so the header contradicted my
+own checker. **Re-derive a published spelling from a known-good example in the
+same image before trusting a scan built on it** — the full form is
+`0x02000000 + offset + 0x8000 + Thumb bit`.
+
 ### Sweep A and sweep B are NOT independent populations
 
 **A sweep-A row is not "already covered by the call graph".** On resource_3a4,

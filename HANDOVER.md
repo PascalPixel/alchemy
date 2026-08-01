@@ -7748,6 +7748,119 @@ old predicate every one of these 38 was masked as structure. That is the
 tightening measured as changing zero tail veneer counts — inert where it was
 measured, and load-bearing here.
 
+## 5m. resource_3b8 CERTIFIED CLOSED (2026-08-01, mars)
+
+Chosen by measurement, not queue position: sweep D tree-wide with `--json`,
+ranked by summed code-suspect bytes, each rank paired with the deduplicated
+residue-owner count AND the coverage percentage.
+
+**Every byte of the image is accounted for, and that is the claim — not "the
+sweeps came back empty".**
+
+```
+image    23,352
+owners   17,168   (26 spans, 0x30 .. 0x4340)
+head         48   (one POOL-OR-DATA gap, the veneer/pointer header)
+tail      6,136   (66 veneers, 24 ruled pointer halves, 0 unruled)
+                  --------
+sum      23,352   delta 0
+```
+
+Coverage 73.5%, and coverage + tail = 99.8% of the image, so there is no third
+region anywhere for something to hide in. **That arithmetic is the certification;
+the sweeps are how each region was ruled.**
+
+### The five instruments, each with a discriminating control in the same session
+
+| sweep | resource_3b8 | control |
+|---|---|---|
+| A/B/C `overlay_published` | `residue=0` | `resource_3a4` = 1 |
+| A `overlay_call_targets` | `sites=1667` (live, not a refusal) | — |
+| D `overlay_gaps` | `code_suspect_gaps=0 overlaps=0` | `resource_3a4` = 3 |
+| D tail | `return_suspect_tails=1`, all 24 ruled by E | `resource_3a4` = PROLOGUE-SUSPECT |
+| E `overlay_certify` | `sweep_e_findings=0` | `resource_3a4` = 4 |
+| refusal | `resource_zzz` exits 1 | — |
+
+**THE BOGUS-NAME CONTROL FOR SWEEP A/B/C IS STALE IN THIS FILE.**
+`overlay_published resource_zzz` no longer falls back to the whole tree with
+`residue=1604` — it now REFUSES, printing `NOTHING SWEPT` and exiting non-zero.
+That is a better tool and a dead control: zero from a refusing tool proves
+nothing about a real overlay. **Use a known-dirty overlay for A/B/C now, the
+same way sweep D always required.** `resource_3a4` returns 1 and does the job
+for every sweep at once.
+
+### The tail: 24 return shapes, all ruled, and what they actually are
+
+`ruleTail` flags 24 return-shaped halfwords past the last owner. Every one is
+the low half of a 4-aligned word holding an ODD (Thumb) pointer under the
+`base + 0x8000` spelling, resolving onto a recorded owner start. `0xbd40` and
+`0xbdf8` are `pop {..., pc}` shapes by accident of the address.
+
+**I re-derived this rather than quoting sweep E's count, and my first
+re-derivation was wrong twice** — no veneer mask, and the plain base instead of
+`base + 0x8000`. It disagreed with the tool; the tool was right. The
+re-derivation still earned its keep, because the corrected version yields a fact
+the count alone does not: **the 24 slots designate only TWO owners, `0x3d40`
+(21 slots) and `0x3df8` (3).** It is a dispatch table with two handlers, not 24
+callbacks.
+
+Wider context, also measured: the tail publishes **17 distinct owners across 47
+slots**. Only 24 of those slots have a low halfword that happens to wear a
+return shape, which is the entire reason sweep D flagged that subset and not the
+others. **The flagged count is an artefact of the discriminator, not a property
+of the table** — do not read "24" as the table's size.
+
+### The one `unknown`, identified rather than waved through
+
+Sweep A reports `unknown=1`, target `0x20055be`. Those bytes are inside a data
+table — `ffff` separators, ascending indices `0x000b`, `0x000c`, ids `0x2247`,
+`0x2248` — so the "call site" is a phantom from stepping through data by
+halfwords, which is the noise floor sweep E documents. **The target reaches no
+return, so it classifies `unknown` and NOT `leaf`.** That is the leaf/unknown
+split introduced this campaign doing exactly its job: `unknown` still means not
+code, and relaxing it to "leaf" would have manufactured a residue owner out of a
+table.
+
+### SWEEP D REPORTS CANDIDATES; SWEEP E RULES THEM. Do not port E into D.
+
+`resource_3b8` and `resource_398` both sit at zero gap bytes and zero A/B/C
+residue with a RETURN-SUSPECT tail, and both come back `sweep_e_findings=0`.
+The temptation is to move sweep E's pointer-half and dispatched rules down into
+`ruleTail` so its verdict stops flagging them. **Do not.** Both rules need
+inputs `ruleTail` does not have and should not acquire — the recorded owner-start
+set, and the set of `bl` targets resolved from inside owners — and `overlay_gaps`
+is the LOWER module that `overlay_certify` imports. Porting them either creates
+an import cycle or duplicates a predicate in two places, which is how two
+predicates drift apart.
+
+Sweep D's own header already says it: *"The report is a CANDIDATE LIST, not a
+verdict."* **A RETURN-SUSPECT tail is not a defect, it is a work item for sweep
+E**, and the selection procedure should read E's verdict for the tail and D's
+for the gaps.
+
+## 5n. A FIX IS NOT REVERTED BECAUSE ITS NUMBER DID NOT MOVE (2026-08-01, mars, at Vale's instruction)
+
+Standing rule, now settled by evidence rather than argued.
+
+The veneer predicate was tightened to require that the `bx rM` branch to the
+register the `ldr rN` just loaded — because `ldr r0,=table / bx lr` is a leaf
+getter, a REAL FUNCTION, and the loose predicate masked it as structure.
+**Measured at the time: it changed the tail veneer count on 0 of 96 overlays.**
+A fix that moves no number looks like a fix that does nothing, and the natural
+next step is to revert it as noise.
+
+It was load-bearing three days later, in a region nobody had measured: **all 38
+head export stubs on ten overlays are `ldr r0,=X / bx lr`, and under the loose
+predicate every one of them was masked as structure.** The head sweep could not
+have seen a single one.
+
+**Inert where measured, load-bearing elsewhere.** Two lanes have now nearly lost
+a correct fix by judging it on the number it moved in the one region that
+happened to be instrumented. The test for keeping a fix is whether the ARGUMENT
+is sound, not whether the count changed — a predicate that cannot distinguish
+two things is broken wherever both things occur, and you have only measured
+where you looked.
+
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**

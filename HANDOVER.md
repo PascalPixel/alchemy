@@ -13,16 +13,17 @@ byte-identical, source ownership is complete, and ROM fallback is zero.
 Alchemy is a complete, byte-identical, source-owned reconstruction of the
 8 MiB GS1 English ROM image. It is **not** a fully decompiled C project.
 
-- Exact Full-C Byte Share is **245,044 / 1,343,206 executable bytes
-  (18.24%)**.
-- Reviewed semantic C adds **821,520 executable bytes**. Exact plus semantic C
-  covers **1,066,564 / 1,343,206 bytes (79.40%)**.
+- Exact Full-C Byte Share is **249,940 / 1,343,212 executable bytes
+  (18.61%)**.
+- Reviewed semantic C adds **816,630 executable bytes**. Exact plus semantic C
+  covers **1,066,570 / 1,343,212 bytes (79.40%)**.
 - The main executable has a closed semantic census: every ordinary owner has
   exact or reviewed semantic C. That closure has **not** made exact matching
   materially faster by itself.
-- The current exact-C 20% threshold is 268,642 bytes. The remaining gap is
-  **23,598 exact bytes**. This audit produced one fresh 108-byte exact code
-  code-overlay conversion; it did not manufacture a 20% claim.
+- The current exact-C 20% threshold is 268,643 bytes. The remaining gap is
+  **18,703 exact bytes**. The latest tranche promoted 37 code-overlay owners
+  and added 4,896 counted exact bytes; one additional 88-byte inline-assembly
+  match was deliberately restored to assembly because it is not canonical C.
 - The largest practical exact-C queue is now the code overlays, not the main
   executable's semantic reconstruction.
 - Compiler and permuter improvements reduce the cost of individual trials, but
@@ -47,23 +48,23 @@ may retain older identifiers when renaming would damage reproducibility.
 | Scope | Exact C | Semantic C, excluding exact | Assembly / retained | Executable total |
 | --- | ---: | ---: | ---: | ---: |
 | Main executable | 102,208 | 415,670 | 30,486 retained | 548,364 |
-| 96 decoded code overlays | 142,836 | 405,850 | 246,156 unresolved | 794,842 |
-| **Total** | **245,044** | **821,520** | **276,642** | **1,343,206** |
+| 96 decoded code overlays | 147,732 | 400,960 | 246,156 unresolved | 794,848 |
+| **Total** | **249,940** | **816,630** | **276,642** | **1,343,212** |
 
 Additional ROM-image facts:
 
 - Total ROM image: **8,388,608 bytes**.
 - Data/assets outside the executable denominator: **7,300,700 bytes**.
 - Compressed code-overlay streams occupy **539,544 ROM bytes**; their decoded
-  executable size is counted in the separate 794,842-byte code-overlay namespace.
+  executable size is counted in the separate 794,848-byte code-overlay namespace.
 - The source-only full build owns **8,388,608 / 8,388,608 bytes**, uses zero
   fallback, and reproduces the reference ROM byte for byte.
-- Diagnostic source counts are 1,413 main-image C files, 1,758 exact code-overlay
-  C files, 718 semantic main-image C files, 1,103 semantic code-overlay C files,
+- Diagnostic source counts are 1,413 main-image C files, 1,795 exact code-overlay
+  C files, 718 semantic main-image C files, 1,066 semantic code-overlay C files,
   and 41 headers. These are useful inventory counts, not progress percentages
   or reliable function counts.
 
-The semantic compiler reviews 843,840 bytes of owner spans, but 22,320 of those
+The semantic compiler reviews 838,944 bytes of owner spans, but 22,314 of those
 bytes lie outside the audited executable extents, chiefly pool/tail portions of
 code-overlay owner spans. The coverage numerator therefore uses 821,520, not
 843,840. `tools/build_semantic.ts` now reports both figures instead of silently
@@ -83,8 +84,8 @@ scheduling diagnostics because their boundaries and scopes differ.
 The current split is:
 
 - Main executable: **102,208 / 548,364 (18.64%)**.
-- Code overlays: **142,836 / 794,842 (17.97%)**.
-- Combined: **245,044 / 1,343,206 (18.24%)**.
+- Code overlays: **147,732 / 794,848 (18.59%)**.
+- Combined: **249,940 / 1,343,212 (18.61%)**.
 
 ## Main-executable audit
 
@@ -341,9 +342,11 @@ image literally assembly-free while retained structures remain.
 
 At the current fixed denominator, first-parent exact ownership ended 2026-07-29
 at 147,614 bytes, 2026-07-30 at 211,626 (+64,012), and 2026-07-31 at 232,944
-(+21,318). The current checkpoint is 245,044 (+12,100 since the prior day-end).
-The decline reflects exhaustion of large exact twin batches and harder compiler
-floors; it is not evidence of exponential acceleration.
+(+21,318). The current checkpoint is 249,940 (+16,996 since the prior day-end).
+The latest 4,896-byte tranche came primarily from exact-source sibling
+transposition: a 164-byte shape expanded across twelve modules, followed by
+smaller structural families. This is a real multiplier, but not exponential
+acceleration; no kilobyte-scale identical large-owner family was found.
 
 Falsified or bounded hypotheses:
 
@@ -361,16 +364,15 @@ Falsified or bounded hypotheses:
 ### Phase 0 — seal this checkpoint
 
 1. Run `bun run verify` and `bun run coverage:check`.
-2. Commit and push the audit, exact 108-byte promotion, semantic fixes,
-   dashboard corrections, and generated metrics.
+2. Commit and push each coherent exact-C tranche and its generated metrics.
 3. Regenerate and commit the first-parent history after the checkpoint commit.
 
 ### Phase 1 — reach 20% exact C honestly
 
-The target is **+23,598 exact bytes**. Treat it as a portfolio, not one heroic
+The target is **+18,703 exact bytes**. Treat it as a portfolio, not one heroic
 function:
 
-1. Work the 587-owner semantic-backed code-overlay reading list in descending
+1. Work the 551-owner semantic-backed code-overlay reading list in descending
    byte value, beginning with the top eight code overlays listed above.
 2. Give each worker a different code overlay and owner and require an exact adoption
    dry-run before integration.

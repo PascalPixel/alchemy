@@ -417,6 +417,7 @@ const EARLY_LITERAL_POOL_OVERLAY_PATHS = new Set([
   "assets/code/resource_3bd_c_02000ee0.c",
 ]);
 const NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3a9_c_0200007c.c",
   "assets/code/resource_3a9_c_020000e4.c",
 ]);
 // This main-ROM routine has one independent entry-window ordering residual:
@@ -498,6 +499,10 @@ const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
 // (or, for 399:05dc and 0a3c, together with the routed immediate-latency
 // mode). Each entry has its own exact-byte proof.
 const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
+  // resource_38f:26cc reaches the reference instruction stream when the
+  // original-order tie-break is paired with the one-cycle Thumb load model;
+  // the pair flips its sole remaining two-insn load/use schedule.
+  "assets/code/resource_38f_c_020026cc.c",
   // resource_398:04b4 sets r0 then r1 for a six-argument call; the dependence
   // count reverses that pair and neither tie-break direction restores it.
   "assets/code/resource_398_c_020004b4.c",
@@ -519,6 +524,9 @@ const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
   // dependence count hoists the +76 field's `ldr` above the store to +12, which
   // is the source's own order. Nothing else moves it, in either direction.
   "assets/code/resource_3c4_c_02001068.c",
+]);
+const THUMB_LOAD_LATENCY_ONE_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_38f_c_020026cc.c",
 ]);
 // In resource_37a:0054 the cse rerun after the copy loop folds the shared
 // window base back into per-site constants; in resource_399:0abc it rewrites
@@ -550,6 +558,14 @@ const NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3b1_c_02000b84.c",
   "assets/code/resource_3b1_c_02000cc8.c",
 ]);
+// resource_372:0278 repeats the same 0x206 event id on opposite sides of a
+// branch.  CSE's skip-blocks pass hoists it and rotates almost the whole leaf;
+// disabling that pass restores the reference lifetimes, while the established
+// low-destination scheduler tie-break fixes the remaining call-argument pair.
+// Path scope matters because every decoded code overlay reuses 0x02000278.
+const NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_372_c_02000278.c",
+]);
 // resource_3c9 field/`(u16*)` mixed-access family: with strict aliasing, our
 // scheduler treats the u16-view store as independent of the struct-field
 // re-read and sinks the load below the store pair; the reference keeps the
@@ -572,6 +588,13 @@ const NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES = new Set([
 // deliberately excluded, since a pool load is one instruction and sharing it is
 // not a size change.
 const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // resource_3bb:0b38 is the target-specific transpose of the exact
+  // resource_3ba:0974 source; both independently materialize repeated wide
+  // immediates before the low-destination call scheduler orders them.
+  "assets/code/resource_3bb_c_02000b38.c",
+  // Paired with the low-destination scheduler route below for resource_3c8's
+  // three independently materialized -1 arguments.
+  "assets/code/resource_3c8_c_020007d8.c",
   // resource_373:0cd0 has the sharing tell twice in one row: a three-argument
   // call whose first two arguments are both 0x30000, and a later one that takes
   // -1 twice. The reference builds each in place -- two `movs`/`lsls` pairs and
@@ -645,6 +668,14 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3b5_c_02000644.c",
+  "assets/code/resource_3bb_c_02000b38.c",
+  // After the paired CSE route rematerializes resource_3c8:07d8's three -1
+  // arguments, this restores its final five-instruction load/store setup.
+  "assets/code/resource_3c8_c_020007d8.c",
+  // Paired with the skip-blocks CSE route documented below; after the event-id
+  // lifetime is restored this orders the final tied call setters exactly.
+  "assets/code/resource_372_c_02000278.c",
   // Both overlays now own an exact-C function at 0x020011d8. The address-only
   // route became ambiguous as soon as resource_373 joined resource_3b4, so
   // preserve the proven scheduler choice without leaking it to future twins.
@@ -825,6 +856,17 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3af_c_02002b7c.c",
   "assets/code/resource_3ba_c_02000974.c",
 ]);
+// resource_372:0ec4's five module-local calls make r7 unavailable in the
+// reference allocation.  Reserving it restores the exact saved-register set;
+// the high-destination tie-break then orders the remaining r6 constant and
+// high-register move.  Both routes are path-scoped because offsets repeat in
+// every decoded code-overlay namespace.
+const FIXED_R7_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_372_c_02000ec4.c",
+]);
+const SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_372_c_02000ec4.c",
+]);
 // The fork proves a store and a later load at two different constant offsets off
 // one base independent, leaves no edge between them, and lets the load's longer
 // dependence chain outrank the store; the reference keeps source order. The mode
@@ -902,6 +944,7 @@ const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3bf_c_02004bfc.c",
   "assets/code/resource_39c_c_020014cc.c",
   "assets/code/resource_3bf_c_0200175c.c",
+  "assets/code/resource_3bf_c_020017bc.c",
 ]);
 const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
   "assets/code/resource_380_c_02000104.c",
@@ -975,6 +1018,7 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   "assets/code/resource_37f_c_0200067c.c",
   "assets/code/resource_37f_c_020006c4.c",
   "assets/code/resource_37f_c_0200070c.c",
+  "assets/code/resource_37f_c_02000754.c",
   // resource_38d:01b4 loads its 0x302 flag id at the test and again at the set.
   "assets/code/resource_38d_c_020001b4.c",
   "assets/code/resource_38d_c_0200028c.c",
@@ -1169,6 +1213,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-sched-depend-count"]
       : []),
+    ...(THUMB_LOAD_LATENCY_ONE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-mthumb-load-latency-one"]
+      : []),
     ...(NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-rerun-cse-after-loop"]
       : []),
@@ -1178,6 +1225,9 @@ export function cflagsForSource(source: string): readonly string[] {
       : []),
     ...(NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-cse-follow-jumps", "-fno-cse-skip-blocks"]
+      : []),
+    ...(NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fno-cse-skip-blocks"]
       : []),
     ...(NO_STRICT_ALIASING_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-strict-aliasing"]
@@ -1191,6 +1241,10 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fsched-low-dest-first"]
       : []),
+    ...(SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fsched-high-dest-first"]
+      : []),
+    ...(FIXED_R7_OVERLAY_SOURCES.has(sourceKey(source)) ? ["-ffixed-r7"] : []),
     ...(NO_SCHED_ALIAS_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-sched-alias"]
       : []),
@@ -1255,15 +1309,19 @@ export function evidencedRoutingFlags(): string[] {
     ...THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES,
     ...NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES,
     ...NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES,
+    ...THUMB_LOAD_LATENCY_ONE_OVERLAY_SOURCES,
     ...NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES,
     ...NO_GCSE_OVERLAY_SOURCES,
     ...NO_EXPENSIVE_OVERLAY_SOURCES,
     ...NO_INTERWORK_OVERLAY_SOURCES,
     ...NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES,
+    ...NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES,
     ...NO_STRICT_ALIASING_OVERLAY_SOURCES,
     ...NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES,
     ...NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES,
     ...SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES,
+    ...SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES,
+    ...FIXED_R7_OVERLAY_SOURCES,
     ...NO_SCHED_ALIAS_OVERLAY_SOURCES,
     ...NO_GCSE_INSERT_LOAD_OVERLAY_SOURCES,
     ...SCHED_STORE_FIRST_OVERLAY_SOURCES,

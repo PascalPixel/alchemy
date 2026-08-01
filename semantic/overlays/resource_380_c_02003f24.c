@@ -51,6 +51,7 @@ typedef int s32;
  * 0x02008000 link base, and only its +450 s16 field is read here.
  */
 
+extern s16 Data_02000240[];
 extern void Func_0200227c(void);
 extern void Func_020027f8(void);
 extern void Func_0200478c(s32 base, s32 count);
@@ -122,7 +123,7 @@ s32 Func_02003f24(void)
     }
 
     /* Play-once guard: the finale raises flag 0x83b on its way out. */
-    if (Func_080770c0(0x83b) == 0 && *(s16 *)(0x02000240 + 450) == 10) {
+    if (Func_080770c0(0x83b) == 0 && Data_02000240[225] == 10) {
         Func_020027f8();
     }
     return 0;

@@ -34,21 +34,24 @@ typedef signed int s32;
  */
 
 extern s16 Data_02000240[];
+extern unsigned char Value_00000031;
+extern unsigned char Value_00000030;
+extern unsigned char Value_0000002f;
 
-void Func_020004b4(void);
-void Func_020004e8(void);
-void Func_02000538(void);
+void Func_02000936(void);
+void Func_02000976(void);
+void Func_020009d2(void);
 
 s32 Func_0200046c(void)
 {
     s16 variant = Data_02000240[224];
 
-    if (variant == 0x31) {
-        Func_020004b4();
-    } else if (variant == 0x30) {
-        Func_020004e8();
-    } else if (variant == 0x2f) {
-        Func_02000538();
+    if (variant == (s32)&Value_00000031) {
+        Func_02000936();
+    } else if (variant == (s32)&Value_00000030) {
+        Func_02000976();
+    } else if (variant == (s32)&Value_0000002f) {
+        Func_020009d2();
     }
     return 0;
 }

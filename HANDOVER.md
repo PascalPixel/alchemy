@@ -5232,6 +5232,71 @@ the compiler-side queue, not in the exact lane.
 larger than the 579/57 originally reported, so the two counts use different
 image-end definitions and should be reconciled before either is quoted.
 
+## 5b4. A compiler-emitted jump table needs the 0x8000 link bias — FIXED in the emitter (2026-08-01)
+
+**A `switch` that becomes a `mov pc, rN` dispatch could not be byte-exact from
+any source spelling, and the reason had nothing to do with the case bodies.**
+
+An overlay image is linked 0x8000 above the address it is loaded at, so every
+absolute in-image code pointer the ROM stores is spelled `base + 0x8000`.
+Hand-written exact C carries that bias in its literals. The compiler cannot:
+gcc emits the jump table as bare `.word .LN` rows plus one more for the pool
+word holding the table's own base, and `compileOverlayC`'s
+`ld -Ttext=0x<load address>` resolves every one of them with no bias at all.
+
+Measured on the parked interpreter `resource_3b9:1a4c` (508 bytes), whose
+66-entry table sits inside its own span at 0x02001a70:
+
+| region | differing bytes before | after |
+| --- | --- | --- |
+| jump table 0x02001a70-0x02001b78 | 77 | 15 |
+| case bodies 0x02001b78-0x02001c2e | 150 | 149 |
+| **row total** | **227** | **164** |
+
+Of the 66 entries, **55 differed by exactly 0x8000** and nothing else; the
+other 11 differ because those case bodies are laid out differently, and are
+downstream of body work, not of the bias. The pool word holding the table
+base (ref 0x02009a70) is the 67th `.word .L` row and takes the same bias.
+
+**The fix is `biasInImageLabelWords` in tools/overlay_disasm.ts**, applied
+between the compile step and `as`, with the cache key moved to
+`overlay-c-v3` so a warm cache cannot serve pre-bias bytes. It biases ONLY a
+bare `.word` reference to a label defined in the same file. Left alone, and
+self-tested as left alone: external symbols, integers, labels with no
+definition in the file, and label DIFFERENCES (`.L5-.L2`) — a difference of
+two in-image addresses is already right and biasing it would be wrong by
+0x8000.
+
+**Why not shift `-Ttext` by 0x8000 instead.** That moves every instruction
+address too, and §5b3a's identity pins a callee name to a FIXED literal
+(`name_address = insn_address + 2 + true_target_offset`). A global shift
+would fix the table and move every `bl` in the row by -0x8000. The bias
+belongs on the label references alone.
+
+**It is a proven no-op for everything already in the tree.** `bun run verify`
+is green with `byte_identical=yes` across all 1,413 adopted rows, twice,
+with the cache key bumped so every overlay C actually recompiled. No adopted
+row today emits a biasable word.
+
+**What it unblocks, measured.** Scanning `assets/code/*_overlay.s` for
+`mov pc, rN` — still-unconverted code, since adopted rows are `.space` —
+gives **60 dispatch sites across 29 overlays**. 36 of them map to 27
+inventoried owners totalling **27,760 bytes**; the remaining 24 sit in
+owners with no inventory row (`resource_3b9:1a4c` is one of them), so the
+true figure is larger. Read that as the size of the population this
+unblocks, NOT as bytes recovered: each of those owners still has to be
+transcribed correctly. Before this change every one of them carried a floor
+of one differing byte per table entry that no amount of body work could
+reach.
+
+*Method note, since it cost the row a whole earlier sitting.*
+`overlay_group_diff.sh` is useless on a row with an in-span table: it
+disassembles the 264 table bytes as instructions and reported 71 differing
+groups of garbage from the table onward. The earlier reading — "227 bytes of
+per-case-body transcription work" — came from that, and it was wrong about
+66 of the 227. On any row with a `mov pc` dispatch, diff BYTES aligned by
+address, not instruction groups.
+
 ## 5c. Auditing the executable inventory for holes (2026-08-01)
 
 Twice in one night `full_c_progress` threw `C span is outside audited

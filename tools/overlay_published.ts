@@ -93,6 +93,34 @@ export interface OverlayResidue {
   overlay: string;
   /** bl-reached prologues with no owner. */
   called: number[];
+  /**
+   * bl-reached targets with no owner that are NOT prologue-shaped: LEAVES.
+   *
+   * THE SAME DEFECT AS `publishedLeaf`, IN SWEEP A, TEN LINES ABOVE WHERE IT
+   * WAS FIXED IN SWEEP B (found 2026-08-01, mars). The call loop resolved every
+   * `bl` correctly and then dropped any target that did not open with a `push`,
+   * so a leaf called from inside its own overlay was found, discarded, and
+   * never appeared in residue. A fix applied to one branch and not its sibling.
+   *
+   * Proven on `resource_3a5` `0x1c78`: FOUR call sites, a real 12-byte setter,
+   * reported by `overlay_call_targets` as kind `unknown` and by this sweep as
+   * nothing at all. Sweep A counted its callers and declined to call it a
+   * function.
+   *
+   * Kept separate from `called` so the prologue-confirmed count stays a
+   * regression invariant, exactly as `publishedLeaf` is kept separate from
+   * `published`. BOTH must be empty to close an overlay.
+   */
+  calledLeaf: number[];
+  /**
+   * bl-reached targets with no owner that do not reach a return: NOT CODE.
+   *
+   * Relaxing the gate admits data along with leaves, so the leaf class earns
+   * itself the same way the published one does -- a bounded scan for `bx lr`.
+   * Reported rather than dropped, because quietly declining to say what was
+   * seen is the fault being fixed. They do not count towards residue.
+   */
+  calledData: number[];
   /** published prologues with no owner. */
   published: number[];
   /**
@@ -259,15 +287,25 @@ export function sweep(overlay: string): OverlayResidue {
   };
 
   const called: number[] = [];
+  const calledLeaf: number[] = [];
+  const calledData: number[] = [];
   const seenCall = new Set<number>();
   for (let at = 0; at + 4 <= image.length; at += 2) {
     const target = targetOffset(image[at] | (image[at + 1] << 8), image[at + 2] | (image[at + 3] << 8));
     if (target === null || target < 0 || target >= image.length) continue;
-    if (classify(image, target, new Set()).kind !== "prologue") continue;
+    const kind = classify(image, target, new Set()).kind;
+    // A veneer target is the import bank and is structure, not residue. It was
+    // already excluded before, as part of the `!== "prologue"` drop; keeping it
+    // excluded explicitly is the difference between a rule and a side effect.
+    if (kind === "veneer" || kind === "call_via") continue;
     if (owners.has(target) || seenCall.has(target)) continue;
     if (insideRecordedBody(target)) continue;
     seenCall.add(target);
-    called.push(target);
+    // Same tri-class as the published path below, for the same reason: the
+    // blind spot was never in what this sweep SCANS, it is in what it ACCEPTS.
+    if (kind === "prologue") called.push(target);
+    else if (reachesReturn(image, target)) calledLeaf.push(target);
+    else calledData.push(target);
   }
 
   const published: number[] = [];
@@ -317,7 +355,7 @@ export function sweep(overlay: string): OverlayResidue {
     shaped.push({ offset: at, halfword, owner, delta, verdict });
   }
 
-  return { overlay, called, published, publishedLeaf, publishedData, shaped };
+  return { overlay, called, calledLeaf, calledData, published, publishedLeaf, publishedData, shaped };
 }
 
 function overlayNames(): string[] {
@@ -392,6 +430,41 @@ function selfTest(): void {
   short[2] = 0x70; short[3] = 0x47;
   if (!reachesReturn(short, 0, 1024)) throw new Error("a return at the last halfword must count");
   if (reachesReturn(new Uint8Array(4), 0, 1024)) throw new Error("running off the end must not invent a return");
+
+  // SWEEP A'S TRI-CLASS, asserted the way sweep B's is: the prologue-confirmed
+  // count is the regression invariant, and the leaf class must be ADDED rather
+  // than the old one disturbed. Measured on the tree at the moment of the edit:
+  // `A called` 224 and `B published` 464 both UNCHANGED, residue 1597 -> 1607,
+  // and the difference is exactly the ten `A leaf` rows. Asserted here on
+  // synthetic bytes so it does not rot as those ten get drafted.
+  //
+  // The three shapes a bl target can wear, at 0x20 in a synthetic image:
+  //   a `push {lr}` prologue  -> called
+  //   `ldr r0,=X / bx lr`     -> calledLeaf  (a leaf: no push, returns)
+  //   a table with no return  -> calledData  (not code)
+  const kindOf = (opening: number[]): string => {
+    const image = new Uint8Array(0x60);
+    opening.forEach((halfword, index) => {
+      image[0x20 + index * 2] = halfword & 0xff;
+      image[0x20 + index * 2 + 1] = halfword >> 8;
+    });
+    if (classify(image, 0x20, new Set()).kind === "prologue") return "called";
+    return reachesReturn(image, 0x20) ? "calledLeaf" : "calledData";
+  };
+  if (kindOf([0xb500, 0x4770]) !== "called")
+    throw new Error("sweep A: a push prologue must stay in `called` -- that count is the invariant");
+  if (kindOf([0x4800, 0x4770]) !== "calledLeaf")
+    throw new Error("sweep A: `ldr r0,=X / bx lr` is a LEAF and must not be dropped");
+  if (kindOf([0x0000, 0x0000]) !== "calledData")
+    throw new Error("sweep A: bytes that never return are data, and must be reported as such");
+  // And the direction that matters most: the leaf must not be silently absent.
+  // Before 2026-08-01 this shape produced NOTHING at all -- not a leaf, not
+  // data, not a complaint. A tri-class that can still return nothing is the
+  // same defect wearing three names.
+  for (const shape of [[0xb500, 0x4770], [0x4800, 0x4770], [0x0000, 0x0000]])
+    if (!["called", "calledLeaf", "calledData"].includes(kindOf(shape)))
+      throw new Error("sweep A: every resolved bl target must land in exactly one class");
+
   console.log("self-test=ok");
 }
 
@@ -411,6 +484,8 @@ function main(): void {
     const unruled = result.shaped.filter((row) => row.verdict.startsWith("UNRULED"));
     if (
       result.called.length === 0 &&
+      result.calledLeaf.length === 0 &&
+      result.calledData.length === 0 &&
       result.published.length === 0 &&
       result.publishedLeaf.length === 0 &&
       result.publishedData.length === 0 &&
@@ -419,10 +494,21 @@ function main(): void {
     )
       continue;
     residue +=
-      result.called.length + result.published.length + result.publishedLeaf.length + unexplained.length;
+      result.called.length +
+      result.calledLeaf.length +
+      result.published.length +
+      result.publishedLeaf.length +
+      unexplained.length;
     console.log(result.overlay);
     for (const offset of result.called)
       console.log(`  A called    0x${(OVERLAY_BASE + offset).toString(16)}`);
+    for (const offset of result.calledLeaf)
+      console.log(`  A leaf      0x${(OVERLAY_BASE + offset).toString(16)}  bl-reached, no push prologue`);
+    for (const offset of result.calledData)
+      console.log(
+        `  A data      0x${(OVERLAY_BASE + offset).toString(16)}  ` +
+          `bl-reached, no push prologue, NO RETURN within ${RETURN_WINDOW} bytes -- RULED DATA, not residue`,
+      );
     for (const offset of result.published)
       console.log(`  B published 0x${(OVERLAY_BASE + offset).toString(16)}`);
     for (const offset of result.publishedLeaf)

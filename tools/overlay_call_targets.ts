@@ -88,7 +88,27 @@ export interface CallSite {
   /** Resolved target offset within the overlay image. */
   target: number;
   /** What the target lands on, once classified. */
-  kind: "veneer" | "prologue" | "call_via" | "unknown";
+  kind: "veneer" | "prologue" | "call_via" | "leaf" | "unknown";
+}
+
+/**
+ * How far a leaf may run before its `bx lr`, in bytes.
+ *
+ * Deliberately a LOCAL copy of `overlay_published`'s window rather than an
+ * import: that module imports this one, and closing the cycle to share five
+ * lines would make the import order load-bearing. If the two ever need to
+ * agree on a number, move the constant to a leaf module -- do not create the
+ * cycle.
+ */
+const RETURN_WINDOW = 128;
+
+/** Does a `bx lr` appear within the window? A function must return. */
+function reachesReturn(image: Uint8Array, offset: number): boolean {
+  const end = Math.min(image.length - 1, offset + RETURN_WINDOW);
+  for (let at = offset; at < end; at += 2) {
+    if ((image[at] | (image[at + 1] << 8)) === 0x4770) return true;
+  }
+  return false;
 }
 
 /**
@@ -126,6 +146,18 @@ export function classify(
     // A bare `bx rN` slot is the overlay's own call_via bank.
     if ((first & 0xff87) === 0x4700) return { kind: "call_via" };
   }
+  // A LEAF. It opens with ordinary work rather than a `push`, because it saves
+  // no register, and it returns with `bx lr`. Until 2026-08-01 this fell
+  // through to `unknown`, which reads as "suspicious, probably not code" and
+  // was acted on that way: `resource_3a5` 0x1c78 has FOUR call sites and a
+  // twelve-byte body, and every run of this tool reported it as unknown while
+  // sweep A dropped it entirely. The tool found the function, counted its
+  // callers, and declined to call it a function.
+  //
+  // `unknown` still exists and still means unknown -- a target that reaches no
+  // return inside the window is not code, and saying "leaf" about it would be
+  // the same overreach in the other direction.
+  if (reachesReturn(image, target)) return { kind: "leaf" };
   return { kind: "unknown" };
 }
 

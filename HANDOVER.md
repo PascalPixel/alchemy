@@ -159,6 +159,8 @@ a dispatch of `renderers[counter & 1]`. Confirmed at:
 | `semantic/main/080dd2c4.c` | `[sp,#48]`, `[sp,#52]` | `[sp,#28]` | emitter index parity |
 | `semantic/main/080d41a4.c` | `[sp,#44]`, `[sp,#48]` | `[sp,#12]` | particle index parity |
 | `semantic/main/080d2d98.c` | `[sp,#52]`, `[sp,#56]` | `[sp,#36]` | `field_0x10 > 0` |
+| `semantic/main/080dab74.c` | `[sp,#52]`, `[sp,#56]` | `[sp,#32]` | named per site, `[rN,#4]` |
+| `semantic/main/080e89ec.c` | `[sp,#48]`, `[sp,#52]` | `[sp,#16]` | named per site, `[rN,#4]` |
 
 Two variants of the same thing. `080d41a4` reaches the slots as `[r5, #28]`
 and `[r5, #32]` off the runtime header at 0x03001eec rather than off
@@ -183,6 +185,10 @@ were repaired by reading it:
   same routine twice. They are renderer 46 then renderer 47.
 - `080f7460` read the index CORRECTLY and even named both renderers — then
   passed the chosen one as a seventh ARGUMENT. Arity is six.
+- `080dab74`'s two arms of one `blt` call DIFFERENT renderers; the draft kept
+  both arms, which read as differing only in an x expression.
+- `080e89ec`'s adjacent `0x30` and `0x38` statements read as one call twice
+  with a changed coordinate. They are entry 0 and entry 1.
 - `080d2d98` carried `if (temp_r3 <= 0) { }` — an if with an EMPTY body. m2c
   kept the branch and dropped its only effect, because that effect was
   `r6 = 4; if (r3 <= 0) r6 = 0;` at 0x080d320c, i.e. choosing the callee. An
@@ -192,6 +198,22 @@ were repaired by reading it:
 Do NOT pattern-match this across files. It is confirmed per file by reading
 the two slot stores and the base store in that function's own prologue; a
 file that does not show all three is not this idiom.
+
+**A `[rN, #4]` load whose rN is the parked table base is entry 1, not an
+unknown struct field.** `tools/veneer_resolve.ts` classifies these as
+INDIRECT memory and refuses, correctly — it cannot know rN is a table base.
+Resolve rN before treating such a site as unresolvable. Ten of the audit's
+"memory" sites were this, across `semantic/main/080dab74.c` and
+`semantic/main/080e89ec.c`, and both files resolved completely once rN was
+chased. That is a real dent in the memory population and it is NOT a claim
+that the rest of it will go the same way.
+
+**A runtime value feeding the SETUP call does not make the callee runtime
+dependent.** `080e89ec` calls `Func_080cef64(alternate, sp + 48)` where
+`alternate` is read out of a scene record. The byte-exact source takes the
+same two slots in BOTH branches; `alternate` only changes what it passes on
+to `Func_080ed408`. That shape looks like it should defeat resolution and
+does not — read the callee's own source before conceding.
 
 The caveat above applies unchanged: this settles which pointer is called,
 never what either slot contains.

@@ -33,6 +33,7 @@ typedef signed int s32;
  * only; the flag id and scene id are literal.
  */
 
+extern s16 Data_02000240[];
 extern u8 *Data_03001ebc;
 
 extern void Func_02001984(void);
@@ -44,7 +45,7 @@ extern void Func_0808a1e0(s32 id, s32 mode);
 s32 Func_020016f0(void)
 {
     *(s32 *)(Data_03001ebc + 448) = 516;
-    if (*(s16 *)((u8 *)0x02000240 + 448) == 93) {
+    if (Data_02000240[224] == 93) {
         *(s32 *)(Data_03001ebc + 448) = 256;
         Func_080000c0(1);
         Func_0808a1e0(11, 3);

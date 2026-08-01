@@ -535,6 +535,12 @@ const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
 // is byte-exact for this source alone.
 const GROUPED_DMA_STORE_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3ca_c_020010d4.c",
+  // resource_392:0c0c and resource_393:0ddc are exact-template twins of
+  // resource_394:0fb4.  Keep the three descriptor stores on the compiler's
+  // established grouped-DMA route; the per-overlay pools and veneers are the
+  // only differences.
+  "assets/code/resource_392_c_02000c0c.c",
+  "assets/code/resource_393_c_02000ddc.c",
   "assets/code/resource_394_c_02000f34.c",
   "assets/code/resource_394_c_02000f54.c",
   "assets/code/resource_394_c_02000fb4.c",

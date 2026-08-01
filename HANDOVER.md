@@ -354,6 +354,14 @@ exactly what makes the wrong answer convincing.
 **`bx rN` after `mov ip, pc` is a CALL, not a return.** m2c treats it as a
 return and silently ends the function there; the guard refuses such rows.
 
+**An empty conditional next to a veneer site is a dropped dispatch, not dead
+code.** m2c keeps the branch and discards its only effect whenever that effect
+was choosing a callee, because the callee register reads as dead. The artefact
+left behind is an `if` with nothing in the body — which every reader deletes as
+noise. Ask what the branch was FOR before deleting it. Found at 0x080d320c in
+`semantic/main/080d2d98.c`, where the empty block is
+`r6 = 4; if (r3 <= 0) r6 = 0;`, i.e. the index into the renderer pair.
+
 **Jump-table arms are not independent blocks.** Arms fall through into the
 next arm's head. Drafting arms separately produces a wrong file **that still
 passes guard coverage** — `m2c_guard` counts callees, not control flow. A

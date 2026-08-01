@@ -7,6 +7,42 @@
   },
   "non_c_ranges": [
     {
+      "address": "0x08002344",
+      "size": 512,
+      "kind": "lookup_table",
+      "evidence": "The deliberate-math classification splits this exported Data_08002344 subregion from the two preceding Thumb owners: 256 .hword quarter-sine values, with no reachable instruction or branch target inside it."
+    },
+    {
+      "address": "0x0800f186",
+      "size": 30,
+      "kind": "literal_pool",
+      "evidence": "Directive-only tail of asm/0800ee14.s after the registered executable owner; the .2byte/.4byte values at source lines 450-457 are code-unreachable pool data."
+    },
+    {
+      "address": "0x080160c4",
+      "size": 56,
+      "kind": "literal_pool",
+      "evidence": "Directive-only trailing pool of the registered 0x08016018 module, represented by the fourteen .4byte words in asm/08016018.s."
+    },
+    {
+      "address": "0x08026e72",
+      "size": 14,
+      "kind": "literal_pool",
+      "evidence": "Pool tail following the complete 0x08026080 multi-row owner; asm/08026b44.s labels the subspan as pool-tail data and emits only .2byte/.4byte directives."
+    },
+    {
+      "address": "0x0809586c",
+      "size": 24,
+      "kind": "literal_pool",
+      "evidence": "Six-word directive-only tail pool after the registered 0x08095778 owner and before the exact-C owner at 0x08095884."
+    },
+    {
+      "address": "0x080b987c",
+      "size": 20,
+      "kind": "literal_pool",
+      "evidence": "Five-word interior pool between the registered 0x080b9724 and 0x080b9890 executable ranges; asm/080b9724.s emits only .4byte directives here."
+    },
+    {
       "address": "0x080bf1e8",
       "size": 32,
       "kind": "literal_pool",
@@ -19,13 +55,95 @@
       "evidence": "Two-byte alignment before the exact-C owner at 0x080c0ea8; the reconstruction is the single filler instruction movs r0, r0."
     },
     {
+      "address": "0x080c19b0",
+      "size": 100,
+      "kind": "literal_pool",
+      "evidence": "Twenty-five-word directive-only tail pool after the registered 0x080c1798 owner and before the exact-C owner at 0x080c1a14."
+    },
+    {
+      "address": "0x080d4d50",
+      "size": 32,
+      "kind": "literal_pool",
+      "evidence": "Eight-word embedded pool explicitly excluded between the registered 0x080d4ce8 executable ranges; every word is emitted as .4byte in asm/080d4ce8.s."
+    },
+    {
+      "address": "0x080d5c98",
+      "size": 32,
+      "kind": "literal_pool",
+      "evidence": "Eight-word interior pool explicitly excluded between the two registered 0x080d5c48 executable ranges."
+    },
+    {
+      "address": "0x080d5e40",
+      "size": 20,
+      "kind": "literal_pool",
+      "evidence": "Five-word LiteralPool_080d5e40 tail explicitly excluded from the registered 0x080d5c48 owner."
+    },
+    {
+      "address": "0x080d7862",
+      "size": 26,
+      "kind": "literal_pool",
+      "evidence": "Interior pool explicitly excluded from the complete 0x080d765c multi-row owner; asm/080d77b4.s emits only .2byte/.4byte directives in this subspan."
+    },
+    {
       "address": "0x080dddb8",
       "size": 40,
       "kind": "literal_pool",
       "evidence": "Trailing literal pool of the registered 0x080dd9c0 owner; its PC-relative provenance and exclusion are recorded on that owner."
+    },
+    {
+      "address": "0x080ecbb8",
+      "size": 32,
+      "kind": "literal_pool",
+      "evidence": "Eight-word directive-only pool excluded from the registered 0x080ecae8 multi-row owner."
+    },
+    {
+      "address": "0x080fa164",
+      "size": 8,
+      "kind": "literal_pool",
+      "evidence": "Two-word directive-only tail pool after the registered 0x080f9f6c module and before the semantic owner at 0x080fa16c."
     }
   ],
   "main_owners": [
+    {
+      "entry": "0x0800230c",
+      "evidence": "Reviewed complete 16-byte Thumb leaf at 0x0800230c..0x0800231c. asm/0800230c.s shifts the phase right by 14, turns bit 14 into either 0 or 0x00010000, and negates that result when the shift carry reports original bit 13. The only in-image branch predecessor is the zero-index boundary path in the adjacent lookup owner at 0x0800231c. It has no table access and returns with bx lr.",
+      "executable_ranges": [
+        {
+          "address": "0x0800230c",
+          "size": 16
+        }
+      ]
+    },
+    {
+      "entry": "0x0800231c",
+      "evidence": "Reviewed complete 40-byte Thumb lookup owner at 0x0800231c..0x08002344, with a second public entry Func_08002322 at 0x08002322 six bytes into the shared body. asm/0800231c.s adds 0x4000 only on the first entry, while both paths add 32, select the rounded six-bit bucket from the phase, mirror it across bit 14, read the u16 result from the PC-relative base 0x08002344, and negate it for bit 15. The zero bucket branches to Func_0800230c for exact quadrant values. classification.json explicitly separates 0x08002344..0x08002544 as a 512-byte quarter_sine_table_u16 subregion; that table is declared external by the semantic C and is not in this owner's executable range.",
+      "executable_ranges": [
+        {
+          "address": "0x0800231c",
+          "size": 40
+        }
+      ]
+    },
+    {
+      "entry": "0x080a7440",
+      "evidence": "Reviewed complete 56-byte Thumb owner at 0x080a7440..0x080a7478. out/decomp/diagnose/080a7440/080a7440.s shows the sole prologue (push {r5,lr}), write of zero to halfword state+0x174, the direct Func_080a77a4(0) call, the -1 sentinel branch, byte load state+0x21a on success, and the matching pop/bx return. The fixed state pointer is 0x03001f2c; the direct caller in semantic/main/080a7380.c consumes r0 as the result. src/080a7440.c is deliberately noncanonical exact-match scaffolding (inline asm), so this reviewed source owns the semantic coverage instead.",
+      "executable_ranges": [
+        {
+          "address": "0x080a7440",
+          "size": 56
+        }
+      ]
+    },
+    {
+      "entry": "0x080b6e7c",
+      "evidence": "Reviewed complete 56-byte Thumb table-search leaf at 0x080b6e7c..0x080b6eb4. out/decomp/diagnose/080b6e7c/080b6e7c.s initializes index 0, reads each u16 Data_080c593c entry, compares its low nine bits against r0, returns entry >> 9 on a match, and after a failed comparison sign-tests the same entry for the 0xffff terminator before incrementing. src/080b6eb4.c directly calls it with a masked u16 key and indexes five result tables with the returned 0..6 selection. src/080b6e7c.c is deliberately noncanonical exact-match scaffolding (register pins and inline asm), so this reviewed source owns the semantic coverage instead.",
+      "executable_ranges": [
+        {
+          "address": "0x080b6e7c",
+          "size": 56
+        }
+      ]
+    },
     {
       "entry": "0x080006fc",
       "evidence": "Core-band census row, unindexed leaf, 16 bytes incl. pool. push-free guard: loads the pointer at fixed RAM 0x03007ff0, dereferences it, compares the first word against magic constant 0x68736d53 (\"Smsh\"), and on match TAIL-BRANCHES (bare beq, no bl, no link set) into Func_0800070c passing the same pointer in r0; on mismatch it returns. Func_0800070c is retained asm with manifest evidence approved_compiler_cannot_express_contract (manual high-register/stack-frame contract, tail branch into IWRAM without link) -- expressible here only as an opaque extern called from the guard, not itself convertible. Semantic-only for now: a C tail call compiles to bl+return on this compiler, not the reference's bare beq, so this draft is control-flow-correct but not yet byte-exact (candidate_show.ts: 32 candidate vs 16 reference halfwords). Left for the exact reconstruction to find the right lever rather than guessed at here.",

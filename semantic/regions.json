@@ -5235,6 +5235,18 @@
     },
     {
       "overlay": "resource_3b9",
+      "entry": "0x020011ac",
+      "span_bytes": 24,
+      "evidence": "admitted whole-owner semantic reconstruction; published-callback population (bun tools/overlay_published.ts resource_3b9) -- owner is prologue-started and returning but is reached by no bl at all: its Thumb pointer is written into a script record as a plain word, so both the whole-image call-graph sweep and tools/overlay_unindexed.ts are structurally blind to it. push {lr} at 0x020011ac through pop {r0}/bx r0 at 0x020011bc-0x020011be, then a one-word literal pool at 0x020011c0 and a zero alignment halfword at 0x020011c2, to the next owner prologue at 0x020011c4. Two calls only: clears flag 0x235 (pool word) and sets flag 564 (movs #141 / lsls #2) -- adjacent ids spelled two different ways in one function. Span MEASURED to the epilogue rather than taken from the prologue-to-next-known-start bound. All bl targets resolved through the overlay import-veneer table under the +2 rule (tools/overlay_call_targets.ts). Checked to lie inside the assembled overlay image and not to overlap another recorded owner."
+    },
+    {
+      "overlay": "resource_3b9",
+      "entry": "0x020011c4",
+      "span_bytes": 212,
+      "evidence": "admitted whole-owner semantic reconstruction; published-callback population (bun tools/overlay_published.ts resource_3b9) -- owner is prologue-started and returning but is reached by no bl at all: its Thumb pointer is written into a script record as a plain word, so both the whole-image call-graph sweep and tools/overlay_unindexed.ts are structurally blind to it. push {r5,lr} at 0x020011c4 through pop {r5}/pop {r0}/bx r0 at 0x02001276-0x0200127a, then the seven-word literal pool 0x0200127c-0x02001297, to the next owner prologue at 0x02001298. The r5 spill carries the Func_080770c0(0x8a4) result across the body and is stored as the byte at record+85 on the flag-clear path, where it is necessarily zero. Its second workspace displacement is derived from the FIRST SLOT'S VALUE (subs #56 against 512 gives 456), not from the first displacement -- reading it as 448-56 gives the wrong field. Span MEASURED to the epilogue rather than taken from the prologue-to-next-known-start bound. All bl targets resolved through the overlay import-veneer table under the +2 rule (tools/overlay_call_targets.ts). Checked to lie inside the assembled overlay image and not to overlap another recorded owner."
+    },
+    {
+      "overlay": "resource_3b9",
       "entry": "0x02001298",
       "span_bytes": 884,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr} plus the r8/r9/sl spill) and returning (pop {r3, r5, r6}/mov r8,r3/mov r9,r5/mov sl,r6/pop {r5, r6}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing eight-word literal pool to the next owner's prologue at 0x0200160c (this overlay's own resource_3b9_c_0200160c.c), inside the assembled overlay image and not overlapping another recorded owner"

@@ -2458,8 +2458,8 @@ AlchemyC_020012c4:
 	.space 0x2c
 AlchemyC_020012f0:
 	.space 0x2c
-	.2byte 0x2001
-	.2byte 0x4770
+AlchemyC_0200131c:
+	.space 0x4
 AlchemyC_02001320:
 	.space 0x2c
 AlchemyC_0200134c:

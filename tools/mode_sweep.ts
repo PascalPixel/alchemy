@@ -39,6 +39,7 @@ export const FORK_MODES = [
   "-fthumb-hoist-parameter-save", "-fthumb-minipool-tail-first",
   "-fthumb-entry-saves-descending", "-fthumb-group-control-last",
   "-fthumb-move-before-alu", "-fthumb-orr-dead-input-reuse",
+  "-fthumb-call-arg1-before-arg0",
   "-fthumb-entry-frame-cluster", "-fthumb-literal-before-index-shift",
   "-fthumb-low-constant-before-high-move", "-fthumb-high-move-before-stack-store",
   // The fork has carried this one since the grouped-descriptor work but neither

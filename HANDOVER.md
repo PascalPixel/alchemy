@@ -1970,12 +1970,101 @@ Residue is now **2 lines, 1 owner**; sweep D reports **one** code-suspect gap.
   over the TRUE bounds before planning it — 0x020012c8's figure was quoted
   correctly but only because it had been measured over the true bounds rather
   than the recorded ones.
-- Sweep D also still reports **STALE-SPAN 0x38c0, recorded 28B, compiles to
-  26B**. That is Ivan's promoted-to-exact-C class, sixteen rows tree-wide, and
-  it is a class decision rather than a 3c9 one.
+- ~~Sweep D also still reports STALE-SPAN 0x38c0~~ **GONE** — Ivan's class was
+  ruled and cleared at 406644f1. Sweep D on 3c9 is now one CODE-SUSPECT gap and
+  nothing else.
 
 3c9 is NOT certified and must not be described as closed. Sweeps A/B/C plus
 sweep D plus the tail read all have to come after 0x02002360.
+
+#### 0x02002360 MEASURED WHOLE, not drafted (2026-08-01, venus)
+
+Opened, structurally mapped end to end, and left undrafted on a boundary — the
+fresh part of the shift went to the build-cache incident and a half-read
+4,708-byte row is worse than none. **Every figure below is a re-derivation, not
+a quote from my earlier note, and the next reader owes it the same treatment**
+(see the handoff-measurement rule in the selection procedure). Two of my own
+earlier figures were wrong and are corrected here.
+
+| fact | value |
+|---|---|
+| true bounds | 0x02002360–0x020035c4, span 0x1264 = **4708** |
+| code end | `bx r0` at 0x020035a8, alignment halfword 0x020035aa |
+| trailing pool | 0x020035ac–0x020035c3, six words |
+| call sites | **433** — `distinct_targets=56 veneer=356 prologue=76 unknown=1` |
+| conditional branches | **9** (my earlier note said seven) |
+| stack frame | `sub sp,#136` — a real local buffer, plus six-argument calls |
+
+**The `unknown=1` is RULED and it is not a defect.** It is a genuine in-image
+`bl` at 0x02002af8 to `Func_02005688` — the push-less leaf sweep D turned up
+last shift and which is already drafted. `classify` reports it unknown only
+because it keys on a `push` prologue and that leaf has none. So 356 + 76 + 1 =
+433, fully accounted. Pleasingly, the leaf that sweep D found is called by the
+row that was blocking the overlay's certification.
+
+**SIX interior literal pools, and FOUR of the ten apparent unconditional
+branches are pool words wearing `b.n`.** The real ones, each skipping the pool
+that follows it:
+
+| skip | pool | resumes |
+|---|---|---|
+| `b.n` @0x020023ce | 0x020023d0 (1 word) | 0x020023d4 |
+| `b.n` @0x0200282e | 0x02002830–0x0200285f (12) | 0x02002860 |
+| `b.n` @0x0200292a | 0x0200292c (1 word) | 0x02002930 |
+| `b.n` @0x02002c54 | 0x02002c58–0x02002c6f (6) | 0x02002c70 (**conditional** skip, via the `bne` @0x02002c48) |
+| `b.n` @0x02003062 | 0x02003064–0x02003093 (12) | 0x02003094 |
+| `b.n` @0x020034cc | 0x020034d0–0x020034f7 (10) | 0x020034f8 |
+
+The four fictions are at 0x02002830, 0x02003070, 0x02003080 and 0x020034e0 —
+all four are listed pool addresses. **0x020034e0's fake `b.n` points to
+0x0200393c, which is past this owner's end**; a reader following it leaves the
+function entirely. Cross-check every branch target against the pool address
+list before believing it.
+
+**All six real `b.n` are pool skips, so the row has NO unconditional joins at
+all.** Of the nine conditional branches, two are loop backedges, leaving seven
+forward `if` blocks. This is the same long-not-hard family as 0x020012c8, and
+bigger only by instruction count: 1,918 against 1,438.
+
+**Two 17-iteration loops** (`cmp r7,#16 / bls`, backedges at 0x02003402 and
+0x0200347a), and each body calls this overlay's own **`Func_0200013c`** with
+stack arguments. My earlier note said one loop.
+
+**It publishes THREE of this overlay's own owners, not two.** By the parity
+rule: 0x020083a1 → 0x020003a0, 0x0200b6d1 → 0x020036d0, 0x0200b7c5 →
+0x020037c4. My earlier note listed only the last two.
+
+**The upper bound is confirmed from the callee side**: `bl Func_020035c4` at
+0x02003410 calls the next owner, exactly as 0x020012c8 called 0x020020dc.
+And the trailing pool holds 0x02000240, 0x22b and 0xbb — **the same three
+closing constants as 0x020012c8's trailing pool**, so the two rows end with
+the same idiom and can be checked against each other.
+
+### Same offset, near-identical body, DIFFERENT ANSWER — the cohort rule re-proved (2026-08-01, venus)
+
+Found while measuring 0x02002360, and it is the strongest version of this trap
+seen yet because the pair is *not* two rows in one overlay.
+
+`resource_3c9` and `resource_3a1` each have an owner at **the same image offset
+0x0200013c**, each **472 bytes**, each **226 halfwords**, and they differ in
+**only 11 halfwords**. Both are eight-argument spawner-initialisers with four
+stack arguments and a flags word, and both write `0x02008105` into the
+record's +108 slot — which in each overlay resolves to *that overlay's own*
+0x02000104.
+
+And the table pointer differs: **3c9 loads 0x0200dfb8 (offset 0x5fb8), 3a1
+loads 0x0200876c (offset 0x76c).** Copying either row onto the other would
+verify green and index the wrong table. This is the 37a/37b result met again
+across *different overlays at the same offset*, which is the form most likely
+to look like an obvious reuse.
+
+**It also corroborates an arity correction from a genuinely independent
+source.** `resource_3c9`'s 0x0200013c was drafted by another reading entirely,
+and it independently carries the same eight-argument signature with a flags
+word and a trailing struct pointer that I derived from 3a1's frame arithmetic
+after having wrongly called that row a simple "one-owner close". Two readings
+that never saw each other agreeing on the arity is better evidence than either
+one re-checked.
 
 ### resource_3a1 CLOSED (2026-08-01, venus) — one owner, and it was one owner
 

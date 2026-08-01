@@ -6612,6 +6612,12 @@
       "entry": "0x020029d4",
       "span_bytes": 424,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6} / pop {r0} / bx r0 at 0x02002b3a-0x02002b3e) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_3af 29d4 2b7c, the +2 rule against the raw image), body is branch-free so the span needs no branch walk, read through the fifteen trailing pool words (0x0200d160, 0x026a0000, 0x02720000, 0x02a60000, 0x0200c980, 0x00006666, 0x0000cccc, 0x0200c628, 0x03001ebc, 0x00019999, 0x00001ee1, 0x00000105, 0x00000209, 0x0000092b, 0x00000302) ending 0x02002b7b to the next owner prologue (push {r5, lr} at 0x02002b7c, already banked byte-exact as assets/code/resource_3af_c_02002b7c.c), inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3af",
+      "entry": "0x02001db0",
+      "span_bytes": 480,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5} / pop {r0} / bx r0 at 0x02001f52-0x02001f56) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_3af 1db0 1f90, the +2 rule against the raw image), the body's single branch is the backward beq at 0x02001f08 to 0x02001ef4 (a do-while poll, walked and confirmed to stay inside the span), span read through the fourteen trailing pool words (0x0200d160, 0x0200d208, 0x03001ebc, 0x00019999, 0x0000cccc, 0x000002a6, 0x0000028e, 0x00001e44, 0x0000a015, 0x00026666, 0x00013333, 0x00000261, 0x0200c4ec, 0x00001e45) ending 0x02001f8f to the next owner at 0x02001f90 (already banked byte-exact as assets/code/resource_3af_c_02001f90.c), inside the assembled overlay image and not overlapping another recorded owner"
     }
   ]
 }

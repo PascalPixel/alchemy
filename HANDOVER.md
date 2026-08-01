@@ -7207,6 +7207,71 @@ gap, no overlap and no duplicate.
   `resource_3a4` → `residue=1`; sweep E over 96 → 397 findings; all three
   self-tests pass; sweep D and sweep E both refuse a bogus name with exit 1.
 
+## 5k. THE PROLOGUE-KEYED DOORS ON THE ENFORCEMENT SIDE (2026-08-01, jupiter)
+
+Garet's line: *the fifth blind spot has a fifth blind door.* Two days were spent
+teaching the SWEEPS that a leaf opens with ordinary work and saves no register —
+and the paths that decide what a lane may *do* with a found leaf went on keying
+on `push`. Sweeps that see are worth little behind gates that do not.
+
+Two doors on my side, both now return-based. Garet has the tool side.
+
+### 1. `semantic_regions_sync` — the door that made manual work the process
+
+Its filter required `starts_with_prologue`, so four correctly-ruled leaves were
+rejected with *"no strict inventory row for this owner"* and went in as
+hand-written entries instead.
+
+**The prologue test was never one of this tool's stated checks.** The contract
+at the top of the file lists three, and every one is about substantiating a
+SPAN: positive span, inside the image, no overlap. Opening with `push` speaks to
+none of them — it was an undocumented fourth condition.
+
+**Measured: 204 of the 838 eligible rows return but do not open with a
+prologue, and every one has a positive span.** A quarter of the population.
+
+Loosening it is safe for a reason worth stating, because it is what makes this
+different from weakening a check: **the human is the gate here, not the
+inventory.** `planSync` only ever considers addresses that already have a
+drafted source in `semantic/overlays/`, so a spurious inventory row cannot
+inject an entry on its own. The row supplies a span, and that span still has to
+clear the bounds and overlap tests. A return is still required — a row that
+never returns is not a function. This is a return-based test *replacing* a
+prologue-based one, not the removal of a test.
+
+**And it now refuses loudly and says what it needs.** The old message named a
+problem and no remedy, which is how the tool got routed around without leaving
+a trace. It now names *why* the row is absent — no inventory row at all (the
+case for anything found by a gap or return sweep), veneer, data walk, contained,
+no return, no span — and names the legitimate path: a hand-written entry
+carrying the span *and its evidence*, or re-running the inventory.
+
+### 2. `exact_reading_list` — the door on the conversion queue
+
+`isStrictRow` called itself *"the same filter the semantic lane converts from"*
+and was a hand-copied duplicate that would have silently stayed prologue-keyed
+once the sync gate changed — the fix-one-branch-not-its-twin defect again. It
+now **delegates to the single definition**, `isConvertibleRow`. Two copies of a
+rule drift; one definition cannot.
+
+The door itself is stated outright in `overlay_inventory`: a widened entry
+"never becomes a queue row itself". So a leaf could be discovered, ruled, and
+drafted — and never offered to a lane as work. **The queue gains 204 rows.**
+
+Its self-test asserted the door: *"a prologue-less seed is not an owner"*. That
+assertion is now inverted to *"a returning leaf must be a queue row"*, which is
+the point worth carrying: **a test can be the place a defect is written down and
+defended.** When you remove a rule, go and look at what asserted it.
+
+### Still prologue-keyed, and NOT mine
+
+`overlay_inventory`'s own strict-queue definitions (`starts_with_prologue` at
+the generator level), `overlay_call_targets`' caller classification, `m2c_guard`
+and `overlay_phantom_rows`. Sweep A's caller counting is the one that tagged
+`3a5:0x1c78` `unknown` despite four callers. Those are the tool side and Garet
+is working them; changing the generator's definition would move the ground under
+his instruments mid-shift.
+
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**

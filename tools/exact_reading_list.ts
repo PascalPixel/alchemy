@@ -25,6 +25,7 @@
 // conversion to discover. See `startsInAuditedSpan` below.
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { isConvertibleRow } from "./semantic_regions_sync.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 
@@ -53,15 +54,22 @@ export interface Pairing {
   blocked: boolean;
 }
 
-/** Strict-queue rows only: the same filter the semantic lane converts from. */
+/**
+ * Strict-queue rows only: the same filter the semantic lane converts from.
+ *
+ * "The same filter" is now literally true — it delegates to the ONE definition
+ * in `semantic_regions_sync`. It was a hand-copied duplicate, and a duplicate
+ * would have stayed prologue-keyed after the sync gate stopped being so: the
+ * fix-one-branch-not-its-twin defect that has bitten this project repeatedly.
+ * Two copies of a rule drift; one definition cannot.
+ *
+ * The prologue requirement that lived here was the door on the CONVERSION
+ * QUEUE, and `overlay_inventory` states it outright — a widened entry "never
+ * becomes a queue row itself". So a leaf could be discovered, ruled, and
+ * drafted, and still never be offered to a lane as work.
+ */
 export function isStrictRow(row: Row): boolean {
-  return (
-    row.starts_with_prologue &&
-    row.returns > 0 &&
-    !row.structural_veneer &&
-    !row.data_walk &&
-    (row.contained_by ?? []).length === 0
-  );
+  return isConvertibleRow(row);
 }
 
 /**
@@ -139,8 +147,12 @@ function selfTest(): void {
   if (isStrictRow({ ...base, returns: 0 })) throw new Error("a non-returning row is not an owner");
   if (isStrictRow({ ...base, contained_by: ["x"] }))
     throw new Error("a contained row is a fragment, not an owner");
-  if (isStrictRow({ ...base, starts_with_prologue: false }))
-    throw new Error("a prologue-less seed is not an owner");
+  // A LEAF MUST BE A QUEUE ROW. This assertion used to demand the opposite —
+  // "a prologue-less seed is not an owner" — which was the conversion queue's
+  // prologue-keyed door written down as a test. A leaf returns; that is what
+  // makes it a function.
+  if (!isStrictRow({ ...base, starts_with_prologue: false }))
+    throw new Error("a returning leaf must be a queue row");
 
   // The two intervals below are adjacent-but-not-touching, which is exactly the
   // shape that produced the five backed-out conversions: a two-byte gap at

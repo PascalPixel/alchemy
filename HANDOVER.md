@@ -134,6 +134,63 @@ three callers — 0x08009e7c (0x27c bytes), 0x08015afc (0x278), 0x080f0024
 (0x230). One buffer, three routines. Unifying by slot address collapses
 distinct functions into one, which is the 0x0808c4f8 disease.
 
+### The frame-local two-entry renderer table — how the `[rN, rM]` remainder reads
+
+Most of the veneer audit's hard remainder is `ldr r4, [rN, rM]` — a callee
+loaded from an indexed table, which looks like it needs runtime state to
+resolve. In the effect-scene family it usually does not, because the table is
+built in the caller's own frame from two adjacent allocator slots, and the
+index is one bit of a loop counter. The idiom, identical in three files:
+
+1. `Func_080ed408(46, …)` / `Func_080c9000(46, …)` publishes slot 46; the
+   caller immediately reads `0x03001e50 + 184` and stores it to a stack slot.
+2. The same for slot 47 at `+188`, stored to the NEXT stack word — written as
+   `str r3, [rX, #4]` where rX is the address of the first slot.
+3. That base address is parked in a third stack slot.
+4. Each site does `ldr r4, [rIndex, rBase]` with `rIndex = (counter & 1) << 2`.
+
+So a two-element local array `Renderer renderers[2] = { slot46, slot47 }` and
+a dispatch of `renderers[counter & 1]`. Confirmed at:
+
+| file | slots at | base at | index |
+|---|---|---|---|
+| `semantic/main/080db264.c` | `[sp,#36]`, `[sp,#40]` | `[sp,#12]` | wave parity |
+| `semantic/main/080f7460.c` | `[sp,#48]`, `[sp,#52]` | `[sp,#12]` | particle index parity |
+| `semantic/main/080dd2c4.c` | `[sp,#48]`, `[sp,#52]` | `[sp,#28]` | emitter index parity |
+
+**Both directions of structural damage show up around this idiom**, and both
+were repaired by reading it:
+
+- `080db264` carried `if (variant == 0) { A } else { A }` with two
+  byte-identical bodies. The branch is real (`cmp r3,#0; bne` at 0x080db43c);
+  the difference is the callee — one arm always uses entry 0, the other
+  indexes by parity. A collapse, dressed as a duplication.
+- `080dd2c4`'s particle loop makes two back-to-back calls a draft read as the
+  same routine twice. They are renderer 46 then renderer 47.
+- `080f7460` read the index CORRECTLY and even named both renderers — then
+  passed the chosen one as a seventh ARGUMENT. Arity is six.
+
+Do NOT pattern-match this across files. It is confirmed per file by reading
+the two slot stores and the base store in that function's own prologue; a
+file that does not show all three is not this idiom.
+
+The caveat above applies unchanged: this settles which pointer is called,
+never what either slot contains.
+
+### A second site for the two-argument form of 0x03000164
+
+`0x080f75c6` in `semantic/main/080f7460.c` reaches 0x03000164 with r0 and r1
+set and **r2 a live leftover** — its last write on the path is
+`ldr r2, [pc, #100]` at 0x080f75a0, the DMA control word 0x84000008 from the
+loop just above. The draft's third argument was a literal `0` that appears
+nowhere in the assembly. This is the second independent two-argument site
+after 0x080bd87e in `semantic/main/080bd850.c`, where nothing in the whole
+function writes r2 at all. Two different instruments, not two drafts.
+
+0x03000164 itself stays **UNESTABLISHED** — still the exact-lane question.
+Nothing here says what it does; it says how many arguments these two callers
+hand it.
+
 ### A struct field is not always a pointer: tagged words
 
 `0x0808d9a4` and `0x0808e23c` both dispatch through **field +8 of an owner

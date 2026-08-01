@@ -7,6 +7,48 @@
 #define S32_AT(p, o) (*(s32 *)((u8 *)(p) + (o)))
 #define PTR_AT(p, o) (*(void **)((u8 *)(p) + (o)))
 
+/*
+ * __call_via_rN veneer sites, resolved per-site against the ROM. All four
+ * `bl 0x080072f4` sites are __call_via_r4 -- 0x080072f4 is index 4 of the
+ * 0x080072e4 bank -- so each is an indirect call through r4, not a call to a
+ * function at 0x080072f4. The draft's `void Func_080072f4();` prototype, left
+ * with an empty argument list, was the tell that no consistent signature could
+ * be found for it.
+ *
+ * A TWO-ENTRY RENDERER TABLE LIVES IN THIS FRAME, the same idiom as
+ * semantic/main/080db264.c and semantic/main/080f7460.c. r5 = 0x03001e50,
+ * Func_080048b0's slot table; +184 (slot 46) is read at 0x080dd358 and stored
+ * to [sp, #48], +188 (slot 47) is read at 0x080dd36c and stored to [sp, #52]
+ * by `str r3, [r5, #4]` at 0x080dd374 with r5 = sp + 48. The base address
+ * sp + 48 is parked in [sp, #28] at 0x080dd372. The two reads bracket the
+ * `Func_080ed408(47, ...)` publish at 0x080dd366.
+ *
+ * 0x080dd538 (variant == 0 arm) and 0x080dd578 (the other arm) -- r4 is
+ * `ldr r4, [r0, r5]` with r5 = [sp, #28] (the table base) and r0 = (r9 & 1)
+ * shifted left by two, r9 being the emitter index i. Both arms select
+ * renderers[i & 1]; the arms differ in their width and source tables, not in
+ * their dispatch. Read at 0x080dd512-0x080dd516 and 0x080dd552-0x080dd556.
+ *
+ * 0x080dd696 -- r4 is `ldr r4, [sp, #48]` at 0x080dd692: entry 0, slot 46.
+ * 0x080dd6c6 -- r4 is `ldr r4, [r6, #4]` at 0x080dd6c2 with r6 = [sp, #28]:
+ * entry 1, slot 47.
+ *
+ * STRUCTURE: the particle loop's two back-to-back calls are NOT the same call
+ * repeated with different arguments. They go to DIFFERENT renderers -- 46 then
+ * 47 -- and that difference was invisible to a draft that read the callee load
+ * as dead code.
+ *
+ * ARITY: six at every site. r0..r3 are set and two more words go out at
+ * [sp, #0] and [sp, #4]. r4 is above the argument registers, so the
+ * register-index regularity does not apply and no argument slot holds the
+ * callee.
+ *
+ * UNCERTAINTY, left standing: what slots 46 and 47 CONTAIN is not settled
+ * here. The slot table unifies the addressing, never the contents.
+ */
+typedef void (*Renderer_080dd2c4)(
+    s32 target, const void *source, s32 x, s32 y, s32 width, s32 height);
+
 struct Particle_080dd2c4 {
     s32 x;
     s32 y;
@@ -24,7 +66,6 @@ u32 Func_08004458(void);
 s32 Func_080022fc(s32, s32);
 void Func_080041d8(const void *, s32);
 void Func_080b50e8(s32);
-void Func_080072f4();
 void Func_080f9010(s32);
 void Func_080d6888(s16, s32, s32, s32, s32);
 void Func_080e155c(s32, u32);
@@ -46,6 +87,7 @@ s32 Func_080dd2c4(void *scene, s32 variant)
     s32 frame_count;
     s32 frame;
     s32 i;
+    Renderer_080dd2c4 renderers[2];
 
     PTR_AT(runtime, 0x7828) = scene;
     Func_080cd594(1);
@@ -60,7 +102,9 @@ s32 Func_080dd2c4(void *scene, s32 variant)
         *(volatile s32 *)0x04000028 = (s32)0xffff9000;
 
     Func_080ed408(0x2e, 7, 7, 3, 1);
+    renderers[0] = *(Renderer_080dd2c4 *)0x03001f08;
     Func_080ed408(0x2f, 7, 7, 7, 1);
+    renderers[1] = *(Renderer_080dd2c4 *)0x03001f0c;
 
     emitter_count = U8_AT((void *)0x080eeb5e, (u32)PTR_AT(scene, 0x18));
     frame_count = emitter_count * 4 + 0x38;
@@ -112,7 +156,7 @@ s32 Func_080dd2c4(void *scene, s32 variant)
 
                     if (variant == 0) {
                         u8 width = U8_AT((void *)0x080eeb48, table);
-                        Func_080072f4(
+                        renderers[i & 1](
                             graphics_source,
                             runtime + U16_AT((void *)0x080eeb4e, table * 2),
                             emitter->x - (width >> 1), emitter->y - height,
@@ -122,7 +166,7 @@ s32 Func_080dd2c4(void *scene, s32 variant)
                         u8 width = U8_AT((void *)0x080eeb54, table);
                         if (height > maximum)
                             height = maximum;
-                        Func_080072f4(
+                        renderers[i & 1](
                             graphics_source,
                             runtime + U16_AT((void *)0x080eeb58, table * 2),
                             emitter->x - (width >> 1), emitter->y - height,
@@ -168,12 +212,12 @@ s32 Func_080dd2c4(void *scene, s32 variant)
                 s8 height = S8_AT((void *)0x080eeb80, phase);
                 s32 source = base + U16_AT((void *)0x080eeb88, phase * 2);
 
-                Func_080072f4(
+                renderers[0](
                     graphics_source, runtime + source,
                     particle->x - half_width,
                     particle->y - ((height + (height < 0)) >> 1),
                     half_width, height);
-                Func_080072f4(
+                renderers[1](
                     graphics_source, runtime + source,
                     particle->x,
                     particle->y - ((height + (height < 0)) >> 1),

@@ -1,5 +1,53 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ *
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320.  A `bl` into that range
+ * is an indirect call through the named register.
+ *
+ * This file declared FOUR phantom functions -- Func_080072f0, Func_080072f4,
+ * Func_080072f8 and Func_08007300 -- which are __call_via_r3, r4, r5 and r7.
+ * There are three real callees behind them, and the mapping is NOT one
+ * prototype to one callee:
+ *
+ *   __call_via_r3  ->  0x03001388, the word copy (2 sites)
+ *                  ->  0x030001d8, the square-root gateway (2 sites)
+ *   __call_via_r4  ->  the renderer at 0x03001f08 (6 sites)
+ *                  ->  the renderer at 0x03001f0c (2 sites)
+ *   __call_via_r5  ->  the renderer at 0x03001f08 (1 site)
+ *   __call_via_r7  ->  the renderer at 0x03001f0c (1 site)
+ *
+ * So the SAME prototype covers two different callees, and two different
+ * prototypes cover the same callee.  Every site below was mapped
+ * individually; none of it was pattern-matched.
+ *
+ * The mapping is checkable rather than assumed.  The ten renderer sites in
+ * ROM order dispatch r4,r4,r4,r4,r5,r4,r7,r4,r4,r4; the ten renderer calls in
+ * source order are f4,f4,f4,f4,f8,f4,7300,f4,f4,f4.  The registers agree at
+ * all ten positions, which is what pins each C statement to its ROM site.
+ *
+ * The two renderer slots are established by the EXACT src/080cef64.c:
+ * Func_080ed408(46,7,7,...) publishes at Data_03001e50+184 = 0x03001f08 and
+ * (47,7,7,...) at +188 = 0x03001f0c.  This owner loads both once, at
+ * 0x080d175a and 0x080d176c, and stashes them -- modelled as the two locals
+ * below rather than as a re-read per call.
+ *
+ * On the square-root gateway: this file's own header already recorded that it
+ * "only consumes its first argument", and it was right, while its call sites
+ * passed three.  That reading was reached from usage; mine was reached from
+ * register liveness at the branch (only r0 is ever set; r1 and r2 hold live
+ * intermediates from computing r0).  Two independent methods agreeing is
+ * worth more than two drafts agreeing -- which is exactly the trap that made
+ * me type this routine with three arguments in batch 3.  Still not asserted
+ * as a name; the type says arity and return, and the comment says the rest.
+ */
 #include "types.h"
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+
+typedef s32 (*Renderer_080d1714)(s32 context, void *source, s32 x, s32 y,
+                                 u32 width, s32 height);
+typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
+typedef s32 (*SquareRootGateway_080d1714)(s32 sumOfSquares);
 
 /*
  * Complete owner reconstruction for the 400-frame scene renderer.  The body
@@ -12,9 +60,6 @@ s32 Func_08002dd8(s32);
 s32 Func_08004c1c(s32);
 s32 Func_08004c6c(s32);
 s32 Func_08004cb4(s32 *);
-s32 Func_080072f4();
-s32 Func_080072f8(s32, void *, s32, s32, s32, s32);
-s32 Func_08007300(s32, s32, s32, s32, u32, s32);
 s32 Func_08009008(s32, s32 *, s32, s32);
 s32 Func_080b5040(s32, s32, s32);
 s32 Func_080b50e8(s32);
@@ -38,7 +83,6 @@ s32 Func_080044d0(s32, s32);
 s32 Func_080049ac(void);
 s32 Func_080051d8();
 s32 Func_08005340();
-s32 Func_080072f0();
 s32 Func_08009038();
 s32 Func_080b5038();
 s32 Func_080dbb24();
@@ -201,6 +245,9 @@ void Func_080d1714(s32 *arg0) {
     void *var_r7_2;
     void *var_r7_4;
     void *var_r9_9;
+    /* Loaded once at 0x080d175a and 0x080d176c, as the ROM does. */
+    Renderer_080d1714 publish_46 = (Renderer_080d1714)*(u32 *)0x03001f08;
+    Renderer_080d1714 publish_47 = (Renderer_080d1714)*(u32 *)0x03001f0c;
 
     sp64 = M2C_FIELD((void *)0x03001EF0, s32 *, 0);
     sp60 = *(s32 *)0x03001E80;
@@ -214,7 +261,7 @@ void Func_080d1714(s32 *arg0) {
     Func_080ed408(0x2F, 7, 7, 3, 3);
     sp58 = M2C_FIELD((void *)0x03001EF0, s32 *, 0x1C);
     temp_r0 = Func_08002f40(0x82);
-    Func_080072f0(0x05000000, temp_r0, 0x80, 0x03001388);
+    ((WordCopy)0x03001388)((void *)0x05000000, (const void *)temp_r0, 0x80);
     Func_08005340(temp_r0 + 0x80, (s32) sp5C);
     Func_08005340(Func_08002f40(0x73), sp4C);
     M2C_FIELD(sp5C, s32 *, 0x7780) = 2;
@@ -239,7 +286,7 @@ void Func_080d1714(s32 *arg0) {
             temp_r3_2 = (s32) M2C_FIELD(temp_r5, s32 *, 8) >> 8;
             temp_r3_3 = (s32) M2C_FIELD(temp_r5, s32 *, 0x10) >> 8;
             temp_r1 = temp_r3_3 * temp_r3_3;
-            *(var_r4 + &sp124) = Func_080072f0((temp_r3_2 * temp_r3_2) + temp_r1, temp_r1, 0, 0x030001D8) >> 7;
+            *(var_r4 + &sp124) = ((SquareRootGateway_080d1714)0x030001d8)((temp_r3_2 * temp_r3_2) + temp_r1) >> 7;
             *(var_r4 + &sp104) = 0;
             M2C_FIELD(temp_r5, s32 *, 0x48) = 0;
             var_r9 += 1;
@@ -368,7 +415,7 @@ loop_25:
         if (var_r0 < 0) {
             var_r0 += 3;
         }
-        Func_080072f4(sp64, sp5C + ((Func_080022fc(var_r0 >> 2, 3) * 0xC00) + ((0x30 - var_r5_2) * 0x30)), 0x20, 0x70 - var_r5_2, 0x30U, var_r5_2);
+        publish_46(sp64, sp5C + ((Func_080022fc(var_r0 >> 2, 3) * 0xC00) + ((0x30 - var_r5_2) * 0x30)), 0x20, 0x70 - var_r5_2, 0x30U, var_r5_2);
     }
     if ((u32) (sp50 - 0x30) <= 0x6FU) {
         var_r5_3 = (sp50 * 2) - 0x60;
@@ -379,7 +426,7 @@ loop_25:
         if (var_r0_2 < 0) {
             var_r0_2 += 3;
         }
-        Func_080072f4(sp64, sp5C + ((Func_080022fc(var_r0_2 >> 2, 3) * 0xC00) + ((0x40 - var_r5_3) * 0x30)), 0x20, 0x30, 0x30U, var_r5_3);
+        publish_46(sp64, sp5C + ((Func_080022fc(var_r0_2 >> 2, 3) * 0xC00) + ((0x40 - var_r5_3) * 0x30)), 0x20, 0x30, 0x30U, var_r5_3);
     }
     temp_r5_4 = sp50 - 0xA0;
     if (temp_r5_4 <= 0xEFU) {
@@ -390,8 +437,8 @@ loop_25:
         temp_r5_5 = sp5C + (Func_080022fc(var_r0_3 >> 2, 3) * 0xC00);
         temp_r1_2 = temp_r5_5;
         sp8 = sp54;
-        Func_080072f4(sp64, temp_r1_2, 8, 0, 0x30U, 0x40);
-        Func_080072f4(sp64, temp_r5_5, 8, 0x40, 0x30U, 0x40);
+        publish_46(sp64, temp_r1_2, 8, 0, 0x30U, 0x40);
+        publish_46(sp64, temp_r5_5, 8, 0x40, 0x30U, 0x40);
     }
     if (sp50 <= 0x9F) {
         var_r9_4 = 0;
@@ -407,7 +454,7 @@ loop_25:
                 temp_r2_2 = (s32) M2C_FIELD(&sp8C, s32 *, 0) >> 1;
                 M2C_FIELD(&sp8C, s32 *, 0) = temp_r2_2;
                 if ((s32) M2C_FIELD(var_r6_3, s32 *, 4) <= 0x3FFFFF) {
-                    Func_080072f8(sp64, sp5C + 0x2400, temp_r2_2 - 0xC, M2C_FIELD(&sp8C, s32 *, 4) - 0xC, 0x10, 0x10);
+                    publish_46(sp64, sp5C + 0x2400, temp_r2_2 - 0xC, M2C_FIELD(&sp8C, s32 *, 4) - 0xC, 0x10, 0x10);
                 }
                 temp_r3_6 = M2C_FIELD(var_r6_3, s32 *, 8);
                 if (temp_r3_6 > 0x18) {
@@ -448,7 +495,7 @@ loop_25:
         Func_080d6750(M2C_FIELD(sp5C, void **, 0x7828));
         Func_080dbb24(9, 0x178, 2U);
         temp_r0_3 = Func_08002f40(0x88);
-        Func_080072f0(0x05000000, temp_r0_3, 0x80, 0x03001388);
+        ((WordCopy)0x03001388)((void *)0x05000000, (const void *)temp_r0_3, 0x80);
         Func_08005340(temp_r0_3 + 0x80, (s32) (sp5C + 0x3600));
         var_r3_2 = (s32 *)0x02010018;
         var_r9_5 = 0;
@@ -549,7 +596,7 @@ loop_105:
                 temp_r2_5 = temp_r3_11 * temp_r3_11;
                 temp_r3_12 = (s32) M2C_FIELD(var_r6_4, s32 *, 8) >> 8;
                 temp_r1_3 = temp_r3_12 * temp_r3_12;
-                temp_r0_7 = Func_080072f0((temp_r3_10 * temp_r3_10) + temp_r2_5 + temp_r1_3, temp_r1_3, temp_r2_5, 0x030001D8) >> 9;
+                temp_r0_7 = ((SquareRootGateway_080d1714)0x030001d8)((temp_r3_10 * temp_r3_10) + temp_r2_5 + temp_r1_3) >> 9;
                 if (temp_r0_7 != 0) {
                     Func_080e3944((s32) var_r6_4, &sp8C);
                     M2C_FIELD(&sp8C, s32 *, 0) = (s32) (((s32) M2C_FIELD(&sp8C, s32 *, 0) >> 0x11) + (sp44 >> 0x11) + 0x20);
@@ -566,7 +613,7 @@ loop_105:
                     }
                     temp_r4_2 = 6 - Func_080022ec(var_r0_4 - 0xAA, 0x24);
                     temp_r0_8 = temp_r4_2 * 2;
-                    Func_080072f4(sp64, sp4C + M2C_FIELD((temp_r0_8 - 2), u16 *, 0x080EDE48), M2C_FIELD(&sp8C, s32 *, 0) - ((s32) (temp_r4_2 + (temp_r4_2 >> 0x1F)) >> 1), M2C_FIELD(&sp8C, s32 *, 4) - temp_r4_2, temp_r4_2, temp_r0_8);
+                    publish_47(sp64, sp4C + M2C_FIELD((temp_r0_8 - 2), u16 *, 0x080EDE48), M2C_FIELD(&sp8C, s32 *, 0) - ((s32) (temp_r4_2 + (temp_r4_2 >> 0x1F)) >> 1), M2C_FIELD(&sp8C, s32 *, 4) - temp_r4_2, temp_r4_2, temp_r0_8);
                     temp_r5_9 = M2C_FIELD(var_r6_4, s32 *, 0);
                     M2C_FIELD(var_r6_4, s32 *, 0) = (s32) (temp_r5_9 - Func_080022ec(temp_r5_9, temp_r0_7));
                     temp_r5_10 = M2C_FIELD(var_r6_4, s32 *, 4);
@@ -584,7 +631,7 @@ loop_105:
                 if (var_sl > 0) {
                     temp_r4_3 = Func_080022ec(var_sl, 0xA) + 1;
                     temp_r0_9 = temp_r4_3 * 2;
-                    Func_08007300(sp64, sp4C + M2C_FIELD((temp_r0_9 - 2), u16 *, 0x080EDE48), ((sp44 >> 0x11) - ((s32) (temp_r4_3 + (temp_r4_3 >> 0x1F)) >> 1)) + 0x20, ((sp48 >> 0x10) - temp_r4_3) - 4, temp_r4_3, temp_r0_9);
+                    publish_47(sp64, sp4C + M2C_FIELD((temp_r0_9 - 2), u16 *, 0x080EDE48), ((sp44 >> 0x11) - ((s32) (temp_r4_3 + (temp_r4_3 >> 0x1F)) >> 1)) + 0x20, ((sp48 >> 0x10) - temp_r4_3) - 4, temp_r4_3, temp_r0_9);
                 }
             }
             var_fp_2 = 0;
@@ -628,7 +675,7 @@ loop_117:
                         }
                         temp_r4_4 = 3 - Func_080022ec(var_r0_5 - 0xAA, 0x5A);
                         temp_r0_11 = temp_r4_4 * 2;
-                        Func_080072f4(sp64, sp4C + M2C_FIELD((temp_r0_11 - 2), u16 *, 0x080EDE48), M2C_FIELD(&sp8C, s32 *, 0) - ((s32) (temp_r4_4 + (temp_r4_4 >> 0x1F)) >> 1), M2C_FIELD(&sp8C, s32 *, 4) - temp_r4_4, temp_r4_4, temp_r0_11);
+                        publish_46(sp64, sp4C + M2C_FIELD((temp_r0_11 - 2), u16 *, 0x080EDE48), M2C_FIELD(&sp8C, s32 *, 0) - ((s32) (temp_r4_4 + (temp_r4_4 >> 0x1F)) >> 1), M2C_FIELD(&sp8C, s32 *, 4) - temp_r4_4, temp_r4_4, temp_r0_11);
                         M2C_FIELD(var_r5_6, s32 *, 0) = (s32) (M2C_FIELD(var_r5_6, s32 *, 0) + M2C_FIELD(var_r5_6, s32 *, 0xC));
                         temp_r2_6 = M2C_FIELD(var_r5_6, s32 *, 0x10);
                         M2C_FIELD(var_r5_6, s32 *, 4) = (s32) (M2C_FIELD(var_r5_6, s32 *, 4) + temp_r2_6);
@@ -676,7 +723,7 @@ loop_133:
                 if (var_r4_4 > 2) {
                     var_r4_4 = 2;
                 }
-                Func_080072f4(sp64, sp5C + M2C_FIELD((var_r4_4 * 2), u16 *, 0x080EE17E), M2C_FIELD(var_r6_5, s32 *, 0), M2C_FIELD(var_r6_5, s32 *, 4) - M2C_FIELD(var_r4_4, u8 *, 0x080EE17A), (u32) M2C_FIELD(var_r4_4, u8 *, 0x080EE174), (s32) M2C_FIELD(var_r4_4, u8 *, 0x080EE177));
+                publish_47(sp64, sp5C + M2C_FIELD((var_r4_4 * 2), u16 *, 0x080EE17E), M2C_FIELD(var_r6_5, s32 *, 0), M2C_FIELD(var_r6_5, s32 *, 4) - M2C_FIELD(var_r4_4, u8 *, 0x080EE17A), (u32) M2C_FIELD(var_r4_4, u8 *, 0x080EE174), (s32) M2C_FIELD(var_r4_4, u8 *, 0x080EE177));
                 M2C_FIELD(var_r6_5, s32 *, 0) = (s32) (M2C_FIELD(var_r6_5, s32 *, 0) - 8);
                 M2C_FIELD(var_r6_5, s32 *, 4) = (s32) (M2C_FIELD(var_r6_5, s32 *, 4) + 2);
                 if (sp50 < (s32) (sp10 + 8)) {
@@ -707,7 +754,7 @@ loop_133:
                         }
                         temp_r4_5 = 3 - Func_080022ec(var_r0_6 - 0xAA, 0x5A);
                         temp_r0_12 = temp_r4_5 * 2;
-                        Func_080072f4(sp64, sp4C + M2C_FIELD((temp_r0_12 - 2), u16 *, 0x080EDE48), M2C_FIELD(&sp8C, s32 *, 0) - ((s32) (temp_r4_5 + (temp_r4_5 >> 0x1F)) >> 1), M2C_FIELD(&sp8C, s32 *, 4) - temp_r4_5, temp_r4_5, temp_r0_12);
+                        publish_46(sp64, sp4C + M2C_FIELD((temp_r0_12 - 2), u16 *, 0x080EDE48), M2C_FIELD(&sp8C, s32 *, 0) - ((s32) (temp_r4_5 + (temp_r4_5 >> 0x1F)) >> 1), M2C_FIELD(&sp8C, s32 *, 4) - temp_r4_5, temp_r4_5, temp_r0_12);
                         var_fp_4 += 1;
                         sp20 += 0x924;
                         var_r5_7 += 0x1C;

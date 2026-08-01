@@ -928,7 +928,27 @@ grind rather than a close.** A truthful "this one is ordinary work" is worth
 more than a forced closure, and the ranking cannot see row size — it sees
 unaccounted bytes, which is a different quantity.
 
-Two cautions the procedure does not remove:
+**WHAT THE METRIC CANNOT SEE, stated because a procedure that does not say
+so is the defect we spent this night correcting.** The ranking measures
+UNACCOUNTED BYTES. The cost of a shift is ROWS REMAINING. Those are different
+quantities and they come apart badly:
+
+- **resource_395 ranks FIRST on 8 gap bytes and is a grind, not a close** — ten
+  residue owners behind those 8 bytes, plus a PROLOGUE-SUSPECT tail. Eight
+  bytes of unaccounted image says almost nothing about ten functions that must
+  each be read, drafted and diffed.
+- The converse also holds: resource_3b9 ranked high on 10 gap bytes and closed
+  in one sitting, because its residue was ZERO and the 10 bytes were one row's
+  own return and pool.
+
+So the metric finds overlays that are nearly ACCOUNTED FOR, which is necessary
+for closure and nowhere near sufficient. **Always pair the rank with the
+deduplicated residue-owner count before committing to an overlay**, and treat
+the pair as the estimate — bytes alone will send you at a grind wearing a
+close's clothes. Keep such overlays ON the ranking with the annotation rather
+than dropping them: they are real work, just not one-sitting work.
+
+Two further cautions:
 
 - **A small burden is not a small overlay.** resource_3b9 ranks second by
   code-suspect bytes and is 5.9 KB of drafted rows. The ranking finds overlays
@@ -938,6 +958,35 @@ Two cautions the procedure does not remove:
   holes in the audit itself and currently reports `gaps=0`. It answers "is the
   bookkeeping self-consistent", not "what should I work on". Vale referred to
   it as the picker on 2026-08-01 and corrected it when told.
+
+### RULE: agreement between instruments that FAIL DIFFERENTLY is the strong evidence
+
+Two sightings in this lane, and Garet reached the same epistemics independently
+in his, which is the reason it is written as a rule rather than as a habit.
+
+The weak version of a confirmation is *one instrument found it first*. The
+strong version is *two instruments that cannot fail the same way named the same
+thing*:
+
+- **resource_37a's 0x020025fc.** Sweep D is unkeyed — it looks at unaccounted
+  bytes and has no idea what a function looks like. Sweep A is keyed — it walks
+  BL targets and cannot see anything nothing calls. They have no shared
+  failure mode, and both named that address. That is worth more than either
+  finding it twice.
+- **resource_3c9's +98 byte.** 0x02003660 is the only orbit step that READS the
+  counter; 0x020056a0 is the only spawner that WRITES it. Two rows drafted
+  hours apart, neither aware of the other, agreeing on a field's role.
+
+The practical form: when you want to believe a result, **look for a second
+instrument whose failure mode is unrelated to the first's**, and prefer it over
+running the first one again. Re-running a tool tests flakiness; a differently
+built instrument tests the answer. This is also why the liveness control works
+— a bogus overlay name and a known-residue overlay fail in opposite directions
+from the sweep you actually care about.
+
+The inverse is the warning: two checks that share a mechanism agreeing tells
+you almost nothing. Sweeps A and B are NOT independent populations (see below),
+so their both being empty is one fact, not two.
 
 ## Overlay closure standard (2026-08-01) — supersedes any earlier claim
 
@@ -1232,6 +1281,38 @@ That is the difference between a cohort and a copy-paste.
 
 The 17-instance integrator is the same family as resource_3a4's 0x020000bc,
 which used +36/+40/+44 where these use +68/+72/+76. Every one of the 17 is core.
+
+#### TWO OVERLAYS CAN SHARE A HEAD TABLE AND SHARE NO ANSWERS (2026-08-01, venus)
+
+The strongest case in the tree against carrying a reading across overlays, and
+it is strong precisely because everything that could license inheritance is
+present.
+
+resource_37a and resource_37b both open with a DESCRIPTOR TABLE filling the
+first 0x30 bytes: five function pointers at offsets 0xc, 0x14, 0x1c, 0x24 and
+0x2c, stride 8, aimed at five stubs beginning at 0x30. Same table. Same five
+slots, in the same order. All five bodies IDENTICAL BYTE FOR BYTE — four
+constant getters and one return-zero stub. Nothing calls any of them; all ten
+are published only.
+
+And every address returned is different:
+
+    37b  0x0200a5c0  0x0200a698  0x0200a6bc  0x0200a80c
+    37a  0x0200aafc  0x0200abec  0x0200ac14  0x0200ad34
+
+**That is a fact about the LOADER, not about the functions.** The shape is a
+publishing convention — the loader hands each overlay the same head layout and
+each overlay fills it with its OWN per-overlay addresses. The shared structure
+is the mechanism by which the answers differ, so finding it is a reason to
+resolve every pool word, never a reason to skip one.
+
+**The seductive form of this mistake is not "copy the file".** Nobody does
+that. It is *"I already read this one"* — recognising the shape, feeling the
+recognition as knowledge, and carrying across the thing the shape does not
+contain. The shape is what repeats; the address is what the row is FOR. Same
+error as Ivan's 191 getters one level up: there it was 191 rows in one
+population, here it is two whole overlays, and it resolves the same way.
+Resolve the pool word per row. Always.
 
 #### NEVER TAKE A COHORT ROW'S SPAN FROM ITS SHAPE (2026-08-01, venus)
 

@@ -1248,73 +1248,8 @@ AlchemyC_02000030:
 	.4byte 0x47704800
 	.2byte 0xbbc8
 	.2byte 0x0200
-	push	{lr}
-	ldr	r3, [pc, #188]
-	movs	r2, #225
-	lsls	r2, r2, #1
-	adds	r3, r3, r2
-	movs	r2, #0
-	ldrsh	r3, [r3, r2]
-	subs	r3, #1
-	cmp	r3, #34
-	bhi.n	.L_02000128
-	ldr	r2, [pc, #172]
-	lsls	r3, r3, #2
-	ldr	r3, [r3, r2]
-	mov	pc, r3
-	.4byte 0x02008118
-	.4byte 0x02008118
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x0200811c
-	.4byte 0x0200811c
-	.4byte 0x0200811c
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x02008120
-	.4byte 0x02008120
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x02008124
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x02008124
-	.4byte 0x02008128
-	.4byte 0x02008128
-	.4byte 0x0200811c
-	.4byte 0xe0064807
-	.4byte 0xe0044807
-	.4byte 0xe0024807
-	.2byte 0x4807
-	.2byte 0xe000
-.L_02000128:
-	ldr	r0, [pc, #28]
-	pop	{r1}
-	bx	r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0200808c
-	.4byte 0x0200bc0c
-	.4byte 0x0200bccc
-	.4byte 0x0200bd2c
-	.4byte 0x0200be04
-	.2byte 0xbbf4
-	.2byte 0x0200
+AlchemyC_02000070:
+	.space 0xdc
 	push	{lr}
 	ldr	r3, [pc, #248]
 	movs	r2, #225

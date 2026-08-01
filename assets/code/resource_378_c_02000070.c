@@ -71,6 +71,14 @@ typedef signed int s32;
  * assets/code/resource_378_c_02000030.c, which reads +8 and +0x10 of a record
  * as the two coordinates it differences.
  *
+ * THE SELECTOR ADDRESS IS BUILT, NOT FOLDED.  The reference loads the pool
+ * word 0x02000240 and reaches +450 with `movs r2,#225 / lsls r2,#1 / adds
+ * r3,r3,r2`; a folded `(u8 *)0x02000240 + 450` pools 0x02000402 instead and
+ * costs the head six bytes, which then puts the whole jump table four low
+ * once the assembler realigns.  The `s32 off = 450;` local in its own block
+ * is what forces the build -- the same lever that closed the dispatcher head
+ * of resource_3b9:0x02001a4c.
+ *
  * Uncertainties.  The record layout above is read off the data, not off a
  * consumer in this overlay, so the fields at +12 and +20 are named by position
  * only.  Why sub-state 35 shares the 10/11/12 table, and why 29 and 32 share
@@ -89,12 +97,17 @@ extern u8 Data_0200bd2c[];
 extern u8 Data_0200be04[];
 
 /* Shared cross-overlay scene-record block; +450 is the scene sub-state. */
-#define SCENE_SUB_STATE_02000070 (*(s16 *)((u8 *)0x02000240 + 450))
+extern u8 Data_02000240[];
 
 void *Func_02000070(void)
 {
-    s16 sub_state = SCENE_SUB_STATE_02000070;
+    s16 sub_state;
 
+    {
+        s32 off = 450;
+
+        sub_state = *(s16 *)(Data_02000240 + off);
+    }
     switch ((s32)sub_state) {
     case 1:
     case 2:

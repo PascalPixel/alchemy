@@ -23,7 +23,7 @@ s32 Func_08078e28(s32 state_index, s32 value)
     for (index = 0; index <= 30; index++) {
         s32 masked = state->slots[index].value & 0x3fff;
 
-        if (masked == key) {
+        if ((masked ^ key) == 0) {
             state->slots[index].value = masked;
             found = index;
             break;
@@ -33,10 +33,8 @@ s32 Func_08078e28(s32 state_index, s32 value)
     if (found < 0) {
         for (index = 0; index <= 30; index++) {
             s32 offset = (index * 4) + 0x58;
-            u16 *entry = (u16 *)((u8 *)state + offset);
-
-            if (*entry == 0) {
-                *entry = key;
+            if (*(u16 *)((u8 *)state + offset) == 0) {
+                *(u16 *)((u8 *)state + offset) = key;
                 found = index;
                 break;
             }

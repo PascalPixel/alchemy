@@ -7092,25 +7092,47 @@ whether one row or the splice boundary owns the damage.
 Do NOT weaken `stageStamp` and do not exempt 39c: the stamp is what made this
 visible at all, and a full re-encode costs 3.6s.
 
-### §5i-SOLVED — the compiler emits the literal pool in a different order
+### §5i-SOLVED — an unstable CSE choice, TWO instructions vs THREE
 
 **`assets/code/resource_39c_c_020010c0.c` compiles NONDETERMINISTICALLY.** Same
-source, same flags, same compiler binary: two different outputs, observed about
-**1 run in 14**.
+source, same flags, same compiler binary: two different outputs.
 
-The compiled length is **invariant at 164 bytes** (`0x10c0-0x1164`) — which is
-why every earlier hypothesis about the splice or a neighbouring row was wrong.
-Inside the row, **55 bytes differ**, in two distinct patterns:
+**CORRECTION to the first version of this entry.** It said "the literal pool is
+emitted in a different order", and named old-GCC pool hashing as the cause.
+**That was the EFFECT, not the cause**, inferred from the byte diff before the
+assembly was ever looked at. Diffing the two `.s` outputs directly shows a
+single, tiny divergence:
 
-- every pc-relative reference shifts by exactly one word — `38d0`→`37d0`,
-  `1f48`→`1e48`, `1c48`→`1b48`, `2e..`→`2d..`;
-- from `0x1128` the literal pool holds **the same words in a different order**.
+```
+  common (matches ROM)          odd
+  mov  r0, #1                   mov  r0, #1
+  mov  r1, #1                   neg  r0, r0
+  neg  r0, r0                   mov  r1, r0
+  neg  r1, r1
+```
 
-So the constant pool is emitted in a different sequence, and every `ldr
-rN,[pc,…]` and conditional branch that addresses through it moves by one word.
-That is the classic old-GCC nondeterminism: pool/hash iteration order seeded by
-pointer values, so it varies with the address-space layout of the compiler
-process itself.
+Both compute `r0 = r1 = -1`. **The odd variant is one instruction shorter.** It
+is a CSE / copy-propagation decision — reuse `r0` rather than re-materialise the
+constant — and it is exactly the decision the fork's own
+`-fno-cse-two-insn-immediate` exists to control. Everything downstream then
+shifts, the pool lands at a different alignment, and the *bytes* look like a
+reordered pool. The diff of the compiled bytes could not distinguish those two
+stories; the diff of the assembly could, in one line.
+
+**Lesson, and it is the reusable one: I diagnosed a cause from the byte diff
+when the assembly was one command away.** The byte-level view had exactly enough
+structure to support a plausible wrong mechanism.
+
+**Rate and scope, measured directly on the compiler** (30 compiles, no cache, no
+splice, no build system): **27 of 30 one output, 3 of 30 the other — 1 in 10.**
+
+**It is one row, not a systemic problem.** Twelve other rows of resource_39c,
+eight compiles each: all stable. Eighteen rows sampled across the whole tree,
+each compiled six times through its OWN routing plan: all stable. This row is
+the only nondeterministic source known.
+
+Adding `-fno-cse-pool-immediate` changes nothing here — byte-identical output
+and the same 27/3 split — so the constants in this row are not the pool class.
 
 **The evidence chain, each link excluding a suspect:**
 
@@ -7144,10 +7166,35 @@ for i in $(seq 1 20); do rm -rf out/cache/overlay-c; bun <probe>; done
 where the probe calls `assembleOverlay` on `resource_39c_overlay.s` and hashes
 `img.subarray(0x10c0, 0x1164)`. A second digest appearing is the bug.
 
-**Open, and Vale's to rule:** the fix belongs in `alchemy-gcc`'s pool ordering,
-and that fork carries pinned digests — no lane should touch it unasked. Until
-then this is a known flaky red on one row, with a named cause and a reproducer,
-which is a different thing from a mystery.
+**Open, and Vale's to rule. NOT a pool-ordering fix.** The authorisation given
+was to make the pool ordering deterministic; that is not the defect, so it was
+not done. The unstable decision is in `cse.c`, in the fork's own Camelot
+matching — `CSE_KEEP_CONSTANT_P` / `CSE_CONSTANT_CLASS` and the cost comparison
+around them. Reading those macros shows nothing obviously unstable, so
+localising it needs an instrumented compiler, not another guess.
+
+Three options, none taken without a ruling, because this compiler decides
+byte-exactness for the whole tree:
+
+1. **Leave it.** One row, 1-in-10, and `build_full` compares against the ROM, so
+   the failure mode is a flaky red and never a wrong byte. Cheapest and
+   currently true.
+2. **Route this row around it.** Find a flag combination that is stable AND still
+   matches the ROM. Touches one row's routing, not the compiler.
+3. **Fix `cse.c`.** Correct, and the only option that helps rows not yet
+   written — but it is a change to the shared compiler, so every adopted row's
+   bytes must be re-verified afterwards.
+
+**Reproducer, 30 seconds, no build system involved** — run the row's own compile
+command 30 times and hash the `.s`:
+
+```bash
+for i in $(seq 1 30); do xgcc <the row's plan flags> -S -o r$i.s <row.c>; done
+md5 -q r*.s | sort | uniq -c
+```
+
+Two digests appearing is the bug. Use at least 30 runs: at 1-in-10, ten clean
+runs mean little.
 
 ## 5j. A FAILURE MUST NAME ITS SUBJECT (2026-08-01, jupiter)
 

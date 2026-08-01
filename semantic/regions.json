@@ -6684,6 +6684,18 @@
       "entry": "0x02002c84",
       "span_bytes": 1228,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr} followed by the sl/r8 spill mov r7,sl / mov r6,r8 / push {r6, r7} and sub sp,#52) and returning (add sp,#52 / pop {r3, r5} / mov r8,r3 / mov sl,r5 / pop {r5, r6, r7} / pop {r0} / bx r0 at 0x020030fc-0x02003108) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts resource_3af 0x2c84 0x3150, the +2 rule against the raw image) and it is the only unowned prologue any BL in this image resolves to; confirmed independently as dispatch case 18 of the 0x02001444 entry driver. Span walked through every internal branch AND through all twenty-one entries of the embedded jump table at 0x02002ed8-0x02002f2b (entries are image addresses in the +0x8000 link form, e.g. 0x0200af2c = image 0x02002f2c; the mov pc,r3 at 0x02002ed6 enters it and the first case body resumes at 0x02002f2c), plus the four-iteration member loop whose back edge is the b.n at 0x02002fcc to 0x02002e70. Alignment halfword plus seventeen trailing pool words (0x0000cccc, 0x00006666, 0x0000026a, 0x0200aed8, 0x00001ee7, 0x00001ee8, 0x00000105, 0x00001ee9, 0x00001eea, 0x00001eeb, 0x00001eec, 0x00000107, 0x00001eed, 0x0200c8e0, 0x00001eee, 0x0000022b, 0x0000012f) end 0x0200314f, next owner at 0x02003150 (already banked byte-exact as assets/code/resource_3af_c_02003150.c), inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3af",
+      "entry": "0x02000b98",
+      "span_bytes": 32,
+      "evidence": "admitted whole-owner semantic reconstruction; owner is absent from every inventory -- no row in out/decomp/overlays.json, no entry in tools/overlay_unindexed.ts's output (which reports zero for this overlay), no file in assets/code, and no bl anywhere in the image resolves here. It is a DATA-INSTALLED callback: its Thumb pointer 0x02008b99 (image offset + the 0x8000 link base, Thumb bit set) is published at 0x02005a14 in the script-record table. Owner is prologue-started (push {lr}) and returning (pop {r0} / bx r0 at 0x02000bb0-0x02000bb2), branch-free; one trailing pool word (0x00001f00) ends 0x02000bb7, next owner prologue at 0x02000bb8, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3af",
+      "entry": "0x020008e0",
+      "span_bytes": 88,
+      "evidence": "admitted whole-owner semantic reconstruction; owner is absent from every inventory and from tools/overlay_unindexed.ts, and no bl in the image resolves here; DATA-INSTALLED callback whose Thumb pointer 0x020090e1 is published at 0x02004990 in the script-record table. Owner is prologue-started (push {r5, r6, r7, lr}) and returning (pop {r5, r6, r7} / pop {r1} / bx r1 at 0x02000930-0x02000934, unwinding through r1 because r0 carries the s32 return value 1); span walked through all five internal branches, no literal pool, next owner at 0x02000938 (already banked byte-exact as assets/code/resource_3af_c_02000938.c), inside the assembled overlay image and not overlapping another recorded owner"
     }
   ]
 }

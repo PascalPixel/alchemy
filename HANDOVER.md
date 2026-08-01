@@ -6845,6 +6845,64 @@ its cached entry against a fresh compile. Do NOT weaken `stageStamp` and do not
 exempt 39c: the stamp is what made this visible at all, and a full re-encode
 costs 3.6s.
 
+## 5j. A FAILURE MUST NAME ITS SUBJECT (2026-08-01, jupiter)
+
+Companion to §5f. That one asked *what does a tool print when it does nothing*;
+this one asks **what does a failure print when it fires**. Same defect class:
+an anonymous throw is a silent gate wearing a different hat, because the lane
+learns that something is wrong without learning what.
+
+**Do NOT fix this by rewriting every message.** 331 anonymous throws exist
+across the lane-facing tools; 187 are self-test assertions, where the assertion
+text *is* the subject, and many of the remaining 144 are usage and argument
+errors, where the flag is the subject. Rewriting those is churn.
+
+**The fix is to WRAP at the layer that knows.** A codec, a linker step or a
+compile plan legitimately does not know which of 2,431 regions or 1,800 modules
+it is working on — the loop above it does. One wrap supplies the coordinate for
+every throw beneath it.
+
+Wraps now in place, each covering a whole family:
+
+| loop | supplies | covers |
+|---|---|---|
+| `build_assets` entry loop | asset address + kind | all 42 `extract_resource` `DecodeError`s |
+| `build_asm` region loop | region source name | veneer/alignment/toolchain throws in `buildRegion` |
+| `build_claimed` module loop | module basename | `moduleEnd`'s symbol errors |
+| `overlay_disasm` row loop | overlay + row basename | bare `xgcc failed: …` from the compile plan |
+
+And the codec itself now reports a coordinate rather than a verdict:
+`replay=… decoded=… cursor=… first_diff=… differing=…`. That single line is
+what reduced "the 39c complaint" from an anonymous days-old mystery to
+`0x10cc, 55 bytes, equal lengths` — which reads immediately as a layout shift
+rather than corruption.
+
+**Already correct, left alone:** `build_semantic`'s missing-inventory throw
+names the file *and* the command that fixes it, and is the model to copy;
+`build_claimed`'s per-module `failures.push` diagnostics all lead with
+`basename(source)`; `build_asm`'s manifest errors lead with
+`asm/manifest.json`.
+
+### On a lint for this: NOT possible, and a weak one would be worse
+
+I looked and I am not going to invent one. A lint can detect "throw with a
+literal message and no interpolation", but that flags all 144 sites, and the
+large majority are *correctly* literal — `--top must be a positive integer`
+needs no coordinate. A rule whose findings are mostly not defects is one a lane
+learns to skip, and §5f's own standard says that is worse than no rule.
+
+The real property — *every throw reachable from a per-item loop is wrapped by a
+layer that names the item* — needs whole-program reachability to check, and
+"is this a per-item loop" is not statically decidable. There is no cheap proxy
+that is not mostly noise.
+
+**So this is a review rule, not a lint, and it is deliberately narrow:** when
+you add a loop over regions, modules, rows or overlays, wrap the body's throws
+with the item's identity. When you write a throw, ask what the reader will have
+to do to find out which thing failed — if the answer is "re-instrument this
+line by hand", the message is unfinished. Three of us did exactly that to one
+line in `extract_resource` before anyone changed it.
+
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**

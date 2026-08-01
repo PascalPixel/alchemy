@@ -6,6 +6,45 @@
 #define S32_AT(p, o) (*(s32 *)((u8 *)(p) + (o)))
 #define PTR_AT(p, o) (*(void **)((u8 *)(p) + (o)))
 
+/*
+ * __call_via_rN veneer sites, resolved per-site against the ROM. Five `bl`
+ * sites land inside the 0x080072e4 bank; each is an indirect call through the
+ * named register.
+ *
+ * 0x080d4248 -- __call_via_r3, r3 from pool 0x080d44ec = 0x03001388, the
+ * relocated word copy (destination, source, size), from the EXACT
+ * src/080d40ec.c. The draft's fourth argument WAS the callee.
+ * 0x080d431e -- __call_via_r3, r3 from pool 0x080d4508 = 0x03000168, the fill
+ * (destination, size, value). r0 = [sp, #36] (graphics), r1 = 0x4000,
+ * r2 = pool 0x080d450c = 0x10101010, all set deliberately. Same correction.
+ *
+ * THE TWO-ENTRY RENDERER TABLE, reached here through the runtime header
+ * rather than the slot table directly. r5 = 0x03001eec; [r5, #28] is read at
+ * 0x080d41e4 into [sp, #44] and [r5, #32] at 0x080d41f8 into [sp, #48], each
+ * right after its own `Func_080ed408(46/47, ...)` publish. 0x03001eec + 28 =
+ * 0x03001f08 and + 32 = 0x03001f0c -- allocator slots 46 and 47, which is why
+ * they read as struct fields here and as globals elsewhere (the same
+ * observation 080d0ee0's header records). The base address sp + 44 is parked
+ * in [sp, #12] at 0x080d41fe.
+ *
+ * 0x080d4366 and 0x080d43a4 -- r4 = `ldr r4, [sp, #44]`: entry 0, slot 46.
+ * 0x080d4576 -- r4 = `ldr r4, [r4, r0]` at 0x080d4572 with r0 = [sp, #12]
+ * (the base) and r4 = (r8 & 1) << 2, r8 being the particle index of the final
+ * loop. So renderers[i & 1].
+ *
+ * ARITY: six at every renderer site. r0..r3 are set and two more words go out
+ * at [sp, #0] and [sp, #4]. r4 is above the argument registers, so no
+ * argument slot holds the callee.
+ *
+ * UNCERTAINTY, left standing: what slots 46 and 47 CONTAIN is not settled
+ * here. The slot table unifies the addressing, never the contents.
+ */
+typedef void *(*WordCopy_080d41a4)(void *destination, const void *source,
+                                   s32 size);
+typedef void (*ArmFill_080d41a4)(void *destination, u32 size, u32 value);
+typedef void (*Renderer_080d41a4)(
+    s32 target, const void *source, s32 x, s32 y, s32 width, s32 height);
+
 struct Particle_080d41a4 {
     s32 x;
     s32 y;
@@ -20,11 +59,9 @@ void Func_080cd594(s32);
 void Func_080ed408(s32, s32, s32, s32, s32);
 void Func_080e0524(s32, void *, s32, s32);
 void *Func_08002f40(s32);
-void Func_080072f0(s32, s32, s32, s32);
 void Func_080041d8(const void *, s32);
 void Func_080b50e8(s32);
 void Func_080f9010(s32);
-void Func_080072f4(s32, const void *, s32, s32, s32, s32);
 u32 Func_08004458(void);
 s32 Func_08002322(s32);
 s32 Func_0800231c(s32);
@@ -50,20 +87,22 @@ void Func_080d41a4(void *argument)
     s32 duration;
     s32 frame;
     s32 i;
+    Renderer_080d41a4 renderers[2];
 
     PTR_AT(runtime, 0x7828) = argument;
     Func_080cd594(1);
     *(volatile u16 *)0x04000052 = 0x1010;
     Func_080ed408(0x2e, 7, 7, 3, 3);
+    renderers[0] = *(Renderer_080d41a4 *)0x03001f08;
     Func_080ed408(0x2f, 7, 7, 7, 2);
+    renderers[1] = *(Renderer_080d41a4 *)0x03001f0c;
     Func_080e0524(0xd1, runtime, 1, 1);
     Func_080e0524(0x73, effect_tiles, 0, 0);
 
     variant = S32_AT(argument, 0x18);
     if (variant != 2) {
-        Func_080072f0(
-            0x05000000, (s32)Func_08002f40(0x60),
-            0x80, 0x03001388);
+        ((WordCopy_080d41a4)0x03001388)(
+            (void *)0x05000000, Func_08002f40(0x60), 0x80);
     }
 
     for (i = 0; i < 0x400; i++)
@@ -94,8 +133,8 @@ void Func_080d41a4(void *argument)
 
             if (frame == start) {
                 Func_080f9010(0x86);
-                Func_080072f0(
-                    graphics, 0x4000, 0x10101010, 0x03000168);
+                ((ArmFill_080d41a4)0x03000168)(
+                    (void *)graphics, 0x4000, 0x10101010);
             }
 
             if (frame >= start && frame < start + 9) {
@@ -105,11 +144,11 @@ void Func_080d41a4(void *argument)
                     0x18;
 
                 if (frame == start + 1) {
-                    Func_080072f4(
+                    renderers[0](
                         graphics, runtime, x, 0, 0x30, 0x70);
                 }
                 if (frame >= start + 2 && frame < start + 4) {
-                    Func_080072f4(
+                    renderers[0](
                         graphics, runtime + 0x1500,
                         x, 0, 0x30, 0x70);
                 }
@@ -185,7 +224,7 @@ void Func_080d41a4(void *argument)
                     effect_tiles +
                     U16_AT((void *)0x080ede48, height - 2);
 
-                Func_080072f4(
+                renderers[i & 1](
                     graphics, source,
                     (particle->x >> 16) -
                         ((size + (size >> 31)) >> 1),

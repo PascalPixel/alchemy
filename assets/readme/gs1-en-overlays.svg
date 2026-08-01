@@ -27,8 +27,8 @@
 <rect x="85.9" y="646.5" width="133.7" height="63.8" style="fill:hsl(190, 48%, 74%);fill:oklch(0.740 0.085 200)"/>
 <rect x="85.9" y="710.3" width="133.7" height="10.5" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
 <rect x="85.9" y="722.8" width="133.7" height="0.6" style="fill:hsl(190, 71%, 65%);fill:oklch(0.645 0.128 200)"/>
-<rect x="85.9" y="723.4" width="133.7" height="1.9" style="fill:hsl(190, 48%, 74%);fill:oklch(0.740 0.085 200)"/>
-<rect x="85.9" y="725.2" width="133.7" height="173.8" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
+<rect x="85.9" y="723.4" width="133.7" height="2.9" style="fill:hsl(190, 48%, 74%);fill:oklch(0.740 0.085 200)"/>
+<rect x="85.9" y="726.3" width="133.7" height="172.7" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
 <rect x="221.6" y="1" width="45.8" height="1.2" style="fill:hsl(190, 71%, 65%);fill:oklch(0.645 0.128 200)"/>
 <rect x="221.6" y="2.2" width="45.8" height="98.3" style="fill:hsl(190, 48%, 74%);fill:oklch(0.740 0.085 200)"/>
 <rect x="221.6" y="100.5" width="45.8" height="13.5" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
@@ -63,8 +63,8 @@
 <rect x="322.4" y="893.7" width="78.1" height="2.5" style="fill:hsl(190, 48%, 74%);fill:oklch(0.740 0.085 200)"/>
 <rect x="322.4" y="896.1" width="78.1" height="2.9" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
 <rect x="402.4" y="1" width="43.4" height="7.3" style="fill:hsl(190, 71%, 65%);fill:oklch(0.645 0.128 200)"/>
-<rect x="402.4" y="8.3" width="43.4" height="2.1" style="fill:hsl(190, 48%, 74%);fill:oklch(0.740 0.085 200)"/>
-<rect x="402.4" y="10.4" width="43.4" height="164.8" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
+<rect x="402.4" y="8.3" width="43.4" height="13.9" style="fill:hsl(190, 48%, 74%);fill:oklch(0.740 0.085 200)"/>
+<rect x="402.4" y="22.2" width="43.4" height="153" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
 <rect x="402.4" y="177.2" width="43.4" height="45.7" style="fill:hsl(190, 71%, 65%);fill:oklch(0.645 0.128 200)"/>
 <rect x="402.4" y="223" width="43.4" height="9.6" style="fill:hsl(190, 48%, 74%);fill:oklch(0.740 0.085 200)"/>
 <rect x="402.4" y="232.5" width="43.4" height="11.3" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
@@ -171,7 +171,8 @@
 <rect x="827.3" y="98.6" width="191.8" height="54.3" style="fill:hsl(190, 48%, 74%);fill:oklch(0.740 0.085 200)"/>
 <rect x="827.3" y="152.9" width="191.8" height="3.5" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
 <rect x="1021.1" y="92.3" width="187" height="3.3" style="fill:hsl(190, 71%, 65%);fill:oklch(0.645 0.128 200)"/>
-<rect x="1021.1" y="95.6" width="187" height="60.8" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
+<rect x="1021.1" y="95.6" width="187" height="3.4" style="fill:hsl(190, 48%, 74%);fill:oklch(0.740 0.085 200)"/>
+<rect x="1021.1" y="99.1" width="187" height="57.3" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
 <rect x="1210" y="92.3" width="31.8" height="57" style="fill:hsl(190, 71%, 65%);fill:oklch(0.645 0.128 200)"/>
 <rect x="1210" y="149.3" width="31.8" height="7.1" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
 <rect x="1243.9" y="92.3" width="195.6" height="3.9" style="fill:hsl(190, 71%, 65%);fill:oklch(0.645 0.128 200)"/>

@@ -109,8 +109,54 @@ export interface OverlayResidue {
    * empty to close an overlay.
    */
   publishedLeaf: number[];
+  /**
+   * Published pointers with no owner that are NOT code at all.
+   *
+   * The relaxed published path of 2026-08-01 admits any non-prologue target,
+   * and a data table whose words happen to be odd is admitted with it. Five
+   * such rows appeared tree-wide: four in resource_3c8 starting two bytes
+   * apart -- which is one table, not four functions -- and one in
+   * resource_3b7.
+   *
+   * The discriminator is one bounded scan: a published target that does not
+   * reach a `bx lr` within RETURN_WINDOW bytes is data. They are REPORTED
+   * rather than dropped, because an instrument that quietly declines to say
+   * what it saw is the exact fault this sweep was relaxed to fix. They do
+   * not count towards residue: there is no owner here to draft.
+   */
+  publishedData: number[];
   /** prologue-shaped halfwords with no owner, each classified. */
   shaped: { offset: number; halfword: number; owner: number | null; delta: number | null; verdict: string }[];
+}
+
+/**
+ * How far a real leaf is allowed to run before it returns.
+ *
+ * 301 of the 306 rows the relaxed gate admitted reach a `bx lr` inside 128
+ * bytes; the five that never do are data. The window is deliberately generous
+ * -- the longest body in the cohort is the 54-byte record integrator -- so
+ * that widening it further would not change the verdict on anything measured.
+ */
+export const RETURN_WINDOW = 128;
+
+/** `bx lr`, the only return a leaf has. */
+const BX_LR = 0x4770;
+
+/**
+ * True when `offset` reaches a `bx lr` within RETURN_WINDOW bytes.
+ *
+ * This is the whole discriminator between a leaf and a table of odd words.
+ * It scans halfwords, so it does not care where instruction boundaries fall
+ * -- data that happens to contain 0x4770 will pass, and that is the safe
+ * direction to be wrong in: a false leaf is read by a human and ruled, a
+ * false table is silently lost.
+ */
+export function reachesReturn(image: Uint8Array, offset: number, window = RETURN_WINDOW): boolean {
+  const end = Math.min(image.length - 1, offset + window);
+  for (let at = offset; at < end; at += 2) {
+    if ((image[at] | (image[at + 1] << 8)) === BX_LR) return true;
+  }
+  return false;
 }
 
 /** Owners are whatever the tree already claims: a C file, or a manual region. */
@@ -226,6 +272,7 @@ export function sweep(overlay: string): OverlayResidue {
 
   const published: number[] = [];
   const publishedLeaf: number[] = [];
+  const publishedData: number[] = [];
   const seenPublish = new Set<number>();
   for (let at = 0; at + 4 <= image.length; at += 4) {
     const word =
@@ -240,7 +287,10 @@ export function sweep(overlay: string): OverlayResidue {
     // hid: something published its address, and this sweep resolved it and then
     // refused it for not opening with a `push`.
     if (isPrologueShape(image[offset] | (image[offset + 1] << 8))) published.push(offset);
-    else publishedLeaf.push(offset);
+    // ...but relaxing the gate admits data as well as leaves, so the leaf
+    // class now has to earn itself: a real leaf returns, and it returns soon.
+    else if (reachesReturn(image, offset)) publishedLeaf.push(offset);
+    else publishedData.push(offset);
   }
 
   const shaped: OverlayResidue["shaped"] = [];
@@ -267,7 +317,7 @@ export function sweep(overlay: string): OverlayResidue {
     shaped.push({ offset: at, halfword, owner, delta, verdict });
   }
 
-  return { overlay, called, published, publishedLeaf, shaped };
+  return { overlay, called, published, publishedLeaf, publishedData, shaped };
 }
 
 function overlayNames(): string[] {
@@ -322,6 +372,26 @@ function selfTest(): void {
   if (unruled.length !== 0) {
     throw new Error(`resource_380 must have no UNRULED rows left, got ${unruled.length}`);
   }
+  // The bounded-window discriminator, asserted on SYNTHETIC bytes rather than
+  // on today's residue -- a check pinned to the rows currently in the tree
+  // rots the moment they are drafted.
+  const getter = new Uint8Array(64);
+  getter[0] = 0x00; getter[1] = 0x48;            /* ldr r0, [pc, #0] */
+  getter[2] = 0x70; getter[3] = 0x47;            /* bx lr            */
+  if (!reachesReturn(getter, 0)) throw new Error("a getter returns at +2 and must read as a leaf");
+  const table = new Uint8Array(64);              /* no 0x4770 anywhere */
+  if (reachesReturn(table, 0)) throw new Error("a table with no return must read as data");
+  // The window has to BE a window. A return past it does not rescue the row,
+  // which is the difference between this check and 'is there a bx lr later'.
+  const far = new Uint8Array(64);
+  far[40] = 0x70; far[41] = 0x47;
+  if (reachesReturn(far, 0, 16)) throw new Error("a return past the window must not count");
+  if (!reachesReturn(far, 0, 64)) throw new Error("a return inside the window must count");
+  // And it must not run off the end of the image looking for one.
+  const short = new Uint8Array(4);
+  short[2] = 0x70; short[3] = 0x47;
+  if (!reachesReturn(short, 0, 1024)) throw new Error("a return at the last halfword must count");
+  if (reachesReturn(new Uint8Array(4), 0, 1024)) throw new Error("running off the end must not invent a return");
   console.log("self-test=ok");
 }
 
@@ -343,6 +413,7 @@ function main(): void {
       result.called.length === 0 &&
       result.published.length === 0 &&
       result.publishedLeaf.length === 0 &&
+      result.publishedData.length === 0 &&
       unexplained.length === 0 &&
       unruled.length === 0
     )
@@ -356,6 +427,11 @@ function main(): void {
       console.log(`  B published 0x${(OVERLAY_BASE + offset).toString(16)}`);
     for (const offset of result.publishedLeaf)
       console.log(`  B leaf      0x${(OVERLAY_BASE + offset).toString(16)}  published, no push prologue`);
+    for (const offset of result.publishedData)
+      console.log(
+        `  B data      0x${(OVERLAY_BASE + offset).toString(16)}  ` +
+          `published, no push prologue, NO RETURN within ${RETURN_WINDOW} bytes -- RULED DATA, not residue`,
+      );
     for (const row of [...unexplained, ...unruled])
       console.log(
         `  C ${row.verdict.startsWith("UNRULED") ? "unruled " : "shaped  "}  ` +

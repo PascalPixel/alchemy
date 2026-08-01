@@ -1059,6 +1059,80 @@ So the honest fraction: **301 of 306 hold as leaf functions (98%)**, of which
 181 are corroborated by sweep D as well. Nineteen bodies to read, three of
 which account for 278 rows.
 
+#### The leaf-only overlays are CLOSED (2026-08-01, jupiter) — 26 overlays, 107 rows
+
+Every overlay whose *entire* residue was leaves now reports **residue=0**
+under sweeps A, B and C, with `code_suspect_gaps=0 overlaps=0
+prologue_suspect_tails=0` under sweep D, and the liveness control run in the
+same sessions (`resource_3a4` residue=1, a bogus name sweeping all 96).
+Commits `4918abb5`, `8cae9d09`, `a0363b13`, on top of the first slice
+`125ace99`.
+
+`resource_36f 370 375 379 37c 37d 37e 384 386 388 38c 38d 38e 390 394 397
+398 3a2 3ac 3b5 3b6 3b7 3c1 3c2 3c6 3cc`
+
+Enumerate the set yourself rather than trusting that list — it is the
+overlays whose every residue line is `B leaf`:
+
+```
+bun tools/overlay_published.ts \
+  | awk '/^resource_/{o=$1;next}{n[o]++; if($0~/B leaf/) l[o]++}
+         END{for(o in n) if(n[o]==l[o]) print o, l[o]}'
+```
+
+**Sweep B now RULES the five data false positives rather than counting
+them.** `reachesReturn` is the discriminator described above, wired into the
+published path: a target that does not reach a `bx lr` within
+`RETURN_WINDOW` (128) bytes prints as `B data ... RULED DATA, not residue`
+and is excluded from the count. It is REPORTED and not dropped on purpose —
+a silent decline is the fault that path was relaxed to fix. `resource_3b7`
+reaches residue=0 on this alone, with nothing drafted for it. The self-test
+is synthetic, including that a return PAST the window does not rescue a row
+and that running off the end of the image does not invent one.
+
+**Three things the transcription found that the specification did not:**
+
+1. **`resource_397` was clean under A, B and C and NOT under D.** Ten
+   unaccounted bytes between two exact-C owners — 0x020001bc ending at
+   0x020001ca, 0x020001d4 beginning the next — read as pad, stub, pad,
+   stub, pad. 0x020001cc and 0x020001d0 are each `bx lr` alone: published
+   nowhere, reached by no `bl`, carrying no `push` to key on. **In no sweep
+   but D.** Both recorded at span 2, not 4 — the `0x0000` halfwords are
+   alignment, and claiming them puts a phantom overlap in the next reader's
+   arithmetic. Never certify an overlay on A/B/C emptiness alone.
+
+2. **`resource_3cc`'s 0x020000b4 is the overlay's ENTRY DRIVER**, reached
+   here as leaf residue because sweep B saw the header word at image offset
+   4 as a publication and discarded the target for opening with no `push`.
+   It is the one driver of 96 without a prologue, for the plain reason that
+   it has no body: it returns 0 and does nothing.
+
+3. **`overlay_driver.ts --all --unowned` reports 0 while two drivers are
+   undrafted.** Its `ownerOf` accepts `"inventory row"` — mere presence in
+   the census — as ownership, so an undrafted driver never reads as UNOWNED.
+   This retracts the "all 96 entry drivers are drafted" line: it was 94.
+   resource_3cc's is now in; **resource_373's 0x02002a54 is still open** and
+   belongs to whichever lane owns 373. Use
+   `overlay_driver.ts --all | grep -v 'semantic-C\|exact-C'`, never
+   `--unowned`. Third instance in three days of the blind spot sitting in
+   what a tool ACCEPTS rather than in what it scans.
+
+**Three rows were read by hand, not transcribed.** `resource_398`'s
+0x0200044c and 0x0200045c are a two-instance body, byte-identical but for
+the stored constant — one raises the flag byte at +23 of the 0x03001e70
+workspace, the other clears it — both span 16 and not 10, the pool word past
+the `bx lr` being theirs. **Their pool words are the SAME address and the
+rows still differ**, which is the sharpest form of the identical-bytes rule:
+resolving each on its own is what shows it. `resource_3a2`'s 0x02000030 is
+the one row in the cohort that reads its argument; it clears bit 0 at
+record+35 and sets bits 2 and 3 in the structure at record+80, **re-reading
+that pointer between the two updates** rather than caching it — Garet's
+republication trap, in a 36-byte leaf.
+
+What remains of the 306 is the ~180 rows in overlays that ALSO carry
+non-leaf residue. Those close their overlay no faster than its heaviest
+sibling, so they are ordinary lane work and not a cheap slice.
+
 #### Cleanup board (2026-08-01, jupiter) — not blockers
 
 Neither of these can hide an owner. Both mislead the next reader who subtracts

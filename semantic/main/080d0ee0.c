@@ -42,15 +42,20 @@
  * trailing arguments are artefacts of an eight-parameter phantom prototype
  * being filled from the last two loads before the branch.
  *
- * FLAGGED, NOT FIXED -- outside this audit.  Several pool-loaded constants in
- * this draft disagree with the ROM, and someone who owns the routine should
- * settle them rather than a veneer pass:
- *   0x080d0f24 loads 0x080d1274 = 0x79, drafted as `Func_08002f40(0x9d)`
- *   0x080d0f38 loads 0x080d127c = 0x73, drafted as `Func_08002f40(0x9e)`
- *   0x080d1294 = 0x080ee140, drafted as 0x080ee200
- *   0x080d129c = 0x080ede48, drafted as 0x080ee280
- * Other constants in the same file (0x080cd261, 0x7828, 0x7780, 0x7784, 134)
- * do match, so this is not a wrong-image problem.
+ * Pool constants SETTLED against the ROM (2026-08-01, exact lane).  The
+ * four values Garet flagged were read straight from the built reference and
+ * his reading was correct on all four; the draft has been corrected:
+ *   0x080d1274 = 0x79        (was drafted 0x9d)
+ *   0x080d127c = 0x73        (was drafted 0x9e)
+ *   0x080d1294 = 0x080ee140  (was drafted 0x080ee200)
+ *   0x080d129c = 0x080ede48  (was drafted 0x080ee280)
+ * Why they looked unreachable: all four addresses lie OUTSIDE this owner's
+ * span, which ends at 0x080d126c.  They are pool words of the NEXT owner,
+ * 0x080d126c (span 60, ending 0x080d12a8), reached by this function's
+ * pc-relative loads -- the shared-literal-pool pattern.  Verified by
+ * indexing out/asm/080d126c.bin directly, not by reading the disassembly.
+ * The constants that already matched (0x080cd261, 0x7828, 0x7780, 0x7784,
+ * 134) live in this owner's own pool, which is why they were never in doubt.
  */
 
 /* 0x03001388, the relocated IWRAM word copy; src/080d40ec.c gives the shape. */
@@ -154,8 +159,8 @@ void Func_080d0ee0(struct Scene_080d0ee0 *scene)
     Func_080cd594(1);
 
     /* 0x080d0f34: bl __call_via_r3, r3 = 0x03001388. */
-    word_copy((void *)0x05000000, Func_08002f40(0x9d), 0x80);
-    Func_08005340(Func_08002f40(0x9e), graphics);
+    word_copy((void *)0x05000000, Func_08002f40(0x79), 0x80);
+    Func_08005340(Func_08002f40(0x73), graphics);
     Func_08009080(target, 2);
     Func_08009088(target, 48);
     Func_080ed408(46, 7, 7, 3, 2);
@@ -227,7 +232,7 @@ void Func_080d0ee0(struct Scene_080d0ee0 *scene)
                 Func_08004c6c(i * 0x1c72);
 
                 value = Func_080e3944(
-                    (const s32 *)(0x080ee200 + (i & 1) * 12 + stride),
+                    (const s32 *)(0x080ee140 + (i & 1) * 12 + stride),
                     transformed);
                 if (maximum < value)
                     maximum = value;
@@ -252,7 +257,7 @@ void Func_080d0ee0(struct Scene_080d0ee0 *scene)
                             ((to->velocity_x - from->velocity_x) * step) / 16;
                         s32 y = from->velocity_y +
                             ((to->velocity_y - from->velocity_y) * step) / 16;
-                        u16 tile = *(const u16 *)(0x080ee280 +
+                        u16 tile = *(const u16 *)(0x080ede48 +
                             (path_count * 2 - 2));
 
                         /* 0x080d11dc: bl __call_via_r4, r4 = slot 46. */

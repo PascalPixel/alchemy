@@ -1,3 +1,21 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
+ * range is an indirect call through the named register, not a call to a
+ * function at the branch target.  Resolved with tools/veneer_resolve.ts.
+ *
+ * UNCERTAINTY, and it is deliberate.  What 0x03000164 DOES is not
+ * established.  semantic/main/080c1ffc.c calls it a resident two-argument
+ * owner initializer; across the tree it is reached with two arguments at
+ * some sites and three at others, and where a third is passed it is almost
+ * always zero.  It also sits four bytes -- one ARM instruction -- from the
+ * fill at 0x03000168, the way the sin/cos pair at 0x0800231c/0x08002322
+ * does.  That is suggestive of two entry points into one routine and it is
+ * NOT asserted here: the evidence is recorded so the exact lane can settle
+ * it, and the type below says only what this call site proves --
+ * two arguments, reached through __call_via_r5.
+ */
 typedef signed char s8;
 typedef unsigned char u8;
 typedef signed short s16;
@@ -5,11 +23,12 @@ typedef unsigned short u16;
 typedef signed int s32;
 typedef unsigned int u32;
 
+typedef void (*Resident_03000164)(void *destination, u32 size);
+
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void Func_080030f8(u32);
 void Func_080041d8(s32, s32);
-void Func_080072f8(s32, s32);
 void Func_080b5028(s32, s32, s32, s32);
 void Func_080b5038(s32, s32, s32);
 void Func_080cd508(u32);
@@ -148,8 +167,8 @@ loop_12:
         var_r6 += 0x1000;
         var_r7 += 8;
     } while (var_ip != 0x10);
-    Func_080072f8(sp0, 0x4000);
-    Func_080072f8(0x06004000, 0x4000);
+    ((Resident_03000164)0x03000164)(sp0, 0x4000);
+    ((Resident_03000164)0x03000164)((void *)0x06004000, 0x4000);
     M2C_FIELD(temp_r9, s32 *, 0x77A8) = 0;
     M2C_FIELD(temp_r9, s32 *, 0x77A0) = (s32) M2C_FIELD((void *)0x03001AD0, u16 *, 4);
     M2C_FIELD(temp_r9, s32 *, 0x77A4) = (s32) M2C_FIELD((void *)0x03001AD0, u16 *, 6);

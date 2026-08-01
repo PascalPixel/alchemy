@@ -1,4 +1,18 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
+ * range is an indirect call through the named register, not a call to a
+ * function at the branch target.  Resolved with tools/veneer_resolve.ts.
+ *
+ * UNCERTAINTY: what the routine at 0x030002c0 DOES is not established.
+ * Nothing in the tree names it.  All five callers pass the same shape --
+ * a pointer, 0x10000, and 0.  The type below records that and no more; it
+ * is not a claim about the routine's job.
+ */
 #include "types.h"
+
+typedef void (*Resident_030002C0)(void *target, s32 arg1, s32 arg2);
 
 struct MatrixRow_08004c1c {
     s32 first;
@@ -13,8 +27,6 @@ struct Matrix_08004c1c {
 
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
-void Func_080072f0(struct Matrix_08004c1c *matrix, s32 scale, s32 mode,
-                   u32 routine);
 
 void Func_08004c1c(s32 angle)
 {
@@ -43,5 +55,5 @@ void Func_08004c1c(s32 angle)
     destination->rows[1].third = sine;
     destination->rows[2].first = cosine;
 
-    Func_080072f0(destination, 0x10000, 0, 0x030002c0);
+    ((Resident_030002C0)0x030002c0)(destination, 0x10000, 0);
 }

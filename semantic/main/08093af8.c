@@ -1,4 +1,20 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
+ * range is an indirect call through the named register, not a call to a
+ * function at the branch target.  Resolved with tools/veneer_resolve.ts.
+ *
+ * UNCERTAINTY: the routine at 0x030001d8 is not established.  It RETURNS a
+ * value, unlike the other relocated helpers in this audit, and both callers
+ * feed it sums of squares and use the result as a distance -- which reads
+ * like a magnitude or square root.  That reading is an inference from two
+ * call sites and is NOT asserted; the type records the arity and the return,
+ * nothing else.
+ */
 #include "types.h"
+
+typedef s32 (*Resident_030001D8)(s32 arg0, s32 arg1, s32 arg2);
 
 struct ObjectVisual_08093af8 {
     u8 unknown_00[0x28];
@@ -18,7 +34,6 @@ struct WorldObject_08093af8 {
     u8 unknown_55[0x1b];
 };
 
-s32 Func_080072f0(s32, s32, s32, s32);
 s32 Func_080044d0(s32 z, s32 x);
 
 /*
@@ -58,11 +73,10 @@ struct WorldObject_08093af8 *Func_08093af8(
                 delta_x >>= 16;
                 delta_z >>= 16;
                 z_squared = delta_z * delta_z;
-                distance = Func_080072f0(
+                distance = ((Resident_030001D8)0x030001d8)(
                     delta_x * delta_x + z_squared,
                     candidate->y,
-                    z_squared,
-                    0x030001d8);
+                    z_squared);
 
                 if (distance < nearest_distance) {
                     u16 direction = (u16)Func_080044d0(

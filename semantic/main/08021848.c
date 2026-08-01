@@ -1,9 +1,23 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
+ * range is an indirect call through the named register, not a call to a
+ * function at the branch target.  Resolved with tools/veneer_resolve.ts.
+ *
+ * Every site here dispatches to the relocated IWRAM fill at 0x03000168.
+ * Its signature is established, not guessed: semantic/main/080e15e8.c
+ * documents it as (destination, size, value), and this file reaches it through
+ * __call_via_sl and passes 64 bytes of 0x44444444, which corroborates the
+ * (destination, size, value) shape directly.
+ */
 typedef unsigned int u32;
 typedef signed int s32;
 
+typedef void (*ArmFill)(void *destination, u32 size, u32 value);
+
 extern u32 Data_08037250[];
 
-void Func_0800730c(void *, s32, u32);
 
 void Func_08021848(void)
 {
@@ -19,7 +33,7 @@ void Func_08021848(void)
         row = 0;
         block = (u32 *)(0x06006280 + group * 0x180);
         do {
-            Func_0800730c(block, 64, 0x44444444);
+            ((ArmFill)0x03000168)(block, 64, 0x44444444);
             column = 1;
             word = block + 1;
             do {

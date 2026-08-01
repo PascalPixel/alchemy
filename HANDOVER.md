@@ -4394,6 +4394,28 @@ while these residuals are allocator and pool-placement decisions that have
 none. `decomp-permuter-agbcc` could NOT be evaluated — the lane has no
 network access.
 
+## 5b2. A falling group count is not approaching closure (2026-08-01)
+
+`overlay_group_diff`'s `groups_differing` is a HINT ABOUT DISTANCE, not a
+measure of it, and the two can disagree badly. On the 0x314 distance cohort
+a lever took 23 groups -> 17, which read as most of the distance closed;
+`overlay_adopt` on the same source said **33 differing bytes of 56**. The
+comparator normalises registers, branch targets and pool loads, so a change
+that fixes many *shapes* can leave most *bytes* wrong.
+
+Consequences, both learned the hard way tonight:
+- Never decide a row is nearly closed from the group count. Run the adopt
+  dry-run before believing any "almost there" reading, and quote bytes when
+  reporting progress.
+- Never plan work from a group count either: an eight-row cohort at 17
+  groups apiece looked like ~450 bytes for one lever and was actually a
+  rewrite-class family. A big byte figure attached to a hard row is a trap
+  for whoever reads the board next; re-file such rows explicitly.
+
+The reverse error is also real and is covered in §4: a TRAILING-ONLY group
+difference (pool words decoding as bogus instructions) means EXACT, even
+though the count is nonzero.
+
 ## 5c. Auditing the executable inventory for holes (2026-08-01)
 
 Twice in one night `full_c_progress` threw `C span is outside audited

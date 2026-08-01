@@ -489,37 +489,50 @@ words are the same space: `word - 0x8000 - 0x02000000`. This rule must be
 applied before anything reaches PROSE, not merely before it reaches a draft —
 a map written off a raw listing carries the error into everything built on it.
 
-### The raw-annotation error IS ALREADY IN THE TREE, at scale (2026-08-01, venus)
+### WITHDRAWN — the 579 "mislabelled" exact-C files are CORRECT (2026-08-01)
 
-The rule above was written as a warning. It is also a description of 579 of
-the 1,707 exact-C files in `assets/code`, across 57 overlays: they name at
-least one `Func_02xxxxxx` whose offset lies **past the end of its own overlay
-image**. Overlays all load at 0x02000000, so a cross-overlay call cannot
-exist — an out-of-image overlay-space name is a raw objdump annotation and
-nothing else. The arithmetic that recovers the truth is
-`true = raw - site - 2`.
+**I claimed a defect here and I was wrong. Do not act on the version of this
+section that circulated on 2026-08-01; Mia's mechanism at "5b3a. The
+mechanism" is authoritative and supersedes it.** The section is kept rather
+than deleted because a lane reading the chat log of that night will find the
+claim, and a withdrawn claim that leaves no trace gets rediscovered.
 
-The founding case, `resource_3c9_c_020038c0.c`, is worth reading because of
-how well it hides. Its five callees are spelled `Func_020095f8`,
-`Func_02007490`, `Func_02007768`, `Func_02007b0c`, `Func_02009610` — every
-one outside a 26,464-byte image. The real targets are two main-image veneers
-and **0x02003bc8, 0x02003e9c, 0x0200423c, three already-drafted owners of
-that same overlay**. The header then compounds it: it claims the `+2` rule
-was applied, and it introduces the three phantoms as "not yet drafted"
-candidates, inventing work that does not exist.
+What I measured is real and reproducible: 579 of 1,707 exact-C files in
+`assets/code`, across 57 overlays, name at least one `Func_02xxxxxx` whose
+offset lies past the end of its own overlay image. `resource_3c9_c_020038c0.c`
+spells its callees `Func_02007490`, `Func_02007768`, `Func_02007b0c` while the
+addresses actually branched to are 0x02003bc8, 0x02003e9c, 0x0200423c.
 
-**`bun run verify` cannot see this, and that is the durable part.** The names
-in an exact-C file are labels; the emitted `bl` encodes a displacement the
-harness resolves the same (wrong) way consistently, so the file still
-compiles byte-identical and `byte_identical=yes` is TRUE and MEANINGLESS as a
-check on it. Byte-identity constrains the bytes, not the reading — the same
-hole that lets a wrong callee name corrupt structure in both directions.
+**What I got wrong was the inference.** I read those names as labels, so an
+out-of-image label had to be a raw-objdump artifact. They are not labels.
+`externalSymbol` emits `.thumb_set Func_0AAAAAAA, 0xAAAAAAAA` — the digits in
+the identifier ARE the address, nothing is looked up — and an overlay `bl`
+stores `true_target_offset - 2` where GAS assembles `sym - (insn + 4)`.
+Equating those gives `name_address = insn_address + 2 + true_target_offset`,
+which is exactly what a pc-relative disassembler prints. **The wrong-looking
+name is the only spelling that emits the correct reference bytes.** Renaming
+those 579 files to the "true" targets would break byte-identity on every one.
 
-Cheap detector, and it should become a `bun run test` gate rather than a note:
-for each exact-C file, parse every `Func_02[0-9a-f]{6}` and flag any whose
-offset is >= its overlay's assembled length. It is a whole-tree scan in about
-a second and it cannot false-positive, because there is no legitimate reason
-for such a name to exist.
+Two corrections to my own reasoning, and they are the transferable part:
+
+- **I treated `byte_identical=yes` as blind to the question when it was
+  ANSWERING it.** I wrote that the harness "resolves the same wrong way
+  consistently", which is a story I invented to explain why a file I believed
+  defective still verified. The simpler reading — the file verifies because
+  it is right — was available and I did not take it. When a check disagrees
+  with your defect hypothesis, the check is evidence against the hypothesis,
+  not a limitation of the check. My own rule 1 covers the case where a check
+  agrees with you; this is the mirror, and I had no rule for it. Now I do.
+- **A detector that "cannot false-positive" was 100% false positives.** I
+  wrote that there is "no legitimate reason for such a name to exist" without
+  reading the emitter. Confidence about what cannot exist is a claim about
+  code I had not opened. Read the thing that produces the artifact before
+  ruling on the artifact.
+
+The reading rule above this section still stands unchanged: never read a `bl`
+target off a raw listing when you are DRAFTING. That is about what a semantic
+draft's prose should say a row calls. It was never about how exact C spells
+the reference, and conflating the two is what produced this.
 
 ### Inline literal pools corrupt a register-tracking reader (2026-08-01, venus)
 

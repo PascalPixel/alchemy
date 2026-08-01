@@ -7173,28 +7173,125 @@ matching — `CSE_KEEP_CONSTANT_P` / `CSE_CONSTANT_CLASS` and the cost compariso
 around them. Reading those macros shows nothing obviously unstable, so
 localising it needs an instrumented compiler, not another guess.
 
-Three options, none taken without a ruling, because this compiler decides
-byte-exactness for the whole tree:
+### ROUTING AROUND IT DOES NOT WORK — measured, and the option is closed
 
-1. **Leave it.** One row, 1-in-10, and `build_full` compares against the ROM, so
-   the failure mode is a flaky red and never a wrong byte. Cheapest and
-   currently true.
-2. **Route this row around it.** Find a flag combination that is stable AND still
-   matches the ROM. Touches one row's routing, not the compiler.
-3. **Fix `cse.c`.** Correct, and the only option that helps rows not yet
-   written — but it is a change to the shared compiler, so every adopted row's
-   bytes must be re-verified afterwards.
+Vale ruled "route this row around it": find a flag combination stable across at
+least forty compiles and still ROM-matching. **It is not achievable with any
+flag tested.** Every candidate only *suppresses* the rate.
 
-**Reproducer, 30 seconds, no build system involved** — run the row's own compile
-command 30 times and hash the `.s`:
+Measured on the compiler directly, hashing the `.s`:
+
+| flags added | N | result |
+|---|---|---|
+| none (baseline) | 100 | **84 / 16** — a 16% rate |
+| `-fno-cse-skip-blocks` | 45 | 2 variants |
+| `-fno-cse-follow-jumps` | 45 | 2 variants |
+| `-fno-strength-reduce` | 45 | 2 variants |
+| `-fno-expensive-optimizations` | 100 ×3 + 60 | 100/0, 98/**2**, 100/0, 60 with 2 variants — **~1%** |
+| all five combined | 400 | **398 / 2** — **~0.5%** |
+
+Every survivor still emits the ROM-matching variant when it is stable, so
+nothing here is byte-unsafe. But **suppression is not a fix**, and a 0.5%
+intermittent failure is in one way *worse* than a 16% one: it is the same
+curtain that the warm cache drew over this bug for days. A rarer bug is a bug
+that gets diagnosed later and by someone with less to go on.
+
+**The forty-run bar cannot decide this, and that is the reusable point.** At
+1-in-10, forty clean runs happen by chance about once in seventy tries; at the
+suppressed 1%, forty clean runs are the *expected* outcome. Small-N screening
+produced a false "STABLE" verdict for me **three times in this one task** — at
+N=12 for four different flags, at N=45 for two of them, and at N=100 for the
+one that a 60-run had already failed. **You cannot prove a nondeterministic
+defect absent by sampling; you can only bound its rate.** Quote a bound with
+its N, never a "stable".
+
+So the live options are back to two, and both are Vale's:
+
+1. **Leave it.** One row, 16%, and `build_full` compares against the ROM, so the
+   failure mode is a flaky red and never a wrong byte.
+2. **Fix `cse.c`.** The only real fix, and the only one that helps rows not yet
+   written. Queued below.
+
+### FORK-QUEUE ITEM: `resource_39c_c_020010c0.c` compiles nondeterministically
+
+For the deliberate fork session, alongside Mia's per-call-site
+`-mcall-arg0-move-first` specification.
+
+**Symptom.** One row of `resource_39c`, 16% of compiles, emits a
+semantically identical but one-instruction-shorter sequence; everything
+downstream shifts and the row fails its ROM comparison.
+
+**The whole diff, at `-O2 -mthumb … -fno-cse-two-insn-immediate`:**
+
+```
+  common (matches ROM)          odd (16%)
+  mov  r0, #1                   mov  r0, #1
+  mov  r1, #1                   neg  r0, r0
+  neg  r0, r0                   mov  r1, r0
+  neg  r1, r1
+```
+
+Both compute `r0 = r1 = -1`. The odd variant reuses `r0` instead of
+re-materialising the constant — a CSE / copy-propagation choice, precisely the
+decision `-fno-cse-two-insn-immediate` exists to control.
+
+**NEGATIVE RESULT, recorded so nobody repeats it:** reading
+`CSE_KEEP_CONSTANT_P`, `CSE_CONSTANT_CLASS` and the `COST` macro around them in
+`gcc-2.96/gcc/cse.c` shows **nothing obviously unstable** — they are functions
+of the rtx code and the flags. The ARM minipool code (`add_minipool_forward_ref`,
+`assign_minipool_offsets`, `dump_minipool`) is likewise a deterministic linked
+list with no pointer hashing, and every `Mnode` field is initialised.
+**Localising this needs an instrumented compiler, not another read.** A
+plausible remaining class is an uninitialised read whose value varies with heap
+or address-space layout, which no amount of source reading will show.
+
+**Scope: one row.** Twelve other rows of resource_39c at eight compiles each,
+and eighteen rows sampled tree-wide through their own routing plans at six
+each — all stable. Re-verification after any `cse.c` change must still cover
+every adopted row, since the change is global.
+
+**Reproducer, seconds, no build system:**
 
 ```bash
-for i in $(seq 1 30); do xgcc <the row's plan flags> -S -o r$i.s <row.c>; done
+for i in $(seq 1 100); do xgcc <the row's plan flags> -S -o r$i.s <row.c>; done
 md5 -q r*.s | sort | uniq -c
 ```
 
-Two digests appearing is the bug. Use at least 30 runs: at 1-in-10, ten clean
-runs mean little.
+Two digests is the bug. **Use N ≥ 100 and report the split**, not a verdict.
+
+## 5i2. LOOK AT THE REPRESENTATION THE DECISION WAS MADE IN (2026-08-01, jupiter)
+
+**The byte view had exactly enough structure to support a plausible wrong
+mechanism.** That sentence cost this project several days across three lanes,
+and it is the sharpest statement of a failure that recurred all night in
+different hands.
+
+On 39c I had a byte diff: 55 differing bytes, pc-relative references each off by
+one unit, and a run from `0x1128` holding the same words in a different order. I
+wrote down "the literal pool is emitted in a different order", named old-GCC
+pool hashing as the cause, and **banked it as solved**. It was coherent, it
+explained every byte, and it was wrong. Diffing the two *assembly* outputs —
+one command, never run — showed the entire divergence was four instructions and
+a CSE choice. The reordered pool was the consequence, not the cause.
+
+**The rule: diagnose in the representation the decision was made in.** The
+compiler decided in RTL and expressed it in assembly; by the time it reached
+bytes, layout had smeared one choice across 55 of them. Bytes are downstream of
+the decision, and downstream views preserve enough correlation to make a wrong
+story fit.
+
+The same shape, same night, three lanes:
+
+- **This one** — a wrong mechanism read out of a byte diff.
+- **Mia's nearest-label mapping** — a plausible attribution that survived every
+  spot-check.
+- **Garet's stride-8 table** — 54 returns at a perfect stride read as code.
+
+None was carelessness. Each was a confident wrong answer that survived every
+check its author thought to run, because **the evidence was one level too far
+downstream to distinguish the candidates.** When a story explains the artefact
+perfectly, ask what *else* would produce the same artefact, and go up a level to
+tell them apart. If the answer is one command away, it is not optional.
 
 ## 5j. A FAILURE MUST NAME ITS SUBJECT (2026-08-01, jupiter)
 

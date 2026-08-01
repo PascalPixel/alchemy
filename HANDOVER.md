@@ -4641,6 +4641,49 @@ The reverse error is also real and is covered in §4: a TRAILING-ONLY group
 difference (pool words decoding as bogus instructions) means EXACT, even
 though the count is nonzero.
 
+## 5b3. Raw-annotation callee names are NOT cosmetic — do not bulk-rename them
+
+The raw-annotation finding (exact-C files naming a `Func_02xxxxxx` past
+their own overlay image) is real, and the phantom-candidate consequence is
+real. **But the proposed cure is not available: renaming a raw annotation
+to its resolved target breaks `verify`.** Measured on the founding case,
+`resource_3c9:38c0`, with the tree otherwise clean:
+
+| names in the exact C | `bun run verify` |
+| --- | --- |
+| raw annotations (as banked) | GREEN, 2 of 2 runs |
+| resolved targets | **RED, 2 of 2 runs** |
+
+`overlay_call_targets.ts resource_3c9 38c0 38dc` resolves that owner's five
+sites to three prologues (`0x2003bc8`, `0x2003e9c`, `0x200423c` — all
+already-drafted owners) and two veneers (`0x2005d34`, `0x2005d3c` ->
+`Func_0808a018`/`Func_0808a020`). Substituting those five names is what
+turns verify red.
+
+Two traps for whoever picks this up:
+- **`build:full` alone says `byte_identical=yes` for BOTH namings.** It is
+  not a sufficient check here; only the full `verify` chain catches it, and
+  the error it reports is in `tools/build_assets.ts` ("palette token plan
+  does not reconstruct input"), which looks unrelated to an overlay C
+  rename and is not.
+- I twice drew a conclusion from a single run — once "the build fails"
+  from a transient, once "the names are cosmetic" from `build:full`. Both
+  were wrong. **Run the gate twice each way before believing a coupling.**
+
+So the population splits by what the fix would be, not by what the target
+is: an entry whose resolved target is an already-drafted owner is still not
+a safe rename today. The measurement Vale asked for (how many resolve to
+owned targets, unowned addresses, and non-code) is still worth having, but
+its "rename" bucket is empty until the encoding question is settled: the
+label evidently participates in the emitted bytes somewhere, and that
+mechanism should be found before any sweep.
+
+**Population size, independently counted (2026-08-01):** with the criterion
+"names a `Func_02xxxxxx` at or past its own overlay's image end", 1,225 of
+1,714 exact-C files across 90 overlays, 5,947 distinct names. That is
+larger than the 579/57 originally reported, so the two counts use different
+image-end definitions and should be reconciled before either is quoted.
+
 ## 5c. Auditing the executable inventory for holes (2026-08-01)
 
 Twice in one night `full_c_progress` threw `C span is outside audited

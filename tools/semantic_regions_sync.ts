@@ -73,6 +73,46 @@ export function spanIsSubstantiated(
   return { ok: true };
 }
 
+/**
+ * Can this inventory row supply a span for an owner a human has already drafted?
+ *
+ * RETURN-BASED, NOT PROLOGUE-BASED. This used to require
+ * `row.starts_with_prologue`, which was a FIFTH PROLOGUE-KEYED DOOR: the sweeps
+ * were taught over two days that a leaf opens with ordinary work and saves no
+ * register, and then this gate refused every leaf anyway. Four correctly-ruled
+ * leaves were rejected with "no strict inventory row for this owner" and went in
+ * as hand-written entries instead — and manual work is how a workaround becomes
+ * the process.
+ *
+ * The prologue test was never one of this tool's stated checks. The contract at
+ * the top of this file lists three, all about substantiating a SPAN: positive
+ * span, inside the image, no overlap. Opening with `push` speaks to none of
+ * them. Measured on the live inventory: **204 of the 838 eligible rows return
+ * but do not open with a prologue, every one with a positive span** — a quarter
+ * of the population shut out by an undocumented fourth condition.
+ *
+ * Loosening it is safe because THE HUMAN IS THE GATE HERE, not the inventory.
+ * `planSync` only ever considers addresses that already have a drafted source in
+ * `semantic/overlays/`, so a spurious inventory row cannot inject an entry on
+ * its own; the row supplies a span, and that span must still clear the bounds
+ * and overlap checks.
+ *
+ * A return is still required: a row that never returns is not a function, and
+ * no span can be derived from it. That is the return-based test replacing the
+ * prologue-based one, not the removal of a test.
+ */
+export function isConvertibleRow(row: {
+  returns: number;
+  structural_veneer: boolean;
+  data_walk: boolean;
+  contained_by?: unknown[];
+}): boolean {
+  if (row.returns <= 0) return false;
+  if (row.structural_veneer || row.data_walk) return false;
+  if ((row.contained_by ?? []).length > 0) return false;
+  return true;
+}
+
 function readRegions(): { format: number; manual_regions: ManualRegion[] } {
   if (!existsSync(REGIONS)) return { format: 1, manual_regions: [] };
   return JSON.parse(readFileSync(REGIONS, "utf8"));
@@ -98,9 +138,7 @@ export function planSync(): SyncResult {
   );
   const rows = new Map<string, InventoryRow>();
   for (const row of inventoryRows()) {
-    if (!row.starts_with_prologue || row.returns <= 0) continue;
-    if (row.structural_veneer || row.data_walk) continue;
-    if ((row.contained_by ?? []).length > 0) continue;
+    if (!isConvertibleRow(row)) continue;
     rows.set(`${row.overlay}@${row.offset}`, row);
   }
   // Spans already claimed, per overlay: hand-written entries plus anything this
@@ -131,7 +169,31 @@ export function planSync(): SyncResult {
     const offset = address - 0x02000000;
     const row = rows.get(`${overlay}@${offset}`);
     if (row === undefined) {
-      rejected.push({ source: name, reason: "no strict inventory row for this owner" });
+      // REFUSE LOUDLY AND SAY WHAT IS NEEDED. "no strict inventory row for this
+      // owner" told a lane that something was wrong and nothing about what to
+      // do, so four ruled leaves became hand-written entries with no record
+      // that the tool had been routed around. Name the reason the row is
+      // absent, and name the legitimate path.
+      const raw = inventoryRows().find((other) => other.overlay === overlay && other.offset === offset);
+      const why = raw === undefined
+        ? "the discovery inventory has no row at this address at all (rows found by a gap or return sweep never have one)"
+        : raw.structural_veneer
+          ? "its inventory row is marked structural_veneer"
+          : raw.data_walk
+            ? "its inventory row is marked data_walk"
+            : (raw.contained_by ?? []).length > 0
+              ? `its inventory row is contained by ${(raw.contained_by ?? []).join(", ")}`
+              : raw.returns <= 0
+                ? "its inventory row records no return, so no span can be derived from it"
+                : "its inventory row has no positive span";
+      rejected.push({
+        source: name,
+        reason:
+          `${why}. This tool derives spans from the inventory and cannot invent one. ` +
+          "Add a hand-written manual_regions entry carrying the span AND the evidence " +
+          "for it (this tool never modifies hand-written entries), or re-run " +
+          "`bun tools/overlay_inventory.ts` if the row should exist and does not.",
+      });
       continue;
     }
     if (!images.has(overlay)) {
@@ -177,7 +239,24 @@ function selfTest(): void {
   if (!spanIsSubstantiated(0x100, 0x20, image, [{ start: 0x120, end: 0x180 }]).ok)
     throw new Error("adjacent spans must be allowed");
   if (spanIsSubstantiated(0x100, 0, image, []).ok) throw new Error("zero span must be rejected");
-  console.log("self-test=ok");
+
+  // Row eligibility, on SYNTHETIC rows so no lane's progress can move it.
+  // The load-bearing case is the first one: a LEAF — returns, but opens with
+  // ordinary work and saves no register — must be accepted. That is the whole
+  // point of the return-based test, and the regression that would silently
+  // reinstate the fifth prologue-keyed door.
+  const base = { returns: 1, structural_veneer: false, data_walk: false, contained_by: [] as unknown[] };
+  if (!isConvertibleRow({ ...base })) throw new Error("a returning leaf must supply a span");
+  if (!isConvertibleRow({ ...base, returns: 3 })) throw new Error("multiple returns must still pass");
+  if (isConvertibleRow({ ...base, returns: 0 })) throw new Error("a row that never returns is not a function");
+  if (isConvertibleRow({ ...base, structural_veneer: true })) throw new Error("a veneer must be refused");
+  if (isConvertibleRow({ ...base, data_walk: true })) throw new Error("a data walk must be refused");
+  if (isConvertibleRow({ ...base, contained_by: ["0x100"] })) throw new Error("a contained row must be refused");
+  // And the predicate must not consult a prologue field even if one is present.
+  if (!isConvertibleRow({ ...base, ...{ starts_with_prologue: false } as object }))
+    throw new Error("eligibility must not depend on a prologue");
+
+  console.log("self-test=ok (including return-based row eligibility)");
 }
 
 function main(): void {

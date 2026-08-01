@@ -39,6 +39,7 @@ typedef signed int s32;
  * gaps at 78 and 84 are transcribed as compiled, not smoothed.
  */
 
+extern s16 Data_02000240[];
 extern u8 *Data_03001ebc;
 
 extern void Func_020020d0(void);
@@ -56,7 +57,7 @@ s32 Func_02002020(void)
     s16 scene;
 
     *(s32 *)(Data_03001ebc + 448) = 516;
-    scene = *(s16 *)((u8 *)0x02000240 + 448);
+    scene = Data_02000240[224];
     if (scene == 77) {
         Func_020020d0();
     } else if (scene == 79) {

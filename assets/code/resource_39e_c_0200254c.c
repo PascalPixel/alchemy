@@ -22,26 +22,26 @@ typedef int s32;
  * `bun tools/overlay_call_targets.ts resource_39e 254c 2574` under the
  * `+2` rule. No branches.
  *
- * SHARED IDIOM: the Func_0808a018/Func_0808a020 scripted-scene bracket,
- * cited from resource_39e_c_02001494.c. The Func_0808a170 dialogue id
- * followed by Func_0808a180(id, 0) is the same pairing 0x02002508 uses on
+ * SHARED IDIOM: the Func_0200692c/Func_0200694e scripted-scene bracket,
+ * cited from resource_39e_c_02001494.c. The Func_020069fa dialogue id
+ * followed by Func_02006a12(id, 0) is the same pairing 0x02002508 uses on
  * its non-default arm, with a different actor id and a different line.
  *
  * Uncertainty: the four callees are not identified beyond call shape;
  * 0x17df is recorded as a passed dialogue id.
  */
 
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern void Func_0808a138(s32 id, s32 arg1);
-extern void Func_0808a170(s32 dialogue_id);
-extern void Func_0808a180(s32 id, s32 arg1);
+extern void Func_0200692c(void);
+extern void Func_0200694e(void);
+extern void Func_020069cc(s32 id, s32 arg1);
+extern void Func_020069fa(s32 dialogue_id);
+extern void Func_02006a12(s32 id, s32 arg1);
 
 void Func_0200254c(void)
 {
-    Func_0808a018();
-    Func_0808a138(8, 2);
-    Func_0808a170(0x17df);
-    Func_0808a180(8, 0);
-    Func_0808a020();
+    Func_0200692c();
+    Func_020069cc(8, 2);
+    Func_020069fa(0x17df);
+    Func_02006a12(8, 0);
+    Func_0200694e();
 }

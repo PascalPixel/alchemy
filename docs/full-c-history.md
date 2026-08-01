@@ -12,7 +12,7 @@ history.  The authoritative machine-readable ledger is
   denominator.
 - History: every first-parent commit, measured from that commit's tracked tree;
   commit subjects are not trusted as the data source.
-- Main-image and overlay ownership are recorded separately in every row.
+- Main-image and code-overlay ownership are recorded separately in every row.
 - Noncanonical C (inline assembly, hard-register pins, fakematches, and similar
   scaffolding) is excluded.  Historical denominator corrections are annotated
   rather than rewritten away.

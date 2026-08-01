@@ -96,20 +96,20 @@ function selfTest(): void {
   data.writeUInt16LE(ENTRY_VENEER_LOAD, 0);
   data.writeUInt16LE(ENTRY_VENEER_BRANCH, 2);
   data.writeUInt32LE(OVERLAY_BASE + BASE_SHIFT + 0x40 + 1, 4);
-  if (!hasEntryVeneer(image)) throw new Error("overlay driver self-test: veneer not recognised");
-  if (driverOffset(image) !== 0x40) throw new Error("overlay driver self-test: wrong driver offset");
+  if (!hasEntryVeneer(image)) throw new Error("code-overlay driver self-test: veneer not recognised");
+  if (driverOffset(image) !== 0x40) throw new Error("code-overlay driver self-test: wrong driver offset");
   // The thumb bit must be stripped, not carried into the offset.
   data.writeUInt32LE(OVERLAY_BASE + BASE_SHIFT + 0x40, 4);
-  if (driverOffset(image) !== 0x40) throw new Error("overlay driver self-test: thumb bit mishandled");
+  if (driverOffset(image) !== 0x40) throw new Error("code-overlay driver self-test: thumb bit mishandled");
   // Out-of-range header words are rejected rather than guessed at.
   data.writeUInt32LE(OVERLAY_BASE + BASE_SHIFT + 0x4000, 4);
-  if (driverOffset(image) !== null) throw new Error("overlay driver self-test: out-of-range word accepted");
-  if (driverOffset(new Uint8Array(4)) !== null) throw new Error("overlay driver self-test: short image accepted");
+  if (driverOffset(image) !== null) throw new Error("code-overlay driver self-test: out-of-range word accepted");
+  if (driverOffset(new Uint8Array(4)) !== null) throw new Error("code-overlay driver self-test: short image accepted");
   // ownerOf builds an exact-C filename from the address: the "0x" prefix must
   // be dropped, not one character of it (that bug reported owned drivers as
   // UNOWNED and inflated the audit's count from 23 to 38).
   if (ownerOf("resource_3c9", 0x71c) !== "exact-C") {
-    throw new Error("overlay driver self-test: exact-C owner not recognised");
+    throw new Error("code-overlay driver self-test: exact-C owner not recognised");
   }
   // A name with no image must FAIL. This defect lived in `main`, so the only
   // honest way to pin it is to run the tool. Both directions are asserted so
@@ -121,12 +121,12 @@ function selfTest(): void {
   // This tool exits 0 for any overlay whose image assembles, whatever
   // its driver turns out to be owned by, so ordinary source changes cannot turn it red.
   if (run("resource_ffffff") === 0)
-    throw new Error("overlay driver self-test: an unknown overlay must NOT exit 0");
+    throw new Error("code-overlay driver self-test: an unknown code overlay must NOT exit 0");
   const anyOverlay = overlayNames()[0];
   if (anyOverlay !== undefined && run(anyOverlay) !== 0)
-    throw new Error(`overlay driver self-test: a real overlay (${anyOverlay}) must exit 0`);
+    throw new Error(`code-overlay driver self-test: a real code overlay (${anyOverlay}) must exit 0`);
 
-  console.log("overlay driver self-test passed (including unknown-overlay refusal)");
+  console.log("code-overlay driver self-test passed (including unknown-code-overlay refusal)");
 }
 
 function main(): void {
@@ -164,7 +164,7 @@ function main(): void {
   if (wantAll) console.log(`\nentry drivers examined=${examined} unowned=${unowned}`);
   if (missing.length > 0) {
     console.log(
-      `NO OVERLAY IMAGE — this is a FAILURE, not a pass: ${missing.join(" ")}\n` +
+      `NO CODE-OVERLAY IMAGE — this is a FAILURE, not a pass: ${missing.join(" ")}\n` +
         "  Check the name against assets/code/*_overlay.s. Nothing was examined for\n" +
         "  these, and `unowned=0` here does NOT mean their drivers are owned.",
     );

@@ -6,9 +6,9 @@ metrics.  For verified current exact/semantic coverage, target limitations,
 provenance, compiler stopping rules, and the quarantined alchemy-gcc
 experiment, use [`../HANDOVER.md`](../HANDOVER.md).
 
-**`asm_c_debt_bytes=395816` and the overlay inventory's ~16 KB adoptable queue
+**`asm_c_debt_bytes=395816` and the code-overlay inventory's ~16 KB adoptable queue
 do not describe the same bytes, and neither one is missing the other's work.**
-The debt is 100% main-image assembly under `asm/`; the overlay inventory reads
+The debt is 100% main-image assembly under `asm/`; the code-overlay inventory reads
 only `assets/code/*_overlay.s` and contributes exactly **0 bytes** to
 `asm_c_debt_bytes`. The apparent 380,000-byte hole between them is a category
 error, not a discovery deficit.
@@ -62,11 +62,11 @@ Split by target, the debt is unambiguous:
 | target | debt regions | debt bytes |
 | --- | ---: | ---: |
 | main image (`asm/*.s`, run address `0x08xxxxxx`) | 727 | 395,816 |
-| overlays (`assets/code/*_overlay.s`) | 0 | 0 |
+| code overlays (`assets/code/*_overlay.s`) | 0 | 0 |
 
 Every one of the 1,807 assembly regions has its `source` under `asm/`, and the
 only run-address banks present are `0x08` (ROM) and `0x03` (the single relocated
-IWRAM payload, which is a keep class). Overlay code is not in this manifest at
+IWRAM payload, which is a keep class). RAM-loaded module code is not in this manifest at
 all — it lives inside compressed resources, is owned by the asset manifest, and
 is tracked separately by `metrics/gs1-en-executable.json`.
 
@@ -83,14 +83,14 @@ is live and has moved material *out* of debt: 49 regions containing
 is why the 43 "not emittable" regions in the 2026-07-26 survey have shrunk to
 **one row of 62 bytes** in the debt today. No action; this bucket is correct.
 
-### 2b. The overlay inventory does not walk the main image — the whole 380 KB
+### 2b. The code-overlay inventory does not walk the main image — the whole 380 KB
 
 `discoverOverlay()` in `tools/overlay_inventory.ts` constructs
 `new Discovery(data, OVERLAY_BASE)` where `data` comes from
 `assembleOverlay(overlay.source, OVERLAY_BASE)` and `OVERLAY_BASE` is
 `0x02000000`. Its input set is the 96 files matching `assets/code/*_overlay.s`.
 The main image is not in that set. **This accounts for the entire gap**: the
-~16 KB queue and the 395,816 bytes are disjoint worlds, and the overlay
+~16 KB queue and the 395,816 bytes are disjoint worlds, and the code-overlay
 inventory was never the main image's queue.
 
 For the record, the overlay-side filtering the question describes is real but
@@ -277,7 +277,7 @@ different residual mechanism.
 ## 4. The cheapest way to widen discovery
 
 Discovery is **not** the constraint on the main image: the queue above is
-complete and needs no walking. Discovery *is* the constraint on overlays, and
+complete and needs no walking. Discovery *is* the constraint on code overlays, and
 one measured change dominates.
 
 **File `tools/overlay_inventory.ts`, function `discoverOverlay()` — the
@@ -300,7 +300,7 @@ over the contiguous 4-aligned run of `literal_slots` entries before testing for
 a `0xb5xx` prologue is a few lines inside that same block.
 
 Measured on a read-only copy of `discoverOverlay()` across all 96 overlays,
-scored against the 835 overlay functions already known to be functions because
+scored against the 835 code-overlay functions already known to be functions because
 they have exact C:
 
 | variant | converted functions rediscovered | functions walked | strict queue rows | strict queue code bytes |
@@ -316,7 +316,7 @@ variants are compared on identical terms.
 
 This also explains the `undiscovered_converted_functions=716` the inventory
 already prints and nobody acts on. It is not a prologue-shape problem:
-**743 of the 835 converted overlay functions (89%) start with `0xb5xx`**, the
+**743 of the 835 converted code-overlay functions (89%) start with `0xb5xx`**, the
 exact shape the seeder recognizes. They are missed because nothing reaches
 them, and adjacency is the reach that is broken.
 

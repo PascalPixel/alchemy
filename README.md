@@ -12,7 +12,7 @@ hobby/research project, not a serious or community-driven decomp, and it is
 nowhere near complete.
 
 The name comes from the moment alchemy is released upon Weyard. This project
-is similarly trying to release the games from their finished cartridge images
+is similarly trying to release the games from their finished ROM images
 into code, art, maps, and music that people can explore.
 
 It is not a remake, ROM hack, emulator, or game download. The long-term target
@@ -35,20 +35,20 @@ source/owner boundary and keeps that owner's natural byte size:
 **Code overlays** — 794,842 executable bytes across 96 decoded RAM-loaded
 modules:
 
-![Decoded overlay code coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=76b5c57e)
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=76b5c57e)
 
 **Data / assets** — the 7.3 MB of the ROM image that is data, not code. Same ladder in
 magenta: faint is byte-represented, a third is b&w sheets, two thirds is
 coloured sheets, full blaze is assets cut into individual objects. The explicit
 unclassified remainder stays at the faint byte-represented floor:
 
-![Asset maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-assets.svg?v=476a752f)
+![Asset maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-assets.svg?v=bb4da623)
 
-Every byte of the English ROM image. The left card is the ROM as it ships; the
+Every byte of the English ROM image. The left card is the ROM image as it ships; the
 right card is the audited executable denominator behind Full-C Byte Share.
 Bright color is byte-exact C, the middle tone is reviewed semantic C, gray is
 ordinary assembly debt, orange is reviewed permanent assembly, and pink is
-non-code data reproduced from tracked asset sources.
+data/assets reproduced from tracked sources.
 
 Exact and semantic ownership come directly from tracked evidence. Orange uses
 the latest verified full-build assembly manifest, so regenerate the publication

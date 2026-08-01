@@ -1015,7 +1015,7 @@ Easy to get wrong and it changes the answer. `Data_0200cd18` is image offset
 Thumb bit. Applying this correctly is what turned an apparently out-of-range
 pool word into the identification of 0x02001770's publishers.
 
-### resource_3c9 residue state (2026-08-01, venus) — 6 of 9 drafted
+### resource_3c9 residue state (2026-08-01, venus) — 7 of 9 drafted
 
 `overlay_published.ts resource_3c9` prints **18 residue LINES and they are
 NINE owners**, each listed twice: once as A-called or B-published and again as
@@ -1035,18 +1035,37 @@ Drafted this shift, read in clusters rather than in address order:
 | 0x02003660 | 112 | orbit step, counter-driven twin of exact-C 0x02003600 |
 | 0x020036d0 | 244 | spawner; installs 0x02003600 at the new record's +108 |
 | 0x020037c4 | 252 | arrival check; consumes the +56/+64 the orbit steps write |
+| 0x020056a0 | 848 | the scene STATE MACHINE; 49-entry jump table, ten arms |
 | 0x02005a28 | 360 | spawner, near-twin of 0x020036d0; installs 0x02005b90 |
 | 0x02005b90 | 92 | third orbit step; anchor from the actor's own +104 |
 
-**resource_3c9 holds THREE copies of one orbit step** — 0x02003600 (exact C),
-0x02003660, 0x02005b90 — and they differ in the anchor source, both radii, and
-the angle increment (-0x800, -0x800, -0x200). The two spawners differ in the
-callback installed, the `Func_0808a160` mode, and, the one that mattered,
-whether bits 2-3 of the attached object's +9 byte are a CONSTANT 4 or are
-COPIED from the anchor's own attached object. Diffing before writing is what
-kept a copy from being normalised into a constant, exactly as on 3b6.
+**resource_3c9 holds THREE copies of one orbit step and THREE spawners, and
+they pair up one to one.** The orbit steps are 0x02003600 (exact C),
+0x02003660 and 0x02005b90; they differ in the anchor source, both radii, and
+the angle increment (-0x800, -0x800, -0x200). The spawners are 0x020036d0,
+0x020056a0 and 0x02005a28, and each installs a different one of the three at
+its record's +108:
 
-Left, and both parked on size rather than on structure:
+| spawner | installs | writes +98? | sine radius | other |
+|---|---|---|---|---|
+| 0x020036d0 | 0x02003600 | no | kept, `>> 16` | — |
+| 0x020056a0 | 0x02003660 | **yes** | computed then DISCARDED | jump table |
+| 0x02005a28 | 0x02005b90 | no | kept, `>> 16` | writes a +104 anchor |
+
+The +98 column is the corroboration worth having: 0x02003660 is the only
+orbit step that READS +98, and 0x020056a0 is the only spawner that WRITES it.
+Neither row knows about the other; the agreement is evidence.
+
+Two things a fold would have destroyed. The +9 byte's bits 2-3 are a CONSTANT
+4 in 0x020036d0 and 0x020056a0 and are COPIED from the anchor's own attached
+object in 0x02005a28 — a copy normalised into a constant, exactly the 3b6
+precedent. And 0x020056a0 computes the sine radius into +48 and overwrites it
+two instructions later from the anchor's +50 halfword; the folded version
+would claim that spawner has no sine call, and it demonstrably does.
+
+Residue after this shift: **4 lines, 2 owners**, re-measured with the liveness
+control in the same session (3a4 = 1, a bogus overlay name = 1748). Both are
+parked on size rather than on structure:
 - **0x020012c8** — 3,604 bytes, `sites=363`, one return-shaped halfword in the
   whole gap. Not opened.
 - **0x02002360** — 4,708 bytes, `sites=` not re-measured; the largest owner in

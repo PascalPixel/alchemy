@@ -61,6 +61,91 @@ Related lever, fully stated (the zero-register reuse, worth 18 -> 1 groups):
 3. start the AND chain with the mask, per the mask-first rule, which is what
    fixes the register identities.
 
+## The main-image `__call_via_rN` bank, and how to read a site (2026-08-01)
+
+`0x080072e4 .. 0x08007320` is the GCC ARMv4T indirect-call veneer bank: fifteen
+four-byte `bx rN; nop` entries in register order r0, r1, r2, r3, r4, r5, r6, r7,
+r8, r9, sl, fp, ip, sp, lr. Past 0x08007320 the bytes are data; `ip` and `lr`
+have no references.
+
+**A `bl` into that range is an INDIRECT CALL through the named register, not a
+call to a function at the target.** The instruction that last wrote that
+register is the callee load — and it reads exactly like dead code, which is why
+138 files across the tree declared these addresses as ordinary prototypes.
+
+The tell that needs no disassembly: **`Func_080072f0` alone was declared with
+eleven mutually incompatible signatures.** A real function has one.
+
+Resolve with `tools/veneer_resolve.ts`; read the contract for its `unknown`
+in the section below before trusting or doubting any answer.
+
+### Arity has a DOMAIN: r0–r3 versus r4 and above
+
+For `__call_via_r0` .. `__call_via_r3` the callee usually sits in the draft's
+argument slot matching the register index — because those ARE the argument
+registers, so the author read rN as argument N. Strip it.
+
+**For r4 and above the callee never appears in the argument list, and every
+argument the draft passed is real.** Stripping one there is the opposite error.
+State the domain or the instrument misleads.
+
+Also: live intermediates are not arguments. `0x030001d8` takes ONE argument;
+it was typed as three because two drafts agreed and r1/r2 happened to hold the
+squares that were multiplied to build r0.
+
+### Pin C statements to ROM sites by REGISTER AGREEMENT AT EVERY POSITION
+
+When a file has several sites, matching statements to sites by order is hope.
+Require the dispatched register to agree at every position: at `0x080d1714`
+ten renderer calls in ROM order dispatch r4,r4,r4,r4,r5,r4,r7,r4,r4,r4 and the
+ten calls in source order matched at all ten. Without that check a phantom gets
+a selection rule invented for it.
+
+### Numbered allocator slots — one mechanism behind four "global families"
+
+`Func_080048b0(id, size)` is a slot allocator. Its table base is `0x03001e50`
+and **slot n lives at `0x03001e50 + n * 4`** (`lsls r5, r0, #2` then
+`str r0, [r4, r5]` at 0x080048de / 0x080048e4). So:
+
+| slot | address | reached from |
+|---|---|---|
+| 0x31 | 0x03001f14 | 0x08012388, 0x08021be0, 0x080f02b0 |
+| 0x32 | 0x03001f18 | 0x080196c4 |
+| 46 | 0x03001f08 | via `Func_080cef64`'s out-parameter (`src/080cef64.c`, byte-exact) |
+| 47 | 0x03001f0c | same |
+
+The "renderer globals" family and the heap/stack-kernel family are the SAME
+mechanism: a relocated routine DMA'd out of ROM into a numbered slot, then
+entered through a veneer.
+
+**CAVEAT THAT MUST TRAVEL WITH THIS: the slot table unifies the ADDRESSING,
+never the CONTENTS.** Slot 0x31 takes three different ROM payloads from its
+three callers — 0x08009e7c (0x27c bytes), 0x08015afc (0x278), 0x080f0024
+(0x230). One buffer, three routines. Unifying by slot address collapses
+distinct functions into one, which is the 0x0808c4f8 disease.
+
+### A struct field is not always a pointer: tagged words
+
+`0x0808d9a4` and `0x0808e23c` both dispatch through **field +8 of an owner
+record**, and both guard it:
+
+- `0x0808d9a4`: `(command & 0x0f000000) != 0` — a test for a GBA
+  memory-region nibble (0x02 EWRAM, 0x03 IWRAM, 0x08 ROM).
+- `0x0808e23c`: `cmp r3, #0x10000; bge`.
+
+Small values are packed script/message ids, read with `ldrh` at the SAME
+offset; large values are addresses. **Any sweep that types struct fields by
+offset alone will silently invert these.** That is not a readable row; it is a
+trap, and it is disarmed only by reading the guard.
+
+### A wrong callee corrupts structure in BOTH directions
+
+`0x080178b0` read two veneer entries as "the two glyph blitters", multiplied
+one function into two, and filed a written Uncertainty about an asymmetry that
+never existed (both entries hold the same pooled 0x03000214). `0x0808c4f8`
+collapsed three different callees into one prototype. `0x080d3f74` welded a
+callee's table index into an argument expression. Same error, three directions.
+
 ## What an `unknown` means, after the resolver control-flow fix (2026-08-01)
 
 `tools/veneer_resolve.ts` originally walked backwards from a call site treating

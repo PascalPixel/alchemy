@@ -14,6 +14,35 @@ rather than real limits.
 Exact means fully linked machine-code byte equality — not semantic similarity,
 not equal object size.
 
+## Reading rules for overlay listings (2026-08-01, learned the hard way)
+
+**Never read a `bl` target from an overlay disassembly listing.** objdump's
+annotations are wrong there: the stored displacement is an absolute image
+offset minus 2, not pc-relative. On one row this printed twenty calls to a
+single veneer as twenty distinct callees, several past the end of the image.
+Resolve with `targetOffset` from `tools/overlay_call_targets.ts`. Jump-table
+words are the same space: `word - 0x8000 - 0x02000000`. This rule must be
+applied before anything reaches PROSE, not merely before it reaches a draft —
+a map written off a raw listing carries the error into everything built on it.
+
+**A literal pool proves nothing about where a function ends.** Pools sit
+*inside* functions with the epilogue after them, branched over. One driver
+carries four interior pools. `measureSpan` numbers are therefore lower bounds.
+
+**`bx rN` after `mov ip, pc` is a CALL, not a return.** m2c treats it as a
+return and silently ends the function there; the guard refuses such rows.
+
+**Jump-table arms are not independent blocks.** Arms fall through into the
+next arm's head. Drafting arms separately produces a wrong file **that still
+passes guard coverage** — `m2c_guard` counts callees, not control flow. A
+100% coverage figure is worth exactly as much as the reading behind it and is
+never a correctness certificate.
+
+**The row after a driver is often what it INSTALLED, not what it calls.**
+
+**The driver anatomy is a habit, not a rule:** several drivers read no scene
+id at all, and one derives the sub-selector when it is zero.
+
 ## Overlay closure standard (2026-08-01) — supersedes any earlier claim
 
 **No overlay is closed without the published-pointer sweep.** The old standard

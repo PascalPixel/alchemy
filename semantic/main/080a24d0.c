@@ -11,21 +11,67 @@
  * interactive part through Func_080a2680, applies the chosen result to the
  * shared display record when the interaction was confirmed, then restores VRAM
  * and tears everything back down.  It returns the Func_080a2680 result code.
+ *
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ *
+ * Neither `Func_08007310` nor `Func_080072f0` is a function.  0x080072e4
+ * begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte `bx rN; nop`
+ * entries in the order r0..r7, r8, r9, sl, fp, ip, sp, lr, ending at
+ * 0x08007320 -- so 0x08007310 is `__call_via_fp` (index 11) and 0x080072f0 is
+ * `__call_via_r3` (index 3).  A `bl` to either calls whatever the named
+ * register holds.
+ *
+ *   0x080a256e  via fp  <- 0x03001388, the relocated IWRAM word copy
+ *   0x080a257a  via r3  <- 0x03000168, the relocated IWRAM word fill
+ *   0x080a2606  via fp  <- 0x03001388, still in fp from the first site
+ *
+ * This file's previous header recorded an honest uncertainty about the first
+ * site: "the assembly loads 0x03001388 into r3 and copies it into fp
+ * immediately before this call.  fp is never read again before the epilogue
+ * restores it ... treated here as a dead literal rather than a fourth
+ * argument."  The observation was exactly right and the conclusion was the
+ * only one available without the bank: fp is not dead and not an argument, it
+ * is the call target, and it is read by the *veneer*, which is why nothing in
+ * the function body appears to read it.
+ *
+ * That also answers why the value is not reloaded before the second copy at
+ * 0x080a2606.  fp is callee-saved and this function pushes it in its own
+ * prologue, so the single write at 0x080a2568 survives the nine intervening
+ * calls; there is no other write to fp anywhere in the range, and the one
+ * conditional edge (`bne.n 0x080a25c2` at 0x080a259c) rejoins after it.  The
+ * resolver reports this site as UNRESOLVED -- correctly, since its backward
+ * walk is bounded -- and the answer here comes from a whole-function
+ * sole-writer argument instead.
+ *
+ * Signatures are not guessed.  The word copy's shape comes from the EXACT
+ * src/080d40ec.c, which declares 0x03001388 as
+ * `void *(*)(void *destination, const void *source, s32 size)`; the fill's
+ * comes from the same file plus semantic/main/080ae2f4.c and 08023e70.c,
+ * which call 0x03000168 as `(void *destination, u32 size, u32 value)`.
+ *
+ * Argument counts, per site, from the registers live at the branch:
+ * both copies set r0/r1/r2 only, and the fill sets r0/r1/r2 with the callee
+ * in r3.  fp is index 11, above the argument registers, so the copies' three
+ * drafted arguments are all real and nothing is stripped there; the fill
+ * dispatches through r3, so its drafted fourth argument is the callee.
  */
 
 /* Snapshot window: 0x2000 bytes of BG character data at 0x06004000. */
 #define VRAM_WINDOW_080A24D0     ((void *)0x06004000)
 #define VRAM_WINDOW_SIZE_080A24D0 0x2000
 
-/* Fill pattern and fill target used to blank the window while the scene runs. */
+/* Fill pattern used to blank the window while the scene runs. */
 #define BLANK_PATTERN_080A24D0   0x33333333u
-#define FILL_TARGET_080A24D0     0x03000168u
+
+/* The two relocated IWRAM helpers this owner calls through the veneer bank. */
+typedef void *(*WordCopy_080a24d0)(void *destination, const void *source,
+                                   s32 size);
+typedef void (*WordFill_080a24d0)(void *destination, u32 size, u32 value);
+#define WORD_COPY_080A24D0  ((WordCopy_080a24d0)0x03001388)
+#define WORD_FILL_080A24D0  ((WordFill_080a24d0)0x03000168)
 
 /* Palette/BG resource handed to Func_08015418 before the window is built. */
 #define SCENE_TILEMAP_080A24D0   0x06002500
-
-/* Fourth word loaded next to the first Func_08007310 call.  See note below. */
-#define UNUSED_LITERAL_080A24D0  0x03001388u
 
 /* Byte flag inside the object pointed to by GlobalTable.unk_24. */
 #define BUSY_FLAG_OFFSET_080A24D0 0xea6
@@ -80,8 +126,6 @@ void *Func_08004970(u32 size);
 void *Func_080048b0(s32 resource, u32 size);
 void Func_08002dd8(s32 resource);
 void Func_08002df0(void *block);
-void Func_08007310(void *destination, const void *source, u32 size);
-void Func_080072f0(void *destination, u32 size, u32 value, u32 target);
 void Func_080030f8(u32 frames);
 void Func_08015408(s32, s32, s32, s32);
 void Func_08015410(s32, s32, s32, s32);
@@ -136,17 +180,12 @@ s32 Func_080a24d0(void)
     scene->widget_10c = Func_08015010(13, 0, 17, 3, 2);
     Func_080a1070();
 
-    /*
-     * Uncertainty: the assembly loads UNUSED_LITERAL_080A24D0 into r3 and
-     * copies it into fp immediately before this call.  fp is never read again
-     * before the epilogue restores it, and the value is not reloaded for the
-     * matching restore call below, so it is treated here as a dead literal
-     * rather than a fourth argument to Func_08007310.
-     */
-    Func_08007310(vram_backup, VRAM_WINDOW_080A24D0,
-                  VRAM_WINDOW_SIZE_080A24D0);
-    Func_080072f0(VRAM_WINDOW_080A24D0, VRAM_WINDOW_SIZE_080A24D0,
-                  BLANK_PATTERN_080A24D0, FILL_TARGET_080A24D0);
+    /* 0x080a256e: bl __call_via_fp, fp = 0x03001388 loaded at 0x080a2568. */
+    WORD_COPY_080A24D0(vram_backup, VRAM_WINDOW_080A24D0,
+                       VRAM_WINDOW_SIZE_080A24D0);
+    /* 0x080a257a: bl __call_via_r3, r3 = 0x03000168 loaded at 0x080a2572. */
+    WORD_FILL_080A24D0(VRAM_WINDOW_080A24D0, VRAM_WINDOW_SIZE_080A24D0,
+                       BLANK_PATTERN_080A24D0);
     Func_080153e0(1);
     Func_080a2474();
 
@@ -180,8 +219,9 @@ s32 Func_080a24d0(void)
 
     Func_080152a8();
     Func_080153e0(0);
-    Func_08007310(VRAM_WINDOW_080A24D0, vram_backup,
-                  VRAM_WINDOW_SIZE_080A24D0);
+    /* 0x080a2606: bl __call_via_fp again; fp still holds 0x03001388. */
+    WORD_COPY_080A24D0(VRAM_WINDOW_080A24D0, vram_backup,
+                       VRAM_WINDOW_SIZE_080A24D0);
 
     /*
      * The busy owner pointer is re-read from the table here; the assembly keeps

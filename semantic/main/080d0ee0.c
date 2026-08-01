@@ -1,6 +1,68 @@
 #include "types.h"
 
-typedef void (*Transfer_080d0ee0)(void *, const void *, u32);
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ *
+ * Neither `Func_080072f0` nor `Func_080072f4` is a function.  0x080072e4
+ * begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte `bx rN; nop`
+ * entries, r0..lr, ending at 0x08007320 -- so 0x080072f0 is `__call_via_r3`
+ * and 0x080072f4 is `__call_via_r4`.  A `bl` to either calls whatever the
+ * named register holds.
+ *
+ * Site 0x080d0f34, via r3.  r3 is loaded at 0x080d0f2e from the pool word at
+ * 0x080d1278: 0x03001388, the relocated IWRAM word copy.  This file had
+ * already found that value -- it declares `transfer` and casts 0x03001388 to
+ * a transfer shape -- and then passed it as a fourth ARGUMENT.  It is the
+ * call target.  Three arguments remain (r0 = 0x05000000, r1 = the resource
+ * pointer, r2 = 0x80); the signature is the one the EXACT src/080d40ec.c
+ * gives for this address.
+ *
+ * Site 0x080d11dc, via r4.  r4 comes from `[sp, #60]`, stored at 0x080d0f7e
+ * from `ldr r6, [r6, #28]` at 0x080d0f72 with r6 = 0x03001eec (pool word at
+ * 0x080d126c).  0x03001eec + 28 = 0x03001f08, which is not a "renderer
+ * global" but allocator slot 46: Func_080048b0's table base is 0x03001e50 and
+ * slot n lives at +n*4, and 46*4 = 184.  The slot holds a routine DMA'd out
+ * of ROM, entered through the veneer.  The draft named the address correctly
+ * as `runtime_header[7]` and was wrong only about what it is for.
+ *
+ * ARGUMENT COUNT AT THAT SITE IS SIX, not the drafted eight, and this is the
+ * exception to the usual r4-and-above rule that the callee never appears in
+ * the argument list.  Registers live at the branch:
+ *
+ *   r0       [sp, #72]          render context
+ *   r1       graphics + tile
+ *   r2       r0 - [sp, #28]     x - half
+ *   r3       ip - r8            y - path_count
+ *   [sp, #0] r8                 path_count
+ *   [sp, #4] r9                 path_count * 2
+ *   r4       [sp, #60]          THE CALLEE
+ *
+ * The draft's seventh argument is that callee, and its eighth is `[sp, #72]`
+ * a second time -- the same value already passed as the first argument.  Both
+ * trailing arguments are artefacts of an eight-parameter phantom prototype
+ * being filled from the last two loads before the branch.
+ *
+ * FLAGGED, NOT FIXED -- outside this audit.  Several pool-loaded constants in
+ * this draft disagree with the ROM, and someone who owns the routine should
+ * settle them rather than a veneer pass:
+ *   0x080d0f24 loads 0x080d1274 = 0x79, drafted as `Func_08002f40(0x9d)`
+ *   0x080d0f38 loads 0x080d127c = 0x73, drafted as `Func_08002f40(0x9e)`
+ *   0x080d1294 = 0x080ee140, drafted as 0x080ee200
+ *   0x080d129c = 0x080ede48, drafted as 0x080ee280
+ * Other constants in the same file (0x080cd261, 0x7828, 0x7780, 0x7784, 134)
+ * do match, so this is not a wrong-image problem.
+ */
+
+/* 0x03001388, the relocated IWRAM word copy; src/080d40ec.c gives the shape. */
+typedef void *(*WordCopy_080d0ee0)(void *destination, const void *source,
+                                   s32 size);
+
+/*
+ * Allocator slot 46 at 0x03001f08, read through 0x03001eec + 28.  Six
+ * arguments, four in registers and two on the stack, read off the branch.
+ */
+typedef void (*SlotRoutine_080d0ee0)(void *render_context, const void *tile,
+                                     s32 x, s32 y, s32 width, s32 span);
 
 struct Scene_080d0ee0 {
     u8 unknown_00[8];
@@ -53,9 +115,6 @@ void Func_08004cb4(void *);
 void Func_08004cf0(s32 *);
 void Func_080051d8(void *, void *);
 void Func_08005340(const void *, void *);
-void Func_080072f0(void *, const void *, u32, Transfer_080d0ee0);
-void Func_080072f4(
-    const void *, const void *, s32, s32, s32, s32, s32, s32);
 void Func_08009080(void *, s32);
 void Func_08009088(void *, s32);
 void Func_08009140(struct Object_080d0ee0 *);
@@ -78,7 +137,9 @@ void Func_080d0ee0(struct Scene_080d0ee0 *scene)
     void *render_context = (void *)runtime_header[1];
     void *graphics = (void *)runtime_header[2];
     void *effect_context = *(void **)0x03001e80;
-    Transfer_080d0ee0 transfer = (Transfer_080d0ee0)0x03001388;
+    WordCopy_080d0ee0 word_copy = (WordCopy_080d0ee0)0x03001388;
+    SlotRoutine_080d0ee0 slot_routine =
+        (SlotRoutine_080d0ee0)runtime_header[7]; /* 0x03001f08, slot 46 */
     struct Object_080d0ee0 *focus;
     struct Object_080d0ee0 *target;
     struct Motion_080d0ee0 *motions =
@@ -92,8 +153,8 @@ void Func_080d0ee0(struct Scene_080d0ee0 *scene)
     target = Func_080b5098(scene->focus_id)->object;
     Func_080cd594(1);
 
-    Func_080072f0(
-        (void *)0x05000000, Func_08002f40(0x9d), 0x80, transfer);
+    /* 0x080d0f34: bl __call_via_r3, r3 = 0x03001388. */
+    word_copy((void *)0x05000000, Func_08002f40(0x9d), 0x80);
     Func_08005340(Func_08002f40(0x9e), graphics);
     Func_08009080(target, 2);
     Func_08009088(target, 48);
@@ -194,15 +255,14 @@ void Func_080d0ee0(struct Scene_080d0ee0 *scene)
                         u16 tile = *(const u16 *)(0x080ee280 +
                             (path_count * 2 - 2));
 
-                        Func_080072f4(
+                        /* 0x080d11dc: bl __call_via_r4, r4 = slot 46. */
+                        slot_routine(
                             render_context,
                             (const u8 *)graphics + tile,
                             x - half,
                             y - path_count,
                             path_count,
-                            path_count * 2,
-                            runtime_header[7],
-                            runtime_header[6]);
+                            path_count * 2);
                     }
                 }
             }

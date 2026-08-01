@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
+#include "types.h"
 
 struct State_080108c4 {
     u8 filler0[0x14];
@@ -12,12 +10,9 @@ extern struct State_080108c4 * volatile Data_03001e70;
 void Func_080108c4(u32 value)
 {
     struct State_080108c4 *state = Data_03001e70;
-    u32 mask = 0xE0;
+    u32 mask = value & 0xe00;
     u32 flags = state->flags;
 
-    mask <<= 4;
-    mask &= value;
-    flags &= 0xF1FF;
-    flags |= mask;
+    flags = (flags & 0xf1ff) | mask;
     state->flags = flags;
 }

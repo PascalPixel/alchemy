@@ -1,4 +1,27 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ *
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320.  A `bl` into that range
+ * is an indirect call through the named register.
+ *
+ * Three sites here, all __call_via_r0, and all THREE DISPATCH DIFFERENT
+ * CALLEES: the values at 0x02008024 (site 0x0808c5be), 0x0200801c
+ * (0x0808c5cc) and 0x02008004 (0x0808c6cc).  One phantom prototype was
+ * standing in for three distinct function pointers.
+ *
+ * __call_via_r0 means the callee occupies r0, so each call takes NO
+ * arguments -- the draft's single argument WAS the callee, appearing in the
+ * slot matching the veneer's register index.  That regularity holds at every
+ * site in this batch and is checked per site, not assumed.
+ *
+ * The three globals are adjacent members of one 0x0200800x block, so a shared
+ * typedef is used.  What any of them does is not established and none is
+ * named.
+ */
 #include "types.h"
+
+typedef s32 (*Callee_0808c4f8)(void);
 
 #define S16(base, off) (*(volatile s16 *)((u8 *)(base) + (off)))
 #define U16(base, off) (*(volatile u16 *)((u8 *)(base) + (off)))
@@ -14,7 +37,6 @@
 extern void *Func_080048f4(s32, s32);
 extern void *Func_08077008(s32);
 extern s32 Func_080022ec(s32, s32);
-extern s32 Func_080072e4(s32);
 extern s32 Func_080770c0(s32);
 extern s32 Func_0808bc9c(void);
 extern s32 Func_0808ce74(void);
@@ -131,9 +153,9 @@ s32 Func_0808c4f8(void)
     Func_08009078(mode);
     Func_08015000();
     Func_0808bc44();
-    S32(work, 0x10) = Func_080072e4(*(volatile s32 *)0x02008024);
+    S32(work, 0x10) = ((Callee_0808c4f8)*(volatile s32 *)0x02008024)();
     Func_0808cf78();
-    Func_0808b674(Func_080072e4(*(volatile s32 *)0x0200801c));
+    Func_0808b674(((Callee_0808c4f8)*(volatile s32 *)0x0200801c)());
     if (Func_080770c0(0x109))
         Func_0808bb2c();
     if (S16(state, 0x74))
@@ -168,7 +190,7 @@ s32 Func_0808c4f8(void)
     }
     Func_08099810();
     S16(work, 0xcc8) = -1;
-    (void)Func_080072e4(*(volatile s32 *)0x02008004);
+    (void)((Callee_0808c4f8)*(volatile s32 *)0x02008004)();
 
     result = S16(work, 0x170);
     if (result != 0) {

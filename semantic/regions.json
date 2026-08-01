@@ -3207,6 +3207,18 @@
     },
     {
       "overlay": "resource_3a4",
+      "entry": "0x02000204",
+      "span_bytes": 8,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- LEAF RESIDUE, surfaced 2026-08-01 by taking the prologue gate off sweep B's published path in tools/overlay_published.ts: the address IS published as a plain word and the sweep resolved it correctly, then discarded it because the target does not open with a push, which a leaf never does since it saves no register and returns with bx lr; published by the overlay's OWN HEADER TABLE at image offset 0x14 as 0x02008205, so it is a DRIVER ENTRY POINT that went undrafted while sixteen larger rows around it were finished -- the cleanest argument for the fix, since the evidence was never missing: the header published the address, the sweep read the header, and one gate threw the answer away; ldr r0,[pc,#0] / bx lr plus the one-word pool at 0x02000208 holding 0x0200c85c, an ADDRESS (image offset 0x485c) returned without being dereferenced; bounds exact from the overlay source, AlchemyC_020001c8 runs .space 0x3c to 0x02000204 and AlchemyC_0200020c begins at 0x0200020c; 0 of 0 callees"
+    },
+    {
+      "overlay": "resource_3a4",
+      "entry": "0x020000bc",
+      "span_bytes": 40,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- LEAF RESIDUE, surfaced 2026-08-01 by taking the prologue gate off sweep B's published path in tools/overlay_published.ts: the address IS published as a plain word and the sweep resolved it correctly, then discarded it because the target does not open with a push, which a leaf never does since it saves no register and returns with bx lr; the largest of the four, forty bytes of real work with no prologue because it calls nothing; PUBLISHED FROM A DESCRIPTOR RECORD rather than the header -- the word at image offset 0x4020 is 0x020080bd, sitting in a structure whose neighbouring words are 0x18, 0xc0010000, 0x10, 0x22, then this pointer, then 0, 1, 0xc, so the callback is one member of a record, the SEVENTH instance of the install-as-data mechanism on this overlay; ONE ARGUMENT r0, the record, used for every access and never reloaded; the per-frame integrator for an actor record -- +8 += +36, +12 += +40, +24 and +28 both += +44 (loaded ONCE into r1 at 0x020000ca, so the two fields advance by one shared quantity rather than two reads), then +40 = +40 - +72 and return 0; the field pattern is the actor record this overlay's drafted rows already use, +8/+12 the position pair 0x02000ec0 adjusts by 224 << 12 and -0x80000, +24/+28 the pair it stamps with 0x13333, +72 the field it writes 0x1999 into, so +36/+40/+44 are the deltas for those members; THE DAMPING READS A STALE REGISTER ON PURPOSE and is the one place this row can be transcribed wrongly -- r2 is loaded from +40 at 0x020000c4 and is still holding it at 0x020000dc where subs r2,r2,r3 subtracts +72, and nothing writes +40 in between, so it is transcribed from the register the instruction names rather than as a fresh load; all forty bytes are instructions, there is no literal pool; bounds exact, AlchemyC_02000098 runs .space 0x24 to 0x020000bc and AlchemyC_020000e4 begins at 0x020000e4; 0 of 0 callees"
+    },
+    {
+      "overlay": "resource_3a4",
       "entry": "0x020002cc",
       "span_bytes": 188,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- resource_3a4 PUBLISHED-POINTER residue, surfaced by sweep B of tools/overlay_published.ts: the address is stored as a plain word rather than reached by any bl, so neither a whole-image BL sweep nor overlay_unindexed can see it; hand-drafted from the bytes with every bl resolved as an absolute image offset (stored displacement + 2) via tools/overlay_call_targets.ts and never read from the listing's arrows; span read through the interworking return pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02000378-0x0200037c plus the two-word literal pool 0x02000380-0x02000387 to the next owner at 0x02000388, so measureSpan's 178 is a lower bound; one argument (r0, held in r7 across the body and spent on the closing Func_02003850 call, whose already-drafted signature (s32 slot, s32 heading) fixes the parameter's role); contains a test-first wait loop the compiler laid out with its single-call body ABOVE the test (body 0x0200034a, test 0x02000350), which read naively from the top looks like unreachable code between two calls; 13 of 13 callees present in the draft"
@@ -5256,6 +5268,18 @@
       "entry": "0x020040b4",
       "span_bytes": 652,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3b9",
+      "entry": "0x02000070",
+      "span_bytes": 4,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- LEAF RESIDUE, surfaced 2026-08-01 by taking the prologue gate off sweep B's published path in tools/overlay_published.ts: the address IS published as a plain word and the sweep resolved it correctly, then discarded it because the target does not open with a push, which a leaf never does since it saves no register and returns with bx lr; published by the overlay's OWN HEADER TABLE at image offset 0x2c as 0x02008071, this offset with the Thumb bit under the base+0x8000 spelling; the whole owner is movs r0,#0 / bx lr with no prologue, no stack frame, no literal pool and no callees; bounds exact from the overlay source, AlchemyC_02000030 runs .space 0x40 to 0x02000070 and the sibling getter Func_02000074 begins at 0x02000074; resource_3b9 had been certified closed at residue 0 with this row inside it; 0 of 0 callees"
+    },
+    {
+      "overlay": "resource_3b9",
+      "entry": "0x02000074",
+      "span_bytes": 8,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- LEAF RESIDUE, surfaced 2026-08-01 by taking the prologue gate off sweep B's published path in tools/overlay_published.ts: the address IS published as a plain word and the sweep resolved it correctly, then discarded it because the target does not open with a push, which a leaf never does since it saves no register and returns with bx lr; published by the overlay's OWN HEADER TABLE at image offset 0x14 as 0x02008075; ldr r0,[pc,#0] / bx lr plus the one-word literal pool at 0x02000078 holding 0x0200b2bc, which is an ADDRESS (image offset 0x32bc) loaded and returned WITHOUT being dereferenced, so the row is a getter for an in-image table; the pool word is INSIDE the owner -- the pc-relative load at 0x02000074 reads 0x02000078 -- so a span stopping at bx lr would report 4 bytes and orphan the word; bounds exact, AlchemyC_0200007c begins with a real push {lr} at 0x0200007c; 0 of 0 callees"
     },
     {
       "overlay": "resource_3b9",

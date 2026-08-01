@@ -40,7 +40,10 @@ typedef unsigned char u8;
  *   0x0200071a  `cmp r0,#0 / bne.n 0x0200071e / b.n 0x02000da8` -- the
  *               whole body runs only when Func_080770c0(0x962) is
  *               NON-zero. 0x962 is this bank's shared story flag, and
- *               0x93f is cleared by Func_080770c8 on the way out.
+ *               0x93f is SET by Func_080770c8 on the way out --
+ *               Func_080770c8 is the setter, not the clearer; the clearer
+ *               is Func_080770d0, per resource_3b9_c_020011ac.c which
+ *               calls both.
  *   0x02000a34  `cmp r0,#0 / bne.n 0x02000aec` -- outer gate. The ZERO
  *               arm is the fall-through at 0x02000a36.
  *   0x02000c12  `cmp r0,#0 / bne.n 0x02000ca2` -- inner gate, inside the
@@ -107,7 +110,7 @@ extern void Func_0808a010(s32 frames);
 extern void Func_0808a018(void);
 extern void Func_0808a020(void);
 extern s32 Func_0808a070(s32 arg0, s32 arg1);
-extern s32 *Func_0808a080(s32 arg0);
+extern u8 *Func_0808a080(s32 id);
 extern void Func_0808a090(s32 id, s32 arg1, s32 arg2);
 extern void Func_0808a098(s32 id, void *data);
 extern void Func_0808a0b0(s32 id, void *data);
@@ -141,7 +144,7 @@ extern u8 *Data_03001ebc;
 void Func_02000710(void)
 {
     u8 *record;
-    s32 *actor;
+    u8 *actor;
     u8 *workspace;
 
     if (Func_080770c0(0x962) == 0)
@@ -214,13 +217,13 @@ void Func_02000710(void)
 
     actor = Func_0808a080(0);
     if (actor != 0)
-        Func_0808a0f0(1, actor[2], actor[4]);
+        Func_0808a0f0(1, *(s32 *)(actor + 8), *(s32 *)(actor + 16));
     actor = Func_0808a080(0);
     if (actor != 0)
-        Func_0808a0f0(2, actor[2], actor[4]);
+        Func_0808a0f0(2, *(s32 *)(actor + 8), *(s32 *)(actor + 16));
     actor = Func_0808a080(0);
     if (actor != 0)
-        Func_0808a0f0(3, actor[2], actor[4]);
+        Func_0808a0f0(3, *(s32 *)(actor + 8), *(s32 *)(actor + 16));
 
     Func_0808a090(1, 0xcccc, 0x6666);
     Func_0808a090(2, 0xcccc, 0x6666);

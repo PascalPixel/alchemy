@@ -61,6 +61,29 @@ Related lever, fully stated (the zero-register reuse, worth 18 -> 1 groups):
 3. start the AND chain with the mask, per the mask-first rule, which is what
    fixes the register identities.
 
+## What an `unknown` means, after the resolver control-flow fix (2026-08-01)
+
+`tools/veneer_resolve.ts` originally walked backwards from a call site treating
+the **linear** predecessor as the **control-flow** predecessor. Two members of
+that bug family were found; the fix adds three rules: the walk stops at a
+fall-through barrier (unconditional `b`, `bx rN`, `pop {..., pc}`); a `bx rN`
+preceded by `mov ip, pc` is a CALL and therefore not a barrier; and a join
+point crossed during the walk invalidates the linear answer, leaving only a
+whole-function sole-writer argument.
+
+**The re-verification: 871 sites, 77 changed, concrete disagreements ZERO.**
+Not one site moved from one address to a *different* address. Every change is a
+withdrawal of confidence (literal→unknown, memory→unknown, call-return→unknown,
+global→memory). The tool never contradicted an earlier assertion; it stopped
+asserting what it could not prove. All thirteen committed files were re-read
+against the ROM individually and stand; no correction commit was required.
+
+**Therefore: an `unknown` from this tool means "not proven here", NOT "the
+earlier answer was wrong."** Known remaining limit, deliberately not tuned
+away: `branchTargets` and `soleWriter` still decode literal pools and jump
+tables as if they were code, so some refusals are false positives — and every
+such error goes in the safe direction.
+
 ## Tooling that lies quietly (2026-08-01)
 
 Two near-misses in one night, same class: a tool that returns a *plausible

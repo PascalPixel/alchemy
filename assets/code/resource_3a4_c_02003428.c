@@ -29,15 +29,23 @@ typedef signed int s32;
  * written as a flags byte.
  */
 
-extern u8 *Func_0808a080(s32 id);
-extern void Func_0808a1e0(s32 id, s32 arg1);
+extern u8 *Func_02006fc6(s32 id);
+extern u8 *Func_02006fd6(s32 id);
+extern void Func_020070a8(s32 id, s32 arg1);
+extern void Func_020070b2(s32 id, s32 arg1);
 
 void Func_02003428(void)
 {
-    if (*(s32 *)(Func_0808a080(0) + 12) > 0x00300000) {
-        Func_0808a080(11)[35] |= 2;
-        Func_0808a1e0(12, 3);
+    if (*(s32 *)(Func_02006fc6(0) + 12) > 0x00300000) {
+        {
+            u8 *flag = Func_02006fd6(11) + 35;
+            s32 bit = 2;
+
+            bit |= *flag;
+            *flag = bit;
+        }
+        Func_020070a8(12, 3);
     } else {
-        Func_0808a1e0(12, 2);
+        Func_020070b2(12, 2);
     }
 }

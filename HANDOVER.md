@@ -2922,7 +2922,18 @@ never involved.
 
 **Statement order matters.** Moving an independent assignment above a call has
 produced exact matches where nothing else did — a permuter's single win in 65,543
-candidates was one statement swap. Always try both orders of two independent
+candidates was one statement swap. **Measured again 2026-08-01 on a correctly
+selected population** (four regalloc-only near-misses, three of them size-exact,
+~5,089 candidates): zero hits, and the floor never improved on any row. The
+reason is structural, not budgetary — a permuter searches source-level degrees
+of freedom (statement order, spelling), while this project's endgame residuals
+are decisions below the C level: which operand gcc copies, where a constant
+materialises, literal-pool sort order. A six-line function offers almost no
+search space and pool ordering offers none. Caveat for the record:
+decomp-permuter-agbcc (agbcc-specific, with targeted PERM_* macros) needs
+network access and was NOT tested; the repo's own permuter was. Note also that
+PERM_LINESWAP's statement-order search is already scripted here by
+`tools/statement_order_sweep_main.ts`. Always try both orders of two independent
 statements. Related: assign a pool-address local immediately before first use,
 not at function top (33 halfwords on one function).
 

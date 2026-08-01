@@ -48,7 +48,13 @@ assembly/structure rather than ordinary semantic-C work.
 The core dashboard therefore contains **zero gray assembly bytes**: it renders
 those 30,654 retained bytes orange. Gray means actionable semantic debt; orange
 means pools, alignment, veneers, relocated runtime, or other reviewed structure
-that remains assembly by design.
+that remains assembly by design. **Challenged and upheld on 2026-08-01:** a
+span-complement probe appeared to show ~1.8kB of remaining debt, so the
+rendering was reverted; listing the spans then showed 4-46 byte intra-function
+fragments (inline call-via thunk sites, pools, alignment) rather than undrafted
+functions, and the rendering was restored. Two independent checks agree, and
+`semantic:check` inside `verify` means new core debt breaks the build rather
+than hiding. Do not re-litigate this without listing spans first.
 
 This does **not** mean the game is fully decompiled or fully byte-exact C.
 Exact-C ownership is **232,944 / 1,339,594 bytes (17.39%)**. The active speed

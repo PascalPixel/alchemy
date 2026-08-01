@@ -2,7 +2,7 @@ typedef int s32;
 
 /*
  * resource_39e owner at 0x0200267c, 16 bytes: one of three thin direction
- * wrappers around this overlay's own Func_0200268c. This one passes
+ * wrappers around this overlay's own Func_02004d12. This one passes
  * (-32, 0).
  *
  * PUBLISHED, NOT CALLED. No `bl` in the image reaches it; its Thumb
@@ -37,9 +37,9 @@ typedef int s32;
  * the sibling comparison above; their units are unknown.
  */
 
-extern void Func_0200268c(s32 arg0, s32 arg1);
+extern void Func_02004d12(s32 arg0, s32 arg1);
 
 void Func_0200267c(void)
 {
-    Func_0200268c(-32, 0);
+    Func_02004d12(-32, 0);
 }

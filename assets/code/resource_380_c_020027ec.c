@@ -11,7 +11,7 @@ typedef int s32;
  * one that is not a talk handler -- it carries no scene bracket and no
  * dialogue.
  *
- * Func_0808a2a0 takes no arguments here: nothing is loaded into r0
+ * Func_020072b4 takes no arguments here: nothing is loaded into r0
  * between the prologue and the `bl`. The tree's one existing use,
  * semantic/overlays/resource_3b4_c_020018e0.c, also calls it with none,
  * so the arity agrees across two independent readings.
@@ -24,18 +24,18 @@ typedef int s32;
  * The `bl` target resolved through the overlay's import-veneer table
  * under the +2 rule (tools/overlay_call_targets.ts): the veneer at
  * image 0x4ac4 loads 0x0808a2a1 and branches, so the callee is
- * Func_0808a2a0.
+ * Func_020072b4.
  *
- * Uncertainty: what Func_0808a2a0 does, and why the script installs a
+ * Uncertainty: what Func_020072b4 does, and why the script installs a
  * whole callback to reach it rather than pointing at it directly, is
  * unestablished. The likeliest reason is that a script record's pointer
  * must be an overlay-image address, but this owner is no evidence for
  * that.
  */
 
-extern void Func_0808a2a0(void);
+extern void Func_020072b4(void);
 
 void Func_020027ec(void)
 {
-    Func_0808a2a0();
+    Func_020072b4();
 }

@@ -13,8 +13,8 @@ typedef int s32;
  * than swept in with them. It has the same 32-byte layout as the four
  * stubs at 0x0200274c-0x020027ac and the same scene bracket, but the
  * third call is different: where those end with the imported
- * Func_0808a180(actor, 0), this one calls the overlay's OWN
- * Func_02004248 with (9, 10). The distinction is visible only in the
+ * Func_02006a26(actor, 0), this one calls the overlay's OWN
+ * Func_02006a26 with (9, 10). The distinction is visible only in the
  * resolved `bl` target -- 0x02004248 is a direct intra-image branch,
  * not a veneer -- so a size-and-shape match would have mis-drafted it.
  *
@@ -22,7 +22,7 @@ typedef int s32;
  * branching 0x02002674. Which script record installs which is not
  * established here.
  *
- * Func_02004248 is already banked byte-exact as
+ * Func_02006a26 is already banked byte-exact as
  * assets/code/resource_380_c_02004248.c, a two-call wrapper the file's
  * own header describes as this overlay's most-called workhorse; its
  * signature (s32, s32) is taken from there rather than re-derived.
@@ -40,20 +40,20 @@ typedef int s32;
  * The two imported `bl` targets resolved through the import-veneer
  * table under the +2 rule (tools/overlay_call_targets.ts).
  *
- * Uncertainty: Func_02004248's arguments carry no established meaning,
+ * Uncertainty: Func_02006a26's arguments carry no established meaning,
  * so 9 and 10 are transcribed, not interpreted -- 9 matching the actor
  * id used elsewhere in the bank is suggestive only.
  */
 
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern void Func_0808a170(s32 dialogueId);
-extern void Func_02004248(s32 arg0, s32 arg1);
+extern void Func_0200716c(void);
+extern void Func_02007186(void);
+extern void Func_0200722a(s32 dialogueId);
+extern void Func_02006a26(s32 arg0, s32 arg1);
 
 void Func_020027cc(void)
 {
-    Func_0808a018();
-    Func_0808a170(0x1072);
-    Func_02004248(9, 10);
-    Func_0808a020();
+    Func_0200716c();
+    Func_0200722a(0x1072);
+    Func_02006a26(9, 10);
+    Func_02007186();
 }

@@ -24,31 +24,36 @@ game.
 
 ## Coverage map
 
-**Main image** — 548,364 bytes of resident code. Purple shows
+**Main image** — 548,364 bytes of resident code. Thirteen real 64 KiB address
+banks wrap the audited source-owner leaves; the final bank contains only the
+executable bytes actually present in that window. Purple shows
 semantic and exact C; orange shows the reviewed pools, alignment, veneers, and
 runtime structure intentionally retained as assembly. There is no ordinary
 gray semantic debt left in the main-image census. Each tile follows one audited
 source/owner boundary and keeps that owner's natural byte size:
 
-![Main-image code coverage box tree in purple with retained assembly in orange.](assets/readme/gs1-en-core.svg?v=7bb89618)
+![Main-image code coverage box tree in purple with retained assembly in orange.](assets/readme/gs1-en-core.svg?v=a5548642)
 
-**Code overlays** — 794,842 executable bytes across 96 decoded RAM-loaded
-modules:
+**Code overlays** — 795,042 executable bytes across 96 decoded RAM-loaded
+modules. Each module is a real parent containing its exact-C owners,
+source-backed semantic owners, and contiguous unowned assembly runs:
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=87b08561)
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=e714ff9f)
 
-**Data / assets** — the 7.3 MB of the ROM image that is data, not code. Same ladder in
-magenta: faint is byte-represented, a third is b&w sheets, two thirds is
-coloured sheets, full blaze is assets cut into individual objects. The explicit
-unclassified remainder stays at the faint byte-represented floor:
+**Data / assets** — 7,298,755 bytes of the ROM image that are data, not code.
+Fifty-two real manifest families wrap their built leaf kinds and 2,335 disjoint,
+byte-verified ROM objects. The magenta ladder shows representation maturity:
+faint is encoded bytes, a third is b&w sheets, two thirds is coloured sheets,
+and full blaze is assets cut into individual objects:
 
-![Asset maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-assets.svg?v=bb4da623)
+![Asset maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-assets.svg?v=f5c9aff3)
 
-Every byte of the English ROM image. The left card is the ROM image as it ships; the
-right card is the audited executable denominator behind Full-C Byte Share.
+These are the same complete SVG panels used by the live dashboard: title,
+hierarchical byte tree, and left-aligned legend are all inside each artifact.
+There is no separate HTML-authored graph chrome to drift from the README.
 Bright color is byte-exact C, the middle tone is reviewed semantic C, gray is
-ordinary assembly debt, orange is reviewed permanent assembly, and pink is
-data/assets reproduced from tracked sources.
+ordinary assembly debt, and orange is reviewed permanent assembly. Leaf gutters
+are zero; only real parent folders have outlines.
 
 Exact and semantic ownership come directly from tracked evidence. Orange uses
 the latest verified full-build assembly manifest, so regenerate the publication
@@ -66,7 +71,7 @@ bun tools/dashboard_server.ts
 
 The local dashboard scans the actual worktree, rebuilds its three graphs in
 memory, and pushes changes to the browser as source, evidence, or the verified
-assembly manifest changes. It does not need `bun run coverage`; that command
+assembly or asset manifest changes. It does not need `bun run coverage`; that command
 updates the checked-in publication snapshot. `main` remains the authoritative
 integrated tree.
 

@@ -21,7 +21,10 @@ const STYLES = join(DASHBOARD, "styles.css");
 const FONT = join(ROOT, "assets", "fonts", "weyard.otf");
 const PORT = Number(Bun.env.ALCHEMY_DASHBOARD_PORT ?? 4649);
 const COVERAGE_DIRECTORIES = ["asm", "assets", "metrics", "semantic", "src"] as const;
-const COVERAGE_BUILD_FILES = [join(ROOT, "out", "full", "asm", "manifest.json")];
+const COVERAGE_BUILD_FILES = [
+  join(ROOT, "out", "full", "asm", "manifest.json"),
+  join(ROOT, "out", "full", "assets", "manifest.json"),
+];
 const RESTART_FILES = [SOURCE, join(dirname(SOURCE), "coverage_map.ts")];
 
 const TREE_LABELS: Record<BoxTreeId, string> = {
@@ -140,8 +143,9 @@ function rebuildCoverage(): void {
       exact: tree,
       semantic: tree,
       validateTrackedProgress: false,
+      preferVerifiedAssets: true,
     });
-    const trees = renderBoxTrees(map, tree);
+    const trees = renderBoxTrees(map, tree, true);
     const revision = BOX_TREES.map((name) => svgCacheVersion(trees[name])).join("-");
     coverage = { revision, generatedAt: new Date().toISOString(), map, trees };
     scanError = undefined;
@@ -239,14 +243,31 @@ async function selfTest(): Promise<void> {
     exact: tree,
     semantic: tree,
     validateTrackedProgress: false,
+    preferVerifiedAssets: true,
   });
-  const trees = renderBoxTrees(map, tree);
+  const trees = renderBoxTrees(map, tree, true);
   if (map.categories.exact_c.bytes <= 0 || BOX_TREES.some((name) => !trees[name].startsWith("<svg "))) {
     throw new Error("dashboard live coverage generation failed");
+  }
+  if (!trees.core.includes("MAIN IMAGE") || !trees.overlays.includes("CODE OVERLAYS") ||
+      !trees.assets.includes("DATA / ASSETS") ||
+      BOX_TREES.some((name) => !trees[name].includes("font-family:Weyard;font-size:16px"))) {
+    throw new Error("dashboard SVGs do not carry their own 16px Weyard title and legend chrome");
   }
   const client = await bundledClient();
   if (!client.includes("EventSource") || !client.includes("createElement")) {
     throw new Error("dashboard client is not bundled hyperscript with live events");
+  }
+  if (client.includes("legendbar") || client.includes("titlebar")) {
+    throw new Error("dashboard title or legend escaped the reproducible SVG boundary");
+  }
+  const styles = await Bun.file(STYLES).text();
+  const fontShorthands = styles.split(/\r?\n/).map((line) => line.trim())
+    .filter((line) => line.startsWith("font:"));
+  if (!styles.includes("--weyard-font: italic 400 16px/15px Weyard") ||
+      styles.includes("font-size:") ||
+      fontShorthands.some((line) => line !== "font: var(--weyard-font);")) {
+    throw new Error("dashboard UI typography drifted from the one 16px Weyard size");
   }
   if (documentShell().includes('<div id="root"')) {
     throw new Error("dashboard document shell contains authored view markup");

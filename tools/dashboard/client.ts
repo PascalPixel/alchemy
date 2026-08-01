@@ -60,7 +60,6 @@ async function requestSnapshot(): Promise<Snapshot> {
 
 function panel(tree: Tree, title: string, revision: string): HTMLElement {
   return h("section", { className: `panel p-${tree}` },
-    h("div", { className: "titlebar", title }, title),
     h("img", {
       className: "tree-image",
       src: `/svg/${tree}?v=${encodeURIComponent(revision)}`,

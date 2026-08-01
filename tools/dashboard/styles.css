@@ -3,7 +3,11 @@
   src: url("/weyard.otf") format("opentype");
   font-weight: 400;
   font-style: italic;
-  font-display: swap;
+  font-display: block;
+}
+
+:root {
+  --weyard-font: italic 400 16px/15px Weyard;
 }
 
 * {
@@ -32,58 +36,36 @@ body {
 
 .trees {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, 540px);
   gap: 10px;
   flex: 1;
   align-items: center;
+  justify-content: center;
+  overflow-x: auto;
 }
 
 .tree-image {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: contain;
+  width: 540px;
+  height: 304px;
+  max-width: none;
   display: block;
-  border-radius: 4px;
 }
 
 .panel {
   min-width: 0;
   min-height: 0;
-  padding: 0 5px 5px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: var(--edge);
-  border-radius: 8px;
-  box-shadow: 0 0 0 2px #1c1c26, inset 0 0 0 1px rgb(255 255 255 / 60%);
 }
 
-.titlebar {
-  height: 18px;
-  padding: 0.5px 5px 0;
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  color: #fff;
-  font: italic 400 16px/15px Weyard, system-ui, sans-serif;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.panel > :not(.titlebar) { border-radius: 5px; }
-.p-core { --edge: #6d4fc2; }
-.p-overlays { --edge: #1f7f93; }
-.p-assets { --edge: #bb2f77; }
 .error {
   padding: 8px 10px;
   color: #7d211b;
   background: #fff1ef;
   border: 2px solid #7c2626;
   border-radius: 6px;
-  font: italic 400 16px/15px Weyard, system-ui, sans-serif;
+  font: var(--weyard-font);
 }
 
 .loading {
@@ -91,18 +73,16 @@ body {
   display: grid;
   place-items: center;
   color: #555;
-  font: italic 400 16px/15px Weyard, system-ui, sans-serif;
+  font: var(--weyard-font);
 }
 
 @media (prefers-color-scheme: dark) {
   html, body { background: #131318; }
-  .panel { box-shadow: 0 0 0 2px #000, inset 0 0 0 1px rgb(255 255 255 / 35%); }
-  .tree-image { filter: brightness(0.92); }
   .error { color: #ffc1bb; background: #371b1a; }
 }
 
 @media (max-width: 760px) {
   #root { height: auto; padding: 8px; gap: 8px; }
-  .trees { grid-template-columns: 1fr; gap: 8px; }
+  .trees { grid-template-columns: 540px; gap: 8px; justify-content: start; }
   .panel { min-height: auto; }
 }

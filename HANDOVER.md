@@ -6095,6 +6095,14 @@ empty `evidence` throws, and overlapping spans throw. The field is a
 field, populated at draft time, and enforced. Every constraint I was about
 to go and build was already met.
 
+**RULE: before building an instrument to derive a fact, grep the tree for
+the fact.** The field existed, was populated for all 1,064 drafts, and was
+already enforced at draft time. A shift of work was approved on my report
+and neither Vale nor I looked; 751 KB answered in one line of Python. The
+cost of the check is always smaller than the cost of the instrument, and
+the check has to come first even when — especially when — the missing fact
+feels obviously missing.
+
 **So the defect was never in the tree. It was that my instrument did not
 read the data the tree already had, and I reached for a parser instead of
 looking.** The three contradictory numbers were not evidence of a missing
@@ -6128,6 +6136,65 @@ state explicitly, so progress moves a site *between* buckets instead of
 out of the accounting. Whenever a metric gets worse after work that was
 plainly correct, suspect the metric's denominator or its buckets before
 suspecting the work.
+
+### The nine described-nowhere sites — opened (2026-08-01)
+
+`overlay_adopt` already takes `--span` for a function discovery never
+seeded, so an undescribed row needs no inventory entry to be adopted. Three
+worked so far:
+
+| row | span | result |
+| --- | --- | --- |
+| 378:014c | 304 | **byte-exact on the first probe, no edit** |
+| 378:3334 | 296 | **byte-exact on the first probe, no edit** |
+| 396:1424 | 392 | 6 differing bytes — parked, see below |
+
+**Two cold rows exact in one pass is the playbook working, not luck.** Arm
+order off the ROM (§5b5) and per-site raw names (§5b3a) were the whole
+method. Write the order down before writing the arms and the row falls out.
+
+**Shape was proven, not assumed, and it needed to be.** `378:014c`,
+`378:3334` and `371:037c` share the `Data_02000240[225]` selector with
+`subs #10 / cmp #40 / bhi` over 10..50, and all three have DIFFERENT
+tables. In `378:014c` selector 50 shares an arm with 20 and 21 while its
+neighbours 48 and 49 fall to the default — nothing about the siblings
+predicts that. Read every entry.
+
+**Read the fallthroughs out of the table.** `396:1424` dispatches on its
+ARGUMENT (`cmp r0,#12`), and two of its thirteen entries point INSIDE
+another arm's body: entry 1 lands at 0x020014e8 inside case 4, entry 8 at
+0x0200158a inside case 11. Those are fallthroughs, and they are only
+visible in the table — the arm order (0,2,3,4,1,5,7,9,10,11,8,12) is what
+makes them legible. A third entry points at the shared tail itself, so that
+selector is the default and gets no arm.
+
+### 396:1424 — PARKED at 6 bytes: a SECOND witness for the `-mcall-arg0-move-first` fork item
+
+The residual is two argument-setter pairs, at 0x020014da and 0x0200157c,
+where the reference sets r1 before r0 and this fork sets r0 first. Both are
+the **fourth two-argument call of an eight-call arm that falls through**;
+the three earlier calls in each of those arms come out right, and so does
+every one of the other thirty-odd sites.
+
+The reference's own rule is visible: the last call of an arm is r0-first
+and every earlier one is r1-first. Where an arm falls through, its last
+call is the *one-argument* call, so the fourth two-argument call should
+stay r1-first — and this fork promotes it as though it were last.
+
+Measured and rejected: `-fno-schedule-insns2`, both dest-first modes,
+`-fno-sched-depend-count`, `-fsched-store-first`, `-fno-sched-alias`,
+`-fno-expensive-optimizations`, `-fno-regmove`, `-fno-cse-two-insn-immediate`,
+`-mthumb-immediate-latency`, and `-mcall-arg0-move-first` itself — not one
+moves those two sites, so this is emission order, decided before scheduling.
+Source spellings tried: argument locals on either operand, an empty
+statement at the label, and removing the fallthrough comment.
+
+`strings cc1` confirms `call-arg0-move-first` is the only member of this
+family in the fork, and it is whole-function. **This is the second
+independent row wanting per-call-site granularity for it** — `3c4:0cd0`
+wants arg0-first at two of four sites, `396:1424` wants arg1-first at two
+of thirty-odd. One row was a curiosity; two rows in different overlays,
+with the reference's own rule legible in both, is a specification.
 
 ### The confirmed population, probed (2026-08-01)
 

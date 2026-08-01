@@ -3254,6 +3254,12 @@
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {lr}) and returning (pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (three incoming sites per overlay_unindexed.ts), span read from the disassembly through the trailing four-word literal pool to the final bx r0 at 0x2003a6e, inside the assembled overlay image and not overlapping another recorded owner"
     },
     {
+      "overlay": "resource_3a5",
+      "entry": "0x02001638",
+      "span_bytes": 572,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_3a5), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; span read from the disassembly through the epilogue at 0x02001846-0x0200184e and the trailing nine-word literal pool 0x02001850-0x02001873 to the next function at 0x02001874, inside the assembled overlay image and not overlapping another recorded owner; hand-drafted from the bytes, with every bl target resolved as an absolute image offset (stored displacement + 2) rather than pc-relative -- a plain objdump listing annotates the twenty Func_080091b8 calls with twenty different targets that are all the one veneer at 0x02001d14; tools/m2c_guard.ts finds no call-through-register site and no jump table here and reports full call coverage against the draft."
+    },
+    {
       "overlay": "resource_3a6",
       "entry": "0x02000314",
       "span_bytes": 56,

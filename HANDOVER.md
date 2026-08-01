@@ -2406,11 +2406,11 @@ new ordinary core debt fails the gate. `main_image_classes.ts --list 100`
 independently reports `convertible-thumb 0 owners / 0 bytes` among the
 source-attributed residuals.
 
-Current compiling totals are **1,558 semantic sources / 793,966 declared
-semantic bytes**: 415,502 core/main bytes and 378,464 overlay bytes. Of those,
-14,572 overlay bytes lie outside the audited executable extents, so the coverage
-map credits **779,394 semantic bytes**. Together with exact C, **1,012,338 /
-1,339,594 executable bytes (75.57%)** are expressed in C, leaving 327,256
+Current compiling totals are **1,837 semantic sources / 849,242 declared
+semantic bytes**: 415,502 core/main bytes and 433,740 overlay bytes. Of those,
+22,404 overlay bytes lie outside the audited executable extents, so the coverage
+map credits **826,838 semantic bytes**. Together with exact C, **1,063,130 /
+1,341,386 executable bytes (79.26%)** are expressed in C, leaving 278,256
 audited executable bytes. In the core image specifically, exact C is 102,208 bytes and
 semantic C is 415,502 bytes; the remaining 30,654 bytes are retained
 assembly/structure rather than ordinary semantic-C work.
@@ -2426,9 +2426,18 @@ functions, and the rendering was restored. Two independent checks agree, and
 than hiding. Do not re-litigate this without listing spans first.
 
 This does **not** mean the game is fully decompiled or fully byte-exact C.
-Exact-C ownership is **232,944 / 1,339,594 bytes (17.39%)**. The active speed
+Exact-C ownership is **236,292 / 1,341,386 bytes (17.62%)**. The active speed
 lane after waking is therefore exact-C replacement of semantic owners, plus
 continued overlay ownership—not another core semantic sweep.
+
+**Latest wake checkpoint (2026-08-01):** `resource_3bb:020010dc` and
+`resource_371:020002cc` added 568 reviewed semantic bytes. The latter was
+rejected twice at review until hard-register declarations and a pool-shaped
+zero spelling were replaced by plain semantic C. In the exact lane, 2,668
+automated variants across fresh `resource_39a` and `resource_3c8` candidates
+produced no hit; do not repeat those floors. The next speed experiment is a
+20-source fresh semantic-backed cohort with a mandatory report even when it
+returns zero, followed by one hand-draft of its best genuinely fresh residual.
 
 ## Historical two-lighthouse protocol
 
@@ -2562,11 +2571,11 @@ to exact, that region is worth re-probing here, because an exact result would
 replace Venus's semantic version outright. Two such candidates were noted and are
 still open (§8).
 
-Alongside the exact lane, reviewed semantic C currently declares **793,966
-bytes across 1,558 compiling sources**: 415,502 main-image bytes and 378,464
-overlay bytes. The executable coverage map credits 779,394 of them after
-excluding 14,572 overlay bytes outside the audited extents; combined with exact
-C, **1,012,338 / 1,339,594 executable bytes (75.57%)** are expressed as C.
+Alongside the exact lane, reviewed semantic C currently declares **849,242
+bytes across 1,837 compiling sources**: 415,502 main-image bytes and 433,740
+overlay bytes. The executable coverage map credits 826,838 of them after
+excluding 22,404 overlay bytes outside the audited extents; combined with exact
+C, **1,063,130 / 1,341,386 executable bytes (79.26%)** are expressed as C.
 Build that lane with `bun run build:semantic`; its
 sources live under `semantic/` and do not claim byte equality. Use
 `semantic/ordinary-blockers.json` to keep proven ABI and multi-region traps out

@@ -197,26 +197,181 @@ function readWord(rom: Uint8Array, address: number): number {
 }
 
 /**
+ * True when control CANNOT fall through from `hw` at `pc` into `pc + 2`:
+ * an unconditional `b`, a `bx`/`blx` register, or a `pop` that restores pc.
+ *
+ * WHY THIS EXISTS. The backward walk used to assume the linear predecessor was
+ * the control-flow predecessor. At 0x0808e23c that produced a confident wrong
+ * answer: the tool named the callee as the RETURN of the `bl 0x08091750` at
+ * 0x0808e360, when the very next instruction, `b.n 0x0808e370`, branches past
+ * the veneer call entirely. Nothing before that branch is on the path that
+ * reaches the site.
+ *
+ * Same family as the caller-saved bug the port found (r0-r3 traced across a
+ * `bl`): both are the walk trusting a linear scan past a boundary.
+ */
+export function isFallThroughBarrier(hw: number, previous: number): boolean {
+  if ((hw & 0xf800) === 0xe000) return true; // b <imm11>
+  if ((hw & 0xff00) === 0xbd00) return true; // pop {..., pc}
+  if ((hw & 0xff87) === 0x4700) {
+    // `bx rN` preceded by `mov ip, pc` is a CALL, not a return -- the tree
+    // already carries this rule (HANDOVER.md, "reading rules for overlay
+    // listings", where m2c silently ends functions at it). Control returns to
+    // the following instruction, so it is not a barrier.
+    return previous !== 0x46fc;
+  }
+  return false;
+}
+
+/**
+ * Every address in [entry, end) that some branch inside the function jumps to.
+ *
+ * Crossing one of these while walking backwards means the site is reachable by
+ * a path that never executed the instruction just found, so a write before the
+ * join point does not dominate the site. Conditional branches are collected as
+ * well as unconditional ones: a `b<cond>` falls through, which is fine to walk
+ * past, but its TARGET is still a second entry into whatever follows.
+ */
+export function branchTargets(rom: Uint8Array, entry: number, end: number): Set<number> {
+  const targets = new Set<number>();
+  for (let pc = entry; pc + 2 <= end; pc += 2) {
+    const hw = readHalf(rom, pc);
+    // b<cond> <imm8>; cond 0xe is undefined and 0xf is svc, neither a branch.
+    if ((hw & 0xf000) === 0xd000 && ((hw >> 8) & 0xf) < 0xe) {
+      targets.add(pc + 4 + (((hw & 0xff) << 24) >> 23));
+      continue;
+    }
+    // b <imm11>
+    if ((hw & 0xf800) === 0xe000) {
+      targets.add(pc + 4 + (((hw & 0x7ff) << 21) >> 20));
+    }
+  }
+  return targets;
+}
+
+/**
+ * Sole fallback once the linear walk has been invalidated by a barrier or a
+ * join point: if the WHOLE function contains exactly one instruction that
+ * writes the register, that write is the answer no matter which path ran.
+ *
+ * Deliberately conservative. It decodes forward so BL pairs are stepped over
+ * as single instructions, but literal pools sitting inside the body are still
+ * decoded as if they were code, and any halfword that happens to look like a
+ * writer counts. Every such false positive pushes the count above one and
+ * yields `unknown` -- the error direction that refuses rather than invents.
+ */
+function soleWriter(
+  rom: Uint8Array,
+  entry: number,
+  end: number,
+  site: number,
+  register: number,
+): number | null {
+  let found: number | null = null;
+  for (let pc = entry; pc + 2 <= end; pc += 2) {
+    const hw = readHalf(rom, pc);
+    if (pc + 4 <= end && decodeBl(hw, readHalf(rom, pc + 2), pc) !== null) {
+      // r0-r3 are caller-saved, so any call writes them.
+      if (register <= 3) return null;
+      pc += 2;
+      continue;
+    }
+    const writer = decodeWriter(hw, pc);
+    if (!writer || writer.register !== register) continue;
+    // A write AFTER the site can only matter if control can get from it back
+    // to the site, which needs a backward branch at or after it. Without one
+    // the write provably never precedes the call.
+    //
+    // This is what the epilogue looks like: `pop {r3, r5}; mov r8, r3;
+    // mov sl, r5` restores the caller's callee-saved registers, so it decodes
+    // as a second writer of sl while being unreachable from the loop above it
+    // (0x08021848 and 0x080a8c2c are both this shape).
+    if (pc > site && !reachesBackward(rom, pc, end, site)) continue;
+    if (found !== null) return null;
+    found = pc;
+  }
+  return found;
+}
+
+/** Whether any branch in [from, end) targets an address at or before `site`. */
+function reachesBackward(rom: Uint8Array, from: number, end: number, site: number): boolean {
+  for (let pc = from; pc + 2 <= end; pc += 2) {
+    const hw = readHalf(rom, pc);
+    if ((hw & 0xf000) === 0xd000 && ((hw >> 8) & 0xf) < 0xe) {
+      if (pc + 4 + (((hw & 0xff) << 24) >> 23) <= site) return true;
+    } else if ((hw & 0xf800) === 0xe000) {
+      if (pc + 4 + (((hw & 0x7ff) << 21) >> 20) <= site) return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * What to report once the linear walk has been invalidated. Tries the
+ * whole-function sole-writer argument, and otherwise says exactly which
+ * control-flow fact stopped it -- never a plausible-looking address.
+ */
+function unreachableWriter(
+  rom: Uint8Array,
+  entry: number,
+  end: number,
+  site: number,
+  register: number,
+  via: string[],
+  reason: string,
+): Resolution {
+  const sole = soleWriter(rom, entry, end, site, register);
+  if (sole !== null) {
+    const writer = decodeWriter(readHalf(rom, sole), sole);
+    if (writer && writer.kind === "literal") {
+      const value = readWord(rom, writer.pool);
+      if (plausibleCallee(value)) return { kind: "literal", pool: writer.pool, value, via };
+    }
+    if (writer && writer.kind === "memory") {
+      return { kind: "memory", detail: writer.detail, at: sole, via };
+    }
+  }
+  return { kind: "unknown", reason };
+}
+
+/**
  * Walk backwards from `site` for the last write to `register`. Pure halfword
  * scanning: Thumb is fixed-width apart from BL, and a BL's halves never decode
  * as a writer form that would mislead this walk, so no instruction-boundary
  * reconstruction is needed.
+ *
+ * The walk is only sound while it stays inside one basic block's worth of
+ * straight-line predecessors. It therefore stops at a fall-through barrier and
+ * notices join points; once either has been crossed, the linear answer is
+ * discarded and only `soleWriter` can still supply one.
  */
 function resolveRegister(
   rom: Uint8Array,
   entry: number,
+  end: number,
   site: number,
   register: number,
   via: string[] = [],
 ): Resolution {
   if (via.length > HOP_LIMIT) return { kind: "unknown", reason: "register hop limit" };
+  const joins = branchTargets(rom, entry, end);
+  let crossedJoinAt: number | null = null;
   for (let pc = site - 2; pc >= entry && pc > site - 2 - WALK_LIMIT * 2; pc -= 2) {
+    // The instruction after a barrier is not reachable from the instruction
+    // before it, so nothing earlier is on this path. Stop.
+    if (isFallThroughBarrier(readHalf(rom, pc), pc - 2 >= entry ? readHalf(rom, pc - 2) : 0)) {
+      return unreachableWriter(rom, entry, end, site, register, via,
+        `control flow: no fall-through past 0x${pc.toString(16)}`);
+    }
     // r0-r3 are caller-saved. A `bl` crossed while tracing one of them means
     // the value is that call's RETURN, and anything written before the call is
     // no longer live. Walking past it invents a callee: four sites in this
     // tree resolved to 0xe0, 0x7c, 0x214 and 0x318 -- allocation sizes -- until
     // this check existed, because the walk skipped a `bl` and picked up the
     // argument that had been loaded into r0 for it.
+    // pc+2 is entered from somewhere else too, so a write found from here on
+    // does not necessarily execute before the site.
+    if (crossedJoinAt === null && joins.has(pc + 2)) crossedJoinAt = pc + 2;
     if (register <= 3 && pc - 2 >= entry) {
       const low = readHalf(rom, pc);
       const high = readHalf(rom, pc - 2);
@@ -226,6 +381,10 @@ function resolveRegister(
     }
     const writer = decodeWriter(readHalf(rom, pc), pc);
     if (!writer || writer.register !== register) continue;
+    if (crossedJoinAt !== null) {
+      return unreachableWriter(rom, entry, end, site, register, via,
+        `control flow: 0x${crossedJoinAt.toString(16)} is a branch target, so the write at 0x${pc.toString(16)} may be skipped`);
+    }
     if (writer.kind === "literal") {
       const value = readWord(rom, writer.pool);
       if (!plausibleCallee(value)) {
@@ -235,13 +394,13 @@ function resolveRegister(
     }
     if (writer.kind === "move") {
       const name = VENEER_REGISTERS[writer.from] ?? `r${writer.from}`;
-      return resolveRegister(rom, entry, pc, writer.from, [...via, `${name}@0x${pc.toString(16)}`]);
+      return resolveRegister(rom, entry, end, pc, writer.from, [...via, `${name}@0x${pc.toString(16)}`]);
     }
     if (writer.kind === "memory") {
       // A stack slot is not an opaque memory read: the function filled it, and
       // the `str` that did is findable. Chase it one level.
       if (writer.slot !== undefined) {
-        const chased = resolveStackSlot(rom, entry, pc, writer.slot, via);
+        const chased = resolveStackSlot(rom, entry, end, pc, writer.slot, via);
         if (chased) return chased;
       }
       // When the BASE register is itself a pooled constant, the load has a
@@ -249,7 +408,7 @@ function resolveRegister(
       // real answer, not an opaque memory read -- it is how the renderer slots
       // at 0x03001f08 / 0x03001f0c are reached.
       if (writer.base !== undefined && writer.disp !== undefined) {
-        const baseResolution = resolveRegister(rom, entry, pc, writer.base, [...via, `r${writer.base}@0x${pc.toString(16)}`]);
+        const baseResolution = resolveRegister(rom, entry, end, pc, writer.base, [...via, `r${writer.base}@0x${pc.toString(16)}`]);
         if (baseResolution.kind === "literal") {
           return { kind: "global", address: baseResolution.value + writer.disp, at: pc, via };
         }
@@ -264,7 +423,17 @@ function resolveRegister(
   // 0x08006f6c is the clearest case in the tree -- its `bl __call_via_r1` is
   // the second instruction, so r1 is plainly an incoming function pointer and
   // the function's declared `(void)` signature is wrong.
-  if (site - 2 - WALK_LIMIT * 2 < entry) return { kind: "incoming", register, via };
+  if (site - 2 - WALK_LIMIT * 2 < entry) {
+    // `incoming` is a claim about the INTERFACE -- the caller supplied this
+    // value -- and it is the opposite answer from `unknown`, not a vaguer one.
+    // It may only be made when the walk saw the whole path: if a join was
+    // crossed, some other path may well have written the register.
+    if (crossedJoinAt !== null) {
+      return unreachableWriter(rom, entry, end, site, register, via,
+        `control flow: reached entry, but 0x${crossedJoinAt.toString(16)} is a branch target`);
+    }
+    return { kind: "incoming", register, via };
+  }
   return { kind: "unknown", reason: `no write to r${register} within ${WALK_LIMIT} instructions` };
 }
 
@@ -280,6 +449,7 @@ function resolveRegister(
 function resolveStackSlot(
   rom: Uint8Array,
   entry: number,
+  end: number,
   load: number,
   slot: number,
   via: string[],
@@ -292,7 +462,7 @@ function resolveStackSlot(
     // str rD, [sp, #imm8*4]
     if ((hw & 0xf800) === 0x9000 && ((hw & 0xff) * 4) === slot) {
       const stored = (hw >> 8) & 7;
-      const inner = resolveRegister(rom, entry, pc, stored, [...via, `[sp,#${slot}]@0x${pc.toString(16)}`]);
+      const inner = resolveRegister(rom, entry, end, pc, stored, [...via, `[sp,#${slot}]@0x${pc.toString(16)}`]);
       return { kind: "stack", slot, storedAt: pc, inner, via };
     }
   }
@@ -310,7 +480,7 @@ export function resolveFunction(rom: Uint8Array, entry: number, end: number): Si
     sites.push({
       address: pc,
       register,
-      resolution: resolveRegister(rom, entry, pc, registerNumber(register)),
+      resolution: resolveRegister(rom, entry, end, pc, registerNumber(register)),
     });
   }
   return sites;
@@ -484,8 +654,45 @@ function selfTest(): void {
     }
     // The sp guard: a slot chase must abort rather than answer across an sp
     // adjustment, because the same displacement then means a different place.
-    if (resolveStackSlot(image, 0x080e15e8, 0x080e15ea, 0, []) !== null) {
+    if (resolveStackSlot(image, 0x080e15e8, 0x080e1c00, 0x080e15ea, 0, []) !== null) {
       throw new Error("veneer self-test: stack chase crossed a push/sp adjustment");
+    }
+
+    // --- control flow --------------------------------------------------
+    // REGRESSION, 2026-08-01. The backward walk used to treat the LINEAR
+    // predecessor as the CONTROL-FLOW predecessor. At 0x0808e36c it therefore
+    // named the callee as the return of the `bl 0x08091750` at 0x0808e360 --
+    // but the instruction between them, `b.n 0x0808e370` at 0x0808e364,
+    // branches past the veneer call entirely, so that `bl` is on a path that
+    // never reaches the site. The real writer is `ldr r3, [r6, #8]` at
+    // 0x0808e336, reached only via the `bge.n 0x0808e366` at 0x0808e33c.
+    //
+    // The tool cannot follow that edge, and must not pretend otherwise: the
+    // required behaviour is a refusal naming the barrier, never an address.
+    const branched = resolveFunction(image, 0x0808e23c, 0x0808e4a0);
+    const past = branched.find((s) => s.address === 0x0808e36c);
+    if (!past) throw new Error("veneer self-test: 0808e36c site missing");
+    if (past.resolution.kind === "call-return") {
+      throw new Error("veneer self-test: walked backwards across an unconditional branch");
+    }
+    if (past.resolution.kind !== "unknown" || !past.resolution.reason.includes("control flow")) {
+      throw new Error("veneer self-test: barrier not reported as a control-flow refusal");
+    }
+
+    // `bx rN` after `mov ip, pc` is a CALL and DOES fall through, so it is not
+    // a barrier. Guarding it as one withdrew 0x0800dc60's answer, which is a
+    // plain pooled constant in `fp`. Both halves of the rule are tested: the
+    // barrier predicate itself, and the site it used to break.
+    if (!isFallThroughBarrier(0x4718, 0x0000)) {
+      throw new Error("veneer self-test: bare `bx r3` must be a barrier");
+    }
+    if (isFallThroughBarrier(0x4718, 0x46fc)) {
+      throw new Error("veneer self-test: `mov ip, pc; bx r3` is a call, not a barrier");
+    }
+    const afterCall = resolveFunction(image, 0x0800daf0, 0x0800dcd4);
+    const viaFp = afterCall.find((s) => s.address === 0x0800dc60);
+    if (!viaFp || viaFp.resolution.kind !== "literal") {
+      throw new Error("veneer self-test: 0800dc60 lost across a `mov ip, pc; bx` call");
     }
 
     // An unwritten register is an incoming argument, not a failed walk.

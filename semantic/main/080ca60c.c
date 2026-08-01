@@ -16,8 +16,6 @@ void Func_080041d8();
 void Func_08004278();
 void Func_080049ac();
 void Func_080051d8();
-void Func_080072f0();
-void Func_080072f4(s32, void *, s32, s32, u32, s32);
 void Func_080b5088(s16, s32);
 void Func_080b50e8(s32);
 void Func_080cd52c();
@@ -33,6 +31,74 @@ void Func_080e396c();
 void Func_080e3980();
 void Func_080ed408();
 void Func_080f9010();
+
+/*
+ * __call_via_rN veneer sites, resolved per-site against the ROM. Nine `bl`
+ * sites in this function land inside the 0x080072e4 bank; none is a call to a
+ * function at the branch target, and each resolves through the register the
+ * veneer entry branches on.
+ *
+ * 0x080ca718 -- `bl 0x080072f0` = __call_via_r3, r3 from this function's pool
+ * = 0x03001388, the IWRAM-relocated word copy (destination, source, size).
+ * r3 is an ARGUMENT register, so the draft's fourth argument WAS the callee;
+ * the call takes three.
+ *
+ * The other eight are `bl 0x080072f4` = __call_via_r4. r4 is above r0-r3, so
+ * no argument slot hides the callee and all six arguments the draft passes at
+ * each of them are real.
+ *
+ * THIS FUNCTION USES BOTH RENDERER DISCIPLINES, AND THE DIFFERENCE IS THE
+ * POINT. Slots 46 (0x03001f08) and 47 (0x03001f0c) are Func_080048b0's
+ * allocator slots, published by Func_080ed408(id, ...) and released by
+ * Func_08002dd8(id). Five sites RE-READ the slot at the point of use; three
+ * go through a two-entry table parked in this frame. Reading the ROM:
+ *
+ *   Slot 46 is published FIVE times with DIFFERENT parameters -- 0x080ca9ca
+ *   (7,7,7,2), 0x080caa70 (7,7,3,2), 0x080cac2c (7,7,3,table byte),
+ *   0x080cac7c (7,7,7,a different table byte), 0x080caeb4 (7,7,3,2) -- and
+ *   four sites re-read 0x03001f08 between two of them: 0x080caa02 after
+ *   0x080ca9ca, 0x080caaa6 after 0x080caa70, 0x080cac62 after 0x080cac2c,
+ *   0x080cac98 after 0x080cac7c. Each is publish, read, call, release.
+ *
+ *   Slot 47 is published at 0x080cae66 and again at 0x080caec8, and the site
+ *   at 0x080cae88 falls between them -- inside the three-iteration loop that
+ *   closes at 0x080cae9a, so the publish/read/call/release runs once per
+ *   iteration with a fresh randomised parameter each time.
+ *
+ * SO THESE FIVE MUST NOT BE HOISTED. A `renderers[2]` local filled once at
+ * the top would compile and would look exactly like the files where caching
+ * is correct, and it would freeze a pointer the ROM refreshes on purpose.
+ * The read is reproduced where the ROM does it.
+ *
+ * THE OTHER THREE ARE CACHED, AND THE ROM CACHES THEM. At 0x080ca962-0x080ca970
+ * `mov r3, sp; adds r3, #100; str r3, [sp, #24]` parks the ADDRESS sp + 100.
+ * After the last publish pair, 0x080caebe stores slot 46 into [sp, #100] and
+ * 0x080caed2 stores slot 47 into [r2, #4] with r2 = sp + 100. That is a
+ * two-element local array, and the three remaining sites index it:
+ * 0x080caff4 (`[r0, #4]`) and 0x080cb0fe (`[r5, #4]`) are entry 1, and
+ * 0x080caf42 is `ldr r4, [r4, r0]` with r0 the table base and r4 = (r8 & 1)
+ * << 2 -- the particle counter's parity. No branch inside
+ * 0x080caecc..0x080cb1a4 targets an address at or before 0x080caecc, checked
+ * exhaustively, so no republication can reach those three sites.
+ *
+ * STRUCTURE CORRECTED at 0x080caf42. The draft called one renderer there;
+ * the ROM alternates between the two on `var_r8_11 & 1`. The callee was the
+ * only thing distinguishing the iterations and the draft could not see it.
+ *
+ * DEFECT CORRECTED in the draft's park. m2c wrote the slot-47 park as
+ * `sp18[1]`, reading `str r3, [r2, #4]` as an offset from sp + 24 when r2
+ * holds the CONTENTS of [sp, #24], which is sp + 100. The word written is
+ * sp + 104, entry 1 of the table -- which is why the three cached sites read
+ * back exactly what this store wrote.
+ *
+ * UNCERTAINTY, left standing: this settles which pointer each site calls and
+ * when it is read. It settles nothing about what slots 46 and 47 CONTAIN --
+ * the slot table unifies the addressing, never the contents.
+ */
+typedef void *(*WordCopy_080ca60c)(void *destination, const void *source,
+                                   s32 size);
+typedef void (*Renderer_080ca60c)(s32 target, void *source, s32 x, s32 y,
+                                  u32 width, s32 height);
 
 /*
  * Run the selector-driven combat visual from resource setup through its final
@@ -68,7 +134,7 @@ s32 Func_080ca60c(s32 arg0, s32 arg1) {
     s32 sp58;
     s32 sp5C;
     s32 sp60;
-    s32 sp64;
+    Renderer_080ca60c renderers[2];
     s32 sp6C[2];
     s32 sp78[2];
     s32 *var_r5_3;
@@ -187,7 +253,7 @@ s32 Func_080ca60c(s32 arg0, s32 arg1) {
         var_r0 = 0xC4;
         break;
     }
-    Func_080072f0(0x05000000, Func_08002f40(var_r0), 0x80, 0x03001388);
+    ((WordCopy_080ca60c)0x03001388)((void *)0x05000000, Func_08002f40(var_r0), 0x80);
     Func_080e0524((void *)0x9E, temp_r1 + 0x3200, 1, 0);
     sp54 = 0;
     sp10 = 0;
@@ -313,10 +379,10 @@ frame_loop:
             temp_r3_4 = (void *)(temp_r1_4 + 5);
             Func_080ed408(0x2E, 7, 7, 3, (s32) M2C_FIELD(temp_r3_4, u8 *, 0x080EDF04));
             temp_r5_2 = (sp20 * 0x360) + temp_r1 + 0xC80;
-            Func_080072f4(sp5C, temp_r5_2, ((s32) (sp38[0] + (sp38[0] >> 0x1F)) >> 1) - 0x12, 0x38, 0x12U, 0x30);
+            (*(Renderer_080ca60c *)0x03001F08)(sp5C, temp_r5_2, ((s32) (sp38[0] + (sp38[0] >> 0x1F)) >> 1) - 0x12, 0x38, 0x12U, 0x30);
             Func_08002dd8(0x2E);
             Func_080ed408(0x2E, 7, 7, 7, (s32) M2C_FIELD(temp_r3_4, u8 *, 0x080EDF04));
-            Func_080072f4(sp5C, temp_r5_2, (s32) (sp38[0] + (sp38[0] >> 0x1F)) >> 1, 0x38, 0x12U, 0x30);
+            (*(Renderer_080ca60c *)0x03001F08)(sp5C, temp_r5_2, (s32) (sp38[0] + (sp38[0] >> 0x1F)) >> 1, 0x38, 0x12U, 0x30);
             Func_08002dd8(0x2E);
             temp_r6 = (void *)(temp_r1_4 + 4);
             temp_r5_3 = M2C_FIELD(temp_r6, u8 *, 0x080EDF04);
@@ -364,11 +430,11 @@ frame_loop:
                 Func_080ed408(0x2E, 7, 7, 7, 2);
                 temp_r5_7 = M2C_FIELD(temp_r6_2, u8 *, 0x080EDF58);
                 temp_r4_2 = M2C_FIELD(temp_r6_2, u8 *, 0x080EDF5E);
-                Func_080072f4(sp5C, M2C_FIELD((temp_r6_2 * 2), u16 *, 0x080EDF64) + temp_r1, ((((s32) (sp38[0] + (sp38[0] >> 0x1F)) >> 1) - ((u8) M2C_FIELD(temp_r6_2, u8 *, 0x080EDF70) >> 1)) - temp_r5_7) + 8, sp38[1] - (temp_r4_2 >> 1), (u32) temp_r5_7, (s32) temp_r4_2);
+                (*(Renderer_080ca60c *)0x03001F08)(sp5C, M2C_FIELD((temp_r6_2 * 2), u16 *, 0x080EDF64) + temp_r1, ((((s32) (sp38[0] + (sp38[0] >> 0x1F)) >> 1) - ((u8) M2C_FIELD(temp_r6_2, u8 *, 0x080EDF70) >> 1)) - temp_r5_7) + 8, sp38[1] - (temp_r4_2 >> 1), (u32) temp_r5_7, (s32) temp_r4_2);
             } else {
                 Func_080ed408(0x2E, 7, 7, 3, 2);
                 temp_r4_3 = M2C_FIELD(temp_r6_2, u8 *, 0x080EDF5E);
-                Func_080072f4(sp5C, M2C_FIELD((temp_r6_2 * 2), u16 *, 0x080EDF64) + temp_r1, (((s32) (sp38[0] + (sp38[0] >> 0x1F)) >> 1) + ((u8) M2C_FIELD(temp_r6_2, u8 *, 0x080EDF70) >> 1)) - 8, sp38[1] - (temp_r4_3 >> 1), (u32) M2C_FIELD(temp_r6_2, u8 *, 0x080EDF58), (s32) temp_r4_3);
+                (*(Renderer_080ca60c *)0x03001F08)(sp5C, M2C_FIELD((temp_r6_2 * 2), u16 *, 0x080EDF64) + temp_r1, (((s32) (sp38[0] + (sp38[0] >> 0x1F)) >> 1) + ((u8) M2C_FIELD(temp_r6_2, u8 *, 0x080EDF70) >> 1)) - 8, sp38[1] - (temp_r4_3 >> 1), (u32) M2C_FIELD(temp_r6_2, u8 *, 0x080EDF58), (s32) temp_r4_3);
             }
             Func_08002dd8(0x2E);
             temp_r5_8 = M2C_FIELD(sp28, u8 *, 0x080EDF04);
@@ -431,7 +497,7 @@ frame_loop:
             temp_r6_4 = (((s32) (temp_r6_3 + (temp_r6_3 >> 0x1F)) >> 1) + ((s32) (temp_r5_12 * Func_08002322((s32) temp_r0_4)) >> 0x11)) - ((u8) M2C_FIELD(temp_r7, u8 *, 0x080EDECA) >> 1);
             temp_r5_13 = (M2C_FIELD(sp38, s32 *, 4) - ((s32) (temp_r5_12 * Func_0800231c((s32) temp_r0_4)) >> 0x11)) - ((u8) M2C_FIELD(temp_r7, u8 *, 0x080EDED0) >> 1);
             Func_080ed408(0x2F, 7, 7, 3 | M2C_FIELD((Func_08004458() & 3), u8 *, 0x080EDF7B), 3);
-            Func_080072f4(sp5C, M2C_FIELD((temp_r7 * 2), u16 *, 0x080EDEBE) + temp_r1, temp_r6_4, temp_r5_13, (u32) M2C_FIELD(temp_r7, u8 *, 0x080EDECA), (s32) M2C_FIELD(temp_r7, u8 *, 0x080EDED0));
+            (*(Renderer_080ca60c *)0x03001F0C)(sp5C, M2C_FIELD((temp_r7 * 2), u16 *, 0x080EDEBE) + temp_r1, temp_r6_4, temp_r5_13, (u32) M2C_FIELD(temp_r7, u8 *, 0x080EDECA), (s32) M2C_FIELD(temp_r7, u8 *, 0x080EDED0));
             Func_08002dd8(0x2F);
             var_r8_10 += 1;
         } while (var_r8_10 != 3);
@@ -439,9 +505,9 @@ frame_loop:
     Func_080049ac();
     Func_080051d8(sp4C, sp14);
     Func_080ed408(0x2E, 7, 7, 3, 2);
-    sp64 = *(s32 *)0x03001F08;
+    renderers[0] = *(Renderer_080ca60c *)0x03001F08;
     Func_080ed408(0x2F, 7, 7, 3, 3);
-    sp18[1] = *(s32 *)0x03001F0C;
+    renderers[1] = *(Renderer_080ca60c *)0x03001F0C;
     sp54 = 0;
     sp1C = (void *)(sp2C + 2);
 loop_83:
@@ -455,7 +521,7 @@ loop_83:
                 if ((s32) var_r3 < 0) {
                     var_r3 += 3;
                 }
-                Func_080072f4(sp5C, (((s32) var_r3 >> 2) * 0x480) + temp_r1 + 0x3200, M2C_FIELD(var_r5_4, s16 *, 2) - 0xC, M2C_FIELD(var_r5_4, s16 *, 6) - 0x18, 0x18U, 0x30);
+                renderers[var_r8_11 & 1](sp5C, (((s32) var_r3 >> 2) * 0x480) + temp_r1 + 0x3200, M2C_FIELD(var_r5_4, s16 *, 2) - 0xC, M2C_FIELD(var_r5_4, s16 *, 6) - 0x18, 0x18U, 0x30);
                 Func_080e3908(var_r5_4, 0x3E, -0x400);
                 M2C_FIELD(var_r5_4, u32 *, 0x18) = (u32) (M2C_FIELD(var_r5_4, u32 *, 0x18) + 1);
             }
@@ -482,7 +548,7 @@ loop_83:
                 Func_080e3944((s32) var_r5_5, sp6C);
                 temp_r2_3 = (s32) M2C_FIELD(sp6C, s32 *, 0) >> 1;
                 M2C_FIELD(sp6C, s32 *, 0) = temp_r2_3;
-                Func_080072f4(sp5C, sp50 + M2C_FIELD((temp_r7_2 - 2), u16 *, 0x080EDE48), temp_r2_3 - (var_sl >> 1), M2C_FIELD(sp6C, s32 *, 4) - var_sl, var_sl, temp_r7_2);
+                renderers[1](sp5C, sp50 + M2C_FIELD((temp_r7_2 - 2), u16 *, 0x080EDE48), temp_r2_3 - (var_sl >> 1), M2C_FIELD(sp6C, s32 *, 4) - var_sl, var_sl, temp_r7_2);
                 Func_080e38b8(var_r5_5, 0x3C, 0);
                 temp_r3_6 = M2C_FIELD(var_r5_5, s32 *, 0x18) + 1;
                 M2C_FIELD(var_r5_5, s32 *, 0x18) = temp_r3_6;
@@ -512,7 +578,7 @@ loop_83:
                 Func_080e38b8(var_r7, 0x3C, 0);
                 temp_r5_15 = (temp_r5_14 >> 3) + 1;
                 temp_r0_6 = temp_r5_15 * 2;
-                Func_080072f4(sp5C, sp50 + M2C_FIELD((temp_r0_6 - 2), u16 *, 0x080EDE48), M2C_FIELD(sp6C, s32 *, 0) - ((s32) (temp_r5_15 + (temp_r5_15 >> 0x1F)) >> 1), M2C_FIELD(sp6C, s32 *, 4) - temp_r5_15, temp_r5_15, temp_r0_6);
+                renderers[1](sp5C, sp50 + M2C_FIELD((temp_r0_6 - 2), u16 *, 0x080EDE48), M2C_FIELD(sp6C, s32 *, 0) - ((s32) (temp_r5_15 + (temp_r5_15 >> 0x1F)) >> 1), M2C_FIELD(sp6C, s32 *, 4) - temp_r5_15, temp_r5_15, temp_r0_6);
                 M2C_FIELD(var_r7, s32 *, 0x18) = (s32) (M2C_FIELD(var_r7, s32 *, 0x18) - 1);
             }
             var_r8_13 += 1;

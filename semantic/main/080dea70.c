@@ -28,11 +28,58 @@ s32 Func_08004278(const void *);
 u32 Func_08004458(void);
 void Func_080049ac(void);
 void Func_080051d8(s32, s32);
-void Func_080072f0(s32, s32, s32, s32);
-void Func_080072f4(s32, void *, s32, s32, u32, s32);
-void Func_080072f8(s32, void *, s32, s32, s32, s32);
-void Func_080072fc(s32, void *, s32, s32, s32, s32);
-void Func_08007300(s32, void *, s32, s32, s32, s32);
+/*
+ * __call_via_rN veneer sites, resolved per-site against the ROM. Sixteen `bl`
+ * sites land in the 0x080072e4 bank: three __call_via_r3, nine
+ * __call_via_r4, two __call_via_r5, one __call_via_r6 and one __call_via_r7.
+ *
+ * The three r3 sites (0x080debaa, 0x080debd4, 0x080dec62) take 0x03001388
+ * from pools 0x080dec38 and 0x080def88 -- the IWRAM-relocated word copy. r3
+ * is an ARGUMENT register, so the draft's fourth argument WAS the callee and
+ * the call takes three.
+ *
+ * THE OTHER THIRTEEN SPLIT CLEANLY IN TWO, AND THE ROM DRAWS THE LINE. Both
+ * halves are Func_080048b0 allocator slots, but the two slots are used with
+ * OPPOSITE lifetimes in this function:
+ *
+ *   SLOT 46 (0x03001f08) IS PUBLISHED EXACTLY ONCE. The three-armed chain at
+ *   0x080deafc / 0x080deb14 / 0x080deb24 is one publish with three parameter
+ *   sets on three branches, its release is at 0x080df86c, and no
+ *   Func_080ed408 between them carries id 46 -- checked at every one of the
+ *   ten intervening publishes, which are all id 47. The ROM reads it ONCE, at
+ *   0x080deb2c through pool 0x080dec20 = 0x03001e50 plus 184, and parks it in
+ *   [sp, #112]. Five sites read it back from there: 0x080df536 (r7),
+ *   0x080df55c (r4), 0x080df578 (r6) -- the three arms of one switch, same
+ *   pointer through three registers -- and 0x080df7a8, 0x080df816 in the two
+ *   burst-pool loops. So `renderer_46` is a genuine cache, and it is the
+ *   ROM's cache, not the audit's.
+ *
+ *   SLOT 47 (0x03001f0c) IS REPUBLISHED TEN TIMES with different parameters,
+ *   and every one of its eight sites RE-READS it between two publishes:
+ *   0x080df0b0 read after the 0x080df098/0x080df0a8 pair for the two r5 sites
+ *   0x080df0cc and 0x080df0e2; then 0x080df3fe/0x080df404, 0x080df452/
+ *   0x080df45a, 0x080df63a/0x080df63e, 0x080df67c/0x080df680, 0x080df6f6/
+ *   0x080df6fa, 0x080df73e/0x080df740, each inside its own publish/release
+ *   bracket. NONE of these may be hoisted; a cached slot 47 would serve a
+ *   stale renderer configuration to every bracket after the first.
+ *
+ * The resolver calls 0x080df0e2 UNRESOLVED because 0x080df0d0 is a branch
+ * target. The skipped range is 0x080df0ba..0x080df0ce and nothing in it
+ * writes r5, so both r5 sites take the 0x080df0b0 read; that is inspection of
+ * the actual span, not an assumption.
+ *
+ * ARITY: six at every renderer site, four in registers and two pushed. The
+ * dispatch register is r4 or above at all thirteen, so no argument slot holds
+ * the callee.
+ *
+ * UNCERTAINTY, left standing: this settles which pointer is called and when
+ * it is read. It settles nothing about what slots 46 and 47 CONTAIN.
+ */
+typedef void *(*WordCopy_080dea70)(void *destination, const void *source,
+                                   s32 size);
+typedef void (*Renderer_080dea70)(s32 target, void *source, s32 x, s32 y,
+                                  u32 width, s32 height);
+
 u32 Func_080b5070(s32);
 void Func_080b5088(s16, s32);
 void **Func_080b5098(s32);
@@ -91,6 +138,8 @@ s32 Func_080dea70(struct Work_02000000 *arg0, s32 arg1) {
     s32 sp88;
     s32 sp8C;
     s32 projected[3];
+    Renderer_080dea70 renderer_46;
+    Renderer_080dea70 renderer_47;
     s32 *var_r2;
     u8 *var_r3_6;
     s32 temp_r0_3;
@@ -202,6 +251,7 @@ block_11:
     } else {
         Func_080ed408(0x2E, 7, 7, 3, 3);
     }
+    renderer_46 = *(Renderer_080dea70 *)0x03001F08;
     Func_080e0524((void *)0x73, sp68, 0, 0);
     switch (arg1) {
     case 0:
@@ -225,11 +275,11 @@ block_24:
             Func_080e0524((void *)0x81, temp_r0 + 0x1000, 1, 1);
         }
         if (arg1 == 5) {
-            Func_080072f0(0x05000000, Func_08002f40(0xB9), 0x80, 0x03001388);
+            ((WordCopy_080dea70)0x03001388)((void *)0x05000000, Func_08002f40(0xB9), 0x80);
         }
         Func_080e0524((void *)0xC7, temp_r0 + 0x2000, 1, 0);
         if (arg1 == 5) {
-            Func_080072f0(0x05000000, Func_08002f40(0xB9), 0x80, 0x03001388);
+            ((WordCopy_080dea70)0x03001388)((void *)0x05000000, Func_08002f40(0xB9), 0x80);
         }
         M2C_FIELD(temp_r0, s32 *, 0x7780) = 2;
         var_r3_2 = 0x4B;
@@ -244,7 +294,7 @@ block_42:
         var_r3_2 = 0;
         break;
     case 2:
-        Func_080072f0(0x05000000, Func_08002f40(0x7F), 0x80, 0x03001388);
+        ((WordCopy_080dea70)0x03001388)((void *)0x05000000, Func_08002f40(0x7F), 0x80);
         Func_080e0524((void *)0x5C, temp_r0, 0, 0);
         M2C_FIELD(temp_r0, s32 *, 0x7780) = arg1;
         var_r2 = (s32 *)(temp_r0 + 0x7784);
@@ -446,10 +496,11 @@ frame_loop:
         } else {
             Func_080ed408(0x2F, 7, 7, 3, 3);
         }
+        renderer_47 = *(Renderer_080dea70 *)0x03001F0C;
         if (sp78 <= 3) {
-            Func_080072f8(sp84, temp_r0 + 0x65C0, temp_sl_2, var_r6, 0x14, 0x28);
+            renderer_47(sp84, temp_r0 + 0x65C0, temp_sl_2, var_r6, 0x14, 0x28);
         }
-        Func_080072f8(sp84, temp_r0 + 0x65C0, temp_sl_2, var_r6, 0x14, 0x28);
+        renderer_47(sp84, temp_r0 + 0x65C0, temp_sl_2, var_r6, 0x14, 0x28);
         Func_08002dd8(0x2F);
     }
     Func_080049ac();
@@ -643,14 +694,14 @@ burst_pool_ready:
                         Func_080ed408(0x2F, 7, 7, 3, 2);
                     }
                     temp_r0_2 = M2C_FIELD((void *)0x080EEBE9, u8 *, sp5C);
-                    Func_080072f4(sp84, temp_r0 + 0x1000, projected[0] - 0x10, projected[1] - temp_r0_2, 0x20U, (s32) temp_r0_2);
+                    (*(Renderer_080dea70 *)0x03001F0C)(sp84, temp_r0 + 0x1000, projected[0] - 0x10, projected[1] - temp_r0_2, 0x20U, (s32) temp_r0_2);
                     Func_08002dd8(0x2F);
                     if (M2C_FIELD(temp_r0, struct Work_02000000 **, 0x7828)->field_4 == 1) {
                         Func_080ed408(0x2F, 7, 7, 0xF, 2);
                     } else {
                         Func_080ed408(0x2F, 7, 7, 0xB, 2);
                     }
-                    Func_080072f4(sp84, temp_r0 + 0x1000, projected[0] - 0x10, projected[1], 0x20U, M2C_FIELD((void *)0x080EEBE9, u8 *, sp5C));
+                    (*(Renderer_080dea70 *)0x03001F0C)(sp84, temp_r0 + 0x1000, projected[0] - 0x10, projected[1], 0x20U, M2C_FIELD((void *)0x080EEBE9, u8 *, sp5C));
                     Func_08002dd8(0x2F);
                     break;
                 case 1:
@@ -669,7 +720,7 @@ burst_pool_ready:
                         draw_width = 0x20U;
                         draw_height = 0x18;
 block_197:
-                        Func_080072f4(
+                        renderer_46(
                             sp84,
                             var_r1_5,
                             var_r2_7,
@@ -696,7 +747,7 @@ block_197:
                     draw_width = 8U;
                     draw_height = 0x10;
 block_194:
-                    Func_08007300(
+                    renderer_46(
                         sp84,
                         var_r1_6,
                         var_r2_8,
@@ -726,7 +777,7 @@ block_194:
                     draw_height = 0x17;
                     goto block_197;
                 default:
-                    Func_080072fc(sp84, temp_r0, projected[0] - 0x14, projected[1] - 0x20, 0x28, 0x40);
+                    renderer_46(sp84, temp_r0, projected[0] - 0x14, projected[1] - 0x20, 0x28, 0x40);
                     break;
                 }
             }
@@ -766,19 +817,19 @@ loop_210:
                     Func_080ed408(0x2F, 7, 7, 3, 2);
                     temp_r5_4 = temp_r6_3 * 2;
                     temp_r4_2 = M2C_FIELD((void *)0x080EEC28, u8 *, temp_r6_3);
-                    Func_080072f4(sp84, temp_r0 + M2C_FIELD((void *)0x080EEC44, u16 *, temp_r5_4), M2C_FIELD(var_r7, s32 *, 0) - temp_r4_2, M2C_FIELD(var_r7, s32 *, 4) - M2C_FIELD((void *)0x080EEC3D, u8 *, temp_r6_3), (u32) temp_r4_2, M2C_FIELD((void *)0x080EEC2F, u8 *, temp_r6_3));
+                    (*(Renderer_080dea70 *)0x03001F0C)(sp84, temp_r0 + M2C_FIELD((void *)0x080EEC44, u16 *, temp_r5_4), M2C_FIELD(var_r7, s32 *, 0) - temp_r4_2, M2C_FIELD(var_r7, s32 *, 4) - M2C_FIELD((void *)0x080EEC3D, u8 *, temp_r6_3), (u32) temp_r4_2, M2C_FIELD((void *)0x080EEC2F, u8 *, temp_r6_3));
                     Func_08002dd8(0x2F);
                     Func_080ed408(0x2F, 7, 7, 0xF, 2);
-                    Func_080072f4(sp84, temp_r0 + M2C_FIELD((void *)0x080EEC44, u16 *, temp_r5_4), M2C_FIELD(var_r7, s32 *, 0), (M2C_FIELD(var_r7, s32 *, 4) + M2C_FIELD((void *)0x080EEC36, u8 *, temp_r6_3)) - M2C_FIELD((void *)0x080EEC3D, u8 *, temp_r6_3), M2C_FIELD((void *)0x080EEC28, u8 *, temp_r6_3), M2C_FIELD((void *)0x080EEC2F, u8 *, temp_r6_3));
+                    (*(Renderer_080dea70 *)0x03001F0C)(sp84, temp_r0 + M2C_FIELD((void *)0x080EEC44, u16 *, temp_r5_4), M2C_FIELD(var_r7, s32 *, 0), (M2C_FIELD(var_r7, s32 *, 4) + M2C_FIELD((void *)0x080EEC36, u8 *, temp_r6_3)) - M2C_FIELD((void *)0x080EEC3D, u8 *, temp_r6_3), M2C_FIELD((void *)0x080EEC28, u8 *, temp_r6_3), M2C_FIELD((void *)0x080EEC2F, u8 *, temp_r6_3));
                     Func_08002dd8(0x2F);
                 } else {
                     Func_080ed408(0x2F, 7, 7, 3, 2);
                     temp_r5_5 = temp_r6_3 * 2;
                     temp_r4_3 = M2C_FIELD((void *)0x080EEC28, u8 *, temp_r6_3);
-                    Func_080072f4(sp84, temp_r0 + 0x128A + M2C_FIELD((void *)0x080EEC44, u16 *, temp_r5_5), M2C_FIELD(var_r7, s32 *, 0) - M2C_FIELD((void *)0x080EEC3D, u8 *, temp_r6_3), M2C_FIELD(var_r7, s32 *, 4) - temp_r4_3, M2C_FIELD((void *)0x080EEC2F, u8 *, temp_r6_3), (s32) temp_r4_3);
+                    (*(Renderer_080dea70 *)0x03001F0C)(sp84, temp_r0 + 0x128A + M2C_FIELD((void *)0x080EEC44, u16 *, temp_r5_5), M2C_FIELD(var_r7, s32 *, 0) - M2C_FIELD((void *)0x080EEC3D, u8 *, temp_r6_3), M2C_FIELD(var_r7, s32 *, 4) - temp_r4_3, M2C_FIELD((void *)0x080EEC2F, u8 *, temp_r6_3), (s32) temp_r4_3);
                     Func_08002dd8(0x2F);
                     Func_080ed408(0x2F, 7, 7, 0xF, 2);
-                    Func_080072f4(sp84, temp_r0 + 0x128A + M2C_FIELD((void *)0x080EEC44, u16 *, temp_r5_5), (M2C_FIELD(var_r7, s32 *, 0) + M2C_FIELD((void *)0x080EEC36, u8 *, temp_r6_3)) - M2C_FIELD((void *)0x080EEC3D, u8 *, temp_r6_3), M2C_FIELD(var_r7, s32 *, 4), M2C_FIELD((void *)0x080EEC2F, u8 *, temp_r6_3), M2C_FIELD((void *)0x080EEC28, u8 *, temp_r6_3));
+                    (*(Renderer_080dea70 *)0x03001F0C)(sp84, temp_r0 + 0x128A + M2C_FIELD((void *)0x080EEC44, u16 *, temp_r5_5), (M2C_FIELD(var_r7, s32 *, 0) + M2C_FIELD((void *)0x080EEC36, u8 *, temp_r6_3)) - M2C_FIELD((void *)0x080EEC3D, u8 *, temp_r6_3), M2C_FIELD(var_r7, s32 *, 4), M2C_FIELD((void *)0x080EEC2F, u8 *, temp_r6_3), M2C_FIELD((void *)0x080EEC28, u8 *, temp_r6_3));
                     Func_08002dd8(0x2F);
                 }
                 temp_r3_5 = M2C_FIELD(var_r7, u32 *, 8) + 1;
@@ -802,7 +853,7 @@ loop_210:
         if (temp_r0_4 > 0) {
             temp_r0_5 = (temp_r0_4 >> 3) + 1;
             temp_r4_4 = temp_r0_5 * 2;
-            Func_080072f4(sp84, sp68 + M2C_FIELD((void *)0x080EDE48, u16 *, temp_r4_4 - 2), M2C_FIELD(var_r5_4, s16 *, 2) - ((s32) (temp_r0_5 + (temp_r0_5 >> 0x1F)) >> 1), M2C_FIELD(var_r5_4, s16 *, 6) - temp_r0_5, temp_r0_5, temp_r4_4);
+            renderer_46(sp84, sp68 + M2C_FIELD((void *)0x080EDE48, u16 *, temp_r4_4 - 2), M2C_FIELD(var_r5_4, s16 *, 2) - ((s32) (temp_r0_5 + (temp_r0_5 >> 0x1F)) >> 1), M2C_FIELD(var_r5_4, s16 *, 6) - temp_r0_5, temp_r0_5, temp_r4_4);
             Func_080e3908(var_r5_4, 0x3C, 0x1000);
             if ((s32) M2C_FIELD(var_r5_4, s32 *, 4) > 0x700000) {
                 temp_r3_6 = 0 - M2C_FIELD(var_r5_4, s32 *, 0x10);
@@ -820,7 +871,7 @@ loop_210:
         if (temp_r0_6 > 0) {
             temp_r0_7 = (temp_r0_6 >> 4) + 1;
             temp_r4_5 = temp_r0_7 * 2;
-            Func_080072f4(sp84, sp68 + M2C_FIELD((void *)0x080EDE48, u16 *, temp_r4_5 - 2), M2C_FIELD(var_r5_5, s16 *, 2) - ((s32) (temp_r0_7 + (temp_r0_7 >> 0x1F)) >> 1), M2C_FIELD(var_r5_5, s16 *, 6) - temp_r0_7, temp_r0_7, temp_r4_5);
+            renderer_46(sp84, sp68 + M2C_FIELD((void *)0x080EDE48, u16 *, temp_r4_5 - 2), M2C_FIELD(var_r5_5, s16 *, 2) - ((s32) (temp_r0_7 + (temp_r0_7 >> 0x1F)) >> 1), M2C_FIELD(var_r5_5, s16 *, 6) - temp_r0_7, temp_r0_7, temp_r4_5);
             Func_080e3908(var_r5_5, 0x3C, -0x4000);
             M2C_FIELD(var_r5_5, s32 *, 0x18) = (s32) (M2C_FIELD(var_r5_5, s32 *, 0x18) - 1);
         }

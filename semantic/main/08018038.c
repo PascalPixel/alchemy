@@ -7,9 +7,65 @@ typedef unsigned int u32;
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
+/*
+ * __call_via_rN veneer sites, resolved per-site against the ROM. Ten `bl`
+ * sites land at 0x08007308, which is index 9 of the 0x080072e4 bank -- every
+ * one is `__call_via_r9`, not a call to a function at 0x08007308.
+ *
+ * The resolver reports all ten as UNRESOLVED, and it is right to: the only
+ * write to r9 is at 0x080180bc, and 0x080180c8 is a branch target, so a
+ * backward walk cannot prove the write is on every path. THAT IS A LIMIT OF
+ * THE WALK, NOT AN OPEN QUESTION -- reading the whole body settles it:
+ *
+ *   - r9 is written EXACTLY ONCE in 0x08018038..0x0801868c. The only other
+ *     mentions are 0x0801803e and 0x08018680, the prologue save and epilogue
+ *     restore of the caller's r9.
+ *   - The single branch that targets 0x080180c8 is `b.n 0x080180c8` at
+ *     0x08018626 -- the loop's own back edge, which is downstream of
+ *     0x080180bc and unreachable without passing through it.
+ *   - The only other way past 0x080180bc is the `bne 0x08018092` at
+ *     0x08018084, whose not-taken arm exits at 0x08018090.
+ *
+ * So the write dominates all ten sites and the value never changes: r9 is
+ * LATCHED before the loop, exactly as r8 is in semantic/main/080196c4.c.
+ *
+ * THE CALLEE. At 0x080180ae-0x080180b4, r3 = *(0x03001e8c + 140), and
+ * 0x03001e8c + 140 is 0x03001f18. That is Func_080048b0's allocation slot for
+ * id 0x32 -- 0x03001e50 + 200, the same word 0x080196c4 reads, and the same
+ * table as slots 46 and 47 under yet another base pointer. This function's
+ * own body proves the identification without leaving it: 0x08018098 calls
+ * `Func_080048b0(0x32, 0x140)` and 0x0801809c-0x080180aa DMAs 0x140 bytes
+ * from 0x08015430 into the result. The thing being allocated, filled and then
+ * called is one and the same relocated routine -- the text token reader.
+ *
+ * Derived from this function's pool words, with 080196c4 as a recognised
+ * precedent rather than as the source: the arithmetic above was read here.
+ *
+ * ARITY: one argument at all ten sites. Every one is `mov r0, sl` immediately
+ * before the branch, with sl = sp + 56 (the 12-byte parser workspace this
+ * function hands to Func_08019bac), and the token comes back in r0. r9 is
+ * outside r0-r3, so no argument slot holds the callee and the draft's arity
+ * was already right.
+ *
+ * PINNING: not required, and saying so is the honest form. All ten C
+ * statements and all ten ROM sites take the same single argument and the same
+ * latched callee, so no assignment between them can change the answer. There
+ * was nothing here to separate and none was invented.
+ *
+ * BEHAVIOURAL NOTE, not an uncertainty about the callee: unlike 080196c4,
+ * which allocates only when the slot is still null, this function allocates
+ * and re-DMAs unconditionally on the `arg0 != -1` path. Whether
+ * Func_080048b0 returns an existing block for a live id is not settled here
+ * and does not need to be -- it does not change which pointer is called.
+ *
+ * UNCERTAINTY, left standing: what the slot CONTAINS beyond "the routine
+ * DMA'd in from 0x08015430" is not established. The slot table unifies the
+ * addressing, never the contents.
+ */
+typedef u32 (*TextTokenReader_08018038)(void *parser);
+
 void Func_08002dd8(s32);
 s32 Func_080048b0(s32, s32);
-u32 Func_08007308(void *);
 u8 *Func_08017dd4(void *, s32, s32);
 u16 Func_08017e88(s32, u16 *, u16, void *, s32, s32, s32 *);
 void Func_080196c4(s32, s32, s32);
@@ -42,6 +98,7 @@ s32 Func_08018038(s32 arg0, s32 arg1) {
     s32 expansion_index;
     volatile s32 expansion_path;
     u8 sp38[12];
+    TextTokenReader_08018038 readToken;
     u8 sp44[16];
     u16 sp54[24];
     s32 temp_r0;
@@ -109,11 +166,13 @@ s32 Func_08018038(s32 arg0, s32 arg1) {
         M2C_FIELD((void *)0x040000D4, s32 *, 0) = 0x08015430;
         M2C_FIELD((void *)0x040000D4, s32 *, 4) = temp_r1_3;
         M2C_FIELD((void *)0x040000D4, s32 *, 8) = (s32) (0x84000000 | (0x140U >> 2));
+        /* Latched once, before the loop, exactly as r9 is at 0x080180bc. */
+        readToken = *(TextTokenReader_08018038 *)0x03001F18;
         Func_08019bac(sp38, sp30);
         spC = sp54;
 loop_3:
         temp_r5 = var_r7;
-        var_r7 = Func_08007308(sp38);
+        var_r7 = readToken(sp38);
         if (var_r7 > 0xFFU) {
             var_r7 = 0x40;
         }
@@ -123,10 +182,10 @@ loop_3:
                 case 18:
                 case 29:
                 case 17:
-                    Func_08007308(sp38);
+                    readToken(sp38);
                     break;
                 case 19:
-                    Func_08007308(sp38);
+                    readToken(sp38);
                     var_r0 = 3;
 block_36:
                     Func_08019944(var_r0, arg1);
@@ -138,7 +197,7 @@ block_36:
                     var_r0 = 5;
                     goto block_36;
                 case 20:
-                    Func_08007308(sp38);
+                    readToken(sp38);
                     var_r0 = 2;
                     goto block_36;
                 case 21:
@@ -190,7 +249,7 @@ block_36:
             } else {
                 expansion_index = 0;
                 if (var_r7 == 0x14) {
-                    temp_r5_2 = Func_08007308(sp38) - 1;
+                    temp_r5_2 = readToken(sp38) - 1;
                     expansion_index = temp_r5_2;
                     expansion_path = 0x14;
                     Func_080196c4((Func_08019944(2, arg1) & 0x1FF) + 0x182, (s32) spC, 0x18);
@@ -216,7 +275,7 @@ block_157:
                     case 3:
                         goto block_157;
                     case 17:
-                        var_r0_2 = Func_08077008(Func_08007308(sp38) - 1);
+                        var_r0_2 = Func_08077008(readToken(sp38) - 1);
                         var_r1 = sp54;
                         var_r2 = var_r1;
                         var_r4 = 0;
@@ -245,7 +304,7 @@ block_147:
                         } while (var_r4_2 <= 0xEU);
                         goto block_146;
                     case 18:
-                        temp_r5_3 = Func_08007308(sp38) - 1;
+                        temp_r5_3 = readToken(sp38) - 1;
                         expansion_index = temp_r5_3;
                         var_r0_5 = Func_08077008(Func_08019944(1, arg1));
                         var_r1 = sp54;
@@ -259,7 +318,7 @@ block_147:
                         } while (var_r4_3 <= 0xEU);
                         goto block_147;
                     case 19:
-                        temp_r5_4 = Func_08007308(sp38) - 1;
+                        temp_r5_4 = readToken(sp38) - 1;
                         expansion_index = temp_r5_4;
                         expansion_path = 0x13;
                         Func_080196c4(Func_08019944(3, arg1) + 0x741, (s32) spC, 0x18);
@@ -303,7 +362,7 @@ block_148:
                         var_r6 = (temp_r6_3 + 1) & 0x1FF;
                         break;
                     case 26:
-                        temp_r0 = (Func_08007308(sp38) - 1) * 2;
+                        temp_r0 = (readToken(sp38) - 1) * 2;
                         temp_r6_4 = (var_r6 + 1) & 0x1FF;
                         M2C_FIELD(temp_r1_2, u16 *, var_r6 * 2) = temp_r0 + 0x80;
                         M2C_FIELD(temp_r1_2, u16 *, temp_r6_4 * 2) = temp_r0 + 0x81;
@@ -324,7 +383,7 @@ block_148:
                     case 29:
                         temp_r6_5 = (var_r6 + 1) & 0x1FF;
                         M2C_FIELD(temp_r1_2, u16 *, var_r6 * 2) = (s16) var_r7;
-                        M2C_FIELD(temp_r1_2, u16 *, temp_r6_5 * 2) = Func_08007308(sp38) + 0xFFFF;
+                        M2C_FIELD(temp_r1_2, u16 *, temp_r6_5 * 2) = readToken(sp38) + 0xFFFF;
                         var_r6 = (temp_r6_5 + 1) & 0x1FF;
                         break;
                     case 22:

@@ -3,11 +3,12 @@ typedef unsigned short u16;
 typedef signed int s32;
 
 /*
- * resource_3c9 owner at 0x020037c4, 252 bytes: a per-frame ARRIVAL
- * check on the pair of scene records 20 and 19. Once record 19's three
- * mirrored position fields have all reached the sentinel 0x80000000 it
- * clears both records' +6 halfword and then, under two separate scene
- * flags, walks both records along fixed increments toward fixed limits.
+ * resource_3c9 owner at 0x020037c4, 252 bytes: a per-frame PARKED
+ * check on the pair of scene records 20 and 19. Once record 19 has been
+ * parked -- its three mirrored fields all carrying the sentinel
+ * 0x80000000 -- it clears both records' +6 halfword and then, under two
+ * separate scene flags, walks both records along fixed increments
+ * toward fixed limits.
  *
  * Complete owner: `push {r5, r6, lr}` at 0x020037c4 through the single
  * epilogue `pop {r5, r6} / pop {r0} / bx r0` at 0x020038ae-0x020038b2,
@@ -43,13 +44,18 @@ typedef signed int s32;
  * source shape that is not established; what IS established is that the
  * hardware performs the load and then throws it away.
  *
- * Cluster reading -- this owner sits behind 0x02003600 with 0x02003660
- * and 0x020036d0 and was diffed against them before being written. It
- * is the CONSUMER of the pair: +56 and +64 are exactly the two mirror
- * fields Func_02003600 and Func_02003660 write at the end of every
- * orbit step, so this row is watching for those steps to park on the
- * sentinel. +60 is read here and written by neither, which is flagged
- * rather than assumed away.
+ * CORRECTED after drafting Func_02005688, and the first version of
+ * this paragraph is worth stating so nobody re-derives it. I wrote that
+ * this row waits for the orbit steps Func_02003600 and Func_02003660 to
+ * "park on the sentinel", and flagged +60 as read here and written by
+ * nothing. Both were wrong. The orbit steps write LIVE COORDINATES into
+ * +56 and +64 and never write 0x80000000 at all; the 24-byte leaf
+ * Func_02005688 stamps the sentinel into +56, +60 AND +64 in one go,
+ * which is also what accounts for the +60 I could not place. So the
+ * gate is not "the animation finished" -- it is "this record has been
+ * parked", and the thing that parks it is a routine no keyed sweep
+ * could see. Reading +56/+64 as belonging to the orbit steps was
+ * proximity reasoning: they were the rows I had just drafted.
  *
  * Uncertainties:
  *   - the pool constant added to +16 at the end is 0xfc5ef004, read
@@ -65,6 +71,10 @@ typedef signed int s32;
  *     arms every other frame rather than selecting a mode.
  *   - field +6 is a u16 of unknown role; +24/+28 and +8/+16 are s32
  *     position-family fields, not named to an axis.
+ *   - 0x80000000 is read as a sentinel because Func_02005688 stamps it
+ *     into three fields at once and this row tests all three for
+ *     equality rather than magnitude. Nothing proves it could not also
+ *     be a legitimate coordinate.
  */
 
 extern u8 *Func_0808a080(s32 index);   /* scene-record accessor */

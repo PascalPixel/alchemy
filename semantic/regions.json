@@ -8034,6 +8034,12 @@
       "entry": "0x020000b4",
       "span_bytes": 4,
       "evidence": "admitted whole-owner semantic reconstruction; THIS IS THE OVERLAY'S ENTRY DRIVER, not an ordinary leaf: the word at image offset 4, the one the opening ldr r4,[pc,#0] / bx r4 veneer jumps through, is 0x20080b5, which is this address plus the Thumb bit under the base+0x8000 spelling, so the loader calls it and nothing in the image does; it is the one driver of all 96 that does not open with a push because there is no body to save registers for -- resource_3cc's entry returns 0 and does nothing else; a CORRECTION TO A COUNT OF MINE: overlay_driver.ts --all --unowned reports 0 while this driver is undrafted, because its ownerOf accepts \"inventory row\" -- mere presence in the census -- as ownership, and resource_373's 0x2002a54 is in the same state; the blind spot is in what the tool ACCEPTS, not in what it scans; reached this shift as LEAF RESIDUE rather than as a driver, sweep B having seen the header word as a publication and discarded the target for opening with no push; the complete owner is movs r0,#0 / bx lr with no prologue, no stack frame, no literal pool, no callees and no argument read; 0 of 0 callees"
+    },
+    {
+      "overlay": "resource_3c9",
+      "entry": "0x02005688",
+      "span_bytes": 24,
+      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
     }
   ]
 }

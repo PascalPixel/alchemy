@@ -21,14 +21,14 @@ typedef int s32;
  *
  * A fifth 32-byte member sits at 0x020027cc and is NOT part of this
  * set -- it keeps the same bracket and line call but replaces the
- * Func_0808a180 tail with a call to the overlay's own Func_02004248.
+ * Func_02007202 tail with a call to the overlay's own Func_02004248.
  * It was read separately rather than folded in.
  *
  * The bank as a whole, and the way it corroborates the six-actor scene
  * wiring at 0x0200227c, is written up in resource_380_c_02002674.c.
  *
- * Shape: the scripted-scene bracket (Func_0808a018 / Func_0808a020)
- * around one line of dialogue and one Func_0808a180 call. No branch,
+ * Shape: the scripted-scene bracket (Func_0200712c / Func_02007146)
+ * around one line of dialogue and one Func_02007202 call. No branch,
  * no state.
  *
  * Complete owner: `push {lr}` at 0x0200278c through `pop {r0} / bx r0`
@@ -39,19 +39,19 @@ typedef int s32;
  * All three `bl` targets resolved through the overlay's import-veneer
  * table under the +2 rule (tools/overlay_call_targets.ts).
  *
- * Uncertainty: Func_0808a180's second argument is zero at every site in
+ * Uncertainty: Func_02007202's second argument is zero at every site in
  * this bank and its role is not established.
  */
 
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern void Func_0808a170(s32 dialogueId);
-extern void Func_0808a180(s32 id, s32 arg1);
+extern void Func_0200712c(void);
+extern void Func_02007146(void);
+extern void Func_020071ea(s32 dialogueId);
+extern void Func_02007202(s32 id, s32 arg1);
 
 void Func_0200278c(void)
 {
-    Func_0808a018();
-    Func_0808a170(0x10c8);
-    Func_0808a180(13, 0);
-    Func_0808a020();
+    Func_0200712c();
+    Func_020071ea(0x10c8);
+    Func_02007202(13, 0);
+    Func_02007146();
 }

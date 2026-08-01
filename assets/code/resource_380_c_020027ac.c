@@ -1,8 +1,8 @@
 typedef int s32;
 
 /*
- * resource_380 owner at 0x0200274c, 32 bytes: the talk handler for
- * actor 10, one of four byte-identical 32-byte stubs in this
+ * resource_380 owner at 0x020027ac, 32 bytes: the talk handler for
+ * actor 14, one of four byte-identical 32-byte stubs in this
  * overlay's per-actor published-callback bank.
  *
  * PUBLISHED, NOT CALLED. Its Thumb pointer is written into a script
@@ -21,37 +21,37 @@ typedef int s32;
  *
  * A fifth 32-byte member sits at 0x020027cc and is NOT part of this
  * set -- it keeps the same bracket and line call but replaces the
- * Func_0808a180 tail with a call to the overlay's own Func_02004248.
+ * Func_02007222 tail with a call to the overlay's own Func_02004248.
  * It was read separately rather than folded in.
  *
  * The bank as a whole, and the way it corroborates the six-actor scene
  * wiring at 0x0200227c, is written up in resource_380_c_02002674.c.
  *
- * Shape: the scripted-scene bracket (Func_0808a018 / Func_0808a020)
- * around one line of dialogue and one Func_0808a180 call. No branch,
+ * Shape: the scripted-scene bracket (Func_0200714c / Func_02007166)
+ * around one line of dialogue and one Func_02007222 call. No branch,
  * no state.
  *
- * Complete owner: `push {lr}` at 0x0200274c through `pop {r0} / bx r0`
- * at 0x02002764-0x02002766, then the one-word literal pool at
- * 0x02002768 and a zero alignment halfword at 0x0200276a; the
- * next owner's prologue begins at 0x0200276c.
+ * Complete owner: `push {lr}` at 0x020027ac through `pop {r0} / bx r0`
+ * at 0x020027c4-0x020027c6, then the one-word literal pool at
+ * 0x020027c8 and a zero alignment halfword at 0x020027ca; the
+ * next owner's prologue begins at 0x020027cc.
  *
  * All three `bl` targets resolved through the overlay's import-veneer
  * table under the +2 rule (tools/overlay_call_targets.ts).
  *
- * Uncertainty: Func_0808a180's second argument is zero at every site in
+ * Uncertainty: Func_02007222's second argument is zero at every site in
  * this bank and its role is not established.
  */
 
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern void Func_0808a170(s32 dialogueId);
-extern void Func_0808a180(s32 id, s32 arg1);
+extern void Func_0200714c(void);
+extern void Func_02007166(void);
+extern void Func_0200720a(s32 dialogueId);
+extern void Func_02007222(s32 id, s32 arg1);
 
-void Func_0200274c(void)
+void Func_020027ac(void)
 {
-    Func_0808a018();
-    Func_0808a170(0x10ca);
-    Func_0808a180(10, 0);
-    Func_0808a020();
+    Func_0200714c();
+    Func_0200720a(0x10cc);
+    Func_02007222(14, 0);
+    Func_02007166();
 }

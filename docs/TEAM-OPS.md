@@ -211,6 +211,26 @@ bun run verify > /tmp/verify.log 2>&1; echo "verify exit=$?"
 Only an `exit=0` printed by that form licenses a commit, a push, or the words
 "verify green" in a report.
 
+## Before mandating an overlay, check it is not already sealed
+
+Vale mandated `resource_3b8` twice, to two lanes, hours apart -- and had written
+its certification into the kanban DONE column in between. A lead's memory is not
+a record any more than a lane's header prose is. Before sending anyone at an
+overlay:
+
+```bash
+grep -n "resource_<id>" HANDOVER.md | grep -i certif
+```
+
+The certified sections are `## 5<x>. resource_<id> CERTIFIED`. If one exists, the
+overlay is sealed and the mandate is a duplicate. This is the same defect the
+lanes have been correcting all week -- a fact that lives only in someone's head
+participates in no measurement -- applied to the person coordinating them.
+
+An independent re-certification is not worthless (the second `3b8` pass retired a
+stale control and corrected a quoted figure), but it is never worth a whole shift
+chosen on purpose.
+
 ## Supervision
 
 Vale runs a recurring ~8-minute tick (session cron): check each lane's

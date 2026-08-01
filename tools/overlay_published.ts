@@ -16,11 +16,36 @@
 // `push` prologue (0xb4xx / 0xb5xx). If it is, something published a pointer to
 // a function at that offset.
 //
-// Reported alongside it are the other two sweeps a closure needs:
+// Reported alongside it are the other sweeps a closure needs:
 //
 //   A  `bl` targets that land on a prologue and are not owned.
 //   B  published pointers to prologues that are not owned   (this file's point)
+//   B  leaf: published pointers whose target is NOT prologue-shaped
 //   C  every prologue-shaped halfword that is not an owner start.
+//
+// THE `B leaf` CLASS WAS ADDED 2026-08-01 AND IS THE MORE IMPORTANT HALF.
+// Until then this sweep required a `push` at the resolved target, so it found
+// a published pointer, resolved it correctly, and then threw the answer away
+// because the target did not open with a push. A LEAF NEVER DOES: it saves no
+// register and returns with `bx lr`. The blind spot was never in what this
+// sweep SCANS, it is in what this sweep ACCEPTS. Removing the gate surfaced
+// 310 targets across 83 of 96 overlays, including two on resource_3b9 and two
+// on resource_3a4 — both of which had been certified closed at residue 0.
+//
+// The prologue-confirmed count is UNCHANGED at 475 by that edit, which is the
+// invariant proving the new class was added rather than the old one disturbed.
+// Both lists must be empty to close an overlay.
+//
+// The typical leaf is four bytes of overlay boilerplate published from the
+// overlay's own header table, and nearly every overlay has a pair:
+//
+//   movs r0, #0          / bx lr        return 0
+//   ldr  r0, =0x0200939c / bx lr        return &Data_...
+//
+// This sweep still cannot see a function that NOTHING publishes and nothing
+// calls — resource_3a4's 0x02003410 is the standing example. That half belongs
+// to `tools/overlay_gaps.ts` (sweep D), which reads unaccounted bytes instead
+// of hunting a signature. The two tools cover different halves; run both.
 //
 // C is NOISY BY DESIGN and must be CLASSIFIED, not zeroed. Two things make it
 // fire legitimately: high-register spill pushes a few bytes inside a prologue
@@ -70,6 +95,20 @@ export interface OverlayResidue {
   called: number[];
   /** published prologues with no owner. */
   published: number[];
+  /**
+   * Published pointers with no owner whose target is NOT prologue-shaped.
+   *
+   * These are LEAF functions. Until 2026-08-01 the published path required a
+   * `push` at the target, which a leaf never has -- it saves no register and
+   * returns with `bx lr`. The pointer was resolved correctly and then thrown
+   * away by that one check, so the blind spot was never in what this sweep
+   * SCANS, it is in what this sweep ACCEPTS.
+   *
+   * Kept separate from `published` rather than merged into it, so the
+   * prologue-confirmed count stays a stable regression invariant. BOTH must be
+   * empty to close an overlay.
+   */
+  publishedLeaf: number[];
   /** prologue-shaped halfwords with no owner, each classified. */
   shaped: { offset: number; halfword: number; owner: number | null; delta: number | null; verdict: string }[];
 }
@@ -186,17 +225,22 @@ export function sweep(overlay: string): OverlayResidue {
   }
 
   const published: number[] = [];
+  const publishedLeaf: number[] = [];
   const seenPublish = new Set<number>();
   for (let at = 0; at + 4 <= image.length; at += 4) {
     const word =
       (image[at] | (image[at + 1] << 8) | (image[at + 2] << 16) | (image[at + 3] << 24)) >>> 0;
     const offset = publishedOffset(word, image.length);
     if (offset === null) continue;
-    if (!isPrologueShape(image[offset] | (image[offset + 1] << 8))) continue;
     if (owners.has(offset) || seenPublish.has(offset)) continue;
     if (insideRecordedBody(offset)) continue;
     seenPublish.add(offset);
-    published.push(offset);
+    // A prologue-shaped target is the long-standing case. A target that is NOT
+    // prologue-shaped used to be dropped here, and that is precisely how a leaf
+    // hid: something published its address, and this sweep resolved it and then
+    // refused it for not opening with a `push`.
+    if (isPrologueShape(image[offset] | (image[offset + 1] << 8))) published.push(offset);
+    else publishedLeaf.push(offset);
   }
 
   const shaped: OverlayResidue["shaped"] = [];
@@ -223,7 +267,7 @@ export function sweep(overlay: string): OverlayResidue {
     shaped.push({ offset: at, halfword, owner, delta, verdict });
   }
 
-  return { overlay, called, published, shaped };
+  return { overlay, called, published, publishedLeaf, shaped };
 }
 
 function overlayNames(): string[] {
@@ -298,16 +342,20 @@ function main(): void {
     if (
       result.called.length === 0 &&
       result.published.length === 0 &&
+      result.publishedLeaf.length === 0 &&
       unexplained.length === 0 &&
       unruled.length === 0
     )
       continue;
-    residue += result.called.length + result.published.length + unexplained.length;
+    residue +=
+      result.called.length + result.published.length + result.publishedLeaf.length + unexplained.length;
     console.log(result.overlay);
     for (const offset of result.called)
       console.log(`  A called    0x${(OVERLAY_BASE + offset).toString(16)}`);
     for (const offset of result.published)
       console.log(`  B published 0x${(OVERLAY_BASE + offset).toString(16)}`);
+    for (const offset of result.publishedLeaf)
+      console.log(`  B leaf      0x${(OVERLAY_BASE + offset).toString(16)}  published, no push prologue`);
     for (const row of [...unexplained, ...unruled])
       console.log(
         `  C ${row.verdict.startsWith("UNRULED") ? "unruled " : "shaped  "}  ` +

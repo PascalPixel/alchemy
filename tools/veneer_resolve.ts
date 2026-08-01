@@ -708,7 +708,76 @@ function selfTest(): void {
       throw new Error("veneer self-test: 080052f4 sp dispatch not found");
     }
   }
+  checkNoPartialConversions();
   console.log("veneer resolve self-test passed");
+}
+
+/**
+ * Strip C comments so a prose mention of an old prototype is not mistaken for
+ * a live call. The audit's file headers quote the prototypes they removed --
+ * that is the whole point of the headers -- so a naive text search reports
+ * them and cries wolf. A guard that cries wolf gets switched off.
+ */
+export function stripComments(source: string): string {
+  return source.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/\/\/[^\n]*/g, " ");
+}
+
+/** Every veneer-bank entry named as an ordinary C callee, e.g. `Func_080072f4(`. */
+const VENEER_CALL = /\bFunc_0800(?:72(?:e4|e8|ec|f0|f4|f8|fc)|730[0-9a-c]|731[0-9c])\s*\(/;
+
+/**
+ * ISAAC'S RULE, applied to this audit: wherever partial work is
+ * indistinguishable by eye from complete work, assert the invariant on the
+ * output and throw.
+ *
+ * A half-converted file is exactly that. It carries the audit's header, most
+ * of its sites are proper indirect calls, and the one site still calling a
+ * phantom prototype reads as ordinary code in a 900-line file. Nothing about
+ * the page looks wrong. The invariant is simple and total:
+ *
+ *   a semantic file that claims to have been audited must contain NO call to
+ *   a veneer-bank address.
+ *
+ * The claim is the header marker, written by hand at the moment the file is
+ * converted; the check is the absence of live calls. Note the scope:
+ * `semantic/` only. The 37 exact `src/` files deliberately still declare their
+ * phantoms per Vale's standing ruling and must NOT be swept in here.
+ */
+export function findPartialConversions(root: string = ROOT): string[] {
+  const marker = "__call_via_rN veneer site";
+  const offenders: string[] = [];
+  const walk = (dir: string): void => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const full = join(dir, entry.name);
+      if (entry.isDirectory()) walk(full);
+      else if (entry.name.endsWith(".c")) {
+        const source = readFileSync(full, "utf8");
+        if (!source.includes(marker)) continue;
+        if (VENEER_CALL.test(stripComments(source))) offenders.push(full);
+      }
+    }
+  };
+  const semantic = join(root, "semantic");
+  if (existsSync(semantic)) walk(semantic);
+  return offenders.sort();
+}
+
+function checkNoPartialConversions(): void {
+  // The stripper itself is load-bearing: without it every audited file trips
+  // the guard on its own header prose. Both directions are asserted.
+  if (VENEER_CALL.test(stripComments("/* calls Func_080072f4(x) here */"))) {
+    throw new Error("veneer self-test: comment stripper failed to strip");
+  }
+  if (!VENEER_CALL.test(stripComments("  Func_080072f4(a, b);"))) {
+    throw new Error("veneer self-test: comment stripper ate live code");
+  }
+  const offenders = findPartialConversions();
+  if (offenders.length > 0) {
+    throw new Error(
+      "veneer self-test: file claims the audit header but still calls a " +
+        "veneer address (partial conversion):\n  " + offenders.join("\n  "),
+    );
+  }
 }
 
 function main(): void {

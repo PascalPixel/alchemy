@@ -54,9 +54,28 @@ extern const u8 Data_0809e680[];
 extern u8 *Data_03001ebc;
 
 void Func_080030f8(s32 frames);
-/* `call via r3` entry of the 080072e4 thunk bank: branches to the address in
- * r3 with r0-r2 as that target's arguments. */
-void Func_080072f0(s32, s32, s32, s32 target);
+
+/*
+ * The 0x0808da64 site is `__call_via_r3` (0x080072f0 is index 3 of the
+ * 0x080072e4 bank), so the call is INDIRECT through the command word --
+ * this file's own header already read it that way, and the ROM agrees.
+ * It is now written as what it is rather than as a fourth argument.
+ *
+ * What the branch's guard actually tests: `(command & 0x0f000000) != 0` is
+ * true exactly when the word's high byte carries a GBA memory-region nibble
+ * (0x02 EWRAM, 0x03 IWRAM, 0x08 ROM). The three sibling branches all compare
+ * `command & 0xfff00000` against small constants (0x00400000, 0x00500000,
+ * 0x00200000). So bits 24..27 are the tag that says "this word is an address,
+ * not a packed id", and the field is a tagged union -- the same offset is read
+ * as `ldrh` for a message id in the untagged branches.
+ *
+ * ARITY: one argument. Only r0 is deliberately set at 0x0808da60. r1 holds
+ * 500 solely because `movs r1,#250; lsls r1,r1,#1` materialised the
+ * 0x02000240 + 0x1f4 address two instructions earlier, and r2 is caller-saved
+ * scratch left over from Func_0808d428. Counting live intermediates as
+ * arguments is exactly the batch-3 error; they are not reproduced.
+ */
+typedef void (*MapEntryHandler)(s32 selectedObject);
 void Func_08009080(void *object, s32 mode);
 void Func_080090d0(void *object);
 void Func_08015040(s32 message, s32 mode);
@@ -140,14 +159,10 @@ s32 Func_0808d9a4(s32 tile_kind)
     if ((command & 0x0f000000) != 0) {
         /* Key/unlock class.  The descriptor's flag gates the state edit. */
         if (Func_0808d428(flag) != 0) {
-            /*
-             * Uncertain ABI: only r0 (the selected object id) and r3 (the
-             * command word) are set at this call site.  r1 happens to hold
-             * 500 because it materialised the 0x02000240 + 0x1f4 address,
-             * and r2 is left unset after the Func_0808d428 call clobbered
-             * it.  The two provable arguments are reproduced here.
-             */
-            Func_080072f0(Data_02000434, 500, 0, command);
+            /* Indirect call: the command word is the handler address.
+             * See the MapEntryHandler note above for the tag test and for
+             * why r1 and r2 are leftovers rather than arguments. */
+            ((MapEntryHandler)command)(Data_02000434);
         }
         if (Func_080770c0(0x142) != 0)
             Func_08015040(0x0928 + message_slot, 1);

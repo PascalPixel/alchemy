@@ -5646,6 +5646,104 @@ Adopting it moved the denominator again, 1,340,136 -> 1,340,308 (+172): the
 row was inventoried but its 140-byte table and 28-byte pool were not audited
 as executable until the span became C.
 
+### CORRECTION — three of the seven ranked rows are NOT dispatch owners (2026-08-01)
+
+The table above is a correct list of spans and residuals and a **wrong**
+population. Re-measured against the built image with
+`overlay_show <overlay> <off> -n <span> | grep -E "mov[[:space:]]+pc"`:
+
+| row | carries a `mov pc` |
+| --- | --- |
+| 371:0350, 3b2:12b4, 3c4:0cd0 | **no** |
+| 378:0070, 372:3ce4, 3b1:012c, 3b9:007c, 3b9:1a4c | yes |
+
+So the jump-table emitter fix of §5b4 is still proven — on 3b9:1a4c and
+378:0070, both genuine dispatch rows — but "the dispatch-row population,
+ranked" over-claims. Whatever mapped `mov pc` sites to owners attributed
+three non-dispatch rows to it, and the 60-sites/29-overlays and
+27-owners/27,760-bytes headline numbers rest on that same mapping. **Treat
+those counts as unconfirmed until the mapping is rebuilt against the
+built image rather than against label positions in the `.s`.**
+
+**And the check that produced this correction lied first.** The obvious
+shape,
+
+```sh
+for r in "378 0x70 220" …; do set -- $r; …; done
+```
+
+reports `0` for every row **under zsh**, which does not word-split an
+unquoted `$r`: `$1` is the whole string and `$2`/`$3` are empty, so
+`overlay_show` runs on its defaults and the grep finds nothing. The same
+loop under `bash -c` gives the table above. A per-row check that says `0`
+for every row is the "what does it print when it does nothing?" question
+answering itself — the tool printed exactly what a clean sweep would
+print. Run any new per-row loop under `bash -c`, and confirm one row by
+hand before believing a column of zeroes.
+
+## 5b6. The shared-return-tail lever (2026-08-01)
+
+`3c4:0cd0`: **137 differing bytes -> 34 by turning two `return 1;`
+statements into `goto refuse;` plus one `refuse: return 1;` at the end.**
+
+Two guards that both refuse take a `b.n` to ONE `movs r0,#1` in the
+reference. Written as two `return 1;` statements, this fork emits each
+inline (`movs r0,#1 / b .Lexit`) and every instruction after the first
+guard lands two halfwords late — so the whole body reads as a structural
+rewrite when only the exit shape is wrong. A short `goto` to a single
+labelled tail restores it.
+
+Read it off the ROM before editing: if two conditional branches carry the
+**same** destination and that destination is a single constant load, the
+source has one exit, not two. This is the cheapest big lever measured so
+far on an overlay row and it costs one command to rule out.
+
+### 3c4:0cd0 — PARKED at 4 bytes, and the fork item it names
+
+After the shared tail (137 -> 34) and per-site raw callee names
+(§5b3a, 34 -> 8) and a block-scoped local for the second argument of the
+`0x2000d1c` call (8 -> 4), the residual is **one r0/r1 argument-setter
+swap at a single call site**, `Func_..(actor, 6)` at 0x2000d92.
+
+What makes it a fork item rather than a spelling: the reference's own
+final basic block contains **both** orderings for structurally identical
+two-argument calls — arg0-first at 0x2000d50 and 0x2000d92, arg1-first at
+0x2000d3c and 0x2000d9a. The fork's `-mcall-arg0-move-first` is exactly
+the right transform and is **whole-function**: it fixes 0x2000d92 and
+breaks the other two, net worse (4 bytes -> 6 groups).
+
+Measured and rejected first: `-fno-schedule-insns2`, `-fschedule-insns`,
+`-fno-schedule-insns`, `-fsched-low-dest-first`, `-fsched-high-dest-first`,
+`-fno-sched-depend-count` (fixes this site, breaks three others),
+`-fsched-store-first`, `-fno-sched-alias`, both CSE modes,
+`-fno-gcse-insert-load`, `-fno-regmove`, `-fno-expensive-optimizations`,
+`-mthumb-immediate-latency`, `-mhigh-register-move-first`,
+`-fthumb-move-before-alu`, `-fthumb-orr-dead-input-reuse`,
+`-fno-canonicalize-comparison`, `-fno-thumb-contiguous-immediate`; and
+eleven source spellings (pointer alias, `void *` cast, comma expression,
+unsigned literal, shared and per-site constant locals, dummy result local,
+argument locals for the preceding call, and three respellings of earlier
+statements in the same block to shift insn uids). The one spelling that
+flips the order — using the call's return value — overruns the span.
+
+**Fork queue item: `-mcall-arg0-move-first` needs per-call-site
+granularity.** Reproducer: `work/claude/notes/3c4_0cd0_working_copy.c`
+against `resource_3c4:0cd0`; 4 differing bytes at baseline, and
+`EXTRA_CFLAGS=-mcall-arg0-move-first tools/overlay_group_diff.sh
+resource_3c4 0xcd0 248 <src>` moves the defect from one site to two.
+
+### The stem/path routing trap, caught in the act (2026-08-01)
+
+`3b2:12b4`'s last two bytes need `-fno-expensive-optimizations`. The
+existing routed set `NO_EXPENSIVE_SOURCES` is **stem**-keyed, and
+`ls assets/code/*_c_020012b4.c` returns `resource_395_c_020012b4.c` — an
+already-converted row in a different overlay. Routing by stem would have
+silently recompiled it and surfaced, layers away and commits later, as
+`palette token plan does not reconstruct input`. The new set
+`NO_EXPENSIVE_OVERLAY_SOURCES` is path-keyed. §7's instruction to run that
+`ls` before adding any overlay address to a routing set is not a
+formality; it fired on the first use.
+
 ## 5c. Auditing the executable inventory for holes (2026-08-01)
 
 Twice in one night `full_c_progress` threw `C span is outside audited

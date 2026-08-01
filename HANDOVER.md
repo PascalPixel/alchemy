@@ -596,10 +596,17 @@ every 4-aligned word with the Thumb bit, subtracts the link base, and then
 So the pointer is found and discarded in the same breath — the blind spot is
 not in what sweep B scans, it is in what sweep B accepts.
 
-Measured across all 96 overlays: **185 published words on 61 overlays resolve
-into unaccounted bytes and are rejected solely by the prologue gate.** They are
-candidates, not confirmed owners — each needs a read — but the shape repeats so
-mechanically that most will be real:
+**FIXED as of the same day.** The gate is off the published path, and the
+non-prologue targets now report as a distinct `B leaf` class rather than being
+merged into `published` — so the prologue-confirmed count stays a regression
+invariant. It is **475 before and after the edit**, proving the new class was
+added rather than the old one disturbed. Both lists must be empty to close.
+
+Measured across all 96 overlays with the gate off: **310 published targets on
+83 of 96 overlays**. The stricter corroborated subset — those that also land in
+bytes sweep D flags as unaccounted and code-shaped — is **185 on 61 overlays**.
+Report the 310 as candidates and the 185 as the high-confidence core; each still
+needs a read. The shape repeats mechanically:
 
 ```
 resource_3a3 0x70:  movs r0, #0        / bx lr        <- return 0
@@ -611,15 +618,22 @@ A `return 0` stub and a `return &table` getter, published in the overlay's own
 header or a nearby table, four bytes each, no push. Nearly every overlay has a
 pair.
 
-**The fix is one line in sweep B, not a new sweep**: accept a resolved target
-that is 2-aligned and inside the code region whether or not it opens with a
-push, and let the classification step rule it. That recovers four of the five
-leaves found tonight.
+**The fix was one line in sweep B, not a new sweep**, and it recovers four of
+the five leaves found tonight. Re-running the certification from the FIXED
+instrument reproduces by tool exactly what I had found by hand:
+
+```
+resource_3af  residue=0     clean
+resource_380  residue=0     clean
+resource_3b9  residue=2     B leaf 0x2000070, 0x2000074
+resource_3a4  residue=3     B leaf 0x20000bc, 0x2000204, plus the settled C row
+```
 
 **Sweep D is still required**, because it catches the one that nothing
 publishes at all: resource_3a4's 0x02003410 has no `bl` and no published word
-anywhere in the image. Relaxing sweep B would never have seen it. The two
-instruments cover different halves of the population.
+anywhere in the image, and the fixed sweep B correctly does NOT report it.
+Relaxing sweep B would never have seen it. The two instruments cover different
+halves of the population — run both.
 
 #### What the re-run found on the overlays currently closed
 
@@ -647,6 +661,33 @@ miss — no instrument the team had could see them.
 - **Undercounted spans** — a recorded span that stops two bytes before its own
   `bx r0`, so the gap is that return plus the row's literal pool. Three on 3a4
   (0x2478, 0x2e76, 0x2ede). Harmless until someone treats the gap as unowned.
+
+#### Cleanup board (2026-08-01, jupiter) — not blockers
+
+Neither of these can hide an owner. Both mislead the next reader who subtracts
+against them, which is exactly how 0x02003410 stayed hidden.
+
+**STALE-SPAN, 16 rows.** A row promoted from a semantic draft to exact C keeps
+its old `manual_regions` entry, and the recorded span disagrees with what the
+compiler now produces. The exact row is the truth. Fix by correcting or
+removing the stale `span_bytes`. Direction matters: a recorded span SHORTER
+than compiled makes a phantom gap, and one LONGER makes a phantom overlap.
+
+```
+resource_380 0x27ec 12/10   resource_3a4 0x29dc 46/52   resource_3bc 0x22c4 44/46
+resource_380 0x4248 24/22   resource_3a4 0x2a10 50/56   resource_3bc 0x38dc 30/32
+resource_39e 0x266c 16/14   resource_3b3 0x0da8 52/50   resource_3bc 0x38fc 30/32
+resource_39e 0x2764 20/18   resource_3b9 0x1c48 12/18   resource_3bc 0x3cd0 34/36
+resource_3a0 0x0cec 28/32   resource_3b9 0x1c5c 12/16   resource_3c9 0x38c0 28/26
+```
+(recorded/compiled)
+
+**TWO-BYTE UNDERCOUNT, 12 rows across 8 overlays.** A recorded span stops two
+bytes before its own `bx r0`, so the gap after it opens on that return and runs
+through the row's literal pool. `bun tools/overlay_gaps.ts` reports these as
+CODE-SUSPECT with exactly one return, sitting at the gap's first halfword —
+that signature is the discriminator, and it is what tells them apart from a
+real hidden function, whose return is at its END rather than its start.
 
 #### A checker of mine agreed with the exciting answer and was wrong
 

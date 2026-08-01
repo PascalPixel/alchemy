@@ -3267,6 +3267,12 @@
     },
     {
       "overlay": "resource_39c",
+      "entry": "0x020051b0",
+      "span_bytes": 64,
+      "evidence": "admitted whole-owner semantic reconstruction; derived owner absent from the structural inventory -- prologue push {r5, r6, lr} at 0x020051b0 through the real-value interworking return pop {r5, r6}/pop {r1}/bx r1 at 0x020051ea-0x020051ee; independently measured with m2c_guard as exactly 64 code bytes ending at 0x020051f0, with no literal pool or seeding hazard; the next owner's prologue begins immediately at 0x020051f0; the sole bounded call resolves through the overlay veneer at 0x020059a4 to Func_08000118; inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
       "entry": "0x02005388",
       "span_bytes": 208,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr}) and returning (pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing three-word literal pool to the next owner's prologue at 0x02005458, inside the assembled overlay image and not overlapping another recorded owner"

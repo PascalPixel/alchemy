@@ -216,20 +216,33 @@ empty or wrong answer* instead of failing. Both nearly reached prose.
 - **`overlay_call_targets` whole-overlay mode returns zero sites when the
   overlay has no recorded owners.** Explicit bounds are mandatory. A silent
   empty result is indistinguishable from a row that genuinely has no calls.
-- **`overlay_show` STOPS at the first interior literal pool and prints its
-  pool-word summary, which reads exactly like the end of a function.** Verified
-  on `resource_3b9:0x02001cd4`: given the true bounds `1cd4 23e0` it emitted 459
-  lines ending at the pool 0x0200213c-0x02002153 with a tidy "pool words
-  referenced" footer — 60% of a 1804-byte row, and nothing marks the cut. The
-  `b.n` immediately before the pool is the tell: 0x0200213a is `b.n 0x02002154`,
-  a jump OVER the pool into the code that follows it. Re-run `overlay_show` from
-  that branch target to the row's real end to get the remainder. This is the
-  same fact as the "a literal pool proves nothing about where a function ends"
-  rule below, but as a tool that quietly agrees with the wrong reading: the
-  output looks complete, the epilogue is simply absent, and a draft written off
-  it is a tail omission of arbitrary size. Cross-check the call census —
-  `overlay_call_targets` prints `sites=N` for the true bounds, and that must
-  equal the number of `bl` lines you actually transcribed.
+- **`overlay_show` used to IGNORE a second positional bound — FIXED, and the
+  fix is the point.** The symptom was a listing that stopped partway through a
+  row and printed its ordinary "pool words referenced" footer, so a truncated
+  listing looked exactly like a finished function. I first recorded this as
+  "the tool stops at the first interior literal pool". That was the symptom,
+  not the mechanism, and the workaround I wrote (re-run from the branch target
+  over the pool) was clumsier than the real fix. **The mechanism:**
+  `overlay_show <ov> <startHex> <endHex>` parsed only the first two
+  positionals and silently dropped the third, then fell back to `extentOf`,
+  which scans forward and stops at the first *return-shaped* halfword — and a
+  literal pool routinely contains one. So the truncation point was wherever a
+  pool word happened to look like `bx rN`. `resource_3b9:0x02001cd4` returned
+  122 of its 180 call sites; `:0x02000710` returned 101 of 177, losing both
+  inner gates, two of three tails and the epilogue.
+  **As of this session the second positional is honoured**, matching
+  `overlay_call_targets`' spelling, and anything unparseable, ambiguous, or
+  extra now THROWS instead of being dropped. `overlay_show resource_3b9 1cd4
+  23e0` now yields all 180 sites. `-n BYTES` still works and was always
+  correct — the only programmatic caller used it, which is why nobody hit
+  this. Covered by `bun tools/overlay_show.ts --self-test`, wired into
+  `bun run test`.
+  **The general lesson outlives the fix:** a tool that accepts arguments it
+  does not use will eventually be handed one that mattered. When two tools in
+  one workflow take bounds in different spellings, the mismatch does not error
+  — it truncates. And the cheap backstop that catches it regardless:
+  `overlay_call_targets` prints `sites=N` for the true bounds, so count the
+  `bl` lines you actually transcribed and require equality.
 
 - **`overlay_published.ts` with an unrecognised overlay name sweeps ALL 96
   overlays instead of erroring.** `resource_zzz` returns `overlays=96
@@ -254,19 +267,38 @@ words are the same space: `word - 0x8000 - 0x02000000`. This rule must be
 applied before anything reaches PROSE, not merely before it reaches a draft —
 a map written off a raw listing carries the error into everything built on it.
 
-**A literal pool proves nothing about where a function ends.** Pools sit
-*inside* functions with the epilogue after them, branched over. One driver
-carries four interior pools.
+### The two ways a span source lies (2026-08-01)
 
-**`measureSpan` is NOT A BOUND IN EITHER DIRECTION.** It was recorded as a
-lower bound on the strength of thirteen of fourteen rows exceeding it; a
-fourteenth row broke it the other way — measureSpan 356 against a true span of
-124, the extra 232 bytes being the *next owner* plus the import-veneer bank.
-Measure every span to its epilogue against the next recorded owner. That same
-row is the cleanest proof that guard coverage is not a certificate: run
-without explicit bounds it reports a shortfall naming a *real* callee — real
-because it belongs to the owner the over-measured span swallowed, which is
-exactly what makes the wrong answer convincing.
+Both were caught the same night, they fail in OPPOSITE directions, and a span
+is only trustworthy when it has survived both. Measure to the epilogue. Nothing
+else is a span.
+
+**1. A literal pool proves nothing about where a function ends — spans read
+this way are TOO SHORT.** Pools sit *inside* functions with the epilogue after
+them, branched over. One driver carries four interior pools. `measureSpan`
+numbers are therefore lower bounds. This is also what made `overlay_show`'s
+dropped-bound bug bite so hard: its `extentOf` fallback stops at the first
+return-shaped halfword, and pool words routinely look like one (see "Tooling
+that lies quietly" — the bound is now honoured, so pass the end explicitly).
+
+**2. A bound taken from a residue list is a bound against the next UNDRAFTED
+row, not the next row — spans read this way are TOO LONG.** `overlay_published`
+reports only what is still unowned, so an already-recorded owner sitting between
+two residue entries is absent *by construction*, and the gap silently folds into
+the earlier row's apparent size. On `resource_39e`'s 0x2484-0x26d8 cluster this
+over-estimated three spans of five; `0x0200254c` reads as 108 bytes off the
+residue list and measures **40**, because 0x02002574 is already owned. Nearly
+threefold on one row.
+
+The same trap applies to any "next candidate" list, not just residue output: a
+queue file, a ranked backlog, a set of sweep hits. If the list was filtered by
+"not yet done", it cannot bound anything. Bound against the full owner set from
+`semantic/regions.json` plus the exact-C spans, or measure.
+
+**Corollary — guard coverage is not a certificate.** Run without explicit
+bounds, `m2c_guard` on an over-measured row reports a shortfall naming a *real*
+callee — real because it belongs to the owner the bad span swallowed. A wrong
+answer built entirely from true parts is the hardest kind to catch.
 
 **`bx rN` after `mov ip, pc` is a CALL, not a return.** m2c treats it as a
 return and silently ends the function there; the guard refuses such rows.

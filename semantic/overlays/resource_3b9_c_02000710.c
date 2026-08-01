@@ -15,17 +15,20 @@ typedef unsigned char u8;
  * 0x0200ade4, 0x0200ad74, 0x93f). The next owner's prologue is exactly at
  * 0x02000dcc. **1724 bytes**, measured to the named epilogue.
  *
- * THIS ROW CARRIES AN INTERIOR LITERAL POOL AND `overlay_show` STOPS AT
- * IT. Given the true bounds `710 dcc` the tool emitted 400 lines ending at
- * the pool 0x02000ab6-0x02000aeb with its usual "pool words referenced"
- * footer, which reads exactly like the end of a function. That is 101 of
- * the row's 177 call sites; the other 76 -- including both inner gates,
- * two of the three tails and the epilogue -- are past it. The tell is the
- * branch immediately before the pool: 0x02000ab4 is `b.n 0x02000c90`, a
- * jump OVER the pool. Disassembling 0x02000aec onward separately recovers
- * the rest and the counts then agree: 101 + 76 = 177 =
- * `overlay_call_targets`' own `sites=` figure for the true bounds. Do that
- * arithmetic; it is the only cheap check that catches this.
+ * THIS ROW CARRIES AN INTERIOR LITERAL POOL at 0x02000ab6-0x02000aeb,
+ * jumped over by `b.n 0x02000c90` at 0x02000ab4; the body resumes at
+ * 0x02000aec.
+ *
+ * When this row was drafted, `tools/overlay_show.ts` SILENTLY DROPPED a
+ * second positional bound and fell back to its own extent scan, which
+ * stops at the first return-shaped halfword. Given the true bounds
+ * `710 dcc` it returned 101 of this row's 177 call sites -- losing BOTH
+ * inner gates, two of the three tails and the epilogue, so a draft off
+ * that listing would have been a branchless linear script: wrong about
+ * the shape, not merely short. That bound is now honoured and the same
+ * command returns all 177. The cheap cross-check remains the real
+ * backstop: `overlay_call_targets` prints `sites=N` for the true bounds,
+ * and the `bl` lines transcribed must equal it.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
  * `bl`. All 177 targets resolved with

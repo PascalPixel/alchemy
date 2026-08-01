@@ -6774,6 +6774,30 @@
       "entry": "0x02000cf4",
       "span_bytes": 532,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_39e",
+      "entry": "0x0200265c",
+      "span_bytes": 16,
+      "evidence": "admitted whole-owner semantic reconstruction; owner is absent from every inventory and from tools/overlay_unindexed.ts, and no bl in the image resolves here; DATA-INSTALLED callback found by bun tools/overlay_published.ts resource_39e (published Thumb pointer in a script record). Owner is prologue-started (push {lr}) and returning (pop {r0} / bx r0 at 0x02002668-0x0200266a), branch-free, no literal pool; its single call resolves by the +2 rule to 0x0200268c, this overlay's already-drafted 76-byte beat, which is what identifies the three siblings 0x265c/0x266c/0x267c as its three documented callers. Next owner prologue at 0x0200266c, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39e",
+      "entry": "0x0200266c",
+      "span_bytes": 16,
+      "evidence": "admitted whole-owner semantic reconstruction; owner is absent from every inventory and from tools/overlay_unindexed.ts, and no bl in the image resolves here; DATA-INSTALLED callback found by bun tools/overlay_published.ts resource_39e. Owner is prologue-started (push {lr}) and returning (pop {r0} / bx r0 at 0x02002676-0x02002678), branch-free, no literal pool, one alignment halfword at 0x0200267a; its single call resolves by the +2 rule to 0x0200268c. Next owner prologue at 0x0200267c, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39e",
+      "entry": "0x0200267c",
+      "span_bytes": 16,
+      "evidence": "admitted whole-owner semantic reconstruction; owner is absent from every inventory and from tools/overlay_unindexed.ts, and no bl in the image resolves here; DATA-INSTALLED callback found by bun tools/overlay_published.ts resource_39e. Owner is prologue-started (push {lr}) and returning (pop {r0} / bx r0 at 0x02002688-0x0200268a), branch-free, no literal pool; its single call resolves by the +2 rule to 0x0200268c, which begins immediately at the end of this span. Inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39e",
+      "entry": "0x02002764",
+      "span_bytes": 20,
+      "evidence": "admitted whole-owner semantic reconstruction; owner is absent from every inventory and from tools/overlay_unindexed.ts, and no bl in the image resolves here; DATA-INSTALLED callback found by bun tools/overlay_published.ts resource_39e. Owner is prologue-started (push {lr}) and returning (pop {r0} / bx r0 at 0x02002772-0x02002774), branch-free, no literal pool; both call targets resolved per-site with the +2 rule (bun tools/overlay_call_targets.ts resource_39e 0x2764 0x2778 --annotate) rather than from the summary histogram. Next published owner at 0x02002778, inside the assembled overlay image and not overlapping another recorded owner"
     }
   ]
 }

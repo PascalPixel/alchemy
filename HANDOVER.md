@@ -5782,6 +5782,109 @@ name; sweep D now does too (`NOTHING SWEPT — this is a FAILURE, not a pass`,
 exit 1). This is the fifth sighting of the named pattern and the second in my
 own hand: the fault lives in what the tool ACCEPTS, not in what it scans.
 
+## 5f. THE SILENT-PASS AUDIT — every certification gate, probed (2026-08-01, jupiter)
+
+Five sightings in five days is not five accidents, so every tool a lane can
+gate on was asked one question: **given an input that names nothing, does it
+fail loudly or return an empty success?** Answered by RUNNING each with a
+bogus name and checking the exit code, never by reading. Result: **three of
+seven were silently passing**, and the worst of them fails hardest on the most
+completed work.
+
+| tool | before | after |
+|---|---|---|
+| `overlay_published.ts` | exit 1 (throws) | unchanged |
+| `overlay_multiset_check.ts` | exit 1, `NOTHING CHECKED` | unchanged |
+| `inventory_gaps.ts` | exit 1 on a bad `--inventory` | unchanged |
+| `overlay_gaps.ts` | **exit 0**, all counters zero | exit 1, `NOTHING SWEPT` |
+| `overlay_call_targets.ts` | **exit 0**, `sites=0` | exit 1, `NOTHING RESOLVED` |
+| `overlay_driver.ts` | **exit 0**, no output at all | exit 1, `NO OVERLAY IMAGE` |
+| `veneer_resolve.ts` | **exit 0**, argument skipped in silence | exit 1, `UNRECOGNISED ARGUMENT` |
+
+**`overlay_call_targets.ts` is the serious one.** Its whole-overlay path walks
+only UNCONVERTED inventory rows, so a well-advanced overlay yields no call site
+and prints `sites=0 distinct_targets=0` at exit 0 — which reads as "this
+overlay makes no calls". **Thirty of ninety-six overlays are in that state**,
+so sixty-six resolve normally, and the thirty are the well-advanced ones:
+resource_380, 39e, 3a4 and 3c9 among them. The tool goes quiet exactly where a
+certification leans on it, and gets quieter as the work gets better. Note the
+shape: the SINGLE-OWNER path had already been fixed for precisely this — it
+synthesises a span from the next known row and prints a `note:` — and the
+sibling whole-overlay branch was never given the same treatment. **A fix
+applied to one branch and not its twin is the blind spot in a new place.**
+Check the siblings when you fix one of these.
+
+**Count exit codes from the TOOL's status, never a pipeline's.** The split is
+30 exit-1 and 66 exit-0. Taken through a pipe — `… | grep -q "sites=0"` — the
+count reports grep's status instead and inverts exactly, to 30 exit-0 and 66
+exit-1, which is how this figure came to be disputed between two people who had
+both measured. `$?` after a pipeline is the LAST command's status. Use
+`cmd >/dev/null 2>&1; echo $?`.
+
+**The refusal's cause was GUESSED in the first draft, and the guess was wrong.**
+It claimed "every row is already banked byte-exact". Measured instead: the
+refusing overlays do still carry top-level inventory rows, but those rows lie
+almost entirely PAST THE LAST RECORDED OWNER — veneer-bank stubs and data-tail
+fragments, which hold no call sites by construction. resource_382 (3,324B),
+resource_396 (4,534B) and resource_38c (3,644B) are 100% past the last owner;
+across the thirty the median walked span is 682 bytes, against 8,012 in the
+sixty-six that resolve. **resource_3c9 refuses while carrying known undrafted
+rows, and that is CORRECT** — those rows were found by sweeps, not by the
+inventory, so the inventory has nothing left to walk. It is the strongest case
+for refusing, not a counter-example. The message now reports what is measured,
+that nothing was resolved, and explicitly declines to assert why.
+
+Until a lane needs otherwise, the whole-overlay path refuses rather than
+resolving through recorded owner spans. That larger fix is blocked by the
+import graph: `overlay_call_targets` is the base module, and `ownerSpans`
+lives above it in `overlay_gaps` → `overlay_published` → here. Passing
+explicit bounds already works and is what the refusal points at.
+
+**`overlay_driver.ts` was the second fault of this class in the same file** —
+`ownerOf` accepting a census row as ownership was the first. An unknown name
+was swallowed by a bare `catch { continue }`, leaving `examined=0 unowned=0`
+at exit 0, and `unowned=0` is that tool's SUCCESS signal: a mistyped overlay
+reported every driver owned.
+
+**`veneer_resolve.ts`'s truncating cap is genuinely fixed** — `boundIsCap` is
+present, reported at both the per-target and summary level, and pinned by a
+synthetic self-test in both directions. Checked rather than assumed, as asked.
+Its remaining fault was at the input end: an argument that spells no 08xxxxxx
+entry was skipped silently, so a mistyped path printed nothing and exited 0.
+
+**Every fix is pinned by a self-test that asserts BOTH directions** — the bad
+input must exit non-zero AND a real input must exit zero, because a predicate
+that rots into always-failing is as useless as one that rots into
+always-passing. These defects live in `main`, not in any pure function, so the
+self-tests spawn the tool itself; all four are already in `bun run test`.
+
+**NEVER NAME A REAL OVERLAY AS A SELF-TEST FIXTURE.** The first attempt at this
+audit did, and it took `main` red within the shift: `resource_37b` was chosen
+as the resolving fixture, Mia banked a row byte-exact, 37b moved into the
+refusing set, and the assertion failed **because the project progressed**.
+That is §5c's own rule — self-tests go on synthetic input — broken by the
+person who wrote it down. The three ways out, in order of preference:
+
+1. **Extract the decision as a pure predicate and test it synthetically.**
+   `resolvesNothing(siteCount, boundCount)` now carries the refusal rule, and
+   all three of its directions are pinned with no tree access at all.
+2. **Assert a tree-INDEPENDENT invariant instead of a fixture's value.** The
+   wiring check runs whichever overlay is first in the tree and asserts only
+   that the exit code AGREES with the output — exit 1 if and only if `sites=0`.
+   That holds for every overlay in every state, so no lane's work can break it.
+3. **Let the tree name the fixture.** Where a tool exits 0 for any real input
+   regardless of findings — sweep D, `overlay_driver` — the passing fixture is
+   `overlayNames()[0]`, not a name typed by hand. `veneer_resolve` uses
+   `0x08000000`, a well-formed address rather than a notable one, because its
+   exit code turns purely on the spelling.
+
+**A test that goes red because the work advanced is not testing what it
+claims to.** Ask of every fixture: which lane's ordinary progress breaks this?
+
+**The standing question for any new tool, and for any tool you touch: what
+does it print when it does nothing?** If that is indistinguishable from a
+clean result, it is not a check.
+
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**

@@ -26,7 +26,7 @@
 //   bun tools/overlay_show.ts resource_39f 1078 -n 180 | \
 //     bun tools/overlay_call_targets.ts resource_39f --annotate   # fix the bl names
 //   bun tools/overlay_call_targets.ts --self-test
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { assembleOverlay } from "./overlay_disasm.ts";
 
@@ -127,6 +127,23 @@ export function classify(
     if ((first & 0xff87) === 0x4700) return { kind: "call_via" };
   }
   return { kind: "unknown" };
+}
+
+/**
+ * True when a whole-overlay run resolved nothing and must therefore FAIL.
+ *
+ * Extracted as a pure predicate so the self-test can pin BOTH directions on
+ * synthetic input. Naming real overlays as fixtures was the defect in the
+ * first attempt: `resource_37b` was chosen as the resolving fixture, a lane
+ * banked a row byte-exact, 37b moved into the refusing set, and the test went
+ * red because the PROJECT PROGRESSED. That is HANDOVER's own rule -- self-tests
+ * go on synthetic input -- violated by the person who wrote it down.
+ *
+ * A run with explicit bounds is exempt: the caller stated a span, and an empty
+ * result there is a real answer about that span.
+ */
+export function resolvesNothing(siteCount: number, boundCount: number): boolean {
+  return siteCount === 0 && boundCount === 0;
 }
 
 export function resolveOverlay(overlay: string, owner?: number, ownerEnd?: number): CallSite[] {
@@ -339,7 +356,37 @@ function selfTest(): void {
   // Pool-word footer lines carry no colon and must never be read as sites.
   if (unannotatedCallSites("  0x20003fc = 0x02000240\n", new Map()).length !== 0)
     throw new Error("a pool footer line is not a call site");
-  console.log("self-test=ok");
+  // The refusal decision, both directions, on SYNTHETIC input. No overlay is
+  // named, so no lane's progress can turn this red.
+  if (!resolvesNothing(0, 0)) throw new Error("self-test: an empty whole-overlay run must refuse");
+  if (resolvesNothing(1, 0)) throw new Error("self-test: a run with sites must not refuse");
+  if (resolvesNothing(0, 2)) throw new Error("self-test: an explicitly bounded run must not refuse");
+
+  // And the wiring, as a tree-INDEPENDENT invariant rather than a fixture:
+  // whatever the tree currently looks like, the exit code must agree with what
+  // was printed. exit 1 if and only if `sites=0`. This holds for every overlay
+  // in every state, so it cannot rot; a fixture naming one overlay could, and
+  // did. The overlay walked is simply the first one present.
+  const self = Bun.fileURLToPath(import.meta.url);
+  const first = readdirSync(join(ROOT, "assets", "code"))
+    .filter((name) => /^resource_[0-9a-f]+_overlay\.s$/.test(name))
+    .sort()[0]
+    ?.replace("_overlay.s", "");
+  if (first !== undefined) {
+    const probe = Bun.spawnSync(["bun", self, first], { stdout: "pipe", stderr: "pipe" });
+    const printedNothing = probe.stdout.toString().includes("sites=0 ");
+    if (printedNothing !== (probe.exitCode !== 0)) {
+      throw new Error(
+        `self-test: ${first} printed sites=0=${printedNothing} but exited ${probe.exitCode} — ` +
+          "the exit code must agree with the result",
+      );
+    }
+  }
+  // An unknown overlay must fail loudly, and that is tree-independent too.
+  if (Bun.spawnSync(["bun", self, "resource_ffffff"], { stdout: "pipe", stderr: "pipe" }).exitCode === 0)
+    throw new Error("self-test: an unknown overlay must NOT exit 0");
+
+  console.log("self-test=ok (including empty whole-overlay refusal)");
 }
 
 /**
@@ -479,6 +526,45 @@ function main(): void {
     `\nsites=${sites.length} distinct_targets=${distinct.size} ` +
       Object.entries(kinds).map(([k, v]) => `${k}=${v}`).join(" "),
   );
+  // RESOLVING NOTHING IS NOT A RESULT. The whole-overlay path walks only
+  // UNCONVERTED inventory rows, so on a well-advanced overlay it can print
+  // `sites=0 distinct_targets=0` at exit 0 -- which reads as "this overlay
+  // makes no calls". Thirty of ninety-six overlays are in that state, and they
+  // are the well-advanced ones: resource_380, 39e, 3a4 and 3c9 among them. The
+  // failure gets worse as the work gets better, which is the worst direction
+  // for a tool a certification leans on.
+  //
+  // MEASURED CAUSE, because the first draft of this message GUESSED one and was
+  // wrong. It said "every row is already banked byte-exact"; the refusing
+  // overlays do still carry top-level inventory rows. What they carry is rows
+  // lying PAST THE LAST RECORDED OWNER -- veneer-bank stubs and data-tail
+  // fragments, which hold no call sites by construction. Across the 30, the
+  // walked rows are ~100% past the last owner (resource_382 3,324B, 396 4,534B,
+  // 38c 3,644B, all entirely so), against a median 8,012 bytes of real body
+  // walked in the 66 that resolve. resource_3c9 refuses while having known
+  // undrafted rows, and that is CORRECT: those rows were found by sweeps, not
+  // by the inventory, so the inventory has nothing left to walk.
+  //
+  // So the message states what is measured -- nothing was resolved -- and does
+  // not assert why.
+  //
+  // The single-owner path was already fixed for exactly this -- it synthesises
+  // a span from the next known row and prints a `note:`. The sibling
+  // whole-overlay branch was not. A fix applied to one branch and not its twin
+  // is the same blind spot in a new place: it lives in what the tool ACCEPTS
+  // as a completed run, not in what it scans.
+  if (resolvesNothing(sites.length, bounds.length)) {
+    console.log(
+      "NOTHING RESOLVED — this is a FAILURE, not a pass.\n" +
+        `  The whole-overlay path walks only UNCONVERTED inventory rows, and for ${overlay}\n` +
+        "  those rows yielded no call site. Typically what remains are veneer-bank and\n" +
+        "  data-tail fragments, but this tool has NOT established that, and this is in no\n" +
+        "  case evidence that the overlay makes no calls.\n" +
+        "  Pass explicit owner bounds — `overlay_call_targets.ts <overlay> START END` —\n" +
+        "  which synthesises the span and resolves it properly.",
+    );
+    process.exitCode = 1;
+  }
 }
 
 if (import.meta.main) main();

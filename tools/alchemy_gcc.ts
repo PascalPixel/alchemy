@@ -640,6 +640,9 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // wide immediates are independently materialized throughout the reference.
   // Sharing them changes the saved-register set and every later pool boundary.
   "assets/code/resource_3b8_c_02002014.c",
+  // resource_3bd:2c44 is another long scene call sheet. Its repeated shifted
+  // immediates are rebuilt at their individual call sites in the reference.
+  "assets/code/resource_3bd_c_02002c44.c",
   // The two placement calls in resource_37b:1624 each rematerialize 0x800000;
   // sharing it introduces r5 and changes the whole call sequence.
   "assets/code/resource_37b_c_02001624.c",
@@ -735,6 +738,9 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // Paired with both CSE gates for resource_3b8's long event call sheet; once
   // constants are rematerialized, this restores the reference argument order.
   "assets/code/resource_3b8_c_02002014.c",
+  // Paired with both CSE gates for resource_3bd:2c44; its 251 call sites use
+  // the same proven low-destination tie-break after rematerialization.
+  "assets/code/resource_3bd_c_02002c44.c",
   // Near-twin of resource_394:08b0.  Its shared straight-line call sequence
   // has the same proven tied-argument ordering; paired with the pool-CSE route.
   "assets/code/resource_394_c_020007e0.c",
@@ -1001,6 +1007,9 @@ const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // This event call sheet reloads recurring addresses at their call sites;
   // sharing them shifts all eight inline literal pools and grows the prologue.
   "assets/code/resource_3b8_c_02002014.c",
+  // resource_3bd:2c44 likewise reloads recurring pool words at their call
+  // sites; sharing them changes the saved-register set and pool placement.
+  "assets/code/resource_3bd_c_02002c44.c",
   "assets/code/resource_38b_c_02000240.c",
   "assets/code/resource_372_c_02000f38.c",
   "assets/code/resource_37b_c_02001b44.c",

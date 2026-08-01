@@ -39,6 +39,26 @@ SMALLEST residues in the tree; ranked by published hits the largest are
 382 (46), 3ab (32), 385 (32), 396 (28), 3b1 (27), 39c (26). The campaign's
 scope is the miscertified overlays deliberately, not the biggest work.
 
+## Tooling that lies quietly (2026-08-01)
+
+Two near-misses in one night, same class: a tool that returns a *plausible
+empty or wrong answer* instead of failing. Both nearly reached prose.
+
+- **Never build source edits or tool arguments through shell interpolation.**
+  The dangerous case is not the one that fails to compile — it is the
+  word-split that produces valid C, or the quoted expansion that passes one
+  argument where the tool expects several. Zsh does not word-split unquoted
+  expansions; a loop over `"a b"` passes a single argument and the tool then
+  reports `sites=0` rather than erroring. That produced an annotator printing
+  a wrong-but-plausible callee, because the bogus address existed in the image.
+  Use single-pass scripted edits.
+- **`overlay_call_targets` whole-overlay mode returns zero sites when the
+  overlay has no recorded owners.** Explicit bounds are mandatory. A silent
+  empty result is indistinguishable from a row that genuinely has no calls.
+
+General rule: when a tool's answer agrees with a convenient hypothesis,
+confirm the tool actually ran on what you think it ran on.
+
 ## Reading rules for overlay listings (2026-08-01, learned the hard way)
 
 **Never read a `bl` target from an overlay disassembly listing.** objdump's

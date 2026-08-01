@@ -27,6 +27,7 @@ import {
 import { canonicalJson } from "./canonical_json.ts";
 import { targetOffset } from "./overlay_call_targets.ts";
 import { publishedOffset } from "./overlay_published.ts";
+import { assembleOverlay, overlayCSources } from "./overlay_disasm.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const OVERLAY_BASE = 0x02000000;
@@ -302,8 +303,19 @@ function assemblerListing(source: string): { rows: Map<number, ListingRow>; deco
         text: match[4].trim(),
       });
     }
-    const data = readFileSync(binary);
-    return { rows, decodedBytes: data.length, binary: Buffer.from(data) };
+    const placeholderImage = Buffer.from(readFileSync(binary));
+    // Source lines tell us which bytes are canonical instructions, directives,
+    // or verified C placeholders. Call-target evidence must instead come from
+    // the image with those placeholders filled: scanning their assembler-zero
+    // bytes makes a raw Thumb leaf disappear from the denominator as soon as
+    // its only caller becomes exact C.
+    const data = overlayCSources(source).length === 0
+      ? placeholderImage
+      : assembleOverlay(source);
+    if (data.length !== placeholderImage.length) {
+      throw new Error(`${source}: compiled overlay length differs from its canonical placeholder image`);
+    }
+    return { rows, decodedBytes: data.length, binary: data };
   } finally {
     rmSync(work, { recursive: true, force: true });
   }

@@ -694,6 +694,13 @@ export interface BuildOptions {
   target: DecompTargetId;
   exact: SourceTree;
   semantic?: SourceTree;
+  /**
+   * The publishing path checks the derived exact total against the tracked
+   * Full-C report. A live dashboard deliberately reads an uncommitted worktree,
+   * where that report may lag by a few seconds or an entire edit, so it can
+   * disable only this publication check while retaining every ownership rule.
+   */
+  validateTrackedProgress?: boolean;
 }
 
 export function buildCoverageMap(options: BuildOptions): CoverageMap {
@@ -702,10 +709,9 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
     options.exact,
     `metrics/${options.target}-executable.json`,
   ) as ExecutableInventory;
-  const tracked = readJson(
-    options.exact,
-    `metrics/${options.target}-progress.json`,
-  ) as ProgressReport;
+  const tracked = options.validateTrackedProgress === false
+    ? undefined
+    : readJson(options.exact, `metrics/${options.target}-progress.json`) as ProgressReport;
   if (inventory.audit !== "complete") {
     throw new Error(`${options.target} executable audit is incomplete; coverage map withheld`);
   }
@@ -755,7 +761,8 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
     (sum, spans) => sum + spanBytes(spans),
     0,
   );
-  if (exactMainBytes !== tracked.main.full_c_bytes || exactOverlayBytes !== tracked.overlays.full_c_bytes) {
+  if (tracked !== undefined &&
+      (exactMainBytes !== tracked.main.full_c_bytes || exactOverlayBytes !== tracked.overlays.full_c_bytes)) {
     throw new Error(
       "derived exact ownership disagrees with the tracked Full-C report " +
       `(main ${exactMainBytes} vs ${tracked.main.full_c_bytes}, ` +

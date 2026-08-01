@@ -15,17 +15,16 @@ byte-identical, source ownership is complete, and ROM fallback is zero.
 Alchemy is a complete, byte-identical, source-owned reconstruction of the
 8 MiB GS1 English ROM image. It is **not** a fully decompiled C project.
 
-- Exact Full-C Byte Share is **264,780 / 1,343,410 executable bytes
-  (19.71%)**.
-- Reviewed semantic C adds **805,246 executable bytes**. Exact plus semantic C
+- Exact Full-C Byte Share is **265,064 / 1,343,410 executable bytes
+  (19.73%)**.
+- Reviewed semantic C adds **804,962 executable bytes**. Exact plus semantic C
   covers **1,070,026 / 1,343,410 bytes (79.65%)**.
 - The main executable has a closed semantic census: every ordinary owner has
   exact or reviewed semantic C. That closure has **not** made exact matching
   materially faster by itself.
 - The current exact-C 20% threshold is 268,682 bytes. The remaining gap is
-  **3,902 exact bytes**. The latest tranche promoted one 32-byte main-image
-  owner from an executable-gap continuation using the existing source-scoped
-  CSE route.
+  **3,618 exact bytes**. The latest tranche promoted the 284-byte main-image
+  owner `08077f70` with a clean, source-scoped scheduler route.
 - The largest practical exact-C queue is now the code overlays, not the main
   executable's semantic reconstruction.
 - Compiler and permuter improvements reduce the cost of individual trials, but
@@ -49,9 +48,9 @@ may retain older identifiers when renaming would damage reproducibility.
 
 | Scope | Exact C | Semantic C, excluding exact | Assembly / retained | Executable total |
 | --- | ---: | ---: | ---: | ---: |
-| Main executable | 103,908 | 413,970 | 30,486 retained | 548,364 |
+| Main executable | 104,192 | 413,686 | 30,486 retained | 548,364 |
 | 96 decoded code overlays | 160,872 | 391,276 | 242,898 unresolved | 795,046 |
-| **Total** | **264,780** | **805,246** | **273,384** | **1,343,410** |
+| **Total** | **265,064** | **804,962** | **273,384** | **1,343,410** |
 
 Additional ROM-image facts:
 
@@ -85,20 +84,20 @@ scheduling diagnostics because their boundaries and scopes differ.
 
 The current split is:
 
-- Main executable: **103,908 / 548,364 (18.95%)**.
+- Main executable: **104,192 / 548,364 (19.00%)**.
 - Code overlays: **160,872 / 795,046 (20.23%)**.
-- Combined: **264,780 / 1,343,410 (19.71%)**.
+- Combined: **265,064 / 1,343,410 (19.73%)**.
 
 ## Main-executable audit
 
-The full-build assembly manifest contains 1,761 rows / 444,456 bytes:
+The full-build assembly manifest contains 1,760 rows / 444,172 bytes:
 
 | Manifest disposition | Rows | Bytes |
 | --- | ---: | ---: |
-| Ordinary `c_candidate` | 589 | 349,404 |
+| Ordinary `c_candidate` | 588 | 349,120 |
 | Split/merge structural exactness debt | 93 | 38,360 |
-| **C/exactness debt total** | **682** | **387,764** |
-| Retained structural assembly | 1,079 | 56,692 |
+| **C/exactness debt total** | **682** | **387,480** |
+| Retained structural assembly | 1,078 | 56,692 |
 
 Those values describe exact build ownership, not missing semantic C. Most of
 the ordinary assembly rows now have reviewed semantic owners. Conversely, two
@@ -115,8 +114,8 @@ reviewed semantic C, the full assembly manifest, and explicit non-code ranges:
 
 | Category | Bytes |
 | --- | ---: |
-| Canonical exact C | 103,908 |
-| Reviewed semantic C | 413,970 |
+| Canonical exact C | 104,192 |
+| Reviewed semantic C | 413,686 |
 | Evidence-backed retained assembly/non-code | 30,486 |
 | Unaccounted | 0 |
 | **Main executable** | **548,364** |
@@ -344,7 +343,7 @@ image literally assembly-free while retained structures remain.
 
 At the current fixed denominator, first-parent exact ownership ended 2026-07-29
 at 147,614 bytes, 2026-07-30 at 211,626 (+64,012), and 2026-07-31 at 232,944
-(+21,318). The current checkpoint is 264,780; this turn added one 32-byte
+(+21,318). The current checkpoint is 265,064; this turn added one 284-byte
 main-image owner after a clean compiler-routed witness. This is a real gain,
 but not exponential acceleration; no kilobyte-scale identical large-owner
 family was found.
@@ -370,7 +369,7 @@ Falsified or bounded hypotheses:
 
 ### Phase 1 — reach 20% exact C honestly
 
-The target is **+3,902 exact bytes**. Treat it as a portfolio, not one heroic
+The target is **+3,618 exact bytes**. Treat it as a portfolio, not one heroic
 function:
 
 1. Work the 551-owner semantic-backed code-overlay reading list in descending

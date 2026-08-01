@@ -21,7 +21,7 @@ history.  The authoritative machine-readable ledger is
 
 ## Current reference point
 
-The live checked metric is **264,780 / 1,343,410 bytes (19.71%)**: 103,908
+The live checked metric is **265,064 / 1,343,410 bytes (19.73%)**: 104,192
 main-image bytes and 160,872 code-overlay bytes. This reference point is a working
 tree publication metric, not a promise that the final history row has already
 been committed.  Regenerate the ledger after a commit with:

@@ -5297,6 +5297,43 @@ per-case-body transcription work" — came from that, and it was wrong about
 66 of the 227. On any row with a `mov pc` dispatch, diff BYTES aligned by
 address, not instruction groups.
 
+## 5b5. The case-order lever — and the 508-byte row it closed (2026-08-01)
+
+`resource_3b9:1a4c`, the 66-entry dispatcher parked as "227 bytes of
+per-case-body work", closed BYTE-EXACT in one edit once the jump-table bias
+of §5b4 was in: **reordering the `case` arms in the source**. Nothing in any
+arm's body changed.
+
+The reference lays its arms out 5, 69, 7, 70, 64, 65, 66, 12, 21, 67, 68, 31.
+Written in ascending selector order — the obvious way, and the way the draft
+had it — gcc lays them out in source order, every arm lands at the wrong
+address, and the row is 164 bytes wrong with every one of those bytes being
+layout rather than content. Reordering took it to **0**.
+
+**How to read the order off the ROM without guessing.** The jump table stores
+each arm's absolute address. Group the entries by value, sort the distinct
+values ascending, and the selectors fall out in the reference's own source
+order. Do the same on your own compile and the two lists sit side by side.
+
+**Ordering and callee naming are ONE fix, not two.** The callee names obey
+§5b3a's identity, `name = insn_address + 2 + true_target_offset`, so they are
+keyed to the reference's instruction addresses. Every name in a draft read off
+the reference disassembly is already correct *for the reference layout*. Put
+each arm back at its reference address and the names emit the right `bl` bytes
+with no renaming at all; leave the arms in the wrong order and the names look
+like the defect, because a moved `bl` encodes differently. Do the ordering
+first and re-measure before touching a single name.
+
+**Arm sizes are the confirmation to run before editing.** Ref and draft agreed
+on 10 of 12 arm sizes here (32, 6, 10, 6, 6, 28, 30, 6, 6, 28) and disagreed
+on two only by a branch halfword at the layout boundary — that pattern says
+the bodies are right and the order is wrong. Genuinely wrong bodies do not
+line up ten for ten.
+
+Adopting an UNINVENTORIED row moves the denominator: this one added its 508
+bytes as a newly audited executable interval, so `--write-inventory` AND
+`--write-report` were both required before `verify` would pass (§5c).
+
 ## 5c. Auditing the executable inventory for holes (2026-08-01)
 
 Twice in one night `full_c_progress` threw `C span is outside audited

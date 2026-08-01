@@ -185,6 +185,32 @@ documented it. **The shell defaults to the dangerous answer, so the defence has
 to be the command form, not the knowledge.** If you need both the output and
 the status, redirect to a file and read the file.
 
+## KNOWN FLAKY FAILURES — read this before debugging a red
+
+**`resource_39c` LZ round-trip, ~16% of cold builds. KNOWN AND EXPECTED. Not
+your change, not your worktree.**
+
+`verify` dies in `build_assets` with `token plan does not reconstruct decoded
+input (… first_diff=0x10cc …)` or `0x10e2`, on the asset at `0x087ac2d8`.
+
+**Re-run it.** It passes about five times in six. Then carry on.
+
+The cause is settled: `assets/code/resource_39c_c_020010c0.c` compiles
+nondeterministically — the compiler emits a semantically identical but
+one-instruction-shorter sequence in about 16% of compiles, and everything
+downstream shifts. It is **one row**, sampled eighteen rows deep tree-wide with
+no second instance. `build_full` compares the composed image against the
+reference ROM, so this is a **loud red and never a wrong byte**.
+
+Ruled by Vale on 2026-08-01: **leave it. Do not add suppression flags** — no
+flag combination eliminates it, the best only drops it to ~0.5%, and a rarer
+intermittent failure is the same curtain a warm cache drew over this bug for
+days. The real fix is a fork-queue item. Full write-up, four-instruction diff,
+measured rates and reproducer: `HANDOVER.md` §5i, "FORK-QUEUE ITEM".
+
+**Before you conclude a red is new**, check it against this list, then re-run it
+capturing the real exit code (see the command form above).
+
 ## The Vale merge cycle
 
 On every lane report: (1) `git merge <lane>` in the root worktree — plain

@@ -378,7 +378,8 @@ AlchemyC_02000458:
 	.space 0x34
 AlchemyC_0200048c:
 	.space 0x40
-	.2byte 0x4770
+AlchemyC_020004cc:
+	.space 0x2
 	.2byte 0x0000
 AlchemyC_020004d0:
 	.space 0x3c
@@ -1811,9 +1812,8 @@ AlchemyC_02000b54:
 	add	sp, #76
 	pop	{r4, r5, r6, pc}
 	.2byte 0x0000
-	.4byte 0x47704800
-	.2byte 0x9888
-	.2byte 0x0200
+AlchemyC_02001424:
+	.space 0x8
 AlchemyC_0200142c:
 	.space 0x10
 AlchemyC_0200143c:

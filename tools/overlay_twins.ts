@@ -21,7 +21,7 @@
 //   bun tools/overlay_twins.ts --self-test
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { assembleOverlay } from "./overlay_disasm.ts";
+import { assembleOverlay, overlayCSpans } from "./overlay_disasm.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 
@@ -85,17 +85,46 @@ function inventory(): OverlayFunction[] {
   return (JSON.parse(readFileSync(path, "utf8")) as { functions: OverlayFunction[] }).functions;
 }
 
+/** Exact-C owners only. Reviewed semantic C is still conversion work. */
 function convertedKeys(): Set<string> {
   const keys = new Set<string>();
-  for (const directory of [join("semantic", "overlays"), join("assets", "code")]) {
-    const path = join(ROOT, directory);
-    if (!existsSync(path)) continue;
-    for (const name of readdirSync(path)) {
-      const match = /^(resource_[0-9a-f]+)_c_0200([0-9a-f]{4})\.c$/.exec(name);
-      if (match !== null) keys.add(`${match[1]}:${match[2]}`);
-    }
+  const path = join(ROOT, "assets", "code");
+  if (!existsSync(path)) return keys;
+  for (const name of readdirSync(path)) {
+    const match = /^(resource_[0-9a-f]+)_c_0200([0-9a-f]{4})\.c$/.exec(name);
+    if (match !== null) keys.add(`${match[1]}:${match[2]}`);
   }
   return keys;
+}
+
+/**
+ * Exact-C owners disappear from `out/decomp/overlays.json`: the inventory is
+ * deliberately a discovery queue, not a complete symbol table.  That made the
+ * twin finder blind to the most valuable member of a family — the verified C
+ * template.  Recover those rows from the compiler-produced extents that the
+ * overlay builder already exposes, then compare their rebuilt bytes alongside
+ * the remaining assembly owners.
+ */
+function exactRows(): OverlayFunction[] {
+  const code = join(ROOT, "assets", "code");
+  if (!existsSync(code)) return [];
+  const rows: OverlayFunction[] = [];
+  for (const name of readdirSync(code).filter((entry) => /^resource_[0-9a-f]+_overlay\.s$/.test(entry)).sort()) {
+    const overlay = name.replace(/_overlay\.s$/, "");
+    for (const span of overlayCSpans(join(code, name))) {
+      rows.push({
+        overlay,
+        offset: span.start,
+        span_bytes: span.end - span.start,
+        starts_with_prologue: true,
+        returns: 1,
+        structural_veneer: false,
+        data_walk: false,
+        contained_by: [],
+      });
+    }
+  }
+  return rows;
 }
 
 export interface Twin {
@@ -106,7 +135,9 @@ export interface Twin {
 }
 
 export function twinGroups(): Twin[][] {
-  const rows = inventory().filter(
+  const discovered = inventory();
+  const known = new Set(discovered.map((row) => `${row.overlay}:${row.offset}`));
+  const rows = [...discovered, ...exactRows().filter((row) => !known.has(`${row.overlay}:${row.offset}`))].filter(
     (row) =>
       row.starts_with_prologue &&
       row.returns > 0 &&

@@ -4750,9 +4750,76 @@ So the population splits by what the fix would be, not by what the target
 is: an entry whose resolved target is an already-drafted owner is still not
 a safe rename today. The measurement Vale asked for (how many resolve to
 owned targets, unowned addresses, and non-code) is still worth having, but
-its "rename" bucket is empty until the encoding question is settled: the
-label evidently participates in the emitted bytes somewhere, and that
-mechanism should be found before any sweep.
+its "rename" bucket is **permanently** empty — see the mechanism below.
+
+### 5b3a. The mechanism (found and proven, 2026-08-01)
+
+**The raw annotation name is not a label. It is an arithmetic operand, and
+its value is call-site dependent.**
+
+Three facts compose:
+
+1. `externalSymbol` (tools/alchemy_gcc.ts) parses `Func_0AAAAAAA` and emits
+   `.thumb_set Func_0AAAAAAA, 0xAAAAAAAA`. The digits in the identifier
+   **are** the address GAS branches to. Nothing looks the name up.
+2. An overlay `bl` does not store a pc-relative displacement; it stores
+   `true_target_offset - 2` (§ the header of `overlay_call_targets.ts`).
+   GAS, however, assembles a normal pc-relative `bl`: it emits
+   `sym - (insn + 4)`.
+3. Equating the two gives the identity the tree is actually written to:
+
+       name_address = insn_address + 2 + true_target_offset
+
+   which is exactly what a pc-relative disassembler prints — i.e. the raw
+   objdump annotation. **The wrong-looking name is the only name that
+   emits the reference bytes.**
+
+Verified on all five sites of the founding case, `resource_3c9:38c0`:
+
+| site | name in the C | true target | check |
+| --- | --- | --- | --- |
+| 0x20038c2 | `Func_020095f8` | 0x2005d34 (veneer) | 0x20038c4+0x5d34 ✓ |
+| 0x20038c6 | `Func_02007490` | 0x2003bc8 | 0x20038c8+0x3bc8 ✓ |
+| 0x20038ca | `Func_02007768` | 0x2003e9c | 0x20038cc+0x3e9c ✓ |
+| 0x20038ce | `Func_02007b0c` | 0x200423c | 0x20038d0+0x423c ✓ |
+| 0x20038d2 | `Func_02009610` | 0x2005d3c (veneer) | 0x20038d4+0x5d3c ✓ |
+
+Measured, not just derived. `overlay_show resource_3c9 38c0` reads the
+BUILT image, so it is a cheap byte-level oracle for this question — no
+`verify` run needed. Renamed to the resolved targets, site 0x20038c2 goes
+`f005 fe99` -> `f002 fa37`; restored, it returns to `f005 fe99`.
+
+**Corollary — the names cannot be deduplicated either.** Because the
+identity carries `insn_address`, two sites calling the *same* callee must
+carry *different* names. The founding case's 5 sites -> 5 distinct names is
+not five callees; it is two veneers and three prologues. Any headcount of
+"distinct names" (the 5,947 below) counts call sites, not callees, and must
+not be read as a callee population.
+
+**Why `build:full` alone says `byte_identical=yes` either way.**
+`stageStamp` in `tools/build_assets.ts` walks `assets/` with
+`assets/code` **explicitly skipped**, so editing an overlay C never
+invalidates the asset stamp; a warm rom-mode build reuses the previously
+encoded assets and re-reports the old result. `verify` catches it only
+because `build_full --source-only` stamps under a different mode string and
+therefore always re-encodes.
+
+**Why it surfaces as a palette complaint.** An overlay's code image is
+itself a compressed ROM asset. The failing entry is
+`assets/code/resource_3c9_stream.lz.json` at ROM 0x087f6e64 (identified by
+probe): the stage re-encodes the decoded components against a stored LZ
+token plan and requires an exact round trip. One changed code byte breaks
+the round trip, and the codec reports
+`palette token plan does not reconstruct input`. It IS a byte mismatch —
+just reported by the compressor instead of by a diff.
+
+**What this closes and what it opens.** The 1,225 files are *correct as
+written* and need no change; there is no sweep, and no lane should spend
+time on one. What remains is a documentation defect, not a byte defect: the
+identifier lies about the callee. The remedy, if anyone wants one, is an
+emitter change (a call form naming the true target that the emitter
+converts back through the identity above), not a rename — and it belongs on
+the compiler-side queue, not in the exact lane.
 
 **Population size, independently counted (2026-08-01):** with the criterion
 "names a `Func_02xxxxxx` at or past its own overlay's image end", 1,225 of

@@ -14,6 +14,31 @@ rather than real limits.
 Exact means fully linked machine-code byte equality — not semantic similarity,
 not equal object size.
 
+## Published-callback campaign — scope as measured 2026-08-01
+
+Formerly-miscertified overlays, regenerated at tip 974ef372 rather than
+trusted from any written figure:
+
+| overlay | published | bl-reached |
+|---|---|---|
+| 3a4 | 16 | 2 |
+| 3b9 | 15 | 1 |
+| 39e | 13 | 1 |
+| 3c9 | 8 | 1 |
+
+**52 published PLUS 5 bl-reached, not 52.** The closure standard requires
+sweeps A and B both empty, and "published-only counts" is a shorthand that
+hides five owners. resource_380 re-reads 0 and 0 — its closure stands on the
+tool's reading, not on assertion.
+
+Whole tree at the same run: published 519, bl-reached 230, residue 1551
+across 96 overlays.
+
+**Do not pick a target by size off this campaign list.** These four are the
+SMALLEST residues in the tree; ranked by published hits the largest are
+382 (46), 3ab (32), 385 (32), 396 (28), 3b1 (27), 39c (26). The campaign's
+scope is the miscertified overlays deliberately, not the biggest work.
+
 ## Reading rules for overlay listings (2026-08-01, learned the hard way)
 
 **Never read a `bl` target from an overlay disassembly listing.** objdump's

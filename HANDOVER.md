@@ -6319,6 +6319,131 @@ the same commit, suspect untracked state before suspecting either reading.**
 Prove it by substituting the suspect file and nothing else — that turns an
 argument into a measurement in one step.
 
+## 5h. THE FIFTH BLIND SPOT: a leaf in the tail, proven (2026-08-01, mars)
+
+The tail-ruling note above says "a leaf in a tail would be invisible to all four
+sweeps at once" and leaves it hypothetical. **It is not hypothetical. Here are
+three, on two overlays, with the controls that make them a result.**
+
+**The mechanism, in one line: `ruleTail` keys on `push` prologues only.** Its
+verdict is `prologues.length > 0 ? PROLOGUE-SUSPECT : VENEER-AND-DATA` — so a
+leaf, which by definition saves no register, is classified as VENEER-AND-DATA.
+This is the identical defect jupiter fixed in sweep B ("scan a region, then
+validate the target by checking for a push prologue"), surviving one layer down
+in the fix that was written to close sweep B's twin at the other end of the
+image. Sweep D's gap loop cannot reach past the last owner; the tail verdict
+reaches there and then applies the very gate that made sweep B blind.
+
+**Instrument that finds them, cheap, and it is arithmetic over bytes already in
+hand.** In the tail, mask the interworking veneers exactly as `ruleTail` does,
+then report every UNCOVERED `4770` (`bx lr`). Tree-wide: **36 sites on 34
+overlays.** Twenty-nine are one benign class and seven are real candidates.
+
+**The benign 29 are the `call_via` bank**, the mechanically generated
+`bx r0 / nop / bx r1 / nop / ... / bx lr / nop` run. Recognise it by the
+ascending register field in the halfword and the `46c0` between entries; do not
+recognise it by "it is in a tail so it is data". `overlay_call_targets` already
+tags its entry point `call_via` — on `resource_398` the `4770` at `0x0904` has
+**15 call sites** and is that bank's `lr` entry, which is why an isolated `bx
+lr` surrounded by data is not automatically a find.
+
+**The three that are real, each ruled by both keyed instruments:**
+
+- **`resource_395` `0x1838` and `0x1858`** — 14 bytes each, byte-identical code,
+  four-word pool each. `ldr r2,[pc,#12] / ldr r3,[pc,#16] / ldr r0,[r2] /
+  ldr r1,[pc,#16] / ldr r2,[pc,#16] / stmia r3!,{r0,r1,r2} / subs r3,#12 /
+  bx lr`. r3 is `0x040000d4` — DMA3SAD — so the `stmia` writes SAD, DAD and CNT
+  in one go: source `[0x03001ed0]`, control `0x008400e0` (enable + 32-bit, 224
+  units). **The twins differ in exactly one pool word: destination `0x02009de0`
+  against `0x0200a4e0`.** Shared shape is not permission to carry an answer
+  across, and this pair is the cheap proof — everything agrees except the one
+  word the function exists to supply. The trailing `subs r3,#12` restores a dead
+  register and is compiler residue, not a fifth effect.
+- **`resource_3cd` `0x07b8`** — 12 bytes plus one pool word. `ldr r3,[pc,#8] /
+  ldr r3,[r3] / movs r2,#1 / adds r3,#53 / strb r2,[r3] / bx lr`, pool
+  `0x03001f30`. Writes 1 to the byte at `[0x03001f30] + 53`. The function
+  immediately after it at `0x07c8` DOES have a `push`, so the tail's
+  PROLOGUE-SUSPECT verdict on 3cd is firing on the neighbour, not on this.
+
+For all three: **not `bl`-reached** — absent from `overlay_call_targets`' target
+list (395 `sites=756`, 3cd `sites=82`, both live runs, not refusals) — and **not
+published**, by a 4-aligned scan for `offset + 0x8000` with and without the
+Thumb bit. That scan's liveness control is `resource_3a4`, whose documented
+publishers this file already records and which the scan reproduces exactly:
+`0x204` from the header word at `0x14`, `0xbc` from the table at `0x4020`, and
+`0x3410` from nothing. And no `push`, so sweep C is blind too.
+
+**A control I ran and failed, recorded because it changes what you may quote.**
+I wrote my own `bl` decoder with the `+2` rule to cross-check sweep A, and
+tested it against `resource_395`'s `0x12f4`, which `overlay_call_targets`
+reports with **51** call sites. My decoder found zero. It was dead, and every
+"NONE" it had printed was worthless. **Do not hand-roll the `bl` decode — the
+`+2` rule is easy to write and easy to write wrong, and a dead decoder prints
+exactly what a clean sweep prints.** Use the tool. The negative results above
+are the tool's, not mine.
+
+**Four more candidates that CANNOT currently be ruled, and why that matters.**
+`resource_387` `0x0da8` and `resource_38a` `0x04c6` are the same 12-byte leaf
+on two different overlays — `ldr r2,[r0,#80] / ldr r1,[pc,#8] / ldrh r3,[r2,#30]
+/ adds r3,r3,r1 / strh r3,[r2,#30] / bx lr`, and here even the pool word matches
+(`0xfffff800`, i.e. subtract 2048). `resource_396` `0x1226` is the same DMA
+shape as 395's pair; `resource_3a5` `0x1c78` is a `ldr r3,[pc] / strh r0,[r3]`
+setter. **On all four of those overlays `overlay_call_targets` REFUSES with
+`sites=0`**, so sweep A cannot rule them at all. A refusal is the correct
+behaviour and it is also a hole in the certification: an overlay sweep A refuses
+on cannot be certified, and nothing currently says so.
+
+### The HEAD is unswept too — the same defect at the other end again
+
+`gapsBetween` pairs `spans[index]` with `spans[index+1]`, so the region from
+image start to the FIRST recorded owner is never examined, exactly as the tail
+was never examined before `bb01a085`. Most overlays start their first owner at
+`0x30` and those 48 bytes are the pointer/veneer header — I scanned all 96 and
+found no `push` and no `bx lr` in any `0x00..0x30` head, so the common case is
+genuinely clean. **Twenty-five overlays have a larger head, and those heads hold
+code:**
+
+- **`resource_3bd` `0x0030`** is a whole function in the head — `push {r5, lr}`,
+  a body of `ldmia`/subtract/multiply work, a `bl`, and a
+  `pop {r5} / pop {r1} / bx r1` epilogue at `0x0066` with its pool word
+  `0x030001d8` at `0x0068`. Sweep C does see it, and the tell is in sweep C's own
+  output: `C shaped 0x2000030 b520 nearest owner 0x? +null` — it cannot name a
+  nearest owner **because there is no owner before it**. Read that `+null` as
+  "this is in the head", not as a formatting wart.
+- **`resource_3cb` `0x30` and `0x38`, `resource_3ce` `0x30`, `0x38`, `0x3c` and
+  `0x44`** are the `ldr r0,=table / bx lr` and `movs r0,#0 / bx lr` stub pair
+  jupiter documented on 3b9, living in the head. Sweep B catches these because
+  they are published; a head leaf that is not published would be caught by
+  nothing.
+
+**Practical rule, and it belongs beside the tail rule: the head is part of the
+sweep.** Take `spans[0].start` and rule `0x00..spans[0].start` the same three
+ways as any gap. It is free when the head is `0x30` and it is where 3bd's
+function was hiding when it is not.
+
+### The tree-wide picture, measured this session
+
+Sweep D over all 96 with `--json`, paired with `overlay_published`'s own
+`residue=` line (not a grep of its rows — `resource_3b7`'s single line is a
+`RULED DATA` verdict and its residue is 0), and with the tail verdict:
+
+**43 overlays are clean on all four sweeps** — zero code-suspect gap bytes, zero
+A/B/C residue, VENEER-AND-DATA tail. 44 are gap-clean. That is a much larger
+number than this file's "3af, 380, 3b9 are the first genuinely complete
+certifications" implies, and the increase is real work landing plus the sweep-B
+and tail fixes. **It is also not a certification, for the reason above: those 43
+were measured by the four sweeps, and the four sweeps have a fifth blind spot.**
+
+**And the ranking still cannot see the one thing that decides cost.** Pair
+every rank with coverage — `sum(owner spans) / image bytes` — because the
+clean 43 run from **89.9%** covered (`resource_37a`) down to **43.7%**
+(`resource_3b5`, 3,274 of 7,496 bytes). An overlay where drafting stopped early
+has almost nothing to gap and a huge tail, so it prints clean because nobody
+has looked. `resource_384` is clean at **45.3%**, with a 624-byte tail on a
+1,232-byte image — half the image ruled by one word. Coverage is one line of
+arithmetic over figures sweep D already loads, and it separates "closed"
+from "unexamined" better than any number currently printed.
+
 ## 6. Park classes
 
 **Real — recognise and skip in seconds:**

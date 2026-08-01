@@ -868,6 +868,7 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
 // (measured on resource_373:2cb0 — do not re-attack it with a whole-function
 // flag). docs/compiler-evidence/cse-pool-immediate.diff.
 const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_38b_c_02000240.c",
   "assets/code/resource_372_c_02000f38.c",
   "assets/code/resource_37b_c_02001b44.c",
   "assets/code/resource_3c5_c_020024d0.c",

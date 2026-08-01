@@ -7,11 +7,28 @@ so the evidence survives the machine the probe ran on. Each entry records the
 mechanism, a prototype diff against the fork source, and the collateral
 measurement a routed mode needs.
 
-Nothing here is applied. Landing any of it requires the fork change to be
-committed to the `alchemy-gcc` repository and the pinned commit updated, then
-the digests re-pinned in `tools/alchemy_gcc.ts` — and per `PROVENANCE.md` that
-re-pin is admissible only after the source-only build reproduces gs1-en.gba
+The applied entry below is the first one admitted from this ledger. The
+remaining entries are still experimental: landing one requires the fork change
+to be committed to the `alchemy-gcc` repository and the pinned commit updated,
+then the digests re-pinned in `tools/alchemy_gcc.ts` — and per `PROVENANCE.md`
+that re-pin is admissible only after the source-only build reproduces gs1-en.gba
 (SHA-1 `5c4695205413df7db52b9a184815a07783999971`) byte-identically.
+
+## applied: grouped-DMA stack-zero order
+
+The clean witness `08090824` is now exact C (104/104 bytes). Its reference
+orders the zero load before the DMA base load after grouped-DMA formation. The
+narrow `thumb_group_zero_before_base` post-reload transform in `alchemy-gcc`
+recognizes the complete seven-instruction shape — registers, constants, modes,
+and grouped consumer — and reorders only that shape. It is gated by the
+existing `-fthumb-group-control-last` route, so it cannot affect unrelated
+sources. The previously exact grouped-DMA owners `08005a78`, `08005c68`, and
+`resource_3bd_c_02000c98` remained byte-identical in the compiler regression.
+
+The darwin-arm64 `cc1` digest is pinned in `tools/alchemy_gcc.ts` as
+`e654b8f55bef2f2a06efec89f171f46a76f0a55f671eb75e8b82ddc994f85b27`. The
+source-only and full builds both reproduce the ROM byte-for-byte, with no
+fallback bytes and no forbidden inline assembly.
 
 ## cse-two-insn-immediate
 

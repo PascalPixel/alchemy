@@ -442,7 +442,7 @@ claims:
 
 | region | best measured shape | remaining blocker |
 | --- | --- | --- |
-| `08090824` | 104/104 bytes, 3 differing halfwords | the reference initializes the zeroed DMA source before loading the DMA base; the best two existing modes leave only that sched2 window |
+| `08090824` | 104/104 bytes, exact C | the new narrowly fingerprinted post-reload grouped-DMA rule restores the stack-zero-before-base order; it is routed with `-mgrouped-dma-store -fthumb-group-control-last` |
 | `0800430c` | 76/76 bytes, 3 differing instruction slots | one loop block wants copy/AND before a constant, while enabling second scheduling damages the otherwise exact entry, exit, and pool |
 | `080bd7a4` | 52/56 bytes, 28 differing halfwords | volatile grouping preserves all three repeated DMA descriptors, but CSE hoists the shared zero/control constants instead of rematerializing each group |
 | `080b1dec` | 140/148 bytes, 51 differing halfwords | the loop offset loses the allocator contest and forces an eight-byte frame; narrowing it restores the reference register family but adds mandatory truncation |

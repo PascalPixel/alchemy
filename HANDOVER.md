@@ -89,6 +89,16 @@ registers, so the author read rN as argument N. Strip it.
 argument the draft passed is real.** Stripping one there is the opposite error.
 State the domain or the instrument misleads.
 
+**That second half is a PRIOR, not a licence, and it now has a worked
+exception.** At `0x080d11dc` (`__call_via_r4`) the draft passed EIGHT arguments
+where the branch sets six — r0..r3 plus two stack words. The seventh was the
+callee itself, out of `[sp, #60]`; the eighth was the first argument a second
+time. Both are artefacts of an eight-parameter phantom prototype being filled
+from the last two loads before the branch, which any spill-heavy call
+reproduces. So above r3, still count the live argument registers at the branch
+before concluding nothing is stripped. The rule says what to expect; the branch
+says what is true.
+
 Also: live intermediates are not arguments. `0x030001d8` takes ONE argument;
 it was typed as three because two drafts agreed and r1/r2 happened to hold the
 squares that were multiplied to build r0.
@@ -111,7 +121,7 @@ and **slot n lives at `0x03001e50 + n * 4`** (`lsls r5, r0, #2` then
 |---|---|---|
 | 0x31 | 0x03001f14 | 0x08012388, 0x08021be0, 0x080f02b0 |
 | 0x32 | 0x03001f18 | 0x080196c4 |
-| 46 | 0x03001f08 | via `Func_080cef64`'s out-parameter (`src/080cef64.c`, byte-exact) |
+| 46 | 0x03001f08 | via `Func_080cef64`'s out-parameter (`src/080cef64.c`, byte-exact); also as `0x03001eec + 28` from 0x080d0ee0, which is why it reads as a struct field rather than a global |
 | 47 | 0x03001f0c | same |
 
 The "renderer globals" family and the heap/stack-kernel family are the SAME
@@ -145,6 +155,27 @@ one function into two, and filed a written Uncertainty about an asymmetry that
 never existed (both entries hold the same pooled 0x03000214). `0x0808c4f8`
 collapsed three different callees into one prototype. `0x080d3f74` welded a
 callee's table index into an argument expression. Same error, three directions.
+
+### The callee-saved register held ACROSS calls, and what to do with the `unknown`
+
+When the veneer register is callee-saved (`r4`–`fp`) and the function pushes it
+in its own prologue, the compiler will load the callee ONCE and reuse it across
+many intervening calls. `0x080a24d0` writes fp at `0x080a2568` and dispatches
+through it at both `0x080a256e` and `0x080a2606`, nine calls apart, with no
+reload.
+
+The resolver reports the second site UNRESOLVED, and that is correct — its
+backward walk is bounded. **The answer is still available, from a whole-function
+sole-writer argument:** exactly one write to the register anywhere in the range,
+and every control edge inside the range rejoins after it. Do that check by hand
+rather than reading the `unknown` as a dead end. It is the same escape hatch the
+control-flow fix left open, used in the direction it was left open for.
+
+This shape is also what makes a "dead literal" look dead. `0x080a24d0`'s own
+header had already written up the load into fp as an unread constant — the
+observation was exact and the conclusion was the only one available without the
+bank. **The register is read by the veneer, not by the body**, which is why a
+callee held this way never appears to be used.
 
 ## What an `unknown` means, after the resolver control-flow fix (2026-08-01)
 

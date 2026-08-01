@@ -1,4 +1,5 @@
 typedef signed int s32;
+typedef unsigned int u32;
 
 /*
  * resource_3a4 owner at 0x02002ffc, 44 bytes: test bit 1 of the runtime
@@ -26,15 +27,17 @@ typedef signed int s32;
  * overlay's callbacks -- observed, not proven.  8, 7 and 6 are literal.
  */
 
-extern s32 Data_03001e40;
+extern u32 Data_03001e40;
 
-extern void Func_0808a158(s32 arg0, s32 arg1);
+extern void Func_02006c2a();
+extern void Func_02006c34();
+
 
 void Func_02002ffc(void)
 {
     if (((Data_03001e40 >> 1) & 1) != 0) {
-        Func_0808a158(8, 7);
+        Func_02006c2a(8, 7);
     } else {
-        Func_0808a158(8, 6);
+        Func_02006c34(8, 6);
     }
 }

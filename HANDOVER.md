@@ -4380,11 +4380,24 @@ ascending, the fork emits them in use order. No source lever found.
    equal-value fold; `39d:31c0`'s copy-before-shift is local-alloc plus the
    two-address pattern; `371:350`'s AND-operand choice is commutative
    canonicalisation. One flag does not cover them.
-3. **Literal-pool placement.** `fae58`'s residual and `39d:31c0`'s residual
-   are the SAME problem: the reference dumps a minipool mid-function where
-   the fork floats it to the end. This is the single named blocker on
-   `fae58`, the largest exact win available (1,098 bytes, currently
-   1086/1098 with five levers folded in).
+3. **Placement — of pool words AND of instructions. THREE members, and the
+   family that is actually growing.** `fae58`'s residual and `39d:31c0`'s
+   residual are the same problem (the reference dumps a minipool
+   mid-function where the fork floats it to the end), and the 0x314
+   distance cohort joined them on 2026-08-01: there the reference issues a
+   subtraction BEFORE two shifts and we issue it after, with the identical
+   instruction and identical registers on both sides. This is the single
+   named blocker on `fae58`, the largest exact win available (1,098 bytes,
+   currently 1086/1098 with five levers folded in), so it is the best fork
+   target on the board.
+
+   *Correction worth keeping:* the cohort was first filed under (2) on the
+   strength of a diff line reading "sub operand order". Putting the two
+   residuals side by side showed 371:0350 genuinely copies a different
+   operand (canonicalisation) while the cohort's instruction is byte-for-byte
+   the same and only moves. **Read the registers, not the shape of the
+   complaint** — the same failure as trusting a group count over a byte
+   count, and both cost a wrong classification before they were caught.
 
 **Fork prototype status (NOT staged; `dist/` digest unchanged).**
 `../alchemy-gcc` carries a working `-fmatch0-keeps-input` /

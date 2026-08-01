@@ -1,9 +1,30 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ *
+ * `Func_080072f0` is not a function.  0x080072e4 begins the GCC
+ * `__call_via_rN` veneer bank -- fifteen four-byte `bx rN; nop` entries,
+ * r0..lr, ending at 0x08007320 -- so 0x080072f0 is `__call_via_r3` and
+ * `bl 0x80072f0` calls whatever r3 holds.
+ *
+ * At every site in this file the ROM loads r3 from the literal pool with
+ * the constant 0x03001388, so the callee is the relocated IWRAM word copy
+ * at that address.  Its signature is not guessed: the EXACT source
+ * src/080d40ec.c declares it as
+ * `void *(*)(void *destination, const void *source, s32 size)` and
+ * src/080e0524.c casts the same address to the same shape.
+ *
+ * Note what the previous draft had already half-seen: it passed
+ * 0x03001388 as a fourth ARGUMENT.  That value was never an argument --
+ * it is the callee, and the register load that produced it is the call
+ * target, not a parameter.
+ */
 typedef signed char s8;
 typedef unsigned char u8;
 typedef signed short s16;
 typedef unsigned short u16;
 typedef signed int s32;
 typedef unsigned int u32;
+typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 
 #define M2C_FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -11,7 +32,6 @@ s32 Func_080022ec(s32, s32);
 s32 Func_080022f4(s32, s32);
 void Func_08002df0(void *);
 void *Func_08004938(s32);
-void Func_080072f0(void *, const void *, s32, const void *);
 void Func_08015130(s32);
 u8 *Func_08077008(s32);
 void Func_08077010(s32);
@@ -236,7 +256,7 @@ s32 Func_080bbb0c(void *arg0, s32 arg1) {
     action = Func_08077080(temp_r4);
     actor_state = Func_08077008(actor_id);
     target_state = Func_08077008((s32) target_id);
-    Func_080072f0(temp_r0, target_state, 0x14C, (const void *)0x03001388);
+    ((WordCopy)0x03001388)(temp_r0, target_state, 0x14C);
     if (M2C_FIELD(action, u8, 8) != 0xFF) {
         temp_r3 = *(request + (arg1 + 0x10));
         range_distance = temp_r3;

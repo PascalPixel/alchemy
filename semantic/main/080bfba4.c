@@ -1,5 +1,26 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ *
+ * `Func_080072f0` is not a function.  0x080072e4 begins the GCC
+ * `__call_via_rN` veneer bank -- fifteen four-byte `bx rN; nop` entries,
+ * r0..lr, ending at 0x08007320 -- so 0x080072f0 is `__call_via_r3` and
+ * `bl 0x80072f0` calls whatever r3 holds.
+ *
+ * At every site in this file the ROM loads r3 from the literal pool with
+ * the constant 0x03001388, so the callee is the relocated IWRAM word copy
+ * at that address.  Its signature is not guessed: the EXACT source
+ * src/080d40ec.c declares it as
+ * `void *(*)(void *destination, const void *source, s32 size)` and
+ * src/080e0524.c casts the same address to the same shape.
+ *
+ * Note what the previous draft had already half-seen: it passed
+ * 0x03001388 as a fourth ARGUMENT.  That value was never an argument --
+ * it is the callee, and the register load that produced it is the call
+ * target, not a parameter.
+ */
 #include "types.h"
 
+typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 #define U8_AT(p, o)  (*(u8 *)((u8 *)(p) + (o)))
 #define S8_AT(p, o)  (*(s8 *)((u8 *)(p) + (o)))
 #define S16_AT(p, o) (*(s16 *)((u8 *)(p) + (o)))
@@ -11,7 +32,6 @@ void *Func_08077000(s32);
 void Func_080771b8(s32, s32, s32);
 s32 Func_080b6b40(s32, void *);
 void *Func_08004970(s32);
-void Func_080072f0();
 void Func_08077010(s32);
 void Func_080bdfec(void);
 void Func_080bd808(s32);
@@ -88,7 +108,7 @@ void Func_080bfba4(u8 *result)
         s32 largest_count = 0;
         s32 largest_category = -1;
 
-        Func_080072f0(snapshot, profile, 0x14c, (void *)0x03001388);
+        ((WordCopy)0x03001388)(snapshot, profile, 0x14c);
         for (i = 0; i < 4; i++) {
             if (counts[i] > largest_count) {
                 largest_count = counts[i];

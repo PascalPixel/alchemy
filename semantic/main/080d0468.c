@@ -1,8 +1,28 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ *
+ * `Func_080072f0` is not a function.  0x080072e4 begins the GCC
+ * `__call_via_rN` veneer bank -- fifteen four-byte `bx rN; nop` entries,
+ * r0..lr, ending at 0x08007320 -- so 0x080072f0 is `__call_via_r3` and
+ * `bl 0x80072f0` calls whatever r3 holds.
+ *
+ * At every site in this file the ROM loads r3 from the literal pool with
+ * the constant 0x03001388, so the callee is the relocated IWRAM word copy
+ * at that address.  Its signature is not guessed: the EXACT source
+ * src/080d40ec.c declares it as
+ * `void *(*)(void *destination, const void *source, s32 size)` and
+ * src/080e0524.c casts the same address to the same shape.
+ *
+ * Note what the previous draft had already half-seen: it passed
+ * 0x03001388 as a fourth ARGUMENT.  That value was never an argument --
+ * it is the callee, and the register load that produced it is the call
+ * target, not a parameter.
+ */
 #include "types.h"
 
+typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 extern u8 *Data_03001ef4;
 
-void Func_080072f0(void *, void *, s32, void *);
 s32 Func_08004458(void);
 void Func_080030f8(s32);
 
@@ -26,8 +46,8 @@ void Func_080d0468(void)
     offsets = Data_03001ef4;
     step = 16;
     extent = 0;
-    Func_080072f0((void *)0x02010000, (void *)0x06008000,
-                  0x7800, (void *)0x03001388);
+    ((WordCopy)0x03001388)((void *)0x02010000, (void *)0x06008000,
+                  0x7800);
 
     {
         s32 index = 0;
@@ -80,8 +100,8 @@ void Func_080d0468(void)
             row++;
         }
 
-        Func_080072f0((void *)0x06008000, (void *)0x02010000,
-                      0x7800, (void *)0x03001388);
+        ((WordCopy)0x03001388)((void *)0x06008000, (void *)0x02010000,
+                      0x7800);
         Func_080030f8(1);
         if (extent > 248)
             break;
@@ -107,7 +127,7 @@ void Func_080d0468(void)
         } while (index != 0x7800);
     }
 
-    Func_080072f0((void *)0x02010000, (void *)0x06008000,
-                  0x7800, (void *)0x03001388);
+    ((WordCopy)0x03001388)((void *)0x02010000, (void *)0x06008000,
+                  0x7800);
     Func_080030f8(1);
 }

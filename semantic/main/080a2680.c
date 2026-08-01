@@ -1,4 +1,28 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ *
+ * `Func_080072f8` and `Func_080072fc` are not functions.  0x080072e4 begins the GCC
+ * `__call_via_rN` veneer bank -- fifteen four-byte `bx rN; nop` entries,
+ * r0..lr, ending at 0x08007320 -- so a `bl` into that range calls
+ * whatever the named register holds.
+ *
+ * 0x080072f8 is `__call_via_r5` and 0x080072fc is `__call_via_r6`.  All four
+ * sites here were verified from the ROM: the two at 0x080a2e30 and
+ * 0x080a2e3a dispatch r6, loaded from the pool at 0x080a2e54, and the two
+ * at 0x080a2f8e and 0x080a2f9a dispatch r5, loaded from the pool at
+ * 0x080a3294.  Both pools hold 0x03001388, so all four are the same
+ * relocated IWRAM word copy reached through two different veneers.
+ *
+ * The callee's signature is not guessed: the EXACT source
+ * src/080d40ec.c declares 0x03001388 as
+ * `void *(*)(void *destination, const void *source, s32 size)`, and
+ * src/080e0524.c casts the same address to the same shape.  The previous
+ * draft already had the right arity and argument order -- only the callee
+ * was wrong.
+ */
 #include "types.h"
+
+typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -7,8 +31,6 @@ extern u8 *Data_03001f2c;
 void Func_08002df0(void *);
 void Func_080030f8(s32);
 void *Func_08004938(s32);
-void Func_080072f8(void *, const void *, s32);
-void Func_080072fc(void *, const void *, s32);
 void Func_08015068();
 void Func_08015080();
 void Func_08015270();
@@ -388,8 +410,8 @@ s32 Func_080a2680(s32 *source_out, s32 *target_out, s32 *item_out)
             second_record = Func_08077008(FIELD(state, u8, 0x21b));
             first_copy = Func_08004938(0x14c);
             second_copy = Func_08004938(0x14c);
-            Func_080072fc(first_copy, first_record, 0x14c);
-            Func_080072fc(second_copy, second_record, 0x14c);
+            ((WordCopy)0x03001388)(first_copy, first_record, 0x14c);
+            ((WordCopy)0x03001388)(second_copy, second_record, 0x14c);
 
             for (i = 0; i < 30; i++) {
                 slot = Func_08077058(
@@ -441,8 +463,8 @@ s32 Func_080a2680(s32 *source_out, s32 *target_out, s32 *item_out)
             }
             Func_080030f8(1);
             if (failure) {
-                Func_080072f8(first_record, first_copy, 0x14c);
-                Func_080072f8(second_record, second_copy, 0x14c);
+                ((WordCopy)0x03001388)(first_record, first_copy, 0x14c);
+                ((WordCopy)0x03001388)(second_record, second_copy, 0x14c);
                 Func_08015278(FIELD(state, void *, 44));
                 Func_080a1d08(0xb84, 15, 14);
             } else {

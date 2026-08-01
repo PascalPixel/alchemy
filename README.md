@@ -35,7 +35,7 @@ source/owner boundary and keeps that owner's natural byte size:
 **Code overlays** — 794,842 executable bytes across 96 decoded RAM-loaded
 modules:
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=76b5c57e)
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=7a5418ac)
 
 **Data / assets** — the 7.3 MB of the ROM image that is data, not code. Same ladder in
 magenta: faint is byte-represented, a third is b&w sheets, two thirds is

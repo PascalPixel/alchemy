@@ -284,6 +284,90 @@ that legitimately cache, and would silently freeze a pointer the ROM
 deliberately refreshes — the failure mode this audit exists to remove,
 reintroduced by the audit itself.
 
+#### The test that decides it, and the three files that ran it
+
+The warning above is correct but it is not the whole rule, and stated as a
+blanket ban it is as wrong as a blanket cache. Batches 14 and 15 converted
+the global population and the deciding question turned out to be sharper and
+easier than "global versus frame-parked":
+
+> **Between the read and the use, does anything republish that slot id?** If
+> yes, the site must re-read at the point of use. If no, a cache is correct —
+> and in every case found so far the ROM has already written that cache
+> itself, so expressing it is transcription rather than a decision.
+
+Ask it PER SLOT and PER ERA, never per file. All three files break the
+file-level generalisation:
+
+* `080ca60c` — slot 46 published five times with different parameters and
+  four sites re-reading between publishes; slot 47 published twice with the
+  site between; **and** a two-entry table the ROM itself parks at `sp + 100`
+  after the last publish pair, feeding three more sites that are correctly
+  cached. Both disciplines, one function, one pair of slots.
+* `080d91dc` — six publish/release brackets, every read inside its own. Two
+  of the brackets read the slot several instructions before the call and park
+  it; that is a latch WITHIN a bracket and is not the forbidden hoist.
+* `080dea70` — the cleanest statement. Slot 46 is published exactly once (a
+  three-armed chain at 0x080deafc/0x080deb14/0x080deb24 is one publish with
+  three parameter sets), read once at 0x080deb2c and parked in `[sp, #112]`,
+  and five sites read it back — including three arms of one switch that reach
+  the SAME pointer through r7, r4 and r6. Slot 47 in the same function is
+  republished ten times and all eight of its sites re-read. Verifying this
+  means checking EVERY intervening publish's id, not sampling; all ten were
+  id 47.
+
+**A slot can also have two eras in one function.** `080ea0d8` releases id 46
+at 0x080ea962 and republishes it at 0x080ea972, re-reading at 0x080ea97a into
+the SAME stack slot `[sp, #88]` that held the first era's pointer since
+0x080ea140. Each era is internally single-publish and therefore cacheable,
+but they are different pointers and need two locals. A single hoisted local
+covering both would be wrong in exactly the way this section warns about,
+while looking like the legitimate cache two paragraphs up.
+
+#### Slot-46 reads wear at least three bases
+
+0x03001f08 is reached as `0x03001e50 + 184`, as `0x03001eec + 28`, and (new
+in batch 14) as `0x03001e80 + 0x88` at 0x080d94e6. This is why the resolver
+reports these as struct fields rather than globals, and it is how a real
+defect hid: `080d91dc`'s draft read the `__call_via_r8` callee as `header[8]`
+= `0x03001eec + 32` = 0x03001f0c, slot **47**, at both of its r8 sites, where
+the ROM reads slot 46. One slot off, in the direction that made a pair of
+distinct renderers look like one renderer used twice. **Resolve the base
+before trusting an offset that looks familiar.**
+
+#### `veneer_resolve.ts` truncates at 0x1000 and now says so
+
+`boundOf` caps a function at `entry + 0x1000` when the next owner is further
+away. `0x080ea0d8` is longer than that: the tool listed 25 sites and the C
+file calls a veneer four more times, at 0x080eb0de, 0x080eb0f6, 0x080eb10e
+and 0x080eb122, all past the cap. The count was a lower bound and nothing
+said so — the same accept-gate shape found in sweep B and in `gapsOf`.
+
+Fixed rather than noted: `boundIsCap` is exported, the per-file listing prints
+`!! TRUNCATED at 0x…` and `--summary` prints `!! TRUNCATED (count is a LOWER
+BOUND)`, and `--self-test` pins both directions (0x080ea0d8 must report,
+a near next-owner must not). **The partial-conversion guard and `--scope` are
+NOT affected** — both walk the C text, not the ROM — so nothing was ever
+silently accepted as finished. Only the site COUNTS were short.
+
+#### `080ea0d8` — the last global file, mapped but not converted
+
+Its 29 sites are inventoried; what is left is pinning 39 C call statements to
+them by argument agreement, because m2c duplicated shared blocks. Do not
+guess the mapping from order.
+
+| what | sites |
+|---|---|
+| `0x03001388`, r3 an argument register, 3-arg call | 0x080ea290 |
+| `0x03000168` ARM fill, same | 0x080ea35e, 0x080ea900 |
+| slot 46 ERA 1 — publish 0x080ea138, read 0x080ea13c → `[sp, #88]`, release 0x080ea962 | 0x080ea460 (r4), 0x080ea558 (r5), 0x080ea7c6 (r4) |
+| slot 47 — republished eleven times, every site re-reads | 0x080ea694, 0x080ea6c2, 0x080ea6f0, 0x080ea71c, 0x080ea800, 0x080ea82a, 0x080ea8b4, 0x080eaefe, 0x080eaf28, 0x080eaf54, 0x080eaf7e |
+| slot 46 ERA 2 — publish 0x080ea972, read 0x080ea97a → `[sp, #88]` again | 0x080eafa8, 0x080eafca, 0x080eb00e, 0x080eb026, 0x080eb03c, 0x080eb050, 0x080eb074, 0x080eb096, and the four past the cap: 0x080eb0de, 0x080eb0f6, 0x080eb10e, 0x080eb122 |
+
+Both eras are closed: no branch inside `0x080ea140..0x080ea962` targets an
+address at or before 0x080ea140, and none inside `0x080ea984..0x080eb0a0`
+targets one at or before 0x080ea984. Checked exhaustively, not sampled.
+
 **A runtime value feeding the SETUP call does not make the callee runtime
 dependent.** `080e89ec` calls `Func_080cef64(alternate, sp + 48)` where
 `alternate` is read out of a scene record. The byte-exact source takes the

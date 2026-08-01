@@ -1476,27 +1476,57 @@ function parseArgs(argv: string[]): Options {
 // compares it to the reference ROM, and compares the composed image as a whole,
 // so a stale skip cannot produce a wrong image — it can only defer the proof
 // that the sources still re-encode, which is exactly what the stamp tracks.
+/** A digest of this file's own source. No fallback: see tools/cache_key_lint.ts. */
+let selfDigestCache: string | undefined;
+function selfDigest(): string {
+  if (selfDigestCache !== undefined) return selfDigestCache;
+  const path = Bun.fileURLToPath(import.meta.url);
+  const source = readFileSync(path);
+  if (source.byteLength === 0) throw new Error(`build_assets read an EMPTY source at ${path}; refusing to key the cache`);
+  selfDigestCache = new Bun.CryptoHasher("sha256").update(source).digest("hex");
+  return selfDigestCache;
+}
+
 function stageStamp(manifestPath: string, sourceOnly: boolean): string {
   const digest = new Bun.CryptoHasher("sha256");
-  digest.update(`assets-v1:${sourceOnly ? "source-only" : "rom"}\0`);
+  // Keyed on this file's own source rather than a hand-maintained `-vN`, for
+  // uniformity with the overlay-C and asm-region caches and so the cache-key
+  // lint needs no allowlist. The `tools/` walk below already covers this file,
+  // so this is belt-and-braces — but an exception in a rule is the same
+  // author's-memory defect the rule exists to remove.
+  digest.update(`assets:${selfDigest()}:${sourceOnly ? "source-only" : "rom"}\0`);
   digest.update(readFileSync(manifestPath));
-  const walk = (directory: string, skip?: string): string[] => {
+  const walk = (directory: string): string[] => {
     const found: string[] = [];
     const stack = [directory];
     while (stack.length !== 0) {
       const current = stack.pop()!;
       for (const entry of readdirSync(current, { withFileTypes: true })) {
         const path = join(current, entry.name);
-        if (skip !== undefined && path === skip) continue;
         if (entry.isDirectory()) stack.push(path);
         else if (entry.isFile()) found.push(path);
       }
     }
     return found.sort();
   };
+  // `assets/code` USED TO BE SKIPPED HERE, and `semantic/` was never walked at
+  // all. Both feed the overlay images that several asset regions compress, so
+  // the stamp reported a hit for work it had not done: touching
+  // `assets/code/resource_39c_overlay.s` or
+  // `semantic/overlays/resource_39c_c_02003d20.c` both printed `reused=stamp`
+  // and skipped the whole re-encode. That is exactly the files a lane changes
+  // when it banks a row, sitting under the merge gate — an adoption could land
+  // with `verify` green and the asset round-trip never re-run. Found
+  // independently from two directions, by Garet forwards and by Mia as
+  // `build:full` reusing stale output.
+  //
+  // A full re-encode of all 2,431 regions measures 3.6s, so there is nothing to
+  // buy by being clever about which inputs matter. Walk them all and stay
+  // conservative, as the comment above always claimed this stamp was.
   const inputs = [
-    ...walk(join(ROOT, "assets"), join(ROOT, "assets/code")),
+    ...walk(join(ROOT, "assets")),
     ...walk(join(ROOT, "tools")),
+    ...walk(join(ROOT, "semantic")),
   ];
   for (const path of inputs) {
     const info = statSync(path);
@@ -1560,7 +1590,22 @@ function main(): void {
     if (!(ROM_BASE <= address && address < previousEnd && previousEnd <= ROM_BASE + romSize)) {
       throw new Error(`asset region outside ROM at 0x${address.toString(16).padStart(8, "0")}`);
     }
-    const [builtData, builtSources, report] = buildEntry(entry);
+    // Name the entry on failure. `buildEntry` throws from deep inside a codec
+    // that has no idea which of 2,431 regions it is encoding, so an unadorned
+    // throw here produced a stack trace with no address in it — which is how
+    // "the 39c complaint" stayed anonymous across three lanes and several days.
+    let builtData: Buffer;
+    let builtSources: string[];
+    let report: Json;
+    try {
+      [builtData, builtSources, report] = buildEntry(entry);
+    } catch (cause) {
+      throw new Error(
+        `asset at 0x${address.toString(16).padStart(8, "0")} (${String(entry.kind)}): ` +
+          `${cause instanceof Error ? cause.message : String(cause)}`,
+        { cause },
+      );
+    }
     const sources = closureSources(entry, builtSources);
     if (builtData.length !== size) {
       throw new Error(

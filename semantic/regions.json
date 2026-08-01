@@ -2426,6 +2426,12 @@
       "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json, span walked from the prologue to its matching interworking epilogue `pop {r5} / pop {r1} / bx r1` at 0x02000346, literal pool 0x0200034c (0x030001d8) excluded, next prologue at 0x02000350; byte-identical to the same routine in resource_385/39b/3a6/3b3/3be apart from the call_via `bl` encoding"
     },
     {
+      "overlay": "resource_39b",
+      "entry": "0x020012e0",
+      "span_bytes": 1104,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_39b), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; a 31-entry jump table at image offset 0x1368 whose ten distinct arms all run PAST it to the shared epilogue at 0x02001718, so the 1098 bytes a table-blind span reports is a lower bound; two arms fall THROUGH to the next rather than branch (sub-selector 1 into 2, 18..20 into 17) and two share a close at 0x0200168e, so the arms are not independent blocks; the bulk of the literal pool sits INSIDE the function at 0x020016a4-0x020016f3, jumped over between arms, with one alignment halfword and one trailing pool word at 0x0200172c; span read through the r8/r9/sl unspill and bx r1 at 0x0200171a-0x02001728 to the next function at 0x02001730, which this driver itself calls, inside the assembled overlay image and not overlapping another recorded owner; hand-drafted from the bytes with every bl resolved as an absolute image offset (stored displacement + 2) and every table word as word - 0x8000 in the same space; tools/m2c_guard.ts finds no call-through-register site and reports 36 of 36 callees present in the draft."
+    },
+    {
       "overlay": "resource_39c",
       "entry": "0x0200013c",
       "span_bytes": 472,

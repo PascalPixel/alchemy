@@ -33,35 +33,40 @@ struct Resource373Actor {
     u8 field55;
 };
 
-void Func_0808a010();
-struct Resource373Actor *Func_0808a080();
-void Func_0808a090();
-void Func_0808a0c0();
-void Func_0808a0d0();
-void Func_0808a100();
-void Func_0808a1b8();
+struct Resource373Actor *Func_0200937c();
+void Func_02009396();
+void Func_020093da();
+void Func_0200946e();
+void Func_0200941c();
+void Func_020093d2();
+void Func_02009406();
+void Func_020093ac();
+void Func_020093ee();
+void Func_0200944e();
+void Func_0200942a();
+void Func_02009478();
 
 void Func_02003380(s32 actorId, s32 firstArgument, s32 secondArgument,
                    s32 emphasise)
 {
-    struct Resource373Actor *actor = Func_0808a080(actorId);
+    struct Resource373Actor *actor = Func_0200937c(actorId);
     struct Resource373Handle *handle = actor->handle;
 
     /* 0x80 << 9 and 0x80 << 8; 196 << 1 is the shared 0x188 duration. */
-    Func_0808a090(actorId, 0x10000, 0x8000);
-    Func_0808a0d0(actorId, 0x188, 0x35b);
-    Func_0808a1b8(actorId, 0xc000, 10);
+    Func_02009396(actorId, 0x10000, 0x8000);
+    Func_020093da(actorId, 0x188, 0x35b);
+    Func_0200946e(actorId, 0xc000, 10);
 
     actor->field55 = 0;
     handle->field26 = 0;
 
-    Func_0808a100(actorId, firstArgument);
-    Func_0808a090(actorId, 0x10000, 0x8000);
-    Func_0808a0c0(actorId, 0x188, 0x36b);
-    Func_0808a010(10);
-    Func_0808a090(actorId, 0x4ccc, 0x2666);
-    Func_0808a100(actorId, secondArgument);
-    Func_0808a0c0(actorId, 0x188, 0x37a);
+    Func_0200941c(actorId, firstArgument);
+    Func_020093d2(actorId, 0x10000, 0x8000);
+    Func_02009406(actorId, 0x188, 0x36b);
+    Func_020093ac(10);
+    Func_020093ee(actorId, 0x4ccc, 0x2666);
+    Func_0200944e(actorId, secondArgument);
+    Func_0200942a(actorId, 0x188, 0x37a);
 
     actor->field28 = 0x20000;       /* 0x80 << 10 */
     handle->field26 = 1;
@@ -69,5 +74,5 @@ void Func_02003380(s32 actorId, s32 firstArgument, s32 secondArgument,
         actor->field55 = 3;
     }
 
-    Func_0808a100(actorId, 1);
+    Func_02009478(actorId, 1);
 }

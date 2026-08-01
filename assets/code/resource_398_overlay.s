@@ -372,15 +372,10 @@ AlchemyC_020002d8:
 	.2byte 0x0000
 AlchemyC_02000424:
 	.space 0x28
-	.4byte 0x681a4b02
-	.4byte 0x75d32301
-	.4byte 0x00004770
-	.4byte 0x03001e70
-	.4byte 0x681a4b02
-	.4byte 0x75d32300
-	.4byte 0x00004770
-	.2byte 0x1e70
-	.2byte 0x0300
+AlchemyC_0200044c:
+	.space 0x10
+AlchemyC_0200045c:
+	.space 0x10
 AlchemyC_0200046c:
 	.space 0x48
 AlchemyC_020004b4:

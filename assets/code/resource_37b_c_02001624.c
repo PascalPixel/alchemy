@@ -36,21 +36,23 @@ typedef unsigned int u32;
  * 0x02000c8c in this overlay, which independently confirms the resolution.
  */
 
-/* Imports.  Old-style declarations: arity varies per site in this overlay. */
-s32 *Func_0808a080();
-void Func_08009278();
+/* Raw per-site import labels preserve the relocated BL encodings. */
+s32 *Func_02003a96();
+s32 *Func_02003aa0();
+void Func_02003a78();
+void Func_02003a88();
 
 void Func_02001624(void)
 {
     s32 selector;
     s32 stage;
 
-    selector = Func_0808a080(0)[2] >> 20;
-    stage = Func_0808a080(0)[4] >> 20;
+    selector = Func_02003a96(0)[2] >> 20;
+    stage = Func_02003aa0(0)[4] >> 20;
 
     if (stage == 8 && (u32)(selector - 17) <= 1) {
         /* 0x88 << 17 and 0x90 << 17, and 0x80 << 16, built by movs/lsls. */
-        Func_08009278(2, 0x1100000, 0x800000, 255);
-        Func_08009278(2, 0x1200000, 0x800000, 255);
+        Func_02003a78(2, 0x1100000, 0x800000, 255);
+        Func_02003a88(2, 0x1200000, 0x800000, 255);
     }
 }

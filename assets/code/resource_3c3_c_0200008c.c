@@ -1,6 +1,8 @@
 typedef signed short s16;
 typedef unsigned char u8;
 typedef signed int s32;
+extern u8 Value_000000a9;
+extern u8 Value_000000aa;
 
 /*
  * Resource 3c3, table selector at 0x0200008c (88 bytes, 1 call site).
@@ -34,7 +36,7 @@ typedef signed int s32;
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
-s32 Func_080770c0();    /* test a story flag (used in a condition) */
+s32 Func_0200092a();    /* raw encoded call destination */
 
 extern s16 Data_02000240[];
 extern u8 Data_02008ba8[];
@@ -46,11 +48,11 @@ s32 Func_0200008c(void)
 {
     s16 scene = Data_02000240[224];
 
-    if (scene == 0xaa) {
+    if (scene == (s32)&Value_000000aa) {
         return (s32)Data_02008ba8;
     }
-    if (scene == 0xa9) {
-        if (Func_080770c0(0x96f) != 0) {
+    if (scene == (s32)&Value_000000a9) {
+        if (Func_0200092a(0x96f) != 0) {
             return (s32)Data_02008c98;
         }
         return (s32)Data_02008c50;

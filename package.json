@@ -21,6 +21,7 @@
     "progress:history": "bun tools/full_c_history.ts --write",
     "test:compiler-explorer": "bun tools/mode_sweep.ts --self-test",
     "test:compiler-cohort": "bun tools/mode_cohort.ts --self-test",
+    "test:overlay-compiler-cohort": "bun tools/overlay_mode_cohort.ts --self-test",
     "test:compiler-corpus": "bun tools/compiler_corpus_regression.ts --self-test",
     "test:compiler-batch": "bun tools/search_compiler_modes.ts --self-test",
     "test:statement-order": "bun tools/statement_order_sweep_main.ts --self-test",

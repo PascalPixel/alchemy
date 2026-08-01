@@ -1,6 +1,7 @@
 typedef signed short s16;
 typedef signed int s32;
 typedef unsigned char u8;
+extern u8 Value_000000b4;
 
 /*
  * Resource 3c7 script selector at 0x020004b0.
@@ -35,17 +36,18 @@ extern u8 Data_02009a94[];
 
 /* Import veneer; used in a condition, so the return type is stated and the
  * arity left open. */
-s32 Func_080770c0();
+s32 Func_020016a4();
+s32 Func_020016b6();
 
 u8 *Func_020004b0(void)
 {
-    if (Data_02000240[224] == 0xb4) {
-        if (Func_080770c0(0x9a7) != 0) {
+    if (Data_02000240[224] == (s32)&Value_000000b4) {
+        if (Func_020016a4(0x9a7) != 0) {
             return Data_0200a010;
         }
         return Data_02009eb4;
     }
-    if (Func_080770c0(0x9a7) != 0) {
+    if (Func_020016b6(0x9a7) != 0) {
         return Data_02009ca4;
     }
     return Data_02009a94;

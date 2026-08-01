@@ -33,9 +33,18 @@ pointers — for every 4-aligned word with the Thumb bit set, resolve
 empty. C is noisy by design and must be CLASSIFIED, not zeroed** (spill inside a
 prologue, pool word wearing a push, unruled, unexplained).
 
-Known limitation, not yet fixed: exact-C spans are not readable from the tree,
-so anything behind an `assets/code` row returns UNRULED rather than confirmed.
-Fixing it means exporting `compileOverlayC` from `overlay_disasm.ts`.
+**That limitation is CLOSED as of f2ad1a76.** It read: exact-C spans are not
+readable from the tree, so anything behind an `assets/code` row returns UNRULED
+rather than confirmed. `overlayCSpans` is now exported from `overlay_disasm.ts`
+and wired into the sweep, and across all 96 overlays UNRULED goes **423 -> 0**,
+with 87 prologue-shaped halfwords now ruling correctly as inside an exact body.
+Published (527) and bl-reached (230) counts are unchanged, which is the
+invariant proving it decided ambiguous rows rather than inventing new ones. A
+row that fails to compile is omitted rather than guessed at, which leaves the
+old UNRULED behaviour for that row only.
+
+So a D-class "cannot tell" no longer exists: **A and B must be empty, and C must
+be classified.** There is nothing left to defer to the owning lane.
 
 Whole-tree context at the time of writing: 60 of 96 overlays show residue,
 542 published hits — mostly overlays never claimed closed, i.e. undone work

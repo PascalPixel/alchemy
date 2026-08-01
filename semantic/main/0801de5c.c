@@ -1,4 +1,20 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
+ * range is an indirect call through the named register, not a call to a
+ * function at the branch target.  Resolved with tools/veneer_resolve.ts.
+ *
+ * Callee signatures here are established, not guessed: 0x03001388 is the
+ * word copy declared in the EXACT src/080d40ec.c, and 0x03000168 is the fill
+ * documented in semantic/main/080e15e8.c as (destination, size, value).
+ *
+ * 0x03000164 is NOT established -- see the audit note. Typed by arity only.
+ */
 #include "types.h"
+
+typedef void (*ArmFill)(void *destination, u32 size, u32 value);
+typedef void (*Resident_03000164)(void *destination, u32 size, u32 value);
 
 struct TextTileState_0801de5c {
     u8 unknown_000[0xda0];
@@ -15,7 +31,6 @@ extern struct TextTileState_0801de5c *Data_03001e8c;
 
 void *Func_08004938(u32 size);
 const u8 *Func_08002f40(s32 resource_id);
-void Func_080072f0(void *destination, u32 size, u32 value, u32 target);
 void Func_08002df0(void *allocation);
 
 /*
@@ -44,29 +59,26 @@ u32 Func_0801de5c(
      * the source explicitly preserves that behavior without relying on a
      * volatile-register accident.
      */
-    Func_080072f0(
+    ((Resident_03000164)0x03000164)(
         translation,
         sizeof(translation),
-        (u32)scratch,
-        0x03000164);
+        (u32)scratch);
 
     if (palette_bits == 0xf000) {
         translation[1] =
             palette_table[state->glyph_style & 0x0f];
         translation[3] = 3;
-        Func_080072f0(
+        ((ArmFill)0x03000168)(
             scratch,
             0x800,
-            0x04040404,
-            0x03000168);
+            0x04040404);
     } else {
         translation[1] = state->glyph_style & 0x0f;
         translation[3] = 1;
-        Func_080072f0(
+        ((ArmFill)0x03000168)(
             scratch,
             0x800,
-            0x0e0e0e0e,
-            0x03000168);
+            0x0e0e0e0e);
     }
 
     if (tokens != 0) {

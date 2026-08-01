@@ -1,11 +1,24 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
+ * range is an indirect call through the named register, not a call to a
+ * function at the branch target.  Resolved with tools/veneer_resolve.ts.
+ *
+ * Callee signatures here are established, not guessed: 0x03001388 is the
+ * word copy declared in the EXACT src/080d40ec.c, and 0x03000168 is the fill
+ * documented in semantic/main/080e15e8.c as (destination, size, value).
+ */
 #include "types.h"
+
+typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
+typedef void (*ArmFill)(void *destination, u32 size, u32 value);
 
 #define NULL ((void *)0)
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void Func_08002df0(void *);
 u8 *Func_08004970(s32);
-void Func_080072f0(s32, s32, s32, s32);
 s32 Func_080770c0(s32);
 void Func_080770c8(s32);
 
@@ -45,11 +58,11 @@ s32 Func_080f07f0(u8 *arg0, s32 arg1, s32 arg2) {
         return -1;
     }
     if (Func_080770c0(0x200) == 0) {
-        Func_080072f0((s32) sp4, 0x900, 0, 0x03000168);
+        ((ArmFill)0x03000168)(sp4, 0x900, 0);
         Func_080770c8(0x200);
     } else {
-        Func_080072f0((s32) sp4, (s32) (sp4 + 0x800), 0x100, 0x03001388);
-        Func_080072f0((s32) (sp4 + 0x100), 0x800, 0, 0x03000168);
+        ((WordCopy)0x03001388)(sp4, sp4 + 0x800, 0x100);
+        ((ArmFill)0x03000168)(sp4 + 0x100, 0x800, 0);
     }
     var_r0 = *arg0;
     var_r8 = 0;

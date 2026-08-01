@@ -3816,6 +3816,16 @@ factorises inverts the reference on the third row — a mistake made three times
 When a constant repeats across sites, plain literals also beat `&Value_`: the
 symbol form is one rtx that CSE always merges.
 
+**The mask-first family (three attested members).** Whatever the operator,
+a masked read-modify-write reproduces the reference only when the chain
+OPENS with the mask and the address has been hoisted into its own local
+first; the loaded value joins the mask, never the other way round. The
+general form is `T *p = obj + K; s32 v = MASK; v OP= *p; *p = v;`. Members:
+`371:0350` (AND, `1 & value`), `3c8:1150` (OR, `{ s32 w = 1; w |= *p; *p = w; }`),
+and `3a4:3428` (OR into a flag byte, where `flag[35] |= 2` had to become
+`s32 bit = 2; bit |= *flag; *flag = bit;`). Reach for it by name whenever the
+only difference is which register holds the mask and which holds the value.
+
 **A masked read-modify-write must start its chain with the mask.**
 `s32 v = ~12; v &= p->f09; v |= 4; p->f09 = v;` is exact, while the more natural
 `s32 v = p->f09 & ~12;` gives the identical instruction stream with two registers
@@ -4393,6 +4403,23 @@ any row. The reason: the permuter searches source-level degrees of freedom,
 while these residuals are allocator and pool-placement decisions that have
 none. `decomp-permuter-agbcc` could NOT be evaluated — the lane has no
 network access.
+
+### Worked example: the two measures rank rows OPPOSITELY
+
+Four rows probed in one sweep on 2026-08-01, group count against the adopt
+dry-run's byte count:
+
+| row | groups_differing | differing_bytes | outcome |
+| --- | --- | --- | --- |
+| 3a4:2d08 | **1** | **33** | not close; span also wrong |
+| 3a4:3428 | 2 | 14 | SEALED with two levers |
+| 3b9:2a0 | 6 | 21 | not close |
+| 3c9:1280 | 6 | 27 | not close |
+
+The row that looked closest by groups was the furthest by bytes. Working the
+board by group count would have spent the sitting on 3a4:2d08 while the
+closable row sat beside it. **Run `overlay_adopt` without `--apply` before
+choosing which row to work, not only before adopting.**
 
 ## 5b2. A falling group count is not approaching closure (2026-08-01)
 

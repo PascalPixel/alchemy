@@ -1,4 +1,18 @@
+/*
+ * Correctness fix, veneer audit (mars, 2026-08-01).
+ * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
+ * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
+ * range is an indirect call through the named register, not a call to a
+ * function at the branch target.  Resolved with tools/veneer_resolve.ts.
+ *
+ * Callee signatures here are established, not guessed: 0x03001388 is the
+ * word copy declared in the EXACT src/080d40ec.c, and 0x03000168 is the fill
+ * documented in semantic/main/080e15e8.c as (destination, size, value).
+ */
 #include "types.h"
+
+typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
+typedef void (*ArmFill)(void *destination, u32 size, u32 value);
 
 #define U8_AT(p, o)  (*(u8 *)((u8 *)(p) + (o)))
 #define S8_AT(p, o)  (*(s8 *)((u8 *)(p) + (o)))
@@ -23,7 +37,6 @@ void Func_08015280(void *, s32, s32, s32, s32);
 s32 Func_080022fc(s32, s32);
 void Func_080ad5b4(s32, s32, s32, s32);
 s32 Func_080aa538(s32, s32);
-void Func_080072f0(s32, s32, s32, s32);
 void Func_080f9010(s32);
 void Func_0800352c(void);
 void Func_080041d8(const void *, s32);
@@ -131,13 +144,11 @@ s32 Func_080ae2f4(void)
 
         if (!(frame & 3)) {
             if (frame & 4)
-                Func_080072f0(
-                    0x060052c0, 0x080af26c,
-                    0x20, 0x03001388);
+                ((WordCopy)0x03001388)(
+                    (void *)0x060052c0, (const void *)0x080af26c, 0x20);
             else
-                Func_080072f0(
-                    0x060052c0, 0x20,
-                    0x44444444, 0x03000168);
+                ((ArmFill)0x03000168)(
+                    (void *)0x060052c0, 0x20, 0x44444444);
         }
 
         if (pressed & 8) {

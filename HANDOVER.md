@@ -366,9 +366,32 @@ is about the tools we write to catch the others.
   reports `sites=0` rather than erroring. That produced an annotator printing
   a wrong-but-plausible callee, because the bogus address existed in the image.
   Use single-pass scripted edits.
-- **`overlay_call_targets` whole-overlay mode returns zero sites when the
-  overlay has no recorded owners.** Explicit bounds are mandatory. A silent
-  empty result is indistinguishable from a row that genuinely has no calls.
+- **`overlay_call_targets` whole-overlay mode returns zero sites — and the
+  condition is the OPPOSITE of what this entry used to say.** It read "when
+  the overlay has no recorded owners", which invites you to assume it only
+  bites on untouched overlays. Measured 2026-08-01: `resource_3a4`,
+  `resource_39e`, `resource_380` and `resource_3c9` all return `sites=0`
+  bare, and `resource_372` returns 936. The mode walks *unconverted inventory
+  rows*, so it empties out as an overlay gets DRAFTED — it is silent on
+  precisely the overlays a lane is re-checking, and loud on the ones nobody
+  has touched. Explicit bounds are mandatory. A silent empty result is
+  indistinguishable from a row that genuinely has no calls.
+- **`overlay_call_targets` used to DROP any argument it did not recognise —
+  FIXED 2026-08-01, same shape as the `overlay_show` bug below.** A filter
+  discards; it does not complain. Hand it one argument where it wants two and
+  bounds parsing yields nothing, the tool falls back to whole-overlay mode,
+  and (per the entry above) prints `sites=0` on exactly the overlays you are
+  working on. The way to be handed one argument is not exotic: **zsh does not
+  word-split an unquoted expansion**, so `for r in "3660 36d0"; do ... $r` is
+  a single argument. That produced `sites=0` for six spans in a row and was
+  caught only because the reader already knew one of the six was 3 — the
+  banked zsh rule was in this very file and still did not prevent it, because
+  the tool made obedience optional.
+  The parser now CONSUMES rather than filters: every argument must be the
+  overlay name, a known flag, or a bound, and anything else throws with the
+  offending text quoted and the shell diagnosis named. More than two bounds
+  throws too. Covered by `bun tools/overlay_call_targets.ts --self-test`,
+  wired into `bun run test`, with five ways of being wrong asserted to throw.
 - **`overlay_show` used to IGNORE a second positional bound — FIXED, and the
   fix is the point.** The symptom was a listing that stopped partway through a
   row and printed its ordinary "pool words referenced" footer, so a truncated

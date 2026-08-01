@@ -14,6 +14,33 @@ rather than real limits.
 Exact means fully linked machine-code byte equality — not semantic similarity,
 not equal object size.
 
+## Overlay closure standard (2026-08-01) — supersedes any earlier claim
+
+**No overlay is closed without the published-pointer sweep.** The old standard
+(a whole-image BL sweep plus `overlay_unindexed`) is structurally blind to
+data-installed callbacks: such a function is never the target of a `bl`, its
+address is written into a script record as a plain word, so a call-graph walk
+cannot see it. Five overlays certified closed under the old standard — 3c9,
+3a4, 39e, 3b9, 380 — were re-checked and **none of them was closed**: ~35,168
+bytes of owners behind them, ~23,656 genuinely undrafted after subtracting
+already-parked monsters.
+
+Run `bun tools/overlay_published.ts` (self-test in `bun run test`). It performs
+three sweeps: (A) unowned BL-reached prologues, (B) unowned published Thumb
+pointers — for every 4-aligned word with the Thumb bit set, resolve
+`(W & ~1) - 0x8000` and check the halfword there for a `push` prologue — and
+(C) every prologue-shaped halfword that is not an owner start. **A and B must be
+empty. C is noisy by design and must be CLASSIFIED, not zeroed** (spill inside a
+prologue, pool word wearing a push, unruled, unexplained).
+
+Known limitation, not yet fixed: exact-C spans are not readable from the tree,
+so anything behind an `assets/code` row returns UNRULED rather than confirmed.
+Fixing it means exporting `compileOverlayC` from `overlay_disasm.ts`.
+
+Whole-tree context at the time of writing: 60 of 96 overlays show residue,
+542 published hits — mostly overlays never claimed closed, i.e. undone work
+rather than bad certifications.
+
 ## Current seal — read before the historical lane notes
 
 During the 2026-07-31 rest window, the interrupted `mercury`, `mars`,

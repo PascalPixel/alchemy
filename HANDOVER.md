@@ -316,18 +316,21 @@ file-level generalisation:
   means checking EVERY intervening publish's id, not sampling; all ten were
   id 47.
 
-**A slot can also have two eras in one function.** `080ea0d8` releases id 46
-at 0x080ea962 and republishes it at 0x080ea972, re-reading at 0x080ea97a into
-the SAME stack slot `[sp, #88]` that held the first era's pointer since
-0x080ea140. Each era is internally single-publish and therefore cacheable,
-but they are different pointers and need two locals. A single hoisted local
-covering both would be wrong in exactly the way this section warns about,
-while looking like the legitimate cache two paragraphs up.
+**A slot can also have several eras in one function.** `080ea0d8` has FOUR:
+it releases id 46 at 0x080ea962 and republishes at 0x080ea972, re-reading at
+0x080ea97a into the SAME stack slot `[sp, #88]` that held the first era's
+pointer since 0x080ea140, and it opens a third era on slot 47 at 0x080eb3ee
+parked in `[sp, #92]`. Each era is internally single-publish and therefore
+cacheable, but they are different pointers and each needs its own local. A
+single hoisted local covering two eras would be wrong in exactly the way this
+section warns about, while looking like the legitimate cache above. The full
+map is at the end of this section.
 
-#### Slot-46 reads wear at least three bases
+#### Slot-46 reads wear at least four bases
 
-0x03001f08 is reached as `0x03001e50 + 184`, as `0x03001eec + 28`, and (new
-in batch 14) as `0x03001e80 + 0x88` at 0x080d94e6. This is why the resolver
+0x03001f08 is reached as `0x03001e50 + 184`, as `0x03001eec + 28`, as
+`0x03001e80 + 0x88` at 0x080d94e6, and as `0x03001ef0 + 0x18` in
+`080ea0d8`. This is why the resolver
 reports these as struct fields rather than globals, and it is how a real
 defect hid: `080d91dc`'s draft read the `__call_via_r8` callee as `header[8]`
 = `0x03001eec + 32` = 0x03001f0c, slot **47**, at both of its r8 sites, where
@@ -350,23 +353,53 @@ a near next-owner must not). **The partial-conversion guard and `--scope` are
 NOT affected** — both walk the C text, not the ROM — so nothing was ever
 silently accepted as finished. Only the site COUNTS were short.
 
-#### `080ea0d8` — the last global file, mapped but not converted
+#### `080ea0d8` — converted, and the map I banked was itself short
 
-Its 29 sites are inventoried; what is left is pinning 39 C call statements to
-them by argument agreement, because m2c duplicated shared blocks. Do not
-guess the mapping from order.
+**The inventory in the previous revision of this section said 29 sites. It is
+34.** I had capped my own manual scan at 0x080eb130 while writing the very
+entry that complained about a silent cap, and the owner runs to the next entry
+at 0x080eb754. Nine sites lived past `boundOf`'s cap and five past my own
+hand-drawn boundary. The correction is the point: **a bound you chose is
+evidence about you, not about the function — go and find the next owner.**
 
-| what | sites |
-|---|---|
-| `0x03001388`, r3 an argument register, 3-arg call | 0x080ea290 |
-| `0x03000168` ARM fill, same | 0x080ea35e, 0x080ea900 |
-| slot 46 ERA 1 — publish 0x080ea138, read 0x080ea13c → `[sp, #88]`, release 0x080ea962 | 0x080ea460 (r4), 0x080ea558 (r5), 0x080ea7c6 (r4) |
-| slot 47 — republished eleven times, every site re-reads | 0x080ea694, 0x080ea6c2, 0x080ea6f0, 0x080ea71c, 0x080ea800, 0x080ea82a, 0x080ea8b4, 0x080eaefe, 0x080eaf28, 0x080eaf54, 0x080eaf7e |
-| slot 46 ERA 2 — publish 0x080ea972, read 0x080ea97a → `[sp, #88]` again | 0x080eafa8, 0x080eafca, 0x080eb00e, 0x080eb026, 0x080eb03c, 0x080eb050, 0x080eb074, 0x080eb096, and the four past the cap: 0x080eb0de, 0x080eb0f6, 0x080eb10e, 0x080eb122 |
+Four eras, and only one of them is a re-read population:
 
-Both eras are closed: no branch inside `0x080ea140..0x080ea962` targets an
-address at or before 0x080ea140, and none inside `0x080ea984..0x080eb0a0`
-targets one at or before 0x080ea984. Checked exhaustively, not sampled.
+| era | slot | publish → read → release | sites |
+|---|---|---|---|
+| 1 | 46 | 0x080ea138 → 0x080ea13c into `[sp, #88]` → 0x080ea962 | 0x080ea460 (r4), 0x080ea558 (r5), 0x080ea7c6 (r4) |
+| — | 47 | eleven publishes, one site each, all RE-READ | 0x080ea694, 0x080ea6c2, 0x080ea6f0, 0x080ea71c, 0x080ea800, 0x080ea82a, 0x080ea8b4, 0x080eaefe, 0x080eaf28, 0x080eaf54, 0x080eaf7e |
+| 2 | 46 | 0x080ea972 → 0x080ea97a into `[sp, #88]` again → 0x080eb72a | 0x080eafa8, 0x080eafca, 0x080eb00e, 0x080eb026, 0x080eb03c, 0x080eb050, 0x080eb074, 0x080eb096, 0x080eb0de, 0x080eb0f6, 0x080eb10e, 0x080eb122, 0x080eb188, 0x080eb3da |
+| 3 | 47 | 0x080eb3ee → 0x080eb3f6 into `[sp, #92]` → 0x080eb6d4 | 0x080eb40c, 0x080eb600, 0x080eb6ca |
+
+Era 2 reaches ONE pointer through r4, r9, sl and r5. Both slot-46 eras are
+closed against loops: no branch inside `0x080ea140..0x080ea962` targets an
+address at or before 0x080ea140, none inside `0x080ea984..0x080eb72a` targets
+one at or before 0x080ea984, checked over every branch in both spans. A single
+back edge would have carried a cached pointer across a republication.
+
+A **fourth base** for slot 46 appears here: m2c writes the era-1 read as
+`M2C_FIELD((void *)0x03001EF0, s32 *, 0x18)`, and 0x03001ef0 + 0x18 is
+0x03001f08. With 0x03001e50 + 184, 0x03001eec + 28 and 0x03001e80 + 0x88 that
+is four spellings of one word.
+
+**On pinning 34 statements to 34 sites.** Once the five prototype declarations
+are discounted the counts match one-to-one per dispatch register, which makes
+order look trustworthy — and order is exactly what must not be trusted. Every
+pin that could change the answer, meaning every boundary between a cache and a
+re-read, was settled by argument agreement at every position: 0x080ea460
+pushes (counter, r0); 0x080ea7c6 adds 0x3c and 0x50 and pushes a table byte;
+0x080eb3da adds 0x2c and 0x11 and pushes 0x20, 0x36; 0x080eb40c passes 0, 0
+and pushes 0x78, 0x78. Four statements remain interchangeable in two pairs —
+the frame-0x40 and frame-0x4e blocks are argument-identical, as are frame-0x42
+and frame-0x50 — and all four are era-2 sites, so the ambiguity cannot change
+the callee. Recorded rather than papered over.
+
+**A DROPPED ARGUMENT at 0x080eb00e, recovered without using order.** The draft
+called it with five arguments where the ROM sets r0-r3 and pushes two. The
+four r9 sites form (A,B), (A,C), (D,B), (D,C) in x and y; the draft's four
+statements form (A,?), (A,C), (D,B), (D,C); so the hole is B, `0x26 -
+temp_r6_7`. m2c lost it because r3 is written eight instructions before the
+branch and stashed in r8 on the way.
 
 **A runtime value feeding the SETUP call does not make the callee runtime
 dependent.** `080e89ec` calls `Func_080cef64(alternate, sp + 48)` where

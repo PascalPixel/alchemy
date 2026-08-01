@@ -1,5 +1,54 @@
 #include "types.h"
 
+/*
+ * __call_via_rN veneer sites, resolved per-site against the ROM. Nine `bl`
+ * sites land in the 0x080072e4 bank: six __call_via_r4 (0x080072f4), two
+ * __call_via_r8 (0x08007304) and one __call_via_sl (0x0800730c). The two
+ * __call_via_r3 sites (0x080d92e8, 0x080d9360) were already resolved to
+ * 0x03001388 by this file's `transfer`, and 0x080d96e6 to 0x030001d8 by its
+ * `square_root`; only the remaining nine are new here.
+ *
+ * All nine callees are Func_080048b0 allocator slots 46 (0x03001f08) and 47
+ * (0x03001f0c), and EVERY read of them is bracketed: Func_080ed408(id, ...)
+ * publishes, the slot is read, the renderer is called, Func_08002dd8(id)
+ * releases. The brackets, from the ROM:
+ *
+ *   0x080d94e2 pub 46, 0x080d94ea read 46, 0x080d94fc pub 47, 0x080d9502
+ *     read 47, 0x080d952c call 46, 0x080d9544 call 47, releases 0x080d954a
+ *     and 0x080d9550.
+ *   0x080d960a / 0x080d9620 pub, 0x080d9628 read 47 into [sp, #60], the
+ *     32-iteration particle loop calls it at 0x080d9756, releases 0x080d9792
+ *     and 0x080d9798.
+ *   0x080d97f0 pub 46 / 0x080d9808 read / 0x080d981e call / 0x080d9824 rel;
+ *     and the same shape at 0x080d9862-0x080d988c, 0x080d98d0-0x080d98f8,
+ *     0x080d9a00-0x080d9a2c-0x080d9a32.
+ *   0x080d9936 pub 46, 0x080d993e read 46, 0x080d9952 pub 47, 0x080d9960
+ *     read 47, 0x080d997e call 46, 0x080d9994 call 47, releases 0x080d999a
+ *     and 0x080d99a0.
+ *
+ * So NOTHING here may be hoisted to the top of the function. Each read is
+ * reproduced inside its own publish/release bracket, where the ROM performs
+ * it -- the slot is republished with different parameters between brackets,
+ * and a cached pointer would serve a stale renderer configuration.
+ *
+ * STRUCTURE CORRECTED, TWICE, AND IT IS THE SAME ERROR BOTH TIMES. The draft
+ * read the __call_via_r8 callee as `header[8]`, which is 0x03001eec + 32 =
+ * 0x03001f0c -- slot 47. The ROM reads slot 46 at both sites: 0x080d94e6
+ * loads [sp, #36] = pool 0x080d968c = 0x03001e80 and adds 0x88, and
+ * 0x03001e80 + 0x88 is 0x03001f08; 0x080d993a takes 0x03001f08 straight from
+ * pool 0x080d99c0. The draft was one slot off, in the direction that made the
+ * pair look like one renderer used twice. That is a THIRD base for this word
+ * -- 0x03001e50 + 184, 0x03001eec + 28 and now 0x03001e80 + 0x88 -- which is
+ * why the resolver reports it as a struct field rather than a global.
+ *
+ * ARITY: six at all nine sites. At the r8 and sl sites the callee is above
+ * r0-r3, so the draft's seventh `renderer` argument to Func_08007304 was the
+ * callee in an argument slot and is gone.
+ *
+ * UNCERTAINTY, left standing: this settles which pointer is called and when
+ * it is read. It settles nothing about what slots 46 and 47 CONTAIN.
+ */
+
 typedef void (*Transfer_080d91dc)(void *, const void *, u32);
 typedef s32 (*SquareRoot_080d91dc)(s32);
 typedef void (*Renderer_080d91dc)(
@@ -54,14 +103,6 @@ void Func_08004c1c(s32);
 void Func_08004c6c(s32);
 void Func_08004cb4(s32 *);
 void Func_080051d8(void *, void *);
-void Func_080072f0(void *, const void *, u32, Transfer_080d91dc);
-void Func_080072f4(
-    void *, const void *, s32, s32, s32, s32);
-void Func_08007304(
-    void *, const void *, s32, s32, s32, s32,
-    Renderer_080d91dc);
-void Func_0800730c(
-    void *, const void *, s32, s32, s32, s32);
 s32 Func_080b5070(s16);
 struct ObjectContext_080d91dc *Func_080b5098(s16);
 void Func_080b50e8(s32);
@@ -213,19 +254,21 @@ void Func_080d91dc(
                 ((Func_0800231c(angle) * 4) >> 16) -
                 24;
             Renderer_080d91dc renderer;
+            Renderer_080d91dc renderer_47;
 
             if (frame > 32)
                 y += 64 - frame * 2;
             Func_080ed408(
                 46, 7, 7, renderer_mode ^ 4, 2);
+            renderer = *(Renderer_080d91dc *)0x03001f08;
             Func_080ed408(
                 47, 7, 7, renderer_mode ^ 4, 3);
-            renderer = (Renderer_080d91dc)header[8];
-            Func_08007304(
+            renderer_47 = *(Renderer_080d91dc *)0x03001f0c;
+            renderer(
                 render_context, runtime + 0x65c0,
-                x, y, 40, 40, renderer);
+                x, y, 40, 40);
             if (frame <= 3)
-                Func_080072f4(
+                renderer_47(
                     render_context, runtime + 0x65c0,
                     x, y, 40, 40);
             Func_08002dd8(47);
@@ -240,6 +283,7 @@ void Func_080d91dc(
             s32 position[3];
             s32 projected[3];
             s32 particle_index;
+            Renderer_080d91dc particle_renderer;
 
             if (frame == start + 80)
                 Func_080f9010(0xd4);
@@ -273,6 +317,8 @@ void Func_080d91dc(
                     46, 7, 7, renderer_mode, 2);
                 Func_080ed408(
                     47, 7, 7, renderer_mode, 3);
+                particle_renderer =
+                    *(Renderer_080d91dc *)0x03001f0c;
 
                 for (particle_index = 0;
                      particle_index < 32;
@@ -311,7 +357,7 @@ void Func_080d91dc(
                     projected[2] = depth;
                     radius =
                         6 - ((depth - 314) / 64);
-                    Func_080072f4(
+                    particle_renderer(
                         render_context,
                         runtime +
                             ((const u16 *)0x080ede5c)
@@ -349,7 +395,7 @@ void Func_080d91dc(
 
                 Func_080ed408(
                     46, 7, 7, renderer_mode, 2);
-                Func_080072f4(
+                (*(Renderer_080d91dc *)0x03001f08)(
                     render_context,
                     runtime + 0x60e + image * 0x640,
                     projected[0] - 20,
@@ -367,7 +413,7 @@ void Func_080d91dc(
 
                     Func_080ed408(
                         46, 7, 7, renderer_mode, 2);
-                    Func_080072f4(
+                    (*(Renderer_080d91dc *)0x03001f08)(
                         render_context,
                         runtime + 0x2b8e +
                             image * 0x3c0,
@@ -385,7 +431,7 @@ void Func_080d91dc(
 
                     Func_080ed408(
                         46, 7, 7, renderer_mode, 2);
-                    Func_080072f4(
+                    (*(Renderer_080d91dc *)0x03001f08)(
                         render_context,
                         runtime + 0x2b8e +
                             image * 0x800,
@@ -406,20 +452,23 @@ void Func_080d91dc(
                         runtime + 0x2b8e +
                         image * 0x800;
                     Renderer_080d91dc renderer;
+                    Renderer_080d91dc renderer_47;
 
                     Func_080ed408(
                         46, 7, 7, renderer_mode, 2);
+                    renderer =
+                        *(Renderer_080d91dc *)0x03001f08;
                     Func_080ed408(
                         47, 7, 7,
                         renderer_mode | 8, 2);
-                    renderer =
-                        (Renderer_080d91dc)header[8];
-                    Func_08007304(
+                    renderer_47 =
+                        *(Renderer_080d91dc *)0x03001f0c;
+                    renderer(
                         render_context, source,
                         projected[0] - 32,
                         projected[1] - 24,
-                        64, 32, renderer);
-                    Func_0800730c(
+                        64, 32);
+                    renderer_47(
                         render_context, source,
                         projected[0] - 32,
                         projected[1] + 8,
@@ -435,7 +484,7 @@ void Func_080d91dc(
 
                 Func_080ed408(
                     46, 7, 7, renderer_mode, 3);
-                Func_080072f4(
+                (*(Renderer_080d91dc *)0x03001f08)(
                     render_context,
                     runtime + 0x2b8e +
                         image * 0x640,

@@ -111,8 +111,6 @@ void Func_080d1714(s32 *arg0) {
     s32 sp48;
     s32 sp4C;
     s32 sp50;
-    s32 sp54;
-    s32 sp58;
     void *sp5C;
     s32 sp60;
     s32 sp64;
@@ -245,9 +243,8 @@ void Func_080d1714(s32 *arg0) {
     void *var_r7_2;
     void *var_r7_4;
     void *var_r9_9;
-    /* Loaded once at 0x080d175a and 0x080d176c, as the ROM does. */
-    Renderer_080d1714 publish_46 = (Renderer_080d1714)*(u32 *)0x03001f08;
-    Renderer_080d1714 publish_47 = (Renderer_080d1714)*(u32 *)0x03001f0c;
+    Renderer_080d1714 publish_46;
+    Renderer_080d1714 publish_47;
 
     sp64 = M2C_FIELD((void *)0x03001EF0, s32 *, 0);
     sp60 = *(s32 *)0x03001E80;
@@ -257,9 +254,9 @@ void Func_080d1714(s32 *arg0) {
     M2C_FIELD(temp_r3, s32 **, 0x7828) = arg0;
     Func_080cd594(0);
     Func_080ed408(0x2E, 7, 7, 3, 2);
-    sp54 = M2C_FIELD((void *)0x03001EF0, s32 *, 0x18);
+    publish_46 = (Renderer_080d1714)*(u32 *)0x03001f08;
     Func_080ed408(0x2F, 7, 7, 3, 3);
-    sp58 = M2C_FIELD((void *)0x03001EF0, s32 *, 0x1C);
+    publish_47 = (Renderer_080d1714)*(u32 *)0x03001f0c;
     temp_r0 = Func_08002f40(0x82);
     ((WordCopy)0x03001388)((void *)0x05000000, (const void *)temp_r0, 0x80);
     Func_08005340(temp_r0 + 0x80, (s32) sp5C);
@@ -436,7 +433,7 @@ loop_25:
         }
         temp_r5_5 = sp5C + (Func_080022fc(var_r0_3 >> 2, 3) * 0xC00);
         temp_r1_2 = temp_r5_5;
-        sp8 = sp54;
+        sp8 = (s32)publish_46;
         publish_46(sp64, temp_r1_2, 8, 0, 0x30U, 0x40);
         publish_46(sp64, temp_r5_5, 8, 0x40, 0x30U, 0x40);
     }

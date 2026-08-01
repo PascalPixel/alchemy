@@ -47,7 +47,8 @@
  *   ERA 2, slot 46 -- released at 0x080ea962 and REPUBLISHED at 0x080ea972,
  *   re-read at 0x080ea97a into the SAME [sp, #88], released at 0x080eb72a.
  *   One publish across the era, so it caches -- but it is a DIFFERENT pointer
- *   from era 1 and needs its own local. Fourteen sites: 0x080eafa8,
+ *   from era 1 and must be assigned again. The ROM parks both non-overlapping
+ *   lifetimes in the same [sp, #88] slot. Fourteen sites: 0x080eafa8,
  *   0x080eafca, 0x080eb00e, 0x080eb026, 0x080eb03c, 0x080eb050, 0x080eb074,
  *   0x080eb096, 0x080eb0de, 0x080eb0f6, 0x080eb10e, 0x080eb122, 0x080eb188,
  *   0x080eb3da -- reached through r4, r9, sl and r5, four registers, one
@@ -162,8 +163,7 @@ void Func_080ea0d8(s32 *arg0) {
     s32 sp4C;
     u8 *sp50;
     s32 frame;
-    Renderer_080ea0d8 renderer_46_early;
-    Renderer_080ea0d8 renderer_46_late;
+    Renderer_080ea0d8 renderer_46;
     Renderer_080ea0d8 renderer_47_tail;
     void *sp60;
     u8 *sp64;
@@ -174,7 +174,7 @@ void Func_080ea0d8(s32 *arg0) {
     s32 projected[3];
     s32 objectTransformInput[3];
     s32 gridPosition[4];
-    s32 projectionState[6];
+    s32 projectionState[2];
     s32 *var_r4_7;
     s32 temp_r0_17;
     s32 temp_r0_18;
@@ -376,7 +376,7 @@ void Func_080ea0d8(s32 *arg0) {
     M2C_FIELD((void *)0x05000000, s16 *, 0) = 0;
     M2C_FIELD((void *)0x05000000, s16 *, 2) = 0;
     Func_080ed408(0x2E, 7, 7, 3, 3);
-    renderer_46_early = *(Renderer_080ea0d8 *)0x03001F08;
+    renderer_46 = *(Renderer_080ea0d8 *)0x03001F08;
     M2C_FIELD(sp64, s32 *, 0x7780) = 0;
     Func_080041d8(0x080CD261, 0x480);
     Func_080cd104(0, 0);
@@ -496,7 +496,7 @@ loop_15:
                 sp3C = temp_r5;
             }
             temp_r0_2 = temp_r4 * 2;
-            renderer_46_early(sp68, &sp50[M2C_FIELD((temp_r0_2 - 2), u16 *, 0x080EDE48)], projected[0] - ((s32) (temp_r4 + (temp_r4 >> 0x1F)) >> 1), projected[1] - temp_r4, temp_r4, temp_r0_2);
+            renderer_46(sp68, &sp50[M2C_FIELD((temp_r0_2 - 2), u16 *, 0x080EDE48)], projected[0] - ((s32) (temp_r4 + (temp_r4 >> 0x1F)) >> 1), projected[1] - temp_r4, temp_r4, temp_r0_2);
             if (frame == 0x40) {
                 M2C_FIELD(var_r6_2, s32 *, 0xC) = (s32) (M2C_FIELD(var_r6_2, s32 *, 0xC) + ((s32) (Func_08002322(M2C_FIELD(var_r6_2, s32 *, 0x18)) * 0xFF) >> 3));
                 M2C_FIELD(var_r6_2, s32 *, 0x10) = (s32) (M2C_FIELD(var_r6_2, s32 *, 0x10) + ((s32) (Func_0800231c(M2C_FIELD(var_r6_2, s32 *, 0x18)) * 0xFF) >> 3));
@@ -547,7 +547,7 @@ loop_15:
             projected[0] = temp_r2;
             projected[1] = temp_r3_2;
             temp_r5_2 = temp_r0_4 * 2;
-            renderer_46_early(sp68, &sp50[M2C_FIELD((temp_r5_2 - 2), u16 *, 0x080EDE48)], temp_r2 - ((s32) (temp_r0_4 + (temp_r0_4 >> 0x1F)) >> 1), temp_r3_2 - temp_r0_4, temp_r0_4, temp_r5_2);
+            renderer_46(sp68, &sp50[M2C_FIELD((temp_r5_2 - 2), u16 *, 0x080EDE48)], temp_r2 - ((s32) (temp_r0_4 + (temp_r0_4 >> 0x1F)) >> 1), temp_r3_2 - temp_r0_4, temp_r0_4, temp_r5_2);
         }
         var_r7_5 += 1;
         var_r6_3 += 0x1C;
@@ -647,7 +647,7 @@ loop_15:
             temp_r5_4 = ((s32) (Func_08002322((s32) temp_r0_8) * 0x10) >> 0x10) - ((u8) M2C_FIELD(temp_r4_2, u8 *, 0x080EEF4A) >> 1);
             temp_r0_9 = M2C_FIELD(sp8, u8 *, 0x080EEF50);
             var_r7_9 += 1;
-            renderer_46_early(sp68, &sp64[M2C_FIELD((sp8 * 2), u16 *, 0x080EEF3E)], temp_r5_4 + 0x3C, (((s32) (Func_0800231c((s32) temp_r0_8) * 0x10) >> 0x10) - (temp_r0_9 >> 1)) + 0x50, (u32) M2C_FIELD(sp8, u8 *, 0x080EEF4A), (s32) temp_r0_9);
+            renderer_46(sp68, &sp64[M2C_FIELD((sp8 * 2), u16 *, 0x080EEF3E)], temp_r5_4 + 0x3C, (((s32) (Func_0800231c((s32) temp_r0_8) * 0x10) >> 0x10) - (temp_r0_9 >> 1)) + 0x50, (u32) M2C_FIELD(sp8, u8 *, 0x080EEF4A), (s32) temp_r0_9);
         } while (var_r7_9 != 6);
     }
     if (frame > 0x8F) {
@@ -712,7 +712,7 @@ loop_15:
     } while (var_r7_12 != 0x10);
     Func_08002dd8(0x2E);
     Func_080ed408(0x2E, 7, 7, 3, 2);
-    renderer_46_late = *(Renderer_080ea0d8 *)0x03001F08;
+    renderer_46 = *(Renderer_080ea0d8 *)0x03001F08;
     Func_080e0524((void *)0x64, sp64 + 0x4000, 1, 1);
     var_r1_3 = sp50;
     var_r7_13 = 0;
@@ -964,10 +964,10 @@ second_frame_loop:
         Func_08002dd8(0x2F);
     }
     if ((u32) (frame - 0x40) <= 1U) {
-        renderer_46_late(sp68, sp64 + 0x6000, 0x34, 0x33, 0x10U, 0x11);
+        renderer_46(sp68, sp64 + 0x6000, 0x34, 0x33, 0x10U, 0x11);
     }
     if ((u32) (frame - 0x42) <= 1U) {
-        renderer_46_late(sp68, sp64 + 0x6110, 0x30, 0x28, 0x18U, 0x29);
+        renderer_46(sp68, sp64 + 0x6110, 0x30, 0x28, 0x18U, 0x29);
     }
     if ((u32) (frame - 0x44) <= 7U) {
         temp_r6_7 = 0x4C - frame;
@@ -975,18 +975,18 @@ second_frame_loop:
         temp_r5_8 = (s32) (temp_r6_7 + (temp_r6_7 >> 0x1F)) >> 1;
         temp_r4_3 = 0x31 - temp_r5_8;
         sp8 = temp_r4_3;
-        renderer_46_late(sp68, temp_r0_16, temp_r4_3, 0x26 - temp_r6_7, 0x16, 0x2C);
+        renderer_46(sp68, temp_r0_16, temp_r4_3, 0x26 - temp_r6_7, 0x16, 0x2C);
         temp_r6_8 = temp_r6_7 + 0x26;
-        renderer_46_late(sp68, temp_r0_16, temp_r4_3, temp_r6_8, 0x16, 0x2C);
+        renderer_46(sp68, temp_r0_16, temp_r4_3, temp_r6_8, 0x16, 0x2C);
         temp_r5_9 = temp_r5_8 + 0x31;
-        renderer_46_late(sp68, temp_r0_16, temp_r5_9, 0x26 - temp_r6_7, 0x16, 0x2C);
-        renderer_46_late(sp68, temp_r0_16, temp_r5_9, temp_r6_8, 0x16, 0x2C);
+        renderer_46(sp68, temp_r0_16, temp_r5_9, 0x26 - temp_r6_7, 0x16, 0x2C);
+        renderer_46(sp68, temp_r0_16, temp_r5_9, temp_r6_8, 0x16, 0x2C);
     }
     if ((u32) (frame - 0x4E) <= 1U) {
-        renderer_46_late(sp68, sp64 + 0x6000, 0x34, 0x33, 0x10U, 0x11);
+        renderer_46(sp68, sp64 + 0x6000, 0x34, 0x33, 0x10U, 0x11);
     }
     if ((u32) (frame - 0x50) <= 1U) {
-        renderer_46_late(sp68, sp64 + 0x6110, 0x30, 0x28, 0x18U, 0x29);
+        renderer_46(sp68, sp64 + 0x6110, 0x30, 0x28, 0x18U, 0x29);
     }
     if ((u32) (frame - 0x52) <= 3U) {
         temp_r7 = frame * 2;
@@ -999,12 +999,12 @@ second_frame_loop:
         temp_r3_16 = var_r3_6 >> 2;
         temp_r5_10 = 0x31 - temp_r3_16;
         temp_r6_9 = 0x26 - temp_r2_9;
-        renderer_46_late(sp68, sp1C, temp_r5_10, temp_r6_9, 0x16, 0x2C);
+        renderer_46(sp68, sp1C, temp_r5_10, temp_r6_9, 0x16, 0x2C);
         temp_r7_2 = temp_r7 - 0x7E;
-        renderer_46_late(sp68, sp1C, temp_r5_10, temp_r7_2, 0x16, 0x2C);
+        renderer_46(sp68, sp1C, temp_r5_10, temp_r7_2, 0x16, 0x2C);
         temp_r9 = temp_r3_16 + 0x31;
-        renderer_46_late(sp68, sp1C, temp_r9, temp_r6_9, 0x16, 0x2C);
-        renderer_46_late(sp68, sp1C, temp_r9, temp_r7_2, 0x16, 0x2C);
+        renderer_46(sp68, sp1C, temp_r9, temp_r6_9, 0x16, 0x2C);
+        renderer_46(sp68, sp1C, temp_r9, temp_r7_2, 0x16, 0x2C);
     }
     if ((u32) (frame - 0x48) <= 3U) {
         temp_r0_17 = (frame * 0x10) + 0xFFFFFB90;
@@ -1013,7 +1013,7 @@ second_frame_loop:
             temp_r6_10 = var_r7_19 << 8;
             temp_r5_11 = ((s32) (temp_r0_17 * Func_08002322(temp_r6_10)) >> 0x10) - 5;
             var_r7_19 += 1;
-            renderer_46_late(sp68, &sp50[*(u16 *)0x080EDE5A], temp_r5_11 + 0x3C, ((s32) (temp_r0_17 * Func_0800231c(temp_r6_10)) >> 0x11) + 0x32, 0xAU, 0x14);
+            renderer_46(sp68, &sp50[*(u16 *)0x080EDE5A], temp_r5_11 + 0x3C, ((s32) (temp_r0_17 * Func_0800231c(temp_r6_10)) >> 0x11) + 0x32, 0xAU, 0x14);
         } while (var_r7_19 != 0x100);
     }
     if (frame <= 0x55) {
@@ -1160,7 +1160,7 @@ loop_184:
                 var_r3_13 = temp_r2_11 + 3;
             }
             var_r7_21 += 1;
-            renderer_46_late(sp68, sp64 + ((temp_r2_11 - ((var_r3_13 >> 2) * 4)) * 0x6C0) + 0x4000, temp_r5_13 + 0x2C, temp_r0_18 + 0x11, 0x20U, 0x36);
+            renderer_46(sp68, sp64 + ((temp_r2_11 - ((var_r3_13 >> 2) * 4)) * 0x6C0) + 0x4000, temp_r5_13 + 0x2C, temp_r0_18 + 0x11, 0x20U, 0x36);
             var_r6_5 += 0x1000;
         } while (var_r7_21 != 9);
     }
@@ -1177,7 +1177,7 @@ loop_184:
         if (M2C_FIELD(M2C_FIELD(sp64, s32 **, 0x7828), s32 *, 0x14) != 0) {
             var_r6_6 = 0x24;
             do {
-                Func_080d6888(*(M2C_FIELD(sp64, s32 **, 0x7828) + var_r6_6), 0xE, 5, -1, 0);
+                Func_080d6888(*(s16 *)((u8 *)M2C_FIELD(sp64, s32 **, 0x7828) + var_r6_6), 0xE, 5, -1, 0);
                 var_r7_22 += 1;
                 var_r6_6 += 2;
             } while (var_r7_22 != M2C_FIELD(M2C_FIELD(sp64, s32 **, 0x7828), s32 *, 0x14));

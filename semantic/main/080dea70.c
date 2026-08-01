@@ -135,8 +135,7 @@ s32 Func_080dea70(struct Work_02000000 *arg0, s32 arg1) {
     s32 sp7C;
     s32 sp80;
     s32 sp84;
-    s32 sp88;
-    s32 sp8C;
+    s32 setup_projection[2];
     s32 projected[3];
     Renderer_080dea70 renderer_46;
     Renderer_080dea70 renderer_47;
@@ -221,11 +220,15 @@ s32 Func_080dea70(struct Work_02000000 *arg0, s32 arg1) {
     u8 *var_r5_4;
     u8 *var_r5_5;
     u8 *var_r7;
+    u8 *runtime_globals;
+    u32 *runtime_words;
 
-    temp_r0 = M2C_FIELD((void *)0x03001EEC, u8 **, 0);
-    sp84 = M2C_FIELD((void *)0x03001EEC, s32 *, 4);
-    sp6C = *(s32 *)0x03001E80;
-    sp68 = M2C_FIELD((void *)0x03001EEC, u8 **, 8);
+    runtime_globals = (u8 *)0x03001EEC;
+    runtime_words = (u32 *)runtime_globals;
+    temp_r0 = (u8 *)*runtime_words++;
+    sp84 = (s32)*runtime_words;
+    sp6C = M2C_FIELD(runtime_globals, s32 *, -0x6C);
+    sp68 = M2C_FIELD(runtime_globals, u8 **, 8);
     sp64 = 0;
     M2C_FIELD(temp_r0, struct Work_02000000 **, 0x7828) = arg0;
     sp5C = arg0->field_18;
@@ -236,7 +239,8 @@ s32 Func_080dea70(struct Work_02000000 *arg0, s32 arg1) {
     }
     temp_r2 = M2C_FIELD(temp_r0, struct Work_02000000 **, 0x7828);
     if (temp_r2->field_1c == 1) {
-        Func_080de2f8(arg0, 1, temp_r2->field_4, 2, &sp8C, &sp88);
+        Func_080de2f8(arg0, 1, temp_r2->field_4, 2,
+                     &setup_projection[1], &setup_projection[0]);
     }
     if (arg1 == 5) {
         if (M2C_FIELD(temp_r0, struct Work_02000000 **, 0x7828)->field_4 == 1) {
@@ -486,8 +490,11 @@ frame_loop:
     }
     if (M2C_FIELD(temp_r0, struct Work_02000000 **, 0x7828)->field_1c == 1) {
         temp_r5_2 = sp78 << 0xB;
-        temp_sl_2 = (((s32) ((0 - Func_08002322(temp_r5_2)) * 4) >> 0x10) + ((s32) (sp8C + ((u32) sp8C >> 0x1F)) >> 1)) - 0xA;
-        var_r6 = (((s32) (Func_0800231c(temp_r5_2) * 2) >> 0x10) + sp88) - 0x18;
+        temp_sl_2 = (((s32) ((0 - Func_08002322(temp_r5_2)) * 4) >> 0x10) +
+                     ((s32) (setup_projection[1] +
+                             ((u32) setup_projection[1] >> 0x1F)) >> 1)) - 0xA;
+        var_r6 = (((s32) (Func_0800231c(temp_r5_2) * 2) >> 0x10) +
+                  setup_projection[0]) - 0x18;
         if (sp78 > 0x45) {
             var_r6 = (var_r6 - (sp78 * 2)) + 0x8A;
         }

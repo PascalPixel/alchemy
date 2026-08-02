@@ -293,9 +293,13 @@ Latest bounded probes (2026-08-02) reinforce that rule:
 - A bounded 1,800-step, three-restart permuter run on fresh `0807a7a0`
   improved the saved score to 84 differing bytes but found no exact result.
   The candidate remains scratch state; no approximate source was promoted.
-- The fresh 40-byte `08079390` leaf reached an 11-halfword floor under a
-  329-configuration compiler sweep, but no configuration or source spelling
-  was exact. It remains outside `src/`.
+- The standalone 40-byte `08079390` leaf remains non-exact after bounded
+  compiler-family sweeps. `asm/080770d8.s` is a linker veneer whose Thumb
+  target is `0x08079391`, so this is an independently callable compiler-output
+  function—not a continuation row. Its semantic C has the correct behaviour
+  and exact extent, but the original begins by preserving the argument in r4
+  while current valid C schedules the address calculation first. Keep it a
+  compiler/source-shape investigation; do not hand-permute it.
 - Fresh main-image `08078ee8` (284-byte owner): the 329-configuration sweep
   reached 282 bytes and 98 differing halfwords with
   `-fno-rerun-cse-after-loop -fno-force-mem`; no exact route emerged.

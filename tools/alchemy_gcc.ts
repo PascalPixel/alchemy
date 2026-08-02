@@ -370,6 +370,9 @@ const CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES = new Set([
 // flags remain untouched.  08077f70 is exact with this mode plus the paired
 // no-alias/store-first scheduler settings (work/0807root/08077f70.c).
 const CALL_ARG0_BEFORE_STORE_SOURCES = new Set(["08077f70"]);
+// 08098b10's clean semantic source is exact when the post-call byte-state
+// increment is retargeted to r2 by the strict post-reload compiler mode.
+const POSTCALL_BYTE_INCREMENT_R2_SOURCES = new Set(["08098b10"]);
 // This no-argument initializer's reference fills the first global literal
 // load's latency with the frame allocation and dependent load, then fills the
 // table-index shift's latency with two stack initializers.  The compiler mode
@@ -1342,6 +1345,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(CALL_ARG0_BEFORE_STORE_SOURCES.has(stem)
       ? ["-fno-sched-alias", "-fsched-store-first", "-fthumb-call-arg0-before-store"]
       : []),
+    ...(POSTCALL_BYTE_INCREMENT_R2_SOURCES.has(stem)
+      ? ["-fthumb-postcall-byte-increment-r2"]
+      : []),
     ...(THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mthumb-immediate-latency"]
       : []),
@@ -1638,6 +1644,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "cce7c26cfda8ee1844256ac9226d0420d74c476fb24823c46bcce26db89a4983",
         "e654b8f55bef2f2a06efec89f171f46a76f0a55f671eb75e8b82ddc994f85b27",
         "0767fccd6046d0b4dcaae1150a82e505a29e59ca9f4f979e2535e7970f3de449",
+        "d12bf2c7b96d2b1b6cec4c09b76f986249285070b1ca09d1ba1baf31b859cc18",
       ],
     },
     gs2: {
@@ -2424,6 +2431,12 @@ function selfTest(): void {
       cflagsForTargetSource("gs1", "/tmp/08077f74.c").includes(callArg0BeforeStore) ||
       cflagsForTargetSource("gs2", "/tmp/08077f70.c").includes(callArg0BeforeStore)) {
     throw new Error("08077f70 call-argument-before-store routing self-test failed");
+  }
+  const postcallByteIncrementR2 = "-fthumb-postcall-byte-increment-r2";
+  if (!cflagsForTargetSource("gs1", "/tmp/08098b10.c").includes(postcallByteIncrementR2) ||
+      cflagsForTargetSource("gs1", "/tmp/08098b11.c").includes(postcallByteIncrementR2) ||
+      cflagsForTargetSource("gs2", "/tmp/08098b10.c").includes(postcallByteIncrementR2)) {
+    throw new Error("08098b10 post-call byte-increment routing self-test failed");
   }
 
   const plannedGcc = sourceToAssemblyPlan({

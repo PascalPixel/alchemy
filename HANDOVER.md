@@ -293,6 +293,11 @@ Latest bounded probes (2026-08-02) reinforce that rule:
 - A bounded 1,800-step, three-restart permuter run on fresh `0807a7a0`
   improved the saved score to 84 differing bytes but found no exact result.
   The candidate remains scratch state; no approximate source was promoted.
+- Two source-grounded semantic corrections in the `0807` bank remain
+  semantic-only: `0807a7a0` now writes the final snapshot tail at `+0x1fa`
+  (not `+0x1d0`), and `08078bf0` now walks its 32 effect slots at their proven
+  four-byte stride. Neither correction is an exact-C promotion; both compile
+  cleanly and leave the exact-byte metric unchanged.
 - The standalone 40-byte `08079390` leaf remains non-exact after bounded
   compiler-family sweeps. `asm/080770d8.s` is a linker veneer whose Thumb
   target is `0x08079391`, so this is an independently callable compiler-output

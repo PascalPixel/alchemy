@@ -250,6 +250,22 @@ and stopping condition. Never manually source-permute an already documented
 near-match, never promote a merely close result, and never run the retired
 overnight queue without new evidence.
 
+Latest bounded probes (2026-08-02) reinforce that rule:
+
+- Fresh main-image `08077428` (2,024-byte owner): a natural typed-C pass moved
+  the baseline from 2,000/2,024 bytes to 1,988/2,024, with 823 differing
+  halfwords; it was not promoted. The first residual is fixed-point temporary
+  lifetime/coalescing, followed by the effect-loop schedule.
+- Fresh main-image `08093c00` (552-byte owner): 73 compiler configurations
+  found an exact-size `-O1` result but still 256 differing halfwords. Its first
+  residual is loop rotation and frame/index materialisation, so it was parked.
+- A bounded 1,800-step, three-restart permuter run on fresh `0807a7a0`
+  improved the saved score to 84 differing bytes but found no exact result.
+  The candidate remains scratch state; no approximate source was promoted.
+- The fresh 40-byte `08079390` leaf reached an 11-halfword floor under a
+  329-configuration compiler sweep, but no configuration or source spelling
+  was exact. It remains outside `src/`.
+
 ## Tooling audit
 
 The repository has 157 top-level TypeScript tools. Its strongest guarantees are:

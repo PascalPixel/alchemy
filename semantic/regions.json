@@ -7197,6 +7197,12 @@
     },
     {
       "overlay": "resource_3bd",
+      "entry": "0x020008c0",
+      "span_bytes": 284,
+      "evidence": "admitted instruction-complete reviewed reconstruction; high-register owner starts at 0x020008c0 and returns through the single pop {r1}/bx r1 epilogue at 0x020009c2-0x020009ce; the three directly referenced literal words at 0x020009d0-0x020009db are included before the next owner's push {lr} at 0x020009dc, establishing the 284-byte whole-owner boundary. Resolver audit finds four ordered calls: Func_0808a080(id), Func_080091c0(cellX, cellZ, width, height, worldX, worldZ), and two direct calls to in-overlay prologue Func_02000244 with variants 0 and 2. Local CFG audit accounts for all eight branch sites and all 14 machine stores: eight local frame materializations and six outgoing stack-argument stores, with no persistent game-state store. Signed kind/extent loads, six-entry selection, wrapped fixed-point additions, arithmetic shifts, widths, offsets and the return values 0/1 are expressed in ordinary C; no inline assembly, fixed-register trick or raw translator construct"
+    },
+    {
+      "overlay": "resource_3bd",
       "entry": "0x02003644",
       "span_bytes": 1004,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_3bd), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; the nineteen-word literal pool at 0x020039b8-0x02003a03 sits INSIDE the function with the tail at 0x02003a04-0x02003a28 after it and one further pool word at 0x02003a2c, so a span measured as code-then-pool stops 118 bytes early; span read through the r8 unspill and bx r1 at 0x02003a1e-0x02003a28 to the next function at 0x02003a30, inside the assembled overlay image and not overlapping another recorded owner; hand-drafted from the bytes with every bl resolved as an absolute image offset (stored displacement + 2) rather than pc-relative; tools/m2c_guard.ts finds no call-through-register site and no jump table here and reports 14 of 14 callees present in the draft."
@@ -8700,6 +8706,24 @@
       "entry": "0x02003610",
       "span_bytes": 52,
       "evidence": "admitted whole-owner semantic reconstruction; saved-register owner begins at 0x02003610, returns through pop {r0}/bx r0 at 0x0200363e-0x02003640 and includes the two-byte alignment before the next owner; its null gate, byte clear, one resolver-confirmed Func_0808a080 call and masked copy of owner byte 9 bits 2-3 are represented"
+    },
+    {
+      "overlay": "resource_3bd",
+      "entry": "0x02000bc8",
+      "span_bytes": 100,
+      "evidence": "admitted whole-owner semantic reconstruction; push {lr} at 0x02000bc8 through pop {r0}/bx r0 at 0x02000c18-0x02000c1a, with the four directly referenced pool words at 0x02000c1c-0x02000c2b and the next owner boundary at 0x02000c2c; the signed/unsigned scene reads, conditional volatile BLDALPHA halfword store, and five resolver-confirmed Func_0808a158 calls are expressed in ordinary C"
+    },
+    {
+      "overlay": "resource_3bd",
+      "entry": "0x02000cf8",
+      "span_bytes": 80,
+      "evidence": "admitted whole-owner semantic reconstruction; push {lr} at 0x02000cf8 through pop {r0}/bx r0 at 0x02000d3e-0x02000d40, with the alignment halfword and directly referenced pool word 0x00000212 at 0x02000d44-0x02000d47 before the next owner at 0x02000d48; the two arithmetic-shift cell tests, three observable record stores, six-argument Func_080091c0 call, and Func_080770c8(0x212) call are represented"
+    },
+    {
+      "overlay": "resource_3bd",
+      "entry": "0x02000de8",
+      "span_bytes": 196,
+      "evidence": "admitted whole-owner semantic reconstruction; saved-register owner starts at 0x02000de8 and returns through the r8 unspill and pop {r0}/bx r0 at 0x02000e9c-0x02000ea6, with the directly referenced pool word 0x02000240 at 0x02000ea8-0x02000eab before the next owner at 0x02000eac; the 13 resolver-confirmed calls, three-word movement probe, signed terrain rejection gate, ordered effect transition, speed/flag stores, coarse-cell placement, and flag restoration are expressed in ordinary C"
     }
   ]
 }

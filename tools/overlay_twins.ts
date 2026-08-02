@@ -18,12 +18,15 @@
 //   bun tools/overlay_twins.ts                    # every twin group
 //   bun tools/overlay_twins.ts resource_383       # groups touching one overlay
 //   bun tools/overlay_twins.ts --unconverted      # only groups with work left
+//   bun tools/overlay_twins.ts --semantic --unconverted
+//                                                # reviewed-C templates too
 //   bun tools/overlay_twins.ts --self-test
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { assembleOverlay, overlayCSpans } from "./overlay_disasm.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
+const USAGE = "usage: overlay_twins.ts [resource_NNN] [--unconverted] [--semantic] [--self-test]";
 
 interface OverlayFunction {
   overlay: string;
@@ -85,14 +88,24 @@ function inventory(): OverlayFunction[] {
   return (JSON.parse(readFileSync(path, "utf8")) as { functions: OverlayFunction[] }).functions;
 }
 
-/** Exact-C owners only. Reviewed semantic C is still conversion work. */
-function convertedKeys(): Set<string> {
+/** Exact-C owners, optionally joined by reviewed semantic-C owners. */
+function convertedKeys(includeSemantic = false): Set<string> {
   const keys = new Set<string>();
   const path = join(ROOT, "assets", "code");
-  if (!existsSync(path)) return keys;
-  for (const name of readdirSync(path)) {
-    const match = /^(resource_[0-9a-f]+)_c_0200([0-9a-f]{4})\.c$/.exec(name);
-    if (match !== null) keys.add(`${match[1]}:${match[2]}`);
+  if (existsSync(path)) {
+    for (const name of readdirSync(path)) {
+      const match = /^(resource_[0-9a-f]+)_c_0200([0-9a-f]{4})\.c$/.exec(name);
+      if (match !== null) keys.add(`${match[1]}:${match[2]}`);
+    }
+  }
+  if (includeSemantic) {
+    const semantic = join(ROOT, "semantic", "overlays");
+    if (existsSync(semantic)) {
+      for (const name of readdirSync(semantic)) {
+        const match = /^(resource_[0-9a-f]+)_c_0200([0-9a-f]{4})\.c$/.exec(name);
+        if (match !== null) keys.add(`${match[1]}:${match[2]}`);
+      }
+    }
   }
   return keys;
 }
@@ -134,7 +147,7 @@ export interface Twin {
   converted: boolean;
 }
 
-export function twinGroups(): Twin[][] {
+export function twinGroups(includeSemantic = false): Twin[][] {
   const discovered = inventory();
   const known = new Set(discovered.map((row) => `${row.overlay}:${row.offset}`));
   const rows = [...discovered, ...exactRows().filter((row) => !known.has(`${row.overlay}:${row.offset}`))].filter(
@@ -145,7 +158,7 @@ export function twinGroups(): Twin[][] {
       !row.data_walk &&
       (row.contained_by ?? []).length === 0,
   );
-  const converted = convertedKeys();
+  const converted = convertedKeys(includeSemantic);
   const images = new Map<string, Uint8Array>();
   const groups = new Map<string, Twin[]>();
   for (const row of rows) {
@@ -199,17 +212,33 @@ function selfTest(): void {
 
 function main(): void {
   const args = Bun.argv.slice(2);
+  if (args.includes("--help") || args.includes("-h")) {
+    console.log(USAGE);
+    return;
+  }
   if (args.includes("--self-test")) return selfTest();
+  const unknown = args.find((argument) =>
+    !/^resource_[0-9a-f]+$/.test(argument) && !["--unconverted", "--semantic"].includes(argument));
+  if (unknown !== undefined) throw new Error(`${USAGE}\nunrecognised argument: ${unknown}`);
+  if (args.filter((argument) => /^resource_[0-9a-f]+$/.test(argument)).length > 1) {
+    throw new Error(`${USAGE}\nselect at most one overlay`);
+  }
   const only = args.find((argument) => /^resource_[0-9a-f]+$/.test(argument));
   const unconvertedOnly = args.includes("--unconverted");
-  let groups = twinGroups();
+  const includeSemantic = args.includes("--semantic");
+  let groups = twinGroups(includeSemantic);
   if (only !== undefined) groups = groups.filter((g) => g.some((t) => t.overlay === only));
-  if (unconvertedOnly) groups = groups.filter((g) => g.some((t) => !t.converted));
+  if (unconvertedOnly) {
+    // A reusable family needs BOTH a source and an unconverted sibling. Groups
+    // with no source are discovery leads, not recoverable bytes; excluding
+    // them here keeps the printed count equal to the rows the user can act on.
+    groups = groups.filter((group) =>
+      group.some((twin) => twin.converted) && group.some((twin) => !twin.converted));
+  }
   let recoverable = 0;
   for (const group of groups) {
     const done = group.filter((t) => t.converted);
     const todo = group.filter((t) => !t.converted);
-    if (unconvertedOnly && done.length === 0) continue;
     recoverable += todo.reduce((sum, t) => sum + t.bytes, 0);
     console.log(
       `${group[0].bytes} bytes x${group.length}` +
@@ -219,7 +248,7 @@ function main(): void {
       console.log(`    TODO ${twin.overlay}:${twin.offset.toString(16).padStart(4, "0")}`);
     }
   }
-  console.log(`\ngroups=${groups.length} recoverable_bytes=${recoverable}`);
+  console.log(`\ngroups=${groups.length} recoverable_bytes=${recoverable} mode=${includeSemantic ? "semantic" : "exact"}`);
 }
 
 if (import.meta.main) main();

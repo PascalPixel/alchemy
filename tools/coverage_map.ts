@@ -1082,6 +1082,7 @@ export function overlayOwnerTiles(
   executable: readonly Span[],
   exactOwners: readonly OverlayOwner[],
   semanticOwners: readonly Span[],
+  retained: readonly Span[] = [],
 ): Tile[] {
   const extent = normalize(executable);
   const exact = normalize(exactOwners.flatMap((owner) => owner.spans));
@@ -1115,7 +1116,19 @@ export function overlayOwnerTiles(
   }
 
   const owned = normalize([...exact, ...semanticCredited]);
-  for (const span of subtract(extent, owned)) {
+  const retainedCredited = intersect(subtract(extent, owned), retained);
+  for (const span of retainedCredited) {
+    const bytes = span.end - span.start;
+    tiles.push({
+      label: `${overlay.replace(/^resource_/, "")} · retained structural assembly 0x${hex8(span.start)}–0x${hex8(span.end)}`,
+      bytes,
+      categories: { retained_asm: bytes },
+      group: overlay.replace(/^resource_/, ""),
+      address: span.start,
+    });
+  }
+
+  for (const span of subtract(extent, [...owned, ...retainedCredited])) {
     const bytes = span.end - span.start;
     tiles.push({
       label: `${overlay.replace(/^resource_/, "")} · unowned assembly 0x${hex8(span.start)}–0x${hex8(span.end)}`,
@@ -1195,6 +1208,16 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
   const mainExecutable = unionIntervals(inventory.main.intervals);
   const overlayExecutable = new Map<string, Span[]>(
     inventory.overlays.map((overlay) => [overlay.id, unionIntervals(overlay.intervals)]),
+  );
+  // Fixed ldr/bx veneers and audited alignment bytes are already proven
+  // structural by the executable inventory. They are source-owned, exact
+  // assembly—not unknown decompilation debt. Preserve that evidence instead
+  // of flattening every overlay interval into one undifferentiated extent.
+  const overlayRetained = new Map<string, Span[]>(
+    inventory.overlays.map((overlay) => [overlay.id, unionIntervals(
+      overlay.intervals.filter((interval) =>
+        interval.kind === "veneer" || interval.kind === "executable_alignment"),
+    )]),
   );
 
   const exactMain = [...exactMainSpans(options.exact, mainExecutable).values()].flat();
@@ -1283,6 +1306,7 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
       semanticOwners.length > 0
         ? semanticOwners
         : semanticOverlayByResource.get(overlay.id) ?? [],
+      overlayRetained.get(overlay.id) ?? [],
     ));
   }
   executableAreas.push(area("overlays", "Decoded code overlays", overlayTiles));
@@ -2606,6 +2630,20 @@ export function selfTest(): void {
       bands[0].categories.semantic_c !== 64 || bands[1].categories.assembly !== 96 ||
       bands[1].categories.retained_asm !== 32) {
     throw new Error("main band composition failed");
+  }
+  const overlayClassification = overlayOwnerTiles(
+    "resource_test",
+    [{ start: 0, end: 100 }],
+    [{ label: "AlchemyC_00000000", entry: 0, spans: [{ start: 0, end: 20 }] }],
+    [{ start: 20, end: 40 }],
+    [{ start: 40, end: 50 }, { start: 90, end: 100 }],
+  );
+  if (categoryTotal(overlayClassification, "exact_c") !== 20 ||
+      categoryTotal(overlayClassification, "semantic_c") !== 20 ||
+      categoryTotal(overlayClassification, "retained_asm") !== 20 ||
+      categoryTotal(overlayClassification, "assembly") !== 40 ||
+      overlayClassification.reduce((sum, tile) => sum + tile.bytes, 0) !== 100) {
+    throw new Error("overlay owner tiles lost exact structural-assembly classification");
   }
   const ownerTiles = mainOwnerTiles(
     [{ start: 0x08000000, end: 0x08000100 }],

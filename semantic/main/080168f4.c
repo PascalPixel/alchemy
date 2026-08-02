@@ -1,355 +1,549 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "layout_guard.h"
+#include "types.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+enum FieldCommand_080168f4 {
+    FIELD_COMMAND_END = 0,
+    FIELD_COMMAND_OPEN = 1,
+    FIELD_COMMAND_CLOSE = 2,
+    FIELD_COMMAND_RISE = 3,
+    FIELD_COMMAND_WAIT_SHORT = 4,
+    FIELD_COMMAND_WAIT_INPUT_SHORT = 5,
+    FIELD_COMMAND_WAIT_INPUT_LONG = 6,
+    FIELD_COMMAND_RESET_TEXT_OPTIONS = 7,
+    FIELD_COMMAND_SET_TEXT_STYLE = 8,
+    FIELD_COMMAND_SET_TEXT_POSITION = 9,
+    FIELD_COMMAND_SET_TEXT_CONTEXT = 10,
+    FIELD_COMMAND_SET_WINDOW_VALUE = 15,
+    FIELD_COMMAND_STOP = 30,
+    FIELD_COMMAND_SPACE = 0x20,
+    FIELD_COMMAND_MODIFIER_4000 = 0xde,
+    FIELD_COMMAND_MODIFIER_8000 = 0xdf
+};
 
-void Func_08003f3c(u32);
-void Func_08016178(s32, s32, s32, s32);
-void Func_08016478(void *);
-void Func_080167ac(void *);
-void Func_080167d8(void *);
-void Func_080167e0(s32);
-void Func_080170f8(s32, s32, s32, s32);
-void Func_0801868c(s32, s32 *, s32 *, s32 *, s32 *, void *, s32);
-s32 Func_08018cac(void *, u32, s32, s32, s32);
-void Func_0801999c(void *);
-s32 Func_080199ec(void *);
-void Func_080f9010(s32);
+enum FieldResult_080168f4 {
+    FIELD_RESULT_NONE = 0,
+    FIELD_RESULT_FINISHED = 8,
+    FIELD_RESULT_CANCELLED = 9
+};
+
+struct WindowWork_080168f4 {
+    s32 reserved00;
+    struct WindowWork_080168f4 *self;
+    u16 width;
+    u16 height;
+    u16 x;
+    u16 y;
+    u16 reserved10;
+    u16 value;
+    u16 reserved14;
+    u16 flags;
+};
+
+struct FieldScriptChannel_080168f4 {
+    struct WindowWork_080168f4 *window;
+    u16 x_accumulator;
+    u16 y_accumulator;
+    u16 text_measurement[4];
+    u16 animation_phase;
+    u16 command_index;
+    u16 command_delay;
+    u16 text_style;
+    u16 text_position;
+    u16 text_context;
+    u16 forced_delay;
+    u16 x_origin;
+    u16 stopped;
+    u16 movement_delay;
+    u16 preserve_geometry;
+    u16 reserved26;
+};
+
+struct FieldEngine_080168f4 {
+    u8 tilemap_and_work[0xea4];
+    u8 alternate_layout;
+    u8 rapid_mode;
+    u8 reserved_ea6[2];
+    u16 active_text_context;
+    u16 reserved_eaa;
+    u16 active_text_position;
+    u16 active_text_style;
+    u16 command_queue[0x200];
+    u8 reserved_12b0[6];
+    u16 active_sound;
+    u8 reserved_12b8[0x3c];
+    u16 movement_sound;
+    u16 movement_sound_delay;
+    u8 preview_active;
+};
+
+struct GlyphMetrics_080168f4 {
+    u16 advance;
+    u8 reserved02[0x1e];
+};
+
+LAYOUT_OFFSET_GUARD(
+    WindowWork080168f4_Width,
+    struct WindowWork_080168f4,
+    width,
+    0x08);
+LAYOUT_OFFSET_GUARD(
+    WindowWork080168f4_X,
+    struct WindowWork_080168f4,
+    x,
+    0x0c);
+LAYOUT_OFFSET_GUARD(
+    WindowWork080168f4_Value,
+    struct WindowWork_080168f4,
+    value,
+    0x12);
+LAYOUT_OFFSET_GUARD(
+    WindowWork080168f4_Flags,
+    struct WindowWork_080168f4,
+    flags,
+    0x16);
+LAYOUT_SIZE_GUARD(
+    FieldScriptChannel080168f4_Size,
+    struct FieldScriptChannel_080168f4,
+    0x28);
+LAYOUT_OFFSET_GUARD(
+    FieldScriptChannel080168f4_CommandIndex,
+    struct FieldScriptChannel_080168f4,
+    command_index,
+    0x12);
+LAYOUT_OFFSET_GUARD(
+    FieldScriptChannel080168f4_ForcedDelay,
+    struct FieldScriptChannel_080168f4,
+    forced_delay,
+    0x1c);
+LAYOUT_OFFSET_GUARD(
+    FieldScriptChannel080168f4_Stopped,
+    struct FieldScriptChannel_080168f4,
+    stopped,
+    0x20);
+LAYOUT_OFFSET_GUARD(
+    FieldScriptChannel080168f4_PreserveGeometry,
+    struct FieldScriptChannel_080168f4,
+    preserve_geometry,
+    0x24);
+LAYOUT_OFFSET_GUARD(
+    FieldEngine080168f4_AlternateLayout,
+    struct FieldEngine_080168f4,
+    alternate_layout,
+    0xea4);
+LAYOUT_OFFSET_GUARD(
+    FieldEngine080168f4_RapidMode,
+    struct FieldEngine_080168f4,
+    rapid_mode,
+    0xea5);
+LAYOUT_OFFSET_GUARD(
+    FieldEngine080168f4_CommandQueue,
+    struct FieldEngine_080168f4,
+    command_queue,
+    0xeb0);
+LAYOUT_OFFSET_GUARD(
+    FieldEngine080168f4_ActiveSound,
+    struct FieldEngine_080168f4,
+    active_sound,
+    0x12b6);
+LAYOUT_OFFSET_GUARD(
+    FieldEngine080168f4_MovementSound,
+    struct FieldEngine_080168f4,
+    movement_sound,
+    0x12f4);
+LAYOUT_OFFSET_GUARD(
+    FieldEngine080168f4_PreviewActive,
+    struct FieldEngine_080168f4,
+    preview_active,
+    0x12f8);
+LAYOUT_SIZE_GUARD(
+    GlyphMetrics080168f4_Size,
+    struct GlyphMetrics_080168f4,
+    0x20);
+
+extern struct FieldEngine_080168f4 *Data_03001e8c;
+extern volatile s32 Data_03001ae8;
+extern volatile s32 Data_03001af8;
+extern volatile u16 Data_03001cd0;
+extern u8 Data_0200044c;
+extern const u8 Data_08073808[];
+extern const u8 Data_0807380b[];
+extern const u8 Data_0807380e[];
+extern const struct GlyphMetrics_080168f4 Data_08032224[];
+
+void Func_08003f3c(u32 sound);
+void Func_08016178(u32 x, u32 y, u32 width, u32 height);
+void Func_08016478(struct WindowWork_080168f4 *window);
+void Func_080167ac(struct FieldScriptChannel_080168f4 *channel);
+void Func_080167d8(struct FieldScriptChannel_080168f4 *channel);
+void Func_080167e0(s32 active);
+void Func_080170f8(u16 x, u16 y, u16 width, u16 height);
+void Func_0801868c(
+    s32 text,
+    s32 *x,
+    s32 *y,
+    s32 *width,
+    s32 *height,
+    void *measurement,
+    s32 flags);
+s32 Func_08018cac(
+    struct WindowWork_080168f4 *window,
+    u32 command,
+    s32 x,
+    s32 y,
+    s32 flags);
+void Func_0801999c(struct FieldScriptChannel_080168f4 *channel);
+s32 Func_080199ec(struct FieldScriptChannel_080168f4 *channel);
+void Func_080f9010(s32 sound);
 
 /*
- * Consume queued field-script commands for one moving map object.
- *
- * Commands update delays, animation, direction, collision bounds, position,
- * and sound state. Geometry-changing commands reconcile the old and new
- * rectangles before committing the object's next frame.
+ * Consume queued commands for one field window. The queue mixes control
+ * commands with printable tokens; printable pairs are packed when their
+ * measured advances fit on one step.
  */
-s32 Func_080168f4(void *arg0) {
-    s32 spC;
-    void *sp10;
-    s32 *sp14;
-    s32 sp18;
-    s32 sp1C;
-    s32 sp20;
-    s32 sp24;
-    s32 sp28;
-    s32 sp2C;
-    s32 sp30;
-    s32 temp_r0;
-    s32 temp_r4_2;
-    s32 temp_r4_4;
-    s32 var_r0;
-    s32 var_r2_2;
-    s32 var_r3;
-    s32 var_r3_4;
-    s32 var_r3_5;
-    s32 var_r5;
-    u16 temp_r1_2;
-    u16 temp_r2;
-    u16 temp_r2_2;
-    u16 temp_r2_3;
-    u16 temp_r2_4;
-    u16 temp_r2_5;
-    u16 temp_r2_6;
-    u16 temp_r2_7;
-    u16 temp_r3_2;
-    u16 temp_r3_3;
-    u16 temp_r4;
-    u16 temp_r4_3;
-    u16 temp_r7;
-    u16 var_r2;
-    u16 var_r3_2;
-    u16 var_r3_3;
-    u16 var_r4;
-    u16 var_r7;
-    u8 temp_sl;
-    void *temp_r0_2;
-    void *temp_r0_3;
-    void *temp_r1;
-    void *temp_r3;
-    void *temp_r5;
+s32 Func_080168f4(struct FieldScriptChannel_080168f4 *channel) {
+    struct FieldEngine_080168f4 *engine = Data_03001e8c;
+    struct WindowWork_080168f4 *window;
+    s32 budget = Data_0807380b[Data_0200044c];
 
-    temp_r3 = *(void **)0x03001E8C;
-    sp20 = (s32) M2C_FIELD(*(void **)0x0200044C, u8 *, 0x0807380B);
-    if (M2C_FIELD(temp_r3, u8 *, 0xEA5) != 0) {
-        var_r2 = *(u16 *)0x03001CD0;
-        if ((s32) var_r2 > 2) {
-            var_r2 = 2;
+    if (engine->rapid_mode != 0) {
+        u16 speed = Data_03001cd0;
+
+        if (speed > 2) {
+            speed = 2;
         }
-        sp20 = (var_r2 * 5) + 3;
+        budget = speed * 5 + 3;
     }
-    if (M2C_FIELD(arg0, u16 *, 0x1C) != 0) {
+
+    if (channel->forced_delay != 0) {
         Func_080167e0(1);
-        M2C_FIELD(arg0, u16 *, 0x1C) = (u16) (M2C_FIELD(arg0, u16 *, 0x1C) - 1);
-        goto block_115;
+        channel->forced_delay--;
+        return FIELD_RESULT_NONE;
     }
-    if (*(s32 *)0x03001AE8 == 0) {
-        temp_r2 = M2C_FIELD(arg0, u16 *, 0x22);
-        if (temp_r2 != 0) {
-            M2C_FIELD(arg0, u16 *, 0x22) = (u16) (temp_r2 + 0xFFFF);
-            goto block_115;
-        }
+
+    if (Data_03001ae8 == 0 && channel->movement_delay != 0) {
+        channel->movement_delay--;
+        return FIELD_RESULT_NONE;
     }
-loop_12:
-    var_r7 = 0;
-    if (M2C_FIELD(arg0, u16 *, 0x20) == 0) {
-        var_r7 = M2C_FIELD(temp_r3, u16 *, (M2C_FIELD(arg0, u16 *, 0x12) * 2) + 0xEB0);
-    }
-    switch ((u32) var_r7) {
-    case 3:
-        M2C_FIELD(arg0, u16 *, 4) = (u16) M2C_FIELD(arg0, u16 *, 0x1E);
-        if (8 & M2C_FIELD(M2C_FIELD(arg0, void **, 0), u16 *, 0x16)) {
-            temp_r2_2 = M2C_FIELD(arg0, u16 *, 6);
-            if ((u32) temp_r2_2 > 0xCFFU) {
-                Func_080167d8(arg0);
-                sp20 = 1;
-            } else {
-                M2C_FIELD(arg0, u16 *, 6) = (u16) (temp_r2_2 + 0xD00);
-            }
-        } else {
-            temp_r2_3 = M2C_FIELD(arg0, u16 *, 0x10);
-            M2C_FIELD(arg0, u16 *, 6) = (u16) (M2C_FIELD(arg0, u16 *, 6) + 0xF00);
-            if ((u32) temp_r2_3 > 2U) {
 
-            } else {
-                M2C_FIELD(arg0, u16 *, 0x10) = (u16) (temp_r2_3 + 1);
-            }
-        }
-    case 11:
-    case 12:
-    case 13:
-    case 14:
-    case 16:
-    case 17:
-    case 18:
-    case 19:
-    case 20:
-    case 21:
-    case 22:
-    case 23:
-    case 24:
-    case 25:
-    case 26:
-    case 27:
-    case 28:
-    case 29:
-block_77:
-        if (M2C_FIELD(temp_r3, u8 *, 0xEA5) != 0) {
+    while (budget != 0) {
+        u16 command = FIELD_COMMAND_END;
 
-        } else {
-            sp20 = 1;
+        if (channel->stopped == 0) {
+            command = engine->command_queue[channel->command_index];
         }
-block_109:
-        temp_r2_4 = M2C_FIELD(arg0, u16 *, 0x14);
-        if ((temp_r2_4 == 0) || (temp_r3_2 = temp_r2_4 + 0xFFFF, M2C_FIELD(arg0, u16 *, 0x14) = temp_r3_2, ((temp_r3_2 << 0x10) == 0))) {
-            M2C_FIELD(arg0, u16 *, 0x12) = (u16) ((M2C_FIELD(arg0, u16 *, 0x12) + 1) & 0x1FF);
-        }
-        temp_r0 = sp20 - 1;
-        sp20 = temp_r0;
-        if (temp_r0 != 0) {
-            goto loop_12;
-        }
-block_115:
-        return 0;
-    case 1:
-        if ((M2C_FIELD(temp_r3, u8 *, 0xEA4) != 0) && ((u32) M2C_FIELD(arg0, u16 *, 0x14) < 0x384U)) {
-            *(s32 *)0x03001AF8 = 0;
-        }
-        M2C_FIELD(arg0, u16 *, 0x14) = 0x397U;
-        if (Func_080199ec(arg0) == 0) {
-            temp_r0_2 = M2C_FIELD(arg0, void **, 0);
-            if (M2C_FIELD(temp_r0_2, u16 *, 8) == 0) {
 
-            } else if (M2C_FIELD(temp_r0_2, u16 *, 0xA) == 0) {
-
-            } else if (M2C_FIELD(temp_r3, u8 *, 0x12F8) != 0) {
-
-            } else {
-                Func_08018cac(temp_r0_2, 1U, (M2C_FIELD(temp_r0_2, u16 *, 8) * 4) - 8, (M2C_FIELD(temp_r0_2, u16 *, 0xA) * 8) - 0x10, 1);
-                M2C_FIELD(temp_r3, u8 *, 0x12F8) = 1U;
-            }
-        } else {
-            temp_r5 = M2C_FIELD(arg0, void **, 0);
-            sp30 = (s32) M2C_FIELD(temp_r5, u16 *, 0xC);
-            sp1C = (s32) M2C_FIELD(temp_r5, u16 *, 8);
-            sp2C = (s32) M2C_FIELD(temp_r5, u16 *, 0xE);
-            temp_r4 = M2C_FIELD(arg0, u16 *, 0x12);
-            sp18 = (s32) M2C_FIELD(temp_r5, u16 *, 0xA);
-            M2C_FIELD(temp_r3, u8 *, 0x12F8) = 0U;
-            spC = (s32) temp_r4;
-            Func_08016478(temp_r5);
-            var_r4 = temp_r4;
-            if ((M2C_FIELD(arg0, u16 *, 0x24) == 0) && ((M2C_FIELD(temp_r5, u16 *, 0xA) | M2C_FIELD(temp_r5, u16 *, 8)) != 0)) {
-                Func_08016178(M2C_FIELD(temp_r5, u16 *, 0xC), M2C_FIELD(temp_r5, u16 *, 0xE), M2C_FIELD(temp_r5, u16 *, 8), M2C_FIELD(temp_r5, u16 *, 0xA));
-                var_r4 = (u16) spC;
-            }
-            temp_r4_2 = (var_r4 + 1) & 0x1FF;
-            if ((M2C_FIELD(temp_r3, u16 *, (temp_r4_2 * 2) + 0xEB0) != 0) && ((M2C_FIELD(temp_r5, u16 *, 0xA) | M2C_FIELD(temp_r5, u16 *, 8)) != 0)) {
-                temp_r7 = M2C_FIELD(arg0, u16 *, 0x24);
-                if (temp_r7 != 0) {
-                    Func_08016178(M2C_FIELD(temp_r5, u16 *, 0xC), M2C_FIELD(temp_r5, u16 *, 0xE), M2C_FIELD(temp_r5, u16 *, 8), M2C_FIELD(temp_r5, u16 *, 0xA));
+        switch (command) {
+        case FIELD_COMMAND_RISE:
+            channel->x_accumulator = channel->x_origin;
+            if (channel->window->flags & 8) {
+                if (channel->y_accumulator > 0xcff) {
+                    Func_080167d8(channel);
+                    budget = 1;
                 } else {
-                    temp_r1 = arg0 + 8;
-                    spC = temp_r4_2;
-                    Func_0801868c(
-                        temp_r4_2, &sp30, &sp2C, &sp28,
-                        &sp24, temp_r1, temp_r7);
-                    temp_r1_2 = M2C_FIELD(temp_r5, u16 *, 0x16);
-                    if (0x80 & temp_r1_2) {
-                        if (sp18 != sp24) {
-                            sp2C -= sp24 - sp18;
-                        }
-                        if (sp2C < 0) {
-                            sp2C = (s32) temp_r7;
-                        }
-                    }
-                    if (!(0x100 & temp_r1_2)) {
-                        var_r3 = sp1C - sp28;
-                        if (var_r3 < 0) {
-                            var_r3 += 3;
-                        }
-                        sp30 += var_r3 >> 2;
+                    channel->y_accumulator += 0xd00;
+                }
+            } else {
+                channel->y_accumulator += 0xf00;
+                if (channel->animation_phase <= 2) {
+                    channel->animation_phase++;
+                }
+            }
+            goto known_command;
+
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 16:
+        case 17:
+        case 18:
+        case 19:
+        case 20:
+        case 21:
+        case 22:
+        case 23:
+        case 24:
+        case 25:
+        case 26:
+        case 27:
+        case 28:
+        case 29:
+            goto known_command;
+
+        case FIELD_COMMAND_OPEN:
+            if (engine->alternate_layout != 0 &&
+                channel->command_delay < 0x384) {
+                Data_03001af8 = 0;
+            }
+            channel->command_delay = 0x397;
+
+            if (Func_080199ec(channel) == 0) {
+                window = channel->window;
+                if (window->width != 0 &&
+                    window->height != 0 &&
+                    engine->preview_active == 0) {
+                    Func_08018cac(
+                        window,
+                        1,
+                        window->width * 4 - 8,
+                        window->height * 8 - 0x10,
+                        1);
+                    engine->preview_active = 1;
+                }
+            } else {
+                s32 x;
+                s32 y;
+                s32 width;
+                s32 height;
+                s32 old_width;
+                s32 old_height;
+                u16 next_index;
+
+                window = channel->window;
+                x = window->x;
+                y = window->y;
+                width = window->width;
+                height = window->height;
+                old_width = width;
+                old_height = height;
+                next_index = channel->command_index;
+                engine->preview_active = 0;
+
+                Func_08016478(window);
+                if (channel->preserve_geometry == 0 &&
+                    (window->width | window->height) != 0) {
+                    Func_08016178(
+                        window->x,
+                        window->y,
+                        window->width,
+                        window->height);
+                }
+
+                next_index = (next_index + 1) & 0x1ff;
+                if (engine->command_queue[next_index] != 0 &&
+                    (window->width | window->height) != 0) {
+                    if (channel->preserve_geometry != 0) {
+                        Func_08016178(
+                            window->x,
+                            window->y,
+                            window->width,
+                            window->height);
+                    } else {
+                        s32 width_adjustment;
+
                         Func_0801868c(
-                            spC, &sp30, &sp2C, &sp28,
-                            &sp24, temp_r1, 2);
+                            next_index,
+                            &x,
+                            &y,
+                            &width,
+                            &height,
+                            channel->text_measurement,
+                            0);
+
+                        if (window->flags & 0x80) {
+                            if (old_height != height) {
+                                y -= height - old_height;
+                            }
+                            if (y < 0) {
+                                y = 0;
+                            }
+                        }
+
+                        if ((window->flags & 0x100) == 0) {
+                            width_adjustment = old_width - width;
+                            if (width_adjustment < 0) {
+                                width_adjustment += 3;
+                            }
+                            x += width_adjustment >> 2;
+                            Func_0801868c(
+                                next_index,
+                                &x,
+                                &y,
+                                &width,
+                                &height,
+                                channel->text_measurement,
+                                2);
+                        }
+
+                        window->x = x;
+                        window->y = y;
+                        window->width = width;
+                        window->height = height;
                     }
-                    M2C_FIELD(temp_r5, u16 *, 0xC) = (u16) sp30;
-                    M2C_FIELD(temp_r5, u16 *, 0xE) = (u16) sp2C;
-                    M2C_FIELD(temp_r5, u16 *, 8) = (u16) sp28;
-                    M2C_FIELD(temp_r5, u16 *, 0xA) = (u16) sp24;
+
+                    Func_080170f8(
+                        window->x,
+                        window->y,
+                        window->width,
+                        window->height);
                 }
-                Func_080170f8(M2C_FIELD(temp_r5, u16 *, 0xC), M2C_FIELD(temp_r5, u16 *, 0xE), M2C_FIELD(temp_r5, u16 *, 8), M2C_FIELD(temp_r5, u16 *, 0xA));
+
+                channel->x_accumulator = channel->x_origin;
+                channel->y_accumulator = 0;
+                channel->animation_phase = 0;
+                Func_08003f3c(engine->active_sound);
+                engine->active_sound = 0x63;
             }
-            M2C_FIELD(arg0, u16 *, 4) = (u16) M2C_FIELD(arg0, u16 *, 0x1E);
-            M2C_FIELD(arg0, u16 *, 6) = 0U;
-            M2C_FIELD(arg0, u16 *, 0x10) = 0U;
-            Func_08003f3c((u32) M2C_FIELD(temp_r3, u16 *, 0x12B6));
-            M2C_FIELD(temp_r3, u16 *, 0x12B6) = 0x63U;
-        }
-        goto block_77;
-    case 2:
-        if ((M2C_FIELD(temp_r3, u8 *, 0xEA4) != 0) && ((u32) M2C_FIELD(arg0, u16 *, 0x14) < 0x384U)) {
-            *(s32 *)0x03001AF8 = 0;
-        }
-        if (Func_080199ec(arg0) != 0) {
-            return 9;
-        }
-        M2C_FIELD(arg0, u16 *, 0x14) = 0x397U;
-        goto block_77;
-    case 5:
-        if (M2C_FIELD(arg0, u16 *, 0x14) == 0) {
-            var_r3_2 = 0x14;
-block_65:
-            M2C_FIELD(arg0, u16 *, 0x14) = var_r3_2;
-        }
-block_66:
-        M2C_FIELD(temp_r3, u16 *, 0x12F6) = 0U;
-        Func_0801999c(arg0);
-        goto block_77;
-    case 6:
-        if (M2C_FIELD(arg0, u16 *, 0x14) == 0) {
-            var_r3_2 = 0x78;
-            goto block_65;
-        }
-        goto block_66;
-    case 4:
-        if (M2C_FIELD(arg0, u16 *, 0x14) == 0) {
-            M2C_FIELD(arg0, u16 *, 0x14) = 0x3CU;
-        }
-        M2C_FIELD(temp_r3, u16 *, 0x12F6) = 0U;
-        goto block_77;
-    case 8:
-        M2C_FIELD(arg0, u16 *, 0x12) = (u16) ((M2C_FIELD(arg0, u16 *, 0x12) + 1) & 0x1FF);
-        M2C_FIELD(arg0, u16 *, 0x16) = M2C_FIELD(temp_r3, u16 *, (M2C_FIELD(arg0, u16 *, 0x12) * 2) + 0xEB0);
-        Func_080167ac(arg0);
-        goto block_77;
-    case 9:
-        M2C_FIELD(arg0, u16 *, 0x12) = (u16) ((M2C_FIELD(arg0, u16 *, 0x12) + 1) & 0x1FF);
-        M2C_FIELD(arg0, u16 *, 0x18) = M2C_FIELD(temp_r3, u16 *, (M2C_FIELD(arg0, u16 *, 0x12) * 2) + 0xEB0);
-        Func_080167ac(arg0);
-        goto block_77;
-    case 10:
-        M2C_FIELD(arg0, u16 *, 0x12) = (u16) ((M2C_FIELD(arg0, u16 *, 0x12) + 1) & 0x1FF);
-        var_r3_3 = M2C_FIELD(temp_r3, u16 *, (M2C_FIELD(arg0, u16 *, 0x12) * 2) + 0xEB0);
-block_74:
-        M2C_FIELD(arg0, u16 *, 0x1A) = var_r3_3;
-        Func_080167ac(arg0);
-        goto block_77;
-    case 7:
-        M2C_FIELD(arg0, u16 *, 0x18) = 0U;
-        var_r3_3 = 0xA;
-        M2C_FIELD(arg0, u16 *, 0x16) = 0xFU;
-        goto block_74;
-    case 15:
-        M2C_FIELD(arg0, u16 *, 0x12) = (u16) ((M2C_FIELD(arg0, u16 *, 0x12) + 1) & 0x1FF);
-        temp_r2_5 = M2C_FIELD(arg0, u16 *, 0x12);
-        M2C_FIELD(M2C_FIELD(arg0, void **, 0), u16 *, 0x12) = M2C_FIELD(temp_r3, u16 *, (temp_r2_5 * 2) + 0xEB0);
-        M2C_FIELD(arg0, u16 *, 0x14) = 0xAU;
-        M2C_FIELD(arg0, u16 *, 0x12) = (u16) ((temp_r2_5 + 1) & 0x1FF);
-        goto block_77;
-    case 0:
-    case 30:
-        M2C_FIELD(arg0, u16 *, 0x20) = 1U;
-        return 8;
-    default:
-        temp_r3_3 = M2C_FIELD(arg0, u16 *, 4);
-        var_r2_2 = temp_r3_3 + 0x80;
-        if (var_r2_2 < 0) {
-            var_r2_2 = temp_r3_3 + 0x17F;
-        }
-        var_r5 = var_r2_2 >> 8;
-        temp_r2_6 = M2C_FIELD(arg0, u16 *, 6);
-        var_r3_4 = temp_r2_6 + 0x80;
-        if (var_r3_4 < 0) {
-            var_r3_4 = temp_r2_6 + 0x17F;
-        }
-        temp_sl = M2C_FIELD(*(void **)0x0200044C, u8 *, 0x0807380E);
-        if (M2C_FIELD(temp_r3, u8 *, 0xEA4) != 0) {
-            var_r5 += 8;
-        }
-        temp_r4_3 = M2C_FIELD(temp_r3, u16 *, (((M2C_FIELD(arg0, u16 *, 0x12) + 1) & 0x1FF) * 2) + 0xEB0);
-        if (temp_r4_3 == 0xDE) {
-            var_r3_5 = 0x4000;
-            goto block_90;
-        }
-        if (temp_r4_3 == 0xDF) {
-            var_r3_5 = 0x8000;
-block_90:
-            var_r7 |= var_r3_5;
-            M2C_FIELD(arg0, u16 *, 0x12) = (u16) ((M2C_FIELD(arg0, u16 *, 0x12) + 1) & 0x1FF);
-        }
-        temp_r0_3 = M2C_FIELD(arg0, void **, 0);
-        if (!(8 & M2C_FIELD(temp_r0_3, u16 *, 0x16)) && ((u32) var_r7 > 0x20U) && ((u32) temp_r4_3 > 0x20U) && ((u32) ((M2C_FIELD(((var_r7 - 0x20) << 5), u16 *, 0x08032224) + M2C_FIELD(((temp_r4_3 - 0x20) << 5), u16 *, 0x08032224)) << 0x10) <= 0xF0000U)) {
-            var_r7 |= temp_r4_3 << 8;
-            M2C_FIELD(arg0, u16 *, 0x12) = (u16) ((M2C_FIELD(arg0, u16 *, 0x12) + 1) & 0x1FF);
-        }
-        temp_r4_4 = Func_08018cac(temp_r0_3, (u32) var_r7, var_r5, var_r3_4 >> 8, 0);
-        M2C_FIELD(arg0, u16 *, 0x22) = (u16) M2C_FIELD(*(void **)0x0200044C, u8 *, 0x08073808);
-        if (temp_r4_4 != 0) {
-            if (M2C_FIELD(temp_r3, u16 *, 0x12F4) != 0) {
-                temp_r2_7 = M2C_FIELD(temp_r3, u16 *, 0x12F6);
-                if (temp_r2_7 == 0) {
-                    if (var_r7 != 0x20) {
-                        spC = temp_r4_4;
-                        Func_080f9010(M2C_FIELD(temp_r3, u16 *, 0x12F4) + (3 & var_r7));
-                        M2C_FIELD(temp_r3, u16 *, 0x12F6) = (u16) temp_sl;
+            goto known_command;
+
+        case FIELD_COMMAND_CLOSE:
+            if (engine->alternate_layout != 0 &&
+                channel->command_delay < 0x384) {
+                Data_03001af8 = 0;
+            }
+            if (Func_080199ec(channel) != 0) {
+                return FIELD_RESULT_CANCELLED;
+            }
+            channel->command_delay = 0x397;
+            goto known_command;
+
+        case FIELD_COMMAND_WAIT_INPUT_SHORT:
+            if (channel->command_delay == 0) {
+                channel->command_delay = 0x14;
+            }
+            engine->movement_sound_delay = 0;
+            Func_0801999c(channel);
+            goto known_command;
+
+        case FIELD_COMMAND_WAIT_INPUT_LONG:
+            if (channel->command_delay == 0) {
+                channel->command_delay = 0x78;
+            }
+            engine->movement_sound_delay = 0;
+            Func_0801999c(channel);
+            goto known_command;
+
+        case FIELD_COMMAND_WAIT_SHORT:
+            if (channel->command_delay == 0) {
+                channel->command_delay = 0x3c;
+            }
+            engine->movement_sound_delay = 0;
+            goto known_command;
+
+        case FIELD_COMMAND_SET_TEXT_STYLE:
+            channel->command_index =
+                (channel->command_index + 1) & 0x1ff;
+            channel->text_style =
+                engine->command_queue[channel->command_index];
+            Func_080167ac(channel);
+            goto known_command;
+
+        case FIELD_COMMAND_SET_TEXT_POSITION:
+            channel->command_index =
+                (channel->command_index + 1) & 0x1ff;
+            channel->text_position =
+                engine->command_queue[channel->command_index];
+            Func_080167ac(channel);
+            goto known_command;
+
+        case FIELD_COMMAND_SET_TEXT_CONTEXT:
+            channel->command_index =
+                (channel->command_index + 1) & 0x1ff;
+            channel->text_context =
+                engine->command_queue[channel->command_index];
+            Func_080167ac(channel);
+            goto known_command;
+
+        case FIELD_COMMAND_RESET_TEXT_OPTIONS:
+            channel->text_style = 0xf;
+            channel->text_position = 0;
+            channel->text_context = 0xa;
+            Func_080167ac(channel);
+            goto known_command;
+
+        case FIELD_COMMAND_SET_WINDOW_VALUE:
+            channel->command_index =
+                (channel->command_index + 1) & 0x1ff;
+            channel->window->value =
+                engine->command_queue[channel->command_index];
+            channel->command_delay = 0xa;
+            channel->command_index =
+                (channel->command_index + 1) & 0x1ff;
+            goto known_command;
+
+        case FIELD_COMMAND_END:
+        case FIELD_COMMAND_STOP:
+            channel->stopped = 1;
+            return FIELD_RESULT_FINISHED;
+
+        default:
+        {
+            u16 following;
+            s32 x = (channel->x_accumulator + 0x80) >> 8;
+            s32 y = (channel->y_accumulator + 0x80) >> 8;
+            s32 movement;
+
+            if (engine->alternate_layout != 0) {
+                x += 8;
+            }
+
+            following = engine->command_queue[
+                (channel->command_index + 1) & 0x1ff];
+            if (following == FIELD_COMMAND_MODIFIER_4000) {
+                command |= 0x4000;
+                channel->command_index =
+                    (channel->command_index + 1) & 0x1ff;
+            } else if (following == FIELD_COMMAND_MODIFIER_8000) {
+                command |= 0x8000;
+                channel->command_index =
+                    (channel->command_index + 1) & 0x1ff;
+            }
+
+            window = channel->window;
+            if ((window->flags & 8) == 0 &&
+                command > FIELD_COMMAND_SPACE &&
+                following > FIELD_COMMAND_SPACE &&
+                (u32)((Data_08032224[command - FIELD_COMMAND_SPACE].advance +
+                       Data_08032224[following - FIELD_COMMAND_SPACE].advance)
+                      << 16) <= 0x000f0000) {
+                command |= following << 8;
+                channel->command_index =
+                    (channel->command_index + 1) & 0x1ff;
+            }
+
+            movement = Func_08018cac(window, command, x, y, 0);
+            channel->movement_delay = Data_08073808[Data_0200044c];
+            if (movement != 0) {
+                if (engine->movement_sound != 0) {
+                    if (engine->movement_sound_delay == 0) {
+                        if (command != FIELD_COMMAND_SPACE) {
+                            Func_080f9010(
+                                engine->movement_sound + (command & 3));
+                            engine->movement_sound_delay =
+                                Data_0807380e[Data_0200044c];
+                        }
+                    } else {
+                        engine->movement_sound_delay--;
                     }
-                } else {
-                    M2C_FIELD(temp_r3, u16 *, 0x12F6) = (u16) (temp_r2_7 + 0xFFFF);
                 }
+
+                movement <<= 8;
+                if (command == FIELD_COMMAND_SPACE) {
+                    movement += channel->text_measurement[
+                        channel->animation_phase];
+                }
+                channel->x_accumulator += movement;
             }
-            var_r0 = temp_r4_4 << 8;
-            if (var_r7 == 0x20) {
-                var_r0 += M2C_FIELD(arg0, u16 *, (M2C_FIELD(arg0, u16 *, 0x10) * 2) + 8);
+
+            if (command == FIELD_COMMAND_SPACE && engine->rapid_mode == 0) {
+                budget = 1;
             }
-            M2C_FIELD(arg0, u16 *, 4) = (u16) (M2C_FIELD(arg0, u16 *, 4) + var_r0);
+            goto finish_command;
         }
-        if ((var_r7 == 0x20) && (M2C_FIELD(temp_r3, u8 *, 0xEA5) == 0)) {
-            sp20 = 1;
         }
-        goto block_109;
+
+known_command:
+        if (engine->rapid_mode == 0) {
+            budget = 1;
+        }
+
+finish_command:
+        if (channel->command_delay == 0 || --channel->command_delay == 0) {
+            channel->command_index =
+                (channel->command_index + 1) & 0x1ff;
+        }
+        budget--;
     }
+
+    return FIELD_RESULT_NONE;
 }

@@ -1,62 +1,75 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "layout_guard.h"
+#include "types.h"
 
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+typedef struct DisplayObject_080a2324 {
+    u8 padding00[5];
+    s8 state;
+    s16 x;
+    s16 y;
+} DisplayObject_080a2324;
 
-void Func_080a17c4(void *);
+typedef struct MenuState_080a2324 {
+    u8 padding000[0x48];
+    DisplayObject_080a2324 *objects[32];
+    u8 padding0c8[0x150];
+    u8 entry_count;
+} MenuState_080a2324;
 
-void Func_080a2324(s32 arg0, s32 arg1, s32 unused,
-                   s32 value, s32 start) {
-    void *state;
-    void **cursor;
-    void **clear_cursor;
-    void *object;
+LAYOUT_OFFSET_GUARD(
+    DisplayObject080a2324_State,
+    DisplayObject_080a2324,
+    state,
+    5);
+LAYOUT_OFFSET_GUARD(
+    DisplayObject080a2324_X,
+    DisplayObject_080a2324,
+    x,
+    6);
+LAYOUT_OFFSET_GUARD(
+    MenuState080a2324_Objects,
+    MenuState_080a2324,
+    objects,
+    0x48);
+LAYOUT_OFFSET_GUARD(
+    MenuState080a2324_EntryCount,
+    MenuState_080a2324,
+    entry_count,
+    0x218);
+
+extern MenuState_080a2324 *Data_03001f2c;
+
+void Func_080a17c4(DisplayObject_080a2324 *object);
+
+/* Hide all row objects, then position the visible slice of one menu page. */
+void Func_080a2324(
+    s32 page_size,
+    s32 first_entry,
+    s32 unused_window,
+    s32 x,
+    s32 y)
+{
+    MenuState_080a2324 *state = Data_03001f2c;
+    s32 end = first_entry + page_size;
     s32 index;
-    s32 temp_end;
-    s32 offset;
-    s32 entry_offset;
-    s32 position;
-    s32 status;
 
-    state = *(void **)0x03001F2C;
-    status = 0xD;
-    clear_cursor = (void **)((u8 *)state + 0x48);
-    index = 0x1F;
-    do {
-        object = *clear_cursor++;
-        if (object != 0)
-            FIELD(object, s8, 5) = status;
-        index--;
-    } while (index >= 0);
+    (void)unused_window;
 
-    index = arg1;
-    temp_end = arg0 + index;
-    if (index < temp_end) {
-        offset = index * 4;
-        entry_offset = offset;
-        entry_offset += 0x48;
-        object = *(void **)((u8 *)state + entry_offset);
-        if (object != 0 &&
-            index <= (s32)(FIELD(state, u8, 0x218) - 1)) {
-            cursor = (void **)((u8 *)state + offset + 0x48);
-            position = start;
-            do {
-                FIELD(object, s16, 6) = value;
-                FIELD(object, s16, 8) = position;
-                Func_080a17c4(object);
-                index++;
-                FIELD(object, s8, 5) = 1;
-                position += 0x10;
-                if (index >= temp_end)
-                    break;
-                cursor++;
-                object = *cursor;
-                if (object == 0)
-                    break;
-            } while (index <=
-                     (s32)(FIELD(state, u8, 0x218) - 1));
-        }
+    for (index = 0; index < 32; index++) {
+        if (state->objects[index] != 0)
+            state->objects[index]->state = 13;
+    }
+
+    for (index = first_entry;
+         index < end && index <= state->entry_count - 1;
+         index++, y += 16) {
+        DisplayObject_080a2324 *object = state->objects[index];
+
+        if (object == 0)
+            break;
+
+        object->x = (s16)x;
+        object->y = (s16)y;
+        Func_080a17c4(object);
+        object->state = 1;
     }
 }

@@ -1,94 +1,105 @@
 #include "types.h"
 
-s16 Func_08029094(void *arg0, s16 arg1, s16 *arg2, s16 *arg3) {
-    s16 temp_r3_3;
-    s16 temp_r3_5;
-    s16 var_r3;
-    s16 var_r5;
-    u16 temp_r1;
-    u16 temp_r2;
-    u16 temp_r2_2;
-    u16 temp_r3;
-    u16 temp_r3_2;
-    u16 temp_r3_4;
-    u16 temp_r3_6;
+struct Work;
 
-    var_r5 = arg1;
-    if (*(s32 *)0x03001B04 & 1) {
+extern volatile u32 Data_03001b04;
+
+void Func_08028ef0(
+    struct Work *work, s16 primary, const s16 *secondary);
+
+enum MenuInput {
+    MENU_INPUT_ACCEPT = 0x001,
+    MENU_INPUT_CANCEL = 0x002,
+    MENU_INPUT_UP = 0x010,
+    MENU_INPUT_DOWN = 0x020,
+    MENU_INPUT_LEFT = 0x040,
+    MENU_INPUT_RIGHT = 0x080,
+    MENU_INPUT_PAGE_UP = 0x100,
+    MENU_INPUT_PAGE_DOWN = 0x200,
+};
+
+/*
+ * Update the two-part numeric selector. The primary half spans 0..200; the
+ * secondary half spans 0..99. Page movement deliberately uses the original
+ * 89-point rollover, so adding ten to 90..99 produces 1..10 (and vice versa).
+ */
+s16 Func_08029094(
+    struct Work *work,
+    s16 primary,
+    s16 *secondary,
+    s16 *active_half)
+{
+    u32 input = Data_03001b04;
+
+    if (input & MENU_INPUT_ACCEPT)
         return -1;
-    }
-    if (*(s32 *)0x03001B04 & 2) {
+
+    if (input & MENU_INPUT_CANCEL)
         return -2;
+
+    if (input & (MENU_INPUT_LEFT | MENU_INPUT_RIGHT)) {
+        *active_half ^= 1;
+        return primary;
     }
-    if ((*(s32 *)0x03001B04 & 0x80) || (temp_r1 = *(s32 *)0x03001B04 & 0x40, (temp_r1 != 0))) {
-        *arg3 = (u16) *arg3 ^ 1;
-    } else {
-        if (*(s32 *)0x03001B04 & 0x10) {
-            if (*arg3 == 0) {
-                var_r3 = var_r5 + 1;
-                goto block_22;
-            }
-            temp_r3 = *arg2 + 1;
-            *arg2 = temp_r3;
-            if ((s32) (temp_r3 << 0x10) > 0x630000) {
-                *arg2 = temp_r1;
-            }
-            goto block_25;
+
+    if (input & MENU_INPUT_UP) {
+        if (*active_half == 0) {
+            primary++;
+            if (primary > 200)
+                primary = 0;
+        } else {
+            (*secondary)++;
+            if (*secondary > 99)
+                *secondary = 0;
         }
-        if (*(s32 *)0x03001B04 & 0x20) {
-            if (*arg3 == 0) {
-                var_r5 -= 1;
-            } else {
-                temp_r3_2 = *arg2 - 1;
-                *arg2 = temp_r3_2;
-                if ((s32) (temp_r3_2 << 0x10) < 0) {
-                    *arg2 = 0x63;
-                }
-            }
-            if ((s32) var_r5 < 0) {
-                var_r5 = 0xC8;
-            }
-            goto block_27;
-        }
-        if (*(s32 *)0x03001B04 & 0x100) {
-            temp_r3_3 = *arg3;
-            if (temp_r3_3 == 0) {
-                *arg2 = (u16) temp_r3_3;
-                var_r3 = var_r5 + 0xA;
-block_22:
-                var_r5 = var_r3;
-            } else {
-                temp_r2 = *arg2;
-                temp_r3_4 = temp_r2 + 0xA;
-                *arg2 = temp_r3_4;
-                if ((s32) (temp_r3_4 << 0x10) > 0x630000) {
-                    *arg2 = temp_r2 - 0x59;
-                }
-            }
-block_25:
-            if ((s32) var_r5 > 0xC8) {
-                var_r5 = 0;
-            }
-block_27:
-            Func_08028ef0(arg0, var_r5, arg2);
-        } else if (*(s32 *)0x03001B04 & 0x200) {
-            temp_r3_5 = *arg3;
-            if (temp_r3_5 == 0) {
-                *arg2 = (u16) temp_r3_5;
-                var_r5 -= 0xA;
-            } else {
-                temp_r2_2 = *arg2;
-                temp_r3_6 = temp_r2_2 - 0xA;
-                *arg2 = temp_r3_6;
-                if ((s32) (temp_r3_6 << 0x10) < 0) {
-                    *arg2 = temp_r2_2 + 0x59;
-                }
-            }
-            if ((s32) var_r5 < 0) {
-                var_r5 = 0xC8;
-            }
-            Func_08028ef0(arg0, var_r5, arg2);
-        }
+        return primary;
     }
-    return var_r5;
+
+    if (input & MENU_INPUT_DOWN) {
+        if (*active_half == 0) {
+            primary--;
+        } else {
+            (*secondary)--;
+            if (*secondary < 0)
+                *secondary = 99;
+        }
+
+        if (primary < 0)
+            primary = 200;
+        return primary;
+    }
+
+    if (input & MENU_INPUT_PAGE_UP) {
+        if (*active_half == 0) {
+            *secondary = 0;
+            primary += 10;
+        } else {
+            s16 previous = *secondary;
+
+            *secondary += 10;
+            if (*secondary > 99)
+                *secondary = previous - 89;
+        }
+
+        if (primary > 200)
+            primary = 0;
+        Func_08028ef0(work, primary, secondary);
+    } else if (input & MENU_INPUT_PAGE_DOWN) {
+        if (*active_half == 0) {
+            *secondary = 0;
+            primary -= 10;
+        } else {
+            s16 previous = *secondary;
+
+            *secondary -= 10;
+            if (*secondary < 0)
+                *secondary = previous + 89;
+        }
+
+        if (primary < 0)
+            primary = 200;
+        Func_08028ef0(work, primary, secondary);
+    }
+
+    return primary;
 }

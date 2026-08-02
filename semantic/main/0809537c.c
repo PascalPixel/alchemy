@@ -1,36 +1,137 @@
+#include "layout_guard.h"
 #include "types.h"
 
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+typedef struct ObjectResource_0809537c {
+    s16 kind;
+} ObjectResource_0809537c;
 
-typedef void (*ObjectCallback_0809537c)(void *);
+typedef struct ObjectDisplay_0809537c {
+    u8 padding00[9];
+    u8 attributes;
+    u8 padding0a[0x1e];
+    ObjectResource_0809537c *resource;
+} ObjectDisplay_0809537c;
 
-void *Func_080090c8(s16, s32, s32, s32);
-void Func_08009080(void *, s32);
-void Func_08009158(void *);
-void Func_080091e0(void *, s32);
-void Func_08009240(void *, s32);
+struct SceneObject_0809537c;
+typedef void (*ObjectCallback_0809537c)(struct SceneObject_0809537c *);
+
+typedef struct SceneObject_0809537c {
+    u8 padding00[6];
+    u16 facing;
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 padding14[4];
+    s32 scale_x;
+    s32 scale_y;
+    u8 padding20[3];
+    u8 child_mode;
+    s32 motion_x;
+    s32 motion_y;
+    s32 motion_z;
+    u8 padding30[8];
+    s32 limit_x;
+    s32 limit_y;
+    s32 limit_z;
+    u8 padding44[0x0c];
+    ObjectDisplay_0809537c *display;
+    u8 padding54;
+    u8 flags;
+    u8 padding56[4];
+    u8 action_flags;
+    u8 padding5b[0x0d];
+    struct SceneObject_0809537c *parent;
+    ObjectCallback_0809537c callback;
+} SceneObject_0809537c;
+
+LAYOUT_OFFSET_GUARD(
+    ObjectDisplay0809537c_Attributes,
+    ObjectDisplay_0809537c,
+    attributes,
+    9);
+LAYOUT_OFFSET_GUARD(
+    ObjectDisplay0809537c_Resource,
+    ObjectDisplay_0809537c,
+    resource,
+    0x28);
+LAYOUT_OFFSET_GUARD(
+    SceneObject0809537c_Facing,
+    SceneObject_0809537c,
+    facing,
+    6);
+LAYOUT_OFFSET_GUARD(
+    SceneObject0809537c_ScaleX,
+    SceneObject_0809537c,
+    scale_x,
+    0x18);
+LAYOUT_OFFSET_GUARD(
+    SceneObject0809537c_ChildMode,
+    SceneObject_0809537c,
+    child_mode,
+    0x23);
+LAYOUT_OFFSET_GUARD(
+    SceneObject0809537c_MotionX,
+    SceneObject_0809537c,
+    motion_x,
+    0x24);
+LAYOUT_OFFSET_GUARD(
+    SceneObject0809537c_LimitX,
+    SceneObject_0809537c,
+    limit_x,
+    0x38);
+LAYOUT_OFFSET_GUARD(
+    SceneObject0809537c_Display,
+    SceneObject_0809537c,
+    display,
+    0x50);
+LAYOUT_OFFSET_GUARD(
+    SceneObject0809537c_ActionFlags,
+    SceneObject_0809537c,
+    action_flags,
+    0x5a);
+LAYOUT_OFFSET_GUARD(
+    SceneObject0809537c_Parent,
+    SceneObject_0809537c,
+    parent,
+    0x68);
+LAYOUT_OFFSET_GUARD(
+    SceneObject0809537c_Callback,
+    SceneObject_0809537c,
+    callback,
+    0x6c);
+LAYOUT_SIZE_GUARD(
+    SceneObject0809537c_Size,
+    SceneObject_0809537c,
+    0x70);
+
+extern u32 Data_02000434;
+
+SceneObject_0809537c *Func_080090c8(s16, s32, s32, s32);
+void Func_08009080(SceneObject_0809537c *, s32);
+void Func_08009158(SceneObject_0809537c *);
+void Func_080091e0(SceneObject_0809537c *, s32);
+void Func_08009240(SceneObject_0809537c *, s32);
 void Func_080030f8(s32);
 void Func_080916b0(void);
 void Func_08091750(void);
-void *Func_08092054(s32);
+SceneObject_0809537c *Func_08092054(u32);
 void Func_08092560(s32, s32, s32);
 void Func_080925cc(s32);
 void Func_08092adc(s32, s32, s32);
-void *Func_08096c48(void *, void *);
-void Func_08096bec(void *, s32, s32);
-void Func_08095348(void *);
+void *Func_08096c48(ObjectDisplay_0809537c *, void *);
+void Func_08096bec(SceneObject_0809537c *, s32, s32);
+void Func_08095348(SceneObject_0809537c *);
 void Func_080f9010(s32);
 
+/* Split the primary object into an eight-link transformation chain. */
 void Func_0809537c(s32 slot)
 {
-    void *primary = Func_08092054(slot);
-    s32 current_slot = *(s32 *)0x02000434;
-    void *current = Func_08092054(current_slot);
-    s32 phase = (FIELD(current, u16, 6) + 0x2000) & 0xc000;
+    SceneObject_0809537c *primary = Func_08092054(slot);
+    SceneObject_0809537c *current = Func_08092054(Data_02000434);
+    SceneObject_0809537c *parent = primary;
+    void *previous_display = 0;
+    s32 phase = (current->facing + 0x2000) & 0xc000;
     s32 heading = phase + 0x8000;
-    void *children[8];
-    void *previous = 0;
-    void *parent = primary;
     s16 kind;
     s32 animation = 9;
     s32 index;
@@ -45,10 +146,10 @@ void Func_0809537c(s32 slot)
     Func_08092adc(slot, heading, 0);
     Func_080030f8(10);
 
-    FIELD(FIELD(primary, void *, 0x50), u8, 9) &= (u8)~0x0c;
-    FIELD(primary, u16, 6) = heading;
-    FIELD(Func_08092054(slot), u8, 0x5a) &= 0xfe;
-    FIELD(primary, u8, 0x55) = 2;
+    primary->display->attributes &= (u8)~0x0c;
+    primary->facing = (u16)heading;
+    Func_08092054(slot)->action_flags &= 0xfe;
+    primary->flags = 2;
 
     for (index = 0; index < 3; index++) {
         Func_08096bec(primary, 0x100000, phase);
@@ -58,7 +159,7 @@ void Func_0809537c(s32 slot)
     }
     Func_080030f8(20);
 
-    kind = *FIELD(FIELD(primary, void *, 0x50), s16 *, 0x28);
+    kind = primary->display->resource->kind;
     if (kind == 90)
         animation = 2;
     if (kind == 92)
@@ -67,30 +168,27 @@ void Func_0809537c(s32 slot)
         animation = 9;
 
     for (index = 0; index < 8; index++) {
-        void *child = Func_080090c8(
+        SceneObject_0809537c *child = Func_080090c8(
             kind,
-            FIELD(primary, s32, 8),
-            FIELD(primary, s32, 12),
-            FIELD(primary, s32, 16));
-        children[index] = child;
-        if (child != 0) {
-            void *part;
+            primary->x,
+            primary->y,
+            primary->z);
 
-            FIELD(child, s32, 0x18) = 0xf000;
-            FIELD(child, s32, 0x1c) = 0xf000;
-            FIELD(child, u8, 0x55) = 0;
-            FIELD(child, u8, 0x23) = 2;
-            FIELD(child, u8, 0x5a) |= 1;
-            FIELD(child, ObjectCallback_0809537c, 0x6c) =
-                Func_08095348;
-            FIELD(child, u16, 6) = FIELD(primary, u16, 6);
-            part = FIELD(child, void *, 0x50);
-            FIELD(part, u8, 9) &= (u8)~0x0c;
+        if (child != 0) {
+            child->scale_x = 0xf000;
+            child->scale_y = 0xf000;
+            child->flags = 0;
+            child->child_mode = 2;
+            child->action_flags |= 1;
+            child->callback = Func_08095348;
+            child->facing = primary->facing;
+            child->display->attributes &= (u8)~0x0c;
             Func_08009240(child, animation);
             Func_08009080(child, 0);
             Func_080091e0(child, 0);
-            previous = Func_08096c48(part, previous);
-            FIELD(child, void *, 0x68) = parent;
+            previous_display =
+                Func_08096c48(child->display, previous_display);
+            child->parent = parent;
             parent = child;
         }
     }
@@ -99,15 +197,15 @@ void Func_0809537c(s32 slot)
     Func_080f9010(136);
     Func_08092560(slot, 12, 0);
     Func_080030f8(24);
-    FIELD(primary, u8, 0x55) = 0;
-    FIELD(primary, s32, 0x24) = 0;
-    FIELD(primary, s32, 0x2c) = 0;
-    FIELD(primary, s32, 0x28) = 0;
-    FIELD(primary, s32, 0x38) = (s32)0x80000000;
-    FIELD(primary, s32, 0x40) = (s32)0x80000000;
-    FIELD(primary, s32, 0x3c) = (s32)0x80000000;
+    primary->flags = 0;
+    primary->motion_x = 0;
+    primary->motion_y = 0;
+    primary->motion_z = 0;
+    primary->limit_x = (s32)0x80000000;
+    primary->limit_y = (s32)0x80000000;
+    primary->limit_z = (s32)0x80000000;
     Func_08009080(primary, 0);
-    FIELD(FIELD(primary, void *, 0x50), u8, 9) =
-        (FIELD(FIELD(primary, void *, 0x50), u8, 9) & (u8)~0x0c) | 8;
+    primary->display->attributes =
+        (primary->display->attributes & (u8)~0x0c) | 8;
     Func_08091750();
 }

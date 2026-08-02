@@ -1,87 +1,149 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "layout_guard.h"
+#include "types.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+typedef struct DmaChannel_08077d38 {
+    const void *source;
+    void *destination;
+    u32 control;
+} DmaChannel_08077d38;
 
-s32 Func_08077cb8();
-void Func_08078ee8(s32 *, s32, s32, s32);
-void Func_0807961c(s32);
+typedef struct SharedState_08077d38 {
+    s32 field_000;
+    s32 field_004;
+    u8 padding008[8];
+    s32 field_010;
+    u8 padding014[0x109];
+    u8 step_table[15];
+    u8 padding12c[0xc8];
+    s32 selected_object;
+    u8 padding1f8[0x0d];
+    u8 field_205;
+    u8 field_206;
+    u8 padding207[3];
+    u8 enabled_20a;
+    u8 enabled_20b;
+    u8 field_20c;
+    u8 padding20d[3];
+    s16 timing_table[7];
+    u8 padding21e[2];
+    s16 field_220;
+    s16 field_222;
+    u8 padding224[6];
+    u8 field_22a;
+    u8 padding22b[0x8d];
+    s32 field_2b8;
+} SharedState_08077d38;
 
-/* Clears the shared runtime arenas and establishes their initial state. */
-s32 Func_08077d38(void) {
-    s32 sp0;
-    s32 sp4;
-    s32 temp_r0;
-    s32 temp_r4;
-    void *temp_r3;
+LAYOUT_OFFSET_GUARD(
+    SharedState08077d38_StepTable,
+    SharedState_08077d38,
+    step_table,
+    0x11d);
+LAYOUT_OFFSET_GUARD(
+    SharedState08077d38_SelectedObject,
+    SharedState_08077d38,
+    selected_object,
+    0x1f4);
+LAYOUT_OFFSET_GUARD(
+    SharedState08077d38_Field205,
+    SharedState_08077d38,
+    field_205,
+    0x205);
+LAYOUT_OFFSET_GUARD(
+    SharedState08077d38_Enabled20a,
+    SharedState_08077d38,
+    enabled_20a,
+    0x20a);
+LAYOUT_OFFSET_GUARD(
+    SharedState08077d38_TimingTable,
+    SharedState_08077d38,
+    timing_table,
+    0x210);
+LAYOUT_OFFSET_GUARD(
+    SharedState08077d38_Field22a,
+    SharedState_08077d38,
+    field_22a,
+    0x22a);
+LAYOUT_OFFSET_GUARD(
+    SharedState08077d38_Field2b8,
+    SharedState_08077d38,
+    field_2b8,
+    0x2b8);
 
-    sp4 = 0;
-    M2C_FIELD((void *)0x040000D4, s32 **, 0) = &sp4;
-    M2C_FIELD((void *)0x040000D4, s32 *, 4) = 0x02000240;
-    M2C_FIELD((void *)0x040000D4, s32 *, 8) = 0x850000B0;
-    temp_r3 = (void *)0x040000D4;
-    sp4 = 0;
-    M2C_FIELD(temp_r3, s32 **, 0) = &sp4;
-    M2C_FIELD(temp_r3, s32 *, 4) = 0x02001000;
-    M2C_FIELD(temp_r3, s32 *, 8) = 0x850003E1;
-    do {
-        temp_r4 = M2C_FIELD((void *)0x040000D4, s32 *, 8) & 0x80000000;
-    } while (temp_r4 != 0);
-    sp4 = temp_r4;
-    M2C_FIELD((void *)0x040000D4, s32 **, 0) = &sp4;
-    M2C_FIELD((void *)0x040000D4, s32 *, 4) = 0x02000040;
-    M2C_FIELD((void *)0x040000D4, s32 *, 8) = 0x85000080;
-    *(s8 *)0x02001104 = 0xFF;
-    sp4 = temp_r4;
-    M2C_FIELD((void *)0x040000D4, s32 **, 0) = &sp4;
-    M2C_FIELD((void *)0x040000D4, s32 *, 4) = 0x02000500;
-    M2C_FIELD((void *)0x040000D4, s32 *, 8) = 0x85000298;
-    sp0 = temp_r4;
-    Func_08078ee8(&sp4, 0x02000500, 0x85000298, (0x040000D4 + 0xC) - 0xC);
-    *(s16 *)0x02000450 = 1;
-    *(s16 *)0x02000452 = 2;
-    *(s16 *)0x02000454 = 4;
-    *(s16 *)0x02000456 = 8;
-    *(s16 *)0x02000458 = 0x200;
-    *(s16 *)0x0200045A = 0x100;
-    *(s16 *)0x0200045C = 2;
-    *(s16 *)0x02000460 = (s16) sp0;
-    *(s16 *)0x02000462 = (s16) sp0;
-    *(s32 *)0x02000434 = sp0;
+s32 Func_08077cb8(void);
+void Func_08078ee8(void);
+void Func_0807961c(s32 mode);
+
+static void StartFill32_08077d38(
+    volatile DmaChannel_08077d38 *dma,
+    const u32 *value,
+    void *destination,
+    u32 control)
+{
+    dma->source = value;
+    dma->destination = destination;
+    dma->control = control;
+}
+
+/* Clear the shared arenas and establish their boot-time defaults. */
+s32 Func_08077d38(void)
+{
+    volatile DmaChannel_08077d38 *dma =
+        (volatile DmaChannel_08077d38 *)0x040000d4;
+    SharedState_08077d38 *shared =
+        (SharedState_08077d38 *)0x02000240;
+    u32 zero = 0;
+    s32 result;
+    s32 group;
+    s32 index;
+
+    StartFill32_08077d38(dma, &zero, (void *)0x02000240, 0x850000b0);
+    zero = 0;
+    StartFill32_08077d38(dma, &zero, (void *)0x02001000, 0x850003e1);
+    while ((dma->control & 0x80000000) != 0) {
+    }
+
+    zero = 0;
+    StartFill32_08077d38(dma, &zero, (void *)0x02000040, 0x85000080);
+    *(u8 *)0x02001104 = 0xff;
+
+    zero = 0;
+    StartFill32_08077d38(dma, &zero, (void *)0x02000500, 0x85000298);
+    Func_08078ee8();
+
+    shared->timing_table[0] = 1;
+    shared->timing_table[1] = 2;
+    shared->timing_table[2] = 4;
+    shared->timing_table[3] = 8;
+    shared->timing_table[4] = 0x200;
+    shared->timing_table[5] = 0x100;
+    shared->timing_table[6] = 2;
+    shared->field_220 = 0;
+    shared->field_222 = 0;
+    shared->selected_object = 0;
+
     Func_0807961c(0);
-    M2C_FIELD((void *)0x02000240, s32 *, 0x10) = sp0;
-    *(s8 *)0x0200044C = 1;
-    M2C_FIELD((void *)0x02000240, s8 *, 0x20A) = 1;
-    M2C_FIELD((void *)0x02000240, s8 *, 0x20B) = 1;
-    M2C_FIELD((void *)0x02000240, s8 *, 0x205) = 0;
-    M2C_FIELD((void *)0x02000240, s8 *, 0x206) = 8;
-    M2C_FIELD((void *)0x02000240, s32 *, 0) = sp0;
-    temp_r0 = Func_08077cb8();
-    M2C_FIELD((void *)0x02000240, s32 *, 0x2B8) = temp_r0;
-    *(s32 *)0x03001C9C = sp0;
-    *(u8 *)0x03001D08 = 0;
-    M2C_FIELD((void *)0x02000240, s32 *, 4) = sp0;
-    M2C_FIELD((void *)0x02000240, u8 *, 0x22A) = (u8) *(u8 *)0x03001D08;
-    *(s16 *)0x03001D24 = (s16) sp0;
+    shared->field_010 = 0;
+    shared->field_20c = 1;
+    shared->enabled_20a = 1;
+    shared->enabled_20b = 1;
+    shared->field_205 = 0;
+    shared->field_206 = 8;
+    shared->field_000 = 0;
+
+    result = Func_08077cb8();
+    shared->field_2b8 = result;
+    *(s32 *)0x03001c9c = 0;
+    *(u8 *)0x03001d08 = 0;
+    shared->field_004 = 0;
+    shared->field_22a = *(u8 *)0x03001d08;
+    *(s16 *)0x03001d24 = 0;
     *(s16 *)0x02002004 = -1;
-    M2C_FIELD((void *)0x02000240, s8 *, 0x11D) = 4;
-    M2C_FIELD((void *)0x02000240, s8 *, 0x11E) = 4;
-    M2C_FIELD((void *)0x02000240, s8 *, 0x11F) = 4;
-    M2C_FIELD((void *)0x02000240, s8 *, 0x120) = 8;
-    M2C_FIELD((void *)0x02000240, s8 *, 0x121) = 8;
-    M2C_FIELD((void *)0x02000240, s8 *, 0x122) = 8;
-    M2C_FIELD((void *)0x02000240, s8 *, 0x123) = 0x10;
-    M2C_FIELD((void *)0x02000240, s8 *, 0x124) = 0x10;
-    M2C_FIELD((void *)0x02000240, s8 *, 0x125) = 0x10;
-    M2C_FIELD((void *)0x02000240, s8 *, 0x126) = 0x20;
-    M2C_FIELD((void *)0x02000240, s8 *, 0x127) = 0x20;
-    M2C_FIELD((void *)0x02000240, s8 *, 0x128) = 0x20;
-    M2C_FIELD((void *)0x02000240, s8 *, 0x129) = 0x40;
-    M2C_FIELD((void *)0x02000240, s8 *, 0x12A) = 0x40;
-    M2C_FIELD((void *)0x02000240, s8 *, 0x12B) = 0x40;
-    return temp_r0;
+
+    for (group = 0; group < 5; group++) {
+        for (index = 0; index < 3; index++)
+            shared->step_table[group * 3 + index] = 4 << group;
+    }
+
+    return result;
 }

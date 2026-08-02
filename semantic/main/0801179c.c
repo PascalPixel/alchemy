@@ -1,80 +1,107 @@
+#include "layout_guard.h"
 #include "types.h"
-#define M2C_FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-void Func_0801179c(void) {
-    s32 temp_r2_2;
-    s32 var_r0;
-    s32 var_r1;
-    s32 var_r1_2;
-    s32 var_r2;
-    u16 temp_r0;
-    u16 temp_r1;
-    u16 temp_r2;
-    u16 temp_r2_3;
-    u32 var_sl;
-    void *temp_r3;
-    void *temp_r4;
-    void *temp_r4_2;
-    void *var_r5;
+struct DmaTransfer_0801179c {
+    const void *source;
+    void *destination;
+    u32 control;
+};
 
-    temp_r3 = *(void **)0x03001E70;
-    var_sl = 0;
-    var_r5 = temp_r3 + 0x18;
-    do {
-        if ((M2C_FIELD(var_r5, void **, 0) != NULL) && (M2C_FIELD(var_r5, u16 *, 0xA) == 0)) {
-loop_3:
-            temp_r2 = M2C_FIELD(var_r5, u16 *, 8);
-            if (temp_r2 == 0) {
-                temp_r4 = M2C_FIELD(var_r5, void **, 4);
-                temp_r0 = M2C_FIELD(temp_r4, u16 *, 0);
-                temp_r4_2 = temp_r4 + 2;
-                if (temp_r0 == 0xFFFF) {
-                    M2C_FIELD(var_r5, void **, 4) = (void *) M2C_FIELD(var_r5, void **, 0);
-                    goto loop_3;
-                }
-                if ((0xFF00 & temp_r0) == 0xFE00) {
-                    temp_r2_2 = 0xFF & temp_r0;
-                    if (temp_r2_2 != 0xFF) {
-                        M2C_FIELD(var_r5, void **, 4) = (void *) (M2C_FIELD(var_r5, void **, 0) + (temp_r2_2 * 4));
-                        goto loop_3;
-                    }
-                } else {
-                    temp_r2_3 = M2C_FIELD(temp_r4, u16 *, 2);
-                    temp_r1 = M2C_FIELD(temp_r4_2, u16 *, 2);
-                    M2C_FIELD(var_r5, u16 *, 8) = (u16) M2C_FIELD((temp_r4_2 + 2), u16 *, 2);
-                    if (M2C_FIELD(temp_r3, u8 *, 0x16) == 0) {
-                        if ((u32) temp_r0 >= 0x600U) {
-                            var_r2 = temp_r2_3 * 8;
-                            var_r0 = (temp_r0 << 5) + 0x0201C000;
-                            var_r1 = (temp_r1 << 5) + 0x06004000;
-                        } else {
-                            var_r2 = temp_r2_3 * 8;
-                            var_r0 = (temp_r0 << 5) + 0x06004000;
-                            var_r1 = (temp_r1 << 5) + 0x06004000;
-                        }
-                    } else {
-                        if ((u32) temp_r0 >= 0x200U) {
-                            var_r2 = temp_r2_3 * 0x10;
-                            var_r1_2 = temp_r1 << 6;
-                            var_r0 = (temp_r0 << 6) + 0x02020000;
-                        } else {
-                            var_r2 = temp_r2_3 * 0x10;
-                            var_r1_2 = temp_r1 << 6;
-                            var_r0 = (temp_r0 << 6) + 0x06008000;
-                        }
-                        var_r1 = var_r1_2 + 0x06008000;
-                    }
-                    M2C_FIELD((void *)0x040000D4, s32 *, 0) = var_r0;
-                    M2C_FIELD((void *)0x040000D4, s32 *, 4) = var_r1;
-                    M2C_FIELD((void *)0x040000D4, s32 *, 8) = (s32) (var_r2 | 0x84000000);
-                    M2C_FIELD(var_r5, void **, 4) = (void *) (M2C_FIELD(var_r5, void **, 4) + 8);
-                    goto loop_3;
-                }
-            } else {
-                M2C_FIELD(var_r5, u16 *, 8) = (u16) (temp_r2 + 0xFFFF);
+struct TileScriptChannel_0801179c {
+    const u16 *script;
+    const u16 *cursor;
+    u16 delay;
+    u16 suspended;
+};
+
+struct TileScriptRuntime_0801179c {
+    u8 padding00[0x16];
+    u8 wide_tiles;
+    u8 padding17;
+    struct TileScriptChannel_0801179c channels[16];
+};
+
+LAYOUT_OFFSET_GUARD(
+    TileScriptRuntime0801179c_WideTiles,
+    struct TileScriptRuntime_0801179c,
+    wide_tiles,
+    0x16);
+LAYOUT_OFFSET_GUARD(
+    TileScriptRuntime0801179c_Channels,
+    struct TileScriptRuntime_0801179c,
+    channels,
+    0x18);
+LAYOUT_SIZE_GUARD(
+    TileScriptChannel0801179c_Size,
+    struct TileScriptChannel_0801179c,
+    0x0c);
+
+extern struct TileScriptRuntime_0801179c *Data_03001e70;
+
+/*
+ * Advance all sixteen tile-transfer scripts.  Ordinary commands contain four
+ * halfwords: source tile, transfer span, destination tile, and delay.  0xffff
+ * restarts at the script base; 0xfeNN jumps to base + NN*4 bytes; 0xfeff is
+ * terminal.  A zero-delay channel may execute several commands in one tick.
+ */
+void Func_0801179c(void)
+{
+    struct TileScriptRuntime_0801179c *runtime = Data_03001e70;
+    volatile struct DmaTransfer_0801179c *dma =
+        (volatile struct DmaTransfer_0801179c *)0x040000d4;
+    s32 channel_index;
+
+    for (channel_index = 0; channel_index < 16; channel_index++) {
+        struct TileScriptChannel_0801179c *channel =
+            &runtime->channels[channel_index];
+
+        if (channel->script == 0 || channel->suspended != 0)
+            continue;
+
+        for (;;) {
+            const u16 *command;
+            u16 opcode;
+
+            if (channel->delay != 0) {
+                channel->delay--;
+                break;
             }
+
+            command = channel->cursor;
+            opcode = command[0];
+            if (opcode == 0xffff) {
+                channel->cursor = channel->script;
+                continue;
+            }
+            if ((opcode & 0xff00) == 0xfe00) {
+                u16 target = opcode & 0xff;
+
+                if (target != 0xff) {
+                    channel->cursor = (const u16 *)(
+                        (const u8 *)channel->script + target * 4);
+                    continue;
+                }
+                break;
+            }
+
+            if (runtime->wide_tiles == 0) {
+                dma->source = (const void *)(
+                    (opcode >= 0x600 ? 0x0201c000 : 0x06004000) +
+                    opcode * 32);
+                dma->destination =
+                    (void *)(0x06004000 + command[2] * 32);
+                dma->control = 0x84000000 | command[1] * 8;
+            } else {
+                dma->source = (const void *)(
+                    (opcode >= 0x200 ? 0x02020000 : 0x06008000) +
+                    opcode * 64);
+                dma->destination =
+                    (void *)(0x06008000 + command[2] * 64);
+                dma->control = 0x84000000 | command[1] * 16;
+            }
+
+            channel->delay = command[3];
+            channel->cursor += 4;
         }
-        var_sl += 1;
-        var_r5 += 0xC;
-    } while (var_sl <= 0xFU);
+    }
 }

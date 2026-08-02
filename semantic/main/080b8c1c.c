@@ -1,8 +1,6 @@
 #include "layout_guard.h"
 #include "types.h"
 
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-
 typedef struct Input_080b8c1c {
     s16 primary_id;
     u8 padding02[6];
@@ -21,7 +19,8 @@ typedef struct Work_080b8c1c {
     s32 mode;
     s32 unknown_1c;
     u8 padding20[4];
-    s16 members[24];
+    s16 members[8];
+    u8 child_values[8][4];
 } Work_080b8c1c;
 
 typedef struct Child_080b8c1c {
@@ -49,6 +48,11 @@ typedef struct Transition_080b8c1c {
     s32 timer;
 } Transition_080b8c1c;
 
+typedef struct WorldState_080b8c1c {
+    u8 padding00[0x41];
+    u8 display_flags;
+} WorldState_080b8c1c;
+
 LAYOUT_OFFSET_GUARD(
     Input080b8c1c_WorkFlags,
     Input_080b8c1c,
@@ -64,6 +68,11 @@ LAYOUT_OFFSET_GUARD(
     Work_080b8c1c,
     members,
     0x24);
+LAYOUT_OFFSET_GUARD(
+    Work080b8c1c_ChildValues,
+    Work_080b8c1c,
+    child_values,
+    0x34);
 LAYOUT_SIZE_GUARD(
     Work080b8c1c_Size,
     Work_080b8c1c,
@@ -74,10 +83,23 @@ LAYOUT_OFFSET_GUARD(
     record,
     0x50);
 LAYOUT_OFFSET_GUARD(
+    Record080b8c1c_ChildCount,
+    Record_080b8c1c,
+    child_count,
+    0x27);
+LAYOUT_OFFSET_GUARD(
     Record080b8c1c_Children,
     Record_080b8c1c,
     children,
     0x28);
+LAYOUT_OFFSET_GUARD(
+    WorldState080b8c1c_DisplayFlags,
+    WorldState_080b8c1c,
+    display_flags,
+    0x41);
+
+extern Transition_080b8c1c *Data_03001f00;
+extern WorldState_080b8c1c *Data_03001e74;
 
 void Func_080030f8(s32);
 void Func_08009080(Motion_080b8c1c *, s32);
@@ -98,8 +120,8 @@ void Func_080c9020(Work_080b8c1c *);
 s32 Func_080b8c1c(const Input_080b8c1c *input)
 {
     Transition_080b8c1c *transition =
-        *(Transition_080b8c1c **)0x03001f00;
-    u8 *world = *(u8 **)0x03001e74;
+        Data_03001f00;
+    WorldState_080b8c1c *world = Data_03001e74;
     Work_080b8c1c work;
     Motion_080b8c1c *primary_object;
     s32 target;
@@ -134,7 +156,7 @@ s32 Func_080b8c1c(const Input_080b8c1c *input)
         initial_team = 1;
     work.count = Func_080b6b40(initial_team, work.members);
 
-    Func_08015130(world[0x41] & ~1);
+    Func_08015130(world->display_flags & ~1);
     primary_object = Func_080b7dd0(work.primary_id)->object;
     Func_08009080(primary_object, 3);
     Func_08009088(primary_object, 16);
@@ -155,7 +177,7 @@ s32 Func_080b8c1c(const Input_080b8c1c *input)
         s32 child;
 
         for (child = 0; child < children; child++) {
-            FIELD(&work, u8, 0x34 + i * 4 + child) =
+            work.child_values[i][child] =
                 record->children[child]->value;
         }
     }

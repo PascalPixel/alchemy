@@ -1,6 +1,5 @@
+#include "layout_guard.h"
 #include "types.h"
-
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 typedef struct ActionInput_080ba978 {
     u8 primary_id;
@@ -23,7 +22,8 @@ typedef struct BattleWork_080ba978 {
     s32 mode;
     s32 unknown_1c;
     u8 padding20[4];
-    s16 members[24];
+    s16 members[8];
+    u8 child_values[8][4];
 } BattleWork_080ba978;
 
 typedef struct Motion_080ba978 {
@@ -47,6 +47,51 @@ typedef struct Record_080ba978 {
     u8 child_count;
     Child_080ba978 **children;
 } Record_080ba978;
+
+LAYOUT_OFFSET_GUARD(
+    ActionInput080ba978_TransitionValue,
+    ActionInput_080ba978,
+    transition_value,
+    0x50);
+LAYOUT_OFFSET_GUARD(
+    ActionInput080ba978_Flags,
+    ActionInput_080ba978,
+    flags,
+    0x58);
+LAYOUT_OFFSET_GUARD(
+    ActionInput080ba978_MessageMode,
+    ActionInput_080ba978,
+    message_mode,
+    0x5c);
+LAYOUT_OFFSET_GUARD(
+    BattleWork080ba978_Members,
+    BattleWork_080ba978,
+    members,
+    0x24);
+LAYOUT_OFFSET_GUARD(
+    BattleWork080ba978_ChildValues,
+    BattleWork_080ba978,
+    child_values,
+    0x34);
+LAYOUT_SIZE_GUARD(
+    BattleWork080ba978_Size,
+    BattleWork_080ba978,
+    0x54);
+LAYOUT_OFFSET_GUARD(
+    Motion080ba978_Position,
+    Motion_080ba978,
+    x,
+    8);
+LAYOUT_OFFSET_GUARD(
+    Record080ba978_ChildCount,
+    Record_080ba978,
+    child_count,
+    0x27);
+LAYOUT_OFFSET_GUARD(
+    Record080ba978_Children,
+    Record_080ba978,
+    children,
+    0x28);
 
 void Func_080041d8(u32, s32);
 u16 Func_080044d0(s32, s32);
@@ -142,7 +187,7 @@ s32 Func_080ba978(ActionInput_080ba978 *input, s32 options)
         s32 child;
 
         for (child = 0; child < children; child++) {
-            FIELD(&work, u8, 0x34 + i * 4 + child) =
+            work.child_values[i][child] =
                 record->children[child]->value;
         }
     }

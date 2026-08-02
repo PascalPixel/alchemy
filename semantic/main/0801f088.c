@@ -1,106 +1,138 @@
+#include "layout_guard.h"
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+typedef struct DmaChannel_0801f088 {
+    const void *source;
+    void *destination;
+    u32 control;
+} DmaChannel_0801f088;
 
-s32 Func_080045e8(void);
+typedef struct TileRegion_0801f088 {
+    u8 padding00[0x0c];
+    u16 x_offset;
+    u16 y_offset;
+} TileRegion_0801f088;
 
-void Func_0801f088(u8 *arg0, s32 arg1, s32 arg2, s32 arg3) {
-    s32 sp0;
-    s32 sp4;
-    u8 *sp8;
-    s32 spC;
-    s32 sp10;
-    s32 temp_r1;
-    s32 temp_r2;
-    s32 temp_r2_2;
-    s32 temp_r3_2;
-    s32 temp_r6;
-    u32 var_ip;
-    s32 var_lr;
-    u32 var_r0;
-    s32 var_r0_2;
-    s32 var_r1;
-    s32 var_r2;
-    s32 var_r3;
-    s32 var_r7;
-    u32 var_r8;
-    s32 var_r9;
-    u32 var_r4;
-    u8 *temp_r3;
+typedef union DisplayRuntime_0801f088 {
+    u16 tilemap[0x753];
+    struct {
+        u8 padding000[0xea5];
+        u8 palette_owned;
+    } control;
+} DisplayRuntime_0801f088;
 
-    sp10 = arg1;
-    var_r9 = arg3;
-    temp_r3 = *(void **)0x03001E8C;
-    sp8 = temp_r3;
-    sp4 = var_r9;
-    if (M2C_FIELD(temp_r3, u8 *, 0xEA5) == 0) {
-        M2C_FIELD((void *)0x040000D4, s32 *, 0) = Func_080045e8();
-        M2C_FIELD((void *)0x040000D4, s32 *, 4) = 0x050001C0;
-        M2C_FIELD((void *)0x040000D4, s32 *, 8) = 0x80000010;
-        *(u16 *)0x050001DC = *(u16 *)0x050001E8;
+LAYOUT_OFFSET_GUARD(
+    TileRegion0801f088_XOffset,
+    TileRegion_0801f088,
+    x_offset,
+    0x0c);
+LAYOUT_OFFSET_GUARD(
+    TileRegion0801f088_YOffset,
+    TileRegion_0801f088,
+    y_offset,
+    0x0e);
+LAYOUT_OFFSET_GUARD(
+    DisplayRuntime0801f088_PaletteOwned,
+    DisplayRuntime_0801f088,
+    control.palette_owned,
+    0xea5);
+
+extern DisplayRuntime_0801f088 *Data_03001e8c;
+
+const void *Func_080045e8(void);
+
+static void BuildReplacementMasks_0801f088(
+    s32 boundary,
+    u32 *color_e,
+    u32 *color_1)
+{
+    *color_e = 0x22222222;
+    *color_1 = 0xcccccccc;
+
+    if (boundary > 7) {
+        *color_e = 0x88888888;
+        *color_1 = 0xdddddddd;
+    } else if (boundary >= 0) {
+        u32 shift = (u32)boundary * 4;
+        u32 opposite = 32 - shift;
+        u32 e_tail = opposite == 32 ? 0 : 0x88888888 >> opposite;
+        u32 one_tail = opposite == 32 ? 0 : 0xdddddddd >> opposite;
+
+        *color_e = (0x22222222 << shift) | e_tail;
+        *color_1 = (0xcccccccc << shift) | one_tail;
     }
-    sp10 += M2C_FIELD(arg0, u16 *, 0xC);
-    sp0 = (arg2 + M2C_FIELD(arg0, u16 *, 0xE)) << 5;
-    spC = 4;
-    do {
-        var_r8 = 0x22222222;
-        var_ip = 0xCCCCCCCC;
-        if (var_r9 > 7) {
-            var_r0 = 0xDDDDDDDD;
-            var_r8 = 0x88888888;
-            goto block_7;
-        }
-        if (var_r9 >= 0) {
-            temp_r1 = var_r9 * 4;
-            temp_r2 = 0x20 - temp_r1;
-            var_r8 = (0x22222222U << temp_r1) |
-                (temp_r2 == 32 ? 0 : 0x88888888U >> temp_r2);
-            var_r0 = (0xCCCCCCCCU << temp_r1) |
-                (temp_r2 == 32 ? 0 : 0xDDDDDDDDU >> temp_r2);
-block_7:
-            var_ip = var_r0;
-        }
-        var_lr = 0;
-        var_r7 = 0;
-loop_18:
-        if (sp4 != 0) {
-            if (var_lr > 2) {
+}
 
-            } else {
-                goto block_9;
-            }
-        } else if (var_lr <= 0) {
-block_9:
-            temp_r6 = (M2C_FIELD(sp8, u16 *, (sp0 + sp10) * 2) & 0x3FF) << 5;
-            var_r4 = M2C_FIELD((u8 *)0x0600001C, u32 *, temp_r6 - var_r7);
-            var_r1 = 0;
-            var_r0_2 = 0;
-            do {
-                temp_r2_2 = var_r4 & 0xF;
-                if (temp_r2_2 == 0xE) {
-                    var_r3 = (s32)(0xFU << (var_r1 * 4));
-                    var_r2 = var_r8;
-                    goto block_14;
-                }
-                if (temp_r2_2 == 1) {
-                    var_r3 = (s32)(0xFU << (var_r1 * 4));
-                    var_r2 = var_ip;
-block_14:
-                    var_r0_2 |= var_r3 & var_r2;
-                } else {
-                    var_r0_2 |= temp_r2_2 << (var_r1 * 4);
-                }
-                var_r1 += 1;
-                var_r4 = var_r4 >> 4;
-            } while (var_r1 <= 7);
-            M2C_FIELD((u8 *)0x0600001C, s32 *, temp_r6 - var_r7) = var_r0_2;
-            var_r7 += 4;
-            var_lr += 1;
-            goto loop_18;
+static u32 RecolorPixels_0801f088(
+    u32 pixels,
+    u32 color_e,
+    u32 color_1)
+{
+    u32 recolored = 0;
+    s32 pixel;
+
+    for (pixel = 0; pixel < 8; pixel++) {
+        u32 shift = (u32)pixel * 4;
+        u32 value = pixels & 0x0f;
+        u32 nibble_mask = 0x0f << shift;
+
+        if (value == 0x0e)
+            recolored |= color_e & nibble_mask;
+        else if (value == 1)
+            recolored |= color_1 & nibble_mask;
+        else
+            recolored |= value << shift;
+        pixels >>= 4;
+    }
+
+    return recolored;
+}
+
+/*
+ * Recolor a five-tile horizontal strip as a wipe crosses it.  Palette indices
+ * 0xe and 1 are replaced with complementary dither masks; other pixels are
+ * preserved.  A nonzero mode updates three tile rows, while mode zero updates
+ * only the bottom row.
+ */
+void Func_0801f088(
+    TileRegion_0801f088 *region,
+    s32 x,
+    s32 y,
+    s32 boundary)
+{
+    DisplayRuntime_0801f088 *runtime = Data_03001e8c;
+    s32 tile_x = x + region->x_offset;
+    s32 tile_row = (y + region->y_offset) << 5;
+    s32 initial_boundary = boundary;
+    s32 column;
+
+    if (runtime->control.palette_owned == 0) {
+        volatile DmaChannel_0801f088 *dma =
+            (volatile DmaChannel_0801f088 *)0x040000d4;
+
+        dma->source = Func_080045e8();
+        dma->destination = (void *)0x050001c0;
+        dma->control = 0x80000010;
+        *(volatile u16 *)0x050001dc = *(volatile u16 *)0x050001e8;
+    }
+
+    for (column = 0; column < 5; column++) {
+        u32 color_e;
+        u32 color_1;
+        u16 tile_id = runtime->tilemap[tile_row + tile_x] & 0x03ff;
+        volatile u32 *tile_end =
+            (volatile u32 *)(0x0600001c + ((u32)tile_id << 5));
+        s32 row_count = initial_boundary != 0 ? 3 : 1;
+        s32 row;
+
+        BuildReplacementMasks_0801f088(boundary, &color_e, &color_1);
+        for (row = 0; row < row_count; row++) {
+            volatile u32 *pixels = tile_end - row;
+
+            *pixels = RecolorPixels_0801f088(*pixels, color_e, color_1);
         }
-        temp_r3_2 = spC - 1;
-        var_r9 -= 8;
-        spC = temp_r3_2;
-        sp10 += 1;
-    } while (temp_r3_2 >= 0);
+
+        boundary -= 8;
+        tile_x++;
+    }
 }

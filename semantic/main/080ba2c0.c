@@ -1,6 +1,5 @@
+#include "layout_guard.h"
 #include "types.h"
-
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 typedef struct BattleInput {
     u8 primary_id;
@@ -47,6 +46,84 @@ typedef struct Record {
     Child *child;
 } Record;
 
+typedef struct Character_080ba2c0 {
+    u8 padding000[0x128];
+    u8 height_class;
+} Character_080ba2c0;
+
+typedef struct WorldState_080ba2c0 {
+    u8 padding00[0x41];
+    u8 display_flags;
+} WorldState_080ba2c0;
+
+typedef struct BattleRuntime_080ba2c0 {
+    s32 facing;
+    s32 padding04[4];
+    s32 temporary_effect_active;
+} BattleRuntime_080ba2c0;
+
+typedef struct WindowRegisters_080ba2c0 {
+    u16 win0_horizontal;
+    u16 win1_horizontal;
+    u16 win0_vertical;
+    u16 win1_vertical;
+    u16 inside;
+    u16 outside;
+} WindowRegisters_080ba2c0;
+
+LAYOUT_OFFSET_GUARD(
+    BattleInput080ba2c0_Mode,
+    BattleInput,
+    mode,
+    0x1e);
+LAYOUT_OFFSET_GUARD(
+    BattleInput080ba2c0_EffectFlag,
+    BattleInput,
+    effect_flag,
+    0x2c);
+LAYOUT_OFFSET_GUARD(
+    BattleInput080ba2c0_Flags,
+    BattleInput,
+    flags,
+    0x58);
+LAYOUT_OFFSET_GUARD(
+    BattleWork080ba2c0_Members,
+    BattleWork,
+    members,
+    0x24);
+LAYOUT_SIZE_GUARD(
+    BattleWork080ba2c0_Size,
+    BattleWork,
+    0x54);
+LAYOUT_OFFSET_GUARD(
+    Motion080ba2c0_Position,
+    Motion,
+    x,
+    8);
+LAYOUT_OFFSET_GUARD(
+    Record080ba2c0_Child,
+    Record,
+    child,
+    0x28);
+LAYOUT_OFFSET_GUARD(
+    Character080ba2c0_HeightClass,
+    Character_080ba2c0,
+    height_class,
+    0x128);
+LAYOUT_OFFSET_GUARD(
+    WorldState080ba2c0_DisplayFlags,
+    WorldState_080ba2c0,
+    display_flags,
+    0x41);
+LAYOUT_OFFSET_GUARD(
+    BattleRuntime080ba2c0_TemporaryEffect,
+    BattleRuntime_080ba2c0,
+    temporary_effect_active,
+    0x14);
+
+extern BattleRuntime_080ba2c0 *Data_03001f00;
+extern WorldState_080ba2c0 *Data_03001e74;
+
 s32 Func_080022ec(s32, s32);
 void Func_080030f8(s32);
 void Func_080041d8(u32, s32);
@@ -54,7 +131,7 @@ u16 Func_080044d0(s32, s32);
 void Func_08009088(Motion *, s32);
 s32 Func_08009260(s16, s32, s32);
 void Func_08015130(s32);
-u8 *Func_08077008(s32);
+Character_080ba2c0 *Func_08077008(s32);
 void Func_080b6cb0(void);
 void Func_080b7b6c(s16 *, s32);
 Slot *Func_080b7dd0(u8);
@@ -80,7 +157,7 @@ void Func_080c9018(BattleWork *);
 s32 Func_080ba2c0(BattleInput *input)
 {
     BattleWork work;
-    s32 *global = *(s32 **)0x03001f00;
+    BattleRuntime_080ba2c0 *global = Data_03001f00;
     Motion *primary_object = Func_080b7dd0(input->primary_id)->object;
     u16 angle = Func_080044d0(primary_object->x, primary_object->z);
     s32 adjusted;
@@ -88,7 +165,7 @@ s32 Func_080ba2c0(BattleInput *input)
     s32 divisor;
     s32 scripted;
     s32 has_temporary_effect = 0;
-    u8 *primary_record;
+    Character_080ba2c0 *primary_record;
 
     if (input->primary_id > 7)
         adjusted = angle + 0x6000;
@@ -97,19 +174,18 @@ s32 Func_080ba2c0(BattleInput *input)
     adjusted &= 0x7fff;
     facing = ((adjusted - 0x2000) / 2) + 0x2000;
 
-    if (global[0] == facing) {
-        global[0] = facing;
+    if (global->facing == facing) {
+        global->facing = facing;
         Func_080030f8(5);
     } else {
-        global[0] = facing;
+        global->facing = facing;
         Func_080030f8(0x0a);
     }
 
     Func_080c10e8(0, 0);
     Func_080b9d34(input, &work);
     if (work.flags == 0x87) {
-        u8 *state = *(u8 **)0x03001e74;
-        Func_08015130(state[0x41] & ~1);
+        Func_08015130(Data_03001e74->display_flags & ~1);
     }
 
     primary_record = Func_08077008(work.primary_id);
@@ -124,17 +200,22 @@ s32 Func_080ba2c0(BattleInput *input)
         work.primary_id,
         work.members[0],
         divisor,
-        Func_080c2410(primary_record[0x128]) << 16);
+        Func_080c2410(primary_record->height_class) << 16);
     Func_08009088(Func_080b7dd0((u8)work.primary_id)->object, 0x10);
     Func_080b7dd0((u8)work.members[0]);
     work.secondary_is_low_id = (u16)work.members[0] <= 7;
 
-    *(volatile u16 *)0x04000040 = 0x00f0;
-    *(volatile u16 *)0x04000042 = 0x00f0;
-    *(volatile u16 *)0x04000044 = 0x1088;
-    *(volatile u16 *)0x04000046 = 0x1088;
-    *(volatile u16 *)0x04000048 = 0x3537;
-    *(volatile u16 *)0x0400004a = 0x3f21;
+    {
+        volatile WindowRegisters_080ba2c0 *window =
+            (volatile WindowRegisters_080ba2c0 *)0x04000040;
+
+        window->win0_horizontal = 0x00f0;
+        window->win1_horizontal = 0x00f0;
+        window->win0_vertical = 0x1088;
+        window->win1_vertical = 0x1088;
+        window->inside = 0x3537;
+        window->outside = 0x3f21;
+    }
     *(volatile u16 *)0x04000000 |= 0x6000;
 
     if (scripted != 0) {
@@ -157,7 +238,7 @@ s32 Func_080ba2c0(BattleInput *input)
 
             work.flags += 0xc8;
             has_temporary_effect = 1;
-            global[5] = 1;
+            global->temporary_effect_active = 1;
             members[0] = work.primary_id;
             members[1] = work.secondary_id;
             members[2] = 0xff;
@@ -187,7 +268,7 @@ s32 Func_080ba2c0(BattleInput *input)
         Func_080be02c();
 
         if (input->effect_flag != 0) {
-            global[5] = 0;
+            global->temporary_effect_active = 0;
             Func_080b6cb0();
             Func_080c0cec(0, 0, 0, 0x64);
         }

@@ -1,67 +1,75 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
-typedef signed long long s64;
-typedef unsigned long long u64;
-typedef int bool;
-#define NULL ((void *)0)
-#define M2C_FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+#include "metadata_lookup.h"
+#include "types.h"
 
-void *Func_08185000(s32);
+struct AnimationMetadata_0800bbc0 {
+    u8 width;
+    u8 height;
+    u16 scale;
+    u8 draw_kind;
+    u8 animation_count;
+    s8 adjust_x;
+    s8 adjust_y;
+    u8 padding08[2];
+    u8 frame_codec;
+    u8 padding0b;
+    s32 frames;
+    const s32 *animation;
+};
+
+struct AnimationObject_0800bbc0 {
+    s16 resource_id;
+    u8 padding02[2];
+    u8 draw_kind;
+    u8 state;
+    u8 padding06;
+    u8 frame_codec;
+    s32 frames;
+    const s32 *animation;
+    s32 current;
+    u8 finished;
+    u8 padding15;
+    u8 marker;
+    u8 padding17;
+};
+
+extern struct AnimationObject_0800bbc0 *Data_03001e5c;
+
 s32 Func_0800b798(s32);
-extern u8 Data_00000000[];
 
-void *Func_0800bbc0(s32 arg0) {
-    void *sp0;
-    void *temp_r0;
-    void *var_r2;
-    void *var_r4;
-    void *var_r5;
-    s32 var_r0;
-    s32 var_r1;
-    s32 *temp_r2;
-    u8 var_r3;
-    void *zero;
+/*
+ * Allocate one of 64 animation-object records and seed it from the resource
+ * metadata.  A zero-width resource is not drawable.  Metadata may omit its
+ * frame count, in which case Func_0800b798 derives it from the animation.
+ */
+struct AnimationObject_0800bbc0 *Func_0800bbc0(s32 resource_id)
+{
+    struct AnimationMetadata_0800bbc0 *metadata =
+        (struct AnimationMetadata_0800bbc0 *)Func_08185000(resource_id);
+    struct AnimationObject_0800bbc0 *object = 0;
+    s32 index;
 
-    sp0 = NULL;
-    temp_r0 = Func_08185000(arg0);
-    var_r2 = *(void **)0x03001E5C;
-    var_r5 = NULL;
-    var_r4 = sp0;
-    if (M2C_FIELD(temp_r0, u8, 0) != 0) {
-        var_r1 = 0;
-        var_r3 = M2C_FIELD(var_r2, u8, 4);
-        while (var_r3 != 0) {
-            var_r1++;
-            var_r2 += 0x18;
-            if (var_r1 > 0x3F) {
-                goto done;
-            }
-            var_r3 = M2C_FIELD(var_r2, u8, 4);
-        }
-        var_r4 = var_r2;
-done:
-        if (var_r4 != NULL) {
-            zero = Data_00000000;
-            var_r0 = M2C_FIELD(temp_r0, s32, 0xC);
-            var_r5 = var_r4;
-            M2C_FIELD(var_r5, s16, 0) = arg0;
-            if (var_r0 == 0) {
-                var_r0 = Func_0800b798(arg0);
-            }
-            temp_r2 = M2C_FIELD(temp_r0, s32 *, 0x10);
-            M2C_FIELD(var_r5, s32, 8) = var_r0;
-            M2C_FIELD(var_r5, s32 *, 0xC) = temp_r2;
-            M2C_FIELD(var_r5, u8, 7) = M2C_FIELD(temp_r0, u8, 0xA);
-            M2C_FIELD(var_r5, u8, 0x16) = 0xFF;
-            M2C_FIELD(var_r5, s32, 0x10) = *temp_r2;
-            M2C_FIELD(var_r5, u8, 0x14) = (u32)zero;
-            M2C_FIELD(var_r5, u8, 4) = M2C_FIELD(temp_r0, u8, 4);
-            M2C_FIELD(var_r5, u8, 5) = (u32)zero;
+    if (metadata->width == 0)
+        return 0;
+
+    for (index = 0; index < 64; index++) {
+        if (Data_03001e5c[index].draw_kind == 0) {
+            object = &Data_03001e5c[index];
+            break;
         }
     }
-    return var_r5;
+    if (object == 0)
+        return 0;
+
+    object->resource_id = (s16)resource_id;
+    object->frames = metadata->frames;
+    if (object->frames == 0)
+        object->frames = Func_0800b798(resource_id);
+    object->animation = metadata->animation;
+    object->frame_codec = metadata->frame_codec;
+    object->marker = 0xff;
+    object->current = metadata->animation[0];
+    object->finished = 0;
+    object->draw_kind = metadata->draw_kind;
+    object->state = 0;
+    return object;
 }

@@ -1828,16 +1828,25 @@ const ASSET_FRACTION: Record<string, number> = {
   asset_data: 0.08,
 };
 const BOX_TREE_LEGEND: Record<string, string> = {
-  exact_c: "Exact C",
-  semantic_c: "Semantic C",
-  assembly: "Assembly",
-  retained_asm: "Permanent asm",
+  exact_c: "Exact",
+  semantic_c: "Semantic",
+  assembly: "Unknown",
+  retained_asm: "Assembly",
   asset_objects: "Objects",
   asset_color: "Color images",
   asset_bw: "B&W",
   asset_bytes: "Encoded bytes",
   asset_unclassified: "Unclassified",
   asset_data: "Data / assets",
+};
+
+// The 540 px README canvas and the one permitted 16 px pixel font are both
+// fixed. These shorter forms leave room for an honest one-decimal percentage
+// without shrinking or horizontally scaling Weyard.
+const BOX_TREE_COMPACT_LEGEND: Record<string, string> = {
+  asset_color: "Color",
+  asset_bytes: "Encoded",
+  asset_unclassified: "Unknown",
 };
 
 let weyardFontBase64: string | undefined;
@@ -2005,6 +2014,15 @@ function preciseRect(rectangle: Rect, attributes: string): string {
     `height="${precise(bottom - y)}" ${attributes}/>`;
 }
 
+function boxTreeCategoryBytes(area: Area, category: string): number {
+  return area.tiles.reduce((sum, tile) => sum + (tile.categories[category] ?? 0), 0);
+}
+
+function boxTreePercent(bytes: number, total: number): string {
+  if (total <= 0) return "0.0%";
+  return `${(Math.round(bytes * 1_000 / total) / 10).toFixed(1)}%`;
+}
+
 /**
  * A recursive SpaceMonger-style box tree. Parent rectangles are real logical
  * owners and derive their byte size exclusively from their descendants. Leaves
@@ -2016,7 +2034,7 @@ export function renderBoxTree(
   ariaLabel: string,
   hue: HueBand = CORE_HUE,
   categoryFraction: Record<string, number> = CODE_FRACTION,
-  categoryOrder: readonly string[] = ["humanized_c", "exact_c", "semantic_c", "assembly", "retained_asm"],
+  categoryOrder: readonly string[] = ["assembly", "retained_asm", "semantic_c", "exact_c", "humanized_c"],
   folders: readonly TileFolder[] = [],
   title = area.label,
 ): string {
@@ -2116,17 +2134,38 @@ export function renderBoxTree(
   }
   drawNodes(nodes, plot, 0);
   lines.push(`<text class="weyard" x="6" y="17">${escapeText(title.toUpperCase())}</text>`);
+  const completionCategory = categoryOrder.includes("exact_c")
+    ? "exact_c"
+    : categoryOrder.includes("asset_objects")
+    ? "asset_objects"
+    : categoryOrder[0];
+  if (completionCategory !== undefined) {
+    const completionLabel = completionCategory === "exact_c"
+      ? "EXACT"
+      : (BOX_TREE_LEGEND[completionCategory] ?? completionCategory).toUpperCase();
+    // Retained assembly is source-owned and byte-exact too; it stays orange so
+    // readers can distinguish its representation, but it belongs in the title
+    // bar's exact-completion total rather than in unknown/decompilation debt.
+    const completionBytes = boxTreeCategoryBytes(area, completionCategory) +
+      (completionCategory === "exact_c" ? boxTreeCategoryBytes(area, "retained_asm") : 0);
+    const completion = boxTreePercent(completionBytes, area.bytes);
+    lines.push(`<text class="weyard" x="${width - 6}" y="17" text-anchor="end">` +
+      `${escapeText(`${completionLabel} ${completion}`)}</text>`);
+  }
   let legendX = 6;
+  const legendCenterY = height - 11;
   for (const category of categoryOrder) {
     const legendLabel = BOX_TREE_LEGEND[category];
     if (legendLabel === undefined) continue;
-    const swatch = { x: legendX, y: height - 17, width: 10, height: 10 };
+    const percentage = boxTreePercent(boxTreeCategoryBytes(area, category), area.bytes);
+    const displayLabel = `${BOX_TREE_COMPACT_LEGEND[category] ?? legendLabel} ${percentage}`;
+    const swatch = { x: legendX, y: legendCenterY - 5, width: 10, height: 10 };
     lines.push(category === "retained_asm"
       ? preciseRect(swatch, `fill="${RETAINED_ASM_FILL}"`)
       : preciseRect(swatch, cellAttributes(categoryFraction[category] ?? 0.08)));
-    lines.push(`<text class="weyard" x="${precise(legendX + 14)}" y="${height - 4}">` +
-      `${escapeText(legendLabel)}</text>`);
-    legendX += 24 + legendLabel.length * 8;
+    lines.push(`<text class="weyard" x="${precise(legendX + 14)}" y="${legendCenterY}" ` +
+      `dominant-baseline="middle">${escapeText(displayLabel)}</text>`);
+    legendX += 16 + displayLabel.length * 8;
   }
   lines.push("</svg>");
   return lines.join("\n");
@@ -2191,17 +2230,17 @@ export function renderBoxTrees(
     core: renderBoxTree(core,
       "Main-image code coverage box tree, purple band; 64 KiB address banks contain audited source-owner leaves at their natural executable byte size",
       CORE_HUE, CODE_FRACTION,
-      ["humanized_c", "exact_c", "semantic_c", "assembly", "retained_asm"], ["group"], "Main image"),
+      ["assembly", "retained_asm", "semantic_c", "exact_c", "humanized_c"], ["group"], "Main image"),
     overlays: renderBoxTree(overlays,
       "Decoded code-overlay coverage box tree, cyan band; each resource contains its exact, semantic, and unowned source regions",
       OVERLAY_HUE, CODE_FRACTION,
-      ["humanized_c", "exact_c", "semantic_c", "assembly", "retained_asm"], ["group"], "Code overlays"),
+      ["assembly", "retained_asm", "semantic_c", "exact_c", "humanized_c"], ["group"], "Code overlays"),
     assets: renderBoxTree(assetsArea,
       detailedAssets
         ? `Asset maturity box tree, pink band; ${commas(cataloguedBytes)} catalogued bytes are tiered by tracked sources and ${commas(unclassifiedBytes)} unclassified ROM-image data bytes remain at the byte-represented floor`
         : "Asset maturity box tree, pink band",
       ASSET_HUE, ASSET_FRACTION,
-      detailedAssets ? ["asset_objects", "asset_color", "asset_bw", "asset_bytes", "asset_unclassified"] : ["asset_data"],
+      detailedAssets ? ["asset_unclassified", "asset_bytes", "asset_bw", "asset_color", "asset_objects"] : ["asset_data"],
       maturityWithRemainder.some((tile) => tile.group !== undefined)
         ? ["group", "subgroup"]
         : [], "Data / assets"),
@@ -2583,6 +2622,9 @@ export function selfTest(): void {
   if (!retainedTree.includes(`fill:${RETAINED_ASM_FILL}`) || retainedTree.includes("#141414")) {
     throw new Error("retained assembly is not rendered orange in the box trees");
   }
+  if (!retainedTree.includes("EXACT 100.0%")) {
+    throw new Error("retained assembly was omitted from exact completion");
+  }
 
   const map: CoverageMap = {
     format: 1,
@@ -2621,9 +2663,19 @@ export function selfTest(): void {
       /font-size:(?!16px)/.test(boxTree)) {
     throw new Error("box-tree chrome does not use only 16px Weyard");
   }
-  if (!boxTree.includes("Exact C") || !boxTree.includes("Semantic C") ||
-      !boxTree.includes("Permanent asm")) {
+  if (!boxTree.includes("Exact 30.0%") || !boxTree.includes("Semantic 40.0%") ||
+      !boxTree.includes("Assembly 0.0%") || !boxTree.includes("Unknown 30.0%")) {
     throw new Error("box-tree title or legend is missing from the reproducible SVG");
+  }
+  if (!boxTree.includes("EXACT 30.0%") ||
+      !boxTree.includes('dominant-baseline="middle"')) {
+    throw new Error("box-tree completion or vertically centred legend is missing");
+  }
+  const legendOrder = ["Unknown 30.0%", "Assembly 0.0%", "Semantic 40.0%", "Exact 30.0%"]
+    .map((legend) => boxTree.indexOf(`>${legend}</text>`));
+  if (legendOrder.some((index) => index < 0) ||
+      legendOrder.some((index, position) => position > 0 && index <= legendOrder[position - 1])) {
+    throw new Error("box-tree legend no longer runs from unknown through exact");
   }
   if (!boxTree.includes('viewBox="0 0 540 304"') ||
       !boxTree.includes('width="540" height="304"')) {

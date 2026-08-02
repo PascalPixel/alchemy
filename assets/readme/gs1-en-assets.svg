@@ -9682,14 +9682,15 @@
 <rect x="534.339867" y="278.637583" width="2.660133" height="1.362417" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
 </g>
 <text class="weyard" x="6" y="17">DATA / ASSETS</text>
-<rect x="6" y="287" width="10" height="10" style="fill:hsl(330, 95%, 55%);fill:oklch(0.550 0.300 355)"/>
-<text class="weyard" x="20" y="300">Objects</text>
-<rect x="86" y="287" width="10" height="10" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
-<text class="weyard" x="100" y="300">Color images</text>
-<rect x="206" y="287" width="10" height="10" style="fill:hsl(330, 32%, 80%);fill:oklch(0.801 0.102 355)"/>
-<text class="weyard" x="220" y="300">B&amp;W</text>
-<rect x="254" y="287" width="10" height="10" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
-<text class="weyard" x="268" y="300">Encoded bytes</text>
-<rect x="382" y="287" width="10" height="10" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
-<text class="weyard" x="396" y="300">Unclassified</text>
+<text class="weyard" x="534" y="17" text-anchor="end">OBJECTS 37.7%</text>
+<rect x="6" y="288" width="10" height="10" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
+<text class="weyard" x="20" y="293" dominant-baseline="middle">Unknown 0.0%</text>
+<rect x="118" y="288" width="10" height="10" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
+<text class="weyard" x="132" y="293" dominant-baseline="middle">Encoded 13.8%</text>
+<rect x="238" y="288" width="10" height="10" style="fill:hsl(330, 32%, 80%);fill:oklch(0.801 0.102 355)"/>
+<text class="weyard" x="252" y="293" dominant-baseline="middle">B&amp;W 0.1%</text>
+<rect x="318" y="288" width="10" height="10" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
+<text class="weyard" x="332" y="293" dominant-baseline="middle">Color 48.3%</text>
+<rect x="422" y="288" width="10" height="10" style="fill:hsl(330, 95%, 55%);fill:oklch(0.550 0.300 355)"/>
+<text class="weyard" x="436" y="293" dominant-baseline="middle">Objects 37.7%</text>
 </svg>

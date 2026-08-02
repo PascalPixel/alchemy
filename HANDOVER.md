@@ -138,6 +138,19 @@ dashboard uses natural source/owner boundaries instead of artificial roughly
 equal blocks and reserves orange for evidence-backed retained assembly or
 explicit non-code data.
 
+### 0807 main-image tranche
+
+The `0x08070000–0x0807ffff` bank is independently closed for ownership: its
+14,376 executable bytes partition into 8,096 exact C bytes, 5,432 reviewed
+semantic-C bytes, and 848 evidence-backed structural bytes. The 848 bytes are
+800 bytes of fixed linker veneers (`ldr`/`bx` stubs) and 48 bytes of explicit
+two-byte alignment fillers; there is no ordinary or unowned assembly in this
+bank. The semantic owners are therefore an exact-C backlog, not an inventory
+gap. Bounded compiler/source probes found no exact route yet; the strongest
+source-grounded floors currently are `0807905c` at 310 differing halfwords and
+`08079460` at 173 under a routed experimental pair. Those probes remain
+unpromoted until a canonical source reproduces the reference bytes.
+
 ## Code-overlay audit
 
 The 96 decoded code overlays are the largest open program scope:

@@ -308,6 +308,42 @@
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
     },
     {
+      "overlay": "resource_371", "entry": "0x020027dc", "span_bytes": 64,
+      "evidence": "complete registry scan through its sole interworking return and directly referenced registry-base pool word before 0x0200281c; the first active type-0x8a record is changed from state 2 to state 1 and receives result 33, with no calls"
+    },
+    {
+      "overlay": "resource_371", "entry": "0x0200281c", "span_bytes": 60,
+      "evidence": "complete actor-55 dialogue/presentation wrapper through its sole bx-lr return and two directly referenced dialogue/scene pool words before 0x02002858; all six calls preserve machine order"
+    },
+    {
+      "overlay": "resource_371", "entry": "0x02002858", "span_bytes": 80,
+      "evidence": "complete dialogue-0x2643 actor-zero restoration owner through its sole bx-lr return, alignment and four directly referenced pool words before 0x020028a8; all eight calls preserve machine order"
+    },
+    {
+      "overlay": "resource_371", "entry": "0x020028a8", "span_bytes": 64,
+      "evidence": "complete dialogue-0x264c conditional story-result owner through its sole bx-lr return and two directly referenced dialogue/workspace pool words before 0x020028e8; all six calls preserve branch and machine order"
+    },
+    {
+      "overlay": "resource_371", "entry": "0x020028e8", "span_bytes": 972,
+      "evidence": "complete dialogue-0x2644 presentation scene through its sole high-register interworking return at 0x02002c60-0x02002c6a and eighteen-word literal pool through 0x02002cb3; all 87 static calls preserve branch and machine order across lead-actor boundary repair, transient-effect construction, selected-actor and actor-55 choreography, restoration and story publication"
+    },
+    {
+      "overlay": "resource_371", "entry": "0x020037d8", "span_bytes": 116,
+      "evidence": "complete actor-98 story-state publication owner through its sole interworking return, alignment and four directly referenced pool words before 0x0200384c; all six calls preserve branch and machine order"
+    },
+    {
+      "overlay": "resource_371", "entry": "0x0200384c", "span_bytes": 176,
+      "evidence": "complete selected-actor/actor-54 sixty-tick synchronized motion owner through its sole high-register return, alignment and three-word pool before 0x020038fc; all twelve static calls preserve loop and machine order"
+    },
+    {
+      "overlay": "resource_371", "entry": "0x020038fc", "span_bytes": 96,
+      "evidence": "complete display-bank blend-register restoration owner through its sole bx-lr return, alignment and branch-local literal pools before 0x0200395c; all three MMIO-helper calls preserve branch and machine order"
+    },
+    {
+      "overlay": "resource_371", "entry": "0x0200395c", "span_bytes": 160,
+      "evidence": "complete transition-phase diagonal camera-step owner through its sole interworking return, alignment and three-word pool before 0x020039fc; all five calls preserve branch, switch-sharing and machine order"
+    },
+    {
       "overlay": "resource_371",
       "entry": "0x020039fc",
       "span_bytes": 1296,
@@ -1970,6 +2006,18 @@
       "evidence": "complete actor-8 timed flag/dialogue scene through its sole return and two-word pool before 0x02000754; all eight ordered calls are explicit ordinary C"
     },
     {
+      "overlay": "resource_385", "entry": "0x02000754", "span_bytes": 48,
+      "evidence": "complete actor-11 temporary-acceptance dialogue wrapper through its sole return and one-word pool before 0x02000784; all four ordered calls and typed acceptance toggles are explicit ordinary C"
+    },
+    {
+      "overlay": "resource_385", "entry": "0x02000784", "span_bytes": 80,
+      "evidence": "complete actor-12 timed two-flag dialogue scene through its sole return, alignment and three-word pool before 0x020007d4; all nine ordered calls are explicit ordinary C"
+    },
+    {
+      "overlay": "resource_385", "entry": "0x020007d4", "span_bytes": 48,
+      "evidence": "complete actor-13 temporary-acceptance dialogue wrapper through its sole return and one-word pool before 0x02000804; all four ordered calls and typed acceptance toggles are explicit ordinary C"
+    },
+    {
       "overlay": "resource_385",
       "entry": "0x02000f30",
       "span_bytes": 296,
@@ -2148,6 +2196,12 @@
       "entry": "0x020004f4",
       "span_bytes": 392,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_387), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; span read from the disassembly through the epilogue at 0x02000668 and the four-word literal pool 0x0200066c-0x0200067b to the next function's prologue at 0x0200067c, inside the assembled overlay image and not overlapping another recorded owner; hand-drafted from the bytes, with tools/m2c_guard.ts clearing the row and reporting full call coverage."
+    },
+    {
+      "overlay": "resource_387",
+      "entry": "0x0200067c",
+      "span_bytes": 1672,
+      "evidence": "complete two-path presentation script through its sole interworking return at 0x02000cf0-0x02000cf4 and final three-word pool through 0x02000d03 before the next prologue; the short flag-0x855-clear restoration path and long actor-0/1/2 choreography keep all 186 static calls explicit in machine order, with every referenced literal island contained and no assembly embedding"
     },
     {
       "overlay": "resource_387",
@@ -3369,6 +3423,99 @@
     },
     {
       "overlay": "resource_396",
+      "entry": "0x02000104",
+      "span_bytes": 56,
+      "evidence": "complete prologue-less object integrator through its sole bx-lr return at 0x02000138 and alignment through 0x0200013b before the next prologue; no calls or literal pool, and all three position axes, two presentation accumulators and the owner heading halfword are advanced from their explicit per-frame deltas"
+    },
+    {
+      "overlay": "resource_396",
+      "entry": "0x0200013c",
+      "span_bytes": 472,
+      "evidence": "complete eight-argument flag-driven particle factory through the high-register unwind at 0x020002f6-0x02000306 and three directly referenced selector-table/default-callback/mask pool words through 0x02000313; all ten static calls, template presentation inheritance, velocity and accumulator initialization, selector-derived rate calculation and every optional high-bit parameter block are explicit, with Func_02000104 installed as the default callback"
+    },
+    {
+      "overlay": "resource_396",
+      "entry": "0x02000314",
+      "span_bytes": 8,
+      "evidence": "complete prologue-less persistent-workspace getter through its sole bx-lr return at 0x02000316 and the directly referenced pointer pool word at 0x02000318-0x0200031b; no calls, and the returned 0x0200a5cc address is not dereferenced by this leaf"
+    },
+    {
+      "overlay": "resource_396",
+      "entry": "0x0200031c",
+      "span_bytes": 8,
+      "evidence": "complete prologue-less persistent-workspace getter through its sole bx-lr return at 0x0200031e and the directly referenced pointer pool word at 0x02000320-0x02000323; no calls, and the returned 0x0200a9d4 address is not dereferenced by this leaf"
+    },
+    {
+      "overlay": "resource_396",
+      "entry": "0x02000324",
+      "span_bytes": 8,
+      "evidence": "complete prologue-less persistent-workspace getter through its sole bx-lr return at 0x02000326 and the directly referenced pointer pool word at 0x02000328-0x0200032b; no calls, and the returned 0x0200aa14 address is not dereferenced by this leaf"
+    },
+    {
+      "overlay": "resource_396",
+      "entry": "0x0200032c",
+      "span_bytes": 8,
+      "evidence": "complete prologue-less persistent-workspace getter through its sole bx-lr return at 0x0200032e and the directly referenced pointer pool word at 0x02000330-0x02000333; no calls, and the returned 0x0200aa58 address is not dereferenced by this leaf before the next prologue"
+    },
+    {
+      "overlay": "resource_396",
+      "entry": "0x02000334",
+      "span_bytes": 352,
+      "evidence": "complete story-gated actor-entrance sequence through the high-register unwind at 0x02000480-0x02000490 and eight control-flow-safe state/layout/cue/motion pool words through 0x02000493; all sixteen static calls preserve machine order across the inactive and active paths, the previous-variant sentinel, layout-derived window bounds, actor setup, thirty-frame heading sweep and conditional flag publication are explicit"
+    },
+    { "overlay": "resource_396", "entry": "0x02000494", "span_bytes": 20, "evidence": "complete one-call story-entrance wrapper through its sole interworking return at 0x020004a4-0x020004a6; forwards flag 0x200, layout 64/35 and variant 21 to Func_02000334 with no literal pool" },
+    { "overlay": "resource_396", "entry": "0x020004a8", "span_bytes": 24, "evidence": "complete one-call story-entrance wrapper through return 0x020004b6-0x020004b8, alignment and its flag pool word through 0x020004bf; forwards flag 0x201, layout 65/35 and variant 22" },
+    { "overlay": "resource_396", "entry": "0x020004c0", "span_bytes": 24, "evidence": "complete one-call story-entrance wrapper through return 0x020004ce-0x020004d0, alignment and its flag pool word through 0x020004d7; forwards flag 0x202, layout 66/35 and variant 23" },
+    { "overlay": "resource_396", "entry": "0x020004d8", "span_bytes": 24, "evidence": "complete one-call story-entrance wrapper through return 0x020004e6-0x020004e8, alignment and its flag pool word through 0x020004ef; forwards flag 0x203, layout 67/35 and variant 24" },
+    { "overlay": "resource_396", "entry": "0x020004f0", "span_bytes": 20, "evidence": "complete one-call story-entrance wrapper through its sole interworking return at 0x02000500-0x02000502; forwards flag 0x204, layout 68/35 and variant 25 with no literal pool" },
+    { "overlay": "resource_396", "entry": "0x02000504", "span_bytes": 24, "evidence": "complete one-call story-entrance wrapper through return 0x02000512-0x02000514, alignment and its flag pool word through 0x0200051b; forwards flag 0x205, layout 69/35 and variant 26" },
+    { "overlay": "resource_396", "entry": "0x0200051c", "span_bytes": 24, "evidence": "complete one-call story-entrance wrapper through return 0x0200052a-0x0200052c, alignment and its flag pool word through 0x02000533; forwards flag 0x206, layout 70/35 and variant 27" },
+    { "overlay": "resource_396", "entry": "0x02000534", "span_bytes": 24, "evidence": "complete one-call story-entrance wrapper through return 0x02000542-0x02000544, alignment and its flag pool word through 0x0200054b; forwards flag 0x207, layout 71/35 and variant 28" },
+    { "overlay": "resource_396", "entry": "0x0200054c", "span_bytes": 20, "evidence": "complete one-call story-entrance wrapper through its sole interworking return at 0x0200055c-0x0200055e; forwards flag 0x208, layout 72/35 and variant 29 with no literal pool" },
+    { "overlay": "resource_396", "entry": "0x02000560", "span_bytes": 24, "evidence": "complete one-call story-entrance wrapper through return 0x0200056e-0x02000570, alignment and its flag pool word through 0x02000577; forwards flag 0x209, layout 73/35 and variant 31" },
+    { "overlay": "resource_396", "entry": "0x02000578", "span_bytes": 24, "evidence": "complete one-call story-entrance wrapper through return 0x02000586-0x02000588, alignment and its flag pool word through 0x0200058f; forwards flag 0x20a, layout 74/35 and variant 32" },
+    { "overlay": "resource_396", "entry": "0x02000590", "span_bytes": 24, "evidence": "complete one-call story-entrance wrapper through return 0x0200059e-0x020005a0, alignment and its flag pool word through 0x020005a7; forwards flag 0x20b, layout 79/35 and variant 50" },
+    { "overlay": "resource_396", "entry": "0x020005a8", "span_bytes": 20, "evidence": "complete one-call story-entrance wrapper through its sole interworking return at 0x020005b8-0x020005ba; forwards flag 0x20c, layout 75/35 and variant 51 with no literal pool" },
+    { "overlay": "resource_396", "entry": "0x020005bc", "span_bytes": 24, "evidence": "complete one-call story-entrance wrapper through return 0x020005ca-0x020005cc, alignment and its flag pool word through 0x020005d3; forwards flag 0x20d, layout 76/35 and variant 52" },
+    { "overlay": "resource_396", "entry": "0x020005d4", "span_bytes": 24, "evidence": "complete one-call story-entrance wrapper through return 0x020005e2-0x020005e4, alignment and its flag pool word through 0x020005eb; forwards flag 0x20e, layout 77/35 and variant 53" },
+    { "overlay": "resource_396", "entry": "0x020005ec", "span_bytes": 24, "evidence": "complete one-call story-entrance wrapper through return 0x020005fa-0x020005fc, alignment and its flag pool word through 0x02000603; forwards flag 0x20f, layout 78/35 and variant 54" },
+    { "overlay": "resource_396", "entry": "0x02000604", "span_bytes": 20, "evidence": "complete one-call story-entrance wrapper through its sole interworking return at 0x02000614-0x02000616; forwards flag 0x210, layout 80/35 and variant 55 with no literal pool" },
+    { "overlay": "resource_396", "entry": "0x02000618", "span_bytes": 24, "evidence": "complete one-call story-entrance wrapper through return 0x02000626-0x02000628, alignment and its flag pool word through 0x0200062f; forwards flag 0x211, layout 81/35 and variant 56" },
+    { "overlay": "resource_396", "entry": "0x02000630", "span_bytes": 24, "evidence": "complete one-call story-entrance wrapper through return 0x0200063e-0x02000640, alignment and its flag pool word through 0x02000647; forwards flag 0x212, layout 82/35 and variant 57" },
+    { "overlay": "resource_396", "entry": "0x02000648", "span_bytes": 24, "evidence": "complete one-call story-entrance wrapper through return 0x02000656-0x02000658, alignment and its flag pool word through 0x0200065f; forwards flag 0x213, layout 83/35 and variant 58" },
+    { "overlay": "resource_396", "entry": "0x02000660", "span_bytes": 20, "evidence": "complete one-call story-entrance wrapper through its sole interworking return at 0x02000670-0x02000672; forwards flag 0x214, layout 84/35 and variant 59 with no literal pool" },
+    {
+      "overlay": "resource_396",
+      "entry": "0x02000674",
+      "span_bytes": 32,
+      "evidence": "complete scene-idle variant reset through its sole interworking return at 0x02000686-0x02000688, alignment and directly referenced -1/state-pointer pool words through 0x02000693; the sole controller query gates the signed-halfword sentinel publication"
+    },
+    {
+      "overlay": "resource_396",
+      "entry": "0x02000694",
+      "span_bytes": 8,
+      "evidence": "complete prologue-less presentation-workspace getter through its sole bx-lr return at 0x02000696 and directly referenced pointer pool word at 0x02000698-0x0200069b; no calls, and the returned 0x0200aae8 address is not dereferenced by this leaf before the next prologue"
+    },
+    {
+      "overlay": "resource_396",
+      "entry": "0x0200069c",
+      "span_bytes": 636,
+      "evidence": "complete four-actor tableau initialization through the sole interworking return at 0x020008e6-0x020008ea and eleven directly referenced dialogue/actor/descriptor/workspace/state pool words through 0x02000917; every static call remains explicit in machine order, including optional actor-three placement, synchronized presentation phases, two actor-8 pose sequences and final workspace/state publication"
+    },
+    {
+      "overlay": "resource_396",
+      "entry": "0x02000918",
+      "span_bytes": 1600,
+      "evidence": "complete four-actor encounter choreography through the sole interworking return at 0x02000f22-0x02000f28 and both control-flow-separated literal islands plus the final twenty-word effect/state pool through 0x02000f57; every static call remains explicit in machine order across optional actor-three and interaction branches, including staging, window animation, dialogue, pose sequences, palette transitions, periodic ring callback registration and terminal story-flag publication"
+    },
+    {
+      "overlay": "resource_396",
+      "entry": "0x02000f58",
+      "span_bytes": 172,
+      "evidence": "complete encounter launcher and story-window installer through the sole interworking return at 0x02000ff2-0x02000ff8, alignment and two directly referenced story-flag pool words through 0x02001003 before the entry driver; all ten static calls preserve machine order across the optional encounter and mutually exclusive five-window/one-window layout branches"
+    },
+    {
+      "overlay": "resource_396",
       "entry": "0x02001004",
       "span_bytes": 544,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_396), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; tools/m2c_guard.ts REFUSES this row for m2c seeding (two call-through-register sites at 0x020010ac and 0x020010c4) so it is drafted from the bytes alone, and the guard reports 21 of 21 callees present; span read from the disassembly through the epilogue at 0x020011d8 and the eighteen-word literal pool 0x020011dc-0x02001223 to the next function at 0x02001224 (a leaf that this driver itself calls), inside the assembled overlay image and not overlapping another recorded owner."
@@ -3426,6 +3573,30 @@
       "entry": "0x020018b8",
       "span_bytes": 344,
       "evidence": "complete actor-entrance and seventeen-particle orbit sequence through the high-register unwind at 0x020019ee-0x020019fa and five directly referenced callback/color/flags/pose/fade pool words through 0x02001a0f before the import veneer bank; all 27 static calls preserve machine order, the inclusive 0..16 binary-angle loop, asymmetric radial shaping, eight-argument particle-spawn ABI, self-contained effect descriptor and callback to Func_0200185c are explicit"
+    },
+    {
+      "overlay": "resource_371",
+      "entry": "0x02002cb4",
+      "span_bytes": 1148,
+      "evidence": "complete actors-5/8/9 staging and camera choreography through the shared interworking return at 0x02003128-0x0200312c and thirty-five control-flow-safe workspace/dialogue/pose/position/descriptor pool words through 0x02003127; every static call remains explicit in machine order, including the actor-5 step-counter wait loop, eleven-argument ensemble transition and terminal camera/presentation publication before the next prologue"
+    },
+    {
+      "overlay": "resource_371",
+      "entry": "0x02003130",
+      "span_bytes": 204,
+      "evidence": "complete timed transition setup through the sole interworking return at 0x020031ea-0x020031ec, alignment and three directly referenced workspace/callback/mode pool words through 0x020031fb; every static call remains explicit in machine order, with Func_020031fc installed as the periodic callback before the next prologue"
+    },
+    {
+      "overlay": "resource_371",
+      "entry": "0x020031fc",
+      "span_bytes": 244,
+      "evidence": "complete randomized particle emitter and periodic four-quadrant camera nudge through the sole interworking return at 0x020032c6-0x020032ca and nine directly referenced position/scale/descriptor/status/camera pool words through 0x020032ef; all eleven static calls preserve machine order, including the null-safe particle setup and four lexical switch camera sites before the next prologue"
+    },
+    {
+      "overlay": "resource_371",
+      "entry": "0x020032f0",
+      "span_bytes": 300,
+      "evidence": "complete actor-8 staged scale-and-position approach through the sole interworking return at 0x020033e6-0x020033e8, alignment and twelve directly referenced position/scale/workspace pool words through 0x0200341b; every static call remains explicit in machine order across five approach waypoints and four progressive scale bands, stopping exactly before the next requested owner boundary"
     },
     {
       "overlay": "resource_397",
@@ -7361,6 +7532,18 @@
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
     },
     {
+      "overlay": "resource_3b4",
+      "entry": "0x020020c4",
+      "span_bytes": 196,
+      "evidence": "complete active-actor presentation-resource reset through the high-register unwind at 0x02002178-0x02002186 and four directly referenced tile-mask/DMA/control pool words through 0x02002187; every static call and DMA3 descriptor write remains explicit, with null/state gates, resource retirement, tile-index publication and owner flag/cursor clearing before the next prologue"
+    },
+    {
+      "overlay": "resource_3b4",
+      "entry": "0x02002334",
+      "span_bytes": 308,
+      "evidence": "complete scene callback installation and flag-selected actor placement through the sole interworking return at 0x02002440-0x02002444, alignment and eight directly referenced callback/flag pool words through 0x02002467 before the veneer bank; every static call remains explicit in branch and local-call order, including mutually exclusive actor-15 placement paths and callback/angle specialization"
+    },
+    {
       "overlay": "resource_3b5",
       "entry": "0x02000040",
       "span_bytes": 60,
@@ -10592,9 +10775,9 @@
     },
     {
       "overlay": "resource_39f",
-      "entry": "0x0200060a",
-      "span_bytes": 694,
-      "evidence": "complete staged actor-movement/redraw family owner from the real prologue at 0x0200060a through unwind, alignment and seven-word pool before 0x020008c0; tables 0x0200af50/0x0200aef8 independently resolved and all 31 calls represented; preceding 0x02000608 is alignment"
+      "entry": "0x02000608",
+      "span_bytes": 696,
+      "evidence": "complete staged actor-movement/redraw family owner from its true stack-frame opening sub sp,#16 at 0x02000608 through unwind, alignment and seven-word pool before 0x020008c0; tables 0x0200af50/0x0200aef8 independently resolved and all 31 calls represented"
     },
     {
       "overlay": "resource_39f",
@@ -10622,9 +10805,9 @@
     },
     {
       "overlay": "resource_3b2",
-      "entry": "0x0200060a",
-      "span_bytes": 694,
-      "evidence": "complete staged actor-movement/redraw family owner; tables 0x0200b1b4/0x0200b15c independently resolved, 31 calls represented, and preceding 0x02000608 retained as alignment"
+      "entry": "0x02000608",
+      "span_bytes": 696,
+      "evidence": "complete staged actor-movement/redraw family owner from its true stack-frame opening sub sp,#16; tables 0x0200b1b4/0x0200b15c independently resolved and all 31 calls represented"
     },
     {
       "overlay": "resource_3b2",
@@ -10652,9 +10835,9 @@
     },
     {
       "overlay": "resource_3c4",
-      "entry": "0x0200060a",
-      "span_bytes": 694,
-      "evidence": "complete staged actor-movement/redraw family owner; tables 0x0200b248/0x0200b1f0 independently resolved, 31 calls represented, and preceding 0x02000608 retained as alignment"
+      "entry": "0x02000608",
+      "span_bytes": 696,
+      "evidence": "complete staged actor-movement/redraw family owner from its true stack-frame opening sub sp,#16; tables 0x0200b248/0x0200b1f0 independently resolved and all 31 calls represented"
     },
     {
       "overlay": "resource_3c4",
@@ -10682,9 +10865,9 @@
     },
     {
       "overlay": "resource_3c5",
-      "entry": "0x0200060a",
-      "span_bytes": 694,
-      "evidence": "complete staged actor-movement/redraw family owner; tables 0x0200b02c/0x0200afd4 independently resolved, 31 calls represented, and preceding 0x02000608 retained as alignment"
+      "entry": "0x02000608",
+      "span_bytes": 696,
+      "evidence": "complete staged actor-movement/redraw family owner from its true stack-frame opening sub sp,#16; tables 0x0200b02c/0x0200afd4 independently resolved and all 31 calls represented"
     },
     {
       "overlay": "resource_3c5",
@@ -10865,6 +11048,14 @@
       "entry": "0x020018d0",
       "span_bytes": 16,
       "evidence": "complete prologue-less BLDALPHA 0x0607 setter through bx lr and its value/destination pool words before the next prologue at 0x020018e0; no calls"
+    },
+    {
+      "overlay": "resource_3b4", "entry": "0x02002188", "span_bytes": 264,
+      "evidence": "complete story-gated actor-8-through-12 installation owner through its sole bx-lr return, alignment and eight-word pool before 0x02002290; all twenty-four calls preserve branch and machine order"
+    },
+    {
+      "overlay": "resource_3b4", "entry": "0x02002290", "span_bytes": 164,
+      "evidence": "complete staged-actor enablement and presentation-velocity setup through its sole interworking return, alignment and seven-word pool before 0x02002334; all twelve calls preserve loop and machine order, with final blend-register writes explicit volatile C"
     },
     {
       "overlay": "resource_3c0",
@@ -11572,5 +11763,85 @@
     ,{"overlay":"resource_3c0","entry":"0x02000d24","span_bytes":164,"evidence":"complete scene-A5 actor/effect installation and palette restoration owner through five-word pool; all nine direct call sites preserve branch and machine order"}
     ,{"overlay":"resource_3c0","entry":"0x02000dc8","span_bytes":148,"evidence":"complete alternate scene-A5 actor and particle-presentation owner through three-word pool; all ten direct call sites preserve branch and machine order"}
     ,{"overlay":"resource_3c0","entry":"0x02000594","span_bytes":616,"evidence":"complete encounter-actor blend staging and one-time actor-13 approach owner through seven-word pool; all direct calls preserve loop, branch and machine order, and deferred display writes are ordinary volatile C"}
+    ,{"overlay":"resource_382","entry":"0x020006d0","span_bytes":84,"evidence":"complete actor-17 dialogue and conditional story increment owner through two-word pool; all seven direct calls preserve branch and machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000724","span_bytes":84,"evidence":"complete actor-18 dialogue and conditional story increment owner through two-word pool; all seven direct calls preserve branch and machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000778","span_bytes":32,"evidence":"complete actor-11 dialogue wrapper through one-word pool; all four direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000798","span_bytes":32,"evidence":"complete actor-16 dialogue wrapper through one-word pool; all four direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x020007b8","span_bytes":52,"evidence":"complete actor-19 dialogue and presentation wrapper through one-word pool; all six direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x020007ec","span_bytes":112,"evidence":"complete actor-14 temporary state/facing dialogue owner with in-body two-word pool; all eight direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x0200085c","span_bytes":112,"evidence":"complete actor-15 temporary state/facing dialogue owner with in-body two-word pool; all eight direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x020008cc","span_bytes":64,"evidence":"complete actor-21 dialogue and presentation wrapper through two-word pool; all seven direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x0200090c","span_bytes":44,"evidence":"complete parameterized actor-dialogue wrapper; all five direct calls preserve machine order and no pool"}
+    ,{"overlay":"resource_382","entry":"0x02000938","span_bytes":68,"evidence":"complete parameterized temporary actor-mode wrapper; all six direct calls preserve machine order and no pool"}
+    ,{"overlay":"resource_382","entry":"0x0200097c","span_bytes":84,"evidence":"complete actor-8 dialogue and conditional story increment owner through two-word pool; all seven direct calls preserve branch and machine order"}
+    ,{"overlay":"resource_382","entry":"0x020009d0","span_bytes":32,"evidence":"complete actor-11 dialogue wrapper through one-word pool; all four direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x020009f0","span_bytes":60,"evidence":"complete flag-selected story increment and actor-12 dialogue owner through two-word pool; all five direct calls preserve branch and machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000a2c","span_bytes":32,"evidence":"complete actor-13 dialogue wrapper through one-word pool; all four direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000a4c","span_bytes":128,"evidence":"complete actor-14 temporary state/facing dialogue and conditional story increment owner with in-body three-word pool; all nine direct calls preserve branch and machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000acc","span_bytes":112,"evidence":"complete actor-15 temporary state/facing dialogue owner with in-body two-word pool; all eight direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000b3c","span_bytes":92,"evidence":"complete actor-16 dialogue, presentation and conditional story increment owner through two-word pool; all eight direct calls preserve branch and machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000b98","span_bytes":84,"evidence":"complete actor-18 dialogue and conditional story increment owner through two-word pool; all seven direct calls preserve branch and machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000bec","span_bytes":104,"evidence":"complete actor-19 dialogue and conditional workspace-state owner through three-word pool; all nine direct calls preserve branch and machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000c54","span_bytes":56,"evidence":"complete actor-20 dialogue and presentation wrapper through one-word pool; all seven direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000c8c","span_bytes":56,"evidence":"complete flag-selected actor-11 temporary-mode dialogue owner through three-word pool; all six direct calls preserve both branches and machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000cc4","span_bytes":56,"evidence":"complete flag-selected actor-13 temporary-mode dialogue owner through three-word pool; all six direct calls preserve both branches and machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000cfc","span_bytes":124,"evidence":"complete flag-selected actor-14 temporary-state dialogue and conditional story increment owner with in-body/trailing five-word pools; all nine direct calls preserve branch and machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000d78","span_bytes":92,"evidence":"complete flag-selected actor-15 temporary-state dialogue owner with in-body/trailing four-word pools; all eight direct calls preserve both branches and machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000dd4","span_bytes":56,"evidence":"complete flag-selected actor-16 temporary-mode dialogue owner through three-word pool; all six direct calls preserve both branches and machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000e0c","span_bytes":120,"evidence":"complete two-flag-selected actor-19 temporary-mode dialogue owner through five-word pool; all eleven direct calls preserve every branch and machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000e84","span_bytes":32,"evidence":"complete actor-21 temporary-mode dialogue wrapper through one-word pool; all four direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000ea4","span_bytes":40,"evidence":"complete flag-set and collision-cell repaint wrapper through alignment; both direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000ecc","span_bytes":40,"evidence":"complete flag-clear and collision-cell repaint wrapper through alignment; both direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000ef4","span_bytes":72,"evidence":"complete leader presentation, workspace timer and state-selector helper through one-word pool; all three direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000f3c","span_bytes":40,"evidence":"complete event-158 map-record and presentation-state wrapper through one-word pool; all three direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000f64","span_bytes":40,"evidence":"complete event-158 map-record and presentation-state wrapper through one-word pool; all three direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000f8c","span_bytes":40,"evidence":"complete event-158 map-record and presentation-state wrapper through one-word pool; all three direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x02000fb4","span_bytes":92,"evidence":"complete leader sprite normalization, event record and collision repaint owner through one-word pool; all five direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x02001010","span_bytes":92,"evidence":"complete leader sprite normalization, event record and collision repaint owner through one-word pool; all five direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x0200106c","span_bytes":36,"evidence":"complete event-158 map-record and presentation-state wrapper through one-word pool; all three direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x02001090","span_bytes":172,"evidence":"complete leader sprite normalization, staged four-cell map repaint and collision update owner; all ten direct calls preserve machine order and no pool"}
+    ,{"overlay":"resource_382","entry":"0x0200113c","span_bytes":92,"evidence":"complete leader sprite normalization, event record and collision repaint owner through one-word pool; all five direct calls preserve machine order"}
+    ,{"overlay":"resource_382","entry":"0x02001198","span_bytes":24,"evidence":"complete event-123 presentation-state wrapper; both direct calls preserve machine order and no pool"}
+    ,{"overlay":"resource_382","entry":"0x020011b0","span_bytes":136,"evidence":"complete parameterized actor placement and bounded movement-wait owner; all seven direct call sites preserve loop and machine order and no pool"}
+    ,{"overlay":"resource_382","entry":"0x02001238","span_bytes":136,"evidence":"complete flag-gated actor-23 staged movement and scene owner through one-word pool; all fifteen direct calls preserve branch and machine order"}
+    ,{"overlay":"resource_382","entry":"0x020012c0","span_bytes":172,"evidence":"complete actor-19 staged animation, movement and flag-finalization scene through three-word pool; all nineteen direct calls preserve machine order before existing entry driver at 0x0200136c"}
+    ,{"overlay":"resource_385","entry":"0x02000804","span_bytes":96,"evidence":"complete flag-selected actor-14 repeat-or-one-time scene owner through five-word pool; all nine direct calls preserve branch and machine order"}
+    ,{"overlay":"resource_385","entry":"0x02000864","span_bytes":68,"evidence":"complete actor-15 active-state dialogue wrapper through two-word pool and alignment; all six direct calls preserve machine order"}
+    ,{"overlay":"resource_385","entry":"0x020008a8","span_bytes":200,"evidence":"complete flag-selected actor-16 first-time staging or repeat-dialogue owner through three-word pool; all nineteen direct calls preserve branch and machine order"}
+    ,{"overlay":"resource_385","entry":"0x02000970","span_bytes":136,"evidence":"complete actor placement and bounded sixty-frame motion-wait helper; all seven direct call sites preserve loop and machine order"}
+    ,{"overlay":"resource_385","entry":"0x020009f8","span_bytes":136,"evidence":"complete flag-0x867 actor-21 arrival scene through one-word pool; all fifteen direct call sites preserve branch and machine order"}
+    ,{"overlay":"resource_385","entry":"0x02000a80","span_bytes":72,"evidence":"complete actor-zero placement and scene-delay setup helper through one-word pool; all three direct calls preserve machine order"}
+    ,{"overlay":"resource_385","entry":"0x02000ac8","span_bytes":40,"evidence":"complete scene-variant-five actor-zero setup wrapper through one-word pool; all three direct calls preserve machine order"}
+    ,{"overlay":"resource_385","entry":"0x02000af0","span_bytes":40,"evidence":"complete scene-variant-six actor-zero setup wrapper through one-word pool; all three direct calls preserve machine order"}
+    ,{"overlay":"resource_385","entry":"0x02000b18","span_bytes":40,"evidence":"complete scene-variant-seven actor-zero setup wrapper through one-word pool; all three direct calls preserve machine order"}
+    ,{"overlay":"resource_385","entry":"0x02000b40","span_bytes":92,"evidence":"complete scene-variant-eight actor-zero presentation setup through one-word pool; all five direct calls preserve machine order"}
+    ,{"overlay":"resource_385","entry":"0x02000b9c","span_bytes":92,"evidence":"complete scene-variant-nine actor-zero presentation setup through one-word pool; all five direct calls preserve machine order"}
+    ,{"overlay":"resource_385","entry":"0x02000bf8","span_bytes":36,"evidence":"complete scene-variant-ten actor-zero setup wrapper through one-word pool; all three direct calls preserve machine order"}
+    ,{"overlay":"resource_385","entry":"0x02000c1c","span_bytes":172,"evidence":"complete scene-variant-eleven paired presentation and actor-zero setup sequence through alignment; all ten direct call sites preserve machine order"}
+    ,{"overlay":"resource_385","entry":"0x02000cc8","span_bytes":92,"evidence":"complete scene-variant-twelve actor-zero presentation setup through one-word pool; all five direct calls preserve machine order"}
+    ,{"overlay":"resource_385","entry":"0x02000d24","span_bytes":40,"evidence":"complete flag-0x200 scene-cell enable wrapper through alignment; both direct calls preserve machine order"}
+    ,{"overlay":"resource_385","entry":"0x02000d4c","span_bytes":40,"evidence":"complete flag-0x200 scene-cell disable wrapper through alignment; both direct calls preserve machine order"}
+    ,{"overlay":"resource_385","entry":"0x02000d74","span_bytes":16,"evidence":"complete actor-21 mode-four reset wrapper; sole direct call explicit"}
+    ,{"overlay":"resource_385","entry":"0x02000d84","span_bytes":172,"evidence":"complete actor-18 three-cue movement scene through three-word pool; all nineteen direct call sites preserve machine order"}
+    ,{"overlay":"resource_385","entry":"0x02000e30","span_bytes":48,"evidence":"complete paired scene-cell presentation update; both six-argument direct calls preserve machine order"}
+    ,{"overlay":"resource_385","entry":"0x02000e60","span_bytes":48,"evidence":"complete alternate paired scene-cell presentation update; both six-argument direct calls preserve machine order"}
+    ,{"overlay":"resource_385","entry":"0x02000e90","span_bytes":112,"evidence":"complete actor-18 dialogue/restoration and conditional scene-marker owner through three-word pool; all ten direct call sites preserve branch and machine order"}
+    ,{"overlay":"resource_385","entry":"0x02000f00","span_bytes":40,"evidence":"complete paired scene-resource enable wrapper through two-word pool; all four direct calls preserve machine order"}
+    ,{"overlay":"resource_385","entry":"0x02000f28","span_bytes":8,"evidence":"complete in-image scene-descriptor getter through its literal pool; no calls"}
+    ,{"overlay":"resource_371","entry":"0x0200341c","span_bytes":44,"evidence":"complete four-slot opposing-pair total helper; all four local calls preserve machine order"}
+    ,{"overlay":"resource_371","entry":"0x02003448","span_bytes":88,"evidence":"complete slot-selected nine-flag active-choice resolver through four-word pool; looped flag-test call explicit"}
+    ,{"overlay":"resource_371","entry":"0x020034a0","span_bytes":220,"evidence":"complete input-gated actor-8 follower-effect spawner with randomized offset and inherited presentation through four-word pool; all eight direct call sites preserve branch and machine order"}
+    ,{"overlay":"resource_371","entry":"0x0200357c","span_bytes":252,"evidence":"complete actor-8 staged presentation setup through ten-word in-body pool and alignment; all twenty-two direct call sites preserve machine order"}
+    ,{"overlay":"resource_371","entry":"0x02003678","span_bytes":100,"evidence":"complete selected-actor presentation and progress synchronizer through three-word pool; all four direct calls preserve branch and machine order"}
+    ,{"overlay":"resource_371","entry":"0x020036dc","span_bytes":224,"evidence":"complete flag-gated selected-actor initialization and progress-task scene through four-word pool; all fifteen direct call sites preserve branch and machine order"}
+    ,{"overlay":"resource_371","entry":"0x020037bc","span_bytes":12,"evidence":"complete reference-actor-54 selected-actor setup wrapper; sole local call explicit"}
+    ,{"overlay":"resource_371","entry":"0x020037c8","span_bytes":16,"evidence":"complete prologue-less shared-state activation leaf through one-word pool; no calls"}
+    ,{"overlay":"resource_39b","entry":"0x02001cb4","span_bytes":324,"evidence":"complete fixed-point linked-object movement owner through five-word pool; four indirect arithmetic helper sites and the sole direct call preserve the machine control flow; independently cross-checked against the homologous reviewed resource_39c owner"}
+    ,{"overlay":"resource_39b","entry":"0x02001df8","span_bytes":208,"evidence":"complete two-object spawn and presentation initialization owner through five-word split pools; all seven resolved call sites preserve branch and machine order"}
+    ,{"overlay":"resource_39b","entry":"0x02001ec8","span_bytes":288,"evidence":"complete linked-object spawn, countdown and terminal-state transition owner through six-word pool; all eight resolved calls, including the local 0x02001df8 call, preserve loop and machine order"}
+    ,{"overlay":"resource_39b","entry":"0x02001fe8","span_bytes":72,"evidence":"complete linked-object cleanup owner through three-word pool; all three resolved direct calls preserve guard and machine order"}
+    ,{"overlay":"resource_39b","entry":"0x02002030","span_bytes":832,"evidence":"complete current-cell transition, linked-object replacement and fixed-point accumulation owner through the tail pool at 0x02002368; branch-skipped interior pool and relocated multiply helper explicitly represented; all 31 resolved direct calls preserve branch, loop and machine order"}
+    ,{"overlay":"resource_39b","entry":"0x02002370","span_bytes":72,"evidence":"complete current-record countdown and bounded random reroll owner through two-word pool; local update and random-source calls preserve machine order"}
+    ,{"overlay":"resource_39b","entry":"0x020023b8","span_bytes":36,"evidence":"complete optional published-attachment release owner ending immediately before the veneer bank; both resolved direct calls preserve guards and machine order; no pool"}
   ]
 }

@@ -64,6 +64,7 @@ void Func_02000ae8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
     u8 *block;
     u16 *tag;
     s32 kind;
+    s32 distance;
 
     party = Func_0808a080(0);
 
@@ -128,17 +129,14 @@ void Func_02000ae8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
             *(s32 *)(effect + 48) =
                 Func_03000380(*(s32 *)(options + 16) - *(s32 *)(effect + 24),
                               descriptor[3]);
-            *(s32 *)(effect + 52) =
-                Func_03000380(*(s32 *)(options + 20) - *(s32 *)(effect + 28),
-                              descriptor[3]);
+            distance = *(s32 *)(options + 20) - *(s32 *)(effect + 28);
         } else {
             *(s32 *)(effect + 48) =
                 Func_03000380(*(s32 *)(options + 16) + (s32)0xffff0000,
                               descriptor[3]);
-            *(s32 *)(effect + 52) =
-                Func_03000380(*(s32 *)(options + 20) + (s32)0xffff0000,
-                              descriptor[3]);
+            distance = *(s32 *)(options + 20) + (s32)0xffff0000;
         }
+        *(s32 *)(effect + 52) = Func_03000380(distance, descriptor[3]);
     }
 
     if ((flags & 0x200000) != 0) {                  /* 128 << 14 */

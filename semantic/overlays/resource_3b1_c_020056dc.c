@@ -21,43 +21,36 @@ typedef signed int s32;
  * Raw callee naming.
  */
 
-s32 Func_0200a690();
-s32 Func_0200a69a();
-void Func_0200bbc0(void);
-void Func_02009fea();
-void Func_02009ff4();
-void Func_02008ec4(void);
-void Func_0200a002();
-void Func_0200bc72();
-void Func_0200bc2c();
-void Func_0200bc22();
-void Func_0200bc3a();
-void Func_0200bc30();
-void Func_0200bc4a();
-void Func_0200bc52();
-void Func_0200bcf2();
-void Func_0200bcfa();
-void Func_0200a84a(void);
+s32 Func_02004fa8();
+void Func_0808a018(void);
+void Func_020048e8();
+void Func_020037b4(void);
+void Func_0808a100();
+void Func_0808a098();
+void Func_0808a088();
+void Func_0808a158();
+void Func_020050e4(void);
+void Func_0808a020(void);
 
 void Func_020056dc(void)
 {
-    s32 handle = Func_0200a690(0, 0);
-    s32 other = Func_0200a69a(1, 0);
+    s32 handle = Func_02004fa8(0, 0);
+    s32 other = Func_02004fa8(1, 0);
 
-    Func_0200bbc0();
-    Func_02009fea(24, 1, 0);
-    Func_02009ff4(25, 3, 0);
-    Func_02008ec4();
-    Func_0200a002(19, handle, other);
-    Func_0200bc72(10, 6);
-    Func_0200bc2c(handle, 0x0200e840);
-    Func_0200bc22(11);
-    Func_0200bc3a(other, 0x0200e840);
-    Func_0200bc30(12);
-    Func_0200bc4a(0x24, 0x0200e8e4);
-    Func_0200bc52(0x25, 0x0200e8e4);
-    Func_0200bcf2(0x24, 3);
-    Func_0200bcfa(0x25, 3);
-    Func_0200a84a();
-    Func_0200bc3a();
+    Func_0808a018();
+    Func_020048e8(24, 1, 0);
+    Func_020048e8(25, 3, 0);
+    Func_020037b4();
+    Func_020048e8(19, handle, other);
+    Func_0808a100(10, 6);
+    Func_0808a098(handle, 0x0200e840);
+    Func_0808a088(11);
+    Func_0808a098(other, 0x0200e840);
+    Func_0808a088(12);
+    Func_0808a098(0x24, 0x0200e8e4);
+    Func_0808a098(0x25, 0x0200e8e4);
+    Func_0808a158(0x24, 3);
+    Func_0808a158(0x25, 3);
+    Func_020050e4();
+    Func_0808a020();
 }

@@ -17,21 +17,21 @@ typedef signed int s32;
  * itself only ever reads the flags word (r3).
  */
 
-void Func_0200aeb6();
-void Func_0200aed0();
-void Func_0200ad3e();
-void Func_0200ad9c();
+void Func_0808a210();
+void Func_0808a218();
+void Func_08009128();
+void Func_0808a010();
 
 void Func_020048ac(s32 a, s32 b, s32 c, u32 flags)
 {
-    Func_0200aeb6(a, b, c, ~flags & 1);
+    Func_0808a210(a, b, c, ~flags & 1);
 
     if (flags & 0x10000000) {
-        Func_0200aed0(a, b, c, flags & 0x10000000);
+        Func_0808a218(a, b, c, flags & 0x10000000);
     }
     if (flags & 0x1000000) {
-        Func_0200ad3e(a, b, c, flags & 0x1000000);
+        Func_08009128(a, b, c, flags & 0x1000000);
     }
 
-    Func_0200ad9c(flags & 0x1111);
+    Func_0808a010(flags & 0x1111);
 }

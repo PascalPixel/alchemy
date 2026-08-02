@@ -103,7 +103,8 @@ void Func_020000ec(void)
 
     redraw = 1;
 
-    for (;;) {
+loop:
+    {
         u32 pressed;
 
         if (redraw != 0) {
@@ -128,11 +129,9 @@ void Func_020000ec(void)
             redraw = 1;
         }
 
-        if ((pressed & 2) != 0) {
-            break;
+        if ((pressed & 2) == 0) {
+            goto scheduler;
         }
-
-        Func_080000c0(1);
     }
 
     Func_080f9010(113);
@@ -145,4 +144,9 @@ void Func_020000ec(void)
     Func_08077010(1);
     Func_08077010(3);
     Func_08077010(2);
+    return;
+
+scheduler:
+    Func_080000c0(1);
+    goto loop;
 }

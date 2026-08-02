@@ -147,6 +147,20 @@ s32 Func_02000860(void)
         return gate;
     }
 
+    /* The abort block physically precedes the normal wait setup. */
+    goto beginTransferWait;
+
+abortTransfer:
+    *phase = 2;
+    Func_080770c8(0x205);
+    Func_080770d0(0x201);
+    Func_080770d0(0x202);
+    Func_02000128(4);
+    aborted = 1;
+    Func_080770d0(512);
+    goto transferWaitComplete;
+
+beginTransferWait:
     Func_0808a018();
     Func_080770c8(0x203);
     Func_02000128(2);
@@ -155,45 +169,45 @@ s32 Func_02000860(void)
         cueHandle = Func_08015038(0x2928, 5, 4, 1);
     }
 
-    while (Func_0200008c(2) == 0) {
-        Func_080000c0(1);
+    goto testTransferWait;
 
-        stop = 0;
-        if (Func_080770c0(0x201) == 0) {
+waitForTransfer:
+    Func_080000c0(1);
+
+    stop = 0;
+    if (Func_080770c0(0x201) == 0) {
+        stop = 1;
+    }
+    if (Func_080770c0(0x205) != 0) {
+        stop = 1;
+    }
+
+    if (Func_0200008c(2) != 0 || Func_0200008c(1) != 0) {
+        idle = 0;
+    } else {
+        idle++;
+        if (idle > 25) {
             stop = 1;
-        }
-        if (Func_080770c0(0x205) != 0) {
-            stop = 1;
-        }
-
-        if (Func_0200008c(2) != 0 || Func_0200008c(1) != 0) {
-            idle = 0;
-        } else {
-            idle++;
-            if (idle > 25) {
-                stop = 1;
-            }
-        }
-
-        if (stop != 0) {
-            *phase = 2;
-            Func_080770c8(0x205);
-            Func_080770d0(0x201);
-            Func_080770d0(0x202);
-            Func_02000128(4);
-            aborted = 1;
-            Func_080770d0(512);
-            break;
         }
     }
 
+    if (stop != 0) {
+        goto abortTransfer;
+    }
+
+testTransferWait:
+    if (Func_0200008c(2) == 0) {
+        goto waitForTransfer;
+    }
+
+transferWaitComplete:
     if (cueHandle != 0) {
         Func_08015018(cueHandle, 1);
     }
     Func_080000c0(5);
 
     if (aborted != 0) {
-        return Func_0808a020();
+        goto close;
     }
 
 transfer:
@@ -241,7 +255,7 @@ transfer:
             Func_080770d0(0x203);
             Func_080770d0(512);
             *phase = 2;
-            return Func_0808a020();
+            goto close;
         }
 
         Func_0808a090(0, 0x8000, 0x4000);
@@ -275,5 +289,7 @@ transfer:
     }
 
     Func_08000150(54);
+close:
+    /* Early aborts and the normal path share the overlay's one close site. */
     return Func_0808a020();
 }

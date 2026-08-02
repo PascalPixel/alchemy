@@ -448,16 +448,20 @@ obstacles:
              * written out separately. */
             if (*(s16 *)(rec + 18) > 0) {
                 Func_08009080(Func_0808a080(21), 3);
-            } else if (phase > 0x17f) {
-                Func_08009080(Func_0808a080(21), 3);
-            } else {
+                goto fourth_piece_done;
+            }
+            if (phase <= 0x17f) {
                 *(s32 *)(rec + 0) = Func_08000118(*(s16 *)(rec + 12)) * 52
                                     + 0x700000;
                 *(s32 *)(rec + 8) = ((Func_08000120(*(s16 *)(rec + 12)) * 3) << 3)
                                     + 0x480000;
                 *(u16 *)(rec + 12) = (u16)(*(u16 *)(rec + 12) + step);
                 Func_08009080(Func_0808a080(21), 2);
+                goto fourth_piece_done;
             }
+            Func_08009080(Func_0808a080(21), 3);
+
+fourth_piece_done:
             *(u16 *)(rec + 14) = (u16)(*(u16 *)(rec + 14) + 1);
         }
 

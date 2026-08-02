@@ -236,8 +236,7 @@ s32 Func_020012e0(void)
             Func_0808a330(0x10000, 0);
             Func_0808a348(30);
         }
-        Func_0808a020();
-        break;
+        goto scene_close;
 
     case 18:
     case 19:
@@ -259,6 +258,8 @@ s32 Func_020012e0(void)
         Func_0808a370();
         Func_0808a010(120);
         Func_0808a248(50);
+
+scene_close:
         Func_0808a020();
         break;
 

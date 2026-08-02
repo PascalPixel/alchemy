@@ -16,7 +16,7 @@ typedef int s32;
  * Not found by the structural inventory walk (unindexed): reached only by
  * `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2` rule.
  *
- * `Func_02006700(0x0200a451, 0xc80)` matches the `Func_080000d0(taskAddress,
+ * `Func_080000d0(0x0200a451, 0xc80)` matches the `Func_080000d0(taskAddress,
  * frameBudget)` task-install shape this project already documents
  * (resource_3bc_c_02003abc.c's header), just reached through this
  * overlay's own local wrapper at 0x02006700 instead of the shared
@@ -33,7 +33,7 @@ typedef int s32;
  * addresses per this project's address-taken-literal convention.
  */
 
-extern void Func_02006700(s32 taskAddress, s32 frameBudget);
+extern void Func_080000d0(s32 taskAddress, s32 frameBudget);
 
 void Func_02002940(s32 mode, s32 arg1)
 {
@@ -44,7 +44,7 @@ void Func_02002940(s32 mode, s32 arg1)
     *modeCell = (u16)mode;
     *scaledCell = (u16)(arg1 << 4);
 
-    Func_02006700(0x0200a451, 0xc80);
+    Func_080000d0(0x0200a451, 0xc80);
 
     if (mode == 2) {
         handler = 0x0200c0ce;

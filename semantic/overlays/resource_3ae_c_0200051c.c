@@ -117,6 +117,7 @@ void Func_0200051c(void)
         Func_08015018(window, 2);
         Func_0808a110(0, 4);
         Func_0808a010(10);
+        goto failed_purchase;
     } else if ((u32)price > COINS) {
         /* Not enough coins.  The comparison is unsigned in the original. */
         Func_08015018(window, 2);
@@ -124,19 +125,23 @@ void Func_0200051c(void)
         Func_0808a010(10);
         *(u16 *)(Data_03001ebc + 472) += 1;
         Func_080f9010(113);
-    } else {
-        Func_08015018(window, 2);
-        Func_0808a110(0, 3);
-        Func_0808a010(10);
-        *(u16 *)(Data_03001ebc + 472) += 3;
-        Func_0808a180(8, 0);
-        Func_0808a060(235, 0);
-        Func_080770c8(0x8a5);
-        Func_08077230(-price);
-        goto close;
+        goto failed_purchase;
     }
+    goto complete_purchase;
 
+failed_purchase:
     Func_0808a180(8, 0);
+    goto close;
+
+complete_purchase:
+    Func_08015018(window, 2);
+    Func_0808a110(0, 3);
+    Func_0808a010(10);
+    *(u16 *)(Data_03001ebc + 472) += 3;
+    Func_0808a180(8, 0);
+    Func_0808a060(235, 0);
+    Func_080770c8(0x8a5);
+    Func_08077230(-price);
 
 close:
     Func_0808a020();

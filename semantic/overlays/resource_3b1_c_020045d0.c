@@ -30,24 +30,24 @@ typedef signed int s32;
 
 extern u8 *Data_0200e968;
 
-u8 *Func_0200aa7c();
-u8 *Func_0200aa58();
-s32 Func_0200aa66();
-void Func_0200aace();
-void Func_0200aa8e();
-void Func_0200aa8c(void);
-void Func_0200aafc();
+u8 *Func_080770c0();
+u8 *Func_080090c8();
+s32 Func_08000140();
+void Func_08015250();
+void Func_080001c8();
+void Func_08000150(void);
+void Func_080770c8();
 
 u8 *Func_020045d0(void)
 {
-    u8 *cached = Func_0200aa7c(0x200);
+    u8 *cached = Func_080770c0(0x200);
 
     if (cached != 0) {
         return Data_0200e968;
     }
 
     {
-        u8 *obj = Func_0200aa58(22, 0x01c70000, 0x40000, 0x2200000);
+        u8 *obj = Func_080090c8(22, 0x01c70000, 0x40000, 0x2200000);
         u8 *linked;
         s32 arg2;
 
@@ -59,11 +59,11 @@ u8 *Func_020045d0(void)
         linked[5] &= (u8)~0x20;
         linked[9] &= 0xf;
 
-        arg2 = Func_0200aa66(17, 0x608) + 0x400;
-        Func_0200aace(0xe8);
-        Func_0200aa8e(linked[0x1c], 128, arg2);
-        Func_0200aa8c();
-        Func_0200aafc(0x200);
+        arg2 = Func_08000140(17, 0x608) + 0x400;
+        Func_08015250(0xe8);
+        Func_080001c8(linked[0x1c], 128, arg2);
+        Func_08000150();
+        Func_080770c8(0x200);
 
         Data_0200e968 = obj;
         return obj;

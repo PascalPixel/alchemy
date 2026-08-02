@@ -58,31 +58,31 @@ struct Resource373Entity {
     void (*behaviour)(void);        /* 0x6c */
 };
 
-s32 Func_0200ba98();
-void Func_0200babe();
-void Func_0200bac8();
-void Func_0200bad2();
-signed int Func_0200bb60();
-struct Resource373Entity *Func_0200bb38();
-struct Resource373Entity *Func_0200bb38_b();
+u8 *Func_08000140();
+void Func_08000150();
+void Func_080001c8();
+void Func_080091e0();
+void Func_08015250();
+struct Resource373Entity *Func_0808a080();
+s32 Func_080770c0();
 
 void Func_02005b48(s32 selector)
 {
-    struct Resource373Entity *entity = Func_0200bb38(selector);
+    struct Resource373Entity *entity = Func_0808a080(selector);
     struct Resource373Handle *handle = entity->handle;
-    s32 gradient;
+    u8 *gradient;
 
     handle->flags05 = (u8)(handle->flags05 & ~0x20);
     handle->flags09 = (u8)(((handle->flags09 & ~0x0c) | 0x04) & 0x0f);
     handle->field27 = 0;
 
-    Func_0200bad2(entity, 0);
+    Func_080091e0(entity, 0);
 
     entity->field5c = 0;
     entity->field55 = 0;
 
     /* 0x109 selects a companion entity; when absent the sprite drops a row. */
-    if (Func_0200bb38_b(0x109) == 0) {
+    if (Func_080770c0(0x109) == 0) {
         entity->y += 0x00200000;    /* 0x80 << 14 */
     }
 
@@ -90,16 +90,16 @@ void Func_02005b48(s32 selector)
     entity->field61 = 1;
 
     /*
-     * Func_0200ba98 reserves 0x608 (0xc1 << 3) bytes on channel 17 and
+     * Func_08000140 reserves 0x608 (0xc1 << 3) bytes on channel 17 and
      * returns the base of the reservation; the ramp uploaded below starts
-     * 0x400 (0x80 << 3) bytes into it.  Func_0200bb60's result is discarded,
-     * so only its side effect on the shared workspace matters.
+     * 0x400 (0x80 << 3) bytes into it. Func_08015250 selects palette 0xb5
+     * before the ramp transfer, and Func_08000150 releases the bank.
      */
-    gradient = Func_0200ba98(17, 0x608);
-    Func_0200bb60(0xb5);
+    gradient = Func_08000140(17, 0x608);
+    Func_08015250(0xb5);
     gradient += 0x400;
-    Func_0200bac8(handle->paletteIndex, 0x80, gradient);
-    Func_0200babe(17);
+    Func_080001c8(handle->paletteIndex, 0x80, gradient);
+    Func_08000150(17);
 
     entity->shadowX = entity->x;
     entity->field30 = 0;

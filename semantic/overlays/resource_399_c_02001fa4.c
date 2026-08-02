@@ -124,27 +124,30 @@ void Func_02001fa4(void)
         Func_08009158(subject);
         *(void **)(subject + 108) = (void *)Func_02001f24;
 
-        for (;;) {
-            Func_08000128((s32)0x100000, heading, probe);
-            marker = Func_080091b0((s32)subject[34], probe[0], probe[2]);
-            if (marker == 255) {
-                break;
-            }
-            if (Func_080091a8((s32)subject[34], probe[0], probe[2])
-                    - *(s32 *)(subject + 12) > 0x80000) {
-                break;
-            }
-            *(s32 *)(subject + 48) = 0x20000;
-            *(s32 *)(subject + 52) = 0x1999;
-            x = probe[0];
-            z = probe[2];
-            Func_08009150(subject, probe[0], probe[1], probe[2]);
-            Func_08009158(subject);
-            if (marker != goal) {
-                goto blocked;
-            }
+        goto advanceProbe;
+continueProbe:
+        if (Func_080091a8((s32)subject[34], probe[0], probe[2])
+                - *(s32 *)(subject + 12) > 0x80000) {
+            goto finishProbe;
+        }
+        *(s32 *)(subject + 48) = 0x20000;
+        *(s32 *)(subject + 52) = 0x1999;
+        x = probe[0];
+        z = probe[2];
+        Func_08009150(subject, probe[0], probe[1], probe[2]);
+        Func_08009158(subject);
+        if (marker != goal) {
+            goto blocked;
         }
 
+advanceProbe:
+        Func_08000128((s32)0x100000, heading, probe);
+        marker = Func_080091b0((s32)subject[34], probe[0], probe[2]);
+        if (marker != 255) {
+            goto continueProbe;
+        }
+
+finishProbe:
         *(s32 *)(subject + 48) = 0x20000;
         *(s32 *)(subject + 52) = 0x10000;
         Func_08009150(subject, x, *(s32 *)(subject + 12), z);

@@ -90,9 +90,7 @@ s32 Func_020007b0(void)
             status = Func_02000398();
             phaseResult = status;
             if (phaseResult >= 0) {
-                Func_080770e8(1008, phaseResult);
-                status = phaseResult;
-                return status;
+                goto publish;
             }
         }
     } else {
@@ -104,12 +102,20 @@ s32 Func_020007b0(void)
             Func_080000c0(10);
             status = Func_02000580();
             if (status >= 0) {
-                Func_080770e8(1008, phaseResult);
-                status = phaseResult;
-                return status;
+                goto publish;
             }
         }
     }
+
+    goto resetLink;
+
+publish:
+    /* Both role branches converge on this one physical publication site. */
+    Func_080770e8(1008, phaseResult);
+    status = phaseResult;
+    return status;
+
+resetLink:
 
     savedInterruptMaster = *interruptMaster;
     *interruptMaster = (u16)(u32)interruptMaster;

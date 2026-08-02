@@ -39,14 +39,13 @@ extern u8 *Data_03001e70;
 extern s32 BucketKeyTable_0200ace0[];
 extern s32 BucketGeomTable_0200acf8[][4];
 
-u8 *Func_020036d2();
-void Func_02003740();
-void Func_020011b8();
-void Func_020011ca();
+u8 *Func_0808a080();
+void Func_080091c0();
+void Func_02000528();
 
 s32 Func_02000ba4(s32 a0)
 {
-    u8 *obj = Func_020036d2(a0);
+    u8 *obj = Func_0808a080(a0);
     u8 *workspace = Data_03001e70;
     s16 *keyfield = *(s16 **)(*(u8 **)(obj + 0x50) + 0x28);
     s32 bucket = 7;
@@ -85,9 +84,9 @@ s32 Func_02000ba4(s32 a0)
         wsum_x = (*(s32 *)(workspace + 316) >> 20) + x;
         wsum_z = (*(s32 *)(workspace + 320) >> 20) + z;
 
-        Func_02003740(x, z, radius1, radius2, wsum_x, wsum_z);
-        Func_020011b8(0, x, z, radius1, radius2, 255);
-        Func_020011ca(2, x, z, radius1, radius2, 255);
+        Func_080091c0(x, z, radius1, radius2, wsum_x, wsum_z);
+        Func_02000528(0, x, z, radius1, radius2, 255);
+        Func_02000528(2, x, z, radius1, radius2, 255);
     }
 
     return 1;

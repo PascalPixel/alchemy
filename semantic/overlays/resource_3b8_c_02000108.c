@@ -32,7 +32,7 @@ s32 Func_080770c0();
 void Func_080770c8();
 void Func_080770d0();
 void Func_0808a010();
-void Func_0808a018();
+s32 Func_0808a018();
 void Func_0808a020();
 s32 Func_0808a070();
 s32 Func_0808a080();
@@ -64,12 +64,12 @@ void Func_02000108(s32 actor)
     facing = (s16)(((s32)context[3] + 0x2000) & 0xc000);
 
     /*
-     * r0 is not reloaded between these two branches: the pointer returned by
-     * 0x02004510 is the argument of 0x02004504, and 0x02004504's return value
-     * is in turn the argument of 0x02004630.  Whether 0x02004630 actually
-     * reads that register is unverified; the dataflow is preserved as written.
+     * r0 is not reloaded between these two branches: the context is carried
+     * into Func_0808a018, whose return is then carried into Func_0808a460.
+     * Whether either import consumes that inherited register is unverified;
+     * the dataflow is preserved as written.
      */
-    Func_0808a018(Func_0808a460(context));
+    Func_0808a460(Func_0808a018(context));
 
     if (Func_080770c0(0x200) == 0) {
         Func_080770c8(0x200);

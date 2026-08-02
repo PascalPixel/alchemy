@@ -78,7 +78,7 @@ extern u8 Data_0200e590[];
 void Func_02005594();
 void Func_020055a4();
 void Func_020057fc();
-u8 *Func_02005c20();
+void Func_02005c20();
 void Func_080000c0();
 void Func_080000d0();
 void Func_080000d8();
@@ -181,8 +181,8 @@ void Func_020034c8(void)
     *(s32 *)(actor + 8) = 0x01840000;
     Func_080091e0(actor, 0);
 
-    Func_0808a080(Func_080091e0(11), 0);
-    Func_0808a080(Func_080091e0(12), 0);
+    Func_080091e0(Func_0808a080(11), 0);
+    Func_080091e0(Func_0808a080(12), 0);
 
     Func_0808a100(0, 11);
     Func_0808a098(0, Data_0200e590);
@@ -295,7 +295,7 @@ void Func_020034c8(void)
 
     /* 60 frames of the per-frame step, one call per frame. */
     for (frame = 0; frame <= 59; frame++) {
-        Func_0808a080(Func_02005c20(1));
+        Func_02005c20(Func_0808a080(1));
         Func_080000c0(1);
     }
 
@@ -307,7 +307,7 @@ void Func_020034c8(void)
     Func_080000d0((void *)0x0200d5b1, 0xc80);
     Func_080000d0((void *)0x0200d5d1, 0xc80);
 
-    Func_0808a080(Func_080091e0(14), 0);
+    Func_080091e0(Func_0808a080(14), 0);
 
     sceneActor[0x55] = 0;
     *(s32 *)(sceneActor + 8) = 0x01ac0000;

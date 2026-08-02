@@ -71,6 +71,7 @@ void Func_02001494(void)
 {
     u8 *record;
     u8 *workspace;
+    s32 poseActor;
 
     Func_080770c8(0x89a);
     Func_0808a010(30);
@@ -289,32 +290,42 @@ void Func_02001494(void)
     if (Func_0808a070(0, 0) == 0) {
         Func_0808a138(16, 1);
         Func_0808a010(20);
-        Func_0808a188(16, 0, 20);
-        Func_080770c8(0x898);
-    } else {
-        workspace = Data_03001ebc;
-        *(u16 *)(workspace + 472) += 1;
-        Func_0808a010(20);
-        Func_0808a1e8(18, 0x105, 60);
-        Func_0808a1b8(18, 128 << 7, 20);
-        Func_0808a138(16, 2);
-        Func_0808a010(20);
-        Func_0808a178(16, 0);
-        if (Func_0808a070(0, 0) == 0) {
-            Func_0808a110(16, 3);
-            Func_0808a010(20);
-            Func_0808a1b8(18, 176 << 8, 20);
-            Func_0808a188(18, 0, 20);
-            Func_080770c8(0x898);
-        } else {
-            *(u16 *)(workspace + 472) += 1;
-            Func_0808a010(20);
-            Func_0808a110(18, 4);
-            Func_0808a010(20);
-            Func_0808a188(18, 0, 20);
-            Func_080770c8(0x899);
-        }
+        poseActor = 16;
+        goto emitSkippedPose;
     }
+
+    workspace = Data_03001ebc;
+    *(u16 *)(workspace + 472) += 1;
+    Func_0808a010(20);
+    Func_0808a1e8(18, 0x105, 60);
+    Func_0808a1b8(18, 128 << 7, 20);
+    Func_0808a138(16, 2);
+    Func_0808a010(20);
+    Func_0808a178(16, 0);
+    if (Func_0808a070(0, 0) == 0) {
+        Func_0808a110(16, 3);
+        Func_0808a010(20);
+        Func_0808a1b8(18, 176 << 8, 20);
+        poseActor = 18;
+        goto emitSkippedPose;
+    }
+    goto secondSkip;
+
+emitSkippedPose:
+    /* The outer and inner zero-result paths share these physical sites. */
+    Func_0808a188(poseActor, 0, 20);
+    Func_080770c8(0x898);
+    goto skipComplete;
+
+secondSkip:
+    *(u16 *)(workspace + 472) += 1;
+    Func_0808a010(20);
+    Func_0808a110(18, 4);
+    Func_0808a010(20);
+    Func_0808a188(18, 0, 20);
+    Func_080770c8(0x899);
+
+skipComplete:
     Func_0808a1b8(10, 128 << 8, 0);
     Func_0808a1b8(11, 128 << 8, 20);
     Func_0808a100(10, 5);

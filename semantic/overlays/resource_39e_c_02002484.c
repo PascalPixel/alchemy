@@ -32,11 +32,9 @@ typedef int s32;
  * skipped when the first is non-zero. Writing this as `&&` over the zero
  * tests would invert it.
  *
- * Both arms end in Func_0808a020, emitted twice (0x020024a6 and
+ * Both arms end in distinct Func_0808a020 sites (0x020024a6 and
  * 0x020024ee) because the first arm branches over the second to the
- * epilogue. It runs exactly once on either path, so it is hoisted below
- * the if/else here; that is the one place the call census legitimately
- * reads two sites against one statement.
+ * epilogue. Each physical close is represented once below.
  *
  * 0x0200c77a is an in-image data address and is EVEN, so a descriptor and
  * not a published function pointer -- do not feed it to the published
@@ -63,17 +61,18 @@ void Func_02002484(void)
 {
     Func_0808a018();
 
-    if (Func_080770c0(0x89a) != 0 || Func_080770c0(0x895) != 0) {
-        Func_080f9010(158);
-        Func_08009178((void *)0x0200c77a, 78, 13);
-        Func_0808a090(0, 128 << 8, 128 << 7);
-        Func_0808a0d0(0, 153 << 1, 248);
-        Func_0808a0c8(0, 152 << 1, 216);
-        Func_0808a010(20);
-        Func_0808a248(4);
-    } else {
+    if (Func_080770c0(0x89a) == 0 && Func_080770c0(0x895) == 0) {
         Func_08015040(0x18ad, 1);
+        Func_0808a020();
+        return;
     }
 
+    Func_080f9010(158);
+    Func_08009178((void *)0x0200c77a, 78, 13);
+    Func_0808a090(0, 128 << 8, 128 << 7);
+    Func_0808a0d0(0, 153 << 1, 248);
+    Func_0808a0c8(0, 152 << 1, 216);
+    Func_0808a010(20);
+    Func_0808a248(4);
     Func_0808a020();
 }

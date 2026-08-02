@@ -59,23 +59,29 @@ void Func_02000500(s32 subject)
     /* Ids 0x950 and 0x962 are queried in order; the first match wins. */
     if (Func_080770c0(0x950) != 0) {
         message = 0x238d;
-    } else if (Func_080770c0(0x962) != 0) {
-        message = 0x221b;
-    } else {
-        /* Fallback arm: the full three-id sequence of the 0x020006ec family. */
-        message = 0x1fd5;
-        Func_0808a170(message);
-        Func_0808a178(subject, 0);
-        if (Func_0808a070(0, 0) == 0) {
-            Func_0808a010(10);
-            Func_0808a170(message + 1);
-        } else {
-            Func_0808a170(message + 2);
-        }
-        Func_0808a180(subject, 0);
-        return;
+        goto matched_message;
     }
+    if (Func_080770c0(0x962) != 0) {
+        message = 0x221b;
+        goto matched_message;
+    }
+    goto fallback_message;
 
+matched_message:
     Func_0808a170(message);
+    Func_0808a180(subject, 0);
+    return;
+
+fallback_message:
+    /* Fallback arm: the full three-id sequence of the 0x020006ec family. */
+    message = 0x1fd5;
+    Func_0808a170(message);
+    Func_0808a178(subject, 0);
+    if (Func_0808a070(0, 0) == 0) {
+        Func_0808a010(10);
+        Func_0808a170(message + 1);
+    } else {
+        Func_0808a170(message + 2);
+    }
     Func_0808a180(subject, 0);
 }

@@ -280,6 +280,7 @@ scene:
         }
         Func_0808a0d0(actor, 216, 150 << 2);
         Func_0808a0d0(actor, 192, 0x26a);
+        Func_0808a0d0(actor, 192, 164 << 2);
 
         switch (category[index]) {
         case 0:

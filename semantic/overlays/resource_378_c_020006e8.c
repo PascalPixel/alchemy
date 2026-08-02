@@ -8,33 +8,31 @@ typedef signed int s32;
  * integer argument here.  All calls are retained in the ROM order.
  */
 
-extern void Func_02003cdc();
-extern void Func_02003dd8();
-extern void Func_02003df8();
-extern void Func_02003df4();
-extern void Func_02003cf2();
-extern void Func_02003da4();
-extern void Func_02003d02();
-extern void Func_02003d8a();
-extern void Func_02003d10();
-extern void Func_02003dd6();
-extern void Func_02003dee();
-extern void Func_02003d16();
-extern void Func_02003d3a();
+extern void Func_0808a018();
+extern void Func_0808a208();
+extern void Func_0808a220();
+extern void Func_0808a218();
+extern void Func_0808a010();
+extern void Func_0808a148();
+extern void Func_0808a110();
+extern void Func_0808a170();
+extern void Func_0808a180();
+extern void Func_080770c8();
+extern void Func_0808a020();
 
 void Func_020006e8(void)
 {
-    Func_02003cdc();
-    Func_02003dd8(0x10000, 0x2000);
-    Func_02003df8(1, 1);
-    Func_02003df4();
-    Func_02003cf2(20);
-    Func_02003da4(8, 0, 0);
-    Func_02003d02(10);
-    Func_02003d8a(8, 4);
-    Func_02003d10(20);
-    Func_02003dd6(0x116c);
-    Func_02003dee(8, 0);
-    Func_02003d16(0x200);
-    Func_02003d3a();
+    Func_0808a018();
+    Func_0808a208(0x10000, 0x2000);
+    Func_0808a220(1, 1);
+    Func_0808a218();
+    Func_0808a010(20);
+    Func_0808a148(8, 0, 0);
+    Func_0808a010(10);
+    Func_0808a110(8, 4);
+    Func_0808a010(20);
+    Func_0808a170(0x116c);
+    Func_0808a180(8, 0);
+    Func_080770c8(0x200);
+    Func_0808a020();
 }

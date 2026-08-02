@@ -130,8 +130,8 @@ void Func_020010c4(void)
 
         if ((tick & 1) == 0) continue;
 
-        kick = (Func_080000f8(Func_030003e0(), 10) - 5) * 0x3332;
-        lift = (s32)0xffff8003 - Func_080000f8(Func_030003e0(), 10) * 6553;
+        kick = (Func_030003e0(Func_080000f8(), 10) - 5) * 0x3332;
+        lift = (s32)0xffff8003 - Func_030003e0(Func_080000f8(), 10) * 6553;
 
         Func_02000ae8(*(s32 *)(record + 8), *(s32 *)(record + 12),
                       *(s32 *)(record + 16),

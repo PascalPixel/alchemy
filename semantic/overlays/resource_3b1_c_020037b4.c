@@ -15,14 +15,14 @@ typedef signed int s32;
  * of each object's `+0x59` flags byte.
  */
 
-u8 *Func_02009ca8();
+u8 *Func_0808a080();
 
 void Func_020037b4(void)
 {
     s32 index;
 
     for (index = 28; index <= 35; index++) {
-        u8 *obj = Func_02009ca8(index);
+        u8 *obj = Func_0808a080(index);
         obj[0x59] |= 8;
     }
 }

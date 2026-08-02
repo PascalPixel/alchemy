@@ -38,6 +38,7 @@ export const FORK_MODES = [
   "-fno-thumb-contiguous-immediate", "-fthumb-split-group-base",
   "-fthumb-hoist-parameter-save", "-fthumb-minipool-tail-first",
   "-fthumb-entry-saves-descending", "-fthumb-group-control-last",
+  "-fthumb-group-value1-before-base",
   "-fthumb-move-before-alu", "-fthumb-orr-dead-input-reuse",
   "-fthumb-call-arg1-before-arg0",
   "-fthumb-call-arg0-before-store",

@@ -2509,6 +2509,17 @@ export function selfTest(): void {
     throw new Error("the cache version is not deterministic");
   }
 
+  // The four recovered Djinn are deliberately shown at their native-looking
+  // 64 px presentation size. Keep this as a checked constraint: README cache
+  // updates must never silently turn them back into oversized hero artwork.
+  const readme = readFileSync(readmePath(), "utf8");
+  const djinn = [...readme.matchAll(
+    /<img src="assets\/readme\/djinn_10[1-4]_idle\.gif" width="(\d+)" height="(\d+)"/g,
+  )];
+  if (djinn.length !== 4 || djinn.some((match) => match[1] !== "64" || match[2] !== "64")) {
+    throw new Error("README Djinn must remain exactly 64 by 64 pixels");
+  }
+
   // A ref tree must list subdirectories, not only files. mainBoundaries walks
   // `asm/` recursively; if a directory reports no children the walk stops at
   // the first level, boundaries go missing and every main-image region is

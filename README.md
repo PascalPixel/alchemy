@@ -40,7 +40,7 @@ source/owner boundary and keeps that owner's natural byte size:
 modules. Each module is a real parent containing its exact-C owners,
 source-backed semantic owners, and contiguous unowned assembly runs:
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=83611569)
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=e3c1a429)
 
 **Data / assets** — 7,300,700 bytes of the ROM image that are data, not code.
 Fifty-two real manifest families wrap their built leaf kinds and 2,431 disjoint,

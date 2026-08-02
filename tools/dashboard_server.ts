@@ -249,6 +249,30 @@ async function selfTest(): Promise<void> {
   if (map.categories.exact_c.bytes <= 0 || BOX_TREES.some((name) => !trees[name].startsWith("<svg "))) {
     throw new Error("dashboard live coverage generation failed");
   }
+  const overlayArea = map.executable_areas.find((area) => area.id === "overlays");
+  if (overlayArea === undefined) throw new Error("dashboard live map lost its code overlays");
+  const overlayTiles = (id: string) => overlayArea.tiles.filter((tile) => tile.group === id);
+  const unknownBytes = (id: string) => overlayTiles(id).reduce(
+    (sum, tile) => sum + (tile.categories.assembly ?? 0), 0);
+  // These neighbouring, recently worked overlays make a useful visual-regression
+  // cohort: their remaining unknown totals are emphatically not one repeated
+  // square, and 383 has no unknown executable bytes at all. Seven also carry
+  // the same 40-byte fixed header, but that shared structure is retained exact
+  // assembly (orange), never unknown (gray).
+  const visualCohort = ["373", "3c9", "380", "3c8", "383", "372", "3bd", "3af"];
+  if (unknownBytes("383") !== 0 ||
+      new Set(visualCohort.map(unknownBytes)).size < 6) {
+    throw new Error("code-overlay unknown debt collapsed into a repeated display tile");
+  }
+  for (const id of visualCohort.filter((item) => item !== "3bd")) {
+    const header = overlayTiles(id).find((tile) =>
+      tile.bytes === 40 &&
+      tile.categories.retained_asm === 40 &&
+      tile.label.includes("0x02000004–0x0200002c"));
+    if (header === undefined) {
+      throw new Error(`${id} fixed overlay header is not retained exact assembly`);
+    }
+  }
   if (!trees.core.includes("MAIN IMAGE") || !trees.overlays.includes("CODE OVERLAYS") ||
       !trees.assets.includes("DATA / ASSETS") ||
       BOX_TREES.some((name) => !trees[name].includes("font-family:Weyard;font-size:16px"))) {

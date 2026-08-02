@@ -2,7 +2,7 @@ typedef unsigned char u8;
 typedef signed int s32;
 
 /*
- * Resource 3b3 descent loop at 0x02001174 (62 bytes, 2 calls).
+ * Resource 3b3 descent loop at 0x02001174 (80-byte whole-owner span, 2 calls).
  *
  * Derived span, not an inventory row: this owner has no row in
  * out/decomp/overlays.json and no exact sibling.  It was found by sweeping the
@@ -11,9 +11,10 @@ typedef signed int s32;
  * (`bhi` at 0x0200118a to 0x020011ac and `bgt` at 0x020011a8 back to
  * 0x02001188) both stay inside the body, and the walk stops at the
  * interworking return `pop {r5, r6, r7} / pop {r0} / bx r0` at
- * 0x020011ac-0x020011b0.  So the executable extent is exactly
- * 0x02001174-0x020011b1 (62 bytes).  The popped register is r0, so the popped
- * value is the return address and the owner is `void`.
+ * 0x020011ac-0x020011b0.  The executable extent is therefore 62 bytes; the
+ * whole-owner span is 80 bytes after annexing its alignment and literal pool
+ * through 0x020011c3.  The popped register is r0, so the popped value is the
+ * return address and the owner is `void`.
  *
  * Pool map — the walk never reaches these as instructions:
  *   0x020011b2  0x0000       alignment
@@ -23,8 +24,8 @@ typedef signed int s32;
  *   0x020011c0  0x00001998   the loop bound
  * None is an address; 0x020011b8 in particular decodes as a plausible `b.n`
  * and 0x020011ba as a NEON instruction, which is the "a pool word disassembles
- * as code" trap — all four are reached only through `ldr rN,[pc,#imm]`.  The
- * next prologue begins at 0x020011c4.
+ * as code" trap — all four are reached only through `ldr rN,[pc,#imm]`.  They
+ * belong to this owner, and the next prologue begins at 0x020011c4.
  *
  * Both call sites were resolved with
  * `bun tools/overlay_call_targets.ts resource_3b3 1174 11b4`, assigning the

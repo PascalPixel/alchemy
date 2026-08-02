@@ -1,7 +1,7 @@
 typedef int s32;
 
 /*
- * resource_3bb owner at 0x020020b8, 64 bytes: pick one of three ids by
+ * resource_3bb owner at 0x020020b8, 92 bytes: pick one of three ids by
  * a shared status cell's value, then run a short two-call closing
  * sequence on `arg0`.
  *
@@ -21,16 +21,16 @@ typedef int s32;
  * values.
  */
 
-extern void Func_02005f72(s32 arg0, s32 arg1);
-extern void Func_020060ba(s32 arg0);
-extern void Func_020060d2(s32 arg0, s32 arg1);
+extern void Func_08015120(s32 arg0, s32 arg1);
+extern void Func_0808a170(s32 arg0);
+extern void Func_0808a180(s32 arg0, s32 arg1);
 
 void Func_020020b8(s32 arg0, s32 arg1)
 {
     short status = *(short *)0x02000400;
     s32 id;
 
-    Func_02005f72(arg1, 5);
+    Func_08015120(arg1, 5);
 
     if (status == 0x8f) {
         id = 0x2076;
@@ -40,6 +40,6 @@ void Func_020020b8(s32 arg0, s32 arg1)
         id = 0x207a;
     }
 
-    Func_020060ba(id + 1);
-    Func_020060d2(arg0, 0);
+    Func_0808a170(id + 1);
+    Func_0808a180(arg0, 0);
 }

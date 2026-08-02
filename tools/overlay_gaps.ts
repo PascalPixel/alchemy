@@ -255,12 +255,21 @@ export function gapsBetween(
   const gaps: Gap[] = [];
   const overlaps: Overlap[] = [];
 
-  // `maskBanks` is applied to the HEAD and not to interior gaps. The head is
-  // where an overlay's veneer/pointer header lives, so unmasked it fires on
-  // every overlay at once -- resource_3a4's 48-byte head reported six returns,
-  // one per veneer, which is a guard that cries wolf and gets switched off.
-  // Interior gaps keep the raw classifier: they are small, they are read by
-  // hand, and the founding case depends on nothing being masked there.
+  // `maskBanks` applies to every gap, not just the head. The head is where an
+  // overlay's veneer/pointer header usually lives, but it is not the only
+  // place: resource_3bf's interior 0x5588-0x57ec gap is EXACTLY 69 fixed
+  // eight-byte veneers followed by all 15 four-byte `call_via` entries. The
+  // old head-only exception reported their 84 structural `bx` instructions as
+  // 84 function returns and ranked 612 bytes of compiler/linker structure as
+  // semantic-C debt.
+  //
+  // Masking does not make a mixed gap disappear. `maskBanks` proves only the
+  // exact `ldr rN,[pc,#0] / bx rN / .word` and `bx rN / nop` entries; every
+  // return-shaped halfword outside those entries remains visible. Tree-wide at
+  // introduction, only two code-suspect gaps changed: resource_3bf loses all
+  // 84 structural returns, while resource_3a7 keeps its one ordinary return
+  // after 31 veneers are removed. The founding leaf still has one uncovered
+  // `bx lr`, so its discriminator is unchanged.
   const rule = (start: number, end: number, after: number, before: number, mask: boolean): void => {
     const returns: number[] = [];
     let padding = true;
@@ -329,7 +338,7 @@ export function gapsBetween(
     for (let at = current.end; at < next.start; at += 1) if (image[at] !== 0) padded = false;
     if (size <= ALIGNMENT_SLACK && padded) continue;
 
-    rule(current.end, next.start, current.start, next.start, false);
+    rule(current.end, next.start, current.start, next.start, true);
   }
 
   return { gaps, overlaps };
@@ -567,6 +576,32 @@ function selfTest(): void {
   if (banked.verdict !== "VENEER-AND-DATA")
     throw new Error(`sweep D self-test: the call_via bank ruled ${banked.verdict} -- the mask is not working`);
 
+  // The same structural bank can live BETWEEN owners. It must be quiet there
+  // too, while an ordinary return beside a veneer must remain visible. This is
+  // the exact failure direction exposed by resource_3bf:5588-57ec.
+  const interiorImage = new Uint8Array(0x40);
+  interiorImage.set(bank.subarray(0x10, 0x30), 0x10);
+  const interiorBank = gapsBetween(interiorImage, [
+    { start: 0, end: 0x10 },
+    { start: 0x30, end: 0x40 },
+  ]);
+  if (interiorBank.gaps.length !== 1 || interiorBank.gaps[0].verdict !== "POOL-OR-DATA")
+    throw new Error("sweep D self-test: an interior call_via bank is structural, not semantic-C debt");
+
+  const mixed = new Uint8Array(0x40);
+  mixed[0x10] = 0x00; mixed[0x11] = 0x48; // ldr r0, [pc, #0]
+  mixed[0x12] = 0x00; mixed[0x13] = 0x47; // bx r0: covered veneer return
+  mixed[0x18] = 0x00; mixed[0x19] = 0x48; // ldr r0, [pc, #0]
+  mixed[0x1a] = 0x70; mixed[0x1b] = 0x47; // bx lr: uncovered getter return
+  const mixedGap = gapsBetween(mixed, [
+    { start: 0, end: 0x10 },
+    { start: 0x30, end: 0x40 },
+  ]);
+  if (mixedGap.gaps.length !== 1 || mixedGap.gaps[0].verdict !== "CODE-SUSPECT")
+    throw new Error("sweep D self-test: masking an interior veneer must not hide an adjacent getter leaf");
+  if (mixedGap.gaps[0].returns.length !== 1 || mixedGap.gaps[0].returns[0] !== 0x1a)
+    throw new Error("sweep D self-test: the mixed interior gap must retain only its ordinary return");
+
   // THE REGISTER TEST inside `maskBanks`, both directions. `ldr r0 / bx r0` is
   // structure and must be masked; `ldr r0 / bx lr` is a getter stub, a
   // real function, and must NOT be. Same four bytes to any predicate that does
@@ -621,7 +656,7 @@ function selfTest(): void {
 
   console.log(
     "sweep D self-test passed (return shapes, leaf, undercount, over-measure, tail ruling,\n" +
-      "  tail leaf, call_via mask, head region, empty-sweep refusal)",
+      "  tail leaf, call_via/interior-bank mask, head region, empty-sweep refusal)",
   );
 }
 

@@ -324,6 +324,20 @@ function machineCallFromTarget(
   };
 }
 
+/** True when the reachable prefix contains ARMv4T's inline indirect-call idiom. */
+export function containsInlineCallThrough(
+  image: Uint8Array,
+  owner: Pick<SemanticOwner, "offset" | "spanBytes">,
+  reachable: Set<number>,
+): boolean {
+  return [...reachable].some((address) => {
+    const offset = address - OVERLAY_BASE;
+    return offset >= owner.offset && offset + 4 <= owner.offset + owner.spanBytes &&
+      readU16(image, offset) === 0x46fc &&
+      (readU16(image, offset + 2) & 0xff87) === 0x4700;
+  });
+}
+
 function machineCalls(owner: SemanticOwner, image: Uint8Array, prologues: Set<number>): MachineCall[] {
   const start = OVERLAY_BASE + owner.offset;
   const end = Math.min(start + owner.spanBytes, OVERLAY_BASE + image.length);
@@ -335,8 +349,10 @@ function machineCalls(owner: SemanticOwner, image: Uint8Array, prologues: Set<nu
   if (reachable.size === 0) throw new Error(`${owner.overlay}:0x${owner.offset.toString(16)} has no reachable instructions`);
 
   // Discovery deliberately stops at an unresolved `mov pc, rN`, because it
-  // cannot prove the table arms without overlay-specific link semantics. The
-  // resolver has the complementary evidence: the overlay's stored BL rule
+  // cannot prove the table arms without overlay-specific link semantics. It
+  // also treats an inline `mov ip,pc / bx rN` IWRAM call as a return even
+  // though execution resumes at the next halfword. The resolver has the
+  // complementary evidence: the overlay's stored BL rule
   // (`target - 2`) and the complete explicit owner bound. When the walk records
   // a jump-table dispatch, use that bounded resolver listing so the order audit
   // covers the arms after the table instead of returning only the pre-dispatch
@@ -347,7 +363,8 @@ function machineCalls(owner: SemanticOwner, image: Uint8Array, prologues: Set<nu
     return offset >= owner.offset && offset + 2 <= owner.offset + owner.spanBytes &&
       (readU16(image, offset) & 0xff87) === 0x4687;
   });
-  if (hasJumpTable) {
+  const hasInlineCallThrough = containsInlineCallThrough(image, owner, reachable);
+  if (hasJumpTable || hasInlineCallThrough) {
     const calls: MachineCall[] = [];
     for (const site of resolveOverlay(owner.overlay, owner.offset, owner.offset + owner.spanBytes)) {
       const call = machineCallFromTarget(image, owner, prologues, site.site, site.target);
@@ -510,6 +527,13 @@ function selfTest(): void {
   if (explicit.mismatches.length !== 0 || explicit.unresolvedCallVia !== 1) throw new Error("explicit callback call_via self-test failed");
   const rejected = compareOrder(owner, ["Func_08000000"], [via]);
   if (rejected.mismatches.length !== 1) throw new Error("call_via source mismatch self-test failed");
+
+  const inline = new Uint8Array([0xfc, 0x46, 0x18, 0x47, 0x00, 0x20]);
+  const inlineOwner = { offset: 0, spanBytes: inline.length };
+  if (!containsInlineCallThrough(inline, inlineOwner, new Set([OVERLAY_BASE])))
+    throw new Error("inline call-through continuation self-test failed");
+  if (containsInlineCallThrough(inline, inlineOwner, new Set([OVERLAY_BASE + 4])))
+    throw new Error("unreachable inline call-through self-test failed");
   console.log("self-test=ok");
 }
 

@@ -1,4 +1,5 @@
 typedef signed int s32;
+typedef unsigned char u8;
 typedef unsigned int u32;
 typedef unsigned long long u64;
 
@@ -30,16 +31,16 @@ typedef unsigned long long u64;
  *
  * Call targets came from `bun tools/overlay_call_targets.ts resource_3bf 57ec`
  * (9 sites, 4 distinct targets), never from the disassembler's pc-relative
- * `bl` annotations.  Eight are the three class predicates.  The ninth, at
- * 0x02005836, is reported `unknown` and is worth spelling out because it is
- * not a call at all:
+ * `bl` annotations. Eight are the three class predicates. The ninth call, at
+ * 0x02005836, targets a prologue-less constant loader and is worth spelling
+ * out because it was previously omitted from the semantic source-call order:
  *
  *     02005ab8:  ldr r0,[pc,#0]   ; loads the following word
  *     02005aba:  bx  lr
  *     02005abc:  .word 0x0200df90
  *
  * There is no `push`, so `bx lr` returns straight to the instruction after the
- * `bl` — a two-instruction CONSTANT LOADER, not a function.  Its effect is
+ * `bl` — a complete two-instruction CONSTANT-LOADER leaf. Its effect is
  * exactly `r0 = 0x0200df90`, and the site immediately branches to the
  * epilogue, so the infinity-minus-infinity case returns that fixed record.
  * 0x0200df90 is inside this overlay's proven in-image band, i.e. the module's
@@ -97,6 +98,7 @@ typedef struct SoftFloatRecord {
 s32 Func_02005ac0();   /* class <= 1  -> not a number */
 s32 Func_02005ad0();   /* class == 4  -> infinity */
 s32 Func_02005ae0();   /* class == 2  -> zero */
+u8 *Func_02005ab8();   /* shared NaN record getter */
 
 SoftFloatRecord *Func_020057ec(SoftFloatRecord *a, SoftFloatRecord *b,
                                SoftFloatRecord *result)
@@ -122,9 +124,9 @@ SoftFloatRecord *Func_020057ec(SoftFloatRecord *a, SoftFloatRecord *b,
         if (a->sign == b->sign) {
             return a;
         }
-        /* `bl 0x02005ab8` is the two-instruction constant loader described
-         * above, not a call: infinity minus infinity yields this record. */
-        return (SoftFloatRecord *)0x0200df90;
+        /* The two-instruction constant loader described above returns the
+         * overlay's shared NaN record for infinity minus infinity. */
+        return (SoftFloatRecord *)Func_02005ab8();
     }
 
     if (Func_02005ad0(b) != 0) {

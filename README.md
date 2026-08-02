@@ -1,20 +1,54 @@
-> **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
-
 <p align="center">
-  <img src="assets/readme/djinn_101_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 101">
-  <img src="assets/readme/djinn_102_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 102">
-  <img src="assets/readme/djinn_103_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 103">
-  <img src="assets/readme/djinn_104_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 104">
+  <img src="assets/readme/djinn_101_idle.gif" width="32" height="32" alt="Recovered Djinn battle idle loop from graphics resource 101">
+  <img src="assets/readme/djinn_102_idle.gif" width="32" height="32" alt="Recovered Djinn battle idle loop from graphics resource 102">
+  <img src="assets/readme/djinn_103_idle.gif" width="32" height="32" alt="Recovered Djinn battle idle loop from graphics resource 103">
+  <img src="assets/readme/djinn_104_idle.gif" width="32" height="32" alt="Recovered Djinn battle idle loop from graphics resource 104">
 </p>
 
-# Alchemy — Golden Sun decompilation
+<h1 align="center">Alchemy</h1>
 
-A for-fun, clean-room attempt at decompiling Golden Sun (GBA). It is a
-hobby/research project, not a serious or community-driven decomp, and it is
-nowhere near complete.
+<p align="center"><strong>Golden Sun 25th Anniversary Preservation Project</strong></p>
 
-## Full-C Byte Share
+Twenty-five years after *Golden Sun* was first released, Alchemy is an
+automated, clean-room attempt to reconstruct the Game Boy Advance classic as
+readable C code, data, artwork, maps, and music.
 
-Alchemy has one headline progress metric: exact executable bytes generated
-from byte-matching, canonical C divided by all audited executable bytes in the
-main image and decoded code overlays.
+## Progress: Currently 20% of the way done
+
+20% of the game's audited executable bytes now build from exact, byte-matching
+C. These three maps show where the code and assets of the English release stand
+today.
+
+### Main game
+
+The main game is the 548,364 bytes of code that remain available while *Golden
+Sun* is running. Bright purple is exact, byte-matching C; the softer purple is
+readable C that still needs to be matched. Orange marks the small pieces of
+low-level runtime structure intentionally retained as assembly.
+
+![Main-image code coverage box tree in purple with retained assembly in orange.](assets/readme/gs1-en-core.svg)
+
+### Code overlays
+
+*Golden Sun* also loads 96 additional code modules into memory when it needs
+them. This panel tracks all 795,090 executable bytes across those modules.
+Bright cyan is exact C, the softer cyan is readable C still being matched, gray
+is code still to reconstruct, and orange is retained low-level assembly.
+
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg)
+
+### Data and assets
+
+![Asset maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-assets.svg)
+
+Exact-C progress is measured by executable bytes rather than function counts,
+so every claimed byte must compile to the original game before it contributes
+to the headline.
+
+## Preservation and copyright
+
+Alchemy is an unofficial, noncommercial decompilation and preservation project.
+*Golden Sun* and all associated names, characters, graphics, music, text, and
+other original material are copyright Nintendo and Camelot Software Planning.
+Alchemy is not affiliated with or endorsed by either company, and no ownership
+of *Golden Sun* is claimed.

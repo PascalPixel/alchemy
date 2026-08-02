@@ -782,8 +782,8 @@
         "tracked_owner_edge",
         "byte_exact_reconstruction"
       ],
-      "expected_files": 38,
-      "expected_bytes": 2614,
+      "expected_files": 37,
+      "expected_bytes": 2574,
       "files": [
         "0800f1bc",
         "0800fd5c",
@@ -791,7 +791,6 @@
         "0801c9be",
         "08021dfa",
         "080268da",
-        "08079390",
         "0808f498",
         "080bea9c",
         "080bef58",

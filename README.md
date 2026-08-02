@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/readme/djinn_101_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 101">
-  <img src="assets/readme/djinn_102_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 102">
-  <img src="assets/readme/djinn_103_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 103">
-  <img src="assets/readme/djinn_104_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 104">
+  <img src="assets/readme/djinn_101_idle.gif" width="64" height="64" alt="Venus Djinn">
+  <img src="assets/readme/djinn_102_idle.gif" width="64" height="64" alt="Jupiter Djinn">
+  <img src="assets/readme/djinn_103_idle.gif" width="64" height="64" alt="Mars Djinn">
+  <img src="assets/readme/djinn_104_idle.gif" width="64" height="64" alt="Mercury Djinn">
 </p>
 
 <h1 align="center">Alchemy</h1>

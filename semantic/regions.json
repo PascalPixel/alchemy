@@ -819,6 +819,36 @@
     },
     {
       "overlay": "resource_378",
+      "entry": "0x0200027c",
+      "span_bytes": 112,
+      "evidence": "admitted whole-owner semantic reconstruction; push at 0x0200027c, pop {r0}/bx r0 at 0x020002d4-0x020002d6, and the five-word literal pool 0x020002d8-0x020002eb establish the boundary before the next push at 0x020002ec; 10 calls, 3 branch sites, no semantic stores"
+    },
+    {
+      "overlay": "resource_378",
+      "entry": "0x020002ec",
+      "span_bytes": 116,
+      "evidence": "admitted whole-owner semantic reconstruction; push at 0x020002ec, pop {r0}/bx r0 at 0x02000348-0x0200034a, and the five-word literal pool 0x0200034c-0x0200035f establish the boundary before the next push at 0x02000360; 11 calls, 3 branch sites, no semantic stores"
+    },
+    {
+      "overlay": "resource_378",
+      "entry": "0x02000360",
+      "span_bytes": 392,
+      "evidence": "admitted whole-owner semantic reconstruction; push at 0x02000360, shared epilogue at 0x020004da-0x020004e0, alignment at 0x020004e2-0x020004e3, and the literal pool word 0x020004e4-0x020004e7 establish the boundary before 0x020004e8; 44 calls, 9 branch sites, and two semantic byte stores at returned-record offset +0x5a"
+    },
+    {
+      "overlay": "resource_378",
+      "entry": "0x020004e8",
+      "span_bytes": 140,
+      "evidence": "admitted whole-owner semantic reconstruction; push {r5,lr}/sub sp at 0x020004e8-0x020004ea, stack-argument call, epilogue at 0x02000560-0x02000566, and the three-word literal pool 0x02000568-0x02000573 establish the boundary before 0x02000574; 10 calls, 2 branch sites, one semantic halfword increment at workspace +472 and seven stack-argument stores"
+    },
+    {
+      "overlay": "resource_378",
+      "entry": "0x02000574",
+      "span_bytes": 88,
+      "evidence": "admitted whole-owner semantic reconstruction; push at 0x02000574, epilogue at 0x020005c0-0x020005c2, and the two-word literal pool 0x020005c4-0x020005cb establish the boundary before the entry-driver push at 0x020005cc; 8 calls, 1 branch site, one semantic halfword increment at workspace +472"
+    },
+    {
+      "overlay": "resource_378",
       "entry": "0x020005cc",
       "span_bytes": 284,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_378), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; the body dispatches through a 26-entry jump table at 0x0200060c whose arms follow the table inside the function, so tools/m2c_guard.ts's 256-byte measurement is a lower bound and the true span runs through the epilogue at 0x020006ca and the seven-word literal pool 0x020006cc-0x020006e7 to the next function's prologue at 0x020006e8; inside the assembled overlay image and not overlapping another recorded owner."
@@ -3447,9 +3477,39 @@
     },
     {
       "overlay": "resource_39d",
+      "entry": "0x0200013c",
+      "span_bytes": 472,
+      "evidence": "admitted whole-owner semantic reconstruction; saved-high-register owner begins at 0x0200013c and returns through pop {r0}/bx r0 at 0x02000304-0x02000306, followed by its three directly referenced literal words through 0x02000313; the next owner starts at 0x02000314; full disassembly comparison identifies the established resource_39c/resource_3c9/resource_39e object-creation family, with all ten resolver-confirmed calls, every flag gate, store width and field offset represented"
+    },
+    {
+      "overlay": "resource_39d",
       "entry": "0x0200035c",
       "span_bytes": 528,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_39d), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; span read from the disassembly through the epilogue at 0x02000540 and the ten-word literal pool 0x02000544-0x0200056b to the next function at 0x0200056c, which this driver itself calls; inside the assembled overlay image and not overlapping another recorded owner; hand-drafted from the bytes with tools/m2c_guard.ts reporting full call coverage."
+    },
+    {
+      "overlay": "resource_39d",
+      "entry": "0x0200056c",
+      "span_bytes": 804,
+      "evidence": "admitted whole-owner semantic reconstruction; saved-link scripted owner begins at 0x0200056c and returns at 0x02000868-0x0200086a, followed by its nine directly referenced pool words through 0x0200088f; all 93 resolver-confirmed calls are retained in runtime order, together with the workspace write, record byte clear and three guarded coordinate-copy calls; the next owner begins at 0x02000890"
+    },
+    {
+      "overlay": "resource_39d",
+      "entry": "0x02000890",
+      "span_bytes": 60,
+      "evidence": "admitted whole-owner semantic reconstruction; saved-register 3-D distance helper begins at 0x02000890 and returns at 0x020008c2-0x020008c6, followed by its directly referenced 0x030001d8 pool word at 0x020008c8; this is the established square-root distance family and all three signed 16.16 differences are represented"
+    },
+    {
+      "overlay": "resource_39d",
+      "entry": "0x020008cc",
+      "span_bytes": 92,
+      "evidence": "admitted whole-owner semantic reconstruction; saved-high-register owner begins at 0x020008cc and returns at 0x02000918-0x02000922, followed by its directly referenced 0x03001ebc pool word at 0x02000924; the complete slot 8..65 search, kind-0xf2 gate, local distance call and nearest-slot selection are represented"
+    },
+    {
+      "overlay": "resource_39d",
+      "entry": "0x02000928",
+      "span_bytes": 212,
+      "evidence": "admitted whole-owner semantic reconstruction; saved-high-register owner begins at 0x02000928 and returns through pop {r0}/bx r0 at 0x020009f4-0x020009f6, followed by its directly referenced 0xfff00000 pool word at 0x020009f8; all thirteen resolver-confirmed calls, the early collision return, coordinate setup, record field writes and restored byte state are represented"
     },
     {
       "overlay": "resource_39d",
@@ -3462,6 +3522,36 @@
       "entry": "0x02000ad0",
       "span_bytes": 82,
       "evidence": "derived owner boundary: no row in out/decomp/overlays.json; prologue found by sweeping the two-byte gaps in metrics/gs1-en-executable.json, straight-line body walked from the prologue to its matching interworking epilogue `pop {r5} / pop {r0} / bx r0` at 0x02000b1c, no literal pool, halfword 0x02000b22 is alignment before the next owner at 0x02000b24"
+    },
+    {
+      "overlay": "resource_39d",
+      "entry": "0x02000b24",
+      "span_bytes": 4044,
+      "evidence": "admitted whole-owner semantic reconstruction; prologue push {r5,r6,lr} at 0x02000b24, full conditional scene-render path through the interworking epilogue pop {r5,r6}/pop {r0}/bx r0 at 0x02001ad4-0x02001ad8, followed by its literal/alignment tail through 0x02001aef; next proven prologue at 0x02001af0, with all 409 bounded calls resolved by tools/overlay_call_targets.ts; local disassembly/control-flow review preserves every branch, field update, pool word, and call; inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39d",
+      "entry": "0x02001af0",
+      "span_bytes": 4844,
+      "evidence": "admitted whole-owner semantic reconstruction; prologue push {r5,r6,r7,lr} plus high-register spill at 0x02001af0, complete scene-59 path through the interworking unwind pop {r3,r5,r6}/mov r8,r3/mov r9,r5/mov sl,r6/pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002dbe-0x02002dc2, followed by its literal/alignment tail through 0x02002ddb; next proven prologue at 0x02002ddc, with all 500 bounded calls resolved by tools/overlay_call_targets.ts; local disassembly/control-flow review preserves every branch, field update, pool word, and call; inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39d",
+      "entry": "0x02002ddc",
+      "span_bytes": 220,
+      "evidence": "admitted whole-owner semantic reconstruction; prologue push {r5,r6,lr} at 0x02002ddc, complete workspace/record setup and six-argument draw path through pop {r5,r6}/pop {r0}/bx r0 at 0x02002e9e-0x02002ea2, followed by its literal pool through 0x02002eb7; next proven prologue at 0x02002eb8, with all 21 bounded calls resolved by tools/overlay_call_targets.ts; local disassembly/control-flow review preserves every observable operation; inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39d",
+      "entry": "0x02002eb8",
+      "span_bytes": 96,
+      "evidence": "admitted whole-owner semantic reconstruction; saved-link prologue push {lr} at 0x02002eb8, complete nine-call helper through pop {r0}/bx r0 at 0x02002f12-0x02002f14, no literal tail, next proven prologue at 0x02002f18; all 10 bounded calls resolved by tools/overlay_call_targets.ts and every operation retained in ordinary C; inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39d",
+      "entry": "0x02002f18",
+      "span_bytes": 328,
+      "evidence": "admitted whole-owner semantic reconstruction; prologue push {r5,r6,r7,lr} plus high-register spill at 0x02002f18, reviewed 32-iteration alternating spawn loop through pop {r3,r5,r6}/mov r8,r3/mov r9,r5/mov sl,r6/pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02003042-0x02003050, followed by its three-word literal tail through 0x0200305f; next proven owner at 0x02003060; all 18 bounded calls (including two local eight-argument spawners) resolved by tools/overlay_call_targets.ts and every branch/dataflow operation retained in ordinary C; inside the assembled overlay image and not overlapping another recorded owner"
     },
     {
       "overlay": "resource_39d",
@@ -8598,6 +8688,18 @@
       "entry": "0x0200109c",
       "span_bytes": 860,
       "evidence": "admitted instruction-complete reviewed reconstruction; saved high-register owner starts at 0x0200109c and returns through pop {r0}/bx r0 at 0x020013ce-0x020013d0, with the directly referenced literal pool through 0x020013f7 before the next owner at 0x020013f8; local CFG audit accounts for all 44 reachable basic blocks, all 44 call sites (18 distinct targets), all 30 branch sites, and all 31 machine stores: 23 semantic memory stores are expressed in C and the eight stack spill stores are explicitly classified as compiler artifacts rather than modeled side effects; literal values and veneer identities were read from resource_3bd's assembled bytes, with no inline assembly, fixed-register trick, or raw translator construct"
+    },
+    {
+      "overlay": "resource_3bd",
+      "entry": "0x0200034c",
+      "span_bytes": 296,
+      "evidence": "admitted instruction-complete reviewed reconstruction; whole owner runs from the high-register prologue at 0x0200034c through the single return epilogue at 0x02000452-0x02000462, with its four directly referenced literal words at 0x02000464-0x02000473 and the next owner prologue at 0x02000474; the ROM boundary is therefore 0x0200034c-0x02000473 (296 bytes). The resolver finds exactly one call site (0x02000368 -> veneer 0x02003cc8 -> Func_0808a080). An independent CFG/store audit accounts for all 12 conditional/unconditional branch sites and all 12 machine stores: the eight stack spills are compiler artifacts, while the four observable store sites write directionOut, kindIndexOut and the two parity arms of slotOut. Signed halfword loads, arithmetic shifts, strict rectangle bounds, parity guards, and the continuously advancing 58*6 key/limit cursors are expressed in ordinary C; no inline assembly, fixed-register trick or raw translator construct"
+    },
+    {
+      "overlay": "resource_3bd",
+      "entry": "0x02003610",
+      "span_bytes": 52,
+      "evidence": "admitted whole-owner semantic reconstruction; saved-register owner begins at 0x02003610, returns through pop {r0}/bx r0 at 0x0200363e-0x02003640 and includes the two-byte alignment before the next owner; its null gate, byte clear, one resolver-confirmed Func_0808a080 call and masked copy of owner byte 9 bits 2-3 are represented"
     }
   ]
 }

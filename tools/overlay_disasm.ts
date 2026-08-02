@@ -215,7 +215,12 @@ export function biasInImageLabelWords(assembly: string): { text: string; biased:
   return { text, biased };
 }
 
-function compileOverlayC(source: string, work: string, overlay: string): { address: number; data: Buffer } {
+function compileOverlayC(
+  source: string,
+  work: string,
+  overlay: string,
+  routingSource = source,
+): { address: number; data: Buffer } {
   const callViaBase = overlayCallViaBase(overlay, source);
   const stem = basename(source, extname(source)).slice(-8);
   if (!/^[0-9a-f]{8}$/i.test(stem)) throw new Error(`overlay C filename is not an address: ${source}`);
@@ -232,7 +237,7 @@ function compileOverlayC(source: string, work: string, overlay: string): { addre
   const binary = join(work, `${stem}.bin`);
   const plan = sourceToAssemblyPlan({
     target: "gs1",
-    routingSource: source,
+    routingSource,
     input: source,
     output: assembly,
     preprocessedOutput: join(work, `${stem}.i`),
@@ -290,6 +295,22 @@ function compileOverlayC(source: string, work: string, overlay: string): { addre
     // A cache write failure must never fail a verification.
   }
   return { address, data };
+}
+
+/**
+ * Compile one prospective overlay C owner without installing a placeholder or
+ * touching the canonical overlay assembly.  Exact-source iteration and
+ * parallel agents need this read-only path: `overlay_adopt` deliberately
+ * rehearses in place so path-routed flags see the installed filename, which
+ * makes concurrent dry runs against one overlay race with each other.
+ */
+export function compileOverlayCandidate(
+  source: string,
+  work: string,
+  overlay: string,
+  routingSource = source,
+): { address: number; data: Buffer } {
+  return compileOverlayC(source, work, overlay, routingSource);
 }
 
 // Address of the overlay's own `_call_via_rN` bank, or the main image's if it

@@ -47,6 +47,23 @@ builds remain byte-identical, with zero fallback bytes. The current bundled
 darwin-arm64 `cc1` digest is
 `0767fccd6046d0b4dcaae1150a82e505a29e59ca9f4f979e2535e7970f3de449`.
 
+## applied: post-call byte-state increment register
+
+The clean witness `08098b10` is now exact C (248/248 bytes). Its ordinary
+GCC 2.96 output has the right control flow and size but keeps the temporary
+state pointer in `r1`; the reference keeps that pointer in `r2` for the
+post-helper byte increment. The default-off
+`-fthumb-postcall-byte-increment-r2` mode recognizes only the complete
+call/branch, `r1 <- r8` copy, byte load, `+1`, and byte store shape. It retargets
+the hard register after reload by register number and carries the corresponding
+reload notes with it. The route is limited to GS1 source `08098b10`.
+
+The full exact-C corpus remains exact (1,424/1,424 members), and the complete
+0809 semantic cohort shows no collateral changes. The source-only and full ROM
+builds remain byte-identical with zero fallback bytes. The admitted
+darwin-arm64 `cc1` is from alchemy-gcc commit `df79270`, digest
+`d12bf2c7b96d2b1b6cec4c09b76f986249285070b1ca09d1ba1baf31b859cc18`.
+
 ## cse-two-insn-immediate
 
 Blocks the largest single class of unconverted code-overlay functions: the reference

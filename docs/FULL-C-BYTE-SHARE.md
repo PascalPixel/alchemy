@@ -79,16 +79,17 @@ commit tree rather than trusting incompatible legacy subject suffixes.
 
 ## Coverage map
 
-`tools/coverage_map.ts` publishes the same measurement as three pictures:
+`tools/coverage_map.ts` publishes the same measurement as four pictures:
 [`gs1-en-core.svg`](../assets/readme/gs1-en-core.svg),
-[`gs1-en-overlays.svg`](../assets/readme/gs1-en-overlays.svg), and
-[`gs1-en-assets.svg`](../assets/readme/gs1-en-assets.svg), with the tile data in
+[`gs1-en-overlays.svg`](../assets/readme/gs1-en-overlays.svg),
+[`gs1-en-images.svg`](../assets/readme/gs1-en-images.svg), and
+[`gs1-en-music.svg`](../assets/readme/gs1-en-music.svg), with the tile data in
 [`metrics/gs1-en-coverage-map.json`](../metrics/gs1-en-coverage-map.json).
 
 It derives exact and semantic ownership the way the history ledger does—from
-tracked trees. Orange retained ownership additionally reads the latest verified
+tracked trees. Dark-gray retained ownership additionally reads the latest verified
 full-build assembly manifest; run the publication redraw after `bun run verify`.
-If that manifest is absent, only explicit tracked non-code spans are orange and
+If that manifest is absent, only explicit tracked non-code spans are dark gray and
 the unresolved complement remains gray:
 
 * main-image exact C: `src/<address>.c` against audited region boundaries,

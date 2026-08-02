@@ -2196,10 +2196,10 @@ export function renderBoxTree(
   return lines.join("\n");
 }
 
-export const BOX_TREES = ["core", "overlays", "assets"] as const;
+export const BOX_TREES = ["core", "overlays", "images", "music"] as const;
 export type BoxTreeId = (typeof BOX_TREES)[number];
-export const DASHBOARD_TREES = ["core", "overlays", "images", "music"] as const;
-export type DashboardTreeId = (typeof DASHBOARD_TREES)[number];
+export const DASHBOARD_TREES = BOX_TREES;
+export type DashboardTreeId = BoxTreeId;
 
 export function boxTreePath(target: DecompTargetId, tree: BoxTreeId): string {
   return join(ROOT, "assets", "readme", `${target}-${tree}.svg`);
@@ -2308,6 +2308,13 @@ export function renderBoxTrees(
   const overlays = map.executable_areas.find((item) => item.id === "overlays");
   if (!core || !overlays) throw new Error("coverage map is missing a box-tree area");
   const assets = assetTreeContext(map, tree, preferVerifiedAssets);
+  const musicTiles = assets.area.tiles.filter(isMusicAsset);
+  const imageTiles = assets.area.tiles.filter((tile) => !isMusicAsset(tile));
+  const images = area("images", "Images", imageTiles);
+  const music = area("music", "Music", musicTiles);
+  if (images.bytes + music.bytes !== assets.area.bytes) {
+    throw new Error("published asset split does not conserve its byte total");
+  }
   return {
     core: renderBoxTree(core,
       "Main-image code coverage box tree, purple band; 64 KiB address banks contain audited source-owner leaves at their natural executable byte size",
@@ -2317,12 +2324,8 @@ export function renderBoxTrees(
       "Decoded code-overlay coverage box tree, cyan band; each resource contains its exact, semantic, and unowned source regions",
       OVERLAY_HUE, CODE_FRACTION,
       ["assembly", "retained_asm", "semantic_c", "exact_c", "humanized_c"], ["group"], "Code overlays"),
-    assets: renderBoxTree(assets.area,
-      assets.detailed
-        ? `Asset maturity box tree, pink band; ${commas(assets.cataloguedBytes)} catalogued bytes are tiered by tracked sources and ${commas(assets.unclassifiedBytes)} unclassified ROM-image data bytes remain at the byte-represented floor`
-        : "Asset maturity box tree, pink band",
-      ASSET_HUE, ASSET_FRACTION,
-      assets.categoryOrder, assets.folders, "Data / assets"),
+    images: renderAssetTree(assets, images, "Images", ASSET_HUE),
+    music: renderAssetTree(assets, music, "Music", MUSIC_HUE),
   };
 }
 
@@ -2333,21 +2336,7 @@ export function renderDashboardTrees(
   tree?: SourceTree,
   preferVerifiedAssets = false,
 ): Record<DashboardTreeId, string> {
-  const published = renderBoxTrees(map, tree, preferVerifiedAssets);
-  const assets = assetTreeContext(map, tree, preferVerifiedAssets);
-  const musicTiles = assets.area.tiles.filter(isMusicAsset);
-  const imageTiles = assets.area.tiles.filter((tile) => !isMusicAsset(tile));
-  const images = area("images", "Images", imageTiles);
-  const music = area("music", "Music", musicTiles);
-  if (images.bytes + music.bytes !== assets.area.bytes) {
-    throw new Error("dashboard asset split does not conserve its byte total");
-  }
-  return {
-    core: published.core,
-    overlays: published.overlays,
-    images: renderAssetTree(assets, images, "Images", ASSET_HUE),
-    music: renderAssetTree(assets, music, "Music", MUSIC_HUE),
-  };
+  return renderBoxTrees(map, tree, preferVerifiedAssets);
 }
 
 export function svgCacheVersion(svg: string): string {
@@ -2592,16 +2581,16 @@ export function selfTest(): void {
 
   // The README cache-buster: derived from the SVG, idempotent, and replacing any
   // version already present rather than accumulating them.
-  const embed = "![a](assets/readme/gs1-en-core.svg) ![b](assets/readme/gs1-en-overlays.svg) ![c](assets/readme/gs1-en-assets.svg)";
-  const sameVersion = { core: "abcd1234", overlays: "abcd1234", assets: "abcd1234" } as const;
+  const embed = "![a](assets/readme/gs1-en-core.svg) ![b](assets/readme/gs1-en-overlays.svg) ![c](assets/readme/gs1-en-images.svg) ![d](assets/readme/gs1-en-music.svg)";
+  const sameVersion = { core: "abcd1234", overlays: "abcd1234", images: "abcd1234", music: "abcd1234" } as const;
   const once = readmeWithCacheBuster(embed, "gs1-en", sameVersion);
-  if (once !== "![a](assets/readme/gs1-en-core.svg?v=abcd1234) ![b](assets/readme/gs1-en-overlays.svg?v=abcd1234) ![c](assets/readme/gs1-en-assets.svg?v=abcd1234)") {
+  if (once !== "![a](assets/readme/gs1-en-core.svg?v=abcd1234) ![b](assets/readme/gs1-en-overlays.svg?v=abcd1234) ![c](assets/readme/gs1-en-images.svg?v=abcd1234) ![d](assets/readme/gs1-en-music.svg?v=abcd1234)") {
     throw new Error("the cache-buster was not applied to a bare embed");
   }
   if (readmeWithCacheBuster(once, "gs1-en", sameVersion) !== once) {
     throw new Error("the cache-buster is not idempotent");
   }
-  if (!readmeWithCacheBuster(once, "gs1-en", { core: "99887766", overlays: "abcd1234", assets: "abcd1234" })
+  if (!readmeWithCacheBuster(once, "gs1-en", { core: "99887766", overlays: "abcd1234", images: "abcd1234", music: "abcd1234" })
       .includes("![a](assets/readme/gs1-en-core.svg?v=99887766)")) {
     throw new Error("an existing cache-buster was not replaced");
   }
@@ -2850,8 +2839,10 @@ export function selfTest(): void {
       ]),
     ],
   };
-  const maturitySvg = renderBoxTrees(maturityMap, maturityTree).assets;
-  if (!maturitySvg.includes("100 catalogued bytes") || !maturitySvg.includes("100 unclassified ROM-image data bytes")) {
+  const maturitySvg = renderBoxTrees(maturityMap, maturityTree).images;
+  if (!maturitySvg.includes("200 bytes are tiered") ||
+      !maturitySvg.includes("Unclassified ROM-image data (byte-represented): 100 bytes") ||
+      !maturitySvg.includes("Unknown 50.0%")) {
     throw new Error("asset maturity tree did not include its unclassified remainder");
   }
 

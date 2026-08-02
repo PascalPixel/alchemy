@@ -284,6 +284,19 @@ Latest bounded probes (2026-08-02) reinforce that rule:
   held the exact extent with four differing halfwords, all one temporary's
   r2/r3 allocation. A bounded 1,800-step, three-restart permuter run ended at
   weighted floor 4 with no exact match.
+- Fresh main-image `08079460` (412-byte owner): the expanded 701-configuration
+  family/mode sweep and an independent compiler review found no exact route;
+  the best result was 187 differing halfwords at the exact extent.
+- Fresh main-image `0807905c` (616-byte owner): the automated declaration and
+  statement-order sweep evaluated 720 probes without improving its 316-
+  halfword floor. The expanded 701-configuration compiler sweep reached 302
+  halfwords at 632 bytes, so it was not promoted.
+- Main-image `08077394` (68-byte owner): the full 701-configuration sweep,
+  quick finish-draft enumerator, and bounded 1,800-step/three-restart permuter
+  found no exact result; the baseline remains 27 differing halfwords at the
+  exact extent. Main-image `0807a664` likewise found no route: the quick
+  enumerator reached 151 differing halfwords at 316 bytes and its bounded
+  permuter did not improve the saved floor.
 
 ## Tooling audit
 

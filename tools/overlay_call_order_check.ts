@@ -204,7 +204,12 @@ function ownerBody(source: string, symbol: string): string {
 function callsInBody(body: string): string[] {
   const calls: string[] = [];
   let cursor = 0;
-  const pattern = /\b(Func_[0-9a-f]{8})\s*\(/gi;
+  // `callback()` is the source-level form of a BL into an overlay's bare
+  // `bx rN` trampoline. Keep it in the sequence as the same explicit marker
+  // used by machineCallFromTarget rather than silently shifting every later
+  // direct call. Semantic owners use `callback` for this deliberately narrow
+  // convention; arbitrary non-Func helper calls remain outside the ABI audit.
+  const pattern = /\b(Func_[0-9a-f]{8}|callback)\s*\(/gi;
   while (true) {
     pattern.lastIndex = cursor;
     const found = pattern.exec(body);
@@ -212,7 +217,9 @@ function callsInBody(body: string): string[] {
     const open = body.indexOf("(", found.index);
     const close = matchingDelimiter(body, open, "(", ")");
     calls.push(...callsInBody(body.slice(open + 1, close)));
-    calls.push(`Func_${found[1].slice(5).toLowerCase()}`);
+    calls.push(found[1].toLowerCase() === "callback"
+      ? CALL_VIA
+      : `Func_${found[1].slice(5).toLowerCase()}`);
     cursor = close + 1;
   }
   return calls;
@@ -381,7 +388,9 @@ export function compareOrder(owner: SemanticOwner, sourceSequence: string[], mac
       continue;
     }
     if (machine.kind === "call_via") {
-      if (machine.resolvedCallViaTarget !== undefined) {
+      if (source === CALL_VIA) {
+        if (machine.resolvedCallViaTarget === undefined) unresolvedCallVia++;
+      } else if (machine.resolvedCallViaTarget !== undefined) {
         const actual = `Func_${hex(machine.resolvedCallViaTarget)}`;
         if (actual !== source) {
           mismatches.push({ index, source, machine: actual, site: machine.site, detail: "resolved call_via target differs" });
@@ -476,6 +485,10 @@ function selfTest(): void {
   const expected = ["Func_08000001", "Func_02000004", "Func_08000002"];
   const actual = sourceCalls(source, "Func_02000000");
   if (JSON.stringify(actual) !== JSON.stringify(expected)) throw new Error("postorder source-call self-test failed");
+  const callbackSource = `void Func_02000000(void (*callback)(void)) { if (callback) callback(); Func_08000002(); }`;
+  const callbackCalls = sourceCalls(callbackSource, "Func_02000000");
+  if (JSON.stringify(callbackCalls) !== JSON.stringify([CALL_VIA, "Func_08000002"]))
+    throw new Error("source callback must remain visible as call_via");
 
   const image = new Uint8Array(0x40);
   // A call-through slot at offset 0x20: bx r3, with a literal target loaded by
@@ -493,6 +506,8 @@ function selfTest(): void {
   const via: MachineCall = { site: 0, target: 0x20, kind: "call_via", name: CALL_VIA };
   const accepted = compareOrder(owner, ["Func_030001d8"], [via]);
   if (accepted.mismatches.length !== 0 || accepted.unresolvedCallVia !== 1) throw new Error("unresolved call_via self-test failed");
+  const explicit = compareOrder(owner, [CALL_VIA], [via]);
+  if (explicit.mismatches.length !== 0 || explicit.unresolvedCallVia !== 1) throw new Error("explicit callback call_via self-test failed");
   const rejected = compareOrder(owner, ["Func_08000000"], [via]);
   if (rejected.mismatches.length !== 1) throw new Error("call_via source mismatch self-test failed");
   console.log("self-test=ok");

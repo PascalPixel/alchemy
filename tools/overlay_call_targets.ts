@@ -129,6 +129,14 @@ export function classify(
   if (target + 1 < image.length) {
     const opening = image[target] | (image[target + 1] << 8);
     if ((opening & 0xfe00) === 0xb400) return { kind: "prologue" };
+    // Some GCC owners reserve outgoing stack-argument space BEFORE saving
+    // registers. resource_39c:0x08ec is the measured example:
+    // `sub sp,#16 ; push {r5,r6,r7,lr}`. Missing this shape hid its two callers
+    // and assigned the first instruction to the preceding owner.
+    if (target + 3 < image.length && (opening & 0xff80) === 0xb080) {
+      const second = image[target + 2] | (image[target + 3] << 8);
+      if ((second & 0xfe00) === 0xb400) return { kind: "prologue" };
+    }
   }
   if (target + 8 <= image.length) {
     const first = image[target] | (image[target + 1] << 8);
@@ -319,6 +327,9 @@ function selfTest(): void {
   const unlisted = new Uint8Array([0x10, 0xb5, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
   if (classify(unlisted, 0, new Set()).kind !== "prologue")
     throw new Error("an unlisted push prologue must be recognised");
+  const stackFirst = new Uint8Array([0x84, 0xb0, 0xe0, 0xb5, 0x00, 0x00, 0x00, 0x00]);
+  if (classify(stackFirst, 0, new Set()).kind !== "prologue")
+    throw new Error("a stack-reservation-before-push prologue must be recognised");
   // Bounds must parse in BOTH spellings. The `0x` form silently produced a
   // whole-overlay listing before this was fixed, which is worse than an error
   // because the output looks correct.

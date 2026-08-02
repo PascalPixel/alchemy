@@ -3394,14 +3394,14 @@
     {
       "overlay": "resource_39c",
       "entry": "0x02000758",
-      "span_bytes": 406,
-      "evidence": "admitted whole-owner semantic reconstruction; derived owner absent from the structural inventory -- r8/r9/sl/fp-saving prologue at 0x02000758 through the real-value interworking return at 0x020008cc-0x020008dc; independently measured with m2c_guard as 390 code bytes ending at 0x020008de, followed by alignment, three referenced pool words at 0x020008e0-0x020008eb (0x0200dda8, 0x0200dd50, 0xffff0000), and one trailing boundary halfword before the next prologue at 0x020008ee, making the whole span 406 bytes; both bounded calls resolve to Func_02000630 and the Func_080091d8 veneer, with no indirect-call hazard; inside the assembled overlay image and not overlapping another recorded owner"
+      "span_bytes": 404,
+      "evidence": "admitted whole-owner semantic reconstruction; derived owner absent from the structural inventory -- r8/r9/sl/fp-saving prologue at 0x02000758 through the real-value interworking return at 0x020008cc-0x020008dc; independently measured with m2c_guard as 390 code bytes ending at 0x020008de, followed by alignment and three referenced pool words at 0x020008e0-0x020008eb (0x0200dda8, 0x0200dd50, 0xffff0000); the next owner begins at 0x020008ec by reserving stack space before its push, making this whole-owner span 404 bytes; both bounded calls resolve to Func_02000630 and the Func_080091d8 veneer, with no indirect-call hazard; inside the assembled overlay image and not overlapping another recorded owner"
     },
     {
       "overlay": "resource_39c",
-      "entry": "0x020008ee",
-      "span_bytes": 694,
-      "evidence": "admitted whole-owner semantic reconstruction; derived owner absent from the structural inventory -- r8/r9/sl/fp-saving prologue at 0x020008ee through the void interworking return at 0x02000b72-0x02000b84; independently measured with m2c_guard as 664 code bytes ending at 0x02000b86, followed by alignment and seven referenced pool words at 0x02000b88-0x02000ba3, with the next owner's prologue at 0x02000ba4, making the whole span 694 bytes; all 31 bounded call sites resolve across fourteen targets and the only call_via site is the explicit sixth callback argument; inside the assembled overlay image and not overlapping another recorded owner"
+      "entry": "0x020008ec",
+      "span_bytes": 696,
+      "evidence": "admitted whole-owner semantic reconstruction; stack-reservation-first prologue at 0x020008ec (`sub sp,#16` before push {r5,r6,r7,lr}) through the void interworking return at 0x02000b72-0x02000b84; independently measured with m2c_guard as 666 code bytes ending at 0x02000b86, followed by alignment and seven referenced pool words at 0x02000b88-0x02000ba3, with the next owner's prologue at 0x02000ba4, making the whole-owner span 696 bytes; all 31 bounded call sites resolve across fourteen targets and the only call_via site is the explicit sixth callback argument; inside the assembled overlay image and not overlapping another recorded owner"
     },
     {
       "overlay": "resource_39c",
@@ -3450,6 +3450,12 @@
       "entry": "0x020021cc",
       "span_bytes": 248,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6}/pop {r1}/bx r1, a real return value not the interworking-return shape) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing nine-word literal pool to the next owner's prologue at 0x020022c4, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_39c",
+      "entry": "0x02002318",
+      "span_bytes": 492,
+      "evidence": "admitted whole-owner semantic reconstruction; push {r5, r6, lr} at 0x02002318 through the sole interworking return at 0x020024da-0x020024e4, followed by alignment and seven directly referenced literal words through 0x02002503 before the next code at 0x02002504; the six-word placement record, selector-10 flag update, selector-11 four-way scene transition, special object/camera sequence, and all 52 resolver-confirmed direct call sites across 21 targets are represented in ordinary C with no indirect-call hazard or embedded assembly"
     },
     {
       "overlay": "resource_39c",
@@ -5541,6 +5547,12 @@
     },
     {
       "overlay": "resource_3b1",
+      "entry": "0x020038ac",
+      "span_bytes": 1124,
+      "evidence": "item-28 unindexed population, same reference-resolution basis. the two-stage high-register prologue begins at 0x020038ac, the three actor-availability branches rejoin at 0x02003cec, and the interworking epilogue is the pop/mov sequence at 0x02003cfc-0x02003d0a; the branch-skipped alignment halfword plus seven-word pool at 0x02003cce-0x02003cea and trailing literal 0x00000926 at 0x02003d0c are included, with the next independent push {r5,lr} at 0x02003d10. All 112 resolver-confirmed BL sites across 22 targets are represented in ordinary C."
+    },
+    {
+      "overlay": "resource_3b1",
       "entry": "0x02003d10",
       "span_bytes": 220,
       "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,lr} at 0x02003d10, epilogue pop {r5} / pop {r0} / bx r0 at 0x02003dd0-0x02003dd4; the trailing pool at 0x02003dd8-0x02003de8 (0x0000cccc, 0x00006666, 0x00000266, 0x0200e738, 0x00001e3b) is included per the usual pool rule, immediately followed by the next owner's push {lr} at 0x02003dec, already this overlay's row 0x02003dec (0x02003d10-0x02003dec, 220 bytes)"
@@ -5616,6 +5628,12 @@
       "entry": "0x020048ac",
       "span_bytes": 60,
       "evidence": "item-28 unindexed population, same reference-resolution basis. push {r5,r6,lr} at 0x020048ac, epilogue pop {r5,r6} / pop {r0} / bx r0 at 0x020048de-0x020048e2; the one-word literal pool at 0x020048e4 (0x00001111) is the last instruction's mask constant and is included per the usual pool rule, immediately followed by the next owner's push at 0x020048e8 (0x020048ac-0x020048e8, 60 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x020048e8",
+      "span_bytes": 1728,
+      "evidence": "item-28 unindexed population; saved-register dispatcher starts at 0x020048e8 and returns through pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02004f64-0x02004f68; the 26-entry jump table at 0x02004904-0x02004967, inline pools at 0x02004cb8-0x02004cc3 and 0x02004f6c-0x02004fa4, and the alignment halfword at 0x02004f6a are included before the next prologue at 0x02004fa8; all 124 resolver-confirmed calls across 26 targets are represented in ordinary C"
     },
     {
       "overlay": "resource_3b1",
@@ -7242,6 +7260,12 @@
       "entry": "0x02002e54",
       "span_bytes": 148,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, r7, lr}) and returning (pop {r3}/mov r8,r3/pop {r5, r6, r7}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image, six sites, first at 0x02002e60), span read from the disassembly through the trailing literal pool to the next owner's prologue at 0x02002ee8, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3bc",
+      "entry": "0x02002ee8",
+      "span_bytes": 1264,
+      "evidence": "admitted whole-owner semantic reconstruction; saved-register/frame prologue at 0x02002ee8, one callback epilogue at 0x0200339c-0x020033ac, branch-skipped inline literal runs 0x02003048-0x0200317b, and the alignment halfword plus ten-word trailing pool at 0x020033ae-0x020033d7; the queue drain, three fixed-point interpolation passes, 10 resolver-confirmed calls and mode-selected output branches were checked against the assembled overlay, ending immediately before the next owner's prologue at 0x020033d8"
     },
     {
       "overlay": "resource_3bc",

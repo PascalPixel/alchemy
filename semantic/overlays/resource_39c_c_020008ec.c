@@ -3,13 +3,13 @@ typedef short s16;
 typedef int s32;
 
 /*
- * resource_39c owner at 0x020008ee, 694 bytes through its pool: configure
+ * resource_39c owner at 0x020008ec, 696 bytes through its pool: configure
  * one selected object, derive a tile rectangle from a four-delta record,
  * publish that rectangle in two coordinate frames, and finalize the
  * object's placement state.  An optional caller callback runs midway
  * through the setup sequence.
  *
- * m2c_guard independently measures 664 code bytes through the void
+ * m2c_guard independently measures 666 code bytes through the void
  * interworking return at 0x02000b84 and finds no seeding hazard.  Alignment
  * at 0x02000b86 and seven referenced pool words at 0x02000b88-0x02000ba3
  * extend the whole owner to the next prologue at 0x02000ba4.  All 31 calls
@@ -39,12 +39,12 @@ extern void Func_0808a100(s32 index, s32 value);
 extern void Func_0808a5e8(void);
 extern void Func_080f9010(s32 value);
 
-static s32 Abs_020008ee(s32 value)
+static s32 Abs_020008ec(s32 value)
 {
     return value < 0 ? -value : value;
 }
 
-static s32 Fixed17TowardZero_020008ee(s32 value)
+static s32 Fixed17TowardZero_020008ec(s32 value)
 {
     if (value < 0) {
         value += 0x1ffff;
@@ -52,7 +52,7 @@ static s32 Fixed17TowardZero_020008ee(s32 value)
     return value >> 17;
 }
 
-void Func_020008ee(s32 deltaIndex, s32 objectIndex, s32 x, s32 y, s32 z,
+void Func_020008ec(s32 deltaIndex, s32 objectIndex, s32 x, s32 y, s32 z,
                    void (*callback)(void))
 {
     const s32 *const deltaTable = (const s32 *)0x0200dda8;
@@ -62,8 +62,8 @@ void Func_020008ee(s32 deltaIndex, s32 objectIndex, s32 x, s32 y, s32 z,
     s32 referenceBucket = *(unsigned short *)(reference + 6) >> 12;
     u8 *object = Func_0808a080(objectIndex);
     const s32 *delta = &deltaTable[deltaIndex * 4];
-    s32 depth = (Abs_020008ee(delta[1]) + Abs_020008ee(delta[3])) >> 4;
-    s32 width = (Abs_020008ee(delta[0]) + Abs_020008ee(delta[2])) >> 4;
+    s32 depth = (Abs_020008ec(delta[1]) + Abs_020008ec(delta[3])) >> 4;
+    s32 width = (Abs_020008ec(delta[0]) + Abs_020008ec(delta[2])) >> 4;
     s32 originalX = *(s32 *)(object + 8);
     s32 originalZ = *(s32 *)(object + 16);
     s32 tileX = (originalX + delta[0] * 0x10000) >> 20;
@@ -84,8 +84,8 @@ void Func_020008ee(s32 deltaIndex, s32 objectIndex, s32 x, s32 y, s32 z,
     Func_0808a010(15);
 
     Func_0808a0e0(0,
-                  Fixed17TowardZero_020008ee(x - originalX),
-                  Fixed17TowardZero_020008ee(z - originalZ));
+                  Fixed17TowardZero_020008ec(x - originalX),
+                  Fixed17TowardZero_020008ec(z - originalZ));
 
     current = Func_0808a080(0);
     *(s32 *)(current + 108) = 0x0200858d;

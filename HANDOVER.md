@@ -17,8 +17,8 @@ Alchemy is a complete, byte-identical, source-owned reconstruction of the
 
 - Exact Full-C Byte Share is **266,832 / 1,343,470 executable bytes
   (19.86%)**.
-- Reviewed semantic C adds **833,208 executable bytes**. Exact plus semantic C
-  covers **1,100,040 / 1,343,470 bytes (81.88%)**.
+- Reviewed semantic C adds **850,024 executable bytes**. Exact plus semantic C
+  covers **1,116,856 / 1,343,470 bytes (83.13%)**.
 - The main executable has a closed semantic census: every ordinary owner has
   exact or reviewed semantic C. That closure has **not** made exact matching
   materially faster by itself.
@@ -50,11 +50,11 @@ may retain older identifiers when renaming would damage reproducibility.
 
 ## Checked byte accounting
 
-| Scope | Exact C | Semantic C, excluding exact | Assembly / retained | Executable total |
-| --- | ---: | ---: | ---: | ---: |
-| Main executable | 105,052 | 412,826 | 30,486 retained | 548,364 |
-| 96 decoded code overlays | 161,780 | 420,382 | 212,944 unresolved | 795,106 |
-| **Total** | **266,832** | **833,208** | **243,430** | **1,343,470** |
+| Scope | Exact C | Semantic C, excluding exact | Unknown assembly | Retained exact assembly | Executable total |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Main executable | 105,052 | 412,826 | 0 | 30,486 | 548,364 |
+| 96 decoded code overlays | 161,780 | 437,198 | 152,380 | 43,748 | 795,106 |
+| **Total** | **266,832** | **850,024** | **152,380** | **74,234** | **1,343,470** |
 
 Additional ROM-image facts:
 
@@ -65,14 +65,14 @@ Additional ROM-image facts:
 - The source-only full build owns **8,388,608 / 8,388,608 bytes**, uses zero
   fallback, and reproduces the reference ROM byte for byte.
 - Diagnostic source counts are 1,428 main-image C files, 1,834 exact code-overlay
-  C files, 701 semantic main-image C files, 1,047 semantic code-overlay C files,
+  C files, 701 semantic main-image C files, 1,124 semantic code-overlay C files,
   and 41 headers. These are useful inventory counts, not progress percentages
   or reliable function counts.
 
-The semantic compiler reviews 855,518 bytes of owner spans, but 22,310 of those
+The semantic compiler reviews 872,406 bytes of owner spans, but 22,382 of those
 bytes lie outside the audited executable extents, chiefly pool/tail portions of
-code-overlay owner spans. The coverage numerator therefore uses 833,208, not
-855,518. `tools/build_semantic.ts` now reports both figures instead of silently
+code-overlay owner spans. The coverage numerator therefore uses 850,024, not
+872,406. `tools/build_semantic.ts` now reports both figures instead of silently
 adding out-of-scope bytes.
 
 ## What exact C means
@@ -366,7 +366,7 @@ Latest bounded probes (2026-08-02) reinforce that rule:
 
 ## Tooling audit
 
-The repository has 157 top-level TypeScript tools. Its strongest guarantees are:
+The repository has 161 top-level TypeScript tools. Its strongest guarantees are:
 
 - complete source-only build and zero fallback;
 - byte-identical ROM verification;
@@ -378,14 +378,25 @@ The repository has 157 top-level TypeScript tools. Its strongest guarantees are:
 
 Corrections made in this audit:
 
-- semantic reporting now subtracts 22,320 out-of-executable bytes;
+- semantic reporting now subtracts 22,310 out-of-executable bytes;
 - noncanonical exact-match scaffolds no longer suppress semantic replacements;
 - the main retained complement has an exhaustive verification gate;
 - semantic supersession is checked live, not only by a self-test;
 - dashboard main-image tiles follow natural ownership boundaries;
-- the data-maturity graph uses all 7,300,700 data bytes;
+- the data-maturity graph uses all 7,298,755 data bytes;
 - a same-address code-overlay compiler-route collision found by the existing
   lint was moved to explicit path-scoped routes.
+- `overlay_gaps.ts --ranked` now puts one-return owner-shaped gaps in byte-yield
+  order before multi-return residue. The first ranked cohort closed **16,816
+  executable bytes across 16 new source owners** rather than spending a pass
+  manually scanning every module report.
+- the ordered-call verifier now follows bounded resolver evidence past a proven
+  jump-table dispatch instead of silently auditing only the pre-table prefix.
+- the coverage map now preserves the executable inventory's proven code-overlay
+  veneer and alignment classifications. **43,748 overlay bytes** that were
+  previously painted gray as Unknown are now correctly orange retained exact
+  assembly; the repeated similarly sized blocks are fixed entry/import banks,
+  not suspicious identical unknown functions.
 
 Remaining tool debt:
 
@@ -397,9 +408,11 @@ Remaining tool debt:
 - Full compiler-corpus regression exists but is not a mandatory CI gate.
 - Git hooks protect publication only after the contributor explicitly enables
   them; hook configuration is not itself verification.
-- Exact and semantic dashboard ownership updates directly from tracked files,
-  but orange retained ownership uses the latest full-build assembly manifest;
-  retained-classification changes therefore require a completed full build.
+- Exact and semantic dashboard ownership update directly from tracked files.
+  Main-image orange ownership uses the verified full-build assembly manifest;
+  code-overlay orange ownership uses the audited executable inventory's
+  `veneer` and `executable_alignment` intervals. Retained-classification changes
+  therefore remain evidence-backed rather than inferred from a complement.
 
 ## Data/assets audit
 
@@ -438,10 +451,11 @@ SDK/leak material.
 
 The present denominator intentionally includes executable literal pools,
 veneers, relocated runtime, private-ABI helpers, and retained assembly. With the
-current 30,486-byte main-image retained classification, even converting every
-other currently measured byte would cap the project headline at **97.73%** and
-the main executable at **94.44%**. A future code-overlay retained audit may lower
-that mathematical ceiling further.
+current evidence-backed **74,234-byte** retained classification, even converting
+every other currently measured byte would cap the all-executable exact-C
+headline at **94.47%**; the main executable alone is capped at **94.44%**. The
+code-overlay figure presently covers proven veneer/alignment intervals, not yet
+an exhaustive retained audit, so that mathematical ceiling may fall further.
 
 Do not silently move those bytes out of the denominator to reach 100%. Preserve
 the current exact-C/all-executable series for historical continuity, then add a
@@ -520,8 +534,10 @@ function:
 
 ### Phase 3 — define the real completion denominator
 
-1. Perform the same retained/non-code per-byte audit across all 96 code overlays
-   that now exists for the main executable.
+1. Complete the retained/non-code per-byte audit across all 96 code overlays;
+   inventory-proven veneer/alignment bytes are now classified, but every other
+   structural residue still needs the same exhaustive proof used by the main
+   executable.
 2. Review every retained main-image span whose confidence is below `proven`,
    especially the mixed-mode audio mixer.
 3. Publish the C-eligible metric beside, never in place of, the historical

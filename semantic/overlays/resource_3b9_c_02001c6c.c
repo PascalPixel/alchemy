@@ -17,27 +17,25 @@ typedef int s32;
  * by `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2`
  * rule.
  *
- * Uncertainty: none of the six callees are identified beyond call
+ * Uncertainty: none of the four resolved callees are identified beyond call
  * shape; the ids (0x950, 16, 0x962) and constant argument pairs are
  * recorded as passed values.
  */
 
-extern s32 Func_02004832(s32 id);
-extern void Func_02004820(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
-extern void Func_0200483c(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
-extern s32 Func_02004936(s32 arg0, s32 arg1);
-extern s32 Func_0200486c(s32 id);
-extern void Func_02004864(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
+extern s32 Func_080770c0(s32 id);
+extern void Func_08009180(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
+extern void Func_080091c0(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
+extern s32 Func_0808a158(s32 arg0, s32 arg1);
 
 void Func_02001c6c(void)
 {
-    if (Func_02004832(0x950) != 0) {
-        Func_02004820(64, 0, 48, 5, 2, 2);
-        Func_0200483c(14, 8, 2, 1, 16, 8);
+    if (Func_080770c0(0x950) != 0) {
+        Func_08009180(64, 0, 48, 5, 2, 2);
+        Func_080091c0(14, 8, 2, 1, 16, 8);
     } else {
-        Func_02004936(16, 2);
-        if (Func_0200486c(0x962) != 0) {
-            Func_02004864(30, 22, 1, 2, 14, 11);
+        Func_0808a158(16, 2);
+        if (Func_080770c0(0x962) != 0) {
+            Func_080091c0(30, 22, 1, 2, 14, 11);
         }
     }
 }

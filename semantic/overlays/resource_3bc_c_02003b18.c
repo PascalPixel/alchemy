@@ -1,0 +1,19 @@
+typedef signed short s16;
+typedef signed int s32;
+
+/*
+ * Complete palette-task teardown owner.  It removes the per-frame palette
+ * callback, releases the currently held graphics slot, then marks the slot as
+ * vacant for the next scene.
+ */
+extern s16 Data_0200dace;
+extern void Func_0200391c(void);
+extern void Func_080000d8(void (*callback)(void));
+extern void Func_080001b8(s32 slot);
+
+void Func_02003b18(void)
+{
+    Func_080000d8(Func_0200391c);
+    Func_080001b8(Data_0200dace);
+    Data_0200dace = -1;
+}

@@ -65,6 +65,14 @@ void Func_02000088(void)
         goto alreadySeen;
     }
 
+    goto fullScene;
+
+alreadySeen:
+    Func_0808a170(line);
+    Func_0808a180(9, 0);
+    goto close;
+
+fullScene:
     Func_0808a170(0x1520);
     Func_0808a188(9, 0, 20);
 
@@ -86,10 +94,6 @@ void Func_02000088(void)
 
     Func_080770c8(0x84c);
     goto close;
-
-alreadySeen:
-    Func_0808a170(line);
-    Func_0808a180(9, 0);
 
 close:
     Func_020012f4(11, 0);

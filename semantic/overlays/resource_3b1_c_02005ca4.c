@@ -13,29 +13,25 @@
  * Raw callee naming.
  */
 
-void Func_0200c170(void);
-void Func_0200a59a();
-void Func_0200a554();
-void Func_0200a5b6();
-void Func_0200c256();
-void Func_0200c19c();
-void Func_0200c2b8();
-void Func_0200c2c2();
-void Func_0200c25a();
-void Func_0200c1c0();
-void Func_0200a5f2();
+void Func_0808a018(void);
+void Func_020048e8();
+void Func_02004890();
+void Func_0808a138();
+void Func_0808a010();
+void Func_0808a1b8();
+void Func_0808a110();
 
 void Func_02005ca4(void)
 {
-    Func_0200c170();
-    Func_0200a59a(15, 1, 0);
-    Func_0200a554(9, 0x1d4, 0x268, 0x8000);
-    Func_0200a5b6(8, 1, 20);
-    Func_0200c256(9, 2);
-    Func_0200c19c(20);
-    Func_0200c2b8(8, 0xd000, 0x50);
-    Func_0200c2c2(8, 0, 20);
-    Func_0200c25a(8, 3);
-    Func_0200c1c0(20);
-    Func_0200a5f2(9, 21, 0);
+    Func_0808a018();
+    Func_020048e8(15, 1, 0);
+    Func_02004890(9, 0x1d4, 0x268, 0x8000);
+    Func_020048e8(8, 1, 20);
+    Func_0808a138(9, 2);
+    Func_0808a010(20);
+    Func_0808a1b8(8, 0xd000, 0x50);
+    Func_0808a1b8(8, 0, 20);
+    Func_0808a110(8, 3);
+    Func_0808a010(20);
+    Func_020048e8(9, 21, 0);
 }

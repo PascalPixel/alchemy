@@ -131,8 +131,7 @@ s32 Func_020006e0(void)
         return 0;
     }
     if (Func_080770c0(0x109) == 0) {
-        Func_020021bc();
-        return 0;
+        goto run_scene;
     }
 
     Func_080091c0(38, 55, 4, 1, 38, 45);
@@ -167,5 +166,11 @@ s32 Func_020006e0(void)
     record = Func_0808a080(24);
     *(s32 *)(record + 12) = (s32)0xfffc0000;
 
+    goto done;
+
+run_scene:
+    Func_020021bc();
+
+done:
     return 0;
 }

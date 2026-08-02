@@ -21,13 +21,14 @@ typedef unsigned char u8;
  * `bun tools/overlay_call_targets.ts resource_39e afc bd4`; the tool
  * reports sites=19 and 19 bl lines were transcribed.
  *
- * THE DRAIN LOOP is the one real loop: entry jumps straight to the test,
- * so it is a `while`, not a `do`. Each iteration re-fetches the slot-12
+ * THE DRAIN LOOP is the one real loop: entry jumps straight to its bottom
+ * test. Each iteration re-fetches the slot-12
  * record with Func_0808a080(12) and re-reads the signed 32-bit counter at
  * record[12]; the body calls Func_080000c0(1), which is the only call in
  * this overlay to that import. The record is re-fetched EVERY time --
  * eight separate Func_0808a080(12) calls in this function, none of them
- * cached -- so the pointer is treated as invalidated by each call.
+ * cached -- so the pointer is treated as invalidated by each call. Explicit
+ * labels retain the machine's wait-then-test lexical order.
  *
  * The byte at record[91] is used as a two-state gate: cleared to 0 before
  * the drain loop, set to 1 after the fields are reset, and cleared again
@@ -74,8 +75,12 @@ void Func_02000afc(void)
     record = Func_0808a080(12);
     record[91] = 0;
 
-    while (*(s32 *)(Func_0808a080(12) + 12) > 0) {
+    goto testPendingWork;
+waitPendingWork:
         Func_080000c0(1);
+testPendingWork:
+    if (*(s32 *)(Func_0808a080(12) + 12) > 0) {
+        goto waitPendingWork;
     }
 
     record = Func_0808a080(12);

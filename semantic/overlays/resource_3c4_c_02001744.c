@@ -48,7 +48,7 @@ typedef unsigned char u8;
  *
  * The epilogue is `add sp,#56 / pop {r3} / mov r8,r3 / pop {r5, r6, r7} /
  * pop {r0} / bx r0`, so the owner is void.  Both early exits branch to the
- * Func_0808a020 call, not past it.
+ * same physical Func_0808a020 close site as the completed sequence.
  */
 
 typedef struct Slot_02001744 {
@@ -92,13 +92,11 @@ void Func_02001744(void)
     Func_0808a018();
 
     if ((Func_0808a080(19)->x >> 20) != 48) {
-        Func_0808a020();
-        return;
+        goto close_sequence;
     }
 
     if (Func_080770c0(0x202) == 0) {
-        Func_0808a020();
-        return;
+        goto close_sequence;
     }
 
     Func_0808a010(30);
@@ -164,5 +162,7 @@ void Func_02001744(void)
 
     Func_0808a010(10);
     Func_080770c8(0x972);
+
+close_sequence:
     Func_0808a020();
 }

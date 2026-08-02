@@ -146,6 +146,10 @@ s32 Func_02003d20(void)
     s32 flagId;
     s32 coordinate;
     s32 cleared;
+    s32 sharedMessageArg0;
+    s32 sharedMessageArg1;
+    s32 sharedMessageArg4;
+    s32 sharedMessageArg5;
 
     Func_080770c8(0x111);
     Data_02000240[289] = 11;
@@ -312,12 +316,16 @@ s32 Func_02003d20(void)
                 coordinate += 0x00400000;
                 flagId += 2;
             }
+            sharedMessageArg0 = 53;
+            sharedMessageArg1 = 10;
+            sharedMessageArg4 = 58;
+            sharedMessageArg5 = 7;
             if (Func_080770c0(0x338) != 0) {
                 Func_0808a0f0(19, 0x03980000, 0x00580000);
-                Func_080091c0(53, 10, 1, 1, 58, 7);
+                goto scene38_shared_message;
             } else if (Func_080770c0(0x339) != 0) {
                 Func_0808a0f0(19, 0x03b80000, 0x00580000);
-                Func_080091c0(53, 10, 1, 1, 58, 7);
+                goto scene38_shared_message;
             }
             break;
 
@@ -327,7 +335,18 @@ s32 Func_02003d20(void)
                 break;
             }
             Func_0808a0f0(20, 0x01c80000, 0x01480000);
-            Func_080091c0(29, 20, 1, 1, 31, 20);
+            sharedMessageArg0 = 29;
+            sharedMessageArg1 = 20;
+            sharedMessageArg4 = 31;
+            sharedMessageArg5 = 20;
+scene38_shared_message:
+            Func_080091c0(
+                sharedMessageArg0,
+                sharedMessageArg1,
+                1,
+                1,
+                sharedMessageArg4,
+                sharedMessageArg5);
             break;
 
         case 3:

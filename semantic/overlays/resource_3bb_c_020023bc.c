@@ -26,8 +26,8 @@ typedef int s32;
  * further; the trailing loop re-reads REG_DMA3CNT and spins while bit 31
  * (enable) is still set, i.e. waits for the transfer to complete.
  *
- * `Func_020061f0`'s first argument is the un-moved return value of the
- * immediately preceding `Func_02006222(0xe7)` call -- kept as a direct
+ * `Func_080001a8`'s first argument is the un-moved return value of the
+ * immediately preceding `Func_08000290(0xe7)` call -- kept as a direct
  * chained call rather than introducing an intermediate named variable,
  * since the compiled code never gives it one either.
  *
@@ -36,23 +36,23 @@ typedef int s32;
  * cursor cell at 0x0200ca1c are not identified.
  */
 
-extern s32 Func_020061b2(s32 arg0);
-extern s32 Func_020061f6(void);
-extern s32 Func_02006222(s32 arg0);
-extern void Func_020061f0(s32 arg0, s32 arg1);
-extern void Func_02006228(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_0200621c(s32 arg0);
+extern s32 Func_08000170(s32 arg0);
+extern s32 Func_080001d0(void);
+extern s32 Func_08000290(s32 arg0);
+extern void Func_080001a8(s32 arg0, s32 arg1);
+extern void Func_080001c8(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_08000178(s32 arg0);
 
 void Func_020023bc(s32 arg0)
 {
     volatile u16 *cursor = (volatile u16 *)0x0200ca1c;
     volatile u32 *dma3 = (volatile u32 *)0x040000d4;
     u8 *table = (u8 *)0x0200c0c4;
-    s32 result = Func_020061b2(0x1ca0);
+    s32 result = Func_08000170(0x1ca0);
     s32 tableByte;
 
     if ((short)*cursor == -1) {
-        *cursor = (u16)Func_020061f6();
+        *cursor = (u16)Func_080001d0();
     }
 
     tableByte = table[arg0];
@@ -60,17 +60,17 @@ void Func_020023bc(s32 arg0)
         arg0 = 4;
     }
 
-    Func_020061f0(Func_02006222(0xe7), result);
+    Func_080001a8(Func_08000290(0xe7), result);
 
     dma3[0] = (u32)(result + tableByte);
     dma3[1] = 0x050003e0;
     dma3[2] = 0x84000008;
 
-    Func_02006228((short)*cursor, 0x400, arg0 * 1024 + result + 160, 0);
+    Func_080001c8((short)*cursor, 0x400, arg0 * 1024 + result + 160, 0);
 
     while ((dma3[2] & 0x80000000) != 0) {
         /* wait for the DMA3 transfer to finish */
     }
 
-    Func_0200621c(result);
+    Func_08000178(result);
 }

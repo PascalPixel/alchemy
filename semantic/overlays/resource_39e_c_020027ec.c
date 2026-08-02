@@ -18,10 +18,9 @@ typedef unsigned int u32;
  *    the second gate bumps +1 in both arms), unlike the
  *    equal-increment shape settled in the 3c9 drafts. Transcribed
  *    as-is.
- * 3. A repeat-prompt poll loop: while Func_0808a070(0, 0) == 1, wait
- *    10, Func_0808a1e8(8, 0x102, 60), show a dialogue and
- *    Func_0808a178(8, 0) -- dialogue 0x17c8 the first pass, 0x17e0
- *    every later pass; falls out to dialogue 0x17c9.
+ * 3. A repeat-prompt poll loop: its first physical body uses dialogue
+ *    0x17c8, then a second test/body site repeats dialogue 0x17e0 while
+ *    Func_0808a070(0, 0) remains 1; it falls out to dialogue 0x17c9.
  *
  * Closes with Func_0808a100(8, 5), story flag 0x893 set
  * (Func_080770c8), and the bracket close. Called 1x in this overlay.
@@ -64,7 +63,6 @@ void Func_020027ec(void)
 {
     u8 *workspace;
     u8 *record;
-    s32 first;
 
     Func_0808a018();
     Func_0808a090(0, 128 << 8, 128 << 7);
@@ -116,13 +114,19 @@ void Func_020027ec(void)
     Func_0808a188(8, 0, 20);
     Func_0808a1e8(0, 0x101, 60);
     Func_0808a178(8, 0);
-    first = 1;
-    while (Func_0808a070(0, 0) == 1) {
+    if (Func_0808a070(0, 0) == 1) {
         Func_0808a010(10);
         Func_0808a1e8(8, 0x102, 60);
-        Func_0808a170(first ? 0x17c8 : 0x17e0);
+        Func_0808a170(0x17c8);
         Func_0808a178(8, 0);
-        first = 0;
+repeatPrompt:
+        if (Func_0808a070(0, 0) == 1) {
+            Func_0808a010(10);
+            Func_0808a1e8(8, 0x102, 60);
+            Func_0808a170(0x17e0);
+            Func_0808a178(8, 0);
+            goto repeatPrompt;
+        }
     }
     Func_0808a170(0x17c9);
     Func_0808a010(10);

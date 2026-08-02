@@ -33,16 +33,16 @@ typedef int s32;
  * 0x27) are inferred only from this call shape.
  */
 
-extern u8 *Func_02007098(s32 arg0);
-extern u8 *Func_02006f36(s32 arg0, s32 arg1);
-extern void Func_0200703e(s32 arg0);
-extern s32 Func_02006fa0(s32 arg0, s32 arg1, s32 arg2);
-extern void Func_02006f78(s32 arg0);
-extern void Func_02006fe6(s32 arg0);
+extern u8 *Func_0808a080(s32 arg0);
+extern u8 *Func_08000140(s32 arg0, s32 arg1);
+extern void Func_08015250(s32 arg0);
+extern s32 Func_080001c8(s32 arg0, s32 arg1, s32 arg2);
+extern void Func_08000150(s32 arg0);
+extern void Func_08009060(s32 arg0);
 
 void Func_02003138(s32 arg0, s32 arg1)
 {
-    u8 *object = Func_02007098(arg0);
+    u8 *object = Func_0808a080(arg0);
     u8 state;
     u8 *owner;
     u8 *dest;
@@ -60,20 +60,20 @@ void Func_02003138(s32 arg0, s32 arg1)
     }
 
     owner = *(u8 **)(object + 0x50);
-    dest = Func_02006f36(17, 0x608) + 0x400;
+    dest = Func_08000140(17, 0x608) + 0x400;
 
     dma3[0] = (u32)&stackWord;
     dma3[1] = (u32)dest;
     dma3[2] = 0x85000020;
 
-    Func_0200703e(arg1);
+    Func_08015250(arg1);
 
-    result = Func_02006fa0(owner[28], 128, (s32)dest);
-    Func_02006f78(17);
+    result = Func_080001c8(owner[28], 128, (s32)dest);
+    Func_08000150(17);
 
     object[0x5c] = state;
 
-    Func_02006fe6(*(s32 *)(owner + 0x28));
+    Func_08009060(*(s32 *)(owner + 0x28));
     *(s32 *)(owner + 0x28) = 0;
     owner[0x27] = 0;
     owner[5] &= (u8)~0x20;

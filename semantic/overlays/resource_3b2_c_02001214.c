@@ -55,9 +55,7 @@ void Func_02001214(void)
     companion = Func_080770c0(Data_02000240[224] + (0x8d2 - 0x7e));
 
     if (companion == 0) {
-        /* Slot absent: clear the entity's flag byte and stop. */
-        Func_0808a080(8)[85] = 0;
-        return;
+        goto absent;
     }
 
     Func_0808a0f0(8, 0x028a0000, 0x00a80000);   /* (650.0, 168.0) */
@@ -70,4 +68,9 @@ void Func_02001214(void)
     entity[35] = (u8)(entity[35] | 2);
 
     Func_080091c0(42, 10, 1, 1, 40, 10);
+    return;
+
+absent:
+    /* Slot absent: clear the entity's flag byte and stop. */
+    Func_0808a080(8)[85] = 0;
 }

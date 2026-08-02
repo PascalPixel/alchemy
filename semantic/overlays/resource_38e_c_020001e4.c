@@ -128,10 +128,7 @@ void Func_020001e4(void)
     Func_0808a178(12, 0);
 
     if (Func_0808a070(0, 0) != 0) {
-        /* The player broke off before the beat completed. */
-        Func_0808a180(12, 0);
-        Func_0808a1b8(12, 0x3000, 10);          /* 192 << 6 */
-        goto close;
+        goto interrupted;
     }
 
     /* Skip-beat counter: the u16 at workspace+472. */
@@ -189,6 +186,12 @@ void Func_020001e4(void)
 handoff:
     /* 0x02008bf4 = in-image data at file offset 0x0bf4. */
     Func_0808a168(12, 0x00010000, (void *)0x02008bf4);
+    goto close;
+
+interrupted:
+    /* The player broke off before the beat completed. */
+    Func_0808a180(12, 0);
+    Func_0808a1b8(12, 0x3000, 10);              /* 192 << 6 */
 
 close:
     Func_0808a020();

@@ -22,21 +22,19 @@ typedef signed int s32;
 
 extern u8 Value_00000928;
 
-void Func_0200a6e4(void);
-void Func_02008b0e();
-void Func_02008b18();
-void Func_02008b22();
-void Func_02009532(void);
-void Func_0200a6ec();
-void Func_0200a718();
+void Func_0808a018(void);
+void Func_020048e8();
+void Func_020052f4(void);
+void Func_080770c8();
+void Func_0808a020(void);
 
 void Func_02004218(void)
 {
-    Func_0200a6e4();
-    Func_02008b0e(24, 1, 0);
-    Func_02008b18(25, 0, 0);
-    Func_02008b22(19, 11, 12);
-    Func_02009532();
-    Func_0200a6ec((s32)&Value_00000928);
-    Func_0200a718();
+    Func_0808a018();
+    Func_020048e8(24, 1, 0);
+    Func_020048e8(25, 0, 0);
+    Func_020048e8(19, 11, 12);
+    Func_020052f4();
+    Func_080770c8((s32)&Value_00000928);
+    Func_0808a020();
 }

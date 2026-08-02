@@ -42,7 +42,7 @@ extern s32 Data_02000240[];    /* subject selector, byte offset 500 */
 extern s32 Data_0200cfc0[];    /* direction table, indexed by facing nibble */
 
 u8 *Func_0808a080();           /* scene-record accessor, established */
-u8 *Func_20045e0();            /* in-overlay probe lookup, sibling item-28 owner */
+u8 *Func_020045e0();           /* in-overlay probe lookup, sibling item-28 owner */
 s32 Func_080091d8();           /* established, legality check */
 void Func_08009080();          /* established (record, mode) */
 void Func_080000c0();          /* established, advance the task scheduler */
@@ -67,7 +67,7 @@ void Func_02004628(void)
     position[1] = *(s32 *)(subject + 12);
     position[2] = *(s32 *)(subject + 16) + (step << 16);
 
-    occupant = Func_20045e0(position);
+    occupant = Func_020045e0(position);
     if (occupant == 0) {
         return;
     }
@@ -77,7 +77,7 @@ void Func_02004628(void)
     position[1] = *(s32 *)(occupant + 12);
     position[2] = *(s32 *)(occupant + 16) + (step << 16);
 
-    blocker = Func_20045e0(position);
+    blocker = Func_020045e0(position);
     if (blocker != 0 && (blocker[89] & 1) != 0) {
         return;
     }
@@ -86,7 +86,7 @@ void Func_02004628(void)
     position[1] = *(s32 *)(occupant + 12) + 0x100000;   /* 128 << 13 */
     position[2] = *(s32 *)(occupant + 16);
 
-    blocker = Func_20045e0(position);
+    blocker = Func_020045e0(position);
     if (blocker != 0 && (blocker[89] & 1) != 0) {
         return;
     }

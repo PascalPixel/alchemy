@@ -30,95 +30,67 @@ extern u8 Value_00000928;
 extern u8 Value_00000925;
 extern u8 Value_00000926;
 
-void Func_02009a92();
-void Func_02006e2a(void);
-
-s32 Func_02009b1c();
-void Func_02007f72();
-void Func_02007f2a();
-void Func_02007f3a();
-
-s32 Func_02009b54();
-void Func_02009c0e();
-void Func_02009c1e();
-void Func_02007fc0();
-
-s32 Func_02009b80();
-void Func_02007fd6();
-void Func_02007fe0();
-void Func_02007952();
-
-s32 Func_02009ba6();
-void Func_02007ffc();
-void Func_02008006();
-void Func_02007978();
-
-s32 Func_02009bcc();
-void Func_02008022();
-void Func_0200802c();
-void Func_0200799e();
-
-s32 Func_02009bf2();
-void Func_02008048();
-void Func_02009cb2();
-void Func_020079c4();
-
-void Func_02009cca();
-s32 Func_02009c20();
-s32 Func_02009c2a();
-void Func_0200703e(void);
+void Func_080000c0();
+void Func_020037b4(void);
+s32 Func_080770c0();
+void Func_020048e8();
+void Func_02004890();
+void Func_0808a0f0();
+void Func_0808a100();
+void Func_02004254();
+void Func_020038ac(void);
 
 void Func_0200366c(void)
 {
-    Func_02009a92(1);
-    Func_02006e2a();
+    Func_080000c0(1);
+    Func_020037b4();
 
-    if (Func_02009b1c((s32)&Value_0000093e) != 0) {
-        Func_02007f72(4, 4, 0);
-        Func_02007f2a(8, 0x19c, 0xde, 0x3000);
-        Func_02007f3a(9, 0x1ca, 0xa1, 0x8000);
+    if (Func_080770c0((s32)&Value_0000093e) != 0) {
+        Func_020048e8(4, 4, 0);
+        Func_02004890(8, 0x19c, 0xde, 0x3000);
+        Func_02004890(9, 0x1ca, 0xa1, 0x8000);
         return;
     }
 
-    if (Func_02009b54(0x8a0) != 0) {
-        Func_02009c0e(8, 0x1d80000, 0x980000);
-        Func_02009c1e(9, 5);
-        Func_02007fc0(4, 4, 0);
+    if (Func_080770c0(0x8a0) != 0) {
+        Func_0808a0f0(8, 0x1d80000, 0x980000);
+        Func_0808a100(9, 5);
+        Func_020048e8(4, 4, 0);
         return;
     }
 
-    if (Func_02009b80((s32)&Value_0000092b) != 0) {
-        Func_02007fd6(16, 0, 0);
-        Func_02007fe0(4, 4, 0);
-        Func_02007952(3);
+    if (Func_080770c0((s32)&Value_0000092b) != 0) {
+        Func_020048e8(16, 0, 0);
+        Func_020048e8(4, 4, 0);
+        Func_02004254(3);
         return;
     }
 
-    if (Func_02009ba6((s32)&Value_0000092a) != 0) {
-        Func_02007ffc(16, 0, 0);
-        Func_02008006(4, 3, 0);
-        Func_02007978(2);
+    if (Func_080770c0((s32)&Value_0000092a) != 0) {
+        Func_020048e8(16, 0, 0);
+        Func_020048e8(4, 3, 0);
+        Func_02004254(2);
         return;
     }
 
-    if (Func_02009bcc((s32)&Value_00000929) != 0) {
-        Func_02008022(16, 0, 0);
-        Func_0200802c(4, 2, 0);
-        Func_0200799e(1);
+    if (Func_080770c0((s32)&Value_00000929) != 0) {
+        Func_020048e8(16, 0, 0);
+        Func_020048e8(4, 2, 0);
+        Func_02004254(1);
         return;
     }
 
-    if (Func_02009bf2((s32)&Value_00000928) != 0) {
-        Func_02008048(16, 0, 0);
-        Func_02009cb2(10, 0, 0);
-        Func_020079c4(0);
+    if (Func_080770c0((s32)&Value_00000928) != 0) {
+        Func_020048e8(16, 0, 0);
+        Func_0808a0f0(10, 0, 0);
+        Func_02004254(0);
         return;
     }
 
-    Func_02009cca(9, 5);
+    Func_0808a100(9, 5);
 
-    if (Func_02009c20((s32)&Value_00000925) != 0 &&
-        Func_02009c2a((s32)&Value_00000926) == 0) {
-        Func_0200703e();
+    if (Func_080770c0((s32)&Value_00000925) != 0 &&
+        Func_080770c0((s32)&Value_00000926) == 0) {
+        Func_020038ac();
     }
 }

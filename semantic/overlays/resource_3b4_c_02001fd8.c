@@ -74,37 +74,44 @@ void Func_02001fd8(void)
      * all point at the shared exit. */
     switch (tick) {
     case 2:
-        Func_020020c4(12, 1);
-        return;
+        goto tick2;
 
     case 4:
         slot = 11;
-        break;
+        goto tick_even;
 
     case 6:
         slot = 10;
-        break;
+        goto tick_even;
 
     case 8:
         slot = 9;
-        break;
+        goto tick_even;
 
     case 10:
         slot = 8;
-        break;
+        goto tick_even;
 
     case 12:
-        /* Place any of slots 8..11 whose scene flag is still clear.  Every
-         * coordinate is a `movs`/`lsls` pair in the assembly. */
-        if (Func_080770c0(0xee7) == 0) Func_0808a0f0(8, 0xe80000, 0x3680000);
-        if (Func_080770c0(0xee8) == 0) Func_0808a0f0(9, 0x1280000, 0x3380000);
-        if (Func_080770c0(0xee9) == 0) Func_0808a0f0(10, 0x1480000, 0x2f80000);
-        if (Func_080770c0(0xeea) == 0) Func_0808a0f0(11, 0x1680000, 0x3680000);
-        return;
+        goto tick12;
 
     default:
         return;
     }
 
+tick12:
+    /* Place any of slots 8..11 whose scene flag is still clear.  Every
+     * coordinate is a `movs`/`lsls` pair in the assembly. */
+    if (Func_080770c0(0xee7) == 0) Func_0808a0f0(8, 0xe80000, 0x3680000);
+    if (Func_080770c0(0xee8) == 0) Func_0808a0f0(9, 0x1280000, 0x3380000);
+    if (Func_080770c0(0xee9) == 0) Func_0808a0f0(10, 0x1480000, 0x2f80000);
+    if (Func_080770c0(0xeea) == 0) Func_0808a0f0(11, 0x1680000, 0x3680000);
+    return;
+
+tick_even:
     Func_020020c4(slot, 0);
+    return;
+
+tick2:
+    Func_020020c4(12, 1);
 }

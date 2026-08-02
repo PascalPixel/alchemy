@@ -50,9 +50,8 @@ typedef unsigned char u8;
  * the cursor and line tables have one more entry than the position table.
  * That is what the code does and it is preserved.
  *
- * All four `bl` sites are accounted for: 0x02004f20, 0x02009a56, 0x02009b24,
- * 0x02009b2e.  Import naming follows the note in
- * resource_3c8_c_020002f0.c.
+ * All four `bl` sites resolve to the overlay-local position probe at
+ * 0x0200032c followed by three calls to Func_08009098.
  */
 
 struct Sprite_02004bd8 {
@@ -105,12 +104,10 @@ extern s32 *Data_0200f77c[];
 extern s32 *Data_0200f7ec[];
 
 /* Used for its return value. */
-struct Actor_02004bd8 *Func_02004f20();
+struct Actor_02004bd8 *Func_0200032c();
 
 /* Old-style declarations: the imports' real interfaces are not known here. */
-void Func_02009a56();
-void Func_02009b24();
-void Func_02009b2e();
+void Func_08009098();
 
 s32 Func_02004bd8(struct Actor_02004bd8 *object)
 {
@@ -134,12 +131,11 @@ s32 Func_02004bd8(struct Actor_02004bd8 *object)
     probe.x = object->x;
     probe.y = object->y + 0xfff00000;
     probe.z = object->z;
-    partner = Func_02004f20(&probe, 0);
+    partner = Func_0200032c(&probe, 0);
 
     sprite = partner->sprite;
     if (*sprite->tag != 256) {
-        Func_02009b2e(object, Data_0200d564);
-        return 0;
+        goto tagFallback;
     }
 
     deltaX = object->deltaX;
@@ -157,9 +153,16 @@ s32 Func_02004bd8(struct Actor_02004bd8 *object)
         candidates++;
     }
     if (*candidates == 0) {
-        Func_02009a56(object, Data_0200d564);
-        return 0;
+        goto fallback;
     }
+
+    goto afterFallback;
+
+fallback:
+    Func_08009098(object, Data_0200d564);
+    return 0;
+
+afterFallback:
 
     if (Data_02000240[224] == 0xb9) {
         positions = Data_0200d128;
@@ -193,8 +196,7 @@ s32 Func_02004bd8(struct Actor_02004bd8 *object)
         u8 *cursor = cursors[slot];
 
         if (*cursor == 0) {
-            Func_02009a56(object, Data_0200d564);
-            return 0;
+            goto fallback;
         }
         if (*cursor == partner->sprite->speaker) {
             break;
@@ -203,6 +205,10 @@ s32 Func_02004bd8(struct Actor_02004bd8 *object)
         step++;
     }
 
-    Func_02009b24(object, lines[slot][step]);
+    Func_08009098(object, lines[slot][step]);
+    return 0;
+
+tagFallback:
+    Func_08009098(object, Data_0200d564);
     return 0;
 }

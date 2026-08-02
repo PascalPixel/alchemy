@@ -128,10 +128,7 @@ void Func_0200288c(s32 arg0)
     *(u16 *)(workspace + 0xcc4) = 4;
 
     predicate = Func_0808a070(selector, 0);
-    if (predicate != 0) {
-        Func_0808a170(0x2088);
-        Func_0808a180(arg0, 0);
-    } else {
+    if (predicate == 0) {
         Func_0808a170(0x2087);
         Func_0808a180(arg0, 0);
 
@@ -154,7 +151,12 @@ void Func_0200288c(s32 arg0)
             Func_0808a370();
             *(u32 *)(workspace + 448) = predicate;
         }
+        goto close_scene;
     }
 
+    Func_0808a170(0x2088);
+    Func_0808a180(arg0, 0);
+
+close_scene:
     Func_0808a020();
 }

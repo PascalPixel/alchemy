@@ -142,15 +142,15 @@ const UNSCHEDULED_SOURCES = new Set([
   "080fb768", "080fb77c",
 ]);
 // These four independently identical leaves need only the post-reload
-// scheduler disabled: it keeps the second field update ahead of the later
-// pointer load.  Their matching reference bytes demonstrate one shared
+// scheduler disabled: it keeps each increment load ahead of the corresponding
+// value load. Their matching complete 54-byte owners demonstrate one shared
 // compiler behaviour, so keep the evidence path-scoped rather than claiming
-// the repeatedly used 02000acc stem globally.
+// the repeatedly used 02000ab0 stem globally.
 const UNSCHEDULED_OVERLAY_SOURCES = new Set([
-  "assets/code/resource_39f_c_02000acc.c",
-  "assets/code/resource_3b2_c_02000acc.c",
-  "assets/code/resource_3c4_c_02000acc.c",
-  "assets/code/resource_3c5_c_02000acc.c",
+  "assets/code/resource_39f_c_02000ab0.c",
+  "assets/code/resource_3b2_c_02000ab0.c",
+  "assets/code/resource_3c4_c_02000ab0.c",
+  "assets/code/resource_3c5_c_02000ab0.c",
 ]);
 // This decoder has mutually exclusive switch arms that reuse the same input
 // base.  Following jumps during CSE rematerializes one arm's base in r3;

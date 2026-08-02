@@ -137,7 +137,8 @@ void Func_020004b0(void)
 
     Func_080000c0(1);
 
-    for (;;) {
+loop:
+    {
         if (redraw != 0) {
             redraw = 0;
             counter = Func_030003ac(counter + 270, 270);    /* 135 << 1 */
@@ -155,10 +156,19 @@ void Func_020004b0(void)
             Func_08015078(masked, window, 0, 48);
         }
 
-        if ((*held & 2) != 0) {
-            break;
+        if ((*held & 2) == 0) {
+            goto interact;
         }
 
+close_panel:
+        Func_080f9010(0x71);
+        Func_08015270(window);
+        Func_080000c0(1);
+        Func_08015018(window, 1);
+        Func_08015018(preview, 1);
+        return;
+
+interact:
         if ((*pressed & 0x40) != 0) {
             counter -= 1;
             direction = -1;
@@ -221,12 +231,10 @@ void Func_020004b0(void)
         }
 
         direction = 0;
-        Func_080000c0(1);
+        goto scheduler;
     }
 
-    Func_080f9010(0x71);
-    Func_08015270(window);
+scheduler:
     Func_080000c0(1);
-    Func_08015018(window, 1);
-    Func_08015018(preview, 1);
+    goto loop;
 }

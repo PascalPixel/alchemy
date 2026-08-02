@@ -1,11 +1,57 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "layout_guard.h"
+#include "types.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+struct TextEngine_08018038 {
+    u8 reserved0000[0xeb0];
+    u16 command_buffer[0x200];
+    u16 reserved12b0;
+    u16 write_cursor;
+    u16 saved_cursor;
+    u8 reserved12b6[0x44];
+    u8 insert_wait_command;
+    u8 insert_modifier;
+};
+
+struct DmaChannel_08018038 {
+    const void *source;
+    void *destination;
+    u32 control;
+};
+
+LAYOUT_OFFSET_GUARD(
+    TextEngine08018038_CommandBuffer,
+    struct TextEngine_08018038,
+    command_buffer,
+    0xeb0);
+LAYOUT_OFFSET_GUARD(
+    TextEngine08018038_WriteCursor,
+    struct TextEngine_08018038,
+    write_cursor,
+    0x12b2);
+LAYOUT_OFFSET_GUARD(
+    TextEngine08018038_SavedCursor,
+    struct TextEngine_08018038,
+    saved_cursor,
+    0x12b4);
+LAYOUT_OFFSET_GUARD(
+    TextEngine08018038_InsertWait,
+    struct TextEngine_08018038,
+    insert_wait_command,
+    0x12fa);
+LAYOUT_OFFSET_GUARD(
+    TextEngine08018038_InsertModifier,
+    struct TextEngine_08018038,
+    insert_modifier,
+    0x12fb);
+LAYOUT_SIZE_GUARD(
+    DmaChannel08018038_Size,
+    struct DmaChannel_08018038,
+    0x0c);
+
+extern struct TextEngine_08018038 *Data_03001e8c;
+extern s32 Data_02000434;
+
+#define DMA3_08018038 ((volatile struct DmaChannel_08018038 *)0x040000d4)
 
 /*
  * __call_via_rN veneer sites, resolved per-site against the ROM. Ten `bl`
@@ -144,28 +190,28 @@ s32 Func_08018038(s32 arg0, s32 arg1) {
     void *temp_r1_2;
 
     sp30 = arg0;
-    temp_r1 = M2C_FIELD((void *)0x03001E8C, void **, 0);
+    temp_r1 = Data_03001e8c;
     sp2C = temp_r1;
     sp28 = 1;
     sp24 = 0;
-    temp_r3 = M2C_FIELD(temp_r1, u16 *, 0x12B2);
+    temp_r3 = Data_03001e8c->write_cursor;
     sp14 = 1;
     sp20 = (s32) temp_r3;
     var_r6 = temp_r3;
     var_r7 = 0;
-    temp_r1_2 = temp_r1 + 0xEB0;
+    temp_r1_2 = Data_03001e8c->command_buffer;
     sp1C = 0;
     sp18 = 0;
     sp34 = 0;
     expansion_index = 0;
     sp10 = 0;
     if (sp30 == -1) {
-        sp20 = (s32) M2C_FIELD(sp2C, u16 *, 0x12B4);
+        sp20 = (s32)Data_03001e8c->saved_cursor;
     } else {
         temp_r1_3 = Func_080048b0(0x32, 0x140);
-        M2C_FIELD((void *)0x040000D4, s32 *, 0) = 0x08015430;
-        M2C_FIELD((void *)0x040000D4, s32 *, 4) = temp_r1_3;
-        M2C_FIELD((void *)0x040000D4, s32 *, 8) = (s32) (0x84000000 | (0x140U >> 2));
+        DMA3_08018038->source = (const void *)0x08015430;
+        DMA3_08018038->destination = (void *)temp_r1_3;
+        DMA3_08018038->control = 0x84000000 | (0x140U >> 2);
         /* Latched once, before the loop, exactly as r9 is at 0x080180bc. */
         readToken = *(TextTokenReader_08018038 *)0x03001F18;
         Func_08019bac(sp38, sp30);
@@ -213,23 +259,23 @@ block_36:
                 }
             }
         } else {
-            if ((M2C_FIELD(sp2C, u8 *, 0x12FA) != 0) && (sp28 == 0) && (var_r7 != 0xDE) && (var_r7 != 0xDF)) {
-                M2C_FIELD(temp_r1_2, u16 *, var_r6 * 2) = 5;
+            if ((Data_03001e8c->insert_wait_command != 0) && (sp28 == 0) && (var_r7 != 0xDE) && (var_r7 != 0xDF)) {
+                Data_03001e8c->command_buffer[var_r6] = 5;
                 var_r6 = (var_r6 + 1) & 0x1FF;
             }
-            if ((M2C_FIELD(sp2C, u8 *, 0x12FB) != 0) && (sp28 == 0) && (var_r7 != 0xDE) && (var_r7 != 0xDF)) {
+            if ((Data_03001e8c->insert_modifier != 0) && (sp28 == 0) && (var_r7 != 0xDE) && (var_r7 != 0xDF)) {
                 if ((temp_r5 <= 0x100U) && (temp_r5 > 0x7FU) && (temp_r5 != 0xDE) && (temp_r5 != 0xDF) && (temp_r5 != 0x20) && (temp_r5 != 0xA5) && (temp_r5 != 0xA1) && (temp_r5 != 0xA4)) {
-                    M2C_FIELD(temp_r1_2, u16 *, var_r6 * 2) = 0xDE;
+                    Data_03001e8c->command_buffer[var_r6] = 0xDE;
                     var_r6 = (var_r6 + 1) & 0x1FF;
                 }
             }
             if (var_r7 > 0x1FU) {
-                if ((M2C_FIELD(sp2C, u8 *, 0x12FA) != 0) && ((var_r7 == 0x20) || (sp1C > 0xAU))) {
+                if ((Data_03001e8c->insert_wait_command != 0) && ((var_r7 == 0x20) || (sp1C > 0xAU))) {
                     temp_r6 = (var_r6 + 1) & 0x1FF;
-                    M2C_FIELD(temp_r1_2, u16 *, var_r6 * 2) = 0x2E;
+                    Data_03001e8c->command_buffer[var_r6] = 0x2E;
                     temp_r6_2 = (temp_r6 + 1) & 0x1FF;
-                    M2C_FIELD(temp_r1_2, u16 *, temp_r6 * 2) = 0x2E;
-                    M2C_FIELD(temp_r1_2, u16 *, temp_r6_2 * 2) = 0x2E;
+                    Data_03001e8c->command_buffer[temp_r6] = 0x2E;
+                    Data_03001e8c->command_buffer[temp_r6_2] = 0x2E;
                     var_r6 = (temp_r6_2 + 1) & 0x1FF;
                     sp10 = 1;
                     if (sp1C > 0xAU) {
@@ -243,7 +289,7 @@ block_36:
                         var_r7 = 0x8E;
                     }
                 }
-                M2C_FIELD(temp_r1_2, u16 *, var_r6 * 2) = (s16) var_r7;
+                Data_03001e8c->command_buffer[var_r6] = (s16)var_r7;
                 var_r6 = (var_r6 + 1) & 0x1FF;
                 sp28 = 0;
             } else {
@@ -263,7 +309,7 @@ block_36:
                     case 1:
 block_157:
                         sp28 = 1;
-                        M2C_FIELD(temp_r1_2, u16 *, var_r6 * 2) = (s16) var_r7;
+                        Data_03001e8c->command_buffer[var_r6] = (s16)var_r7;
                         var_r6 = (var_r6 + 1) & 0x1FF;
                         if ((var_r7 == 0x73) || (var_r7 == 0x53)) {
                             var_r3 = 1;
@@ -332,10 +378,10 @@ block_147:
                     case 25:
                         if (sp18 != 0) {
                             if (sp34 != 0) {
-                                M2C_FIELD(temp_r1_2, u16 *, var_r6 * 2) = 0x65;
+                                Data_03001e8c->command_buffer[var_r6] = 0x65;
                                 var_r6 = (var_r6 + 1) & 0x1FF;
                             }
-                            M2C_FIELD(temp_r1_2, u16 *, var_r6 * 2) = 0x73;
+                            Data_03001e8c->command_buffer[var_r6] = 0x73;
                             var_r6 = (var_r6 + 1) & 0x1FF;
                         }
                         break;
@@ -346,7 +392,7 @@ block_147:
                         var_r0_3 = var_r6;
                         if (var_r2_4 != 0) {
                             do {
-                                M2C_FIELD(temp_r1_2, u16 *, var_r0_3 * 2) = var_r2_4;
+                                Data_03001e8c->command_buffer[var_r0_3] = var_r2_4;
                                 var_r1_2 += 2;
                                 var_r2_4 = *var_r1_2;
                                 var_r0_3 = (var_r0_3 + 1) & 0x1FF;
@@ -356,23 +402,23 @@ block_148:
                         var_r6 = var_r0_3;
                         break;
                     case 24:
-                        M2C_FIELD(temp_r1_2, u16 *, var_r6 * 2) = 0x8F;
+                        Data_03001e8c->command_buffer[var_r6] = 0x8F;
                         temp_r6_3 = (var_r6 + 1) & 0x1FF;
-                        M2C_FIELD(temp_r1_2, u16 *, temp_r6_3 * 2) = 0x2D;
+                        Data_03001e8c->command_buffer[temp_r6_3] = 0x2D;
                         var_r6 = (temp_r6_3 + 1) & 0x1FF;
                         break;
                     case 26:
                         temp_r0 = (readToken(sp38) - 1) * 2;
                         temp_r6_4 = (var_r6 + 1) & 0x1FF;
-                        M2C_FIELD(temp_r1_2, u16 *, var_r6 * 2) = temp_r0 + 0x80;
-                        M2C_FIELD(temp_r1_2, u16 *, temp_r6_4 * 2) = temp_r0 + 0x81;
+                        Data_03001e8c->command_buffer[var_r6] = temp_r0 + 0x80;
+                        Data_03001e8c->command_buffer[temp_r6_4] = temp_r0 + 0x81;
                         var_r6 = (temp_r6_4 + 1) & 0x1FF;
                         break;
                     case 27:
-                        M2C_FIELD(temp_r1_2, u16 *, var_r6 * 2) = 0x27;
+                        Data_03001e8c->command_buffer[var_r6] = 0x27;
                         var_r6 = (var_r6 + 1) & 0x1FF;
                         if (sp34 == 0) {
-                            M2C_FIELD(temp_r1_2, u16 *, var_r6 * 2) = 0x73;
+                            Data_03001e8c->command_buffer[var_r6] = 0x73;
                             var_r6 = (var_r6 + 1) & 0x1FF;
                         }
                         break;
@@ -382,8 +428,8 @@ block_148:
                         break;
                     case 29:
                         temp_r6_5 = (var_r6 + 1) & 0x1FF;
-                        M2C_FIELD(temp_r1_2, u16 *, var_r6 * 2) = (s16) var_r7;
-                        M2C_FIELD(temp_r1_2, u16 *, temp_r6_5 * 2) = readToken(sp38) + 0xFFFF;
+                        Data_03001e8c->command_buffer[var_r6] = (s16)var_r7;
+                        Data_03001e8c->command_buffer[temp_r6_5] = readToken(sp38) - 1;
                         var_r6 = (temp_r6_5 + 1) & 0x1FF;
                         break;
                     case 22:
@@ -405,7 +451,7 @@ block_148:
                             var_r0_6 = sp44 + var_r4_4;
                             var_r1_3 = var_r0_6;
 loop_124:
-                            M2C_FIELD(temp_r1_2, u16 *, var_r6 * 2) = (s16) *var_r1_3;
+                            Data_03001e8c->command_buffer[var_r6] = (s16)*var_r1_3;
                             var_r4_4 += 1;
                             var_r1_3 += 1;
                             var_r6 = (var_r6 + 1) & 0x1FF;
@@ -428,7 +474,7 @@ loop_124:
                         var_r0_3 = var_r6;
                         if (var_r2_5 != 0) {
                             do {
-                                M2C_FIELD(temp_r1_2, u16 *, var_r0_3 * 2) = var_r2_5;
+                                Data_03001e8c->command_buffer[var_r0_3] = var_r2_5;
                                 var_r1_4 += 2;
                                 var_r2_5 = *var_r1_4;
                                 var_r0_3 = (var_r0_3 + 1) & 0x1FF;
@@ -444,12 +490,12 @@ loop_124:
         if ((sp14 != 0) && (temp_r5_5 <= 0x1FFU)) {
             goto loop_3;
         }
-        M2C_FIELD(temp_r1_2, u16 *, var_r6 * 2) = (s16) var_r7;
+        Data_03001e8c->command_buffer[var_r6] = (s16)var_r7;
         temp_r6_6 = (var_r6 + 1) & 0x1FF;
-        M2C_FIELD(temp_r1_2, u16 *, temp_r6_6 * 2) = 0;
-        M2C_FIELD(sp2C, s16 *, 0x12B2) = (s16) ((temp_r6_6 + 1) & 0x1FF);
+        Data_03001e8c->command_buffer[temp_r6_6] = 0;
+        Data_03001e8c->write_cursor = (temp_r6_6 + 1) & 0x1ff;
         Func_08002dd8(0x32);
-        M2C_FIELD(sp2C, u16 *, 0x12B4) = (u16) sp20;
+        Data_03001e8c->saved_cursor = sp20;
     }
     if (arg1 != 0) {
         Func_080198dc();

@@ -8,9 +8,9 @@
 // still assembly or non-code asset data.
 //
 // Exact and semantic ownership are derived from tracked evidence without a ROM
-// read or compiler. The orange retained-assembly layer additionally consumes
+// read or compiler. The dark-gray retained-assembly layer additionally consumes
 // the latest verified full-build assembly manifest; when that manifest is
-// absent, only explicit tracked non-code ranges are orange and the rest stays
+// absent, only explicit tracked non-code ranges are dark gray and the rest stays
 // gray. Publish the map after `bun run verify`, never from stale build output:
 //
 //   * executable classification  metrics/<target>-executable.json
@@ -54,7 +54,7 @@ export type AssetMaturityCategory =
   | "asset_bw"
   | "asset_bytes"
   | "asset_unclassified";
-const RETAINED_ASM_FILL = "#ff8a00";
+const RETAINED_ASM_FILL = "#333";
 
 // CoverageCategory order is also the stacking order inside a tile: exact at the bottom.
 // `ink` is the label colour a tile takes when that category fills most of it.
@@ -1287,7 +1287,7 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
   const semanticBytes = semanticMainBytes + semanticOverlayBytes;
 
   // -------------------------------------------------- executable universe
-  // Orange is reserved for spans with an explicit retained-assembly contract
+  // Dark gray is reserved for spans with an explicit retained-assembly contract
   // in the audited manifest. A closed semantic-owner census does not itself
   // prove the remaining bytes permanent: any complement without such evidence
   // stays gray as unresolved assembly.
@@ -1837,6 +1837,7 @@ interface HueBand { hslHue: number; okHue: number; okCmax: number; edge: string 
 const CORE_HUE: HueBand = { hslHue: 275, okHue: 295, okCmax: 0.26, edge: "#6d4fc2" };
 const OVERLAY_HUE: HueBand = { hslHue: 190, okHue: 200, okCmax: 0.17, edge: "#1f7f93" };
 const ASSET_HUE: HueBand = { hslHue: 330, okHue: 355, okCmax: 0.30, edge: "#bb2f77" };
+const MUSIC_HUE: HueBand = { hslHue: 28, okHue: 55, okCmax: 0.20, edge: "#c85d00" };
 const GROUND = "#ffffff";
 const OK_LIGHTNESS = 0.70;
 // Completion fractions: code ladder assembly 0 -> semantic 0.5 -> exact 0.75
@@ -2167,7 +2168,7 @@ export function renderBoxTree(
     const completionLabel = completionCategory === "exact_c"
       ? "EXACT"
       : (BOX_TREE_LEGEND[completionCategory] ?? completionCategory).toUpperCase();
-    // Retained assembly is source-owned and byte-exact too; it stays orange so
+    // Retained assembly is source-owned and byte-exact too; it stays dark gray so
     // readers can distinguish its representation, but it belongs in the title
     // bar's exact-completion total rather than in unknown/decompilation debt.
     const completionBytes = boxTreeCategoryBytes(area, completionCategory) +
@@ -2197,20 +2198,29 @@ export function renderBoxTree(
 
 export const BOX_TREES = ["core", "overlays", "assets"] as const;
 export type BoxTreeId = (typeof BOX_TREES)[number];
+export const DASHBOARD_TREES = ["core", "overlays", "images", "music"] as const;
+export type DashboardTreeId = (typeof DASHBOARD_TREES)[number];
 
 export function boxTreePath(target: DecompTargetId, tree: BoxTreeId): string {
   return join(ROOT, "assets", "readme", `${target}-${tree}.svg`);
 }
 
-export function renderBoxTrees(
+interface AssetTreeContext {
+  area: Area;
+  categoryOrder: readonly string[];
+  folders: readonly TileFolder[];
+  cataloguedBytes: number;
+  unclassifiedBytes: number;
+  detailed: boolean;
+}
+
+function assetTreeContext(
   map: CoverageMap,
   tree?: SourceTree,
   preferVerifiedAssets = false,
-): Record<BoxTreeId, string> {
-  const core = map.executable_areas.find((item) => item.id === "main");
-  const overlays = map.executable_areas.find((item) => item.id === "overlays");
+): AssetTreeContext {
   const romData = map.rom_areas.find((item) => item.id === "rom-data");
-  if (!core || !overlays || !romData) throw new Error("coverage map is missing a box-tree area");
+  if (!romData) throw new Error("coverage map is missing its asset area");
   const embeddedMaturity = romData.tiles.filter((tile) =>
     ASSET_TIERS.some((tier) => (tile.categories[tier] ?? 0) > 0) ||
     (tile.categories.asset_unclassified ?? 0) > 0);
@@ -2245,11 +2255,59 @@ export function renderBoxTrees(
         categories: { asset_unclassified: unclassifiedBytes },
       }]
     : maturity;
-  const detailedAssets = tree !== undefined || embeddedMaturity.length > 0 || verifiedMaturity !== undefined;
-  const assetsArea: Area = detailedAssets
-    ? { id: "rom-data", label: romData.label, bytes: romData.bytes,
-        categories: {}, tiles: maturityWithRemainder }
-    : romData;
+  const detailed = tree !== undefined || embeddedMaturity.length > 0 || verifiedMaturity !== undefined;
+  return {
+    area: detailed
+      ? { id: "rom-data", label: romData.label, bytes: romData.bytes,
+          categories: {}, tiles: maturityWithRemainder }
+      : romData,
+    categoryOrder: detailed
+      ? ["asset_unclassified", "asset_bytes", "asset_bw", "asset_color", "asset_objects"]
+      : ["asset_data"],
+    folders: maturityWithRemainder.some((tile) => tile.group !== undefined)
+      ? ["group", "subgroup"]
+      : [],
+    cataloguedBytes,
+    unclassifiedBytes,
+    detailed,
+  };
+}
+
+function renderAssetTree(
+  context: AssetTreeContext,
+  assetArea: Area,
+  title: string,
+  hue: HueBand,
+): string {
+  const band = hue === MUSIC_HUE ? "orange" : "pink";
+  const detail = context.detailed
+    ? `${commas(assetArea.bytes)} bytes are tiered by their tracked representation maturity`
+    : `${commas(assetArea.bytes)} ROM-image bytes`;
+  return renderBoxTree(
+    assetArea,
+    `${title} maturity box tree, ${band} band; ${detail}`,
+    hue,
+    ASSET_FRACTION,
+    context.categoryOrder,
+    context.folders,
+    title,
+  );
+}
+
+function isMusicAsset(tile: Tile): boolean {
+  const identity = `${tile.group ?? ""} ${tile.subgroup ?? ""} ${tile.label}`;
+  return /sound|audio|wave|pcm|music|midi|sequence|sound-?font/i.test(identity);
+}
+
+export function renderBoxTrees(
+  map: CoverageMap,
+  tree?: SourceTree,
+  preferVerifiedAssets = false,
+): Record<BoxTreeId, string> {
+  const core = map.executable_areas.find((item) => item.id === "main");
+  const overlays = map.executable_areas.find((item) => item.id === "overlays");
+  if (!core || !overlays) throw new Error("coverage map is missing a box-tree area");
+  const assets = assetTreeContext(map, tree, preferVerifiedAssets);
   return {
     core: renderBoxTree(core,
       "Main-image code coverage box tree, purple band; 64 KiB address banks contain audited source-owner leaves at their natural executable byte size",
@@ -2259,15 +2317,36 @@ export function renderBoxTrees(
       "Decoded code-overlay coverage box tree, cyan band; each resource contains its exact, semantic, and unowned source regions",
       OVERLAY_HUE, CODE_FRACTION,
       ["assembly", "retained_asm", "semantic_c", "exact_c", "humanized_c"], ["group"], "Code overlays"),
-    assets: renderBoxTree(assetsArea,
-      detailedAssets
-        ? `Asset maturity box tree, pink band; ${commas(cataloguedBytes)} catalogued bytes are tiered by tracked sources and ${commas(unclassifiedBytes)} unclassified ROM-image data bytes remain at the byte-represented floor`
+    assets: renderBoxTree(assets.area,
+      assets.detailed
+        ? `Asset maturity box tree, pink band; ${commas(assets.cataloguedBytes)} catalogued bytes are tiered by tracked sources and ${commas(assets.unclassifiedBytes)} unclassified ROM-image data bytes remain at the byte-represented floor`
         : "Asset maturity box tree, pink band",
       ASSET_HUE, ASSET_FRACTION,
-      detailedAssets ? ["asset_unclassified", "asset_bytes", "asset_bw", "asset_color", "asset_objects"] : ["asset_data"],
-      maturityWithRemainder.some((tile) => tile.group !== undefined)
-        ? ["group", "subgroup"]
-        : [], "Data / assets"),
+      assets.categoryOrder, assets.folders, "Data / assets"),
+  };
+}
+
+/** Live dashboard projection: separate visual/data assets from the audio
+ * corpus so each has a readable chart and an independent maturity percentage. */
+export function renderDashboardTrees(
+  map: CoverageMap,
+  tree?: SourceTree,
+  preferVerifiedAssets = false,
+): Record<DashboardTreeId, string> {
+  const published = renderBoxTrees(map, tree, preferVerifiedAssets);
+  const assets = assetTreeContext(map, tree, preferVerifiedAssets);
+  const musicTiles = assets.area.tiles.filter(isMusicAsset);
+  const imageTiles = assets.area.tiles.filter((tile) => !isMusicAsset(tile));
+  const images = area("images", "Images", imageTiles);
+  const music = area("music", "Music", musicTiles);
+  if (images.bytes + music.bytes !== assets.area.bytes) {
+    throw new Error("dashboard asset split does not conserve its byte total");
+  }
+  return {
+    core: published.core,
+    overlays: published.overlays,
+    images: renderAssetTree(assets, images, "Images", ASSET_HUE),
+    music: renderAssetTree(assets, music, "Music", MUSIC_HUE),
   };
 }
 
@@ -2669,7 +2748,7 @@ export function selfTest(): void {
     "retained colour test",
   );
   if (!retainedTree.includes(`fill:${RETAINED_ASM_FILL}`) || retainedTree.includes("#141414")) {
-    throw new Error("retained assembly is not rendered orange in the box trees");
+    throw new Error("retained assembly is not rendered dark gray in the box trees");
   }
   if (!retainedTree.includes("EXACT 100.0%")) {
     throw new Error("retained assembly was omitted from exact completion");

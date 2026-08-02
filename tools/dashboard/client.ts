@@ -1,4 +1,4 @@
-type Tree = "core" | "overlays" | "assets";
+type Tree = "core" | "overlays" | "images" | "music";
 type Child = Node | string | number | boolean | null | undefined | Child[];
 type Attributes = Record<string, string | number | boolean | null | undefined>;
 

@@ -4,12 +4,12 @@
 import { existsSync, statSync, watch, type FSWatcher } from "node:fs";
 import { dirname, join } from "node:path";
 import {
-  BOX_TREES,
+  DASHBOARD_TREES,
   buildCoverageMap,
-  renderBoxTrees,
+  renderDashboardTrees,
   svgCacheVersion,
   workTree,
-  type BoxTreeId,
+  type DashboardTreeId,
   type CoverageMap,
 } from "./coverage_map.ts";
 
@@ -27,10 +27,11 @@ const COVERAGE_BUILD_FILES = [
 ];
 const RESTART_FILES = [SOURCE, join(dirname(SOURCE), "coverage_map.ts")];
 
-const TREE_LABELS: Record<BoxTreeId, string> = {
+const TREE_LABELS: Record<DashboardTreeId, string> = {
   core: "Main image",
   overlays: "Code overlays",
-  assets: "Data / assets",
+  images: "Images",
+  music: "Music",
 };
 const PAGE_FILES = [CLIENT, STYLES];
 const encoder = new TextEncoder();
@@ -39,7 +40,7 @@ interface LiveCoverage {
   revision: string;
   generatedAt: string;
   map: CoverageMap;
-  trees: Record<BoxTreeId, string>;
+  trees: Record<DashboardTreeId, string>;
 }
 
 interface ClientBundle {
@@ -145,8 +146,8 @@ function rebuildCoverage(): void {
       validateTrackedProgress: false,
       preferVerifiedAssets: true,
     });
-    const trees = renderBoxTrees(map, tree, true);
-    const revision = BOX_TREES.map((name) => svgCacheVersion(trees[name])).join("-");
+    const trees = renderDashboardTrees(map, tree, true);
+    const revision = DASHBOARD_TREES.map((name) => svgCacheVersion(trees[name])).join("-");
     coverage = { revision, generatedAt: new Date().toISOString(), map, trees };
     scanError = undefined;
   } catch (error) {
@@ -197,7 +198,7 @@ function watchRepository(): FSWatcher[] {
     notify();
   });
   watchers.push(pageWatcher);
-  // Exact and semantic ownership are tracked-tree projections. Orange retained
+  // Exact and semantic ownership are tracked-tree projections. Dark-gray retained
   // ownership comes from the last verified assembly manifest, so a completed
   // full build must wake the live dashboard too.
   for (const file of COVERAGE_BUILD_FILES.filter(existsSync)) {
@@ -245,23 +246,28 @@ async function selfTest(): Promise<void> {
     validateTrackedProgress: false,
     preferVerifiedAssets: true,
   });
-  const trees = renderBoxTrees(map, tree, true);
-  if (map.categories.exact_c.bytes <= 0 || BOX_TREES.some((name) => !trees[name].startsWith("<svg "))) {
+  const trees = renderDashboardTrees(map, tree, true);
+  if (map.categories.exact_c.bytes <= 0 || DASHBOARD_TREES.some((name) => !trees[name].startsWith("<svg "))) {
     throw new Error("dashboard live coverage generation failed");
   }
   const overlayArea = map.executable_areas.find((area) => area.id === "overlays");
   if (overlayArea === undefined) throw new Error("dashboard live map lost its code overlays");
   const overlayTiles = (id: string) => overlayArea.tiles.filter((tile) => tile.group === id);
+  const overlayBytes = (id: string) => overlayTiles(id).reduce(
+    (sum, tile) => sum + tile.bytes, 0);
   const unknownBytes = (id: string) => overlayTiles(id).reduce(
     (sum, tile) => sum + (tile.categories.assembly ?? 0), 0);
-  // These neighbouring, recently worked overlays make a useful visual-regression
-  // cohort: their remaining unknown totals are emphatically not one repeated
-  // square, and 383 has no unknown executable bytes at all. Seven also carry
-  // the same 40-byte fixed header, but that shared structure is retained exact
-  // assembly (orange), never unknown (gray).
+  // These neighbouring overlays make a useful structural visual-regression
+  // cohort. Their executable extents are stable properties of the resources,
+  // unlike unknown-byte totals, which legitimately converge toward zero as C
+  // reconstruction advances.  A prior grouping bug collapsed them into one
+  // repeated display tile; distinct total extents catch that without turning
+  // successful coverage work into a failing self-test. Seven also carry the
+  // same 40-byte fixed header, retained exact assembly (dark gray), never unknown.
   const visualCohort = ["373", "3c9", "380", "3c8", "383", "372", "3bd", "3af"];
-  if (unknownBytes("383") !== 0 ||
-      new Set(visualCohort.map(unknownBytes)).size < 6) {
+  if (visualCohort.some((id) => overlayTiles(id).length === 0 ||
+      unknownBytes(id) > overlayBytes(id)) ||
+      new Set(visualCohort.map(overlayBytes)).size < 6) {
     throw new Error("code-overlay unknown debt collapsed into a repeated display tile");
   }
   for (const id of visualCohort.filter((item) => item !== "3bd")) {
@@ -274,8 +280,9 @@ async function selfTest(): Promise<void> {
     }
   }
   if (!trees.core.includes("MAIN IMAGE") || !trees.overlays.includes("CODE OVERLAYS") ||
-      !trees.assets.includes("DATA / ASSETS") ||
-      BOX_TREES.some((name) => !trees[name].includes("font-family:Weyard;font-size:16px"))) {
+      !trees.images.includes("IMAGES") || !trees.music.includes("MUSIC") ||
+      !trees.music.includes('fill="#c85d00"') ||
+      DASHBOARD_TREES.some((name) => !trees[name].includes("font-family:Weyard;font-size:16px"))) {
     throw new Error("dashboard SVGs do not carry their own 16px Weyard title and legend chrome");
   }
   const client = await bundledClient();
@@ -326,7 +333,7 @@ async function main(): Promise<void> {
       if (path === "/weyard.otf") {
         return new Response(Bun.file(FONT), { headers: headers("font/otf", "public, max-age=300") });
       }
-      const tree = /^\/svg\/(core|overlays|assets)$/.exec(path)?.[1] as BoxTreeId | undefined;
+      const tree = /^\/svg\/(core|overlays|images|music)$/.exec(path)?.[1] as DashboardTreeId | undefined;
       if (tree !== undefined) {
         const svg = coverage?.trees[tree];
         return svg === undefined

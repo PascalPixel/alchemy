@@ -1,109 +1,106 @@
+#include "layout_guard.h"
 #include "types.h"
-#define M2C_FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-s8 Func_080799b0(u8 arg0, const u8 *arg1) {
-    s32 *sp0;
-    s32 sp4[4];
-    s32 *var_ip_3;
-    s32 *var_r2;
-    s32 *var_r2_2;
-    s32 temp_r0;
-    s32 temp_r3;
-    s32 temp_r3_2;
-    s32 var_ip;
-    s32 var_ip_2;
-    s32 var_r0;
-    s32 var_r0_2;
-    s32 var_r0_3;
-    s32 var_r0_4;
-    s32 var_r1;
-    s32 var_r4;
-    s32 var_r4_2;
-    s32 var_r5;
-    s32 var_r8;
-    u8 *var_r1_2;
-    u8 *var_r7;
-    void *var_r5_2;
+enum {
+    SCORE_COUNT_080799B0 = 4,
+    HIGHEST_RANK_080799B0 = 202,
+};
 
-    var_r8 = -1;
-    var_r0 = 0;
-    if (((s32) arg0 <= 7) && ((Func_080797fc(arg0, arg1, sp4), (Func_08079338(0x20) == 0)) || ((var_r0 = 0xC8, (arg0 != 0)) && (var_r0 = 0xC9, (arg0 != 1))))) {
-        var_r0 = 0xCA;
-        if (arg0 != 5) {
-            var_r0 = -1;
-            if (-1 == -1) {
-                var_ip = -1;
-                var_r5 = -1;
-                var_r0_2 = 0;
-                var_r2 = sp4;
-                do {
-                    temp_r3 = *var_r2;
-                    var_r2 += 1;
-                    if (var_ip < temp_r3) {
-                        var_ip = temp_r3;
-                        var_r5 = var_r0_2;
-                    }
-                    var_r0_2 += 1;
-                } while (var_r0_2 <= 3);
-                var_r4 = -1;
-                var_ip_2 = -1;
-                var_r0_3 = 0;
-                var_r2_2 = sp4;
-                do {
-                    if (var_r0_3 != var_r5) {
-                        temp_r3_2 = *var_r2_2;
-                        if (var_ip_2 < temp_r3_2) {
-                            var_ip_2 = temp_r3_2;
-                            var_r4 = var_r0_3;
-                        }
-                    }
-                    var_r0_3 += 1;
-                    var_r2_2 += 1;
-                } while (var_r0_3 <= 3);
-                var_r1 = var_r5;
-                if ((s32) sp4[var_r4] > 9) {
-                    var_r1 = var_r4;
-                }
-                temp_r0 = Func_080797ec(var_r5, var_r1);
-                sp0 = sp4;
-                var_r5_2 = (void *)0x4248;
-                var_r0_4 = 0xCA;
-                var_r7 = (u8 *)0x08088D68;
-loop_19:
-                if (M2C_FIELD(var_r5_2, s32 *, 0x08084B1C) == temp_r0) {
-                    var_r4_2 = 0;
-                    if ((s32) *sp0 >= (s32) (*var_r7 * 0xA)) {
-                        var_ip_3 = sp4;
-                        var_r1_2 = var_r5_2 + 0x08084B1C + 4;
-loop_22:
-                        var_r4_2 += 1;
-                        if (var_r4_2 <= 3) {
-                            var_r1_2 += 1;
-                            var_ip_3 += 1;
-                            if ((s32) *var_ip_3 >= (s32) (*var_r1_2 * 0xA)) {
-                                goto loop_22;
-                            }
-                        }
-                    }
-                    if (var_r4_2 != 4) {
-                        goto block_25;
-                    }
-                    var_r8 = var_r0_4;
-                } else {
-block_25:
-                    var_r0_4 -= 1;
-                    var_r7 -= 0x54;
-                    var_r5_2 -= 0x54;
-                    if (var_r0_4 >= 0) {
-                        goto loop_19;
-                    }
-                }
-                if (var_r8 == -1) {
-                    var_r8 = 0;
-                }
-                var_r0 = var_r8;
-            }
+typedef struct RankRequirement_080799b0 {
+    s32 score_key;
+    u8 minimum_tens[SCORE_COUNT_080799B0];
+    u8 padding08[0x4c];
+} RankRequirement_080799b0;
+
+LAYOUT_OFFSET_GUARD(
+    RankRequirement080799b0_Minimums,
+    RankRequirement_080799b0,
+    minimum_tens,
+    4);
+LAYOUT_SIZE_GUARD(
+    RankRequirement080799b0_Size,
+    RankRequirement_080799b0,
+    0x54);
+
+void Func_080797fc(u8, const u8 *, s32 *);
+s32 Func_08079338(s32);
+s32 Func_080797ec(s32, s32);
+
+static s32 FindLargestScore_080799b0(
+    const s32 *scores,
+    s32 excluded)
+{
+    s32 largest = -1;
+    s32 largest_index = -1;
+    s32 index;
+
+    for (index = 0; index < SCORE_COUNT_080799B0; index++) {
+        if (index != excluded && largest < scores[index]) {
+            largest = scores[index];
+            largest_index = index;
         }
     }
-    return (s8) var_r0;
+
+    return largest_index;
+}
+
+static s32 MeetsRequirements_080799b0(
+    const RankRequirement_080799b0 *requirement,
+    const s32 *scores)
+{
+    s32 index;
+
+    for (index = 0; index < SCORE_COUNT_080799B0; index++) {
+        if (scores[index] < requirement->minimum_tens[index] * 10)
+            return 0;
+    }
+
+    return 1;
+}
+
+/*
+ * Classify a four-score result.  Types 0, 1, and 5 can return their dedicated
+ * sentinel ranks; other types derive a score key from the strongest two
+ * dimensions and then choose the highest table rank whose four minimums are
+ * met.  Rank zero is the fallback when no record qualifies.
+ */
+s8 Func_080799b0(u8 type, const u8 *input)
+{
+    const RankRequirement_080799b0 *requirement;
+    s32 scores[SCORE_COUNT_080799B0];
+    s32 strongest;
+    s32 second;
+    s32 key_partner;
+    s32 score_key;
+    s32 rank;
+
+    if (type > 7)
+        return 0;
+
+    Func_080797fc(type, input, scores);
+    if (Func_08079338(0x20) != 0) {
+        if (type == 0)
+            return (s8)200;
+        if (type == 1)
+            return (s8)201;
+    }
+    if (type == 5)
+        return (s8)202;
+
+    strongest = FindLargestScore_080799b0(scores, -1);
+    second = FindLargestScore_080799b0(scores, strongest);
+    key_partner = strongest;
+    if (scores[second] > 9)
+        key_partner = second;
+    score_key = Func_080797ec(strongest, key_partner);
+
+    requirement = (const RankRequirement_080799b0 *)0x08088d64;
+    for (rank = HIGHEST_RANK_080799B0; rank >= 0; rank--, requirement--) {
+        if (requirement->score_key == score_key &&
+            MeetsRequirements_080799b0(requirement, scores)) {
+            return (s8)rank;
+        }
+    }
+
+    return 0;
 }

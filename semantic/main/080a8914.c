@@ -1,71 +1,112 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+#include "layout_guard.h"
+#include "types.h"
+
+struct FocusObject_080a8914 {
+    u8 padding00[5];
+    u8 dirty;
+};
+
+struct BattleUiState_080a8914 {
+    u8 padding000[0x17c];
+    struct FocusObject_080a8914 *focus;
+};
+
+struct Combatant_080a8914 {
+    u8 padding000[0x0f];
+    u8 level;
+    u8 padding010[0x24];
+    s16 paired_values[4];
+    u16 summary_values[3];
+    u8 summary_value_3;
+    u8 padding043[0x0e1];
+    s32 experience;
+    u8 padding128;
+    u8 class_id;
+};
+
+LAYOUT_OFFSET_GUARD(
+    BattleUi080a8914_Focus,
+    struct BattleUiState_080a8914,
+    focus,
+    0x17c);
+LAYOUT_OFFSET_GUARD(
+    Combatant080a8914_PairedValues,
+    struct Combatant_080a8914,
+    paired_values,
+    0x34);
+LAYOUT_OFFSET_GUARD(
+    Combatant080a8914_SummaryValues,
+    struct Combatant_080a8914,
+    summary_values,
+    0x3c);
+LAYOUT_OFFSET_GUARD(
+    Combatant080a8914_Experience,
+    struct Combatant_080a8914,
+    experience,
+    0x124);
+LAYOUT_OFFSET_GUARD(
+    Combatant080a8914_ClassId,
+    struct Combatant_080a8914,
+    class_id,
+    0x129);
+
+extern struct BattleUiState_080a8914 *Data_03001f2c;
 
 void Func_08015068(s32, s32, s32, s32, s32);
 void Func_08015080(s32, s32, s32, s32);
-void Func_08015090(s32, s32, s32, s32);
-s32 Func_08015098(s32, s32, s32, s32);
+void Func_08015090(const void *, s32, s32, s32);
+s32 Func_08015098(const void *, s32, s32, s32);
 void Func_080150b0(s32, s32, s32, s32, s32);
 void Func_080150b8(s32);
 void Func_080030f8(u32);
-s32 Func_08077008(s32);
-extern u8 Value_00000b0e[];
+struct Combatant_080a8914 *Func_08077008(s32);
 
-void Func_080a8914(s32 arg0, s32 arg1, s32 arg2) {
-    s32 state;
-    s32 option;
-    u8 *textBase;
-    s32 offset8;
-    s32 offset16;
-    s32 offset24;
-    s32 amount;
-    s32 mask;
-    void *global;
+/*
+ * Draw the stable identity/statistics portion of a combatant summary panel.
+ * Mode zero clears both panel bands around the draw; other modes update the
+ * existing window in place.  The surrounding selector owns the focus object,
+ * which is marked dirty before any text is emitted.
+ */
+void Func_080a8914(s32 window, s32 combatant_id, s32 mode)
+{
+    struct Combatant_080a8914 *combatant =
+        Func_08077008(combatant_id);
+    s32 compact_mode = mode & 0xff;
 
-    global = *(void **)0x03001F2C;
-    state = Func_08077008(arg1);
-    mask = 1;
-    M2C_FIELD(M2C_FIELD(global, void **, 0x17C), s8 *, 5) = mask;
-    mask += 255;
-    option = arg2 & mask;
-    if (option == 0) {
-        Func_08015068(arg0, 0, 0, 0x80, 0x28);
-    }
-    Func_08015090(state, arg0, 0x28, 0);
-    Func_08015080(M2C_FIELD(state, u8 *, 0x129) + 0x741, arg0, 0, 0x20);
-    Func_08015090(0x080AF22C, arg0, 0x68, 0);
-    Func_080150b8(0xF);
-    Func_080150b0(M2C_FIELD(state, u8 *, 0xF), 2, arg0, 0x80, 0);
-    Func_08015090(0x080AF234, arg0, 0x28, 0x10);
-    offset16 = 0x10;
-    Func_080150b0(M2C_FIELD(state, s16 *, 0x38), 4, arg0, 0x48, offset16);
-    Func_080150b0(M2C_FIELD(state, s16 *, 0x34), 4, arg0, 0x70, offset16);
-    Func_08015098(0x080AF230, arg0, 0x68, offset16);
-    Func_08015090(0x080AF238, arg0, 0x28, 0x18);
-    offset24 = 0x18;
-    Func_080150b0(M2C_FIELD(state, s16 *, 0x3A), 4, arg0, 0x48, offset24);
-    Func_080150b0(M2C_FIELD(state, s16 *, 0x36), 4, arg0, 0x70, offset24);
-    Func_08015098(0x080AF230, arg0, 0x68, offset24);
-    textBase = Value_00000b0e;
-    Func_08015080((s32)textBase, arg0, 0x28, 8);
-    amount = M2C_FIELD(state, s32 *, 0x124);
-    offset8 = 8;
-    Func_080150b0(amount, 7, arg0, 0x58, offset8);
-    if (option == 0) {
+    Data_03001f2c->focus->dirty = 1;
+    if (compact_mode == 0)
+        Func_08015068(window, 0, 0, 0x80, 0x28);
+
+    Func_08015090(combatant, window, 0x28, 0);
+    Func_08015080(combatant->class_id + 0x741, window, 0, 0x20);
+    Func_08015090((const void *)0x080af22c, window, 0x68, 0);
+    Func_080150b8(15);
+    Func_080150b0(combatant->level, 2, window, 0x80, 0);
+
+    Func_08015090((const void *)0x080af234, window, 0x28, 0x10);
+    Func_080150b0(combatant->paired_values[2], 4, window, 0x48, 0x10);
+    Func_080150b0(combatant->paired_values[0], 4, window, 0x70, 0x10);
+    Func_08015098((const void *)0x080af230, window, 0x68, 0x10);
+
+    Func_08015090((const void *)0x080af238, window, 0x28, 0x18);
+    Func_080150b0(combatant->paired_values[3], 4, window, 0x48, 0x18);
+    Func_080150b0(combatant->paired_values[1], 4, window, 0x70, 0x18);
+    Func_08015098((const void *)0x080af230, window, 0x68, 0x18);
+
+    Func_08015080(0x0b0e, window, 0x28, 8);
+    Func_080150b0(combatant->experience, 7, window, 0x58, 8);
+
+    if (compact_mode == 0) {
         Func_080030f8(1);
-        Func_08015068(arg0, 0x90, 0, 0xE0, 0x28);
+        Func_08015068(window, 0x90, 0, 0xe0, 0x28);
     }
-    Func_08015080((s32)(textBase - 23), arg0, 0x98, 0);
-    Func_08015080((s32)(textBase - 22), arg0, 0x98, offset8);
-    Func_08015080((s32)(textBase - 21), arg0, 0x98, offset16);
-    Func_08015080((s32)(textBase - 20), arg0, 0x98, offset24);
-    Func_080150b0(M2C_FIELD(state, u16 *, 0x3C), 3, arg0, 0xC8, 0);
-    Func_080150b0(M2C_FIELD(state, u16 *, 0x3E), 3, arg0, 0xC8, 8);
-    Func_080150b0(M2C_FIELD(state, u16 *, 0x40), 3, arg0, 0xC8, 0x10);
-    Func_080150b0(M2C_FIELD(state, u8 *, 0x42), 3, arg0, 0xC8, 0x18);
+
+    Func_08015080(0x0af7, window, 0x98, 0);
+    Func_08015080(0x0af8, window, 0x98, 8);
+    Func_08015080(0x0af9, window, 0x98, 0x10);
+    Func_08015080(0x0afa, window, 0x98, 0x18);
+    Func_080150b0(combatant->summary_values[0], 3, window, 0xc8, 0);
+    Func_080150b0(combatant->summary_values[1], 3, window, 0xc8, 8);
+    Func_080150b0(combatant->summary_values[2], 3, window, 0xc8, 0x10);
+    Func_080150b0(combatant->summary_value_3, 3, window, 0xc8, 0x18);
 }

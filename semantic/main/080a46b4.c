@@ -1,52 +1,87 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+#include "layout_guard.h"
+#include "types.h"
 
-s32 Func_0808a490(s32);
-extern u8 Value_000001ff;
+typedef struct EffectDefinition_080a46b4 {
+    u8 padding00[2];
+    u8 placement;
+    u8 padding03[9];
+    u8 usability;
+    u8 padding0d[0x1b];
+    u16 action;
+} EffectDefinition_080a46b4;
 
-s32 Func_080a46b4(s32 arg0, s32 arg1) {
-    s32 temp_r2_2;
-    s32 temp_r3;
-    s32 temp_r6;
-    s32 var_r3;
-    s32 var_r7;
-    u32 var_r7_2;
-    u8 *temp_r8;
-    u32 temp_r2;
-    void *temp_r5;
+typedef struct ActionInfo_080a46b4 {
+    u8 padding00;
+    u8 flags;
+    u8 padding02[6];
+    u8 special_target;
+} ActionInfo_080a46b4;
 
-    temp_r3 = (s32)&Value_000001ff;
-    temp_r6 = arg1;
-    temp_r6 &= temp_r3;
-    temp_r5 = Func_08077018(temp_r6);
-    var_r7 = -1;
-    if (Func_0808a490(temp_r6) != 0) {
+LAYOUT_OFFSET_GUARD(
+    EffectDefinition080a46b4_Placement,
+    EffectDefinition_080a46b4,
+    placement,
+    2);
+LAYOUT_OFFSET_GUARD(
+    EffectDefinition080a46b4_Usability,
+    EffectDefinition_080a46b4,
+    usability,
+    0x0c);
+LAYOUT_OFFSET_GUARD(
+    EffectDefinition080a46b4_Action,
+    EffectDefinition_080a46b4,
+    action,
+    0x28);
+LAYOUT_OFFSET_GUARD(
+    ActionInfo080a46b4_Flags,
+    ActionInfo_080a46b4,
+    flags,
+    1);
+LAYOUT_OFFSET_GUARD(
+    ActionInfo080a46b4_SpecialTarget,
+    ActionInfo_080a46b4,
+    special_target,
+    8);
+
+s32 Func_08077218(s32 combatant, u16 effect_id);
+EffectDefinition_080a46b4 *Func_08077018(s32 effect_id);
+ActionInfo_080a46b4 *Func_08077080(s32 action);
+s32 Func_0808a490(s32 effect_id);
+
+/*
+ * Classify how the battle menu should collect this effect's target. The
+ * caller distinguishes immediate modes (-1/0), the normal target picker (1),
+ * and the special picker (2).
+ */
+s32 Func_080a46b4(s32 combatant, s32 encoded_effect)
+{
+    u16 effect_id = encoded_effect & 0x01ff;
+    EffectDefinition_080a46b4 *effect =
+        Func_08077018(effect_id);
+    ActionInfo_080a46b4 *action;
+    s32 selection_mode = -1;
+
+    if (Func_0808a490(effect_id) != 0)
         return 0;
-    }
-    temp_r8 = Func_08077080(0x3FFF & M2C_FIELD(temp_r5, u16 *, 0x28));
-    if (M2C_FIELD(temp_r5, u16 *, 0x28) != 0) {
-        if ((M2C_FIELD(temp_r5, u8 *, 2) == 0) || ((M2C_FIELD(temp_r5, u8 *, 0xC) != 3) && (Func_08077218(arg0, temp_r6) != 0))) {
-            var_r7 = 1;
+
+    action = Func_08077080(effect->action & 0x3fff);
+    if (effect->action != 0) {
+        if (effect->placement == 0 ||
+            (effect->usability != 3 &&
+             Func_08077218(combatant, effect_id) != 0)) {
+            selection_mode = 1;
         }
-        if (var_r7 == 1) {
-            temp_r2 = M2C_FIELD(temp_r8, u8 *, 1);
-            if (0x40 & temp_r2) {
-                temp_r2_2 = M2C_FIELD(temp_r8, u8 *, 8);
-                temp_r2_2 ^= 0xFF;
-                var_r7_2 = (u32) ((0 - temp_r2_2) | temp_r2_2) >> 0x1F;
-                var_r3 = 2;
+
+        if (selection_mode == 1) {
+            if ((action->flags & 0x40) != 0) {
+                selection_mode =
+                    action->special_target == 0xff ? 2 : 1;
             } else {
-                temp_r3 = 0x80 & temp_r2;
-                var_r7_2 = (u32) ((0 - temp_r3) | temp_r3) >> 0x1F;
-                var_r3 = 0;
+                selection_mode =
+                    (action->flags & 0x80) != 0 ? -1 : 0;
             }
-            var_r7 = var_r3 - var_r7_2;
         }
     }
-    return var_r7;
+
+    return selection_mode;
 }

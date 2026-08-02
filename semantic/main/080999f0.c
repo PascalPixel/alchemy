@@ -1,163 +1,279 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "layout_guard.h"
+#include "types.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+typedef struct Vec3_080999f0 {
+    s32 x;
+    s32 y;
+    s32 z;
+} Vec3_080999f0;
+
+typedef struct EffectAsset_080999f0 {
+    u8 padding00[9];
+    u8 display_flags;
+} EffectAsset_080999f0;
+
+typedef struct EffectObject_080999f0 {
+    u8 padding00[8];
+    s32 x;
+    s32 y;
+    s32 z;
+    s32 base_y;
+    s32 scale_x;
+    s32 scale_y;
+    u8 padding20[0x30];
+    EffectAsset_080999f0 *asset;
+    u8 padding54;
+    s8 mode;
+    u8 padding56[0x16];
+    const void *callback;
+} EffectObject_080999f0;
+
+typedef struct ArrivalScene_080999f0 {
+    s32 heading;
+    Vec3_080999f0 destination;
+    EffectObject_080999f0 *source;
+    EffectObject_080999f0 *secondary;
+    u8 padding18[8];
+    s8 extended_burst;
+    u8 padding21[0x13];
+    s8 high_arrival;
+    u8 padding35[0x10];
+    s8 alternate_burst;
+} ArrivalScene_080999f0;
+
+LAYOUT_OFFSET_GUARD(
+    EffectObject080999f0_Position,
+    EffectObject_080999f0,
+    x,
+    8);
+LAYOUT_OFFSET_GUARD(
+    EffectObject080999f0_BaseY,
+    EffectObject_080999f0,
+    base_y,
+    0x14);
+LAYOUT_OFFSET_GUARD(
+    EffectObject080999f0_ScaleX,
+    EffectObject_080999f0,
+    scale_x,
+    0x18);
+LAYOUT_OFFSET_GUARD(
+    EffectObject080999f0_Asset,
+    EffectObject_080999f0,
+    asset,
+    0x50);
+LAYOUT_OFFSET_GUARD(
+    EffectObject080999f0_Mode,
+    EffectObject_080999f0,
+    mode,
+    0x55);
+LAYOUT_OFFSET_GUARD(
+    EffectObject080999f0_Callback,
+    EffectObject_080999f0,
+    callback,
+    0x6c);
+LAYOUT_OFFSET_GUARD(
+    ArrivalScene080999f0_Source,
+    ArrivalScene_080999f0,
+    source,
+    0x10);
+LAYOUT_OFFSET_GUARD(
+    ArrivalScene080999f0_ExtendedBurst,
+    ArrivalScene_080999f0,
+    extended_burst,
+    0x20);
+LAYOUT_OFFSET_GUARD(
+    ArrivalScene080999f0_HighArrival,
+    ArrivalScene_080999f0,
+    high_arrival,
+    0x34);
+LAYOUT_OFFSET_GUARD(
+    ArrivalScene080999f0_AlternateBurst,
+    ArrivalScene_080999f0,
+    alternate_burst,
+    0x45);
+
+extern ArrivalScene_080999f0 *Data_03001f30;
 
 s32 Func_080022ec(s32, s32);
-s32 Func_08004458(void);
+void Func_080030f8(s32);
+u32 Func_08004458(void);
+void Func_0800447c(s32, s32, Vec3_080999f0 *);
+void Func_08009080(EffectObject_080999f0 *, s32);
+void Func_080090d0(EffectObject_080999f0 *);
 s32 Func_080091a8(s32, s32, s32);
-void *Func_08096c80(s32, s32, s32, s32);
+void Func_08009240(EffectObject_080999f0 *, s32);
+EffectObject_080999f0 *Func_08096c80(s32, s32, s32, s32);
 void Func_08097384(void);
+void Func_0809748c(void);
+void Func_080f9010(s32);
 
-/* Runs the staged arrival, particle-burst, and departure presentation. */
-void Func_080999f0(void) {
-    s32 sp0;
-    s32 *sp4;
-    s32 sp8[3];
-    s32 sp20[3];
-    s32 start_pos[3];
-    s32 temp_r0_2;
-    s32 temp_r0_5;
-    s32 temp_r2;
-    s32 temp_r5;
-    s32 temp_r5_2;
-    s32 temp_r5_3;
-    s32 temp_r5_4;
-    s32 temp_r5_5;
-    s32 temp_r5_6;
-    s32 temp_r5_7;
-    s32 temp_r5_8;
-    s32 var_r8;
-    s32 var_r8_2;
-    s32 var_r8_3;
-    s32 var_r8_4;
-    s32 var_r9;
-    s32 var_r9_2;
-    void *temp_r0;
-    void *temp_r0_3;
-    void *temp_r0_4;
-    void *temp_r1;
-    void *temp_r6;
-    void *temp_sl;
+static void InterpolateArrival_080999f0(
+    EffectObject_080999f0 *effect,
+    const Vec3_080999f0 *from,
+    const Vec3_080999f0 *to)
+{
+    s32 step;
 
-    temp_r6 = *(void **)0x03001F30;
-    temp_sl = M2C_FIELD(temp_r6, void **, 0x10);
-    var_r8 = 0;
-    temp_r0 = Func_08096c80(0xEF, 0, 0, 0);
-    if (temp_r0 == 0) {
+    for (step = 0; step < 11; step++) {
+        s32 scale;
+
+        effect->x =
+            from->x + Func_080022ec(step * (to->x - from->x), 10);
+        effect->y =
+            from->y + Func_080022ec(step * (to->y - from->y), 10);
+        effect->z =
+            from->z + Func_080022ec(step * (to->z - from->z), 10);
+        scale = Func_080022ec(step * 0xc000, 10) + 0x4000;
+        effect->scale_x = scale;
+        effect->scale_y = scale;
+        Func_080030f8(1);
+    }
+}
+
+static void InterpolateDeparture_080999f0(
+    EffectObject_080999f0 *effect,
+    const Vec3_080999f0 *from,
+    const Vec3_080999f0 *to)
+{
+    s32 step;
+
+    for (step = 0; step < 11; step++) {
+        s32 scale;
+
+        effect->x =
+            from->x + Func_080022ec(step * (to->x - from->x), 10);
+        effect->y =
+            from->y + Func_080022ec(step * (to->y - from->y), 10);
+        effect->z =
+            from->z + Func_080022ec(step * (to->z - from->z), 10);
+        scale = Func_080022ec(step * -0xc000, 10) + 0x10000;
+        effect->scale_x = scale;
+        effect->scale_y = scale;
+        Func_080030f8(1);
+    }
+}
+
+static void SpawnStandardBurst_080999f0(
+    EffectObject_080999f0 *effect,
+    s32 count)
+{
+    s32 index;
+
+    for (index = 0; index < count; index++) {
+        Vec3_080999f0 position;
+        EffectObject_080999f0 *particle;
+
+        position.x = effect->x;
+        position.y = effect->y;
+        position.z = effect->z;
+        Func_0800447c(
+            (s32)(Func_08004458() * 5) + 0x30000,
+            (s32)Func_08004458(),
+            &position);
+
+        /* The final particle marks the pause at the undisturbed center. */
+        if (index == count - 1) {
+            Func_080030f8(0x19);
+            position.x = effect->x;
+            position.y = effect->y;
+            position.z = effect->z;
+        }
+
+        particle = Func_08096c80(
+            0xf0, position.x, position.y, position.z);
+        if (particle != 0) {
+            particle->base_y = position.y - 0x200000;
+            particle->callback = (const void *)0x08099921;
+            particle->mode = 2;
+        }
+        Func_080f9010(0x84);
+        Func_080030f8(6);
+    }
+
+    Func_080030f8(10);
+}
+
+static void SpawnAlternateBurst_080999f0(
+    EffectObject_080999f0 *effect,
+    s32 count)
+{
+    s32 index;
+
+    for (index = 0; index < count; index++) {
+        Vec3_080999f0 position;
+        EffectObject_080999f0 *particle;
+
+        position.x = effect->x;
+        position.y = effect->y;
+        position.z = effect->z;
+        Func_0800447c(
+            (s32)(Func_08004458() * 5) + 0x30000,
+            (s32)Func_08004458(),
+            &position);
+        particle = Func_08096c80(
+            0x11c, position.x, position.y, position.z);
+        if (particle != 0) {
+            particle->callback = (const void *)0x080999a9;
+            particle->mode = 0;
+            particle->asset->display_flags =
+                (particle->asset->display_flags & (u8)~0x0c) | 8;
+            Func_08009080(particle, 8);
+            Func_08009240(particle, 7);
+        }
+        Func_080030f8(6);
+    }
+
+    Func_080030f8(0x46);
+}
+
+/* Run the staged arrival, particle burst, and departure presentation. */
+void Func_080999f0(void)
+{
+    ArrivalScene_080999f0 *scene = Data_03001f30;
+    EffectObject_080999f0 *source = scene->source;
+    EffectObject_080999f0 *effect;
+    Vec3_080999f0 start;
+    Vec3_080999f0 arrival;
+    s32 burst_count;
+
+    effect = Func_08096c80(0xef, 0, 0, 0);
+    if (effect == 0)
         return;
-    }
+
     Func_08097384();
-    Func_080f9010(0x8A);
-    if (M2C_FIELD(temp_r6, s32 *, 0x14) == 0) {
-        M2C_FIELD(temp_r6, s32 *, 4) = (s32) M2C_FIELD(temp_sl, s32 *, 8);
-        M2C_FIELD(temp_r6, s32 *, 0xC) = (s32) M2C_FIELD(temp_sl, s32 *, 0x10);
-        Func_0800447c(0x100000, M2C_FIELD(temp_r6, s32 *, 0), temp_r6 + 4);
-        M2C_FIELD(temp_r6, s32 *, 8) = Func_080091a8(0, M2C_FIELD(temp_r6, s32 *, 4), M2C_FIELD(temp_r6, s32 *, 0xC));
+    Func_080f9010(0x8a);
+
+    if (scene->secondary == 0) {
+        scene->destination.x = source->x;
+        scene->destination.z = source->z;
+        Func_0800447c(
+            0x100000, scene->heading, &scene->destination);
+        scene->destination.y = Func_080091a8(
+            0, scene->destination.x, scene->destination.z);
     }
-    sp4 = start_pos;
-    M2C_FIELD(sp4, s32 *, 0) = M2C_FIELD(temp_sl, s32 *, 8);
-    M2C_FIELD(sp4, s32 *, 4) = (s32) (M2C_FIELD(temp_sl, s32 *, 0xC) + 0x100000);
-    M2C_FIELD(sp4, s32 *, 8) = (s32) M2C_FIELD(temp_sl, s32 *, 0x10);
-    M2C_FIELD(&sp8, s32 *, 0) = (s32) M2C_FIELD(temp_r6, s32 *, 4);
-    temp_r2 = M2C_FIELD(temp_r6, s32 *, 8);
-    M2C_FIELD(&sp8, s32 *, 4) = (s32) (temp_r2 + 0x200000);
-    M2C_FIELD(&sp8, s32 *, 8) = (s32) M2C_FIELD(temp_r6, s32 *, 0xC);
-    if ((s8) M2C_FIELD(temp_r6, u8 *, 0x34) != 0) {
-        M2C_FIELD(&sp8, s32 *, 4) = (s32) (temp_r2 + 0x500000);
+
+    start.x = source->x;
+    start.y = source->y + 0x100000;
+    start.z = source->z;
+    arrival.x = scene->destination.x;
+    arrival.y = scene->destination.y + 0x200000;
+    arrival.z = scene->destination.z;
+    if (scene->high_arrival != 0)
+        arrival.y = scene->destination.y + 0x500000;
+
+    InterpolateArrival_080999f0(effect, &start, &arrival);
+    Func_080030f8(10);
+
+    burst_count = scene->extended_burst == 0 ? 0x18 : 10;
+    if (scene->alternate_burst == 0)
+        SpawnStandardBurst_080999f0(effect, burst_count);
+    else {
+        if (scene->extended_burst == 0)
+            burst_count = 0x1e;
+        SpawnAlternateBurst_080999f0(effect, burst_count);
     }
-    do {
-        temp_r5 = M2C_FIELD(sp4, s32 *, 0);
-        M2C_FIELD(temp_r0, s32 *, 8) = (s32) (temp_r5 + Func_080022ec(var_r8 * (M2C_FIELD(&sp8, s32 *, 0) - temp_r5), 0xA));
-        temp_r5_2 = M2C_FIELD(sp4, s32 *, 4);
-        M2C_FIELD(temp_r0, s32 *, 0xC) = (s32) (temp_r5_2 + Func_080022ec(var_r8 * (M2C_FIELD(&sp8, s32 *, 4) - temp_r5_2), 0xA));
-        temp_r5_3 = M2C_FIELD(sp4, s32 *, 8);
-        M2C_FIELD(temp_r0, s32 *, 0x10) = (s32) (temp_r5_3 + Func_080022ec(var_r8 * (M2C_FIELD(&sp8, s32 *, 8) - temp_r5_3), 0xA));
-        temp_r0_2 = Func_080022ec(var_r8 * 0xC000, 0xA) + 0x4000;
-        M2C_FIELD(temp_r0, s32 *, 0x18) = temp_r0_2;
-        M2C_FIELD(temp_r0, s32 *, 0x1C) = temp_r0_2;
-        Func_080030f8(1U);
-        var_r8 += 1;
-    } while (var_r8 < 0xB);
-    Func_080030f8(0xAU);
-    if ((s8) M2C_FIELD(temp_r6, u8 *, 0x45) == 0) {
-        var_r9 = 0xA;
-        if ((s8) M2C_FIELD(temp_r6, u8 *, 0x20) == 0) {
-            var_r9 = 0x18;
-        }
-        var_r8_2 = 0;
-        if (var_r9 > 0) {
-            sp0 = var_r9 - 1;
-            do {
-                M2C_FIELD(&sp20, s32 *, 0) = M2C_FIELD(temp_r0, s32 *, 8);
-                M2C_FIELD(&sp20, s32 *, 4) = (s32) M2C_FIELD(temp_r0, s32 *, 0xC);
-                M2C_FIELD(&sp20, s32 *, 8) = (s32) M2C_FIELD(temp_r0, s32 *, 0x10);
-                temp_r5_4 = (Func_08004458() * 5) + 0x30000;
-                Func_0800447c(temp_r5_4, (s32) Func_08004458(), &sp20);
-                if (var_r8_2 == sp0) {
-                    Func_080030f8(0x19U);
-                    M2C_FIELD(&sp20, s32 *, 0) = M2C_FIELD(temp_r0, s32 *, 8);
-                    M2C_FIELD(&sp20, s32 *, 4) = (s32) M2C_FIELD(temp_r0, s32 *, 0xC);
-                    M2C_FIELD(&sp20, s32 *, 8) = (s32) M2C_FIELD(temp_r0, s32 *, 0x10);
-                }
-                temp_r0_3 = Func_08096c80(0xF0, M2C_FIELD(&sp20, s32 *, 0), M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
-                if (temp_r0_3 != 0) {
-                    M2C_FIELD(temp_r0_3, s32 *, 0x14) = (s32) (M2C_FIELD(&sp20, s32 *, 4) + 0xFFE00000);
-                    M2C_FIELD(temp_r0_3, s32 *, 0x6C) = 0x08099921;
-                    M2C_FIELD(temp_r0_3, s8 *, 0x55) = 2;
-                }
-                Func_080f9010(0x84);
-                Func_080030f8(6U);
-                var_r8_2 += 1;
-            } while (var_r8_2 < var_r9);
-        }
-        Func_080030f8(0xAU);
-    } else {
-        var_r9_2 = 0xA;
-        if ((s8) M2C_FIELD(temp_r6, u8 *, 0x20) == 0) {
-            var_r9_2 = 0x1E;
-        }
-        if (var_r9_2 != 0) {
-            var_r8_3 = var_r9_2;
-            do {
-                M2C_FIELD(&sp20, s32 *, 0) = M2C_FIELD(temp_r0, s32 *, 8);
-                M2C_FIELD(&sp20, s32 *, 4) = (s32) M2C_FIELD(temp_r0, s32 *, 0xC);
-                M2C_FIELD(&sp20, s32 *, 8) = (s32) M2C_FIELD(temp_r0, s32 *, 0x10);
-                temp_r5_5 = (Func_08004458() * 5) + 0x30000;
-                Func_0800447c(temp_r5_5, (s32) Func_08004458(), &sp20);
-                temp_r0_4 = Func_08096c80(0x11C, M2C_FIELD(&sp20, s32 *, 0), M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
-                if (temp_r0_4 != 0) {
-                    M2C_FIELD(temp_r0_4, s32 *, 0x6C) = 0x080999A9;
-                    M2C_FIELD(temp_r0_4, s8 *, 0x55) = 0;
-                    temp_r1 = M2C_FIELD(temp_r0_4, void **, 0x50);
-                    M2C_FIELD(temp_r1, u8 *, 9) = (u8) ((M2C_FIELD(temp_r1, u8 *, 9) & ~0xC) | 8);
-                    Func_08009080((s32) temp_r0_4, 8);
-                    Func_08009240((s32) temp_r0_4, 7);
-                }
-                Func_080030f8(6U);
-                var_r8_3 -= 1;
-            } while (var_r8_3 != 0);
-        }
-        Func_080030f8(0x46U);
-    }
-    var_r8_4 = 0;
-    do {
-        temp_r5_6 = M2C_FIELD(&sp8, s32 *, 0);
-        M2C_FIELD(temp_r0, s32 *, 8) = (s32) (temp_r5_6 + Func_080022ec(var_r8_4 * (M2C_FIELD(sp4, s32 *, 0) - temp_r5_6), 0xA));
-        temp_r5_7 = M2C_FIELD(&sp8, s32 *, 4);
-        M2C_FIELD(temp_r0, s32 *, 0xC) = (s32) (temp_r5_7 + Func_080022ec(var_r8_4 * (M2C_FIELD(sp4, s32 *, 4) - temp_r5_7), 0xA));
-        temp_r5_8 = M2C_FIELD(&sp8, s32 *, 8);
-        M2C_FIELD(temp_r0, s32 *, 0x10) = (s32) (temp_r5_8 + Func_080022ec(var_r8_4 * (M2C_FIELD(sp4, s32 *, 8) - temp_r5_8), 0xA));
-        temp_r0_5 = Func_080022ec(var_r8_4 * 0xFFFF4000, 0xA) + 0x10000;
-        M2C_FIELD(temp_r0, s32 *, 0x18) = temp_r0_5;
-        M2C_FIELD(temp_r0, s32 *, 0x1C) = temp_r0_5;
-        Func_080030f8(1U);
-        var_r8_4 += 1;
-    } while (var_r8_4 < 0xB);
-    Func_080090d0(temp_r0);
+
+    InterpolateDeparture_080999f0(effect, &arrival, &start);
+    Func_080090d0(effect);
     Func_0809748c();
 }

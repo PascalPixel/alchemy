@@ -1,13 +1,11 @@
+#include "layout_guard.h"
 #include "types.h"
 
-#define NULL ((void *)0)
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
-
-struct SlidingNode_0801b810 {
+typedef struct SlidingNode_0801b810 {
     struct SlidingNode_0801b810 *previous;
     struct SlidingNode_0801b810 *next;
     u16 field_08;
-    u16 field_0a;
+    u16 entry_kind;
     u16 resource;
     u16 field_0e;
     s16 x;
@@ -16,118 +14,166 @@ struct SlidingNode_0801b810 {
     u16 field_16;
     s16 target_x;
     s16 target_y;
-    u8 field_1c[6];
+    u8 padding1c[6];
     s16 motion;
     s16 step;
     s16 scale;
-};
+} SlidingNode_0801b810;
 
-void Func_0801b9a8(void *, u16);
-void Func_0801b9ec(void *, u16);
-void Func_0801ba68(void *, u32);
-void Func_0801bd98(
-    u16, u16, struct SlidingNode_0801b810 *, s32);
+typedef struct SelectionState_0801b810 {
+    u8 padding000[8];
+    u16 backward_scroll_motion;
+    u16 previous_marker_visible;
+    u8 padding00c[0x30];
+    u16 forward_scroll_motion;
+    u16 next_marker_visible;
+    u8 padding040[0x308];
+    SlidingNode_0801b810 *head;
+    u8 padding34c[8];
+    u16 resource_ids[16];
+    u16 variants[16];
+    u16 page_size;
+    u16 base_x;
+    u16 base_y;
+    u16 padding39a;
+    u16 first_visible;
+    u16 cursor_position;
+    u16 padding3a0;
+    u16 cursor_state;
+} SelectionState_0801b810;
+
+LAYOUT_OFFSET_GUARD(
+    SlidingNode0801b810_EntryKind,
+    SlidingNode_0801b810,
+    entry_kind,
+    0x0a);
+LAYOUT_OFFSET_GUARD(
+    SlidingNode0801b810_X,
+    SlidingNode_0801b810,
+    x,
+    0x10);
+LAYOUT_OFFSET_GUARD(
+    SlidingNode0801b810_MotionMode,
+    SlidingNode_0801b810,
+    motion_mode,
+    0x14);
+LAYOUT_OFFSET_GUARD(
+    SlidingNode0801b810_TargetX,
+    SlidingNode_0801b810,
+    target_x,
+    0x18);
+LAYOUT_OFFSET_GUARD(
+    SelectionState0801b810_Head,
+    SelectionState_0801b810,
+    head,
+    0x348);
+LAYOUT_OFFSET_GUARD(
+    SelectionState0801b810_ResourceIds,
+    SelectionState_0801b810,
+    resource_ids,
+    0x354);
+LAYOUT_OFFSET_GUARD(
+    SelectionState0801b810_PageSize,
+    SelectionState_0801b810,
+    page_size,
+    0x394);
+LAYOUT_OFFSET_GUARD(
+    SelectionState0801b810_FirstVisible,
+    SelectionState_0801b810,
+    first_visible,
+    0x39c);
+LAYOUT_OFFSET_GUARD(
+    SelectionState0801b810_CursorState,
+    SelectionState_0801b810,
+    cursor_state,
+    0x3a2);
+
+void Func_0801b9a8(SelectionState_0801b810 *, u16);
+void Func_0801b9ec(SelectionState_0801b810 *, u16);
+void Func_0801ba68(SelectionState_0801b810 *, u32);
+void Func_0801bd98(u16, u16, SlidingNode_0801b810 *, s32);
 void Func_0801b010(u16, u32);
 void Func_080030f8(s32);
 
-/*
- * Move the selection window one step backward and rebuild its five-entry
- * animated list when the current page has been exhausted.
- */
-void Func_0801b810(void *state)
+static void RepopulateNodes_0801b810(
+    SelectionState_0801b810 *state,
+    u16 first_entry)
 {
-    struct SlidingNode_0801b810 *node;
-    u16 page_size;
-    u16 selection;
-    u16 position;
+    SlidingNode_0801b810 *node = state->head;
+    u16 entry = first_entry;
 
-    position = M2C_FIELD(state, u16 *, 0x39E);
+    while (node != 0) {
+        Func_0801bd98(
+            state->resource_ids[entry],
+            state->variants[entry],
+            node,
+            1);
+        node = node->next;
+        entry++;
+    }
+}
+
+/* Move the selector backward, wrapping and rebuilding a long five-row page. */
+void Func_0801b810(SelectionState_0801b810 *state)
+{
+    SlidingNode_0801b810 *node;
+    u16 position = state->cursor_position;
+
     Func_0801b9a8(state, position);
-    M2C_FIELD(state, u16 *, 0x3A2) = 0x21;
+    state->cursor_state = 0x21;
     Func_080030f8(1);
 
-    page_size = M2C_FIELD(state, u16 *, 0x394);
-    if (page_size <= 5) {
-        if (position != 0) {
+    if (state->page_size <= 5) {
+        if (position != 0)
             position--;
+        else
+            position = state->page_size - 1;
+        state->cursor_position = position;
+    } else if ((state->first_visible | position) != 0) {
+        if (position == 1 && state->first_visible != 0) {
+            state->backward_scroll_motion = 8;
+            state->first_visible--;
+            Func_0801ba68(state, 0);
+            if (state->first_visible == 0)
+                state->previous_marker_visible = 0;
+            state->next_marker_visible = 1;
         } else {
-            position = page_size - 1;
+            state->cursor_position = position - 1;
         }
-        M2C_FIELD(state, u16 *, 0x39E) = position;
     } else {
-        selection = M2C_FIELD(state, u16 *, 0x39C);
-        if ((selection | position) != 0) {
-            if (position == 1 && selection != 0) {
-                M2C_FIELD(state, u16 *, 8) = 8;
-                selection--;
-                M2C_FIELD(state, u16 *, 0x39C) = selection;
-                Func_0801ba68(state, 0);
-                if (selection == 0) {
-                    M2C_FIELD(state, u16 *, 0xA) = 0;
-                }
-                M2C_FIELD(state, u16 *, 0x3E) = 1;
-            } else {
-                M2C_FIELD(state, u16 *, 0x39E) = position - 1;
-            }
-        } else {
-            struct SlidingNode_0801b810 *head =
-                M2C_FIELD(state, struct SlidingNode_0801b810 **, 0x348);
-            s32 offset = 0x40;
+        s32 offset = 0x40;
+        s32 target_x;
 
-            M2C_FIELD(state, u16 *, 0x3E) = 0;
-            node = head;
-            if (node->next != NULL) {
-                do {
-                    node->target_x = node->x + offset;
-                    node->motion_mode = 0xC;
-                    node = node->next;
-                    offset -= 0x10;
-                } while (node->next != NULL);
-            }
-
-            do {
-                Func_080030f8(1);
-            } while (head->x != head->target_x);
-
-            selection = 0;
-            if (page_size != 5) {
-                do {
-                    selection++;
-                } while (selection != page_size - 5);
-            }
-            M2C_FIELD(state, u16 *, 0x39C) = selection;
-            M2C_FIELD(state, u16 *, 0x39E) = 4;
-
-            node = head;
-            if (node != NULL) {
-                u16 *resource =
-                    (u16 *)((u8 *)state + 0x354 + selection * 2);
-                do {
-                    Func_0801bd98(
-                        resource[0], resource[16], node, 1);
-                    node = node->next;
-                    resource++;
-                } while (node != NULL);
-            }
-
-            node = head;
-            position = M2C_FIELD(state, u16 *, 0x396);
-            if (node->next != NULL) {
-                do {
-                    node->target_x = position;
-                    node->motion_mode = -0xC;
-                    node = node->next;
-                    position += 0x10;
-                } while (node->next != NULL);
-            }
-            M2C_FIELD(state, u16 *, 0xA) = 1;
+        state->next_marker_visible = 0;
+        node = state->head;
+        while (node->next != 0) {
+            node->target_x = node->x + offset;
+            node->motion_mode = 0x0c;
+            node = node->next;
+            offset -= 0x10;
         }
+
+        while (state->head->x != state->head->target_x)
+            Func_080030f8(1);
+
+        state->first_visible = state->page_size - 5;
+        state->cursor_position = 4;
+        RepopulateNodes_0801b810(state, state->first_visible);
+
+        node = state->head;
+        target_x = state->base_x;
+        while (node->next != 0) {
+            node->target_x = (s16)target_x;
+            node->motion_mode = -0x0c;
+            node = node->next;
+            target_x += 0x10;
+        }
+        state->previous_marker_visible = 1;
     }
 
-    M2C_FIELD(state, u16 *, 0x3A2) = 1;
-    Func_0801b9ec(state, M2C_FIELD(state, u16 *, 0x39E));
+    state->cursor_state = 1;
+    Func_0801b9ec(state, state->cursor_position);
     Func_080030f8(1);
-    node = M2C_FIELD(state, struct SlidingNode_0801b810 **, 0x348);
-    Func_0801b010(node->field_0a, 0);
+    Func_0801b010(state->head->entry_kind, 0);
     Func_080030f8(1);
 }

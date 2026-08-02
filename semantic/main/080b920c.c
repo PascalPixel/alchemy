@@ -1,71 +1,131 @@
+#include "layout_guard.h"
 #include "types.h"
-#define M2C_FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-s32 Func_080151c0(s32, s16 *, s32);
+typedef struct BattleUnit_080b920c {
+    u8 padding000[0x40];
+    u16 weight;
+    u8 padding042;
+    u8 action_count;
+    u8 padding044[0xf4];
+    u8 delay_penalty;
+    u8 status_139;
+    u8 auto_battle;
+    u8 stunned;
+    u8 downed;
+} BattleUnit_080b920c;
 
-s32 Func_080b920c(s32 arg0) {
-    s32 *sp0;
-    s16 *sp4;
-    s16 *sp8;
-    s32 spC;
-    s16 *var_r1;
-    s16 *var_r6;
-    s32 temp_r0;
-    s32 temp_r0_3;
-    s32 temp_r2;
-    s32 var_r5;
-    s32 var_r5_2;
-    s32 var_r8;
-    s32 var_r9;
-    s32 var_sl;
-    void *temp_r0_2;
-    void *var_r2;
+typedef struct BattleDecision_080b920c {
+    s16 owner;
+    u8 padding02[2];
+    u16 weight;
+    s16 state;
+    u16 action;
+    s16 target;
+    u8 padding0c[4];
+} BattleDecision_080b920c;
 
-    spC = arg0;
-    sp8 = Func_08004970(0x11);
-    sp4 = Func_08004970(9);
-    temp_r0 = Func_080b6b40(1, (u16 *) sp4);
-    var_r8 = 0;
-    var_r9 = 0;
-    if (temp_r0 > 0) {
-        var_r6 = sp4;
-        var_sl = temp_r0;
-        do {
-            temp_r0_2 = (void *) Func_08077008((s32) (u16) *var_r6);
-            var_r5_2 = 0;
-            if ((s32) M2C_FIELD(temp_r0_2, u8 *, 0x43) > 0) {
-                sp0 = temp_r0_2 + 0x138;
-                var_r1 = &sp8[var_r9];
-                var_r2 = spC + (var_r8 * 0x10);
-                do {
-                    if ((M2C_FIELD(temp_r0_2, u8 *, 0x13C) != 0) || (*sp0 & 0xFFFFFF00)) {
-                        M2C_FIELD(var_r2, u16 *, 0) = (u16) *var_r6;
-                        M2C_FIELD(var_r2, u16 *, 4) = (u16) M2C_FIELD(temp_r0_2, u16 *, 0x40);
-                        M2C_FIELD(var_r2, s16 *, 6) = 8;
-                        M2C_FIELD(var_r2, s16 *, 8) = 0;
-                        M2C_FIELD(var_r2, s16 *, 0xA) = 0x180;
-                        var_r8 += 1;
-                        var_r2 += 0x10;
-                    } else {
-                        *var_r1 = (s16) (u16) *var_r6;
-                        var_r1 += 2;
-                        var_r9 += 1;
-                    }
-                    var_r5_2 += 1;
-                } while (var_r5_2 < (s32) M2C_FIELD(temp_r0_2, u8 *, 0x43));
+LAYOUT_OFFSET_GUARD(
+    BattleUnit080b920c_Weight,
+    BattleUnit_080b920c,
+    weight,
+    0x40);
+LAYOUT_OFFSET_GUARD(
+    BattleUnit080b920c_ActionCount,
+    BattleUnit_080b920c,
+    action_count,
+    0x43);
+LAYOUT_OFFSET_GUARD(
+    BattleUnit080b920c_DelayPenalty,
+    BattleUnit_080b920c,
+    delay_penalty,
+    0x138);
+LAYOUT_OFFSET_GUARD(
+    BattleUnit080b920c_Downed,
+    BattleUnit_080b920c,
+    downed,
+    0x13c);
+LAYOUT_SIZE_GUARD(
+    BattleDecision080b920c_Size,
+    BattleDecision_080b920c,
+    0x10);
+LAYOUT_OFFSET_GUARD(
+    BattleDecision080b920c_Weight,
+    BattleDecision_080b920c,
+    weight,
+    4);
+LAYOUT_OFFSET_GUARD(
+    BattleDecision080b920c_State,
+    BattleDecision_080b920c,
+    state,
+    6);
+LAYOUT_OFFSET_GUARD(
+    BattleDecision080b920c_Target,
+    BattleDecision_080b920c,
+    target,
+    0x0a);
+
+void Func_08002df0(void *allocation);
+void *Func_08004970(s32 pool);
+s32 Func_080151c0(
+    BattleDecision_080b920c *output, u16 *owners, s32 owner_count);
+BattleUnit_080b920c *Func_08077008(s32 owner);
+s32 Func_080b6b40(s32 groups, u16 *owners);
+
+static s32 NeedsAutomaticDecision_080b920c(
+    const BattleUnit_080b920c *unit)
+{
+    return unit->downed != 0 ||
+        unit->status_139 != 0 ||
+        unit->auto_battle != 0 ||
+        unit->stunned != 0;
+}
+
+/*
+ * Seed party decisions that do not require the command UI, then ask the UI
+ * to append decisions for every remaining owner/action slot. The return value
+ * is the combined decision count, or -1 when manual selection is cancelled.
+ */
+s32 Func_080b920c(BattleDecision_080b920c *output)
+{
+    u16 *manual_owners = Func_08004970(0x11);
+    u16 *party_owners = Func_08004970(9);
+    s32 party_count = Func_080b6b40(1, party_owners);
+    s32 automatic_count = 0;
+    s32 manual_count = 0;
+    s32 owner_number;
+    s32 result;
+
+    for (owner_number = 0;
+         owner_number < party_count;
+         owner_number++) {
+        u16 owner = party_owners[owner_number];
+        BattleUnit_080b920c *unit = Func_08077008(owner);
+        s32 action_number;
+
+        for (action_number = 0;
+             action_number < unit->action_count;
+             action_number++) {
+            if (NeedsAutomaticDecision_080b920c(unit)) {
+                BattleDecision_080b920c *decision =
+                    &output[automatic_count++];
+
+                decision->owner = owner;
+                decision->weight = unit->weight;
+                decision->state = 8;
+                decision->action = 0;
+                decision->target = 0x180;
+            } else {
+                manual_owners[manual_count++] = owner;
             }
-            var_sl -= 1;
-            var_r6 += 2;
-        } while (var_sl != 0);
+        }
     }
-    temp_r2 = spC + (var_r8 * 0x10);
-    spC = temp_r2;
-    temp_r0_3 = Func_080151c0(temp_r2, sp8, var_r9);
-    var_r5 = -1;
-    if (temp_r0_3 >= 0) {
-        var_r5 = var_r8 + temp_r0_3;
-    }
-    Func_08002df0(sp4);
-    Func_08002df0(sp8);
-    return var_r5;
+
+    result = Func_080151c0(
+        &output[automatic_count], manual_owners, manual_count);
+    if (result >= 0)
+        result += automatic_count;
+
+    Func_08002df0(party_owners);
+    Func_08002df0(manual_owners);
+    return result;
 }

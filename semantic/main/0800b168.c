@@ -1,106 +1,184 @@
+#include "layout_guard.h"
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+typedef struct SpriteSlot_0800b168 {
+    u8 padding00[4];
+    u8 oam_y;
+    u8 oam_mode;
+    u16 oam_attr1;
+    u8 padding08[4];
+} SpriteSlot_0800b168;
 
-s32 Func_08003d28();
+typedef struct Sprite_0800b168 {
+    SpriteSlot_0800b168 main_slot;
+    SpriteSlot_0800b168 shadow_slot;
+    u8 padding18[6];
+    u16 rotation;
+    u8 width;
+    u8 height;
+    s8 center_x;
+    s8 center_y;
+    u8 padding24[2];
+    u8 flags;
+} Sprite_0800b168;
+
+typedef struct SpriteFrame_0800b168 {
+    s32 x;
+    s32 main_reference_y;
+    s32 baseline_y;
+    s32 shadow_reference_y;
+} SpriteFrame_0800b168;
+
+typedef struct SpriteScale_0800b168 {
+    s32 x;
+    s32 y;
+} SpriteScale_0800b168;
+
+LAYOUT_SIZE_GUARD(
+    SpriteSlot0800b168_Size,
+    SpriteSlot_0800b168,
+    0x0c);
+LAYOUT_OFFSET_GUARD(
+    Sprite0800b168_ShadowSlot,
+    Sprite_0800b168,
+    shadow_slot,
+    0x0c);
+LAYOUT_OFFSET_GUARD(
+    Sprite0800b168_Rotation,
+    Sprite_0800b168,
+    rotation,
+    0x1e);
+LAYOUT_OFFSET_GUARD(
+    Sprite0800b168_Width,
+    Sprite_0800b168,
+    width,
+    0x20);
+LAYOUT_OFFSET_GUARD(
+    Sprite0800b168_Flags,
+    Sprite_0800b168,
+    flags,
+    0x26);
+
+s32 Func_08003d28(const u32 *);
 void Func_08003dec(void *, s32);
-s32 Func_0800aa0c(u8 *, u16);
+s32 Func_0800aa0c(Sprite_0800b168 *, u16);
 
-void Func_0800b168(u8 *arg0, u8 *arg1, u8 *arg2, u16 arg3) {
-    s32 sp0;
-    s32 sp4;
-    s32 sp8;
-    s32 spC;
-    s32 sp10;
-    u8 *sp14;
-    u32 sp18;
-    u32 sp1C;
-    s32 sp20;
-    s32 sp24;
-    u8 *temp_r0_2;
-    s32 temp_fp;
-    s32 temp_r0;
-    s32 temp_r1_2;
-    s32 temp_r1_3;
-    s32 temp_r4;
-    s32 temp_r6;
-    s32 temp_r6_2;
-    s32 temp_r6_3;
-    s32 temp_r8;
-    s32 temp_r9;
-    s32 temp_sl;
-    s32 var_r4;
-    s32 var_r5;
-    u8 *temp_r1;
+static s32 RoundedFixedPixel_0800b168(s32 value)
+{
+    return (value + 0xffff) >> 16;
+}
 
-    sp1C = (u8) M2C_FIELD(arg0, u8 *, 0x20) >> 1;
-    sp14 = arg0 + 0x21;
-    sp18 = (u8) M2C_FIELD(arg0, u8 *, 0x21) >> 1;
-    sp10 = 8;
-    spC = 4;
-    temp_r1 = arg1 + 4;
-    temp_r9 = M2C_FIELD(arg2, s32 *, 4);
-    sp4 = M2C_FIELD(arg1, s32 *, 4);
-    temp_r8 = M2C_FIELD(arg2, s32 *, 0);
-    temp_r6 = M2C_FIELD((temp_r1 + 4), s32 *, 4);
-    temp_sl = M2C_FIELD(arg1, s32 *, 0);
-    temp_fp = M2C_FIELD(temp_r1, s32 *, 4);
-    temp_r0 = Func_0800aa0c(arg0, arg3);
-    if ((temp_r0 == 0) && (temp_r8 == 0x10000) && (temp_r9 == temp_r8)) {
-        if (M2C_FIELD(arg0, u16 *, 0x1E) == 0) {
-            sp8 = 0;
-            sp20 = 0;
-        } else {
-            goto block_6;
-        }
+static void PlaceSlot_0800b168(
+    SpriteSlot_0800b168 *slot,
+    s32 x,
+    s32 y,
+    u8 mode,
+    s32 affine_slot,
+    s32 priority)
+{
+    slot->oam_mode = (slot->oam_mode & (u8)~3) | mode;
+    slot->oam_attr1 =
+        (slot->oam_attr1 & 0xfe00) | (x & 0x01ff);
+    slot->oam_y = (u8)y;
+    slot->oam_attr1 =
+        (slot->oam_attr1 & (u16)~0x3e00) |
+        ((affine_slot & 0x1f) << 9);
+    Func_08003dec(slot, priority);
+}
+
+/*
+ * Draw an orthographic sprite and its optional ground marker.  Plain unit
+ * scale uses ordinary OAM; mirroring, rotation, or scaling allocates affine
+ * parameters, and scales above 1.0 select double-size affine bounds.
+ */
+void Func_0800b168(
+    Sprite_0800b168 *sprite,
+    const SpriteFrame_0800b168 *frame,
+    const SpriteScale_0800b168 *scale,
+    u16 heading)
+{
+    u32 affine[2] = {0, 0};
+    s32 half_width = sprite->width >> 1;
+    s32 half_height = sprite->height >> 1;
+    s32 shadow_x_margin = 8;
+    s32 shadow_y_margin = 4;
+    s32 mirror = Func_0800aa0c(sprite, heading);
+    s32 mode;
+    s32 affine_slot;
+    s32 main_priority;
+    s32 shadow_priority;
+    s32 base_x;
+    s32 shadow_y;
+    s32 main_x;
+    s32 main_y;
+
+    if (mirror == 0 &&
+        scale->x == 0x10000 &&
+        scale->y == 0x10000 &&
+        sprite->rotation == 0) {
+        mode = 0;
+        affine_slot = 0;
     } else {
-block_6:
-        sp8 = 1;
-        temp_r1_2 = (u16) (((u32) temp_r8 << 8) >> 0x10) |
-            ((((u32) temp_r9 << 8) >> 0x10) << 0x10);
-        sp24 = temp_r1_2;
-        if (temp_r0 != 0) {
-            sp24 = (0xFFFF0000 & temp_r1_2) | (u16) (0 - M2C_FIELD(&sp24, u16 *, 0));
-        }
-        sp20 = Func_08003d28();
+        u16 scale_x = (u16)(((u32)scale->x << 8) >> 16);
+        u16 scale_y = (u16)(((u32)scale->y << 8) >> 16);
+
+        mode = 1;
+        if (mirror != 0)
+            scale_x = (u16)(0 - scale_x);
+        affine[0] = scale_x | ((u32)scale_y << 16);
+        affine[1] = sprite->rotation;
+        affine_slot = Func_08003d28(affine);
     }
-    if ((temp_r8 > 0x10000) || (temp_r9 > 0x10000)) {
-        sp8 = 3;
-        sp1C *= 2;
-        sp18 *= 2;
-        sp10 = 0x10;
-        spC = 8;
+
+    if (scale->x > 0x10000 || scale->y > 0x10000) {
+        mode = 3;
+        half_width *= 2;
+        half_height *= 2;
+        shadow_x_margin = 16;
+        shadow_y_margin = 8;
     }
-    if (sp4 <= 0xFF9C0000) {
-        sp0 = 1;
-        var_r4 = 0;
+
+    if (frame->main_reference_y <= (s32)0xff9c0000) {
+        main_priority = 1;
+        shadow_priority = 0;
     } else {
-        sp0 = (temp_fp >> 0x11) + 0xA;
-        var_r4 = 2;
+        main_priority = (frame->baseline_y >> 17) + 10;
+        shadow_priority = 2;
     }
-    temp_r6_2 = ((s32) (temp_fp - temp_r6) >> 0x10) - spC;
-    var_r5 = temp_sl >> 0x10;
-    if (1 & M2C_FIELD(arg0, u8 *, 0x26)) {
-        if (temp_r6_2 <= 0x9F) {
-            temp_r0_2 = arg0 + 0xC;
-            M2C_FIELD(temp_r0_2, u8 *, 5) = (u8) ((-4 & M2C_FIELD(temp_r0_2, u8 *, 5)) | sp8);
-            M2C_FIELD(temp_r0_2, u8 *, 7) = (u8) ((-0x3F & M2C_FIELD(temp_r0_2, u8 *, 7)) | ((sp20 & 0x1F) * 2));
-            M2C_FIELD(temp_r0_2, u16 *, 6) = (u16) ((0xFFFFFE00 & M2C_FIELD(temp_r0_2, u16 *, 6)) | ((var_r5 - sp10) & 0x1FF));
-            M2C_FIELD(temp_r0_2, s8 *, 4) = (s8) temp_r6_2;
-            Func_08003dec(temp_r0_2, var_r4);
-        } else {
-            var_r5 = temp_sl >> 0x10;
-        }
+
+    base_x = frame->x >> 16;
+    shadow_y =
+        ((frame->baseline_y - frame->shadow_reference_y) >> 16) -
+        shadow_y_margin;
+    if ((sprite->flags & 1) != 0 && shadow_y <= 159) {
+        PlaceSlot_0800b168(
+            &sprite->shadow_slot,
+            base_x - shadow_x_margin,
+            shadow_y,
+            (u8)mode,
+            affine_slot,
+            shadow_priority);
     }
-    temp_r4 = (var_r5 - sp1C) + ((s32) ((temp_r8 * (s8) M2C_FIELD(arg0, u8 *, 0x22)) + 0xFFFF) >> 0x10);
-    temp_r6_3 = (((s32) (temp_fp - sp4) >> 0x10) - sp18) - ((s32) ((temp_r9 * (((u8) *sp14 >> 1) - (s8) M2C_FIELD(arg0, u8 *, 0x23))) + 0xFFFF) >> 0x10);
-    if ((temp_r4 <= 0xEF) && (temp_r6_3 <= 0x9F)) {
-        M2C_FIELD(arg0, u16 *, 6) = (u16) ((0xFFFFFE00 & M2C_FIELD(arg0, u16 *, 6)) | (temp_r4 & 0x1FF));
-        M2C_FIELD(arg0, s8 *, 4) = (s8) temp_r6_3;
-        M2C_FIELD(arg0, u8 *, 5) = (u8) ((-4 & M2C_FIELD(arg0, u8 *, 5)) | sp8);
-        temp_r1_3 = sp20 & 0x1F;
-        sp20 = temp_r1_3;
-        M2C_FIELD(arg0, u8 *, 7) = (u8) ((-0x3F & M2C_FIELD(arg0, u8 *, 7)) | (temp_r1_3 * 2));
-        Func_08003dec(arg0, sp0);
+
+    main_x = base_x - (sprite->width >> 1) +
+        RoundedFixedPixel_0800b168(scale->x * sprite->center_x);
+    main_y =
+        ((frame->baseline_y - frame->main_reference_y) >> 16) -
+        (sprite->height >> 1) -
+        RoundedFixedPixel_0800b168(
+            scale->y * ((sprite->height >> 1) - sprite->center_y));
+    if (mode == 3) {
+        main_x -= sprite->width >> 1;
+        main_y -= sprite->height >> 1;
+    }
+
+    if (main_x <= 239 && main_y <= 159) {
+        PlaceSlot_0800b168(
+            &sprite->main_slot,
+            main_x,
+            main_y,
+            (u8)mode,
+            affine_slot,
+            main_priority);
     }
 }

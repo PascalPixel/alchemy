@@ -1,90 +1,159 @@
+#include "layout_guard.h"
 #include "types.h"
 
-#define NULL ((void *)0)
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+typedef struct TextObject_08017aa4 {
+    u8 padding00[0x16];
+    u16 flags;
+} TextObject_08017aa4;
+
+typedef struct GlyphMetrics_08017aa4 {
+    u16 width;
+    u8 padding02[0x1e];
+} GlyphMetrics_08017aa4;
+
+typedef struct TextRuntime_08017aa4 {
+    u8 padding0000[0xea8];
+    u16 vertical_offset;
+    u8 padding0eaa[2];
+    u16 render_mode;
+    u16 text_parameter;
+    u16 scratch_text[512];
+    u16 horizontal_offset;
+    u16 scratch_write_index;
+} TextRuntime_08017aa4;
+
+LAYOUT_OFFSET_GUARD(
+    TextObject08017aa4_Flags,
+    TextObject_08017aa4,
+    flags,
+    0x16);
+LAYOUT_SIZE_GUARD(
+    GlyphMetrics08017aa4_Size,
+    GlyphMetrics_08017aa4,
+    0x20);
+LAYOUT_OFFSET_GUARD(
+    TextRuntime08017aa4_VerticalOffset,
+    TextRuntime_08017aa4,
+    vertical_offset,
+    0xea8);
+LAYOUT_OFFSET_GUARD(
+    TextRuntime08017aa4_RenderMode,
+    TextRuntime_08017aa4,
+    render_mode,
+    0xeac);
+LAYOUT_OFFSET_GUARD(
+    TextRuntime08017aa4_TextParameter,
+    TextRuntime_08017aa4,
+    text_parameter,
+    0xeae);
+LAYOUT_OFFSET_GUARD(
+    TextRuntime08017aa4_ScratchText,
+    TextRuntime_08017aa4,
+    scratch_text,
+    0xeb0);
+LAYOUT_OFFSET_GUARD(
+    TextRuntime08017aa4_HorizontalOffset,
+    TextRuntime_08017aa4,
+    horizontal_offset,
+    0x12b0);
+LAYOUT_OFFSET_GUARD(
+    TextRuntime08017aa4_ScratchWriteIndex,
+    TextRuntime_08017aa4,
+    scratch_write_index,
+    0x12b2);
+
+extern TextRuntime_08017aa4 *Data_03001e8c;
 
 void Func_080173ac(void);
-s32 Func_08018cac(s32, u32, s16, s32, s32);
+s32 Func_08018cac(void *, u32, s32, s32, s32);
 
-void Func_08017aa4(const u16 *arg0, s32 arg1, s32 arg2, s32 arg3) {
-    u8 *var_r5;
-    s16 temp_r9;
-    s32 var_r1;
-    s32 var_r7;
-    s32 var_r8;
-    u16 temp_r0;
-    u16 var_r4;
-    u32 temp_r1;
-    u8 *temp_r6;
+static s32 CanPackNextGlyph_08017aa4(
+    u16 current,
+    u16 next,
+    const GlyphMetrics_08017aa4 *metrics)
+{
+    u32 combined_width;
 
-    var_r8 = arg3;
-    var_r7 = arg2;
-    temp_r6 = *(void **)0x03001E8C;
-    var_r5 = (u8 *)arg0;
-    temp_r9 = (s16) var_r7;
-    if (var_r5 != NULL) {
+    if (current <= 0x20 || next <= 0x20)
+        return 0;
 
-    } else {
-        M2C_FIELD(temp_r6, u16 *,
-            (M2C_FIELD(temp_r6, u16 *, 0x12B2) * 2) + 0xEB0) = 0;
-        var_r5 = temp_r6 + 0xEB0;
-        M2C_FIELD(temp_r6, u16 *, 0x12B2) = (u16) ((M2C_FIELD(temp_r6, u16 *, 0x12B2) + 1) & 0x1FF);
+    combined_width =
+        metrics[current - 0x20].width + metrics[next - 0x20].width;
+    return (combined_width << 16) <= 0x000f0000;
+}
+
+/*
+ * Interpret a zero-terminated field-text stream and emit its visible glyphs.
+ * Control tokens update renderer state, advance over their operands, or start
+ * a new fifteen-pixel line.  When packing is enabled, two narrow neighboring
+ * glyphs are passed to the renderer as one encoded pair.
+ */
+void Func_08017aa4(
+    const u16 *text,
+    TextObject_08017aa4 *object,
+    s32 x,
+    s32 y)
+{
+    TextRuntime_08017aa4 *runtime = Data_03001e8c;
+    const GlyphMetrics_08017aa4 *metrics =
+        (const GlyphMetrics_08017aa4 *)0x08032224;
+    s16 line_start = (s16)x;
+
+    if (text == 0) {
+        runtime->scratch_text[runtime->scratch_write_index] = 0;
+        text = runtime->scratch_text;
+        runtime->scratch_write_index =
+            (runtime->scratch_write_index + 1) & 0x01ff;
     }
-loop_20:
-    var_r4 = M2C_FIELD(var_r5, u16 *, 0);
-    var_r5 += 2;
-    if ((u32) var_r4 > 0xFFU) {
-        var_r4 = 0x40;
-    }
-    if (var_r4 != 0) {
-        if ((u32) var_r4 <= 0x1EU) {
-            temp_r1 = var_r4 - 3;
-            switch (temp_r1) {
-            case 5:
-                var_r1 = 0xEAE;
-block_9:
-                M2C_FIELD(temp_r6, u16 *, var_r1) =
-                    M2C_FIELD(var_r5, u16 *, 0);
-            case 8:
-            case 9:
-            case 14:
-            case 26:
-block_10:
-                var_r5 += 2;
+
+    for (;;) {
+        u16 character = *text++;
+
+        if (character > 0xff)
+            character = 0x40;
+        if (character == 0)
+            return;
+
+        if (character <= 0x1e) {
+            switch (character) {
+            case 3:
+                x = line_start;
+                y += 15;
                 break;
-            case 6:
-                var_r1 = 0xEAC;
-                goto block_9;
             case 7:
-                var_r1 = 0xEA8;
-                goto block_9;
-            case 4:
                 Func_080173ac();
                 break;
-            case 0:
-                var_r7 = (s32) temp_r9;
-                var_r8 += 0xF;
+            case 8:
+                runtime->text_parameter = *text++;
+                break;
+            case 9:
+                runtime->render_mode = *text++;
+                break;
+            case 10:
+                runtime->vertical_offset = *text++;
                 break;
             case 11:
             case 12:
-            case 25:
-                var_r5 += 2;
-                goto block_10;
+            case 17:
+            case 29:
+                text++;
+                break;
+            case 14:
+            case 15:
+            case 28:
+                text += 2;
+                break;
+            default:
+                break;
             }
-        } else {
-            if (!(8 & M2C_FIELD(arg1, u16 *, 0x16))) {
-                temp_r0 = M2C_FIELD(var_r5, u16 *, 0);
-                if (((u32) var_r4 > 0x20U) && ((u32) temp_r0 > 0x20U) &&
-                    ((u32) ((M2C_FIELD((u8 *)0x08032224, u16 *,
-                        (var_r4 - 0x20) << 5) +
-                        M2C_FIELD((u8 *)0x08032224, u16 *,
-                        (temp_r0 - 0x20) << 5)) << 0x10) <= 0xF0000U)) {
-                    var_r4 |= temp_r0 << 8;
-                    var_r5 += 2;
-                }
-            }
-            var_r7 += Func_08018cac(arg1, (u32) var_r4, (s16) var_r7, var_r8, 0);
+            continue;
         }
-        goto loop_20;
+
+        if ((object->flags & 8) == 0 &&
+            CanPackNextGlyph_08017aa4(character, *text, metrics)) {
+            character |= *text++ << 8;
+        }
+
+        x += Func_08018cac(object, character, (s16)x, y, 0);
     }
 }

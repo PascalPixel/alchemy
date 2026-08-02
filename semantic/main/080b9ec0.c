@@ -1,6 +1,5 @@
+#include "layout_guard.h"
 #include "types.h"
-
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 typedef struct ActionInput_080b9ec0 {
     u8 primary_id;
@@ -23,7 +22,8 @@ typedef struct BattleWork_080b9ec0 {
     s32 mode;
     s32 unknown_1c;
     u8 padding20[4];
-    s16 members[24];
+    s16 members[8];
+    u8 child_values[8][4];
 } BattleWork_080b9ec0;
 
 typedef struct Motion_080b9ec0 {
@@ -47,6 +47,74 @@ typedef struct Record_080b9ec0 {
     u8 child_count;
     Child_080b9ec0 **children;
 } Record_080b9ec0;
+
+typedef struct Transition_080b9ec0 {
+    s32 facing;
+    s32 timer;
+} Transition_080b9ec0;
+
+typedef struct WorldState_080b9ec0 {
+    u8 padding00[0x41];
+    u8 display_flags;
+} WorldState_080b9ec0;
+
+typedef struct BlendRegisters_080b9ec0 {
+    u16 control;
+    u16 alpha;
+} BlendRegisters_080b9ec0;
+
+LAYOUT_OFFSET_GUARD(
+    ActionInput080b9ec0_TransitionValue,
+    ActionInput_080b9ec0,
+    transition_value,
+    0x50);
+LAYOUT_OFFSET_GUARD(
+    ActionInput080b9ec0_Flags,
+    ActionInput_080b9ec0,
+    flags,
+    0x58);
+LAYOUT_OFFSET_GUARD(
+    ActionInput080b9ec0_MessageMode,
+    ActionInput_080b9ec0,
+    message_mode,
+    0x5c);
+LAYOUT_OFFSET_GUARD(
+    BattleWork080b9ec0_Members,
+    BattleWork_080b9ec0,
+    members,
+    0x24);
+LAYOUT_OFFSET_GUARD(
+    BattleWork080b9ec0_ChildValues,
+    BattleWork_080b9ec0,
+    child_values,
+    0x34);
+LAYOUT_SIZE_GUARD(
+    BattleWork080b9ec0_Size,
+    BattleWork_080b9ec0,
+    0x54);
+LAYOUT_OFFSET_GUARD(
+    Motion080b9ec0_Position,
+    Motion_080b9ec0,
+    x,
+    8);
+LAYOUT_OFFSET_GUARD(
+    Record080b9ec0_ChildCount,
+    Record_080b9ec0,
+    child_count,
+    0x27);
+LAYOUT_OFFSET_GUARD(
+    Record080b9ec0_Children,
+    Record_080b9ec0,
+    children,
+    0x28);
+LAYOUT_OFFSET_GUARD(
+    WorldState080b9ec0_DisplayFlags,
+    WorldState_080b9ec0,
+    display_flags,
+    0x41);
+
+extern Transition_080b9ec0 *Data_03001f00;
+extern WorldState_080b9ec0 *Data_03001e74;
 
 void Func_080030f8(s32);
 void Func_080041d8(u32, s32);
@@ -85,8 +153,10 @@ s32 Func_080b9ec0(ActionInput_080b9ec0 *input, s32 options)
 {
     BattleWork_080b9ec0 work;
     u16 actors[14];
-    s32 *facing = *(s32 **)0x03001f00;
-    u8 *world = *(u8 **)0x03001e74;
+    Transition_080b9ec0 *transition = Data_03001f00;
+    WorldState_080b9ec0 *world = Data_03001e74;
+    volatile BlendRegisters_080b9ec0 *blend =
+        (volatile BlendRegisters_080b9ec0 *)0x04000050;
     u16 primary = input->primary_id;
     u16 secondary = input->ids[0];
     Motion_080b9ec0 *primary_object;
@@ -95,19 +165,19 @@ s32 Func_080b9ec0(ActionInput_080b9ec0 *input, s32 options)
 
     Func_080b9d34(input, &work);
     if ((input->flags & 0x8000) != 0) {
-        facing[0] = primary <= 7 ? 0x2000 : 0x5000;
-        facing[1] = 60;
+        transition->facing = primary <= 7 ? 0x2000 : 0x5000;
+        transition->timer = 60;
     } else {
         s32 desired = primary <= 7 ? 0x2000 : -0x2000;
 
-        if (facing[0] != desired)
-            facing[0] = desired;
+        if (transition->facing != desired)
+            transition->facing = desired;
     }
 
     Func_080c10e8(0, 0);
-    Func_08015130(world[0x41] & ~1);
+    Func_08015130(world->display_flags & ~1);
     primary_object = Func_080b7dd0(primary)->object;
-    *(volatile u16 *)0x04000050 = 0x3f40;
+    blend->control = 0x3f40;
 
     actor_count = Func_080b6c08(3, actors);
     for (i = 0; i < actor_count; i++) {
@@ -129,7 +199,7 @@ s32 Func_080b9ec0(ActionInput_080b9ec0 *input, s32 options)
         Func_080c0f98(primary, 1);
 
     for (i = 0; i < 16; i++) {
-        *(volatile u16 *)0x04000052 = (u16)(0x1000 | (16 - i));
+        blend->alpha = (u16)(0x1000 | (16 - i));
         Func_080030f8(1);
     }
 
@@ -176,7 +246,7 @@ s32 Func_080b9ec0(ActionInput_080b9ec0 *input, s32 options)
             s32 child;
 
             for (child = 0; child < children; child++) {
-                FIELD(&work, u8, 0x34 + i * 4 + child) =
+                work.child_values[i][child] =
                     record->children[child]->value;
             }
         }
@@ -197,7 +267,7 @@ s32 Func_080b9ec0(ActionInput_080b9ec0 *input, s32 options)
 
     Func_080b6c90();
     actor_count = Func_080b6c08(3, actors);
-    *(volatile u16 *)0x04000050 = 0x3f40;
+    blend->control = 0x3f40;
     for (i = 0; i < actor_count; i++) {
         u16 actor = actors[i];
 
@@ -210,7 +280,7 @@ s32 Func_080b9ec0(ActionInput_080b9ec0 *input, s32 options)
     }
 
     for (i = 0; i < 16; i++) {
-        *(volatile u16 *)0x04000052 = (u16)(0x1000 | i);
+        blend->alpha = (u16)(0x1000 | i);
         Func_080030f8(1);
     }
     for (i = 0; i < actor_count; i++)

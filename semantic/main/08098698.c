@@ -1,18 +1,124 @@
+#include "layout_guard.h"
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+typedef struct Vec3_08098698 {
+    s32 x;
+    s32 y;
+    s32 z;
+} Vec3_08098698;
 
-void Func_08097384(void);
-u8 *Func_08096c80(s32, s32, s32, s32);
+typedef struct SpriteRecord_08098698 {
+    u8 padding00[4];
+    u8 attr0_low;
+    u8 attr0_high;
+    u8 attr1_low;
+    u8 attr1_high;
+    u8 attr2_low;
+    u8 attr2_high;
+    u8 padding0a[2];
+} SpriteRecord_08098698;
+
+typedef struct SpritePair_08098698 {
+    SpriteRecord_08098698 base;
+    SpriteRecord_08098698 child;
+} SpritePair_08098698;
+
+typedef struct SceneObject_08098698 {
+    u8 padding00[8];
+    Vec3_08098698 position;
+    u8 padding14[4];
+    s32 scale_x;
+    s32 scale_y;
+    u8 padding20[0x10];
+    s32 size_x;
+    s32 size_y;
+    u8 padding38[0x18];
+    SpritePair_08098698 *sprites;
+    u8 padding54;
+    u8 kind;
+} SceneObject_08098698;
+
+typedef struct SceneState_08098698 {
+    s32 direction;
+    Vec3_08098698 launch_vector;
+    SceneObject_08098698 *reference;
+} SceneState_08098698;
+
+LAYOUT_SIZE_GUARD(
+    SpriteRecord08098698_Size,
+    SpriteRecord_08098698,
+    0x0c);
+LAYOUT_OFFSET_GUARD(
+    SceneObject08098698_Position,
+    SceneObject_08098698,
+    position,
+    8);
+LAYOUT_OFFSET_GUARD(
+    SceneObject08098698_ScaleX,
+    SceneObject_08098698,
+    scale_x,
+    0x18);
+LAYOUT_OFFSET_GUARD(
+    SceneObject08098698_SizeX,
+    SceneObject_08098698,
+    size_x,
+    0x30);
+LAYOUT_OFFSET_GUARD(
+    SceneObject08098698_Sprites,
+    SceneObject_08098698,
+    sprites,
+    0x50);
+LAYOUT_OFFSET_GUARD(
+    SceneObject08098698_Kind,
+    SceneObject_08098698,
+    kind,
+    0x55);
+LAYOUT_OFFSET_GUARD(
+    SceneState08098698_Reference,
+    SceneState_08098698,
+    reference,
+    0x10);
+
+extern SceneState_08098698 *Data_03001f30;
+
+void Func_080030f8(s32 frames);
 u32 Func_08004458(void);
-void Func_0800447c(s32, s32, s32 *);
-void Func_08009240(void *, s32);
-void Func_08009080(void *, s32);
-void Func_08009098(void *, const void *);
-void Func_080091e0(void *, s32);
-void Func_08009150(void *, s32, s32, s32);
-void Func_080f9010(s32);
-void Func_080030f8(s32);
+void Func_0800447c(
+    s32 magnitude, s32 direction, Vec3_08098698 *vector);
+void Func_08009080(SceneObject_08098698 *object, s32 mode);
+void Func_08009098(SceneObject_08098698 *object, const void *program);
+void Func_08009150(
+    SceneObject_08098698 *object, s32 x, s32 y, s32 z);
+void Func_080091e0(SceneObject_08098698 *object, s32 mode);
+void Func_08009240(SceneObject_08098698 *object, s32 animation);
+SceneObject_08098698 *Func_08096c80(
+    s32 resource, s32 x, s32 y, s32 z);
+void Func_08097384(void);
+void Func_080f9010(s32 sound);
+
+static void CopySpriteAppearance_08098698(
+    SpriteRecord_08098698 *child,
+    const SpriteRecord_08098698 *base)
+{
+    u16 *child_attr2 = (u16 *)&child->attr2_low;
+    const u16 *base_attr2 = (const u16 *)&base->attr2_low;
+
+    child->attr0_high =
+        (child->attr0_high & (u8)~0x20) |
+        (base->attr0_high & 0x20);
+    child->attr0_high =
+        (child->attr0_high & 0x3f) |
+        (base->attr0_high & 0xc0);
+    child->attr1_high =
+        (child->attr1_high & 0x3f) |
+        (base->attr1_high & 0xc0);
+    *child_attr2 =
+        (*child_attr2 & 0xfc00) |
+        (*base_attr2 & 0x03ff);
+    child->attr2_high =
+        (child->attr2_high & 0x0f) |
+        (base->attr2_high & 0xf0);
+}
 
 /*
  * Emit twenty-four copies of the scene projectile. Each copy inherits the
@@ -21,73 +127,59 @@ void Func_080030f8(s32);
  */
 void Func_08098698(void)
 {
-    u8 *state = *(u8 **)0x03001F30;
-    u8 *reference = M2C_FIELD(state, u8 **, 0x10);
-    s32 position[3];
+    SceneState_08098698 *state = Data_03001f30;
+    SceneObject_08098698 *reference = state->reference;
     s32 count;
 
     Func_08097384();
     for (count = 0; count < 24; count++) {
-        s32 direction = M2C_FIELD(state, s32 *, 0);
-        u8 *projectile;
-        u8 *sprite;
-        u8 *base_sprite;
+        Vec3_08098698 position = reference->position;
+        SceneObject_08098698 *projectile;
+        s32 direction = state->direction;
 
-        position[0] = M2C_FIELD(reference, s32 *, 8);
-        position[2] = M2C_FIELD(reference, s32 *, 0x10);
         if (direction == 0x4000) {
-            position[1] = M2C_FIELD(reference, s32 *, 0xC) + 0xA0000;
-        } else if (direction == 0xC000) {
-            position[1] = M2C_FIELD(reference, s32 *, 0xC) + 0x180000;
+            position.y += 0xa0000;
+        } else if (direction == 0xc000) {
+            position.y += 0x180000;
         } else {
-            position[1] = M2C_FIELD(reference, s32 *, 0xC) + 0xA0000;
-            Func_0800447c(0xA0000, direction, position);
+            position.y += 0xa0000;
+            Func_0800447c(0xa0000, direction, &position);
         }
 
         projectile = Func_08096c80(
-            0x11C, position[0], position[1], position[2]);
-        base_sprite = M2C_FIELD(projectile, u8 **, 0x50);
-        sprite = base_sprite + 0xC;
+            0x11c, position.x, position.y, position.z);
 
-        sprite[5] = (sprite[5] & ~0x20) | (base_sprite[5] & 0x20);
-        sprite[5] =
-            (sprite[5] & 0x3F) | ((base_sprite[5] >> 6) << 6);
-        sprite[7] =
-            (sprite[7] & 0x3F) | ((base_sprite[7] >> 6) << 6);
-        M2C_FIELD(sprite, u16 *, 8) =
-            (M2C_FIELD(sprite, u16 *, 8) & 0xFC00) |
-            (M2C_FIELD(base_sprite, u16 *, 8) & 0x3FF);
-        sprite[9] =
-            (sprite[9] & 0xF) | ((base_sprite[9] >> 4) << 4);
+        /* Func_08096c80 is expected to succeed in this scripted sequence. */
+        CopySpriteAppearance_08098698(
+            &projectile->sprites->child,
+            &projectile->sprites->base);
 
         if (projectile != 0) {
-            s32 velocity[3];
+            Vec3_08098698 velocity = state->launch_vector;
             s32 magnitude;
 
-            M2C_FIELD(projectile, s32 *, 0x1C) = 0xB333;
-            M2C_FIELD(projectile, s32 *, 0x18) = 0xB333;
-            M2C_FIELD(projectile, s32 *, 0x34) = 0x18000;
-            M2C_FIELD(projectile, s32 *, 0x30) = 0x18000;
-            M2C_FIELD(projectile, u8 *, 0x55) = 0;
-            Func_08009240(projectile, 0xB);
+            projectile->scale_y = 0xb333;
+            projectile->scale_x = 0xb333;
+            projectile->size_y = 0x18000;
+            projectile->size_x = 0x18000;
+            projectile->kind = 0;
+            Func_08009240(projectile, 0x0b);
             Func_08009080(projectile, 7);
-            Func_08009098(projectile, (const void *)0x0809F0B4);
+            Func_08009098(projectile, (const void *)0x0809f0b4);
             Func_080091e0(projectile, 1);
 
-            velocity[0] = M2C_FIELD(state, s32 *, 4);
-            velocity[1] = M2C_FIELD(state, s32 *, 8);
-            velocity[2] = M2C_FIELD(state, s32 *, 0xC);
-            if (direction == 0xC000) {
-                Func_0800447c(0xE0000, direction, velocity);
-            }
+            if (direction == 0xc000)
+                Func_0800447c(0xe0000, direction, &velocity);
+
             magnitude = Func_08004458() * 6 + 0x40000;
-            Func_0800447c(magnitude, Func_08004458(), velocity);
+            Func_0800447c(magnitude, Func_08004458(), &velocity);
             Func_08009150(
-                projectile, velocity[0], velocity[1], velocity[2]);
+                projectile, velocity.x, velocity.y, velocity.z);
         }
 
         Func_080f9010(0x83);
         Func_080030f8(2);
     }
+
     Func_080030f8(8);
 }

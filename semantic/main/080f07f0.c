@@ -1,165 +1,150 @@
 /*
- * Correctness fix, veneer audit (2026-08-01).
- * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
- * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
- * range is an indirect call through the named register, not a call to a
- * function at the branch target.  Resolved with tools/veneer_resolve.ts.
- *
- * Callee signatures here are established, not guessed: 0x03001388 is the
- * word copy declared in the EXACT src/080d40ec.c, and 0x03000168 is the fill
- * documented in semantic/main/080e15e8.c as (destination, size, value).
+ * The two relocated routines are ordinary calls through IWRAM function
+ * pointers.  The original branch targets are GCC call-via-register veneers,
+ * not embedded instructions.
  */
 #include "types.h"
 
-typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
-typedef void (*ArmFill)(void *destination, u32 size, u32 value);
+enum {
+    TEXT_SURFACE_WIDTH_080f07f0 = 0xc0,
+    GLYPH_HEIGHT_080f07f0 = 8,
+    TILE_COUNT_080f07f0 = 0x18,
+    PIXEL_BUFFER_SIZE_080f07f0 = 0x900
+};
 
-#define NULL ((void *)0)
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+typedef void *(*WordCopy_080f07f0)(
+    void *destination,
+    const void *source,
+    s32 size);
+typedef void (*ArmFill_080f07f0)(
+    void *destination,
+    u32 size,
+    u32 value);
 
 void Func_08002df0(void *);
 u8 *Func_08004970(s32);
 s32 Func_080770c0(s32);
 void Func_080770c8(s32);
 
-s32 Func_080f07f0(u8 *arg0, s32 arg1, s32 arg2) {
-    s32 sp0;
-    u8 *sp4;
-    s32 sp8;
-    u8 *var_r0_3;
-    u8 *var_r1_2;
-    u8 *var_r2_2;
-    u8 *var_r4_3;
-    s32 temp_r2;
-    s32 var_ip;
-    s32 var_ip_2;
-    s32 var_ip_3;
-    s32 var_r1_3;
-    s32 var_r5;
-    s32 var_r5_2;
-    s32 var_r8;
-    s32 var_r8_2;
-    s8 *var_r1;
-    s8 *var_r2;
-    u32 temp_r3;
-    u32 var_r6;
-    u8 *var_r4;
-    u8 *var_r4_2;
-    u8 *var_sl;
-    u8 temp_r7;
-    u8 var_r0;
-    u8 var_r0_2;
-    u8 var_r3;
+static const u8 *GlyphWidths_080f07f0(void)
+{
+    return (const u8 *)0x080f11bd;
+}
 
-    sp8 = arg1;
-    sp4 = Func_08004970(0x900);
-    sp0 = 0;
-    if (arg0 == NULL) {
-        return -1;
+static const u8 *GlyphRows_080f07f0(u8 character)
+{
+    return (const u8 *)0x080f1770 + (character - 0x20) * 8;
+}
+
+static s32 MeasureText_080f07f0(const u8 *text)
+{
+    const u8 *widths = GlyphWidths_080f07f0();
+    s32 width = 0;
+
+    while (*text != 0) {
+        u8 character = *text++;
+
+        if (character > 0x1f)
+            width += widths[character - 0x20];
     }
+    return width;
+}
+
+static void DrawGlyph_080f07f0(
+    u8 *pixels,
+    s32 x,
+    u8 character)
+{
+    const u8 *rows = GlyphRows_080f07f0(character);
+    s32 row;
+
+    for (row = 0; row < GLYPH_HEIGHT_080f07f0; row++) {
+        u8 bits = rows[row];
+        s32 column;
+
+        for (column = 0; column < 8; column++) {
+            if ((bits & (0x80 >> column)) != 0) {
+                pixels[x + row * 0x100 + column] = 0x0f;
+                pixels[x + row * 0x100 + column + 0x101] = 1;
+            }
+        }
+    }
+}
+
+static void PackPixels_080f07f0(u8 *pixels)
+{
+    s32 row;
+
+    for (row = 0; row < GLYPH_HEIGHT_080f07f0; row++) {
+        u8 *source = pixels + row * 0x100;
+        u8 *destination = pixels + row * 0x100;
+        s32 packed_x;
+
+        for (packed_x = 0; packed_x < 0x60; packed_x++) {
+            destination[packed_x] =
+                source[packed_x * 2] |
+                (source[packed_x * 2 + 1] << 4);
+        }
+    }
+}
+
+static void CopyTilesToVram_080f07f0(u8 *pixels, s32 first_tile)
+{
+    volatile u32 *vram =
+        (volatile u32 *)(0x06010000 + (first_tile << 5));
+    s32 tile;
+
+    for (tile = 0; tile < TILE_COUNT_080f07f0; tile++) {
+        s32 row;
+
+        for (row = 0; row < GLYPH_HEIGHT_080f07f0; row++)
+            vram[row] = *(u32 *)(pixels + row * 0x100);
+        vram += 8;
+        pixels += 4;
+    }
+}
+
+/* Rasterize one line into 24 4bpp tiles and upload them to character VRAM. */
+s32 Func_080f07f0(const u8 *text, s32 first_tile, s32 alignment)
+{
+    ArmFill_080f07f0 fill = (ArmFill_080f07f0)0x03000168;
+    WordCopy_080f07f0 copy = (WordCopy_080f07f0)0x03001388;
+    u8 *pixels = Func_08004970(PIXEL_BUFFER_SIZE_080f07f0);
+    s32 x = 0;
+
+    if (text == 0)
+        return -1;
+
     if (Func_080770c0(0x200) == 0) {
-        ((ArmFill)0x03000168)(sp4, 0x900, 0);
+        fill(pixels, PIXEL_BUFFER_SIZE_080f07f0, 0);
         Func_080770c8(0x200);
     } else {
-        ((WordCopy)0x03001388)(sp4, sp4 + 0x800, 0x100);
-        ((ArmFill)0x03000168)(sp4 + 0x100, 0x800, 0);
+        /* Preserve the shadow spill from the preceding surface segment. */
+        copy(pixels, pixels + 0x800, 0x100);
+        fill(pixels + 0x100, 0x800, 0);
     }
-    var_r0 = *arg0;
-    var_r8 = 0;
-    var_r4 = arg0 + 1;
-    if (var_r0 != 0) {
-        do {
-            if ((u32) var_r0 > 0x1FU) {
-                var_r8 += M2C_FIELD((var_r0 - 0x20), u8 *, 0x080F11BD);
-            }
-            var_r0 = *var_r4;
-            var_r4 += 1;
-        } while (var_r0 != 0);
+
+    {
+        s32 remaining = TEXT_SURFACE_WIDTH_080f07f0 -
+            MeasureText_080f07f0(text);
+
+        if (alignment == 2)
+            x = remaining;
+        else if (alignment == 1)
+            x = (s32)((u32)remaining + ((u32)remaining >> 31)) >> 1;
     }
-    if (arg2 == 2) {
-        sp0 = 0xC0 - var_r8;
-    } else if (arg2 == 1) {
-        temp_r3 = 0xC0 - var_r8;
-        sp0 = (s32) (temp_r3 + (temp_r3 >> 0x1F)) >> 1;
-    }
-    var_r0_2 = *arg0;
-    var_r8_2 = 0;
-    var_sl = arg0 + 1;
-    if (var_r0_2 != 0) {
-        do {
-            if ((u32) var_r0_2 > 0x1FU) {
-                temp_r2 = var_r0_2 - 0x20;
-                var_r4_2 = (u8 *)0x080F1770 + (temp_r2 * 8);
-                var_r1 = sp4 + sp0 + var_r8_2;
-                var_ip = 0;
-                do {
-                    temp_r7 = *var_r4_2;
-                    var_r6 = 0x80;
-                    var_r4_2 += 1;
-                    var_r5 = 7;
-                    var_r2 = var_r1 + 0x101;
-loop_18:
-                    if (temp_r7 & var_r6) {
-                        *var_r2 = 1;
-                        *var_r1 = 0xF;
-                    }
-                    var_r5 -= 1;
-                    var_r2 += 1;
-                    var_r1 += 1;
-                    var_r6 = var_r6 >> 1;
-                    if (var_r5 >= 0) {
-                        goto loop_18;
-                    }
-                    var_ip += 1;
-                    var_r1 += 0xF8;
-                } while (var_ip <= 7);
-                var_r3 = 1;
-                if ((u32) var_r0_2 > 0x1FU) {
-                    var_r3 = M2C_FIELD(temp_r2, u8 *, 0x080F11BD);
-                }
-                var_r8_2 += var_r3;
-            }
-            var_r0_2 = *var_sl;
-            var_sl += 1;
-        } while (var_r0_2 != 0);
-    }
-    var_r4_3 = sp4;
-    var_r1_2 = var_r4_3;
-    var_ip_2 = 7;
-    do {
-        if (0x60 != 0) {
-            var_r5_2 = 0x60;
-            var_r2_2 = var_r4_3;
-            do {
-                var_r5_2 -= 1;
-                *var_r1_2 = (s8) (M2C_FIELD(var_r2_2, u8 *, 0) | (M2C_FIELD(var_r2_2, u8 *, 1) * 0x10));
-                var_r2_2 += 2;
-                var_r4_3 += 2;
-                var_r1_2 += 1;
-            } while (var_r5_2 != 0);
+
+    while (*text != 0) {
+        u8 character = *text++;
+
+        if (character > 0x1f) {
+            DrawGlyph_080f07f0(pixels, x, character);
+            x += GlyphWidths_080f07f0()[character - 0x20];
         }
-        var_r1_2 = (var_r1_2 - 0x60) + 0x100;
-        var_r4_3 = (var_r4_3 - 0xC0) + 0x100;
-        var_ip_2 -= 1;
-    } while (var_ip_2 >= 0);
-    if (0x18 != 0) {
-        var_r0_3 = sp4;
-        var_r1_3 = sp8 << 5;
-        var_ip_3 = 0x18;
-        do {
-            M2C_FIELD(var_r1_3, s32 *, 0x06010000) = (s32) M2C_FIELD(var_r0_3, s32 *, 0);
-            M2C_FIELD(var_r1_3, s32 *, 0x06010004) = (s32) M2C_FIELD(var_r0_3, s32 *, 0x100);
-            M2C_FIELD(var_r1_3, s32 *, 0x06010008) = (s32) M2C_FIELD(var_r0_3, s32 *, 0x200);
-            M2C_FIELD(var_r1_3, s32 *, 0x0601000C) = (s32) M2C_FIELD(var_r0_3, s32 *, 0x300);
-            M2C_FIELD(var_r1_3, s32 *, 0x06010010) = (s32) M2C_FIELD(var_r0_3, s32 *, 0x400);
-            M2C_FIELD(var_r1_3, s32 *, 0x06010014) = (s32) M2C_FIELD(var_r0_3, s32 *, 0x500);
-            M2C_FIELD(var_r1_3, s32 *, 0x06010018) = (s32) M2C_FIELD(var_r0_3, s32 *, 0x600);
-            M2C_FIELD(var_r1_3, s32 *, 0x0601001C) = (s32) M2C_FIELD(var_r0_3, s32 *, 0x700);
-            var_ip_3 -= 1;
-            var_r1_3 += 0x20;
-            var_r0_3 += 4;
-        } while (var_ip_3 != 0);
     }
-    Func_08002df0(sp4);
+
+    PackPixels_080f07f0(pixels);
+    CopyTilesToVram_080f07f0(pixels, first_tile);
+    Func_08002df0(pixels);
     return 0;
 }

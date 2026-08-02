@@ -1,128 +1,163 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "layout_guard.h"
+#include "types.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+enum {
+    PARTY_CAPACITY_080AAFB8 = 8,
+    ABILITIES_PER_MEMBER_080AAFB8 = 10,
+    ABILITY_CATEGORY_COUNT_080AAFB8 = 4,
+};
+
+typedef struct AbilityGrid_080aafb8 {
+    u16 abilities[PARTY_CAPACITY_080AAFB8]
+                 [ABILITIES_PER_MEMBER_080AAFB8];
+    s8 ability_counts[PARTY_CAPACITY_080AAFB8];
+} AbilityGrid_080aafb8;
+
+typedef struct BattleMenu_080aafb8 {
+    u8 padding000[0x30];
+    s32 display;
+    u8 padding034[0x1d4];
+    u16 member_ids[PARTY_CAPACITY_080AAFB8];
+    u8 has_secondary;
+    u8 active_count;
+} BattleMenu_080aafb8;
+
+typedef struct MenuRenderer_080aafb8 {
+    u8 padding000[0xea3];
+    s8 redraw_requested;
+    u8 paddingea4[2];
+    s8 drawing;
+} MenuRenderer_080aafb8;
+
+LAYOUT_OFFSET_GUARD(
+    AbilityGrid080aafb8_Counts,
+    AbilityGrid_080aafb8,
+    ability_counts,
+    0xa0);
+LAYOUT_OFFSET_GUARD(
+    BattleMenu080aafb8_Display,
+    BattleMenu_080aafb8,
+    display,
+    0x30);
+LAYOUT_OFFSET_GUARD(
+    BattleMenu080aafb8_MemberIds,
+    BattleMenu_080aafb8,
+    member_ids,
+    0x208);
+LAYOUT_OFFSET_GUARD(
+    BattleMenu080aafb8_ActiveCount,
+    BattleMenu_080aafb8,
+    active_count,
+    0x219);
+LAYOUT_OFFSET_GUARD(
+    MenuRenderer080aafb8_RedrawRequested,
+    MenuRenderer_080aafb8,
+    redraw_requested,
+    0xea3);
+LAYOUT_OFFSET_GUARD(
+    MenuRenderer080aafb8_Drawing,
+    MenuRenderer_080aafb8,
+    drawing,
+    0xea6);
+
+extern BattleMenu_080aafb8 *Data_03001f2c;
+extern MenuRenderer_080aafb8 *Data_03001e8c;
 
 void Func_08015070(s32, s32, s32, s32, s32);
 void Func_08015080(s32, s32, s32, s32);
+void Func_080150b8(s32);
+void Func_08015270(s32);
+void Func_08015280(s32, s32, s32, s32, s32);
 s32 Func_08077208(u32, u32, s32);
 s32 Func_08077210(u32, u32, s32);
 s8 Func_080ac8fc(u16 *, u16, s32);
 
-/* Builds and renders the categorized ability grid for each active entry. */
-void Func_080aafb8(u16 *arg0) {
-    u16 *sp4;
-    s32 sp8;
-    s32 spC;
-    s32 sp10;
-    s32 sp14;
-    s32 sp18;
-    s32 sp1C;
-    void *sp20;
-    s32 sp24;
-    s32 sp28;
-    s32 sp2C;
-    u16 *sp30;
-    s32 temp_r2_2;
-    s32 temp_r2_3;
-    s32 var_r8;
-    s32 var_sl;
-    u16 *var_r5;
-    u16 *var_r5_2;
-    u16 *var_r6;
-    u8 *var_r7;
-    u16 temp_r2;
-    u16 temp_r3_2;
-    u16 temp_r4;
-    void *temp_r0;
-    void *temp_r3;
+static u32 AbilityCategory_080aafb8(u16 ability)
+{
+    return (ability & 0x00e0) >> 5;
+}
 
-    sp30 = arg0;
-    temp_r0 = *(void **)0x03001F2C;
-    temp_r3 = *(void **)0x03001E8C;
-    sp20 = temp_r3;
-    M2C_FIELD(temp_r3, s8 *, 0xEA6) = 1;
-    sp2C = 0;
-    if (M2C_FIELD(temp_r0, u8 *, 0x219) != 0) {
-        var_r5 = sp30;
-        var_r7 = (u8 *)sp30 + 0xA0;
-        var_r6 = (u16 *)((u8 *)temp_r0 + 0x208);
-        do {
-            *var_r7 = Func_080ac8fc(var_r5, *var_r6, -1);
-            sp2C += 1;
-            var_r6 += 2;
-            var_r7 += 1;
-            var_r5 += 0xA;
-        } while (sp2C < (s32) M2C_FIELD(temp_r0, u8 *, 0x219));
+static u32 AbilityGroup_080aafb8(u16 ability)
+{
+    return (ability & 0x0f00) >> 8;
+}
+
+static u32 AbilityIndex_080aafb8(u16 ability)
+{
+    return ability & 0x001f;
+}
+
+static s32 AbilityIsAvailable_080aafb8(u16 ability)
+{
+    u32 group = AbilityGroup_080aafb8(ability);
+    u32 category = AbilityCategory_080aafb8(ability);
+    u32 index = AbilityIndex_080aafb8(ability);
+
+    return Func_08077210(group, category, index) != 0 ||
+           Func_08077208(group, category, index) != 0;
+}
+
+/* Build, categorize, and render the ability grid for every active member. */
+void Func_080aafb8(AbilityGrid_080aafb8 *grid)
+{
+    BattleMenu_080aafb8 *menu = Data_03001f2c;
+    MenuRenderer_080aafb8 *renderer = Data_03001e8c;
+    s32 member;
+
+    renderer->drawing = 1;
+
+    for (member = 0; member < menu->active_count; member++) {
+        grid->ability_counts[member] = Func_080ac8fc(
+            grid->abilities[member],
+            menu->member_ids[member],
+            -1);
     }
-    Func_08015270(M2C_FIELD(temp_r0, s32 *, 0x30));
-    Func_08015080(0xBAD, M2C_FIELD(temp_r0, s32 *, 0x30), 0, 0x50);
-    sp28 = 0;
-    if ((s32) M2C_FIELD(temp_r0, u8 *, 0x219) <= 0) {
 
-    } else {
-        sp10 = 0xA0;
-        spC = 0;
-        sp8 = 0;
-        sp4 = sp30;
-loop_6:
-        sp1C = 0;
-        sp24 = 0;
-loop_7:
-        sp2C = 0;
-        if ((s32)*(s8 *)((u8 *)sp30 + sp10) <= 0) {
+    Func_08015270(menu->display);
+    Func_08015080(0x0bad, menu->display, 0, 0x50);
 
-        } else {
-            sp14 = spC;
-            sp18 = sp8;
-            var_r5_2 = sp4;
-            var_sl = (sp1C * 8) + 0x10;
-loop_10:
-            temp_r4 = *var_r5_2;
-            if (sp24 == ((u32) (0xE0 & temp_r4) >> 5)) {
-                if (!(0x8000 & temp_r4)) {
+    for (member = 0; member < menu->active_count; member++) {
+        s32 category;
+        s32 rendered_row = 0;
+
+        for (category = 0;
+             category < ABILITY_CATEGORY_COUNT_080AAFB8;
+             category++) {
+            s32 ability_index;
+
+            for (ability_index = 0;
+                 ability_index < grid->ability_counts[member];
+                 ability_index++) {
+                u16 ability = grid->abilities[member][ability_index];
+                u32 ability_category = AbilityCategory_080aafb8(ability);
+
+                if (category != ability_category)
+                    continue;
+
+                if ((ability & 0x8000) == 0)
                     Func_080150b8(2);
-                }
-                var_r8 = 0;
-                if ((Func_08077210((u32) (0xF00 & *var_r5_2) >> 8, (u32) (0xE0 & *var_r5_2) >> 5, 0x1F & *var_r5_2) != 0) || (temp_r3_2 = *var_r5_2, (Func_08077208((u32) (0xF00 & temp_r3_2) >> 8, (u32) (0xE0 & temp_r3_2) >> 5, 0x1F & temp_r3_2) != 0))) {
-                    var_r8 = 1;
-                }
-                if (var_r8 == 0) {
+                if (!AbilityIsAvailable_080aafb8(ability))
                     Func_080150b8(4);
-                }
-                Func_08015280(M2C_FIELD(temp_r0, s32 *, 0x30), ((u32) (0xE0 & *var_r5_2) >> 5) + 0x5001, sp18 + 1, sp1C + 2, 0);
-                temp_r2 = *var_r5_2;
-                Func_08015080((((u32) (0xE0 & temp_r2) >> 5) * 0x14) + (0x1F & temp_r2) + 0x45F, M2C_FIELD(temp_r0, s32 *, 0x30), sp14 + 0x10, var_sl);
-                var_sl += 8;
-                sp1C += 1;
-                Func_080150b8(0xF);
+
+                Func_08015280(
+                    menu->display,
+                    ability_category + 0x5001,
+                    member * 7 + 1,
+                    rendered_row + 2,
+                    0);
+                Func_08015080(
+                    ability_category * 0x14 +
+                        AbilityIndex_080aafb8(ability) + 0x45f,
+                    menu->display,
+                    member * 0x38 + 0x10,
+                    rendered_row * 8 + 0x10);
+                rendered_row++;
+                Func_080150b8(0x0f);
             }
-            temp_r2_2 = sp2C + 1;
-            sp2C = temp_r2_2;
-            var_r5_2 += 2;
-            if (temp_r2_2 < (s32)*(s8 *)((u8 *)sp30 + sp10)) {
-                goto loop_10;
-            }
-        }
-        temp_r2_3 = sp24 + 1;
-        sp24 = temp_r2_3;
-        if (temp_r2_3 <= 3) {
-            goto loop_7;
-        }
-        sp10 += 1;
-        sp28 += 1;
-        spC += 0x38;
-        sp8 += 7;
-        sp4 += 0xA;
-        if (sp28 < (s32) M2C_FIELD(temp_r0, u8 *, 0x219)) {
-            goto loop_6;
         }
     }
-    Func_08015070(M2C_FIELD(temp_r0, s32 *, 0x30), 0, 0xA, 0x1C, 0xA);
-    M2C_FIELD(*(void **)0x03001E8C, s8 *, 0xEA3) = 1;
-    M2C_FIELD(sp20, s8 *, 0xEA6) = 0;
+
+    Func_08015070(menu->display, 0, 0x0a, 0x1c, 0x0a);
+    Data_03001e8c->redraw_requested = 1;
+    renderer->drawing = 0;
 }

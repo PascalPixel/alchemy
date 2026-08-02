@@ -5603,7 +5603,13 @@
       "overlay": "resource_3b1",
       "entry": "0x02004218",
       "span_bytes": 60,
-      "evidence": "item-28 unindexed population, same reference-resolution basis. push {lr} at 0x02004218, epilogue pop {r0} / bx r0 at 0x0200424a-0x0200424c; the one-word literal pool at 0x02004250 (0x00000928) is included per the usual pool rule, immediately followed by the next owner's push at 0x02004254, the still-parked resource_3b1 0x02004254 row (0x02004218-0x02004254, 60 bytes)"
+      "evidence": "item-28 unindexed population, same reference-resolution basis. push {lr} at 0x02004218, epilogue pop {r0} / bx r0 at 0x0200424a-0x0200424c; the one-word literal pool at 0x02004250 (0x00000928) is included per the usual pool rule, immediately followed by the next owner's push at 0x02004254, the newly admitted resource_3b1 owner (0x02004218-0x02004254, 60 bytes)"
+    },
+    {
+      "overlay": "resource_3b1",
+      "entry": "0x02004254",
+      "span_bytes": 892,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- two-stage saved-register prologue at 0x02004254, interworking epilogue pop {r3} / mov r8,r3 / pop {r5,r6,r7} / pop {r0} / bx r0 at 0x02004592-0x0200459a; thirteen directly referenced literal pool words at 0x0200459c-0x020045cf are included per the usual pool rule, immediately followed by the next independent prologue at 0x020045d0. The 0x300 gate and the nested 0x92b/0x92a/0x929 branches rejoin at 0x020044a2; all 83 resolver-confirmed calls are represented in ordinary C, with the record reads at 0x0200433e-0x0200434c kept as explicit field loads"
     },
     {
       "overlay": "resource_3b1",
@@ -6819,6 +6825,12 @@
     },
     {
       "overlay": "resource_3ba",
+      "entry": "0x02001e7c",
+      "span_bytes": 620,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28-called-function population -- owner is prologue-started at 0x02001e7c and returns at 0x020020be-0x020020ce, followed by its six-word literal pool through 0x020020e7; the next owner's prologue is at 0x020020e8, giving a 0x26c (620-byte) complete owner boundary inside the assembled overlay image and with no overlap; resolved 41 static call sites to 23 imported targets, with the common close pair retained as one lexical block"
+    },
+    {
+      "overlay": "resource_3ba",
       "entry": "0x020033a0",
       "span_bytes": 964,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
@@ -7041,6 +7053,12 @@
     },
     {
       "overlay": "resource_3bb",
+      "entry": "0x02002450",
+      "span_bytes": 1264,
+      "evidence": "admitted whole-owner semantic reconstruction; independently address-mapped sibling of resource_3bc:0x02002ee8 with identical instruction/control-flow shape and ten-call sequence but resource_3bb-local state; saved-register/frame prologue at 0x02002450 through the single unwind return at 0x02002904-0x02002914, including branch-skipped inline literal runs at 0x020025b0-0x020026e3 plus alignment and ten trailing pool words through 0x0200293f before the next prologue at 0x02002940; the queue drain, three signed fixed-point interpolation channels, four output modes, and two shared-queue appends are represented in ordinary C"
+    },
+    {
+      "overlay": "resource_3bb",
       "entry": "0x02002940",
       "span_bytes": 144,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing alignment halfword to the next owner's prologue at 0x020029d0, inside the assembled overlay image and not overlapping another recorded owner"
@@ -7248,6 +7266,12 @@
       "entry": "0x02002b50",
       "span_bytes": 92,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image, six sites), span read from the disassembly through the trailing seven-word literal pool to the next owner's prologue at 0x02002bac, inside the assembled overlay image and not overlapping another recorded owner"
+    },
+    {
+      "overlay": "resource_3bc",
+      "entry": "0x02002bac",
+      "span_bytes": 620,
+      "evidence": "admitted whole-owner semantic reconstruction; saved high-register/frame prologue at 0x02002bac, single unwind through pop {r3,r5,r6,r7}/restore r8/r9/sl/fp/pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002df0-0x02002dfe, and six directly referenced pool words 0x02002e00-0x02002e14 before the next prologue at 0x02002e18; the queue-count byte passes, four signed-byte service loops, shared message tail, actor presentation calls and two final coordinate writes account for all 41 resolver-confirmed calls in ordinary C"
     },
     {
       "overlay": "resource_3bc",

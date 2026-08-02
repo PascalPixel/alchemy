@@ -3,9 +3,10 @@ typedef signed int s32;
 typedef unsigned char u8;
 
 /*
- * resource_383 owner at 0x02002564, 312 bytes (0x02002564-0x0200269b):
+ * resource_383 owner at 0x02002564, 384 bytes (0x02002564-0x020026e3):
  * code 0x02002564-0x02002583, an eight-word jump table at 0x02002584, code
- * 0x020025a4-0x02002693, and the head of a literal pool at 0x02002694.
+ * 0x020025a4-0x02002693, and the complete 20-word literal pool at
+ * 0x02002694-0x020026e3.
  *
  * Cutscene step table for the two staged actors (24 and 25).  It reads the
  * beat counter - the signed halfword at +364 of the overlay workspace block
@@ -38,9 +39,8 @@ typedef unsigned char u8;
  * the owner is void.
  */
 
-/* This overlay's guarded state-transition helper at file offset 0x26e4.
- * Old-style declaration: its own source is not yet reconstructed. */
-void Func_020026e4();
+/* This overlay's guarded state-transition helper at file offset 0x26e4. */
+void Func_020026e4(s32 actor, s32 expected, s32 next, const u8 *descriptor);
 
 /* In-image animation descriptors; file offset = address - 0x8000. */
 extern u8 Data_0200d538[];

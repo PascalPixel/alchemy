@@ -297,10 +297,13 @@ export function buildSemantic(directory = SEMANTIC): {
         ? mainOwners.find((item) => item.entry === address)
         : undefined;
       const ranges = trackedMainOwner?.executableRanges ??
-        (inventoried !== undefined
-          ? [{ address, size: inventoried.span_bytes }]
-          : reviewed !== undefined
-            ? [{ address, size: reviewed.span_bytes }]
+        (reviewed !== undefined
+          // A reviewed manual boundary exists specifically to correct or
+          // extend the structural inventory (for example through a complete
+          // trailing literal pool). It must therefore win when both exist.
+          ? [{ address, size: reviewed.span_bytes }]
+          : inventoried !== undefined
+            ? [{ address, size: inventoried.span_bytes }]
             : mainRegion !== undefined
               ? [{ address, size: mainRegion.size }]
               : undefined);

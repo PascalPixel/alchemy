@@ -1,23 +1,23 @@
 typedef signed int s32;
 
 /*
- * Resource 385 3-D distance helper at 0x02000314 (56 bytes, 1 call).
+ * Resource 385 3-D distance helper at 0x02000314 (60 bytes, 1 call).
  *
  * Derived span, not an inventory row: this owner has no row in
  * out/decomp/overlays.json and no exact sibling.  It was found by sweeping the
  * two-byte gaps in metrics/gs1-en-executable.json for `push {..,lr}`
  * prologues.  Walking from the prologue at 0x02000314 there is no branch of
  * any kind until the interworking return `pop {r5} / pop {r1} / bx r1` at
- * 0x02000346-0x0200034a, so the executable extent is exactly
- * 0x02000314-0x0200034b (56 bytes).  The walk never reaches 0x0200034c, which
- * is this owner's one-word literal pool:
+ * 0x02000346-0x0200034a.  Its ownership continues through the one-word
+ * literal pool at 0x0200034c, making the complete span 60 bytes:
  *
  *   0x0200034c  0x030001d8   the ARM-mode square root relocated into IWRAM
  *
  * That word is even, so by the overlay parity rule it is a data address rather
  * than a Thumb entry, and it is well below the 0x02008000 link base, so it is
  * an absolute IWRAM address and not an in-image offset.  The next prologue
- * begins at 0x02000350, and nothing between 0x0200034c and it belongs here.
+ * begins immediately at 0x02000350.  Keeping this referenced pool with its
+ * owner avoids manufacturing a four-byte semantic gap.
  *
  * The epilogue pops into r1, not r0 (`pop {r1} / bx r1`), so by the epilogue
  * rule r0 survives as the result: the owner returns the helper's value.

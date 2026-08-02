@@ -247,7 +247,11 @@ const ENTRY_SAVES_DESCENDING_SOURCES = new Set(["08093054"]);
 // moves the saved zero before the DMA base load after grouped-DMA formation.
 // Keep it on the same control-last route; the backend fingerprint is narrower
 // than the generic grouped-store reorder and leaves existing owners unchanged.
-const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78", "08005c68", "08090824"]);
+const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78", "08005c68", "080907b0", "08090824"]);
+// 080907b0's second descriptor has a strict value1/base scheduling fingerprint:
+// the immediate, source-address add, base literal, shift, and control literal
+// must be restored to the reference order after grouped-DMA formation.
+const GROUP_VALUE1_BEFORE_BASE_SOURCES = new Set(["080907b0"]);
 // resource_3bd:0c98 writes the same three-word DMA descriptor after an object
 // factory call.  Its reference copies the live source and destination into r0
 // and r1 before loading the pooled control word into r2; the path-scoped mode
@@ -264,7 +268,7 @@ const GROUP_CONTROL_LAST_OVERLAY_SOURCES = new Set([
 // 08094730 has the same scheduler tell immediately before its grouped DMA
 // descriptor; original-order tie breaking closes its last transposition.
 const NO_SCHED_DEPEND_COUNT_SOURCES = new Set([
-  "08002fb0", "08003e10", "08004760", "08005340", "08005394", "080053e8", "0800d304", "08019bac", "08021d88", "080903bc", "08094730",
+  "08002fb0", "08003e10", "08004760", "08005340", "08005394", "080053e8", "0800d304", "08019bac", "08021d88", "080903bc", "080907b0", "08094730",
   // First overlay member. §4's pool-load hoist, but the flag that reaches it is
   // this one, not -fsched-low-dest-first: the reference issues the argument
   // group's `ldr r0,[pc]` ahead of its `movs r1,#1`, and both -fsched-*-dest-first
@@ -328,7 +332,7 @@ const GROUPED_DMA_STORE_SOURCES = new Set([
   "08005c68", "080060e8", "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
   "08004a5c", "08004a94", "08005340", "08005394", "080053e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "080170c4", "08019bac",
   "0801d014", "0801d980",
-  "080251d4", "080284dc", "08090824", "08094730", "08095160", "08095290", "080958a8", "08097540", "0809bb34", "080c0184", "080c08a8",
+  "080251d4", "080284dc", "080907b0", "08090824", "08094730", "08095160", "08095290", "080958a8", "08097540", "0809bb34", "080c0184", "080c08a8",
   "0808fecc", "08004760", "08005a78", "080037d4", "080b5ad4", "0800300c", "080f377c",
   "08002fb0", "08003e10",
   "080a1090",
@@ -1303,6 +1307,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(MINIPOOL_TAIL_FIRST_SOURCES.has(stem) ? ["-fthumb-minipool-tail-first"] : []),
     ...(ENTRY_SAVES_DESCENDING_SOURCES.has(stem) ? ["-fthumb-entry-saves-descending"] : []),
     ...(GROUP_CONTROL_LAST_SOURCES.has(stem) ? ["-fthumb-group-control-last"] : []),
+    ...(GROUP_VALUE1_BEFORE_BASE_SOURCES.has(stem)
+      ? ["-fthumb-group-value1-before-base"]
+      : []),
     ...(GROUP_CONTROL_LAST_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-group-control-last"]
       : []),
@@ -1645,6 +1652,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "e654b8f55bef2f2a06efec89f171f46a76f0a55f671eb75e8b82ddc994f85b27",
         "0767fccd6046d0b4dcaae1150a82e505a29e59ca9f4f979e2535e7970f3de449",
         "d12bf2c7b96d2b1b6cec4c09b76f986249285070b1ca09d1ba1baf31b859cc18",
+        "9ebef7d0fac03bbd44ce3016b8e06534cde5ef514b29042be9dcbf9414f248ff",
       ],
     },
     gs2: {
@@ -2192,7 +2200,7 @@ function selfTest(): void {
     "08002f10", "08002fb0", "0800300c", "080037d4", "08003e10", "08004760",
     "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c",
     "08004a94", "08005340", "08005394", "080053e8", "08005a78", "08005c68", "080060e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304",
-    "080170c4", "08019bac", "0801d014", "0801d980", "080251d4", "080284dc", "0808fecc", "08090824", "08094730", "08095160", "08095290", "080958a8", "08097540",
+    "080170c4", "08019bac", "0801d014", "0801d980", "080251d4", "080284dc", "0808fecc", "080907b0", "08090824", "08094730", "08095160", "08095290", "080958a8", "08097540",
     "0809bb34", "080a1090", "080b5ad4", "080c0184", "080c08a8", "080f377c",
   ])) {
     throw new Error("grouped DMA source allowlist self-test failed");
@@ -2249,6 +2257,17 @@ function selfTest(): void {
         cflagsForTargetSource("gs2", "/tmp/08094730.c").includes(flag)) {
       throw new Error(`08094730 polled-DMA routing self-test failed for ${flag}`);
     }
+  }
+  const value1BeforeBaseFlag = "-fthumb-group-value1-before-base";
+  const value1BeforeBaseFlags = cflagsForTargetSource("gs1", "/tmp/080907b0.c");
+  const value1BeforeBaseDirect = directCompilerCommand(
+    "/tmp/080907b0.i", "/tmp/080907b0.s", "080907b0.c", "/tmp/080907b0.c",
+  );
+  if (!value1BeforeBaseFlags.includes(value1BeforeBaseFlag) ||
+      !value1BeforeBaseDirect.includes(value1BeforeBaseFlag) ||
+      cflagsForTargetSource("gs1", "/tmp/080907b4.c").includes(value1BeforeBaseFlag) ||
+      cflagsForTargetSource("gs2", "/tmp/080907b0.c").includes(value1BeforeBaseFlag)) {
+    throw new Error("080907b0 grouped-DMA value1/base routing self-test failed");
   }
   const stackZeroFlag = "-fthumb-high-move-before-stack-store";
   const stackZeroFlags = cflagsForTargetSource("gs1", "/tmp/08095290.c");

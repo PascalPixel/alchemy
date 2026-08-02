@@ -2,7 +2,8 @@ typedef unsigned char u8;
 typedef signed int s32;
 
 /*
- * Resource 3a6 one-shot scene 0x200 at 0x020011a0 (182 bytes, 20 calls).
+ * Resource 3a6 one-shot scene 0x200 at 0x020011a0 (184 bytes, 20 calls),
+ * including the trailing alignment halfword before the next prologue.
  *
  * Derived span, not an inventory row: this owner has no row in
  * out/decomp/overlays.json and no exact sibling.  It was found by sweeping the
@@ -15,8 +16,9 @@ typedef signed int s32;
  * `void`.
  *
  * Pool map: none — every constant is built with `movs` + `lsls`.  The halfword
- * at 0x02001256 is `0x0000` alignment before the next prologue at 0x02001258,
- * and the walk never reaches it as an instruction.
+ * at 0x02001256 is `0x0000` alignment before the next prologue at 0x02001258;
+ * it is included as structural tail ownership rather than misreported as a
+ * two-byte code-suspect gap.
  *
  * All twenty call sites were resolved with
  * `bun tools/overlay_call_targets.ts resource_3a6 11a0 1256`; the per-target

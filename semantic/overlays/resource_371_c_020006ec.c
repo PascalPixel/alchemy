@@ -4,7 +4,7 @@ typedef signed short s16;
 typedef signed int s32;
 
 /*
- * Resource 371 owner at 0x020006ec (880 bytes) — the overlay's scene entry
+ * Resource 371 owner at 0x020006ec (928 bytes) — the overlay's scene entry
  * point.  The image's fixed dispatch table at file offset 0 reaches it: its
  * first entry is `ldr r4,[pc,#0] / bx r4 / .word 0x020086ed`, and under this
  * overlay's proven 0x02008000 link base that word is this address plus the
@@ -12,7 +12,7 @@ typedef signed int s32;
  *
  * Complete owner: `push {r5, lr}` at 0x020006ec and `pop {r5} ; pop {r1} ;
  * bx r1` at 0x02000a2e.  The popped register is r1, not r0, so r0 survives
- * and IS the result — the constant 0 set at 0x02000a2c.  The 880-byte span
+ * and IS the result — the constant 0 set at 0x02000a2c.  The 928-byte span
  * decomposes as head (0x020006ec-0x020007c7), an 80-entry jump table
  * (0x020007c8-0x02000907, data), the case bodies
  * (0x02000908-0x02000a33) and the literal pool

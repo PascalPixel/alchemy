@@ -4,7 +4,8 @@ typedef unsigned int u32;
 typedef signed int s32;
 
 /*
- * Resource 3b3 layer inheritance resolver at 0x02001aa8 (310 bytes, 6 calls).
+ * Resource 3b3 layer inheritance resolver at 0x02001aa8 (320-byte whole
+ * owner, 6 calls).
  *
  * Derived span, not an inventory row: this owner has no row in
  * out/decomp/overlays.json and no exact sibling.  It was found by sweeping the
@@ -17,7 +18,8 @@ typedef signed int s32;
  * 0x02001aa8-0x02001bdd, and the walk stops at the interworking return
  * `pop {r3} / mov r8,r3 / pop {r5,r6,r7} / pop {r1} / bx r1` at
  * 0x02001bd4-0x02001bdc.  So the executable extent is exactly
- * 0x02001aa8-0x02001bdd (310 bytes).
+ * 0x02001aa8-0x02001bdd (310 executable bytes).  The whole-owner span is
+ * 320 bytes after annexing the alignment and pool described below.
  *
  * THE EPILOGUE POPS INTO r1, NOT r0, so by the epilogue rule r0 is the result.
  * r0 is set to 0 at 0x02001bd2 on the joined path and the early arm falls into

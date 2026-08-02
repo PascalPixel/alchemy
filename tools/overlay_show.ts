@@ -14,6 +14,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { assembleOverlay, OVERLAY_BASE } from "./overlay_disasm.ts";
+import { annotate, resolvedCallNames, unannotatedCallSites } from "./overlay_call_targets.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const PC_LOAD_MASK = 0xf800;
@@ -21,9 +22,16 @@ const PC_LOAD = 0x4800;
 const RETURN_MASK = 0xff87;
 const RETURN = 0x4700;
 
-interface Options { overlay: string; offset: number; length: number }
+interface Options { overlay: string; offset: number; length: number; annotate: boolean }
 
-const USAGE = "usage: overlay_show.ts <overlay> <offsetHex> [endHex | -n BYTES]";
+const USAGE = "usage: overlay_show.ts <overlay> <offsetHex> [endHex | -n BYTES] [--annotate]";
+
+/** Accept either an image offset or its ordinary 0x02000000 RAM spelling. */
+function imageOffset(value: number, label: string): number {
+  const offset = value >= OVERLAY_BASE ? value - OVERLAY_BASE : value;
+  if (!Number.isInteger(offset) || offset < 0) throw new Error(`${label} must be hexadecimal`);
+  return offset;
+}
 
 /**
  * Parse the command line.
@@ -40,13 +48,15 @@ const USAGE = "usage: overlay_show.ts <overlay> <offsetHex> [endHex | -n BYTES]"
  */
 export function optionsOf(argv: string[]): Options {
   const rest: string[] = [];
-  const options: Options = { overlay: "", offset: -1, length: 0 };
+  const options: Options = { overlay: "", offset: -1, length: 0, annotate: false };
   let explicitLength = false;
   for (let index = 0; index < argv.length; index++) {
     const argument = argv[index];
     if (argument === "--length" || argument === "-n") {
       options.length = Number(argv[++index]);
       explicitLength = true;
+    } else if (argument === "--annotate") {
+      options.annotate = true;
     } else if (argument === "-h" || argument === "--help") {
       console.log(USAGE);
       process.exit(0);
@@ -56,12 +66,11 @@ export function optionsOf(argv: string[]): Options {
   if (overlay === undefined || offsetText === undefined) throw new Error(USAGE);
   if (extra.length > 0) throw new Error(`${USAGE}\nunexpected argument: ${extra[0]}`);
   options.overlay = overlay;
-  options.offset = Number.parseInt(offsetText, 16);
-  if (!Number.isInteger(options.offset) || options.offset < 0) throw new Error("offset must be hexadecimal");
+  options.offset = imageOffset(Number.parseInt(offsetText, 16), "offset");
   if (endText !== undefined) {
     if (explicitLength) throw new Error("pass an end bound OR -n BYTES, not both");
     if (!/^(0x)?[0-9a-f]+$/i.test(endText)) throw new Error(`end bound must be hexadecimal: ${endText}`);
-    const end = Number.parseInt(endText.replace(/^0x/i, ""), 16);
+    const end = imageOffset(Number.parseInt(endText.replace(/^0x/i, ""), 16), "end bound");
     if (end <= options.offset) throw new Error("end bound must be greater than the start offset");
     options.length = end - options.offset;
   }
@@ -103,6 +112,9 @@ function selfTest(): void {
   if (bounded.length !== 0x23e0 - 0x1cd4) throw new Error("overlay show self-test: end bound ignored");
   const prefixed = optionsOf(["resource_3b9", "1cd4", "0x23e0"]);
   if (prefixed.length !== 0x23e0 - 0x1cd4) throw new Error("overlay show self-test: 0x end bound");
+  const absolute = optionsOf(["resource_3b9", "0x02001cd4", "0x020023e0", "--annotate"]);
+  if (absolute.offset !== 0x1cd4 || absolute.length !== 0x23e0 - 0x1cd4 || !absolute.annotate)
+    throw new Error("overlay show self-test: absolute address normalization or annotation flag");
   if (optionsOf(["resource_3b9", "1cd4", "-n", "1804"]).length !== 1804)
     throw new Error("overlay show self-test: -n must still work");
   if (optionsOf(["resource_3b9", "1cd4"]).length !== 0)
@@ -144,8 +156,22 @@ function main(): void {
   if (dumped.exitCode !== 0) throw new Error(`objdump failed: ${dumped.stderr.toString().trim()}`);
 
   const pools = new Map<number, number>();
-  for (const line of dumped.stdout.toString().split("\n")) {
-    if (/^\s+[0-9a-f]+:/.test(line)) console.log(line.replace(/\s+$/, ""));
+  let listing = dumped.stdout.toString().split("\n")
+    .filter((line) => /^\s+[0-9a-f]+:/.test(line))
+    .map((line) => line.replace(/\s+$/, ""))
+    .join("\n");
+  if (options.annotate) {
+    const names = resolvedCallNames(options.overlay, options.offset, options.offset + length);
+    const missed = unannotatedCallSites(listing, names);
+    if (missed.length > 0) {
+      throw new Error(
+        `overlay show annotation missed ${missed.length} call site(s); explicit bounds do not cover the listing`,
+      );
+    }
+    listing = annotate(listing, names);
+  }
+  for (const line of listing.split("\n")) {
+    if (line.length > 0) console.log(line);
   }
   for (let at = options.offset; at + 2 <= options.offset + length; at += 2) {
     const half = data.readUInt16LE(at);

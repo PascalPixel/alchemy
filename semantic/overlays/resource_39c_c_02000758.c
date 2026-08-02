@@ -13,7 +13,7 @@ typedef int s32;
  * prologue at 0x02000758 through the real-value return at 0x020008dc.
  * Alignment at 0x020008de is followed by the three referenced pool words
  * at 0x020008e0-0x020008eb (0x0200dda8, 0x0200dd50, 0xffff0000) and one
- * trailing boundary halfword before the next prologue at 0x020008ee.
+ * The next owner begins at 0x020008ec by reserving stack space before its push.
  * The two bounded calls resolve to Func_02000630 and, through a veneer,
  * Func_080091d8; there is no indirect-call hazard.
  *

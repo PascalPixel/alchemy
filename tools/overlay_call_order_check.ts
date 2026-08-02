@@ -27,7 +27,7 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { Discovery } from "./discover.ts";
-import { OVERLAY_BASE, classify, overlayImage, targetOffset } from "./overlay_call_targets.ts";
+import { OVERLAY_BASE, classify, overlayImage, resolveOverlay, targetOffset } from "./overlay_call_targets.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const SOURCE_DIRECTORY = join(ROOT, "semantic", "overlays");
@@ -273,6 +273,50 @@ function inventoryPrologues(inventory: InventoryFile, overlay: string): Set<numb
   );
 }
 
+function machineCallFromTarget(
+  image: Uint8Array,
+  owner: SemanticOwner,
+  prologues: Set<number>,
+  siteOffset: number,
+  target: number,
+): MachineCall | null {
+  // BLs into the owner's own span are compiler-generated internal transfers,
+  // not calls represented by a separate source function.
+  if (target > owner.offset && target < owner.offset + owner.spanBytes) return null;
+  const detail = classify(image, target, prologues);
+  if (detail.kind === "veneer" && detail.imported !== undefined) {
+    return { site: siteOffset, target, kind: detail.kind, name: `Func_${hex(detail.imported)}` };
+  }
+  if (detail.kind === "call_via") {
+    // A bare `bx lr` is a genuine local leaf, not an indirect-call slot. The
+    // shared resolver intentionally reports this shape as call_via; mirror
+    // overlay_multiset_check's explicit exception so established no-op leaf
+    // owners remain comparable by their local address.
+    if (readU16(image, target) === 0x4770) {
+      return {
+        site: siteOffset,
+        target,
+        kind: "leaf",
+        name: `Func_${hex(OVERLAY_BASE + target)}`,
+      };
+    }
+    const resolved = callViaLiteralTarget(image, target, siteOffset);
+    return {
+      site: siteOffset,
+      target,
+      kind: detail.kind,
+      name: CALL_VIA,
+      ...(resolved === undefined ? {} : { resolvedCallViaTarget: resolved }),
+    };
+  }
+  return {
+    site: siteOffset,
+    target,
+    kind: detail.kind,
+    name: detail.kind === "unknown" ? `UNKNOWN_${hex(target)}` : `Func_${hex(OVERLAY_BASE + target)}`,
+  };
+}
+
 function machineCalls(owner: SemanticOwner, image: Uint8Array, prologues: Set<number>): MachineCall[] {
   const start = OVERLAY_BASE + owner.offset;
   const end = Math.min(start + owner.spanBytes, OVERLAY_BASE + image.length);
@@ -283,50 +327,36 @@ function machineCalls(owner: SemanticOwner, image: Uint8Array, prologues: Set<nu
   const reachable = functionInfo?.instructions ?? new Set<number>();
   if (reachable.size === 0) throw new Error(`${owner.overlay}:0x${owner.offset.toString(16)} has no reachable instructions`);
 
+  // Discovery deliberately stops at an unresolved `mov pc, rN`, because it
+  // cannot prove the table arms without overlay-specific link semantics. The
+  // resolver has the complementary evidence: the overlay's stored BL rule
+  // (`target - 2`) and the complete explicit owner bound. When the walk records
+  // a jump-table dispatch, use that bounded resolver listing so the order audit
+  // covers the arms after the table instead of returning only the pre-dispatch
+  // prefix. Unknown flat-disassembly hits remain visible as UNKNOWN_*; a pool
+  // masquerading as BL is therefore a review signal, not silently discarded.
+  const hasJumpTable = [...(functionInfo?.unresolved ?? [])].some((address) => {
+    const offset = address - OVERLAY_BASE;
+    return offset >= owner.offset && offset + 2 <= owner.offset + owner.spanBytes &&
+      (readU16(image, offset) & 0xff87) === 0x4687;
+  });
+  if (hasJumpTable) {
+    const calls: MachineCall[] = [];
+    for (const site of resolveOverlay(owner.overlay, owner.offset, owner.offset + owner.spanBytes)) {
+      const call = machineCallFromTarget(image, owner, prologues, site.site, site.target);
+      if (call !== null) calls.push(call);
+    }
+    return calls;
+  }
+
   const calls: MachineCall[] = [];
   for (let address = start; address + 3 < end; address += 2) {
     if (!reachable.has(address)) continue;
     const siteOffset = address - OVERLAY_BASE;
     const target = targetOffset(readU16(image, siteOffset), readU16(image, siteOffset + 2));
     if (target === null || target < 0 || target >= image.length) continue;
-    // BLs into the owner's own span are compiler-generated internal transfers,
-    // not calls represented by a separate source function.
-    if (target > owner.offset && target < owner.offset + owner.spanBytes) continue;
-    const detail = classify(image, target, prologues);
-    if (detail.kind === "veneer" && detail.imported !== undefined) {
-      calls.push({ site: siteOffset, target, kind: detail.kind, name: `Func_${hex(detail.imported)}` });
-      continue;
-    }
-    if (detail.kind === "call_via") {
-      // A bare `bx lr` is a genuine local leaf, not an indirect-call slot.  The
-      // shared resolver intentionally reports this shape as call_via; mirror
-      // overlay_multiset_check's explicit exception so established no-op leaf
-      // owners remain comparable by their local address.
-      if (readU16(image, target) === 0x4770) {
-        calls.push({
-          site: siteOffset,
-          target,
-          kind: "leaf",
-          name: `Func_${hex(OVERLAY_BASE + target)}`,
-        });
-        continue;
-      }
-      const resolved = callViaLiteralTarget(image, target, siteOffset);
-      calls.push({
-        site: siteOffset,
-        target,
-        kind: detail.kind,
-        name: CALL_VIA,
-        ...(resolved === undefined ? {} : { resolvedCallViaTarget: resolved }),
-      });
-      continue;
-    }
-    calls.push({
-      site: siteOffset,
-      target,
-      kind: detail.kind,
-      name: detail.kind === "unknown" ? `UNKNOWN_${hex(target)}` : `Func_${hex(OVERLAY_BASE + target)}`,
-    });
+    const call = machineCallFromTarget(image, owner, prologues, siteOffset, target);
+    if (call !== null) calls.push(call);
   }
   return calls;
 }

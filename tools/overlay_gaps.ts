@@ -42,6 +42,7 @@
 //   bun tools/overlay_gaps.ts                  # every overlay
 //   bun tools/overlay_gaps.ts resource_3a4     # one overlay
 //   bun tools/overlay_gaps.ts --certified      # only overlays claimed closed
+//   bun tools/overlay_gaps.ts --ranked         # owner-shaped gaps, best yield first
 //   bun tools/overlay_gaps.ts --json
 //   bun tools/overlay_gaps.ts --self-test
 import { existsSync, readdirSync } from "node:fs";
@@ -102,6 +103,30 @@ export interface Overlap {
   next: number;
   /** How far past, in bytes. */
   bytes: number;
+}
+
+export interface RankedGap {
+  overlay: string;
+  gap: Gap;
+}
+
+/**
+ * Put the safest high-yield semantic-C candidates first.
+ *
+ * Exactly one reachable return is not proof of one owner, but it is the best
+ * cheap scheduling signal available: the recent 3bd:13f8, 378:088c,
+ * 378:187c, 383:36f8 and 399:19e8 closures all have this shape. Multi-return
+ * gaps remain visible after the one-return cohort rather than being discarded.
+ */
+export function rankGaps(items: RankedGap[]): RankedGap[] {
+  return [...items].sort((left, right) => {
+    const leftTier = left.gap.returns.length === 1 ? 0 : 1;
+    const rightTier = right.gap.returns.length === 1 ? 0 : 1;
+    if (leftTier !== rightTier) return leftTier - rightTier;
+    if (left.gap.bytes !== right.gap.bytes) return right.gap.bytes - left.gap.bytes;
+    const overlayOrder = left.overlay.localeCompare(right.overlay);
+    return overlayOrder !== 0 ? overlayOrder : left.gap.start - right.gap.start;
+  });
 }
 
 /**
@@ -420,6 +445,14 @@ function selfTest(): void {
   if (isReturnShape(0xb5e0)) throw new Error("sweep D self-test: push is not a return");
   if (isReturnShape(0x0000)) throw new Error("sweep D self-test: zero is not a return");
 
+  const ranked = rankGaps([
+    { overlay: "resource_b", gap: { start: 0x20, end: 0x120, after: 0, before: 0x120, bytes: 256, returns: [0x40, 0x80], padding: false, verdict: "CODE-SUSPECT" } },
+    { overlay: "resource_c", gap: { start: 0x30, end: 0xb0, after: 0, before: 0xb0, bytes: 128, returns: [0x90], padding: false, verdict: "CODE-SUSPECT" } },
+    { overlay: "resource_a", gap: { start: 0x10, end: 0xd0, after: 0, before: 0xd0, bytes: 192, returns: [0xa0], padding: false, verdict: "CODE-SUSPECT" } },
+  ]);
+  if (ranked.map((item) => item.overlay).join(",") !== "resource_a,resource_c,resource_b")
+    throw new Error("sweep D self-test: ranked candidates must prefer one-return gaps, then byte yield");
+
   // The founding case, rebuilt synthetically so drafting the real row cannot
   // break it: an owner ending at 0x10, then 24 unaccounted bytes carrying
   // resource_3a4's actual 0x02003410 leaf, then the next owner.
@@ -597,6 +630,8 @@ function main(): void {
   if (argv.includes("--self-test")) return selfTest();
 
   const json = argv.includes("--json");
+  const ranked = argv.includes("--ranked");
+  if (json && ranked) throw new Error("choose either --json or --ranked");
   const named = argv.filter((argument) => !argument.startsWith("--"));
   const overlays = named.length > 0 ? named : overlayNames();
 
@@ -619,7 +654,7 @@ function main(): void {
     overlapping += result.overlaps.length;
     if (result.tail.verdict === "PROLOGUE-SUSPECT") tails += 1;
     if (result.tail.verdict === "RETURN-SUSPECT") returnTails += 1;
-    if (json) continue;
+    if (json || ranked) continue;
     if (
       interesting.length === 0 &&
       result.overlaps.length === 0 &&
@@ -669,6 +704,21 @@ function main(): void {
     console.log(JSON.stringify(report, null, 2));
     if (Object.keys(report).length === 0) process.exitCode = 1;
     return;
+  }
+  if (ranked) {
+    const candidates = rankGaps(Object.entries(report).flatMap(([overlay, result]) =>
+      result.gaps
+        .filter((gap) => gap.verdict === "CODE-SUSPECT")
+        .map((gap) => ({ overlay, gap })),
+    ));
+    for (const { overlay, gap } of candidates) {
+      const shape = gap.returns.length === 1 ? "ONE-RETURN" : `${gap.returns.length}-RETURN`;
+      console.log(
+        `${gap.bytes.toString().padStart(6)}B  ${shape.padEnd(10)}  ${overlay} ` +
+          `0x${gap.start.toString(16)}-0x${gap.end.toString(16)}`,
+      );
+    }
+    console.log(`\nranked_code_suspect_gaps=${candidates.length}`);
   }
   console.log(
     `\noverlays=${Object.keys(report).length} code_suspect_gaps=${suspects} ` +

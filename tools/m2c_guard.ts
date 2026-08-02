@@ -109,6 +109,15 @@ export function callNames(image: Uint8Array, start: number, end: number, overlay
     const target = targetOffset(data.readUInt16LE(at), data.readUInt16LE(at + 2));
     if (target === null || target < 0 || target >= data.length) continue;
     const detail = classify(image, target, prologues);
+    // A BL into the overlay's `bx rN` bank names the callback value held in a
+    // register, not the trampoline itself. The draft represents it as an
+    // explicit function-pointer call, so requiring a fictitious Func_0200xxxx
+    // symbol is a false shortfall. Ordered-call checking audits the call_via
+    // position separately.
+    if (detail.kind === "call_via") {
+      at += 2;
+      continue;
+    }
     const name = detail.imported !== undefined
       ? `Func_${detail.imported.toString(16).padStart(8, "0")}`
       : `Func_${(OVERLAY_BASE + target).toString(16).padStart(8, "0")}`;

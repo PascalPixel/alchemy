@@ -275,6 +275,15 @@ Latest bounded probes (2026-08-02) reinforce that rule:
   194-byte extent and 38 differing halfwords with grouped-DMA scheduling.
   A bounded 1,800-step, three-restart permuter run ended at weighted floor 96;
   no exact match was found or promoted.
+- A default-route scan of all 704 remaining semantic main-image owners found
+  no directly adoptable full-module exact match. It did flag the first 2-byte
+  leaf in continuation row `0801c9be` as exact in isolation, but its semantic
+  file also owns two non-exact siblings; promoting only that leaf would require
+  splitting the row's source/assembly boundaries, so it remains parked.
+- Fresh standalone `080a524c` (316-byte owner): 329 compiler configurations
+  held the exact extent with four differing halfwords, all one temporary's
+  r2/r3 allocation. A bounded 1,800-step, three-restart permuter run ended at
+  weighted floor 4 with no exact match.
 
 ## Tooling audit
 

@@ -1242,13 +1242,14 @@ Overlay_02000000:
 	.2byte 0x0200
 AlchemyC_02000030:
 	.space 0x2c
-	.4byte 0x47704800
+	ldr	r0, [pc, #0]
+	bx	lr
 	.4byte 0x0200baa8
 AlchemyC_02000064:
 	.space 0x4
-	.4byte 0x47704800
-	.2byte 0xbbc8
-	.2byte 0x0200
+	ldr	r0, [pc, #0]
+	bx	lr
+	.4byte 0x0200bbc8
 AlchemyC_02000070:
 	.space 0xdc
 AlchemyC_0200014c:

@@ -106,6 +106,22 @@ The preceding `0809` target `080907b0` was already exact C (116/116 bytes),
 so no new source change was needed there; its routed regression remains
 1/1 exact.
 
+## applied: resource_3a7:0944 overlay veneer/dataflow shape
+
+The clean witness `resource_3a7:0944` is now exact C (124/124 bytes). Its two
+calls reach the same logical main-image accessor through different physical
+overlay veneer slots, so the C owner names the two established in-image veneer
+addresses separately. Explicit `zDelta`/`xDelta` temporaries preserve the
+reference's arithmetic order, and a labeled loop tail places both rejection
+branches on the original increment instruction. The resulting source remains
+ordinary C: no inline assembly, fixed-register binding, or byte writes.
+
+The source-scoped route adds `-O3` after the normal overlay `-O2` flags; the
+exact witness was independently compiled and compared at 124/124 bytes. The
+route is limited to `assets/code/resource_3a7_c_02000944.c` until another
+unrelated owner establishes a broader `-O3` family. The source-only and full
+ROM builds pass with zero fallback bytes.
+
 ## cse-two-insn-immediate
 
 Blocks the largest single class of unconverted code-overlay functions: the reference

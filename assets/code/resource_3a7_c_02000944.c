@@ -46,7 +46,11 @@
 typedef signed int s32;
 typedef unsigned int u32;
 
-s32 *Func_0808a080();   /* scene-entity record by selector */
+/* The overlay import table has two physical veneer slots for this logical
+ * accessor.  Naming the slots separately lets the normal linker encode the
+ * overlay's target-offset BL words without changing the call ABI. */
+s32 *Func_02001a78();   /* subject selector veneer */
+s32 *Func_02001a84();   /* candidate selector veneer */
 
 /* Truncating >> 20: whole pixels, then the 16-pixel tile grid. */
 static s32 TileCell(s32 fixed)
@@ -59,11 +63,11 @@ static s32 TileCell(s32 fixed)
 
 s32 Func_02000944(s32 subjectSelector)
 {
-    s32 *subject = Func_0808a080(subjectSelector);
+    s32 *subject = Func_02001a78(subjectSelector);
     s32 index = 0;
 
     do {
-        s32 *candidate = Func_0808a080(index + 11);
+        s32 *candidate = Func_02001a84(index + 11);
 
         /* Unclaimed: +12 in 1..0x000fffff. */
         if ((u32)(candidate[3] - 1) <= 0x000ffffe) {
@@ -72,14 +76,18 @@ s32 Func_02000944(s32 subjectSelector)
             s32 subjectZ = TileCell(subject[4]);
             s32 subjectX = TileCell(subject[2]);
 
-            if (subjectX == candidateX && subjectZ - candidateZ == 0) {
-                candidate[3] = 0x00ff0000;   /* +12: mark claimed */
-                candidate[18] = 0;           /* +72 */
-                candidate[10] = 0;           /* +40 */
-                return 1;
+            s32 zDelta = subjectZ - candidateZ;
+            s32 xDelta = subjectX - candidateX;
+            if (xDelta != 0 || zDelta != 0) {
+                goto next_candidate;
             }
+            candidate[3] = 0x00ff0000;   /* +12: mark claimed */
+            candidate[18] = 0;           /* +72 */
+            candidate[10] = 0;           /* +40 */
+            return 1;
         }
 
+    next_candidate:
         index++;
     } while (index <= 3);
 

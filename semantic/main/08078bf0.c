@@ -9,7 +9,7 @@ s32 Func_08079ad8(s32 index);
 /*
  * Refresh the owner's 32 sparse effect slots.  Stale flagged entries are
  * removed, the survivors are compacted, eligible table and inventory effects
- * are inserted once, and the list is compacted again.  Each slot is eight
+ * are inserted once, and the list is compacted again.  Each slot is four
  * bytes wide; only its leading halfword is owned by this routine.
  */
 s32 Func_08078bf0(s32 owner)
@@ -66,7 +66,7 @@ s32 Func_08078bf0(s32 owner)
             *var_r2 = 0;
         }
         var_r5 -= 1;
-        var_r2 += 4;
+        var_r2 += 2;
     } while (var_r5 >= 0);
     var_r2_2 = slots;
     var_r5_2 = 0x1F;
@@ -75,28 +75,28 @@ s32 Func_08078bf0(s32 owner)
             *var_r2_2 = 0;
         }
         var_r5_2 -= 1;
-        var_r2_2 += 4;
+        var_r2_2 += 2;
     } while (var_r5_2 >= 0);
     var_r4 = 0x1F;
     var_r5_3 = 0x1F;
     var_r1 = (u16 *)((u8 *)slots + 0x7c);
     do {
-        temp_r2 = *((var_r4 * 4) + slots);
+        temp_r2 = *((var_r4 * 2) + slots);
         if (temp_r2 == 0) {
             var_r4 -= 1;
         } else {
             *var_r1 = temp_r2;
             var_r4 -= 1;
-            var_r1 -= 4;
+            var_r1 -= 2;
             var_r5_3 -= 1;
         }
     } while (var_r4 >= 0);
     if (var_r5_3 >= 0) {
-        var_r3 = (var_r5_3 * 4) + slots;
+        var_r3 = (var_r5_3 * 2) + slots;
         do {
             var_r5_3 -= 1;
             *var_r3 = 0;
-            var_r3 -= 4;
+            var_r3 -= 2;
         } while (var_r5_3 >= 0);
     }
     var_lr = effectTable + 0x10;
@@ -112,7 +112,7 @@ loop_19:
 loop_23:
             var_r4_2 += 1;
             if (var_r4_2 <= 0x1F) {
-                var_r1_2 += 4;
+                var_r1_2 += 2;
                 if (*var_r1_2 != effectTable[var_sl]) {
                     goto loop_23;
                 }
@@ -128,7 +128,7 @@ loop_23:
 loop_28:
             var_r4_3 += 1;
             if (var_r4_3 <= 0x1F) {
-                var_r2_3 = (var_r4_3 * 4) + slots;
+                var_r2_3 = (var_r4_3 * 2) + slots;
                 if (*var_r2_3 == 0) {
                     var_r3_2 = *var_r7 | 0x8000;
 block_31:
@@ -168,7 +168,7 @@ loop_35:
 loop_41:
             var_r4_4 += 1;
             if (var_r4_4 <= 0x1F) {
-                var_r1_3 += 4;
+                var_r1_3 += 2;
                 if ((0x3FFF & *var_r1_3) != temp_r0_4) {
                     goto loop_41;
                 }
@@ -182,7 +182,7 @@ loop_41:
 loop_46:
                 var_r4_5 += 1;
                 if (var_r4_5 <= 0x1F) {
-                    temp_r2_3 = (var_r4_5 * 4) + slots;
+                    temp_r2_3 = (var_r4_5 * 2) + slots;
                     if (*temp_r2_3 == 0) {
                         *temp_r2_3 = 0x4000 | temp_r0_4;
                     } else {
@@ -208,23 +208,23 @@ block_50:
     var_r5_6 = 0;
     var_r1_4 = slots;
     do {
-        temp_r2_4 = *((var_r4_6 * 4) + slots);
+        temp_r2_4 = *((var_r4_6 * 2) + slots);
         if (temp_r2_4 == 0) {
             var_r4_6 += 1;
         } else {
             *var_r1_4 = temp_r2_4;
             var_r4_6 += 1;
-            var_r1_4 += 4;
+            var_r1_4 += 2;
             var_r5_6 += 1;
         }
     } while (var_r4_6 <= 0x1F);
     if (var_r5_6 <= 0x1F) {
-        var_r2_4 = (var_r5_6 * 4) + slots;
+        var_r2_4 = (var_r5_6 * 2) + slots;
         var_r5_7 = 0x20 - var_r5_6;
         do {
             var_r5_7 -= 1;
             *var_r2_4 = 0;
-            var_r2_4 += 4;
+            var_r2_4 += 2;
         } while (var_r5_7 != 0);
     }
     return 0;

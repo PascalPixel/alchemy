@@ -49,9 +49,12 @@ void Func_0807a7a0(void)
         *(u16 *)(state + offset) = *source++;
         offset += 2;
         *(u16 *)(state + offset) = *source++;
-        offset = 252;
-        offset <<= 1;
-        *(u16 *)(state + offset) = *source;
+        {
+            s32 tailOffset = 252;
+
+            tailOffset <<= 1;
+            *(u16 *)(state + tailOffset) = *source;
+        }
         offset -= 40;
         *(u16 *)(state + offset) = source[1];
     }

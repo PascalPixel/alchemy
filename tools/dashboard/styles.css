@@ -19,47 +19,53 @@
 
 html,
 body {
+  width: 100vw;
   height: 100%;
   margin: 0;
+  overflow: hidden;
   background: #fff;
 }
 
 #root {
+  position: relative;
+  width: 100vw;
   height: 100vh;
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 .trees {
+  position: absolute;
+  inset: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, 540px);
-  gap: 10px;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  overflow-x: auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  overflow: hidden;
 }
 
 .tree-image {
-  width: 540px;
-  height: 304px;
-  max-width: none;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   display: block;
+  object-fit: contain;
+  object-position: center;
 }
 
 .panel {
   min-width: 0;
   min-height: 0;
-  display: flex;
-  flex-direction: column;
   overflow: hidden;
 }
 
 .error {
+  position: absolute;
+  z-index: 1;
+  top: 8px;
+  left: 50%;
+  max-width: calc(100% - 16px);
+  transform: translateX(-50%);
   padding: 8px 10px;
   color: #7d211b;
   background: #fff1ef;
@@ -69,6 +75,8 @@ body {
 }
 
 .loading {
+  position: absolute;
+  inset: 0;
   height: 100%;
   display: grid;
   place-items: center;
@@ -81,8 +89,18 @@ body {
   .error { color: #ffc1bb; background: #371b1a; }
 }
 
-@media (max-width: 760px) {
-  #root { height: auto; padding: 8px; gap: 8px; }
-  .trees { grid-template-columns: 540px; gap: 8px; justify-content: start; }
-  .panel { min-height: auto; }
+/* Each chart is 540:304. These cutovers select the packing that gives every
+ * chart the largest possible contained rectangle for the viewport shape. */
+@media (min-aspect-ratio: 135 / 38) {
+  .trees {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1fr);
+  }
+}
+
+@media (max-aspect-ratio: 135 / 152) {
+  .trees {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+  }
 }

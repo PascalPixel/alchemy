@@ -1875,17 +1875,27 @@ AlchemyC_02001ad0:
 	.2byte 0x0200
 AlchemyC_02001b9c:
 	.space 0x40
-	.4byte 0x6c426883
-	.4byte 0x6083189b
-	.4byte 0x68c36c82
-	.4byte 0x60c3189b
-	.4byte 0x69036cc2
-	.4byte 0x6103189b
-	.4byte 0x69836b02
-	.4byte 0x6183189b
-	.4byte 0x69c36b42
-	.4byte 0x61c3189b
-	.2byte 0x4770
+	ldr	r3, [r0, #8]
+	ldr	r2, [r0, #68]
+	adds	r3, r3, r2
+	str	r3, [r0, #8]
+	ldr	r2, [r0, #72]
+	ldr	r3, [r0, #12]
+	adds	r3, r3, r2
+	str	r3, [r0, #12]
+	ldr	r2, [r0, #76]
+	ldr	r3, [r0, #16]
+	adds	r3, r3, r2
+	str	r3, [r0, #16]
+	ldr	r2, [r0, #48]
+	ldr	r3, [r0, #24]
+	adds	r3, r3, r2
+	str	r3, [r0, #24]
+	ldr	r2, [r0, #52]
+	ldr	r3, [r0, #28]
+	adds	r3, r3, r2
+	str	r3, [r0, #28]
+	bx	lr
 	.2byte 0x0000
 AlchemyC_02001c08:
 	.space 0xe

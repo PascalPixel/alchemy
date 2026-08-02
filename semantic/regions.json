@@ -801,6 +801,18 @@
     },
     {
       "overlay": "resource_378",
+      "entry": "0x0200005c",
+      "span_bytes": 8,
+      "evidence": "admitted whole-owner semantic reconstruction; leaf getter at 0x0200005c is ldr r0,[pc,#0] / bx lr and includes its directly referenced pool word 0x0200baa8 at 0x02000060; it returns the overlay-local address without dereferencing it"
+    },
+    {
+      "overlay": "resource_378",
+      "entry": "0x02000068",
+      "span_bytes": 8,
+      "evidence": "admitted whole-owner semantic reconstruction; leaf getter at 0x02000068 is ldr r0,[pc,#0] / bx lr and includes its directly referenced pool word 0x0200bbc8 at 0x0200006c; it returns the overlay-local address without dereferencing it"
+    },
+    {
+      "overlay": "resource_378",
       "entry": "0x02000070",
       "span_bytes": 220,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
@@ -810,6 +822,42 @@
       "entry": "0x020005cc",
       "span_bytes": 284,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_378), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; the body dispatches through a 26-entry jump table at 0x0200060c whose arms follow the table inside the function, so tools/m2c_guard.ts's 256-byte measurement is a lower bound and the true span runs through the epilogue at 0x020006ca and the seven-word literal pool 0x020006cc-0x020006e7 to the next function's prologue at 0x020006e8; inside the assembled overlay image and not overlapping another recorded owner."
+    },
+    {
+      "overlay": "resource_378",
+      "entry": "0x020006e8",
+      "span_bytes": 100,
+      "evidence": "derived owner boundary from assets/code/resource_378_overlay.s: push {lr} at 0x020006e8, straight-line calls through pop {r0}/bx r0 at 0x02000744-0x02000746, and the one-word literal pool at 0x02000748-0x0200074b; next prologue is 0x0200074c"
+    },
+    {
+      "overlay": "resource_378",
+      "entry": "0x0200074c",
+      "span_bytes": 252,
+      "evidence": "derived owner boundary from assets/code/resource_378_overlay.s: push {lr} at 0x0200074c, branch-over embedded pool 0x020007f8-0x0200081b, conditional tail and pop {r0}/bx r0 at 0x02000844-0x02000846; next prologue is 0x02000848"
+    },
+    {
+      "overlay": "resource_378",
+      "entry": "0x02000848",
+      "span_bytes": 68,
+      "evidence": "derived owner boundary from assets/code/resource_378_overlay.s: push {r5,r6,lr} at 0x02000848, high-register restore and pop {r1}/bx r1 at 0x02000884-0x02000888, with the two-byte alignment at 0x0200088a-0x0200088b; next prologue is 0x0200088c"
+    },
+    {
+      "overlay": "resource_378",
+      "entry": "0x020025c4",
+      "span_bytes": 156,
+      "evidence": "derived owner boundary from assets/code/resource_378_overlay.s: push {r5,lr} at 0x020025c4, the four-byte literal pool at 0x0200265c-0x0200265f, and pop {r5}/pop {r0}/bx r0 at 0x02002654-0x02002658; next prologue is 0x02002660"
+    },
+    {
+      "overlay": "resource_378",
+      "entry": "0x02002660",
+      "span_bytes": 28,
+      "evidence": "derived owner boundary from assets/code/resource_378_overlay.s: push {lr} at 0x02002660, pop {r0}/bx r0 at 0x02002676-0x02002678, and two-byte alignment at 0x0200267a-0x0200267b; next prologue is 0x0200267c"
+    },
+    {
+      "overlay": "resource_378",
+      "entry": "0x0200267c",
+      "span_bytes": 116,
+      "evidence": "derived owner boundary from assets/code/resource_378_overlay.s: push {r5,lr} at 0x0200267c, pop {r5}/pop {r0}/bx r0 at 0x020026de-0x020026e2, and the three-word literal pool 0x020026e4-0x020026ef; next prologue is 0x020026f0"
     },
     {
       "overlay": "resource_378",
@@ -2937,9 +2985,27 @@
     },
     {
       "overlay": "resource_399",
+      "entry": "0x02001990",
+      "span_bytes": 42,
+      "evidence": "admitted whole-owner semantic reconstruction; the owner opens with push {lr} at 0x02001990 and returns through pop {r0} / bx r0 at 0x020019b6-0x020019b8; the next independent push {lr} prologue starts at 0x020019bc, leaving only two zero alignment bytes outside this span; all six direct callees and the +6 halfword store were resolved from the local overlay disassembly"
+    },
+    {
+      "overlay": "resource_399",
       "entry": "0x02001fa4",
       "span_bytes": 452,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_39a",
+      "entry": "0x020000ec",
+      "span_bytes": 4,
+      "evidence": "admitted whole-owner semantic reconstruction; complete leaf at 0x020000ec is movs r0,#0 / bx lr with no prologue, pool, call, or argument use"
+    },
+    {
+      "overlay": "resource_39a",
+      "entry": "0x020000f0",
+      "span_bytes": 8,
+      "evidence": "admitted whole-owner semantic reconstruction; leaf getter at 0x020000f0 is ldr r0,[pc,#0] / bx lr and includes its directly referenced pool word 0x0200a8f4 at 0x020000f4; it returns the overlay-local address without dereferencing it"
     },
     {
       "overlay": "resource_39a",
@@ -2985,9 +3051,21 @@
     },
     {
       "overlay": "resource_39a",
+      "entry": "0x02000768",
+      "span_bytes": 136,
+      "evidence": "admitted whole-owner semantic reconstruction; complete saved-link owner from 0x02000768 through bx r0 at 0x020007dc, including alignment and four directly referenced pool words through 0x020007ef; the 0x308 query selects two fully resolved call sequences before the common 0x121/2/finalization tail"
+    },
+    {
+      "overlay": "resource_39a",
       "entry": "0x020007f0",
       "span_bytes": 220,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_39a",
+      "entry": "0x020008cc",
+      "span_bytes": 84,
+      "evidence": "admitted whole-owner semantic reconstruction; complete saved-link owner from 0x020008cc through bx r0 at 0x0200090c, including alignment and its four directly referenced literal words at 0x02000910-0x0200091f; all nine calls and arguments were resolved from the local overlay disassembly"
     },
     {
       "overlay": "resource_39a",
@@ -2997,9 +3075,27 @@
     },
     {
       "overlay": "resource_39a",
+      "entry": "0x02000a10",
+      "span_bytes": 80,
+      "evidence": "admitted whole-owner semantic reconstruction; complete saved-link owner from 0x02000a10 through bx r0 at 0x02000a4e, followed by its four directly referenced pool words through 0x02000a5f; all nine direct calls and their literal arguments were resolved from the local overlay disassembly"
+    },
+    {
+      "overlay": "resource_39a",
+      "entry": "0x02000a60",
+      "span_bytes": 84,
+      "evidence": "admitted whole-owner semantic reconstruction; complete saved-link owner from 0x02000a60 through bx r0 at 0x02000aa0, including its alignment halfword and four directly referenced pool words through 0x02000ab3; all nine direct calls and the negative 80 argument were resolved from the local overlay disassembly"
+    },
+    {
+      "overlay": "resource_39a",
       "entry": "0x02000b04",
       "span_bytes": 196,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_39a",
+      "entry": "0x02000bf4",
+      "span_bytes": 48,
+      "evidence": "admitted whole-owner semantic reconstruction; complete saved-link owner from 0x02000bf4 through the return at 0x02000c1c, including its referenced literal word 0x121 at 0x02000c20 and the required two-byte alignment before that word; all six direct callees and their arguments were resolved from the local overlay disassembly"
     },
     {
       "overlay": "resource_39a",
@@ -3009,9 +3105,33 @@
     },
     {
       "overlay": "resource_39a",
+      "entry": "0x02000d08",
+      "span_bytes": 48,
+      "evidence": "admitted whole-owner semantic reconstruction; complete saved-link owner from 0x02000d08 through bx r0 at 0x02000d30, including the alignment halfword and directly referenced 0x121 literal at 0x02000d34; all six calls and arguments were resolved from the local overlay disassembly"
+    },
+    {
+      "overlay": "resource_39a",
+      "entry": "0x02000e0c",
+      "span_bytes": 52,
+      "evidence": "admitted whole-owner semantic reconstruction; independent saved-link owner from 0x02000e0c through bx r0 at 0x02000e36, including directly referenced literal words 0x121 and 0x315 at 0x02000e38-0x02000e3f; all six calls and arguments were resolved from the local overlay disassembly"
+    },
+    {
+      "overlay": "resource_39a",
+      "entry": "0x02000e40",
+      "span_bytes": 56,
+      "evidence": "admitted whole-owner semantic reconstruction; independent saved-link owner from 0x02000e40 through bx r0 at 0x02000e6c, including its alignment halfword and directly referenced literal words 0x121 and 0x315 at 0x02000e70-0x02000e77; all six calls and the negative 160 argument were resolved from the local overlay disassembly"
+    },
+    {
+      "overlay": "resource_39a",
       "entry": "0x02000ed8",
       "span_bytes": 88,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_39a",
+      "entry": "0x02000fcc",
+      "span_bytes": 42,
+      "evidence": "admitted whole-owner semantic reconstruction; saved-link owner begins at 0x02000fcc and returns through pop {r0} / bx r0 at 0x02000ff2-0x02000ff4, followed by two zero alignment bytes; all six direct callees and the halfword store of 0x4000 at +6 of service zero were resolved from this overlay's disassembly"
     },
     {
       "overlay": "resource_39a",
@@ -3063,6 +3183,24 @@
     },
     {
       "overlay": "resource_39a",
+      "entry": "0x02001948",
+      "span_bytes": 236,
+      "evidence": "admitted whole-owner semantic reconstruction; independent saved-link owner from 0x02001948 through bx r0 at 0x02001a1c, including alignment and its five directly referenced pool words through 0x02001a33; the complete 0x3e/0x3f/0x40/0x41 state dispatch, secondary selector checks, six-argument calls, and four resolved finalizers are represented"
+    },
+    {
+      "overlay": "resource_39a",
+      "entry": "0x02001a34",
+      "span_bytes": 124,
+      "evidence": "admitted whole-owner semantic reconstruction; saved-register owner begins at 0x02001a34 and returns at 0x02001a94-0x02001a98, including alignment and five directly referenced pool words through 0x02001aaf; both state gates, the signed scene halfword at workspace +0x16c, and all four call paths are represented"
+    },
+    {
+      "overlay": "resource_39a",
+      "entry": "0x02001ab0",
+      "span_bytes": 16,
+      "evidence": "admitted whole-owner semantic reconstruction; complete saved-link wrapper at 0x02001ab0-0x02001abe calls Func_0200358a with 0 and -32 and returns through pop {r0} / bx r0"
+    },
+    {
+      "overlay": "resource_39a",
       "entry": "0x02001ad0",
       "span_bytes": 76,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
@@ -3078,6 +3216,12 @@
       "entry": "0x02001b9c",
       "span_bytes": 64,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_39a",
+      "entry": "0x02001bdc",
+      "span_bytes": 42,
+      "evidence": "admitted whole-owner semantic reconstruction; leaf owner starts at 0x02001bdc and ends with bx lr at 0x02001c04, followed by two zero alignment bytes; the five load/add/store groups independently prove the +8/+12/+16 coordinates consume +0x44/+0x48/+0x4c deltas and the +0x18/+0x1c fields consume +0x30/+0x34 deltas"
     },
     {
       "overlay": "resource_39a",
@@ -4482,6 +4626,12 @@
       "entry": "0x0200145c",
       "span_bytes": 124,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3a7",
+      "entry": "0x020014d8",
+      "span_bytes": 108,
+      "evidence": "admitted whole-owner semantic reconstruction; complete saved-register owner from 0x020014d8 through pop {r4,pc} at 0x0200153e, including its directly referenced 0x7fffffff pool word at 0x02001540; local control flow proves the two early invalid checks, the amount range 0..30, the 60-amount scale, direction-controlled negation, and the signed-limit sentinel"
     },
     {
       "overlay": "resource_3a7",
@@ -7629,6 +7779,12 @@
     },
     {
       "overlay": "resource_3c5",
+      "entry": "0x020027f4",
+      "span_bytes": 44,
+      "evidence": "admitted whole-owner semantic reconstruction; complete saved-link owner from push {lr} at 0x020027f4 through pop {r0} / bx r0 at 0x0200281c-0x0200281e; the eight-byte stack frame carries the fifth and sixth arguments (18 and 7) for the first direct call, and all three calls were resolved from the local overlay disassembly"
+    },
+    {
+      "overlay": "resource_3c5",
       "entry": "0x020028a0",
       "span_bytes": 1240,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
@@ -8337,9 +8493,21 @@
     },
     {
       "overlay": "resource_3cd",
+      "entry": "0x02000098",
+      "span_bytes": 8,
+      "evidence": "admitted whole-owner semantic reconstruction; leaf getter is ldr r0,[pc,#0] / bx lr at 0x02000098-0x0200009b and directly references its own pool word 0x02008a58 at 0x0200009c-0x0200009f; it returns that overlay-local address without dereferencing it"
+    },
+    {
+      "overlay": "resource_3cd",
       "entry": "0x020000ec",
       "span_bytes": 296,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3cd",
+      "entry": "0x02000214",
+      "span_bytes": 668,
+      "evidence": "admitted whole-owner semantic reconstruction; the prologue at 0x02000214 saves the high-register state, the single interworking epilogue returns at 0x0200046c, and the next independent prologue is 0x020004b0; the executable body is 602 bytes through 0x0200046d, followed by one alignment halfword and a 64-byte literal pool through 0x020004af referenced by this owner; all 35 import calls, both DMA3 bursts, six independent d-pad arms, and both availability-search loops are represented in semantic/overlays/resource_3cd_c_02000214.c"
     },
     {
       "overlay": "resource_3cd",
@@ -8349,15 +8517,39 @@
     },
     {
       "overlay": "resource_3cd",
+      "entry": "0x020006f8",
+      "span_bytes": 36,
+      "evidence": "admitted whole-owner semantic reconstruction; saved-link owner starts at 0x020006f8 and returns at 0x02000714-0x02000716; the pool word at 0x02000718 is included because this owner's opening load references it, and the next independently owned entry driver starts at 0x0200071c; the two scene-state word offsets, values, and the resolver-confirmed Func_0808a248 import callee were resolved from this overlay's disassembly"
+    },
+    {
+      "overlay": "resource_3cd",
       "entry": "0x0200071c",
       "span_bytes": 76,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay's ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_3cd), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; span read from the disassembly through the trailing literal pool to the next function prologue at 0x02000768, inside the assembled overlay image and not overlapping another recorded owner."
     },
     {
       "overlay": "resource_3cd",
+      "entry": "0x02000768",
+      "span_bytes": 80,
+      "evidence": "admitted whole-owner semantic reconstruction; saved-link owner starts at 0x02000768 and returns at 0x020007a2-0x020007a8; its alignment halfword and three directly referenced resource-address pool words at 0x020007ac-0x020007b7 are included before the next leaf at 0x020007b8; the resolver identifies Func_08015010 x1 followed by Func_08015098 x3, with the five-argument handle creation and three four-argument bindings preserved from the local disassembly"
+    },
+    {
+      "overlay": "resource_3cd",
       "entry": "0x020007b8",
       "span_bytes": 16,
       "evidence": "admitted whole-owner semantic reconstruction; TAIL LEAF surfaced 2026-08-01 by the return-shape rule in ruleTail and by nothing else -- it lies PAST the last recorded owner so sweep D's gap loop never reached it, it opens with no push so sweep C is blind, no bl in the image targets it (overlay_call_targets, a LIVE run with sites>0, not a refusal), and no 4-aligned word in the image holds its published spelling under base+0x8000 with or without the Thumb bit: invisible to all four sweeps at once; HAND-WRITTEN because semantic_regions_sync REJECTS it -- 'no strict inventory row for this owner' -- the inventory being prologue-keyed, so the adoption door is blind in exactly the way the sweep was, and the span here is measured from the ROM rather than taken from an inventory row; SPAN IS 16 BYTES AND NOT 12: the pool word 0x03001f30 at 0x20007c4 is reached by this row's own ldr r3,[pc,#8] (pc 0x20007bc after alignment, plus 8); the far bound is the ROM's -- b500 at 0x20007c8, the next function's prologue; the row dereferences the IWRAM pointer at 0x03001f30 and stores 1 into the BYTE at +53 of that record, a flag set and not a count; WHICH record and WHAT the flag means are NOT decidable from this row and are left as a bounded uncertainty rather than guessed; this overlay's tail already read PROLOGUE-SUSPECT because of the neighbour at 0x020007c8, which has a push -- a tail flagged for one reason is not a tail that has been read; 0 of 0 callees"
+    },
+    {
+      "overlay": "resource_3cd",
+      "entry": "0x020007c8",
+      "span_bytes": 10,
+      "evidence": "admitted whole-owner semantic reconstruction; saved-link wrapper at 0x020007c8 resolves its single import-veneer call to Func_08015340 and returns through pop {r1} / bx r1 at 0x020007ce-0x020007d0; the following zero halfword is alignment before the next prologue"
+    },
+    {
+      "overlay": "resource_3cd",
+      "entry": "0x020007d4",
+      "span_bytes": 10,
+      "evidence": "admitted whole-owner semantic reconstruction; saved-link wrapper at 0x020007d4 resolves its single import-veneer call to Func_08015348 and returns through pop {r1} / bx r1 at 0x020007da-0x020007dc; the following zero halfword is alignment before the import-veneer table at 0x020007e0"
     },
     {
       "overlay": "resource_3ce",
@@ -8400,6 +8592,12 @@
       "entry": "0x02000cf4",
       "span_bytes": 532,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
+    },
+    {
+      "overlay": "resource_3bd",
+      "entry": "0x0200109c",
+      "span_bytes": 860,
+      "evidence": "admitted instruction-complete reviewed reconstruction; saved high-register owner starts at 0x0200109c and returns through pop {r0}/bx r0 at 0x020013ce-0x020013d0, with the directly referenced literal pool through 0x020013f7 before the next owner at 0x020013f8; local CFG audit accounts for all 44 reachable basic blocks, all 44 call sites (18 distinct targets), all 30 branch sites, and all 31 machine stores: 23 semantic memory stores are expressed in C and the eight stack spill stores are explicitly classified as compiler artifacts rather than modeled side effects; literal values and veneer identities were read from resource_3bd's assembled bytes, with no inline assembly, fixed-register trick, or raw translator construct"
     }
   ]
 }

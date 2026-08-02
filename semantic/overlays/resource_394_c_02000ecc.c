@@ -3,9 +3,8 @@ typedef unsigned int u32;
 typedef signed short s16;
 typedef signed int s32;
 
-s32 Func_02001ee2(s32 channel, s32 adjustment);
-s32 Func_02001ef0(s32 channel, s32 adjustment);
-s32 Func_02001efe(s32 channel, s32 adjustment);
+/* Resolved whole-owner call targets. */
+extern s32 Func_03000380();
 
 /*
  * Apply the resource's asymmetric RGB555 colour adjustment.
@@ -20,12 +19,12 @@ u16 Func_02000ecc(u16 color, s32 adjustment)
     s16 blue = (s16)((color >> 10) & 31);
     u32 packed;
 
-    red = (s16)(red + Func_02001ee2(
+    red = (s16)(red + Func_03000380(
         red,
         (s32)((u32)adjustment << 2)
     ));
-    green = (s16)(green - Func_02001ef0(green, adjustment));
-    blue = (s16)(blue - Func_02001efe(blue, adjustment));
+    green = (s16)(green - Func_03000380(green, adjustment));
+    blue = (s16)(blue - Func_03000380(blue, adjustment));
 
     /* Only the increasing channel is explicitly saturated by this owner. */
     if (red > 31)

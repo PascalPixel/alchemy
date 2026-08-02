@@ -250,6 +250,14 @@ s32 Func_020028a0(void)
             second = 8;
             goto place;
         }
+
+        goto special_cases;
+
+place:
+        Func_080091c0(first, second, 1, 1, stack5, stack6);
+        return 0;
+
+special_cases:
         if (index == 4) {
             Func_020009f4(0x01b80000, 0, 0x01220000, 223);  /* 220<<17, 145<<17 */
             stack5 = 27;
@@ -279,8 +287,7 @@ s32 Func_020028a0(void)
     }
 
     if (scene != 174) {
-        Func_0808a100(12, 2);
-        return 0;
+        goto unsupported_scene;
     }
 
     record = Func_0808a080(8);
@@ -340,7 +347,7 @@ gate:
     }
     return 0;
 
-place:
-    Func_080091c0(first, second, 1, 1, stack5, stack6);
+unsupported_scene:
+    Func_0808a100(12, 2);
     return 0;
 }

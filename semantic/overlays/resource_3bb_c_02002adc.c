@@ -17,7 +17,7 @@ typedef int s32;
  * Not found by the structural inventory walk (unindexed): reached only by
  * `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2` rule.
  *
- * The `while (Func_02006c28() != 0) Func_0200690c(1);` loop is the
+ * The `while (Func_080000c0() != 0) Func_080f9048(1);` loop is the
  * compiled "jump to test first" shape, like
  * resource_3bb_c_020029d0.c's poll loop.
  *
@@ -25,65 +25,54 @@ typedef int s32;
  * shape; the two `0x0200cXXX` cells are recorded as opaque addresses.
  */
 
-extern void Func_02006b94(s32 arg0);
-extern void Func_02006b48();
-extern void Func_02006b5c();
-extern void Func_02006a42(s32 arg0);
-extern void Func_02006bc8(s32 arg0);
-extern void Func_02004eda(s32 arg0);
-extern void Func_02005466(s32 arg0, s32 arg1);
-extern void Func_02006a62(s32 arg0);
-extern void Func_02006a6c(s32 arg0);
-extern void Func_02006bf4(s32 arg0);
-extern void Func_02004f06(s32 arg0);
-extern void Func_02005492(s32 arg0, s32 arg1);
-extern void Func_02006a8a(s32 arg0);
-extern void Func_02006b64(s32 arg0, s32 arg1, s32 arg2);
-extern void Func_0200690c(s32 arg0);
-extern s32 Func_02006c28(void);
-extern void Func_02006c2a(s32 arg0);
-extern void Func_02006ab0(s32 arg0);
-extern void Func_02006c36(s32 arg0);
-extern void Func_02006bf2();
-extern void Func_02006bfe();
+extern void Func_080f9010(s32 arg0);
+extern void Func_0808a360(void);
+extern void Func_0808a370(void);
+extern void Func_0808a010(s32 arg0);
+extern void Func_020023bc(s32 arg0);
+extern void Func_02002940(s32 arg0, s32 arg1);
+extern void Func_0808a1e8(s32 arg0, s32 arg1, s32 arg2);
+extern s32 Func_080000c0(void);
+extern void Func_080f9048(s32 arg0);
+extern void Func_0808a368(void);
 
 void Func_02002adc(s32 arg0)
 {
     s32 absScaled = (arg0 < 0 ? -arg0 : arg0) * 60;
     s32 trailingArg;
 
-    Func_02006b94(247);
-    Func_02006b48();
-    Func_02006b5c();
+    Func_080f9010(247);
+    Func_0808a360();
+    Func_0808a370();
 
     *(u16 *)(0x0200cac8 + 26) = (u16)(arg0 * 60);
     *(u16 *)(0x0200c0f6 + 26) = (u16)absScaled;
 
     if (arg0 < 0) {
-        Func_02006a42(30);
-        Func_02006bc8(86);
-        Func_02004eda(8);
-        Func_02005466(3, 1);
-        Func_02006a62(-60 * arg0 + 60);
+        Func_0808a010(30);
+        Func_080f9010(86);
+        Func_020023bc(8);
+        Func_02002940(3, 1);
+        Func_0808a010(-60 * arg0 + 60);
         trailingArg = 0;
     } else {
-        Func_02006a6c(30);
-        Func_02006bf4(arg0 + 0x5a);
-        Func_02004f06(4);
-        Func_02005492(3, 0);
-        Func_02006a8a(absScaled + 60);
+        Func_0808a010(30);
+        Func_080f9010(arg0 + 0x5a);
+        Func_020023bc(4);
+        Func_02002940(3, 0);
+        Func_0808a010(absScaled + 60);
         trailingArg = 8;
     }
 
-    Func_02006b64(trailingArg, 0x105, 0);
+    Func_0808a1e8(trailingArg, 0x105, 0);
 
-    while (Func_02006c28() != 0) {
-        Func_0200690c(1);
+    while (Func_080000c0() != 0) {
+        Func_080f9048(1);
     }
 
-    Func_02006c2a(19);
-    Func_02006ab0(30);
-    Func_02006c36(0x121);
-    Func_02006bf2();
-    Func_02006bfe();
+    Func_080f9010(19);
+    Func_0808a010(30);
+    Func_080f9010(0x121);
+    Func_0808a368();
+    Func_0808a370();
 }

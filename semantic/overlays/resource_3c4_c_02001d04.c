@@ -91,6 +91,9 @@ void Func_02001d04(void)
     s32 slot;
     s32 chosen;
     s32 scan;
+    s32 other;
+    s32 target;
+    u8 *shaken;
     s32 saved[3];          /* sl -> sp+8, sp+12, sp+16 */
 
     /* No argument register is set. */
@@ -105,10 +108,32 @@ void Func_02001d04(void)
             Func_02001038(Func_0808a080(slot));
             Func_0808a0f0(slot, 0, 0);
             Func_080770c8(index + 512);
-            Func_0808a020();
-            return;
+            goto close_sequence;
         }
 
+        /* The swap body precedes the condition that reaches it in the
+         * original address layout. */
+        goto check_candidate;
+
+    swap_with_prior:
+        other = scan + 12;
+
+        saved[0] = Func_0808a080(slot)->x;
+        saved[1] = Func_0808a080(slot)->y;
+        saved[2] = Func_0808a080(slot)->z;
+
+        Func_0808a080(slot)->x = Func_0808a080(other)->x;
+        Func_0808a080(slot)->y = Func_0808a080(other)->y;
+        Func_0808a080(slot)->z = Func_0808a080(other)->z;
+
+        Func_0808a080(other)->x = saved[0];
+        Func_0808a080(other)->y = saved[1];
+        Func_0808a080(other)->z = saved[2];
+
+        chosen = scan;
+        goto reset_chosen;
+
+    check_candidate:
         if ((Func_0808a080(slot)->z >> 20) != 9) continue;
         if (Func_080770c0(index + 512) != 0) continue;
 
@@ -126,74 +151,57 @@ void Func_02001d04(void)
          * first such slot swaps positions with it. */
         for (scan = 0; scan < index; scan++) {
             if (Func_080770c0(scan + 512) == 0) {
-                s32 other = scan + 12;
-
-                saved[0] = Func_0808a080(slot)->x;
-                saved[1] = Func_0808a080(slot)->y;
-                saved[2] = Func_0808a080(slot)->z;
-
-                Func_0808a080(slot)->x = Func_0808a080(other)->x;
-                Func_0808a080(slot)->y = Func_0808a080(other)->y;
-                Func_0808a080(slot)->z = Func_0808a080(other)->z;
-
-                Func_0808a080(other)->x = saved[0];
-                Func_0808a080(other)->y = saved[1];
-                Func_0808a080(other)->z = saved[2];
-
-                chosen = scan;
-                break;
+                goto swap_with_prior;
             }
         }
 
-        {
-            s32 target = chosen + 12;
-            u8 *shaken;
+    reset_chosen:
+        target = chosen + 12;
 
-            Func_0808a080(target)->w20 = 0;
-            Func_0808a080(target)->w40 = 0;
-            Func_0808a080(target)->w60 = (s32)0x80000000;
-            ((u8 *)Func_0808a080(target))[85] = 0;
-            *(u16 *)((u8 *)Func_0808a080(target) + 100) = 0;
+        Func_0808a080(target)->w20 = 0;
+        Func_0808a080(target)->w40 = 0;
+        Func_0808a080(target)->w60 = (s32)0x80000000;
+        ((u8 *)Func_0808a080(target))[85] = 0;
+        *(u16 *)((u8 *)Func_0808a080(target) + 100) = 0;
 
-            /* 192 << 10 and 192 << 7. */
-            Func_0808a208(0x30000, 0x6000);
+        /* 192 << 10 and 192 << 7. */
+        Func_0808a208(0x30000, 0x6000);
 
-            /* No argument register is set; the result's byte at +85 is
-             * cleared. */
-            shaken = Func_0808a228();
-            shaken[85] = 0;
+        /* No argument register is set; the result's byte at +85 is cleared. */
+        shaken = Func_0808a228();
+        shaken[85] = 0;
 
-            /* 168 << 16, 128 << 12, 184 << 16. */
-            Func_0808a210(0x00a80000, 0x00080000, 0x00b80000, 1);
+        /* 168 << 16, 128 << 12, 184 << 16. */
+        Func_0808a210(0x00a80000, 0x00080000, 0x00b80000, 1);
 
-            /* No argument register is set. */
-            Func_0808a218();
+        /* No argument register is set. */
+        Func_0808a218();
 
-            Func_02001c2c(target);
+        Func_02001c2c(target);
 
-            /* The two counter slots move in opposite directions depending on
-             * which side of whole-tile x 8 the pillar came to rest. */
-            if ((Func_0808a080(target)->x >> 20) == 8) {
-                *(u16 *)((u8 *)Func_0808a080(10) + 100) += 1;
-                *(u16 *)((u8 *)Func_0808a080(11) + 100) -= 1;
-            } else {
-                *(u16 *)((u8 *)Func_0808a080(10) + 100) -= 1;
-                *(u16 *)((u8 *)Func_0808a080(11) + 100) += 1;
-            }
-
-            /* 0x02009a99 is Func_02001a98 plus the Thumb bit: the per-frame
-             * handler installed at record+108. */
-            *(unsigned int *)((u8 *)Func_0808a080(target) + 108) = 0x02009a99;
-
-            Func_02001abc(40);
-
-            ((u8 *)Func_0808a080(target))[35] |= 2;
-
-            Func_080770c8(chosen + 512);
+        /* The two counter slots move in opposite directions depending on
+         * which side of whole-tile x 8 the pillar came to rest. */
+        if ((Func_0808a080(target)->x >> 20) == 8) {
+            *(u16 *)((u8 *)Func_0808a080(10) + 100) += 1;
+            *(u16 *)((u8 *)Func_0808a080(11) + 100) -= 1;
+        } else {
+            *(u16 *)((u8 *)Func_0808a080(10) + 100) -= 1;
+            *(u16 *)((u8 *)Func_0808a080(11) + 100) += 1;
         }
+
+        /* 0x02009a99 is Func_02001a98 plus the Thumb bit: the per-frame
+         * handler installed at record+108. */
+        *(unsigned int *)((u8 *)Func_0808a080(target) + 108) = 0x02009a99;
+
+        Func_02001abc(40);
+
+        ((u8 *)Func_0808a080(target))[35] |= 2;
+
+        Func_080770c8(chosen + 512);
 
         break;             /* every path through here leaves the loop */
     }
 
+close_sequence:
     Func_0808a020();
 }

@@ -38,11 +38,7 @@ typedef unsigned char u8;
  * this package's grid conversion, passed as arguments five and six of the
  * six-argument placement ABI proven by the byte-exact sibling 0x020010cc.
  *
- * All thirteen `bl` sites reach thirteen distinct targets, all accounted for:
- * 0x02007186, 0x0200718e, 0x020071a6, 0x020071b4, 0x02007308, 0x0200712e,
- * 0x02007142, 0x02007230, 0x02007236, 0x0200736a, 0x02007224, 0x020071de,
- * 0x02007242.  Import naming follows the note in
- * resource_3c8_c_020002f0.c.
+ * All thirteen call sites use their resolved resident-service identities.
  */
 
 struct Actor_020022c8 {
@@ -57,20 +53,13 @@ struct Actor_020022c8 {
 /* In-image height table, indexed by an actor's kind halfword. */
 extern s32 Data_0200d148[];
 
-/* Used for their return values. */
-struct Actor_020022c8 *Func_02007186();
-struct Actor_020022c8 *Func_0200718e();
-void Func_020071a6();
-void Func_020071b4();
-void Func_02007308();
-void Func_0200712e();
-void Func_02007142();
-void Func_02007230();
-void Func_02007236();
-void Func_0200736a();
-struct Actor_020022c8 *Func_02007224();
-void Func_020071de();
-void Func_02007242();
+struct Actor_020022c8 *Func_0808a080();
+void Func_0808a090();
+void Func_080f9010();
+void Func_08009150();
+void Func_0808a0e8();
+void Func_080091c0();
+void Func_0808a010();
 
 /* Old-style declarations: the imports' real interfaces are not known here. */
 
@@ -82,36 +71,36 @@ void Func_020022c8(s32 announce)
     u32 slot;
     s32 height;
 
-    first = Func_02007186(8);
-    second = Func_0200718e(9);
+    first = Func_0808a080(8);
+    second = Func_0808a080(9);
 
-    Func_020071a6(8, 0x8000, 0x4000);
-    Func_020071b4(9, 0x8000, 0x4000);
+    Func_0808a090(8, 0x8000, 0x4000);
+    Func_0808a090(9, 0x8000, 0x4000);
 
     if (announce != 0) {
-        Func_02007308(180);
+        Func_080f9010(180);
     }
 
-    Func_0200712e(first, first->x, Data_0200d148[first->kind], first->z);
-    Func_02007142(second, second->x, Data_0200d148[second->kind], second->z);
+    Func_08009150(first, first->x, Data_0200d148[first->kind], first->z);
+    Func_08009150(second, second->x, Data_0200d148[second->kind], second->z);
 
-    Func_02007230(8);
-    Func_02007236(9);
+    Func_0808a0e8(8);
+    Func_0808a0e8(9);
 
     first->y = Data_0200d148[first->kind];
     second->y = Data_0200d148[second->kind];
 
     if (announce != 0) {
-        Func_0200736a(0x121);
+        Func_080f9010(0x121);
     }
 
     for (slot = 0; slot <= 4; slot++) {
-        member = Func_02007224(slot + 8);
+        member = Func_0808a080(slot + 8);
         height = member->y / 0x10000;
         if (height < 0 && height > -30) {
-            Func_020071de(4, 19, 1, 1, member->x >> 20, member->z >> 20);
+            Func_080091c0(4, 19, 1, 1, member->x >> 20, member->z >> 20);
         }
     }
 
-    Func_02007242(announce);
+    Func_0808a010(announce);
 }

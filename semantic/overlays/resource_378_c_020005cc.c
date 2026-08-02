@@ -63,41 +63,47 @@ extern void Func_0808a348(s32 arg0);
 
 s32 Func_020005cc(void)
 {
+    s16 selector = Data_02000240[225];
+    s32 raiseSharedFlag = 0;
+
     *(s32 *)(Data_03001ebc + 448) = 521;
     Func_0808a330(0x10000, 0);
     Func_0808a348(1);
     Func_0808a010(1);
-    switch (Data_02000240[225]) {
+    switch (selector) {
     case 10:
     case 11:
     case 12:
         if (Func_080770c0(0x855) != 0) {
             Func_0808a0f0(10, 0xc80000, 0x500000);
         }
-        Func_080770d0(0x12f);
+        raiseSharedFlag = 1;
         break;
     case 20:
         Func_02003270();
         if (Func_080770c0(0x109) == 0) {
             Func_0200088c();
         }
-        Func_080770d0(0x12f);
+        raiseSharedFlag = 1;
         break;
-    case 21:
+    case 29:
+    case 32:
+    case 35:
+        raiseSharedFlag = 1;
+        break;
+    default:
+        break;
+    }
+    if (raiseSharedFlag != 0) {
+        Func_080770d0(0x12f);
+    }
+    if (selector == 21) {
         Func_02003270();
         Func_080770c8(513);
         if (Func_080770c0(0x109) == 0) {
             Func_0200088c();
         }
         Func_080770d0(0x12f);
-        break;
-    case 29:
-    case 32:
-    case 35:
-        Func_080770d0(0x12f);
-        break;
-    default:
-        break;
     }
     return 0;
 }

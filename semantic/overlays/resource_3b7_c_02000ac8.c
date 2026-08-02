@@ -192,12 +192,27 @@ menu:
             line = 0xe45;
             goto say_and_retry;
         }
-        if (Func_08077308() == 0) {
-            Func_0808a170(0xe47);
-            Func_0808a178(-1, 0);
-            if (Func_0808a070(0, 0) != 0) {
-                goto done;
-            }
+        goto confirm_ticket;
+    }
+    goto play;
+
+say_and_retry:
+    Func_0808a170(line);
+    Func_0808a180(-1, 0);
+    Func_080000c0(1);
+    goto menu;
+
+input_accepted:
+    Func_080f9010(0x70);
+    aborted = 0;
+    goto input_finished;
+
+confirm_ticket:
+    if (Func_08077308() == 0) {
+        Func_0808a170(0xe47);
+        Func_0808a178(-1, 0);
+        if (Func_0808a070(0, 0) != 0) {
+            goto done;
         }
     }
 
@@ -207,21 +222,23 @@ play:
     Func_08015080(0xe4d, window, 0, 8);
     Func_080000c0(5);
     Func_080f9010(0x74);
+    goto input_check;
 
-    for (;;) {
-        if ((*(volatile s32 *)0x03001c94 & 1) != 0) {       /* A */
-            Func_080f9010(0x70);
-            aborted = 0;
-            break;
-        }
-        if ((*(volatile s32 *)0x03001c94 & 2) != 0) {       /* B */
-            Func_080f9010(0x71);
-            aborted = -1;
-            break;
-        }
-        Func_080000c0(1);
+input_wait:
+    Func_080000c0(1);
+
+input_check:
+    if ((*(volatile s32 *)0x03001c94 & 1) != 0) {       /* A */
+        goto input_accepted;
+    }
+    if ((*(volatile s32 *)0x03001c94 & 2) == 0) {       /* B */
+        goto input_wait;
     }
 
+    Func_080f9010(0x71);
+    aborted = -1;
+
+input_finished:
     Func_08015018(window, 2);
 
     if (aborted == -1) {
@@ -236,13 +253,10 @@ play:
 
     round = Func_0200173c(choice);
 
-    if (choice == 0) {
-        if (round == 4) {
-            Func_080f9010(0x71);
-            Func_0808a010(10);
-            goto done;
-        }
-
+    if (choice != 0) {
+        goto weighted_draw;
+    }
+    if (round != 4) {
         Func_08077230(Data_0200a00c[round]);
         Func_080f9010(0x5b);
         Func_08015120(Data_0200a00c[round], 5);
@@ -251,6 +265,11 @@ play:
         goto done;
     }
 
+    Func_080f9010(0x71);
+    Func_0808a010(10);
+    goto done;
+
+weighted_draw:
     /* Weighted draw over the first (round * 3) + 3 weights. */
     total = 0;
     for (index = 0; index < round * 3 + 3; index++) {
@@ -287,10 +306,4 @@ play:
 done:
     Func_0808a020();
     return 0;
-
-say_and_retry:
-    Func_0808a170(line);
-    Func_0808a180(-1, 0);
-    Func_080000c0(1);
-    goto menu;
 }

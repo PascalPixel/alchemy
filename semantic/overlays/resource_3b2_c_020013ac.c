@@ -72,11 +72,7 @@ void Func_020013ac(void)
     s32 group;
 
     if (Func_080770c0(Data_02000240[224] + (0x8c8 - 0x7e)) != 0) {
-        /* Already recruited: show the canned line and leave. */
-        Func_08009178(Data_0200b2bc, 44, 7);
-        Func_080f9010(183);
-        Func_0808a248(3);
-        return;
+        goto already_recruited;
     }
 
     Func_0808a018();
@@ -113,4 +109,11 @@ void Func_020013ac(void)
     }
 
     Func_0808a020();
+    return;
+
+already_recruited:
+    /* Already recruited: show the canned line and leave. */
+    Func_08009178(Data_0200b2bc, 44, 7);
+    Func_080f9010(183);
+    Func_0808a248(3);
 }

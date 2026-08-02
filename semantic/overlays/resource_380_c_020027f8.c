@@ -697,11 +697,17 @@ void Func_020027f8(void)
     Func_0808a1b8(5, 0, 30);
     Func_0808a178(5, 0);
     Func_0808a1b8(0, 0x8000, 0);
-    while (Func_0808a070(0, 0) != 0) {
+
+    goto checkRepeatPrompt;
+repeatPrompt:
         Func_0808a170(0x1068);
         Func_0808a1e8(5, 0x107, 0);
         Func_0808a128(5, 4, 60);
         Func_0808a178(5, 0);
+
+checkRepeatPrompt:
+    if (Func_0808a070(0, 0) != 0) {
+        goto repeatPrompt;
     }
     Func_0808a170(0x1069);
     Func_0808a010(20);

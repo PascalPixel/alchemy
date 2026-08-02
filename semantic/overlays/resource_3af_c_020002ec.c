@@ -106,37 +106,7 @@ s32 Func_020002ec(u8 *object)
 {
     u8 state = object[0x62];
 
-    if (state == 0) {
-        if (*(s16 *)(object + 100) != 0) {
-            *(s32 *)(object + 76) -= (s32)(((u32)Func_080000f8() << 12) >> 16);
-            if (*(s32 *)(object + 76) < -0x4000)
-                *(u16 *)(object + 100) = state;        /* provably 0 here */
-        } else {
-            *(s32 *)(object + 76) += (s32)(((u32)Func_080000f8() << 12) >> 16);
-            if (*(s32 *)(object + 76) > 0x4000)        /* 128 << 7 */
-                *(u16 *)(object + 100) = 1;
-        }
-
-        if ((u32)(*(s32 *)(object + 8) + 0xff17ffff) <= 0x0027fffe)
-            *(s32 *)(object + 8) += *(s32 *)(object + 76);
-
-        if (*(s16 *)(object + 102) != 0) {
-            *(s32 *)(object + 12) =
-                *(s32 *)(object + 12)
-                - (s32)(((u32)Func_080000f8() << 15) >> 16) - 0x8000;
-            if (*(s32 *)(object + 12) < 0)
-                *(u16 *)(object + 102) = 0;
-        } else {
-            *(s32 *)(object + 12) =
-                *(s32 *)(object + 12)
-                + (s32)(((u32)Func_080000f8() << 15) >> 16) + 0x8000;
-            if (*(s32 *)(object + 12) > 0x80000)       /* 128 << 12 */
-                *(u16 *)(object + 102) = 1;
-        }
-        goto tail;
-    }
-
-    switch (state) {
+    if (state != 0) switch (state) {
     case 1:
         *(s32 *)(object + 48) = 0x40000;               /* 128 << 11, 4.0 */
         *(s32 *)(object + 52) = 0x20000;               /* 128 << 10, 2.0 */
@@ -195,6 +165,35 @@ bump:
 
     default:
         break;
+    }
+
+    if (state == 0) {
+        if (*(s16 *)(object + 100) != 0) {
+            *(s32 *)(object + 76) -= (s32)(((u32)Func_080000f8() << 12) >> 16);
+            if (*(s32 *)(object + 76) < -0x4000)
+                *(u16 *)(object + 100) = state;        /* provably 0 here */
+        } else {
+            *(s32 *)(object + 76) += (s32)(((u32)Func_080000f8() << 12) >> 16);
+            if (*(s32 *)(object + 76) > 0x4000)        /* 128 << 7 */
+                *(u16 *)(object + 100) = 1;
+        }
+
+        if ((u32)(*(s32 *)(object + 8) + 0xff17ffff) <= 0x0027fffe)
+            *(s32 *)(object + 8) += *(s32 *)(object + 76);
+
+        if (*(s16 *)(object + 102) != 0) {
+            *(s32 *)(object + 12) =
+                *(s32 *)(object + 12)
+                - (s32)(((u32)Func_080000f8() << 15) >> 16) - 0x8000;
+            if (*(s32 *)(object + 12) < 0)
+                *(u16 *)(object + 102) = 0;
+        } else {
+            *(s32 *)(object + 12) =
+                *(s32 *)(object + 12)
+                + (s32)(((u32)Func_080000f8() << 15) >> 16) + 0x8000;
+            if (*(s32 *)(object + 12) > 0x80000)       /* 128 << 12 */
+                *(u16 *)(object + 102) = 1;
+        }
     }
 
 tail:

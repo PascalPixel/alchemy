@@ -151,13 +151,13 @@ void Func_020005dc(void)
     Func_0808a1b8(0, 0xe000, 0);                        /* 224 << 8 */
 
     /* Entered at the TEST; the body can run zero times. */
-    while (Func_0808a070(0, 0) != 0) {
+    do {
         Func_0808a1e8(12, 256, 60);
         Func_0808a170(0x1724);
         Func_0808a188(12, 0, 10);
         Func_0808a130(12, 2);
         Func_0808a178(12, 0);
-    }
+    } while (Func_0808a070(0, 0) != 0);
 
     Func_0808a010(10);
     Func_0808a1b8(11, 0x3000, 0);

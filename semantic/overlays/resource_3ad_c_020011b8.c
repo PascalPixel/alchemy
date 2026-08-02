@@ -78,30 +78,10 @@ void Func_020011b8(void)
 
 top:                                                    /* 0x0200120c */
     if ((Func_020012ac() & 0xff) == 0) {
-        /* 0x0200124e */
-        if ((Func_020012c4() & 0xff) != 0) {
-            if ((Func_020012f0() & 0xff) == 0) {
-                retryFromStep134c = 1;                  /* 0x0200122c */
-                goto step134c;
-            }
-            goto finishAffirmative;                     /* 0x02001296 */
-        }
-
-        /* 0x02001264 */
-        if ((Func_02001368() & 0xff) == 0) {
-            /* 0x0200126e: repeat the prompt with the second line pair. */
-            line = 0x254b;
-            Func_0808a170(line);
-            line += 1;
-            Func_0808a180(2, 0);
-            Func_0808a170(line);
-            Func_0808a178(1, 0);
-            goto top;
-        }
-        /* falls through to the 0x02001216 arm */
+        goto step12c4;
     }
 
-    /* 0x02001216 */
+step1320:                                               /* 0x02001216 */
     if ((Func_02001320() & 0xff) == 0) {
         goto finishNegative;                            /* 0x02001290 */
     }
@@ -110,11 +90,14 @@ top:                                                    /* 0x0200120c */
     retryFromStep134c = 0;
     if ((Func_0200141c() & 0xff) == 0) {
         retryFromStep134c = 1;
+        goto step134c;
+    }
+    goto step1394;
+
 step134c:                                               /* 0x0200122e */
-        Func_0200134c();
-        if (Func_0808a070(0, 0) == 0) {
-            goto finishNegative;
-        }
+    Func_0200134c();
+    if (Func_0808a070(0, 0) == 0) {
+        goto finishNegative;
     }
 
     /*
@@ -122,10 +105,34 @@ step134c:                                               /* 0x0200122e */
      * not the retry path" outcomes fall to the same exit, so there is exactly
      * one call site here despite three predecessors.
      */
+step1394:
     if ((Func_02001394() & 0xff) == 0 && retryFromStep134c != 0) {
         goto step134c;
     }
     goto finishAffirmative;
+
+step12c4:                                               /* 0x0200124e */
+    if ((Func_020012c4() & 0xff) != 0) {
+        if ((Func_020012f0() & 0xff) == 0) {
+            retryFromStep134c = 1;                      /* 0x0200122c */
+            goto step134c;
+        }
+        goto finishAffirmative;
+    }
+
+    /* 0x02001264 */
+    if ((Func_02001368() & 0xff) != 0) {
+        goto step1320;
+    }
+
+    /* 0x0200126e: repeat the prompt with the second line pair. */
+    line = 0x254b;
+    Func_0808a170(line);
+    line += 1;
+    Func_0808a180(2, 0);
+    Func_0808a170(line);
+    Func_0808a178(1, 0);
+    goto top;
 
 finishNegative:                                         /* 0x02001290 */
     Func_02001760();

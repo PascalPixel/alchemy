@@ -88,6 +88,7 @@ void Func_0808a158();
 void Func_02004f60(void)
 {
     s16 mode;
+    s32 install_id;
     u8 *state;
 
     Func_02005470();
@@ -113,21 +114,14 @@ void Func_02004f60(void)
         Func_080000d0((Task_02004f60)Func_02001718, 200 << 4);
         Func_080000d0((Task_02004f60)Func_0200175c, 200 << 4);
         Func_080000d0((Task_02004f60)Func_020017bc, 200 << 4);
-        Func_08009258(224 << 4);
-        break;
+        install_id = 224;
+        goto install_mode;
 
     case 12:
     case 19:
         *(s32 *)(state + 0x1C0) = 0x209;
-        Func_08009258(192 << 4);
-        break;
-
-    case 13:
-    case 14:
-    case 15:
-        *(s32 *)(state + 0x1C0) = 0x200;
-        Func_080000d0((Task_02004f60)Func_0200169c, 200 << 4);
-        break;
+        install_id = 192;
+        goto install_mode;
 
     case 16:
     case 17:
@@ -139,15 +133,26 @@ void Func_02004f60(void)
         Func_08009128();
         Func_080000c0(1);
         Func_080091b8(101, 9, 10, 8, 110, 9);
-        Func_08009258(224 << 4);
-        break;
+        install_id = 224;
+
+install_mode:
+        Func_08009258(install_id << 4);
+        goto tail;
+
+    case 13:
+    case 14:
+    case 15:
+        *(s32 *)(state + 0x1C0) = 0x200;
+        Func_080000d0((Task_02004f60)Func_0200169c, 200 << 4);
+        goto tail;
 
     default:
         *(s32 *)(state + 0x1C0) = 0x200;
         Func_08009258(224 << 4);
-        break;
+        goto tail;
     }
 
+tail:
     Func_0808a158(18, 1);
     Func_0808a158(17, 1);
     Func_0808a158(21, 1);

@@ -65,11 +65,11 @@ void Func_02002508(void)
     Func_0808a018();
 
     biased = biased + 0xffff5fff;
-    if (biased > 0x3ffe) {
+    if (biased <= 0x3ffe) {
+        Func_080b0010(13);
+    } else {
         Func_0808a170(0x1a1c);
         Func_0808a180(13, 0);
-    } else {
-        Func_080b0010(13);
     }
 
     Func_0808a020();

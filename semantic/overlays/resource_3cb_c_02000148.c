@@ -79,17 +79,12 @@ typedef signed int s32;
 void Func_080770c8();
 void Func_080770d0();
 void Func_02000128();
+void Func_03000164();
 
 /* Used for their return values. */
 s32 Func_080770c0();
 s32 Func_0200008c();
 s32 *Func_0808a080();
-
-/* The relocated IWRAM helper reached through this overlay's `bx r7` thunk.
- * The pool word IS the code address — `ldr r7, [pc, ...]` loads 0x03000164
- * itself and `bx r7` branches to it — so this is a cast, not a load through a
- * pointer cell. */
-typedef void (*RelocatedHelper_02000148)();
 
 s32 Func_02000148(void)
 {
@@ -110,14 +105,12 @@ s32 Func_02000148(void)
         if (Func_080770c0(0x303) == 0) {
             *step = *step + 1;
             if ((s32)*step > 25) {
-                RelocatedHelper_02000148 clear =
-                    (RelocatedHelper_02000148)0x03000164;
                 unsigned char *record = (unsigned char *)0x02002024;
                 s32 remaining = 3;
 
                 do {
                     remaining--;
-                    clear(record, 20);
+                    Func_03000164(record, 20);
                     record += 24;
                 } while (remaining >= 0);
 

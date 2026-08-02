@@ -103,48 +103,61 @@ s32 Func_02000e10(s32 speaker)
 
     chooser = Func_08015010(0, 0, 6, 4, 2);
 
-    for (;;) {
-        if (selection != painted) {
-            Func_08015060(chooser);
-            Func_080150a0(selection, 3, chooser, 0, 0);
-            painted = selection;
-        }
+    /* The frame wait is the body of a bottom-tested input loop. */
+    goto paintSelection;
 
-        if ((*cursorKeys & 0x20) != 0) {
-            selection--;
-        }
-        if ((*cursorKeys & 0x10) != 0) {
-            selection++;
-        }
-        if (selection < 0) {
-            selection = 0;
-        }
+waitForInput:
+    if ((*buttonKeys & 2) != 0) {
+        selection = -1;
+        goto selectionMade;
+    }
+    Func_080000c0(1);
 
-        if ((*buttonKeys & 1) != 0) {
-            break;
-        }
-
-        if ((*buttonKeys & 2) != 0) {
-            selection = -1;
-            break;
-        }
-
-        Func_080000c0(1);
+paintSelection:
+    if (selection != painted) {
+        Func_08015060(chooser);
+        Func_080150a0(selection, 3, chooser, 0, 0);
+        painted = selection;
     }
 
+    if ((*cursorKeys & 0x20) != 0) {
+        selection--;
+    }
+    if ((*cursorKeys & 0x10) != 0) {
+        selection++;
+    }
+    if (selection < 0) {
+        selection = 0;
+    }
+
+    if ((*buttonKeys & 1) != 0) {
+        goto selectionMade;
+    }
+    goto waitForInput;
+
+selectionMade:
     Func_08015018(chooser, 1);
 
     if (selection < 0) {
         outcomeCue = 0x98a;
+        goto emitChosenOutcome;
     } else if (Func_080b5110(selection) != 0) {
         outcomeCue = 0x98b;
-    } else {
-        outcomeCue = 0x98c;
+        goto emitChosenOutcome;
     }
+    goto emitZeroOutcome;
 
+emitChosenOutcome:
+    /* Cancel and nonzero choices share this physical cue/portrait pair. */
     Func_0808a170(outcomeCue);
     Func_0808a180(9, 0);
+    goto outcomeComplete;
 
+emitZeroOutcome:
+    Func_0808a170(0x98c);
+    Func_0808a180(9, 0);
+
+outcomeComplete:
     Func_080000c0(10);
     return Func_0808a020();
 }

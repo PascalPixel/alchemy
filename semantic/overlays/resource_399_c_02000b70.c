@@ -237,20 +237,27 @@ s32 Func_02000b70(void)
         goto emit_pause;
     }
 
+    if (step == 3 && Func_080770c0(0x881) != 0) {
+        Func_0808a0f0(15, 230 << 17, 129 << 17);
+        Func_0808a1e0(15, 2);
+        record = Func_0808a080(15);
+        record[89] |= 4;
+        Func_0808a0f0(14, 204 << 17, 132 << 17);
+        record = Func_0808a080(14);
+        *(u16 *)(record + 6) = 0x1000;
+        pose_sel = 12;
+        pose_a = 26;
+        pose_b = 70;
+        goto emit_pose;
+    }
+    goto after_emit_pose;
+
+emit_pose:
+    Func_08009180(pose_sel, 125, pose_a, pose_b, 3, 3);
+    return 0;
+
+after_emit_pose:
     if (step == 3) {
-        if (Func_080770c0(0x881) != 0) {
-            Func_0808a0f0(15, 230 << 17, 129 << 17);
-            Func_0808a1e0(15, 2);
-            record = Func_0808a080(15);
-            record[89] |= 4;
-            Func_0808a0f0(14, 204 << 17, 132 << 17);
-            record = Func_0808a080(14);
-            *(u16 *)(record + 6) = 0x1000;
-            pose_sel = 12;
-            pose_a = 26;
-            pose_b = 70;
-            goto emit_pose;
-        }
         Func_0808a0f0(14, 230 << 17, 129 << 17);
         Func_0808a1e0(14, 2);
         record = Func_0808a080(14);
@@ -261,6 +268,13 @@ s32 Func_02000b70(void)
         selector = 15;
         goto emit_pause;
     }
+    goto after_emit_pause;
+
+emit_pause:
+    Func_0808a100(selector, 5);
+    return 0;
+
+after_emit_pause:
 
     if (step != 7) {
         return 0;
@@ -282,14 +296,4 @@ s32 Func_02000b70(void)
     Func_0808a0f0(20, 161 << 18, 166 << 16);
     return 0;
 
-    /* The two shared call sites; see the header note.  Both are entered only
-     * by the `goto`s above, and the stack arguments of the first are r5, which
-     * still holds the step value 3 on both paths that reach it. */
-emit_pose:
-    Func_08009180(pose_sel, 125, pose_a, pose_b, 3, 3);
-    return 0;
-
-emit_pause:
-    Func_0808a100(selector, 5);
-    return 0;
 }

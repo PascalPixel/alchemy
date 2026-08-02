@@ -107,6 +107,8 @@ extern void Func_02004698(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
 s32 Func_02002758(void)
 {
+    s32 callback_to_install;
+
     *(s32 *)(Data_03001ebc + 448) = 521;
 
     switch (Data_02000240[225]) {
@@ -114,19 +116,6 @@ s32 Func_02002758(void)
         Func_0808a080(8)[85] = 0;
         *(s32 *)(Func_0808a080(8) + 12) = 0;
         *(s32 *)(Func_0808a080(8) + 20) = 0;
-        break;
-
-    case 7:
-    case 11:
-        if (Func_080770c0(0x855) != 0) {
-            Func_0808a0f0(18, 0x2380000, 0x2880000);
-            Func_0808a098(18, 1);
-            Func_0808a1b8(18, 0x4000, 0);
-            Func_02004698(231, 0x2380000, 0x100000, 0x2a00000);
-            Func_080000d0(0x0200a71d, 3200);
-        } else if (Func_080770c0(0x853) != 0) {
-            Func_0808a0f0(18, 0, 0);
-        }
         break;
 
     case 10:
@@ -144,13 +133,36 @@ s32 Func_02002758(void)
         }
         break;
 
+    case 7:
+    case 11:
+        if (Func_080770c0(0x855) != 0) {
+            Func_0808a0f0(18, 0x2380000, 0x2880000);
+            Func_0808a098(18, 1);
+            Func_0808a1b8(18, 0x4000, 0);
+            Func_02004698(231, 0x2380000, 0x100000, 0x2a00000);
+            callback_to_install = 0x0200a71d;
+            goto install_callback;
+        } else if (Func_080770c0(0x853) != 0) {
+            Func_0808a0f0(18, 0, 0);
+        }
+        break;
+
     case 12:
         if (Func_080770c0(0x109) != 0 && Func_080770c0(0x852) != 0 &&
             Func_080770c0(0x853) == 0 && Func_080770c0(0x300) != 0) {
             Func_080091c0(14, 45, 3, 1, 14, 44);
-            Func_080000d0(0x0200aba1, 3200);
-            break;
+            callback_to_install = 0x0200aba1;
+            goto install_callback;
         }
+        goto continue_case_12;
+
+    install_callback:
+        /* Arms 7/11 and the first arm of case 12 converge on this one
+         * callback-installer site in the original control flow. */
+        Func_080000d0(callback_to_install, 3200);
+        break;
+
+    continue_case_12:
         if (Func_080770c0(0x856) != 0) {
             Func_0808a0f0(25, 0x780000, 0x2b80000);
             Func_0808a1b8(25, 0x8000, 0);

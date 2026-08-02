@@ -68,18 +68,24 @@ void Func_02000f80(void)
         Func_0808a0d0(15, 216, 168);
         Func_0808a0d0(15, 224, 168);
         amount = 0x2000;
+        goto emitSharedFacing;
     } else if ((u16)(facing - 0x6000) <= 0x3fff) {
         Func_0808a0d0(15, 232, 160);
         amount = 0x5000;
+        goto emitSharedFacing;
     } else if ((u16)(facing + 0x6000) <= 0x3fff) {
         Func_0808a0d0(15, 216, 168);
         Func_0808a0d0(15, 224, 172);
         amount = 0xe000;
-    } else {
-        Func_0808a0d0(15, 232, 160);
-        Func_0808a1b8(15, 0x2000, 20);
-        return;
+        goto emitSharedFacing;
     }
+    goto emitFourthFacing;
 
+emitSharedFacing:
     Func_0808a1b8(15, amount, 20);
+    return;
+
+emitFourthFacing:
+    Func_0808a0d0(15, 232, 160);
+    Func_0808a1b8(15, 0x2000, 20);
 }

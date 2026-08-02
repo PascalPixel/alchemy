@@ -46,10 +46,10 @@ typedef unsigned int u32;
  * identified by shape only.
  */
 
-extern void Func_020080e8(s32 arg0);
-extern u8 *Func_02007e9c(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_02007ebe(u8 *record, s32 arg1);
-extern void Func_02007ebc(s32 arg0);
+extern void Func_080f9010(s32 arg0);
+extern u8 *Func_080090c8(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_08009020(u8 *record, s32 arg1);
+extern void Func_080001b8(s32 arg0);
 
 void Func_02002200(u8 *caller)
 {
@@ -59,10 +59,10 @@ void Func_02002200(u8 *caller)
     u8 *record;
     s32 i;
 
-    Func_020080e8(0x83);
+    Func_080f9010(0x83);
 
     for (i = 0; i <= 1; i++) {
-        object = Func_02007e9c(26, *(s32 *)(caller + 8), *(s32 *)(caller + 12),
+        object = Func_080090c8(26, *(s32 *)(caller + 8), *(s32 *)(caller + 12),
                                *(s32 *)(caller + 16));
         slots[i] = object;
         if (object == 0) {
@@ -78,9 +78,9 @@ void Func_02002200(u8 *caller)
             continue;
         }
 
-        Func_02007ebe(record, 0);
+        Func_08009020(record, 0);
         record[0x26] = 0;
-        Func_02007ebc(record[0x1c]);
+        Func_080001b8(record[0x1c]);
         record[0x1c] = *(u16 *)(globalCtx + 0x46);
         record[0x1d] |= 1;
         {

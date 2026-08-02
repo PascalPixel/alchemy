@@ -157,10 +157,10 @@ void Func_02000dcc(void)
 
     gate = Func_0808a070(0, 0);
     if (gate != 0) {
-        workspace = Data_03001ebc;
-        *(u16 *)(workspace + 472) += 1;
-        Func_0808a180(0x8008, 0);
-    } else {
+        goto skipped_scene;
+    }
+
+    {
         Func_0808a010(20);
         Func_02001c5c(12, 208 << 8);
         Func_0808a138(12, 1);
@@ -262,5 +262,13 @@ void Func_02000dcc(void)
         Func_0808a248(66);
     }
 
+    goto close;
+
+skipped_scene:
+    workspace = Data_03001ebc;
+    *(u16 *)(workspace + 472) += 1;
+    Func_0808a180(0x8008, 0);
+
+close:
     Func_0808a020();
 }

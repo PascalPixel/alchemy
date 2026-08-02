@@ -112,6 +112,7 @@ extern void Func_02006110(void);
 s32 Func_02002ff0(void)
 {
     s32 which;
+    s32 sharedModeRecord;
 
     Func_080000c0(1);
     Func_080770c8(324);
@@ -197,8 +198,8 @@ s32 Func_02002ff0(void)
             Func_0808a098(38, (const void *)0x0200e8e4);
             Func_0808a158(36, 3);
             Func_0808a158(37, 3);
-            Func_0808a158(38, 3);
-            Func_0808a020();
+            sharedModeRecord = 38;
+            goto finish_mode3;
         } else {
             Func_02004198();
         }
@@ -229,7 +230,9 @@ s32 Func_02002ff0(void)
             Func_0808a098(36, (const void *)0x0200e8e4);
             Func_0808a098(37, (const void *)0x0200e8e4);
             Func_0808a158(36, 3);
-            Func_0808a158(37, 3);
+            sharedModeRecord = 37;
+finish_mode3:
+            Func_0808a158(sharedModeRecord, 3);
             Func_0808a020();
         } else {
             Func_020056dc();

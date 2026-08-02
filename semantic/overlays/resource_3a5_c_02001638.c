@@ -79,6 +79,9 @@ extern void Func_020004e4(void);
 s32 Func_02001638(void)
 {
     s32 scene;
+    s32 finalA;
+    s32 finalB;
+    s32 finalSlot;
 
     Data_02000240[278] = 600;
     Data_02000240[279] = 0;
@@ -99,7 +102,10 @@ s32 Func_02001638(void)
         Func_080091b8(23, 21, 4, 2, 0x48, 126);
         Func_080091b8(16, 42, 4, 2, 0x4c, 126);
         Func_080091b8(36, 44, 4, 2, 0x50, 126);
-        Func_080091b8(14, 55, 4, 2, 0x54, 126);
+        finalA = 14;
+        finalB = 55;
+        finalSlot = 0x54;
+        goto kind2_tail;
     } else if (scene == 0x5a) {
         Func_080091b8(42, 5, 4, 2, 0x40, 126);
         Func_080091b8(20, 11, 4, 2, 0x44, 126);
@@ -114,14 +120,26 @@ s32 Func_02001638(void)
         Func_080091b8(34, 43, 4, 2, 0x68, 126);
         Func_080091b8(6, 46, 4, 2, 0x6c, 126);
         Func_080091b8(27, 55, 4, 2, 0x70, 126);
-        Func_080091b8(43, 56, 4, 2, 0x74, 126);
-    } else if (scene == 0x5b) {
+        finalA = 43;
+        finalB = 56;
+        finalSlot = 0x74;
+        goto kind2_tail;
+    }
+    goto maybe_scene_5b;
+
+kind2_tail:
+    Func_080091b8(finalA, finalB, 4, 2, finalSlot, 126);
+    goto scenes_done;
+
+maybe_scene_5b:
+    if (scene == 0x5b) {
         Func_0808a5e0(169);
         Func_080091b8(8, 14, 4, 4, 0x40, 124);
         Func_080091b8(6, 18, 4, 4, 0x44, 124);
         Func_080091b8(10, 21, 4, 4, 0x48, 124);
     }
 
+scenes_done:
     Func_020004e4();
     return 0;
 }

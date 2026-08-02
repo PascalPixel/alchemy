@@ -67,37 +67,19 @@ extern const struct FootprintExtent Data_0200bf0c[];
 extern const struct SearchDirection Data_0200beb4[];
 extern struct WorldState *Data_03001e70;
 
-struct ObjectHeader *Func_020042f4();
-struct SceneObject *Func_02004300();
-struct EffectSlot *Func_020043ce();
-struct EffectSlot *Func_0200445e();
-
-void Func_02000902();
-void Func_02000a6e();
-void Func_02000a80();
-void Func_02000acc();
-void Func_02004348();
-void Func_02004352();
-void Func_02004374();
-void Func_0200437e();
-void Func_02004398();
-void Func_020043b8();
-void Func_020043e0();
-void Func_020043ec();
-void Func_020043f0();
-void Func_02004408();
-void Func_02004424();
-void Func_02004452();
-void Func_0200446a();
-void Func_02004480();
-void Func_02004498();
-void Func_020044b0();
-void Func_020044ba();
-void Func_020045a0();
-void Func_02004606();
-void Func_02004618();
-void Func_0200461e();
-void Func_020046e4();
+void *Func_0808a080();
+void Func_02000244();
+void Func_0808a090();
+void Func_0808a100();
+void Func_0808a010();
+void Func_0808a0e0();
+void Func_08009080();
+void Func_080f9010();
+void Func_08009150();
+void Func_0808a0e8();
+void Func_08009158();
+void Func_080091c0();
+void Func_0808a5e8();
 void Func_020082a8(void);
 
 static s32 add_wrapped(s32 left, s32 right)
@@ -144,7 +126,7 @@ void Func_02000608(
     s32 x,
     s32 y,
     s32 z,
-    s32 enableOptionalEffect
+    void (*callback)(void)
 )
 {
     volatile struct WorldState *world = Data_03001e70;
@@ -169,9 +151,9 @@ void Func_02000608(
     s32 height;
     s32 state;
 
-    header = Func_020042f4(0);
+    header = (struct ObjectHeader *)Func_0808a080(0);
     state = header->state >> 12;
-    object = Func_02004300(objectId);
+    object = (struct SceneObject *)Func_0808a080(objectId);
     footprint = &Data_0200bf0c[footprintIndex];
 
     height = footprint_span(footprint->z0, footprint->z1);
@@ -184,49 +166,49 @@ void Func_02000608(
     originalCellX = footprint_cell(originalX, footprint->x0);
     originalCellZ = footprint_cell(originalZ, footprint->z0);
 
-    Func_02000902(0, originalCellX, originalCellZ, width, height, 0);
-    Func_02004398(0, 0x00008000, 0x00001999);
-    Func_020043f0(0, 8);
-    Func_0200437e(15);
-    Func_02004408(
+    Func_02000244(0, originalCellX, originalCellZ, width, height, 0);
+    Func_0808a090(0, 0x00008000, 0x00001999);
+    Func_0808a100(0, 8);
+    Func_0808a010(15);
+    Func_0808a0e0(
         0,
         rounded_phase_delta(x, originalX),
         rounded_phase_delta(z, originalZ)
     );
 
-    effect = Func_020043ce(0);
+    effect = (struct EffectSlot *)Func_0808a080(0);
     effect->callback = Func_020082a8;
-    Func_020043b8(4);
+    Func_0808a010(4);
 
     if ((u32)(state - 6) <= 7)
-        Func_02004348((struct SceneObject *)object, 3);
+        Func_08009080((struct SceneObject *)object, 3);
     else
-        Func_02004352((struct SceneObject *)object, 2);
+        Func_08009080((struct SceneObject *)object, 2);
 
-    Func_020045a0(239);
-    Func_02004374((struct SceneObject *)object, x, y, z);
-    Func_02004452(0);
-    Func_0200446a(0, 2);
-    Func_02004424(0, 0x00004ccc, 0x00001999);
+    Func_080f9010(239);
+    Func_08009150((struct SceneObject *)object, x, y, z);
+    Func_0808a0e8(0);
+    Func_0808a100(0, 2);
+    Func_0808a090(0, 0x00004ccc, 0x00001999);
 
     direction = &Data_0200beb4[state];
-    Func_02004480(0, direction->x / 2, direction->z / 2);
-    if (enableOptionalEffect != 0)
-        Func_02004606();
+    Func_0808a0e0(0, direction->x / 2, direction->z / 2);
+    if (callback != 0)
+        callback();
 
-    Func_02004498(0);
-    Func_020044b0(0, 1);
-    effect = Func_0200445e(0);
+    Func_0808a0e8(0);
+    Func_0808a100(0, 1);
+    effect = (struct EffectSlot *)Func_0808a080(0);
     effect->callback = (void (*)(void))0;
-    Func_020043e0((struct SceneObject *)object);
-    Func_02004618(288);
-    Func_0200461e(213);
+    Func_08009158((struct SceneObject *)object);
+    Func_080f9010(288);
+    Func_080f9010(213);
 
     object->x = x;
     object->z = z;
     object->velocityX = 0;
     object->velocityZ = 0;
-    Func_020043ec((struct SceneObject *)object, 1);
+    Func_08009080((struct SceneObject *)object, 1);
 
     targetCellX = footprint_cell(x, footprint->x0);
     targetCellZ = footprint_cell(z, footprint->z0);
@@ -235,7 +217,7 @@ void Func_02000608(
     targetWorldX = add_wrapped(viewCellX, targetCellX);
     targetWorldZ = add_wrapped(viewCellZ, targetCellZ);
 
-    Func_0200445e(
+    Func_080091c0(
         targetCellX,
         targetCellZ,
         width,
@@ -243,8 +225,8 @@ void Func_02000608(
         targetWorldX,
         targetWorldZ
     );
-    Func_02000a6e(0, targetCellX, targetCellZ, width, height, 255);
-    Func_02000a80(2, targetCellX, targetCellZ, width, height, 255);
+    Func_02000244(0, targetCellX, targetCellZ, width, height, 255);
+    Func_02000244(2, targetCellX, targetCellZ, width, height, 255);
 
     /*
      * The final helpers use the object's original cell, not the requested
@@ -255,7 +237,7 @@ void Func_02000608(
     originalCellZ = footprint_cell(originalZ, footprint->z0);
     originalWorldX = add_wrapped(viewCellX, originalCellX);
     originalWorldZ = add_wrapped(viewCellZ, originalCellZ);
-    Func_020044ba(
+    Func_080091c0(
         originalWorldX,
         originalWorldZ,
         width,
@@ -263,6 +245,6 @@ void Func_02000608(
         originalCellX,
         originalCellZ
     );
-    Func_02000acc(2, originalCellX, originalCellZ, width, height, 0);
-    Func_020046e4();
+    Func_02000244(2, originalCellX, originalCellZ, width, height, 0);
+    Func_0808a5e8();
 }

@@ -6148,7 +6148,7 @@ AlchemyC_02000354:
 	.4byte 0xfff40000
 	.2byte 0x0000
 	.2byte 0xfffc
-	.2byte 0xb560
+	push	{r5, r6, lr}
 	ldr	r3, [pc, #64]
 	adds	r2, r1, #0
 	asrs	r2, r2, #20

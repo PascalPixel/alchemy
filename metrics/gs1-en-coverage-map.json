@@ -4,23 +4,23 @@
   "target": "gs1-en",
   "derivation": "tracked-evidence-v1",
   "rom_bytes": 8388608,
-  "executable_bytes": 1343470,
+  "executable_bytes": 1343592,
   "categories": {
     "exact_c": {
-      "bytes": 266832,
-      "percent_of_executable": 19.86
+      "bytes": 266944,
+      "percent_of_executable": 19.87
     },
     "semantic_c": {
-      "bytes": 980296,
-      "percent_of_executable": 72.97
+      "bytes": 998358,
+      "percent_of_executable": 74.31
     },
     "assembly": {
-      "bytes": 22626,
-      "percent_of_executable": 1.68
+      "bytes": 4728,
+      "percent_of_executable": 0.35
     },
     "retained_asm": {
-      "bytes": 73716,
-      "percent_of_executable": 5.49
+      "bytes": 73562,
+      "percent_of_executable": 5.48
     },
     "asset_data": {
       "bytes": 7298755,
@@ -33,17 +33,17 @@
     "semantic_c_bytes": 412826
   },
   "overlays": {
-    "executable_bytes": 795106,
-    "exact_c_bytes": 161780,
-    "semantic_c_bytes": 567470
+    "executable_bytes": 795228,
+    "exact_c_bytes": 161892,
+    "semantic_c_bytes": 585532
   },
   "provenance": {
     "exact_source": "worktree",
     "semantic_source": "worktree",
-    "semantic_sources": 2462,
+    "semantic_sources": 2598,
     "main_semantic_census": "closed",
     "semantic_superseded_bytes": 0,
-    "semantic_outside_extent_bytes": 27998,
+    "semantic_outside_extent_bytes": 28176,
     "semantic_unresolved": []
   },
   "rom_areas": [
@@ -63,9 +63,9 @@
       "label": "Compressed code overlays",
       "bytes": 541489,
       "categories": {
-        "exact_c": 111744,
-        "semantic_c": 380736,
-        "assembly": 49009
+        "exact_c": 111793,
+        "semantic_c": 395335,
+        "assembly": 34361
       },
       "tiles": 11
     },
@@ -94,14 +94,14 @@
     {
       "id": "overlays",
       "label": "Decoded code overlays",
-      "bytes": 795106,
+      "bytes": 795228,
       "categories": {
-        "exact_c": 161780,
-        "semantic_c": 567470,
-        "assembly": 22626,
-        "retained_asm": 43230
+        "exact_c": 161892,
+        "semantic_c": 585532,
+        "assembly": 4728,
+        "retained_asm": 43076
       },
-      "tiles": 4314
+      "tiles": 4272
     }
   ]
 }

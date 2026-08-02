@@ -20,29 +20,22 @@ typedef int s32;
  * uses) are recorded as passed values.
  */
 
-extern s32 Func_02005a38(s32 id);
-extern s32 Func_02005a42(s32 id);
-extern void Func_02005ae8(s32 tag, s32 a, s32 b);
-extern s32 Func_02005a60(s32 id);
-extern s32 Func_02005a6a(s32 id);
-extern void Func_02005b0c(s32 tag, s32 a, s32 b);
-extern s32 Func_02005a84(s32 id);
-extern s32 Func_02005a8e(s32 id);
-extern void Func_02005b30(s32 tag, s32 a, s32 b);
+extern s32 Func_080770e0(s32 id);
+extern void Func_0808a0f0(s32 tag, s32 a, s32 b);
 
 void Func_02001b30(void)
 {
     s32 a, b;
 
-    a = (Func_02005a38(896) << 20) + 0x80000;
-    b = (Func_02005a42(904) << 20) + 0x80000;
-    Func_02005ae8(1, a, b);
+    a = (Func_080770e0(896) << 20) + 0x80000;
+    b = (Func_080770e0(904) << 20) + 0x80000;
+    Func_0808a0f0(1, a, b);
 
-    a = (Func_02005a60(912) << 20) + 0x80000;
-    b = (Func_02005a6a(920) << 20) + 0x80000;
-    Func_02005b0c(2, a, b);
+    a = (Func_080770e0(912) << 20) + 0x80000;
+    b = (Func_080770e0(920) << 20) + 0x80000;
+    Func_0808a0f0(2, a, b);
 
-    a = (Func_02005a84(928) << 20) + 0x80000;
-    b = (Func_02005a8e(936) << 20) + 0x80000;
-    Func_02005b30(3, a, b);
+    a = (Func_080770e0(928) << 20) + 0x80000;
+    b = (Func_080770e0(936) << 20) + 0x80000;
+    Func_0808a0f0(3, a, b);
 }

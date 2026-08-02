@@ -46,8 +46,8 @@ typedef unsigned char u8;
  * record are never written and never read.
  *
  * The epilogue is `add sp,#56 / pop {r3} / mov r8,r3 / pop {r5, r6, r7} /
- * pop {r0} / bx r0`, so the owner is void.  Func_0808a020 runs on the gated-out
- * path too - the early test branches to it, not past it.
+ * pop {r0} / bx r0`, so the owner is void.  The gated-out path branches to
+ * the same physical Func_0808a020 close site used by the full sequence.
  */
 
 typedef struct Slot_02001550 {
@@ -90,8 +90,7 @@ void Func_02001550(void)
     Func_0808a018();
 
     if ((Func_0808a080(18)->x >> 20) != 46) {
-        Func_0808a020();
-        return;
+        goto close_sequence;
     }
 
     Func_0808a010(30);
@@ -158,5 +157,7 @@ void Func_02001550(void)
 
     Func_0808a010(10);
     Func_080770c8(0x971);
+
+close_sequence:
     Func_0808a020();
 }

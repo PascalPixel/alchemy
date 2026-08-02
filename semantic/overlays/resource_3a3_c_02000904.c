@@ -70,41 +70,45 @@ void Func_02000904(void)
     u8 *origin;
     u8 *record;
     s32 hidden;
-    s32 joined;
 
     origin = Func_0808a080(0);
 
-    joined = 1;
     hidden = 0;
 
     if (Func_080770c0(0x242) != 0) {
         Func_08009180(64, 32, 0, 32, 32, 32);
         Func_080091c0(64, 32, 32, 32, 0, 0);
         hidden = 20;
+        goto joined_actors;
     } else if (Func_080770c0(0x241) != 0) {
         Func_08009180(64, 0, 0, 32, 32, 32);
         Func_080091c0(64, 0, 32, 32, 0, 0);
         Func_0808a088(17);
         hidden = 20;
+        goto joined_actors;
     } else if (Func_080770c0(0x240) != 0) {
         /* `movs r0,#144 / lsls r0,#2` = 576 = 0x240. */
         Func_08009180(0, 64, 0, 32, 32, 32);
         Func_080091c0(0, 64, 32, 32, 0, 0);
         Func_0808a088(16);
         hidden = 17;
-    } else {
-        Func_080091c0(0, 32, 32, 32, 0, 0);
-        Func_0808a088(15);
-        Func_0808a088(16);
-        Func_0808a088(17);
-        joined = 0;
+        goto joined_actors;
     }
 
-    if (joined != 0) {
-        Func_0808a088(hidden);
-        Func_0808a088(21);
-    }
+    goto unjoined_actors;
 
+joined_actors:
+    Func_0808a088(hidden);
+    Func_0808a088(21);
+    goto actors_ready;
+
+unjoined_actors:
+    Func_080091c0(0, 32, 32, 32, 0, 0);
+    Func_0808a088(15);
+    Func_0808a088(16);
+    Func_0808a088(17);
+
+actors_ready:
     if (Func_080770c0(0x8ff) != 0) {
         Func_0808a088(18);
     } else {

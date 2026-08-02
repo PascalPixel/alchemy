@@ -1,24 +1,21 @@
 typedef signed int s32;
 
-extern void Func_02002ce2(s32);
-extern void Func_02000a5e(s32, s32, s32);
-extern void Func_02002cf4(s32);
-extern void Func_02002c0a(s32);
-extern void Func_02002c1a(s32);
-extern void Func_02002c20(s32);
-extern void Func_02002c26(s32);
-extern void Func_02002b64(s32);
-extern void Func_02001bd4(void);
+extern void Func_080f9010(s32);
+extern void Func_02000180(s32, s32, s32);
+extern void Func_080770c8(s32);
+extern void Func_080770d0(s32);
+extern void Func_080000c0(s32);
+extern void Func_020012cc(void);
 
 void Func_020008cc(void)
 {
-    Func_02002ce2(241);
-    Func_02000a5e(10, 0, -16);
-    Func_02002cf4(0x121);
-    Func_02002c0a(0x30b);
-    Func_02002c1a(0x30c);
-    Func_02002c20(0x30d);
-    Func_02002c26(0x30e);
-    Func_02002b64(2);
-    Func_02001bd4();
+    Func_080f9010(241);
+    Func_02000180(10, 0, -16);
+    Func_080f9010(0x121);
+    Func_080770c8(0x30b);
+    Func_080770d0(0x30c);
+    Func_080770d0(0x30d);
+    Func_080770d0(0x30e);
+    Func_080000c0(2);
+    Func_020012cc();
 }

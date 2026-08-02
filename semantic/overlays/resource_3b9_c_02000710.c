@@ -70,10 +70,9 @@ typedef unsigned char u8;
  * sequence is emitted TWICE, not three times: 0x02000c90 serves the outer
  * zero arm and the inner zero arm, and 0x02000d84 is a private copy for
  * the inner non-zero arm, which then falls into the shared
- * Func_0808a248(2) at 0x02000d98. All three paths run it exactly once, so
- * it is hoisted below the if/else -- which is why the call census shows
- * two Func_0808a368/Func_0808a370 sites against one statement here. Every
- * other callee count matches the reference exactly (177 sites).
+ * Func_0808a248(2) at 0x02000d98. Both physical copies are explicit below;
+ * labels keep the two zero arms converged on the first without duplicating
+ * it in source. The resulting source and machine censuses are both 177.
  *
  * The join at 0x02000c90 is reached with `r3` already holding the
  * workspace pointer and `r2` already holding 228, set separately in each
@@ -251,105 +250,121 @@ void Func_02000710(void)
     Func_0808a1b8(3, 160 << 8, 0);
 
     if (Func_0808a070(0, 0) != 0) {
-        workspace = Data_03001ebc;
-        *(u16 *)(workspace + 472) += 1;
-
-        Func_0808a1e8(17, 129 << 1, 40);
-        Func_02001c48(17);
-        Func_0808a1e8(18, 129 << 1, 40);
-        Func_02001c48(18);
-        Func_0808a1e8(19, 129 << 1, 40);
-        Func_02001c48(19);
-        Func_0808a1e8(20, 129 << 1, 40);
-        Func_02001c48(19);
-        Func_0808a110(17, 4);
-        Func_02001c48(17);
-        Func_0808a138(2, 1);
-        Func_0808a010(20);
-        Func_02001c48(2);
-        Func_0808a1e8(3, 129 << 1, 40);
-        Func_02001c48(3);
-        Func_0808a1b8(17, 176 << 8, 0);
-        Func_0808a1b8(19, 128 << 8, 0);
-        Func_0808a1b8(20, 0, 60);
-        Func_0808a1b8(17, 192 << 6, 0);
-        Func_0808a1b8(19, 192 << 6, 0);
-        Func_0808a1b8(20, 192 << 6, 20);
-        Func_0808a100(17, 3);
-        Func_0808a100(18, 3);
-        Func_0808a100(19, 3);
-        Func_0808a110(20, 3);
-        Func_0808a1e8(3, 128 << 1, 60);
-        Func_02001c5c(3, 160 << 8);
-        Func_02001c48(3);
-        Func_0808a100(1, 4);
-        Func_0808a010(20);
-        Func_0808a178(1, 0);
-
-        if (Func_0808a070(0, 0) != 0) {
-            workspace = Data_03001ebc;
-            *(u16 *)(workspace + 472) += 1;
-
-            Func_0808a010(20);
-            Func_0808a130(1, 2);
-            Func_0808a188(1, 0, 20);
-            Func_0808a1e8(2, 129 << 1, 60);
-            Func_02001c48(2);
-            Func_02001c5c(3, 128 << 8);
-            Func_0808a100(3, 3);
-            Func_02001c48(3);
-            Func_0808a098(2, (void *)0x0200ad74);
-            Func_0808a0b0(3, (void *)0x0200ad74);
-            Func_0808a010(20);
-            Func_0808a0b0(0, (void *)0x0200ad74);
-            Func_0808a0d0(1, 131 << 1, 188);
-            Func_02001c5c(1, 192 << 8);
-            Func_0808a110(1, 3);
-            Func_02001c48(1);
-            Func_0808a208(0x6666, 0xccc);
-            Func_0808a210(128 << 17, -1, 200 << 15, 1);
-            Func_0808a090(17, 128 << 9, 128 << 8);
-            Func_0808a098(17, (void *)0x0200ade4);
-            Func_0808a010(10);
-            Func_0808a090(1, 128 << 9, 128 << 8);
-            Func_0808a098(1, (void *)0x0200ade4);
-            Func_0808a010(80);
-        } else {
-            /* identical to the outer zero arm below; emitted twice */
-            Func_0808a110(17, 3);
-            Func_02001c48(17);
-            Func_0808a098(1, (void *)0x0200ad3c);
-            Func_0808a098(2, (void *)0x0200ad3c);
-            Func_0808a0b0(3, (void *)0x0200ad3c);
-            Func_0808a208(0x6666, 0xccc);
-            Func_0808a210(128 << 17, -1, 200 << 15, 1);
-            Func_0808a090(17, 128 << 9, 128 << 8);
-            Func_0808a098(17, (void *)0x0200ade4);
-            Func_0808a010(10);
-            Func_0808a090(0, 128 << 9, 128 << 8);
-            Func_0808a098(0, (void *)0x0200ade4);
-            Func_0808a010(80);
-        }
-    } else {
-        Func_0808a110(17, 3);
-        Func_02001c48(17);
-        Func_0808a098(1, (void *)0x0200ad3c);
-        Func_0808a098(2, (void *)0x0200ad3c);
-        Func_0808a0b0(3, (void *)0x0200ad3c);
-        Func_0808a208(0x6666, 0xccc);
-        Func_0808a210(128 << 17, -1, 200 << 15, 1);
-        Func_0808a090(17, 128 << 9, 128 << 8);
-        Func_0808a098(17, (void *)0x0200ade4);
-        Func_0808a010(10);
-        Func_0808a090(0, 128 << 9, 128 << 8);
-        Func_0808a098(0, (void *)0x0200ade4);
-        Func_0808a010(80);
+        goto outer_gate_open;
     }
+
+    Func_0808a110(17, 3);
+    Func_02001c48(17);
+    Func_0808a098(1, (void *)0x0200ad3c);
+    Func_0808a098(2, (void *)0x0200ad3c);
+    Func_0808a0b0(3, (void *)0x0200ad3c);
+    Func_0808a208(0x6666, 0xccc);
+    Func_0808a210(128 << 17, -1, 200 << 15, 1);
+    Func_0808a090(17, 128 << 9, 128 << 8);
+    Func_0808a098(17, (void *)0x0200ade4);
+    Func_0808a010(10);
+    Func_0808a090(0, 128 << 9, 128 << 8);
+    Func_0808a098(0, (void *)0x0200ade4);
+    Func_0808a010(80);
+    goto shared_gate_close;
+
+outer_gate_open:
+    workspace = Data_03001ebc;
+    *(u16 *)(workspace + 472) += 1;
+
+    Func_0808a1e8(17, 129 << 1, 40);
+    Func_02001c48(17);
+    Func_0808a1e8(18, 129 << 1, 40);
+    Func_02001c48(18);
+    Func_0808a1e8(19, 129 << 1, 40);
+    Func_02001c48(19);
+    Func_0808a1e8(20, 129 << 1, 40);
+    Func_02001c48(19);
+    Func_0808a110(17, 4);
+    Func_02001c48(17);
+    Func_0808a138(2, 1);
+    Func_0808a010(20);
+    Func_02001c48(2);
+    Func_0808a1e8(3, 129 << 1, 40);
+    Func_02001c48(3);
+    Func_0808a1b8(17, 176 << 8, 0);
+    Func_0808a1b8(19, 128 << 8, 0);
+    Func_0808a1b8(20, 0, 60);
+    Func_0808a1b8(17, 192 << 6, 0);
+    Func_0808a1b8(19, 192 << 6, 0);
+    Func_0808a1b8(20, 192 << 6, 20);
+    Func_0808a100(17, 3);
+    Func_0808a100(18, 3);
+    Func_0808a100(19, 3);
+    Func_0808a110(20, 3);
+    Func_0808a1e8(3, 128 << 1, 60);
+    Func_02001c5c(3, 160 << 8);
+    Func_02001c48(3);
+    Func_0808a100(1, 4);
+    Func_0808a010(20);
+    Func_0808a178(1, 0);
+
+    if (Func_0808a070(0, 0) != 0) {
+        goto inner_gate_open;
+    }
+
+    /* Same thirteen-call arm as the outer zero path, physically emitted twice. */
+    Func_0808a110(17, 3);
+    Func_02001c48(17);
+    Func_0808a098(1, (void *)0x0200ad3c);
+    Func_0808a098(2, (void *)0x0200ad3c);
+    Func_0808a0b0(3, (void *)0x0200ad3c);
+    Func_0808a208(0x6666, 0xccc);
+    Func_0808a210(128 << 17, -1, 200 << 15, 1);
+    Func_0808a090(17, 128 << 9, 128 << 8);
+    Func_0808a098(17, (void *)0x0200ade4);
+    Func_0808a010(10);
+    Func_0808a090(0, 128 << 9, 128 << 8);
+    Func_0808a098(0, (void *)0x0200ade4);
+    Func_0808a010(80);
+
+shared_gate_close:
+    workspace = Data_03001ebc;
+    *(s32 *)(workspace + 456) = 40;
+    Func_0808a368();
+    Func_0808a370();
+    goto gates_done;
+
+inner_gate_open:
+    workspace = Data_03001ebc;
+    *(u16 *)(workspace + 472) += 1;
+
+    Func_0808a010(20);
+    Func_0808a130(1, 2);
+    Func_0808a188(1, 0, 20);
+    Func_0808a1e8(2, 129 << 1, 60);
+    Func_02001c48(2);
+    Func_02001c5c(3, 128 << 8);
+    Func_0808a100(3, 3);
+    Func_02001c48(3);
+    Func_0808a098(2, (void *)0x0200ad74);
+    Func_0808a0b0(3, (void *)0x0200ad74);
+    Func_0808a010(20);
+    Func_0808a0b0(0, (void *)0x0200ad74);
+    Func_0808a0d0(1, 131 << 1, 188);
+    Func_02001c5c(1, 192 << 8);
+    Func_0808a110(1, 3);
+    Func_02001c48(1);
+    Func_0808a208(0x6666, 0xccc);
+    Func_0808a210(128 << 17, -1, 200 << 15, 1);
+    Func_0808a090(17, 128 << 9, 128 << 8);
+    Func_0808a098(17, (void *)0x0200ade4);
+    Func_0808a010(10);
+    Func_0808a090(1, 128 << 9, 128 << 8);
+    Func_0808a098(1, (void *)0x0200ade4);
+    Func_0808a010(80);
 
     workspace = Data_03001ebc;
     *(s32 *)(workspace + 456) = 40;
     Func_0808a368();
     Func_0808a370();
+
+gates_done:
 
     Func_0808a248(2);
     Func_080770c8(0x93f);

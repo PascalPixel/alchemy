@@ -23,11 +23,9 @@ typedef signed int s32;
  * Raw callee naming.
  */
 
-s32 Func_0200c876();
-void Func_0200c890();
-s32 Func_0200c896();
-void Func_0200c8b0();
-void Func_0200c8b8();
+s32 Func_080770c0();
+void Func_080770d0();
+void Func_080770c8();
 
 void Func_020063ac(u8 *a, u8 *b)
 {
@@ -37,8 +35,8 @@ void Func_020063ac(u8 *a, u8 *b)
 
     for (i = 0; i <= 8; i++) {
         u8 *elem = a + i;
-        if (Func_0200c876(elem) != 0) {
-            Func_0200c890(elem);
+        if (Func_080770c0(elem) != 0) {
+            Func_080770d0(elem);
             break;
         }
         count_a++;
@@ -46,13 +44,13 @@ void Func_020063ac(u8 *a, u8 *b)
 
     for (i = 0; i <= 8; i++) {
         u8 *elem = b + i;
-        if (Func_0200c896(elem) != 0) {
-            Func_0200c8b0(elem);
+        if (Func_080770c0(elem) != 0) {
+            Func_080770d0(elem);
             break;
         }
         count_b++;
     }
 
-    Func_0200c8b0(b + count_a);
-    Func_0200c8b8(a + count_b);
+    Func_080770c8(b + count_a);
+    Func_080770c8(a + count_b);
 }

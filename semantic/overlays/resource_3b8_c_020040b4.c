@@ -18,84 +18,32 @@ typedef unsigned int u32;
  * the area identity compared against 0x8b, and whose element 0xe1 is the step
  * this routine reads and rewrites.
  *
- * Every `bl` here reaches the overlay's import band (the 0x02008xxx addresses
- * the branches compute after the tool's nominal 0x02000000 base).  As in the
- * byte-exact sources for this overlay, each import is named by the address its
- * call site computes and its interface is left open; the numeric name carries
- * no further meaning.  Several imports are reached with different argument
- * counts from this one owner (0x02008594 with three and with one), which is
- * why the declarations below are old-style.
+ * Resolver-confirmed main-image symbols name every external call below.
+ * Old-style declarations keep the source honest where a shared engine helper
+ * is reached with more than one argument shape.
  */
 
-void Func_0200842c();
-void Func_02008432();
-void Func_02008438();
-void Func_02008488();
-void Func_0200849a();
-void Func_020084a2();
-void Func_020084ca();
-void Func_02008516();
-void Func_020084ee();
-void Func_020084ec();
-void Func_02008564();
-void Func_02008622();
-void Func_020061e2();
-void Func_02008636();
-void Func_0200855a();
-void Func_0200865e();
-void Func_02008612();
-void Func_02008626();
-void Func_0200862c();
-void Func_02008632();
-void Func_02008646();
-void Func_02005a62();
-void Func_02008672();
-void Func_02008686();
-void Func_0200868c();
-void Func_02008692();
-void Func_020086a6();
-void Func_02008684();
-void Func_0200868a();
-void Func_02008748();
-void Func_020087ac();
-void Func_02004974();
-
-/* Imports whose results are consumed. */
-s32 Func_020084c2();
-s32 Func_020084cc();
-u8 *Func_02008544();
-s32 Func_020084c6();
-s32 Func_02008552();
-s32 Func_020085dc();
-s32 Func_0200858a();
-s32 Func_02008594();
-s32 Func_02008602();
-u16 *Func_020085e2();
-s32 Func_02008662();
-u16 *Func_02008642();
-u8 *Func_0200861a();
-
-/*
- * The two identical sweeps at 0x02004240 and 0x020042a0 copy each listed
- * entity's halfword pair at +52/+54 to +56/+58 and then hand the entity to a
- * per-sweep import.  They differ only in the three imports they use, so they
- * are written once here.
- */
-static void latch_and_release(const s16 *list, s32 count,
-                              u16 *(*lookup)(), void (*release)())
-{
-    s32 index = 0;
-
-    do {
-        u16 *entity = lookup(list[index]);
-
-        entity[28] = entity[26];
-        entity[29] = entity[27];
-        release(list[index]);
-        index++;
-        count--;
-    } while (count != 0);
-}
+void Func_02000674();
+void Func_020017e8();
+void Func_02002014();
+s32 Func_08000140();
+void Func_08000150();
+void Func_080001c8();
+void Func_08009190();
+void Func_080091e0();
+void Func_08015250();
+u16 *Func_08077008();
+s32 Func_080770c0();
+void Func_080770c8();
+void Func_080770d0();
+void Func_08077128();
+void Func_08077150();
+s32 Func_08077158();
+void Func_08077318();
+u8 *Func_0808a080();
+void Func_0808a0f0();
+void Func_0808a100();
+void Func_0808a1b8();
 
 s32 Func_020040b4(void)
 {
@@ -105,37 +53,39 @@ s32 Func_020040b4(void)
     s16 step;
     u16 raw;
     s32 count;
+    s32 index;
+    u16 *entity;
 
-    Func_0200842c(1);
-    Func_02008432(2);
-    Func_02008438(4);
+    Func_08009190(1);
+    Func_08009190(2);
+    Func_08009190(4);
 
     step = table[0xe1];
     raw = (u16)table[0xe1];
     if (step == 90) {
-        Func_02008488(0x962);
+        Func_080770c8(0x962);
         raw = (u16)table[0xe1];
     }
     /* `lsls #16` on the zero-extended halfword before the compare, so this is
      * an exact halfword test against 91 rather than a signed one. */
     if (raw == 91) {
-        Func_0200849a(0x962);
-        Func_020084a2(0x950);
+        Func_080770c8(0x962);
+        Func_080770c8(0x950);
     }
 
     if (table[0xe0] == 0x8b)
         return 0;
 
     if (table[0xe1] == 11)
-        Func_020084ca(0x12f);
+        Func_080770d0(0x12f);
 
-    if (Func_020084c2(0x950) != 0) {
-        s32 slot = Func_020084cc(0xf31);
+    if (Func_080770c0(0x950) != 0) {
+        s32 slot = Func_080770c0(0xf31);
 
         if (slot != 0) {
-            Func_02008594(16, 0, 0);
+            Func_0808a0f0(16, 0, 0);
         } else {
-            u8 *record = Func_02008544(16);
+            u8 *record = Func_0808a080(16);
             u8 *sub = *(u8 **)(record + 0x50);
             s32 handle;
 
@@ -146,24 +96,23 @@ s32 Func_020040b4(void)
             sub[5] = (u8)(sub[5] & ~0x20);
             sub[9] = (u8)(sub[9] & 0x0f);
 
-            handle = Func_020084c6(17, 0x608);
-            Func_02008516(205);                   /* result discarded */
+            handle = Func_08000140(17, 0x608);
+            Func_08015250(205);                   /* result discarded */
             handle += 0x400;
-            Func_020084ee(sub[28], 128, handle);
-            Func_020084ec(17);
+            Func_080001c8(sub[28], 128, handle);
+            Func_08000150(17);
         }
 
-        if (table[0xe1] == 33 && Func_02008552(0x96f) == 0) {
-            Func_02008564(0x96f);
-            Func_02008622(14, 0xd00000, 0x2c00000);
-            Func_020061e2();
+        if (table[0xe1] == 33 && Func_080770c0(0x96f) == 0) {
+            Func_080770c8(0x96f);
+            Func_0808a0f0(14, 0xd00000, 0x2c00000);
+            Func_02002014();
         }
-        Func_02008636(14, 5);
-        /* r0 is not reloaded between these two branches; whether 0x020085dc
-         * really returns a value or leaves 14 in r0 is unverified. */
-        Func_0200855a(Func_020085dc(14), 0);
-    } else if (Func_0200858a(0x962) != 0 && Func_02008594(0x966) == 0) {
-        Func_0200865e(10, 0x780000, 0x480000);
+        Func_0808a100(14, 5);
+        /* Hand the selected record directly to the engine transition. */
+        Func_080091e0(Func_0808a080(14), 0);
+    } else if (Func_080770c0(0x962) != 0 && Func_080770c0(0x966) == 0) {
+        Func_0808a0f0(10, 0x780000, 0x480000);
     }
 
     /*
@@ -174,36 +123,48 @@ s32 Func_020040b4(void)
     *(u32 *)(*(u8 **)0x03001ebc + 0x1c0) = 0x209;
 
     {
-        u8 *flags = Func_0200861a(9);
+        u8 *flags = Func_0808a080(9);
 
         flags[0x59] = (u8)(flags[0x59] | 4);
     }
 
     if (table[0xe1] == 99) {
-        count = Func_02008602(listA);
-        if (count > 0)
-            latch_and_release(listA, count, Func_020085e2, Func_02008612);
-        Func_02008626(1);
-        Func_0200862c(2);
-        Func_02008632(3);
-        Func_02008646();
-        Func_02005a62();
+        count = Func_08077158(listA);
+        if (count > 0) {
+            for (index = 0; index < count; index++) {
+                entity = Func_08077008(listA[index]);
+                entity[28] = entity[26];
+                entity[29] = entity[27];
+                Func_08077128(listA[index]);
+            }
+        }
+        Func_08077150(1);
+        Func_08077150(2);
+        Func_08077150(3);
+        Func_08077318();
+        Func_020017e8();
         table[0xe1] = 8;
     }
 
     if (table[0xe1] == 98) {
-        count = Func_02008662(listB);
-        if (count > 0)
-            latch_and_release(listB, count, Func_02008642, Func_02008672);
-        Func_02008686(1);
-        Func_0200868c(2);
-        Func_02008692(3);
-        Func_020086a6();
-        Func_02008684(0x966);
-        Func_0200868a(0x967);
-        Func_02008748(10, 0x380000, 0x780000);
-        Func_020087ac(10, 0xf000, 0);
-        Func_02004974();
+        count = Func_08077158(listB);
+        if (count > 0) {
+            for (index = 0; index < count; index++) {
+                entity = Func_08077008(listB[index]);
+                entity[28] = entity[26];
+                entity[29] = entity[27];
+                Func_08077128(listB[index]);
+            }
+        }
+        Func_08077150(1);
+        Func_08077150(2);
+        Func_08077150(3);
+        Func_08077318();
+        Func_080770c8(0x966);
+        Func_080770c8(0x967);
+        Func_0808a0f0(10, 0x380000, 0x780000);
+        Func_0808a1b8(10, 0xf000, 0);
+        Func_02000674();
         table[0xe1] = 8;
     }
 

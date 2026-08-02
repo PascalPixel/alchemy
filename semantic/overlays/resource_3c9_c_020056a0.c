@@ -127,19 +127,29 @@ void Func_020056a0(void)
     u8 *attached;
     u32 offset;
     s32 radius;
+    s32 pulseValue;
+    s32 pulseMode;
+    s32 pulseFrames;
 
     switch (*step) {
     case 0:
         Func_080f9010(220);
         Func_080091f0(192 << 11, 192 << 11, 128 << 9);
-        Func_0808a330(0x002063ff, 1);
-        Func_0808a348(8);
+        pulseValue = 0x002063ff;
+        pulseMode = 1;
+        pulseFrames = 8;
+        goto pulse;
+
+pulse:
+        Func_0808a330(pulseValue, pulseMode);
+        Func_0808a348(pulseFrames);
         break;
 
     case 8:
-        Func_0808a330(128 << 9, 1);
-        Func_0808a348(8);
-        break;
+        pulseValue = 128 << 9;
+        pulseMode = 1;
+        pulseFrames = 8;
+        goto pulse;
 
     case 16:
         Func_080091f0(128 << 9, 128 << 9, 128 << 9);
@@ -183,6 +193,15 @@ void Func_020056a0(void)
         *step += 1;
         break;
 
+settle:
+        if ((*(s32 *)0x03001e40 & 7) == 0) {
+            Func_080f9010(246);
+            held = *(s32 *)(anchor + 12);
+        }
+        *(s32 *)(anchor + 12) = held + (144 << 10);
+        spawn = 1;
+        goto join;
+
     case 27: case 28: case 29: case 30:
     case 31: case 32: case 33: case 34:
         spawn = 1;
@@ -203,14 +222,6 @@ void Func_020056a0(void)
         break;
     }
     goto join;
-
-settle:
-    if ((*(s32 *)0x03001e40 & 7) == 0) {
-        Func_080f9010(246);
-        held = *(s32 *)(anchor + 12);
-    }
-    *(s32 *)(anchor + 12) = held + (144 << 10);
-    spawn = 1;
 
 join:
     if (spawn != 0) {

@@ -203,10 +203,10 @@ void Func_02001444(void)
         Func_02002618();
         return;
     case 16:
-        /* `bne 0x02001604` jumps straight into the BODY of the tail
-         * chain's 0x92b arm, reusing its Func_02001920 call site. */
+        /* This branch joins the tail's 0x92b arm at its single physical
+         * Func_02001920 call site. */
         if (Func_080770c0(0x109) != 0) {
-            Func_02001920();
+            goto story_92b;
         } else {
             Func_020029d4();
         }
@@ -232,6 +232,7 @@ void Func_02001444(void)
     } else if (Func_080770c0(0x8a0) != 0) {
         Func_020019c0();
     } else if (Func_080770c0(0x92b) != 0) {
+story_92b:
         Func_02001920();
     } else if (Func_080770c0(0x928) != 0) {
         Func_0200185c();

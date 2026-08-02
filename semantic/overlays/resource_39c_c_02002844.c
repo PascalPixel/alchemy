@@ -29,12 +29,12 @@ typedef int s32;
  * whole 8-entry pass -- one helper call per pass -- until all eight are
  * white in the same pass.
  *
- * Uncertainty: Func_0200821e is called once per pass with the constant
+ * Uncertainty: Func_080000c0 is called once per pass with the constant
  * argument 2; given it is the only thing separating passes, it is almost
  * certainly a frame/vblank sync, but that is not established here.
  */
 
-extern void Func_0200821e(s32 arg0);
+extern void Func_080000c0(s32 arg0);
 
 void Func_02002844(void)
 {
@@ -66,6 +66,6 @@ void Func_02002844(void)
             palette++;
         }
 
-        Func_0200821e(2);
+        Func_080000c0(2);
     } while (whiteCount <= 7);
 }

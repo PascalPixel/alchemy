@@ -40,7 +40,7 @@ extern u8 Data_02000240[];
 
 u8 *Func_0808a080();           /* scene-record accessor, established */
 void Func_08000128();          /* advance a position block along a heading, established */
-s32 Func_20045e0();            /* in-overlay probe rejection, undrafted */
+s32 Func_020045e0();           /* in-overlay probe rejection, undrafted */
 
 s32 Func_02004790(void)
 {
@@ -58,7 +58,7 @@ s32 Func_02004790(void)
     probe[2] = (*(s32 *)(record + 16) & (s32)0xfff00000) + 0x80000;
 
     Func_08000128(0x100000, heading, probe);
-    result = Func_20045e0(probe, record);
+    result = Func_020045e0(probe, record);
     if (result != 0) {
         return result;
     }
@@ -68,5 +68,5 @@ s32 Func_02004790(void)
     probe[2] = (*(s32 *)(record + 16) & (s32)0xfff00000) + 0x80000;
 
     Func_08000128(0x200000, heading, probe);
-    return Func_20045e0(probe, record);
+    return Func_020045e0(probe, record);
 }

@@ -168,8 +168,8 @@ s32 Func_0200259c(void)
         Func_020023a0();
         Func_0808a080(8)->hidden = 0;
         Func_0808a080(9)->hidden = 0;
-        Func_0808a080(Func_080091e0(8), 0);
-        Func_0808a080(Func_080091e0(9), 0);
+        Func_080091e0(Func_0808a080(8), 0);
+        Func_080091e0(Func_0808a080(9), 0);
         Func_0808a080(8)->watch = Func_02000ec8;
         slot = 9;
         goto install_watch;
@@ -187,19 +187,19 @@ s32 Func_0200259c(void)
         Func_02002410();
         Func_0808a080(10)->hidden = 0;
         Func_0808a080(11)->hidden = 0;
-        Func_0808a080(Func_080091e0(10), 0);
-        Func_0808a080(Func_080091e0(11), 0);
+        Func_080091e0(Func_0808a080(10), 0);
+        Func_080091e0(Func_0808a080(11), 0);
         Func_0808a080(10)->watch = Func_02000ec8;
         slot = 11;
         goto install_watch;
 
     case 10:
     case 11:                                    /* 0x020027d2 */
-        Func_0808a080(Func_080091e0(18), 0);
-        Func_0808a080(Func_080091e0(19), 0);
+        Func_080091e0(Func_0808a080(18), 0);
+        Func_080091e0(Func_0808a080(19), 0);
         Func_0808a100(18, 2);
-        Func_0808a080(Func_080091e0(20), 0);
-        Func_0808a080(Func_080091e0(21), 0);
+        Func_080091e0(Func_0808a080(20), 0);
+        Func_080091e0(Func_0808a080(21), 0);
         Func_0808a158(20, 15);
         Func_0808a158(21, 15);
 
@@ -241,12 +241,12 @@ s32 Func_0200259c(void)
         Func_02002480();
         Func_0808a080(12)->hidden = 0;
         Func_0808a080(13)->hidden = 0;
-        Func_0808a080(Func_080091e0(15), 0);
-        Func_0808a080(Func_080091e0(16), 0);
-        Func_0808a080(Func_080091e0(17), 0);
-        Func_0808a080(Func_080091e0(12), 0);
-        Func_0808a080(Func_080091e0(13), 0);
-        Func_0808a080(Func_080091e0(14), 0);
+        Func_080091e0(Func_0808a080(15), 0);
+        Func_080091e0(Func_0808a080(16), 0);
+        Func_080091e0(Func_0808a080(17), 0);
+        Func_080091e0(Func_0808a080(12), 0);
+        Func_080091e0(Func_0808a080(13), 0);
+        Func_080091e0(Func_0808a080(14), 0);
         Func_0808a080(12)->watch = Func_02000ec8;
         Func_0808a080(13)->watch = Func_02000ec8;
         slot = 14;
@@ -294,7 +294,7 @@ other_chapter:                                  /* 0x02002a30 */
         Func_0808a080(12)->hidden = 0;
         Func_080091c0(13)->hidden = 0;
         Func_0808a080(14)->hidden = 0;
-        Func_0808a080(Func_080770c0(12), 0);
+        Func_080770c0(Func_0808a080(12), 0);
         Func_0808a080(Func_0808a080(13), 0);
         Func_0808a080(Func_0808a080(14), 0);
         Func_0808a080(12)->pose = 0;

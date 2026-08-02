@@ -39,8 +39,9 @@ typedef signed int s32;
  * TWO SPIN-WAITS, at 0x02001284 and 0x020013e0.  Each is entered by a forward
  * `b.n` to its test, polls the s16 at +100 of channel 3's record and calls
  * Func_080000c0(1) once per iteration until it becomes non-zero.  Written as
- * `while` loops, which is what keeps their Func_0808a080/Func_080000c0 sites
- * at one each instead of two — the shared-call-site trap in its loop form.
+ * as explicit bottom-tested loops so the source walk follows the machine's
+ * wait-then-test layout while keeping each Func_0808a080/Func_080000c0 site
+ * at one — the shared-call-site trap in its loop form.
  * The flag they wait on is the halfword this owner itself clears just before
  * each wait and hands to Func_0808a098 with a script, so the script is what
  * sets it: the pair reads as "play this animation and block until it ends".
@@ -230,8 +231,12 @@ void Func_02000f90(void)
     *(u16 *)(record + 100) = 0;
     Func_0808a098(3, Data_0200a670);
 
-    while (*(s16 *)(Func_0808a080(3) + 100) == 0) {
+    goto checkFirstScript;
+waitFirstScript:
         Func_080000c0(1);
+checkFirstScript:
+    if (*(s16 *)(Func_0808a080(3) + 100) == 0) {
+        goto waitFirstScript;
     }
 
     Func_0808a210(140 << 16, -1, 198 << 16, 1);
@@ -279,8 +284,12 @@ void Func_02000f90(void)
     *(u16 *)(record + 100) = 0;
     Func_0808a098(3, Data_0200a6e0);
 
-    while (*(s16 *)(Func_0808a080(3) + 100) == 0) {
+    goto checkSecondScript;
+waitSecondScript:
         Func_080000c0(1);
+checkSecondScript:
+    if (*(s16 *)(Func_0808a080(3) + 100) == 0) {
+        goto waitSecondScript;
     }
 
     Func_0808a1b8(0, 0x4000, 0);

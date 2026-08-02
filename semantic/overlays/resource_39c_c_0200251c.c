@@ -21,37 +21,23 @@ typedef int s32;
  * `Fixed20()` is the same `if (raw < 0) raw += 0xfffff; raw >> 20`
  * truncate-toward-zero idiom resource_39c_c_020021cc.c already documents.
  *
- * `Func_02008004` is called twice with genuinely different argument
- * counts: once with a single fresh register (the per-slot lookup, r1-r3
- * are stale leftovers from the earlier Func_02007fd6 call, not real
- * arguments) and once with six freshly-set arguments in the closing
- * dispatch. Declared old-style (no prototype) rather than picking one
- * shape and miscrediting the other -- the same "arities vary per site"
- * convention resource_3cb_c_02000580.c already documents for this
- * project.
+ * The id-57 and id-59 paths each set one counterpart id, then converge on
+ * one `Func_080770d0` call and the mode-10 `Func_080091c0` dispatch. The
+ * unmatched path performs two clears and uses mode 11 before all paths
+ * converge on `Func_0808a020`.
  *
- * Uncertainty: none of the other thirteen callees are identified beyond
+ * Uncertainty: none of the six resolved callees are identified beyond
  * call shape; the four-slot loop's per-slot id pair (`slot*4+39`/`+41`)
  * and the second check's id constants (57, 59) are recorded as compared
  * values, not decoded further.
  */
 
-extern void Func_02007fd6(s32 arg0);
-extern void *Func_02008004();
-extern void Func_02007fd8(s32 arg0);
-extern void Func_02007fe6(s32 arg0);
-extern void Func_02007fec(s32 arg0);
-extern void Func_02007ffa(s32 arg0);
-extern void Func_02008002(s32 arg0);
-extern void Func_02008008(s32 arg0);
-extern void *Func_02008056(s32 arg0);
-extern void Func_02008026(s32 arg0);
-extern void Func_02008034(s32 arg0);
-extern void Func_02008062(s32 arg0);
-extern void Func_02008068(s32 arg0);
-extern void Func_02008044(s32 arg0);
-extern void Func_02007fe0(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
-extern void Func_020080a8(void);
+extern void Func_0808a018(s32 arg0);
+extern void *Func_0808a080(s32 arg0);
+extern void Func_080770c8(s32 arg0);
+extern void Func_080770d0(s32 arg0);
+extern void Func_080091c0(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
+extern void Func_0808a020(void);
 
 static s32 Fixed20(s32 raw)
 {
@@ -66,43 +52,51 @@ void Func_0200251c(s32 arg0)
     s32 slot;
     s32 id;
 
-    Func_02007fd6(arg0);
+    Func_0808a018(arg0);
 
     for (slot = 0; slot <= 3; slot++) {
         s32 id0 = slot * 4 + 39;
         s32 id1 = slot * 4 + 41;
         s32 a = 816 + slot * 2;
 
-        id = Fixed20(*(s32 *)((u8 *)Func_02008004(slot + 15) + 8));
+        id = Fixed20(*(s32 *)((u8 *)Func_0808a080(slot + 15) + 8));
 
         if (id == id0) {
-            Func_02007fd8(a);
-            Func_02007fe6(a + 1);
+            Func_080770c8(a);
+            Func_080770d0(a + 1);
         } else if (id == id1) {
-            Func_02007fec(a + 1);
-            Func_02007ffa(a);
+            Func_080770c8(a + 1);
+            Func_080770d0(a);
         } else {
-            Func_02008002(a);
-            Func_02008008(a + 1);
+            Func_080770d0(a);
+            Func_080770d0(a + 1);
         }
     }
 
-    id = Fixed20(*(s32 *)((u8 *)Func_02008056(19) + 8));
+    id = Fixed20(*(s32 *)((u8 *)Func_0808a080(19) + 8));
 
     if (id == 57) {
-        Func_02008026(824);
-        Func_02008044(825);
+        Func_080770c8(824);
+        id = 825;
+        goto matched;
     } else if (id == 59) {
-        Func_02008034(825);
-        Func_02008044(824);
-    } else {
-        Func_02008062(824);
-        Func_02008068(825);
-        Func_02008004(53, 11, 1, 1, 58, 7);
-        Func_020080a8();
-        return;
+        Func_080770c8(825);
+        id = 824;
+        goto matched;
     }
 
-    Func_02007fe0(53, 10, 1, 1, 58, 7);
-    Func_020080a8();
+    goto unmatched;
+
+matched:
+    Func_080770d0(id);
+    Func_080091c0(53, 10, 1, 1, 58, 7);
+    goto close;
+
+unmatched:
+    Func_080770d0(824);
+    Func_080770d0(825);
+    Func_080091c0(53, 11, 1, 1, 58, 7);
+
+close:
+    Func_0808a020();
 }

@@ -35,7 +35,7 @@ typedef int s32;
  * other spin-waits use.
  *
  * Uncertainty: none of the fourteen callees are identified beyond call
- * shape; `Func_020072cc` and `Func_020072b8` are each called twice with
+ * shape; `Func_08015120` and `Func_0808a080` are each called repeatedly with
  * different arities/arguments at two sites and are declared old-style
  * rather than miscredited either shape. `current`'s fields (0xe2/0xe4
  * halfword, 0xe8/0xec word) and `object`'s fields (8, 0x30, 0x34, 0x64)
@@ -44,24 +44,23 @@ typedef int s32;
 
 extern u8 *Data_03001f3c;
 
-extern s32 Func_02007240(s32 id);
-extern u8 *Func_020072b8();
-extern void Func_0200723a(u8 *object, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_02007220(u8 *object, void *table);
-extern void Func_0200717e(s32 arg0);
-extern void Func_02005772(s32 arg0, s32 arg1);
-extern void Func_020072aa(s32 arg0, s32 arg1);
-extern void Func_02005784(s32 arg0, s32 arg1);
-extern void Func_020072bc(s32 arg0, s32 arg1);
-extern void Func_020072cc();
-extern void Func_0200729a(u8 *object);
+extern s32 Func_080770c0(s32 id);
+extern u8 *Func_0808a080(s32 arg0);
+extern void Func_08009150(u8 *object, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_080770c8(s32 arg0);
+extern void Func_08009098(u8 *object, void *table);
+extern s32 Func_080000c0(s32 arg0);
+extern void Func_02002380(s32 arg0, s32 arg1);
+extern void Func_08015120(s32 arg0, s32 arg1);
+extern void Func_08015040(s32 arg0, s32 arg1);
+extern void Func_08009148(u8 *object);
 
 s32 Func_02003344(s32 arg0, s32 arg1)
 {
     u8 *current = Data_03001f3c;
-    s32 flag = Func_02007240(0x211);
+    s32 flag = Func_080770c0(0x211);
     u32 idx = *(u32 *)0x02000434;
-    u8 *object = (u8 *)Func_020072b8((s32)idx);
+    u8 *object = (u8 *)Func_0808a080((s32)idx);
     s32 posDelta;
     s32 dirOffset;
     u16 *field64;
@@ -84,27 +83,27 @@ s32 Func_02003344(s32 arg0, s32 arg1)
     *(s32 *)(object + 0x34) = 0x4000;
     *(s32 *)(object + 0x30) = 0x10000;
 
-    Func_0200723a(object, posDelta, 0, dirOffset);
-    Func_020072b8(0x211);
-    Func_02007220(object, (void *)0x0200cb9c);
+    Func_08009150(object, posDelta, 0, dirOffset);
+    Func_080770c8(0x211);
+    Func_08009098(object, (void *)0x0200cb9c);
 
     status = *(s16 *)(object + 0x64);
     while (status != 0) {
-        Func_0200717e(1);
+        Func_080000c0(1);
         status = *(s16 *)(object + 0x64);
     }
 
     if (flag == 0) {
-        Func_02005772(0, arg1);
-        Func_020072aa(arg0, 2);
+        Func_02002380(0, arg1);
+        Func_08015120(arg0, 2);
     } else {
-        Func_02005784(0, arg1);
-        Func_020072bc(arg1, 2);
+        Func_02002380(0, arg1);
+        Func_08015120(arg1, 2);
     }
 
-    Func_020072cc((s32)idx, 1);
-    Func_020072cc(0x96a, 3);
-    Func_0200729a(object);
+    Func_08015120((s32)idx, 1);
+    Func_08015040(0x96a, 3);
+    Func_08009148(object);
 
     return flag;
 }

@@ -25,26 +25,26 @@ typedef int s32;
  * owner record's field 9 (flag byte) and 0x26 (byte, cleared) are inferred
  * only from this call shape and the resource_39c_c_02000048.c sibling; none
  * are independently confirmed. The 0x0200de08 pointer passed to
- * Func_0200ab3e is not dereferenced here, so it is recorded as a raw
+ * Func_08009098 is not dereferenced here, so it is recorded as a raw
  * literal rather than a typed global, per HANDOVER's address-taken-literal
  * rule.
  */
 
-extern u8 *Func_0200ab38(s32 kind, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_0200ab3e(u8 *object, void *table);
-extern void Func_0200ab50(u8 *record, s32 arg1);
+extern u8 *Func_080090c8(s32 kind, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_08009098(u8 *object, void *table);
+extern void Func_08009020(u8 *record, s32 arg1);
 
 void Func_02005158(u8 *object)
 {
     u8 *newObject;
     u8 *record;
 
-    newObject = Func_0200ab38(24, *(s32 *)(object + 8), *(s32 *)(object + 12), *(s32 *)(object + 16));
+    newObject = Func_080090c8(24, *(s32 *)(object + 8), *(s32 *)(object + 12), *(s32 *)(object + 16));
     if (newObject == 0) {
         return;
     }
 
-    Func_0200ab3e(newObject, (void *)0x0200de08);
+    Func_08009098(newObject, (void *)0x0200de08);
 
     newObject[0x55] = 0;
     newObject[0x22] = 1;
@@ -52,7 +52,7 @@ void Func_02005158(u8 *object)
 
     record = *(u8 **)(newObject + 0x50);
     if (record != 0) {
-        Func_0200ab50(record, 2);
+        Func_08009020(record, 2);
         record[0x26] = 0;
         record[9] |= 0x0C;
     }

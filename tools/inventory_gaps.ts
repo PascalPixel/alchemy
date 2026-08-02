@@ -33,6 +33,15 @@ export interface Ownable {
   owned: boolean;
 }
 
+/**
+ * A shape whose start lies strictly inside an admitted semantic owner is not a
+ * new owner. Requiring strict containment matters: a shape at the semantic
+ * entry corroborates that owner and must remain eligible for this audit.
+ */
+export function startsInside(start: number, spans: readonly Interval[]): boolean {
+  return spans.some((span) => span.start < start && start < span.end);
+}
+
 /** Merge overlapping/adjacent intervals so containment is a single test. */
 export function unionOf(intervals: readonly Interval[]): Interval[] {
   const sorted = [...intervals].sort((a, b) => a.start - b.start || a.end - b.end);
@@ -87,6 +96,7 @@ function auditedIntervals(inventoryPath: string): Map<string, Interval[]> {
 
 function collectOwnables(): Ownable[] {
   const ownables: Ownable[] = [];
+  const overlaySemanticSpans = new Map<string, Interval[]>();
 
   // 1. main: every assembled manifest row.
   const manifestPath = [join(ROOT, "out/full/asm/manifest.json"), join(ROOT, "out/asm/manifest.json")]
@@ -127,6 +137,25 @@ function collectOwnables(): Ownable[] {
     }
   }
 
+  // Overlay semantic spans only classify structural shapes here. Their full
+  // ranges often include trailing literal pools, so they are not themselves
+  // added to the executable-ownable set.
+  const overlayRegionsPath = join(ROOT, "semantic/regions.json");
+  if (existsSync(overlayRegionsPath)) {
+    const document = readJson(overlayRegionsPath) as {
+      manual_regions?: Array<{ overlay: string; entry: string; span_bytes: number }>;
+    };
+    for (const region of document.manual_regions ?? []) {
+      const start = Number.parseInt(region.entry, 16);
+      if (!Number.isSafeInteger(start) || !Number.isSafeInteger(region.span_bytes) || region.span_bytes <= 0)
+        continue;
+      overlaySemanticSpans.set(region.overlay, [
+        ...(overlaySemanticSpans.get(region.overlay) ?? []),
+        { start, end: start + region.span_bytes },
+      ]);
+    }
+  }
+
   // 3. overlays: every owner label the overlay assembly names.
   const code = join(ROOT, "assets/code");
   if (existsSync(code)) {
@@ -157,6 +186,11 @@ function collectOwnables(): Ownable[] {
     };
     for (const entry of document.all ?? []) {
       const start = OVERLAY_BASE + entry.offset;
+      // The motivating false positive is resource_3b9:0x0200020c: pointer
+      // 0x0200b5f4 begins with a push-shaped halfword, and the shape walker
+      // continues through the next owner's return. The apparent entry is
+      // strictly inside the admitted 0x0200007c semantic owner.
+      if (startsInside(start, overlaySemanticSpans.get(entry.overlay) ?? [])) continue;
       ownables.push({
         namespace: entry.overlay,
         owner: `unindexed:${start.toString(16)}`,
@@ -203,6 +237,13 @@ function selfTest(): void {
   if (!gaps.some((gap) => gap.owner === "unowned-hole" && !gap.owned)) {
     throw new Error("unowned spans must be reported");
   }
+  const semanticSpan = [{ start: 0x100, end: 0x110 }];
+  if (!startsInside(0x108, semanticSpan))
+    throw new Error("a shape strictly inside a semantic owner must be interior");
+  if (startsInside(0x100, semanticSpan))
+    throw new Error("a shape at an owner entry must remain audit-eligible");
+  if (startsInside(0x110, semanticSpan))
+    throw new Error("a shape at an owner end must not be interior");
   let threw = false;
   try {
     findGaps(audited, [{ namespace: "main", owner: "empty", start: 8, end: 8, owned: true }]);

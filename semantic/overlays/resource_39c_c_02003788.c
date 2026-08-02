@@ -23,73 +23,66 @@ typedef int s32;
  * two different writes in sequence rather than a repeated identical
  * store.
  *
- * Uncertainty: none of the seventeen callees are identified beyond call
- * shape; `Func_02009454` is called twice with different argument counts
- * (one, then three) and is declared old-style rather than miscredited
- * either shape, per this project's "arities vary per site" convention
- * (resource_3cb_c_02000580.c). The fixed-point conversion of `self`'s
+ * Uncertainty: none of the fourteen resolved callees are identified beyond
+ * call shape. The fixed-point conversion of `self`'s
  * fields 0x10/0x12 (signed halfwords, shifted to 16.16, one of them
  * additionally offset by -1.0 via the 0xfff00000 pool constant) is
  * recorded as read, not decoded further.
  */
 
-extern void *Func_02009262(s32 arg0);
-extern void *Func_0200921a(s32 arg0);
-extern void Func_02009254();
-extern void Func_0200936a(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_020092f2(s32 arg0, s32 arg1, s32 arg2);
-extern void Func_02009342(s32 arg0, s32 arg1);
-extern void Func_020092b0(s32 arg0);
-extern void Func_0200920e(s32 arg0, s32 arg1);
-extern void Func_020093da();
-extern void Func_020093ee();
-extern void Func_02009454();
-extern void Func_020092da(s32 arg0, s32 arg1, s32 arg2);
-extern void Func_0200937c(s32 arg0, s32 arg1);
-extern void Func_020092ea(s32 arg0);
-extern void Func_02009248(s32 arg0, s32 arg1);
-extern void Func_02009482(s32 arg0, s32 arg1, s32 arg2);
-extern void Func_0200949c();
-extern void Func_02009300();
+extern void *Func_0808a080(s32 arg0);
+extern s32 Func_080770c0(s32 arg0);
+extern void Func_0808a018(void);
+extern void Func_0808a210(s32, s32, s32, s32);
+extern void Func_0808a0f0(s32, s32, s32);
+extern void Func_0808a158(s32, s32);
+extern void Func_080091e0(s32, s32);
+extern void Func_0808a360(void);
+extern void Func_0808a370(void);
+extern void Func_080f9010(s32);
+extern void Func_0808a090(s32, s32, s32);
+extern void Func_0808a580();
+extern void Func_0808a5e8(void);
+extern void Func_0808a020(void);
 
 void Func_02003788(void)
 {
-    u8 *self = (u8 *)Func_02009262(0);
-    void *existing = Func_0200921a(0x109);
+    u8 *self = (u8 *)Func_0808a080(0);
+    s32 existing = Func_080770c0(0x109);
     u8 *ownerRecord;
 
     if (existing != 0) {
         return;
     }
 
-    Func_02009254();
+    Func_0808a018();
 
     self[0x55] = 0;
-    Func_0200936a(-1, -1, -1, 0);
+    Func_0808a210(-1, -1, -1, 0);
 
-    Func_020092f2(0, *(short *)(self + 10) << 16, (*(short *)(self + 18) << 16) - 0x10000);
-    Func_02009342(0, 15);
-    Func_020092b0(0);
-    Func_0200920e(0, 0);
-    Func_020093da();
-    Func_020093ee();
-    Func_02009454(228);
+    Func_0808a0f0(0, *(short *)(self + 10) << 16, (*(short *)(self + 18) << 16) - 0x10000);
+    Func_0808a158(0, 15);
+    Func_0808a080(0);
+    Func_080091e0(0, 0);
+    Func_0808a360();
+    Func_0808a370();
+    Func_080f9010(228);
 
     *(s32 *)(self + 0x6c) = 0x02008cd1;
-    Func_020092da(0, 0x6666, 0x3333);
-    Func_02009454(0, 0, 8);
-    Func_0200937c(0, 0);
-    Func_020092ea(0);
-    Func_02009248(0, 1);
+    Func_0808a090(0, 0x6666, 0x3333);
+    Func_0808a580(0, 0, 8);
+    Func_0808a158(0, 0);
+    Func_0808a080(0);
+    Func_080091e0(0, 1);
 
     ownerRecord = *(u8 **)(self + 0x50);
     ownerRecord[9] = (ownerRecord[9] & ~0x0c) | 4;
 
-    Func_02009482(0, 0, 10);
+    Func_0808a580(0, 0, 10);
 
     self[0x55] = 3;
     *(s32 *)(self + 0x6c) = 0;
 
-    Func_0200949c();
-    Func_02009300();
+    Func_0808a5e8();
+    Func_0808a020();
 }

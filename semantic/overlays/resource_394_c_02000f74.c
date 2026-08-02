@@ -7,7 +7,8 @@ struct DmaTransfer {
     u32 control;
 };
 
-void Func_020020aa(s32 size, s32 mode);
+/* Resolved whole-owner call targets. */
+extern void Func_0808a338();
 
 /*
  * Capture the two hardware-palette banks into their non-contiguous work-buffer
@@ -29,5 +30,5 @@ void Func_02000f74(void)
     dma3->destination = destination + 0x1c0;
     dma3->control = 0x84000070;
 
-    Func_020020aa(0x10000, 0);
+    Func_0808a338(0x10000, 0);
 }

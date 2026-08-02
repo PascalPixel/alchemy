@@ -37,11 +37,9 @@ struct Resource373Follower {
     u8 alertLatch;                  /* 0x62 */
 };
 
-s32 Func_0200acb0(const s32 *targetPosition, const s32 *followerPosition);
-s32 Func_0200b56a(s32 dz, s32 dx);
-void Func_0200b578(struct Resource373Follower *follower, s32 mode);
-void Func_0200b5ec(struct Resource373Follower *follower, s32 mode);
-void Func_0200b602(struct Resource373Follower *follower, s32 mode);
+s32 Func_02005610(const s32 *targetPosition, const s32 *followerPosition);
+s32 Func_08000100(s32 dz, s32 dx);
+void Func_08009080(struct Resource373Follower *follower, s32 mode);
 
 s32 Func_0200564c(struct Resource373Follower *follower,
                   struct Resource373Follower *target,
@@ -52,13 +50,13 @@ s32 Func_0200564c(struct Resource373Follower *follower,
     s32 distance;
 
     if (follower->alerted == 1 && follower->alertLatch == 0) {
-        Func_0200b578(follower, 1);
+        Func_08009080(follower, 1);
         return 1;
     }
 
-    distance = Func_0200acb0(&target->x, &follower->x);
+    distance = Func_02005610(&target->x, &follower->x);
     if (distance < noticeRange || force != 0) {
-        s32 bearing = Func_0200b56a(target->z - follower->z,
+        s32 bearing = Func_08000100(target->z - follower->z,
                                     target->x - follower->x);
         s32 sector = (s32)(u16)bearing;   /* lsls #16 ; lsrs #16 */
         s32 previous;
@@ -73,7 +71,7 @@ s32 Func_0200564c(struct Resource373Follower *follower,
         if (sector == facing || next == facing || previous == facing ||
             force != 0) {
             follower->alerted = 1;
-            Func_0200b5ec(follower, 1);
+            Func_08009080(follower, 1);
             result = 1;
             follower->alertLatch = 1;
             return result;
@@ -81,7 +79,7 @@ s32 Func_0200564c(struct Resource373Follower *follower,
     }
 
     follower->alerted = (u8)force;
-    Func_0200b602(follower, 2);
+    Func_08009080(follower, 2);
     follower->alertLatch = (u8)force;
     return result;
 }

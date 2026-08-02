@@ -24,46 +24,35 @@ typedef signed int s32;
  * Raw callee naming.
  */
 
-void Func_0200ad60();
-void Func_0200ad70();
-void Func_0200ad72();
-void Func_0200ad82();
-void Func_0200ad84();
-void Func_0200ad94();
-void Func_0200ad96();
-void Func_0200ada6();
-void Func_0200ada8();
-void Func_0200adb8();
+void Func_0808a100(s32 arg0, s32 arg1);
+void Func_0808a108(s32 arg0, s32 arg1);
 
 void Func_020047cc(s32 a0)
 {
     switch (a0) {
     case 18:
     case 20:
-        Func_0200ad60(a0, 5);
-        Func_0200ad70(a0, 16);
+        Func_0808a100(a0, 5);
+        Func_0808a108(a0, 16);
         break;
     case 19:
-        Func_0200ad84(a0, 6);
-        Func_0200ad94(a0, 8);
-        break;
     case 24:
-        Func_0200ad84(a0, 10);
-        Func_0200ad94(a0, 8);
+        Func_0808a100(a0, a0 == 19 ? 6 : 10);
+        Func_0808a108(a0, 8);
         break;
     case 21:
     case 25:
-        Func_0200ad96(a0, 5);
-        Func_0200ada6(a0, 4);
+        Func_0808a100(a0, 5);
+        Func_0808a108(a0, 4);
         break;
     case 22:
     case 23:
-        Func_0200ad72(a0, 5);
-        Func_0200ad82(a0, 20);
+        Func_0808a100(a0, 5);
+        Func_0808a108(a0, 20);
         break;
     case 26:
-        Func_0200ada8(a0, 9);
-        Func_0200adb8(a0, 4);
+        Func_0808a100(a0, 9);
+        Func_0808a108(a0, 4);
         break;
     default:
         break;

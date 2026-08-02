@@ -35,8 +35,8 @@ typedef unsigned long long u64;
  * The +32 field is computed in the overlay's soft-float library rather than in
  * fixed point, which is the one structural difference from the two siblings:
  *   Func_02005af0  s32 -> packed double (actor9->x)
- *   Func_02005a78  double subtraction, first operand the pooled constant
- *   Func_02005b6c  double -> s32 truncation
+ *   Func_02005a78  double -> s32 truncation
+ *   Func_02005b6c  double subtraction, first operand the pooled constant
  * The pooled operand is r0 = 0x41610000, r1 = 0x00000000.  This library keeps
  * the HIGH word of a double in r0 (established by 0x02005af0's -2147483648.0
  * literal pair), so the constant is 8912896.0 == 8.5 * 0x100000 — the same
@@ -113,7 +113,7 @@ void Func_02001150(void)
         u64 value = Func_02005af0(*(s32 *)(actor9 + 8));
 
         /* r0/r1 = 0x41610000 / 0 == 8912896.0 in this library's word order. */
-        record[8] = Func_02005a78(Func_02005b6c((u64)0x41610000u, value));
+        record[8] = Func_02005b6c(Func_02005a78((u64)0x41610000u, value));
     }
 
     if (Func_02001108() != 0) {

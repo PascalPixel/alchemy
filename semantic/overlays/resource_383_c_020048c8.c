@@ -144,12 +144,13 @@ void Func_020048c8(void)
         if (Func_02004840(exit) != 0) {
             heading = (s16)(*(u16 *)(follower + 6) + 0x8000);
             exit = Func_02004754(cell, &heading);
-            if (Func_02004840(exit) != 0) {
+            if (Func_02004840(exit) == 0) {
+                Func_0808a1f0(24, 2);
+            } else {
                 Func_08009080(follower, 4);
                 blocked = 1;
                 goto actor25;
             }
-            Func_0808a1f0(24, 2);
         }
         Func_020048a4((s32)follower, exit);
         Func_08009080(follower, 2);
@@ -168,12 +169,13 @@ actor25:
         if (Func_02004840(exit) != 0) {
             heading = (s16)(*(u16 *)(follower + 6) + 0x8000);
             exit = Func_02004754(cell, &heading);
-            if (Func_02004840(exit) != 0) {
+            if (Func_02004840(exit) == 0) {
+                Func_0808a1f0(25, 2);
+            } else {
                 Func_08009080(follower, 4);
                 blocked += 2;
                 goto tally;
             }
-            Func_0808a1f0(25, 2);
         }
         Func_020048a4((s32)follower, exit);
         Func_08009080(follower, 2);

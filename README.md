@@ -32,26 +32,26 @@ Alchemy inspires new developers to create wonderful RPGs of their own.
 ## Progress: Currently 20% of the way done
 
 20% of the game's audited executable bytes now build from exact, byte-matching
-C. These three maps show where the code and assets of the English release stand
+C. These maps show where the code and assets of the English release stand
 today.
 
 ### Main game
 
 The main game is the 548,364 bytes of code that remain available while *Golden
 Sun* is running. Bright purple is exact, byte-matching C; the softer purple is
-readable C that still needs to be matched. Orange marks the small pieces of
+readable C that still needs to be matched. Dark gray marks the small pieces of
 low-level runtime structure intentionally retained as assembly.
 
-![Main-image code coverage box tree in purple with retained assembly in orange.](assets/readme/gs1-en-core.svg?v=900bd060)
+![Main-image code coverage box tree in purple with retained assembly in dark gray.](assets/readme/gs1-en-core.svg?v=9ef37438)
 
 ### Code overlays
 
 *Golden Sun* also loads 96 additional code modules into memory when it needs
 them. This panel tracks all 795,106 executable bytes across those modules.
 Bright cyan is exact C, the softer cyan is readable C still being matched, gray
-is code still to reconstruct, and orange is retained low-level assembly.
+is code still to reconstruct, and dark gray is retained low-level assembly.
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=89749873)
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=aa88cb24)
 
 ### Data and assets
 

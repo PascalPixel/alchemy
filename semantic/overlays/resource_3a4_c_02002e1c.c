@@ -3,7 +3,7 @@ typedef signed int s32;
 typedef unsigned int u32;
 
 /*
- * resource_3a4 owner at 0x02002e1c, 90 bytes: bracket a scene setup --
+ * resource_3a4 owner at 0x02002e1c, 104 bytes: bracket a scene setup --
  * place entity slots 9 and 8, set a story flag, run three unresolved
  * no-arg primitives and the task scheduler, stamp the overlay workspace's
  * +448 field once with 0x201 and again with 0x204 around two more
@@ -12,7 +12,7 @@ typedef unsigned int u32;
  * Complete owner: `push {r5, r6, lr}` at 0x02002e1c through the matching
  * interworking return `pop {r5, r6} / pop {r0} / bx r0` at 0x2002e72-
  * 0x02002e76, followed by the three-word literal pool 0x02002e78-0x02002e83
- * that closes the 90-byte span. No arguments, void.
+ * that closes the 104-byte span. No arguments, void.
  *
  * Not found by the structural inventory walk (unindexed); one incoming
  * call site per overlay_unindexed.ts. This owner makes eleven outgoing

@@ -3,7 +3,7 @@ typedef signed int s32;
 typedef unsigned int u32;
 
 /*
- * resource_3bc owner at 0x02003b40, 62 bytes: a sibling of
+ * resource_3bc owner at 0x02003b40, 64 bytes: a sibling of
  * resource_3bc_c_020022c4.c -- same "if the entity exists, run the
  * unestablished no-arg helper, set presentation mode 5, teleport
  * horizontally keeping height" sequence, plus three extra field resets

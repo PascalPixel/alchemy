@@ -1,7 +1,7 @@
 typedef signed int s32;
 
 /*
- * resource_3a4 owner at 0x02002d08, 78 bytes: a fixed sequence of
+ * resource_3a4 owner at 0x02002d08, 80 bytes: a fixed sequence of
  * cutscene-primitive calls with literal arguments -- select entity
  * presentation 10/mode 2 four times interleaved with five other primitive
  * calls, then play sound cue 288.

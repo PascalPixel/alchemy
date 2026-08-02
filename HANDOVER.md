@@ -265,6 +265,16 @@ Latest bounded probes (2026-08-02) reinforce that rule:
 - The fresh 40-byte `08079390` leaf reached an 11-halfword floor under a
   329-configuration compiler sweep, but no configuration or source spelling
   was exact. It remains outside `src/`.
+- Fresh main-image `08078ee8` (284-byte owner): the 329-configuration sweep
+  reached 282 bytes and 98 differing halfwords with
+  `-fno-rerun-cse-after-loop -fno-force-mem`; no exact route emerged.
+- Fresh main-image `08079b24` (160-byte owner): the sweep reached the exact
+  160-byte extent and 46 differing halfwords. A bounded 1,800-step,
+  three-restart permuter run ended at weighted floor 148 with no exact match.
+- Fresh main-image `0809509c` (194-byte owner): the sweep reached the exact
+  194-byte extent and 38 differing halfwords with grouped-DMA scheduling.
+  A bounded 1,800-step, three-restart permuter run ended at weighted floor 96;
+  no exact match was found or promoted.
 
 ## Tooling audit
 

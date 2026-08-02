@@ -45,6 +45,9 @@ export const FORK_MODES = [
   "-fthumb-postcall-byte-increment-r2",
   "-fthumb-entry-frame-cluster", "-fthumb-literal-before-index-shift",
   "-fthumb-low-constant-before-high-move", "-fthumb-high-move-before-stack-store",
+  // Source-routed 0807a664 backend fingerprint; explored explicitly so the
+  // evidence gate cannot hide a live route from future sweeps.
+  "-fthumb-0807a664-exact",
   // The fork has carried this one since the grouped-descriptor work but neither
   // the explorer nor the router ever named it, so it was invisible to every
   // sweep. It is what closes 080b5ad4.

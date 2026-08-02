@@ -81,22 +81,22 @@ s32 Func_02002a94(s32 arg0, s32 arg1)
         return 2;
     }
 
-    if (Func_080770c0(arg1 + 0x208) == 0) {
-        Func_080770c8(arg1 + 0x208);
-        Func_0808a170(0x207c);
-        Func_0808a178(arg0, 0);
-        return Func_0808a070(0, 0);
+    if (Func_080770c0(arg1 + 0x208) != 0) {
+        classification = Func_080153a0(0);
+        if (classification == 1) {
+            return 2;
+        }
+        if (classification == 2) {
+            return 3;
+        }
+        if (classification == -1) {
+            return 3;
+        }
+        return classification;
     }
 
-    classification = Func_080153a0(0);
-    if (classification == 1) {
-        return 2;
-    }
-    if (classification == 2) {
-        return 3;
-    }
-    if (classification == -1) {
-        return 3;
-    }
-    return classification;
+    Func_080770c8(arg1 + 0x208);
+    Func_0808a170(0x207c);
+    Func_0808a178(arg0, 0);
+    return Func_0808a070(0, 0);
 }

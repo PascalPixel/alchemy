@@ -27,8 +27,7 @@ typedef unsigned long long u64;
  *     compare (`bhi`), so a high word already above 0x0FFFFFFF skips
  *     normalisation entirely.
  *
- * Func_0200b792 is a resident service whose address falls numerically inside
- * this overlay's image; no local owner is asserted for it.
+ * Both ordinary paths join at the single local packer call at 0x02005c38.
  */
 typedef u64 SoftDouble;
 
@@ -40,7 +39,7 @@ typedef struct SoftFloatRecord {
     u32 high;
 } SoftFloatRecord;
 
-SoftDouble Func_0200b792(SoftFloatRecord *record);
+SoftDouble Func_02005c38(SoftFloatRecord *record);
 
 SoftDouble Func_02005af0(s32 value)
 {
@@ -52,7 +51,7 @@ SoftDouble Func_02005af0(s32 value)
 
     if (value == 0) {
         record.cls = 2u;
-        return Func_0200b792(&record);
+        goto pack;
     }
 
     record.exponent = 60;
@@ -80,5 +79,6 @@ SoftDouble Func_02005af0(s32 value)
         } while (record.high <= 0x0FFFFFFFu);
     }
 
-    return Func_0200b792(&record);
+pack:
+    return Func_02005c38(&record);
 }

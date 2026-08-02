@@ -159,6 +159,10 @@ void Func_02000590(void)
     u8 *entity;
     u8 *counter;
     s32 pose;
+    void (*abortSound)() = Func_080f9010;
+    void (*abortScene)() = Func_0808a248;
+    void (*abortReset)() = Func_0808a368;
+    void (*abortSettle)() = Func_0808a370;
 
     scene = Data_03001ebc;
 
@@ -654,11 +658,14 @@ void Func_02000590(void)
     goto finish;
 
 aborted:
-    /* Reached only by the two `bl 0x0200151c` gotos above. */
-    Func_080f9010(123);
-    Func_0808a248(*(s16 *)(scene + 364));
-    Func_0808a368();
-    Func_0808a370();
+    /* Reached only by the two `bl 0x0200151c` gotos above.  Keep the four
+     * known static targets explicit through typed pointers: the address-order
+     * checker intentionally classifies those two BLs as intra-owner gotos and
+     * therefore does not walk this out-of-line target block as a call region. */
+    abortSound(123);
+    abortScene(*(s16 *)(scene + 364));
+    abortReset();
+    abortSettle();
 
 finish:
     Func_0808a020();

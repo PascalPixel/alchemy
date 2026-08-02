@@ -82,7 +82,6 @@ void Func_0200039c(void)
     if (Func_080770c0(0x962)) {
         if (Func_080770c0(960)) {
             Func_0808a170(0x225e);
-            Func_0808a180(16, 0);
         } else {
             Func_0808a170(0x225a);
             Func_0808a178(16, 0);

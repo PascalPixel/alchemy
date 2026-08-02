@@ -29,8 +29,8 @@ typedef signed int s32;
  * All 15 bl sites resolve with the `+2` stored-displacement rule; 14
  * land in the veneer table, one is overlay-local:
  *   0x2002938, 0x2002998, 0x20029be -> Func_080770c0   test story flag
- *   0x2002948, 0x2002952, 0x20029a2 -> Func_0808a0f0   place entity
- *   0x200295a, 0x200296e, 0x200297a -> Func_0808a080   record accessor
+ *   0x2002948, 0x2002952 -> Func_0808a0f0   place entity
+ *   0x200295a, 0x200296e, 0x200297a, 0x20029a2 -> Func_0808a080   record accessor
  *   0x2002960, 0x2002974 -> Func_080091e0   (record, n), established
  *   0x2002968 -> Func_0808a1e0              (slot, n), established
  *   0x20029a8 -> Func_0808a018              open bracket on the entity
@@ -67,7 +67,7 @@ void Func_02002934(void)
     selector = *(s16 *)((u8 *)0x02000240 + 450);
     if (selector == 1 || selector == 98) {
         if (Func_080770c0(0x109) == 0) {
-            entity = Func_0808a0f0(0);
+            entity = Func_0808a080(0);
             Func_0808a018(entity);
             *(s32 *)(entity + 12) = 0x100000;   /* 128 << 13 */
             Func_0808a020();

@@ -981,7 +981,17 @@ void Func_02000d3c(void)
             Func_0808a110(1, 3);
             Func_0808a010(20);
             Func_0808a100(3, 3);
-        } else {
+            goto shared_scene_tail;
+        }
+
+        goto alternate_scene_tail;
+
+shared_scene_tail:
+        Func_0808a110(2, 3);
+        goto scene_close;
+
+alternate_scene_tail:
+        {
             Func_0808a1e8(2, 0x105, 0);
             Func_0808a010(40);
             Func_0808a110(2, 3);
@@ -1019,12 +1029,6 @@ void Func_02000d3c(void)
             goto scene_close;
         }
     }
-
-    /*
-     * 0x02002528, the tail both surviving arms fall into; the third arm
-     * (0x02002558) branches past it to 0x02002660, which is the goto above.
-     */
-    Func_0808a110(2, 3);
 
 scene_close:
     Func_080f9010(17);

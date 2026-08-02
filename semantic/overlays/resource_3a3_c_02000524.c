@@ -119,13 +119,16 @@ void Func_02000524(void)
 
     if (variant == 6) {
         Func_0808a0d8(0, 2, 0);
-    } else if (variant == 1) {
-        Func_0808a1e0(0, 2);
-        Func_0808a0e0(0, 0, -4);
-    } else {
-        Func_0808a0d8(0, 2, -4);
+        goto placement_done;
     }
+    if (variant != 1) {
+        Func_0808a0d8(0, 2, -4);
+        goto placement_done;
+    }
+    Func_0808a1e0(0, 2);
+    Func_0808a0e0(0, 0, -4);
 
+placement_done:
     Func_0808a010(10);
 
     Func_0808a248((s32)*(s16 *)(workspace + 364));

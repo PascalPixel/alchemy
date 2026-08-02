@@ -529,8 +529,9 @@ s32 Func_02003068(void)
                 sprite->z = (s32)0xfff00000;
                 sprite->flags = 2;
                 Func_0808a080(12, 7);
-                Func_0808a100(Func_0808a080(12), 0);
-                Func_080091e0(12, 1);
+                Func_0808a100(12, 7);
+                sprite = Func_0808a080(12);
+                Func_080091e0(sprite, 0);
                 sprite = Func_0808a1e0(12);
                 sprite->state59 = 0;
                 sprite->flags = 2;
@@ -559,7 +560,7 @@ s32 Func_02003068(void)
     case 2:
         if (Func_080770c0(0x109) != 0) {
             Func_020022c8(0);
-            Func_0808a080(Func_0200094c(0));
+            Func_0200094c(Func_0808a080(0));
             for (i = 0; i <= 3; i++) {
                 sprite = Func_0808a080(i + 10);
                 if ((sprite->x >> 20) == 13 && (sprite->y >> 20) == 7 &&
@@ -590,7 +591,7 @@ s32 Func_02003068(void)
         sprite = Func_0808a080(10);
         sprite->state55 = 0;
         sprite->counter64 = 0;
-        Func_080091e0(Func_0808a080(10), 0);
+        Func_080091e0(sprite, 0);
         sprite = Func_0808a080(11);
         sprite->state55 = 0;
         sprite->counter64 = 0;
@@ -602,12 +603,18 @@ s32 Func_02003068(void)
         sprite = Func_0808a080(13);
         sprite->state55 = 0;
         sprite->counter64 = 0;
-        Func_080091e0(Func_0808a5e0(13), 0);
+        Func_080091e0(Func_0808a080(13), 0);
         return 0;
 
     case 13:
     case 14:
         goto scene_fade;
+
+    /* Four jump tables enter this one physical fade tail.  Its placement
+     * here mirrors the machine's address order between switch arms. */
+    scene_fade:
+        Func_0808a5e0(170);
+        return 0;
 
     case 18:
     case 19:
@@ -697,8 +704,9 @@ s32 Func_02003068(void)
             sprite->flags = 2;
             Func_0808a080(18, 3);
             Func_0808a1e0(19, 7);
-            Func_0808a100(Func_0808a080(19), 0);
-            Func_080091e0(19, 1);
+            Func_0808a100(19, 7);
+            sprite = Func_0808a080(19);
+            Func_080091e0(sprite, 0);
             sprite = Func_0808a1e0(19);
             sprite->state59 = 0;
             sprite->flags = 2;
@@ -706,19 +714,11 @@ s32 Func_02003068(void)
             sprite->handler = Func_02000b98;
         }
         Func_0808a0f0();
+        Func_02002b14();
         return 0;
 
     default:
         return 0;
     }
 
-    /*
-     * 0x02003c86: a two-instruction tail that four of the five jump tables
-     * enter directly (scene 0xb7 states 1-4/19, 0xb8 states 1/2, 0xb9 states
-     * 4-6, 0xba states 13/14).  Written once, reached by `goto`, so the file's
-     * call count stays equal to the assembly's site count.
-     */
-scene_fade:
-    Func_02002b14(170);
-    return 0;
 }

@@ -250,26 +250,30 @@ void Func_02001ca4(void)
         Func_0808a178(8, 0);
 
         step = 0;
-        for (;;) {
-            if (Func_0808a070(0, 0) != 1) {
-                Func_0808a100(0, 22);
-                Func_0808a170(8, 2, 20);
-                Func_0808a128(8, 4, 20);
-                Func_0808a170(0xc63);
-                Func_0808a180(8, 0);
-                break;
-            }
-            Func_0808a128(8, 2, 20);
-            Func_0808a128(8, 2, 20);
-            if (step == 6) {
-                Func_0808a128(0xc62);
-                Func_0808a180(8, 0);
-                break;
-            }
-            Func_0808a170(0xc5c + step);
-            Func_0808a178(8, 0);
-            step++;
+loop_test:
+        if (Func_0808a070(0, 0) != 1) {
+            goto loop_failed;
         }
+        Func_0808a128(8, 2, 20);
+        Func_0808a128(8, 2, 20);
+        if (step == 6) {
+            Func_0808a170(0xc62);
+            Func_0808a180(8, 0);
+            goto loop_done;
+        }
+        Func_0808a170(0xc5c + step);
+        Func_0808a178(8, 0);
+        step++;
+        goto loop_test;
+
+loop_failed:
+        Func_0808a100(0, 22);
+        Func_0808a128(8, 2, 20);
+        Func_0808a128(8, 4, 20);
+        Func_0808a170(0xc63);
+        Func_0808a180(8, 0);
+
+loop_done:
 
         Func_08015120(300, 4);
         Func_080f9010(81);

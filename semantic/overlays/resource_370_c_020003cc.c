@@ -504,8 +504,7 @@ L_09a6:
 
 L_09cc:
     if (r6 != 0) {
-        Func_080000c0(300);
-        goto L_04a8;                /* long `bl` at 0x02000c92 */
+        goto L_delayed_wait;
     }
 
 L_09d2:
@@ -649,6 +648,10 @@ L_0b58:
 L_0c82:
     Func_080000c0(1);
     goto L_0aaa;
+
+L_delayed_wait:
+    Func_080000c0(300);
+    ((void (*)(void))0x0200113c)(); /* long `bl` at 0x02000c92 */
 
 L_0c96:
     *(u16 *)(*(u8 **)0x03001ebc + 368) = 999;

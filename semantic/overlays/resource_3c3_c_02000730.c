@@ -70,8 +70,8 @@ void Func_02000730(void)
         goto done;
     }
 
-    Func_0808a180(9, 0);
     Func_0808a110(9, 4);
+    Func_0808a180(9, 0);
 
 close:
     Func_0808a180(9, 0);

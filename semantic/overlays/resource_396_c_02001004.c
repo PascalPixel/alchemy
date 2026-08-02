@@ -67,7 +67,7 @@ extern void Func_020018b8(void);
 
 /* IWRAM 16.16 multiply, established; reached at 0x03000118 through the
  * `mov ip, pc / bx r4` idiom rather than by bl. */
-extern s32 Func_03000118(s32 value, s32 scale);
+typedef s32 (*Multiply16_16)(s32 value, s32 scale);
 
 extern void Func_080000c0(s32 arg0);
 extern void Func_080000d0(s32 callback, s32 arg1);
@@ -90,6 +90,7 @@ s32 Func_02001004(void)
 {
     u8 *record;
     u8 *camera;
+    Multiply16_16 multiply16_16 = (Multiply16_16)0x03000118;
     s32 id;
     s16 selector;
 
@@ -115,8 +116,8 @@ s32 Func_02001004(void)
     }
 
     camera = Data_03001e70;
-    *(s32 *)(camera + 268) += Func_03000118(*(s32 *)(camera + 236) + 0xa00000, 0x1999);
-    *(s32 *)(camera + 272) += Func_03000118(*(s32 *)(camera + 240) + 0x880000, 0x1999);
+    *(s32 *)(camera + 268) += multiply16_16(*(s32 *)(camera + 236) + 0xa00000, 0x1999);
+    *(s32 *)(camera + 272) += multiply16_16(*(s32 *)(camera + 240) + 0x880000, 0x1999);
     *(s32 *)(camera + 276) = 0xe666;
     *(s32 *)(camera + 280) = 0xe666;
     Func_080770c8(0x201);

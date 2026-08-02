@@ -91,6 +91,7 @@ void Func_02005a28(void)
     s32 reach;
     u8 *record;
     u8 *attached;
+    u8 *positioned;
     s32 gate;
     s32 placed;
 
@@ -98,18 +99,25 @@ void Func_02005a28(void)
     state += 232;
 
     if (*(short *)(state + 2) > 129) {
-        Func_0808a0f0(23, 0, 0);
-    } else if ((*(s32 *)0x03001e40 & 1) != 0) {
+        goto reset_position;
+    }
+    if ((*(s32 *)0x03001e40 & 1) != 0) {
         Func_0808a0f0(23, 152 << 17, 164 << 16);
         reach = 128 << 9;
-        *(s32 *)(Func_0808a080(23) + 24) = reach;
-        *(s32 *)(Func_0808a080(23) + 28) = reach;
+        positioned = Func_0808a080(23);
     } else {
         Func_0808a0f0(23, 152 << 17, 171 << 16);
         reach = 0x00014ccc;
-        *(s32 *)(Func_0808a080(23) + 24) = reach;
-        *(s32 *)(Func_0808a080(23) + 28) = reach;
+        positioned = Func_0808a080(23);
     }
+    *(s32 *)(positioned + 24) = reach;
+    *(s32 *)(Func_0808a080(23) + 28) = reach;
+    goto position_done;
+
+reset_position:
+    Func_0808a0f0(23, 0, 0);
+
+position_done:
 
     if (anchor == 0) {
         return;

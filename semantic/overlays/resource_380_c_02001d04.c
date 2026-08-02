@@ -85,6 +85,7 @@ void Func_02001d04(void)
     u8 *flag;
     u8 *entry;
     s32 tick;
+    s32 promptId;
 
     Func_0808a138(1, 3);
     Func_0808a010(10);
@@ -175,14 +176,20 @@ void Func_02001d04(void)
     if (Func_0808a070(1, 0) != 0) {
         Func_0808a010(10);
         Func_0808a110(14, 4);
-        Func_0808a170(0x10c3);
+        promptId = 0x10c3;
+        goto presentPrompt;
+
+repeatPrompt:
+        Func_0808a010(20);
+        Func_0808a110(14, 4);
+        Func_0808a010(10);
+        promptId = 0x10c6;
+
+presentPrompt:
+        Func_0808a170(promptId);
         Func_0808a178(14, 0);
-        while (Func_0808a070(1, 0) == 0) {
-            Func_0808a010(20);
-            Func_0808a110(14, 4);
-            Func_0808a010(10);
-            Func_0808a170(0x10c6);
-            Func_0808a178(14, 0);
+        if (Func_0808a070(1, 0) == 0) {
+            goto repeatPrompt;
         }
     }
     Func_0808a010(30);

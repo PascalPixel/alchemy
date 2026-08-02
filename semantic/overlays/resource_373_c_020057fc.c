@@ -17,7 +17,7 @@ typedef signed int s32;
  *
  * UNCERTAINTY 1: the called service addresses are the ones encoded in the
  * overlay image (shared 0x02000000 namespace, load-time fixups).
- * UNCERTAINTY 2: 0x0200e6e4 is passed to Func_0200b760 as a plain pointer;
+ * UNCERTAINTY 2: 0x0200e6e4 is passed to Func_08009098 as a plain pointer;
  * whether it is animation data or a callback is not established here.
  */
 
@@ -52,59 +52,54 @@ struct Resource373Particle {
     u8 field55;
 };
 
-void Func_0200b954();
-void Func_0200b6c0();
-struct Resource373Particle *Func_0200b754();
-void Func_0200b7a8();
-void Func_0200b760();
-s32 Func_0200b70c();
-s32 Func_0200b726();
-s32 Func_0200b72c();
-s32 Func_0200b734();
-s32 Func_0200b744();
-void Func_0200b19a();
-void Func_0200ba08();
+void Func_080f9010();
+void Func_080000c0();
+struct Resource373Particle *Func_080090c8();
+void Func_080091e0();
+void Func_08009098();
+s32 Func_080000f8();
+void Func_020058f0();
 
 void Func_020057fc(struct Resource373Emitter *emitter)
 {
     s32 remaining;
 
-    Func_0200b954(154);
+    Func_080f9010(154);
 
     for (remaining = 30; remaining >= 0; remaining--) {
         emitter->y += 0x10000;              /* 0x80 << 9 */
         emitter->field06 = (u16)(emitter->field06 + 0x2000);  /* 0x80 << 6 */
         emitter->field18 += -2048;          /* pool word 0xfffff800 */
         emitter->field1c += -2048;
-        Func_0200b6c0(1);
+        Func_080000c0(1);
     }
 
     for (remaining = 7; remaining >= 0; remaining--) {
         struct Resource373Particle *particle =
-            Func_0200b754(0x11d, emitter->x, emitter->y, emitter->z);
+            Func_080090c8(0x11d, emitter->x, emitter->y, emitter->z);
 
         if (particle != 0) {
             s32 height;
             s32 speed;
 
-            Func_0200b7a8(particle, 0);
-            Func_0200b760(particle, (const void *)0x0200e6e4);
+            Func_080091e0(particle, 0);
+            Func_08009098(particle, (const void *)0x0200e6e4);
 
-            height = Func_0200b70c() + 0x10000;
+            height = Func_080000f8() + 0x10000;
             particle->field34 = 0x10000;
             particle->field30 = height;
             particle->field55 = 2;
             particle->field48 = 0x0a3d;
 
-            particle->lifetime = Func_0200b726() - Func_0200b72c();
+            particle->lifetime = Func_080000f8() - Func_080000f8();
 
-            speed = Func_0200b734();
+            speed = Func_080000f8();
             speed = ((speed * 2 + speed) << 3) + 0x80000;   /* 24x + 0x80000 */
-            Func_0200b19a(particle, speed, Func_0200b744());
+            Func_020058f0(particle, speed, Func_080000f8());
         }
     }
 
-    Func_0200ba08(131);
+    Func_080f9010(131);
 
     emitter->x = 0;
     emitter->y = 0;

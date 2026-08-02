@@ -74,6 +74,7 @@ typedef signed int s32;
 /* Old-style declarations: arities vary per site across this overlay. */
 void Func_080000c0();
 void Func_08000178();
+void Func_03001388();
 
 /* Used for their return values. */
 s32 Func_08000170();
@@ -83,14 +84,9 @@ s32 Func_0200053c();
 u8 *Func_08077008();
 u8 *Func_08077000();
 
-/* The relocated IWRAM serialiser reached through this overlay's `bx r3`
- * thunk; 0x03001388 is the code address itself. */
-typedef void (*Serialiser_02000580)();
-
 s32 Func_02000580(void)
 {
     volatile u16 *linkState = (volatile u16 *)0x03001f64;
-    Serialiser_02000580 serialise = (Serialiser_02000580)0x03001388;
     u16 ids[8];
     u8 scratch[8];
     s32 status = 0;
@@ -113,7 +109,7 @@ s32 Func_02000580(void)
 
     for (slot = 0; slot < present; slot++) {
         block = Func_08077008(ids[slot]);
-        serialise(handle, block, 340);
+        Func_03001388(handle, block, 340);
         *(u8 *)((u32)handle + 298) = 2;
         scratch[ids[slot]] = (u8)(slot - 128);
 
@@ -124,24 +120,45 @@ s32 Func_02000580(void)
             goto close;
         }
 
-        for (;;) {
-            if (Func_080003a8() == 0) {
-                break;
+        /* The machine enters each polling loop at its bottom test. */
+        goto testRosterSend;
+waitRosterSend:
+        budget--;
+        Func_080000c0(1);
+        if (budget < 0 || (*linkState & 3) != 3) {
+            stalls++;
+            if (stalls > 24) {
+                goto fail;
             }
-            budget--;
-            Func_080000c0(1);
-            if (budget < 0 || (*linkState & 3) != 3) {
-                stalls++;
-                if (stalls > 24) {
-                    goto fail;
-                }
-            }
+        }
+testRosterSend:
+        if (Func_080003a8() != 0) {
+            goto waitRosterSend;
         }
         Func_080000c0(2);
     }
 
     sent = present;
-    while (sent <= 2) {
+    /* Padding is sent from the block below the shared polling test. */
+    goto sendPadding;
+waitPadding:
+    budget--;
+    Func_080000c0(1);
+    if (budget < 0 || (*linkState & 3) != 3) {
+        stalls++;
+        if (stalls > 24) {
+            goto fail;
+        }
+    }
+testPadding:
+    if (Func_080003a8() != 0) {
+        goto waitPadding;
+    }
+    Func_080000c0(2);
+    sent++;
+
+sendPadding:
+    if (sent <= 2) {
         *(u8 *)((u32)handle + 298) = 0;
         stalls = 0;
         rc = Func_08000380(handle, 340);
@@ -149,28 +166,13 @@ s32 Func_02000580(void)
             status = rc;
             goto close;
         }
-
-        for (;;) {
-            if (Func_080003a8() == 0) {
-                break;
-            }
-            budget--;
-            Func_080000c0(1);
-            if (budget < 0 || (*linkState & 3) != 3) {
-                stalls++;
-                if (stalls > 24) {
-                    goto fail;
-                }
-            }
-        }
-        Func_080000c0(2);
-        sent++;
+        goto testPadding;
     }
 
     Func_08000178(handle);
     handle = Func_08000170(320);
     block = Func_08077000(0);
-    serialise(handle, block, 320);
+    Func_03001388(handle, block, 320);
 
     {
         s32 *count = (s32 *)((u32)handle + 264);
@@ -204,18 +206,19 @@ s32 Func_02000580(void)
         goto close;
     }
 
-    for (;;) {
-        if (Func_080003a8() == 0) {
-            break;
+    goto testFinalSend;
+waitFinalSend:
+    budget--;
+    Func_080000c0(1);
+    if (budget < 0 || (*linkState & 3) != 3) {
+        stalls++;
+        if (stalls > 24) {
+            goto fail;
         }
-        budget--;
-        Func_080000c0(1);
-        if (budget < 0 || (*linkState & 3) != 3) {
-            stalls++;
-            if (stalls > 24) {
-                goto fail;
-            }
-        }
+    }
+testFinalSend:
+    if (Func_080003a8() != 0) {
+        goto waitFinalSend;
     }
     Func_080000c0(1);
     Func_080000c0(2);

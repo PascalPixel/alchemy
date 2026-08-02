@@ -19,36 +19,31 @@ typedef unsigned char u8;
  * Raw callee naming.
  */
 
-u8 *Func_0200a018();
-void Func_0200b53e(void);
-void Func_02009968();
-void Func_02009972();
-void Func_02008842(void);
-void Func_02009980();
-void Func_0200b5f0();
-void Func_0200b5aa();
-void Func_0200b5a0();
-void Func_0200b5b8();
-void Func_0200b5c2();
-void Func_0200b5ca();
-void Func_0200a1b2(void);
-void Func_0200b5a2(void);
+u8 *Func_02004fa8();
+void Func_0808a018(void);
+void Func_020048e8();
+void Func_020037b4(void);
+void Func_0808a100();
+void Func_0808a098();
+void Func_0808a088();
+void Func_020050e4(void);
+void Func_0808a020(void);
 
 void Func_02005068(void)
 {
-    u8 *obj = Func_0200a018(0, 0);
+    u8 *obj = Func_02004fa8(0, 0);
 
-    Func_0200b53e();
-    Func_02009968(24, 1, 0);
-    Func_02009972(25, 2, 0);
-    Func_02008842();
-    Func_02009980(19, obj, 12);
-    Func_0200b5f0(10, 6);
-    Func_0200b5aa(obj, 0x0200e840);
-    Func_0200b5a0(11);
-    Func_0200b5b8(12, 0x0200e840);
-    Func_0200b5c2(0x24, 0x0200e8e4);
-    Func_0200b5ca(0x25, 0x0200e8e4);
-    Func_0200a1b2();
-    Func_0200b5a2();
+    Func_0808a018();
+    Func_020048e8(24, 1, 0);
+    Func_020048e8(25, 2, 0);
+    Func_020037b4();
+    Func_020048e8(19, obj, 12);
+    Func_0808a100(10, 6);
+    Func_0808a098(obj, 0x0200e840);
+    Func_0808a088(11);
+    Func_0808a098(12, 0x0200e840);
+    Func_0808a098(0x24, 0x0200e8e4);
+    Func_0808a098(0x25, 0x0200e8e4);
+    Func_020050e4();
+    Func_0808a020();
 }

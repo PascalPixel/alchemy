@@ -22,47 +22,45 @@ typedef signed int s32;
 
 extern u8 *Data_03001ebc;
 
-void Func_02007cd6();
-void Func_02007dbc();
-void Func_02007dcc();
-s32 Func_02007d04();
-void Func_0200609a();
-void Func_02007d86();
-u8 *Func_02007d24();
-void Func_02007d66();
-void Func_02007d94();
-void Func_02007da6();
-void Func_02007d0e();
-void Func_02007d14();
-void Func_020060f0();
-void Func_02007d58(void);
+void Func_0808a018();
+void Func_0808a170();
+void Func_0808a178();
+s32 Func_0808a070();
+void Func_0200486c();
+void Func_0808a100();
+u8 *Func_0808a080();
+u8 *Func_0808a0b8();
+void Func_0808a0e8();
+void Func_0808a0f0();
+void Func_080770c8();
+void Func_0808a020(void);
 
 void Func_02001804(s32 a0, s32 a1, s32 a2)
 {
-    Func_02007cd6(a0, a1, a2);
-    Func_02007dbc(a1);
-    Func_02007dcc(a0, 0);
+    Func_0808a018(a0, a1, a2);
+    Func_0808a170(a1);
+    Func_0808a178(a0, 0);
 
-    if (Func_02007d04(0, 0) != 0) {
+    if (Func_0808a070(0, 0) != 0) {
         u16 *slot = (u16 *)(Data_03001ebc + 472);
         (*slot)++;
-        Func_020060f0(a0);
+        Func_0200486c(a0);
     } else {
         u8 *obj;
 
-        Func_0200609a(a0);
-        Func_02007d86(a0, 2);
-        obj = Func_02007d24(0);
+        Func_0808a100(a0);
+        Func_0808a080(a0, 2);
+        obj = Func_0808a0b8(0);
         if (obj != 0) {
             s16 v1 = *(s16 *)(obj + 10);
             s16 v2 = *(s16 *)(obj + 18);
-            Func_02007d66(a0, v1, v2);
+            Func_0808a0e8(a0, v1, v2);
         }
-        Func_02007d94(a0);
-        Func_02007da6(a0, 0, 0);
-        Func_02007d0e(0x300);
-        Func_02007d14(a2);
+        Func_0808a0f0(a0);
+        Func_080770c8(a0, 0, 0);
+        Func_080770c8(0x300);
+        Func_0200486c(a2);
     }
 
-    Func_02007d58();
+    Func_0808a020();
 }

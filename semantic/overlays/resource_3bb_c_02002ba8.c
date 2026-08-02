@@ -51,19 +51,16 @@ typedef int s32;
 
 extern u8 *Data_03001e68;
 
-extern u8 *Func_02006b14(void);
-extern void Func_02006be4(s32 arg0, s32 arg1);
-extern void Func_02006aa6(u8 *object, s32 arg1);
-extern void Func_02006a56(u8 *object, s32 arg1);
-extern void Func_02006a5e(u8 *object, s32 arg1);
-extern void Func_02006bba(s32 arg0, s32 arg1, s32 arg2);
-extern void Func_02006bec(s32 arg0, s32 arg1, s32 arg2);
-extern void Func_02006d36(s32 arg0);
-extern void Func_02006a76(s32 arg0);
-extern void Func_02006c4e(s32 arg0);
-extern void Func_02006c5c(s32 arg0);
-extern void Func_02006cea(s32 arg0, s32 arg1);
-extern void Func_02006c80(s32 arg0);
+extern u8 *Func_0808a080(void);
+extern void Func_0808a1e0(s32 arg0, s32 arg1);
+extern void Func_080091e0(u8 *object, s32 arg1);
+extern void Func_08009080(u8 *object, s32 arg1);
+extern void Func_0808a0f0(s32 arg0, s32 arg1, s32 arg2);
+extern void Func_0808a148(s32 arg0, s32 arg1, s32 arg2);
+extern void Func_080f9010(s32 arg0);
+extern void Func_080000c0(s32 arg0);
+extern void Func_0808a010(s32 arg0);
+extern void Func_0808a110(s32 arg0, s32 arg1);
 
 static u16 BeginCritical(volatile u16 *regIME)
 {
@@ -98,27 +95,26 @@ void Func_02002ba8(s32 arg0, s32 arg1, s32 arg2)
     u16 saved;
     s32 i;
 
-    Func_02006b14();
+    resultObj = Func_0808a080();
     current[6] = 1;
 
-    resultObj = Func_02006b14();
     current[7] = 4;
     *(u32 *)0x0200cca4 = *(s32 *)(resultObj + 8);
     *(u32 *)0x0200cbfc = *(s32 *)(resultObj + 16);
     ownerRecord = *(u8 **)(resultObj + 0x50);
     *(u32 *)0x0200cc28 = *(u16 *)(resultObj + 6);
 
-    Func_02006be4(arg0, 2);
+    Func_0808a1e0(arg0, 2);
 
     resultObj[0x23] |= 1;
     *(u16 *)(resultObj + 6) = 0x4000;
 
-    Func_02006aa6(resultObj, 3);
-    Func_02006a56(resultObj, 0);
-    Func_02006a5e(resultObj, 1);
+    Func_080091e0(resultObj, 3);
+    Func_08009080(resultObj, 0);
+    Func_08009080(resultObj, 1);
 
-    Func_02006bba(arg0, arg1 << 16, arg2 << 16);
-    Func_02006bec(0, 0x4000, 0);
+    Func_0808a0f0(arg0, arg1 << 16, arg2 << 16);
+    Func_0808a148(0, 0x4000, 0);
 
     saved = BeginCritical(regIME);
     AppendIfRoom(counter, 0xf00, 0x04000050, 0x20000);
@@ -127,7 +123,7 @@ void Func_02002ba8(s32 arg0, s32 arg1, s32 arg2)
     ownerRecord[5] = (ownerRecord[5] & ~0x0c) | 4;
     ownerRecord[0x11] = (ownerRecord[0x11] & ~0x0c) | 4;
 
-    Func_02006d36(252);
+    Func_080f9010(252);
 
     for (i = 0; i <= 14; i += 2) {
         *(s32 *)(resultObj + 0x18) = i * 0x1000 + 0x1000;
@@ -137,7 +133,7 @@ void Func_02002ba8(s32 arg0, s32 arg1, s32 arg2)
         AppendIfRoom(counter, ((15 - i) << 8) | (i + 1), 0x04000052, 0x20000);
         EndCritical(regIME, saved);
 
-        Func_02006a76(1);
+        Func_080000c0(1);
     }
 
     saved = BeginCritical(regIME);
@@ -146,12 +142,12 @@ void Func_02002ba8(s32 arg0, s32 arg1, s32 arg2)
 
     *(s32 *)(resultObj + 0x18) = 0x11000;
     *(s32 *)(resultObj + 0x1c) = 0xf000;
-    Func_02006c4e(1);
+    Func_0808a010(1);
 
     *(s32 *)(resultObj + 0x18) = 0x10000;
     *(s32 *)(resultObj + 0x1c) = 0x10000;
-    Func_02006c5c(13);
+    Func_0808a010(13);
 
-    Func_02006cea(arg0, 3);
-    Func_02006c80(20);
+    Func_0808a110(arg0, 3);
+    Func_0808a010(20);
 }

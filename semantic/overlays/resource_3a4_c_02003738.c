@@ -43,11 +43,12 @@ typedef signed int s32;
  *   0x2003816 (2), 0x2003824 (3), 0x200382e (4) -> Func_08009080
  */
 
-s32 Func_03000118();           /* IWRAM 16.16 multiply, established */
 void Func_08000128();          /* displace (scale, heading, position) */
 s32 Func_080091a8();           /* ground query (2, x, z) */
 void Func_08009080();          /* mark record (record, n), established */
 void Func_080f9010();          /* sound/sting, established */
+
+typedef s32 (*Multiply16_16_02003738)(s32 value, s32 scale);
 
 void Func_02003738(u8 *record)
 {
@@ -58,6 +59,8 @@ void Func_02003738(u8 *record)
     s16 *countdown;
     s32 forward;
     s32 backward;
+    Multiply16_16_02003738 multiply16_16 =
+        (Multiply16_16_02003738)0x03000118;
 
     heading = *(u16 *)(record + 6) & 0xc000;
 
@@ -82,12 +85,12 @@ void Func_02003738(u8 *record)
     probe[0] = *(s32 *)(record + 8);
     probe[1] = *(s32 *)(record + 12);
     probe[2] = *(s32 *)(record + 16);
-    Func_08000128(Func_03000118(distance, 0xc000), heading, probe);
+    Func_08000128(multiply16_16(distance, 0xc000), heading, probe);
     *(s32 *)(record + 8) = probe[0];
     *(s32 *)(record + 16) = probe[2];
     forward = Func_080091a8(2, probe[0], probe[2]);
 
-    Func_08000128(-Func_03000118(distance, 0x18000), heading, probe);
+    Func_08000128(-multiply16_16(distance, 0x18000), heading, probe);
     backward = Func_080091a8(2, probe[0], probe[2]);
 
     if (*countdown <= 20) {

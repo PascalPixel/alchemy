@@ -19,19 +19,19 @@ typedef unsigned char u8;
  * Raw callee naming.
  */
 
-u8 *Func_02005118(void);
-void Func_020050f6();
+u8 *Func_0808a080(void);
+void Func_080091e0();
 
 void Func_020025f8(void)
 {
-    u8 *obj = Func_02005118();
+    u8 *obj = Func_0808a080();
     u8 *linked;
 
     obj[0x59] &= 0xfe;
     obj[0x23] |= 2;
     obj[0x55] = 0;
 
-    Func_020050f6(obj);
+    Func_080091e0(obj);
 
     linked = *(u8 **)(obj + 0x50);
     linked[9] = (linked[9] & 0xf3) | 8;

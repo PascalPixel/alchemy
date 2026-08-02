@@ -135,8 +135,12 @@ void Func_020024a8(void)
     Func_0808a138(Data_0200e79c, 1);
     Func_0808a188(Data_0200e79c, 0, 10);
 
-    while (*(s16 *)(Func_0808a080(0) + 0x64) == 0) {
-        Func_080000c0(1);
+    goto wait_test;
+wait_body:
+    Func_080000c0(1);
+wait_test:
+    if (*(s16 *)(Func_0808a080(0) + 0x64) == 0) {
+        goto wait_body;
     }
 
     Func_0808a1b8(0, 0x4000, 20);

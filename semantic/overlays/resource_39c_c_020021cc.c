@@ -23,8 +23,8 @@ typedef int s32;
  * standard truncate-toward-zero correction for an arithmetic right shift of
  * a value that can be negative.
  *
- * Uncertainty: none of the eleven callees are identified beyond their call
- * shape and argument count; the two fixed-point values (from field 8 of
+ * Uncertainty: none of the seven resolved callees are identified beyond their
+ * call shape and argument count; the two fixed-point values (from field 8 of
  * one looked-up object and field 16 of another, both looked up with the
  * same constant argument 9) are read but their unit/meaning is not
  * established; the four 0x0200dfXX pool words are treated as opaque
@@ -36,22 +36,13 @@ typedef int s32;
  * compiled, not smoothed into a single shape.
  */
 
-extern void *Func_02007ca6(s32 arg0);
-extern void *Func_02007cb8(s32 arg0);
-extern void Func_02007da8(s32 arg0, s32 arg1);
-extern void Func_02007dc2(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_02007dce();
-extern s32 Func_02007c9c(s32 flagId);
-extern s32 Func_02007caa(s32 flagId);
-extern s32 Func_02007cc0(s32 flagId);
-extern s32 Func_02007cca(s32 flagId);
-extern s32 Func_02007cd4(s32 flagId);
-extern s32 Func_02007ce6(s32 flagId);
-extern s32 Func_02007cfe(s32 flagId);
-extern void Func_02007d52(s32 arg0, void *msg);
-extern void Func_02007d6a(s32 arg0, void *msg);
-extern void Func_02007d38(s32 arg0);
-extern void Func_02007d42(s32 arg0);
+extern void *Func_0808a080(s32 arg0);
+extern void Func_0808a208(s32 arg0, s32 arg1);
+extern void Func_0808a210(s32, s32, s32, s32);
+extern void Func_0808a218(void);
+extern s32 Func_080770c0(s32 flagId);
+extern void Func_0808a098(s32 arg0, void *msg);
+extern void Func_0808a010(s32 arg0);
 
 static s32 Fixed20(s32 raw)
 {
@@ -63,20 +54,20 @@ static s32 Fixed20(s32 raw)
 
 s32 Func_020021cc(void)
 {
-    s32 valA = Fixed20(*(s32 *)((u8 *)Func_02007ca6(9) + 8));
-    s32 valB = Fixed20(*(s32 *)((u8 *)Func_02007cb8(9) + 16));
+    s32 valA = Fixed20(*(s32 *)((u8 *)Func_0808a080(9) + 8));
+    s32 valB = Fixed20(*(s32 *)((u8 *)Func_0808a080(9) + 16));
     void *msg;
 
-    Func_02007da8(0x50000, 0xa000);
-    Func_02007dc2(0x3300000, -1, 0x2c80000, 1);
-    Func_02007dce();
+    Func_0808a208(0x50000, 0xa000);
+    Func_0808a210(0x3300000, -1, 0x2c80000, 1);
+    Func_0808a218();
 
-    if (Func_02007c9c(2167) != 0) {
+    if (Func_080770c0(2167) != 0) {
         goto negative;
     }
 
     if (valA == 50) {
-        if (Func_02007caa(793) == 0) {
+        if (Func_080770c0(793) == 0) {
             goto negative;
         }
         msg = (void *)0x0200df20;
@@ -88,28 +79,31 @@ s32 Func_020021cc(void)
     }
 
     if (valB == 44) {
-        if (Func_02007cc0(793) == 0 && Func_02007cca(794) == 0 && Func_02007cd4(795) == 0) {
+        if (Func_080770c0(793) == 0 && Func_080770c0(794) == 0 && Func_080770c0(795) == 0) {
             msg = (void *)0x0200df60;
             goto message;
         }
-        if (Func_02007ce6(793) != 0) {
+        if (Func_080770c0(793) != 0) {
             msg = (void *)0x0200dff0;
             goto message;
         }
-        goto negative;
+        goto check_success;
     }
 
-    if (valB == 46 && Func_02007cfe(794) != 0) {
-        Func_02007d6a(9, (void *)0x0200dfa8);
-        Func_02007d38(30);
+    goto check_success;
+
+message:
+    Func_0808a098(9, msg);
+    goto negative;
+
+check_success:
+    if (valB == 46 && Func_080770c0(794) != 0) {
+        Func_0808a098(9, (void *)0x0200dfa8);
+        Func_0808a010(30);
         return 1;
     }
 
 negative:
-    Func_02007d42(30);
+    Func_0808a010(30);
     return 0;
-
-message:
-    Func_02007d52(9, msg);
-    goto negative;
 }

@@ -53,10 +53,7 @@ s32 Func_0200007c(u8 *self, u8 *other, s32 range, s32 force)
     s32 behind, ahead, left, right, front;
 
     if (Func_02000040(other_pos, self_pos, 0) >= range && force == 0) {
-        /* Out of range and not forced: clear the flag and report the miss. */
-        self[91] = (u8)noticed;
-        Func_08009080(self, 2);
-        return noticed;
+        goto missed;
     }
 
     /* arc tangent of (dz, dx) between the two actors, as a 16-bit angle. */
@@ -92,5 +89,11 @@ s32 Func_0200007c(u8 *self, u8 *other, s32 range, s32 force)
         noticed = 1;
     }
 
+    return noticed;
+
+missed:
+    /* Out of range and not forced: clear the flag and report the miss. */
+    self[91] = (u8)noticed;
+    Func_08009080(self, 2);
     return noticed;
 }

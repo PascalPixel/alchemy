@@ -40,10 +40,8 @@ typedef unsigned char u8;
  * at 0x020006c2-0x020006d0 (x3, x17, x257 = x13107 = x0x3333) followed by
  * `negs`.  0x3333 is the same 16.16 fifth this package uses elsewhere.
  *
- * All four `bl` sites are accounted for: 0x02005470, 0x0200081a, 0x020054cc,
- * 0x02000852.  Import naming follows the note in
- * resource_3c8_c_020002f0.c - the two spawn addresses fall numerically inside
- * this overlay's own code region but are import identities, not locations.
+ * All four `bl` sites resolve to two random-helper calls and two calls to the
+ * overlay-local spawner at 0x02000118.
  */
 
 struct Object_020006a0 {
@@ -62,10 +60,8 @@ struct EffectParams_020006a0 {
 };
 
 /* Old-style declarations: the imports' real interfaces are not known here. */
-s32 Func_02005470();
-s32 Func_0200081a();
-s32 Func_020054cc();
-s32 Func_02000852();
+s32 Func_080000f8();
+s32 Func_02000118();
 
 /* Old-style declarations: the imports' real interfaces are not known here. */
 
@@ -79,10 +75,10 @@ s32 Func_020006a0(struct Object_020006a0 *object)
     params.color2 = 0x0000cccc;
     params.unk00 = 0;
 
-    speed = (s32)((u32)(Func_02005470() * 8) >> 16) * 0x3333;
+    speed = (s32)((u32)(Func_080000f8() * 8) >> 16) * 0x3333;
     phase = *(u32 *)0x03001e40 & 15;
 
-    Func_0200081a(
+    Func_02000118(
         object->x + ((8 - phase) << 16),
         object->y + 0x001a0000,
         object->z,
@@ -97,9 +93,9 @@ s32 Func_020006a0(struct Object_020006a0 *object)
     if (phase == 0) {
         params.color1 = 0x00008000;
         params.color2 = 0x00008000;
-        Func_02000852(
+        Func_02000118(
             object->x
-                + (((s32)((u32)(Func_020054cc() * 9) >> 16) - 4) << 16),
+                + (((s32)((u32)(Func_080000f8() * 9) >> 16) - 4) << 16),
             object->y,
             object->z,
             0,

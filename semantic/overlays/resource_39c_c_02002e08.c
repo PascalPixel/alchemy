@@ -31,12 +31,12 @@ typedef int s32;
  * `whiteCount <= 7` -- behaviourally the same shape since blackCount only
  * ever counts 0..7 in a single pass.
  *
- * Uncertainty: Func_020087dc is called once per pass with the constant
+ * Uncertainty: Func_080000c0 is called once per pass with the constant
  * argument 5 (the white twin's helper takes 2); presumed to be the same
  * kind of frame/vblank sync, not established here.
  */
 
-extern void Func_020087dc(s32 arg0);
+extern void Func_080000c0(s32 arg0);
 
 void Func_02002e08(void)
 {
@@ -69,6 +69,6 @@ void Func_02002e08(void)
             palette++;
         }
 
-        Func_020087dc(5);
+        Func_080000c0(5);
     } while (blackCount != 7);
 }

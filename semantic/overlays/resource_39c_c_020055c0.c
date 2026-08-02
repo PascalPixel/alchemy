@@ -167,15 +167,18 @@ void Func_020055c0(void)
 
         Func_08009080(slot, 18);
         Func_080f9010(0xf1);
-        for (;;) {
-            if ((frame & 15) == 0) {
-                Func_02005158(slot);
-            }
-            if (frame > 31 && *(volatile u32 *)0x03001c94 != 0) {
-                break;
-            }
+        goto check_frame;
+
+next_frame:
             Func_080000c0(1);
             frame++;
+
+check_frame:
+        if ((frame & 15) == 0) {
+            Func_02005158(slot);
+        }
+        if (frame <= 31 || *(volatile u32 *)0x03001c94 == 0) {
+            goto next_frame;
         }
 
         Func_080f9010(0x120);

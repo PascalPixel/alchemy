@@ -40,27 +40,14 @@ typedef unsigned char u8;
  * as an unsigned 2-bit field - the same two bits the spawner at 0x02000118
  * writes from `params->unk00 & 3`.
  *
- * The final wait loop polls two records returned by 0x02002de4 and 0x02002df0
+ * The final wait loop polls two records returned by Func_02000c5c
  * (their words at +0 are the "still running" counters and their bytes at +99
  * the "finished" flags), stepping one frame per pass through 0x02006fbc.
  *
- * IMPORT IDENTITIES INSIDE THE OWN BODY.  0x02002124, reached from
- * 0x0200208a, disassembles to the middle of this very routine.  As everywhere
- * in this package an overlay `bl`'s encoded address is a stable identity for
- * the import it reaches after load-time fixup, not a place to disassemble;
- * see the note in resource_3c8_c_020002f0.c and the proof in
- * semantic/overlays/resource_3c8_c_02002f30.c.
- *
- * Thirty-seven `bl` sites reach 36 distinct targets - 0x02006ffa is called
- * once with two arguments and once with one, for its return value - matching
- * the inventory's call count.  The full list: 0x02006e22, 0x02006e10,
- * 0x02006dc4, 0x02006e46, 0x02006df4, 0x02006e0e, 0x02006ee4, 0x02002124,
- * 0x02006ffa, 0x02006f48, 0x02006ee6, 0x02006f06, 0x02002a24, 0x020070da,
- * 0x02007058, 0x02006f46, 0x0200707e, 0x02006fcc, 0x02006f22, 0x02006fb2,
- * 0x02006fe2, 0x02007002, 0x0200700a, 0x02002de4, 0x02002df0, 0x02007040,
- * 0x020071b6, 0x02006fd8, 0x0200700c, 0x0200708a, 0x0200709c, 0x0200707c,
- * 0x02007084, 0x0200708c, 0x02006fbc, 0x020070d0.  Import naming follows the
- * note in resource_3c8_c_020002f0.c.
+ * Calls use their resolved resident-service and local-helper identities.  The
+ * two sites previously sharing one overlay-relative alias are deliberately
+ * distinct here: the first changes actor mode, while the second fetches an
+ * actor record.
  */
 
 struct Sprite_02001f60 {
@@ -100,45 +87,23 @@ extern u8 Data_0200d488[];
 extern u8 Data_0200d508[];
 extern u8 Data_0200dd12[];
 
-/* Used for their return values. */
-struct Actor_02001f60 *Func_02006e22();
-struct Actor_02001f60 *Func_02006e46();
-struct Actor_02001f60 *Func_02006ee4();
-struct Actor_02001f60 *Func_02006fcc();
-struct Actor_02001f60 *Func_02006ffa();
-struct Actor_02001f60 *Func_02007002();
-struct Actor_02001f60 *Func_0200700a();
-struct Actor_02001f60 *Func_0200708a();
-struct Actor_02001f60 *Func_0200709c();
-struct Progress_02001f60 *Func_02002de4();
-struct Progress_02001f60 *Func_02002df0();
-s32 Func_02002124();
-s32 Func_02006fb2();
+struct Actor_02001f60 *Func_0808a080();
+struct Progress_02001f60 *Func_02000c5c();
+s32 Func_02000098();
+s32 Func_080770c0();
 
-/* Old-style declarations: the imports' real interfaces are not known here. */
-void Func_02006e10();
-void Func_02006dc4();
-void Func_02006df4();
-void Func_02006e0e();
-struct Actor_02001f60 *Func_02006f48();
-void Func_02006ee6();
-void Func_02006f06();
-void Func_02002a24();
-void Func_020070da();
-void Func_02007058();
-void Func_02006f46();
-void Func_0200707e();
-void Func_02006f22();
-void Func_02006fe2();
-void Func_02007040();
-void Func_020071b6();
-void Func_02006fd8();
-void Func_0200700c();
-void Func_0200707c();
-void Func_02007084();
-void Func_0200708c();
-void Func_02006fbc();
-void Func_020070d0();
+void Func_0808a018();
+void Func_080091c0();
+void Func_0808a1e0();
+void Func_080091e0();
+void Func_0200094c();
+void Func_080f9010();
+void Func_080090d0();
+void Func_0808a020();
+void Func_0808a010();
+void Func_08009178();
+void Func_080770c8();
+void Func_080000c0();
 
 void Func_02001f60(void)
 {
@@ -154,21 +119,21 @@ void Func_02001f60(void)
     s32 slot;
 
     handle = 0;
-    leader = Func_02006e22();
+    leader = Func_0808a080();
 
     /* No argument register is written here; r0 still holds the pointer just
      * returned above, and that dataflow is preserved as written. */
-    Func_02006e10(leader);
+    Func_0808a018(leader);
 
-    Func_02006dc4(108, 39, 13, 7, 44, 39);
+    Func_080091c0(108, 39, 13, 7, 44, 39);
 
     for (slot = 9; slot <= 11; slot++) {
-        actor = Func_02006e46(slot);
+        actor = Func_0808a080(slot);
 
         if (actor->flags23 == 2) {
-            Func_02006e0e(46, 39, 1, 1, actor->x >> 20, actor->z >> 20);
+            Func_080091c0(46, 39, 1, 1, actor->x >> 20, actor->z >> 20);
         } else {
-            Func_02006df4(47, 39, 1, 1, actor->x >> 20, actor->z >> 20);
+            Func_080091c0(47, 39, 1, 1, actor->x >> 20, actor->z >> 20);
         }
 
         match = 5;
@@ -191,7 +156,7 @@ void Func_02001f60(void)
         }
 
         for (other = 9; other <= 11; other++) {
-            neighbour = Func_02006ee4(other);
+            neighbour = Func_0808a080(other);
             if (other != slot
                 && (actor->x >> 20) == (neighbour->x >> 20)
                 && (actor->z >> 20) == (neighbour->z >> 20)) {
@@ -206,71 +171,71 @@ void Func_02001f60(void)
         shade = (leader->sprite->flags9 << 28) >> 30;
 
         if ((u32)(leader->z >> 20) <= (u32)Data_0200d128[match * 2 + 1]) {
-            handle = Func_02002124(actor->x, actor->y,
+            handle = Func_02000098(actor->x, actor->y,
                                    actor->z + 0xfffc0000, 20);
-            Func_02006ffa(0, 3);
+            Func_0808a1e0(0, 3);
         }
 
         /* Only r1 is written at the second site; r0 still carries the
          * record the first call returned. */
-        Func_02006ee6(Func_02006f48(slot), 0);
+        Func_080091e0(Func_0808a080(slot), 0);
 
         actor->flags22 = 0;
         actor->mode55 = 3;
         actor->state44 = 0;
         actor->state48 = 0x1999;
-        Func_02006f06(42, 41, 1, 1,
+        Func_080091c0(42, 41, 1, 1,
                       Data_0200d128[match * 2], Data_0200d128[match * 2 + 1]);
-        Func_02002a24(actor);
-        Func_020070da(188);
+        Func_0200094c(actor);
+        Func_080f9010(188);
         actor->state59 = 0;
         actor->mode55 = 0;
         actor->y = 0xfff00000;
-        Func_02007058(slot, 3);
+        Func_0808a1e0(slot, 3);
         actor->flags23 = 2;
-        Func_02006f46(46, 39, 1, 1,
+        Func_080091c0(46, 39, 1, 1,
                       Data_0200d128[match * 2], Data_0200d128[match * 2 + 1]);
-        Func_0200707e(0, shade);
-        Func_02006fcc(0)->flags23 |= 1;
+        Func_0808a1e0(0, shade);
+        Func_0808a080(0)->flags23 |= 1;
 
         if (handle != 0) {
-            Func_02006f22(handle);
+            Func_080090d0(handle);
         }
 
-        if (Func_02006fb2(772) != 0) {
-            Func_02006fe2();
+        if (Func_080770c0(772) != 0) {
+            Func_0808a020();
             return;
         }
 
-        if ((Func_02006ffa(9)->flags23
-             & Func_02007002(10)->flags23
-             & Func_0200700a(11)->flags23
+        if ((Func_0808a080(9)->flags23
+             & Func_0808a080(10)->flags23
+             & Func_0808a080(11)->flags23
              & 2) == 0) {
             continue;
         }
 
-        progressA = Func_02002de4(888, 680, Data_0200d488);
-        progressB = Func_02002df0(888, 680, Data_0200d508);
+        progressA = Func_02000c5c(888, 680, Data_0200d488);
+        progressB = Func_02000c5c(888, 680, Data_0200d508);
 
         while (progressA->running != 0 || progressB->running != 0) {
             if (progressA->finished != 0 || progressB->finished != 0) {
-                Func_02007040(30);
-                Func_020071b6(158);
-                Func_02006fd8(Data_0200dd12, 109, 37);
-                Func_0200700c(45, 37, 1, 1, 45, 38);
+                Func_0808a010(30);
+                Func_080f9010(158);
+                Func_08009178(Data_0200dd12, 109, 37);
+                Func_080091c0(45, 37, 1, 1, 45, 38);
 
-                if ((Func_0200708a(9)->x >> 20) == Data_0200d128[0]
-                    && (Func_0200709c(9)->z >> 20) == Data_0200d128[1]) {
-                    Func_0200707c(0x302);
+                if ((Func_0808a080(9)->x >> 20) == Data_0200d128[0]
+                    && (Func_0808a080(9)->z >> 20) == Data_0200d128[1]) {
+                    Func_080770c8(0x302);
                 } else {
-                    Func_02007084(0x303);
+                    Func_080770c8(0x303);
                 }
-                Func_0200708c(772);
+                Func_080770c8(772);
                 break;
             }
-            Func_02006fbc(1);
+            Func_080000c0(1);
         }
     }
 
-    Func_020070d0();
+    Func_0808a020();
 }

@@ -20,16 +20,15 @@ typedef int s32;
  * from this call shape.
  */
 
-extern u8 *Func_02007168(s32 arg0);
-extern void Func_02006f74();
-extern void Func_02006f5c(u8 *object, s32 arg1);
-extern void Func_02006f98(u8 *object, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_02006fa6(u8 *object);
-extern void Func_02006f76(u8 *object, s32 arg1);
+extern u8 *Func_0808a400(s32 arg0);
+extern void Func_08009140(void);
+extern void Func_08009080(u8 *object, s32 arg1);
+extern void Func_08009150(u8 *object, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_08009158(u8 *object);
 
 void Func_020030e8(s32 arg0, s32 arg1, s32 arg2)
 {
-    u8 *object = Func_02007168(arg0);
+    u8 *object = Func_0808a400(arg0);
 
     if (object == 0) {
         return;
@@ -39,9 +38,9 @@ void Func_020030e8(s32 arg0, s32 arg1, s32 arg2)
     *(s32 *)(object + 0x34) = 0xa000;
     object[0x5b] = 0;
 
-    Func_02006f74();
-    Func_02006f5c(object, 5);
-    Func_02006f98(object, arg1 << 16, *(s32 *)(object + 12), arg2 << 16);
-    Func_02006fa6(object);
-    Func_02006f76(object, 1);
+    Func_08009140();
+    Func_08009080(object, 5);
+    Func_08009150(object, arg1 << 16, *(s32 *)(object + 12), arg2 << 16);
+    Func_08009158(object);
+    Func_08009080(object, 1);
 }

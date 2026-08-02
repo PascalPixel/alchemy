@@ -16,38 +16,31 @@ typedef int s32;
  * by `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2`
  * rule.
  *
- * `Func_020057c0`, `Func_020057c8`, `Func_020057d8` and `Func_020057e0`
- * are each called twice (the second `Func_020057c8` call three times)
- * with different tag values at different sites -- ordinary repeat
- * calls, not an arity conflict (both sites take the same 2-argument
- * shape).
+ * The first seven sites resolve to Func_0808a158. The remaining sites use
+ * Func_0808a108 except for the id-15/tag-0 call, which resolves separately
+ * to Func_0808a100; all retain the same two-argument shape.
  *
- * Uncertainty: none of the eight callees are identified beyond call
+ * Uncertainty: none of the three resolved callees are identified beyond call
  * shape; the id/tag pairs are recorded as passed values.
  */
 
-extern void Func_020057b0(s32 id, s32 tag);
-extern void Func_020057b8(s32 id, s32 tag);
-extern void Func_020057c0(s32 id, s32 tag);
-extern void Func_020057c8(s32 id, s32 tag);
-extern void Func_020057d0(s32 id, s32 tag);
-extern void Func_020057d8(s32 id, s32 tag);
-extern void Func_020057e0(s32 id, s32 tag);
-extern void Func_020057e8(s32 id, s32 tag);
+extern void Func_0808a158(s32 id, s32 tag);
+extern void Func_0808a108(s32 id, s32 tag);
+extern void Func_0808a100(s32 id, s32 tag);
 
 void Func_02002b1c(void)
 {
-    Func_020057b0(12, 3);
-    Func_020057b8(13, 0);
-    Func_020057c0(14, 4);
-    Func_020057c8(15, 1);
-    Func_020057d0(16, 5);
-    Func_020057d8(17, 2);
-    Func_020057e0(18, 6);
-    Func_020057c0(13, 10);
-    Func_020057c8(14, 20);
-    Func_020057c8(15, 0);
-    Func_020057d8(16, 40);
-    Func_020057e0(17, 50);
-    Func_020057e8(18, 60);
+    Func_0808a158(12, 3);
+    Func_0808a158(13, 0);
+    Func_0808a158(14, 4);
+    Func_0808a158(15, 1);
+    Func_0808a158(16, 5);
+    Func_0808a158(17, 2);
+    Func_0808a158(18, 6);
+    Func_0808a108(13, 10);
+    Func_0808a108(14, 20);
+    Func_0808a100(15, 0);
+    Func_0808a108(16, 40);
+    Func_0808a108(17, 50);
+    Func_0808a108(18, 60);
 }

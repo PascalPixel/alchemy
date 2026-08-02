@@ -34,11 +34,10 @@ typedef int s32;
  * same single-id-argument call shape as Func_080770c8, so plausibly the
  * same flag family under a different veneer, but not confirmed.
  *
- * Func_0808a0b8 and Func_0808a0c0 alternate between id 0 and id 11 with
- * a shared second argument (588 = 147<<2) and a climbing first argument
- * (780, 812, 880, 912, 980, 1012) -- the same "three near-identical
- * calls with shifted-constant pairs" shape resource_3b9_c_02002668.c's
- * header already named for a different callee pair.
+ * Func_0808a0b8 and Func_0808a0c0 share a second argument
+ * (588 = 147<<2) while the first argument climbs through 780, 812, 880,
+ * 912, 980 and 1012. The final id-11 site resolves to Func_0808a0b8 too,
+ * so the sequence is not a perfectly alternating pair.
  *
  * Uncertainty: none of the eleven callees are identified beyond call
  * shape; every id/constant is recorded as a passed value.
@@ -90,7 +89,7 @@ void Func_020023e0(void)
     Func_0808a0b8(0, 220 << 2, 147 << 2);
     Func_0808a0c0(11, 228 << 2, 147 << 2);
     Func_0808a0b8(0, 245 << 2, 147 << 2);
-    Func_0808a0c0(11, 253 << 2, 147 << 2);
+    Func_0808a0b8(11, 253 << 2, 147 << 2);
     Func_0808a368();
     Func_0808a370();
 

@@ -65,14 +65,11 @@ extern u8 Data_02009884[];
 void Func_02000b8c(s32 *source)
 {
     s32 index = 0;
+    u8 *record;
 
-    while (index <= 3) {
-        u8 *record = Func_080090c8(240, source[2], source[3], source[4]);
+    goto spawn_test;
 
-        if (record == 0) {
-            break;
-        }
-
+spawn_body:
         *(s32 *)(record + 28) = 0x00008ccc;
         *(s32 *)(record + 24) = 0x00008ccc;
         record[85] = 2;
@@ -87,5 +84,11 @@ void Func_02000b8c(s32 *source)
         Func_08009098(record, Data_02009884);
 
         index++;
-    }
+
+spawn_test:
+    if (index > 3)
+        return;
+    record = Func_080090c8(240, source[2], source[3], source[4]);
+    if (record != 0)
+        goto spawn_body;
 }

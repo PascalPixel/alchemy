@@ -25,21 +25,22 @@ typedef signed int s32;
  * Raw callee naming.
  */
 
-u8 *Func_02005160();
-s32 Func_0200513a();
-void Func_020050be();
-void Func_020051aa();
+u8 *Func_0808a080();
+s32 Func_080770c0();
+void Func_08009080();
+void Func_080091c0();
+void Func_0808a098();
 
 void Func_0200263c(u8 *a0)
 {
-    u8 *obj = Func_02005160(a0);
+    u8 *obj = Func_0808a080(a0);
 
-    if (Func_0200513a(a0 + 0x1f5) != 0) {
-        Func_020050be(obj, 5);
+    if (Func_080770c0(a0 + 0x1f5) != 0) {
+        Func_08009080(obj, 5);
 
         *(u32 *)(obj + 0x6c) = 0x0200a0b9;
 
-        Func_0200513a(20, 14, 1, 1, *(s32 *)(obj + 8) >> 20, *(s32 *)(obj + 16) >> 20);
-        Func_020051aa(a0, 0x0200ad64);
+        Func_080091c0(20, 14, 1, 1, *(s32 *)(obj + 8) >> 20, *(s32 *)(obj + 16) >> 20);
+        Func_0808a098(a0, 0x0200ad64);
     }
 }

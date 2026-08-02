@@ -1486,15 +1486,8 @@ AlchemyC_02000474:
 	pop	{r1}
 	bx	r1
 	.2byte 0x0000
-	.4byte 0x6c426883
-	.4byte 0x6083189b
-	.4byte 0x68c36c82
-	.4byte 0x60c3189b
-	.4byte 0x69036cc2
-	.4byte 0x6103189b
-	.4byte 0x69836b02
-AlchemyC_02000acc:
-	.space 0x1a
+AlchemyC_02000ab0:
+	.space 0x36
 	.2byte 0x0000
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

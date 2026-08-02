@@ -64,26 +64,31 @@ void Func_020019b8(void)
                 Func_080770c8(0x313);
             }
         } else {
-            /* Kind 8 paints its marker and takes no shared tail: control
-             * rejoins at the common exit, not at the `armed` test. */
-            if (probe[1] == 8) {
-                Func_080091c0(42, 49, 1, 4, probe[2] >> 20, 49);
-            }
+            goto kind8;
+        }
+
+        if (armed == 0) {
             Func_0808a020();
             return;
         }
 
-        if (armed != 0) {
-            Func_0808a100(probe[1], 3);
-            Func_0808a0e0(probe[1], 18, 6);
-            Func_0808a010(30);
-            Func_0808a100(probe[1], 8);
-            Func_080f9010(240);
+        Func_0808a100(probe[1], 3);
+        Func_0808a0e0(probe[1], 18, 6);
+        Func_0808a010(30);
+        Func_0808a100(probe[1], 8);
+        Func_080f9010(240);
 
-            Func_0808a080(probe[1])[35] = 2;
+        Func_0808a080(probe[1])[35] = 2;
+        goto common_exit;
+
+kind8:
+        /* Kind 8 paints its marker and takes no shared presentation tail. */
+        if (probe[1] == 8) {
+            Func_080091c0(42, 49, 1, 4, probe[2] >> 20, 49);
         }
     }
 
+common_exit:
     /* Common exit; no argument registers are set. */
     Func_0808a020();
 }

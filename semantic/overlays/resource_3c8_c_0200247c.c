@@ -33,35 +33,14 @@ typedef unsigned char u8;
  * spawner at 0x02000118 writes), 0x64 a halfword counter, 0x6c the callback
  * slot.  0x80000000 is `movs r3, #128 ; lsls r3, r3, #24`.
  *
- * `Func_02007540(target)->callback = 0x0200a2a5` installs Func_020022a4: at
+ * `Func_0808a080(target)->callback = 0x0200a2a5` installs Func_020022a4: at
  * this overlay's proven 0x02008000 link base, 0x0200a2a5 - 0x8000 - 1 =
  * 0x020022a4, this reconstruction's `s32`-returning per-frame callback that parks an
  * actor one unit above the object its kind word names.
  *
- * `Func_02004966` is called two bytes before the real prologue at
- * 0x02004968; 0x02004966 holds the alignment `movs r0, r0` that precedes it.
- * That is the ordinary "call the function two bytes later" shape, not a
- * hidden-context entry - the same routine 0x02004a2c installs by its
- * Thumb-tagged address 0x0200c969.
- *
- * IMPORT IDENTITIES INSIDE THE OWN BODY.  0x0200259e and 0x020025ae, reached
- * from 0x02002544 and 0x02002554, disassemble to the middle of this very
- * routine (a `str r3, [r6, #16]` and a `b`).  As everywhere in this package,
- * an overlay `bl`'s encoded address is a stable identity for the import it
- * reaches after load-time fixup, not a place to disassemble; see the note in
- * resource_3c8_c_020002f0.c and the proof in
- * semantic/overlays/resource_3c8_c_02002f30.c.  Neither names a local
- * continuation owned by this C file.
- *
- * Thirty-four `bl` sites reach 33 distinct targets - 0x020075c2 is called
- * twice, once with no argument register written and once with four, which is
- * why every import is declared old-style.  The full list: 0x02007328,
- * 0x02007354, 0x0200733e, 0x02002e22, 0x02007358, 0x0200733a, 0x02007394,
- * 0x02007490, 0x0200259e, 0x020025ae, 0x02002eaa, 0x0200745c, 0x0200735a,
- * 0x02007360, 0x020073f6, 0x02007430, 0x02007436, 0x02007460, 0x020074ac,
- * 0x0200759e, 0x020075c2, 0x020075ce, 0x02004a1c, 0x020074fa, 0x02007508,
- * 0x02007516, 0x02007524, 0x02007532, 0x02007540, 0x02004966, 0x02007550,
- * 0x02007534, 0x02007568.
+ * The two choreography calls after the settling effect are distinct resident
+ * services: Func_0808a228 returns the record whose mode is cleared, while
+ * Func_0808a210 receives the four movement arguments.
  */
 
 struct Sprite_0200247c {
@@ -95,42 +74,24 @@ struct Actor_0200247c {
     s32 callback;               /* 0x6c */
 };
 
-/* Used for their return values. */
-struct Actor_0200247c *Func_02007354();
-struct Actor_0200247c *Func_02007430();
-struct Actor_0200247c *Func_020074ac();
-struct Actor_0200247c *Func_020074fa();
-struct Actor_0200247c *Func_02007508();
-struct Actor_0200247c *Func_02007516();
-struct Actor_0200247c *Func_02007524();
-struct Actor_0200247c *Func_02007532();
-struct Actor_0200247c *Func_02007540();
-struct Actor_0200247c *Func_02007550();
-struct Actor_0200247c *Func_020075c2();
-s32 Func_0200733e();
-s32 Func_02007394();
-s32 Func_02007436();
-s32 Func_02007460();
-s32 Func_0200259e();
-s32 Func_020025ae();
+struct Actor_0200247c *Func_0808a080();
+struct Actor_0200247c *Func_0808a228();
+s32 Func_080770c0();
+s32 Func_02000058();
 
-/* Old-style declarations: the imports' real interfaces are not known here. */
-void Func_02007328();
-void Func_02002e22();
-void Func_02007358();
-void Func_0200733a();
-void Func_02007490();
-void Func_02002eaa();
-void Func_0200745c();
-void Func_0200735a();
-void Func_02007360();
-void Func_020073f6();
-void Func_0200759e();
-void Func_020075ce();
-void Func_02004a1c();
-void Func_02004966();
-void Func_02007534();
-void Func_02007568();
+void Func_0808a018();
+void Func_0200094c();
+void Func_080770c8();
+void Func_080091c0();
+void Func_0808a1e0();
+void Func_0808a0f0();
+void Func_080090d0();
+void Func_0808a208();
+void Func_0808a210();
+void Func_0808a218();
+void Func_020023d4();
+void Func_020022c8();
+void Func_0808a020();
 
 void Func_0200247c(void)
 {
@@ -150,42 +111,61 @@ void Func_0200247c(void)
 
     handleA = 0;
     handleB = 0;
-    Func_02007328();
+    Func_0808a018();
 
     index = 0;
     slot = 10;
     do {
-        actor = Func_02007354(slot);
+        actor = Func_0808a080(slot);
         gridX = actor->x >> 20;
         gridZ = actor->z >> 20;
 
-        if (gridX == 13 && gridZ == 7 && Func_0200733e(512 + index) == 0) {
-            Func_02002e22(actor);
-            Func_02007358(512 + index);
+        if (gridX == 13 && gridZ == 7 && Func_080770c0(512 + index) == 0) {
+            Func_0200094c(actor);
+            Func_080770c8(512 + index);
             actor->flags23 |= 2;
             actor->state59 = 0;
             actor->mode55 = 0;
-            Func_0200733a(4, 19, 1, 1, gridX, gridZ);
+            Func_080091c0(4, 19, 1, 1, gridX, gridZ);
             break;
         }
 
         if ((actor->sprite->flags9 & 12) == 12
-            && Func_02007394(512 + index) == 0) {
-            Func_02007490(slot, 1);
+            && Func_080770c0(512 + index) == 0) {
+            Func_0808a1e0(slot, 1);
             actor->velocity44 = 0;
             if ((actor->z >> 20) <= 12) {
-                handleA = Func_0200259e(actor->x, 0, 0x00e00000, 253);
-                handleB = Func_020025ae(actor->x, 0, 0x00f00000, 253);
+                handleA = Func_02000058(actor->x, 0, 0x00e00000, 253);
+                handleB = Func_02000058(actor->x, 0, 0x00f00000, 253);
             }
-            Func_02002eaa(actor);
-            Func_0200745c(slot, 0, 0);
-            Func_0200735a(handleA);
-            Func_02007360(handleB);
-            Func_020073f6(512 + index);
+            Func_0200094c(actor);
+            Func_0808a0f0(slot, 0, 0);
+            Func_080090d0(handleA);
+            Func_080090d0(handleB);
+            Func_080770c8(512 + index);
             break;
         }
 
-        if ((actor->z >> 20) == 19 && Func_02007436(512 + index) == 0) {
+        /* The swap block is laid out before the test that reaches it in the
+         * original function.  Keep that shape explicit so source order also
+         * reflects the machine's address order. */
+        goto check_settled_action;
+
+    swap_with_free_slot:
+        other = Func_0808a080(free + 10);
+        scratch.x = actor->x;
+        scratch.y = actor->y;
+        scratch.z = actor->z;
+        actor->x = other->x;
+        actor->y = other->y;
+        actor->z = other->z;
+        other->x = scratch.x;
+        other->y = scratch.y;
+        other->z = scratch.z;
+        goto finish_settled_action;
+
+    check_settled_action:
+        if ((actor->z >> 20) == 19 && Func_080770c0(512 + index) == 0) {
             actor->limit3c = 0x80000000;
             actor->state14 = 0;
             actor->state28 = 0;
@@ -193,54 +173,43 @@ void Func_0200247c(void)
             actor->word64 = 0;
 
             for (free = 0; free < index; free++) {
-                if (Func_02007460(512 + free) == 0) {
-                    break;
+                if (Func_080770c0(512 + free) == 0) {
+                    goto swap_with_free_slot;
                 }
             }
-            if (free < index) {
-                other = Func_02007430(free + 10);
-                scratch.x = actor->x;
-                scratch.y = actor->y;
-                scratch.z = actor->z;
-                actor->x = other->x;
-                actor->y = other->y;
-                actor->z = other->z;
-                other->x = scratch.x;
-                other->y = scratch.y;
-                other->z = scratch.z;
-            }
 
+    finish_settled_action:
             target = free + 10;
-            object = Func_020074ac(target);
+            object = Func_0808a080(target);
             object->limit3c = 0x80000000;
             object->state14 = 0;
             object->state28 = 0;
             object->mode55 = 0;
             object->word64 = 0;
 
-            Func_0200759e(0x00030000, 0x6000);
+            Func_0808a208(0x00030000, 0x6000);
 
             /* No argument register is written at this site; the returned
              * record's mode byte is cleared straight away. */
-            Func_020075c2()->mode55 = 0;
+            Func_0808a228()->mode55 = 0;
 
-            Func_020075c2(0x00880000, 0x00080000, 0x01580000, 1);
-            Func_020075ce();
-            Func_02004a1c(target);
+            Func_0808a210(0x00880000, 0x00080000, 0x01580000, 1);
+            Func_0808a218();
+            Func_020023d4(target);
 
-            probe = Func_020074fa(target);
+            probe = Func_0808a080(target);
             if ((probe->x >> 20) == 6) {
-                Func_02007508(8)->word64++;
-                Func_02007516(9)->word64--;
+                Func_0808a080(8)->word64++;
+                Func_0808a080(9)->word64--;
             } else {
-                Func_02007524(8)->word64--;
-                Func_02007532(9)->word64++;
+                Func_0808a080(8)->word64--;
+                Func_0808a080(9)->word64++;
             }
 
-            Func_02007540(target)->callback = 0x0200a2a5;  /* Func_020022a4|1 */
-            Func_02004966(40);
-            Func_02007550(target)->flags23 |= 2;
-            Func_02007534(free + 512);
+            Func_0808a080(target)->callback = 0x0200a2a5;  /* Func_020022a4|1 */
+            Func_020022c8(40);
+            Func_0808a080(target)->flags23 |= 2;
+            Func_080770c8(free + 512);
             break;
         }
 
@@ -248,5 +217,5 @@ void Func_0200247c(void)
         slot++;
     } while (index <= 3);
 
-    Func_02007568();
+    Func_0808a020();
 }

@@ -4,11 +4,11 @@ typedef signed int s32;
 /* Resource 378 position copy/phase adjustment at 0x0200267c (116 bytes). */
 
 extern s32 Data_03001e40;
-extern u8 *Func_02005c94();
+extern u8 *Func_0808a080();
 
 void Func_0200267c(u8 *object)
 {
-    u8 *source = Func_02005c94(8);
+    u8 *source = Func_0808a080(8);
     s32 x = *(s32 *)(source + 8);
     s32 y = *(s32 *)(source + 12);
     s32 z = *(s32 *)(source + 16) - 0x20000;

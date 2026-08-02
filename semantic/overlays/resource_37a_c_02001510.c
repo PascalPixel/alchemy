@@ -116,11 +116,6 @@ void Func_080f9010();
 /* Used for its return value. */
 u32 Func_080000f8();
 
-static u16 scene_timer(void)
-{
-    return (u16)(((u32)(Func_080000f8() * 60)) >> 16) + 20;
-}
-
 void Func_02001510(void)
 {
     u8 **runtime_globals = (u8 **)0x03001ebc;
@@ -158,10 +153,10 @@ void Func_02001510(void)
 
     Func_020025fc(0x8010, 6);
 
-    SCENE_H2 = scene_timer();
-    SCENE_H0 = scene_timer();
-    SCENE_H1 = scene_timer();
-    SCENE_H3 = scene_timer();
+    SCENE_H2 = (u16)(((u32)(Func_080000f8() * 60) >> 16) + 20);
+    SCENE_H0 = (u16)(((u32)(Func_080000f8() * 60) >> 16) + 20);
+    SCENE_H1 = (u16)(((u32)(Func_080000f8() * 60) >> 16) + 20);
+    SCENE_H3 = (u16)(((u32)(Func_080000f8() * 60) >> 16) + 20);
     SCENE_W = 0;
 
     Func_080000d0((void (*)(void))((s32)&Func_02000d9c | 1), 3200);

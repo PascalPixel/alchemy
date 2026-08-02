@@ -100,129 +100,149 @@ void Func_020012f4(s32 kind, s32 gesture)
     if (kind == 10) {
         if ((u32)gesture > 11) goto settle;
         switch (gesture) {
-        case 0:
-            Func_0808a100(8, 1);
-            Func_080000c0(6);
-            slot = 8;
-            goto join_req3;                 /* 0x02001488 */
-        case 1:
-            slot = 8;
-            goto join_req1;                 /* 0x020014fa */
-        case 2:
-            Func_0808a100(8, 1);
-            Func_080000c0(6);
-            slot = 8;
-            goto join_req5;                 /* 0x020014a0 */
-        case 3:
-            Func_0808a100(8, 1);
-            Func_080000c0(6);
-            slot = 8;
-            goto join_req4;                 /* 0x020014b8 */
-        case 4:
-            Func_0808a100(8, 1);
-            Func_080000c0(6);
-            Func_0808a100(8, 3);
-            Func_080000c0(6);
-            Func_0808a100(8, 1);
-            Func_080000c0(6);
-            Func_0808a100(8, 3);
-            Func_080000c0(6);
-            slot = 8;
-            goto join_req1;
-        case 5:
-            Func_0808a100(8, 1);
-            Func_080000c0(6);
-            Func_0808a100(8, 2);
-            goto settle;
-        case 6:
-            Func_0808a100(8, 6);
-            Func_080000c0(6);
-            Func_0808a100(8, 8);
-            goto settle;
-        case 7:
-        case 11:
-            goto join_slot6;                /* 0x0200144a, shared body */
-        case 8:
-            Func_0808a100(8, 6);
-            Func_080000c0(6);
-            Func_0808a100(8, 9);
-            goto settle;
-        case 9:
-            Func_0808a100(8, 6);
-            Func_080000c0(6);
-            Func_0808a100(8, 10);
-            goto settle;
-        case 10:
-            Func_0808a100(8, 6);
-            Func_080000c0(6);
-            Func_0808a100(8, 8);
-            Func_080000c0(6);
-            Func_0808a100(8, 6);
-            Func_080000c0(6);
-            Func_0808a100(8, 8);
-            Func_080000c0(6);
-            goto join_slot6;                /* falls through in the assembly */
+        case 0:  goto table_a_0;
+        case 1:  slot = 8; goto join_req1;
+        case 2:  goto table_a_2;
+        case 3:  goto table_a_3;
+        case 4:  goto table_a_4;
+        case 5:  goto table_a_5;
+        case 6:  goto table_a_6;
+        case 7:  goto join_slot6;
+        case 8:  goto table_a_8;
+        case 9:  goto table_a_9;
+        case 10: goto table_a_10;
+        case 11: goto join_slot6;
         }
         goto settle;
     }
 
-    if ((u32)gesture > 5) goto settle;
-    switch (gesture) {
-    case 0:
-        Func_0808a100(9, 1);
-        Func_080000c0(6);
-        slot = 9;
-        goto join_req3;                     /* falls through in the assembly */
-    case 1:
-        slot = 9;
-        goto join_req1;                     /* falls through in the assembly */
-    case 2:
-        Func_0808a100(9, 1);
-        Func_080000c0(6);
-        slot = 9;
-        goto join_req5;                     /* falls through in the assembly */
-    case 3:
-        Func_0808a100(9, 1);
-        Func_080000c0(6);
-        slot = 9;
-        goto join_req4;                     /* falls through in the assembly */
-    case 4:
-        Func_0808a100(9, 1);
-        Func_080000c0(6);
-        Func_0808a100(9, 3);
-        Func_080000c0(6);
-        Func_0808a100(9, 1);
-        Func_080000c0(6);
-        Func_0808a100(9, 3);
-        Func_080000c0(6);
-        slot = 9;
-        goto join_req1;
-    case 5:
-        Func_0808a100(9, 1);
-        Func_080000c0(6);
-        Func_0808a100(9, 2);
-        goto settle;
-    }
+    goto table_b_dispatch;
+
+table_a_0:
+    Func_0808a100(8, 1);
+    Func_080000c0(6);
+    slot = 8;
+    goto join_req3;                         /* 0x02001488 */
+
+table_a_2:
+    Func_0808a100(8, 1);
+    Func_080000c0(6);
+    slot = 8;
+    goto join_req5;                         /* 0x020014a0 */
+
+table_a_3:
+    Func_0808a100(8, 1);
+    Func_080000c0(6);
+    slot = 8;
+    goto join_req4;                         /* 0x020014b8 */
+
+table_a_4:
+    Func_0808a100(8, 1);
+    Func_080000c0(6);
+    Func_0808a100(8, 3);
+    Func_080000c0(6);
+    Func_0808a100(8, 1);
+    Func_080000c0(6);
+    Func_0808a100(8, 3);
+    Func_080000c0(6);
+    slot = 8;
+    goto join_req1;
+
+table_a_5:
+    Func_0808a100(8, 1);
+    Func_080000c0(6);
+    Func_0808a100(8, 2);
     goto settle;
+
+table_a_6:
+    Func_0808a100(8, 6);
+    Func_080000c0(6);
+    Func_0808a100(8, 8);
+    goto settle;
+
+table_a_8:
+    Func_0808a100(8, 6);
+    Func_080000c0(6);
+    Func_0808a100(8, 9);
+    goto settle;
+
+table_a_9:
+    Func_0808a100(8, 6);
+    Func_080000c0(6);
+    Func_0808a100(8, 10);
+    goto settle;
+
+table_a_10:
+    Func_0808a100(8, 6);
+    Func_080000c0(6);
+    Func_0808a100(8, 8);
+    Func_080000c0(6);
+    Func_0808a100(8, 6);
+    Func_080000c0(6);
+    Func_0808a100(8, 8);
+    Func_080000c0(6);
+    goto join_slot6;
 
 join_slot6:                                 /* 0x0200144a */
     Func_0808a100(8, 6);
     goto settle;
 
+table_b_dispatch:
+    if ((u32)gesture > 5) goto settle;
+    switch (gesture) {
+    case 0: goto table_b_0;
+    case 1: slot = 9; goto join_req1;
+    case 2: goto table_b_2;
+    case 3: goto table_b_3;
+    case 4: goto table_b_4;
+    case 5: goto table_b_5;
+    }
+    goto settle;
+
+table_b_0:
+    Func_0808a100(9, 1);
+    Func_080000c0(6);
+    slot = 9;
 join_req3:                                  /* 0x02001488 */
     Func_0808a100(slot, 3);
     goto settle;
 
+table_b_2:
+    Func_0808a100(9, 1);
+    Func_080000c0(6);
+    slot = 9;
 join_req5:                                  /* 0x020014a0 */
     Func_0808a100(slot, 5);
     goto settle;
 
+table_b_3:
+    Func_0808a100(9, 1);
+    Func_080000c0(6);
+    slot = 9;
 join_req4:                                  /* 0x020014b8 */
     Func_0808a100(slot, 4);
     goto settle;
 
+table_b_4:
+    Func_0808a100(9, 1);
+    Func_080000c0(6);
+    Func_0808a100(9, 3);
+    Func_080000c0(6);
+    Func_0808a100(9, 1);
+    Func_080000c0(6);
+    Func_0808a100(9, 3);
+    Func_080000c0(6);
+    slot = 9;
+    goto join_req1;
+
 join_req1:                                  /* 0x020014fa */
     Func_0808a100(slot, 1);
+    goto settle;
+
+table_b_5:
+    Func_0808a100(9, 1);
+    Func_080000c0(6);
+    Func_0808a100(9, 2);
 
 settle:                                     /* 0x02001518 */
     Func_080000c0(12);

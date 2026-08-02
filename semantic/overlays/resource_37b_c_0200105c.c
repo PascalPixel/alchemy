@@ -143,6 +143,13 @@ s32 Func_0200105c(void)
         goto publish;
     }
 
+    goto retest;
+
+publish:
+    Func_080091c0(first, second, 2, 1, slot, mode);
+    goto common;
+
+retest:
     /* The two flags are re-tested here; this is a second pair of call sites,
      * not a reuse of the results above. */
     if (Func_080770c0(0x816) != 0) {
@@ -154,9 +161,6 @@ s32 Func_0200105c(void)
         Func_08009180(4, 59, 17, 38, 4, 3);
     }
     goto common;
-
-publish:
-    Func_080091c0(first, second, 2, 1, slot, mode);
 
 common:
     if (Func_080770c0(0x80b) != 0) {

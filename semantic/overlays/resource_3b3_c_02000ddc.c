@@ -44,11 +44,11 @@ extern u8 *Data_03001e70;
 extern s32 BucketKeyTable_0200ace0[];
 extern s32 BucketGeomTable_0200acf8[][4];
 
-u8 *Func_0200390a();
+u8 *Func_0808a080();
 
 s32 Func_02000ddc(s32 a0, s32 *out1, s32 *out2, s32 *out3, s32 *out4, s32 *out5)
 {
-    u8 *obj = Func_0200390a(a0);
+    u8 *obj = Func_0808a080(a0);
     s16 *keyfield;
     s32 bucket = 7;
     s32 i;

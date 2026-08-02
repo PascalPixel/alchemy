@@ -127,12 +127,14 @@ void Func_020013b8(void)
 
     if (*(s16 *)(record + 18) <= 209) {
         if (Func_080770c0(0x89a) == 0) goto scene0;
-        if (Func_080770c0(0x89b) == 0) {
-            Func_02001160();
-        } else {
+        if (Func_080770c0(0x89b) != 0) goto scene0;
+        goto scene1;
 scene0:
-            Func_0200102c(0);
-        }
+        Func_0200102c(0);
+        goto firstSceneComplete;
+scene1:
+        Func_02001160();
+firstSceneComplete:
         Func_0808a020();
         return;
     }

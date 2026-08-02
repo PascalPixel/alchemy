@@ -15,16 +15,16 @@ typedef signed int s32;
  * stop; `a0`/`a1` both increment together each iteration.
  */
 
-s32 Func_0200b4e4();
-void Func_0200b59a();
+s32 Func_080770c0();
+void Func_0808a0f0();
 
 void Func_02005038(s32 a0, s32 a1)
 {
     s32 i;
 
     for (i = 0; i <= 8; i++, a0++, a1++) {
-        if (Func_0200b4e4(a1) != 0) {
-            Func_0200b59a(a0, 0, 0);
+        if (Func_080770c0(a1) != 0) {
+            Func_0808a0f0(a0, 0, 0);
             break;
         }
     }

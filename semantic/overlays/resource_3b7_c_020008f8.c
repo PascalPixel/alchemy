@@ -87,17 +87,7 @@ void Func_020008f8(s32 repeat)
     Func_0808a5b0();
 
     if (repeat != 0) {
-        if (handle == 0) {
-            line = 0xe32;
-            goto say_and_close;
-        }
-        Func_0808a170(0xe33);
-        Func_0808a178(8, 0);
-        if (Func_0808a070(0, 0) == 0) {
-            goto refuse;
-        }
-        line = 0xe31;
-        goto say_and_close;
+        goto repeat_path;
     }
 
     Func_0808a170(0xe23);
@@ -138,6 +128,19 @@ void Func_020008f8(s32 repeat)
     }
 
     line = 0xe29;
+    goto say_and_close;
+
+repeat_path:
+    if (handle == 0) {
+        line = 0xe32;
+        goto say_and_close;
+    }
+    Func_0808a170(0xe33);
+    Func_0808a178(8, 0);
+    if (Func_0808a070(0, 0) == 0) {
+        goto refuse;
+    }
+    line = 0xe31;
 
 say_and_close:
     Func_0808a170(line);

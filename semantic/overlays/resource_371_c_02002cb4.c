@@ -1,0 +1,165 @@
+typedef unsigned char u8;
+typedef signed short s16;
+typedef signed int s32;
+
+extern u8 Data_02000240[];
+extern u8 Data_0200cf7c[];
+extern u8 Data_0200d01c[];
+extern u8 Data_0200d0a8[];
+
+extern void Func_08015360(s32, s32);
+extern void Func_0808a018(void);
+extern void Func_0808a5c0(s32, s32);
+extern void Func_0808a210(s32, s32, s32, s32);
+extern void Func_0808a100(s32, s32);
+extern void Func_0808a0f0(s32, s32, s32);
+extern void Func_080000c0(s32);
+extern void Func_0808a330(s32, s32);
+extern void Func_0808a360(void);
+extern void Func_0808a5c8(void);
+extern void Func_0808a3d8(void);
+extern void Func_0808a010(s32);
+extern void Func_0808a138(s32, s32);
+extern void Func_0808a170(s32);
+extern void Func_0808a188(s32, s32, s32);
+extern void Func_0808a1e8(s32, s32, s32);
+extern void Func_0808a1f0(s32, s32);
+extern void Func_0808a090(s32, s32, s32);
+extern void Func_0808a0d0(s32, s32, s32);
+extern void Func_0808a110(s32, s32);
+extern void Func_0808a180(s32, s32);
+extern void Func_08009170(void);
+extern void Func_0808a098(s32, u8 *);
+extern void Func_0808a128(s32, s32, s32);
+extern void Func_0808a208(s32, s32);
+extern u8 *Func_0808a080(s32);
+extern void Func_0808a1b8(s32, s32, s32);
+extern void Func_0808a1d0(s32, s32, s32, s32, s32, s32,
+                          s32, s32, s32, s32, s32);
+extern void Func_0808a0c8(s32, s32, s32);
+extern void Func_0808a130(s32, s32);
+extern void Func_080f9010(s32);
+extern void Func_0808a348(s32);
+extern void Func_0808a238(s32, s32);
+
+/* Run the full actors 5/8/9 staging and camera choreography. */
+void Func_02002cb4(void)
+{
+    u8 *actor;
+
+    Func_08015360(Data_02000240[0x205], Data_02000240[0x206]);
+    Func_0808a018();
+    Func_0808a5c0(0x10000, 300);
+    Func_0808a210(-1, -1, -1, 0);
+    Func_0808a100(5, 19);
+    Func_0808a100(8, 5);
+    Func_0808a0f0(0, 0, 0);
+    Func_080000c0(1);
+    Func_0808a5c0(0x18000, 16);
+    *(s32 *)(*(u8 **)0x03001ebc + 448) = 256;
+    Func_0808a330(0x10003, 1);
+    *(s32 *)(*(u8 **)0x03001ebc + 456) = 16;
+    Func_0808a360();
+    Func_0808a5c8();
+    Func_0808a3d8();
+    Func_0808a010(40);
+
+    Func_0808a138(5, 1);
+    Func_0808a010(20);
+    Func_0808a170(0x2913);
+    Func_0808a188(5, 0, 20);
+    Func_0808a138(8, 2);
+    Func_0808a010(20);
+    Func_0808a188(8, 0, 20);
+    Func_0808a1e8(5, 0x107, 20);
+    Func_0808a188(5, 0, 20);
+    Func_0808a1e8(8, 0x105, 80);
+    Func_0808a188(8, 0, 10);
+    Func_0808a138(5, 2);
+    Func_0808a188(5, 0, 20);
+    Func_0808a1e8(8, 0x105, 100);
+    Func_0808a1e8(5, 0x105, 40);
+    Func_0808a188(5, 0, 20);
+    Func_0808a188(8, 0, 10);
+    Func_0808a1e8(5, 0x102, 20);
+    Func_0808a188(5, 0, 10);
+    Func_0808a1f0(8, 0x102);
+    Func_0808a010(80);
+    Func_0808a188(8, 0, 20);
+    Func_0808a1e8(5, 0x105, 80);
+    Func_0808a188(8, 0, 120);
+    Func_0808a138(5, 1);
+    Func_0808a188(5, 0, 40);
+    Func_0808a188(8, 0, 20);
+    Func_0808a1e8(5, 0x105, 40);
+    Func_0808a188(5, 0, 120);
+
+    Func_0808a090(9, 0x6666, 0x3333);
+    Func_0808a0f0(9, 0x1ddc0000, 0x0d840000);
+    Func_0808a0d0(9, 0x1d940000, 0x0d8c0000);
+    Func_0808a0d0(9, 0x1d880000, 0x0da0);
+    Func_0808a010(20);
+    Func_0808a188(0x6009, 0, 20);
+    Func_0808a1e8(8, 0x101, 0);
+    Func_0808a1e8(5, 0x101, 60);
+    Func_0808a110(9, 3);
+    Func_0808a180(0x6009, 0);
+    Func_08009170();
+    Func_0808a010(20);
+    Func_0808a098(9, Data_0200cf7c);
+    Func_0808a010(80);
+
+    Func_0808a100(8, 1);
+    Func_0808a128(8, 4, 40);
+    Func_0808a100(5, 1);
+    Func_0808a128(5, 4, 60);
+    Func_0808a1b8(8, 0x3000, 0);
+    Func_0808a1b8(5, 0xb000, 40);
+    Func_0808a090(8, 0x9999, 0x4ccc);
+    Func_0808a090(5, 0x9999, 0x4ccc);
+    Func_0808a098(8, Data_0200d01c);
+    Func_0808a010(20);
+    Func_0808a208(0xb333, 0x1666);
+    Func_0808a210(0x1e380000, -1, 0x0dc80000, 1);
+    Func_0808a098(5, Data_0200d0a8);
+
+    do {
+        Func_0808a100(10, 6);
+        Func_0808a100(6, 8);
+        Func_080000c0(1);
+        actor = Func_0808a080(5);
+    } while (*(s16 *)(actor + 100) == 0);
+
+    Func_0808a010(20);
+    Func_0808a1b8(9, 0x10000, 20);
+    Func_0808a1f0(8, 0x102);
+    Func_0808a1f0(5, 0x102);
+    Func_0808a010(40);
+    Func_0808a3d8();
+    Func_0808a1d0(5, 7, 13, 2, 12, 8, 9, 4, 4, 3, 0);
+    Func_0808a010(20);
+    Func_08009170();
+    Func_0808a208(0x10000, 0x2000);
+    Func_0808a210(0x1e580000, -1, 0x0dc80000, 1);
+    Func_0808a1b8(9, 0x3000, 0);
+    Func_0808a090(8, 0x19999, 0xcccc);
+    Func_0808a090(5, 0x19999, 0xcccc);
+    Func_0808a0c8(8, 0x1e7c0000, 0x0db80000);
+    Func_0808a0d0(5, 0x1e6c0000, 0x0dd80000);
+    Func_0808a100(8, 1);
+    Func_0808a3d8();
+    Func_0808a010(80);
+    Func_0808a138(8, 1);
+    Func_0808a188(8, 0, 20);
+    Func_0808a138(5, 2);
+    Func_0808a188(0x1005, 0, 40);
+    Func_0808a1b8(8, 0x10000, 20);
+    Func_0808a130(8, 2);
+    Func_0808a188(8, 0, 60);
+    Func_08009170();
+    Func_080f9010(17);
+    Func_0808a330(0, 0);
+    Func_0808a348(120);
+    Func_080000c0(120);
+    Func_0808a238(0, 10);
+}

@@ -157,28 +157,33 @@ The 96 decoded code overlays are the largest open program scope:
 
 - Executable inventory: **795,046 bytes**.
 - Exact C: **161,780 bytes**.
-- Additional semantic C: **390,368 bytes**.
-- Remaining without exact or semantic C: **242,898 bytes**.
-- Current semantic-backed exact reading list: **537 owners / 274,524 bytes**
-  across 66 code overlays.
+- Additional semantic C: **407,030 bytes**.
+- Remaining without exact or semantic C: **226,236 bytes**.
+- Current semantic-backed exact reading list: **539 owners / 274,540 bytes**
+  across 67 code overlays.
 
-The largest reading-list portfolios are `resource_373` (17,232 bytes),
-`resource_3b8` (15,028), `resource_3bf` (12,808), `resource_3c8` (10,636),
-`resource_372` (9,622), `resource_38f` (9,212), `resource_371` (8,894), and
-`resource_383` (8,236).
+The largest reading-list portfolios are `resource_373` (16,440 bytes),
+`resource_3bf` (12,596), `resource_3c8` (10,194), `resource_372` (9,400),
+`resource_38f` (8,988), `resource_371` (8,894), and `resource_383` (8,236).
 
-Discovery is broad but noisy: the live inventory reports 12,046 unconverted
-discoveries, including 10,353 contained rows, 10,000 data walks, 126 structural
-veneers, 1,005 ordinary discoveries, and 529 ordinary prologue/return rows.
+Discovery is broad but noisy: the live inventory reports 11,954 unconverted
+discoveries, including 10,335 contained rows, 9,987 data walks, 126 structural
+veneers, 928 ordinary discoveries, and 477 ordinary prologue/return rows.
 These filters overlap; their counts must never be added as distinct functions.
 
-The exact-twin report shows only 1,804 theoretical recoverable bytes. Its three
-remaining families have already demonstrated address-, pool-, veneer-, or
-one-to-four-byte compiler differences, so 1,804 is an upper bound, not an easy
-batch. During this audit, `resource_373:11d8` converted exactly for 108 bytes
-after correcting code-overlay-local call targets and using its already-proven
-scheduler route. That is the productive pattern: start from a complete owner,
-resolve the module-local ABI correctly, and reuse a demonstrated family route.
+The exact-twin report now shows only **116 theoretical recoverable bytes** in
+two families; `bun tools/overlay_twins.ts --semantic --unconverted` reports
+zero, proving there is no remaining known twin-template shortcut for semantic
+closure. The new semantic mode prevents the exact-C queue from being mistaken
+for unowned code and makes that negative result immediate rather than manual.
+
+`bun tools/overlay_call_order_check.ts` is the other current speedup. It compares
+each semantic owner's source-level postorder call sequence with its reachable,
+veneer-resolved BL sequence, including conservative IWRAM call-through recovery.
+Use it on every new owner alongside the multiset check: all four new
+`resource_3bd` owners pass both. The project-wide diagnostic currently reports
+1,101 owners, 866 passes and 235 pre-existing mismatches, so `--all` is an audit
+queue rather than a green gate; the self-test is wired into `bun test`.
 
 ## Semantic C: what it did and did not unlock
 

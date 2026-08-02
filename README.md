@@ -51,7 +51,7 @@ them. This panel tracks all 795,090 executable bytes across those modules.
 Bright cyan is exact C, the softer cyan is readable C still being matched, gray
 is code still to reconstruct, and orange is retained low-level assembly.
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=7a63de89)
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=601c7eb5)
 
 ### Data and assets
 

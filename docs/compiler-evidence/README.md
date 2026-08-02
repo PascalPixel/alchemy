@@ -7,8 +7,8 @@ so the evidence survives the machine the probe ran on. Each entry records the
 mechanism, a prototype diff against the fork source, and the collateral
 measurement a routed mode needs.
 
-The applied entry below is the first one admitted from this ledger. The
-remaining entries are still experimental: landing one requires the fork change
+The applied entries below are admitted from this ledger. Remaining entries are
+still experimental: landing one requires the fork change
 to be committed to the `alchemy-gcc` repository and the pinned commit updated,
 then the digests re-pinned in `tools/alchemy_gcc.ts` — and per `PROVENANCE.md`
 that re-pin is admissible only after the source-only build reproduces gs1-en.gba
@@ -63,6 +63,24 @@ The full exact-C corpus remains exact (1,424/1,424 members), and the complete
 builds remain byte-identical with zero fallback bytes. The admitted
 darwin-arm64 `cc1` is from alchemy-gcc commit `df79270`, digest
 `d12bf2c7b96d2b1b6cec4c09b76f986249285070b1ca09d1ba1baf31b859cc18`.
+
+## applied: grouped-DMA value1-before-base order
+
+The clean witness `080907b0` is now exact C (116/116 bytes). Its natural
+volatile DMA-descriptor source leaves an independent destination setup between
+the first two scalar stores, permits the live stack pointer as the first
+descriptor value, and requires the second descriptor's immediate, source
+address, base, shift, and control setup in a strict order. The default-off
+`-fthumb-group-value1-before-base` mode accepts only that complete grouped-DMA
+shape and restores the reference order. It is routed only to GS1 source
+`080907b0`, together with `-mgrouped-dma-store`,
+`-fthumb-group-control-last`, and `-fno-sched-depend-count`.
+
+The existing `alchemy-gcc` regression suite passes. The 0809 routed cohort is
+exact throughout (228/228, zero regressions), and the explicit gcc296 routed
+check for the owner is exact (1/1, zero regressions). The rebuilt Darwin arm64
+`cc1` digest is
+`9ebef7d0fac03bbd44ce3016b8e06534cde5ef514b29042be9dcbf9414f248ff`.
 
 ## cse-two-insn-immediate
 

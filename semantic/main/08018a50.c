@@ -1,155 +1,195 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "layout_guard.h"
+#include "types.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+enum {
+    TEXT_RING_SIZE_08018A50 = 512,
+    TEXT_COLUMN_LIMIT_08018A50 = 16,
+    TEXT_SEGMENT_LIMIT_08018A50 = 4,
+};
+
+typedef struct GlyphMetrics_08018a50 {
+    u16 width;
+    u8 padding02[0x1e];
+} GlyphMetrics_08018a50;
+
+typedef struct TextRuntime_08018a50 {
+    u8 padding000[0xea4];
+    u8 narrow_display;
+    u8 paddingea5[7];
+    u16 render_mode;
+    u8 paddingeae[2];
+    u16 scratch_text[TEXT_RING_SIZE_08018A50];
+} TextRuntime_08018a50;
+
+LAYOUT_SIZE_GUARD(
+    GlyphMetrics08018a50_Size,
+    GlyphMetrics_08018a50,
+    0x20);
+LAYOUT_OFFSET_GUARD(
+    TextRuntime08018a50_NarrowDisplay,
+    TextRuntime_08018a50,
+    narrow_display,
+    0xea4);
+LAYOUT_OFFSET_GUARD(
+    TextRuntime08018a50_RenderMode,
+    TextRuntime_08018a50,
+    render_mode,
+    0xeac);
+LAYOUT_OFFSET_GUARD(
+    TextRuntime08018a50_ScratchText,
+    TextRuntime_08018a50,
+    scratch_text,
+    0xeb0);
+
+extern TextRuntime_08018a50 *Data_03001e8c;
 
 s32 Func_080022ec(s32, s32);
 
-/*
- * Measures an encoded text stream, returning its widest row, total width, and
- * optional per-row spacing values.
- */
-void Func_08018a50(s32 arg0, u32 *arg1, u32 *arg2, s16 *arg3) {
-    u32 sp4;
-    u32 *sp8;
-    s16 line_widths[4];
-    s16 glyph_counts[4];
-    u32 row_widths[16];
-    s16 *var_r8;
-    s16 var_r4;
-    s16 var_r6;
-    s32 var_ip;
-    s32 var_r0;
-    s32 var_r0_3;
-    s32 var_r5;
-    s32 var_r7;
-    u16 temp_r2;
-    u16 temp_r3;
-    u16 var_r2;
-    u32 temp_r2_2;
-    u32 temp_r3_2;
-    u32 temp_r7;
-    u32 var_r4_2;
-    u32 var_r6_2;
-    u32 var_sl;
-    u8 *temp_r5;
+static void FinishSegment_08018a50(
+    s16 line_widths[TEXT_SEGMENT_LIMIT_08018A50],
+    s16 glyph_counts[TEXT_SEGMENT_LIMIT_08018A50],
+    s32 segment,
+    s32 width,
+    s32 glyph_count)
+{
+    glyph_counts[segment] = glyph_count + 1;
+    line_widths[segment] = width;
+}
 
-    var_r0 = arg0;
-    sp8 = arg1;
-    var_r8 = arg3;
-    temp_r5 = *(void **)0x03001E8C;
-    for (var_r5 = 0; var_r5 < 16; var_r5++) {
-        row_widths[var_r5] = 0xF;
-    }
-    sp4 = 0;
-    var_sl = 0;
-    var_r4 = 0;
-    var_r6 = 0;
-    var_r7 = 0;
-    var_ip = 0;
-loop_1:
-    temp_r2 = M2C_FIELD(temp_r5, u16 *, (var_r0 * 2) + 0xEB0);
-    var_r0 = (var_r0 + 1) & 0x1FF;
-    if ((u32) temp_r2 > 0x1FU) {
-        if (temp_r2 == 0x20) {
-            var_r4 += 5;
-            var_r6 += 1;
-        } else {
-            var_r2 = M2C_FIELD(((temp_r2 - 0x20) << 5), u16 *, 0x08032224);
-            temp_r3 = M2C_FIELD(temp_r5, u16 *, 0xEAC);
-            if ((temp_r3 == 1) || (temp_r3 == 5)) {
-                var_r2 += 1;
-            }
-            var_r4 += var_r2;
-        }
-        goto loop_1;
-    }
-    switch (temp_r2) {
-    case 3:
-        glyph_counts[sp4] = var_r6 + 1;
-        line_widths[sp4] = var_r4;
-        if ((var_r7 == 0) && (var_sl < (u32) var_r4)) {
-            var_sl = (u32) var_r4;
-        }
-        if (sp4 <= 2U) {
-            temp_r3_2 = sp4 + 1;
-            sp4 = temp_r3_2;
-            var_ip = temp_r3_2 * 2;
-        }
-        var_r6 = 0;
-        var_r4 = 0;
-        row_widths[var_r7] += 0xF;
-        goto loop_1;
-    case 1:
-        var_r6 += 1;
-        glyph_counts[sp4] = var_r6;
-        line_widths[sp4] = var_r4;
-        if ((var_r7 == 0) && (var_sl < (u32) var_r4)) {
-            var_sl = (u32) var_r4;
-        }
-        var_r7 += 1;
-        goto loop_1;
-    case 14:
-    case 28:
-        var_r0 = (var_r0 + 1) & 0x1FF;
-    case 8:
-    case 10:
-    case 15:
-    case 17:
-block_26:
-        var_r0 = (var_r0 + 1) & 0x1FF;
-        goto loop_1;
-    case 9:
-        M2C_FIELD(temp_r5, u16 *, 0xEAC) =
-            M2C_FIELD(temp_r5, u16 *, (var_r0 * 2) + 0xEB0);
-        goto block_26;
-    }
-    glyph_counts[sp4] = var_r6 + 1;
-    line_widths[sp4] = var_r4;
-    if ((var_r7 == 0) && (var_sl < (u32) var_r4)) {
-        var_sl = (u32) var_r4;
-    }
-    temp_r7 = var_r7 + 1;
-    if (M2C_FIELD(temp_r5, u8 *, 0xEA4) != 0) {
-        var_sl += 2;
-    }
-    var_r4_2 = 0;
-    if (temp_r7 > 0U) {
-        do {
-            if (var_r4_2 == 0) {
-                *arg2 = row_widths[0];
+/* Measure the multi-column scratch-text stream and optional segment spacing. */
+void Func_08018a50(
+    s32 start,
+    u32 *width,
+    u32 *height,
+    s16 *spacing)
+{
+    TextRuntime_08018a50 *runtime = Data_03001e8c;
+    const GlyphMetrics_08018a50 *metrics =
+        (const GlyphMetrics_08018a50 *)0x08032224;
+    s16 line_widths[TEXT_SEGMENT_LIMIT_08018A50];
+    s16 glyph_counts[TEXT_SEGMENT_LIMIT_08018A50];
+    u32 column_heights[TEXT_COLUMN_LIMIT_08018A50];
+    u32 max_width = 0;
+    s32 segment = 0;
+    s32 current_width = 0;
+    s32 glyph_count = 0;
+    s32 column = 0;
+    s32 cursor = start;
+    s32 index;
+
+    for (index = 0; index < TEXT_COLUMN_LIMIT_08018A50; index++)
+        column_heights[index] = 0x0f;
+
+    for (;;) {
+        u16 token = runtime->scratch_text[cursor];
+
+        cursor = (cursor + 1) & 0x01ff;
+        if (token > 0x1f) {
+            if (token == 0x20) {
+                current_width += 5;
+                glyph_count++;
             } else {
-                temp_r2_2 = row_widths[var_r4_2];
-                if ((u32) *arg2 < temp_r2_2) {
-                    *arg2 = temp_r2_2;
+                s32 glyph_width = metrics[token - 0x20].width;
+
+                if (runtime->render_mode == 1 ||
+                    runtime->render_mode == 5) {
+                    glyph_width++;
                 }
+                current_width += glyph_width;
             }
-            var_r4_2 += 1;
-        } while (var_r4_2 < temp_r7);
+            continue;
+        }
+
+        switch (token) {
+        case 0:
+            FinishSegment_08018a50(
+                line_widths,
+                glyph_counts,
+                segment,
+                current_width,
+                glyph_count);
+            if (column == 0 && max_width < (u32)current_width)
+                max_width = current_width;
+            column++;
+            goto finished;
+
+        case 1:
+            FinishSegment_08018a50(
+                line_widths,
+                glyph_counts,
+                segment,
+                current_width,
+                glyph_count);
+            if (column == 0 && max_width < (u32)current_width)
+                max_width = current_width;
+            column++;
+            continue;
+
+        case 3:
+            FinishSegment_08018a50(
+                line_widths,
+                glyph_counts,
+                segment,
+                current_width,
+                glyph_count);
+            if (column == 0 && max_width < (u32)current_width)
+                max_width = current_width;
+            if (segment <= 2)
+                segment++;
+            current_width = 0;
+            glyph_count = 0;
+            column_heights[column] += 0x0f;
+            continue;
+
+        case 14:
+        case 28:
+            cursor = (cursor + 1) & 0x01ff;
+            /* Fall through: these commands carry two operands. */
+        case 8:
+        case 10:
+        case 15:
+        case 17:
+            cursor = (cursor + 1) & 0x01ff;
+            continue;
+
+        case 9:
+            runtime->render_mode = runtime->scratch_text[cursor];
+            cursor = (cursor + 1) & 0x01ff;
+            continue;
+
+        default:
+            continue;
+        }
     }
-    *sp8 = var_sl;
-    if (var_r8 != 0) {
-        var_r6_2 = 0;
-        var_r5 = 0;
-        do {
-            if ((u32)glyph_counts[var_r6_2] <= 1U) {
-                *var_r8 = 0;
+
+finished:
+    if (runtime->narrow_display != 0)
+        max_width += 2;
+
+    *height = column_heights[0];
+    for (index = 1; index < column; index++) {
+        if (*height < column_heights[index])
+            *height = column_heights[index];
+    }
+    *width = max_width;
+
+    if (spacing != 0) {
+        s32 available_width =
+            (((max_width + 0x13) >> 3) * 8) - 0x10;
+
+        for (index = 0; index <= segment; index++) {
+            if (glyph_counts[index] <= 1) {
+                spacing[index] = 0;
             } else {
-                var_r0_3 = (((((u32) (var_sl + 0x13) >> 3) * 8) - 0x10) -
-                    line_widths[var_r6_2]) - 4;
-                if (var_r0_3 < 0) {
-                    var_r0_3 = 0;
-                }
-                *var_r8 = (s16)Func_080022ec(
-                    var_r0_3 << 8, glyph_counts[var_r6_2] - 1);
+                s32 available =
+                    available_width - line_widths[index] - 4;
+
+                if (available < 0)
+                    available = 0;
+                spacing[index] = (s16)Func_080022ec(
+                    available << 8,
+                    glyph_counts[index] - 1);
             }
-            var_r8 += 2;
-            var_r6_2 += 1;
-            var_r5 += 2;
-        } while (var_r6_2 <= sp4);
+        }
     }
 }

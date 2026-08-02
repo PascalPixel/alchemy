@@ -1,98 +1,192 @@
+#include "layout_guard.h"
 #include "types.h"
 
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+enum { OPTION_COUNT_080AB314 = 7 };
+
+typedef struct MenuWindow_080ab314 {
+    u8 padding00[0x0e];
+    u16 row_offset;
+} MenuWindow_080ab314;
+
+typedef struct PreviewPane_080ab314 {
+    u8 padding00[0x14];
+    s16 field14;
+    u8 padding16[2];
+    s16 field18;
+    s16 field1a;
+} PreviewPane_080ab314;
+
+typedef struct BattleMenu_080ab314 {
+    u8 padding000[0x10];
+    void *auxiliary_window;
+    u8 padding014[0x1c];
+    void *display;
+    u8 padding034[0xd8];
+    void *message_window;
+} BattleMenu_080ab314;
+
+typedef struct MenuRuntime_080ab314 {
+    u8 padding000[0xea6];
+    s8 drawing;
+    u8 paddingea7[0x40f];
+    u16 preview_resource;
+    u8 padding12b8[0x40];
+    s8 preview_active;
+} MenuRuntime_080ab314;
+
+LAYOUT_OFFSET_GUARD(
+    MenuWindow080ab314_RowOffset,
+    MenuWindow_080ab314,
+    row_offset,
+    0x0e);
+LAYOUT_OFFSET_GUARD(
+    PreviewPane080ab314_Field14,
+    PreviewPane_080ab314,
+    field14,
+    0x14);
+LAYOUT_OFFSET_GUARD(
+    BattleMenu080ab314_Display,
+    BattleMenu_080ab314,
+    display,
+    0x30);
+LAYOUT_OFFSET_GUARD(
+    BattleMenu080ab314_MessageWindow,
+    BattleMenu_080ab314,
+    message_window,
+    0x10c);
+LAYOUT_OFFSET_GUARD(
+    MenuRuntime080ab314_Drawing,
+    MenuRuntime_080ab314,
+    drawing,
+    0xea6);
+LAYOUT_OFFSET_GUARD(
+    MenuRuntime080ab314_PreviewResource,
+    MenuRuntime_080ab314,
+    preview_resource,
+    0x12b6);
+LAYOUT_OFFSET_GUARD(
+    MenuRuntime080ab314_PreviewActive,
+    MenuRuntime_080ab314,
+    preview_active,
+    0x12f8);
+
+extern BattleMenu_080ab314 *Data_03001f2c;
+extern MenuRuntime_080ab314 *Data_03001e8c;
+extern volatile u32 Data_03001b04;
+extern volatile u32 Data_03001c94;
 
 void Func_080030f8(s32);
 void Func_08003f3c(u16);
-void Func_080041d8(u32, s32);
-u8 *Func_08015010(s32, s32, s32, s32, s32);
-void Func_08015018(u8 *, s32);
+void Func_080041d8(const void *, s32);
+MenuWindow_080ab314 *Func_08015010(s32, s32, s32, s32, s32);
+void Func_08015018(void *, s32);
 s32 Func_08015048(void);
-void Func_08015060(u8 *);
-void Func_08015078(s32, u8 *, s32, s32);
-void Func_08015080(s32, u8 *, s32, s32);
-void Func_08015278(u8 *);
+void Func_08015060(void *);
+void Func_08015078(s32, void *, s32, s32);
+void Func_08015080(s32, void *, s32, s32);
+void Func_08015278(void *);
 void Func_080152a8(void);
-u8 **Func_080153f8(u8 *, s32);
+PreviewPane_080ab314 **Func_080153f8(void *, s32);
 void Func_080a1a40(s32, s32);
 s32 Func_080aa538(s32, s32);
-void Func_080ab1f4(u8 *, s32, s32, s32, s32, s32);
+void Func_080ab1f4(void *, s32, s32, s32, s32, s32);
 void Func_080ab21c(s32, s32, s32, s32, s32);
-void Func_080ab2ec(u8 *, s32, s32, s32, s32, s32);
+void Func_080ab2ec(void *, s32, s32, s32, s32, s32);
 void Func_080f9010(s32);
 
-/*
- * Run the seven-entry selection screen.  Return -1 for cancel, -2 for the
- * alternate exit, and keep rebuilding the preview until an exit is chosen.
- */
+static void ReleasePreview_080ab314(
+    MenuRuntime_080ab314 *runtime,
+    void *preview_window,
+    PreviewPane_080ab314 **preview_slot)
+{
+    PreviewPane_080ab314 *pane;
+
+    if (runtime->preview_resource != 0x63) {
+        Func_08003f3c(runtime->preview_resource);
+        runtime->preview_resource = 0x63;
+    }
+    runtime->preview_active = 0;
+    Func_08015060(preview_window);
+
+    pane = *preview_slot;
+    pane->field1a = 0;
+    pane->field18 = 0;
+    pane->field14 = 0;
+    *preview_slot = 0;
+}
+
+/* Run the seven-entry menu; return -1 for cancel or -2 for alternate exit. */
 s32 Func_080ab314(void)
 {
-    u8 *ui = *(u8 **)0x03001f2c;
-    u8 *state = *(u8 **)0x03001e8c;
-    u8 *row;
-    u8 *preview;
-    u8 *cursor;
-    u8 *window;
+    BattleMenu_080ab314 *ui = Data_03001f2c;
+    MenuRuntime_080ab314 *runtime = Data_03001e8c;
+    MenuWindow_080ab314 *rows;
+    void *preview_window;
+    void *cursor_window;
     s32 result = 0;
     s32 selection = 0;
     s32 previous = 0;
-    s32 i;
+    s32 index;
 
-    Func_08015278(FIELD(ui, u8 *, 0x30));
+    Func_08015278(ui->display);
     Func_080030f8(1);
-    Func_08015060(FIELD(ui, u8 *, 0x10c));
-    Func_08015080(0x0c30, FIELD(ui, u8 *, 0x10c), 0, 0);
-    Func_08015080(0x0c31, FIELD(ui, u8 *, 0x10c), 0, 0x10);
+    Func_08015060(ui->message_window);
+    Func_08015080(0x0c30, ui->message_window, 0, 0);
+    Func_08015080(0x0c31, ui->message_window, 0, 0x10);
     Func_080ab21c(1, 1, 0x0b, 3, 6);
-    Func_080ab2ec(FIELD(ui, u8 *, 0x30), 0, 0, 0x1c, 0x0a, 6);
+    Func_080ab2ec(ui->display, 0, 0, 0x1c, 0x0a, 6);
 
-    row = Func_08015010(0, 9, 8, 0x0a, 6);
-    preview = Func_08015010(8, 0x0c, 0x16, 7, 2);
-    cursor = Func_08015010(8, 9, 0x16, 3, 2);
+    rows = Func_08015010(0, 9, 8, 0x0a, 6);
+    preview_window = Func_08015010(8, 0x0c, 0x16, 7, 2);
+    cursor_window = Func_08015010(8, 9, 0x16, 3, 2);
     Func_080152a8();
 
-    for (i = 0; i < 7; i++)
-        Func_08015080(0x0c32 + i, row, 0, i * 8);
+    for (index = 0; index < OPTION_COUNT_080AB314; index++)
+        Func_08015080(0x0c32 + index, rows, 0, index * 8);
 
     do {
-        u8 **preview_slot;
+        PreviewPane_080ab314 **preview_slot;
 
-        Func_08015060(cursor);
-        Func_08015078(0x0c32 + selection, cursor, 0, 0);
-        preview_slot = Func_080153f8(preview, 0x0c39 + selection);
-        Func_080ab1f4(row, 0, previous, 6, 1, 0x0f);
-        Func_080ab1f4(row, 0, selection, 6, 1, 0x0e);
+        Func_08015060(cursor_window);
+        Func_08015078(0x0c32 + selection, cursor_window, 0, 0);
+        preview_slot = Func_080153f8(
+            preview_window, 0x0c39 + selection);
+        Func_080ab1f4(rows, 0, previous, 6, 1, 0x0f);
+        Func_080ab1f4(rows, 0, selection, 6, 1, 0x0e);
         previous = selection;
 
         for (;;) {
             Func_080a1a40(
                 -0x0c,
-                (FIELD(row, u16, 0x0e) + selection) * 8 + 8);
+                (rows->row_offset + selection) * 8 + 8);
             Func_080030f8(1);
 
-            if ((*(u32 *)0x03001b04 & 0x90) != 0) {
-                selection = Func_080aa538(selection + 1, 7);
+            if ((Data_03001b04 & 0x90) != 0) {
+                selection = Func_080aa538(
+                    selection + 1, OPTION_COUNT_080AB314);
                 Func_080f9010(0x6f);
                 break;
             }
-            if ((*(u32 *)0x03001b04 & 0x60) != 0) {
-                selection = Func_080aa538(selection - 1, 7);
+            if ((Data_03001b04 & 0x60) != 0) {
+                selection = Func_080aa538(
+                    selection - 1, OPTION_COUNT_080AB314);
                 Func_080f9010(0x6f);
                 break;
             }
-            if ((*(u32 *)0x03001c94 & 8) != 0) {
+            if ((Data_03001c94 & 8) != 0) {
                 Func_080f9010(0x71);
                 result = -2;
                 break;
             }
-            if ((*(u32 *)0x03001c94 & 6) != 0) {
+            if ((Data_03001c94 & 6) != 0) {
                 Func_080f9010(0x71);
                 result = -1;
                 break;
             }
-            if ((*(u32 *)0x03001c94 & 1) != 0) {
+            if ((Data_03001c94 & 1) != 0) {
                 if (Func_08015048() != 0) {
-                    selection = Func_080aa538(selection + 1, 7);
+                    selection = Func_080aa538(
+                        selection + 1, OPTION_COUNT_080AB314);
                     Func_080f9010(0x70);
                     break;
                 }
@@ -100,36 +194,26 @@ s32 Func_080ab314(void)
             }
         }
 
-        if (FIELD(state, u16, 0x12b6) != 0x63) {
-            Func_08003f3c(FIELD(state, u16, 0x12b6));
-            FIELD(state, u16, 0x12b6) = 0x63;
-        }
-        FIELD(state, s8, 0x12f8) = 0;
-        Func_08015060(preview);
-
-        window = *preview_slot;
-        FIELD(window, s16, 0x1a) = 0;
-        FIELD(window, s16, 0x18) = 0;
-        FIELD(window, s16, 0x14) = 0;
-        *preview_slot = 0;
+        ReleasePreview_080ab314(
+            runtime, preview_window, preview_slot);
     } while (result == 0);
 
-    FIELD(state, s8, 0x0ea6) = 1;
-    Func_08015278(cursor);
-    Func_08015278(preview);
+    runtime->drawing = 1;
+    Func_08015278(cursor_window);
+    Func_08015278(preview_window);
     Func_080030f8(1);
-    Func_08015018(cursor, 1);
-    Func_08015018(row, 1);
-    Func_08015018(preview, 1);
+    Func_08015018(cursor_window, 1);
+    Func_08015018(rows, 1);
+    Func_08015018(preview_window, 1);
     Func_080152a8();
 
     if (result == -2) {
-        Func_08015060(FIELD(ui, u8 *, 0x10c));
-        Func_08015060(FIELD(ui, u8 *, 0x30));
-        Func_08015060(FIELD(ui, u8 *, 0x10));
-        FIELD(state, s8, 0x0ea6) = 0;
+        Func_08015060(ui->message_window);
+        Func_08015060(ui->display);
+        Func_08015060(ui->auxiliary_window);
+        runtime->drawing = 0;
     }
 
-    Func_080041d8(0x080a19a1, 0x0c80);
+    Func_080041d8((const void *)0x080a19a1, 0x0c80);
     return result;
 }

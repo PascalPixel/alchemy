@@ -1,6 +1,31 @@
+#include "layout_guard.h"
+#include "menu_result.h"
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+struct MenuState_080a6a98 {
+    u8 padding00[0x20];
+    void *selection_grid;
+    u8 padding24[8];
+    s32 preview_window;
+    u8 padding30[0x198];
+    u16 action_list[40];
+};
+
+LAYOUT_OFFSET_GUARD(
+    MenuState080a6a98_SelectionGrid,
+    struct MenuState_080a6a98,
+    selection_grid,
+    0x20);
+LAYOUT_OFFSET_GUARD(
+    MenuState080a6a98_PreviewWindow,
+    struct MenuState_080a6a98,
+    preview_window,
+    0x2c);
+LAYOUT_OFFSET_GUARD(
+    MenuState080a6a98_ActionList,
+    struct MenuState_080a6a98,
+    action_list,
+    0x1c8);
 
 s32 Func_080770c0(s32);
 void Func_080770d0(s32);
@@ -9,42 +34,49 @@ void Func_080030f8(u32);
 void Func_08015080(s32, s32, s32, s32);
 void Func_080a2268(void *, s32, s32, s32, s32, u32);
 
-s32 Func_080a6a98(s32 arg0, s32 arg1, void *arg2)
+/*
+ * Refresh the five-row action preview.  `page->value8` chooses a group of
+ * five actions and `value10` chooses the highlighted row.  The selected row
+ * uses palette 14; the other four use palette 15.
+ *
+ * The first two arguments are scratch values kept by the surrounding modal;
+ * this renderer does not consume them.
+ */
+s32 Func_080a6a98(
+    s32 unused_selected_info,
+    s32 unused_preview_scratch,
+    struct MenuResult *page)
 {
-    s32 var_r5;
-    s32 var_r6;
-    s32 temp_sl;
-    u16 temp_r2;
-    u16 *temp_r7;
+    struct MenuState_080a6a98 *state =
+        *(struct MenuState_080a6a98 **)0x03001f2c;
+    s32 row;
 
-    temp_r7 = *(u16 **)0x03001F2C;
-    M2C_FIELD(arg2, s32, 0x18) =
-        (M2C_FIELD(arg2, s32, 8) * 5) + M2C_FIELD(arg2, s32, 0x10);
+    (void)unused_selected_info;
+    (void)unused_preview_scratch;
+
+    page->value18 = page->value8 * 5 + page->value10;
+
     if (Func_080770c0(0x151) == 0) {
-        Func_08015270(M2C_FIELD(temp_r7, s32, 0x2C));
-        Func_080030f8(1U);
-        temp_r2 = temp_r7[M2C_FIELD(arg2, s32, 0x18) + 0xE4];
-        if (temp_r2 != 0) {
-            Func_08015080((0x1FF & temp_r2) + 0x53A,
-                          M2C_FIELD(temp_r7, s32, 0x2C), 0, 0);
+        u16 action = state->action_list[page->value18];
+
+        Func_08015270(state->preview_window);
+        Func_080030f8(1);
+        if (action != 0) {
+            Func_08015080(
+                (action & 0x01ff) + 0x053a,
+                state->preview_window,
+                0,
+                0);
         }
     } else {
-        Func_080770d0(0x2FF);
+        Func_080770d0(0x02ff);
     }
-    temp_sl = 1;
-    var_r6 = 0;
-    var_r5 = 1;
-    do {
-        if (var_r6 == M2C_FIELD(arg2, s32, 0x10)) {
-            Func_080a2268(M2C_FIELD(temp_r7, void *, 0x20), 0,
-                          var_r5, 0xF, temp_sl, 0xEU);
-        } else {
-            Func_080a2268(M2C_FIELD(temp_r7, void *, 0x20), 0,
-                          var_r5, 0xF, temp_sl, 0xFU);
-        }
-        var_r6 += 1;
-        var_r5 += 2;
-    } while (var_r6 <= 4);
-    Func_080030f8(1U);
+
+    for (row = 0; row < 5; row++) {
+        u32 palette = row == page->value10 ? 14 : 15;
+        Func_080a2268(state->selection_grid, 0, row * 2 + 1, 15, 1, palette);
+    }
+
+    Func_080030f8(1);
     return 1;
 }

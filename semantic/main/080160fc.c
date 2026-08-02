@@ -1,44 +1,61 @@
-typedef unsigned char u8;
-typedef signed int s32;
-typedef unsigned int u32;
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+#include "layout_guard.h"
+#include "types.h"
 
+typedef struct DmaChannel_080160fc {
+    const void *source;
+    void *destination;
+    u32 control;
+} DmaChannel_080160fc;
+
+typedef struct TextRuntime_080160fc {
+    u8 tile_data[0xea3];
+    u8 dirty_blocks;
+    u8 paddingea4[2];
+    u8 upload_busy;
+} TextRuntime_080160fc;
+
+LAYOUT_OFFSET_GUARD(
+    TextRuntime080160fc_DirtyBlocks,
+    TextRuntime_080160fc,
+    dirty_blocks,
+    0xea3);
+LAYOUT_OFFSET_GUARD(
+    TextRuntime080160fc_UploadBusy,
+    TextRuntime_080160fc,
+    upload_busy,
+    0xea6);
+
+extern TextRuntime_080160fc *Data_03001e8c;
+
+/* Upload the dirty 0x100-byte text-tile blocks to character memory. */
 void Func_080160fc(void)
 {
-    u8 *base;
-    u8 *source;
-    u8 *destination;
-    u8 *status;
-    u32 *dma;
-    u32 pending;
-    u8 state;
+    volatile DmaChannel_080160fc *dma =
+        (volatile DmaChannel_080160fc *)0x040000d4;
+    TextRuntime_080160fc *runtime = Data_03001e8c;
+    const u8 *source = runtime->tile_data;
+    u8 *destination = (u8 *)0x06002000;
+    u32 pending = runtime->dirty_blocks;
 
-    base = *(u8 **)0x03001E8C;
-    status = base + 0xEA6;
-    if (*status != 0)
+    if (runtime->upload_busy != 0 || pending == 0)
         return;
 
-    state = status[-3];
-    if (state == 0)
-        return;
-
-    destination = (u8 *)0x06002000;
-    source = base;
-    if (state & 1)
-        state = 0x3F;
-    pending = (state & 0x3F) >> 1;
-    dma = (u32 *)0x040000D4;
+    /* Bit 0 requests all five blocks; bits 1..5 select them individually. */
+    if ((pending & 1) != 0)
+        pending = 0x3f;
+    pending = (pending & 0x3f) >> 1;
 
     do {
-        if (pending & 1) {
-            dma[0] = (u32)source;
-            dma[1] = (u32)destination;
-            dma[2] = 0x84000040;
+        if ((pending & 1) != 0) {
+            dma->source = source;
+            dma->destination = destination;
+            dma->control = 0x84000040;
         }
+
         pending >>= 1;
         source += 0x100;
         destination += 0x100;
     } while (pending != 0);
 
-    status[-3] = pending;
+    runtime->dirty_blocks = 0;
 }

@@ -1,6 +1,5 @@
+#include "layout_guard.h"
 #include "types.h"
-
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 typedef struct BattleInput {
     u8 primary_id;
@@ -20,7 +19,8 @@ typedef struct BattleWork {
     s32 mode;
     s32 unknown_1c;
     u8 padding20[4];
-    s16 members[24];
+    s16 members[8];
+    u8 child_values[8][4];
 } BattleWork;
 
 typedef struct Motion {
@@ -53,18 +53,113 @@ typedef struct UsedItem {
 
 typedef struct QueuedItem {
     s16 actor_id;
-    u8 padding02[4];
-    s16 kind;
+    u8 padding02[6];
     s16 inventory_slot;
-    u8 padding0a[6];
+    s16 kind;
+    u8 padding0c[4];
 } QueuedItem;
+
+typedef struct Character_080ba6ac {
+    u8 padding000[0xd8];
+    u16 inventory[32];
+} Character_080ba6ac;
+
+typedef struct ItemDefinition_080ba6ac {
+    u8 padding00[0x0c];
+    u8 type;
+} ItemDefinition_080ba6ac;
+
+typedef struct WorldState_080ba6ac {
+    u8 padding000[0x2ec];
+    QueuedItem queued_items[20];
+    u8 padding42c[0x118];
+    u8 palette[0x100];
+    s32 palette_factor;
+} WorldState_080ba6ac;
+
+LAYOUT_OFFSET_GUARD(
+    BattleInput080ba6ac_Flags,
+    BattleInput,
+    flags,
+    0x58);
+LAYOUT_OFFSET_GUARD(
+    BattleWork080ba6ac_Members,
+    BattleWork,
+    members,
+    0x24);
+LAYOUT_OFFSET_GUARD(
+    BattleWork080ba6ac_ChildValues,
+    BattleWork,
+    child_values,
+    0x34);
+LAYOUT_SIZE_GUARD(
+    BattleWork080ba6ac_Size,
+    BattleWork,
+    0x54);
+LAYOUT_OFFSET_GUARD(
+    Record080ba6ac_ChildCount,
+    Record,
+    child_count,
+    0x27);
+LAYOUT_OFFSET_GUARD(
+    Record080ba6ac_Children,
+    Record,
+    children,
+    0x28);
+LAYOUT_OFFSET_GUARD(
+    UsedItem080ba6ac_InventorySlot,
+    UsedItem,
+    inventory_slot,
+    8);
+LAYOUT_OFFSET_GUARD(
+    QueuedItem080ba6ac_InventorySlot,
+    QueuedItem,
+    inventory_slot,
+    8);
+LAYOUT_OFFSET_GUARD(
+    QueuedItem080ba6ac_Kind,
+    QueuedItem,
+    kind,
+    0x0a);
+LAYOUT_SIZE_GUARD(
+    QueuedItem080ba6ac_Size,
+    QueuedItem,
+    0x10);
+LAYOUT_OFFSET_GUARD(
+    Character080ba6ac_Inventory,
+    Character_080ba6ac,
+    inventory,
+    0xd8);
+LAYOUT_OFFSET_GUARD(
+    ItemDefinition080ba6ac_Type,
+    ItemDefinition_080ba6ac,
+    type,
+    0x0c);
+LAYOUT_OFFSET_GUARD(
+    WorldState080ba6ac_QueuedItems,
+    WorldState_080ba6ac,
+    queued_items,
+    0x2ec);
+LAYOUT_OFFSET_GUARD(
+    WorldState080ba6ac_Palette,
+    WorldState_080ba6ac,
+    palette,
+    0x544);
+LAYOUT_OFFSET_GUARD(
+    WorldState080ba6ac_PaletteFactor,
+    WorldState_080ba6ac,
+    palette_factor,
+    0x644);
+
+extern s32 *Data_03001f00;
+extern WorldState_080ba6ac *Data_03001e74;
 
 void Func_080030f8(s32);
 void Func_080041d8(u32, s32);
 void Func_08009080(Motion *, s32);
 void Func_08009088(Motion *, s32);
-u8 *Func_08077008(s16);
-u8 *Func_08077018(u16);
+Character_080ba6ac *Func_08077008(s16);
+ItemDefinition_080ba6ac *Func_08077018(u16);
 s32 Func_08077058(s16, s16);
 void Func_08077060(s16, s16);
 s32 Func_080771a0(void);
@@ -90,9 +185,8 @@ s32 Func_080ba6ac(
     UsedItem *used_item)
 {
     BattleWork work;
-    s32 *global = *(s32 **)0x03001f00;
+    s32 *global = Data_03001f00;
     Motion *primary_object;
-    u8 *state;
     s32 i;
 
     (void)unused;
@@ -112,18 +206,21 @@ s32 Func_080ba6ac(
         s32 child;
 
         for (child = 0; child < child_count; child++) {
-            FIELD(&work, u8, 0x34 + i * 4 + child) =
+            work.child_values[i][child] =
                 record->children[child]->value;
         }
     }
 
     Func_080041d8(0x080bd899, 0x0c80);
     if (work.flags != 0) {
-        state = *(u8 **)0x03001e74;
+        WorldState_080ba6ac *world = Data_03001e74;
+
         for (i = 0; i < 20; i++) {
             s32 factor = 0x10000 - i * 0x444;
-            FIELD(state, s32, 0x644) = factor;
-            Func_080c1724(state + 0x544, 0x050000c0, factor, 0x80);
+
+            world->palette_factor = factor;
+            Func_080c1724(
+                world->palette, 0x050000c0, factor, 0x80);
             Func_080030f8(1);
         }
         if ((input->flags & 0x4000) != 0)
@@ -140,15 +237,15 @@ s32 Func_080ba6ac(
         Func_080b8000(work.members[i]);
 
     {
-        u8 *character = Func_08077008(used_item->actor_id);
+        Character_080ba6ac *character =
+            Func_08077008(used_item->actor_id);
         s16 slot = used_item->inventory_slot;
-        u16 item = FIELD(character, u16, 0xd8 + slot * 2);
-        u8 item_type = FIELD(Func_08077018(item), u8, 0x0c);
+        u16 item = character->inventory[slot];
+        u8 item_type = Func_08077018(item)->type;
 
         if (item_type == 1) {
             if (Func_08077058(used_item->actor_id, slot) == 2) {
-                QueuedItem *queue =
-                    (QueuedItem *)(*(u8 **)0x03001e74 + 0x2ec);
+                QueuedItem *queue = Data_03001e74->queued_items;
 
                 for (i = 0; i < 20; i++) {
                     if (queue[i].kind == 2 &&
@@ -170,7 +267,7 @@ s32 Func_080ba6ac(
         } else if (item_type == 4) {
             if ((item & 0x1ff) == 0xb8)
                 item = 0xb9;
-            FIELD(character, u16, 0xd8 + slot * 2) = item;
+            character->inventory[slot] = item;
         }
     }
 

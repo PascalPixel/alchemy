@@ -1,192 +1,243 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "layout_guard.h"
+#include "types.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+typedef struct DmaTransfer_080a7a34 {
+    const void *source;
+    void *destination;
+    u32 control;
+} DmaTransfer_080a7a34;
 
-void Func_08015080(s32, s32, s32, s32);
+typedef struct EntryMenu_080a7a34 {
+    u8 padding000[8];
+    s32 selected_id;
+    u8 padding00c[4];
+    void *selection_window;
+    u8 padding014[8];
+    s8 selection;
+    u8 padding01d;
+    s8 entry_count;
+    u8 padding01f[0xed];
+    void *menu_window;
+    u8 padding110[0x34];
+    u16 row_styles[8];
+    u8 padding154[0xb4];
+    u16 entries[9];
+    s8 selected_actor;
+    u8 padding21b[5];
+    u16 cursor_phase;
+    u8 padding222[0x12];
+    s16 cursor_x[4];
+    s16 cursor_y[4];
+} EntryMenu_080a7a34;
+
+LAYOUT_OFFSET_GUARD(
+    EntryMenu080a7a34_SelectedId,
+    EntryMenu_080a7a34,
+    selected_id,
+    8);
+LAYOUT_OFFSET_GUARD(
+    EntryMenu080a7a34_SelectionWindow,
+    EntryMenu_080a7a34,
+    selection_window,
+    0x10);
+LAYOUT_OFFSET_GUARD(
+    EntryMenu080a7a34_Selection,
+    EntryMenu_080a7a34,
+    selection,
+    0x1c);
+LAYOUT_OFFSET_GUARD(
+    EntryMenu080a7a34_EntryCount,
+    EntryMenu_080a7a34,
+    entry_count,
+    0x1e);
+LAYOUT_OFFSET_GUARD(
+    EntryMenu080a7a34_MenuWindow,
+    EntryMenu_080a7a34,
+    menu_window,
+    0x10c);
+LAYOUT_OFFSET_GUARD(
+    EntryMenu080a7a34_RowStyles,
+    EntryMenu_080a7a34,
+    row_styles,
+    0x144);
+LAYOUT_OFFSET_GUARD(
+    EntryMenu080a7a34_Entries,
+    EntryMenu_080a7a34,
+    entries,
+    0x208);
+LAYOUT_OFFSET_GUARD(
+    EntryMenu080a7a34_SelectedActor,
+    EntryMenu_080a7a34,
+    selected_actor,
+    0x21a);
+LAYOUT_OFFSET_GUARD(
+    EntryMenu080a7a34_CursorPhase,
+    EntryMenu_080a7a34,
+    cursor_phase,
+    0x220);
+LAYOUT_OFFSET_GUARD(
+    EntryMenu080a7a34_CursorX,
+    EntryMenu_080a7a34,
+    cursor_x,
+    0x234);
+
+extern EntryMenu_080a7a34 *Data_03001f2c;
+extern volatile u32 Data_03001c94;
+extern volatile u32 Data_03001b04;
+
+s8 Func_080022fc(s32, s32);
+void Func_080030f8(s32);
+void Func_08015080(s32, void *, s32, s32);
+void Func_08015270(void *);
+void Func_08077008(u16);
+s32 Func_080770c0(s32);
+void Func_080a1804(EntryMenu_080a7a34 *, u16);
+void Func_080a1870(void *, s32, s32, s32, s32);
+void Func_080a195c(void);
 void Func_080a1a40(s32, s32);
+void Func_080a2144(s32);
 void Func_080a7850(void);
 s32 Func_080a7f44(s32, s32);
+void Func_080a8088(u16, s32);
+void Func_080f9010(s32);
 
-/* Runs the cyclic entry-selection menu and commits the selected entry. */
-s32 Func_080a7a34(void) {
-    s32 sp4;
-    s32 sp8;
-    s16 *var_r3_2;
-    s16 *var_r3_3;
-    s16 *var_r3_4;
-    s16 var_r1;
-    s32 temp_r0;
-    s32 temp_r2;
-    s32 temp_r5;
-    s32 temp_r5_2;
-    s32 temp_r6;
-    s32 var_r2;
-    s32 var_r2_2;
-    s32 var_r2_3;
-    s32 var_r2_4;
-    s32 var_r7;
-    s32 var_r7_2;
-    s8 temp_fp;
-    s8 var_sl;
-    u16 var_r9;
-    u8 *temp_r3;
-    void *temp_r3_2;
-    void *temp_r3_3;
-    void *temp_r3_4;
-    u8 *var_r3;
+static void ResetRowStyles_080a7a34(
+    EntryMenu_080a7a34 *menu,
+    s32 selection)
+{
+    s32 row;
 
-    temp_r3 = *(void **)0x03001F2C;
-    sp8 = 1;
-    var_sl = M2C_FIELD(temp_r3, s8 *, 0x1C);
-    sp4 = 0;
-    temp_fp = M2C_FIELD(temp_r3, s8 *, 0x1E);
-    var_r9 = M2C_FIELD(temp_r3, u16 *, 0x220);
-    Func_08077008(
-        (s32)M2C_FIELD(temp_r3, u16 *, (var_sl * 2) + 0x208));
-    var_r3 = temp_r3 + 0x234;
-    var_r1 = 0x82;
-    var_r2 = 3;
-    do {
-        var_r2 -= 1;
-        M2C_FIELD(var_r3, s16 *, 0) = var_r1;
-        M2C_FIELD(var_r3, s16 *, 8) = 0x80;
-        var_r1 += 0x20;
-        var_r3 += 2;
-    } while (var_r2 >= 0);
-    Func_080a2144(0xE);
-    M2C_FIELD((void *)0x040000D4, s32 *, 0) = 0x05000200;
-    M2C_FIELD((void *)0x040000D4, s32 *, 4) = 0x05000000;
-    M2C_FIELD((void *)0x040000D4, s32 *, 8) = 0x80000010;
-    temp_r3_2 = (void *)0x040000D4;
-    M2C_FIELD(temp_r3_2, s32 *, 0) = 0x050001C8;
-    M2C_FIELD(temp_r3_2, s32 *, 4) = 0x0500001C;
-    M2C_FIELD(temp_r3_2, s32 *, 8) = 0x80000001;
-    temp_r3_3 = (void *)0x040000D4;
-    M2C_FIELD(temp_r3_3, s32 *, 0) = 0x05000200;
-    M2C_FIELD(temp_r3_3, s32 *, 4) = 0x05000020;
-    M2C_FIELD(temp_r3_3, s32 *, 8) = 0x80000010;
-    temp_r3_4 = (void *)0x040000D4;
-    M2C_FIELD(temp_r3_4, s32 *, 0) = 0x050001E8;
-    M2C_FIELD(temp_r3_4, s32 *, 4) = 0x0500003C;
-    M2C_FIELD(temp_r3_4, s32 *, 8) = 0x80000001;
-loop_37:
-    if (Func_080770c0(0x150) == 0) {
-        if (sp8 != 0) {
-            sp8 = 0;
-            Func_08015270(M2C_FIELD(temp_r3, s32 *, 0x10C));
-            Func_08015080(0xB0D, M2C_FIELD(temp_r3, s32 *, 0x10C), 0, 0);
-            if (Func_080770c0(0x30) != 0) {
-                Func_08015080(0xB16, M2C_FIELD(temp_r3, s32 *, 0x10C), 0, 0x10);
-            }
-            Func_08015080(0xB0A, M2C_FIELD(temp_r3, s32 *, 0x10C), 0, 8);
-            temp_r0 = Func_080022fc(var_sl + temp_fp, (s32) temp_fp);
-            var_r7 = temp_r0 * 2;
-            temp_r5 = var_r7 + 0x208;
-            var_sl = (s8) temp_r0;
-            Func_08077008((s32)M2C_FIELD(temp_r3, u16 *, temp_r5));
-            var_r9 = (u16) Func_080022fc(var_r9 + 3, 3);
-            Func_080a8088((s32)M2C_FIELD(temp_r3, u16 *, temp_r5));
-            Func_080a1804(
-                (s32)temp_r3, (s32)M2C_FIELD(temp_r3, u16 *, temp_r5));
-            var_r2_2 = 7;
-            var_r3_2 = (s16 *)(temp_r3 + 0x152);
-            do {
-                var_r2_2 -= 1;
-                *var_r3_2 = 0x1E;
-                var_r3_2 -= 1;
-            } while (var_r2_2 >= 0);
-            *(temp_r3 + (var_r7 + 0x144)) = 0x1A;
-        } else {
-            var_r7 = var_sl * 2;
-        }
-        Func_080a1a40(((var_r7 + var_sl) * 8) - 0xA, 0x10);
-        Func_080030f8(1U);
-        if (*(s32 *)0x03001C94 & 1) {
-            Func_080f9010(0x70);
-            sp4 = 1;
-        } else {
-            temp_r6 = *(s32 *)0x03001C94 & 2;
-            if (temp_r6 != 0) {
-                Func_080f9010(0x71);
-                sp4 = -1;
-            } else {
-                temp_r5_2 = *(s32 *)0x03001B04 & 0x100;
-                if (temp_r5_2 != 0) {
-                    if (Func_080a7f44((s32) var_sl, 1) != 0) {
-                        Func_080f9010(0x70);
-                        var_sl += 1;
-                        Func_080a195c();
-                        Func_080a1870(M2C_FIELD(temp_r3, s32 *, 0x10), 2, 2, 8, temp_r6);
-                        var_r2_3 = 7;
-                        var_r3_3 = (s16 *)(temp_r3 + 0x152);
-                        do {
-                            var_r2_3 -= 1;
-                            *var_r3_3 = 0x1E;
-                            var_r3_3 -= 1;
-                        } while (var_r2_3 >= 0);
-                        var_r7_2 = var_sl * 2;
-                        goto block_25;
-                    }
-                    goto block_26;
-                    goto block_27;
-                }
-                if (*(s32 *)0x03001B04 & 0x200) {
-                    if (Func_080a7f44((s32) var_sl, 0) != 0) {
-                        Func_080f9010(0x70);
-                        var_sl -= 1;
-                        Func_080a195c();
-                        Func_080a1870(M2C_FIELD(temp_r3, s32 *, 0x10), 2, 2, 8, temp_r5_2);
-                        var_r2_4 = 7;
-                        var_r3_4 = (s16 *)(temp_r3 + 0x152);
-                        do {
-                            var_r2_4 -= 1;
-                            *var_r3_4 = 0x1E;
-                            var_r3_4 -= 1;
-                        } while (var_r2_4 >= 0);
-                        var_r7_2 = var_sl * 2;
-block_25:
-                        *(temp_r3 + (var_r7_2 + 0x144)) = 0x1A;
-                    } else {
-block_26:
-                        Func_080f9010(0x72);
-                    }
-block_27:
-                    Func_080030f8(1U);
-                } else if ((*(s32 *)0x03001C94 & 4) && (Func_080770c0(0x30) != 0)) {
-                    Func_080a7850();
-                    sp8 = 1;
-                } else {
-                    if (*(s32 *)0x03001B04 & 0x20) {
-                        Func_080f9010(0x6F);
-                        if ((s32) temp_fp > 1) {
-                            sp8 = 1;
-                            var_sl -= 1;
-                        }
-                    }
-                    if (*(s32 *)0x03001B04 & 0x10) {
-                        Func_080f9010(0x6F);
-                        if ((s32) temp_fp > 1) {
-                            sp8 = 1;
-                            var_sl += 1;
-                        }
-                    }
-                }
-                goto loop_37;
-            }
-        }
-    } else {
-        var_r7 = var_sl * 2;
+    for (row = 0; row < 8; row++)
+        menu->row_styles[row] = 0x1e;
+    menu->row_styles[selection] = 0x1a;
+}
+
+static void InitializeCursorPositions_080a7a34(
+    EntryMenu_080a7a34 *menu)
+{
+    s32 index;
+
+    for (index = 0; index < 4; index++) {
+        menu->cursor_x[index] = 0x82 + index * 0x20;
+        menu->cursor_y[index] = 0x80;
     }
-    M2C_FIELD(temp_r3, s8 *, 0x1C) = var_sl;
-    temp_r2 = var_r7 + 0x208;
-    M2C_FIELD(temp_r3, s32 *, 8) =
-        (s32)M2C_FIELD(temp_r3, u16 *, temp_r2);
-    M2C_FIELD(temp_r3, s8 *, 0x21A) =
-        (s8)M2C_FIELD(temp_r3, u16 *, temp_r2);
-    return sp4;
+}
+
+static void CopyMenuPalettes_080a7a34(void)
+{
+    volatile DmaTransfer_080a7a34 *dma =
+        (volatile DmaTransfer_080a7a34 *)0x040000d4;
+
+    dma->source = (const void *)0x05000200;
+    dma->destination = (void *)0x05000000;
+    dma->control = 0x80000010;
+    dma->source = (const void *)0x050001c8;
+    dma->destination = (void *)0x0500001c;
+    dma->control = 0x80000001;
+    dma->source = (const void *)0x05000200;
+    dma->destination = (void *)0x05000020;
+    dma->control = 0x80000010;
+    dma->source = (const void *)0x050001e8;
+    dma->destination = (void *)0x0500003c;
+    dma->control = 0x80000001;
+}
+
+/* Run the cyclic entry-selection menu and commit the selected entry. */
+s32 Func_080a7a34(void)
+{
+    EntryMenu_080a7a34 *menu = Data_03001f2c;
+    s32 selection = menu->selection;
+    s32 entry_count = menu->entry_count;
+    s32 redraw = 1;
+    s32 result = 0;
+    s32 cursor_phase = menu->cursor_phase;
+
+    Func_08077008(menu->entries[selection]);
+    InitializeCursorPositions_080a7a34(menu);
+    Func_080a2144(0x0e);
+    CopyMenuPalettes_080a7a34();
+
+    while (Func_080770c0(0x150) == 0) {
+        if (redraw != 0) {
+            u16 entry;
+
+            redraw = 0;
+            Func_08015270(menu->menu_window);
+            Func_08015080(0x0b0d, menu->menu_window, 0, 0);
+            if (Func_080770c0(0x30) != 0)
+                Func_08015080(0x0b16, menu->menu_window, 0, 0x10);
+            Func_08015080(0x0b0a, menu->menu_window, 0, 8);
+
+            selection = Func_080022fc(
+                selection + entry_count, entry_count);
+            entry = menu->entries[selection];
+            Func_08077008(entry);
+            cursor_phase = Func_080022fc(cursor_phase + 3, 3);
+            Func_080a8088(entry, cursor_phase);
+            Func_080a1804(menu, entry);
+            ResetRowStyles_080a7a34(menu, selection);
+        }
+
+        Func_080a1a40(selection * 24 - 10, 0x10);
+        Func_080030f8(1);
+
+        if ((Data_03001c94 & 1) != 0) {
+            Func_080f9010(0x70);
+            result = 1;
+            break;
+        }
+        if ((Data_03001c94 & 2) != 0) {
+            Func_080f9010(0x71);
+            result = -1;
+            break;
+        }
+
+        if ((Data_03001b04 & 0x100) != 0) {
+            if (Func_080a7f44(selection, 1) != 0) {
+                Func_080f9010(0x70);
+                selection++;
+                Func_080a195c();
+                Func_080a1870(menu->selection_window, 2, 2, 8, 0);
+                ResetRowStyles_080a7a34(menu, selection);
+            } else {
+                Func_080f9010(0x72);
+            }
+            Func_080030f8(1);
+        } else if ((Data_03001b04 & 0x200) != 0) {
+            if (Func_080a7f44(selection, 0) != 0) {
+                Func_080f9010(0x70);
+                selection--;
+                Func_080a195c();
+                Func_080a1870(menu->selection_window, 2, 2, 8, 0);
+                ResetRowStyles_080a7a34(menu, selection);
+            } else {
+                Func_080f9010(0x72);
+            }
+            Func_080030f8(1);
+        } else if ((Data_03001c94 & 4) != 0 &&
+                   Func_080770c0(0x30) != 0) {
+            Func_080a7850();
+            redraw = 1;
+        } else {
+            if ((Data_03001b04 & 0x20) != 0) {
+                Func_080f9010(0x6f);
+                if (entry_count > 1) {
+                    redraw = 1;
+                    selection--;
+                }
+            }
+            if ((Data_03001b04 & 0x10) != 0) {
+                Func_080f9010(0x6f);
+                if (entry_count > 1) {
+                    redraw = 1;
+                    selection++;
+                }
+            }
+        }
+    }
+
+    menu->selection = (s8)selection;
+    menu->selected_id = menu->entries[selection];
+    menu->selected_actor = (s8)menu->entries[selection];
+    return result;
 }

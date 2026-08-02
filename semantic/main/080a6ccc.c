@@ -2,8 +2,6 @@
 #include "menu_result.h"
 #include "types.h"
 
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-
 struct ActionInfo_080a6ccc {
     u8 padding00[9];
     u8 value;
@@ -25,17 +23,24 @@ struct Actor_080a6ccc {
     u8 cursor_style;
 };
 
+struct WindowHandle_080a6ccc {
+    u8 padding00[5];
+    u8 style;
+};
+
 struct MenuState_080a6ccc {
     u8 padding000[8];
     s32 selected_actor;
     u8 padding00c[8];
-    s32 result_windows[2];
+    struct WindowHandle_080a6ccc *result_windows[2];
     s8 actor_selection[4];
     s32 padding020;
     s32 window;
     u8 padding028[0x0c];
     struct MenuResult page;
-    u8 padding050[0xf4];
+    u8 padding050[0xc4];
+    void *actor_objects[4];
+    u8 padding124[0x20];
     u16 actor_markers[8];
     u8 padding154[0x20];
     s16 selected_rows[2];
@@ -45,12 +50,48 @@ struct MenuState_080a6ccc {
     u8 action_count;
     u8 actor_count;
     u8 owner_ids[2];
-    s32 description_window;
+    struct WindowHandle_080a6ccc *description_window;
     u16 flags;
     u8 padding222[0x3e];
     s8 row_by_owner[8];
     u8 mode;
 };
+
+LAYOUT_OFFSET_GUARD(
+    ActionInfo080a6ccc_Value,
+    struct ActionInfo_080a6ccc,
+    value,
+    0x09);
+LAYOUT_OFFSET_GUARD(
+    ActionInfo080a6ccc_Type,
+    struct ActionInfo_080a6ccc,
+    type,
+    0x0c);
+LAYOUT_OFFSET_GUARD(
+    Owner080a6ccc_Threshold,
+    struct Owner_080a6ccc,
+    threshold,
+    0x3a);
+LAYOUT_OFFSET_GUARD(
+    Actor080a6ccc_DisplayMode,
+    struct Actor_080a6ccc,
+    display_mode,
+    0x05);
+LAYOUT_OFFSET_GUARD(
+    Actor080a6ccc_CursorX,
+    struct Actor_080a6ccc,
+    cursor_x,
+    0x0c);
+LAYOUT_OFFSET_GUARD(
+    Actor080a6ccc_CursorStyle,
+    struct Actor_080a6ccc,
+    cursor_style,
+    0x0f);
+LAYOUT_OFFSET_GUARD(
+    WindowHandle080a6ccc_Style,
+    struct WindowHandle_080a6ccc,
+    style,
+    0x05);
 
 LAYOUT_OFFSET_GUARD(
     MenuState080a6ccc_ResultWindows,
@@ -78,6 +119,11 @@ LAYOUT_OFFSET_GUARD(
     actor_markers,
     0x144);
 LAYOUT_OFFSET_GUARD(
+    MenuState080a6ccc_ActorObjects,
+    struct MenuState_080a6ccc,
+    actor_objects,
+    0x114);
+LAYOUT_OFFSET_GUARD(
     MenuState080a6ccc_ActionList,
     struct MenuState_080a6ccc,
     action_list,
@@ -93,6 +139,11 @@ LAYOUT_OFFSET_GUARD(
     flags,
     0x220);
 LAYOUT_OFFSET_GUARD(
+    MenuState080a6ccc_DescriptionWindow,
+    struct MenuState_080a6ccc,
+    description_window,
+    0x21c);
+LAYOUT_OFFSET_GUARD(
     MenuState080a6ccc_RowByOwner,
     struct MenuState_080a6ccc,
     row_by_owner,
@@ -105,7 +156,7 @@ LAYOUT_OFFSET_GUARD(
 
 void Func_080030f8(u32);
 s32 Func_080022fc(s32, s32);
-void Func_08009020(s32, s32);
+void Func_08009020(void *, s32);
 void Func_08015068(s32, s32, s32, s32, s32);
 void Func_08015080(s32, s32, s32, s32);
 void *Func_08077008(s32);
@@ -125,6 +176,18 @@ s32 Func_080a6b64(s32, s32, const struct MenuResult *);
 s32 Func_080a735c(s32);
 void Func_080f9010(s32);
 
+extern struct MenuState_080a6ccc *Data_03001f2c;
+extern volatile u32 Data_03001ae8;
+extern volatile u32 Data_03001c94;
+extern volatile u32 Data_03001b04;
+
+static s32 RowResource_080a6ccc(
+    const struct MenuState_080a6ccc *state,
+    s32 row
+) {
+    return *(const s32 *)((const u8 *)state + 0x48 + row * 4);
+}
+
 /*
  * Select an action from one actor's action list.  The modal also supports
  * moving between actors, and the two shoulder-button modes immediately apply
@@ -132,8 +195,7 @@ void Func_080f9010(s32);
  */
 s32 Func_080a6ccc(s32 result_index)
 {
-    struct MenuState_080a6ccc *state =
-        *(struct MenuState_080a6ccc **)0x03001f2c;
+    struct MenuState_080a6ccc *state = Data_03001f2c;
     struct Owner_080a6ccc *owner;
     struct MenuResult *page = &state->page;
     void *selected_info;
@@ -147,7 +209,7 @@ s32 Func_080a6ccc(s32 result_index)
     u8 poll_scratch[16];
     u8 i;
 
-    FIELD(state->result_windows[result_index], u8, 5) = 13;
+    state->result_windows[result_index]->style = 13;
     Func_080a10d0(page, 13, 3, 17, 14, 2);
     selected_info = (void *)page->value0;
     redraw = 0;
@@ -165,7 +227,7 @@ s32 Func_080a6ccc(s32 result_index)
         Func_080a6a00(page, result_index);
         redraw = 1;
         first_draw = 1;
-        FIELD(state->result_windows[result_index], u8, 5) = 1;
+        state->result_windows[result_index]->style = 1;
 
         while (Func_080770c0(0x150) == 0) {
             Func_080a1a40(88, page->value10 * 16 + 36);
@@ -173,7 +235,7 @@ s32 Func_080a6ccc(s32 result_index)
             if (first_draw) {
                 first_draw = 0;
                 if (state->action_list[selected_row] != 0)
-                    Func_080a17c4(FIELD(state, s32, 0x48 + selected_row * 4));
+                    Func_080a17c4(RowResource_080a6ccc(state, selected_row));
 
                 if (redraw) {
                     redraw = 0;
@@ -184,25 +246,25 @@ s32 Func_080a6ccc(s32 result_index)
                 Func_080a6a98((s32)selected_info, (s32)preview_scratch, page);
                 state->selected_actions[result_index] =
                     state->action_list[page->value18];
-                FIELD(state->description_window, u8, 5) = 13;
+                state->description_window->style = 13;
 
                 selected_action = state->action_list[page->value18];
                 if (selected_action != 0) {
                     struct Actor_080a6ccc *selected_actor =
-                        (struct Actor_080a6ccc *)FIELD(
-                            state, s32, 0x48 + page->value18 * 4);
+                        (struct Actor_080a6ccc *)RowResource_080a6ccc(
+                            state, page->value18);
                     selected_actor->display_mode = 9;
                     selected_actor->cursor_x = 0;
                     selected_actor->cursor_style = 250;
                 }
 
                 for (i = 0; i < state->actor_count; i++)
-                    Func_08009020(FIELD(state, s32, 0x114 + i * 4), 1);
+                    Func_08009020(state->actor_objects[i], 1);
             }
 
             Func_080030f8(1);
             selected_row = page->value18;
-            if ((*(volatile u32 *)0x03001ae8 & 4) == 0)
+            if ((Data_03001ae8 & 4) == 0)
                 poll_result = Func_080a1fd4(
                     0, page->value14, 5,
                     poll_scratch + 8,
@@ -222,7 +284,7 @@ s32 Func_080a6ccc(s32 result_index)
             selected_action = state->action_list[page->value18];
 
             if (state->mode == 0) {
-                if ((*(volatile u32 *)0x03001c94 & 4) && !help_open) {
+                if ((Data_03001c94 & 4) && !help_open) {
                     if (Func_08077080(selected_action & 0x3fff)->type == 0) {
                         Func_080f9010(0x72);
                     } else {
@@ -235,7 +297,7 @@ s32 Func_080a6ccc(s32 result_index)
                             0xae1, (s32)selected_info, 0, 88);
                     }
                 }
-                if ((*(volatile u32 *)0x03001ae8 & 4) == 0 &&
+                if ((Data_03001ae8 & 4) == 0 &&
                     help_open == 1) {
                     help_open = 0;
                     state->flags &= 0xfffd;
@@ -246,7 +308,7 @@ s32 Func_080a6ccc(s32 result_index)
                 }
             }
 
-            if (*(volatile u32 *)0x03001c94 & 1) {
+            if (Data_03001c94 & 1) {
                 if (state->mode != 0) {
                     Func_080f9010(0x82);
                     result = selected_action;
@@ -268,14 +330,14 @@ s32 Func_080a6ccc(s32 result_index)
                     finished = 1;
                     break;
                 }
-            } else if (*(volatile u32 *)0x03001c94 & 2) {
+            } else if (Data_03001c94 & 2) {
                 Func_080f9010(0x71);
                 result = -1;
                 finished = 1;
                 break;
-            } else if (((*(volatile u32 *)0x03001b04 & 0x100) ||
-                        (*(volatile u32 *)0x03001b04 & 0x200)) &&
-                       ((*(volatile u32 *)0x03001ae8 & 4) == 0)) {
+            } else if (((Data_03001b04 & 0x100) ||
+                        (Data_03001b04 & 0x200)) &&
+                       ((Data_03001ae8 & 4) == 0)) {
                 s8 direction_mode = state->mode == 0 ? 2 : 1;
                 s8 next_actor = state->actor_selection[result_index];
 
@@ -283,7 +345,7 @@ s32 Func_080a6ccc(s32 result_index)
                 state->row_by_owner[state->owner_ids[result_index]] =
                     page->value18;
                 do {
-                    if (*(volatile u32 *)0x03001b04 & 0x100)
+                    if (Data_03001b04 & 0x100)
                         next_actor++;
                     else
                         next_actor--;
@@ -311,8 +373,8 @@ s32 Func_080a6ccc(s32 result_index)
                     state,
                     state->action_list[next_actor + 32]);
                 break;
-            } else if ((*(volatile u32 *)0x03001c94 & 0x200) &&
-                       (*(volatile u32 *)0x03001ae8 & 4)) {
+            } else if ((Data_03001c94 & 0x200) &&
+                       (Data_03001ae8 & 4)) {
                 if (Func_08077080(selected_action & 0x3fff)->type == 0) {
                     Func_080f9010(0x72);
                 } else {
@@ -326,8 +388,8 @@ s32 Func_080a6ccc(s32 result_index)
                         break;
                     }
                 }
-            } else if ((*(volatile u32 *)0x03001c94 & 0x100) &&
-                       (*(volatile u32 *)0x03001ae8 & 4)) {
+            } else if ((Data_03001c94 & 0x100) &&
+                       (Data_03001ae8 & 4)) {
                 if (Func_08077080(selected_action & 0x3fff)->type == 0) {
                     Func_080f9010(0x72);
                 } else if (Func_080a65e4(

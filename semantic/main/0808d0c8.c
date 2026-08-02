@@ -1,16 +1,100 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
 typedef signed int s32;
+typedef unsigned short u16;
 typedef unsigned int u32;
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+extern volatile u32 Data_03001ae8;
+extern volatile u32 Data_03001b04;
 
-void Func_080030f8(u32);
+void Func_080030f8(u32 frames);
 void Func_08004760(void);
 void Func_0800479c(void);
-void Func_080052f4(s32, s32);
+void Func_080052f4(s32 source, s32 destination);
+
+enum PaletteComponent_0808d0c8 {
+    PALETTE_RED_0808d0c8 = 1,
+    PALETTE_GREEN_0808d0c8,
+    PALETTE_BLUE_0808d0c8,
+};
+
+static volatile u16 *const Palette_0808d0c8 = (volatile u16 *)0x05000000;
+static volatile u16 *const PaletteGrid_0808d0c8 = (volatile u16 *)0x0600205A;
+
+static void DrawPaletteGrid_0808d0c8(s32 bank) {
+    s32 color_index;
+    s32 palette_offset = bank * 16;
+
+    PaletteGrid_0808d0c8[0] = (u16)(0xF0E0 + bank);
+    PaletteGrid_0808d0c8[32] = 0xF052;
+    PaletteGrid_0808d0c8[64] = 0xF047;
+    PaletteGrid_0808d0c8[96] = 0xF042;
+
+    for (color_index = 1; color_index <= 15; color_index++) {
+        u16 color = Palette_0808d0c8[palette_offset + color_index];
+
+        PaletteGrid_0808d0c8[color_index] =
+            (u16)((bank << 12) + 0xD0 + color_index);
+        PaletteGrid_0808d0c8[32 + color_index] =
+            (u16)(0xF0E0 + (color & 0x1F));
+        PaletteGrid_0808d0c8[64 + color_index] =
+            (u16)(0xF0E0 + ((color >> 5) & 0x1F));
+        PaletteGrid_0808d0c8[96 + color_index] =
+            (u16)(0xF0E0 + ((color >> 10) & 0x1F));
+    }
+}
+
+static void AdjustPaletteColor_0808d0c8(
+    s32 bank,
+    s32 color_index,
+    enum PaletteComponent_0808d0c8 component,
+    s32 amount
+) {
+    volatile u16 *color_address = &Palette_0808d0c8[bank * 16 + color_index];
+    u16 color = *color_address;
+    u32 red = color & 0x1F;
+    u32 green = (color >> 5) & 0x1F;
+    u32 blue = (color >> 10) & 0x1F;
+
+    if (component == PALETTE_RED_0808d0c8) {
+        if ((amount > 0 && red < 31) || (amount < 0 && red != 0)) {
+            red += amount;
+        }
+    } else if (component == PALETTE_GREEN_0808d0c8) {
+        if ((amount > 0 && green < 31) || (amount < 0 && green != 0)) {
+            green += amount;
+        }
+    } else if ((amount > 0 && blue < 31) || (amount < 0 && blue != 0)) {
+        blue += amount;
+    }
+
+    *color_address = (u16)((blue << 10) | (green << 5) | red);
+}
+
+static void PreviewPaletteColor_0808d0c8(s32 bank, s32 color_index) {
+    volatile u16 *color_address = &Palette_0808d0c8[bank * 16 + color_index];
+    u16 original_color = *color_address;
+
+    while (Data_03001ae8 & 8) {
+        u32 phase;
+
+        for (phase = 0; phase <= 39; phase++) {
+            Func_080030f8(1);
+            if (!(Data_03001ae8 & 8)) {
+                *color_address = original_color;
+                return;
+            }
+
+            if (phase == 0) {
+                *color_address = 0x7FFF;
+            } else if (phase == 10 || phase == 30) {
+                *color_address = original_color;
+            } else if (phase == 20) {
+                *color_address = 0;
+            }
+        }
+    }
+
+    *color_address = original_color;
+}
 
 /*
  * Interactive palette editor. Draw the selected palette as an RGB grid,
@@ -18,196 +102,82 @@ void Func_080052f4(s32, s32);
  * and flash-preview the selected colour until the user exits.
  */
 void Func_0808d0c8(void) {
-    s32 sp0;
-    s32 *sp4;
-    s32 sp8;
-    s16 *var_r7_2;
-    s16 var_r0;
-    s32 *var_r1_2;
-    s32 temp_r3;
-    s32 temp_r3_2;
-    s32 temp_r3_3;
-    s32 var_fp;
-    s32 var_r1_3;
-    s32 var_r1_4;
-    s32 var_r3;
-    s32 var_r4;
-    s32 var_r8;
-    s32 var_r9;
-    s32 var_sl;
-    u16 *var_r7;
-    u16 temp_r6;
-    u16 temp_r6_2;
-    u16 temp_r6_3;
-    u16 temp_r6_4;
-    u32 var_ip;
-    u32 var_r2;
-    u32 var_r3_2;
-    u32 var_r5;
-    u32 var_r5_2;
-    void *temp_r2;
-    void *temp_r2_2;
-    void *var_r1;
+    s32 bank = 0;
+    s32 color_index = 1;
+    enum PaletteComponent_0808d0c8 component = PALETTE_RED_0808d0c8;
 
-    var_r9 = 0;
-    var_sl = 1;
-    var_r8 = 1;
     Func_080052f4(0x0809E4CE, 0x06001A00);
-    sp8 = 0;
-    var_fp = 0;
-loop_5:
-    M2C_FIELD((void *)0x0600205A, s16 *, 0) = (s16) (var_r9 + 0xFFFFF0E0);
-    temp_r2 = (void *)0x0600205A + 0x40;
-    M2C_FIELD((void *)0x0600205A, s16 *, 0x40) = 0xF052;
-    M2C_FIELD(temp_r2, s16 *, 0x40) = 0xF047;
-    M2C_FIELD((temp_r2 + 0x40), s16 *, 0x40) = 0xF042;
-    var_r0 = sp8 + 0xD1;
-    var_r7 = (u16 *)(var_fp + 0x05000002);
-    var_r1 = (void *)0x0600205A + 2;
-    var_ip = 1;
-    do {
-        M2C_FIELD(var_r1, s16 *, 0) = var_r0;
-        temp_r6 = *var_r7;
-        temp_r2_2 = var_r1 + 0x40;
-        M2C_FIELD(var_r1, s16 *, 0x40) = (s16) ((temp_r6 & 0x1F) + 0xF0E0);
-        M2C_FIELD(temp_r2_2, s16 *, 0x40) = (s16) (((temp_r6 >> 5) & 0x1F) + 0xF0E0);
-        M2C_FIELD((temp_r2_2 + 0x40), s16 *, 0x40) = (s16) (((temp_r6 >> 0xA) & 0x1F) + 0xF0E0);
-        var_ip += 1;
-        var_r0 += 1;
-        var_r7 += 1;
-        var_r1 += 2;
-    } while (var_ip <= 0xFU);
-    Func_080030f8(1U);
-    var_r1_2 = (s32 *)0x03001B04;
-    var_r4 = 0x1F;
-loop_8:
-    if (*var_r1_2 & 0x40) {
-        var_sl -= 1;
-        if (var_sl <= 0) {
-            var_sl = 3;
-        }
-    }
-    if (*var_r1_2 & 0x80) {
-        var_sl += 1;
-        if (var_sl > 3) {
-            var_sl = 1;
-        }
-    }
-    if (*var_r1_2 & 0x20) {
-        var_r8 -= 1;
-        if (var_r8 <= 0) {
-            var_r8 = 0xF;
-        }
-    }
-    if (*var_r1_2 & 0x10) {
-        var_r8 += 1;
-        if (var_r8 > 0xF) {
-            var_r8 = 1;
-        }
-    }
-    if (*var_r1_2 & 0x200) {
-        var_r9 -= 1;
-        if (var_r9 >= 0) {
-            sp8 = var_r9 << 0xC;
-            var_fp = var_r9 << 5;
-        } else {
-            var_r9 = 0xD;
-            var_r1_3 = 0xD;
-            var_r3 = 0xD000;
-block_3:
-            var_r1_4 = var_r1_3 << 5;
-            sp8 = var_r3;
-block_4:
-            var_fp = var_r1_4;
-        }
-        goto loop_5;
-    }
-    if (*var_r1_2 & 0x100) {
-        var_r9 += 1;
-        if (var_r9 <= 0xD) {
-            var_r3 = var_r9 << 0xC;
-            var_r1_3 = var_r9;
-            goto block_3;
-        }
-        var_r1_4 = 0;
-        var_r9 = 0;
-        sp8 = 0;
-        goto block_4;
-    }
-    if (*var_r1_2 & 1) {
-        temp_r3 = ((var_r9 * 0x10) + var_r8) * 2;
-        var_r7_2 = (s16 *)(temp_r3 + 0x05000000);
-        temp_r6_2 = M2C_FIELD(temp_r3, u16 *, 0x05000000);
-        var_r5 = temp_r6_2 & var_r4;
-        var_r2 = (temp_r6_2 >> 5) & var_r4;
-        var_r3_2 = (temp_r6_2 >> 0xA) & var_r4;
-        if ((var_sl == 1) && (var_r5 <= 0x1EU)) {
-            var_r5 += 1;
-        }
-        if ((var_sl == 2) && (var_r2 <= 0x1EU)) {
-            var_r2 += 1;
-        }
-        if ((var_sl == 3) && (var_r3_2 <= 0x1EU)) {
-            var_r3_2 += 1;
-        }
-block_48:
-        *var_r7_2 = (var_r3_2 << 0xA) | (var_r2 << 5) | var_r5;
-        goto loop_5;
-    }
-    if (*var_r1_2 & 2) {
-        temp_r3_2 = ((var_r9 * 0x10) + var_r8) * 2;
-        var_r7_2 = (s16 *)(temp_r3_2 + 0x05000000);
-        temp_r6_3 = M2C_FIELD(temp_r3_2, u16 *, 0x05000000);
-        var_r5 = temp_r6_3 & var_r4;
-        var_r2 = (temp_r6_3 >> 5) & var_r4;
-        var_r3_2 = (temp_r6_3 >> 0xA) & var_r4;
-        if ((var_sl == 1) && (var_r5 != 0)) {
-            var_r5 -= 1;
-        }
-        if ((var_sl == 2) && (var_r2 != 0)) {
-            var_r2 -= 1;
-        }
-        if ((var_sl == 3) && (var_r3_2 != 0)) {
-            var_r3_2 -= 1;
-        }
-        goto block_48;
-    }
-    if (*var_r1_2 & 8) {
-        temp_r3_3 = ((var_r9 * 0x10) + var_r8) * 2;
-        temp_r6_4 = M2C_FIELD(temp_r3_3, u16 *, 0x05000000);
-loop_61:
-        var_r5_2 = 0;
-loop_62:
-        sp4 = var_r1_2;
-        sp0 = var_r4;
-        Func_080030f8(1U);
-        if (*(s32 *)0x03001AE8 & 8) {
-            if (var_r5_2 == 0) {
-                M2C_FIELD(temp_r3_3, u16 *, 0x05000000) = 0x7FFFU;
+    DrawPaletteGrid_0808d0c8(bank);
+    Func_080030f8(1);
+
+    for (;;) {
+        u32 keys = Data_03001b04;
+
+        if (keys & 0x40) {
+            component--;
+            if (component < PALETTE_RED_0808d0c8) {
+                component = PALETTE_BLUE_0808d0c8;
             }
-            if (var_r5_2 == 0xA) {
-                M2C_FIELD(temp_r3_3, u16 *, 0x05000000) = temp_r6_4;
-            }
-            if (var_r5_2 == 0x14) {
-                M2C_FIELD(temp_r3_3, u16 *, 0x05000000) = 0U;
-            }
-            if (var_r5_2 == 0x1E) {
-                M2C_FIELD(temp_r3_3, u16 *, 0x05000000) = temp_r6_4;
-            }
-            var_r5_2 += 1;
-            if (var_r5_2 > 0x27U) {
-                goto loop_61;
-            }
-            goto loop_62;
         }
-        M2C_FIELD(temp_r3_3, u16 *, 0x05000000) = temp_r6_4;
+        if (keys & 0x80) {
+            component++;
+            if (component > PALETTE_BLUE_0808d0c8) {
+                component = PALETTE_RED_0808d0c8;
+            }
+        }
+        if (keys & 0x20) {
+            color_index--;
+            if (color_index == 0) {
+                color_index = 15;
+            }
+        }
+        if (keys & 0x10) {
+            color_index++;
+            if (color_index > 15) {
+                color_index = 1;
+            }
+        }
+
+        if (keys & 0x200) {
+            bank--;
+            if (bank < 0) {
+                bank = 13;
+            }
+            DrawPaletteGrid_0808d0c8(bank);
+            Func_080030f8(1);
+            continue;
+        }
+        if (keys & 0x100) {
+            bank++;
+            if (bank > 13) {
+                bank = 0;
+            }
+            DrawPaletteGrid_0808d0c8(bank);
+            Func_080030f8(1);
+            continue;
+        }
+        if (keys & 1) {
+            AdjustPaletteColor_0808d0c8(bank, color_index, component, 1);
+            DrawPaletteGrid_0808d0c8(bank);
+            Func_080030f8(1);
+            continue;
+        }
+        if (keys & 2) {
+            AdjustPaletteColor_0808d0c8(bank, color_index, component, -1);
+            DrawPaletteGrid_0808d0c8(bank);
+            Func_080030f8(1);
+            continue;
+        }
+        if (keys & 8) {
+            PreviewPaletteColor_0808d0c8(bank, color_index);
+        }
+
+        if (Data_03001b04 & 4) {
+            break;
+        }
+        Func_080030f8(1);
     }
-    if (!(*var_r1_2 & 4)) {
-        sp4 = var_r1_2;
-        sp0 = var_r4;
-        Func_080030f8(1U);
-        goto loop_8;
-    }
+
     Func_0800479c();
     Func_08004760();
 }

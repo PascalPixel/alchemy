@@ -1,57 +1,65 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "layout_guard.h"
+#include "types.h"
 
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+typedef struct CartridgeConfig_08006910 {
+    u32 value_00;
+    u32 value_04;
+    u32 value_08;
+    u32 value_0c;
+    u32 value_10;
+    u8 payload[0x14];
+    u16 id;
+} CartridgeConfig_08006910;
 
-extern s32 Func_08006878(void);
+LAYOUT_OFFSET_GUARD(
+    CartridgeConfig08006910_Payload,
+    CartridgeConfig_08006910,
+    payload,
+    0x14);
+LAYOUT_OFFSET_GUARD(
+    CartridgeConfig08006910_Id,
+    CartridgeConfig_08006910,
+    id,
+    0x28);
+
 extern volatile u16 Data_04000204;
-extern void *Data_08007a0c[];
+extern CartridgeConfig_08006910 *Data_08007a0c[];
+extern volatile u32 Data_02004c00;
 extern volatile u32 Data_02004c04;
+extern void *volatile Data_02004c08;
 extern volatile u32 Data_02004c10;
 extern volatile u32 Data_02004c14;
-extern volatile u32 Data_02004c00;
 extern volatile u32 Data_02004c18;
-extern void *volatile Data_02004c08;
 
+s32 Func_08006878(void);
+
+/* Select and publish the configuration matching the detected cartridge ID. */
 s32 Func_08006910(void)
 {
-    s32 result;
-    u32 waitValue;
-    u32 id;
-    void *volatile *cursor;
-    void *entry;
-    volatile u32 *destination;
+    CartridgeConfig_08006910 **cursor = Data_08007a0c;
+    CartridgeConfig_08006910 *config;
+    u16 id;
+    s32 missing = 1;
 
-    waitValue = Data_04000204;
-    waitValue &= 0xfffc;
-    waitValue |= 3;
-    Data_04000204 = waitValue;
+    Data_04000204 = (Data_04000204 & 0xfffc) | 3;
     id = (u16)Func_08006878();
-    cursor = Data_08007a0c;
-    result = 1;
-    goto check;
-next:
-    cursor++;
-check:
-    entry = *cursor;
-    if (FIELD(entry, u8, 0x28) == 0)
-        goto done;
-    if (id != FIELD(entry, u16, 0x28))
-        goto next;
-    result = 0;
-done:
-    destination = &Data_02004c04;
-    *destination = FIELD(*cursor, u32, 0);
-    destination = &Data_02004c10;
-    *destination = FIELD(*cursor, u32, 4);
-    destination = &Data_02004c14;
-    *destination = FIELD(*cursor, u32, 8);
-    destination = &Data_02004c00;
-    *destination = FIELD(*cursor, u32, 0xc);
-    destination = &Data_02004c18;
-    *destination = FIELD(*cursor, u32, 0x10);
-    Data_02004c08 = (u8 *)*cursor + 0x14;
-    return result;
+
+    for (;;) {
+        config = *cursor;
+        if (config->id == 0)
+            break;
+        if (config->id == id) {
+            missing = 0;
+            break;
+        }
+        cursor++;
+    }
+
+    Data_02004c04 = config->value_00;
+    Data_02004c10 = config->value_04;
+    Data_02004c14 = config->value_08;
+    Data_02004c00 = config->value_0c;
+    Data_02004c18 = config->value_10;
+    Data_02004c08 = config->payload;
+    return missing;
 }

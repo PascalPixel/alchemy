@@ -1,50 +1,33 @@
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned char u8;
-
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+#include "types.h"
 
 void Func_080cd594(void);
 
-void Func_080cdb24(s32 arg0) {
-    s32 var_ip;
-    s32 var_r0;
-    s32 var_r1;
-    s32 var_r4;
-    s32 var_r4_2;
-    s32 var_r6;
-    s32 var_r7;
-    void *var_r5;
+/*
+ * Build the 16x16 affine-background map at screen block 7.  The left half
+ * of each row selects progressively offset tiles and palette banks; the
+ * right half is deliberately cleared.  Callers choose the display-control
+ * variant through the low bits of `mode`.
+ */
+void Func_080cdb24(s32 mode)
+{
+    volatile u16 *display_control = (volatile u16 *)0x0400000c;
+    volatile u16 *screen = (volatile u16 *)0x06003800;
+    s32 row;
 
     Func_080cd594();
-    *(s16 *)0x0400000C = arg0 | 0x6784;
-    var_r5 = (void *)0;
-    var_ip = 0;
-    var_r7 = 0;
-    var_r6 = 0;
-    do {
-        var_r4 = 0;
-        var_r0 = var_r6 + 0x100;
-        var_r1 = var_r7 * 2;
-loop_2:
-        var_r4++;
-        FIELD(var_r5, s16, 0x06003800) =
-            (s16)(var_r0 | var_r1);
-        var_r0 += 0x200;
-        var_r1 += 2;
-        var_r5 = (u8 *)var_r5 + 2;
-        if (var_r4 != 8)
-            goto loop_2;
-        var_r4_2 = 0;
-loop_4:
-        var_r4_2++;
-        FIELD(var_r5, s16, 0x06003800) = 0;
-        var_r5 = (u8 *)var_r5 + 2;
-        if (var_r4_2 != 8)
-            goto loop_4;
-        var_r6 += 0x1000;
-        var_ip++;
-        var_r7 += 8;
-    } while (var_ip != 0x10);
+    *display_control = (u16)(mode | 0x6784);
+
+    for (row = 0; row < 16; row++) {
+        s32 column;
+        u16 tile = (u16)(0x0100 + row * 0x1000);
+        u16 attribute = (u16)(row * 16);
+
+        for (column = 0; column < 8; column++) {
+            screen[row * 16 + column] = (u16)(tile | attribute);
+            tile += 0x0200;
+            attribute += 2;
+        }
+        for (; column < 16; column++)
+            screen[row * 16 + column] = 0;
+    }
 }

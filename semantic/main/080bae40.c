@@ -1,67 +1,400 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "layout_guard.h"
+#include "types.h"
 
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+struct TargetRequest_080bae40 {
+    u8 roster_mode;
+    u8 action_flags;
+    u8 padding02;
+    u8 filter_mode;
+    u8 padding04[4];
+    u8 ranked_selection;
+    u8 padding09;
+    u16 fallback_enabled;
+};
+
+struct BattleRoster_080bae40 {
+    u8 padding00[0x58];
+    s16 first[7];
+    s16 second[7];
+};
+
+struct CombatantState_080bae40 {
+    u8 padding000[0x34];
+    s16 maximum_value;
+    u8 padding036[2];
+    s16 current_value;
+    s16 reserve_value;
+    u8 padding03c[0xec];
+    u8 class_id;
+    u8 padding129[3];
+    s8 modifiers[4];
+    u8 padding130;
+    s8 condition;
+    u8 stage_data[6];
+    u8 status138;
+    u8 status139;
+    u8 status13a;
+    u8 status13b;
+    u8 status13c;
+    u8 status13d;
+    u8 padding13e[2];
+    u8 status140;
+    u8 status141;
+};
+
+struct ClassDefinition_080bae40 {
+    u8 padding00[0x35];
+    s8 selection_class;
+};
+
+LAYOUT_OFFSET_GUARD(
+    TargetRequest080bae40_FilterMode,
+    struct TargetRequest_080bae40,
+    filter_mode,
+    0x03);
+LAYOUT_OFFSET_GUARD(
+    TargetRequest080bae40_RankedSelection,
+    struct TargetRequest_080bae40,
+    ranked_selection,
+    0x08);
+LAYOUT_OFFSET_GUARD(
+    TargetRequest080bae40_FallbackEnabled,
+    struct TargetRequest_080bae40,
+    fallback_enabled,
+    0x0a);
+LAYOUT_OFFSET_GUARD(
+    BattleRoster080bae40_First,
+    struct BattleRoster_080bae40,
+    first,
+    0x58);
+LAYOUT_OFFSET_GUARD(
+    BattleRoster080bae40_Second,
+    struct BattleRoster_080bae40,
+    second,
+    0x66);
+LAYOUT_OFFSET_GUARD(
+    CombatantState080bae40_MaximumValue,
+    struct CombatantState_080bae40,
+    maximum_value,
+    0x34);
+LAYOUT_OFFSET_GUARD(
+    CombatantState080bae40_CurrentValue,
+    struct CombatantState_080bae40,
+    current_value,
+    0x38);
+LAYOUT_OFFSET_GUARD(
+    CombatantState080bae40_ClassId,
+    struct CombatantState_080bae40,
+    class_id,
+    0x128);
+LAYOUT_OFFSET_GUARD(
+    CombatantState080bae40_Modifiers,
+    struct CombatantState_080bae40,
+    modifiers,
+    0x12c);
+LAYOUT_OFFSET_GUARD(
+    CombatantState080bae40_Condition,
+    struct CombatantState_080bae40,
+    condition,
+    0x131);
+LAYOUT_OFFSET_GUARD(
+    CombatantState080bae40_Stages,
+    struct CombatantState_080bae40,
+    stage_data,
+    0x132);
+LAYOUT_OFFSET_GUARD(
+    CombatantState080bae40_Status138,
+    struct CombatantState_080bae40,
+    status138,
+    0x138);
+LAYOUT_OFFSET_GUARD(
+    CombatantState080bae40_Status140,
+    struct CombatantState_080bae40,
+    status140,
+    0x140);
+LAYOUT_OFFSET_GUARD(
+    ClassDefinition080bae40_SelectionClass,
+    struct ClassDefinition_080bae40,
+    selection_class,
+    0x35);
+
+extern struct BattleRoster_080bae40 *Data_03001e74;
 
 u32 Func_08004458(void);
-u8 *Func_08077008(s32);
-u8 *Func_08077198(u8);
-s32 Func_080772b8(s32);
+struct CombatantState_080bae40 *Func_08077008(s32 actor);
+struct ClassDefinition_080bae40 *Func_08077198(u8 class_id);
+s32 Func_080772b8(s32 filter_mode);
 
-/*
- * Select an encoded battle-roster entry for an action.
- *
- * The two source rosters hold at most six combatants.  Each accepted ID is
- * paired with a token that records both its source roster and original slot:
- * 0x100 | slot for the first roster and 0x180 | slot for the second.
- */
-s32 Func_080bae40(u32 actor, void *arg1) {
-    u8 *request = (u8 *)arg1;
-    u8 *battle = *(u8 **)0x03001E74;
+s32 LoadS32_080bae40(const s32 *values, s32 index) {
+    return values[index];
+}
+
+void StoreS32_080bae40(s32 *values, s32 index, s32 value) {
+    values[index] = value;
+}
+
+u16 LoadU16_080bae40(const u16 *values, s32 index) {
+    return values[index];
+}
+
+void StoreU16_080bae40(u16 *values, s32 index, u16 value) {
+    values[index] = value;
+}
+
+static u8 StageMarker_080bae40(
+    const struct CombatantState_080bae40 *state,
+    s32 index
+) {
+    return state->stage_data[index * 2];
+}
+
+static s8 StageValue_080bae40(
+    const struct CombatantState_080bae40 *state,
+    s32 index
+) {
+    return (s8)state->stage_data[index * 2 + 1];
+}
+
+static s32 CountPrimaryStatuses_080bae40(
+    const struct CombatantState_080bae40 *state
+) {
+    s32 count = 0;
+
+    if (state->status138 != 0) count++;
+    if (state->status139 != 0) count++;
+    if (state->status13a != 0) count++;
+    if (state->status13c != 0) count++;
+    if (state->status13d != 0) count++;
+    if (state->status141 != 0) count++;
+    return count;
+}
+
+static s32 FilterMatches_080bae40(
+    const struct CombatantState_080bae40 *state,
+    s32 mode
+) {
+    s32 matches = 0;
+
+    switch (mode) {
+    case 0:
+    case 1:
+    case 2:
+        break;
+    case 3:
+        matches = state->condition != 0;
+        break;
+    case 4:
+        matches = CountPrimaryStatuses_080bae40(state);
+        break;
+    case 5:
+    case 0x38:
+    case 0x39:
+        if (state->current_value == 0) matches = 100;
+        break;
+    case 6:
+    case 7:
+        if (StageValue_080bae40(state, 0) <= 3) matches = 1;
+        if (StageMarker_080bae40(state, 0) == 1) matches++;
+        break;
+    case 8:
+    case 9:
+        if (StageValue_080bae40(state, 0) >= -3) matches = 1;
+        if (StageMarker_080bae40(state, 0) == 1) matches++;
+        break;
+    case 10:
+    case 11:
+        if (StageValue_080bae40(state, 1) <= 3) matches = 1;
+        if (StageMarker_080bae40(state, 1) == 1) matches++;
+        break;
+    case 12:
+    case 13:
+        if (StageValue_080bae40(state, 1) >= -3) matches = 1;
+        if (StageMarker_080bae40(state, 1) == 1) matches++;
+        break;
+    case 14:
+    case 15:
+        if (StageValue_080bae40(state, 2) <= 3) matches = 1;
+        if (StageMarker_080bae40(state, 2) == 1) matches++;
+        break;
+    case 16:
+    case 17:
+        if (StageValue_080bae40(state, 2) >= -3) matches = 1;
+        if (StageMarker_080bae40(state, 2) == 1) matches++;
+        break;
+    case 18:
+        matches = state->condition == 0;
+        break;
+    case 19:
+        matches = state->condition <= 1;
+        break;
+    case 23:
+        matches = state->status13b == 0;
+        break;
+    case 24:
+        matches = state->status13c == 0;
+        break;
+    case 26:
+        matches = state->status140 == 0;
+        break;
+    case 28:
+        matches = state->status141 == 0;
+        break;
+    case 0x21: {
+        s32 index;
+        for (index = 0; index < 3; index++) {
+            if (StageValue_080bae40(state, index) > 0) matches++;
+        }
+        for (index = 0; index < 4; index++) {
+            if (state->modifiers[index] > 0) matches++;
+        }
+        break;
+    }
+    case 0x3d:
+    case 0x3e:
+        matches = state->current_value < state->maximum_value;
+        break;
+    case 0x40:
+        matches = CountPrimaryStatuses_080bae40(state);
+        if (state->status140 != 0) matches++;
+        if (state->condition != 0) matches++;
+        break;
+    default:
+        matches = 1;
+        break;
+    }
+
+    if (state->current_value == 0 && Func_080772b8(mode) == 0) {
+        matches = 0;
+    }
+    return matches;
+}
+
+static s32 FallbackMatches_080bae40(
+    const struct CombatantState_080bae40 *state,
+    const struct TargetRequest_080bae40 *request
+) {
+    switch ((request->action_flags & 0x0f) - 1) {
+    case 0:
+        return state->current_value != 0 &&
+            state->current_value < state->maximum_value;
+    case 1:
+    case 4:
+    case 5:
+    case 7:
+    case 8:
+        return request->fallback_enabled != 0 && state->current_value != 0;
+    case 2:
+    case 3:
+        return state->current_value != 0;
+    case 9:
+        return state->reserve_value != 0;
+    default:
+        return 0;
+    }
+}
+
+static s32 RankedPairOutOfOrder_080bae40(
+    s32 first,
+    s32 second,
+    u32 actor
+) {
+    struct CombatantState_080bae40 *first_state =
+        Func_08077008(first);
+    struct CombatantState_080bae40 *second_state =
+        Func_08077008(second);
+    struct CombatantState_080bae40 *actor_state =
+        Func_08077008((s32)actor);
+    s8 selection_class =
+        Func_08077198(actor_state->class_id)->selection_class;
+
+    if (selection_class == 0) {
+        return first_state->current_value < second_state->current_value;
+    }
+    return first_state->maximum_value < second_state->maximum_value;
+}
+
+static void SortRankedCandidates_080bae40(
+    s32 ids[6],
+    s32 tokens[6],
+    s32 count,
+    u32 actor
+) {
+    s32 outer;
+
+    for (outer = 0; outer < count; outer++) {
+        s32 current;
+
+        for (current = outer; current < count - 1; current++) {
+            if (RankedPairOutOfOrder_080bae40(
+                    ids[current], ids[current + 1], actor)) {
+                s32 id = ids[current];
+                s32 token = tokens[current];
+
+                ids[current] = ids[current + 1];
+                ids[current + 1] = id;
+                tokens[current] = tokens[current + 1];
+                tokens[current + 1] = token;
+            }
+        }
+    }
+}
+
+static s32 ChooseRankedToken_080bae40(
+    const s32 tokens[6],
+    s32 count
+) {
+    u32 roll;
+
+    switch (count) {
+    case 1:
+        return tokens[0];
+    case 2:
+        roll = 11U * Func_08004458() >> 16;
+        return roll <= 5 ? tokens[0] : tokens[1];
+    case 3:
+        roll = 15U * Func_08004458() >> 16;
+        if (roll <= 5) return tokens[0];
+        if (roll <= 10) return tokens[1];
+        return tokens[2];
+    case 4:
+        roll = 18U * Func_08004458() >> 16;
+        if (roll <= 5) return tokens[0];
+        if (roll <= 10) return tokens[1];
+        if (roll <= 14) return tokens[2];
+        return tokens[3];
+    default:
+        return -1;
+    }
+}
+
+/* Select an encoded battle-roster entry for an action. */
+s32 Func_080bae40(u32 actor, const struct TargetRequest_080bae40 *request) {
+    struct BattleRoster_080bae40 *battle = Data_03001e74;
     s32 candidate_ids[6];
     u16 candidate_tokens[6];
     s32 selected_tokens[6];
     s32 candidate_count = 0;
     s32 selected_count = 0;
-    s32 source_index;
     s32 index;
 
-    if (request[0] != 0) {
-        s32 special_roster = request[0] == 2 || request[0] == 4;
-        s32 use_first_roster;
-        s16 *roster;
-        u16 token_base;
+    if (request->roster_mode != 0) {
+        s32 special_roster =
+            request->roster_mode == 2 || request->roster_mode == 4;
+        s32 use_first_roster = actor <= 7 ? special_roster : !special_roster;
+        const s16 *roster =
+            use_first_roster ? battle->first : battle->second;
+        u16 token_base = use_first_roster ? 0x100 : 0x180;
 
-        if (actor <= 7U) {
-            use_first_roster = special_roster;
-        } else {
-            use_first_roster = !special_roster;
-        }
+        for (index = 0; roster[index] != 0xff; index++) {
+            s16 candidate = roster[index];
 
-        if (use_first_roster) {
-            roster = (s16 *)(battle + 0x58);
-            token_base = 0x100;
-        } else {
-            roster = (s16 *)(battle + 0x66);
-            token_base = 0x180;
-        }
-
-        for (source_index = 0; roster[source_index] != 0xFF; source_index++) {
-            s16 candidate = roster[source_index];
-
-            if (candidate == 0xFE) {
-                continue;
-            }
-            if (request[0] == 4 && candidate != (s32)actor) {
-                continue;
-            }
-
-            candidate_ids[candidate_count] = candidate;
-            candidate_tokens[candidate_count] = token_base | source_index;
+            if (candidate == 0xfe) continue;
+            if (request->roster_mode == 4 && candidate != (s32)actor) continue;
+            StoreS32_080bae40(candidate_ids, candidate_count, candidate);
+            StoreU16_080bae40(
+                candidate_tokens,
+                candidate_count,
+                (u16)(token_base | index));
             candidate_count++;
         }
     }
@@ -71,175 +404,22 @@ s32 Func_080bae40(u32 actor, void *arg1) {
     }
 
     for (index = 0; index < candidate_count; index++) {
-        u8 *state = Func_08077008(candidate_ids[index]);
-        s32 mode = request[3];
-        s32 matches = 0;
-
-        switch (mode) {
-        case 0:
-        case 1:
-        case 2:
-            break;
-
-        case 3:
-            matches = FIELD(state, s8, 0x131) != 0;
-            break;
-
-        case 4:
-            if (FIELD(state, u8, 0x138) != 0) matches++;
-            if (FIELD(state, u8, 0x139) != 0) matches++;
-            if (FIELD(state, u8, 0x13A) != 0) matches++;
-            if (FIELD(state, u8, 0x13C) != 0) matches++;
-            if (FIELD(state, u8, 0x13D) != 0) matches++;
-            if (FIELD(state, u8, 0x141) != 0) matches++;
-            break;
-
-        case 5:
-        case 0x38:
-        case 0x39:
-            if (FIELD(state, s16, 0x38) == 0) {
-                matches = 100;
-            }
-            break;
-
-        case 6:
-        case 7:
-            if (FIELD(state, s8, 0x133) <= 3) matches = 1;
-            if (FIELD(state, u8, 0x132) == 1) matches++;
-            break;
-
-        case 8:
-        case 9:
-            if (FIELD(state, s8, 0x133) >= -3) matches = 1;
-            if (FIELD(state, u8, 0x132) == 1) matches++;
-            break;
-
-        case 10:
-        case 11:
-            if (FIELD(state, s8, 0x135) <= 3) matches = 1;
-            if (FIELD(state, u8, 0x134) == 1) matches++;
-            break;
-
-        case 12:
-        case 13:
-            if (FIELD(state, s8, 0x135) >= -3) matches = 1;
-            if (FIELD(state, u8, 0x134) == 1) matches++;
-            break;
-
-        case 14:
-        case 15:
-            if (FIELD(state, s8, 0x137) <= 3) matches = 1;
-            if (FIELD(state, u8, 0x136) == 1) matches++;
-            break;
-
-        case 16:
-        case 17:
-            if (FIELD(state, s8, 0x137) >= -3) matches = 1;
-            if (FIELD(state, u8, 0x136) == 1) matches++;
-            break;
-
-        case 18:
-            matches = FIELD(state, s8, 0x131) == 0;
-            break;
-
-        case 19:
-            matches = FIELD(state, s8, 0x131) <= 1;
-            break;
-
-        case 23:
-            matches = FIELD(state, u8, 0x13B) == 0;
-            break;
-
-        case 24:
-            matches = FIELD(state, u8, 0x13C) == 0;
-            break;
-
-        case 26:
-            matches = FIELD(state, u8, 0x140) == 0;
-            break;
-
-        case 28:
-            matches = FIELD(state, u8, 0x141) == 0;
-            break;
-
-        case 0x21:
-            if (FIELD(state, s8, 0x133) > 0) matches++;
-            if (FIELD(state, s8, 0x135) > 0) matches++;
-            if (FIELD(state, s8, 0x137) > 0) matches++;
-            if (FIELD(state, s8, 0x12C) > 0) matches++;
-            if (FIELD(state, s8, 0x12D) > 0) matches++;
-            if (FIELD(state, s8, 0x12E) > 0) matches++;
-            if (FIELD(state, s8, 0x12F) > 0) matches++;
-            break;
-
-        case 0x3D:
-        case 0x3E:
-            matches =
-                FIELD(state, s16, 0x38) < FIELD(state, s16, 0x34);
-            break;
-
-        case 0x40:
-            if (FIELD(state, u8, 0x138) != 0) matches++;
-            if (FIELD(state, u8, 0x139) != 0) matches++;
-            if (FIELD(state, u8, 0x13A) != 0) matches++;
-            if (FIELD(state, u8, 0x13C) != 0) matches++;
-            if (FIELD(state, u8, 0x13D) != 0) matches++;
-            if (FIELD(state, u8, 0x141) != 0) matches++;
-            if (FIELD(state, u8, 0x140) != 0) matches++;
-            if (FIELD(state, s8, 0x131) != 0) matches++;
-            break;
-
-        default:
-            matches = 1;
-            break;
-        }
-
-        /*
-         * Most modes cannot select an unavailable combatant.  Modes for which
-         * Func_080772b8 reports a special dead-target rule retain their match.
-         */
-        if (FIELD(state, u16, 0x38) == 0 && Func_080772b8(mode) == 0) {
-            matches = 0;
-        }
+        struct CombatantState_080bae40 *state =
+            Func_08077008(LoadS32_080bae40(candidate_ids, index));
+        s32 matches = FilterMatches_080bae40(state, request->filter_mode);
 
         if (matches == 0) {
-            switch ((request[1] & 0xF) - 1) {
-            case 0:
-                if (FIELD(state, s16, 0x38) != 0 &&
-                    FIELD(state, s16, 0x38) < FIELD(state, s16, 0x34)) {
-                    matches = 1;
-                }
-                break;
-
-            case 1:
-            case 4:
-            case 5:
-            case 7:
-            case 8:
-                if (FIELD(request, u16, 0xA) != 0 &&
-                    FIELD(state, s16, 0x38) != 0) {
-                    matches = 1;
-                }
-                break;
-
-            case 2:
-            case 3:
-                if (FIELD(state, s16, 0x38) != 0) {
-                    matches = 1;
-                }
-                break;
-
-            case 9:
-                if (FIELD(state, s16, 0x3A) != 0) {
-                    matches = 1;
-                }
-                break;
-            }
+            matches = FallbackMatches_080bae40(state, request);
         }
-
         if (matches != 0) {
-            candidate_ids[selected_count] = candidate_ids[index];
-            selected_tokens[selected_count] = candidate_tokens[index];
+            StoreS32_080bae40(
+                candidate_ids,
+                selected_count,
+                LoadS32_080bae40(candidate_ids, index));
+            StoreS32_080bae40(
+                selected_tokens,
+                selected_count,
+                LoadU16_080bae40(candidate_tokens, index));
             selected_count++;
         }
     }
@@ -248,83 +428,33 @@ s32 Func_080bae40(u32 actor, void *arg1) {
         return -1;
     }
 
-    /*
-     * A narrow group of actions ranks candidates by their live battle stat.
-     * The encoded roster tokens must move in parallel with the combatant IDs.
-     */
-    if (request[0] == 1 && request[8] == 1) {
-        u8 *actor_state = Func_08077008((s32)actor);
-        s8 actor_class =
-            FIELD(Func_08077198(FIELD(actor_state, u8, 0x128)), s8, 0x35);
-        s32 action_group = request[1] & 0xF;
+    if (request->roster_mode == 1 && request->ranked_selection == 1) {
+        struct CombatantState_080bae40 *actor_state =
+            Func_08077008((s32)actor);
+        s8 selection_class =
+            Func_08077198(actor_state->class_id)->selection_class;
+        s32 action_group = request->action_flags & 0x0f;
 
-        if (actor_class != 2 && action_group >= 3 && action_group <= 5) {
-            s32 outer;
+        if (selection_class != 2 && action_group >= 3 && action_group <= 5) {
+            s32 ranked_token;
 
-            for (outer = 0; outer < selected_count; outer++) {
-                s32 current;
-
-                for (current = outer; current < selected_count - 1; current++) {
-                    u8 *first = Func_08077008(candidate_ids[current]);
-                    u8 *second = Func_08077008(candidate_ids[current + 1]);
-                    u8 *current_actor = Func_08077008((s32)actor);
-                    s8 current_class = FIELD(
-                        Func_08077198(FIELD(current_actor, u8, 0x128)),
-                        s8,
-                        0x35);
-                    s16 first_value;
-                    s16 second_value;
-
-                    if (current_class == 0) {
-                        first_value = FIELD(first, s16, 0x38);
-                        second_value = FIELD(second, s16, 0x38);
-                    } else {
-                        first_value = FIELD(first, s16, 0x34);
-                        second_value = FIELD(second, s16, 0x34);
-                    }
-
-                    if (first_value < second_value) {
-                        s32 id = candidate_ids[current];
-                        s32 token = selected_tokens[current];
-
-                        candidate_ids[current] = candidate_ids[current + 1];
-                        candidate_ids[current + 1] = id;
-                        selected_tokens[current] = selected_tokens[current + 1];
-                        selected_tokens[current + 1] = token;
-                    }
-                }
-            }
-
-            switch (selected_count) {
-            case 1:
-                return selected_tokens[0];
-
-            case 2:
-                if ((11U * Func_08004458() >> 16) <= 5U) {
-                    return selected_tokens[0];
-                }
-                return selected_tokens[1];
-
-            case 3: {
-                u32 roll = 15U * Func_08004458() >> 16;
-
-                if (roll <= 5U) return selected_tokens[0];
-                if (roll <= 10U) return selected_tokens[1];
-                return selected_tokens[2];
-            }
-
-            case 4: {
-                u32 roll = 18U * Func_08004458() >> 16;
-
-                if (roll <= 5U) return selected_tokens[0];
-                if (roll <= 10U) return selected_tokens[1];
-                if (roll <= 14U) return selected_tokens[2];
-                return selected_tokens[3];
-            }
+            SortRankedCandidates_080bae40(
+                candidate_ids, selected_tokens, selected_count, actor);
+            ranked_token = ChooseRankedToken_080bae40(
+                selected_tokens, selected_count);
+            if (ranked_token >= 0) {
+                return ranked_token;
             }
         }
     }
 
     index = (u32)(selected_count * Func_08004458()) >> 16;
-    return selected_tokens[index];
+    switch (index) {
+    case 0: return selected_tokens[0];
+    case 1: return selected_tokens[1];
+    case 2: return selected_tokens[2];
+    case 3: return selected_tokens[3];
+    case 4: return selected_tokens[4];
+    default: return selected_tokens[5];
+    }
 }

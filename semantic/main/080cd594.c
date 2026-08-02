@@ -1,176 +1,229 @@
 /*
- * Correctness fix, veneer audit (2026-08-01).
- * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
- * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
- * range is an indirect call through the named register, not a call to a
- * function at the branch target.  Resolved with tools/veneer_resolve.ts.
- *
- * UNCERTAINTY, and it is deliberate.  What 0x03000164 DOES is not
- * established.  semantic/main/080c1ffc.c calls it a resident two-argument
- * owner initializer; across the tree it is reached with two arguments at
- * some sites and three at others, and where a third is passed it is almost
- * always zero.  It also sits four bytes -- one ARM instruction -- from the
- * fill at 0x03000168, the way the sin/cos pair at 0x0800231c/0x08002322
- * does.  That is suggestive of two entry points into one routine and it is
- * NOT asserted here: the evidence is recorded so the exact reconstruction can settle
- * it, and the type below says only what this call site proves --
- * two arguments, reached through __call_via_r5.
+ * The call at 0x03000164 is reached through GCC's call-via-register veneer.
+ * Its wider semantics remain uncertain; this owner proves only the two-argument
+ * resident entry point represented below.
  */
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "layout_guard.h"
+#include "types.h"
 
-typedef void (*Resident_03000164)(void *destination, u32 size);
+typedef void (*ResidentEntry_080cd594)(void *destination, u32 size);
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+typedef struct DeferredWrite_080cd594 {
+    u32 value;
+    u32 address;
+    u32 mask;
+} DeferredWrite_080cd594;
+
+typedef struct DeferredWriteQueue_080cd594 {
+    u16 count;
+    u16 padding02;
+    DeferredWrite_080cd594 entries[32];
+} DeferredWriteQueue_080cd594;
+
+typedef struct PrimaryWork_080cd594 {
+    u8 padding0000[0x77a0];
+    s32 viewport_width;
+    s32 viewport_height;
+    s32 background_mode;
+    u8 padding77ac[8];
+    s32 scroll_step;
+    s32 scroll_phase;
+} PrimaryWork_080cd594;
+
+typedef struct SyncState_080cd594 {
+    u8 padding00[0x0c];
+    s32 locked;
+} SyncState_080cd594;
+
+typedef struct BackgroundRuntime_080cd594 {
+    PrimaryWork_080cd594 *primary;
+    void *resident_buffer;
+    u8 padding08[0x0c];
+    SyncState_080cd594 *sync;
+} BackgroundRuntime_080cd594;
+
+typedef struct WorldState_080cd594 {
+    u8 padding000[0x648];
+    u16 palette_id;
+} WorldState_080cd594;
+
+typedef struct DisplayMetrics_080cd594 {
+    u8 padding00[4];
+    u16 width;
+    u16 height;
+} DisplayMetrics_080cd594;
+
+typedef struct AffineRegisters_080cd594 {
+    u16 pa;
+    u16 pb;
+    u16 pc;
+    u16 pd;
+    s32 x;
+    s32 y;
+} AffineRegisters_080cd594;
+
+typedef struct WindowRegisters_080cd594 {
+    u16 win0_horizontal;
+    u16 win1_horizontal;
+    u16 win0_vertical;
+    u16 win1_vertical;
+    u16 inside;
+    u16 outside;
+} WindowRegisters_080cd594;
+
+typedef struct BlendRegisters_080cd594 {
+    u16 control;
+    u16 alpha;
+} BlendRegisters_080cd594;
+
+LAYOUT_SIZE_GUARD(
+    DeferredWrite080cd594_Size,
+    DeferredWrite_080cd594,
+    0x0c);
+LAYOUT_OFFSET_GUARD(
+    DeferredWriteQueue080cd594_Entries,
+    DeferredWriteQueue_080cd594,
+    entries,
+    4);
+LAYOUT_OFFSET_GUARD(
+    PrimaryWork080cd594_ViewportWidth,
+    PrimaryWork_080cd594,
+    viewport_width,
+    0x77a0);
+LAYOUT_OFFSET_GUARD(
+    PrimaryWork080cd594_BackgroundMode,
+    PrimaryWork_080cd594,
+    background_mode,
+    0x77a8);
+LAYOUT_OFFSET_GUARD(
+    PrimaryWork080cd594_ScrollStep,
+    PrimaryWork_080cd594,
+    scroll_step,
+    0x77b4);
+LAYOUT_OFFSET_GUARD(
+    BackgroundRuntime080cd594_ResidentBuffer,
+    BackgroundRuntime_080cd594,
+    resident_buffer,
+    4);
+LAYOUT_OFFSET_GUARD(
+    BackgroundRuntime080cd594_Sync,
+    BackgroundRuntime_080cd594,
+    sync,
+    0x14);
+LAYOUT_OFFSET_GUARD(
+    WorldState080cd594_PaletteId,
+    WorldState_080cd594,
+    palette_id,
+    0x648);
+LAYOUT_SIZE_GUARD(
+    AffineRegisters080cd594_Size,
+    AffineRegisters_080cd594,
+    0x10);
+
+extern BackgroundRuntime_080cd594 Data_03001eec;
+extern WorldState_080cd594 *Data_03001e74;
+extern DisplayMetrics_080cd594 Data_03001ad0;
+extern DeferredWriteQueue_080cd594 Data_02002090;
 
 void Func_080030f8(u32);
-void Func_080041d8(s32, s32);
+void Func_080041d8(const void *, s32);
 void Func_080b5028(s32, s32, s32, s32);
-void Func_080b5038(s32, s32, s32);
+void Func_080b5038(s32, u16, s32);
 void Func_080cd508(u32);
 
-/* Configures and clears the first affine battle-background presentation. */
-void Func_080cd594(u32 arg0) {
-    s32 sp0;
-    s32 var_ip;
-    s32 var_r0;
-    s32 var_r1;
-    s32 var_r4;
-    s32 var_r6;
-    s32 var_r7;
-    u16 temp_r1;
-    u16 temp_r1_2;
-    u16 temp_r1_3;
-    u16 temp_r1_4;
-    u16 temp_r2;
-    u16 temp_r2_2;
-    u16 temp_r2_3;
-    u16 temp_r2_4;
-    void *temp_fp;
-    void *temp_r3;
-    void *temp_r3_2;
-    void *temp_r3_3;
-    void *temp_r3_4;
-    void *temp_r3_5;
-    void *temp_r3_6;
-    void *temp_r3_7;
-    void *temp_r3_8;
-    void *temp_r3_9;
-    void *temp_r9;
-    void *temp_sl;
-    void *var_r5;
+static void QueueDisplayWrite_080cd594(u32 value)
+{
+    volatile u16 *interrupt_master = (volatile u16 *)0x04000208;
+    u16 saved = *interrupt_master;
 
-    temp_r9 = M2C_FIELD((void *)0x03001EEC, void **, 0);
-    temp_sl = *(void **)0x03001E74;
-    sp0 = M2C_FIELD((void *)0x03001EEC, s32 *, 4);
-    temp_fp = M2C_FIELD((void *)0x03001EEC, void **, 0x14);
-    Func_080cd508(arg0);
-    M2C_FIELD(temp_fp, s32 *, 0xC) = 1;
-    Func_080030f8(1U);
-    M2C_FIELD((void *)0x04000050, s16 *, 0) = 0;
-    temp_r1 = *(u16 *)0x04000208;
-    *(u16 *)0x04000208 = 0x0208;
-    temp_r2 = *(u16 *)0x02002090;
-    if ((s32) temp_r2 <= 0x1F) {
-        temp_r3 = (void *)((temp_r2 * 0xC) + 0x02002090);
-        *(u16 *)0x02002090 = temp_r2 + 1;
-        temp_r3_2 = temp_r3 + 4;
-        M2C_FIELD(temp_r3, s32 *, 4) = 0x7741;
-        M2C_FIELD(temp_r3_2, s32 *, 4) = 0x04000000;
-        M2C_FIELD((temp_r3_2 + 4), s32 *, 4) = 0x20000;
+    /* The original writes IME's even address, clearing the enable bit. */
+    *interrupt_master = (u16)(u32)interrupt_master;
+    if (Data_02002090.count <= 31) {
+        DeferredWrite_080cd594 *write =
+            &Data_02002090.entries[Data_02002090.count++];
+
+        write->value = value;
+        write->address = 0x04000000;
+        write->mask = 0x00020000;
     }
-    *(u16 *)0x04000208 = temp_r1;
-    M2C_FIELD((void *)0x03001AD0, u16 *, 6) = 0x20U;
-    Func_080030f8(1U);
-    Func_080b5038(1, M2C_FIELD(temp_sl, u16 *, 0x648), 0);
-    M2C_FIELD(temp_r9, s32 *, 0x77B4) = 0;
-    M2C_FIELD(temp_r9, s32 *, 0x77B8) = 0;
-    Func_080041d8(0x080CD4B5, 0xC80);
-    temp_r1_2 = *(u16 *)0x04000208;
-    *(u16 *)0x04000208 = 0x0208;
-    temp_r2_2 = *(u16 *)0x02002090;
-    if ((s32) temp_r2_2 <= 0x1F) {
-        temp_r3_3 = (void *)((temp_r2_2 * 0xC) + 0x02002090);
-        *(u16 *)0x02002090 = temp_r2_2 + 1;
-        temp_r3_4 = temp_r3_3 + 4;
-        M2C_FIELD(temp_r3_3, s32 *, 4) = 0x7341;
-        M2C_FIELD(temp_r3_4, s32 *, 4) = 0x04000000;
-        M2C_FIELD((temp_r3_4 + 4), s32 *, 4) = 0x20000;
-    }
-    *(u16 *)0x04000208 = temp_r1_2;
-    Func_080030f8(1U);
-    *(s16 *)0x0400000C = arg0 | 0x784;
-    temp_r1_3 = *(u16 *)0x04000208;
-    *(u16 *)0x04000208 = 0x0208;
-    temp_r2_3 = *(u16 *)0x02002090;
-    if ((s32) temp_r2_3 <= 0x1F) {
-        temp_r3_5 = (void *)((temp_r2_3 * 0xC) + 0x02002090);
-        *(u16 *)0x02002090 = temp_r2_3 + 1;
-        temp_r3_6 = temp_r3_5 + 4;
-        M2C_FIELD(temp_r3_5, s32 *, 4) = 0x7341;
-        M2C_FIELD(temp_r3_6, s32 *, 4) = 0x04000000;
-        M2C_FIELD((temp_r3_6 + 4), s32 *, 4) = 0x20000;
-    }
-    *(u16 *)0x04000208 = temp_r1_3;
-    Func_080b5028(0, 0, 0, 0x64);
-    M2C_FIELD(temp_fp, s32 *, 0xC) = 0;
-    Func_080030f8(1U);
-    M2C_FIELD((void *)0x04000050, s16 *, 0) = 0x3F44;
-    M2C_FIELD((void *)0x04000050, s16 *, 2) = 0x100E;
-    *(s32 *)0x04000028 = 0;
-    *(s32 *)0x0400002C = 0xFFFFF000;
-    *(s16 *)0x04000020 = 0x80;
-    M2C_FIELD((void *)0x04000022, s16 *, 0) = 0;
-    M2C_FIELD((void *)0x04000022, s16 *, 2) = 0;
-    *(s16 *)0x04000026 = 0x100;
-    M2C_FIELD((void *)0x04000040, s16 *, 0) = 0xF0;
-    M2C_FIELD((void *)0x04000040, s16 *, 4) = 0x1088;
-    temp_r3_7 = ((void *)0x04000040 + 4) - 2;
-    M2C_FIELD(temp_r3_7, s16 *, 0) = 0xF0;
-    M2C_FIELD(temp_r3_7, s16 *, 4) = 0x1088;
-    M2C_FIELD((void *)0x04000048, s16 *, 0) = 0x3537;
-    M2C_FIELD((void *)0x04000048, s16 *, 2) = 0x3F21;
-    temp_r1_4 = *(u16 *)0x04000208;
-    *(u16 *)0x04000208 = 0x0208;
-    temp_r2_4 = *(u16 *)0x02002090;
-    if ((s32) temp_r2_4 <= 0x1F) {
-        temp_r3_8 = (void *)((temp_r2_4 * 0xC) + 0x02002090);
-        *(u16 *)0x02002090 = temp_r2_4 + 1;
-        temp_r3_9 = temp_r3_8 + 4;
-        M2C_FIELD(temp_r3_8, s32 *, 4) = 0x7741;
-        M2C_FIELD(temp_r3_9, s32 *, 4) = 0x04000000;
-        M2C_FIELD((temp_r3_9 + 4), s32 *, 4) = 0x20000;
-    }
-    *(u16 *)0x04000208 = temp_r1_4;
-    var_r5 = 0;
-    var_ip = 0;
-    var_r7 = 0;
-    var_r6 = 0;
-    do {
-        var_r4 = 0;
-        var_r0 = var_r6 + 0x100;
-        var_r1 = var_r7 * 2;
-loop_12:
-        var_r4 += 1;
-        M2C_FIELD(var_r5, s16 *, 0x06003800) = (s16) (var_r0 | var_r1);
-        var_r0 += 0x200;
-        var_r1 += 2;
-        var_r5 += 2;
-        if (var_r4 != 8) {
-            goto loop_12;
+    *interrupt_master = saved;
+}
+
+static void BuildAffineTilemap_080cd594(void)
+{
+    volatile u16 *tilemap = (volatile u16 *)0x06003800;
+    s32 row;
+
+    for (row = 0; row < 16; row++) {
+        s32 column;
+
+        for (column = 0; column < 8; column++) {
+            tilemap[row * 8 + column] = (u16)(
+                (0x100 + row * 0x1000 + column * 0x200) |
+                (row * 0x10 + column * 2));
         }
-        var_ip += 1;
-        var_r6 += 0x1000;
-        var_r7 += 8;
-    } while (var_ip != 0x10);
-    ((Resident_03000164)0x03000164)(sp0, 0x4000);
-    ((Resident_03000164)0x03000164)((void *)0x06004000, 0x4000);
-    M2C_FIELD(temp_r9, s32 *, 0x77A8) = 0;
-    M2C_FIELD(temp_r9, s32 *, 0x77A0) = (s32) M2C_FIELD((void *)0x03001AD0, u16 *, 4);
-    M2C_FIELD(temp_r9, s32 *, 0x77A4) = (s32) M2C_FIELD((void *)0x03001AD0, u16 *, 6);
-    Func_080030f8(1U);
+    }
+}
+
+/* Configure and clear the first affine battle-background presentation. */
+void Func_080cd594(u32 background_bits)
+{
+    ResidentEntry_080cd594 resident =
+        (ResidentEntry_080cd594)0x03000164;
+    BackgroundRuntime_080cd594 *runtime = &Data_03001eec;
+    PrimaryWork_080cd594 *primary = runtime->primary;
+    WorldState_080cd594 *world = Data_03001e74;
+    volatile u16 *bg3_control = (volatile u16 *)0x0400000c;
+    volatile AffineRegisters_080cd594 *affine =
+        (volatile AffineRegisters_080cd594 *)0x04000020;
+    volatile WindowRegisters_080cd594 *window =
+        (volatile WindowRegisters_080cd594 *)0x04000040;
+    volatile BlendRegisters_080cd594 *blend =
+        (volatile BlendRegisters_080cd594 *)0x04000050;
+
+    Func_080cd508(background_bits);
+    runtime->sync->locked = 1;
+    Func_080030f8(1);
+
+    blend->control = 0;
+    QueueDisplayWrite_080cd594(0x7741);
+    Data_03001ad0.height = 0x20;
+    Func_080030f8(1);
+
+    Func_080b5038(1, world->palette_id, 0);
+    primary->scroll_step = 0;
+    primary->scroll_phase = 0;
+    Func_080041d8((const void *)0x080cd4b5, 0x0c80);
+    QueueDisplayWrite_080cd594(0x7341);
+    Func_080030f8(1);
+
+    *bg3_control = (u16)(background_bits | 0x0784);
+    QueueDisplayWrite_080cd594(0x7341);
+    Func_080b5028(0, 0, 0, 0x64);
+    runtime->sync->locked = 0;
+    Func_080030f8(1);
+
+    blend->control = 0x3f44;
+    blend->alpha = 0x100e;
+    affine->x = 0;
+    affine->y = -0x1000;
+    affine->pa = 0x80;
+    affine->pb = 0;
+    affine->pc = 0;
+    affine->pd = 0x100;
+    window->win0_horizontal = 0x00f0;
+    window->win1_horizontal = 0x00f0;
+    window->win0_vertical = 0x1088;
+    window->win1_vertical = 0x1088;
+    window->inside = 0x3537;
+    window->outside = 0x3f21;
+    QueueDisplayWrite_080cd594(0x7741);
+
+    BuildAffineTilemap_080cd594();
+    resident(runtime->resident_buffer, 0x4000);
+    resident((void *)0x06004000, 0x4000);
+    primary->background_mode = 0;
+    primary->viewport_width = Data_03001ad0.width;
+    primary->viewport_height = Data_03001ad0.height;
+    Func_080030f8(1);
 }

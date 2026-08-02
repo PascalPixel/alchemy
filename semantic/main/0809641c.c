@@ -1,73 +1,87 @@
+#include "effect_0809b11c.h"
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+struct Vector_0809641c {
+    s32 x;
+    s32 y;
+    s32 z;
+};
 
-void *Func_08092054(void *);
+struct PositionSource_0809641c {
+    u8 padding00[8];
+    struct Vector_0809641c position;
+};
+
+extern s32 Data_02000240[];
+
+struct PositionSource_0809641c *Func_08092054(s32);
 u32 Func_08004458(void);
-void Func_0800447c(s32, s32, s32 *);
-void Func_080974d8(s32 *);
-s8 Func_0809ba34(void *);
-void Func_0809bb34(void *);
+void Func_0800447c(s32, s32, struct Vector_0809641c *);
+void Func_080974d8(struct Vector_0809641c *);
 void Func_080f9010(s32);
 
 /*
- * Advance the rising projectile through launch, one of two travel passes,
- * and teardown. The first pass can reverse to stage zero; the second advances
- * to cleanup after assigning its next randomized arc.
+ * Advance a rising projectile through launch, two alternating travel passes,
+ * and teardown.  The first completed pass returns to state zero; the second
+ * advances to cleanup after assigning its next randomized arc.
  */
-void Func_0809641c(void *effect)
+void Func_0809641c(struct EffectSlot *effect)
 {
-    u8 *owner = *(u8 **)(0x02000240 + 500);
-    u8 *controller = Func_08092054(owner);
-    s8 stage = M2C_FIELD(effect, s8 *, 0x40);
-    s32 vector[3];
+    struct PositionSource_0809641c *source =
+        Func_08092054(Data_02000240[125]);
+    struct Vector_0809641c position;
+    s32 state = effect->state;
 
-    if (stage == 0) {
+    if (state == 0) {
         s32 magnitude;
 
-        vector[0] = M2C_FIELD(controller, s32 *, 8);
-        vector[1] = M2C_FIELD(controller, s32 *, 0xC) +
-            Func_08004458() * 5 + 0xF0000;
-        vector[2] = M2C_FIELD(controller, s32 *, 0x10);
-        Func_080974d8(vector);
-        magnitude = Func_08004458() * 6 + 0x20000;
-        Func_0800447c(magnitude, Func_08004458(), vector);
+        position.x = source->position.x;
+        position.y = source->position.y + Func_08004458() * 5 + 0x0f0000;
+        position.z = source->position.z;
+        Func_080974d8(&position);
 
-        M2C_FIELD(effect, s32 *, 0xC) = vector[0];
-        M2C_FIELD(effect, s32 *, 0x10) = vector[2];
-        M2C_FIELD(effect, s32 *, 4) = vector[0];
-        M2C_FIELD(effect, s32 *, 8) = vector[2] - 0x640000;
-        M2C_FIELD(effect, s32 *, 0x24) = 0x30000;
-        M2C_FIELD(effect, s32 *, 0x20) =
-            Func_08004458() * 3 + 0x30000;
-        M2C_FIELD(effect, s32 *, 0x28) = 0x10000;
-        M2C_FIELD(effect, s32 *, 0x2C) = 0x10000;
-        M2C_FIELD(effect, u8 *, 0x42) = 0;
-        M2C_FIELD(effect, u8 *, 0x41) = 1;
-        M2C_FIELD(effect, u8 *, 0x40)++;
-    } else if (stage == 1 || stage == 2) {
-        if (Func_0809ba34(effect) == 0) {
-            vector[0] = M2C_FIELD(effect, s32 *, 4);
-            vector[2] = M2C_FIELD(effect, s32 *, 8);
-            Func_0800447c(0xC0000, Func_08004458(), vector);
-            M2C_FIELD(effect, s32 *, 0xC) = vector[0];
-            M2C_FIELD(effect, s32 *, 0x10) = vector[2];
-            M2C_FIELD(effect, u8 *, 0x41) = 0;
-            M2C_FIELD(effect, s32 *, 0x1C) = 0x10000;
-            M2C_FIELD(effect, s32 *, 0x24) = 0;
-            M2C_FIELD(effect, s32 *, 0x20) =
-                Func_08004458() + 0x23333;
-            M2C_FIELD(effect, s32 *, 0x28) = 0x8000;
-            M2C_FIELD(effect, s32 *, 0x2C) = 0x8000;
-            Func_080f9010(0x8F);
-            if (stage == 1) {
-                M2C_FIELD(effect, u8 *, 0x40)--;
-            } else {
-                M2C_FIELD(effect, u8 *, 0x40)++;
-            }
-            M2C_FIELD(effect, u16 *, 0x3A) = 6;
-        }
-    } else if (stage == 3) {
-        Func_0809bb34(effect);
+        magnitude = Func_08004458() * 6 + 0x020000;
+        Func_0800447c(magnitude, Func_08004458(), &position);
+
+        effect->target_x = position.x;
+        effect->target_z = position.z;
+        effect->x = position.x;
+        effect->z = position.z - 0x640000;
+        effect->acceleration = 0x030000;
+        effect->max_speed = Func_08004458() * 3 + 0x030000;
+        effect->scale_x = 0x010000;
+        effect->scale_y = 0x010000;
+        effect->flag42 = 0;
+        effect->flag41 = 1;
+        effect->state++;
+        return;
     }
+
+    if (state == 1 || state == 2) {
+        if (Func_0809ba34(effect) == 0) {
+            position.x = effect->x;
+            position.z = effect->z;
+            Func_0800447c(0x0c0000, Func_08004458(), &position);
+
+            effect->target_x = position.x;
+            effect->target_z = position.z;
+            effect->flag41 = 0;
+            effect->speed = 0x010000;
+            effect->acceleration = 0;
+            effect->max_speed = Func_08004458() + 0x023333;
+            effect->scale_x = 0x008000;
+            effect->scale_y = 0x008000;
+            Func_080f9010(0x8f);
+
+            if (state == 1)
+                effect->state--;
+            else
+                effect->state++;
+            effect->callback_delay = 6;
+        }
+        return;
+    }
+
+    if (state == 3)
+        Func_0809bb34(effect);
 }

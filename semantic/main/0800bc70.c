@@ -1,130 +1,136 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "layout_guard.h"
+#include "types.h"
 
-#define NULL ((void *)0)
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
-extern u8 *Data_03001e60;
-extern u16 Data_03001b10[];
-
-u8 *Func_08185000(s32 arg0);
-s32 Func_08004080(void);
-s32 Func_08003fa4(s32, s32, s32);
-s32 Func_0800b8ac(void *, s32);
-
-struct Slot {
-    s32 word0;      /* 0x00 */
-    s32 word1;      /* 0x04 */
-    s32 word2;      /* 0x08 */
-    s32 word3;      /* 0x0C */
-    s32 word4;      /* 0x10 */
-    s32 word5;      /* 0x14 */
-    u8 pad18[4];    /* 0x18 */
-    u8 field1C;     /* 0x1C */
-    u8 pad1D;       /* 0x1D */
-    u16 field1E;    /* 0x1E */
-    u8 first;       /* 0x20 */
-    u8 pad21[5];    /* 0x21 */
-    u8 field26;     /* 0x26 */
-    u8 pad27[0x38 - 0x27]; /* 0x27 */
+enum {
+    RENDER_SLOT_COUNT_0800BC70 = 64,
+    RESOURCE_ID_EXHAUSTED_0800BC70 = 0x60,
 };
 
-void *Func_0800bc70(s32 arg0)
+typedef struct ResourceDimensions_0800bc70 {
+    u8 width;
+    u8 height;
+} ResourceDimensions_0800bc70;
+
+typedef struct RenderSlot_0800bc70 {
+    u32 reserved00;
+    u32 object_attributes;
+    u32 tile_attributes;
+    u32 reserved0c;
+    u32 coordinate_bias;
+    u32 palette_attributes;
+    u8 padding18[4];
+    u8 resource_id;
+    u8 padding1d;
+    u16 animation_state;
+    u8 active;
+    u8 padding21[5];
+    u8 visible;
+    u8 padding27[0x11];
+} RenderSlot_0800bc70;
+
+LAYOUT_OFFSET_GUARD(
+    RenderSlot0800bc70_ResourceId,
+    RenderSlot_0800bc70,
+    resource_id,
+    0x1c);
+LAYOUT_OFFSET_GUARD(
+    RenderSlot0800bc70_AnimationState,
+    RenderSlot_0800bc70,
+    animation_state,
+    0x1e);
+LAYOUT_OFFSET_GUARD(
+    RenderSlot0800bc70_Active,
+    RenderSlot_0800bc70,
+    active,
+    0x20);
+LAYOUT_OFFSET_GUARD(
+    RenderSlot0800bc70_Visible,
+    RenderSlot_0800bc70,
+    visible,
+    0x26);
+LAYOUT_SIZE_GUARD(
+    RenderSlot0800bc70_Size,
+    RenderSlot_0800bc70,
+    0x38);
+
+extern RenderSlot_0800bc70 *Data_03001e60;
+extern u16 Data_03001b10[];
+
+ResourceDimensions_0800bc70 *Func_08185000(s32);
+s32 Func_08004080(void);
+s32 Func_08003fa4(s32, s32, s32);
+s32 Func_0800b8ac(RenderSlot_0800bc70 *, s32);
+
+/* Translate supported sprite dimensions into GBA OBJ shape/size bits. */
+static u32 ObjectShapeSize_0800bc70(u16 dimensions)
 {
-    u8 *header;
-    u8 *table;
-    struct Slot *slot;
-    s32 id;
-    s32 i;
-    s32 flags;
-    s32 threshold;
-    u32 headerValue;
-    s32 code;
+    switch (dimensions) {
+    case 0x0808:
+        return 0;
+    case 0x0810:
+        return 0x00008000;
+    case 0x1008:
+        return 0x00004000;
+    case 0x1010:
+        return 0x40000000;
+    case 0x1020:
+        return 0x80008000;
+    case 0x2010:
+        return 0x80004000;
+    case 0x2020:
+        return 0x80000000;
+    case 0x2040:
+        return 0xc0008000;
+    case 0x4020:
+        return 0xc0004000;
+    case 0x4040:
+        return 0xc0000000;
+    default:
+        return 0;
+    }
+}
 
-    slot = NULL;
-    header = Func_08185000(arg0);
-    id = Func_08004080();
-    table = Data_03001e60;
-    if (header[0] == 0)
-        return NULL;
+/* Reserve and initialize one of the 64 shared sprite-render slots. */
+RenderSlot_0800bc70 *Func_0800bc70(s32 resource)
+{
+    ResourceDimensions_0800bc70 *dimensions = Func_08185000(resource);
+    s32 resource_id = Func_08004080();
+    RenderSlot_0800bc70 *slot = Data_03001e60;
+    s32 tile_attributes;
+    s32 index;
+    u16 packed_dimensions;
 
-    for (i = 0; i <= 63; i++) {
-        if (M2C_FIELD(table, u8, 0x20) == 0) {
-            slot = (struct Slot *) table;
+    if (dimensions->width == 0)
+        return 0;
+
+    for (index = 0; index < RENDER_SLOT_COUNT_0800BC70; index++, slot++) {
+        if (slot->active == 0)
             break;
-        }
-        table += 0x38;
     }
+    if (index == RENDER_SLOT_COUNT_0800BC70)
+        return 0;
+    if (resource_id == RESOURCE_ID_EXHAUSTED_0800BC70)
+        return 0;
 
-    if (slot == NULL)
-        return NULL;
-    if (id == 0x60)
-        return NULL;
+    tile_attributes = Func_08003fa4(resource_id, 0, 0);
+    if (tile_attributes == 0)
+        return 0;
 
-    if ((code = Func_08003fa4(id, 0, 0)) == 0)
-        return NULL;
+    slot->resource_id = resource_id;
+    slot->animation_state = 0;
+    slot->visible = 1;
 
-    slot->field1C = id;
-    slot->field1E = 0;
-    slot->field26 = 1;
+    packed_dimensions =
+        ((u16)dimensions->width << 8) | dimensions->height;
+    slot->reserved00 = 0;
+    slot->object_attributes =
+        ObjectShapeSize_0800bc70(packed_dimensions) | 0x2000;
+    slot->tile_attributes = tile_attributes | 0x0800;
+    slot->reserved0c = 0;
+    slot->coordinate_bias = 0x6000;
+    slot->palette_attributes =
+        (Data_03001b10[187] >> 5) | 0x0800;
 
-    headerValue = (header[0] << 8) + header[1];
-    flags = 0x80008000;
-    if (headerValue != 0x1020) {
-        if (headerValue <= 0x1020) {
-            flags = 0x8000;
-            if (headerValue != 0x810) {
-                if (headerValue <= 0x810) {
-                    threshold = 0x808;
-                    flags = 0;
-                    goto check_low;
-                }
-                flags = 0x4000;
-                if (headerValue != 0x1008) {
-                    flags = 0x40000000;
-                    if (headerValue != 0x1010) {
-                        goto no_match;
-                    }
-                }
-            }
-        } else {
-            flags = 0xC0008000;
-            if (headerValue != 0x2040) {
-                if (headerValue <= 0x2040) {
-                    flags = 0x80004000;
-                    if (headerValue != 0x2010) {
-                        flags = 0x80000000;
-                        if (headerValue != 0x2020) {
-                            goto no_match;
-                        }
-                    }
-                } else {
-                    flags = 0xC0004000;
-                    if (headerValue != 0x4020) {
-                        threshold = 0x4040;
-                        flags = 0xC0000000;
-                    check_low:
-                        if (headerValue != threshold) {
-                        no_match:
-                            flags = 0;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    M2C_FIELD(table, s32, 0x00) = 0;
-    M2C_FIELD(table, s32, 0x04) = flags | 0x2000;
-    M2C_FIELD(table, s32, 0x08) = code | 0x800;
-    M2C_FIELD(table, s32, 0x0C) = 0;
-    M2C_FIELD(table, s32, 0x10) = 0x6000;
-    M2C_FIELD(table, s32, 0x14) = (Data_03001b10[187] >> 5) | 0x800;
-
-    Func_0800b8ac(table, arg0);
+    Func_0800b8ac(slot, resource);
     return slot;
 }

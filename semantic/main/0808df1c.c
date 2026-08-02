@@ -1,145 +1,131 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
-typedef signed long long s64;
-typedef unsigned long long u64;
-typedef int bool;
-#define NULL ((void *)0)
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+#include "layout_guard.h"
+#include "types.h"
+
+enum { OBJECT_SCAN_COUNT_0808DF1C = 67 };
+
+typedef struct FieldObject_0808df1c {
+    u8 padding00[6];
+    u16 facing;
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 padding14[0x45];
+    u8 flags;
+} FieldObject_0808df1c;
+
+LAYOUT_OFFSET_GUARD(
+    FieldObject0808df1c_Facing,
+    FieldObject_0808df1c,
+    facing,
+    6);
+LAYOUT_OFFSET_GUARD(
+    FieldObject0808df1c_X,
+    FieldObject_0808df1c,
+    x,
+    8);
+LAYOUT_OFFSET_GUARD(
+    FieldObject0808df1c_Flags,
+    FieldObject_0808df1c,
+    flags,
+    0x59);
+
+typedef s32 (*LengthGateway_0808df1c)(s32 sum_of_squares);
+
+s32 Func_080022ec(s32, s32);
+s32 Func_080044d0(s32, s32);
+FieldObject_0808df1c *Func_0808ba1c(u32);
+s32 Func_0808ddb8(s32);
+
+static s32 VerticalRange_0808df1c(s32 requested_type)
+{
+    switch (requested_type) {
+    case 0x0d:
+        return 0x300000;
+    case 5:
+        return 0x400000;
+    case 2:
+        return 0x100000;
+    default:
+        return 0x080000;
+    }
+}
+
+static s32 FixedToInteger_0808df1c(s32 value)
+{
+    if (value < 0)
+        value += 0xffff;
+    return value >> 16;
+}
 
 /*
- * __call_via_rN veneer site, resolved per-site against the ROM.
- *
- * The `bl Func_080072f0` at 0x0808dfea is `__call_via_r3`. r3 is loaded one
- * instruction earlier at 0x0808dfe8 from the pool word at 0x0808e074, which
- * reads 0x030001d8 -- a fixed target, verified at this site.
- *
- * ARITY: ONE argument. Only r0 is set for the call, by `adds r0, r0, r3` at
- * 0x0808dfe6. r1 and r2 hold the two squares that were multiplied to build
- * that sum (0x0808dfdc, 0x0808dfe0); they are live intermediates, not
- * arguments. Passing them as arguments is precisely the batch-3 error --
- * 0x030001d8 was typed as three-argument there because two drafts agreed,
- * and it takes one.
- *
- * The gateway at 0x030001d8 is not named. Every one of its call sites takes a
- * sum of squares and consumes the result as a length; here `var_r5` is
- * compared against a distance bound. That reads as a square root and is
- * recorded as such WITHOUT being asserted -- an IWRAM routine with no ROM
- * body to read is a bounded uncertainty, and that is the final answer, not a
- * waypoint.
+ * Find the nearest eligible field object within the requested vertical
+ * range and the target's forward cone. The fixed 0x030001d8 gateway takes a
+ * sum of squares and returns its length; its relocated body has no ROM name.
  */
-typedef s32 (*LengthGateway)(s32 sumOfSquares);
+u32 Func_0808df1c(u32 target_id, s32 requested_type)
+{
+    static LengthGateway_0808df1c const length_gateway =
+        (LengthGateway_0808df1c)0x030001d8;
+    FieldObject_0808df1c *target = Func_0808ba1c(target_id);
+    u32 nearest_id = (u32)-1;
+    s32 nearest_distance = Func_0808ddb8(requested_type);
+    s32 vertical_range = VerticalRange_0808df1c(requested_type);
+    u16 forward;
+    u32 candidate_id;
 
-u32 Func_0808df1c(u32 arg0, s32 arg1) {
-    u32 sp4;
-    s32 sp0;
-    u32 sp8;
-    s32 var_r0_3;
-    s32 temp_fp;
-    s32 temp_r0;
-    u8 *target;
-    u8 *temp_r0_2;
-    s32 temp_r0_3;
-    s32 temp_r1;
-    s32 temp_r1_2;
-    s32 temp_r2;
-    s32 temp_r2_2;
-    s32 sum_a;
-    s32 sum_b;
-    s32 sum;
-    s32 temp_r3;
-    s32 temp_r3_2;
-    s32 var_r0;
-    s32 var_r0_2;
-    s32 var_r2;
-    s32 var_r2_2;
-    s32 var_r5;
-    u32 temp_r0_4;
-    u32 var_r9;
+    if (target == 0)
+        return nearest_id;
 
-    sp8 = arg0;
-    sp4 = -1U;
-    sp0 = Func_0808ddb8(arg1);
-    target = Func_0808ba1c(arg0);
-    if (target == 0) {
-    } else {
-        temp_fp = (M2C_FIELD(target, u16 *, 6) + 0x2000) & 0xC000;
-        var_r9 = 0;
-        do {
-            if (var_r9 != sp8) {
-                temp_r0_2 = Func_0808ba1c(var_r9);
-                if ((temp_r0_2 != 0) && !(8 & M2C_FIELD(temp_r0_2, u8 *, 0x59))) {
-                    var_r0 = 0x80000;
-                    if (arg1 == 0xD) {
-                        var_r0 = 0x300000;
-                    }
-                    if (arg1 == 5) {
-                        var_r0 = 0x400000;
-                    }
-                    if (arg1 == 2) {
-                        var_r0 = 0x100000;
-                    }
-                    temp_r1 = M2C_FIELD(temp_r0_2, s32 *, 0xC);
-                    temp_r3 = M2C_FIELD(target, s32 *, 0xC);
-                    temp_r2 = temp_r1 - temp_r3;
-                    if (temp_r2 >= 0) {
-                        if (temp_r2 > var_r0) {
-                        } else {
-                            goto block_16;
-                        }
-                    } else if ((s32)(temp_r3 - temp_r1) <= var_r0) {
-block_16:
-                        var_r0_2 = M2C_FIELD(temp_r0_2, s32 *, 8) - M2C_FIELD(target, s32 *, 8);
-                        if (var_r0_2 < 0) {
-                            var_r0_2 += 0xFFFF;
-                        }
-                        var_r2 = M2C_FIELD(temp_r0_2, s32 *, 0x10) - M2C_FIELD(target, s32 *, 0x10);
-                        temp_r0_3 = var_r0_2 >> 0x10;
-                        if (var_r2 < 0) {
-                            var_r2 += 0xFFFF;
-                        }
-                        temp_r3_2 = var_r2 >> 0x10;
-                        temp_r1_2 = temp_r3_2 * temp_r3_2;
-                        temp_r2_2 = temp_r0_3 * temp_r0_3;
-                        sum_a = temp_r1_2;
-                        sum_b = temp_r2_2;
-                        sum = sum_a;
-                        sum += sum_b;
-                        var_r5 = ((LengthGateway)0x030001D8)(sum);
-                        if (0x10 & M2C_FIELD(temp_r0_2, u8 *, 0x59)) {
-                            var_r5 = Func_080022ec(var_r5 * 2, 3);
-                        }
-                        if (var_r5 < sp0) {
-                            temp_r0_4 = (u16)Func_080044d0(M2C_FIELD(temp_r0_2, s32 *, 0x10) - M2C_FIELD(target, s32 *, 0x10), M2C_FIELD(temp_r0_2, s32 *, 8) - M2C_FIELD(target, s32 *, 8));
-                            var_r2_2 = 0x1800;
-                            if (var_r5 > 0x13) {
-                                var_r2_2 = 0x1000;
-                            }
-                            if (arg1 == 2) {
-                                var_r2_2 = 0x2000;
-                            }
-                            if (var_r5 > 0xB) {
-                                var_r0_3 = (s16)(temp_r0_4 - temp_fp);
-                                if ((s32)var_r0_3 < 0) {
-                                    var_r0_3 = 0 - var_r0_3;
-                                }
-                                if ((s32)var_r0_3 < var_r2_2) {
-                                    goto block_31;
-                                }
-                            } else {
-block_31:
-                                sp4 = var_r9;
-                                sp0 = var_r5;
-                            }
-                        }
-                    }
-                }
-            }
-            var_r9 += 1;
-        } while ((s32)var_r9 <= 0x42);
+    forward = (target->facing + 0x2000) & 0xc000;
+    for (candidate_id = 0;
+         candidate_id < OBJECT_SCAN_COUNT_0808DF1C;
+         candidate_id++) {
+        FieldObject_0808df1c *candidate;
+        s32 vertical_delta;
+        s32 delta_x;
+        s32 delta_z;
+        s32 distance;
+        u16 bearing;
+        s32 angular_limit;
+        s32 angular_delta;
+
+        if (candidate_id == target_id)
+            continue;
+        candidate = Func_0808ba1c(candidate_id);
+        if (candidate == 0 || (candidate->flags & 8) != 0)
+            continue;
+
+        vertical_delta = candidate->y - target->y;
+        if (vertical_delta < 0)
+            vertical_delta = -vertical_delta;
+        if (vertical_delta > vertical_range)
+            continue;
+
+        delta_x = FixedToInteger_0808df1c(candidate->x - target->x);
+        delta_z = FixedToInteger_0808df1c(candidate->z - target->z);
+        distance = length_gateway(
+            delta_x * delta_x + delta_z * delta_z);
+        if ((candidate->flags & 0x10) != 0)
+            distance = Func_080022ec(distance * 2, 3);
+        if (distance >= nearest_distance)
+            continue;
+
+        bearing = (u16)Func_080044d0(
+            candidate->z - target->z,
+            candidate->x - target->x);
+        angular_limit = distance > 0x13 ? 0x1000 : 0x1800;
+        if (requested_type == 2)
+            angular_limit = 0x2000;
+
+        angular_delta = (s16)(bearing - forward);
+        if (angular_delta < 0)
+            angular_delta = -angular_delta;
+        if (distance > 0x0b && angular_delta >= angular_limit)
+            continue;
+
+        nearest_id = candidate_id;
+        nearest_distance = distance;
     }
-    return sp4;
+
+    return nearest_id;
 }

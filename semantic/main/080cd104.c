@@ -1,110 +1,112 @@
+#include "layout_guard.h"
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+enum {
+    WIPE_EXTENT_080CD104 = 128,
+    WIPE_TILE_COLUMNS_080CD104 = 16,
+};
+
+typedef struct DisplayState_080cd104 {
+    u8 padding0000[0x7824];
+    s32 image_dirty;
+} DisplayState_080cd104;
+
+LAYOUT_OFFSET_GUARD(
+    DisplayState080cd104_ImageDirty,
+    DisplayState_080cd104,
+    image_dirty,
+    0x7824);
+
+extern DisplayState_080cd104 *Data_03001eec;
+extern s8 *Data_03001ef0;
 
 void Func_080030f8(u32);
 u32 Func_08004458(void);
 
-void Func_080cd104(s32 arg0, s32 arg1) {
-    u8 *sp0;
-    s32 sp4;
-    s32 temp_r1;
-    s32 temp_r1_2;
-    s8 *temp_r9;
-    s32 var_r2;
-    s32 var_r2_2;
-    s32 var_r3;
-    s32 var_r3_2;
-    s32 var_r5_2;
-    s32 var_r5_3;
-    s32 var_r6;
-    s32 var_r6_2;
-    s32 var_r8;
-    s32 var_r8_2;
-    s32 var_sl;
-    u32 var_sl_2;
-    u8 *var_r0;
-    u8 *var_r0_2;
-    u8 *var_r5;
-    u8 offsets[128];
+static void WriteTiledPixel_080cd104(
+    s8 *image,
+    s32 x,
+    s32 y,
+    s8 value)
+{
+    u32 tile = (u32)(y >> 3) * WIPE_TILE_COLUMNS_080CD104 +
+               (u32)(x >> 3);
+    u32 pixel = tile * 64 + (u32)(y & 7) * 8 + (u32)(x & 7);
 
-    sp4 = arg1;
-    sp0 = *(u8 **)0x03001EEC;
-    temp_r9 = *(s8 **)0x03001EF0;
-    var_r5 = offsets;
-    do {
-        *var_r5 = Func_08004458() & 0x3F;
-        var_r5 += 1;
-    } while (var_r5 != offsets + 128);
-    if (arg0 == 1) {
-        var_r8 = 0;
-        var_sl = 1;
-        var_r5_2 = 0;
+    image[pixel] = value;
+}
+
+static void PresentWipeStep_080cd104(DisplayState_080cd104 *display)
+{
+    display->image_dirty = 1;
+    Func_080030f8(1);
+}
+
+/*
+ * Reveal or erase a 128x128 tiled image with one randomized diagonal per row.
+ * Direction 1 advances x while scanning rows; the other direction advances y
+ * while scanning columns.  Each expanding frontier is presented for one
+ * frame, producing the two differently paced wipe animations.
+ */
+void Func_080cd104(s32 direction, s32 displayed_value)
+{
+    DisplayState_080cd104 *display = Data_03001eec;
+    s8 *image = Data_03001ef0;
+    u8 offsets[WIPE_EXTENT_080CD104];
+    s8 value = (s8)(1 - displayed_value);
+    s32 index;
+
+    for (index = 0; index < WIPE_EXTENT_080CD104; index++)
+        offsets[index] = Func_08004458() & 0x3f;
+
+    if (direction == 1) {
+        s32 frontier = 0;
+        s32 frontier_step = 1;
+        s32 x = 0;
+
         do {
-            var_r8 += var_sl;
-            var_sl += 1;
-            if (var_r5_2 != var_r8) {
-                do {
-                    var_r6 = 0;
-                    var_r0 = offsets;
-loop_7:
-                    temp_r1 = var_r5_2 - *var_r0;
-                    var_r0 += 1;
-                    if ((temp_r1 >= 0) && (temp_r1 <= 0x7F)) {
-                        var_r2 = var_r6;
-                        if (var_r6 < 0) {
-                            var_r2 = var_r6 + 7;
-                        }
-                        var_r3 = temp_r1;
-                        if (temp_r1 < 0) {
-                            var_r3 = temp_r1 + 7;
-                        }
-                        *(temp_r9 + (((((((var_r2 >> 3) * 0x10) + (var_r3 >> 3)) * 8) + (var_r6 & 7)) * 8) + (temp_r1 & 7))) = 1 - sp4;
-                    }
-                    var_r6 += 1;
-                    if (var_r6 != 0x80) {
-                        goto loop_7;
-                    }
-                    var_r5_2 += 1;
-                } while (var_r5_2 != var_r8);
+            frontier += frontier_step;
+            frontier_step++;
+
+            while (x != frontier) {
+                s32 y;
+
+                for (y = 0; y < WIPE_EXTENT_080CD104; y++) {
+                    s32 shifted_x = x - offsets[y];
+
+                    if (shifted_x >= 0 && shifted_x < WIPE_EXTENT_080CD104)
+                        WriteTiledPixel_080cd104(
+                            image, shifted_x, y, value);
+                }
+                x++;
             }
-            M2C_FIELD(sp0, s32 *, 0x7824) = 1;
-            Func_080030f8(1U);
-        } while (var_r8 <= 0x100);
-        return;
+
+            PresentWipeStep_080cd104(display);
+        } while (frontier <= 0x100);
+    } else {
+        s32 frontier = 0;
+        u32 frontier_step = 1;
+        s32 y = 0;
+
+        do {
+            frontier +=
+                (s32)((frontier_step >> 31) + frontier_step) >> 1;
+            frontier_step += 4;
+
+            while (y != frontier) {
+                s32 x;
+
+                for (x = 0; x < WIPE_EXTENT_080CD104; x++) {
+                    s32 shifted_y = y - offsets[x];
+
+                    if (shifted_y >= 0 && shifted_y < WIPE_EXTENT_080CD104)
+                        WriteTiledPixel_080cd104(
+                            image, x, shifted_y, value);
+                }
+                y++;
+            }
+
+            PresentWipeStep_080cd104(display);
+        } while (frontier <= 0xbf);
     }
-    var_r8_2 = 0;
-    var_sl_2 = 1;
-    var_r6_2 = 0;
-    do {
-        var_r8_2 += (s32) ((var_sl_2 >> 0x1F) + var_sl_2) >> 1;
-        var_sl_2 += 4;
-        if (var_r6_2 != var_r8_2) {
-            do {
-                var_r5_3 = 0;
-                var_r0_2 = offsets;
-loop_22:
-                temp_r1_2 = var_r6_2 - *var_r0_2;
-                var_r0_2 += 1;
-                if ((temp_r1_2 >= 0) && (temp_r1_2 <= 0x7F)) {
-                    var_r2_2 = temp_r1_2;
-                    if (temp_r1_2 < 0) {
-                        var_r2_2 = temp_r1_2 + 7;
-                    }
-                    var_r3_2 = var_r5_3;
-                    if (var_r5_3 < 0) {
-                        var_r3_2 = var_r5_3 + 7;
-                    }
-                    *(temp_r9 + (((((((var_r2_2 >> 3) * 0x10) + (var_r3_2 >> 3)) * 8) + (temp_r1_2 & 7)) * 8) + (var_r5_3 & 7))) = 1 - sp4;
-                }
-                var_r5_3 += 1;
-                if (var_r5_3 != 0x80) {
-                    goto loop_22;
-                }
-                var_r6_2 += 1;
-            } while (var_r6_2 != var_r8_2);
-        }
-        M2C_FIELD(sp0, s32 *, 0x7824) = 1;
-        Func_080030f8(1U);
-    } while (var_r8_2 <= 0xBF);
 }

@@ -1,180 +1,310 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "layout_guard.h"
+#include "types.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+struct SpriteSlot_080191cc {
+    u8 padding00[4];
+    u8 oam_y;
+    u8 oam_mode;
+    u16 oam_attr1;
+    u16 oam_attr2;
+    u8 padding0a[2];
+};
 
-s32 Func_08002304(s32, s32);
-s32 Func_0800231c(s32);
-s32 Func_08002322(s32);
-s32 Func_08003d28(s32 *);
-void Func_08003dec(void *, s32);
-s32 Func_08003fa4(s32, s32, s32);
+struct MapEffect_080191cc {
+    struct MapEffect_080191cc *next;
+    u8 padding04;
+    u8 kind;
+    u16 x;
+    u8 y;
+    u8 padding09[3];
+    u16 timer;
+    s8 tile_index;
+    u8 priority;
+    struct SpriteSlot_080191cc sprite;
+};
+
+struct EffectList_080191cc {
+    struct MapEffect_080191cc *head;
+    u8 padding04[0x0e];
+    u16 mode;
+    u8 padding14[2];
+    u16 flags;
+    u8 padding18[0x0c];
+};
+
+struct FieldState_080191cc {
+    u8 padding0000[0x500];
+    struct EffectList_080191cc effect_lists[8];
+    u8 padding0620[0x0c96];
+    u16 map_id;
+};
+
+LAYOUT_SIZE_GUARD(SpriteSlot080191cc_Size, struct SpriteSlot_080191cc, 0x0c);
+LAYOUT_OFFSET_GUARD(
+    SpriteSlot080191cc_Y,
+    struct SpriteSlot_080191cc,
+    oam_y,
+    0x04);
+LAYOUT_OFFSET_GUARD(
+    SpriteSlot080191cc_Attr1,
+    struct SpriteSlot_080191cc,
+    oam_attr1,
+    0x06);
+LAYOUT_OFFSET_GUARD(
+    SpriteSlot080191cc_Attr2,
+    struct SpriteSlot_080191cc,
+    oam_attr2,
+    0x08);
+LAYOUT_OFFSET_GUARD(
+    MapEffect080191cc_Kind,
+    struct MapEffect_080191cc,
+    kind,
+    0x05);
+LAYOUT_OFFSET_GUARD(
+    MapEffect080191cc_X,
+    struct MapEffect_080191cc,
+    x,
+    0x06);
+LAYOUT_OFFSET_GUARD(
+    MapEffect080191cc_Timer,
+    struct MapEffect_080191cc,
+    timer,
+    0x0c);
+LAYOUT_OFFSET_GUARD(
+    MapEffect080191cc_Sprite,
+    struct MapEffect_080191cc,
+    sprite,
+    0x10);
+LAYOUT_SIZE_GUARD(EffectList080191cc_Size, struct EffectList_080191cc, 0x24);
+LAYOUT_OFFSET_GUARD(
+    EffectList080191cc_Mode,
+    struct EffectList_080191cc,
+    mode,
+    0x12);
+LAYOUT_OFFSET_GUARD(
+    EffectList080191cc_Flags,
+    struct EffectList_080191cc,
+    flags,
+    0x16);
+LAYOUT_OFFSET_GUARD(
+    FieldState080191cc_EffectLists,
+    struct FieldState_080191cc,
+    effect_lists,
+    0x500);
+LAYOUT_OFFSET_GUARD(
+    FieldState080191cc_MapId,
+    struct FieldState_080191cc,
+    map_id,
+    0x12b6);
+
+extern struct FieldState_080191cc *Data_03001e8c;
+extern u32 Data_03001800;
+
+s32 Func_08002304(s32 value, s32 modulus);
+s32 Func_0800231c(s32 angle);
+s32 Func_08002322(s32 angle);
+s32 Func_08003d28(const u32 *affine);
+void Func_08003dec(struct SpriteSlot_080191cc *sprite, s32 priority);
+s32 Func_08003fa4(s32 index, s32 size, const void *source);
 u32 Func_08004458(void);
-void Func_0801908c(void *);
+void Func_0801908c(struct MapEffect_080191cc *effect);
+
+static void SetSpriteX_080191cc(struct SpriteSlot_080191cc *sprite, s32 x) {
+    sprite->oam_attr1 =
+        (sprite->oam_attr1 & 0xfe00) | (x & 0x01ff);
+}
+
+static void SetAffineSlot_080191cc(
+    struct SpriteSlot_080191cc *sprite,
+    s32 affine_slot
+) {
+    sprite->oam_attr1 =
+        (sprite->oam_attr1 & 0xc1ff) | ((affine_slot & 31) << 9);
+}
+
+static void PlaceNormalSprite_080191cc(struct MapEffect_080191cc *effect) {
+    struct SpriteSlot_080191cc *sprite = &effect->sprite;
+
+    sprite->oam_attr1 &= 0xc1ff;
+    sprite->oam_mode &= (u8)~3;
+    SetSpriteX_080191cc(sprite, effect->x);
+    sprite->oam_y = effect->y;
+}
+
+static s32 SmallJitter_080191cc(void) {
+    u32 first = (Func_08004458() * 3) >> 16;
+    u32 second = (Func_08004458() * 3) >> 16;
+
+    return (first + second) / 2 - 1;
+}
+
+static void AnimateMapTile_080191cc(
+    struct FieldState_080191cc *field,
+    struct MapEffect_080191cc *effect
+) {
+    struct SpriteSlot_080191cc *sprite = &effect->sprite;
+    s32 frame = (Data_03001800 >> 2) & 7;
+    s32 tile;
+
+    if (field->map_id == 0x60) {
+        return;
+    }
+
+    tile = Func_08003fa4(
+        field->map_id,
+        0x80,
+        (const u8 *)0x080368D4 + frame * 0x80);
+    sprite->oam_attr2 = (sprite->oam_attr2 & 0xfc00) | (tile & 0x03ff);
+    effect->tile_index = (s8)sprite->oam_attr2;
+    sprite->oam_mode =
+        ((((sprite->oam_mode & (u8)~0x0c) & (u8)~0x10) | 0x20) & 0x3f) |
+        0x80;
+    sprite->oam_y = (u8)(effect->y +
+        ((const u8 *)0x08033E60)[Func_08002304(Data_03001800, 0x50)] + 2);
+    sprite->oam_mode &= (u8)~3;
+    sprite->oam_attr1 &= 0x01ff;
+}
+
+static void AnimateShrink_080191cc(struct MapEffect_080191cc *effect) {
+    u32 affine[2] = {0x02000200, 0};
+
+    if (effect->timer == 0) {
+        PlaceNormalSprite_080191cc(effect);
+        return;
+    }
+
+    SetAffineSlot_080191cc(&effect->sprite, Func_08003d28(affine));
+    effect->sprite.oam_mode |= 3;
+    SetSpriteX_080191cc(&effect->sprite, effect->x - 5);
+    effect->sprite.oam_y = effect->y - 5;
+    effect->timer--;
+}
+
+static void AnimateOrbit_080191cc(struct MapEffect_080191cc *effect) {
+    u32 affine[2];
+    u16 angle;
+
+    effect->timer += 0x300;
+    angle = effect->timer;
+    affine[0] = 0x01000100;
+    affine[1] = angle;
+    SetAffineSlot_080191cc(&effect->sprite, Func_08003d28(affine));
+    effect->sprite.oam_mode =
+        (effect->sprite.oam_mode & (u8)~3) | 1;
+    SetSpriteX_080191cc(
+        &effect->sprite,
+        effect->x - (Func_08002322((u16)(angle + 0xe800)) >> 14) - 2);
+    effect->sprite.oam_y =
+        effect->y - (Func_0800231c((u16)(angle + 0x6800)) >> 14) - 2;
+}
+
+static void AnimateBob_080191cc(struct MapEffect_080191cc *effect) {
+    const s8 *offsets = (const s8 *)0x08033EB0;
+    s32 x_offset_index;
+    s32 y_offset_index;
+
+    if (Data_03001800 & 1) {
+        effect->timer++;
+    }
+    x_offset_index = Func_08002304(effect->timer, 0x14) * 2;
+    SetSpriteX_080191cc(&effect->sprite, effect->x + offsets[x_offset_index]);
+    y_offset_index = Func_08002304(effect->timer, 0x14) * 2 + 1;
+    effect->sprite.oam_y = effect->y + (u8)offsets[y_offset_index] - 2;
+}
+
+static void AnimateLargeShrink_080191cc(struct MapEffect_080191cc *effect) {
+    u32 affine[2] = {0x01400140, 0};
+
+    if (effect->timer == 0) {
+        PlaceNormalSprite_080191cc(effect);
+        return;
+    }
+
+    SetAffineSlot_080191cc(&effect->sprite, Func_08003d28(affine));
+    effect->sprite.oam_mode |= 3;
+    SetSpriteX_080191cc(&effect->sprite, effect->x - 8);
+    effect->sprite.oam_y = effect->y - 8;
+    effect->timer--;
+}
+
+static void AnimateEffect_080191cc(
+    struct FieldState_080191cc *field,
+    struct MapEffect_080191cc *effect
+) {
+    const s8 *step = (const s8 *)0x08033EE8;
+
+    switch (effect->kind) {
+    case 2:
+        AnimateMapTile_080191cc(field, effect);
+        break;
+    case 4:
+        AnimateBob_080191cc(effect);
+        break;
+    case 5:
+        if (Data_03001800 & 1) {
+            SetSpriteX_080191cc(&effect->sprite, effect->x + SmallJitter_080191cc());
+            effect->sprite.oam_y = effect->y + SmallJitter_080191cc();
+        }
+        break;
+    case 6:
+        AnimateShrink_080191cc(effect);
+        break;
+    case 7:
+        AnimateOrbit_080191cc(effect);
+        break;
+    case 8:
+        AnimateLargeShrink_080191cc(effect);
+        break;
+    case 9:
+    case 10:
+    case 11:
+    case 12:
+        Func_0801908c(effect);
+        break;
+    case 14:
+    case 15:
+    case 16:
+        effect->timer++;
+        effect->sprite.oam_y = effect->y + (u8)step[effect->timer & 15];
+        break;
+    case 17:
+        effect->timer++;
+        effect->sprite.oam_y = effect->y - (u8)step[effect->timer & 15];
+        break;
+    case 18:
+        effect->timer++;
+        SetSpriteX_080191cc(
+            &effect->sprite,
+            effect->x - step[effect->timer & 15]);
+        effect->sprite.oam_y = effect->y + (u8)step[effect->timer & 15];
+        break;
+    }
+}
 
 /* Updates the eight active map-object lists and their attached sprite state. */
 void Func_080191cc(void) {
-    s32 sp0;
-    s32 sp4;
-    s32 sp10[2];
-    u8 *temp_r7;
-    s32 var_fp;
-    u16 temp_r3_3;
-    u16 temp_r3_4;
-    u16 temp_r3_5;
-    u16 temp_r3_6;
-    u16 temp_r3_7;
-    u32 temp_r3_2;
-    u32 temp_r5_2;
-    u32 temp_r5_3;
-    u8 temp_r3_8;
-    u8 temp_r4;
-    u8 temp_r5;
-    u8 temp_r8;
-    u8 *temp_r3;
-    u8 *var_r6;
-    u8 *var_sl;
+    struct FieldState_080191cc *field = Data_03001e8c;
+    s32 list_index;
 
-    temp_r3 = *(void **)0x03001E8C;
-    var_sl = temp_r3 + 0x500;
-    var_fp = 0;
-loop_1:
-    if (!(1 & M2C_FIELD(var_sl, u16 *, 0x16))) {
+    for (list_index = 0; list_index < 8; list_index++) {
+        struct EffectList_080191cc *list = &field->effect_lists[list_index];
+        struct MapEffect_080191cc *effect;
 
-    } else {
-        var_r6 = M2C_FIELD(var_sl, void **, 0);
-loop_36:
-        if (var_r6 != 0) {
-            temp_r7 = var_r6 + 0x10;
-            if (M2C_FIELD(var_sl, u16 *, 0x12) == 4) {
-                M2C_FIELD(var_r6, u16 *, 0xC) = 2U;
-                M2C_FIELD(var_r6, u8 *, 5) = 8U;
-            }
-            temp_r3_2 = M2C_FIELD(var_r6, u8 *, 5) - 2;
-            switch (temp_r3_2) {
-            case 0:
-                if (M2C_FIELD(temp_r3, u16 *, 0x12B6) == 0x60) {
-
-                } else {
-                    temp_r3_3 = (0xFFFFFC00 & M2C_FIELD(temp_r7, u16 *, 8)) | (Func_08003fa4((s32) M2C_FIELD(temp_r3, u16 *, 0x12B6), 0x80, (((*(u32 *)0x03001800 >> 2) & 7) << 7) + 0x080368D4) & 0x3FF);
-                    M2C_FIELD(temp_r7, u16 *, 8) = temp_r3_3;
-                    M2C_FIELD(var_r6, s8 *, 0xE) = (s8) temp_r3_3;
-                    temp_r4 = 0x3F & M2C_FIELD(temp_r7, u8 *, 7);
-                    temp_r5 = (((-0xD & M2C_FIELD(temp_r7, u8 *, 5) & ~0x10) | 0x20) & 0x3F) | 0x80;
-                    M2C_FIELD(temp_r7, u8 *, 7) = temp_r4;
-                    M2C_FIELD(temp_r7, u8 *, 5) = temp_r5;
-                    temp_r8 = M2C_FIELD(var_r6, u8 *, 8);
-                    sp4 = 0x08033E60;
-                    sp0 = (s32) temp_r4;
-                    M2C_FIELD(temp_r7, s8 *, 4) = (s8) (temp_r8 + M2C_FIELD((void *) Func_08002304(*(s32 *)0x03001800, 0x50), u8 *, 0x08033E60) + 2);
-                    M2C_FIELD(temp_r7, u8 *, 5) = (u8) (temp_r5 & ~3);
-                    M2C_FIELD(temp_r7, u8 *, 7) = (u8) (-0x3F & temp_r4);
-                }
-                break;
-            case 3:
-                if (!(*(u32 *)0x03001800 & 1)) {
-
-                } else {
-                    temp_r5_2 = Func_08004458();
-                    M2C_FIELD(temp_r7, u16 *, 6) = (u16) ((0xFFFFFE00 & M2C_FIELD(temp_r7, u16 *, 6)) | (((M2C_FIELD(var_r6, u16 *, 6) + ((u32) (((u32) (temp_r5_2 * 3) >> 0x10) + ((u32) (Func_08004458() * 3) >> 0x10)) >> 1)) - 1) & 0x1FF));
-                    temp_r5_3 = Func_08004458();
-                    M2C_FIELD(temp_r7, s8 *, 4) = (s8) ((M2C_FIELD(var_r6, u8 *, 8) + ((u32) (((u32) (temp_r5_3 * 3) >> 0x10) + ((u32) (Func_08004458() * 3) >> 0x10)) >> 1)) - 1);
-                }
-                break;
-            case 4:
-                if (M2C_FIELD(var_r6, u16 *, 0xC) == 0) {
-block_28:
-                    M2C_FIELD(temp_r7, u8 *, 7) = (u8) (-0x3F & M2C_FIELD(temp_r7, u8 *, 7));
-                    M2C_FIELD(temp_r7, u8 *, 5) = (u8) (-4 & M2C_FIELD(temp_r7, u8 *, 5));
-                    M2C_FIELD(temp_r7, u16 *, 6) = (u16) ((0xFFFFFE00 & M2C_FIELD(temp_r7, u16 *, 6)) | (0x1FF & M2C_FIELD(var_r6, u16 *, 6)));
-                    M2C_FIELD(temp_r7, s8 *, 4) = (s8) (u16) M2C_FIELD(var_r6, u8 *, 8);
-                } else {
-                    sp10[0] = 0x02000200;
-                    sp10[1] = 0;
-                    M2C_FIELD(temp_r7, u8 *, 7) = (u8) ((-0x3F & M2C_FIELD(temp_r7, u8 *, 7)) | ((Func_08003d28(sp10) & 0x1F) * 2));
-                    M2C_FIELD(temp_r7, u8 *, 5) = (u8) (M2C_FIELD(temp_r7, u8 *, 5) | 3);
-                    M2C_FIELD(temp_r7, u16 *, 6) = (u16) ((0xFFFFFE00 & M2C_FIELD(temp_r7, u16 *, 6)) | ((M2C_FIELD(var_r6, u16 *, 6) + 0xFFFB) & 0x1FF));
-                    M2C_FIELD(temp_r7, s8 *, 4) = (s8) (M2C_FIELD(var_r6, u8 *, 8) + 0xFB);
-                    M2C_FIELD(var_r6, u16 *, 0xC) = (u16) (M2C_FIELD(var_r6, u16 *, 0xC) + 0xFFFF);
-                }
-                break;
-            case 5:
-                M2C_FIELD(sp10, s16 *, 0) = 0x100;
-                M2C_FIELD(sp10, s16 *, 2) = 0x100;
-                temp_r3_4 = M2C_FIELD(var_r6, u16 *, 0xC) + 0x300;
-                M2C_FIELD(var_r6, u16 *, 0xC) = temp_r3_4;
-                M2C_FIELD(sp10, s32 *, 4) = temp_r3_4;
-                M2C_FIELD(temp_r7, u8 *, 7) = (u8) ((-0x3F & M2C_FIELD(temp_r7, u8 *, 7)) | ((Func_08003d28(sp10) & 0x1F) * 2));
-                M2C_FIELD(temp_r7, u8 *, 5) = (u8) ((-4 & M2C_FIELD(temp_r7, u8 *, 5)) | 1);
-                M2C_FIELD(temp_r7, u16 *, 6) = (u16) ((0xFFFFFE00 & M2C_FIELD(temp_r7, u16 *, 6)) | (((M2C_FIELD(var_r6, u16 *, 6) - (Func_08002322((u16) M2C_FIELD(sp10, s32 *, 4) + 0xE800) >> 0xE)) - 2) & 0x1FF));
-                M2C_FIELD(temp_r7, s8 *, 4) = (s8) ((M2C_FIELD(var_r6, u8 *, 8) - (Func_0800231c((u16) M2C_FIELD(sp10, s32 *, 4) + 0x6800) >> 0xE)) - 2);
-                break;
-            case 2:
-                if (*(u32 *)0x03001800 & 1) {
-                    M2C_FIELD(var_r6, u16 *, 0xC) = (u16) (M2C_FIELD(var_r6, u16 *, 0xC) + 1);
-                }
-                sp0 = 0x08033EB0;
-                M2C_FIELD(temp_r7, u16 *, 6) = (u16) ((0xFFFFFE00 & M2C_FIELD(temp_r7, u16 *, 6)) | ((M2C_FIELD(var_r6, u16 *, 6) + M2C_FIELD(((u32) (Func_08002304((s32) M2C_FIELD(var_r6, u16 *, 0xC), 0x14) << 0x10) >> 0xF), s8 *, 0x08033EB0)) & 0x1FF));
-                M2C_FIELD(temp_r7, s8 *, 4) = (s8) ((M2C_FIELD(var_r6, u8 *, 8) + M2C_FIELD((((u32) (Func_08002304((s32) M2C_FIELD(var_r6, u16 *, 0xC), 0x14) << 0x10) >> 0xF) + 1), u8 *, 0x08033EB0)) - 2);
-                break;
-            case 15:
-                temp_r3_5 = M2C_FIELD(var_r6, u16 *, 0xC) + 1;
-                M2C_FIELD(var_r6, u16 *, 0xC) = temp_r3_5;
-                M2C_FIELD(temp_r7, s8 *, 4) = (s8) (M2C_FIELD(var_r6, u8 *, 8) - M2C_FIELD((temp_r3_5 & 0xF), u8 *, 0x08033EE8));
-                break;
-            case 12:
-            case 13:
-            case 14:
-                temp_r3_6 = M2C_FIELD(var_r6, u16 *, 0xC) + 1;
-                M2C_FIELD(var_r6, u16 *, 0xC) = temp_r3_6;
-                M2C_FIELD(temp_r7, s8 *, 4) = (s8) (M2C_FIELD(var_r6, u8 *, 8) + M2C_FIELD((temp_r3_6 & 0xF), u8 *, 0x08033EE8));
-                break;
-            case 16:
-                temp_r3_7 = M2C_FIELD(var_r6, u16 *, 0xC) + 1;
-                M2C_FIELD(var_r6, u16 *, 0xC) = temp_r3_7;
-                M2C_FIELD(temp_r7, u16 *, 6) = (u16) ((0xFFFFFE00 & M2C_FIELD(temp_r7, u16 *, 6)) | ((M2C_FIELD(var_r6, u16 *, 6) - M2C_FIELD((temp_r3_7 & 0xF), s8 *, 0x08033EE8)) & 0x1FF));
-                M2C_FIELD(temp_r7, s8 *, 4) = (s8) (M2C_FIELD(var_r6, u8 *, 8) + M2C_FIELD((0xF & M2C_FIELD(var_r6, u16 *, 0xC)), u8 *, 0x08033EE8));
-                break;
-            case 6:
-                if (M2C_FIELD(var_r6, u16 *, 0xC) != 0) {
-                    M2C_FIELD(sp10, s16 *, 0) = 0x140;
-                    M2C_FIELD(sp10, s16 *, 2) = 0x140;
-                    M2C_FIELD(sp10, s32 *, 4) = 0;
-                    M2C_FIELD(temp_r7, u8 *, 7) = (u8) ((-0x3F & M2C_FIELD(temp_r7, u8 *, 7)) | ((Func_08003d28(sp10) & 0x1F) * 2));
-                    M2C_FIELD(temp_r7, u8 *, 5) = (u8) (M2C_FIELD(temp_r7, u8 *, 5) | 3);
-                    M2C_FIELD(temp_r7, u16 *, 6) = (u16) ((0xFFFFFE00 & M2C_FIELD(temp_r7, u16 *, 6)) | ((M2C_FIELD(var_r6, u16 *, 6) + 0xFFF8) & 0x1FF));
-                    M2C_FIELD(temp_r7, s8 *, 4) = (s8) (M2C_FIELD(var_r6, u8 *, 8) + 0xF8);
-                    M2C_FIELD(var_r6, u16 *, 0xC) = (u16) (M2C_FIELD(var_r6, u16 *, 0xC) + 0xFFFF);
-                } else {
-                    goto block_28;
-                }
-                break;
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-                Func_0801908c(var_r6);
-                break;
-            }
-            temp_r3_8 = M2C_FIELD(var_r6, u8 *, 5);
-            if (temp_r3_8 == 2) {
-                if (M2C_FIELD(temp_r3, u16 *, 0x12B6) != 0x60) {
-                    Func_08003dec(temp_r7, (s32) M2C_FIELD(var_r6, u8 *, 0xF));
-                }
-            } else if (temp_r3_8 != 0xD) {
-                Func_08003dec(temp_r7, (s32) M2C_FIELD(var_r6, u8 *, 0xF));
-            }
-            var_r6 = M2C_FIELD(var_r6, void **, 0);
-            goto loop_36;
+        if (!(list->flags & 1)) {
+            continue;
         }
-    }
-    var_fp += 1;
-    var_sl += 0x24;
-    if (var_fp != 8) {
-        goto loop_1;
+
+        for (effect = list->head; effect != 0; effect = effect->next) {
+            if (list->mode == 4) {
+                effect->timer = 2;
+                effect->kind = 8;
+            }
+
+            AnimateEffect_080191cc(field, effect);
+            if ((effect->kind != 2 || field->map_id != 0x60) &&
+                effect->kind != 13) {
+                Func_08003dec(&effect->sprite, effect->priority);
+            }
+        }
     }
 }

@@ -1,49 +1,59 @@
 #include "types.h"
-#define M2C_FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-void Func_08097384(void) {
-    s32 temp_r5;
-    s32 var_r5;
-    void *temp_r4;
+struct DmaTransfer_08097384 {
+    const void *source;
+    void *destination;
+    u32 control;
+};
 
-    temp_r5 = M2C_FIELD((void *)0x03001EBC, s32 *, 0x14);
-    temp_r4 = M2C_FIELD((void *)0x03001EBC, void **, 0);
-    M2C_FIELD((void *)0x040000D4, s32 *, 0) = (s32) (temp_r5 + 0x1340);
-    M2C_FIELD((void *)0x040000D4, void **, 4) = (void *) (temp_r4 + 0x776);
-    M2C_FIELD((void *)0x040000D4, s32 *, 8) = 0x84000150;
-    if (M2C_FIELD(temp_r4, s16 *, 0xCB8) == 0) {
-        M2C_FIELD((void *)0x040000D4, s32 *, 0) = (s32) (temp_r5 + 0xE00);
-        M2C_FIELD((void *)0x040000D4, void **, 4) = (void *) (temp_r4 + 0x236);
-        M2C_FIELD((void *)0x040000D4, s32 *, 8) = 0x84000150;
+struct RuntimeState_08097384 {
+    u8 *scene;
+    u8 padding04[0x10];
+    u8 *tiles;
+};
+
+extern s32 Data_03001e40;
+extern const s32 Data_080a0108[8];
+
+s32 Func_080770c0(s32);
+void Func_08091200(s32, s32);
+void Func_08091254(s32);
+
+/*
+ * Install the scene's tile data and choose its rendering preset.  The eight
+ * event flags are checked in order, so the highest enabled flag wins; when
+ * none is enabled the low three bits of the global scene index are used.
+ */
+void Func_08097384(void)
+{
+    struct RuntimeState_08097384 *runtime =
+        (struct RuntimeState_08097384 *)0x03001ebc;
+    volatile struct DmaTransfer_08097384 *dma =
+        (volatile struct DmaTransfer_08097384 *)0x040000d4;
+    u8 *base = runtime->scene;
+    u8 *tiles = runtime->tiles;
+    s32 preset = Data_03001e40 & 7;
+    s32 flag;
+
+    dma->source = tiles + 0x1340;
+    dma->destination = base + 0x0776;
+    dma->control = 0x84000150;
+
+    if (*(s16 *)(base + 0x0cb8) == 0) {
+        dma->source = tiles + 0x0e00;
+        dma->destination = base + 0x0236;
+        dma->control = 0x84000150;
     }
-    M2C_FIELD((void *)0x040000D4, s32 *, 0) = (s32) (temp_r5 + 0xE00);
-    M2C_FIELD((void *)0x040000D4, void **, 4) = (void *) (temp_r5 + 0x380);
-    M2C_FIELD((void *)0x040000D4, s32 *, 8) = 0x840002A0;
-    var_r5 = *(s32 *)0x03001E40 & 7;
-    if (Func_080770c0(0x148) != 0) {
-        var_r5 = 0;
+
+    dma->source = tiles + 0x0e00;
+    dma->destination = tiles + 0x0380;
+    dma->control = 0x840002a0;
+
+    for (flag = 0; flag < 8; flag++) {
+        if (Func_080770c0(0x0148 + flag) != 0)
+            preset = flag;
     }
-    if (Func_080770c0(0x149) != 0) {
-        var_r5 = 1;
-    }
-    if (Func_080770c0(0x14A) != 0) {
-        var_r5 = 2;
-    }
-    if (Func_080770c0(0x14B) != 0) {
-        var_r5 = 3;
-    }
-    if (Func_080770c0(0x14C) != 0) {
-        var_r5 = 4;
-    }
-    if (Func_080770c0(0x14D) != 0) {
-        var_r5 = 5;
-    }
-    if (Func_080770c0(0x14E) != 0) {
-        var_r5 = 6;
-    }
-    if (Func_080770c0(0x14F) != 0) {
-        var_r5 = 7;
-    }
-    Func_08091200(M2C_FIELD((var_r5 * 4), s32 *, 0x080A0108), 1);
+
+    Func_08091200(Data_080a0108[preset], 1);
     Func_08091254(8);
 }

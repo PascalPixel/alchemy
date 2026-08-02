@@ -15,10 +15,10 @@ byte-identical, source ownership is complete, and ROM fallback is zero.
 Alchemy is a complete, byte-identical, source-owned reconstruction of the
 8 MiB GS1 English ROM image. It is **not** a fully decompiled C project.
 
-- Exact Full-C Byte Share is **266,832 / 1,343,410 executable bytes
+- Exact Full-C Byte Share is **266,832 / 1,343,470 executable bytes
   (19.86%)**.
-- Reviewed semantic C adds **803,194 executable bytes**. Exact plus semantic C
-  covers **1,070,026 / 1,343,410 bytes (79.65%)**.
+- Reviewed semantic C adds **833,208 executable bytes**. Exact plus semantic C
+  covers **1,100,040 / 1,343,470 bytes (81.88%)**.
 - The main executable has a closed semantic census: every ordinary owner has
   exact or reviewed semantic C. That closure has **not** made exact matching
   materially faster by itself.
@@ -53,15 +53,15 @@ may retain older identifiers when renaming would damage reproducibility.
 | Scope | Exact C | Semantic C, excluding exact | Assembly / retained | Executable total |
 | --- | ---: | ---: | ---: | ---: |
 | Main executable | 105,052 | 412,826 | 30,486 retained | 548,364 |
-| 96 decoded code overlays | 161,780 | 390,368 | 242,898 unresolved | 795,046 |
-| **Total** | **266,832** | **803,194** | **273,384** | **1,343,410** |
+| 96 decoded code overlays | 161,780 | 420,382 | 212,944 unresolved | 795,106 |
+| **Total** | **266,832** | **833,208** | **243,430** | **1,343,470** |
 
 Additional ROM-image facts:
 
 - Total ROM image: **8,388,608 bytes**.
-- Data/assets outside the executable denominator: **7,300,700 bytes**.
-- Compressed code-overlay streams occupy **539,544 ROM bytes**; their decoded
-  executable size is counted in the separate 795,046-byte code-overlay namespace.
+- Data/assets outside the executable denominator: **7,298,755 bytes**.
+- Compressed code-overlay streams occupy **541,489 ROM bytes**; their decoded
+  executable size is counted in the separate 795,106-byte code-overlay namespace.
 - The source-only full build owns **8,388,608 / 8,388,608 bytes**, uses zero
   fallback, and reproduces the reference ROM byte for byte.
 - Diagnostic source counts are 1,428 main-image C files, 1,834 exact code-overlay
@@ -69,10 +69,10 @@ Additional ROM-image facts:
   and 41 headers. These are useful inventory counts, not progress percentages
   or reliable function counts.
 
-The semantic compiler reviews 825,476 bytes of owner spans, but 22,282 of those
+The semantic compiler reviews 855,518 bytes of owner spans, but 22,310 of those
 bytes lie outside the audited executable extents, chiefly pool/tail portions of
-code-overlay owner spans. The coverage numerator therefore uses 803,194, not
-825,476. `tools/build_semantic.ts` now reports both figures instead of silently
+code-overlay owner spans. The coverage numerator therefore uses 833,208, not
+855,518. `tools/build_semantic.ts` now reports both figures instead of silently
 adding out-of-scope bytes.
 
 ## What exact C means
@@ -89,8 +89,8 @@ scheduling diagnostics because their boundaries and scopes differ.
 The current split is:
 
 - Main executable: **105,052 / 548,364 (19.16%)**.
-- Code overlays: **161,780 / 795,046 (20.35%)**.
-- Combined: **266,832 / 1,343,410 (19.86%)**.
+- Code overlays: **161,780 / 795,106 (20.35%)**.
+- Combined: **266,832 / 1,343,470 (19.86%)**.
 
 ## Main-executable audit
 
@@ -155,10 +155,10 @@ unpromoted until a canonical source reproduces the reference bytes.
 
 The 96 decoded code overlays are the largest open program scope:
 
-- Executable inventory: **795,046 bytes**.
+- Executable inventory: **795,106 bytes**.
 - Exact C: **161,780 bytes**.
-- Additional semantic C: **407,030 bytes**.
-- Remaining without exact or semantic C: **226,236 bytes**.
+- Additional semantic C: **420,382 bytes**.
+- Remaining without exact or semantic C: **212,944 bytes**.
 - Current semantic-backed exact reading list: **539 owners / 274,540 bytes**
   across 67 code overlays.
 
@@ -181,9 +181,13 @@ for unowned code and makes that negative result immediate rather than manual.
 each semantic owner's source-level postorder call sequence with its reachable,
 veneer-resolved BL sequence, including conservative IWRAM call-through recovery.
 Use it on every new owner alongside the multiset check: all four new
-`resource_3bd` owners pass both. The project-wide diagnostic currently reports
-1,101 owners, 866 passes and 235 pre-existing mismatches, so `--all` is an audit
-queue rather than a green gate; the self-test is wired into `bun test`.
+`resource_3bd` owners pass both. The latest closure also admits the 6,220-byte
+`resource_3bd:13f8`, the 4,080-byte `resource_378:088c`, four adjacent
+`resource_383` owners totalling 2,824 bytes, and `resource_3b1:1894` at 228
+bytes. Each passes the targeted multiset and ordered-call checks. The
+project-wide diagnostic currently reports 1,108 owners, 873 passes and 235
+pre-existing mismatches, so `--all` is an audit queue rather than a green gate;
+the self-test is wired into `bun test`.
 
 ## Semantic C: what it did and did not unlock
 

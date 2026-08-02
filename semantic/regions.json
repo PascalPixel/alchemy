@@ -873,6 +873,12 @@
     },
     {
       "overlay": "resource_378",
+      "entry": "0x0200088c",
+      "span_bytes": 4080,
+      "evidence": "admitted whole-owner semantic reconstruction; first ordinary prologue in the live gap at 0x0200088c is push {r5,lr}; the CFG walk reaches the sole interworking return pop {r5}/pop {r0}/bx r0 at 0x0200186c-0x02001870, then the alignment word at 0x02001872 and two literal-pool words at 0x02001874-0x0200187b; the next prologue is 0x0200187c, establishing 0x0200088c-0x0200187b (0xff0 bytes); embedded pools at 0x02000b48-0x02000b5f, 0x02000f3c-0x02000f43, and 0x02001600-0x02001607 are branch-skipped; 489 resolved BL sites (39 distinct targets), with the apparent 0x020017ca BL excluded as an intra-owner transfer"
+    },
+    {
+      "overlay": "resource_378",
       "entry": "0x020025c4",
       "span_bytes": 156,
       "evidence": "derived owner boundary from assets/code/resource_378_overlay.s: push {r5,lr} at 0x020025c4, the four-byte literal pool at 0x0200265c-0x0200265f, and pop {r5}/pop {r0}/bx r0 at 0x02002654-0x02002658; next prologue is 0x02002660"
@@ -1656,6 +1662,30 @@
       "entry": "0x02002758",
       "span_bytes": 1096,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_383), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; a 13-entry jump table at image offset 0x2784 whose nine distinct arms all run PAST it to the shared epilogue at 0x02002b92-0x02002b9a, so the 1092 bytes a table-blind span reports is a lower bound; the bulk of the literal pool sits INSIDE the function at 0x02002af4-0x02002b2b, jumped over between arms, with one trailing pool word at 0x02002b9c; span read to the next function at 0x02002ba0, which is itself the callback this driver installs as 0x0200aba1, inside the assembled overlay image and not overlapping another recorded owner; hand-drafted from the bytes with every bl resolved as an absolute image offset (stored displacement + 2) and every table word as word - 0x8000 in the same space; tools/m2c_guard.ts finds no call-through-register site and reports 24 of 24 callees present in the draft."
+    },
+    {
+      "overlay": "resource_383",
+      "entry": "0x02002ba0",
+      "span_bytes": 80,
+      "evidence": "admitted whole-owner semantic reconstruction; saved-register prologue at 0x02002ba0 and the sole pop/bx return at 0x02002bee, immediately followed by the next prologue at 0x02002bf0; the four wrapped coordinate deltas, two direction-helper calls and actor direction stores are represented in ordinary C"
+    },
+    {
+      "overlay": "resource_383",
+      "entry": "0x02002bf0",
+      "span_bytes": 452,
+      "evidence": "admitted whole-owner semantic reconstruction; push {r5,r6,lr} at 0x02002bf0 through the sole pop/bx return at 0x02002d9e, followed by the alignment halfword and four directly referenced pool words through 0x02002db3; the next prologue is 0x02002db4, establishing the complete 452-byte owner"
+    },
+    {
+      "overlay": "resource_383",
+      "entry": "0x02002db4",
+      "span_bytes": 464,
+      "evidence": "admitted whole-owner semantic reconstruction; saved-register prologue at 0x02002db4 through the sole pop/bx return at 0x02002f68, followed by the alignment halfword and six directly referenced pool words through 0x02002f83; the next prologue is 0x02002f84, establishing the complete 464-byte event owner"
+    },
+    {
+      "overlay": "resource_383",
+      "entry": "0x02002fd4",
+      "span_bytes": 1828,
+      "evidence": "admitted whole-owner semantic reconstruction; one saved-register event-sequence owner from push {r5,r6,lr} at 0x02002fd4 through its sole pop/bx return at 0x020036e0-0x020036e4, followed by the alignment halfword and four directly referenced pool words through 0x020036f7 before the next high-register prologue at 0x020036f8. The linear actor/camera choreography, three persistent scene-state stores and the single Func_0808a070 conditional split are represented in ordinary C; all local/import call identities and their runtime order are independently checked against reachable resolver output, with no inline assembly or fixed-register construct."
     },
     {
       "overlay": "resource_383",
@@ -5385,6 +5415,12 @@
     },
     {
       "overlay": "resource_3b1",
+      "entry": "0x02001894",
+      "span_bytes": 228,
+      "evidence": "admitted whole-owner semantic reconstruction; first ordinary owner after the 0x02001894 gap begins with push {lr}, returns through pop {r0} / bx r0 at 0x0200194e-0x02001950, includes the alignment halfword at 0x02001952 and nine directly referenced literal words at 0x02001954-0x02001977, and ends immediately before the next push {lr} at 0x02001978; the unsigned fixed-point gate, 20 resolved calls, all conditional arms, and the 228-byte boundary were checked against the assembled overlay"
+    },
+    {
+      "overlay": "resource_3b1",
       "entry": "0x02002ff0",
       "span_bytes": 884,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- this overlay ENTRY DRIVER, identified from the header veneer at image offset 4 (bun tools/overlay_driver.ts resource_3b1), so it is entered by the loader and is the target of no bl inside the image, which is why it sat in no structural inventory row; TWO jump tables on the same sub-selector, at image offsets 0x3028 (24 entries, four arms) and 0x30f0 (30 entries, twenty arms), whose arms all run PAST their tables to the shared epilogue at 0x02003320-0x02003326, so the 824 bytes a table-blind span reports is a lower bound; span read through that epilogue and the fifteen-word literal pool 0x02003328-0x02003363 to the next function at 0x02003364, which this driver itself calls, inside the assembled overlay image and not overlapping another recorded owner; hand-drafted from the bytes with every bl resolved as an absolute image offset (stored displacement + 2) and every table word as word - 0x8000 in the same space; tools/m2c_guard.ts finds no call-through-register site and reports 31 of 31 callees present in the draft."
@@ -8724,6 +8760,12 @@
       "entry": "0x02000de8",
       "span_bytes": 196,
       "evidence": "admitted whole-owner semantic reconstruction; saved-register owner starts at 0x02000de8 and returns through the r8 unspill and pop {r0}/bx r0 at 0x02000e9c-0x02000ea6, with the directly referenced pool word 0x02000240 at 0x02000ea8-0x02000eab before the next owner at 0x02000eac; the 13 resolver-confirmed calls, three-word movement probe, signed terrain rejection gate, ordered effect transition, speed/flag stores, coarse-cell placement, and flag restoration are expressed in ordinary C"
+    },
+    {
+      "overlay": "resource_3bd",
+      "entry": "0x020013f8",
+      "span_bytes": 6220,
+      "evidence": "admitted instruction-complete reviewed reconstruction; saved-register scene owner starts at 0x020013f8 and returns through pop {r0}/bx r0 at 0x02002c32-0x02002c34. The six directly referenced literal words at 0x02002c38-0x02002c43 are included before the next owner prologue at 0x02002c44, establishing the 6220-byte whole-owner boundary. Ordered resolver audit finds 703 call sites to 44 imported targets, including the three conditional tails and two 17-iteration hardware-register loops. The C preserves all static call sites, branch-selected tails, object/workspace field offsets, halfword stores and 62 literal values in ordinary expressions; no inline assembly, fixed-register trick, or raw translator construct"
     }
   ]
 }

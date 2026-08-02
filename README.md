@@ -47,15 +47,15 @@ low-level runtime structure intentionally retained as assembly.
 ### Code overlays
 
 *Golden Sun* also loads 96 additional code modules into memory when it needs
-them. This panel tracks all 795,090 executable bytes across those modules.
+them. This panel tracks all 795,106 executable bytes across those modules.
 Bright cyan is exact C, the softer cyan is readable C still being matched, gray
 is code still to reconstruct, and orange is retained low-level assembly.
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=601c7eb5)
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=752a34eb)
 
 ### Data and assets
 
-The remaining 7,300,700 bytes contain the game's graphics, maps, text, music,
+The remaining 7,298,755 bytes contain the game's graphics, maps, text, music,
 and other data. This panel follows 2,431 verified objects as they move from
 encoded ROM data to individually understood and reusable assets. Brighter
 magenta means a more complete reconstruction.

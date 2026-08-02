@@ -1,130 +1,81 @@
-> **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
-
 <p align="center">
-  <img src="assets/readme/djinn_101_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 101">
-  <img src="assets/readme/djinn_102_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 102">
-  <img src="assets/readme/djinn_103_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 103">
-  <img src="assets/readme/djinn_104_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 104">
+  <img src="assets/readme/djinn_101_idle.gif" width="32" height="32" alt="Recovered Djinn battle idle loop from graphics resource 101">
+  <img src="assets/readme/djinn_102_idle.gif" width="32" height="32" alt="Recovered Djinn battle idle loop from graphics resource 102">
+  <img src="assets/readme/djinn_103_idle.gif" width="32" height="32" alt="Recovered Djinn battle idle loop from graphics resource 103">
+  <img src="assets/readme/djinn_104_idle.gif" width="32" height="32" alt="Recovered Djinn battle idle loop from graphics resource 104">
 </p>
 
-# Alchemy — Golden Sun decompilation
+<h1 align="center">Alchemy</h1>
 
-A for-fun, clean-room attempt at decompiling Golden Sun (GBA). It is a
-hobby/research project, not a serious or community-driven decomp, and it is
-nowhere near complete.
+<p align="center"><strong>Golden Sun 25th Anniversary Preservation Project</strong></p>
 
-The name comes from the moment alchemy is released upon Weyard. This project
-is similarly trying to release the games from their finished ROM images
-into code, art, maps, and music that people can explore.
+Twenty-five years after *Golden Sun* was first released, Alchemy is an
+automated, clean-room attempt to reconstruct the Game Boy Advance classic as
+readable C code, data, artwork, maps, and music.
 
-It is not a remake, ROM hack, emulator, or game download. The long-term target
-is one byte-perfect source tree for Golden Sun and Golden Sun: The Lost Age in
-English, Japanese, German, Spanish, French, and Italian. The immediate target
-is 100% byte closure for the English Golden Sun release. The repository is
-still in active decompilation and does not yet provide a standalone playable
-game.
+Decompilation works backwards from a finished game to human-readable source
+code that can be understood, preserved, and built again. A faithful source tree
+can make native ports possible, keep a game working on modern hardware, add
+widescreen and high-frame-rate support, improve controls and accessibility, fix
+long-standing bugs, and provide a foundation for mods and entirely new
+adventures.
 
-## Coverage map
+Alchemy is not a remake, ROM hack, emulator, or game download. Its immediate
+goal is a byte-perfect reconstruction of the English release of *Golden Sun*,
+followed by *The Lost Age* and the games' other languages.
 
-**Main image** — 548,364 bytes of resident code. Thirteen real 64 KiB address
-banks wrap the audited source-owner leaves; the final bank contains only the
-executable bytes actually present in that window. Purple shows
-semantic and exact C; orange shows the reviewed pools, alignment, veneers, and
-runtime structure intentionally retained as assembly. There is no ordinary
-gray semantic debt left in the main-image census. Each tile follows one audited
-source/owner boundary and keeps that owner's natural byte size:
+The name comes from the moment alchemy is released upon Weyard. In much the same
+spirit, this project is releasing *Golden Sun* from its finished ROM image into
+code and assets that people can study and learn from. We hope that, in doing so,
+Alchemy inspires new developers to create wonderful RPGs of their own.
 
-![Main-image code coverage box tree in purple with retained assembly in orange.](assets/readme/gs1-en-core.svg?v=46114d28)
+## Progress: Currently 20% of the way done
 
-**Code overlays** — 795,046 executable bytes across 96 decoded RAM-loaded
-modules. Each module is a real parent containing its exact-C owners,
-source-backed semantic owners, and contiguous unowned assembly runs:
+20% of the game's audited executable bytes now build from exact, byte-matching
+C. These three maps show where the code and assets of the English release stand
+today.
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=fb48524a)
+### Main game
 
-**Data / assets** — 7,300,700 bytes of the ROM image that are data, not code.
-Fifty-two real manifest families wrap their built leaf kinds and 2,431 disjoint,
-byte-verified ROM objects. The magenta ladder shows representation maturity:
-faint is encoded bytes, a third is b&w sheets, two thirds is coloured sheets,
-and full blaze is assets cut into individual objects:
+The main game is the 548,364 bytes of code that remain available while *Golden
+Sun* is running. Bright purple is exact, byte-matching C; the softer purple is
+readable C that still needs to be matched. Orange marks the small pieces of
+low-level runtime structure intentionally retained as assembly.
 
-![Asset maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-assets.svg?v=9fbd282c)
+![Main-image code coverage box tree in purple with retained assembly in orange.](assets/readme/gs1-en-core.svg)
 
-These are the same complete SVG panels used by the live dashboard: title,
-hierarchical byte tree, and left-aligned legend are all inside each artifact.
-There is no separate HTML-authored graph chrome to drift from the README.
-Bright color is byte-exact C, the middle tone is reviewed semantic C, gray is
-ordinary assembly debt, and orange is reviewed permanent assembly. Leaf gutters
-are zero; only real parent folders have outlines.
+### Code overlays
 
-Exact and semantic ownership come directly from tracked evidence. Orange uses
-the latest verified full-build assembly manifest, so regenerate the publication
-snapshot after `bun run verify`:
+*Golden Sun* also loads 96 additional code modules into memory when it needs
+them. This panel tracks all 795,090 executable bytes across those modules.
+Bright cyan is exact C, the softer cyan is readable C still being matched, gray
+is code still to reconstruct, and orange is retained low-level assembly.
 
-```sh
-bun run coverage
-```
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg)
 
-For a hands-off working view, run:
+### Data and assets
 
-```sh
-bun tools/dashboard_server.ts
-```
+The remaining 7,300,700 bytes contain the game's graphics, maps, text, music,
+and other data. This panel follows 2,431 verified objects as they move from
+encoded ROM data to individually understood and reusable assets. Brighter
+magenta means a more complete reconstruction.
 
-The local dashboard scans the actual worktree, rebuilds its three graphs in
-memory, and pushes changes to the browser as source, evidence, or the verified
-assembly or asset manifest changes. It does not need `bun run coverage`; that command
-updates the checked-in publication snapshot. `main` remains the authoritative
-integrated tree.
+![Asset maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-assets.svg)
 
-The measured totals live in
-[`metrics/gs1-en-coverage-map.json`](metrics/gs1-en-coverage-map.json). The
-exact-C numbers behind the picture are reconciled against
-`metrics/gs1-en-progress.json` from the same source revision, and a disagreement
-is an error rather than a redrawn picture. Semantic coverage is drawn beside
-the headline metric rather than folded into it.
+Exact-C progress is measured by executable bytes rather than function counts,
+so every claimed byte must compile to the original game before it contributes
+to the headline.
 
-## Clean-room boundary
+## Preservation and copyright
 
-The evidence and publication rules are part of the repository in
-[PROVENANCE.md](PROVENANCE.md). A fresh clone should activate the tracked
-publication hooks once with:
+Alchemy is an unofficial, noncommercial decompilation and preservation project.
+*Golden Sun* and all associated names, characters, graphics, music, text, and
+other original material are copyright Nintendo and Camelot Software Planning.
+Alchemy is not affiliated with or endorsed by either company, and no ownership
+of *Golden Sun* is claimed.
 
-```sh
-git config core.hooksPath .hooks
-```
-
-Current measured decompilation status and the remaining-work breakdown are in
-[docs/PATH-TO-COMPLETION.md](docs/PATH-TO-COMPLETION.md).
-
-## Full-C Byte Share
-
-Alchemy has one headline progress metric: exact executable bytes generated
-from byte-matching, canonical C divided by all audited executable bytes in the
-main image and decoded code overlays.
-
-```sh
-bun run progress
-```
-
-The exact fraction is stored in
-[`metrics/gs1-en-progress.json`](metrics/gs1-en-progress.json). Function counts,
-source ownership, asset round trips, and assembly-region counts are diagnostics
-rather than overall decompilation progress. Historical first-parent measurements
-are published non-destructively in
-[`docs/full-c-history.json`](docs/full-c-history.json); existing commit IDs have
-not been rewritten.
-
-## Verification
-
-With the approved local toolchains and target inputs in place, the canonical
-verification entry point is:
-
-```sh
-bun run verify
-```
-
-It runs the complete self-test suite, compiles every exact-C claim, proves that
-the source-only image owns all ROM bytes, and verifies that the normal full
-build is byte-identical with zero ROM fallback. Only after those checks pass
-does it independently regenerate and validate Full-C Byte Share.
+This repository does not distribute a game or ROM. Its reconstructed code is
+written from scratch from the released game. No original source code, leaked
+material, or other proprietary development material is used. The goal of this
+zero-provenance, clean-room approach is to keep Alchemy safe to study, share,
+and preserve online for many years to come.

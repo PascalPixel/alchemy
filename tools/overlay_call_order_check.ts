@@ -112,9 +112,25 @@ function readInventory(): InventoryFile {
   return JSON.parse(readFileSync(INVENTORY_PATH, "utf8")) as InventoryFile;
 }
 
-function sourceOwnerFiles(): string[] {
+interface OwnerSelection {
+  overlay?: string;
+  start?: number;
+}
+
+function sourceOwnerFiles(selection: OwnerSelection = {}): string[] {
   return readdirSync(SOURCE_DIRECTORY)
     .filter((name) => /^resource_[0-9a-f]+_c_[0-9a-f]{8}\.c$/i.test(name))
+    // Apply a requested scope before resolving boundaries.  A project-wide
+    // source directory can contain a draft owner without an admitted row;
+    // that must not prevent a targeted audit of an already-admitted owner in
+    // another overlay from running.
+    .filter((name) => {
+      const match = /^(resource_[0-9a-f]+)_c_([0-9a-f]{8})\.c$/i.exec(name);
+      if (match === null) return false;
+      if (selection.overlay !== undefined && match[1].toLowerCase() !== selection.overlay) return false;
+      if (selection.start === undefined) return true;
+      return Number.parseInt(match[2], 16) - OVERLAY_BASE === selection.start;
+    })
     .sort()
     .map((name) => join(SOURCE_DIRECTORY, name));
 }
@@ -142,10 +158,10 @@ function ownerFromSource(path: string, manual: Map<string, number>, inventory: I
   return { overlay, offset, spanBytes, source: path, symbol };
 }
 
-function loadOwners(): SemanticOwner[] {
+function loadOwners(selection: OwnerSelection = {}): SemanticOwner[] {
   const manual = readManualRegions();
   const inventory = readInventory();
-  return sourceOwnerFiles().map((path) => ownerFromSource(path, manual, inventory));
+  return sourceOwnerFiles(selection).map((path) => ownerFromSource(path, manual, inventory));
 }
 
 function stripCommentsAndStrings(source: string): string {
@@ -458,7 +474,7 @@ function main(): void {
   if (args.includes("--self-test")) { selfTest(); return; }
   try {
     const parsed = parseArgs(args);
-    let owners = loadOwners();
+    let owners = loadOwners(parsed);
     if (parsed.overlay !== undefined) owners = owners.filter((owner) => owner.overlay === parsed.overlay);
     if (parsed.start !== undefined) owners = owners.filter((owner) => owner.offset === parsed.start);
     if (parsed.end !== undefined) {

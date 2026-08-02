@@ -1,360 +1,435 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "layout_guard.h"
+#include "types.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+#define REG_BLDALPHA_080D4604 (*(volatile u16 *)0x04000052)
+#define MAIN_PARTICLES_080D4604 ((struct Particle_080d4604 *)0x02010000)
+#define CAMERA_080D4604 (*(struct Camera_080d4604 **)0x03001e80)
 
-/*
- * __call_via_rN veneer sites, resolved per-site against the ROM. Owner range
- * 0x080d4604 .. 0x080d4ce8 (next owner semantic/main/080d4ce8.c) -- the bound
- * is stated rather than assumed. Seven `bl` sites land in the 0x080072e4
- * bank: three __call_via_r3 and four __call_via_r4.
- *
- * 0x080d46f8 and 0x080d4714 -- pool 0x080d49dc = 0x03001388, the IWRAM word
- * copy, (destination, source, size). 0x080d4922 -- pool 0x080d4a0c =
- * 0x03000168, the IWRAM ARM fill; its fill value is the SEPARATE pool word
- * 0x080d4a10 = 0x3f3f3f3f, which is why two pool loads sit together there.
- * r3 is an ARGUMENT register at all three, so each draft's fourth argument
- * WAS the callee and each call takes three.
- *
- * THE OTHER FOUR ARE THE FRAME-LOCAL TWO-ENTRY TABLE `sp3C`, which the draft
- * had already found as an array. Entry 0 is written at 0x080d46a2 from
- * `[0x03001e50 + 0xb8]` = 0x03001f08 and entry 1 at 0x080d46bc from
- * 0x03001f0c; the ADDRESS sp + 60 is parked in [sp, #24] at 0x080d46b8.
- *
- * ONE ERA, and here the count IS the whole argument: there are exactly two
- * Func_080ed408 calls in 0x080d4604..0x080d4ce8, at 0x080d4694 and 0x080d46ac,
- * one per slot, with no branch between them -- 0x080d46be is `b.n 0x080d46cc`
- * jumping over the inline literal pool at 0x080d46c0..0x080d46ca, not a
- * conditional. Both precede all seven sites. The two later `str r3, [r7, #4]`
- * and `str r3, [r6, #4]` at 0x080d476e and 0x080d4820 write entity records
- * (r7 also takes [r7, #0] two instructions earlier), not this table. Nothing
- * republishes either slot, so both entries cache.
- *
- * READS, and the index is NOT the one the previous file had:
- *   0x080d49c2, 0x080d4a3e and 0x080d4ad4 -- `ldr r4, [sp, #60]`, entry 0.
- *   0x080d4bbc -- `ldr r4, [r4, r3]` with r3 = the parked base and
- *   r4 = (sl & 1) << 2, sl being the loop counter set at 0x080d4a56 and
- *   advanced at 0x080d4bd8. Plain LOOP PARITY -- 0x080cf8e0's indexed site
- *   was a stored word toggled by xor, and these are not each other.
- *
- * ARITY: three at the copy and fill sites, six at the renderers; r4 is above
- * the argument registers at all four, so no draft argument there was ever the
- * callee.
- *
- * PINNING: the first two entry-0 sites are the two arms of `cmp r3, #1 / bne
- * 0x080d4a18` at 0x080d499c and join at 0x080d4a46; the outer `bge 0x080d4a46`
- * at 0x080d4994 skips BOTH and is not the branch that separates them -- the
- * first reading was corrected against the disassembly. The third
- * entry-0 site sits past that join. All three read the same slot with nothing
- * between them that could change it, so no pin is needed. The indexed site is
- * separated from all three by its own read.
- *
- * UNCERTAINTY, left standing: what slots 46 and 47 CONTAIN is not settled
- * here, only that entry 0 and entry 1 are distinct routines.
- */
-typedef void *(*WordCopy_080d4604)(void *destination, const void *source,
-                                   s32 size);
-typedef void (*ArmFill_080d4604)(void *destination, u32 size, u32 value);
-typedef void (*Renderer_080d4604)(s32 target, void *source, s32 x, s32 y,
-                                  u32 width, s32 height);
+enum {
+    TRAIL_GROUP_CAPACITY_080D4604 = 4,
+    TRAIL_SEED_COUNT_080D4604 = 16,
+    TRAIL_DRAW_COUNT_080D4604 = 12
+};
 
-void Func_08002dd8(s32);
-void Func_080b5088(s16, s32);
-void Func_080b50e8(s32);
+typedef void *(*WordCopy_080d4604)(
+    void *destination,
+    const void *source,
+    s32 size);
+typedef void (*ArmFill_080d4604)(
+    void *destination,
+    u32 size,
+    u32 value);
+typedef void (*Renderer_080d4604)(
+    s32 target,
+    void *source,
+    s32 x,
+    s32 y,
+    u32 width,
+    s32 height);
+
+#define WORD_COPY_080D4604 ((WordCopy_080d4604)0x03001388)
+#define ARM_FILL_080D4604 ((ArmFill_080d4604)0x03000168)
+#define RENDERER_A_080D4604 (*(Renderer_080d4604 *)0x03001f08)
+#define RENDERER_B_080D4604 (*(Renderer_080d4604 *)0x03001f0c)
+
+struct Particle_080d4604 {
+    s32 x;
+    s32 y;
+    s32 reserved08;
+    s32 velocity_x;
+    s32 velocity_y;
+    s32 reserved14;
+    s32 timer;
+};
+
+struct SceneContext_080d4604 {
+    u8 reserved00[4];
+    s32 side;
+    s32 bounds_source;
+    u8 reserved0c[8];
+    s32 actor_count;
+    s32 variant;
+    u8 reserved1c[8];
+    s16 actor_ids[1];
+};
+
+struct SceneWork_080d4604 {
+    u8 reserved0000[0x7080];
+    struct Particle_080d4604
+        trail_groups[TRAIL_GROUP_CAPACITY_080D4604][TRAIL_SEED_COUNT_080D4604];
+    s32 scene_phase;
+    s32 scene_timer;
+    u8 reserved7788[0x20];
+    s32 burst_phase;
+    u8 reserved77ac[0x78];
+    s32 frame_ready;
+    struct SceneContext_080d4604 *context;
+};
+
+struct RuntimeHeader_080d4604 {
+    struct SceneWork_080d4604 *work;
+    s32 render_target;
+    u8 *sprite_sheet;
+};
+
+struct Camera_080d4604 {
+    u8 reserved00[0x36];
+    u16 horizontal_offset;
+};
+
+LAYOUT_SIZE_GUARD(
+    Particle080d4604_Size,
+    struct Particle_080d4604,
+    0x1c);
+LAYOUT_OFFSET_GUARD(
+    Particle080d4604_VelocityX,
+    struct Particle_080d4604,
+    velocity_x,
+    0x0c);
+LAYOUT_OFFSET_GUARD(
+    Particle080d4604_Timer,
+    struct Particle_080d4604,
+    timer,
+    0x18);
+LAYOUT_OFFSET_GUARD(
+    SceneContext080d4604_ActorCount,
+    struct SceneContext_080d4604,
+    actor_count,
+    0x14);
+LAYOUT_OFFSET_GUARD(
+    SceneContext080d4604_Variant,
+    struct SceneContext_080d4604,
+    variant,
+    0x18);
+LAYOUT_OFFSET_GUARD(
+    SceneContext080d4604_ActorIds,
+    struct SceneContext_080d4604,
+    actor_ids,
+    0x24);
+LAYOUT_OFFSET_GUARD(
+    SceneWork080d4604_TrailGroups,
+    struct SceneWork_080d4604,
+    trail_groups,
+    0x7080);
+LAYOUT_OFFSET_GUARD(
+    SceneWork080d4604_ScenePhase,
+    struct SceneWork_080d4604,
+    scene_phase,
+    0x7780);
+LAYOUT_OFFSET_GUARD(
+    SceneWork080d4604_BurstPhase,
+    struct SceneWork_080d4604,
+    burst_phase,
+    0x77a8);
+LAYOUT_OFFSET_GUARD(
+    SceneWork080d4604_FrameReady,
+    struct SceneWork_080d4604,
+    frame_ready,
+    0x7824);
+LAYOUT_OFFSET_GUARD(
+    SceneWork080d4604_Context,
+    struct SceneWork_080d4604,
+    context,
+    0x7828);
+LAYOUT_OFFSET_GUARD(
+    Camera080d4604_HorizontalOffset,
+    struct Camera_080d4604,
+    horizontal_offset,
+    0x36);
+
+static const struct RuntimeHeader_080d4604 *const Runtime_080d4604 =
+    (const struct RuntimeHeader_080d4604 *)0x03001eec;
+/* Five u16 values per variant: particle count, group count, three offsets. */
+static const u16 *const LayoutWords_080d4604 = (const u16 *)0x080ee262;
+static const u16 *const ParticleTiles_080d4604 = (const u16 *)0x080ede48;
+static const u8 *const TrailFrames_080d4604 = (const u8 *)0x080ee294;
+
+void Func_08002dd8(s32 slot);
+void *Func_08002f40(s32 resource);
+void Func_080030f8(u32 frames);
+s32 Func_080022ec(s32 value, s32 divisor);
+s32 Func_0800231c(s32 angle);
+s32 Func_08002322(s32 angle);
+u32 Func_08004458(void);
+void Func_080041d8(s32 callback, s32 size);
+void Func_08004278(void *callback);
+void Func_080b5088(s16 actor, s32 action);
+void Func_080b50e8(s32 sound);
 void Func_080cd52c(void);
-void Func_080cd594(s32);
-void Func_080d6888(s16, s32, s32, s32, s32);
+void Func_080cd594(s32 enabled);
+s32 Func_080cdbc0(void);
+void Func_080d6888(s16 actor, s32 a, s32 b, s32 index, s32 duration);
+void Func_080e0524(void *resource, void *destination, s32 a, s32 b);
+void Func_080e155c(s32 x, u32 y);
+void Func_080e3908(struct Particle_080d4604 *particle, s32 gravity, s32 wind);
+void Func_080e396c(s32 source, s32 *bounds);
+void Func_080ed408(s32 slot, s32 a, s32 b, s32 c, s32 d);
+void Func_080f9010(s32 sound);
 
 /*
- * Run the particle-and-sprite scene for a battle transition.
+ * Run a staged battle-transition scene. Each group owns a short-lived spray
+ * in scene work and a variable-size particle run in shared EWRAM.
  *
- * The mode chooses the initial origin and palette. Multiple particle groups
- * are seeded, staged into view, advanced with gravity, and paired with
- * character effects before all temporary display resources are released.
+ * The renderer slots are populated once by Func_080ed408 and cached locally.
+ * The IWRAM copy/fill targets are ordinary three-argument routines.
  */
-s32 Func_080d4604(s32 arg0, s32 arg1) {
-    s32 sp8;
-    void *spC;
-    void *sp10;
-    u32 sp14;
-    void **sp1C;
-    s32 sp20;
-    s32 sp24;
-    void *sp28;
-    s32 sp2C;
-    s32 sp30;
-    s32 sp34;
-    s32 sp38;
-    Renderer_080d4604 sp3C[2];
-    s32 sp44[2];
-    s32 temp_r2;
-    s32 temp_r2_4;
-    s32 temp_r3_2;
-    s32 temp_r3_3;
-    s32 temp_r3_4;
-    s32 temp_r3_5;
-    s32 temp_r5;
-    s32 temp_r5_2;
-    s32 temp_r6;
-    s32 temp_r7_2;
-    s32 temp_r8;
-    s32 var_r0;
-    s32 var_r3;
-    s32 var_r3_2;
-    s32 var_r6;
-    s32 var_r6_2;
-    s32 var_r7_2;
-    s32 var_sl_2;
-    s32 var_sl_3;
-    s32 var_sl_4;
-    s32 var_sl_5;
-    u16 temp_r0_2;
-    u16 temp_r7;
-    u16 var_r3_3;
-    u32 temp_r0_3;
-    u32 temp_r0_4;
-    u32 temp_r0_5;
-    u32 temp_r3;
-    u32 temp_r3_6;
-    u32 var_r3_4;
-    u32 var_sl;
-    void *temp_r1;
-    void *temp_r1_2;
-    void *temp_r2_2;
-    void *temp_r2_3;
-    void *temp_r6_2;
-    void *temp_r6_3;
-    void *var_r5;
-    void *var_r7;
+s32 Func_080d4604(struct SceneContext_080d4604 *context, s32 mode) {
+    struct SceneWork_080d4604 *work = Runtime_080d4604->work;
+    s32 render_target = Runtime_080d4604->render_target;
+    u8 *sprite_sheet = Runtime_080d4604->sprite_sheet;
+    Renderer_080d4604 renderers[2];
+    const u16 *layout;
+    u16 particles_per_group;
+    u16 group_count;
+    s32 origin_x;
+    s32 origin_y;
+    s32 group;
+    s32 frame;
 
-    sp38 = arg1;
-    temp_r1 = M2C_FIELD((void *)0x03001EEC, void **, 0);
-    sp34 = M2C_FIELD((void *)0x03001EEC, s32 *, 4);
-    sp28 = M2C_FIELD((void *)0x03001EEC, void **, 8);
-    M2C_FIELD(temp_r1, s32 *, 0x7828) = arg0;
-    if (sp38 == 0) {
+    work->context = context;
+    layout = &LayoutWords_080d4604[context->variant * 5];
+    particles_per_group = layout[0];
+    group_count = layout[1];
+
+    if (mode == 0) {
         Func_080cd594(1);
-        sp24 = 0x3C;
-        sp20 = 0x30;
+        origin_x = 0x3c;
+        origin_y = 0x30;
+    } else if (mode == 1) {
+        Func_080cd594(0);
+        origin_x = 0x3c;
+        origin_y = 0x40;
     } else {
-        if (sp38 == 1) {
-            Func_080cd594(0);
-            var_r3 = 0x40;
-            sp24 = 0x3C;
-        } else {
-            Func_080cd594(0);
-            Func_080e396c(M2C_FIELD(M2C_FIELD(temp_r1, s32 *, 0x7828), s32 *, 8), sp44);
-            temp_r3 = M2C_FIELD(sp44, u32 *, 0);
-            sp24 = (s32) (temp_r3 + (temp_r3 >> 0x1F)) >> 1;
-            var_r3 = M2C_FIELD(sp44, s32 *, 4) + 0x30;
-        }
-        sp20 = var_r3;
-    }
-    *(s16 *)0x04000052 = 0x1010;
-    Func_080ed408(0x2E, 7, 7, 3, 2);
-    sp3C[0] = *(Renderer_080d4604 *)0x03001F08;
-    Func_080ed408(0x2F, 7, 7, 3, 3);
-    sp3C[1] = *(Renderer_080d4604 *)0x03001F0C;
-    Func_080e0524((void *)0x7D, temp_r1, 1, 1);
-    Func_080e0524((void *)0x73, sp28, 0, 0);
-    if (sp38 == 1) {
-        ((WordCopy_080d4604)0x03001388)((void *)0x05000000, Func_08002f40(0x87), 0x80);
-    } else if (sp38 == 2) {
-        ((WordCopy_080d4604)0x03001388)((void *)0x05000000, Func_08002f40(0xC4), 0x80);
-    }
-    sp30 = 0;
-    if (M2C_FIELD(((M2C_FIELD(M2C_FIELD(temp_r1, s32 *, 0x7828), s32 *, 0x18) * 0xA) + 2), u16 *, 0x080EE262) == 0) {
+        s32 bounds[2];
+        u32 first_bound;
 
-    } else {
-        spC = temp_r1;
-loop_14:
-        var_sl = 0;
-        var_r7 = spC + 0x7080;
-        do {
-            temp_r6 = var_sl * 2;
-            temp_r0_2 = (u16) Func_08004458();
-            M2C_FIELD(var_r7, s32 *, 0) = (s32) (temp_r6 * Func_08002322((s32) temp_r0_2));
-            M2C_FIELD(var_r7, s32 *, 4) = (s32) (0 - (temp_r6 * Func_0800231c((s32) temp_r0_2)));
-            temp_r3_2 = ((s32) ((var_sl >> 0x1F) + var_sl) >> 1) + 0x19;
-            var_sl += 1;
-            M2C_FIELD(var_r7, s32 *, 0x18) = temp_r3_2;
-            var_r7 += 0x1C;
-        } while (var_sl != 0x10);
-        var_sl_2 = 0;
-        if (M2C_FIELD((M2C_FIELD(M2C_FIELD(temp_r1, s32 *, 0x7828), s32 *, 0x18) * 0xA), u16 *, 0x080EE262) != 0) {
-            do {
-                temp_r6_2 = (void *)((((M2C_FIELD((M2C_FIELD(M2C_FIELD(temp_r1, s32 *, 0x7828), s32 *, 0x18) * 0xA), u16 *, 0x080EE262) * sp30) + var_sl_2) * 0x1C) + 0x02010000);
-                sp8 = 0x080EE262;
-                temp_r8 = (0x3FF & Func_08004458()) + 0x20;
-                temp_r5 = M2C_FIELD(temp_r1, s32 *, 0x7828);
-                temp_r7 = (u16) Func_08004458();
-                if (M2C_FIELD(temp_r5, s32 *, 4) == 1) {
-                    var_r3_2 = (sp24 - M2C_FIELD(((((M2C_FIELD(temp_r5, s32 *, 0x18) * 5) + sp30) * 2) + 4), u16 *, 0x080EE262)) + 0x1C;
+        Func_080cd594(0);
+        Func_080e396c(context->bounds_source, bounds);
+        first_bound = bounds[0];
+        origin_x = (s32)(first_bound + (first_bound >> 31)) >> 1;
+        origin_y = bounds[1] + 0x30;
+    }
+
+    REG_BLDALPHA_080D4604 = 0x1010;
+    Func_080ed408(0x2e, 7, 7, 3, 2);
+    renderers[0] = RENDERER_A_080D4604;
+    Func_080ed408(0x2f, 7, 7, 3, 3);
+    renderers[1] = RENDERER_B_080D4604;
+    Func_080e0524((void *)0x7d, work, 1, 1);
+    Func_080e0524((void *)0x73, sprite_sheet, 0, 0);
+
+    if (mode == 1) {
+        WORD_COPY_080D4604(
+            (void *)0x05000000,
+            Func_08002f40(0x87),
+            0x80);
+    } else if (mode == 2) {
+        WORD_COPY_080D4604(
+            (void *)0x05000000,
+            Func_08002f40(0xc4),
+            0x80);
+    }
+
+    for (group = 0; group < group_count; group++) {
+        struct Particle_080d4604 *trail = work->trail_groups[group];
+        s32 particle_index;
+
+        for (particle_index = 0;
+             particle_index < TRAIL_SEED_COUNT_080D4604;
+             particle_index++, trail++) {
+            s32 speed = particle_index * 2;
+            u16 angle = Func_08004458();
+
+            trail->x = speed * Func_08002322(angle);
+            trail->y = -(speed * Func_0800231c(angle));
+            trail->timer = particle_index / 2 + 0x19;
+        }
+
+        for (particle_index = 0;
+             particle_index < particles_per_group;
+             particle_index++) {
+            struct Particle_080d4604 *particle =
+                &MAIN_PARTICLES_080D4604[
+                    particles_per_group * group + particle_index];
+            s32 speed = (Func_08004458() & 0x3ff) + 0x20;
+            u16 angle = Func_08004458();
+
+            if (context->side == 1) {
+                particle->x =
+                    (origin_x - layout[group + 2] + 0x1c) << 16;
+            } else {
+                particle->x =
+                    (origin_x + layout[group + 2] - 0x1c) << 16;
+            }
+            particle->y = origin_y << 16;
+            particle->velocity_x =
+                speed * Func_08002322(angle) >> 6;
+            particle->velocity_y =
+                -(speed * Func_0800231c(angle) * 2) >> 6;
+            particle->timer = (Func_08004458() & 7) + 0x20;
+        }
+    }
+
+    work->scene_phase = 2;
+    work->scene_timer = 0x4b;
+    Func_080041d8(0x080cd261, 0x480);
+
+    /* The ROM compares the u16 group count with this unreachable sentinel. */
+    if (group_count != 0x1ffffff9) {
+        u32 sound_mode = mode - 1;
+
+        for (frame = 0; frame != group_count * 8 + 0x38; frame++) {
+            if (context->variant == 2 && frame <= 0x33) {
+                if (context->side == 0) {
+                    CAMERA_080D4604->horizontal_offset += 0x100;
                 } else {
-                    var_r3_2 = (sp24 + M2C_FIELD(((((M2C_FIELD(temp_r5, s32 *, 0x18) * 5) + sp30) * 2) + 4), u16 *, 0x080EE262)) - 0x1C;
+                    CAMERA_080D4604->horizontal_offset -= 0x100;
                 }
-                M2C_FIELD(temp_r6_2, s32 *, 0) = (s32) (var_r3_2 << 0x10);
-                M2C_FIELD(temp_r6_2, s32 *, 4) = (s32) (sp20 << 0x10);
-                M2C_FIELD(temp_r6_2, s32 *, 0xC) = (s32) ((s32) (temp_r8 * Func_08002322((s32) temp_r7)) >> 6);
-                M2C_FIELD(temp_r6_2, s32 *, 0x10) = (s32) ((s32) (0 - (temp_r8 * Func_0800231c((s32) temp_r7) * 2)) >> 6);
-                var_sl_2 += 1;
-                M2C_FIELD(temp_r6_2, s32 *, 0x18) = (s32) ((7 & Func_08004458()) + 0x20);
-            } while (var_sl_2 != M2C_FIELD((M2C_FIELD(M2C_FIELD(temp_r1, s32 *, 0x7828), s32 *, 0x18) * 0xA), u16 *, 0x080EE262));
-        }
-        spC += 0x1C0;
-        sp30 += 1;
-        if (sp30 != M2C_FIELD(((M2C_FIELD(M2C_FIELD(temp_r1, s32 *, 0x7828), s32 *, 0x18) * 0xA) + 2), u16 *, 0x080EE262)) {
-            goto loop_14;
-        }
-    }
-    M2C_FIELD(temp_r1, s32 *, 0x7780) = 2;
-    M2C_FIELD(temp_r1, s32 *, 0x7784) = 0x4B;
-    Func_080041d8(0x080CD261, 0x480);
-    sp2C = 0;
-    if (M2C_FIELD(((M2C_FIELD(M2C_FIELD(temp_r1, s32 *, 0x7828), s32 *, 0x18) * 0xA) + 2), u16 *, 0x080EE262) == 0x1FFFFFF9) {
+            }
 
-    } else {
-        sp14 = sp38 - 1;
-        sp1C = temp_r1 + 0x7828;
-loop_27:
-        temp_r1_2 = *(void **)0x03001E80;
-        temp_r2 = M2C_FIELD(temp_r1, s32 *, 0x7828);
-        if ((M2C_FIELD(temp_r2, s32 *, 0x18) == 2) && (sp2C <= 0x33)) {
-            if (M2C_FIELD(temp_r2, s32 *, 4) == 0) {
-                var_r3_3 = M2C_FIELD(temp_r1_2, u16 *, 0x36) + 0x100;
+            if (context->variant == 3 && frame == 4) {
+                ARM_FILL_080D4604(
+                    (void *)render_target,
+                    0x4000,
+                    0x3f3f3f3f);
+            }
+
+            if (sound_mode <= 1) {
+                if (frame == 2) {
+                    Func_080b50e8(0x91);
+                }
             } else {
-                var_r3_3 = M2C_FIELD(temp_r1_2, u16 *, 0x36) + 0xFFFFFF00;
+                if (frame == 2) {
+                    Func_080f9010(0x91);
+                }
+                if (frame == 0x18) {
+                    Func_080b50e8(0x86);
+                }
             }
-            M2C_FIELD(temp_r1_2, u16 *, 0x36) = var_r3_3;
-        }
-        if ((M2C_FIELD(*sp1C, s32 *, 0x18) == 3) && (sp2C == 4)) {
-            ((ArmFill_080d4604)0x03000168)((void *)sp34, 0x4000, 0x3F3F3F3F);
-        }
-        if (sp14 <= 1U) {
-            if (sp2C == 2) {
-                Func_080b50e8(0x91);
-            }
-        } else {
-            if (sp2C == 2) {
-                Func_080f9010(0x91);
-            }
-            if (sp2C == 0x18) {
-                Func_080b50e8(0x86);
-            }
-        }
-        sp30 = 0;
-        if (M2C_FIELD(((M2C_FIELD(*sp1C, s32 *, 0x18) * 0xA) + 2), u16 *, 0x080EE262) == 0) {
 
-        } else {
-            sp10 = temp_r1;
-loop_46:
-            temp_r3_3 = sp30 * 8;
-            if (sp2C == temp_r3_3) {
-                M2C_FIELD(temp_r1, s32 *, 0x77A8) = 0xC;
-            }
-            if (sp2C < temp_r3_3) {
+            for (group = 0; group < group_count; group++) {
+                s32 start_frame = group * 8;
+                s32 particle_index;
 
-            } else {
-                if (sp2C < (s32) (temp_r3_3 + 2)) {
-                    temp_r2_2 = *sp1C;
-                    if (M2C_FIELD(temp_r2_2, s32 *, 4) == 1) {
-                        sp3C[0](sp34, temp_r1, (sp24 - M2C_FIELD(((((M2C_FIELD(temp_r2_2, s32 *, 0x18) * 5) + sp30) * 2) + 4), u16 *, 0x080EE262)) + 0xC, sp20 - 0x20, 0x20U, 0x40);
+                if (frame == start_frame) {
+                    work->burst_phase = 0xc;
+                }
+
+                if (frame >= start_frame && frame < start_frame + 2) {
+                    s32 x;
+
+                    if (context->side == 1) {
+                        x = origin_x - layout[group + 2] + 0xc;
                     } else {
-                        sp3C[0](sp34, temp_r1, (sp24 + M2C_FIELD(((((M2C_FIELD(temp_r2_2, s32 *, 0x18) * 5) + sp30) * 2) + 4), u16 *, 0x080EE262)) - 0x2C, sp20 - 0x20, 0x20U, 0x40);
+                        x = origin_x + layout[group + 2] - 0x2c;
+                    }
+                    renderers[0](
+                        render_target,
+                        work,
+                        x,
+                        origin_y - 0x20,
+                        0x20,
+                        0x40);
+                }
+
+                if (frame >= start_frame) {
+                    struct Particle_080d4604 *trail = work->trail_groups[group];
+
+                    for (particle_index = 0;
+                         particle_index < TRAIL_DRAW_COUNT_080D4604;
+                         particle_index++, trail++) {
+                        s32 x;
+                        s32 y = (s16)(trail->y >> 16) + origin_y;
+
+                        if (context->side == 1) {
+                            x = (s16)(trail->x >> 16) + origin_x -
+                                layout[group + 2] + 0x1c;
+                        } else {
+                            x = (s16)(trail->x >> 16) + origin_x +
+                                layout[group + 2] - 0x1c;
+                        }
+
+                        if ((u32)trail->timer <= 0x11) {
+                            renderers[0](
+                                render_target,
+                                (u8 *)work +
+                                    (TrailFrames_080d4604[
+                                         Func_080022ec(trail->timer, 3)]
+                                     << 11),
+                                x - 0x10,
+                                y - 0x20,
+                                0x20,
+                                0x40);
+                        }
+
+                        if (trail->timer > 0) {
+                            trail->timer--;
+                        } else {
+                            trail->timer = -1;
+                        }
                     }
                 }
-                if (sp2C >= temp_r3_3) {
-                    var_sl_3 = 0;
-                    var_r5 = sp10 + 0x7080;
-                    do {
-                        temp_r7_2 = M2C_FIELD(var_r5, s16 *, 6) + sp20;
-                        temp_r2_3 = *sp1C;
-                        if (M2C_FIELD(temp_r2_3, s32 *, 4) == 1) {
-                            var_r6 = ((M2C_FIELD(var_r5, s16 *, 2) + sp24) - M2C_FIELD(((((M2C_FIELD(temp_r2_3, s32 *, 0x18) * 5) + sp30) * 2) + 4), u16 *, 0x080EE262)) + 0x1C;
-                        } else {
-                            var_r6 = (M2C_FIELD(var_r5, s16 *, 2) + sp24 + M2C_FIELD(((((M2C_FIELD(temp_r2_3, s32 *, 0x18) * 5) + sp30) * 2) + 4), u16 *, 0x080EE262)) - 0x1C;
-                        }
-                        temp_r0_3 = M2C_FIELD(var_r5, u32 *, 0x18);
-                        if (temp_r0_3 <= 0x11U) {
-                            sp3C[0](sp34, (M2C_FIELD((void *) Func_080022ec((s32) temp_r0_3, 3), u8 *, 0x080EE294) << 0xB) + temp_r1, var_r6 - 0x10, temp_r7_2 - 0x20, 0x20U, 0x40);
-                        }
-                        if ((s32) M2C_FIELD(var_r5, u32 *, 0x18) > 0) {
-                            var_r3_4 = (s32) M2C_FIELD(var_r5, u32 *, 0x18) - 1;
-                        } else {
-                            var_r3_4 = -1U;
-                        }
-                        M2C_FIELD(var_r5, u32 *, 0x18) = var_r3_4;
-                        var_sl_3 += 1;
-                        var_r5 += 0x1C;
-                    } while (var_sl_3 != 0xC);
-                }
-            }
-            if (sp2C > (s32) (temp_r3_3 + 5)) {
-                var_r7_2 = -0x1000;
-                if (sp38 != 2) {
-                    var_r7_2 = 0x1000;
-                }
-                var_sl_4 = 0;
-                var_r0 = 0x080EE262;
-                if (M2C_FIELD((M2C_FIELD(M2C_FIELD(temp_r1, s32 *, 0x7828), s32 *, 0x18) * 0xA), u16 *, 0x080EE262) != 0) {
-                    do {
-                        temp_r3_4 = ((M2C_FIELD((void *)var_r0, u16 *, M2C_FIELD(M2C_FIELD(temp_r1, s32 *, 0x7828), s32 *, 0x18) * 0xA) * sp30) + var_sl_4) * 0x1C;
-                        temp_r6_3 = (void *)(temp_r3_4 + 0x02010000);
-                        if ((s32) M2C_FIELD(temp_r6_3, s32 *, 0x18) > 0) {
-                            Func_080e3908(temp_r6_3, 0x3C, var_r7_2);
-                            temp_r2_4 = M2C_FIELD(temp_r6_3, s32 *, 4);
-                            temp_r3_5 = M2C_FIELD(temp_r6_3, s32 *, 0x18) - 1;
-                            M2C_FIELD(temp_r6_3, s32 *, 0x18) = temp_r3_5;
-                            if (temp_r2_4 > 0x6C0000) {
-                                temp_r3_6 = 0 - M2C_FIELD(temp_r6_3, s32 *, 0x10);
-                                M2C_FIELD(temp_r6_3, s32 *, 0x10) = (s32) ((s32) (temp_r3_6 + (temp_r3_6 >> 0x1F)) >> 1);
-                            } else {
-                                temp_r0_4 = M2C_FIELD(temp_r3_4, u32 *, 0x02010000);
-                                if ((temp_r0_4 <= 0x7EFFFFU) && (temp_r2_4 >= 0)) {
-                                    temp_r0_5 = Func_080022ec(temp_r3_5, 5) + 1;
-                                    temp_r5_2 = temp_r0_5 * 2;
-                                    sp3C[var_sl_4 & 1](sp34, sp28 + M2C_FIELD((temp_r5_2 - 2), u16 *, 0x080EDE48), ((s32) temp_r0_4 >> 0x10) - ((s32) (temp_r0_5 + (temp_r0_5 >> 0x1F)) >> 1), (temp_r2_4 >> 0x10) - temp_r0_5, temp_r0_5, temp_r5_2);
-                                }
+
+                if (frame > start_frame + 5) {
+                    s32 wind = mode == 2 ? -0x1000 : 0x1000;
+
+                    for (particle_index = 0;
+                         particle_index < particles_per_group;
+                         particle_index++) {
+                        struct Particle_080d4604 *particle =
+                            &MAIN_PARTICLES_080D4604[
+                                particles_per_group * group +
+                                particle_index];
+
+                        if (particle->timer > 0) {
+                            s32 size;
+
+                            Func_080e3908(particle, 0x3c, wind);
+                            particle->timer--;
+
+                            if (particle->y > 0x6c0000) {
+                                s32 reflected = -particle->velocity_y;
+
+                                particle->velocity_y =
+                                    (s32)((u32)reflected +
+                                          ((u32)reflected >> 31)) >> 1;
+                            } else if ((u32)particle->x <= 0x7effff &&
+                                       particle->y >= 0) {
+                                size = Func_080022ec(particle->timer, 5) + 1;
+                                renderers[particle_index & 1](
+                                    render_target,
+                                    sprite_sheet +
+                                        ParticleTiles_080d4604[size - 1],
+                                    (particle->x >> 16) - size / 2,
+                                    (particle->y >> 16) - size,
+                                    size,
+                                    size * 2);
                             }
                         }
-                        var_sl_4 += 1;
-                        var_r0 = 0x080EE262;
-                    } while (var_sl_4 != M2C_FIELD((void *)var_r0, u16 *, M2C_FIELD(M2C_FIELD(temp_r1, s32 *, 0x7828), s32 *, 0x18) * 0xA));
+                    }
+                }
+
+                for (particle_index = 0;
+                     particle_index < context->actor_count;
+                     particle_index++) {
+                    if (frame == start_frame + 6) {
+                        s16 actor = context->actor_ids[particle_index];
+
+                        Func_080d6888(actor, 7, 5, particle_index, 0xa);
+                        Func_080b5088(actor, 4);
+                    }
                 }
             }
-            var_sl_5 = 0;
-            if (M2C_FIELD(M2C_FIELD(temp_r1, s32 *, 0x7828), s32 *, 0x14) != 0) {
-                var_r6_2 = 0x24;
-                do {
-                    if (sp2C == (temp_r3_3 + 6)) {
-                        Func_080d6888(M2C_FIELD(M2C_FIELD(temp_r1, void **, 0x7828), s16 *, var_r6_2), 7, 5, var_sl_5, 0xA);
-                        Func_080b5088(M2C_FIELD(M2C_FIELD(temp_r1, void **, 0x7828), s16 *, var_r6_2), 4);
-                    }
-                    var_sl_5 += 1;
-                    var_r6_2 += 2;
-                } while (var_sl_5 != M2C_FIELD(M2C_FIELD(temp_r1, s32 *, 0x7828), s32 *, 0x14));
-            }
-            sp10 += 0x1C0;
-            sp30 += 1;
-            if (sp30 != M2C_FIELD(((M2C_FIELD(*sp1C, s32 *, 0x18) * 0xA) + 2), u16 *, 0x080EE262)) {
-                goto loop_46;
-            }
-        }
-        Func_080e155c(0x10, 0x10U);
-        Func_080cd52c();
-        M2C_FIELD(temp_r1, s32 *, 0x7824) = 1;
-        Func_080030f8(1U);
-        sp2C += 1;
-        if (sp2C != ((M2C_FIELD(((M2C_FIELD(M2C_FIELD(temp_r1, s32 *, 0x7828), s32 *, 0x18) * 0xA) + 2), u16 *, 0x080EE262) * 8) + 0x38)) {
-            goto loop_27;
+
+            Func_080e155c(0x10, 0x10);
+            Func_080cd52c();
+            work->frame_ready = 1;
+            Func_080030f8(1);
         }
     }
-    Func_08004278((void *)0x080CD261);
-    Func_08002dd8(0x2F);
-    Func_08002dd8(0x2E);
+
+    Func_08004278((void *)0x080cd261);
+    Func_08002dd8(0x2f);
+    Func_08002dd8(0x2e);
     return Func_080cdbc0();
 }

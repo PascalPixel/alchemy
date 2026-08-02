@@ -1,51 +1,75 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "layout_guard.h"
+#include "types.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+struct MenuState_080a8578 {
+    u8 padding00[0x21a];
+    u8 selected_character;
+};
+
+struct Character_080a8578 {
+    u8 padding000[0x0f];
+    u8 level;
+    u8 padding010[0x114];
+    s32 experience;
+};
+
+LAYOUT_OFFSET_GUARD(
+    MenuState080a8578_SelectedCharacter,
+    struct MenuState_080a8578,
+    selected_character,
+    0x21a);
+LAYOUT_OFFSET_GUARD(
+    Character080a8578_Level,
+    struct Character_080a8578,
+    level,
+    0x0f);
+LAYOUT_OFFSET_GUARD(
+    Character080a8578_Experience,
+    struct Character_080a8578,
+    experience,
+    0x124);
 
 s16 *Func_08004938(s32);
-s32 Func_08015030(void *, s16 *, s32);
+s32 Func_08015030(s32, s16 *, s32);
 s32 Func_08015258(s16 *, s32, s32, s32);
 s32 Func_08077258(u8, s32);
-s32 Func_08077008(s32);
-s32 Func_08015120(s32, s32);
+struct Character_080a8578 *Func_08077008(u8);
+void Func_08015120(s32, s32);
 void Func_08002df0(void *);
 
-static inline u8 LoadCurrent(u8 *current)
+/*
+ * Render the help text for the alternate command pane.  The compact
+ * seven-entry pane skips one message-table slot; the extended eight-entry
+ * pane does not.  Entry 1 inserts the selected character's experience needed
+ * for the next level, or switches to the max-level message at level 99.
+ */
+void Func_080a8578(s32 window, s32 selection, s32 extended_pane)
 {
-    return *current;
-}
+    struct MenuState_080a8578 *state =
+        *(struct MenuState_080a8578 **)0x03001f2c;
+    s16 *text;
 
-void Func_080a8578(s32 arg0, s32 arg1, s32 arg2)
-{
-    s16 *temp_r0_2;
-    s32 dialog;
-    s32 selector;
-    void *temp_r0;
-    void *temp_r3;
-    s32 current;
+    if (extended_pane == 0 && selection > 3)
+        selection++;
 
-    selector = arg1;
-    temp_r3 = *(void **)0x03001F2C;
-    if ((arg2 == 0) && (selector > 3)) {
-        selector += 1;
-    }
-    if (selector == 1) {
-        current = (s32)temp_r3 + 0x21A;
-        temp_r0 = (void *)Func_08077008(LoadCurrent((u8 *)current));
-        if (M2C_FIELD(temp_r0, u8 *, 0xF) == 0x63) {
-            selector = 8;
+    if (selection == 1) {
+        u8 character_id = state->selected_character;
+        struct Character_080a8578 *character =
+            Func_08077008(character_id);
+
+        if (character->level == 99) {
+            selection = 8;
         } else {
-            Func_08015120(Func_08077258(LoadCurrent((u8 *)current), M2C_FIELD(temp_r0, u8 *, 0xF) + 1) - M2C_FIELD(temp_r0, s32 *, 0x124), 5);
+            s32 next_level_experience =
+                Func_08077258(character_id, character->level + 1);
+            Func_08015120(
+                next_level_experience - character->experience,
+                5);
         }
     }
-    temp_r0_2 = Func_08004938(0x100);
-    dialog = 0xBE6 + selector;
-    Func_08015030((void *)dialog, temp_r0_2, 0x80);
-    Func_08015258(temp_r0_2, arg0, 0, -1);
-    Func_08002df0(temp_r0_2);
+
+    text = Func_08004938(0x100);
+    Func_08015030(0x0be6 + selection, text, 0x80);
+    Func_08015258(text, window, 0, -1);
+    Func_08002df0(text);
 }

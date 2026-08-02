@@ -1,50 +1,82 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "layout_guard.h"
+#include "types.h"
 
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+typedef struct DisplayObject_080b08b8 {
+    u8 padding00[6];
+    u16 x;
+    u16 y;
+    u8 padding0a[0x0a];
+    u8 screen_y;
+    u8 padding15;
+    u16 attr1;
+} DisplayObject_080b08b8;
 
-s32 Func_080022ec(s32, s32);
+typedef struct PositionTween_080b08b8 {
+    DisplayObject_080b08b8 *object;
+    s16 start_x;
+    s16 start_y;
+    s16 end_x;
+    s16 end_y;
+    s8 step;
+    s8 duration;
+} PositionTween_080b08b8;
 
-void Func_080b08b8(void *state)
+LAYOUT_OFFSET_GUARD(
+    DisplayObject080b08b8_X,
+    DisplayObject_080b08b8,
+    x,
+    6);
+LAYOUT_OFFSET_GUARD(
+    DisplayObject080b08b8_ScreenY,
+    DisplayObject_080b08b8,
+    screen_y,
+    0x14);
+LAYOUT_OFFSET_GUARD(
+    DisplayObject080b08b8_Attr1,
+    DisplayObject_080b08b8,
+    attr1,
+    0x16);
+LAYOUT_OFFSET_GUARD(
+    PositionTween080b08b8_Step,
+    PositionTween_080b08b8,
+    step,
+    0x0c);
+LAYOUT_OFFSET_GUARD(
+    PositionTween080b08b8_Duration,
+    PositionTween_080b08b8,
+    duration,
+    0x0d);
+
+s32 Func_080022ec(s32 dividend, s32 divisor);
+
+/* Advance one frame of a display object's signed linear position tween. */
+void Func_080b08b8(PositionTween_080b08b8 *tween)
 {
-    void *object;
-    s32 duration;
+    DisplayObject_080b08b8 *object;
     s32 step;
-    s32 value;
-    void *zero;
+    s32 x;
+    s32 y;
 
-    if (state == 0)
-        return;
-    duration = FIELD(state, s8, 13);
-    if (duration == 0)
+    if (tween == 0 || tween->duration == 0)
         return;
 
-    object = FIELD(state, void *, 0);
-    FIELD(state, u8, 12)++;
-    step = FIELD(state, s8, 12);
+    object = tween->object;
+    tween->step++;
+    step = tween->step;
 
-    value = (u16)FIELD(state, u16, 4)
-        + Func_080022ec(
-            step * (FIELD(state, s16, 8) - FIELD(state, s16, 4)),
-            duration);
-    FIELD(object, u16, 6) = value;
-    zero = 0;
-    FIELD(object, u16, 22) =
-        (FIELD(object, u16, 22) & 0xfe00) | (value & 0x1ff);
+    x = (u16)tween->start_x + Func_080022ec(
+        step * (tween->end_x - tween->start_x), tween->duration);
+    object->x = (u16)x;
+    object->attr1 =
+        (object->attr1 & 0xfe00) | (x & 0x01ff);
 
-    value = (u16)FIELD(state, u16, 6)
-        + Func_080022ec(
-            step * (FIELD(state, s16, 10) - FIELD(state, s16, 6)),
-            duration);
-    FIELD(object, u16, 8) = value;
-    FIELD(object, u8, 20) = value;
+    y = (u16)tween->start_y + Func_080022ec(
+        step * (tween->end_y - tween->start_y), tween->duration);
+    object->y = (u16)y;
+    object->screen_y = (u8)y;
 
-    if (step == duration) {
-        FIELD(state, u8, 13) = (u32)zero;
-        FIELD(state, u8, 12) = (u32)zero;
+    if (step == tween->duration) {
+        tween->duration = 0;
+        tween->step = 0;
     }
 }

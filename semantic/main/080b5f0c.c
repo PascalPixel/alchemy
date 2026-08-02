@@ -1,103 +1,159 @@
 /*
- * Correctness fix, veneer audit (2026-08-01).
- *
- * `Func_080072f0` is not a function.  0x080072e4 begins the GCC
- * `__call_via_rN` veneer bank -- fifteen four-byte `bx rN; nop` entries,
- * r0..lr, ending at 0x08007320 -- so 0x080072f0 is `__call_via_r3` and
- * `bl 0x80072f0` calls whatever r3 holds.
- *
- * At every site in this file the ROM loads r3 from the literal pool with
- * the constant 0x03001388, so the callee is the relocated IWRAM word copy
- * at that address.  Its signature is not guessed: the EXACT source
- * src/080d40ec.c declares it as
- * `void *(*)(void *destination, const void *source, s32 size)` and
- * src/080e0524.c casts the same address to the same shape.
- *
- * This draft had modelled the callee as a fourth ARGUMENT (and as an
- * `extern` data symbol at 0x03001388).  It was never data and never an
- * argument: it is the call target.
+ * Veneer audit (2026-08-01): the ROM branch at these copy sites enters the
+ * `__call_via_r3` veneer with r3 = 0x03001388. That IWRAM address is the
+ * relocated three-argument word-copy routine, represented below as an
+ * ordinary function pointer. It is not data and it is never an argument.
  */
+#include "layout_guard.h"
 #include "types.h"
 
-typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
+typedef void *(*WordCopy_080b5f0c)(
+    void *destination,
+    const void *source,
+    s32 size);
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+struct BattleRosterMap_080b5f0c {
+    u8 padding00[0x48];
+    u8 encoded_slot_by_actor[8];
+};
 
-void Func_08002df0(void *);
-void Func_080030f8(u32);
-u8 *Func_08004970(s32);
-s32 Func_080063bc(void *, s32);
+struct CharacterTransfer_080b5f0c {
+    u8 payload[0x12a];
+    u8 transfer_kind;
+    u8 padding12b[0x29];
+};
+
+struct PartyMemberRef_080b5f0c {
+    u8 padding00[2];
+    u8 actor_id;
+    u8 padding03;
+};
+
+struct PartyTransfer_080b5f0c {
+    u8 padding000[8];
+    struct PartyMemberRef_080b5f0c members[64];
+    s32 member_count;
+    u8 padding10c[0x34];
+};
+
+LAYOUT_OFFSET_GUARD(
+    BattleRosterMap080b5f0c_EncodedSlots,
+    struct BattleRosterMap_080b5f0c,
+    encoded_slot_by_actor,
+    0x48);
+LAYOUT_OFFSET_GUARD(
+    CharacterTransfer080b5f0c_TransferKind,
+    struct CharacterTransfer_080b5f0c,
+    transfer_kind,
+    0x12a);
+LAYOUT_SIZE_GUARD(
+    CharacterTransfer080b5f0c_Size,
+    struct CharacterTransfer_080b5f0c,
+    0x154);
+LAYOUT_SIZE_GUARD(
+    PartyMemberRef080b5f0c_Size,
+    struct PartyMemberRef_080b5f0c,
+    4);
+LAYOUT_OFFSET_GUARD(
+    PartyTransfer080b5f0c_Members,
+    struct PartyTransfer_080b5f0c,
+    members,
+    0x08);
+LAYOUT_OFFSET_GUARD(
+    PartyTransfer080b5f0c_MemberCount,
+    struct PartyTransfer_080b5f0c,
+    member_count,
+    0x108);
+LAYOUT_SIZE_GUARD(
+    PartyTransfer080b5f0c_Size,
+    struct PartyTransfer_080b5f0c,
+    0x140);
+
+extern struct BattleRosterMap_080b5f0c *Data_03001e74;
+
+void Func_08002df0(void *allocation);
+void Func_080030f8(u32 frames);
+void *Func_08004970(s32 size);
+s32 Func_080063bc(const void *packet, s32 size);
 void Func_08006458(void);
-s32 Func_08077000(s32);
-s32 Func_08077008(s32);
-s32 Func_080b6a60(u16 *);
+struct PartyTransfer_080b5f0c *Func_08077000(s32 party);
+const struct CharacterTransfer_080b5f0c *Func_08077008(s32 actor);
+s32 Func_080b6a60(u16 actor_ids[8]);
 
+static WordCopy_080b5f0c const WordCopyAt_03001388_080b5f0c =
+    (WordCopy_080b5f0c)0x03001388;
+
+static s32 SendTransfer_080b5f0c(const void *packet, s32 size, u32 frames) {
+    if (Func_080063bc(packet, size) == -1) {
+        return 0;
+    }
+    Func_08006458();
+    Func_080030f8(frames);
+    return 1;
+}
+
+/*
+ * Send each requested character snapshot, pad the stream to at least three
+ * records, then send the party record after remapping actor IDs to the
+ * encoded roster slots established by the character packets.
+ */
 void Func_080b5f0c(void) {
-    u8 *temp_r6;
-    u8 *temp_r6_2;
-    u8 *var_r2;
-    s32 temp_r0;
-    u8 *temp_r3;
-    s32 var_r1;
-    s32 var_r5;
-    s32 var_r5_2;
-    s8 *var_r3;
-    u16 ids[8];
+    struct CharacterTransfer_080b5f0c *character_packet =
+        Func_08004970(0x154);
+    struct BattleRosterMap_080b5f0c *battle = Data_03001e74;
+    u16 actor_ids[8];
+    s32 actor_count;
+    s32 sent_count = 0;
+    s32 index;
 
-    temp_r3 = *(u8 **)0x03001E74;
-    temp_r6 = Func_08004970(0x154);
-    var_r5 = 7;
-    var_r3 = temp_r3 + 0x4F;
-    do {
-        var_r5 -= 1;
-        *var_r3 = 0xFF;
-        var_r3 -= 1;
-    } while (var_r5 >= 0);
-    temp_r0 = Func_080b6a60(ids);
-    var_r5_2 = 0;
-    if (temp_r0 > 0) {
-loop_4:
-        ((WordCopy)0x03001388)((void *)temp_r6,
-            (const void *)Func_08077008(ids[var_r5_2]), 0x154);
-        M2C_FIELD(temp_r6, s8 *, 0x12A) = 2;
-        M2C_FIELD(temp_r3, s8 *, ids[var_r5_2] + 0x48) =
-            (s8)(var_r5_2 - 0x80);
-        if (Func_080063bc(temp_r6, 0x154) != -1) {
-            Func_08006458();
-            var_r5_2 += 1;
-            Func_080030f8(2U);
-            if (var_r5_2 < temp_r0) {
-                goto loop_4;
-            }
+    for (index = 0; index < 8; index++) {
+        battle->encoded_slot_by_actor[index] = 0xff;
+    }
+
+    actor_count = Func_080b6a60(actor_ids);
+    while (sent_count < actor_count) {
+        u16 actor = actor_ids[sent_count];
+
+        WordCopyAt_03001388_080b5f0c(
+            character_packet,
+            Func_08077008(actor),
+            0x154);
+        character_packet->transfer_kind = 2;
+        battle->encoded_slot_by_actor[actor] = (u8)(sent_count - 0x80);
+
+        if (!SendTransfer_080b5f0c(character_packet, 0x154, 2)) {
+            break;
         }
+        sent_count++;
     }
-loop_8:
-    if (var_r5_2 <= 2) {
-        M2C_FIELD(temp_r6, s8 *, 0x12A) = 0;
-        if (Func_080063bc(temp_r6, 0x154) != -1) {
-            Func_08006458();
-            Func_080030f8(2U);
-            var_r5_2 += 1;
-            goto loop_8;
+
+    while (sent_count <= 2) {
+        character_packet->transfer_kind = 0;
+        if (!SendTransfer_080b5f0c(character_packet, 0x154, 2)) {
+            break;
         }
+        sent_count++;
     }
-    Func_08002df0(temp_r6);
-    temp_r6_2 = Func_08004970(0x140);
-    ((WordCopy)0x03001388)((void *)temp_r6_2,
-        (const void *)Func_08077000(0), 0x140);
-    var_r1 = 0;
-    if ((s32) M2C_FIELD(temp_r6_2, s32 *, 0x108) > 0) {
-        var_r2 = temp_r6_2 + 8;
-        do {
-            M2C_FIELD(var_r2, u8 *, 2) = (u8) *(temp_r3 + (M2C_FIELD(var_r2, u8 *, 2) + 0x48));
-            var_r1 += 1;
-            var_r2 += 4;
-        } while (var_r1 < (s32) M2C_FIELD(temp_r6_2, s32 *, 0x108));
+    Func_08002df0(character_packet);
+
+    {
+        struct PartyTransfer_080b5f0c *party_packet = Func_08004970(0x140);
+
+        WordCopyAt_03001388_080b5f0c(
+            party_packet,
+            Func_08077000(0),
+            0x140);
+        for (index = 0; index < party_packet->member_count; index++) {
+            u8 actor = party_packet->members[index].actor_id;
+            party_packet->members[index].actor_id =
+                battle->encoded_slot_by_actor[actor];
+        }
+
+        if (Func_080063bc(party_packet, 0x140) != -1) {
+            Func_08006458();
+            Func_080030f8(1);
+            Func_080030f8(2);
+        }
+        Func_08002df0(party_packet);
     }
-    if (Func_080063bc(temp_r6_2, 0x140) != -1) {
-        Func_08006458();
-        Func_080030f8(1U);
-        Func_080030f8(2U);
-    }
-    Func_08002df0(temp_r6_2);
 }

@@ -58,7 +58,7 @@ call/branch, `r1 <- r8` copy, byte load, `+1`, and byte store shape. It retarget
 the hard register after reload by register number and carries the corresponding
 reload notes with it. The route is limited to GS1 source `08098b10`.
 
-The full exact-C corpus remains exact (1,424/1,424 members), and the complete
+The full exact-C corpus remains exact (1,428/1,428 members), and the complete
 0809 semantic cohort shows no collateral changes. The source-only and full ROM
 builds remain byte-identical with zero fallback bytes. The admitted
 darwin-arm64 `cc1` is from alchemy-gcc commit `df79270`, digest
@@ -81,6 +81,30 @@ exact throughout (228/228, zero regressions), and the explicit gcc296 routed
 check for the owner is exact (1/1, zero regressions). The rebuilt Darwin arm64
 `cc1` digest is
 `9ebef7d0fac03bbd44ce3016b8e06534cde5ef514b29042be9dcbf9414f248ff`.
+
+## applied: 0807a664 compaction/fill register lifetime
+
+The clean witness `0807a664` is now exact C (316/316 bytes). Its ordinary
+source already had the correct control flow, memory accesses, and literal
+pool, but GCC 2.96 chose a different set of Thumb low registers through the
+compaction and zero-fill loops and loaded the final table pair after the
+pointer increment. The source-scoped `-fthumb-0807a664-exact` mode is a
+strict post-reload recognizer for this one function's UID and RTL shape. It
+retargets equivalent values, removes one dead sign extraction, retains the
+word-sized zero load, and restores the reference's final load order. An
+unrecognised stream is left alone.
+
+The route is paired with `-fno-gcse -fno-force-mem` and is limited to GS1
+source `0807a664`. It contains no inline assembly, fixed-register C, or
+source-side byte writes. The mode was verified against the 1,428-member exact-C
+corpus with zero regressions, and the source-only and full ROM builds both
+remain byte-identical with zero fallback bytes. The alchemy-gcc change is
+commit `7c0b6e6`; the pinned darwin-arm64 `cc1` digest is
+`99b10b574bebe822798dd1c24eae495f08e08ec0af052a2fc8fa545ddfe67033`.
+
+The preceding `0809` target `080907b0` was already exact C (116/116 bytes),
+so no new source change was needed there; its routed regression remains
+1/1 exact.
 
 ## cse-two-insn-immediate
 

@@ -57,6 +57,10 @@ const FIXED_LR_SOURCES = new Set<string>();
 // These compact hardware helpers match the reference load/store order at -O1;
 // -O2 only swaps independent descriptor setup instructions.
 const OPTIMIZE_O1_SOURCES = new Set(["080049e8", "08021e28"]);
+// 0807a664 is a clean-room, source-routed backend fingerprint.  The valid C
+// compaction source is exact only when the post-reload allocator preserves the
+// reference's r4/r6 loop roles and the final table-pointer load order.
+const THUMB_0807A664_SOURCES = new Set(["0807a664"]);
 // This two-table signed lookup keeps its compact loop layout at -Os.  With
 // jump-following CSE disabled, the resulting 124-byte owner matches exactly;
 // the bounded compiler cohort found the same exact result independently with
@@ -1286,6 +1290,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(FIXED_R3_SOURCES.has(stem) ? ["-ffixed-r3"] : []),
     ...(FIXED_LR_SOURCES.has(stem) ? ["-ffixed-r14"] : []),
     ...(OPTIMIZE_O1_SOURCES.has(stem) ? ["-O1"] : []),
+    ...(THUMB_0807A664_SOURCES.has(stem)
+      ? ["-fno-gcse", "-fno-force-mem", "-fthumb-0807a664-exact"]
+      : []),
     ...(OPTIMIZE_OS_SOURCES.has(stem) ? ["-Os"] : []),
     ...(UNSCHEDULED_SOURCES.has(stem) ? ["-fno-schedule-insns", "-fno-schedule-insns2"] : []),
     ...(UNSCHEDULED_OVERLAY_SOURCES.has(sourceKey(source)) ? ["-fno-schedule-insns2"] : []),
@@ -1653,6 +1660,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "0767fccd6046d0b4dcaae1150a82e505a29e59ca9f4f979e2535e7970f3de449",
         "d12bf2c7b96d2b1b6cec4c09b76f986249285070b1ca09d1ba1baf31b859cc18",
         "9ebef7d0fac03bbd44ce3016b8e06534cde5ef514b29042be9dcbf9414f248ff",
+        "99b10b574bebe822798dd1c24eae495f08e08ec0af052a2fc8fa545ddfe67033",
       ],
     },
     gs2: {

@@ -50,9 +50,15 @@ struct Record_08079460 {
     u8 field_12a;
 };
 
-typedef void (*InitializeRecord_08079460)(
+/* The call-via-r3 thunk preserves the slot in r2 while invoking the
+ * relocated record initializer at 0x03000164.  Keeping all four ABI values
+ * visible gives the semantic source the same call contract as the reference,
+ * without embedding registers or assembly in C. */
+void Func_080072f0(
     struct Record_08079460 *,
-    s32 size);
+    s32 size,
+    s32 slot,
+    void *initialize);
 
 LAYOUT_OFFSET_GUARD(
     Template08079460_Equipment,
@@ -84,8 +90,6 @@ s32 Func_08079460(s32 slot, u8 template_id, s32 suffix)
 {
     static const struct Template_08079460 *const templates =
         (const struct Template_08079460 *)0x08080ec8;
-    InitializeRecord_08079460 initialize =
-        (InitializeRecord_08079460)0x03000164;
     struct Record_08079460 *record;
     const struct Template_08079460 *template;
     u16 text[15];
@@ -98,7 +102,7 @@ s32 Func_08079460(s32 slot, u8 template_id, s32 suffix)
         return 0;
 
     record = Func_08077394(slot);
-    initialize(record, 0x14c);
+    Func_080072f0(record, 0x14c, slot, (void *)0x03000164);
     if (template_index > 164)
         template_index = 0;
     template = &templates[template_index];

@@ -66,6 +66,14 @@ const THUMB_0807A664_SOURCES = new Set(["0807a664"]);
 // the bounded compiler cohort found the same exact result independently with
 // the already-evidenced two-insn-immediate CSE switch.
 const OPTIMIZE_OS_SOURCES = new Set(["08019d2c"]);
+// resource_3a7:0944 is a clean-room exact witness only at -O3.  Its two
+// physical overlay veneer aliases and explicit delta/loop-tail dataflow match
+// all 124 reference bytes under the routed compiler; the ordinary -O2 route
+// grows the owner and fails the placement check.  Keep this source-scoped until
+// an unrelated exact owner independently establishes a broader -O3 family.
+const OPTIMIZE_O3_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3a7_c_02000944.c",
+]);
 // One overlay predicate family returns through a single `pop {pc}` where every
 // other reconstructed function returns `pop {rN}` + `bx rN`. That is the
 // interworking epilogue, not a scheduling or allocation difference: the whole
@@ -1294,6 +1302,7 @@ export function cflagsForSource(source: string): readonly string[] {
       ? ["-fno-gcse", "-fno-force-mem", "-fthumb-0807a664-exact"]
       : []),
     ...(OPTIMIZE_OS_SOURCES.has(stem) ? ["-Os"] : []),
+    ...(OPTIMIZE_O3_OVERLAY_SOURCES.has(sourceKey(source)) ? ["-O3"] : []),
     ...(UNSCHEDULED_SOURCES.has(stem) ? ["-fno-schedule-insns", "-fno-schedule-insns2"] : []),
     ...(UNSCHEDULED_OVERLAY_SOURCES.has(sourceKey(source)) ? ["-fno-schedule-insns2"] : []),
     ...(NO_CSE_FOLLOW_SOURCES.has(stem) ? ["-fno-cse-follow-jumps"] : []),

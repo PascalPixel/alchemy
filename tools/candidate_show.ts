@@ -153,7 +153,11 @@ async function main(): Promise<void> {
   const extent = symbols.exitCode === 0 && options.configuration.family !== "gcc2951"
     ? linkedFunctionExtent(symbols.stdout.toString(), `Func_${stem}`, address, linked.length)
     : verification.actual.length;
-  const expectedSize = regionSize(stem) ?? verification.expected.length;
+  // Promoted sources may own a complete multi-function span after their
+  // reference `.s` row has been removed. In that case the linked extent is
+  // the authoritative candidate boundary; the verification object only knows
+  // the entry symbol's head size.
+  const expectedSize = regionSize(stem) ?? linked.length;
   const actual = linked.subarray(0, extent);
   const expected = Buffer.from(rom).subarray(address - ROM_BASE, address - ROM_BASE + expectedSize);
 

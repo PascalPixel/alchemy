@@ -6,9 +6,11 @@ Audit checkpoint: 2026-08-02, `main`. This is the single authoritative current
 handover. Historical studies remain useful evidence, but their counters and
 queues are not live project status.
 
-Verification status: the complete `bun run verify` gate and
-`bun run coverage:check` both pass at this checkpoint. The normal build is
-byte-identical, source ownership is complete, and ROM fallback is zero.
+Verification status: `bun run test`, `bun run build:semantic`, and
+`bun run coverage:check` pass at this checkpoint. The normal build remains
+byte-identical, source ownership is complete, and ROM fallback is zero. The
+complete `bun run verify` gate last passed before this semantic-only tranche
+and should be rerun before the next checkpoint commit.
 
 ## Executive verdict
 
@@ -17,8 +19,8 @@ Alchemy is a complete, byte-identical, source-owned reconstruction of the
 
 - Exact Full-C Byte Share is **266,832 / 1,343,470 executable bytes
   (19.86%)**.
-- Reviewed semantic C adds **856,346 executable bytes**. Exact plus semantic C
-  covers **1,123,178 / 1,343,470 bytes (83.60%)**.
+- Reviewed semantic C adds **949,778 executable bytes**. Exact plus semantic C
+  covers **1,216,610 / 1,343,470 bytes (90.56%)**.
 - The main executable has a closed semantic census: every ordinary owner has
   exact or reviewed semantic C. That closure has **not** made exact matching
   materially faster by itself.
@@ -53,8 +55,8 @@ may retain older identifiers when renaming would damage reproducibility.
 | Scope | Exact C | Semantic C, excluding exact | Unknown assembly | Retained exact assembly | Executable total |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | Main executable | 105,052 | 412,826 | 0 | 30,486 | 548,364 |
-| 96 decoded code overlays | 161,780 | 443,520 | 146,058 | 43,748 | 795,106 |
-| **Total** | **266,832** | **856,346** | **146,058** | **74,234** | **1,343,470** |
+| 96 decoded code overlays | 161,780 | 536,952 | 52,826 | 43,548 | 795,106 |
+| **Total** | **266,832** | **949,778** | **52,826** | **74,034** | **1,343,470** |
 
 Additional ROM-image facts:
 
@@ -65,15 +67,24 @@ Additional ROM-image facts:
 - The source-only full build owns **8,388,608 / 8,388,608 bytes**, uses zero
   fallback, and reproduces the reference ROM byte for byte.
 - Diagnostic source counts are 1,428 main-image C files, 1,834 exact code-overlay
-  C files, 701 semantic main-image C files, 1,132 semantic code-overlay C files,
+  C files, 701 semantic main-image C files, 1,587 semantic code-overlay C files,
   and 41 headers. These are useful inventory counts, not progress percentages
   or reliable function counts.
 
-The semantic compiler reviews 880,410 bytes of owner spans, but 24,064 of those
+The semantic compiler reviews 976,622 bytes of owner spans, but 26,844 of those
 bytes lie outside the audited executable extents, chiefly pool/tail portions of
-code-overlay owner spans. The coverage numerator therefore uses 856,346, not
-880,410. `tools/build_semantic.ts` now reports both figures instead of silently
+code-overlay owner spans. The coverage numerator therefore uses 949,778, not
+976,622. `tools/build_semantic.ts` now reports both figures instead of silently
 adding out-of-scope bytes.
+
+The continuous semantic-overlay campaign has reduced the ranked
+`CODE-SUSPECT` queue from 35 to **11 gaps** at this checkpoint. Recent complete
+closures include `resource_3a5`, `resource_3bb`, `resource_381`, `resource_376`,
+`resource_39b`, `resource_39c`, `resource_3b0`, `resource_3b3`, `resource_3bf`,
+and `resource_3c8`, plus bounded tranches in `resource_3a0`, `resource_3a6`,
+`resource_3b4`, `resource_3ba`, and `resource_3be`. Every admitted owner is
+ordinary C: the repository-wide gate currently scans 5,592 C/H sources with
+zero forbidden assembly escapes.
 
 ## What exact C means
 
@@ -98,8 +109,8 @@ The full-build assembly manifest contains 1,756 rows / 443,312 bytes:
 
 | Manifest disposition | Rows | Bytes |
 | --- | ---: | ---: |
-| Ordinary compiler-output debt | 584 | 348,260 |
-| Other retained structural/low-level rows | 1,172 | 95,052 |
+| Ordinary compiler-output debt | 585 | 348,300 |
+| Other retained structural/low-level rows | 1,171 | 95,012 |
 | **Assembly manifest total** | **1,756** | **443,312** |
 
 Those values describe exact build ownership, not missing semantic C. Most of
@@ -135,7 +146,7 @@ current explicit `keep_asm` policy, although its manifest confidence remains
 
 `bun run core:retained:check` is now part of the full verification gate. The
 dashboard uses natural source/owner boundaries instead of artificial roughly
-equal blocks and reserves orange for evidence-backed retained assembly or
+equal blocks and reserves dark gray for evidence-backed retained assembly or
 explicit non-code data.
 
 ### 0807 main-image tranche
@@ -157,10 +168,10 @@ The 96 decoded code overlays are the largest open program scope:
 
 - Executable inventory: **795,106 bytes**.
 - Exact C: **161,780 bytes**.
-- Additional semantic C: **443,520 bytes**.
-- Remaining without exact or semantic C: **189,806 bytes**, including 43,748
+- Additional semantic C: **536,952 bytes**.
+- Remaining without exact or semantic C: **96,374 bytes**, including 43,548
   bytes of evidence-backed retained assembly.
-- Current semantic-backed exact reading list: **539 owners / 274,540 bytes**
+- Current semantic-backed exact reading list: **546 owners / 275,078 bytes**
   across 67 code overlays.
 
 The largest reading-list portfolios are `resource_373` (16,440 bytes),
@@ -188,10 +199,389 @@ by `resource_3b1:4254` (892), `resource_3ba:1e7c` (620),
 `resource_3bb:2450` (1,264), and `resource_3bc:2bac` (620). All eight pass the
 targeted multiset, ordered-call, and m2c coverage checks. The first four add
 2,926 executable semantic-C bytes after pool/tail clipping; the second four add
-another 3,396. The project-wide diagnostic now covers 1,132 owners; the latest
+another 3,396. The project-wide diagnostic now covers 1,150 owners; the latest
 four add four passes to the prior 914-pass/214-mismatch audit, so `--all` remains
 an audit queue rather
 than a green gate; the self-test is wired into `bun test`.
+
+`bun tools/overlay_show.ts <overlay> <start> <end> --annotate` now performs the
+disassembly, overlay-specific BL resolution, and completeness check in one
+command. Both offsets and full `0x02000000` RAM addresses are accepted. This
+removes the repeated two-command pipe and prevents an absolute address from
+silently producing an empty binary. The first owner read through this route,
+`resource_373:2a54`, closes a 604-byte one-return gap with all 45 calls matching
+in multiset and source/machine order.
+
+The next family pass closes another **5,936 executable semantic-C bytes** in
+17 independently verified owners: the 480-byte state driver in resources 3ba,
+3bb and 3bc; the 384-byte collision/movement owner in 39b, 3a6, 3b3 and 3be;
+and the 296-byte actor-rectangle scan in ten overlays. Shared control flow was
+used to amortize reading, but every receiving overlay resolved its own table or
+script addresses and passed its own multiset, ordered-call and m2c coverage
+checks. `m2c_guard.ts` now ignores unresolvable BL-shaped words in skipped
+literal data, matching the existing multiset rule instead of demanding a
+fictional C call.
+
+The following ranked pass closes `resource_371:0a8c` with another **412
+executable semantic-C bytes** and 48/48 ordered, veneer-resolved calls. It also
+corrects the adjacent `resource_371:06ec` registration from 880 to its already
+source-documented 928-byte extent: the missing 48 bytes were the end of that
+dispatcher's literal pool, not the start of the new function. The ranked queue
+therefore drops the former 460-byte combined gap cleanly, with code and pool
+ownership kept distinct.
+
+The same ranked tranche then closes `resource_3c4:1aba` (370 bytes, 26/26
+ordered calls) and the paired interpolation/display-cycle owners
+`resource_3ba:2bec` and `resource_3bc:391c` (316 bytes each). The pair shares
+control flow but uses independently resolved state addresses and independently
+passes every targeted gate. In total this tranche adds **1,414 executable
+semantic-C bytes** across four new owners.
+
+The next ranked pass adds another **1,256 executable semantic-C bytes** in five
+owners: the three-group formation builder `resource_39c:3948` (284 bytes), the
+story-flag-selected spawn/release family member `resource_3ba:30ac` (276), the
+terrain-search/spawn owner `resource_3b3:1074` (256), the scene-0x36 setup
+`resource_39c:36ac` (220), and the collision-gated tile-center move
+`resource_3a0:0d0c` (220). Existing reviewed or exact-C local callees supplied
+the private ABIs where available; every owner still resolved its own calls,
+data addresses and pool boundary and passed targeted multiset, ordered-call,
+m2c coverage and no-assembly checks.
+
+The next ranked owner closes `resource_3ba:1910` with another **208 executable
+semantic-C bytes**. Its independently reconstructed 208-byte sibling at
+`resource_3bc:2640` supplied the operation and established import ABIs, while
+the receiving overlay independently confirmed its mid-owner literal pool and
+all eleven calls across six targets. The semantic build, multiset, ordered-call,
+m2c coverage, and repository-wide no-assembly gates all pass.
+
+The following ranked pass closes another **904 executable semantic-C bytes**
+across five owners: the story-flag-selected sequence/setup owner
+`resource_3b1:1078` (204 bytes), the palette-rebuild sibling
+`resource_3ba:2ea0` (196), the randomized kind-222 effect spawn
+`resource_3a8:3864` (168), the six-candidate same-tile/highest-y selector
+`resource_3c8:23d4` (168), and the heading-selected interaction/message owner
+`resource_3cb:0d68` (168). The 2-byte alignment at `resource_3ba:2e9e` remains
+with its preceding unknown owner instead of being misattributed. Every new
+owner passes the semantic build, multiset, ordered-call, m2c coverage, and
+repository-wide no-assembly checks; the ranked one-return queue now starts at
+164 bytes.
+
+The next ranked tranche closes another **1,028 executable semantic-C bytes**
+across seven owners. It pairs the instruction-identical party interaction
+owners `resource_3bb:1f14` and `resource_3bc:29ac` (164 bytes each), closes the
+two unrelated 164-byte `resource_39c` collision/palette owners at `058c` and
+`0d58`, and separates the real 104-byte `resource_39f:2ba4` motion owner from
+the 60 bytes of preceding table/pool data that the gap rank groups with it. It
+then closes `resource_3b3:26b8` (148 bytes) and `resource_39c:1568` (120).
+Family comparison amortized the paired reading, while prologue-first boundary
+review prevented data from being mislabeled as C. Every owner passes the
+semantic build, multiset, ordered-call, m2c coverage and no-assembly gates; the
+ranked one-return queue now starts at 104 bytes.
+
+The following boundary-first pass adds **392 executable semantic-C bytes** in
+four owners: the protected-window palette adjustment `resource_392:0abc` (104
+bytes), the actor-8 tile trigger `resource_38a:0380` (100), the two-placement
+camera script `resource_3b0:040c` (92), and the fixed actor placement/state
+setup `resource_3bf:206c` (96). Prologue-first inspection keeps the eight bytes
+before `resource_3b0:040c` with the preceding pool instead of claiming the
+ranked gap's nominal `0404` start. All four independently pass the semantic
+build, multiset, ordered-call, m2c coverage and no-assembly gates; the ranked
+one-return queue now starts at 86 bytes.
+
+The next combined ranked/family pass adds **5,714 executable semantic-C bytes**
+across 34 owners. Four boundary-first ranked owners contribute 214 bytes while
+keeping the import veneers before `resource_39c:0030` and the alignment before
+`resource_3c4:1458` out of ordinary C. The main throughput gain is the paired
+696-byte movement/redraw and 284-byte nested-kind rectangle family at `0608`
+and `08c0`: one control-flow reconstruction is applied to resources 373, 389,
+391, 392 and 393, but every overlay independently resolves its key, delta and
+direction tables and its call-through callback. Those ten owners contribute
+4,890 executable bytes. Twenty adjacent setup, query, transition and leaf
+owners add the remaining 610 executable bytes and close the `09dc` follow-on
+banks in resources 391-393. Normalizing the instruction skeleton while leaving
+pool/table words overlay-specific is the best measured acceleration in this
+pass. Every owner passes the semantic build, call multiset, ordered-call, m2c
+coverage and no-assembly gates; the ranked one-return queue now starts at 32
+bytes.
+
+The next boundary-first pass adds **1,280 executable semantic-C bytes**. Four
+independently reconstructed `resource_372` scene owners at `3e18`, `3e48`,
+`3fb0` and `40f0` contribute 1,052 bytes. Two 32-byte owners at
+`resource_3bb:2e44` and `resource_3cb:0128`, the 28-byte conditional-sound
+owner `resource_373:5a08`, and the 24-byte actor-mode owner
+`resource_3b3:1428` contribute another 116. The remaining 112 bytes came from
+correcting five registrations whose source comments already proved that the
+return/alignment/literal-pool tail belonged to the preceding owner: two in
+`resource_3bb` and three in `resource_3a4`. Those corrections also exposed and
+fixed stale local-veneer names in the two existing `resource_3bb` sources.
+Every affected owner passes its targeted multiset, ordered-call and m2c checks.
+Two additional prologue-less leaves, `resource_3bc:45d0` and
+`resource_389:10c0`, add 24 reviewed bytes outside the executable inventory;
+they therefore do not inflate the executable-semantic numerator.
+
+This pass establishes a cheaper first step for the small-gap queue: when a
+ranked gap starts on the previous semantic owner's return, compare the
+registered span against the source-documented next prologue and referenced
+pool before drafting a new function. The check recovered 112 executable bytes
+from five stale spans and reduced the one-return queue to 10-byte gaps. Real
+prologue-less leaves still remain distinguishable because they begin after the
+preceding alignment/pool boundary and pass their own owner-scoped gates.
+
+The following closure pass adds another **9,864 executable semantic-C bytes**
+and clears the one-return queue completely. Twelve independently resolved
+eight-byte address getters, six four-byte no-op/zero leaves and three corrected
+return-tail spans account for 128 reviewed bytes, 16 of them executable. The
+first large reuse cohort then splits the repeated 530-byte gap in eleven
+overlays into a 56-byte prologue-less integrator and a 472-byte configurable
+spawn/copy owner. Those 22 owners add 5,808 reviewed bytes and 5,192 executable
+bytes; the integrators lie outside the executable census. The ordered-call
+gate caught an inherited error in the older sibling reconstruction: actor 0 is
+looked up before the spawn call, not afterward. All eleven normalized sources
+now preserve that machine order and independently resolve their variant table.
+
+A second cohort converts five complete owners in each of resources 39f, 3b2,
+3c4 and 3c5: the staged 694-byte movement/redraw owner, the 284-byte
+kind-selected redraw, a 24-byte owner-bit setter and two 88/100-byte spawn
+wrappers. These 20 owners add 4,760 reviewed bytes and 4,656 executable bytes,
+with every overlay independently resolving its key, displacement and direction
+tables. The remaining 28-byte head of the following integrator is deliberately
+not claimed because its tail is already a separate exact-C fragment; preserving
+that split is more accurate than manufacturing a whole-owner semantic span.
+All 60 targeted multiset, ordered-call and m2c checks pass.
+
+The best measured speedup is now cohorting repeated ranked gaps by exact
+boundary shape before reading their bodies. Hash the instruction-only leaf,
+resolve every receiving overlay's call multiset and pool words, normalize one
+source skeleton, then substitute only independently verified table addresses.
+This produced 42 family owners from two detailed control-flow reads while the
+owner-scoped gates still caught a real sequencing defect. The ranked queue now
+contains 91 multi-return gaps and no one-return gaps.
+
+The first multi-return pass splits `resource_3a8:2000-3184` at the two actual
+saved-register prologues instead of treating the 4,484-byte gap as one owner.
+The preceding pool ends at `0x02002008`; the first cutscene then owns 1,720
+bytes through its trailing pool at `0x020026bf`, and the second cutscene starts
+at `0x020026c0`. The first owner is now reviewed semantic C with all **160/160**
+veneer-resolved calls matching in both multiset and machine order, including
+the sole answer branch and the direct scene/entity field writes. This adds
+1,720 executable semantic bytes. The separate 12-byte gap at `0174-017f` is
+also split into a four-byte zero-return leaf and an eight-byte literal-address
+getter; both pass their zero-call owner gates but lie outside the executable
+census, so they add reviewed coverage without inflating the executable metric.
+The remaining `resource_3a8` gap is the independently bounded 2,756-byte owner
+at `0x020026c0` with 249 veneer calls.
+
+For large linear script owners, the cheaper workflow is now: split on proven
+prologues/returns and pool branches first, resolve the complete ordered call
+stream once, transcribe calls and the comparatively few memory operations in
+address order, then use the multiset and ordered-call gates as immediate
+feedback. On `resource_3a8:2008`, that avoided searching for a nonexistent
+large twin and turned a 4.4-KiB ambiguous gap into one verified 1.7-KiB owner
+plus one cleanly isolated follow-up.
+
+That follow-up is now complete. The 2,756-byte `resource_3a8:26c0` cutscene
+passes a **249/249** veneer-resolved multiset and ordered-call reconciliation,
+including its three pools, three nullable actor-position copies, four randomized
+counters, answer branch, DMA/scene writes and final teardown. Together the two
+large owners account for 4,476 executable semantic bytes and 409 independently
+checked calls; `overlay_gaps.ts resource_3a8` now reports zero code-suspect
+gaps.
+
+The same boundary-first pass then closes 43 smaller owners and reduces the
+ranked multi-return queue from 89 gaps to **70**. Nine overlays share the proven
+four-byte-zero-leaf plus eight-byte-address-getter split (18 owners). Two
+resource_3bb/resource_3bc empty-hook/state-setter pairs, four resource_3b4
+hook/heading/blend owners and two resource_3c0 entity owners close another ten.
+Four 32-byte DMA3 descriptor writers in resources 392/393, five resource_39c
+wrapper owners, three resource_3b3 probe/link owners and three resource_3a0
+presentation/effect owners complete the tranche. Every receiving owner resolves
+its own data address and passes its own multiset and ordered-call gates.
+
+This continuation adds **3,308 executable semantic bytes** in 44 owners. The
+small-owner portion adds 732 reviewed bytes, of which 180 are correctly outside
+the executable census; it therefore contributes 552, not 732, to the headline.
+The measured acceleration remains decomposition plus exact-shape cohorting:
+first split every return into independently bounded owners, then normalize only
+when instruction shape is identical and keep all pool/data substitutions
+overlay-specific.
+
+The next boundary split closes `resource_37f` completely. The apparent
+2,344-byte two-return gap begins with 40 bytes already owned by the preceding
+dispatcher's trailing pool, then divides at fresh prologues into a 624-byte
+scene-setup owner at `0x02000d1c` and a 1,680-byte scene-sequence owner at
+`0x02000f8c`. The first reconciles all **60/60** calls across 20 veneers. The
+second preserves its interior pool skip, six nullable entity-record reads,
+answer branch, camera choreography and teardown while reconciling all
+**174/174** calls across 30 veneers. Both pass syntax, multiset, strict ordered-
+call, m2c coverage and no-assembly checks. They add **2,304 executable semantic
+bytes**, reduce the ranked multi-return queue to **69**, and leave
+`overlay_gaps.ts resource_37f` at zero code-suspect gaps.
+
+A four-gap shape cohort then closes seven more owners across resources 399,
+3a6, 3bb and 3bc. The paired 148/84-byte resource_3bb owners have exact
+instruction twins in resource_3bc, with all four callback words resolved
+independently. Resource_3a6 contributes a four-call scene wrapper plus its
+metatile-centered presentation owner; resource_399 contributes the complete
+248-byte orbit/randomized-clone owner. The seven recorded spans add 928 reviewed
+bytes, 716 of them inside the audited executable census, and reduce the ranked
+queue from 69 to **65** gaps.
+
+That resource_399 owner exposed and fixed another throughput hazard in
+`overlay_call_order_check.ts`: Discovery treated an inline `mov ip,pc / bx rN`
+IWRAM call as a return and silently discarded every later BL. The checker now
+detects the reachable call-through idiom and switches to the complete bounded
+resolver listing, with a regression test. The formerly truncated owner now
+passes all ten direct calls in order; m2c remains correctly refused as a seed
+while independently confirming all 9/9 distinct direct callees in the draft.
+
+The highest-yield low-return gap, `resource_3b1:1f3c-2ff0`, is now complete as
+two independent scene owners separated at the fresh prologue `0x020027d8`.
+The first 2,204-byte owner preserves its branch-skipped thirteen-word interior
+pool and all **230/230** calls across 23 targets. The second 2,072-byte owner
+preserves three answer branches, the shared scene counter, six nullable record
+copies, final teardown and all **203/203** calls across 30 targets. Both pass
+multiset and strict-order checks; m2c independently reports 23/23 and 30/30
+callee coverage with no truncation hazard. The pair adds **4,276 executable
+semantic bytes**, closes the entire former two-return gap and reduces the ranked
+queue to **64**.
+
+Two more boundary-first passes close both late `resource_3b1` two-return gaps.
+The `5d10-63ac` pair contributes 1,024- and 668-byte owners whose 87 and 63
+calls pass multiset and strict-order checks, with m2c covering 29/29 and 23/23
+callees. The `50e4-5684` pair contributes 528- and 912-byte owners, including
+three nullable actor-position copies, the answer-dependent scene-counter write
+and final state publication; its 48 and 80 calls pass the same gates with 24/24
+and 27/27 callee coverage. Together they add **3,132 executable semantic
+bytes**, leave only three `resource_3b1` code-suspect gaps, and reduce the global
+ranked queue to **62**.
+
+The remaining `resource_3b1` gaps are now closed too. The `57ec-5ca4` pair
+adds 1,116- and 92-byte owners with 112/112 and 4/4 ordered calls; the
+`0728-08a8` pair adds 208- and 176-byte story/answer owners with 19/19 and
+17/17 ordered calls. Finally, twelve homologous eight-call story selectors and
+four six-call selectors close `1324-1804` as sixteen independently admitted
+owners. Explicit per-owner C keeps every branch and constant visible while the
+shared boundary/constant-table pass avoids repeating the analysis. This final
+tranche adds **2,840 executable semantic bytes**; `overlay_gaps.ts resource_3b1`
+now reports zero gaps and the global ranked queue is **59**.
+
+The next boundary-first pass closes five of the six owners in
+`resource_3bc:1474-22c4`. The four related state-machine owners at
+`1c20`, `1df8`, `1f90`, and `20f0` contribute 1,700 bytes; their 44, 40, 30,
+and 40 calls pass independent multiset and strict-order checks with complete
+m2c callee coverage. The adjacent 532-byte scene-staging owner at `1a0c`
+adds 47/47 ordered calls across seventeen callees. Together the tranche adds
+**2,232 executable semantic bytes** and shrinks the remaining head owner to
+`1474-1a0c` (1,432 bytes). Because that residual is still one code-suspect
+gap, the global ranked queue remains **59**. The full build, coverage check,
+owner-scope census and no-assembly gate all pass at the checkpoint.
+
+The adjacent `resource_3bc:232e-25c8` residual is closed immediately after
+that checkpoint. The first two bytes were the previously omitted final
+`bx r0` of the already semantic `22f4` owner, whose corrected 60-byte span now
+passes 5/5 call coverage. The remaining 416- and 248-byte state-machine owners
+at `2330` and `24d0` preserve 35/35 and 26/26 ordered calls, including the
+120-frame fixed-point motion loop and scene-byte publication. This adds
+**666 executable semantic bytes**, removes the overlay certifier's stale
+"recorded owner contains no return" finding, leaves three `resource_3bc`
+code-suspect gaps, and reduces the global ranked queue to **58**.
+
+The final `resource_3bc` closure adds **3,576 executable semantic bytes** in
+six independently admitted owners. The 948-byte `3468-381c` gap splits into
+268-, 204-, and 476-byte owners, including the complete deferred-MMIO queue
+append logic in ordinary C. The 1,196-byte `40d0-457c` gap splits into the
+964-byte per-frame chain renderer and 232-byte descriptor constructor. Reusing
+their already reviewed `resource_3ba`/`resource_3bb` homologs, followed by
+independent address, pool, multiset and order validation, was the fastest
+measured path through that pair. Finally, the 1,432-byte scripted-scene owner
+at `1474` preserves its branch-skipped eleven-word interior pool, final message
+word, five task phases and all **157/157** calls across 33 resolved callees.
+All six pass compilation, multiset, strict-order, m2c coverage and no-assembly
+gates. `overlay_gaps.ts resource_3bc` now reports zero code-suspect gaps and the
+global ranked queue is **55**. The certifier still reports the two previously
+recorded tail findings at `405c` and `4d88`; neither intersects a newly admitted
+owner.
+
+Homolog reuse then closes the complete 1,412-byte `resource_3ba:2124-26a8`
+gap as a 148-byte palette loader and 1,264-byte command/interpolation renderer.
+Their reviewed `resource_3bb:23bc/2450` and `resource_3bc:2ee8` family members
+supply control-flow evidence only: the receiving overlay independently resolves
+its palette/cache cells, callback, command queue, output state, interior pools
+and every import. The two new owners pass 6/6 and 10/10 multiset and strict-order
+call checks plus complete m2c callee coverage. The renderer keeps all three
+signed interpolation channels, four output modes and both interrupt-masked
+deferred-MMIO queue appends in ordinary C. This raises combined C coverage to
+**1,177,960 / 1,343,470 bytes (87.68%)** and reduces the global ranked queue to
+**54**.
+
+The following boundary-first tranche adds another **1,800 executable semantic
+bytes** and reduces the global ranked queue from 54 to **48**. `resource_3bb`
+closes `1c78-1df4` as 72- and 308-byte owners; `resource_389` closes `0a58-0b6c`
+as one 232-byte spawn/configuration owner plus five small wrappers/leaves;
+`resource_381:0f64` contributes a 288-byte formation owner whose two apparent
+returns are relocated-helper calls; and `resource_395:172c-1838` adds three
+palette/group helpers after correcting the preceding owner's pool boundary.
+`resource_39c` then closes `5242-5388` as two retained alignment bytes plus a
+324-byte target-following movement owner, and closes `2648-2814` as a 60-byte
+palette rotator and 400-byte scripted actor/camera owner. Every ordinary BL is
+reconciled in multiset and source/machine order; the relocated arithmetic calls
+are ordinary typed C function calls, never assembly embeddings. The current
+coverage checkpoint is **1,179,760 / 1,343,470 bytes (87.81%)**.
+
+The next boundary-and-homolog tranche adds **4,720 executable semantic-C
+bytes** and reduces the ranked code-suspect queue from 48 to **39**. It closes
+owners in `resource_3a6`, `resource_3ca`, `resource_399`, `resource_3ba`, and
+`resource_387`; annexes the literal-pool tail and two following owners in
+`resource_3b3:1174-13b0`; transposes the independently re-resolved
+`resource_373` movement/redraw family into the 980-byte `resource_3bf:0608-09dc`
+gap; and closes both `resource_39c:1164-1408` and `18f8-1bd8` placement/event
+families. The owner-local multiset and strict-order gates caught and corrected
+one converged-call source-shape error in `resource_39c:1340`. All admitted
+owners pass compilation, complete m2c callee coverage, strict call checks and
+the repository-wide no-assembly scan. The current checkpoint is **1,184,480 /
+1,343,470 bytes (88.17%)**.
+
+A structural-queue audit then proves that `resource_3bf:5588-57ec` is exactly
+69 fixed eight-byte import veneers followed by all fifteen four-byte
+`call_via` entries (552 + 60 = 612 bytes), with no ordinary return outside
+those banks. `overlay_gaps.ts` now masks the same exact structures in interior
+gaps as it already did in heads and tails; a mixed `resource_3a7` gap retains
+its one ordinary return, and synthetic getter/veneer tests pin both directions.
+That evidence-only correction removes one false code-suspect row without
+changing coverage. The exposed `resource_3a7:1158-13ac` owner then adds **596
+executable semantic-C bytes** by transposing the independently reviewed
+`resource_3bf:57ec` soft-float core: all eighteen differing halfwords are the
+nine BL pairs, no ordinary instruction or pool word differs, and the four
+local targets were independently re-resolved with the same 2/3/3/1 call
+multiset and order. The ordered-call gate also corrected the older template's
+omission of its real constant-loader call, so both siblings now pass 9/9. The
+ranked code-suspect queue is **37**, the no-assembly guard scans 5,427 C/H files
+with zero forbidden constructs, and combined coverage is **1,185,076 /
+1,343,470 bytes (88.21%)**.
+
+The next boundary split closes all **516 reviewed bytes** in
+`resource_3a6:0d74-0f78` as six owners: a zero leaf, a literal getter, a
+76-byte signed-state scene-record selector, two 28-byte six-argument rectangle
+wrappers, and the 372-byte actor-9 particle-descent sequence. The large owner
+independently preserves the tile-23 guard, pre-positioning, two symmetric
+object creates, 68-frame random-particle loop, presentation/cue updates and
+teardown; all 29 BL sites match source/machine order, and the whole overlay's
+20 semantic owners pass the strict call gate. Twelve trailing pool bytes fall
+outside executable coverage, so the tranche contributes **504 executable
+semantic-C bytes**. The ranked queue is **36**, the no-assembly guard scans
+5,433 C/H files with zero findings, and combined coverage is **1,185,580 /
+1,343,470 bytes (88.25%)**.
+
+The following `resource_3a0:0f30-1148` closure contributes **528 executable
+semantic-C bytes** across a 304-byte actor-19 scripted scene, a 224-byte
+actor-18 setup, and an eight-byte literal getter. The scene retains three
+independently parameterised object spawns, actor presentation, story-state
+increment and all 21 calls; the setup retains its repeated record fetches and
+all 22 calls. All thirteen semantic owners in the overlay pass strict
+source/machine order, both larger owners pass complete m2c callee coverage,
+and the ranked queue falls from 36 to **35**. The no-assembly guard scans 5,436
+C/H files with zero findings; combined coverage is **1,186,108 / 1,343,470
+bytes (88.29%)**.
 
 ## Semantic C: what it did and did not unlock
 
@@ -201,6 +591,36 @@ own. Closing the main-executable semantic census did not change the exact
 headline because the remaining work is dominated by register allocation,
 scheduling, literal-pool placement, compiler vintage, private ABI contracts,
 and module boundary/linkage details.
+
+Main-image readability is now maintained as a continuous, independently gated
+track rather than left frozen at first-pass semantic closure. Its first forty-four
+tranches replace fifty-four mechanical owners with typed source. They cover the
+16-by-16 affine tilemap initializer at `080cdb24`, action/help/combatant renderers
+at `080a6a98`, `080a8578` and `080a8914`, scene transfer and sprite-palette
+owners, inventory and roster selection, modal lifecycle, animation allocation,
+and ordered rendering-preset selection, plus transition profiles, a two-window
+selection dialog, the tile-script interpreter, a shared effect-slot motion
+sequence, the effect-transfer queue at `0801a088`, the 512-color RGB555 fade at
+`080f2f10`, the numeric selector input handler at `08029094`, the item-page
+renderer at `080b0fa4`, projectile launch at `08098698`, sprite-slot projection
+at `0800b074`, battle-decision routing at `080b920c`, and the owner at
+`0809b208`, plus particle-manager, terrain-marker, target-classification,
+arena-initialization, cursor-wobble, display-tween and dirty text-tile DMA
+owners. The preceding batch adds camera-relative projection, guarded letterbox and
+deferred-display writes, map-init resource staging, interpolation and paged
+display-object updates, an effect watcher, numeric text placement, cartridge
+configuration lookup, a terrain-seeded particle manager, `0808bb2c`, and the
+typed fixed-stride selection-state initializer at `0801a66c`. The latest ten
+also cover `080a5b94`, `08093fa0`, `08094e7c`, `0801f088`, `080799b0`, the
+text interpreter at `08017aa4`, fixed-stride merge state at `080aae14`, the
+paired-buffer effect owner at `08097644`, sprite/OAM projection at `0800b168`,
+and the guarded orbit lifecycle at `08095c08`.
+The rendering preset preserves the eight-flag
+override as a loop whose highest enabled flag wins. These refactorings do not
+change semantic coverage, and the combined full gate remains byte-identical
+with zero fallback and zero forbidden C/H assembly constructs. A persistent
+Main Image-only worker continues this track in separately verified tranches
+while overlay closure proceeds.
 
 Use semantic C as an input corpus, not a second finish line:
 
@@ -408,8 +828,8 @@ Corrections made in this audit:
   both literal-pool tables, turning a second 600-instruction read into a bounded
   address-substitution review without weakening per-owner verification.
 - the coverage map now preserves the executable inventory's proven code-overlay
-  veneer and alignment classifications. **43,748 overlay bytes** that were
-  previously painted gray as Unknown are now correctly orange retained exact
+  veneer and alignment classifications. **43,548 overlay bytes** that were
+  previously painted gray as Unknown are now correctly dark-gray retained exact
   assembly; the repeated similarly sized blocks are fixed entry/import banks,
   not suspicious identical unknown functions.
 
@@ -424,8 +844,8 @@ Remaining tool debt:
 - Git hooks protect publication only after the contributor explicitly enables
   them; hook configuration is not itself verification.
 - Exact and semantic dashboard ownership update directly from tracked files.
-  Main-image orange ownership uses the verified full-build assembly manifest;
-  code-overlay orange ownership uses the audited executable inventory's
+  Main-image dark-gray ownership uses the verified full-build assembly manifest;
+  code-overlay dark-gray ownership uses the audited executable inventory's
   `veneer` and `executable_alignment` intervals. Retained-classification changes
   therefore remain evidence-backed rather than inferred from a complement.
 
@@ -522,7 +942,7 @@ Falsified or bounded hypotheses:
 The target is **+1,850 exact bytes**. Treat it as a portfolio, not one heroic
 function:
 
-1. Work the 537-owner semantic-backed code-overlay reading list in descending
+1. Work the 540-owner semantic-backed code-overlay reading list in descending
    byte value, beginning with the top eight code overlays listed above.
 2. Give each worker a different code overlay and owner and require an exact adoption
    dry-run before integration.

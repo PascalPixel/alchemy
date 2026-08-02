@@ -4,15 +4,16 @@ typedef unsigned char u8;
 typedef unsigned int u32;
 
 /*
- * Resource 3bf per-mode task installer at 0x02004f60.
+ * Resource 3bf per-mode task installer at 0x02004f60, 388 bytes including
+ * the nine-word trailing pool through 0x020050e3.
  *
  * Complete owner: `push {lr} / sub sp, #8` at 0x02004f60 through
  * `add sp, #8 / pop {r0} / bx r0` at 0x020050ba.  The epilogue pops the return
  * address into r0, so the owner is `void` (HANDOVER section 0).  Two blocks
  * inside the advertised 364-byte row are DATA, not code:
  *   0x02004f84-0x02004fcb  the 18-entry `mov pc, r3` jump table below;
- *   0x020050c0-0x020050e3  the literal pool (nine words), which runs a little
- *                          past the row's advertised end.
+ *   0x020050c0-0x020050e3  the literal pool (nine words), now included in the
+ *                          semantic owner up to the next prologue at 0x50e4.
  *
  * LINK BASE, six fresh witnesses.  The jump table is loaded with base
  * 0x0200cf84 and sits physically at file offset 0x4f84, and its entries are

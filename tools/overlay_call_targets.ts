@@ -236,6 +236,33 @@ export function resolveOverlay(overlay: string, owner?: number, ownerEnd?: numbe
 }
 
 /**
+ * Resolve every call site in one explicitly bounded owner to its C spelling.
+ *
+ * Kept here so readers such as overlay_show can annotate a listing without
+ * reimplementing the overlay's non-PC-relative BL rule or shelling through a
+ * second CLI.  Explicit bounds are required by the caller: an unbounded run
+ * intentionally has different inventory semantics and is not safe for a
+ * tracked owner.
+ */
+export function resolvedCallNames(overlay: string, owner: number, ownerEnd: number): Map<number, string> {
+  const image = overlayImage(overlay);
+  const prologues = new Set(
+    inventory().filter((row) => row.overlay === overlay && row.starts_with_prologue).map((row) => row.offset),
+  );
+  const names = new Map<number, string>();
+  for (const site of resolveOverlay(overlay, owner, ownerEnd)) {
+    const detail = classify(image, site.target, prologues);
+    names.set(
+      site.site,
+      detail.imported !== undefined
+        ? `Func_${detail.imported.toString(16).padStart(8, "0")}`
+        : `Func_${(OVERLAY_BASE + site.target).toString(16)}`,
+    );
+  }
+  return names;
+}
+
+/**
  * Pick the owner/end bounds out of the command line.
  *
  * This used to be an inline `/^[0-9a-f]{1,4}$/` filter, which silently dropped
@@ -516,20 +543,7 @@ function main(): void {
           "wrong — bl targets, with no error and nothing to see.",
       );
     }
-    const image = overlayImage(overlay);
-    const prologues = new Set(
-      inventory().filter((row) => row.overlay === overlay && row.starts_with_prologue).map((row) => row.offset),
-    );
-    const names = new Map<number, string>();
-    for (const site of sites) {
-      const detail = classify(image, site.target, prologues);
-      names.set(
-        site.site,
-        detail.imported !== undefined
-          ? `Func_${detail.imported.toString(16).padStart(8, "0")}`
-          : `Func_${(OVERLAY_BASE + site.target).toString(16)}`,
-      );
-    }
+    const names = resolvedCallNames(overlay, bounds[0], bounds[1]);
     const listing = readFileSync(0, "utf8");
     const missed = unannotatedCallSites(listing, names);
     if (missed.length > 0) {

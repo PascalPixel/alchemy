@@ -3,7 +3,7 @@ typedef signed int s32;
 typedef unsigned int u32;
 
 /*
- * resource_3bc owner at 0x02003b80, 76 bytes: a third sibling in this
+ * resource_3bc owner at 0x02003b80, 80 bytes: a third sibling in this
  * family -- resource_3bc_c_02003b40.c's field-reset-then-teleport sequence
  * (different reset constants: +48 = 0x14000, +52 = 0x14000 >> 1 = 0xa000)
  * plus resource_3bc_c_020022f4.c's two trailing calls.

@@ -4,7 +4,7 @@ typedef signed int s32;
 typedef unsigned int u32;
 
 /*
- * resource_3a4 owner at 0x02002428, 80 bytes: if story value 0x8fe is set,
+ * resource_3a4 owner at 0x02002428, 104 bytes: if story value 0x8fe is set,
  * clear bit 9 of a third overlay workspace's +20 field; otherwise render
  * six fixed cells. Either way, then check a saved story value against a
  * threshold and fire a second story-value setter if it is not exceeded.
@@ -12,7 +12,7 @@ typedef unsigned int u32;
  * Complete owner: `push {lr}` plus an 8-byte frame at 0x02002428, through
  * the matching interworking return `pop {r0} / bx r0` at 0x02002476-
  * 0x02002478, followed by the five-word literal pool 0x0200247c-0x0200248f
- * that closes the 80-byte span. No arguments, void.
+ * that closes the 104-byte span. No arguments, void.
  *
  * Not found by the structural inventory walk (unindexed); one incoming
  * call site per overlay_unindexed.ts. This owner makes three outgoing

@@ -109,6 +109,17 @@ export function callNames(image: Uint8Array, start: number, end: number, overlay
     const target = targetOffset(data.readUInt16LE(at), data.readUInt16LE(at + 2));
     if (target === null || target < 0 || target >= data.length) continue;
     const detail = classify(image, target, prologues);
+    // A branch-skipped literal word can have the f0xx/f8xx bit shape of BL.
+    // If its decoded target is neither a known prologue/import nor code that
+    // reaches a return, classify() leaves it unknown. Requiring a C spelling
+    // for that target manufactures a call: resource_3bb:3458 has exactly this
+    // shape at 0x35c4 inside its skipped pool. The multiset audit applies the
+    // same rule. Genuine calls remain visible because their target resolves to
+    // a veneer, prologue, leaf, or call_via slot.
+    if (detail.kind === "unknown") {
+      at += 2;
+      continue;
+    }
     // A BL into the overlay's `bx rN` bank names the callback value held in a
     // register, not the trampoline itself. The draft represents it as an
     // explicit function-pointer call, so requiring a fictitious Func_0200xxxx

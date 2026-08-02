@@ -3,7 +3,7 @@ typedef signed int s32;
 typedef unsigned int u32;
 
 /*
- * resource_3a4 owner at 0x02002e84, 90 bytes: STRUCTURALLY IDENTICAL to
+ * resource_3a4 owner at 0x02002e84, 104 bytes: STRUCTURALLY IDENTICAL to
  * sibling item-28 owner resource_3a4_c_02002e1c.c -- the same bracketed
  * scene-setup shape (place two entity slots, set a story flag, run the
  * same unresolved primitives and workspace-448 double-stamp), just with
@@ -13,7 +13,7 @@ typedef unsigned int u32;
  * Complete owner: `push {r5, r6, lr}` at 0x02002e84 through the matching
  * interworking return `pop {r5, r6} / pop {r0} / bx r0` at 0x02002eda-
  * 0x02002ede, followed by the three-word literal pool 0x02002ee0-0x02002eeb
- * that closes the 90-byte span. No arguments, void.
+ * that closes the 104-byte span. No arguments, void.
  *
  * Not found by the structural inventory walk (unindexed); one incoming
  * call site per overlay_unindexed.ts. This owner makes eleven outgoing

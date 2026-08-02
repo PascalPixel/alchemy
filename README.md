@@ -34,7 +34,7 @@ runtime structure intentionally retained as assembly. There is no ordinary
 gray semantic debt left in the main-image census. Each tile follows one audited
 source/owner boundary and keeps that owner's natural byte size:
 
-![Main-image code coverage box tree in purple with retained assembly in orange.](assets/readme/gs1-en-core.svg?v=2d01d9b1)
+![Main-image code coverage box tree in purple with retained assembly in orange.](assets/readme/gs1-en-core.svg?v=46114d28)
 
 **Code overlays** — 795,046 executable bytes across 96 decoded RAM-loaded
 modules. Each module is a real parent containing its exact-C owners,

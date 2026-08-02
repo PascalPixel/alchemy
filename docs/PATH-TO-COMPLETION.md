@@ -2,10 +2,10 @@
 
 # Path to completion
 
-Current verified exact **Full-C Byte Share: 265,608 / 1,343,410 executable
-bytes (19.77%)**. Exact main-image ownership is 104,736 bytes and exact code-overlay
+Current verified exact **Full-C Byte Share: 265,924 / 1,343,410 executable
+bytes (19.79%)**. Exact main-image ownership is 105,052 bytes and exact code-overlay
 ownership is 160,872 bytes. After exact-C supersession and executable-extent
-accounting, the reviewed semantic tier contributes another **804,418 bytes**;
+accounting, the reviewed semantic tier contributes another **804,102 bytes**;
 together they cover **1,070,026 / 1,343,410 bytes (79.65%)**. This combined
 figure is reviewed semantic coverage, not the Full-C headline or a completion
 forecast; [`../HANDOVER.md`](../HANDOVER.md) is the authoritative current audit.
@@ -14,8 +14,10 @@ The primary integration point is `main`. The main-executable reviewed semantic-C
 census is closed and enforced by `bun run semantic:check`; exact-C replacement
 remains the principal completion task.
 
-The latest exact promotion is main-image owner `08011590`: a clean 180-byte C
-span compiled byte-for-byte with the existing grouped-DMA and scheduler route.
+The latest exact promotion is main-image owner `0807a664`: a clean 316-byte C
+span compiled byte-for-byte with a source-gated GCC 2.96 post-reload route.
+The preceding promotion was `08011590`, a clean 180-byte C span compiled
+byte-for-byte with the existing grouped-DMA and scheduler route.
 The preceding exact promotions were `080907b0` (116 bytes),
 `08098b10` (248 bytes) and `08077f70` (284 bytes); each compiled byte-for-byte
 with a source-scoped

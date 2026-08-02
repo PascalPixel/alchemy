@@ -2,10 +2,10 @@
 
 # Path to completion
 
-Current verified exact **Full-C Byte Share: 265,064 / 1,343,410 executable
-bytes (19.73%)**. Exact main-image ownership is 104,192 bytes and exact code-overlay
+Current verified exact **Full-C Byte Share: 265,428 / 1,343,410 executable
+bytes (19.76%)**. Exact main-image ownership is 104,556 bytes and exact code-overlay
 ownership is 160,872 bytes. After exact-C supersession and executable-extent
-accounting, the reviewed semantic tier contributes another **804,962 bytes**;
+accounting, the reviewed semantic tier contributes another **804,598 bytes**;
 together they cover **1,070,026 / 1,343,410 bytes (79.65%)**. This combined
 figure is reviewed semantic coverage, not the Full-C headline or a completion
 forecast; [`../HANDOVER.md`](../HANDOVER.md) is the authoritative current audit.
@@ -14,8 +14,11 @@ The primary integration point is `main`. The main-executable reviewed semantic-C
 census is closed and enforced by `bun run semantic:check`; exact-C replacement
 remains the principal completion task.
 
-The latest exact promotion is main-image owner `08077f70`: a clean 284-byte C
-source compiled byte-for-byte with the source-scoped
+The latest exact promotion is main-image owner `080907b0`: a clean 116-byte C
+source compiled byte-for-byte with the source-scoped grouped-DMA
+`-fthumb-group-value1-before-base` route. The preceding exact promotions were
+`08098b10` (248 bytes) and `08077f70` (284 bytes); each compiled byte-for-byte
+with a source-scoped
 `-fno-sched-alias -fsched-store-first -fthumb-call-arg0-before-store` route.
 The route is default-off, compiler-regression tested, and contains no assembly
 escape hatch.

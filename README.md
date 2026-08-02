@@ -53,14 +53,23 @@ is code still to reconstruct, and dark gray is retained low-level assembly.
 
 ![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=a0d2d4b5)
 
-### Data and assets
+### Images and data
 
-The remaining 7,298,755 bytes contain the game's graphics, maps, text, music,
-and other data. This panel follows 2,431 verified objects as they move from
+The non-code part of the ROM is split across two panels. This one follows
+6,735,557 bytes of graphics, maps, text, and other data as they move from
 encoded ROM data to individually understood and reusable assets. Brighter
 magenta means a more complete reconstruction.
 
-![Asset maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-assets.svg?v=930f8eb5)
+![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=5f7d4728)
+
+### Music and sound
+
+The remaining 563,198 bytes of music, samples, sequences, and soundfonts have
+their own maturity panel so audio progress remains legible instead of being
+compressed into the image chart. Brighter orange means a more complete
+reconstruction.
+
+![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=3e71c43d)
 
 Exact-C progress is measured by executable bytes rather than function counts,
 so every claimed byte must compile to the original game before it contributes

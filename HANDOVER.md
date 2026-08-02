@@ -267,10 +267,12 @@ overnight queue without new evidence.
 
 Latest bounded probes (2026-08-02) reinforce that rule:
 
-- Fresh main-image `08077428` (2,024-byte owner): a natural typed-C pass moved
-  the baseline from 2,000/2,024 bytes to 1,988/2,024, with 823 differing
-  halfwords; it was not promoted. The first residual is fixed-point temporary
-  lifetime/coalescing, followed by the effect-loop schedule.
+- Fresh main-image `08077428` (2,024-byte owner): a bounded 74-mode plus
+  third/fourth-flag sweep reached the exact extent with 153 differing
+  halfwords under `-Os -fno-gcse -fno-strict-aliasing`; the first residual is
+  the fixed-point mask temporary's register shape. A separate typed-pair
+  structural matrix reached 1,988 bytes / 840 differing halfwords, but no exact
+  route emerged.
 - Fresh main-image `08093c00` (552-byte owner): 73 compiler configurations
   found an exact-size `-O1` result but still 256 differing halfwords. Its first
   residual is loop rotation and frame/index materialisation, so it was parked.
@@ -322,6 +324,12 @@ Latest bounded probes (2026-08-02) reinforce that rule:
   no exact result.
 - Fresh main-image `080907b0` moved from a 23-halfword natural-source floor to
   an exact 116-byte owner through the strict grouped-DMA compiler route above.
+- Fresh main-image `08011568` (40-byte DMA leaf): grouped-DMA plus
+  `-mentry-low-register-order` held the exact extent at an 11-halfword floor;
+  48 natural source/configuration variants found no exact route.
+- Fresh main-image `080c00d8` (88-byte fill owner): the automated mode sweep
+  reached 25 differing halfwords with `-fno-cse-two-insn-immediate`, while 480
+  declaration/loop shapes did not improve it; both targets remain scratch-only.
 
 ## Tooling audit
 

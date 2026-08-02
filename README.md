@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/readme/djinn_101_idle.gif" width="64" height="64" alt="Recovered Djinn battle idle loop from graphics resource 101">
-  <img src="assets/readme/djinn_102_idle.gif" width="64" height="64" alt="Recovered Djinn battle idle loop from graphics resource 102">
-  <img src="assets/readme/djinn_103_idle.gif" width="64" height="64" alt="Recovered Djinn battle idle loop from graphics resource 103">
-  <img src="assets/readme/djinn_104_idle.gif" width="64" height="64" alt="Recovered Djinn battle idle loop from graphics resource 104">
+  <img src="assets/readme/djinn_101_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 101">
+  <img src="assets/readme/djinn_102_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 102">
+  <img src="assets/readme/djinn_103_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 103">
+  <img src="assets/readme/djinn_104_idle.gif" width="128" height="128" alt="Recovered Djinn battle idle loop from graphics resource 104">
 </p>
 
 <h1 align="center">Alchemy</h1>
@@ -42,7 +42,7 @@ Sun* is running. Bright purple is exact, byte-matching C; the softer purple is
 readable C that still needs to be matched. Orange marks the small pieces of
 low-level runtime structure intentionally retained as assembly.
 
-![Main-image code coverage box tree in purple with retained assembly in orange.](assets/readme/gs1-en-core.svg)
+![Main-image code coverage box tree in purple with retained assembly in orange.](assets/readme/gs1-en-core.svg?v=900bd060)
 
 ### Code overlays
 
@@ -51,7 +51,7 @@ them. This panel tracks all 795,090 executable bytes across those modules.
 Bright cyan is exact C, the softer cyan is readable C still being matched, gray
 is code still to reconstruct, and orange is retained low-level assembly.
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg)
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=7a63de89)
 
 ### Data and assets
 
@@ -60,7 +60,7 @@ and other data. This panel follows 2,431 verified objects as they move from
 encoded ROM data to individually understood and reusable assets. Brighter
 magenta means a more complete reconstruction.
 
-![Asset maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-assets.svg)
+![Asset maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-assets.svg?v=930f8eb5)
 
 Exact-C progress is measured by executable bytes rather than function counts,
 so every claimed byte must compile to the original game before it contributes

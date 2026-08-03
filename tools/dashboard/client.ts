@@ -47,6 +47,8 @@ function h<K extends keyof HTMLElementTagNameMap>(
 const root = h("div", { id: "root" },
   h("div", { className: "loading", role: "status" }, "Reading the stones…"));
 document.body.replaceChildren(root);
+const tooltip = h("div", { className: "hover-tooltip", role: "tooltip", hidden: true });
+document.body.append(tooltip);
 
 let pageVersion = "";
 let lastRevision = "";
@@ -58,19 +60,67 @@ async function requestSnapshot(): Promise<Snapshot> {
   return response.json() as Promise<Snapshot>;
 }
 
+function hideTooltip(): void {
+  tooltip.hidden = true;
+}
+
+function showTooltip(event: PointerEvent): void {
+  const target = event.target instanceof Element
+    ? event.target.closest("[data-byte-leaf], [data-folder-depth]")
+    : null;
+  const label = target?.getAttribute("aria-label")?.trim();
+  if (!label) {
+    hideTooltip();
+    return;
+  }
+
+  tooltip.textContent = label;
+  tooltip.hidden = false;
+  const gap = 14;
+  const edge = 8;
+  const bounds = tooltip.getBoundingClientRect();
+  const left = Math.min(event.clientX + gap, window.innerWidth - bounds.width - edge);
+  const below = event.clientY + gap;
+  const top = below + bounds.height <= window.innerHeight - edge
+    ? below
+    : event.clientY - bounds.height - gap;
+  tooltip.style.left = `${Math.max(edge, left)}px`;
+  tooltip.style.top = `${Math.max(edge, top)}px`;
+}
+
+async function loadTree(
+  section: HTMLElement,
+  tree: Tree,
+  title: string,
+  revision: string,
+): Promise<void> {
+  const response = await fetch(`/svg/${tree}?v=${encodeURIComponent(revision)}`);
+  if (!response.ok) throw new Error(`/svg/${tree} returned ${response.status}`);
+  const parsed = new DOMParser().parseFromString(await response.text(), "image/svg+xml");
+  const svg = parsed.documentElement;
+  if (svg.localName !== "svg") throw new Error(`/svg/${tree} did not return an SVG`);
+  svg.classList.add("tree-image");
+  svg.setAttribute("aria-label", `${title} coverage graph`);
+  svg.querySelectorAll("title").forEach((node) => node.remove());
+  section.replaceChildren(svg);
+}
+
 function panel(tree: Tree, title: string, revision: string): HTMLElement {
-  return h("section", { className: `panel p-${tree}` },
-    h("img", {
-      className: "tree-image",
-      src: `/svg/${tree}?v=${encodeURIComponent(revision)}`,
-      alt: `${title} coverage graph`,
-    }));
+  const section = h("section", { className: `panel p-${tree}` });
+  void loadTree(section, tree, title, revision).catch((error) => {
+    showError(error instanceof Error ? error.message : String(error));
+  });
+  return section;
 }
 
 function render(snapshot: Snapshot): void {
+  hideTooltip();
   const trees = (Object.entries(snapshot.trees) as Array<[Tree, string]>)
     .map(([tree, title]) => panel(tree, title, snapshot.revision));
-  root.replaceChildren(h("main", { className: "trees" }, trees));
+  const main = h("main", { className: "trees" }, trees);
+  main.addEventListener("pointermove", showTooltip);
+  main.addEventListener("pointerleave", hideTooltip);
+  root.replaceChildren(main);
   lastRevision = snapshot.revision;
   lastError = "";
   if (snapshot.summary !== undefined) {

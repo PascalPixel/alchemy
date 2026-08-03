@@ -84,6 +84,28 @@ body {
   font: var(--weyard-font);
 }
 
+.hover-tooltip {
+  position: fixed;
+  z-index: 2;
+  max-width: calc(100vw - 16px);
+  padding: 7px 9px;
+  overflow: hidden;
+  color: #fff;
+  background: rgb(25 25 31 / 94%);
+  border: 1px solid rgb(255 255 255 / 35%);
+  border-radius: 4px;
+  box-shadow: 0 3px 12px rgb(0 0 0 / 35%);
+  font: var(--weyard-font);
+  line-height: 1.2;
+  pointer-events: none;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.hover-tooltip[hidden] {
+  display: none;
+}
+
 @media (prefers-color-scheme: dark) {
   html, body { background: #131318; }
   .error { color: #ffc1bb; background: #371b1a; }

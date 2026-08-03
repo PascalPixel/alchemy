@@ -1558,6 +1558,14 @@ function fitText(text: string, width: number, fontSize: number): string | undefi
   return text.length <= room ? text : `${text.slice(0, Math.max(room - 1, 1))}…`;
 }
 
+const weyardTextWidth = (text: string, size: number): number => text.length * size / 2;
+
+function fitWeyardText(text: string, width: number, size: number): string | undefined {
+  const room = Math.floor(width / (size / 2));
+  if (room < 3) return undefined;
+  return text.length <= room ? text : `${text.slice(0, room - 1)}…`;
+}
+
 function rect(
   area: Rect,
   fill: string,
@@ -2100,14 +2108,36 @@ export function renderBoxTree(
   };
   const cellRect = (rectangle: Rect, fraction: number): string =>
     preciseRect(rectangle, cellAttributes(fraction));
+  const drawRectangleLabel = (rectangle: Rect, text: string): void => {
+    if (rectangle.height < 10) return;
+    const display = fitWeyardText(text, rectangle.width - 6, 8);
+    if (display === undefined) return;
+    lines.push(
+      preciseRect({ ...rectangle, height: 10 },
+        `fill="hsl(${hue.hslHue} 70% 24%)" fill-opacity="0.9"`),
+      `<text class="weyard rectangle-label" x="${precise(rectangle.x + 3)}" ` +
+        `y="${precise(rectangle.y + 8)}">${escapeText(display)}</text>`,
+    );
+  };
+  const leafDisplayName = (tile: Tile): string => {
+    const withoutGroup = tile.group === undefined
+      ? tile.label
+      : tile.label.replace(new RegExp(`^${tile.group.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")} · `), "");
+    const exact = /AlchemyC_([0-9a-f]+)/i.exec(withoutGroup)?.[1];
+    if (exact !== undefined) return exact;
+    const address = /(?:owner |assembly )0x([0-9a-f]+(?:–0x[0-9a-f]+)?)/i.exec(withoutGroup)?.[1];
+    if (address !== undefined) return address.replaceAll("0x", "");
+    return withoutGroup.split(" · ", 1)[0].replaceAll("0x", "");
+  };
   const drawLeaf = (tile: Tile, rectangle: Rect): void => {
     const categories = tile.categories as Record<string, number>;
     const populated = categoryOrder.filter((category) => (categories[category] ?? 0) > 0);
     const total = populated.reduce((sum, category) => sum + (categories[category] ?? 0), 0);
-    lines.push(`<g data-byte-leaf="true" aria-label="${escapeText(`${tile.label}: ${commas(tile.bytes)} bytes`)}">`,
-      `<title>${escapeText(`${tile.label}: ${commas(tile.bytes)} bytes`)}</title>`);
+    lines.push(`<g aria-label="${escapeText(`${tile.label}: ${commas(tile.bytes)} bytes`)}">`);
     if (total <= 0) {
-      lines.push(cellRect(rectangle, categoryFraction[categoryOrder.at(-1) ?? ""] ?? 0.08), "</g>");
+      lines.push(cellRect(rectangle, categoryFraction[categoryOrder.at(-1) ?? ""] ?? 0.08));
+      drawRectangleLabel(rectangle, leafDisplayName(tile));
+      lines.push("</g>");
       return;
     }
     let credited = 0;
@@ -2120,6 +2150,7 @@ export function renderBoxTree(
       const band = { x: rectangle.x, y: top, width: rectangle.width, height: bottom - top };
       lines.push(cellRect(band, categoryFraction[category] ?? 0.08));
     });
+    drawRectangleLabel(rectangle, leafDisplayName(tile));
     lines.push("</g>");
   };
   const drawNodes = (nodes: readonly BoxTreeNode[], rectangle: Rect, depth: number): void => {
@@ -2131,26 +2162,12 @@ export function renderBoxTree(
       }
       const bytes = boxNodeBytes(node);
       const folderDepth = depth + 1;
-      lines.push(`<g data-folder-depth="${folderDepth}" aria-label="${escapeText(`${node.label}: ${commas(bytes)} bytes`)}">`,
-        `<title>${escapeText(`${node.label}: ${commas(bytes)} bytes`)}</title>`);
+      lines.push(`<g aria-label="${escapeText(`${node.label}: ${commas(bytes)} bytes`)}">`);
       drawNodes(node.children, placed.rect, folderDepth);
       const stroke = folderDepth === 1 ? 2 : 1;
       lines.push(preciseRect(placed.rect,
         `fill="none" stroke="hsl(${hue.hslHue} 70% 24%)" stroke-width="${stroke}" vector-effect="non-scaling-stroke"`));
-      const displayName = folderDisplayName(node.label);
-      const displayLabel = placed.rect.height >= 10
-        ? fitText(displayName, placed.rect.width - 6, 8)
-        : undefined;
-      if (displayLabel !== undefined) {
-        const headerHeight = Math.min(10, placed.rect.height);
-        lines.push(
-          preciseRect({ ...placed.rect, height: headerHeight },
-            `fill="hsl(${hue.hslHue} 70% 24%)" fill-opacity="0.9"`),
-          `<text class="weyard rectangle-label" x="${precise(placed.rect.x + 3)}" ` +
-            `y="${precise(placed.rect.y + 8)}">` +
-            `${escapeText(displayLabel)}</text>`,
-        );
-      }
+      drawRectangleLabel(placed.rect, folderDisplayName(node.label));
       lines.push("</g>");
     }
   };
@@ -2193,7 +2210,7 @@ export function renderBoxTree(
     lines.push(preciseRect(swatch, cellAttributes(categoryFraction[category] ?? 0.08)));
     lines.push(`<text class="weyard" x="${precise(legendX + 14)}" y="${legendCenterY}" ` +
       `dominant-baseline="middle">${escapeText(displayLabel)}</text>`);
-    legendX += 16 + displayLabel.length * 8;
+    legendX += 16 + weyardTextWidth(displayLabel, 16);
   }
   lines.push("</svg>");
   return lines.join("\n");
@@ -2201,8 +2218,6 @@ export function renderBoxTree(
 
 export const BOX_TREES = ["core", "overlays", "images", "music"] as const;
 export type BoxTreeId = (typeof BOX_TREES)[number];
-export const DASHBOARD_TREES = BOX_TREES;
-export type DashboardTreeId = BoxTreeId;
 
 export function boxTreePath(target: DecompTargetId, tree: BoxTreeId): string {
   return join(ROOT, "assets", "readme", `${target}-${tree}.svg`);
@@ -2330,16 +2345,6 @@ export function renderBoxTrees(
     images: renderAssetTree(assets, images, "Images", ASSET_HUE),
     music: renderAssetTree(assets, music, "Music", MUSIC_HUE),
   };
-}
-
-/** Live dashboard projection: separate visual/data assets from the audio
- * corpus so each has a readable chart and an independent maturity percentage. */
-export function renderDashboardTrees(
-  map: CoverageMap,
-  tree?: SourceTree,
-  preferVerifiedAssets = false,
-): Record<DashboardTreeId, string> {
-  return renderBoxTrees(map, tree, preferVerifiedAssets);
 }
 
 export function svgCacheVersion(svg: string): string {
@@ -2840,9 +2845,11 @@ export function selfTest(): void {
     { label: "two", bytes: 40, categories: { assembly: 40 }, group: "second" },
   ]), "folder self-test", CORE_HUE, CODE_FRACTION,
     ["exact_c", "assembly"], ["group"]);
-  if ((folderTree.match(/data-folder-depth="1"/g) ?? []).length !== 2 ||
-      (folderTree.match(/data-byte-leaf="true"/g) ?? []).length !== 2) {
-    throw new Error("recursive box-tree hierarchy lost a group or leaf");
+  if ((folderTree.match(/<g aria-label=/g) ?? []).length !== 4 ||
+      (folderTree.match(/<text class="weyard rectangle-label"/g) ?? []).length !== 4 ||
+      folderTree.includes("data-folder-depth") || folderTree.includes("data-byte-leaf") ||
+      folderTree.includes("clip-path") || folderTree.includes("<title>")) {
+    throw new Error("box-tree labels are not one unclipped accessible invariant");
   }
   if (svg.includes("undefined") || svg.includes("NaN")) throw new Error("SVG contains unresolved values");
   for (const category of CATEGORY_ORDER) {

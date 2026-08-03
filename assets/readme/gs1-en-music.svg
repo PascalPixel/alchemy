@@ -3,136 +3,164 @@
 <rect x="0" y="0" width="540" height="304" fill="#c85d00" rx="8"/>
 <rect x="1" y="1" width="538" height="302" fill="none" stroke="#1c1c26" stroke-width="2" rx="7"/>
 <rect x="3" y="22" width="534" height="258" fill="#ffffff" rx="3"/>
-<g data-folder-depth="1" aria-label="golden-sun-pcm-wave-series: 404,160 bytes">
-<title>golden-sun-pcm-wave-series: 404,160 bytes</title>
-<g data-folder-depth="2" aria-label="golden-sun-pcm-wave: 404,160 bytes">
-<title>golden-sun-pcm-wave: 404,160 bytes</title>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x081239a4: 49,200 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x081239a4: 49,200 bytes</title>
+<g aria-label="golden-sun-pcm-wave-series: 404,160 bytes">
+<g aria-label="golden-sun-pcm-wave: 404,160 bytes">
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x081239a4: 49,200 bytes">
 <rect x="3" y="22" width="109.307306" height="110.107213" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="3" y="22" width="109.307306" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="6" y="30">waves_index.json</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x0814a3b8: 33,204 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x0814a3b8: 33,204 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x0814a3b8: 33,204 bytes">
 <rect x="3" y="132.107213" width="109.307306" height="74.308942" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="3" y="132.107213" width="109.307306" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="6" y="140.107213">waves_index.json</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x0813aa10: 32,880 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x0813aa10: 32,880 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x0813aa10: 32,880 bytes">
 <rect x="3" y="206.416155" width="109.307306" height="73.583845" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="3" y="206.416155" width="109.307306" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="6" y="214.416155">waves_index.json</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x08134658: 25,528 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x08134658: 25,528 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x08134658: 25,528 bytes">
 <rect x="112.307306" y="22" width="80.248197" height="77.818233" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="112.307306" y="22" width="80.248197" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="115.307306" y="30">waves_index.json</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x081450f8: 21,184 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x081450f8: 21,184 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x081450f8: 21,184 bytes">
 <rect x="112.307306" y="99.818233" width="80.248197" height="64.576209" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="112.307306" y="99.818233" width="80.248197" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="115.307306" y="107.818233">waves_index.json</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x0810560c: 19,544 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x0810560c: 19,544 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x0810560c: 19,544 bytes">
 <rect x="112.307306" y="164.394442" width="80.248197" height="59.576918" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="112.307306" y="164.394442" width="80.248197" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="115.307306" y="172.394442">waves_index.json</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x0815b3ac: 18,380 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x0815b3ac: 18,380 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x0815b3ac: 18,380 bytes">
 <rect x="112.307306" y="223.97136" width="80.248197" height="56.02864" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="112.307306" y="223.97136" width="80.248197" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="115.307306" y="231.97136">waves_index.json</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x0810a264: 16,848 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x0810a264: 16,848 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x0810a264: 16,848 bytes">
 <rect x="192.555503" y="22" width="66.168596" height="62.286839" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="192.555503" y="22" width="66.168596" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="195.555503" y="30">waves_index.js…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x0815738c: 16,416 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x0815738c: 16,416 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x0815738c: 16,416 bytes">
 <rect x="258.724099" y="22" width="64.471966" height="62.286839" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="258.724099" y="22" width="64.471966" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="261.724099" y="30">waves_index.j…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x0810e434: 16,044 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x0810e434: 16,044 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x0810e434: 16,044 bytes">
 <rect x="323.196065" y="22" width="63.010978" height="62.286839" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="323.196065" y="22" width="63.010978" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="326.196065" y="30">waves_index.j…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x08112ce0: 13,304 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x08112ce0: 13,304 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x08112ce0: 13,304 bytes">
 <rect x="192.555503" y="84.286839" width="66.407364" height="49.007873" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="192.555503" y="84.286839" width="66.407364" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="195.555503" y="92.286839">waves_index.js…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x080fd2f4: 13,068 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x080fd2f4: 13,068 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x080fd2f4: 13,068 bytes">
 <rect x="258.962867" y="84.286839" width="65.229361" height="49.007873" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="258.962867" y="84.286839" width="65.229361" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="261.962867" y="92.286839">waves_index.j…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x081315d0: 12,424 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x081315d0: 12,424 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x081315d0: 12,424 bytes">
 <rect x="324.192228" y="84.286839" width="62.014815" height="49.007873" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="324.192228" y="84.286839" width="62.014815" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="327.192228" y="92.286839">waves_index.j…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x08118890: 12,264 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x08118890: 12,264 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x08118890: 12,264 bytes">
 <rect x="192.555503" y="133.294712" width="57.100325" height="52.540406" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="192.555503" y="133.294712" width="57.100325" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="195.555503" y="141.294712">waves_index…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x08100600: 11,096 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x08100600: 11,096 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x08100600: 11,096 bytes">
 <rect x="192.555503" y="185.835118" width="57.100325" height="47.536557" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="192.555503" y="185.835118" width="57.100325" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="195.555503" y="193.835118">waves_index…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x08120694: 10,884 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x08120694: 10,884 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x08120694: 10,884 bytes">
 <rect x="192.555503" y="233.371675" width="57.100325" height="46.628325" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="192.555503" y="233.371675" width="57.100325" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="195.555503" y="241.371675">waves_index…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x08152e04: 10,844 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x08152e04: 10,844 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x08152e04: 10,844 bytes">
 <rect x="249.655828" y="133.294712" width="50.236171" height="52.804732" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="249.655828" y="133.294712" width="50.236171" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="252.655828" y="141.294712">waves_inde…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x08142a80: 9,848 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x08142a80: 9,848 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x08142a80: 9,848 bytes">
 <rect x="299.891999" y="133.294712" width="45.622077" height="52.804732" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="299.891999" y="133.294712" width="45.622077" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="302.891999" y="141.294712">waves_in…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x0811b878: 8,784 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x0811b878: 8,784 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x0811b878: 8,784 bytes">
 <rect x="345.514076" y="133.294712" width="40.692967" height="52.804732" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="345.514076" y="133.294712" width="40.692967" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="348.514076" y="141.294712">waves_i…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x081160d8: 8,096 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x081160d8: 8,096 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x081160d8: 8,096 bytes">
 <rect x="249.655828" y="186.099444" width="40.765289" height="48.582496" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="249.655828" y="186.099444" width="40.765289" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="252.655828" y="194.099444">waves_i…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x08103158: 7,552 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x08103158: 7,552 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x08103158: 7,552 bytes">
 <rect x="249.655828" y="234.68194" width="40.765289" height="45.31806" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="249.655828" y="234.68194" width="40.765289" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="252.655828" y="242.68194">waves_i…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x0812f9d4: 7,164 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x0812f9d4: 7,164 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x0812f9d4: 7,164 bytes">
 <rect x="290.421117" y="186.099444" width="36.940939" height="47.440309" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="290.421117" y="186.099444" width="36.940939" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="293.421117" y="194.099444">waves_…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x0811eb2c: 7,016 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x0811eb2c: 7,016 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x0811eb2c: 7,016 bytes">
 <rect x="290.421117" y="233.539753" width="36.940939" height="46.460247" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="290.421117" y="233.539753" width="36.940939" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="293.421117" y="241.539753">waves_…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x0811db38: 4,084 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x0811db38: 4,084 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x0811db38: 4,084 bytes">
 <rect x="327.362056" y="186.099444" width="29.713517" height="33.622618" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="327.362056" y="186.099444" width="29.713517" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="330.362056" y="194.099444">wave…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x08155860: 4,004 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x08155860: 4,004 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x08155860: 4,004 bytes">
 <rect x="357.075573" y="186.099444" width="29.13147" height="33.622618" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="357.075573" y="186.099444" width="29.13147" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="360.075573" y="194.099444">wave…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x08156804: 2,952 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x08156804: 2,952 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x08156804: 2,952 bytes">
 <rect x="327.362056" y="219.722062" width="31.514949" height="22.91393" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="327.362056" y="219.722062" width="31.514949" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="330.362056" y="227.722062">waves…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x081122e0: 2,560 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x081122e0: 2,560 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x081122e0: 2,560 bytes">
 <rect x="358.877005" y="219.722062" width="27.330038" height="22.91393" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="358.877005" y="219.722062" width="27.330038" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="361.877005" y="227.722062">wave…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x0815256c: 2,200 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x0815256c: 2,200 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x0815256c: 2,200 bytes">
 <rect x="327.362056" y="242.635992" width="28.728505" height="18.733095" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="327.362056" y="242.635992" width="28.728505" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="330.362056" y="250.635992">wave…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x08123118: 2,188 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x08123118: 2,188 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x08123118: 2,188 bytes">
 <rect x="327.362056" y="261.369087" width="28.728505" height="18.630913" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="327.362056" y="261.369087" width="28.728505" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="330.362056" y="269.369087">wave…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x08118078: 2,072 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x08118078: 2,072 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x08118078: 2,072 bytes">
 <rect x="356.090561" y="242.635992" width="30.116482" height="16.830049" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="356.090561" y="242.635992" width="30.116482" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="359.090561" y="250.635992">waves…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x08104ed8: 1,844 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x08104ed8: 1,844 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x08104ed8: 1,844 bytes">
 <rect x="356.090561" y="259.466041" width="21.967877" height="20.533959" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="356.090561" y="259.466041" width="21.967877" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="359.090561" y="267.466041">wa…</text>
 </g>
-<g data-byte-leaf="true" aria-label="waves_index.json · golden-sun-pcm-wave · 0x080fd048: 684 bytes">
-<title>waves_index.json · golden-sun-pcm-wave · 0x080fd048: 684 bytes</title>
+<g aria-label="waves_index.json · golden-sun-pcm-wave · 0x080fd048: 684 bytes">
 <rect x="378.058438" y="259.466041" width="8.148605" height="20.533959" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
 <rect x="3" y="22" width="383.207043" height="258" fill="none" stroke="hsl(28 70% 24%)" stroke-width="1" vector-effect="non-scaling-stroke"/>
@@ -143,1048 +171,864 @@
 <rect x="3" y="22" width="383.207043" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
 <text class="weyard rectangle-label" x="6" y="30">Pcm Wave Series</text>
 </g>
-<g data-folder-depth="1" aria-label="golden-sun-sound-sequence-series: 150,254 bytes">
-<title>golden-sun-sound-sequence-series: 150,254 bytes</title>
-<g data-folder-depth="2" aria-label="golden-sun-sound-sequence: 150,254 bytes">
-<title>golden-sun-sound-sequence: 150,254 bytes</title>
-<g data-byte-leaf="true" aria-label="music_051. sound_051.mid · golden-sun-sound-sequence · 0x08171b18: 7,972 bytes">
-<title>music_051. sound_051.mid · golden-sun-sound-sequence · 0x08171b18: 7,972 bytes</title>
+<g aria-label="golden-sun-sound-sequence-series: 150,254 bytes">
+<g aria-label="golden-sun-sound-sequence: 150,254 bytes">
+<g aria-label="music_051. sound_051.mid · golden-sun-sound-sequence · 0x08171b18: 7,972 bytes">
 <rect x="386.207043" y="22" width="51.232588" height="38.064563" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="386.207043" y="22" width="51.232588" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="389.207043" y="30">music_051.…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_054. sound_054.mid · golden-sun-sound-sequence · 0x08176fac: 7,964 bytes">
-<title>music_054. sound_054.mid · golden-sun-sound-sequence · 0x08176fac: 7,964 bytes</title>
+<g aria-label="music_054. sound_054.mid · golden-sun-sound-sequence · 0x08176fac: 7,964 bytes">
 <rect x="437.439631" y="22" width="51.181176" height="38.064563" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="437.439631" y="22" width="51.181176" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="440.439631" y="30">music_054.…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_067. sound_067.mid · golden-sun-sound-sequence · 0x0817c0ec: 7,528 bytes">
-<title>music_067. sound_067.mid · golden-sun-sound-sequence · 0x0817c0ec: 7,528 bytes</title>
+<g aria-label="music_067. sound_067.mid · golden-sun-sound-sequence · 0x0817c0ec: 7,528 bytes">
 <rect x="488.620807" y="22" width="48.379193" height="38.064563" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="488.620807" y="22" width="48.379193" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="491.620807" y="30">music_067…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_053. sound_053.mid · golden-sun-sound-sequence · 0x081753a0: 7,180 bytes">
-<title>music_053. sound_053.mid · golden-sun-sound-sequence · 0x081753a0: 7,180 bytes</title>
+<g aria-label="music_053. sound_053.mid · golden-sun-sound-sequence · 0x081753a0: 7,180 bytes">
 <rect x="386.207043" y="60.064563" width="46.245234" height="37.980206" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="386.207043" y="60.064563" width="46.245234" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="389.207043" y="68.064563">music_053…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_052. sound_052.mid · golden-sun-sound-sequence · 0x08173a3c: 6,500 bytes">
-<title>music_052. sound_052.mid · golden-sun-sound-sequence · 0x08173a3c: 6,500 bytes</title>
+<g aria-label="music_052. sound_052.mid · golden-sun-sound-sequence · 0x08173a3c: 6,500 bytes">
 <rect x="432.452277" y="60.064563" width="41.865463" height="37.980206" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="432.452277" y="60.064563" width="41.865463" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="435.452277" y="68.064563">music_0…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_029. sound_029.mid · golden-sun-sound-sequence · 0x0816c7ac: 4,892 bytes">
-<title>music_029. sound_029.mid · golden-sun-sound-sequence · 0x0816c7ac: 4,892 bytes</title>
+<g aria-label="music_029. sound_029.mid · golden-sun-sound-sequence · 0x0816c7ac: 4,892 bytes">
 <rect x="474.31774" y="60.064563" width="31.508592" height="37.980206" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="474.31774" y="60.064563" width="31.508592" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="477.31774" y="68.064563">music…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_022. sound_022.mid · golden-sun-sound-sequence · 0x081664b4: 4,840 bytes">
-<title>music_022. sound_022.mid · golden-sun-sound-sequence · 0x081664b4: 4,840 bytes</title>
+<g aria-label="music_022. sound_022.mid · golden-sun-sound-sequence · 0x081664b4: 4,840 bytes">
 <rect x="505.826332" y="60.064563" width="31.173668" height="37.980206" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="505.826332" y="60.064563" width="31.173668" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="508.826332" y="68.064563">music…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_024. sound_024.mid · golden-sun-sound-sequence · 0x081686ac: 4,828 bytes">
-<title>music_024. sound_024.mid · golden-sun-sound-sequence · 0x081686ac: 4,828 bytes</title>
+<g aria-label="music_024. sound_024.mid · golden-sun-sound-sequence · 0x081686ac: 4,828 bytes">
 <rect x="386.207043" y="98.044769" width="37.380796" height="31.595015" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="386.207043" y="98.044769" width="37.380796" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="389.207043" y="106.044769">music_…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_023. sound_023.mid · golden-sun-sound-sequence · 0x0816779c: 3,856 bytes">
-<title>music_023. sound_023.mid · golden-sun-sound-sequence · 0x0816779c: 3,856 bytes</title>
+<g aria-label="music_023. sound_023.mid · golden-sun-sound-sequence · 0x0816779c: 3,856 bytes">
 <rect x="423.587839" y="98.044769" width="29.855086" height="31.595015" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="423.587839" y="98.044769" width="29.855086" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="426.587839" y="106.044769">musi…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_027. sound_027.mid · golden-sun-sound-sequence · 0x0816acfc: 3,740 bytes">
-<title>music_027. sound_027.mid · golden-sun-sound-sequence · 0x0816acfc: 3,740 bytes</title>
+<g aria-label="music_027. sound_027.mid · golden-sun-sound-sequence · 0x0816acfc: 3,740 bytes">
 <rect x="453.442925" y="98.044769" width="28.956955" height="31.595015" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="453.442925" y="98.044769" width="28.956955" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="456.442925" y="106.044769">musi…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_063. sound_063.mid · golden-sun-sound-sequence · 0x0817b084: 3,536 bytes">
-<title>music_063. sound_063.mid · golden-sun-sound-sequence · 0x0817b084: 3,536 bytes</title>
+<g aria-label="music_063. sound_063.mid · golden-sun-sound-sequence · 0x0817b084: 3,536 bytes">
 <rect x="482.39988" y="98.044769" width="27.377485" height="31.595015" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="482.39988" y="98.044769" width="27.377485" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="485.39988" y="106.044769">musi…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_043. sound_043.mid · golden-sun-sound-sequence · 0x08170228: 3,516 bytes">
-<title>music_043. sound_043.mid · golden-sun-sound-sequence · 0x08170228: 3,516 bytes</title>
+<g aria-label="music_043. sound_043.mid · golden-sun-sound-sequence · 0x08170228: 3,516 bytes">
 <rect x="509.777365" y="98.044769" width="27.222635" height="31.595015" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="509.777365" y="98.044769" width="27.222635" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="512.777365" y="106.044769">musi…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_025. sound_025.mid · golden-sun-sound-sequence · 0x08169988: 3,224 bytes">
-<title>music_025. sound_025.mid · golden-sun-sound-sequence · 0x08169988: 3,224 bytes</title>
+<g aria-label="music_025. sound_025.mid · golden-sun-sound-sequence · 0x08169988: 3,224 bytes">
 <rect x="386.207043" y="129.639784" width="27.160057" height="29.037833" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="386.207043" y="129.639784" width="27.160057" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="389.207043" y="137.639784">musi…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_028. sound_028.mid · golden-sun-sound-sequence · 0x0816bb98: 3,092 bytes">
-<title>music_028. sound_028.mid · golden-sun-sound-sequence · 0x0816bb98: 3,092 bytes</title>
+<g aria-label="music_028. sound_028.mid · golden-sun-sound-sequence · 0x0816bb98: 3,092 bytes">
 <rect x="386.207043" y="158.677617" width="27.160057" height="27.848939" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="386.207043" y="158.677617" width="27.160057" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="389.207043" y="166.677617">musi…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_042. sound_042.mid · golden-sun-sound-sequence · 0x0816f61c: 3,084 bytes">
-<title>music_042. sound_042.mid · golden-sun-sound-sequence · 0x0816f61c: 3,084 bytes</title>
+<g aria-label="music_042. sound_042.mid · golden-sun-sound-sequence · 0x0816f61c: 3,084 bytes">
 <rect x="386.207043" y="186.526556" width="27.160057" height="27.776885" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="386.207043" y="186.526556" width="27.160057" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="389.207043" y="194.526556">musi…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_050. sound_050.mid · golden-sun-sound-sequence · 0x08170fe4: 2,868 bytes">
-<title>music_050. sound_050.mid · golden-sun-sound-sequence · 0x08170fe4: 2,868 bytes</title>
+<g aria-label="music_050. sound_050.mid · golden-sun-sound-sequence · 0x08170fe4: 2,868 bytes">
 <rect x="386.207043" y="214.303441" width="27.160057" height="25.831422" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="386.207043" y="214.303441" width="27.160057" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="389.207043" y="222.303441">musi…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_074. sound_074.mid · golden-sun-sound-sequence · 0x0817f0ec: 2,844 bytes">
-<title>music_074. sound_074.mid · golden-sun-sound-sequence · 0x0817f0ec: 2,844 bytes</title>
+<g aria-label="music_074. sound_074.mid · golden-sun-sound-sequence · 0x0817f0ec: 2,844 bytes">
 <rect x="386.207043" y="240.134863" width="27.160057" height="25.61526" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="386.207043" y="240.134863" width="27.160057" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="389.207043" y="248.134863">musi…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_055. sound_055.mid · golden-sun-sound-sequence · 0x08178ec8: 2,840 bytes">
-<title>music_055. sound_055.mid · golden-sun-sound-sequence · 0x08178ec8: 2,840 bytes</title>
+<g aria-label="music_055. sound_055.mid · golden-sun-sound-sequence · 0x08178ec8: 2,840 bytes">
 <rect x="413.3671" y="129.639784" width="25.340462" height="27.415974" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="413.3671" y="129.639784" width="25.340462" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="416.3671" y="137.639784">mus…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_001. sound_001.mid · golden-sun-sound-sequence · 0x081604d4: 2,796 bytes">
-<title>music_001. sound_001.mid · golden-sun-sound-sequence · 0x081604d4: 2,796 bytes</title>
+<g aria-label="music_001. sound_001.mid · golden-sun-sound-sequence · 0x081604d4: 2,796 bytes">
 <rect x="438.707562" y="129.639784" width="24.947863" height="27.415974" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="438.707562" y="129.639784" width="24.947863" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="441.707562" y="137.639784">mus…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_041. sound_041.mid · golden-sun-sound-sequence · 0x0816eb54: 2,760 bytes">
-<title>music_041. sound_041.mid · golden-sun-sound-sequence · 0x0816eb54: 2,760 bytes</title>
+<g aria-label="music_041. sound_041.mid · golden-sun-sound-sequence · 0x0816eb54: 2,760 bytes">
 <rect x="463.655425" y="129.639784" width="24.626645" height="27.415974" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="463.655425" y="129.639784" width="24.626645" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="466.655425" y="137.639784">mus…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_070. sound_070.mid · golden-sun-sound-sequence · 0x0817de54: 2,744 bytes">
-<title>music_070. sound_070.mid · golden-sun-sound-sequence · 0x0817de54: 2,744 bytes</title>
+<g aria-label="music_070. sound_070.mid · golden-sun-sound-sequence · 0x0817de54: 2,744 bytes">
 <rect x="488.28207" y="129.639784" width="24.483883" height="27.415974" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="488.28207" y="129.639784" width="24.483883" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="491.28207" y="137.639784">mus…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_040. sound_040.mid · golden-sun-sound-sequence · 0x0816e0b8: 2,716 bytes">
-<title>music_040. sound_040.mid · golden-sun-sound-sequence · 0x0816e0b8: 2,716 bytes</title>
+<g aria-label="music_040. sound_040.mid · golden-sun-sound-sequence · 0x0816e0b8: 2,716 bytes">
 <rect x="512.765953" y="129.639784" width="24.234047" height="27.415974" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="512.765953" y="129.639784" width="24.234047" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="515.765953" y="137.639784">mus…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_020. sound_020.mid · golden-sun-sound-sequence · 0x081652e0: 2,712 bytes">
-<title>music_020. sound_020.mid · golden-sun-sound-sequence · 0x081652e0: 2,712 bytes</title>
+<g aria-label="music_020. sound_020.mid · golden-sun-sound-sequence · 0x081652e0: 2,712 bytes">
 <rect x="413.3671" y="157.055758" width="23.144879" height="28.663858" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="413.3671" y="157.055758" width="23.144879" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="416.3671" y="165.055758">mus…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_007. sound_007.mid · golden-sun-sound-sequence · 0x08163324: 2,644 bytes">
-<title>music_007. sound_007.mid · golden-sun-sound-sequence · 0x08163324: 2,644 bytes</title>
+<g aria-label="music_007. sound_007.mid · golden-sun-sound-sequence · 0x08163324: 2,644 bytes">
 <rect x="413.3671" y="185.719616" width="23.144879" height="27.945148" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="413.3671" y="185.719616" width="23.144879" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="416.3671" y="193.719616">mus…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_006. sound_006.mid · golden-sun-sound-sequence · 0x08162940: 2,532 bytes">
-<title>music_006. sound_006.mid · golden-sun-sound-sequence · 0x08162940: 2,532 bytes</title>
+<g aria-label="music_006. sound_006.mid · golden-sun-sound-sequence · 0x08162940: 2,532 bytes">
 <rect x="413.3671" y="213.664764" width="23.144879" height="26.76139" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="413.3671" y="213.664764" width="23.144879" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="416.3671" y="221.664764">mus…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_000. sound_000.mid · golden-sun-sound-sequence · 0x0815fb78: 2,396 bytes">
-<title>music_000. sound_000.mid · golden-sun-sound-sequence · 0x0815fb78: 2,396 bytes</title>
+<g aria-label="music_000. sound_000.mid · golden-sun-sound-sequence · 0x0815fb78: 2,396 bytes">
 <rect x="413.3671" y="240.426154" width="23.144879" height="25.323969" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="413.3671" y="240.426154" width="23.144879" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="416.3671" y="248.426154">mus…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_005. sound_005.mid · golden-sun-sound-sequence · 0x0816206c: 2,260 bytes">
-<title>music_005. sound_005.mid · golden-sun-sound-sequence · 0x0816206c: 2,260 bytes</title>
+<g aria-label="music_005. sound_005.mid · golden-sun-sound-sequence · 0x0816206c: 2,260 bytes">
 <rect x="436.511979" y="157.055758" width="22.256265" height="24.840253" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="436.511979" y="157.055758" width="22.256265" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="439.511979" y="165.055758">mus…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_009. sound_009.mid · golden-sun-sound-sequence · 0x081643e0: 2,076 bytes">
-<title>music_009. sound_009.mid · golden-sun-sound-sequence · 0x081643e0: 2,076 bytes</title>
+<g aria-label="music_009. sound_009.mid · golden-sun-sound-sequence · 0x081643e0: 2,076 bytes">
 <rect x="458.768244" y="157.055758" width="20.44425" height="24.840253" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="458.768244" y="157.055758" width="20.44425" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="461.768244" y="165.055758">mu…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_072. sound_072.mid · golden-sun-sound-sequence · 0x0817e90c: 2,016 bytes">
-<title>music_072. sound_072.mid · golden-sun-sound-sequence · 0x0817e90c: 2,016 bytes</title>
+<g aria-label="music_072. sound_072.mid · golden-sun-sound-sequence · 0x0817e90c: 2,016 bytes">
 <rect x="479.212494" y="157.055758" width="19.853376" height="24.840253" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="479.212494" y="157.055758" width="19.853376" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="482.212494" y="165.055758">mu…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_061. sound_061.mid · golden-sun-sound-sequence · 0x0817a590: 1,944 bytes">
-<title>music_061. sound_061.mid · golden-sun-sound-sequence · 0x0817a590: 1,944 bytes</title>
+<g aria-label="music_061. sound_061.mid · golden-sun-sound-sequence · 0x0817a590: 1,944 bytes">
 <rect x="499.06587" y="157.055758" width="19.144327" height="24.840253" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="499.06587" y="157.055758" width="19.144327" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="502.06587" y="165.055758">mu…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_076. sound_076.mid · golden-sun-sound-sequence · 0x0817fe6c: 1,908 bytes">
-<title>music_076. sound_076.mid · golden-sun-sound-sequence · 0x0817fe6c: 1,908 bytes</title>
+<g aria-label="music_076. sound_076.mid · golden-sun-sound-sequence · 0x0817fe6c: 1,908 bytes">
 <rect x="518.210197" y="157.055758" width="18.789803" height="24.840253" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="518.210197" y="157.055758" width="18.789803" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="521.210197" y="165.055758">mu…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_003. sound_003.mid · golden-sun-sound-sequence · 0x0816157c: 1,868 bytes">
-<title>music_003. sound_003.mid · golden-sun-sound-sequence · 0x0816157c: 1,868 bytes</title>
+<g aria-label="music_003. sound_003.mid · golden-sun-sound-sequence · 0x0816157c: 1,868 bytes">
 <rect x="436.511979" y="181.896011" width="21.097641" height="21.65922" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="436.511979" y="181.896011" width="21.097641" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="439.511979" y="189.896011">mu…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_021. sound_021.mid · golden-sun-sound-sequence · 0x08165d78: 1,852 bytes">
-<title>music_021. sound_021.mid · golden-sun-sound-sequence · 0x08165d78: 1,852 bytes</title>
+<g aria-label="music_021. sound_021.mid · golden-sun-sound-sequence · 0x08165d78: 1,852 bytes">
 <rect x="436.511979" y="203.555231" width="21.097641" height="21.473703" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="436.511979" y="203.555231" width="21.097641" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="439.511979" y="211.555231">mu…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_010. sound_010.mid · golden-sun-sound-sequence · 0x08164bfc: 1,756 bytes">
-<title>music_010. sound_010.mid · golden-sun-sound-sequence · 0x08164bfc: 1,756 bytes</title>
+<g aria-label="music_010. sound_010.mid · golden-sun-sound-sequence · 0x08164bfc: 1,756 bytes">
 <rect x="436.511979" y="225.028934" width="21.097641" height="20.360594" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="436.511979" y="225.028934" width="21.097641" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="439.511979" y="233.028934">mu…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_026. sound_026.mid · golden-sun-sound-sequence · 0x0816a620: 1,756 bytes">
-<title>music_026. sound_026.mid · golden-sun-sound-sequence · 0x0816a620: 1,756 bytes</title>
+<g aria-label="music_026. sound_026.mid · golden-sun-sound-sequence · 0x0816a620: 1,756 bytes">
 <rect x="436.511979" y="245.389528" width="21.097641" height="20.360595" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="436.511979" y="245.389528" width="21.097641" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="439.511979" y="253.389528">mu…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_008. sound_008.mid · golden-sun-sound-sequence · 0x08163d78: 1,640 bytes">
-<title>music_008. sound_008.mid · golden-sun-sound-sequence · 0x08163d78: 1,640 bytes</title>
+<g aria-label="music_008. sound_008.mid · golden-sun-sound-sequence · 0x08163d78: 1,640 bytes">
 <rect x="457.60962" y="181.896011" width="20.892206" height="19.202573" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="457.60962" y="181.896011" width="20.892206" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="460.60962" y="189.896011">mu…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_060. sound_060.mid · golden-sun-sound-sequence · 0x08179f4c: 1,604 bytes">
-<title>music_060. sound_060.mid · golden-sun-sound-sequence · 0x08179f4c: 1,604 bytes</title>
+<g aria-label="music_060. sound_060.mid · golden-sun-sound-sequence · 0x08179f4c: 1,604 bytes">
 <rect x="478.501826" y="181.896011" width="20.433595" height="19.202573" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="478.501826" y="181.896011" width="20.433595" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="481.501826" y="189.896011">mu…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_030. sound_030.mid · golden-sun-sound-sequence · 0x0816dac8: 1,520 bytes">
-<title>music_030. sound_030.mid · golden-sun-sound-sequence · 0x0816dac8: 1,520 bytes</title>
+<g aria-label="music_030. sound_030.mid · golden-sun-sound-sequence · 0x0816dac8: 1,520 bytes">
 <rect x="498.935421" y="181.896011" width="19.363508" height="19.202573" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="498.935421" y="181.896011" width="19.363508" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="501.935421" y="189.896011">mu…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_002. sound_002.mid · golden-sun-sound-sequence · 0x08160fc0: 1,468 bytes">
-<title>music_002. sound_002.mid · golden-sun-sound-sequence · 0x08160fc0: 1,468 bytes</title>
+<g aria-label="music_002. sound_002.mid · golden-sun-sound-sequence · 0x08160fc0: 1,468 bytes">
 <rect x="518.298929" y="181.896011" width="18.701071" height="19.202573" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="518.298929" y="181.896011" width="18.701071" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="521.298929" y="189.896011">mu…</text>
 </g>
-<g data-byte-leaf="true" aria-label="music_004. sound_004.mid · golden-sun-sound-sequence · 0x08161cc8: 932 bytes">
-<title>music_004. sound_004.mid · golden-sun-sound-sequence · 0x08161cc8: 932 bytes</title>
+<g aria-label="music_004. sound_004.mid · golden-sun-sound-sequence · 0x08161cc8: 932 bytes">
 <rect x="457.60962" y="201.098584" width="12.789033" height="17.826992" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="music_058. sound_058.mid · golden-sun-sound-sequence · 0x081799e0: 924 bytes">
-<title>music_058. sound_058.mid · golden-sun-sound-sequence · 0x081799e0: 924 bytes</title>
+<g aria-label="music_058. sound_058.mid · golden-sun-sound-sequence · 0x081799e0: 924 bytes">
 <rect x="457.60962" y="218.925576" width="12.789033" height="17.673971" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="music_062. sound_062.mid · golden-sun-sound-sequence · 0x0817ad28: 860 bytes">
-<title>music_062. sound_062.mid · golden-sun-sound-sequence · 0x0817ad28: 860 bytes</title>
+<g aria-label="music_062. sound_062.mid · golden-sun-sound-sequence · 0x0817ad28: 860 bytes">
 <rect x="457.60962" y="236.599547" width="12.789033" height="16.4498" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="music_064. sound_064.mid · golden-sun-sound-sequence · 0x0817be54: 664 bytes">
-<title>music_064. sound_064.mid · golden-sun-sound-sequence · 0x0817be54: 664 bytes</title>
+<g aria-label="music_064. sound_064.mid · golden-sun-sound-sequence · 0x0817be54: 664 bytes">
 <rect x="457.60962" y="253.049347" width="12.789033" height="12.700776" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="music_075. sound_075.mid · golden-sun-sound-sequence · 0x0817fc08: 612 bytes">
-<title>music_075. sound_075.mid · golden-sun-sound-sequence · 0x0817fc08: 612 bytes</title>
+<g aria-label="music_075. sound_075.mid · golden-sun-sound-sequence · 0x0817fc08: 612 bytes">
 <rect x="470.398653" y="201.098584" width="11.018244" height="13.58748" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_197. sound_197.mid · golden-sun-sound-sequence · 0x08182830: 564 bytes">
-<title>sfx_197. sound_197.mid · golden-sun-sound-sequence · 0x08182830: 564 bytes</title>
+<g aria-label="sfx_197. sound_197.mid · golden-sun-sound-sequence · 0x08182830: 564 bytes">
 <rect x="470.398653" y="214.686064" width="11.018244" height="12.521795" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_199. sound_199.mid · golden-sun-sound-sequence · 0x08182c00: 472 bytes">
-<title>sfx_199. sound_199.mid · golden-sun-sound-sequence · 0x08182c00: 472 bytes</title>
+<g aria-label="sfx_199. sound_199.mid · golden-sun-sound-sequence · 0x08182c00: 472 bytes">
 <rect x="470.398653" y="227.207859" width="11.018244" height="10.479233" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="music_059. sound_059.mid · golden-sun-sound-sequence · 0x08179d7c: 464 bytes">
-<title>music_059. sound_059.mid · golden-sun-sound-sequence · 0x08179d7c: 464 bytes</title>
+<g aria-label="music_059. sound_059.mid · golden-sun-sound-sequence · 0x08179d7c: 464 bytes">
 <rect x="470.398653" y="237.687092" width="11.018244" height="10.301619" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_198. sound_198.mid · golden-sun-sound-sequence · 0x08182a64: 412 bytes">
-<title>sfx_198. sound_198.mid · golden-sun-sound-sequence · 0x08182a64: 412 bytes</title>
+<g aria-label="sfx_198. sound_198.mid · golden-sun-sound-sequence · 0x08182a64: 412 bytes">
 <rect x="470.398653" y="247.988711" width="11.018244" height="9.147127" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="music_086. sound_086.mid · golden-sun-sound-sequence · 0x08180a74: 388 bytes">
-<title>music_086. sound_086.mid · golden-sun-sound-sequence · 0x08180a74: 388 bytes</title>
+<g aria-label="music_086. sound_086.mid · golden-sun-sound-sequence · 0x08180a74: 388 bytes">
 <rect x="470.398653" y="257.135838" width="11.018244" height="8.614285" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="music_093. sound_093.mid · golden-sun-sound-sequence · 0x08180f48: 368 bytes">
-<title>music_093. sound_093.mid · golden-sun-sound-sequence · 0x08180f48: 368 bytes</title>
+<g aria-label="music_093. sound_093.mid · golden-sun-sound-sequence · 0x08180f48: 368 bytes">
 <rect x="481.416897" y="201.098584" width="11.263536" height="7.992321" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_200. sound_200.mid · golden-sun-sound-sequence · 0x08182dd8: 320 bytes">
-<title>sfx_200. sound_200.mid · golden-sun-sound-sequence · 0x08182dd8: 320 bytes</title>
+<g aria-label="sfx_200. sound_200.mid · golden-sun-sound-sequence · 0x08182dd8: 320 bytes">
 <rect x="492.680433" y="201.098584" width="9.794379" height="7.992321" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="music_081. sound_081.mid · golden-sun-sound-sequence · 0x081806a0: 248 bytes">
-<title>music_081. sound_081.mid · golden-sun-sound-sequence · 0x081806a0: 248 bytes</title>
+<g aria-label="music_081. sound_081.mid · golden-sun-sound-sequence · 0x081806a0: 248 bytes">
 <rect x="502.474812" y="201.098584" width="7.590645" height="7.992321" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="music_083. sound_083.mid · golden-sun-sound-sequence · 0x08180854: 248 bytes">
-<title>music_083. sound_083.mid · golden-sun-sound-sequence · 0x08180854: 248 bytes</title>
+<g aria-label="music_083. sound_083.mid · golden-sun-sound-sequence · 0x08180854: 248 bytes">
 <rect x="510.065457" y="201.098584" width="7.590644" height="7.992321" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="music_089. sound_089.mid · golden-sun-sound-sequence · 0x08180d4c: 220 bytes">
-<title>music_089. sound_089.mid · golden-sun-sound-sequence · 0x08180d4c: 220 bytes</title>
+<g aria-label="music_089. sound_089.mid · golden-sun-sound-sequence · 0x08180d4c: 220 bytes">
 <rect x="517.656101" y="201.098584" width="6.733635" height="7.992321" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_184. sound_184.mid · golden-sun-sound-sequence · 0x08182458: 212 bytes">
-<title>sfx_184. sound_184.mid · golden-sun-sound-sequence · 0x08182458: 212 bytes</title>
+<g aria-label="sfx_184. sound_184.mid · golden-sun-sound-sequence · 0x08182458: 212 bytes">
 <rect x="524.389736" y="201.098584" width="6.488777" height="7.992321" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="music_084. sound_084.mid · golden-sun-sound-sequence · 0x0818094c: 200 bytes">
-<title>music_084. sound_084.mid · golden-sun-sound-sequence · 0x0818094c: 200 bytes</title>
+<g aria-label="music_084. sound_084.mid · golden-sun-sound-sequence · 0x0818094c: 200 bytes">
 <rect x="530.878513" y="201.098584" width="6.121487" height="7.992321" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_241. sound_241.mid · golden-sun-sound-sequence · 0x08183970: 200 bytes">
-<title>sfx_241. sound_241.mid · golden-sun-sound-sequence · 0x08183970: 200 bytes</title>
+<g aria-label="sfx_241. sound_241.mid · golden-sun-sound-sequence · 0x08183970: 200 bytes">
 <rect x="481.416897" y="209.090905" width="7.490984" height="6.53117" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_311. sound_311.mid · golden-sun-sound-sequence · 0x081845d0: 200 bytes">
-<title>sfx_311. sound_311.mid · golden-sun-sound-sequence · 0x081845d0: 200 bytes</title>
+<g aria-label="sfx_311. sound_311.mid · golden-sun-sound-sequence · 0x081845d0: 200 bytes">
 <rect x="488.907881" y="209.090905" width="7.490984" height="6.53117" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="music_088. sound_088.mid · golden-sun-sound-sequence · 0x08180c88: 196 bytes">
-<title>music_088. sound_088.mid · golden-sun-sound-sequence · 0x08180c88: 196 bytes</title>
+<g aria-label="music_088. sound_088.mid · golden-sun-sound-sequence · 0x08180c88: 196 bytes">
 <rect x="496.398865" y="209.090905" width="7.341165" height="6.53117" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="music_080. sound_080.mid · golden-sun-sound-sequence · 0x081805e0: 192 bytes">
-<title>music_080. sound_080.mid · golden-sun-sound-sequence · 0x081805e0: 192 bytes</title>
+<g aria-label="music_080. sound_080.mid · golden-sun-sound-sequence · 0x081805e0: 192 bytes">
 <rect x="503.74003" y="209.090905" width="7.191345" height="6.53117" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="music_082. sound_082.mid · golden-sun-sound-sequence · 0x08180798: 188 bytes">
-<title>music_082. sound_082.mid · golden-sun-sound-sequence · 0x08180798: 188 bytes</title>
+<g aria-label="music_082. sound_082.mid · golden-sun-sound-sequence · 0x08180798: 188 bytes">
 <rect x="510.931375" y="209.090905" width="7.041525" height="6.53117" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="music_092. sound_092.mid · golden-sun-sound-sequence · 0x08180e8c: 188 bytes">
-<title>music_092. sound_092.mid · golden-sun-sound-sequence · 0x08180e8c: 188 bytes</title>
+<g aria-label="music_092. sound_092.mid · golden-sun-sound-sequence · 0x08180e8c: 188 bytes">
 <rect x="517.9729" y="209.090905" width="7.041525" height="6.53117" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_233. sound_233.mid · golden-sun-sound-sequence · 0x08183694: 160 bytes">
-<title>sfx_233. sound_233.mid · golden-sun-sound-sequence · 0x08183694: 160 bytes</title>
+<g aria-label="sfx_233. sound_233.mid · golden-sun-sound-sequence · 0x08183694: 160 bytes">
 <rect x="525.014425" y="209.090905" width="5.992788" height="6.53117" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_235. sound_235.mid · golden-sun-sound-sequence · 0x08183750: 160 bytes">
-<title>sfx_235. sound_235.mid · golden-sun-sound-sequence · 0x08183750: 160 bytes</title>
+<g aria-label="sfx_235. sound_235.mid · golden-sun-sound-sequence · 0x08183750: 160 bytes">
 <rect x="531.007213" y="209.090905" width="5.992787" height="6.53117" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_209. sound_209.mid · golden-sun-sound-sequence · 0x08183100: 156 bytes">
-<title>sfx_209. sound_209.mid · golden-sun-sound-sequence · 0x08183100: 156 bytes</title>
+<g aria-label="sfx_209. sound_209.mid · golden-sun-sound-sequence · 0x08183100: 156 bytes">
 <rect x="481.416897" y="215.622075" width="5.64127" height="6.764684" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_140. sound_140.mid · golden-sun-sound-sequence · 0x081819e0: 152 bytes">
-<title>sfx_140. sound_140.mid · golden-sun-sound-sequence · 0x081819e0: 152 bytes</title>
+<g aria-label="sfx_140. sound_140.mid · golden-sun-sound-sequence · 0x081819e0: 152 bytes">
 <rect x="481.416897" y="222.386759" width="5.64127" height="6.591232" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_220. sound_220.mid · golden-sun-sound-sequence · 0x081833c8: 148 bytes">
-<title>sfx_220. sound_220.mid · golden-sun-sound-sequence · 0x081833c8: 148 bytes</title>
+<g aria-label="sfx_220. sound_220.mid · golden-sun-sound-sequence · 0x081833c8: 148 bytes">
 <rect x="481.416897" y="228.977991" width="5.64127" height="6.417777" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="music_087. sound_087.mid · golden-sun-sound-sequence · 0x08180bf8: 144 bytes">
-<title>music_087. sound_087.mid · golden-sun-sound-sequence · 0x08180bf8: 144 bytes</title>
+<g aria-label="music_087. sound_087.mid · golden-sun-sound-sequence · 0x08180bf8: 144 bytes">
 <rect x="481.416897" y="235.395768" width="5.64127" height="6.244325" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_308. sound_308.mid · golden-sun-sound-sequence · 0x081844b0: 144 bytes">
-<title>sfx_308. sound_308.mid · golden-sun-sound-sequence · 0x081844b0: 144 bytes</title>
+<g aria-label="sfx_308. sound_308.mid · golden-sun-sound-sequence · 0x081844b0: 144 bytes">
 <rect x="481.416897" y="241.640093" width="5.64127" height="6.244324" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_204. sound_204.mid · golden-sun-sound-sequence · 0x08182fc0: 140 bytes">
-<title>sfx_204. sound_204.mid · golden-sun-sound-sequence · 0x08182fc0: 140 bytes</title>
+<g aria-label="sfx_204. sound_204.mid · golden-sun-sound-sequence · 0x08182fc0: 140 bytes">
 <rect x="481.416897" y="247.884417" width="5.64127" height="6.070871" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_239. sound_239.mid · golden-sun-sound-sequence · 0x081838b8: 140 bytes">
-<title>sfx_239. sound_239.mid · golden-sun-sound-sequence · 0x081838b8: 140 bytes</title>
+<g aria-label="sfx_239. sound_239.mid · golden-sun-sound-sequence · 0x081838b8: 140 bytes">
 <rect x="481.416897" y="253.955288" width="5.64127" height="6.070871" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_190. sound_190.mid · golden-sun-sound-sequence · 0x0818262c: 132 bytes">
-<title>sfx_190. sound_190.mid · golden-sun-sound-sequence · 0x0818262c: 132 bytes</title>
+<g aria-label="sfx_190. sound_190.mid · golden-sun-sound-sequence · 0x0818262c: 132 bytes">
 <rect x="481.416897" y="260.026159" width="5.64127" height="5.723964" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_142. sound_142.mid · golden-sun-sound-sequence · 0x08181ad0: 128 bytes">
-<title>sfx_142. sound_142.mid · golden-sun-sound-sequence · 0x08181ad0: 128 bytes</title>
+<g aria-label="sfx_142. sound_142.mid · golden-sun-sound-sequence · 0x08181ad0: 128 bytes">
 <rect x="487.058167" y="215.622075" width="6.030712" height="5.192078" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_165. sound_165.mid · golden-sun-sound-sequence · 0x08181f88: 120 bytes">
-<title>sfx_165. sound_165.mid · golden-sun-sound-sequence · 0x08181f88: 120 bytes</title>
+<g aria-label="sfx_165. sound_165.mid · golden-sun-sound-sequence · 0x08181f88: 120 bytes">
 <rect x="493.088879" y="215.622075" width="5.653792" height="5.192078" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_238. sound_238.mid · golden-sun-sound-sequence · 0x08183840: 120 bytes">
-<title>sfx_238. sound_238.mid · golden-sun-sound-sequence · 0x08183840: 120 bytes</title>
+<g aria-label="sfx_238. sound_238.mid · golden-sun-sound-sequence · 0x08183840: 120 bytes">
 <rect x="498.742671" y="215.622075" width="5.653793" height="5.192078" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_244. sound_244.mid · golden-sun-sound-sequence · 0x08183acc: 120 bytes">
-<title>sfx_244. sound_244.mid · golden-sun-sound-sequence · 0x08183acc: 120 bytes</title>
+<g aria-label="sfx_244. sound_244.mid · golden-sun-sound-sequence · 0x08183acc: 120 bytes">
 <rect x="504.396464" y="215.622075" width="5.653792" height="5.192078" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_246. sound_246.mid · golden-sun-sound-sequence · 0x08183b7c: 120 bytes">
-<title>sfx_246. sound_246.mid · golden-sun-sound-sequence · 0x08183b7c: 120 bytes</title>
+<g aria-label="sfx_246. sound_246.mid · golden-sun-sound-sequence · 0x08183b7c: 120 bytes">
 <rect x="510.050256" y="215.622075" width="5.653792" height="5.192078" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_107. sound_107.mid · golden-sun-sound-sequence · 0x0818127c: 116 bytes">
-<title>sfx_107. sound_107.mid · golden-sun-sound-sequence · 0x0818127c: 116 bytes</title>
+<g aria-label="sfx_107. sound_107.mid · golden-sun-sound-sequence · 0x0818127c: 116 bytes">
 <rect x="515.704048" y="215.622075" width="5.465333" height="5.192078" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_193. sound_193.mid · golden-sun-sound-sequence · 0x081826fc: 116 bytes">
-<title>sfx_193. sound_193.mid · golden-sun-sound-sequence · 0x081826fc: 116 bytes</title>
+<g aria-label="sfx_193. sound_193.mid · golden-sun-sound-sequence · 0x081826fc: 116 bytes">
 <rect x="521.169381" y="215.622075" width="5.465333" height="5.192078" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_126. sound_126.mid · golden-sun-sound-sequence · 0x081816ac: 112 bytes">
-<title>sfx_126. sound_126.mid · golden-sun-sound-sequence · 0x081816ac: 112 bytes</title>
+<g aria-label="sfx_126. sound_126.mid · golden-sun-sound-sequence · 0x081816ac: 112 bytes">
 <rect x="526.634714" y="215.622075" width="5.276873" height="5.192078" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_144. sound_144.mid · golden-sun-sound-sequence · 0x08181b74: 108 bytes">
-<title>sfx_144. sound_144.mid · golden-sun-sound-sequence · 0x08181b74: 108 bytes</title>
+<g aria-label="sfx_144. sound_144.mid · golden-sun-sound-sequence · 0x08181b74: 108 bytes">
 <rect x="531.911587" y="215.622075" width="5.088413" height="5.192078" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_145. sound_145.mid · golden-sun-sound-sequence · 0x08181be0: 108 bytes">
-<title>sfx_145. sound_145.mid · golden-sun-sound-sequence · 0x08181be0: 108 bytes</title>
+<g aria-label="sfx_145. sound_145.mid · golden-sun-sound-sequence · 0x08181be0: 108 bytes">
 <rect x="487.058167" y="220.814153" width="4.943011" height="5.344807" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_105. sound_105.mid · golden-sun-sound-sequence · 0x081811f8: 104 bytes">
-<title>sfx_105. sound_105.mid · golden-sun-sound-sequence · 0x081811f8: 104 bytes</title>
+<g aria-label="sfx_105. sound_105.mid · golden-sun-sound-sequence · 0x081811f8: 104 bytes">
 <rect x="487.058167" y="226.15896" width="4.943011" height="5.146851" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_178. sound_178.mid · golden-sun-sound-sequence · 0x08182270: 104 bytes">
-<title>sfx_178. sound_178.mid · golden-sun-sound-sequence · 0x08182270: 104 bytes</title>
+<g aria-label="sfx_178. sound_178.mid · golden-sun-sound-sequence · 0x08182270: 104 bytes">
 <rect x="487.058167" y="231.305811" width="4.943011" height="5.146851" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_180. sound_180.mid · golden-sun-sound-sequence · 0x0818231c: 104 bytes">
-<title>sfx_180. sound_180.mid · golden-sun-sound-sequence · 0x0818231c: 104 bytes</title>
+<g aria-label="sfx_180. sound_180.mid · golden-sun-sound-sequence · 0x0818231c: 104 bytes">
 <rect x="487.058167" y="236.452662" width="4.943011" height="5.146852" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="music_091. sound_091.mid · golden-sun-sound-sequence · 0x08180e28: 100 bytes">
-<title>music_091. sound_091.mid · golden-sun-sound-sequence · 0x08180e28: 100 bytes</title>
+<g aria-label="music_091. sound_091.mid · golden-sun-sound-sequence · 0x08180e28: 100 bytes">
 <rect x="487.058167" y="241.599514" width="4.943011" height="4.948895" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_123. sound_123.mid · golden-sun-sound-sequence · 0x08181608: 100 bytes">
-<title>sfx_123. sound_123.mid · golden-sun-sound-sequence · 0x08181608: 100 bytes</title>
+<g aria-label="sfx_123. sound_123.mid · golden-sun-sound-sequence · 0x08181608: 100 bytes">
 <rect x="487.058167" y="246.548409" width="4.943011" height="4.948895" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="music_085. sound_085.mid · golden-sun-sound-sequence · 0x08180a14: 96 bytes">
-<title>music_085. sound_085.mid · golden-sun-sound-sequence · 0x08180a14: 96 bytes</title>
+<g aria-label="music_085. sound_085.mid · golden-sun-sound-sequence · 0x08180a14: 96 bytes">
 <rect x="487.058167" y="251.497304" width="4.943011" height="4.75094" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_114. sound_114.mid · golden-sun-sound-sequence · 0x08181434: 96 bytes">
-<title>sfx_114. sound_114.mid · golden-sun-sound-sequence · 0x08181434: 96 bytes</title>
+<g aria-label="sfx_114. sound_114.mid · golden-sun-sound-sequence · 0x08181434: 96 bytes">
 <rect x="487.058167" y="256.248244" width="4.943011" height="4.750939" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_182. sound_182.mid · golden-sun-sound-sequence · 0x081823c0: 96 bytes">
-<title>sfx_182. sound_182.mid · golden-sun-sound-sequence · 0x081823c0: 96 bytes</title>
+<g aria-label="sfx_182. sound_182.mid · golden-sun-sound-sequence · 0x081823c0: 96 bytes">
 <rect x="487.058167" y="260.999183" width="4.943011" height="4.75094" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_189. sound_189.mid · golden-sun-sound-sequence · 0x081825cc: 96 bytes">
-<title>sfx_189. sound_189.mid · golden-sun-sound-sequence · 0x081825cc: 96 bytes</title>
+<g aria-label="sfx_189. sound_189.mid · golden-sun-sound-sequence · 0x081825cc: 96 bytes">
 <rect x="492.001178" y="220.814153" width="4.877685" height="4.814568" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_242. sound_242.mid · golden-sun-sound-sequence · 0x08183a38: 96 bytes">
-<title>sfx_242. sound_242.mid · golden-sun-sound-sequence · 0x08183a38: 96 bytes</title>
+<g aria-label="sfx_242. sound_242.mid · golden-sun-sound-sequence · 0x08183a38: 96 bytes">
 <rect x="492.001178" y="225.628721" width="4.877685" height="4.814569" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_291. sound_291.mid · golden-sun-sound-sequence · 0x0818428c: 92 bytes">
-<title>sfx_291. sound_291.mid · golden-sun-sound-sequence · 0x0818428c: 92 bytes</title>
+<g aria-label="sfx_291. sound_291.mid · golden-sun-sound-sequence · 0x0818428c: 92 bytes">
 <rect x="492.001178" y="230.44329" width="4.877685" height="4.613961" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_113. sound_113.mid · golden-sun-sound-sequence · 0x081813dc: 88 bytes">
-<title>sfx_113. sound_113.mid · golden-sun-sound-sequence · 0x081813dc: 88 bytes</title>
+<g aria-label="sfx_113. sound_113.mid · golden-sun-sound-sequence · 0x081813dc: 88 bytes">
 <rect x="492.001178" y="235.057251" width="4.877685" height="4.413354" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_134. sound_134.mid · golden-sun-sound-sequence · 0x0818187c: 88 bytes">
-<title>sfx_134. sound_134.mid · golden-sun-sound-sequence · 0x0818187c: 88 bytes</title>
+<g aria-label="sfx_134. sound_134.mid · golden-sun-sound-sequence · 0x0818187c: 88 bytes">
 <rect x="492.001178" y="239.470605" width="4.877685" height="4.413354" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_141. sound_141.mid · golden-sun-sound-sequence · 0x08181a78: 88 bytes">
-<title>sfx_141. sound_141.mid · golden-sun-sound-sequence · 0x08181a78: 88 bytes</title>
+<g aria-label="sfx_141. sound_141.mid · golden-sun-sound-sequence · 0x08181a78: 88 bytes">
 <rect x="492.001178" y="243.883959" width="4.877685" height="4.413354" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_196. sound_196.mid · golden-sun-sound-sequence · 0x081827d8: 88 bytes">
-<title>sfx_196. sound_196.mid · golden-sun-sound-sequence · 0x081827d8: 88 bytes</title>
+<g aria-label="sfx_196. sound_196.mid · golden-sun-sound-sequence · 0x081827d8: 88 bytes">
 <rect x="492.001178" y="248.297313" width="4.877685" height="4.413354" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_253. sound_253.mid · golden-sun-sound-sequence · 0x08183d24: 88 bytes">
-<title>sfx_253. sound_253.mid · golden-sun-sound-sequence · 0x08183d24: 88 bytes</title>
+<g aria-label="sfx_253. sound_253.mid · golden-sun-sound-sequence · 0x08183d24: 88 bytes">
 <rect x="492.001178" y="252.710667" width="4.877685" height="4.413354" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_290. sound_290.mid · golden-sun-sound-sequence · 0x08184234: 88 bytes">
-<title>sfx_290. sound_290.mid · golden-sun-sound-sequence · 0x08184234: 88 bytes</title>
+<g aria-label="sfx_290. sound_290.mid · golden-sun-sound-sequence · 0x08184234: 88 bytes">
 <rect x="492.001178" y="257.124021" width="4.877685" height="4.413354" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_112. sound_112.mid · golden-sun-sound-sequence · 0x08181388: 84 bytes">
-<title>sfx_112. sound_112.mid · golden-sun-sound-sequence · 0x08181388: 84 bytes</title>
+<g aria-label="sfx_112. sound_112.mid · golden-sun-sound-sequence · 0x08181388: 84 bytes">
 <rect x="492.001178" y="261.537375" width="4.877685" height="4.212748" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_173. sound_173.mid · golden-sun-sound-sequence · 0x0818211c: 84 bytes">
-<title>sfx_173. sound_173.mid · golden-sun-sound-sequence · 0x0818211c: 84 bytes</title>
+<g aria-label="sfx_173. sound_173.mid · golden-sun-sound-sequence · 0x0818211c: 84 bytes">
 <rect x="496.878863" y="220.814153" width="4.604065" height="4.463111" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_174. sound_174.mid · golden-sun-sound-sequence · 0x08182170: 84 bytes">
-<title>sfx_174. sound_174.mid · golden-sun-sound-sequence · 0x08182170: 84 bytes</title>
+<g aria-label="sfx_174. sound_174.mid · golden-sun-sound-sequence · 0x08182170: 84 bytes">
 <rect x="501.482928" y="220.814153" width="4.604065" height="4.463111" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_175. sound_175.mid · golden-sun-sound-sequence · 0x081821c4: 84 bytes">
-<title>sfx_175. sound_175.mid · golden-sun-sound-sequence · 0x081821c4: 84 bytes</title>
+<g aria-label="sfx_175. sound_175.mid · golden-sun-sound-sequence · 0x081821c4: 84 bytes">
 <rect x="506.086993" y="220.814153" width="4.604065" height="4.463111" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_310. sound_310.mid · golden-sun-sound-sequence · 0x0818457c: 84 bytes">
-<title>sfx_310. sound_310.mid · golden-sun-sound-sequence · 0x0818457c: 84 bytes</title>
+<g aria-label="sfx_310. sound_310.mid · golden-sun-sound-sequence · 0x0818457c: 84 bytes">
 <rect x="510.691058" y="220.814153" width="4.604065" height="4.463111" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_103. sound_103.mid · golden-sun-sound-sequence · 0x08181160: 80 bytes">
-<title>sfx_103. sound_103.mid · golden-sun-sound-sequence · 0x08181160: 80 bytes</title>
+<g aria-label="sfx_103. sound_103.mid · golden-sun-sound-sequence · 0x08181160: 80 bytes">
 <rect x="515.295123" y="220.814153" width="4.384823" height="4.463111" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_135. sound_135.mid · golden-sun-sound-sequence · 0x081818d4: 80 bytes">
-<title>sfx_135. sound_135.mid · golden-sun-sound-sequence · 0x081818d4: 80 bytes</title>
+<g aria-label="sfx_135. sound_135.mid · golden-sun-sound-sequence · 0x081818d4: 80 bytes">
 <rect x="519.679946" y="220.814153" width="4.384824" height="4.463111" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_201. sound_201.mid · golden-sun-sound-sequence · 0x08182f18: 80 bytes">
-<title>sfx_201. sound_201.mid · golden-sun-sound-sequence · 0x08182f18: 80 bytes</title>
+<g aria-label="sfx_201. sound_201.mid · golden-sun-sound-sequence · 0x08182f18: 80 bytes">
 <rect x="524.06477" y="220.814153" width="4.384824" height="4.463111" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_208. sound_208.mid · golden-sun-sound-sequence · 0x081830b0: 80 bytes">
-<title>sfx_208. sound_208.mid · golden-sun-sound-sequence · 0x081830b0: 80 bytes</title>
+<g aria-label="sfx_208. sound_208.mid · golden-sun-sound-sequence · 0x081830b0: 80 bytes">
 <rect x="528.449594" y="220.814153" width="4.384823" height="4.463111" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_154. sound_154.mid · golden-sun-sound-sequence · 0x08181db8: 76 bytes">
-<title>sfx_154. sound_154.mid · golden-sun-sound-sequence · 0x08181db8: 76 bytes</title>
+<g aria-label="sfx_154. sound_154.mid · golden-sun-sound-sequence · 0x08181db8: 76 bytes">
 <rect x="532.834417" y="220.814153" width="4.165583" height="4.463111" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_213. sound_213.mid · golden-sun-sound-sequence · 0x08183248: 76 bytes">
-<title>sfx_213. sound_213.mid · golden-sun-sound-sequence · 0x08183248: 76 bytes</title>
+<g aria-label="sfx_213. sound_213.mid · golden-sun-sound-sequence · 0x08183248: 76 bytes">
 <rect x="496.878863" y="225.277264" width="4.356009" height="4.268003" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_214. sound_214.mid · golden-sun-sound-sequence · 0x08183294: 76 bytes">
-<title>sfx_214. sound_214.mid · golden-sun-sound-sequence · 0x08183294: 76 bytes</title>
+<g aria-label="sfx_214. sound_214.mid · golden-sun-sound-sequence · 0x08183294: 76 bytes">
 <rect x="501.234872" y="225.277264" width="4.356009" height="4.268003" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_104. sound_104.mid · golden-sun-sound-sequence · 0x081811b0: 72 bytes">
-<title>sfx_104. sound_104.mid · golden-sun-sound-sequence · 0x081811b0: 72 bytes</title>
+<g aria-label="sfx_104. sound_104.mid · golden-sun-sound-sequence · 0x081811b0: 72 bytes">
 <rect x="505.590881" y="225.277264" width="4.126746" height="4.268003" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_121. sound_121.mid · golden-sun-sound-sequence · 0x08181584: 72 bytes">
-<title>sfx_121. sound_121.mid · golden-sun-sound-sequence · 0x08181584: 72 bytes</title>
+<g aria-label="sfx_121. sound_121.mid · golden-sun-sound-sequence · 0x08181584: 72 bytes">
 <rect x="509.717627" y="225.277264" width="4.126745" height="4.268003" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_115. sound_115.mid · golden-sun-sound-sequence · 0x08181494: 68 bytes">
-<title>sfx_115. sound_115.mid · golden-sun-sound-sequence · 0x08181494: 68 bytes</title>
+<g aria-label="sfx_115. sound_115.mid · golden-sun-sound-sequence · 0x08181494: 68 bytes">
 <rect x="513.844372" y="225.277264" width="3.897482" height="4.268003" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_131. sound_131.mid · golden-sun-sound-sequence · 0x081817dc: 68 bytes">
-<title>sfx_131. sound_131.mid · golden-sun-sound-sequence · 0x081817dc: 68 bytes</title>
+<g aria-label="sfx_131. sound_131.mid · golden-sun-sound-sequence · 0x081817dc: 68 bytes">
 <rect x="517.741854" y="225.277264" width="3.897482" height="4.268003" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_151. sound_151.mid · golden-sun-sound-sequence · 0x08181cfc: 68 bytes">
-<title>sfx_151. sound_151.mid · golden-sun-sound-sequence · 0x08181cfc: 68 bytes</title>
+<g aria-label="sfx_151. sound_151.mid · golden-sun-sound-sequence · 0x08181cfc: 68 bytes">
 <rect x="521.639336" y="225.277264" width="3.897482" height="4.268003" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_179. sound_179.mid · golden-sun-sound-sequence · 0x081822d8: 68 bytes">
-<title>sfx_179. sound_179.mid · golden-sun-sound-sequence · 0x081822d8: 68 bytes</title>
+<g aria-label="sfx_179. sound_179.mid · golden-sun-sound-sequence · 0x081822d8: 68 bytes">
 <rect x="525.536818" y="225.277264" width="3.897482" height="4.268003" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_248. sound_248.mid · golden-sun-sound-sequence · 0x08183c1c: 68 bytes">
-<title>sfx_248. sound_248.mid · golden-sun-sound-sequence · 0x08183c1c: 68 bytes</title>
+<g aria-label="sfx_248. sound_248.mid · golden-sun-sound-sequence · 0x08183c1c: 68 bytes">
 <rect x="529.4343" y="225.277264" width="3.897482" height="4.268003" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_153. sound_153.mid · golden-sun-sound-sequence · 0x08181d78: 64 bytes">
-<title>sfx_153. sound_153.mid · golden-sun-sound-sequence · 0x08181d78: 64 bytes</title>
+<g aria-label="sfx_153. sound_153.mid · golden-sun-sound-sequence · 0x08181d78: 64 bytes">
 <rect x="533.331782" y="225.277264" width="3.668218" height="4.268003" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_210. sound_210.mid · golden-sun-sound-sequence · 0x0818319c: 64 bytes">
-<title>sfx_210. sound_210.mid · golden-sun-sound-sequence · 0x0818319c: 64 bytes</title>
+<g aria-label="sfx_210. sound_210.mid · golden-sun-sound-sequence · 0x0818319c: 64 bytes">
 <rect x="496.878863" y="229.545267" width="3.675631" height="4.259395" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_231. sound_231.mid · golden-sun-sound-sequence · 0x0818361c: 64 bytes">
-<title>sfx_231. sound_231.mid · golden-sun-sound-sequence · 0x0818361c: 64 bytes</title>
+<g aria-label="sfx_231. sound_231.mid · golden-sun-sound-sequence · 0x0818361c: 64 bytes">
 <rect x="496.878863" y="233.804662" width="3.675631" height="4.259395" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_102. sound_102.mid · golden-sun-sound-sequence · 0x08181124: 60 bytes">
-<title>sfx_102. sound_102.mid · golden-sun-sound-sequence · 0x08181124: 60 bytes</title>
+<g aria-label="sfx_102. sound_102.mid · golden-sun-sound-sequence · 0x08181124: 60 bytes">
 <rect x="496.878863" y="238.064057" width="3.675631" height="3.993182" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_122. sound_122.mid · golden-sun-sound-sequence · 0x081815cc: 60 bytes">
-<title>sfx_122. sound_122.mid · golden-sun-sound-sequence · 0x081815cc: 60 bytes</title>
+<g aria-label="sfx_122. sound_122.mid · golden-sun-sound-sequence · 0x081815cc: 60 bytes">
 <rect x="496.878863" y="242.057239" width="3.675631" height="3.993183" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_137. sound_137.mid · golden-sun-sound-sequence · 0x0818194c: 60 bytes">
-<title>sfx_137. sound_137.mid · golden-sun-sound-sequence · 0x0818194c: 60 bytes</title>
+<g aria-label="sfx_137. sound_137.mid · golden-sun-sound-sequence · 0x0818194c: 60 bytes">
 <rect x="496.878863" y="246.050422" width="3.675631" height="3.993182" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_181. sound_181.mid · golden-sun-sound-sequence · 0x08182384: 60 bytes">
-<title>sfx_181. sound_181.mid · golden-sun-sound-sequence · 0x08182384: 60 bytes</title>
+<g aria-label="sfx_181. sound_181.mid · golden-sun-sound-sequence · 0x08182384: 60 bytes">
 <rect x="496.878863" y="250.043604" width="3.675631" height="3.993183" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_222. sound_222.mid · golden-sun-sound-sequence · 0x08183488: 60 bytes">
-<title>sfx_222. sound_222.mid · golden-sun-sound-sequence · 0x08183488: 60 bytes</title>
+<g aria-label="sfx_222. sound_222.mid · golden-sun-sound-sequence · 0x08183488: 60 bytes">
 <rect x="496.878863" y="254.036787" width="3.675631" height="3.993183" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_309. sound_309.mid · golden-sun-sound-sequence · 0x08184540: 60 bytes">
-<title>sfx_309. sound_309.mid · golden-sun-sound-sequence · 0x08184540: 60 bytes</title>
+<g aria-label="sfx_309. sound_309.mid · golden-sun-sound-sequence · 0x08184540: 60 bytes">
 <rect x="496.878863" y="258.02997" width="3.675631" height="3.993182" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_101. sound_101.mid · golden-sun-sound-sequence · 0x081810ec: 56 bytes">
-<title>sfx_101. sound_101.mid · golden-sun-sound-sequence · 0x081810ec: 56 bytes</title>
+<g aria-label="sfx_101. sound_101.mid · golden-sun-sound-sequence · 0x081810ec: 56 bytes">
 <rect x="496.878863" y="262.023152" width="3.675631" height="3.726971" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_128. sound_128.mid · golden-sun-sound-sequence · 0x08181744: 56 bytes">
-<title>sfx_128. sound_128.mid · golden-sun-sound-sequence · 0x08181744: 56 bytes</title>
+<g aria-label="sfx_128. sound_128.mid · golden-sun-sound-sequence · 0x08181744: 56 bytes">
 <rect x="500.554494" y="229.545267" width="3.783738" height="3.620486" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_129. sound_129.mid · golden-sun-sound-sequence · 0x0818177c: 56 bytes">
-<title>sfx_129. sound_129.mid · golden-sun-sound-sequence · 0x0818177c: 56 bytes</title>
+<g aria-label="sfx_129. sound_129.mid · golden-sun-sound-sequence · 0x0818177c: 56 bytes">
 <rect x="500.554494" y="233.165753" width="3.783738" height="3.620485" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_152. sound_152.mid · golden-sun-sound-sequence · 0x08181d40: 56 bytes">
-<title>sfx_152. sound_152.mid · golden-sun-sound-sequence · 0x08181d40: 56 bytes</title>
+<g aria-label="sfx_152. sound_152.mid · golden-sun-sound-sequence · 0x08181d40: 56 bytes">
 <rect x="500.554494" y="236.786238" width="3.783738" height="3.620486" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_158. sound_158.mid · golden-sun-sound-sequence · 0x08181e68: 56 bytes">
-<title>sfx_158. sound_158.mid · golden-sun-sound-sequence · 0x08181e68: 56 bytes</title>
+<g aria-label="sfx_158. sound_158.mid · golden-sun-sound-sequence · 0x08181e68: 56 bytes">
 <rect x="500.554494" y="240.406724" width="3.783738" height="3.620485" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_183. sound_183.mid · golden-sun-sound-sequence · 0x08182420: 56 bytes">
-<title>sfx_183. sound_183.mid · golden-sun-sound-sequence · 0x08182420: 56 bytes</title>
+<g aria-label="sfx_183. sound_183.mid · golden-sun-sound-sequence · 0x08182420: 56 bytes">
 <rect x="500.554494" y="244.027209" width="3.783738" height="3.620486" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_194. sound_194.mid · golden-sun-sound-sequence · 0x08182770: 56 bytes">
-<title>sfx_194. sound_194.mid · golden-sun-sound-sequence · 0x08182770: 56 bytes</title>
+<g aria-label="sfx_194. sound_194.mid · golden-sun-sound-sequence · 0x08182770: 56 bytes">
 <rect x="500.554494" y="247.647695" width="3.783738" height="3.620485" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_211. sound_211.mid · golden-sun-sound-sequence · 0x081831dc: 56 bytes">
-<title>sfx_211. sound_211.mid · golden-sun-sound-sequence · 0x081831dc: 56 bytes</title>
+<g aria-label="sfx_211. sound_211.mid · golden-sun-sound-sequence · 0x081831dc: 56 bytes">
 <rect x="500.554494" y="251.26818" width="3.783738" height="3.620486" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_215. sound_215.mid · golden-sun-sound-sequence · 0x081832e0: 56 bytes">
-<title>sfx_215. sound_215.mid · golden-sun-sound-sequence · 0x081832e0: 56 bytes</title>
+<g aria-label="sfx_215. sound_215.mid · golden-sun-sound-sequence · 0x081832e0: 56 bytes">
 <rect x="500.554494" y="254.888666" width="3.783738" height="3.620485" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_216. sound_216.mid · golden-sun-sound-sequence · 0x08183318: 56 bytes">
-<title>sfx_216. sound_216.mid · golden-sun-sound-sequence · 0x08183318: 56 bytes</title>
+<g aria-label="sfx_216. sound_216.mid · golden-sun-sound-sequence · 0x08183318: 56 bytes">
 <rect x="500.554494" y="258.509151" width="3.783738" height="3.620486" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_226. sound_226.mid · golden-sun-sound-sequence · 0x08183540: 56 bytes">
-<title>sfx_226. sound_226.mid · golden-sun-sound-sequence · 0x08183540: 56 bytes</title>
+<g aria-label="sfx_226. sound_226.mid · golden-sun-sound-sequence · 0x08183540: 56 bytes">
 <rect x="500.554494" y="262.129637" width="3.783738" height="3.620486" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_232. sound_232.mid · golden-sun-sound-sequence · 0x0818365c: 56 bytes">
-<title>sfx_232. sound_232.mid · golden-sun-sound-sequence · 0x0818365c: 56 bytes</title>
+<g aria-label="sfx_232. sound_232.mid · golden-sun-sound-sequence · 0x0818365c: 56 bytes">
 <rect x="504.338232" y="229.545267" width="3.748072" height="3.654938" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_245. sound_245.mid · golden-sun-sound-sequence · 0x08183b44: 56 bytes">
-<title>sfx_245. sound_245.mid · golden-sun-sound-sequence · 0x08183b44: 56 bytes</title>
+<g aria-label="sfx_245. sound_245.mid · golden-sun-sound-sequence · 0x08183b44: 56 bytes">
 <rect x="508.086304" y="229.545267" width="3.748072" height="3.654938" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_292. sound_292.mid · golden-sun-sound-sequence · 0x081842e8: 56 bytes">
-<title>sfx_292. sound_292.mid · golden-sun-sound-sequence · 0x081842e8: 56 bytes</title>
+<g aria-label="sfx_292. sound_292.mid · golden-sun-sound-sequence · 0x081842e8: 56 bytes">
 <rect x="511.834376" y="229.545267" width="3.748071" height="3.654938" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_293. sound_293.mid · golden-sun-sound-sequence · 0x08184320: 56 bytes">
-<title>sfx_293. sound_293.mid · golden-sun-sound-sequence · 0x08184320: 56 bytes</title>
+<g aria-label="sfx_293. sound_293.mid · golden-sun-sound-sequence · 0x08184320: 56 bytes">
 <rect x="515.582447" y="229.545267" width="3.748072" height="3.654938" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_304. sound_304.mid · golden-sun-sound-sequence · 0x081843ec: 56 bytes">
-<title>sfx_304. sound_304.mid · golden-sun-sound-sequence · 0x081843ec: 56 bytes</title>
+<g aria-label="sfx_304. sound_304.mid · golden-sun-sound-sequence · 0x081843ec: 56 bytes">
 <rect x="519.330519" y="229.545267" width="3.748072" height="3.654938" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_133. sound_133.mid · golden-sun-sound-sequence · 0x08181848: 52 bytes">
-<title>sfx_133. sound_133.mid · golden-sun-sound-sequence · 0x08181848: 52 bytes</title>
+<g aria-label="sfx_133. sound_133.mid · golden-sun-sound-sequence · 0x08181848: 52 bytes">
 <rect x="523.078591" y="229.545267" width="3.480352" height="3.654938" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_149. sound_149.mid · golden-sun-sound-sequence · 0x08181ca8: 52 bytes">
-<title>sfx_149. sound_149.mid · golden-sun-sound-sequence · 0x08181ca8: 52 bytes</title>
+<g aria-label="sfx_149. sound_149.mid · golden-sun-sound-sequence · 0x08181ca8: 52 bytes">
 <rect x="526.558943" y="229.545267" width="3.480352" height="3.654938" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_168. sound_168.mid · golden-sun-sound-sequence · 0x08182050: 52 bytes">
-<title>sfx_168. sound_168.mid · golden-sun-sound-sequence · 0x08182050: 52 bytes</title>
+<g aria-label="sfx_168. sound_168.mid · golden-sun-sound-sequence · 0x08182050: 52 bytes">
 <rect x="530.039295" y="229.545267" width="3.480353" height="3.654938" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_202. sound_202.mid · golden-sun-sound-sequence · 0x08182f68: 52 bytes">
-<title>sfx_202. sound_202.mid · golden-sun-sound-sequence · 0x08182f68: 52 bytes</title>
+<g aria-label="sfx_202. sound_202.mid · golden-sun-sound-sequence · 0x08182f68: 52 bytes">
 <rect x="533.519648" y="229.545267" width="3.480352" height="3.654938" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_206. sound_206.mid · golden-sun-sound-sequence · 0x0818307c: 52 bytes">
-<title>sfx_206. sound_206.mid · golden-sun-sound-sequence · 0x0818307c: 52 bytes</title>
+<g aria-label="sfx_206. sound_206.mid · golden-sun-sound-sequence · 0x0818307c: 52 bytes">
 <rect x="504.338232" y="233.200205" width="3.457067" height="3.679556" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_212. sound_212.mid · golden-sun-sound-sequence · 0x08183214: 52 bytes">
-<title>sfx_212. sound_212.mid · golden-sun-sound-sequence · 0x08183214: 52 bytes</title>
+<g aria-label="sfx_212. sound_212.mid · golden-sun-sound-sequence · 0x08183214: 52 bytes">
 <rect x="504.338232" y="236.879761" width="3.457067" height="3.679556" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_227. sound_227.mid · golden-sun-sound-sequence · 0x08183578: 52 bytes">
-<title>sfx_227. sound_227.mid · golden-sun-sound-sequence · 0x08183578: 52 bytes</title>
+<g aria-label="sfx_227. sound_227.mid · golden-sun-sound-sequence · 0x08183578: 52 bytes">
 <rect x="504.338232" y="240.559317" width="3.457067" height="3.679556" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_243. sound_243.mid · golden-sun-sound-sequence · 0x08183a98: 52 bytes">
-<title>sfx_243. sound_243.mid · golden-sun-sound-sequence · 0x08183a98: 52 bytes</title>
+<g aria-label="sfx_243. sound_243.mid · golden-sun-sound-sequence · 0x08183a98: 52 bytes">
 <rect x="504.338232" y="244.238873" width="3.457067" height="3.679555" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_249. sound_249.mid · golden-sun-sound-sequence · 0x08183c60: 52 bytes">
-<title>sfx_249. sound_249.mid · golden-sun-sound-sequence · 0x08183c60: 52 bytes</title>
+<g aria-label="sfx_249. sound_249.mid · golden-sun-sound-sequence · 0x08183c60: 52 bytes">
 <rect x="504.338232" y="247.918428" width="3.457067" height="3.679556" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_289. sound_289.mid · golden-sun-sound-sequence · 0x08184200: 52 bytes">
-<title>sfx_289. sound_289.mid · golden-sun-sound-sequence · 0x08184200: 52 bytes</title>
+<g aria-label="sfx_289. sound_289.mid · golden-sun-sound-sequence · 0x08184200: 52 bytes">
 <rect x="504.338232" y="251.597984" width="3.457067" height="3.679556" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_307. sound_307.mid · golden-sun-sound-sequence · 0x0818447c: 52 bytes">
-<title>sfx_307. sound_307.mid · golden-sun-sound-sequence · 0x0818447c: 52 bytes</title>
+<g aria-label="sfx_307. sound_307.mid · golden-sun-sound-sequence · 0x0818447c: 52 bytes">
 <rect x="504.338232" y="255.27754" width="3.457067" height="3.679556" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_111. sound_111.mid · golden-sun-sound-sequence · 0x08181358: 48 bytes">
-<title>sfx_111. sound_111.mid · golden-sun-sound-sequence · 0x08181358: 48 bytes</title>
+<g aria-label="sfx_111. sound_111.mid · golden-sun-sound-sequence · 0x08181358: 48 bytes">
 <rect x="504.338232" y="258.957096" width="3.457067" height="3.396513" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_192. sound_192.mid · golden-sun-sound-sequence · 0x081826cc: 48 bytes">
-<title>sfx_192. sound_192.mid · golden-sun-sound-sequence · 0x081826cc: 48 bytes</title>
+<g aria-label="sfx_192. sound_192.mid · golden-sun-sound-sequence · 0x081826cc: 48 bytes">
 <rect x="504.338232" y="262.353609" width="3.457067" height="3.396514" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_195. sound_195.mid · golden-sun-sound-sequence · 0x081827a8: 48 bytes">
-<title>sfx_195. sound_195.mid · golden-sun-sound-sequence · 0x081827a8: 48 bytes</title>
+<g aria-label="sfx_195. sound_195.mid · golden-sun-sound-sequence · 0x081827a8: 48 bytes">
 <rect x="507.795299" y="233.200205" width="3.689015" height="3.182956" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_205. sound_205.mid · golden-sun-sound-sequence · 0x0818304c: 48 bytes">
-<title>sfx_205. sound_205.mid · golden-sun-sound-sequence · 0x0818304c: 48 bytes</title>
+<g aria-label="sfx_205. sound_205.mid · golden-sun-sound-sequence · 0x0818304c: 48 bytes">
 <rect x="511.484314" y="233.200205" width="3.689015" height="3.182956" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_217. sound_217.mid · golden-sun-sound-sequence · 0x08183350: 48 bytes">
-<title>sfx_217. sound_217.mid · golden-sun-sound-sequence · 0x08183350: 48 bytes</title>
+<g aria-label="sfx_217. sound_217.mid · golden-sun-sound-sequence · 0x08183350: 48 bytes">
 <rect x="515.173329" y="233.200205" width="3.689015" height="3.182956" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_224. sound_224.mid · golden-sun-sound-sequence · 0x081834ec: 48 bytes">
-<title>sfx_224. sound_224.mid · golden-sun-sound-sequence · 0x081834ec: 48 bytes</title>
+<g aria-label="sfx_224. sound_224.mid · golden-sun-sound-sequence · 0x081834ec: 48 bytes">
 <rect x="518.862344" y="233.200205" width="3.689015" height="3.182956" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_250. sound_250.mid · golden-sun-sound-sequence · 0x08183c94: 48 bytes">
-<title>sfx_250. sound_250.mid · golden-sun-sound-sequence · 0x08183c94: 48 bytes</title>
+<g aria-label="sfx_250. sound_250.mid · golden-sun-sound-sequence · 0x08183c94: 48 bytes">
 <rect x="522.551359" y="233.200205" width="3.689014" height="3.182956" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_251. sound_251.mid · golden-sun-sound-sequence · 0x08183cc4: 48 bytes">
-<title>sfx_251. sound_251.mid · golden-sun-sound-sequence · 0x08183cc4: 48 bytes</title>
+<g aria-label="sfx_251. sound_251.mid · golden-sun-sound-sequence · 0x08183cc4: 48 bytes">
 <rect x="526.240373" y="233.200205" width="3.689015" height="3.182956" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_252. sound_252.mid · golden-sun-sound-sequence · 0x08183cf4: 48 bytes">
-<title>sfx_252. sound_252.mid · golden-sun-sound-sequence · 0x08183cf4: 48 bytes</title>
+<g aria-label="sfx_252. sound_252.mid · golden-sun-sound-sequence · 0x08183cf4: 48 bytes">
 <rect x="529.929388" y="233.200205" width="3.689015" height="3.182956" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_100. sound_100.mid · golden-sun-sound-sequence · 0x081810c0: 44 bytes">
-<title>sfx_100. sound_100.mid · golden-sun-sound-sequence · 0x081810c0: 44 bytes</title>
+<g aria-label="sfx_100. sound_100.mid · golden-sun-sound-sequence · 0x081810c0: 44 bytes">
 <rect x="533.618403" y="233.200205" width="3.381597" height="3.182956" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_162. sound_162.mid · golden-sun-sound-sequence · 0x08181f10: 44 bytes">
-<title>sfx_162. sound_162.mid · golden-sun-sound-sequence · 0x08181f10: 44 bytes</title>
+<g aria-label="sfx_162. sound_162.mid · golden-sun-sound-sequence · 0x08181f10: 44 bytes">
 <rect x="507.795299" y="236.383161" width="3.244967" height="3.316976" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_163. sound_163.mid · golden-sun-sound-sequence · 0x08181f3c: 44 bytes">
-<title>sfx_163. sound_163.mid · golden-sun-sound-sequence · 0x08181f3c: 44 bytes</title>
+<g aria-label="sfx_163. sound_163.mid · golden-sun-sound-sequence · 0x08181f3c: 44 bytes">
 <rect x="511.040266" y="236.383161" width="3.244967" height="3.316976" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_176. sound_176.mid · golden-sun-sound-sequence · 0x08182218: 44 bytes">
-<title>sfx_176. sound_176.mid · golden-sun-sound-sequence · 0x08182218: 44 bytes</title>
+<g aria-label="sfx_176. sound_176.mid · golden-sun-sound-sequence · 0x08182218: 44 bytes">
 <rect x="514.285233" y="236.383161" width="3.244967" height="3.316976" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_177. sound_177.mid · golden-sun-sound-sequence · 0x08182244: 44 bytes">
-<title>sfx_177. sound_177.mid · golden-sun-sound-sequence · 0x08182244: 44 bytes</title>
+<g aria-label="sfx_177. sound_177.mid · golden-sun-sound-sequence · 0x08182244: 44 bytes">
 <rect x="517.5302" y="236.383161" width="3.244966" height="3.316976" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_219. sound_219.mid · golden-sun-sound-sequence · 0x0818339c: 44 bytes">
-<title>sfx_219. sound_219.mid · golden-sun-sound-sequence · 0x0818339c: 44 bytes</title>
+<g aria-label="sfx_219. sound_219.mid · golden-sun-sound-sequence · 0x0818339c: 44 bytes">
 <rect x="520.775166" y="236.383161" width="3.244967" height="3.316976" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_221. sound_221.mid · golden-sun-sound-sequence · 0x0818345c: 44 bytes">
-<title>sfx_221. sound_221.mid · golden-sun-sound-sequence · 0x0818345c: 44 bytes</title>
+<g aria-label="sfx_221. sound_221.mid · golden-sun-sound-sequence · 0x0818345c: 44 bytes">
 <rect x="524.020133" y="236.383161" width="3.244967" height="3.316976" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_237. sound_237.mid · golden-sun-sound-sequence · 0x08183814: 44 bytes">
-<title>sfx_237. sound_237.mid · golden-sun-sound-sequence · 0x08183814: 44 bytes</title>
+<g aria-label="sfx_237. sound_237.mid · golden-sun-sound-sequence · 0x08183814: 44 bytes">
 <rect x="527.2651" y="236.383161" width="3.244967" height="3.316976" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_240. sound_240.mid · golden-sun-sound-sequence · 0x08183944: 44 bytes">
-<title>sfx_240. sound_240.mid · golden-sun-sound-sequence · 0x08183944: 44 bytes</title>
+<g aria-label="sfx_240. sound_240.mid · golden-sun-sound-sequence · 0x08183944: 44 bytes">
 <rect x="530.510067" y="236.383161" width="3.244966" height="3.316976" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_305. sound_305.mid · golden-sun-sound-sequence · 0x08184424: 44 bytes">
-<title>sfx_305. sound_305.mid · golden-sun-sound-sequence · 0x08184424: 44 bytes</title>
+<g aria-label="sfx_305. sound_305.mid · golden-sun-sound-sequence · 0x08184424: 44 bytes">
 <rect x="533.755033" y="236.383161" width="3.244967" height="3.316976" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_306. sound_306.mid · golden-sun-sound-sequence · 0x08184450: 44 bytes">
-<title>sfx_306. sound_306.mid · golden-sun-sound-sequence · 0x08184450: 44 bytes</title>
+<g aria-label="sfx_306. sound_306.mid · golden-sun-sound-sequence · 0x08184450: 44 bytes">
 <rect x="507.795299" y="239.700137" width="3.042548" height="3.537652" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_116. sound_116.mid · golden-sun-sound-sequence · 0x081814d8: 40 bytes">
-<title>sfx_116. sound_116.mid · golden-sun-sound-sequence · 0x081814d8: 40 bytes</title>
+<g aria-label="sfx_116. sound_116.mid · golden-sun-sound-sequence · 0x081814d8: 40 bytes">
 <rect x="507.795299" y="243.237789" width="3.042548" height="3.216048" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_120. sound_120.mid · golden-sun-sound-sequence · 0x0818155c: 40 bytes">
-<title>sfx_120. sound_120.mid · golden-sun-sound-sequence · 0x0818155c: 40 bytes</title>
+<g aria-label="sfx_120. sound_120.mid · golden-sun-sound-sequence · 0x0818155c: 40 bytes">
 <rect x="507.795299" y="246.453837" width="3.042548" height="3.216048" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_127. sound_127.mid · golden-sun-sound-sequence · 0x0818171c: 40 bytes">
-<title>sfx_127. sound_127.mid · golden-sun-sound-sequence · 0x0818171c: 40 bytes</title>
+<g aria-label="sfx_127. sound_127.mid · golden-sun-sound-sequence · 0x0818171c: 40 bytes">
 <rect x="507.795299" y="249.669885" width="3.042548" height="3.216047" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_130. sound_130.mid · golden-sun-sound-sequence · 0x081817b4: 40 bytes">
-<title>sfx_130. sound_130.mid · golden-sun-sound-sequence · 0x081817b4: 40 bytes</title>
+<g aria-label="sfx_130. sound_130.mid · golden-sun-sound-sequence · 0x081817b4: 40 bytes">
 <rect x="507.795299" y="252.885932" width="3.042548" height="3.216048" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_132. sound_132.mid · golden-sun-sound-sequence · 0x08181820: 40 bytes">
-<title>sfx_132. sound_132.mid · golden-sun-sound-sequence · 0x08181820: 40 bytes</title>
+<g aria-label="sfx_132. sound_132.mid · golden-sun-sound-sequence · 0x08181820: 40 bytes">
 <rect x="507.795299" y="256.10198" width="3.042548" height="3.216047" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_136. sound_136.mid · golden-sun-sound-sequence · 0x08181924: 40 bytes">
-<title>sfx_136. sound_136.mid · golden-sun-sound-sequence · 0x08181924: 40 bytes</title>
+<g aria-label="sfx_136. sound_136.mid · golden-sun-sound-sequence · 0x08181924: 40 bytes">
 <rect x="507.795299" y="259.318027" width="3.042548" height="3.216048" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_138. sound_138.mid · golden-sun-sound-sequence · 0x08181988: 40 bytes">
-<title>sfx_138. sound_138.mid · golden-sun-sound-sequence · 0x08181988: 40 bytes</title>
+<g aria-label="sfx_138. sound_138.mid · golden-sun-sound-sequence · 0x08181988: 40 bytes">
 <rect x="507.795299" y="262.534075" width="3.042548" height="3.216048" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_155. sound_155.mid · golden-sun-sound-sequence · 0x08181e04: 40 bytes">
-<title>sfx_155. sound_155.mid · golden-sun-sound-sequence · 0x08181e04: 40 bytes</title>
+<g aria-label="sfx_155. sound_155.mid · golden-sun-sound-sequence · 0x08181e04: 40 bytes">
 <rect x="510.837847" y="239.700137" width="3.004985" height="3.256248" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_160. sound_160.mid · golden-sun-sound-sequence · 0x08181ec4: 40 bytes">
-<title>sfx_160. sound_160.mid · golden-sun-sound-sequence · 0x08181ec4: 40 bytes</title>
+<g aria-label="sfx_160. sound_160.mid · golden-sun-sound-sequence · 0x08181ec4: 40 bytes">
 <rect x="510.837847" y="242.956385" width="3.004985" height="3.256248" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_166. sound_166.mid · golden-sun-sound-sequence · 0x08182000: 40 bytes">
-<title>sfx_166. sound_166.mid · golden-sun-sound-sequence · 0x08182000: 40 bytes</title>
+<g aria-label="sfx_166. sound_166.mid · golden-sun-sound-sequence · 0x08182000: 40 bytes">
 <rect x="510.837847" y="246.212633" width="3.004985" height="3.256249" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_167. sound_167.mid · golden-sun-sound-sequence · 0x08182028: 40 bytes">
-<title>sfx_167. sound_167.mid · golden-sun-sound-sequence · 0x08182028: 40 bytes</title>
+<g aria-label="sfx_167. sound_167.mid · golden-sun-sound-sequence · 0x08182028: 40 bytes">
 <rect x="510.837847" y="249.468882" width="3.004985" height="3.256248" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_169. sound_169.mid · golden-sun-sound-sequence · 0x08182084: 40 bytes">
-<title>sfx_169. sound_169.mid · golden-sun-sound-sequence · 0x08182084: 40 bytes</title>
+<g aria-label="sfx_169. sound_169.mid · golden-sun-sound-sequence · 0x08182084: 40 bytes">
 <rect x="510.837847" y="252.72513" width="3.004985" height="3.256248" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_170. sound_170.mid · golden-sun-sound-sequence · 0x081820ac: 40 bytes">
-<title>sfx_170. sound_170.mid · golden-sun-sound-sequence · 0x081820ac: 40 bytes</title>
+<g aria-label="sfx_170. sound_170.mid · golden-sun-sound-sequence · 0x081820ac: 40 bytes">
 <rect x="510.837847" y="255.981378" width="3.004985" height="3.256248" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_185. sound_185.mid · golden-sun-sound-sequence · 0x0818252c: 40 bytes">
-<title>sfx_185. sound_185.mid · golden-sun-sound-sequence · 0x0818252c: 40 bytes</title>
+<g aria-label="sfx_185. sound_185.mid · golden-sun-sound-sequence · 0x0818252c: 40 bytes">
 <rect x="510.837847" y="259.237626" width="3.004985" height="3.256248" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_186. sound_186.mid · golden-sun-sound-sequence · 0x08182554: 40 bytes">
-<title>sfx_186. sound_186.mid · golden-sun-sound-sequence · 0x08182554: 40 bytes</title>
+<g aria-label="sfx_186. sound_186.mid · golden-sun-sound-sequence · 0x08182554: 40 bytes">
 <rect x="510.837847" y="262.493874" width="3.004985" height="3.256249" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_187. sound_187.mid · golden-sun-sound-sequence · 0x0818257c: 40 bytes">
-<title>sfx_187. sound_187.mid · golden-sun-sound-sequence · 0x0818257c: 40 bytes</title>
+<g aria-label="sfx_187. sound_187.mid · golden-sun-sound-sequence · 0x0818257c: 40 bytes">
 <rect x="513.842832" y="239.700137" width="3.308167" height="2.957825" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_188. sound_188.mid · golden-sun-sound-sequence · 0x081825a4: 40 bytes">
-<title>sfx_188. sound_188.mid · golden-sun-sound-sequence · 0x081825a4: 40 bytes</title>
+<g aria-label="sfx_188. sound_188.mid · golden-sun-sound-sequence · 0x081825a4: 40 bytes">
 <rect x="517.150999" y="239.700137" width="3.308167" height="2.957825" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_223. sound_223.mid · golden-sun-sound-sequence · 0x081834c4: 40 bytes">
-<title>sfx_223. sound_223.mid · golden-sun-sound-sequence · 0x081834c4: 40 bytes</title>
+<g aria-label="sfx_223. sound_223.mid · golden-sun-sound-sequence · 0x081834c4: 40 bytes">
 <rect x="520.459166" y="239.700137" width="3.308167" height="2.957825" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_230. sound_230.mid · golden-sun-sound-sequence · 0x081835f4: 40 bytes">
-<title>sfx_230. sound_230.mid · golden-sun-sound-sequence · 0x081835f4: 40 bytes</title>
+<g aria-label="sfx_230. sound_230.mid · golden-sun-sound-sequence · 0x081835f4: 40 bytes">
 <rect x="523.767333" y="239.700137" width="3.308167" height="2.957825" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_247. sound_247.mid · golden-sun-sound-sequence · 0x08183bf4: 40 bytes">
-<title>sfx_247. sound_247.mid · golden-sun-sound-sequence · 0x08183bf4: 40 bytes</title>
+<g aria-label="sfx_247. sound_247.mid · golden-sun-sound-sequence · 0x08183bf4: 40 bytes">
 <rect x="527.0755" y="239.700137" width="3.308166" height="2.957825" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_280. sound_280.mid · golden-sun-sound-sequence · 0x081840c0: 40 bytes">
-<title>sfx_280. sound_280.mid · golden-sun-sound-sequence · 0x081840c0: 40 bytes</title>
+<g aria-label="sfx_280. sound_280.mid · golden-sun-sound-sequence · 0x081840c0: 40 bytes">
 <rect x="530.383666" y="239.700137" width="3.308167" height="2.957825" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_281. sound_281.mid · golden-sun-sound-sequence · 0x081840e8: 40 bytes">
-<title>sfx_281. sound_281.mid · golden-sun-sound-sequence · 0x081840e8: 40 bytes</title>
+<g aria-label="sfx_281. sound_281.mid · golden-sun-sound-sequence · 0x081840e8: 40 bytes">
 <rect x="533.691833" y="239.700137" width="3.308167" height="2.957825" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_282. sound_282.mid · golden-sun-sound-sequence · 0x08184110: 40 bytes">
-<title>sfx_282. sound_282.mid · golden-sun-sound-sequence · 0x08184110: 40 bytes</title>
+<g aria-label="sfx_282. sound_282.mid · golden-sun-sound-sequence · 0x08184110: 40 bytes">
 <rect x="513.842832" y="242.657962" width="2.881404" height="3.395906" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_283. sound_283.mid · golden-sun-sound-sequence · 0x08184138: 40 bytes">
-<title>sfx_283. sound_283.mid · golden-sun-sound-sequence · 0x08184138: 40 bytes</title>
+<g aria-label="sfx_283. sound_283.mid · golden-sun-sound-sequence · 0x08184138: 40 bytes">
 <rect x="513.842832" y="246.053868" width="2.881404" height="3.395906" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_286. sound_286.mid · golden-sun-sound-sequence · 0x081841a8: 40 bytes">
-<title>sfx_286. sound_286.mid · golden-sun-sound-sequence · 0x081841a8: 40 bytes</title>
+<g aria-label="sfx_286. sound_286.mid · golden-sun-sound-sequence · 0x081841a8: 40 bytes">
 <rect x="513.842832" y="249.449774" width="2.881404" height="3.395906" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_287. sound_287.mid · golden-sun-sound-sequence · 0x081841d0: 40 bytes">
-<title>sfx_287. sound_287.mid · golden-sun-sound-sequence · 0x081841d0: 40 bytes</title>
+<g aria-label="sfx_287. sound_287.mid · golden-sun-sound-sequence · 0x081841d0: 40 bytes">
 <rect x="513.842832" y="252.84568" width="2.881404" height="3.395906" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_300. sound_300.mid · golden-sun-sound-sequence · 0x08184360: 40 bytes">
-<title>sfx_300. sound_300.mid · golden-sun-sound-sequence · 0x08184360: 40 bytes</title>
+<g aria-label="sfx_300. sound_300.mid · golden-sun-sound-sequence · 0x08184360: 40 bytes">
 <rect x="513.842832" y="256.241586" width="2.881404" height="3.395906" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_108. sound_108.mid · golden-sun-sound-sequence · 0x081812f0: 36 bytes">
-<title>sfx_108. sound_108.mid · golden-sun-sound-sequence · 0x081812f0: 36 bytes</title>
+<g aria-label="sfx_108. sound_108.mid · golden-sun-sound-sequence · 0x081812f0: 36 bytes">
 <rect x="513.842832" y="259.637492" width="2.881404" height="3.056315" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_109. sound_109.mid · golden-sun-sound-sequence · 0x08181314: 36 bytes">
-<title>sfx_109. sound_109.mid · golden-sun-sound-sequence · 0x08181314: 36 bytes</title>
+<g aria-label="sfx_109. sound_109.mid · golden-sun-sound-sequence · 0x08181314: 36 bytes">
 <rect x="513.842832" y="262.693807" width="2.881404" height="3.056316" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_117. sound_117.mid · golden-sun-sound-sequence · 0x08181500: 36 bytes">
-<title>sfx_117. sound_117.mid · golden-sun-sound-sequence · 0x08181500: 36 bytes</title>
+<g aria-label="sfx_117. sound_117.mid · golden-sun-sound-sequence · 0x08181500: 36 bytes">
 <rect x="516.724236" y="242.657962" width="2.896538" height="3.040347" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_143. sound_143.mid · golden-sun-sound-sequence · 0x08181b50: 36 bytes">
-<title>sfx_143. sound_143.mid · golden-sun-sound-sequence · 0x08181b50: 36 bytes</title>
+<g aria-label="sfx_143. sound_143.mid · golden-sun-sound-sequence · 0x08181b50: 36 bytes">
 <rect x="519.620774" y="242.657962" width="2.896538" height="3.040347" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_159. sound_159.mid · golden-sun-sound-sequence · 0x08181ea0: 36 bytes">
-<title>sfx_159. sound_159.mid · golden-sun-sound-sequence · 0x08181ea0: 36 bytes</title>
+<g aria-label="sfx_159. sound_159.mid · golden-sun-sound-sequence · 0x08181ea0: 36 bytes">
 <rect x="522.517312" y="242.657962" width="2.896537" height="3.040347" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_161. sound_161.mid · golden-sun-sound-sequence · 0x08181eec: 36 bytes">
-<title>sfx_161. sound_161.mid · golden-sun-sound-sequence · 0x08181eec: 36 bytes</title>
+<g aria-label="sfx_161. sound_161.mid · golden-sun-sound-sequence · 0x08181eec: 36 bytes">
 <rect x="525.413849" y="242.657962" width="2.896538" height="3.040347" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_171. sound_171.mid · golden-sun-sound-sequence · 0x081820d4: 36 bytes">
-<title>sfx_171. sound_171.mid · golden-sun-sound-sequence · 0x081820d4: 36 bytes</title>
+<g aria-label="sfx_171. sound_171.mid · golden-sun-sound-sequence · 0x081820d4: 36 bytes">
 <rect x="528.310387" y="242.657962" width="2.896538" height="3.040347" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_172. sound_172.mid · golden-sun-sound-sequence · 0x081820f8: 36 bytes">
-<title>sfx_172. sound_172.mid · golden-sun-sound-sequence · 0x081820f8: 36 bytes</title>
+<g aria-label="sfx_172. sound_172.mid · golden-sun-sound-sequence · 0x081820f8: 36 bytes">
 <rect x="531.206925" y="242.657962" width="2.896537" height="3.040347" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_203. sound_203.mid · golden-sun-sound-sequence · 0x08182f9c: 36 bytes">
-<title>sfx_203. sound_203.mid · golden-sun-sound-sequence · 0x08182f9c: 36 bytes</title>
+<g aria-label="sfx_203. sound_203.mid · golden-sun-sound-sequence · 0x08182f9c: 36 bytes">
 <rect x="534.103462" y="242.657962" width="2.896538" height="3.040347" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_225. sound_225.mid · golden-sun-sound-sequence · 0x0818351c: 36 bytes">
-<title>sfx_225. sound_225.mid · golden-sun-sound-sequence · 0x0818351c: 36 bytes</title>
+<g aria-label="sfx_225. sound_225.mid · golden-sun-sound-sequence · 0x0818351c: 36 bytes">
 <rect x="516.724236" y="245.698309" width="3.074304" height="2.864545" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_228. sound_228.mid · golden-sun-sound-sequence · 0x081835ac: 36 bytes">
-<title>sfx_228. sound_228.mid · golden-sun-sound-sequence · 0x081835ac: 36 bytes</title>
+<g aria-label="sfx_228. sound_228.mid · golden-sun-sound-sequence · 0x081835ac: 36 bytes">
 <rect x="516.724236" y="248.562854" width="3.074304" height="2.864545" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_229. sound_229.mid · golden-sun-sound-sequence · 0x081835d0: 36 bytes">
-<title>sfx_229. sound_229.mid · golden-sun-sound-sequence · 0x081835d0: 36 bytes</title>
+<g aria-label="sfx_229. sound_229.mid · golden-sun-sound-sequence · 0x081835d0: 36 bytes">
 <rect x="516.724236" y="251.427399" width="3.074304" height="2.864544" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_236. sound_236.mid · golden-sun-sound-sequence · 0x081837f0: 36 bytes">
-<title>sfx_236. sound_236.mid · golden-sun-sound-sequence · 0x081837f0: 36 bytes</title>
+<g aria-label="sfx_236. sound_236.mid · golden-sun-sound-sequence · 0x081837f0: 36 bytes">
 <rect x="516.724236" y="254.291943" width="3.074304" height="2.864545" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_263. sound_263.mid · golden-sun-sound-sequence · 0x08183e5c: 36 bytes">
-<title>sfx_263. sound_263.mid · golden-sun-sound-sequence · 0x08183e5c: 36 bytes</title>
+<g aria-label="sfx_263. sound_263.mid · golden-sun-sound-sequence · 0x08183e5c: 36 bytes">
 <rect x="516.724236" y="257.156488" width="3.074304" height="2.864545" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_264. sound_264.mid · golden-sun-sound-sequence · 0x08183e80: 36 bytes">
-<title>sfx_264. sound_264.mid · golden-sun-sound-sequence · 0x08183e80: 36 bytes</title>
+<g aria-label="sfx_264. sound_264.mid · golden-sun-sound-sequence · 0x08183e80: 36 bytes">
 <rect x="516.724236" y="260.021033" width="3.074304" height="2.864545" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_265. sound_265.mid · golden-sun-sound-sequence · 0x08183ea4: 36 bytes">
-<title>sfx_265. sound_265.mid · golden-sun-sound-sequence · 0x08183ea4: 36 bytes</title>
+<g aria-label="sfx_265. sound_265.mid · golden-sun-sound-sequence · 0x08183ea4: 36 bytes">
 <rect x="516.724236" y="262.885578" width="3.074304" height="2.864545" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_266. sound_266.mid · golden-sun-sound-sequence · 0x08183ec8: 36 bytes">
-<title>sfx_266. sound_266.mid · golden-sun-sound-sequence · 0x08183ec8: 36 bytes</title>
+<g aria-label="sfx_266. sound_266.mid · golden-sun-sound-sequence · 0x08183ec8: 36 bytes">
 <rect x="519.79854" y="245.698309" width="2.86691" height="3.071767" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_267. sound_267.mid · golden-sun-sound-sequence · 0x08183eec: 36 bytes">
-<title>sfx_267. sound_267.mid · golden-sun-sound-sequence · 0x08183eec: 36 bytes</title>
+<g aria-label="sfx_267. sound_267.mid · golden-sun-sound-sequence · 0x08183eec: 36 bytes">
 <rect x="522.66545" y="245.698309" width="2.86691" height="3.071767" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_268. sound_268.mid · golden-sun-sound-sequence · 0x08183f10: 36 bytes">
-<title>sfx_268. sound_268.mid · golden-sun-sound-sequence · 0x08183f10: 36 bytes</title>
+<g aria-label="sfx_268. sound_268.mid · golden-sun-sound-sequence · 0x08183f10: 36 bytes">
 <rect x="525.53236" y="245.698309" width="2.86691" height="3.071767" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_269. sound_269.mid · golden-sun-sound-sequence · 0x08183f34: 36 bytes">
-<title>sfx_269. sound_269.mid · golden-sun-sound-sequence · 0x08183f34: 36 bytes</title>
+<g aria-label="sfx_269. sound_269.mid · golden-sun-sound-sequence · 0x08183f34: 36 bytes">
 <rect x="528.39927" y="245.698309" width="2.86691" height="3.071767" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_270. sound_270.mid · golden-sun-sound-sequence · 0x08183f58: 36 bytes">
-<title>sfx_270. sound_270.mid · golden-sun-sound-sequence · 0x08183f58: 36 bytes</title>
+<g aria-label="sfx_270. sound_270.mid · golden-sun-sound-sequence · 0x08183f58: 36 bytes">
 <rect x="531.26618" y="245.698309" width="2.86691" height="3.071767" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_271. sound_271.mid · golden-sun-sound-sequence · 0x08183f7c: 36 bytes">
-<title>sfx_271. sound_271.mid · golden-sun-sound-sequence · 0x08183f7c: 36 bytes</title>
+<g aria-label="sfx_271. sound_271.mid · golden-sun-sound-sequence · 0x08183f7c: 36 bytes">
 <rect x="534.13309" y="245.698309" width="2.86691" height="3.071767" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_272. sound_272.mid · golden-sun-sound-sequence · 0x08183fa0: 36 bytes">
-<title>sfx_272. sound_272.mid · golden-sun-sound-sequence · 0x08183fa0: 36 bytes</title>
+<g aria-label="sfx_272. sound_272.mid · golden-sun-sound-sequence · 0x08183fa0: 36 bytes">
 <rect x="519.79854" y="248.770076" width="3.111822" height="2.830008" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_273. sound_273.mid · golden-sun-sound-sequence · 0x08183fc4: 36 bytes">
-<title>sfx_273. sound_273.mid · golden-sun-sound-sequence · 0x08183fc4: 36 bytes</title>
+<g aria-label="sfx_273. sound_273.mid · golden-sun-sound-sequence · 0x08183fc4: 36 bytes">
 <rect x="519.79854" y="251.600084" width="3.111822" height="2.830008" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_274. sound_274.mid · golden-sun-sound-sequence · 0x08183fe8: 36 bytes">
-<title>sfx_274. sound_274.mid · golden-sun-sound-sequence · 0x08183fe8: 36 bytes</title>
+<g aria-label="sfx_274. sound_274.mid · golden-sun-sound-sequence · 0x08183fe8: 36 bytes">
 <rect x="519.79854" y="254.430092" width="3.111822" height="2.830007" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_275. sound_275.mid · golden-sun-sound-sequence · 0x0818400c: 36 bytes">
-<title>sfx_275. sound_275.mid · golden-sun-sound-sequence · 0x0818400c: 36 bytes</title>
+<g aria-label="sfx_275. sound_275.mid · golden-sun-sound-sequence · 0x0818400c: 36 bytes">
 <rect x="519.79854" y="257.260099" width="3.111822" height="2.830008" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_276. sound_276.mid · golden-sun-sound-sequence · 0x08184030: 36 bytes">
-<title>sfx_276. sound_276.mid · golden-sun-sound-sequence · 0x08184030: 36 bytes</title>
+<g aria-label="sfx_276. sound_276.mid · golden-sun-sound-sequence · 0x08184030: 36 bytes">
 <rect x="519.79854" y="260.090107" width="3.111822" height="2.830008" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_277. sound_277.mid · golden-sun-sound-sequence · 0x08184054: 36 bytes">
-<title>sfx_277. sound_277.mid · golden-sun-sound-sequence · 0x08184054: 36 bytes</title>
+<g aria-label="sfx_277. sound_277.mid · golden-sun-sound-sequence · 0x08184054: 36 bytes">
 <rect x="519.79854" y="262.920115" width="3.111822" height="2.830008" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_278. sound_278.mid · golden-sun-sound-sequence · 0x08184078: 36 bytes">
-<title>sfx_278. sound_278.mid · golden-sun-sound-sequence · 0x08184078: 36 bytes</title>
+<g aria-label="sfx_278. sound_278.mid · golden-sun-sound-sequence · 0x08184078: 36 bytes">
 <rect x="522.910362" y="248.770076" width="2.817927" height="3.125162" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_279. sound_279.mid · golden-sun-sound-sequence · 0x0818409c: 36 bytes">
-<title>sfx_279. sound_279.mid · golden-sun-sound-sequence · 0x0818409c: 36 bytes</title>
+<g aria-label="sfx_279. sound_279.mid · golden-sun-sound-sequence · 0x0818409c: 36 bytes">
 <rect x="525.728289" y="248.770076" width="2.817928" height="3.125162" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_284. sound_284.mid · golden-sun-sound-sequence · 0x08184160: 36 bytes">
-<title>sfx_284. sound_284.mid · golden-sun-sound-sequence · 0x08184160: 36 bytes</title>
+<g aria-label="sfx_284. sound_284.mid · golden-sun-sound-sequence · 0x08184160: 36 bytes">
 <rect x="528.546217" y="248.770076" width="2.817928" height="3.125162" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_285. sound_285.mid · golden-sun-sound-sequence · 0x08184184: 36 bytes">
-<title>sfx_285. sound_285.mid · golden-sun-sound-sequence · 0x08184184: 36 bytes</title>
+<g aria-label="sfx_285. sound_285.mid · golden-sun-sound-sequence · 0x08184184: 36 bytes">
 <rect x="531.364145" y="248.770076" width="2.817927" height="3.125162" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_301. sound_301.mid · golden-sun-sound-sequence · 0x08184388: 36 bytes">
-<title>sfx_301. sound_301.mid · golden-sun-sound-sequence · 0x08184388: 36 bytes</title>
+<g aria-label="sfx_301. sound_301.mid · golden-sun-sound-sequence · 0x08184388: 36 bytes">
 <rect x="534.182072" y="248.770076" width="2.817928" height="3.125162" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_303. sound_303.mid · golden-sun-sound-sequence · 0x081843c8: 36 bytes">
-<title>sfx_303. sound_303.mid · golden-sun-sound-sequence · 0x081843c8: 36 bytes</title>
+<g aria-label="sfx_303. sound_303.mid · golden-sun-sound-sequence · 0x081843c8: 36 bytes">
 <rect x="522.910362" y="251.895238" width="2.895615" height="3.041316" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_110. sound_110.mid · golden-sun-sound-sequence · 0x08181338: 32 bytes">
-<title>sfx_110. sound_110.mid · golden-sun-sound-sequence · 0x08181338: 32 bytes</title>
+<g aria-label="sfx_110. sound_110.mid · golden-sun-sound-sequence · 0x08181338: 32 bytes">
 <rect x="522.910362" y="254.936554" width="2.895615" height="2.703392" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_124. sound_124.mid · golden-sun-sound-sequence · 0x0818166c: 32 bytes">
-<title>sfx_124. sound_124.mid · golden-sun-sound-sequence · 0x0818166c: 32 bytes</title>
+<g aria-label="sfx_124. sound_124.mid · golden-sun-sound-sequence · 0x0818166c: 32 bytes">
 <rect x="522.910362" y="257.639946" width="2.895615" height="2.703392" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_125. sound_125.mid · golden-sun-sound-sequence · 0x0818168c: 32 bytes">
-<title>sfx_125. sound_125.mid · golden-sun-sound-sequence · 0x0818168c: 32 bytes</title>
+<g aria-label="sfx_125. sound_125.mid · golden-sun-sound-sequence · 0x0818168c: 32 bytes">
 <rect x="522.910362" y="260.343338" width="2.895615" height="2.703393" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_147. sound_147.mid · golden-sun-sound-sequence · 0x08181c68: 32 bytes">
-<title>sfx_147. sound_147.mid · golden-sun-sound-sequence · 0x08181c68: 32 bytes</title>
+<g aria-label="sfx_147. sound_147.mid · golden-sun-sound-sequence · 0x08181c68: 32 bytes">
 <rect x="522.910362" y="263.046731" width="2.895615" height="2.703392" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_148. sound_148.mid · golden-sun-sound-sequence · 0x08181c88: 32 bytes">
-<title>sfx_148. sound_148.mid · golden-sun-sound-sequence · 0x08181c88: 32 bytes</title>
+<g aria-label="sfx_148. sound_148.mid · golden-sun-sound-sequence · 0x08181c88: 32 bytes">
 <rect x="525.805977" y="251.895238" width="2.798506" height="2.797201" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_150. sound_150.mid · golden-sun-sound-sequence · 0x08181cdc: 32 bytes">
-<title>sfx_150. sound_150.mid · golden-sun-sound-sequence · 0x08181cdc: 32 bytes</title>
+<g aria-label="sfx_150. sound_150.mid · golden-sun-sound-sequence · 0x08181cdc: 32 bytes">
 <rect x="528.604483" y="251.895238" width="2.798505" height="2.797201" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_157. sound_157.mid · golden-sun-sound-sequence · 0x08181e48: 32 bytes">
-<title>sfx_157. sound_157.mid · golden-sun-sound-sequence · 0x08181e48: 32 bytes</title>
+<g aria-label="sfx_157. sound_157.mid · golden-sun-sound-sequence · 0x08181e48: 32 bytes">
 <rect x="531.402988" y="251.895238" width="2.798506" height="2.797201" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_164. sound_164.mid · golden-sun-sound-sequence · 0x08181f68: 32 bytes">
-<title>sfx_164. sound_164.mid · golden-sun-sound-sequence · 0x08181f68: 32 bytes</title>
+<g aria-label="sfx_164. sound_164.mid · golden-sun-sound-sequence · 0x08181f68: 32 bytes">
 <rect x="534.201494" y="251.895238" width="2.798506" height="2.797201" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_256. sound_256.mid · golden-sun-sound-sequence · 0x08183d7c: 32 bytes">
-<title>sfx_256. sound_256.mid · golden-sun-sound-sequence · 0x08183d7c: 32 bytes</title>
+<g aria-label="sfx_256. sound_256.mid · golden-sun-sound-sequence · 0x08183d7c: 32 bytes">
 <rect x="525.805977" y="254.692439" width="2.831689" height="2.764421" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_257. sound_257.mid · golden-sun-sound-sequence · 0x08183d9c: 32 bytes">
-<title>sfx_257. sound_257.mid · golden-sun-sound-sequence · 0x08183d9c: 32 bytes</title>
+<g aria-label="sfx_257. sound_257.mid · golden-sun-sound-sequence · 0x08183d9c: 32 bytes">
 <rect x="525.805977" y="257.45686" width="2.831689" height="2.764421" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_258. sound_258.mid · golden-sun-sound-sequence · 0x08183dbc: 32 bytes">
-<title>sfx_258. sound_258.mid · golden-sun-sound-sequence · 0x08183dbc: 32 bytes</title>
+<g aria-label="sfx_258. sound_258.mid · golden-sun-sound-sequence · 0x08183dbc: 32 bytes">
 <rect x="525.805977" y="260.221281" width="2.831689" height="2.764421" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_259. sound_259.mid · golden-sun-sound-sequence · 0x08183ddc: 32 bytes">
-<title>sfx_259. sound_259.mid · golden-sun-sound-sequence · 0x08183ddc: 32 bytes</title>
+<g aria-label="sfx_259. sound_259.mid · golden-sun-sound-sequence · 0x08183ddc: 32 bytes">
 <rect x="525.805977" y="262.985702" width="2.831689" height="2.764421" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_260. sound_260.mid · golden-sun-sound-sequence · 0x08183dfc: 32 bytes">
-<title>sfx_260. sound_260.mid · golden-sun-sound-sequence · 0x08183dfc: 32 bytes</title>
+<g aria-label="sfx_260. sound_260.mid · golden-sun-sound-sequence · 0x08183dfc: 32 bytes">
 <rect x="528.637666" y="254.692439" width="2.787445" height="2.8083" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_261. sound_261.mid · golden-sun-sound-sequence · 0x08183e1c: 32 bytes">
-<title>sfx_261. sound_261.mid · golden-sun-sound-sequence · 0x08183e1c: 32 bytes</title>
+<g aria-label="sfx_261. sound_261.mid · golden-sun-sound-sequence · 0x08183e1c: 32 bytes">
 <rect x="531.425111" y="254.692439" width="2.787444" height="2.8083" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_262. sound_262.mid · golden-sun-sound-sequence · 0x08183e3c: 32 bytes">
-<title>sfx_262. sound_262.mid · golden-sun-sound-sequence · 0x08183e3c: 32 bytes</title>
+<g aria-label="sfx_262. sound_262.mid · golden-sun-sound-sequence · 0x08183e3c: 32 bytes">
 <rect x="534.212555" y="254.692439" width="2.787445" height="2.8083" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_139. sound_139.mid · golden-sun-sound-sequence · 0x081819c2: 30 bytes">
-<title>sfx_139. sound_139.mid · golden-sun-sound-sequence · 0x081819c2: 30 bytes</title>
+<g aria-label="sfx_139. sound_139.mid · golden-sun-sound-sequence · 0x081819c2: 30 bytes">
 <rect x="528.637666" y="257.500739" width="2.550216" height="2.877692" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_106. sound_106.mid · golden-sun-sound-sequence · 0x08181260: 28 bytes">
-<title>sfx_106. sound_106.mid · golden-sun-sound-sequence · 0x08181260: 28 bytes</title>
+<g aria-label="sfx_106. sound_106.mid · golden-sun-sound-sequence · 0x08181260: 28 bytes">
 <rect x="528.637666" y="260.378431" width="2.550216" height="2.685846" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_118. sound_118.mid · golden-sun-sound-sequence · 0x08181524: 28 bytes">
-<title>sfx_118. sound_118.mid · golden-sun-sound-sequence · 0x08181524: 28 bytes</title>
+<g aria-label="sfx_118. sound_118.mid · golden-sun-sound-sequence · 0x08181524: 28 bytes">
 <rect x="528.637666" y="263.064277" width="2.550216" height="2.685846" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_119. sound_119.mid · golden-sun-sound-sequence · 0x08181540: 28 bytes">
-<title>sfx_119. sound_119.mid · golden-sun-sound-sequence · 0x08181540: 28 bytes</title>
+<g aria-label="sfx_119. sound_119.mid · golden-sun-sound-sequence · 0x08181540: 28 bytes">
 <rect x="531.187882" y="257.500739" width="2.906059" height="2.356967" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_146. sound_146.mid · golden-sun-sound-sequence · 0x08181c4c: 28 bytes">
-<title>sfx_146. sound_146.mid · golden-sun-sound-sequence · 0x08181c4c: 28 bytes</title>
+<g aria-label="sfx_146. sound_146.mid · golden-sun-sound-sequence · 0x08181c4c: 28 bytes">
 <rect x="534.093941" y="257.500739" width="2.906059" height="2.356967" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_156. sound_156.mid · golden-sun-sound-sequence · 0x08181e2c: 28 bytes">
-<title>sfx_156. sound_156.mid · golden-sun-sound-sequence · 0x08181e2c: 28 bytes</title>
+<g aria-label="sfx_156. sound_156.mid · golden-sun-sound-sequence · 0x08181e2c: 28 bytes">
 <rect x="531.187882" y="259.857706" width="2.906059" height="2.356967" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_191. sound_191.mid · golden-sun-sound-sequence · 0x081826b0: 28 bytes">
-<title>sfx_191. sound_191.mid · golden-sun-sound-sequence · 0x081826b0: 28 bytes</title>
+<g aria-label="sfx_191. sound_191.mid · golden-sun-sound-sequence · 0x081826b0: 28 bytes">
 <rect x="534.093941" y="259.857706" width="2.906059" height="2.356967" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_218. sound_218.mid · golden-sun-sound-sequence · 0x08183380: 28 bytes">
-<title>sfx_218. sound_218.mid · golden-sun-sound-sequence · 0x08183380: 28 bytes</title>
+<g aria-label="sfx_218. sound_218.mid · golden-sun-sound-sequence · 0x08183380: 28 bytes">
 <rect x="531.187882" y="262.214673" width="1.937372" height="3.53545" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_234. sound_234.mid · golden-sun-sound-sequence · 0x08183734: 28 bytes">
-<title>sfx_234. sound_234.mid · golden-sun-sound-sequence · 0x08183734: 28 bytes</title>
+<g aria-label="sfx_234. sound_234.mid · golden-sun-sound-sequence · 0x08183734: 28 bytes">
 <rect x="533.125254" y="262.214673" width="1.937373" height="3.53545" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="sfx_302. sound_302.mid · golden-sun-sound-sequence · 0x081843ac: 28 bytes">
-<title>sfx_302. sound_302.mid · golden-sun-sound-sequence · 0x081843ac: 28 bytes</title>
+<g aria-label="sfx_302. sound_302.mid · golden-sun-sound-sequence · 0x081843ac: 28 bytes">
 <rect x="535.062627" y="262.214673" width="1.937373" height="3.53545" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
 <rect x="386.207043" y="22" width="150.792957" height="243.750123" fill="none" stroke="hsl(28 70% 24%)" stroke-width="1" vector-effect="non-scaling-stroke"/>
@@ -1195,65 +1039,58 @@
 <rect x="386.207043" y="22" width="150.792957" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
 <text class="weyard rectangle-label" x="389.207043" y="30">Sound Sequence Series</text>
 </g>
-<g data-folder-depth="1" aria-label="golden-sun-audio-engine-data: 3,826 bytes">
-<title>golden-sun-audio-engine-data: 3,826 bytes</title>
-<g data-byte-leaf="true" aria-label="engine_index.json · golden-sun-audio-engine-data · 0x080fb792: 3,826 bytes">
-<title>engine_index.json · golden-sun-audio-engine-data · 0x080fb792: 3,826 bytes</title>
+<g aria-label="golden-sun-audio-engine-data: 3,826 bytes">
+<g aria-label="engine_index.json · golden-sun-audio-engine-data · 0x080fb792: 3,826 bytes">
 <rect x="386.207043" y="265.750123" width="65.680083" height="14.249877" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="386.207043" y="265.750123" width="65.680083" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="389.207043" y="273.750123">engine_index.…</text>
 </g>
 <rect x="386.207043" y="265.750123" width="65.680083" height="14.249877" fill="none" stroke="hsl(28 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
 <rect x="386.207043" y="265.750123" width="65.680083" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="389.207043" y="273.750123">Audio Engin…</text>
+<text class="weyard rectangle-label" x="389.207043" y="273.750123">Audio Engine …</text>
 </g>
-<g data-folder-depth="1" aria-label="golden-sun-sound-table: 2,496 bytes">
-<title>golden-sun-sound-table: 2,496 bytes</title>
-<g data-byte-leaf="true" aria-label="song_table.json · golden-sun-sound-table · 0x080fc684: 2,496 bytes">
-<title>song_table.json · golden-sun-sound-table · 0x080fc684: 2,496 bytes</title>
+<g aria-label="golden-sun-sound-table: 2,496 bytes">
+<g aria-label="song_table.json · golden-sun-sound-table · 0x080fc684: 2,496 bytes">
 <rect x="451.887126" y="265.750123" width="42.848272" height="14.249877" style="fill:hsl(28, 8%, 90%);fill:oklch(0.900 0.016 55)"/>
+<rect x="451.887126" y="265.750123" width="42.848272" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="454.887126" y="273.750123">song_tab…</text>
 </g>
 <rect x="451.887126" y="265.750123" width="42.848272" height="14.249877" fill="none" stroke="hsl(28 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
 <rect x="451.887126" y="265.750123" width="42.848272" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="454.887126" y="273.750123">Sound …</text>
+<text class="weyard rectangle-label" x="454.887126" y="273.750123">Sound Ta…</text>
 </g>
-<g data-folder-depth="1" aria-label="golden-sun-music-residuals: 2,462 bytes">
-<title>golden-sun-music-residuals: 2,462 bytes</title>
-<g data-folder-depth="2" aria-label="golden-sun-music-residual: 2,462 bytes">
-<title>golden-sun-music-residual: 2,462 bytes</title>
-<g data-byte-leaf="true" aria-label="residuals_index.json · golden-sun-music-residual · 0x08184698: 2,408 bytes">
-<title>residuals_index.json · golden-sun-music-residual · 0x08184698: 2,408 bytes</title>
+<g aria-label="golden-sun-music-residuals: 2,462 bytes">
+<g aria-label="golden-sun-music-residual: 2,462 bytes">
+<g aria-label="residuals_index.json · golden-sun-music-residual · 0x08184698: 2,408 bytes">
 <rect x="494.735398" y="265.750123" width="41.337596" height="14.249877" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
+<rect x="494.735398" y="265.750123" width="41.337596" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="497.735398" y="273.750123">residua…</text>
 </g>
-<g data-byte-leaf="true" aria-label="residuals_index.json · golden-sun-music-residual · 0x081819b0: 18 bytes">
-<title>residuals_index.json · golden-sun-music-residual · 0x081819b0: 18 bytes</title>
+<g aria-label="residuals_index.json · golden-sun-music-residual · 0x081819b0: 18 bytes">
 <rect x="536.072994" y="265.750123" width="0.927006" height="4.749959" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="residuals_index.json · golden-sun-music-residual · 0x081652d8: 8 bytes">
-<title>residuals_index.json · golden-sun-music-residual · 0x081652d8: 8 bytes</title>
+<g aria-label="residuals_index.json · golden-sun-music-residual · 0x081652d8: 8 bytes">
 <rect x="536.072994" y="270.500082" width="0.927006" height="2.111093" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="residuals_index.json · golden-sun-music-residual · 0x081810b8: 8 bytes">
-<title>residuals_index.json · golden-sun-music-residual · 0x081810b8: 8 bytes</title>
+<g aria-label="residuals_index.json · golden-sun-music-residual · 0x081810b8: 8 bytes">
 <rect x="536.072994" y="272.611175" width="0.927006" height="2.111093" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="residuals_index.json · golden-sun-music-residual · 0x081841f8: 8 bytes">
-<title>residuals_index.json · golden-sun-music-residual · 0x081841f8: 8 bytes</title>
+<g aria-label="residuals_index.json · golden-sun-music-residual · 0x081841f8: 8 bytes">
 <rect x="536.072994" y="274.722268" width="0.927006" height="2.111093" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="residuals_index.json · golden-sun-music-residual · 0x08184358: 8 bytes">
-<title>residuals_index.json · golden-sun-music-residual · 0x08184358: 8 bytes</title>
+<g aria-label="residuals_index.json · golden-sun-music-residual · 0x08184358: 8 bytes">
 <rect x="536.072994" y="276.833361" width="0.927006" height="2.111093" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
-<g data-byte-leaf="true" aria-label="residuals_index.json · golden-sun-music-residual · 0x080fd044: 4 bytes">
-<title>residuals_index.json · golden-sun-music-residual · 0x080fd044: 4 bytes</title>
+<g aria-label="residuals_index.json · golden-sun-music-residual · 0x080fd044: 4 bytes">
 <rect x="536.072994" y="278.944454" width="0.927006" height="1.055546" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
 <rect x="494.735398" y="265.750123" width="42.264602" height="14.249877" fill="none" stroke="hsl(28 70% 24%)" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <rect x="494.735398" y="265.750123" width="42.264602" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="497.735398" y="273.750123">Music …</text>
+<text class="weyard rectangle-label" x="497.735398" y="273.750123">Music Re…</text>
 </g>
 <rect x="494.735398" y="265.750123" width="42.264602" height="14.249877" fill="none" stroke="hsl(28 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
 <rect x="494.735398" y="265.750123" width="42.264602" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="497.735398" y="273.750123">Music …</text>
+<text class="weyard rectangle-label" x="497.735398" y="273.750123">Music Re…</text>
 </g>
 <text class="weyard" x="6" y="17">MUSIC</text>
 <text class="weyard" x="534" y="17" text-anchor="end">OBJECTS 99.6%</text>

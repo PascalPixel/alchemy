@@ -19,6 +19,7 @@
     "progress:check": "bun tools/full_c_progress.ts --check",
     "progress:subject": "bun tools/full_c_progress.ts --subject",
     "progress:history": "bun tools/full_c_history.ts --write",
+    "verify:showcase": "bun tools/overlay_showcase.ts resource_384",
     "test:compiler-explorer": "bun tools/mode_sweep.ts --self-test",
     "test:compiler-cohort": "bun tools/mode_cohort.ts --self-test",
     "test:overlay-compiler-cohort": "bun tools/overlay_mode_cohort.ts --self-test",

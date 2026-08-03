@@ -48,11 +48,16 @@ low-level runtime structure kept as permanent assembly.
 ### Code overlays
 
 *Golden Sun* also loads 96 additional code modules into memory when it needs
-them. This panel tracks all 795,350 executable bytes across those modules.
+them. This panel tracks all 795,370 executable bytes across those modules.
 Bright cyan is exact C, the softer cyan is readable C still being matched, gray
 is code still to reconstruct, and dark gray is permanent low-level assembly.
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=18c1fc87)
+`resource_384` is the first pret-like showcase overlay: all 13 genuine
+functions are ordinary byte-exact C, with only export/import veneers, literal
+data, and alignment retained in assembly. `bun run verify:showcase` rebuilds
+its decoded image and runs the complete overlay-closure audit.
+
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=b2dec911)
 
 ### Images and data
 

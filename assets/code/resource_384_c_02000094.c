@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "resource_384.h"
 
 extern void Func_02000308(void);
 extern void Func_02000342(s32, s32, s32);
@@ -21,30 +21,47 @@ extern void Func_0200038c(s32, s32);
 extern void Func_02000362(s32);
 extern void Func_020003ba(s32, s32);
 
+#define BeginSceneSequence       Func_02000308
+#define StageActors8And9         Func_02000342
+#define WaitAfterFirstStaging    Func_02000310
+#define StageActors8And10        Func_02000352
+#define WaitAfterSecondStaging   Func_02000320
+#define PlayOpeningCue           Func_0200036e
+#define SelectActor8             Func_0200037e
+#define SetActor9Presentation    Func_0200035e
+#define SetActor10Presentation   Func_0200036e_b
+#define WaitForPresentation      Func_02000344
+#define ResetActor8Pose          Func_0200038e
+#define WaitAfterPoseReset       Func_02000354
+#define SetActor8Motion          Func_0200038c
+#define WaitAfterMotion          Func_02000362
+#define FinishActor8Motion       Func_020003ba
+#define EndSceneSequence         Func_0200037e_b
+
 void Func_02000094(void)
 {
-    Func_02000308();
+    BeginSceneSequence();
 
-    Func_02000342(8, 9, 0);
-    Func_02000310(40);
+    StageActors8And9(RESOURCE384_ACTOR_8, RESOURCE384_ACTOR_9, 0);
+    WaitAfterFirstStaging(40);
 
-    Func_02000352(8, 10, 0);
-    Func_02000320(40);
+    StageActors8And10(RESOURCE384_ACTOR_8, RESOURCE384_ACTOR_10, 0);
+    WaitAfterSecondStaging(40);
 
-    Func_0200036e(0x138A);
-    Func_0200037e(8, 0);
+    PlayOpeningCue(RESOURCE384_CUE_OPENING);
+    SelectActor8(RESOURCE384_ACTOR_8, 0);
 
-    Func_0200035e(9, 2);
-    Func_0200036e_b(10, 2);
-    Func_02000344(20);
+    SetActor9Presentation(RESOURCE384_ACTOR_9, 2);
+    SetActor10Presentation(RESOURCE384_ACTOR_10, 2);
+    WaitForPresentation(20);
 
-    Func_0200038e(8, 0, 0);
-    Func_02000354(20);
+    ResetActor8Pose(RESOURCE384_ACTOR_8, 0, 0);
+    WaitAfterPoseReset(20);
 
-    Func_0200038c(8, 1);
-    Func_02000362(20);
+    SetActor8Motion(RESOURCE384_ACTOR_8, 1);
+    WaitAfterMotion(20);
 
-    Func_020003ba(8, 0);
+    FinishActor8Motion(RESOURCE384_ACTOR_8, 0);
 
-    Func_0200037e_b();
+    EndSceneSequence();
 }

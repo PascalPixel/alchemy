@@ -2082,6 +2082,7 @@ export function renderBoxTree(
     "<defs><style>" +
       `@font-face{font-family:Weyard;src:url(data:font/otf;base64,${embeddedWeyardFont()}) format('opentype');font-style:italic;}` +
       ".weyard{font-family:Weyard;font-size:16px;font-style:italic;fill:#fff;}" +
+      ".rectangle-label{font-size:8px;}" +
     "</style></defs>",
     preciseRect({ x: 0, y: 0, width, height }, `fill="${hue.edge}" rx="8"`),
     preciseRect({ x: 1, y: 1, width: width - 2, height: height - 2 },
@@ -2137,17 +2138,17 @@ export function renderBoxTree(
       const stroke = folderDepth === 1 ? 2 : 1;
       lines.push(preciseRect(placed.rect,
         `fill="none" stroke="hsl(${hue.hslHue} 70% 24%)" stroke-width="${stroke}" vector-effect="non-scaling-stroke"`));
-      const showLabel = placed.rect.height >= 18 &&
-        placed.rect.width >= (folderDepth === 1 ? 50 : 120);
+      const showLabel = placed.rect.height >= 10 &&
+        placed.rect.width >= (folderDepth === 1 ? 25 : 60);
       if (showLabel) {
         const id = `folder-clip-${folderSequence++}`;
-        const headerHeight = Math.min(18, placed.rect.height);
+        const headerHeight = Math.min(10, placed.rect.height);
         lines.push(
           `<clipPath id="${id}">${preciseRect(placed.rect, "")}</clipPath>`,
           preciseRect({ ...placed.rect, height: headerHeight },
             `fill="hsl(${hue.hslHue} 70% 24%)" fill-opacity="0.9"`),
-          `<text class="weyard" x="${precise(Math.round(placed.rect.x) + 3)}" ` +
-            `y="${precise(Math.round(placed.rect.y) + 15)}" clip-path="url(#${id})">` +
+          `<text class="weyard rectangle-label" x="${precise(Math.round(placed.rect.x) + 2)}" ` +
+            `y="${precise(Math.round(placed.rect.y) + 8)}" clip-path="url(#${id})">` +
             `${escapeText(folderDisplayName(node.label))}</text>`,
         );
       }
@@ -2811,8 +2812,8 @@ export function selfTest(): void {
   if (!svg.startsWith("<svg ") || !svg.trimEnd().endsWith("</svg>")) throw new Error("SVG shape failed");
   const boxTree = renderBoxTree(map.executable_areas[0], "self-test box tree");
   if (!boxTree.includes("font-family:Weyard;font-size:16px") ||
-      /font-size:(?!16px)/.test(boxTree)) {
-    throw new Error("box-tree chrome does not use only 16px Weyard");
+      !boxTree.includes(".rectangle-label{font-size:8px;}")) {
+    throw new Error("box-tree chrome or rectangle-label typography drifted");
   }
   if (!boxTree.includes("Exact 30.0%") || !boxTree.includes("Semantic 40.0%") ||
       !boxTree.includes("Permanent ASM 30.0%") || boxTree.includes("Unknown")) {

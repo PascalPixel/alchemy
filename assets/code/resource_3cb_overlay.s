@@ -452,15 +452,8 @@ AlchemyC_02000060:
 	.4byte 0x00000302
 	.4byte 0x02002024
 	.4byte 0x02009940
-	.4byte 0x4a054b04
-	.4byte 0x5c1b0081
-	.4byte 0x588a4c04
-	.4byte 0x511a009b
-	.4byte 0x00004770
-	.4byte 0x02009940
-	.4byte 0x02009928
-	.2byte 0x2224
-	.2byte 0x0200
+AlchemyC_02000128:
+	.space 0x20
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -2352,99 +2345,12 @@ AlchemyC_02001050:
 	.4byte 0x47704800
 	.2byte 0x9e14
 	.2byte 0x0200
-	push	{r5, lr}
-	movs	r0, #85
-	bl	sub_02002aa6
-	ldr	r0, [pc, #88]
-	movs	r1, #5
-	movs	r2, #4
-	movs	r3, #1
+AlchemyC_020011bc:
+	.space 0x10
 .L_020011cc:
-	bl	sub_02002992
-	adds	r5, r0, #0
-	b.n	.L_020011da
-.L_020011d4:
-	movs	r0, #1
-	bl	sub_020028ec
-.L_020011da:
-	bl	sub_020029a8
-	cmp	r0, #0
-	beq.n	.L_020011d4
-	bl	sub_020029d8
-	adds	r0, r5, #0
-	movs	r1, #1
-	bl	sub_020029a0
-	movs	r0, #1
-	bl	sub_02002906
-	ldr	r0, [pc, #44]
-	movs	r1, #5
-	movs	r2, #4
-	movs	r3, #1
-	bl	sub_020029c2
-	adds	r5, r0, #0
-	b.n	.L_0200120a
-.L_02001204:
-	movs	r0, #1
-	bl	sub_0200291c
-.L_0200120a:
-	bl	sub_020029d8
-	cmp	r0, #0
-	beq.n	.L_02001204
-	adds	r0, r5, #0
-	movs	r1, #1
-	bl	sub_020029cc
-	pop	{r5}
-	pop	{r1}
-	bx	r1
-	.4byte 0x0000292a
-	.2byte 0x292b
-	.2byte 0x0000
-	push	{r5, lr}
-	movs	r0, #85
-	bl	sub_02002b12
-	ldr	r0, [pc, #88]
-	movs	r1, #5
-	movs	r2, #4
-	movs	r3, #1
-	bl	sub_020029fe
-	adds	r5, r0, #0
-	b.n	.L_02001246
-.L_02001240:
-	movs	r0, #1
-	bl	sub_02002958
-.L_02001246:
-	bl	sub_02002a14
-	cmp	r0, #0
-	beq.n	.L_02001240
-	bl	sub_02002a44
-	adds	r0, r5, #0
-	movs	r1, #1
-	bl	sub_02002a0c
-	movs	r0, #1
-	bl	sub_02002972
-	ldr	r0, [pc, #44]
-	movs	r1, #5
-	movs	r2, #4
-	movs	r3, #1
-	bl	sub_02002a2e
-	adds	r5, r0, #0
-	b.n	.L_02001276
-.L_02001270:
-	movs	r0, #1
-	bl	sub_02002988
-.L_02001276:
-	bl	sub_02002a44
-	cmp	r0, #0
-	beq.n	.L_02001270
-	adds	r0, r5, #0
-	movs	r1, #1
-	bl	sub_02002a38
-	pop	{r5}
-	pop	{r1}
-	bx	r1
-	.4byte 0x0000292c
-	.2byte 0x292d
-	.2byte 0x0000
+	.space 0x5c
+AlchemyC_02001228:
+	.space 0x6c
 AlchemyC_02001294:
 	.space 0x4c
 	push	{r5, r6, r7, lr}

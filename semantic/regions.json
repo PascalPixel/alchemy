@@ -891,18 +891,6 @@
     },
     {
       "overlay": "resource_378",
-      "entry": "0x0200005c",
-      "span_bytes": 8,
-      "evidence": "admitted whole-owner semantic reconstruction; leaf getter at 0x0200005c is ldr r0,[pc,#0] / bx lr and includes its directly referenced pool word 0x0200baa8 at 0x02000060; it returns the overlay-local address without dereferencing it"
-    },
-    {
-      "overlay": "resource_378",
-      "entry": "0x02000068",
-      "span_bytes": 8,
-      "evidence": "admitted whole-owner semantic reconstruction; leaf getter at 0x02000068 is ldr r0,[pc,#0] / bx lr and includes its directly referenced pool word 0x0200bbc8 at 0x0200006c; it returns the overlay-local address without dereferencing it"
-    },
-    {
-      "overlay": "resource_378",
       "entry": "0x02000070",
       "span_bytes": 220,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
@@ -10588,12 +10576,6 @@
       "evidence": "complete prologue-less getter; ldr/bx at 0x020012d8-0x020012db and its independently resolved 0x0200b85c literal through 0x020012df before the next owner at 0x020012e0"
     },
     {
-      "overlay": "resource_3c5",
-      "entry": "0x02000fd4",
-      "span_bytes": 8,
-      "evidence": "complete prologue-less getter; ldr/bx at 0x02000fd4-0x02000fd7 and its independently resolved 0x0200b5f8 literal through 0x02000fdb before the next owner at 0x02000fdc"
-    },
-    {
       "overlay": "resource_3cb",
       "entry": "0x02000058",
       "span_bytes": 8,
@@ -11676,7 +11658,6 @@
     ,{"overlay":"resource_3a6","entry":"0x02001bfc","span_bytes":24,"evidence":"complete two-state actor presentation wrapper through alignment before the import veneer bank"}
     ,{"overlay":"resource_3a0","entry":"0x020009dc","span_bytes":784,"evidence":"complete multi-actor scene setup and particle presentation controller through fifteen-word pool; all 57 calls including nine local object spawns preserve machine order"}
     ,{"overlay":"resource_3a6","entry":"0x02001984","span_bytes":632,"evidence":"complete scene-94/95 actor and placement dispatcher through its jump table, sole return, alignment and eleven-word pool; all 34 calls preserve branch structure and machine order"}
-    ,{"overlay":"resource_398","entry":"0x02000904","span_bytes":4,"evidence":"complete no-op leaf and alignment immediately before the import veneer bank"}
     ,{"overlay":"resource_3ab","entry":"0x020003c0","span_bytes":52,"evidence":"complete scene-start reset wrapper through alignment and one-word pool; all six direct calls preserve machine order"}
     ,{"overlay":"resource_3ab","entry":"0x020003f4","span_bytes":116,"evidence":"complete actor-8 collision-tile and presentation-state setup owner; all seven direct calls preserve machine order"}
     ,{"overlay":"resource_3ab","entry":"0x02000468","span_bytes":52,"evidence":"complete leader-height-selected actor-8 presentation-bit owner through alignment; all three fetch calls preserve branch order"}

@@ -1888,10 +1888,8 @@ AlchemyC_02000f58:
 	.space 0x54
 AlchemyC_02000fac:
 	.space 0x28
-	ldr	r0, [pc, #0]
-	bx	lr
-	push	{r3, r4, r5, r6, r7, lr}
-	lsls	r0, r0, #8
+AlchemyC_02000fd4:
+	.space 0x8
 AlchemyC_02000fdc:
 	.space 0x54
 AlchemyC_02001030:

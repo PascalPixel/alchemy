@@ -19,3 +19,4 @@ s32 Func_02000030(s32 arg0) {
     }
     return 1;
 }
+#include "resource_38f.h"

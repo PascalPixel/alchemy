@@ -13,3 +13,4 @@ s32 Func_02000284(void) {
     }
     return (s32)Data_0200b3b0;
 }
+#include "resource_38f.h"

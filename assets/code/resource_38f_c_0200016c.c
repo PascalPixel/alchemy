@@ -20,3 +20,4 @@ s32 Func_0200016c(void) {
     }
     return (s32)Data_0200ae60;
 }
+#include "resource_38f.h"

@@ -7,6 +7,55 @@
       "exact_c_owners": 13,
       "sha256": "13935b5cc31b4823c6aa95e7b4b843aaa0ca432918c950316b8588942fbfc9ec",
       "retained_assembly": "export/import veneers, literal data, and alignment only"
+    },
+    {
+      "id": "resource_37d",
+      "decoded_bytes": 376,
+      "exact_c_owners": 6,
+      "sha256": "a64af5e0bdc8000bc295b1486b6dae864b64de1b961772a553c4867f07c264fc",
+      "retained_assembly": "export/import veneers, literal data, and alignment only"
+    },
+    {
+      "id": "resource_37e",
+      "decoded_bytes": 364,
+      "exact_c_owners": 6,
+      "sha256": "c674e54bae18c76115b4f8908ae6bbe93d47a51dae01058add8d782477a80086",
+      "retained_assembly": "export/import veneers, literal data, and alignment only"
+    },
+    {
+      "id": "resource_37c",
+      "decoded_bytes": 344,
+      "exact_c_owners": 6,
+      "sha256": "d77f9ac7fad5dc2314fb1729c44853f21cd106697de2347a65ceb8c148941d6a",
+      "retained_assembly": "export/import veneers, literal data, and alignment only"
+    },
+    {
+      "id": "resource_388",
+      "decoded_bytes": 500,
+      "exact_c_owners": 6,
+      "sha256": "52b088e6d4f887af2a7b9981e799b54e5c191fece8a56bbab48b9ead35001652",
+      "retained_assembly": "export/import veneers, literal data, and alignment only"
+    },
+    {
+      "id": "resource_38c",
+      "decoded_bytes": 3572,
+      "exact_c_owners": 20,
+      "sha256": "caa0d3e6a94245cc0bac68f734af2ed14cee3ad21e3648c25193ccc961790cb8",
+      "retained_assembly": "export/import veneers, literal data, and alignment only"
+    },
+    {
+      "id": "resource_3ac",
+      "decoded_bytes": 3272,
+      "exact_c_owners": 18,
+      "sha256": "c82615ba1b6d7825df346f0f647e24806651576000bb9ec481c54fd0c8aaaf4b",
+      "retained_assembly": "export/import veneers, literal data, and alignment only"
+    },
+    {
+      "id": "resource_390",
+      "decoded_bytes": 2404,
+      "exact_c_owners": 11,
+      "sha256": "5e20be944bc72be7e8d02abfb16c8b740307922ce1ebfa60e19bee00d6023eaa",
+      "retained_assembly": "export/import veneers, literal data, and alignment only"
     }
   ]
 }

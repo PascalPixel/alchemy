@@ -4,6 +4,12 @@ typedef unsigned int u32;
 typedef signed short s16;
 typedef signed int s32;
 
+typedef struct Placement {
+    u32 destination;
+    u16 x;
+    u16 y;
+} Placement;
+
 /*
  * resource_3a9 owner at 0x02000240, 200 bytes: the scene arrival routine —
  * clear every scene slot's residue, look the current sub-state up in a small
@@ -62,34 +68,33 @@ typedef signed int s32;
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-u8 *Func_0808a080();            /* scene entity by selector, or null */
-void Func_0808a018();           /* open a scene bracket */
-void Func_0808a020();           /* close a scene bracket */
-void Func_0808a010();           /* wait this many frames */
-void Func_0808a090();           /* set a 16.16 x/y scale */
-void Func_0808a0d8();           /* nudge an entity by a delta */
-void Func_0808a100();
-void Func_0808a248();
-void Func_0808a368();           /* scene bookkeeping, no arguments */
-void Func_0808a370();           /* scene bookkeeping, no arguments */
-void Func_08009178();           /* place the player (destination, x, y) */
-void Func_080f9010();           /* play a sound cue */
+u8 *Func_0200067a();
+void Func_02000658();
+void Func_02000710();
+u8 *Func_020006e6();
+void Func_020006f0();
+void Func_02000718();
+void Func_02000714();
+void Func_0200075c();
+void Func_02000768();
+void Func_02000774();
+void Func_02000692(u32, u32, u32);
+void Func_02000730();
 
 /* In-image placement table: four 8-byte entries {u32, u16, u16}. */
-extern u8 Data_02008ef8[];
+extern Placement Data_02008ef8[];
 
 void Func_02000240(void)
 {
     u8 *work = *(u8 **)0x03001ebc;
-    s32 slot;
+    u32 slot;
     s32 index;
-    u8 *entry;
     u8 *player;
 
-    Func_0808a018();
+    Func_02000658();
 
     for (slot = 8; slot <= 65; slot++) {
-        u8 *record = Func_0808a080(slot);
+        u8 *record = Func_0200067a(slot);
 
         if (record != 0) {
             record[85] = 0;
@@ -104,22 +109,32 @@ void Func_02000240(void)
     default: return;
     }
 
-    Func_080f9010(158);
+    Func_02000730(158);
 
-    entry = Data_02008ef8 + index * 8;
-    Func_08009178(*(u32 *)entry, *(u16 *)(entry + 4), *(u16 *)(entry + 6));
+    {
+        u32 offset = index << 3;
+        u32 value = (u32)Data_02008ef8;
+        u32 coordinateAddress = offset + 4;
+        u16 x = *(volatile u16 *)(value + coordinateAddress);
+        u16 y;
 
-    Func_0808a090(0, 0x00008000, 0x00004000);   /* 0.5, 0.25 in 16.16 */
+        coordinateAddress += value;
+        y = *(volatile u16 *)(coordinateAddress + 2);
+        value = *(volatile u32 *)(value + offset);
+        Func_02000692(value, x, y);
+    }
 
-    player = Func_0808a080(0);
+    Func_020006f0(0, 0x00008000, 0x00004000);
+
+    player = Func_020006e6(0);
     player[85] = 0;
 
-    Func_0808a100(0, 2);
-    Func_0808a0d8(0, 3, -8);
-    Func_0808a010(10);
+    Func_02000714(0, 2);
+    Func_02000718(0, 3, -8);
+    Func_020006e6(10);
 
-    Func_0808a248(*(s16 *)(work + 364));
-    Func_0808a368();
-    Func_0808a370();
-    Func_0808a020();
+    Func_0200075c(*(s16 *)(work + 364));
+    Func_02000768();
+    Func_02000774();
+    Func_02000710();
 }

@@ -2,6 +2,7 @@ typedef unsigned char u8;
 typedef unsigned short u16;
 typedef signed short s16;
 typedef signed int s32;
+typedef unsigned int u32;
 
 /*
  * resource_397 owner at 0x020002a0, 64 bytes: recompute the three alpha-blend
@@ -41,18 +42,33 @@ typedef signed int s32;
  */
 
 extern u8 *Data_03001e70;
-extern volatile s32 Data_03001e40;
+extern volatile u32 Data_03001e40;
 extern s32 Data_02008610;
 extern u16 Data_02008614;
 extern u16 Data_02008616;
 
 void Func_020002a0(void)
 {
-    u8 *record = Data_03001e70 + 0x104;
-    s16 fieldA = *(s16 *)(record + 6);
-    s16 fieldB = *(s16 *)(record + 2);
+    s32 recordOffset;
+    u8 *record;
 
-    Data_02008610 = 192 - fieldA;
-    Data_02008614 = (u16)fieldB;
-    Data_02008616 = (u16)(fieldB - (Data_03001e40 >> 2));
+    recordOffset = 0x104;
+    record = Data_03001e70;
+    record += recordOffset;
+
+    {
+        s16 fieldA = *(s16 *)(record + 6);
+        Data_02008610 = 192 - fieldA;
+    }
+    {
+        u16 *fieldBOutput = &Data_02008614;
+        u16 *fieldCOutput;
+        s16 fieldB = *(s16 *)(record + 2);
+        u32 blendPhase;
+        *fieldBOutput = (u16)fieldB;
+        blendPhase = Data_03001e40;
+        fieldCOutput = &Data_02008616;
+        blendPhase >>= 2;
+        *fieldCOutput = (u16)(fieldB - blendPhase);
+    }
 }

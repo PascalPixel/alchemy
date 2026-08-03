@@ -16,3 +16,4 @@ s32 Func_020025d8(struct Obj *p) {
     }
     return 1;
 }
+#include "resource_38f.h"

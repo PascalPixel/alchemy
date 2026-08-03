@@ -20,9 +20,7 @@ typedef unsigned char u8;
  * identical semantics; this row's pool word was resolved on its own.
  */
 
-extern u8 Data_20084a4[];   /* image offset 0x4a4 */
-
 u8 *Func_020001b4(void)
 {
-    return Data_20084a4;
+    return (u8 *)0x020084a4;   /* image offset 0x4a4 */
 }

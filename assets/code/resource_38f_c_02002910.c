@@ -28,3 +28,4 @@ void Func_02002910(void) {
         Func_02005328(1);
     }
 }
+#include "resource_38f.h"

@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "overlays": [
+    {
+      "id": "resource_384",
+      "decoded_bytes": 1232,
+      "exact_c_owners": 13,
+      "sha256": "13935b5cc31b4823c6aa95e7b4b843aaa0ca432918c950316b8588942fbfc9ec",
+      "retained_assembly": "export/import veneers, literal data, and alignment only"
+    }
+  ]
+}

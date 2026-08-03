@@ -29,29 +29,30 @@ spirit, this project is releasing *Golden Sun* from its finished ROM image into
 code and assets that people can study and learn from. We hope that, in doing so,
 Alchemy inspires new developers to create wonderful RPGs of their own.
 
-## Progress: Currently 20% of the way done
+## DONE: Currently 26%
 
-20% of the game's audited executable bytes now build from exact, byte-matching
-C. These maps show where the code and assets of the English release stand
-today.
+**DONE is Exact C + Permanent ASM**: the share of the game's audited executable
+bytes that either build from exact, byte-matching C or belong to low-level
+assembly intentionally kept in its permanent form. These maps show where the
+code and assets of the English release stand today.
 
 ### Main game
 
 The main game is the 548,364 bytes of code that remain available while *Golden
 Sun* is running. Bright purple is exact, byte-matching C; the softer purple is
 readable C that still needs to be matched. Dark gray marks the small pieces of
-low-level runtime structure intentionally retained as assembly.
+low-level runtime structure kept as permanent assembly.
 
-![Main-image code coverage box tree in purple with retained assembly in dark gray.](assets/readme/gs1-en-core.svg?v=0f99623d)
+![Main-image code coverage box tree in purple with permanent assembly in dark gray.](assets/readme/gs1-en-core.svg?v=07619d10)
 
 ### Code overlays
 
 *Golden Sun* also loads 96 additional code modules into memory when it needs
-them. This panel tracks all 795,106 executable bytes across those modules.
+them. This panel tracks all 795,350 executable bytes across those modules.
 Bright cyan is exact C, the softer cyan is readable C still being matched, gray
-is code still to reconstruct, and dark gray is retained low-level assembly.
+is code still to reconstruct, and dark gray is permanent low-level assembly.
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=d8a3e335)
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=18c1fc87)
 
 ### Images and data
 
@@ -71,9 +72,9 @@ reconstruction.
 
 ![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=68ce167a)
 
-Exact-C progress is measured by executable bytes rather than function counts,
-so every claimed byte must compile to the original game before it contributes
-to the headline.
+DONE is measured by executable bytes rather than function counts. Exact C must
+compile to the original game byte for byte; Permanent ASM must have an explicit
+source-ownership contract before either contributes to the headline.
 
 ## Preservation and copyright
 

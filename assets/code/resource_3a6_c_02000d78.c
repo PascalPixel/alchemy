@@ -1,0 +1,6 @@
+typedef unsigned char u8;
+
+u8 *Func_02000d78(void)
+{
+    return (u8 *)0x0200a1dc;
+}

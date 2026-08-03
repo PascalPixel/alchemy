@@ -59,3 +59,4 @@ inside:
     Data_0200b698 = 1;
     return 0;
 }
+#include "resource_38f.h"

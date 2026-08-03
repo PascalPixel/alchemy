@@ -52,7 +52,8 @@ function main(id: string): void {
     if (!canonicalCSource(source)) {
       throw new Error(`${name} uses inline assembly or register-pinned fakematch and is not canonical Exact C`);
     }
-    if (!/^#include\s+"resource_384\.h"/m.test(source)) {
+    const header = id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    if (!new RegExp(`^#include\\s+"${header}\\.h"`, "m").test(source)) {
       throw new Error(`${name} does not use the showcase overlay's named interface`);
     }
   }
@@ -76,4 +77,12 @@ function main(id: string): void {
   );
 }
 
-if (import.meta.main) main(Bun.argv[2] ?? "");
+if (import.meta.main) {
+  const requested = Bun.argv[2] ?? "";
+  if (requested === "--all") {
+    const manifest = JSON.parse(readFileSync(join(ROOT, "metrics/overlay-showcases.json"), "utf8")) as {
+      overlays: Showcase[];
+    };
+    for (const overlay of manifest.overlays) main(overlay.id);
+  } else main(requested);
+}

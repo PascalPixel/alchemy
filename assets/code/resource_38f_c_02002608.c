@@ -71,3 +71,4 @@ void Func_02002608(void) {
     Func_0200506c(p, c3, 0, c4);
     Func_02005054(p, Data_0200b5d8);
 }
+#include "resource_38f.h"

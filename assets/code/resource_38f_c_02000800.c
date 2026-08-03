@@ -59,3 +59,4 @@ void Func_02000800(void) {
         }
     }
 }
+#include "resource_38f.h"

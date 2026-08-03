@@ -47,3 +47,4 @@ s32 Func_02000114(struct Ent *p) {
     }
     return 1;
 }
+#include "resource_38f.h"

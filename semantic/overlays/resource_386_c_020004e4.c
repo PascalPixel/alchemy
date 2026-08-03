@@ -53,10 +53,12 @@ void Func_02000570();
 
 s32 Func_020004e4(void)
 {
+    s32 offset = 448;
     s32 scene;
 
-    *(s32 *)(WORKSPACE + 448) = 521;
-    scene = *(s16 *)((u8 *)0x02000240 + 450);
+    *(s32 *)(WORKSPACE + offset) = offset + 73;
+    offset += 2;
+    scene = *(s16 *)((u8 *)0x02000240 + offset);
 
     if (scene == 5) {
         /* Two arguments are passed on the stack: 4 then 3. */

@@ -12,3 +12,4 @@ s32 Func_020026a4(s32 arg0) {
     }
     return 0;
 }
+#include "resource_38f.h"

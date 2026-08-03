@@ -22,3 +22,4 @@ void Func_020000a0(u8 *o) {
         p += 24;
     }
 }
+#include "resource_38f.h"

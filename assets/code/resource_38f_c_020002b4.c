@@ -16,3 +16,4 @@ void Func_020002b4(s32 arg0) {
     *(s32 *)(*(s32 *)0x03001ebc + 0x1c8) = 16;
     Func_02002e54(arg0);
 }
+#include "resource_38f.h"

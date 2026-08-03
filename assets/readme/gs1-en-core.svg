@@ -594,9 +594,8 @@
 <rect x="124.338469" y="156.176633" width="0.558636" height="0.899484" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
 </g>
 <rect x="3" y="22" width="121.897105" height="135.076117" fill="none" stroke="hsl(275 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-0"><rect x="3" y="22" width="121.897105" height="135.076117" /></clipPath>
 <rect x="3" y="22" width="121.897105" height="10" fill="hsl(275 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="5" y="30" clip-path="url(#folder-clip-0)">080d · 64 KiB Bank</text>
+<text class="weyard rectangle-label" x="6" y="30">080d · 64 KiB Bank</text>
 </g>
 <g data-folder-depth="1" aria-label="080b · 64 KiB bank: 59,640 bytes">
 <title>080b · 64 KiB bank: 59,640 bytes</title>
@@ -1890,9 +1889,8 @@
 <rect x="123.834511" y="279.527116" width="1.062594" height="0.472884" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
 </g>
 <rect x="3" y="157.076117" width="121.897105" height="122.923883" fill="none" stroke="hsl(275 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-1"><rect x="3" y="157.076117" width="121.897105" height="122.923883" /></clipPath>
 <rect x="3" y="157.076117" width="121.897105" height="10" fill="hsl(275 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="5" y="165" clip-path="url(#folder-clip-1)">080b · 64 KiB Bank</text>
+<text class="weyard rectangle-label" x="6" y="165.076117">080b · 64 KiB Bank</text>
 </g>
 <g data-folder-depth="1" aria-label="0801 · 64 KiB bank: 57,114 bytes">
 <title>0801 · 64 KiB bank: 57,114 bytes</title>
@@ -3867,9 +3865,8 @@
 <rect x="233.997271" y="151.841095" width="0.98078" height="0.512331" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
 </g>
 <rect x="124.897105" y="22" width="110.080946" height="130.353426" fill="none" stroke="hsl(275 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-2"><rect x="124.897105" y="22" width="110.080946" height="130.353426" /></clipPath>
 <rect x="124.897105" y="22" width="110.080946" height="10" fill="hsl(275 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="127" y="30" clip-path="url(#folder-clip-2)">0801 · 64 KiB Bank</text>
+<text class="weyard rectangle-label" x="127.897105" y="30">0801 · 64 KiB Bank</text>
 </g>
 <g data-folder-depth="1" aria-label="080e · 64 KiB bank: 55,928 bytes">
 <title>080e · 64 KiB bank: 55,928 bytes</title>
@@ -4276,9 +4273,8 @@
 <rect x="233.891916" y="279.537365" width="1.086135" height="0.462635" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
 </g>
 <rect x="124.897105" y="152.353426" width="110.080946" height="127.646574" fill="none" stroke="hsl(275 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-3"><rect x="124.897105" y="152.353426" width="110.080946" height="127.646574" /></clipPath>
 <rect x="124.897105" y="152.353426" width="110.080946" height="10" fill="hsl(275 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="127" y="160" clip-path="url(#folder-clip-3)">080e · 64 KiB Bank</text>
+<text class="weyard rectangle-label" x="127.897105" y="160.353426">080e · 64 KiB Bank</text>
 </g>
 <g data-folder-depth="1" aria-label="080a · 64 KiB bank: 55,870 bytes">
 <title>080a · 64 KiB bank: 55,870 bytes</title>
@@ -5208,9 +5204,8 @@
 <rect x="339.823747" y="154.007725" width="1.131633" height="0.444034" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
 </g>
 <rect x="234.978051" y="22" width="105.977329" height="132.451759" fill="none" stroke="hsl(275 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-4"><rect x="234.978051" y="22" width="105.977329" height="132.451759" /></clipPath>
 <rect x="234.978051" y="22" width="105.977329" height="10" fill="hsl(275 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="237" y="30" clip-path="url(#folder-clip-4)">080a · 64 KiB Bank</text>
+<text class="weyard rectangle-label" x="237.978051" y="30">080a · 64 KiB Bank</text>
 </g>
 <g data-folder-depth="1" aria-label="0800 · 64 KiB bank: 52,958 bytes">
 <title>0800 · 64 KiB bank: 52,958 bytes</title>
@@ -7325,9 +7320,8 @@
 <rect x="340.474582" y="278.954896" width="0.480798" height="1.045104" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
 </g>
 <rect x="234.978051" y="154.451759" width="105.977329" height="125.548241" fill="none" stroke="hsl(275 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-5"><rect x="234.978051" y="154.451759" width="105.977329" height="125.548241" /></clipPath>
 <rect x="234.978051" y="154.451759" width="105.977329" height="10" fill="hsl(275 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="237" y="162" clip-path="url(#folder-clip-5)">0800 · 64 KiB Bank</text>
+<text class="weyard rectangle-label" x="237.978051" y="162.451759">0800 · 64 KiB Bank</text>
 </g>
 <g data-folder-depth="1" aria-label="0809 · 64 KiB bank: 50,164 bytes">
 <title>0809 · 64 KiB bank: 50,164 bytes</title>
@@ -8759,9 +8753,8 @@
 <rect x="449.620179" y="136.366414" width="1.096382" height="0.458311" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
 </g>
 <rect x="340.95538" y="22" width="109.761181" height="114.824725" fill="none" stroke="hsl(275 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-6"><rect x="340.95538" y="22" width="109.761181" height="114.824725" /></clipPath>
 <rect x="340.95538" y="22" width="109.761181" height="10" fill="hsl(275 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="343" y="30" clip-path="url(#folder-clip-6)">0809 · 64 KiB Bank</text>
+<text class="weyard rectangle-label" x="343.95538" y="30">0809 · 64 KiB Bank</text>
 </g>
 <g data-folder-depth="1" aria-label="080c · 64 KiB bank: 39,434 bytes">
 <title>080c · 64 KiB bank: 39,434 bytes</title>
@@ -9399,9 +9392,8 @@
 <rect x="536.471944" y="135.873152" width="0.528056" height="0.951573" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
 </g>
 <rect x="450.716561" y="22" width="86.283439" height="114.824725" fill="none" stroke="hsl(275 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-7"><rect x="450.716561" y="22" width="86.283439" height="114.824725" /></clipPath>
 <rect x="450.716561" y="22" width="86.283439" height="10" fill="hsl(275 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="453" y="30" clip-path="url(#folder-clip-7)">080c · 64 KiB Bank</text>
+<text class="weyard rectangle-label" x="453.716561" y="30">080c · 64 KiB Ba…</text>
 </g>
 <g data-folder-depth="1" aria-label="0802 · 64 KiB bank: 39,180 bytes">
 <title>0802 · 64 KiB bank: 39,180 bytes</title>
@@ -9890,9 +9882,8 @@
 <rect x="467.87001" y="213.251067" width="0.721438" height="0.696503" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
 </g>
 <rect x="340.95538" y="136.824725" width="127.636068" height="77.122845" fill="none" stroke="hsl(275 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-8"><rect x="340.95538" y="136.824725" width="127.636068" height="77.122845" /></clipPath>
 <rect x="340.95538" y="136.824725" width="127.636068" height="10" fill="hsl(275 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="343" y="145" clip-path="url(#folder-clip-8)">0802 · 64 KiB Bank</text>
+<text class="weyard rectangle-label" x="343.95538" y="144.824725">0802 · 64 KiB Bank</text>
 </g>
 <g data-folder-depth="1" aria-label="080f · 64 KiB bank: 33,556 bytes">
 <title>080f · 64 KiB bank: 33,556 bytes</title>
@@ -10759,9 +10750,8 @@
 <rect x="467.722456" y="279.421762" width="0.868992" height="0.578238" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
 </g>
 <rect x="340.95538" y="213.94757" width="127.636068" height="66.05243" fill="none" stroke="hsl(275 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-9"><rect x="340.95538" y="213.94757" width="127.636068" height="66.05243" /></clipPath>
 <rect x="340.95538" y="213.94757" width="127.636068" height="10" fill="hsl(275 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="343" y="222" clip-path="url(#folder-clip-9)">080f · 64 KiB Bank</text>
+<text class="weyard rectangle-label" x="343.95538" y="221.94757">080f · 64 KiB Bank</text>
 </g>
 <g data-folder-depth="1" aria-label="0808 · 64 KiB bank: 24,572 bytes">
 <title>0808 · 64 KiB bank: 24,572 bytes</title>
@@ -11955,9 +11945,8 @@
 <rect x="536.53123" y="225.997594" width="0.46877" height="1.07192" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
 </g>
 <rect x="468.591448" y="136.824725" width="68.408552" height="90.244789" fill="none" stroke="hsl(275 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-10"><rect x="468.591448" y="136.824725" width="68.408552" height="90.244789" /></clipPath>
 <rect x="468.591448" y="136.824725" width="68.408552" height="10" fill="hsl(275 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="471" y="145" clip-path="url(#folder-clip-10)">0808 · 64 KiB Bank</text>
+<text class="weyard rectangle-label" x="471.591448" y="144.824725">0808 · 64 Ki…</text>
 </g>
 <g data-folder-depth="1" aria-label="0807 · 64 KiB bank: 14,376 bytes">
 <title>0807 · 64 KiB bank: 14,376 bytes</title>
@@ -12926,9 +12915,8 @@
 <rect x="535.861544" y="279.480678" width="0.967577" height="0.519322" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
 </g>
 <rect x="468.591448" y="227.069514" width="68.237673" height="52.930486" fill="none" stroke="hsl(275 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-11"><rect x="468.591448" y="227.069514" width="68.237673" height="52.930486" /></clipPath>
 <rect x="468.591448" y="227.069514" width="68.237673" height="10" fill="hsl(275 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="471" y="235" clip-path="url(#folder-clip-11)">0807 · 64 KiB Bank</text>
+<text class="weyard rectangle-label" x="471.591448" y="235.069514">0807 · 64 Ki…</text>
 </g>
 <g data-folder-depth="1" aria-label="0818 · 64 KiB bank: 36 bytes">
 <title>0818 · 64 KiB bank: 36 bytes</title>

@@ -42,9 +42,8 @@
 <rect x="104.272293" y="220.558193" width="29.487348" height="59.441807" style="fill:hsl(330, 95%, 55%);fill:oklch(0.550 0.300 355)"/>
 </g>
 <rect x="3" y="22" width="130.759641" height="258" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-0"><rect x="3" y="22" width="130.759641" height="258" /></clipPath>
 <rect x="3" y="22" width="130.759641" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="5" y="30" clip-path="url(#folder-clip-0)">Static Sprite Series</text>
+<text class="weyard rectangle-label" x="6" y="30">Static Sprite Series</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-map-charblock-series: 1,456,612 bytes">
 <title>golden-sun-map-charblock-series: 1,456,612 bytes</title>
@@ -1051,9 +1050,8 @@
 <rect x="299.645963" y="190.6037" width="1.61836" height="4.044474" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
 </g>
 <rect x="133.759641" y="22" width="167.504682" height="172.648174" fill="none" stroke="hsl(330 70% 24%)" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-1"><rect x="133.759641" y="22" width="167.504682" height="172.648174" /></clipPath>
 <rect x="133.759641" y="22" width="167.504682" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="136" y="30" clip-path="url(#folder-clip-1)">Kind2 Lz</text>
+<text class="weyard rectangle-label" x="136.759641" y="30">Kind2 Lz</text>
 </g>
 <g data-folder-depth="2" aria-label="golden-sun-general-lz: 42,768 bytes">
 <title>golden-sun-general-lz: 42,768 bytes</title>
@@ -1544,9 +1542,8 @@
 <rect x="133.759641" y="194.648174" width="167.504682" height="5.222512" fill="none" stroke="hsl(330 70% 24%)" stroke-width="1" vector-effect="non-scaling-stroke"/>
 </g>
 <rect x="133.759641" y="22" width="167.504682" height="177.870686" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-2"><rect x="133.759641" y="22" width="167.504682" height="177.870686" /></clipPath>
 <rect x="133.759641" y="22" width="167.504682" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="136" y="30" clip-path="url(#folder-clip-2)">Map Charblock Series</text>
+<text class="weyard rectangle-label" x="136.759641" y="30">Map Charblock Series</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-map-grid-series: 656,192 bytes">
 <title>golden-sun-map-grid-series: 656,192 bytes</title>
@@ -2249,14 +2246,12 @@
 <rect x="295.898683" y="277.087545" width="5.36564" height="2.912455" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
 </g>
 <rect x="133.759641" y="199.870686" width="167.504682" height="80.129314" fill="none" stroke="hsl(330 70% 24%)" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-3"><rect x="133.759641" y="199.870686" width="167.504682" height="80.129314" /></clipPath>
 <rect x="133.759641" y="199.870686" width="167.504682" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="136" y="208" clip-path="url(#folder-clip-3)">Kind1 Grid</text>
+<text class="weyard rectangle-label" x="136.759641" y="207.870686">Kind1 Grid</text>
 </g>
 <rect x="133.759641" y="199.870686" width="167.504682" height="80.129314" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-4"><rect x="133.759641" y="199.870686" width="167.504682" height="80.129314" /></clipPath>
 <rect x="133.759641" y="199.870686" width="167.504682" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="136" y="208" clip-path="url(#folder-clip-4)">Map Grid Series</text>
+<text class="weyard rectangle-label" x="136.759641" y="207.870686">Map Grid Series</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-map-component-series: 568,044 bytes">
 <title>golden-sun-map-component-series: 568,044 bytes</title>
@@ -2959,9 +2954,8 @@
 <rect x="404.335657" y="119.431248" width="0.483958" height="0.338119" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
 </g>
 <rect x="301.264323" y="22" width="103.555292" height="97.769367" fill="none" stroke="hsl(330 70% 24%)" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-5"><rect x="301.264323" y="22" width="103.555292" height="97.769367" /></clipPath>
 <rect x="301.264323" y="22" width="103.555292" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="303" y="30" clip-path="url(#folder-clip-5)">Map Metatiles</text>
+<text class="weyard rectangle-label" x="304.264323" y="30">Map Metatiles</text>
 </g>
 <g data-folder-depth="2" aria-label="golden-sun-map-animation-queues: 51,212 bytes">
 <title>golden-sun-map-animation-queues: 51,212 bytes</title>
@@ -6212,9 +6206,8 @@
 <rect x="414.077889" y="112.955207" width="6.027523" height="6.81416" fill="none" stroke="hsl(330 70% 24%)" stroke-width="1" vector-effect="non-scaling-stroke"/>
 </g>
 <rect x="301.264323" y="22" width="118.841089" height="97.769367" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-6"><rect x="301.264323" y="22" width="118.841089" height="97.769367" /></clipPath>
 <rect x="301.264323" y="22" width="118.841089" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="303" y="30" clip-path="url(#folder-clip-6)">Map Component Series</text>
+<text class="weyard rectangle-label" x="304.264323" y="30">Map Component Series</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-delta7-still-series: 558,740 bytes">
 <title>golden-sun-delta7-still-series: 558,740 bytes</title>
@@ -6357,14 +6350,12 @@
 <rect x="526.121588" y="94.746635" width="10.878412" height="25.022732" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
 </g>
 <rect x="420.105412" y="22" width="116.894588" height="97.769367" fill="none" stroke="hsl(330 70% 24%)" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-7"><rect x="420.105412" y="22" width="116.894588" height="97.769367" /></clipPath>
 <rect x="420.105412" y="22" width="116.894588" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="422" y="30" clip-path="url(#folder-clip-7)">Delta7 Still</text>
+<text class="weyard rectangle-label" x="423.105412" y="30">Delta7 Still</text>
 </g>
 <rect x="420.105412" y="22" width="116.894588" height="97.769367" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-8"><rect x="420.105412" y="22" width="116.894588" height="97.769367" /></clipPath>
 <rect x="420.105412" y="22" width="116.894588" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="422" y="30" clip-path="url(#folder-clip-8)">Delta7 Still Series</text>
+<text class="weyard rectangle-label" x="423.105412" y="30">Delta7 Still Series</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-zero-skip-sprite-series: 488,954 bytes">
 <title>golden-sun-zero-skip-sprite-series: 488,954 bytes</title>
@@ -6579,9 +6570,8 @@
 <rect x="388.789507" y="220.050909" width="6.384587" height="6.1127" style="fill:hsl(330, 95%, 55%);fill:oklch(0.550 0.300 355)"/>
 </g>
 <rect x="301.264323" y="119.769367" width="93.909771" height="106.394242" fill="none" stroke="hsl(330 70% 24%)" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-9"><rect x="301.264323" y="119.769367" width="93.909771" height="106.394242" /></clipPath>
 <rect x="301.264323" y="119.769367" width="93.909771" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="303" y="128" clip-path="url(#folder-clip-9)">General Lz</text>
+<text class="weyard rectangle-label" x="304.264323" y="127.769367">General Lz</text>
 </g>
 <g data-folder-depth="2" aria-label="gba-palette: 480 bytes">
 <title>gba-palette: 480 bytes</title>
@@ -6592,9 +6582,8 @@
 <rect x="301.264323" y="226.163609" width="93.909771" height="0.104548" fill="none" stroke="hsl(330 70% 24%)" stroke-width="1" vector-effect="non-scaling-stroke"/>
 </g>
 <rect x="301.264323" y="119.769367" width="93.909771" height="106.49879" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-10"><rect x="301.264323" y="119.769367" width="93.909771" height="106.49879" /></clipPath>
 <rect x="301.264323" y="119.769367" width="93.909771" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="303" y="128" clip-path="url(#folder-clip-10)">Zero Skip Sprite Series</text>
+<text class="weyard rectangle-label" x="304.264323" y="127.769367">Zero Skip Sprite …</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-message-archive: 246,692 bytes">
 <title>golden-sun-message-archive: 246,692 bytes</title>
@@ -6603,9 +6592,8 @@
 <rect x="301.264323" y="226.268157" width="93.909771" height="53.731843" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
 </g>
 <rect x="301.264323" y="226.268157" width="93.909771" height="53.731843" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-11"><rect x="301.264323" y="226.268157" width="93.909771" height="53.731843" /></clipPath>
 <rect x="301.264323" y="226.268157" width="93.909771" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="303" y="234" clip-path="url(#folder-clip-11)">Message Archive</text>
+<text class="weyard rectangle-label" x="304.264323" y="234.268157">Message Archive</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-prefill-lz-series: 187,136 bytes">
 <title>golden-sun-prefill-lz-series: 187,136 bytes</title>
@@ -6872,11 +6860,12 @@
 <rect x="450.923433" y="184.81252" width="1.372097" height="1.967781" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
 </g>
 <rect x="395.174094" y="119.769367" width="57.121436" height="67.010934" fill="none" stroke="hsl(330 70% 24%)" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<rect x="395.174094" y="119.769367" width="57.121436" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="398.174094" y="127.769367">General Lz</text>
 </g>
 <rect x="395.174094" y="119.769367" width="57.121436" height="67.010934" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-12"><rect x="395.174094" y="119.769367" width="57.121436" height="67.010934" /></clipPath>
 <rect x="395.174094" y="119.769367" width="57.121436" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="397" y="128" clip-path="url(#folder-clip-12)">Prefill Lz Series</text>
+<text class="weyard rectangle-label" x="398.174094" y="127.769367">Prefill Lz…</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-standalone-tile-series: 139,632 bytes">
 <title>golden-sun-standalone-tile-series: 139,632 bytes</title>
@@ -6963,11 +6952,12 @@
 <rect x="492.482473" y="181.167509" width="2.434361" height="5.612792" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
 </g>
 <rect x="452.29553" y="119.769367" width="42.621304" height="67.010934" fill="none" stroke="hsl(330 70% 24%)" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<rect x="452.29553" y="119.769367" width="42.621304" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="455.29553" y="127.769367">Kind2 …</text>
 </g>
 <rect x="452.29553" y="119.769367" width="42.621304" height="67.010934" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-13"><rect x="452.29553" y="119.769367" width="42.621304" height="67.010934" /></clipPath>
 <rect x="452.29553" y="119.769367" width="42.621304" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="454" y="128" clip-path="url(#folder-clip-13)">Standalone Tile Series</text>
+<text class="weyard rectangle-label" x="455.29553" y="127.769367">Standa…</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-sentou-resource-series: 137,869 bytes">
 <title>golden-sun-sentou-resource-series: 137,869 bytes</title>
@@ -7214,11 +7204,12 @@
 <rect x="536.226093" y="184.216583" width="0.773907" height="2.563718" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
 </g>
 <rect x="494.916834" y="119.769367" width="42.083166" height="67.010934" fill="none" stroke="hsl(330 70% 24%)" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<rect x="494.916834" y="119.769367" width="42.083166" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="497.916834" y="127.769367">Sentou…</text>
 </g>
 <rect x="494.916834" y="119.769367" width="42.083166" height="67.010934" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-14"><rect x="494.916834" y="119.769367" width="42.083166" height="67.010934" /></clipPath>
 <rect x="494.916834" y="119.769367" width="42.083166" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="497" y="128" clip-path="url(#folder-clip-14)">Sentou Resource Series</text>
+<text class="weyard rectangle-label" x="497.916834" y="127.769367">Sentou…</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-general-lz: 107,795 bytes">
 <title>golden-sun-general-lz: 107,795 bytes</title>
@@ -7311,9 +7302,8 @@
 <rect x="430.76216" y="239.546325" width="5.164045" height="1.338795" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
 </g>
 <rect x="395.174094" y="186.780301" width="40.752111" height="54.104819" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-15"><rect x="395.174094" y="186.780301" width="40.752111" height="54.104819" /></clipPath>
 <rect x="395.174094" y="186.780301" width="40.752111" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="397" y="195" clip-path="url(#folder-clip-15)">General Lz</text>
+<text class="weyard rectangle-label" x="398.174094" y="194.780301">Genera…</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-offset-palette-lz: 77,930 bytes">
 <title>golden-sun-offset-palette-lz: 77,930 bytes</title>
@@ -7326,9 +7316,8 @@
 <rect x="428.394935" y="240.88512" width="7.53127" height="39.11488" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
 </g>
 <rect x="395.174094" y="240.88512" width="40.752111" height="39.11488" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-16"><rect x="395.174094" y="240.88512" width="40.752111" height="39.11488" /></clipPath>
 <rect x="395.174094" y="240.88512" width="40.752111" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="397" y="249" clip-path="url(#folder-clip-16)">Offset Palette Lz</text>
+<text class="weyard rectangle-label" x="398.174094" y="248.88512">Offset…</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-title-lz: 65,327 bytes">
 <title>golden-sun-title-lz: 65,327 bytes</title>
@@ -7345,9 +7334,8 @@
 <rect x="455.78247" y="217.202236" width="17.685706" height="5.170942" style="fill:hsl(330, 95%, 55%);fill:oklch(0.550 0.300 355)"/>
 </g>
 <rect x="435.926205" y="186.780301" width="37.541971" height="35.592877" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-17"><rect x="435.926205" y="186.780301" width="37.541971" height="35.592877" /></clipPath>
 <rect x="435.926205" y="186.780301" width="37.541971" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="438" y="195" clip-path="url(#folder-clip-17)">Title Lz</text>
+<text class="weyard rectangle-label" x="438.926205" y="194.780301">Title…</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-gameplay-databases: 63,448 bytes">
 <title>golden-sun-gameplay-databases: 63,448 bytes</title>
@@ -7356,9 +7344,8 @@
 <rect x="435.926205" y="222.373178" width="37.541971" height="34.569119" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
 </g>
 <rect x="435.926205" y="222.373178" width="37.541971" height="34.569119" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-18"><rect x="435.926205" y="222.373178" width="37.541971" height="34.569119" /></clipPath>
 <rect x="435.926205" y="222.373178" width="37.541971" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="438" y="230" clip-path="url(#folder-clip-18)">Gameplay Databases</text>
+<text class="weyard rectangle-label" x="438.926205" y="230.373178">Gamep…</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-localization-font: 42,320 bytes">
 <title>golden-sun-localization-font: 42,320 bytes</title>
@@ -7367,9 +7354,8 @@
 <rect x="435.926205" y="256.942297" width="37.541971" height="23.057703" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
 </g>
 <rect x="435.926205" y="256.942297" width="37.541971" height="23.057703" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-19"><rect x="435.926205" y="256.942297" width="37.541971" height="23.057703" /></clipPath>
 <rect x="435.926205" y="256.942297" width="37.541971" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="438" y="265" clip-path="url(#folder-clip-19)">Localization Font</text>
+<text class="weyard rectangle-label" x="438.926205" y="264.942297">Local…</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-tokushu-map-series: 39,756 bytes">
 <title>golden-sun-tokushu-map-series: 39,756 bytes</title>
@@ -7400,11 +7386,12 @@
 <rect x="502.038093" y="201.155756" width="5.630527" height="9.401618" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
 </g>
 <rect x="473.468176" y="186.780301" width="34.200444" height="23.777073" fill="none" stroke="hsl(330 70% 24%)" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<rect x="473.468176" y="186.780301" width="34.200444" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="476.468176" y="194.780301">Tokus…</text>
 </g>
 <rect x="473.468176" y="186.780301" width="34.200444" height="23.777073" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-20"><rect x="473.468176" y="186.780301" width="34.200444" height="23.777073" /></clipPath>
 <rect x="473.468176" y="186.780301" width="34.200444" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="475" y="195" clip-path="url(#folder-clip-20)">Tokushu Map Series</text>
+<text class="weyard rectangle-label" x="476.468176" y="194.780301">Tokus…</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-character-catalog: 34,096 bytes">
 <title>golden-sun-character-catalog: 34,096 bytes</title>
@@ -7413,9 +7400,8 @@
 <rect x="507.66862" y="186.780301" width="29.33138" height="23.777073" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
 </g>
 <rect x="507.66862" y="186.780301" width="29.33138" height="23.777073" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-21"><rect x="507.66862" y="186.780301" width="29.33138" height="23.777073" /></clipPath>
 <rect x="507.66862" y="186.780301" width="29.33138" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="510" y="195" clip-path="url(#folder-clip-21)">Character Catalog</text>
+<text class="weyard rectangle-label" x="510.66862" y="194.780301">Char…</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-mtf4-archive: 22,828 bytes">
 <title>golden-sun-mtf4-archive: 22,828 bytes</title>
@@ -7424,9 +7410,8 @@
 <rect x="473.468176" y="210.557374" width="25.57315" height="18.258752" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
 </g>
 <rect x="473.468176" y="210.557374" width="25.57315" height="18.258752" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-22"><rect x="473.468176" y="210.557374" width="25.57315" height="18.258752" /></clipPath>
 <rect x="473.468176" y="210.557374" width="25.57315" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="475" y="219" clip-path="url(#folder-clip-22)">Mtf4 Archive</text>
+<text class="weyard rectangle-label" x="476.468176" y="218.557374">Mtf…</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-battle-effect-data: 19,440 bytes">
 <title>golden-sun-battle-effect-data: 19,440 bytes</title>
@@ -7435,6 +7420,8 @@
 <rect x="499.041326" y="210.557374" width="21.777731" height="18.258752" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
 </g>
 <rect x="499.041326" y="210.557374" width="21.777731" height="18.258752" fill="none" stroke="hsl(330 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
+<rect x="499.041326" y="210.557374" width="21.777731" height="10" fill="hsl(330 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="502.041326" y="218.557374">Ba…</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-chiiki-map-series: 14,444 bytes">
 <title>golden-sun-chiiki-map-series: 14,444 bytes</title>

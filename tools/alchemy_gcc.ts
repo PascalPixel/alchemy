@@ -114,6 +114,11 @@ const NO_INTERWORK_SOURCES = new Set([
 // row at that offset, and that claim keeps getting falsified. Prefer this set
 // for anything new; the stem set stays only for its existing members.
 const NO_INTERWORK_OVERLAY_SOURCES = new Set([
+  // Transposed soft-double wrappers in resource_3a7 use the stock pop-PC
+  // epilogue; preserve the same non-interworking ABI as their exact resource_3bf
+  // siblings.
+  "assets/code/resource_3a7_c_020013ac.c",
+  "assets/code/resource_3a7_c_020013e4.c",
   // Three single-comparison predicates whose stems are already taken by
   // resource_373 and resource_3b2 rows that must keep interworking.
   "assets/code/resource_3a7_c_02001554.c",
@@ -520,15 +525,15 @@ const SCHED_HIGH_DEST_FIRST_SOURCES = new Set(["08098954", "0809a294", "08097540
 // r0-r3 ordinal tie-break: the reference defers a `negs r2,r2` behind the whole
 // argument group where we keep it adjacent to the `movs r2,#16` that feeds it.
 // -fsched-high-dest-first and -fno-sched-depend-count both move the pair but
-// land it one slot early, so this is the only flag that reaches it. No other
-// overlay owns 020011bc. Its sibling `02000178` has the same residual and is
-// *not* routable: resource_3ba already owns that address, and §7's routing key
-// is the bare address.
+// land it one slot early, so this is the only flag that reaches it. The
+// 020011bc address is shared by resource_3c6 and resource_3cb, so both owners
+// are routed by full path below. Its sibling `02000178` has the same residual
+// and is *not* routable: resource_3ba already owns that address.
 // Keyed by stem, so every member here is also a claim that no other overlay has
 // a converted row at the same offset. 02001984 was moved out to the path-keyed
 // set below when resource_3b4 gained a row at that offset that the flag breaks.
 const SCHED_LOW_DEST_FIRST_SOURCES = new Set([
-  "08097540", "020011bc", "02001958", "02000260",
+  "08097540", "02001958", "02000260",
   // resource_3b1's flat setter-sequence unindexed rows: a shifted constant
   // argument (movs/lsls) with the callee's other args set between the two
   // halves. Verified no other overlay owns these stems (bare-address key).
@@ -583,6 +588,7 @@ const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
 // (or, for 399:05dc and 0a3c, together with the routed immediate-latency
 // mode). Each entry has its own exact-byte proof.
 const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3cb_c_02000128.c",
   // resource_38f:26cc reaches the reference instruction stream when the
   // original-order tie-break is paired with the one-cycle Thumb load model;
   // the pair flips its sole remaining two-insn load/use schedule.
@@ -637,6 +643,10 @@ const GROUPED_DMA_STORE_OVERLAY_SOURCES = new Set([
   "assets/code/resource_394_c_02000f34.c",
   "assets/code/resource_394_c_02000f54.c",
   "assets/code/resource_394_c_02000fb4.c",
+  "assets/code/resource_393_c_02000d5c.c",
+  "assets/code/resource_393_c_02000d7c.c",
+  "assets/code/resource_392_c_02000b8c.c",
+  "assets/code/resource_392_c_02000bac.c",
 ]);
 const NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES = new Set([
   "assets/code/resource_383_c_0200082c.c",
@@ -773,6 +783,14 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  // 020011bc is shared by resource_3c6 and resource_3cb; preserve the
+  // scheduler route for both without leaking it to any future twin.
+  "assets/code/resource_3c6_c_020011bc.c",
+  // resource_3c6:0158 has two mirrored three-argument transition calls. Once
+  // their per-site veneer identities are preserved, the remaining scheduler
+  // tell is the same ascending r0/r1/r2 argument setup used by this cohort.
+  "assets/code/resource_3c6_c_02000158.c",
+  "assets/code/resource_3cb_c_020011bc.c",
   // The same resource_38f call sheet consistently orders tied r0-r2 argument
   // setters by ascending destination once its constants are rematerialized.
   "assets/code/resource_38f_c_020008ec.c",
@@ -846,6 +864,7 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // one and copies it where the reference negates each in place.
   "assets/code/resource_3a2_c_02000870.c",
   "assets/code/resource_3a2_c_020008a8.c",
+  "assets/code/resource_3a2_c_02000180.c",
   "assets/code/resource_3c8_c_02001780.c",
   "assets/code/resource_3c8_c_02001150.c",
   "assets/code/resource_372_c_02000f38.c",
@@ -1209,6 +1228,8 @@ const DEFAULT_ABI_SOURCES = new Set([
 const DEFAULT_ABI_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3bf_c_02005a40.c",
   "assets/code/resource_3bf_c_02005a78.c",
+  "assets/code/resource_3a7_c_020013ac.c",
+  "assets/code/resource_3a7_c_020013e4.c",
 ]);
 // The stock m4a object linked into GS1 was built with the public old_agbcc
 // compiler rather than Camelot's gcc-2.96 fork. Keep adoption source-scoped:

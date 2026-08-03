@@ -1861,7 +1861,7 @@ const ASSET_FRACTION: Record<string, number> = {
 const BOX_TREE_LEGEND: Record<string, string> = {
   exact_c: "Exact",
   semantic_c: "Semantic",
-  retained_asm: "Assembly",
+  retained_asm: "Permanent ASM",
   asset_objects: "Objects",
   asset_color: "Color images",
   asset_bw: "B&W",
@@ -2167,11 +2167,11 @@ export function renderBoxTree(
     : categoryOrder[0];
   if (completionCategory !== undefined) {
     const completionLabel = completionCategory === "exact_c"
-      ? "EXACT"
+      ? "DONE"
       : (BOX_TREE_LEGEND[completionCategory] ?? completionCategory).toUpperCase();
-    // Retained assembly is source-owned and byte-exact too; it stays dark gray so
-    // readers can distinguish its representation, but it belongs in the title
-    // bar's exact-completion total rather than in unknown/decompilation debt.
+    // Permanent assembly is source-owned and byte-exact too; it stays dark gray
+    // so readers can distinguish its representation, but DONE is explicitly the
+    // sum of exact C and permanent assembly.
     const completionBytes = boxTreeCategoryBytes(area, completionCategory) +
       (completionCategory === "exact_c" ? boxTreeCategoryBytes(area, "retained_asm") : 0);
     const completion = boxTreePercent(completionBytes, area.bytes);
@@ -2362,6 +2362,16 @@ export function readmeWithCacheBuster(
     );
   }
   return out;
+}
+
+/** Keep the README's headline aligned with the box-tree DONE metric. */
+export function readmeWithDoneHeadline(readme: string, map: CoverageMap): string {
+  const doneBytes = map.categories.exact_c.bytes + map.categories.retained_asm.bytes;
+  const done = Math.round(roundHalfUpPercent(doneBytes, map.executable_bytes));
+  return readme.replace(
+    /^## (?:Progress|DONE):.*$/m,
+    `## DONE: Currently ${done}%`,
+  );
 }
 
 function readmePath(): string {
@@ -2603,6 +2613,17 @@ export function selfTest(): void {
   if (svgCacheVersion("<svg/>") !== svgCacheVersion("<svg/>")) {
     throw new Error("the cache version is not deterministic");
   }
+  const headlineMap = {
+    executable_bytes: 1000,
+    categories: {
+      exact_c: { bytes: 201 },
+      retained_asm: { bytes: 58 },
+    },
+  } as CoverageMap;
+  if (readmeWithDoneHeadline("## Progress: Currently 20% of the way done", headlineMap) !==
+      "## DONE: Currently 26%") {
+    throw new Error("the README DONE headline does not track exact C plus permanent ASM");
+  }
 
   // The four recovered Djinn are deliberately shown at their native-looking
   // 64 px presentation size. Keep this as a checked constraint: README cache
@@ -2740,10 +2761,10 @@ export function selfTest(): void {
     "retained colour test",
   );
   if (!retainedTree.includes("oklch(0.740")) {
-    throw new Error("retained assembly did not inherit the former semantic colour");
+    throw new Error("permanent assembly did not inherit the former semantic colour");
   }
-  if (!retainedTree.includes("EXACT 100.0%")) {
-    throw new Error("retained assembly was omitted from exact completion");
+  if (!retainedTree.includes("DONE 100.0%")) {
+    throw new Error("permanent assembly was omitted from DONE");
   }
   if (retainedTree.includes("Unknown 0.0%")) {
     throw new Error("zero-byte dashboard category leaked into the legend");
@@ -2794,14 +2815,14 @@ export function selfTest(): void {
     throw new Error("box-tree chrome does not use only 16px Weyard");
   }
   if (!boxTree.includes("Exact 30.0%") || !boxTree.includes("Semantic 40.0%") ||
-      !boxTree.includes("Assembly 30.0%") || boxTree.includes("Unknown")) {
+      !boxTree.includes("Permanent ASM 30.0%") || boxTree.includes("Unknown")) {
     throw new Error("box-tree title or legend is missing from the reproducible SVG");
   }
-  if (!boxTree.includes("EXACT 60.0%") ||
+  if (!boxTree.includes("DONE 60.0%") ||
       !boxTree.includes('dominant-baseline="middle"')) {
     throw new Error("box-tree completion or vertically centred legend is missing");
   }
-  const legendOrder = ["Semantic 40.0%", "Assembly 30.0%", "Exact 30.0%"]
+  const legendOrder = ["Semantic 40.0%", "Permanent ASM 30.0%", "Exact 30.0%"]
     .map((legend) => boxTree.indexOf(`>${legend}</text>`));
   if (legendOrder.some((index) => index < 0) ||
       legendOrder.some((index, position) => position > 0 && index <= legendOrder[position - 1])) {
@@ -2915,14 +2936,14 @@ async function main(argv: string[]): Promise<void> {
          BOX_TREES.some((tree) => trackedTrees[tree] !== trees[tree])) && !stale.length) {
       stale.push("rendered map");
     }
-    const expected = readmeWithCacheBuster(
+    const expected = readmeWithDoneHeadline(readmeWithCacheBuster(
       readFileSync(readmePath(), "utf8"),
       options.target,
       Object.fromEntries(BOX_TREES.map((tree) =>
         [tree, svgCacheVersion(trackedTrees[tree])],
       )) as Record<BoxTreeId, string>,
-    );
-    if (expected !== readFileSync(readmePath(), "utf8")) stale.push("README cache-buster");
+    ), map);
+    if (expected !== readFileSync(readmePath(), "utf8")) stale.push("README DONE headline or cache-buster");
     if (stale.length) {
       throw new Error(
         `tracked coverage map is stale (${stale.join(", ")}); run: bun run coverage`,
@@ -2940,10 +2961,10 @@ async function main(argv: string[]): Promise<void> {
     // Keep the README's cache-busters in step with the pictures they bust. Doing
     // it here rather than by hand means they cannot drift.
     const readme = readFileSync(readmePath(), "utf8");
-    const busted = readmeWithCacheBuster(readme, options.target,
+    const busted = readmeWithDoneHeadline(readmeWithCacheBuster(readme, options.target,
       Object.fromEntries(BOX_TREES.map((tree) =>
         [tree, svgCacheVersion(trees[tree])],
-      )) as Record<BoxTreeId, string>);
+      )) as Record<BoxTreeId, string>), map);
     if (busted !== readme) writeFileSync(readmePath(), busted);
     console.log(
       `map=${mapPath(options.target).slice(ROOT.length + 1)} ` +

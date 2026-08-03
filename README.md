@@ -43,7 +43,7 @@ Sun* is running. Bright purple is exact, byte-matching C; the softer purple is
 readable C that still needs to be matched. Dark gray marks the small pieces of
 low-level runtime structure kept as permanent assembly.
 
-![Main-image code coverage box tree in purple with permanent assembly in dark gray.](assets/readme/gs1-en-core.svg?v=e3e199b7)
+![Main-image code coverage box tree in purple with permanent assembly in dark gray.](assets/readme/gs1-en-core.svg?v=6b7adc9e)
 
 ### Code overlays
 
@@ -59,7 +59,7 @@ alignment retained in assembly.
 `bun run verify:showcase` rebuilds every showcase's decoded image and runs the
 complete overlay-closure audit.
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=1634237a)
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=07041f75)
 
 ### Images and data
 
@@ -68,7 +68,7 @@ The non-code part of the ROM is split across two panels. This one follows
 encoded ROM data to individually understood and reusable assets. Brighter
 magenta means a more complete reconstruction.
 
-![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=cb76a608)
+![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=50855b97)
 
 ### Music and sound
 
@@ -77,7 +77,7 @@ their own maturity panel so audio progress remains legible instead of being
 compressed into the image chart. Brighter orange means a more complete
 reconstruction.
 
-![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=1adf4f4d)
+![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=87d68d5e)
 
 DONE is measured by executable bytes rather than function counts. Exact C must
 compile to the original game byte for byte; Permanent ASM must have an explicit

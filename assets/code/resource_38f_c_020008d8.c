@@ -9,3 +9,4 @@ void Func_020008d8(void) {
     Func_0200347e();
     Func_0200348a();
 }
+#include "resource_38f.h"

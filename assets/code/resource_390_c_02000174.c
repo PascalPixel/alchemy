@@ -1,3 +1,5 @@
+#include "resource_390.h"
+
 typedef unsigned short u16;
 typedef unsigned int u32;
 typedef signed int s32;

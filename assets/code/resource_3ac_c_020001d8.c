@@ -1,3 +1,5 @@
+#include "resource_3ac.h"
+
 typedef signed int s32;
 typedef unsigned char u8;
 extern u8 Value_00001be0;

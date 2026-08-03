@@ -13,3 +13,4 @@ void Func_020008ac(s32 arg0, s32 arg1) {
     Func_0200344e(1);
     Func_0200326c(1);
 }
+#include "resource_38f.h"

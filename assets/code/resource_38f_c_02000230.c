@@ -22,3 +22,4 @@ void Func_02000230(void) {
     }
     Func_02002c9c();
 }
+#include "resource_38f.h"

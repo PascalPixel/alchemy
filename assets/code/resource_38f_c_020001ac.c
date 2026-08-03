@@ -12,3 +12,4 @@ s32 Func_020001ac(void) {
     }
     return 0;
 }
+#include "resource_38f.h"

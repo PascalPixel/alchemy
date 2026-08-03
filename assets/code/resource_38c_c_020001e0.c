@@ -1,3 +1,5 @@
+#include "resource_38c.h"
+
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef signed int s32;

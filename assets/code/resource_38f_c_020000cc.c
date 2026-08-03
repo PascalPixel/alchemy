@@ -27,3 +27,4 @@ s32 Func_020000cc(struct Obj *p) {
     }
     return 1;
 }
+#include "resource_38f.h"

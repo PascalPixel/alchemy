@@ -105,16 +105,15 @@ Overlay_02000000:
 	.4byte 0x0200804d
 	.4byte 0x47204c00
 	.4byte 0x02008039
-	.4byte 0x47704800
-	.4byte 0x020084f8
+AlchemyC_02000030:
+	.space 0x8
 
 AlchemyC_02000038:
 	.space 0x4
-	.4byte 0x47704800
-	.4byte 0x02008630
-	.4byte 0x47704800
-	.2byte 0x865c
-	.2byte 0x0200
+AlchemyC_0200003c:
+	.space 0x8
+AlchemyC_02000044:
+	.space 0x8
 AlchemyC_0200004c:
 	.space 0x40
 AlchemyC_0200008c:

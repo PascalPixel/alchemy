@@ -30,3 +30,4 @@ s32 Func_02000050(struct Obj *p) {
     }
     return 1;
 }
+#include "resource_38f.h"

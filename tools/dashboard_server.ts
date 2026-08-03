@@ -289,6 +289,10 @@ async function selfTest(): Promise<void> {
   if (!client.includes("EventSource") || !client.includes("createElement")) {
     throw new Error("dashboard client is not bundled hyperscript with live events");
   }
+  if (!client.includes("data-byte-leaf") || !client.includes("data-folder-depth") ||
+      !client.includes("hover-tooltip")) {
+    throw new Error("dashboard client lost its graph hover labels");
+  }
   if (client.includes("legendbar") || client.includes("titlebar")) {
     throw new Error("dashboard title or legend escaped the reproducible SVG boundary");
   }
@@ -296,6 +300,7 @@ async function selfTest(): Promise<void> {
   const fontShorthands = styles.split(/\r?\n/).map((line) => line.trim())
     .filter((line) => line.startsWith("font:"));
   if (!styles.includes("--weyard-font: italic 400 16px/15px Weyard") ||
+      !styles.includes(".hover-tooltip") ||
       styles.includes("font-size:") ||
       fontShorthands.some((line) => line !== "font: var(--weyard-font);")) {
     throw new Error("dashboard UI typography drifted from the one 16px Weyard size");

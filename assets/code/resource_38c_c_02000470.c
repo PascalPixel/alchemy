@@ -1,3 +1,5 @@
+#include "resource_38c.h"
+
 typedef signed int s32;
 
 extern void Func_0200098c(void);

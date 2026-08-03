@@ -1,0 +1,33 @@
+#ifndef RESOURCE_38F_H
+#define RESOURCE_38F_H
+
+/* Public names for the byte-exact C owners in resource_38f. */
+#define Resource38f_Owner_0030 Func_02000030
+#define Resource38f_Owner_0050 Func_02000050
+#define Resource38f_Owner_00A0 Func_020000a0
+#define Resource38f_Owner_00CC Func_020000cc
+#define Resource38f_Owner_0114 Func_02000114
+#define Resource38f_Owner_016C Func_0200016c
+#define Resource38f_Owner_01AC Func_020001ac
+#define Resource38f_Owner_01D4 Func_020001d4
+#define Resource38f_Owner_01DC Func_020001dc
+#define Resource38f_Owner_0230 Func_02000230
+#define Resource38f_Owner_0274 Func_02000274
+#define Resource38f_Owner_0284 Func_02000284
+#define Resource38f_Owner_02B4 Func_020002b4
+#define Resource38f_Owner_0800 Func_02000800
+#define Resource38f_Owner_08AC Func_020008ac
+#define Resource38f_Owner_08D8 Func_020008d8
+#define Resource38f_Owner_25A8 Func_020025a8
+#define Resource38f_Owner_25C0 Func_020025c0
+#define Resource38f_Owner_25D8 Func_020025d8
+#define Resource38f_Owner_2608 Func_02002608
+#define Resource38f_Owner_26A4 Func_020026a4
+#define Resource38f_Owner_26CC Func_020026cc
+#define Resource38f_Owner_2910 Func_02002910
+
+#define RESOURCE_38F_SCENE_POINTER_ADDRESS 0x03001ebc
+#define RESOURCE_38F_FRAME_COUNTER_ADDRESS 0x03001e40
+#define RESOURCE_38F_WORKSPACE_POINTER_ADDRESS 0x03001e70
+
+#endif

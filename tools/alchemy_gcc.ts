@@ -843,6 +843,10 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // one and copies it where the reference negates each in place.
   "assets/code/resource_3a2_c_02000870.c",
   "assets/code/resource_3a2_c_020008a8.c",
+  // resource_3a2:0180 has the tie at two distinct sites: the r0 zero setter
+  // against an r2 pool load, then the r1 zero setter against the r2 negate.
+  // Both reference windows prefer the lower destination register.
+  "assets/code/resource_3a2_c_02000180.c",
   "assets/code/resource_3c8_c_02001780.c",
   "assets/code/resource_3c8_c_02001150.c",
   "assets/code/resource_372_c_02000f38.c",

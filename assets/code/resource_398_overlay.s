@@ -759,7 +759,9 @@ AlchemyC_020007c4:
 	.4byte 0x02009064
 	.4byte 0xffff0000
 	.4byte 0x00003333
-	.4byte 0x00004770
+AlchemyC_02000904:
+	.space 0x2
+	.2byte 0x0000
 	.4byte 0x47204c00
 	.4byte 0x080000c1
 	.4byte 0x47204c00

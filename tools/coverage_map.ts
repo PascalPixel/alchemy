@@ -2122,7 +2122,6 @@ export function renderBoxTree(
     });
     lines.push("</g>");
   };
-  let folderSequence = 0;
   const drawNodes = (nodes: readonly BoxTreeNode[], rectangle: Rect, depth: number): void => {
     for (const placed of squarify(nodes, boxNodeBytes, rectangle)) {
       const node = placed.item;
@@ -2138,18 +2137,18 @@ export function renderBoxTree(
       const stroke = folderDepth === 1 ? 2 : 1;
       lines.push(preciseRect(placed.rect,
         `fill="none" stroke="hsl(${hue.hslHue} 70% 24%)" stroke-width="${stroke}" vector-effect="non-scaling-stroke"`));
-      const showLabel = placed.rect.height >= 10 &&
-        placed.rect.width >= (folderDepth === 1 ? 25 : 60);
-      if (showLabel) {
-        const id = `folder-clip-${folderSequence++}`;
+      const displayName = folderDisplayName(node.label);
+      const displayLabel = placed.rect.height >= 10
+        ? fitText(displayName, placed.rect.width - 6, 8)
+        : undefined;
+      if (displayLabel !== undefined) {
         const headerHeight = Math.min(10, placed.rect.height);
         lines.push(
-          `<clipPath id="${id}">${preciseRect(placed.rect, "")}</clipPath>`,
           preciseRect({ ...placed.rect, height: headerHeight },
             `fill="hsl(${hue.hslHue} 70% 24%)" fill-opacity="0.9"`),
-          `<text class="weyard rectangle-label" x="${precise(Math.round(placed.rect.x) + 2)}" ` +
-            `y="${precise(Math.round(placed.rect.y) + 8)}" clip-path="url(#${id})">` +
-            `${escapeText(folderDisplayName(node.label))}</text>`,
+          `<text class="weyard rectangle-label" x="${precise(placed.rect.x + 3)}" ` +
+            `y="${precise(placed.rect.y + 8)}">` +
+            `${escapeText(displayLabel)}</text>`,
         );
       }
       lines.push("</g>");

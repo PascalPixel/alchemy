@@ -136,14 +136,12 @@
 <rect x="378.058438" y="259.466041" width="8.148605" height="20.533959" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
 <rect x="3" y="22" width="383.207043" height="258" fill="none" stroke="hsl(28 70% 24%)" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-0"><rect x="3" y="22" width="383.207043" height="258" /></clipPath>
 <rect x="3" y="22" width="383.207043" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="5" y="30" clip-path="url(#folder-clip-0)">Pcm Wave</text>
+<text class="weyard rectangle-label" x="6" y="30">Pcm Wave</text>
 </g>
 <rect x="3" y="22" width="383.207043" height="258" fill="none" stroke="hsl(28 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-1"><rect x="3" y="22" width="383.207043" height="258" /></clipPath>
 <rect x="3" y="22" width="383.207043" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="5" y="30" clip-path="url(#folder-clip-1)">Pcm Wave Series</text>
+<text class="weyard rectangle-label" x="6" y="30">Pcm Wave Series</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-sound-sequence-series: 150,254 bytes">
 <title>golden-sun-sound-sequence-series: 150,254 bytes</title>
@@ -1190,14 +1188,12 @@
 <rect x="535.062627" y="262.214673" width="1.937373" height="3.53545" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
 <rect x="386.207043" y="22" width="150.792957" height="243.750123" fill="none" stroke="hsl(28 70% 24%)" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-2"><rect x="386.207043" y="22" width="150.792957" height="243.750123" /></clipPath>
 <rect x="386.207043" y="22" width="150.792957" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="388" y="30" clip-path="url(#folder-clip-2)">Sound Sequence</text>
+<text class="weyard rectangle-label" x="389.207043" y="30">Sound Sequence</text>
 </g>
 <rect x="386.207043" y="22" width="150.792957" height="243.750123" fill="none" stroke="hsl(28 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-3"><rect x="386.207043" y="22" width="150.792957" height="243.750123" /></clipPath>
 <rect x="386.207043" y="22" width="150.792957" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="388" y="30" clip-path="url(#folder-clip-3)">Sound Sequence Series</text>
+<text class="weyard rectangle-label" x="389.207043" y="30">Sound Sequence Series</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-audio-engine-data: 3,826 bytes">
 <title>golden-sun-audio-engine-data: 3,826 bytes</title>
@@ -1206,9 +1202,8 @@
 <rect x="386.207043" y="265.750123" width="65.680083" height="14.249877" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
 <rect x="386.207043" y="265.750123" width="65.680083" height="14.249877" fill="none" stroke="hsl(28 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-4"><rect x="386.207043" y="265.750123" width="65.680083" height="14.249877" /></clipPath>
 <rect x="386.207043" y="265.750123" width="65.680083" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="388" y="274" clip-path="url(#folder-clip-4)">Audio Engine Data</text>
+<text class="weyard rectangle-label" x="389.207043" y="273.750123">Audio Engin…</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-sound-table: 2,496 bytes">
 <title>golden-sun-sound-table: 2,496 bytes</title>
@@ -1217,9 +1212,8 @@
 <rect x="451.887126" y="265.750123" width="42.848272" height="14.249877" style="fill:hsl(28, 8%, 90%);fill:oklch(0.900 0.016 55)"/>
 </g>
 <rect x="451.887126" y="265.750123" width="42.848272" height="14.249877" fill="none" stroke="hsl(28 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-5"><rect x="451.887126" y="265.750123" width="42.848272" height="14.249877" /></clipPath>
 <rect x="451.887126" y="265.750123" width="42.848272" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="454" y="274" clip-path="url(#folder-clip-5)">Sound Table</text>
+<text class="weyard rectangle-label" x="454.887126" y="273.750123">Sound …</text>
 </g>
 <g data-folder-depth="1" aria-label="golden-sun-music-residuals: 2,462 bytes">
 <title>golden-sun-music-residuals: 2,462 bytes</title>
@@ -1254,11 +1248,12 @@
 <rect x="536.072994" y="278.944454" width="0.927006" height="1.055546" style="fill:hsl(28, 95%, 55%);fill:oklch(0.550 0.200 55)"/>
 </g>
 <rect x="494.735398" y="265.750123" width="42.264602" height="14.249877" fill="none" stroke="hsl(28 70% 24%)" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<rect x="494.735398" y="265.750123" width="42.264602" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
+<text class="weyard rectangle-label" x="497.735398" y="273.750123">Music …</text>
 </g>
 <rect x="494.735398" y="265.750123" width="42.264602" height="14.249877" fill="none" stroke="hsl(28 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-<clipPath id="folder-clip-6"><rect x="494.735398" y="265.750123" width="42.264602" height="14.249877" /></clipPath>
 <rect x="494.735398" y="265.750123" width="42.264602" height="10" fill="hsl(28 70% 24%)" fill-opacity="0.9"/>
-<text class="weyard rectangle-label" x="497" y="274" clip-path="url(#folder-clip-6)">Music Residuals</text>
+<text class="weyard rectangle-label" x="497.735398" y="273.750123">Music …</text>
 </g>
 <text class="weyard" x="6" y="17">MUSIC</text>
 <text class="weyard" x="534" y="17" text-anchor="end">OBJECTS 99.6%</text>

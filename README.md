@@ -26,7 +26,7 @@ Sun* is running. Bright purple is exact, byte-matching C; the softer purple is
 readable C that still needs to be matched. Dark gray marks the small pieces of
 low-level runtime structure intentionally retained as assembly.
 
-![Main-image code coverage box tree in purple with retained assembly in dark gray.](assets/readme/gs1-en-core.svg?v=9ef37438)
+![Main-image code coverage box tree in purple with retained assembly in dark gray.](assets/readme/gs1-en-core.svg?v=0f99623d)
 
 ### Code overlays
 
@@ -35,11 +35,11 @@ them. This panel tracks all 795,106 executable bytes across those modules.
 Bright cyan is exact C, the softer cyan is readable C still being matched, gray
 is code still to reconstruct, and dark gray is retained low-level assembly.
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=000b206b)
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=d8a3e335)
 
 ### Images and data
 
-![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=5f7d4728)
+![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=0b9d6a23)
 
 ### Music and sound
 
@@ -48,7 +48,7 @@ their own maturity panel so audio progress remains legible instead of being
 compressed into the image chart. Brighter orange means a more complete
 reconstruction.
 
-![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=3e71c43d)
+![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=68ce167a)
 
 Exact-C progress is measured by executable bytes rather than function counts,
 so every claimed byte must compile to the original game before it contributes

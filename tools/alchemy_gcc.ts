@@ -369,6 +369,7 @@ const ORR_DEAD_INPUT_REUSE_SOURCES = new Set(["08003adc"]);
 // updates where a constant OR input dies at the OR and the reference reuses
 // that register for the result immediately stored to the field.
 const ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_39a_c_02001004.c",
   "assets/code/resource_38f_c_020008ec.c",
   "semantic/overlays/resource_38f_c_020008ec.c",
 ]);
@@ -537,6 +538,8 @@ const SCHED_LOW_DEST_FIRST_SOURCES = new Set([
   "020029dc",
 ]);
 const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
+  // Keep the slot copy between the two halves of the 0xc000 heading setup.
+  "assets/code/resource_3c6_c_02000078.c",
   // resource_3b7:0154 and :0178 are the same four-call sheet over two ids. The
   // third call takes -1, built as movs #1 then negs, and the reference sets the
   // second argument between those two halves; only the latency mode reproduces
@@ -1171,6 +1174,9 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
 // resource_395's converted row, and the stem set would silently recompile that
 // one too (§7's overlay-blindness trap).
 const NO_EXPENSIVE_OVERLAY_SOURCES = new Set([
+  // The scene predicate keeps its signed table value in r3 through the XOR;
+  // disabling the pass is the only exposed single mode that preserves it.
+  "assets/code/resource_370_c_02000384.c",
   "assets/code/resource_3b2_c_020012b4.c",
 ]);
 const NO_GCSE_OVERLAY_SOURCES = new Set([

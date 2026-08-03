@@ -111,12 +111,6 @@
     },
     {
       "overlay": "resource_370",
-      "entry": "0x02000384",
-      "span_bytes": 72,
-      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
-    },
-    {
-      "overlay": "resource_370",
       "entry": "0x020003cc",
       "span_bytes": 2352,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
@@ -3969,12 +3963,6 @@
       "entry": "0x02000fcc",
       "span_bytes": 42,
       "evidence": "admitted whole-owner semantic reconstruction; saved-link owner begins at 0x02000fcc and returns through pop {r0} / bx r0 at 0x02000ff2-0x02000ff4, followed by two zero alignment bytes; all six direct callees and the halfword store of 0x4000 at +6 of service zero were resolved from this overlay's disassembly"
-    },
-    {
-      "overlay": "resource_39a",
-      "entry": "0x02001004",
-      "span_bytes": 76,
-      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
     },
     {
       "overlay": "resource_39a",
@@ -8619,12 +8607,6 @@
     },
     {
       "overlay": "resource_3bc",
-      "entry": "0x02000204",
-      "span_bytes": 72,
-      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
-    },
-    {
-      "overlay": "resource_3bc",
       "entry": "0x020002f8",
       "span_bytes": 268,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
@@ -9118,12 +9100,6 @@
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
     },
     {
-      "overlay": "resource_3c1",
-      "entry": "0x0200022c",
-      "span_bytes": 92,
-      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
-    },
-    {
       "overlay": "resource_3c2",
       "entry": "0x02000030",
       "span_bytes": 8,
@@ -9578,12 +9554,6 @@
       "entry": "0x0200004c",
       "span_bytes": 8,
       "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- LEAF RESIDUE surfaced 2026-08-01 by taking the prologue gate off sweep B's published path: the address IS published (image offset 0x14) and the sweep resolved it correctly, then discarded it because a leaf opens with no push; THE SPAN IS 8 BYTES AND NOT 4 -- the one-word literal pool at 0x2000050 sits PAST the bx lr and is read by this row's own pc-relative load, so it belongs to this owner and recording 4 would orphan a word and manufacture a phantom gap; the pool word 0x20098c4 is an ADDRESS, image offset 0x18c4 under the base+0x8000 spelling, loaded and returned WITHOUT being dereferenced, so the row is a getter for an in-image table; one of 191 rows tree-wide sharing this exact body, every one of which returns a DIFFERENT address -- identical bytes are not identical semantics, and this row's pool word was resolved on its own; 0 of 0 callees"
-    },
-    {
-      "overlay": "resource_3c6",
-      "entry": "0x02000078",
-      "span_bytes": 76,
-      "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
     },
     {
       "overlay": "resource_3c6",

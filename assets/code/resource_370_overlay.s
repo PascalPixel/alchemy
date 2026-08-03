@@ -561,41 +561,8 @@ Overlay_02000000:
 	pop	{r0}
 	bx	r0
 	.2byte 0x0000
-	push	{lr}
-	movs	r0, #162
-	lsls	r0, r0, #1
-	bl	sub_020017e0
-	cmp	r0, #0
-	bne.n	.L_02000396
-	movs	r0, #0
-	b.n	.L_020003bc
-.L_02000396:
-	ldr	r1, [pc, #40]
-	ldr	r2, [pc, #40]
-	adds	r3, r2, r1
-	movs	r1, #0
-	ldrsh	r3, [r3, r1]
-	movs	r0, #0
-	cmp	r3, #2
-	beq.n	.L_020003bc
-	movs	r1, #224
-	lsls	r1, r1, #1
-	adds	r3, r2, r1
-	movs	r2, #0
-	ldrsh	r3, [r3, r2]
-	ldr	r2, [pc, #20]
-	eors	r3, r2
-	negs	r0, r3
-	orrs	r0, r3
-	lsrs	r0, r0, #31
-	negs	r0, r0
-.L_020003bc:
-	pop	{r1}
-	bx	r1
-	.4byte 0x0000023e
-	.4byte 0x02000240
-	.2byte 0x0002
-	.2byte 0x0000
+AlchemyC_02000384:
+	.space 0x48
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

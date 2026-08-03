@@ -8448,13 +8448,11 @@
 <text class="weyard" x="6" y="17">IMAGES</text>
 <text class="weyard" x="534" y="17" text-anchor="end">OBJECTS 32.6%</text>
 <rect x="6" y="288" width="10" height="10" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
-<text class="weyard" x="20" y="293" dominant-baseline="middle">Unknown 0.0%</text>
-<rect x="118" y="288" width="10" height="10" style="fill:hsl(330, 8%, 90%);fill:oklch(0.900 0.024 355)"/>
-<text class="weyard" x="132" y="293" dominant-baseline="middle">Encoded 15.0%</text>
-<rect x="238" y="288" width="10" height="10" style="fill:hsl(330, 32%, 80%);fill:oklch(0.801 0.102 355)"/>
-<text class="weyard" x="252" y="293" dominant-baseline="middle">B&amp;W 0.1%</text>
-<rect x="318" y="288" width="10" height="10" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
-<text class="weyard" x="332" y="293" dominant-baseline="middle">Color 52.4%</text>
-<rect x="422" y="288" width="10" height="10" style="fill:hsl(330, 95%, 55%);fill:oklch(0.550 0.300 355)"/>
-<text class="weyard" x="436" y="293" dominant-baseline="middle">Objects 32.6%</text>
+<text class="weyard" x="20" y="293" dominant-baseline="middle">Encoded 15.0%</text>
+<rect x="126" y="288" width="10" height="10" style="fill:hsl(330, 32%, 80%);fill:oklch(0.801 0.102 355)"/>
+<text class="weyard" x="140" y="293" dominant-baseline="middle">B&amp;W 0.1%</text>
+<rect x="206" y="288" width="10" height="10" style="fill:hsl(330, 64%, 68%);fill:oklch(0.675 0.201 355)"/>
+<text class="weyard" x="220" y="293" dominant-baseline="middle">Color 52.4%</text>
+<rect x="310" y="288" width="10" height="10" style="fill:hsl(330, 95%, 55%);fill:oklch(0.550 0.300 355)"/>
+<text class="weyard" x="324" y="293" dominant-baseline="middle">Objects 32.6%</text>
 </svg>

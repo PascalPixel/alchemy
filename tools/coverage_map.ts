@@ -54,15 +54,13 @@ export type AssetMaturityCategory =
   | "asset_bw"
   | "asset_bytes"
   | "asset_unclassified";
-const RETAINED_ASM_FILL = "#333";
-
 // CoverageCategory order is also the stacking order inside a tile: exact at the bottom.
 // `ink` is the label colour a tile takes when that category fills most of it.
 const CATEGORY_STYLE: Record<CoverageCategory, { fill: string; ink: string; label: string }> = {
   exact_c: { fill: "#0072f5", ink: "#eaf2ff", label: "byte-exact C" },
-  semantic_c: { fill: "#50e3c2", ink: "#04241d", label: "semantic C" },
+  semantic_c: { fill: "#ededed", ink: "#333333", label: "semantic C" },
   assembly: { fill: "#333333", ink: "#a1a1a1", label: "assembly" },
-  retained_asm: { fill: RETAINED_ASM_FILL, ink: "#2b1600", label: "permanent asm" },
+  retained_asm: { fill: "#50e3c2", ink: "#04241d", label: "permanent asm" },
   asset_data: { fill: "#ff0080", ink: "#2b0016", label: "data / assets" },
 };
 const CATEGORY_ORDER: CoverageCategory[] = ["exact_c", "semantic_c", "assembly", "retained_asm", "asset_data"];
@@ -1128,12 +1126,18 @@ export function overlayOwnerTiles(
     });
   }
 
+  // Every remaining executable byte still comes from the checked-in overlay
+  // assembly source and is therefore a known, byte-exact representation.  It
+  // may be a deliberately retained register veneer or a raw-halfword leaf
+  // that has not acquired a C owner yet, but it is not unknown data.  Keep it
+  // in the assembly bucket; semantic/exact C will continue to supersede it as
+  // owners land.
   for (const span of subtract(extent, [...owned, ...retainedCredited])) {
     const bytes = span.end - span.start;
     tiles.push({
-      label: `${overlay.replace(/^resource_/, "")} · unowned assembly 0x${hex8(span.start)}–0x${hex8(span.end)}`,
+      label: `${overlay.replace(/^resource_/, "")} · byte-exact assembly 0x${hex8(span.start)}–0x${hex8(span.end)}`,
       bytes,
-      categories: { assembly: bytes },
+      categories: { retained_asm: bytes },
       group: overlay.replace(/^resource_/, ""),
       address: span.start,
     });
@@ -1209,14 +1213,16 @@ export function buildCoverageMap(options: BuildOptions): CoverageMap {
   const overlayExecutable = new Map<string, Span[]>(
     inventory.overlays.map((overlay) => [overlay.id, unionIntervals(overlay.intervals)]),
   );
-  // Fixed ldr/bx veneers and audited alignment bytes are already proven
-  // structural by the executable inventory. They are source-owned, exact
-  // assembly—not unknown decompilation debt. Preserve that evidence instead
-  // of flattening every overlay interval into one undifferentiated extent.
+  // Fixed ldr/bx veneers, literal pools, and audited alignment bytes are
+  // already proven structural by the executable inventory. They are
+  // source-owned, exact assembly—not unknown decompilation debt. Preserve
+  // that evidence instead of flattening every overlay interval into one
+  // undifferentiated extent. Owner C still wins where its span includes a pool.
   const overlayRetained = new Map<string, Span[]>(
     inventory.overlays.map((overlay) => [overlay.id, unionIntervals(
       overlay.intervals.filter((interval) =>
-        interval.kind === "veneer" || interval.kind === "executable_alignment"),
+        interval.kind === "veneer" || interval.kind === "literal_pool" ||
+        interval.kind === "executable_alignment"),
     )]),
   );
 
@@ -1840,11 +1846,11 @@ const ASSET_HUE: HueBand = { hslHue: 330, okHue: 355, okCmax: 0.30, edge: "#bb2f
 const MUSIC_HUE: HueBand = { hslHue: 28, okHue: 55, okCmax: 0.20, edge: "#c85d00" };
 const GROUND = "#ffffff";
 const OK_LIGHTNESS = 0.70;
-// Completion fractions: code ladder assembly 0 -> semantic 0.5 -> exact 0.75
-// -> humanized 1 (empty until real humanization lands). Assets ladder ends at
-// individual objects; byte-represented keeps a faint tint floor.
+// Dashboard colours use the former Unknown neutral for semantic C, the former
+// Semantic mid-ramp colour for assembly, then the stronger exact/humanized
+// tiers. Assets use their own maturity ladder.
 const CODE_FRACTION: Record<string, number> = {
-  humanized_c: 1, exact_c: 0.75, semantic_c: 0.5, assembly: 0, retained_asm: 0,
+  humanized_c: 1, exact_c: 0.75, semantic_c: 0, assembly: 0, retained_asm: 0.5,
 };
 export const ASSET_TIERS = ["asset_bytes", "asset_bw", "asset_color", "asset_objects"] as const;
 export type AssetTier = (typeof ASSET_TIERS)[number];
@@ -1855,7 +1861,6 @@ const ASSET_FRACTION: Record<string, number> = {
 const BOX_TREE_LEGEND: Record<string, string> = {
   exact_c: "Exact",
   semantic_c: "Semantic",
-  assembly: "Unknown",
   retained_asm: "Assembly",
   asset_objects: "Objects",
   asset_color: "Color images",
@@ -2059,7 +2064,7 @@ export function renderBoxTree(
   ariaLabel: string,
   hue: HueBand = CORE_HUE,
   categoryFraction: Record<string, number> = CODE_FRACTION,
-  categoryOrder: readonly string[] = ["assembly", "retained_asm", "semantic_c", "exact_c", "humanized_c"],
+  categoryOrder: readonly string[] = ["semantic_c", "retained_asm", "exact_c", "humanized_c"],
   folders: readonly TileFolder[] = [],
   title = area.label,
 ): string {
@@ -2112,11 +2117,7 @@ export function renderBoxTree(
         ? rectangle.y + rectangle.height
         : rectangle.y + rectangle.height * (credited / total);
       const band = { x: rectangle.x, y: top, width: rectangle.width, height: bottom - top };
-      if (category === "retained_asm") {
-        lines.push(preciseRect(band, `style="fill:${RETAINED_ASM_FILL}"`));
-      } else {
-        lines.push(cellRect(band, categoryFraction[category] ?? 0.08));
-      }
+      lines.push(cellRect(band, categoryFraction[category] ?? 0.08));
     });
     lines.push("</g>");
   };
@@ -2182,12 +2183,14 @@ export function renderBoxTree(
   for (const category of categoryOrder) {
     const legendLabel = BOX_TREE_LEGEND[category];
     if (legendLabel === undefined) continue;
-    const percentage = boxTreePercent(boxTreeCategoryBytes(area, category), area.bytes);
+    const categoryBytes = boxTreeCategoryBytes(area, category);
+    // A zero-valued category should not survive as a misleading 0.0% legend
+    // item (notably the former overlay "Unknown" bucket).
+    if (categoryBytes === 0) continue;
+    const percentage = boxTreePercent(categoryBytes, area.bytes);
     const displayLabel = `${BOX_TREE_COMPACT_LEGEND[category] ?? legendLabel} ${percentage}`;
     const swatch = { x: legendX, y: legendCenterY - 5, width: 10, height: 10 };
-    lines.push(category === "retained_asm"
-      ? preciseRect(swatch, `fill="${RETAINED_ASM_FILL}"`)
-      : preciseRect(swatch, cellAttributes(categoryFraction[category] ?? 0.08)));
+    lines.push(preciseRect(swatch, cellAttributes(categoryFraction[category] ?? 0.08)));
     lines.push(`<text class="weyard" x="${precise(legendX + 14)}" y="${legendCenterY}" ` +
       `dominant-baseline="middle">${escapeText(displayLabel)}</text>`);
     legendX += 16 + displayLabel.length * 8;
@@ -2319,11 +2322,11 @@ export function renderBoxTrees(
     core: renderBoxTree(core,
       "Main-image code coverage box tree, purple band; 64 KiB address banks contain audited source-owner leaves at their natural executable byte size",
       CORE_HUE, CODE_FRACTION,
-      ["assembly", "retained_asm", "semantic_c", "exact_c", "humanized_c"], ["group"], "Main image"),
+      ["semantic_c", "retained_asm", "exact_c", "humanized_c"], ["group"], "Main image"),
     overlays: renderBoxTree(overlays,
-      "Decoded code-overlay coverage box tree, cyan band; each resource contains its exact, semantic, and unowned source regions",
+      "Decoded code-overlay coverage box tree, cyan band; each resource contains its exact, semantic, and assembly source regions",
       OVERLAY_HUE, CODE_FRACTION,
-      ["assembly", "retained_asm", "semantic_c", "exact_c", "humanized_c"], ["group"], "Code overlays"),
+      ["semantic_c", "retained_asm", "exact_c", "humanized_c"], ["group"], "Code overlays"),
     images: renderAssetTree(assets, images, "Images", ASSET_HUE),
     music: renderAssetTree(assets, music, "Music", MUSIC_HUE),
   };
@@ -2663,7 +2666,7 @@ export function selfTest(): void {
   }
 
   const tiles: Tile[] = [
-    { label: "a", bytes: 60, categories: { exact_c: 30, assembly: 30 } },
+    { label: "a", bytes: 60, categories: { exact_c: 30, retained_asm: 30 } },
     { label: "b", bytes: 40, categories: { semantic_c: 40 } },
   ];
   const placed = squarify(tiles, (tile) => tile.bytes, { x: 0, y: 0, width: 100, height: 100 });
@@ -2708,8 +2711,8 @@ export function selfTest(): void {
   );
   if (categoryTotal(overlayClassification, "exact_c") !== 20 ||
       categoryTotal(overlayClassification, "semantic_c") !== 20 ||
-      categoryTotal(overlayClassification, "retained_asm") !== 20 ||
-      categoryTotal(overlayClassification, "assembly") !== 40 ||
+      categoryTotal(overlayClassification, "retained_asm") !== 60 ||
+      categoryTotal(overlayClassification, "assembly") !== 0 ||
       overlayClassification.reduce((sum, tile) => sum + tile.bytes, 0) !== 100) {
     throw new Error("overlay owner tiles lost exact structural-assembly classification");
   }
@@ -2736,11 +2739,21 @@ export function selfTest(): void {
     area("retained", "Retained", [{ label: "r", bytes: 32, categories: { retained_asm: 32 } }]),
     "retained colour test",
   );
-  if (!retainedTree.includes(`fill:${RETAINED_ASM_FILL}`) || retainedTree.includes("#141414")) {
-    throw new Error("retained assembly is not rendered dark gray in the box trees");
+  if (!retainedTree.includes("oklch(0.740")) {
+    throw new Error("retained assembly did not inherit the former semantic colour");
   }
   if (!retainedTree.includes("EXACT 100.0%")) {
     throw new Error("retained assembly was omitted from exact completion");
+  }
+  if (retainedTree.includes("Unknown 0.0%")) {
+    throw new Error("zero-byte dashboard category leaked into the legend");
+  }
+  const semanticTree = renderBoxTree(
+    area("semantic", "Semantic", [{ label: "s", bytes: 32, categories: { semantic_c: 32 } }]),
+    "semantic colour test",
+  );
+  if (!semanticTree.includes("oklch(0.930 0.000") || semanticTree.includes("#333")) {
+    throw new Error("semantic C did not inherit the former light-gray colour");
   }
 
   const map: CoverageMap = {
@@ -2781,18 +2794,18 @@ export function selfTest(): void {
     throw new Error("box-tree chrome does not use only 16px Weyard");
   }
   if (!boxTree.includes("Exact 30.0%") || !boxTree.includes("Semantic 40.0%") ||
-      !boxTree.includes("Assembly 0.0%") || !boxTree.includes("Unknown 30.0%")) {
+      !boxTree.includes("Assembly 30.0%") || boxTree.includes("Unknown")) {
     throw new Error("box-tree title or legend is missing from the reproducible SVG");
   }
-  if (!boxTree.includes("EXACT 30.0%") ||
+  if (!boxTree.includes("EXACT 60.0%") ||
       !boxTree.includes('dominant-baseline="middle"')) {
     throw new Error("box-tree completion or vertically centred legend is missing");
   }
-  const legendOrder = ["Unknown 30.0%", "Assembly 0.0%", "Semantic 40.0%", "Exact 30.0%"]
+  const legendOrder = ["Semantic 40.0%", "Assembly 30.0%", "Exact 30.0%"]
     .map((legend) => boxTree.indexOf(`>${legend}</text>`));
   if (legendOrder.some((index) => index < 0) ||
       legendOrder.some((index, position) => position > 0 && index <= legendOrder[position - 1])) {
-    throw new Error("box-tree legend no longer runs from unknown through exact");
+    throw new Error("box-tree legend no longer runs from semantic through assembly to exact");
   }
   if (!boxTree.includes('viewBox="0 0 540 304"') ||
       !boxTree.includes('width="540" height="304"')) {

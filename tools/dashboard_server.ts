@@ -4,12 +4,12 @@
 import { existsSync, statSync, watch, type FSWatcher } from "node:fs";
 import { dirname, join } from "node:path";
 import {
-  DASHBOARD_TREES,
+  BOX_TREES,
   buildCoverageMap,
-  renderDashboardTrees,
+  renderBoxTrees,
   svgCacheVersion,
   workTree,
-  type DashboardTreeId,
+  type BoxTreeId,
   type CoverageMap,
 } from "./coverage_map.ts";
 
@@ -27,7 +27,7 @@ const COVERAGE_BUILD_FILES = [
 ];
 const RESTART_FILES = [SOURCE, join(dirname(SOURCE), "coverage_map.ts")];
 
-const TREE_LABELS: Record<DashboardTreeId, string> = {
+const TREE_LABELS: Record<BoxTreeId, string> = {
   core: "Main image",
   overlays: "Code overlays",
   images: "Images",
@@ -36,17 +36,17 @@ const TREE_LABELS: Record<DashboardTreeId, string> = {
 const PAGE_FILES = [CLIENT, STYLES];
 const encoder = new TextEncoder();
 
-interface LiveCoverage {
+type LiveCoverage = {
   revision: string;
   generatedAt: string;
   map: CoverageMap;
-  trees: Record<DashboardTreeId, string>;
-}
+  trees: Record<BoxTreeId, string>;
+};
 
-interface ClientBundle {
+type ClientBundle = {
   version: string;
   source: string;
-}
+};
 
 let coverage: LiveCoverage | undefined;
 let scanError: string | undefined;
@@ -146,8 +146,8 @@ function rebuildCoverage(): void {
       validateTrackedProgress: false,
       preferVerifiedAssets: true,
     });
-    const trees = renderDashboardTrees(map, tree, true);
-    const revision = DASHBOARD_TREES.map((name) => svgCacheVersion(trees[name])).join("-");
+    const trees = renderBoxTrees(map, tree, true);
+    const revision = BOX_TREES.map((name) => svgCacheVersion(trees[name])).join("-");
     coverage = { revision, generatedAt: new Date().toISOString(), map, trees };
     scanError = undefined;
   } catch (error) {
@@ -198,6 +198,14 @@ function watchRepository(): FSWatcher[] {
     notify();
   });
   watchers.push(pageWatcher);
+  for (const file of RESTART_FILES) {
+    const watcher = watch(file, () => process.exit(0));
+    watcher.on("error", (error) => {
+      scanError = `restart watcher: ${error.message}`;
+      notify();
+    });
+    watchers.push(watcher);
+  }
   // Exact and semantic ownership are tracked-tree projections. Dark-gray retained
   // ownership comes from the last verified assembly manifest, so a completed
   // full build must wake the live dashboard too.
@@ -246,8 +254,8 @@ async function selfTest(): Promise<void> {
     validateTrackedProgress: false,
     preferVerifiedAssets: true,
   });
-  const trees = renderDashboardTrees(map, tree, true);
-  if (map.categories.exact_c.bytes <= 0 || DASHBOARD_TREES.some((name) => !trees[name].startsWith("<svg "))) {
+  const trees = renderBoxTrees(map, tree, true);
+  if (map.categories.exact_c.bytes <= 0 || BOX_TREES.some((name) => !trees[name].startsWith("<svg "))) {
     throw new Error("dashboard live coverage generation failed");
   }
   const overlayArea = map.executable_areas.find((area) => area.id === "overlays");
@@ -282,15 +290,15 @@ async function selfTest(): Promise<void> {
   if (!trees.core.includes("MAIN IMAGE") || !trees.overlays.includes("CODE OVERLAYS") ||
       !trees.images.includes("IMAGES") || !trees.music.includes("MUSIC") ||
       !trees.music.includes('fill="#c85d00"') ||
-      DASHBOARD_TREES.some((name) => !trees[name].includes("font-family:Weyard;font-size:16px"))) {
+      BOX_TREES.some((name) => !trees[name].includes("font-family:Weyard;font-size:16px"))) {
     throw new Error("dashboard SVGs do not carry their own 16px Weyard title and legend chrome");
   }
   const client = await bundledClient();
   if (!client.includes("EventSource") || !client.includes("createElement")) {
     throw new Error("dashboard client is not bundled hyperscript with live events");
   }
-  if (!client.includes("data-byte-leaf") || !client.includes("data-folder-depth") ||
-      !client.includes("hover-tooltip")) {
+  if (!client.includes('closest("g[aria-label]")') || !client.includes("hover-tooltip") ||
+      client.includes("data-byte-leaf") || client.includes("data-folder-depth")) {
     throw new Error("dashboard client lost its graph hover labels");
   }
   if (client.includes("legendbar") || client.includes("titlebar")) {
@@ -338,7 +346,7 @@ async function main(): Promise<void> {
       if (path === "/weyard.otf") {
         return new Response(Bun.file(FONT), { headers: headers("font/otf", "public, max-age=300") });
       }
-      const tree = /^\/svg\/(core|overlays|images|music)$/.exec(path)?.[1] as DashboardTreeId | undefined;
+      const tree = /^\/svg\/(core|overlays|images|music)$/.exec(path)?.[1] as BoxTreeId | undefined;
       if (tree !== undefined) {
         const svg = coverage?.trees[tree];
         return svg === undefined
@@ -349,10 +357,6 @@ async function main(): Promise<void> {
     },
   });
   const repositoryWatchers = watchRepository();
-  const restartMtimes = RESTART_FILES.map(mtime);
-  const restartMonitor = setInterval(() => {
-    if (RESTART_FILES.some((file, index) => mtime(file) !== restartMtimes[index])) process.exit(0);
-  }, 1_000);
   const keepalive = setInterval(() => {
     const message = encoder.encode(": keepalive\n\n");
     for (const client of eventClients) {
@@ -360,7 +364,6 @@ async function main(): Promise<void> {
     }
   }, 5_000);
   const stop = (): void => {
-    clearInterval(restartMonitor);
     clearInterval(keepalive);
     for (const watcher of repositoryWatchers) watcher.close();
     for (const client of eventClients) {

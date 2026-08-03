@@ -2,7 +2,7 @@ type Tree = "core" | "overlays" | "images" | "music";
 type Child = Node | string | number | boolean | null | undefined | Child[];
 type Attributes = Record<string, string | number | boolean | null | undefined>;
 
-interface Snapshot {
+type Snapshot = {
   page: string;
   revision: string;
   generatedAt?: string;
@@ -16,7 +16,7 @@ interface Snapshot {
     semanticBytes: number;
     combinedBytes: number;
   };
-}
+};
 
 function append(parent: Node, child: Child): void {
   if (Array.isArray(child)) {
@@ -66,7 +66,7 @@ function hideTooltip(): void {
 
 function showTooltip(event: PointerEvent): void {
   const target = event.target instanceof Element
-    ? event.target.closest("[data-byte-leaf], [data-folder-depth]")
+    ? event.target.closest("g[aria-label]")
     : null;
   const label = target?.getAttribute("aria-label")?.trim();
   if (!label) {
@@ -101,7 +101,6 @@ async function loadTree(
   if (svg.localName !== "svg") throw new Error(`/svg/${tree} did not return an SVG`);
   svg.classList.add("tree-image");
   svg.setAttribute("aria-label", `${title} coverage graph`);
-  svg.querySelectorAll("title").forEach((node) => node.remove());
   section.replaceChildren(svg);
 }
 
@@ -118,8 +117,6 @@ function render(snapshot: Snapshot): void {
   const trees = (Object.entries(snapshot.trees) as Array<[Tree, string]>)
     .map(([tree, title]) => panel(tree, title, snapshot.revision));
   const main = h("main", { className: "trees" }, trees);
-  main.addEventListener("pointermove", showTooltip);
-  main.addEventListener("pointerleave", hideTooltip);
   root.replaceChildren(main);
   lastRevision = snapshot.revision;
   lastError = "";
@@ -174,6 +171,5 @@ events.addEventListener("update", (event) => {
   }
 });
 
-// EventSource reconnects on its own. This slow fallback also covers browsers or
-// local proxies that suppress streaming responses.
-setInterval(refresh, 5_000);
+root.addEventListener("pointermove", showTooltip);
+root.addEventListener("pointerleave", hideTooltip);

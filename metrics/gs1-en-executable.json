@@ -4,7 +4,7 @@
   "target": "gs1-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1344346,
+  "total_union_bytes": 1345594,
   "main": {
     "id": "main",
     "executable_bytes": 548364,
@@ -5213,8 +5213,8 @@
     {
       "id": "resource_36f",
       "decoded_bytes": 1618,
-      "executable_bytes": 1476,
-      "excluded_bytes": 142,
+      "executable_bytes": 1512,
+      "excluded_bytes": 106,
       "audit": "complete",
       "intervals": [
         {
@@ -5224,7 +5224,7 @@
           "evidence": "resource_36f_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33554516,
+          "start": 33554480,
           "end": 33554978,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -5319,8 +5319,8 @@
     {
       "id": "resource_370",
       "decoded_bytes": 5914,
-      "executable_bytes": 5264,
-      "excluded_bytes": 650,
+      "executable_bytes": 5300,
+      "excluded_bytes": 614,
       "audit": "complete",
       "intervals": [
         {
@@ -5330,7 +5330,7 @@
           "evidence": "resource_370_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33554516,
+          "start": 33554480,
           "end": 33554584,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -7783,8 +7783,8 @@
     {
       "id": "resource_374",
       "decoded_bytes": 16084,
-      "executable_bytes": 10288,
-      "excluded_bytes": 5796,
+      "executable_bytes": 10300,
+      "excluded_bytes": 5784,
       "audit": "complete",
       "intervals": [
         {
@@ -7795,12 +7795,6 @@
         },
         {
           "start": 33554480,
-          "end": 33554568,
-          "kind": "thumb",
-          "evidence": "resource_374_overlay.s:809:verified-C-placeholder"
-        },
-        {
-          "start": 33554580,
           "end": 33555344,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -8111,8 +8105,8 @@
     {
       "id": "resource_375",
       "decoded_bytes": 8386,
-      "executable_bytes": 7088,
-      "excluded_bytes": 1298,
+      "executable_bytes": 7116,
+      "excluded_bytes": 1270,
       "audit": "complete",
       "intervals": [
         {
@@ -8123,12 +8117,6 @@
         },
         {
           "start": 33554480,
-          "end": 33554568,
-          "kind": "thumb",
-          "evidence": "resource_375_overlay.s:596:verified-C-placeholder"
-        },
-        {
-          "start": 33554596,
           "end": 33554788,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -8307,8 +8295,8 @@
     {
       "id": "resource_376",
       "decoded_bytes": 8800,
-      "executable_bytes": 4756,
-      "excluded_bytes": 4044,
+      "executable_bytes": 4768,
+      "excluded_bytes": 4032,
       "audit": "complete",
       "intervals": [
         {
@@ -8324,7 +8312,7 @@
           "evidence": "resource_376_overlay.s:362:verified-C-placeholder"
         },
         {
-          "start": 33554648,
+          "start": 33554636,
           "end": 33554670,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -8611,8 +8599,8 @@
     {
       "id": "resource_377",
       "decoded_bytes": 11548,
-      "executable_bytes": 6804,
-      "excluded_bytes": 4744,
+      "executable_bytes": 6812,
+      "excluded_bytes": 4736,
       "audit": "complete",
       "intervals": [
         {
@@ -8623,12 +8611,6 @@
         },
         {
           "start": 33554480,
-          "end": 33554568,
-          "kind": "thumb",
-          "evidence": "resource_377_overlay.s:482:verified-C-placeholder"
-        },
-        {
-          "start": 33554576,
           "end": 33555066,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -9571,8 +9553,8 @@
     {
       "id": "resource_37a",
       "decoded_bytes": 11740,
-      "executable_bytes": 10952,
-      "excluded_bytes": 788,
+      "executable_bytes": 10988,
+      "excluded_bytes": 752,
       "audit": "complete",
       "intervals": [
         {
@@ -9582,7 +9564,7 @@
           "evidence": "resource_37a_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33554516,
+          "start": 33554480,
           "end": 33554998,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -9779,8 +9761,8 @@
     {
       "id": "resource_37b",
       "decoded_bytes": 10616,
-      "executable_bytes": 9526,
-      "excluded_bytes": 1090,
+      "executable_bytes": 9562,
+      "excluded_bytes": 1054,
       "audit": "complete",
       "intervals": [
         {
@@ -9790,7 +9772,7 @@
           "evidence": "resource_37b_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33554516,
+          "start": 33554480,
           "end": 33555794,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -10173,8 +10155,8 @@
     {
       "id": "resource_37f",
       "decoded_bytes": 9884,
-      "executable_bytes": 6702,
-      "excluded_bytes": 3182,
+      "executable_bytes": 6714,
+      "excluded_bytes": 3170,
       "audit": "complete",
       "intervals": [
         {
@@ -10185,12 +10167,6 @@
         },
         {
           "start": 33554480,
-          "end": 33554544,
-          "kind": "thumb",
-          "evidence": "resource_37f_overlay.s:475:verified-C-placeholder"
-        },
-        {
-          "start": 33554556,
           "end": 33554636,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -10931,8 +10907,8 @@
     {
       "id": "resource_381",
       "decoded_bytes": 15032,
-      "executable_bytes": 13520,
-      "excluded_bytes": 1512,
+      "executable_bytes": 13556,
+      "excluded_bytes": 1476,
       "audit": "complete",
       "intervals": [
         {
@@ -10942,7 +10918,7 @@
           "evidence": "resource_381_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33554516,
+          "start": 33554480,
           "end": 33555402,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -11331,8 +11307,8 @@
     {
       "id": "resource_382",
       "decoded_bytes": 10484,
-      "executable_bytes": 6782,
-      "excluded_bytes": 3702,
+      "executable_bytes": 6802,
+      "excluded_bytes": 3682,
       "audit": "complete",
       "intervals": [
         {
@@ -11402,7 +11378,7 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33555500,
+          "start": 33555480,
           "end": 33555522,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -12253,8 +12229,8 @@
     {
       "id": "resource_383",
       "decoded_bytes": 25848,
-      "executable_bytes": 18658,
-      "excluded_bytes": 7190,
+      "executable_bytes": 18682,
+      "excluded_bytes": 7166,
       "audit": "complete",
       "intervals": [
         {
@@ -12264,7 +12240,7 @@
           "evidence": "resource_383_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33554504,
+          "start": 33554480,
           "end": 33555318,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -12369,7 +12345,7 @@
           "start": 33560976,
           "end": 33560994,
           "kind": "thumb",
-          "evidence": "resource_383_overlay.s:3145:verified-C-placeholder"
+          "evidence": "resource_383_overlay.s:3144:verified-C-placeholder"
         },
         {
           "start": 33560994,
@@ -12639,7 +12615,7 @@
           "start": 33572364,
           "end": 33572386,
           "kind": "thumb",
-          "evidence": "resource_383_overlay.s:7347:verified-C-placeholder"
+          "evidence": "resource_383_overlay.s:7346:verified-C-placeholder"
         },
         {
           "start": 33572386,
@@ -12651,7 +12627,7 @@
           "start": 33572388,
           "end": 33572410,
           "kind": "thumb",
-          "evidence": "resource_383_overlay.s:7350:verified-C-placeholder"
+          "evidence": "resource_383_overlay.s:7349:verified-C-placeholder"
         },
         {
           "start": 33572410,
@@ -12687,7 +12663,7 @@
           "start": 33572792,
           "end": 33572796,
           "kind": "literal_pool",
-          "evidence": "resource_383_overlay.s:7409:pc-relative-literal"
+          "evidence": "resource_383_overlay.s:7408:pc-relative-literal"
         },
         {
           "start": 33572796,
@@ -12783,8 +12759,8 @@
     {
       "id": "resource_385",
       "decoded_bytes": 6720,
-      "executable_bytes": 4442,
-      "excluded_bytes": 2278,
+      "executable_bytes": 4478,
+      "excluded_bytes": 2242,
       "audit": "complete",
       "intervals": [
         {
@@ -12860,7 +12836,7 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33555636,
+          "start": 33555608,
           "end": 33555670,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -13334,7 +13310,7 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33558320,
+          "start": 33558312,
           "end": 33558592,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -13421,8 +13397,8 @@
     {
       "id": "resource_387",
       "decoded_bytes": 5376,
-      "executable_bytes": 4492,
-      "excluded_bytes": 884,
+      "executable_bytes": 4534,
+      "excluded_bytes": 842,
       "audit": "complete",
       "intervals": [
         {
@@ -13468,7 +13444,13 @@
           "evidence": "resource_387_overlay.s:569:verified-C-placeholder"
         },
         {
-          "start": 33555272,
+          "start": 33555242,
+          "end": 33555244,
+          "kind": "executable_alignment",
+          "evidence": "resource_387_overlay.s:two-byte-zero-between-executable-spans"
+        },
+        {
+          "start": 33555244,
           "end": 33555396,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -13504,6 +13486,18 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33555664,
+          "end": 33555666,
+          "kind": "thumb",
+          "evidence": "resource_387_overlay.s:744:verified-C-placeholder"
+        },
+        {
+          "start": 33555666,
+          "end": 33555668,
+          "kind": "executable_alignment",
+          "evidence": "resource_387_overlay.s:two-byte-zero-between-executable-spans"
+        },
+        {
           "start": 33555668,
           "end": 33555688,
           "kind": "thumb",
@@ -13513,10 +13507,10 @@
           "start": 33555688,
           "end": 33555692,
           "kind": "literal_pool",
-          "evidence": "resource_387_overlay.s:747:pc-relative-literal"
+          "evidence": "resource_387_overlay.s:748:pc-relative-literal"
         },
         {
-          "start": 33555700,
+          "start": 33555692,
           "end": 33556074,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -13681,8 +13675,8 @@
     {
       "id": "resource_389",
       "decoded_bytes": 6380,
-      "executable_bytes": 5398,
-      "excluded_bytes": 982,
+      "executable_bytes": 5436,
+      "excluded_bytes": 944,
       "audit": "complete",
       "intervals": [
         {
@@ -13770,7 +13764,7 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33557356,
+          "start": 33557328,
           "end": 33557448,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -13854,7 +13848,13 @@
           "evidence": "resource_389_overlay.s:1557:verified-C-placeholder"
         },
         {
-          "start": 33558728,
+          "start": 33558718,
+          "end": 33558720,
+          "kind": "executable_alignment",
+          "evidence": "resource_389_overlay.s:two-byte-zero-between-executable-spans"
+        },
+        {
+          "start": 33558720,
           "end": 33558862,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -13919,8 +13919,8 @@
     {
       "id": "resource_38a",
       "decoded_bytes": 2580,
-      "executable_bytes": 1758,
-      "excluded_bytes": 822,
+      "executable_bytes": 1770,
+      "excluded_bytes": 810,
       "audit": "complete",
       "intervals": [
         {
@@ -13961,12 +13961,6 @@
         },
         {
           "start": 33555220,
-          "end": 33555268,
-          "kind": "thumb",
-          "evidence": "resource_38a_overlay.s:337:verified-C-placeholder"
-        },
-        {
-          "start": 33555280,
           "end": 33555420,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -14025,8 +14019,8 @@
     {
       "id": "resource_38b",
       "decoded_bytes": 7560,
-      "executable_bytes": 4518,
-      "excluded_bytes": 3042,
+      "executable_bytes": 4526,
+      "excluded_bytes": 3034,
       "audit": "complete",
       "intervals": [
         {
@@ -14037,12 +14031,6 @@
         },
         {
           "start": 33554480,
-          "end": 33554692,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33554700,
           "end": 33555448,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -14075,7 +14063,7 @@
           "start": 33555832,
           "end": 33555842,
           "kind": "thumb",
-          "evidence": "resource_38b_overlay.s:553:verified-C-placeholder"
+          "evidence": "resource_38b_overlay.s:552:verified-C-placeholder"
         },
         {
           "start": 33555842,
@@ -14177,7 +14165,7 @@
           "start": 33557772,
           "end": 33557776,
           "kind": "literal_pool",
-          "evidence": "resource_38b_overlay.s:1342:pc-relative-literal"
+          "evidence": "resource_38b_overlay.s:1341:pc-relative-literal"
         },
         {
           "start": 33557776,
@@ -14273,8 +14261,8 @@
     {
       "id": "resource_38d",
       "decoded_bytes": 12464,
-      "executable_bytes": 9624,
-      "excluded_bytes": 2840,
+      "executable_bytes": 9644,
+      "excluded_bytes": 2820,
       "audit": "complete",
       "intervals": [
         {
@@ -14285,12 +14273,6 @@
         },
         {
           "start": 33554480,
-          "end": 33554568,
-          "kind": "thumb",
-          "evidence": "resource_38d_overlay.s:790:verified-C-placeholder"
-        },
-        {
-          "start": 33554588,
           "end": 33555432,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -14559,8 +14541,8 @@
     {
       "id": "resource_38e",
       "decoded_bytes": 3736,
-      "executable_bytes": 2996,
-      "excluded_bytes": 740,
+      "executable_bytes": 3016,
+      "excluded_bytes": 720,
       "audit": "complete",
       "intervals": [
         {
@@ -14571,12 +14553,6 @@
         },
         {
           "start": 33554480,
-          "end": 33554568,
-          "kind": "thumb",
-          "evidence": "resource_38e_overlay.s:202:verified-C-placeholder"
-        },
-        {
-          "start": 33554588,
           "end": 33554654,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -14967,8 +14943,8 @@
     {
       "id": "resource_391",
       "decoded_bytes": 13188,
-      "executable_bytes": 11558,
-      "excluded_bytes": 1630,
+      "executable_bytes": 11596,
+      "excluded_bytes": 1592,
       "audit": "complete",
       "intervals": [
         {
@@ -15044,7 +15020,13 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33557096,
+          "start": 33557066,
+          "end": 33557068,
+          "kind": "executable_alignment",
+          "evidence": "resource_391_overlay.s:two-byte-zero-between-executable-spans"
+        },
+        {
+          "start": 33557068,
           "end": 33557274,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -15057,12 +15039,6 @@
         },
         {
           "start": 33557276,
-          "end": 33557600,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33557608,
           "end": 33557806,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -15161,7 +15137,7 @@
           "start": 33561596,
           "end": 33561600,
           "kind": "literal_pool",
-          "evidence": "resource_391_overlay.s:2959:pc-relative-literal"
+          "evidence": "resource_391_overlay.s:2958:pc-relative-literal"
         },
         {
           "start": 33561600,
@@ -15221,7 +15197,7 @@
           "start": 33564520,
           "end": 33564542,
           "kind": "thumb",
-          "evidence": "resource_391_overlay.s:4287:verified-C-placeholder"
+          "evidence": "resource_391_overlay.s:4286:verified-C-placeholder"
         },
         {
           "start": 33564542,
@@ -15233,7 +15209,7 @@
           "start": 33564544,
           "end": 33564566,
           "kind": "thumb",
-          "evidence": "resource_391_overlay.s:4290:verified-C-placeholder"
+          "evidence": "resource_391_overlay.s:4289:verified-C-placeholder"
         },
         {
           "start": 33564566,
@@ -15257,7 +15233,7 @@
           "start": 33565400,
           "end": 33565572,
           "kind": "thumb",
-          "evidence": "resource_391_overlay.s:4474:verified-C-placeholder"
+          "evidence": "resource_391_overlay.s:4473:verified-C-placeholder"
         },
         {
           "start": 33565576,
@@ -15283,8 +15259,8 @@
     {
       "id": "resource_392",
       "decoded_bytes": 4260,
-      "executable_bytes": 3716,
-      "excluded_bytes": 544,
+      "executable_bytes": 3752,
+      "excluded_bytes": 508,
       "audit": "complete",
       "intervals": [
         {
@@ -15342,7 +15318,7 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33556984,
+          "start": 33556956,
           "end": 33557082,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -15360,7 +15336,7 @@
           "evidence": "resource_392_overlay.s:766:pc-relative-literal"
         },
         {
-          "start": 33557096,
+          "start": 33557088,
           "end": 33557168,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -15393,7 +15369,7 @@
           "start": 33557356,
           "end": 33557360,
           "kind": "literal_pool",
-          "evidence": "resource_392_overlay.s:876:pc-relative-literal"
+          "evidence": "resource_392_overlay.s:875:pc-relative-literal"
         },
         {
           "start": 33557360,
@@ -15429,7 +15405,7 @@
           "start": 33557892,
           "end": 33557896,
           "kind": "literal_pool",
-          "evidence": "resource_392_overlay.s:995:pc-relative-literal"
+          "evidence": "resource_392_overlay.s:994:pc-relative-literal"
         },
         {
           "start": 33557896,
@@ -15461,8 +15437,8 @@
     {
       "id": "resource_393",
       "decoded_bytes": 4308,
-      "executable_bytes": 3784,
-      "excluded_bytes": 524,
+      "executable_bytes": 3820,
+      "excluded_bytes": 488,
       "audit": "complete",
       "intervals": [
         {
@@ -15520,7 +15496,7 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33556984,
+          "start": 33556956,
           "end": 33557160,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -15533,12 +15509,6 @@
         },
         {
           "start": 33557164,
-          "end": 33557488,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33557496,
           "end": 33557632,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -15559,7 +15529,7 @@
           "start": 33557820,
           "end": 33557824,
           "kind": "literal_pool",
-          "evidence": "resource_393_overlay.s:910:pc-relative-literal"
+          "evidence": "resource_393_overlay.s:909:pc-relative-literal"
         },
         {
           "start": 33557824,
@@ -15577,7 +15547,7 @@
           "start": 33557980,
           "end": 33558044,
           "kind": "thumb",
-          "evidence": "resource_393_overlay.s:986:verified-C-placeholder"
+          "evidence": "resource_393_overlay.s:985:verified-C-placeholder"
         },
         {
           "start": 33558056,
@@ -15603,8 +15573,8 @@
     {
       "id": "resource_394",
       "decoded_bytes": 4792,
-      "executable_bytes": 4320,
-      "excluded_bytes": 472,
+      "executable_bytes": 4356,
+      "excluded_bytes": 436,
       "audit": "complete",
       "intervals": [
         {
@@ -15614,7 +15584,7 @@
           "evidence": "resource_394_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33554516,
+          "start": 33554480,
           "end": 33554582,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -15805,8 +15775,8 @@
     {
       "id": "resource_395",
       "decoded_bytes": 7612,
-      "executable_bytes": 5926,
-      "excluded_bytes": 1686,
+      "executable_bytes": 5966,
+      "excluded_bytes": 1646,
       "audit": "complete",
       "intervals": [
         {
@@ -15816,13 +15786,7 @@
           "evidence": "resource_395_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33554512,
-          "end": 33554560,
-          "kind": "thumb",
-          "evidence": "resource_395_overlay.s:476:verified-C-placeholder"
-        },
-        {
-          "start": 33554568,
+          "start": 33554480,
           "end": 33554756,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -15999,7 +15963,7 @@
           "start": 33560600,
           "end": 33560604,
           "kind": "literal_pool",
-          "evidence": "resource_395_overlay.s:2534:pc-relative-literal"
+          "evidence": "resource_395_overlay.s:2532:pc-relative-literal"
         },
         {
           "start": 33560604,
@@ -16061,8 +16025,8 @@
     {
       "id": "resource_396",
       "decoded_bytes": 11708,
-      "executable_bytes": 5956,
-      "excluded_bytes": 5752,
+      "executable_bytes": 5996,
+      "excluded_bytes": 5712,
       "audit": "complete",
       "intervals": [
         {
@@ -16102,7 +16066,7 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33555252,
+          "start": 33555220,
           "end": 33555372,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -16171,7 +16135,7 @@
           "start": 33555644,
           "end": 33555648,
           "kind": "literal_pool",
-          "evidence": "resource_396_overlay.s:765:pc-relative-literal"
+          "evidence": "resource_396_overlay.s:764:pc-relative-literal"
         },
         {
           "start": 33555648,
@@ -16189,7 +16153,7 @@
           "start": 33555668,
           "end": 33555672,
           "kind": "literal_pool",
-          "evidence": "resource_396_overlay.s:776:pc-relative-literal"
+          "evidence": "resource_396_overlay.s:775:pc-relative-literal"
         },
         {
           "start": 33555672,
@@ -16207,7 +16171,7 @@
           "start": 33555692,
           "end": 33555696,
           "kind": "literal_pool",
-          "evidence": "resource_396_overlay.s:787:pc-relative-literal"
+          "evidence": "resource_396_overlay.s:786:pc-relative-literal"
         },
         {
           "start": 33555696,
@@ -16225,7 +16189,7 @@
           "start": 33555736,
           "end": 33555740,
           "kind": "literal_pool",
-          "evidence": "resource_396_overlay.s:807:pc-relative-literal"
+          "evidence": "resource_396_overlay.s:806:pc-relative-literal"
         },
         {
           "start": 33555740,
@@ -16243,7 +16207,7 @@
           "start": 33555760,
           "end": 33555764,
           "kind": "literal_pool",
-          "evidence": "resource_396_overlay.s:818:pc-relative-literal"
+          "evidence": "resource_396_overlay.s:817:pc-relative-literal"
         },
         {
           "start": 33555764,
@@ -16261,7 +16225,7 @@
           "start": 33555784,
           "end": 33555788,
           "kind": "literal_pool",
-          "evidence": "resource_396_overlay.s:829:pc-relative-literal"
+          "evidence": "resource_396_overlay.s:828:pc-relative-literal"
         },
         {
           "start": 33555788,
@@ -16279,7 +16243,7 @@
           "start": 33555828,
           "end": 33555832,
           "kind": "literal_pool",
-          "evidence": "resource_396_overlay.s:849:pc-relative-literal"
+          "evidence": "resource_396_overlay.s:848:pc-relative-literal"
         },
         {
           "start": 33555832,
@@ -16297,7 +16261,7 @@
           "start": 33555852,
           "end": 33555856,
           "kind": "literal_pool",
-          "evidence": "resource_396_overlay.s:860:pc-relative-literal"
+          "evidence": "resource_396_overlay.s:859:pc-relative-literal"
         },
         {
           "start": 33555856,
@@ -16315,7 +16279,7 @@
           "start": 33555876,
           "end": 33555880,
           "kind": "literal_pool",
-          "evidence": "resource_396_overlay.s:871:pc-relative-literal"
+          "evidence": "resource_396_overlay.s:870:pc-relative-literal"
         },
         {
           "start": 33555880,
@@ -16333,7 +16297,7 @@
           "start": 33555920,
           "end": 33555924,
           "kind": "literal_pool",
-          "evidence": "resource_396_overlay.s:891:pc-relative-literal"
+          "evidence": "resource_396_overlay.s:890:pc-relative-literal"
         },
         {
           "start": 33555924,
@@ -16351,7 +16315,7 @@
           "start": 33555944,
           "end": 33555948,
           "kind": "literal_pool",
-          "evidence": "resource_396_overlay.s:902:pc-relative-literal"
+          "evidence": "resource_396_overlay.s:901:pc-relative-literal"
         },
         {
           "start": 33555948,
@@ -16369,7 +16333,7 @@
           "start": 33555968,
           "end": 33555972,
           "kind": "literal_pool",
-          "evidence": "resource_396_overlay.s:913:pc-relative-literal"
+          "evidence": "resource_396_overlay.s:912:pc-relative-literal"
         },
         {
           "start": 33555972,
@@ -16387,7 +16351,7 @@
           "start": 33556012,
           "end": 33556016,
           "kind": "literal_pool",
-          "evidence": "resource_396_overlay.s:933:pc-relative-literal"
+          "evidence": "resource_396_overlay.s:932:pc-relative-literal"
         },
         {
           "start": 33556016,
@@ -16405,7 +16369,7 @@
           "start": 33556036,
           "end": 33556040,
           "kind": "literal_pool",
-          "evidence": "resource_396_overlay.s:944:pc-relative-literal"
+          "evidence": "resource_396_overlay.s:943:pc-relative-literal"
         },
         {
           "start": 33556040,
@@ -16423,7 +16387,7 @@
           "start": 33556060,
           "end": 33556064,
           "kind": "literal_pool",
-          "evidence": "resource_396_overlay.s:955:pc-relative-literal"
+          "evidence": "resource_396_overlay.s:954:pc-relative-literal"
         },
         {
           "start": 33556064,
@@ -16444,7 +16408,7 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33556124,
+          "start": 33556116,
           "end": 33556716,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -16567,7 +16531,7 @@
           "start": 33559976,
           "end": 33559980,
           "kind": "literal_pool",
-          "evidence": "resource_396_overlay.s:2388:pc-relative-literal"
+          "evidence": "resource_396_overlay.s:2386:pc-relative-literal"
         },
         {
           "start": 33559980,
@@ -16585,7 +16549,7 @@
           "start": 33560104,
           "end": 33560108,
           "kind": "literal_pool",
-          "evidence": "resource_396_overlay.s:2529:pc-relative-literal"
+          "evidence": "resource_396_overlay.s:2527:pc-relative-literal"
         },
         {
           "start": 33560108,
@@ -16615,7 +16579,7 @@
           "start": 33560648,
           "end": 33560652,
           "kind": "literal_pool",
-          "evidence": "resource_396_overlay.s:2693:pc-relative-literal"
+          "evidence": "resource_396_overlay.s:2691:pc-relative-literal"
         },
         {
           "start": 33560652,
@@ -16627,7 +16591,7 @@
           "start": 33560664,
           "end": 33560668,
           "kind": "literal_pool",
-          "evidence": "resource_396_overlay.s:2740:pc-relative-literal"
+          "evidence": "resource_396_overlay.s:2738:pc-relative-literal"
         },
         {
           "start": 33560668,
@@ -16913,8 +16877,8 @@
     {
       "id": "resource_399",
       "decoded_bytes": 12780,
-      "executable_bytes": 8954,
-      "excluded_bytes": 3826,
+      "executable_bytes": 8966,
+      "excluded_bytes": 3814,
       "audit": "complete",
       "intervals": [
         {
@@ -16925,12 +16889,6 @@
         },
         {
           "start": 33554480,
-          "end": 33554784,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33554796,
           "end": 33554886,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -17253,8 +17211,8 @@
     {
       "id": "resource_39a",
       "decoded_bytes": 13096,
-      "executable_bytes": 9206,
-      "excluded_bytes": 3890,
+      "executable_bytes": 9218,
+      "excluded_bytes": 3878,
       "audit": "complete",
       "intervals": [
         {
@@ -17277,12 +17235,6 @@
         },
         {
           "start": 33554512,
-          "end": 33554668,
-          "kind": "thumb",
-          "evidence": "resource_39a_overlay.s:545:verified-C-placeholder"
-        },
-        {
-          "start": 33554680,
           "end": 33556446,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -17749,8 +17701,8 @@
     {
       "id": "resource_39b",
       "decoded_bytes": 12284,
-      "executable_bytes": 8684,
-      "excluded_bytes": 3600,
+      "executable_bytes": 8722,
+      "excluded_bytes": 3562,
       "audit": "complete",
       "intervals": [
         {
@@ -18006,7 +17958,13 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33558188,
+          "start": 33558158,
+          "end": 33558160,
+          "kind": "executable_alignment",
+          "evidence": "resource_39b_overlay.s:two-byte-zero-between-executable-spans"
+        },
+        {
+          "start": 33558160,
           "end": 33558218,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -18055,12 +18013,6 @@
         },
         {
           "start": 33558444,
-          "end": 33558480,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33558488,
           "end": 33558826,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -18213,7 +18165,7 @@
           "start": 33561628,
           "end": 33561632,
           "kind": "literal_pool",
-          "evidence": "resource_39b_overlay.s:3179:pc-relative-literal"
+          "evidence": "resource_39b_overlay.s:3178:pc-relative-literal"
         },
         {
           "start": 33561632,
@@ -18279,7 +18231,7 @@
           "start": 33562308,
           "end": 33562312,
           "kind": "literal_pool",
-          "evidence": "resource_39b_overlay.s:3490:pc-relative-literal"
+          "evidence": "resource_39b_overlay.s:3489:pc-relative-literal"
         },
         {
           "start": 33562312,
@@ -18383,8 +18335,8 @@
     {
       "id": "resource_39c",
       "decoded_bytes": 28696,
-      "executable_bytes": 22174,
-      "excluded_bytes": 6522,
+      "executable_bytes": 22186,
+      "excluded_bytes": 6510,
       "audit": "complete",
       "intervals": [
         {
@@ -18599,12 +18551,6 @@
         },
         {
           "start": 33558048,
-          "end": 33558132,
-          "kind": "thumb",
-          "evidence": "resource_39c_overlay.s:2357:verified-C-placeholder"
-        },
-        {
-          "start": 33558144,
           "end": 33558254,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -18667,7 +18613,7 @@
           "start": 33558316,
           "end": 33558320,
           "kind": "literal_pool",
-          "evidence": "resource_39c_overlay.s:2385:pc-relative-literal"
+          "evidence": "resource_39c_overlay.s:2386:pc-relative-literal"
         },
         {
           "start": 33558320,
@@ -18709,7 +18655,7 @@
           "start": 33559560,
           "end": 33559582,
           "kind": "thumb",
-          "evidence": "resource_39c_overlay.s:2721:verified-C-placeholder"
+          "evidence": "resource_39c_overlay.s:2722:verified-C-placeholder"
         },
         {
           "start": 33559582,
@@ -18745,7 +18691,7 @@
           "start": 33560256,
           "end": 33560260,
           "kind": "literal_pool",
-          "evidence": "resource_39c_overlay.s:2855:pc-relative-literal"
+          "evidence": "resource_39c_overlay.s:2856:pc-relative-literal"
         },
         {
           "start": 33560260,
@@ -18757,7 +18703,7 @@
           "start": 33560460,
           "end": 33560464,
           "kind": "literal_pool",
-          "evidence": "resource_39c_overlay.s:2943:pc-relative-literal"
+          "evidence": "resource_39c_overlay.s:2944:pc-relative-literal"
         },
         {
           "start": 33560464,
@@ -18877,7 +18823,7 @@
           "start": 33563908,
           "end": 33563930,
           "kind": "thumb",
-          "evidence": "resource_39c_overlay.s:4118:verified-C-placeholder"
+          "evidence": "resource_39c_overlay.s:4119:verified-C-placeholder"
         },
         {
           "start": 33563930,
@@ -19237,7 +19183,7 @@
           "start": 33575340,
           "end": 33575344,
           "kind": "literal_pool",
-          "evidence": "resource_39c_overlay.s:7941:pc-relative-literal"
+          "evidence": "resource_39c_overlay.s:7942:pc-relative-literal"
         },
         {
           "start": 33575344,
@@ -19303,7 +19249,7 @@
           "start": 33576020,
           "end": 33576024,
           "kind": "literal_pool",
-          "evidence": "resource_39c_overlay.s:8251:pc-relative-literal"
+          "evidence": "resource_39c_overlay.s:8252:pc-relative-literal"
         },
         {
           "start": 33576024,
@@ -19399,7 +19345,7 @@
           "start": 33582376,
           "end": 33582378,
           "kind": "thumb",
-          "evidence": "resource_39c_overlay.s:10105:canonical-instruction"
+          "evidence": "resource_39c_overlay.s:10106:canonical-instruction"
         },
         {
           "start": 33582380,
@@ -19519,7 +19465,7 @@
           "start": 33582688,
           "end": 33582690,
           "kind": "thumb",
-          "evidence": "resource_39c_overlay.s:10270:canonical-instruction"
+          "evidence": "resource_39c_overlay.s:10271:canonical-instruction"
         },
         {
           "start": 33582692,
@@ -19645,7 +19591,7 @@
           "start": 33583096,
           "end": 33583098,
           "kind": "thumb",
-          "evidence": "resource_39c_overlay.s:10502:canonical-instruction"
+          "evidence": "resource_39c_overlay.s:10503:canonical-instruction"
         },
         {
           "start": 33583100,
@@ -19663,7 +19609,7 @@
           "start": 33583114,
           "end": 33583116,
           "kind": "thumb",
-          "evidence": "resource_39c_overlay.s:10511:canonical-instruction"
+          "evidence": "resource_39c_overlay.s:10512:canonical-instruction"
         },
         {
           "start": 33583120,
@@ -20795,8 +20741,8 @@
     {
       "id": "resource_39f",
       "decoded_bytes": 15916,
-      "executable_bytes": 11226,
-      "excluded_bytes": 4690,
+      "executable_bytes": 11234,
+      "excluded_bytes": 4682,
       "audit": "complete",
       "intervals": [
         {
@@ -20951,12 +20897,6 @@
         },
         {
           "start": 33558184,
-          "end": 33558324,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33558332,
           "end": 33559318,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -20995,7 +20935,7 @@
           "start": 33560300,
           "end": 33560304,
           "kind": "literal_pool",
-          "evidence": "resource_39f_overlay.s:1919:pc-relative-literal"
+          "evidence": "resource_39f_overlay.s:1918:pc-relative-literal"
         },
         {
           "start": 33560304,
@@ -21031,7 +20971,7 @@
           "start": 33561856,
           "end": 33561860,
           "kind": "literal_pool",
-          "evidence": "resource_39f_overlay.s:2137:pc-relative-literal"
+          "evidence": "resource_39f_overlay.s:2136:pc-relative-literal"
         },
         {
           "start": 33561862,
@@ -21067,7 +21007,7 @@
           "start": 33563324,
           "end": 33563328,
           "kind": "literal_pool",
-          "evidence": "resource_39f_overlay.s:2390:pc-relative-literal"
+          "evidence": "resource_39f_overlay.s:2389:pc-relative-literal"
         },
         {
           "start": 33563328,
@@ -21139,7 +21079,7 @@
           "start": 33565916,
           "end": 33565920,
           "kind": "literal_pool",
-          "evidence": "resource_39f_overlay.s:3319:pc-relative-literal"
+          "evidence": "resource_39f_overlay.s:3318:pc-relative-literal"
         },
         {
           "start": 33565920,
@@ -21551,8 +21491,8 @@
     {
       "id": "resource_3a2",
       "decoded_bytes": 7648,
-      "executable_bytes": 5604,
-      "excluded_bytes": 2044,
+      "executable_bytes": 5612,
+      "excluded_bytes": 2036,
       "audit": "complete",
       "intervals": [
         {
@@ -21575,12 +21515,6 @@
         },
         {
           "start": 33554556,
-          "end": 33554608,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33554616,
           "end": 33555444,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -21619,7 +21553,7 @@
           "start": 33556648,
           "end": 33556702,
           "kind": "thumb",
-          "evidence": "resource_3a2_overlay.s:1147:verified-C-placeholder"
+          "evidence": "resource_3a2_overlay.s:1146:verified-C-placeholder"
         },
         {
           "start": 33556702,
@@ -21703,7 +21637,7 @@
           "start": 33558848,
           "end": 33558852,
           "kind": "literal_pool",
-          "evidence": "resource_3a2_overlay.s:1840:pc-relative-literal"
+          "evidence": "resource_3a2_overlay.s:1839:pc-relative-literal"
         },
         {
           "start": 33558852,
@@ -21729,8 +21663,8 @@
     {
       "id": "resource_3a3",
       "decoded_bytes": 7856,
-      "executable_bytes": 4014,
-      "excluded_bytes": 3842,
+      "executable_bytes": 4022,
+      "excluded_bytes": 3834,
       "audit": "complete",
       "intervals": [
         {
@@ -21741,12 +21675,6 @@
         },
         {
           "start": 33554480,
-          "end": 33554548,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33554556,
           "end": 33554676,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -24049,8 +23977,8 @@
     {
       "id": "resource_3a7",
       "decoded_bytes": 8756,
-      "executable_bytes": 5826,
-      "excluded_bytes": 2930,
+      "executable_bytes": 5830,
+      "excluded_bytes": 2926,
       "audit": "complete",
       "intervals": [
         {
@@ -24115,15 +24043,21 @@
         },
         {
           "start": 33555424,
-          "end": 33555468,
+          "end": 33555470,
           "kind": "thumb",
-          "evidence": "resource_3a7_overlay.s:371:verified-C-placeholder"
+          "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33555470,
+          "end": 33555472,
+          "kind": "executable_alignment",
+          "evidence": "resource_3a7_overlay.s:two-byte-zero-between-executable-spans"
         },
         {
           "start": 33555472,
           "end": 33555542,
           "kind": "thumb",
-          "evidence": "resource_3a7_overlay.s:375:verified-C-placeholder"
+          "evidence": "resource_3a7_overlay.s:376:verified-C-placeholder"
         },
         {
           "start": 33555542,
@@ -24207,7 +24141,7 @@
           "start": 33557332,
           "end": 33557386,
           "kind": "thumb",
-          "evidence": "resource_3a7_overlay.s:833:verified-C-placeholder"
+          "evidence": "resource_3a7_overlay.s:834:verified-C-placeholder"
         },
         {
           "start": 33557386,
@@ -24291,7 +24225,7 @@
           "start": 33559524,
           "end": 33559586,
           "kind": "thumb",
-          "evidence": "resource_3a7_overlay.s:1641:verified-C-placeholder"
+          "evidence": "resource_3a7_overlay.s:1642:verified-C-placeholder"
         },
         {
           "start": 33559586,
@@ -24321,7 +24255,7 @@
           "start": 33559872,
           "end": 33559876,
           "kind": "literal_pool",
-          "evidence": "resource_3a7_overlay.s:1761:pc-relative-literal"
+          "evidence": "resource_3a7_overlay.s:1762:pc-relative-literal"
         },
         {
           "start": 33559876,
@@ -24917,8 +24851,8 @@
     {
       "id": "resource_3ab",
       "decoded_bytes": 9552,
-      "executable_bytes": 6862,
-      "excluded_bytes": 2690,
+      "executable_bytes": 6866,
+      "excluded_bytes": 2686,
       "audit": "complete",
       "intervals": [
         {
@@ -25360,7 +25294,7 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33558432,
+          "start": 33558428,
           "end": 33558506,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -25549,8 +25483,8 @@
     {
       "id": "resource_3ad",
       "decoded_bytes": 7756,
-      "executable_bytes": 7188,
-      "excluded_bytes": 568,
+      "executable_bytes": 7204,
+      "excluded_bytes": 552,
       "audit": "complete",
       "intervals": [
         {
@@ -25560,13 +25494,7 @@
           "evidence": "resource_3ad_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33554488,
-          "end": 33554492,
-          "kind": "thumb",
-          "evidence": "resource_3ad_overlay.s:633:verified-C-placeholder"
-        },
-        {
-          "start": 33554500,
+          "start": 33554480,
           "end": 33554578,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -25587,7 +25515,7 @@
           "start": 33555256,
           "end": 33555260,
           "kind": "literal_pool",
-          "evidence": "resource_3ad_overlay.s:781:pc-relative-literal"
+          "evidence": "resource_3ad_overlay.s:780:pc-relative-literal"
         },
         {
           "start": 33555260,
@@ -25719,7 +25647,7 @@
           "start": 33559576,
           "end": 33559580,
           "kind": "literal_pool",
-          "evidence": "resource_3ad_overlay.s:2481:pc-relative-literal"
+          "evidence": "resource_3ad_overlay.s:2480:pc-relative-literal"
         },
         {
           "start": 33559580,
@@ -25755,7 +25683,7 @@
           "start": 33561096,
           "end": 33561100,
           "kind": "literal_pool",
-          "evidence": "resource_3ad_overlay.s:2841:pc-relative-literal"
+          "evidence": "resource_3ad_overlay.s:2840:pc-relative-literal"
         },
         {
           "start": 33561100,
@@ -25781,8 +25709,8 @@
     {
       "id": "resource_3ae",
       "decoded_bytes": 9236,
-      "executable_bytes": 5792,
-      "excluded_bytes": 3444,
+      "executable_bytes": 5800,
+      "excluded_bytes": 3436,
       "audit": "complete",
       "intervals": [
         {
@@ -25793,12 +25721,6 @@
         },
         {
           "start": 33554480,
-          "end": 33554584,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33554592,
           "end": 33554832,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -27825,8 +27747,8 @@
     {
       "id": "resource_3b2",
       "decoded_bytes": 15796,
-      "executable_bytes": 12466,
-      "excluded_bytes": 3330,
+      "executable_bytes": 12478,
+      "excluded_bytes": 3318,
       "audit": "complete",
       "intervals": [
         {
@@ -27932,13 +27854,19 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33557700,
-          "end": 33557820,
+          "start": 33557696,
+          "end": 33557698,
           "kind": "thumb",
-          "evidence": "resource_3b2_overlay.s:1502:verified-C-placeholder"
+          "evidence": "resource_3b2_overlay.s:1500:verified-C-placeholder"
         },
         {
-          "start": 33557828,
+          "start": 33557698,
+          "end": 33557700,
+          "kind": "executable_alignment",
+          "evidence": "resource_3b2_overlay.s:two-byte-zero-between-executable-spans"
+        },
+        {
+          "start": 33557700,
           "end": 33558014,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -28273,8 +28201,8 @@
     {
       "id": "resource_3b3",
       "decoded_bytes": 14028,
-      "executable_bytes": 11064,
-      "excluded_bytes": 2964,
+      "executable_bytes": 11076,
+      "excluded_bytes": 2952,
       "audit": "complete",
       "intervals": [
         {
@@ -28573,12 +28501,6 @@
         },
         {
           "start": 33559616,
-          "end": 33559736,
-          "kind": "thumb",
-          "evidence": "resource_3b3_overlay.s:2647:verified-C-placeholder"
-        },
-        {
-          "start": 33559748,
           "end": 33559874,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -28955,8 +28877,8 @@
     {
       "id": "resource_3b4",
       "decoded_bytes": 12164,
-      "executable_bytes": 9522,
-      "excluded_bytes": 2642,
+      "executable_bytes": 9546,
+      "excluded_bytes": 2618,
       "audit": "complete",
       "intervals": [
         {
@@ -29015,24 +28937,6 @@
         },
         {
           "start": 33556956,
-          "end": 33556972,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33556976,
-          "end": 33557060,
-          "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:1123:verified-C-placeholder"
-        },
-        {
-          "start": 33557072,
-          "end": 33557156,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33557160,
           "end": 33557198,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -29308,6 +29212,18 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33560960,
+          "end": 33560962,
+          "kind": "thumb",
+          "evidence": "resource_3b4_overlay.s:2376:verified-C-placeholder"
+        },
+        {
+          "start": 33560962,
+          "end": 33560964,
+          "kind": "executable_alignment",
+          "evidence": "resource_3b4_overlay.s:two-byte-zero-between-executable-spans"
+        },
+        {
           "start": 33560964,
           "end": 33561242,
           "kind": "thumb",
@@ -29323,7 +29239,7 @@
           "start": 33561244,
           "end": 33561286,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2389:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2390:verified-C-placeholder"
         },
         {
           "start": 33561286,
@@ -29341,7 +29257,7 @@
           "start": 33561436,
           "end": 33561440,
           "kind": "literal_pool",
-          "evidence": "resource_3b4_overlay.s:2399:pc-relative-literal"
+          "evidence": "resource_3b4_overlay.s:2400:pc-relative-literal"
         },
         {
           "start": 33561440,
@@ -29353,7 +29269,7 @@
           "start": 33561536,
           "end": 33561540,
           "kind": "literal_pool",
-          "evidence": "resource_3b4_overlay.s:2473:pc-relative-literal"
+          "evidence": "resource_3b4_overlay.s:2474:pc-relative-literal"
         },
         {
           "start": 33561540,
@@ -29395,7 +29311,7 @@
           "start": 33561760,
           "end": 33561802,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2566:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2567:verified-C-placeholder"
         },
         {
           "start": 33561802,
@@ -29407,7 +29323,7 @@
           "start": 33561804,
           "end": 33561846,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2569:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2570:verified-C-placeholder"
         },
         {
           "start": 33561846,
@@ -29425,13 +29341,13 @@
           "start": 33561952,
           "end": 33561956,
           "kind": "literal_pool",
-          "evidence": "resource_3b4_overlay.s:2577:pc-relative-literal"
+          "evidence": "resource_3b4_overlay.s:2578:pc-relative-literal"
         },
         {
           "start": 33561956,
           "end": 33561974,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2627:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2628:verified-C-placeholder"
         },
         {
           "start": 33561974,
@@ -29443,7 +29359,7 @@
           "start": 33561976,
           "end": 33562014,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2630:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2631:verified-C-placeholder"
         },
         {
           "start": 33562014,
@@ -29455,7 +29371,7 @@
           "start": 33562016,
           "end": 33562102,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2633:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2634:verified-C-placeholder"
         },
         {
           "start": 33562102,
@@ -29479,13 +29395,13 @@
           "start": 33562192,
           "end": 33562196,
           "kind": "literal_pool",
-          "evidence": "resource_3b4_overlay.s:2643:pc-relative-literal"
+          "evidence": "resource_3b4_overlay.s:2644:pc-relative-literal"
         },
         {
           "start": 33562196,
           "end": 33562206,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2680:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2681:verified-C-placeholder"
         },
         {
           "start": 33562206,
@@ -29497,7 +29413,7 @@
           "start": 33562208,
           "end": 33562226,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2683:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2684:verified-C-placeholder"
         },
         {
           "start": 33562226,
@@ -29509,7 +29425,7 @@
           "start": 33562228,
           "end": 33562238,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2686:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2687:verified-C-placeholder"
         },
         {
           "start": 33562238,
@@ -29521,7 +29437,7 @@
           "start": 33562240,
           "end": 33562258,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2689:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2690:verified-C-placeholder"
         },
         {
           "start": 33562258,
@@ -29533,7 +29449,7 @@
           "start": 33562260,
           "end": 33562302,
           "kind": "thumb",
-          "evidence": "resource_3b4_overlay.s:2692:verified-C-placeholder"
+          "evidence": "resource_3b4_overlay.s:2693:verified-C-placeholder"
         },
         {
           "start": 33562302,
@@ -29551,7 +29467,7 @@
           "start": 33562484,
           "end": 33562488,
           "kind": "literal_pool",
-          "evidence": "resource_3b4_overlay.s:2734:pc-relative-literal"
+          "evidence": "resource_3b4_overlay.s:2735:pc-relative-literal"
         },
         {
           "start": 33562488,
@@ -29679,8 +29595,8 @@
     {
       "id": "resource_3b5",
       "decoded_bytes": 7496,
-      "executable_bytes": 3696,
-      "excluded_bytes": 3800,
+      "executable_bytes": 3724,
+      "excluded_bytes": 3772,
       "audit": "complete",
       "intervals": [
         {
@@ -29714,7 +29630,7 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33554980,
+          "start": 33554952,
           "end": 33555254,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -29893,8 +29809,8 @@
     {
       "id": "resource_3b6",
       "decoded_bytes": 7660,
-      "executable_bytes": 2666,
-      "excluded_bytes": 4994,
+      "executable_bytes": 2686,
+      "excluded_bytes": 4974,
       "audit": "complete",
       "intervals": [
         {
@@ -29904,7 +29820,7 @@
           "evidence": "resource_3b6_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33554500,
+          "start": 33554480,
           "end": 33554740,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -30101,8 +30017,8 @@
     {
       "id": "resource_3b7",
       "decoded_bytes": 8298,
-      "executable_bytes": 6602,
-      "excluded_bytes": 1696,
+      "executable_bytes": 6622,
+      "excluded_bytes": 1676,
       "audit": "complete",
       "intervals": [
         {
@@ -30112,7 +30028,7 @@
           "evidence": "resource_3b7_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33554500,
+          "start": 33554480,
           "end": 33554768,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -31725,8 +31641,8 @@
     {
       "id": "resource_3bb",
       "decoded_bytes": 19440,
-      "executable_bytes": 16214,
-      "excluded_bytes": 3226,
+      "executable_bytes": 16256,
+      "excluded_bytes": 3184,
       "audit": "complete",
       "intervals": [
         {
@@ -31736,10 +31652,22 @@
           "evidence": "resource_3bb_overlay.s:fixed-ldr-bx-veneer"
         },
         {
+          "start": 33554480,
+          "end": 33554510,
+          "kind": "thumb",
+          "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33554510,
+          "end": 33554512,
+          "kind": "executable_alignment",
+          "evidence": "resource_3bb_overlay.s:two-byte-zero-between-executable-spans"
+        },
+        {
           "start": 33554512,
           "end": 33554522,
           "kind": "thumb",
-          "evidence": "resource_3bb_overlay.s:768:verified-C-placeholder"
+          "evidence": "resource_3bb_overlay.s:770:verified-C-placeholder"
         },
         {
           "start": 33554522,
@@ -31763,7 +31691,7 @@
           "start": 33554624,
           "end": 33554766,
           "kind": "thumb",
-          "evidence": "resource_3bb_overlay.s:776:verified-C-placeholder"
+          "evidence": "resource_3bb_overlay.s:778:verified-C-placeholder"
         },
         {
           "start": 33554766,
@@ -31805,7 +31733,7 @@
           "start": 33555216,
           "end": 33555456,
           "kind": "thumb",
-          "evidence": "resource_3bb_overlay.s:902:verified-C-placeholder"
+          "evidence": "resource_3bb_overlay.s:904:verified-C-placeholder"
         },
         {
           "start": 33555458,
@@ -31910,10 +31838,10 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33557304,
+          "start": 33557296,
           "end": 33557458,
           "kind": "thumb",
-          "evidence": "resource_3bb_overlay.s:1630:verified-C-placeholder"
+          "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
           "start": 33557458,
@@ -32387,7 +32315,7 @@
           "start": 33566652,
           "end": 33566656,
           "kind": "literal_pool",
-          "evidence": "resource_3bb_overlay.s:5576:pc-relative-literal"
+          "evidence": "resource_3bb_overlay.s:5577:pc-relative-literal"
         },
         {
           "start": 33566656,
@@ -32475,7 +32403,7 @@
         },
         {
           "start": 33567212,
-          "end": 33567274,
+          "end": 33567276,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
@@ -32507,7 +32435,7 @@
           "start": 33567552,
           "end": 33567556,
           "kind": "literal_pool",
-          "evidence": "resource_3bb_overlay.s:5936:pc-relative-literal"
+          "evidence": "resource_3bb_overlay.s:5938:pc-relative-literal"
         },
         {
           "start": 33567556,
@@ -32635,8 +32563,8 @@
     {
       "id": "resource_3bc",
       "decoded_bytes": 23416,
-      "executable_bytes": 19004,
-      "excluded_bytes": 4412,
+      "executable_bytes": 19034,
+      "excluded_bytes": 4382,
       "audit": "complete",
       "intervals": [
         {
@@ -32646,7 +32574,7 @@
           "evidence": "resource_3bc_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33554508,
+          "start": 33554480,
           "end": 33554796,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -33439,7 +33367,7 @@
         },
         {
           "start": 33569924,
-          "end": 33569986,
+          "end": 33569988,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
@@ -33471,7 +33399,7 @@
           "start": 33570264,
           "end": 33570268,
           "kind": "literal_pool",
-          "evidence": "resource_3bc_overlay.s:6862:pc-relative-literal"
+          "evidence": "resource_3bc_overlay.s:6863:pc-relative-literal"
         },
         {
           "start": 33570268,
@@ -34227,8 +34155,8 @@
     {
       "id": "resource_3be",
       "decoded_bytes": 7572,
-      "executable_bytes": 5500,
-      "excluded_bytes": 2072,
+      "executable_bytes": 5512,
+      "excluded_bytes": 2060,
       "audit": "complete",
       "intervals": [
         {
@@ -34371,9 +34299,9 @@
         },
         {
           "start": 33557696,
-          "end": 33557780,
+          "end": 33557784,
           "kind": "thumb",
-          "evidence": "resource_3be_overlay.s:1589:verified-C-placeholder"
+          "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
           "start": 33557792,
@@ -34427,7 +34355,7 @@
           "start": 33558476,
           "end": 33558480,
           "kind": "literal_pool",
-          "evidence": "resource_3be_overlay.s:1851:pc-relative-literal"
+          "evidence": "resource_3be_overlay.s:1852:pc-relative-literal"
         },
         {
           "start": 33558480,
@@ -34505,7 +34433,7 @@
           "start": 33558852,
           "end": 33558856,
           "kind": "literal_pool",
-          "evidence": "resource_3be_overlay.s:2032:pc-relative-literal"
+          "evidence": "resource_3be_overlay.s:2033:pc-relative-literal"
         },
         {
           "start": 33558856,
@@ -34535,7 +34463,13 @@
           "start": 33558976,
           "end": 33558980,
           "kind": "literal_pool",
-          "evidence": "resource_3be_overlay.s:2083:pc-relative-literal"
+          "evidence": "resource_3be_overlay.s:2084:pc-relative-literal"
+        },
+        {
+          "start": 33558980,
+          "end": 33558984,
+          "kind": "thumb",
+          "evidence": "resource_3be_overlay.s:2095:verified-C-placeholder"
         },
         {
           "start": 33559000,
@@ -34556,7 +34490,7 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33559428,
+          "start": 33559424,
           "end": 33559662,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -34597,8 +34531,8 @@
     {
       "id": "resource_3bf",
       "decoded_bytes": 30580,
-      "executable_bytes": 23458,
-      "excluded_bytes": 7122,
+      "executable_bytes": 23462,
+      "excluded_bytes": 7118,
       "audit": "complete",
       "intervals": [
         {
@@ -34657,12 +34591,6 @@
         },
         {
           "start": 33556956,
-          "end": 33557040,
-          "kind": "thumb",
-          "evidence": "resource_3bf_overlay.s:2181:verified-C-placeholder"
-        },
-        {
-          "start": 33557044,
           "end": 33557406,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -35327,8 +35255,8 @@
     {
       "id": "resource_3c0",
       "decoded_bytes": 6656,
-      "executable_bytes": 4838,
-      "excluded_bytes": 1818,
+      "executable_bytes": 4850,
+      "excluded_bytes": 1806,
       "audit": "complete",
       "intervals": [
         {
@@ -35387,12 +35315,6 @@
         },
         {
           "start": 33555276,
-          "end": 33555360,
-          "kind": "thumb",
-          "evidence": "resource_3c0_overlay.s:495:verified-C-placeholder"
-        },
-        {
-          "start": 33555372,
           "end": 33555544,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -35647,8 +35569,8 @@
     {
       "id": "resource_3c2",
       "decoded_bytes": 5068,
-      "executable_bytes": 3078,
-      "excluded_bytes": 1990,
+      "executable_bytes": 3102,
+      "excluded_bytes": 1966,
       "audit": "complete",
       "intervals": [
         {
@@ -35658,7 +35580,7 @@
           "evidence": "resource_3c2_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33554504,
+          "start": 33554480,
           "end": 33554582,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -35673,7 +35595,7 @@
           "start": 33554584,
           "end": 33554588,
           "kind": "literal_pool",
-          "evidence": "resource_3c2_overlay.s:301:pc-relative-literal"
+          "evidence": "resource_3c2_overlay.s:300:pc-relative-literal"
         },
         {
           "start": 33554590,
@@ -35703,7 +35625,7 @@
           "start": 33554732,
           "end": 33554736,
           "kind": "literal_pool",
-          "evidence": "resource_3c2_overlay.s:366:pc-relative-literal"
+          "evidence": "resource_3c2_overlay.s:365:pc-relative-literal"
         },
         {
           "start": 33554738,
@@ -35745,7 +35667,7 @@
           "start": 33554896,
           "end": 33554900,
           "kind": "literal_pool",
-          "evidence": "resource_3c2_overlay.s:441:pc-relative-literal"
+          "evidence": "resource_3c2_overlay.s:440:pc-relative-literal"
         },
         {
           "start": 33554900,
@@ -35901,8 +35823,8 @@
     {
       "id": "resource_3c4",
       "decoded_bytes": 16764,
-      "executable_bytes": 10136,
-      "excluded_bytes": 6628,
+      "executable_bytes": 10144,
+      "excluded_bytes": 6620,
       "audit": "complete",
       "intervals": [
         {
@@ -36123,12 +36045,6 @@
         },
         {
           "start": 33559008,
-          "end": 33559256,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33559264,
           "end": 33559366,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -36167,7 +36083,7 @@
           "start": 33559520,
           "end": 33559586,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:1875:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:1874:verified-C-placeholder"
         },
         {
           "start": 33559586,
@@ -36179,7 +36095,7 @@
           "start": 33559588,
           "end": 33559638,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:1878:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:1877:verified-C-placeholder"
         },
         {
           "start": 33559638,
@@ -36197,7 +36113,7 @@
           "start": 33559720,
           "end": 33559724,
           "kind": "literal_pool",
-          "evidence": "resource_3c4_overlay.s:1884:pc-relative-literal"
+          "evidence": "resource_3c4_overlay.s:1883:pc-relative-literal"
         },
         {
           "start": 33559724,
@@ -36233,7 +36149,7 @@
           "start": 33560308,
           "end": 33560330,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2107:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:2106:verified-C-placeholder"
         },
         {
           "start": 33560330,
@@ -36245,7 +36161,7 @@
           "start": 33560332,
           "end": 33560386,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2110:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:2109:verified-C-placeholder"
         },
         {
           "start": 33560386,
@@ -36269,7 +36185,7 @@
           "start": 33560824,
           "end": 33560846,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2299:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:2298:verified-C-placeholder"
         },
         {
           "start": 33560846,
@@ -36293,7 +36209,7 @@
           "start": 33561036,
           "end": 33561058,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2313:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:2312:verified-C-placeholder"
         },
         {
           "start": 33561058,
@@ -36317,7 +36233,7 @@
           "start": 33561236,
           "end": 33561240,
           "kind": "literal_pool",
-          "evidence": "resource_3c4_overlay.s:2359:pc-relative-literal"
+          "evidence": "resource_3c4_overlay.s:2358:pc-relative-literal"
         },
         {
           "start": 33561240,
@@ -36359,7 +36275,7 @@
           "start": 33561856,
           "end": 33561860,
           "kind": "literal_pool",
-          "evidence": "resource_3c4_overlay.s:2544:pc-relative-literal"
+          "evidence": "resource_3c4_overlay.s:2543:pc-relative-literal"
         },
         {
           "start": 33561862,
@@ -36377,13 +36293,13 @@
           "start": 33562456,
           "end": 33562460,
           "kind": "literal_pool",
-          "evidence": "resource_3c4_overlay.s:2863:pc-relative-literal"
+          "evidence": "resource_3c4_overlay.s:2862:pc-relative-literal"
         },
         {
           "start": 33562460,
           "end": 33562478,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2900:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:2899:verified-C-placeholder"
         },
         {
           "start": 33562478,
@@ -36443,7 +36359,7 @@
           "start": 33563392,
           "end": 33563438,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:3259:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:3258:verified-C-placeholder"
         },
         {
           "start": 33563438,
@@ -36485,7 +36401,7 @@
           "start": 33565588,
           "end": 33565592,
           "kind": "literal_pool",
-          "evidence": "resource_3c4_overlay.s:3728:pc-relative-literal"
+          "evidence": "resource_3c4_overlay.s:3727:pc-relative-literal"
         },
         {
           "start": 33566682,
@@ -36923,8 +36839,8 @@
     {
       "id": "resource_3c6",
       "decoded_bytes": 8424,
-      "executable_bytes": 5652,
-      "excluded_bytes": 2772,
+      "executable_bytes": 5672,
+      "excluded_bytes": 2752,
       "audit": "complete",
       "intervals": [
         {
@@ -36935,12 +36851,6 @@
         },
         {
           "start": 33554480,
-          "end": 33554496,
-          "kind": "thumb",
-          "evidence": "resource_3c6_overlay.s:523:verified-C-placeholder"
-        },
-        {
-          "start": 33554516,
           "end": 33554910,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -37107,8 +37017,8 @@
     {
       "id": "resource_3c7",
       "decoded_bytes": 8616,
-      "executable_bytes": 4820,
-      "excluded_bytes": 3796,
+      "executable_bytes": 4838,
+      "excluded_bytes": 3778,
       "audit": "complete",
       "intervals": [
         {
@@ -37124,13 +37034,13 @@
           "evidence": "resource_3c7_overlay.s:436:verified-C-placeholder"
         },
         {
-          "start": 33554508,
-          "end": 33554556,
-          "kind": "thumb",
-          "evidence": "resource_3c7_overlay.s:442:verified-C-placeholder"
+          "start": 33554498,
+          "end": 33554500,
+          "kind": "executable_alignment",
+          "evidence": "resource_3c7_overlay.s:two-byte-zero-between-executable-spans"
         },
         {
-          "start": 33554564,
+          "start": 33554500,
           "end": 33554674,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -37145,7 +37055,7 @@
           "start": 33554676,
           "end": 33554680,
           "kind": "literal_pool",
-          "evidence": "resource_3c7_overlay.s:456:pc-relative-literal"
+          "evidence": "resource_3c7_overlay.s:454:pc-relative-literal"
         },
         {
           "start": 33554682,
@@ -37175,7 +37085,7 @@
           "start": 33554824,
           "end": 33554828,
           "kind": "literal_pool",
-          "evidence": "resource_3c7_overlay.s:521:pc-relative-literal"
+          "evidence": "resource_3c7_overlay.s:519:pc-relative-literal"
         },
         {
           "start": 33554830,
@@ -37205,7 +37115,7 @@
           "start": 33554932,
           "end": 33554936,
           "kind": "literal_pool",
-          "evidence": "resource_3c7_overlay.s:569:pc-relative-literal"
+          "evidence": "resource_3c7_overlay.s:567:pc-relative-literal"
         },
         {
           "start": 33554938,
@@ -37247,7 +37157,7 @@
           "start": 33555096,
           "end": 33555100,
           "kind": "literal_pool",
-          "evidence": "resource_3c7_overlay.s:644:pc-relative-literal"
+          "evidence": "resource_3c7_overlay.s:642:pc-relative-literal"
         },
         {
           "start": 33555100,
@@ -37265,7 +37175,7 @@
           "start": 33555144,
           "end": 33555148,
           "kind": "literal_pool",
-          "evidence": "resource_3c7_overlay.s:663:pc-relative-literal"
+          "evidence": "resource_3c7_overlay.s:661:pc-relative-literal"
         },
         {
           "start": 33555150,
@@ -37301,7 +37211,7 @@
           "start": 33555440,
           "end": 33555444,
           "kind": "literal_pool",
-          "evidence": "resource_3c7_overlay.s:787:pc-relative-literal"
+          "evidence": "resource_3c7_overlay.s:785:pc-relative-literal"
         },
         {
           "start": 33555444,
@@ -38919,8 +38829,8 @@
     {
       "id": "resource_3ca",
       "decoded_bytes": 6904,
-      "executable_bytes": 4706,
-      "excluded_bytes": 2198,
+      "executable_bytes": 4744,
+      "excluded_bytes": 2160,
       "audit": "complete",
       "intervals": [
         {
@@ -38930,7 +38840,7 @@
           "evidence": "resource_3ca_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33554508,
+          "start": 33554480,
           "end": 33554540,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -38960,7 +38870,13 @@
           "evidence": "resource_3ca_overlay.s:290:verified-C-placeholder"
         },
         {
-          "start": 33554608,
+          "start": 33554598,
+          "end": 33554600,
+          "kind": "executable_alignment",
+          "evidence": "resource_3ca_overlay.s:two-byte-zero-between-executable-spans"
+        },
+        {
+          "start": 33554600,
           "end": 33554664,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -39029,7 +38945,7 @@
           "start": 33555340,
           "end": 33555344,
           "kind": "literal_pool",
-          "evidence": "resource_3ca_overlay.s:490:pc-relative-literal"
+          "evidence": "resource_3ca_overlay.s:489:pc-relative-literal"
         },
         {
           "start": 33555356,
@@ -39125,7 +39041,7 @@
           "start": 33558316,
           "end": 33558320,
           "kind": "literal_pool",
-          "evidence": "resource_3ca_overlay.s:1717:pc-relative-literal"
+          "evidence": "resource_3ca_overlay.s:1716:pc-relative-literal"
         },
         {
           "start": 33558400,
@@ -39187,8 +39103,8 @@
     {
       "id": "resource_3cb",
       "decoded_bytes": 8012,
-      "executable_bytes": 6370,
-      "excluded_bytes": 1642,
+      "executable_bytes": 6402,
+      "excluded_bytes": 1610,
       "audit": "complete",
       "intervals": [
         {
@@ -39198,13 +39114,7 @@
           "evidence": "resource_3cb_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33554492,
-          "end": 33554520,
-          "kind": "thumb",
-          "evidence": "resource_3cb_overlay.s:377:verified-C-placeholder"
-        },
-        {
-          "start": 33554528,
+          "start": 33554480,
           "end": 33554698,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -39411,7 +39321,19 @@
           "start": 33558404,
           "end": 33558408,
           "kind": "literal_pool",
-          "evidence": "resource_3cb_overlay.s:2087:pc-relative-literal"
+          "evidence": "resource_3cb_overlay.s:2086:pc-relative-literal"
+        },
+        {
+          "start": 33558408,
+          "end": 33558410,
+          "kind": "thumb",
+          "evidence": "resource_3cb_overlay.s:2115:verified-C-placeholder"
+        },
+        {
+          "start": 33558410,
+          "end": 33558412,
+          "kind": "executable_alignment",
+          "evidence": "resource_3cb_overlay.s:two-byte-zero-between-executable-spans"
         },
         {
           "start": 33558412,
@@ -39468,7 +39390,7 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33558972,
+          "start": 33558964,
           "end": 33559400,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -39603,8 +39525,8 @@
     {
       "id": "resource_3cd",
       "decoded_bytes": 2768,
-      "executable_bytes": 2178,
-      "excluded_bytes": 590,
+      "executable_bytes": 2214,
+      "excluded_bytes": 554,
       "audit": "complete",
       "intervals": [
         {
@@ -39614,13 +39536,7 @@
           "evidence": "resource_3cd_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33554508,
-          "end": 33554584,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33554592,
+          "start": 33554480,
           "end": 33554946,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -39677,7 +39593,7 @@
           "start": 33556248,
           "end": 33556252,
           "kind": "literal_pool",
-          "evidence": "resource_3cd_overlay.s:835:pc-relative-literal"
+          "evidence": "resource_3cd_overlay.s:834:pc-relative-literal"
         },
         {
           "start": 33556252,
@@ -39745,8 +39661,8 @@
     {
       "id": "resource_3ce",
       "decoded_bytes": 5772,
-      "executable_bytes": 4730,
-      "excluded_bytes": 1042,
+      "executable_bytes": 4758,
+      "excluded_bytes": 1014,
       "audit": "complete",
       "intervals": [
         {
@@ -39756,7 +39672,7 @@
           "evidence": "resource_3ce_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33554508,
+          "start": 33554480,
           "end": 33554950,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"

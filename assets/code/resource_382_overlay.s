@@ -808,12 +808,12 @@ AlchemyC_020000a0:
 	.2byte 0x0000
 	.4byte 0x03001e8c
 	.4byte 0x00000ea4
-	.4byte 0x47704800
-	.4byte 0x02009f5c
-	.4byte 0x47702000
-	.4byte 0x47704800
-	.2byte 0xa094
-	.2byte 0x0200
+AlchemyC_02000418:
+	.space 0x8
+AlchemyC_02000420:
+	.space 0x4
+AlchemyC_02000424:
+	.space 0x8
 	push	{lr}
 	ldr	r0, [pc, #20]
 	bl	sub_02001dba

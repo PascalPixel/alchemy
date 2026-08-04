@@ -480,8 +480,8 @@ Overlay_02000000:
 	.2byte 0x0200
 AlchemyC_02000030:
 	.space 0x58
-	.4byte 0x47704800
-	.4byte 0x02009fd0
+AlchemyC_02000088:
+	.space 0x8
 AlchemyC_02000090:
 	.space 0x4
 AlchemyC_02000094:

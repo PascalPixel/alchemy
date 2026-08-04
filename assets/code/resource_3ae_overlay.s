@@ -435,9 +435,8 @@ AlchemyC_02000040:
 
 AlchemyC_02000094:
 	.space 0x4
-	.4byte 0x47704800
-	.2byte 0x98a0
-	.2byte 0x0200
+AlchemyC_02000098:
+	.space 0x8
 AlchemyC_020000a0:
 	.space 0xa4
 	push	{lr}

@@ -1853,9 +1853,8 @@ AlchemyC_02001270:
 	.space 0x40
 AlchemyC_020012b0:
 	.space 0x28
-	.4byte 0x47704800
-	.2byte 0xb85c
-	.2byte 0x0200
+AlchemyC_020012d8:
+	.space 0x8
 AlchemyC_020012e0:
 	.space 0x38
 AlchemyC_02001318:

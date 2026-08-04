@@ -441,14 +441,14 @@ AlchemyC_02000040:
 	bx	r1
 	.4byte 0x03001e8c
 	.4byte 0x00000ea4
-	.4byte 0x47704800
-	.4byte 0x02009060
-	.4byte 0x47702000
-	.4byte 0x47704800
-	.4byte 0x020091f8
-	.4byte 0x47704800
-	.2byte 0x9238
-	.2byte 0x0200
+AlchemyC_02000208:
+	.space 0x8
+AlchemyC_02000210:
+	.space 0x4
+AlchemyC_02000214:
+	.space 0x8
+AlchemyC_0200021c:
+	.space 0x8
 AlchemyC_02000224:
 	.space 0x3c
 AlchemyC_02000260:

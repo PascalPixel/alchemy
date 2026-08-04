@@ -641,10 +641,10 @@ AlchemyC_020000d8:
 	.space 0x58
 AlchemyC_02000130:
 	.space 0x30
-	.4byte 0x47702000
-	.4byte 0x47704800
-	.2byte 0xa990
-	.2byte 0x0200
+AlchemyC_02000160:
+	.space 0x4
+AlchemyC_02000164:
+	.space 0x8
 	push	{r5, lr}
 	ldr	r3, [pc, #88]
 	movs	r1, #224

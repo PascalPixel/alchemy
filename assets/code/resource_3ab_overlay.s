@@ -1973,8 +1973,8 @@ AlchemyC_02000388:
 	bx	r0
 	.4byte 0x02000240
 	.4byte 0x000024da
-	.2byte 0x4770
-	.2byte 0x0000
+AlchemyC_02000f9c:
+	.space 0x4
 	push	{r5, lr}
 	sub	sp, #8
 	movs	r3, #7

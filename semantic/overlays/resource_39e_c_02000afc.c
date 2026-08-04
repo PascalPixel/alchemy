@@ -56,63 +56,64 @@ typedef unsigned char u8;
  * inference from context, not evidence.
  */
 
-extern void Func_080000c0(s32 arg0);
-extern s32 Func_080770c0(s32 flagId);
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern u8 *Func_0808a080(s32 slot);
-extern void Func_0808a098(s32 slot, u8 *descriptor);
-extern void Func_0808a148(s32 slot, s32 a1, s32 a2);
-extern void Func_0808a170(s32 dialogueId);
-extern void Func_0808a180(s32 slot, s32 a1);
+extern void Func_02004e58(s32 arg0);
+extern s32 Func_02004f16(s32 flagId);
+extern s32 Func_02004f28(s32 flagId);
+extern void Func_02004edc(void);
+extern void Func_02004fa0(void);
+extern u8 *Func_02004f0a(s32 slot);
+extern u8 *Func_02004f1e(s32 slot);
+extern u8 *Func_02004f2a(s32 slot);
+extern u8 *Func_02004f34(s32 slot);
+extern u8 *Func_02004f40(s32 slot);
+extern u8 *Func_02004f48(s32 slot);
+extern u8 *Func_02004fa2(s32 slot);
+extern u8 *Func_02004fae(s32 slot);
+extern void Func_02004fd4(s32 slot, u8 *descriptor);
+extern void Func_02004fd0(s32 slot, s32 a1, s32 a2);
+extern void Func_02005000(s32 dialogueId);
+extern void Func_02005012(s32 dialogueId);
+extern void Func_0200502c(s32 dialogueId);
+extern void Func_02005044(s32 slot, s32 a1);
 
 void Func_02000afc(void)
 {
-    u8 *record;
+    Func_02004edc();
 
-    Func_0808a018();
-
-    record = Func_0808a080(12);
-    record[91] = 0;
+    Func_02004f0a(12)[91] = 0;
 
     goto testPendingWork;
 waitPendingWork:
-        Func_080000c0(1);
+        Func_02004e58(1);
 testPendingWork:
-    if (*(s32 *)(Func_0808a080(12) + 12) > 0) {
+    if (*(s32 *)(Func_02004f1e(12) + 12) > 0) {
         goto waitPendingWork;
     }
 
-    record = Func_0808a080(12);
-    *(s32 *)(record + 12) = 0;
+    *(s32 *)(Func_02004f2a(12) + 12) = 0;
 
-    record = Func_0808a080(12);
-    *(s32 *)(record + 60) = 128 << 24;
+    *(s32 *)(Func_02004f34(12) + 60) = 128 << 24;
 
-    record = Func_0808a080(12);
-    *(s32 *)(record + 40) = 0;
+    *(s32 *)(Func_02004f40(12) + 40) = 0;
 
-    record = Func_0808a080(12);
-    record[91] = 1;
+    Func_02004f48(12)[91] = 1;
 
-    Func_0808a148(12, 0, 0);
+    Func_02004fd0(12, 0, 0);
 
-    if (Func_080770c0(0x895) != 0) {
-        Func_0808a170(0x1a5b);
-    } else if (Func_080770c0(0x89b) != 0) {
-        Func_0808a170(0x189e);
+    if (Func_02004f16(0x895) != 0) {
+        Func_02005000(0x1a5b);
+    } else if (Func_02004f28(0x89b) != 0) {
+        Func_02005012(0x189e);
     } else {
-        Func_0808a170(0x182a);
+        Func_0200502c(0x182a);
     }
 
-    Func_0808a180(12, 0);
+    Func_02005044(12, 0);
 
-    record = Func_0808a080(12);
-    *(u16 *)(record + 6) = 128 << 7;
+    *(u16 *)(Func_02004fa2(12) + 6) = 128 << 7;
 
-    record = Func_0808a080(12);
-    record[91] = 0;
+    Func_02004fae(12)[91] = 0;
 
-    Func_0808a098(12, (u8 *)0x0200c638);
-    Func_0808a020();
+    Func_02004fd4(12, (u8 *)0x0200c638);
+    Func_02004fa0();
 }

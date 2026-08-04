@@ -24,12 +24,12 @@ typedef signed int s32;
  * symbol names and the raw pool value for absolute data addresses, which is
  * self-consistent; nothing here depends on which of the two bases is real.
  */
-void Func_02000c90();
-void Func_080091f0();
-s32 Func_08077040();
-s32 Func_080770c0();
-void Func_080770c8();
-void Func_080f9010();
+void Func_020019a4();
+void Func_0200631a();
+s32 Func_020062f2();
+s32 Func_02006316();
+void Func_02006356();
+void Func_020064c2();
 
 void Func_02000ce0(void)
 {
@@ -37,20 +37,20 @@ void Func_02000ce0(void)
     s16 id;
     s32 selector;
 
-    if (Func_08077040(234) == -1) {
+    if (Func_020062f2(234) == -1) {
         return;
     }
 
     id = *(s16 *)(workspace + 364);
     selector = id - 40;
 
-    if (Func_080770c0(0x941) != 0 && selector == 4) {
+    if (Func_02006316(0x941) != 0 && selector == 4) {
         return;
     }
 
-    Func_02000c90(selector);
-    Func_080f9010(157);
-    Func_080091f0(0x30000, 0x30000, 0x10000);
-    Func_080091f0(-1, -1, 0xe666);
-    Func_080770c8(id + 808);
+    Func_020019a4(selector);
+    Func_020064c2(157);
+    Func_0200631a(0x30000, 0x30000, 0x10000);
+    Func_0200631a(-1, -1, 0xe666);
+    Func_02006356(id + 808);
 }

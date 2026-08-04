@@ -55,7 +55,7 @@ typedef signed int s32;
 void Func_02000030(void *record, s32 value)
 {
     u8 *inner = *(u8 **)((u8 *)record + 80);
-    u8 mask = ~0x0c;
+    s32 result = ((value & 3) << 2) | (inner[9] & ~0x0c);
 
-    inner[9] = (u8)((inner[9] & mask) | ((value & 3) << 2));
+    inner[9] = (u8)result;
 }

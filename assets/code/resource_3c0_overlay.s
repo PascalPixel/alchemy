@@ -486,11 +486,8 @@ AlchemyC_02000314:
 	pop	{r5}
 	pop	{r1}
 	bx	r1
-	.4byte 0x78033054
-	.4byte 0x40532201
-	.4byte 0x20017003
-	.2byte 0x4770
-	.2byte 0x0000
+AlchemyC_0200033c:
+	.space 0x10
 AlchemyC_0200034c:
 	.space 0x54
 AlchemyC_020003a0:
@@ -1289,11 +1286,8 @@ AlchemyC_020003ac:
 	.4byte 0x000009b7
 	.4byte 0x0000020e
 	.4byte 0x020097a8
-	.4byte 0x681b4b02
-	.4byte 0x33342201
-	.4byte 0x4770701a
-	.2byte 0x1f30
-	.2byte 0x0300
+AlchemyC_02000b14:
+	.space 0x10
 	push	{r5, r6, lr}
 	ldr	r3, [pc, #184]
 	adds	r6, r1, #0

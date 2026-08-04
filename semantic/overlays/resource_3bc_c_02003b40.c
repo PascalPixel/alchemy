@@ -29,23 +29,25 @@ typedef unsigned int u32;
  * alone.
  */
 
-s32 *Func_0808a400();          /* entity by selector, established */
-void Func_08009140();          /* unestablished */
-void Func_08009080();          /* established (record, mode) */
-void Func_08009150();          /* established (record, x, y, z) */
+s32 *Func_020086b0();          /* entity by selector, established */
+void Func_02008464();          /* unestablished */
+void Func_0200844c();          /* established (record, mode) */
+void Func_02008488();          /* established (record, x, y, z) */
 
 void Func_02003b40(s32 selector, s32 x, s32 z)
 {
     s32 *record;
+    s32 field48;
 
-    record = Func_0808a400(selector);
+    record = Func_020086b0(selector);
     if (record != 0) {
-        *(u32 *)((u8 *)record + 48) = 0x20000;
-        *(u32 *)((u8 *)record + 52) = 0x10000;
+        field48 = 0x20000;
+        *(u32 *)((u8 *)record + 48) = field48;
+        *(u32 *)((u8 *)record + 52) = field48 >> 1;
         *((u8 *)record + 0x5b) = 0;
 
-        Func_08009140();
-        Func_08009080(record, 5);
-        Func_08009150(record, x << 16, record[3], z << 16);
+        Func_02008464();
+        Func_0200844c(record, 5);
+        Func_02008488(record, x << 16, record[3], z << 16);
     }
 }

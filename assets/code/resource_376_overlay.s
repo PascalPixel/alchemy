@@ -377,10 +377,10 @@ AlchemyC_02000030:
 	.4byte 0x20008023
 	.4byte 0x00004770
 	.4byte 0x00000666
-	.4byte 0x47704800
-	.4byte 0x02009478
-	.2byte 0x2000
-	.2byte 0x4770
+AlchemyC_020000cc:
+	.space 0x8
+AlchemyC_020000d4:
+	.space 0x4
 	push	{lr}
 	ldr	r0, [pc, #20]
 	bl	sub_02001262

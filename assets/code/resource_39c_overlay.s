@@ -2355,9 +2355,10 @@ AlchemyC_02000dfc:
 	.2byte 0x0000
 AlchemyC_02000e20:
 	.space 0x54
-	.4byte 0x47702000
-	.4byte 0x47704800
-	.4byte 0x0200e614
+AlchemyC_02000e74:
+	.space 0x4
+AlchemyC_02000e78:
+	.space 0x8
 AlchemyC_02000e80:
 	.space 0x64
 	push {lr}

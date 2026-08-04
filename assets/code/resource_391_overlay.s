@@ -1429,14 +1429,14 @@ AlchemyC_02000474:
 	pop	{r1}
 	bx	r1
 	.2byte 0x0000
-	.4byte 0x47704800
-	.4byte 0x0200b06c
-	.4byte 0x47702000
-	.4byte 0x47704800
-	.4byte 0x0200b0cc
-	.4byte 0x47704800
-	.2byte 0xb0e4
-	.2byte 0x0200
+AlchemyC_02000a4c:
+	.space 0x8
+AlchemyC_02000a54:
+	.space 0x4
+AlchemyC_02000a58:
+	.space 0x8
+AlchemyC_02000a60:
+	.space 0x8
 	push	{r5, lr}
 	sub	sp, #32
 	bl	sub_0200367a
@@ -1523,9 +1523,8 @@ AlchemyC_02000b1c:
 	.space 0x12
 AlchemyC_02000c14:
 	.space 0x4c
-	.4byte 0x47704800
-	.2byte 0xb294
-	.2byte 0x0200
+AlchemyC_02000c60:
+	.space 0x8
 	push	{r5, lr}
 	movs	r0, #10
 	sub	sp, #8

@@ -31,9 +31,10 @@ typedef signed int s32;
  * some other task publishes them while this owner spins.
  */
 
-/* Import veneer, named by the main-image function it reaches.  Old-style
- * declaration: arities vary between call sites in this overlay. */
-void Func_080000c0();
+/* Per-site veneers (raw sub_ symbols from the overlay .s), both ultimately
+ * reaching the same main-image import but each is its own call-site symbol. */
+void Func_02004716();
+void Func_02004724();
 
 /* In-image status words at file offsets 0x4834 and 0x4838. */
 extern volatile s32 Data_0200c834;
@@ -43,11 +44,11 @@ void Func_02000970(void)
 {
     s32 polls;
 
-    Func_080000c0(10);
+    Func_02004716(10);
 
     polls = 0;
     while (Data_0200c834 != 0 || Data_0200c838 != 75) {
-        Func_080000c0(1);
+        Func_02004724(1);
         polls = polls + 1;
         if (polls >= 600) break;
     }

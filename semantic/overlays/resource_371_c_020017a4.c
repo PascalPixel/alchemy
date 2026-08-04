@@ -26,16 +26,17 @@ typedef signed int s32;
  * declarations, because the interfaces are unknown.
  */
 
-u8 *Func_0808a080();
-s32 Func_080770c0();
-void Func_080f9010();
-void Func_08009080();
-void Func_080770c8();
+u8 *Func_02005aa6();
+u8 *Func_02005aae();
+s32 Func_02005a5e();
+void Func_02005c80();
+void Func_020059e0();
+void Func_02005a80();
 
 void Func_020017a4(void)
 {
-    u8 *self = Func_0808a080(15);
-    u8 *source = Func_0808a080(14);
+    u8 *self = Func_02005aa6(15);
+    u8 *source = Func_02005aae(14);
 
     *(s32 *)(self + 0x08) = *(s32 *)(source + 0x08);
     *(s32 *)(self + 0x10) = *(s32 *)(source + 0x10);
@@ -45,11 +46,11 @@ void Func_020017a4(void)
     }
     *(s32 *)(self + 0x0c) = 0xa0000;
 
-    if (Func_080770c0(512) != 0) {
+    if (Func_02005a5e(512) != 0) {
         return;
     }
-    Func_080f9010(145);
-    Func_08009080(self, 3);
-    Func_080770c8(512);
+    Func_02005c80(145);
+    Func_020059e0(self, 3);
+    Func_02005a80(512);
     *(u16 *)(self + 0x64) = 1;
 }

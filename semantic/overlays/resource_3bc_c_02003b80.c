@@ -29,26 +29,29 @@ typedef unsigned int u32;
  * otherwise cross-referenced from this owner alone.
  */
 
-s32 *Func_0808a400();          /* entity by selector, established */
-void Func_08009140();          /* unestablished */
-void Func_08009080();          /* established (record, mode) */
-void Func_08009150();          /* established (record, x, y, z) */
-void Func_08009158();          /* unestablished, single argument */
+s32 *Func_020086f0();          /* entity by selector, established */
+void Func_020084a4();          /* unestablished */
+void Func_0200848c();          /* established (record, mode) */
+void Func_020084c8();          /* established (record, x, y, z) */
+void Func_020084d6();          /* unestablished, single argument */
+void Func_020084a6();          /* established (record, mode) */
 
 void Func_02003b80(s32 selector, s32 x, s32 z)
 {
     s32 *record;
+    s32 field48;
 
-    record = Func_0808a400(selector);
+    record = Func_020086f0(selector);
     if (record != 0) {
-        *(u32 *)((u8 *)record + 48) = 0x14000;
-        *(u32 *)((u8 *)record + 52) = 0xa000;
+        field48 = 0x14000;
+        *(u32 *)((u8 *)record + 48) = field48;
+        *(u32 *)((u8 *)record + 52) = field48 >> 1;
         *((u8 *)record + 0x5b) = 0;
 
-        Func_08009140();
-        Func_08009080(record, 5);
-        Func_08009150(record, x << 16, record[3], z << 16);
-        Func_08009158(record);
-        Func_08009080(record, 1);
+        Func_020084a4();
+        Func_0200848c(record, 5);
+        Func_020084c8(record, x << 16, record[3], z << 16);
+        Func_020084d6(record);
+        Func_020084a6(record, 1);
     }
 }

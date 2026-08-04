@@ -843,6 +843,16 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   "assets/code/resource_373_c_02003380.c",
   "assets/code/resource_373_c_020012bc.c",
   "assets/code/resource_3b5_c_02000644.c",
+  // resource_371:281c: once the per-site local veneer symbols replace the
+  // resolved far names, the only residue is movs r0,#55 landing between the
+  // r1 immediate's movs/lsls halves -- the same low-destination tie-break
+  // (mode cohort by hand, no inventory row for this address-only owner,
+  // 2026-08-04).
+  "assets/code/resource_371_c_0200281c.c",
+  // resource_371:2858, twin of :281c's dialogue call sheet: same low-dest
+  // tie-break moves each movs r0,#0 ahead of its sibling immediate synthesis
+  // (mode cohort by hand, no inventory row, 2026-08-04).
+  "assets/code/resource_371_c_02002858.c",
   "assets/code/resource_3bb_c_02000b38.c",
   // After the paired CSE route rematerializes resource_3c8:07d8's three -1
   // arguments, this restores its final five-instruction load/store setup.

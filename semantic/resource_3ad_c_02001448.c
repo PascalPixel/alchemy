@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 3ad, cutscene at 0x02001448 (792 bytes, 90 call sites).

@@ -39,7 +39,7 @@
 
 /* Old-style declarations: arities vary between call sites in this overlay.
  * The flag test must still declare a return type because it is tested. */
-typedef signed int s32;
+#include "types.h"
 
 s32 Func_080770c0();    /* test a scene completion flag */
 void Func_08015040();

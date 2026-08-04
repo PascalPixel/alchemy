@@ -1,6 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 3c8 at 0x02001f60: the "party members take their marks" step -

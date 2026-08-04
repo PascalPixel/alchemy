@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 37a scene setup at 0x02001264 (284 bytes, 0x02001264-0x0200137f).

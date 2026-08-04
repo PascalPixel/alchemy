@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 struct ConvertedValue_020014d8 {
     s32 unknown00;

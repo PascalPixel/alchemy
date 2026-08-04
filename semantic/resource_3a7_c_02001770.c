@@ -1,6 +1,4 @@
-typedef unsigned int u32;
-typedef signed int s32;
-typedef unsigned long long u64;
+#include "types.h"
 
 /*
  * resource_3a7 soft-float double unpack at 0x02001770, 212 bytes.

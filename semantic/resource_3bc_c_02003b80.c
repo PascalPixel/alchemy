@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * resource_3bc owner at 0x02003b80, 80 bytes: a third sibling in this

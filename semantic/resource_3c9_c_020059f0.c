@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * resource_3c9 owner at 0x020059f0, 56 bytes: gated by a byte flag at

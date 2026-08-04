@@ -1,9 +1,4 @@
-typedef unsigned char u8;
-typedef signed char s8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3cb post-session outcome dispatcher at 0x020012e0 (1060 bytes,

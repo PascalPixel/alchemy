@@ -49,9 +49,7 @@
 
 /* Old-style declarations: overlay imports vary their argument count between
  * call sites in this overlay. */
-typedef signed int s32;
-typedef unsigned char u8;
-typedef unsigned short u16;
+#include "types.h"
 
 u8 *Func_080090c8();    /* spawner: (kind, x, y, z) -> record, or NULL */
 s32 Func_080000f8();    /* random source, no arguments */

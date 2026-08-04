@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef signed short s16;
+#include "types.h"
 
 /*
  * Resource 37a gated cutscene at 0x02000488 (1388 bytes,

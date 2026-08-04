@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3c6 scene setup at 0x0200120c, 716 bytes (0x0200120c-0x020014d7).

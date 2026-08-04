@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /* Complete actor-15 facing-preserving dialogue scene through its two-word pool. */
 struct Actor_02000640 {

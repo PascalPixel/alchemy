@@ -1,4 +1,4 @@
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 3ad, owner at 0x02000094 (64 bytes, 3 call sites).

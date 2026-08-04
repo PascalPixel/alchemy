@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /* resource_3bc state-machine slot 6, complete 248-byte owner and pool. */
 

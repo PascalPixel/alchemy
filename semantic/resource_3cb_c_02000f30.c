@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3cb party-roster membership test at 0x02000f30 (88 bytes,

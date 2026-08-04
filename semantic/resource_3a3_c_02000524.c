@@ -1,7 +1,4 @@
-typedef signed int s32;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 3a3 scene-variant entry sequence at 0x02000524 (384 bytes,

@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_39f owner at 0x020015d0, 288 bytes: code 0x020015d0-0x020016e9, an

@@ -62,7 +62,7 @@
  *  - The imports' interfaces are unknown, hence the old-style declarations.
  */
 
-typedef signed int s32;
+#include "types.h"
 
 s32 Func_080772e0();
 s32 Func_08077308();

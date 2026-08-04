@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3a6 camera-shift scene at 0x020018b4 (54 bytes, 7 calls).

@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 extern s32 Func_080770c0(s32 flagId);
 
 /* Complete 80-byte three-flag table selector through its seven-word pool. */

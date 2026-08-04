@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3b8 cutscene at 0x02000ff8.

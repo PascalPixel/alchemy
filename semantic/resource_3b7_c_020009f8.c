@@ -75,9 +75,7 @@
  *    types because their results are used.
  */
 
-typedef signed int s32;
-typedef unsigned int u32;
-typedef unsigned short u16;
+#include "types.h"
 
 extern s32 Data_02000240[];     /* RAM workspace; also indexed as s16 elsewhere */
 extern s32 Data_02001000;

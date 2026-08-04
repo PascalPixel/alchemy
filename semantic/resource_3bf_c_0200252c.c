@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3bf party placement at 0x0200252c.

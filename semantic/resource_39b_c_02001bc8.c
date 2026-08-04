@@ -1,4 +1,4 @@
-typedef unsigned char u8;
+#include "types.h"
 
 extern u8 *Func_080090c8();
 extern void Func_08009098();

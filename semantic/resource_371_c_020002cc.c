@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 /* Copy the halfword at workspace + 282 into the object held at arg0 + 80,
  * then clear the object's byte at +38. */

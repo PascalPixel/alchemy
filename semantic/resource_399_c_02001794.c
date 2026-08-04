@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * resource_399 five-lane kind-222 emitter at 0x02001794, complete 304-byte

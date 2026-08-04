@@ -1,6 +1,4 @@
-typedef signed int s32;
-typedef signed short s16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 3a3 scene entry at 0x02000904 (552 bytes,

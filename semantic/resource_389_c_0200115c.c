@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_389 owner at 0x0200115c, 192 bytes: the scene-script callback for

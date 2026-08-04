@@ -1,5 +1,4 @@
-typedef int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_380 owner at 0x02000a98, 708 bytes: a three-panel scene

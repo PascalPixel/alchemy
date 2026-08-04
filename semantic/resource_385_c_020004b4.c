@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /* Complete actor-mode scene wrapper through its return and alignment. */
 extern void Func_0808a018(void);

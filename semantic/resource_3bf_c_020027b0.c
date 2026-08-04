@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 3bf two-variant cutscene script at 0x020027b0.

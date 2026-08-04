@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /* Exact reviewed skeleton homolog of resource_39c:0x0200058c, using this
  * overlay's independently mapped delta/key tables.  Complete 164-byte owner

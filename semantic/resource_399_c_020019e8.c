@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Long scripted formation for actors 0, 3, 19 and 20. The body is linear

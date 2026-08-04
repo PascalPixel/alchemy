@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 38b scene-variant dispatcher at 0x02000890 (96 bytes, 4 distinct

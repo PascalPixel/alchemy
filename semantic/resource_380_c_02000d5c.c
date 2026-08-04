@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_380 owner at 0x02000d5c, 560 bytes: a two-track scene

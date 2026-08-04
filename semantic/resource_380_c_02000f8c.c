@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * resource_380 owner at 0x02000f8c, 1220 bytes: a scripted scene beat

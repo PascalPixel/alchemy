@@ -25,10 +25,7 @@
  *     stack slot. Must be read with the surrounding code; must NOT be
  *     pattern-matched against other files.
  */
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /* 0x02004c08 が指すフラッシュ管理ブロック。control は待ち時間設定値。 */
 struct FlashInfo08006cdc {

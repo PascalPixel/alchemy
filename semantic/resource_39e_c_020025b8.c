@@ -1,6 +1,4 @@
-typedef int s32;
-typedef unsigned int u32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_39e owner at 0x020025b8, 164 bytes: a per-frame callback that

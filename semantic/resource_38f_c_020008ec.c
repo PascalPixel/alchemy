@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_38f owner at 0x020008ec, 7,356 bytes: code 0x020008ec-0x02002589

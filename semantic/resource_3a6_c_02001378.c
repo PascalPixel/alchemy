@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /* Actor-8 presentation reset at 0x02001378, including alignment to 0x1390. */
 

@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3c7 cutscene script at 0x02000eec.

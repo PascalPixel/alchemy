@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned short u16;
+#include "types.h"
 
 /* Prepare service zero, set its +6 halfword, and run the follow-up sequence. */
 struct SceneService_02000fcc {

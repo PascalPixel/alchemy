@@ -1,4 +1,4 @@
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 3b3 unindexed helper at 0x02001fd4 (96 bytes, 1 call).

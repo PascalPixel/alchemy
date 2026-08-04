@@ -23,9 +23,7 @@
  * argument shapes, so they are declared without prototypes: only what the two
  * call sites jointly establish is asserted.
  */
-typedef signed int s32;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 typedef struct Actor_02000cd0 {
     u8 pad0[6];

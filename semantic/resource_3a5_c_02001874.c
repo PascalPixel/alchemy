@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /* Configure actor slot 8's scale, pose, offset, and final pose. */
 extern void Func_0808a090();

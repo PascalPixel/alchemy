@@ -6,8 +6,7 @@
  * into slot 14's byte at +98 and bit 3 of the byte at +89.  The zero halfword
  * at 0x02001456 is alignment after the preceding owner, not part of this one.
  */
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 s32 Func_080770c0();
 void Func_080770c8();

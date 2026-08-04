@@ -1,6 +1,5 @@
 /* Advance the actor's +100 counter by a bounded random amount. */
-typedef int s32; typedef unsigned int u32; typedef signed short s16;
-typedef unsigned short u16; typedef unsigned char u8;
+#include "types.h"
 u32 Func_080000f8(void); void Func_0808a160(u8 *object, s32 mode);
 s32 Func_020009fc(u8 *object)
 {

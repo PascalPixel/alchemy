@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * Run the following encounter beat, finishing with actors 12 and 21 selected.

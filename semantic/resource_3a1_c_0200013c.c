@@ -1,8 +1,5 @@
 /* Spawn an object and apply the optional fields selected by the flag word. */
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 u8 *Func_020007d2(s32 slot);
 u8 *Func_020007b0(s32 kind, s32 x, s32 y, void *z);

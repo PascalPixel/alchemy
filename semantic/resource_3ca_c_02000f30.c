@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * resource_3ca DMA bank-flip leaf at 0x02000f30, complete 80-byte span through

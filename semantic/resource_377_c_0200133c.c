@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_377 owner at 0x0200133c, 120 bytes.  Complete owner: 'push {r5, lr}'

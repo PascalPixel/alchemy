@@ -1,6 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_38d owner at 0x020021bc, 588 bytes, exactly the advertised row:

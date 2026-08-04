@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 39d scripted recoil cutscene at 0x020009fc (198 bytes, 10 calls).

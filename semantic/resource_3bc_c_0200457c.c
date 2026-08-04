@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3bc owner at 0x0200457c, 84 bytes: decompress an archived asset

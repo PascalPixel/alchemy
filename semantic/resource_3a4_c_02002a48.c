@@ -1,8 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed short s16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3a4 owner at 0x02002a48, 272 bytes: the per-frame update of the

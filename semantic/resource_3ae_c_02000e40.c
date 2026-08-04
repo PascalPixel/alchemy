@@ -1,5 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 3ae, owner at 0x02000e40 (1728 bytes).  TWO literal pools sit

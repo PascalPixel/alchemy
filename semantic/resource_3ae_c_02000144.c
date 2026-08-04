@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3ae, owner at 0x02000144 (88 bytes including its three-word pool at

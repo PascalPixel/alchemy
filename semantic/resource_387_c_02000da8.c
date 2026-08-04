@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 /* Turn the object's attached presentation state by one eighth-turn. */
 void Func_02000da8(u8 *object)

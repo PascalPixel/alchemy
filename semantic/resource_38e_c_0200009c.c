@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_38e owner at 0x0200009c, 92 bytes: exported ENTRY 3 - hand the

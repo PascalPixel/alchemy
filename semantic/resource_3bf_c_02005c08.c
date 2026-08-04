@@ -1,5 +1,4 @@
-typedef unsigned int u32;
-typedef unsigned long long u64;
+#include "types.h"
 
 /*
  * Resource 3bf 64-bit logical right shift at 0x02005c08.

@@ -1,7 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned char u8;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 381, sparkle-field installer at 0x0200330c

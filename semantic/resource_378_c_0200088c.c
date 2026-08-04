@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_378 scripted scene owner at 0x0200088c (4,080 bytes).

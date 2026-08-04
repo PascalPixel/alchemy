@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef signed char s8;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3b3 layer inheritance resolver at 0x02001aa8 (320-byte whole

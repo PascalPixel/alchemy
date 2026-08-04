@@ -1,6 +1,4 @@
-typedef int s32;
-typedef short s16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_380 owner at 0x02004328, 148 bytes: a drain-until-room

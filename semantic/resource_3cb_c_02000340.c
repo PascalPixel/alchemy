@@ -1,6 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3cb scene-teardown step at 0x02000340 (88 bytes,

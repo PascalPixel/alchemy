@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* Complete scene-variant twelve actor-zero presentation setup through its pool. */
 struct Actor_02000cc8 {

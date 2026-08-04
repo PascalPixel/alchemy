@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 38b scene entry at 0x02000d10 (112 bytes, 8 distinct callees).

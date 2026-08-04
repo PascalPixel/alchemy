@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3a4 owner at 0x02001398, 736 bytes: a once-only cutscene. Bail

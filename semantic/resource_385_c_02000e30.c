@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /* Complete paired scene-cell presentation update. */
 extern void Func_080091c0(s32 kind, s32 x, s32 enabled, s32 mode,

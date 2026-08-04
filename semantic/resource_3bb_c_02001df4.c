@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3bb owner at 0x02001df4, 288 bytes: run a short setup pair

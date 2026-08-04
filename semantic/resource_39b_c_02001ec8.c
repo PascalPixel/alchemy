@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /* Complete linked-object state transition, including six pool words. */
 extern s32 **Data_03001edc;

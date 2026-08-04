@@ -1,5 +1,4 @@
-typedef unsigned short u16;
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3bb owner at 0x02002adc, 186 bytes: seed two fixed-cell

@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 39d alternating 32-frame emitter at 0x02003060 (340 bytes, 22

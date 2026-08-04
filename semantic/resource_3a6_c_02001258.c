@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Flag-gated actor-8 scene at 0x02001258, complete 168-byte span through its

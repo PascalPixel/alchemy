@@ -1,6 +1,4 @@
-typedef signed int s32;
-typedef unsigned short u16;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * Resource 3ca palette-cycle step at 0x020000b0 (80 bytes,

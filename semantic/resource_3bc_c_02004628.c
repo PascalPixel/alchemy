@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3bc owner at 0x02004628, 360 bytes: the "push" mechanic --

@@ -1,8 +1,4 @@
-typedef int s32;
-typedef short s16;
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * resource_380 owner at 0x0200013c, 472 bytes: the overlay's general

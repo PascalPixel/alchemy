@@ -1,4 +1,4 @@
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 39d record-flag initialiser at 0x02000ad0 (82 bytes, 7 calls).

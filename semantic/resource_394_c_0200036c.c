@@ -1,6 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
-typedef unsigned short u16;
+#include "types.h"
 
 /*
  * Resource 394 per-scanline scroll callback at 0x0200036c.

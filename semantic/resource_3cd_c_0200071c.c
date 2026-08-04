@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3cd owner at 0x0200071c, 76 bytes: THE OVERLAY'S ENTRY

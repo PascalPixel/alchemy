@@ -1,7 +1,4 @@
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 3b5, cutscene script step at 0x020003d0 (224 bytes; 196 bytes of

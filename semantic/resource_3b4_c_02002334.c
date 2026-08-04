@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 extern u8 *Func_0808a080(s32 actor);
 extern void Func_080000d0(void (*callback)(void), s32 interval);

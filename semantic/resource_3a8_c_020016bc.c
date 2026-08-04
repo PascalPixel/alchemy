@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3a8 owner at 0x020016bc, 300 bytes: the scene's entry fix-up -

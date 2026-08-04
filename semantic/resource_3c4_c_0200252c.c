@@ -35,8 +35,7 @@
  * The epilogue is `add sp,#8 ; pop {r3} ; mov r8,r3 ; pop {r5,r6} ;
  * pop {r0} ; bx r0`, so the owner is void.
  */
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 typedef struct Slot_0200252c {
     u8 pad0[8];

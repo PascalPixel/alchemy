@@ -1,5 +1,4 @@
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3bf cutscene-stage dispatcher at 0x02004638.

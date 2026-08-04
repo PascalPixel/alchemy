@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Complete actor-18 three-cue movement scene through its literal pool.  The

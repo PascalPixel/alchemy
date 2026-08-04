@@ -16,7 +16,7 @@
  *
  * `add sp,#8 ; pop {r5} ; pop {r0} ; bx r0` return: void.
  */
-typedef signed int s32;
+#include "types.h"
 
 void Func_080091c0();
 void Func_0808a0f0();

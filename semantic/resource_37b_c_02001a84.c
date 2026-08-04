@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_37b owner at 0x02001a84, 40 bytes: fetches scene record 10

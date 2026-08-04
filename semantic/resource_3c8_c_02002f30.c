@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3c8 at 0x02002f30: nine-call camera/scene setup step.

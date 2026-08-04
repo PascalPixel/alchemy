@@ -1,9 +1,4 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned int u32;
-typedef unsigned short u16;
+#include "types.h"
 
 void Func_080fb334(u8 *player, u32 mask_arg, u32 value_arg)
 {

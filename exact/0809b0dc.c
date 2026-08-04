@@ -1,4 +1,4 @@
-typedef signed char s8; typedef unsigned char u8; typedef signed short s16; typedef unsigned short u16; typedef signed int s32; typedef unsigned int u32;
+#include "types.h"
 struct S {
   u8 f0[6]; u16 f6; u8 f8[4]; u32 fC; u8 f10[8]; u32 f18; u32 f1C; u8 f20[0x34]; s8 f54;
 };

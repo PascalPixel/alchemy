@@ -1,7 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_392 owner at 0x02000b24, 104 bytes: apply the asymmetric RGB555 colour

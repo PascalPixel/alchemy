@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /* Complete 68-byte leaf owner through alignment and its 0x666 pool word. */
 s32 Func_02000088(u8 *actor)

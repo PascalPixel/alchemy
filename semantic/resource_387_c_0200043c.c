@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_387 paired-actor scene owner at 0x0200043c, complete 144-byte span

@@ -1,7 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /* Resolved whole-owner call targets. */
 extern s32 Func_03000380();

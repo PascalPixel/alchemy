@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 enum { DEFERRED_MMIO_CAPACITY_02002910 = 32 };
 

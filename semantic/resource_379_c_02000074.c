@@ -58,9 +58,7 @@
  * caller declares it `s32`; the result is discarded there, so the two agree on
  * the generated code.)
  */
-typedef signed int s32;
-typedef unsigned char u8;
-typedef unsigned short u16;
+#include "types.h"
 
 /* IWRAM pointer cell naming the scene workspace. */
 extern u8 *Data_03001ebc;

@@ -1,8 +1,4 @@
-typedef unsigned short u16;
-typedef signed char s8;
-typedef signed short s16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3a4 owner at 0x020039c8, 124 bytes: a palette-cycling tick.

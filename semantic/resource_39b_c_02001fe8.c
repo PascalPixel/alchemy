@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* Complete linked-object cleanup owner and three-word pool. */
 extern s32 **Data_03001edc;

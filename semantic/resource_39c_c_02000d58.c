@@ -1,5 +1,4 @@
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 /* resource_39c owner at 0x02000d58, 164 bytes: every fifth frame, rotate six
  * palette entries while composing their upper colour channels from three

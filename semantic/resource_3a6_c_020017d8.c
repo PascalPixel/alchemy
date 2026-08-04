@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3a6 paired-actor placement owner at 0x020017d8, complete 220-byte

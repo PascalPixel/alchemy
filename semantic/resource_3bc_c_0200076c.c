@@ -1,6 +1,4 @@
-typedef signed int s32;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 3bc, owner at 0x0200076c.  692 strict bytes: 660 bytes of code

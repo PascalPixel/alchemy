@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 extern s32 Func_080770c0(s32 flag);
 extern void Func_08009180(s32 left, s32 top, s32 right, s32 bottom,

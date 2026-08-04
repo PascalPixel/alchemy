@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3a6 tile-27 rain sequence at 0x02000f78 (320 bytes, 24 calls).

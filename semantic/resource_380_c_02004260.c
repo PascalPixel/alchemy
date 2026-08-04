@@ -1,5 +1,4 @@
-typedef int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_380 owner at 0x02004260, 200 bytes: allocate-and-wire for

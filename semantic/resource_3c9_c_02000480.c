@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3c9 owner at 0x02000480, 56 bytes: the same 3-D distance

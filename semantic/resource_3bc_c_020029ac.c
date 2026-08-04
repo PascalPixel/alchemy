@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /* resource_3bc owner at 0x020029ac, 164 bytes, independently matched to
  * resource_3bb:1f14. Prologue through the sole return at

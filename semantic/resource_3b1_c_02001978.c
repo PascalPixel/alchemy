@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3b1 owner at 0x02001978, 144 bytes.  It is the first ordinary

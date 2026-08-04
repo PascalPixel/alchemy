@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * resource_3a4 owner at 0x02002e1c, 104 bytes: bracket a scene setup --

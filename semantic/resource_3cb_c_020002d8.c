@@ -1,5 +1,4 @@
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3cb idle-timeout poll at 0x020002d8 (104 bytes,

@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 extern u8 *Func_02000630(s32 *referenceBucketOut, s32 *slotIndexOut,
                          s32 *keyIndexOut);

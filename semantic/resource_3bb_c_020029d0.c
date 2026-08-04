@@ -1,5 +1,4 @@
-typedef unsigned short u16;
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3bb owner at 0x020029d0, 254 bytes: a two-branch setup

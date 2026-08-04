@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 37a cutscene beat at 0x020009f4 (524 bytes, 0x020009f4-0x02000bff).

@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /* resource_387 three-call story-flag wrapper at 0x020004d4. */
 extern void Func_080770c8(s32 flagId);

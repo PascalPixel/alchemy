@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3bc owner at 0x02002b50, 92 bytes: release the caller's handle

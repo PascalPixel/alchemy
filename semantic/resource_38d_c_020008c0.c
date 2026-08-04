@@ -119,9 +119,7 @@
  *    the source more often than the histogram has them.
  */
 
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /* Imports. Old-style declarations: one name takes different argument counts at
  * different sites in this overlay. */

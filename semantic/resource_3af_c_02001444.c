@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3af owner at 0x02001444, 576 bytes: THE OVERLAY'S TOP-LEVEL

@@ -1,5 +1,4 @@
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 extern s32 Func_030003e0(s32 frame, s32 period);
 extern s32 Func_03000380(s32 value, s32 divisor);

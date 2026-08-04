@@ -1,7 +1,4 @@
-typedef unsigned int u32;
-typedef signed int s32;
-typedef unsigned char u8;
-typedef unsigned short u16;
+#include "types.h"
 
 /*
  * resource_3b1 owner at 0x02001b34, 1,032 bytes.  The owner starts with the

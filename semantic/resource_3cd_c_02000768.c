@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* Create one scene handle and bind its three adjacent resource records. */
 extern u8 Data_02008920;

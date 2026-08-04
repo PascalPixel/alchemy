@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3ba, per-frame cutscene task at 0x0200004c.

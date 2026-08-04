@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 3c8 at 0x02004a2c: 28-call cutscene step that lowers two scene

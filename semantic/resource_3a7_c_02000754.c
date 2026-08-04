@@ -81,10 +81,7 @@
 
 /* Old-style declarations: overlay imports vary their argument count between
  * call sites in this overlay.  Those used for their results need a type. */
-typedef signed int s32;
-typedef unsigned char u8;
-typedef unsigned int u32;
-typedef unsigned long long u64;
+#include "types.h"
 
 /* A double carried in the r0/r1 register pair; the LOW half of this u64 is the
  * r0 word, which the overlay's packer leaves holding the double's HIGH word. */

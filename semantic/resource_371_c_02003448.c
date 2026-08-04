@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Complete slot-to-active-choice resolver.  Each slot selects a run of nine

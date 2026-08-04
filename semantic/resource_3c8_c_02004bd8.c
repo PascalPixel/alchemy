@@ -1,6 +1,4 @@
-typedef signed int s32;
-typedef signed short s16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 3c8 at 0x02004bd8: pick the line of dialogue an NPC says, from

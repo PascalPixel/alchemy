@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_39c owner at 0x02000314, 60 bytes through its pool: reduce

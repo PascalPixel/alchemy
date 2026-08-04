@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 38b door/collision update at 0x020009cc (274 bytes, 16 call

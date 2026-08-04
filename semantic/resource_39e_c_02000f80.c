@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 39e facing-quadrant selector at 0x02000f80 (156 bytes, 9 calls).

@@ -58,8 +58,7 @@
 
 /* Old-style declarations: overlay imports vary their argument count between
  * call sites in this overlay.  Those used in conditions need a return type. */
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 u8 *Func_0808a080();    /* scene-entity record by selector */
 void Func_02000b8c();   /* spawn an effect burst at a record's position */

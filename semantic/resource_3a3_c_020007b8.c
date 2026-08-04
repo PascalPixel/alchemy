@@ -1,7 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 3a3 actor-18 setup sequence at 0x020007b8 (148 bytes,

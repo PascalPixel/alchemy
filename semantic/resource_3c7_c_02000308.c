@@ -1,6 +1,4 @@
-typedef signed int s32;
-typedef unsigned char u8;
-typedef unsigned short u16;
+#include "types.h"
 
 /*
  * Resource 3c7 cutscene step at 0x02000308.

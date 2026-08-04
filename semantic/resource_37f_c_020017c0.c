@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 37f, owner at 0x020017c0 (702 bytes of code, prologue

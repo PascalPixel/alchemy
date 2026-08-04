@@ -64,9 +64,7 @@
  *    bytes are not in doubt (0x2064 is `01 00`), only the meaning.
  */
 
-typedef signed int s32;
-typedef unsigned char u8;
-typedef unsigned short u16;
+#include "types.h"
 
 extern u8 Data_0200a05a[];      /* in-image 0x205a: four X tile coordinates */
 extern u8 Data_0200a05e[];      /* in-image 0x205e: four Z tile coordinates */

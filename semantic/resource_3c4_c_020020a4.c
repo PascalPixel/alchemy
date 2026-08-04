@@ -23,8 +23,7 @@
  *
  * `add sp,#8 ; pop {r5, r6} ; pop {r0} ; bx r0` return: void.
  */
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 typedef struct Slot_020020a4 {
     s32 pad0;

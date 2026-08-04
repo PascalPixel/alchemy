@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* Actor-0/9 staged scene, complete 288-byte owner through pool at 0x15c4. */
 

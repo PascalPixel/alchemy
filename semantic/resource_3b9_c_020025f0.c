@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3b9 owner at 0x020025f0, 106 bytes: the same linear setup

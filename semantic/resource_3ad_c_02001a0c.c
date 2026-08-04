@@ -1,6 +1,4 @@
-typedef signed short s16;
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3ad, scene-entry hook at 0x02001a0c (200 bytes, 19 call sites).

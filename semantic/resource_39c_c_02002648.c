@@ -1,5 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * resource_39c palette-rotation owner at 0x02002648, complete 60-byte span

@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Signed transition-step owner at 0x02002844, complete through its return,

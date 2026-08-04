@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3a6 owner at 0x02001770, complete 104-byte span through its

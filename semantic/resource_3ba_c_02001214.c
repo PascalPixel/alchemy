@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 extern void Func_0808a010(s32 frames);
 extern void Func_0808a018(void);

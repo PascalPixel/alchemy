@@ -1,4 +1,4 @@
-typedef unsigned char u8;
+#include "types.h"
 
 /* Resource 378 sprite-flag synchronisation at 0x02000848 (68 bytes). */
 

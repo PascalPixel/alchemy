@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef int s32;
+#include "types.h"
 
 struct State {
     u8 unknown_000[0xD8];

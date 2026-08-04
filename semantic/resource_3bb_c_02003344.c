@@ -1,8 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef short s16;
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3bb owner at 0x02003344, 276 bytes: fetch a flag/count via a

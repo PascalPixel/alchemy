@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_392 owner at 0x02000a68, 84 bytes: THE OVERLAY'S ENTRY

@@ -1,5 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned int u32;
+#include "types.h"
 
 /* Rotate seven adjacent palette entries once every eight frames. */
 void Func_02002dcc(void)

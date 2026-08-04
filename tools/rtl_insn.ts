@@ -28,12 +28,21 @@ export type RtlExpr =
 export type BinaryOp = "plus" | "minus" | "mult" | "and" | "ior" | "xor" | "ashift" | "ashiftrt" | "lshiftrt";
 const BINARY_OPS = new Set<string>(["plus", "minus", "mult", "and", "ior", "xor", "ashift", "ashiftrt", "lshiftrt"]);
 
+// LOG_LINKS: the insns THIS insn depends on (predecessors), each tagged with
+// a dependency kind. gcc's dump leaves a true (data) dependency untagged --
+// a bare `insn_list` -- and marks anti/output dependencies explicitly, e.g.
+// `insn_list:REG_DEP_ANTI`. This mirrors REG_NOTE_KIND(link)==0 meaning
+// "data dependence" in haifa-sched.c's rank_for_schedule (see rtl_schedule.ts).
+export type DependencyKind = "true" | "anti" | "output";
+export interface Dependency { uid: number; kind: DependencyKind; }
+
 export interface RtlInsn {
   uid: number;
   kind: "insn" | "call_insn" | "jump_insn";
   code: string | null; // the pattern's own head: "set", "parallel", "use", "unspec_volatile", ...
   set: { dest: RtlExpr; src: RtlExpr } | null;
   callTarget: RtlExpr | null;
+  dependencies: Dependency[];
   raw: string;
 }
 
@@ -116,6 +125,32 @@ function extractFromPattern(pattern: SExpr): { code: string | null; set: RtlInsn
   return { code, set: null, callTarget: null };
 }
 
+// LOG_LINKS is a hand-rolled linked list, not a normal S-expression list:
+// `(insn_list[:KIND] UID (insn_list[:KIND] UID (nil)))`, printed as gcc's
+// generic INSN_LIST/EXPR_LIST chain format. Walks it iteratively; stops at
+// `(nil)` or anything that does not keep the chain shape, rather than
+// throwing -- a REG_NOTES chain (`expr_list:REG_DEAD ...`) can appear in the
+// same position on some insns and must not be misread as dependencies.
+function parseLogLinks(chain: SExpr | undefined): Dependency[] {
+  const dependencies: Dependency[] = [];
+  let node = chain;
+  while (node !== undefined && node.kind === "list") {
+    const rawHead = head(node);
+    if (rawHead === null) break;
+    // The dependency kind rides in the MODE slot, not a `/flag`:
+    // `insn_list:REG_DEP_ANTI` -> tag "insn_list", mode "REG_DEP_ANTI".
+    const { tag, mode } = parseTag(rawHead);
+    if (tag !== "insn_list") break;
+    const uidAtom = node.items[1];
+    const uid = uidAtom?.kind === "atom" ? Number(uidAtom.value) : Number.NaN;
+    if (!Number.isFinite(uid)) break;
+    const kind: DependencyKind = mode === "REG_DEP_ANTI" ? "anti" : mode === "REG_DEP_OUTPUT" ? "output" : "true";
+    dependencies.push({ uid, kind });
+    node = node.items[2];
+  }
+  return dependencies;
+}
+
 const INSN_KINDS = new Set(["insn", "call_insn", "jump_insn"]);
 
 // Parses every top-level `(insn|call_insn|jump_insn UID PREV NEXT PATTERN
@@ -139,12 +174,21 @@ export function parseInsns(dumpText: string): RtlInsn[] {
     // read like a compact triple but the head atom occupies index 0 too.
     const pattern = form.items[4];
     const extracted = pattern === undefined ? { code: null, set: null, callTarget: null } : extractFromPattern(pattern);
+    // Layout continues (KIND UID PREV NEXT PATTERN CODE {NAME} LOG_LINKS
+    // NOTES...): LOG_LINKS is index 7. It is defensively re-found by shape
+    // (head "insn_list", or the literal "nil") if index 7 is not it, since a
+    // pattern with no matched template name can shift the field over by one.
+    const expectedLinks = form.items[7];
+    const logLinks = expectedLinks !== undefined && (head(expectedLinks) === "insn_list" || (expectedLinks.kind === "atom" && expectedLinks.value === "nil"))
+      ? expectedLinks
+      : form.items.slice(5).find((item) => head(item) === "insn_list");
     insns.push({
       uid,
       kind: rawHead as RtlInsn["kind"],
       code: extracted.code,
       set: extracted.set,
       callTarget: extracted.callTarget,
+      dependencies: parseLogLinks(logLinks),
       raw: render(form),
     });
   }
@@ -187,7 +231,9 @@ function selfTest(): void {
 
 (insn 30 28 32 (set (mem:QI (plus:SI (reg/f:SI 0 r0)
                 (const_int 9 [0x9])) [0 S1 A8])
-        (reg:SI 3 r3)) 174 {*movqi_insn} (nil))
+        (reg:SI 3 r3)) 174 {*movqi_insn} (insn_list 28 (insn_list:REG_DEP_ANTI 17 (nil)))
+    (expr_list:REG_DEAD (reg:SI 3 r3)
+        (nil)))
 
 (call_insn 67 58 71 (parallel [
             (set (reg:SI 0 r0)
@@ -208,6 +254,14 @@ function selfTest(): void {
   if (store.uid !== 30) throw new Error(`wrong second insn uid: ${store.uid}`);
   if (destRegister(store) !== null) throw new Error("a store's dest is a MEM, destRegister must be null");
   if (store.set?.dest.kind !== "mem") throw new Error(`expected store dest to be mem, got ${store.set?.dest.kind}`);
+  if (store.dependencies.length !== 2) throw new Error(`expected 2 LOG_LINKS, got ${JSON.stringify(store.dependencies)}`);
+  if (store.dependencies[0].uid !== 28 || store.dependencies[0].kind !== "true") {
+    throw new Error(`expected an untagged (true) dependency on 28, got ${JSON.stringify(store.dependencies[0])}`);
+  }
+  if (store.dependencies[1].uid !== 17 || store.dependencies[1].kind !== "anti") {
+    throw new Error(`expected a REG_DEP_ANTI dependency on 17, got ${JSON.stringify(store.dependencies[1])}`);
+  }
+  if (add.dependencies.length !== 0) throw new Error(`expected no dependencies on a (nil) LOG_LINKS, got ${JSON.stringify(add.dependencies)}`);
 
   if (call.uid !== 67 || call.kind !== "call_insn") throw new Error(`wrong third insn: ${JSON.stringify(call)}`);
   // A CALL's operand is the memory location holding the callee, so the

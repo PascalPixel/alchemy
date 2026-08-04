@@ -48,6 +48,19 @@ typedef unsigned char u8;
  *
  * Uncertainty: Func_0808a178(18, 0) and Func_0808a188(18, 0, 20) are
  * transcribed, not identified.
+ *
+ * STILL-OPEN residual, 4 bytes at 0x02001d5c: the reference sets the third
+ * call's arguments as `movs r1,#0` before `movs r0,#18`; this source emits
+ * them the other way.  Identical fingerprint to resource_378:574's open
+ * residual (see that file's header for the full derivation): the pair ties
+ * through every rank_for_schedule tier and falls to sched2's chain-order
+ * tie-break; Thumb force-disables the first scheduler pass (arm.c
+ * OVERRIDE_OPTIONS), and constant call arguments are expanded arg0-first
+ * (calls.c load_register_parameters, ascending, LOAD_ARGS_REVERSED not
+ * defined) -- so no scheduling flag and no statement reordering can flip
+ * it; -fthumb-call-arg1-before-arg0's uid precondition provably keeps it
+ * from firing.  The original source shape that made arg1 a non-deferred
+ * value at this one site is not yet identified.
  */
 
 extern void Func_02006130(void);

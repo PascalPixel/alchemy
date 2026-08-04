@@ -21,8 +21,14 @@ typedef signed int s32;
  * other argument pairs in this function that are also creation-order
  * decided and currently match.  A local temporary for either argument (or
  * for the shared 10) is folded by constant propagation and re-materialized
- * in arg order, changing nothing.  Whatever source shape the original used
- * to create arg1's setter first at this one site is not yet identified.
+ * in arg order, changing nothing.  Deeper root cause, verified in the gcc
+ * source: Thumb force-disables the first scheduler pass (arm.c
+ * OVERRIDE_OPTIONS), so sched2's chain-order tie-break sees expansion
+ * order, and constant call arguments are expanded arg0-first (calls.c
+ * load_register_parameters, ascending, LOAD_ARGS_REVERSED not defined).
+ * The original must have made arg1 a non-deferred value at this one site;
+ * that source shape is not yet identified.  Same fingerprint as
+ * resource_39e:1d50's open residual.
  */
 
 extern u8 *Data_03001ebc;

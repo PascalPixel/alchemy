@@ -54,14 +54,16 @@ void Func_020026f0(u8 *object)
     u16 theta = *angle;
     s32 along;
     s32 across;
+    s32 echoed;
 
     along = *(s32 *)(anchor + 8) + Func_02005c52(theta) * 14;
     *(s32 *)(object + 8) = along;
 
     across = *(s32 *)(anchor + 16) + Func_02005c5e(theta) * 10;
-    *(s32 *)(object + 56) = *(s32 *)(object + 8);
+    echoed = *(s32 *)(object + 8);
     *(s32 *)(object + 16) = across;
     *(s32 *)(object + 64) = across;
+    *(s32 *)(object + 56) = echoed;
 
     *angle = (u16)(*angle + *(u16 *)(object + 102));
 }

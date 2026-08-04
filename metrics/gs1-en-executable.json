@@ -4,7 +4,7 @@
   "target": "gs1-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1345716,
+  "total_union_bytes": 1345718,
   "main": {
     "id": "main",
     "executable_bytes": 548364,
@@ -8939,8 +8939,8 @@
     {
       "id": "resource_378",
       "decoded_bytes": 16784,
-      "executable_bytes": 13916,
-      "excluded_bytes": 2868,
+      "executable_bytes": 13918,
+      "excluded_bytes": 2866,
       "audit": "complete",
       "intervals": [
         {
@@ -9160,10 +9160,10 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33564402,
+          "start": 33564400,
           "end": 33564494,
           "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
+          "evidence": "resource_378_overlay.s:4719:verified-C-placeholder"
         },
         {
           "start": 33564494,
@@ -9259,7 +9259,7 @@
           "start": 33567104,
           "end": 33567108,
           "kind": "literal_pool",
-          "evidence": "resource_378_overlay.s:5801:pc-relative-literal"
+          "evidence": "resource_378_overlay.s:5758:pc-relative-literal"
         },
         {
           "start": 33567108,
@@ -9373,7 +9373,7 @@
           "start": 33568028,
           "end": 33568032,
           "kind": "literal_pool",
-          "evidence": "resource_378_overlay.s:6063:pc-relative-literal"
+          "evidence": "resource_378_overlay.s:6020:pc-relative-literal"
         },
         {
           "start": 33568044,

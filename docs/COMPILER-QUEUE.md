@@ -15,12 +15,12 @@ current semantic candidates. It found no shared exact configuration and no
 irreducible configuration that improves multiple candidates without regressing
 another. The useful single-mode effects were:
 
-| configuration | improved candidates | halfwords removed | regressed candidates |
-| --- | ---: | ---: | ---: |
-| `-fno-rerun-loop-opt` | 1 | 40 | 0 |
-| `-fno-caller-saves` | 2 | 9 | 3 |
-| `-Os` | 2 | 36 | 11 |
-| `-fno-force-mem` | 1 | 3 | 3 |
+| configuration         | improved candidates | halfwords removed | regressed candidates |
+| --------------------- | ------------------: | ----------------: | -------------------: |
+| `-fno-rerun-loop-opt` |                   1 |                40 |                    0 |
+| `-fno-caller-saves`   |                   2 |                 9 |                    3 |
+| `-Os`                 |                   2 |                36 |                   11 |
+| `-fno-force-mem`      |                   1 |                 3 |                    3 |
 
 The first mode moves `0807a0f4` from 68 to 28 differing halfwords, but does not
 make it exact. The second improves both `080113e4` and `080114a0`, so it remains
@@ -92,7 +92,7 @@ decompilation residual supplies new cross-region evidence.
 > pushed in `alchemy-gcc`. Statements below about uncommitted patches or an
 > untouched `dist/` describe the time of measurement, not the current state.
 
-Prototyped in `../alchemy-gcc/build-296/`, which is a separate tree from the
+Prototyped in `alchemy-gcc/build-296/`, which is a separate tree from the
 digest-pinned `dist/`. **`dist/` was never touched**, so every alchemy build in
 this repo still uses the approved bundle. Before changing anything, the
 prototype toolchain was verified to reproduce `dist` byte-for-byte on a known
@@ -144,10 +144,10 @@ store and a later pass deletes it.
 - **The class went from unreachable to reachable.** Both multi-descriptor
   regions tested now keep every descriptor and group every one of them:
 
-  | region | descriptors | stock | patched |
-  | --- | --- | --- | --- |
-  | 080f377c | 3 | 0 grouped, first descriptor deleted, 104 B | **3 grouped, all present, 116 B against 112** |
-  | 0800300c | 2 | 1 descriptor deleted, 108 B | **2 grouped, all present, 120 B against 112** |
+  | region   | descriptors | stock                                      | patched                                       |
+  | -------- | ----------- | ------------------------------------------ | --------------------------------------------- |
+  | 080f377c | 3           | 0 grouped, first descriptor deleted, 104 B | **3 grouped, all present, 116 B against 112** |
+  | 0800300c | 2           | 1 descriptor deleted, 108 B                | **2 grouped, all present, 120 B against 112** |
 
   Getting there also needed the locals-first law applied per descriptor: an
   address computed inline sits between two stores and breaks
@@ -189,7 +189,7 @@ candidates were tested and ruled out in `work/hand/080f377c/NOTES.md`).
 ## Patch 3 — relax the `regs_ever_live` guards. TRIED, POINTLESS, REVERTED.
 
 This was the third blocker: `thumb_order_grouped_dma_store` requires r0 and r4
-unused *anywhere in the function*, which was thought to confine the twelve-store
+unused _anywhere in the function_, which was thought to confine the twelve-store
 `stmia r0!, {r1, r2, r3, r4}` path to argument-free leaves like `src/08004a94.c`.
 
 Dropping both tests changes nothing. 08004bd4 stays at 52 mismatched bytes and
@@ -206,20 +206,20 @@ Reverted, with the measurement recorded at the guard.
 
 Two of the four did not survive measurement with the runnable compiler:
 
-| # | claim | verdict |
-| --- | --- | --- |
-| 1 | volatile blocks grouping, 42 regions | **real and now fixed** (patch 2b): the grouped pattern carries volatility, descriptors survive and group |
-| 2 | `value2` copy from hard-coded `(reg:SI 2)` | untested here; still stands on inspection only |
-| 3 | whole-function `regs_ever_live` guard | **wrong** — not the binding condition, DSE is |
-| 5 | `value1` must be a pseudo | real and fixed, but converts nothing alone |
+| #   | claim                                      | verdict                                                                                                  |
+| --- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| 1   | volatile blocks grouping, 42 regions       | **real and now fixed** (patch 2b): the grouped pattern carries volatility, descriptors survive and group |
+| 2   | `value2` copy from hard-coded `(reg:SI 2)` | untested here; still stands on inspection only                                                           |
+| 3   | whole-function `regs_ever_live` guard      | **wrong** — not the binding condition, DSE is                                                            |
+| 5   | `value1` must be a pseudo                  | real and fixed, but converts nothing alone                                                               |
 
 Blocker 4 (loop-invariant hoisting) was already withdrawn yesterday as
 source-reachable. So of five published items, two are confirmed and fixed, one is
 wrong, one was withdrawn, and one is still unmeasured. The pattern is that reading a precondition list and
-naming the guard that *looks* responsible is not evidence; only running the
+naming the guard that _looks_ responsible is not evidence; only running the
 patched compiler is.
 
-## State of ../alchemy-gcc
+## State of alchemy-gcc
 
 Patches 1 and 2b are **applied and uncommitted** in the working tree; patch 3 is
 reverted to stock plus its measurement comment. `build-296/gcc/cc1` is built from that state.
@@ -246,7 +246,7 @@ ours+mode   mov r3,#255 / mov r1,#137 / strb r3,[r4,#28] / lsl r1,r1,#1
 ```
 
 A gap does open between the constant's halves, but the scheduler fills it with
-the *store* rather than with the other constant, and it also hoists
+the _store_ rather than with the other constant, and it also hoists
 `mov r3,#255` to the front. 4 mismatched bytes without the mode, 16 with it.
 
 So the remaining lever is not cost, it is **ready-list priority**: which of
@@ -277,13 +277,13 @@ Together with `-fno-sched-depend-count` and a source reorder these converted
 
 **Rejected: extending `-fthumb-move-before-alu` to also overtake a constant
 materialisation.** It looks like the missing cell of an obvious matrix — the
-high-register hook does *constant before high move*, the new hook does *ALU
-before low move*, so *constant before low move* should complete it. Measured
+high-register hook does _constant before high move_, the new hook does _ALU
+before low move_, so _constant before low move_ should complete it. Measured
 across the six closest parked regions it is a net loss: `08019bac` 6 to 10
 bytes, `080b0744` 10 to 18, others unchanged or marginal. Reverted.
 
 The general rule confirmed by these experiments: a hook needs several regions
-sharing a residual *and* a measurement across the parked set before it lands.
+sharing a residual _and_ a measurement across the parked set before it lands.
 Symmetry is not evidence. Seven modes proposed by inspection were
 wrong; the three that worked came from `-da` dumps and gating passes one at a
 time.
@@ -311,7 +311,7 @@ dispatcher, the reference orders a two-argument call's register setters as:
 - **every earlier** call of the arm sets **r1 first**.
 
 Where an arm falls through into the next case, its last call is the
-*one-argument* call, so the last **two**-argument call of that arm is NOT
+_one-argument_ call, so the last **two**-argument call of that arm is NOT
 last and stays r1-first.
 
 This fork gets the general case right and mis-handles exactly the ends: it

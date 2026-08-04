@@ -3,7 +3,7 @@ typedef unsigned short u16;
 typedef signed short s16;
 typedef signed int s32;
 
-extern void Func_08009098(u8 *object, const void *script);
+extern void Func_0200670c(u8 *object, const void *script);
 
 /*
  * Per-frame callback for the randomized child effect.  Its signed vertical
@@ -18,7 +18,7 @@ void Func_02003144(u8 *object)
 
     *(s32 *)(object + 12) += (s32)*(s16 *)(object + 100) << 12;
     *(s32 *)(object + 60) = *(s32 *)(object + 12);
-    quadrant = (*lifetime >> 2) & 3;
+    quadrant = ((s32)(s16)*lifetime >> 2) & 3;
     if (quadrant == 0)
         velocity = 0x10000;
     else if (quadrant == 1 || quadrant == 3)
@@ -30,5 +30,5 @@ void Func_02003144(u8 *object)
 
     (*lifetime)--;
     if ((s16)*lifetime <= 0)
-        Func_08009098(object, (const void *)0x0200c18c);
+        Func_0200670c(object, (const void *)0x0200c18c);
 }

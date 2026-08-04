@@ -58,50 +58,51 @@ typedef unsigned char u8;
  * shape; every id and constant is recorded as a passed value.
  */
 
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern u8 *Func_0808a080(s32 arg0);
-extern void Func_0808a090(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a0e0(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a0e8(s32 id);
-extern void Func_0808a100(s32 id, s32 arg1);
-extern void Func_0808a158(s32 id, s32 arg1);
-extern void Func_0808a248(s32 arg0);
-extern void Func_0808a368(void);
-extern void Func_0808a370(void);
-extern void Func_080000d0(void *callback, s32 arg1);
-extern void Func_080000d8(void *callback);
-extern void Func_080091e0(u8 *record, s32 arg1);
-extern void Func_080f9010(s32 arg0);
+extern void Func_02006ab8(void);
+extern void Func_02006b30(void);
+extern u8 *Func_02006b36(s32 arg0);
+extern void Func_02006b06(s32 id, s32 arg1, s32 arg2);
+extern void Func_02006b5a(s32 id, s32 arg1, s32 arg2);
+extern void Func_02006b68(s32 id);
+extern void Func_02006b66(s32 id, s32 arg1);
+extern void Func_02006bb8(s32 id, s32 arg1);
+extern void Func_02006c4c(s32 arg0);
+extern void Func_02006c30(void);
+extern void Func_02006c76(void);
+extern void Func_02006a34(void *callback, s32 arg1);
+extern void Func_02006a92(void *callback);
+extern void Func_02006adc(u8 *record, s32 arg1);
+extern void Func_02006c86(s32 arg0);
 
 extern u8 *Data_03001ebc;
 
 void Func_020026d8(void)
 {
-    void *frame_callback = (void *)0x0200a5b9;
+    void *frame_callback;
     u8 *record;
     u8 *workspace;
 
-    Func_0808a018();
-    Func_080000d0(frame_callback, 200 << 4);
+    Func_02006ab8();
+    frame_callback = (void *)0x0200a5b9;
+    Func_02006a34(frame_callback, 200 << 4);
 
-    Func_0808a090(0, 0x3333, 0x1999);
+    Func_02006b06(0, 0x3333, 0x1999);
 
     workspace = Data_03001ebc;
     *(s32 *)(workspace + 456) = 60;
 
-    Func_0808a368();
-    Func_080f9010(154);
-    Func_0808a100(0, 2);
-    Func_0808a0e0(0, 0, -6);
-    Func_0808a0e8(0);
-    Func_0808a158(0, 15);
+    Func_02006c30();
+    Func_02006c86(154);
+    Func_02006b66(0, 2);
+    Func_02006b5a(0, 0, -6);
+    Func_02006b68(0);
+    Func_02006bb8(0, 15);
 
-    record = Func_0808a080(0);
-    Func_080091e0(record, 0);
+    record = Func_02006b36(0);
+    Func_02006adc(record, 0);
 
-    Func_080000d8(frame_callback);
-    Func_0808a370();
-    Func_0808a248(3);
-    Func_0808a020();
+    Func_02006a92(frame_callback);
+    Func_02006c76();
+    Func_02006c4c(3);
+    Func_02006b30();
 }

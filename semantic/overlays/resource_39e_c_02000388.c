@@ -53,19 +53,20 @@ typedef unsigned char u8;
  * unidentified beyond "consumes the chosen table".
  */
 
-extern s32 Func_080770c0(s32 flagId);
-extern void Func_0808a038(u8 *table);
+extern s32 Func_02004772();
+extern void Func_020047dc();
+extern u8 Data_02000240[];
 
 u8 *Func_02000388(void)
 {
-    u8 *control = (u8 *)0x02000240;
+    u8 *control = Data_02000240;
     u8 *table;
 
     if (*(s16 *)(control + 448) == 60) return (u8 *)0x0200c8f0;
     if (*(s16 *)(control + 450) == 3) return (u8 *)0x0200cae8;
 
     table = (u8 *)0x0200c998;
-    if (Func_080770c0(0x895) != 0) {
+    if (Func_02004772(table) != 0) {
         *(u16 *)(table + 122) = 0x895;
         *(u16 *)(table + 170) = 0x895;
         *(s32 *)(table + 200) = 144 << 17;
@@ -74,6 +75,6 @@ u8 *Func_02000388(void)
         *(u16 *)(table + 290) = 0x895;
     }
 
-    Func_0808a038(table);
+    Func_020047dc(table);
     return table;
 }

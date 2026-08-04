@@ -32,8 +32,10 @@ typedef unsigned int u32;
  * identifiers here (they are biased by small constants, never dereferenced),
  * so they are typed s32 rather than as pointers.
  */
-void Func_080091b8(s32, s32, s32, s32, s32, s32);
-void Func_080091c0(s32, s32, s32, s32, s32, s32);
+void Func_02006346(s32, s32, s32, s32, s32, s32);
+void Func_02006358(s32, s32, s32, s32, s32, s32);
+void Func_02006376(s32, s32, s32, s32, s32, s32);
+void Func_02006390(s32, s32, s32, s32, s32, s32);
 
 void Func_02000d54(s32 index)
 {
@@ -46,11 +48,11 @@ void Func_02000d54(s32 index)
     offset += 4;
     second = *(const s32 *)(table + offset);
 
-    Func_080091b8(0, 77, 1, 3, first, second);
-    Func_080091b8(1, 77, 1, 1, first + 1, second);
-    Func_080091c0(first, second - 45, 1, 1, first, second - 44);
+    Func_02006346(0, 77, 1, 3, first, second);
+    Func_02006358(1, 77, 1, 1, first + 1, second);
+    Func_02006376(first, second - 45, 1, 1, first, second - 44);
 
     if (index == 1) {
-        Func_080091c0(first, second - 44, 1, 1, first, second - 43);
+        Func_02006390(first, second - 44, 1, 1, first, second - 43);
     }
 }

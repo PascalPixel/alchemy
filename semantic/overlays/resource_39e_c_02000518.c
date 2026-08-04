@@ -53,71 +53,77 @@ typedef unsigned char u8;
  * path, so some later consumer must.
  */
 
-extern void Func_0200013c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
-extern void Func_080091c0(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6);
-extern void Func_080770c8(s32 flagId);
-extern void Func_0808a010(s32 frames);
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern u8 *Func_0808a080(s32 slot);
-extern void Func_0808a090(s32 slot, s32 a1, s32 a2);
-extern void Func_0808a0b8(s32 slot, s32 a1, s32 a2);
-extern void Func_0808a0d0(s32 slot, s32 a1, s32 a2);
-extern void Func_0808a0e8(s32 slot);
-extern void Func_0808a170(s32 dialogueId);
-extern void Func_0808a188(s32 slot, s32 a1, s32 a2);
-extern void Func_0808a1b8(s32 slot, s32 a1, s32 a2);
-extern void Func_0808a5e8(void);
-extern void Func_080f9010(s32 arg0);
+extern void Func_02000718(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
+extern void Func_02000732(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
+extern void Func_0200074c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
+extern void Func_020049ca(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6);
+extern void Func_020049f8(s32 flagId);
+extern void Func_020049ea(s32 frames);
+extern void Func_0200490c(void);
+extern void Func_02004a1c();
+extern u8 *Func_0200492e(s32 slot);
+extern u8 *Func_02004968(s32 slot);
+extern u8 *Func_02004974(s32 slot);
+extern u8 *Func_020049a2(s32 slot);
+extern void Func_0200499a(s32 slot, s32 a1, s32 a2);
+extern void Func_020049b6(s32 slot, s32 a1, s32 a2);
+extern void Func_02004980(s32 slot, s32 a1, s32 a2);
+extern void Func_020049dc(s32 slot);
+extern void Func_020049d2(s32 dialogueId);
+extern void Func_020049f4(s32 slot, s32 a1, s32 a2);
+extern void Func_02004a74(s32 slot, s32 a1, s32 a2);
+extern void Func_02004b86(void);
+extern void Func_02004ada(s32 arg0);
+extern void Func_02004b32(s32 arg0);
 
 void Func_02000518(void)
 {
-    u8 *record = Func_0808a080(9);
+    u8 *record = Func_0200492e(9);
     u8 *other;
     s32 spawnOffset = 128 << 11;   /* 0x40000, added to record[16] */
     s32 spawnFlags = 128 << 9;     /* 0x10000, also written to record[72] */
     s32 block[2];
 
-    Func_0808a018();
-    Func_0808a170(0x17b4);
-    Func_0808a188(9, 0, 20);
-    Func_0808a0d0(0, 168, 196 << 1);
-    Func_0808a1b8(0, 192 << 8, 20);
-    Func_080f9010(132);
+    Func_0200490c();
+    Func_020049d2(0x17b4);
+    Func_020049f4(9, 0, 20);
+    Func_02004980(0, 168, 196 << 1);
+    Func_02004a1c(0, 192 << 8, 20);
+    Func_02004ada(132);
 
-    other = Func_0808a080(9);
+    other = Func_02004968(9);
     *(s32 *)(other + 40) = 160 << 13;
 
-    other = Func_0808a080(9);
+    other = Func_02004974(9);
     *(s32 *)(other + 72) = spawnOffset;
 
-    Func_0808a090(9, 192 << 10, 192 << 9);
-    Func_0808a0b8(9, 152, 196 << 1);
-    Func_0808a0e8(9);
+    Func_0200499a(9, 192 << 10, 192 << 9);
+    Func_020049b6(9, 152, 196 << 1);
+    Func_020049dc(9);
 
-    other = Func_0808a080(9);
+    other = Func_020049a2(9);
     *(s32 *)(other + 72) = spawnFlags;
 
-    Func_0808a1b8(9, 0, 0);
-    Func_080f9010(132);
+    Func_02004a74(9, 0, 0);
+    Func_02004b32(132);
 
     block[1] = 7;
 
-    Func_0200013c(*(s32 *)(record + 8), *(s32 *)(record + 12),
+    Func_02000718(*(s32 *)(record + 8), *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + spawnOffset,
                   128 << 8, 0, 0, spawnFlags, (u8 *)block);
 
-    Func_0200013c(*(s32 *)(record + 8), *(s32 *)(record + 12),
+    Func_02000732(*(s32 *)(record + 8), *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + spawnOffset,
                   0, 0, 0, spawnFlags, (u8 *)block);
 
-    Func_0200013c(*(s32 *)(record + 8), *(s32 *)(record + 12),
+    Func_0200074c(*(s32 *)(record + 8), *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + spawnOffset,
                   (s32)0xffff8000, 0, 0, spawnFlags, (u8 *)block);
 
-    Func_0808a010(30);
-    Func_0808a5e8();
-    Func_080091c0(10, 24, 1, 1, 10, 22);
-    Func_080770c8(0x892);
-    Func_0808a020();
+    Func_020049ea(30);
+    Func_02004b86();
+    Func_020049ca(10, 24, 1, 1, 10, 22);
+    Func_020049f8(0x892);
+    Func_02004a1c();
 }

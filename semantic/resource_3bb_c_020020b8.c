@@ -1,5 +1,9 @@
 #include "types.h"
 
+/* STILL-OPEN: adopt --where differing_bytes=60/92. alchemist.ts exhausted
+ * (tiers: original-order, priority, unaligned; 13 licensed compiles, no
+ * improving move found). Genuinely unfixed within budget. */
+
 /*
  * resource_3bb owner at 0x020020b8, 92 bytes: pick one of three ids by
  * a shared status cell's value, then run a short two-call closing

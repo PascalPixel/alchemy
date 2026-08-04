@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /* Two sites reach this one address with different arities, so the prototype
  * has to be old-style or the six-argument call materialises the wrong shape. */

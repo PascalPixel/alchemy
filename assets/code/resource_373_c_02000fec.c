@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 extern u8 *Func_02006fd6(s32);
 extern u8 *Func_02006fde(s32);

@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Complete actor-13 dialogue wrapper through its one-word pool.

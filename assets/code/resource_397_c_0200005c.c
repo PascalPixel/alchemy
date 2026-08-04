@@ -1,7 +1,6 @@
 #include "resource_397.h"
 
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 u8 *Func_020003ac();
 s32 Func_020003b4();

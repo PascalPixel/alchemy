@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* Four sites of one import, so four names. */
 extern void Func_02003ed6(s32, s32, s32, s32, s32, s32);

@@ -1,6 +1,6 @@
 #include "resource_38c.h"
 
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_38c owner at 0x02000038, 4 bytes: `movs r0, #0 / bx lr`.

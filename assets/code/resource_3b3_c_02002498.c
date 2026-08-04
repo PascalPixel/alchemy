@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3b3 unindexed helper at 0x02002498 (52 bytes, 1 call).

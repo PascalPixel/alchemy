@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 void Func_020008c0(u8 *o) {
     if (*(s32 *)(o + 24) > 0x10000) {

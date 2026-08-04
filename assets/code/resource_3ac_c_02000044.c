@@ -1,6 +1,6 @@
 #include "resource_3ac.h"
 
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_3ac owner at 0x02000044, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the

@@ -1,10 +1,4 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
-typedef int bool;
+#include "types.h"
 #define NULL ((void *)0)
 
 u16 *Func_02003456(s32);

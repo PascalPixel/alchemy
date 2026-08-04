@@ -1,5 +1,5 @@
 /* Play sound 0x83 only while the low runtime nibble is clear. */
-typedef unsigned int u32;
+#include "types.h"
 
 void Func_0200bb66(int sound);
 

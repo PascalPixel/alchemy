@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /* Signed halfwords in the shared work area; index 225 is the same slot src/0808b1d8.c reads. */
 extern s16 Data_02000240[];

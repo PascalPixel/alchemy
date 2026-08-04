@@ -1,10 +1,6 @@
 #include "resource_3a9.h"
 
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 typedef struct Placement {
     u32 destination;

@@ -1,6 +1,6 @@
 #include "resource_397.h"
 
-typedef signed int s32;
+#include "types.h"
 
 extern void Func_020004e4(void);
 extern void Func_020004f0(void);

@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
+#include "types.h"
 
 u16 Func_020012c8(u32 count, u8 *p) {
     u32 crc;

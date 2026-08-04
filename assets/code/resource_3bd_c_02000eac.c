@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 typedef struct {
     s32 a, b, c, d, e, f;

@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 typedef struct Record {
     s32 pad0;

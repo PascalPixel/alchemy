@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned int u32;
+#include "types.h"
 
 typedef void *(*WordCopy)(void *destination, const void *source, u32 size);
 typedef void *(*CopiedTransform)(

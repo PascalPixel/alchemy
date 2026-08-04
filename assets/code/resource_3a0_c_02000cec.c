@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3a0 one-shot scene at 0x02000cec (28 bytes, 4 calls).

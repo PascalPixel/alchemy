@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed short s16;
+#include "types.h"
 
 extern void Func_02004348();
 

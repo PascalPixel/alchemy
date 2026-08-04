@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /* The anchor pointer is read before the frame counter is stored: the reference
  * hoists `ldr r6,[r5,#104]` above the `strh`, and only that source order

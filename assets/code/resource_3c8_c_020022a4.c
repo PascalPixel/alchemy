@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef signed short s16;
+#include "types.h"
 
 typedef struct {
     s16 filler0[50];

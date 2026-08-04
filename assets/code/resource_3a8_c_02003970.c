@@ -1,5 +1,4 @@
-typedef signed char s8;
-typedef signed int s32;
+#include "types.h"
 
 typedef struct Effect {
     unsigned char pad00[0xC];

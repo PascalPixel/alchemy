@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_3a4 owner at 0x020000bc, 40 bytes: the per-frame integrator

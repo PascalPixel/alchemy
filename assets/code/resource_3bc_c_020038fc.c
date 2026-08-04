@@ -1,6 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned short u16;
+#include "types.h"
 
 /*
  * resource_3bc owner at 0x020038fc, 30 bytes: lazily allocate the handle

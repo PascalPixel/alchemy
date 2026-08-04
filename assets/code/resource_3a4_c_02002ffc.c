@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * resource_3a4 owner at 0x02002ffc, 44 bytes: test bit 1 of the runtime

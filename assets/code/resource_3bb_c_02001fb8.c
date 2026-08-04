@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3bb owner at 0x02001fb8, 66 bytes: six calls to a family of

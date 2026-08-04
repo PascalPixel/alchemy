@@ -1,9 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed char s8;
-typedef unsigned char u8;
+#include "types.h"
 
 struct S0104 {
     u8 pad[0x1e];

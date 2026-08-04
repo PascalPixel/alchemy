@@ -11,8 +11,7 @@
  * __call_via_sl and passes 64 bytes of 0x44444444, which corroborates the
  * (destination, size, value) shape directly.
  */
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 typedef void (*ArmFill)(void *destination, u32 size, u32 value);
 

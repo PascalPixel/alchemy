@@ -14,11 +14,7 @@
  * idea for two of its four sites and the phantom prototype for the other
  * two. 0x03000164 itself is NOT established; typed by arity only.
  */
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 typedef void (*ArmFill)(void *destination, u32 size, u32 value);
 typedef void (*Resident_03000164)(void *destination, u32 size, u32 value);

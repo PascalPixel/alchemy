@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_39e owner at 0x02002484, 132 bytes: a two-flag gate that either

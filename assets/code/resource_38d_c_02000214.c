@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 void Func_02002688();           /* scripted-scene bracket: open */
 s32 Func_0200266e();            /* story-flag test; used in a condition */

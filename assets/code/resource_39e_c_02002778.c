@@ -1,5 +1,4 @@
-typedef int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_39e owner at 0x02002778, 116 bytes: a scene-setup beat --

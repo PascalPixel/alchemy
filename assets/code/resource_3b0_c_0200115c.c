@@ -1,5 +1,4 @@
-typedef int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 extern s32 Func_0200238c(s32);
 extern s32 Data_020098f8[];

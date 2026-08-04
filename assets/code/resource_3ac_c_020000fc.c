@@ -1,6 +1,6 @@
 #include "resource_3ac.h"
 
-typedef signed int s32;
+#include "types.h"
 extern void Func_020005b0(void);
 extern void Func_020005ce(s32);
 extern void Func_020005e6(s32, s32);

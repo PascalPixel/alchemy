@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 extern unsigned char Value_00001f00;
 
 /*

@@ -1,5 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_3a4 owner at 0x02003410, 24 bytes: write 0x1018 into the

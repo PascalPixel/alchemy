@@ -1,6 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
-typedef unsigned char u8;
+#include "types.h"
 #define M2C_FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 typedef struct {
     u8 pad[9];

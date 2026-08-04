@@ -1,6 +1,4 @@
-typedef unsigned int u32;
-typedef signed int s32;
-typedef unsigned short u16;
+#include "types.h"
 
 /*
  * resource_3b1 owner at 0x02001a60, 212 bytes.  It is gated by flag 0x922,

@@ -16,7 +16,7 @@
  * __call_via_r0, so the call takes no arguments. What the routine DOES is
  * not established and is not named.
  */
-typedef unsigned int u32;
+#include "types.h"
 
 typedef void (*Callee_030000C4)(void);
 

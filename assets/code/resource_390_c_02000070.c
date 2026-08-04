@@ -1,7 +1,6 @@
 #include "resource_390.h"
 
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 extern s32 Func_0200033e(s32);
 extern void Func_020000b0(u8 *);

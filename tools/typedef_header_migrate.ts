@@ -12,7 +12,7 @@
 // this tool never trusts pattern-matching alone for byte-exact-critical
 // files.
 import { readdirSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import { compileOverlayCandidate } from "./overlay_disasm.ts";
 import { verifyCandidate, ROM_BASE } from "./match_m2c.ts";
 
@@ -66,12 +66,7 @@ export function migrateFile(text: string): { text: string; changed: boolean } {
   return { text: output.join("\n"), changed: true };
 }
 
-function compileOverlayBytes(source: string, work: string, overlay: string): Buffer {
-  const compiled = compileOverlayCandidate(source, work, overlay, source, []);
-  return compiled.data;
-}
-
-async function migrateOverlayFile(path: string, work: string): Promise<MigrationResult> {
+async function migrateOverlayFile(path: string, workRoot: string): Promise<MigrationResult> {
   const original = readFileSync(path, "utf8");
   const { text, changed } = migrateFile(original);
   if (!changed) return { path, status: "unchanged" };
@@ -82,43 +77,74 @@ async function migrateOverlayFile(path: string, work: string): Promise<Migration
     return { path, status: "verify-failed", detail: "cannot determine overlay/address from filename" };
   }
 
-  mkdirSync(work, { recursive: true });
-  const beforeBytes = compileOverlayBytes(path, join(work, "before"), overlay);
-  const tmpPath = join(work, `${overlay}_c_${stem}.c`);
-  writeFileSync(tmpPath, text);
-  let afterBytes: Buffer;
+  // A shared work directory across the whole run caused every file's compile
+  // artifacts (named from the entry address, e.g. "0200006c.o") to collide
+  // with any OTHER file at the same low address in a different overlay --
+  // this corpus reuses low addresses constantly across overlays. Isolate
+  // per-file, like alchemist.ts already does for the same reason.
+  const work = join(workRoot, `${overlay}_${stem}`);
+  // compileOverlayC uses its `work` parameter as the spawned compiler's cwd
+  // (overlay_disasm.ts `checked()`) but never creates that directory itself
+  // -- it assumes the caller already did. A cache hit (the common case for
+  // an unmodified "before" compile, since these files have already been
+  // compiled countless times this session) returns before ever touching the
+  // directory, masking a missing mkdir until the first cache MISS, where
+  // Bun's posix_spawn reports the missing cwd as an ENOENT on the
+  // EXECUTABLE PATH -- a real, reproducible POSIX misattribution, not a
+  // filesystem race. Create both subdirectories explicitly.
+  const beforeWork = join(work, "before");
+  const afterWork = join(work, "after");
+  mkdirSync(beforeWork, { recursive: true });
+  mkdirSync(afterWork, { recursive: true });
+  const before = compileOverlayCandidate(path, beforeWork, overlay, path, []);
+
+  // Compile the edit IN PLACE at the real path, never a scratch copy: per-
+  // source flag routing (NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES and friends
+  // in alchemy_gcc.ts) matches on the file's exact project path, and a
+  // scratch routingSource silently falls through to no special routing --
+  // compiling genuinely different bytes for any routed file, not a harmless
+  // no-op. The real file is restored unless verification succeeds.
+  writeFileSync(path, text);
   try {
-    afterBytes = compileOverlayBytes(tmpPath, join(work, "after"), overlay);
+    const after = compileOverlayCandidate(path, afterWork, overlay, path, []);
+    if (Buffer.compare(before.data, after.data) !== 0) {
+      writeFileSync(path, original);
+      return { path, status: "verify-failed", detail: "post-edit compile is not byte-identical" };
+    }
+    return { path, status: "migrated" };
   } catch (error) {
+    writeFileSync(path, original);
     return { path, status: "verify-failed", detail: `after-edit compile failed: ${(error as Error).message.slice(0, 100)}` };
   }
-  if (Buffer.compare(beforeBytes, afterBytes) !== 0) {
-    return { path, status: "verify-failed", detail: "post-edit compile is not byte-identical" };
-  }
-  writeFileSync(path, text);
-  return { path, status: "migrated" };
 }
 
-async function migrateMainFile(path: string, work: string, rom: Buffer): Promise<MigrationResult> {
+async function migrateMainFile(path: string, workRoot: string, rom: Buffer): Promise<MigrationResult> {
   const original = readFileSync(path, "utf8");
   const { text, changed } = migrateFile(original);
   if (!changed) return { path, status: "unchanged" };
 
-  mkdirSync(work, { recursive: true });
-  const before = await verifyCandidate(path, rom, join(work, "before"), [], ROM_BASE, "gs1", { family: "routed", removeFlags: [] });
-  const tmpPath = join(work, "candidate.c");
-  writeFileSync(tmpPath, text);
-  let after;
+  const work = join(workRoot, basename(path, ".c"));
+  const beforeWork = join(work, "before");
+  const afterWork = join(work, "after");
+  mkdirSync(beforeWork, { recursive: true });
+  mkdirSync(afterWork, { recursive: true });
+  const before = await verifyCandidate(path, rom, beforeWork, [], ROM_BASE, "gs1", { family: "routed", removeFlags: [] });
+
+  // Same in-place rationale as migrateOverlayFile: verifyCandidate always
+  // routes on its own `source` argument, so a scratch path would silently
+  // drop any route this file carries.
+  writeFileSync(path, text);
   try {
-    after = await verifyCandidate(tmpPath, rom, join(work, "after"), [], ROM_BASE, "gs1", { family: "routed", removeFlags: [] });
+    const after = await verifyCandidate(path, rom, afterWork, [], ROM_BASE, "gs1", { family: "routed", removeFlags: [] });
+    if (Buffer.compare(Buffer.from(before.actual), Buffer.from(after.actual)) !== 0) {
+      writeFileSync(path, original);
+      return { path, status: "verify-failed", detail: "post-edit compile is not byte-identical" };
+    }
+    return { path, status: "migrated" };
   } catch (error) {
+    writeFileSync(path, original);
     return { path, status: "verify-failed", detail: `after-edit compile failed: ${(error as Error).message.slice(0, 100)}` };
   }
-  if (Buffer.compare(Buffer.from(before.actual), Buffer.from(after.actual)) !== 0) {
-    return { path, status: "verify-failed", detail: "post-edit compile is not byte-identical" };
-  }
-  writeFileSync(path, text);
-  return { path, status: "migrated" };
 }
 
 function selfTest(): void {

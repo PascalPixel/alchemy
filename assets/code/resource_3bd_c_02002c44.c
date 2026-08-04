@@ -1,6 +1,4 @@
-typedef signed int s32;
-typedef signed short s16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_3bd cutscene owner 0x02002c44-0x020034bb (2168 bytes).

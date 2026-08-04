@@ -1,5 +1,4 @@
-typedef unsigned int u32;
-typedef unsigned char u8;
+#include "types.h"
 
 void Func_02000128(u32 index)
 {

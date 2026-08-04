@@ -1,6 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /* Seed the marker cycle directly from caller coordinates and install it. */
 extern u16 Data_0200cc94;

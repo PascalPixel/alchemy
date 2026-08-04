@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* Resource 378 object reset at 0x02002660 (28 bytes including alignment). */
 

@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* 0x02004d98 serves two imports: the two-argument setter at site 7 and the
  * three-argument one at site 14. */

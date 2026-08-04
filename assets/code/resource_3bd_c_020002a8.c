@@ -1,8 +1,4 @@
-typedef signed int s32;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef unsigned char u8;
+#include "types.h"
 
 typedef struct {
     s32 unk0;

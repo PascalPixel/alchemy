@@ -15,10 +15,7 @@
  * The value at 0x02004C1C is the callee, reached through __call_via_r1, so
  * the call takes ONE argument. Two sites, both rewritten.
  */
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 typedef s32 (*Callee_02004C1C)(s32 argument);
 

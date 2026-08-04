@@ -1,6 +1,5 @@
 /* Reset the selected actor's motion fields after refreshing it. */
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 u8 *Func_02006d98();
 void Func_02006cb6();
 

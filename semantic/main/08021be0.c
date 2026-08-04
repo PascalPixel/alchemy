@@ -19,9 +19,7 @@
 // registers, which is exactly why the draft mistook the callee for argument
 // four). Register agreement at the branch: r0 = *slot, r1 = object, r2 = slot,
 // r3 = callee at 0x08021c0a.
-typedef unsigned char u8;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 extern u8 Data_08015afc;
 extern u8 Data_03001e50;

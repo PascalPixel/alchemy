@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* Two veneers each serve two imports: 0x020046fa is the three-argument setter
  * at site 8 and the one-argument wait at site 21, and 0x02004730 is the

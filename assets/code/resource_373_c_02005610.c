@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 typedef s32 (*IwramSqrt02005610)(s32);
 

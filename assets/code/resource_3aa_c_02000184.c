@@ -1,6 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /* Sixteen call sites reaching eleven distinct import veneers. Byte equality
  * needs one symbol per slot, so repeated imports appear under several names;

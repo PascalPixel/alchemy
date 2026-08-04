@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 extern void Func_020034b4(void);
 extern void Func_02003562(s32);

@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3bc owner at 0x02002e18, 60 bytes: resolve an item against a

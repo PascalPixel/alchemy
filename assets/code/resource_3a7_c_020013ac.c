@@ -1,5 +1,4 @@
-typedef unsigned int u32;
-typedef unsigned long long u64;
+#include "types.h"
 
 /*
  * resource_3a7 soft-float double addition at 0x020013ac.

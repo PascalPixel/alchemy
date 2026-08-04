@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 extern s32 Data_020097f4;
 extern s32 Data_020097f0;

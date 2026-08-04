@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 extern void Func_02000d0c(void);
 /* 0x02000d6a serves two imports: the one-argument message at +0x04 and the

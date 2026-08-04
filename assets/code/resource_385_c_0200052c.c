@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Complete actor-12 two-flag dialogue scene through its three-word pool.

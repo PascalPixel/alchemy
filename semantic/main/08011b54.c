@@ -1,8 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 struct Entry_08011b54 {
     u32 source;

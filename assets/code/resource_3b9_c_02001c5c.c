@@ -1,5 +1,4 @@
-typedef unsigned short u16;
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3b9 owner at 0x02001c5c, 12 bytes: single-call trampoline,

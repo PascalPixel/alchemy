@@ -1,7 +1,6 @@
 #include "resource_38c.h"
 
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 extern u8 *Func_02000a14(s32);
 

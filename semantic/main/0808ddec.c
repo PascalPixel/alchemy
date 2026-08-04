@@ -19,11 +19,7 @@
  * comparison, or shifted right by 8 as a 16.16 magnitude.  That reads as a
  * square root.  Left as a comment for the exact reconstruction to settle, not a name.
  */
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 typedef s32 (*Resident_030001D8)(s32 value);
 

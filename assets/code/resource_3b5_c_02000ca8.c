@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 struct Actor {
     u8 pad00[0x23];
     u8 field23;

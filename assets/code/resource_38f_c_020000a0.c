@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 void Func_020000a0(u8 *o) {
     u8 *p = o + 72;

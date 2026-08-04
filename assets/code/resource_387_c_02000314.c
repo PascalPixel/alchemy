@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 387 request-then-wait wrapper at 0x02000314 (22 bytes, 2 calls).

@@ -1,6 +1,4 @@
-typedef signed short s16;
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3bf scene step at 0x02000e80.

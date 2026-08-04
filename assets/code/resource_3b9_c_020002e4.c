@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 extern void Func_02002edc(void);
 extern s32 Func_02002eaa(s32 flagId);

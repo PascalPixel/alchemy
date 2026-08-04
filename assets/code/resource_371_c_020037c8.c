@@ -1,4 +1,4 @@
-typedef unsigned char u8;
+#include "types.h"
 
 /* Complete prologue-less shared-state activation leaf through its pool. */
 struct SharedState_020037c8 {

@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 struct S {
     s32 pad0[2];

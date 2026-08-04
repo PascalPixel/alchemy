@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_380 owner at 0x02004248, 24 bytes including the trailing

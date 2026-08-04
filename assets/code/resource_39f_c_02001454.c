@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* The probe record is passed on by value: four words in r0-r3 and the last two
  * copied to the outgoing stack area by an `ldmia`/`stmia` pair. */

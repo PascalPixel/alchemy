@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Complete palette-task teardown owner.  It removes the per-frame palette

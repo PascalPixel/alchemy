@@ -17,10 +17,7 @@
 // (`ldr r3, [r7, #20]; subs r0, r0, r3`), so the sampler returns a value.
 // That is an instrument independent of the tail-position evidence at
 // 0x08011f54, and the two agree.
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 struct ObjectPosition {
     u8 unknown_00[0x14];

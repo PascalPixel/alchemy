@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 s32 Func_02001544(u32 *state)
 {

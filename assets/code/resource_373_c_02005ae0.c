@@ -1,6 +1,4 @@
-typedef unsigned int u32;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 extern s32 Func_0200b99e(s32);
 extern s32 Func_0200b9b4(s32);

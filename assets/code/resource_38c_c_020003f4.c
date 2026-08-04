@@ -1,6 +1,6 @@
 #include "resource_38c.h"
 
-typedef signed int s32;
+#include "types.h"
 
 extern void Func_02000910(void);
 extern void Func_0200094e(s32);

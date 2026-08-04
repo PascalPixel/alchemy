@@ -1,5 +1,4 @@
-typedef int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * resource_39e owner at 0x020041c4, 36 bytes: NOT in the unindexed

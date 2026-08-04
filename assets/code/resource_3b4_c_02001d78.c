@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned short u16;
+#include "types.h"
 
 struct Slot {
     u16 f00;

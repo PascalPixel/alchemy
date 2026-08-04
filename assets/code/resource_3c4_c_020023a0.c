@@ -14,7 +14,7 @@
  *
  * `add sp,#8 ; pop {r5} ; pop {r0} ; bx r0` return: void.
  */
-typedef signed int s32;
+#include "types.h"
 
 typedef struct Slot_020023a0 {
     s32 pad0;

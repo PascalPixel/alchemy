@@ -1,6 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
-typedef unsigned char u8;
+#include "types.h"
 
 struct Struct3848 { u8 pad00[8]; u32 field08; s32 field0c; u32 field10; };
 extern u8 Data_02000240[];

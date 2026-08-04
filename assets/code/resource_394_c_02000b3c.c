@@ -1,6 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 extern u8 Data_02010000[];
 
 void Func_02000b3c(s16 *records, s32 value)

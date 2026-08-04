@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 struct Actor {
     s32 f00;

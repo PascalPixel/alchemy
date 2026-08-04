@@ -1,8 +1,6 @@
 #include "resource_390.h"
 
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 struct Approach390Subject {
     u16 unknown_00[3];

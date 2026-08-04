@@ -1,6 +1,4 @@
-typedef signed int s32;
-typedef signed short s16;
-typedef unsigned char u8;
+#include "types.h"
 struct EffectObject_020007d8 { u8 unknown_00[10]; s16 unkA; u8 unknown_0c[6]; s16 unk12; u8 unknown_14[0x41]; u8 mode55; u8 unknown_56[0x16]; s32 callback; };
 struct EffectObject_020007d8 *Func_0200568a();
 s32 Func_0200565a();

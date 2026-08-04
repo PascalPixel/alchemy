@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3a0 owner at 0x02000e4c (228 bytes).

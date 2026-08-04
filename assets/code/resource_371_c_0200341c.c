@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /* Complete four-slot opposing-pair total helper. */
 extern s32 Func_0200686a(s32 slot);

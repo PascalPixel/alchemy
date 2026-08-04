@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 378 scene reset at 0x020006e8 (100 bytes including its literal).

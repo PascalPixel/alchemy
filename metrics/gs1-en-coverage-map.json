@@ -4,22 +4,22 @@
   "target": "gs1-en",
   "derivation": "tracked-evidence-v1",
   "rom_bytes": 8388608,
-  "executable_bytes": 1344346,
+  "executable_bytes": 1345594,
   "categories": {
     "exact_c": {
-      "bytes": 272902,
-      "percent_of_executable": 20.3
+      "bytes": 274138,
+      "percent_of_executable": 20.37
     },
     "semantic_c": {
-      "bytes": 993146,
-      "percent_of_executable": 73.88
+      "bytes": 993138,
+      "percent_of_executable": 73.81
     },
     "assembly": {
       "bytes": 0,
       "percent_of_executable": 0
     },
     "retained_asm": {
-      "bytes": 78298,
+      "bytes": 78318,
       "percent_of_executable": 5.82
     },
     "asset_data": {
@@ -33,17 +33,17 @@
     "semantic_c_bytes": 412826
   },
   "overlays": {
-    "executable_bytes": 795982,
-    "exact_c_bytes": 167850,
-    "semantic_c_bytes": 580320
+    "executable_bytes": 797230,
+    "exact_c_bytes": 169086,
+    "semantic_c_bytes": 580312
   },
   "provenance": {
     "exact_source": "worktree",
     "semantic_source": "worktree",
-    "semantic_sources": 2466,
+    "semantic_sources": 2283,
     "main_semantic_census": "closed",
     "semantic_superseded_bytes": 0,
-    "semantic_outside_extent_bytes": 27426,
+    "semantic_outside_extent_bytes": 26190,
     "semantic_unresolved": []
   },
   "rom_areas": [
@@ -63,9 +63,9 @@
       "label": "Compressed code overlays",
       "bytes": 541489,
       "categories": {
-        "exact_c": 116644,
-        "semantic_c": 390634,
-        "assembly": 34211
+        "exact_c": 117381,
+        "semantic_c": 389952,
+        "assembly": 34156
       },
       "tiles": 11
     },
@@ -94,13 +94,13 @@
     {
       "id": "overlays",
       "label": "Decoded code overlays",
-      "bytes": 795982,
+      "bytes": 797230,
       "categories": {
-        "exact_c": 167850,
-        "semantic_c": 580320,
-        "retained_asm": 47812
+        "exact_c": 169086,
+        "semantic_c": 580312,
+        "retained_asm": 47832
       },
-      "tiles": 4325
+      "tiles": 4514
     }
   ]
 }

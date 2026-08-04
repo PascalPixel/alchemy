@@ -543,10 +543,10 @@ AlchemyC_02000040:
 	.2byte 0x0000
 AlchemyC_02000050:
 	.space 0x9c
-	.4byte 0x47702000
-	.4byte 0x47704800
-	.2byte 0xa8f4
-	.2byte 0x0200
+AlchemyC_020000ec:
+	.space 0x4
+AlchemyC_020000f0:
+	.space 0x8
 AlchemyC_020000f8:
 	.space 0x88
 AlchemyC_02000180:

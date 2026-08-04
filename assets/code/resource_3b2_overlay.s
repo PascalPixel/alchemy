@@ -1496,15 +1496,15 @@ AlchemyC_02000ab0:
 	.4byte 0x0200b2d4
 	.4byte 0x02008ab1
 	.4byte 0xffff0000
-	.2byte 0x4770
+AlchemyC_02000cc0:
+	.space 0x2
 	.2byte 0x0000
 AlchemyC_02000cc4:
 	.space 0x78
-	.4byte 0x47702000
-	.2byte 0x4800
-	.2byte 0x4770
-	push	{r3, lr}
-	lsls	r0, r0, #8
+AlchemyC_02000d3c:
+	.space 0x4
+AlchemyC_02000d40:
+	.space 0x8
 AlchemyC_02000d48:
 	.space 0x5c
 AlchemyC_02000da4:

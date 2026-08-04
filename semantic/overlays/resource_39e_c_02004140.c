@@ -34,10 +34,11 @@ typedef unsigned int u32;
  * lever-playbook signedness rule.
  */
 
-extern u8 *Func_0808a080(s32 id);
-extern void Func_0808a010(s32 frames);
-extern void Func_080f9010(s32 sound_id);
-extern void Func_0200013c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
+extern u8 *Func_0200854c(s32 id);
+extern void Func_02008540(s32 frames);
+extern void Func_020086f6(s32 sound_id);
+extern void Func_020042d6(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
+extern void Func_02008578(s32 frames);
 
 void Func_02004140(void)
 {
@@ -45,20 +46,20 @@ void Func_02004140(void)
     u8 *record;
     u32 i;
 
-    record = Func_0808a080(8);
+    record = Func_0200854c(8);
     *(u32 *)(descriptor + 0) = 1;
     *(u16 *)(descriptor + 24) = 0x0119;
     *(u32 *)(descriptor + 28) = 0x0200d1d8;
     *(u32 *)(descriptor + 16) = 224 << 10;
     *(u32 *)(descriptor + 20) = 192 << 9;
     for (i = 0; i <= 7; i++) {
-        Func_0808a010(10);
+        Func_02008540(10);
         if (i & 1) {
-            Func_080f9010(0x82);
+            Func_020086f6(0x82);
         }
-        Func_0200013c(*(s32 *)(record + 8), *(s32 *)(record + 12),
+        Func_020042d6(*(s32 *)(record + 8), *(s32 *)(record + 12),
                       *(s32 *)(record + 16) + 0xffe80000, 0,
                       0x9999, 0, 0x00360001, descriptor);
     }
-    Func_0808a010(60);
+    Func_02008578(60);
 }

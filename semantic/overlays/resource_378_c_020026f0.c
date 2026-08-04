@@ -44,25 +44,24 @@ typedef signed int s32;
  * in one word and must not be read as one 32-bit field.
  */
 
-s32 Func_08000120();           /* ROM dispatch[12] -> Func_0800231c */
-s32 Func_08000118();           /* ROM dispatch[11] -> Func_08002322 */
+s32 Func_02005c52();           /* site veneer -> ROM dispatch[12] -> Func_0800231c */
+s32 Func_02005c5e();           /* site veneer -> ROM dispatch[11] -> Func_08002322 */
 
 void Func_020026f0(u8 *object)
 {
-    u16 *angle = (u16 *)(object + 100);
-    u16 *step = (u16 *)(object + 102);
     u8 *anchor = *(u8 **)(object + 104);
+    u16 *angle = (u16 *)(object + 100);
     u16 theta = *angle;
     s32 along;
     s32 across;
 
-    along = *(s32 *)(anchor + 8) + Func_08000120(theta) * 14;
+    along = *(s32 *)(anchor + 8) + Func_02005c52(theta) * 14;
     *(s32 *)(object + 8) = along;
 
-    across = *(s32 *)(anchor + 16) + Func_08000118(theta) * 10;
+    across = *(s32 *)(anchor + 16) + Func_02005c5e(theta) * 10;
+    *(s32 *)(object + 56) = *(s32 *)(object + 8);
     *(s32 *)(object + 16) = across;
     *(s32 *)(object + 64) = across;
-    *(s32 *)(object + 56) = *(s32 *)(object + 8);
 
-    *angle = (u16)(*angle + *step);
+    *angle = (u16)(*angle + *(u16 *)(object + 102));
 }

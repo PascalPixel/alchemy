@@ -8,57 +8,80 @@ typedef signed int s32;
  * runs through the return at 0x844 and the next prologue at 0x848 (252 bytes).
  * The RAM cell at 0x03001ed0 is loaded first and its pointed-to state block is
  * then updated at the literal offsets 0xe5a, 0xe5c, 0x2a00--0x2a03.
+ *
+ * The state pointer is scoped to the block that writes through it: the
+ * reference loads it fresh right before those stores and lets it die
+ * immediately after, so no register stays saved across the seven leading
+ * Func_02003d.. calls -- only `push {lr}` in the prologue, no r5.
+ *
+ * The direct call before the final if/else resolves to the in-overlay
+ * veneer at sub_02002ffc, not the semantic owner address; kept as an
+ * ordinary call to that exact site symbol.
  */
 
 extern u8 *Data_03001ed0;
 
-extern void Func_0808a018();
-extern void Func_0808a100();
-extern void Func_0808a330();
-extern void Func_0808a348();
-extern void Func_0808a010();
-extern void Func_08015210();
-extern s32 Func_020027d4();
-extern void Func_0808a020();
-extern void Func_0808a248();
+extern void Func_02003d40();
+extern void Func_02003db8();
+extern void Func_02003dc0();
+extern void Func_02003dc8();
+extern void Func_02003dd0();
+extern void Func_02003dd8();
+extern void Func_02003de0();
+extern void Func_02003de8();
+extern void Func_02003e98();
+extern void Func_02003ea6();
+extern void Func_02003d84();
+extern void Func_02003dc2();
+extern void Func_02003ef4();
+extern void Func_02003f02();
+extern void Func_02003e06();
+extern void Func_02003e0c();
+extern s32 Func_02002ffc();
+extern void Func_02003e28();
+extern void Func_02003f36();
+extern void Func_02003e34();
+extern void Func_02003f42();
 
 void Func_0200074c(void)
 {
-    u8 *state = Data_03001ed0;
-    u16 *halfwords = (u16 *)state;
+    Func_02003d40();
+    Func_02003db8(0, 0);
+    Func_02003dc0(1, 0);
+    Func_02003dc8(11, 0);
+    Func_02003dd0(12, 0);
+    Func_02003dd8(8, 0);
+    Func_02003de0(9, 0);
+    Func_02003de8(10, 0);
+    Func_02003e98(0x10002, 0);
+    Func_02003ea6(120);
+    Func_02003d84(180);
 
-    Func_0808a018();
-    Func_0808a100(0, 0);
-    Func_0808a100(1, 0);
-    Func_0808a100(11, 0);
-    Func_0808a100(12, 0);
-    Func_0808a100(8, 0);
-    Func_0808a100(9, 0);
-    Func_0808a100(10, 0);
-    Func_0808a330(0x10002, 0);
-    Func_0808a348(120);
-    Func_0808a010(180);
+    {
+        u8 *state = Data_03001ed0;
+        u16 *halfwords = (u16 *)state;
 
-    halfwords[0xe5a / 2] = 0x7c00;
-    halfwords[0xe5c / 2] = 0x7c00;
-    halfwords[(0xe5c + 2) / 2] = 0x7c00;
-    state[0x2a00] = 0;
-    state[0x2a01] = 1;
-    state[0x2a02] = 1;
-    state[0x2a03] = 1;
+        halfwords[0xe5a / 2] = 0x7c00;
+        halfwords[0xe5c / 2] = 0x7c00;
+        halfwords[(0xe5c + 2) / 2] = 0x7c00;
+        state[0x2a00] = 0;
+        state[0x2a01] = 1;
+        state[0x2a02] = 1;
+        state[0x2a03] = 1;
+    }
 
-    Func_0808a010(1);
-    Func_08015210(0x116d, 1, 0);
-    Func_0808a330(0, 0);
-    Func_0808a348(120);
+    Func_02003dc2(1);
+    Func_02003d84(0x116d, 1, 0);
+    Func_02003ef4(0, 0);
+    Func_02003f02(120);
 
-    Func_0808a010(120);
-    Func_0808a010(60);
-    if (Func_020027d4() == 0) {
-        Func_0808a020();
-        Func_0808a248(20);
+    Func_02003e06(120);
+    Func_02003e0c(60);
+    if (Func_02002ffc() == 0) {
+        Func_02003e28();
+        Func_02003f36(20);
     } else {
-        Func_0808a020();
-        Func_0808a248(50);
+        Func_02003e34();
+        Func_02003f42(50);
     }
 }

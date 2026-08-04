@@ -29,25 +29,26 @@ typedef signed int s32;
  * (`pop {r5,r6}; pop {r0}; bx r0`), which is a call result on both paths, so
  * it is written as a void routine here.
  */
-void Func_02000e30();
-void Func_080091f0();
-s32 Func_08077040();
-void Func_080770c8();
-void Func_080f9010();
+void Func_02001cd4();
+void Func_020064aa();
+void Func_020064b4();
+s32 Func_02006492();
+void Func_020064e6();
+void Func_02006652();
 
 void Func_02000e80(void)
 {
     u8 *workspace = *(u8 **)0x03001ebc;
     s16 id;
 
-    if (Func_08077040(234) == -1) {
+    if (Func_02006492(234) == -1) {
         return;
     }
 
     id = *(s16 *)(workspace + 364);
-    Func_02000e30(id - 40);
-    Func_080f9010(157);
-    Func_080091f0(0x30000, 0x30000, 0x10000);
-    Func_080091f0(-1, -1, 0xe666);
-    Func_080770c8(id + 816);
+    Func_02001cd4(id - 40);
+    Func_02006652(157);
+    Func_020064aa(0x30000, 0x30000, 0x10000);
+    Func_020064b4(-1, -1, 0xe666);
+    Func_020064e6(id + 816);
 }

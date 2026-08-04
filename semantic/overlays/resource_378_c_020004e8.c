@@ -19,35 +19,36 @@ typedef signed int s32;
 extern u8 Data_0200bc9c[];
 extern u8 *Data_03001ebc;
 
-extern s32 Func_0808a070(s32 id, s32 arg1);
-extern void Func_080000c0(s32 frames);
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern void Func_0808a030(u8 *data);
-extern void Func_0808a170(s32 value);
-extern void Func_0808a178(s32 id, s32 arg1);
-extern void Func_0808a180(s32 id, s32 arg1);
-extern void Func_0808a1d0(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+extern void Func_02003ade(void);
+extern void Func_02003af4(u8 *data);
+extern void Func_02003a22(s32 frames);
+extern void Func_02003ba8(s32 value);
+extern void Func_02003bb8(s32 id, s32 arg1);
+extern s32 Func_02003b18(s32 id, s32 arg1);
+extern void Func_02003bd4(s32 id, s32 arg1);
+extern void Func_02003c1a(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+extern void Func_02003c12(s32 id, s32 arg1);
+extern void Func_02003b56(void);
 
 void Func_020004e8(void)
 {
-    Func_0808a018();
-    Func_0808a030(Data_0200bc9c);
-    Func_080000c0(1);
-    Func_0808a170(0x1bfd);
-    Func_0808a178(9, 0);
+    Func_02003ade();
+    Func_02003af4(Data_0200bc9c);
+    Func_02003a22(1);
+    Func_02003ba8(0x1bfd);
+    Func_02003bb8(9, 0);
 
-    if (Func_0808a070(0, 0) == 0) {
-        Func_0808a180(9, 0);
+    if (Func_02003b18(0, 0) == 0) {
+        Func_02003bd4(9, 0);
         goto finish;
     }
 
     (*(u16 *)(Data_03001ebc + 472))++;
 
-    Func_0808a1d0(2, 16, 1, 24,
-                   1, 3, 7, 16, 1, 14, 0);
-    Func_0808a180(9, 0);
+    Func_02003c1a(2, 16, 1, 24,
+                  1, 3, 7, 16, 1, 14, 0);
+    Func_02003c12(9, 0);
 
 finish:
-    Func_0808a020();
+    Func_02003b56();
 }

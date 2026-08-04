@@ -32,23 +32,37 @@ typedef signed int s32;
  * established here.
  */
 
-/* Import veneers, named by the main-image function each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
-void Func_080091c0();
-s32 *Func_0808a080();
+/* Per-site veneers (raw sub_ symbols from the overlay .s), each call site
+ * spelled with its own symbol even though several reach the same import. */
+void Func_020044ca();
+s32 *Func_02004598();
+void Func_020044e4();
+s32 *Func_020045b2();
+void Func_020044fe();
+s32 *Func_020045cc();
+void Func_0200451a();
 
 void Func_0200062c(void)
 {
     s32 *record;
 
-    Func_080091c0(100, 11, 12, 4, 14, 11);
+    Func_020044ca(100, 11, 12, 4, 14, 11);
 
-    record = Func_0808a080(15);
-    Func_080091c0(13, 28, 1, 4, record[2] >> 20, 11);
+    record = Func_02004598(15);
+    {
+        s32 field = record[2] >> 20;
+        Func_020044e4(13, 28, 1, 4, field, 11);
+    }
 
-    record = Func_0808a080(16);
-    Func_080091c0(13, 28, 1, 4, record[2] >> 20, 11);
+    record = Func_020045b2(16);
+    {
+        s32 field = record[2] >> 20;
+        Func_020044fe(13, 28, 1, 4, field, 11);
+    }
 
-    record = Func_0808a080(17);
-    Func_080091c0(13, 28, 4, 1, 18, record[4] >> 20);
+    record = Func_020045cc(17);
+    {
+        s32 field = record[4] >> 20;
+        Func_0200451a(13, 28, 4, 1, 18, field);
+    }
 }

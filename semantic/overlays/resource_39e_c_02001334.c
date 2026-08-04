@@ -53,39 +53,40 @@ typedef unsigned char u8;
  * Func_0808a100(0, 1) after it are transcribed, not identified.
  */
 
-extern void Func_0808a010(s32 frames);
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern u8 *Func_0808a080(s32 slot);
-extern void Func_0808a100(s32 slot, s32 arg1);
-extern void Func_02000bf4(void);
-extern void Func_02000cd4(void);
-extern void Func_02000db4(void);
-extern void Func_02000e94(void);
-extern void Func_0200102c(s32 arg0);
+extern void Func_02005722(s32 frames);
+extern void Func_0200571c(void);
+extern void Func_02005784(void);
+extern u8 *Func_0200573e(s32 slot);
+extern void Func_0200579c(s32 slot, s32 arg1);
+extern void Func_020057ea(s32 slot, s32 arg1);
+extern void Func_02001f68(void);
+extern void Func_0200213c(void);
+extern void Func_02002062(void);
+extern void Func_020021f6(void);
+extern void Func_020023c8(s32 arg0);
 
 void Func_02001334(void)
 {
-    u8 *record = Func_0808a080(0);
+    u8 *record = Func_0200573e(0);
     u16 angle;
 
-    Func_0808a018();
-    Func_0808a100(0, 8);
-    Func_0808a010(20);
+    Func_0200571c();
+    Func_0200579c(0, 8);
+    Func_02005722(20);
 
     angle = *(u16 *)(record + 6);
 
     if ((u32)((angle + 0xffffe000) << 16) <= 0x3fff0000u) {
-        Func_02000e94();
+        Func_020021f6();
     } else if ((u16)(angle + 0xffffa000) <= 0x3fffu) {
-        Func_02000bf4();
+        Func_02001f68();
     } else if ((u16)(angle + (192 << 7)) <= 0x3fffu) {
-        Func_02000db4();
+        Func_0200213c();
     } else {
-        Func_02000cd4();
+        Func_02002062();
     }
 
-    Func_0808a100(0, 1);
-    Func_0200102c(1);
-    Func_0808a020();
+    Func_020057ea(0, 1);
+    Func_020023c8(1);
+    Func_02005784();
 }

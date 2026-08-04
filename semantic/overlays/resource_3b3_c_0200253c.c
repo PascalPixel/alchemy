@@ -48,30 +48,28 @@ typedef signed int s32;
  * words, and the copy is what supplies them.
  */
 
-void Func_0808a018();          /* scene open */
-s32 Func_02000758();           /* fills the probe record, returns a flag */
-void Func_020008ec();          /* four register arguments plus two stack words */
-void Func_02002498();
-void Func_020003a8();
-void Func_020024cc();
-void Func_0808a020();          /* scene close */
+void Func_0200504e();          /* scene open */
+s32 Func_02002ca2();           /* fills the probe record, returns a flag */
+void Func_02002e4e();          /* four register arguments plus two stack words */
+void Func_02004a00();
+void Func_02002914();
+void Func_02004a3c();
+void Func_02005088();          /* scene close */
 
 void Func_0200253c(void)
 {
     s32 frame[8];
     s32 *probe = &frame[2];
 
-    Func_0808a018();
+    Func_0200504e();
 
-    if (Func_02000758(probe) != 0) {
-        frame[0] = frame[6];
-        frame[1] = frame[7];
-        Func_020008ec(probe[0], probe[1], probe[2], probe[3], frame[0], frame[1]);
+    if (Func_02002ca2(probe) != 0) {
+        Func_02002e4e(probe[0], probe[1], probe[2], probe[3], probe[4], probe[5]);
     } else {
-        Func_02002498();
-        Func_020003a8();
-        Func_020024cc();
+        Func_02004a00();
+        Func_02002914();
+        Func_02004a3c();
     }
 
-    Func_0808a020();
+    Func_02005088();
 }

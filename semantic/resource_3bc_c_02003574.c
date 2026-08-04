@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /* resource_3bc signed transition-step owner, complete 204-byte span. */
 

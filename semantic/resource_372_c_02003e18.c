@@ -1,6 +1,5 @@
 /* Select actor 27's nested state byte from the low runtime flag bit. */
-typedef unsigned char u8;
-typedef unsigned int u32;
+#include "types.h"
 u8 *Func_0808a080();
 
 void Func_02003e18(void)

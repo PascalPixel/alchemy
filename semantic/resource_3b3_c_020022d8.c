@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 extern volatile s32 Data_03001e40;
 extern s32 Func_03000380(s32 dividend, s32 divisor);

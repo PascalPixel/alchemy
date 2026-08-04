@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3c5 owner at 0x02001238, 2264 bytes: 0x02001238-0x02001b0f.  One of

@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* Complete actor-11 temporary-acceptance dialogue wrapper through its pool. */
 struct Actor_02000754 {

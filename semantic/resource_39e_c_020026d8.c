@@ -1,5 +1,4 @@
-typedef int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_39e owner at 0x020026d8, 140 bytes: the scene that INSTALLS

@@ -1,8 +1,4 @@
-typedef signed int s32;
-typedef signed short s16;
-typedef unsigned int u32;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_3bc per-frame chain renderer at 0x020040d0, complete 964-byte

@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 /* 0x02004c08 が指すフラッシュ機種表。 */
 struct FlashChip08006e24 {

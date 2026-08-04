@@ -1,6 +1,4 @@
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 /* Protected-window palette adjustment owner, 0x02000abc-0x02000b23. */
 void Func_02000b8c(); u16 Func_02000b24(u16, s32); void Func_02000bcc();
 void Func_02000bac(); void Func_0808a330();

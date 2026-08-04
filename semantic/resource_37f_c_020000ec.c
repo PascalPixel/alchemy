@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 37f, owner at 0x020000ec (68 bytes of code + a seven-word literal

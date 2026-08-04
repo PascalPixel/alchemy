@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_383 owner at 0x020047fc, 68 bytes (0x020047fc-0x0200483f), all

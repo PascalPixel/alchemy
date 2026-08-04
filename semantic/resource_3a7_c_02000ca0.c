@@ -86,10 +86,7 @@
 
 /* Old-style declarations: overlay imports vary their argument count between
  * call sites in this overlay.  Those used in conditions need a return type. */
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned char u8;
-typedef unsigned int u32;
+#include "types.h"
 
 s32 Func_080770c0();    /* test a scene completion flag */
 void Func_080770d0();   /* clear a scene completion flag */

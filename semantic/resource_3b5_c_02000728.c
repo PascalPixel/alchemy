@@ -1,6 +1,4 @@
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 3b5, overlay initialiser at 0x02000728 (364 bytes; 330 bytes of

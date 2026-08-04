@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 38b cutscene at 0x02000404 (372 bytes, 35 call sites over 18

@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3b3 descent loop at 0x02001174 (80-byte whole-owner span, 2 calls).

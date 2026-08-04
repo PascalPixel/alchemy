@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * resource_389 owner at 0x02000bd0, 272 bytes: the per-frame TASK that trails

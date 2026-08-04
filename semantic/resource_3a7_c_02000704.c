@@ -35,8 +35,7 @@
 
 /* Old-style declaration: overlay imports vary their argument count between
  * call sites in this overlay. */
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 u8 *Func_0808a080();    /* scene-entity record by selector */
 

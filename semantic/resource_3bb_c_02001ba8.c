@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3bb owner at 0x02001ba8, 208 bytes: run this overlay's

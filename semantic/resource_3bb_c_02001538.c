@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /* Scene-three presentation script and its longer two-wave actor staging. */
 extern s16 Data_02000240[];

@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_387 actor-9 tile/flag owner at 0x02000348, complete 136-byte span

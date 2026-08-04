@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3ad, conversation driver at 0x020011b8 (244 bytes, 25 call sites).

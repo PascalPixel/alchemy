@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /* resource_39f owner at 0x02002ba4, 104 bytes. The nominal ranked gap begins
  * 60 bytes earlier inside the preceding owner's table/pool; only this prologue

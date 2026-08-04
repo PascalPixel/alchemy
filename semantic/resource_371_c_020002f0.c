@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 /* Raise the pending bit on the input record, then refresh the halfword at
  * +30 of its object from the shared workspace entry at +282. */

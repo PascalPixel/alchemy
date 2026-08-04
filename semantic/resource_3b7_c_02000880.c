@@ -51,8 +51,7 @@
  * spill slots for the two loop-invariant constants.
  */
 
-typedef signed int s32;
-typedef unsigned short u16;
+#include "types.h"
 
 extern u16 Data_02009fc0[];     /* in-image, file offset 0x1fc0: 8 BLDALPHA words */
 

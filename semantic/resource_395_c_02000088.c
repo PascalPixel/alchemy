@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 395 scripted scene at 0x02000088 (208 bytes,

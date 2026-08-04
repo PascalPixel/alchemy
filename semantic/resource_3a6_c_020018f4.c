@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 extern void Func_080f9010(s32 soundId);
 extern void Func_020017d8(s32 actorId, s32 cellX, s32 cellZ);

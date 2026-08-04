@@ -1,7 +1,7 @@
 // Approved reference provenance: adapted from pret/pokeemerald
 // src/m4a.c:CgbOscOff at commit 83df84e40623b79281f2397faa611cbf044170bd.
 // Register addresses and control flow were checked against this ROM region.
-typedef unsigned char u8;
+#include "types.h"
 
 void Func_080fada0(u8 channel)
 {

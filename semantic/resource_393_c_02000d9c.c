@@ -1,5 +1,4 @@
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_393 owner at 0x02000d9c, 64 bytes: capture the two hardware-palette

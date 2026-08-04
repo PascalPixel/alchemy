@@ -96,11 +96,7 @@
  *    but no consumer is visible from here.
  */
 
-typedef unsigned char u8;
-typedef signed char s8;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
 s32 Func_030003f0();            /* relocated IWRAM quotient helper */

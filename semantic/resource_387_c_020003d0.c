@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* resource_387 actor-10 tile-23 transition owner, 108 bytes through its pool. */
 

@@ -54,7 +54,7 @@
  *  - The imports' interfaces are unknown, hence the old-style declarations.
  */
 
-typedef signed int s32;
+#include "types.h"
 
 void Func_0808a018();
 void Func_0808a020();

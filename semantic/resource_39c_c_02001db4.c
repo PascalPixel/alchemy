@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * Two-pass scene particle pattern selected by `variant`.

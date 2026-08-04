@@ -1,6 +1,4 @@
-typedef unsigned int u32;
-typedef signed int s32;
-typedef unsigned long long u64;
+#include "types.h"
 
 /*
  * resource_3a7 signed-integer to soft-float conversion at 0x0200145c, 124 bytes.

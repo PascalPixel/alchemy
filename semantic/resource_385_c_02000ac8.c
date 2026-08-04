@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* Complete scene-variant five actor-zero setup wrapper through its pool. */
 extern const u8 Data_02009740[];

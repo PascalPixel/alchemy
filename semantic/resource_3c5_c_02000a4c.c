@@ -1,6 +1,5 @@
 /* Spawn and configure the mode-15 object variant. */
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 u8 *Func_080090c8(s32 kind, s32 x, s32 y, s32 z);
 void Func_080091e0(u8 *object, s32 mode);

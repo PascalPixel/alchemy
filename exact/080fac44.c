@@ -1,10 +1,7 @@
 // Approved reference provenance: adapted from pret/pokeemerald
 // src/m4a.c:TrkVolPitSet at commit 83df84e40623b79281f2397faa611cbf044170bd.
 // Names and layout were checked against this ROM region and exact compiler output.
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 struct MusicPlayerState;
 

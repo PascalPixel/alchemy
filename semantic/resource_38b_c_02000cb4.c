@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 38b collision-map repaint at 0x02000cb4 (92 bytes, 2 distinct

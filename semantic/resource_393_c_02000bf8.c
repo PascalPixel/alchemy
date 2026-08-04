@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_393 owner at 0x02000bf8, 148 bytes: the scene's phase-516 step.

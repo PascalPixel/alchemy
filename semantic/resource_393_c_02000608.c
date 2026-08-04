@@ -1,9 +1,5 @@
 /* resource_393 0x02000608-0x020008bf: staged actor move/redraw family. */
-typedef int s32;
-typedef unsigned int u32;
-typedef short s16;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 u8 *Func_0808a080(s32);
 void Func_0808a090(s32,s32,s32); void Func_0808a100(s32,s32);
 void Func_0808a010(s32); void Func_0808a0e0(s32,s32,s32);

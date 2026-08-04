@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef signed short s16;
+#include "types.h"
 
 /*
  * Resource 3a3 flag-sync / scene dispatcher at 0x02000874 (144 bytes,

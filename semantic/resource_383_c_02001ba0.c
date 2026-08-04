@@ -1,7 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_383 owner at 0x02001ba0, 708 bytes (0x02001ba0-0x02001e63):

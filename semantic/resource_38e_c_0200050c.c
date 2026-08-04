@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_38e owner at 0x0200050c, 208 bytes: the scene-0x22 body - decide

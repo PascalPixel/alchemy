@@ -1,5 +1,4 @@
-typedef int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_3b9 owner at 0x020011c4, 212 bytes: a two-outcome scene

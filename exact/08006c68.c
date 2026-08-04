@@ -22,10 +22,7 @@
  *
  *   0x08006ccc  __call_via_r3  ->  a computed value (see 0x8006cb8). CONTEXT-DEPENDENT.
  */
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 u8 *Func_08006c24(u8 *, u8 *, u16);
 s32 Func_080072f0(s32, s32, s32, s32);

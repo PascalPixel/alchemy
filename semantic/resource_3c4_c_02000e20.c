@@ -21,8 +21,7 @@
  *
  * `pop {r5, r6} ; pop {r0} ; bx r0` return: void.
  */
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 extern s16 Data_02000240[];
 extern void **Data_03001ee0;   /* workspace block pointer in IWRAM */

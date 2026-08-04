@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3ad, dialogue step at 0x02001394 (136 bytes, 13 call sites).

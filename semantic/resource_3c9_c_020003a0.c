@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3c9 damped-motion step at 0x020003a0 (94 bytes, 2 calls).

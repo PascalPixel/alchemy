@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3a6 actor-9 particle descent at 0x02000e04 (372 bytes).

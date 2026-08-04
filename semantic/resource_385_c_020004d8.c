@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /* Complete actor-8 flag-setting dialogue scene through its two-word pool. */
 extern void Func_0808a018(void);

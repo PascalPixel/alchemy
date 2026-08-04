@@ -1,5 +1,5 @@
 /* resource_389 0x020008c0-0x020009db: kind-selected rectangle redraw. */
-typedef int s32; typedef short s16; typedef unsigned char u8;
+#include "types.h"
 u8 *Func_0808a080(s32);
 void Func_080091c0(s32,s32,s32,s32,s32,s32);
 s32 Func_02000244(s32,s32,s32,s32,s32,s32);

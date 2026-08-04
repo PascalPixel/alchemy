@@ -5,9 +5,7 @@
  * rectangle from the corresponding displacement row, redraws it on layers
  * zero and two, and returns whether a mapping was found.
  */
-typedef signed int s32;
-typedef signed short s16;
-typedef unsigned char u8;
+#include "types.h"
 
 u8 *Func_0808a080(s32 slot);
 void Func_080091c0(s32 x, s32 y, s32 width, s32 height,

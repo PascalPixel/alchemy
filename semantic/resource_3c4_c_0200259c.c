@@ -51,9 +51,7 @@
  * pop {r5,r6,r7} ; pop {r1} ; bx r1` — r1, not r0, carries the return address,
  * so r0 survives and the owner returns the constant 0.
  */
-typedef signed int s32;
-typedef signed short s16;
-typedef unsigned char u8;
+#include "types.h"
 
 typedef struct Actor_0200259c Actor_0200259c;
 

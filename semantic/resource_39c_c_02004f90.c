@@ -1,6 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned char u8;
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_39c owner at 0x02004f90, 60 bytes: two chained lookups against

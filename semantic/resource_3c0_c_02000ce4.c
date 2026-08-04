@@ -1,5 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned int u32;
+#include "types.h"
 
 /* Pulse the encounter palette entry through a symmetric 64-frame ramp. */
 void Func_02000ce4(void)

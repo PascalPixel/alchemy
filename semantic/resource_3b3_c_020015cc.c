@@ -1,5 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * Complete 48-byte prologue-less alternate-affine builder.  It copies the

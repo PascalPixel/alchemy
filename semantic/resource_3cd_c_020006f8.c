@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Set the two scene-state words at +0x1c0 and +0x1c8, then run the local

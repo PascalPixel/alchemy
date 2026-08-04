@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_391 owner at 0x02002974, 356 bytes: code 0x02002974-0x02002aa7 and

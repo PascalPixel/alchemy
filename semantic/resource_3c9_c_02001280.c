@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3c9 owner at 0x02001280, 72 bytes: a two-way branch on its
@@ -28,7 +28,6 @@ typedef int s32;
  * Recorded as a plain passed value rather than resolved.
  */
 
-typedef unsigned char u8;
 
 /*
  * Per-site call symbols: byte-matching this overlay's `bl` needs the RAW

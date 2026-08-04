@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3bb owner at 0x02001ffc, 188 bytes: run a short setup pair,

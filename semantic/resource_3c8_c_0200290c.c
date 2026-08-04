@@ -1,8 +1,4 @@
-typedef signed int s32;
-typedef signed short s16;
-typedef unsigned int u32;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 3c8 at 0x0200290c: the mirror of 0x020026f8 - the same 320-frame

@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 extern void Func_080000d8(void *descriptor);
 extern void Func_080091c0(s32 actorId, s32 resourceId, s32 enabled,

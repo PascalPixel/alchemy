@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3ce script-command handler at 0x0200029c (1574 bytes,

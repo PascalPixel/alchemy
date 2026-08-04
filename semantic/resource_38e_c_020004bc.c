@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_38e owner at 0x020004bc, 80 bytes: the overlay's ENTRY-0 root -

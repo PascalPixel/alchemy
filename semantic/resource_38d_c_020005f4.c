@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_38d owner at 0x020005f4, 236 bytes: code 0x020005f4-0x020006ad

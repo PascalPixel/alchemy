@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /* Complete actor-12 timed two-flag dialogue scene through its pool. */
 extern void Func_0808a018(void);

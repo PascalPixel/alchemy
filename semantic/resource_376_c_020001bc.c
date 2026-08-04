@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 extern void Func_0808a018(void);
 extern void Func_0808a020(void);
 extern void Func_0808a150(s32 actor, s32 target, s32 frames);

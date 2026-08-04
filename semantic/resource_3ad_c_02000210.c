@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3ad, map-repaint sequence at 0x02000210 (300 bytes, 19 call sites).

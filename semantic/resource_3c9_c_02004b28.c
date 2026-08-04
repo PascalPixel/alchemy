@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3c9 owner at 0x02004b28, 196 bytes: a short scripted-scene

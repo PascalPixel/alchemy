@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 extern s16 Data_02000240[];
 extern void Func_02001b5c(s32); extern s32 Func_02001d64(s32,s32); extern void Func_02001e20(s32,s32);

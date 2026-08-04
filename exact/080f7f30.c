@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned int u32;
+#include "types.h"
 extern u8 Data_0000443c[];
 
 void Func_080f7f30(u8 *destination)

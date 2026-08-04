@@ -5,8 +5,7 @@
  * coordinates are biased before the arithmetic shift, reproducing truncation
  * toward zero rather than flooring them.
  */
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 u8 *Func_0808a080(s32 slot);
 

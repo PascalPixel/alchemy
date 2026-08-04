@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_39c owner at 0x02004f44, 76 bytes: fire a three-call setup

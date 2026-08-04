@@ -1,6 +1,4 @@
-typedef int s32;
-typedef unsigned char u8;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * resource_380 owner at 0x0200478c, 200 bytes: build a tracked-object

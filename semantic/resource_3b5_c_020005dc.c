@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3b5, cutscene script step at 0x020005dc (104 bytes; 92 bytes of

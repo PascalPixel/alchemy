@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned short u16;
+#include "types.h"
 
 /*
  * resource_3a2 owner at 0x020011b0, 744 bytes.  This is the overlay's ROOT:

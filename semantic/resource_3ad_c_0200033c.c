@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3ad, owner at 0x0200033c (72 bytes, 7 call sites).

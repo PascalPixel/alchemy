@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3a0 mode entry at 0x02000de8 (94 bytes, 6 calls).

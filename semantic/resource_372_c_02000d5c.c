@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 372 guarded cutscene step at 0x02000d5c (360 bytes, 27 calls).

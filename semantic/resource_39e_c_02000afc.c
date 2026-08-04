@@ -1,6 +1,4 @@
-typedef int s32;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_39e owner at 0x02000afc, 216 bytes: the overlay's SCENE-EXIT

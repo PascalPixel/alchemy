@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3a3 scripted sequence at 0x02000d58 (200 bytes,

@@ -85,10 +85,7 @@
  *  - The imports' interfaces are unknown, hence the old-style declarations.
  */
 
-typedef signed int s32;
-typedef signed short s16;
-typedef unsigned char u8;
-typedef unsigned short u16;
+#include "types.h"
 
 extern u8 Data_0200a054[];      /* in-image 0x2054: obstacle tag bytes, slots 0/1 */
 extern u8 Data_0200a057[];      /* in-image 0x2057: obstacle tag bytes, slots 2/3 */

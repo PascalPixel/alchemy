@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 /* Resource 378 object finalisation at 0x020025c4 (156 bytes including pool). */
 

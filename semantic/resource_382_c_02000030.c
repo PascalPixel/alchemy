@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_resource_382 owner at 0x02000030, 22 bytes. No literal pool.

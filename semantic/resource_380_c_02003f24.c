@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef short s16;
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_380 owner at 0x02003f24, 804 bytes: THE OVERLAY'S ENTRY

@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3bc, owner at 0x020001c8.  60 strict bytes: 50 bytes of code

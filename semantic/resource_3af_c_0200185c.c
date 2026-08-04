@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * resource_3af owner at 0x0200185c, 196 bytes: a scene-entry setup

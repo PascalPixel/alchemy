@@ -1,8 +1,5 @@
 /* resource_3a5 exact 472-byte homolog, independently remapped to its 0x0200a120 table. */
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 u8 *Func_0808a080(s32 slot);
 u8 *Func_080090c8(s32 kind, s32 x, s32 y, s32 z);

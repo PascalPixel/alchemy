@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3af owner at 0x02000bf0, 56 bytes: byte-identical twin of

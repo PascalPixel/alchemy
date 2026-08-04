@@ -220,6 +220,7 @@ function compileOverlayC(
   work: string,
   overlay: string,
   routingSource = source,
+  extraFlags: readonly string[] = [],
 ): { address: number; data: Buffer } {
   const callViaBase = overlayCallViaBase(overlay, source);
   const stem = basename(source, extname(source)).slice(-8);
@@ -241,6 +242,7 @@ function compileOverlayC(
     input: source,
     output: assembly,
     preprocessedOutput: join(work, `${stem}.i`),
+    flags: extraFlags.length > 0 ? { addFlags: extraFlags } : undefined,
   });
   const keyDigest = new Bun.CryptoHasher("sha256");
   // The key carries a digest of THIS FILE's own source, not a hand-bumped
@@ -264,7 +266,11 @@ function compileOverlayC(
   keyDigest.update("\0");
   keyDigest.update(readFileSync(source));
   const cached = join(OVERLAY_C_CACHE, `${keyDigest.digest("hex")}.bin`);
-  if (existsSync(cached)) return { address, data: readFileSync(cached) };
+  // A cache hit returns before the compile steps ever run, so extra debug
+  // flags (e.g. candidate_explain.ts's -dR dump) would silently produce no
+  // side-effect files on a repeat invocation. Callers requesting extra flags
+  // are asking for a live compile's side effects, not just its .bin result.
+  if (extraFlags.length === 0 && existsSync(cached)) return { address, data: readFileSync(cached) };
   for (const step of plan.steps) checked([...step.command], work);
   writeFileSync(assembly, biasInImageLabelWords(readFileSync(assembly, "utf8")).text);
   checked(["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", object, assembly], work);
@@ -309,8 +315,9 @@ export function compileOverlayCandidate(
   work: string,
   overlay: string,
   routingSource = source,
+  extraFlags: readonly string[] = [],
 ): { address: number; data: Buffer } {
-  return compileOverlayC(source, work, overlay, routingSource);
+  return compileOverlayC(source, work, overlay, routingSource, extraFlags);
 }
 
 // Address of the overlay's own `_call_via_rN` bank, or the main image's if it

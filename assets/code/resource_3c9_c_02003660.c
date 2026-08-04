@@ -58,13 +58,23 @@ typedef signed int s32;
  * +8/+16 is which world axis, so they are not named x/y/z here.
  */
 
-extern u8 *Func_0808a080(s32 index);   /* scene-record accessor */
-extern s32 Func_08000118(s32 angle);   /* sine of a binary angle */
-extern s32 Func_08000120(s32 angle);   /* cosine of a binary angle */
+/*
+ * Per-site call symbols: `overlay_call_targets.ts`'s `+2` rule resolves
+ * these three sites to the semantic imports (0x366c -> Func_0808a080,
+ * 0x367a -> Func_08000120 cosine, 0x369a -> Func_08000118 sine) but
+ * declaring externs at THOSE addresses does not reproduce the reference
+ * bytes -- byte-matching this overlay's `bl` needs the RAW pc-relative
+ * decode (standard Thumb BL semantics, no `+2` correction), which lands
+ * on these bogus-looking mid-veneer-chain addresses instead. Confirmed by
+ * direct calculation on the reference halfwords at 0x366c/0x367a/0x369a.
+ */
+u8 *Func_020093ba(s32 index);   /* scene-record accessor (Func_0808a080) */
+s32 Func_020092b8(s32 angle);   /* sine of a binary angle (Func_08000118) */
+s32 Func_020092a0(s32 angle);   /* cosine of a binary angle (Func_08000120) */
 
 void Func_02003660(u8 *actor)
 {
-    u8 *anchor = Func_0808a080(23);
+    u8 *anchor = Func_020093ba(23);
     u16 *anglePtr = (u16 *)(actor + 100);
     s32 angle = *anglePtr;
     s32 cosine;
@@ -72,18 +82,22 @@ void Func_02003660(u8 *actor)
     s32 along;
     s32 across;
 
-    cosine = Func_08000120(angle);
+    cosine = Func_020092a0(angle);
     along = *(s32 *)(anchor + 8)
-          + (*(s32 *)(actor + 48) + *(u8 *)(actor + 98) + 6) * cosine;
+          + cosine * (*(s32 *)(actor + 48) + *(u8 *)(actor + 98) + 6);
     *(s32 *)(actor + 8) = along;
 
-    sine = Func_08000118(angle);
+    sine = Func_020092b8(angle);
     across = *(s32 *)(anchor + 16)
-           + (*(u8 *)(actor + 98) + 4) * sine;
+           + sine * (*(u8 *)(actor + 98) + 4);
     *(s32 *)(actor + 16) = across;
 
     *(s32 *)(actor + 56) = *(s32 *)(actor + 8);
     *(s32 *)(actor + 64) = across;
 
-    *anglePtr = (u16)(*anglePtr + 0xf800);
+    {
+        s32 next = *anglePtr;
+        next = next + (s32)0xfffff800;
+        *anglePtr = (u16)next;
+    }
 }

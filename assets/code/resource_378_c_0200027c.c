@@ -16,32 +16,34 @@ typedef signed int s32;
 
 extern s16 Data_02000240[];
 
-extern s32 Func_080770c0(s32 flag);
-extern void Func_0808a010(s32 frames);
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern void Func_0808a100(s32 id, s32 enabled);
-extern void Func_0808a150(s32 id, s32 x, s32 y);
-extern void Func_0808a170(s32 value);
-extern void Func_0808a180(s32 id, s32 arg1);
+extern void Func_02003870(void);
+extern s32 Func_02003856(s32 flag);
+extern void Func_02003938(s32 value);
+extern void Func_02003940(s32 value);
+extern void Func_02003956(s32 value);
+extern void Func_02003916(s32 id, s32 enabled);
+extern void Func_02003958(s32 id, s32 x, s32 y);
+extern void Func_020038ae(s32 frames);
+extern void Func_02003986(s32 id, s32 arg1);
+extern void Func_020038ca(void);
 
 void Func_0200027c(void)
 {
-    Func_0808a018();
+    Func_02003870();
 
-    if (Func_080770c0(0x855) != 0) {
-        Func_0808a170(0x1377);
+    if (Func_02003856(0x855) != 0) {
+        Func_02003938(0x1377);
     } else {
-        Func_0808a170(0x1289);
+        Func_02003940(0x1289);
     }
 
     if (Data_02000240[225] == 11) {
-        Func_0808a170(0x1ce9);
+        Func_02003956(0x1ce9);
     }
 
-    Func_0808a100(9, 1);
-    Func_0808a150(9, 0, 0);
-    Func_0808a010(2);
-    Func_0808a180(9, 0);
-    Func_0808a020();
+    Func_02003916(9, 1);
+    Func_02003958(9, 0, 0);
+    Func_020038ae(2);
+    Func_02003986(9, 0);
+    Func_020038ca();
 }

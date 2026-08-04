@@ -49,16 +49,16 @@ typedef unsigned char u8;
  * not identified.
  */
 
-extern void Func_08009178(u8 *descriptor, s32 arg1, s32 arg2);
-extern void Func_0808a010(s32 frames);
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern u8 *Func_0808a080(s32 slot);
-extern void Func_0808a090(s32 slot, s32 arg1, s32 arg2);
-extern void Func_0808a0e0(s32 slot, s32 arg1, s32 arg2);
-extern void Func_0808a100(s32 slot, s32 arg1);
-extern void Func_0808a248(s32 arg0);
-extern void Func_080f9010(s32 arg0);
+extern void Func_02006b20(u8 *descriptor, s32 arg1, s32 arg2);
+extern void Func_02006b9e(s32 frames);
+extern void Func_02006b58(void);
+extern void Func_02006bb8(void);
+extern u8 *Func_02006b96(s32 slot);
+extern void Func_02006bb6(s32 slot, s32 arg1, s32 arg2);
+extern void Func_02006c00(s32 slot, s32 arg1, s32 arg2);
+extern void Func_02006c0c(s32 slot, s32 arg1);
+extern void Func_02006cd4(s32 arg0);
+extern void Func_02006cfe(s32 arg0);
 
 extern u8 *Data_03001ebc;
 
@@ -67,21 +67,21 @@ void Func_02002778(void)
     u8 *record;
     u8 *workspace;
 
-    Func_0808a018();
-    Func_080f9010(188);
-    Func_08009178((u8 *)0x0200c764, 77, 8);
+    Func_02006b58();
+    Func_02006cfe(188);
+    Func_02006b20((u8 *)0x0200c764, 77, 8);
 
-    record = Func_0808a080(0);
+    record = Func_02006b96(0);
     record[85] = 0;
 
-    Func_0808a090(0, 0xcccc, 0x6666);
+    Func_02006bb6(0, 0xcccc, 0x6666);
 
     workspace = Data_03001ebc;
     *(s32 *)(workspace + 448) = 448 - 192;
 
-    Func_0808a100(0, 2);
-    Func_0808a0e0(0, 0, -16);
-    Func_0808a010(16);
-    Func_0808a248(2);
-    Func_0808a020();
+    Func_02006c0c(0, 2);
+    Func_02006c00(0, 0, -16);
+    Func_02006b9e(16);
+    Func_02006cd4(2);
+    Func_02006bb8();
 }

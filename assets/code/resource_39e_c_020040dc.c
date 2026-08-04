@@ -26,23 +26,22 @@ typedef int s32;
  * by shape only.
  */
 
-extern void Func_080770c8(s32 flagId);
-extern void Func_0808a420(s32 arg0);
-extern void Func_0808a428(s32 arg0, s32 arg1);
-extern void Func_0808a430(s32 arg0, s32 arg1);
-extern void Func_0808a448(void);
-extern void Func_080000c0(s32 arg0);
+extern void Func_020084b0();
+extern void Func_02008638();
+extern void Func_0200864c();
+extern void Func_02008666();
+extern void Func_0200845a();
 
 void Func_020040dc(s32 arg0, s32 arg1)
 {
     u8 *globalCtx;
 
-    Func_080770c8(160 << 1);
-    Func_0808a428(141, 1);
+    Func_020084b0(160 << 1);
+    Func_02008638(141, 1);
     globalCtx = *(u8 **)0x03001f30;
-    Func_0808a430(arg0, arg1);
+    Func_0200864c(arg0, arg1);
     globalCtx[0x23] = 0;
-    Func_0808a448();
-    Func_0808a420(1);
-    Func_080000c0(1);
+    Func_02008666();
+    Func_0200864c(1);
+    Func_0200845a(1);
 }

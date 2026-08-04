@@ -17,7 +17,7 @@
  * Uncertainty: the relocated routine is not named, only located.
  */
 
-typedef unsigned int u32;
+#include "types.h"
 /*
  * The relocated kernel's signature once running from the stack.
  * Entered in ARM state by `bx sp`.

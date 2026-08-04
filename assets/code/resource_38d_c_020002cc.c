@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 void Func_02002740();           /* scripted-scene bracket: open */
 s32 Func_02002726();            /* story-flag test; used in a condition */

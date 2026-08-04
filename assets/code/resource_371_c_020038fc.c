@@ -1,5 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned int u32;
+#include "types.h"
 
 extern u32 Data_03001e40;
 extern u16 Data_0200e7a0;

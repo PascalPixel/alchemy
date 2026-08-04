@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /* One import reached through four veneer slots twelve bytes apart, so the four
  * `bl` encodings are identical and the call sites must name distinct symbols. */

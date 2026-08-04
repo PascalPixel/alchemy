@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 s32 Func_02001c88(u8 *o) {
     u16 *c = (u16 *)(o + 100);

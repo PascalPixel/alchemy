@@ -10,8 +10,7 @@
  * a pointer, 0x10000, and 0.  The type below records that and no more; it
  * is not a claim about the routine's job.
  */
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 typedef void (*Resident_030002C0)(void *target, s32 arg1, s32 arg2);
 

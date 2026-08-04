@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /* Palette RAM, walked backwards from the last entry of a sixteen-colour bank. */
 extern s16 Data_050000de[];

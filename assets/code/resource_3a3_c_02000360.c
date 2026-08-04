@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 s32 Func_020011ee();        /* tests a flag id; nonzero when set */
 void Func_02001216();       /* opens a scripted sequence */

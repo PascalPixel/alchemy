@@ -1,6 +1,6 @@
 #include "resource_390.h"
 
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_390 owner at 0x0200005c, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the

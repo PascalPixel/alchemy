@@ -18,10 +18,7 @@
 // domain, which is why the draft read the callee as argument four. Register
 // agreement at the branch: r0 = buffer + 0x100, r1 = r7 (destination),
 // r2 = r8 (fill), r3 = callee.
-typedef signed int s32;
-typedef unsigned int u32;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 typedef struct DmaChannel {
     u32 source;

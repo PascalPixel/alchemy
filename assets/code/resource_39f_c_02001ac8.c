@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* Four sites of the record accessor, so four names. */
 extern u8 *Func_02004890(s32);

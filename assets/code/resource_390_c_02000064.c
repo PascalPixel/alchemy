@@ -1,6 +1,6 @@
 #include "resource_390.h"
 
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_390 owner at 0x02000064, 4 bytes: `movs r0, #0 / bx lr`.

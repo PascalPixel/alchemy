@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 struct V6 {
     s32 a;

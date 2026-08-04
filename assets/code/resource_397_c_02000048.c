@@ -1,6 +1,6 @@
 #include "resource_397.h"
 
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_397 owner at 0x02000048, 4 bytes: `movs r0, #0 / bx lr`.

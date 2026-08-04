@@ -1,4 +1,4 @@
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_38f owner at 0x020001d4, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the

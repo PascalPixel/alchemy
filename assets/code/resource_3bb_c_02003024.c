@@ -1,6 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /* Start an interpolated marker move from the current position. */
 extern u16 Data_0200cc00;

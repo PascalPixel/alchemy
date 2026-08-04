@@ -17,9 +17,7 @@
  * `extern` data symbol at 0x03001388).  It was never data and never an
  * argument: it is the call target.
  */
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 
 void *Func_08004970(s32);

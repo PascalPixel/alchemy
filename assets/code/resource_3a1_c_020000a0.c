@@ -1,6 +1,4 @@
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 #define NULL ((void *)0)
 
 void *Func_020006de(s32, s32, s32, s32);

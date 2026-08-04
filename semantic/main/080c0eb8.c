@@ -1,4 +1,4 @@
-typedef unsigned int u32;
+#include "types.h"
 
 struct Entry_080c0eb8 {
     u32 value;

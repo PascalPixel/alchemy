@@ -1,8 +1,6 @@
 #include "resource_397.h"
 
-typedef signed int s32;
-typedef unsigned char u8;
-typedef unsigned short u16;
+#include "types.h"
 
 void Func_02000560();
 void Func_0200051e();

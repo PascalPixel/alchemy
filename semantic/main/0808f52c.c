@@ -27,12 +27,7 @@
  * leftover; typed as three because three is the safer reproduction, with the
  * doubt recorded here rather than resolved by guess.
  */
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 typedef s32 (*Resident_030001D8)(s32 value);
 typedef s32 (*Resident_03000380)(s32 arg0, s32 arg1, s32 arg2);

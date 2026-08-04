@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /* One import, four call sites, four distinct veneer addresses. */
 s32 Func_02004f6c();

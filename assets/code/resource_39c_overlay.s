@@ -8795,23 +8795,8 @@ AlchemyC_02005578:
 	bx r0
 	.4byte 0x03001edc
 	.4byte 0x02000240
-	push {r5, lr}
-	movs r0, #35
-	movs r1, #4
-	bl sub_0200b304
-	cmp r0, #0
-	beq .L_02005966
-	ldr r5, [r0, #0]
-	ldr r0, [r5, #20]
-	cmp r0, #0
-	beq .L_02005966
-	bl sub_0200b33c
-	movs r3, #0
-	str r3, [r5, #20]
-.L_02005966:
-	pop {r5}
-	pop {r0}
-	bx r0
+AlchemyC_02005948:
+	.space 0x24
 	.4byte 0x47204c00
 	.4byte 0x03000380
 	.4byte 0x47204c00

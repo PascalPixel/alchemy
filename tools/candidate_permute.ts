@@ -351,6 +351,27 @@ interface Options {
   budget: number;
   write: boolean;
   force: boolean;
+  json: boolean;
+}
+
+// Owners routinely miss the overlays.json inventory (address-only owners);
+// semantic/regions.json's manual_regions is the project's span registry for
+// those, so agents never have to pass --span by hand.
+export function resolveSpan(overlay: string, offset: number): number | undefined {
+  const inventoryPath = join(ROOT, "out/decomp/overlays.json");
+  if (existsSync(inventoryPath)) {
+    const inventory = JSON.parse(readFileSync(inventoryPath, "utf8")) as { functions: Array<{ id: string; span_bytes: number }> };
+    const row = inventory.functions.find((item) => item.id === `${overlay}:${offset.toString(16)}`);
+    if (row !== undefined) return row.span_bytes;
+  }
+  const regionsPath = join(ROOT, "semantic/regions.json");
+  if (existsSync(regionsPath)) {
+    const regions = JSON.parse(readFileSync(regionsPath, "utf8")) as { manual_regions: Array<{ overlay: string; entry: string; span_bytes: number }> };
+    const entry = `0x${(OVERLAY_BASE + offset).toString(16).padStart(8, "0")}`;
+    const row = regions.manual_regions.find((item) => item.overlay === overlay && item.entry === entry);
+    if (row !== undefined) return row.span_bytes;
+  }
+  return undefined;
 }
 
 function optionsOf(argv: string[]): Options {
@@ -362,6 +383,7 @@ function optionsOf(argv: string[]): Options {
   let budget = 60;
   let write = false;
   let force = false;
+  let json = false;
   for (let index = 0; index < argv.length; index++) {
     const argument = argv[index];
     if (argument === "--source") source = argv[++index] ?? "";
@@ -371,32 +393,64 @@ function optionsOf(argv: string[]): Options {
     else if (argument === "--budget") budget = Number(argv[++index]);
     else if (argument === "--write") write = true;
     else if (argument === "--force") force = true;
+    else if (argument === "--json") json = true;
     else if (argument === "-h" || argument === "--help") {
       console.log(
-        "usage: candidate_permute.ts OVERLAY:OFFSET --source FILE [--span BYTES] [--budget N] [--write] [--force]\n" +
+        "usage: candidate_permute.ts OVERLAY:OFFSET [--source FILE] [--span BYTES] [--budget N] [--write] [--force] [--json]\n" +
         "Reads the scheduler tier diagnosis and applies only the licensed source moves\n" +
-        "(statement sink/hoist, split-store).  --write saves the source ONLY when a\n" +
-        "variant is byte-exact.  --force runs the search even when no differing row\n" +
-        "was decided by the original-order tier (normally a proven dead end).",
+        "(statement sink/hoist, split-store).  --source defaults to the owner's\n" +
+        "semantic/overlays file; --span resolves from the inventory or\n" +
+        "semantic/regions.json.  --write saves the source ONLY when a variant is\n" +
+        "byte-exact.  --force runs the search even when no differing row was decided\n" +
+        "by the original-order tier (normally a proven dead end).  --json prints one\n" +
+        "machine-readable verdict object with an explicit `next` action.",
       );
       process.exit(0);
     } else if (id === "") id = argument;
     else throw new Error(`unrecognised argument: ${argument}`);
   }
   const match = /^(resource_[0-9a-f]+):(?:0x)?([0-9a-f]+)$/i.exec(id);
-  if (match === null) throw new Error("usage: candidate_permute.ts OVERLAY:OFFSET --source FILE [--span BYTES]");
-  if (source === "") throw new Error("--source FILE is required");
+  if (match === null) throw new Error("usage: candidate_permute.ts OVERLAY:OFFSET [--source FILE] [--span BYTES]");
   const overlay = match[1];
   const offset = Number.parseInt(match[2], 16);
-  if (routingSource === "") {
-    const stem = (OVERLAY_BASE + offset).toString(16).padStart(8, "0");
-    routingSource = join(ROOT, "assets/code", `${overlay}_c_${stem}.c`);
-  }
+  const stem = (OVERLAY_BASE + offset).toString(16).padStart(8, "0");
+  if (source === "") source = join(ROOT, "semantic/overlays", `${overlay}_c_${stem}.c`);
+  if (routingSource === "") routingSource = join(ROOT, "assets/code", `${overlay}_c_${stem}.c`);
   return {
     id, overlay, offset,
     source: resolve(source), routingSource: resolve(routingSource),
-    work: resolve(work || join(ROOT, "work/candidate-permute")), span, budget, write, force,
+    // Per-owner work directory: parallel lanes running different owners never
+    // share compile intermediates or scheduler dumps.
+    work: resolve(work || join(ROOT, "work/candidate-permute", `${overlay}_${offset.toString(16)}`)),
+    span, budget, write, force, json,
   };
+}
+
+// The one-line contract a low-context agent acts on without interpretation.
+interface Verdict {
+  id: string;
+  verdict: "exact" | "improved" | "refused" | "exhausted" | "unnecessary";
+  baseline_differing_bytes: number;
+  differing_bytes: number;
+  tiers: string[];
+  compiles: number;
+  moves: string[];
+  source: string;
+  saved: string | null;
+  next: string;
+}
+
+function emitVerdict(verdict: Verdict, json: boolean): void {
+  if (json) {
+    console.log(JSON.stringify(verdict));
+    return;
+  }
+  console.log(
+    `permute=${verdict.verdict} differing_bytes=${verdict.differing_bytes} ` +
+    `(baseline ${verdict.baseline_differing_bytes}) compiles=${verdict.compiles} tiers=${verdict.tiers.join(",") || "none"}`,
+  );
+  if (verdict.moves.length > 0) console.log(`moves:\n  ${verdict.moves.join("\n  ")}`);
+  console.log(`next: ${verdict.next}`);
 }
 
 function selfTest(): void {
@@ -451,39 +505,41 @@ async function main(): Promise<void> {
   const options = optionsOf(Bun.argv.slice(2));
   mkdirSync(options.work, { recursive: true });
 
-  const inventoryPath = join(ROOT, "out/decomp/overlays.json");
-  let span = options.span;
-  if (span === undefined && existsSync(inventoryPath)) {
-    const inventory = JSON.parse(readFileSync(inventoryPath, "utf8")) as { functions: Array<{ id: string; span_bytes: number }> };
-    span = inventory.functions.find((item) => item.id === options.id)?.span_bytes;
-  }
-  if (span === undefined) throw new Error(`no inventory row for ${options.id}; pass --span BYTES`);
+  const span = options.span ?? resolveSpan(options.overlay, options.offset);
+  if (span === undefined) throw new Error(`no inventory or regions.json row for ${options.id}; pass --span BYTES`);
   if (!existsSync(options.source)) throw new Error(`candidate does not exist: ${options.source}`);
 
   const overlayPath = join(ROOT, "assets/code", `${options.overlay}_overlay.s`);
   const image = assembleOverlay(overlayPath, OVERLAY_BASE);
   const expected = image.subarray(options.offset, options.offset + span);
+  const adoptCommand = `bun tools/overlay_adopt.ts ${options.id} --source ${options.source} --span ${span}`;
 
   const gate = gateDiagnosis(options.source, options.work, options.overlay, options.routingSource, expected);
+  const tiers = [...gate.tiersSeen].sort();
   if (gate.differingBytes === 0) {
-    console.log("permute=unnecessary differing_bytes=0 (candidate is already byte-exact -- run overlay_adopt)");
+    emitVerdict({
+      id: options.id, verdict: "unnecessary",
+      baseline_differing_bytes: 0, differing_bytes: 0, tiers, compiles: 1, moves: [],
+      source: options.source, saved: null,
+      next: `already byte-exact: ${adoptCommand} --apply, then delete the semantic source`,
+    }, options.json);
     return;
   }
-  const tiers = [...gate.tiersSeen].sort().join(",") || "none";
-  console.log(`baseline differing_bytes=${gate.differingBytes} differing_row_tiers=${tiers}`);
+  if (!options.json) console.log(`baseline differing_bytes=${gate.differingBytes} differing_row_tiers=${tiers.join(",") || "none"}`);
   if (!gate.licensed && !options.force) {
-    console.log(
-      "permute=refused (no differing row was decided by the original-order tier, so statement\n" +
-      "order provably cannot fix this residual -- see the tier list above for what did decide\n" +
-      "it: priority/class/depend-count differences need a different lever, and model-divergence\n" +
-      "marks an unmodeled tier.  Pass --force to search anyway.)",
-    );
+    emitVerdict({
+      id: options.id, verdict: "refused",
+      baseline_differing_bytes: gate.differingBytes, differing_bytes: gate.differingBytes,
+      tiers, compiles: 1, moves: [], source: options.source, saved: null,
+      next: `note STILL-OPEN in the source header citing tiers [${tiers.join(",") || "none"}]; ` +
+        "statement order provably cannot fix this residual -- do not hand-permute or flag-sweep it",
+    }, options.json);
     return;
   }
-  if (gate.licensed) {
-    console.log("diagnosis licenses statement-order moves (original-order tier decided a differing row)");
-  } else {
-    console.log("searching under --force despite an unlicensed diagnosis");
+  if (!options.json) {
+    console.log(gate.licensed
+      ? "diagnosis licenses statement-order moves (original-order tier decided a differing row)"
+      : "searching under --force despite an unlicensed diagnosis");
   }
 
   const functionName = `Func_${(OVERLAY_BASE + options.offset).toString(16).padStart(8, "0")}`;
@@ -518,30 +574,49 @@ async function main(): Promise<void> {
       if (score === 0) break;
     }
     if (roundBest === null || roundBest.score >= best.score) {
-      console.log(`round ${round}: no improving move (${compiles} compiles used)`);
+      if (!options.json) console.log(`round ${round}: no improving move (${compiles} compiles used)`);
       break;
     }
     best = { parsed: roundBest.parsed, score: roundBest.score, trail: [...best.trail, roundBest.description] };
-    console.log(`round ${round}: ${roundBest.description} -> differing_bytes=${roundBest.score}`);
+    if (!options.json) console.log(`round ${round}: ${roundBest.description} -> differing_bytes=${roundBest.score}`);
   }
 
   if (best.score === 0) {
     const finalText = renderFunction(best.parsed);
+    let saved: string;
     if (options.write) {
       writeFileSync(options.source, finalText);
-      console.log(`permute=exact compiles=${compiles} written=${options.source}`);
+      saved = options.source;
     } else {
-      const outPath = join(options.work, "permute-exact.c");
-      writeFileSync(outPath, finalText);
-      console.log(`permute=exact compiles=${compiles} saved=${outPath} (re-run with --write to update the source)`);
+      saved = join(options.work, "permute-exact.c");
+      writeFileSync(saved, finalText);
     }
-    console.log(`moves applied:\n  ${best.trail.join("\n  ")}`);
-    console.log("note: rename any permuted_N temps to meaningful names -- renaming locals cannot change bytes");
+    emitVerdict({
+      id: options.id, verdict: "exact",
+      baseline_differing_bytes: gate.differingBytes, differing_bytes: 0,
+      tiers, compiles: compiles + 1, moves: best.trail, source: options.source, saved,
+      next: options.write
+        ? `rename permuted_N temps to meaningful names (cannot change bytes), then ${adoptCommand} --apply and delete the semantic source`
+        : `re-run with --write to save, or copy ${saved} over the source; then ${adoptCommand} --apply`,
+    }, options.json);
   } else if (best.trail.length > 0) {
-    console.log(`permute=improved differing_bytes=${best.score} (from ${gate.differingBytes}) compiles=${compiles}`);
-    console.log(`moves (NOT written -- an inexact improvement is not proof of the reference's true shape):\n  ${best.trail.join("\n  ")}`);
+    const saved = join(options.work, "permute-best.c");
+    writeFileSync(saved, renderFunction(best.parsed));
+    emitVerdict({
+      id: options.id, verdict: "improved",
+      baseline_differing_bytes: gate.differingBytes, differing_bytes: best.score,
+      tiers, compiles: compiles + 1, moves: best.trail, source: options.source, saved,
+      next: "do NOT install: an inexact improvement is not proof of the reference's true shape. " +
+        "A capable agent may inspect the saved variant and the moves for a lead; otherwise note STILL-OPEN",
+    }, options.json);
   } else {
-    console.log(`permute=exhausted differing_bytes=${gate.differingBytes} compiles=${compiles} (no licensed move improved the candidate)`);
+    emitVerdict({
+      id: options.id, verdict: "exhausted",
+      baseline_differing_bytes: gate.differingBytes, differing_bytes: gate.differingBytes,
+      tiers, compiles: compiles + 1, moves: [], source: options.source, saved: null,
+      next: `note STILL-OPEN in the source header citing tiers [${tiers.join(",") || "none"}] and that ` +
+        "licensed statement moves are exhausted; do not hand-permute",
+    }, options.json);
   }
 }
 

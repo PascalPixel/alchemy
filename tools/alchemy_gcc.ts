@@ -1085,6 +1085,39 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // tell on their three-argument calls.
   "assets/code/resource_39e_c_0200268c.c",
   "assets/code/resource_39e_c_02002778.c",
+  // resource_3bf's four sibling scene-transition sheets (0xce0/0xdcc/0xe80/
+  // 0xf30): after -fno-cse-shift-immediate rebuilds their duplicated
+  // 192<<10 arguments per site, one adds-r1-from-r6 / pool-ldr-r2
+  // transposition remains at the (-1,-1,pool) call and the low-destination
+  // tie-break puts it back (probed exact 2026-08-04).
+  "assets/code/resource_3bf_c_02000ce0.c",
+  "semantic/overlays/resource_3bf_c_02000ce0.c",
+  "assets/code/resource_3bf_c_02000dcc.c",
+  "semantic/overlays/resource_3bf_c_02000dcc.c",
+  "assets/code/resource_3bf_c_02000e80.c",
+  "semantic/overlays/resource_3bf_c_02000e80.c",
+  "assets/code/resource_3bf_c_02000f30.c",
+  "semantic/overlays/resource_3bf_c_02000f30.c",
+]);
+// The reference objects for these owners re-materialise their shifted
+// (`movs rN,#K / lsls rN,rN,#n`, constraint K) immediates at every use site
+// while still sharing negated (`movs/negs`, constraint J) immediates of the
+// same function in a callee-saved register -- a split
+// -fno-cse-two-insn-immediate (which covers J and K together) cannot spell.
+// -fno-cse-shift-immediate is the K-only fraction of that flag; see
+// alchemy-gcc/gcc-2.96/gcc/config/arm/arm.h CSE_CONSTANT_CLASS.  All four
+// resource_3bf siblings share one fingerprint: Func(0x30000, 0x30000,
+// 0x10000) rebuilt per-argument in the reference, Func(-1, -1, pool) sharing
+// r6, verified byte-exact under the pair with -fsched-low-dest-first.
+const NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  "assets/code/resource_3bf_c_02000ce0.c",
+  "semantic/overlays/resource_3bf_c_02000ce0.c",
+  "assets/code/resource_3bf_c_02000dcc.c",
+  "semantic/overlays/resource_3bf_c_02000dcc.c",
+  "assets/code/resource_3bf_c_02000e80.c",
+  "semantic/overlays/resource_3bf_c_02000e80.c",
+  "assets/code/resource_3bf_c_02000f30.c",
+  "semantic/overlays/resource_3bf_c_02000f30.c",
 ]);
 // resource_372:0ec4's five module-local calls make r7 unavailable in the
 // reference allocation.  Reserving it restores the exact saved-register set;
@@ -1560,6 +1593,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-cse-two-insn-immediate"]
       : []),
+    ...(NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fno-cse-shift-immediate"]
+      : []),
     ...(NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-cse-pool-immediate"]
       : []),
@@ -1643,6 +1679,7 @@ export function evidencedRoutingFlags(): string[] {
     ...NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES,
     ...NO_STRICT_ALIASING_OVERLAY_SOURCES,
     ...NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES,
+    ...NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES,
     ...NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES,
     ...SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES,
     ...SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES,
@@ -1858,6 +1895,10 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "c1cc6d2864567297451662d36fba7abbce7a916d138f7115832a265de6868a06",
         "640964de34d6202f6dc5943b0c22b0afd1a8f4f1307ba6d3cf30af4110f5f5e2",
         "c1c5be8f10668a7a66bfa2d6de2ca89f6ac17ffb57ffe62aedf7935da172f21a",
+        // -fno-cse-shift-immediate added (K-class-only split of the
+        // two-insn-immediate CSE policy; default-on, inert unless routed) --
+        // admitted from a green `bun run verify` on this host.
+        "13287dcb29210f197d7fe484532458197d21a7dc2bdf7ca3fca08af447631d3b",
       ],
     },
     gs2: {

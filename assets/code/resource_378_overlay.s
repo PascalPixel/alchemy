@@ -4715,51 +4715,8 @@ AlchemyC_02002660:
 	.4byte 0x03001e40
 	.2byte 0x8000
 	.2byte 0xfffc
-	.2byte 0xb560
-	mov	r6, sl
-	mov	r5, r8
-	push	{r5, r6}
-	adds	r5, r0, #0
-	movs	r2, #100
-	adds	r2, r2, r5
-	ldrh	r6, [r2, #0]
-	ldr	r1, [r5, #104]
-	adds	r0, r6, #0
-	mov	r8, r2
-	mov	sl, r1
-	bl	sub_02005c52
-	mov	r1, sl
-	lsls	r2, r0, #3
-	ldr	r3, [r1, #8]
-	subs	r2, r2, r0
-	lsls	r2, r2, #1
-	adds	r3, r3, r2
-	str	r3, [r5, #8]
-	adds	r0, r6, #0
-	bl	sub_02005c5e
-	mov	r1, sl
-	lsls	r3, r0, #2
-	ldr	r2, [r1, #16]
-	adds	r3, r3, r0
-	lsls	r3, r3, #1
-	adds	r2, r2, r3
-	ldr	r3, [r5, #8]
-	str	r2, [r5, #16]
-	str	r2, [r5, #64]
-	str	r3, [r5, #56]
-	mov	r2, r8
-	adds	r5, #102
-	ldrh	r3, [r2, #0]
-	ldrh	r2, [r5, #0]
-	mov	r1, r8
-	adds	r3, r3, r2
-	strh	r3, [r1, #0]
-	pop	{r3, r5}
-	mov	r8, r3
-	mov	sl, r5
-	pop	{r5, r6}
-	pop	{r0}
-	bx	r0
+AlchemyC_020026f0:
+	.space 0x5e
 	.2byte 0x0000
 	push	{r5, r6, r7, lr}
 	mov	r7, r8

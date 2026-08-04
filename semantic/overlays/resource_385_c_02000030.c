@@ -1,4 +1,5 @@
 typedef unsigned char u8;
+typedef signed int s32;
 
 /*
  * resource_resource_385 owner at 0x02000030, 22 bytes. No literal pool.
@@ -49,9 +50,26 @@ typedef unsigned char u8;
  * is not evidence that the referenced one is unreachable.
  *
  * 0 of 0 callees.
+ *
+ * ITERATION NOTE (still open, 17/22 bytes differing): declaring `value` as
+ * `s32` instead of `u8` drops the candidate from 21 to 17 differing bytes
+ * and fixes the size mismatch (was 24 bytes, now the correct 20) -- a `u8`
+ * parameter made this old compiler re-truncate it with a spurious
+ * `lsls r1,r1,#24 / lsrs r1,r1,#24` pair before masking (same shape as
+ * LAWS.md's "zero-extension shape is chosen by the local's declared type"
+ * note, apparently extending to parameters here too). The ABI register
+ * content is identical either way. Residual: the reference spells the
+ * byte-preserve mask as two instructions, `movs r3,#13 / negs r3,r3`,
+ * where this compiler constant-folds `~0x0c` (== -13) straight to a single
+ * `movs r3,#243`; tried both `~0x0c` and literal `-13` spellings with no
+ * difference (both fold identically pre-codegen). The reference also loads
+ * the `#3` mask constant and reads `inner[9]` in the opposite order from
+ * what the natural expression produces. Not closed within budget; possibly
+ * an old_agbcc vs fork compiler-choice question (unverified) rather than a
+ * C-shape one.
  */
 
-void Func_02000030(void *record, u8 value)
+void Func_02000030(void *record, s32 value)
 {
     u8 *inner = *(u8 **)((u8 *)record + 80);
 

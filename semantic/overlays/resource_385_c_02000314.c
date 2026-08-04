@@ -39,25 +39,38 @@ typedef signed int s32;
  * unrelated routines (382 saves r8-sl and loads 0x03001e8c; 387 is a
  * two-import wrapper; 3a0 and 3c0 are small constant-argument calls).
  *
- * The single call site was resolved with
- * `bun tools/overlay_call_targets.ts resource_385 0314 034c`: one site,
- * classified `call_via`, and r3 is loaded from the pool with 0x030001d8
- * immediately before it.  So the callee is the IWRAM square root, the same
- * helper resource_3b7_c_02000e5c.c already names.
+ * The single call site was resolved directly against the raw region in
+ * assets/code/resource_385_overlay.s (still unadopted there at the time of
+ * writing): `bl sub_02001508` immediately after `ldr r3, [pc, #8]` loads
+ * 0x030001d8.  sub_02001508 is this overlay's own `_call_via_r3` veneer --
+ * NOT the 0x20011c4 address the transposed-family comment above would
+ * suggest by `stored_displacement + 2` veneer math, which the raw source
+ * contradicts (see LAWS.md's "Func_080072xx is usually not a function"
+ * addendum and the src/0800dcdc.c veneer-audit precedent for this same
+ * 0x030001d8 target).  The veneer is called directly with the target address
+ * as the trailing argument that the ABI forces into r3, rather than through a
+ * function-pointer spelling (which the Thumb `call_indirect` pattern cannot
+ * reproduce byte-for-byte).
  *
  * The three coordinate differences are taken as 16.16 fixed point and reduced
  * to whole units by `asrs #16` before squaring, which is what keeps the sum
- * inside 32 bits; the pointers are walked with `ldmia rN!` in the interleaved
- * order a[0], b[0], a[1], b[1], b[2], a[2].
+ * inside 32 bits; the pointers are walked with post-increment `*p++` (which
+ * is what makes gcc emit `ldmia rN!, {rX}`) in the interleaved order
+ * a[0], b[0], a[1], b[1], b[2], a[2] -- the same shape documented for the
+ * sibling 0x0030 distance family in LAWS.md.
  */
 
-s32 Func_030001d8();   /* IWRAM square root, reached through the call_via slot */
+s32 Func_02001508(s32 a, s32 b, s32 c, s32 target);   /* _call_via_r3 veneer */
 
-s32 Func_02000314(s32 *a, s32 *b)
+s32 Func_02000314(s32 *arg0, s32 *arg1)
 {
-    s32 dx = (a[0] - b[0]) >> 16;
-    s32 dy = (a[1] - b[1]) >> 16;
-    s32 dz = (a[2] - b[2]) >> 16;
+    s32 temp_r5 = (*arg0++ - *arg1++) >> 16;
+    s32 temp_r4 = (*arg0++ - *arg1++) >> 16;
+    s32 temp_r3 = (*arg0 - *arg1) >> 16;
 
-    return Func_030001d8(dx * dx + dy * dy + dz * dz);
+    s32 temp_r0 = temp_r5 * temp_r5;
+    s32 temp_r2 = temp_r4 * temp_r4;
+    s32 temp_r1 = temp_r3 * temp_r3;
+
+    return Func_02001508(temp_r0 + temp_r2 + temp_r1, temp_r1, temp_r2, 0x030001d8);
 }

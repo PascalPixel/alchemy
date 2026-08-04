@@ -29,29 +29,29 @@
  * rule.
  */
 
-extern u8 *Func_080090c8(s32 kind, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_08009098(u8 *object, void *table);
-extern void Func_08009020(u8 *record, s32 arg1);
+extern u8 *Func_0200ab38(s32 kind, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_0200ab3e(u8 *object, void *table);
+extern void Func_0200ab50(u8 *record, s32 arg1);
 
 void Func_02005158(u8 *object)
 {
     u8 *newObject;
     u8 *record;
 
-    newObject = Func_080090c8(24, *(s32 *)(object + 8), *(s32 *)(object + 12), *(s32 *)(object + 16));
+    newObject = Func_0200ab38(24, *(s32 *)(object + 8), *(s32 *)(object + 12), *(s32 *)(object + 16));
     if (newObject == 0) {
         return;
     }
 
-    Func_08009098(newObject, (void *)0x0200de08);
+    record = *(u8 **)(newObject + 0x50);
+    Func_0200ab3e(newObject, (void *)0x0200de08);
 
     newObject[0x55] = 0;
     newObject[0x22] = 1;
     newObject[0x23] = 2;
 
-    record = *(u8 **)(newObject + 0x50);
     if (record != 0) {
-        Func_08009020(record, 2);
+        Func_0200ab50(record, 2);
         record[0x26] = 0;
         record[9] |= 0x0C;
     }

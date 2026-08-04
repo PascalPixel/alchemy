@@ -180,7 +180,7 @@ function main(): void {
   const output = join(ROOT, "out/permute");
   mkdirSync(output, { recursive: true });
   const tracked = new Set(
-    readdirSync(join(ROOT, "src"))
+    readdirSync(join(ROOT, "exact"))
       .filter((name) => name.endsWith(".c"))
       .map((name) => basename(name, ".c")),
   );
@@ -222,7 +222,7 @@ function main(): void {
           console.log(`skip ${stem}: asm region longer than matched C`);
           continue;
         }
-        writeFileSync(join(ROOT, "src", `${stem}.c`), M2C_PREAMBLE + body);
+        writeFileSync(join(ROOT, "exact", `${stem}.c`), M2C_PREAMBLE + body);
         rmSync(join(ROOT, "asm", `${stem}.s`), { force: true });
         matched++;
         hit = true;

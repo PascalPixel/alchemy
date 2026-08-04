@@ -30,6 +30,7 @@ const STATE_DIR = join(OUT, "state");
 const HITS_DIR = join(OUT, "hits");
 const CACHE_DIR = join(OUT, "cache");
 const CODE = join(ROOT, "assets/code");
+const EXACT = join(ROOT, "exact");
 
 function contentSignature(paths: readonly string[]): string {
   const digest = new Bun.CryptoHasher("sha256");
@@ -150,7 +151,7 @@ function resolveDraft(overlay: string, offsetText: string): string | undefined {
   const candidates = [
     join(ROOT, "work/notes", `${overlay}-${offsetText}-best.c`),
     join(ROOT, "work/drafts", `${overlay}-${offsetText}.c`),
-    join(CODE, `${overlay}_c_${(OVERLAY_BASE + Number.parseInt(offsetText, 16)).toString(16).padStart(8, "0")}.c`),
+    join(EXACT, `${overlay}_c_${(OVERLAY_BASE + Number.parseInt(offsetText, 16)).toString(16).padStart(8, "0")}.c`),
   ];
   return candidates.find(existsSync);
 }
@@ -181,7 +182,7 @@ function resolveTargets(options: Options): Target[] {
     }
     // 採用済み関数の参照像には自分の出力が貼り込まれているので、比較は自明に
     // 一致する。探索対象にすると偽の当たりになるため外す。
-    const adopted = join(CODE, `${specification.overlay}_c_${specification.stem}.c`);
+    const adopted = join(EXACT, `${specification.overlay}_c_${specification.stem}.c`);
     if (existsSync(adopted)) {
       console.log(`skip ${id}: already adopted (${basename(adopted)})`);
       continue;
@@ -193,7 +194,7 @@ function resolveTargets(options: Options): Target[] {
       stem: specification.stem,
       span,
       draft,
-      routing: specification.routing ?? `assets/code/${specification.overlay}_c_${specification.stem}.c`,
+      routing: specification.routing ?? `exact/${specification.overlay}_c_${specification.stem}.c`,
     });
   }
   return targets;

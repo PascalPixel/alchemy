@@ -143,8 +143,8 @@ export function semanticQueue(): Candidate[] {
     readFileSync(join(ROOT, "out", "full", "asm", "manifest.json"), "utf8"),
   ) as { regions: Region[] };
   const admitted = new Set([
-    ...sourceStems(join(ROOT, "src")),
-    ...sourceStems(join(ROOT, "semantic", "main")),
+    ...sourceStems(join(ROOT, "exact")),
+    ...sourceStems(join(ROOT, "semantic")),
   ]);
   const blockersPath = join(ROOT, "semantic", "ordinary-blockers.json");
   const blockers = existsSync(blockersPath)

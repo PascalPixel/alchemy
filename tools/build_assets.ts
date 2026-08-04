@@ -1513,7 +1513,7 @@ function stageStamp(manifestPath: string, sourceOnly: boolean): string {
   // all. Both feed the overlay images that several asset regions compress, so
   // the stamp reported a hit for work it had not done: touching
   // `assets/code/resource_39c_overlay.s` or
-  // `semantic/overlays/resource_39c_c_02003d20.c` both printed `reused=stamp`
+  // `semantic/resource_39c_c_02003d20.c` both printed `reused=stamp`
   // and skipped the whole re-encode. Those are exactly the files changed by an
   // overlay conversion, so `verify` could pass without rerunning the asset
   // round trip. The forward dependency scan and a stale `build:full` result

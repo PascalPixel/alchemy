@@ -20,7 +20,7 @@ const CLIENT = join(DASHBOARD, "client.ts");
 const STYLES = join(DASHBOARD, "styles.css");
 const FONT = join(ROOT, "assets", "fonts", "weyard.otf");
 const PORT = Number(Bun.env.ALCHEMY_DASHBOARD_PORT ?? 4649);
-const COVERAGE_DIRECTORIES = ["asm", "assets", "metrics", "semantic", "src"] as const;
+const COVERAGE_DIRECTORIES = ["asm", "assets", "metrics", "semantic", "exact"] as const;
 const COVERAGE_BUILD_FILES = [
   join(ROOT, "out", "full", "asm", "manifest.json"),
   join(ROOT, "out", "full", "assets", "manifest.json"),
@@ -242,7 +242,7 @@ function eventResponse(): Response {
 
 async function selfTest(): Promise<void> {
   if (!affectsCoverage("assets/code/resource_373_overlay.s") ||
-      !affectsCoverage("semantic/overlays/example.c") ||
+      !affectsCoverage("semantic/example.c") ||
       affectsCoverage("tools/dashboard/styles.css")) {
     throw new Error("dashboard coverage-path filter failed");
   }

@@ -79,7 +79,7 @@ export function ownerOf(overlay: string, offset: number): string {
     .manual_regions as { overlay: string; entry: string }[];
   if (regions.some((row) => row.overlay === overlay && row.entry === address)) return "semantic-C";
   // `address` carries the "0x" prefix; the exact-C filenames do not.
-  if (existsSync(join(ROOT, "assets", "code", `${overlay}_c_${address.slice(2)}.c`))) return "exact-C";
+  if (existsSync(join(ROOT, "exact", `${overlay}_c_${address.slice(2)}.c`))) return "exact-C";
   const inventoryPath = join(ROOT, "out", "decomp", "overlays.json");
   if (existsSync(inventoryPath)) {
     const rows = JSON.parse(readFileSync(inventoryPath, "utf8"))

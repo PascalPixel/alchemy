@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, renameSy
 import { basename, dirname, extname, join } from "node:path";
 import {
   CALL_VIA_BASE,
+  ROOT,
   externalSymbol,
   overlayCallViaBase,
   externalSymbolAssembly,
@@ -149,9 +150,14 @@ function sourceText(source: string | URL): string {
 
 export function overlayCSources(source: string | URL): string[] {
   if (source instanceof URL || source.includes("\n") || !existsSync(source)) return [];
-  // Flat layout: overlay C replacements are prefix_c_<address>.c siblings.
-  const directory = dirname(source);
+  // Overlay C replacements live in exact/, named prefix_c_<address>.c after
+  // the .s container's own basename -- NOT siblings of the .s file itself
+  // (that was true under the old assets/code/ layout, before the
+  // exact/semantic tree consolidation moved installed C out to its own
+  // directory while the raw .s containers stayed where they were).
+  const directory = join(ROOT, "exact");
   const prefix = `${basename(source).replace(/overlay\.s$/, "")}c_`;
+  if (!existsSync(directory)) return [];
   return readdirSync(directory)
     .filter((name) => name.startsWith(prefix) && name.endsWith(".c"))
     .sort()

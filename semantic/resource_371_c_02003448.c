@@ -13,11 +13,11 @@ s32 Func_02003448(s32 slot)
     s32 choice;
 
     switch (slot) {
-    case 0:
-        first_flag = 0x92c;
-        break;
     case 1:
         first_flag = 0x935;
+        break;
+    case 0:
+        first_flag = 0x92c;
         break;
     case 2:
         first_flag = 0x917;

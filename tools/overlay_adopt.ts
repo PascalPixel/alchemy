@@ -15,6 +15,7 @@ import { assembleOverlay, OVERLAY_BASE } from "./overlay_disasm.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const CODE = join(ROOT, "assets/code");
+const EXACT = join(ROOT, "exact");
 // Listing rows are "<line> <offset> <bytes> <source>"; continuation rows of a
 // wide directive repeat the line number and omit the offset. GNU as prints the
 // offset in lowercase but the byte column in uppercase, so the byte column has
@@ -233,7 +234,7 @@ function main(): void {
   // compiled from a temp directory silently loses every path-keyed flag -- a
   // dry run under /tmp would reject a correct flag-routed match. Both files are
   // restored unless the rebuild is byte-identical and --apply was given.
-  const installed = join(CODE, `${fn.overlay}_c_${stem}.c`);
+  const installed = join(EXACT, `${fn.overlay}_c_${stem}.c`);
   // Only remove the installed C file if this run created it. A rehearsal over
   // a region that already has one (a dry run, or a repeat) must leave the
   // existing source alone -- deleting it orphans the placeholder and the next
@@ -289,7 +290,7 @@ function main(): void {
     console.log(`adopt=ready ${options.id} span=${fn.span_bytes} aliases=${aliases.length} lines=${first}-${last} source=${basename(options.source)} (pass --apply to install)`);
     return;
   }
-  console.log(`adopt=applied ${options.id} span=${fn.span_bytes} aliases=${aliases.length} c=assets/code/${fn.overlay}_c_${stem}.c`);
+  console.log(`adopt=applied ${options.id} span=${fn.span_bytes} aliases=${aliases.length} c=exact/${fn.overlay}_c_${stem}.c`);
 }
 
 if (import.meta.main) main();

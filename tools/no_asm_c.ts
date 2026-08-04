@@ -5,7 +5,7 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, extname, join, relative } from "node:path";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
-const SOURCE_ROOTS = ["assets", "games", "include", "semantic", "src"];
+const SOURCE_ROOTS = ["assets", "games", "include", "semantic", "exact"];
 const FORBIDDEN = /\b(?:asm|__asm_*)\b/g;
 
 export interface Finding {

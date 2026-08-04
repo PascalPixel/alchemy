@@ -30,7 +30,7 @@ import { Discovery } from "./discover.ts";
 import { OVERLAY_BASE, classify, overlayImage, resolveOverlay, targetOffset } from "./overlay_call_targets.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
-const SOURCE_DIRECTORY = join(ROOT, "semantic", "overlays");
+const SOURCE_DIRECTORY = join(ROOT, "semantic");
 const REGIONS_PATH = join(ROOT, "semantic", "regions.json");
 const INVENTORY_PATH = join(ROOT, "out", "decomp", "overlays.json");
 const CALL_VIA = "(call_via)";

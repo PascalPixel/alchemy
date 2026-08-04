@@ -52,5 +52,8 @@ void Func_020017a4(void)
     Func_02005c80(145);
     Func_020059e0(self, 3);
     Func_02005a80(512);
-    *(u16 *)(self + 0x64) = 1;
+    {
+        u16 *counter = (u16 *)(self + 0x64);
+        *counter = 1;
+    }
 }

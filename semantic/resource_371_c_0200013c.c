@@ -63,10 +63,12 @@ void Func_0200013c(u8 *object)
         return;
     }
 
-    spawned = Func_080090c8(0x11d,
-                            *(s32 *)(object + 0x08),
-                            *(s32 *)(object + 0x0c),
-                            *(s32 *)(object + 0x10));
+    {
+        s32 x = *(s32 *)(object + 0x08);
+        s32 y = *(s32 *)(object + 0x0c);
+        s32 z = *(s32 *)(object + 0x10);
+        spawned = Func_080090c8(0x11d, x, y, z);
+    }
     Func_080f9010(0xf6);
     if (spawned == 0) {
         return;

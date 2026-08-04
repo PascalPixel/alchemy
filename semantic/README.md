@@ -5,18 +5,31 @@
 This tree contains behaviorally reconstructed C that is not yet claimed to
 reproduce the original machine code.
 
-The byte-exact build under `assets/code/` remains authoritative and unchanged.
-When a semantic source later becomes byte-exact, promote it through the normal
+The byte-exact build under `exact/` remains authoritative and unchanged. When
+a semantic source later becomes byte-exact, promote it through the normal
 overlay adoption workflow rather than editing this tree in place.
 
-Overlay files use the existing address convention:
+This directory is flat: main-image and overlay files sit side by side,
+distinguished by filename convention rather than subdirectory --
 
 ```text
-semantic/overlays/resource_NNN_c_0200AAAA.c
+semantic/resource_NNN_c_0200AAAA.c   (overlay)
+semantic/080AAAAA.c                  (main-image)
 ```
 
-Main-image files use `semantic/main/080AAAAA.c`. Both layouts preserve the
-existing `Func_ADDRESS` entry symbol.
+Both conventions preserve the existing `Func_ADDRESS` entry symbol. `exact/`
+follows the identical convention for its byte-exact counterparts.
+
+Main-image admissions are promoted from the clean, hand-reviewed candidate
+queue: each one already represented the corresponding ordinary compiler-output
+region but was parked because its generated instructions were not
+byte-identical. Admission removes that byte-exact constraint while retaining
+every other semantic requirement below. The normal manifest boundary is only
+a seed -- follow live stack and callee-saved-register state across direct
+continuation branches. If one owner occupies noncontiguous executable ranges
+separated by pools, alignment, or data, record all reviewed ranges in
+`semantic/main-regions.json` and exclude the gaps; do not admit or count only
+the convenient first range.
 
 Each file must define `Func_0200aaaa`, compile as freestanding ARM7TDMI C, and
 contain no inline assembly. Validate the complete semantic tree with:

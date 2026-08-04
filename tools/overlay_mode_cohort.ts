@@ -254,8 +254,8 @@ function selfTest(): void {
   if (configsOf({ candidates: ["x:0000=x.c"], inventory: "x", output: "x", scope: "families", pairs: 0, jobs: 1, top: 1 }).length < 5) throw new Error("family configuration planning failed");
   const biased = biasInImageLabelWords(".Ltable:\n\t.word\t.Ltable\n");
   if (biased.biased !== 1 || !biased.text.includes(".Ltable + 0x8000")) throw new Error("overlay label-word bias is not applied");
-  const defaultCallVia = overlayCallViaBase("resource_373", "assets/code/not-an-override.c");
-  const overriddenCallVia = overlayCallViaBase("resource_373", "assets/code/resource_373_c_02005610.c");
+  const defaultCallVia = overlayCallViaBase("resource_373", "exact/not-an-override.c");
+  const overriddenCallVia = overlayCallViaBase("resource_373", "exact/resource_373_c_02005610.c");
   if (defaultCallVia === overriddenCallVia ||
       externalSymbolAssembly("_call_via_r3", overriddenCallVia) === externalSymbolAssembly("_call_via_r3", defaultCallVia)) {
     throw new Error("overlay call-via source routing is not applied");

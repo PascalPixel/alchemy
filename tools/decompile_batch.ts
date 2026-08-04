@@ -58,7 +58,7 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
   const discovery = new Discovery(rom);
   discovery.run();
   mkdirSync(args.output, { recursive: true });
-  const tracked = new Set(readdirSync(join(ROOT, "src")).filter((name) => /^[0-9a-f]+\.c$/.test(name)).map((name) => Number.parseInt(basename(name, ".c"), 16)));
+  const tracked = new Set(readdirSync(join(ROOT, "exact")).filter((name) => /^[0-9a-f]+\.c$/.test(name)).map((name) => Number.parseInt(basename(name, ".c"), 16)));
   let candidates: [number, number][] = [];
   for (const [address, fn] of [...discovery.functions].sort((a, b) => a[0] - b[0])) {
     if (tracked.has(address) || fn.mode !== "thumb" || fn.unresolved.size || !fn.instructions.size) continue;

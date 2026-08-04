@@ -259,7 +259,7 @@ function readJson(tree: SourceTree, path: string): any {
  */
 export function mainBoundaries(tree: SourceTree): number[] {
   const addresses = new Set<number>();
-  for (const name of tree.list("src")) {
+  for (const name of tree.list("exact")) {
     const match = MAIN_SOURCE.exec(name);
     if (match) addresses.add(Number.parseInt(match[1], 16));
   }
@@ -299,10 +299,10 @@ export function exactMainSpans(
   const boundaries = mainBoundaries(tree);
   const limit = executable.at(-1)?.end ?? ROM_BASE;
   const owned = new Map<number, Span[]>();
-  for (const name of tree.list("src")) {
+  for (const name of tree.list("exact")) {
     const match = MAIN_SOURCE.exec(name);
     if (!match) continue;
-    const source = tree.read(`src/${name}`);
+    const source = tree.read(`exact/${name}`);
     // Register-pinned, inline-assembly and fakematch C is not a C claim.
     if (source === undefined || !canonicalCSource(source)) continue;
     const address = Number.parseInt(match[1], 16);
@@ -366,7 +366,7 @@ export function exactOverlayOwners(tree: SourceTree): Map<string, OverlayOwner[]
     const source = tree.read(`assets/code/${name}`);
     if (source === undefined) continue;
     const owners = overlayPlaceholderOwners(source).filter((owner) => {
-      const cPath = `assets/code/${match[1]}_c_${hex8(owner.entry)}.c`;
+      const cPath = `exact/${match[1]}_c_${hex8(owner.entry)}.c`;
       const cSource = tree.read(cPath);
       return cSource !== undefined && canonicalCSource(cSource);
     });
@@ -427,7 +427,7 @@ export function semanticSpans(
       );
     }
   }
-  for (const name of tree.list("semantic/main")) {
+  for (const name of tree.list("semantic")) {
     const match = MAIN_SOURCE.exec(name);
     if (!match) continue;
     sources++;
@@ -435,7 +435,7 @@ export function semanticSpans(
     const declared = owners.get(address) ?? [regionSpan(address, boundaries, limit)];
     const spans = intersect(declared, executable);
     if (spans.length) main.set(address, spans);
-    else unresolved.push(`semantic/main/${name}`);
+    else unresolved.push(`semantic/${name}`);
   }
 
   const reviewedDocument = tree.read("semantic/regions.json");
@@ -459,7 +459,7 @@ export function semanticSpans(
   }
   const claimedSources = new Set<string>();
 
-  for (const name of tree.list("semantic/overlays")) {
+  for (const name of tree.list("semantic")) {
     const match = SEMANTIC_OVERLAY_SOURCE.exec(name);
     if (!match) continue;
     sources++;
@@ -473,7 +473,7 @@ export function semanticSpans(
     if (span === undefined) {
       // The decoded-region inventory that sizes ordinary overlay owners is a
       // build diagnostic, so an unlisted owner is reported, not estimated.
-      unresolved.push(`semantic/overlays/${name}`);
+      unresolved.push(`semantic/${name}`);
       continue;
     }
     const owner = { start: address, end: address + span };
@@ -2406,7 +2406,7 @@ export function resolveSemanticTree(
     if (!tree) throw new Error(`cannot resolve semantic source ref ${wanted}`);
     return tree;
   }
-  if (exact.list("semantic/main").some((name) => MAIN_SOURCE.test(name))) return exact;
+  if (exact.list("semantic").some((name) => MAIN_SOURCE.test(name))) return exact;
   return undefined;
 }
 
@@ -2534,7 +2534,7 @@ export function selfTest(): void {
   // Whole-overlay semantic claims.
   const sourceTree = (regions: unknown, overlaySources: string[]): SourceTree => ({
     id: "test",
-    list: (directory) => (directory === "semantic/overlays" ? overlaySources : []),
+    list: (directory) => (directory === "semantic" ? overlaySources : []),
     read: (path) => (path === "semantic/regions.json" ? JSON.stringify(regions) : undefined),
   });
   const extent = new Map<string, Span[]>([["resource_375", [{ start: 0x02000000, end: 0x02000100 }]]]);
@@ -2580,7 +2580,7 @@ export function selfTest(): void {
   // A recorded semantic source must beat the describes-itself heuristic.
   const semanticBearing: SourceTree = {
     id: "exact-with-semantic",
-    list: (directory) => (directory === "semantic/main" ? ["08000000.c"] : []),
+    list: (directory) => (directory === "semantic" ? ["08000000.c"] : []),
     read: () => undefined,
   };
   expectReject(

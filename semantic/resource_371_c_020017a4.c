@@ -22,6 +22,15 @@
  * load-time-relocated import, not a place to disassemble and not a global
  * identity (see the note in resource_371_c_0200008c.c).  Old-style
  * declarations, because the interfaces are unknown.
+ *
+ * STILL-OPEN (8 differing bytes / candidate compiles 4 bytes LARGER than
+ * the 88-byte span): the reference builds the final `*counter = 1` store
+ * with `adds r2,#100` then `movs r3,#1` (no pool). Every phrasing tried
+ * (nested block, direct single-statement `*(u16*)(self+0x64) = 1`)
+ * instead compiles to `ldr r3,[pc,#8]` pulling 1 from a spilled literal
+ * pool word, growing the function past its registered span. alchemist.ts
+ * refused (tier: unaligned only). Not yet understood why gcc routes this
+ * particular small immediate through the pool instead of movs.
  */
 
 u8 *Func_02005aa6();

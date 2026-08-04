@@ -15,6 +15,20 @@
  *
  * The flag byte at object + 0x54 is cleared with `eors` against the same
  * bit that was just tested, which is a clear of bit 0 only.
+ *
+ * STILL-OPEN (4 differing bytes at baseline routing, 2 with -fno-regmove
+ * tried standalone but not installed since it does not reach exact):
+ * the reference's first `1 & value` test materializes the constant into
+ * the AND's destination register (`adds r3,r1,#0` / `ands r3,r2`); every
+ * source phrasing tried here (`1 & value`, `value & 1`, a separate
+ * `masked` local) still compiles to the value-first form
+ * (`adds r3,r2,#0` / `ands r3,r1`) because AND is commutative and the
+ * front end canonicalizes it before this choice is visible in the tree.
+ * alchemist.ts refused (tier: unaligned only, no original-order row).
+ * overlay_mode_cohort.ts singles found -fno-regmove closes the mirrored
+ * `eors` pair at the end (matches the documented NO_REGMOVE_SOURCES
+ * fingerprint in tools/alchemy_gcc.ts) but leaves this first `ands` pair
+ * at differing=2, not exact, so no route entry was added.
  */
 
 extern u32 Data_03001e40;
@@ -24,7 +38,7 @@ s32 Func_02000350(u8 *object)
     u8 *flags = object + 0x54;
     u8 value = *flags;
 
-    if ((1 & value) != 0 && (Data_03001e40 & 1) != 0) {
+    if ((value & 1) != 0 && (Data_03001e40 & 1) != 0) {
         *flags = (u8)(1 ^ value);
     }
     return 1;

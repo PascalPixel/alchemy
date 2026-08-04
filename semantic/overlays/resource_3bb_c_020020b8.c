@@ -21,16 +21,18 @@ typedef int s32;
  * values.
  */
 
+extern short Data_02000240[];
 extern void Func_08015120(s32 arg0, s32 arg1);
 extern void Func_0808a170(s32 arg0);
 extern void Func_0808a180(s32 arg0, s32 arg1);
 
 void Func_020020b8(s32 arg0, s32 arg1)
 {
-    short status = *(short *)0x02000400;
+    short status;
     s32 id;
 
     Func_08015120(arg1, 5);
+    status = Data_02000240[224];
 
     if (status == 0x8f) {
         id = 0x2076;

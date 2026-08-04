@@ -10096,13 +10096,8 @@ AlchemyC_020038c0:
 	.4byte 0x000012f4
 	.4byte 0x000012f6
 	.4byte 0x0000284f
-	.4byte 0x061b2380
-	.4byte 0x63c36383
-	.4byte 0x23006403
-	.4byte 0x62836243
-	.4byte 0x306462c3
-	.2byte 0x8003
-	.2byte 0x4770
+AlchemyC_02005688:
+	.space 0x18
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

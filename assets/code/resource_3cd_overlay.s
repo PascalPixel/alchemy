@@ -913,11 +913,8 @@ AlchemyC_020000c0:
 	.4byte 0x02008920
 	.4byte 0x0200893c
 	.4byte 0x02008958
-	.4byte 0x681b4b02
-	.4byte 0x33352201
-	.4byte 0x4770701a
-	.2byte 0x1f30
-	.2byte 0x0300
+AlchemyC_020007b8:
+	.space 0x10
 	push	{lr}
 	bl	sub_0200100c
 	pop	{r1}

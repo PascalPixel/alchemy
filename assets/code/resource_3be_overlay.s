@@ -2093,11 +2093,8 @@ AlchemyC_02000d14:
 	.4byte 0x000009a5
 AlchemyC_020011c4:
 	.space 0x4
-	.4byte 0x49026d02
-	.4byte 0x185b8bd3
-	.4byte 0x477083d3
-	.2byte 0xfc00
-	.2byte 0xffff
+AlchemyC_020011c8:
+	.space 0x10
 	push	{r5, r6, r7, lr}
 	adds	r7, r0, #0
 	adds	r6, r1, #0

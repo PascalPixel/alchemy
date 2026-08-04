@@ -384,6 +384,9 @@ const ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES = new Set([
 // pair structurally and does not depend on this address.
 const CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES = new Set([
   "assets/code/resource_38f_c_020008ec.c",
+  // resource_3c3 0x02000730: same post-reload r1-before-r0 call-argument pair
+  // at the 0x0200074e Func_02001078(9,0) site (movs r1,#0 before movs r0,#9).
+  "assets/code/resource_3c3_c_02000730.c",
 ]);
 // This main-image scheduler fingerprint leaves an independent r0 call-argument
 // copy immediately after a halfword store.  The reference places that copy
@@ -616,6 +619,11 @@ const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3c4_c_02001068.c",
 ]);
 const THUMB_LOAD_LATENCY_ONE_OVERLAY_SOURCES = new Set([
+  // resource_3aa:1494: with the default load model the scheduler drags the
+  // workspace-slot pool load above the preceding call and permutes the pool;
+  // the one-cycle model keeps it at its reference position.
+  "assets/code/resource_3aa_c_02001494.c",
+  "semantic/overlays/resource_3aa_c_02001494.c",
   "assets/code/resource_38f_c_020026cc.c",
 ]);
 // In resource_37a:0054 the cse rerun after the copy loop folds the shared
@@ -660,6 +668,11 @@ const NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES = new Set([
 // Path scope matters because every decoded code overlay reuses 0x02000278.
 const NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES = new Set([
   "assets/code/resource_372_c_02000278.c",
+  // resource_398:0304 repeats the pooled 0x302 event id on both sides of the
+  // gate branch; skip-blocks hoists the pool load into r6, while the
+  // reference reloads it per site. Disabling the pass is byte-exact.
+  "assets/code/resource_398_c_02000304.c",
+  "semantic/overlays/resource_398_c_02000304.c",
 ]);
 // resource_3c9 field/`(u16*)` mixed-access family: with strict aliasing, our
 // scheduler treats the u16-view store as independent of the struct-field
@@ -695,6 +708,16 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // resource_3bd:2c44 is another long scene call sheet. Its repeated shifted
   // immediates are rebuilt at their individual call sites in the reference.
   "assets/code/resource_3bd_c_02002c44.c",
+  // resource_379:0074 is a 287-call cutscene sheet; mode cohort showed
+  // cse-two-insn-immediate-off is the single largest gain (2133->1699 bytes),
+  // matching the reference's per-site rematerialized shifted immediates.
+  "assets/code/resource_379_c_02000074.c",
+  "semantic/overlays/resource_379_c_02000074.c",
+  // resource_3aa:1494 is a 133-call cutscene sheet; the reference rebuilds
+  // its repeated shifted immediates (258, 0x3000, 0x5000, -1, 0x03600000...)
+  // at each call site instead of parking them in callee-saved registers.
+  "assets/code/resource_3aa_c_02001494.c",
+  "semantic/overlays/resource_3aa_c_02001494.c",
   // The two placement calls in resource_37b:1624 each rematerialize 0x800000;
   // sharing it introduces r5 and changes the whole call sequence.
   "assets/code/resource_37b_c_02001624.c",
@@ -783,6 +806,10 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  // resource_3c1:0120 and :0194 (byte-identical twins) negate the shake
+  // argument r2 for a three-argument call; the reference sets r0/r1 before
+  // the negs, the low-destination tie-break, same tell as resource_38e:045c.
+
   // 020011bc is shared by resource_3c6 and resource_3cb; preserve the
   // scheduler route for both without leaking it to any future twin.
   "assets/code/resource_3c6_c_020011bc.c",
@@ -794,7 +821,16 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // The same resource_38f call sheet consistently orders tied r0-r2 argument
   // setters by ascending destination once its constants are rematerialized.
   "assets/code/resource_38f_c_020008ec.c",
+  // resource_38f:0304 case-9 arm: the three-argument Func_02002dd8 call sets
+  // movs r0,#0 between the r1/r2 immediate shifts; the low-destination
+  // tie-break closes the last two halfwords (mode cohort exact under
+  // sched-low-dest-first, 2026-08-04).
+  "assets/code/resource_38f_c_02000304.c",
   "semantic/overlays/resource_38f_c_020008ec.c",
+  // resource_379:0074, the same long call-sheet shape as resource_38f:08ec:
+  // once both CSE gates rematerialize its constants, the remaining tell is the
+  // movs of a lower argument register between the r1/r2 immediate shifts.
+  "assets/code/resource_379_c_02000074.c",
   // Paired with both CSE gates for resource_3b8's long event call sheet; once
   // constants are rematerialized, this restores the reference argument order.
   "assets/code/resource_3b8_c_02002014.c",
@@ -826,6 +862,10 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // four constants are the same 0xc000; :140c's four differ and it does not.
   "assets/code/resource_3aa_c_0200140c.c",
   "assets/code/resource_3aa_c_02001450.c",
+  // resource_3aa:1494 is the long cutscene sheet next door: the same setters
+  // want r0 set before the r1/r2 pool loads at every call site.
+  "assets/code/resource_3aa_c_02001494.c",
+  "semantic/overlays/resource_3aa_c_02001494.c",
   // resource_3aa:0184 is the same tell across sixteen call sites: the setters
   // for r0/r1/r2 tie and the reference orders them by ascending destination.
   "assets/code/resource_3aa_c_02000184.c",
@@ -1024,6 +1064,11 @@ const NO_SCHED_ALIAS_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3b0_c_02000030.c",
   "assets/code/resource_381_c_02002e0c.c",
   "assets/code/resource_381_c_02002e5c.c",
+  // resource_38f:27ac particle-spawn store sheet: the scheduler otherwise
+  // hoists the p->f50 load above the p->f0c store and reorders the
+  // f08/f10/f26 stores and the f09 mask's ldrb; conservative scheduler alias
+  // analysis restores the reference order (mode cohort exact, 2026-08-04).
+  "assets/code/resource_38f_c_020027ac.c",
 ]);
 // gcse's partial-redundancy elimination inserts a load the reference does not
 // have. The mode drops the insert and delete bits of any expression that reads
@@ -1065,12 +1110,21 @@ const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // sharing them changes both the saved-register set and pool boundaries.
   "assets/code/resource_38f_c_020008ec.c",
   "semantic/overlays/resource_38f_c_020008ec.c",
+  // resource_3aa:1494 reloads its recurring 0x2009/0x2002/0xcccc pool words
+  // at each call site; sharing them adds r7/r8 to the prologue and moves the
+  // pool islands.
+  "assets/code/resource_3aa_c_02001494.c",
+  "semantic/overlays/resource_3aa_c_02001494.c",
   // This event call sheet reloads recurring addresses at their call sites;
   // sharing them shifts all eight inline literal pools and grows the prologue.
   "assets/code/resource_3b8_c_02002014.c",
   // resource_3bd:2c44 likewise reloads recurring pool words at their call
   // sites; sharing them changes the saved-register set and pool placement.
   "assets/code/resource_3bd_c_02002c44.c",
+  // resource_379:0074 reloads its recurring pool words (0xe666 argument and
+  // script addresses) at each call site; sharing hoists one into r5.
+  "assets/code/resource_379_c_02000074.c",
+  "semantic/overlays/resource_379_c_02000074.c",
   "assets/code/resource_38b_c_02000240.c",
   "assets/code/resource_372_c_02000f38.c",
   "assets/code/resource_37b_c_02001b44.c",
@@ -1197,6 +1251,15 @@ const NO_EXPENSIVE_OVERLAY_SOURCES = new Set([
   // disabling the pass is the only exposed single mode that preserves it.
   "assets/code/resource_370_c_02000384.c",
   "assets/code/resource_3b2_c_020012b4.c",
+  // resource_398:0214 has the same `ldrb / movs #2 / orrs / strb` flag-set with
+  // the same r2/r3 swap; cse-expensive-off is the only single that closes it.
+  "assets/code/resource_398_c_02000214.c",
+  "semantic/overlays/resource_398_c_02000214.c",
+  // resource_398:0538 repeats the same flag-set idiom with the same swap;
+  // with its pooled/shifted script-call pair spelled as function-top locals
+  // (the resource_3aa pattern) this flag alone is byte-exact.
+  "assets/code/resource_398_c_02000538.c",
+  "semantic/overlays/resource_398_c_02000538.c",
 ]);
 const NO_GCSE_OVERLAY_SOURCES = new Set([
   // The long resource_38f call sheet retains the original local lifetimes
@@ -1409,6 +1472,9 @@ export function cflagsForSource(source: string): readonly string[] {
       : []),
     ...(THUMB_LOAD_LATENCY_ONE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mthumb-load-latency-one"]
+      : []),
+    ...(sourceKey(source) === "assets/code/resource_379_c_02000074.c"
+      ? []
       : []),
     ...(NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-rerun-cse-after-loop"]
@@ -1711,18 +1777,22 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
       xgcc: [
         "845b828e15efedfeacc1956ac2694101e2b520824643d5b9f7608f9c389aee03",
         "2ed03493228a7873f020b16a63b89b3aadf4835be2d1a3a217cabca0fa244444",
+        "1e7c30e3ba311981dcbf93bcc1b9e38e0581a993a22f93a7bc3193c21d254130",
       ],
       cpp: [
         "60d0b6637deb0f98cbf952a89694b02a0557fc87ca968121759be139372e90cc",
         "06096beb427848574f610626bb53408b1a76f69b178ee2d7f0a05f6c2f6d3778",
+        "31bb32028d63e328877111df74a4d1390b6d5bfa8d077b739ae85bf7504d1a91",
       ],
       tradcpp: [
         "87f89bebf41cd12ac7706604dd24624061b2276f95cc1e9998c22de1accfee2a",
         "f9b951486d4e1769e06b892a59980c91a45435559505d73039130b63d1156803",
+        "7a030f2838a1fa6c6e92091136dcdf8cf81d2cf49a2e11a6ee633d839c33ccac",
       ],
       cc1: [
         "c1cc6d2864567297451662d36fba7abbce7a916d138f7115832a265de6868a06",
         "640964de34d6202f6dc5943b0c22b0afd1a8f4f1307ba6d3cf30af4110f5f5e2",
+        "c1c5be8f10668a7a66bfa2d6de2ca89f6ac17ffb57ffe62aedf7935da172f21a",
       ],
     },
     gs2: {
@@ -1749,6 +1819,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
 const LINUX_AGBCC_EXPECTED: readonly string[] = [
   "30a2a042c4be2acdd215ffc26c7d27498098ac38607ec8af43cc6598dcecdf55",
   "0c2d5ec04129f7b9d1ecf738f096167af152661bc2506f8fdb2749305fa3eb37",
+  "21eca5a4e4d1138a1fdebccc03f6a140cbb74c072d3c10c299d64fa2cf13aef9",
 ];
 
 const validated = new Set<CompilerTarget>();

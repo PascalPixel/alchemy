@@ -63,21 +63,24 @@ typedef unsigned char u8;
 
 /* Imports, named by the main-image address in the trailing word of each
  * overlay veneer. Old-style declarations are mandatory in this overlay. */
-void Func_08009190();
-/* Used for its return value at every site: a zero/non-zero query. */
-s32 Func_080770c0();
-void Func_0808a0f0();
-void Func_08009180();
-void Func_080091c0();
-void Func_08009128();
-void Func_080000c0();
-
-/* Used for its return value: the record whose halfword at +6 is written. */
-u8 *Func_0808a080();
-
-/* In-overlay scene bodies at file offsets 0x1494 and 0x0360. */
-void Func_02001494();
-void Func_02000360();
+void Func_02001cc0();
+void Func_02001cc6();
+s32 Func_02001cfc();
+u8 *Func_02001d46();
+s32 Func_02001d12();
+void Func_0200174a();
+void Func_02001da6();
+s32 Func_02001d2c();
+void Func_02001dbc(s32, s32, s32);
+u8 *Func_02001d82();
+s32 Func_02001d50();
+void Func_02001d48(s32, s32, s32, s32, s32, s32);
+void Func_02001d74(s32, s32, s32, s32, s32, s32);
+void Func_02001d58();
+void Func_02001d56();
+void Func_02001e12();
+s32 Func_02001d98();
+void Func_0200069c();
 
 /* Signed halfword table in RAM; index 225 selects the scene. */
 extern s16 Data_02000240[];
@@ -85,43 +88,54 @@ extern s16 Data_02000240[];
 void Func_02000264(void)
 {
     u8 *record;
+    s32 h;
+    s32 x1 = 0x038a0000;
+    s32 z1 = 0x01a60000;
 
-    Func_08009190(1);
-    Func_08009190(2);
+    Func_02001cc0(1);
+    Func_02001cc6(2);
 
     switch (Data_02000240[225]) {
     case 9:
-        if (Func_080770c0(0x941) != 0) {
-            record = Func_0808a080(8);
-            *(u16 *)(record + 6) = 0x1000;
+        if (Func_02001cfc(0x941) != 0) {
+            record = Func_02001d46(8);
+            h = 0x1000;
+            *(u16 *)(record + 6) = h;
 
-            if (Func_080770c0(0x914) == 0) {
-                Func_02001494();
+            if (Func_02001d12(0x914) == 0) {
+                Func_0200174a();
             }
         } else {
-            Func_0808a0f0(9, 0, 0);
-            if (Func_080770c0(0x321) != 0) {
-                Func_0808a0f0(8, 0x038a0000, 0x01a60000);
-                record = Func_0808a080(8);
-                *(u16 *)(record + 6) = 0xd000;
+            Func_02001da6(9, 0, 0);
+            if (Func_02001d2c(0x321) != 0) {
+                Func_02001dbc(8, x1, z1);
+                record = Func_02001d82(8);
+                h = 0xd000;
+                *(u16 *)(record + 6) = h;
             }
         }
         break;
 
     case 10:
     case 11:
-        if (Func_080770c0(0x915) != 0) {
-            Func_08009180(58, 70, 54, 70, 4, 3);
-            Func_080091c0(55, 9, 2, 1, 55, 8);
-            Func_08009128();
-            Func_080000c0(1);
+        if (Func_02001d50(0x915) != 0) {
+            s32 fifth = 4;
+            s32 sixth = 3;
+            Func_02001d48(58, 70, 54, 70, fifth, sixth);
+            {
+                s32 fifth2 = 55;
+                s32 sixth2 = 8;
+                Func_02001d74(55, 9, 2, 1, fifth2, sixth2);
+            }
+            Func_02001d58();
+            Func_02001d56(1);
         }
         break;
 
     case 20:
-        Func_0808a0f0(9, 0, 0);
-        if (Func_080770c0(0x109) == 0) {
-            Func_02000360();
+        Func_02001e12(9, 0, 0);
+        if (Func_02001d98(0x109) == 0) {
+            Func_0200069c();
         }
         break;
 

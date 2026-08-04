@@ -3510,30 +3510,6 @@
     },
     {
       "overlay": "resource_397",
-      "entry": "0x02000040",
-      "span_bytes": 8,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- LEAF RESIDUE surfaced 2026-08-01 by taking the prologue gate off sweep B's published path: the address IS published (image offset 0xc) and the sweep resolved it correctly, then discarded it because a leaf opens with no push; THE SPAN IS 8 BYTES AND NOT 4 -- the one-word literal pool at 0x2000044 sits PAST the bx lr and is read by this row's own pc-relative load, so it belongs to this owner and recording 4 would orphan a word and manufacture a phantom gap; the pool word 0x200835c is an ADDRESS, image offset 0x35c under the base+0x8000 spelling, loaded and returned WITHOUT being dereferenced, so the row is a getter for an in-image table; one of 191 rows tree-wide sharing this exact body, every one of which returns a DIFFERENT address -- identical bytes are not identical semantics, and this row's pool word was resolved on its own; 0 of 0 callees"
-    },
-    {
-      "overlay": "resource_397",
-      "entry": "0x02000048",
-      "span_bytes": 4,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- LEAF RESIDUE surfaced 2026-08-01 by taking the prologue gate off sweep B's published path: the address IS published (image offset 0x2c) and the sweep resolved it correctly, then discarded it because a leaf opens with no push, saving no register and returning with bx lr; the complete owner is movs r0,#0 / bx lr with no prologue, no stack frame, no literal pool, no callees and no argument read; one of 70 rows tree-wide sharing this exact body, bounded here by this overlay's own neighbours and published from this overlay's own table; 0 of 0 callees"
-    },
-    {
-      "overlay": "resource_397",
-      "entry": "0x0200004c",
-      "span_bytes": 8,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- LEAF RESIDUE surfaced 2026-08-01 by taking the prologue gate off sweep B's published path: the address IS published (image offset 0x14) and the sweep resolved it correctly, then discarded it because a leaf opens with no push; THE SPAN IS 8 BYTES AND NOT 4 -- the one-word literal pool at 0x2000050 sits PAST the bx lr and is read by this row's own pc-relative load, so it belongs to this owner and recording 4 would orphan a word and manufacture a phantom gap; the pool word 0x200844c is an ADDRESS, image offset 0x44c under the base+0x8000 spelling, loaded and returned WITHOUT being dereferenced, so the row is a getter for an in-image table; one of 191 rows tree-wide sharing this exact body, every one of which returns a DIFFERENT address -- identical bytes are not identical semantics, and this row's pool word was resolved on its own; 0 of 0 callees"
-    },
-    {
-      "overlay": "resource_397",
-      "entry": "0x02000054",
-      "span_bytes": 8,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- LEAF RESIDUE surfaced 2026-08-01 by taking the prologue gate off sweep B's published path: the address IS published (image offset 0x1c) and the sweep resolved it correctly, then discarded it because a leaf opens with no push; THE SPAN IS 8 BYTES AND NOT 4 -- the one-word literal pool at 0x2000058 sits PAST the bx lr and is read by this row's own pc-relative load, so it belongs to this owner and recording 4 would orphan a word and manufacture a phantom gap; the pool word 0x2008474 is an ADDRESS, image offset 0x474 under the base+0x8000 spelling, loaded and returned WITHOUT being dereferenced, so the row is a getter for an in-image table; one of 191 rows tree-wide sharing this exact body, every one of which returns a DIFFERENT address -- identical bytes are not identical semantics, and this row's pool word was resolved on its own; 0 of 0 callees"
-    },
-    {
-      "overlay": "resource_397",
       "entry": "0x0200005c",
       "span_bytes": 124,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
@@ -3546,33 +3522,9 @@
     },
     {
       "overlay": "resource_397",
-      "entry": "0x020001b4",
-      "span_bytes": 8,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- LEAF RESIDUE surfaced 2026-08-01 by taking the prologue gate off sweep B's published path: the address IS published (image offset 0x24) and the sweep resolved it correctly, then discarded it because a leaf opens with no push; THE SPAN IS 8 BYTES AND NOT 4 -- the one-word literal pool at 0x20001b8 sits PAST the bx lr and is read by this row's own pc-relative load, so it belongs to this owner and recording 4 would orphan a word and manufacture a phantom gap; the pool word 0x20084a4 is an ADDRESS, image offset 0x4a4 under the base+0x8000 spelling, loaded and returned WITHOUT being dereferenced, so the row is a getter for an in-image table; one of 191 rows tree-wide sharing this exact body, every one of which returns a DIFFERENT address -- identical bytes are not identical semantics, and this row's pool word was resolved on its own; 0 of 0 callees"
-    },
-    {
-      "overlay": "resource_397",
-      "entry": "0x020001cc",
-      "span_bytes": 2,
-      "evidence": "admitted whole-owner semantic reconstruction; SWEEP-D RESIDUE -- this row is in NO sweep: it is published nowhere in the image (the full 0x02000000 + offset + 0x8000 + Thumb-bit spelling appears in no word), no bl in the image reaches it, and it has no push for a shape scan to key on, so it offers no key to sweeps A, B or C; it was found only as unaccounted bytes between two exact-C owners, 0x20001bc ending at 0x20001ca and 0x20001d4 beginning the next, and the ten bytes between read as pad, stub, pad, stub, pad; the body is `bx lr` alone -- an EMPTY HOOK, the same body resource_3bb's 0x2003228 has and the same one this cohort's two-byte class is made of, saving nothing, reading nothing, writing nothing and returning at once; SPAN 2 AND NOT 4 -- the 0x0000 halfword before it aligns the entry to four bytes and the one after aligns the next, neither is part of this body, and recording 4 would claim alignment as code and put a phantom overlap in the next reader's arithmetic; 0 of 0 callees"
-    },
-    {
-      "overlay": "resource_397",
-      "entry": "0x020001d0",
-      "span_bytes": 2,
-      "evidence": "admitted whole-owner semantic reconstruction; SWEEP-D RESIDUE -- this row is in NO sweep: it is published nowhere in the image (the full 0x02000000 + offset + 0x8000 + Thumb-bit spelling appears in no word), no bl in the image reaches it, and it has no push for a shape scan to key on, so it offers no key to sweeps A, B or C; it was found only as unaccounted bytes between two exact-C owners, 0x20001bc ending at 0x20001ca and 0x20001d4 beginning the next, and the ten bytes between read as pad, stub, pad, stub, pad; the body is `bx lr` alone -- an EMPTY HOOK, the same body resource_3bb's 0x2003228 has and the same one this cohort's two-byte class is made of, saving nothing, reading nothing, writing nothing and returning at once; SPAN 2 AND NOT 4 -- the 0x0000 halfword before it aligns the entry to four bytes and the one after aligns the next, neither is part of this body, and recording 4 would claim alignment as code and put a phantom overlap in the next reader's arithmetic; 0 of 0 callees"
-    },
-    {
-      "overlay": "resource_397",
       "entry": "0x02000200",
       "span_bytes": 106,
       "evidence": "admitted whole-owner semantic reconstruction; span is the strict overlay inventory row (prologue-started, returning, not a veneer or data walk, not contained by another row), checked to lie inside the assembled overlay image and not to overlap another recorded owner"
-    },
-    {
-      "overlay": "resource_397",
-      "entry": "0x020002a0",
-      "span_bytes": 64,
-      "evidence": "admitted whole-owner semantic reconstruction; prologue-free, calls-free 64-byte leaf, so the strict inventory row test (prologue-started) cannot see it; span read from the disassembly and bounded by the byte-exact sibling at 0x0200026c that reads back the same Data_02008610/14/16 records; inside the assembled overlay image, no overlap with another recorded owner"
     },
     {
       "overlay": "resource_398",

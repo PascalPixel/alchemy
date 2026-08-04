@@ -2,6 +2,13 @@
   "format": 1,
   "overlays": [
     {
+      "id": "resource_397",
+      "decoded_bytes": 1414,
+      "exact_c_owners": 22,
+      "sha256": "912f68f3d6a773d60cf9d3567a9b9be79955bb3e5779fc09356393ca8c771e32",
+      "retained_assembly": "export/import veneers, literal data, and alignment only"
+    },
+    {
       "id": "resource_3cc",
       "decoded_bytes": 672,
       "exact_c_owners": 10,

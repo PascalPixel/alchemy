@@ -583,6 +583,12 @@ const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
   // resource_3b8:049c is byte-exact only with immediate-latency AND the
   // rerun-cse-after-loop rerun disabled together (notes/resource_3b8-049c.md).
   "assets/code/resource_3b8_c_0200049c.c",
+  // resource_3b9:2668's shifted-constant calls place the independent id
+  // literal (r0) between the two base movs and their shifts; only the
+  // latency mode reproduces that slot.
+  "assets/code/resource_3b9_c_02002668.c",
+  // resource_3b9:2964 is the same call-sheet shape as resource_3b9:2668.
+  "assets/code/resource_3b9_c_02002964.c",
 ]);
 // `rank_for_schedule` breaks a tie towards the insn with more forward
 // dependents; these objects fall through to the `INSN_LUID` (original order)
@@ -816,6 +822,12 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // three calls; the reference rebuilds it at each site instead of parking
   // it in r5 (tell: reference pushes {lr}, candidate pushes {r5, lr}).
   "assets/code/resource_3b9_c_02002904.c",
+  // resource_3b9:2668 shares the (0x10000,0x8000) scale pair four times and
+  // the 808 (202<<2) displacement three times across its long call sheet;
+  // the reference rebuilds each independently instead of parking them.
+  "assets/code/resource_3b9_c_02002668.c",
+  // resource_3b9:2964 is the same call-sheet shape as resource_3b9:2668.
+  "assets/code/resource_3b9_c_02002964.c",
 ]);
 // Every edge into a CALL_INSN costs 1, so a call's argument setters tie in
 // `rank_for_schedule` on priority, insn class and forward-dependent count alike,
@@ -1192,6 +1204,11 @@ const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // test and set call sites; sharing it in r5 adds a push/pop the reference
   // does not have (tell: reference pushes {lr}, candidate pushes {r5, lr}).
   "assets/code/resource_3b9_c_0200055c.c",
+  // resource_3b9:2668 reloads the shared pool address 0x0200adac three times
+  // across the id-0/1/2 calls; the reference reloads it at each site.
+  "assets/code/resource_3b9_c_02002668.c",
+  // resource_3b9:2964 is the same call-sheet shape as resource_3b9:2668.
+  "assets/code/resource_3b9_c_02002964.c",
 ]);
 const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
   "assets/code/resource_380_c_02000104.c",

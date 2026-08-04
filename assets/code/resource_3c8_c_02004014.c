@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 struct Args_02004014 {
     s32 first;

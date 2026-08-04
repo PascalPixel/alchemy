@@ -1,7 +1,4 @@
-typedef signed int s32;
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
+#include "types.h"
 
 void Func_08019ee4(s32 value, s32 mode, s32 *output, s32 *result, s32 enabled);
 void Func_08019fcc(s32 value, s32 mode, s32 *output, s32 *result, s32 enabled);

@@ -1,5 +1,4 @@
-typedef signed char s8;
-typedef signed int s32;
+#include "types.h"
 
 extern s8 Data_02000240[];      /* RAM workspace, also indexed as s16 elsewhere */
 extern s32 Data_0200a018[];     /* in-image, file offset 0x2018: 5 topics x 3 ids */

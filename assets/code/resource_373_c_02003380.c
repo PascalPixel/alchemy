@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 373: configure one dialogue/portrait actor and start it.

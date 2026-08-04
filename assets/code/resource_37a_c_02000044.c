@@ -1,4 +1,4 @@
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_37a owner at 0x02000044, 8 bytes: a constant getter --

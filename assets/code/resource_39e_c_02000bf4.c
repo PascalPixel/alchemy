@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * resource_39e owner at 0x02000bf4, 224 bytes: the FORWARD twin of the

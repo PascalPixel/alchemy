@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 extern void Func_02000844(void);
 /* 0x0200089e serves two imports: the three-argument setter at +0x06 and the

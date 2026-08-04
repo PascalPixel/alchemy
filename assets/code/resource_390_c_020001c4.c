@@ -1,10 +1,6 @@
 #include "resource_390.h"
 
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_390 owner at 0x020001c4, 244 bytes: the map's entry step.  Publish

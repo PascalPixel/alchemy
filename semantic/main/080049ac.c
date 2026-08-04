@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 struct Descriptor_080049ac {
     u32 value;

@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 struct LevelCheckRecord {
     u8 unknown_00[12];

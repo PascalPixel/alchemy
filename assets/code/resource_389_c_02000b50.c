@@ -1,2 +1,2 @@
-typedef unsigned char u8;
+#include "types.h"
 u8 *Func_02000b50(void) { return (u8 *)0x02009690; }

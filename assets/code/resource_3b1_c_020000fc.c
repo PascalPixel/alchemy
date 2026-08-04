@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 s32 Func_020000fc(u8 *o) {
     s32 n = *(s32 *)(o + 76);

@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 u8 *Func_0200138a();        /* scene/actor record accessor */
 void Func_02001490();

@@ -1,7 +1,6 @@
 #include "resource_3a9.h"
 
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3a9 owner at 0x0200033c, 172 bytes: the per-sub-state slot cleanup

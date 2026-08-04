@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef signed short s16;
+#include "types.h"
 
 extern void Func_02003ba4(s32 a, s32 b);
 

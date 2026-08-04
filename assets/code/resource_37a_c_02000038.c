@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_37a owner at 0x02000038, 4 bytes: a return-zero stub --

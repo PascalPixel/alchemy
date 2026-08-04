@@ -1,4 +1,4 @@
-typedef unsigned int u32;
+#include "types.h"
 
 void Func_080f0254(u32 page)
 {

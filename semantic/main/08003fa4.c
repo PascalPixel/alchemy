@@ -15,10 +15,7 @@
  * NOT asserted here: the evidence is recorded so the exact reconstruction can settle
  * it, and the type below says only what this call site proves.
  */
-typedef unsigned short u16;
-typedef unsigned char u8;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 typedef void (*Resident_03000164)(void *destination, u32 size, u32 value);
 

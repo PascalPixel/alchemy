@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* Per-site raw names: the first resolves to Func_0808a080 and the four
  * renderer sites resolve to Func_080091c0. */

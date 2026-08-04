@@ -1,6 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
-typedef unsigned char u8;
+#include "types.h"
 struct Object_020005e4 { u8 unknown_00[8]; s32 x; s32 y; s32 z; };
 struct EffectParams_020005e4 { s32 unk00; s32 mode; s32 color1; s32 color2; u8 unknown_10[0x18]; };
 s32 Func_020053b2();

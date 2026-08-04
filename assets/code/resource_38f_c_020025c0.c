@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 void Func_020050ec(s32, s32, s32);
 void Func_02004ffa(s32);

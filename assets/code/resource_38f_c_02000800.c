@@ -1,6 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
-typedef unsigned char u8;
+#include "types.h"
 
 struct Ent {
     s32 f00, f04, f08, f0c;

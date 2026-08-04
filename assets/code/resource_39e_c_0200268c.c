@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_39e owner at 0x0200268c, 76 bytes: a fully linear scripted

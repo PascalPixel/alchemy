@@ -1,6 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 struct Dma_080170c4 {
     const void *source;

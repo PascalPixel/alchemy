@@ -1,6 +1,4 @@
-typedef signed short s16;
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 struct EffectObject {
     u8 filler00[0x30];

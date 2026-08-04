@@ -1,4 +1,4 @@
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_3cd owner at 0x020007b8, 16 bytes: 12 of code, a one-word pool.

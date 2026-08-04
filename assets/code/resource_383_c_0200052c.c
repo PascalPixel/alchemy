@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 extern void Func_02005274(void);
 extern s32 Func_0200524a(s32);

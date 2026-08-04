@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 398 map-variant selector at 0x0200046c.

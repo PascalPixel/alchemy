@@ -1,7 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned char u8;
-typedef unsigned short u16;
+#include "types.h"
 
 /*
  * Resource 3b8 cutscene at 0x02002014 - the overlay's main sequence.

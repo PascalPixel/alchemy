@@ -1,6 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 struct Record_08004144 {
     u32 first;

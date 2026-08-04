@@ -1,9 +1,7 @@
 /* Byte-exact reconstruction of resource_3c4's per-frame object step at
  * 0x02001068. Routed -fno-sched-depend-count: without it the `ldr` of the
  * +76 field is hoisted above the store to +12. */
-typedef signed int s32;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 typedef struct Linked_02001068 {
     u8 pad[30];

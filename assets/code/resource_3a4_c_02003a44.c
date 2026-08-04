@@ -1,4 +1,4 @@
-typedef unsigned short u16;
+#include "types.h"
 
 /*
  * resource_3a4 owner at 0x02003a44, 44 bytes: clear two RAM globals and
@@ -22,7 +22,6 @@ typedef unsigned short u16;
  * this owner alone.
  */
 
-typedef signed int s32;
 extern unsigned char Value_00000000;
 extern u16 Data_0200d260;
 extern u16 Data_0200d25c;

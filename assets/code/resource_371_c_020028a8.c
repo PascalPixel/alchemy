@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 struct SceneWork_020028a8 {
     u8 reserved000[370];

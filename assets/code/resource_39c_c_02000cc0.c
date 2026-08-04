@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_39c owner at 0x02000cc0, 16 bytes: invoke one fixed two-value

@@ -43,8 +43,7 @@
 
 /* Old-style declaration: overlay imports vary their argument count between
  * call sites in this overlay. */
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /* The overlay import table has two physical veneer slots for this logical
  * accessor.  Naming the slots separately lets the normal linker encode the

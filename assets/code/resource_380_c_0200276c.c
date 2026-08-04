@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_380 owner at 0x0200276c, 32 bytes: the talk handler for

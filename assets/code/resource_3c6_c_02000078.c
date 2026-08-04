@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 s32 *Func_020015ce(s32);
 s32 *Func_020015da(s32);

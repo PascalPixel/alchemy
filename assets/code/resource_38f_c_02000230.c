@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned short u16;
+#include "types.h"
 
 struct Rec { u16 f00, f02, f04, f06; };
 

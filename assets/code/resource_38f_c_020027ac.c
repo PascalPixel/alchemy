@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 struct Sub {
     u8 pad00[9];

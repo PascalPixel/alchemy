@@ -1,8 +1,4 @@
-typedef signed short s16;
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 typedef struct EffectState {
     u8 padding0000[0x1f80];

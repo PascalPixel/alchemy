@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_39e owner at 0x02000bd4, 32 bytes: a one-line scripted beat --

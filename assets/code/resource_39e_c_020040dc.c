@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_39e owner at 0x020040dc, 76 bytes: flag-set + two-argument

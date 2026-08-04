@@ -1,4 +1,4 @@
-typedef unsigned int u32;
+#include "types.h"
 extern u32 Data_03001ed0;
 
 void Func_02000d7c(void)

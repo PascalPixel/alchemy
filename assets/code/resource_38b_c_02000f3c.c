@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* Per-site raw names preserve the stock relocated branch operands; they
  * resolve to Func_080090c8, Func_08009098 and Func_08009020 respectively. */

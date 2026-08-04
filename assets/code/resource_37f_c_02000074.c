@@ -1,4 +1,4 @@
-typedef unsigned char u8;
+#include "types.h"
 
 /* Complete eight-byte literal-address getter, including its sole pool word. */
 

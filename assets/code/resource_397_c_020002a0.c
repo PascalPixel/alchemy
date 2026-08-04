@@ -1,10 +1,6 @@
 #include "resource_397.h"
 
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * resource_397 owner at 0x020002a0, 64 bytes: recompute the three alpha-blend

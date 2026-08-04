@@ -1,7 +1,5 @@
 /* Apply the actor's low four counter bits as its animation mode. */
-typedef signed int s32;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 void Func_02003fa2(u8 *actor, s32 mode);
 

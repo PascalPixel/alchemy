@@ -1,6 +1,5 @@
 /* Store the caller's halfword in the scene workspace field at offset 220. */
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 void Func_020045d0(u16 value)
 {

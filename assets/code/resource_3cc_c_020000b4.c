@@ -1,6 +1,6 @@
 #include "resource_3cc.h"
 
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3cc owner at 0x020000b4, 4 bytes: `movs r0, #0 / bx lr`.

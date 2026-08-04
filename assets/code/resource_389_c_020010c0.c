@@ -1,5 +1,5 @@
 /* Return this overlay's task-state block. */
-typedef unsigned char u8;
+#include "types.h"
 
 u8 *Func_020010c0(void)
 {

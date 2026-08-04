@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /* Pool-forced message base: a SYMBOL_REF gcc cannot fold, so the two
  * sibling ids stay `adds r0, r5, #1` / `#2` off one pooled word. */

@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3b9 owner at 0x020011ac, 24 bytes: a two-call story-flag

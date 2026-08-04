@@ -1,7 +1,6 @@
 #include "resource_397.h"
 
-typedef unsigned char u8;
-typedef unsigned short u16;
+#include "types.h"
 
 void Func_020004ae();
 

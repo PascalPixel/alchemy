@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 extern void Func_02002982(s32);
 /* Three sites of one import, so three names. */

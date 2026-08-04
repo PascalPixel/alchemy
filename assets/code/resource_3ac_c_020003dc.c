@@ -1,9 +1,6 @@
 #include "resource_3ac.h"
 
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 extern u8 Data_02000240[];
 extern u8 Value_00000069;

@@ -1,4 +1,4 @@
-typedef signed short s16;
+#include "types.h"
 
 extern s16 Data_0200c6a6;
 

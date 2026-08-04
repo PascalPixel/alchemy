@@ -1,8 +1,6 @@
 #include "resource_397.h"
 
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 extern u16 Data_04000006;
 extern s32 Data_02008610;

@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /* Remove the marker task and release its selected display slot.
  * Per-site veneers (raw sub_ symbols from the overlay .s). */

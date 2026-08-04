@@ -18,12 +18,7 @@
  * it is the callee, and the register load that produced it is the call
  * target, not a parameter.
  */
-typedef signed char s8;
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 
 void *Func_08002f40(s32);

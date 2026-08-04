@@ -10,8 +10,7 @@
  * documents it as (destination, size, value), and this file's own call
  * corroborates the third parameter directly.
  */
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 typedef void (*ArmFill)(void *destination, u32 size, u32 value);
 

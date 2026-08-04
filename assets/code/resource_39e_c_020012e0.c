@@ -1,6 +1,4 @@
-typedef int s32;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_39e owner at 0x020012e0, 84 bytes: a DISPATCHER. It picks one

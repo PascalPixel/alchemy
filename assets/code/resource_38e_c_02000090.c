@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_38e owner at 0x02000090, 4 bytes: `movs r0, #0 / bx lr`.

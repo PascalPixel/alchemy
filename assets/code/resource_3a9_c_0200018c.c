@@ -1,8 +1,6 @@
 #include "resource_3a9.h"
 
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 extern u8 *Func_020005ba(s32);
 extern void Func_02000638(s32, s32);

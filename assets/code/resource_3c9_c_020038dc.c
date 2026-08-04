@@ -29,29 +29,38 @@ typedef int s32;
 
 extern u8 *Data_03001ebc;
 
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern void Func_0808a248(s32 arg0);
-extern void Func_0808a368(void);
-extern void Func_0808a370(void);
-extern void Func_080770c8(s32 flag_id);
-extern void Func_020048d8();
-extern void Func_02004b28(void);
+/*
+ * Per-site call symbols: byte-matching this overlay's `bl` needs the RAW
+ * pc-relative decode of the reference halfwords, not the semantic import
+ * address -- confirmed on resource_3c9:3660, :1280 and :37c4 (see those
+ * files). Eight sites in call order, from `overlay_show`'s plain listing:
+ * 0x2009614, 0x20081bc, 0x2008410, 0x2009604, 0x20097a6, 0x20097b2,
+ * 0x2009770, 0x2009654.
+ */
+void Func_02009614();  /* Func_0808a018 */
+void Func_020081bc();  /* Func_020048d8, this overlay's own */
+void Func_02008410();  /* Func_02004b28, this overlay's own */
+void Func_02009604();  /* Func_080770c8 */
+void Func_020097a6();  /* Func_0808a368 */
+void Func_020097b2();  /* Func_0808a370 */
+void Func_02009770();  /* Func_0808a248 */
+void Func_02009654();  /* Func_0808a020 */
 
 void Func_020038dc(void)
 {
-    u8 *workspace = Data_03001ebc;
+    u8 *workspace;
 
-    Func_0808a018();
-    Func_020048d8();
-    Func_02004b28();
-    Func_080770c8(141 << 1);
+    Func_02009614();
+    Func_020081bc();
+    Func_02008410();
+    Func_02009604(141 << 1);
 
+    workspace = Data_03001ebc;
     *(s32 *)(workspace + 448) = 512;   /* additive: 224<<1 + 64 */
     *(s32 *)(workspace + 456) = 24;    /* subtractive: 512 - 56 */
 
-    Func_0808a368();
-    Func_0808a370();
-    Func_0808a248(1);
-    Func_0808a020();
+    Func_020097a6();
+    Func_020097b2();
+    Func_02009770(1);
+    Func_02009654();
 }

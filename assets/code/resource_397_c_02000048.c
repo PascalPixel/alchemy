@@ -1,3 +1,5 @@
+#include "resource_397.h"
+
 typedef signed int s32;
 
 /*

@@ -33,14 +33,14 @@ Overlay_02000000:
 AlchemyC_02000030:
 	.space 0xe
 	.2byte 0x0000
-	.4byte 0x47704800
-	.4byte 0x0200835c
-	.4byte 0x47702000
-	.4byte 0x47704800
-	.4byte 0x0200844c
-	.4byte 0x47704800
-	.2byte 0x8474
-	.2byte 0x0200
+AlchemyC_02000040:
+	.space 0x8
+AlchemyC_02000048:
+	.space 0x4
+AlchemyC_0200004c:
+	.space 0x8
+AlchemyC_02000054:
+	.space 0x8
 AlchemyC_0200005c:
 	.space 0x7c
 AlchemyC_020000d8:
@@ -63,14 +63,14 @@ AlchemyC_02000138:
 .L_0200015c:
 AlchemyC_0200015c:
 	.space 0x58
-	.4byte 0x47704800
-	.2byte 0x84a4
-	.2byte 0x0200
+AlchemyC_020001b4:
+	.space 0x8
 AlchemyC_020001bc:
 	.space 0xe
 	.2byte 0x0000
 	.4byte 0x00004770
-	.2byte 0x4770
+AlchemyC_020001d0:
+	.space 0x2
 	.2byte 0x0000
 AlchemyC_020001d4:
 	.space 0x2c
@@ -79,23 +79,8 @@ AlchemyC_02000200:
 	.2byte 0x0000
 AlchemyC_0200026c:
 	.space 0x34
-	.4byte 0x21824b0a
-	.4byte 0x0049681a
-	.4byte 0x23061852
-	.4byte 0x48085ed1
-	.4byte 0x1a5b23c0
-	.4byte 0x4b076003
-	.4byte 0x5e522102
-	.4byte 0x4b06801a
-	.4byte 0x4906681b
-	.4byte 0x1ad2089b
-	.4byte 0x4770800a
-	.4byte 0x03001e70
-	.4byte 0x02008610
-	.4byte 0x02008614
-	.4byte 0x03001e40
-	.2byte 0x8616
-	.2byte 0x0200
+AlchemyC_020002a0:
+	.space 0x40
 AlchemyC_020002e0:
 	.space 0x24
 	.4byte 0x47204c00

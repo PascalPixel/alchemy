@@ -1,3 +1,5 @@
+#include "resource_397.h"
+
 typedef unsigned char u8;
 
 /*

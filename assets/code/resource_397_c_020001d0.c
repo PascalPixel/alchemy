@@ -1,9 +1,11 @@
+#include "resource_397.h"
+
 /*
- * resource_397 owner at 0x020001cc, 2 bytes: `bx lr` alone.
+ * resource_397 owner at 0x020001d0, 2 bytes: `bx lr` alone.
  *
  * SWEEP-D RESIDUE, and the reason sweep D exists. This row is in NO sweep:
  * it is not published anywhere in the image (the full spelling
- * 0x02000000 + 0x1cc + 0x8000 + Thumb bit = 0x20081cd appears in no word),
+ * 0x02000000 + 0x1d0 + 0x8000 + Thumb bit = 0x20081d1 appears in no word),
  * no `bl` in the image reaches it, and it has no `push` for a shape scan
  * to key on. It offers no key to sweeps A, B or C. It was found only as
  * unaccounted bytes between two exact-C owners -- 0x020001bc ends at
@@ -21,6 +23,6 @@
  * overlap in the next reader's arithmetic.
  */
 
-void Func_020001cc(void)
+void Func_020001d0(void)
 {
 }

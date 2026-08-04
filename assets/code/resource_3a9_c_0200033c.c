@@ -1,3 +1,5 @@
+#include "resource_3a9.h"
+
 typedef signed short s16;
 typedef signed int s32;
 

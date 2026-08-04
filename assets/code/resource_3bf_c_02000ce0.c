@@ -26,6 +26,7 @@ typedef signed int s32;
  */
 void Func_020019a4();
 void Func_0200631a();
+void Func_02006324();
 s32 Func_020062f2();
 s32 Func_02006316();
 void Func_02006356();
@@ -51,6 +52,6 @@ void Func_02000ce0(void)
     Func_020019a4(selector);
     Func_020064c2(157);
     Func_0200631a(0x30000, 0x30000, 0x10000);
-    Func_0200631a(-1, -1, 0xe666);
+    Func_02006324(-1, -1, 0xe666);
     Func_02006356(id + 808);
 }

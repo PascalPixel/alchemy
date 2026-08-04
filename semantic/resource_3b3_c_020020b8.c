@@ -5,8 +5,7 @@
  * is cleared and then restored only if the actor is also above slot zero.
  * The function always returns zero.
  */
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 u8 *Func_0808a080(s32 slot);
 

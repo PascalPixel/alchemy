@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned int u32;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /* Six footprint kinds are selected from the object's signed kind id.  Each
  * matching row supplies the four signed fixed-point extents used below. */

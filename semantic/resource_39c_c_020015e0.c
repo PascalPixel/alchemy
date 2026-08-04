@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_39c owner at 0x020015e0, 228 bytes: for each index in

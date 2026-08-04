@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3a0 3-D distance helper at 0x020003cc (56 bytes, 1 call).

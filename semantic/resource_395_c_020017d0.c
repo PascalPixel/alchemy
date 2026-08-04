@@ -1,5 +1,4 @@
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 extern s32 Func_03000380(s32 channel, s32 amount);
 

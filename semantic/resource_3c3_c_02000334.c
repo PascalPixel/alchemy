@@ -1,4 +1,4 @@
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 3c3, scene bracket at 0x02000334 (142 bytes, 11 call sites).

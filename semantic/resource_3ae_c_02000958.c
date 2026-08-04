@@ -1,6 +1,4 @@
-typedef signed short s16;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 3ae, owner at 0x02000958 (378 bytes; the four-word pool at

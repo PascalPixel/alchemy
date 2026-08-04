@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Configure this overlay's scene parameters, enable the configuration, and

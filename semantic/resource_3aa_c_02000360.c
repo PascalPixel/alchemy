@@ -1,7 +1,4 @@
-typedef signed int s32;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_3aa owner at 0x02000360, 4268 bytes: file offsets 0x0360-0x140b.

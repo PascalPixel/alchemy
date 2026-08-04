@@ -1,6 +1,4 @@
-typedef int s32;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_3b9 owner at 0x0200039c, 204 bytes: the fourth published

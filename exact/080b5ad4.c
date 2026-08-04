@@ -24,9 +24,7 @@
  *     a relocated IWRAM routine. NOT established -- reached with two
  *     arguments at some sites and three at others. Do not assume
  */
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 s32 Func_080072f0(void *, u32, u32, void *);
 

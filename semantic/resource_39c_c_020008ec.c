@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef short s16;
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_39c owner at 0x020008ec, 696 bytes through its pool: configure

@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 extern u8 *Func_02000630(s32 *directionOut, s32 *slotOut, s32 *classOut);
 extern s32 Func_080091d8(u8 *actor, s32 *position);

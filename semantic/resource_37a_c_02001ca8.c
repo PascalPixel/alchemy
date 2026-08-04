@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 37a gated cutscene at 0x02001ca8 (1120 bytes,

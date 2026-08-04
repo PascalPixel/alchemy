@@ -1,6 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned short u16;
+#include "types.h"
 
 /*
  * Resource 3ca per-frame actor step at 0x02000100 (104 bytes,

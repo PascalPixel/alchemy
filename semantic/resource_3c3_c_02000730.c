@@ -1,6 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3c3, dialogue bracket at 0x02000730 (124 bytes, 11 call sites).

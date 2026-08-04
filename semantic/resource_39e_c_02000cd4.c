@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 39e retreat-along-arc then triple emit at 0x02000cd4 (198 bytes,

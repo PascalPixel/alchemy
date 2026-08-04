@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3b6 one-shot cutscene step at 0x020007b0.

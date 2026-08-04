@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3bb owner at 0x020020b8, 92 bytes: pick one of three ids by

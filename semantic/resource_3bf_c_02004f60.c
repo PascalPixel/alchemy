@@ -1,7 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned char u8;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * Resource 3bf per-mode task installer at 0x02004f60, 388 bytes including

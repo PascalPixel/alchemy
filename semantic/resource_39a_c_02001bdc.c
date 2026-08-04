@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* Advance both coordinate triplets by their corresponding deltas. */
 struct MovingObject_02001bdc {

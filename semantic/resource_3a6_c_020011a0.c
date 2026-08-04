@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3a6 one-shot scene 0x200 at 0x020011a0 (184 bytes, 20 calls),

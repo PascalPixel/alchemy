@@ -85,8 +85,7 @@
  *  - The imports' interfaces are unknown, hence the old-style declarations.
  */
 
-typedef signed int s32;
-typedef unsigned short u16;
+#include "types.h"
 
 extern unsigned char Data_0200a070[];   /* scratch EWRAM: the 0x50-byte state block */
 extern s32 Data_0200a0c0;               /* scratch EWRAM: the mode word */

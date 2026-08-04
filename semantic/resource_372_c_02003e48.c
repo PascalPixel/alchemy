@@ -1,7 +1,5 @@
 /* Story-flag-selected actor-8 scene sequence. */
-typedef signed int s32;
-typedef signed short s16;
-typedef unsigned char u8;
+#include "types.h"
 u8 *Func_0808a080();
 void Func_0808a018(); void Func_0808a020();
 s32 Func_080770c0(); void Func_080770c8();

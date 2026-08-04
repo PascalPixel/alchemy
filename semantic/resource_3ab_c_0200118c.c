@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /* Three adjacent collision cells used by the scene's lower doorway. */
 extern void Func_080091c0(s32, s32, s32, s32, s32, s32);

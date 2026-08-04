@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3ae, owner at 0x0200086c (96 bytes including its four-word pool at

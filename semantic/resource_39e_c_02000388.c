@@ -1,7 +1,4 @@
-typedef int s32;
-typedef short s16;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_39e owner at 0x02000388, 140 bytes: the overlay's SCRIPT-TABLE

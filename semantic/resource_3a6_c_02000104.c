@@ -1,7 +1,5 @@
 /* Integrate an object's position, presentation offsets and heading. */
-typedef signed int s32;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 void Func_02000104(s32 *object)
 {

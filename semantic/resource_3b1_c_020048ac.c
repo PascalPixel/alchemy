@@ -1,5 +1,4 @@
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3b1 unindexed helper at 0x020048ac (60 bytes incl. one-word

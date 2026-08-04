@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* Per-site veneers (raw sub_ symbols from the overlay .s). */
 extern s32 *Func_02007128(s32 selector);

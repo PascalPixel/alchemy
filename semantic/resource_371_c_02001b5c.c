@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 371 owner at 0x02001b5c (172 bytes, 16 distinct call targets).

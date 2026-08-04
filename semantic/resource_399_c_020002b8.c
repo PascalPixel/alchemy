@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_399 scripted step at 0x020002b8, 204 bytes.

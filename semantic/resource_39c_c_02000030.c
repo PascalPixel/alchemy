@@ -5,8 +5,7 @@
  * record reached through argument +80.  The six 8-byte import veneers before
  * this leaf remain structural code and are not represented as ordinary C.
  */
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 void Func_02000030(void *record, s32 value)
 {

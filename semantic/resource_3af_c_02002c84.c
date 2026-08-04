@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * resource_3af owner at 0x02002c84, 1228 bytes: the overlay's party

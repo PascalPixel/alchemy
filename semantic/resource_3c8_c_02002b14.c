@@ -1,6 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 3c8 at 0x02002b14: the eight-tile variant of the "take your marks"

@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* Complete actor-zero placement and scene-delay setup helper through its pool. */
 struct SceneWork_02000a80 {

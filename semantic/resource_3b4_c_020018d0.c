@@ -1,4 +1,4 @@
-typedef unsigned short u16;
+#include "types.h"
 
 /* Complete blend-alpha setter through return and its two pool words. */
 void Func_020018d0(void)

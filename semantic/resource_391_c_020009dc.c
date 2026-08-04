@@ -1,5 +1,5 @@
 /* Clear the pending object cell after restoring its mode. */
-typedef int s32; typedef unsigned char u8;
+#include "types.h"
 void Func_08009080(u8 *object, s32 mode);
 s32 Func_020009dc(u8 *object)
 {

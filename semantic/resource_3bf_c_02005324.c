@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Flag-driven actor reset owner at 0x02005324, complete 332-byte span through

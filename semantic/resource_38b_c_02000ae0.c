@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 38b scene setup at 0x02000ae0 (468 bytes, 37 call sites over 9

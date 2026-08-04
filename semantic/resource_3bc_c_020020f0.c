@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /* resource_3bc state-machine slot 4, complete 468-byte owner and pool. */
 

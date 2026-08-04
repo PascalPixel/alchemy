@@ -1,8 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_36f owner at 0x020002e8, 364 bytes: the overlay's scene ROOT — set

@@ -102,10 +102,7 @@
  *  - The imports' interfaces are unknown, hence the old-style declarations.
  */
 
-typedef signed int s32;
-typedef unsigned int u32;
-typedef signed char s8;
-typedef unsigned short u16;
+#include "types.h"
 
 extern s8 Data_02000240[];      /* RAM workspace; also indexed as s16 elsewhere */
 extern s32 Data_02009fd0[];     /* in-image 0x1fd0: fifteen draw ids */

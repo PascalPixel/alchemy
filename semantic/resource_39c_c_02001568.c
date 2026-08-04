@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* resource_39c owner at 0x02001568, 120 bytes: when story flag 0x256 is set,
  * consume it, raise actor 0, snapshot the raised y field, wait five frames,

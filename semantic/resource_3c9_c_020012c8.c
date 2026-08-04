@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3c9 owner at 0x020012c8, 3604 bytes: the largest owner in

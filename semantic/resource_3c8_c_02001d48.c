@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 struct Resource3c8Actor {
     u8 unknown_00[8];

@@ -7,9 +7,7 @@
  * resource_373 control flow with resource_3bf's independently resolved tables
  * at 0x0200df18 and 0x0200df30.
  */
-typedef signed int s32;
-typedef signed short s16;
-typedef unsigned char u8;
+#include "types.h"
 
 u8 *Func_0808a080(s32 slot);
 void Func_080091c0(s32 x, s32 y, s32 width, s32 height,

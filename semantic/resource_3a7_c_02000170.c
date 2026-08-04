@@ -73,10 +73,7 @@
 
 /* Old-style declarations: overlay imports vary their argument count between
  * call sites in this overlay.  Those used in conditions need a return type. */
-typedef signed short s16;
-typedef signed int s32;
-typedef unsigned char u8;
-typedef unsigned short u16;
+#include "types.h"
 
 u8 *Func_0808a080();    /* scene-entity record by selector */
 u8 *Func_02000134();    /* tile-occupant lookup (cellX, cellZ); byte-exact */

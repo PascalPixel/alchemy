@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3ad, cutscene at 0x020004a8 (896 bytes, 95 call sites).

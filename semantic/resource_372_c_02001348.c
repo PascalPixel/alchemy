@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 372 guarded cutscene step at 0x02001348 (336 bytes, 27 distinct

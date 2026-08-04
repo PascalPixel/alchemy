@@ -1,7 +1,4 @@
-typedef signed int s32;
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * Resource 3c2 dialogue step at 0x02000100.

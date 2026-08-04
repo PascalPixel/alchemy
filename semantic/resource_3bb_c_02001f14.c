@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /* resource_3bb owner at 0x02001f14, 164 bytes, instruction-for-instruction
  * twin of resource_3bc:29ac. Prologue through the sole return at

@@ -17,6 +17,8 @@ export const PRET_EARLY_THUMB_BUNDLE = join(BUNDLE, "pret-early-thumb");
 export const PRET_EARLY_THUMB_DRIVER = join(PRET_EARLY_THUMB_BUNDLE, "cc1");
 export const GCC2951_BUNDLE = join(BUNDLE, "gcc2951");
 export const GCC2951_DRIVER = join(GCC2951_BUNDLE, "cc1");
+export const GCC3_BUNDLE = join(BUNDLE, "gcc3");
+export const GCC3_DRIVER = join(GCC3_BUNDLE, "cc1");
 // -nostdinc keeps the host's headers out; -Iinclude puts this repository's own
 // back in. Before it, the eight fixed-width typedefs were restated in 1,224 of
 // the 1,249 sources, 7,751 lines of the same eight declarations.
@@ -28,6 +30,14 @@ export const CFLAGS = [
 export const GS2_CFLAGS = [...CFLAGS, "-ffixed-r7"] as const;
 export const AGBCC_CFLAGS = [
   "-mthumb-interwork", "-O2", "-fno-builtin", "-ffreestanding",
+] as const;
+// Stock gcc-3.0 has no -fcall-used-r4 patch (that is gcc-2.96's Camelot ABI
+// fork); it reserves the same register class the README documents as needed
+// for gs2's Camelot backend mode: -ffixed-r7.
+export const GCC3_CFLAGS = [
+  "-O2", "-mthumb", "-mthumb-interwork", "-mcpu=arm7tdmi",
+  "-fno-builtin", "-nostdinc", "-ffreestanding", "-ffixed-r7",
+  `-I${join(ROOT, "include")}`,
 ] as const;
 
 export function bundleForTarget(target: CompilerTarget): string {
@@ -1853,6 +1863,16 @@ const GCC2951_EXPECTED: Record<HostKey, readonly string[]> = {
   "linux-x64": [
     "c8f80fffa2aa0aa2809d93ad86d11ea0e8ebf08e9bba6cc5b8d391aef05c3fe4",
     "edbee4fec1a1b59d0fd77273559aebbaf2c92b344bbeeb3539a10b689e71716d",
+    "79859ae26c9c29d6b874fe27d4f4cdce72b80839ff05cc017906ef7e179c582a",
+  ],
+};
+// Stock gcc-3.0 comparison probe (built.sh gcc3 / stage.sh gcc3), used only to
+// test whether Golden Sun sources match unmodified GCC 3.0 codegen instead of
+// the gcc-2.96/Camelot-ABI fork. Locally-built linux-x64 digest, 2026-08-04.
+const GCC3_EXPECTED: Record<HostKey, readonly string[]> = {
+  "darwin-arm64": [],
+  "linux-x64": [
+    "78840db683cc441be9741153418e0fd991ea6f628a0c4f08cb4bdc1cf5ebdb9b",
   ],
 };
 
@@ -2021,7 +2041,8 @@ export type CompilerFamily =
   | "gcc296"
   | "old-agbcc"
   | "pret-early-thumb"
-  | "gcc2951";
+  | "gcc2951"
+  | "gcc3";
 
 export interface CompilerFlagMutations {
   addFlags?: readonly string[];
@@ -2090,9 +2111,11 @@ export function sourceToAssemblyPlan(
 
   const canonical = requestedFamily === "routed"
     ? cflagsForTargetSource(options.target, options.routingSource)
-    : family !== "gcc296"
-      ? AGBCC_CFLAGS
-      : cflagsForTarget(options.target);
+    : family === "gcc3"
+      ? GCC3_CFLAGS
+      : family !== "gcc296"
+        ? AGBCC_CFLAGS
+        : cflagsForTarget(options.target);
   const flags = mutatedCompilerFlags(canonical, options.flags);
   const dumpbase = options.dumpbase ?? basename(options.routingSource);
   let compilerInput = options.input;
@@ -2103,10 +2126,14 @@ export function sourceToAssemblyPlan(
       ? AGBCC_DRIVER
       : family === "pret-early-thumb"
         ? PRET_EARLY_THUMB_DRIVER
-        : GCC2951_DRIVER;
+        : family === "gcc3"
+          ? GCC3_DRIVER
+          : GCC2951_DRIVER;
     if (family === "old-agbcc") validateAgbccBundle();
     else if (family === "pret-early-thumb") {
       validateExperimentalCompiler(family, driver, PRET_EARLY_THUMB_EXPECTED);
+    } else if (family === "gcc3") {
+      validateExperimentalCompiler(family, driver, GCC3_EXPECTED);
     } else {
       validateExperimentalCompiler(family, driver, GCC2951_EXPECTED);
     }
@@ -2116,7 +2143,7 @@ export function sourceToAssemblyPlan(
       command: directPreprocessorCommand(
         options.input,
         compilerInput,
-        family === "gcc2951" ? 95 : 9,
+        family === "gcc2951" ? 95 : family === "gcc3" ? 0 : 9,
       ),
     });
     steps.push({
@@ -2749,6 +2776,11 @@ function main(): void {
   if (argument === "gcc2951") {
     validateExperimentalCompiler(argument, GCC2951_DRIVER, GCC2951_EXPECTED);
     console.log(`alchemy-gcc=${argument} ok host=${hostKey()} files=1 bytes=${statSync(GCC2951_DRIVER).size}`);
+    return;
+  }
+  if (argument === "gcc3") {
+    validateExperimentalCompiler(argument, GCC3_DRIVER, GCC3_EXPECTED);
+    console.log(`alchemy-gcc=${argument} ok host=${hostKey()} files=1 bytes=${statSync(GCC3_DRIVER).size}`);
     return;
   }
   if (argument !== "gs1" && argument !== "gs2") {

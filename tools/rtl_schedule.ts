@@ -24,7 +24,24 @@
 // -fsched-low-dest-first/-high-dest-first Camelot-matching hook, which only
 // applies to files already routed through one of those flags -- out of
 // scope for a routing-independent diagnosis).
-import type { RtlInsn } from "./rtl_insn.ts";
+//
+// The class tier's real gcc test is not just "does a LOG_LINKS edge exist"
+// -- it's `link == 0 || insn_cost(last_scheduled, link, candidate) == 1`
+// (haifa-sched.c:4200-4202): a class-1/2 edge with an effective cost of
+// exactly one cycle demotes to class 3 too, since it can't stall anything.
+// arm_adjust_cost (arm.c:2456) forces that cost to 1, UNCONDITIONALLY (not
+// behind any -f flag), in two cases this file models:
+//   - a true (REG_DEP_ANTI/OUTPUT already return 0, not 1, so they're
+//     unaffected) dependency edge into a CALL_INSN -- "call insns don't
+//     incur a stall, even if they follow a load,"
+//   - a load from the stack pointer, hard frame pointer, or a
+//     constant-pool address, whose producer is a store -- "no conflict if
+//     the load reads from a cached area." This file only models the
+//     stack-pointer case (register 13) of that rule, conservatively: a pool
+//     load's RTL address shape needs more fixture work to recognize
+//     reliably, and under-modeling only costs a `model-divergence` label on
+//     that specific pair, never a wrong classification.
+import type { RtlExpr, RtlInsn } from "./rtl_insn.ts";
 
 export interface DependenceRow {
   uid: number;
@@ -71,10 +88,36 @@ export interface PairComparison {
   detail: string;
 }
 
-function classOf(insn: RtlInsn, lastScheduledUid: number | null): 1 | 2 | 3 {
+const STACK_POINTER_REGNUM = 13;
+
+function isMemFrom(expr: RtlExpr, regnum: number): boolean {
+  if (expr.kind !== "mem") return false;
+  const address = expr.address;
+  if (address.kind === "reg") return address.number === regnum;
+  if (address.kind === "binary") return isMemFrom({ kind: "mem", address: address.a }, regnum);
+  return false;
+}
+
+// arm_adjust_cost's "no conflict if the load reads from a cached area"
+// rule: the dependent insn is a plain register load from the stack pointer,
+// and the producer (the last-scheduled insn) is a plain store.
+function isCachedStackLoadAfterStore(candidate: RtlInsn, producer: RtlInsn): boolean {
+  if (candidate.set === null || producer.set === null) return false;
+  if (candidate.set.dest.kind !== "reg" || !isMemFrom(candidate.set.src, STACK_POINTER_REGNUM)) return false;
+  return producer.set.dest.kind === "mem";
+}
+
+function classOf(insn: RtlInsn, lastScheduledUid: number | null, insnsByUid: ReadonlyMap<number, RtlInsn>): 1 | 2 | 3 {
   if (lastScheduledUid === null) return 3;
   const link = insn.dependencies.find((dependency) => dependency.uid === lastScheduledUid);
-  return link === undefined ? 3 : link.kind === "true" ? 1 : 2;
+  if (link === undefined) return 3;
+  if (link.kind === "true") {
+    if (insn.kind === "call_insn") return 3;
+    const producer = insnsByUid.get(lastScheduledUid);
+    if (producer !== undefined && isCachedStackLoadAfterStore(insn, producer)) return 3;
+    return 1;
+  }
+  return 2;
 }
 
 export interface ScheduleContext {
@@ -102,8 +145,8 @@ export function comparePair(aUid: number, bUid: number, context: ScheduleContext
   const aInsn = context.insnsByUid.get(aUid);
   const bInsn = context.insnsByUid.get(bUid);
   if (aInsn !== undefined && bInsn !== undefined) {
-    const aClass = classOf(aInsn, context.lastScheduledUid);
-    const bClass = classOf(bInsn, context.lastScheduledUid);
+    const aClass = classOf(aInsn, context.lastScheduledUid, context.insnsByUid);
+    const bClass = classOf(bInsn, context.lastScheduledUid, context.insnsByUid);
     if (aClass !== bClass) {
       const [winner, loser, winnerClass, loserClass] = aClass > bClass ? [aUid, bUid, aClass, bClass] : [bUid, aUid, bClass, aClass];
       return {
@@ -216,6 +259,54 @@ function selfTest(): void {
   const clearPick = comparePair(15, 17, { table: clearWinner, lastScheduledUid: null, insnsByUid: new Map() });
   if (clearPick.winner !== 15 || clearPick.tier !== "priority") {
     throw new Error(`expected a clean priority win, got ${JSON.stringify(clearPick)}`);
+  }
+
+  // arm_adjust_cost's cost==1 shortcuts (arm.c:2456): a true dependency into
+  // a CALL_INSN, and a stack-pointer load whose producer is a store, both
+  // demote from class 1 to class 3 -- they can't stall anything, so
+  // rank_for_schedule treats them as independent of the last-scheduled insn.
+  const reg = (number: number): RtlExpr => ({ kind: "reg", number, name: `r${number}` });
+  const costOneTable = parseDependenceTable(`
+;;       50   174     0     0    50     1    1 - 32   core	:
+;;       60   244     0     1    40     2    1 - 32   core	:
+;;       70   174     0     1    40     1    1 - 32   core	:
+`);
+  const costOneInsnsByUid = new Map<number, RtlInsn>([
+    // 50 is the producer (last-scheduled): a plain store to memory.
+    [50, { uid: 50, kind: "insn", code: "set", set: { dest: { kind: "mem", address: reg(13) }, src: reg(3) }, callTarget: null, dependencies: [], raw: "" }],
+    // 60 is a call_insn with a TRUE dependency on 50 -- would be class 1
+    // under the naive "any link exists" rule, but arm_adjust_cost forces
+    // cost 1 for any true dependency into a call, so it's class 3.
+    [60, { uid: 60, kind: "call_insn", code: "call", set: null, callTarget: reg(0), dependencies: [{ uid: 50, kind: "true" }], raw: "" }],
+    // 70 is an ordinary insn loading from the stack pointer, TRUE dependent
+    // on 50's store -- also forced to cost 1 ("no conflict, cached area").
+    [70, { uid: 70, kind: "insn", code: "set", set: { dest: reg(4), src: { kind: "mem", address: reg(13) } }, callTarget: null, dependencies: [{ uid: 50, kind: "true" }], raw: "" }],
+  ]);
+  const costOneContext: ScheduleContext = { table: costOneTable, lastScheduledUid: 50, insnsByUid: costOneInsnsByUid };
+  const callShortcut = comparePair(60, 70, costOneContext);
+  if (callShortcut.tier === "class") {
+    throw new Error(`expected the call-insn and stack-load cost==1 shortcuts to tie at class 3 (no class-tier win), got ${JSON.stringify(callShortcut)}`);
+  }
+  if (callShortcut.winner !== 60 || callShortcut.tier !== "original-order") {
+    throw new Error(`expected 60 to win on original-order once class and priority tie, got ${JSON.stringify(callShortcut)}`);
+  }
+
+  // Without the cost==1 modeling, a call_insn with a true dependency would
+  // wrongly win on class 1 against a genuinely independent rival; confirm it
+  // instead ties at class 3 and falls through to a lower tier.
+  const independentRivalTable = parseDependenceTable(`
+;;       50   174     0     0    50     1    1 - 32   core	:
+;;       60   244     0     1    40     2    1 - 32   core	:
+;;       80   174     0     0    40     1    1 - 32   core	:
+`);
+  const independentRivalInsns = new Map<number, RtlInsn>([
+    [50, costOneInsnsByUid.get(50)!],
+    [60, costOneInsnsByUid.get(60)!],
+    [80, { uid: 80, kind: "insn", code: "set", set: { dest: reg(5), src: reg(6) }, callTarget: null, dependencies: [], raw: "" }],
+  ]);
+  const vsIndependent = comparePair(60, 80, { table: independentRivalTable, lastScheduledUid: 50, insnsByUid: independentRivalInsns });
+  if (vsIndependent.tier === "class") {
+    throw new Error(`call_insn's true dependency on the producer should not win on class, got ${JSON.stringify(vsIndependent)}`);
   }
 
   console.log("self-test=ok tool=rtl-schedule");

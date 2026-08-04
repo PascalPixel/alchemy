@@ -53,7 +53,7 @@ Bright cyan is exact C, the softer cyan is readable C still being matched, gray
 is code still to reconstruct, and dark gray is permanent low-level assembly.
 
 `resource_384`, `resource_37c`, `resource_37d`, `resource_37e`, `resource_388`,
-`resource_38c`, `resource_3ac`, and `resource_390` are the first eight pret-like showcase overlays: all 86 genuine functions are
+`resource_38c`, `resource_3ac`, `resource_390`, and `resource_3a9` are the first nine pret-like showcase overlays: all 98 genuine functions are
 ordinary byte-exact C, with only export/import veneers, literal data, and
 alignment retained in assembly.
 `bun run verify:showcase` rebuilds every showcase's decoded image and runs the

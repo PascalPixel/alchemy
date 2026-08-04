@@ -1,3 +1,5 @@
+#include "resource_3a9.h"
+
 typedef signed int s32;
 
 extern void Func_02000558(void);

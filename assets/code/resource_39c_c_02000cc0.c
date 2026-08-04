@@ -13,9 +13,9 @@ typedef int s32;
  * The constants' game-level meanings are not established by this owner.
  */
 
-extern void Func_0808a258(s32, s32);
+extern void Func_0200689c(s32, s32);
 
 void Func_02000cc0(void)
 {
-    Func_0808a258(12, 21);
+    Func_0200689c(12, 21);
 }

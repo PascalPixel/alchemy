@@ -71,24 +71,32 @@ extern void Func_02002766(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6,
 
 extern s32 Data_03001e40;
 
+struct Params {
+    s32 unused0;
+    s32 field1;
+    s32 field2;
+    s32 field3;
+    u8 pad[24];
+};
+
 void Func_020025b8(void)
 {
-    u8 params[40];
+    struct Params params;
     u8 *record;
     s32 draw;
     s32 offset;
 
     record = Func_020069c4(0);
 
-    *(s32 *)(params + 4) = 7;
-    draw = (Func_02006928() * 7) >> 16;
+    params.field1 = 7;
+    draw = (u32)(Func_02006928() * 7) >> 16;
     if ((draw & 7) == 0)
-        *(s32 *)(params + 4) = 5;
+        params.field1 = 5;
 
-    *(s32 *)(params + 8) = 0xb333;
-    *(s32 *)(params + 12) = 0xcccc;
+    params.field2 = 0xb333;
+    params.field3 = 0xcccc;
 
-    offset = ((Func_02006944() * 8) >> 16) * 13107;
+    offset = ((u32)(Func_02006944() * 8) >> 16) * 13107;
 
     Func_02002766(*(s32 *)(record + 8) + ((8 - (Data_03001e40 & 15)) << 16),
                   *(s32 *)(record + 12) + (192 << 13),
@@ -97,7 +105,7 @@ void Func_020025b8(void)
                   -offset,
                   0,
                   144 << 12,
-                  params);
+                  (u8 *)&params);
 
     if ((Data_03001e40 & 1) != 0)
         Func_02006ac8(0, 15);

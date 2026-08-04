@@ -10456,18 +10456,6 @@
       "evidence": "complete unindexed literal-return leaf owner in a code-suspect gap: ldr r0 from its sole literal word followed by bx lr, returning the overlay-specific in-image data address 0x02009f14; bounded by the zero-return leaf and the fresh saved-register prologue at 0x0200007c"
     },
     {
-      "overlay": "resource_38a",
-      "entry": "0x02000344",
-      "span_bytes": 4,
-      "evidence": "complete unindexed leaf owner in a code-suspect gap: movs r0,#0 followed by bx lr, with no prologue, stack frame, pool, callees, argument reads or side effects; bounded by the preceding pointer table and the independent literal-return leaf at 0x02000348"
-    },
-    {
-      "overlay": "resource_38a",
-      "entry": "0x02000348",
-      "span_bytes": 8,
-      "evidence": "complete unindexed literal-return leaf owner in a code-suspect gap: ldr r0 from its sole literal word followed by bx lr, returning the overlay-specific in-image data address 0x02008920; bounded by the zero-return leaf and the fresh saved-register prologue at 0x02000350"
-    },
-    {
       "overlay": "resource_399",
       "entry": "0x02000160",
       "span_bytes": 4,

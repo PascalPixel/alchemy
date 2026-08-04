@@ -335,10 +335,10 @@ AlchemyC_020000a0:
 	.2byte 0xffff
 AlchemyC_02000314:
 	.space 0x30
-	.4byte 0x47702000
-	.4byte 0x47704800
-	.2byte 0x8920
-	.2byte 0x0200
+AlchemyC_02000344:
+	.space 0x4
+AlchemyC_02000348:
+	.space 0x8
 AlchemyC_02000350:
 	.space 0x30
 	push	{lr}

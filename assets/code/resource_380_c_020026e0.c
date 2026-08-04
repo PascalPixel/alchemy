@@ -41,28 +41,32 @@ typedef int s32;
  * Func_0808a180 have no established meaning.
  */
 
-extern void Func_0808a010(s32 frames);
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern void Func_0808a150(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a170(s32 dialogueId);
-extern void Func_0808a180(s32 id, s32 arg1);
-extern s32 Func_080770c0(s32 flagId);
+extern void Func_02007080(void);
+extern s32 Func_0200704e(s32 flagId);
+extern void Func_02007148(s32 dialogueId);
+extern void Func_02007160(s32 id, s32 arg1);
+extern s32 Func_02007068(s32 flagId);
+extern void Func_02007162(s32 dialogueId);
+extern void Func_0200716a(s32 dialogueId);
+extern void Func_0200715c(s32 id, s32 arg1, s32 arg2);
+extern void Func_020070ba(s32 frames);
+extern void Func_02007192(s32 id, s32 arg1);
+extern void Func_020070d6(void);
 
 void Func_020026e0(void)
 {
-    Func_0808a018();
-    if (Func_080770c0(0x83e)) {
-        Func_0808a170(0x10c9);
-        Func_0808a180(5, 0);
+    Func_02007080();
+    if (Func_0200704e(0x83e)) {
+        Func_02007148(0x10c9);
+        Func_02007160(5, 0);
     } else {
-        if (Func_080770c0(0x83c) == 0)
-            Func_0808a170(0x107a);
+        if (Func_02007068(0x83c) == 0)
+            Func_02007162(0x107a);
         else
-            Func_0808a170(0x107c);
-        Func_0808a150(5, 0, 0);
-        Func_0808a010(10);
-        Func_0808a180(5, 0);
+            Func_0200716a(0x107c);
+        Func_0200715c(5, 0, 0);
+        Func_020070ba(10);
+        Func_02007192(5, 0);
     }
-    Func_0808a020();
+    Func_020070d6();
 }

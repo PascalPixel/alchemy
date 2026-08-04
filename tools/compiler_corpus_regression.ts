@@ -92,9 +92,9 @@ export function flagsOf(value: unknown): string[] {
 function compilerFamilyOf(value: unknown): CandidateCompilerFamily {
   if (
     value === "routed" || value === "gcc296" || value === "old-agbcc" ||
-    value === "pret-early-thumb" || value === "gcc2951"
+    value === "pret-early-thumb" || value === "gcc2951" || value === "gcc3"
   ) return value;
-  throw new Error("compiler config family must be routed, gcc296, old-agbcc, pret-early-thumb, or gcc2951");
+  throw new Error("compiler config family must be routed, gcc296, old-agbcc, pret-early-thumb, gcc2951, or gcc3");
 }
 
 export function compilerConfigurationOf(value: unknown): CandidateCompilerConfiguration {
@@ -174,7 +174,7 @@ function parseOptions(argv: string[]): Options {
       console.log([
         "usage: compiler_corpus_regression.ts (--flags FLAG[,FLAG...] | --config FILE) [options]",
         "  --config FILE       CandidateCompilerConfiguration JSON:",
-        "                      {\"family\":\"routed|gcc296|old-agbcc|pret-early-thumb|gcc2951\",",
+        "                      {\"family\":\"routed|gcc296|old-agbcc|pret-early-thumb|gcc2951|gcc3\",",
         "                       \"addFlags\":[...],\"removeFlags\":[...]}",
         "  --flags FLAGS       compatibility shorthand for additional flags",
         "  --sample N          deterministic sample size; 0 selects all (default 64)",

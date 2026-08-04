@@ -48,29 +48,29 @@ typedef unsigned char u8;
  * interval above selects the Func_080b0010 arm.
  */
 
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern u8 *Func_0808a080(s32 arg0);
-extern void Func_0808a170(s32 dialogue_id);
-extern void Func_0808a180(s32 id, s32 arg1);
-extern void Func_080b0010(s32 arg0);
+extern void Func_020068f0();
+extern void Func_0200691c();
+extern u8 *Func_02006912();
+extern void Func_020069c8();
+extern void Func_020069e0();
+extern void Func_02006a98();
 
 void Func_02002508(void)
 {
     u8 *record;
     u32 biased;
 
-    record = Func_0808a080(0);
+    record = Func_02006912(0);
     biased = *(u16 *)(record + 6);
-    Func_0808a018();
+    Func_020068f0();
 
     biased = biased + 0xffff5fff;
     if (biased <= 0x3ffe) {
-        Func_080b0010(13);
+        Func_02006a98(13);
     } else {
-        Func_0808a170(0x1a1c);
-        Func_0808a180(13, 0);
+        Func_020069c8(0x1a1c);
+        Func_020069e0(13, 0);
     }
 
-    Func_0808a020();
+    Func_0200691c();
 }

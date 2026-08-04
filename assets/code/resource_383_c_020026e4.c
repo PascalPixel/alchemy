@@ -14,15 +14,15 @@ typedef signed int s32;
  * the complete span is 56 bytes.
  */
 
-extern u8 *Func_0808a080(s32 actor);
-extern void Func_0808a098(s32 actor, const u8 *descriptor);
+extern u8 *Func_02007472(s32 actor);
+extern void Func_02007496(s32 actor, const u8 *descriptor);
 
 void Func_020026e4(s32 actor, s32 expected, s32 next, const u8 *descriptor)
 {
-    u8 *record = Func_0808a080(actor);
+    u8 *record = Func_02007472(actor);
 
     if (*(s16 *)(record + 100) == expected) {
-        Func_0808a098(actor, descriptor);
+        Func_02007496(actor, descriptor);
         *(u16 *)(record + 100) = (u16)next;
     }
 }

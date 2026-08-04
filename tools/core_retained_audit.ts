@@ -159,7 +159,7 @@ function sourceNames(directory: string): string[] {
 
 function boundaries(): number[] {
   const addresses = new Set<number>();
-  for (const path of sourceNames(join(ROOT, "src"))) {
+  for (const path of sourceNames(join(ROOT, "exact"))) {
     const match = /\/([0-9a-f]{8})\.c$/i.exec(path);
     if (match) addresses.add(Number.parseInt(match[1], 16));
   }
@@ -188,7 +188,7 @@ function canonicalSpans(executable: readonly Span[]): {
   const limit = executable.at(-1)?.end ?? ROM_BASE;
   const starts = boundaries();
   const exact: Span[] = [];
-  for (const path of sourceNames(join(ROOT, "src"))) {
+  for (const path of sourceNames(join(ROOT, "exact"))) {
     const match = /\/([0-9a-f]{8})\.c$/i.exec(path);
     if (match && canonicalC(readFileSync(path, "utf8"))) exact.push(regionSpan(Number.parseInt(match[1], 16), starts, limit));
   }
@@ -209,14 +209,14 @@ function semanticSpans(path: string, boundaries: readonly number[], limit: numbe
     // being deliberately noncanonical (register pins/inline asm). It remains
     // reviewed semantic C, never byte-exact C; name that replacement here so
     // the claimed-manifest cross-check cannot promote it by accident.
-    const claimedSource = join(ROOT, "src", `${entry.slice(2).toLowerCase()}.c`);
+    const claimedSource = join(ROOT, "exact", `${entry.slice(2).toLowerCase()}.c`);
     if (existsSync(claimedSource) && !canonicalC(readFileSync(claimedSource, "utf8"))) {
-      claims.push(...ranges.map((range) => ({ ...range, source: `src/${entry.slice(2).toLowerCase()}.c` })));
+      claims.push(...ranges.map((range) => ({ ...range, source: `exact/${entry.slice(2).toLowerCase()}.c` })));
     }
   };
   for (const [index, owner] of document.main_owners.entries()) {
     if (typeof owner.entry !== "string" || !/^0x080[0-9a-f]{5}$/i.test(owner.entry)) throw new Error(`semantic owner ${index} has an invalid entry`);
-    const source = join(ROOT, "semantic", "main", `${owner.entry.slice(2).toLowerCase()}.c`);
+    const source = join(ROOT, "semantic", `${owner.entry.slice(2).toLowerCase()}.c`);
     if (!existsSync(source)) throw new Error(`semantic owner ${owner.entry} has no canonical source (${source})`);
     if (!Array.isArray(owner.executable_ranges) || owner.executable_ranges.length === 0) throw new Error(`semantic owner ${owner.entry} has no executable ranges`);
     addSemantic(owner.entry, owner.executable_ranges.map((range: any, rangeIndex: number) => span(range, `semantic owner ${index} range ${rangeIndex}`)));
@@ -231,7 +231,7 @@ function semanticSpans(path: string, boundaries: readonly number[], limit: numbe
   // source boundary span.  Registered owners deliberately override that
   // default (their range can exclude a literal pool or combine fragments).
   const registered = new Set(document.main_owners.map((owner: any) => Number.parseInt(owner.entry, 16)));
-  for (const path of sourceNames(join(ROOT, "semantic/main"))) {
+  for (const path of sourceNames(join(ROOT, "semantic"))) {
     const match = /\/([0-9a-f]{8})\.c$/i.exec(path);
     if (!match) continue;
     const address = Number.parseInt(match[1], 16);

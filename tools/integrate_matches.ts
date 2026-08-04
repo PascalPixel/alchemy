@@ -86,8 +86,9 @@ function linkedBytes(stem: string, source: string, scratch: string, kind: "asm" 
   if (kind === "c") {
     /* Candidates arrive as src_<stem>.c, but the per-source compiler-mode
        allowlists in alchemy_gcc.ts key off the bare stem, so route the flags
-       through the name the file will carry once installed. */
-    const routed = join(dirname(source), `${stem}.c`);
+       through the name the file will carry once installed -- exact/, not
+       wherever the draft candidate currently sits (a scratch directory). */
+    const routed = join(ROOT, "exact", `${stem}.c`);
     const plan = sourceToAssemblyPlan({
       target: "gs1",
       routingSource: routed,
@@ -253,7 +254,7 @@ function main(): void {
   for (const name of candidates) {
     const candidate = join(options.directory, name);
     const stem = basename(name, ".c").replace("src_", "");
-    if (existsSync(join(ROOT, "src", `${stem}.c`))) continue;
+    if (existsSync(join(ROOT, "exact", `${stem}.c`))) continue;
     if (HELPER.test(readFileSync(candidate, "utf8"))) {
       rejected.push([stem, "carries an m2c helper"]);
       continue;
@@ -276,7 +277,7 @@ function main(): void {
   for (const [stem, size] of accepted) {
     console.log(`accept ${stem} (${size}B)`);
     if (options.apply) {
-      copyFileSync(join(options.directory, `src_${stem}.c`), join(ROOT, "src", `${stem}.c`));
+      copyFileSync(join(options.directory, `src_${stem}.c`), join(ROOT, "exact", `${stem}.c`));
       rmSync(join(ROOT, "asm", `${stem}.s`), { force: true });
       const cleaned = cleanupInstalledScratch(stem);
       if (cleaned.removed.length > 0 || cleaned.dossierClosed) {

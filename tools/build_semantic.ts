@@ -111,10 +111,10 @@ export function validateMainSemanticOwners(
       // noncanonical (register pins or inline asm).  They are omitted from
       // the ordinary-assembly manifest, but a reviewed semantic owner may
       // replace their coverage without promoting that source to exact C.
-      const noncanonicalExactSource = join(ROOT, "src", `${owner.entry.slice(2)}.c`);
+      const noncanonicalExactSource = join(ROOT, "exact", `${owner.entry.slice(2)}.c`);
       const hasNoncanonicalExactSource = existsSync(noncanonicalExactSource) &&
         !canonicalCSource(readFileSync(noncanonicalExactSource, "utf8"));
-      const expectedClaimSource = `src/${owner.entry.slice(2).toLowerCase()}.c`;
+      const expectedClaimSource = `exact/${owner.entry.slice(2).toLowerCase()}.c`;
       const noncanonicalClaim = hasNoncanonicalExactSource
         ? claimedRegions.find((item) =>
           item.source.toLowerCase() === expectedClaimSource &&
@@ -274,9 +274,7 @@ export function buildSemantic(directory = SEMANTIC): {
       const name = basename(source);
       const address = identity.address;
       const overlay = identity.owner;
-      const exactSource = identity.kind === "overlay"
-        ? join(ROOT, "assets", "code", name)
-        : join(ROOT, "src", name);
+      const exactSource = join(ROOT, "exact", name);
       if (existsSync(exactSource) && canonicalCSource(readFileSync(exactSource, "utf8"))) {
         throw new Error(`${relative(ROOT, source)} duplicates exact source ${relative(ROOT, exactSource)}`);
       }

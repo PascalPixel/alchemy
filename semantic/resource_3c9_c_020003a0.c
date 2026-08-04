@@ -52,11 +52,15 @@ s32 Func_03000380();           /* relocated IWRAM quotient helper */
 void Func_020003a0(u8 *object)
 {
     s32 vx = *(s32 *)(object + 68);
-    s32 vy = *(s32 *)(object + 72);
-    s32 vz = *(s32 *)(object + 76);
+    s32 vy;
+    s32 vz;
 
     *(s32 *)(object + 8) += vx;
+
+    vy = *(s32 *)(object + 72);
     *(s32 *)(object + 12) += vy;
+
+    vz = *(s32 *)(object + 76);
     *(s32 *)(object + 16) += vz;
 
     vx -= Func_03000380(vx, 22);
@@ -64,12 +68,17 @@ void Func_020003a0(u8 *object)
 
     {
         s32 damped = Func_03000380(vz, 20);
+        s32 t;
+        s32 u;
 
         *(s32 *)(object + 24) += *(s32 *)(object + 48);
-        *(s32 *)(object + 28) += *(s32 *)(object + 52);
 
+        t = *(s32 *)(object + 52);
+        u = *(s32 *)(object + 28);
         vz -= damped;
+        u += t;
         *(s32 *)(object + 76) = vz;
+        *(s32 *)(object + 28) = u;
     }
 
     {

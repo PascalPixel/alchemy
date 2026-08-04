@@ -96,7 +96,7 @@ function semanticCoverage(): {
     end: Number.parseInt(item.address, 16) + item.size,
   }));
   return {
-    stems: sourceStems(join(ROOT, "semantic/main")),
+    stems: sourceStems(join(ROOT, "semantic")),
     executable: ranges(document.main_owners.flatMap((owner) => owner.executable_ranges)),
     nonC: ranges(document.non_c_ranges ?? []),
   };
@@ -118,7 +118,7 @@ function survey(): {
   const classes = new Map<OwnerClass, { owners: number; bytes: number }>();
   const convertible: { stem: string; bytes: number }[] = [];
   for (const [stem, owned] of bytes) {
-    if (existsSync(join(ROOT, "src", `${stem}.c`))) continue;
+    if (existsSync(join(ROOT, "exact", `${stem}.c`))) continue;
     if (semantic.stems.has(stem)) continue;
     const address = Number.parseInt(stem, 16);
     const overlaps = (range: { start: number; end: number }) =>

@@ -303,8 +303,16 @@ async function main(): Promise<void> {
     throw new Error(`${target.id} ROM must contain exactly ${target.romSize} bytes`);
   }
   const sourceDirectory = rooted(target.sourceDir);
+  // This tool claims absolute ROM addresses, one per source, and every
+  // filename IS that address (see stem() below). Since the exact/semantic
+  // tree consolidation, exact/ also holds overlay sources
+  // (resource_NNN_c_0200AAAA.c), whose addresses are per-overlay-relative
+  // and legitimately repeat across overlays -- and whose non-hex filename
+  // prefix parses as NaN here, which Set collapses into one entry and
+  // reports as a false "duplicate source address". Restrict to the plain
+  // 8-hex-digit main-image naming convention this tool actually claims.
   const sources = readdirSync(sourceDirectory, { withFileTypes: true })
-    .filter((entry) => entry.isFile() && entry.name.endsWith(".c"))
+    .filter((entry) => entry.isFile() && /^[0-9a-f]{8}\.c$/i.test(entry.name))
     .map((entry) => join(sourceDirectory, entry.name)).sort();
   if (sources.length === 0) throw new Error("no reconstructed sources");
   const addresses = sources.map((source) => Number.parseInt(stem(source), 16));

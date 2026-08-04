@@ -22,7 +22,7 @@ const TARGETS: Readonly<Record<DecompTargetId, DecompTarget>> = Object.freeze({
     rom: "roms/gs1-en.gba",
     romSize: 0x00800000,
     compiler: "gs1",
-    sourceDir: "src",
+    sourceDir: "exact",
     asmDir: "asm",
     assetManifest: "assets/manifest.json",
     outputDir: "out",

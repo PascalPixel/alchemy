@@ -34,7 +34,7 @@ function main(id: string): void {
   const showcase = manifest.overlays.find((row) => row.id === id);
   if (showcase === undefined) throw new Error(`${id} is not a registered showcase overlay`);
 
-  const semantic = join(ROOT, "semantic/overlays");
+  const semantic = join(ROOT, "semantic");
   const semanticOwners = existsSync(semantic)
     ? readdirSync(semantic).filter((name) => name.startsWith(`${id}_c_`) && name.endsWith(".c"))
     : [];
@@ -42,7 +42,8 @@ function main(id: string): void {
     throw new Error(`${id} still has semantic owners: ${semanticOwners.join(", ")}`);
   }
 
-  const code = join(ROOT, "assets/code");
+  const code = join(ROOT, "exact");
+  const overlayAssets = join(ROOT, "assets/code");
   const exactOwners = readdirSync(code).filter((name) => name.startsWith(`${id}_c_`) && name.endsWith(".c"));
   if (exactOwners.length !== showcase.exact_c_owners) {
     throw new Error(`${id} exact owner count is ${exactOwners.length}, expected ${showcase.exact_c_owners}`);
@@ -58,7 +59,7 @@ function main(id: string): void {
     }
   }
 
-  const image = assembleOverlay(join(code, `${id}_overlay.s`));
+  const image = assembleOverlay(join(overlayAssets, `${id}_overlay.s`));
   const digest = new Bun.CryptoHasher("sha256").update(image).digest("hex");
   if (image.length !== showcase.decoded_bytes || digest !== showcase.sha256) {
     throw new Error(

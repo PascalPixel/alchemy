@@ -66,16 +66,20 @@ void Func_02005b90(u8 *actor)
     u16 *anglePtr = (u16 *)(actor + 100);
     s32 angle = *anglePtr;
     u8 *anchor = *(u8 **)(actor + 104);
+    s32 mirror;
     s32 across;
 
     *(s32 *)(actor + 8) = *(s32 *)(anchor + 8)
-                        + (*(s32 *)(actor + 48) + 28) * Func_08000120(angle);
+                        + Func_08000120(angle) * (*(s32 *)(actor + 48) + 28);
 
     across = (Func_08000118(angle) << 4) + (164 << 16);
     *(s32 *)(actor + 16) = across;
-
     *(s32 *)(actor + 56) = *(s32 *)(actor + 8);
     *(s32 *)(actor + 64) = across;
 
-    *anglePtr = (u16)(*anglePtr + 0xfe00);
+    {
+        s32 next = *anglePtr;
+        next = next + (s32)0xfffffe00;
+        *anglePtr = (u16)next;
+    }
 }

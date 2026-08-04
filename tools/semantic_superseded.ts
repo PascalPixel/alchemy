@@ -25,9 +25,10 @@ const ROOT = resolve(dirname(new URL(import.meta.url).pathname), "..");
 // A semantic source is superseded when the exact directory holds the same file
 // name -- both source trees name a file after the address it owns, so equal
 // names mean equal addresses. `fromDisk` additionally requires canonical C.
+// Main-image and overlay sources share one flat directory each since the
+// exact/semantic tree consolidation, so this is a single pair now.
 const SOURCE_PAIRS: readonly (readonly [string, string])[] = [
-  ["semantic/overlays", "assets/code"],
-  ["semantic/main", "src"],
+  ["semantic", "exact"],
 ];
 
 export function supersededSources(
@@ -59,13 +60,13 @@ function fromDisk(): string[] {
 
 function selfTest(): void {
   const listing = (directory: string): string[] =>
-    directory === "semantic/overlays"
-      ? ["resource_3aa_c_02000230.c", "resource_3aa_c_02000400.c", "notes.md"]
-      : ["08006d50.c"];
+    directory === "semantic"
+      ? ["resource_3aa_c_02000230.c", "resource_3aa_c_02000400.c", "notes.md", "08006d50.c"]
+      : [];
   const present = (path: string): boolean =>
-    path === "assets/code/resource_3aa_c_02000230.c" || path === "src/08006d50.c";
+    path === "exact/resource_3aa_c_02000230.c" || path === "exact/08006d50.c";
   const found = supersededSources(listing, present);
-  const expected = ["semantic/main/08006d50.c", "semantic/overlays/resource_3aa_c_02000230.c"];
+  const expected = ["semantic/08006d50.c", "semantic/resource_3aa_c_02000230.c"];
   if (JSON.stringify(found) !== JSON.stringify(expected)) {
     throw new Error(`superseded self-test failed: ${JSON.stringify(found)}`);
   }

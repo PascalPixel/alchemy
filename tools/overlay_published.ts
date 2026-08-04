@@ -191,7 +191,7 @@ export function reachesReturn(image: Uint8Array, offset: number, window = RETURN
 export function ownerSet(overlay: string): Set<number> {
   const owners = new Set<number>();
   const pattern = new RegExp(`^${overlay}_c_0*([0-9a-f]+)\\.c$`);
-  for (const directory of ["assets/code", "semantic/overlays"]) {
+  for (const directory of ["exact", "semantic"]) {
     const path = join(ROOT, directory);
     if (!existsSync(path)) continue;
     for (const name of readdirSync(path)) {
@@ -207,7 +207,7 @@ export function ownerSet(overlay: string): Set<number> {
  * Recorded semantic bodies, as [start, end) offsets.
  *
  * These are the only spans the tree states outright. Exact-C rows under
- * assets/code carry no span here — their extent is whatever the compiler
+ * exact/ carry no span here — their extent is whatever the compiler
  * produces — so a candidate sitting behind an exact row cannot be ruled inside
  * a body by this data alone, and is reported as needing the owner's
  * check rather than silently dropped.
@@ -247,7 +247,7 @@ export function exactSpans(overlay: string): { start: number; end: number }[] {
 /** Exact-C row start offsets, used only to name the rows a span is missing for. */
 export function exactStarts(overlay: string): Set<number> {
   const starts = new Set<number>();
-  const path = join(ROOT, "assets", "code");
+  const path = join(ROOT, "exact");
   const pattern = new RegExp(`^${overlay}_c_0*([0-9a-f]+)\\.c$`);
   if (!existsSync(path)) return starts;
   for (const name of readdirSync(path)) {

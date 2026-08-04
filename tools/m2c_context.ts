@@ -52,7 +52,7 @@ function score(signature: Signature): number {
   return 1 + params.split(",").length;
 }
 
-export function collectContext(sourceDirectory = join(ROOT, "src")): string {
+export function collectContext(sourceDirectory = join(ROOT, "exact")): string {
   const signatures = new Map<string, Signature>();
   const data = new Set<string>();
   for (const name of readdirSync(sourceDirectory).filter((entry) => entry.endsWith(".c")).sort()) {

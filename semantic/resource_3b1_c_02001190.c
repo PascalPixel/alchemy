@@ -34,7 +34,7 @@ typedef unsigned int u32;
  * Raw callee naming.
  */
 
-extern u32 BucketTable_0200e668[];
+extern u32 Data_0200e668[];
 
 u8 *Func_0808a080();
 void Func_0808a1e0();
@@ -86,7 +86,7 @@ void Func_02001190(u8 *obj)
     Func_0808a090(obj, 0x19999, 0xcccc);
     Func_0808a100(obj, 2);
 
-    packed = BucketTable_0200e668[bucket];
+    packed = Data_0200e668[bucket];
     Func_0808a0e0(obj, (s16)(packed >> 16), (s16)packed);
 
     Func_0808a0e8(obj);

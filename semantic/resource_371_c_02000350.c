@@ -26,8 +26,8 @@ s32 Func_02000350(u8 *object)
     u8 *flags = object + 0x54;
     u8 value = *flags;
 
-    if ((value & 1) != 0 && (Data_03001e40 & 1) != 0) {
-        *flags = (u8)(value ^ 1);
+    if ((1 & value) != 0 && (Data_03001e40 & 1) != 0) {
+        *flags = (u8)(1 ^ value);
     }
     return 1;
 }

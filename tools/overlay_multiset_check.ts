@@ -336,7 +336,7 @@ function main(): void {
   for (const row of rows(overlay)) {
     if (wanted !== undefined && row.offset !== wanted) continue;
     const address = (0x02000000 + row.offset).toString(16).padStart(8, "0");
-    const path = join(ROOT, "semantic", "overlays", `${overlay}_c_${address}.c`);
+    const path = join(ROOT, "semantic", `${overlay}_c_${address}.c`);
     if (!existsSync(path)) continue;
     const mismatches = compare(
       assemblyCounts(overlay, row.offset, row.span_bytes),

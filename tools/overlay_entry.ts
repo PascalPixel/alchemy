@@ -125,7 +125,7 @@ function main(): void {
   const inventory = JSON.parse(readFileSync(join(ROOT, "out/decomp/overlays.json"), "utf8")) as
     { functions: Array<Record<string, any>> };
   const converted = new Set(
-    readdirSync(join(ROOT, "assets/code"))
+    readdirSync(join(ROOT, "exact"))
       .map((name) => /_c_([0-9a-f]{8})\.c$/.exec(name)?.[1])
       .filter((stem): stem is string => stem !== undefined)
       .map((stem) => Number.parseInt(stem, 16)),

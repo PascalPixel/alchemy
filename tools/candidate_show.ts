@@ -71,13 +71,13 @@ function optionsOf(argv: string[]): Options {
       options.configuration.removeFlags = argv[++index].split(",").filter(Boolean);
     } else if (argument === "--family") {
       const family = argv[++index] as CandidateCompilerFamily;
-      if (!["routed", "gcc296", "old-agbcc", "pret-early-thumb", "gcc2951"].includes(family)) {
-        throw new Error("--family must be routed, gcc296, old-agbcc, pret-early-thumb, or gcc2951");
+      if (!["routed", "gcc296", "old-agbcc", "pret-early-thumb", "gcc2951", "gcc3"].includes(family)) {
+        throw new Error("--family must be routed, gcc296, old-agbcc, pret-early-thumb, gcc2951, or gcc3");
       }
       options.configuration.family = family;
     }
     else if (argument === "-h" || argument === "--help") {
-      console.log("usage: candidate_show.ts <candidate.c> [--rom FILE] [--work DIR] [--family routed|gcc296|old-agbcc|pret-early-thumb|gcc2951] [--flags -fa,-fb] [--remove-flags -fa,-fb]");
+      console.log("usage: candidate_show.ts <candidate.c> [--rom FILE] [--work DIR] [--family routed|gcc296|old-agbcc|pret-early-thumb|gcc2951|gcc3] [--flags -fa,-fb] [--remove-flags -fa,-fb]");
       process.exit(0);
     } else rest.push(argument);
   }

@@ -1625,11 +1625,10 @@ AlchemyC_02000ea8:
 	.space 0x38
 AlchemyC_02000ee0:
 	.space 0x54
-	.4byte 0x47702000
-	.2byte 0x4800
-	.2byte 0x4770
-	push	{r2, r3, r4, r5, r7, lr}
-	lsls	r0, r0, #8
+AlchemyC_02000f34:
+	.space 0x4
+AlchemyC_02000f38:
+	.space 0x8
 AlchemyC_02000f40:
 	.space 0x54
 	push	{r5, lr}

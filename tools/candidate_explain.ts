@@ -18,6 +18,7 @@ import { verifyCandidate, ROM_BASE } from "./match_m2c.ts";
 import { type RtlInsn, calleeSymbol, parseInsns } from "./rtl_insn.ts";
 import { type Instruction, parseInstruction } from "./thumb_disasm.ts";
 import { align } from "./rtl_align.ts";
+import { type DependenceRow, type PairComparison, type ScheduleContext, diagnose, parseDependenceTable } from "./rtl_schedule.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 
@@ -31,10 +32,15 @@ const EXPLAIN_FLAGS = ["-dS", "-dR", "-fsched-verbose=9"] as const;
 // gcc names dump files from its -dumpbase argument (the routing source's own
 // basename, see alchemy_gcc.ts's sourceToAssemblyPlan), not from the actual
 // preprocessed input filename -- so the prefix cannot be predicted from the
-// candidate's own stem. Each work directory holds one candidate's build at a
-// time, so matching on suffix within it is unambiguous.
-function findDumpFile(work: string, suffix: string): string | null {
-  const match = readdirSync(work).find((name) => name.endsWith(`.${suffix}`));
+// candidate's own stem, but IS predictable from the routing source's own
+// stem, which every caller here already knows. Work directories are reused
+// across repeated invocations (not cleaned between runs), so matching on
+// suffix alone picks up stale dump files left behind by a PREVIOUS,
+// unrelated candidate compiled into the same directory -- silently
+// producing a plausible-looking but entirely wrong scheduler trace. Matching
+// on the routing stem prefix as well avoids that.
+function findDumpFile(work: string, routingStem: string, suffix: string): string | null {
+  const match = readdirSync(work).find((name) => name.startsWith(`${routingStem}.`) && name.endsWith(`.${suffix}`));
   return match === undefined ? null : join(work, match);
 }
 
@@ -63,25 +69,41 @@ function differingHalfwords(actual: Uint8Array, expected: Uint8Array): Set<numbe
   return found;
 }
 
-// The scheduling trace at -fsched-verbose=9 prints "Ready list (t = N): ..."
-// immediately before each "--> scheduling insn <<<UID>>>" pick. Pulling the
-// pair for a given UID shows exactly which other ready insns it was chosen
-// ahead of at that cycle -- the raw fact haifa-sched.c's rank_for_schedule
-// decided on, without re-deriving the decision from source.
-export function traceForInsn(dumpText: string, uid: number): string | null {
+// The scheduling trace at -fsched-verbose=9 prints "Ready list (t = N):
+// UID UID ..." immediately before each "--> scheduling insn <<<UID>>>"
+// pick, both as `;;`-prefixed lines in file order. Finding the decision for
+// a given UID means finding its own "scheduling insn" line, then walking
+// backward for the nearest preceding "Ready list" line (its own ready set)
+// and, separately, the nearest preceding *other* "scheduling insn" line
+// (the last-scheduled insn rank_for_schedule's class tier compares against
+// -- null if this is the first decision in the dump).
+interface Decision { readyUids: number[]; lastScheduledUid: number | null }
+
+function decisionForInsn(dumpText: string, uid: number): Decision | null {
   const lines = dumpText.split("\n");
-  const marker = `--> scheduling insn <<<${uid}>>>`;
-  for (let index = 0; index < lines.length; index++) {
-    if (!lines[index].includes(marker)) continue;
-    let readyLine = "";
-    for (let back = index - 1; back >= 0 && index - back <= 6; back--) {
-      const match = /Ready list \(t = *\d+\): *(.*)$/.exec(lines[back]);
-      if (match !== null) { readyLine = match[1].trim(); break; }
+  const pickedMarker = new RegExp(`--> scheduling insn <<<(\\d+)>>>`);
+  const ownIndex = lines.findIndex((line) => line.includes(`--> scheduling insn <<<${uid}>>>`));
+  if (ownIndex === -1) return null;
+
+  let readyUids: number[] = [];
+  for (let back = ownIndex - 1; back >= 0; back--) {
+    const match = /Ready list \(t = *\d+\): *(.*)$/.exec(lines[back]);
+    if (match !== null) {
+      readyUids = match[1].trim().split(/\s+/).filter(Boolean).map(Number);
+      break;
     }
-    const picked = lines[index].trim();
-    return readyLine.length > 0 ? `ready list: [${readyLine}] -- ${picked}` : picked;
+    // A "scheduling insn" line encountered before any "Ready list" line
+    // means we've walked past this decision's own ready-list snapshot
+    // (queue/dequeue trace lines between them don't reset the search).
+    if (pickedMarker.test(lines[back])) break;
   }
-  return null;
+
+  let lastScheduledUid: number | null = null;
+  for (let back = ownIndex - 1; back >= 0; back--) {
+    const match = pickedMarker.exec(lines[back]);
+    if (match !== null) { lastScheduledUid = Number(match[1]); break; }
+  }
+  return { readyUids, lastScheduledUid };
 }
 
 function describeInsn(insn: RtlInsn): string {
@@ -90,15 +112,45 @@ function describeInsn(insn: RtlInsn): string {
   return `insn ${insn.uid}`;
 }
 
-function report(actual: Buffer, expected: Buffer, work: string, actualPath: string): void {
+// `pickedUid` is the insn the real trace shows scheduled -- the row this
+// pair is being printed under. comparePair is a pure tier-by-tier
+// comparator, so when our model is accurate it agrees pickedUid won; when
+// it doesn't, that mismatch IS the finding (an unmodeled tier -- register
+// pressure, the cost==1 shortcut, or the project's own dest-order hook --
+// was decisive), and must be shown as a divergence, not silently reported
+// as if pickedUid had won anyway.
+function formatPair(pickedUid: number, pair: PairComparison): string {
+  if (pair.winner === pickedUid) return `beats ${pair.loser} (${pair.tier}: ${pair.detail})`;
+  return `?? model expects ${pair.winner} to beat ${pickedUid} here (${pair.tier}: ${pair.detail}) -- ` +
+    `actual pick suggests an unmodeled tier (register pressure / cost==1 / dest-order hook)`;
+}
+
+// Combines the raw decision (this insn's ready list + the last-scheduled
+// insn at that point) with rank_for_schedule's own tier-by-tier comparator
+// to explain, for each other insn that was ready at the same cycle, exactly
+// which tier picked this insn over it. Falls back to a bare description
+// when there's no scheduling decision to read (e.g. the insn was the only
+// one ready, or it predates any "Ready list" line in the dump).
+function traceForInsn(dumpText: string, insn: RtlInsn, context: ScheduleContext): string {
+  const description = describeInsn(insn);
+  const decision = decisionForInsn(dumpText, insn.uid);
+  if (decision === null) return description;
+  const diagnosis = diagnose(decision.readyUids, insn.uid, { ...context, lastScheduledUid: decision.lastScheduledUid });
+  if (diagnosis.perRival.length === 0) return description;
+  return `${description} -- ${diagnosis.perRival.map((pair) => formatPair(insn.uid, pair)).join("; ")}`;
+}
+
+function report(actual: Buffer, expected: Buffer, work: string, actualPath: string, routingStem: string): void {
   const instructions = disassembleInstructions(actualPath);
   const differing = differingHalfwords(actual, expected);
 
-  const dumpPath = findDumpFile(work, "sched2") ?? findDumpFile(work, "sched");
+  const dumpPath = findDumpFile(work, routingStem, "sched2") ?? findDumpFile(work, routingStem, "sched");
   const dumpText = dumpPath === null ? "" : readFileSync(dumpPath, "utf8");
   const insns = dumpPath === null ? [] : parseInsns(dumpText);
   const alignment = align(insns, instructions);
   const byOffset = new Map(alignment.pairs.map((pair) => [pair.instruction.offset, pair.insn]));
+  const table = dumpPath === null ? new Map<number, DependenceRow>() : parseDependenceTable(dumpText);
+  const insnsByUid = new Map(insns.map((insn) => [insn.uid, insn]));
 
   console.log(`candidate=${actual.length} reference=${expected.length} differing_halfwords=${differing.size}`);
   if (dumpPath === null) {
@@ -119,7 +171,7 @@ function report(actual: Buffer, expected: Buffer, work: string, actualPath: stri
     const candidateColumn = instruction.raw.replace(/\t/g, " ").padEnd(30).slice(0, 30);
     const insn = byOffset.get(offset);
     const uidLabel = insn === undefined ? "" : String(insn.uid).padStart(4);
-    const trace = insn === undefined || dumpPath === null ? "" : (traceForInsn(dumpText, insn.uid) ?? describeInsn(insn));
+    const trace = insn === undefined || dumpPath === null ? "" : traceForInsn(dumpText, insn, { table, lastScheduledUid: null, insnsByUid });
     console.log(`  ${mark} ${offset.toString(16).padStart(4, "0")}  ${candidateColumn} ${uidLabel}  ${trace}`);
   }
   if (dumpPath !== null) console.log(`\nfull dump: ${dumpPath}`);
@@ -241,7 +293,7 @@ async function main(): Promise<void> {
     }
     const actualPath = join(options.work, "candidate.bin");
     await Bun.write(actualPath, compiled.data);
-    report(compiled.data, expected, options.work, actualPath);
+    report(compiled.data, expected, options.work, actualPath, basename(options.routingSource, ".c"));
   } else {
     const rom = readFileSync(join(ROOT, "roms/gs1-en.gba"));
     const verification = await verifyCandidate(
@@ -249,7 +301,7 @@ async function main(): Promise<void> {
     );
     const stem = basename(options.source, ".c");
     const actualPath = join(options.work, `${stem}.bin`);
-    report(Buffer.from(verification.actual), Buffer.from(verification.expected), options.work, actualPath);
+    report(Buffer.from(verification.actual), Buffer.from(verification.expected), options.work, actualPath, stem);
   }
 }
 

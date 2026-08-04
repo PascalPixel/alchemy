@@ -4,7 +4,7 @@
   "target": "gs1-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1344044,
+  "total_union_bytes": 1344134,
   "main": {
     "id": "main",
     "executable_bytes": 548364,
@@ -9501,8 +9501,8 @@
     {
       "id": "resource_379",
       "decoded_bytes": 3766,
-      "executable_bytes": 3020,
-      "excluded_bytes": 746,
+      "executable_bytes": 3056,
+      "excluded_bytes": 710,
       "audit": "complete",
       "intervals": [
         {
@@ -9512,7 +9512,7 @@
           "evidence": "resource_379_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33554516,
+          "start": 33554480,
           "end": 33555586,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -24855,18 +24855,6 @@
         },
         {
           "start": 33554480,
-          "end": 33555200,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33555200,
-          "end": 33555208,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33555208,
           "end": 33555432,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -35909,8 +35897,8 @@
     {
       "id": "resource_3c3",
       "decoded_bytes": 3740,
-      "executable_bytes": 2392,
-      "excluded_bytes": 1348,
+      "executable_bytes": 2404,
+      "excluded_bytes": 1336,
       "audit": "complete",
       "intervals": [
         {
@@ -35933,12 +35921,6 @@
         },
         {
           "start": 33554496,
-          "end": 33554560,
-          "kind": "thumb",
-          "evidence": "resource_3c3_overlay.s:170:verified-C-placeholder"
-        },
-        {
-          "start": 33554572,
           "end": 33555030,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -39641,8 +39623,8 @@
     {
       "id": "resource_3cc",
       "decoded_bytes": 672,
-      "executable_bytes": 142,
-      "excluded_bytes": 530,
+      "executable_bytes": 184,
+      "excluded_bytes": 488,
       "audit": "complete",
       "intervals": [
         {
@@ -39652,10 +39634,10 @@
           "evidence": "resource_3cc_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33554508,
+          "start": 33554480,
           "end": 33554530,
           "kind": "thumb",
-          "evidence": "resource_3cc_overlay.s:34:verified-C-placeholder"
+          "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
           "start": 33554530,
@@ -39692,6 +39674,18 @@
           "end": 33554602,
           "kind": "thumb",
           "evidence": "resource_3cc_overlay.s:43:verified-C-placeholder"
+        },
+        {
+          "start": 33554602,
+          "end": 33554604,
+          "kind": "executable_alignment",
+          "evidence": "resource_3cc_overlay.s:two-byte-zero-between-executable-spans"
+        },
+        {
+          "start": 33554604,
+          "end": 33554616,
+          "kind": "thumb",
+          "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
           "start": 33554620,

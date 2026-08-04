@@ -53,13 +53,14 @@ Bright cyan is exact C, the softer cyan is readable C still being matched, gray
 is code still to reconstruct, and dark gray is permanent low-level assembly.
 
 `resource_384`, `resource_37c`, `resource_37d`, `resource_37e`, `resource_388`,
-`resource_38c`, `resource_3ac`, `resource_390`, and `resource_3a9` are the first nine pret-like showcase overlays: all 98 genuine functions are
-ordinary byte-exact C, with only export/import veneers, literal data, and
-alignment retained in assembly.
+`resource_38c`, `resource_3ac`, `resource_390`, `resource_3a9`, and
+`resource_3cc` are the first ten pret-like showcase overlays: all 108 genuine
+functions are ordinary byte-exact C, with only export/import veneers, literal
+data, and alignment retained in assembly.
 `bun run verify:showcase` rebuilds every showcase's decoded image and runs the
 complete overlay-closure audit.
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=af11a6a0)
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=39e069b1)
 
 ### Images and data
 
@@ -68,7 +69,7 @@ The non-code part of the ROM is split across two panels. This one follows
 encoded ROM data to individually understood and reusable assets. Brighter
 magenta means a more complete reconstruction.
 
-![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=01eb15ee)
+![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=af050cbb)
 
 ### Music and sound
 
@@ -77,7 +78,7 @@ their own maturity panel so audio progress remains legible instead of being
 compressed into the image chart. Brighter orange means a more complete
 reconstruction.
 
-![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=0de9466b)
+![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=d62fa185)
 
 DONE is measured by executable bytes rather than function counts. Exact C must
 compile to the original game byte for byte; Permanent ASM must have an explicit

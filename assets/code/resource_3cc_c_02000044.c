@@ -1,3 +1,5 @@
+#include "resource_3cc.h"
+
 typedef unsigned char u8;
 
 /*
@@ -20,9 +22,8 @@ typedef unsigned char u8;
  * identical semantics; this row's pool word was resolved on its own.
  */
 
-extern u8 Data_20081ec[];   /* image offset 0x1ec */
 
 u8 *Func_02000044(void)
 {
-    return Data_20081ec;
+    return (u8 *)0x020081ec;
 }

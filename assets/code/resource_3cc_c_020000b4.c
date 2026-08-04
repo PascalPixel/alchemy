@@ -1,3 +1,5 @@
+#include "resource_3cc.h"
+
 typedef signed int s32;
 
 /*

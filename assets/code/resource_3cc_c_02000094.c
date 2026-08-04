@@ -1,3 +1,5 @@
+#include "resource_3cc.h"
+
 typedef signed char s8;
 typedef unsigned char u8;
 typedef signed short s16;

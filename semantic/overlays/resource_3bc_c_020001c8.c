@@ -25,18 +25,19 @@ typedef signed int s32;
 extern s32 Data_0200d480;
 extern s32 Data_0200d484;
 
-void Func_080000c0();
+void Func_02004a0e();
+void Func_02004a1e();
 
 void Func_020001c8(void)
 {
     s32 polls;
 
-    Func_080000c0(10);
+    Func_02004a0e(10);
 
     polls = 0;
     while (Data_0200d480 != 3 || Data_0200d484 != 1) {
         polls++;
-        Func_080000c0(1);
+        Func_02004a1e(1);
         if (polls > 119) {
             break;
         }

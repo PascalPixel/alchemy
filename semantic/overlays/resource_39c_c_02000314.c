@@ -18,13 +18,12 @@ typedef int s32;
  * relocated helper's game-level role remains unknown here.
  */
 
-extern s32 Func_030001d8(s32 value);
-
 s32 Func_02000314(s32 *a, s32 *b)
 {
-    s32 dx = (a[0] - b[0]) >> 16;
-    s32 dy = (a[1] - b[1]) >> 16;
-    s32 dz = (a[2] - b[2]) >> 16;
+    s32 dx = (*a++ - *b++) >> 16;
+    s32 dy = (*a++ - *b++) >> 16;
+    s32 dz = (*a - *b) >> 16;
+    s32 xx = dx * dx;
 
-    return Func_030001d8(dx * dx + dy * dy + dz * dz);
+    return ((s32 (*)(s32))0x030001d8)(xx + dy * dy + dz * dz);
 }

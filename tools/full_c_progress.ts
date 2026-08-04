@@ -721,8 +721,10 @@ function overlayCSpans(source: string): OwnedSpan[] {
     const space = /^\s*\.space\s+(0x[0-9a-f]+|\d+)\s*$/i.exec(line);
     if (inPlaceholder && space) {
       const size = Number.parseInt(space[1], 0);
+      // The exact-C sibling lives in exact/, not next to the .s container
+      // (see overlay_disasm.ts's overlayCSources for the same reasoning).
       const cName = basename(source).replace(/overlay\.s$/, `c_${owner.slice(-8)}.c`);
-      const cPath = join(dirname(source), cName);
+      const cPath = join(ROOT, "exact", cName);
       if (!existsSync(cPath) || !canonicalCSource(readFileSync(cPath, "utf8"))) {
         cursor += size;
         continue;

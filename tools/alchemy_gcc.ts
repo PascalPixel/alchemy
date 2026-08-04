@@ -82,7 +82,7 @@ const OPTIMIZE_OS_SOURCES = new Set(["08019d2c"]);
 // grows the owner and fails the placement check.  Keep this source-scoped until
 // an unrelated exact owner independently establishes a broader -O3 family.
 const OPTIMIZE_O3_OVERLAY_SOURCES = new Set([
-  "assets/code/resource_3a7_c_02000944.c",
+  "exact/resource_3a7_c_02000944.c",
 ]);
 // One overlay predicate family returns through a single `pop {pc}` where every
 // other reconstructed function returns `pop {rN}` + `bx rN`. That is the
@@ -127,21 +127,21 @@ const NO_INTERWORK_OVERLAY_SOURCES = new Set([
   // Transposed soft-double wrappers in resource_3a7 use the stock pop-PC
   // epilogue; preserve the same non-interworking ABI as their exact resource_3bf
   // siblings.
-  "assets/code/resource_3a7_c_020013ac.c",
-  "assets/code/resource_3a7_c_020013e4.c",
+  "exact/resource_3a7_c_020013ac.c",
+  "exact/resource_3a7_c_020013e4.c",
   // Three single-comparison predicates whose stems are already taken by
   // resource_373 and resource_3b2 rows that must keep interworking.
-  "assets/code/resource_3a7_c_02001554.c",
-  "assets/code/resource_3a7_c_02001740.c",
-  "assets/code/resource_3bf_c_02005ae0.c",
+  "exact/resource_3a7_c_02001554.c",
+  "exact/resource_3a7_c_02001740.c",
+  "exact/resource_3bf_c_02005ae0.c",
   // Moved out of the stem set: resource_377 now has an interworking row at
   // 02001544, and the stem key would have stripped its interworking epilogue.
-  "assets/code/resource_3a7_c_02001544.c",
+  "exact/resource_3a7_c_02001544.c",
   // These resource_3bf soft-double wrappers are stock-ABI library leaves whose
   // references return with pop {pc}; both bodies independently match once the
   // two ABI properties are selected.
-  "assets/code/resource_3bf_c_02005a40.c",
-  "assets/code/resource_3bf_c_02005a78.c",
+  "exact/resource_3bf_c_02005a40.c",
+  "exact/resource_3bf_c_02005a78.c",
 ]);
 // Only the second flag does anything. The pre-reload scheduler is inert in this
 // fork: 40 converted sources, including the largest, compile byte-identically
@@ -162,10 +162,10 @@ const UNSCHEDULED_SOURCES = new Set([
 // compiler behaviour, so keep the evidence path-scoped rather than claiming
 // the repeatedly used 02000ab0 stem globally.
 const UNSCHEDULED_OVERLAY_SOURCES = new Set([
-  "assets/code/resource_39f_c_02000ab0.c",
-  "assets/code/resource_3b2_c_02000ab0.c",
-  "assets/code/resource_3c4_c_02000ab0.c",
-  "assets/code/resource_3c5_c_02000ab0.c",
+  "exact/resource_39f_c_02000ab0.c",
+  "exact/resource_3b2_c_02000ab0.c",
+  "exact/resource_3c4_c_02000ab0.c",
+  "exact/resource_3c5_c_02000ab0.c",
 ]);
 // This decoder has mutually exclusive switch arms that reuse the same input
 // base.  Following jumps during CSE rematerializes one arm's base in r3;
@@ -284,7 +284,7 @@ const GROUP_VALUE1_BEFORE_BASE_SOURCES = new Set(["080907b0"]);
 // and r1 before loading the pooled control word into r2; the path-scoped mode
 // preserves that order without changing unrelated overlays sharing 02000c98.
 const GROUP_CONTROL_LAST_OVERLAY_SOURCES = new Set([
-  "assets/code/resource_3bd_c_02000c98.c",
+  "exact/resource_3bd_c_02000c98.c",
 ]);
 // The descriptor's base pool load wins a priority-68 ready-list tie on forward
 // dependent count alone; these references break it by original order instead.
@@ -384,19 +384,19 @@ const ORR_DEAD_INPUT_REUSE_SOURCES = new Set(["08003adc"]);
 // updates where a constant OR input dies at the OR and the reference reuses
 // that register for the result immediately stored to the field.
 const ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES = new Set([
-  "assets/code/resource_39a_c_02001004.c",
-  "assets/code/resource_38f_c_020008ec.c",
-  "semantic/overlays/resource_38f_c_020008ec.c",
+  "exact/resource_39a_c_02001004.c",
+  "exact/resource_38f_c_020008ec.c",
+  "semantic/resource_38f_c_020008ec.c",
 ]);
 // The same call sheet mostly follows the established low-destination scheduler
 // fingerprint, with a repeated post-reload exception: an adjacent r1 setter
 // fills the slot before a literal r0 setter. The mode recognizes the call-fed
 // pair structurally and does not depend on this address.
 const CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES = new Set([
-  "assets/code/resource_38f_c_020008ec.c",
+  "exact/resource_38f_c_020008ec.c",
   // resource_3c3 0x02000730: same post-reload r1-before-r0 call-argument pair
   // at the 0x0200074e Func_02001078(9,0) site (movs r1,#0 before movs r0,#9).
-  "assets/code/resource_3c3_c_02000730.c",
+  "exact/resource_3c3_c_02000730.c",
 ]);
 // This main-image scheduler fingerprint leaves an independent r0 call-argument
 // copy immediately after a halfword store.  The reference places that copy
@@ -458,35 +458,35 @@ const CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES = new Set([
   // prototype-less callee were tried and rejected, and the mode does not fix
   // its sibling 1c4c, so this stays a per-function route
   // (notes/resource_3bf-1cf0.md).
-  "assets/code/resource_3bf_c_02001cf0.c",
-  "assets/code/resource_3a0_c_02000048.c",
-  "assets/code/resource_3a1_c_02000048.c",
-  "assets/code/resource_3a5_c_02000048.c",
-  "assets/code/resource_3a6_c_02000048.c",
-  "assets/code/resource_3ab_c_02000048.c",
-  "assets/code/resource_3b3_c_02000048.c",
-  "assets/code/resource_3be_c_02000048.c",
-  "assets/code/resource_3c0_c_02000048.c",
-  "assets/code/resource_3c9_c_02000048.c",
-  "assets/code/resource_380_c_020000a0.c",
-  "assets/code/resource_382_c_020000a0.c",
-  "assets/code/resource_385_c_020000a0.c",
-  "assets/code/resource_387_c_020000a0.c",
-  "assets/code/resource_38a_c_020000a0.c",
-  "assets/code/resource_396_c_020000a0.c",
-  "assets/code/resource_39b_c_020000a0.c",
-  "assets/code/resource_39c_c_020000a0.c",
-  "assets/code/resource_39d_c_020000a0.c",
-  "assets/code/resource_39e_c_020000a0.c",
-  "assets/code/resource_3a0_c_020000a0.c",
-  "assets/code/resource_3a1_c_020000a0.c",
-  "assets/code/resource_3a5_c_020000a0.c",
-  "assets/code/resource_3a6_c_020000a0.c",
-  "assets/code/resource_3ab_c_020000a0.c",
-  "assets/code/resource_3b3_c_020000a0.c",
-  "assets/code/resource_3be_c_020000a0.c",
-  "assets/code/resource_3c0_c_020000a0.c",
-  "assets/code/resource_3c9_c_020000a0.c",
+  "exact/resource_3bf_c_02001cf0.c",
+  "exact/resource_3a0_c_02000048.c",
+  "exact/resource_3a1_c_02000048.c",
+  "exact/resource_3a5_c_02000048.c",
+  "exact/resource_3a6_c_02000048.c",
+  "exact/resource_3ab_c_02000048.c",
+  "exact/resource_3b3_c_02000048.c",
+  "exact/resource_3be_c_02000048.c",
+  "exact/resource_3c0_c_02000048.c",
+  "exact/resource_3c9_c_02000048.c",
+  "exact/resource_380_c_020000a0.c",
+  "exact/resource_382_c_020000a0.c",
+  "exact/resource_385_c_020000a0.c",
+  "exact/resource_387_c_020000a0.c",
+  "exact/resource_38a_c_020000a0.c",
+  "exact/resource_396_c_020000a0.c",
+  "exact/resource_39b_c_020000a0.c",
+  "exact/resource_39c_c_020000a0.c",
+  "exact/resource_39d_c_020000a0.c",
+  "exact/resource_39e_c_020000a0.c",
+  "exact/resource_3a0_c_020000a0.c",
+  "exact/resource_3a1_c_020000a0.c",
+  "exact/resource_3a5_c_020000a0.c",
+  "exact/resource_3a6_c_020000a0.c",
+  "exact/resource_3ab_c_020000a0.c",
+  "exact/resource_3b3_c_020000a0.c",
+  "exact/resource_3be_c_020000a0.c",
+  "exact/resource_3c0_c_020000a0.c",
+  "exact/resource_3c9_c_020000a0.c",
 ]);
 // The fork's scheduler cost model gives a Thumb immediate move's result a
 // ready-delay of 1, so a two-insn constant (`movs rN,#imm` / `lsls rN,rN,#k`)
@@ -513,12 +513,12 @@ const EARLY_LITERAL_POOL_OVERLAY_SOURCES = new Set(["02000e3c", "02000dfc", "020
 // adoptions in other overlays, so the resource_394 and resource_3bd members
 // are routed by full path instead.
 const EARLY_LITERAL_POOL_OVERLAY_PATHS = new Set([
-  "assets/code/resource_394_c_02000ee0.c",
-  "assets/code/resource_3bd_c_02000ee0.c",
+  "exact/resource_394_c_02000ee0.c",
+  "exact/resource_3bd_c_02000ee0.c",
 ]);
 const NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES = new Set([
-  "assets/code/resource_3a9_c_0200007c.c",
-  "assets/code/resource_3a9_c_020000e4.c",
+  "exact/resource_3a9_c_0200007c.c",
+  "exact/resource_3a9_c_020000e4.c",
 ]);
 // This main-ROM routine has one independent entry-window ordering residual:
 // after `movs r3,#1`, the reference materializes the stack selection pointer
@@ -557,38 +557,38 @@ const SCHED_LOW_DEST_FIRST_SOURCES = new Set([
 ]);
 const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
   // Keep the slot copy between the two halves of the 0xc000 heading setup.
-  "assets/code/resource_3c6_c_02000078.c",
+  "exact/resource_3c6_c_02000078.c",
   // resource_3b7:0154 and :0178 are the same four-call sheet over two ids. The
   // third call takes -1, built as movs #1 then negs, and the reference sets the
   // second argument between those two halves; only the latency mode reproduces
   // that split. Neither tie-break direction reaches it.
-  "assets/code/resource_3b7_c_02000154.c",
-  "assets/code/resource_3b7_c_02000178.c",
-  "assets/code/resource_383_c_02000428.c",
+  "exact/resource_3b7_c_02000154.c",
+  "exact/resource_3b7_c_02000178.c",
+  "exact/resource_383_c_02000428.c",
   // Paired with the callee-return-type lever: the return type fixed these
   // functions' movs/movs swaps and the latency mode their movs/lsls ones —
   // neither reaches zero alone.
-  "assets/code/resource_3b1_c_02000670.c",
-  "assets/code/resource_372_c_0200173c.c",
-  "assets/code/resource_3bf_c_02004794.c",
-  "assets/code/resource_37a_c_02001380.c",
-  "assets/code/resource_37a_c_02001790.c",
-  "assets/code/resource_37a_c_02002924.c",
-  "assets/code/resource_372_c_020016cc.c",
-  "assets/code/resource_399_c_020005dc.c",
-  "assets/code/resource_399_c_02000a3c.c",
-  "assets/code/resource_399_c_02000abc.c",
-  "assets/code/resource_3c7_c_02000030.c",
-  "assets/code/resource_3cd_c_0200004c.c",
+  "exact/resource_3b1_c_02000670.c",
+  "exact/resource_372_c_0200173c.c",
+  "exact/resource_3bf_c_02004794.c",
+  "exact/resource_37a_c_02001380.c",
+  "exact/resource_37a_c_02001790.c",
+  "exact/resource_37a_c_02002924.c",
+  "exact/resource_372_c_020016cc.c",
+  "exact/resource_399_c_020005dc.c",
+  "exact/resource_399_c_02000a3c.c",
+  "exact/resource_399_c_02000abc.c",
+  "exact/resource_3c7_c_02000030.c",
+  "exact/resource_3cd_c_0200004c.c",
   // resource_3b8:049c is byte-exact only with immediate-latency AND the
   // rerun-cse-after-loop rerun disabled together (notes/resource_3b8-049c.md).
-  "assets/code/resource_3b8_c_0200049c.c",
+  "exact/resource_3b8_c_0200049c.c",
   // resource_3b9:2668's shifted-constant calls place the independent id
   // literal (r0) between the two base movs and their shifts; only the
   // latency mode reproduces that slot.
-  "assets/code/resource_3b9_c_02002668.c",
+  "exact/resource_3b9_c_02002668.c",
   // resource_3b9:2964 is the same call-sheet shape as resource_3b9:2668.
-  "assets/code/resource_3b9_c_02002964.c",
+  "exact/resource_3b9_c_02002964.c",
 ]);
 // `rank_for_schedule` breaks a tie towards the insn with more forward
 // dependents; these objects fall through to the `INSN_LUID` (original order)
@@ -607,40 +607,40 @@ const THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES = new Set([
 // (or, for 399:05dc and 0a3c, together with the routed immediate-latency
 // mode). Each entry has its own exact-byte proof.
 const NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES = new Set([
-  "assets/code/resource_3cb_c_02000128.c",
+  "exact/resource_3cb_c_02000128.c",
   // resource_38f:26cc reaches the reference instruction stream when the
   // original-order tie-break is paired with the one-cycle Thumb load model;
   // the pair flips its sole remaining two-insn load/use schedule.
-  "assets/code/resource_38f_c_020026cc.c",
+  "exact/resource_38f_c_020026cc.c",
   // resource_398:04b4 sets r0 then r1 for a six-argument call; the dependence
   // count reverses that pair and neither tie-break direction restores it.
-  "assets/code/resource_398_c_020004b4.c",
-  "assets/code/resource_3c8_c_0200096c.c",
-  "assets/code/resource_3c5_c_02000cf0.c",
-  "assets/code/resource_3b2_c_02000da4.c",
-  "assets/code/resource_37a_c_02001790.c",
-  "assets/code/resource_399_c_0200021c.c",
-  "assets/code/resource_3ca_c_020010d4.c",
-  "assets/code/resource_399_c_02000254.c",
-  "assets/code/resource_399_c_020005dc.c",
-  "assets/code/resource_399_c_02000608.c",
-  "assets/code/resource_399_c_02000668.c",
-  "assets/code/resource_399_c_02000688.c",
-  "assets/code/resource_399_c_02000a3c.c",
-  "assets/code/resource_3cd_c_0200004c.c",
-  "assets/code/resource_3ce_c_02000244.c",
+  "exact/resource_398_c_020004b4.c",
+  "exact/resource_3c8_c_0200096c.c",
+  "exact/resource_3c5_c_02000cf0.c",
+  "exact/resource_3b2_c_02000da4.c",
+  "exact/resource_37a_c_02001790.c",
+  "exact/resource_399_c_0200021c.c",
+  "exact/resource_3ca_c_020010d4.c",
+  "exact/resource_399_c_02000254.c",
+  "exact/resource_399_c_020005dc.c",
+  "exact/resource_399_c_02000608.c",
+  "exact/resource_399_c_02000668.c",
+  "exact/resource_399_c_02000688.c",
+  "exact/resource_399_c_02000a3c.c",
+  "exact/resource_3cd_c_0200004c.c",
+  "exact/resource_3ce_c_02000244.c",
   // resource_3c4:1068 is the same heuristic on a load rather than a setter: the
   // dependence count hoists the +76 field's `ldr` above the store to +12, which
   // is the source's own order. Nothing else moves it, in either direction.
-  "assets/code/resource_3c4_c_02001068.c",
+  "exact/resource_3c4_c_02001068.c",
 ]);
 const THUMB_LOAD_LATENCY_ONE_OVERLAY_SOURCES = new Set([
   // resource_3aa:1494: with the default load model the scheduler drags the
   // workspace-slot pool load above the preceding call and permutes the pool;
   // the one-cycle model keeps it at its reference position.
-  "assets/code/resource_3aa_c_02001494.c",
-  "semantic/overlays/resource_3aa_c_02001494.c",
-  "assets/code/resource_38f_c_020026cc.c",
+  "exact/resource_3aa_c_02001494.c",
+  "semantic/resource_3aa_c_02001494.c",
+  "exact/resource_38f_c_020026cc.c",
 ]);
 // In resource_37a:0054 the cse rerun after the copy loop folds the shared
 // window base back into per-site constants; in resource_399:0abc it rewrites
@@ -656,26 +656,26 @@ const THUMB_LOAD_LATENCY_ONE_OVERLAY_SOURCES = new Set([
 // the descriptor inputs; both modes carry existing evidence and the pairing
 // is byte-exact for this source alone.
 const GROUPED_DMA_STORE_OVERLAY_SOURCES = new Set([
-  "assets/code/resource_3bd_c_02000c98.c",
-  "assets/code/resource_3ca_c_020010d4.c",
+  "exact/resource_3bd_c_02000c98.c",
+  "exact/resource_3ca_c_020010d4.c",
   // resource_392:0c0c and resource_393:0ddc are exact-template twins of
   // resource_394:0fb4.  Keep the three descriptor stores on the compiler's
   // established grouped-DMA route; the per-overlay pools and veneers are the
   // only differences.
-  "assets/code/resource_392_c_02000c0c.c",
-  "assets/code/resource_393_c_02000ddc.c",
-  "assets/code/resource_394_c_02000f34.c",
-  "assets/code/resource_394_c_02000f54.c",
-  "assets/code/resource_394_c_02000fb4.c",
-  "assets/code/resource_393_c_02000d5c.c",
-  "assets/code/resource_393_c_02000d7c.c",
-  "assets/code/resource_392_c_02000b8c.c",
-  "assets/code/resource_392_c_02000bac.c",
+  "exact/resource_392_c_02000c0c.c",
+  "exact/resource_393_c_02000ddc.c",
+  "exact/resource_394_c_02000f34.c",
+  "exact/resource_394_c_02000f54.c",
+  "exact/resource_394_c_02000fb4.c",
+  "exact/resource_393_c_02000d5c.c",
+  "exact/resource_393_c_02000d7c.c",
+  "exact/resource_392_c_02000b8c.c",
+  "exact/resource_392_c_02000bac.c",
 ]);
 const NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES = new Set([
-  "assets/code/resource_383_c_0200082c.c",
-  "assets/code/resource_3b1_c_02000b84.c",
-  "assets/code/resource_3b1_c_02000cc8.c",
+  "exact/resource_383_c_0200082c.c",
+  "exact/resource_3b1_c_02000b84.c",
+  "exact/resource_3b1_c_02000cc8.c",
 ]);
 // resource_372:0278 repeats the same 0x206 event id on opposite sides of a
 // branch.  CSE's skip-blocks pass hoists it and rotates almost the whole leaf;
@@ -683,12 +683,12 @@ const NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES = new Set([
 // low-destination scheduler tie-break fixes the remaining call-argument pair.
 // Path scope matters because every decoded code overlay reuses 0x02000278.
 const NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES = new Set([
-  "assets/code/resource_372_c_02000278.c",
+  "exact/resource_372_c_02000278.c",
   // resource_398:0304 repeats the pooled 0x302 event id on both sides of the
   // gate branch; skip-blocks hoists the pool load into r6, while the
   // reference reloads it per site. Disabling the pass is byte-exact.
-  "assets/code/resource_398_c_02000304.c",
-  "semantic/overlays/resource_398_c_02000304.c",
+  "exact/resource_398_c_02000304.c",
+  "semantic/resource_398_c_02000304.c",
 ]);
 // resource_3c9 field/`(u16*)` mixed-access family: with strict aliasing, our
 // scheduler treats the u16-view store as independent of the struct-field
@@ -715,130 +715,130 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // resource_38f:08ec is a 732-call cutscene script. The reference rebuilds
   // recurring shifted immediates at their individual call sites rather than
   // carrying them through callee-saved registers across the whole owner.
-  "assets/code/resource_38f_c_020008ec.c",
-  "semantic/overlays/resource_38f_c_020008ec.c",
+  "exact/resource_38f_c_020008ec.c",
+  "semantic/resource_38f_c_020008ec.c",
   // The largest open overlay owner is a long event call sheet whose repeated
   // wide immediates are independently materialized throughout the reference.
   // Sharing them changes the saved-register set and every later pool boundary.
-  "assets/code/resource_3b8_c_02002014.c",
+  "exact/resource_3b8_c_02002014.c",
   // resource_3bd:2c44 is another long scene call sheet. Its repeated shifted
   // immediates are rebuilt at their individual call sites in the reference.
-  "assets/code/resource_3bd_c_02002c44.c",
+  "exact/resource_3bd_c_02002c44.c",
   // resource_379:0074 is a 287-call cutscene sheet; mode cohort showed
   // cse-two-insn-immediate-off is the single largest gain (2133->1699 bytes),
   // matching the reference's per-site rematerialized shifted immediates.
-  "assets/code/resource_379_c_02000074.c",
-  "semantic/overlays/resource_379_c_02000074.c",
+  "exact/resource_379_c_02000074.c",
+  "semantic/resource_379_c_02000074.c",
   // resource_371:1a98 rematerializes -1 three times (Func_02005eaa(-1,-1,-1,0))
   // at each argument in the reference; CSE shares it via one register and two
   // copies instead (mode_cohort: 158->88 differing bytes, 2026-08-04).
-  "assets/code/resource_371_c_02001a98.c",
-  "semantic/overlays/resource_371_c_02001a98.c",
+  "exact/resource_371_c_02001a98.c",
+  "semantic/resource_371_c_02001a98.c",
   // resource_3aa:1494 is a 133-call cutscene sheet; the reference rebuilds
   // its repeated shifted immediates (258, 0x3000, 0x5000, -1, 0x03600000...)
   // at each call site instead of parking them in callee-saved registers.
-  "assets/code/resource_3aa_c_02001494.c",
-  "semantic/overlays/resource_3aa_c_02001494.c",
+  "exact/resource_3aa_c_02001494.c",
+  "semantic/resource_3aa_c_02001494.c",
   // The two placement calls in resource_37b:1624 each rematerialize 0x800000;
   // sharing it introduces r5 and changes the whole call sequence.
-  "assets/code/resource_37b_c_02001624.c",
+  "exact/resource_37b_c_02001624.c",
   // resource_373:3380 independently materialises the repeated 0x10000/0x8000
   // scale pair.  CSE sharing changes the prologue and grows the owner by eight
   // bytes; the low-destination scheduler route below restores its call setup.
-  "assets/code/resource_373_c_02003380.c",
-  "assets/code/resource_373_c_020012bc.c",
+  "exact/resource_373_c_02003380.c",
+  "exact/resource_373_c_020012bc.c",
   // resource_3bb:0b38 is the target-specific transpose of the exact
   // resource_3ba:0974 source; both independently materialize repeated wide
   // immediates before the low-destination call scheduler orders them.
-  "assets/code/resource_3bb_c_02000b38.c",
+  "exact/resource_3bb_c_02000b38.c",
   // Paired with the low-destination scheduler route below for resource_3c8's
   // three independently materialized -1 arguments.
-  "assets/code/resource_3c8_c_020007d8.c",
+  "exact/resource_3c8_c_020007d8.c",
   // resource_373:0cd0 has the sharing tell twice in one row: a three-argument
   // call whose first two arguments are both 0x30000, and a later one that takes
   // -1 twice. The reference builds each in place -- two `movs`/`lsls` pairs and
   // two `negs` -- where CSE builds one and copies it.
-  "assets/code/resource_373_c_02000cd0.c",
+  "exact/resource_373_c_02000cd0.c",
   // resource_3b1:5c48 rematerializes -1 twice (Func_0200c0ee(-1,-1,0xe666))
   // and 0x20000 twice (Func_0200c116(0x20000,0x20000,0x10000)) independently
   // at each call site in the reference; CSE shares each pair via a register
   // copy instead, costing 4 bytes at each site.
-  "assets/code/resource_3b1_c_02005c48.c",
-  "semantic/overlays/resource_3b1_c_02005c48.c",
+  "exact/resource_3b1_c_02005c48.c",
+  "semantic/resource_3b1_c_02005c48.c",
   // 0xC000 appears at two of this call sheet's three sites, so CSE hoists it
   // into a callee-saved register and buys a prologue the reference does not
   // have. Paired with -fsched-low-dest-first, which orders the r0 setter.
-  "assets/code/resource_38d_c_02001984.c",
+  "exact/resource_38d_c_02001984.c",
   // Same shape: 0x80000 feeds both of this call's shifted arguments.
-  "assets/code/resource_3b4_c_020011d8.c",
+  "exact/resource_3b4_c_020011d8.c",
   // resource_39f:2004 places the same 744/504 pair twice, once in whole units
   // and once in 16.16. CSE keeps 186 and 252 in r5/r6 across the whole body and
   // buys a `push {r5, r6, lr}` the reference does not have -- 34 groups from
   // that one decision. Paired with -fsched-low-dest-first for the r0 setter.
-  "assets/code/resource_39f_c_02002004.c",
+  "exact/resource_39f_c_02002004.c",
   // Same -1 pair shape as the entry two lines below; see the tie-break set.
-  "assets/code/resource_3a2_c_020008a8.c",
+  "exact/resource_3a2_c_020008a8.c",
   // Both negated arguments are -1, so CSE builds one and copies it.
-  "assets/code/resource_3b5_c_0200028c.c",
-  "assets/code/resource_372_c_02000f38.c",
-  "assets/code/resource_3bf_c_02000bec.c",
-  "assets/code/resource_3af_c_02001a98.c",
-  "assets/code/resource_3af_c_02004218.c",
+  "exact/resource_3b5_c_0200028c.c",
+  "exact/resource_372_c_02000f38.c",
+  "exact/resource_3bf_c_02000bec.c",
+  "exact/resource_3af_c_02001a98.c",
+  "exact/resource_3af_c_02004218.c",
   // Parked before the mode existed, byte-exact under it with its existing draft
   // and no further source work.
-  "assets/code/resource_3c8_c_020009c8.c",
+  "exact/resource_3c8_c_020009c8.c",
   // Paired with -fsched-low-dest-first below: removing the constant sharing
   // exposes a scheduling transposition that the tie-break then fixes.
-  "assets/code/resource_373_c_020031b4.c",
-  "assets/code/resource_3c5_c_02001158.c",
-  "assets/code/resource_3c5_c_02000eac.c",
-  "assets/code/resource_3a8_c_0200158c.c",
-  "assets/code/resource_3a8_c_020015b4.c",
-  "assets/code/resource_374_c_02000780.c",
-  "assets/code/resource_39c_c_020010c0.c",
-  "assets/code/resource_39e_c_0200071c.c",
-  "assets/code/resource_3af_c_02001f90.c",
-  "assets/code/resource_380_c_02000390.c",
-  "assets/code/resource_373_c_020032b0.c",
-  "assets/code/resource_3bf_c_02004704.c",
-  "assets/code/resource_3bf_c_020049a0.c",
-  "assets/code/resource_3bf_c_0200169c.c",
-  "assets/code/resource_3bf_c_0200269c.c",
-  "assets/code/resource_3bf_c_02002718.c",
-  "assets/code/resource_3bf_c_020025f8.c",
-  "assets/code/resource_3bf_c_020021c4.c",
-  "assets/code/resource_3b0_c_020004b0.c",
-  "assets/code/resource_39e_c_02000414.c",
-  "assets/code/resource_372_c_02003c48.c",
-  "assets/code/resource_3b8_c_02003e40.c",
-  "assets/code/resource_3a4_c_02000c9c.c",
-  "assets/code/resource_3af_c_02001b58.c",
-  "assets/code/resource_3af_c_020019c0.c",
-  "assets/code/resource_3af_c_020012f0.c",
-  "assets/code/resource_3af_c_02002b7c.c",
-  "assets/code/resource_3ba_c_02000974.c",
+  "exact/resource_373_c_020031b4.c",
+  "exact/resource_3c5_c_02001158.c",
+  "exact/resource_3c5_c_02000eac.c",
+  "exact/resource_3a8_c_0200158c.c",
+  "exact/resource_3a8_c_020015b4.c",
+  "exact/resource_374_c_02000780.c",
+  "exact/resource_39c_c_020010c0.c",
+  "exact/resource_39e_c_0200071c.c",
+  "exact/resource_3af_c_02001f90.c",
+  "exact/resource_380_c_02000390.c",
+  "exact/resource_373_c_020032b0.c",
+  "exact/resource_3bf_c_02004704.c",
+  "exact/resource_3bf_c_020049a0.c",
+  "exact/resource_3bf_c_0200169c.c",
+  "exact/resource_3bf_c_0200269c.c",
+  "exact/resource_3bf_c_02002718.c",
+  "exact/resource_3bf_c_020025f8.c",
+  "exact/resource_3bf_c_020021c4.c",
+  "exact/resource_3b0_c_020004b0.c",
+  "exact/resource_39e_c_02000414.c",
+  "exact/resource_372_c_02003c48.c",
+  "exact/resource_3b8_c_02003e40.c",
+  "exact/resource_3a4_c_02000c9c.c",
+  "exact/resource_3af_c_02001b58.c",
+  "exact/resource_3af_c_020019c0.c",
+  "exact/resource_3af_c_020012f0.c",
+  "exact/resource_3af_c_02002b7c.c",
+  "exact/resource_3ba_c_02000974.c",
   // Four call sites share one 0xc000, built as `movs #192` + `lsls #8`. CSE
   // parks it in a callee-saved register and the tell is the prologue: the
   // reference pushes {r5, lr} and we push {r5, r6, lr}. The sibling at 0x140c
   // has four *different* constants and needs only the scheduler tie-break.
-  "assets/code/resource_3aa_c_02001450.c",
+  "exact/resource_3aa_c_02001450.c",
   // resource_3b9:04c8 shares 258 (129<<1) across its two id-14 calls; the
   // reference rebuilds it at each site instead of parking it in r5.
-  "assets/code/resource_3b9_c_020004c8.c",
+  "exact/resource_3b9_c_020004c8.c",
   // resource_3b9:055c shares the flag id 0x3c1 across its test and set calls;
   // the reference reloads the pool word at each site instead of keeping the
   // address's dereferenced value live in r5 across the body.
-  "assets/code/resource_3b9_c_0200055c.c",
+  "exact/resource_3b9_c_0200055c.c",
   // resource_3b9:2904 shares the shifted displacement 428 (214<<1) across
   // three calls; the reference rebuilds it at each site instead of parking
   // it in r5 (tell: reference pushes {lr}, candidate pushes {r5, lr}).
-  "assets/code/resource_3b9_c_02002904.c",
+  "exact/resource_3b9_c_02002904.c",
   // resource_3b9:2668 shares the (0x10000,0x8000) scale pair four times and
   // the 808 (202<<2) displacement three times across its long call sheet;
   // the reference rebuilds each independently instead of parking them.
-  "assets/code/resource_3b9_c_02002668.c",
+  "exact/resource_3b9_c_02002668.c",
   // resource_3b9:2964 is the same call-sheet shape as resource_3b9:2668.
-  "assets/code/resource_3b9_c_02002964.c",
+  "exact/resource_3b9_c_02002964.c",
 ]);
 // Every edge into a CALL_INSN costs 1, so a call's argument setters tie in
 // `rank_for_schedule` on priority, insn class and forward-dependent count alike,
@@ -856,259 +856,259 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
 
   // 020011bc is shared by resource_3c6 and resource_3cb; preserve the
   // scheduler route for both without leaking it to any future twin.
-  "assets/code/resource_3c6_c_020011bc.c",
+  "exact/resource_3c6_c_020011bc.c",
   // resource_3c6:0158 has two mirrored three-argument transition calls. Once
   // their per-site veneer identities are preserved, the remaining scheduler
   // tell is the same ascending r0/r1/r2 argument setup used by this cohort.
-  "assets/code/resource_3c6_c_02000158.c",
-  "assets/code/resource_3cb_c_020011bc.c",
+  "exact/resource_3c6_c_02000158.c",
+  "exact/resource_3cb_c_020011bc.c",
   // The same resource_38f call sheet consistently orders tied r0-r2 argument
   // setters by ascending destination once its constants are rematerialized.
-  "assets/code/resource_38f_c_020008ec.c",
+  "exact/resource_38f_c_020008ec.c",
   // resource_38f:0304 case-9 arm: the three-argument Func_02002dd8 call sets
   // movs r0,#0 between the r1/r2 immediate shifts; the low-destination
   // tie-break closes the last two halfwords (mode cohort exact under
   // sched-low-dest-first, 2026-08-04).
-  "assets/code/resource_38f_c_02000304.c",
-  "semantic/overlays/resource_38f_c_020008ec.c",
+  "exact/resource_38f_c_02000304.c",
+  "semantic/resource_38f_c_020008ec.c",
   // resource_379:0074, the same long call-sheet shape as resource_38f:08ec:
   // once both CSE gates rematerialize its constants, the remaining tell is the
   // movs of a lower argument register between the r1/r2 immediate shifts.
-  "assets/code/resource_379_c_02000074.c",
+  "exact/resource_379_c_02000074.c",
   // Paired with both CSE gates for resource_3b8's long event call sheet; once
   // constants are rematerialized, this restores the reference argument order.
-  "assets/code/resource_3b8_c_02002014.c",
+  "exact/resource_3b8_c_02002014.c",
   // Paired with both CSE gates for resource_3bd:2c44; its 251 call sites use
   // the same proven low-destination tie-break after rematerialization.
-  "assets/code/resource_3bd_c_02002c44.c",
+  "exact/resource_3bd_c_02002c44.c",
   // Near-twin of resource_394:08b0.  Its shared straight-line call sequence
   // has the same proven tied-argument ordering; paired with the pool-CSE route.
-  "assets/code/resource_394_c_020007e0.c",
-  "assets/code/resource_373_c_02003380.c",
-  "assets/code/resource_373_c_020012bc.c",
-  "assets/code/resource_3b5_c_02000644.c",
+  "exact/resource_394_c_020007e0.c",
+  "exact/resource_373_c_02003380.c",
+  "exact/resource_373_c_020012bc.c",
+  "exact/resource_3b5_c_02000644.c",
   // resource_371:281c: once the per-site local veneer symbols replace the
   // resolved far names, the only residue is movs r0,#55 landing between the
   // r1 immediate's movs/lsls halves -- the same low-destination tie-break
   // (mode cohort by hand, no inventory row for this address-only owner,
   // 2026-08-04).
-  "assets/code/resource_371_c_0200281c.c",
+  "exact/resource_371_c_0200281c.c",
   // resource_371:2858, twin of :281c's dialogue call sheet: same low-dest
   // tie-break moves each movs r0,#0 ahead of its sibling immediate synthesis
   // (mode cohort by hand, no inventory row, 2026-08-04).
-  "assets/code/resource_371_c_02002858.c",
-  "assets/code/resource_3bb_c_02000b38.c",
+  "exact/resource_371_c_02002858.c",
+  "exact/resource_3bb_c_02000b38.c",
   // After the paired CSE route rematerializes resource_3c8:07d8's three -1
   // arguments, this restores its final five-instruction load/store setup.
-  "assets/code/resource_3c8_c_020007d8.c",
+  "exact/resource_3c8_c_020007d8.c",
   // Paired with the skip-blocks CSE route documented below; after the event-id
   // lifetime is restored this orders the final tied call setters exactly.
-  "assets/code/resource_372_c_02000278.c",
+  "exact/resource_372_c_02000278.c",
   // Both overlays now own an exact-C function at 0x020011d8. The address-only
   // route became ambiguous as soon as resource_373 joined resource_3b4, so
   // preserve the proven scheduler choice without leaking it to future twins.
-  "assets/code/resource_373_c_020011d8.c",
-  "assets/code/resource_3b4_c_020011d8.c",
+  "exact/resource_373_c_020011d8.c",
+  "exact/resource_3b4_c_020011d8.c",
   // resource_3aa:140c and :1450 are the sibling pair in HANDOVER 0: four
   // three-argument setter calls, then a guarded wait. Void callees put r0 and
   // r2 in the wrong order at every site and the low-destination tie-break puts
   // them back. :1450 needs -fno-cse-two-insn-immediate as well, because its
   // four constants are the same 0xc000; :140c's four differ and it does not.
-  "assets/code/resource_3aa_c_0200140c.c",
-  "assets/code/resource_3aa_c_02001450.c",
+  "exact/resource_3aa_c_0200140c.c",
+  "exact/resource_3aa_c_02001450.c",
   // resource_3aa:1494 is the long cutscene sheet next door: the same setters
   // want r0 set before the r1/r2 pool loads at every call site.
-  "assets/code/resource_3aa_c_02001494.c",
-  "semantic/overlays/resource_3aa_c_02001494.c",
+  "exact/resource_3aa_c_02001494.c",
+  "semantic/resource_3aa_c_02001494.c",
   // resource_3aa:0184 is the same tell across sixteen call sites: the setters
   // for r0/r1/r2 tie and the reference orders them by ascending destination.
-  "assets/code/resource_3aa_c_02000184.c",
+  "exact/resource_3aa_c_02000184.c",
   // Moved here from the stem-keyed set: resource_3b4 now has a row at 02001984
   // whose six-argument call wants the reference's own order, and the stem key
   // would have applied resource_38d's flag to it.
-  "assets/code/resource_38d_c_02001984.c",
+  "exact/resource_38d_c_02001984.c",
   // resource_3bf:0c78 sets r0, r1 and r2 for one call and the reference orders
   // them by ascending destination; without the tie-break r0 lands last.
-  "assets/code/resource_3bf_c_02000c78.c",
+  "exact/resource_3bf_c_02000c78.c",
   // resource_39f:2004's last placement sets r0, r1 and r2 and the reference
   // puts `movs r0,#22` ahead of the two finishing `lsls`. See the CSE set.
-  "assets/code/resource_39f_c_02002004.c",
+  "exact/resource_39f_c_02002004.c",
   // resource_38d:0150 has the same tie at three of its eleven sites: a shifted
   // r1 argument finishing against a plain `movs r0,#14`.
-  "assets/code/resource_38d_c_02000150.c",
+  "exact/resource_38d_c_02000150.c",
   // resource_39a:17a8 sets r0/r1/r2 at two three-argument calls and the
   // reference orders them by ascending destination at both.
-  "assets/code/resource_39a_c_020017a8.c",
+  "exact/resource_39a_c_020017a8.c",
   // resource_383:19a4 sets r0/r1/r2 at two three-argument calls; ascending
   // destination order at both.
-  "assets/code/resource_383_c_020019a4.c",
-  "assets/code/resource_3bf_c_02000bac.c",
+  "exact/resource_383_c_020019a4.c",
+  "exact/resource_3bf_c_02000bac.c",
   // resource_3b6:0898 sets r0/r1/r2 for a three-argument call; ascending
   // destination order.
-  "assets/code/resource_3b6_c_02000898.c",
+  "exact/resource_3b6_c_02000898.c",
   // resource_3b5:0568 is the same three-argument setter shape.
-  "assets/code/resource_3b5_c_02000568.c",
+  "exact/resource_3b5_c_02000568.c",
   // resource_3b5:0224 sets r0/r1/r2 for a four-argument call; ascending
   // destination order.
-  "assets/code/resource_3b5_c_02000224.c",
-  "assets/code/resource_3b5_c_02000528.c",
+  "exact/resource_3b5_c_02000224.c",
+  "exact/resource_3b5_c_02000528.c",
   // resource_3a2:0870 and :08a8 each set r0/r1/r2 for a three-argument call and
   // the reference orders them by ascending destination. :08a8 also needs the
   // constant-sharing mode: both of its negated arguments are -1, so CSE builds
   // one and copies it where the reference negates each in place.
-  "assets/code/resource_3a2_c_02000870.c",
-  "assets/code/resource_3a2_c_020008a8.c",
-  "assets/code/resource_3a2_c_02000180.c",
-  "assets/code/resource_3c8_c_02001780.c",
-  "assets/code/resource_3c8_c_02001150.c",
-  "assets/code/resource_372_c_02000f38.c",
+  "exact/resource_3a2_c_02000870.c",
+  "exact/resource_3a2_c_020008a8.c",
+  "exact/resource_3a2_c_02000180.c",
+  "exact/resource_3c8_c_02001780.c",
+  "exact/resource_3c8_c_02001150.c",
+  "exact/resource_372_c_02000f38.c",
   // Needs the tie-break alone, without the paired constant-sharing mode: two
   // argument setters tie before a `bl` and the low-destination rule picks
   // `mov r0,sl` over `lsls r1,r1,#1` (notes/resource_381-0e30.md).
-  "assets/code/resource_381_c_02000e30.c",
-  "assets/code/resource_3c5_c_02001030.c",
-  "assets/code/resource_38f_c_020002b4.c",
-  "assets/code/resource_3a8_c_02001ed8.c",
-  "assets/code/resource_3a8_c_02000504.c",
-  "assets/code/resource_3a8_c_02000464.c",
-  "assets/code/resource_374_c_02000750.c",
-  "assets/code/resource_374_c_020007ec.c",
-  "assets/code/resource_374_c_0200081c.c",
-  "assets/code/resource_374_c_0200084c.c",
-  "assets/code/resource_374_c_0200087c.c",
-  "assets/code/resource_374_c_020008ac.c",
-  "assets/code/resource_374_c_02000780.c",
-  "assets/code/resource_3b2_c_02001494.c",
-  "assets/code/resource_39e_c_0200071c.c",
-  "assets/code/resource_3af_c_02001f90.c",
-  "assets/code/resource_380_c_02000390.c",
-  "assets/code/resource_373_c_020032b0.c",
-  "assets/code/resource_3bf_c_02004704.c",
-  "assets/code/resource_3bf_c_020049a0.c",
-  "assets/code/resource_3bf_c_0200269c.c",
-  "assets/code/resource_3bf_c_02002718.c",
-  "assets/code/resource_3bf_c_020025f8.c",
-  "assets/code/resource_3bf_c_020021c4.c",
-  "assets/code/resource_3b0_c_02000468.c",
-  "assets/code/resource_399_c_020019bc.c",
-  "assets/code/resource_39c_c_02000ffc.c",
-  "assets/code/resource_39c_c_02002e6c.c",
-  "assets/code/resource_39e_c_02000658.c",
-  "assets/code/resource_3af_c_02000c28.c",
-  "assets/code/resource_372_c_02001600.c",
-  "assets/code/resource_3b0_c_020004b0.c",
-  "assets/code/resource_372_c_02000398.c",
-  "assets/code/resource_372_c_020003cc.c",
-  "assets/code/resource_372_c_02000400.c",
-  "assets/code/resource_3b8_c_020003b0.c",
-  "assets/code/resource_3b8_c_02003d40.c",
+  "exact/resource_381_c_02000e30.c",
+  "exact/resource_3c5_c_02001030.c",
+  "exact/resource_38f_c_020002b4.c",
+  "exact/resource_3a8_c_02001ed8.c",
+  "exact/resource_3a8_c_02000504.c",
+  "exact/resource_3a8_c_02000464.c",
+  "exact/resource_374_c_02000750.c",
+  "exact/resource_374_c_020007ec.c",
+  "exact/resource_374_c_0200081c.c",
+  "exact/resource_374_c_0200084c.c",
+  "exact/resource_374_c_0200087c.c",
+  "exact/resource_374_c_020008ac.c",
+  "exact/resource_374_c_02000780.c",
+  "exact/resource_3b2_c_02001494.c",
+  "exact/resource_39e_c_0200071c.c",
+  "exact/resource_3af_c_02001f90.c",
+  "exact/resource_380_c_02000390.c",
+  "exact/resource_373_c_020032b0.c",
+  "exact/resource_3bf_c_02004704.c",
+  "exact/resource_3bf_c_020049a0.c",
+  "exact/resource_3bf_c_0200269c.c",
+  "exact/resource_3bf_c_02002718.c",
+  "exact/resource_3bf_c_020025f8.c",
+  "exact/resource_3bf_c_020021c4.c",
+  "exact/resource_3b0_c_02000468.c",
+  "exact/resource_399_c_020019bc.c",
+  "exact/resource_39c_c_02000ffc.c",
+  "exact/resource_39c_c_02002e6c.c",
+  "exact/resource_39e_c_02000658.c",
+  "exact/resource_3af_c_02000c28.c",
+  "exact/resource_372_c_02001600.c",
+  "exact/resource_3b0_c_020004b0.c",
+  "exact/resource_372_c_02000398.c",
+  "exact/resource_372_c_020003cc.c",
+  "exact/resource_372_c_02000400.c",
+  "exact/resource_3b8_c_020003b0.c",
+  "exact/resource_3b8_c_02003d40.c",
   // resource_38c:01a8 and :0430 are the same beat over actors 21 and 23: the
   // last call takes (id, 192 << 8, 10), so the `lsls` that finishes r1 ties
   // with the `movs` that sets r0, and the reference takes r0 first.
-  "assets/code/resource_38c_c_020001a8.c",
-  "assets/code/resource_38c_c_02000430.c",
+  "exact/resource_38c_c_020001a8.c",
+  "exact/resource_38c_c_02000430.c",
   // Same tell twice in resource_38c:035c, whose other lever is the rerun-cse
   // one; the flags are independent and both are needed.
-  "assets/code/resource_38c_c_0200035c.c",
+  "exact/resource_38c_c_0200035c.c",
   // Moved out of the stem-keyed set: 0200028c was added for resource_3b5 and
   // three more overlays have since gained a row at that offset (38d, 3bb, 399),
   // which the bare-address key was silently handing the flag to. Found by the
   // collision scan `--lint` now runs.
-  "assets/code/resource_3b5_c_0200028c.c",
+  "exact/resource_3b5_c_0200028c.c",
   // resource_372:198c sets r0 for a three-argument call whose r1 and r2 are both
   // finished by a `lsls`, so both shifts tie with the r0 setter.
-  "assets/code/resource_372_c_0200198c.c",
+  "exact/resource_372_c_0200198c.c",
   // resource_39f:1818 sets r0 for a three-argument call whose r1 and r2 are both
   // finished by a `lsls #17`, so both shifts tie with the r0 setter.
-  "assets/code/resource_39f_c_02001818.c",
+  "exact/resource_39f_c_02001818.c",
   // resource_39f:0d90 sets r0 for a three-argument call whose r1 is finished by
   // a `lsls`, so the shift ties with the r0 setter.
-  "assets/code/resource_39f_c_02000d90.c",
+  "exact/resource_39f_c_02000d90.c",
   // resource_38e:045c has the tell at two sites: a shifted-constant pair and a
   // negated argument, both tying with the r0 setter.
-  "assets/code/resource_38e_c_0200045c.c",
+  "exact/resource_38e_c_0200045c.c",
   // resource_3a3:06a4 sets r1 and negates r2 for a three-argument call and the
   // reference takes the r1 setter first.
-  "assets/code/resource_3a3_c_020006a4.c",
+  "exact/resource_3a3_c_020006a4.c",
   // resource_3c6:010c has the tell at two call sites; its sibling :0078 has the
   // same flag need but a pool-load residual on top and stays unconverted.
-  "assets/code/resource_3c6_c_0200010c.c",
+  "exact/resource_3c6_c_0200010c.c",
   // resource_39a:1ad0 sets r0 for a three-argument call whose r1 and r2 are both
   // finished by a `lsls`, so both shifts tie with the r0 setter.
-  "assets/code/resource_39a_c_02001ad0.c",
+  "exact/resource_39a_c_02001ad0.c",
   // resource_3c3:0288 sets r1 and negates r2 for a three-argument call and the
   // reference takes the r1 setter first.
-  "assets/code/resource_3c3_c_02000288.c",
+  "exact/resource_3c3_c_02000288.c",
   // resource_386:0204 and :011c, same plain form. :011c also needed one callee
   // declared `s32` -- the reference sets r1 before r0 at that site, which only a
   // value-returning callee does; the flag alone leaves that pair swapped.
-  "assets/code/resource_386_c_02000204.c",
-  "assets/code/resource_386_c_0200011c.c",
+  "exact/resource_386_c_02000204.c",
+  "exact/resource_386_c_0200011c.c",
   // resource_383:091c and :19e4 are the plain form of the tell: one call takes a
   // shifted constant and the `lsls` that finishes r1 ties with the `movs` that
   // sets r0. Both are transcriptions of the semantic sources, which name
   // this overlay's callees by veneer rather than raw, so every site was renamed.
-  "assets/code/resource_383_c_0200091c.c",
-  "assets/code/resource_383_c_020019e4.c",
+  "exact/resource_383_c_0200091c.c",
+  "exact/resource_383_c_020019e4.c",
   // resource_38c:0124, :01e0 and :0250 close the same overlay's family; each has
   // one `(id, 128 << k, n)` call where the finishing `lsls` ties with the `movs`
   // that sets r0. Their other half is a declaration, not a flag: the two-argument
   // callee that follows the single-argument (10) call returns a value, so its
   // setters leave r1 before r0 (HANDOVER 4, first lever).
-  "assets/code/resource_38c_c_02000124.c",
-  "assets/code/resource_38c_c_020001e0.c",
-  "assets/code/resource_38c_c_02000250.c",
-  "assets/code/resource_3b8_c_02003df8.c",
-  "assets/code/resource_3b8_c_02003e40.c",
+  "exact/resource_38c_c_02000124.c",
+  "exact/resource_38c_c_020001e0.c",
+  "exact/resource_38c_c_02000250.c",
+  "exact/resource_3b8_c_02003df8.c",
+  "exact/resource_3b8_c_02003e40.c",
   // resource_373: this overlay's real fingerprint is the low-dest tie-break,
   // not the rerun-cse mode (measured neutral on ~15 functions here).
-  "assets/code/resource_373_c_02000dc0.c",
-  "assets/code/resource_373_c_02000e54.c",
-  "assets/code/resource_373_c_02000e84.c",
-  "assets/code/resource_373_c_02000f5c.c",
-  "assets/code/resource_373_c_02000f8c.c",
-  "assets/code/resource_373_c_02000fbc.c",
-  "assets/code/resource_373_c_02000fec.c",
-  "assets/code/resource_373_c_02001490.c",
+  "exact/resource_373_c_02000dc0.c",
+  "exact/resource_373_c_02000e54.c",
+  "exact/resource_373_c_02000e84.c",
+  "exact/resource_373_c_02000f5c.c",
+  "exact/resource_373_c_02000f8c.c",
+  "exact/resource_373_c_02000fbc.c",
+  "exact/resource_373_c_02000fec.c",
+  "exact/resource_373_c_02001490.c",
   // resource_37b members: routed per function, NOT overlay-wide — this mode
   // regresses that overlay's three large word-store sheets (02001c14, 02001d14,
   // 02001e10), which are exact at default flags.
-  "assets/code/resource_37b_c_020015d4.c",
-  "assets/code/resource_37b_c_020015fc.c",
-  "assets/code/resource_37b_c_0200101c.c",
-  "assets/code/resource_37b_c_02001624.c",
-  "assets/code/resource_37b_c_0200166c.c",
-  "assets/code/resource_37b_c_020016a4.c",
-  "assets/code/resource_37b_c_0200195c.c",
-  "assets/code/resource_3a4_c_02000c9c.c",
-  "assets/code/resource_394_c_020008b0.c",
-  "assets/code/resource_3b8_c_02000264.c",
-  "assets/code/resource_373_c_020031b4.c",
-  "assets/code/resource_3af_c_02001b58.c",
-  "assets/code/resource_3af_c_020019c0.c",
-  "assets/code/resource_3af_c_020012f0.c",
-  "assets/code/resource_3af_c_02002b7c.c",
-  "assets/code/resource_3ba_c_02000974.c",
+  "exact/resource_37b_c_020015d4.c",
+  "exact/resource_37b_c_020015fc.c",
+  "exact/resource_37b_c_0200101c.c",
+  "exact/resource_37b_c_02001624.c",
+  "exact/resource_37b_c_0200166c.c",
+  "exact/resource_37b_c_020016a4.c",
+  "exact/resource_37b_c_0200195c.c",
+  "exact/resource_3a4_c_02000c9c.c",
+  "exact/resource_394_c_020008b0.c",
+  "exact/resource_3b8_c_02000264.c",
+  "exact/resource_373_c_020031b4.c",
+  "exact/resource_3af_c_02001b58.c",
+  "exact/resource_3af_c_020019c0.c",
+  "exact/resource_3af_c_020012f0.c",
+  "exact/resource_3af_c_02002b7c.c",
+  "exact/resource_3ba_c_02000974.c",
   // resource_39e:2484 has two three-argument calls that set movs r0,#0
   // between the r1/r2 immediate shifts, same low-destination tie-break tell.
-  "assets/code/resource_39e_c_02002484.c",
+  "exact/resource_39e_c_02002484.c",
   // resource_39e:268c/2778: same movs-r0-between-shifts low-destination
   // tell on their three-argument calls.
-  "assets/code/resource_39e_c_0200268c.c",
-  "assets/code/resource_39e_c_02002778.c",
+  "exact/resource_39e_c_0200268c.c",
+  "exact/resource_39e_c_02002778.c",
   // resource_3bf's four sibling scene-transition sheets (0xce0/0xdcc/0xe80/
   // 0xf30): after -fno-cse-shift-immediate rebuilds their duplicated
   // 192<<10 arguments per site, one adds-r1-from-r6 / pool-ldr-r2
   // transposition remains at the (-1,-1,pool) call and the low-destination
   // tie-break puts it back (probed exact 2026-08-04).
-  "assets/code/resource_3bf_c_02000ce0.c",
-  "semantic/overlays/resource_3bf_c_02000ce0.c",
-  "assets/code/resource_3bf_c_02000dcc.c",
-  "semantic/overlays/resource_3bf_c_02000dcc.c",
-  "assets/code/resource_3bf_c_02000e80.c",
-  "semantic/overlays/resource_3bf_c_02000e80.c",
-  "assets/code/resource_3bf_c_02000f30.c",
-  "semantic/overlays/resource_3bf_c_02000f30.c",
+  "exact/resource_3bf_c_02000ce0.c",
+  "semantic/resource_3bf_c_02000ce0.c",
+  "exact/resource_3bf_c_02000dcc.c",
+  "semantic/resource_3bf_c_02000dcc.c",
+  "exact/resource_3bf_c_02000e80.c",
+  "semantic/resource_3bf_c_02000e80.c",
+  "exact/resource_3bf_c_02000f30.c",
+  "semantic/resource_3bf_c_02000f30.c",
 ]);
 // The reference objects for these owners re-materialise their shifted
 // (`movs rN,#K / lsls rN,rN,#n`, constraint K) immediates at every use site
@@ -1126,50 +1126,50 @@ const NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // overflowing the registered span by 4-36 bytes before this flag; probed
   // exact-shape-restoring 2026-08-04 (overflow resolves; residual differing
   // bytes handled per-owner from here).
-  "semantic/overlays/resource_3bc_c_020002f8.c",
-  "assets/code/resource_3bc_c_020002f8.c",
-  "semantic/overlays/resource_3bc_c_020004a4.c",
-  "assets/code/resource_3bc_c_020004a4.c",
-  "semantic/overlays/resource_3bc_c_0200076c.c",
-  "assets/code/resource_3bc_c_0200076c.c",
-  "semantic/overlays/resource_3bc_c_02001474.c",
-  "assets/code/resource_3bc_c_02001474.c",
-  "semantic/overlays/resource_3bc_c_02001a0c.c",
-  "assets/code/resource_3bc_c_02001a0c.c",
-  "semantic/overlays/resource_3bc_c_02001c20.c",
-  "assets/code/resource_3bc_c_02001c20.c",
-  "semantic/overlays/resource_3bc_c_020029ac.c",
-  "assets/code/resource_3bc_c_020029ac.c",
-  "semantic/overlays/resource_3bc_c_02002bac.c",
-  "assets/code/resource_3bc_c_02002bac.c",
-  "semantic/overlays/resource_3bc_c_02002e54.c",
-  "assets/code/resource_3bc_c_02002e54.c",
-  "semantic/overlays/resource_3bc_c_02002ee8.c",
-  "assets/code/resource_3bc_c_02002ee8.c",
-  "semantic/overlays/resource_3bc_c_020033d8.c",
-  "assets/code/resource_3bc_c_020033d8.c",
-  "semantic/overlays/resource_3bc_c_02003bd0.c",
-  "assets/code/resource_3bc_c_02003bd0.c",
-  "semantic/overlays/resource_3bc_c_02003d88.c",
-  "assets/code/resource_3bc_c_02003d88.c",
-  "semantic/overlays/resource_3bc_c_02003ef0.c",
-  "assets/code/resource_3bc_c_02003ef0.c",
-  "semantic/overlays/resource_3bc_c_0200457c.c",
-  "assets/code/resource_3bc_c_0200457c.c",
-  "assets/code/resource_3bf_c_02000ce0.c",
-  "semantic/overlays/resource_3bf_c_02000ce0.c",
-  "assets/code/resource_3bf_c_02000dcc.c",
-  "semantic/overlays/resource_3bf_c_02000dcc.c",
-  "assets/code/resource_3bf_c_02000e80.c",
-  "semantic/overlays/resource_3bf_c_02000e80.c",
-  "assets/code/resource_3bf_c_02000f30.c",
-  "semantic/overlays/resource_3bf_c_02000f30.c",
+  "semantic/resource_3bc_c_020002f8.c",
+  "exact/resource_3bc_c_020002f8.c",
+  "semantic/resource_3bc_c_020004a4.c",
+  "exact/resource_3bc_c_020004a4.c",
+  "semantic/resource_3bc_c_0200076c.c",
+  "exact/resource_3bc_c_0200076c.c",
+  "semantic/resource_3bc_c_02001474.c",
+  "exact/resource_3bc_c_02001474.c",
+  "semantic/resource_3bc_c_02001a0c.c",
+  "exact/resource_3bc_c_02001a0c.c",
+  "semantic/resource_3bc_c_02001c20.c",
+  "exact/resource_3bc_c_02001c20.c",
+  "semantic/resource_3bc_c_020029ac.c",
+  "exact/resource_3bc_c_020029ac.c",
+  "semantic/resource_3bc_c_02002bac.c",
+  "exact/resource_3bc_c_02002bac.c",
+  "semantic/resource_3bc_c_02002e54.c",
+  "exact/resource_3bc_c_02002e54.c",
+  "semantic/resource_3bc_c_02002ee8.c",
+  "exact/resource_3bc_c_02002ee8.c",
+  "semantic/resource_3bc_c_020033d8.c",
+  "exact/resource_3bc_c_020033d8.c",
+  "semantic/resource_3bc_c_02003bd0.c",
+  "exact/resource_3bc_c_02003bd0.c",
+  "semantic/resource_3bc_c_02003d88.c",
+  "exact/resource_3bc_c_02003d88.c",
+  "semantic/resource_3bc_c_02003ef0.c",
+  "exact/resource_3bc_c_02003ef0.c",
+  "semantic/resource_3bc_c_0200457c.c",
+  "exact/resource_3bc_c_0200457c.c",
+  "exact/resource_3bf_c_02000ce0.c",
+  "semantic/resource_3bf_c_02000ce0.c",
+  "exact/resource_3bf_c_02000dcc.c",
+  "semantic/resource_3bf_c_02000dcc.c",
+  "exact/resource_3bf_c_02000e80.c",
+  "semantic/resource_3bf_c_02000e80.c",
+  "exact/resource_3bf_c_02000f30.c",
+  "semantic/resource_3bf_c_02000f30.c",
   // resource_371:17a4 rebuilds its shared 512 (128<<2) call argument at each
   // of its two call sites in the reference instead of caching it across the
   // intervening calls; -fno-cse-shift-immediate alone takes this from 44 to
   // 8 differing bytes (mode_cohort, 2026-08-04).
-  "assets/code/resource_371_c_020017a4.c",
-  "semantic/overlays/resource_371_c_020017a4.c",
+  "exact/resource_371_c_020017a4.c",
+  "semantic/resource_371_c_020017a4.c",
 ]);
 // resource_372:0ec4's five module-local calls make r7 unavailable in the
 // reference allocation.  Reserving it restores the exact saved-register set;
@@ -1177,10 +1177,10 @@ const NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // high-register move.  Both routes are path-scoped because offsets repeat in
 // every decoded code-overlay namespace.
 const FIXED_R7_OVERLAY_SOURCES = new Set([
-  "assets/code/resource_372_c_02000ec4.c",
+  "exact/resource_372_c_02000ec4.c",
 ]);
 const SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES = new Set([
-  "assets/code/resource_372_c_02000ec4.c",
+  "exact/resource_372_c_02000ec4.c",
 ]);
 // The fork proves a store and a later load at two different constant offsets off
 // one base independent, leaves no edge between them, and lets the load's longer
@@ -1188,22 +1188,22 @@ const SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES = new Set([
 // forces the conflict when neither MEM is RTX_UNCHANGING_P, adding the edge as
 // REG_DEP_ANTI so it orders without adding cost — a true dependence lengthens
 // the store's path to the block end and regresses resource_381:2e0c.
-// Keyed by repository path, so a main-image `src/` source routes here too — the
-// name predates the first main-image member. `08078144` stores a halfword and
-// then reloads a word at a different constant offset off one base; the fork
-// proves them independent and hoists the load, where the reference keeps source
-// order.
+// Keyed by repository path, so a main-image `exact/` source routes here too —
+// the name predates the exact/semantic tree consolidation. `08078144` stores
+// a halfword and then reloads a word at a different constant offset off one
+// base; the fork proves them independent and hoists the load, where the
+// reference keeps source order.
 const NO_SCHED_ALIAS_OVERLAY_SOURCES = new Set([
-  "src/08078144.c",
-  "assets/code/resource_3af_c_02002b7c.c",
-  "assets/code/resource_3b0_c_02000030.c",
-  "assets/code/resource_381_c_02002e0c.c",
-  "assets/code/resource_381_c_02002e5c.c",
+  "exact/08078144.c",
+  "exact/resource_3af_c_02002b7c.c",
+  "exact/resource_3b0_c_02000030.c",
+  "exact/resource_381_c_02002e0c.c",
+  "exact/resource_381_c_02002e5c.c",
   // resource_38f:27ac particle-spawn store sheet: the scheduler otherwise
   // hoists the p->f50 load above the p->f0c store and reorders the
   // f08/f10/f26 stores and the f09 mask's ldrb; conservative scheduler alias
   // analysis restores the reference order (mode cohort exact, 2026-08-04).
-  "assets/code/resource_38f_c_020027ac.c",
+  "exact/resource_38f_c_020027ac.c",
 ]);
 // gcse's partial-redundancy elimination inserts a load the reference does not
 // have. The mode drops the insert and delete bits of any expression that reads
@@ -1211,13 +1211,14 @@ const NO_SCHED_ALIAS_OVERLAY_SOURCES = new Set([
 // a pair because PRE only deletes an occurrence that an insertion made
 // available. Constant-pool loads keep their bits and are still eliminated. This
 // is the narrowest of the four gates: 9 of 1,335 sources change.
-// Keyed by repository path, so a main-image `src/` source routes here too; the
-// name predates the first main-image member. 0807a550 is that member: gcse's
-// partial-redundancy pass inserts a load the reference does not have, and the
-// remaining seven halfwords vanish with the insert suppressed.
+// Keyed by repository path, so a main-image `exact/` source routes here too;
+// the name predates the exact/semantic tree consolidation. 0807a550 is that
+// member: gcse's partial-redundancy pass inserts a load the reference does
+// not have, and the remaining seven halfwords vanish with the insert
+// suppressed.
 const NO_GCSE_INSERT_LOAD_OVERLAY_SOURCES = new Set([
-  "src/0807a550.c",
-  "assets/code/resource_37a_c_02000d9c.c",
+  "exact/0807a550.c",
+  "exact/resource_37a_c_02000d9c.c",
 ]);
 // A store has no value for a later insn to consume, so it reaches the block end
 // over a zero-cost ordering edge and takes the block's minimum priority, sinking
@@ -1226,8 +1227,8 @@ const NO_GCSE_INSERT_LOAD_OVERLAY_SOURCES = new Set([
 // store-versus-store to the existing rules. Including loads in the predicate
 // raises collateral from 308 to 498 sources with no further gain.
 const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
-  "assets/code/resource_373_c_020032b0.c",
-  "assets/code/resource_3bd_c_02000a54.c",
+  "exact/resource_373_c_020032b0.c",
+  "exact/resource_3bd_c_02000a54.c",
 ]);
 // The pool-word sibling of the mode above, and a different kind of defect: for a
 // two-instruction constant the cost model is right and only the reference's
@@ -1243,147 +1244,147 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
 const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // Its nine literal-pool islands likewise reload recurring words locally;
   // sharing them changes both the saved-register set and pool boundaries.
-  "assets/code/resource_38f_c_020008ec.c",
-  "semantic/overlays/resource_38f_c_020008ec.c",
+  "exact/resource_38f_c_020008ec.c",
+  "semantic/resource_38f_c_020008ec.c",
   // resource_3aa:1494 reloads its recurring 0x2009/0x2002/0xcccc pool words
   // at each call site; sharing them adds r7/r8 to the prologue and moves the
   // pool islands.
-  "assets/code/resource_3aa_c_02001494.c",
-  "semantic/overlays/resource_3aa_c_02001494.c",
+  "exact/resource_3aa_c_02001494.c",
+  "semantic/resource_3aa_c_02001494.c",
   // This event call sheet reloads recurring addresses at their call sites;
   // sharing them shifts all eight inline literal pools and grows the prologue.
-  "assets/code/resource_3b8_c_02002014.c",
+  "exact/resource_3b8_c_02002014.c",
   // resource_3bd:2c44 likewise reloads recurring pool words at their call
   // sites; sharing them changes the saved-register set and pool placement.
-  "assets/code/resource_3bd_c_02002c44.c",
+  "exact/resource_3bd_c_02002c44.c",
   // resource_379:0074 reloads its recurring pool words (0xe666 argument and
   // script addresses) at each call site; sharing hoists one into r5.
-  "assets/code/resource_379_c_02000074.c",
-  "semantic/overlays/resource_379_c_02000074.c",
-  "assets/code/resource_38b_c_02000240.c",
-  "assets/code/resource_372_c_02000f38.c",
-  "assets/code/resource_37b_c_02001b44.c",
-  "assets/code/resource_3c5_c_020024d0.c",
-  "assets/code/resource_3c5_c_02002548.c",
-  "assets/code/resource_3a8_c_02001ed8.c",
-  "assets/code/resource_374_c_02000634.c",
-  "assets/code/resource_3af_c_02001f90.c",
-  "assets/code/resource_380_c_02000390.c",
-  "assets/code/resource_3bf_c_020049a0.c",
-  "assets/code/resource_3bf_c_02002308.c",
-  "assets/code/resource_3bf_c_0200238c.c",
-  "assets/code/resource_372_c_02001600.c",
-  "assets/code/resource_3b8_c_02003f84.c",
-  "assets/code/resource_37b_c_0200195c.c",
-  "assets/code/resource_37b_c_02002244.c",
-  "assets/code/resource_37b_c_020022f4.c",
-  "assets/code/resource_3a4_c_02000c9c.c",
-  "assets/code/resource_394_c_020008b0.c",
-  "assets/code/resource_394_c_020007e0.c",
-  "assets/code/resource_3b8_c_02000264.c",
-  "assets/code/resource_3bf_c_02004bfc.c",
-  "assets/code/resource_39c_c_020014cc.c",
-  "assets/code/resource_3bf_c_0200175c.c",
-  "assets/code/resource_3bf_c_020017bc.c",
+  "exact/resource_379_c_02000074.c",
+  "semantic/resource_379_c_02000074.c",
+  "exact/resource_38b_c_02000240.c",
+  "exact/resource_372_c_02000f38.c",
+  "exact/resource_37b_c_02001b44.c",
+  "exact/resource_3c5_c_020024d0.c",
+  "exact/resource_3c5_c_02002548.c",
+  "exact/resource_3a8_c_02001ed8.c",
+  "exact/resource_374_c_02000634.c",
+  "exact/resource_3af_c_02001f90.c",
+  "exact/resource_380_c_02000390.c",
+  "exact/resource_3bf_c_020049a0.c",
+  "exact/resource_3bf_c_02002308.c",
+  "exact/resource_3bf_c_0200238c.c",
+  "exact/resource_372_c_02001600.c",
+  "exact/resource_3b8_c_02003f84.c",
+  "exact/resource_37b_c_0200195c.c",
+  "exact/resource_37b_c_02002244.c",
+  "exact/resource_37b_c_020022f4.c",
+  "exact/resource_3a4_c_02000c9c.c",
+  "exact/resource_394_c_020008b0.c",
+  "exact/resource_394_c_020007e0.c",
+  "exact/resource_3b8_c_02000264.c",
+  "exact/resource_3bf_c_02004bfc.c",
+  "exact/resource_39c_c_020014cc.c",
+  "exact/resource_3bf_c_0200175c.c",
+  "exact/resource_3bf_c_020017bc.c",
   // resource_3b9:055c reloads the flag-id pool word 0x3c1 independently at its
   // test and set call sites; sharing it in r5 adds a push/pop the reference
   // does not have (tell: reference pushes {lr}, candidate pushes {r5, lr}).
-  "assets/code/resource_3b9_c_0200055c.c",
+  "exact/resource_3b9_c_0200055c.c",
   // resource_3b9:2668 reloads the shared pool address 0x0200adac three times
   // across the id-0/1/2 calls; the reference reloads it at each site.
-  "assets/code/resource_3b9_c_02002668.c",
+  "exact/resource_3b9_c_02002668.c",
   // resource_3b9:2964 is the same call-sheet shape as resource_3b9:2668.
-  "assets/code/resource_3b9_c_02002964.c",
+  "exact/resource_3b9_c_02002964.c",
 ]);
 const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
-  "assets/code/resource_380_c_02000104.c",
-  "assets/code/resource_39c_c_02000104.c",
-  "assets/code/resource_39e_c_02000104.c",
-  "assets/code/resource_39c_c_020003a8.c",
-  "assets/code/resource_3c9_c_02000104.c",
-  "assets/code/resource_3c9_c_0200215c.c",
-  "assets/code/resource_3c9_c_020021ac.c",
-  "assets/code/resource_3c9_c_02003600.c",
+  "exact/resource_380_c_02000104.c",
+  "exact/resource_39c_c_02000104.c",
+  "exact/resource_39e_c_02000104.c",
+  "exact/resource_39c_c_020003a8.c",
+  "exact/resource_3c9_c_02000104.c",
+  "exact/resource_3c9_c_0200215c.c",
+  "exact/resource_3c9_c_020021ac.c",
+  "exact/resource_3c9_c_02003600.c",
   // resource_397:02a0 writes Data_02008614 (u16*) and Data_02008616 (u16*)
   // through two independent pointers the strict-aliasing analysis treats as
   // possibly overlapping with the u32 blendPhase local, hoisting the second
   // pool-address load; the reference schedules it before the second fieldB
   // reload. Mode cohort: exact under alias-strict-off alone.
-  "assets/code/resource_397_c_020002a0.c",
+  "exact/resource_397_c_020002a0.c",
 ]);
 const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   // resource_3ad:01b0 tests flag 0x202 and then sets it, so the pooled word is
   // read twice and the rerun caches it in r5 across the guarded block where the
   // reference reloads it into r0 at each site. Took the row from 14 groups to 0.
-  "assets/code/resource_3ad_c_020001b0.c",
+  "exact/resource_3ad_c_020001b0.c",
   // resource_38c:035c tests one event flag and then sets the same flag id, so
   // 768 is built twice; the rerun caches it in r5 across the guarded block and
   // turns the leaf's `push {lr}` into `push {r5, lr}`. Paired with the
   // low-destination tie-break for its two `(id, 192 << 8, n)` calls.
-  "assets/code/resource_38c_c_0200035c.c",
-  "assets/code/resource_37a_c_02000054.c",
-  "assets/code/resource_37a_c_02000108.c",
-  "assets/code/resource_37a_c_02000150.c",
-  "assets/code/resource_37a_c_020001ec.c",
-  "assets/code/resource_37a_c_02001a58.c",
-  "assets/code/resource_373_c_02000ba8.c",
+  "exact/resource_38c_c_0200035c.c",
+  "exact/resource_37a_c_02000054.c",
+  "exact/resource_37a_c_02000108.c",
+  "exact/resource_37a_c_02000150.c",
+  "exact/resource_37a_c_020001ec.c",
+  "exact/resource_37a_c_02001a58.c",
+  "exact/resource_373_c_02000ba8.c",
   // Third and fourth members of this overlay's rerun-cse family: the rerun caches
   // twice- and thrice-used pool constants in callee-saved registers where the
   // reference rematerializes them per use.
-  "assets/code/resource_373_c_02005950.c",
-  "assets/code/resource_373_c_02005a40.c",
-  "assets/code/resource_399_c_02000abc.c",
-  "assets/code/resource_3b8_c_0200049c.c",
+  "exact/resource_373_c_02005950.c",
+  "exact/resource_373_c_02005a40.c",
+  "exact/resource_399_c_02000abc.c",
+  "exact/resource_3b8_c_0200049c.c",
   // resource_3a4 status-window family: default flags CSE-hoist a thrice-used
   // pool constant into r5; the reference keeps first-pass lifetimes. Each
   // entry byte-exact under the flag alone (notes/resource_3a4-*.md).
-  "assets/code/resource_3a4_c_020009ec.c",
-  "assets/code/resource_3a4_c_02000a94.c",
-  "assets/code/resource_3a4_c_02000b3c.c",
-  "assets/code/resource_3a4_c_02000bd8.c",
+  "exact/resource_3a4_c_020009ec.c",
+  "exact/resource_3a4_c_02000a94.c",
+  "exact/resource_3a4_c_02000b3c.c",
+  "exact/resource_3a4_c_02000bd8.c",
   // resource_39c:1c9c and 1d3c both load the pool constant 0x256 at two sites,
   // one of them in the entry block, so the entry-hoisted-local lever cannot
   // reach them and a &Value_ spelling is CSEd exactly like the const_int. Both
   // are byte-exact under the flag alone.
-  "assets/code/resource_39c_c_02001c9c.c",
-  "assets/code/resource_39c_c_02001d3c.c",
+  "exact/resource_39c_c_02001c9c.c",
+  "exact/resource_39c_c_02001d3c.c",
   // resource_3ba:0540 shares its 0x301 argument between the entry-block call
   // and the else-branch call once cse reruns; the reference keeps both sites
   // independent. Byte-exact (752/752) under the flag alone
   // (notes/resource_3ba-0540.md).
-  "assets/code/resource_3ba_c_02000540.c",
+  "exact/resource_3ba_c_02000540.c",
   // resource_3a7:03e0 is the same twice-used pool constant tell: the guard call
   // and the body call both take 0x9a9, and the rerun parks it in r5 across the
   // two conditional branches instead of reloading it. Byte-exact under the flag
   // alone. It has to be routed by path, not by stem: resource_3a4_c_020003e0.c
   // is already exact and shares the stem.
-  "assets/code/resource_3a7_c_020003e0.c",
+  "exact/resource_3a7_c_020003e0.c",
   // resource_3cd:00c0 needs this alongside -fno-gcse; see NO_GCSE_OVERLAY_SOURCES.
-  "assets/code/resource_3cd_c_020000c0.c",
+  "exact/resource_3cd_c_020000c0.c",
   // resource_3b4:1070 loads its 0x9c4 request id at the guard call and again
   // at the commit call; the rerun keeps it in r5 across both and costs the
   // prologue a register the reference does not push.
-  "assets/code/resource_3b4_c_02001070.c",
+  "exact/resource_3b4_c_02001070.c",
   // resource_37f:056c loads its 0x302 and 0x303 ids at two sites each; the
   // rerun parks both in callee-saved registers and buys two prologue pushes.
-  "assets/code/resource_37f_c_0200056c.c",
-  "assets/code/resource_37f_c_020005ac.c",
-  "assets/code/resource_37f_c_020005ec.c",
-  "assets/code/resource_37f_c_02000634.c",
-  "assets/code/resource_37f_c_0200067c.c",
-  "assets/code/resource_37f_c_020006c4.c",
-  "assets/code/resource_37f_c_0200070c.c",
-  "assets/code/resource_37f_c_02000754.c",
+  "exact/resource_37f_c_0200056c.c",
+  "exact/resource_37f_c_020005ac.c",
+  "exact/resource_37f_c_020005ec.c",
+  "exact/resource_37f_c_02000634.c",
+  "exact/resource_37f_c_0200067c.c",
+  "exact/resource_37f_c_020006c4.c",
+  "exact/resource_37f_c_0200070c.c",
+  "exact/resource_37f_c_02000754.c",
   // resource_38d:01b4 loads its 0x302 flag id at the test and again at the set.
-  "assets/code/resource_38d_c_020001b4.c",
-  "assets/code/resource_38d_c_0200028c.c",
+  "exact/resource_38d_c_020001b4.c",
+  "exact/resource_38d_c_0200028c.c",
   // resource_3a7:0368 loads its 0x9a9 request id at the guard call and again
   // at the commit call, the same shape as :03e0 in this overlay.
-  "assets/code/resource_3a7_c_02000368.c",
+  "exact/resource_3a7_c_02000368.c",
   // resource_3a7:04d0 loads its 0x9aa request id at the guard and again at
   // the commit, the third row in this overlay with that shape.
-  "assets/code/resource_3a7_c_020004d0.c",
-  "assets/code/resource_3a7_c_0200048c.c",
+  "exact/resource_3a7_c_020004d0.c",
+  "exact/resource_3a7_c_0200048c.c",
 ]);
 // -fno-gcse routed by path rather than by stem, for overlay rows whose address
 // is also an offset in another overlay that is already converted.
@@ -1399,23 +1400,23 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
 const NO_EXPENSIVE_OVERLAY_SOURCES = new Set([
   // The scene predicate keeps its signed table value in r3 through the XOR;
   // disabling the pass is the only exposed single mode that preserves it.
-  "assets/code/resource_370_c_02000384.c",
-  "assets/code/resource_3b2_c_020012b4.c",
+  "exact/resource_370_c_02000384.c",
+  "exact/resource_3b2_c_020012b4.c",
   // resource_398:0214 has the same `ldrb / movs #2 / orrs / strb` flag-set with
   // the same r2/r3 swap; cse-expensive-off is the only single that closes it.
-  "assets/code/resource_398_c_02000214.c",
-  "semantic/overlays/resource_398_c_02000214.c",
+  "exact/resource_398_c_02000214.c",
+  "semantic/resource_398_c_02000214.c",
   // resource_398:0538 repeats the same flag-set idiom with the same swap;
   // with its pooled/shifted script-call pair spelled as function-top locals
   // (the resource_3aa pattern) this flag alone is byte-exact.
-  "assets/code/resource_398_c_02000538.c",
-  "semantic/overlays/resource_398_c_02000538.c",
+  "exact/resource_398_c_02000538.c",
+  "semantic/resource_398_c_02000538.c",
 ]);
 const NO_GCSE_OVERLAY_SOURCES = new Set([
   // The long resource_38f call sheet retains the original local lifetimes
   // only without global common-subexpression elimination.
-  "assets/code/resource_38f_c_020008ec.c",
-  "semantic/overlays/resource_38f_c_020008ec.c",
+  "exact/resource_38f_c_020008ec.c",
+  "semantic/resource_38f_c_020008ec.c",
   // resource_3cd:00c0 fills a 16-halfword stack list through a call and then
   // walks it. Both the call argument and the walk's induction base are the
   // frame address, and the reference materialises `mov rX, sp` twice -- once
@@ -1425,7 +1426,7 @@ const NO_GCSE_OVERLAY_SOURCES = new Set([
   // either flag alone leaves the merge in place. The result is insensitive to
   // how the buffer is spelled -- plain array, struct wrapper, or byte buffer
   // cast to u16 all land.
-  "assets/code/resource_3cd_c_020000c0.c",
+  "exact/resource_3cd_c_020000c0.c",
 ]);
 // 既定ABI(標準のr4被呼出保存)で構築された収蔵ライブラリ翻訳単位。
 // 証拠: r4を保存する序文は -fcall-used-r4 の下では出ない
@@ -1439,10 +1440,10 @@ const DEFAULT_ABI_SOURCES = new Set([
 // Overlay-safe counterpart to DEFAULT_ABI_SOURCES.  Addresses are extensively
 // reused between overlays, so new evidence belongs to the full source path.
 const DEFAULT_ABI_OVERLAY_SOURCES = new Set([
-  "assets/code/resource_3bf_c_02005a40.c",
-  "assets/code/resource_3bf_c_02005a78.c",
-  "assets/code/resource_3a7_c_020013ac.c",
-  "assets/code/resource_3a7_c_020013e4.c",
+  "exact/resource_3bf_c_02005a40.c",
+  "exact/resource_3bf_c_02005a78.c",
+  "exact/resource_3a7_c_020013ac.c",
+  "exact/resource_3a7_c_020013e4.c",
 ]);
 // The stock m4a object linked into GS1 was built with the public old_agbcc
 // compiler rather than Camelot's gcc-2.96 fork. Keep adoption source-scoped:
@@ -1623,7 +1624,7 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(THUMB_LOAD_LATENCY_ONE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mthumb-load-latency-one"]
       : []),
-    ...(sourceKey(source) === "assets/code/resource_379_c_02000074.c"
+    ...(sourceKey(source) === "exact/resource_379_c_02000074.c"
       ? []
       : []),
     ...(NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES.has(sourceKey(source))
@@ -1825,7 +1826,7 @@ const OVERLAY_CALL_VIA_BASE: Record<string, number> = {
 const SOURCE_CALL_VIA_BASE: Record<string, number> = {
   // Same routine as resource_373_c_02000030.c and the same slot, called from
   // 0x563e instead of 0x5e.
-  "assets/code/resource_373_c_02005610.c": 0x0200b794,
+  "exact/resource_373_c_02005610.c": 0x0200b794,
 };
 
 export function overlayCallViaBase(overlay: string, source?: string): number {
@@ -2411,7 +2412,7 @@ export function overlayStemCollisionLint(): void {
   const root = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
   const source = readFileSync(join(root, "tools/alchemy_gcc.ts"), "utf8");
   const owners = new Map<string, string[]>();
-  for (const name of readdirSync(join(root, "assets/code"))) {
+  for (const name of readdirSync(join(root, "exact"))) {
     const stem = name.match(/_c_([0-9a-f]{8})\.c$/);
     if (stem === null) continue;
     owners.set(stem[1], [...(owners.get(stem[1]) ?? []), name]);
@@ -2475,12 +2476,12 @@ function selfTest(): void {
     throw new Error("old_agbcc unrelated-source routing self-test failed");
   }
   for (const stem of ["02005a40", "02005a78"]) {
-    const source = join(ROOT, `assets/code/resource_3bf_c_${stem}.c`);
+    const source = join(ROOT, `exact/resource_3bf_c_${stem}.c`);
     const flags = cflagsForTargetSource("gs1", source);
     if (flags.includes("-fcall-used-r4") || flags.includes("-mthumb-interwork")) {
       throw new Error(`${stem} stock non-interworking ABI routing self-test failed`);
     }
-    const unrelated = cflagsForTargetSource("gs1", join(ROOT, `assets/code/resource_3aa_c_${stem}.c`));
+    const unrelated = cflagsForTargetSource("gs1", join(ROOT, `exact/resource_3aa_c_${stem}.c`));
     if (!unrelated.includes("-fcall-used-r4") || !unrelated.includes("-mthumb-interwork")) {
       throw new Error(`${stem} overlay-path isolation self-test failed`);
     }
@@ -2504,10 +2505,10 @@ function selfTest(): void {
       cflagsForTargetSource("gs2", "/tmp/080958a8.c").includes("-mgrouped-dma-store")) {
     throw new Error("grouped DMA unrelated-source routing self-test failed");
   }
-  const overlayDmaSource = join(ROOT, "assets/code/resource_3bd_c_02000c98.c");
+  const overlayDmaSource = join(ROOT, "exact/resource_3bd_c_02000c98.c");
   const overlayDmaFlags = cflagsForTargetSource("gs1", overlayDmaSource);
   const overlayDmaNeighbor = cflagsForTargetSource(
-    "gs1", join(ROOT, "assets/code/resource_3bc_c_02000c98.c"),
+    "gs1", join(ROOT, "exact/resource_3bc_c_02000c98.c"),
   );
   for (const flag of ["-mgrouped-dma-store", "-fthumb-group-control-last"]) {
     if (!overlayDmaFlags.includes(flag) || overlayDmaNeighbor.includes(flag) ||
@@ -2728,7 +2729,7 @@ function selfTest(): void {
     }
   }
   if (cflagsForTargetSource("gs1", "/tmp/020000a0.c").includes("-mcall-arg0-move-first") ||
-      cflagsForTargetSource("gs1", join(ROOT, "assets/code/resource_381/c/020000a0.c"))
+      cflagsForTargetSource("gs1", join(ROOT, "exact/resource_381/c/020000a0.c"))
         .includes("-mcall-arg0-move-first")) {
     throw new Error("overlay call-argument unrelated-source routing self-test failed");
   }

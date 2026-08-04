@@ -91,7 +91,7 @@ function inventory(): OverlayFunction[] {
 /** Exact-C owners, optionally joined by reviewed semantic-C owners. */
 function convertedKeys(includeSemantic = false): Set<string> {
   const keys = new Set<string>();
-  const path = join(ROOT, "assets", "code");
+  const path = join(ROOT, "exact");
   if (existsSync(path)) {
     for (const name of readdirSync(path)) {
       const match = /^(resource_[0-9a-f]+)_c_0200([0-9a-f]{4})\.c$/.exec(name);
@@ -99,7 +99,7 @@ function convertedKeys(includeSemantic = false): Set<string> {
     }
   }
   if (includeSemantic) {
-    const semantic = join(ROOT, "semantic", "overlays");
+    const semantic = join(ROOT, "semantic");
     if (existsSync(semantic)) {
       for (const name of readdirSync(semantic)) {
         const match = /^(resource_[0-9a-f]+)_c_0200([0-9a-f]{4})\.c$/.exec(name);

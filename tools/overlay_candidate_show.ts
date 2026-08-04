@@ -60,7 +60,7 @@ function optionsOf(argv: string[]): Options {
   }
   if (routingSource === "") {
     const stem = (OVERLAY_BASE + Number.parseInt(matched[2], 16)).toString(16).padStart(8, "0");
-    routingSource = join(ROOT, "assets/code", `${matched[1]}_c_${stem}.c`);
+    routingSource = join(ROOT, "exact", `${matched[1]}_c_${stem}.c`);
   }
   return {
     id,

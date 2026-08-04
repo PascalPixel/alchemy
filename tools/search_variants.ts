@@ -437,7 +437,7 @@ async function main(): Promise<void> {
   const spanRows = JSON.parse(readFileSync(options.spans, "utf8")) as Array<{ entry: number; size: number }>;
   const spans = new Map(spanRows.map((item) => [item.entry, item.size]));
   const tracked = new Set(
-    readdirSync(join(ROOT, "src"))
+    readdirSync(join(ROOT, "exact"))
       .filter((name) => name.endsWith(".c"))
       .map((name) => Number.parseInt(basename(name, ".c"), 16)),
   );

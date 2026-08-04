@@ -92,8 +92,8 @@ function inventory(): Row[] {
 
 export function scanAll(only?: string): Found[] {
   const rows = inventory();
-  const semantic = new Set(readdirSync(join(ROOT, "semantic", "overlays")));
-  const exact = new Set(readdirSync(join(ROOT, "assets", "code")));
+  const semantic = new Set(readdirSync(join(ROOT, "semantic")));
+  const exact = new Set(readdirSync(join(ROOT, "exact")));
   const byOverlay = new Map<string, Row[]>();
   for (const row of rows) byOverlay.set(row.overlay, [...(byOverlay.get(row.overlay) ?? []), row]);
 

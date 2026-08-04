@@ -149,7 +149,7 @@ export function spanIsSubstantiated(
  *
  * Loosening it is safe because THE HUMAN IS THE GATE HERE, not the inventory.
  * `planSync` only ever considers addresses that already have a drafted source in
- * `semantic/overlays/`, so a spurious inventory row cannot inject an entry on
+ * `semantic/`, so a spurious inventory row cannot inject an entry on
  * its own; the row supplies a span, and that span must still clear the bounds
  * and overlap checks.
  *
@@ -212,7 +212,7 @@ export function planSync(): SyncResult {
   const rejected: { source: string; reason: string }[] = [];
   let alreadyRecorded = 0;
 
-  const directory = join(ROOT, "semantic", "overlays");
+  const directory = join(ROOT, "semantic");
   for (const name of existsSync(directory) ? readdirSync(directory).sort() : []) {
     const match = SOURCE_NAME.exec(name);
     if (match === null) continue;

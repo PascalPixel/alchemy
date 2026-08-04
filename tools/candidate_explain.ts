@@ -222,7 +222,7 @@ function optionsOf(argv: string[]): OverlayArgs | MainImageArgs {
     const offset = Number.parseInt(overlayMatch[2], 16);
     if (routingSource === "") {
       const stem = (OVERLAY_BASE + offset).toString(16).padStart(8, "0");
-      routingSource = join(ROOT, "assets/code", `${overlay}_c_${stem}.c`);
+      routingSource = join(ROOT, "exact", `${overlay}_c_${stem}.c`);
     }
     return {
       mode: "overlay", id, overlay, offset,

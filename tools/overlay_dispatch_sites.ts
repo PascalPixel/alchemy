@@ -116,7 +116,7 @@ function main(): void {
   }
   const described = new Set(regions.map((region) => `${region.overlay}:${Number.parseInt(region.entry, 16)}`));
   let draftsWithoutSpan = 0;
-  for (const draft of readdirSync(join(ROOT, "semantic/overlays"))) {
+  for (const draft of readdirSync(join(ROOT, "semantic"))) {
     const identity = /^(resource_[0-9a-f]+)_c_([0-9a-f]{8})\.c$/.exec(draft);
     if (identity === null) continue;
     if (!described.has(`${identity[1]}:${Number.parseInt(identity[2], 16)}`)) draftsWithoutSpan++;

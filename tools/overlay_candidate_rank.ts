@@ -74,7 +74,7 @@ function measureWorker(inputPath: string, outputPath: string): void {
       const address = Number.parseInt(row.address, 16);
       const expected = image.subarray(address - OVERLAY_BASE, address - OVERLAY_BASE + row.bytes);
       const source = resolve(ROOT, row.semanticSource);
-      const routingSource = join(ROOT, "assets/code", `${row.overlay}_c_${row.address.slice(2)}.c`);
+      const routingSource = join(ROOT, "exact", `${row.overlay}_c_${row.address.slice(2)}.c`);
       const ownerWork = join(input.work, `${row.overlay}-${row.address.slice(2)}`);
       mkdirSync(ownerWork, { recursive: true });
       const compiled = compileOverlayCandidate(source, ownerWork, row.overlay, routingSource);
@@ -108,7 +108,7 @@ function selfTest(): void {
     overlay: "resource_000",
     address: "0x02000000",
     span: 16,
-    semanticSource: "semantic/overlays/example.c",
+    semanticSource: "semantic/example.c",
   };
   if (countDifferingHalfwords(Uint8Array.of(0, 1), Uint8Array.of(0, 1)) !== 0) throw new Error("equal");
   if (countDifferingHalfwords(Uint8Array.of(0, 1), Uint8Array.of(0, 2)) !== 1) throw new Error("diff");

@@ -414,8 +414,8 @@ function optionsOf(argv: string[]): Options {
   const overlay = match[1];
   const offset = Number.parseInt(match[2], 16);
   const stem = (OVERLAY_BASE + offset).toString(16).padStart(8, "0");
-  if (source === "") source = join(ROOT, "semantic/overlays", `${overlay}_c_${stem}.c`);
-  if (routingSource === "") routingSource = join(ROOT, "assets/code", `${overlay}_c_${stem}.c`);
+  if (source === "") source = join(ROOT, "semantic", `${overlay}_c_${stem}.c`);
+  if (routingSource === "") routingSource = join(ROOT, "exact", `${overlay}_c_${stem}.c`);
   return {
     id, overlay, offset,
     source: resolve(source), routingSource: resolve(routingSource),

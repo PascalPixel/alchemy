@@ -335,7 +335,7 @@ async function main(): Promise<void> {
     if (row.structural_veneer === true || row.data_walk === true) continue;
     if ((row.returns ?? 0) === 0) continue;
     if (row.span_bytes > maxSpan) continue;
-    const installed = join(ROOT, `assets/code/${row.overlay}_c_${hex8(row.entry)}.c`);
+    const installed = join(ROOT, `exact/${row.overlay}_c_${hex8(row.entry)}.c`);
     if (existsSync(installed)) continue;
     const { instructions, pool } = parseOverlayShow(
       await disassemble(row.overlay, row.offset, row.span_bytes),

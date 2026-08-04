@@ -74,7 +74,7 @@
         "start": 134229756,
         "end": 134229758,
         "kind": "thumb",
-        "evidence": "src/08002efc.c:byte-identical-claimed-C"
+        "evidence": "exact/08002efc.c:byte-identical-claimed-C"
       },
       {
         "start": 134229758,
@@ -86,7 +86,7 @@
         "start": 134229760,
         "end": 134229762,
         "kind": "thumb",
-        "evidence": "src/08002f00.c:byte-identical-claimed-C"
+        "evidence": "exact/08002f00.c:byte-identical-claimed-C"
       },
       {
         "start": 134229762,
@@ -98,7 +98,7 @@
         "start": 134229764,
         "end": 134229766,
         "kind": "thumb",
-        "evidence": "src/08002f04.c:byte-identical-claimed-C"
+        "evidence": "exact/08002f04.c:byte-identical-claimed-C"
       },
       {
         "start": 134229766,
@@ -110,7 +110,7 @@
         "start": 134229768,
         "end": 134229770,
         "kind": "thumb",
-        "evidence": "src/08002f08.c:byte-identical-claimed-C"
+        "evidence": "exact/08002f08.c:byte-identical-claimed-C"
       },
       {
         "start": 134229770,
@@ -164,7 +164,7 @@
         "start": 134232944,
         "end": 134233010,
         "kind": "thumb",
-        "evidence": "src/08003b70.c:byte-identical-claimed-C"
+        "evidence": "exact/08003b70.c:byte-identical-claimed-C"
       },
       {
         "start": 134233010,
@@ -176,7 +176,7 @@
         "start": 134233012,
         "end": 134233078,
         "kind": "thumb",
-        "evidence": "src/08003bb4.c:byte-identical-claimed-C"
+        "evidence": "exact/08003bb4.c:byte-identical-claimed-C"
       },
       {
         "start": 134233078,
@@ -188,7 +188,7 @@
         "start": 134233080,
         "end": 134233146,
         "kind": "thumb",
-        "evidence": "src/08003bf8.c:byte-identical-claimed-C"
+        "evidence": "exact/08003bf8.c:byte-identical-claimed-C"
       },
       {
         "start": 134233146,
@@ -200,7 +200,7 @@
         "start": 134233148,
         "end": 134233214,
         "kind": "thumb",
-        "evidence": "src/08003c3c.c:byte-identical-claimed-C"
+        "evidence": "exact/08003c3c.c:byte-identical-claimed-C"
       },
       {
         "start": 134233214,
@@ -614,7 +614,7 @@
         "start": 134267716,
         "end": 134267782,
         "kind": "thumb",
-        "evidence": "src/0800c344.c:byte-identical-claimed-C"
+        "evidence": "exact/0800c344.c:byte-identical-claimed-C"
       },
       {
         "start": 134267782,
@@ -638,7 +638,7 @@
         "start": 134267952,
         "end": 134267986,
         "kind": "thumb",
-        "evidence": "src/0800c430.c:byte-identical-claimed-C"
+        "evidence": "exact/0800c430.c:byte-identical-claimed-C"
       },
       {
         "start": 134267986,
@@ -698,7 +698,7 @@
         "start": 134269508,
         "end": 134269526,
         "kind": "thumb",
-        "evidence": "src/0800ca44.c:byte-identical-claimed-C"
+        "evidence": "exact/0800ca44.c:byte-identical-claimed-C"
       },
       {
         "start": 134269526,
@@ -710,7 +710,7 @@
         "start": 134269528,
         "end": 134269546,
         "kind": "thumb",
-        "evidence": "src/0800ca58.c:byte-identical-claimed-C"
+        "evidence": "exact/0800ca58.c:byte-identical-claimed-C"
       },
       {
         "start": 134269546,
@@ -740,7 +740,7 @@
         "start": 134271280,
         "end": 134271306,
         "kind": "thumb",
-        "evidence": "src/0800d130.c:byte-identical-claimed-C"
+        "evidence": "exact/0800d130.c:byte-identical-claimed-C"
       },
       {
         "start": 134271306,
@@ -758,7 +758,7 @@
         "start": 134271748,
         "end": 134271808,
         "kind": "thumb",
-        "evidence": "src/0800d304.c:byte-identical-claimed-C"
+        "evidence": "exact/0800d304.c:byte-identical-claimed-C"
       },
       {
         "start": 134271808,
@@ -770,7 +770,7 @@
         "start": 134272596,
         "end": 134272626,
         "kind": "thumb",
-        "evidence": "src/0800d654.c:byte-identical-claimed-C"
+        "evidence": "exact/0800d654.c:byte-identical-claimed-C"
       },
       {
         "start": 134272626,
@@ -806,7 +806,7 @@
         "start": 134272896,
         "end": 134272946,
         "kind": "thumb",
-        "evidence": "src/0800d780.c:byte-identical-claimed-C"
+        "evidence": "exact/0800d780.c:byte-identical-claimed-C"
       },
       {
         "start": 134272946,
@@ -818,7 +818,7 @@
         "start": 134272948,
         "end": 134272998,
         "kind": "thumb",
-        "evidence": "src/0800d7b4.c:byte-identical-claimed-C"
+        "evidence": "exact/0800d7b4.c:byte-identical-claimed-C"
       },
       {
         "start": 134272998,
@@ -842,7 +842,7 @@
         "start": 134273220,
         "end": 134273254,
         "kind": "thumb",
-        "evidence": "src/0800d8c4.c:byte-identical-claimed-C"
+        "evidence": "exact/0800d8c4.c:byte-identical-claimed-C"
       },
       {
         "start": 134273254,
@@ -866,7 +866,7 @@
         "start": 134273280,
         "end": 134273314,
         "kind": "thumb",
-        "evidence": "src/0800d900.c:byte-identical-claimed-C"
+        "evidence": "exact/0800d900.c:byte-identical-claimed-C"
       },
       {
         "start": 134273314,
@@ -890,7 +890,7 @@
         "start": 134273656,
         "end": 134273694,
         "kind": "thumb",
-        "evidence": "src/0800da78.c:byte-identical-claimed-C"
+        "evidence": "exact/0800da78.c:byte-identical-claimed-C"
       },
       {
         "start": 134273694,
@@ -902,7 +902,7 @@
         "start": 134273696,
         "end": 134273726,
         "kind": "thumb",
-        "evidence": "src/0800daa0.c:byte-identical-claimed-C"
+        "evidence": "exact/0800daa0.c:byte-identical-claimed-C"
       },
       {
         "start": 134273726,
@@ -914,7 +914,7 @@
         "start": 134273728,
         "end": 134273776,
         "kind": "thumb",
-        "evidence": "src/0800dac0.c:byte-identical-claimed-C"
+        "evidence": "exact/0800dac0.c:byte-identical-claimed-C"
       },
       {
         "start": 134273776,
@@ -926,7 +926,7 @@
         "start": 134274268,
         "end": 134274416,
         "kind": "thumb",
-        "evidence": "src/0800dcdc.c:byte-identical-claimed-C"
+        "evidence": "exact/0800dcdc.c:byte-identical-claimed-C"
       },
       {
         "start": 134274416,
@@ -962,7 +962,7 @@
         "start": 134275804,
         "end": 134275846,
         "kind": "thumb",
-        "evidence": "src/0800e2dc.c:byte-identical-claimed-C"
+        "evidence": "exact/0800e2dc.c:byte-identical-claimed-C"
       },
       {
         "start": 134275846,
@@ -974,7 +974,7 @@
         "start": 134275848,
         "end": 134275890,
         "kind": "thumb",
-        "evidence": "src/0800e308.c:byte-identical-claimed-C"
+        "evidence": "exact/0800e308.c:byte-identical-claimed-C"
       },
       {
         "start": 134275890,
@@ -998,7 +998,7 @@
         "start": 134275984,
         "end": 134276026,
         "kind": "thumb",
-        "evidence": "src/0800e390.c:byte-identical-claimed-C"
+        "evidence": "exact/0800e390.c:byte-identical-claimed-C"
       },
       {
         "start": 134276026,
@@ -1010,7 +1010,7 @@
         "start": 134276028,
         "end": 134276070,
         "kind": "thumb",
-        "evidence": "src/0800e3bc.c:byte-identical-claimed-C"
+        "evidence": "exact/0800e3bc.c:byte-identical-claimed-C"
       },
       {
         "start": 134276070,
@@ -1022,7 +1022,7 @@
         "start": 134276072,
         "end": 134276114,
         "kind": "thumb",
-        "evidence": "src/0800e3e8.c:byte-identical-claimed-C"
+        "evidence": "exact/0800e3e8.c:byte-identical-claimed-C"
       },
       {
         "start": 134276114,
@@ -1034,7 +1034,7 @@
         "start": 134276116,
         "end": 134276158,
         "kind": "thumb",
-        "evidence": "src/0800e414.c:byte-identical-claimed-C"
+        "evidence": "exact/0800e414.c:byte-identical-claimed-C"
       },
       {
         "start": 134276158,
@@ -1046,7 +1046,7 @@
         "start": 134276160,
         "end": 134276202,
         "kind": "thumb",
-        "evidence": "src/0800e440.c:byte-identical-claimed-C"
+        "evidence": "exact/0800e440.c:byte-identical-claimed-C"
       },
       {
         "start": 134276202,
@@ -1058,7 +1058,7 @@
         "start": 134276204,
         "end": 134276246,
         "kind": "thumb",
-        "evidence": "src/0800e46c.c:byte-identical-claimed-C"
+        "evidence": "exact/0800e46c.c:byte-identical-claimed-C"
       },
       {
         "start": 134276246,
@@ -1070,7 +1070,7 @@
         "start": 134276248,
         "end": 134276290,
         "kind": "thumb",
-        "evidence": "src/0800e498.c:byte-identical-claimed-C"
+        "evidence": "exact/0800e498.c:byte-identical-claimed-C"
       },
       {
         "start": 134276290,
@@ -1082,7 +1082,7 @@
         "start": 134276292,
         "end": 134276334,
         "kind": "thumb",
-        "evidence": "src/0800e4c4.c:byte-identical-claimed-C"
+        "evidence": "exact/0800e4c4.c:byte-identical-claimed-C"
       },
       {
         "start": 134276334,
@@ -1094,7 +1094,7 @@
         "start": 134276336,
         "end": 134276378,
         "kind": "thumb",
-        "evidence": "src/0800e4f0.c:byte-identical-claimed-C"
+        "evidence": "exact/0800e4f0.c:byte-identical-claimed-C"
       },
       {
         "start": 134276378,
@@ -1106,7 +1106,7 @@
         "start": 134276380,
         "end": 134276422,
         "kind": "thumb",
-        "evidence": "src/0800e51c.c:byte-identical-claimed-C"
+        "evidence": "exact/0800e51c.c:byte-identical-claimed-C"
       },
       {
         "start": 134276422,
@@ -1118,7 +1118,7 @@
         "start": 134276424,
         "end": 134276466,
         "kind": "thumb",
-        "evidence": "src/0800e548.c:byte-identical-claimed-C"
+        "evidence": "exact/0800e548.c:byte-identical-claimed-C"
       },
       {
         "start": 134276466,
@@ -1130,7 +1130,7 @@
         "start": 134276468,
         "end": 134276510,
         "kind": "thumb",
-        "evidence": "src/0800e574.c:byte-identical-claimed-C"
+        "evidence": "exact/0800e574.c:byte-identical-claimed-C"
       },
       {
         "start": 134276510,
@@ -1142,7 +1142,7 @@
         "start": 134276512,
         "end": 134276554,
         "kind": "thumb",
-        "evidence": "src/0800e5a0.c:byte-identical-claimed-C"
+        "evidence": "exact/0800e5a0.c:byte-identical-claimed-C"
       },
       {
         "start": 134276554,
@@ -1178,7 +1178,7 @@
         "start": 134277372,
         "end": 134277414,
         "kind": "thumb",
-        "evidence": "src/0800e8fc.c:byte-identical-claimed-C"
+        "evidence": "exact/0800e8fc.c:byte-identical-claimed-C"
       },
       {
         "start": 134277414,
@@ -1202,7 +1202,7 @@
         "start": 134281180,
         "end": 134281202,
         "kind": "thumb",
-        "evidence": "src/0800f7dc.c:byte-identical-claimed-C"
+        "evidence": "exact/0800f7dc.c:byte-identical-claimed-C"
       },
       {
         "start": 134281202,
@@ -1274,7 +1274,7 @@
         "start": 134290668,
         "end": 134290702,
         "kind": "thumb",
-        "evidence": "src/08011cec.c:byte-identical-claimed-C"
+        "evidence": "exact/08011cec.c:byte-identical-claimed-C"
       },
       {
         "start": 134290702,
@@ -1286,7 +1286,7 @@
         "start": 134290704,
         "end": 134290738,
         "kind": "thumb",
-        "evidence": "src/08011d10.c:byte-identical-claimed-C"
+        "evidence": "exact/08011d10.c:byte-identical-claimed-C"
       },
       {
         "start": 134290738,
@@ -1298,7 +1298,7 @@
         "start": 134290740,
         "end": 134290782,
         "kind": "thumb",
-        "evidence": "src/08011d34.c:byte-identical-claimed-C"
+        "evidence": "exact/08011d34.c:byte-identical-claimed-C"
       },
       {
         "start": 134290782,
@@ -1310,7 +1310,7 @@
         "start": 134290784,
         "end": 134290834,
         "kind": "thumb",
-        "evidence": "src/08011d60.c:byte-identical-claimed-C"
+        "evidence": "exact/08011d60.c:byte-identical-claimed-C"
       },
       {
         "start": 134290834,
@@ -1346,7 +1346,7 @@
         "start": 134291052,
         "end": 134291078,
         "kind": "thumb",
-        "evidence": "src/08011e6c.c:byte-identical-claimed-C"
+        "evidence": "exact/08011e6c.c:byte-identical-claimed-C"
       },
       {
         "start": 134291078,
@@ -1358,7 +1358,7 @@
         "start": 134291080,
         "end": 134291150,
         "kind": "thumb",
-        "evidence": "src/08011e88.c:byte-identical-claimed-C"
+        "evidence": "exact/08011e88.c:byte-identical-claimed-C"
       },
       {
         "start": 134291150,
@@ -1370,7 +1370,7 @@
         "start": 134291152,
         "end": 134291218,
         "kind": "thumb",
-        "evidence": "src/08011ed0.c:byte-identical-claimed-C"
+        "evidence": "exact/08011ed0.c:byte-identical-claimed-C"
       },
       {
         "start": 134291218,
@@ -1394,7 +1394,7 @@
         "start": 134291272,
         "end": 134291282,
         "kind": "thumb",
-        "evidence": "src/08011f48.c:byte-identical-claimed-C"
+        "evidence": "exact/08011f48.c:byte-identical-claimed-C"
       },
       {
         "start": 134291282,
@@ -1604,7 +1604,7 @@
         "start": 134324972,
         "end": 134325034,
         "kind": "thumb",
-        "evidence": "src/0801a2ec.c:byte-identical-claimed-C"
+        "evidence": "exact/0801a2ec.c:byte-identical-claimed-C"
       },
       {
         "start": 134325034,
@@ -1670,7 +1670,7 @@
         "start": 134332616,
         "end": 134332634,
         "kind": "thumb",
-        "evidence": "src/0801c0c8.c:byte-identical-claimed-C"
+        "evidence": "exact/0801c0c8.c:byte-identical-claimed-C"
       },
       {
         "start": 134332634,
@@ -1682,7 +1682,7 @@
         "start": 134332636,
         "end": 134332754,
         "kind": "thumb",
-        "evidence": "src/0801c0dc.c:byte-identical-claimed-C"
+        "evidence": "exact/0801c0dc.c:byte-identical-claimed-C"
       },
       {
         "start": 134332754,
@@ -1718,7 +1718,7 @@
         "start": 134333156,
         "end": 134333166,
         "kind": "thumb",
-        "evidence": "src/0801c2e4.c:byte-identical-claimed-C"
+        "evidence": "exact/0801c2e4.c:byte-identical-claimed-C"
       },
       {
         "start": 134333166,
@@ -1808,7 +1808,7 @@
         "start": 134342592,
         "end": 134342742,
         "kind": "thumb",
-        "evidence": "src/0801e7c0.c:byte-identical-claimed-C"
+        "evidence": "exact/0801e7c0.c:byte-identical-claimed-C"
       },
       {
         "start": 134342742,
@@ -1844,7 +1844,7 @@
         "start": 134343124,
         "end": 134343174,
         "kind": "thumb",
-        "evidence": "src/0801e9d4.c:byte-identical-claimed-C"
+        "evidence": "exact/0801e9d4.c:byte-identical-claimed-C"
       },
       {
         "start": 134343174,
@@ -1856,7 +1856,7 @@
         "start": 134343176,
         "end": 134343226,
         "kind": "thumb",
-        "evidence": "src/0801ea08.c:byte-identical-claimed-C"
+        "evidence": "exact/0801ea08.c:byte-identical-claimed-C"
       },
       {
         "start": 134343226,
@@ -1958,7 +1958,7 @@
         "start": 134355840,
         "end": 134355910,
         "kind": "thumb",
-        "evidence": "src/08021b80.c:byte-identical-claimed-C"
+        "evidence": "exact/08021b80.c:byte-identical-claimed-C"
       },
       {
         "start": 134355910,
@@ -2078,7 +2078,7 @@
         "start": 134385076,
         "end": 134385138,
         "kind": "thumb",
-        "evidence": "src/08028db4.c:byte-identical-claimed-C"
+        "evidence": "exact/08028db4.c:byte-identical-claimed-C"
       },
       {
         "start": 134385138,
@@ -2114,7 +2114,7 @@
         "start": 134386148,
         "end": 134386290,
         "kind": "thumb",
-        "evidence": "src/080291e4.c:byte-identical-claimed-C"
+        "evidence": "exact/080291e4.c:byte-identical-claimed-C"
       },
       {
         "start": 134386290,
@@ -2138,7 +2138,7 @@
         "start": 134386900,
         "end": 134386946,
         "kind": "thumb",
-        "evidence": "src/080294d4.c:byte-identical-claimed-C"
+        "evidence": "exact/080294d4.c:byte-identical-claimed-C"
       },
       {
         "start": 134386946,
@@ -2174,7 +2174,7 @@
         "start": 134709804,
         "end": 134709918,
         "kind": "thumb",
-        "evidence": "src/0807822c.c:byte-identical-claimed-C"
+        "evidence": "exact/0807822c.c:byte-identical-claimed-C"
       },
       {
         "start": 134709918,
@@ -2198,7 +2198,7 @@
         "start": 134710180,
         "end": 134710234,
         "kind": "thumb",
-        "evidence": "src/080783a4.c:byte-identical-claimed-C"
+        "evidence": "exact/080783a4.c:byte-identical-claimed-C"
       },
       {
         "start": 134710234,
@@ -2210,7 +2210,7 @@
         "start": 134710236,
         "end": 134710290,
         "kind": "thumb",
-        "evidence": "src/080783dc.c:byte-identical-claimed-C"
+        "evidence": "exact/080783dc.c:byte-identical-claimed-C"
       },
       {
         "start": 134710290,
@@ -2234,7 +2234,7 @@
         "start": 134710400,
         "end": 134710446,
         "kind": "thumb",
-        "evidence": "src/08078480.c:byte-identical-claimed-C"
+        "evidence": "exact/08078480.c:byte-identical-claimed-C"
       },
       {
         "start": 134710446,
@@ -2366,7 +2366,7 @@
         "start": 134717944,
         "end": 134718138,
         "kind": "thumb",
-        "evidence": "src/0807a1f8.c:byte-identical-claimed-C"
+        "evidence": "exact/0807a1f8.c:byte-identical-claimed-C"
       },
       {
         "start": 134718138,
@@ -2378,7 +2378,7 @@
         "start": 134718140,
         "end": 134718178,
         "kind": "thumb",
-        "evidence": "src/0807a2bc.c:byte-identical-claimed-C"
+        "evidence": "exact/0807a2bc.c:byte-identical-claimed-C"
       },
       {
         "start": 134718178,
@@ -2390,7 +2390,7 @@
         "start": 134718180,
         "end": 134718286,
         "kind": "thumb",
-        "evidence": "src/0807a2e4.c:byte-identical-claimed-C"
+        "evidence": "exact/0807a2e4.c:byte-identical-claimed-C"
       },
       {
         "start": 134718286,
@@ -2414,7 +2414,7 @@
         "start": 134718616,
         "end": 134718798,
         "kind": "thumb",
-        "evidence": "src/0807a498.c:byte-identical-claimed-C"
+        "evidence": "exact/0807a498.c:byte-identical-claimed-C"
       },
       {
         "start": 134718798,
@@ -2426,7 +2426,7 @@
         "start": 134718800,
         "end": 134718894,
         "kind": "thumb",
-        "evidence": "src/0807a550.c:byte-identical-claimed-C"
+        "evidence": "exact/0807a550.c:byte-identical-claimed-C"
       },
       {
         "start": 134718894,
@@ -2504,7 +2504,7 @@
         "start": 134788684,
         "end": 134788724,
         "kind": "thumb",
-        "evidence": "src/0808b64c.c:byte-identical-claimed-C"
+        "evidence": "exact/0808b64c.c:byte-identical-claimed-C"
       },
       {
         "start": 134788724,
@@ -2606,7 +2606,7 @@
         "start": 134808964,
         "end": 134809174,
         "kind": "thumb",
-        "evidence": "src/08090584.c:byte-identical-claimed-C"
+        "evidence": "exact/08090584.c:byte-identical-claimed-C"
       },
       {
         "start": 134809174,
@@ -2648,7 +2648,7 @@
         "start": 134813564,
         "end": 134813566,
         "kind": "thumb",
-        "evidence": "src/0809177c.c:byte-identical-claimed-C"
+        "evidence": "exact/0809177c.c:byte-identical-claimed-C"
       },
       {
         "start": 134813566,
@@ -2666,7 +2666,7 @@
         "start": 134813648,
         "end": 134813682,
         "kind": "thumb",
-        "evidence": "src/080917d0.c:byte-identical-claimed-C"
+        "evidence": "exact/080917d0.c:byte-identical-claimed-C"
       },
       {
         "start": 134813682,
@@ -2678,7 +2678,7 @@
         "start": 134813684,
         "end": 134813714,
         "kind": "thumb",
-        "evidence": "src/080917f4.c:byte-identical-claimed-C"
+        "evidence": "exact/080917f4.c:byte-identical-claimed-C"
       },
       {
         "start": 134813714,
@@ -2756,7 +2756,7 @@
         "start": 134816452,
         "end": 134816514,
         "kind": "thumb",
-        "evidence": "src/080922c4.c:byte-identical-claimed-C"
+        "evidence": "exact/080922c4.c:byte-identical-claimed-C"
       },
       {
         "start": 134816514,
@@ -2792,7 +2792,7 @@
         "start": 134817096,
         "end": 134817116,
         "kind": "thumb",
-        "evidence": "src/08092548.c:byte-identical-claimed-C"
+        "evidence": "exact/08092548.c:byte-identical-claimed-C"
       },
       {
         "start": 134817120,
@@ -2822,7 +2822,7 @@
         "start": 134817864,
         "end": 134817910,
         "kind": "thumb",
-        "evidence": "src/08092848.c:byte-identical-claimed-C"
+        "evidence": "exact/08092848.c:byte-identical-claimed-C"
       },
       {
         "start": 134817910,
@@ -2888,7 +2888,7 @@
         "start": 134820188,
         "end": 134820198,
         "kind": "thumb",
-        "evidence": "src/0809315c.c:byte-identical-claimed-C"
+        "evidence": "exact/0809315c.c:byte-identical-claimed-C"
       },
       {
         "start": 134820198,
@@ -3116,7 +3116,7 @@
         "start": 134845248,
         "end": 134845360,
         "kind": "thumb",
-        "evidence": "src/08099340.c:byte-identical-claimed-C"
+        "evidence": "exact/08099340.c:byte-identical-claimed-C"
       },
       {
         "start": 134845360,
@@ -3128,7 +3128,7 @@
         "start": 134845632,
         "end": 134845646,
         "kind": "thumb",
-        "evidence": "src/080994c0.c:byte-identical-claimed-C"
+        "evidence": "exact/080994c0.c:byte-identical-claimed-C"
       },
       {
         "start": 134845646,
@@ -3164,7 +3164,7 @@
         "start": 134849612,
         "end": 134849666,
         "kind": "thumb",
-        "evidence": "src/0809a44c.c:byte-identical-claimed-C"
+        "evidence": "exact/0809a44c.c:byte-identical-claimed-C"
       },
       {
         "start": 134849666,
@@ -3188,7 +3188,7 @@
         "start": 134850232,
         "end": 134850360,
         "kind": "thumb",
-        "evidence": "src/0809a6b8.c:byte-identical-claimed-C"
+        "evidence": "exact/0809a6b8.c:byte-identical-claimed-C"
       },
       {
         "start": 134850360,
@@ -3224,7 +3224,7 @@
         "start": 134852184,
         "end": 134852194,
         "kind": "thumb",
-        "evidence": "src/0809ae58.c:byte-identical-claimed-C"
+        "evidence": "exact/0809ae58.c:byte-identical-claimed-C"
       },
       {
         "start": 134852194,
@@ -3260,7 +3260,7 @@
         "start": 134854660,
         "end": 134854764,
         "kind": "thumb",
-        "evidence": "src/0809b804.c:byte-identical-claimed-C"
+        "evidence": "exact/0809b804.c:byte-identical-claimed-C"
       },
       {
         "start": 134854764,
@@ -3272,7 +3272,7 @@
         "start": 134855220,
         "end": 134855258,
         "kind": "thumb",
-        "evidence": "src/0809ba34.c:byte-identical-claimed-C"
+        "evidence": "exact/0809ba34.c:byte-identical-claimed-C"
       },
       {
         "start": 134855258,
@@ -3284,7 +3284,7 @@
         "start": 134855260,
         "end": 134855278,
         "kind": "thumb",
-        "evidence": "src/0809ba5c.c:byte-identical-claimed-C"
+        "evidence": "exact/0809ba5c.c:byte-identical-claimed-C"
       },
       {
         "start": 134855278,
@@ -3320,7 +3320,7 @@
         "start": 134877264,
         "end": 134877294,
         "kind": "thumb",
-        "evidence": "src/080a1050.c:byte-identical-claimed-C"
+        "evidence": "exact/080a1050.c:byte-identical-claimed-C"
       },
       {
         "start": 134877294,
@@ -3332,7 +3332,7 @@
         "start": 134877296,
         "end": 134877326,
         "kind": "thumb",
-        "evidence": "src/080a1070.c:byte-identical-claimed-C"
+        "evidence": "exact/080a1070.c:byte-identical-claimed-C"
       },
       {
         "start": 134877326,
@@ -3590,7 +3590,7 @@
         "start": 134910836,
         "end": 134910878,
         "kind": "thumb",
-        "evidence": "src/080a9374.c:byte-identical-claimed-C"
+        "evidence": "exact/080a9374.c:byte-identical-claimed-C"
       },
       {
         "start": 134910884,
@@ -3608,7 +3608,7 @@
         "start": 134912432,
         "end": 134912598,
         "kind": "thumb",
-        "evidence": "src/080a99b0.c:byte-identical-claimed-C"
+        "evidence": "exact/080a99b0.c:byte-identical-claimed-C"
       },
       {
         "start": 134912598,
@@ -3668,7 +3668,7 @@
         "start": 134932824,
         "end": 134932890,
         "kind": "thumb",
-        "evidence": "src/080ae958.c:byte-identical-claimed-C"
+        "evidence": "exact/080ae958.c:byte-identical-claimed-C"
       },
       {
         "start": 134932890,
@@ -3848,7 +3848,7 @@
         "start": 134966448,
         "end": 134966478,
         "kind": "thumb",
-        "evidence": "src/080b6cb0.c:byte-identical-claimed-C"
+        "evidence": "exact/080b6cb0.c:byte-identical-claimed-C"
       },
       {
         "start": 134966478,
@@ -3914,7 +3914,7 @@
         "start": 134971248,
         "end": 134971290,
         "kind": "thumb",
-        "evidence": "src/080b7f70.c:byte-identical-claimed-C"
+        "evidence": "exact/080b7f70.c:byte-identical-claimed-C"
       },
       {
         "start": 134971290,
@@ -3950,7 +3950,7 @@
         "start": 134972340,
         "end": 134972438,
         "kind": "thumb",
-        "evidence": "src/080b83b4.c:byte-identical-claimed-C"
+        "evidence": "exact/080b83b4.c:byte-identical-claimed-C"
       },
       {
         "start": 134972438,
@@ -3962,7 +3962,7 @@
         "start": 134972440,
         "end": 134972508,
         "kind": "thumb",
-        "evidence": "src/080b8418.c:byte-identical-claimed-C"
+        "evidence": "exact/080b8418.c:byte-identical-claimed-C"
       },
       {
         "start": 134972508,
@@ -3974,7 +3974,7 @@
         "start": 134972720,
         "end": 134972786,
         "kind": "thumb",
-        "evidence": "src/080b8530.c:byte-identical-claimed-C"
+        "evidence": "exact/080b8530.c:byte-identical-claimed-C"
       },
       {
         "start": 134972786,
@@ -4046,7 +4046,7 @@
         "start": 134980220,
         "end": 134980286,
         "kind": "thumb",
-        "evidence": "src/080ba27c.c:byte-identical-claimed-C"
+        "evidence": "exact/080ba27c.c:byte-identical-claimed-C"
       },
       {
         "start": 134980286,
@@ -4106,7 +4106,7 @@
         "start": 134992868,
         "end": 134992930,
         "kind": "thumb",
-        "evidence": "src/080bd3e4.c:byte-identical-claimed-C"
+        "evidence": "exact/080bd3e4.c:byte-identical-claimed-C"
       },
       {
         "start": 134992930,
@@ -4172,7 +4172,7 @@
         "start": 135001692,
         "end": 135001714,
         "kind": "thumb",
-        "evidence": "src/080bf65c.c:byte-identical-claimed-C"
+        "evidence": "exact/080bf65c.c:byte-identical-claimed-C"
       },
       {
         "start": 135001714,
@@ -4184,7 +4184,7 @@
         "start": 135001716,
         "end": 135001718,
         "kind": "thumb",
-        "evidence": "src/080bf674.c:byte-identical-claimed-C"
+        "evidence": "exact/080bf674.c:byte-identical-claimed-C"
       },
       {
         "start": 135001718,
@@ -4220,7 +4220,7 @@
         "start": 135007800,
         "end": 135007854,
         "kind": "thumb",
-        "evidence": "src/080c0e38.c:byte-identical-claimed-C"
+        "evidence": "exact/080c0e38.c:byte-identical-claimed-C"
       },
       {
         "start": 135007854,
@@ -4232,7 +4232,7 @@
         "start": 135007856,
         "end": 135007910,
         "kind": "thumb",
-        "evidence": "src/080c0e70.c:byte-identical-claimed-C"
+        "evidence": "exact/080c0e70.c:byte-identical-claimed-C"
       },
       {
         "start": 135007910,
@@ -4280,7 +4280,7 @@
         "start": 135009336,
         "end": 135009392,
         "kind": "thumb",
-        "evidence": "src/080c1438.c:byte-identical-claimed-C"
+        "evidence": "exact/080c1438.c:byte-identical-claimed-C"
       },
       {
         "start": 135009392,
@@ -4400,7 +4400,7 @@
         "start": 135090776,
         "end": 135090802,
         "kind": "thumb",
-        "evidence": "src/080d5258.c:byte-identical-claimed-C"
+        "evidence": "exact/080d5258.c:byte-identical-claimed-C"
       },
       {
         "start": 135090802,
@@ -4508,7 +4508,7 @@
         "start": 135129584,
         "end": 135129634,
         "kind": "thumb",
-        "evidence": "src/080de9f0.c:byte-identical-claimed-C"
+        "evidence": "exact/080de9f0.c:byte-identical-claimed-C"
       },
       {
         "start": 135129634,
@@ -4820,7 +4820,7 @@
         "start": 135239012,
         "end": 135239022,
         "kind": "thumb",
-        "evidence": "src/080f9564.c:byte-identical-claimed-C"
+        "evidence": "exact/080f9564.c:byte-identical-claimed-C"
       },
       {
         "start": 135239022,
@@ -4856,7 +4856,7 @@
         "start": 135240272,
         "end": 135240318,
         "kind": "thumb",
-        "evidence": "src/080f9a50.c:byte-identical-claimed-C"
+        "evidence": "exact/080f9a50.c:byte-identical-claimed-C"
       },
       {
         "start": 135240318,
@@ -4976,7 +4976,7 @@
         "start": 135242184,
         "end": 135242194,
         "kind": "thumb",
-        "evidence": "src/080fa1c8.c:byte-identical-claimed-C"
+        "evidence": "exact/080fa1c8.c:byte-identical-claimed-C"
       },
       {
         "start": 135242194,
@@ -5012,7 +5012,7 @@
         "start": 135242236,
         "end": 135242338,
         "kind": "thumb",
-        "evidence": "src/080fa1fc.c:byte-identical-claimed-C"
+        "evidence": "exact/080fa1fc.c:byte-identical-claimed-C"
       },
       {
         "start": 135242338,
@@ -5120,7 +5120,7 @@
         "start": 135247616,
         "end": 135247634,
         "kind": "thumb",
-        "evidence": "src/080fb700.c:byte-identical-claimed-C"
+        "evidence": "exact/080fb700.c:byte-identical-claimed-C"
       },
       {
         "start": 135247634,
@@ -5132,7 +5132,7 @@
         "start": 135247636,
         "end": 135247654,
         "kind": "thumb",
-        "evidence": "src/080fb714.c:byte-identical-claimed-C"
+        "evidence": "exact/080fb714.c:byte-identical-claimed-C"
       },
       {
         "start": 135247654,
@@ -5144,7 +5144,7 @@
         "start": 135247656,
         "end": 135247674,
         "kind": "thumb",
-        "evidence": "src/080fb728.c:byte-identical-claimed-C"
+        "evidence": "exact/080fb728.c:byte-identical-claimed-C"
       },
       {
         "start": 135247674,
@@ -5156,7 +5156,7 @@
         "start": 135247676,
         "end": 135247694,
         "kind": "thumb",
-        "evidence": "src/080fb73c.c:byte-identical-claimed-C"
+        "evidence": "exact/080fb73c.c:byte-identical-claimed-C"
       },
       {
         "start": 135247694,
@@ -5180,7 +5180,7 @@
         "start": 135247740,
         "end": 135247758,
         "kind": "thumb",
-        "evidence": "src/080fb77c.c:byte-identical-claimed-C"
+        "evidence": "exact/080fb77c.c:byte-identical-claimed-C"
       },
       {
         "start": 135247758,
@@ -5192,7 +5192,7 @@
         "start": 135247760,
         "end": 135247762,
         "kind": "thumb",
-        "evidence": "src/080fb790.c:byte-identical-claimed-C"
+        "evidence": "exact/080fb790.c:byte-identical-claimed-C"
       },
       {
         "start": 135811072,
@@ -5204,7 +5204,7 @@
         "start": 135811080,
         "end": 135811108,
         "kind": "thumb",
-        "evidence": "src/08185008.c:byte-identical-claimed-C"
+        "evidence": "exact/08185008.c:byte-identical-claimed-C"
       }
     ],
     "evidence": ["out/full/asm/manifest.json", "out/full/claimed/manifest.json", "byte-identical full build and tracked assembly classification"]
@@ -6085,24 +6085,6 @@
         },
         {
           "start": 33567024,
-          "end": 33567214,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33567214,
-          "end": 33567216,
-          "kind": "executable_alignment",
-          "evidence": "resource_371_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33567216,
-          "end": 33567228,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33567228,
           "end": 33567436,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -6181,18 +6163,6 @@
         },
         {
           "start": 33568376,
-          "end": 33568464,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33568464,
-          "end": 33568476,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33568476,
           "end": 33568684,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -6339,7 +6309,7 @@
           "start": 33570572,
           "end": 33570576,
           "kind": "literal_pool",
-          "evidence": "resource_371_overlay.s:6971:pc-relative-literal"
+          "evidence": "resource_371_overlay.s:6854:pc-relative-literal"
         },
         {
           "start": 33570576,
@@ -6393,7 +6363,7 @@
           "start": 33571180,
           "end": 33571184,
           "kind": "literal_pool",
-          "evidence": "resource_371_overlay.s:7098:pc-relative-literal"
+          "evidence": "resource_371_overlay.s:6981:pc-relative-literal"
         },
         {
           "start": 33571184,
@@ -6465,13 +6435,13 @@
           "start": 33572990,
           "end": 33572992,
           "kind": "thumb",
-          "evidence": "resource_371_overlay.s:7613:canonical-instruction"
+          "evidence": "resource_371_overlay.s:7496:canonical-instruction"
         },
         {
           "start": 33572994,
           "end": 33572996,
           "kind": "thumb",
-          "evidence": "resource_371_overlay.s:7615:canonical-instruction"
+          "evidence": "resource_371_overlay.s:7498:canonical-instruction"
         },
         {
           "start": 33573000,
@@ -6495,7 +6465,7 @@
           "start": 33573048,
           "end": 33573050,
           "kind": "thumb",
-          "evidence": "resource_371_overlay.s:7645:canonical-instruction"
+          "evidence": "resource_371_overlay.s:7528:canonical-instruction"
         },
         {
           "start": 33573052,
@@ -6519,25 +6489,25 @@
           "start": 33573220,
           "end": 33573224,
           "kind": "literal_pool",
-          "evidence": "resource_371_overlay.s:7642:pc-relative-literal"
+          "evidence": "resource_371_overlay.s:7525:pc-relative-literal"
         },
         {
           "start": 33573424,
           "end": 33573428,
           "kind": "literal_pool",
-          "evidence": "resource_371_overlay.s:7555:pc-relative-literal"
+          "evidence": "resource_371_overlay.s:7438:pc-relative-literal"
         },
         {
           "start": 33573560,
           "end": 33573564,
           "kind": "literal_pool",
-          "evidence": "resource_371_overlay.s:7567:pc-relative-literal"
+          "evidence": "resource_371_overlay.s:7450:pc-relative-literal"
         },
         {
           "start": 33573612,
           "end": 33573616,
           "kind": "literal_pool",
-          "evidence": "resource_371_overlay.s:7618:pc-relative-literal"
+          "evidence": "resource_371_overlay.s:7501:pc-relative-literal"
         },
         {
           "start": 33573988,
@@ -18113,18 +18083,6 @@
         },
         {
           "start": 33557696,
-          "end": 33557710,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33557710,
-          "end": 33557712,
-          "kind": "executable_alignment",
-          "evidence": "resource_39c_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33557712,
           "end": 33557838,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -18175,7 +18133,7 @@
           "start": 33558012,
           "end": 33558046,
           "kind": "thumb",
-          "evidence": "resource_39c_overlay.s:2354:verified-C-placeholder"
+          "evidence": "resource_39c_overlay.s:2349:verified-C-placeholder"
         },
         {
           "start": 33558046,
@@ -18185,72 +18143,6 @@
         },
         {
           "start": 33558048,
-          "end": 33558254,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33558254,
-          "end": 33558256,
-          "kind": "executable_alignment",
-          "evidence": "resource_39c_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33558256,
-          "end": 33558266,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33558266,
-          "end": 33558268,
-          "kind": "executable_alignment",
-          "evidence": "resource_39c_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33558268,
-          "end": 33558278,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33558278,
-          "end": 33558280,
-          "kind": "executable_alignment",
-          "evidence": "resource_39c_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33558280,
-          "end": 33558290,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33558290,
-          "end": 33558292,
-          "kind": "executable_alignment",
-          "evidence": "resource_39c_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33558292,
-          "end": 33558314,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33558314,
-          "end": 33558316,
-          "kind": "executable_alignment",
-          "evidence": "resource_39c_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33558316,
-          "end": 33558320,
-          "kind": "literal_pool",
-          "evidence": "resource_39c_overlay.s:2386:pc-relative-literal"
-        },
-        {
-          "start": 33558320,
           "end": 33559346,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -18289,7 +18181,7 @@
           "start": 33559560,
           "end": 33559582,
           "kind": "thumb",
-          "evidence": "resource_39c_overlay.s:2722:verified-C-placeholder"
+          "evidence": "resource_39c_overlay.s:2697:verified-C-placeholder"
         },
         {
           "start": 33559582,
@@ -18325,7 +18217,7 @@
           "start": 33560256,
           "end": 33560260,
           "kind": "literal_pool",
-          "evidence": "resource_39c_overlay.s:2856:pc-relative-literal"
+          "evidence": "resource_39c_overlay.s:2831:pc-relative-literal"
         },
         {
           "start": 33560260,
@@ -18337,7 +18229,7 @@
           "start": 33560460,
           "end": 33560464,
           "kind": "literal_pool",
-          "evidence": "resource_39c_overlay.s:2944:pc-relative-literal"
+          "evidence": "resource_39c_overlay.s:2919:pc-relative-literal"
         },
         {
           "start": 33560464,
@@ -18457,7 +18349,7 @@
           "start": 33563908,
           "end": 33563930,
           "kind": "thumb",
-          "evidence": "resource_39c_overlay.s:4119:verified-C-placeholder"
+          "evidence": "resource_39c_overlay.s:4094:verified-C-placeholder"
         },
         {
           "start": 33563930,
@@ -18817,7 +18709,7 @@
           "start": 33575340,
           "end": 33575344,
           "kind": "literal_pool",
-          "evidence": "resource_39c_overlay.s:7942:pc-relative-literal"
+          "evidence": "resource_39c_overlay.s:7917:pc-relative-literal"
         },
         {
           "start": 33575344,
@@ -18883,7 +18775,7 @@
           "start": 33576020,
           "end": 33576024,
           "kind": "literal_pool",
-          "evidence": "resource_39c_overlay.s:8252:pc-relative-literal"
+          "evidence": "resource_39c_overlay.s:8227:pc-relative-literal"
         },
         {
           "start": 33576024,
@@ -18949,7 +18841,7 @@
           "start": 33577288,
           "end": 33577324,
           "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
+          "evidence": "resource_39c_overlay.s:8799:verified-C-placeholder"
         },
         {
           "start": 33577344,
@@ -18979,7 +18871,7 @@
           "start": 33582376,
           "end": 33582378,
           "kind": "thumb",
-          "evidence": "resource_39c_overlay.s:10106:canonical-instruction"
+          "evidence": "resource_39c_overlay.s:10066:canonical-instruction"
         },
         {
           "start": 33582380,
@@ -19099,7 +18991,7 @@
           "start": 33582688,
           "end": 33582690,
           "kind": "thumb",
-          "evidence": "resource_39c_overlay.s:10271:canonical-instruction"
+          "evidence": "resource_39c_overlay.s:10231:canonical-instruction"
         },
         {
           "start": 33582692,
@@ -19225,7 +19117,7 @@
           "start": 33583096,
           "end": 33583098,
           "kind": "thumb",
-          "evidence": "resource_39c_overlay.s:10503:canonical-instruction"
+          "evidence": "resource_39c_overlay.s:10463:canonical-instruction"
         },
         {
           "start": 33583100,
@@ -19243,7 +19135,7 @@
           "start": 33583114,
           "end": 33583116,
           "kind": "thumb",
-          "evidence": "resource_39c_overlay.s:10512:canonical-instruction"
+          "evidence": "resource_39c_overlay.s:10472:canonical-instruction"
         },
         {
           "start": 33583120,
@@ -26495,24 +26387,6 @@
         },
         {
           "start": 33561184,
-          "end": 33561370,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33561370,
-          "end": 33561372,
-          "kind": "executable_alignment",
-          "evidence": "resource_3b1_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33561372,
-          "end": 33561396,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33561396,
           "end": 33562364,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -26629,7 +26503,7 @@
           "start": 33567552,
           "end": 33567556,
           "kind": "literal_pool",
-          "evidence": "resource_3b1_overlay.s:5100:pc-relative-literal"
+          "evidence": "resource_3b1_overlay.s:5023:pc-relative-literal"
         },
         {
           "start": 33567588,
@@ -26647,7 +26521,7 @@
           "start": 33567612,
           "end": 33567616,
           "kind": "literal_pool",
-          "evidence": "resource_3b1_overlay.s:5269:pc-relative-literal"
+          "evidence": "resource_3b1_overlay.s:5192:pc-relative-literal"
         },
         {
           "start": 33567616,
@@ -26737,7 +26611,7 @@
           "start": 33570060,
           "end": 33570064,
           "kind": "literal_pool",
-          "evidence": "resource_3b1_overlay.s:6142:pc-relative-literal"
+          "evidence": "resource_3b1_overlay.s:6065:pc-relative-literal"
         },
         {
           "start": 33570064,
@@ -26767,7 +26641,7 @@
           "start": 33571220,
           "end": 33571224,
           "kind": "literal_pool",
-          "evidence": "resource_3b1_overlay.s:6247:pc-relative-literal"
+          "evidence": "resource_3b1_overlay.s:6170:pc-relative-literal"
         },
         {
           "start": 33571224,
@@ -26821,13 +26695,13 @@
           "start": 33572968,
           "end": 33572972,
           "kind": "literal_pool",
-          "evidence": "resource_3b1_overlay.s:6758:pc-relative-literal"
+          "evidence": "resource_3b1_overlay.s:6681:pc-relative-literal"
         },
         {
           "start": 33572972,
           "end": 33572990,
           "kind": "thumb",
-          "evidence": "resource_3b1_overlay.s:6802:verified-C-placeholder"
+          "evidence": "resource_3b1_overlay.s:6725:verified-C-placeholder"
         },
         {
           "start": 33572990,
@@ -26845,7 +26719,7 @@
           "start": 33573092,
           "end": 33573096,
           "kind": "literal_pool",
-          "evidence": "resource_3b1_overlay.s:6814:pc-relative-literal"
+          "evidence": "resource_3b1_overlay.s:6737:pc-relative-literal"
         },
         {
           "start": 33573096,
@@ -26857,7 +26731,7 @@
           "start": 33574072,
           "end": 33574076,
           "kind": "literal_pool",
-          "evidence": "resource_3b1_overlay.s:6847:pc-relative-literal"
+          "evidence": "resource_3b1_overlay.s:6770:pc-relative-literal"
         },
         {
           "start": 33574748,
@@ -26951,24 +26825,6 @@
         },
         {
           "start": 33578056,
-          "end": 33578138,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33578138,
-          "end": 33578140,
-          "kind": "executable_alignment",
-          "evidence": "resource_3b1_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33578140,
-          "end": 33578148,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33578148,
           "end": 33579224,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -37367,24 +37223,6 @@
         },
         {
           "start": 33568196,
-          "end": 33568458,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33568458,
-          "end": 33568460,
-          "kind": "executable_alignment",
-          "evidence": "resource_3c9_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33568460,
-          "end": 33568464,
-          "kind": "literal_pool",
-          "evidence": "resource_3c9_overlay.s:6747:pc-relative-literal"
-        },
-        {
-          "start": 33568464,
           "end": 33568522,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -37445,24 +37283,6 @@
         },
         {
           "start": 33568960,
-          "end": 33569054,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33569054,
-          "end": 33569056,
-          "kind": "executable_alignment",
-          "evidence": "resource_3c9_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33569056,
-          "end": 33569060,
-          "kind": "literal_pool",
-          "evidence": "resource_3c9_overlay.s:7010:pc-relative-literal"
-        },
-        {
-          "start": 33569060,
           "end": 33569716,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -37483,7 +37303,7 @@
           "start": 33569848,
           "end": 33569852,
           "kind": "literal_pool",
-          "evidence": "resource_3c9_overlay.s:7344:pc-relative-literal"
+          "evidence": "resource_3c9_overlay.s:7267:pc-relative-literal"
         },
         {
           "start": 33569852,
@@ -37543,7 +37363,7 @@
           "start": 33572816,
           "end": 33572820,
           "kind": "literal_pool",
-          "evidence": "resource_3c9_overlay.s:8537:pc-relative-literal"
+          "evidence": "resource_3c9_overlay.s:8460:pc-relative-literal"
         },
         {
           "start": 33572820,
@@ -37663,7 +37483,7 @@
           "start": 33577328,
           "end": 33577332,
           "kind": "literal_pool",
-          "evidence": "resource_3c9_overlay.s:10295:pc-relative-literal"
+          "evidence": "resource_3c9_overlay.s:10218:pc-relative-literal"
         },
         {
           "start": 33577336,
@@ -37681,7 +37501,7 @@
           "start": 33577452,
           "end": 33577456,
           "kind": "literal_pool",
-          "evidence": "resource_3c9_overlay.s:10343:pc-relative-literal"
+          "evidence": "resource_3c9_overlay.s:10266:pc-relative-literal"
         },
         {
           "start": 33577456,
@@ -37747,7 +37567,7 @@
           "start": 33577960,
           "end": 33577964,
           "kind": "literal_pool",
-          "evidence": "resource_3c9_overlay.s:10598:pc-relative-literal"
+          "evidence": "resource_3c9_overlay.s:10521:pc-relative-literal"
         },
         {
           "start": 33577984,

@@ -33,8 +33,8 @@ function main(): void {
     type === "void *" ? [4, false, true] :
     [type.includes("8") ? 1 : type.includes("16") ? 2 : 4, type.startsWith("s"), false];
 
-  for (const name of readdirSync(join(ROOT, "src")).filter((entry) => entry.endsWith(".c"))) {
-    const text = readFileSync(join(ROOT, "src", name), "utf8");
+  for (const name of readdirSync(join(ROOT, "exact")).filter((entry) => entry.endsWith(".c"))) {
+    const text = readFileSync(join(ROOT, "exact", name), "utf8");
     for (const match of text.matchAll(indirect)) {
       const [width, signed, pointer] = widthOf(match[2]);
       record(`ptr:${match[1].toLowerCase()}`, Number(match[3]), width, signed, pointer);

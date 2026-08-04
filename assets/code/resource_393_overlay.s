@@ -736,14 +736,14 @@ AlchemyC_02000474:
 	.4byte 0x03001e70
 	.4byte 0x02008f50
 	.4byte 0x02008f68
-	.4byte 0x47704800
-	.4byte 0x02008fc8
-	.4byte 0x47702000
-	.4byte 0x47704800
-	.4byte 0x02009028
-	.4byte 0x47704800
-	.2byte 0x9038
-	.2byte 0x0200
+AlchemyC_020009dc:
+	.space 0x8
+AlchemyC_020009e4:
+	.space 0x4
+AlchemyC_020009e8:
+	.space 0x8
+AlchemyC_020009f0:
+	.space 0x8
 	push	{r5, lr}
 	sub	sp, #32
 	bl	sub_02001872
@@ -828,9 +828,8 @@ AlchemyC_02000aac:
 	.space 0xd8
 AlchemyC_02000ba4:
 	.space 0x4c
-	.4byte 0x47704800
-	.2byte 0x9098
-	.2byte 0x0200
+AlchemyC_02000bf0:
+	.space 0x8
 	push	{r5, lr}
 	ldr	r3, [pc, #132]
 	movs	r2, #224

@@ -2991,30 +2991,6 @@
     },
     {
       "overlay": "resource_393",
-      "entry": "0x020009dc",
-      "span_bytes": 8,
-      "evidence": "complete constant getter through its pool word 0x02008fc8"
-    },
-    {
-      "overlay": "resource_393",
-      "entry": "0x020009e4",
-      "span_bytes": 4,
-      "evidence": "complete zero-return leaf with no pool or callees"
-    },
-    {
-      "overlay": "resource_393",
-      "entry": "0x020009e8",
-      "span_bytes": 8,
-      "evidence": "complete constant getter through its pool word 0x02009028"
-    },
-    {
-      "overlay": "resource_393",
-      "entry": "0x020009f0",
-      "span_bytes": 8,
-      "evidence": "complete constant getter through its pool word 0x02009038"
-    },
-    {
-      "overlay": "resource_393",
       "entry": "0x020009f8",
       "span_bytes": 180,
       "evidence": "complete placement-query and tile-(10,12) transition owner through return and pool word 0x00000201 at 0x02000aa8; all fifteen calls resolve and match in multiset and source/machine order"
@@ -10124,12 +10100,6 @@
       "entry": "0x02000c60",
       "span_bytes": 8,
       "evidence": "complete prologue-less getter; ldr/bx at 0x02000c60-0x02000c63 and its independently resolved 0x0200b294 literal through 0x02000c67 before the next owner at 0x02000c68"
-    },
-    {
-      "overlay": "resource_393",
-      "entry": "0x02000bf0",
-      "span_bytes": 8,
-      "evidence": "complete prologue-less getter; ldr/bx at 0x02000bf0-0x02000bf3 and its independently resolved 0x02009098 literal through 0x02000bf7 before the next owner at 0x02000bf8"
     },
     {
       "overlay": "resource_395",

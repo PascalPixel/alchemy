@@ -951,12 +951,6 @@
     },
     {
       "overlay": "resource_378",
-      "entry": "0x02003270",
-      "span_bytes": 56,
-      "evidence": "complete two-panel presentation wrapper through the sole return at 0x020032a2-0x020032a6; all three direct calls and their six-argument panel rectangles are explicit, with no pool before 0x020032a8"
-    },
-    {
-      "overlay": "resource_378",
       "entry": "0x020032a8",
       "span_bytes": 40,
       "evidence": "complete actor-0 facing-window predicate through its value-returning interworking return, alignment and two-word comparison pool through 0x020032cf; sole actor lookup and unsigned wrapped-angle test are explicit before 0x020032d0"

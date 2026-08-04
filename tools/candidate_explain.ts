@@ -1,10 +1,11 @@
 #!/usr/bin/env bun
 // Compile a candidate with gcc-2.96's own -fsched-verbose=9 scheduler trace
 // enabled, correlate the final RTL insn order with the actual disassembled
-// instructions by output position, and print the compiler's own ready-list
-// trace beside each differing row -- so a stuck "why did the scheduler put
-// this instruction here" question is answered by reading the compiler's own
-// decision log instead of by reading haifa-sched.c source and guessing flags.
+// instructions by CONTENT (instruction class + destination register, via
+// rtl_align.ts), and print the compiler's own ready-list trace beside each
+// differing row -- so a stuck "why did the scheduler put this instruction
+// here" question is answered by reading the compiler's own decision log
+// instead of by reading haifa-sched.c source and guessing flags.
 //
 // This does not explain every residual: only RTL-level pass decisions are
 // dumpable this way (scheduling, combine, loop, gcse, register allocation).
@@ -14,6 +15,9 @@ import { existsSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 import { assembleOverlay, compileOverlayCandidate, OVERLAY_BASE } from "./overlay_disasm.ts";
 import { verifyCandidate, ROM_BASE } from "./match_m2c.ts";
+import { type RtlInsn, calleeSymbol, parseInsns } from "./rtl_insn.ts";
+import { type Instruction, parseInstruction } from "./thumb_disasm.ts";
+import { align } from "./rtl_align.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 
@@ -24,34 +28,39 @@ const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 // the ready list and every "--> scheduling insn <<<N>>>" decision.
 const EXPLAIN_FLAGS = ["-dS", "-dR", "-fsched-verbose=9"] as const;
 
-interface InsnNode {
-  uid: number;
-  kind: "insn" | "call_insn" | "jump_insn";
-  summary: string;
+// gcc names dump files from its -dumpbase argument (the routing source's own
+// basename, see alchemy_gcc.ts's sourceToAssemblyPlan), not from the actual
+// preprocessed input filename -- so the prefix cannot be predicted from the
+// candidate's own stem. Each work directory holds one candidate's build at a
+// time, so matching on suffix within it is unambiguous.
+function findDumpFile(work: string, suffix: string): string | null {
+  const match = readdirSync(work).find((name) => name.endsWith(`.${suffix}`));
+  return match === undefined ? null : join(work, match);
 }
 
-// Every top-level `(insn N ...)` / `(call_insn N ...)` / `(jump_insn N ...)`
-// line in a gcc RTL dump starts at column 0 with that exact literal token
-// followed by its UID; nested dependency references (`insn_list N ...`)
-// never start a line this way. A -dR dump file contains exactly one such
-// listing, in final scheduled order, after the scheduling trace text -- this
-// is not documented anywhere, it was confirmed by inspection of a real dump.
-export function parseFinalInsnOrder(dumpText: string): InsnNode[] {
-  const nodes: InsnNode[] = [];
-  const lines = dumpText.split("\n");
-  for (let index = 0; index < lines.length; index++) {
-    const header = /^\((insn|call_insn|jump_insn) (\d+) /.exec(lines[index]);
-    if (header === null) continue;
-    const kind = header[1] as InsnNode["kind"];
-    const uid = Number.parseInt(header[2], 10);
-    // The pattern summary is whatever follows the UID/prev/next triple on
-    // this line plus continuation lines up to the closing paren of the SET,
-    // truncated hard -- this is a hint for a human reader, not a full parse.
-    const rest = lines.slice(index, index + 3).join(" ").replace(/\s+/g, " ").trim();
-    const summary = rest.length > 90 ? `${rest.slice(0, 90)}...` : rest;
-    nodes.push({ uid, kind, summary });
+export function disassembleInstructions(path: string, base = 0): Instruction[] {
+  const result = Bun.spawnSync([
+    "arm-none-eabi-objdump", "-D", "-b", "binary", "-m", "arm", "-M", "force-thumb",
+    ...(base ? [`--adjust-vma=0x${base.toString(16)}`] : []), path,
+  ], { stdout: "pipe", stderr: "pipe" });
+  if (result.exitCode !== 0) throw new Error(result.stderr.toString().trim());
+  const rows: Instruction[] = [];
+  for (const line of result.stdout.toString().split("\n")) {
+    const matched = /^\s+([0-9a-f]+):\t[0-9a-f ]+\t(.*)$/.exec(line);
+    if (matched === null) continue;
+    rows.push(parseInstruction(Number.parseInt(matched[1], 16) - base, matched[2].trimEnd()));
   }
-  return nodes;
+  return rows;
+}
+
+function differingHalfwords(actual: Uint8Array, expected: Uint8Array): Set<number> {
+  const found = new Set<number>();
+  const shared = Math.min(actual.length, expected.length);
+  for (let offset = 0; offset + 2 <= shared; offset += 2) {
+    if (actual[offset] !== expected[offset] || actual[offset + 1] !== expected[offset + 1]) found.add(offset);
+  }
+  for (let offset = shared & ~1; offset < Math.max(actual.length, expected.length); offset += 2) found.add(offset);
+  return found;
 }
 
 // The scheduling trace at -fsched-verbose=9 prints "Ready list (t = N): ..."
@@ -70,86 +79,50 @@ export function traceForInsn(dumpText: string, uid: number): string | null {
       if (match !== null) { readyLine = match[1].trim(); break; }
     }
     const picked = lines[index].trim();
-    return readyLine.length > 0
-      ? `ready list: [${readyLine}] -- ${picked}`
-      : picked;
+    return readyLine.length > 0 ? `ready list: [${readyLine}] -- ${picked}` : picked;
   }
   return null;
 }
 
-// gcc names dump files from its -dumpbase argument (the routing source's own
-// basename, see alchemy_gcc.ts's sourceToAssemblyPlan), not from the actual
-// preprocessed input filename -- so the prefix cannot be predicted from the
-// stem alone. Each work directory holds one candidate's build at a time, so
-// matching on suffix within it is unambiguous.
-function findDumpFile(work: string, _stem: string, suffix: string): string | null {
-  const match = readdirSync(work).find((name) => name.endsWith(`.${suffix}`));
-  return match === undefined ? null : join(work, match);
+function describeInsn(insn: RtlInsn): string {
+  const callee = calleeSymbol(insn);
+  if (callee !== null) return `call ${callee}`;
+  return `insn ${insn.uid}`;
 }
 
-function disassemble(path: string, base = 0): Map<number, string> {
-  const result = Bun.spawnSync([
-    "arm-none-eabi-objdump", "-D", "-b", "binary", "-m", "arm", "-M", "force-thumb",
-    ...(base ? [`--adjust-vma=0x${base.toString(16)}`] : []), path,
-  ], { stdout: "pipe", stderr: "pipe" });
-  if (result.exitCode !== 0) throw new Error(result.stderr.toString().trim());
-  const rows = new Map<number, string>();
-  for (const line of result.stdout.toString().split("\n")) {
-    const matched = /^\s+([0-9a-f]+):\t[0-9a-f ]+\t(.*)$/.exec(line);
-    if (matched !== null) rows.set(Number.parseInt(matched[1], 16) - base, matched[2].trimEnd());
-  }
-  return rows;
-}
-
-function differingHalfwords(actual: Uint8Array, expected: Uint8Array): Set<number> {
-  const found = new Set<number>();
-  const shared = Math.min(actual.length, expected.length);
-  for (let offset = 0; offset + 2 <= shared; offset += 2) {
-    if (actual[offset] !== expected[offset] || actual[offset + 1] !== expected[offset + 1]) found.add(offset);
-  }
-  for (let offset = shared & ~1; offset < Math.max(actual.length, expected.length); offset += 2) found.add(offset);
-  return found;
-}
-
-function report(
-  actual: Buffer, expected: Buffer, work: string, stem: string, actualPath: string,
-): void {
-  const left = disassemble(actualPath);
+function report(actual: Buffer, expected: Buffer, work: string, actualPath: string): void {
+  const instructions = disassembleInstructions(actualPath);
   const differing = differingHalfwords(actual, expected);
-  const offsets = [...left.keys()].sort((a, b) => a - b);
 
-  const dumpPath = findDumpFile(work, stem, "sched2") ?? findDumpFile(work, stem, "sched");
-  const insnOrder = dumpPath === null ? [] : parseFinalInsnOrder(readFileSync(dumpPath, "utf8"))
-    .filter((node) => node.kind !== undefined);
-  // Real instructions only: notes/barriers/uses emit no bytes and must not
-  // consume a disassembly-row slot when zipping by position.
-  const realInsns = insnOrder.filter((node) => ["insn", "call_insn", "jump_insn"].includes(node.kind));
+  const dumpPath = findDumpFile(work, "sched2") ?? findDumpFile(work, "sched");
+  const dumpText = dumpPath === null ? "" : readFileSync(dumpPath, "utf8");
+  const insns = dumpPath === null ? [] : parseInsns(dumpText);
+  const alignment = align(insns, instructions);
+  const byOffset = new Map(alignment.pairs.map((pair) => [pair.instruction.offset, pair.insn]));
 
   console.log(`candidate=${actual.length} reference=${expected.length} differing_halfwords=${differing.size}`);
   if (dumpPath === null) {
     console.log("(no scheduler dump found -- family/route may not support -dR, or nothing was scheduled)");
-  } else if (realInsns.length !== offsets.filter((o) => left.has(o)).length) {
+  } else {
     console.log(
-      `(scheduler trace present but insn count (${realInsns.length}) does not match ` +
-      `instruction row count (${offsets.length}) -- correlation by position is unreliable here, ` +
-      `showing raw disassembly only)`,
+      `(scheduler trace: ${insns.length} RTL insns, ${instructions.length} real instructions, ` +
+      `${alignment.pairs.length} aligned by class+destination-register; ` +
+      `${alignment.unmatchedInstructions.length} real instruction(s) had no RTL match -- ` +
+      `typically prologue/epilogue multi-insn expansion, shown without a trace column below)`,
     );
   }
-  const reliable = dumpPath !== null && realInsns.length === offsets.filter((o) => left.has(o)).length;
 
   console.log("      offset  candidate                      insn  scheduler trace");
-  let insnIndex = 0;
-  for (const offset of offsets) {
+  for (const instruction of instructions) {
+    const offset = instruction.offset;
     const mark = differing.has(offset) ? "!" : " ";
-    const candidate = (left.get(offset) ?? "").padEnd(30).slice(0, 30);
-    const node = reliable ? realInsns[insnIndex++] : undefined;
-    const uidLabel = node === undefined ? "" : String(node.uid).padStart(4);
-    const trace = node === undefined || dumpPath === null ? "" : (traceForInsn(readFileSync(dumpPath, "utf8"), node.uid) ?? "");
-    console.log(`  ${mark} ${offset.toString(16).padStart(4, "0")}  ${candidate} ${uidLabel}  ${trace}`);
+    const candidateColumn = instruction.raw.replace(/\t/g, " ").padEnd(30).slice(0, 30);
+    const insn = byOffset.get(offset);
+    const uidLabel = insn === undefined ? "" : String(insn.uid).padStart(4);
+    const trace = insn === undefined || dumpPath === null ? "" : (traceForInsn(dumpText, insn.uid) ?? describeInsn(insn));
+    console.log(`  ${mark} ${offset.toString(16).padStart(4, "0")}  ${candidateColumn} ${uidLabel}  ${trace}`);
   }
-  if (dumpPath !== null) {
-    console.log(`\nfull dump: ${dumpPath}`);
-  }
+  if (dumpPath !== null) console.log(`\nfull dump: ${dumpPath}`);
 }
 
 interface OverlayArgs {
@@ -205,26 +178,40 @@ function optionsOf(argv: string[]): OverlayArgs | MainImageArgs {
       work: resolve(work || join(ROOT, "work/candidate-explain-overlay")), span,
     };
   }
-  // Main-image mode: the positional argument IS the candidate source file.
   if (id === "") throw new Error("usage: candidate_explain.ts OVERLAY:OFFSET --source FILE | candidate_explain.ts FILE.c");
   return { mode: "main", source: resolve(id), work: resolve(work || join(ROOT, "work/candidate-explain-main")) };
 }
 
 function selfTest(): void {
-  const same = "(insn 15 10 17 (set (reg:SI 3) (const_int 3)) 174 {*x} (nil))\n" +
-    "(note 17 15 19 NOTE_INSN_DELETED 0)\n" +
-    "(call_insn 19 17 21 (parallel [(set (reg:SI 0) (call ...))]) 245 {*y} (nil))\n";
-  const parsed = parseFinalInsnOrder(same);
-  if (parsed.length !== 2) throw new Error(`expected 2 real-instruction nodes (note excluded), got ${parsed.length}`);
-  if (parsed[0].uid !== 15 || parsed[0].kind !== "insn") throw new Error("wrong first node");
-  if (parsed[1].uid !== 19 || parsed[1].kind !== "call_insn") throw new Error("wrong second node");
-
-  const trace = ";; Ready list (t =  4):    19  28\n;;\t\t--> scheduling insn <<<28>>> on unit core\n";
-  const found = traceForInsn(trace, 28);
-  if (found === null || !found.includes("19") || !found.includes("28")) {
-    throw new Error(`trace lookup failed: ${found}`);
+  const instructions = [
+    parseInstruction(0, "adds\tr3, r3, r2"),
+    parseInstruction(2, "pop\t{r5}"),
+    parseInstruction(4, "bl\t0x11f4"),
+  ];
+  const insns = parseInsns(
+    "(insn 15 10 17 (set (reg:SI 3 r3)\n" +
+    "        (plus:SI (reg/v:SI 3 r3)\n" +
+    "            (reg/v:SI 2 r2))) 5 {*thumb_addsi3} (nil))\n" +
+    '(call_insn 19 17 21 (parallel [\n' +
+    "            (set (reg:SI 0 r0)\n" +
+    '                (call (mem:SI (symbol_ref:SI ("Func_02001508")) 0)\n' +
+    "                    (const_int 0 [0x0])))\n" +
+    "        ] ) 245 {*call_value_insn} (nil))\n",
+  );
+  if (insns.length !== 2) throw new Error(`expected 2 insns from fixture, got ${insns.length}`);
+  const alignment = align(insns, instructions);
+  if (alignment.pairs.length !== 2) throw new Error(`expected 2 aligned pairs, got ${alignment.pairs.length}`);
+  if (alignment.pairs[0].instruction.offset !== 0 || alignment.pairs[0].insn.uid !== 15) {
+    throw new Error(`wrong first pair: ${JSON.stringify(alignment.pairs[0])}`);
   }
-  if (traceForInsn(trace, 999) !== null) throw new Error("expected no trace for unknown uid");
+  // The unmatched `pop` (offset 2) must not have derailed the alignment: the
+  // call at offset 4 must still find its call_insn.
+  if (alignment.pairs[1].instruction.offset !== 4 || alignment.pairs[1].insn.uid !== 19) {
+    throw new Error(`gap tolerance failed: ${JSON.stringify(alignment.pairs[1])}`);
+  }
+  if (alignment.unmatchedInstructions.length !== 1 || alignment.unmatchedInstructions[0].offset !== 2) {
+    throw new Error(`expected the pop to be reported unmatched, got ${JSON.stringify(alignment.unmatchedInstructions)}`);
+  }
   console.log("self-test=ok tool=candidate-explain");
 }
 
@@ -252,10 +239,9 @@ async function main(): Promise<void> {
     if (compiled.address !== OVERLAY_BASE + options.offset) {
       throw new Error(`candidate entry 0x${compiled.address.toString(16)} does not match ${options.id}`);
     }
-    const stem = (OVERLAY_BASE + options.offset).toString(16).padStart(8, "0");
     const actualPath = join(options.work, "candidate.bin");
     await Bun.write(actualPath, compiled.data);
-    report(compiled.data, expected, options.work, stem, actualPath);
+    report(compiled.data, expected, options.work, actualPath);
   } else {
     const rom = readFileSync(join(ROOT, "roms/gs1-en.gba"));
     const verification = await verifyCandidate(
@@ -263,10 +249,7 @@ async function main(): Promise<void> {
     );
     const stem = basename(options.source, ".c");
     const actualPath = join(options.work, `${stem}.bin`);
-    report(
-      Buffer.from(verification.actual), Buffer.from(verification.expected),
-      options.work, stem, actualPath,
-    );
+    report(Buffer.from(verification.actual), Buffer.from(verification.expected), options.work, actualPath);
   }
 }
 

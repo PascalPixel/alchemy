@@ -45,34 +45,36 @@ typedef int s32;
  * them and does not write them.
  */
 
-extern void Func_0808a010(s32 frames);
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern void Func_0808a090(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a0c8(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a0d0(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a248(s32 arg0);
-extern void Func_080f9010(s32 arg0);
-extern void Func_08009178(void *data, s32 arg1, s32 arg2);
-extern void Func_08015040(s32 arg0, s32 arg1);
-extern s32 Func_080770c0(s32 flagId);
+extern void Func_020068ba(s32 frames);
+extern void Func_02006864(void);
+extern void Func_0200688c(void);
+extern void Func_020068d4(void);
+extern void Func_020068dc(s32 id, s32 arg1, s32 arg2);
+extern void Func_0200690c(s32 id, s32 arg1, s32 arg2);
+extern void Func_02006908(s32 id, s32 arg1, s32 arg2);
+extern void Func_020069f0(s32 arg0);
+extern void Func_02006a2c(s32 arg0);
+extern void Func_0200684e(void *data, s32 arg1, s32 arg2);
+extern void Func_02006858(s32 arg0, s32 arg1);
+extern s32 Func_0200684a(s32 flagId);
+extern s32 Func_02006854(s32 flagId);
 
 void Func_02002484(void)
 {
-    Func_0808a018();
+    Func_02006864();
 
-    if (Func_080770c0(0x89a) == 0 && Func_080770c0(0x895) == 0) {
-        Func_08015040(0x18ad, 1);
-        Func_0808a020();
+    if (Func_0200684a(0x89a) == 0 && Func_02006854(0x895) == 0) {
+        Func_02006858(0x18ad, 1);
+        Func_0200688c();
         return;
     }
 
-    Func_080f9010(158);
-    Func_08009178((void *)0x0200c77a, 78, 13);
-    Func_0808a090(0, 128 << 8, 128 << 7);
-    Func_0808a0d0(0, 153 << 1, 248);
-    Func_0808a0c8(0, 152 << 1, 216);
-    Func_0808a010(20);
-    Func_0808a248(4);
-    Func_0808a020();
+    Func_02006a2c(158);
+    Func_0200684e((void *)0x0200c77a, 78, 13);
+    Func_020068dc(0, 128 << 8, 128 << 7);
+    Func_02006908(0, 153 << 1, 248);
+    Func_0200690c(0, 152 << 1, 216);
+    Func_020068ba(20);
+    Func_020069f0(4);
+    Func_020068d4();
 }

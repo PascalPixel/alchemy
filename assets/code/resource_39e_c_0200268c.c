@@ -24,22 +24,23 @@ typedef int s32;
  * transcribed from the arithmetic, meaning unknown.
  */
 
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern void Func_0808a090(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a0e0(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a0e8(s32 id);
-extern void Func_0808a100(s32 id, s32 arg1);
-extern void Func_0808a128(s32 id, s32 arg1, s32 arg2);
+extern void Func_02006a70(void);
+extern void Func_02006ab4(void);
+extern void Func_02006ab6(s32 id, s32 arg1, s32 arg2);
+extern void Func_02006ae8(s32 id, s32 arg1, s32 arg2);
+extern void Func_02006b08(s32 id);
+extern void Func_02006b12(s32 id, s32 arg1);
+extern void Func_02006b1a(s32 id, s32 arg1, s32 arg2);
+extern void Func_02006b20(s32 id, s32 arg1);
 
 void Func_0200268c(s32 arg0, s32 arg1)
 {
-    Func_0808a018();
-    Func_0808a090(0, 160 << 10, 160 << 9);
-    Func_0808a0e0(0, arg0, arg1);
-    Func_0808a128(0, 4, 0);
-    Func_0808a100(0, 7);
-    Func_0808a0e8(0);
-    Func_0808a100(0, 6);
-    Func_0808a020();
+    Func_02006a70();
+    Func_02006ab6(0, 160 << 10, 160 << 9);
+    Func_02006ae8(0, arg0, arg1);
+    Func_02006b1a(0, 4, 0);
+    Func_02006b12(0, 7);
+    Func_02006b08(0);
+    Func_02006b20(0, 6);
+    Func_02006ab4();
 }

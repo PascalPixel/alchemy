@@ -805,6 +805,17 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // reference pushes {r5, lr} and we push {r5, r6, lr}. The sibling at 0x140c
   // has four *different* constants and needs only the scheduler tie-break.
   "assets/code/resource_3aa_c_02001450.c",
+  // resource_3b9:04c8 shares 258 (129<<1) across its two id-14 calls; the
+  // reference rebuilds it at each site instead of parking it in r5.
+  "assets/code/resource_3b9_c_020004c8.c",
+  // resource_3b9:055c shares the flag id 0x3c1 across its test and set calls;
+  // the reference reloads the pool word at each site instead of keeping the
+  // address's dereferenced value live in r5 across the body.
+  "assets/code/resource_3b9_c_0200055c.c",
+  // resource_3b9:2904 shares the shifted displacement 428 (214<<1) across
+  // three calls; the reference rebuilds it at each site instead of parking
+  // it in r5 (tell: reference pushes {lr}, candidate pushes {r5, lr}).
+  "assets/code/resource_3b9_c_02002904.c",
 ]);
 // Every edge into a CALL_INSN costs 1, so a call's argument setters tie in
 // `rank_for_schedule` on priority, insn class and forward-dependent count alike,
@@ -1055,6 +1066,13 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3af_c_020012f0.c",
   "assets/code/resource_3af_c_02002b7c.c",
   "assets/code/resource_3ba_c_02000974.c",
+  // resource_39e:2484 has two three-argument calls that set movs r0,#0
+  // between the r1/r2 immediate shifts, same low-destination tie-break tell.
+  "assets/code/resource_39e_c_02002484.c",
+  // resource_39e:268c/2778: same movs-r0-between-shifts low-destination
+  // tell on their three-argument calls.
+  "assets/code/resource_39e_c_0200268c.c",
+  "assets/code/resource_39e_c_02002778.c",
 ]);
 // resource_372:0ec4's five module-local calls make r7 unavailable in the
 // reference allocation.  Reserving it restores the exact saved-register set;
@@ -1170,6 +1188,10 @@ const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
   "assets/code/resource_39c_c_020014cc.c",
   "assets/code/resource_3bf_c_0200175c.c",
   "assets/code/resource_3bf_c_020017bc.c",
+  // resource_3b9:055c reloads the flag-id pool word 0x3c1 independently at its
+  // test and set call sites; sharing it in r5 adds a push/pop the reference
+  // does not have (tell: reference pushes {lr}, candidate pushes {r5, lr}).
+  "assets/code/resource_3b9_c_0200055c.c",
 ]);
 const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
   "assets/code/resource_380_c_02000104.c",

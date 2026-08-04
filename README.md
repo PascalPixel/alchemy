@@ -13,7 +13,7 @@ Twenty-five years after *Golden Sun* was first released, Alchemy is an
 automated, clean-room attempt to reconstruct the Game Boy Advance classic as
 readable C code, data, artwork, maps, and music.
 
-## DONE: Currently 26%
+## DONE: Currently 27%
 
 26% of the game's audited executable bytes now build from exact, byte-matching
 C, or belong to the small pieces of low-level code intentionally kept as
@@ -37,7 +37,7 @@ Bright cyan is exact C, the softer cyan is readable C still being matched, gray
 is code still to reconstruct, and dark gray is permanent low-level assembly.
 Eleven of those modules are already completely exact, byte-matching C.
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=b44ca615)
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=a7876f38)
 
 ### Images and data
 

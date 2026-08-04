@@ -1,5 +1,10 @@
 #include "types.h"
 
+/* STILL-OPEN: adopt --where differing_bytes=33/148. alchemist.ts exhausted
+ * (tiers: original-order, priority, unaligned; 34 licensed compiles tried,
+ * no improving move found). overlay_mode_cohort singles sweep: no config
+ * closes it either. Genuinely unfixed within budget. */
+
 u32 Func_080000f8(void);
 void Func_08000128();
 u8 *Func_080090c8();

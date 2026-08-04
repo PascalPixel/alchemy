@@ -1,5 +1,21 @@
 #include "types.h"
 
+/* STILL-OPEN: fixed a real bug this session -- the original source read the
+ * RAM word via a folded numeric literal `*(s32 *)(0x02000240 + 500)`, which
+ * GCC constant-folds into a single direct-address load; the reference wants
+ * a symbol + runtime-computed index (`movs r2,#250 / lsls r2,#1 / adds
+ * r3,r3,r2`), matching sibling owners (resource_3bb_c_020012f0.c etc.) that
+ * read the same word via `Data_02000240[N]` array syntax. Rewriting as
+ * `Data_02000240[125]` (s32 element type, 125*4=500 bytes) took adopt from
+ * differing_bytes=177/192 to differing_bytes=62/192. The remainder is an
+ * r5/r6-class register-allocation swap in the callee's return-value use --
+ * alchemist.ts exhausted (tiers: depend-count, model-divergence,
+ * original-order, priority, unaligned; 8 compiles, no improving move) and
+ * overlay_mode_cohort singles sweep found no closing config. Genuinely
+ * unfixed within budget; the Data_02000240 rewrite is a real improvement,
+ * keep it for the next pass.
+ */
+
 /*
  * resource_3bb owner at 0x02000400, 192 bytes (0x02000400-0x020004bf):
  * 182 bytes of code, two alignment bytes at 0x020004b6, and the two-word
@@ -48,14 +64,18 @@ void Func_080091c0();
 /* This overlay's own routine at file offset 0x0310. */
 void Func_02000310();
 
+/* RAM global read via symbol + runtime index, matching sibling owners
+ * (resource_3bb_c_020012f0.c etc.) that read this same word. */
+extern s32 Data_02000240[];
+
 void Func_02000400(void)
 {
     u8 *record;
-    s32 x;
     s32 partner;
     s32 step;
+    s32 x;
 
-    record = Func_0808a080(*(s32 *)(0x02000240 + 500));
+    record = Func_0808a080(Data_02000240[125]);
     x = *(s32 *)(record + 8) >> 20;
 
     step = 0;

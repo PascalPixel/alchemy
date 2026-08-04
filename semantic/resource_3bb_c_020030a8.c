@@ -1,5 +1,9 @@
 #include "types.h"
 
+/* STILL-OPEN: adopt --where differing_bytes=11/64. alchemist.ts refused
+ * (tiers: class, priority) -- matches the documented DEAD-END FINGERPRINT
+ * (adjacent register swap in an asrs/str block), genuinely unfixed. */
+
 /* Per-site veneers (raw sub_ symbols from the overlay .s). */
 extern s32 *Func_02007128(s32 selector);
 extern void Func_02006f34(s32 *actor);

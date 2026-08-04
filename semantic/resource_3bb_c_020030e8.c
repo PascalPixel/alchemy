@@ -1,5 +1,9 @@
 #include "types.h"
 
+/* STILL-OPEN: adopt --where differing_bytes=13/80. alchemist.ts refused
+ * (tiers: class, priority) -- matches the documented DEAD-END FINGERPRINT
+ * (adjacent register swap in an asrs/str block), genuinely unfixed. */
+
 /*
  * resource_3bb owner at 0x020030e8, 80 bytes: spawn an object and run a
  * short fixed setup sequence on it.

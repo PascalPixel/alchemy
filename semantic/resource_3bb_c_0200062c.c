@@ -1,5 +1,10 @@
 #include "types.h"
 
+/* STILL-OPEN: adopt --where differing_bytes=10/112. alchemist.ts refused
+ * (tiers: class, depend-count, model-divergence, priority) -- matches the
+ * documented DEAD-END FINGERPRINT (adjacent r5/r6-class register swap in an
+ * asrs/str block), genuinely unfixed, do not hand-permute. */
+
 /*
  * resource_3bb owner at 0x0200062c, 112 bytes (0x0200062c-0x0200069b), all
  * code: the body loads no literal pool and no pool sits inside the span.

@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3b9 owner at 0x02002820, 228 bytes: a flag-gated three-call

@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 372 scene setup at 0x02002dec (960 bytes, 78 distinct call targets

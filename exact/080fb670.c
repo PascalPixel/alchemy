@@ -25,8 +25,7 @@
  *     stack slot. Must be read with the surrounding code; must NOT be
  *     pattern-matched against other files.
  */
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 struct MusicPlayerState;
 

@@ -5,11 +5,7 @@
  * resolved as 0x0200a69c and 0x0200a644; all 31 direct sites plus the generic
  * call-through callback were independently resolved in resource_3b4.
  */
-typedef signed int s32;
-typedef unsigned int u32;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 u8 *Func_0808a080(s32 slot);
 void Func_0808a090(s32 id, s32 value, s32 callback);

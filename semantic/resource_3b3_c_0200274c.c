@@ -85,9 +85,7 @@
  *    written separately because the assembly rejects on each independently.
  */
 
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
 void Func_080000d0();           /* install a per-frame task */

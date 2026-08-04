@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 372 cutscene script step at 0x0200150c (244 bytes, 23 distinct

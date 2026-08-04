@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned short u16;
+#include "types.h"
 
 /*
  * Prepare the scene service selected by index zero, set its halfword at +6,

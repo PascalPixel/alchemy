@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3a4 owner at 0x02002d08, 80 bytes: a fixed sequence of

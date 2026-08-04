@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Select one of three overlay-local scene records from the signed state code

@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3bc owner at 0x020025c8, 120 bytes: place three entities (slots

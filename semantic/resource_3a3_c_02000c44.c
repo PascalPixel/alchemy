@@ -1,8 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * Resource 3a3 per-frame object callback at 0x02000c44 (196 bytes,

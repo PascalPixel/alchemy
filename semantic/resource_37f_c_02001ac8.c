@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * Resource 37f, owner at 0x02001ac8 (76 bytes of code + a two-word literal

@@ -1,7 +1,4 @@
-typedef signed int s32;
-typedef signed short s16;
-typedef unsigned short u16;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_3bb owner at 0x020039fc, 232 bytes (0x020039fc-0x02003ae3):

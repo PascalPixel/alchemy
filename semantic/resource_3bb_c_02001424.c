@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /* Scene-two presentation script, including its two overlay-local setup hooks. */
 extern s16 Data_02000240[];

@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_38d owner at 0x02000568, 140 bytes: code 0x02000568-0x020005e3 and

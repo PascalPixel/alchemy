@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_383 owner at 0x02001348, 1608 bytes (0x02001348-0x0200198f):

@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
+#include "types.h"
 
 u8 *Func_08006c24(u8 *left, u8 *right, u16 size)
 {

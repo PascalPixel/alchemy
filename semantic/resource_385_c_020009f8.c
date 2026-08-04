@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Complete flag-0x867 actor-21 arrival scene.  The one-time path stages two

@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * Resource 394 metatile blit at 0x02000098.

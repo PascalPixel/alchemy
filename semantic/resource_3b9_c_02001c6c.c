@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3b9 owner at 0x02001c6c, 100 bytes: check a fixed status id;

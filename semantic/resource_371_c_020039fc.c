@@ -101,10 +101,7 @@
  *    (`movs rN,#C / lsls rN,rN,#5 or #6`); nothing here proves a page size.
  */
 
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
 void Func_080000c0();           /* wait n frames */

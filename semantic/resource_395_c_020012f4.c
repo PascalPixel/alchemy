@@ -1,5 +1,4 @@
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 395 gesture dispatcher at 0x020012f4 (568 bytes,

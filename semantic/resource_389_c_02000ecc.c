@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_389 owner at 0x02000ecc, 444 bytes: emit a ring of six effects

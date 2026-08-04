@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /* Complete two-spawn owner and its pools, 0x02001df8-0x02001ec7. */
 extern u8 *Data_03001ebc;

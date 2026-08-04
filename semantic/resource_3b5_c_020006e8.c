@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3b5, owner at 0x020006e8 (62 bytes, all code; no literal pool).

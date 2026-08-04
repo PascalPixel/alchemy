@@ -1,5 +1,5 @@
 /* Scene setup for slot 11 and effect 181. */
-typedef int s32;
+#include "types.h"
 void Func_0808a018(void); void Func_0808a020(void);
 void Func_0808a0f0(s32,s32,s32); void Func_080770c8(s32);
 void Func_0808a398(s32,s32); void Func_0808a060(s32,s32);

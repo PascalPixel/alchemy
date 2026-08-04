@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3ad owner at 0x02000828, a 2448-byte scripted scene sequence.

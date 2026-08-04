@@ -1,6 +1,5 @@
 /* Copy the low two mode bits into the object's owner record. */
-typedef signed int s32;
-typedef unsigned char u8;
+#include "types.h"
 
 void Func_020009dc(u8 *object, s32 mode)
 {

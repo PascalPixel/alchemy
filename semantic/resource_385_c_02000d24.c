@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /* Complete flag-0x200 scene-cell enable wrapper through alignment. */
 extern void Func_080770c8(s32 flag);

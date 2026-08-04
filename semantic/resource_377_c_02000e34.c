@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_377 owner at 0x02000e34, 196 bytes.  Complete owner: 'push {r5, lr}'

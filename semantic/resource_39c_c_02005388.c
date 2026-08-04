@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * resource_39c owner at 0x02005388, 208 bytes: spawn two secondary objects

@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 /* Actor-8 tile-triggered presentation owner, 0x02000380-0x020003e3. */
 u8 *Func_0808a080(); void Func_020004f4(); void Func_080091c0();
 void Func_080091e0(); void Func_080770c8();

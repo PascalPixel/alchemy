@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_39c owner at 0x020016c4, 204 bytes: three-iteration setup loop,

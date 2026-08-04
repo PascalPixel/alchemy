@@ -1,4 +1,4 @@
-typedef signed short s16;
+#include "types.h"
 
 extern void Func_080770c8();
 

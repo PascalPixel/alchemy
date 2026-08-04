@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * resource_3af owner at 0x02000af0, 168 bytes: actor 24's interaction

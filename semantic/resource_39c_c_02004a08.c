@@ -1,7 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Run the actor-3 scene only when actor 8 occupies coarse column 48. The

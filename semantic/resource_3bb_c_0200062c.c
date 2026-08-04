@@ -1,4 +1,4 @@
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3bb owner at 0x0200062c, 112 bytes (0x0200062c-0x0200069b), all

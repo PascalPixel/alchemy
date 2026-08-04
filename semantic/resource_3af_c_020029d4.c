@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3af owner at 0x020029d4, 424 bytes: a full scripted scene,

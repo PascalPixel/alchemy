@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /* resource_3b3 callback owner at 0x020026b8, 148 bytes: scan actors 8-11 for
  * one occupying a narrow box relative to actor 0, forward its two-bit handle

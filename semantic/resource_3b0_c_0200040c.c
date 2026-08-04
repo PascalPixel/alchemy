@@ -1,4 +1,4 @@
-typedef unsigned char u8;
+#include "types.h"
 /* Two-placement scripted camera owner at 0x0200040c, 92 bytes. The preceding
  * eight ranked bytes belong to the prior pool and are deliberately unclaimed. */
 void Func_0808a018(); void Func_0808a210(); void Func_080000c0();

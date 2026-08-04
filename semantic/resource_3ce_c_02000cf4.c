@@ -1,5 +1,4 @@
-typedef signed int s32;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * Resource 3ce value-entry loop at 0x02000cf4 (532 bytes,

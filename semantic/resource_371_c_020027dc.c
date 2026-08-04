@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /* Install result 33 in the first active type-0x8a registry record. */
 struct RegistryRecord_020027dc {

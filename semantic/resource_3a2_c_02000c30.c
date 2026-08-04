@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3a2 owner at 0x02000c30, 924 bytes.  A scripted cutscene beat,

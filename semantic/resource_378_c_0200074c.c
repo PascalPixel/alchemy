@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 378 scene setup at 0x0200074c.  The data at 0x7f8--0x81b is an

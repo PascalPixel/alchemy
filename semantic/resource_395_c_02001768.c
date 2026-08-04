@@ -1,6 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 extern void Func_02001838(s32 strength);
 extern u16 Func_020017d0(u16 colour, s32 strength);

@@ -1,5 +1,4 @@
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3c7 main cutscene at 0x02000508 — the overlay's largest owner.

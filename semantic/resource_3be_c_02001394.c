@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3be owner at 0x02001394, 240 bytes: THE OVERLAY'S ENTRY

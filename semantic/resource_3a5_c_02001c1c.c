@@ -1,6 +1,4 @@
-typedef unsigned short u16;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /* Initialize the palette buffer, start its task, and clear both phase words. */
 extern void Func_080001a8(void *source, void *destination);

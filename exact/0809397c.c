@@ -25,9 +25,7 @@
  *     every site in the tree feeds it a sum of squares and consumes the
  *     result as a length. Reads as a square root; NOT asserted
  */
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 s32 Func_080072f0(s32, s32, s32, s32);
 s32 Func_080022ec(s32, s32);

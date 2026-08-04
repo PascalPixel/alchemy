@@ -1,5 +1,5 @@
 /* Linear actor-22 scene and camera setup. */
-typedef unsigned char u8;
+#include "types.h"
 u8 *Func_0808a080();
 void Func_0808a018(); void Func_0808a210(); void Func_0808a0a8();
 void Func_080000d8(); void Func_0808a0d0(); void Func_0808a0f0();

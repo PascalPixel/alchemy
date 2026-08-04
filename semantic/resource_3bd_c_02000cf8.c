@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3bd owner at 0x02000cf8 (80 bytes).  The single scene record is

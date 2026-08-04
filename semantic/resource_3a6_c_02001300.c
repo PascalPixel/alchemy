@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 struct ActorRecord_02001300 {
     u8 padding00[0x30];

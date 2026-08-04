@@ -1,4 +1,4 @@
-typedef unsigned char u8;
+#include "types.h"
 
 /*
  * resource_3a2 owner at 0x020010b8, 140 bytes.  Complete owner:

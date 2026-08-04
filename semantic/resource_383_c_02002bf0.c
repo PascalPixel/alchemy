@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * Stage the opening formation and dismiss actors 10-12 in sequence. The

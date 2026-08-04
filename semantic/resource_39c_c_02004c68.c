@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_39c owner at 0x02004c68, 732 bytes through its ten-word tail

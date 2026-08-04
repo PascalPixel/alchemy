@@ -79,11 +79,7 @@
  *  - The imports' interfaces are unknown, hence the old-style declarations.
  */
 
-typedef signed int s32;
-typedef signed short s16;
-typedef signed char s8;
-typedef unsigned char u8;
-typedef unsigned short u16;
+#include "types.h"
 
 extern s16 Data_02000240[];     /* RAM workspace; element 224 is the map id */
 extern s32 Data_02001000;       /* balance snapshot, written by Func_020009f8 */

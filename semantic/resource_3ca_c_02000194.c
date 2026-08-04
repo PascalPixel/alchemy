@@ -1,7 +1,4 @@
-typedef signed int s32;
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
+#include "types.h"
 
 /*
  * Resource 3ca per-frame scene driver at 0x02000194 (554 bytes,

@@ -1,4 +1,4 @@
-typedef int s32;
+#include "types.h"
 
 /*
  * resource_3af owner at 0x02000bb8, 56 bytes: a once-only reward grant

@@ -96,7 +96,16 @@ async function migrateOverlayFile(path: string, workRoot: string): Promise<Migra
   const afterWork = join(work, "after");
   mkdirSync(beforeWork, { recursive: true });
   mkdirSync(afterWork, { recursive: true });
-  const before = compileOverlayCandidate(path, beforeWork, overlay, path, []);
+  // Some semantic drafts don't compile cleanly as-is yet (still WIP, not a
+  // closed owner) -- that's a pre-existing property of the file, unrelated
+  // to this edit, so it must be caught here too, not just around the "after"
+  // compile below.
+  let before: { data: Buffer };
+  try {
+    before = compileOverlayCandidate(path, beforeWork, overlay, path, []);
+  } catch (error) {
+    return { path, status: "verify-failed", detail: `before-edit compile failed: ${(error as Error).message.slice(0, 100)}` };
+  }
 
   // Compile the edit IN PLACE at the real path, never a scratch copy: per-
   // source flag routing (NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES and friends
@@ -128,7 +137,12 @@ async function migrateMainFile(path: string, workRoot: string, rom: Buffer): Pro
   const afterWork = join(work, "after");
   mkdirSync(beforeWork, { recursive: true });
   mkdirSync(afterWork, { recursive: true });
-  const before = await verifyCandidate(path, rom, beforeWork, [], ROM_BASE, "gs1", { family: "routed", removeFlags: [] });
+  let before: { actual: Uint8Array };
+  try {
+    before = await verifyCandidate(path, rom, beforeWork, [], ROM_BASE, "gs1", { family: "routed", removeFlags: [] });
+  } catch (error) {
+    return { path, status: "verify-failed", detail: `before-edit compile failed: ${(error as Error).message.slice(0, 100)}` };
+  }
 
   // Same in-place rationale as migrateOverlayFile: verifyCandidate always
   // routes on its own `source` argument, so a scratch path would silently
@@ -194,16 +208,14 @@ function selfTest(): void {
   console.log("self-test=ok tool=typedef-header-migrate");
 }
 
+// Since the exact/semantic tree consolidation, exact/ and semantic/ each
+// hold both main-image and overlay sources together, so the main-vs-overlay
+// choice must be made per file by filename shape, not by directory scope.
+const MAIN_IMAGE_NAME = /^[0-9a-f]{8}\.c$/i;
+
 async function main(): Promise<void> {
   if (Bun.argv.includes("--self-test")) return selfTest();
   const args = Bun.argv.slice(2);
-  // NOTE: this tool predates the exact/semantic tree consolidation (see
-  // exact_semantic_tree_migrate.ts) and was a one-shot pass already run and
-  // committed against the old assets/code/semantic/main/semantic/overlays
-  // layout. Its region-based branching (migrateOverlayFile vs
-  // migrateMainFile) no longer maps cleanly onto the merged exact/ and
-  // semantic/ directories, which each now hold both regions together -- do
-  // not re-run this tool without reworking that split first.
   const scope = args.find((arg) => !arg.startsWith("--")) ?? "exact";
   const dryRun = args.includes("--dry-run");
   const work = resolve(ROOT, "work/typedef-migrate");
@@ -212,7 +224,7 @@ async function main(): Promise<void> {
   const files = readdirSync(dir).filter((name) => name.endsWith(".c")).map((name) => join(dir, name));
   console.log(`scanning ${files.length} files in ${scope}${dryRun ? " (dry run)" : ""}`);
 
-  const rom = scope === "semantic/main" ? readFileSync(join(ROOT, "roms/gs1-en.gba")) : Buffer.alloc(0);
+  const rom = readFileSync(join(ROOT, "roms/gs1-en.gba"));
   let migrated = 0;
   let unchanged = 0;
   let failed = 0;
@@ -222,7 +234,7 @@ async function main(): Promise<void> {
       if (changed) migrated++; else unchanged++;
       continue;
     }
-    const result = scope === "semantic/main"
+    const result = MAIN_IMAGE_NAME.test(basename(file))
       ? await migrateMainFile(file, work, rom)
       : await migrateOverlayFile(file, work);
     if (result.status === "migrated") migrated++;

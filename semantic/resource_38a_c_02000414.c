@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef signed short s16;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_38a owner at 0x02000414, 176 bytes: THE OVERLAY'S ENTRY

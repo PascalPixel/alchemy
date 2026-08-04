@@ -1,5 +1,4 @@
-typedef unsigned char u8;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Complete scene-variant eleven actor-zero presentation sequence.  Two paired

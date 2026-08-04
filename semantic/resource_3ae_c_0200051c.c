@@ -1,7 +1,4 @@
-typedef unsigned short u16;
-typedef unsigned char u8;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * Resource 3ae, owner at 0x0200051c (364 bytes including its six-word pool at

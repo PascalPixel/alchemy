@@ -1,6 +1,4 @@
-typedef unsigned char u8;
-typedef unsigned int u32;
-typedef signed int s32;
+#include "types.h"
 
 /*
  * resource_3c5 owner at 0x02000d4c, 352 bytes: code 0x02000d4c-0x02000e95, a

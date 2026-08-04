@@ -1160,6 +1160,12 @@ const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
   "assets/code/resource_3c9_c_0200215c.c",
   "assets/code/resource_3c9_c_020021ac.c",
   "assets/code/resource_3c9_c_02003600.c",
+  // resource_397:02a0 writes Data_02008614 (u16*) and Data_02008616 (u16*)
+  // through two independent pointers the strict-aliasing analysis treats as
+  // possibly overlapping with the u32 blendPhase local, hoisting the second
+  // pool-address load; the reference schedules it before the second fieldB
+  // reload. Mode cohort: exact under alias-strict-off alone.
+  "assets/code/resource_397_c_020002a0.c",
 ]);
 const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   // resource_3ad:01b0 tests flag 0x202 and then sets it, so the pooled word is

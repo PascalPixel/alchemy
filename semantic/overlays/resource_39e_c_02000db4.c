@@ -36,10 +36,13 @@ typedef unsigned int u32;
  * fixed-point constants are transcribed, meaning unknown.
  */
 
-extern u8 *Func_0808a080(s32 id);
-extern void Func_080000c0(s32 arg0);
-extern void Func_080f9010(s32 sound_id);
-extern void Func_0200013c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
+extern u8 *Func_020051c6(s32 id);
+extern void Func_02005118(s32 arg0);
+extern void Func_02005370(s32 sound_id);
+extern void Func_02000f4c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
+extern void Func_02000f62(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
+extern void Func_02000f86(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
+extern void Func_02000fa2(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
 
 void Func_02000db4(void)
 {
@@ -47,26 +50,26 @@ void Func_02000db4(void)
     u32 i;
     s32 step;
 
-    record = Func_0808a080(19);
+    record = Func_020051c6(19);
     step = 8;
     for (i = 0; i <= 3; i++) {
-        Func_080000c0(step);
+        Func_02005118(step);
         *(s32 *)(record + 16) += 0xffff0000;
         *(u32 *)(record + 64) = 0x80000000;
         step -= 2;
     }
     *(u16 *)(*(u8 **)(record + 80) + 30) = 0;
-    Func_080f9010(227);
-    Func_0200013c(*(s32 *)(record + 8), *(s32 *)(record + 12),
+    Func_02005370(227);
+    Func_02000f4c(*(s32 *)(record + 8), *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + 0xfff80000, 0xffff3334,
                   0, 0xffffcccd, 0, 0);
-    Func_0200013c(*(s32 *)(record + 8), *(s32 *)(record + 12),
+    Func_02000f62(*(s32 *)(record + 8), *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + 0xfff80000, 0x0000cccc,
                   0, 0xffffcccd, 0, 0);
-    Func_0200013c(*(s32 *)(record + 8) + 0xfffa0000, *(s32 *)(record + 12),
+    Func_02000f86(*(s32 *)(record + 8) + 0xfffa0000, *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + (160 << 12), 0x00003333,
                   0, 0xffff0000, 0, 0);
-    Func_0200013c(*(s32 *)(record + 8) + (192 << 11), *(s32 *)(record + 12),
+    Func_02000fa2(*(s32 *)(record + 8) + (192 << 11), *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + (160 << 12), 0x00003333,
                   0, 0xffff0000, 0, 0);
 }

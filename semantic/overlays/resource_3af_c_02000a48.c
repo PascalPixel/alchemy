@@ -73,7 +73,8 @@ void Func_02000a48(void)
         Func_0808a180(21, 0);
         record = Func_0808a080(21);
         draw = ((u32)Func_080000f8() * 90) >> 16;
-        *(u16 *)(record + 100) = (u16)(draw + 60);
+        draw = (u16)(draw + 60);
+        *(u16 *)(record + 100) = (u16)draw;
         Func_0808a098(21, 0x0200c4d8);
     } else {
         Func_0808a1e8(21, 0x103, 0);

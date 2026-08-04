@@ -73,16 +73,18 @@ typedef signed int s32;
  * It is not a missing save; nothing reads r4 across a call here.
  */
 
-u8 *Func_0808a080();           /* record fetch, returns the record */
-void Func_080000c0();          /* advance the task scheduler */
-s32 Func_08000120();           /* along-axis trig lookup */
-s32 Func_08000118();           /* across-axis trig lookup */
-void Func_080f9010();          /* one-argument notify */
-void Func_0200013c();          /* local: spawn, eight arguments */
+u8 *Func_020050e4();           /* record fetch, returns the record */
+void Func_02005038();          /* advance the task scheduler */
+s32 Func_0200506e();           /* along-axis trig lookup */
+s32 Func_02005078();           /* across-axis trig lookup */
+void Func_020052ac();          /* one-argument notify */
+void Func_02000e92();          /* local: spawn, eight arguments (entry 1) */
+void Func_02000eaa();          /* local: spawn, eight arguments (entry 2) */
+void Func_02000ec8();          /* local: spawn, eight arguments (entry 3) */
 
 void Func_02000cd4(void)
 {
-    u8 *record = Func_0808a080(19);
+    u8 *record = Func_020050e4(19);
     s32 index;
     s32 angle;
     s32 scalar;
@@ -90,27 +92,27 @@ void Func_02000cd4(void)
     for (index = 8; index <= 12; index++) {
         angle = index << 12;
         *(u16 *)(*(u8 **)(record + 80) + 30) = (u16)angle;
-        Func_080000c0((12 - index) * 2);
-        *(s32 *)(record + 8) -= Func_08000120(angle) * 6;
-        *(s32 *)(record + 16) -= Func_08000118(angle) * 6;
+        Func_02005038((12 - index) * 2);
+        *(s32 *)(record + 8) -= Func_0200506e(angle) * 6;
+        *(s32 *)(record + 16) -= Func_02005078(angle) * 6;
     }
 
     *(s32 *)(record + 12) = 0x120000;          /* 144 << 13, i.e. 18.0 */
     *(s32 *)(record + 60) = 0x120000;
     *(s32 *)(record + 24) = -0xcccc;           /* 0xffff3334 */
 
-    Func_080f9010(227);
+    Func_020052ac(227);
 
     scalar = 0x3333;                           /* parked in r8 for the third */
-    Func_0200013c(*(s32 *)(record + 8) - 0xc0000,
+    Func_02000e92(*(s32 *)(record + 8) - 0xc0000,
                   *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + 0x80000,
                   0x10000, scalar, 0, 0, 0);
-    Func_0200013c(*(s32 *)(record + 8),
+    Func_02000eaa(*(s32 *)(record + 8),
                   *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + 0x80000,
                   0xcccc, 0x4ccc, 0, 0, 0);
-    Func_0200013c(*(s32 *)(record + 8) + 0xa0000,
+    Func_02000ec8(*(s32 *)(record + 8) + 0xa0000,
                   *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + 0x80000,
                   scalar, 0x6666, 0, 0, 0);

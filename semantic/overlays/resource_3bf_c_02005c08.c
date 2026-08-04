@@ -21,24 +21,34 @@ typedef unsigned long long u64;
  * or more are not defined by the original code either.  The C below matches
  * the assembly for every count the assembly itself defines.
  */
+typedef union {
+    u64 whole;
+    struct {
+        u32 lo;
+        u32 hi;
+    } parts;
+} SplitU64;
+
 u64 Func_02005c08(u64 value, u32 count)
 {
-    u32 lo = (u32)value;
-    u32 hi = (u32)(value >> 32);
-    u32 resultLo;
-    u32 resultHi;
+    u32 lo;
+    u32 hi;
+    SplitU64 result;
 
     if (count == 0u) {
         return value;
     }
 
+    lo = (u32)value;
+    hi = (u32)(value >> 32);
+
     if ((int)(32 - count) <= 0) {
-        resultLo = hi >> (count - 32u);
-        resultHi = 0u;
+        result.parts.lo = hi >> (count - 32u);
+        result.parts.hi = 0u;
     } else {
-        resultLo = (lo >> count) | (hi << (32u - count));
-        resultHi = hi >> count;
+        result.parts.lo = (lo >> count) | (hi << (32u - count));
+        result.parts.hi = hi >> count;
     }
 
-    return ((u64)resultHi << 32) | resultLo;
+    return result.whole;
 }

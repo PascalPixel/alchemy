@@ -1,5 +1,10 @@
 #include "types.h"
 
+/* STILL-OPEN: adopt --where differing_bytes=116/308. alchemist.ts exhausted
+ * (tiers: class, depend-count, model-divergence, original-order, priority;
+ * 11 licensed compiles, no improving move found). Genuinely unfixed within
+ * budget -- large multi-tier residual, not a simple symbol issue. */
+
 /*
  * Scene-one presentation script.  The shared scene state supplies the early
  * teardown path; otherwise a status probe selects the one-time setup, retry,

@@ -1,5 +1,10 @@
 #include "types.h"
 
+/* STILL-OPEN: adopt --where differing_bytes=35/232. alchemist.ts exhausted
+ * (tiers: original-order, unaligned; 43 licensed compiles tried, no
+ * improving move found). overlay_mode_cohort singles sweep: no config
+ * closes it either. Genuinely unfixed within budget. */
+
 /*
  * resource_3bb owner at 0x020039fc, 232 bytes (0x020039fc-0x02003ae3):
  * code 0x020039fc-0x02003ab9, a seven-word literal pool at 0x02003aba that

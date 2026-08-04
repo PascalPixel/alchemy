@@ -9,7 +9,7 @@ typedef signed int s32;
  * positive collision result. Prologue through the real zero return at
  * 0x0200061a-0x02000622, with three pool words through 0x0200062f. */
 s32 *Func_02000350();
-s32 Func_080091d8();
+s32 Func_0200602a();
 
 static void ClearMotion_0200058c(u8 *object)
 {
@@ -50,7 +50,7 @@ s32 Func_0200058c(u8 *object)
     position[0] = *(s32 *)(object + 8) + (delta & (s32)0xffff0000);
     position[1] = *(s32 *)(object + 12);
     position[2] = *(s32 *)(object + 16) + (s32)((unsigned)delta << 16);
-    if (Func_080091d8(object, position) > 0)
+    if (Func_0200602a(object, position) > 0)
         ClearMotion_0200058c(object);
     return 0;
 }

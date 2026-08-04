@@ -41,9 +41,13 @@ void Func_020059f0(u8 *arg0)
 
         Func_02005688(arg0);
 
-        counter = *(u8 *)(arg0 + 98);
-        if (counter > 0 && counter <= 31) {
-            *(u8 *)(arg0 + 98) = (u8)(counter + 1);
+        {
+            u32 c = *(u8 *)(arg0 + 98);
+            if (c != 0) {
+                if (c <= 31) {
+                    *(u8 *)(arg0 + 98) = (u8)(c + 1);
+                }
+            }
         }
     }
 }

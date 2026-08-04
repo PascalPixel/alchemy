@@ -680,7 +680,7 @@ function install(stem: string, source: string, rom: Buffer, scratch: string): bo
     console.log(`skip ${stem}: asm region longer than matched C`);
     return false;
   }
-  writeFileSync(join(ROOT, "src", `${stem}.c`), source);
+  writeFileSync(join(ROOT, "exact", `${stem}.c`), source);
   rmSync(join(ROOT, "asm", `${stem}.s`), { force: true });
   return true;
 }
@@ -690,7 +690,7 @@ async function main(): Promise<void> {
   const rom = readFileSync(options.rom);
   const output = join(ROOT, "out/permute1/work");
   mkdirSync(output, { recursive: true });
-  const tracked = new Set(readdirSync(join(ROOT, "src")).filter((name) => name.endsWith(".c")).map((name) => basename(name, ".c")));
+  const tracked = new Set(readdirSync(join(ROOT, "exact")).filter((name) => name.endsWith(".c")).map((name) => basename(name, ".c")));
   const retained = retainedAssemblyStems();
   let stems: string[];
   if (options.targetsFile !== undefined) {

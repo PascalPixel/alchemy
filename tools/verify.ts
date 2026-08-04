@@ -129,8 +129,11 @@ function main(): void {
   const outputDir = join(ROOT, target.outputDir, "verify");
   mkdirSync(outputDir, { recursive: true });
   const sourceDirectory = join(ROOT, target.sourceDir);
+  // verify() parses the filename itself as the absolute ROM address (see
+  // stem() usage below) -- main-image-only, same reasoning as
+  // build_claimed.ts's identical filter.
   const sources = readdirSync(sourceDirectory, { withFileTypes: true })
-    .filter((entry) => entry.isFile() && entry.name.endsWith(".c"))
+    .filter((entry) => entry.isFile() && /^[0-9a-f]{8}\.c$/i.test(entry.name))
     .map((entry) => join(sourceDirectory, entry.name)).sort();
   const failures: string[] = [];
   let total = 0;

@@ -77,14 +77,33 @@ typedef signed int s32;
  *     be a legitimate coordinate.
  */
 
-extern u8 *Func_0808a080(s32 index);   /* scene-record accessor */
-extern s32 Func_080770c0();            /* scene/event flag test */
-extern void Func_0808a158(s32 index, s32 value);
+/*
+ * Per-site call symbols: byte-matching this overlay's `bl` needs the RAW
+ * pc-relative decode of the reference halfwords, not the semantic import
+ * address -- confirmed on resource_3c9:3660 and :1280 (see those files).
+ * Ten sites in call order, from `overlay_show`'s plain (non-annotate)
+ * listing: 0x2009516 (x2, shared by the first Func_0808a080(20) accessor
+ * AND the later Func_080770c0(0x235) flag test -- same raw target,
+ * different real callees, old-style declaration below covers both),
+ * 0x200951e, 0x20095fa, 0x2009602, 0x200963c, 0x2009644, 0x200964e,
+ * 0x2009656, 0x2009586.
+ */
+s32 Func_02009516();  /* Func_0808a080(20) accessor, and separately
+                        * Func_080770c0(0x235) flag test -- shared raw
+                        * target, old-style so both 1-arg call shapes work */
+u8 *Func_0200951e(s32 index);          /* Func_0808a080(19) accessor */
+void Func_020095fa(s32 index, s32 value); /* Func_0808a158(20, 7) */
+void Func_02009602(s32 index, s32 value); /* Func_0808a158(19, 7) */
+void Func_0200963c(s32 index, s32 value); /* Func_0808a158(20, 15) */
+void Func_02009644(s32 index, s32 value); /* Func_0808a158(19, 0) */
+void Func_0200964e(s32 index, s32 value); /* Func_0808a158(20, 0) */
+void Func_02009656(s32 index, s32 value); /* Func_0808a158(19, 15) */
+s32 Func_02009586(s32 flag);           /* Func_080770c0(141 << 2) */
 
 void Func_020037c4(void)
 {
-    u8 *lead = Func_0808a080(20);
-    u8 *follow = Func_0808a080(19);
+    u8 *lead = (u8 *)Func_02009516(20);
+    u8 *follow = Func_0200951e(19);
     s32 arrived;
 
     /*
@@ -106,9 +125,9 @@ void Func_020037c4(void)
     *(u16 *)(lead + 6) = 0;
     *(u16 *)(follow + 6) = 0;
 
-    if (Func_080770c0(0x235) != 0) {
-        Func_0808a158(20, 7);
-        Func_0808a158(19, 7);
+    if (Func_02009516(0x235) != 0) {
+        Func_020095fa(20, 7);
+        Func_02009602(19, 7);
         if (*(s32 *)(lead + 24) < (160 << 9)) {
             *(s32 *)(lead + 24) += 128 << 2;
             *(s32 *)(lead + 28) += 128 << 2;
@@ -116,14 +135,14 @@ void Func_020037c4(void)
             *(s32 *)(follow + 28) += 128 << 2;
         }
     } else if ((*(s32 *)0x03001e40 & 2) != 0) {
-        Func_0808a158(20, 15);
-        Func_0808a158(19, 0);
+        Func_0200963c(20, 15);
+        Func_02009644(19, 0);
     } else {
-        Func_0808a158(20, 0);
-        Func_0808a158(19, 15);
+        Func_0200964e(20, 0);
+        Func_02009656(19, 15);
     }
 
-    if (Func_080770c0(141 << 2) == 0) {
+    if (Func_02009586(141 << 2) == 0) {
         return;
     }
 

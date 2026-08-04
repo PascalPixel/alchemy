@@ -126,7 +126,7 @@ async function main(): Promise<void> {
   const exact = misplaced.length === 0 && actual.length === expected.length && actual.equals(expected);
   console.log(`module=${stems.join(",")} bytes=${actual.length}/${expected.length} mismatches=${mismatches} misplaced=${misplaced.length} exact=${exact}`);
   if (install && exact) {
-    writeFileSync(join(ROOT, "src", `${stems[0]}.c`), combined);
+    writeFileSync(join(ROOT, "exact", `${stems[0]}.c`), combined);
     for (const stem of stems) rmSync(join(ROOT, "asm", `${stem}.s`), { force: true });
     console.log(`installed src/${stems[0]}.c with ${stems.length} functions`);
   } else if (install) process.exitCode = 1;

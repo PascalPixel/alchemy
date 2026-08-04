@@ -122,7 +122,7 @@ async function main(): Promise<void> {
   // narrower selection.
   const duplicate = new Set(inventory.families.filter((family) => family.count > 1).map((family) => family.fingerprint));
   const converted = new Set(
-    readdirSync(join(ROOT, "assets/code"))
+    readdirSync(join(ROOT, "exact"))
       .map((name) => /_c_([0-9a-f]{8})\.c$/.exec(name)?.[1])
       .filter((stem): stem is string => stem !== undefined)
       .map((stem) => Number.parseInt(stem, 16)),
@@ -138,7 +138,7 @@ async function main(): Promise<void> {
     const instructions = [...decoded].sort((a, b) => a[0] - b[0]).map((item) => item[1]);
     return {
       stem,
-      source: `src/${stem}.c`,
+      source: `exact/${stem}.c`,
       instructions,
       exact: digest(instructions),
       structural: digest(structural(instructions)),

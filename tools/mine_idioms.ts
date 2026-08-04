@@ -36,8 +36,8 @@ export function templateOf(statement: string): { template: string; slots: number
 function main(): void {
   const dictionary = new Map<string, Set<string>>();
   let statements = 0;
-  for (const name of readdirSync(join(ROOT, "src")).filter((entry) => entry.endsWith(".c"))) {
-    const text = readFileSync(join(ROOT, "src", name), "utf8");
+  for (const name of readdirSync(join(ROOT, "exact")).filter((entry) => entry.endsWith(".c"))) {
+    const text = readFileSync(join(ROOT, "exact", name), "utf8");
     for (const raw of text.split("\n")) {
       const statement = raw.trim();
       if (!statement.endsWith(";") || statement.startsWith("typedef") || statement.startsWith("#") ||

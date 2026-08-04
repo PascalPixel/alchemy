@@ -43,57 +43,58 @@ typedef signed int s32;
 extern u8 Data_0200d158[];
 extern u8 Data_0200d1b8[];
 
-u8 *Func_0808a080();
-void Func_0808a018();
-void Func_0808a210();
-void Func_080000c0();
-void Func_0808a0f0();
-void Func_0808a200();
-void Func_0808a360();
-void Func_0808a090();
-s32 Func_0200341c();
-void Func_0808a098();
-void Func_0808a020();
-void Func_0808a368();
-void Func_0808a370();
-void Func_080770c8();
-void Func_0808a248();
+u8 *Func_02005d9a();
+void Func_02005d80();
+void Func_02005eaa();
+void Func_02005c40();
+void Func_02005e22();
+void Func_02005e2e();
+void Func_02005c64();
+void Func_02005ecc();
+void Func_02005f28();
+void Func_02005e02();
+s32 Func_02004f1c();
+void Func_02005e20();
+void Func_02005e2a();
+void Func_02005ca0();
+void Func_02005f6c();
+void Func_02005f78();
+void Func_02005dc6();
+void Func_02005f44();
 
 void Func_02001a98(void)
 {
-    u8 *actor = Func_0808a080(8);
-    s16 *frame;
+    u8 *actor = Func_02005d9a(8);
 
-    Func_0808a018(actor);
-    Func_0808a210(-1, -1, -1, 0);
-    Func_080000c0(1);
-    Func_0808a0f0(0, 0, 0);
-    Func_0808a0f0(8, 0x1f080000, 0xc80000);
+    Func_02005d80(actor);
+    Func_02005eaa(-1, -1, -1, 0);
+    Func_02005c40(1);
+    Func_02005e22(0, 0, 0);
+    Func_02005e2e(8, 0x1f080000, 0xc80000);
 
     *(s32 *)(actor + 0x18) = 0x14000;
     *(s32 *)(actor + 0x1c) = 0x14000;
 
-    Func_080000c0(1);
-    Func_0808a200(8, 1);
-    Func_0808a360();
-    Func_0808a090(8, 0x9999, 0x4ccc);
+    Func_02005c64(1);
+    Func_02005ecc(8, 1);
+    Func_02005f28();
+    Func_02005e02(8, 0x9999, 0x4ccc);
 
-    frame = (s16 *)(actor + 0x64);
-    *frame = 0;
+    *(s16 *)(actor + 0x64) = 0;
 
-    if (Func_0200341c() == 11) {
-        Func_0808a098(8, Data_0200d1b8);
+    if (Func_02004f1c() == 11) {
+        Func_02005e20(8, Data_0200d1b8);
     } else {
-        Func_0808a098(8, Data_0200d158);
+        Func_02005e2a(8, Data_0200d158);
     }
 
     do {
-        Func_080000c0(1);
-    } while (*frame == 0);
+        Func_02005ca0(1);
+    } while (*(s16 *)(actor + 0x64) == 0);
 
-    Func_0808a368();
-    Func_0808a370();
-    Func_080770c8(0x927);
-    Func_0808a248(106);
-    Func_0808a020();
+    Func_02005f6c();
+    Func_02005f78();
+    Func_02005dc6(0x927);
+    Func_02005f44(106);
+    Func_02005e20();
 }

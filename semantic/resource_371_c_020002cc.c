@@ -7,9 +7,8 @@ typedef signed int s32;
 s32 Func_020002cc(void *arg0)
 {
     u8 *workspace = *(u8 **)0x03001e70;
-    u16 *source = (u16 *)(workspace + 282);
     u8 *object = *(u8 **)((u8 *)arg0 + 80);
-    u16 value = *source;
+    u16 value = *(u16 *)(workspace + 282);
 
     *(u16 *)(object + 30) = value;
     object[38] = 0;

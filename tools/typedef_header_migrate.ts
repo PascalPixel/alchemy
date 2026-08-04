@@ -197,7 +197,14 @@ function selfTest(): void {
 async function main(): Promise<void> {
   if (Bun.argv.includes("--self-test")) return selfTest();
   const args = Bun.argv.slice(2);
-  const scope = args.find((arg) => !arg.startsWith("--")) ?? "assets/code";
+  // NOTE: this tool predates the exact/semantic tree consolidation (see
+  // exact_semantic_tree_migrate.ts) and was a one-shot pass already run and
+  // committed against the old assets/code/semantic/main/semantic/overlays
+  // layout. Its region-based branching (migrateOverlayFile vs
+  // migrateMainFile) no longer maps cleanly onto the merged exact/ and
+  // semantic/ directories, which each now hold both regions together -- do
+  // not re-run this tool without reworking that split first.
+  const scope = args.find((arg) => !arg.startsWith("--")) ?? "exact";
   const dryRun = args.includes("--dry-run");
   const work = resolve(ROOT, "work/typedef-migrate");
 

@@ -174,7 +174,7 @@ export function groupOwners(rows: RowFacts[]): Owner[] {
 
 function admittedStems(): Set<string> {
   const stems = new Set<string>();
-  for (const directory of ["src", join("semantic", "main")]) {
+  for (const directory of ["exact", join("semantic", "main")]) {
     const path = join(ROOT, directory);
     if (!existsSync(path)) continue;
     for (const name of readdirSync(path)) {

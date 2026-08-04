@@ -5,7 +5,7 @@
 // Semantic reconstruction already explains *what the code does* for most
 // overlay owners. When converting one of those rows, the expensive part — reading assembly
 // until the behaviour is clear — is already done and sitting in
-// `semantic/overlays/`. This prints the pairing directly:
+// `semantic/`. This prints the pairing directly:
 // every strict-queue owner that has a semantic source but no exact source, with
 // the path to read and the row's size.
 //
@@ -98,11 +98,11 @@ export function readingList(): Pairing[] {
     readFileSync(join(ROOT, "out", "decomp", "overlays.json"), "utf8"),
   ) as { functions: Row[] };
   const semantic = new Set(
-    existsSync(join(ROOT, "semantic", "overlays"))
-      ? readdirSync(join(ROOT, "semantic", "overlays"))
+    existsSync(join(ROOT, "semantic"))
+      ? readdirSync(join(ROOT, "semantic"))
       : [],
   );
-  const exact = new Set(readdirSync(join(ROOT, "assets", "code")));
+  const exact = new Set(readdirSync(join(ROOT, "exact")));
   const audited = auditedIntervals();
   const pairings: Pairing[] = [];
   for (const row of inventory.functions) {
@@ -124,7 +124,7 @@ export function readingList(): Pairing[] {
       overlay: row.overlay,
       address: `0x${address}`,
       bytes: row.span_bytes,
-      semanticSource: `semantic/overlays/${base}`,
+      semanticSource: `semantic/${base}`,
       blocked: !startsInAuditedSpan(start, intervals),
     });
   }

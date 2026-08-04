@@ -1,5 +1,6 @@
 typedef unsigned char u8;
 typedef signed int s32;
+typedef unsigned int u32;
 
 /*
  * Resource 3b1 unindexed helper at 0x020037b4 (36 bytes, 5 calls).
@@ -19,7 +20,7 @@ u8 *Func_0808a080();
 
 void Func_020037b4(void)
 {
-    s32 index;
+    u32 index;
 
     for (index = 28; index <= 35; index++) {
         u8 *obj = Func_0808a080(index);

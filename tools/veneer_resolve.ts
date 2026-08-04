@@ -489,7 +489,7 @@ export function resolveFunction(rom: Uint8Array, entry: number, end: number): Si
 /** Sorted entry addresses of every owner with a C source, for bounding. */
 export function ownerEntries(): number[] {
   const seen = new Set<number>();
-  for (const dir of [join(ROOT, "semantic", "main"), join(ROOT, "src")]) {
+  for (const dir of [join(ROOT, "semantic"), join(ROOT, "exact")]) {
     if (!existsSync(dir)) continue;
     for (const name of readdirSync(dir)) {
       const stem = basename(name, ".c");

@@ -11087,7 +11087,6 @@
     ,{"overlay":"resource_3be","entry":"0x02000d18","span_bytes":8,"evidence":"literal getter including pool"}
     ,{"overlay":"resource_3be","entry":"0x020010f0","span_bytes":12,"evidence":"single-call wrapper through alignment"}
     ,{"overlay":"resource_3be","entry":"0x02001148","span_bytes":16,"evidence":"two-call wrapper through alignment"}
-    ,{"overlay":"resource_3be","entry":"0x020011c8","span_bytes":16,"evidence":"actor subobject angle decrement through literal pool"}
     ,{"overlay":"resource_3be","entry":"0x020011d8","span_bytes":32,"evidence":"bounded forty-frame actor-height wait"}
     ,{"overlay":"resource_3be","entry":"0x02001384","span_bytes":16,"evidence":"local three-argument wrapper"}
     ,{"overlay":"resource_3be","entry":"0x020010fc","span_bytes":76,"evidence":"complete actor-8 threshold scene wrapper through pool"}
@@ -11201,7 +11200,6 @@
     ,{"overlay":"resource_3c0","entry":"0x02000838","span_bytes":404,"evidence":"complete three-flag actor-13 dialogue, movement and map-restoration scene through six-word pool; all 37 direct call sites preserve branch and machine order"}
     ,{"overlay":"resource_3c0","entry":"0x020009cc","span_bytes":272,"evidence":"complete encounter-entity initialization, proximity publication and periodic effect-spawn owner through five-word pool; all five direct call sites preserve branch and machine order"}
     ,{"overlay":"resource_3c0","entry":"0x02000adc","span_bytes":56,"evidence":"complete flag-gated actor-12 placement and descriptor owner through three-word pool; all four direct calls preserve branch and machine order"}
-    ,{"overlay":"resource_3c0","entry":"0x02000b14","span_bytes":16,"evidence":"complete map-state activation leaf through its sole pointer pool word"}
     ,{"overlay":"resource_3c0","entry":"0x02000b24","span_bytes":220,"evidence":"complete scene-selected encounter close, resource variant and map-actor restoration owner through eight-word pool; all ten direct call sites preserve branch and machine order"}
     ,{"overlay":"resource_3c0","entry":"0x02000c00","span_bytes":228,"evidence":"complete sixty-frame paired-actor fade and scene-selected result owner through four-word pool; all fourteen direct call sites preserve loop, branch and machine order"}
     ,{"overlay":"resource_3c0","entry":"0x02000ce4","span_bytes":64,"evidence":"complete symmetric 64-frame encounter-palette pulse owner through three inline pool words; no callees"}
@@ -11279,7 +11277,6 @@
     ,{"overlay":"resource_371","entry":"0x02003678","span_bytes":100,"evidence":"complete selected-actor presentation and progress synchronizer through three-word pool; all four direct calls preserve branch and machine order"}
     ,{"overlay":"resource_371","entry":"0x020036dc","span_bytes":224,"evidence":"complete flag-gated selected-actor initialization and progress-task scene through four-word pool; all fifteen direct call sites preserve branch and machine order"}
     ,{"overlay":"resource_371","entry":"0x020037bc","span_bytes":12,"evidence":"complete reference-actor-54 selected-actor setup wrapper; sole local call explicit"}
-    ,{"overlay":"resource_371","entry":"0x020037c8","span_bytes":16,"evidence":"complete prologue-less shared-state activation leaf through one-word pool; no calls"}
     ,{"overlay":"resource_39b","entry":"0x02001cb4","span_bytes":324,"evidence":"complete fixed-point linked-object movement owner through five-word pool; four indirect arithmetic helper sites and the sole direct call preserve the machine control flow; independently cross-checked against the homologous reviewed resource_39c owner"}
     ,{"overlay":"resource_39b","entry":"0x02001df8","span_bytes":208,"evidence":"complete two-object spawn and presentation initialization owner through five-word split pools; all seven resolved call sites preserve branch and machine order"}
     ,{"overlay":"resource_39b","entry":"0x02001ec8","span_bytes":288,"evidence":"complete linked-object spawn, countdown and terminal-state transition owner through six-word pool; all eight resolved calls, including the local 0x02001df8 call, preserve loop and machine order"}

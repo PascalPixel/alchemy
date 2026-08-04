@@ -60,7 +60,7 @@ export/import veneers, literal data, and alignment retained in assembly.
 `bun run verify:showcase` rebuilds every showcase's decoded image and runs the
 complete overlay-closure audit.
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=8ee3d45a)
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=ccab427c)
 
 ### Images and data
 

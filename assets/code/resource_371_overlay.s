@@ -6305,11 +6305,8 @@ AlchemyC_020006dc:
 	bl	sub_02006e9e
 	pop	{r0}
 	bx	r0
-	.4byte 0x681b4b02
-	.4byte 0x33342201
-	.4byte 0x4770701a
-	.2byte 0x1f30
-	.2byte 0x0300
+AlchemyC_020037c8:
+	.space 0x10
 	push	{r5, lr}
 	ldr	r3, [pc, #96]
 	movs	r1, #193

@@ -10,7 +10,7 @@ cd "$ROOT"
 export WORK
 WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
-"$ROOT/../alchemy-gcc/dist/xgcc" -B"$ROOT/../alchemy-gcc/dist/" -O2 -mthumb -mthumb-interwork \
+"$ROOT/alchemy-gcc/dist/xgcc" -B"$ROOT/alchemy-gcc/dist/" -O2 -mthumb -mthumb-interwork \
   -mcpu=arm7tdmi -fno-builtin -nostdinc -ffreestanding -fcall-used-r4 -Iinclude ${EXTRA_CFLAGS:-} -S "$4" -o "$WORK/m.s" 2>/dev/null
 grep -E "^	[a-z]" "$WORK/m.s" | sed 's/\t/ /g;s/^ *//' > "$WORK/candidate.txt"
 bun tools/overlay_show.ts "$1" "$2" -n "$3" 2>/dev/null | sed 's/^ *[0-9a-f]*:\t[0-9a-f ]*\t//' \

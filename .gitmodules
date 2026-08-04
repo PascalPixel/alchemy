@@ -1,0 +1,3 @@
+[submodule "alchemy-gcc"]
+	path = alchemy-gcc
+	url = https://github.com/PascalPixel/alchemy-gcc.git

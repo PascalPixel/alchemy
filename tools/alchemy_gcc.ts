@@ -5,7 +5,7 @@ import { basename, dirname, extname, join, relative, resolve, sep } from "node:p
 export const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 // 承認済みコンパイラ束は姉妹リポジトリ PascalPixel/alchemy-gcc の dist/ に住む。
 // ソースからの再構築手順は同リポジトリの build.sh、検証は下の validateBundle。
-export const BUNDLE = join(ROOT, "..", "alchemy-gcc", "dist");
+export const BUNDLE = join(ROOT, "alchemy-gcc", "dist");
 export const DRIVER = join(BUNDLE, "xgcc");
 export const M2C = join(BUNDLE, "m2c-venv/bin/m2c");
 export type CompilerTarget = "gs1" | "gs2";

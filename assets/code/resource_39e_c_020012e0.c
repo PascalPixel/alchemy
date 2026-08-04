@@ -48,31 +48,32 @@ typedef unsigned char u8;
  * strong reading, not a proof.
  */
 
-extern s32 Func_080770c0(s32 flagId);
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern u8 *Func_0808a080(s32 slot);
-extern void Func_02000bf4(void);
-extern void Func_02000cd4(void);
-extern void Func_0200102c(s32 arg0);
-extern void Func_02001160(void);
+extern s32 Func_020056d0(s32 flagId);
+extern void Func_020056c0(void);
+extern void Func_0200570c(void);
+extern u8 *Func_020056ee(s32 slot);
+extern u8 *Func_020056fe(s32 slot);
+extern void Func_02001efc(void);
+extern void Func_02001fe2(void);
+extern void Func_0200247c(void);
+extern void Func_02002350(s32 arg0);
 
 void Func_020012e0(void)
 {
-    Func_0808a018();
+    Func_020056c0();
 
-    if (*(u16 *)(Func_0808a080(0) + 6) > (128 << 7)
-        && *(u16 *)(Func_0808a080(0) + 6) < (192 << 8)) {
-        Func_02000bf4();
+    if (*(u16 *)(Func_020056ee(0) + 6) > (128 << 7)
+        && *(u16 *)(Func_020056fe(0) + 6) < (192 << 8)) {
+        Func_02001efc();
     } else {
-        Func_02000cd4();
+        Func_02001fe2();
     }
 
-    if (Func_080770c0(0x898) != 0) {
-        Func_02001160();
+    if (Func_020056d0(0x898) != 0) {
+        Func_0200247c();
     } else {
-        Func_0200102c(0);
+        Func_02002350(0);
     }
 
-    Func_0808a020();
+    Func_0200570c();
 }

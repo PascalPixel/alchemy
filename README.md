@@ -31,10 +31,10 @@ Alchemy inspires new developers to create wonderful RPGs of their own.
 
 ## DONE: Currently 26%
 
-**DONE is Exact C + Permanent ASM**: the share of the game's audited executable
-bytes that either build from exact, byte-matching C or belong to low-level
-assembly intentionally kept in its permanent form. These maps show where the
-code and assets of the English release stand today.
+26% of the game's audited executable bytes now build from exact, byte-matching
+C, or belong to the small pieces of low-level code intentionally kept as
+permanent assembly. These four maps show where the code and assets of the
+English release stand today.
 
 ### Main game
 
@@ -51,14 +51,7 @@ low-level runtime structure kept as permanent assembly.
 them. This panel tracks all 795,370 executable bytes across those modules.
 Bright cyan is exact C, the softer cyan is readable C still being matched, gray
 is code still to reconstruct, and dark gray is permanent low-level assembly.
-
-`resource_384`, `resource_37c`, `resource_37d`, `resource_37e`, `resource_388`,
-`resource_38c`, `resource_3ac`, `resource_390`, `resource_3a9`,
-`resource_3cc`, and `resource_397` are the first eleven pret-like showcase
-overlays: all 130 genuine functions are ordinary byte-exact C, with only
-export/import veneers, literal data, and alignment retained in assembly.
-`bun run verify:showcase` rebuilds every showcase's decoded image and runs the
-complete overlay-closure audit.
+Eleven of those modules are already completely exact, byte-matching C.
 
 ![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=b44ca615)
 
@@ -80,9 +73,9 @@ reconstruction.
 
 ![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=d62fa185)
 
-DONE is measured by executable bytes rather than function counts. Exact C must
-compile to the original game byte for byte; Permanent ASM must have an explicit
-source-ownership contract before either contributes to the headline.
+Progress is measured by executable bytes rather than function counts, so every
+claimed byte must compile to the original game before it contributes to the
+headline.
 
 ## Preservation and copyright
 

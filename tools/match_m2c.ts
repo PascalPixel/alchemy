@@ -57,7 +57,8 @@ export type CandidateCompilerFamily =
   | "gcc296"
   | "old-agbcc"
   | "pret-early-thumb"
-  | "gcc2951";
+  | "gcc2951"
+  | "gcc3";
 export interface CandidateCompilerConfiguration {
   family?: CandidateCompilerFamily;
   addFlags?: readonly string[];

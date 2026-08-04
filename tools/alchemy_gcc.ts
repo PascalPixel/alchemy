@@ -729,6 +729,11 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // matching the reference's per-site rematerialized shifted immediates.
   "assets/code/resource_379_c_02000074.c",
   "semantic/overlays/resource_379_c_02000074.c",
+  // resource_371:1a98 rematerializes -1 three times (Func_02005eaa(-1,-1,-1,0))
+  // at each argument in the reference; CSE shares it via one register and two
+  // copies instead (mode_cohort: 158->88 differing bytes, 2026-08-04).
+  "assets/code/resource_371_c_02001a98.c",
+  "semantic/overlays/resource_371_c_02001a98.c",
   // resource_3aa:1494 is a 133-call cutscene sheet; the reference rebuilds
   // its repeated shifted immediates (258, 0x3000, 0x5000, -1, 0x03600000...)
   // at each call site instead of parking them in callee-saved registers.
@@ -754,6 +759,12 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // -1 twice. The reference builds each in place -- two `movs`/`lsls` pairs and
   // two `negs` -- where CSE builds one and copies it.
   "assets/code/resource_373_c_02000cd0.c",
+  // resource_3b1:5c48 rematerializes -1 twice (Func_0200c0ee(-1,-1,0xe666))
+  // and 0x20000 twice (Func_0200c116(0x20000,0x20000,0x10000)) independently
+  // at each call site in the reference; CSE shares each pair via a register
+  // copy instead, costing 4 bytes at each site.
+  "assets/code/resource_3b1_c_02005c48.c",
+  "semantic/overlays/resource_3b1_c_02005c48.c",
   // 0xC000 appears at two of this call sheet's three sites, so CSE hoists it
   // into a callee-saved register and buys a prologue the reference does not
   // have. Paired with -fsched-low-dest-first, which orders the r0 setter.
@@ -1110,6 +1121,41 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
 // 0x10000) rebuilt per-argument in the reference, Func(-1, -1, pool) sharing
 // r6, verified byte-exact under the pair with -fsched-low-dest-first.
 const NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // resource_3bc: 15 owners re-materialise a shifted immediate at every call
+  // site in the reference while the semantic C shares it in a register,
+  // overflowing the registered span by 4-36 bytes before this flag; probed
+  // exact-shape-restoring 2026-08-04 (overflow resolves; residual differing
+  // bytes handled per-owner from here).
+  "semantic/overlays/resource_3bc_c_020002f8.c",
+  "assets/code/resource_3bc_c_020002f8.c",
+  "semantic/overlays/resource_3bc_c_020004a4.c",
+  "assets/code/resource_3bc_c_020004a4.c",
+  "semantic/overlays/resource_3bc_c_0200076c.c",
+  "assets/code/resource_3bc_c_0200076c.c",
+  "semantic/overlays/resource_3bc_c_02001474.c",
+  "assets/code/resource_3bc_c_02001474.c",
+  "semantic/overlays/resource_3bc_c_02001a0c.c",
+  "assets/code/resource_3bc_c_02001a0c.c",
+  "semantic/overlays/resource_3bc_c_02001c20.c",
+  "assets/code/resource_3bc_c_02001c20.c",
+  "semantic/overlays/resource_3bc_c_020029ac.c",
+  "assets/code/resource_3bc_c_020029ac.c",
+  "semantic/overlays/resource_3bc_c_02002bac.c",
+  "assets/code/resource_3bc_c_02002bac.c",
+  "semantic/overlays/resource_3bc_c_02002e54.c",
+  "assets/code/resource_3bc_c_02002e54.c",
+  "semantic/overlays/resource_3bc_c_02002ee8.c",
+  "assets/code/resource_3bc_c_02002ee8.c",
+  "semantic/overlays/resource_3bc_c_020033d8.c",
+  "assets/code/resource_3bc_c_020033d8.c",
+  "semantic/overlays/resource_3bc_c_02003bd0.c",
+  "assets/code/resource_3bc_c_02003bd0.c",
+  "semantic/overlays/resource_3bc_c_02003d88.c",
+  "assets/code/resource_3bc_c_02003d88.c",
+  "semantic/overlays/resource_3bc_c_02003ef0.c",
+  "assets/code/resource_3bc_c_02003ef0.c",
+  "semantic/overlays/resource_3bc_c_0200457c.c",
+  "assets/code/resource_3bc_c_0200457c.c",
   "assets/code/resource_3bf_c_02000ce0.c",
   "semantic/overlays/resource_3bf_c_02000ce0.c",
   "assets/code/resource_3bf_c_02000dcc.c",
@@ -1118,6 +1164,12 @@ const NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES = new Set([
   "semantic/overlays/resource_3bf_c_02000e80.c",
   "assets/code/resource_3bf_c_02000f30.c",
   "semantic/overlays/resource_3bf_c_02000f30.c",
+  // resource_371:17a4 rebuilds its shared 512 (128<<2) call argument at each
+  // of its two call sites in the reference instead of caching it across the
+  // intervening calls; -fno-cse-shift-immediate alone takes this from 44 to
+  // 8 differing bytes (mode_cohort, 2026-08-04).
+  "assets/code/resource_371_c_020017a4.c",
+  "semantic/overlays/resource_371_c_020017a4.c",
 ]);
 // resource_372:0ec4's five module-local calls make r7 unavailable in the
 // reference allocation.  Reserving it restores the exact saved-register set;

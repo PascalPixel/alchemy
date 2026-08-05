@@ -80,8 +80,8 @@ void Func_02002fd4(void)
     Func_0808a090(8, 0xcccc, 0x6666);
     Func_0808a1b8(8, 176u << 8, 0);
 
-    shared = Data_03001ebc;
     *(u32 *)(shared + 0x1c0) = 0x209;
+    shared = Data_03001ebc;
     Func_0808a200(0, 0);
     Func_0808a218();
     Func_08009128();
@@ -170,9 +170,9 @@ void Func_02002fd4(void)
         Func_0808a010(20);
         Func_020045f4(1, 20);
     } else {
-        (*(u16 *)(shared + 0x1d8))++;
         Func_0808a1e8(1, 0x102, 0);
         Func_0808a010(60);
+        (*(u16 *)(shared + 0x1d8))++;
         Func_020045f4(1, 20);
         Func_0808a148(0, 2, 0);
         Func_0200460c(1, 2, 20);

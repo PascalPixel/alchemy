@@ -13,10 +13,10 @@ s32 Func_020008c0(s32 slot)
     for (index = 0; index < 6; index++) if (kind == keys[index]) break;
     if (index == 6) return 0;
     delta = (s32 *)0x02008f68 + index * 4;
-    a0 = delta[0] < 0 ? -delta[0] : delta[0];
-    a2 = delta[2] < 0 ? -delta[2] : delta[2];
     a3 = delta[3] < 0 ? -delta[3] : delta[3];
     width = (a0 + a2) >> 4; depth = (a1 + a3) >> 4;
+    a2 = delta[2] < 0 ? -delta[2] : delta[2];
+    a0 = delta[0] < 0 ? -delta[0] : delta[0];
     a1 = delta[1] < 0 ? -delta[1] : delta[1];
     tileX = (*(s32 *)(object + 8) + (delta[0] << 16)) >> 20;
     tileZ = (*(s32 *)(object + 16) + (delta[1] << 16)) >> 20;

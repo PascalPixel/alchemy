@@ -128,9 +128,9 @@ void Func_02000578(void)
     u8 *slot;
     u8 *record;
 
+    slot = *(u8 **)(workspace + 480);
     workspace = Data_03001ebc;
     cam = Data_03001e70;
-    slot = *(u8 **)(workspace + 480);
     record = *(u8 **)(Func_0808a080(17) + 80);
 
     Func_0808a018();
@@ -143,8 +143,8 @@ void Func_02000578(void)
     Func_080091e0(Func_0808a080(0), 0);
     Func_0808a100(0, 18);
 
-    *(u16 *)(record + 30) = 0x555;
     Func_0808a080(17)[85] = 0;
+    *(u16 *)(record + 30) = 0x555;
     Func_080091e0(Func_0808a080(17), 0);
     Func_0808a0f0(17, 0x02400000, 0x028A0000);
     Func_08009188(7);
@@ -166,16 +166,16 @@ void Func_02000578(void)
     *(s32 *)(cam + 240) = 0x02580000;
     *(s32 *)(cam + 244) = 0x02700000;
     *(s32 *)(cam + 248) = 0x03300000;
-    *(s32 *)(slot + 8) = 0x02340000;
     *(s32 *)(slot + 12) = 0;
     *(s32 *)(slot + 16) = 0x02B30000;
+    *(s32 *)(slot + 8) = 0x02340000;
 
     Func_08009128();
     Func_080000c0(1);
 
     workspace = Data_03001ebc;
-    *(s32 *)(workspace + 448) = 521;
     *(s32 *)(workspace + 456) = 64;
+    *(s32 *)(workspace + 448) = 521;
 
     Func_0808a2c8();
     *(u16 *)(((u8 **)&Data_03001ebc)[3] + 0x1F84) = 1;

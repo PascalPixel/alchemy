@@ -185,10 +185,10 @@ s32 Func_02002108(void)
         progressed = 1;
     } else if (chapter == 5) {
         if (Func_080770c0(0x812) != 0)
-            goto after_chapter;
         Func_02001510();
         Func_080770c8(0x812);
         Func_080770d0(0x80b);
+            goto after_chapter;
         Func_080770d0(0x80c);
         Func_080770d0(0x80d);
         Func_080770d0(0x80e);

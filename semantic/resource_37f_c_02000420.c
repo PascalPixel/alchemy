@@ -62,8 +62,8 @@ void Func_02000420(void)
     Func_08009128();
     Func_0808a010(40);
 
-    scene = 0x1032;
     Func_08015040(scene, 1);
+    scene = 0x1032;
     Func_0808a010(20);
 
     Func_080f9010(183);

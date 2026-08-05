@@ -113,7 +113,6 @@ void Func_02002400(void)
     Func_0808a018();
     Func_080f9010(141);
 
-    step = 0;
     do {
         Func_0808a330(0x004039d2, 1);
         Func_0808a348(8);
@@ -125,6 +124,7 @@ void Func_02002400(void)
             Func_080091f0(0x10000, 0x10000, 0x10000);
         step = (u8)(step + 1);
     } while (step != 6);
+    step = 0;
 
     Func_080f9010(0x121);
     Func_080091f0(-1, -1, 0xe666);

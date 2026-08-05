@@ -81,16 +81,18 @@ s32 Func_02000940(void)
     s16 state;
     u8 *record;
 
+    s32 permuted_7;
     if (Func_080770c0(0x90b) != 0) Func_0808a0f0(8, 0, 0);
     if (Func_080770c0(0x90c) != 0) Func_0808a0f0(9, 0, 0);
     if (Func_080770c0(0x90d) != 0) Func_0808a0f0(10, 0, 0);
 
-    state = Data_02000240[225];
+    permuted_7 = Data_02000240[225];
     if (state == 98) {
         Func_080770c8(32);
         Func_0808a248(50);
         return 0;
     }
+    state  = permuted_7;
     if (state == 99) {
         Func_020025b0();
         return 0;
@@ -137,12 +139,12 @@ s32 Func_02000940(void)
 
     if (Func_080770c0(0x834) != 0) {
         record = Func_0808a080(20);
-        *(s32 *)(record + 24) = 0x4ccc;
         *(s32 *)(record + 28) = 0x4ccc;
         Func_080091e0(Func_0808a080(20), 0);
-        record = Func_0808a080(21);
+        *(s32 *)(record + 24) = 0x4ccc;
         *(s32 *)(record + 24) = 0x9999;
         *(s32 *)(record + 28) = 0x9999;
+        record = Func_0808a080(21);
         Func_0808a100(13, 5);
     } else if (Func_080770c0(0x815) != 0) {
         Func_0808a0f0(21, 0x014b0000, 0x00f90000);

@@ -73,13 +73,13 @@ s32 Func_0200150c(void)
     u16 *scene;
     u8 *actor;
 
-    scene = &Data_02000240[225];
     if ((u16)(*scene - 5) <= 1) {
         Func_080770d0(0x12f);
     }
     if (Func_080770c0(0x109) != 0) {
         Func_080770d0(0x242);
     }
+    scene = &Data_02000240[225];
 
     if (Func_080770c0(0x834) != 0) {
         Func_0808a2c0();
@@ -98,8 +98,8 @@ s32 Func_0200150c(void)
         Func_0808a0d0(11, 0x53, 0x111);
         Func_0808a100(11, 5);
 
-        actor = Func_0808a080(11);
         *(u16 *)(actor + 32) = 12;
+        actor = Func_0808a080(11);
 
         Func_0808a098(11, (void *)0x02009c34);
         if (Func_080770c0(0x839) != 0) {
@@ -141,6 +141,6 @@ s32 Func_0200150c(void)
         Func_0808a0f0(16, 0x00840000, 0x01080000);
     }
 
-    Func_0808a020();
     return 0;
+    Func_0808a020();
 }

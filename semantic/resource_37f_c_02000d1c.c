@@ -38,8 +38,8 @@ void Func_02000d1c(void)
 {
     u8 *record;
 
-    Func_0808a018();
     *(s32 *)(Data_03001ebc + 448) = 256;
+    Func_0808a018();
     Func_0808a360();
     Func_0808a100(0, 0);
     Func_0808a010(4);
@@ -106,8 +106,8 @@ void Func_02000d1c(void)
     Func_0808a100(1, 1);
     Func_0808a100(5, 1);
     Func_0808a100(8, 1);
-    Func_080770c8(0x802);
     *(s32 *)(Data_03001ebc + 448) = 516;
+    Func_080770c8(0x802);
     Func_080770d0(0x12f);
     Func_0808a020();
 }

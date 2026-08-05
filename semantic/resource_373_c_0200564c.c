@@ -61,9 +61,9 @@ s32 Func_0200564c(struct Resource373Follower *follower,
         s32 next;
         s32 facing;
 
-        next = (sector + 0x1000) & 0xf000;
-        previous = (sector + (s32)0xfb94f006) & 0xf000;
         sector = sector & 0xf000;
+        previous = (sector + (s32)0xfb94f006) & 0xf000;
+        next = (sector + 0x1000) & 0xf000;
         facing = follower->facing & 0xf000;
 
         if (sector == facing || next == facing || previous == facing ||

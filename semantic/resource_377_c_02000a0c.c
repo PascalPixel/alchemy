@@ -132,14 +132,14 @@ void Func_02000a0c(void)
 
     Func_080091e0(Func_0808a080(10), 0);
 
-    record[35] &= (u8)0xFE;
     record[85] = 0;
+    record[35] &= (u8)0xFE;
     sub[9] = (u8)((sub[9] & (u8)~0x0C) | 4);
 
     Func_0808a098(10, Data_02009cec);
 
-    workspace = Data_03001ebc;
     *(s32 *)(workspace + 448) = 513;
+    workspace = Data_03001ebc;
 
     /* six-argument Func_08009180: two arguments are passed on the stack */
     Func_08009180(83, 15, 83, 19, 5, 4);
@@ -153,8 +153,8 @@ void Func_02000a0c(void)
     Func_08009180(65, 53, 88, 24, 2, 2);
     Func_080091a0();
 
-    *(u16 *)0x04000050 = 0x3F42;
     *(u16 *)0x04000052 = 0x100C;
+    *(u16 *)0x04000050 = 0x3F42;
 
     Func_0808a2c8();
     *(u16 *)(((u8 **)&Data_03001ebc)[3] + 0x1F84) = 1;
@@ -205,8 +205,8 @@ void Func_02000a0c(void)
     Func_080000c0(10);
 
     for (i = 0; i <= 15; i++) {
-        *(u16 *)0x04000052 = (u16)(0x100F - i);
         Func_080000c0(1);
+        *(u16 *)0x04000052 = (u16)(0x100F - i);
     }
 
     Func_0808a0a0(0);

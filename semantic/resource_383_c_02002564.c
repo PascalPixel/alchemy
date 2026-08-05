@@ -83,22 +83,22 @@ void Func_02002564(void)
      * one at 0x0200262a takes case 4 into case 6's third call (0x02002672).
      * Seventeen sites, not twenty. */
     switch (beat) {
-    case 0:
         Func_020026e4(24, 1, 2, Data_0200d5b0);
         expected = 3;
         descriptor = Data_0200d8bc;
+    case 0:
         goto next4;
 
     case 1:
         Func_020026e4(24, 1, 4, Data_0200d678);
+        goto next3;
         Func_020026e4(24, 2, 3, Data_0200d5d8);
         expected = 1;
         descriptor = Data_0200d830;
-        goto next3;
 
-    case 2:
         Func_020026e4(24, 2, 1, Data_0200d538);
         Func_020026e4(24, 3, 6, Data_0200d718);
+    case 2:
         expected = 2;
         descriptor = Data_0200d894;
     next4:

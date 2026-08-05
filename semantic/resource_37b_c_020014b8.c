@@ -76,16 +76,16 @@ void Func_020014b8(void)
      * slice of the unpacked buffer under a different attribute flag. */
     attribute = Func_080001c8(Func_080001d0(), 0x80, work) | 0xac00;
     for (i = 0; i <= 8; i++) {
-        entry[0] = 0;
         entry[1] = 0x40004000;
+        entry[0] = 0;
         entry[2] = attribute;
         entry += 3;
     }
 
     attribute = Func_080001c8(Func_080001d0(), 0x80, (u8 *)work + 0x80) | 0xdc00;
     for (i = 0; i <= 8; i++) {
-        entry[0] = 0;
         entry[1] = 0x40004000;
+        entry[0] = 0;
         entry[2] = attribute;
         entry += 3;
     }

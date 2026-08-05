@@ -108,9 +108,9 @@ void Func_02000054(void) {
 
     /* Phase 0: reset the encounter and establish the initial actor layout. */
     Func_0808a018();
-    *firstPhase = 0;
     Func_080f9010(0x8D);
     Func_080091f0(0x10000, 0x10000, 0x10000);
+    *firstPhase = 0;
     Func_0808a0f0(0, 0xE80000, 0x9C0000);
     Func_0808a0f0(1, 0xDA0000, 0xAC0000);
     Func_0808a1b8(0, 0xB000, 0);
@@ -124,10 +124,10 @@ void Func_02000054(void) {
     Func_0808a1e0(0xF, 1);
     Func_0808a210(0xE80000, -1, 0x9C0000, 0);
     Func_08009128();
-    (*(struct MainSceneState **)((u8 *)sceneSlot - 8))->activeActorLimit = 8;
     Func_0808a360();
     Func_0808a370();
     Func_0808a330(0x7FFF, 0);
+    (*(struct MainSceneState **)((u8 *)sceneSlot - 8))->activeActorLimit = 8;
     Func_0808a348(4);
     Func_0808a010(4);
     Func_0808a330(0x10000, 0);

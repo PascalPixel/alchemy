@@ -64,10 +64,10 @@ s32 Func_020005cc(void)
     s16 selector = Data_02000240[225];
     s32 raiseSharedFlag = 0;
 
-    *(s32 *)(Data_03001ebc + 448) = 521;
     Func_0808a330(0x10000, 0);
     Func_0808a348(1);
     Func_0808a010(1);
+    *(s32 *)(Data_03001ebc + 448) = 521;
     switch (selector) {
     case 10:
     case 11:
@@ -76,9 +76,9 @@ s32 Func_020005cc(void)
             Func_0808a0f0(10, 0xc80000, 0x500000);
         }
         raiseSharedFlag = 1;
-        break;
     case 20:
         Func_02003270();
+        break;
         if (Func_080770c0(0x109) == 0) {
             Func_0200088c();
         }

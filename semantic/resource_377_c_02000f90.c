@@ -177,8 +177,8 @@ void Func_02000f90(void)
     Func_0808a0d0(8, 580, 382);
     Func_0808a1b8(8, 0x8000, 40);
 
-    record = Func_0808a080(0);
     record[90] |= 1;
+    record = Func_0808a080(0);
 
     Func_0808a1b8(8, 0xC000, 8);
     Func_0808a1b8(8, 0, 8);

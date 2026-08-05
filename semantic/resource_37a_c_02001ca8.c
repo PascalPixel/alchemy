@@ -158,8 +158,8 @@ void Func_02001ca8(void)
     u8 *sub;
     s32 i;
     s32 two = 2;        /* r5 */
-    s32 one = 1;        /* r6 */
     s32 three = 3;      /* r8 */
+    s32 one = 1;        /* r6 */
     s32 actor;
 
     if (Func_080770c0(0x811) == 0)
@@ -235,10 +235,10 @@ void Func_02001ca8(void)
     Func_0808a1b8(0, 0xc000, 20);               /* 192 << 8 */
     Func_0808a090(0, 0x4ccc, 0x2666);
 
-    rec[0x5a] &= 0xfe;
-    rec[0x55] = 0;
     Func_080f9010(0xc9);
+    rec[0x55] = 0;
     Func_0808a158(0, 256);                      /* 128 << 1 */
+    rec[0x5a] &= 0xfe;
     sub = *(u8 **)(rec + 0x50);
     sub[0x26] = 0;
 
@@ -270,12 +270,12 @@ void Func_02001ca8(void)
 
     rec = Func_0808a080(16);
 
-    rec[0x5a] &= 0xfe;
-    rec[0x55] = 0;
     Func_080f9010(0xc9);
     Func_0808a158(16, 256);                     /* 128 << 1 */
-    sub = *(u8 **)(rec + 0x50);
+    rec[0x55] = 0;
+    rec[0x5a] &= 0xfe;
     sub[0x26] = 0;
+    sub = *(u8 **)(rec + 0x50);
 
     i = 0;
     do {

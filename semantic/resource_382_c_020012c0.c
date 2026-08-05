@@ -1,13 +1,32 @@
-extern void Func_080772e8(int); extern void Func_0808a018(void); extern void Func_0808a010(int);
-extern void Func_0808a138(int,int); extern void Func_0808a090(int,int,int); extern void Func_0808a0d0(int,int,int);
-extern void Func_0808a1b8(int,int,int); extern void Func_0808a128(int,int,int); extern void Func_080770c8(int);
-extern void Func_0808a020(void);
+  
+  
+  
+
+extern void Func_02002c6e(int);
+extern void Func_02002c82(void);
+extern void Func_02002c80(int);
+extern void Func_02002d10(int,int);
+extern void Func_02002cca(int,int,int);
+extern void Func_02002cf6(int,int,int);
+extern void Func_02002ca4(int);
+extern void Func_02002d70(int,int,int);
+extern void Func_02002d3a(int,int,int);
+extern void Func_02002cc0(int);
+extern void Func_02002d4a(int,int,int);
+extern void Func_02002cd0(int);
+extern void Func_02002d5a(int,int,int);
+extern void Func_02002ce0(int);
+extern void Func_02002d44(int,int,int);
+extern void Func_02002cf2(int);
+extern void Func_02002dbe(int,int,int);
+extern void Func_02002ce4(int);
+extern void Func_02002d18(void);
 void Func_020012c0(void)
 {
-    Func_080772e8(231); Func_0808a018(); Func_0808a010(10); Func_0808a138(19,2);
-    Func_0808a090(19,0xcccc,0x6666); Func_0808a0d0(19,216,408); Func_0808a010(10);
-    Func_0808a1b8(19,0x4000,20); Func_0808a128(19,6,0); Func_0808a010(30);
-    Func_0808a128(19,6,0); Func_0808a010(30); Func_0808a128(19,6,0); Func_0808a010(30);
-    Func_0808a0d0(19,216,392); Func_0808a010(10); Func_0808a1b8(19,0x4000,20);
-    Func_080770c8(0x858); Func_0808a020();
+    Func_02002c6e(231); Func_02002c82(); Func_02002c80(10); Func_02002d10(19,2);
+    Func_02002cca(19,0xcccc,0x6666); Func_02002cf6(19,216,408); Func_02002ca4(10);
+    Func_02002d70(19,0x4000,20); Func_02002d3a(19,6,0); Func_02002cc0(30);
+    Func_02002d4a(19,6,0); Func_02002cd0(30); Func_02002d5a(19,6,0); Func_02002ce0(30);
+    Func_02002d44(19,216,392); Func_02002cf2(10); Func_02002dbe(19,0x4000,20);
+    Func_02002ce4(0x858); Func_02002d18();
 }

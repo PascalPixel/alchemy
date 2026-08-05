@@ -17,12 +17,11 @@ u8 *Func_02000630(s32 *directionOut, s32 *slotOut, s32 *classOut)
     const s32 *steps = (const s32 *)0x0200a700;
     u8 *leader = Func_0808a080(0);
     s32 direction = *(u16 *)(leader + 6) >> 12;
-    s32 probeX = ((*(s32 *)(leader + 8) >> 16) + (steps[direction] >> 16)) >> 4;
     s32 probeZ = ((*(s32 *)(leader + 16) >> 16) + (s16)steps[direction]) >> 4;
+    s32 probeX = ((*(s32 *)(leader + 8) >> 16) + (steps[direction] >> 16)) >> 4;
     s32 slot;
     u32 kind;
 
-    *directionOut = direction;
     for (slot = 8; slot <= 65; slot++) {
         u8 *object = ((u8 **)(Data_03001ebc + 0x14))[slot];
         u8 *record = *(u8 **)(object + 80);
@@ -54,5 +53,6 @@ u8 *Func_02000630(s32 *directionOut, s32 *slotOut, s32 *classOut)
             boundsCursor += 4;
         }
     }
+    *directionOut = direction;
     return 0;
 }

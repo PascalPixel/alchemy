@@ -28,10 +28,10 @@ void Func_020015b4(u8 *object)
     u8 *clone;
     s16 next_angle;
 
-    *(s32 *)(object + 8) =
-        *(s32 *)0x0200b1f0 + multiply(0x00060000,
-                                     Func_08000118((s32)*angle << 10));
     next_angle = *angle + 1;
+        *(s32 *)0x0200b1f0 + multiply(0x00060000,
+    *(s32 *)(object + 8) =
+                                     Func_08000118((s32)*angle << 10));
     *angle = (s16)((next_angle + 64) % 64);
 
     if (Func_030003e0(*(s32 *)0x03001e40, 3) != 0)
@@ -49,9 +49,9 @@ void Func_020015b4(u8 *object)
         u8 *presentation = *(u8 **)(clone + 80);
         presentation[9] &= (u8)-13;
         Func_080091e0(clone, 0);
-        Func_08009080(clone, 1);
         *(s32 *)(clone + 24) = 0x9999;
         *(s32 *)(clone + 28) = 0x9999;
+        Func_08009080(clone, 1);
         clone[0x23] = 2;
         clone[0x55] = 0;
         Func_0808a160(clone, 9);

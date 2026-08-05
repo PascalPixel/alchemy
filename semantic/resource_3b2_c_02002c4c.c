@@ -53,9 +53,11 @@ void Func_02002c4c(void)
     s32 companion9Row;
     s32 transition;
 
+    s32 permuted_7;
     column = *(s32 *)(Func_0808a080(14) + 8) >> 20;
-    row = *(s32 *)(Func_0808a080(14) + 16) >> 20;
+    permuted_7 = *(s32 *)(Func_0808a080(14) + 16) >> 20;
     companion18Row = *(s32 *)(Func_0808a080(18) + 16) >> 20;
+    row  = permuted_7;
     companion9Row = *(s32 *)(Func_0808a080(9) + 16) >> 20;
 
     transition = -1;

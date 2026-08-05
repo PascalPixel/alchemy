@@ -3061,7 +3061,8 @@ AlchemyC_02001a58:
 AlchemyC_020025b0:
 	.space 0x4c
 AlchemyC_020025fc:
-	.space 0x18
+	.space 0x16
+	.2byte 0x0000
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

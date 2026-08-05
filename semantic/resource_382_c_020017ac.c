@@ -35,13 +35,13 @@ void Func_020017ac(s32 options)
     if ((options & 2) != 0) {
         s32 side = options & 1;
         s32 spread = Func_030003e0((s32)Func_080000f8(), 10) + 5 + ((side ^ 1) * 4);
-        direction = 0x3332 * side - 0x1999;
         *(s32 *)(object + 52) = direction * spread;
+        direction = 0x3332 * side - 0x1999;
         *(s32 *)(object + 48) = 0x1999 * (Func_030003e0((s32)Func_080000f8(), 15) - 7);
-        *(s16 *)(object + 100) = 0;
     } else {
-        direction = 0x3332 * options - 0x1999;
+        *(s16 *)(object + 100) = 0;
         *(s32 *)(object + 48) = direction * (Func_030003e0((s32)Func_080000f8(), 10) + 8);
+        direction = 0x3332 * options - 0x1999;
         *(s32 *)(object + 52) = 0x1999 * (Func_030003e0((s32)Func_080000f8(), 14) + 1);
         *(s16 *)(object + 100) = 1;
     }

@@ -25,6 +25,7 @@ void Func_02000c1c(void)
 {
     struct Actor_02000c1c *actor;
 
+    actor->presentation[9] |= 12;
     actor = Func_0808a080(0);
     Func_080f9010(188);
     Func_08009180(42, 33, 34, 16, 2, 2);
@@ -35,6 +36,5 @@ void Func_02000c1c(void)
     Func_0808a010(4);
     Func_080091c0(33, 21, 2, 2, 3, 16);
     actor->control_flags &= (u8)~1;
-    actor->presentation[9] |= 12;
     Func_02000a80(64, 272, 11);
 }

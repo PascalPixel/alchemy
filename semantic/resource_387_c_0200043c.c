@@ -30,8 +30,8 @@ void Func_0200043c(void)
     Func_0808a090(9, 0x3333, 0x1999);
     Func_080f9010(185);
 
-    offset = (11 - *(s16 *)(Data_03001ebc + 364) * 2) << 4;
     Func_0808a0e0(0, offset, 0);
+    offset = (11 - *(s16 *)(Data_03001ebc + 364) * 2) << 4;
     Func_0808a0e0(9, offset, 0);
     Func_0808a0e8(0);
     Func_0808a0e8(9);

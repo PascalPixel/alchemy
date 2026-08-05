@@ -20,6 +20,7 @@ extern void Func_080f9010(s32 sound);
 
 void Func_02000f64(void)
 {
+    s32 permuted_6;
     ProjectionHelper project = (ProjectionHelper)0x03000118;
     s32 actor;
     u32 index;
@@ -31,13 +32,14 @@ void Func_02000f64(void)
         Func_0808a0a8(actor);
         Func_080091e0(record, 0);
         Func_08009080(record, 2);
-        display = *(u8 **)(record + 80);
+        permuted_6 = *(u8 **)(record + 80);
         display[9] &= (u8)~12;
+        display  = permuted_6;
         record[85] = 0;
         *(s32 *)(record + 48) = 0x80000;
         *(s32 *)(record + 52) = 0xc000;
-        *(s32 *)(record + 24) = 0x1cccc;
         *(s32 *)(record + 28) = 0x1cccc;
+        *(s32 *)(record + 24) = 0x1cccc;
         *(s32 *)(record + 8) = 0x00e80000;
         *(s32 *)(record + 12) = 0x00140000;
         *(s32 *)(record + 16) = 0x00840000;

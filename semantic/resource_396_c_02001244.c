@@ -40,11 +40,11 @@ void Func_02001244(void)
             blueDelta -= blueDelta / 4 + Func_03000380(blueDelta, 5);
         }
 
-        color = captured[index];
         red = (color & 31) + redDelta;
-        green = ((color >> 5) & 31) + greenDelta;
-        blue = ((color >> 10) & 31) + blueDelta;
         if (red > 31) red = 31;
+        green = ((color >> 5) & 31) + greenDelta;
+        color = captured[index];
+        blue = ((color >> 10) & 31) + blueDelta;
         if (green > 31) green = 31;
         if (blue > 31) blue = 31;
         if (red < 0) red = 0;

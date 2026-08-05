@@ -11,31 +11,33 @@ extern void Func_0808a160(u8 *object, s32 mode);
 void Func_02000a68(s32 x, s32 y, s32 z, s32 value,
                    s32 extra, u32 style, u32 packed_mode)
 {
+    s32 permuted_6;
     u8 *source = Func_0808a080(0);
     u8 *object;
     u8 *display;
     s32 resources[3];
     u32 mode;
 
-    resources[0] = *(s32 *)0x0200960c;
+    permuted_6 = *(s32 *)0x0200960c;
     resources[1] = *(s32 *)0x02009610;
+    resources[0]  = permuted_6;
     resources[2] = *(s32 *)0x02009614;
 
     object = Func_080090c8(222, x, y, z);
     if (object == 0)
         return;
 
-    display = *(u8 **)(object + 80);
     Func_08009080(object, (style + 1) & 15);
     Func_08009098(object, resources[style & 15]);
+    display = *(u8 **)(object + 80);
     Func_0808a160(object, (style >> 16) & 15);
 
     object[85] = 0;
     display[38] = 0;
-    *(u32 *)(object + 108) = 0x02008a01;
     *(s32 *)(object + 48) = value;
     *(s32 *)(object + 52) = extra;
     *(u16 *)(object + 102) = (u16)packed_mode;
+    *(u32 *)(object + 108) = 0x02008a01;
 
     mode = packed_mode >> 16;
     if (mode == 0) {

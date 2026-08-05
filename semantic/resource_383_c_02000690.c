@@ -61,10 +61,12 @@ void Func_02000690(void)
     s32 half;
     s32 next;
 
+    s32 permuted_7;
+    permuted_7 = (u16)(*(u16 *)(actor + 6) & 0xf000);
     actor = Func_0808a080(25);
-    orientation = (u16)(*(u16 *)(actor + 6) & 0xf000);
     state = (s16 *)(actor + 100);
     half = *state >> 1;
+    orientation  = permuted_7;
 
     /* Re-establish the actor's appearance for this beat. */
     Func_0808a018(actor);
@@ -76,13 +78,13 @@ void Func_02000690(void)
 
     next = *state;
     switch ((s32)*state) {
-    case 0:
     case 2:
         if ((u32)(orientation - 0x2001) <= 0x7ffe) {
             Func_0808a098(25, Data_0200e4d8[(half << 2) + *state]);
             next = (u16)*state - (half << 1) + 1;
             break;
         }
+    case 0:
         goto mirrored;
 
     case 1:
@@ -119,8 +121,8 @@ void Func_02000690(void)
 
     *state = (s16)next;
 
-done:
     *state = (s16)(*(u16 *)state & 3);
+done:
     Func_0808a0a0(25);
     Func_0808a020();
 }

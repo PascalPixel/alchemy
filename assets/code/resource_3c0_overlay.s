@@ -933,11 +933,8 @@ AlchemyC_02000558:
 	.4byte 0x0000262e
 	.2byte 0x0101
 	.2byte 0x0000
-	push	{lr}
-	movs	r0, #8
-	bl	.L_02000d96
-	pop	{r0}
-	bx	r0
+AlchemyC_020007fc:
+	.space 0xc
 	push	{lr}
 	movs	r0, #9
 	bl	.L_02000da2

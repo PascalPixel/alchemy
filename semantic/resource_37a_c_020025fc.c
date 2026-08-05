@@ -33,11 +33,13 @@
  * transcribed rather than interpreted.
  */
 
-extern void Func_0808a180();
-extern void Func_0808a010();
 
+
+
+extern void Func_02005068();
+extern void Func_02004fd6();
 void Func_020025fc(s32 arg0, s32 arg1)
 {
-    Func_0808a180(arg0, 0);
-    Func_0808a010(arg1);
+    Func_02005068(arg0, 0);
+    Func_02004fd6(arg1);
 }

@@ -148,8 +148,8 @@ void Func_02001494(void)
     Func_080000c0(1);
     Func_0808a0f0(0, 0x03600000, 0x02760000);
 
-    workspace = WORKSPACE;
     REQUEST_WORD(workspace) = 0x100;
+    workspace = WORKSPACE;
     SETUP_WORD(workspace) = 40;
 
     Func_0808a360();
@@ -220,7 +220,6 @@ void Func_02001494(void)
 
     /* First branch on the query. The flag decides whether the counter is
      * bumped again after the following wait step. */
-    skipped = 1;
     if (Func_0808a070(0, 0) == 0) {
         Func_0808a010(10);
         Func_0808a100(8, 3);
@@ -230,6 +229,7 @@ void Func_02001494(void)
         Func_0808a100(8, 4);
         skipped = 0;
     }
+    skipped = 1;
 
     Func_0808a188(8, 0, 10);
     if (skipped != 0) {

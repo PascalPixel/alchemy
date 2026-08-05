@@ -70,8 +70,8 @@ void Func_02002008(void)
     Func_0808a208(0x3333, 0x666);
     Func_0808a210(0x00c00000, -1, 0x00fc0000, 1);
 
-    *(s32 *)(Data_03001ebc + 0x1c8) = 40;
     Func_0808a360();
+    *(s32 *)(Data_03001ebc + 0x1c8) = 40;
     Func_0808a090(0, 0xcccc, 0x6666);
     Func_0808a0d0(0, 192, 278);
     Func_0808a090(8, 0x10000, 0x8000);
@@ -84,8 +84,8 @@ void Func_02002008(void)
     Func_080000c0(1);
 
     entity = Func_0808a080(8);
-    entity[0x5a] &= 0xfe;
     entity = Func_0808a080(9);
+    entity[0x5a] &= 0xfe;
     entity[0x5a] &= 0xfe;
     Func_0808a0c8(8, 184, 232);
     Func_0808a0d0(9, 198, 232);
@@ -212,8 +212,8 @@ void Func_02002008(void)
     Func_0808a090(9, 0xcccc, 0x6666);
     entity = Func_0808a080(8);
     *(u16 *)(entity + 6) = 0;
-    entity = Func_0808a080(9);
     *(u16 *)(entity + 6) = 0x8000;
+    entity = Func_0808a080(9);
     entity = Func_0808a080(8);
     entity[0x5a] &= 0xfe;
     entity = Func_0808a080(9);

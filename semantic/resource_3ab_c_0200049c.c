@@ -19,9 +19,9 @@ void Func_0200049c(void)
 
     if (tileX < 0)
         tileX += 0xfffff;
+    tileX >>= 20;
     if (tileZ < 0)
         tileZ += 0xfffff;
-    tileX >>= 20;
     tileZ >>= 20;
 
     if (Func_080770c0(0xf27) == 0) {
@@ -47,11 +47,11 @@ void Func_0200049c(void)
         Func_080091e0(actor, 0);
         actor = Func_0808a080(19);
         if (actor != 0) {
-            actor[0x55] = 8;
             *(s32 *)(actor + 12) = 0x100000;
+            actor[0x55] = 8;
             actor[0x23] = 2;
-            *(s32 *)(actor + 24) = 0x00013333;
             *(s32 *)(actor + 28) = 0x18000;
+            *(s32 *)(actor + 24) = 0x00013333;
         }
     }
 

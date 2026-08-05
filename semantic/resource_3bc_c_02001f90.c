@@ -65,10 +65,10 @@ void Func_02001f90(s32 actor)
         Func_02003b40(0, 0x2a8, 0xc8);
 
         while (*(s16 *)(workspace + 0x182) != 5) {
-            state++;
+                break;
             Func_080000c0(1);
             if (state > 239)
-                break;
+            state++;
         }
 
         Func_02000b30();

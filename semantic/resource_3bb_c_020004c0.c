@@ -81,9 +81,10 @@ void Func_020004c0(s32 participant, s32 x, s32 z)
     s32 step_x;
     s32 step_z;
 
-    subject_id = *(s32 *)(0x02000240 + 500);
+    s32 permuted_0;
     subject = Func_0808a080(subject_id);
     record = Func_0808a080(participant);
+    subject_id = *(s32 *)(0x02000240 + 500);
 
     /* (facing + 0x1000) & 0xe000 - the biased octant, kept for the pose. */
     facing = ((*(u16 *)(subject + 6) + 0x1000) & 0xe000);
@@ -92,10 +93,11 @@ void Func_020004c0(s32 participant, s32 x, s32 z)
     target_z = z << 19;
 
     if ((*(s32 *)(record + 8) >> 20) != (x / 2)) {
-        step_x = (target_x - *(s32 *)(record + 8)) / 2;
-        step_z = 0;
+        permuted_0 = (target_x - *(s32 *)(record + 8)) / 2;
     } else {
+        step_z = 0;
         step_x = 0;
+        step_x  = permuted_0;
         step_z = (target_z - *(s32 *)(record + 16)) / 2;
     }
 
@@ -118,8 +120,8 @@ void Func_020004c0(s32 participant, s32 x, s32 z)
     Func_0808a090(subject_id, 0x8000, 0x3333);
     Func_08009080(subject, 2);
     Func_08009150(subject,
-                  *(s32 *)(subject + 8) + step_x,
                   0,
+                  *(s32 *)(subject + 8) + step_x,
                   *(s32 *)(subject + 16) + step_z);
 
     Func_080f9010(239);

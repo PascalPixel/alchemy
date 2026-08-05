@@ -84,10 +84,10 @@ void Func_0200039c(void)
             Func_0808a170(0x225a);
             Func_0808a178(16, 0);
             if (Func_0808a070(0, 0) == 0) {
-                workspace = Data_03001ebc;
                 *(u16 *)(workspace + 472) += 1;
                 Func_0808a1e8(16, 256, 40);
                 Func_0808a178(16, 0);
+                workspace = Data_03001ebc;
                 if (Func_0808a070(0, 0) == 0)
                     *(u16 *)(workspace + 472) += 1;
                 Func_0808a010(40);

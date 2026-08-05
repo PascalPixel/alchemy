@@ -24,9 +24,9 @@ void Func_02001cc0(void)
 {
     u8 *workspace = *(u8 **)0x03001ebc;
     s32 subject = *(s32 *)0x02000434;
-    u8 *subject_record = Func_0808a080(subject);
     s32 selected = 8;
     s32 best_distance = 0x100000;
+    u8 *subject_record = Func_0808a080(subject);
     s32 actor;
 
     Func_0808a018();
@@ -66,16 +66,16 @@ void Func_02001cc0(void)
     Func_0808a170(0x2085);
     Func_0808a180(selected, 0);
     *(s32 *)(workspace + 448) = 512;
-    *(s32 *)(workspace + 456) = 15;
     Func_0808a010(20);
+    *(s32 *)(workspace + 456) = 15;
     Func_0808a368();
     Func_0808a370();
 
     Func_080770e8(subject * 16 + 0x370,
                   *(s32 *)(subject_record + 8) >> 20);
+    subject++;
     Func_080770e8(subject * 16 + 0x378,
                   *(s32 *)(subject_record + 16) >> 20);
-    subject++;
 
     if (subject > 3) {
         Func_0808a248(10);

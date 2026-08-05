@@ -35,10 +35,10 @@ void Func_02000594(s32 encounterActorId)
 {
     s32 mapActorId = *(volatile s32 *)0x02000434;
     u8 *mapActor = Func_0808a080(mapActorId);
+    s32 mapY = *(s16 *)(mapActor + 18);
     u8 *encounterActor = Func_0808a080(encounterActorId);
     s32 suppressBlendQueue = Func_080770c0(0x340);
     s32 mapX = *(s16 *)(mapActor + 10);
-    s32 mapY = *(s16 *)(mapActor + 18);
     s32 step;
 
     Func_0808a018();
@@ -54,16 +54,16 @@ void Func_02000594(s32 encounterActorId)
             u16 saved = *interruptMaster;
 
             *interruptMaster = (u16)(u32)interruptMaster;
+            *interruptMaster = saved;
             if (*count <= 31) {
                 struct DeferredDisplayWrite_02000594 *entry =
                     (struct DeferredDisplayWrite_02000594 *)
                     (0x02002094 + *count * 12);
-                (*count)++;
-                entry->value = ((16 - step) << 8) | step;
-                entry->address = 0x04000052;
                 entry->mask = 0x02000000;
+                (*count)++;
+                entry->address = 0x04000052;
+                entry->value = ((16 - step) << 8) | step;
             }
-            *interruptMaster = saved;
         }
         Func_080000c0(1);
     }

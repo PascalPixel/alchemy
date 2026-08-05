@@ -60,11 +60,11 @@ void Func_02000598(void)
 {
     s16 *table = Data_02000240;
     u8 *subject = Func_0808a080(*(s32 *)&table[250]);
-    s32 subject_radius = RadiusProduct_02000598(subject);
     u8 *workspace = Data_03001ebc;
+    s32 subject_radius = RadiusProduct_02000598(subject);
     u8 *reference = *(u8 **)(workspace + 480);
-    s32 x_low = *(s32 *)(reference + 0x08) - 0xa00000;
     s32 x_high = *(s32 *)(reference + 0x08) + 0xa00000;
+    s32 x_low = *(s32 *)(reference + 0x08) - 0xa00000;
     s32 z_low = *(s32 *)(reference + 0x10) - 0x12c0000;
     s32 z_high = *(s32 *)(reference + 0x10) + 0xc80000;
     u32 index;
@@ -82,17 +82,16 @@ void Func_02000598(void)
 
         x = *(s32 *)(actor + 0x08);
         z = *(s32 *)(actor + 0x10);
+        actor[0x54] = 1;
         if (x < x_low || x > x_high || z < z_low || z > z_high) {
             actor[0x54] = 0;
             continue;
         }
-        actor[0x54] = 1;
 
         if (Data_03001f54 != 0 && Func_080770c0(0x163) != 0) {
             continue;
         }
 
-        dx = x - *(s32 *)(subject + 0x08);
         if (dx < 0) {
             dx = *(s32 *)(subject + 0x08) - x;
         }
@@ -100,6 +99,7 @@ void Func_02000598(void)
         if (dz < 0) {
             dz = *(s32 *)(subject + 0x10) - z;
         }
+        dx = x - *(s32 *)(subject + 0x08);
         if (dx + dz >= subject_radius + RadiusProduct_02000598(actor)) {
             continue;
         }

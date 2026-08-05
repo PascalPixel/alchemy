@@ -257,8 +257,8 @@ void Func_02000c28(void)
     *(s32 *)(actor + 0x18) = 0x18000;
     *(s32 *)(actor + 0x1c) = 0x18000;
     frame = (s16 *)(actor + 0x64);
-    *frame = 0;
     *(s32 *)(actor + 0x0c) = 0x400000;
+    *frame = 0;
     *(u16 *)(*(u8 **)(actor + 0x50) + 0x1e) = 0xf000;
 
     Func_080091e0(actor, 0);

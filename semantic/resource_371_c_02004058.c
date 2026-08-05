@@ -62,11 +62,11 @@ void Func_02004058(u8 *parent)
     u32 index;
 
     for (index = 0; index <= 1; index++) {
-        piece = Func_080090c8(26,
                               *(s32 *)(parent + 0x08),
+        pieces[index] = piece;
+        piece = Func_080090c8(26,
                               *(s32 *)(parent + 0x0c),
                               *(s32 *)(parent + 0x10));
-        pieces[index] = piece;
         if (piece == 0) {
             continue;
         }
@@ -94,9 +94,9 @@ void Func_02004058(u8 *parent)
         *(u8 *)(*(u8 **)(record + 0x28) + 0x16) = 0;
     }
 
-    record = *(u8 **)(pieces[0] + 0x50);
     *(void (**)(void *))(pieces[0] + 0x6c) = Func_02004004;
     record[9] = (u8)((record[9] & ~0x0c) | 0x04);
+    record = *(u8 **)(pieces[0] + 0x50);
 
     record = *(u8 **)(pieces[1] + 0x50);
     *(void (**)(void *))(pieces[1] + 0x6c) = Func_02003fb4;

@@ -78,8 +78,8 @@ void Func_02000cfc(struct MapPlacement_02000cfc *placement, void *source)
             shadow[column] = value;
         }
         /* Advance one full 32-entry row (16 written + 16 skipped). */
-        screen += 32;
         shadow += 32;
+        screen += 32;
     }
 
     Func_08000178(handle);

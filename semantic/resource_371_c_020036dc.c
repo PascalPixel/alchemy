@@ -78,12 +78,12 @@ void Func_020036dc(s32 reference_actor)
     Func_080f9010(244);
     Func_080000d0(Func_02003678, 3200);
 
-    actor->variant = 0;
     Func_08009150(actor, actor->x.fixed,
                   actor->auxiliary + 0x200000, actor->y.fixed);
-    Func_0808a0e8(selected_actor);
+    actor->variant = 0;
     actor->motion_state = 0;
     actor->variant = 4;
+    Func_0808a0e8(selected_actor);
     Data_02000240.scene_mode = 2;
     Func_080770c8(0x2f0);
     Func_080770e8(0x2f8, 180);

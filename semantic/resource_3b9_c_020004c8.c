@@ -27,23 +27,30 @@
  * open.
  */
 
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern void Func_0808a138(s32 id, s32 arg1);
-extern void Func_0808a170(s32 dialogueId);
-extern void Func_0808a180(s32 id, s32 arg1);
-extern void Func_0808a1e8(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a1f0(s32 id, s32 arg1);
-extern void Func_02001c48(s32 arg0);
 
+
+
+
+
+
+
+
+
+extern void Func_020030c0(void);
+extern void Func_020031a2(s32 id, s32 arg1);
+extern void Func_0200315a(s32 id, s32 arg1);
+extern void Func_02003178(s32 dialogueId);
+extern void Func_02002132(s32 arg0);
+extern void Func_020031ba(s32 id, s32 arg1, s32 arg2);
+extern void Func_020030fe(void);
 void Func_020004c8(void)
 {
-    Func_0808a018();
-    Func_0808a1f0(14, 258);
-    Func_0808a138(14, 2);
-    Func_0808a170(0x2116);
-    Func_02001c48(14);
-    Func_0808a1e8(14, 258, 40);
-    Func_0808a180(14, 0);
-    Func_0808a020();
+    Func_020030c0();
+    Func_020031a2(14, 258);
+    Func_0200315a(14, 2);
+    Func_02003178(0x2116);
+    Func_02002132(14);
+    Func_020031ba(14, 258, 40);
+    Func_020031a2(14, 0);
+    Func_020030fe();
 }

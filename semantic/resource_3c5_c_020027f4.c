@@ -7,13 +7,16 @@
  * the first call.
  */
 
-extern void Func_080091c0(s32, s32, s32, s32, s32, s32);
-extern void Func_080000c0(s32);
-extern void Func_080770c8(s32);
 
+
+
+
+extern void Func_020055e2(s32, s32, s32, s32, s32, s32);
+extern void Func_02005590(s32);
+extern void Func_02005638(s32);
 void Func_020027f4(void)
 {
-    Func_080091c0(82, 7, 1, 2, 18, 7);
-    Func_080000c0(1);
-    Func_080770c8(768);
+    Func_020055e2(82, 7, 1, 2, 18, 7);
+    Func_02005590(1);
+    Func_02005638(768);
 }

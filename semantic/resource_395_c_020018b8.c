@@ -6,10 +6,12 @@ struct DmaTransfer {
     u32 control;
 };
 
-extern void Func_0808a330(s32 value, s32 mode);
-extern void Func_02001878(void);
+
+
 
 /* Load the selected saved palette, fade it in, then refresh the work buffer. */
+extern void Func_02003352(s32 value, s32 mode);
+extern void Func_02003156(void);
 void Func_020018b8(s32 useAlternate)
 {
     volatile struct DmaTransfer *const dma3 =
@@ -19,6 +21,6 @@ void Func_020018b8(s32 useAlternate)
     dma3->source = useAlternate != 0 ? 0x0200a4e0 : 0x02009de0;
     dma3->control = 0x840000e0;
 
-    Func_0808a330(0x10000, 0);
-    Func_02001878();
+    Func_02003352(0x10000, 0);
+    Func_02003156();
 }
